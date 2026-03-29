@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python*)",
+      "Bash(git*)",
+      "Bash(python -m http.server*)"
+    ]
+  }
+}

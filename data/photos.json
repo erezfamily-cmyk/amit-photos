@@ -1,0 +1,66 @@
+[
+  {
+    "id": "1",
+    "title": "שקיעה בנגב",
+    "category": "טבע",
+    "url": "https://placehold.co/1200x800/1a1208/c8a96e?text=שקיעה+בנגב",
+    "thumbnail": "https://placehold.co/800x1100/1a1208/c8a96e?text=שקיעה+בנגב",
+    "description": "שקיעה דרמטית במדבר הנגב"
+  },
+  {
+    "id": "2",
+    "title": "פורטרט בשחור-לבן",
+    "category": "פורטרט",
+    "url": "https://placehold.co/900x1200/111111/ffffff?text=פורטרט",
+    "thumbnail": "https://placehold.co/600x800/111111/ffffff?text=פורטרט",
+    "description": "פורטרט בסטודיו"
+  },
+  {
+    "id": "3",
+    "title": "רחוב יפו בלילה",
+    "category": "עירוני",
+    "url": "https://placehold.co/1200x800/0d1b2a/c8a96e?text=יפו+לילה",
+    "thumbnail": "https://placehold.co/800x600/0d1b2a/c8a96e?text=יפו+לילה",
+    "description": "אווירת לילה ביפו העתיקה"
+  },
+  {
+    "id": "4",
+    "title": "חתונה על הים",
+    "category": "אירועים",
+    "url": "https://placehold.co/1200x800/1a0f0f/e0c080?text=חתונה",
+    "thumbnail": "https://placehold.co/800x800/1a0f0f/e0c080?text=חתונה",
+    "description": "חתונה רומנטית על חוף הים"
+  },
+  {
+    "id": "5",
+    "title": "פרח בשדה",
+    "category": "טבע",
+    "url": "https://placehold.co/900x1200/0f1a0f/c8a96e?text=פרח",
+    "thumbnail": "https://placehold.co/600x800/0f1a0f/c8a96e?text=פרח",
+    "description": "פרח בר בשדה פתוח"
+  },
+  {
+    "id": "6",
+    "title": "עיניים",
+    "category": "פורטרט",
+    "url": "https://placehold.co/1200x800/1a1a1a/888888?text=עיניים",
+    "thumbnail": "https://placehold.co/800x700/1a1a1a/888888?text=עיניים",
+    "description": "קלוז-אפ פורטרט"
+  },
+  {
+    "id": "7",
+    "title": "מגדל דוד",
+    "category": "עירוני",
+    "url": "https://placehold.co/900x1300/1a1208/c8a96e?text=מגדל+דוד",
+    "thumbnail": "https://placehold.co/600x900/1a1208/c8a96e?text=מגדל+דוד",
+    "description": "מגדל דוד בשעת בין הערביים"
+  },
+  {
+    "id": "8",
+    "title": "בר מצווה",
+    "category": "אירועים",
+    "url": "https://placehold.co/1200x800/0a0a1a/c8a96e?text=בר+מצווה",
+    "thumbnail": "https://placehold.co/800x600/0a0a1a/c8a96e?text=בר+מצווה",
+    "description": "רגעים מרגשים מאירוע בר מצווה"
+  }
+]

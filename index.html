@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>עמית | צילום</title>
+  <meta name="description" content="פורטפוליו צילום — טבע, פורטרט, עירוני ואירועים" />
+
+  <!-- Google Fonts: Syne (display) + Heebo (Hebrew body) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Heebo:wght@300;400;500;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+
+  <!-- ===== NAV ===== -->
+  <nav>
+    <a href="#hero" class="nav-logo">עמית<span style="color:var(--text-muted);font-weight:300"> / צילום</span></a>
+    <ul class="nav-links">
+      <li><a href="#gallery" class="active">גלריה</a></li>
+      <li><a href="#about">אודות</a></li>
+      <li><a href="#contact">צור קשר</a></li>
+    </ul>
+    <button class="nav-hamburger" aria-label="תפריט">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- ===== HERO ===== -->
+  <section class="hero" id="hero" data-section="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-content">
+      <p class="hero-eyebrow">Photography Portfolio</p>
+      <h1 class="hero-title">
+        רגעים שנשארים<br />
+        <strong>לנצח</strong>
+      </h1>
+      <p class="hero-subtitle">צילום טבע, פורטרט, עירוני ואירועים — ישראל וסביבותיה</p>
+      <a href="#gallery" class="hero-cta">
+        צפה בעבודות
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </a>
+    </div>
+    <div class="hero-scroll">גלול</div>
+  </section>
+
+  <!-- ===== GALLERY ===== -->
+  <section class="section" id="gallery" data-section="gallery">
+    <div class="section-header">
+      <p class="section-label">עבודות נבחרות</p>
+      <h2 class="section-title">הגלריה</h2>
+    </div>
+
+    <div class="filter-bar" id="filter-bar">
+      <!-- Populated by JS -->
+    </div>
+
+    <div class="gallery-grid" id="gallery-grid">
+      <!-- Populated by JS -->
+    </div>
+  </section>
+
+  <!-- ===== ABOUT ===== -->
+  <section class="section" id="about" data-section="about" style="background: linear-gradient(to bottom, var(--bg), #0d0d0d, var(--bg));">
+    <div class="about-grid">
+      <div class="about-image">
+        <div class="about-image-placeholder">📷</div>
+      </div>
+      <div class="about-text">
+        <p class="section-label">קצת עליי</p>
+        <h2 class="section-title">הסיפור מאחורי העדשה</h2>
+        <p>
+          שמי עמית, צלם ישראלי עם תשוקה לתפוס את הרגע שלעולם לא יחזור.
+          מאמין שכל תמונה טובה מתחילה ברגישות לאור ולסיפור שמאחוריו.
+        </p>
+        <p>
+          מתמחה בצילום טבע ונוף, פורטרטים אנושיים, ואירועים בלתי נשכחים.
+          עובד עם לקוחות פרטיים ועסקיים ברחבי הארץ.
+        </p>
+        <div class="about-stats">
+          <div>
+            <div class="stat-number">500+</div>
+            <div class="stat-label">פרויקטים</div>
+          </div>
+          <div>
+            <div class="stat-number">8</div>
+            <div class="stat-label">שנות ניסיון</div>
+          </div>
+          <div>
+            <div class="stat-number">∞</div>
+            <div class="stat-label">רגעים</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CONTACT ===== -->
+  <section class="section" id="contact" data-section="contact">
+    <div class="section-header">
+      <p class="section-label">בואו נדבר</p>
+      <h2 class="section-title">צור קשר</h2>
+    </div>
+
+    <div class="contact-wrapper">
+      <div class="contact-info">
+        <h3>נשמח לשמוע ממך</h3>
+        <p>מחפש צלם לאירוע, פרויקט מסחרי, או שיש לך שאלה? השאר פרטים ואחזור אליך בהקדם.</p>
+
+        <div class="contact-detail">
+          <div class="contact-detail-icon">📧</div>
+          <span>amit@example.com</span>
+        </div>
+        <div class="contact-detail">
+          <div class="contact-detail-icon">📱</div>
+          <span>054-000-0000</span>
+        </div>
+        <div class="contact-detail">
+          <div class="contact-detail-icon">📍</div>
+          <span>ישראל</span>
+        </div>
+      </div>
+
+      <div class="contact-form" id="contact-form-wrapper">
+        <form id="contact-form">
+          <div class="form-group">
+            <label>שם מלא</label>
+            <input type="text" name="name" placeholder="ישראל ישראלי" required />
+          </div>
+          <div class="form-group">
+            <label>אימייל</label>
+            <input type="email" name="email" placeholder="you@example.com" required />
+          </div>
+          <div class="form-group">
+            <label>נושא</label>
+            <select name="subject">
+              <option value="">בחר נושא...</option>
+              <option>צילום אירוע</option>
+              <option>צילום מסחרי</option>
+              <option>פורטרט אישי</option>
+              <option>רכישת תמונה</option>
+              <option>אחר</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>הודעה</label>
+            <textarea name="message" placeholder="ספר לי על הפרויקט שלך..." required></textarea>
+          </div>
+          <button type="submit" class="form-submit">שלח הודעה →</button>
+        </form>
+        <div class="form-success" id="form-success">
+          <div style="font-size:3rem;margin-bottom:1rem">✓</div>
+          <strong style="font-size:1.2rem;color:var(--text)">ההודעה נשלחה!</strong>
+          <p style="color:var(--text-muted);margin-top:0.5rem">אחזור אליך בהקדם.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer>
+    <p>© 2026 עמית — כל הזכויות שמורות</p>
+  </footer>
+
+  <!-- ===== LIGHTBOX ===== -->
+  <div class="lightbox" id="lightbox">
+    <button class="lightbox-close" id="lb-close">✕</button>
+    <button class="lightbox-nav lightbox-prev" id="lb-prev">‹</button>
+    <button class="lightbox-nav lightbox-next" id="lb-next">›</button>
+    <div class="lightbox-inner">
+      <img id="lb-img" src="" alt="" />
+    </div>
+    <div class="lightbox-caption">
+      <strong id="lb-title"></strong>
+      <span id="lb-cat"></span>
+    </div>
+  </div>
+
+  <script src="assets/js/gallery.js"></script>
+</body>
+</html>
