@@ -78,7 +78,7 @@ async function loadPhotos() {
   showSkeletons(grid);
 
   try {
-    const res = await fetch('data/photos.json');
+    const res = await fetch('data/photos.json?v=' + Date.now());
     if (!res.ok) throw new Error();
     allPhotos = await res.json();
   } catch {
