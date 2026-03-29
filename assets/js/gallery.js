@@ -1,12 +1,13 @@
-// ===== GALLERY STATE =====
+// ===== STATE =====
 let allPhotos = [];
 let filteredPhotos = [];
 let currentIndex = 0;
-let currentCategory = 'all';
 
 // ===== INIT =====
 document.addEventListener('DOMContentLoaded', async () => {
   initNav();
+  initScrollReveal();
+  initBackToTop();
   await loadPhotos();
   initFilters();
   initLightbox();
@@ -15,28 +16,58 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 // ===== NAV =====
 function initNav() {
+  const nav = document.getElementById('main-nav');
   const hamburger = document.querySelector('.nav-hamburger');
   const navLinks = document.querySelector('.nav-links');
+
+  // Scrolled state
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 40);
+  }, { passive: true });
+
+  // Hamburger
   if (hamburger) {
     hamburger.addEventListener('click', () => {
       navLinks.classList.toggle('open');
+      hamburger.classList.toggle('open');
     });
   }
 
+  // Close menu on link click
+  navLinks.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', () => {
+      navLinks.classList.remove('open');
+      hamburger.classList.remove('open');
+    });
+  });
+
   // Active link on scroll
   const sections = document.querySelectorAll('[data-section]');
-  const observer = new IntersectionObserver((entries) => {
+  const io = new IntersectionObserver(entries => {
     entries.forEach(e => {
       if (e.isIntersecting) {
-        document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
-        const id = e.target.dataset.section;
-        const link = document.querySelector(`.nav-links a[href="#${id}"]`);
+        navLinks.querySelectorAll('a').forEach(a => a.classList.remove('active'));
+        const link = navLinks.querySelector(`a[href="#${e.target.id}"]`);
         if (link) link.classList.add('active');
       }
     });
-  }, { threshold: 0.4 });
+  }, { threshold: 0.35 });
 
-  sections.forEach(s => observer.observe(s));
+  sections.forEach(s => io.observe(s));
+}
+
+// ===== SCROLL REVEAL =====
+function initScrollReveal() {
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 }
 
 // ===== LOAD PHOTOS =====
@@ -44,14 +75,13 @@ async function loadPhotos() {
   const grid = document.getElementById('gallery-grid');
   if (!grid) return;
 
-  grid.innerHTML = `<div class="gallery-loading"><div class="spinner"></div>טוען תמונות...</div>`;
+  showSkeletons(grid);
 
   try {
     const res = await fetch('data/photos.json');
-    if (!res.ok) throw new Error('no data');
+    if (!res.ok) throw new Error();
     allPhotos = await res.json();
   } catch {
-    // Use demo data if no real data
     allPhotos = getDemoPhotos();
   }
 
@@ -59,35 +89,39 @@ async function loadPhotos() {
   renderGallery();
 }
 
+// ===== SKELETONS =====
+function showSkeletons(grid) {
+  const heights = [280, 200, 340, 220, 300, 180, 260, 310];
+  grid.innerHTML = heights.map(h => `
+    <div class="skeleton" style="height:${h}px"></div>
+  `).join('');
+}
+
 // ===== DEMO DATA =====
 function getDemoPhotos() {
-  const categories = ['טבע', 'פורטרט', 'עירוני', 'אירועים'];
-  const photos = [];
-  const sizes = [
-    [800, 1200], [800, 600], [800, 1000], [800, 800],
-    [800, 1100], [800, 700], [800, 900], [800, 1300],
+  const items = [
+    { title: 'שקיעה בנגב', cat: 'טבע', w: 800, h: 1100, bg: '1a1208/c8a96e' },
+    { title: 'פורטרט עירוני', cat: 'פורטרט', w: 800, h: 1000, bg: '111111/f0ede8' },
+    { title: 'רחוב יפו', cat: 'עירוני', w: 800, h: 600, bg: '0d1b2a/c8a96e' },
+    { title: 'חתונה על הים', cat: 'אירועים', w: 800, h: 800, bg: '1a0f0f/e0c080' },
+    { title: 'פרח בר', cat: 'טבע', w: 800, h: 1200, bg: '0f1a0f/c8a96e' },
+    { title: 'עיניים', cat: 'פורטרט', w: 800, h: 700, bg: '1a1a1a/888888' },
+    { title: 'מגדל דוד', cat: 'עירוני', w: 800, h: 1100, bg: '1a1208/c8a96e' },
+    { title: 'בר מצווה', cat: 'אירועים', w: 800, h: 600, bg: '0a0a1a/c8a96e' },
+    { title: 'ים בעלות השחר', cat: 'טבע', w: 800, h: 900, bg: '0a1520/e0c080' },
+    { title: 'סמטת ירושלים', cat: 'עירוני', w: 800, h: 1300, bg: '180f08/c8a96e' },
+    { title: 'אמא ובת', cat: 'פורטרט', w: 800, h: 800, bg: '111111/f0ede8' },
+    { title: 'אירוסין', cat: 'אירועים', w: 800, h: 650, bg: '12090a/e0c080' },
   ];
 
-  const colors = [
-    '1a1a2e/c8a96e', '16213e/e0c080', '0f3460/c8a96e',
-    '533483/ffffff', '2d4739/c8a96e', '3d2b1f/e0c080',
-    '1c1c1c/888888', '2a1a0e/c8a96e',
-  ];
-
-  for (let i = 0; i < 16; i++) {
-    const cat = categories[i % categories.length];
-    const [w, h] = sizes[i % sizes.length];
-    const color = colors[i % colors.length];
-    photos.push({
-      id: `demo-${i}`,
-      title: `תמונה ${i + 1}`,
-      category: cat,
-      url: `https://placehold.co/${w}x${h}/${color}?text=${encodeURIComponent(cat)}`,
-      thumbnail: `https://placehold.co/${w}x${h}/${color}?text=${encodeURIComponent(cat)}`,
-      description: `תיאור תמונה לדוגמה — ${cat}`,
-    });
-  }
-  return photos;
+  return items.map((it, i) => ({
+    id: `demo-${i}`,
+    title: it.title,
+    category: it.cat,
+    url: `https://placehold.co/${it.w}x${it.h}/${it.bg}?text=${encodeURIComponent(it.title)}`,
+    thumbnail: `https://placehold.co/${it.w}x${it.h}/${it.bg}?text=${encodeURIComponent(it.title)}`,
+    description: '',
+  }));
 }
 
 // ===== RENDER GALLERY =====
@@ -96,16 +130,17 @@ function renderGallery() {
   if (!grid) return;
 
   if (filteredPhotos.length === 0) {
-    grid.innerHTML = `<p style="text-align:center; color:var(--text-muted); padding:4rem; width:100%">אין תמונות בקטגוריה זו.</p>`;
+    grid.innerHTML = `<p style="text-align:center;color:var(--text-muted);padding:4rem">אין תמונות בקטגוריה זו.</p>`;
     return;
   }
 
   grid.innerHTML = filteredPhotos.map((photo, idx) => `
-    <div class="gallery-item" data-idx="${idx}" data-category="${photo.category}">
+    <div class="gallery-item" data-idx="${idx}">
       <img
         src="${photo.thumbnail || photo.url}"
         alt="${photo.title}"
         loading="lazy"
+        onload="this.closest('.gallery-item').classList.add('loaded')"
       />
       <div class="gallery-item-overlay">
         <div class="gallery-item-info">
@@ -116,12 +151,10 @@ function renderGallery() {
     </div>
   `).join('');
 
-  // Attach click handlers
-  grid.querySelectorAll('.gallery-item').forEach(item => {
-    item.addEventListener('click', () => {
-      currentIndex = parseInt(item.dataset.idx);
-      openLightbox(currentIndex);
-    });
+  // Staggered entrance animation
+  grid.querySelectorAll('.gallery-item').forEach((item, i) => {
+    setTimeout(() => item.classList.add('loaded'), i * 55);
+    item.addEventListener('click', () => openLightbox(parseInt(item.dataset.idx)));
   });
 }
 
@@ -132,25 +165,24 @@ function initFilters() {
 
   const categories = ['all', ...new Set(allPhotos.map(p => p.category))];
 
-  bar.innerHTML = categories.map(cat => `
+  bar.innerHTML = categories.map(cat => {
+    const count = cat === 'all' ? allPhotos.length : allPhotos.filter(p => p.category === cat).length;
+    return `
     <button class="filter-btn ${cat === 'all' ? 'active' : ''}" data-cat="${cat}">
-      ${cat === 'all' ? 'הכל' : cat}
-    </button>
-  `).join('');
+      ${cat === 'all' ? 'הכל' : cat} <span class="filter-count">${count}</span>
+    </button>`;
+  }).join('');
 
   bar.querySelectorAll('.filter-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       bar.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-      currentCategory = btn.dataset.cat;
-      filterGallery(currentCategory);
+      filteredPhotos = btn.dataset.cat === 'all'
+        ? [...allPhotos]
+        : allPhotos.filter(p => p.category === btn.dataset.cat);
+      renderGallery();
     });
   });
-}
-
-function filterGallery(cat) {
-  filteredPhotos = cat === 'all' ? [...allPhotos] : allPhotos.filter(p => p.category === cat);
-  renderGallery();
 }
 
 // ===== LIGHTBOX =====
@@ -161,10 +193,7 @@ function initLightbox() {
   document.getElementById('lb-close').addEventListener('click', closeLightbox);
   document.getElementById('lb-prev').addEventListener('click', () => navigateLightbox(-1));
   document.getElementById('lb-next').addEventListener('click', () => navigateLightbox(1));
-
-  lb.addEventListener('click', e => {
-    if (e.target === lb) closeLightbox();
-  });
+  lb.addEventListener('click', e => { if (e.target === lb) closeLightbox(); });
 
   document.addEventListener('keydown', e => {
     if (!lb.classList.contains('open')) return;
@@ -172,19 +201,39 @@ function initLightbox() {
     if (e.key === 'ArrowRight') navigateLightbox(-1);
     if (e.key === 'ArrowLeft') navigateLightbox(1);
   });
+
+  // Touch swipe support
+  let touchX = null;
+  lb.addEventListener('touchstart', e => { touchX = e.touches[0].clientX; }, { passive: true });
+  lb.addEventListener('touchend', e => {
+    if (touchX === null) return;
+    const diff = touchX - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 50) navigateLightbox(diff > 0 ? 1 : -1);
+    touchX = null;
+  });
 }
 
 function openLightbox(idx) {
   currentIndex = idx;
   const photo = filteredPhotos[idx];
   if (!photo) return;
-
-  const lb = document.getElementById('lightbox');
-  document.getElementById('lb-img').src = photo.url;
-  document.getElementById('lb-img').alt = photo.title;
+  const img = document.getElementById('lb-img');
+  const spinner = document.getElementById('lb-spinner');
+  img.style.opacity = '0';
+  spinner.style.display = 'block';
+  img.onload = () => {
+    spinner.style.display = 'none';
+    img.style.opacity = '1';
+  };
+  img.src = photo.url;
+  img.alt = photo.title;
   document.getElementById('lb-title').textContent = photo.title;
   document.getElementById('lb-cat').textContent = photo.category;
-  lb.classList.add('open');
+  document.getElementById('lb-counter').textContent = `${idx + 1} / ${filteredPhotos.length}`;
+  const descEl = document.getElementById('lb-desc');
+  descEl.textContent = photo.description || '';
+  descEl.style.display = photo.description ? 'block' : 'none';
+  document.getElementById('lightbox').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
 
@@ -198,21 +247,47 @@ function navigateLightbox(dir) {
   openLightbox(currentIndex);
 }
 
+// ===== BACK TO TOP =====
+function initBackToTop() {
+  const btn = document.getElementById('back-to-top');
+  if (!btn) return;
+  window.addEventListener('scroll', () => {
+    btn.classList.toggle('visible', window.scrollY > 400);
+  }, { passive: true });
+  btn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+}
+
 // ===== CONTACT FORM =====
+// כדי לחבר לשליחה אמיתית: הרשם ב-https://formspree.io, צור טופס, והחלף את FORMSPREE_ID למטה
+const FORMSPREE_ID = null; // לדוגמה: 'xpwzabcd'
+
 function initContactForm() {
   const form = document.getElementById('contact-form');
   if (!form) return;
 
-  form.addEventListener('submit', e => {
+  form.addEventListener('submit', async e => {
     e.preventDefault();
     const btn = form.querySelector('.form-submit');
     btn.textContent = 'שולח...';
     btn.disabled = true;
 
-    // Simulate send (replace with real service later)
-    setTimeout(() => {
-      form.style.display = 'none';
-      document.getElementById('form-success').style.display = 'block';
-    }, 1200);
+    if (FORMSPREE_ID) {
+      try {
+        const res = await fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
+          method: 'POST',
+          headers: { 'Accept': 'application/json' },
+          body: new FormData(form),
+        });
+        if (!res.ok) throw new Error();
+      } catch {
+        btn.textContent = 'שלח הודעה ←';
+        btn.disabled = false;
+        alert('שגיאה בשליחה, נסה שוב.');
+        return;
+      }
+    }
+
+    form.style.display = 'none';
+    document.getElementById('form-success').style.display = 'block';
   });
 }
