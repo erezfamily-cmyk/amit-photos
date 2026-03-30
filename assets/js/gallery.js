@@ -213,6 +213,15 @@ function initLightbox() {
   });
 }
 
+function getLightboxUrl(url) {
+  // Replace full Google Drive export URL with a resized thumbnail (max 1600px wide)
+  const match = url.match(/[?&]id=([\w-]+)/);
+  if (match && url.includes('drive.google.com')) {
+    return `https://drive.google.com/thumbnail?id=${match[1]}&sz=w1600`;
+  }
+  return url;
+}
+
 function openLightbox(idx) {
   currentIndex = idx;
   const photo = filteredPhotos[idx];
@@ -225,7 +234,7 @@ function openLightbox(idx) {
     spinner.style.display = 'none';
     img.style.opacity = '1';
   };
-  img.src = photo.url;
+  img.src = getLightboxUrl(photo.url);
   img.alt = photo.title;
   document.getElementById('lb-title').textContent = photo.title;
   document.getElementById('lb-cat').textContent = photo.category;
@@ -261,12 +270,53 @@ function initBackToTop() {
 // כדי לחבר לשליחה אמיתית: הרשם ב-https://formspree.io, צור טופס, והחלף את FORMSPREE_ID למטה
 const FORMSPREE_ID = null; // לדוגמה: 'xpwzabcd'
 
+function validateForm(form) {
+  let valid = true;
+  form.querySelectorAll('.field-error-msg').forEach(el => el.remove());
+  form.querySelectorAll('.field-error').forEach(el => el.classList.remove('field-error'));
+
+  const name = form.querySelector('[name="name"]');
+  if (!name.value.trim()) {
+    showFieldError(name, 'נא להזין שם');
+    valid = false;
+  }
+
+  const email = form.querySelector('[name="email"]');
+  const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim());
+  if (!emailOk) {
+    showFieldError(email, 'נא להזין כתובת אימייל תקינה');
+    valid = false;
+  }
+
+  const msg = form.querySelector('[name="message"]');
+  if (!msg.value.trim()) {
+    showFieldError(msg, 'נא להזין הודעה');
+    valid = false;
+  }
+
+  return valid;
+}
+
+function showFieldError(input, text) {
+  input.classList.add('field-error');
+  const err = document.createElement('span');
+  err.className = 'field-error-msg';
+  err.textContent = text;
+  input.parentElement.appendChild(err);
+  input.addEventListener('input', () => {
+    input.classList.remove('field-error');
+    err.remove();
+  }, { once: true });
+}
+
 function initContactForm() {
   const form = document.getElementById('contact-form');
   if (!form) return;
 
   form.addEventListener('submit', async e => {
     e.preventDefault();
+    if (!validateForm(form)) return;
+
     const btn = form.querySelector('.form-submit');
     btn.textContent = 'שולח...';
     btn.disabled = true;
