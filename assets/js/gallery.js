@@ -340,6 +340,15 @@ function initLightbox() {
   document.getElementById('lb-next').addEventListener('click', () => { stopSlideshow(); navigateLightbox(1); });
   lb.addEventListener('click', e => { if (e.target === lb) closeLightbox(); });
 
+  // Buy button
+  const buyBtn = document.getElementById('lb-buy');
+  if (buyBtn) {
+    buyBtn.addEventListener('click', () => openBuyModal(filteredPhotos[currentIndex]));
+  }
+
+  // Buy modal
+  initBuyModal();
+
   // Slideshow
   const ssBtn = document.getElementById('lb-slideshow');
   if (ssBtn) {
@@ -584,6 +593,73 @@ function initContactForm() {
     form.style.display = 'none';
     document.getElementById('form-success').style.display = 'block';
   });
+}
+
+// ===== BUY MODAL =====
+const PAYPAL_EMAIL = 'erez.family@gmail.com';
+const SITE_URL = 'https://amit-photos.netlify.app';
+
+const SIZES = {
+  small:  { label: 'קובץ רשת (1500px)',   price: 39,  sz: 'w1500' },
+  medium: { label: 'קובץ הדפסה (3000px)', price: 89,  sz: 'w3000' },
+  large:  { label: 'קובץ מלא',            price: 179, sz: 'w6000' },
+};
+
+function initBuyModal() {
+  const modal = document.getElementById('buy-modal');
+  if (!modal) return;
+
+  document.getElementById('buy-modal-close').addEventListener('click', closeBuyModal);
+  modal.addEventListener('click', e => { if (e.target === modal) closeBuyModal(); });
+
+  modal.querySelectorAll('.buy-size-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const size = btn.dataset.size;
+      const photo = modal._photo;
+      if (!photo) return;
+      redirectToPayPal(photo, size);
+    });
+  });
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && modal.classList.contains('open')) closeBuyModal();
+  });
+}
+
+function openBuyModal(photo) {
+  if (!photo) return;
+  const modal = document.getElementById('buy-modal');
+  modal._photo = photo;
+  document.getElementById('buy-modal-title').textContent = photo.title;
+  modal.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeBuyModal() {
+  const modal = document.getElementById('buy-modal');
+  modal.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function redirectToPayPal(photo, size) {
+  const s = SIZES[size];
+  const fileIdMatch = photo.url.match(/[?&]id=([\w-]+)/);
+  const fileId = fileIdMatch ? fileIdMatch[1] : photo.id;
+
+  const params = new URLSearchParams({
+    cmd: '_xclick',
+    business: PAYPAL_EMAIL,
+    item_name: `${photo.title} — ${s.label}`,
+    item_number: `${fileId}_${size}`,
+    amount: s.price,
+    currency_code: 'ILS',
+    no_shipping: '1',
+    return: `${SITE_URL}/download.html`,
+    cancel_return: `${SITE_URL}/`,
+    rm: '1',
+  });
+
+  window.location.href = `https://www.paypal.com/cgi-bin/webscr?${params.toString()}`;
 }
 
 // ===== SERVICE WORKER =====
