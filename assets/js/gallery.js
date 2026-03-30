@@ -4,6 +4,8 @@ let filteredPhotos = [];
 let currentIndex = 0;
 let displayedCount = 0;
 const PAGE_SIZE = 25;
+let slideshowTimer = null;
+let isZoomed = false;
 
 // ===== INIT =====
 document.addEventListener('DOMContentLoaded', async () => {
@@ -13,6 +15,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   await loadPhotos();
   initFilters();
   initSearch();
+  initFeatured();
   initLightbox();
   initContactForm();
   handleInitialHash();
@@ -190,6 +193,30 @@ function updateLoadMoreBtn() {
   }
 }
 
+// ===== FEATURED =====
+function initFeatured() {
+  const grid = document.getElementById('featured-grid');
+  if (!grid || allPhotos.length === 0) return;
+
+  const picks = allPhotos.slice(0, 4);
+  grid.innerHTML = picks.map((photo, i) => `
+    <div class="featured-item" data-idx="${i}">
+      <img src="${photo.thumbnail || photo.url}" alt="${photo.title}" loading="lazy" />
+      <div class="featured-item-overlay">
+        <span class="featured-item-title">${photo.title}</span>
+      </div>
+    </div>
+  `).join('');
+
+  grid.querySelectorAll('.featured-item').forEach(item => {
+    item.addEventListener('click', () => {
+      filteredPhotos = [...allPhotos];
+      displayedCount = Math.min(PAGE_SIZE, filteredPhotos.length);
+      openLightbox(parseInt(item.dataset.idx));
+    });
+  });
+}
+
 // ===== SEARCH =====
 function initSearch() {
   const input = document.getElementById('gallery-search');
@@ -261,15 +288,33 @@ function initLightbox() {
   initLoadMore();
 
   document.getElementById('lb-close').addEventListener('click', closeLightbox);
-  document.getElementById('lb-prev').addEventListener('click', () => navigateLightbox(-1));
-  document.getElementById('lb-next').addEventListener('click', () => navigateLightbox(1));
+  document.getElementById('lb-prev').addEventListener('click', () => { stopSlideshow(); navigateLightbox(-1); });
+  document.getElementById('lb-next').addEventListener('click', () => { stopSlideshow(); navigateLightbox(1); });
   lb.addEventListener('click', e => { if (e.target === lb) closeLightbox(); });
+
+  // Slideshow
+  const ssBtn = document.getElementById('lb-slideshow');
+  if (ssBtn) {
+    ssBtn.addEventListener('click', () => {
+      if (slideshowTimer) { stopSlideshow(); } else { startSlideshow(); }
+    });
+  }
+
+  // Zoom on image click
+  const img = document.getElementById('lb-img');
+  if (img) {
+    img.addEventListener('click', () => {
+      isZoomed = !isZoomed;
+      img.classList.toggle('zoomed', isZoomed);
+    });
+  }
 
   document.addEventListener('keydown', e => {
     if (!lb.classList.contains('open')) return;
-    if (e.key === 'Escape') closeLightbox();
-    if (e.key === 'ArrowRight') navigateLightbox(-1);
-    if (e.key === 'ArrowLeft') navigateLightbox(1);
+    if (e.key === 'Escape') { if (isZoomed) { isZoomed = false; img.classList.remove('zoomed'); } else { closeLightbox(); } }
+    if (e.key === 'ArrowRight') { stopSlideshow(); navigateLightbox(-1); }
+    if (e.key === 'ArrowLeft') { stopSlideshow(); navigateLightbox(1); }
+    if (e.key === ' ') { e.preventDefault(); slideshowTimer ? stopSlideshow() : startSlideshow(); }
   });
 
   // Touch swipe support
@@ -278,9 +323,22 @@ function initLightbox() {
   lb.addEventListener('touchend', e => {
     if (touchX === null) return;
     const diff = touchX - e.changedTouches[0].clientX;
-    if (Math.abs(diff) > 50) navigateLightbox(diff > 0 ? 1 : -1);
+    if (Math.abs(diff) > 50) { stopSlideshow(); navigateLightbox(diff > 0 ? 1 : -1); }
     touchX = null;
   });
+}
+
+function startSlideshow() {
+  const btn = document.getElementById('lb-slideshow');
+  if (btn) btn.textContent = '⏸ עצור';
+  slideshowTimer = setInterval(() => navigateLightbox(1), 3000);
+}
+
+function stopSlideshow() {
+  clearInterval(slideshowTimer);
+  slideshowTimer = null;
+  const btn = document.getElementById('lb-slideshow');
+  if (btn) btn.textContent = '▶ מצגת';
 }
 
 function getLightboxUrl(url) {
@@ -356,14 +414,27 @@ function openLightbox(idx) {
 }
 
 function closeLightbox() {
+  stopSlideshow();
+  isZoomed = false;
+  const img = document.getElementById('lb-img');
+  if (img) img.classList.remove('zoomed');
   document.getElementById('lightbox').classList.remove('open');
   document.body.style.overflow = '';
   history.replaceState(null, '', window.location.pathname + window.location.search);
 }
 
 function navigateLightbox(dir) {
-  currentIndex = (currentIndex + dir + filteredPhotos.length) % filteredPhotos.length;
-  openLightbox(currentIndex);
+  // reset zoom
+  isZoomed = false;
+  const img = document.getElementById('lb-img');
+  if (img) img.classList.remove('zoomed');
+
+  // fade out then switch
+  if (img) img.style.opacity = '0';
+  setTimeout(() => {
+    currentIndex = (currentIndex + dir + filteredPhotos.length) % filteredPhotos.length;
+    openLightbox(currentIndex);
+  }, 200);
 }
 
 // ===== DEEP LINK — פתיחה לפי hash =====
