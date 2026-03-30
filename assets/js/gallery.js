@@ -85,6 +85,13 @@ async function loadPhotos() {
     allPhotos = getDemoPhotos();
   }
 
+  // הצג עד 100 תמונות רנדומליות
+  for (let i = allPhotos.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [allPhotos[i], allPhotos[j]] = [allPhotos[j], allPhotos[i]];
+  }
+  allPhotos = allPhotos.slice(0, 100);
+
   filteredPhotos = [...allPhotos];
   renderGallery();
 }
