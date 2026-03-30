@@ -127,14 +127,18 @@ def list_images(session, folder_id):
 
 
 def download_thumbnail(session, file_id, max_size=800):
-    """מוריד thumbnail מ-Drive לצורך ניתוח."""
-    import requests
-    url = f"https://drive.google.com/thumbnail?id={file_id}&sz=w{max_size}"
-    res = session.get(url)
+    """מוריד תמונה מ-Drive API לצורך ניתוח."""
+    # הורד ישירות דרך Drive API עם token (אמין יותר מ-thumbnail URL)
+    res = session.get(
+        f"{DRIVE_API}/files/{file_id}",
+        params={"alt": "media"},
+        stream=True,
+    )
     if res.ok:
         return res.content
-    # fallback — הורד ישירות
-    res = session.get(f"{DRIVE_API}/files/{file_id}", params={"alt": "media"})
+    # fallback — thumbnail
+    url = f"https://drive.google.com/thumbnail?id={file_id}&sz=w{max_size}"
+    res = session.get(url)
     res.raise_for_status()
     return res.content
 
@@ -244,11 +248,16 @@ def main():
             file_id = f["id"]
             meta = f.get("imageMediaMetadata", {})
 
-            # אם התמונה כבר קיימת — שמור כמות שהיא
+            # אם התמונה כבר קיימת עם שם אמיתי — שמור כמות שהיא
             if file_id in existing:
-                all_photos.append(existing[file_id])
-                print(f"   ✓ {f['name']} (קיים)")
-                continue
+                ex = existing[file_id]
+                filename_stem = Path(f["name"]).stem
+                # אם השם זהה לשם הקובץ — נתח מחדש
+                if ex["title"] != filename_stem:
+                    all_photos.append(ex)
+                    print(f"   ✓ {f['name']} (קיים: {ex['title']})")
+                    continue
+                print(f"   🔄 {f['name']} (שם קובץ, מנתח מחדש...)", end=" ", flush=True)
 
             # תמונה חדשה — נתח עם Claude
             print(f"   🤖 מנתח: {f['name']}...", end=" ", flush=True)
