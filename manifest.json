@@ -1,0 +1,20 @@
+{
+  "name": "עמית | צילום",
+  "short_name": "עמית צילום",
+  "description": "פורטפוליו צילום — טבע, פורטרט, עירוני ואירועים",
+  "start_url": "/amit-photos/",
+  "scope": "/amit-photos/",
+  "display": "standalone",
+  "background_color": "#0a0a0a",
+  "theme_color": "#0a0a0a",
+  "lang": "he",
+  "dir": "rtl",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' rx='38' fill='%230a0a0a'/><circle cx='96' cy='90' r='38' fill='none' stroke='%23c8a96e' stroke-width='10'/><circle cx='96' cy='90' r='15' fill='%23c8a96e'/><rect x='58' y='55' width='76' height='8' rx='4' fill='%23c8a96e'/></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

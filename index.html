@@ -45,6 +45,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Heebo:wght@300;400;500;700&display=swap" rel="stylesheet" />
 
   <link rel="stylesheet" href="assets/css/style.css" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#0a0a0a" />
 </head>
 <body>
 
@@ -89,12 +91,20 @@
       <h2 class="section-title">הגלריה</h2>
     </div>
 
+    <div class="gallery-search-wrap reveal reveal-delay-1">
+      <input type="search" id="gallery-search" class="gallery-search" placeholder="חיפוש לפי שם תמונה..." aria-label="חיפוש תמונות" />
+    </div>
+
     <div class="filter-bar reveal reveal-delay-1" id="filter-bar">
       <!-- Populated by JS -->
     </div>
 
     <div class="gallery-grid" id="gallery-grid">
       <!-- Populated by JS -->
+    </div>
+
+    <div class="load-more-wrap">
+      <button id="load-more-btn" class="load-more-btn" style="display:none">טען עוד</button>
     </div>
   </section>
 
@@ -406,6 +416,6 @@
   <!-- ===== BACK TO TOP ===== -->
   <button class="back-to-top" id="back-to-top" aria-label="חזרה למעלה">↑</button>
 
-  <script src="assets/js/gallery.js?v=4"></script>
+  <script src="assets/js/gallery.js?v=5"></script>
 </body>
 </html>

@@ -329,6 +329,54 @@ nav.scrolled { border-bottom-color: var(--border); }
   line-height: 1.05;
 }
 
+/* ===== GALLERY SEARCH ===== */
+.gallery-search-wrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.25rem;
+}
+.gallery-search {
+  width: 100%;
+  max-width: 420px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 0.75rem 1.1rem;
+  border-radius: 2px;
+  font-family: var(--font);
+  font-size: 0.9rem;
+  direction: rtl;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.gallery-search::placeholder { color: var(--text-muted); }
+.gallery-search:focus { border-color: var(--accent); }
+.gallery-search::-webkit-search-cancel-button { cursor: pointer; }
+
+/* ===== LOAD MORE ===== */
+.load-more-wrap {
+  text-align: center;
+  margin-top: 3rem;
+}
+.load-more-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  padding: 0.875rem 2.5rem;
+  border-radius: 2px;
+  font-family: var(--font);
+  font-size: 0.82rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s, transform 0.2s;
+}
+.load-more-btn:hover {
+  border-color: var(--accent);
+  color: var(--text);
+  transform: translateY(-2px);
+}
+
 /* ===== FILTER TABS ===== */
 .filter-bar {
   display: flex;
