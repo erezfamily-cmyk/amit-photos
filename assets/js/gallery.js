@@ -316,13 +316,28 @@ function openLightbox(idx) {
   const progress = document.getElementById('lb-progress');
   if (progress) progress.style.width = `${((idx + 1) / filteredPhotos.length) * 100}%`;
 
-  // Download button
+  // Download button — עם הגנת סיסמה
   const dlBtn = document.getElementById('lb-download');
   if (dlBtn) {
-    const driveMatch = photo.url.match(/[?&]id=([\w-]+)/);
-    dlBtn.href = driveMatch
-      ? `https://drive.google.com/uc?export=download&id=${driveMatch[1]}`
-      : photo.url;
+    dlBtn.onclick = (e) => {
+      e.preventDefault();
+      const driveMatch = photo.url.match(/[?&]id=([\w-]+)/);
+      if (!driveMatch) { window.open(photo.url, '_blank'); return; }
+      const fileId = driveMatch[1];
+      const pwd = prompt('הזן סיסמה להורדת התמונה:');
+      if (!pwd) return;
+      fetch('/.netlify/functions/download', {
+        method: 'POST',
+        body: JSON.stringify({ password: pwd, fileId }),
+      }).then(r => r.json()).then(data => {
+        if (data.url) {
+          window.open(data.url, '_blank');
+        } else {
+          alert('סיסמה שגויה. נסה שוב.');
+        }
+      }).catch(() => alert('שגיאה. נסה שוב.'));
+    };
+    dlBtn.href = '#';
   }
 
   // WhatsApp share
@@ -378,9 +393,6 @@ function initBackToTop() {
 }
 
 // ===== CONTACT FORM =====
-// כדי לחבר לשליחה אמיתית: הרשם ב-https://formspree.io, צור טופס, והחלף את FORMSPREE_ID למטה
-const FORMSPREE_ID = null; // לדוגמה: 'xpwzabcd'
-
 function validateForm(form) {
   let valid = true;
   form.querySelectorAll('.field-error-msg').forEach(el => el.remove());
@@ -432,20 +444,18 @@ function initContactForm() {
     btn.textContent = 'שולח...';
     btn.disabled = true;
 
-    if (FORMSPREE_ID) {
-      try {
-        const res = await fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
-          method: 'POST',
-          headers: { 'Accept': 'application/json' },
-          body: new FormData(form),
-        });
-        if (!res.ok) throw new Error();
-      } catch {
-        btn.textContent = 'שלח הודעה ←';
-        btn.disabled = false;
-        alert('שגיאה בשליחה, נסה שוב.');
-        return;
-      }
+    try {
+      const res = await fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams(new FormData(form)).toString(),
+      });
+      if (!res.ok) throw new Error();
+    } catch {
+      btn.textContent = 'שלח הודעה ←';
+      btn.disabled = false;
+      alert('שגיאה בשליחה, נסה שוב.');
+      return;
     }
 
     form.style.display = 'none';

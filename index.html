@@ -10,7 +10,7 @@
   <meta property="og:title" content="עמית | צילום" />
   <meta property="og:description" content="פורטפוליו צילום — טבע, פורטרט, עירוני ואירועים" />
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://erezfamily-cmyk.github.io/amit-photos/" />
+  <meta property="og:url" content="https://tranquil-lokum-5fabe6.netlify.app/" />
   <meta property="og:image" content="https://drive.google.com/thumbnail?id=11o26WyWty86CrIFjPnqp94n2h5ChU1Wp&sz=w1200" />
   <meta name="twitter:card" content="summary_large_image" />
 
@@ -21,7 +21,7 @@
     "@type": "Person",
     "name": "עמית",
     "jobTitle": "צלם מקצועי",
-    "url": "https://erezfamily-cmyk.github.io/amit-photos/",
+    "url": "https://tranquil-lokum-5fabe6.netlify.app/",
     "image": "https://drive.google.com/thumbnail?id=11o26WyWty86CrIFjPnqp94n2h5ChU1Wp&sz=w1200",
     "description": "צלם מקצועי עם ניסיון של 8+ שנים — טבע, פורטרט, עירוני ואירועים",
     "telephone": "050-3333227",
@@ -334,7 +334,9 @@
       </div>
 
       <div class="contact-form reveal reveal-delay-1" id="contact-form-wrapper">
-        <form id="contact-form" novalidate>
+        <form id="contact-form" name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" novalidate>
+            <input type="hidden" name="form-name" value="contact" />
+            <p style="display:none"><input name="bot-field" /></p>
           <div class="form-row">
             <div class="form-group">
               <label>שם מלא</label>
@@ -416,6 +418,6 @@
   <!-- ===== BACK TO TOP ===== -->
   <button class="back-to-top" id="back-to-top" aria-label="חזרה למעלה">↑</button>
 
-  <script src="assets/js/gallery.js?v=5"></script>
+  <script src="assets/js/gallery.js?v=6"></script>
 </body>
 </html>

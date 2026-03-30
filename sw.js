@@ -1,11 +1,11 @@
 const CACHE = 'amit-photos-v1';
 const STATIC = [
-  '/amit-photos/',
-  '/amit-photos/index.html',
-  '/amit-photos/assets/css/style.css',
-  '/amit-photos/assets/js/gallery.js',
-  '/amit-photos/data/photos.json',
-  '/amit-photos/404.html',
+  '/',
+  '/index.html',
+  '/assets/css/style.css',
+  '/assets/js/gallery.js',
+  '/data/photos.json',
+  '/404.html',
 ];
 
 // Install — cache static assets

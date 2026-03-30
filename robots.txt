@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://erezfamily-cmyk.github.io/amit-photos/sitemap.xml
+Sitemap: https://tranquil-lokum-5fabe6.netlify.app/sitemap.xml

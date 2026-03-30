@@ -4,3 +4,6 @@ __pycache__/
 *.pyc
 .env
 assets/photos/
+.agents/
+skills-lock.json
+SETUP.md
