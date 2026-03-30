@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /functions/
 
-Sitemap: https://amit-photos.netlify.app/sitemap.xml
+Sitemap: https://amit-photos.erez-family.workers.dev/sitemap.xml

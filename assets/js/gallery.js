@@ -172,9 +172,16 @@ function renderGallery(append = false) {
           <h3>${photo.title}</h3>
           <span>${photo.category}</span>
         </div>
+        <button class="gallery-buy-btn" data-idx="${idx}" aria-label="רכישת ${photo.title}">רכישה ←</button>
       </div>`;
     setTimeout(() => item.classList.add('loaded'), i * 55);
-    item.addEventListener('click', () => openLightbox(idx));
+    item.addEventListener('click', e => {
+      if (e.target.closest('.gallery-buy-btn')) {
+        openBuyModal(photo);
+      } else {
+        openLightbox(idx);
+      }
+    });
     grid.appendChild(item);
   });
 
@@ -629,6 +636,8 @@ function openBuyModal(photo) {
   const modal = document.getElementById('buy-modal');
   modal._photo = photo;
   document.getElementById('buy-modal-title').textContent = photo.title;
+  const previewImg = document.getElementById('buy-modal-img');
+  if (previewImg) { previewImg.src = photo.thumbnail || photo.url; previewImg.alt = photo.title; }
 
   // קבע אילו גדלים זמינים לפי רזולוציית המקור
   const maxDim = Math.max(photo.width || 0, photo.height || 0);
