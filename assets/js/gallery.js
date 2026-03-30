@@ -229,15 +229,24 @@ function initSearch() {
 
 function getActiveCategory() {
   const active = document.querySelector('.filter-btn.active');
-  return active ? active.dataset.cat : 'all';
+  if (!active) return { cat: 'all', parent: null };
+  return { cat: active.dataset.cat || 'all', parent: active.dataset.parent || null };
 }
 
 function applyFilters() {
   const query = (document.getElementById('gallery-search')?.value || '').trim().toLowerCase();
-  const cat = getActiveCategory();
+  const { cat, parent } = getActiveCategory();
 
   filteredPhotos = allPhotos.filter(p => {
-    const matchCat = cat === 'all' || p.category === cat;
+    let matchCat;
+    if (cat === 'all') {
+      matchCat = true;
+    } else if (parent) {
+      // תת-קטגוריה ספציפית
+      matchCat = p.category === cat && p.parent_category === parent;
+    } else {
+      matchCat = p.category === cat && !p.parent_category;
+    }
     const matchSearch = !query || p.title.toLowerCase().includes(query);
     return matchCat && matchSearch;
   });
@@ -251,21 +260,60 @@ function initFilters() {
   const bar = document.getElementById('filter-bar');
   if (!bar) return;
 
-  const categories = ['all', ...new Set(allPhotos.map(p => p.category))];
+  // בנה מבנה היררכי: { null: ['טבע','ישראל',...], 'מקומות בעולם': ['צכיה','פולין',...] }
+  const hierarchy = {};
+  allPhotos.forEach(p => {
+    const parent = p.parent_category || null;
+    if (!hierarchy[parent]) hierarchy[parent] = new Set();
+    hierarchy[parent].add(p.category);
+  });
 
-  bar.innerHTML = categories.map(cat => {
-    const count = cat === 'all' ? allPhotos.length : allPhotos.filter(p => p.category === cat).length;
-    return `
-    <button class="filter-btn ${cat === 'all' ? 'active' : ''}" data-cat="${cat}">
-      ${cat === 'all' ? 'הכל' : cat} <span class="filter-count">${count}</span>
-    </button>`;
-  }).join('');
+  let html = `<button class="filter-btn active" data-cat="all">הכל <span class="filter-count">${allPhotos.length}</span></button>`;
 
-  bar.querySelectorAll('.filter-btn').forEach(btn => {
+  // קטגוריות ראשיות (ללא parent)
+  (hierarchy[null] || new Set()).forEach(cat => {
+    const count = allPhotos.filter(p => p.category === cat && !p.parent_category).length;
+    html += `<button class="filter-btn" data-cat="${cat}">${cat} <span class="filter-count">${count}</span></button>`;
+  });
+
+  // קבוצות עם parent
+  Object.keys(hierarchy).filter(k => k !== 'null' && k !== null).forEach(parent => {
+    const totalCount = allPhotos.filter(p => p.parent_category === parent).length;
+    html += `<div class="filter-group">
+      <button class="filter-btn filter-group-btn" data-parent="${parent}">
+        ${parent} <span class="filter-count">${totalCount}</span> <span class="filter-arrow">▾</span>
+      </button>
+      <div class="filter-group-sub" style="display:none">`;
+    hierarchy[parent].forEach(sub => {
+      const count = allPhotos.filter(p => p.category === sub && p.parent_category === parent).length;
+      html += `<button class="filter-btn filter-sub-btn" data-cat="${sub}" data-parent="${parent}">${sub} <span class="filter-count">${count}</span></button>`;
+    });
+    html += `</div></div>`;
+  });
+
+  bar.innerHTML = html;
+
+  // לחיצה על כפתור רגיל
+  bar.querySelectorAll('.filter-btn:not(.filter-group-btn)').forEach(btn => {
     btn.addEventListener('click', () => {
       bar.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       applyFilters();
+    });
+  });
+
+  // לחיצה על כפתור קבוצה — פתח/סגור תפריט
+  bar.querySelectorAll('.filter-group-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const sub = btn.nextElementSibling;
+      const isOpen = sub.style.display !== 'none';
+      // סגור כל שאר הקבוצות
+      bar.querySelectorAll('.filter-group-sub').forEach(s => s.style.display = 'none');
+      bar.querySelectorAll('.filter-group-btn .filter-arrow').forEach(a => a.textContent = '▾');
+      if (!isOpen) {
+        sub.style.display = 'flex';
+        btn.querySelector('.filter-arrow').textContent = '▴';
+      }
     });
   });
 }
