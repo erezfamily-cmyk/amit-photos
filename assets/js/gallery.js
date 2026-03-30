@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   initFeatured();
   initLightbox();
   initContactForm();
+  initCart();
   handleInitialHash();
 });
 
@@ -172,11 +173,16 @@ function renderGallery(append = false) {
           <h3>${photo.title}</h3>
           <span>${photo.category}</span>
         </div>
-        <button class="gallery-buy-btn" data-idx="${idx}" aria-label="רכישת ${photo.title}">רכישה ←</button>
+        <div class="gallery-item-actions">
+          <button class="gallery-cart-btn" data-idx="${idx}" aria-label="הוסף לסל">+ סל</button>
+          <button class="gallery-buy-btn" data-idx="${idx}" aria-label="רכישת ${photo.title}">רכישה ←</button>
+        </div>
       </div>`;
     setTimeout(() => item.classList.add('loaded'), i * 55);
     item.addEventListener('click', e => {
-      if (e.target.closest('.gallery-buy-btn')) {
+      if (e.target.closest('.gallery-cart-btn')) {
+        addToCart(photo, item);
+      } else if (e.target.closest('.gallery-buy-btn')) {
         openBuyModal(photo);
       } else {
         openLightbox(idx);
@@ -598,6 +604,133 @@ function initContactForm() {
     form.style.display = 'none';
     document.getElementById('form-success').style.display = 'block';
   });
+}
+
+// ===== CART =====
+let cart = []; // [{ id, title, thumbnail, url, width, height }]
+let cartSize = 'small';
+const CART_PRICES = { small: 39, medium: 89, large: 179 };
+const BUNDLE_DISCOUNT = 0.2;
+const BUNDLE_MIN = 5;
+
+function initCart() {
+  document.getElementById('cart-open-btn')?.addEventListener('click', openCartModal);
+  document.getElementById('cart-modal-close')?.addEventListener('click', closeCartModal);
+  document.getElementById('cart-modal')?.addEventListener('click', e => {
+    if (e.target === document.getElementById('cart-modal')) closeCartModal();
+  });
+
+  document.querySelectorAll('.cart-size-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.cart-size-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      cartSize = btn.dataset.size;
+      renderCartSummary();
+    });
+  });
+
+  document.getElementById('cart-checkout-btn')?.addEventListener('click', cartCheckout);
+}
+
+function addToCart(photo, itemEl) {
+  if (cart.find(p => p.id === photo.id)) {
+    // כבר בסל — הסר
+    cart = cart.filter(p => p.id !== photo.id);
+    itemEl?.classList.remove('in-cart');
+  } else {
+    cart.push(photo);
+    itemEl?.classList.add('in-cart');
+  }
+  updateCartBadge();
+}
+
+function updateCartBadge() {
+  const count = cart.length;
+  document.getElementById('cart-count').textContent = count;
+  document.getElementById('cart-float').style.display = count > 0 ? 'flex' : 'none';
+}
+
+function openCartModal() {
+  renderCartItems();
+  renderCartSummary();
+  document.getElementById('cart-modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeCartModal() {
+  document.getElementById('cart-modal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function renderCartItems() {
+  const container = document.getElementById('cart-items');
+  if (cart.length === 0) {
+    container.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:1rem">הסל ריק</p>';
+    return;
+  }
+  container.innerHTML = cart.map(photo => `
+    <div class="cart-item" data-id="${photo.id}">
+      <img src="${photo.thumbnail || photo.url}" alt="${photo.title}" />
+      <span class="cart-item-title">${photo.title}</span>
+      <button class="cart-item-remove" data-id="${photo.id}" aria-label="הסר">✕</button>
+    </div>
+  `).join('');
+
+  container.querySelectorAll('.cart-item-remove').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.dataset.id;
+      cart = cart.filter(p => String(p.id) !== id);
+      // עדכן סימון בגלריה
+      document.querySelectorAll('.gallery-item').forEach(el => {
+        const idx = parseInt(el.dataset.idx);
+        const photo = filteredPhotos[idx];
+        if (photo && String(photo.id) === id) el.classList.remove('in-cart');
+      });
+      updateCartBadge();
+      renderCartItems();
+      renderCartSummary();
+    });
+  });
+}
+
+function renderCartSummary() {
+  const price = CART_PRICES[cartSize] || 39;
+  const total = cart.length * price;
+  const hasDiscount = cart.length >= BUNDLE_MIN;
+  const discount = hasDiscount ? Math.round(total * BUNDLE_DISCOUNT) : 0;
+  const final = total - discount;
+
+  document.getElementById('cart-total-original').textContent = `₪${total}`;
+  document.getElementById('cart-discount-row').style.display = hasDiscount ? 'flex' : 'none';
+  document.getElementById('cart-discount-amount').textContent = `-₪${discount}`;
+  document.getElementById('cart-total-final').textContent = `₪${final}`;
+}
+
+function cartCheckout() {
+  if (cart.length === 0) return;
+  const price = CART_PRICES[cartSize] || 39;
+  const total = cart.length * price;
+  const hasDiscount = cart.length >= BUNDLE_MIN;
+  const discount = hasDiscount ? Math.round(total * BUNDLE_DISCOUNT) : 0;
+  const finalPrice = total - discount;
+
+  const itemIds = cart.map(p => p.id).join(',');
+  const itemNames = cart.map(p => p.title).join(', ');
+
+  const params = new URLSearchParams({
+    cmd: '_xclick',
+    business: PAYPAL_EMAIL,
+    item_name: `חבילת תמונות (${cart.length}) — ${cartSize}`,
+    item_number: `CART_${cartSize}_${itemIds}`,
+    amount: finalPrice,
+    currency_code: 'ILS',
+    no_shipping: '1',
+    return: `${SITE_URL}/download.html`,
+    cancel_return: `${SITE_URL}/`,
+    rm: '1',
+  });
+
+  window.location.href = `https://www.paypal.com/cgi-bin/webscr?${params.toString()}`;
 }
 
 // ===== BUY MODAL =====

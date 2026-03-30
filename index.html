@@ -442,6 +442,52 @@
     </svg>
   </a>
 
+  <!-- ===== CART ===== -->
+  <div class="cart-float" id="cart-float" style="display:none">
+    <button class="cart-btn" id="cart-open-btn" aria-label="פתח סל קניות">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+      <span class="cart-count" id="cart-count">0</span>
+    </button>
+  </div>
+
+  <!-- ===== CART MODAL ===== -->
+  <div class="cart-modal" id="cart-modal" aria-modal="true" role="dialog" aria-label="סל קניות">
+    <div class="cart-modal-inner">
+      <button class="buy-modal-close" id="cart-modal-close" aria-label="סגור">✕</button>
+      <p class="buy-modal-label">סל קניות</p>
+      <h3 class="buy-modal-title">התמונות שבחרת</h3>
+
+      <div class="cart-items" id="cart-items"></div>
+
+      <div class="cart-size-row">
+        <label class="cart-size-label">בחר גודל לכל התמונות:</label>
+        <div class="cart-size-btns">
+          <button class="cart-size-btn active" data-size="small" data-price="39">רשת ₪39</button>
+          <button class="cart-size-btn" data-size="medium" data-price="89">הדפסה ₪89</button>
+          <button class="cart-size-btn" data-size="large" data-price="179">מלא ₪179</button>
+        </div>
+      </div>
+
+      <div class="cart-summary">
+        <div class="cart-summary-row">
+          <span>סה"כ</span>
+          <span id="cart-total-original"></span>
+        </div>
+        <div class="cart-summary-row cart-discount-row" id="cart-discount-row" style="display:none">
+          <span>הנחת חבילה (20%)</span>
+          <span id="cart-discount-amount" style="color:#4caf7d"></span>
+        </div>
+        <div class="cart-summary-row cart-summary-final">
+          <span>לתשלום</span>
+          <span id="cart-total-final"></span>
+        </div>
+      </div>
+
+      <button class="dl-btn" id="cart-checkout-btn" style="width:100%;margin-bottom:0">תשלום דרך PayPal →</button>
+      <p class="buy-modal-note" style="margin-top:0.75rem">מ-5 תמונות ומעלה — הנחה של 20% אוטומטית</p>
+    </div>
+  </div>
+
   <!-- ===== BUY MODAL ===== -->
   <div class="buy-modal" id="buy-modal" aria-modal="true" role="dialog" aria-label="רכישת תמונה">
     <div class="buy-modal-inner">
