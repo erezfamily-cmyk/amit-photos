@@ -242,6 +242,27 @@ function openLightbox(idx) {
   const descEl = document.getElementById('lb-desc');
   descEl.textContent = photo.description || '';
   descEl.style.display = photo.description ? 'block' : 'none';
+
+  // Progress bar
+  const progress = document.getElementById('lb-progress');
+  if (progress) progress.style.width = `${((idx + 1) / filteredPhotos.length) * 100}%`;
+
+  // Download button — use Google Drive export=download if possible
+  const dlBtn = document.getElementById('lb-download');
+  if (dlBtn) {
+    const driveMatch = photo.url.match(/[?&]id=([\w-]+)/);
+    dlBtn.href = driveMatch
+      ? `https://drive.google.com/uc?export=download&id=${driveMatch[1]}`
+      : photo.url;
+  }
+
+  // WhatsApp share
+  const waBtn = document.getElementById('lb-share-wa');
+  if (waBtn) {
+    const shareText = `${photo.title} — ${window.location.href}`;
+    waBtn.href = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`;
+  }
+
   document.getElementById('lightbox').classList.add('open');
   document.body.style.overflow = 'hidden';
 }

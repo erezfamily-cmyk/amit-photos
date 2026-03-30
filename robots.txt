@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://erezfamily-cmyk.github.io/amit-photos/sitemap.xml
