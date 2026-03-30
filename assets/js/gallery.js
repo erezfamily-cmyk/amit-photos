@@ -595,7 +595,7 @@ function initContactForm() {
 
 // ===== BUY MODAL =====
 const PAYPAL_EMAIL = 'erez.family@gmail.com';
-const SITE_URL = 'https://amit-photos.netlify.app';
+const SITE_URL = 'https://amit-photos.erez-family.workers.dev';
 
 const SIZES = {
   small:  { label: 'קובץ רשת (1500px)',   price: 39,  sz: 'w1500' },
