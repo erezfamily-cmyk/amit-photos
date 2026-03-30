@@ -227,12 +227,31 @@ def main():
         print(f"❌ לא נמצאה תיקייה '{PORTFOLIO_FOLDER}' ב-Drive")
         sys.exit(1)
 
-    categories = list_subfolders(session, portfolio["id"])
+    # סריקה רקורסיבית — קטגוריה = תיקייה שיש בה תמונות (לא משנה כמה רמות עמוק)
+    def collect_folders(parent_id, parent_name=None):
+        """מחזיר רשימת (folder_id, category_name) רקורסיבית."""
+        result = []
+        subfolders = list_subfolders(session, parent_id)
+        for folder in subfolders:
+            name = f"{parent_name} / {folder['name']}" if parent_name else folder['name']
+            # בדוק אם יש תמונות ישירות בתיקייה
+            imgs = list_images(session, folder["id"])
+            if imgs:
+                result.append({"id": folder["id"], "name": name, "files": imgs})
+            # המשך לתת-תיקיות
+            result.extend(collect_folders(folder["id"], name))
+        return result
+
+    print("🔍 סורק תיקיות רקורסיבית...")
+    categories = collect_folders(portfolio["id"])
+
     if not categories:
-        print("⚠️  לא נמצאו תת-תיקיות")
+        print("⚠️  לא נמצאו תת-תיקיות עם תמונות")
         sys.exit(1)
 
-    print(f"✓ נמצאו {len(categories)} קטגוריות: {', '.join(c['name'] for c in categories)}")
+    print(f"✓ נמצאו {len(categories)} קטגוריות:")
+    for c in categories:
+        print(f"   📁 {c['name']} ({len(c['files'])} תמונות)")
 
     existing = load_existing_photos()
     print(f"📋 תמונות קיימות ב-JSON: {len(existing)}")
@@ -241,8 +260,9 @@ def main():
     new_count = 0
 
     for cat in categories:
-        files = list_images(session, cat["id"])
+        files = cat["files"]
         print(f"\n📁 {cat['name']}: {len(files)} תמונות")
+
 
         for f in files:
             file_id = f["id"]
