@@ -872,6 +872,19 @@ nav.scrolled { border-bottom-color: var(--border); }
   color: var(--text);
   margin-top: 0.2rem;
 }
+.buy-size-unavailable {
+  opacity: 0.35;
+  cursor: not-allowed;
+  border-color: #222 !important;
+}
+.buy-size-unavailable:hover {
+  background: #1a1a1a !important;
+  border-color: #222 !important;
+}
+.buy-size-unavailable .buy-size-px {
+  color: #e05050 !important;
+  font-size: 0.62rem;
+}
 .buy-modal-note {
   font-size: 0.75rem;
   color: var(--text-muted);

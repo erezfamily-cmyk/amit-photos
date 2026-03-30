@@ -631,6 +631,30 @@ function openBuyModal(photo) {
   const modal = document.getElementById('buy-modal');
   modal._photo = photo;
   document.getElementById('buy-modal-title').textContent = photo.title;
+
+  // קבע אילו גדלים זמינים לפי רזולוציית המקור
+  const maxDim = Math.max(photo.width || 0, photo.height || 0);
+  modal.querySelectorAll('.buy-size-btn').forEach(btn => {
+    const size = btn.dataset.size;
+    let available = true;
+    if (size === 'medium' && maxDim < 3000) available = false;
+    if (size === 'large'  && maxDim < 5000) available = false;
+
+    btn.disabled = !available;
+    btn.classList.toggle('buy-size-unavailable', !available);
+
+    // עדכן תיאור הגודל בפועל
+    const pxEl = btn.querySelector('.buy-size-px');
+    if (size === 'large' && pxEl) {
+      pxEl.textContent = maxDim >= 5000
+        ? `${photo.width}×${photo.height}px`
+        : `נדרש ${5000}px+ (קובץ זה: ${maxDim}px)`;
+    }
+    if (size === 'medium' && pxEl && maxDim < 3000) {
+      pxEl.textContent = `נדרש 3000px+ (קובץ זה: ${maxDim}px)`;
+    }
+  });
+
   modal.classList.add('open');
   document.body.style.overflow = 'hidden';
 }
