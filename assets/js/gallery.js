@@ -516,13 +516,17 @@ function initContactForm() {
     btn.disabled = true;
 
     try {
-      const res = await fetch('/', {
+      const formData = new FormData(form);
+      const body = new URLSearchParams(formData).toString();
+      const res = await fetch(window.location.pathname, {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams(new FormData(form)).toString(),
+        body,
       });
-      if (!res.ok) throw new Error();
-    } catch {
+      // Netlify מחזיר redirect לעמוד success — גם 3xx נחשב הצלחה
+      if (!res.ok && res.status !== 303) throw new Error(`status ${res.status}`);
+    } catch (err) {
+      console.error('Form error:', err);
       btn.textContent = 'שלח הודעה ←';
       btn.disabled = false;
       alert('שגיאה בשליחה, נסה שוב.');
