@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://tranquil-lokum-5fabe6.netlify.app/sitemap.xml
+Sitemap: https://amit-photos.netlify.app/sitemap.xml
