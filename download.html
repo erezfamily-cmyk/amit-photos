@@ -89,7 +89,7 @@
       }
 
       try {
-        const res = await fetch(`/.netlify/functions/verify-payment?tx=${encodeURIComponent(tx)}&item_number=${encodeURIComponent(itemNumber)}`);
+        const res = await fetch(`/functions/verify-payment?tx=${encodeURIComponent(tx)}&item_number=${encodeURIComponent(itemNumber)}`);
         const data = await res.json();
 
         if (data.url) {

@@ -441,7 +441,7 @@ function openLightbox(idx) {
       const fileId = driveMatch[1];
       const pwd = prompt('הזן סיסמה להורדת התמונה:');
       if (!pwd) return;
-      fetch('/.netlify/functions/download', {
+      fetch('/functions/download', {
         method: 'POST',
         body: JSON.stringify({ password: pwd, fileId }),
       }).then(r => r.json()).then(data => {
@@ -574,14 +574,12 @@ function initContactForm() {
 
     try {
       const formData = new FormData(form);
-      const body = new URLSearchParams(formData).toString();
-      const res = await fetch(window.location.pathname, {
+      const res = await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body,
+        body: formData,
       });
-      // Netlify מחזיר redirect לעמוד success — גם 3xx נחשב הצלחה
-      if (!res.ok && res.status !== 303) throw new Error(`status ${res.status}`);
+      const data = await res.json();
+      if (!res.ok || !data.success) throw new Error(data.message || `status ${res.status}`);
     } catch (err) {
       console.error('Form error:', err);
       btn.textContent = 'שלח הודעה ←';
