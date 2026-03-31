@@ -289,13 +289,29 @@ def main():
     print("\n📸 מוריד ומעבד תמונות...")
     all_photos = []
     for cat in categories:
+        # תמונות ישירות בקטגוריה (רמה 2)
         files = list_drive_images(session, cat["id"])
-        print(f"   📁 {cat['name']}: {len(files)} תמונות", end="", flush=True)
-        for f in files:
-            photo = process_photo(session, f, cat["name"], existing_titles, use_ai)
-            all_photos.append(photo)
-            print(".", end="", flush=True)
-        print()
+        if files:
+            print(f"   📁 {cat['name']}: {len(files)} תמונות", end="", flush=True)
+            for f in files:
+                photo = process_photo(session, f, cat["name"], existing_titles, use_ai)
+                all_photos.append(photo)
+                print(".", end="", flush=True)
+            print()
+
+        # תת-תיקיות (רמה 3) — למשל מקומות בעולם → יוון
+        subcats = list_subfolders(session, cat["id"])
+        for sub in subcats:
+            sub_files = list_drive_images(session, sub["id"])
+            if not sub_files:
+                continue
+            print(f"   📁 {cat['name']} / {sub['name']}: {len(sub_files)} תמונות", end="", flush=True)
+            for f in sub_files:
+                photo = process_photo(session, f, sub["name"], existing_titles, use_ai)
+                photo["parent_category"] = cat["name"]
+                all_photos.append(photo)
+                print(".", end="", flush=True)
+            print()
 
     if not all_photos:
         print("\n⚠️  לא נמצאו תמונות.")
