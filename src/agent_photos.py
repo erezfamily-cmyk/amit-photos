@@ -292,10 +292,16 @@ def main():
                 title = Path(f["name"]).stem
                 description = ""
 
+            # חלק את הקטגוריה ל-parent ו-sub אם יש "/"
+            cat_parts = cat["name"].split(" / ", 1)
+            cat_main = cat_parts[0].strip()
+            cat_sub = cat_parts[1].strip() if len(cat_parts) > 1 else None
+
             photo = {
                 "id": file_id,
                 "title": title or Path(f["name"]).stem,
-                "category": cat["name"],
+                "category": cat_sub or cat_main,
+                "parent_category": cat_main if cat_sub else None,
                 "url": f"https://drive.google.com/uc?export=view&id={file_id}",
                 "thumbnail": f"https://drive.google.com/thumbnail?id={file_id}&sz=w600",
                 "description": description,

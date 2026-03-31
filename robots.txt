@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /functions/
 
-Sitemap: https://amit-photos.erez-family.workers.dev/sitemap.xml
+Sitemap: https://amitphotos.com/sitemap.xml
