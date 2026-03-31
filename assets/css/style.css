@@ -703,10 +703,18 @@ nav.scrolled { border-bottom-color: var(--border); }
 .gallery-item:hover img { transform: scale(1.05); }
 .gallery-item:hover .gallery-item-overlay { opacity: 1; }
 
-/* על מובייל (touch) — overlay תמיד גלוי */
+/* על מובייל (touch) — overlay תמיד גלוי, כפתורים גדולים יותר */
 @media (hover: none) {
   .gallery-item-overlay { opacity: 1; }
   .gallery-item img { transform: none !important; }
+  .gallery-buy-btn, .gallery-cart-btn {
+    min-height: 40px;
+    padding: 0.5rem 0.9rem;
+    font-size: 0.75rem;
+  }
+  .buy-size-btn {
+    min-height: 44px;
+  }
 }
 
 .gallery-item-info h3 {
@@ -979,6 +987,8 @@ nav.scrolled { border-bottom-color: var(--border); }
   width: 100%;
   position: relative;
   text-align: center;
+  max-height: 90vh;
+  overflow-y: auto;
 }
 .buy-modal-close {
   position: absolute;
