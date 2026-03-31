@@ -703,6 +703,12 @@ nav.scrolled { border-bottom-color: var(--border); }
 .gallery-item:hover img { transform: scale(1.05); }
 .gallery-item:hover .gallery-item-overlay { opacity: 1; }
 
+/* על מובייל (touch) — overlay תמיד גלוי */
+@media (hover: none) {
+  .gallery-item-overlay { opacity: 1; }
+  .gallery-item img { transform: none !important; }
+}
+
 .gallery-item-info h3 {
   font-size: 0.9rem;
   font-weight: 600;
