@@ -93,13 +93,7 @@ async function loadPhotos() {
     allPhotos = getDemoPhotos();
   }
 
-  // ערבב את כל התמונות; בדף הבית מציגים 100 אקראיות, בקטגוריות — הכל
-  for (let i = allPhotos.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [allPhotos[i], allPhotos[j]] = [allPhotos[j], allPhotos[i]];
-  }
-
-  filteredPhotos = allPhotos.slice(0, 100);
+  filteredPhotos = [...allPhotos];
   displayedCount = Math.min(PAGE_SIZE, filteredPhotos.length);
   renderGallery();
 }
@@ -262,11 +256,6 @@ function applyFilters() {
     const matchSearch = !query || p.title.toLowerCase().includes(query);
     return matchCat && matchSearch;
   });
-
-  // בדף הבית (הכל, ללא חיפוש) — 100 תמונות אקראיות בלבד
-  if (cat === 'all' && !query) {
-    pool = [...pool].sort(() => Math.random() - 0.5).slice(0, 100);
-  }
 
   filteredPhotos = pool;
   displayedCount = Math.min(PAGE_SIZE, filteredPhotos.length);
