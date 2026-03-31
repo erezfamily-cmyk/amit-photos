@@ -82,8 +82,7 @@ nav.scrolled { border-bottom-color: rgba(200, 169, 110, 0.3); }
 .nav-logo span {
   color: var(--accent);
   font-family: var(--font);
-  font-weight: 300;
-  font-style: italic;
+  font-weight: 700;
   font-size: 0.8rem;
   letter-spacing: 0.03em;
 }
