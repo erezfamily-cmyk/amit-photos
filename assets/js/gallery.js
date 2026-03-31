@@ -364,6 +364,15 @@ function initLightbox() {
     buyBtn.addEventListener('click', () => openBuyModal(filteredPhotos[currentIndex]));
   }
 
+  // Back to gallery button (mobile)
+  const backBtn = document.getElementById('lb-back');
+  if (backBtn) {
+    backBtn.addEventListener('click', () => {
+      closeLightbox();
+      document.getElementById('gallery')?.scrollIntoView({ behavior: 'smooth' });
+    });
+  }
+
   // Buy modal
   initBuyModal();
 
@@ -439,7 +448,15 @@ function openLightbox(idx) {
   img.src = getLightboxUrl(photo.url);
   img.alt = photo.title;
   document.getElementById('lb-title').textContent = photo.title;
-  document.getElementById('lb-cat').textContent = photo.category;
+  const catEl = document.getElementById('lb-cat');
+  catEl.textContent = photo.category;
+  catEl.className = 'lb-cat-link';
+  catEl.onclick = () => {
+    closeLightbox();
+    const btn = document.querySelector(`.filter-btn[data-cat="${photo.category}"]`);
+    if (btn) { btn.click(); }
+    document.getElementById('gallery')?.scrollIntoView({ behavior: 'smooth' });
+  };
   document.getElementById('lb-counter').textContent = `${idx + 1} / ${filteredPhotos.length}`;
   const descEl = document.getElementById('lb-desc');
   descEl.textContent = photo.description || '';
