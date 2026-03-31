@@ -72,18 +72,23 @@ nav {
 nav.scrolled { border-bottom-color: rgba(200, 169, 110, 0.3); }
 
 .nav-logo {
-  font-family: var(--font-display);
-  font-size: 1.25rem;
-  font-weight: 800;
-  letter-spacing: -0.02em;
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
   color: var(--text);
 }
-
-.nav-logo span {
+.nav-logo-name {
+  font-family: 'Great Vibes', cursive;
+  font-size: 1.8rem;
+  font-weight: 400;
+  color: var(--text);
+  line-height: 1;
+}
+.nav-logo-tag {
   color: var(--accent);
   font-family: var(--font);
   font-weight: 700;
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   letter-spacing: 0.03em;
 }
 
