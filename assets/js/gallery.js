@@ -93,7 +93,8 @@ async function loadPhotos() {
     allPhotos = getDemoPhotos();
   }
 
-  filteredPhotos = [...allPhotos];
+  const shuffled = [...allPhotos].sort(() => Math.random() - 0.5);
+  filteredPhotos = shuffled.slice(0, 100);
   displayedCount = Math.min(PAGE_SIZE, filteredPhotos.length);
   renderGallery();
 }
@@ -257,6 +258,9 @@ function applyFilters() {
     return matchCat && matchSearch;
   });
 
+  if (cat === 'all' && !query) {
+    pool = [...pool].sort(() => Math.random() - 0.5).slice(0, 100);
+  }
   filteredPhotos = pool;
   displayedCount = Math.min(PAGE_SIZE, filteredPhotos.length);
   renderGallery();
