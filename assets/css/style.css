@@ -69,7 +69,7 @@ nav {
   transition: border-color 0.3s;
 }
 
-nav.scrolled { border-bottom-color: var(--border); }
+nav.scrolled { border-bottom-color: rgba(200, 169, 110, 0.3); }
 
 .nav-logo {
   font-family: var(--font-display);
