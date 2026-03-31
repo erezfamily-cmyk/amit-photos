@@ -211,7 +211,7 @@ function initFeatured() {
   const grid = document.getElementById('featured-grid');
   if (!grid || allPhotos.length === 0) return;
 
-  const picks = allPhotos.slice(0, 4);
+  const picks = allPhotos.slice(0, 5);
   grid.innerHTML = picks.map((photo, i) => `
     <div class="featured-item" data-idx="${i}">
       <img src="${photo.thumbnail || photo.url}" alt="${photo.title}" loading="lazy" />
