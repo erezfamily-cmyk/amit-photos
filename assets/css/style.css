@@ -667,6 +667,22 @@ nav.scrolled { border-bottom-color: var(--border); }
   display: block;
 }
 
+/* סימון מים */
+.gallery-item::after {
+  content: '© עמית';
+  position: absolute;
+  bottom: 8px;
+  left: 10px;
+  color: rgba(255,255,255,0.55);
+  font-size: 0.72rem;
+  font-family: var(--font);
+  letter-spacing: 0.08em;
+  pointer-events: none;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.7);
+  z-index: 2;
+  user-select: none;
+}
+
 .gallery-item-overlay {
   position: absolute;
   inset: 0;
