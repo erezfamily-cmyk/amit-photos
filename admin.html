@@ -509,9 +509,9 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
             <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke-width="2"/><polyline points="7 10 12 15 17 10" stroke-width="2"/><line x1="12" y1="15" x2="12" y2="3" stroke-width="2"/></svg>
             ייצוא CSV
           </button>
-          <button class="btn btn-primary btn-sm" id="newsletter-btn">
-            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke-width="1.5"/><polyline points="22,6 12,13 2,6" stroke-width="1.5"/></svg>
-            שלח ניוזלטר
+          <button class="btn btn-primary btn-sm" id="copy-emails-btn">
+            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><rect x="9" y="9" width="13" height="13" rx="2" stroke-width="1.5"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke-width="1.5"/></svg>
+            העתק מיילים
           </button>
         </div>
       </div>
@@ -669,23 +669,6 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
   <div class="dialog-footer">
     <button class="btn btn-primary" id="save-cust-btn">שמור</button>
     <button class="btn btn-ghost" onclick="document.getElementById('cust-dialog').close()">ביטול</button>
-  </div>
-</dialog>
-
-<!-- NEWSLETTER DIALOG -->
-<dialog id="newsletter-dialog">
-  <div class="dialog-header">
-    <span class="dialog-title">שליחת ניוזלטר</span>
-    <button class="dialog-close" onclick="document.getElementById('newsletter-dialog').close()">✕</button>
-  </div>
-  <div class="dialog-body">
-    <div class="form-field"><label>נושא</label><input type="text" id="nl-subject" placeholder="נושא ההודעה..."></div>
-    <div class="form-field"><label>תוכן</label><textarea id="nl-body" rows="7" placeholder="תוכן ההודעה..."></textarea></div>
-    <p style="font-size:.78rem;color:var(--text-muted)">ישלח לכל הנרשמים. דורש הגדרת RESEND_API_KEY ו-FROM_EMAIL ב-Cloudflare.</p>
-  </div>
-  <div class="dialog-footer">
-    <button class="btn btn-primary" id="nl-send-btn">שלח</button>
-    <button class="btn btn-ghost" onclick="document.getElementById('newsletter-dialog').close()">ביטול</button>
   </div>
 </dialog>
 
@@ -1347,29 +1330,14 @@ const Subscribers = (() => {
     toast('CSV יוצא');
   }
 
-  $('newsletter-btn').addEventListener('click', () => {
-    $('nl-subject').value = '';
-    $('nl-body').value = '';
-    $('newsletter-dialog').showModal();
-  });
-
-  $('nl-send-btn').addEventListener('click', async () => {
-    const subject = $('nl-subject').value.trim();
-    const body    = $('nl-body').value.trim();
-    if (!subject || !body) { toast('נושא ותוכן הם שדות חובה', 'error'); return; }
-    const btn = $('nl-send-btn');
-    btn.disabled = true; btn.textContent = 'שולח...';
-    try {
-      const r = await fetch('/api/newsletter', {
-        method: 'POST', headers: authHeaders(),
-        body: JSON.stringify({ subject, body })
-      });
-      const res = await r.json();
-      if (!r.ok) { toast(res.error || 'שגיאה בשליחה', 'error'); return; }
-      toast(`נשלח לـ${res.sent} מנויים`);
-      $('newsletter-dialog').close();
-    } catch { toast('שגיאת חיבור', 'error'); }
-    finally { btn.disabled = false; btn.textContent = 'שלח'; }
+  $('copy-emails-btn').addEventListener('click', () => {
+    if (!data.length) { toast('אין נרשמים ברשימה', 'error'); return; }
+    const emails = data.map(s => s.email).join(', ');
+    navigator.clipboard.writeText(emails).then(() => {
+      toast(`הועתקו ${data.length} כתובות מייל`);
+    }).catch(() => {
+      prompt('העתק את הכתובות:', emails);
+    });
   });
 
   $('add-sub-btn').addEventListener('click', add);
