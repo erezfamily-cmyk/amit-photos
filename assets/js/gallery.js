@@ -86,9 +86,15 @@ async function loadPhotos() {
   showSkeletons(grid);
 
   try {
-    const res = await fetch('data/photos.json?v=' + Date.now());
-    if (!res.ok) throw new Error();
-    allPhotos = await res.json();
+    const [jsonRes, apiRes] = await Promise.allSettled([
+      fetch('data/photos.json?v=' + Date.now()).then(r => r.ok ? r.json() : []),
+      fetch('/api/photos').then(r => r.ok ? r.json() : [])
+    ]);
+    const jsonPhotos = jsonRes.status === 'fulfilled' ? (jsonRes.value || []) : [];
+    const apiPhotos  = apiRes.status  === 'fulfilled' ? (apiRes.value  || []) : [];
+    const apiIds = new Set(apiPhotos.map(p => p.id));
+    allPhotos = [...apiPhotos, ...jsonPhotos.filter(p => !apiIds.has(p.id))];
+    if (!allPhotos.length) allPhotos = getDemoPhotos();
   } catch {
     allPhotos = getDemoPhotos();
   }
