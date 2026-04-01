@@ -537,21 +537,29 @@ const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,6
 const fmtDate = d => d ? new Date(d).toLocaleDateString('he-IL') : '';
 
 // ===== AUTH =====
-const PASSWORD = 'amit1408';
+let ADMIN_PWD = '';
+
 (function initAuth() {
-  if (sessionStorage.getItem('admin_auth') === '1') showAdmin();
+  const saved = sessionStorage.getItem('admin_auth');
+  if (saved) { ADMIN_PWD = saved; showAdmin(); }
 
   $('login-btn').addEventListener('click', doLogin);
   $('password-input').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
 
-  function doLogin() {
-    if ($('password-input').value === PASSWORD) {
-      sessionStorage.setItem('admin_auth','1');
+  async function doLogin() {
+    const pwd = $('password-input').value;
+    if (!pwd) return;
+    // נאמת מול השרת
+    try {
+      const r = await fetch('/api/subscribers', { headers: { 'X-Admin-Password': pwd } });
+      if (r.status === 401) throw new Error('wrong');
+      ADMIN_PWD = pwd;
+      sessionStorage.setItem('admin_auth', pwd);
       $('login-screen').style.opacity='0';
       $('login-screen').style.transition='opacity .4s';
       setTimeout(()=>{ $('login-screen').style.display='none'; }, 400);
       showAdmin();
-    } else {
+    } catch {
       $('login-error').textContent = 'סיסמה שגויה';
       $('login-card').classList.remove('shake');
       void $('login-card').offsetWidth;
@@ -563,6 +571,8 @@ const PASSWORD = 'amit1408';
   function showAdmin() {
     $('admin-ui').classList.add('visible');
     Photos.init();
+    Subscribers.load();
+    Customers.load();
   }
 })();
 
@@ -741,16 +751,24 @@ const Photos = (() => {
 
 // ===== SUBSCRIBERS =====
 const Subscribers = (() => {
-  const KEY = 'admin_subscribers';
   let data = [];
   let filter = '';
 
-  function load() { try { data = JSON.parse(localStorage.getItem(KEY)||'[]'); } catch { data=[]; } }
-  function save() { localStorage.setItem(KEY, JSON.stringify(data)); }
+  function authHeaders() {
+    return { 'Content-Type': 'application/json', 'X-Admin-Password': ADMIN_PWD };
+  }
+
+  async function load() {
+    try {
+      const r = await fetch('/api/subscribers', { headers: authHeaders() });
+      data = await r.json();
+    } catch { data = []; toast('שגיאה בטעינת נרשמים', 'error'); }
+    render();
+  }
 
   function render() {
     const rows = data.filter(s =>
-      !filter || s.name.includes(filter) || s.email.includes(filter)
+      !filter || (s.name||'').includes(filter) || (s.email||'').includes(filter)
     );
     const tbody = $('subs-table-body');
     if (!rows.length) {
@@ -764,78 +782,76 @@ const Subscribers = (() => {
       <tr>
         <td>${s.name||'—'}</td>
         <td><a href="mailto:${s.email}" style="color:var(--accent)">${s.email}</a></td>
-        <td>${fmtDate(s.date)}</td>
+        <td>${fmtDate(s.created_at)}</td>
         <td style="color:var(--text-muted);font-size:.82rem">${s.notes||'—'}</td>
         <td><button class="btn btn-danger btn-sm" onclick="Subscribers.remove('${s.id}')">מחק</button></td>
       </tr>
     `).join('');
   }
 
-  function add() {
+  async function add() {
     const name = $('sub-name').value.trim();
     const email = $('sub-email').value.trim();
     const notes = $('sub-notes').value.trim();
     if (!email) { toast('יש להזין כתובת מייל', 'error'); return; }
-    data.push({ id:uid(), name, email, notes, date: new Date().toISOString() });
-    save(); render();
-    $('sub-name').value=''; $('sub-email').value=''; $('sub-notes').value='';
-    toast('נרשם נוסף');
+    try {
+      const r = await fetch('/api/subscribers', {
+        method: 'POST', headers: authHeaders(),
+        body: JSON.stringify({ name, email, notes })
+      });
+      if (!r.ok) throw new Error();
+      $('sub-name').value=''; $('sub-email').value=''; $('sub-notes').value='';
+      toast('נרשם נוסף');
+      await load();
+    } catch { toast('שגיאה בהוספה', 'error'); }
   }
 
-  function remove(id) {
+  async function remove(id) {
     if (!confirm('למחוק נרשם זה?')) return;
-    data = data.filter(s=>s.id!==id);
-    save(); render();
-    toast('נרשם נמחק');
+    try {
+      await fetch(`/api/subscribers?id=${id}`, { method: 'DELETE', headers: authHeaders() });
+      toast('נרשם נמחק');
+      await load();
+    } catch { toast('שגיאה במחיקה', 'error'); }
   }
 
   function exportCSV() {
     const header = 'שם,מייל,תאריך,הערות\n';
-    const rows = data.map(s=>[s.name,s.email,fmtDate(s.date),s.notes].map(v=>`"${(v||'').replace(/"/g,'""')}"`).join(',')).join('\n');
+    const rows = data.map(s=>[s.name,s.email,fmtDate(s.created_at),s.notes].map(v=>`"${(v||'').replace(/"/g,'""')}"`).join(',')).join('\n');
     const blob = new Blob(['\uFEFF'+header+rows], {type:'text/csv;charset=utf-8'});
     const a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='subscribers.csv'; a.click();
     toast('CSV יוצא');
   }
 
-  function importCSV(file) {
-    const fr = new FileReader();
-    fr.onload = e => {
-      try {
-        const text = e.target.result.replace(/^\uFEFF/,'');
-        const lines = text.split('\n').filter(l=>l.trim());
-        lines.slice(1).forEach(line => {
-          const cols = line.match(/("([^"]|"")*"|[^,]*)(,|$)/g)||[];
-          const clean = cols.map(c=>c.replace(/,$/,'').replace(/^"|"$/g,'').replace(/""/g,'"'));
-          if(clean[1]) data.push({id:uid(),name:clean[0],email:clean[1],date:clean[2]||new Date().toISOString(),notes:clean[3]});
-        });
-        save(); render(); toast('CSV יובא');
-      } catch { toast('קובץ לא תקין','error'); }
-    };
-    fr.readAsText(file,'UTF-8');
-  }
-
-  load(); render();
   $('add-sub-btn').addEventListener('click', add);
   $('sub-email').addEventListener('keydown', e=>{ if(e.key==='Enter') add(); });
   $('export-subs-btn').addEventListener('click', exportCSV);
   $('import-subs-btn').addEventListener('click', ()=>$('import-subs-file').click());
-  $('import-subs-file').addEventListener('change', e=>{ if(e.target.files[0]) importCSV(e.target.files[0]); e.target.value=''; });
+  $('import-subs-file').addEventListener('change', e=>{ if(e.target.files[0]) { /* TODO: parse & POST rows */ } e.target.value=''; });
   $('sub-search').addEventListener('input', e=>{ filter=e.target.value.trim(); render(); });
 
-  return { remove };
+  return { load, remove };
 })();
 
 // ===== CUSTOMERS =====
 const Customers = (() => {
-  const KEY = 'admin_customers';
   let data = [];
   let editId = null;
   let filterType = '';
   let filterStatus = '';
   let filterSearch = '';
 
-  function load() { try { data = JSON.parse(localStorage.getItem(KEY)||'[]'); } catch { data=[]; } }
-  function save() { localStorage.setItem(KEY, JSON.stringify(data)); }
+  function authHeaders() {
+    return { 'Content-Type': 'application/json', 'X-Admin-Password': ADMIN_PWD };
+  }
+
+  async function load() {
+    try {
+      const r = await fetch('/api/customers', { headers: authHeaders() });
+      data = await r.json();
+    } catch { data = []; toast('שגיאה בטעינת לקוחות', 'error'); }
+    render();
+  }
 
   function getFiltered() {
     return data.filter(c => {
@@ -913,10 +929,11 @@ const Customers = (() => {
     $('cust-dialog').showModal();
   }
 
-  function save_cust() {
+  async function save_cust() {
     const name = $('cust-name').value.trim();
     if (!name) { toast('יש להזין שם', 'error'); return; }
     const entry = {
+      id: editId || undefined,
       name, email:$('cust-email').value.trim(),
       phone:$('cust-phone').value.trim(),
       date:$('cust-date').value,
@@ -925,23 +942,25 @@ const Customers = (() => {
       subject:$('cust-subject').value.trim(),
       notes:$('cust-notes').value.trim()
     };
-    if (editId) {
-      const i = data.findIndex(x=>x.id===editId);
-      data[i] = { ...data[i], ...entry };
-      toast('פרטים עודכנו');
-    } else {
-      data.push({ id:uid(), ...entry });
-      toast('לקוח נוסף');
-    }
-    save(); render();
-    $('cust-dialog').close();
+    try {
+      const r = await fetch('/api/customers', {
+        method: 'POST', headers: authHeaders(),
+        body: JSON.stringify(entry)
+      });
+      if (!r.ok) throw new Error();
+      toast(editId ? 'פרטים עודכנו' : 'לקוח נוסף');
+      $('cust-dialog').close();
+      await load();
+    } catch { toast('שגיאה בשמירה', 'error'); }
   }
 
-  function remove(id) {
+  async function remove(id) {
     if (!confirm('למחוק רשומה זו?')) return;
-    data = data.filter(c=>c.id!==id);
-    save(); render();
-    toast('רשומה נמחקה');
+    try {
+      await fetch(`/api/customers?id=${id}`, { method: 'DELETE', headers: authHeaders() });
+      toast('רשומה נמחקה');
+      await load();
+    } catch { toast('שגיאה במחיקה', 'error'); }
   }
 
   function exportCSV() {
@@ -956,34 +975,16 @@ const Customers = (() => {
     toast('CSV יוצא');
   }
 
-  function importCSV(file) {
-    const fr = new FileReader();
-    fr.onload = e => {
-      try {
-        const text = e.target.result.replace(/^\uFEFF/,'');
-        const lines = text.split('\n').filter(l=>l.trim());
-        lines.slice(1).forEach(line => {
-          const cols = line.match(/("([^"]|"")*"|[^,]*)(,|$)/g)||[];
-          const c = cols.map(v=>v.replace(/,$/,'').replace(/^"|"$/g,'').replace(/""/g,'"'));
-          if(c[0]) data.push({id:uid(),name:c[0],email:c[1],phone:c[2],date:c[3],type:c[4],subject:c[5],status:c[6],notes:c[7]});
-        });
-        save(); render(); toast('CSV יובא');
-      } catch { toast('קובץ לא תקין','error'); }
-    };
-    fr.readAsText(file,'UTF-8');
-  }
-
-  load(); render();
   $('add-cust-btn').addEventListener('click', openAdd);
   $('save-cust-btn').addEventListener('click', save_cust);
   $('export-cust-btn').addEventListener('click', exportCSV);
   $('import-cust-btn').addEventListener('click', ()=>$('import-cust-file').click());
-  $('import-cust-file').addEventListener('change', e=>{ if(e.target.files[0]) importCSV(e.target.files[0]); e.target.value=''; });
+  $('import-cust-file').addEventListener('change', e=>{ e.target.value=''; });
   $('cust-search').addEventListener('input', e=>{ filterSearch=e.target.value.trim(); render(); });
   $('cust-filter-type').addEventListener('change', e=>{ filterType=e.target.value; render(); });
   $('cust-filter-status').addEventListener('change', e=>{ filterStatus=e.target.value; render(); });
 
-  return { openEdit, remove };
+  return { load, openEdit, remove };
 })();
 </script>
 </body>
