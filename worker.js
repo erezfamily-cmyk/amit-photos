@@ -153,6 +153,62 @@ async function handleUpload(request, env) {
   return jsonRes({ ok: true, id, url, key });
 }
 
+// ===== FILL TITLES WITH AI =====
+function isGenericTitle(title) {
+  if (!title) return true;
+  return /^(IMG|DSC|DSCN|MJH|greece|P\d|PIC|photo|image)[_\-]?\S*$/i.test(title);
+}
+
+async function handleFillTitles(request, env) {
+  if (!checkAuth(request, env)) return unauth();
+  if (request.method !== 'POST') return jsonRes({ error: 'method not allowed' }, 405);
+
+  if (!env.ANTHROPIC_API_KEY) return jsonRes({ error: 'ANTHROPIC_API_KEY לא מוגדר' }, 500);
+
+  const origin = new URL(request.url).origin;
+  const { results: photos } = await env.DB.prepare(
+    'SELECT id, title, category, r2_key FROM photos'
+  ).all();
+
+  const toFill = photos.filter(p => isGenericTitle(p.title));
+  if (!toFill.length) return jsonRes({ updated: 0, message: 'כל הכותרות כבר מלאות' });
+
+  const updated = [];
+  for (const photo of toFill) {
+    try {
+      const imageUrl = `${origin}/photos/${photo.r2_key}`;
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'x-api-key': env.ANTHROPIC_API_KEY,
+          'anthropic-version': '2023-06-01',
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'claude-haiku-4-5-20251001',
+          max_tokens: 30,
+          messages: [{
+            role: 'user',
+            content: [
+              { type: 'image', source: { type: 'url', url: imageUrl } },
+              { type: 'text', text: `זוהי תמונה מגלריית הצילום של הצלם עמית ארז, קטגוריה: ${photo.category || 'כללי'}.\nתן לתמונה כותרת קצרה ויפה בעברית — 2 עד 4 מילים בלבד.\nהחזר רק את הכותרת, ללא פיסוק נוסף.` }
+            ]
+          }]
+        })
+      });
+      if (!res.ok) continue;
+      const data = await res.json();
+      const title = data.content?.[0]?.text?.trim().replace(/^['"]|['"]$/g, '');
+      if (title) {
+        await env.DB.prepare('UPDATE photos SET title=? WHERE id=?').bind(title, photo.id).run();
+        updated.push({ id: photo.id, title });
+      }
+    } catch { /* המשך לתמונה הבאה */ }
+  }
+
+  return jsonRes({ updated: updated.length, total: toFill.length, titles: updated });
+}
+
 // ===== SERVE PHOTO FROM R2 =====
 async function servePhoto(key, env) {
   const object = await env.PHOTOS.get(key);
@@ -178,8 +234,9 @@ export default {
     if (path === '/api/subscribers') return handleSubscribers(request, env);
     if (path === '/api/customers')   return handleCustomers(request, env);
     if (path === '/api/photos')      return handlePhotos(request, env);
-    if (path === '/api/upload')      return handleUpload(request, env);
-    if (path.startsWith('/photos/')) return servePhoto(path.slice('/photos/'.length), env);
+    if (path === '/api/upload')       return handleUpload(request, env);
+    if (path === '/api/fill-titles')  return handleFillTitles(request, env);
+    if (path.startsWith('/photos/'))  return servePhoto(path.slice('/photos/'.length), env);
 
     // Static assets
     return env.ASSETS.fetch(request);

@@ -355,6 +355,10 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
             <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke-width="2"/><polyline points="7 10 12 15 17 10" stroke-width="2"/><line x1="12" y1="15" x2="12" y2="3" stroke-width="2"/></svg>
             ייצוא JSON
           </button>
+          <button class="btn btn-ghost btn-sm" id="fill-titles-btn">
+            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z" stroke-width="1.5"/><path d="M12 6v6l4 2" stroke-width="1.5" stroke-linecap="round"/></svg>
+            מלא כותרות AI
+          </button>
           <button class="btn btn-primary btn-sm" id="add-photo-btn">
             <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><line x1="12" y1="5" x2="12" y2="19" stroke-width="2"/><line x1="5" y1="12" x2="19" y2="12" stroke-width="2"/></svg>
             הוסף תמונה
@@ -818,6 +822,23 @@ const Photos = (() => {
       }, { once: true });
     });
   }
+
+  $('fill-titles-btn').addEventListener('click', async () => {
+    const btn = $('fill-titles-btn');
+    btn.disabled = true;
+    btn.textContent = 'מעבד...';
+    try {
+      const r = await fetch('/api/fill-titles', {
+        method: 'POST',
+        headers: { 'X-Admin-Password': ADMIN_PWD }
+      });
+      const res = await r.json();
+      if (!r.ok) { toast(res.error || 'שגיאה', 'error'); return; }
+      if (res.updated === 0) { toast(res.message || 'אין כותרות לעדכן'); }
+      else { toast(`עודכנו ${res.updated} כותרות`); await Photos.init(); }
+    } catch { toast('שגיאה בחיבור', 'error'); }
+    finally { btn.disabled = false; btn.innerHTML = '<svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z" stroke-width="1.5"/><path d="M12 6v6l4 2" stroke-width="1.5" stroke-linecap="round"/></svg> מלא כותרות AI'; }
+  });
 
   $('export-photos-btn').addEventListener('click', () => {
     const exportData = data.map(({ _source, ...p }) => p);
