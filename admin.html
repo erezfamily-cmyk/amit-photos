@@ -574,11 +574,15 @@ const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,6
 const fmtDate = d => d ? new Date(d).toLocaleDateString('he-IL') : '';
 
 // ===== AUTH =====
-let ADMIN_PWD = '';
+let SESSION_TOKEN = '';
+
+function authHeaders() {
+  return { 'Content-Type': 'application/json', 'X-Session-Token': SESSION_TOKEN };
+}
 
 (function initAuth() {
-  const saved = sessionStorage.getItem('admin_auth');
-  if (saved) { ADMIN_PWD = saved; showAdmin(); }
+  const saved = sessionStorage.getItem('admin_session');
+  if (saved) { SESSION_TOKEN = saved; showAdmin(); }
 
   $('login-btn').addEventListener('click', doLogin);
   $('password-input').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
@@ -586,22 +590,29 @@ let ADMIN_PWD = '';
   async function doLogin() {
     const pwd = $('password-input').value;
     if (!pwd) return;
-    // נאמת מול השרת
     try {
-      const r = await fetch('/api/subscribers', { headers: { 'X-Admin-Password': pwd } });
-      if (r.status === 401) throw new Error('wrong');
-      ADMIN_PWD = pwd;
-      sessionStorage.setItem('admin_auth', pwd);
+      const r = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: pwd })
+      });
+      const data = await r.json();
+      if (!r.ok) {
+        $('login-error').textContent = data.error || 'סיסמה שגויה';
+        $('login-card').classList.remove('shake');
+        void $('login-card').offsetWidth;
+        $('login-card').classList.add('shake');
+        $('password-input').value='';
+        return;
+      }
+      SESSION_TOKEN = data.token;
+      sessionStorage.setItem('admin_session', SESSION_TOKEN);
       $('login-screen').style.opacity='0';
       $('login-screen').style.transition='opacity .4s';
       setTimeout(()=>{ $('login-screen').style.display='none'; }, 400);
       showAdmin();
     } catch {
-      $('login-error').textContent = 'סיסמה שגויה';
-      $('login-card').classList.remove('shake');
-      void $('login-card').offsetWidth;
-      $('login-card').classList.add('shake');
-      $('password-input').value='';
+      $('login-error').textContent = 'שגיאת חיבור';
     }
   }
 
@@ -613,8 +624,9 @@ let ADMIN_PWD = '';
   }
 })();
 
-$('logout-btn').addEventListener('click', () => {
-  sessionStorage.removeItem('admin_auth');
+$('logout-btn').addEventListener('click', async () => {
+  await fetch('/api/logout', { method: 'POST', headers: authHeaders() }).catch(()=>{});
+  sessionStorage.removeItem('admin_session');
   location.reload();
 });
 
@@ -632,9 +644,6 @@ document.querySelectorAll('.nav-item').forEach(item => {
 const Photos = (() => {
   let data = [];
 
-  function authHeaders() {
-    return { 'X-Admin-Password': ADMIN_PWD };
-  }
 
   async function init() {
     // טען תמונות מ-D1 + photos.json במקביל
@@ -722,7 +731,7 @@ const Photos = (() => {
     if (photo?._source === 'r2') {
       await fetch('/api/photos', {
         method: 'PATCH',
-        headers: { ...authHeaders(), 'Content-Type': 'application/json' },
+        headers: authHeaders(),
         body: JSON.stringify({ id, title, category, description })
       });
     }
@@ -784,7 +793,7 @@ const Photos = (() => {
       fd.append('category', meta.category);
       fd.append('description', meta.description);
 
-      const headers = { 'X-Admin-Password': ADMIN_PWD };
+      const headers = authHeaders();
       const r = await fetch('/api/upload', { method: 'POST', headers, body: fd });
       if (!r.ok) { toast(`שגיאה בהעלאת ${file.name}`, 'error'); continue; }
       const { id, url } = await r.json();
@@ -834,7 +843,7 @@ const Photos = (() => {
     try {
       const r = await fetch('/api/fill-titles', {
         method: 'POST',
-        headers: { 'X-Admin-Password': ADMIN_PWD }
+        headers: authHeaders()
       });
       const res = await r.json();
       if (!r.ok) { toast(res.error || 'שגיאה', 'error'); return; }
@@ -851,7 +860,7 @@ const Photos = (() => {
     try {
       const r = await fetch('/api/trigger-workflow', {
         method: 'POST',
-        headers: { 'X-Admin-Password': ADMIN_PWD, 'Content-Type': 'application/json' },
+        headers: authHeaders(),
         body: JSON.stringify({ workflow: 'update-photos.yml' })
       });
       const res = await r.json();
@@ -883,9 +892,6 @@ const Subscribers = (() => {
   let data = [];
   let filter = '';
 
-  function authHeaders() {
-    return { 'Content-Type': 'application/json', 'X-Admin-Password': ADMIN_PWD };
-  }
 
   async function load() {
     try {
@@ -970,9 +976,6 @@ const Customers = (() => {
   let filterStatus = '';
   let filterSearch = '';
 
-  function authHeaders() {
-    return { 'Content-Type': 'application/json', 'X-Admin-Password': ADMIN_PWD };
-  }
 
   async function load() {
     try {

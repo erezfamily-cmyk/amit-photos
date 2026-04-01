@@ -1,24 +1,97 @@
 // Cloudflare Worker — amit-photos
 // מטפל בנתיבי API ומגיש static assets
 
-const JSON_HEADERS = {
-  'Content-Type': 'application/json',
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'GET,POST,DELETE,PATCH,OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type,X-Admin-Password',
-};
+const ALLOWED_ORIGINS = ['https://amitphotos.com', 'https://www.amitphotos.com'];
+const SESSION_TTL_HOURS = 8;
+const MAX_LOGIN_ATTEMPTS = 5;
+const LOCKOUT_MINUTES = 15;
 
-function jsonRes(data, status = 200) {
-  return new Response(JSON.stringify(data), { status, headers: JSON_HEADERS });
+function corsHeaders(request) {
+  const origin = request.headers.get('Origin') || '';
+  const allowed = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
+  return {
+    'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin': allowed,
+    'Access-Control-Allow-Methods': 'GET,POST,DELETE,PATCH,OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type,X-Session-Token',
+    'Vary': 'Origin',
+  };
 }
-function unauth() { return jsonRes({ error: 'לא מורשה' }, 401); }
-function checkAuth(request, env) {
-  return request.headers.get('X-Admin-Password') === env.ADMIN_PASSWORD;
+
+function jsonRes(data, status = 200, request = null) {
+  return new Response(JSON.stringify(data), {
+    status,
+    headers: request ? corsHeaders(request) : { 'Content-Type': 'application/json' }
+  });
+}
+function unauth(request) { return jsonRes({ error: 'לא מורשה' }, 401, request); }
+
+async function checkAuth(request, env) {
+  const token = request.headers.get('X-Session-Token');
+  if (!token) return false;
+  const session = await env.DB.prepare(
+    'SELECT token FROM sessions WHERE token=? AND expires_at > ?'
+  ).bind(token, new Date().toISOString()).first();
+  return !!session;
+}
+
+// ===== LOGIN =====
+async function handleLogin(request, env) {
+  if (request.method !== 'POST') return jsonRes({ error: 'method not allowed' }, 405, request);
+
+  const ip = request.headers.get('CF-Connecting-IP') || 'unknown';
+  const now = new Date();
+
+  // בדוק brute force
+  const attempt = await env.DB.prepare(
+    'SELECT count, last_attempt FROM login_attempts WHERE ip=?'
+  ).bind(ip).first();
+
+  if (attempt) {
+    const lastTime = new Date(attempt.last_attempt);
+    const minutesPassed = (now - lastTime) / 1000 / 60;
+    if (minutesPassed < LOCKOUT_MINUTES && attempt.count >= MAX_LOGIN_ATTEMPTS) {
+      const remaining = Math.ceil(LOCKOUT_MINUTES - minutesPassed);
+      return jsonRes({ error: `נחסמת. נסה שוב בעוד ${remaining} דקות.` }, 429, request);
+    }
+    if (minutesPassed >= LOCKOUT_MINUTES) {
+      await env.DB.prepare('DELETE FROM login_attempts WHERE ip=?').bind(ip).run();
+    }
+  }
+
+  const { password } = await request.json().catch(() => ({}));
+  if (!password || password !== env.ADMIN_PASSWORD) {
+    // רשום כישלון
+    await env.DB.prepare(
+      `INSERT INTO login_attempts (ip, count, last_attempt) VALUES (?,1,?)
+       ON CONFLICT(ip) DO UPDATE SET count=count+1, last_attempt=excluded.last_attempt`
+    ).bind(ip, now.toISOString()).run();
+    return jsonRes({ error: 'סיסמה שגויה' }, 401, request);
+  }
+
+  // הצלחה — נקה כישלונות, צור session
+  await env.DB.prepare('DELETE FROM login_attempts WHERE ip=?').bind(ip).run();
+  const token = crypto.randomUUID();
+  const expires = new Date(now.getTime() + SESSION_TTL_HOURS * 3600 * 1000).toISOString();
+  await env.DB.prepare(
+    'INSERT INTO sessions (token, created_at, expires_at) VALUES (?,?,?)'
+  ).bind(token, now.toISOString(), expires).run();
+
+  // נקה sessions ישנים
+  await env.DB.prepare('DELETE FROM sessions WHERE expires_at < ?').bind(now.toISOString()).run();
+
+  return jsonRes({ ok: true, token }, 200, request);
+}
+
+async function handleLogout(request, env) {
+  const token = request.headers.get('X-Session-Token');
+  if (token) await env.DB.prepare('DELETE FROM sessions WHERE token=?').bind(token).run();
+  return jsonRes({ ok: true }, 200, request);
 }
 
 // ===== SUBSCRIBERS =====
 async function handleSubscribers(request, env) {
-  if (!checkAuth(request, env)) return unauth();
+  if (!await checkAuth(request, env)) return unauth(request);
   const method = request.method;
 
   if (method === 'GET') {
@@ -50,7 +123,7 @@ async function handleSubscribers(request, env) {
 
 // ===== CUSTOMERS =====
 async function handleCustomers(request, env) {
-  if (!checkAuth(request, env)) return unauth();
+  if (!await checkAuth(request, env)) return unauth(request);
   const method = request.method;
 
   if (method === 'GET') {
@@ -90,7 +163,7 @@ async function handleCustomers(request, env) {
 
 // ===== PHOTOS =====
 async function handlePhotos(request, env) {
-  if (!checkAuth(request, env)) return unauth();
+  if (!await checkAuth(request, env)) return unauth(request);
   const method = request.method;
 
   if (method === 'GET') {
@@ -123,7 +196,7 @@ async function handlePhotos(request, env) {
 
 // ===== UPLOAD =====
 async function handleUpload(request, env) {
-  if (!checkAuth(request, env)) return unauth();
+  if (!await checkAuth(request, env)) return unauth(request);
   if (request.method !== 'POST') return jsonRes({ error: 'method not allowed' }, 405);
 
   const formData = await request.formData();
@@ -155,7 +228,7 @@ async function handleUpload(request, env) {
 
 // ===== TRIGGER GITHUB ACTIONS =====
 async function handleTriggerWorkflow(request, env) {
-  if (!checkAuth(request, env)) return unauth();
+  if (!await checkAuth(request, env)) return unauth(request);
   if (request.method !== 'POST') return jsonRes({ error: 'method not allowed' }, 405);
 
   if (!env.GITHUB_TOKEN) return jsonRes({ error: 'GITHUB_TOKEN לא מוגדר' }, 500);
@@ -190,7 +263,7 @@ function isGenericTitle(title) {
 }
 
 async function handleFillTitles(request, env) {
-  if (!checkAuth(request, env)) return unauth();
+  if (!await checkAuth(request, env)) return unauth(request);
   if (request.method !== 'POST') return jsonRes({ error: 'method not allowed' }, 405);
 
   if (!env.ANTHROPIC_API_KEY) return jsonRes({ error: 'ANTHROPIC_API_KEY לא מוגדר' }, 500);
@@ -261,13 +334,15 @@ export default {
       return new Response(null, { status: 204, headers: JSON_HEADERS });
     }
 
-    if (path === '/api/subscribers') return handleSubscribers(request, env);
-    if (path === '/api/customers')   return handleCustomers(request, env);
-    if (path === '/api/photos')      return handlePhotos(request, env);
-    if (path === '/api/upload')       return handleUpload(request, env);
+    if (path === '/api/login')             return handleLogin(request, env);
+    if (path === '/api/logout')            return handleLogout(request, env);
+    if (path === '/api/subscribers')       return handleSubscribers(request, env);
+    if (path === '/api/customers')         return handleCustomers(request, env);
+    if (path === '/api/photos')            return handlePhotos(request, env);
+    if (path === '/api/upload')            return handleUpload(request, env);
     if (path === '/api/fill-titles')       return handleFillTitles(request, env);
     if (path === '/api/trigger-workflow')  return handleTriggerWorkflow(request, env);
-    if (path.startsWith('/photos/'))  return servePhoto(path.slice('/photos/'.length), env);
+    if (path.startsWith('/photos/'))       return servePhoto(path.slice('/photos/'.length), env);
 
     // Static assets
     return env.ASSETS.fetch(request);
