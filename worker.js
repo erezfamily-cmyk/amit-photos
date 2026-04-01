@@ -270,7 +270,8 @@ async function handleTriggerWorkflow(request, env) {
 // ===== FILL TITLES WITH AI =====
 function isGenericTitle(title) {
   if (!title) return true;
-  return /^(IMG|DSC|DSCN|MJH|greece|P\d|PIC|photo|image)[_\-]?\S*$/i.test(title);
+  // כל כותרת שאין בה אף תו עברי — גנרית
+  return !/[\u05D0-\u05EA]/.test(title);
 }
 
 async function handleFillTitles(request, env) {
