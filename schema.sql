@@ -1,4 +1,5 @@
 -- הרץ פעם אחת דרך Cloudflare Dashboard → D1 → amit-photos-db → Console
+-- (אם הטבלאות subscribers ו-customers כבר קיימות, הרץ רק את CREATE TABLE photos)
 
 CREATE TABLE IF NOT EXISTS subscribers (
   id         TEXT PRIMARY KEY,
@@ -6,6 +7,18 @@ CREATE TABLE IF NOT EXISTS subscribers (
   email      TEXT NOT NULL,
   notes      TEXT NOT NULL DEFAULT '',
   created_at TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS photos (
+  id          TEXT PRIMARY KEY,
+  title       TEXT NOT NULL DEFAULT '',
+  category    TEXT NOT NULL DEFAULT '',
+  description TEXT NOT NULL DEFAULT '',
+  filename    TEXT NOT NULL DEFAULT '',
+  r2_key      TEXT NOT NULL DEFAULT '',
+  url         TEXT NOT NULL DEFAULT '',
+  thumbnail   TEXT NOT NULL DEFAULT '',
+  created_at  TEXT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS customers (

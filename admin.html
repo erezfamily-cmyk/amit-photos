@@ -161,6 +161,22 @@ input,textarea,select{font-family:var(--font);direction:rtl}
 }
 .photo-actions{display:flex;gap:.4rem;margin-top:.65rem}
 
+/* Upload zone */
+.upload-zone{
+  border:2px dashed var(--border);border-radius:8px;
+  padding:2.5rem;text-align:center;cursor:pointer;
+  transition:border-color .2s,background .2s;margin-bottom:1.5rem;
+}
+.upload-zone:hover,.upload-zone.drag{border-color:var(--accent);background:var(--accent-dim)}
+.upload-zone p{color:var(--text-muted);font-size:.9rem;margin-top:.5rem}
+.upload-icon{font-size:2rem;opacity:.5}
+.upload-progress{
+  background:var(--bg-card);border:1px solid var(--border);border-radius:6px;
+  padding:1rem 1.25rem;margin-bottom:1rem;display:none;
+}
+.progress-bar-wrap{background:#1a1a1a;border-radius:10px;height:6px;margin-top:.5rem}
+.progress-bar{background:var(--accent);height:6px;border-radius:10px;width:0%;transition:width .3s}
+
 /* Table */
 .table-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:6px}
 table{width:100%;border-collapse:collapse;font-size:.875rem}
@@ -346,6 +362,19 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
         </div>
       </div>
       <div class="stats-bar" id="photos-stats"></div>
+
+      <!-- Upload zone -->
+      <div class="upload-zone" id="upload-zone">
+        <div class="upload-icon">📷</div>
+        <strong>גרור תמונות לכאן</strong>
+        <p>או לחץ לבחירת קבצים (JPG, PNG, WEBP)</p>
+        <input type="file" id="upload-file-input" accept="image/*" multiple style="display:none">
+      </div>
+      <div class="upload-progress" id="upload-progress">
+        <span id="upload-status">מעלה...</span>
+        <div class="progress-bar-wrap"><div class="progress-bar" id="progress-bar"></div></div>
+      </div>
+
       <div class="photos-grid" id="photos-grid"></div>
     </section>
 
@@ -594,23 +623,23 @@ document.querySelectorAll('.nav-item').forEach(item => {
 // ===== PHOTOS =====
 const Photos = (() => {
   let data = [];
-  let unsaved = false;
 
-  function setUnsaved(v) {
-    unsaved = v;
-    $('photos-unsaved-dot').classList.toggle('show', v);
+  function authHeaders() {
+    return { 'X-Admin-Password': ADMIN_PWD };
   }
 
   async function init() {
-    try {
-      const r = await fetch('data/photos.json');
-      if (!r.ok) throw new Error();
-      data = await r.json();
-    } catch(e) {
-      data = [];
-      toast('לא ניתן לטעון את photos.json', 'error');
-    }
+    // טען תמונות מ-D1 + photos.json במקביל
+    const [d1Photos, jsonPhotos] = await Promise.all([
+      fetch('/api/photos', { headers: authHeaders() }).then(r => r.ok ? r.json() : []).catch(() => []),
+      fetch('data/photos.json').then(r => r.ok ? r.json() : []).catch(() => [])
+    ]);
+    // שלב: D1 קודם, אחר כך Google Drive (ללא כפילויות)
+    const d1Ids = new Set(d1Photos.map(p => p.id));
+    const drivePhotos = jsonPhotos.filter(p => !d1Ids.has(p.id)).map(p => ({ ...p, _source: 'drive' }));
+    data = [...d1Photos.map(p => ({ ...p, _source: 'r2' })), ...drivePhotos];
     render();
+    initUpload();
   }
 
   function render() {
@@ -622,7 +651,10 @@ const Photos = (() => {
   function renderStats() {
     const cats = {};
     data.forEach(p => { cats[p.category] = (cats[p.category]||0)+1; });
-    const html = [`<div class="stat-chip"><strong>${data.length}</strong> תמונות סה"כ</div>`,
+    const html = [
+      `<div class="stat-chip"><strong>${data.length}</strong> תמונות סה"כ</div>`,
+      `<div class="stat-chip"><strong>${data.filter(p=>p._source==='r2').length}</strong> ב-R2</div>`,
+      `<div class="stat-chip"><strong>${data.filter(p=>p._source==='drive').length}</strong> ב-Drive</div>`,
       ...Object.entries(cats).map(([c,n])=>`<div class="stat-chip"><strong>${n}</strong> ${c}</div>`)
     ].join('');
     $('photos-stats').innerHTML = html;
@@ -636,7 +668,8 @@ const Photos = (() => {
     $('photos-grid').innerHTML = data.map((p,i) => `
       <div class="photo-card">
         <div class="photo-thumb">
-          <img loading="lazy" src="${p.thumbnail||p.url}" alt="${p.title||''}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%2275%22%3E%3Crect fill=%22%23111%22 width=%22100%25%22 height=%22100%25%22/%3E%3C/svg%3E'">
+          <img loading="lazy" src="${p.thumbnail||p.url}" alt="${p.title||''}"
+            onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%2275%22%3E%3Crect fill=%22%23111%22 width=%22100%25%22 height=%22100%25%22/%3E%3C/svg%3E'">
         </div>
         <div class="photo-info">
           <div class="photo-title">${p.title||'ללא כותרת'}</div>
@@ -645,9 +678,10 @@ const Photos = (() => {
             <button class="btn-icon" title="ערוך" onclick="Photos.openEdit(${i})">
               <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" stroke-width="2"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" stroke-width="2"/></svg>
             </button>
-            <button class="btn-icon danger" title="מחק" onclick="Photos.confirmDelete(${i})">
+            ${p._source==='r2' ? `
+            <button class="btn-icon danger" title="מחק" onclick="Photos.confirmDelete('${p.id}')">
               <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor"><polyline points="3 6 5 6 21 6" stroke-width="2"/><path d="M19 6l-1 14H6L5 6" stroke-width="2"/><path d="M10 11v6M14 11v6" stroke-width="2"/><path d="M9 6V4h6v2" stroke-width="2"/></svg>
-            </button>
+            </button>` : ''}
           </div>
         </div>
       </div>
@@ -662,7 +696,7 @@ const Photos = (() => {
   function openEdit(i) {
     const p = data[i];
     $('photo-dialog-title').textContent = 'עריכת תמונה';
-    $('edit-photo-id').value = i;
+    $('edit-photo-id').value = p.id;
     $('edit-photo-title').value = p.title||'';
     $('edit-photo-category').value = p.category||'';
     $('edit-photo-desc').value = p.description||'';
@@ -670,81 +704,131 @@ const Photos = (() => {
     $('photo-dialog').showModal();
   }
 
-  function openAdd() {
-    $('photo-dialog-title').textContent = 'הוספת תמונה';
-    $('edit-photo-id').value = '';
-    $('edit-photo-title').value = '';
-    $('edit-photo-category').value = '';
-    $('edit-photo-desc').value = '';
-    $('edit-photo-drive-id').value = '';
-    $('edit-photo-drive-wrap').style.display = 'flex';
-    $('photo-dialog').showModal();
-  }
-
-  function savePhoto() {
-    const idx = $('edit-photo-id').value;
+  async function savePhoto() {
+    const id = $('edit-photo-id').value;
     const title = $('edit-photo-title').value.trim();
     const category = $('edit-photo-category').value.trim();
     const description = $('edit-photo-desc').value.trim();
-
-    if (idx === '') {
-      // new photo
-      const driveId = $('edit-photo-drive-id').value.trim();
-      if (!driveId) { toast('יש להזין Drive ID', 'error'); return; }
-      data.push({
-        id: driveId, title, category, description,
-        url: `https://drive.google.com/uc?export=view&id=${driveId}`,
-        thumbnail: `https://drive.google.com/thumbnail?id=${driveId}&sz=w600`,
-        filename: ''
+    // עדכון מטא-דאטה ב-D1 (רק תמונות R2)
+    const photo = data.find(p => p.id === id);
+    if (photo?._source === 'r2') {
+      await fetch('/api/photos', {
+        method: 'PATCH',
+        headers: { ...authHeaders(), 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, title, category, description })
       });
-      toast('תמונה נוספה');
-    } else {
-      data[+idx] = { ...data[+idx], title, category, description };
-      toast('שינויים נשמרו');
     }
-    setUnsaved(true);
+    // עדכון מקומי
+    const idx = data.findIndex(p => p.id === id);
+    if (idx >= 0) data[idx] = { ...data[idx], title, category, description };
+    toast('שינויים נשמרו');
     $('photo-dialog').close();
     render();
   }
 
-  function confirmDelete(i) {
-    if (confirm(`למחוק את "${data[i].title||'תמונה זו'}"?`)) {
-      data.splice(i, 1);
-      setUnsaved(true);
-      render();
-      toast('תמונה נמחקה');
+  async function confirmDelete(id) {
+    const photo = data.find(p => p.id === id);
+    if (!confirm(`למחוק את "${photo?.title||'תמונה זו'}"?`)) return;
+    await fetch(`/api/photos?id=${id}`, { method: 'DELETE', headers: authHeaders() });
+    data = data.filter(p => p.id !== id);
+    render();
+    toast('תמונה נמחקה');
+  }
+
+  function initUpload() {
+    const zone = $('upload-zone');
+    const input = $('upload-file-input');
+
+    zone.addEventListener('click', () => input.click());
+    zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag'); });
+    zone.addEventListener('dragleave', () => zone.classList.remove('drag'));
+    zone.addEventListener('drop', e => {
+      e.preventDefault(); zone.classList.remove('drag');
+      uploadFiles([...e.dataTransfer.files]);
+    });
+    input.addEventListener('change', e => {
+      uploadFiles([...e.target.files]);
+      e.target.value = '';
+    });
+  }
+
+  async function uploadFiles(files) {
+    const images = files.filter(f => f.type.startsWith('image/'));
+    if (!images.length) { toast('בחר קבצי תמונה בלבד', 'error'); return; }
+
+    const prog = $('upload-progress');
+    const bar = $('progress-bar');
+    const status = $('upload-status');
+    prog.style.display = 'block';
+
+    for (let i = 0; i < images.length; i++) {
+      const file = images[i];
+      status.textContent = `מעלה ${i+1}/${images.length}: ${file.name}`;
+      bar.style.width = `${(i / images.length) * 100}%`;
+
+      // פתח דיאלוג מטא-דאטה לפני העלאה
+      const meta = await promptPhotoMeta(file.name);
+      if (meta === null) continue; // דילג
+
+      const fd = new FormData();
+      fd.append('file', file);
+      fd.append('title', meta.title);
+      fd.append('category', meta.category);
+      fd.append('description', meta.description);
+
+      const headers = { 'X-Admin-Password': ADMIN_PWD };
+      const r = await fetch('/api/upload', { method: 'POST', headers, body: fd });
+      if (!r.ok) { toast(`שגיאה בהעלאת ${file.name}`, 'error'); continue; }
+      const { id, url } = await r.json();
+      data.unshift({ id, title: meta.title, category: meta.category, description: meta.description,
+        url, thumbnail: url, filename: file.name, _source: 'r2' });
     }
+
+    bar.style.width = '100%';
+    status.textContent = 'הסתיים!';
+    setTimeout(() => { prog.style.display = 'none'; bar.style.width = '0%'; }, 1500);
+    render();
+    toast(`${images.length} תמונות הועלו`);
   }
 
-  function exportJSON() {
-    const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'photos.json';
-    a.click();
-    setUnsaved(false);
-    toast('JSON יוצא בהצלחה');
+  function promptPhotoMeta(filename) {
+    return new Promise(resolve => {
+      $('edit-photo-id').value = '';
+      $('edit-photo-title').value = filename.replace(/\.[^.]+$/, '');
+      $('edit-photo-category').value = '';
+      $('edit-photo-desc').value = '';
+      $('edit-photo-drive-wrap').style.display = 'none';
+      $('photo-dialog-title').textContent = `פרטי תמונה: ${filename}`;
+      $('photo-dialog').showModal();
+
+      const saveBtn = $('save-photo-btn');
+      const onSave = () => {
+        resolve({
+          title: $('edit-photo-title').value.trim(),
+          category: $('edit-photo-category').value.trim(),
+          description: $('edit-photo-desc').value.trim(),
+        });
+        saveBtn.removeEventListener('click', onSave);
+        $('photo-dialog').close();
+      };
+      saveBtn.addEventListener('click', onSave);
+      $('photo-dialog').addEventListener('close', () => {
+        saveBtn.removeEventListener('click', onSave);
+        resolve(null);
+      }, { once: true });
+    });
   }
 
-  function importJSON(file) {
-    const fr = new FileReader();
-    fr.onload = e => {
-      try {
-        data = JSON.parse(e.target.result);
-        setUnsaved(true);
-        render();
-        toast('JSON יובא בהצלחה');
-      } catch { toast('קובץ לא תקין', 'error'); }
-    };
-    fr.readAsText(file);
-  }
-
-  // public
-  $('add-photo-btn').addEventListener('click', openAdd);
-  $('export-photos-btn').addEventListener('click', exportJSON);
-  $('save-photo-btn').addEventListener('click', savePhoto);
+  $('export-photos-btn').addEventListener('click', () => {
+    const exportData = data.map(({ _source, ...p }) => p);
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+    a.download = 'photos.json'; a.click();
+    toast('JSON יוצא');
+  });
   $('import-photos-btn').addEventListener('click', () => $('import-photos-file').click());
-  $('import-photos-file').addEventListener('change', e => { if(e.target.files[0]) importJSON(e.target.files[0]); e.target.value=''; });
+  $('import-photos-file').addEventListener('change', e => { e.target.value = ''; });
+  $('save-photo-btn').addEventListener('click', savePhoto);
 
   return { init, openEdit, confirmDelete };
 })();
