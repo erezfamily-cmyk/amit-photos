@@ -363,17 +363,26 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
     <button class="login-forgot" id="forgot-btn">שכחת סיסמה?</button>
   </div>
 
-  <!-- טופס איפוס סיסמה -->
+  <!-- טופס "שכחת סיסמה" — שליחת מייל -->
+  <div class="login-card" id="forgot-card" style="display:none">
+    <div class="login-logo">AMIT PHOTOS</div>
+    <div class="login-sub">שכחת סיסמה</div>
+    <p style="color:var(--text-muted);font-size:.85rem;margin-bottom:1.5rem">נשלח קישור לאיפוס לכתובת erez.family@gmail.com</p>
+    <button class="btn-login" id="send-reset-btn">שלח קישור לאיפוס</button>
+    <div class="login-error" id="forgot-error"></div>
+    <div class="login-success" id="forgot-success"></div>
+    <button class="login-forgot" id="back-to-login-btn">חזרה לכניסה</button>
+  </div>
+
+  <!-- טופס איפוס סיסמה — מגיע דרך קישור במייל -->
   <div class="login-card" id="reset-card" style="display:none">
     <div class="login-logo">AMIT PHOTOS</div>
-    <div class="login-sub">איפוס סיסמה</div>
-    <input type="text" id="reset-token-input" placeholder="קוד איפוס" autocomplete="off">
+    <div class="login-sub">סיסמה חדשה</div>
     <input type="password" id="reset-new-pwd" placeholder="סיסמה חדשה" autocomplete="new-password">
     <input type="password" id="reset-confirm-pwd" placeholder="אשר סיסמה" autocomplete="new-password">
-    <button class="btn-login" id="reset-btn">אפס סיסמה</button>
+    <button class="btn-login" id="reset-btn">שמור סיסמה</button>
     <div class="login-error" id="reset-error"></div>
     <div class="login-success" id="reset-success"></div>
-    <button class="login-forgot" id="back-to-login-btn">חזרה לכניסה</button>
   </div>
 </div>
 
@@ -780,51 +789,68 @@ function authHeaders() {
   $('login-btn').addEventListener('click', doLogin);
   $('password-input').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
 
-  // ניווט בין טפסים
+  // "שכחת סיסמה?" — מציג מסך שליחת מייל
   $('forgot-btn').addEventListener('click', () => {
     $('login-card').style.display = 'none';
-    $('reset-card').style.display = '';
+    $('forgot-card').style.display = '';
   });
   $('back-to-login-btn').addEventListener('click', () => {
-    $('reset-card').style.display = 'none';
+    $('forgot-card').style.display = 'none';
     $('login-card').style.display = '';
-    $('reset-error').textContent = '';
-    $('reset-success').textContent = '';
+    $('forgot-error').textContent = '';
+    $('forgot-success').textContent = '';
   });
 
-  // איפוס סיסמה
+  // שליחת מייל איפוס
+  $('send-reset-btn').addEventListener('click', async () => {
+    $('forgot-error').textContent = '';
+    $('forgot-success').textContent = '';
+    $('send-reset-btn').disabled = true;
+    $('send-reset-btn').textContent = 'שולח...';
+    try {
+      const r = await fetch('/api/forgot-password', { method: 'POST', headers: { 'Content-Type': 'application/json' } });
+      const data = await r.json();
+      if (!r.ok) { $('forgot-error').textContent = data.error || 'שגיאה בשליחה'; }
+      else { $('forgot-success').textContent = 'הקישור נשלח! בדוק את תיבת הדואר שלך.'; }
+    } catch { $('forgot-error').textContent = 'שגיאת חיבור'; }
+    $('send-reset-btn').disabled = false;
+    $('send-reset-btn').textContent = 'שלח קישור לאיפוס';
+  });
+
+  // טיפול בקישור איפוס מהמייל (?reset=TOKEN)
+  const resetToken = new URLSearchParams(location.search).get('reset');
+  if (resetToken) {
+    $('login-card').style.display = 'none';
+    $('reset-card').style.display = '';
+  }
+
+  // שמירת סיסמה חדשה
   $('reset-btn').addEventListener('click', doReset);
   $('reset-confirm-pwd').addEventListener('keydown', e => { if(e.key==='Enter') doReset(); });
 
   async function doReset() {
-    const token = $('reset-token-input').value.trim();
     const pwd = $('reset-new-pwd').value;
     const confirm = $('reset-confirm-pwd').value;
     $('reset-error').textContent = '';
     $('reset-success').textContent = '';
-    if (!token || !pwd) { $('reset-error').textContent = 'יש למלא את כל השדות'; return; }
+    if (!pwd) { $('reset-error').textContent = 'יש להזין סיסמה'; return; }
     if (pwd !== confirm) { $('reset-error').textContent = 'הסיסמאות אינן תואמות'; return; }
     if (pwd.length < 6) { $('reset-error').textContent = 'הסיסמה חייבת להכיל לפחות 6 תווים'; return; }
     try {
       const r = await fetch('/api/reset-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ reset_token: token, new_password: pwd })
+        body: JSON.stringify({ token: resetToken, new_password: pwd })
       });
       const data = await r.json();
       if (!r.ok) { $('reset-error').textContent = data.error || 'שגיאה'; return; }
       $('reset-success').textContent = 'הסיסמה עודכנה בהצלחה!';
-      $('reset-new-pwd').value = '';
-      $('reset-confirm-pwd').value = '';
-      $('reset-token-input').value = '';
       setTimeout(() => {
+        history.replaceState(null, '', location.pathname);
         $('reset-card').style.display = 'none';
         $('login-card').style.display = '';
-        $('reset-success').textContent = '';
       }, 2000);
-    } catch {
-      $('reset-error').textContent = 'שגיאת חיבור';
-    }
+    } catch { $('reset-error').textContent = 'שגיאת חיבור'; }
   }
 
   async function doLogin() {

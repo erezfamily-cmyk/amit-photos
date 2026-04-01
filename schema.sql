@@ -51,3 +51,8 @@ CREATE TABLE IF NOT EXISTS settings (
   key   TEXT PRIMARY KEY,
   value TEXT NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS reset_tokens (
+  token      TEXT PRIMARY KEY,
+  expires_at TEXT NOT NULL
+);
