@@ -1,0 +1,8 @@
+name = "amit-photos"
+compatibility_date = "2025-09-27"
+compatibility_flags = ["nodejs_compat"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "amit-photos-db"
+database_id = "802379c7-97cf-4262-93b8-da81c5c3c07d"
