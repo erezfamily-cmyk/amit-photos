@@ -60,7 +60,10 @@ async function handleLogin(request, env) {
   }
 
   const { password } = await request.json().catch(() => ({}));
-  if (!password || password !== env.ADMIN_PASSWORD) {
+  // בדוק סיסמה — קודם D1 (איפוס), אחר כך env
+  const storedPwd = await env.DB.prepare('SELECT value FROM settings WHERE key=?').bind('admin_password').first().catch(() => null);
+  const correctPassword = storedPwd?.value || env.ADMIN_PASSWORD;
+  if (!password || password !== correctPassword) {
     // רשום כישלון
     await env.DB.prepare(
       `INSERT INTO login_attempts (ip, count, last_attempt) VALUES (?,1,?)
@@ -81,6 +84,23 @@ async function handleLogin(request, env) {
   await env.DB.prepare('DELETE FROM sessions WHERE expires_at < ?').bind(now.toISOString()).run();
 
   return jsonRes({ ok: true, token }, 200, request);
+}
+
+// ===== RESET PASSWORD =====
+async function handleResetPassword(request, env) {
+  if (request.method !== 'POST') return jsonRes({ error: 'method not allowed' }, 405, request);
+  const { reset_token, new_password } = await request.json().catch(() => ({}));
+  if (!reset_token || !new_password) return jsonRes({ error: 'פרטים חסרים' }, 400, request);
+  if (!env.RESET_TOKEN) return jsonRes({ error: 'RESET_TOKEN לא מוגדר בסביבה' }, 500, request);
+  if (reset_token !== env.RESET_TOKEN) return jsonRes({ error: 'קוד איפוס שגוי' }, 401, request);
+  if (new_password.length < 6) return jsonRes({ error: 'הסיסמה חייבת להכיל לפחות 6 תווים' }, 400, request);
+  await env.DB.prepare(
+    `INSERT INTO settings (key, value) VALUES ('admin_password', ?)
+     ON CONFLICT(key) DO UPDATE SET value=excluded.value`
+  ).bind(new_password).run();
+  // בטל את כל הסשנים הקיימים
+  await env.DB.prepare('DELETE FROM sessions').run();
+  return jsonRes({ ok: true }, 200, request);
 }
 
 async function handleLogout(request, env) {
@@ -179,7 +199,8 @@ async function handlePhotos(request, env) {
     if (!url) return jsonRes({ error: 'url חסר' }, 400, request);
     const photoId = id || crypto.randomUUID();
     await env.DB.prepare(
-      `INSERT OR IGNORE INTO photos (id,title,category,description,filename,r2_key,url,thumbnail,created_at) VALUES (?,?,?,?,?,?,?,?,?)`
+      `INSERT INTO photos (id,title,category,description,filename,r2_key,url,thumbnail,created_at) VALUES (?,?,?,?,?,?,?,?,?)
+       ON CONFLICT(id) DO UPDATE SET title=excluded.title, category=excluded.category, description=excluded.description, url=excluded.url, thumbnail=excluded.thumbnail`
     ).bind(photoId, title||'', category||'', description||'', filename||'', r2_key||'', url, thumbnail||url, new Date().toISOString()).run();
     return jsonRes({ ok: true, id: photoId }, 200, request);
   }
@@ -324,6 +345,38 @@ async function handleFillTitles(request, env) {
   return jsonRes({ updated: updated.length, total: toFill.length, titles: updated });
 }
 
+// ===== NEWSLETTER =====
+async function handleNewsletter(request, env) {
+  if (!await checkAuth(request, env)) return unauth(request);
+  if (request.method !== 'POST') return jsonRes({ error: 'method not allowed' }, 405, request);
+  if (!env.RESEND_API_KEY) return jsonRes({ error: 'RESEND_API_KEY לא מוגדר ב-Cloudflare' }, 500, request);
+
+  const { subject, body } = await request.json().catch(() => ({}));
+  if (!subject || !body) return jsonRes({ error: 'נושא ותוכן הם שדות חובה' }, 400, request);
+
+  const { results: subscribers } = await env.DB.prepare('SELECT email, name FROM subscribers').all();
+  if (!subscribers.length) return jsonRes({ error: 'אין נרשמים ברשימה' }, 400, request);
+
+  const fromEmail = env.FROM_EMAIL || 'amit@amitphotos.com';
+  const html = `<div dir="rtl" style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:2rem;color:#111">
+    <h2 style="color:#c8a96e;font-family:sans-serif">AMIT PHOTOS</h2>
+    <div style="line-height:1.8;white-space:pre-wrap">${body.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
+    <hr style="margin-top:2rem;border-color:#ddd">
+    <p style="color:#999;font-size:.8rem">קיבלת מייל זה כי נרשמת לניוזלטר של עמית פוטוס.</p>
+  </div>`;
+
+  let sent = 0;
+  for (const sub of subscribers) {
+    const res = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ from: fromEmail, to: sub.email, subject, html })
+    });
+    if (res.ok) sent++;
+  }
+  return jsonRes({ ok: true, sent, total: subscribers.length }, 200, request);
+}
+
 // ===== SERVE PHOTO FROM R2 =====
 async function servePhoto(key, env) {
   const object = await env.PHOTOS.get(key);
@@ -348,12 +401,14 @@ export default {
 
     if (path === '/api/login')             return handleLogin(request, env);
     if (path === '/api/logout')            return handleLogout(request, env);
+    if (path === '/api/reset-password')    return handleResetPassword(request, env);
     if (path === '/api/subscribers')       return handleSubscribers(request, env);
     if (path === '/api/customers')         return handleCustomers(request, env);
     if (path === '/api/photos')            return handlePhotos(request, env);
     if (path === '/api/upload')            return handleUpload(request, env);
     if (path === '/api/fill-titles')       return handleFillTitles(request, env);
     if (path === '/api/trigger-workflow')  return handleTriggerWorkflow(request, env);
+    if (path === '/api/newsletter')        return handleNewsletter(request, env);
     if (path.startsWith('/photos/'))       return servePhoto(path.slice('/photos/'.length), env);
 
     // Static assets

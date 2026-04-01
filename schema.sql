@@ -46,3 +46,8 @@ CREATE TABLE IF NOT EXISTS login_attempts (
   count        INTEGER NOT NULL DEFAULT 0,
   last_attempt TEXT NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS settings (
+  key   TEXT PRIMARY KEY,
+  value TEXT NOT NULL
+);
