@@ -153,6 +153,35 @@ async function handleUpload(request, env) {
   return jsonRes({ ok: true, id, url, key });
 }
 
+// ===== TRIGGER GITHUB ACTIONS =====
+async function handleTriggerWorkflow(request, env) {
+  if (!checkAuth(request, env)) return unauth();
+  if (request.method !== 'POST') return jsonRes({ error: 'method not allowed' }, 405);
+
+  if (!env.GITHUB_TOKEN) return jsonRes({ error: 'GITHUB_TOKEN לא מוגדר' }, 500);
+
+  const body = await request.json().catch(() => ({}));
+  const workflow = body.workflow || 'update-photos.yml';
+
+  const res = await fetch(
+    `https://api.github.com/repos/erezfamily-cmyk/amit-photos/actions/workflows/${workflow}/dispatches`,
+    {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${env.GITHUB_TOKEN}`,
+        'Accept': 'application/vnd.github+json',
+        'Content-Type': 'application/json',
+        'X-GitHub-Api-Version': '2022-11-28',
+      },
+      body: JSON.stringify({ ref: 'main' }),
+    }
+  );
+
+  if (res.status === 204) return jsonRes({ ok: true, message: 'הסקריפט הופעל בהצלחה' });
+  const err = await res.text();
+  return jsonRes({ error: `GitHub API: ${err}` }, res.status);
+}
+
 // ===== FILL TITLES WITH AI =====
 function isGenericTitle(title) {
   if (!title) return true;
@@ -235,7 +264,8 @@ export default {
     if (path === '/api/customers')   return handleCustomers(request, env);
     if (path === '/api/photos')      return handlePhotos(request, env);
     if (path === '/api/upload')       return handleUpload(request, env);
-    if (path === '/api/fill-titles')  return handleFillTitles(request, env);
+    if (path === '/api/fill-titles')       return handleFillTitles(request, env);
+    if (path === '/api/trigger-workflow')  return handleTriggerWorkflow(request, env);
     if (path.startsWith('/photos/'))  return servePhoto(path.slice('/photos/'.length), env);
 
     // Static assets
