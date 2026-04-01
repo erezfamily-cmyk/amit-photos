@@ -562,6 +562,32 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
 <script>
 // ===== UTILS =====
 const $ = id => document.getElementById(id);
+
+function parseCSV(text) {
+  const lines = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n').filter(l => l.trim());
+  if (lines.length < 2) return [];
+  const headers = [];
+  let cur = '', inQ = false;
+  for (let i = 0; i <= lines[0].length; i++) {
+    const ch = lines[0][i];
+    if (ch === '"') { if (inQ && lines[0][i+1] === '"') { cur += '"'; i++; } else inQ = !inQ; }
+    else if ((ch === ',' || ch === undefined) && !inQ) { headers.push(cur.trim()); cur = ''; }
+    else cur += (ch || '');
+  }
+  return lines.slice(1).map(line => {
+    const vals = []; cur = ''; inQ = false;
+    for (let i = 0; i <= line.length; i++) {
+      const ch = line[i];
+      if (ch === '"') { if (inQ && line[i+1] === '"') { cur += '"'; i++; } else inQ = !inQ; }
+      else if ((ch === ',' || ch === undefined) && !inQ) { vals.push(cur.trim()); cur = ''; }
+      else cur += (ch || '');
+    }
+    const obj = {};
+    headers.forEach((h, i) => { obj[h] = vals[i] || ''; });
+    return obj;
+  });
+}
+
 const toast = (msg, type='success') => {
   const c = $('toast-container');
   const t = document.createElement('div');
@@ -793,8 +819,7 @@ const Photos = (() => {
       fd.append('category', meta.category);
       fd.append('description', meta.description);
 
-      const headers = authHeaders();
-      const r = await fetch('/api/upload', { method: 'POST', headers, body: fd });
+      const r = await fetch('/api/upload', { method: 'POST', headers: { 'X-Session-Token': SESSION_TOKEN }, body: fd });
       if (!r.ok) { toast(`שגיאה בהעלאת ${file.name}`, 'error'); continue; }
       const { id, url } = await r.json();
       data.unshift({ id, title: meta.title, category: meta.category, description: meta.description,
@@ -881,7 +906,26 @@ const Photos = (() => {
     toast('JSON יוצא');
   });
   $('import-photos-btn').addEventListener('click', () => $('import-photos-file').click());
-  $('import-photos-file').addEventListener('change', e => { e.target.value = ''; });
+  $('import-photos-file').addEventListener('change', async e => {
+    const file = e.target.files[0];
+    if (!file) { e.target.value = ''; return; }
+    try {
+      const photos = JSON.parse(await file.text());
+      if (!Array.isArray(photos)) { toast('קובץ JSON לא תקין', 'error'); e.target.value = ''; return; }
+      let imported = 0;
+      for (const p of photos) {
+        if (!p.url) continue;
+        const r = await fetch('/api/photos', {
+          method: 'POST', headers: authHeaders(),
+          body: JSON.stringify(p)
+        });
+        if (r.ok) imported++;
+      }
+      toast(`יובאו ${imported} תמונות`);
+      await Photos.init();
+    } catch { toast('שגיאה בייבוא JSON', 'error'); }
+    e.target.value = '';
+  });
   $('save-photo-btn').addEventListener('click', savePhoto);
 
   return { init, openEdit, confirmDelete };
@@ -962,7 +1006,30 @@ const Subscribers = (() => {
   $('sub-email').addEventListener('keydown', e=>{ if(e.key==='Enter') add(); });
   $('export-subs-btn').addEventListener('click', exportCSV);
   $('import-subs-btn').addEventListener('click', ()=>$('import-subs-file').click());
-  $('import-subs-file').addEventListener('change', e=>{ if(e.target.files[0]) { /* TODO: parse & POST rows */ } e.target.value=''; });
+  $('import-subs-file').addEventListener('change', async e => {
+    const file = e.target.files[0];
+    if (!file) { e.target.value = ''; return; }
+    try {
+      const rows = parseCSV(await file.text());
+      let imported = 0;
+      for (const row of rows) {
+        const email = row['מייל'] || row['email'] || row['Email'];
+        if (!email) continue;
+        const r = await fetch('/api/subscribers', {
+          method: 'POST', headers: authHeaders(),
+          body: JSON.stringify({
+            name: row['שם'] || row['name'] || row['Name'] || '',
+            email,
+            notes: row['הערות'] || row['notes'] || row['Notes'] || ''
+          })
+        });
+        if (r.ok) imported++;
+      }
+      toast(`יובאו ${imported} נרשמים`);
+      await Subscribers.load();
+    } catch { toast('שגיאה בייבוא CSV', 'error'); }
+    e.target.value = '';
+  });
   $('sub-search').addEventListener('input', e=>{ filter=e.target.value.trim(); render(); });
 
   return { load, remove };
@@ -1111,7 +1178,35 @@ const Customers = (() => {
   $('save-cust-btn').addEventListener('click', save_cust);
   $('export-cust-btn').addEventListener('click', exportCSV);
   $('import-cust-btn').addEventListener('click', ()=>$('import-cust-file').click());
-  $('import-cust-file').addEventListener('change', e=>{ e.target.value=''; });
+  $('import-cust-file').addEventListener('change', async e => {
+    const file = e.target.files[0];
+    if (!file) { e.target.value = ''; return; }
+    try {
+      const rows = parseCSV(await file.text());
+      let imported = 0;
+      for (const row of rows) {
+        const name = row['שם'] || row['name'] || row['Name'];
+        if (!name) continue;
+        const r = await fetch('/api/customers', {
+          method: 'POST', headers: authHeaders(),
+          body: JSON.stringify({
+            name,
+            email: row['מייל'] || row['email'] || '',
+            phone: row['טלפון'] || row['phone'] || '',
+            date: row['תאריך'] || row['date'] || '',
+            type: row['סוג'] || row['type'] || 'אחר',
+            status: row['סטטוס'] || row['status'] || 'ממתין',
+            subject: row['נושא'] || row['subject'] || '',
+            notes: row['הערות'] || row['notes'] || ''
+          })
+        });
+        if (r.ok) imported++;
+      }
+      toast(`יובאו ${imported} לקוחות`);
+      await Customers.load();
+    } catch { toast('שגיאה בייבוא CSV', 'error'); }
+    e.target.value = '';
+  });
   $('cust-search').addEventListener('input', e=>{ filterSearch=e.target.value.trim(); render(); });
   $('cust-filter-type').addEventListener('change', e=>{ filterType=e.target.value; render(); });
   $('cust-filter-status').addEventListener('change', e=>{ filterStatus=e.target.value; render(); });

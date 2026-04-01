@@ -173,6 +173,17 @@ async function handlePhotos(request, env) {
     return jsonRes(results);
   }
 
+  if (method === 'POST') {
+    const body = await request.json().catch(() => ({}));
+    const { id, title, category, description, filename, r2_key, url, thumbnail } = body;
+    if (!url) return jsonRes({ error: 'url חסר' }, 400, request);
+    const photoId = id || crypto.randomUUID();
+    await env.DB.prepare(
+      `INSERT OR IGNORE INTO photos (id,title,category,description,filename,r2_key,url,thumbnail,created_at) VALUES (?,?,?,?,?,?,?,?,?)`
+    ).bind(photoId, title||'', category||'', description||'', filename||'', r2_key||'', url, thumbnail||url, new Date().toISOString()).run();
+    return jsonRes({ ok: true, id: photoId }, 200, request);
+  }
+
   if (method === 'PATCH') {
     const { id, title, category, description } = await request.json().catch(() => ({}));
     if (!id) return jsonRes({ error: 'id חסר' }, 400);
@@ -331,7 +342,7 @@ export default {
     const path = url.pathname;
 
     if (request.method === 'OPTIONS') {
-      return new Response(null, { status: 204, headers: JSON_HEADERS });
+      return new Response(null, { status: 204, headers: corsHeaders(request) });
     }
 
     if (path === '/api/login')             return handleLogin(request, env);

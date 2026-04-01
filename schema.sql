@@ -1,5 +1,6 @@
 -- הרץ פעם אחת דרך Cloudflare Dashboard → D1 → amit-photos-db → Console
 -- (אם הטבלאות subscribers ו-customers כבר קיימות, הרץ רק את CREATE TABLE photos)
+-- הוסף גם את sessions ו-login_attempts אם עדיין לא קיימות
 
 CREATE TABLE IF NOT EXISTS subscribers (
   id         TEXT PRIMARY KEY,
@@ -32,4 +33,16 @@ CREATE TABLE IF NOT EXISTS customers (
   subject    TEXT NOT NULL DEFAULT '',
   notes      TEXT NOT NULL DEFAULT '',
   created_at TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS sessions (
+  token      TEXT PRIMARY KEY,
+  created_at TEXT NOT NULL,
+  expires_at TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS login_attempts (
+  ip           TEXT PRIMARY KEY,
+  count        INTEGER NOT NULL DEFAULT 0,
+  last_attempt TEXT NOT NULL
 );
