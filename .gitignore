@@ -7,3 +7,9 @@ assets/photos/
 .agents/
 skills-lock.json
 SETUP.md
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+!.env.example
