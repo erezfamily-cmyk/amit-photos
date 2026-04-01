@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AMIT PHOTOS — ניהול</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Heebo:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0a0a;--bg-card:#111111;--bg-nav:rgba(10,10,10,.95);
+  --accent:#c8a96e;--accent-hover:#e0c080;--accent-dim:rgba(200,169,110,.12);
+  --text:#f0ede8;--text-muted:#888;--border:#222;--border-hover:#333;
+  --radius:4px;--font:'Heebo',sans-serif;--font-display:'Syne',sans-serif;
+  --sidebar:220px;
+  --green:#4caf7d;--red:#e05555;--yellow:#e0b855;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font);direction:rtl;line-height:1.6;overflow-x:hidden;min-height:100vh}
+a{color:inherit;text-decoration:none}
+button{cursor:pointer;font-family:var(--font)}
+input,textarea,select{font-family:var(--font);direction:rtl}
+
+/* ===== LOGIN ===== */
+#login-screen{
+  position:fixed;inset:0;background:var(--bg);
+  display:flex;align-items:center;justify-content:center;z-index:1000;
+}
+.login-card{
+  background:var(--bg-card);border:1px solid var(--border);
+  padding:3rem 2.5rem;width:100%;max-width:380px;border-radius:8px;
+  text-align:center;
+}
+.login-logo{font-family:var(--font-display);font-size:1.3rem;font-weight:800;letter-spacing:.05em;margin-bottom:.25rem}
+.login-sub{color:var(--text-muted);font-size:.8rem;letter-spacing:.15em;text-transform:uppercase;margin-bottom:2.5rem}
+.login-card input[type=password]{
+  width:100%;background:#0f0f0f;border:1px solid var(--border);color:var(--text);
+  padding:.75rem 1rem;border-radius:var(--radius);font-size:.95rem;
+  transition:border-color .2s;outline:none;margin-bottom:1rem;text-align:center;
+}
+.login-card input[type=password]:focus{border-color:var(--accent)}
+.btn-login{
+  width:100%;background:var(--accent);color:#0a0a0a;border:none;
+  padding:.75rem;font-weight:600;font-size:.95rem;border-radius:var(--radius);
+  transition:background .2s,transform .15s;
+}
+.btn-login:hover{background:var(--accent-hover)}
+.login-error{color:var(--red);font-size:.85rem;margin-top:.75rem;min-height:1.2em}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.shake{animation:shake .35s ease}
+
+/* ===== ADMIN LAYOUT ===== */
+#admin-ui{display:none;min-height:100vh}
+#admin-ui.visible{display:flex}
+
+/* Sidebar */
+.sidebar{
+  position:fixed;right:0;top:0;bottom:0;width:var(--sidebar);
+  background:var(--bg-card);border-left:1px solid var(--border);
+  display:flex;flex-direction:column;z-index:100;
+  padding:1.5rem 0;
+}
+.sidebar-logo{
+  font-family:var(--font-display);font-size:1rem;font-weight:800;
+  padding:0 1.25rem 1.5rem;border-bottom:1px solid var(--border);
+  letter-spacing:.03em;
+}
+.sidebar-logo span{display:block;color:var(--accent);font-size:.65rem;letter-spacing:.18em;font-family:var(--font);font-weight:400;margin-top:.15rem}
+.sidebar-nav{flex:1;padding:1rem 0}
+.nav-item{
+  display:flex;align-items:center;gap:.75rem;
+  padding:.7rem 1.25rem;font-size:.9rem;font-weight:500;
+  color:var(--text-muted);cursor:pointer;transition:color .2s,background .2s;
+  position:relative;border-left:2px solid transparent;
+}
+.nav-item:hover{color:var(--text);background:rgba(255,255,255,.03)}
+.nav-item.active{color:var(--accent);border-left-color:var(--accent);background:var(--accent-dim)}
+.nav-item .nav-dot{
+  position:absolute;left:1rem;top:.6rem;
+  width:6px;height:6px;border-radius:50%;background:var(--accent);
+  display:none;
+}
+.nav-item .nav-dot.show{display:block}
+.nav-icon{width:18px;height:18px;flex-shrink:0;opacity:.7}
+.nav-item.active .nav-icon{opacity:1}
+.sidebar-footer{padding:1rem 1.25rem;border-top:1px solid var(--border)}
+.btn-logout{
+  width:100%;background:transparent;border:1px solid var(--border);
+  color:var(--text-muted);padding:.6rem;border-radius:var(--radius);
+  font-size:.85rem;transition:all .2s;
+}
+.btn-logout:hover{border-color:var(--red);color:var(--red)}
+
+/* Main */
+.main-content{
+  margin-right:var(--sidebar);flex:1;min-height:100vh;
+  padding:2rem 2.5rem;
+}
+
+/* ===== SECTIONS ===== */
+.section{display:none}
+.section.active{display:block}
+
+.section-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:1.75rem;padding-bottom:1.25rem;border-bottom:1px solid var(--border);
+  flex-wrap:wrap;gap:.75rem;
+}
+.section-title{font-family:var(--font-display);font-size:1.4rem;font-weight:800}
+.section-actions{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap}
+
+/* Buttons */
+.btn{
+  display:inline-flex;align-items:center;gap:.4rem;
+  padding:.55rem 1rem;border-radius:var(--radius);font-size:.85rem;
+  font-weight:500;border:none;transition:all .2s;white-space:nowrap;
+}
+.btn-primary{background:var(--accent);color:#0a0a0a}
+.btn-primary:hover{background:var(--accent-hover)}
+.btn-ghost{background:transparent;color:var(--text-muted);border:1px solid var(--border)}
+.btn-ghost:hover{border-color:var(--border-hover);color:var(--text)}
+.btn-danger{background:transparent;color:var(--red);border:1px solid rgba(224,85,85,.3)}
+.btn-danger:hover{background:rgba(224,85,85,.1)}
+.btn-sm{padding:.35rem .7rem;font-size:.8rem}
+.btn-icon{width:30px;height:30px;padding:0;display:inline-flex;align-items:center;justify-content:center;background:transparent;border:1px solid var(--border);color:var(--text-muted);border-radius:var(--radius);transition:all .2s}
+.btn-icon:hover{border-color:var(--accent);color:var(--accent)}
+.btn-icon.danger:hover{border-color:var(--red);color:var(--red)}
+
+/* Stats bar */
+.stats-bar{
+  display:flex;gap:1rem;margin-bottom:1.5rem;flex-wrap:wrap;
+}
+.stat-chip{
+  background:var(--bg-card);border:1px solid var(--border);
+  padding:.4rem .9rem;border-radius:20px;font-size:.8rem;color:var(--text-muted);
+}
+.stat-chip strong{color:var(--accent);font-weight:600}
+
+/* Photo grid */
+.photos-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1rem;
+}
+.photo-card{
+  background:var(--bg-card);border:1px solid var(--border);border-radius:6px;
+  overflow:hidden;transition:border-color .2s,transform .2s;
+}
+.photo-card:hover{border-color:var(--border-hover);transform:translateY(-2px)}
+.photo-thumb{
+  aspect-ratio:4/3;overflow:hidden;background:#111;position:relative;
+}
+.photo-thumb img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .4s}
+.photo-card:hover .photo-thumb img{transform:scale(1.04)}
+.photo-info{padding:.75rem}
+.photo-title{font-size:.85rem;font-weight:500;margin-bottom:.35rem;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cat-badge{
+  display:inline-block;padding:.15rem .55rem;border-radius:20px;
+  font-size:.72rem;background:var(--accent-dim);color:var(--accent);
+  border:1px solid rgba(200,169,110,.2);
+}
+.photo-actions{display:flex;gap:.4rem;margin-top:.65rem}
+
+/* Table */
+.table-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:6px}
+table{width:100%;border-collapse:collapse;font-size:.875rem}
+thead{background:#0d0d0d}
+th{padding:.75rem 1rem;text-align:right;color:var(--text-muted);font-weight:500;
+   font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;
+   border-bottom:1px solid var(--border);white-space:nowrap}
+td{padding:.7rem 1rem;border-bottom:1px solid #161616;vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(255,255,255,.015)}
+tr.clickable{cursor:pointer}
+
+/* Status badges */
+.status{display:inline-block;padding:.15rem .6rem;border-radius:20px;font-size:.75rem;font-weight:500}
+.status-pending{background:rgba(224,184,85,.12);color:var(--yellow);border:1px solid rgba(224,184,85,.25)}
+.status-done{background:rgba(76,175,125,.12);color:var(--green);border:1px solid rgba(76,175,125,.25)}
+.status-closed{background:rgba(136,136,136,.12);color:var(--text-muted);border:1px solid #333}
+.type-badge{display:inline-block;padding:.15rem .6rem;border-radius:20px;font-size:.75rem}
+.type-purchase{background:var(--accent-dim);color:var(--accent);border:1px solid rgba(200,169,110,.2)}
+.type-inquiry{background:rgba(100,149,237,.1);color:#6495ed;border:1px solid rgba(100,149,237,.2)}
+.type-other{background:rgba(136,136,136,.1);color:var(--text-muted);border:1px solid #333}
+
+/* Add form */
+.add-form{
+  background:var(--bg-card);border:1px solid var(--border);
+  border-radius:6px;padding:1.25rem;margin-bottom:1.25rem;
+}
+.add-form-title{font-size:.85rem;font-weight:600;color:var(--text-muted);
+  text-transform:uppercase;letter-spacing:.08em;margin-bottom:.9rem}
+.form-row{display:flex;gap:.75rem;flex-wrap:wrap}
+.form-field{display:flex;flex-direction:column;gap:.35rem;flex:1;min-width:140px}
+.form-field label{font-size:.78rem;color:var(--text-muted)}
+.form-field input,.form-field textarea,.form-field select{
+  background:#0d0d0d;border:1px solid var(--border);color:var(--text);
+  padding:.55rem .75rem;border-radius:var(--radius);font-size:.875rem;
+  transition:border-color .2s;outline:none;
+}
+.form-field input:focus,.form-field textarea:focus,.form-field select:focus{border-color:var(--accent)}
+.form-field textarea{resize:vertical;min-height:70px}
+.form-field select option{background:#111}
+
+/* Search/filter bar */
+.filter-bar{display:flex;gap:.75rem;margin-bottom:1.25rem;flex-wrap:wrap;align-items:center}
+.filter-bar input,.filter-bar select{
+  background:#0d0d0d;border:1px solid var(--border);color:var(--text);
+  padding:.5rem .85rem;border-radius:var(--radius);font-size:.875rem;
+  outline:none;transition:border-color .2s;
+}
+.filter-bar input:focus,.filter-bar select:focus{border-color:var(--accent)}
+.filter-bar input{flex:1;min-width:180px}
+.filter-bar select{min-width:130px}
+
+/* Empty state */
+.empty-state{
+  text-align:center;padding:4rem 2rem;color:var(--text-muted);
+}
+.empty-state .empty-icon{font-size:3rem;margin-bottom:1rem;opacity:.4}
+.empty-state p{font-size:.95rem}
+
+/* ===== DIALOG ===== */
+dialog{
+  background:var(--bg-card);color:var(--text);border:1px solid var(--border);
+  border-radius:8px;padding:0;width:min(540px,95vw);
+  direction:rtl;
+}
+dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
+.dialog-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1.25rem 1.5rem;border-bottom:1px solid var(--border);
+}
+.dialog-title{font-family:var(--font-display);font-size:1.05rem;font-weight:700}
+.dialog-close{
+  background:transparent;border:none;color:var(--text-muted);
+  font-size:1.2rem;padding:.2rem .5rem;cursor:pointer;border-radius:var(--radius);
+  transition:color .2s;line-height:1;
+}
+.dialog-close:hover{color:var(--text)}
+.dialog-body{padding:1.5rem;display:flex;flex-direction:column;gap:1rem}
+.dialog-footer{
+  padding:1rem 1.5rem;border-top:1px solid var(--border);
+  display:flex;justify-content:flex-start;gap:.6rem;
+}
+
+/* ===== TOAST ===== */
+#toast-container{
+  position:fixed;top:1.25rem;left:50%;transform:translateX(-50%);
+  z-index:9999;display:flex;flex-direction:column;gap:.5rem;align-items:center;
+  pointer-events:none;
+}
+.toast{
+  background:var(--bg-card);border:1px solid var(--border);
+  color:var(--text);padding:.65rem 1.25rem;border-radius:6px;
+  font-size:.875rem;box-shadow:0 4px 20px rgba(0,0,0,.5);
+  animation:toastIn .3s ease;pointer-events:all;white-space:nowrap;
+}
+.toast.success{border-color:rgba(76,175,125,.4);color:var(--green)}
+.toast.error{border-color:rgba(224,85,85,.4);color:var(--red)}
+@keyframes toastIn{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:none}}
+@keyframes toastOut{from{opacity:1}to{opacity:0;transform:translateY(-8px)}}
+.toast.out{animation:toastOut .25s ease forwards}
+
+/* ===== MOBILE ===== */
+@media(max-width:768px){
+  .sidebar{
+    position:fixed;right:0;left:0;bottom:auto;top:0;
+    width:100%;height:56px;flex-direction:row;align-items:center;
+    padding:0 1rem;border-left:none;border-bottom:1px solid var(--border);
+  }
+  .sidebar-logo{padding:0;border-bottom:none;font-size:.85rem}
+  .sidebar-logo span{display:none}
+  .sidebar-nav{flex:1;display:flex;padding:0;justify-content:center;gap:.25rem}
+  .nav-item{padding:.5rem .75rem;border-left:none;border-bottom:2px solid transparent;font-size:.8rem}
+  .nav-item.active{border-bottom-color:var(--accent);background:transparent}
+  .sidebar-footer{border-top:none;padding:0}
+  .btn-logout{padding:.4rem .7rem;font-size:.78rem}
+  .main-content{margin-right:0;margin-top:56px;padding:1.25rem 1rem}
+  .photos-grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-card" id="login-card">
+    <div class="login-logo">AMIT PHOTOS</div>
+    <div class="login-sub">ממשק ניהול</div>
+    <input type="password" id="password-input" placeholder="סיסמה" autocomplete="current-password">
+    <button class="btn-login" id="login-btn">כניסה</button>
+    <div class="login-error" id="login-error"></div>
+  </div>
+</div>
+
+<!-- ADMIN UI -->
+<div id="admin-ui">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      AMIT PHOTOS
+      <span>ניהול</span>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-item active" data-section="photos">
+        <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><rect x="3" y="3" width="18" height="18" rx="2" stroke-width="1.5"/><circle cx="8.5" cy="8.5" r="1.5" fill="currentColor" stroke="none"/><path d="m3 15 5-5 4 4 3-3 6 6" stroke-width="1.5" stroke-linecap="round"/></svg>
+        תמונות
+        <span class="nav-dot" id="photos-unsaved-dot"></span>
+      </div>
+      <div class="nav-item" data-section="subscribers">
+        <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke-width="1.5"/><circle cx="9" cy="7" r="4" stroke-width="1.5"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" stroke-width="1.5" stroke-linecap="round"/></svg>
+        נרשמים
+      </div>
+      <div class="nav-item" data-section="customers">
+        <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M20 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z" stroke-width="1.5"/><path d="M16 3H8a2 2 0 0 0-2 2v2h12V5a2 2 0 0 0-2-2z" stroke-width="1.5"/></svg>
+        לקוחות
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="btn-logout" id="logout-btn">התנתק</button>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main-content">
+
+    <!-- PHOTOS SECTION -->
+    <section class="section active" id="section-photos">
+      <div class="section-header">
+        <h1 class="section-title">תמונות</h1>
+        <div class="section-actions">
+          <button class="btn btn-ghost btn-sm" id="import-photos-btn">
+            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke-width="2"/><polyline points="17 8 12 3 7 8" stroke-width="2"/><line x1="12" y1="3" x2="12" y2="15" stroke-width="2"/></svg>
+            ייבוא JSON
+          </button>
+          <input type="file" id="import-photos-file" accept=".json" style="display:none">
+          <button class="btn btn-ghost btn-sm" id="export-photos-btn">
+            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke-width="2"/><polyline points="7 10 12 15 17 10" stroke-width="2"/><line x1="12" y1="15" x2="12" y2="3" stroke-width="2"/></svg>
+            ייצוא JSON
+          </button>
+          <button class="btn btn-primary btn-sm" id="add-photo-btn">
+            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><line x1="12" y1="5" x2="12" y2="19" stroke-width="2"/><line x1="5" y1="12" x2="19" y2="12" stroke-width="2"/></svg>
+            הוסף תמונה
+          </button>
+        </div>
+      </div>
+      <div class="stats-bar" id="photos-stats"></div>
+      <div class="photos-grid" id="photos-grid"></div>
+    </section>
+
+    <!-- SUBSCRIBERS SECTION -->
+    <section class="section" id="section-subscribers">
+      <div class="section-header">
+        <h1 class="section-title">נרשמים</h1>
+        <div class="section-actions">
+          <button class="btn btn-ghost btn-sm" id="import-subs-btn">
+            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke-width="2"/><polyline points="17 8 12 3 7 8" stroke-width="2"/><line x1="12" y1="3" x2="12" y2="15" stroke-width="2"/></svg>
+            ייבוא CSV
+          </button>
+          <input type="file" id="import-subs-file" accept=".csv,.json" style="display:none">
+          <button class="btn btn-ghost btn-sm" id="export-subs-btn">
+            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke-width="2"/><polyline points="7 10 12 15 17 10" stroke-width="2"/><line x1="12" y1="15" x2="12" y2="3" stroke-width="2"/></svg>
+            ייצוא CSV
+          </button>
+        </div>
+      </div>
+
+      <!-- Add subscriber form -->
+      <div class="add-form">
+        <div class="add-form-title">הוסף נרשם</div>
+        <div class="form-row">
+          <div class="form-field"><label>שם</label><input type="text" id="sub-name" placeholder="ישראל ישראלי"></div>
+          <div class="form-field"><label>מייל</label><input type="email" id="sub-email" placeholder="mail@example.com"></div>
+          <div class="form-field"><label>הערות</label><input type="text" id="sub-notes" placeholder="הערה כלשהי..."></div>
+          <div class="form-field" style="justify-content:flex-end">
+            <button class="btn btn-primary" id="add-sub-btn" style="align-self:flex-end">הוסף</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="filter-bar">
+        <input type="text" id="sub-search" placeholder="חיפוש לפי שם או מייל...">
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr>
+            <th>שם</th><th>מייל</th><th>תאריך הצטרפות</th><th>הערות</th><th>פעולות</th>
+          </tr></thead>
+          <tbody id="subs-table-body"></tbody>
+        </table>
+      </div>
+      <div id="subs-empty" class="empty-state" style="display:none">
+        <div class="empty-icon">📋</div>
+        <p>אין נרשמים עדיין</p>
+      </div>
+    </section>
+
+    <!-- CUSTOMERS SECTION -->
+    <section class="section" id="section-customers">
+      <div class="section-header">
+        <h1 class="section-title">לקוחות ופניות</h1>
+        <div class="section-actions">
+          <button class="btn btn-ghost btn-sm" id="import-cust-btn">
+            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke-width="2"/><polyline points="17 8 12 3 7 8" stroke-width="2"/><line x1="12" y1="3" x2="12" y2="15" stroke-width="2"/></svg>
+            ייבוא CSV
+          </button>
+          <input type="file" id="import-cust-file" accept=".csv,.json" style="display:none">
+          <button class="btn btn-ghost btn-sm" id="export-cust-btn">
+            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke-width="2"/><polyline points="7 10 12 15 17 10" stroke-width="2"/><line x1="12" y1="15" x2="12" y2="3" stroke-width="2"/></svg>
+            ייצוא CSV
+          </button>
+          <button class="btn btn-primary btn-sm" id="add-cust-btn">
+            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><line x1="12" y1="5" x2="12" y2="19" stroke-width="2"/><line x1="5" y1="12" x2="19" y2="12" stroke-width="2"/></svg>
+            הוסף לקוח
+          </button>
+        </div>
+      </div>
+
+      <div class="filter-bar">
+        <input type="text" id="cust-search" placeholder="חיפוש לפי שם, מייל...">
+        <select id="cust-filter-type">
+          <option value="">כל הסוגים</option>
+          <option value="רכישה">רכישה</option>
+          <option value="פנייה">פנייה</option>
+          <option value="אחר">אחר</option>
+        </select>
+        <select id="cust-filter-status">
+          <option value="">כל הסטטוסים</option>
+          <option value="ממתין">ממתין</option>
+          <option value="טופל">טופל</option>
+          <option value="סגור">סגור</option>
+        </select>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr>
+            <th>שם</th><th>מייל</th><th>טלפון</th><th>תאריך</th>
+            <th>סוג</th><th>נושא/תמונה</th><th>סטטוס</th><th>הערות</th><th>פעולות</th>
+          </tr></thead>
+          <tbody id="cust-table-body"></tbody>
+        </table>
+      </div>
+      <div id="cust-empty" class="empty-state" style="display:none">
+        <div class="empty-icon">👥</div>
+        <p>אין לקוחות או פניות עדיין</p>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div id="toast-container"></div>
+
+<!-- EDIT PHOTO DIALOG -->
+<dialog id="photo-dialog">
+  <div class="dialog-header">
+    <span class="dialog-title" id="photo-dialog-title">עריכת תמונה</span>
+    <button class="dialog-close" onclick="document.getElementById('photo-dialog').close()">✕</button>
+  </div>
+  <div class="dialog-body">
+    <input type="hidden" id="edit-photo-id">
+    <div class="form-field"><label>כותרת</label><input type="text" id="edit-photo-title"></div>
+    <div class="form-field">
+      <label>קטגוריה</label>
+      <input type="text" id="edit-photo-category" list="categories-list">
+      <datalist id="categories-list"></datalist>
+    </div>
+    <div class="form-field"><label>תיאור</label><textarea id="edit-photo-desc" rows="3"></textarea></div>
+    <div class="form-field" id="edit-photo-drive-wrap" style="display:none">
+      <label>Google Drive File ID</label>
+      <input type="text" id="edit-photo-drive-id" placeholder="1aBcDeFgHiJkLmNoPqRsT">
+    </div>
+  </div>
+  <div class="dialog-footer">
+    <button class="btn btn-primary" id="save-photo-btn">שמור</button>
+    <button class="btn btn-ghost" onclick="document.getElementById('photo-dialog').close()">ביטול</button>
+  </div>
+</dialog>
+
+<!-- CUSTOMER DIALOG -->
+<dialog id="cust-dialog">
+  <div class="dialog-header">
+    <span class="dialog-title" id="cust-dialog-title">הוספת לקוח</span>
+    <button class="dialog-close" onclick="document.getElementById('cust-dialog').close()">✕</button>
+  </div>
+  <div class="dialog-body">
+    <input type="hidden" id="cust-edit-id">
+    <div class="form-row">
+      <div class="form-field"><label>שם *</label><input type="text" id="cust-name" placeholder="שם מלא"></div>
+      <div class="form-field"><label>מייל</label><input type="email" id="cust-email" placeholder="mail@example.com"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-field"><label>טלפון</label><input type="tel" id="cust-phone" placeholder="05X-XXXXXXX"></div>
+      <div class="form-field"><label>תאריך</label><input type="date" id="cust-date"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-field">
+        <label>סוג</label>
+        <select id="cust-type">
+          <option value="רכישה">רכישה</option>
+          <option value="פנייה">פנייה</option>
+          <option value="אחר">אחר</option>
+        </select>
+      </div>
+      <div class="form-field">
+        <label>סטטוס</label>
+        <select id="cust-status">
+          <option value="ממתין">ממתין</option>
+          <option value="טופל">טופל</option>
+          <option value="סגור">סגור</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-field"><label>נושא / תמונה שנרכשה</label><input type="text" id="cust-subject" placeholder="שם התמונה או נושא הפנייה"></div>
+    <div class="form-field"><label>הערות</label><textarea id="cust-notes" rows="3" placeholder="פרטים נוספים..."></textarea></div>
+  </div>
+  <div class="dialog-footer">
+    <button class="btn btn-primary" id="save-cust-btn">שמור</button>
+    <button class="btn btn-ghost" onclick="document.getElementById('cust-dialog').close()">ביטול</button>
+  </div>
+</dialog>
+
+<script>
+// ===== UTILS =====
+const $ = id => document.getElementById(id);
+const toast = (msg, type='success') => {
+  const c = $('toast-container');
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.textContent = msg;
+  c.appendChild(t);
+  setTimeout(() => { t.classList.add('out'); setTimeout(()=>t.remove(), 300); }, 2800);
+};
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+const fmtDate = d => d ? new Date(d).toLocaleDateString('he-IL') : '';
+
+// ===== AUTH =====
+const PASSWORD = 'amit2024';
+(function initAuth() {
+  if (sessionStorage.getItem('admin_auth') === '1') showAdmin();
+
+  $('login-btn').addEventListener('click', doLogin);
+  $('password-input').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+
+  function doLogin() {
+    if ($('password-input').value === PASSWORD) {
+      sessionStorage.setItem('admin_auth','1');
+      $('login-screen').style.opacity='0';
+      $('login-screen').style.transition='opacity .4s';
+      setTimeout(()=>{ $('login-screen').style.display='none'; }, 400);
+      showAdmin();
+    } else {
+      $('login-error').textContent = 'סיסמה שגויה';
+      $('login-card').classList.remove('shake');
+      void $('login-card').offsetWidth;
+      $('login-card').classList.add('shake');
+      $('password-input').value='';
+    }
+  }
+
+  function showAdmin() {
+    $('admin-ui').classList.add('visible');
+    Photos.init();
+  }
+})();
+
+$('logout-btn').addEventListener('click', () => {
+  sessionStorage.removeItem('admin_auth');
+  location.reload();
+});
+
+// ===== NAV =====
+document.querySelectorAll('.nav-item').forEach(item => {
+  item.addEventListener('click', () => {
+    document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+    document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+    item.classList.add('active');
+    $('section-' + item.dataset.section).classList.add('active');
+  });
+});
+
+// ===== PHOTOS =====
+const Photos = (() => {
+  let data = [];
+  let unsaved = false;
+
+  function setUnsaved(v) {
+    unsaved = v;
+    $('photos-unsaved-dot').classList.toggle('show', v);
+  }
+
+  async function init() {
+    try {
+      const r = await fetch('data/photos.json');
+      if (!r.ok) throw new Error();
+      data = await r.json();
+    } catch(e) {
+      data = [];
+      toast('לא ניתן לטעון את photos.json', 'error');
+    }
+    render();
+  }
+
+  function render() {
+    renderStats();
+    renderGrid();
+    renderCategoryDatalist();
+  }
+
+  function renderStats() {
+    const cats = {};
+    data.forEach(p => { cats[p.category] = (cats[p.category]||0)+1; });
+    const html = [`<div class="stat-chip"><strong>${data.length}</strong> תמונות סה"כ</div>`,
+      ...Object.entries(cats).map(([c,n])=>`<div class="stat-chip"><strong>${n}</strong> ${c}</div>`)
+    ].join('');
+    $('photos-stats').innerHTML = html;
+  }
+
+  function renderGrid() {
+    if (!data.length) {
+      $('photos-grid').innerHTML = '<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">🖼️</div><p>אין תמונות</p></div>';
+      return;
+    }
+    $('photos-grid').innerHTML = data.map((p,i) => `
+      <div class="photo-card">
+        <div class="photo-thumb">
+          <img loading="lazy" src="${p.thumbnail||p.url}" alt="${p.title||''}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%2275%22%3E%3Crect fill=%22%23111%22 width=%22100%25%22 height=%22100%25%22/%3E%3C/svg%3E'">
+        </div>
+        <div class="photo-info">
+          <div class="photo-title">${p.title||'ללא כותרת'}</div>
+          <span class="cat-badge">${p.category||'ללא קטגוריה'}</span>
+          <div class="photo-actions">
+            <button class="btn-icon" title="ערוך" onclick="Photos.openEdit(${i})">
+              <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" stroke-width="2"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" stroke-width="2"/></svg>
+            </button>
+            <button class="btn-icon danger" title="מחק" onclick="Photos.confirmDelete(${i})">
+              <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor"><polyline points="3 6 5 6 21 6" stroke-width="2"/><path d="M19 6l-1 14H6L5 6" stroke-width="2"/><path d="M10 11v6M14 11v6" stroke-width="2"/><path d="M9 6V4h6v2" stroke-width="2"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function renderCategoryDatalist() {
+    const cats = [...new Set(data.map(p=>p.category).filter(Boolean))];
+    $('categories-list').innerHTML = cats.map(c=>`<option value="${c}">`).join('');
+  }
+
+  function openEdit(i) {
+    const p = data[i];
+    $('photo-dialog-title').textContent = 'עריכת תמונה';
+    $('edit-photo-id').value = i;
+    $('edit-photo-title').value = p.title||'';
+    $('edit-photo-category').value = p.category||'';
+    $('edit-photo-desc').value = p.description||'';
+    $('edit-photo-drive-wrap').style.display = 'none';
+    $('photo-dialog').showModal();
+  }
+
+  function openAdd() {
+    $('photo-dialog-title').textContent = 'הוספת תמונה';
+    $('edit-photo-id').value = '';
+    $('edit-photo-title').value = '';
+    $('edit-photo-category').value = '';
+    $('edit-photo-desc').value = '';
+    $('edit-photo-drive-id').value = '';
+    $('edit-photo-drive-wrap').style.display = 'flex';
+    $('photo-dialog').showModal();
+  }
+
+  function savePhoto() {
+    const idx = $('edit-photo-id').value;
+    const title = $('edit-photo-title').value.trim();
+    const category = $('edit-photo-category').value.trim();
+    const description = $('edit-photo-desc').value.trim();
+
+    if (idx === '') {
+      // new photo
+      const driveId = $('edit-photo-drive-id').value.trim();
+      if (!driveId) { toast('יש להזין Drive ID', 'error'); return; }
+      data.push({
+        id: driveId, title, category, description,
+        url: `https://drive.google.com/uc?export=view&id=${driveId}`,
+        thumbnail: `https://drive.google.com/thumbnail?id=${driveId}&sz=w600`,
+        filename: ''
+      });
+      toast('תמונה נוספה');
+    } else {
+      data[+idx] = { ...data[+idx], title, category, description };
+      toast('שינויים נשמרו');
+    }
+    setUnsaved(true);
+    $('photo-dialog').close();
+    render();
+  }
+
+  function confirmDelete(i) {
+    if (confirm(`למחוק את "${data[i].title||'תמונה זו'}"?`)) {
+      data.splice(i, 1);
+      setUnsaved(true);
+      render();
+      toast('תמונה נמחקה');
+    }
+  }
+
+  function exportJSON() {
+    const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'photos.json';
+    a.click();
+    setUnsaved(false);
+    toast('JSON יוצא בהצלחה');
+  }
+
+  function importJSON(file) {
+    const fr = new FileReader();
+    fr.onload = e => {
+      try {
+        data = JSON.parse(e.target.result);
+        setUnsaved(true);
+        render();
+        toast('JSON יובא בהצלחה');
+      } catch { toast('קובץ לא תקין', 'error'); }
+    };
+    fr.readAsText(file);
+  }
+
+  // public
+  $('add-photo-btn').addEventListener('click', openAdd);
+  $('export-photos-btn').addEventListener('click', exportJSON);
+  $('save-photo-btn').addEventListener('click', savePhoto);
+  $('import-photos-btn').addEventListener('click', () => $('import-photos-file').click());
+  $('import-photos-file').addEventListener('change', e => { if(e.target.files[0]) importJSON(e.target.files[0]); e.target.value=''; });
+
+  return { init, openEdit, confirmDelete };
+})();
+
+// ===== SUBSCRIBERS =====
+const Subscribers = (() => {
+  const KEY = 'admin_subscribers';
+  let data = [];
+  let filter = '';
+
+  function load() { try { data = JSON.parse(localStorage.getItem(KEY)||'[]'); } catch { data=[]; } }
+  function save() { localStorage.setItem(KEY, JSON.stringify(data)); }
+
+  function render() {
+    const rows = data.filter(s =>
+      !filter || s.name.includes(filter) || s.email.includes(filter)
+    );
+    const tbody = $('subs-table-body');
+    if (!rows.length) {
+      tbody.innerHTML = '';
+      $('subs-empty').style.display = 'block';
+      $('subs-empty').querySelector('p').textContent = filter ? 'לא נמצאו תוצאות' : 'אין נרשמים עדיין';
+      return;
+    }
+    $('subs-empty').style.display = 'none';
+    tbody.innerHTML = rows.map(s => `
+      <tr>
+        <td>${s.name||'—'}</td>
+        <td><a href="mailto:${s.email}" style="color:var(--accent)">${s.email}</a></td>
+        <td>${fmtDate(s.date)}</td>
+        <td style="color:var(--text-muted);font-size:.82rem">${s.notes||'—'}</td>
+        <td><button class="btn btn-danger btn-sm" onclick="Subscribers.remove('${s.id}')">מחק</button></td>
+      </tr>
+    `).join('');
+  }
+
+  function add() {
+    const name = $('sub-name').value.trim();
+    const email = $('sub-email').value.trim();
+    const notes = $('sub-notes').value.trim();
+    if (!email) { toast('יש להזין כתובת מייל', 'error'); return; }
+    data.push({ id:uid(), name, email, notes, date: new Date().toISOString() });
+    save(); render();
+    $('sub-name').value=''; $('sub-email').value=''; $('sub-notes').value='';
+    toast('נרשם נוסף');
+  }
+
+  function remove(id) {
+    if (!confirm('למחוק נרשם זה?')) return;
+    data = data.filter(s=>s.id!==id);
+    save(); render();
+    toast('נרשם נמחק');
+  }
+
+  function exportCSV() {
+    const header = 'שם,מייל,תאריך,הערות\n';
+    const rows = data.map(s=>[s.name,s.email,fmtDate(s.date),s.notes].map(v=>`"${(v||'').replace(/"/g,'""')}"`).join(',')).join('\n');
+    const blob = new Blob(['\uFEFF'+header+rows], {type:'text/csv;charset=utf-8'});
+    const a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='subscribers.csv'; a.click();
+    toast('CSV יוצא');
+  }
+
+  function importCSV(file) {
+    const fr = new FileReader();
+    fr.onload = e => {
+      try {
+        const text = e.target.result.replace(/^\uFEFF/,'');
+        const lines = text.split('\n').filter(l=>l.trim());
+        lines.slice(1).forEach(line => {
+          const cols = line.match(/("([^"]|"")*"|[^,]*)(,|$)/g)||[];
+          const clean = cols.map(c=>c.replace(/,$/,'').replace(/^"|"$/g,'').replace(/""/g,'"'));
+          if(clean[1]) data.push({id:uid(),name:clean[0],email:clean[1],date:clean[2]||new Date().toISOString(),notes:clean[3]});
+        });
+        save(); render(); toast('CSV יובא');
+      } catch { toast('קובץ לא תקין','error'); }
+    };
+    fr.readAsText(file,'UTF-8');
+  }
+
+  load(); render();
+  $('add-sub-btn').addEventListener('click', add);
+  $('sub-email').addEventListener('keydown', e=>{ if(e.key==='Enter') add(); });
+  $('export-subs-btn').addEventListener('click', exportCSV);
+  $('import-subs-btn').addEventListener('click', ()=>$('import-subs-file').click());
+  $('import-subs-file').addEventListener('change', e=>{ if(e.target.files[0]) importCSV(e.target.files[0]); e.target.value=''; });
+  $('sub-search').addEventListener('input', e=>{ filter=e.target.value.trim(); render(); });
+
+  return { remove };
+})();
+
+// ===== CUSTOMERS =====
+const Customers = (() => {
+  const KEY = 'admin_customers';
+  let data = [];
+  let editId = null;
+  let filterType = '';
+  let filterStatus = '';
+  let filterSearch = '';
+
+  function load() { try { data = JSON.parse(localStorage.getItem(KEY)||'[]'); } catch { data=[]; } }
+  function save() { localStorage.setItem(KEY, JSON.stringify(data)); }
+
+  function getFiltered() {
+    return data.filter(c => {
+      if (filterType && c.type !== filterType) return false;
+      if (filterStatus && c.status !== filterStatus) return false;
+      if (filterSearch) {
+        const q = filterSearch.toLowerCase();
+        return (c.name||'').toLowerCase().includes(q) ||
+               (c.email||'').toLowerCase().includes(q) ||
+               (c.subject||'').toLowerCase().includes(q);
+      }
+      return true;
+    });
+  }
+
+  function statusClass(s) {
+    return s==='ממתין'?'status-pending':s==='טופל'?'status-done':'status-closed';
+  }
+  function typeClass(t) {
+    return t==='רכישה'?'type-purchase':t==='פנייה'?'type-inquiry':'type-other';
+  }
+
+  function render() {
+    const rows = getFiltered();
+    const tbody = $('cust-table-body');
+    if (!rows.length) {
+      tbody.innerHTML = '';
+      $('cust-empty').style.display = 'block';
+      $('cust-empty').querySelector('p').textContent = (filterType||filterStatus||filterSearch) ? 'לא נמצאו תוצאות' : 'אין לקוחות או פניות עדיין';
+      return;
+    }
+    $('cust-empty').style.display = 'none';
+    tbody.innerHTML = rows.map(c => `
+      <tr class="clickable" onclick="Customers.openEdit('${c.id}')">
+        <td><strong>${c.name||'—'}</strong></td>
+        <td><a href="mailto:${c.email}" style="color:var(--accent)" onclick="event.stopPropagation()">${c.email||'—'}</a></td>
+        <td style="color:var(--text-muted)">${c.phone||'—'}</td>
+        <td style="color:var(--text-muted);font-size:.82rem">${fmtDate(c.date)}</td>
+        <td><span class="type-badge ${typeClass(c.type)}">${c.type||'—'}</span></td>
+        <td style="font-size:.85rem;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.subject||'—'}</td>
+        <td><span class="status ${statusClass(c.status)}">${c.status||'—'}</span></td>
+        <td style="color:var(--text-muted);font-size:.82rem;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.notes||'—'}</td>
+        <td onclick="event.stopPropagation()">
+          <button class="btn btn-danger btn-sm" onclick="Customers.remove('${c.id}')">מחק</button>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  function openAdd() {
+    editId = null;
+    $('cust-dialog-title').textContent = 'הוספת לקוח';
+    $('cust-edit-id').value = '';
+    $('cust-name').value=''; $('cust-email').value=''; $('cust-phone').value='';
+    $('cust-date').value = new Date().toISOString().slice(0,10);
+    $('cust-type').value='רכישה'; $('cust-status').value='ממתין';
+    $('cust-subject').value=''; $('cust-notes').value='';
+    $('cust-dialog').showModal();
+  }
+
+  function openEdit(id) {
+    const c = data.find(x=>x.id===id);
+    if (!c) return;
+    editId = id;
+    $('cust-dialog-title').textContent = 'עריכת לקוח';
+    $('cust-edit-id').value = id;
+    $('cust-name').value = c.name||'';
+    $('cust-email').value = c.email||'';
+    $('cust-phone').value = c.phone||'';
+    $('cust-date').value = c.date ? c.date.slice(0,10) : '';
+    $('cust-type').value = c.type||'רכישה';
+    $('cust-status').value = c.status||'ממתין';
+    $('cust-subject').value = c.subject||'';
+    $('cust-notes').value = c.notes||'';
+    $('cust-dialog').showModal();
+  }
+
+  function save_cust() {
+    const name = $('cust-name').value.trim();
+    if (!name) { toast('יש להזין שם', 'error'); return; }
+    const entry = {
+      name, email:$('cust-email').value.trim(),
+      phone:$('cust-phone').value.trim(),
+      date:$('cust-date').value,
+      type:$('cust-type').value,
+      status:$('cust-status').value,
+      subject:$('cust-subject').value.trim(),
+      notes:$('cust-notes').value.trim()
+    };
+    if (editId) {
+      const i = data.findIndex(x=>x.id===editId);
+      data[i] = { ...data[i], ...entry };
+      toast('פרטים עודכנו');
+    } else {
+      data.push({ id:uid(), ...entry });
+      toast('לקוח נוסף');
+    }
+    save(); render();
+    $('cust-dialog').close();
+  }
+
+  function remove(id) {
+    if (!confirm('למחוק רשומה זו?')) return;
+    data = data.filter(c=>c.id!==id);
+    save(); render();
+    toast('רשומה נמחקה');
+  }
+
+  function exportCSV() {
+    const header = 'שם,מייל,טלפון,תאריך,סוג,נושא,סטטוס,הערות\n';
+    const rows = data.map(c=>
+      [c.name,c.email,c.phone,fmtDate(c.date),c.type,c.subject,c.status,c.notes]
+      .map(v=>`"${(v||'').replace(/"/g,'""')}"`)
+      .join(',')
+    ).join('\n');
+    const blob = new Blob(['\uFEFF'+header+rows],{type:'text/csv;charset=utf-8'});
+    const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='customers.csv'; a.click();
+    toast('CSV יוצא');
+  }
+
+  function importCSV(file) {
+    const fr = new FileReader();
+    fr.onload = e => {
+      try {
+        const text = e.target.result.replace(/^\uFEFF/,'');
+        const lines = text.split('\n').filter(l=>l.trim());
+        lines.slice(1).forEach(line => {
+          const cols = line.match(/("([^"]|"")*"|[^,]*)(,|$)/g)||[];
+          const c = cols.map(v=>v.replace(/,$/,'').replace(/^"|"$/g,'').replace(/""/g,'"'));
+          if(c[0]) data.push({id:uid(),name:c[0],email:c[1],phone:c[2],date:c[3],type:c[4],subject:c[5],status:c[6],notes:c[7]});
+        });
+        save(); render(); toast('CSV יובא');
+      } catch { toast('קובץ לא תקין','error'); }
+    };
+    fr.readAsText(file,'UTF-8');
+  }
+
+  load(); render();
+  $('add-cust-btn').addEventListener('click', openAdd);
+  $('save-cust-btn').addEventListener('click', save_cust);
+  $('export-cust-btn').addEventListener('click', exportCSV);
+  $('import-cust-btn').addEventListener('click', ()=>$('import-cust-file').click());
+  $('import-cust-file').addEventListener('change', e=>{ if(e.target.files[0]) importCSV(e.target.files[0]); e.target.value=''; });
+  $('cust-search').addEventListener('input', e=>{ filterSearch=e.target.value.trim(); render(); });
+  $('cust-filter-type').addEventListener('change', e=>{ filterType=e.target.value; render(); });
+  $('cust-filter-status').addEventListener('change', e=>{ filterStatus=e.target.value; render(); });
+
+  return { openEdit, remove };
+})();
+</script>
+</body>
+</html>
