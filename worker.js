@@ -86,19 +86,63 @@ async function handleLogin(request, env) {
   return jsonRes({ ok: true, token }, 200, request);
 }
 
-// ===== RESET PASSWORD =====
+// ===== FORGOT PASSWORD — שלח מייל עם קישור =====
+async function handleForgotPassword(request, env) {
+  if (request.method !== 'POST') return jsonRes({ error: 'method not allowed' }, 405, request);
+  if (!env.RESEND_API_KEY) return jsonRes({ error: 'RESEND_API_KEY לא מוגדר' }, 500, request);
+
+  const token = crypto.randomUUID();
+  const expires = new Date(Date.now() + 30 * 60 * 1000).toISOString(); // 30 דקות
+  await env.DB.prepare(
+    `INSERT INTO reset_tokens (token, expires_at) VALUES (?,?)
+     ON CONFLICT(token) DO UPDATE SET expires_at=excluded.expires_at`
+  ).bind(token, expires).run();
+  // נקה טוקנים ישנים
+  await env.DB.prepare('DELETE FROM reset_tokens WHERE expires_at < ?').bind(new Date().toISOString()).run();
+
+  const origin = new URL(request.url).origin;
+  const resetUrl = `${origin}/admin.html?reset=${token}`;
+
+  await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${env.RESEND_API_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      from: 'Amit Photos <onboarding@resend.dev>',
+      to: ['erez.family@gmail.com'],
+      subject: 'איפוס סיסמה — Amit Photos',
+      html: `<div dir="rtl" style="font-family:Arial,sans-serif;max-width:480px;margin:auto">
+        <h2 style="color:#c8a96e">Amit Photos — איפוס סיסמה</h2>
+        <p>קיבלנו בקשה לאיפוס הסיסמה שלך.</p>
+        <p>לחץ על הכפתור להגדרת סיסמה חדשה. הקישור תקף ל-30 דקות.</p>
+        <a href="${resetUrl}" style="display:inline-block;margin:1.5rem 0;padding:.75rem 2rem;background:#c8a96e;color:#0a0a0a;text-decoration:none;border-radius:4px;font-weight:bold">אפס סיסמה</a>
+        <p style="color:#888;font-size:.85rem">אם לא ביקשת איפוס, התעלם ממייל זה.</p>
+      </div>`
+    })
+  });
+
+  return jsonRes({ ok: true }, 200, request);
+}
+
+// ===== RESET PASSWORD — אימות טוקן + עדכון סיסמה =====
 async function handleResetPassword(request, env) {
   if (request.method !== 'POST') return jsonRes({ error: 'method not allowed' }, 405, request);
-  const { reset_token, new_password } = await request.json().catch(() => ({}));
-  if (!reset_token || !new_password) return jsonRes({ error: 'פרטים חסרים' }, 400, request);
-  if (!env.RESET_TOKEN) return jsonRes({ error: 'RESET_TOKEN לא מוגדר בסביבה' }, 500, request);
-  if (reset_token !== env.RESET_TOKEN) return jsonRes({ error: 'קוד איפוס שגוי' }, 401, request);
+  const { token, new_password } = await request.json().catch(() => ({}));
+  if (!token || !new_password) return jsonRes({ error: 'פרטים חסרים' }, 400, request);
   if (new_password.length < 6) return jsonRes({ error: 'הסיסמה חייבת להכיל לפחות 6 תווים' }, 400, request);
+
+  const row = await env.DB.prepare(
+    'SELECT token FROM reset_tokens WHERE token=? AND expires_at > ?'
+  ).bind(token, new Date().toISOString()).first().catch(() => null);
+  if (!row) return jsonRes({ error: 'הקישור פג תוקף או אינו תקין' }, 401, request);
+
   await env.DB.prepare(
     `INSERT INTO settings (key, value) VALUES ('admin_password', ?)
      ON CONFLICT(key) DO UPDATE SET value=excluded.value`
   ).bind(new_password).run();
-  // בטל את כל הסשנים הקיימים
+  await env.DB.prepare('DELETE FROM reset_tokens WHERE token=?').bind(token).run();
   await env.DB.prepare('DELETE FROM sessions').run();
   return jsonRes({ ok: true }, 200, request);
 }
@@ -401,6 +445,7 @@ export default {
 
     if (path === '/api/login')             return handleLogin(request, env);
     if (path === '/api/logout')            return handleLogout(request, env);
+    if (path === '/api/forgot-password')   return handleForgotPassword(request, env);
     if (path === '/api/reset-password')    return handleResetPassword(request, env);
     if (path === '/api/subscribers')       return handleSubscribers(request, env);
     if (path === '/api/customers')         return handleCustomers(request, env);
