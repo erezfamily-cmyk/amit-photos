@@ -155,24 +155,27 @@ async function handleLogout(request, env) {
 
 // ===== SUBSCRIBERS =====
 async function handleSubscribers(request, env) {
-  if (!await checkAuth(request, env)) return unauth(request);
   const method = request.method;
+
+  // POST פתוח לציבור — הרשמה לניוזלטר מהאתר
+  if (method === 'POST') {
+    const { name, email, notes } = await request.json().catch(() => ({}));
+    if (!email) return jsonRes({ error: 'מייל חסר' }, 400, request);
+    const id = crypto.randomUUID();
+    await env.DB.prepare(
+      'INSERT INTO subscribers (id, name, email, notes, created_at) VALUES (?,?,?,?,?)'
+    ).bind(id, name || '', email, notes || '', new Date().toISOString()).run();
+    return jsonRes({ ok: true, id }, 200, request);
+  }
+
+  // GET ו-DELETE דורשים auth
+  if (!await checkAuth(request, env)) return unauth(request);
 
   if (method === 'GET') {
     const { results } = await env.DB.prepare(
       'SELECT * FROM subscribers ORDER BY created_at DESC'
     ).all();
     return jsonRes(results);
-  }
-
-  if (method === 'POST') {
-    const { name, email, notes } = await request.json().catch(() => ({}));
-    if (!email) return jsonRes({ error: 'מייל חסר' }, 400);
-    const id = crypto.randomUUID();
-    await env.DB.prepare(
-      'INSERT INTO subscribers (id, name, email, notes, created_at) VALUES (?,?,?,?,?)'
-    ).bind(id, name || '', email, notes || '', new Date().toISOString()).run();
-    return jsonRes({ ok: true, id });
   }
 
   if (method === 'DELETE') {
@@ -389,6 +392,53 @@ async function handleFillTitles(request, env) {
   return jsonRes({ updated: updated.length, total: toFill.length, titles: updated });
 }
 
+// ===== VERIFY PAYPAL PAYMENT =====
+async function handleVerifyPayment(request, env) {
+  if (request.method !== 'GET') return jsonRes({ error: 'method not allowed' }, 405, request);
+  const url = new URL(request.url);
+  const tx = url.searchParams.get('tx');
+  const itemNumber = url.searchParams.get('item_number');
+  const pdtToken = env.PAYPAL_PDT_TOKEN;
+
+  if (!tx || !itemNumber) return jsonRes({ error: 'חסרים פרמטרים' }, 400, request);
+  if (!pdtToken) return jsonRes({ error: 'PAYPAL_PDT_TOKEN לא מוגדר' }, 500, request);
+
+  const lastUnderscore = itemNumber.lastIndexOf('_');
+  if (lastUnderscore === -1) return jsonRes({ error: 'item_number לא תקין' }, 400, request);
+  const fileId = itemNumber.substring(0, lastUnderscore);
+  const size = itemNumber.substring(lastUnderscore + 1);
+  const SIZE_MAP = { small: 'w1500', medium: 'w3000', large: null };
+  if (!Object.prototype.hasOwnProperty.call(SIZE_MAP, size)) return jsonRes({ error: 'גודל לא תקין' }, 400, request);
+
+  let paypalText;
+  try {
+    const res = await fetch('https://www.paypal.com/cgi-bin/webscr', {
+      method: 'POST',
+      body: new URLSearchParams({ cmd: '_notify-synch', tx, at: pdtToken }),
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    });
+    paypalText = await res.text();
+  } catch {
+    return jsonRes({ error: 'שגיאה בתקשורת עם PayPal' }, 502, request);
+  }
+
+  if (!paypalText.startsWith('SUCCESS')) return jsonRes({ error: 'התשלום לא אומת' }, 402, request);
+
+  const lines = paypalText.split('\n');
+  const txData = {};
+  for (let i = 1; i < lines.length; i++) {
+    const eq = lines[i].indexOf('=');
+    if (eq !== -1) txData[decodeURIComponent(lines[i].substring(0, eq))] = decodeURIComponent(lines[i].substring(eq + 1));
+  }
+  if (txData['payment_status'] !== 'Completed') return jsonRes({ error: `סטטוס: ${txData['payment_status']}` }, 402, request);
+
+  const sz = SIZE_MAP[size];
+  const downloadUrl = sz
+    ? `https://drive.google.com/thumbnail?id=${fileId}&sz=${sz}`
+    : `https://drive.google.com/uc?export=download&id=${fileId}`;
+  return jsonRes({ url: downloadUrl, title: txData['item_name'] || 'תמונה' }, 200, request);
+}
+
 // ===== NEWSLETTER =====
 async function handleNewsletter(request, env) {
   if (!await checkAuth(request, env)) return unauth(request);
@@ -454,6 +504,7 @@ export default {
     if (path === '/api/fill-titles')       return handleFillTitles(request, env);
     if (path === '/api/trigger-workflow')  return handleTriggerWorkflow(request, env);
     if (path === '/api/newsletter')        return handleNewsletter(request, env);
+    if (path === '/api/verify-payment')    return handleVerifyPayment(request, env);
     if (path.startsWith('/photos/'))       return servePhoto(path.slice('/photos/'.length), env);
 
     // Static assets

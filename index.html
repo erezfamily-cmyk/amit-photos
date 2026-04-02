@@ -396,20 +396,41 @@
           <h2>הישארו מעודכנים</h2>
           <p>תמונות חדשות, מבצעים בלעדיים ותוכן מאחורי הקלעים — ישירות למייל.</p>
         </div>
-        <form
-          action="https://dev.us7.list-manage.com/subscribe/post?u=e6efd7201901da74b3f56c9d4&id=154af53f74&f_id=0052f2e0f0"
-          method="post"
-          target="_blank"
-          novalidate
-          class="newsletter-form"
-        >
-          <input type="email" name="EMAIL" placeholder="כתובת המייל שלך" required class="newsletter-input" />
-          <!-- bot protection (hidden) -->
-          <div style="position:absolute;left:-5000px" aria-hidden="true">
-            <input type="text" name="b_e6efd7201901da74b3f56c9d4_154af53f74" tabindex="-1" value="" />
-          </div>
-          <button type="submit" class="newsletter-btn">הרשמה</button>
+        <form class="newsletter-form" id="newsletter-form">
+          <input type="email" id="newsletter-email" placeholder="כתובת המייל שלך" required class="newsletter-input" />
+          <button type="submit" class="newsletter-btn" id="newsletter-btn">הרשמה</button>
         </form>
+        <p id="newsletter-msg" style="margin-top:.75rem;font-size:.9rem;min-height:1.2em"></p>
+        <script>
+          document.getElementById('newsletter-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const email = document.getElementById('newsletter-email').value.trim();
+            const btn = document.getElementById('newsletter-btn');
+            const msg = document.getElementById('newsletter-msg');
+            btn.disabled = true;
+            btn.textContent = '...';
+            try {
+              const r = await fetch('/api/subscribers', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email })
+              });
+              if (r.ok) {
+                msg.style.color = '#4caf7d';
+                msg.textContent = 'תודה! נרשמת בהצלחה.';
+                document.getElementById('newsletter-email').value = '';
+              } else {
+                msg.style.color = '#e05555';
+                msg.textContent = 'שגיאה בהרשמה. נסה שוב.';
+              }
+            } catch {
+              msg.style.color = '#e05555';
+              msg.textContent = 'שגיאת חיבור. נסה שוב.';
+            }
+            btn.disabled = false;
+            btn.textContent = 'הרשמה';
+          });
+        </script>
       </div>
     </div>
   </section>
