@@ -425,6 +425,10 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
         <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M20 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z" stroke-width="1.5"/><path d="M16 3H8a2 2 0 0 0-2 2v2h12V5a2 2 0 0 0-2-2z" stroke-width="1.5"/></svg>
         לקוחות
       </div>
+      <div class="nav-item" data-section="analytics">
+        <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        סטטיסטיקות
+      </div>
     </nav>
     <div class="sidebar-footer">
       <button class="btn-logout" id="logout-btn">התנתק</button>
@@ -444,13 +448,21 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
         <div class="dash-recent-title">פניות ולקוחות אחרונים</div>
         <div id="dash-recent"></div>
       </div>
-      <div class="dash-recent" id="dash-analytics-box" style="margin-top:1.25rem;display:none">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+    </section>
+
+    <!-- ANALYTICS SECTION -->
+    <section class="section" id="section-analytics">
+      <div class="section-header">
+        <h1 class="section-title">סטטיסטיקות</h1>
+      </div>
+      <div class="dash-recent" id="analytics-box">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem">
           <div class="dash-recent-title" style="margin-bottom:0">צפיות באתר — 30 יום אחרונים</div>
-          <span id="dash-analytics-total" style="color:var(--accent);font-family:var(--font-display);font-size:1.1rem;font-weight:700"></span>
+          <span id="dash-analytics-total" style="color:var(--accent);font-family:var(--font-display);font-size:1.4rem;font-weight:700"></span>
         </div>
-        <div id="dash-chart" style="display:flex;align-items:flex-end;gap:3px;height:80px;margin-bottom:1rem"></div>
-        <div id="dash-countries" style="display:flex;flex-wrap:wrap;gap:.4rem .75rem;font-size:.78rem;color:var(--text-muted)"></div>
+        <div id="dash-chart" style="display:flex;align-items:flex-end;gap:4px;height:120px;margin-bottom:1.25rem"></div>
+        <div style="margin-bottom:.5rem;font-size:.8rem;color:var(--text-muted);font-weight:500">מדינות</div>
+        <div id="dash-countries" style="display:flex;flex-wrap:wrap;gap:.5rem 1rem;font-size:.85rem;color:var(--text-muted)"></div>
       </div>
     </section>
 
@@ -822,8 +834,6 @@ const Dashboard = (() => {
       const r = await fetch('/api/analytics', { headers: authHeaders() });
       if (!r.ok) return;
       const { daily, countries } = await r.json();
-      const box = $('dash-analytics-box');
-      box.style.display = '';
       if (!daily || !daily.length) {
         $('dash-analytics-total').textContent = 'אין נתונים עדיין';
         $('dash-chart').innerHTML = '<div style="color:var(--text-muted);font-size:.85rem;padding:.5rem 0">לא נרשמו צפיות עדיין</div>';
@@ -981,6 +991,7 @@ document.querySelectorAll('.nav-item').forEach(item => {
     document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
     item.classList.add('active');
     $('section-' + item.dataset.section).classList.add('active');
+    if (item.dataset.section === 'analytics') Dashboard.loadAnalytics();
   });
 });
 
