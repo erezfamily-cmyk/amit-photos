@@ -518,6 +518,7 @@ async function handleNewsletter(request, env) {
   const fromEmail = env.FROM_EMAIL || 'amit@amitphotos.com';
   const origin = new URL(request.url).origin;
   let sent = 0;
+  let lastError = null;
   for (const sub of subscribers) {
     const unsubscribeUrl = `${origin}/api/unsubscribe?token=${sub.id}`;
     const html = buildNewsletterHtml(subject, body, unsubscribeUrl, sub.name);
@@ -526,7 +527,15 @@ async function handleNewsletter(request, env) {
       headers: { 'Authorization': `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({ from: fromEmail, to: sub.email, subject, html })
     });
-    if (res.ok) sent++;
+    if (res.ok) {
+      sent++;
+    } else {
+      const errBody = await res.json().catch(() => ({}));
+      lastError = errBody.message || errBody.name || `HTTP ${res.status}`;
+    }
+  }
+  if (sent === 0 && lastError) {
+    return jsonRes({ error: `שגיאת Resend: ${lastError}` }, 500, request);
   }
   return jsonRes({ ok: true, sent, total: subscribers.length }, 200, request);
 }
