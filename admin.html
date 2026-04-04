@@ -822,9 +822,13 @@ const Dashboard = (() => {
       const r = await fetch('/api/analytics', { headers: authHeaders() });
       if (!r.ok) return;
       const { daily, countries } = await r.json();
-      if (!daily || !daily.length) return;
       const box = $('dash-analytics-box');
       box.style.display = '';
+      if (!daily || !daily.length) {
+        $('dash-analytics-total').textContent = 'אין נתונים עדיין';
+        $('dash-chart').innerHTML = '<div style="color:var(--text-muted);font-size:.85rem;padding:.5rem 0">לא נרשמו צפיות עדיין</div>';
+        return;
+      }
       const total = daily.reduce((s, d) => s + (d.views || 0), 0);
       $('dash-analytics-total').textContent = total.toLocaleString() + ' צפיות';
       // בר גרף פשוט
