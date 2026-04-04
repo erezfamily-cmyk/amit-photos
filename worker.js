@@ -474,6 +474,36 @@ async function handleVerifyPayment(request, env) {
 }
 
 // ===== NEWSLETTER =====
+function buildNewsletterHtml(subject, body, unsubscribeUrl, name) {
+  const safeBody = body.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const safeSubject = subject.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const greeting = name ? `שלום ${name.replace(/&/g,'&amp;')},<br><br>` : '';
+  return `<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#f4f4f4;font-family:Arial,sans-serif">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:32px 0">
+    <tr><td align="center">
+      <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.08)">
+        <tr><td style="background:#0a0a0a;padding:28px 40px;text-align:center">
+          <div style="color:#c8a96e;font-size:22px;font-weight:700;letter-spacing:.25em;font-family:Georgia,serif">AMIT PHOTOS</div>
+          <div style="color:#888;font-size:11px;letter-spacing:.18em;margin-top:4px">צילום אמנותי</div>
+        </td></tr>
+        <tr><td style="padding:36px 40px;color:#222;font-size:15px;line-height:1.85;direction:rtl;text-align:right">
+          <h2 style="margin:0 0 1.2rem;font-size:18px;color:#111">${safeSubject}</h2>
+          <div style="white-space:pre-wrap">${greeting}${safeBody}</div>
+        </td></tr>
+        <tr><td style="padding:0 40px"><hr style="border:none;border-top:1px solid #e8e8e8"></td></tr>
+        <tr><td style="padding:20px 40px 28px;text-align:center">
+          <p style="color:#aaa;font-size:12px;margin:0 0 6px">קיבלת מייל זה כי נרשמת לניוזלטר של <a href="https://amitphotos.com" style="color:#c8a96e;text-decoration:none">amitphotos.com</a></p>
+          <p style="margin:0"><a href="${unsubscribeUrl}" style="color:#bbb;font-size:11px;text-decoration:underline">הסר אותי מהרשימה</a></p>
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body></html>`;
+}
+
 async function handleNewsletter(request, env) {
   if (!await checkAuth(request, env)) return unauth(request);
   if (request.method !== 'POST') return jsonRes({ error: 'method not allowed' }, 405, request);
@@ -482,46 +512,15 @@ async function handleNewsletter(request, env) {
   const { subject, body } = await request.json().catch(() => ({}));
   if (!subject || !body) return jsonRes({ error: 'נושא ותוכן הם שדות חובה' }, 400, request);
 
-  const { results: subscribers } = await env.DB.prepare('SELECT email, name FROM subscribers').all();
+  const { results: subscribers } = await env.DB.prepare('SELECT id, email, name FROM subscribers').all();
   if (!subscribers.length) return jsonRes({ error: 'אין נרשמים ברשימה' }, 400, request);
 
   const fromEmail = env.FROM_EMAIL || 'amit@amitphotos.com';
-  const safeBody = body.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  const html = `<!DOCTYPE html>
-<html lang="he" dir="rtl">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
-<body style="margin:0;padding:0;background:#f4f4f4;font-family:Arial,sans-serif">
-  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:32px 0">
-    <tr><td align="center">
-      <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#ffffff;border-radius:8px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.08)">
-        <!-- Header -->
-        <tr>
-          <td style="background:#0a0a0a;padding:28px 40px;text-align:center">
-            <div style="color:#c8a96e;font-size:22px;font-weight:700;letter-spacing:.25em;font-family:Georgia,serif">AMIT PHOTOS</div>
-            <div style="color:#888;font-size:11px;letter-spacing:.18em;margin-top:4px">צילום אמנותי</div>
-          </td>
-        </tr>
-        <!-- Body -->
-        <tr>
-          <td style="padding:36px 40px;color:#222;font-size:15px;line-height:1.85;direction:rtl;text-align:right">
-            <div style="white-space:pre-wrap">${safeBody}</div>
-          </td>
-        </tr>
-        <!-- Divider -->
-        <tr><td style="padding:0 40px"><hr style="border:none;border-top:1px solid #e8e8e8"></td></tr>
-        <!-- Footer -->
-        <tr>
-          <td style="padding:20px 40px 28px;text-align:center">
-            <p style="color:#aaa;font-size:12px;margin:0">קיבלת מייל זה כי נרשמת לניוזלטר של <a href="https://amitphotos.com" style="color:#c8a96e;text-decoration:none">amitphotos.com</a></p>
-          </td>
-        </tr>
-      </table>
-    </td></tr>
-  </table>
-</body></html>`;
-
+  const origin = new URL(request.url).origin;
   let sent = 0;
   for (const sub of subscribers) {
+    const unsubscribeUrl = `${origin}/api/unsubscribe?token=${sub.id}`;
+    const html = buildNewsletterHtml(subject, body, unsubscribeUrl, sub.name);
     const res = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: { 'Authorization': `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
@@ -530,6 +529,30 @@ async function handleNewsletter(request, env) {
     if (res.ok) sent++;
   }
   return jsonRes({ ok: true, sent, total: subscribers.length }, 200, request);
+}
+
+// ===== UNSUBSCRIBE =====
+async function handleUnsubscribe(request, env) {
+  const token = new URL(request.url).searchParams.get('token');
+  const html = (title, msg, color) => new Response(`<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${title}</title></head>
+<body style="margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#f4f4f4;font-family:Arial,sans-serif">
+  <div style="background:#fff;border-radius:8px;padding:48px 40px;max-width:440px;width:100%;text-align:center;box-shadow:0 2px 12px rgba(0,0,0,.08)">
+    <div style="color:#c8a96e;font-size:18px;font-weight:700;letter-spacing:.22em;font-family:Georgia,serif;margin-bottom:24px">AMIT PHOTOS</div>
+    <div style="font-size:2rem;margin-bottom:16px">${color}</div>
+    <h2 style="margin:0 0 12px;font-size:20px;color:#111">${title}</h2>
+    <p style="color:#666;font-size:14px;line-height:1.7;margin:0 0 24px">${msg}</p>
+    <a href="https://amitphotos.com" style="display:inline-block;padding:.6rem 1.6rem;background:#0a0a0a;color:#c8a96e;text-decoration:none;border-radius:4px;font-size:14px">חזרה לאתר</a>
+  </div>
+</body></html>`, { headers: { 'Content-Type': 'text/html;charset=UTF-8' } });
+
+  if (!token) return html('קישור לא תקין', 'הקישור להסרה אינו תקין.', '❌');
+  const row = await env.DB.prepare('SELECT id FROM subscribers WHERE id=?').bind(token).first().catch(() => null);
+  if (!row) return html('כבר הוסרת', 'כתובת המייל שלך אינה ברשימה.', 'ℹ️');
+  await env.DB.prepare('DELETE FROM subscribers WHERE id=?').bind(token).run();
+  return html('הוסרת בהצלחה', 'הוסרת מרשימת הניוזלטר. לא תקבל עוד מיילים מאיתנו.', '✅');
 }
 
 // ===== ANALYTICS =====
@@ -590,6 +613,7 @@ export default {
     if (path === '/api/fill-titles')       return handleFillTitles(request, env);
     if (path === '/api/trigger-workflow')  return handleTriggerWorkflow(request, env);
     if (path === '/api/newsletter')        return handleNewsletter(request, env);
+    if (path === '/api/unsubscribe')       return handleUnsubscribe(request, env);
     if (path === '/api/verify-payment')    return handleVerifyPayment(request, env);
     if (path === '/api/analytics')         return handleAnalytics(request, env);
     if (path.startsWith('/photos/'))       return servePhoto(path.slice('/photos/'.length), env);
