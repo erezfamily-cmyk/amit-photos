@@ -517,26 +517,28 @@ async function handleNewsletter(request, env) {
 
   const fromEmail = env.FROM_EMAIL || 'amit@amitphotos.com';
   const origin = new URL(request.url).origin;
-  let sent = 0;
-  let lastError = null;
-  for (const sub of subscribers) {
-    const unsubscribeUrl = `${origin}/api/unsubscribe?token=${sub.id}`;
-    const html = buildNewsletterHtml(subject, body, unsubscribeUrl, sub.name);
-    const res = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: { 'Authorization': `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ from: fromEmail, to: sub.email, subject, html })
-    });
-    if (res.ok) {
-      sent++;
-    } else {
-      const errBody = await res.json().catch(() => ({}));
-      lastError = errBody.message || errBody.name || `HTTP ${res.status}`;
-    }
+
+  const batch = subscribers.map(sub => ({
+    from: fromEmail,
+    to: sub.email,
+    subject,
+    html: buildNewsletterHtml(subject, body, `${origin}/api/unsubscribe?token=${sub.id}`, sub.name)
+  }));
+
+  const res = await fetch('https://api.resend.com/emails/batch', {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify(batch)
+  });
+
+  if (!res.ok) {
+    const errBody = await res.json().catch(() => ({}));
+    const msg = errBody.message || errBody.name || `HTTP ${res.status}`;
+    return jsonRes({ error: `שגיאת Resend: ${msg}` }, 500, request);
   }
-  if (sent === 0 && lastError) {
-    return jsonRes({ error: `שגיאת Resend: ${lastError}` }, 500, request);
-  }
+
+  const data = await res.json().catch(() => ({}));
+  const sent = Array.isArray(data.data) ? data.data.length : subscribers.length;
   return jsonRes({ ok: true, sent, total: subscribers.length }, 200, request);
 }
 
