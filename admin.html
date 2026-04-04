@@ -110,6 +110,9 @@ input,textarea,select{font-family:var(--font);direction:rtl}
 /* ===== SECTIONS ===== */
 .section{display:none}
 .section.active{display:block}
+.hidden{display:none}
+.empty-msg{text-align:center;color:var(--text-muted);padding:2rem}
+.badge-status{font-size:.75rem;background:rgba(200,169,110,.12);color:var(--accent);border:1px solid rgba(200,169,110,.2);padding:.15rem .5rem;border-radius:4px}
 
 .section-header{
   display:flex;align-items:center;justify-content:space-between;
@@ -449,6 +452,10 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
         <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke-width="1.5"/><polyline points="22,6 12,13 2,6" stroke-width="1.5"/></svg>
         ניוזלטר
       </div>
+      <div class="nav-item" data-section="print-orders">
+        <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><polyline points="6 9 6 2 18 2 18 9" stroke-width="1.5"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" stroke-width="1.5"/><rect x="6" y="14" width="12" height="8" rx="1" stroke-width="1.5"/></svg>
+        הדפסות
+      </div>
     </nav>
     <div class="sidebar-footer">
       <button class="btn-logout" id="logout-btn">התנתק</button>
@@ -518,6 +525,31 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
         <div style="margin-bottom:.5rem;font-size:.8rem;color:var(--text-muted);font-weight:500">מדינות</div>
         <div id="dash-countries" style="display:flex;flex-wrap:wrap;gap:.5rem 1rem;font-size:.85rem;color:var(--text-muted)"></div>
       </div>
+    </section>
+
+    <!-- PRINT ORDERS SECTION -->
+    <section class="section" id="section-print-orders">
+      <div class="section-header">
+        <h1 class="section-title">הזמנות הדפסה</h1>
+        <button type="button" class="btn btn-ghost btn-sm" id="print-orders-refresh-btn">רענן</button>
+      </div>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead><tr>
+            <th>תאריך</th>
+            <th>שם לקוח</th>
+            <th>טלפון</th>
+            <th>מייל</th>
+            <th>כתובת</th>
+            <th>מוצר</th>
+            <th>מחיר</th>
+            <th>מספר הזמנה Prodigi</th>
+            <th>סטטוס</th>
+          </tr></thead>
+          <tbody id="print-orders-tbody"></tbody>
+        </table>
+      </div>
+      <p id="print-orders-empty" class="empty-msg hidden">אין הזמנות הדפסה עדיין</p>
     </section>
 
     <!-- PHOTOS SECTION -->
@@ -1074,6 +1106,7 @@ document.querySelectorAll('.nav-item').forEach(item => {
     $('section-' + item.dataset.section).classList.add('active');
     if (item.dataset.section === 'analytics') Dashboard.loadAnalytics();
     if (item.dataset.section === 'newsletter') Newsletter.init();
+    if (item.dataset.section === 'print-orders') PrintOrders.load();
   });
 });
 
@@ -1934,6 +1967,51 @@ const Customers = (() => {
   $('cust-filter-status').addEventListener('change', e=>{ filterStatus=e.target.value; render(); });
 
   return { load, openView, openEdit, quickStatus, remove, getData: () => data };
+})();
+
+// ===== PRINT ORDERS =====
+const PrintOrders = (() => {
+  let data = [];
+
+  function fmtDate(d) {
+    if (!d) return '—';
+    return new Date(d).toLocaleDateString('he-IL', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' });
+  }
+
+  function render() {
+    const tbody = $('print-orders-tbody');
+    const empty = $('print-orders-empty');
+    if (!data.length) {
+      tbody.innerHTML = '';
+      empty.classList.remove('hidden');
+      return;
+    }
+    empty.classList.add('hidden');
+    tbody.innerHTML = data.map(o => `
+      <tr>
+        <td style="white-space:nowrap;font-size:.82rem;color:var(--text-muted)">${fmtDate(o.created_at)}</td>
+        <td><strong>${o.customer_name||'—'}</strong></td>
+        <td><a href="tel:${o.customer_phone||''}" style="color:var(--accent)">${o.customer_phone||'—'}</a></td>
+        <td><a href="mailto:${o.customer_email||''}" style="color:var(--accent)">${o.customer_email||'—'}</a></td>
+        <td style="font-size:.85rem">${o.address_line1||'—'}, ${o.address_city||''} ${o.address_zip||''}</td>
+        <td style="font-size:.85rem">${o.product_label||o.sku||'—'}</td>
+        <td style="color:var(--accent)">$${o.sell_price||'—'}</td>
+        <td style="font-size:.78rem;color:var(--text-muted)">${o.prodigi_order_id||'—'}</td>
+        <td><span class="badge-status">${o.status||'—'}</span></td>
+      </tr>`).join('');
+  }
+
+  async function load() {
+    try {
+      const r = await fetch('/api/print/orders', { headers: authHeaders() });
+      data = await r.json();
+      render();
+    } catch { toast('שגיאה בטעינת הזמנות', 'error'); }
+  }
+
+  $('print-orders-refresh-btn').addEventListener('click', load);
+
+  return { load };
 })();
 </script>
 </body>

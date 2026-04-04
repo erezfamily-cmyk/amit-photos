@@ -626,7 +626,33 @@ async function handlePrintOrderComplete(request, env) {
     return jsonRes({ error: `שגיאת Prodigi: ${err.detail || prodigiRes.status}` }, 500, request);
   }
   const pd = await prodigiRes.json();
-  return jsonRes({ ok: true, orderId: pd.order?.id || orderId }, 200, request);
+  const prodigiOrderId = pd.order?.id || '';
+
+  // Find human-readable product label
+  const typeEntry = Object.values(PRINT_CATALOG).find(t => t.sizes.some(s => s.sku === sku));
+  const sizeEntry = typeEntry?.sizes.find(s => s.sku === sku);
+  const productLabel = typeEntry && sizeEntry ? `${typeEntry.label} — ${sizeEntry.label}` : sku;
+  const sellPrice = parseFloat(txData['mc_gross'] || 0);
+
+  await env.DB.prepare(
+    `INSERT INTO print_orders (id, prodigi_order_id, photo_id, sku, product_label, sell_price, customer_name, customer_email, customer_phone, address_line1, address_city, address_zip, paypal_tx, status, created_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'in_production', ?)`
+  ).bind(
+    orderId, prodigiOrderId, photoId, sku, productLabel, sellPrice,
+    address.name, address.email || '', address.phone || '',
+    address.line1, address.city, address.zip,
+    tx, new Date().toISOString()
+  ).run();
+
+  return jsonRes({ ok: true, orderId: prodigiOrderId || orderId }, 200, request);
+}
+
+async function handlePrintOrders(request, env) {
+  if (!await checkAuth(request, env)) return unauth(request);
+  const { results } = await env.DB.prepare(
+    'SELECT * FROM print_orders ORDER BY created_at DESC'
+  ).all();
+  return jsonRes(results, 200, request);
 }
 
 // ===== NEWSLETTER =====
@@ -828,9 +854,10 @@ export default {
     if (path === '/api/unsubscribe')       return handleUnsubscribe(request, env);
     if (path === '/api/reply')             return handleReply(request, env);
     if (path === '/api/verify-payment')    return handleVerifyPayment(request, env);
-    if (path === '/api/print/catalog')     return handlePrintCatalog(request, env);
-    if (path === '/api/print/quote')       return handlePrintQuote(request, env);
+    if (path === '/api/print/catalog')        return handlePrintCatalog(request, env);
+    if (path === '/api/print/quote')          return handlePrintQuote(request, env);
     if (path === '/api/print/order-complete') return handlePrintOrderComplete(request, env);
+    if (path === '/api/print/orders')         return handlePrintOrders(request, env);
     if (path === '/api/analytics')         return handleAnalytics(request, env);
     if (path.startsWith('/photos/'))       return servePhoto(path.slice('/photos/'.length), env);
 
