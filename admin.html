@@ -1346,12 +1346,15 @@ const Photos = (() => {
     const category = $('edit-photo-category').value.trim();
     const description = $('edit-photo-desc').value.trim();
     const photo = data.find(p => p.id === id);
+    let finalTitle = title;
     if (photo?._source === 'r2') {
-      await fetch('/api/photos', {
+      const res = await fetch('/api/photos', {
         method: 'PATCH',
         headers: authHeaders(),
         body: JSON.stringify({ id, title, category, description })
       });
+      const resData = await res.json().catch(() => ({}));
+      if (resData.title) finalTitle = resData.title;
     } else if (photo?._source === 'drive') {
       const { _source, ...photoData } = photo;
       await fetch('/api/photos', {
@@ -1364,7 +1367,7 @@ const Photos = (() => {
     }
     // עדכון מקומי
     const idx = data.findIndex(p => p.id === id);
-    if (idx >= 0) data[idx] = { ...data[idx], title, category, description };
+    if (idx >= 0) data[idx] = { ...data[idx], title: finalTitle, category, description };
     toast('שינויים נשמרו');
     $('photo-dialog').close();
     render();

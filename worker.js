@@ -278,10 +278,22 @@ async function handlePhotos(request, env) {
   if (method === 'PATCH') {
     const { id, title, category, description } = await request.json().catch(() => ({}));
     if (!id) return jsonRes({ error: 'id חסר' }, 400);
+
+    let finalTitle = title || '';
+    // אם הכותרת גנרית — נסה לייצר עברית אוטומטית
+    if (isGenericTitle(finalTitle)) {
+      const row = await env.DB.prepare('SELECT r2_key FROM photos WHERE id=?').bind(id).first();
+      if (row?.r2_key) {
+        const origin = new URL(request.url).origin;
+        const aiTitle = await generateHebrewTitle(`${origin}/photos/${row.r2_key}`, category || '', env);
+        if (aiTitle) finalTitle = aiTitle;
+      }
+    }
+
     await env.DB.prepare(
       'UPDATE photos SET title=?,category=?,description=? WHERE id=?'
-    ).bind(title||'', category||'', description||'', id).run();
-    return jsonRes({ ok: true });
+    ).bind(finalTitle, category||'', description||'', id).run();
+    return jsonRes({ ok: true, title: finalTitle });
   }
 
   if (method === 'DELETE') {
@@ -325,18 +337,26 @@ async function handleUpload(request, env) {
   }
 
   const url = `/photos/${key}`;
+  const category = formData.get('category') || '';
+  let title = formData.get('title') || '';
+
+  // אם אין כותרת עברית — נסה לייצר אחת אוטומטית
+  if (isGenericTitle(title)) {
+    const origin = new URL(request.url).origin;
+    const aiTitle = await generateHebrewTitle(`${origin}${url}`, category, env);
+    if (aiTitle) title = aiTitle;
+  }
+
   await env.DB.prepare(
     `INSERT INTO photos (id,title,category,description,filename,r2_key,url,thumbnail,created_at) VALUES (?,?,?,?,?,?,?,?,?)`
   ).bind(
-    id,
-    formData.get('title') || '',
-    formData.get('category') || '',
+    id, title, category,
     formData.get('description') || '',
     file.name, key, url, thumbUrl,
     new Date().toISOString()
   ).run();
 
-  return jsonRes({ ok: true, id, url, thumbnail: thumbUrl, key });
+  return jsonRes({ ok: true, id, url, thumbnail: thumbUrl, key, title });
 }
 
 // ===== TRIGGER GITHUB ACTIONS =====
@@ -374,6 +394,36 @@ function isGenericTitle(title) {
   if (!title) return true;
   // כל כותרת שאין בה אף תו עברי — גנרית
   return !/[\u05D0-\u05EA]/.test(title);
+}
+
+async function generateHebrewTitle(imageUrl, category, env) {
+  if (!env.ANTHROPIC_API_KEY) return null;
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'x-api-key': env.ANTHROPIC_API_KEY,
+        'anthropic-version': '2023-06-01',
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 30,
+        messages: [{
+          role: 'user',
+          content: [
+            { type: 'image', source: { type: 'url', url: imageUrl } },
+            { type: 'text', text: `זוהי תמונה מגלריית הצילום של הצלם עמית ארז, קטגוריה: ${category || 'כללי'}.\nתן לתמונה כותרת קצרה ויפה בעברית — 2 עד 4 מילים בלבד.\nהחזר רק את הכותרת, ללא פיסוק נוסף.` }
+          ]
+        }]
+      })
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data.content?.[0]?.text?.replace(/[\*_`#\n\r]/g, '').trim().replace(/^['"]|['"]$/g, '') || null;
+  } catch {
+    return null;
+  }
 }
 
 async function handleFillTitles(request, env) {
