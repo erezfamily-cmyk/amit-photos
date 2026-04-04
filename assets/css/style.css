@@ -667,6 +667,15 @@ nav.scrolled { border-bottom-color: rgba(200, 169, 110, 0.3); }
   height: auto;
   transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
   display: block;
+  user-select: none;
+  -webkit-user-drag: none;
+  pointer-events: none;
+}
+
+.img-protect-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
 }
 
 /* סימון מים */
@@ -905,6 +914,8 @@ nav.scrolled { border-bottom-color: rgba(200, 169, 110, 0.3); }
   transition: opacity 0.3s ease;
   cursor: zoom-in;
   transform-origin: center center;
+  user-select: none;
+  -webkit-user-drag: none;
 }
 #lb-img.zoomed {
   cursor: zoom-out;

@@ -7,6 +7,11 @@ const PAGE_SIZE = 25;
 let slideshowTimer = null;
 let isZoomed = false;
 
+// ===== IMAGE PROTECTION =====
+document.addEventListener('keydown', e => {
+  if ((e.ctrlKey || e.metaKey) && e.key === 's') e.preventDefault();
+});
+
 // ===== INIT =====
 document.addEventListener('DOMContentLoaded', async () => {
   initNav();
@@ -167,7 +172,10 @@ function renderGallery(append = false) {
         alt="${photo.title}"
         loading="lazy"
         onload="this.closest('.gallery-item').classList.add('loaded')"
+        draggable="false"
+        oncontextmenu="return false"
       />
+      <div class="img-protect-overlay"></div>
       <div class="gallery-item-overlay">
         <div class="gallery-item-info">
           <h3>${photo.title}</h3>
@@ -351,6 +359,12 @@ function initLightbox() {
   if (!lb) return;
 
   initLoadMore();
+
+  const lbImg = document.getElementById('lb-img');
+  if (lbImg) {
+    lbImg.setAttribute('draggable', 'false');
+    lbImg.addEventListener('contextmenu', e => e.preventDefault());
+  }
 
   document.getElementById('lb-close').addEventListener('click', closeLightbox);
   document.getElementById('lb-prev').addEventListener('click', () => { stopSlideshow(); navigateLightbox(-1); });
