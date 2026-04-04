@@ -313,6 +313,17 @@ async function handleUpload(request, env) {
     httpMetadata: { contentType: file.type || 'image/jpeg' },
   });
 
+  // שמור thumbnail אם נשלח
+  const thumb = formData.get('thumb');
+  let thumbUrl = `/photos/${key}`;
+  if (thumb && typeof thumb !== 'string') {
+    const thumbKey = `thumb_${id}.jpg`;
+    await env.PHOTOS.put(thumbKey, thumb.stream(), {
+      httpMetadata: { contentType: 'image/jpeg' },
+    });
+    thumbUrl = `/photos/${thumbKey}`;
+  }
+
   const url = `/photos/${key}`;
   await env.DB.prepare(
     `INSERT INTO photos (id,title,category,description,filename,r2_key,url,thumbnail,created_at) VALUES (?,?,?,?,?,?,?,?,?)`
@@ -321,11 +332,11 @@ async function handleUpload(request, env) {
     formData.get('title') || '',
     formData.get('category') || '',
     formData.get('description') || '',
-    file.name, key, url, url,
+    file.name, key, url, thumbUrl,
     new Date().toISOString()
   ).run();
 
-  return jsonRes({ ok: true, id, url, key });
+  return jsonRes({ ok: true, id, url, thumbnail: thumbUrl, key });
 }
 
 // ===== TRIGGER GITHUB ACTIONS =====

@@ -1152,17 +1152,21 @@ const Photos = (() => {
       const meta = await promptPhotoMeta(file.name);
       if (meta === null) continue; // דילג
 
+      // צור thumbnail 800px בדפדפן
+      const thumbBlob = await createThumbnail(file, 800);
+
       const fd = new FormData();
       fd.append('file', file);
+      fd.append('thumb', thumbBlob, 'thumb.jpg');
       fd.append('title', meta.title);
       fd.append('category', meta.category);
       fd.append('description', meta.description);
 
       const r = await fetch('/api/upload', { method: 'POST', headers: { 'X-Session-Token': SESSION_TOKEN }, body: fd });
       if (!r.ok) { toast(`שגיאה בהעלאת ${file.name}`, 'error'); continue; }
-      const { id, url } = await r.json();
+      const { id, url, thumbnail } = await r.json();
       data.unshift({ id, title: meta.title, category: meta.category, description: meta.description,
-        url, thumbnail: url, filename: file.name, _source: 'r2' });
+        url, thumbnail: thumbnail || url, filename: file.name, _source: 'r2' });
     }
 
     bar.style.width = '100%';
@@ -1170,6 +1174,23 @@ const Photos = (() => {
     setTimeout(() => { prog.style.display = 'none'; bar.style.width = '0%'; }, 1500);
     render();
     toast(`${images.length} תמונות הועלו`);
+  }
+
+  function createThumbnail(file, maxWidth) {
+    return new Promise(resolve => {
+      const img = new Image();
+      const objUrl = URL.createObjectURL(file);
+      img.onload = () => {
+        URL.revokeObjectURL(objUrl);
+        const ratio = Math.min(1, maxWidth / img.width);
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.round(img.width * ratio);
+        canvas.height = Math.round(img.height * ratio);
+        canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+        canvas.toBlob(resolve, 'image/jpeg', 0.85);
+      };
+      img.src = objUrl;
+    });
   }
 
   function promptPhotoMeta(filename) {
