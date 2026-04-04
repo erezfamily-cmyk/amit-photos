@@ -1122,7 +1122,7 @@ const PrintShop = (() => {
     const aspectH = parseFloat(btn.dataset.h);
     const minW    = parseFloat(btn.dataset.minw);
     const minH    = parseFloat(btn.dataset.minh);
-    initCropPreview(currentPhoto.url, aspectW, aspectH, minW, minH);
+    initCropPreview(getLightboxUrl(currentPhoto.url), aspectW, aspectH, minW, minH);
 
     document.getElementById('print-price-display').textContent = 'טוען מחיר...';
     try {
