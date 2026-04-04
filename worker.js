@@ -165,6 +165,25 @@ async function handleSubscribers(request, env) {
     await env.DB.prepare(
       'INSERT INTO subscribers (id, name, email, notes, created_at) VALUES (?,?,?,?,?)'
     ).bind(id, name || '', email, notes || '', new Date().toISOString()).run();
+
+    // שלח מייל אישור לנרשם
+    if (env.RESEND_API_KEY) {
+      const fromEmail = env.FROM_EMAIL || 'amit@amitphotos.com';
+      const confirmHtml = `<div dir="rtl" style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:2rem;color:#111">
+        <h2 style="color:#c8a96e;font-family:sans-serif">AMIT PHOTOS</h2>
+        <p>שלום${name ? ' ' + name : ''},</p>
+        <p>תודה שנרשמת לניוזלטר של עמית פוטוס! 🎉</p>
+        <p>תקבל עדכונים על תמונות חדשות, מבצעים בלעדיים ותוכן מאחורי הקלעים — ישירות למייל.</p>
+        <hr style="margin-top:2rem;border-color:#ddd">
+        <p style="color:#999;font-size:.8rem">קיבלת מייל זה כי נרשמת לניוזלטר של <a href="https://amitphotos.com">amitphotos.com</a>.</p>
+      </div>`;
+      await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ from: fromEmail, to: email, subject: 'ברוך הבא לניוזלטר של עמית פוטוס!', html: confirmHtml })
+      });
+    }
+
     return jsonRes({ ok: true, id }, 200, request);
   }
 
