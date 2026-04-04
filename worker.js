@@ -478,20 +478,22 @@ async function handleVerifyPayment(request, env) {
 const PRINT_CATALOG = {
   photo: {
     label: 'הדפסה על נייר צילום',
-    desc: 'נייר לוסטר איכותי, מועבר מגולגל או שטוח — מוכן למסגור',
+    desc: 'נייר לוסטר איכותי, מוכן למסגור',
+    attributes: {},
     sizes: [
       { label: '10×15 ס"מ (4×6")', sku: 'GLOBAL-PAP-4X6' },
       { label: '13×18 ס"מ (5×7")', sku: 'GLOBAL-PAP-5X7' },
       { label: '20×25 ס"מ (8×10")', sku: 'GLOBAL-PAP-8X10' },
-      { label: 'A4 — 21×29.7 ס"מ', sku: 'GLOBAL-PAP-A4' },
+      { label: 'A4 — 21×30 ס"מ', sku: 'GLOBAL-PAP-A4' },
       { label: '28×35 ס"מ (11×14")', sku: 'GLOBAL-PAP-11X14' },
       { label: '40×50 ס"מ (16×20")', sku: 'GLOBAL-PAP-16X20' },
-      { label: 'A3 — 29.7×42 ס"מ', sku: 'GLOBAL-PAP-A3' },
+      { label: 'A3 — 30×42 ס"מ', sku: 'GLOBAL-PAP-A3' },
     ]
   },
   canvas: {
     label: 'הדפסה על קנבס',
     desc: 'קנבס מתוח על מסגרת עץ, מוכן לתלייה',
+    attributes: { wrap: 'ImageWrap' },
     sizes: [
       { label: '20×20 ס"מ', sku: 'GLOBAL-CAN-8X8' },
       { label: '20×25 ס"מ', sku: 'GLOBAL-CAN-8X10' },
@@ -501,13 +503,14 @@ const PRINT_CATALOG = {
     ]
   },
   poster: {
-    label: 'פוסטר',
-    desc: 'נייר אמנות דיגיטלי, פינישינג מט',
+    label: 'פוסטר — נייר אמנות מט',
+    desc: 'נייר אמנות איכותי, פינישינג מט',
+    attributes: {},
     sizes: [
-      { label: 'A3 — 29.7×42 ס"מ', sku: 'GLOBAL-BAPD-A3' },
-      { label: 'A2 — 42×59.4 ס"מ', sku: 'GLOBAL-BAPD-A2' },
-      { label: '45×60 ס"מ', sku: 'GLOBAL-BAPD-18X24' },
-      { label: '60×90 ס"מ', sku: 'GLOBAL-BAPD-24X36' },
+      { label: 'A3 — 30×42 ס"מ', sku: 'GLOBAL-FAP-A3' },
+      { label: 'A2 — 42×59 ס"מ', sku: 'GLOBAL-FAP-A2' },
+      { label: '45×60 ס"מ', sku: 'GLOBAL-FAP-18X24' },
+      { label: '60×90 ס"מ', sku: 'GLOBAL-FAP-24X36' },
     ]
   }
 };
@@ -522,6 +525,10 @@ async function handlePrintQuote(request, env) {
   if (!sku) return jsonRes({ error: 'sku חסר' }, 400, request);
   if (!env.PRODIGI_API_KEY) return jsonRes({ error: 'PRODIGI_API_KEY לא מוגדר' }, 500, request);
 
+  // Find attributes for this SKU
+  const typeEntry = Object.values(PRINT_CATALOG).find(t => t.sizes.some(s => s.sku === sku));
+  const skuAttributes = typeEntry?.attributes || {};
+
   const res = await fetch('https://api.prodigi.com/v4.0/quotes', {
     method: 'POST',
     headers: { 'X-API-Key': env.PRODIGI_API_KEY, 'Content-Type': 'application/json' },
@@ -529,7 +536,7 @@ async function handlePrintQuote(request, env) {
       shippingMethod: 'Standard',
       destinationCountryCode: 'IL',
       currencyCode: 'USD',
-      items: [{ sku, copies: 1, attributes: {}, assets: [{ printArea: 'default' }] }]
+      items: [{ sku, copies: 1, attributes: skuAttributes, assets: [{ printArea: 'default' }] }]
     })
   });
 
@@ -616,6 +623,7 @@ async function handlePrintOrderComplete(request, env) {
         sku,
         copies: 1,
         sizing: 'fillPrintArea',
+        attributes: typeEntry?.attributes || {},
         assets: [{ printArea: 'default', url: photoUrl }]
       }]
     })
