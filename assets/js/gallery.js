@@ -947,7 +947,7 @@ const PrintShop = (() => {
     document.getElementById('print-type-label').textContent = t.label;
     const container = document.getElementById('print-size-options');
     container.innerHTML = t.sizes.map(s =>
-      `<button type="button" class="print-size-btn" data-sku="${s.sku}" data-w="${s.w}" data-h="${s.h}">${s.label}</button>`
+      `<button type="button" class="print-size-btn" data-sku="${s.sku}" data-w="${s.w}" data-h="${s.h}" data-wi="${s.wi}" data-hi="${s.hi}">${s.label}</button>`
     ).join('');
     container.querySelectorAll('.print-size-btn').forEach(btn => {
       btn.addEventListener('click', () => selectSize(btn));
@@ -962,7 +962,7 @@ const PrintShop = (() => {
   let cropImgNaturalW = 0, cropImgNaturalH = 0;
   let cropFrameW = 0, cropFrameH = 0;
 
-  function initCropPreview(imageUrl, aspectW, aspectH) {
+  function initCropPreview(imageUrl, aspectW, aspectH, winch, hinch) {
     const wrap = document.getElementById('print-preview-wrap');
     const frame = document.getElementById('print-crop-frame');
     const img = document.getElementById('print-crop-img');
@@ -995,6 +995,25 @@ const PrintShop = (() => {
       cropOffsetX = Math.round((cropFrameW - dispW) / 2);
       cropOffsetY = Math.round((cropFrameH - dispH) / 2);
       img.style.transform = `translate(${cropOffsetX}px, ${cropOffsetY}px)`;
+
+      // Resolution check
+      if (winch && hinch) {
+        const resEl = document.getElementById('print-res-warning');
+        const level = checkResolution(img, winch, hinch);
+        if (level === 'block') {
+          resEl.className = 'print-res-block';
+          resEl.textContent = '❌ הרזולוציה נמוכה מדי לגודל זה — בחר גודל קטן יותר';
+          document.getElementById('print-to-details-btn').classList.remove('visible');
+          selectedPrice = null;
+        } else if (level === 'warn') {
+          resEl.className = 'print-res-warn';
+          resEl.textContent = '⚠️ הרזולוציה בינונית — התוצאה עשויה להיות פחות חדה';
+        } else {
+          resEl.className = '';
+          resEl.textContent = '✓ רזולוציה מתאימה להדפסה';
+          resEl.className = 'print-res-ok';
+        }
+      }
     };
     img.src = imageUrl;
     wrap.classList.remove('hidden');
@@ -1054,6 +1073,27 @@ const PrintShop = (() => {
     document.onmousemove = document.onmouseup = document.ontouchmove = document.ontouchend = null;
   }
 
+  function checkResolution(imgEl, winch, hinch) {
+    // Returns: 'ok' | 'warn' | 'block'
+    const pw = imgEl.naturalWidth;
+    const ph = imgEl.naturalHeight;
+    if (!pw || !ph) return 'ok'; // can't check, allow
+
+    // Prodigi crops to fill — use the constraining dimension
+    const dpiW = pw / winch;
+    const dpiH = ph / hinch;
+    // For fillPrintArea, image is scaled so both dimensions cover the print
+    // The effective DPI is the minimum of the two after scaling
+    const scaleToFillW = winch / pw;
+    const scaleToFillH = hinch / ph;
+    const scale = Math.min(scaleToFillW, scaleToFillH); // scale that makes image cover print
+    const effectiveDpi = 1 / scale;
+
+    if (effectiveDpi < 100) return 'block';
+    if (effectiveDpi < 200) return 'warn';
+    return 'ok';
+  }
+
   async function selectSize(btn) {
     document.getElementById('print-size-options').querySelectorAll('.print-size-btn')
       .forEach(b => b.classList.toggle('active', b === btn));
@@ -1064,8 +1104,9 @@ const PrintShop = (() => {
     // Show crop preview immediately
     const aspectW = parseFloat(btn.dataset.w);
     const aspectH = parseFloat(btn.dataset.h);
-    const imgUrl = currentPhoto.url.startsWith('http') ? currentPhoto.url : currentPhoto.url;
-    initCropPreview(imgUrl, aspectW, aspectH);
+    const winch   = parseFloat(btn.dataset.wi);
+    const hinch   = parseFloat(btn.dataset.hi);
+    initCropPreview(currentPhoto.url, aspectW, aspectH, winch, hinch);
 
     document.getElementById('print-price-display').textContent = 'טוען מחיר...';
     try {

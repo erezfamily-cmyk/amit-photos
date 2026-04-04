@@ -1218,6 +1218,9 @@ nav.scrolled { border-bottom-color: rgba(200, 169, 110, 0.3); }
 .print-preview-wrap { margin: 1rem 0 .5rem; }
 .print-preview-label { font-size: .78rem; color: var(--text-muted); text-align: center; margin-bottom: .5rem; }
 .print-preview-hint  { font-size: .72rem; color: var(--text-muted); text-align: center; margin-top: .4rem; }
+.print-res-ok    { font-size: .8rem; text-align: center; margin-top: .4rem; color: #4caf7d; }
+.print-res-warn  { font-size: .8rem; text-align: center; margin-top: .4rem; color: #e8a838; }
+.print-res-block { font-size: .8rem; text-align: center; margin-top: .4rem; color: #e55; font-weight: 600; }
 .print-crop-frame {
   width: 100%;
   overflow: hidden;
