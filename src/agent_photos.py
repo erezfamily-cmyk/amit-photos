@@ -19,6 +19,7 @@ Agent אוטומטי שסורק את Google Drive, מנתח תמונות עם Cl
 import base64
 import json
 import os
+import re
 import sys
 import time
 from pathlib import Path
@@ -213,7 +214,7 @@ def load_existing_photos():
 def main():
     sys.stdout.reconfigure(encoding="utf-8")
 
-    anthropic_key = (os.environ.get("ANTHROPIC_API_KEY") or os.environ.get("AMIT_PHOTO_AGENT") or "").strip()
+    anthropic_key = re.sub(r'\s+', '', os.environ.get("ANTHROPIC_API_KEY") or os.environ.get("AMIT_PHOTO_AGENT") or "")
     if not anthropic_key:
         print("❌ חסר ANTHROPIC_API_KEY במשתני הסביבה")
         sys.exit(1)
