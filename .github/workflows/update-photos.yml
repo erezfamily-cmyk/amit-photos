@@ -48,3 +48,10 @@ jobs:
           git commit -m "🤖 עדכון אוטומטי: תמונות חדשות מ-Google Drive"
           git pull --rebase origin main
           git push origin main
+
+      - name: Deploy ל-Cloudflare
+        if: steps.changes.outputs.changed == 'true'
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: 439cc74123631d21ff905817aca9785d
+        run: npx wrangler deploy
