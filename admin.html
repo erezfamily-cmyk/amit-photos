@@ -132,6 +132,9 @@ input,textarea,select{font-family:var(--font);direction:rtl}
 .btn-primary:hover{background:var(--accent-hover)}
 .btn-ghost{background:transparent;color:var(--text-muted);border:1px solid var(--border)}
 .btn-ghost:hover{border-color:var(--border-hover);color:var(--text)}
+.btn-success{background:#1a6640;color:#fff;border:1px solid #1a6640}
+.btn-success:hover{background:#22804f}
+.btn-hidden{display:none}
 .btn-danger{background:transparent;color:var(--red);border:1px solid rgba(224,85,85,.3)}
 .btn-danger:hover{background:rgba(224,85,85,.1)}
 .btn-sm{padding:.35rem .7rem;font-size:.8rem}
@@ -188,6 +191,7 @@ input,textarea,select{font-family:var(--font);direction:rtl}
   border:1px solid rgba(200,169,110,.2);
 }
 .photo-actions{display:flex;gap:.4rem;margin-top:.65rem}
+.draft-badge{margin-right:.4rem;font-size:.68rem;font-weight:600;color:#e8a000;background:rgba(232,160,0,.12);border:1px solid rgba(232,160,0,.3);padding:.1rem .4rem;border-radius:10px;vertical-align:middle}
 
 /* Upload zone */
 .upload-zone{
@@ -745,6 +749,8 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
   </div>
   <div class="dialog-footer">
     <button class="btn btn-primary" id="save-photo-btn">שמור</button>
+    <button class="btn btn-success btn-hidden" id="publish-photo-btn">פרסם באתר</button>
+    <button class="btn btn-ghost btn-hidden" id="unpublish-photo-btn">הסתר מהאתר</button>
     <button class="btn btn-ghost" onclick="document.getElementById('photo-dialog').close()">ביטול</button>
   </div>
 </dialog>
@@ -1263,7 +1269,7 @@ const Photos = (() => {
   async function init() {
     // טען תמונות מ-D1 + photos.json במקביל
     const [d1Photos, jsonPhotos] = await Promise.all([
-      fetch('/api/photos', { headers: authHeaders() }).then(r => r.ok ? r.json() : []).catch(() => []),
+      fetch('/api/photos?admin=1', { headers: authHeaders() }).then(r => r.ok ? r.json() : []).catch(() => []),
       fetch('data/photos.json').then(r => r.ok ? r.json() : []).catch(() => [])
     ]);
     // שלב: D1 קודם, אחר כך Google Drive (ללא כפילויות)
@@ -1308,7 +1314,7 @@ const Photos = (() => {
             onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%2275%22%3E%3Crect fill=%22%23111%22 width=%22100%25%22 height=%22100%25%22/%3E%3C/svg%3E'">
         </div>
         <div class="photo-info">
-          <div class="photo-title">${p.title||'ללא כותרת'}</div>
+          <div class="photo-title">${p.title||'ללא כותרת'}${p.published===0?'<span class="draft-badge">טיוטה</span>':''}</div>
           <span class="cat-badge">${p.category||'ללא קטגוריה'}</span>
           <div class="photo-actions">
             <button class="btn-icon" title="ערוך" onclick="event.stopPropagation();Photos.openEditById('${p.id}')">
@@ -1337,6 +1343,13 @@ const Photos = (() => {
     $('edit-photo-category').value = p.category||'';
     $('edit-photo-desc').value = p.description||'';
     $('edit-photo-drive-wrap').style.display = 'none';
+
+    // כפתורי פרסום — רק לתמונות R2
+    const isR2 = p._source === 'r2';
+    const isPublished = p.published !== 0;
+    $('publish-photo-btn').classList.toggle('btn-hidden', !isR2 || isPublished);
+    $('unpublish-photo-btn').classList.toggle('btn-hidden', !isR2 || !isPublished);
+
     $('photo-dialog').showModal();
   }
 
@@ -1633,6 +1646,26 @@ const Photos = (() => {
     e.target.value = '';
   });
   $('save-photo-btn').addEventListener('click', savePhoto);
+
+  async function setPublished(published) {
+    const id = $('edit-photo-id').value;
+    const r = await fetch('/api/photos', {
+      method: 'PATCH',
+      headers: authHeaders(),
+      body: JSON.stringify({ id, published })
+    });
+    if (!r.ok) { toast('שגיאה בפרסום', 'error'); return; }
+    const idx = data.findIndex(p => p.id === id);
+    if (idx >= 0) data[idx].published = published ? 1 : 0;
+    $('publish-photo-btn').classList.toggle('btn-hidden', published);
+    $('unpublish-photo-btn').classList.toggle('btn-hidden', !published);
+    toast(published ? '✓ התמונה פורסמה באתר' : 'התמונה הוסתרה מהאתר');
+    $('photo-dialog').close();
+    render();
+  }
+
+  $('publish-photo-btn').addEventListener('click', () => setPublished(true));
+  $('unpublish-photo-btn').addEventListener('click', () => setPublished(false));
 
   return { init, openEdit, openEditById, confirmDelete, cardClick, toggleSelect, getData: () => data };
 })();

@@ -257,9 +257,13 @@ async function handlePhotos(request, env) {
   const method = request.method;
 
   if (method === 'GET') {
-    const { results } = await env.DB.prepare(
-      'SELECT * FROM photos ORDER BY created_at DESC'
-    ).all();
+    const url = new URL(request.url);
+    // ציבורי — רק published; אדמין — הכל
+    const adminAll = url.searchParams.get('admin') === '1';
+    const sql = adminAll
+      ? 'SELECT * FROM photos ORDER BY created_at DESC'
+      : 'SELECT * FROM photos WHERE published=1 ORDER BY created_at DESC';
+    const { results } = await env.DB.prepare(sql).all();
     return jsonRes(results);
   }
 
@@ -276,8 +280,14 @@ async function handlePhotos(request, env) {
   }
 
   if (method === 'PATCH') {
-    const { id, title, category, description } = await request.json().catch(() => ({}));
+    const { id, title, category, description, published } = await request.json().catch(() => ({}));
     if (!id) return jsonRes({ error: 'id חסר' }, 400);
+
+    // פרסום/ביטול פרסום בלבד
+    if (published !== undefined) {
+      await env.DB.prepare('UPDATE photos SET published=? WHERE id=?').bind(published ? 1 : 0, id).run();
+      return jsonRes({ ok: true, published: published ? 1 : 0 });
+    }
 
     let finalTitle = title || '';
     // אם הכותרת גנרית — נסה לייצר עברית אוטומטית
@@ -348,7 +358,7 @@ async function handleUpload(request, env) {
   }
 
   await env.DB.prepare(
-    `INSERT INTO photos (id,title,category,description,filename,r2_key,url,thumbnail,created_at) VALUES (?,?,?,?,?,?,?,?,?)`
+    `INSERT INTO photos (id,title,category,description,filename,r2_key,url,thumbnail,created_at,published) VALUES (?,?,?,?,?,?,?,?,?,0)`
   ).bind(
     id, title, category,
     formData.get('description') || '',
