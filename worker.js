@@ -486,12 +486,39 @@ async function handleNewsletter(request, env) {
   if (!subscribers.length) return jsonRes({ error: 'אין נרשמים ברשימה' }, 400, request);
 
   const fromEmail = env.FROM_EMAIL || 'amit@amitphotos.com';
-  const html = `<div dir="rtl" style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:2rem;color:#111">
-    <h2 style="color:#c8a96e;font-family:sans-serif">AMIT PHOTOS</h2>
-    <div style="line-height:1.8;white-space:pre-wrap">${body.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
-    <hr style="margin-top:2rem;border-color:#ddd">
-    <p style="color:#999;font-size:.8rem">קיבלת מייל זה כי נרשמת לניוזלטר של עמית פוטוס.</p>
-  </div>`;
+  const safeBody = body.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const html = `<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#f4f4f4;font-family:Arial,sans-serif">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:32px 0">
+    <tr><td align="center">
+      <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#ffffff;border-radius:8px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.08)">
+        <!-- Header -->
+        <tr>
+          <td style="background:#0a0a0a;padding:28px 40px;text-align:center">
+            <div style="color:#c8a96e;font-size:22px;font-weight:700;letter-spacing:.25em;font-family:Georgia,serif">AMIT PHOTOS</div>
+            <div style="color:#888;font-size:11px;letter-spacing:.18em;margin-top:4px">צילום אמנותי</div>
+          </td>
+        </tr>
+        <!-- Body -->
+        <tr>
+          <td style="padding:36px 40px;color:#222;font-size:15px;line-height:1.85;direction:rtl;text-align:right">
+            <div style="white-space:pre-wrap">${safeBody}</div>
+          </td>
+        </tr>
+        <!-- Divider -->
+        <tr><td style="padding:0 40px"><hr style="border:none;border-top:1px solid #e8e8e8"></td></tr>
+        <!-- Footer -->
+        <tr>
+          <td style="padding:20px 40px 28px;text-align:center">
+            <p style="color:#aaa;font-size:12px;margin:0">קיבלת מייל זה כי נרשמת לניוזלטר של <a href="https://amitphotos.com" style="color:#c8a96e;text-decoration:none">amitphotos.com</a></p>
+          </td>
+        </tr>
+      </table>
+    </td></tr>
+  </table>
+</body></html>`;
 
   let sent = 0;
   for (const sub of subscribers) {
