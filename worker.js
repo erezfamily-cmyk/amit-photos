@@ -494,6 +494,31 @@ async function handleNewsletter(request, env) {
   return jsonRes({ ok: true, sent, total: subscribers.length }, 200, request);
 }
 
+// ===== ANALYTICS =====
+async function trackPageView(env, request) {
+  try {
+    const date = new Date().toISOString().slice(0, 10);
+    const country = request.headers.get('CF-IPCountry') || 'XX';
+    await env.DB.prepare(
+      'INSERT INTO analytics (date, views) VALUES (?, 1) ON CONFLICT(date) DO UPDATE SET views = views + 1'
+    ).bind(date).run();
+    await env.DB.prepare(
+      'INSERT INTO analytics_countries (date, country, views) VALUES (?, ?, 1) ON CONFLICT(date, country) DO UPDATE SET views = views + 1'
+    ).bind(date, country).run();
+  } catch { /* non-critical */ }
+}
+
+async function handleAnalytics(request, env) {
+  if (!await checkAuth(request, env)) return unauth(request);
+  const [{ results: daily }, { results: countries }] = await Promise.all([
+    env.DB.prepare('SELECT date, views FROM analytics ORDER BY date DESC LIMIT 30').all(),
+    env.DB.prepare(
+      'SELECT country, SUM(views) as total FROM analytics_countries WHERE date >= date("now", "-30 days") GROUP BY country ORDER BY total DESC LIMIT 10'
+    ).all(),
+  ]);
+  return jsonRes({ daily, countries }, 200, request);
+}
+
 // ===== SERVE PHOTO FROM R2 =====
 async function servePhoto(key, env) {
   const object = await env.PHOTOS.get(key);
@@ -528,9 +553,15 @@ export default {
     if (path === '/api/trigger-workflow')  return handleTriggerWorkflow(request, env);
     if (path === '/api/newsletter')        return handleNewsletter(request, env);
     if (path === '/api/verify-payment')    return handleVerifyPayment(request, env);
+    if (path === '/api/analytics')         return handleAnalytics(request, env);
     if (path.startsWith('/photos/'))       return servePhoto(path.slice('/photos/'.length), env);
 
-    // Static assets
-    return env.ASSETS.fetch(request);
+    // Static assets — track page views for HTML pages
+    const res = await env.ASSETS.fetch(request);
+    if (request.method === 'GET' && !path.startsWith('/api/') && (path === '/' || path.endsWith('.html') || path === '')) {
+      const ctx = { waitUntil: (p) => p }; // best-effort
+      trackPageView(env, request);
+    }
+    return res;
   },
 };

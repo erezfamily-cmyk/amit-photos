@@ -444,6 +444,14 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
         <div class="dash-recent-title">פניות ולקוחות אחרונים</div>
         <div id="dash-recent"></div>
       </div>
+      <div class="dash-recent" id="dash-analytics-box" style="margin-top:1.25rem;display:none">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+          <div class="dash-recent-title" style="margin-bottom:0">צפיות באתר — 30 יום אחרונים</div>
+          <span id="dash-analytics-total" style="color:var(--accent);font-family:var(--font-display);font-size:1.1rem;font-weight:700"></span>
+        </div>
+        <div id="dash-chart" style="display:flex;align-items:flex-end;gap:3px;height:80px;margin-bottom:1rem"></div>
+        <div id="dash-countries" style="display:flex;flex-wrap:wrap;gap:.4rem .75rem;font-size:.78rem;color:var(--text-muted)"></div>
+      </div>
     </section>
 
     <!-- PHOTOS SECTION -->
@@ -809,7 +817,36 @@ const Dashboard = (() => {
       </div>`).join('')
       : '<p style="color:var(--text-muted);font-size:.875rem">אין פניות עדיין</p>';
   }
-  return { init };
+  async function loadAnalytics() {
+    try {
+      const r = await fetch('/api/analytics', { headers: authHeaders() });
+      if (!r.ok) return;
+      const { daily, countries } = await r.json();
+      if (!daily || !daily.length) return;
+      const box = $('dash-analytics-box');
+      box.style.display = '';
+      const total = daily.reduce((s, d) => s + (d.views || 0), 0);
+      $('dash-analytics-total').textContent = total.toLocaleString() + ' צפיות';
+      // בר גרף פשוט
+      const max = Math.max(...daily.map(d => d.views || 0), 1);
+      const sorted = [...daily].sort((a, b) => a.date.localeCompare(b.date));
+      $('dash-chart').innerHTML = sorted.map(d => {
+        const h = Math.max(4, Math.round((d.views / max) * 76));
+        const label = d.date.slice(5); // MM-DD
+        return `<div title="${d.date}: ${d.views} צפיות" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px">
+          <div style="width:100%;height:${h}px;background:var(--accent);border-radius:2px;opacity:.8"></div>
+          <div style="font-size:9px;color:var(--text-muted);writing-mode:vertical-rl;transform:rotate(180deg);line-height:1">${label}</div>
+        </div>`;
+      }).join('');
+      // מדינות
+      const flags = { IL:'🇮🇱', US:'🇺🇸', GB:'🇬🇧', DE:'🇩🇪', FR:'🇫🇷', AU:'🇦🇺', CA:'🇨🇦', NL:'🇳🇱', XX:'🌍' };
+      $('dash-countries').innerHTML = countries.slice(0, 8).map(c =>
+        `<span>${flags[c.country] || '🌍'} ${c.country} <strong style="color:var(--text)">${c.total}</strong></span>`
+      ).join('');
+    } catch { /* non-critical */ }
+  }
+
+  return { init, loadAnalytics };
 })();
 
 // ===== AUTH =====
@@ -923,6 +960,7 @@ function authHeaders() {
     $('admin-ui').classList.add('visible');
     await Promise.all([Photos.init(), Subscribers.load(), Customers.load()]);
     Dashboard.init(Photos.getData(), Subscribers.getData(), Customers.getData());
+    Dashboard.loadAnalytics();
   }
 })();
 
