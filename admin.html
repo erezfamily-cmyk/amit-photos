@@ -147,6 +147,11 @@ input,textarea,select{font-family:var(--font);direction:rtl}
 .nl-preview{width:100%;height:480px;border:1px solid var(--border);border-radius:var(--radius);background:#f4f4f4}
 @media(max-width:768px){.nl-grid{grid-template-columns:1fr}}
 
+/* Reply dialog */
+.reply-to-readonly{opacity:.6;cursor:default}
+.reply-body{width:100%;resize:vertical;background:var(--bg-card);color:var(--text);border:1px solid var(--border);border-radius:var(--radius);padding:.6rem .8rem;font-family:inherit;font-size:.9rem;line-height:1.7}
+.reply-status{font-size:.85rem;margin-top:.5rem}
+
 /* Stats bar */
 .stats-bar{
   display:flex;gap:1rem;margin-bottom:1.5rem;flex-wrap:wrap;
@@ -747,8 +752,35 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
   </div>
   <div class="dialog-footer">
     <button class="btn btn-primary" id="cust-view-edit-btn">ערוך</button>
-    <a class="btn btn-ghost" id="cust-view-reply-btn" target="_blank">השב במייל</a>
+    <button type="button" class="btn btn-ghost" id="cust-view-reply-btn">השב במייל</button>
     <button class="btn btn-ghost" onclick="document.getElementById('cust-view-dialog').close()">סגור</button>
+  </div>
+</dialog>
+
+<!-- Reply dialog -->
+<dialog id="reply-dialog" class="dialog">
+  <div class="dialog-header">
+    <div class="dialog-title">השב ל־<span id="reply-to-name"></span></div>
+    <button class="dialog-close" onclick="document.getElementById('reply-dialog').close()">✕</button>
+  </div>
+  <div class="dialog-body">
+    <div class="form-field">
+      <label>אל</label>
+      <input type="text" id="reply-to-email" class="reply-to-readonly" readonly>
+    </div>
+    <div class="form-field">
+      <label>נושא</label>
+      <input type="text" id="reply-subject">
+    </div>
+    <div class="form-field">
+      <label>תוכן</label>
+      <textarea id="reply-body" class="reply-body" rows="7"></textarea>
+    </div>
+    <div id="reply-status" class="reply-status"></div>
+  </div>
+  <div class="dialog-footer">
+    <button type="button" class="btn btn-primary" id="reply-send-btn">שלח</button>
+    <button class="btn btn-ghost" onclick="document.getElementById('reply-dialog').close()">ביטול</button>
   </div>
 </dialog>
 
@@ -1044,6 +1076,57 @@ document.querySelectorAll('.nav-item').forEach(item => {
     if (item.dataset.section === 'newsletter') Newsletter.init();
   });
 });
+
+// ===== REPLY =====
+const Reply = (() => {
+  function open(name, email, subject) {
+    $('reply-to-name').textContent = name || email;
+    $('reply-to-email').value = email;
+    $('reply-subject').value = 'Re: ' + (subject || 'פנייה מהאתר');
+    $('reply-body').value = `שלום ${name || ''},\n\n`;
+    $('reply-status').textContent = '';
+    $('reply-send-btn').disabled = false;
+    $('reply-send-btn').textContent = 'שלח';
+    document.getElementById('reply-dialog').showModal();
+    $('reply-body').focus();
+    $('reply-body').setSelectionRange($('reply-body').value.length, $('reply-body').value.length);
+  }
+
+  async function send() {
+    const to = $('reply-to-email').value;
+    const subject = $('reply-subject').value.trim();
+    const body = $('reply-body').value.trim();
+    if (!subject || !body) { $('reply-status').textContent = 'נא למלא נושא ותוכן'; $('reply-status').style.color = 'var(--red)'; return; }
+    $('reply-send-btn').disabled = true;
+    $('reply-send-btn').textContent = 'שולח...';
+    try {
+      const r = await fetch('/api/reply', {
+        method: 'POST',
+        headers: { ...authHeaders(), 'Content-Type': 'application/json' },
+        body: JSON.stringify({ to, subject, body })
+      });
+      const data = await r.json();
+      if (r.ok) {
+        $('reply-status').textContent = '✓ נשלח בהצלחה';
+        $('reply-status').style.color = 'var(--green)';
+        setTimeout(() => document.getElementById('reply-dialog').close(), 1200);
+      } else {
+        $('reply-status').textContent = data.error || 'שגיאה בשליחה';
+        $('reply-status').style.color = 'var(--red)';
+        $('reply-send-btn').disabled = false;
+        $('reply-send-btn').textContent = 'שלח';
+      }
+    } catch {
+      $('reply-status').textContent = 'שגיאת רשת';
+      $('reply-status').style.color = 'var(--red)';
+      $('reply-send-btn').disabled = false;
+      $('reply-send-btn').textContent = 'שלח';
+    }
+  }
+
+  document.getElementById('reply-send-btn').addEventListener('click', send);
+  return { open };
+})();
 
 // ===== NEWSLETTER =====
 const Newsletter = (() => {
@@ -1717,8 +1800,8 @@ const Customers = (() => {
     $('cust-view-edit-btn').onclick = () => { document.getElementById('cust-view-dialog').close(); openEdit(id); };
     const replyBtn = $('cust-view-reply-btn');
     if (c.email) {
-      replyBtn.href = `mailto:${c.email}?subject=${encodeURIComponent('Re: '+(c.subject||'פנייה מהאתר'))}&body=${encodeURIComponent('שלום '+c.name+',\n\n')}`;
       replyBtn.style.display = '';
+      replyBtn.onclick = () => { document.getElementById('cust-view-dialog').close(); Reply.open(c.name, c.email, c.subject); };
     } else {
       replyBtn.style.display = 'none';
     }

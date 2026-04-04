@@ -531,6 +531,51 @@ async function handleNewsletter(request, env) {
   return jsonRes({ ok: true, sent, total: subscribers.length }, 200, request);
 }
 
+// ===== REPLY =====
+async function handleReply(request, env) {
+  if (!await checkAuth(request, env)) return unauth(request);
+  if (request.method !== 'POST') return jsonRes({ error: 'method not allowed' }, 405, request);
+  if (!env.RESEND_API_KEY) return jsonRes({ error: 'RESEND_API_KEY לא מוגדר' }, 500, request);
+
+  const { to, subject, body } = await request.json().catch(() => ({}));
+  if (!to || !subject || !body) return jsonRes({ error: 'חסרים שדות' }, 400, request);
+
+  const fromEmail = env.FROM_EMAIL || 'amit@amitphotos.com';
+  const safeBody = body.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const html = `<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head><meta charset="UTF-8"></head>
+<body style="margin:0;padding:0;background:#f4f4f4;font-family:Arial,sans-serif">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:32px 0">
+    <tr><td align="center">
+      <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.08)">
+        <tr><td style="background:#0a0a0a;padding:20px 40px;text-align:center">
+          <div style="color:#c8a96e;font-size:18px;font-weight:700;letter-spacing:.22em;font-family:Georgia,serif">AMIT PHOTOS</div>
+        </td></tr>
+        <tr><td style="padding:32px 40px;color:#222;font-size:15px;line-height:1.85;direction:rtl;text-align:right">
+          <div style="white-space:pre-wrap">${safeBody}</div>
+        </td></tr>
+        <tr><td style="padding:0 40px"><hr style="border:none;border-top:1px solid #e8e8e8"></td></tr>
+        <tr><td style="padding:16px 40px 24px;text-align:center">
+          <p style="color:#aaa;font-size:12px;margin:0"><a href="https://amitphotos.com" style="color:#c8a96e;text-decoration:none">amitphotos.com</a></p>
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body></html>`;
+
+  const res = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ from: fromEmail, to, subject, html })
+  });
+  if (!res.ok) {
+    const err = await res.text();
+    return jsonRes({ error: `Resend: ${err}` }, 502, request);
+  }
+  return jsonRes({ ok: true }, 200, request);
+}
+
 // ===== UNSUBSCRIBE =====
 async function handleUnsubscribe(request, env) {
   const token = new URL(request.url).searchParams.get('token');
@@ -614,6 +659,7 @@ export default {
     if (path === '/api/trigger-workflow')  return handleTriggerWorkflow(request, env);
     if (path === '/api/newsletter')        return handleNewsletter(request, env);
     if (path === '/api/unsubscribe')       return handleUnsubscribe(request, env);
+    if (path === '/api/reply')             return handleReply(request, env);
     if (path === '/api/verify-payment')    return handleVerifyPayment(request, env);
     if (path === '/api/analytics')         return handleAnalytics(request, env);
     if (path.startsWith('/photos/'))       return servePhoto(path.slice('/photos/'.length), env);
