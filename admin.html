@@ -322,6 +322,14 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
 .photos-grid.select-mode .photo-card{cursor:pointer}
 .photo-card.selected{border-color:var(--accent)}
 
+/* ===== CUSTOMER VIEW DIALOG ===== */
+.cust-view-meta{display:flex;flex-wrap:wrap;gap:.75rem 1.5rem;margin-bottom:1rem}
+.cust-view-meta-item{display:flex;flex-direction:column;gap:.2rem}
+.cust-view-meta-label{font-size:.72rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em}
+.cust-view-meta-val{font-size:.92rem}
+.cust-view-message{background:#0f0f0f;border:1px solid var(--border);border-radius:var(--radius);padding:1rem;font-size:.9rem;line-height:1.7;white-space:pre-wrap;min-height:60px;color:var(--text)}
+.cust-view-subject{font-size:.85rem;color:var(--text-muted);margin-bottom:.4rem}
+
 /* ===== LIGHTBOX ===== */
 #lb-dialog{background:#000;border:none;padding:0;width:100vw;max-width:100vw;height:100vh;max-height:100vh;margin:0;direction:ltr}
 #lb-dialog::backdrop{background:#000}
@@ -631,6 +639,47 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
   <div class="dialog-footer">
     <button class="btn btn-primary" id="save-photo-btn">שמור</button>
     <button class="btn btn-ghost" onclick="document.getElementById('photo-dialog').close()">ביטול</button>
+  </div>
+</dialog>
+
+<!-- CUSTOMER VIEW DIALOG -->
+<dialog id="cust-view-dialog">
+  <div class="dialog-header">
+    <span class="dialog-title" id="cust-view-name"></span>
+    <button class="dialog-close" onclick="document.getElementById('cust-view-dialog').close()">✕</button>
+  </div>
+  <div class="dialog-body">
+    <div class="cust-view-meta">
+      <div class="cust-view-meta-item">
+        <span class="cust-view-meta-label">מייל</span>
+        <span class="cust-view-meta-val" id="cust-view-email"></span>
+      </div>
+      <div class="cust-view-meta-item">
+        <span class="cust-view-meta-label">טלפון</span>
+        <span class="cust-view-meta-val" id="cust-view-phone"></span>
+      </div>
+      <div class="cust-view-meta-item">
+        <span class="cust-view-meta-label">סוג</span>
+        <span class="cust-view-meta-val" id="cust-view-type"></span>
+      </div>
+      <div class="cust-view-meta-item">
+        <span class="cust-view-meta-label">סטטוס</span>
+        <span class="cust-view-meta-val" id="cust-view-status"></span>
+      </div>
+      <div class="cust-view-meta-item">
+        <span class="cust-view-meta-label">תאריך</span>
+        <span class="cust-view-meta-val" id="cust-view-date"></span>
+      </div>
+    </div>
+    <div>
+      <div class="cust-view-subject" id="cust-view-subject"></div>
+      <div class="cust-view-message" id="cust-view-message"></div>
+    </div>
+  </div>
+  <div class="dialog-footer">
+    <button class="btn btn-primary" id="cust-view-edit-btn">ערוך</button>
+    <a class="btn btn-ghost" id="cust-view-reply-btn" target="_blank">השב במייל</a>
+    <button class="btn btn-ghost" onclick="document.getElementById('cust-view-dialog').close()">סגור</button>
   </div>
 </dialog>
 
@@ -1427,7 +1476,7 @@ const Customers = (() => {
     }
     $('cust-empty').style.display = 'none';
     tbody.innerHTML = rows.map(c => `
-      <tr class="clickable" onclick="Customers.openEdit('${c.id}')">
+      <tr class="clickable" onclick="Customers.openView('${c.id}')">
         <td><strong>${c.name||'—'}</strong></td>
         <td><a href="mailto:${c.email}" style="color:var(--accent)" onclick="event.stopPropagation()">${c.email||'—'}</a></td>
         <td style="color:var(--text-muted)">${c.phone||'—'}</td>
@@ -1448,6 +1497,28 @@ const Customers = (() => {
         </td>
       </tr>
     `).join('');
+  }
+
+  function openView(id) {
+    const c = data.find(x => x.id === id);
+    if (!c) return;
+    $('cust-view-name').textContent = c.name || '—';
+    $('cust-view-email').textContent = c.email || '—';
+    $('cust-view-phone').textContent = c.phone || '—';
+    $('cust-view-type').innerHTML = `<span class="type-badge ${typeClass(c.type)}">${c.type||'—'}</span>`;
+    $('cust-view-status').innerHTML = `<span class="status ${statusClass(c.status)}">${c.status||'—'}</span>`;
+    $('cust-view-date').textContent = fmtDate(c.created_at || c.date);
+    $('cust-view-subject').textContent = c.subject ? `נושא: ${c.subject}` : '';
+    $('cust-view-message').textContent = c.notes || '(אין הודעה)';
+    $('cust-view-edit-btn').onclick = () => { document.getElementById('cust-view-dialog').close(); openEdit(id); };
+    const replyBtn = $('cust-view-reply-btn');
+    if (c.email) {
+      replyBtn.href = `mailto:${c.email}?subject=${encodeURIComponent('Re: '+(c.subject||'פנייה מהאתר'))}&body=${encodeURIComponent('שלום '+c.name+',\n\n')}`;
+      replyBtn.style.display = '';
+    } else {
+      replyBtn.style.display = 'none';
+    }
+    document.getElementById('cust-view-dialog').showModal();
   }
 
   function openAdd() {
@@ -1575,7 +1646,7 @@ const Customers = (() => {
   $('cust-filter-type').addEventListener('change', e=>{ filterType=e.target.value; render(); });
   $('cust-filter-status').addEventListener('change', e=>{ filterStatus=e.target.value; render(); });
 
-  return { load, openEdit, remove, getData: () => data };
+  return { load, openView, openEdit, quickStatus, remove, getData: () => data };
 })();
 </script>
 </body>
