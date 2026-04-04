@@ -204,6 +204,11 @@ tr.clickable{cursor:pointer}
 .status-done{background:rgba(76,175,125,.12);color:var(--green);border:1px solid rgba(76,175,125,.25)}
 .status-closed{background:rgba(136,136,136,.12);color:var(--text-muted);border:1px solid #333}
 .type-badge{display:inline-block;padding:.15rem .6rem;border-radius:20px;font-size:.75rem}
+.status-select{border:none;border-radius:20px;font-size:.75rem;font-weight:500;padding:.15rem .6rem;cursor:pointer;outline:none;background:transparent}
+.status-select.status-pending{background:rgba(224,184,85,.12);color:var(--yellow);border:1px solid rgba(224,184,85,.25)}
+.status-select.status-done{background:rgba(76,175,125,.12);color:var(--green);border:1px solid rgba(76,175,125,.25)}
+.status-select.status-closed{background:rgba(136,136,136,.12);color:var(--text-muted);border:1px solid #333}
+.btn-reply{background:rgba(200,169,110,.1);color:var(--accent);border:1px solid rgba(200,169,110,.2);padding:.25rem .6rem;border-radius:var(--radius);font-size:.78rem;text-decoration:none;display:inline-block}
 .type-purchase{background:var(--accent-dim);color:var(--accent);border:1px solid rgba(200,169,110,.2)}
 .type-inquiry{background:rgba(100,149,237,.1);color:#6495ed;border:1px solid rgba(100,149,237,.2)}
 .type-other{background:rgba(136,136,136,.1);color:var(--text-muted);border:1px solid #333}
@@ -1429,9 +1434,16 @@ const Customers = (() => {
         <td style="color:var(--text-muted);font-size:.82rem">${fmtDate(c.date)}</td>
         <td><span class="type-badge ${typeClass(c.type)}">${c.type||'—'}</span></td>
         <td style="font-size:.85rem;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.subject||'—'}</td>
-        <td><span class="status ${statusClass(c.status)}">${c.status||'—'}</span></td>
-        <td style="color:var(--text-muted);font-size:.82rem;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.notes||'—'}</td>
         <td onclick="event.stopPropagation()">
+          <select class="status-select ${statusClass(c.status)}" onchange="Customers.quickStatus('${c.id}', this)">
+            <option ${c.status==='ממתין'?'selected':''}>ממתין</option>
+            <option ${c.status==='טופל'?'selected':''}>טופל</option>
+            <option ${c.status==='סגור'?'selected':''}>סגור</option>
+          </select>
+        </td>
+        <td style="color:var(--text-muted);font-size:.82rem;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.notes||'—'}</td>
+        <td onclick="event.stopPropagation()" style="white-space:nowrap;display:flex;gap:.4rem;align-items:center">
+          ${c.email ? `<a class="btn-reply" href="mailto:${c.email}?subject=${encodeURIComponent('Re: '+(c.subject||'פנייה מהאתר'))}&body=${encodeURIComponent('שלום '+c.name+',\n\n')}" target="_blank">השב</a>` : ''}
           <button class="btn btn-danger btn-sm" onclick="Customers.remove('${c.id}')">מחק</button>
         </td>
       </tr>
@@ -1489,6 +1501,20 @@ const Customers = (() => {
       $('cust-dialog').close();
       await load();
     } catch { toast('שגיאה בשמירה', 'error'); }
+  }
+
+  async function quickStatus(id, sel) {
+    const c = data.find(x => x.id === id);
+    if (!c) return;
+    c.status = sel.value;
+    sel.className = 'status-select ' + statusClass(c.status);
+    try {
+      await fetch('/api/customers', {
+        method: 'POST', headers: authHeaders(),
+        body: JSON.stringify({ id, name: c.name, email: c.email, phone: c.phone, date: c.date, type: c.type, status: c.status, subject: c.subject, notes: c.notes })
+      });
+      toast('סטטוס עודכן');
+    } catch { toast('שגיאה בעדכון', 'error'); }
   }
 
   async function remove(id) {
