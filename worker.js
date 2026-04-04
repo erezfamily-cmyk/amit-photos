@@ -481,13 +481,13 @@ const PRINT_CATALOG = {
     desc: 'נייר לוסטר איכותי, מוכן למסגור',
     attributes: {},
     sizes: [
-      { label: '10×15 ס"מ (4×6")', sku: 'GLOBAL-PAP-4X6' },
-      { label: '13×18 ס"מ (5×7")', sku: 'GLOBAL-PAP-5X7' },
-      { label: '20×25 ס"מ (8×10")', sku: 'GLOBAL-PAP-8X10' },
-      { label: 'A4 — 21×30 ס"מ', sku: 'GLOBAL-PAP-A4' },
-      { label: '28×35 ס"מ (11×14")', sku: 'GLOBAL-PAP-11X14' },
-      { label: '40×50 ס"מ (16×20")', sku: 'GLOBAL-PAP-16X20' },
-      { label: 'A3 — 30×42 ס"מ', sku: 'GLOBAL-PAP-A3' },
+      { label: '10×15 ס"מ (4×6")', sku: 'GLOBAL-PAP-4X6',   w: 4,  h: 6  },
+      { label: '13×18 ס"מ (5×7")', sku: 'GLOBAL-PAP-5X7',   w: 5,  h: 7  },
+      { label: '20×25 ס"מ (8×10")',sku: 'GLOBAL-PAP-8X10',  w: 8,  h: 10 },
+      { label: 'A4 — 21×30 ס"מ',  sku: 'GLOBAL-PAP-A4',    w: 210,h: 297 },
+      { label: '28×35 ס"מ (11×14")',sku:'GLOBAL-PAP-11X14', w: 11, h: 14 },
+      { label: '40×50 ס"מ (16×20")',sku:'GLOBAL-PAP-16X20', w: 16, h: 20 },
+      { label: 'A3 — 30×42 ס"מ',  sku: 'GLOBAL-PAP-A3',    w: 297,h: 420 },
     ]
   },
   canvas: {
@@ -495,11 +495,11 @@ const PRINT_CATALOG = {
     desc: 'קנבס מתוח על מסגרת עץ, מוכן לתלייה',
     attributes: { wrap: 'ImageWrap' },
     sizes: [
-      { label: '20×20 ס"מ', sku: 'GLOBAL-CAN-8X8' },
-      { label: '20×25 ס"מ', sku: 'GLOBAL-CAN-8X10' },
-      { label: '30×40 ס"מ', sku: 'GLOBAL-CAN-12X16' },
-      { label: '40×50 ס"מ', sku: 'GLOBAL-CAN-16X20' },
-      { label: '50×60 ס"מ', sku: 'GLOBAL-CAN-20X24' },
+      { label: '20×20 ס"מ', sku: 'GLOBAL-CAN-8X8',   w: 1,  h: 1  },
+      { label: '20×25 ס"מ', sku: 'GLOBAL-CAN-8X10',  w: 8,  h: 10 },
+      { label: '30×40 ס"מ', sku: 'GLOBAL-CAN-12X16', w: 3,  h: 4  },
+      { label: '40×50 ס"מ', sku: 'GLOBAL-CAN-16X20', w: 4,  h: 5  },
+      { label: '50×60 ס"מ', sku: 'GLOBAL-CAN-20X24', w: 5,  h: 6  },
     ]
   },
   poster: {
@@ -507,10 +507,10 @@ const PRINT_CATALOG = {
     desc: 'נייר אמנות איכותי, פינישינג מט',
     attributes: {},
     sizes: [
-      { label: 'A3 — 30×42 ס"מ', sku: 'GLOBAL-FAP-A3' },
-      { label: 'A2 — 42×59 ס"מ', sku: 'GLOBAL-FAP-A2' },
-      { label: '45×60 ס"מ', sku: 'GLOBAL-FAP-18X24' },
-      { label: '60×90 ס"מ', sku: 'GLOBAL-FAP-24X36' },
+      { label: 'A3 — 30×42 ס"מ', sku: 'GLOBAL-FAP-A3',    w: 297,h: 420 },
+      { label: 'A2 — 42×59 ס"מ', sku: 'GLOBAL-FAP-A2',    w: 420,h: 594 },
+      { label: '45×60 ס"מ',      sku: 'GLOBAL-FAP-18X24', w: 18, h: 24  },
+      { label: '60×90 ס"מ',      sku: 'GLOBAL-FAP-24X36', w: 24, h: 36  },
     ]
   }
 };

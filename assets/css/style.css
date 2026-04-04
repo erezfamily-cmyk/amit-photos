@@ -1214,6 +1214,29 @@ nav.scrolled { border-bottom-color: rgba(200, 169, 110, 0.3); }
 .print-continue-btn.visible { display: block; }
 .print-pay-btn { width: 100%; }
 
+/* Crop preview */
+.print-preview-wrap { margin: 1rem 0 .5rem; }
+.print-preview-label { font-size: .78rem; color: var(--text-muted); text-align: center; margin-bottom: .5rem; }
+.print-preview-hint  { font-size: .72rem; color: var(--text-muted); text-align: center; margin-top: .4rem; }
+.print-crop-frame {
+  width: 100%;
+  overflow: hidden;
+  border: 2px solid var(--accent);
+  border-radius: var(--radius);
+  cursor: grab;
+  position: relative;
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: none;
+}
+.print-crop-frame.dragging { cursor: grabbing; }
+.print-crop-frame img {
+  display: block;
+  width: 100%;
+  pointer-events: none;
+  transform-origin: top left;
+}
+
 /* ===== FAQ ===== */
 .faq-grid {
   max-width: 780px;

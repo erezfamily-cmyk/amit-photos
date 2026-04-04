@@ -947,7 +947,7 @@ const PrintShop = (() => {
     document.getElementById('print-type-label').textContent = t.label;
     const container = document.getElementById('print-size-options');
     container.innerHTML = t.sizes.map(s =>
-      `<button type="button" class="print-size-btn" data-sku="${s.sku}">${s.label}</button>`
+      `<button type="button" class="print-size-btn" data-sku="${s.sku}" data-w="${s.w}" data-h="${s.h}">${s.label}</button>`
     ).join('');
     container.querySelectorAll('.print-size-btn').forEach(btn => {
       btn.addEventListener('click', () => selectSize(btn));
@@ -956,11 +956,117 @@ const PrintShop = (() => {
     showStep(2);
   }
 
+  // Crop preview state
+  let cropOffsetX = 0, cropOffsetY = 0;
+  let cropDragStartX, cropDragStartY, cropDragOffsetX, cropDragOffsetY;
+  let cropImgNaturalW = 0, cropImgNaturalH = 0;
+  let cropFrameW = 0, cropFrameH = 0;
+
+  function initCropPreview(imageUrl, aspectW, aspectH) {
+    const wrap = document.getElementById('print-preview-wrap');
+    const frame = document.getElementById('print-crop-frame');
+    const img = document.getElementById('print-crop-img');
+
+    // Set frame aspect ratio
+    const maxW = frame.parentElement.clientWidth || 400;
+    cropFrameW = maxW;
+    cropFrameH = Math.round(maxW * aspectH / aspectW);
+    frame.style.width = cropFrameW + 'px';
+    frame.style.height = cropFrameH + 'px';
+
+    // Reset offset
+    cropOffsetX = 0;
+    cropOffsetY = 0;
+
+    img.onload = () => {
+      cropImgNaturalW = img.naturalWidth;
+      cropImgNaturalH = img.naturalHeight;
+
+      // Scale image so it covers the frame (like object-fit: cover)
+      const scaleX = cropFrameW / cropImgNaturalW;
+      const scaleY = cropFrameH / cropImgNaturalH;
+      const scale = Math.max(scaleX, scaleY);
+      const dispW = Math.round(cropImgNaturalW * scale);
+      const dispH = Math.round(cropImgNaturalH * scale);
+      img.style.width = dispW + 'px';
+      img.style.height = dispH + 'px';
+
+      // Center
+      cropOffsetX = Math.round((cropFrameW - dispW) / 2);
+      cropOffsetY = Math.round((cropFrameH - dispH) / 2);
+      img.style.transform = `translate(${cropOffsetX}px, ${cropOffsetY}px)`;
+    };
+    img.src = imageUrl;
+    wrap.classList.remove('hidden');
+
+    // Drag — mouse
+    frame.onmousedown = e => {
+      e.preventDefault();
+      frame.classList.add('dragging');
+      cropDragStartX = e.clientX;
+      cropDragStartY = e.clientY;
+      cropDragOffsetX = cropOffsetX;
+      cropDragOffsetY = cropOffsetY;
+      document.onmousemove = dragMove;
+      document.onmouseup = dragEnd;
+    };
+
+    // Drag — touch
+    frame.ontouchstart = e => {
+      const t = e.touches[0];
+      frame.classList.add('dragging');
+      cropDragStartX = t.clientX;
+      cropDragStartY = t.clientY;
+      cropDragOffsetX = cropOffsetX;
+      cropDragOffsetY = cropOffsetY;
+      document.ontouchmove = dragMoveTouch;
+      document.ontouchend = dragEnd;
+    };
+  }
+
+  function clampOffset(ox, oy) {
+    const img = document.getElementById('print-crop-img');
+    const dispW = parseInt(img.style.width);
+    const dispH = parseInt(img.style.height);
+    const minX = cropFrameW - dispW;
+    const minY = cropFrameH - dispH;
+    return {
+      x: Math.min(0, Math.max(minX, ox)),
+      y: Math.min(0, Math.max(minY, oy))
+    };
+  }
+
+  function applyOffset(ox, oy) {
+    const { x, y } = clampOffset(ox, oy);
+    cropOffsetX = x; cropOffsetY = y;
+    document.getElementById('print-crop-img').style.transform = `translate(${x}px, ${y}px)`;
+  }
+
+  function dragMove(e) {
+    applyOffset(cropDragOffsetX + e.clientX - cropDragStartX, cropDragOffsetY + e.clientY - cropDragStartY);
+  }
+  function dragMoveTouch(e) {
+    const t = e.touches[0];
+    applyOffset(cropDragOffsetX + t.clientX - cropDragStartX, cropDragOffsetY + t.clientY - cropDragStartY);
+  }
+  function dragEnd() {
+    document.getElementById('print-crop-frame').classList.remove('dragging');
+    document.onmousemove = document.onmouseup = document.ontouchmove = document.ontouchend = null;
+  }
+
   async function selectSize(btn) {
     document.getElementById('print-size-options').querySelectorAll('.print-size-btn')
       .forEach(b => b.classList.toggle('active', b === btn));
     selectedSku = btn.dataset.sku;
     selectedPrice = null;
+    document.getElementById('print-to-details-btn').classList.remove('visible');
+
+    // Show crop preview immediately
+    const aspectW = parseFloat(btn.dataset.w);
+    const aspectH = parseFloat(btn.dataset.h);
+    const imgUrl = currentPhoto.url.startsWith('http') ? currentPhoto.url : currentPhoto.url;
+    initCropPreview(imgUrl, aspectW, aspectH);
+
     document.getElementById('print-price-display').textContent = 'טוען מחיר...';
     try {
       const r = await fetch('/api/print/quote', {
@@ -975,11 +1081,9 @@ const PrintShop = (() => {
         document.getElementById('print-to-details-btn').classList.add('visible');
       } else {
         document.getElementById('print-price-display').textContent = data.error || 'שגיאה בטעינת מחיר';
-        document.getElementById('print-to-details-btn').classList.remove('visible');
       }
     } catch {
       document.getElementById('print-price-display').textContent = 'שגיאת רשת';
-      document.getElementById('print-to-details-btn').classList.remove('visible');
     }
   }
 
@@ -1034,7 +1138,10 @@ const PrintShop = (() => {
     document.getElementById('print-modal').addEventListener('click', e => {
       if (e.target === document.getElementById('print-modal')) close();
     });
-    document.getElementById('print-back-1').addEventListener('click', () => showStep(1));
+    document.getElementById('print-back-1').addEventListener('click', () => {
+      showStep(1);
+      document.getElementById('print-preview-wrap').classList.add('hidden');
+    });
     document.getElementById('print-back-2').addEventListener('click', () => {
       showStep(2);
       if (!selectedPrice) document.getElementById('print-to-details-btn').classList.remove('visible');
