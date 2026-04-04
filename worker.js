@@ -652,7 +652,97 @@ async function handlePrintOrderComplete(request, env) {
     tx, new Date().toISOString()
   ).run();
 
+  // Send confirmation email with cancel link
+  if (address.email && env.RESEND_API_KEY) {
+    const fromEmail = env.FROM_EMAIL || 'amit@amitphotos.com';
+    const cancelUrl = `${origin}/api/print/cancel?token=${orderId}`;
+    const confirmHtml = `<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head><meta charset="UTF-8"></head>
+<body style="margin:0;padding:0;background:#f4f4f4;font-family:Arial,sans-serif">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:32px 0">
+    <tr><td align="center">
+      <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.08)">
+        <tr><td style="background:#0a0a0a;padding:24px 40px;text-align:center">
+          <div style="color:#c8a96e;font-size:20px;font-weight:700;letter-spacing:.25em;font-family:Georgia,serif">AMIT PHOTOS</div>
+        </td></tr>
+        <tr><td style="padding:32px 40px;color:#222;font-size:15px;line-height:1.85;direction:rtl;text-align:right">
+          <h2 style="margin:0 0 1rem;font-size:18px">שלום ${address.name}, ההזמנה התקבלה!</h2>
+          <p><strong>מוצר:</strong> ${productLabel}</p>
+          <p><strong>כתובת:</strong> ${address.line1}, ${address.city} ${address.zip}</p>
+          <p><strong>מחיר ששולם:</strong> $${sellPrice}</p>
+          <p style="color:#888;font-size:.9rem">זמן משלוח משוער: 7–14 ימי עסקים.</p>
+          <hr style="border:none;border-top:1px solid #eee;margin:1.5rem 0">
+          <p style="color:#555;font-size:.88rem">רוצה לבטל? ניתן לבטל תוך שעה מרגע ההזמנה:</p>
+          <p style="text-align:center;margin:1rem 0">
+            <a href="${cancelUrl}" style="background:#c8a96e;color:#0a0a0a;padding:.7rem 2rem;border-radius:6px;text-decoration:none;font-weight:700;font-size:.95rem">ביטול הזמנה</a>
+          </p>
+          <p style="color:#aaa;font-size:.78rem;text-align:center">הכפתור יפסיק לעבוד לאחר שעה</p>
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body></html>`;
+    await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ from: fromEmail, to: address.email, subject: 'אישור הזמנת הדפסה — Amit Photos', html: confirmHtml })
+    });
+  }
+
   return jsonRes({ ok: true, orderId: prodigiOrderId || orderId }, 200, request);
+}
+
+async function handlePrintCancel(request, env) {
+  const url = new URL(request.url);
+  const token = url.searchParams.get('token');
+  if (!token) return new Response('קישור לא תקין', { status: 400 });
+
+  const order = await env.DB.prepare('SELECT * FROM print_orders WHERE id=?').bind(token).first();
+  if (!order) return new Response(cancelPage('הזמנה לא נמצאה', false), { status: 404, headers: { 'Content-Type': 'text/html;charset=UTF-8' } });
+
+  if (order.status === 'cancelled') {
+    return new Response(cancelPage('ההזמנה כבר בוטלה', false), { headers: { 'Content-Type': 'text/html;charset=UTF-8' } });
+  }
+
+  // Check 1-hour window
+  const created = new Date(order.created_at);
+  const diffMin = (Date.now() - created.getTime()) / 60000;
+  if (diffMin > 60) {
+    return new Response(cancelPage('פג תוקף הביטול (שעה אחרי ההזמנה)', false), { headers: { 'Content-Type': 'text/html;charset=UTF-8' } });
+  }
+
+  // Cancel at Prodigi
+  if (order.prodigi_order_id) {
+    await fetch(`https://api.prodigi.com/v4.0/orders/${order.prodigi_order_id}/actions/cancel`, {
+      method: 'POST',
+      headers: { 'X-API-Key': env.PRODIGI_API_KEY, 'Content-Type': 'application/json' }
+    });
+  }
+
+  await env.DB.prepare('UPDATE print_orders SET status=? WHERE id=?').bind('cancelled', token).run();
+
+  return new Response(cancelPage('ההזמנה בוטלה בהצלחה', true), { headers: { 'Content-Type': 'text/html;charset=UTF-8' } });
+}
+
+function cancelPage(message, success) {
+  const color = success ? '#4caf7d' : '#e55';
+  const icon = success ? '✅' : '❌';
+  return `<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${message} — Amit Photos</title>
+<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:Arial,sans-serif;background:#0a0a0a;color:#e0e0e0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem}.card{background:#141414;border:1px solid #222;border-radius:12px;padding:3rem 2.5rem;max-width:440px;width:100%;text-align:center}.logo{color:#c8a96e;font-size:1rem;letter-spacing:.25em;margin-bottom:2rem}.icon{font-size:3rem;margin-bottom:1rem}h1{font-size:1.3rem;margin-bottom:.75rem;color:${color}}p{color:#888;font-size:.9rem;line-height:1.7;margin-bottom:1rem}.btn{display:inline-block;margin-top:1.5rem;padding:.7rem 1.8rem;background:#c8a96e;color:#0a0a0a;border-radius:6px;text-decoration:none;font-weight:700;font-size:.9rem}</style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">AMIT PHOTOS</div>
+    <div class="icon">${icon}</div>
+    <h1>${message}</h1>
+    ${success ? '<p>ההחזר הכספי יבוצע דרך PayPal תוך 3–5 ימי עסקים.</p>' : '<p>לעזרה נוספת צרו קשר: <a href="mailto:contact@amitphotos.com" style="color:#c8a96e">contact@amitphotos.com</a></p>'}
+    <a href="https://amitphotos.com" class="btn">חזרה לאתר</a>
+  </div>
+</body></html>`;
 }
 
 async function handlePrintOrders(request, env) {
@@ -865,6 +955,7 @@ export default {
     if (path === '/api/print/catalog')        return handlePrintCatalog(request, env);
     if (path === '/api/print/quote')          return handlePrintQuote(request, env);
     if (path === '/api/print/order-complete') return handlePrintOrderComplete(request, env);
+    if (path === '/api/print/cancel')         return handlePrintCancel(request, env);
     if (path === '/api/print/orders')         return handlePrintOrders(request, env);
     if (path === '/api/analytics')         return handleAnalytics(request, env);
     if (path.startsWith('/photos/'))       return servePhoto(path.slice('/photos/'.length), env);
