@@ -213,7 +213,7 @@ def load_existing_photos():
 def main():
     sys.stdout.reconfigure(encoding="utf-8")
 
-    anthropic_key = os.environ.get("ANTHROPIC_API_KEY") or os.environ.get("AMIT_PHOTO_AGENT")
+    anthropic_key = (os.environ.get("ANTHROPIC_API_KEY") or os.environ.get("AMIT_PHOTO_AGENT") or "").strip()
     if not anthropic_key:
         print("❌ חסר ANTHROPIC_API_KEY במשתני הסביבה")
         sys.exit(1)
