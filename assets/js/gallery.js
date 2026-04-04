@@ -377,6 +377,8 @@ function initLightbox() {
     buyBtn.addEventListener('click', () => openBuyModal(filteredPhotos[currentIndex]));
   }
 
+  PrintShop.init();
+
   // Back to gallery button (mobile)
   const backBtn = document.getElementById('lb-back');
   if (backBtn) {
@@ -458,6 +460,7 @@ function openLightbox(idx) {
     spinner.style.display = 'none';
     img.style.opacity = '1';
   };
+  window._currentLightboxPhoto = photo;
   img.src = getLightboxUrl(photo.url);
   img.alt = photo.title;
   document.getElementById('lb-title').textContent = photo.title;
@@ -873,6 +876,162 @@ function redirectToPayPal(photo, size) {
 
   window.location.href = `https://www.paypal.com/cgi-bin/webscr?${params.toString()}`;
 }
+
+// ===== PRINT SHOP =====
+const PrintShop = (() => {
+  let catalog = null;
+  let currentPhoto = null;
+  let selectedType = null;
+  let selectedSku = null;
+  let selectedPrice = null;
+
+  function showStep(n) {
+    [1, 2, 3].forEach(i => {
+      document.getElementById(`print-step-${i}`).classList.toggle('active', i === n);
+    });
+  }
+
+  async function open(photo) {
+    currentPhoto = photo;
+    selectedType = null; selectedSku = null; selectedPrice = null;
+    document.getElementById('print-modal-img').src = photo.thumbnail || photo.url;
+    document.getElementById('print-modal-title').textContent = photo.title || '';
+    document.getElementById('print-price-display').textContent = '';
+    document.getElementById('print-error').textContent = '';
+    showStep(1);
+    document.getElementById('print-modal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+
+    if (!catalog) {
+      try {
+        const r = await fetch('/api/print/catalog');
+        catalog = await r.json();
+      } catch { catalog = {}; }
+    }
+    renderTypes();
+  }
+
+  function renderTypes() {
+    const container = document.getElementById('print-type-options');
+    container.innerHTML = Object.entries(catalog).map(([key, val]) =>
+      `<button type="button" class="print-type-btn" data-type="${key}">
+        <strong>${val.label}</strong>
+        <span class="print-type-desc">${val.desc}</span>
+      </button>`
+    ).join('');
+    container.querySelectorAll('.print-type-btn').forEach(btn => {
+      btn.addEventListener('click', () => selectType(btn.dataset.type));
+    });
+  }
+
+  function selectType(type) {
+    selectedType = type;
+    const t = catalog[type];
+    document.getElementById('print-type-label').textContent = t.label;
+    const container = document.getElementById('print-size-options');
+    container.innerHTML = t.sizes.map(s =>
+      `<button type="button" class="print-size-btn" data-sku="${s.sku}">${s.label}</button>`
+    ).join('');
+    container.querySelectorAll('.print-size-btn').forEach(btn => {
+      btn.addEventListener('click', () => selectSize(btn));
+    });
+    document.getElementById('print-price-display').textContent = '';
+    showStep(2);
+  }
+
+  async function selectSize(btn) {
+    document.getElementById('print-size-options').querySelectorAll('.print-size-btn')
+      .forEach(b => b.classList.toggle('active', b === btn));
+    selectedSku = btn.dataset.sku;
+    selectedPrice = null;
+    document.getElementById('print-price-display').textContent = 'טוען מחיר...';
+    try {
+      const r = await fetch('/api/print/quote', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sku: selectedSku })
+      });
+      const data = await r.json();
+      if (r.ok) {
+        selectedPrice = data.sellPrice;
+        document.getElementById('print-price-display').textContent = `$${data.sellPrice} — כולל משלוח לישראל`;
+        document.getElementById('print-to-details-btn').classList.add('visible');
+      } else {
+        document.getElementById('print-price-display').textContent = data.error || 'שגיאה בטעינת מחיר';
+        document.getElementById('print-to-details-btn').classList.remove('visible');
+      }
+    } catch {
+      document.getElementById('print-price-display').textContent = 'שגיאת רשת';
+      document.getElementById('print-to-details-btn').classList.remove('visible');
+    }
+  }
+
+  function goToDetails() {
+    if (!selectedSku || !selectedPrice) return;
+    document.getElementById('print-pay-amount').textContent = `$${selectedPrice}`;
+    document.getElementById('print-error').textContent = '';
+    showStep(3);
+  }
+
+  function close() {
+    document.getElementById('print-modal').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function pay() {
+    const name = document.getElementById('print-name').value.trim();
+    const phone = document.getElementById('print-phone').value.trim();
+    const email = document.getElementById('print-email').value.trim();
+    const line1 = document.getElementById('print-line1').value.trim();
+    const city = document.getElementById('print-city').value.trim();
+    const zip = document.getElementById('print-zip').value.trim();
+
+    if (!name || !phone || !line1 || !city || !zip) {
+      document.getElementById('print-error').textContent = 'נא למלא את כל השדות המסומנים ב-*';
+      return;
+    }
+
+    const address = { name, phone, email, line1, city, zip };
+    const customB64 = btoa(unescape(encodeURIComponent(JSON.stringify(address))));
+    const itemNumber = `PRINT_${currentPhoto.id}_${selectedSku}`;
+    const itemName = `${currentPhoto.title || 'תמונה'} — ${catalog[selectedType]?.sizes.find(s => s.sku === selectedSku)?.label || ''}`;
+
+    const params = new URLSearchParams({
+      cmd: '_xclick',
+      business: PAYPAL_EMAIL,
+      item_name: itemName,
+      item_number: itemNumber,
+      amount: selectedPrice,
+      currency_code: 'USD',
+      no_shipping: '1',
+      custom: customB64,
+      return: `${SITE_URL}/print-complete.html`,
+      cancel_return: `${SITE_URL}/`,
+      rm: '1',
+    });
+    window.location.href = `https://www.paypal.com/cgi-bin/webscr?${params.toString()}`;
+  }
+
+  function init() {
+    document.getElementById('print-modal-close').addEventListener('click', close);
+    document.getElementById('print-modal').addEventListener('click', e => {
+      if (e.target === document.getElementById('print-modal')) close();
+    });
+    document.getElementById('print-back-1').addEventListener('click', () => showStep(1));
+    document.getElementById('print-back-2').addEventListener('click', () => {
+      showStep(2);
+      if (!selectedPrice) document.getElementById('print-to-details-btn').classList.remove('visible');
+    });
+    document.getElementById('lb-print').addEventListener('click', () => {
+      const photo = window._currentLightboxPhoto;
+      if (photo) open(photo);
+    });
+    document.getElementById('print-to-details-btn').addEventListener('click', goToDetails);
+    document.getElementById('print-pay-btn').addEventListener('click', pay);
+  }
+
+  return { init, open };
+})();
 
 // ===== SERVICE WORKER =====
 if ('serviceWorker' in navigator) {

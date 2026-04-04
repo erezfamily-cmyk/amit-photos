@@ -473,6 +473,162 @@ async function handleVerifyPayment(request, env) {
   return jsonRes({ url: downloadUrl, title: txData['item_name'] || 'תמונה' }, 200, request);
 }
 
+// ===== PRINT SHOP =====
+
+const PRINT_CATALOG = {
+  photo: {
+    label: 'הדפסה על נייר צילום',
+    desc: 'נייר לוסטר איכותי, מועבר מגולגל או שטוח — מוכן למסגור',
+    sizes: [
+      { label: '10×15 ס"מ (4×6")', sku: 'GLOBAL-PAP-4X6' },
+      { label: '13×18 ס"מ (5×7")', sku: 'GLOBAL-PAP-5X7' },
+      { label: '20×25 ס"מ (8×10")', sku: 'GLOBAL-PAP-8X10' },
+      { label: 'A4 — 21×29.7 ס"מ', sku: 'GLOBAL-PAP-A4' },
+      { label: '28×35 ס"מ (11×14")', sku: 'GLOBAL-PAP-11X14' },
+      { label: '40×50 ס"מ (16×20")', sku: 'GLOBAL-PAP-16X20' },
+      { label: 'A3 — 29.7×42 ס"מ', sku: 'GLOBAL-PAP-A3' },
+    ]
+  },
+  canvas: {
+    label: 'הדפסה על קנבס',
+    desc: 'קנבס מתוח על מסגרת עץ, מוכן לתלייה',
+    sizes: [
+      { label: '20×20 ס"מ', sku: 'GLOBAL-CAN-8X8' },
+      { label: '20×25 ס"מ', sku: 'GLOBAL-CAN-8X10' },
+      { label: '30×40 ס"מ', sku: 'GLOBAL-CAN-12X16' },
+      { label: '40×50 ס"מ', sku: 'GLOBAL-CAN-16X20' },
+      { label: '50×60 ס"מ', sku: 'GLOBAL-CAN-20X24' },
+    ]
+  },
+  poster: {
+    label: 'פוסטר',
+    desc: 'נייר אמנות דיגיטלי, פינישינג מט',
+    sizes: [
+      { label: 'A3 — 29.7×42 ס"מ', sku: 'GLOBAL-BAPD-A3' },
+      { label: 'A2 — 42×59.4 ס"מ', sku: 'GLOBAL-BAPD-A2' },
+      { label: '45×60 ס"מ', sku: 'GLOBAL-BAPD-18X24' },
+      { label: '60×90 ס"מ', sku: 'GLOBAL-BAPD-24X36' },
+    ]
+  }
+};
+
+async function handlePrintCatalog(request, env) {
+  return jsonRes(PRINT_CATALOG, 200, request);
+}
+
+async function handlePrintQuote(request, env) {
+  if (request.method !== 'POST') return jsonRes({ error: 'method not allowed' }, 405, request);
+  const { sku } = await request.json().catch(() => ({}));
+  if (!sku) return jsonRes({ error: 'sku חסר' }, 400, request);
+  if (!env.PRODIGI_API_KEY) return jsonRes({ error: 'PRODIGI_API_KEY לא מוגדר' }, 500, request);
+
+  const res = await fetch('https://api.prodigi.com/v4.0/quotes', {
+    method: 'POST',
+    headers: { 'X-API-Key': env.PRODIGI_API_KEY, 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      shippingMethod: 'Standard',
+      destinationCountryCode: 'IL',
+      currencyCode: 'USD',
+      items: [{ sku, copies: 1, attributes: {}, assets: [{ printArea: 'default' }] }]
+    })
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    return jsonRes({ error: err.detail || `שגיאת Prodigi: ${res.status}` }, 500, request);
+  }
+
+  const data = await res.json();
+  const quote = data.quotes?.[0];
+  if (!quote) return jsonRes({ error: 'לא התקבלה הצעת מחיר' }, 500, request);
+
+  const prodigiCost = parseFloat(quote.costSummary?.totalCost?.amount || 0);
+  // Markup: 2.5x total cost, rounded up to nearest $5
+  const sellPrice = Math.ceil((prodigiCost * 2.5) / 5) * 5;
+  return jsonRes({ sellPrice, sku }, 200, request);
+}
+
+async function handlePrintOrderComplete(request, env) {
+  if (request.method !== 'POST') return jsonRes({ error: 'method not allowed' }, 405, request);
+  const { tx, itemNumber } = await request.json().catch(() => ({}));
+  if (!tx || !itemNumber) return jsonRes({ error: 'חסרים פרמטרים' }, 400, request);
+  if (!env.PAYPAL_PDT_TOKEN) return jsonRes({ error: 'PDT token לא מוגדר' }, 500, request);
+
+  // Parse: PRINT_{photoId}_{sku}
+  if (!itemNumber.startsWith('PRINT_')) return jsonRes({ error: 'item_number לא תקין' }, 400, request);
+  const rest = itemNumber.slice(6);
+  const firstUnderscore = rest.indexOf('_');
+  if (firstUnderscore === -1) return jsonRes({ error: 'item_number לא תקין' }, 400, request);
+  const photoId = rest.substring(0, firstUnderscore);
+  const sku = rest.substring(firstUnderscore + 1);
+
+  // Verify PayPal
+  let paypalText;
+  try {
+    const r = await fetch('https://www.paypal.com/cgi-bin/webscr', {
+      method: 'POST',
+      body: new URLSearchParams({ cmd: '_notify-synch', tx, at: env.PAYPAL_PDT_TOKEN }),
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    });
+    paypalText = await r.text();
+  } catch { return jsonRes({ error: 'שגיאה בתקשורת עם PayPal' }, 502, request); }
+
+  if (!paypalText.startsWith('SUCCESS')) return jsonRes({ error: 'התשלום לא אומת' }, 402, request);
+  const txData = {};
+  paypalText.split('\n').slice(1).forEach(line => {
+    const eq = line.indexOf('=');
+    if (eq !== -1) txData[decodeURIComponent(line.substring(0, eq))] = decodeURIComponent(line.substring(eq + 1));
+  });
+  if (txData['payment_status'] !== 'Completed') return jsonRes({ error: `סטטוס: ${txData['payment_status']}` }, 402, request);
+
+  // Decode address from custom field
+  let address;
+  try { address = JSON.parse(atob(txData['custom'] || '')); }
+  catch { return jsonRes({ error: 'נתוני כתובת חסרים' }, 400, request); }
+
+  // Get photo URL from DB
+  const origin = new URL(request.url).origin;
+  const photo = await env.DB.prepare('SELECT url FROM photos WHERE id=?').bind(photoId).first();
+  if (!photo) return jsonRes({ error: 'תמונה לא נמצאה' }, 404, request);
+  const photoUrl = photo.url.startsWith('http') ? photo.url : `${origin}${photo.url}`;
+
+  // Create Prodigi order
+  const orderId = crypto.randomUUID();
+  const prodigiRes = await fetch('https://api.prodigi.com/v4.0/orders', {
+    method: 'POST',
+    headers: { 'X-API-Key': env.PRODIGI_API_KEY, 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      merchantReference: orderId,
+      shippingMethod: 'Standard',
+      recipient: {
+        name: address.name,
+        email: address.email || '',
+        phoneNumber: address.phone || '',
+        address: {
+          line1: address.line1,
+          postalOrZipCode: address.zip,
+          countryCode: 'IL',
+          townOrCity: address.city,
+        }
+      },
+      items: [{
+        merchantReference: `item-${orderId}`,
+        sku,
+        copies: 1,
+        sizing: 'fillPrintArea',
+        assets: [{ printArea: 'default', url: photoUrl }]
+      }]
+    })
+  });
+
+  if (!prodigiRes.ok) {
+    const err = await prodigiRes.json().catch(() => ({}));
+    return jsonRes({ error: `שגיאת Prodigi: ${err.detail || prodigiRes.status}` }, 500, request);
+  }
+  const pd = await prodigiRes.json();
+  return jsonRes({ ok: true, orderId: pd.order?.id || orderId }, 200, request);
+}
+
 // ===== NEWSLETTER =====
 function buildNewsletterHtml(subject, body, unsubscribeUrl, name) {
   const safeBody = body.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
@@ -672,6 +828,9 @@ export default {
     if (path === '/api/unsubscribe')       return handleUnsubscribe(request, env);
     if (path === '/api/reply')             return handleReply(request, env);
     if (path === '/api/verify-payment')    return handleVerifyPayment(request, env);
+    if (path === '/api/print/catalog')     return handlePrintCatalog(request, env);
+    if (path === '/api/print/quote')       return handlePrintQuote(request, env);
+    if (path === '/api/print/order-complete') return handlePrintOrderComplete(request, env);
     if (path === '/api/analytics')         return handleAnalytics(request, env);
     if (path.startsWith('/photos/'))       return servePhoto(path.slice('/photos/'.length), env);
 

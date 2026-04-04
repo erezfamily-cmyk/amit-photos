@@ -1160,6 +1160,60 @@ nav.scrolled { border-bottom-color: rgba(200, 169, 110, 0.3); }
   .buy-modal-inner { padding: 2rem 1.25rem; }
 }
 
+/* ===== PRINT MODAL ===== */
+.print-modal-inner { max-width: 520px; }
+.print-back-btn {
+  background: none;
+  border: none;
+  color: var(--accent);
+  cursor: pointer;
+  font-size: .85rem;
+  margin-bottom: .5rem;
+  padding: 0;
+}
+.print-type-options,
+.print-size-options { display: flex; flex-direction: column; gap: .5rem; margin-bottom: 1rem; }
+.print-size-options { gap: .4rem; }
+.print-type-btn, .print-size-btn {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: .9rem;
+  padding: .7rem 1rem;
+  text-align: right;
+  transition: border-color .2s, background .2s;
+}
+.print-type-btn:hover, .print-size-btn:hover,
+.print-type-btn.active, .print-size-btn.active {
+  border-color: var(--accent);
+  background: rgba(200,169,110,.08);
+}
+.print-type-desc { display: block; font-size: .75rem; color: var(--text-muted); margin-top: .2rem; }
+.print-price-display { text-align: center; font-size: 1.1rem; color: var(--accent); min-height: 1.5rem; }
+.print-fields { display: flex; flex-direction: column; gap: .5rem; margin-bottom: 1rem; }
+.print-field-row { display: flex; gap: .5rem; }
+.print-input {
+  width: 100%;
+  padding: .6rem .8rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-card);
+  color: var(--text);
+  font-family: inherit;
+  font-size: .9rem;
+}
+.print-input-city { flex: 1; }
+.print-input-zip { width: 110px; }
+.print-error { color: #e55; font-size: .85rem; text-align: center; min-height: 1.2rem; }
+.print-step { display: none; }
+.print-step.active { display: block; }
+.print-continue-btn { width: 100%; margin-top: .75rem; display: none; }
+.print-continue-btn.visible { display: block; }
+.print-pay-btn { width: 100%; }
+
 /* ===== LIGHTBOX KEYBOARD HINT ===== */
 .lb-keys-hint {
   text-align: center;

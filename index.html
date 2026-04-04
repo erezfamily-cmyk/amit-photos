@@ -475,6 +475,7 @@
     </div>
     <div class="lb-actions">
       <button id="lb-slideshow" class="lb-action-btn">▶ מצגת</button>
+      <button id="lb-print" class="lb-action-btn">הדפסה ←</button>
       <button id="lb-buy" class="lb-action-btn lb-buy-btn">רכישה ←</button>
       <a id="lb-share-wa" class="lb-action-btn lb-whatsapp" target="_blank" rel="noopener">שתף לוואטסאפ</a>
     </div>
@@ -574,6 +575,54 @@
         </button>
       </div>
       <p class="buy-modal-note">לאחר התשלום הקובץ יורד אוטומטית. תשלום מאובטח דרך PayPal.</p>
+    </div>
+  </div>
+
+  <!-- ===== PRINT MODAL ===== -->
+  <div class="buy-modal" id="print-modal" aria-modal="true" role="dialog" aria-label="הזמנת הדפסה">
+    <div class="buy-modal-inner print-modal-inner">
+      <button class="buy-modal-close" id="print-modal-close" aria-label="סגור">✕</button>
+      <div class="buy-modal-preview">
+        <img id="print-modal-img" src="" alt="" />
+      </div>
+      <p class="buy-modal-label">הזמנת הדפסה</p>
+      <h3 class="buy-modal-title" id="print-modal-title"></h3>
+
+      <!-- Step 1: type -->
+      <div class="print-step active" id="print-step-1">
+        <p class="buy-modal-subtitle">בחר סוג הדפסה</p>
+        <div class="print-type-options" id="print-type-options"></div>
+      </div>
+
+      <!-- Step 2: size -->
+      <div class="print-step" id="print-step-2">
+        <button type="button" class="print-back-btn" id="print-back-1">← חזור</button>
+        <p class="buy-modal-subtitle" id="print-type-label"></p>
+        <div class="print-size-options" id="print-size-options"></div>
+        <p class="print-price-display" id="print-price-display"></p>
+        <button type="button" id="print-to-details-btn" class="dl-btn print-continue-btn">המשך לפרטי משלוח →</button>
+      </div>
+
+      <!-- Step 3: delivery details -->
+      <div class="print-step" id="print-step-3">
+        <button type="button" class="print-back-btn" id="print-back-2">← חזור</button>
+        <p class="buy-modal-subtitle">פרטי משלוח</p>
+        <div class="print-fields">
+          <input id="print-name" class="print-input" type="text" placeholder="שם מלא *">
+          <input id="print-phone" class="print-input" type="tel" placeholder="טלפון *">
+          <input id="print-email" class="print-input" type="email" placeholder="מייל (לאישור הזמנה)">
+          <input id="print-line1" class="print-input" type="text" placeholder="כתובת (רחוב ומספר) *">
+          <div class="print-field-row">
+            <input id="print-city" class="print-input print-input-city" type="text" placeholder="עיר *">
+            <input id="print-zip" class="print-input print-input-zip" type="text" placeholder="מיקוד *">
+          </div>
+        </div>
+        <p class="print-error" id="print-error"></p>
+        <button type="button" id="print-pay-btn" class="dl-btn print-pay-btn">
+          שלם דרך PayPal — <span id="print-pay-amount"></span>
+        </button>
+        <p class="buy-modal-note">המוצר יישלח ישירות לביתך בדואר. זמן משלוח: 7–14 ימי עסקים.</p>
+      </div>
     </div>
   </div>
 
