@@ -404,7 +404,7 @@ async function handleFillTitles(request, env) {
       });
       if (!res.ok) continue;
       const data = await res.json();
-      const title = data.content?.[0]?.text?.trim().replace(/^['"]|['"]$/g, '');
+      const title = data.content?.[0]?.text?.replace(/[\*_`#\n\r]/g, '').trim().replace(/^['"]|['"]$/g, '');
       if (title) {
         await env.DB.prepare('UPDATE photos SET title=? WHERE id=?').bind(title, photo.id).run();
         updated.push({ id: photo.id, title });

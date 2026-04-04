@@ -35,7 +35,8 @@ def generate_title(file_id, category):
                 )},
             ]}],
         )
-        return msg.content[0].text.strip().strip('"').strip("'")
+        raw = re.sub(r'[\*_`#\n\r]', '', msg.content[0].text)
+        return raw.strip().strip('"').strip("'")
     except Exception as e:
         print(f" ⚠️({e})", end="", flush=True)
         return None
