@@ -877,6 +877,23 @@ function redirectToPayPal(photo, size) {
   window.location.href = `https://www.paypal.com/cgi-bin/webscr?${params.toString()}`;
 }
 
+// ===== FAQ ACCORDION =====
+document.querySelectorAll('.faq-question').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const isOpen = btn.getAttribute('aria-expanded') === 'true';
+    // Close all
+    document.querySelectorAll('.faq-question').forEach(b => {
+      b.setAttribute('aria-expanded', 'false');
+      b.nextElementSibling.style.maxHeight = null;
+    });
+    // Open clicked if it was closed
+    if (!isOpen) {
+      btn.setAttribute('aria-expanded', 'true');
+      btn.nextElementSibling.style.maxHeight = btn.nextElementSibling.scrollHeight + 'px';
+    }
+  });
+});
+
 // ===== PRINT SHOP =====
 const PrintShop = (() => {
   let catalog = null;
