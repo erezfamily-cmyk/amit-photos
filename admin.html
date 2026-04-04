@@ -545,6 +545,7 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
             <th>מחיר</th>
             <th>מספר הזמנה Prodigi</th>
             <th>סטטוס</th>
+            <th>החזר</th>
           </tr></thead>
           <tbody id="print-orders-tbody"></tbody>
         </table>
@@ -1987,8 +1988,13 @@ const PrintOrders = (() => {
       return;
     }
     empty.classList.add('hidden');
-    tbody.innerHTML = data.map(o => `
-      <tr>
+    tbody.innerHTML = data.map(o => {
+      const cancelled = o.status === 'cancelled';
+      const paypalLink = o.paypal_tx
+        ? `https://www.paypal.com/activity/payment/${o.paypal_tx}`
+        : 'https://www.paypal.com/activity/';
+      return `
+      <tr style="${cancelled ? 'opacity:.5' : ''}">
         <td style="white-space:nowrap;font-size:.82rem;color:var(--text-muted)">${fmtDate(o.created_at)}</td>
         <td><strong>${o.customer_name||'—'}</strong></td>
         <td><a href="tel:${o.customer_phone||''}" style="color:var(--accent)">${o.customer_phone||'—'}</a></td>
@@ -1998,7 +2004,13 @@ const PrintOrders = (() => {
         <td style="color:var(--accent)">$${o.sell_price||'—'}</td>
         <td style="font-size:.78rem;color:var(--text-muted)">${o.prodigi_order_id||'—'}</td>
         <td><span class="badge-status">${o.status||'—'}</span></td>
-      </tr>`).join('');
+        <td>
+          ${cancelled
+            ? `<a href="${paypalLink}" target="_blank" class="btn btn-danger btn-sm">החזר ב-PayPal</a>`
+            : '—'}
+        </td>
+      </tr>`;
+    }).join('');
   }
 
   async function load() {
