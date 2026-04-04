@@ -7,11 +7,6 @@ compatibility_flags = ["nodejs_compat"]
 directory = "."
 binding = "ASSETS"
 
-[[assets.headers]]
-path = "/data/photos.json"
-[assets.headers.additional_headers]
-Cache-Control = "no-store"
-
 [[d1_databases]]
 binding = "DB"
 database_name = "amit-photos-db"

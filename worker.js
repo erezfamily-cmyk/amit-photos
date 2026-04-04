@@ -1117,6 +1117,14 @@ export default {
       const ctx = { waitUntil: (p) => p }; // best-effort
       trackPageView(env, request);
     }
+
+    // מנע קאש על photos.json כדי שעדכונים יופיעו מיידית
+    if (path === '/data/photos.json') {
+      const newRes = new Response(res.body, res);
+      newRes.headers.set('Cache-Control', 'no-store');
+      return newRes;
+    }
+
     return res;
   },
 };
