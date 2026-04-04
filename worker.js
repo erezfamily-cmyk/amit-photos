@@ -481,13 +481,13 @@ const PRINT_CATALOG = {
     desc: 'נייר לוסטר איכותי, מוכן למסגור',
     attributes: {},
     sizes: [
-      { label: '10×15 ס"מ (4×6")',  sku: 'GLOBAL-PAP-4X6',   w: 4,     h: 6,     wi: 4,     hi: 6     },
-      { label: '13×18 ס"מ (5×7")',  sku: 'GLOBAL-PAP-5X7',   w: 5,     h: 7,     wi: 5,     hi: 7     },
-      { label: '20×25 ס"מ (8×10")', sku: 'GLOBAL-PAP-8X10',  w: 8,     h: 10,    wi: 8,     hi: 10    },
-      { label: 'A4 — 21×30 ס"מ',   sku: 'GLOBAL-PAP-A4',    w: 210,   h: 297,   wi: 8.27,  hi: 11.69 },
-      { label: '28×35 ס"מ (11×14")',sku: 'GLOBAL-PAP-11X14', w: 11,    h: 14,    wi: 11,    hi: 14    },
-      { label: '40×50 ס"מ (16×20")',sku: 'GLOBAL-PAP-16X20', w: 16,    h: 20,    wi: 16,    hi: 20    },
-      { label: 'A3 — 30×42 ס"מ',   sku: 'GLOBAL-PAP-A3',    w: 297,   h: 420,   wi: 11.69, hi: 16.54 },
+      { label: '10×15 ס"מ (4×6")',  sku: 'GLOBAL-PAP-4X6',   w: 4,   h: 6,   minW: 1200, minH: 1800 },
+      { label: '13×18 ס"מ (5×7")',  sku: 'GLOBAL-PAP-5X7',   w: 5,   h: 7,   minW: 1606, minH: 2196 },
+      { label: '20×25 ס"מ (8×10")', sku: 'GLOBAL-PAP-8X10',  w: 8,   h: 10,  minW: 2400, minH: 3000 },
+      { label: 'A4 — 21×30 ס"מ',   sku: 'GLOBAL-PAP-A4',    w: 210, h: 297, minW: 2551, minH: 3578 },
+      { label: '28×35 ס"מ (11×14")',sku: 'GLOBAL-PAP-11X14', w: 11,  h: 14,  minW: 3307, minH: 4192 },
+      { label: '40×50 ס"מ (16×20")',sku: 'GLOBAL-PAP-16X20', w: 16,  h: 20,  minW: 4800, minH: 6000 },
+      { label: 'A3 — 30×42 ס"מ',   sku: 'GLOBAL-PAP-A3',    w: 297, h: 420, minW: 3507, minH: 4962 },
     ]
   },
   canvas: {
@@ -495,11 +495,11 @@ const PRINT_CATALOG = {
     desc: 'קנבס מתוח על מסגרת עץ, מוכן לתלייה',
     attributes: { wrap: 'ImageWrap' },
     sizes: [
-      { label: '20×20 ס"מ', sku: 'GLOBAL-CAN-8X8',   w: 1,  h: 1,  wi: 8,  hi: 8  },
-      { label: '20×25 ס"מ', sku: 'GLOBAL-CAN-8X10',  w: 8,  h: 10, wi: 8,  hi: 10 },
-      { label: '30×40 ס"מ', sku: 'GLOBAL-CAN-12X16', w: 3,  h: 4,  wi: 12, hi: 16 },
-      { label: '40×50 ס"מ', sku: 'GLOBAL-CAN-16X20', w: 4,  h: 5,  wi: 16, hi: 20 },
-      { label: '50×60 ס"מ', sku: 'GLOBAL-CAN-20X24', w: 5,  h: 6,  wi: 20, hi: 24 },
+      { label: '20×20 ס"מ', sku: 'GLOBAL-CAN-8X8',   w: 1, h: 1, minW: 2454, minH: 2454 },
+      { label: '20×25 ס"מ', sku: 'GLOBAL-CAN-8X10',  w: 8, h: 10,minW: 2454, minH: 3054 },
+      { label: '30×40 ס"מ', sku: 'GLOBAL-CAN-12X16', w: 3, h: 4, minW: 3654, minH: 4854 },
+      { label: '40×50 ס"מ', sku: 'GLOBAL-CAN-16X20', w: 4, h: 5, minW: 4854, minH: 6054 },
+      { label: '50×60 ס"מ', sku: 'GLOBAL-CAN-20X24', w: 5, h: 6, minW: 6054, minH: 7254 },
     ]
   },
   poster: {
@@ -507,10 +507,10 @@ const PRINT_CATALOG = {
     desc: 'נייר אמנות איכותי, פינישינג מט',
     attributes: {},
     sizes: [
-      { label: 'A3 — 30×42 ס"מ', sku: 'GLOBAL-FAP-A3',    w: 297, h: 420, wi: 11.69, hi: 16.54 },
-      { label: 'A2 — 42×59 ס"מ', sku: 'GLOBAL-FAP-A2',    w: 420, h: 594, wi: 16.54, hi: 23.39 },
-      { label: '45×60 ס"מ',      sku: 'GLOBAL-FAP-18X24', w: 18,  h: 24,  wi: 18,    hi: 24    },
-      { label: '60×90 ס"מ',      sku: 'GLOBAL-FAP-24X36', w: 24,  h: 36,  wi: 24,    hi: 36    },
+      { label: 'A3 — 30×42 ס"מ', sku: 'GLOBAL-FAP-A3',    w: 297, h: 420, minW: 3507, minH: 4960  },
+      { label: 'A2 — 42×59 ס"מ', sku: 'GLOBAL-FAP-A2',    w: 420, h: 594, minW: 4960, minH: 7015  },
+      { label: '45×60 ס"מ',      sku: 'GLOBAL-FAP-18X24', w: 18,  h: 24,  minW: 5400, minH: 7200  },
+      { label: '60×90 ס"מ',      sku: 'GLOBAL-FAP-24X36', w: 24,  h: 36,  minW: 7200, minH: 10800 },
     ]
   }
 };
@@ -606,7 +606,9 @@ async function handlePrintOrderComplete(request, env) {
     headers: { 'X-API-Key': env.PRODIGI_API_KEY, 'Content-Type': 'application/json' },
     body: JSON.stringify({
       merchantReference: orderId,
+      idempotencyKey: orderId,
       shippingMethod: 'Standard',
+      callbackUrl: `${origin}/api/print/webhook`,
       recipient: {
         name: address.name,
         email: address.email || '',
@@ -768,6 +770,69 @@ function cancelPage(message, success) {
     <a href="https://amitphotos.com" class="btn">חזרה לאתר</a>
   </div>
 </body></html>`;
+}
+
+async function handlePrintWebhook(request, env) {
+  if (request.method !== 'POST') return new Response('ok', { status: 200 });
+  const payload = await request.json().catch(() => null);
+  if (!payload) return new Response('ok', { status: 200 });
+
+  const prodigiOrderId = payload.data?.order?.id || payload.subject;
+  const stage = payload.data?.order?.status?.stage;
+  if (!prodigiOrderId || !stage) return new Response('ok', { status: 200 });
+
+  // Map Prodigi stage to our status
+  const STATUS_MAP = {
+    'InProgress': 'in_production',
+    'Complete':   'shipped',
+    'Cancelled':  'cancelled',
+  };
+  const newStatus = STATUS_MAP[stage];
+  if (!newStatus) return new Response('ok', { status: 200 });
+
+  await env.DB.prepare(
+    'UPDATE print_orders SET status=? WHERE prodigi_order_id=? AND status != ?'
+  ).bind(newStatus, prodigiOrderId, 'cancelled').run();
+
+  // Send shipping notification to customer when shipped
+  if (newStatus === 'shipped' && env.RESEND_API_KEY) {
+    const order = await env.DB.prepare(
+      'SELECT * FROM print_orders WHERE prodigi_order_id=?'
+    ).bind(prodigiOrderId).first();
+    if (order?.customer_email) {
+      const fromEmail = env.FROM_EMAIL || 'amit@amitphotos.com';
+      const shipments = payload.data?.order?.shipments || [];
+      const tracking = shipments[0]?.tracking?.number || '';
+      const html = `<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head><meta charset="UTF-8"></head>
+<body style="margin:0;padding:0;background:#f4f4f4;font-family:Arial,sans-serif">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:32px 0">
+    <tr><td align="center">
+      <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#fff;border-radius:8px;overflow:hidden">
+        <tr><td style="background:#0a0a0a;padding:24px 40px;text-align:center">
+          <div style="color:#c8a96e;font-size:20px;font-weight:700;letter-spacing:.25em;font-family:Georgia,serif">AMIT PHOTOS</div>
+        </td></tr>
+        <tr><td style="padding:32px 40px;color:#222;font-size:15px;line-height:1.85;direction:rtl;text-align:right">
+          <h2 style="margin:0 0 1rem">שלום ${order.customer_name}, ההדפסה שלך בדרך! 📦</h2>
+          <p><strong>מוצר:</strong> ${order.product_label}</p>
+          <p><strong>כתובת:</strong> ${order.address_line1}, ${order.address_city} ${order.address_zip}</p>
+          ${tracking ? `<p><strong>מספר מעקב:</strong> ${tracking}</p>` : ''}
+          <p style="color:#888;font-size:.9rem">זמן הגעה משוער: 7–14 ימי עסקים.</p>
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body></html>`;
+      await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ from: fromEmail, to: order.customer_email, subject: 'ההדפסה שלך נשלחה! — Amit Photos', html })
+      });
+    }
+  }
+
+  return new Response('ok', { status: 200 });
 }
 
 async function handlePrintOrders(request, env) {
@@ -981,6 +1046,7 @@ export default {
     if (path === '/api/print/quote')          return handlePrintQuote(request, env);
     if (path === '/api/print/order-complete') return handlePrintOrderComplete(request, env);
     if (path === '/api/print/cancel')         return handlePrintCancel(request, env);
+    if (path === '/api/print/webhook')        return handlePrintWebhook(request, env);
     if (path === '/api/print/orders')         return handlePrintOrders(request, env);
     if (path === '/api/analytics')         return handleAnalytics(request, env);
     if (path.startsWith('/photos/'))       return servePhoto(path.slice('/photos/'.length), env);
