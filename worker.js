@@ -209,32 +209,36 @@ async function handleSubscribers(request, env) {
 
 // ===== CUSTOMERS =====
 async function handleCustomers(request, env) {
-  if (!await checkAuth(request, env)) return unauth(request);
   const method = request.method;
+
+  // POST פתוח לציבור — פניות מטופס צור קשר באתר
+  if (method === 'POST') {
+    const body = await request.json().catch(() => ({}));
+    const { id, name, email, phone, date, type, status, subject, notes } = body;
+    if (!name) return jsonRes({ error: 'שם חסר' }, 400, request);
+    if (id) {
+      if (!await checkAuth(request, env)) return unauth(request);
+      await env.DB.prepare(
+        `UPDATE customers SET name=?,email=?,phone=?,date=?,type=?,status=?,subject=?,notes=? WHERE id=?`
+      ).bind(name, email||'', phone||'', date||'', type||'', status||'', subject||'', notes||'', id).run();
+      return jsonRes({ ok: true, id }, 200, request);
+    } else {
+      const newId = crypto.randomUUID();
+      await env.DB.prepare(
+        `INSERT INTO customers (id,name,email,phone,date,type,status,subject,notes,created_at) VALUES (?,?,?,?,?,?,?,?,?,?)`
+      ).bind(newId, name, email||'', phone||'', date||'', type||'פנייה', status||'ממתין', subject||'', notes||'', new Date().toISOString()).run();
+      return jsonRes({ ok: true, id: newId }, 200, request);
+    }
+  }
+
+  // GET ו-DELETE דורשים auth
+  if (!await checkAuth(request, env)) return unauth(request);
 
   if (method === 'GET') {
     const { results } = await env.DB.prepare(
       'SELECT * FROM customers ORDER BY created_at DESC'
     ).all();
     return jsonRes(results);
-  }
-
-  if (method === 'POST') {
-    const body = await request.json().catch(() => ({}));
-    const { id, name, email, phone, date, type, status, subject, notes } = body;
-    if (!name) return jsonRes({ error: 'שם חסר' }, 400);
-    if (id) {
-      await env.DB.prepare(
-        `UPDATE customers SET name=?,email=?,phone=?,date=?,type=?,status=?,subject=?,notes=? WHERE id=?`
-      ).bind(name, email||'', phone||'', date||'', type||'', status||'', subject||'', notes||'', id).run();
-      return jsonRes({ ok: true, id });
-    } else {
-      const newId = crypto.randomUUID();
-      await env.DB.prepare(
-        `INSERT INTO customers (id,name,email,phone,date,type,status,subject,notes,created_at) VALUES (?,?,?,?,?,?,?,?,?,?)`
-      ).bind(newId, name, email||'', phone||'', date||'', type||'', status||'ממתין', subject||'', notes||'', new Date().toISOString()).run();
-      return jsonRes({ ok: true, id: newId });
-    }
   }
 
   if (method === 'DELETE') {

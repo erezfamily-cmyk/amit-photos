@@ -608,6 +608,19 @@ function initContactForm() {
 
     try {
       const formData = new FormData(form);
+      const name    = formData.get('name')    || '';
+      const email   = formData.get('email')   || '';
+      const subject = formData.get('subject') || '';
+      const message = formData.get('message') || '';
+
+      // שמור פנייה בDB
+      await fetch('/api/customers', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, subject, notes: message, type: 'פנייה', status: 'ממתין' }),
+      });
+
+      // שלח התראה למייל דרך Web3Forms
       const res = await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
         body: formData,
