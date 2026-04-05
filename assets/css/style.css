@@ -1363,6 +1363,7 @@ nav.scrolled { border-bottom-color: rgba(200, 169, 110, 0.3); }
 .print-res-block { font-size: .8rem; text-align: center; margin-top: .4rem; color: #e55; font-weight: 600; }
 .print-crop-frame {
   width: 100%;
+  max-height: 220px;
   overflow: hidden;
   border: 2px solid var(--accent);
   border-radius: var(--radius);

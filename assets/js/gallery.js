@@ -1011,10 +1011,17 @@ const PrintShop = (() => {
     const frame = document.getElementById('print-crop-frame');
     const img = document.getElementById('print-crop-img');
 
-    // Set frame aspect ratio
+    // Set frame aspect ratio, capped at 220px height
+    const MAX_CROP_H = 220;
     const maxW = frame.parentElement.clientWidth || 400;
-    cropFrameW = maxW;
-    cropFrameH = Math.round(maxW * aspectH / aspectW);
+    const rawH = Math.round(maxW * aspectH / aspectW);
+    if (rawH > MAX_CROP_H) {
+      cropFrameH = MAX_CROP_H;
+      cropFrameW = Math.round(MAX_CROP_H * aspectW / aspectH);
+    } else {
+      cropFrameH = rawH;
+      cropFrameW = maxW;
+    }
     frame.style.width = cropFrameW + 'px';
     frame.style.height = cropFrameH + 'px';
 
