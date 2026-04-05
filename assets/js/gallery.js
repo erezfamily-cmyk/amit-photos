@@ -38,6 +38,24 @@ function initNav() {
     nav.classList.toggle('scrolled', window.scrollY > 40);
   }, { passive: true });
 
+  // Hero parallax
+  const heroBg = document.querySelector('.hero-bg');
+  if (heroBg && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          const scrollY = window.scrollY;
+          if (scrollY < window.innerHeight) {
+            heroBg.style.transform = `translateY(${scrollY * 0.4}px)`;
+          }
+          ticking = false;
+        });
+        ticking = true;
+      }
+    }, { passive: true });
+  }
+
   // Hamburger
   if (hamburger) {
     hamburger.addEventListener('click', () => {
