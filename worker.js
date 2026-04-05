@@ -253,19 +253,21 @@ async function handleCustomers(request, env) {
 
 // ===== PHOTOS =====
 async function handlePhotos(request, env) {
-  if (!await checkAuth(request, env)) return unauth(request);
   const method = request.method;
 
   if (method === 'GET') {
     const url = new URL(request.url);
-    // ציבורי — רק published; אדמין — הכל
     const adminAll = url.searchParams.get('admin') === '1';
+    // ?admin=1 מחייב auth; גישה ציבורית — רק published
+    if (adminAll && !await checkAuth(request, env)) return unauth(request);
     const sql = adminAll
       ? 'SELECT * FROM photos ORDER BY created_at DESC'
       : 'SELECT * FROM photos WHERE published=1 ORDER BY created_at DESC';
     const { results } = await env.DB.prepare(sql).all();
     return jsonRes(results);
   }
+
+  if (!await checkAuth(request, env)) return unauth(request);
 
   if (method === 'POST') {
     const body = await request.json().catch(() => ({}));
