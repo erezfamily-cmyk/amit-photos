@@ -1,0 +1,42 @@
+name: פרסום לפייסבוק אוטומטי
+
+on:
+  # שלישי וששי ב-08:00 UTC = 11:00 ישראל
+  schedule:
+    - cron: '0 8 * * 2,5'
+  # הפעלה ידנית לבדיקות
+  workflow_dispatch:
+
+jobs:
+  facebook-post:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Python setup
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: התקנת חבילות
+        run: pip install requests anthropic
+
+      - name: פרסום תמונה לפייסבוק
+        env:
+          FACEBOOK_PAGE_ID: ${{ secrets.FACEBOOK_PAGE_ID }}
+          FACEBOOK_PAGE_TOKEN: ${{ secrets.FACEBOOK_PAGE_TOKEN }}
+          ANTHROPIC_API_KEY: ${{ secrets.AMIT_PHOTO_AGENT }}
+        run: python src/facebook_post.py
+
+      - name: עדכון מעקב פרסומים
+        run: |
+          git config user.name "Facebook Agent"
+          git config user.email "agent@amitphotos.com"
+          git add data/facebook_posted.json
+          git diff --staged --quiet || (git commit -m "🤖 עדכון facebook_posted.json" && git pull --rebase origin main && git push origin main)
