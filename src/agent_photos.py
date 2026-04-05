@@ -128,20 +128,34 @@ def list_images(session, folder_id):
 
 
 def download_thumbnail(session, file_id, max_size=800):
-    """מוריד תמונה מ-Drive API לצורך ניתוח."""
-    # הורד ישירות דרך Drive API עם token (אמין יותר מ-thumbnail URL)
-    res = session.get(
-        f"{DRIVE_API}/files/{file_id}",
-        params={"alt": "media"},
-        stream=True,
-    )
-    if res.ok:
-        return res.content
-    # fallback — thumbnail
+    """מוריד thumbnail של תמונה מ-Drive לצורך ניתוח עם Claude."""
+    from PIL import Image
+    import io
+
+    # נסה thumbnail URL קודם — קטן ומהיר, לא יגרום ל-413
     url = f"https://drive.google.com/thumbnail?id={file_id}&sz=w{max_size}"
-    res = session.get(url)
-    res.raise_for_status()
-    return res.content
+    res = session.get(url, timeout=20)
+    if res.ok and len(res.content) > 1000:
+        raw = res.content
+    else:
+        # fallback — הורד קובץ מלא ושנה גודל עם Pillow
+        res = session.get(
+            f"{DRIVE_API}/files/{file_id}",
+            params={"alt": "media"},
+            timeout=30,
+        )
+        res.raise_for_status()
+        raw = res.content
+
+    # וודא שהתמונה לא עוברת 4MB (מגבלת Claude base64)
+    if len(raw) > 4 * 1024 * 1024:
+        img = Image.open(io.BytesIO(raw))
+        img.thumbnail((max_size, max_size), Image.LANCZOS)
+        buf = io.BytesIO()
+        img.save(buf, format="JPEG", quality=80)
+        raw = buf.getvalue()
+
+    return raw
 
 
 def analyze_with_claude(image_bytes, filename, category, anthropic_key):
@@ -187,18 +201,28 @@ def analyze_with_claude(image_bytes, filename, category, anthropic_key):
         }]
     }
 
-    try:
-        res = requests.post(ANTHROPIC_API, headers=headers, json=body, timeout=30)
-        res.raise_for_status()
-        content = res.json()["content"][0]["text"].strip()
-        # נקה JSON אם יש ```
-        if "```" in content:
-            content = content.split("```")[1].replace("json", "").strip()
-        data = json.loads(content)
-        return data.get("title", ""), data.get("description", "")
-    except Exception as e:
-        print(f"⚠️  שגיאה בניתוח Claude: {e}")
-        return Path(filename).stem, ""
+    for attempt in range(3):
+        try:
+            res = requests.post(ANTHROPIC_API, headers=headers, json=body, timeout=30)
+            if res.status_code in (429, 500, 502, 503) and attempt < 2:
+                wait = 5 * (attempt + 1)
+                print(f"⏳ retry בעוד {wait}s (סטטוס {res.status_code})...", end=" ", flush=True)
+                time.sleep(wait)
+                continue
+            res.raise_for_status()
+            content = res.json()["content"][0]["text"].strip()
+            # נקה JSON אם יש ```
+            if "```" in content:
+                content = content.split("```")[1].replace("json", "").strip()
+            data = json.loads(content)
+            return data.get("title", ""), data.get("description", "")
+        except Exception as e:
+            if attempt < 2:
+                time.sleep(3)
+                continue
+            print(f"⚠️  שגיאה בניתוח Claude: {e}")
+            return Path(filename).stem, ""
+    return Path(filename).stem, ""
 
 
 def load_existing_photos():
