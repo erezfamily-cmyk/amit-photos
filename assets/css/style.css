@@ -1207,10 +1207,11 @@ nav.scrolled { border-bottom-color: rgba(200, 169, 110, 0.3); }
   flex: 1;
   height: 2px;
   background: var(--border);
-  margin: 13px .3rem 0;
-  min-width: 24px;
+  margin-bottom: 18px;
+  min-width: 20px;
   border-radius: 1px;
   transition: background .25s;
+  align-self: center;
 }
 .print-prog-item.current .print-prog-dot {
   border-color: var(--accent);
@@ -1872,6 +1873,7 @@ footer {
     gap: 1.5rem;
     border-bottom: 1px solid var(--border);
     display: none;
+    -webkit-backdrop-filter: blur(16px);
     backdrop-filter: blur(16px);
   }
   .nav-links.open { display: flex; }
