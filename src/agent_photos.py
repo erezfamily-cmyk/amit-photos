@@ -135,7 +135,9 @@ def download_thumbnail(session, file_id, max_size=800):
     # נסה thumbnail URL קודם — קטן ומהיר, לא יגרום ל-413
     url = f"https://drive.google.com/thumbnail?id={file_id}&sz=w{max_size}"
     res = session.get(url, timeout=20)
-    if res.ok and len(res.content) > 1000:
+    # ודא שהתגובה היא תמונה (לא דף HTML של login)
+    content_type = res.headers.get("Content-Type", "")
+    if res.ok and len(res.content) > 1000 and "image" in content_type:
         raw = res.content
     else:
         # fallback — הורד קובץ מלא ושנה גודל עם Pillow

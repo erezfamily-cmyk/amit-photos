@@ -172,6 +172,7 @@ function renderGallery(append = false) {
         alt="${photo.title}"
         loading="lazy"
         onload="this.closest('.gallery-item').classList.add('loaded')"
+        onerror="this.closest('.gallery-item').style.display='none'"
         draggable="false"
         oncontextmenu="return false"
       />
