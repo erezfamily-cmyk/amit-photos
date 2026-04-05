@@ -220,9 +220,17 @@ function initFeatured() {
   const grid = document.getElementById('featured-grid');
   if (!grid || allPhotos.length === 0) return;
 
-  const picks = allPhotos.slice(0, 5);
+  // Deterministic weekly selection — same 5 photos all week, rotates each Sunday
+  const weekNum = Math.floor(Date.now() / (7 * 24 * 60 * 60 * 1000));
+  const seededSort = (a, b) => {
+    const ha = (weekNum * 2654435761 + hashStr(a.id)) >>> 0;
+    const hb = (weekNum * 2654435761 + hashStr(b.id)) >>> 0;
+    return ha - hb;
+  };
+  const picks = [...allPhotos].sort(seededSort).slice(0, 5);
+
   grid.innerHTML = picks.map((photo, i) => `
-    <div class="featured-item" data-idx="${i}">
+    <div class="featured-item" data-id="${photo.id}">
       <img src="${photo.thumbnail || photo.url}" alt="${photo.title}" loading="lazy" />
       <div class="featured-item-overlay">
         <span class="featured-item-title">${photo.title}</span>
@@ -232,11 +240,19 @@ function initFeatured() {
 
   grid.querySelectorAll('.featured-item').forEach(item => {
     item.addEventListener('click', () => {
+      const id = item.dataset.id;
       filteredPhotos = [...allPhotos];
       displayedCount = Math.min(PAGE_SIZE, filteredPhotos.length);
-      openLightbox(parseInt(item.dataset.idx));
+      const idx = filteredPhotos.findIndex(p => p.id === id);
+      if (idx !== -1) openLightbox(idx);
     });
   });
+}
+
+function hashStr(s) {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) h = Math.imul(31, h) + s.charCodeAt(i) | 0;
+  return h >>> 0;
 }
 
 // ===== SEARCH =====
@@ -482,6 +498,51 @@ function openLightbox(idx) {
   // Progress bar
   const progress = document.getElementById('lb-progress');
   if (progress) progress.style.width = `${((idx + 1) / filteredPhotos.length) * 100}%`;
+
+  // EXIF
+  const exifEl = document.getElementById('lb-exif');
+  if (exifEl) {
+    const e = photo.exif;
+    if (e && Object.keys(e).length) {
+      const chips = [];
+      if (e.camera) chips.push(`<span class="lb-exif-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="6" width="20" height="14" rx="1.5"/><circle cx="12" cy="13" r="3.5"/><path d="M8 6l1.5-3h5L16 6" stroke-linecap="round"/></svg>${e.camera}</span>`);
+      if (e.focal) chips.push(`<span class="lb-exif-chip">${Math.round(e.focal)}mm</span>`);
+      if (e.aperture) chips.push(`<span class="lb-exif-chip">f/${e.aperture}</span>`);
+      if (e.shutter) chips.push(`<span class="lb-exif-chip">${e.shutter < 1 ? '1/' + Math.round(1 / e.shutter) : e.shutter}s</span>`);
+      if (e.iso) chips.push(`<span class="lb-exif-chip">ISO ${e.iso}</span>`);
+      exifEl.innerHTML = chips.join('');
+      exifEl.classList.toggle('hidden', chips.length === 0);
+    } else {
+      exifEl.classList.add('hidden');
+    }
+  }
+
+  // Related photos from same category
+  const relatedEl = document.getElementById('lb-related');
+  const relatedTrack = document.getElementById('lb-related-track');
+  if (relatedEl && relatedTrack) {
+    const related = allPhotos.filter(p => p.category === photo.category && p.id !== photo.id).slice(0, 10);
+    if (related.length >= 2) {
+      relatedTrack.innerHTML = related.map(p => {
+        const relIdx = filteredPhotos.findIndex(x => x.id === p.id);
+        return `<div class="lb-related-thumb" data-id="${p.id}" data-idx="${relIdx}">
+          <img src="${p.thumbnail || p.url}" alt="${p.title}" loading="lazy" />
+        </div>`;
+      }).join('');
+      relatedTrack.querySelectorAll('.lb-related-thumb').forEach(t => {
+        t.addEventListener('click', () => {
+          const ridx = parseInt(t.dataset.idx);
+          if (ridx >= 0) { openLightbox(ridx); return; }
+          // photo not in current filtered set — add it and open
+          const p = allPhotos.find(x => x.id === t.dataset.id);
+          if (p) { filteredPhotos.push(p); openLightbox(filteredPhotos.length - 1); }
+        });
+      });
+      relatedEl.classList.remove('hidden');
+    } else {
+      relatedEl.classList.add('hidden');
+    }
+  }
 
   // Download button — עם הגנת סיסמה
   const dlBtn = document.getElementById('lb-download');

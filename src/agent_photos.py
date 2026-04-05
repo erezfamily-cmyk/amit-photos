@@ -324,6 +324,16 @@ def main():
             cat_main = cat_parts[0].strip()
             cat_sub = cat_parts[1].strip() if len(cat_parts) > 1 else None
 
+            # EXIF
+            exif = {}
+            cam = f"{meta.get('cameraMake', '')} {meta.get('cameraModel', '')}".strip()
+            if cam: exif["camera"] = cam
+            if meta.get("lens"): exif["lens"] = meta["lens"]
+            if meta.get("focalLength") is not None: exif["focal"] = meta["focalLength"]
+            if meta.get("aperture") is not None: exif["aperture"] = meta["aperture"]
+            if meta.get("isoSpeed") is not None: exif["iso"] = meta["isoSpeed"]
+            if meta.get("exposureTime") is not None: exif["shutter"] = meta["exposureTime"]
+
             photo = {
                 "id": file_id,
                 "title": title or Path(f["name"]).stem,
@@ -335,6 +345,7 @@ def main():
                 "filename": f["name"],
                 "width": meta.get("width", 1920),
                 "height": meta.get("height", 1080),
+                "exif": exif if exif else None,
             }
             all_photos.append(photo)
             new_count += 1
