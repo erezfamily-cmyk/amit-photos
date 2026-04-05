@@ -923,6 +923,8 @@ const PrintShop = (() => {
   function showStep(n) {
     [1, 2, 3].forEach(i => {
       document.getElementById(`print-step-${i}`).classList.toggle('active', i === n);
+      const prog = document.getElementById(`print-prog-${i}`);
+      if (prog) prog.className = 'print-prog-item' + (i === n ? ' current' : i < n ? ' done' : '');
     });
   }
 
@@ -946,17 +948,38 @@ const PrintShop = (() => {
     renderTypes();
   }
 
+  const TYPE_ICONS = {
+    photo: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2" y="5" width="20" height="15" rx="1.5"/><circle cx="12" cy="12.5" r="3.5"/><path d="M9 5l1.2-2h3.6L15 5" stroke-linecap="round"/><circle cx="18.5" cy="8" r=".8" fill="currentColor" stroke="none"/></svg>`,
+    canvas: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="3" width="18" height="18" rx="1"/><path d="M3 8h18M3 16h18M8 3v18M16 3v18" stroke-width="1" opacity=".5"/><circle cx="12" cy="12" r="2" stroke-width="1.5"/></svg>`,
+    poster: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="5" y="2" width="14" height="20" rx="1"/><path d="M8 7h8M8 11h8M8 15h5" stroke-linecap="round"/></svg>`,
+  };
+
   function renderTypes() {
     const container = document.getElementById('print-type-options');
     container.innerHTML = Object.entries(catalog).map(([key, val]) =>
       `<button type="button" class="print-type-btn" data-type="${key}">
-        <strong>${val.label}</strong>
-        <span class="print-type-desc">${val.desc}</span>
+        <span class="print-type-icon">${TYPE_ICONS[key] || ''}</span>
+        <span class="print-type-text">
+          <strong>${val.label}</strong>
+          <span class="print-type-desc">${val.desc}</span>
+        </span>
       </button>`
     ).join('');
     container.querySelectorAll('.print-type-btn').forEach(btn => {
       btn.addEventListener('click', () => selectType(btn.dataset.type));
     });
+  }
+
+  function sizeVisual(w, h) {
+    const maxDim = 28;
+    const fw = parseFloat(w), fh = parseFloat(h);
+    const isSquare = fw === fh;
+    if (isSquare) return `<div class="size-vis" style="width:${maxDim}px;height:${maxDim}px"></div>`;
+    const landscape = fw > fh;
+    const ratio = landscape ? fh / fw : fw / fh;
+    const vW = landscape ? maxDim : Math.max(12, Math.round(maxDim * ratio));
+    const vH = landscape ? Math.max(12, Math.round(maxDim * ratio)) : maxDim;
+    return `<div class="size-vis" style="width:${vW}px;height:${vH}px"></div>`;
   }
 
   function selectType(type) {
@@ -965,7 +988,10 @@ const PrintShop = (() => {
     document.getElementById('print-type-label').textContent = t.label;
     const container = document.getElementById('print-size-options');
     container.innerHTML = t.sizes.map(s =>
-      `<button type="button" class="print-size-btn" data-sku="${s.sku}" data-w="${s.w}" data-h="${s.h}" data-minw="${s.minW}" data-minh="${s.minH}">${s.label}</button>`
+      `<button type="button" class="print-size-btn" data-sku="${s.sku}" data-w="${s.w}" data-h="${s.h}" data-minw="${s.minW}" data-minh="${s.minH}">
+        ${sizeVisual(s.w, s.h)}
+        <span>${s.label}</span>
+      </button>`
     ).join('');
     container.querySelectorAll('.print-size-btn').forEach(btn => {
       btn.addEventListener('click', () => selectSize(btn));
