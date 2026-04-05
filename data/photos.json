@@ -9,7 +9,15 @@
     "description": "",
     "filename": "DSC_5899 copy.jpg",
     "width": 7522,
-    "height": 5015
+    "height": 5015,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 160,
+      "aperture": 2.8,
+      "iso": 125,
+      "shutter": 0.0008
+    }
   },
   {
     "id": "1Lin1fkPbPPkPq79TeljA6LDLv_rzG1F9",
@@ -21,7 +29,15 @@
     "description": "",
     "filename": "DSC_5902 copy.jpg",
     "width": 7805,
-    "height": 5203
+    "height": 5203,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 80,
+      "aperture": 2.8,
+      "iso": 125,
+      "shutter": 0.001
+    }
   },
   {
     "id": "1_rxjKeg8Fm-Pr37s3uHbT5po91HwCT0f",
@@ -33,7 +49,15 @@
     "description": "",
     "filename": "DSC_5917 copy.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 200,
+      "aperture": 2.8,
+      "iso": 1800,
+      "shutter": 0.005
+    }
   },
   {
     "id": "1FD7o7nYN8Semdl2W2eaE7_mEHiKpbHCM",
@@ -45,7 +69,15 @@
     "description": "",
     "filename": "DSC_7642.jpg",
     "width": 4100,
-    "height": 2726
+    "height": 2726,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "18.0-70.0 mm f/3.5-4.5",
+      "focal": 44,
+      "aperture": 5,
+      "iso": 100,
+      "shutter": 0.003125
+    }
   },
   {
     "id": "1urStD-M6I3FRdNOOBg22Kn0N6-csR3L5",
@@ -57,7 +89,15 @@
     "description": "",
     "filename": "DSC_7839.jpg",
     "width": 4288,
-    "height": 2848
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "18.0-70.0 mm f/3.5-4.5",
+      "focal": 34,
+      "aperture": 4,
+      "iso": 100,
+      "shutter": 0.003125
+    }
   },
   {
     "id": "1VxjOZ0V3dyUIRAtzHNkSVoWpNykkNw8d",
@@ -69,7 +109,15 @@
     "description": "",
     "filename": "DSC_7932.jpg",
     "width": 3800,
-    "height": 2524
+    "height": 2524,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "18.0-70.0 mm f/3.5-4.5",
+      "focal": 27,
+      "aperture": 4,
+      "iso": 100,
+      "shutter": 0.008
+    }
   },
   {
     "id": "1rPOKfINEQiiwQSkoflezhxgLH0WI1ygG",
@@ -81,7 +129,15 @@
     "description": "",
     "filename": "DSC_7936.jpg",
     "width": 4232,
-    "height": 2768
+    "height": 2768,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "18.0-70.0 mm f/3.5-4.5",
+      "focal": 52,
+      "aperture": 4.5,
+      "iso": 100,
+      "shutter": 0.0125
+    }
   },
   {
     "id": "1PO8ftae1KQLyfWLF58mYeHcBmv4_9fz6",
@@ -93,7 +149,15 @@
     "description": "",
     "filename": "DSC_9596.jpg",
     "width": 4215,
-    "height": 2775
+    "height": 2775,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 200,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.000625
+    }
   },
   {
     "id": "1mkj7yjz3I-Y951ZoHVSH_-6v8FjL66ap",
@@ -105,7 +169,15 @@
     "description": "",
     "filename": "greece-2025-617.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 185,
+      "aperture": 6.3,
+      "iso": 64,
+      "shutter": 0.003125
+    }
   },
   {
     "id": "13xVSea2recyRuCOKwzzRZntXwPMJHWoz",
@@ -117,7 +189,15 @@
     "description": "",
     "filename": "greece-2025-618.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 102,
+      "aperture": 6.3,
+      "iso": 64,
+      "shutter": 0.005
+    }
   },
   {
     "id": "1MoJcye0TH-X8JnZNFJlk-101A4iuqWS7",
@@ -129,7 +209,15 @@
     "description": "",
     "filename": "greece-2025-619.jpg",
     "width": 7437,
-    "height": 5209
+    "height": 5209,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 70,
+      "aperture": 6.3,
+      "iso": 64,
+      "shutter": 0.003125
+    }
   },
   {
     "id": "11AnFgtB5Ch-asooNb6dVFPdOdvZ6C0y_",
@@ -141,7 +229,15 @@
     "description": "",
     "filename": "greece-2025-621.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 200,
+      "aperture": 6.3,
+      "iso": 64,
+      "shutter": 0.0025
+    }
   },
   {
     "id": "1cqtkYy8vr20KSAuajsQ1Ppirv7YBchPv",
@@ -230,7 +326,15 @@
     "description": "",
     "filename": "Z72_4679 copy.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 200,
+      "aperture": 2.8,
+      "iso": 160,
+      "shutter": 0.005
+    }
   },
   {
     "id": "1d8LFk1t2KZRu2o8VmgJxszQCFPbEW-lg",
@@ -242,7 +346,15 @@
     "description": "",
     "filename": "1_20.jpg",
     "width": 4288,
-    "height": 2848
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "17.0-55.0 mm f/2.8",
+      "focal": 55,
+      "aperture": 8,
+      "iso": 160,
+      "shutter": 0.002
+    }
   },
   {
     "id": "1MYPjGXaSH8bE9-RpJr8X0ZX8gEDKq2K6",
@@ -254,7 +366,15 @@
     "description": "",
     "filename": "1_22.jpg",
     "width": 3558,
-    "height": 2351
+    "height": 2351,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "10.0-20.0 mm f/4.0-5.6",
+      "focal": 16,
+      "aperture": 5,
+      "iso": 400,
+      "shutter": 0.001
+    }
   },
   {
     "id": "1OZKg38_Q0BLEzqhDGCLVP2r0yHSPXW2P",
@@ -299,7 +419,15 @@
     "description": "",
     "filename": "DSC_0365a.jpg",
     "width": 3200,
-    "height": 2125
+    "height": 2125,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "10.0-20.0 mm f/4.0-5.6",
+      "focal": 10,
+      "aperture": 4,
+      "iso": 200,
+      "shutter": 0.005
+    }
   },
   {
     "id": "1M0MNq47h_rck94IU0GlqlX9yIA5_6MMe",
@@ -311,7 +439,15 @@
     "description": "",
     "filename": "DSC_2217.jpg",
     "width": 4233,
-    "height": 2812
+    "height": 2812,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "10.0-20.0 mm f/4.0-5.6",
+      "focal": 15,
+      "aperture": 5,
+      "iso": 160,
+      "shutter": 0.003125
+    }
   },
   {
     "id": "1Ky7uRmF5GurOE5OH_vtk-u_0iSWxcfQu",
@@ -323,7 +459,15 @@
     "description": "",
     "filename": "DSC_2399.jpg",
     "width": 4288,
-    "height": 2848
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "10.0-20.0 mm f/4.0-5.6",
+      "focal": 10,
+      "aperture": 4,
+      "iso": 100,
+      "shutter": 0.004
+    }
   },
   {
     "id": "1wE6dcdkaciBGBWTqztbGuQTSdJRr_Mw1",
@@ -335,7 +479,15 @@
     "description": "",
     "filename": "DSC_2504.jpg",
     "width": 4189,
-    "height": 2848
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "17.0-55.0 mm f/2.8",
+      "focal": 26,
+      "aperture": 22,
+      "iso": 100,
+      "shutter": 30
+    }
   },
   {
     "id": "1CUMXBEV1qLilGxw0eMMi_G5S3XuUrUeB",
@@ -358,7 +510,15 @@
     "description": "",
     "filename": "DSC_3322.jpg",
     "width": 4288,
-    "height": 2848
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "10.0-20.0 mm f/4.0-5.6",
+      "focal": 10,
+      "aperture": 11,
+      "iso": 100,
+      "shutter": 0.00625
+    }
   },
   {
     "id": "1KDUlqmuPI2047DDStVYUdXNvbcbn1lB-",
@@ -370,7 +530,15 @@
     "description": "",
     "filename": "DSC_3329.jpg",
     "width": 2848,
-    "height": 4288
+    "height": 4288,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "10.0-20.0 mm f/4.0-5.6",
+      "focal": 10,
+      "aperture": 11,
+      "iso": 100,
+      "shutter": 0.01
+    }
   },
   {
     "id": "1m6IFLTq0pfpdgENTItciXddOOGIOUzt2",
@@ -382,7 +550,15 @@
     "description": "",
     "filename": "DSC_3366.jpg",
     "width": 4000,
-    "height": 2657
+    "height": 2657,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "10.0-20.0 mm f/4.0-5.6",
+      "focal": 16,
+      "aperture": 7.1,
+      "iso": 100,
+      "shutter": 0.002
+    }
   },
   {
     "id": "1RwVJCbbNJAk-JUZI087Gm9kpMBM6fnJr",
@@ -394,7 +570,15 @@
     "description": "",
     "filename": "DSC_3768.jpg",
     "width": 4288,
-    "height": 2848
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "18.0-70.0 mm f/3.5-4.5",
+      "focal": 50,
+      "aperture": 8,
+      "iso": 160,
+      "shutter": 0.01
+    }
   },
   {
     "id": "1UEHatC39tA67plADlcepZ4giuxRKRcfk",
@@ -406,7 +590,15 @@
     "description": "",
     "filename": "DSC_3888.jpg",
     "width": 1100,
-    "height": 702
+    "height": 702,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "10.0-20.0 mm f/4.0-5.6",
+      "focal": 10,
+      "aperture": 5.6,
+      "iso": 100,
+      "shutter": 0.016666668
+    }
   },
   {
     "id": "1IBAfg_OCYwqil4w957gA-b0ferLS1_5G",
@@ -418,7 +610,15 @@
     "description": "",
     "filename": "DSC_3893.jpg",
     "width": 3921,
-    "height": 2536
+    "height": 2536,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "10.0-20.0 mm f/4.0-5.6",
+      "focal": 10,
+      "aperture": 5.6,
+      "iso": 100,
+      "shutter": 0.01
+    }
   },
   {
     "id": "1G6p9VgAqYn0G48z3vOQsMl_nPib5HyF8",
@@ -441,7 +641,15 @@
     "description": "",
     "filename": "DSC_5532.jpg",
     "width": 4078,
-    "height": 2709
+    "height": 2709,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "10.0-20.0 mm f/4.0-5.6",
+      "focal": 10,
+      "aperture": 8,
+      "iso": 100,
+      "shutter": 0.004
+    }
   },
   {
     "id": "1oyNjIb0iUVnfCah6IAjgFnDCZGKtq7gA",
@@ -453,7 +661,15 @@
     "description": "",
     "filename": "DSC_5685.jpg",
     "width": 4288,
-    "height": 2848
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 98,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.0005
+    }
   },
   {
     "id": "1rroI9xJY7BrYpb0QDM3rf9LmAuMTujlj",
@@ -465,7 +681,15 @@
     "description": "",
     "filename": "DSC_5736.jpg",
     "width": 4288,
-    "height": 2848
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "10.0-20.0 mm f/4.0-5.6",
+      "focal": 10,
+      "aperture": 20,
+      "iso": 100,
+      "shutter": 0.025
+    }
   },
   {
     "id": "18l1NkO-12l3fgP6JEMu6p1oL3RSBixX8",
@@ -477,7 +701,15 @@
     "description": "",
     "filename": "DSC_7467.jpg",
     "width": 3800,
-    "height": 2524
+    "height": 2524,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "10.0-20.0 mm f/4.0-5.6",
+      "focal": 11.5,
+      "aperture": 25,
+      "iso": 100,
+      "shutter": 2
+    }
   },
   {
     "id": "14vthzIuM_Gi0Bl5IsQbogDajHKad6B1r",
@@ -489,7 +721,15 @@
     "description": "",
     "filename": "DSC_7485.jpg",
     "width": 3800,
-    "height": 2524
+    "height": 2524,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "10.0-20.0 mm f/4.0-5.6",
+      "focal": 12,
+      "aperture": 25,
+      "iso": 100,
+      "shutter": 3
+    }
   },
   {
     "id": "1n7ml6jRSlfDWtrILiPi8oqevBQtelUoG",
@@ -501,7 +741,15 @@
     "description": "",
     "filename": "DSC_7502.jpg",
     "width": 4000,
-    "height": 2657
+    "height": 2657,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "10.0-20.0 mm f/4.0-5.6",
+      "focal": 18,
+      "aperture": 20,
+      "iso": 100,
+      "shutter": 5
+    }
   },
   {
     "id": "18yuQlOZTp7sf-JjpfCBVCRItafDJSuG0",
@@ -513,7 +761,15 @@
     "description": "",
     "filename": "DSC_7513.jpg",
     "width": 3500,
-    "height": 2325
+    "height": 2325,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "10.0-20.0 mm f/4.0-5.6",
+      "focal": 13,
+      "aperture": 20,
+      "iso": 100,
+      "shutter": 6
+    }
   },
   {
     "id": "1nLh9i-XaerEFjja5UUD3KfZgg1jRPv5J",
@@ -536,7 +792,15 @@
     "description": "",
     "filename": "February 23, 20132013-885.jpg",
     "width": 6597,
-    "height": 4165
+    "height": 4165,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "300.0 mm f/4.0",
+      "focal": 300,
+      "aperture": 6.3,
+      "iso": 400,
+      "shutter": 0.005
+    }
   },
   {
     "id": "1YIY2z5GedI2Av8vuozdyUP38CyedES4B",
@@ -548,7 +812,15 @@
     "description": "",
     "filename": "February 23, 20132013-971.jpg",
     "width": 7360,
-    "height": 4912
+    "height": 4912,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "300.0 mm f/4.0",
+      "focal": 300,
+      "aperture": 4,
+      "iso": 800,
+      "shutter": 0.000625
+    }
   },
   {
     "id": "1_GPklSlYpaxTmLnu7bArKoDZSUDaNgfR",
@@ -560,7 +832,15 @@
     "description": "",
     "filename": "greece-2025-608.jpg",
     "width": 5408,
-    "height": 3600
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 10,
+      "aperture": 22,
+      "iso": 31,
+      "shutter": 1
+    }
   },
   {
     "id": "16hKNONU3uhqCUBBG2VS0oIK_KqWP3lP6",
@@ -572,7 +852,15 @@
     "description": "",
     "filename": "greece-2025-609.jpg",
     "width": 5333,
-    "height": 3536
+    "height": 3536,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 10,
+      "aperture": 22,
+      "iso": 31,
+      "shutter": 6
+    }
   },
   {
     "id": "1M5kXPLpXu6PfoGkfd4JdW6Id1faF0dKA",
@@ -584,7 +872,15 @@
     "description": "",
     "filename": "greece-2025-611.jpg",
     "width": 5290,
-    "height": 3471
+    "height": 3471,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 20,
+      "aperture": 9,
+      "iso": 31,
+      "shutter": 8
+    }
   },
   {
     "id": "1P0_tbOufdRIALyGsCnhBXKN4D_C_m8rh",
@@ -596,7 +892,15 @@
     "description": "",
     "filename": "greece-2025-612.jpg",
     "width": 5282,
-    "height": 3516
+    "height": 3516,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 10,
+      "aperture": 22,
+      "iso": 31,
+      "shutter": 1.6
+    }
   },
   {
     "id": "1H1XNPcnpmQmlyM8aaqFG8cK5DFZFNVlt",
@@ -608,7 +912,15 @@
     "description": "",
     "filename": "greece-2025-615.jpg",
     "width": 7863,
-    "height": 5226
+    "height": 5226,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 200,
+      "aperture": 22,
+      "iso": 1600,
+      "shutter": 0.005
+    }
   },
   {
     "id": "1gQiDx1lCA3I00hm980ZTHnAWb3GjnC-d",
@@ -620,7 +932,15 @@
     "description": "",
     "filename": "Hermon mountain, Israel.jpg",
     "width": 4288,
-    "height": 2848
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 70,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.00125
+    }
   },
   {
     "id": "1kiRdVJO2wVz5LF1BsCwxg9I23GeQX85E",
@@ -632,7 +952,15 @@
     "description": "",
     "filename": "MJH_4890 1.jpg",
     "width": 7360,
-    "height": 4912
+    "height": 4912,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "24.0-70.0 mm f/2.8",
+      "focal": 29,
+      "aperture": 6.3,
+      "iso": 50,
+      "shutter": 0.06666667
+    }
   },
   {
     "id": "1Rwx9jKcw9RERPNi2Rf1PdXuRbGrDIHXC",
@@ -644,7 +972,15 @@
     "description": "",
     "filename": "Red sea at down.jpg",
     "width": 4000,
-    "height": 2657
+    "height": 2657,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "10.0-20.0 mm f/4.0-5.6",
+      "focal": 14,
+      "aperture": 20,
+      "iso": 100,
+      "shutter": 5
+    }
   },
   {
     "id": "1LLJ3g6rQlEhnQ_nTZhcyWrWifVa3XKgt",
@@ -656,7 +992,15 @@
     "description": "",
     "filename": "September 29, 20122012-10.jpg",
     "width": 4288,
-    "height": 2848
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "10.0-20.0 mm f/4.0-5.6",
+      "focal": 14,
+      "aperture": 6.3,
+      "iso": 100,
+      "shutter": 25
+    }
   },
   {
     "id": "1STznCFeJOu31QkoqVMHTm7i_cXvevzro",
@@ -668,7 +1012,14 @@
     "description": "",
     "filename": "Z72_3414.JPG",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "focal": 70,
+      "aperture": 4,
+      "iso": 125,
+      "shutter": 0.0125
+    }
   },
   {
     "id": "1Yrm9Ix9wGU-h70l7GadHkAFOfHTRM8M2",
@@ -691,7 +1042,15 @@
     "description": "",
     "filename": "DSC_0232.jpg",
     "width": 4288,
-    "height": 2848
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "105.0 mm f/2.8",
+      "focal": 105,
+      "aperture": 3.3,
+      "iso": 100,
+      "shutter": 0.005
+    }
   },
   {
     "id": "1_OgIaYrGEs5a2CWXgIw-1dQSGGoSsgKz",
@@ -824,7 +1183,15 @@
     "description": "",
     "filename": "DSC_2334.jpg",
     "width": 2657,
-    "height": 4000
+    "height": 4000,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "105.0 mm f/2.8",
+      "focal": 105,
+      "aperture": 4,
+      "iso": 100,
+      "shutter": 0.016666668
+    }
   },
   {
     "id": "1EyqJyuAVzyIdqtd3zToyDsPN3pcN9MwA",
@@ -836,7 +1203,15 @@
     "description": "",
     "filename": "DSC_2376.jpg",
     "width": 2723,
-    "height": 4100
+    "height": 4100,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "105.0 mm f/2.8",
+      "focal": 105,
+      "aperture": 9,
+      "iso": 160,
+      "shutter": 0.02
+    }
   },
   {
     "id": "16Scx1OhcvEY-JkM7g4barZWZAf0uugXl",
@@ -848,7 +1223,15 @@
     "description": "",
     "filename": "DSC_2746.jpg",
     "width": 2019,
-    "height": 2848
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "105.0 mm f/2.8",
+      "focal": 105,
+      "aperture": 3.2,
+      "iso": 100,
+      "shutter": 0.001
+    }
   },
   {
     "id": "1-oLwxYgYjKDWNeIzJPsVbIPjhBOGT70I",
@@ -1080,7 +1463,15 @@
     "description": "",
     "filename": "DSC_7429.jpg",
     "width": 3000,
-    "height": 1993
+    "height": 1993,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "105.0 mm f/2.8",
+      "focal": 105,
+      "aperture": 5,
+      "iso": 400,
+      "shutter": 0.016666668
+    }
   },
   {
     "id": "1T_sZuDJIECAtqscPBtZ1qoi7KECxxmLu",
@@ -1092,7 +1483,15 @@
     "description": "",
     "filename": "DSC_7462.jpg",
     "width": 4288,
-    "height": 2848
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "105.0 mm f/2.8",
+      "focal": 105,
+      "aperture": 3,
+      "iso": 100,
+      "shutter": 0.008
+    }
   },
   {
     "id": "12RvFwqLBEYL56rREul7msc4RkgSqixCI",
@@ -1170,7 +1569,15 @@
     "description": "",
     "filename": "DSC_8803.jpg",
     "width": 4000,
-    "height": 2657
+    "height": 2657,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "105.0 mm f/2.8",
+      "focal": 105,
+      "aperture": 8,
+      "iso": 400,
+      "shutter": 0.004
+    }
   },
   {
     "id": "1epbtb8U6y-k_8I04hWejfgbET_mEcNF0",
@@ -1193,7 +1600,15 @@
     "description": "",
     "filename": "Z72_0550 copy.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 200,
+      "aperture": 2.8,
+      "iso": 64,
+      "shutter": 0.00015625
+    }
   },
   {
     "id": "1GNE_KfvZrhA7Xx8VxyzL1iB2Q-zolMhD",
@@ -1205,7 +1620,15 @@
     "description": "",
     "filename": "Z72_0555 copy.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 175,
+      "aperture": 10,
+      "iso": 560,
+      "shutter": 0.005
+    }
   },
   {
     "id": "1elM6XHeRrV9uMv_5xDr7NC1KqVpMRnUH",
@@ -1217,7 +1640,15 @@
     "description": "",
     "filename": "Z72_0585 copy.jpg",
     "width": 5408,
-    "height": 3600
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 16,
+      "aperture": 3.5,
+      "iso": 100,
+      "shutter": 0.04
+    }
   },
   {
     "id": "1z65uWUxPZhNE29Zr2x3nKZT6wtlg5adj",
@@ -1229,7 +1660,15 @@
     "description": "",
     "filename": "Z72_0635 copy.jpg",
     "width": 8023,
-    "height": 5349
+    "height": 5349,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "24-70mm f/2.8G",
+      "focal": 45,
+      "aperture": 7.1,
+      "iso": 1800,
+      "shutter": 0.02
+    }
   },
   {
     "id": "1v55SlYVU99eLo8-vd_L82rg3nR1nzAx4",
@@ -1241,7 +1680,15 @@
     "description": "",
     "filename": "Z72_0638 copy.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 125,
+      "aperture": 7.1,
+      "iso": 2800,
+      "shutter": 0.008
+    }
   },
   {
     "id": "1zb3ko2DjGynX-08EUC2f0otErldWwmI0",
@@ -1253,7 +1700,15 @@
     "description": "",
     "filename": "Z72_0738 copy.jpg",
     "width": 7743,
-    "height": 5203
+    "height": 5203,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 200,
+      "aperture": 2.8,
+      "iso": 720,
+      "shutter": 0.005
+    }
   },
   {
     "id": "1MV_NtWD-Xf8QOS3vYgtqzm_OKSUVDykh",
@@ -1265,7 +1720,15 @@
     "description": "",
     "filename": "Z72_0752 copy.jpg",
     "width": 5239,
-    "height": 7832
+    "height": 7832,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 122,
+      "aperture": 2.8,
+      "iso": 250,
+      "shutter": 0.008
+    }
   },
   {
     "id": "1Z1U6pMT9PBNuVYHwg8PIh8B4uTFqm9bJ",
@@ -1277,7 +1740,15 @@
     "description": "",
     "filename": "Z72_0791 copy.jpg",
     "width": 5408,
-    "height": 3600
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 18,
+      "aperture": 3.5,
+      "iso": 125,
+      "shutter": 0.033333335
+    }
   },
   {
     "id": "1SpNHplCgfyVPnaCmLM2-Qev61Kg1Xv1i",
@@ -1289,7 +1760,15 @@
     "description": "",
     "filename": "Z72_0812 copy.jpg",
     "width": 5408,
-    "height": 3600
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 10,
+      "aperture": 3.5,
+      "iso": 90,
+      "shutter": 0.06666667
+    }
   },
   {
     "id": "1FKUiZlTrxzGJBzokEqVR1W1_pSoUT4ip",
@@ -1301,7 +1780,15 @@
     "description": "",
     "filename": "Z72_0823 copy.jpg",
     "width": 5331,
-    "height": 3549
+    "height": 3549,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 10,
+      "aperture": 3.5,
+      "iso": 90,
+      "shutter": 0.06666667
+    }
   },
   {
     "id": "1-XeHZVRXouPbQVrsbIMbhWy18f33V6BK",
@@ -1313,7 +1800,15 @@
     "description": "",
     "filename": "Z72_0941 copy.jpg",
     "width": 8057,
-    "height": 5371
+    "height": 5371,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "24-70mm f/2.8G",
+      "focal": 70,
+      "aperture": 2.8,
+      "iso": 180,
+      "shutter": 0.0125
+    }
   },
   {
     "id": "1FcgYpVjgppXtq1eVZUfRSNFMMR-fmlIB",
@@ -1325,7 +1820,15 @@
     "description": "",
     "filename": "Z72_0981 copy.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "24-70mm f/2.8G",
+      "focal": 24,
+      "aperture": 3.5,
+      "iso": 180,
+      "shutter": 0.04
+    }
   },
   {
     "id": "1VCl8Dl8bupSfuDmmc5hVCadHsPoGNpWI",
@@ -1337,7 +1840,15 @@
     "description": "",
     "filename": "Z72_1016 copy.jpg",
     "width": 7770,
-    "height": 5180
+    "height": 5180,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 200,
+      "aperture": 3.5,
+      "iso": 800,
+      "shutter": 0.005
+    }
   },
   {
     "id": "1aiFLu6Xd2oiSs9NiOz_GCsBOYACRv5UW",
@@ -1349,7 +1860,15 @@
     "description": "",
     "filename": "Z72_1230 copy.jpg",
     "width": 5408,
-    "height": 3600
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 15,
+      "aperture": 3.5,
+      "iso": 64,
+      "shutter": 0.00025
+    }
   },
   {
     "id": "1tAWNSWmCXNdcTQGU-TT20ySVbeVFe_C2",
@@ -1361,7 +1880,15 @@
     "description": "",
     "filename": "Z72_1259 copy.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 200,
+      "aperture": 2.8,
+      "iso": 64,
+      "shutter": 0.00025
+    }
   },
   {
     "id": "1ymzu2KYiBGiI4BxvNcPK7KXph_zKzo4s",
@@ -1373,7 +1900,15 @@
     "description": "",
     "filename": "Z72_1303 copy.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 200,
+      "aperture": 2.8,
+      "iso": 64,
+      "shutter": 0.0005
+    }
   },
   {
     "id": "1xuz8fZwN1ajgGNjhviVUmYzYULbKTgiM",
@@ -1385,7 +1920,15 @@
     "description": "",
     "filename": "Z72_1415 copy.jpg",
     "width": 8079,
-    "height": 5327
+    "height": 5327,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 170,
+      "aperture": 2.8,
+      "iso": 800,
+      "shutter": 0.005
+    }
   },
   {
     "id": "1SfNXSzwHzS0VdC_XxSM5BjEJ5VU8b8kX",
@@ -1397,7 +1940,15 @@
     "description": "",
     "filename": "Z72_1587 copy.jpg",
     "width": 7769,
-    "height": 5179
+    "height": 5179,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 120,
+      "aperture": 2.8,
+      "iso": 64,
+      "shutter": 0.000625
+    }
   },
   {
     "id": "1IoZa57mDdGzA9b9BYPb227VyBey5-uqt",
@@ -1409,7 +1960,15 @@
     "description": "",
     "filename": "Z72_1593 copy.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 200,
+      "aperture": 2.8,
+      "iso": 64,
+      "shutter": 0.0005
+    }
   },
   {
     "id": "1ngd6Y2Y10r2Q5q-QfEAVsCsLf_4PxTLX",
@@ -1421,7 +1980,15 @@
     "description": "",
     "filename": "Z72_1759 copy.jpg",
     "width": 5408,
-    "height": 3600
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 12,
+      "aperture": 11,
+      "iso": 64,
+      "shutter": 0.01
+    }
   },
   {
     "id": "1buUeH8gXugxMmlUoLc-PIt-0TNno29Pk",
@@ -1433,7 +2000,15 @@
     "description": "",
     "filename": "Z72_1787 copy.jpg",
     "width": 5408,
-    "height": 3600
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 10,
+      "aperture": 3.5,
+      "iso": 64,
+      "shutter": 0.000625
+    }
   },
   {
     "id": "1_IvlJLJrkF89OLeJAMVt6a7nih0K97vb",
@@ -1445,7 +2020,15 @@
     "description": "",
     "filename": "Z72_1832 copy.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 190,
+      "aperture": 2.8,
+      "iso": 64,
+      "shutter": 0.0025
+    }
   },
   {
     "id": "1WDLpmzbGdaOzlEgi892ya1JTR-ClsUGo",
@@ -1457,7 +2040,15 @@
     "description": "",
     "filename": "Z72_1853 copy.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "24-70mm f/2.8G",
+      "focal": 24,
+      "aperture": 14,
+      "iso": 64,
+      "shutter": 0.025
+    }
   },
   {
     "id": "1gbXCTI9IS7-ZaR4nN9_2ncKgZ9fy_YDT",
@@ -1469,7 +2060,15 @@
     "description": "",
     "filename": "Z72_1866 copy.jpg",
     "width": 5408,
-    "height": 3600
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 10,
+      "aperture": 14,
+      "iso": 64,
+      "shutter": 0.005
+    }
   },
   {
     "id": "1VtjWqoHmdb9GNoa-fFzsaAx5yh4nOIV8",
@@ -1481,7 +2080,15 @@
     "description": "",
     "filename": "Z72_1886 copy.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 140,
+      "aperture": 3.5,
+      "iso": 560,
+      "shutter": 0.00625
+    }
   },
   {
     "id": "1zio7LG17bD8Mw3LZ2MNK2U9cBFSutZg3",
@@ -1493,7 +2100,15 @@
     "description": "",
     "filename": "Z72_1891 copy.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 135,
+      "aperture": 3.5,
+      "iso": 400,
+      "shutter": 0.00625
+    }
   },
   {
     "id": "1Yq5GKzGTtvi1QNr9CE9IKNjN5zMzrIsS",
@@ -1505,7 +2120,15 @@
     "description": "",
     "filename": "Z72_1927 copy.jpg",
     "width": 5408,
-    "height": 3600
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 20,
+      "aperture": 3.5,
+      "iso": 64,
+      "shutter": 0.003125
+    }
   },
   {
     "id": "18cRXTPt645lzlxtSNGM3RwYcsTcRS-ZY",
@@ -1517,7 +2140,15 @@
     "description": "",
     "filename": "Z72_1934 copy.jpg",
     "width": 5408,
-    "height": 3600
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 10,
+      "aperture": 3.5,
+      "iso": 64,
+      "shutter": 0.05
+    }
   },
   {
     "id": "1YfaXr8zQe5xf8pe8UDB3u9M9vfwTwqi5",
@@ -1529,7 +2160,15 @@
     "description": "",
     "filename": "Z72_1957 copy.jpg",
     "width": 5408,
-    "height": 3600
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 10,
+      "aperture": 3.5,
+      "iso": 64,
+      "shutter": 0.005
+    }
   },
   {
     "id": "18nRQRH0sIVe-Qpkv-Kq47M_cHdE34CCp",
@@ -1541,7 +2180,15 @@
     "description": "",
     "filename": "Z72_2045 copy.jpg",
     "width": 5408,
-    "height": 3600
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 10,
+      "aperture": 3.5,
+      "iso": 64,
+      "shutter": 0.0125
+    }
   },
   {
     "id": "1Dkd-op4PAj-PmOfonjBuOK6iNRNDv_fc",
@@ -1553,7 +2200,15 @@
     "description": "",
     "filename": "Z72_2086 copy.jpg",
     "width": 3000,
-    "height": 1997
+    "height": 1997,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 13,
+      "aperture": 3.5,
+      "iso": 320,
+      "shutter": 0.05
+    }
   },
   {
     "id": "1a1VOdUcAqr7cjBkcz0vlYXrB2B_1iIgj",
@@ -1565,7 +2220,15 @@
     "description": "",
     "filename": "Z72_2129 copy.jpg",
     "width": 3000,
-    "height": 1997
+    "height": 1997,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 10,
+      "aperture": 3.5,
+      "iso": 64,
+      "shutter": 0.05
+    }
   },
   {
     "id": "1lcsyJwCpdLQQLyuJP0JRBmU9uMZeAjOs",
@@ -1577,7 +2240,15 @@
     "description": "",
     "filename": "Z72_2137 copy.jpg",
     "width": 3000,
-    "height": 1997
+    "height": 1997,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 10,
+      "aperture": 3.5,
+      "iso": 64,
+      "shutter": 0.025
+    }
   },
   {
     "id": "1bEJ1UIcdfRcMcnpxQqMryijXs_Ry_4i6",
@@ -1589,7 +2260,15 @@
     "description": "",
     "filename": "Z72_2162 copy.jpg",
     "width": 3000,
-    "height": 1997
+    "height": 1997,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 10,
+      "aperture": 3.5,
+      "iso": 5000,
+      "shutter": 0.06666667
+    }
   },
   {
     "id": "1yBGbXhMfV2LZLGnnQzeCYMQ6wuL9Y3Lb",
@@ -1601,7 +2280,15 @@
     "description": "",
     "filename": "Z72_2164 copy.jpg",
     "width": 3000,
-    "height": 1997
+    "height": 1997,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 12,
+      "aperture": 3.5,
+      "iso": 320,
+      "shutter": 0.05
+    }
   },
   {
     "id": "1nB904YN725_dwEKjL8ymddeV2IhU53A6",
@@ -1613,7 +2300,15 @@
     "description": "",
     "filename": "Z72_2171 copy.jpg",
     "width": 3000,
-    "height": 1997
+    "height": 1997,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 12,
+      "aperture": 3.5,
+      "iso": 1800,
+      "shutter": 0.05
+    }
   },
   {
     "id": "1bbJ5yT-g_ZWwddX1OFJTWYgWIqNNhp1k",
@@ -1625,7 +2320,15 @@
     "description": "",
     "filename": "Z72_2182 copy.jpg",
     "width": 3000,
-    "height": 1997
+    "height": 1997,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 10,
+      "aperture": 3.5,
+      "iso": 400,
+      "shutter": 0.06666667
+    }
   },
   {
     "id": "1aw7oPUP-MtB5eoC4a0xup8hITN-OHBAk",
@@ -1637,7 +2340,15 @@
     "description": "",
     "filename": "Z72_2188 copy.jpg",
     "width": 3000,
-    "height": 1997
+    "height": 1997,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 18,
+      "aperture": 3.5,
+      "iso": 400,
+      "shutter": 0.04
+    }
   },
   {
     "id": "1Mpe0rBFj0tmdpFcM6hkESNVWETHNTPcA",
@@ -1649,7 +2360,15 @@
     "description": "",
     "filename": "Z72_2312 copy.jpg",
     "width": 3000,
-    "height": 1997
+    "height": 1997,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 11.5,
+      "aperture": 3.5,
+      "iso": 64,
+      "shutter": 0.033333335
+    }
   },
   {
     "id": "1D-HIuhwyagpmg_FPY9p5InN0PNwqEuds",
@@ -1661,7 +2380,15 @@
     "description": "",
     "filename": "Z72_2332 copy.jpg",
     "width": 3000,
-    "height": 2000
+    "height": 2000,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 125,
+      "aperture": 3.5,
+      "iso": 18000,
+      "shutter": 0.008
+    }
   },
   {
     "id": "1Vkby6HIwK2ZVcCFeHCKvYhaWByC8p-2j",
@@ -1673,7 +2400,15 @@
     "description": "",
     "filename": "Z72_2342 copy.jpg",
     "width": 3000,
-    "height": 1997
+    "height": 1997,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 13,
+      "aperture": 3.5,
+      "iso": 1000,
+      "shutter": 0.05
+    }
   },
   {
     "id": "1SjSzrMp_yDPlg5zQB6T2v2qucq30xC6s",
@@ -1685,7 +2420,15 @@
     "description": "",
     "filename": "Z72_2463 copy.jpg",
     "width": 3000,
-    "height": 1997
+    "height": 1997,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 20,
+      "aperture": 3.5,
+      "iso": 64,
+      "shutter": 0.0125
+    }
   },
   {
     "id": "1DtOuAfxbJEn5jeUqxk1i-iQKzEBfZhZI",
@@ -1697,7 +2440,15 @@
     "description": "",
     "filename": "Z72_2473 copy.jpg",
     "width": 3000,
-    "height": 1997
+    "height": 1997,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 12,
+      "aperture": 3.5,
+      "iso": 72,
+      "shutter": 0.05
+    }
   },
   {
     "id": "1VnaK8BHWzDJqSaHRcfe6H3XLM_g-qQjK",
@@ -1709,7 +2460,15 @@
     "description": "",
     "filename": "Z72_2514 copy.jpg",
     "width": 3000,
-    "height": 1995
+    "height": 1995,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 18,
+      "aperture": 3.5,
+      "iso": 360,
+      "shutter": 0.04
+    }
   },
   {
     "id": "1hVX9LJjscf8nCipAMq7D070FW_Pq1VYN",
@@ -1721,7 +2480,15 @@
     "description": "",
     "filename": "Z72_2518 copy.jpg",
     "width": 3000,
-    "height": 1997
+    "height": 1997,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 10,
+      "aperture": 3.5,
+      "iso": 180,
+      "shutter": 0.06666667
+    }
   },
   {
     "id": "1sLnUk4IAP5DuPc70zGunF1IB0wdGGUbF",
@@ -1733,7 +2500,15 @@
     "description": "",
     "filename": "Z72_2628 copy.jpg",
     "width": 3000,
-    "height": 1997
+    "height": 1997,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 13,
+      "aperture": 3.5,
+      "iso": 140,
+      "shutter": 0.05
+    }
   },
   {
     "id": "14nbsn6h2adsT88U5rticB3zxI52UsRDp",
@@ -1745,7 +2520,15 @@
     "description": "",
     "filename": "Z72_2714 copy.jpg",
     "width": 3000,
-    "height": 2000
+    "height": 2000,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 200,
+      "aperture": 2.8,
+      "iso": 1100,
+      "shutter": 0.005
+    }
   },
   {
     "id": "1R7MRKRy895wj2ZYEJ83zvwQ2VVBtgGdR",
@@ -1757,7 +2540,15 @@
     "description": "",
     "filename": "Z72_2720 copy.jpg",
     "width": 3000,
-    "height": 2000
+    "height": 2000,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 150,
+      "aperture": 2.8,
+      "iso": 500,
+      "shutter": 0.00625
+    }
   },
   {
     "id": "1K1nbSXkM9cX0YtgahVUi7lnoP5ka6DyR",
@@ -1769,7 +2560,15 @@
     "description": "",
     "filename": "Z72_2749 copy.jpg",
     "width": 1333,
-    "height": 2000
+    "height": 2000,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 165,
+      "aperture": 2.8,
+      "iso": 64,
+      "shutter": 0.000625
+    }
   },
   {
     "id": "1SIxnuMcpiqxFq_zlU4ri07OZIA8x0aQW",
@@ -1781,7 +2580,15 @@
     "description": "",
     "filename": "Z72_2751 copy.jpg",
     "width": 3000,
-    "height": 2000
+    "height": 2000,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 82,
+      "aperture": 2.8,
+      "iso": 64,
+      "shutter": 0.00125
+    }
   },
   {
     "id": "145bRagq1kywQjjPwkKWOy-TUl-JJT3AR",
@@ -1793,7 +2600,15 @@
     "description": "",
     "filename": "Z72_2764 copy.jpg",
     "width": 2981,
-    "height": 2000
+    "height": 2000,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 10,
+      "aperture": 3.5,
+      "iso": 64,
+      "shutter": 0.016666668
+    }
   },
   {
     "id": "1yZWuy3xO7QXTbRq5R7Wb_wK8xPTqIYPD",
@@ -1805,7 +2620,15 @@
     "description": "",
     "filename": "Z72_2794 copy.jpg",
     "width": 3000,
-    "height": 1997
+    "height": 1997,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 12,
+      "aperture": 3.5,
+      "iso": 64,
+      "shutter": 0.033333335
+    }
   },
   {
     "id": "1PqxX8FurNmCAzIVnbp14zpxYggasNcEc",
@@ -1817,7 +2640,15 @@
     "description": "",
     "filename": "Z72_2910.jpg",
     "width": 3000,
-    "height": 2000
+    "height": 2000,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 85,
+      "aperture": 2.8,
+      "iso": 64,
+      "shutter": 0.0003125
+    }
   },
   {
     "id": "1gQIo-qNqKmRbMsEX--MLBpBgT7zXobVE",
@@ -1829,7 +2660,15 @@
     "description": "",
     "filename": "DSC_7988 copy.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 140,
+      "aperture": 2.8,
+      "iso": 200,
+      "shutter": 0.00125
+    }
   },
   {
     "id": "1SjO7yA1pjZHCa4L8RGgg-_l2YP2ScRqo",
@@ -1841,7 +2680,15 @@
     "description": "",
     "filename": "DSC_8007 copy.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 122,
+      "aperture": 2.8,
+      "iso": 200,
+      "shutter": 0.004
+    }
   },
   {
     "id": "14OQokD36-Gk58vl2QtBndXxbcJcUIn5_",
@@ -1853,7 +2700,15 @@
     "description": "",
     "filename": "DSC_8026 copy.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 175,
+      "aperture": 2.8,
+      "iso": 200,
+      "shutter": 0.00025
+    }
   },
   {
     "id": "1w1p6SNGzdI68LLsc9pIWQ7XL0vJvNsPL",
@@ -1865,7 +2720,15 @@
     "description": "",
     "filename": "DSC_8032 copy.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 70,
+      "aperture": 8,
+      "iso": 200,
+      "shutter": 0.005
+    }
   },
   {
     "id": "1E811mT_4RpRmw_gr474v8zhto1UeQLdS",
@@ -1877,7 +2740,15 @@
     "description": "",
     "filename": "DSC_8156 copy.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 190,
+      "aperture": 2.8,
+      "iso": 200,
+      "shutter": 0.0004
+    }
   },
   {
     "id": "1Pv0soGD_IhNDAAErMDAQVKa5EXfPHwkJ",
@@ -1889,7 +2760,15 @@
     "description": "",
     "filename": "DSC_8160.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 155,
+      "aperture": 2.8,
+      "iso": 200,
+      "shutter": 0.00125
+    }
   },
   {
     "id": "1uGgnITeoQdRlUd4QXM1Qrzlc_CyQdb4j",
@@ -1901,7 +2780,15 @@
     "description": "",
     "filename": "DSC_8161.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 70,
+      "aperture": 2.8,
+      "iso": 200,
+      "shutter": 0.0005
+    }
   },
   {
     "id": "10bfzIIsdJFAC65ZBhZV604-GFz9OFSup",
@@ -1913,7 +2800,15 @@
     "description": "",
     "filename": "DSC_8211 copy.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 200,
+      "aperture": 2.8,
+      "iso": 200,
+      "shutter": 0.000625
+    }
   },
   {
     "id": "1TgpPqZBR95o0_u3TJ3R-B-lB-u-jjogp",
@@ -1925,7 +2820,15 @@
     "description": "",
     "filename": "DSC_8240 copy.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 150,
+      "aperture": 2.8,
+      "iso": 200,
+      "shutter": 0.00025
+    }
   },
   {
     "id": "1fVitqkVFG0gD9TAynlTD8lh6vRyXxo7M",
@@ -1937,7 +2840,15 @@
     "description": "",
     "filename": "DSC_8241 copy.jpg",
     "width": 7769,
-    "height": 5269
+    "height": 5269,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 140,
+      "aperture": 2.8,
+      "iso": 200,
+      "shutter": 0.000625
+    }
   },
   {
     "id": "1b5XrI_E8G7ho1SHA_7LhWUxhvF4ercL4",
@@ -1949,7 +2860,15 @@
     "description": "",
     "filename": "DSC_8249 copy.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 130,
+      "aperture": 2.8,
+      "iso": 200,
+      "shutter": 0.0003125
+    }
   },
   {
     "id": "18Y1gl9j0RVk5Wuo4G7qI-Fx6sVaQsqSe",
@@ -1961,7 +2880,15 @@
     "description": "",
     "filename": "DSC_8259 copy.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 140,
+      "aperture": 2.8,
+      "iso": 200,
+      "shutter": 0.0004
+    }
   },
   {
     "id": "1NNsNM4NjlUyFuuxyJxtdp0L-_qOwatsp",
@@ -1973,7 +2900,15 @@
     "description": "",
     "filename": "DSC_8285-2 copy.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 200,
+      "aperture": 2.8,
+      "iso": 200,
+      "shutter": 0.0005
+    }
   },
   {
     "id": "1OsHP7dGm0yYcyIUhVC_QbSWt3wZ0hEEc",
@@ -1985,7 +2920,15 @@
     "description": "",
     "filename": "DSC_8376.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 140,
+      "aperture": 2.8,
+      "iso": 320,
+      "shutter": 0.00625
+    }
   },
   {
     "id": "1YysIZRwu1sxnIddmfBQR4F_gyodlxsdO",
@@ -1997,7 +2940,15 @@
     "description": "",
     "filename": "DSC_8381.jpg",
     "width": 7525,
-    "height": 5017
+    "height": 5017,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 200,
+      "aperture": 2.8,
+      "iso": 80,
+      "shutter": 0.0025
+    }
   },
   {
     "id": "1pCcQm4UOVgTSJ4mlbTYEomdEo6yCdQGU",
@@ -2009,7 +2960,15 @@
     "description": "",
     "filename": "DSC_8404 copy.jpg",
     "width": 7534,
-    "height": 5023
+    "height": 5023,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 190,
+      "aperture": 4,
+      "iso": 80,
+      "shutter": 0.0025
+    }
   },
   {
     "id": "16rSgsmOqjZgQkLjk4ws0I2ZNtfZT6CUo",
@@ -2021,7 +2980,15 @@
     "description": "",
     "filename": "DSC_8481.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 195,
+      "aperture": 4,
+      "iso": 80,
+      "shutter": 0.003125
+    }
   },
   {
     "id": "1DyvFemrLJmJ9_DcczDzKq8RteE7cgevG",
@@ -2033,7 +3000,15 @@
     "description": "",
     "filename": "DSC_8512 copy.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 200,
+      "aperture": 2.8,
+      "iso": 500,
+      "shutter": 0.000125
+    }
   },
   {
     "id": "10U8_BHPncFPy-y2vqmPjuMAJaOV6aSpd",
@@ -2045,7 +3020,15 @@
     "description": "",
     "filename": "DSC_8652 copy.jpg",
     "width": 7887,
-    "height": 5258
+    "height": 5258,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 200,
+      "aperture": 2.8,
+      "iso": 2000,
+      "shutter": 0.000125
+    }
   },
   {
     "id": "1jzfuF0ygh7Q9541-mQud1vk7NcqlI6C9",
@@ -2057,7 +3040,15 @@
     "description": "",
     "filename": "DSC_8667 copy.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 190,
+      "aperture": 2.8,
+      "iso": 3200,
+      "shutter": 0.0003125
+    }
   },
   {
     "id": "1TfNPONwVKSmCtxq5no6qcFnZbtd3Bx5R",
@@ -2069,7 +3060,15 @@
     "description": "",
     "filename": "DSC_8668 copy.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 78,
+      "aperture": 2.8,
+      "iso": 2800,
+      "shutter": 0.000125
+    }
   },
   {
     "id": "1Os6cdaNLFE7nE0XTm3fd9zJqVDsU2HPW",
@@ -2081,7 +3080,15 @@
     "description": "",
     "filename": "DSC_8669 copy.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 170,
+      "aperture": 2.8,
+      "iso": 2200,
+      "shutter": 0.000125
+    }
   },
   {
     "id": "1VXT35ZonkAjh09hMKdHY9Sk-EtWGX5_c",
@@ -2093,7 +3100,15 @@
     "description": "",
     "filename": "DSC_8670 copy.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 200,
+      "aperture": 2.8,
+      "iso": 2500,
+      "shutter": 0.000125
+    }
   },
   {
     "id": "1mRpdsYRmUdaacH1FTUpcTAA8h7BOgkXv",
@@ -2105,7 +3120,15 @@
     "description": "",
     "filename": "DSC_8733 copy.jpg",
     "width": 5504,
-    "height": 8256
+    "height": 8256,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 200,
+      "aperture": 2.8,
+      "iso": 220,
+      "shutter": 0.005
+    }
   },
   {
     "id": "1Gtg0jN4Ji3bBl-VHQRju9M4WhhCEmGoQ",
@@ -2117,7 +3140,15 @@
     "description": "",
     "filename": "DSC_8747 copy.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 200,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.004
+    }
   },
   {
     "id": "13nIqNH9-ga_b7fToQsoMw1lWU9hFP5h0",
@@ -2129,7 +3160,15 @@
     "description": "",
     "filename": "DSC_8759 copy.jpg",
     "width": 5504,
-    "height": 8256
+    "height": 8256,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 185,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.000625
+    }
   },
   {
     "id": "1XdvVh5rW_HQpqx61OVV3oO3Ew9anSwvK",
@@ -2141,7 +3180,15 @@
     "description": "",
     "filename": "DSC_8772 copy.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 185,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.00125
+    }
   },
   {
     "id": "1fg6k8AhN8yHprSRmXx7UQFnYi0g_Hab6",
@@ -2153,7 +3200,15 @@
     "description": "",
     "filename": "DSC_8915 copy.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 70,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.0025
+    }
   },
   {
     "id": "11lRfo9G3v18yxhYPMGO-FFew_KrFMFkv",
@@ -2165,7 +3220,15 @@
     "description": "",
     "filename": "DSC_8922 copy.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 155,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.0025
+    }
   },
   {
     "id": "1sXcBYBmB6LKEN28bOXSlEq6q94Oy7XAo",
@@ -2177,7 +3240,15 @@
     "description": "",
     "filename": "DSC_9003 copy.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 130,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.002
+    }
   },
   {
     "id": "1Duc1Ky98Yt9a3lUCHi7gGt19ou8_uzTA",
@@ -2189,7 +3260,15 @@
     "description": "",
     "filename": "DSC_9006 copy.jpg",
     "width": 5504,
-    "height": 8256
+    "height": 8256,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 165,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.000625
+    }
   },
   {
     "id": "1BmHFnp_2eqfYT9D78Uu4019k9hAT9iEW",
@@ -2201,7 +3280,15 @@
     "description": "",
     "filename": "DSC_9078 copy.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 102,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.002
+    }
   },
   {
     "id": "1fexmAkIm46K61b-PITUQuFLCVG8q0Uu1",
@@ -2213,7 +3300,15 @@
     "description": "",
     "filename": "DSC_9093 copy.jpg",
     "width": 7970,
-    "height": 5313
+    "height": 5313,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 112,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.0025
+    }
   },
   {
     "id": "1gdsKZ9UpW4lPuvzhcbcPLxedASPml6-H",
@@ -2225,7 +3320,15 @@
     "description": "",
     "filename": "DSC_9141 copy.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 85,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.0015625
+    }
   },
   {
     "id": "1PHZ_kjBRX_ifAjHi-k9O79r2H_YD7t7k",
@@ -2237,7 +3340,15 @@
     "description": "",
     "filename": "DSC_9161 copy.jpg",
     "width": 8010,
-    "height": 5340
+    "height": 5340,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 200,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.0004
+    }
   },
   {
     "id": "13W42seB31mX09kxMi24W9WaJU9bAAOdq",
@@ -2249,7 +3360,15 @@
     "description": "",
     "filename": "DSC_9190.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 180,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.0008
+    }
   },
   {
     "id": "16q5moGvz_Qvrmk8iI3DNTE9JDmA_f5Kd",
@@ -2261,7 +3380,8 @@
     "description": "",
     "filename": "DSC_9326.jpg",
     "width": 4288,
-    "height": 2848
+    "height": 2848,
+    "exif": null
   },
   {
     "id": "1IqkYIpfg_myAW-f0wywKi4tg06Zgr2Qd",
@@ -2273,7 +3393,8 @@
     "description": "",
     "filename": "MJH_1338.jpg",
     "width": 7360,
-    "height": 4912
+    "height": 4912,
+    "exif": null
   },
   {
     "id": "1Qnp_IEW63u5v_lRG9-zyiaP57hSFuxdg",
@@ -2285,7 +3406,8 @@
     "description": "",
     "filename": "MJH_4477.jpg",
     "width": 7360,
-    "height": 4912
+    "height": 4912,
+    "exif": null
   },
   {
     "id": "1UKIQ5TWf6BU0OmUhmtB9hyXHk40o9QAH",
@@ -2297,7 +3419,15 @@
     "description": "",
     "filename": "DSC_8973.JPG",
     "width": 4288,
-    "height": 2378
+    "height": 2378,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 200,
+      "aperture": 4.5,
+      "iso": 100,
+      "shutter": 0.002
+    }
   },
   {
     "id": "16YgTIBO-Qojrm0zQIQslrCV9_bmEb0SQ",
@@ -2309,7 +3439,15 @@
     "description": "",
     "filename": "MJH_0512.JPG",
     "width": 7360,
-    "height": 4912
+    "height": 4912,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 200,
+      "aperture": 5.6,
+      "iso": 140,
+      "shutter": 0.005
+    }
   },
   {
     "id": "1I2si-uc6APVK0OOMdkBGqhrerrMd2eDz",
@@ -2321,7 +3459,15 @@
     "description": "",
     "filename": "MJH_1243.JPG",
     "width": 7360,
-    "height": 4912
+    "height": 4912,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "300.0 mm f/4.0",
+      "focal": 300,
+      "aperture": 4,
+      "iso": 100,
+      "shutter": 0.0015625
+    }
   },
   {
     "id": "1XLpGpRUl1Qe56sc6g517chVWdPrzIhAD",
@@ -2333,7 +3479,15 @@
     "description": "",
     "filename": "MJH_1377.JPG",
     "width": 4662,
-    "height": 7047
+    "height": 7047,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "24.0-70.0 mm f/2.8",
+      "focal": 70,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.0004
+    }
   },
   {
     "id": "1Bi0pZgIkYDSl74ec9UC9tI6X3c0X7N4z",
@@ -2345,7 +3499,15 @@
     "description": "",
     "filename": "MJH_1391.JPG",
     "width": 7068,
-    "height": 4675
+    "height": 4675,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "24.0-70.0 mm f/2.8",
+      "focal": 70,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.001
+    }
   },
   {
     "id": "1w8O_ZqZ8Q-yzKFr5YcOZELcOn4s-nMsY",
@@ -2357,7 +3519,15 @@
     "description": "",
     "filename": "MJH_1393.JPG",
     "width": 7151,
-    "height": 4703
+    "height": 4703,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "24.0-70.0 mm f/2.8",
+      "focal": 70,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.0005
+    }
   },
   {
     "id": "1RnLj3UwKAqNolnTK8LmfVUI_QmfR9ffo",
@@ -2369,7 +3539,15 @@
     "description": "",
     "filename": "MJH_2248.JPG",
     "width": 7360,
-    "height": 4912
+    "height": 4912,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 105,
+      "aperture": 8,
+      "iso": 6400,
+      "shutter": 0.0125
+    }
   },
   {
     "id": "1jNHa6TWHEJPXhU0feONC_yZMdqehbEd-",
@@ -2381,7 +3559,15 @@
     "description": "",
     "filename": "MJH_2249.JPG",
     "width": 7360,
-    "height": 4912
+    "height": 4912,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 190,
+      "aperture": 8,
+      "iso": 6400,
+      "shutter": 0.008
+    }
   },
   {
     "id": "1oOoJHPqVKYarqTOJUJ7PQ0qv3d4IDrm9",
@@ -2393,7 +3579,15 @@
     "description": "",
     "filename": "MJH_2358.JPG",
     "width": 4912,
-    "height": 7360
+    "height": 7360,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 200,
+      "aperture": 8,
+      "iso": 100,
+      "shutter": 0.004
+    }
   },
   {
     "id": "1M3vy3gkX5WbO7u3x5iwHYQY_z6K68rki",
@@ -2405,7 +3599,15 @@
     "description": "",
     "filename": "MJH_2743.JPG",
     "width": 6776,
-    "height": 4557
+    "height": 4557,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 200,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.002
+    }
   },
   {
     "id": "1GH-pRSXoTrNDjmd7zgg8Oiya2r5Jo_je",
@@ -2417,7 +3619,15 @@
     "description": "",
     "filename": "MJH_2749.JPG",
     "width": 6970,
-    "height": 4425
+    "height": 4425,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 200,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.0008
+    }
   },
   {
     "id": "10ybFm3HSayPX2SvYxr279qi7MC84vWHE",
@@ -2429,7 +3639,15 @@
     "description": "",
     "filename": "MJH_2847.JPG",
     "width": 4912,
-    "height": 7360
+    "height": 7360,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 200,
+      "aperture": 2.8,
+      "iso": 320,
+      "shutter": 0.000125
+    }
   },
   {
     "id": "18LVMgW3oVFcp6q-8pB-iRwPwMHru5r6N",
@@ -2441,7 +3659,15 @@
     "description": "",
     "filename": "MJH_2911.JPG",
     "width": 7360,
-    "height": 4912
+    "height": 4912,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 200,
+      "aperture": 5,
+      "iso": 200,
+      "shutter": 0.004
+    }
   },
   {
     "id": "1oB-I3elJCfqczTwoWn7JYxnOcyqoclrj",
@@ -2453,7 +3679,15 @@
     "description": "",
     "filename": "MJH_2929.JPG",
     "width": 7360,
-    "height": 4912
+    "height": 4912,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 200,
+      "aperture": 5,
+      "iso": 320,
+      "shutter": 0.005
+    }
   },
   {
     "id": "1xTyWkvZEfKFiP2YQMZ_qf5GgyTPROzn3",
@@ -2465,7 +3699,15 @@
     "description": "",
     "filename": "MJH_3162.JPG",
     "width": 7360,
-    "height": 4912
+    "height": 4912,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 200,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.001
+    }
   },
   {
     "id": "1SXdH6qZNQz1uMF3esSQAHpflvKWw6Hnw",
@@ -2477,7 +3719,15 @@
     "description": "",
     "filename": "MJH_3204.JPG",
     "width": 7360,
-    "height": 4912
+    "height": 4912,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 200,
+      "aperture": 9,
+      "iso": 320,
+      "shutter": 0.005
+    }
   },
   {
     "id": "1hb61cfQlsoS1ROWmT8r4kE6Ng2nQNdGg",
@@ -2489,7 +3739,15 @@
     "description": "",
     "filename": "MJH_3461.JPG",
     "width": 7360,
-    "height": 4912
+    "height": 4912,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 200,
+      "aperture": 2.8,
+      "iso": 400,
+      "shutter": 0.005
+    }
   },
   {
     "id": "19gBeOQYE1-FvkLtA-fzPwiiKf8xF-i0V",
@@ -2501,7 +3759,15 @@
     "description": "",
     "filename": "MJH_3614.JPG",
     "width": 7290,
-    "height": 4842
+    "height": 4842,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 95,
+      "aperture": 6.3,
+      "iso": 100,
+      "shutter": 0.00125
+    }
   },
   {
     "id": "1uG7W_jsw5SHP7eVh_pE4PaUi5eMzl9MX",
@@ -2513,7 +3779,15 @@
     "description": "",
     "filename": "MJH_4146.JPG",
     "width": 7346,
-    "height": 4703
+    "height": 4703,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "24.0-70.0 mm f/2.8",
+      "focal": 70,
+      "aperture": 8,
+      "iso": 180,
+      "shutter": 0.0125
+    }
   },
   {
     "id": "1v_AifY9gLwMSGjQ95lsulCP6MaiL7Qj4",
@@ -2525,7 +3799,15 @@
     "description": "",
     "filename": "MJH_8660.JPG",
     "width": 1001,
-    "height": 1500
+    "height": 1500,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "24.0-70.0 mm f/2.8",
+      "focal": 24,
+      "aperture": 2.8,
+      "iso": 360,
+      "shutter": 0.04
+    }
   },
   {
     "id": "1tg2z-fvban2eXxY_Y0j0o-3TIAHKNnp3",
@@ -2537,7 +3819,15 @@
     "description": "",
     "filename": "MJH_8863.JPG",
     "width": 7360,
-    "height": 4912
+    "height": 4912,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "24.0-70.0 mm f/2.8",
+      "focal": 70,
+      "aperture": 7.1,
+      "iso": 200,
+      "shutter": 0.0125
+    }
   },
   {
     "id": "1aAVQrQeiZEgiDo_JMoqyiLo9n6x3qpfu",
@@ -2549,7 +3839,15 @@
     "description": "",
     "filename": "MJH_8864.JPG",
     "width": 6426,
-    "height": 4289
+    "height": 4289,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "24.0-70.0 mm f/2.8",
+      "focal": 50,
+      "aperture": 7.1,
+      "iso": 100,
+      "shutter": 0.016666668
+    }
   },
   {
     "id": "17TBkjwBoT2x1yzuxvm8Vgs314SEZvwMf",
@@ -2561,7 +3859,15 @@
     "description": "",
     "filename": "MJH_8866.JPG",
     "width": 6426,
-    "height": 4289
+    "height": 4289,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "24.0-70.0 mm f/2.8",
+      "focal": 36,
+      "aperture": 7.1,
+      "iso": 100,
+      "shutter": 0.0125
+    }
   },
   {
     "id": "1den9gI7vGQGgDKFhGfRlJ3kqpkEikTcC",
@@ -2573,7 +3879,15 @@
     "description": "",
     "filename": "MJH_8870.JPG",
     "width": 7360,
-    "height": 4912
+    "height": 4912,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "24.0-70.0 mm f/2.8",
+      "focal": 70,
+      "aperture": 7.1,
+      "iso": 110,
+      "shutter": 0.0125
+    }
   },
   {
     "id": "1VO9kO_wqs-ziA1jUwQH343YJ5wNgxMWF",
@@ -2585,7 +3899,15 @@
     "description": "",
     "filename": "MJH_8876.JPG",
     "width": 7178,
-    "height": 4791
+    "height": 4791,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "24.0-70.0 mm f/2.8",
+      "focal": 62,
+      "aperture": 16,
+      "iso": 6400,
+      "shutter": 0.02
+    }
   },
   {
     "id": "11wxIXv9ZTmahj7_7L3QacFztEomMFgk4",
@@ -2597,7 +3919,15 @@
     "description": "",
     "filename": "MJH_8896.JPG",
     "width": 7360,
-    "height": 4912
+    "height": 4912,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "24.0-70.0 mm f/2.8",
+      "focal": 24,
+      "aperture": 7.1,
+      "iso": 560,
+      "shutter": 0.04
+    }
   },
   {
     "id": "1hWbN5TL_IKSS-FITYFo8LC5BgUmoUA39",
@@ -2609,7 +3939,15 @@
     "description": "",
     "filename": "MJH_8897.JPG",
     "width": 4316,
-    "height": 6783
+    "height": 6783,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "24.0-70.0 mm f/2.8",
+      "focal": 66,
+      "aperture": 7.1,
+      "iso": 1800,
+      "shutter": 0.0125
+    }
   },
   {
     "id": "14rG5W3jwcADiqLxUREUXAqKPjGbGxulA",
@@ -2621,7 +3959,15 @@
     "description": "",
     "filename": "DSC_0838.JPG",
     "width": 2848,
-    "height": 4288
+    "height": 4288,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "10.0-20.0 mm f/4.0-5.6",
+      "focal": 10,
+      "aperture": 4,
+      "iso": 160,
+      "shutter": 0.003125
+    }
   },
   {
     "id": "1nPkQltk-kwphzeMCSkBxiMjoWOL-nU92",
@@ -2633,7 +3979,15 @@
     "description": "",
     "filename": "DSC_0924.JPG",
     "width": 4288,
-    "height": 2848
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "10.0-20.0 mm f/4.0-5.6",
+      "focal": 17,
+      "aperture": 5.3,
+      "iso": 100,
+      "shutter": 0.0125
+    }
   },
   {
     "id": "16_kIsahWG_P5Glk3AVqv4Q95ZKqSoXV9",
@@ -2645,7 +3999,15 @@
     "description": "",
     "filename": "DSC_1082.JPG",
     "width": 4180,
-    "height": 2775
+    "height": 2775,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "10.0-20.0 mm f/4.0-5.6",
+      "focal": 10,
+      "aperture": 4,
+      "iso": 100,
+      "shutter": 0.003125
+    }
   },
   {
     "id": "1UW89XVzBQ7IL7ei8re_pxx7y3z_1WYjd",
@@ -2657,7 +4019,15 @@
     "description": "",
     "filename": "DSC_1271.JPG",
     "width": 4288,
-    "height": 2848
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 70,
+      "aperture": 2.8,
+      "iso": 160,
+      "shutter": 0.0005
+    }
   },
   {
     "id": "1yX492uqDKYSZtMlBeJ9RFySzpUT-ppx8",
@@ -2669,7 +4039,15 @@
     "description": "",
     "filename": "DSC_1275.JPG",
     "width": 4288,
-    "height": 2848
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 78,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.0015625
+    }
   },
   {
     "id": "1uDhUdoUgBx1ZbM8hmRBCQSl9JmHiW1bd",
@@ -2681,7 +4059,15 @@
     "description": "",
     "filename": "DSC_1608.JPG",
     "width": 2848,
-    "height": 4288
+    "height": 4288,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "10.0-20.0 mm f/4.0-5.6",
+      "focal": 10,
+      "aperture": 4,
+      "iso": 100,
+      "shutter": 0.002
+    }
   },
   {
     "id": "115eqcCv8hlzJp7T5hVcqrVJeMOLQbxa6",
@@ -2693,7 +4079,15 @@
     "description": "",
     "filename": "DSC_1685.jpg",
     "width": 3000,
-    "height": 1993
+    "height": 1993,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "10.0-20.0 mm f/4.0-5.6",
+      "focal": 10,
+      "aperture": 4,
+      "iso": 160,
+      "shutter": 0.0025
+    }
   },
   {
     "id": "1MEXl9agfUsf8bX-LrVXQ9fQoMN3R6F2R",
@@ -2705,7 +4099,15 @@
     "description": "",
     "filename": "DSC_3674.JPG",
     "width": 4288,
-    "height": 2848
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "10.0-20.0 mm f/4.0-5.6",
+      "focal": 10,
+      "aperture": 4,
+      "iso": 100,
+      "shutter": 0.01
+    }
   },
   {
     "id": "1eV1m_7ednH16DOdthfISdMi-qhaeAguw",
@@ -2717,7 +4119,15 @@
     "description": "",
     "filename": "DSC_8995.JPG",
     "width": 4080,
-    "height": 2710
+    "height": 2710,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "17.0-55.0 mm f/2.8",
+      "focal": 17,
+      "aperture": 8,
+      "iso": 100,
+      "shutter": 0.008
+    }
   },
   {
     "id": "1ECRFTE6sAMkCwPwCK2yblfvgOfUDLram",
@@ -2729,7 +4139,15 @@
     "description": "",
     "filename": "DSC_9032.JPG",
     "width": 2848,
-    "height": 4288
+    "height": 4288,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "10.0-20.0 mm f/4.0-5.6",
+      "focal": 10,
+      "aperture": 4,
+      "iso": 100,
+      "shutter": 0.003125
+    }
   },
   {
     "id": "1KMCA9iUrSibvmGIoOP341nTxkb2f8uFx",
@@ -2741,7 +4159,15 @@
     "description": "",
     "filename": "DSC_9056.JPG",
     "width": 4288,
-    "height": 2848
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "10.0-20.0 mm f/4.0-5.6",
+      "focal": 10,
+      "aperture": 7.1,
+      "iso": 100,
+      "shutter": 0.005
+    }
   },
   {
     "id": "1o1YBlK6a6yx8tYXB71Mux391w1kLKbaE",
@@ -2753,7 +4179,15 @@
     "description": "",
     "filename": "DSC_9115.JPG",
     "width": 4199,
-    "height": 2789
+    "height": 2789,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "10.0-20.0 mm f/4.0-5.6",
+      "focal": 20,
+      "aperture": 9,
+      "iso": 100,
+      "shutter": 0.004
+    }
   },
   {
     "id": "1PMHbwVK89VV6-pJFms4_0hiwG-yCS3KA",
@@ -2765,7 +4199,15 @@
     "description": "",
     "filename": "DSC_9464.JPG",
     "width": 2848,
-    "height": 4288
+    "height": 4288,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 150,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.008
+    }
   },
   {
     "id": "1ByCvB6E1ZptVJNxNEYUMPbkZYLVfflRO",
@@ -2777,7 +4219,15 @@
     "description": "",
     "filename": "DSC_9502.jpg",
     "width": 4288,
-    "height": 2848
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "10.0-20.0 mm f/4.0-5.6",
+      "focal": 20,
+      "aperture": 5.6,
+      "iso": 100,
+      "shutter": 0.008
+    }
   },
   {
     "id": "1vKAYdSH0PGYUvRhTl59v_CLvvRAOKyzR",
@@ -2789,7 +4239,15 @@
     "description": "",
     "filename": "DSC_9734.JPG",
     "width": 4092,
-    "height": 2718
+    "height": 2718,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "17.0-55.0 mm f/2.8",
+      "focal": 26,
+      "aperture": 7.1,
+      "iso": 100,
+      "shutter": 0.00625
+    }
   },
   {
     "id": "1_SUtLt8EAkXhLt92VGtPDwiz0CP9BGqX",
@@ -2801,7 +4259,15 @@
     "description": "",
     "filename": "greece-2025-1.jpg",
     "width": 5408,
-    "height": 3600
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 12,
+      "aperture": 3.5,
+      "iso": 64,
+      "shutter": 0.0003125
+    }
   },
   {
     "id": "1A5PDiwG9dUZI2AKTBJQMPqVG-EY76yby",
@@ -2813,7 +4279,15 @@
     "description": "",
     "filename": "greece-2025-106.jpg",
     "width": 4128,
-    "height": 2752
+    "height": 2752,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 185,
+      "aperture": 2.8,
+      "iso": 64,
+      "shutter": 0.000625
+    }
   },
   {
     "id": "1edGYGkeg96Bk2-Cp93ESOpTn_fjD3IdV",
@@ -2825,7 +4299,15 @@
     "description": "",
     "filename": "greece-2025-121.jpg",
     "width": 5408,
-    "height": 3600
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 13,
+      "aperture": 11,
+      "iso": 500,
+      "shutter": 0.05
+    }
   },
   {
     "id": "15eQX3B704rjwH40d-SLDlRTRODP8JsGy",
@@ -2837,7 +4319,15 @@
     "description": "",
     "filename": "greece-2025-125.jpg",
     "width": 5095,
-    "height": 3530
+    "height": 3530,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 12,
+      "aperture": 3.5,
+      "iso": 900,
+      "shutter": 0.05
+    }
   },
   {
     "id": "1xVy1KFYjrd_33fbJsuQ3QgmdXnNmM3eq",
@@ -2849,7 +4339,15 @@
     "description": "",
     "filename": "greece-2025-140.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "24-70mm f/2.8G",
+      "focal": 38,
+      "aperture": 3.5,
+      "iso": 64,
+      "shutter": 0.002
+    }
   },
   {
     "id": "1OvOmi9DDMOShB2QTj7pP--P_vbi-3T3C",
@@ -2861,7 +4359,15 @@
     "description": "",
     "filename": "greece-2025-161.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "24-70mm f/2.8G",
+      "focal": 70,
+      "aperture": 5.6,
+      "iso": 9000,
+      "shutter": 0.0125
+    }
   },
   {
     "id": "1sN2DiFiRBMTNPqf3POewpYefbbSebKMV",
@@ -2873,7 +4379,15 @@
     "description": "",
     "filename": "greece-2025-163.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "24-70mm f/2.8G",
+      "focal": 70,
+      "aperture": 5.6,
+      "iso": 800,
+      "shutter": 0.0125
+    }
   },
   {
     "id": "1MuKUkfLsKWhuwizKoOjjgFsyyqvEv5Q8",
@@ -2885,7 +4399,15 @@
     "description": "",
     "filename": "greece-2025-166.jpg",
     "width": 5408,
-    "height": 3600
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 10,
+      "aperture": 7.1,
+      "iso": 64,
+      "shutter": 0.0025
+    }
   },
   {
     "id": "1f8P_3sz4yVElh3ejItjZIujzvtCb4ixO",
@@ -2897,7 +4419,15 @@
     "description": "",
     "filename": "greece-2025-183.jpg",
     "width": 7961,
-    "height": 5307
+    "height": 5307,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "24-70mm f/2.8G",
+      "focal": 58,
+      "aperture": 4.5,
+      "iso": 80,
+      "shutter": 0.016666668
+    }
   },
   {
     "id": "1k9gIfRFpdQ_D3ZBd8ecirMXqQBGBEtST",
@@ -2909,7 +4439,15 @@
     "description": "",
     "filename": "greece-2025-2.jpg",
     "width": 4989,
-    "height": 3308
+    "height": 3308,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 17,
+      "aperture": 3.5,
+      "iso": 64,
+      "shutter": 0.000625
+    }
   },
   {
     "id": "1hZCGkvLlriQTJR0gq0ZAIeAop-pG4nqv",
@@ -2921,7 +4459,15 @@
     "description": "",
     "filename": "greece-2025-226.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 150,
+      "aperture": 16,
+      "iso": 720,
+      "shutter": 0.00625
+    }
   },
   {
     "id": "18RmlIY8iORAWgeySZXlrehhg9ywlpc5D",
@@ -2933,7 +4479,15 @@
     "description": "",
     "filename": "greece-2025-23.jpg",
     "width": 6833,
-    "height": 4600
+    "height": 4600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 160,
+      "aperture": 2.8,
+      "iso": 64,
+      "shutter": 0.0015625
+    }
   },
   {
     "id": "1_aR8jkePIvKyJ-5sL8Wc5N9BhXlC_OnY",
@@ -2945,7 +4499,15 @@
     "description": "",
     "filename": "greece-2025-231.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "24-70mm f/2.8G",
+      "focal": 24,
+      "aperture": 4.5,
+      "iso": 64,
+      "shutter": 0.005
+    }
   },
   {
     "id": "1O5kxNYqAFLcYuJJkN_6gVaHtLBO_-5qL",
@@ -2957,7 +4519,15 @@
     "description": "",
     "filename": "greece-2025-239.jpg",
     "width": 8141,
-    "height": 5307
+    "height": 5307,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "24-70mm f/2.8G",
+      "focal": 62,
+      "aperture": 2.8,
+      "iso": 1100,
+      "shutter": 0.016666668
+    }
   },
   {
     "id": "1GJPkn3GfQ2qpX3cxTVva4voGz9m0i44E",
@@ -2969,7 +4539,15 @@
     "description": "",
     "filename": "greece-2025-239.jpg",
     "width": 8141,
-    "height": 5307
+    "height": 5307,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "24-70mm f/2.8G",
+      "focal": 62,
+      "aperture": 2.8,
+      "iso": 1100,
+      "shutter": 0.016666668
+    }
   },
   {
     "id": "1mMxsQIX70Ojcrdn-T5MB9LYWoXwIakTD",
@@ -2981,7 +4559,15 @@
     "description": "",
     "filename": "greece-2025-240.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 110,
+      "aperture": 2.8,
+      "iso": 64,
+      "shutter": 0.003125
+    }
   },
   {
     "id": "1nKqihv18Bce0Q-B3KSkTHJHTwzFXF-47",
@@ -2993,7 +4579,15 @@
     "description": "",
     "filename": "greece-2025-245.jpg",
     "width": 5408,
-    "height": 3600
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 19,
+      "aperture": 3.5,
+      "iso": 64,
+      "shutter": 0.025
+    }
   },
   {
     "id": "1g9FjR7lI5b1G5o7Swv3L9wyR4Pmj5IqG",
@@ -3005,7 +4599,15 @@
     "description": "",
     "filename": "greece-2025-275.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 135,
+      "aperture": 9,
+      "iso": 1100,
+      "shutter": 0.00625
+    }
   },
   {
     "id": "1IaD571TCZXpmWAkVNjR9On2MPau0HT7K",
@@ -3017,7 +4619,15 @@
     "description": "",
     "filename": "greece-2025-322.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 105mm f/2.8G",
+      "focal": 105,
+      "aperture": 8,
+      "iso": 100,
+      "shutter": 0.008
+    }
   },
   {
     "id": "1jvLVyX8GysbfXZN78Rbbyp0WsUNdmNUy",
@@ -3029,7 +4639,15 @@
     "description": "",
     "filename": "greece-2025-365.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "24-70mm f/2.8G",
+      "focal": 36,
+      "aperture": 22,
+      "iso": 31,
+      "shutter": 10
+    }
   },
   {
     "id": "1ws3TKrzadnML6NYfJnNxsRben26DFKO2",
@@ -3041,7 +4659,15 @@
     "description": "",
     "filename": "greece-2025-367.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "24-70mm f/2.8G",
+      "focal": 66,
+      "aperture": 22,
+      "iso": 31,
+      "shutter": 4
+    }
   },
   {
     "id": "1oQ0SiZm5NsCuAP4qxgB2zZUbwrXrqxTW",
@@ -3053,7 +4679,15 @@
     "description": "",
     "filename": "greece-2025-379.jpg",
     "width": 8133,
-    "height": 5422
+    "height": 5422,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 200,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.005
+    }
   },
   {
     "id": "1L2si56DPncjQ7YPgrnSn8qQ_V-JK-6Qe",
@@ -3065,7 +4699,15 @@
     "description": "",
     "filename": "greece-2025-384.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 105mm f/2.8G",
+      "focal": 105,
+      "aperture": 3.2,
+      "iso": 72,
+      "shutter": 0.008
+    }
   },
   {
     "id": "1peWEB-o9X0w8ouezEqnNop20NRVyHnqr",
@@ -3077,7 +4719,15 @@
     "description": "",
     "filename": "greece-2025-385.jpg",
     "width": 7968,
-    "height": 5312
+    "height": 5312,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "24-70mm f/2.8G",
+      "focal": 45,
+      "aperture": 6.3,
+      "iso": 200,
+      "shutter": 0.02
+    }
   },
   {
     "id": "19thgJ1SLZtLlziRWLWfCTVV1irhjtmGX",
@@ -3089,7 +4739,15 @@
     "description": "",
     "filename": "greece-2025-421.jpg",
     "width": 7771,
-    "height": 5181
+    "height": 5181,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "24-70mm f/2.8G",
+      "focal": 48,
+      "aperture": 5.6,
+      "iso": 31,
+      "shutter": 0.33333334
+    }
   },
   {
     "id": "1rmutyjSPsV0L-WBVKFfO0USF7l4anBdg",
@@ -3101,7 +4759,15 @@
     "description": "",
     "filename": "greece-2025-442.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 116,
+      "aperture": 22,
+      "iso": 180,
+      "shutter": 0.008
+    }
   },
   {
     "id": "1h2mARoqKNE1tSLSO8e15DdCzku44pH5Z",
@@ -3113,7 +4779,15 @@
     "description": "",
     "filename": "greece-2025-445.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "24-70mm f/2.8G",
+      "focal": 66,
+      "aperture": 2.8,
+      "iso": 64,
+      "shutter": 0.005
+    }
   },
   {
     "id": "12nEvb5jWhki41SoS3G7JTlaJ2nKE7wsR",
@@ -3125,7 +4799,15 @@
     "description": "",
     "filename": "greece-2025-45.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "24-70mm f/2.8G",
+      "focal": 38,
+      "aperture": 2.8,
+      "iso": 64,
+      "shutter": 0.0008
+    }
   },
   {
     "id": "1RL3drU2FA9li_--J3fb1lPkUae7J4np6",
@@ -3137,7 +4819,15 @@
     "description": "",
     "filename": "greece-2025-480.jpg",
     "width": 7381,
-    "height": 4930
+    "height": 4930,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 155,
+      "aperture": 2.8,
+      "iso": 64,
+      "shutter": 0.0004
+    }
   },
   {
     "id": "1bwCjLweaRzBfN-yMzW9GUPwdBJL-QNRr",
@@ -3149,7 +4839,15 @@
     "description": "",
     "filename": "greece-2025-505.jpg",
     "width": 7765,
-    "height": 4915
+    "height": 4915,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 200,
+      "aperture": 7.1,
+      "iso": 64,
+      "shutter": 0.0008
+    }
   },
   {
     "id": "1hjxpbXvrYRHBK9rqSXVW9lucISvhJTCZ",
@@ -3161,7 +4859,15 @@
     "description": "",
     "filename": "greece-2025-523.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "24-70mm f/2.8G",
+      "focal": 52,
+      "aperture": 22,
+      "iso": 500,
+      "shutter": 3
+    }
   },
   {
     "id": "1Tof9c4pWfn0bEwBEMz7m48OWlWyrWkk3",
@@ -3173,7 +4879,15 @@
     "description": "",
     "filename": "greece-2025-54.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 120,
+      "aperture": 2.8,
+      "iso": 64,
+      "shutter": 0.000625
+    }
   },
   {
     "id": "1bNUD9_bLskhZpw8hrpTt-kNceho6fUsy",
@@ -3185,7 +4899,15 @@
     "description": "",
     "filename": "greece-2025-557.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 78,
+      "aperture": 2.8,
+      "iso": 64,
+      "shutter": 0.0002
+    }
   },
   {
     "id": "1sPaSdngAz71GjCD1WytEIh9LkExcV9MY",
@@ -3197,7 +4919,15 @@
     "description": "",
     "filename": "greece-2025-564.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 135,
+      "aperture": 3.5,
+      "iso": 1600,
+      "shutter": 0.00625
+    }
   },
   {
     "id": "1caBkdcEpt-4bIsN-3YRzsTAfOZ2g9Rpu",
@@ -3209,7 +4939,15 @@
     "description": "",
     "filename": "greece-2025-584.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "24-70mm f/2.8G",
+      "focal": 34,
+      "aperture": 18,
+      "iso": 900,
+      "shutter": 0.025
+    }
   },
   {
     "id": "11j8dfbuZSBVGmr4GA40UzmrdLh0gscqR",
@@ -3221,7 +4959,15 @@
     "description": "",
     "filename": "greece-2025-598.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 155,
+      "aperture": 18,
+      "iso": 160,
+      "shutter": 0.00625
+    }
   },
   {
     "id": "1gnUdX0Lg7kKhK-RamHVeE6hgeiy7qYSZ",
@@ -3233,7 +4979,15 @@
     "description": "",
     "filename": "greece-2025-604.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 200,
+      "aperture": 2.8,
+      "iso": 64,
+      "shutter": 0.0005
+    }
   },
   {
     "id": "1YD55X9pPo8FWHPqAaIpgw3b_TpS3SjX7",
@@ -3245,7 +4999,15 @@
     "description": "",
     "filename": "greece-2025-90.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "24-70mm f/2.8G",
+      "focal": 60,
+      "aperture": 3.5,
+      "iso": 64,
+      "shutter": 0.002
+    }
   },
   {
     "id": "1-QdedjPvx0mSSFlH10h3x8-XdJ5_K0Zx",
@@ -3257,7 +5019,15 @@
     "description": "",
     "filename": "greece-2025-628.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 185,
+      "aperture": 2.8,
+      "iso": 64,
+      "shutter": 0.000625
+    }
   },
   {
     "id": "1oQteqzfUcTFhLPVXBFPZ38e1VNxsaUVn",
@@ -3269,7 +5039,15 @@
     "description": "",
     "filename": "greece-2025-655.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 190,
+      "aperture": 2.8,
+      "iso": 160,
+      "shutter": 0.005
+    }
   },
   {
     "id": "1VZxtR1NTYTMzystC1lvlsKnxqYtOIbmP",
@@ -3281,7 +5059,15 @@
     "description": "",
     "filename": "greece-2025-661.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 140,
+      "aperture": 2.8,
+      "iso": 250,
+      "shutter": 0.00625
+    }
   },
   {
     "id": "1cZAEVIRmfezR3uZmFPD_GDYDa8Jxc2gB",
@@ -3293,7 +5079,15 @@
     "description": "",
     "filename": "greece-2025-662.jpg",
     "width": 7987,
-    "height": 5325
+    "height": 5325,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 70,
+      "aperture": 2.8,
+      "iso": 64,
+      "shutter": 0.0025
+    }
   },
   {
     "id": "1H0zUqPotU1YWoYbE4QaGXs6HKfZXPuYX",
@@ -3305,7 +5099,15 @@
     "description": "",
     "filename": "greece-2025-680.jpg",
     "width": 5408,
-    "height": 3600
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 13,
+      "aperture": 4,
+      "iso": 64,
+      "shutter": 0.00025
+    }
   },
   {
     "id": "1oLMFZwBI9Gd0cjS47Vy-eVwUx5a8vsKm",
@@ -3317,7 +5119,15 @@
     "description": "",
     "filename": "greece-2025-708.jpg",
     "width": 5408,
-    "height": 3600
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 10,
+      "aperture": 22,
+      "iso": 64,
+      "shutter": 0.025
+    }
   },
   {
     "id": "1YDWBlKGtD-orHgW0vZZJj-p1PU9IZ5Jg",
@@ -3329,7 +5139,15 @@
     "description": "",
     "filename": "greece-2025-729.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 175,
+      "aperture": 2.8,
+      "iso": 64,
+      "shutter": 0.00015625
+    }
   },
   {
     "id": "1KIl1-gUdJbG1xXQt6_ykpm0EfKPPk-nX",
@@ -3341,7 +5159,15 @@
     "description": "",
     "filename": "greece-2025-736.jpg",
     "width": 5689,
-    "height": 3855
+    "height": 3855,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 200,
+      "aperture": 22,
+      "iso": 2200,
+      "shutter": 0.005
+    }
   },
   {
     "id": "1L-4-iziL6Crvbf4IpR7tvVu2IpXw_hSp",
@@ -3353,7 +5179,15 @@
     "description": "",
     "filename": "greece-2025-742.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "24-70mm f/2.8G",
+      "focal": 62,
+      "aperture": 2.8,
+      "iso": 64,
+      "shutter": 0.003125
+    }
   },
   {
     "id": "1FleBc74zF7KqAQXs_Imv4pW-ZpHgRgnw",
@@ -3365,7 +5199,15 @@
     "description": "",
     "filename": "greece-2025-744.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "24-70mm f/2.8G",
+      "focal": 36,
+      "aperture": 2.8,
+      "iso": 64,
+      "shutter": 0.003125
+    }
   },
   {
     "id": "1Xu2mARpZncQYYOoXIlvrv6w-v8QKtVSP",
@@ -3377,7 +5219,15 @@
     "description": "",
     "filename": "greece-2025-749.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "24-70mm f/2.8G",
+      "focal": 56,
+      "aperture": 3.2,
+      "iso": 64,
+      "shutter": 0.00125
+    }
   },
   {
     "id": "1eQHDV-FQHuGwe4SbpaTCc4iGCgYtFI0H",
@@ -3389,7 +5239,15 @@
     "description": "",
     "filename": "greece-2025-779.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 200,
+      "aperture": 7.1,
+      "iso": 2800,
+      "shutter": 0.005
+    }
   },
   {
     "id": "1d1NZ8fqExLKJhWQfVx-_p0v70XrZ91yT",
@@ -3401,7 +5259,15 @@
     "description": "",
     "filename": "greece-2025-825.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 200,
+      "aperture": 2.8,
+      "iso": 64,
+      "shutter": 0.002
+    }
   },
   {
     "id": "1mR7B8iqgFOBLc_LhTRxF0JPxCkOajkEf",
@@ -3413,7 +5279,15 @@
     "description": "",
     "filename": "greece-2025-833.jpg",
     "width": 8097,
-    "height": 5325
+    "height": 5325,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 150,
+      "aperture": 4,
+      "iso": 64,
+      "shutter": 0.001
+    }
   },
   {
     "id": "1-MyJWzUCYUp7UKLd5cPUdmB6t3pgp6Ns",
@@ -3425,7 +5299,15 @@
     "description": "",
     "filename": "greece-2025-845.jpg",
     "width": 5201,
-    "height": 3462
+    "height": 3462,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 10,
+      "aperture": 11,
+      "iso": 64,
+      "shutter": 0.02
+    }
   },
   {
     "id": "1z23dvVT8aWaL90C7uJtcz8SllgfsCwOH",
@@ -3437,7 +5319,15 @@
     "description": "",
     "filename": "greece-2025-853.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 110,
+      "aperture": 2.8,
+      "iso": 64,
+      "shutter": 0.00125
+    }
   },
   {
     "id": "1kRGeOdFxk06K9bXrTPC9qhC4rkwNxz_N",
@@ -3449,7 +5339,15 @@
     "description": "",
     "filename": "greece-2025-854.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 200,
+      "aperture": 2.8,
+      "iso": 64,
+      "shutter": 0.00125
+    }
   },
   {
     "id": "1bTf1shjIVeMLxmMSrmP3d-8lqa8vPlCg",
@@ -3461,7 +5359,15 @@
     "description": "",
     "filename": "greece-2025-858.jpg",
     "width": 7798,
-    "height": 5180
+    "height": 5180,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "24-70mm f/2.8G",
+      "focal": 58,
+      "aperture": 2.8,
+      "iso": 1600,
+      "shutter": 0.016666668
+    }
   },
   {
     "id": "10JxlwcIji_xR4H-ocfIpEauC4IqKC45e",
@@ -3473,7 +5379,15 @@
     "description": "",
     "filename": "greece-2025-862.jpg",
     "width": 7093,
-    "height": 4418
+    "height": 4418,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 200,
+      "aperture": 2.8,
+      "iso": 180,
+      "shutter": 0.005
+    }
   },
   {
     "id": "1KR_9fDJvlzYkpkT4SBQ8ojYvLWutUZtL",
@@ -3485,7 +5399,15 @@
     "description": "",
     "filename": "greece-2025-865.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 195,
+      "aperture": 2.8,
+      "iso": 72,
+      "shutter": 0.005
+    }
   },
   {
     "id": "18QyNaG4FB0PI4D2Vcrwb1mEfi4oRlMEU",
@@ -3497,7 +5419,15 @@
     "description": "",
     "filename": "greece-2025-901.jpg",
     "width": 6899,
-    "height": 4599
+    "height": 4599,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "24-70mm f/2.8G",
+      "focal": 66,
+      "aperture": 2.8,
+      "iso": 64,
+      "shutter": 0.00125
+    }
   },
   {
     "id": "1XGushvst1Gd4fJaitgrmT0g94HhfrcUi",
@@ -3509,7 +5439,15 @@
     "description": "",
     "filename": "greece-2025-923.jpg",
     "width": 7859,
-    "height": 5239
+    "height": 5239,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 165,
+      "aperture": 8,
+      "iso": 560,
+      "shutter": 0.005
+    }
   },
   {
     "id": "1kFhLNVLTM7SKYxWuV2gzEIyWrwdfkwcW",
@@ -3521,7 +5459,15 @@
     "description": "",
     "filename": "greece-2025-925.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 165,
+      "aperture": 2.8,
+      "iso": 110,
+      "shutter": 0.005
+    }
   },
   {
     "id": "1F83TrJE58tuYvpjoTEppO4sLlR_B9h6I",
@@ -3533,7 +5479,15 @@
     "description": "",
     "filename": "greece-2025-926.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 116,
+      "aperture": 2.8,
+      "iso": 64,
+      "shutter": 0.001
+    }
   },
   {
     "id": "1aSyJCX8VuJlc28OQ8pT4HXrzZhQvy8qo",
@@ -3545,7 +5499,15 @@
     "description": "",
     "filename": "greece-2025-927.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 155,
+      "aperture": 2.8,
+      "iso": 200,
+      "shutter": 0.00625
+    }
   },
   {
     "id": "19Q-SGNEyuCzAc8cbmMMeXeSzVpaFJazV",
@@ -3557,7 +5519,15 @@
     "description": "",
     "filename": "MJH_0139.jpg",
     "width": 4728,
-    "height": 7084
+    "height": 7084,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 200,
+      "aperture": 3.5,
+      "iso": 125,
+      "shutter": 0.005
+    }
   },
   {
     "id": "1mplPGZRcTguwJ24aQWKWgltTHsudEIr2",
@@ -3569,7 +5539,15 @@
     "description": "",
     "filename": "MJH_0236.jpg",
     "width": 4912,
-    "height": 7360
+    "height": 7360,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "105.0 mm f/2.8",
+      "focal": 105,
+      "aperture": 3.5,
+      "iso": 800,
+      "shutter": 0.008
+    }
   },
   {
     "id": "1_Veq6buDjoWYBjz49v9w2_RFFZ4Zu_Cd",
@@ -3581,7 +5559,15 @@
     "description": "",
     "filename": "MJH_0400.jpg",
     "width": 7360,
-    "height": 4912
+    "height": 4912,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 100,
+      "aperture": 3.5,
+      "iso": 125,
+      "shutter": 0.005
+    }
   },
   {
     "id": "1nUCTMYuPdBqMshHRz2ThiXe4R5qc63TY",
@@ -3593,7 +5579,15 @@
     "description": "",
     "filename": "MJH_0409.jpg",
     "width": 6301,
-    "height": 4151
+    "height": 4151,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 200,
+      "aperture": 2.8,
+      "iso": 280,
+      "shutter": 0.005
+    }
   },
   {
     "id": "16z-bJaEjNcwUpviw28lgDiAV_NMug-Ic",
@@ -3605,7 +5599,15 @@
     "description": "",
     "filename": "MJH_0575.jpg",
     "width": 7360,
-    "height": 4912
+    "height": 4912,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 200,
+      "aperture": 10,
+      "iso": 250,
+      "shutter": 0.005
+    }
   },
   {
     "id": "1wEW9UC71Dnca2E6WYWw5qqt4nWAuhlJn",
@@ -3617,7 +5619,15 @@
     "description": "",
     "filename": "MJH_0735.jpg",
     "width": 7360,
-    "height": 4912
+    "height": 4912,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 200,
+      "aperture": 11,
+      "iso": 280,
+      "shutter": 0.005
+    }
   },
   {
     "id": "14v7JbtjQX03bOhyywk4w3VwiWFtq5vRq",
@@ -3629,7 +5639,15 @@
     "description": "",
     "filename": "MJH_1189.jpg",
     "width": 7295,
-    "height": 4869
+    "height": 4869,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 116,
+      "aperture": 8,
+      "iso": 1400,
+      "shutter": 0.008
+    }
   },
   {
     "id": "1taihR0eG_8acGVbfe76QQ0d_v20A1Pq1",
@@ -3641,7 +5659,15 @@
     "description": "",
     "filename": "MJH_1380.jpg",
     "width": 7360,
-    "height": 4912
+    "height": 4912,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "24.0-70.0 mm f/2.8",
+      "focal": 24,
+      "aperture": 3.5,
+      "iso": 100,
+      "shutter": 0.0125
+    }
   },
   {
     "id": "1GkIX48BOMYyS_v-o1Rv6mqJQqOZRH5D0",
@@ -3653,7 +5679,15 @@
     "description": "",
     "filename": "MJH_1395.jpg",
     "width": 6978,
-    "height": 4657
+    "height": 4657,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "24.0-70.0 mm f/2.8",
+      "focal": 32,
+      "aperture": 4,
+      "iso": 100,
+      "shutter": 0.02
+    }
   },
   {
     "id": "1_a6lttAlcebpHimEUXAe6ah0wfrMUMPO",
@@ -3665,7 +5699,15 @@
     "description": "",
     "filename": "MJH_1658.jpg",
     "width": 7360,
-    "height": 4912
+    "height": 4912,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "24.0-70.0 mm f/2.8",
+      "focal": 29,
+      "aperture": 10,
+      "iso": 140,
+      "shutter": 0.033333335
+    }
   },
   {
     "id": "1_rvROOsKzW5uy4ICPVqOTOhsnEfvAKDN",
@@ -3677,7 +5719,15 @@
     "description": "",
     "filename": "MJH_9233.jpg",
     "width": 7360,
-    "height": 4912
+    "height": 4912,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 200,
+      "aperture": 2.8,
+      "iso": 125,
+      "shutter": 0.005
+    }
   },
   {
     "id": "1RWz2ZIrTCbwxA6A9sEGhUol4i4hOIo5y",
@@ -3689,7 +5739,15 @@
     "description": "",
     "filename": "MJH_9255.jpg",
     "width": 4904,
-    "height": 2832
+    "height": 2832,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 200,
+      "aperture": 2.8,
+      "iso": 450,
+      "shutter": 0.005
+    }
   },
   {
     "id": "1lraiJ-ll34As0arwxTDdeuI84tY3LaLg",
@@ -3701,7 +5759,15 @@
     "description": "",
     "filename": "MJH_9544.jpg",
     "width": 4800,
-    "height": 3200
+    "height": 3200,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "10.0-20.0 mm f/3.5",
+      "focal": 18,
+      "aperture": 8,
+      "iso": 50,
+      "shutter": 1
+    }
   },
   {
     "id": "1zEdwwkBZymZDz0Ox08whcH7AIMza3fmo",
@@ -3713,7 +5779,15 @@
     "description": "",
     "filename": "MJH_9708.jpg",
     "width": 4800,
-    "height": 3200
+    "height": 3200,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "10.0-20.0 mm f/3.5",
+      "focal": 17,
+      "aperture": 8,
+      "iso": 900,
+      "shutter": 0.04
+    }
   },
   {
     "id": "1FffSq1Efh0FGtGtspYnkXmfHE0T_bwEf",
@@ -3725,7 +5799,15 @@
     "description": "",
     "filename": "MJH_9926.jpg",
     "width": 7360,
-    "height": 4912
+    "height": 4912,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "24.0-70.0 mm f/2.8",
+      "focal": 38,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.008
+    }
   },
   {
     "id": "1QmWH16e2CsXg9vCf8AGlOQynd2OUY01A",
@@ -4038,7 +6120,15 @@
     "description": "",
     "filename": "cyclamen crown.jpg",
     "width": 3764,
-    "height": 2500
+    "height": 2500,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "105.0 mm f/2.8",
+      "focal": 105,
+      "aperture": 3.2,
+      "iso": 160,
+      "shutter": 0.000625
+    }
   },
   {
     "id": "1T1ysYl7OBegcFnpAHThQqZX8-nV6_0oR",
@@ -4050,7 +6140,15 @@
     "description": "",
     "filename": "DSC_0232.jpg",
     "width": 4288,
-    "height": 2848
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "105.0 mm f/2.8",
+      "focal": 105,
+      "aperture": 3.3,
+      "iso": 100,
+      "shutter": 0.005
+    }
   },
   {
     "id": "1glcm3u0LLLWC4sw-r8GgsnIyMYgGT3L_",
@@ -4062,7 +6160,15 @@
     "description": "",
     "filename": "DSC_0318.jpg",
     "width": 4288,
-    "height": 2848
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "105.0 mm f/2.8",
+      "focal": 105,
+      "aperture": 8,
+      "iso": 100,
+      "shutter": 0.05
+    }
   },
   {
     "id": "1_IZewWsa8jDUNLATxFo5i7rZEyUakKm6",
@@ -4074,7 +6180,15 @@
     "description": "",
     "filename": "DSC_0331.jpg",
     "width": 4288,
-    "height": 2848
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "105.0 mm f/2.8",
+      "focal": 105,
+      "aperture": 8,
+      "iso": 100,
+      "shutter": 0.033333335
+    }
   },
   {
     "id": "1A8y2S1s8pDnIzK0lbW6NpxJS5plJcYzJ",
@@ -4086,7 +6200,15 @@
     "description": "",
     "filename": "DSC_0436.jpg",
     "width": 2848,
-    "height": 4288
+    "height": 4288,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "105.0 mm f/2.8",
+      "focal": 105,
+      "aperture": 9,
+      "iso": 100,
+      "shutter": 0.008
+    }
   },
   {
     "id": "1UHAnI17wVt8l6w6tNGjcxBPKoMGFchos",
@@ -4098,7 +6220,15 @@
     "description": "",
     "filename": "DSC_0605.jpg",
     "width": 3200,
-    "height": 2125
+    "height": 2125,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "105.0 mm f/2.8",
+      "focal": 105,
+      "aperture": 3.2,
+      "iso": 200,
+      "shutter": 0.02
+    }
   },
   {
     "id": "1Z-qtX5WfnR8N7tWtgSLLx4uBWQUIm_wf",
@@ -4110,7 +6240,15 @@
     "description": "",
     "filename": "DSC_0852.jpg",
     "width": 4288,
-    "height": 2848
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "105.0 mm f/2.8",
+      "focal": 105,
+      "aperture": 4.5,
+      "iso": 100,
+      "shutter": 0.0008
+    }
   },
   {
     "id": "1heVuuhd-zNbofmd1jqmB_mkJmdxEY_pf",
@@ -4122,7 +6260,15 @@
     "description": "",
     "filename": "DSC_0865.jpg",
     "width": 4288,
-    "height": 2848
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "105.0 mm f/2.8",
+      "focal": 105,
+      "aperture": 3.5,
+      "iso": 100,
+      "shutter": 0.0004
+    }
   },
   {
     "id": "1JK0T5D9bSH3ZJJ0_HMWAWVa6bUi-BoaG",
@@ -4134,7 +6280,15 @@
     "description": "",
     "filename": "DSC_1019.jpg",
     "width": 4288,
-    "height": 2848
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "105.0 mm f/2.8",
+      "focal": 105,
+      "aperture": 4,
+      "iso": 200,
+      "shutter": 0.003125
+    }
   },
   {
     "id": "1hz0djJ0vvaJn81qutGPOsos4LTs1Ysx8",
@@ -4146,7 +6300,13 @@
     "description": "",
     "filename": "DSC_1318.jpg",
     "width": 3000,
-    "height": 1993
+    "height": 1993,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "focal": 105,
+      "aperture": 4.5,
+      "shutter": 0.0125
+    }
   },
   {
     "id": "101p4QYL3gWSjMG-vtvTaCjCsF2GNpYoK",
@@ -4158,7 +6318,15 @@
     "description": "",
     "filename": "DSC_2174.jpg",
     "width": 3750,
-    "height": 2687
+    "height": 2687,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "105.0 mm f/2.8",
+      "focal": 105,
+      "aperture": 10,
+      "iso": 200,
+      "shutter": 0.005
+    }
   },
   {
     "id": "1r_VnEdgHtk5mswJRNcQFXX6q8ulb8GbB",
@@ -4170,7 +6338,15 @@
     "description": "",
     "filename": "DSC_3161.jpg",
     "width": 4288,
-    "height": 2848
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "105.0 mm f/2.8",
+      "focal": 105,
+      "aperture": 4,
+      "iso": 100,
+      "shutter": 0.0025
+    }
   },
   {
     "id": "1F3Mqm_32vZ1IzS2W73VxFvDUgMpdNlRX",
@@ -4182,7 +6358,15 @@
     "description": "",
     "filename": "DSC_3194.jpg",
     "width": 4288,
-    "height": 2848
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "105.0 mm f/2.8",
+      "focal": 105,
+      "aperture": 3.3,
+      "iso": 100,
+      "shutter": 0.0003125
+    }
   },
   {
     "id": "1utEEIbAWMpJ2zgwXH5WkUEiQcAklsDgr",
@@ -4194,7 +6378,15 @@
     "description": "",
     "filename": "DSC_3208a.jpg",
     "width": 4288,
-    "height": 2848
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "105.0 mm f/2.8",
+      "focal": 105,
+      "aperture": 3.2,
+      "iso": 100,
+      "shutter": 0.0003125
+    }
   },
   {
     "id": "1bBx1W0YjlrkW8mPhXcgrTyu5LipA1aRW",
@@ -4206,7 +6398,15 @@
     "description": "",
     "filename": "DSC_3446.jpg",
     "width": 4288,
-    "height": 2848
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "10.0-20.0 mm f/4.0-5.6",
+      "focal": 10,
+      "aperture": 9,
+      "iso": 100,
+      "shutter": 0.01
+    }
   },
   {
     "id": "1O51BSknGAdKbwmMqj_7_V54OFmRhLEjJ",
@@ -4218,7 +6418,15 @@
     "description": "",
     "filename": "DSC_3534.jpg",
     "width": 4288,
-    "height": 2848
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "105.0 mm f/2.8",
+      "focal": 105,
+      "aperture": 3,
+      "iso": 100,
+      "shutter": 0.00025
+    }
   },
   {
     "id": "1_XRUpQJywTayw2BqOYcGZFxPxvny52Hx",
@@ -4307,7 +6515,15 @@
     "description": "",
     "filename": "DSC_4743.jpg",
     "width": 3936,
-    "height": 2464
+    "height": 2464,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "105.0 mm f/2.8",
+      "focal": 105,
+      "aperture": 3,
+      "iso": 100,
+      "shutter": 0.0008
+    }
   },
   {
     "id": "1w6kUvKc5OAlZAVgwmbE-kxTE0KUzTfvB",
@@ -4319,7 +6535,15 @@
     "description": "",
     "filename": "DSC_4930.jpg",
     "width": 3907,
-    "height": 2516
+    "height": 2516,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "105.0 mm f/2.8",
+      "focal": 105,
+      "aperture": 3.8,
+      "iso": 100,
+      "shutter": 0.000625
+    }
   },
   {
     "id": "1LjG0BlIz52uvjeXZVVWg8ww4lQgifpAI",
@@ -4331,7 +6555,15 @@
     "description": "",
     "filename": "DSC_5159.jpg",
     "width": 4288,
-    "height": 2848
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "105.0 mm f/2.8",
+      "focal": 105,
+      "aperture": 4,
+      "iso": 100,
+      "shutter": 0.0025
+    }
   },
   {
     "id": "1yWJqBqlMSiE7F5oee354pYsvUgYX2HOk",
@@ -4343,7 +6575,15 @@
     "description": "",
     "filename": "DSC_5163.JPG",
     "width": 4037,
-    "height": 2678
+    "height": 2678,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "105.0 mm f/2.8",
+      "focal": 105,
+      "aperture": 7.1,
+      "iso": 100,
+      "shutter": 0.01
+    }
   },
   {
     "id": "1EuRqwjvmu0VyTJOxniz0JjhjtyrjvZZr",
@@ -4355,7 +6595,15 @@
     "description": "",
     "filename": "DSC_5839 copy.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 105mm f/2.8G",
+      "focal": 105,
+      "aperture": 3.5,
+      "iso": 125,
+      "shutter": 0.0015625
+    }
   },
   {
     "id": "1foMx3KXghHVjGnWirDuk1bI8aX5TWVf3",
@@ -4367,7 +6615,15 @@
     "description": "",
     "filename": "DSC_6129 copy.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 105mm f/2.8G",
+      "focal": 105,
+      "aperture": 3.2,
+      "iso": 220,
+      "shutter": 0.0125
+    }
   },
   {
     "id": "1oqNW9C1s7P014P66F3GsmlntZRchV8gL",
@@ -4379,7 +6635,15 @@
     "description": "",
     "filename": "DSC_6131 copy.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 105mm f/2.8G",
+      "focal": 105,
+      "aperture": 3.5,
+      "iso": 64,
+      "shutter": 0.0125
+    }
   },
   {
     "id": "17SuzI9UwZUmhtJp4PfGDW2jemWbc0xK_",
@@ -4391,7 +6655,15 @@
     "description": "",
     "filename": "DSC_6147 copy.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 105mm f/2.8G",
+      "focal": 105,
+      "aperture": 6.3,
+      "iso": 220,
+      "shutter": 0.008
+    }
   },
   {
     "id": "1TZRbWTabXrbCpUqXJc-EfFLsUaA4XXT-",
@@ -4403,7 +6675,15 @@
     "description": "",
     "filename": "DSC_6158 copy.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 105mm f/2.8G",
+      "focal": 105,
+      "aperture": 5,
+      "iso": 360,
+      "shutter": 0.008
+    }
   },
   {
     "id": "1Zpb1brFjrBGYnT0-dNx289Ola3kx6FrI",
@@ -4415,7 +6695,15 @@
     "description": "",
     "filename": "DSC_6255 copy.jpg",
     "width": 7725,
-    "height": 5150
+    "height": 5150,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 105mm f/2.8G",
+      "focal": 105,
+      "aperture": 4.5,
+      "iso": 450,
+      "shutter": 0.008
+    }
   },
   {
     "id": "1D7F-UDEoPqZFWujHMPcIzNQPlzJHEijf",
@@ -4427,7 +6715,15 @@
     "description": "",
     "filename": "DSC_6286 copy.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 105mm f/2.8G",
+      "focal": 105,
+      "aperture": 4.5,
+      "iso": 800,
+      "shutter": 0.008
+    }
   },
   {
     "id": "1WsDtgO0Tb0s5_mMjQHedTsqdY08T5lGg",
@@ -4439,7 +6735,15 @@
     "description": "",
     "filename": "DSC_6288 copy.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 105mm f/2.8G",
+      "focal": 105,
+      "aperture": 4.5,
+      "iso": 250,
+      "shutter": 0.008
+    }
   },
   {
     "id": "1g9b703RhSdonj-wADDYevbzEY0gF6jTX",
@@ -4451,7 +6755,15 @@
     "description": "",
     "filename": "DSC_6317 copy.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 105mm f/2.8G",
+      "focal": 105,
+      "aperture": 3.2,
+      "iso": 64,
+      "shutter": 0.00625
+    }
   },
   {
     "id": "1FPEE1GSfd0YFtKob7cIcUAAL6jx6O8L_",
@@ -4463,7 +6775,15 @@
     "description": "",
     "filename": "DSC_6327 copy.jpg",
     "width": 7564,
-    "height": 5043
+    "height": 5043,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 105mm f/2.8G",
+      "focal": 105,
+      "aperture": 3.2,
+      "iso": 64,
+      "shutter": 0.003125
+    }
   },
   {
     "id": "1dgj0v5OkiTy5XzNiwzngCBiH2crLrMla",
@@ -4475,7 +6795,15 @@
     "description": "",
     "filename": "DSC_6364 copy.jpg",
     "width": 5504,
-    "height": 8256
+    "height": 8256,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 105mm f/2.8G",
+      "focal": 105,
+      "aperture": 3.3,
+      "iso": 160,
+      "shutter": 0.008
+    }
   },
   {
     "id": "1ZgvZFQ5APlGXKzwrLMe4g7xAA-qPTZ5z",
@@ -4487,7 +6815,15 @@
     "description": "",
     "filename": "DSC_6374 copy.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 105mm f/2.8G",
+      "focal": 105,
+      "aperture": 3.2,
+      "iso": 100,
+      "shutter": 0.008
+    }
   },
   {
     "id": "1W8-F5AawLNWCzmCszaZX_YDp0A2oyn34",
@@ -4499,7 +6835,15 @@
     "description": "",
     "filename": "DSC_6431 copy.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 105mm f/2.8G",
+      "focal": 105,
+      "aperture": 3.2,
+      "iso": 64,
+      "shutter": 0.00125
+    }
   },
   {
     "id": "118RM_kkpXjvAFKP51Wf4VrBMre5vOki4",
@@ -4511,7 +6855,15 @@
     "description": "",
     "filename": "DSC_6443 copy.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 105mm f/2.8G",
+      "focal": 105,
+      "aperture": 3.2,
+      "iso": 64,
+      "shutter": 0.005
+    }
   },
   {
     "id": "1zOwofy1H65KuCYXlDMJEDRVgKlwVycAZ",
@@ -4523,7 +6875,15 @@
     "description": "",
     "filename": "DSC_6477 copy.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 105mm f/2.8G",
+      "focal": 105,
+      "aperture": 3,
+      "iso": 110,
+      "shutter": 0.008
+    }
   },
   {
     "id": "1-iqxlYN773fYnouAo4H6C4MSrWGWRFZc",
@@ -4535,7 +6895,15 @@
     "description": "",
     "filename": "DSC_7250.jpg",
     "width": 4288,
-    "height": 2848
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "10.0-20.0 mm f/4.0-5.6",
+      "focal": 14,
+      "aperture": 4.8,
+      "iso": 125,
+      "shutter": 0.000625
+    }
   },
   {
     "id": "1-JFHR1mY8XRbwjgyKnPT_bNfx9Ki6pPm",
@@ -4547,7 +6915,15 @@
     "description": "",
     "filename": "DSC_7985.jpg",
     "width": 4288,
-    "height": 2848
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "105.0 mm f/2.8",
+      "focal": 105,
+      "aperture": 6.3,
+      "iso": 200,
+      "shutter": 0.00625
+    }
   },
   {
     "id": "1QypvXLHHP8rDUHQ6EqD1MeR-WUhc7faY",
@@ -4559,7 +6935,15 @@
     "description": "",
     "filename": "DSC_8007.jpg",
     "width": 4000,
-    "height": 2657
+    "height": 2657,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "105.0 mm f/2.8",
+      "focal": 105,
+      "aperture": 8,
+      "iso": 100,
+      "shutter": 0.07692308
+    }
   },
   {
     "id": "1XNy3wMrU-T3WL2F1Fz7yUb1sJ6ksvoE-",
@@ -4571,7 +6955,15 @@
     "description": "",
     "filename": "DSC_8044.jpg",
     "width": 4100,
-    "height": 2723
+    "height": 2723,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "105.0 mm f/2.8",
+      "focal": 105,
+      "aperture": 3.2,
+      "iso": 100,
+      "shutter": 0.0125
+    }
   },
   {
     "id": "1qil2hRqCyyh6PAvlIMymboMnFp56rOcK",
@@ -4583,7 +6975,15 @@
     "description": "",
     "filename": "DSC_9087.jpg",
     "width": 4000,
-    "height": 2657
+    "height": 2657,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "105.0 mm f/2.8",
+      "focal": 105,
+      "aperture": 9,
+      "iso": 100,
+      "shutter": 0.0125
+    }
   },
   {
     "id": "1Oj4LIdYrQU-KR9aPCVLFsTnhBJnPdh8U",
@@ -4595,7 +6995,15 @@
     "description": "",
     "filename": "DSC_9528.JPG",
     "width": 4288,
-    "height": 2848
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "105.0 mm f/2.8",
+      "focal": 105,
+      "aperture": 5.6,
+      "iso": 100,
+      "shutter": 0.002
+    }
   },
   {
     "id": "11S3_-5DsrJxf2UfW7IpBzV1RHw9pb_Br",
@@ -4607,7 +7015,15 @@
     "description": "",
     "filename": "DSC_9535.JPG",
     "width": 2591,
-    "height": 3773
+    "height": 3773,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "105.0 mm f/2.8",
+      "focal": 105,
+      "aperture": 5.6,
+      "iso": 100,
+      "shutter": 0.00625
+    }
   },
   {
     "id": "1pp9jL6s0w6kjknl5kla09hCqUg-dQ3Tt",
@@ -4619,7 +7035,15 @@
     "description": "",
     "filename": "DSC_9839.jpg",
     "width": 4016,
-    "height": 2592
+    "height": 2592,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "105.0 mm f/2.8",
+      "focal": 105,
+      "aperture": 3.3,
+      "iso": 100,
+      "shutter": 0.008
+    }
   },
   {
     "id": "1p8Cc-Ep8K3DLs5-8_TiKZaVlgsrHKxmy",
@@ -4686,7 +7110,15 @@
     "description": "",
     "filename": "MJH_7353.jpg",
     "width": 4912,
-    "height": 7360
+    "height": 7360,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "105.0 mm f/2.8",
+      "focal": 105,
+      "aperture": 3.5,
+      "iso": 200,
+      "shutter": 0.0015625
+    }
   },
   {
     "id": "1uLGoiQB0E6fzEynhPBJ3YkAM7Cq0lVYr",
@@ -4698,7 +7130,15 @@
     "description": "",
     "filename": "MJH_7374.jpg",
     "width": 7360,
-    "height": 4912
+    "height": 4912,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "105.0 mm f/2.8",
+      "focal": 105,
+      "aperture": 9,
+      "iso": 200,
+      "shutter": 0.00625
+    }
   },
   {
     "id": "1m-H52tW1jcxbamcmCjFWuI-zRGhJJxDn",
@@ -4710,7 +7150,15 @@
     "description": "",
     "filename": "MJH_7397.jpg",
     "width": 7360,
-    "height": 4912
+    "height": 4912,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "105.0 mm f/2.8",
+      "focal": 105,
+      "aperture": 4,
+      "iso": 200,
+      "shutter": 0.0125
+    }
   },
   {
     "id": "1980pro99hL69jyuLJEGw0fq8STDetDmY",
@@ -4722,7 +7170,15 @@
     "description": "",
     "filename": "MJH_7418.jpg",
     "width": 7360,
-    "height": 4912
+    "height": 4912,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "105.0 mm f/2.8",
+      "focal": 105,
+      "aperture": 3.5,
+      "iso": 200,
+      "shutter": 0.003125
+    }
   },
   {
     "id": "1MW9XKOyKEsV627l8G7FHaSw6_LGUoqo_",
@@ -4734,7 +7190,15 @@
     "description": "",
     "filename": "MJH_7504.jpg",
     "width": 7360,
-    "height": 4912
+    "height": 4912,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "105.0 mm f/2.8",
+      "focal": 105,
+      "aperture": 3,
+      "iso": 100,
+      "shutter": 0.0004
+    }
   },
   {
     "id": "18g1PblF8G72MpzgAfBZNnyx5k-mEplag",
@@ -4746,7 +7210,15 @@
     "description": "",
     "filename": "MJH_7512.jpg",
     "width": 4912,
-    "height": 7360
+    "height": 7360,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "105.0 mm f/2.8",
+      "focal": 105,
+      "aperture": 3.3,
+      "iso": 100,
+      "shutter": 0.0015625
+    }
   },
   {
     "id": "16M8xBlYPOkOdxRhbTYgDnEO-YYJA8SZX",
@@ -4758,7 +7230,15 @@
     "description": "",
     "filename": "October 07, 20122012-21.jpg",
     "width": 4288,
-    "height": 2848
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "105.0 mm f/2.8",
+      "focal": 105,
+      "aperture": 3,
+      "iso": 160,
+      "shutter": 0.004
+    }
   },
   {
     "id": "1AuT3n7Ykq3ZF9FM-GNjLbSJ50NWdGsGM",
@@ -4770,7 +7250,15 @@
     "description": "",
     "filename": "Z72_4839 copy.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 105mm f/2.8G",
+      "focal": 105,
+      "aperture": 3.5,
+      "iso": 64,
+      "shutter": 0.001
+    }
   },
   {
     "id": "12fEjoqIEq7EP5wShazViF5JdcDNsCQyG",
@@ -4782,7 +7270,15 @@
     "description": "",
     "filename": "Z72_4866 copy.jpg",
     "width": 5106,
-    "height": 7659
+    "height": 7659,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 105mm f/2.8G",
+      "focal": 105,
+      "aperture": 3.5,
+      "iso": 64,
+      "shutter": 0.0015625
+    }
   },
   {
     "id": "1qzyKie4Igl-ln3V-DjqQzKSWVlzZXM0b",
@@ -4794,7 +7290,15 @@
     "description": "",
     "filename": "Z72_4938 copy.jpg",
     "width": 7688,
-    "height": 5125
+    "height": 5125,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 105mm f/2.8G",
+      "focal": 105,
+      "aperture": 8,
+      "iso": 64,
+      "shutter": 0.005
+    }
   },
   {
     "id": "1scG81LoWFkCf-mJ1ycF5lTvX-2qg1HMm",
@@ -4806,7 +7310,15 @@
     "description": "",
     "filename": "Z72_4957 copy.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 105mm f/2.8G",
+      "focal": 105,
+      "aperture": 3.2,
+      "iso": 64,
+      "shutter": 0.004
+    }
   },
   {
     "id": "11kAItcnIw7H_GGmyA1AUsyfIKsBVBugq",
@@ -4818,7 +7330,15 @@
     "description": "",
     "filename": "Z72_5600 copya.jpg",
     "width": 7708,
-    "height": 5139
+    "height": 5139,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 105mm f/2.8G",
+      "focal": 105,
+      "aperture": 3,
+      "iso": 125,
+      "shutter": 0.00125
+    }
   },
   {
     "id": "1O-biotFOnn_alqxevn2m0TtkWbviW2Hw",
@@ -4830,7 +7350,15 @@
     "description": "",
     "filename": "August 10, 20122012-24.JPG",
     "width": 7360,
-    "height": 4912
+    "height": 4912,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 200,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.02
+    }
   },
   {
     "id": "1o4AFxDQKI4qb9oMdxBCNfCWOMm6icu1o",
@@ -4842,7 +7370,15 @@
     "description": "",
     "filename": "August 21, 20122012-27.jpg",
     "width": 7360,
-    "height": 4912
+    "height": 4912,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "24.0-70.0 mm f/2.8",
+      "focal": 24,
+      "aperture": 2.8,
+      "iso": 6400,
+      "shutter": 0.125
+    }
   },
   {
     "id": "1gk7ghTSA_HcFvgDg3fsO6E-ZUcbVgQWY",
@@ -4854,7 +7390,15 @@
     "description": "",
     "filename": "August 21, 20122012-36.jpg",
     "width": 7360,
-    "height": 4912
+    "height": 4912,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "24.0-70.0 mm f/2.8",
+      "focal": 40,
+      "aperture": 2.8,
+      "iso": 360,
+      "shutter": 0.025
+    }
   },
   {
     "id": "1JwYa8GeoKrQY0m39VBCrqRDe9bgtx2iA",
@@ -4866,7 +7410,15 @@
     "description": "",
     "filename": "August 21, 20122012-40.jpg",
     "width": 7360,
-    "height": 4912
+    "height": 4912,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "24.0-70.0 mm f/2.8",
+      "focal": 62,
+      "aperture": 2.8,
+      "iso": 6400,
+      "shutter": 0.025
+    }
   },
   {
     "id": "1QS-lkXmxbF9PJzU-s2P2373jKIX8Vdpf",
@@ -4878,7 +7430,15 @@
     "description": "",
     "filename": "August 21, 20122012-46.jpg",
     "width": 7360,
-    "height": 4912
+    "height": 4912,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "24.0-70.0 mm f/2.8",
+      "focal": 45,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.01
+    }
   },
   {
     "id": "1iCWLjcS_uBoMPkO3J2LSRpY1Fi192T6A",
@@ -4890,7 +7450,15 @@
     "description": "",
     "filename": "Cactus texture.jpg",
     "width": 4288,
-    "height": 2848
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "105.0 mm f/2.8",
+      "focal": 105,
+      "aperture": 8,
+      "iso": 100,
+      "shutter": 0.04
+    }
   },
   {
     "id": "1TnVzi2L8ZLCBh0c_NMRf6MCipgw-oDsG",
@@ -4902,7 +7470,15 @@
     "description": "",
     "filename": "coffee mugs background.jpeg",
     "width": 4288,
-    "height": 2848
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "105.0 mm f/2.8",
+      "focal": 105,
+      "aperture": 3,
+      "iso": 100,
+      "shutter": 0.0004
+    }
   },
   {
     "id": "1QDuFcuGl-MMn8bbzdNSZQLj8iXTEc2Ox",
@@ -4914,7 +7490,15 @@
     "description": "",
     "filename": "colorful straw abstract 2.jpg",
     "width": 4288,
-    "height": 2848
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "105.0 mm f/2.8",
+      "focal": 105,
+      "aperture": 3.5,
+      "iso": 100,
+      "shutter": 0.0125
+    }
   },
   {
     "id": "193ChTPGZ2eYwTeL634t5nz_QMnd02xeK",
@@ -4926,7 +7510,15 @@
     "description": "",
     "filename": "colorful straw abstract.jpg",
     "width": 4288,
-    "height": 2848
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "105.0 mm f/2.8",
+      "focal": 105,
+      "aperture": 4.5,
+      "iso": 100,
+      "shutter": 0.016666668
+    }
   },
   {
     "id": "1ampVjADrXXRaQvJkTuwnwKro1a0w9P2L",
@@ -4938,7 +7530,15 @@
     "description": "",
     "filename": "Dry moisture texture.jpg",
     "width": 4288,
-    "height": 2848
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "105.0 mm f/2.8",
+      "focal": 105,
+      "aperture": 3.5,
+      "iso": 100,
+      "shutter": 0.008
+    }
   },
   {
     "id": "1rS4FzYkwKAlpUxInIkv7dcw_em72fpP2",
@@ -4950,7 +7550,15 @@
     "description": "",
     "filename": "DSC_0232.jpg",
     "width": 4288,
-    "height": 2848
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "105.0 mm f/2.8",
+      "focal": 105,
+      "aperture": 3.3,
+      "iso": 100,
+      "shutter": 0.005
+    }
   },
   {
     "id": "1hxahzabb1AHEAXyYO-Z8oKqFwvDZuol6",
@@ -4962,7 +7570,15 @@
     "description": "",
     "filename": "DSC_1364.jpg",
     "width": 4288,
-    "height": 2848
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "105.0 mm f/2.8",
+      "focal": 105,
+      "aperture": 3.8,
+      "iso": 160,
+      "shutter": 0.005
+    }
   },
   {
     "id": "11CB5ZK5gWbW1N3yxOggz07vMA4BkVeJg",
@@ -4974,7 +7590,15 @@
     "description": "",
     "filename": "DSC_1374.jpg",
     "width": 4288,
-    "height": 2848
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "105.0 mm f/2.8",
+      "focal": 105,
+      "aperture": 4,
+      "iso": 100,
+      "shutter": 0.005
+    }
   },
   {
     "id": "1nCBHHTe1uLLHJK5U6swTl5FLRmyapQob",
@@ -4986,7 +7610,15 @@
     "description": "",
     "filename": "DSC_2202.jpg",
     "width": 4288,
-    "height": 2848
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "105.0 mm f/2.8",
+      "focal": 105,
+      "aperture": 7.1,
+      "iso": 100,
+      "shutter": 0.016666668
+    }
   },
   {
     "id": "14qNCsr-QNn0MLc-abJRV_HcZD_AOFItY",
@@ -4998,7 +7630,15 @@
     "description": "",
     "filename": "DSC_2637.jpg",
     "width": 4032,
-    "height": 2624
+    "height": 2624,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "105.0 mm f/2.8",
+      "focal": 105,
+      "aperture": 5.6,
+      "iso": 100,
+      "shutter": 0.00625
+    }
   },
   {
     "id": "1jov8nfOezxvf0nz-Uq3aFTR6lCmk62S6",
@@ -5010,7 +7650,13 @@
     "description": "",
     "filename": "DSC_2998_1.jpg",
     "width": 4000,
-    "height": 2657
+    "height": 2657,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "focal": 70,
+      "aperture": 5.6,
+      "shutter": 0.004
+    }
   },
   {
     "id": "13-Vj1zwX1WiCAW0JXByc-7GS2aMSAkny",
@@ -5022,7 +7668,15 @@
     "description": "",
     "filename": "DSC_3178a.jpg",
     "width": 4288,
-    "height": 2848
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "105.0 mm f/2.8",
+      "focal": 105,
+      "aperture": 3.8,
+      "iso": 250,
+      "shutter": 0.0025
+    }
   },
   {
     "id": "1WZUI8vzx_VBpg6yfXb_mAth6guweU2JH",
@@ -5034,7 +7688,15 @@
     "description": "",
     "filename": "DSC_3919.jpg",
     "width": 4288,
-    "height": 2848
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "105.0 mm f/2.8",
+      "focal": 105,
+      "aperture": 4,
+      "iso": 100,
+      "shutter": 0.0015625
+    }
   },
   {
     "id": "1uBai-6tPfU2lN0MBkcocyfXyNyXXeXd8",
@@ -5046,7 +7708,15 @@
     "description": "",
     "filename": "DSC_4053.jpg",
     "width": 4288,
-    "height": 2848
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "10.0-20.0 mm f/4.0-5.6",
+      "focal": 14,
+      "aperture": 4.8,
+      "iso": 100,
+      "shutter": 0.0025
+    }
   },
   {
     "id": "133-YvkHkjHupL7-a-ocHs6hTAlgCH6Am",
@@ -5058,7 +7728,15 @@
     "description": "",
     "filename": "DSC_4608.jpg",
     "width": 4288,
-    "height": 2848
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 180,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.0125
+    }
   },
   {
     "id": "1eAY-e_8t2KA_a4g0nrIus6aRFa4jIr4j",
@@ -5070,7 +7748,15 @@
     "description": "",
     "filename": "DSC_5402.jpg",
     "width": 4122,
-    "height": 2794
+    "height": 2794,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "105.0 mm f/2.8",
+      "focal": 105,
+      "aperture": 3.5,
+      "iso": 100,
+      "shutter": 0.002
+    }
   },
   {
     "id": "1Q4-zZB-SnLz0Ei3tFkeTe62OPWuPvOaT",
@@ -5082,7 +7768,15 @@
     "description": "",
     "filename": "DSC_5411.jpg",
     "width": 4288,
-    "height": 2848
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "105.0 mm f/2.8",
+      "focal": 105,
+      "aperture": 3.2,
+      "iso": 100,
+      "shutter": 0.00125
+    }
   },
   {
     "id": "1zElYUv45yfChIkkBhWiOxVsuQmParSrS",
@@ -5094,7 +7788,15 @@
     "description": "",
     "filename": "DSC_5510.jpg",
     "width": 5360,
-    "height": 3560
+    "height": 3560,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "105.0 mm f/2.8",
+      "focal": 105,
+      "aperture": 8,
+      "iso": 160,
+      "shutter": 0.0015625
+    }
   },
   {
     "id": "1-zHOPxA1O_SNYJQNgh7HpAqtm3RfDllT",
@@ -5106,7 +7808,13 @@
     "description": "",
     "filename": "DSC_5690.jpg",
     "width": 2623,
-    "height": 1600
+    "height": 1600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D70",
+      "focal": 200,
+      "aperture": 8,
+      "shutter": 0.0015625
+    }
   },
   {
     "id": "1l1-rlJkl0l5xft9AdAkcgMzOYWkY0aqo",
@@ -5118,7 +7826,15 @@
     "description": "",
     "filename": "DSC_5975.JPG",
     "width": 6144,
-    "height": 4081
+    "height": 4081,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "105.0 mm f/2.8",
+      "focal": 105,
+      "aperture": 3,
+      "iso": 160,
+      "shutter": 0.02
+    }
   },
   {
     "id": "12yC9WcIfq2liDpZXDh3_JK9RBaxZtj8G",
@@ -5130,7 +7846,15 @@
     "description": "",
     "filename": "DSC_6030.JPG",
     "width": 6144,
-    "height": 4081
+    "height": 4081,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "105.0 mm f/2.8",
+      "focal": 105,
+      "aperture": 3,
+      "iso": 160,
+      "shutter": 0.016666668
+    }
   },
   {
     "id": "1-j_StuhGng1VrlBLZbOvttUqXF8BHj80",
@@ -5142,7 +7866,13 @@
     "description": "",
     "filename": "DSC_6345.jpg",
     "width": 2858,
-    "height": 1900
+    "height": 1900,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D70",
+      "focal": 105,
+      "aperture": 4.5,
+      "shutter": 0.033333335
+    }
   },
   {
     "id": "1VapbJsV6ADUiXjyDwOFPMNnYqRS-5b4i",
@@ -5154,7 +7884,15 @@
     "description": "",
     "filename": "DSC_6534 copy.jpg",
     "width": 7257,
-    "height": 4838
+    "height": 4838,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 200,
+      "aperture": 8,
+      "iso": 220,
+      "shutter": 0.005
+    }
   },
   {
     "id": "1bCPZFc40QtK4loEsDEtNqvZ4-UtS7XMs",
@@ -5166,7 +7904,15 @@
     "description": "",
     "filename": "DSC_6668.jpg",
     "width": 8256,
-    "height": 5504
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 105mm f/2.8G",
+      "focal": 105,
+      "aperture": 3.2,
+      "iso": 1800,
+      "shutter": 0.008
+    }
   },
   {
     "id": "1aYWwR25_GX10e7fqzNyWQDzYeHOLq8bE",
@@ -5178,7 +7924,15 @@
     "description": "",
     "filename": "DSC_7584.JPG",
     "width": 4288,
-    "height": 2848
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "105.0 mm f/2.8",
+      "focal": 105,
+      "aperture": 8,
+      "iso": 100,
+      "shutter": 0.07692308
+    }
   },
   {
     "id": "1POBPyXo8c-t1oZWe69z-NH4UDtO-fcwu",
@@ -5190,7 +7944,15 @@
     "description": "",
     "filename": "DSC_7707.jpg",
     "width": 4288,
-    "height": 2848
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 135,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.0015625
+    }
   },
   {
     "id": "1FzHlnK1Mj5awNstDqYFZ6BGjbzmbNA_R",
@@ -5202,7 +7964,15 @@
     "description": "",
     "filename": "DSC_8747a.jpg",
     "width": 4288,
-    "height": 2848
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "105.0 mm f/2.8",
+      "focal": 105,
+      "aperture": 4.5,
+      "iso": 100,
+      "shutter": 0.008
+    }
   },
   {
     "id": "1SMdR3WP3i7gxALOh1jQGblgf9N6i4G9m",
@@ -5214,7 +7984,15 @@
     "description": "",
     "filename": "DSC_9381.jpg",
     "width": 4288,
-    "height": 2848
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "105.0 mm f/2.8",
+      "focal": 105,
+      "aperture": 3.3,
+      "iso": 100,
+      "shutter": 0.004
+    }
   },
   {
     "id": "1_nNBWRuQm0QsRVCTRYc2DMPfG5t5ciwk",
@@ -5226,7 +8004,15 @@
     "description": "",
     "filename": "Green Cactus.jpg",
     "width": 4000,
-    "height": 2657
+    "height": 2657,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "105.0 mm f/2.8",
+      "focal": 105,
+      "aperture": 5.6,
+      "iso": 100,
+      "shutter": 0.004
+    }
   },
   {
     "id": "1xJHXlR19ElZ4SVcF_5-iMZqD3PJhOuS9",
@@ -5238,7 +8024,14 @@
     "description": "",
     "filename": "Indian Blue Peacock feather background.jpg",
     "width": 4288,
-    "height": 2848
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "AF-S VR Micro-Nikkor 105mm f/2.8G IF-ED",
+      "focal": 105,
+      "aperture": 3,
+      "shutter": 0.004
+    }
   },
   {
     "id": "1Oncer_8vC4XzjDXPKtHxVwVLLTFxT_Rr",
@@ -5250,7 +8043,13 @@
     "description": "",
     "filename": "Mud Wall astract.jpg",
     "width": 4000,
-    "height": 2657
+    "height": 2657,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "focal": 75,
+      "aperture": 5.6,
+      "shutter": 0.00625
+    }
   },
   {
     "id": "1_nMygIC3UIuFjY_xtRNxL9a0tdm8VSmS",
@@ -5262,7 +8061,13 @@
     "description": "",
     "filename": "Old Olive tree Texture.jpg",
     "width": 3812,
-    "height": 2212
+    "height": 2212,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "focal": 70,
+      "aperture": 8,
+      "shutter": 0.06666667
+    }
   },
   {
     "id": "1n1-Ob-qJURqvptSc8SADLQWarG5Fbnj-",
@@ -5274,7 +8079,14 @@
     "description": "",
     "filename": "Spin around.jpg",
     "width": 4288,
-    "height": 2848
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "focal": 105,
+      "aperture": 3.2,
+      "iso": 200,
+      "shutter": 0.004
+    }
   },
   {
     "id": "1QfIyE05hrV0QQogIOft7k-Y4smeS28BN",
@@ -5286,6 +8098,14 @@
     "description": "",
     "filename": "Wine Glass Background.jpg",
     "width": 4288,
-    "height": 2848
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "105.0 mm f/2.8",
+      "focal": 105,
+      "aperture": 3,
+      "iso": 100,
+      "shutter": 0.00625
+    }
   }
 ]
