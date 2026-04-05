@@ -1031,7 +1031,14 @@ nav.scrolled { border-bottom-color: rgba(200, 169, 110, 0.3); }
   text-align: center;
   max-height: 90vh;
   overflow-y: auto;
+  direction: ltr; /* scrollbar on right even in RTL */
+  scrollbar-width: thin;
+  scrollbar-color: #333 transparent;
 }
+.buy-modal-inner::-webkit-scrollbar { width: 4px; }
+.buy-modal-inner::-webkit-scrollbar-track { background: transparent; }
+.buy-modal-inner::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
+.buy-modal-inner > * { direction: rtl; }
 .buy-modal-close {
   position: absolute;
   top: 1rem;
@@ -1057,6 +1064,7 @@ nav.scrolled { border-bottom-color: rgba(200, 169, 110, 0.3); }
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center top;
 }
 
 .buy-modal-label {
@@ -1161,6 +1169,25 @@ nav.scrolled { border-bottom-color: rgba(200, 169, 110, 0.3); }
 }
 
 /* ===== PRINT MODAL ===== */
+/* Primary action button */
+.dl-btn {
+  display: block;
+  width: 100%;
+  padding: .8rem 1.5rem;
+  background: var(--accent);
+  color: #0a0a0a;
+  border: none;
+  border-radius: var(--radius);
+  font-family: inherit;
+  font-size: .95rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-align: center;
+  transition: opacity .2s, transform .15s;
+}
+.dl-btn:hover { opacity: .88; transform: translateY(-1px); }
+.dl-btn:active { transform: translateY(0); }
+
 .print-modal-inner { max-width: 520px; }
 .print-back-btn {
   background: none;
@@ -1315,7 +1342,14 @@ nav.scrolled { border-bottom-color: rgba(200, 169, 110, 0.3); }
 .print-input-zip { width: 110px; }
 .print-error { color: #e55; font-size: .85rem; text-align: center; min-height: 1.2rem; }
 .print-step { display: none; }
-.print-step.active { display: block; }
+.print-step.active {
+  display: block;
+  animation: printStepIn .22s ease both;
+}
+@keyframes printStepIn {
+  from { opacity: 0; transform: translateX(14px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
 .print-continue-btn { width: 100%; margin-top: .75rem; display: none; }
 .print-continue-btn.visible { display: block; }
 .print-pay-btn { width: 100%; }
