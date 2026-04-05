@@ -568,18 +568,19 @@ function openLightbox(idx) {
     dlBtn.href = '#';
   }
 
-  // Share buttons
-  const pageUrl = window.location.href.split('#')[0] + '#photo-' + photo.id;
+  // Share buttons — use /photo/{id} so bots get dynamic OG tags
+  const shareUrl = window.location.origin + '/photo/' + photo.id;
+  const hashUrl  = window.location.href.split('#')[0] + '#photo-' + photo.id;
   const waBtn = document.getElementById('lb-share-wa');
-  if (waBtn) waBtn.href = `https://api.whatsapp.com/send?text=${encodeURIComponent(photo.title + ' — ' + pageUrl)}`;
+  if (waBtn) waBtn.href = `https://api.whatsapp.com/send?text=${encodeURIComponent(photo.title + ' — ' + shareUrl)}`;
 
   const fbBtn = document.getElementById('lb-share-fb');
-  if (fbBtn) fbBtn.href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(pageUrl)}`;
+  if (fbBtn) fbBtn.href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`;
 
   const copyBtn = document.getElementById('lb-copy-link');
   if (copyBtn) {
     copyBtn.onclick = () => {
-      navigator.clipboard.writeText(pageUrl).then(() => {
+      navigator.clipboard.writeText(shareUrl).then(() => {
         const orig = copyBtn.textContent;
         copyBtn.textContent = '✓ הועתק!';
         setTimeout(() => { copyBtn.textContent = orig; }, 2000);
@@ -592,7 +593,7 @@ function openLightbox(idx) {
   document.querySelector('meta[property="og:title"]')?.setAttribute('content', `${photo.title} — עמית ארז`);
   document.querySelector('meta[property="og:description"]')?.setAttribute('content', photo.description || 'תמונה אמנותית מגלריית עמית ארז — לרכישה ולהדפסה');
   document.querySelector('meta[property="og:image"]')?.setAttribute('content', photoThumb);
-  document.querySelector('meta[property="og:url"]')?.setAttribute('content', window.location.href.split('#')[0] + '#photo-' + photo.id);
+  document.querySelector('meta[property="og:url"]')?.setAttribute('content', shareUrl);
 
   // URL hash for direct sharing
   history.replaceState(null, '', '#photo-' + photo.id);

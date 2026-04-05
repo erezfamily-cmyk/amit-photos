@@ -1069,6 +1069,61 @@ async function handleAnalytics(request, env) {
 }
 
 // ===== SERVE PHOTO FROM R2 =====
+async function servePhotoPage(photoId, env) {
+  // נסה לשלוף תמונה מ-D1
+  let photo = null;
+  try {
+    const row = await env.DB.prepare(
+      'SELECT id, title, description, thumbnail, url, category FROM photos WHERE id = ?'
+    ).bind(photoId).first();
+    if (row) photo = row;
+  } catch (_) {}
+
+  // אם לא נמצא ב-D1 — שלוף מ-photos.json
+  if (!photo) {
+    try {
+      const jsonRes = await env.ASSETS.fetch(new Request('https://amitphotos.com/data/photos.json'));
+      const photos = await jsonRes.json();
+      photo = photos.find(p => p.id === photoId) || null;
+    } catch (_) {}
+  }
+
+  const title    = photo?.title       || 'עמית ארז | צילום אמנותי';
+  const desc     = photo?.description || 'תמונות אמנותיות דיגיטליות לרכישה — טבע, פורטרט, נופי ישראל ועוד.';
+  const imageUrl = photo?.thumbnail   || photo?.url || 'https://amitphotos.com/assets/images/og-default.jpg';
+  const pageUrl  = `https://amitphotos.com/photo/${photoId}`;
+  const siteUrl  = `https://amitphotos.com/#photo-${photoId}`;
+
+  const html = `<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>${title} | עמית ארז</title>
+  <meta property="og:title" content="${title} | עמית ארז" />
+  <meta property="og:description" content="${desc}" />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="${pageUrl}" />
+  <meta property="og:image" content="${imageUrl}" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:locale" content="he_IL" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="${title} | עמית ארז" />
+  <meta name="twitter:description" content="${desc}" />
+  <meta name="twitter:image" content="${imageUrl}" />
+  <meta http-equiv="refresh" content="0; url=${siteUrl}" />
+  <script>window.location.replace('${siteUrl}');</script>
+</head>
+<body></body>
+</html>`;
+
+  return new Response(html, {
+    headers: {
+      'Content-Type': 'text/html; charset=UTF-8',
+      'Cache-Control': 'public, max-age=3600',
+    },
+  });
+}
+
 async function servePhoto(key, env) {
   const object = await env.PHOTOS.get(key);
   if (!object) return new Response('Not found', { status: 404 });
@@ -1112,6 +1167,7 @@ export default {
     if (path === '/api/print/orders')         return handlePrintOrders(request, env);
     if (path === '/api/analytics')         return handleAnalytics(request, env);
     if (path.startsWith('/photos/'))       return servePhoto(path.slice('/photos/'.length), env);
+    if (path.startsWith('/photo/'))        return servePhotoPage(path.slice('/photo/'.length), env);
 
     // Static assets — track page views for HTML pages
     const res = await env.ASSETS.fetch(request);
