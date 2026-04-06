@@ -16,6 +16,7 @@ document.addEventListener('keydown', e => {
 document.addEventListener('DOMContentLoaded', async () => {
   initNav();
   initScrollReveal();
+  initGalleryReveal();
   initBackToTop();
   await loadPhotos();
   initFilters();
@@ -99,6 +100,29 @@ function initScrollReveal() {
   }, { threshold: 0.12 });
 
   document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+}
+
+// ===== GALLERY SCROLL REVEAL =====
+let galRevealObs = null;
+
+function initGalleryReveal() {
+  if (galRevealObs) return;
+  const pending = [];
+  let flush;
+  galRevealObs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) pending.push(e.target); });
+    clearTimeout(flush);
+    flush = setTimeout(() => {
+      // Sort top-to-bottom for natural stagger direction
+      pending.sort((a, b) => a.getBoundingClientRect().top - b.getBoundingClientRect().top);
+      pending.forEach((el, i) => {
+        el.style.transitionDelay = Math.min(i * 55, 330) + 'ms';
+        el.classList.add('loaded');
+        galRevealObs.unobserve(el);
+      });
+      pending.length = 0;
+    }, 40);
+  }, { threshold: 0.05, rootMargin: '60px 0px 0px 0px' });
 }
 
 // ===== LOAD PHOTOS =====
@@ -189,7 +213,6 @@ function renderGallery(append = false) {
         src="${photo.thumbnail || photo.url}"
         alt="${photo.title}"
         loading="lazy"
-        onload="this.closest('.gallery-item').classList.add('loaded')"
         onerror="this.closest('.gallery-item').style.display='none'"
         draggable="false"
         oncontextmenu="return false"
@@ -205,7 +228,7 @@ function renderGallery(append = false) {
           <button class="gallery-buy-btn" data-idx="${idx}" aria-label="רכישת ${photo.title}">רכישה ←</button>
         </div>
       </div>`;
-    setTimeout(() => item.classList.add('loaded'), i * 55);
+    galRevealObs?.observe(item);
     item.addEventListener('click', e => {
       if (e.target.closest('.gallery-cart-btn')) {
         addToCart(photo, item);
