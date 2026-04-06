@@ -555,13 +555,13 @@ const PRINT_CATALOG = {
   canvas: {
     label: 'הדפסה על קנבס',
     desc: 'קנבס מתוח על מסגרת עץ, מוכן לתלייה',
-    attributes: { wrap: 'ImageWrap' },
+    attributes: {}, // wrap is user-selected per order (ImageWrap / MirrorWrap / White / Black)
     sizes: [
-      { label: '20×20 ס"מ', sku: 'GLOBAL-CAN-8X8',   w: 1, h: 1, minW: 2454, minH: 2454 },
-      { label: '20×25 ס"מ', sku: 'GLOBAL-CAN-8X10',  w: 8, h: 10,minW: 2454, minH: 3054 },
-      { label: '30×40 ס"מ', sku: 'GLOBAL-CAN-12X16', w: 3, h: 4, minW: 3654, minH: 4854 },
-      { label: '40×50 ס"מ', sku: 'GLOBAL-CAN-16X20', w: 4, h: 5, minW: 4854, minH: 6054 },
-      { label: '50×60 ס"מ', sku: 'GLOBAL-CAN-20X24', w: 5, h: 6, minW: 6054, minH: 7254 },
+      { label: '20×20 ס"מ', sku: 'GLOBAL-CAN-8X8',   landscapeSku: null,               w: 1, h: 1, minW: 2454, minH: 2454 },
+      { label: '20×25 ס"מ', sku: 'GLOBAL-CAN-8X10',  landscapeSku: 'GLOBAL-CAN-10X8',  w: 8, h: 10,minW: 2454, minH: 3054 },
+      { label: '30×40 ס"מ', sku: 'GLOBAL-CAN-12X16', landscapeSku: 'GLOBAL-CAN-16X12', w: 3, h: 4, minW: 3654, minH: 4854 },
+      { label: '40×50 ס"מ', sku: 'GLOBAL-CAN-16X20', landscapeSku: 'GLOBAL-CAN-20X16', w: 4, h: 5, minW: 4854, minH: 6054 },
+      { label: '50×60 ס"מ', sku: 'GLOBAL-CAN-20X24', landscapeSku: 'GLOBAL-CAN-24X20', w: 5, h: 6, minW: 6054, minH: 7254 },
     ]
   },
   poster: {
@@ -583,13 +583,15 @@ async function handlePrintCatalog(request, env) {
 
 async function handlePrintQuote(request, env) {
   if (request.method !== 'POST') return jsonRes({ error: 'method not allowed' }, 405, request);
-  const { sku } = await request.json().catch(() => ({}));
+  const { sku, wrap } = await request.json().catch(() => ({}));
   if (!sku) return jsonRes({ error: 'sku חסר' }, 400, request);
   if (!env.PRODIGI_API_KEY) return jsonRes({ error: 'PRODIGI_API_KEY לא מוגדר' }, 500, request);
 
-  // Find attributes for this SKU
-  const typeEntry = Object.values(PRINT_CATALOG).find(t => t.sizes.some(s => s.sku === sku));
-  const skuAttributes = typeEntry?.attributes || {};
+  // Find attributes for this SKU (check both portrait and landscape SKUs)
+  const typeEntry = Object.values(PRINT_CATALOG).find(t =>
+    t.sizes.some(s => s.sku === sku || s.landscapeSku === sku));
+  const skuAttributes = { ...(typeEntry?.attributes || {}) };
+  if (wrap) skuAttributes.wrap = wrap;
 
   const res = await fetch('https://api.prodigi.com/v4.0/quotes', {
     method: 'POST',
@@ -623,13 +625,16 @@ async function handlePrintOrderComplete(request, env) {
   if (!tx || !itemNumber) return jsonRes({ error: 'חסרים פרמטרים' }, 400, request);
   if (!env.PAYPAL_PDT_TOKEN) return jsonRes({ error: 'PDT token לא מוגדר' }, 500, request);
 
-  // Parse: PRINT_{photoId}_{sku}
+  // Parse: PRINT_{photoId}_{sku} or PRINT_{photoId}_{sku}:{wrap}
   if (!itemNumber.startsWith('PRINT_')) return jsonRes({ error: 'item_number לא תקין' }, 400, request);
   const rest = itemNumber.slice(6);
   const firstUnderscore = rest.indexOf('_');
   if (firstUnderscore === -1) return jsonRes({ error: 'item_number לא תקין' }, 400, request);
   const photoId = rest.substring(0, firstUnderscore);
-  const sku = rest.substring(firstUnderscore + 1);
+  const skuAndWrap = rest.substring(firstUnderscore + 1);
+  const colonIdx = skuAndWrap.indexOf(':');
+  const sku = colonIdx === -1 ? skuAndWrap : skuAndWrap.substring(0, colonIdx);
+  const wrapValue = colonIdx === -1 ? null : (skuAndWrap.substring(colonIdx + 1) || null);
 
   // Verify PayPal
   let paypalText;
@@ -661,6 +666,13 @@ async function handlePrintOrderComplete(request, env) {
   if (!photo) return jsonRes({ error: 'תמונה לא נמצאה' }, 404, request);
   const photoUrl = photo.url.startsWith('http') ? photo.url : `${origin}${photo.url}`;
 
+  // Resolve product entry (supports both portrait and landscape SKUs)
+  const typeEntry = Object.values(PRINT_CATALOG).find(t =>
+    t.sizes.some(s => s.sku === sku || s.landscapeSku === sku));
+  const sizeEntry = typeEntry?.sizes.find(s => s.sku === sku || s.landscapeSku === sku);
+  const orderAttributes = { ...(typeEntry?.attributes || {}) };
+  if (wrapValue) orderAttributes.wrap = wrapValue;
+
   // Create Prodigi order
   const orderId = crypto.randomUUID();
   const prodigiRes = await fetch('https://api.prodigi.com/v4.0/orders', {
@@ -687,7 +699,7 @@ async function handlePrintOrderComplete(request, env) {
         sku,
         copies: 1,
         sizing: 'fillPrintArea',
-        attributes: typeEntry?.attributes || {},
+        attributes: orderAttributes,
         assets: [{ printArea: 'default', url: photoUrl }]
       }]
     })
@@ -700,9 +712,7 @@ async function handlePrintOrderComplete(request, env) {
   const pd = await prodigiRes.json();
   const prodigiOrderId = pd.order?.id || '';
 
-  // Find human-readable product label
-  const typeEntry = Object.values(PRINT_CATALOG).find(t => t.sizes.some(s => s.sku === sku));
-  const sizeEntry = typeEntry?.sizes.find(s => s.sku === sku);
+  // Human-readable product label
   const productLabel = typeEntry && sizeEntry ? `${typeEntry.label} — ${sizeEntry.label}` : sku;
   const sellPrice = parseFloat(txData['mc_gross'] || 0);
 

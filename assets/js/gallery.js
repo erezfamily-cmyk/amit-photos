@@ -1000,6 +1000,7 @@ const PrintShop = (() => {
   let selectedType = null;
   let selectedSku = null;
   let selectedPrice = null;
+  let selectedWrap = null;
 
   function showStep(n) {
     [1, 2, 3].forEach(i => {
@@ -1011,7 +1012,7 @@ const PrintShop = (() => {
 
   async function open(photo) {
     currentPhoto = photo;
-    selectedType = null; selectedSku = null; selectedPrice = null;
+    selectedType = null; selectedSku = null; selectedPrice = null; selectedWrap = null;
     document.getElementById('print-modal-img').src = photo.thumbnail || photo.url;
     document.getElementById('print-modal-title').textContent = photo.title || '';
     document.getElementById('print-price-display').textContent = '';
@@ -1070,17 +1071,23 @@ const PrintShop = (() => {
 
   function selectType(type) {
     selectedType = type;
+    selectedSku = null; selectedPrice = null; selectedWrap = null;
     const t = catalog[type];
     const photoLandscape = currentPhoto && (currentPhoto.width || 0) > (currentPhoto.height || 0);
     document.getElementById('print-type-label').textContent = t.label;
+    document.getElementById('print-wrap-section').classList.add('hidden');
+    document.getElementById('print-to-details-btn').classList.remove('visible');
     const container = document.getElementById('print-size-options');
     container.innerHTML = t.sizes.map(s => {
-      const dw = photoLandscape ? s.h : s.w;
-      const dh = photoLandscape ? s.w : s.h;
-      const minW = photoLandscape ? s.minH : s.minW;
-      const minH = photoLandscape ? s.minW : s.minH;
-      const label = photoLandscape ? swapDimLabel(s.label) : s.label;
-      return `<button type="button" class="print-size-btn" data-sku="${s.sku}" data-w="${dw}" data-h="${dh}" data-minw="${minW}" data-minh="${minH}">
+      const isSquare = parseFloat(s.w) === parseFloat(s.h);
+      const useLandscape = photoLandscape && !isSquare;
+      const effectiveSku = (useLandscape && s.landscapeSku) ? s.landscapeSku : s.sku;
+      const dw = useLandscape ? s.h : s.w;
+      const dh = useLandscape ? s.w : s.h;
+      const minW = useLandscape ? s.minH : s.minW;
+      const minH = useLandscape ? s.minW : s.minH;
+      const label = useLandscape ? swapDimLabel(s.label) : s.label;
+      return `<button type="button" class="print-size-btn" data-sku="${effectiveSku}" data-w="${dw}" data-h="${dh}" data-minw="${minW}" data-minh="${minH}">
         ${sizeVisual(dw, dh)}
         <span>${label}</span>
       </button>`;
@@ -1235,12 +1242,39 @@ const PrintShop = (() => {
     return 'ok';
   }
 
+  function renderWrapOptions() {
+    selectedWrap = null;
+    document.getElementById('print-to-details-btn').classList.remove('visible');
+    const WRAPS = [
+      { value: 'ImageWrap',  label: 'גלריה',  desc: 'התמונה עוטפת את הצדדים' },
+      { value: 'MirrorWrap', label: 'מראה',   desc: 'קצוות התמונה משוקפים' },
+      { value: 'White',      label: 'לבן',    desc: 'שוליים לבנים נקיים' },
+      { value: 'Black',      label: 'שחור',   desc: 'שוליים שחורים' },
+    ];
+    const wrapContainer = document.getElementById('print-wrap-options');
+    wrapContainer.innerHTML = WRAPS.map(w =>
+      `<button type="button" class="print-wrap-btn" data-wrap="${w.value}">
+        <strong>${w.label}</strong><span>${w.desc}</span>
+      </button>`
+    ).join('');
+    wrapContainer.querySelectorAll('.print-wrap-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        wrapContainer.querySelectorAll('.print-wrap-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        selectedWrap = btn.dataset.wrap;
+        document.getElementById('print-to-details-btn').classList.add('visible');
+      });
+    });
+    document.getElementById('print-wrap-section').classList.remove('hidden');
+  }
+
   async function selectSize(btn) {
     document.getElementById('print-size-options').querySelectorAll('.print-size-btn')
       .forEach(b => b.classList.toggle('active', b === btn));
     selectedSku = btn.dataset.sku;
-    selectedPrice = null;
+    selectedPrice = null; selectedWrap = null;
     document.getElementById('print-to-details-btn').classList.remove('visible');
+    document.getElementById('print-wrap-section').classList.add('hidden');
 
     // Show crop preview immediately
     const aspectW = parseFloat(btn.dataset.w);
@@ -1260,7 +1294,11 @@ const PrintShop = (() => {
       if (r.ok) {
         selectedPrice = data.sellPrice;
         document.getElementById('print-price-display').textContent = `$${data.sellPrice} — כולל משלוח לישראל`;
-        document.getElementById('print-to-details-btn').classList.add('visible');
+        if (selectedType === 'canvas') {
+          renderWrapOptions(); // shows wrap section, continue btn hidden until wrap picked
+        } else {
+          document.getElementById('print-to-details-btn').classList.add('visible');
+        }
       } else {
         document.getElementById('print-price-display').textContent = data.error || 'שגיאה בטעינת מחיר';
       }
@@ -1271,6 +1309,7 @@ const PrintShop = (() => {
 
   function goToDetails() {
     if (!selectedSku || !selectedPrice) return;
+    if (selectedType === 'canvas' && !selectedWrap) return;
     document.getElementById('print-pay-amount').textContent = `$${selectedPrice}`;
     document.getElementById('print-error').textContent = '';
     showStep(3);
@@ -1296,8 +1335,11 @@ const PrintShop = (() => {
 
     const address = { name, phone, email, line1, city, zip };
     const customB64 = btoa(unescape(encodeURIComponent(JSON.stringify(address))));
-    const itemNumber = `PRINT_${currentPhoto.id}_${selectedSku}`;
-    const itemName = `${currentPhoto.title || 'תמונה'} — ${catalog[selectedType]?.sizes.find(s => s.sku === selectedSku)?.label || ''}`;
+    const itemNumber = selectedWrap
+      ? `PRINT_${currentPhoto.id}_${selectedSku}:${selectedWrap}`
+      : `PRINT_${currentPhoto.id}_${selectedSku}`;
+    const sizeEntry = catalog[selectedType]?.sizes.find(s => s.sku === selectedSku || s.landscapeSku === selectedSku);
+    const itemName = `${currentPhoto.title || 'תמונה'} — ${sizeEntry?.label || ''}`;
 
     const params = new URLSearchParams({
       cmd: '_xclick',
@@ -1323,6 +1365,8 @@ const PrintShop = (() => {
     document.getElementById('print-back-1').addEventListener('click', () => {
       showStep(1);
       document.getElementById('print-preview-wrap').classList.add('hidden');
+      document.getElementById('print-wrap-section').classList.add('hidden');
+      selectedWrap = null;
     });
     document.getElementById('print-back-2').addEventListener('click', () => {
       showStep(2);

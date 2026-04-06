@@ -1388,6 +1388,20 @@ nav.scrolled { border-bottom-color: rgba(200, 169, 110, 0.3); }
 .print-size-btn:hover .size-vis,
 .print-size-btn.active .size-vis { opacity: .85; }
 .print-type-desc { display: block; font-size: .75rem; color: var(--text-muted); margin-top: .2rem; }
+.print-wrap-section { margin: .75rem 0 .5rem; }
+.print-wrap-title { font-size: .8rem; color: var(--text-muted); text-align: center; margin-bottom: .45rem; }
+.print-wrap-options { display: grid; grid-template-columns: 1fr 1fr; gap: .4rem; }
+.print-wrap-btn {
+  display: flex; flex-direction: column; align-items: flex-start;
+  gap: .1rem; padding: .55rem .75rem;
+  background: var(--card-bg); border: 1.5px solid var(--border);
+  border-radius: 8px; cursor: pointer; text-align: right;
+  transition: border-color .2s, background .2s; width: 100%;
+}
+.print-wrap-btn strong { font-size: .85rem; color: var(--text); }
+.print-wrap-btn span { font-size: .72rem; color: var(--text-muted); }
+.print-wrap-btn:hover, .print-wrap-btn.active { border-color: var(--accent); background: rgba(200,169,110,.07); }
+.print-wrap-btn.active strong { color: var(--accent); }
 .print-price-display { text-align: center; font-size: 1.1rem; color: var(--accent); min-height: 1.5rem; }
 .print-fields { display: flex; flex-direction: column; gap: .5rem; margin-bottom: 1rem; }
 .print-field-row { display: flex; gap: .5rem; }
