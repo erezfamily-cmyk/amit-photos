@@ -1103,8 +1103,39 @@ const PrintShop = (() => {
   let cropDragStartX, cropDragStartY, cropDragOffsetX, cropDragOffsetY;
   let cropImgNaturalW = 0, cropImgNaturalH = 0;
   let cropFrameW = 0, cropFrameH = 0;
+  let currentCropImageUrl = '';
+
+  async function buildCroppedBlob() {
+    const img = document.getElementById('print-crop-img');
+    if (!currentCropImageUrl || !cropImgNaturalW || !cropImgNaturalH) return null;
+    const dispW = parseFloat(img.style.width);
+    const dispH = parseFloat(img.style.height);
+    if (!dispW || !dispH || !cropFrameW || !cropFrameH) return null;
+
+    const scaleToNat = cropImgNaturalW / dispW;
+    const srcX = Math.max(0, Math.round(-cropOffsetX * scaleToNat));
+    const srcY = Math.max(0, Math.round(-cropOffsetY * scaleToNat));
+    const srcW = Math.min(Math.round(cropFrameW * scaleToNat), cropImgNaturalW - srcX);
+    const srcH = Math.min(Math.round(cropFrameH * scaleToNat), cropImgNaturalH - srcY);
+    if (srcW <= 0 || srcH <= 0) return null;
+
+    const proxyImg = await new Promise((resolve, reject) => {
+      const i = new Image();
+      i.crossOrigin = 'anonymous';
+      i.onload = () => resolve(i);
+      i.onerror = reject;
+      i.src = '/api/proxy-image?url=' + encodeURIComponent(currentCropImageUrl);
+    });
+
+    const canvas = document.createElement('canvas');
+    canvas.width = srcW;
+    canvas.height = srcH;
+    canvas.getContext('2d').drawImage(proxyImg, srcX, srcY, srcW, srcH, 0, 0, srcW, srcH);
+    return new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.92));
+  }
 
   function initCropPreview(imageUrl, aspectW, aspectH, minW, minH) {
+    currentCropImageUrl = imageUrl;
     const wrap = document.getElementById('print-preview-wrap');
     const frame = document.getElementById('print-crop-frame');
     const img = document.getElementById('print-crop-img');
@@ -1319,7 +1350,7 @@ const PrintShop = (() => {
     document.body.style.overflow = '';
   }
 
-  function pay() {
+  async function pay() {
     const name = document.getElementById('print-name').value.trim();
     const phone = document.getElementById('print-phone').value.trim();
     const email = document.getElementById('print-email').value.trim();
@@ -1332,7 +1363,29 @@ const PrintShop = (() => {
       return;
     }
 
-    const address = { name, phone, email, line1, city, zip };
+    const payBtn = document.getElementById('print-pay-btn');
+    const origHtml = payBtn.innerHTML;
+    payBtn.disabled = true;
+    payBtn.textContent = 'מעבד חיתוך...';
+
+    let cropUrl = null;
+    try {
+      const blob = await buildCroppedBlob();
+      if (blob) {
+        const r = await fetch('/api/print/upload-crop', {
+          method: 'POST',
+          headers: { 'Content-Type': 'image/jpeg' },
+          body: blob,
+        });
+        const data = await r.json();
+        if (r.ok) cropUrl = data.url;
+      }
+    } catch { /* fall back to original image */ }
+
+    payBtn.disabled = false;
+    payBtn.innerHTML = origHtml;
+
+    const address = { name, phone, email, line1, city, zip, cropUrl };
     const customB64 = btoa(unescape(encodeURIComponent(JSON.stringify(address))));
     const itemNumber = selectedWrap
       ? `PRINT_${currentPhoto.id}_${selectedSku}:${selectedWrap}`

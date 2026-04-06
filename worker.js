@@ -658,11 +658,12 @@ async function handlePrintOrderComplete(request, env) {
   try { address = JSON.parse(atob(txData['custom'] || '')); }
   catch { return jsonRes({ error: 'נתוני כתובת חסרים' }, 400, request); }
 
-  // Get photo URL from DB
+  // Get photo URL from DB; prefer pre-cropped URL if client uploaded one
   const origin = new URL(request.url).origin;
   const photo = await env.DB.prepare('SELECT url FROM photos WHERE id=?').bind(photoId).first();
   if (!photo) return jsonRes({ error: 'תמונה לא נמצאה' }, 404, request);
-  const photoUrl = photo.url.startsWith('http') ? photo.url : `${origin}${photo.url}`;
+  const originalUrl = photo.url.startsWith('http') ? photo.url : `${origin}${photo.url}`;
+  const photoUrl = address.cropUrl || originalUrl;
 
   // Resolve product entry
   const typeEntry = Object.values(PRINT_CATALOG).find(t => t.sizes.some(s => s.sku === sku));
@@ -1138,8 +1139,41 @@ async function servePhoto(key, env) {
     headers: {
       'Content-Type': object.httpMetadata?.contentType || 'image/jpeg',
       'Cache-Control': 'public, max-age=31536000, immutable',
+      'Access-Control-Allow-Origin': '*',
     },
   });
+}
+
+async function handleImageProxy(request, env) {
+  const urlParam = new URL(request.url).searchParams.get('url');
+  if (!urlParam) return new Response('url missing', { status: 400 });
+  let urlObj;
+  try { urlObj = new URL(urlParam); } catch { return new Response('invalid url', { status: 400 }); }
+  const allowedHosts = ['drive.google.com', 'lh3.googleusercontent.com', 'googleusercontent.com'];
+  const host = urlObj.hostname;
+  const sameOrigin = urlParam.startsWith(new URL(request.url).origin);
+  if (!sameOrigin && !allowedHosts.some(h => host === h || host.endsWith('.' + h))) {
+    return new Response('domain not allowed', { status: 403 });
+  }
+  const res = await fetch(urlParam);
+  if (!res.ok) return new Response('fetch failed', { status: res.status });
+  return new Response(res.body, {
+    headers: {
+      'Content-Type': res.headers.get('Content-Type') || 'image/jpeg',
+      'Access-Control-Allow-Origin': '*',
+      'Cache-Control': 'public, max-age=3600',
+    },
+  });
+}
+
+async function handlePrintUploadCrop(request, env) {
+  if (request.method !== 'POST') return jsonRes({ error: 'method not allowed' }, 405, request);
+  const body = await request.arrayBuffer().catch(() => null);
+  if (!body || !body.byteLength) return jsonRes({ error: 'גוף ריק' }, 400, request);
+  const key = `crop-${crypto.randomUUID()}.jpg`;
+  await env.PHOTOS.put(key, body, { httpMetadata: { contentType: 'image/jpeg' } });
+  const origin = new URL(request.url).origin;
+  return jsonRes({ url: `${origin}/photos/${key}` }, 200, request);
 }
 
 // ===== MAIN ROUTER =====
@@ -1168,10 +1202,12 @@ export default {
     if (path === '/api/verify-payment')    return handleVerifyPayment(request, env);
     if (path === '/api/print/catalog')        return handlePrintCatalog(request, env);
     if (path === '/api/print/quote')          return handlePrintQuote(request, env);
+    if (path === '/api/print/upload-crop')    return handlePrintUploadCrop(request, env);
     if (path === '/api/print/order-complete') return handlePrintOrderComplete(request, env);
     if (path === '/api/print/cancel')         return handlePrintCancel(request, env);
     if (path === '/api/print/webhook')        return handlePrintWebhook(request, env);
     if (path === '/api/print/orders')         return handlePrintOrders(request, env);
+    if (path === '/api/proxy-image')          return handleImageProxy(request, env);
     if (path === '/api/analytics')         return handleAnalytics(request, env);
     if (path.startsWith('/photos/'))       return servePhoto(path.slice('/photos/'.length), env);
     if (path.startsWith('/photo/'))        return servePhotoPage(path.slice('/photo/'.length), env);
