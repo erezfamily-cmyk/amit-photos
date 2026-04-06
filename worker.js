@@ -557,11 +557,11 @@ const PRINT_CATALOG = {
     desc: 'קנבס מתוח על מסגרת עץ, מוכן לתלייה',
     attributes: {}, // wrap is user-selected per order (ImageWrap / MirrorWrap / White / Black)
     sizes: [
-      { label: '20×20 ס"מ', sku: 'GLOBAL-CAN-8X8',   landscapeSku: null,               w: 1, h: 1, minW: 2454, minH: 2454 },
-      { label: '20×25 ס"מ', sku: 'GLOBAL-CAN-8X10',  landscapeSku: 'GLOBAL-CAN-10X8',  w: 8, h: 10,minW: 2454, minH: 3054 },
-      { label: '30×40 ס"מ', sku: 'GLOBAL-CAN-12X16', landscapeSku: 'GLOBAL-CAN-16X12', w: 3, h: 4, minW: 3654, minH: 4854 },
-      { label: '40×50 ס"מ', sku: 'GLOBAL-CAN-16X20', landscapeSku: 'GLOBAL-CAN-20X16', w: 4, h: 5, minW: 4854, minH: 6054 },
-      { label: '50×60 ס"מ', sku: 'GLOBAL-CAN-20X24', landscapeSku: 'GLOBAL-CAN-24X20', w: 5, h: 6, minW: 6054, minH: 7254 },
+      { label: '20×20 ס"מ', sku: 'GLOBAL-CAN-8X8',   w: 1, h: 1, minW: 2454, minH: 2454 },
+      { label: '20×25 ס"מ', sku: 'GLOBAL-CAN-8X10',  w: 8, h: 10,minW: 2454, minH: 3054 },
+      { label: '30×40 ס"מ', sku: 'GLOBAL-CAN-12X16', w: 3, h: 4, minW: 3654, minH: 4854 },
+      { label: '40×50 ס"מ', sku: 'GLOBAL-CAN-16X20', w: 4, h: 5, minW: 4854, minH: 6054 },
+      { label: '50×60 ס"מ', sku: 'GLOBAL-CAN-20X24', w: 5, h: 6, minW: 6054, minH: 7254 },
     ]
   },
   poster: {
@@ -587,9 +587,7 @@ async function handlePrintQuote(request, env) {
   if (!sku) return jsonRes({ error: 'sku חסר' }, 400, request);
   if (!env.PRODIGI_API_KEY) return jsonRes({ error: 'PRODIGI_API_KEY לא מוגדר' }, 500, request);
 
-  // Find attributes for this SKU (check both portrait and landscape SKUs)
-  const typeEntry = Object.values(PRINT_CATALOG).find(t =>
-    t.sizes.some(s => s.sku === sku || s.landscapeSku === sku));
+  const typeEntry = Object.values(PRINT_CATALOG).find(t => t.sizes.some(s => s.sku === sku));
   const skuAttributes = { ...(typeEntry?.attributes || {}) };
   if (wrap) skuAttributes.wrap = wrap;
 
@@ -666,10 +664,9 @@ async function handlePrintOrderComplete(request, env) {
   if (!photo) return jsonRes({ error: 'תמונה לא נמצאה' }, 404, request);
   const photoUrl = photo.url.startsWith('http') ? photo.url : `${origin}${photo.url}`;
 
-  // Resolve product entry (supports both portrait and landscape SKUs)
-  const typeEntry = Object.values(PRINT_CATALOG).find(t =>
-    t.sizes.some(s => s.sku === sku || s.landscapeSku === sku));
-  const sizeEntry = typeEntry?.sizes.find(s => s.sku === sku || s.landscapeSku === sku);
+  // Resolve product entry
+  const typeEntry = Object.values(PRINT_CATALOG).find(t => t.sizes.some(s => s.sku === sku));
+  const sizeEntry = typeEntry?.sizes.find(s => s.sku === sku);
   const orderAttributes = { ...(typeEntry?.attributes || {}) };
   if (wrapValue) orderAttributes.wrap = wrapValue;
 

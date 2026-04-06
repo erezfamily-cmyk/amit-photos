@@ -1081,13 +1081,12 @@ const PrintShop = (() => {
     container.innerHTML = t.sizes.map(s => {
       const isSquare = parseFloat(s.w) === parseFloat(s.h);
       const useLandscape = photoLandscape && !isSquare;
-      const effectiveSku = (useLandscape && s.landscapeSku) ? s.landscapeSku : s.sku;
       const dw = useLandscape ? s.h : s.w;
       const dh = useLandscape ? s.w : s.h;
       const minW = useLandscape ? s.minH : s.minW;
       const minH = useLandscape ? s.minW : s.minH;
       const label = useLandscape ? swapDimLabel(s.label) : s.label;
-      return `<button type="button" class="print-size-btn" data-sku="${effectiveSku}" data-w="${dw}" data-h="${dh}" data-minw="${minW}" data-minh="${minH}">
+      return `<button type="button" class="print-size-btn" data-sku="${s.sku}" data-w="${dw}" data-h="${dh}" data-minw="${minW}" data-minh="${minH}">
         ${sizeVisual(dw, dh)}
         <span>${label}</span>
       </button>`;
@@ -1338,7 +1337,7 @@ const PrintShop = (() => {
     const itemNumber = selectedWrap
       ? `PRINT_${currentPhoto.id}_${selectedSku}:${selectedWrap}`
       : `PRINT_${currentPhoto.id}_${selectedSku}`;
-    const sizeEntry = catalog[selectedType]?.sizes.find(s => s.sku === selectedSku || s.landscapeSku === selectedSku);
+    const sizeEntry = catalog[selectedType]?.sizes.find(s => s.sku === selectedSku);
     const itemName = `${currentPhoto.title || 'תמונה'} — ${sizeEntry?.label || ''}`;
 
     const params = new URLSearchParams({
