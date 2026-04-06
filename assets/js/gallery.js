@@ -1105,6 +1105,17 @@ const PrintShop = (() => {
   let cropFrameW = 0, cropFrameH = 0;
   let currentCropImageUrl = '';
 
+  function getFullResUrl(photo) {
+    const url = photo.url;
+    const match = url.match(/[?&]id=([\w-]+)/);
+    if (match && url.includes('drive.google.com')) {
+      // Request largest available Google Drive thumbnail (up to 4000px)
+      return `https://drive.google.com/thumbnail?id=${match[1]}&sz=w4000`;
+    }
+    // R2-hosted photo — already full resolution
+    return url.startsWith('http') ? url : (window.location.origin + url);
+  }
+
   async function buildCroppedBlob() {
     const img = document.getElementById('print-crop-img');
     if (!currentCropImageUrl || !cropImgNaturalW || !cropImgNaturalH) return null;
@@ -1112,20 +1123,29 @@ const PrintShop = (() => {
     const dispH = parseFloat(img.style.height);
     if (!dispW || !dispH || !cropFrameW || !cropFrameH) return null;
 
-    const scaleToNat = cropImgNaturalW / dispW;
-    const srcX = Math.max(0, Math.round(-cropOffsetX * scaleToNat));
-    const srcY = Math.max(0, Math.round(-cropOffsetY * scaleToNat));
-    const srcW = Math.min(Math.round(cropFrameW * scaleToNat), cropImgNaturalW - srcX);
-    const srcH = Math.min(Math.round(cropFrameH * scaleToNat), cropImgNaturalH - srcY);
-    if (srcW <= 0 || srcH <= 0) return null;
+    // Calculate crop as fractions of the displayed image (resolution-independent)
+    const fracX = Math.max(0, -cropOffsetX / dispW);
+    const fracY = Math.max(0, -cropOffsetY / dispH);
+    const fracW = Math.min(cropFrameW / dispW, 1 - fracX);
+    const fracH = Math.min(cropFrameH / dispH, 1 - fracY);
+    if (fracW <= 0 || fracH <= 0) return null;
 
+    // Load the highest-resolution version via proxy
+    const fullResUrl = getFullResUrl(currentPhoto);
     const proxyImg = await new Promise((resolve, reject) => {
       const i = new Image();
       i.crossOrigin = 'anonymous';
       i.onload = () => resolve(i);
       i.onerror = reject;
-      i.src = '/api/proxy-image?url=' + encodeURIComponent(currentCropImageUrl);
+      i.src = '/api/proxy-image?url=' + encodeURIComponent(fullResUrl);
     });
+
+    // Apply fractions to the full-res dimensions
+    const srcX = Math.round(fracX * proxyImg.naturalWidth);
+    const srcY = Math.round(fracY * proxyImg.naturalHeight);
+    const srcW = Math.min(Math.round(fracW * proxyImg.naturalWidth), proxyImg.naturalWidth - srcX);
+    const srcH = Math.min(Math.round(fracH * proxyImg.naturalHeight), proxyImg.naturalHeight - srcY);
+    if (srcW <= 0 || srcH <= 0) return null;
 
     const canvas = document.createElement('canvas');
     canvas.width = srcW;
