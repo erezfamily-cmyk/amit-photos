@@ -1063,17 +1063,28 @@ const PrintShop = (() => {
     return `<div class="size-vis" style="width:${vW}px;height:${vH}px"></div>`;
   }
 
+  function swapDimLabel(label) {
+    // swap every N×M pair so portrait labels become landscape (e.g. "30×40 ס״מ" → "40×30 ס״מ")
+    return label.replace(/(\d+)×(\d+)/g, '$2×$1');
+  }
+
   function selectType(type) {
     selectedType = type;
     const t = catalog[type];
+    const photoLandscape = currentPhoto && (currentPhoto.width || 0) > (currentPhoto.height || 0);
     document.getElementById('print-type-label').textContent = t.label;
     const container = document.getElementById('print-size-options');
-    container.innerHTML = t.sizes.map(s =>
-      `<button type="button" class="print-size-btn" data-sku="${s.sku}" data-w="${s.w}" data-h="${s.h}" data-minw="${s.minW}" data-minh="${s.minH}">
-        ${sizeVisual(s.w, s.h)}
-        <span>${s.label}</span>
-      </button>`
-    ).join('');
+    container.innerHTML = t.sizes.map(s => {
+      const dw = photoLandscape ? s.h : s.w;
+      const dh = photoLandscape ? s.w : s.h;
+      const minW = photoLandscape ? s.minH : s.minW;
+      const minH = photoLandscape ? s.minW : s.minH;
+      const label = photoLandscape ? swapDimLabel(s.label) : s.label;
+      return `<button type="button" class="print-size-btn" data-sku="${s.sku}" data-w="${dw}" data-h="${dh}" data-minw="${minW}" data-minh="${minH}">
+        ${sizeVisual(dw, dh)}
+        <span>${label}</span>
+      </button>`;
+    }).join('');
     container.querySelectorAll('.print-size-btn').forEach(btn => {
       btn.addEventListener('click', () => selectSize(btn));
     });
