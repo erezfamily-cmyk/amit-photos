@@ -437,6 +437,31 @@ function initLightbox() {
 
   PrintShop.init();
 
+  // ===== WALL MOCKUP =====
+  const wallModal   = document.getElementById('wall-modal');
+  const wallImg     = document.getElementById('wall-img');
+  const wallLabel   = document.getElementById('wall-label');
+
+  function openWallMockup(photo) {
+    wallImg.src = getLightboxUrl(photo.url);
+    wallImg.alt = photo.title;
+    wallLabel.textContent = photo.title || '';
+    wallModal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeWallMockup() {
+    wallModal.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  document.getElementById('lb-wall').addEventListener('click', () => {
+    const photo = window._currentLightboxPhoto;
+    if (photo) openWallMockup(photo);
+  });
+  document.getElementById('wall-modal-close').addEventListener('click', closeWallMockup);
+  wallModal.addEventListener('click', e => { if (e.target === wallModal) closeWallMockup(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && wallModal.classList.contains('open')) closeWallMockup(); });
+
   // Back to gallery button (mobile)
   const backBtn = document.getElementById('lb-back');
   if (backBtn) {

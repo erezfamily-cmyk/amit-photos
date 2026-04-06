@@ -566,6 +566,7 @@
     </div>
     <div class="lb-actions">
       <button id="lb-slideshow" class="lb-action-btn">▶ מצגת</button>
+      <button id="lb-wall" class="lb-action-btn">🖼 על הקיר</button>
       <button id="lb-print" class="lb-action-btn">הדפסה ←</button>
       <button id="lb-buy" class="lb-action-btn lb-buy-btn">רכישה ←</button>
       <a id="lb-share-wa" class="lb-action-btn lb-whatsapp" target="_blank" rel="noopener">וואטסאפ</a>
@@ -577,6 +578,21 @@
       <span class="lb-kbd-hint">← → לניווט &nbsp;|&nbsp; ESC לסגירה</span>
     </div>
     <div class="lb-progress-bar"><div class="lb-progress-fill" id="lb-progress"></div></div>
+  </div>
+
+  <!-- ===== WALL MOCKUP ===== -->
+  <div class="wall-modal" id="wall-modal" role="dialog" aria-modal="true" aria-label="תצוגת קיר">
+    <button type="button" class="wall-modal-close" id="wall-modal-close" aria-label="סגור">✕</button>
+    <div class="wall-scene">
+      <div class="wall-frame-outer" id="wall-frame-outer">
+        <div class="wall-frame-border">
+          <div class="wall-frame-mat">
+            <img id="wall-img" src="" alt="" draggable="false" />
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="wall-label" id="wall-label"></p>
   </div>
 
   <!-- ===== BACK TO TOP ===== -->
@@ -754,7 +770,7 @@
     </div>
   </div>
 
-  <script src="assets/js/gallery.js?v=18"></script>
+  <script src="assets/js/gallery.js?v=19"></script>
 </body>
 </html>
 .
