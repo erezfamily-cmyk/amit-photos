@@ -438,6 +438,50 @@ async function generateHebrewTitle(imageUrl, category, env) {
   }
 }
 
+async function handleGenerateAlt(request, env) {
+  if (!await checkAuth(request, env)) return unauth(request);
+  if (request.method !== 'POST') return jsonRes({ error: 'method not allowed' }, 405, request);
+  if (!env.ANTHROPIC_API_KEY) return jsonRes({ error: 'ANTHROPIC_API_KEY לא מוגדר' }, 500, request);
+
+  const { urls } = await request.json().catch(() => ({}));
+  if (!Array.isArray(urls) || !urls.length) return jsonRes({ error: 'urls חסר' }, 400, request);
+
+  const results = [];
+  for (const { id, url, category } of urls) {
+    try {
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'x-api-key': env.ANTHROPIC_API_KEY,
+          'anthropic-version': '2023-06-01',
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'claude-haiku-4-5-20251001',
+          max_tokens: 60,
+          messages: [{
+            role: 'user',
+            content: [
+              { type: 'image', source: { type: 'url', url } },
+              { type: 'text', text: `זוהי תמונה מגלריית הצילום של הצלם עמית ארז, קטגוריה: ${category || 'כללי'}.\nכתוב alt text קצר ותיאורי בעברית — משפט אחד, עד 10 מילים.\nהחזר רק את הטקסט, ללא פיסוק נוסף.` }
+            ]
+          }]
+        })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        const alt = data.content?.[0]?.text?.replace(/[\*_`#\n\r]/g, '').trim() || null;
+        results.push({ id, alt });
+      } else {
+        results.push({ id, alt: null, error: res.status });
+      }
+    } catch (e) {
+      results.push({ id, alt: null, error: String(e) });
+    }
+  }
+  return jsonRes({ results }, 200, request);
+}
+
 async function handleFillTitles(request, env) {
   if (!await checkAuth(request, env)) return unauth(request);
   if (request.method !== 'POST') return jsonRes({ error: 'method not allowed' }, 405);
@@ -1197,6 +1241,7 @@ export default {
     if (path === '/api/photos')            return handlePhotos(request, env);
     if (path === '/api/upload')            return handleUpload(request, env);
     if (path === '/api/fill-titles')       return handleFillTitles(request, env);
+    if (path === '/api/generate-alt')      return handleGenerateAlt(request, env);
     if (path === '/api/trigger-workflow')  return handleTriggerWorkflow(request, env);
     if (path === '/api/newsletter')        return handleNewsletter(request, env);
     if (path === '/api/unsubscribe')       return handleUnsubscribe(request, env);
