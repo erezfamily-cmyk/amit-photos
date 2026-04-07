@@ -589,7 +589,9 @@ async function handlePrintQuote(request, env) {
 
   const typeEntry = Object.values(PRINT_CATALOG).find(t => t.sizes.some(s => s.sku === sku));
   const skuAttributes = { ...(typeEntry?.attributes || {}) };
+  // Canvas requires wrap attribute; use provided value or default for quote (price is same for all wraps)
   if (wrap) skuAttributes.wrap = wrap;
+  else if (sku.startsWith('GLOBAL-CAN-')) skuAttributes.wrap = 'ImageWrap';
 
   const res = await fetch('https://api.prodigi.com/v4.0/quotes', {
     method: 'POST',
