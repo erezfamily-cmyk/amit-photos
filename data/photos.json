@@ -121,7 +121,7 @@
   },
   {
     "id": "1rPOKfINEQiiwQSkoflezhxgLH0WI1ygG",
-    "title": "DSC_7936",
+    "title": "טקסטורות וצבעים מופשטים אמנות",
     "category": "טבע דומם",
     "parent_category": null,
     "url": "https://drive.google.com/uc?export=view&id=1rPOKfINEQiiwQSkoflezhxgLH0WI1ygG",
@@ -137,11 +137,13 @@
       "aperture": 4.5,
       "iso": 100,
       "shutter": 0.0125
-    }
+    },
+    "alt": "טקסטורות וצבעים מופשטים אמנות",
+    "alt_en": "Abstract textures and colors fine art"
   },
   {
     "id": "1PO8ftae1KQLyfWLF58mYeHcBmv4_9fz6",
-    "title": "DSC_9596",
+    "title": "חפצי וינטג' טבע דומם קומפוזיציה",
     "category": "טבע דומם",
     "parent_category": null,
     "url": "https://drive.google.com/uc?export=view&id=1PO8ftae1KQLyfWLF58mYeHcBmv4_9fz6",
@@ -157,7 +159,9 @@
       "aperture": 2.8,
       "iso": 100,
       "shutter": 0.000625
-    }
+    },
+    "alt": "חפצי וינטג' טבע דומם קומפוזיציה",
+    "alt_en": "Vintage objects still life composition"
   },
   {
     "id": "1mkj7yjz3I-Y951ZoHVSH_-6v8FjL66ap",
@@ -582,7 +586,7 @@
   },
   {
     "id": "1UEHatC39tA67plADlcepZ4giuxRKRcfk",
-    "title": "DSC_3888",
+    "title": "נוף טבע בישראל מבט פנורמי",
     "category": "ישראל",
     "parent_category": null,
     "url": "https://drive.google.com/uc?export=view&id=1UEHatC39tA67plADlcepZ4giuxRKRcfk",
@@ -598,7 +602,9 @@
       "aperture": 5.6,
       "iso": 100,
       "shutter": 0.016666668
-    }
+    },
+    "alt": "נוף טבע בישראל מבט פנורמי",
+    "alt_en": "Israel nature landscape scenic view"
   },
   {
     "id": "1IBAfg_OCYwqil4w957gA-b0ferLS1_5G",
@@ -864,7 +870,7 @@
   },
   {
     "id": "1M5kXPLpXu6PfoGkfd4JdW6Id1faF0dKA",
-    "title": "greece-2025-611",
+    "title": "כנסייה עם כיפה כחולה בסנטוריני",
     "category": "ישראל",
     "parent_category": null,
     "url": "https://drive.google.com/uc?export=view&id=1M5kXPLpXu6PfoGkfd4JdW6Id1faF0dKA",
@@ -880,7 +886,9 @@
       "aperture": 9,
       "iso": 31,
       "shutter": 8
-    }
+    },
+    "alt": "כנסייה עם כיפה כחולה בסנטוריני",
+    "alt_en": "Santorini church blue dome scenic view"
   },
   {
     "id": "1P0_tbOufdRIALyGsCnhBXKN4D_C_m8rh",
@@ -1561,7 +1569,7 @@
   },
   {
     "id": "1RcH4xVxzRxpOexVhzDgdumhhif5cTjm5",
-    "title": "DSC_8803",
+    "title": "פרפר על ציניה ורודה צילום מאקרו",
     "category": "מאקרו-צילומי תקריב",
     "parent_category": null,
     "url": "https://drive.google.com/uc?export=view&id=1RcH4xVxzRxpOexVhzDgdumhhif5cTjm5",
@@ -1577,7 +1585,9 @@
       "aperture": 8,
       "iso": 400,
       "shutter": 0.004
-    }
+    },
+    "alt": "פרפר על ציניה ורודה צילום מאקרו",
+    "alt_en": "Butterfly on pink zinnia macro photography"
   },
   {
     "id": "1epbtb8U6y-k_8I04hWejfgbET_mEcNF0",
@@ -1592,7 +1602,7 @@
   },
   {
     "id": "1caAXpctdX8dqyi66FyKXU9V3ogXZ9Lq3",
-    "title": "Z72_0550 copy",
+    "title": "פרטי אדריכלות במסגד השייח' זאיד אבו דאבי",
     "category": "אבו דאבי",
     "parent_category": "מקומות בעולם",
     "url": "https://drive.google.com/uc?export=view&id=1caAXpctdX8dqyi66FyKXU9V3ogXZ9Lq3",
@@ -1608,7 +1618,9 @@
       "aperture": 2.8,
       "iso": 64,
       "shutter": 0.00015625
-    }
+    },
+    "alt": "פרטי אדריכלות במסגד השייח' זאיד אבו דאבי",
+    "alt_en": "Sheikh Zayed Mosque architectural detail Abu Dhabi"
   },
   {
     "id": "1GNE_KfvZrhA7Xx8VxyzL1iB2Q-zolMhD",
@@ -1832,7 +1844,7 @@
   },
   {
     "id": "1VCl8Dl8bupSfuDmmc5hVCadHsPoGNpWI",
-    "title": "Z72_1016 copy",
+    "title": "פנים המסגד הגדול אבו דאבי",
     "category": "אבו דאבי",
     "parent_category": "מקומות בעולם",
     "url": "https://drive.google.com/uc?export=view&id=1VCl8Dl8bupSfuDmmc5hVCadHsPoGNpWI",
@@ -1848,7 +1860,9 @@
       "aperture": 3.5,
       "iso": 800,
       "shutter": 0.005
-    }
+    },
+    "alt": "פנים המסגד הגדול אבו דאבי",
+    "alt_en": "Grand Mosque interior Abu Dhabi"
   },
   {
     "id": "1aiFLu6Xd2oiSs9NiOz_GCsBOYACRv5UW",
@@ -1972,7 +1986,7 @@
   },
   {
     "id": "1ngd6Y2Y10r2Q5q-QfEAVsCsLf_4PxTLX",
-    "title": "Z72_1759 copy",
+    "title": "תבניות בחול דיונות המדבר איחוד האמירויות",
     "category": "אבו דאבי",
     "parent_category": "מקומות בעולם",
     "url": "https://drive.google.com/uc?export=view&id=1ngd6Y2Y10r2Q5q-QfEAVsCsLf_4PxTLX",
@@ -1988,7 +2002,9 @@
       "aperture": 11,
       "iso": 64,
       "shutter": 0.01
-    }
+    },
+    "alt": "תבניות בחול דיונות המדבר איחוד האמירויות",
+    "alt_en": "Desert sand dunes patterns Emirates"
   },
   {
     "id": "1buUeH8gXugxMmlUoLc-PIt-0TNno29Pk",
@@ -2132,7 +2148,7 @@
   },
   {
     "id": "18cRXTPt645lzlxtSNGM3RwYcsTcRS-ZY",
-    "title": "Z72_1934 copy",
+    "title": "אדריכלות מודרנית באבו דאבי קו רקיע",
     "category": "אבו דאבי",
     "parent_category": "מקומות בעולם",
     "url": "https://drive.google.com/uc?export=view&id=18cRXTPt645lzlxtSNGM3RwYcsTcRS-ZY",
@@ -2148,7 +2164,9 @@
       "aperture": 3.5,
       "iso": 64,
       "shutter": 0.05
-    }
+    },
+    "alt": "אדריכלות מודרנית באבו דאבי קו רקיע",
+    "alt_en": "Abu Dhabi modern architecture skyline"
   },
   {
     "id": "1YfaXr8zQe5xf8pe8UDB3u9M9vfwTwqi5",
@@ -2592,7 +2610,7 @@
   },
   {
     "id": "145bRagq1kywQjjPwkKWOy-TUl-JJT3AR",
-    "title": "Z72_2764 copy",
+    "title": "כיפת מוזיאון הלובר אבו דאבי",
     "category": "אבו דאבי",
     "parent_category": "מקומות בעולם",
     "url": "https://drive.google.com/uc?export=view&id=145bRagq1kywQjjPwkKWOy-TUl-JJT3AR",
@@ -2608,7 +2626,9 @@
       "aperture": 3.5,
       "iso": 64,
       "shutter": 0.016666668
-    }
+    },
+    "alt": "כיפת מוזיאון הלובר אבו דאבי",
+    "alt_en": "Louvre Abu Dhabi museum dome architecture"
   },
   {
     "id": "1yZWuy3xO7QXTbRq5R7Wb_wK8xPTqIYPD",
@@ -2692,7 +2712,7 @@
   },
   {
     "id": "14OQokD36-Gk58vl2QtBndXxbcJcUIn5_",
-    "title": "DSC_8026 copy",
+    "title": "רחוב בכפר אנגלי בתי אבן",
     "category": "אנגליה",
     "parent_category": "מקומות בעולם",
     "url": "https://drive.google.com/uc?export=view&id=14OQokD36-Gk58vl2QtBndXxbcJcUIn5_",
@@ -2708,7 +2728,9 @@
       "aperture": 2.8,
       "iso": 200,
       "shutter": 0.00025
-    }
+    },
+    "alt": "רחוב בכפר אנגלי בתי אבן",
+    "alt_en": "English village street with stone cottages"
   },
   {
     "id": "1w1p6SNGzdI68LLsc9pIWQ7XL0vJvNsPL",
@@ -2932,7 +2954,7 @@
   },
   {
     "id": "1YysIZRwu1sxnIddmfBQR4F_gyodlxsdO",
-    "title": "DSC_8381",
+    "title": "אדריכלות מנזר באת' אנגליה",
     "category": "אנגליה",
     "parent_category": "מקומות בעולם",
     "url": "https://drive.google.com/uc?export=view&id=1YysIZRwu1sxnIddmfBQR4F_gyodlxsdO",
@@ -2948,7 +2970,9 @@
       "aperture": 2.8,
       "iso": 80,
       "shutter": 0.0025
-    }
+    },
+    "alt": "אדריכלות מנזר באת' אנגליה",
+    "alt_en": "Bath Abbey architecture England"
   },
   {
     "id": "1pCcQm4UOVgTSJ4mlbTYEomdEo6yCdQGU",
@@ -2992,7 +3016,7 @@
   },
   {
     "id": "1DyvFemrLJmJ9_DcczDzKq8RteE7cgevG",
-    "title": "DSC_8512 copy",
+    "title": "מבנה היסטורי באוניברסיטת אוקספורד אנגליה",
     "category": "אנגליה",
     "parent_category": "מקומות בעולם",
     "url": "https://drive.google.com/uc?export=view&id=1DyvFemrLJmJ9_DcczDzKq8RteE7cgevG",
@@ -3008,7 +3032,9 @@
       "aperture": 2.8,
       "iso": 500,
       "shutter": 0.000125
-    }
+    },
+    "alt": "מבנה היסטורי באוניברסיטת אוקספורד אנגליה",
+    "alt_en": "Oxford University historic building England"
   },
   {
     "id": "10U8_BHPncFPy-y2vqmPjuMAJaOV6aSpd",
@@ -3092,7 +3118,7 @@
   },
   {
     "id": "1VXT35ZonkAjh09hMKdHY9Sk-EtWGX5_c",
-    "title": "DSC_8670 copy",
+    "title": "חצר קולג' באוקספורד אדריכלות",
     "category": "אנגליה",
     "parent_category": "מקומות בעולם",
     "url": "https://drive.google.com/uc?export=view&id=1VXT35ZonkAjh09hMKdHY9Sk-EtWGX5_c",
@@ -3108,11 +3134,13 @@
       "aperture": 2.8,
       "iso": 2500,
       "shutter": 0.000125
-    }
+    },
+    "alt": "חצר קולג' באוקספורד אדריכלות",
+    "alt_en": "Oxford college courtyard architecture"
   },
   {
     "id": "1mRpdsYRmUdaacH1FTUpcTAA8h7BOgkXv",
-    "title": "DSC_8733 copy",
+    "title": "גשר אבן בקוטסוולדס אנגליה",
     "category": "אנגליה",
     "parent_category": "מקומות בעולם",
     "url": "https://drive.google.com/uc?export=view&id=1mRpdsYRmUdaacH1FTUpcTAA8h7BOgkXv",
@@ -3128,7 +3156,9 @@
       "aperture": 2.8,
       "iso": 220,
       "shutter": 0.005
-    }
+    },
+    "alt": "גשר אבן בקוטסוולדס אנגליה",
+    "alt_en": "Cotswolds stone bridge over river"
   },
   {
     "id": "1Gtg0jN4Ji3bBl-VHQRju9M4WhhCEmGoQ",
@@ -3212,7 +3242,7 @@
   },
   {
     "id": "11lRfo9G3v18yxhYPMGO-FFew_KrFMFkv",
-    "title": "DSC_8922 copy",
+    "title": "הצוקים הלבנים של דובר אנגליה",
     "category": "אנגליה",
     "parent_category": "מקומות בעולם",
     "url": "https://drive.google.com/uc?export=view&id=11lRfo9G3v18yxhYPMGO-FFew_KrFMFkv",
@@ -3228,7 +3258,9 @@
       "aperture": 2.8,
       "iso": 100,
       "shutter": 0.0025
-    }
+    },
+    "alt": "הצוקים הלבנים של דובר אנגליה",
+    "alt_en": "White cliffs of Dover coastline UK"
   },
   {
     "id": "1sXcBYBmB6LKEN28bOXSlEq6q94Oy7XAo",
@@ -3272,7 +3304,7 @@
   },
   {
     "id": "1BmHFnp_2eqfYT9D78Uu4019k9hAT9iEW",
-    "title": "DSC_9078 copy",
+    "title": "אדריכלות קתדרלה היסטורית אנגליה",
     "category": "אנגליה",
     "parent_category": "מקומות בעולם",
     "url": "https://drive.google.com/uc?export=view&id=1BmHFnp_2eqfYT9D78Uu4019k9hAT9iEW",
@@ -3288,11 +3320,13 @@
       "aperture": 2.8,
       "iso": 100,
       "shutter": 0.002
-    }
+    },
+    "alt": "אדריכלות קתדרלה היסטורית אנגליה",
+    "alt_en": "Historic cathedral architecture England"
   },
   {
     "id": "1fexmAkIm46K61b-PITUQuFLCVG8q0Uu1",
-    "title": "DSC_9093 copy",
+    "title": "אוניברסיטת קיימברידג' ונהר הקאם",
     "category": "אנגליה",
     "parent_category": "מקומות בעולם",
     "url": "https://drive.google.com/uc?export=view&id=1fexmAkIm46K61b-PITUQuFLCVG8q0Uu1",
@@ -3308,7 +3342,9 @@
       "aperture": 2.8,
       "iso": 100,
       "shutter": 0.0025
-    }
+    },
+    "alt": "אוניברסיטת קיימברידג' ונהר הקאם",
+    "alt_en": "Cambridge University River Cam photography"
   },
   {
     "id": "1gdsKZ9UpW4lPuvzhcbcPLxedASPml6-H",
@@ -3411,7 +3447,7 @@
   },
   {
     "id": "1UKIQ5TWf6BU0OmUhmtB9hyXHk40o9QAH",
-    "title": "DSC_8973",
+    "title": "שביל ביער בסתיו גרמניה",
     "category": "גרמניה",
     "parent_category": "מקומות בעולם",
     "url": "https://drive.google.com/uc?export=view&id=1UKIQ5TWf6BU0OmUhmtB9hyXHk40o9QAH",
@@ -3427,11 +3463,13 @@
       "aperture": 4.5,
       "iso": 100,
       "shutter": 0.002
-    }
+    },
+    "alt": "שביל ביער בסתיו גרמניה",
+    "alt_en": "Autumn forest path Germany"
   },
   {
     "id": "16YgTIBO-Qojrm0zQIQslrCV9_bmEb0SQ",
-    "title": "MJH_0512",
+    "title": "מונומנט היסטורי בברלין גרמניה",
     "category": "גרמניה",
     "parent_category": "מקומות בעולם",
     "url": "https://drive.google.com/uc?export=view&id=16YgTIBO-Qojrm0zQIQslrCV9_bmEb0SQ",
@@ -3447,7 +3485,9 @@
       "aperture": 5.6,
       "iso": 140,
       "shutter": 0.005
-    }
+    },
+    "alt": "מונומנט היסטורי בברלין גרמניה",
+    "alt_en": "Berlin monument history Germany"
   },
   {
     "id": "1I2si-uc6APVK0OOMdkBGqhrerrMd2eDz",
@@ -3531,7 +3571,7 @@
   },
   {
     "id": "1RnLj3UwKAqNolnTK8LmfVUI_QmfR9ffo",
-    "title": "MJH_2248",
+    "title": "כיכר עיר היסטורית בגרמניה",
     "category": "גרמניה",
     "parent_category": "מקומות בעולם",
     "url": "https://drive.google.com/uc?export=view&id=1RnLj3UwKAqNolnTK8LmfVUI_QmfR9ffo",
@@ -3547,7 +3587,9 @@
       "aperture": 8,
       "iso": 6400,
       "shutter": 0.0125
-    }
+    },
+    "alt": "כיכר עיר היסטורית בגרמניה",
+    "alt_en": "Germany historic town square photography"
   },
   {
     "id": "1jNHa6TWHEJPXhU0feONC_yZMdqehbEd-",
@@ -3951,7 +3993,7 @@
   },
   {
     "id": "14rG5W3jwcADiqLxUREUXAqKPjGbGxulA",
-    "title": "DSC_0838",
+    "title": "שקיעה ים תיכונית בחוף יוון",
     "category": "הולנד",
     "parent_category": "מקומות בעולם",
     "url": "https://drive.google.com/uc?export=view&id=14rG5W3jwcADiqLxUREUXAqKPjGbGxulA",
@@ -3967,7 +4009,9 @@
       "aperture": 4,
       "iso": 160,
       "shutter": 0.003125
-    }
+    },
+    "alt": "שקיעה ים תיכונית בחוף יוון",
+    "alt_en": "Mediterranean sunset Greece coast"
   },
   {
     "id": "1nPkQltk-kwphzeMCSkBxiMjoWOL-nU92",
@@ -4051,7 +4095,7 @@
   },
   {
     "id": "1uDhUdoUgBx1ZbM8hmRBCQSl9JmHiW1bd",
-    "title": "DSC_1608",
+    "title": "נוף הולנדי מסורתי צילום אמנותי",
     "category": "הולנד",
     "parent_category": "מקומות בעולם",
     "url": "https://drive.google.com/uc?export=view&id=1uDhUdoUgBx1ZbM8hmRBCQSl9JmHiW1bd",
@@ -4067,11 +4111,13 @@
       "aperture": 4,
       "iso": 100,
       "shutter": 0.002
-    }
+    },
+    "alt": "נוף הולנדי מסורתי צילום אמנותי",
+    "alt_en": "Traditional Netherlands landscape fine art photography"
   },
   {
     "id": "115eqcCv8hlzJp7T5hVcqrVJeMOLQbxa6",
-    "title": "DSC_1685",
+    "title": "בתי תעלות באמסטרדם והשתקפות",
     "category": "הולנד",
     "parent_category": "מקומות בעולם",
     "url": "https://drive.google.com/uc?export=view&id=115eqcCv8hlzJp7T5hVcqrVJeMOLQbxa6",
@@ -4087,7 +4133,9 @@
       "aperture": 4,
       "iso": 160,
       "shutter": 0.0025
-    }
+    },
+    "alt": "בתי תעלות באמסטרדם והשתקפות",
+    "alt_en": "Amsterdam canal houses and reflection"
   },
   {
     "id": "1MEXl9agfUsf8bX-LrVXQ9fQoMN3R6F2R",
@@ -4351,7 +4399,7 @@
   },
   {
     "id": "1OvOmi9DDMOShB2QTj7pP--P_vbi-3T3C",
-    "title": "greece-2025-161",
+    "title": "אדריכלות יוונית כחול ולבן",
     "category": "יוון",
     "parent_category": "מקומות בעולם",
     "url": "https://drive.google.com/uc?export=view&id=1OvOmi9DDMOShB2QTj7pP--P_vbi-3T3C",
@@ -4367,7 +4415,9 @@
       "aperture": 5.6,
       "iso": 9000,
       "shutter": 0.0125
-    }
+    },
+    "alt": "אדריכלות יוונית כחול ולבן",
+    "alt_en": "Greek island architecture white and blue"
   },
   {
     "id": "1sN2DiFiRBMTNPqf3POewpYefbbSebKMV",
@@ -4671,7 +4721,7 @@
   },
   {
     "id": "1oQ0SiZm5NsCuAP4qxgB2zZUbwrXrqxTW",
-    "title": "greece-2025-379",
+    "title": "סמטה לבנה באי יווני צילום רחוב",
     "category": "יוון",
     "parent_category": "מקומות בעולם",
     "url": "https://drive.google.com/uc?export=view&id=1oQ0SiZm5NsCuAP4qxgB2zZUbwrXrqxTW",
@@ -4687,7 +4737,9 @@
       "aperture": 2.8,
       "iso": 100,
       "shutter": 0.005
-    }
+    },
+    "alt": "סמטה לבנה באי יווני צילום רחוב",
+    "alt_en": "Greek island white alleyway street photography"
   },
   {
     "id": "1L2si56DPncjQ7YPgrnSn8qQ_V-JK-6Qe",
@@ -4791,7 +4843,7 @@
   },
   {
     "id": "12nEvb5jWhki41SoS3G7JTlaJ2nKE7wsR",
-    "title": "greece-2025-45",
+    "title": "מנזרי מטאורה יוון נוף הררי",
     "category": "יוון",
     "parent_category": "מקומות בעולם",
     "url": "https://drive.google.com/uc?export=view&id=12nEvb5jWhki41SoS3G7JTlaJ2nKE7wsR",
@@ -4807,7 +4859,9 @@
       "aperture": 2.8,
       "iso": 64,
       "shutter": 0.0008
-    }
+    },
+    "alt": "מנזרי מטאורה יוון נוף הררי",
+    "alt_en": "Meteora monastery Greece mountain landscape"
   },
   {
     "id": "1RL3drU2FA9li_--J3fb1lPkUae7J4np6",
@@ -5751,7 +5805,7 @@
   },
   {
     "id": "1lraiJ-ll34As0arwxTDdeuI84tY3LaLg",
-    "title": "MJH_9544",
+    "title": "נוף הררי בסלובקיה הרי הטטרה",
     "category": "סלובקיה",
     "parent_category": "מקומות בעולם",
     "url": "https://drive.google.com/uc?export=view&id=1lraiJ-ll34As0arwxTDdeuI84tY3LaLg",
@@ -5767,7 +5821,9 @@
       "aperture": 8,
       "iso": 50,
       "shutter": 1
-    }
+    },
+    "alt": "נוף הררי בסלובקיה הרי הטטרה",
+    "alt_en": "Slovakia mountain landscape High Tatras"
   },
   {
     "id": "1zEdwwkBZymZDz0Ox08whcH7AIMza3fmo",
@@ -6172,7 +6228,7 @@
   },
   {
     "id": "1_IZewWsa8jDUNLATxFo5i7rZEyUakKm6",
-    "title": "DSC_0331",
+    "title": "פריחת אביב צילום מאקרו תקריב",
     "category": "פרחים וצמחים",
     "parent_category": null,
     "url": "https://drive.google.com/uc?export=view&id=1_IZewWsa8jDUNLATxFo5i7rZEyUakKm6",
@@ -6188,7 +6244,9 @@
       "aperture": 8,
       "iso": 100,
       "shutter": 0.033333335
-    }
+    },
+    "alt": "פריחת אביב צילום מאקרו תקריב",
+    "alt_en": "Spring blossom flowers macro photography"
   },
   {
     "id": "1A8y2S1s8pDnIzK0lbW6NpxJS5plJcYzJ",
@@ -6527,7 +6585,7 @@
   },
   {
     "id": "1w6kUvKc5OAlZAVgwmbE-kxTE0KUzTfvB",
-    "title": "DSC_4930",
+    "title": "פרח בר צילום מאקרו טבע",
     "category": "פרחים וצמחים",
     "parent_category": null,
     "url": "https://drive.google.com/uc?export=view&id=1w6kUvKc5OAlZAVgwmbE-kxTE0KUzTfvB",
@@ -6543,7 +6601,9 @@
       "aperture": 3.8,
       "iso": 100,
       "shutter": 0.000625
-    }
+    },
+    "alt": "פרח בר צילום מאקרו טבע",
+    "alt_en": "Wildflower macro nature photography"
   },
   {
     "id": "1LjG0BlIz52uvjeXZVVWg8ww4lQgifpAI",
@@ -7102,7 +7162,7 @@
   },
   {
     "id": "1Sq3RncvzHkqHMdDfX151-XqfxFL7KJEH",
-    "title": "MJH_7353",
+    "title": "ניצן פרח עדין צילום טבע מאקרו",
     "category": "פרחים וצמחים",
     "parent_category": null,
     "url": "https://drive.google.com/uc?export=view&id=1Sq3RncvzHkqHMdDfX151-XqfxFL7KJEH",
@@ -7118,7 +7178,9 @@
       "aperture": 3.5,
       "iso": 200,
       "shutter": 0.0015625
-    }
+    },
+    "alt": "ניצן פרח עדין צילום טבע מאקרו",
+    "alt_en": "Delicate flower bud nature macro photography"
   },
   {
     "id": "1uLGoiQB0E6fzEynhPBJ3YkAM7Cq0lVYr",
@@ -7700,7 +7762,7 @@
   },
   {
     "id": "1uBai-6tPfU2lN0MBkcocyfXyNyXXeXd8",
-    "title": "DSC_4053",
+    "title": "צילום מופשט תנועה ואור",
     "category": "צילום מופשט",
     "parent_category": null,
     "url": "https://drive.google.com/uc?export=view&id=1uBai-6tPfU2lN0MBkcocyfXyNyXXeXd8",
@@ -7716,7 +7778,9 @@
       "aperture": 4.8,
       "iso": 100,
       "shutter": 0.0025
-    }
+    },
+    "alt": "צילום מופשט תנועה ואור",
+    "alt_en": "Abstract light and motion photography"
   },
   {
     "id": "133-YvkHkjHupL7-a-ocHs6hTAlgCH6Am",

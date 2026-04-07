@@ -211,7 +211,7 @@ function renderGallery(append = false) {
     item.innerHTML = `
       <img
         src="${photo.thumbnail || photo.url}"
-        alt="${photo.title}"
+        alt="${photo.alt || photo.title}"
         loading="lazy"
         onerror="this.closest('.gallery-item').style.display='none'"
         draggable="false"
@@ -545,7 +545,7 @@ function openLightbox(idx) {
   };
   window._currentLightboxPhoto = photo;
   img.src = getLightboxUrl(photo.url);
-  img.alt = photo.title;
+  img.alt = photo.alt || photo.title;
   document.getElementById('lb-title').textContent = photo.title;
   const catEl = document.getElementById('lb-cat');
   catEl.textContent = photo.category;
