@@ -1392,16 +1392,67 @@ nav.scrolled { border-bottom-color: rgba(200, 169, 110, 0.3); }
 .print-wrap-title { font-size: .8rem; color: var(--text-muted); text-align: center; margin-bottom: .45rem; }
 .print-wrap-options { display: grid; grid-template-columns: 1fr 1fr; gap: .4rem; }
 .print-wrap-btn {
-  display: flex; flex-direction: column; align-items: flex-start;
-  gap: .1rem; padding: .55rem .75rem;
+  display: flex; flex-direction: row; align-items: center;
+  gap: .65rem; padding: .5rem .65rem;
   background: var(--card-bg); border: 1.5px solid var(--border);
   border-radius: 8px; cursor: pointer; text-align: right;
   transition: border-color .2s, background .2s; width: 100%;
 }
-.print-wrap-btn strong { font-size: .85rem; color: var(--text); }
-.print-wrap-btn span { font-size: .72rem; color: var(--text-muted); }
+.print-wrap-btn strong { font-size: .85rem; color: var(--text); display: block; }
+.print-wrap-btn .wrap-text span { font-size: .72rem; color: var(--text-muted); }
 .print-wrap-btn:hover, .print-wrap-btn.active { border-color: var(--accent); background: rgba(200,169,110,.07); }
 .print-wrap-btn.active strong { color: var(--accent); }
+
+/* Wrap visual diagrams */
+.wrap-visual {
+  flex-shrink: 0;
+  width: 42px; height: 42px;
+  position: relative;
+  border-radius: 2px;
+  overflow: visible;
+}
+/* Front face — same for all */
+.wrap-visual::before {
+  content: '';
+  position: absolute;
+  inset: 6px;
+  background: linear-gradient(135deg, #8ab4c8 0%, #5a8fa8 40%, #3d6e82 100%);
+  border-radius: 1px;
+}
+/* Side strips */
+.wrap-visual::after {
+  content: '';
+  position: absolute;
+  top: 6px; bottom: 6px; left: 0; width: 6px;
+  border-radius: 1px 0 0 1px;
+}
+/* ImageWrap — continuation of photo gradient */
+.wrap-visual--image-wrap::after {
+  background: linear-gradient(180deg, #5a8fa8 0%, #3d6e82 100%);
+}
+/* MirrorWrap — mirrored, slightly lighter */
+.wrap-visual--mirror-wrap::after {
+  background: linear-gradient(180deg, #8ab4c8 0%, #5a8fa8 100%);
+  opacity: .7;
+}
+/* White wrap */
+.wrap-visual--white-wrap::after {
+  background: #e8e8e0;
+  border: 1px solid #ccc;
+}
+/* Black wrap */
+.wrap-visual--black-wrap::after {
+  background: #111;
+}
+/* Top strip (same logic) */
+.wrap-visual--image-wrap  .wrap-side-top,
+.wrap-visual--mirror-wrap .wrap-side-top { display: none; }
+
+/* Add top strip via box-shadow trick */
+.wrap-visual--image-wrap::before  { box-shadow: -6px 0 0 #3d6e82, 0 -6px 0 #5a8fa8; }
+.wrap-visual--mirror-wrap::before { box-shadow: -6px 0 0 rgba(138,180,200,.7), 0 -6px 0 rgba(138,180,200,.7); }
+.wrap-visual--white-wrap::before  { box-shadow: -6px 0 0 #e8e8e0, 0 -6px 0 #e8e8e0; }
+.wrap-visual--black-wrap::before  { box-shadow: -6px 0 0 #111, 0 -6px 0 #111; }
 .print-price-display { text-align: center; font-size: 1.1rem; color: var(--accent); min-height: 1.5rem; }
 .print-fields { display: flex; flex-direction: column; gap: .5rem; margin-bottom: 1rem; }
 .print-field-row { display: flex; gap: .5rem; }

@@ -1344,15 +1344,16 @@ const PrintShop = (() => {
     selectedWrap = null;
     document.getElementById('print-to-details-btn').classList.remove('visible');
     const WRAPS = [
-      { value: 'ImageWrap',  label: 'גלריה',  desc: 'התמונה עוטפת את הצדדים' },
-      { value: 'MirrorWrap', label: 'מראה',   desc: 'קצוות התמונה משוקפים' },
-      { value: 'White',      label: 'לבן',    desc: 'שוליים לבנים נקיים' },
-      { value: 'Black',      label: 'שחור',   desc: 'שוליים שחורים' },
+      { value: 'ImageWrap',  label: 'גלריה',  desc: 'התמונה עוטפת את הצדדים', visual: 'image-wrap' },
+      { value: 'MirrorWrap', label: 'מראה',   desc: 'קצוות התמונה משוקפים',   visual: 'mirror-wrap' },
+      { value: 'White',      label: 'לבן',    desc: 'שוליים לבנים נקיים',     visual: 'white-wrap' },
+      { value: 'Black',      label: 'שחור',   desc: 'שוליים שחורים',          visual: 'black-wrap' },
     ];
     const wrapContainer = document.getElementById('print-wrap-options');
     wrapContainer.innerHTML = WRAPS.map(w =>
       `<button type="button" class="print-wrap-btn" data-wrap="${w.value}">
-        <strong>${w.label}</strong><span>${w.desc}</span>
+        <span class="wrap-visual wrap-visual--${w.visual}" aria-hidden="true"></span>
+        <span class="wrap-text"><strong>${w.label}</strong><span>${w.desc}</span></span>
       </button>`
     ).join('');
     wrapContainer.querySelectorAll('.print-wrap-btn').forEach(btn => {
