@@ -1,4 +1,4 @@
-const CACHE = 'amit-photos-v1';
+const CACHE = 'amit-photos-v2';
 const STATIC = [
   '/',
   '/index.html',
