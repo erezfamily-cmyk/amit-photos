@@ -1228,6 +1228,7 @@ nav.scrolled { border-bottom-color: rgba(200, 169, 110, 0.3); }
   margin-top: .4rem;
 }
 .print-customs-notice {
+  display: none;
   margin-top: .75rem;
   padding: .6rem .9rem;
   border: 1px solid #c8a96e55;
@@ -1236,6 +1237,9 @@ nav.scrolled { border-bottom-color: rgba(200, 169, 110, 0.3); }
   color: #c8a96e;
   font-size: .78rem;
   line-height: 1.5;
+}
+.print-customs-notice.visible {
+  display: block;
 }
 @media (max-width: 480px) {
   .buy-size-options { grid-template-columns: 1fr; }
