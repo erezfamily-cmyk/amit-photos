@@ -1215,6 +1215,16 @@ const PrintShop = (() => {
       cropImgNaturalW = img.naturalWidth;
       cropImgNaturalH = img.naturalHeight;
 
+      // Auto-rotate frame to match photo orientation
+      const photoLandscape = cropImgNaturalW > cropImgNaturalH;
+      const frameLandscape = cropFrameW > cropFrameH;
+      if (photoLandscape !== frameLandscape) {
+        [cropFrameW, cropFrameH] = [cropFrameH, cropFrameW];
+        [minW, minH] = [minH, minW];
+        frame.style.width = cropFrameW + 'px';
+        frame.style.height = cropFrameH + 'px';
+      }
+
       // Scale image so it covers the frame (like object-fit: cover)
       const scaleX = cropFrameW / cropImgNaturalW;
       const scaleY = cropFrameH / cropImgNaturalH;
