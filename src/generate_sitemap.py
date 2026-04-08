@@ -18,46 +18,50 @@ SITEMAP_FILE = ROOT / "sitemap.xml"
 SITE_URL = "https://amitphotos.com"
 
 
+def escape(text):
+    return (text
+            .replace("&", "&amp;")
+            .replace("<", "&lt;")
+            .replace(">", "&gt;")
+            .replace('"', "&quot;"))
+
+
 def main():
     photos = json.loads(DATA_FILE.read_text(encoding="utf-8"))
     today = date.today().isoformat()
 
-    lines = ['<?xml version="1.0" encoding="UTF-8"?>']
-    lines.append('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"')
-    lines.append('        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">')
+    lines = [
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"',
+        '        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">',
+        f'  <url>',
+        f'    <loc>{SITE_URL}/</loc>',
+        f'    <lastmod>{today}</lastmod>',
+        f'    <changefreq>daily</changefreq>',
+        f'    <priority>1.0</priority>',
+    ]
 
-    # עמוד ראשי
-    lines.append(f"""  <url>
-    <loc>{SITE_URL}/</loc>
-    <lastmod>{today}</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>""")
-
-    # תמונות
-    lines.append(f"""  <url>
-    <loc>{SITE_URL}/</loc>
-    <lastmod>{today}</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>""")
-
+    count = 0
     for photo in photos:
-        title = photo.get("title", "").replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
-        description = photo.get("description", "").replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
         image_url = photo.get("thumbnail") or photo.get("url", "")
         if not image_url:
             continue
-        lines.append(f"""    <image:image>
-      <image:loc>{image_url}</image:loc>
-      <image:title>{title}</image:title>
-      <image:caption>{description}</image:caption>
-    </image:image>""")
+        title = escape(photo.get("title", ""))
+        description = escape(photo.get("description", ""))
+        lines.append(f'    <image:image>')
+        lines.append(f'      <image:loc>{image_url}</image:loc>')
+        if title:
+            lines.append(f'      <image:title>{title}</image:title>')
+        if description:
+            lines.append(f'      <image:caption>{description}</image:caption>')
+        lines.append(f'    </image:image>')
+        count += 1
 
-    lines.append(f"""  </url>""")
-    lines.append("</urlset>")
+    lines.append('  </url>')
+    lines.append('</urlset>')
 
     SITEMAP_FILE.write_text("\n".join(lines), encoding="utf-8")
-    print(f"sitemap.xml created with {len(photos)} photos")
+    print(f"sitemap.xml created with {count} images")
 
 
 if __name__ == "__main__":
