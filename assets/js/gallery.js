@@ -134,7 +134,7 @@ async function loadPhotos() {
 
   try {
     const [jsonRes, apiRes] = await Promise.allSettled([
-      fetch('data/photos.json?v=' + Date.now()).then(r => r.ok ? r.json() : []),
+      fetch('data/photos.json').then(r => r.ok ? r.json() : []),
       fetch('/api/photos').then(r => r.ok ? r.json() : [])
     ]);
     const jsonPhotos = jsonRes.status === 'fulfilled' ? (jsonRes.value || []) : [];
@@ -194,7 +194,7 @@ function renderGallery(append = false) {
 
   if (filteredPhotos.length === 0) {
     grid.innerHTML = `<p style="text-align:center;color:var(--text-muted);padding:4rem">אין תמונות בקטגוריה זו.</p>`;
-    updateLoadMoreBtn();
+    updateSentinel();
     return;
   }
 
@@ -241,19 +241,13 @@ function renderGallery(append = false) {
     grid.appendChild(item);
   });
 
-  updateLoadMoreBtn();
+  updateSentinel();
 }
 
-function updateLoadMoreBtn() {
-  const btn = document.getElementById('load-more-btn');
-  if (!btn) return;
-  const remaining = filteredPhotos.length - displayedCount;
-  if (remaining > 0) {
-    btn.style.display = 'block';
-    btn.textContent = `טען עוד (${remaining} נותרו)`;
-  } else {
-    btn.style.display = 'none';
-  }
+function updateSentinel() {
+  const sentinel = document.getElementById('gallery-sentinel');
+  if (!sentinel) return;
+  sentinel.style.display = displayedCount < filteredPhotos.length ? 'block' : 'none';
 }
 
 // ===== FEATURED =====
@@ -401,14 +395,17 @@ function initFilters() {
   });
 }
 
-// ===== LOAD MORE =====
-function initLoadMore() {
-  const btn = document.getElementById('load-more-btn');
-  if (!btn) return;
-  btn.addEventListener('click', () => {
+// ===== INFINITE SCROLL =====
+function initInfiniteScroll() {
+  const sentinel = document.getElementById('gallery-sentinel');
+  if (!sentinel) return;
+  const io = new IntersectionObserver(entries => {
+    if (!entries[0].isIntersecting) return;
+    if (displayedCount >= filteredPhotos.length) return;
     displayedCount = Math.min(displayedCount + PAGE_SIZE, filteredPhotos.length);
     renderGallery(true);
-  });
+  }, { rootMargin: '200px' });
+  io.observe(sentinel);
 }
 
 // ===== LIGHTBOX =====
@@ -416,7 +413,7 @@ function initLightbox() {
   const lb = document.getElementById('lightbox');
   if (!lb) return;
 
-  initLoadMore();
+  initInfiniteScroll();
 
   const lbImg = document.getElementById('lb-img');
   if (lbImg) {
