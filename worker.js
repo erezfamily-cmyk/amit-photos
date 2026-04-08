@@ -732,7 +732,7 @@ async function handlePrintOrderComplete(request, env) {
     return jsonRes({ error: `שגיאת Gelato: ${err.message || gelatoRes.status}` }, 500, request);
   }
   const pd = await gelatoRes.json();
-  const prodigiOrderId = pd.id || '';
+  const gelatoOrderId = pd.id || '';
 
   // Human-readable product label
   const productLabel = typeEntry && sizeEntry ? `${typeEntry.label} — ${sizeEntry.label}` : sku;
@@ -742,7 +742,7 @@ async function handlePrintOrderComplete(request, env) {
     `INSERT INTO print_orders (id, prodigi_order_id, photo_id, sku, product_label, sell_price, customer_name, customer_email, customer_phone, address_line1, address_city, address_zip, paypal_tx, status, created_at)
      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'in_production', ?)`
   ).bind(
-    orderId, prodigiOrderId, photoId, sku, productLabel, sellPrice,
+    orderId, gelatoOrderId, photoId, sku, productLabel, sellPrice,
     address.name, address.email || '', address.phone || '',
     address.line1, address.city, address.zip,
     tx, new Date().toISOString()
@@ -767,7 +767,7 @@ async function handlePrintOrderComplete(request, env) {
           <p><strong>מוצר:</strong> ${productLabel}</p>
           <p><strong>כתובת:</strong> ${address.line1}, ${address.city} ${address.zip}</p>
           <p><strong>מחיר ששולם:</strong> $${sellPrice}</p>
-          <p style="color:#888;font-size:.9rem">זמן משלוח משוער: 7–14 ימי עסקים.</p>
+          <p style="color:#888;font-size:.9rem">זמן משלוח משוער: 7–10 ימי עסקים.</p>
           <hr style="border:none;border-top:1px solid #eee;margin:1.5rem 0">
           <p style="color:#555;font-size:.88rem">רוצה לבטל? ניתן לבטל תוך שעה מרגע ההזמנה:</p>
           <p style="text-align:center;margin:1rem 0">
@@ -800,7 +800,7 @@ async function handlePrintOrderComplete(request, env) {
       <tr><td style="padding:.4rem 0;color:#888">כתובת</td><td>${address.line1}, ${address.city} ${address.zip}</td></tr>
       <tr><td style="padding:.4rem 0;color:#888">מוצר</td><td>${productLabel}</td></tr>
       <tr><td style="padding:.4rem 0;color:#888">מחיר</td><td><strong>$${sellPrice}</strong></td></tr>
-      <tr><td style="padding:.4rem 0;color:#888">Prodigi ID</td><td style="font-size:.82rem;color:#aaa">${prodigiOrderId||'—'}</td></tr>
+      <tr><td style="padding:.4rem 0;color:#888">Prodigi ID</td><td style="font-size:.82rem;color:#aaa">${gelatoOrderId||'—'}</td></tr>
     </table>
   </div>
 </body></html>`;
@@ -811,7 +811,7 @@ async function handlePrintOrderComplete(request, env) {
     });
   }
 
-  return jsonRes({ ok: true, orderId: prodigiOrderId || orderId }, 200, request);
+  return jsonRes({ ok: true, orderId: gelatoOrderId || orderId }, 200, request);
 }
 
 async function handlePrintCancel(request, env) {
@@ -916,7 +916,7 @@ async function handlePrintWebhook(request, env) {
           <p><strong>מוצר:</strong> ${order.product_label}</p>
           <p><strong>כתובת:</strong> ${order.address_line1}, ${order.address_city} ${order.address_zip}</p>
           ${tracking ? `<p><strong>מספר מעקב:</strong> ${tracking}</p>` : ''}
-          <p style="color:#888;font-size:.9rem">זמן הגעה משוער: 7–14 ימי עסקים.</p>
+          <p style="color:#888;font-size:.9rem">זמן הגעה משוער: 7–10 ימי עסקים.</p>
         </td></tr>
       </table>
     </td></tr>
