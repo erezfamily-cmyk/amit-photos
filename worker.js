@@ -581,42 +581,31 @@ async function handleVerifyPayment(request, env) {
 
 // ===== PRINT SHOP =====
 
+const GELATO_API = 'https://order.gelatoapis.com/v4';
+
 const PRINT_CATALOG = {
-  photo: {
-    label: 'הדפסה על נייר צילום',
-    desc: 'נייר לוסטר איכותי, מוכן למסגור',
-    attributes: {},
+  poster: {
+    label: 'פוסטר — נייר אמנות מט',
+    desc: 'נייר אמנות 170gsm, פינישינג מט — כולל משלוח לישראל',
     sizes: [
-      { label: '10×15 ס"מ (4×6")',  sku: 'GLOBAL-PAP-4X6',   w: 4,   h: 6,   minW: 1200, minH: 1800 },
-      { label: '13×18 ס"מ (5×7")',  sku: 'GLOBAL-PAP-5X7',   w: 5,   h: 7,   minW: 1606, minH: 2196 },
-      { label: '20×25 ס"מ (8×10")', sku: 'GLOBAL-PAP-8X10',  w: 8,   h: 10,  minW: 2400, minH: 3000 },
-      { label: 'A4 — 21×30 ס"מ',   sku: 'GLOBAL-PAP-A4',    w: 210, h: 297, minW: 2551, minH: 3578 },
-      { label: '28×35 ס"מ (11×14")',sku: 'GLOBAL-PAP-11X14', w: 11,  h: 14,  minW: 3307, minH: 4192 },
-      { label: '40×50 ס"מ (16×20")',sku: 'GLOBAL-PAP-16X20', w: 16,  h: 20,  minW: 4800, minH: 6000 },
-      { label: 'A3 — 30×42 ס"מ',   sku: 'GLOBAL-PAP-A3',    w: 297, h: 420, minW: 3507, minH: 4962 },
+      { label: '20×25 ס"מ (8×10")', sku: 'flat_200x250-mm-8x10-inch_170-gsm-65lb-uncoated_4-0_ver',  minW: 2400, minH: 3000 },
+      { label: '30×40 ס"מ (12×16")',sku: 'flat_300x400-mm-12x16-inch_170-gsm-65lb-uncoated_4-0_ver', minW: 3543, minH: 4724 },
+      { label: '40×50 ס"מ (16×20")',sku: 'flat_400x500-mm-16x20-inch_170-gsm-65lb-uncoated_4-0_ver', minW: 4724, minH: 5906 },
+      { label: 'A3 — 30×42 ס"מ',   sku: 'flat_a3_170-gsm-65lb-uncoated_4-0_ver',                    minW: 3508, minH: 4961 },
+      { label: 'A2 — 42×59 ס"מ',   sku: 'flat_a2_170-gsm-65lb-uncoated_4-0_ver',                    minW: 4961, minH: 7016 },
+      { label: '45×60 ס"מ (18×24")',sku: 'flat_450x600-mm-18x24-inch_170-gsm-65lb-uncoated_4-0_ver', minW: 5315, minH: 7087 },
+      { label: '60×90 ס"מ (24×36")',sku: 'flat_600x900-mm-24x36-inch_170-gsm-65lb-uncoated_4-0_ver', minW: 7087, minH: 10630 },
     ]
   },
   canvas: {
     label: 'הדפסה על קנבס',
-    desc: 'קנבס מתוח על מסגרת עץ, מוכן לתלייה',
-    attributes: {}, // wrap is user-selected per order (ImageWrap / MirrorWrap / White / Black)
+    desc: 'קנבס מתוח על מסגרת עץ, מוכן לתלייה — כולל משלוח לישראל',
     sizes: [
-      { label: '20×20 ס"מ', sku: 'GLOBAL-CAN-8X8',   w: 1, h: 1, minW: 2454, minH: 2454 },
-      { label: '20×25 ס"מ', sku: 'GLOBAL-CAN-8X10',  w: 8, h: 10,minW: 2454, minH: 3054 },
-      { label: '30×40 ס"מ', sku: 'GLOBAL-CAN-12X16', w: 3, h: 4, minW: 3654, minH: 4854 },
-      { label: '40×50 ס"מ', sku: 'GLOBAL-CAN-16X20', w: 4, h: 5, minW: 4854, minH: 6054 },
-      { label: '50×60 ס"מ', sku: 'GLOBAL-CAN-20X24', w: 5, h: 6, minW: 6054, minH: 7254 },
-    ]
-  },
-  poster: {
-    label: 'פוסטר — נייר אמנות מט',
-    desc: 'נייר אמנות איכותי, פינישינג מט',
-    attributes: {},
-    sizes: [
-      { label: 'A3 — 30×42 ס"מ', sku: 'GLOBAL-FAP-A3',    w: 297, h: 420, minW: 3507, minH: 4960  },
-      { label: 'A2 — 42×59 ס"מ', sku: 'GLOBAL-FAP-A2',    w: 420, h: 594, minW: 4960, minH: 7015  },
-      { label: '45×60 ס"מ',      sku: 'GLOBAL-FAP-18X24', w: 18,  h: 24,  minW: 5400, minH: 7200  },
-      { label: '60×90 ס"מ',      sku: 'GLOBAL-FAP-24X36', w: 24,  h: 36,  minW: 7200, minH: 10800 },
+      { label: '20×20 ס"מ', sku: 'canvas_200x200-mm-8x8-inch_canvas_wood-fsc-slim_4-0_ver',    minW: 2362, minH: 2362 },
+      { label: '20×25 ס"מ', sku: 'canvas_200x250-mm-8x10-inch_canvas_wood-fsc-slim_4-0_ver',   minW: 2362, minH: 2953 },
+      { label: '30×40 ס"מ', sku: 'canvas_12x16-inch-300x400-mm_canvas_wood-fsc-slim_4-0_ver',  minW: 3543, minH: 4724 },
+      { label: '40×50 ס"מ', sku: 'canvas_16x20-inch-400x500-mm_canvas_wood-fsc-slim_4-0_ver',  minW: 4724, minH: 5906 },
+      { label: '45×60 ס"מ', sku: 'canvas_18x24-inch-450x600-mm_canvas_wood-fsc-slim_4-0_ver',  minW: 5315, minH: 7087 },
     ]
   }
 };
@@ -627,39 +616,37 @@ async function handlePrintCatalog(request, env) {
 
 async function handlePrintQuote(request, env) {
   if (request.method !== 'POST') return jsonRes({ error: 'method not allowed' }, 405, request);
-  const { sku, wrap } = await request.json().catch(() => ({}));
+  const { sku } = await request.json().catch(() => ({}));
   if (!sku) return jsonRes({ error: 'sku חסר' }, 400, request);
-  if (!env.PRODIGI_API_KEY) return jsonRes({ error: 'PRODIGI_API_KEY לא מוגדר' }, 500, request);
+  if (!env.GELATO_API_KEY) return jsonRes({ error: 'GELATO_API_KEY לא מוגדר' }, 500, request);
 
-  const typeEntry = Object.values(PRINT_CATALOG).find(t => t.sizes.some(s => s.sku === sku));
-  const skuAttributes = { ...(typeEntry?.attributes || {}) };
-  // Canvas requires wrap attribute; use provided value or default for quote (price is same for all wraps)
-  if (wrap) skuAttributes.wrap = wrap;
-  else if (sku.startsWith('GLOBAL-CAN-')) skuAttributes.wrap = 'ImageWrap';
-
-  const res = await fetch('https://api.prodigi.com/v4.0/quotes', {
+  const res = await fetch(`${GELATO_API}/orders:quote`, {
     method: 'POST',
-    headers: { 'X-API-Key': env.PRODIGI_API_KEY, 'Content-Type': 'application/json' },
+    headers: { 'X-API-KEY': env.GELATO_API_KEY, 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      shippingMethod: 'Standard',
-      destinationCountryCode: 'IL',
-      currencyCode: 'USD',
-      items: [{ sku, copies: 1, attributes: skuAttributes, assets: [{ printArea: 'default' }] }]
+      orderType: 'order',
+      orderReferenceId: `quote-${Date.now()}`,
+      customerReferenceId: 'quote',
+      currency: 'USD',
+      recipient: { country: 'IL' },
+      products: [{ itemReferenceId: 'item-1', productUid: sku, quantity: 1 }]
     })
   });
 
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
-    return jsonRes({ error: err.detail || `שגיאת Prodigi: ${res.status}` }, 500, request);
+    return jsonRes({ error: err.message || `שגיאת Gelato: ${res.status}` }, 500, request);
   }
 
   const data = await res.json();
   const quote = data.quotes?.[0];
   if (!quote) return jsonRes({ error: 'לא התקבלה הצעת מחיר' }, 500, request);
 
-  const prodigiCost = parseFloat(quote.costSummary?.totalCost?.amount || 0);
-  // Markup: 2.5x total cost, rounded up to nearest $5
-  const sellPrice = Math.ceil((prodigiCost * 2.5) / 5) * 5;
+  const productCost = parseFloat(quote.products?.[0]?.price || 0);
+  const shippingCost = parseFloat(quote.shipmentMethods?.[0]?.price || 0);
+  const totalCost = productCost + shippingCost;
+  // Markup: 1.6x total cost (product + shipping), rounded up to nearest $5
+  const sellPrice = Math.ceil((totalCost * 1.6) / 5) * 5;
   return jsonRes({ sellPrice, sku }, 200, request);
 }
 
@@ -714,47 +701,41 @@ async function handlePrintOrderComplete(request, env) {
   // Resolve product entry
   const typeEntry = Object.values(PRINT_CATALOG).find(t => t.sizes.some(s => s.sku === sku));
   const sizeEntry = typeEntry?.sizes.find(s => s.sku === sku);
-  const orderAttributes = { ...(typeEntry?.attributes || {}) };
-  if (wrapValue) orderAttributes.wrap = wrapValue;
 
-  // Create Prodigi order
+  // Create Gelato order
   const orderId = crypto.randomUUID();
-  const prodigiRes = await fetch('https://api.prodigi.com/v4.0/orders', {
+  const gelatoRes = await fetch(`${GELATO_API}/orders`, {
     method: 'POST',
-    headers: { 'X-API-Key': env.PRODIGI_API_KEY, 'Content-Type': 'application/json' },
+    headers: { 'X-API-KEY': env.GELATO_API_KEY, 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      merchantReference: orderId,
-      idempotencyKey: orderId,
-      shippingMethod: 'Standard',
-      callbackUrl: `${origin}/api/print/webhook`,
+      orderType: 'order',
+      orderReferenceId: orderId,
+      customerReferenceId: orderId,
+      currency: 'USD',
       recipient: {
         name: address.name,
         email: address.email || '',
-        phoneNumber: address.phone || '',
-        address: {
-          line1: address.line1,
-          postalOrZipCode: address.zip,
-          countryCode: 'IL',
-          townOrCity: address.city,
-        }
+        phone: address.phone || '',
+        addressLine1: address.line1,
+        city: address.city,
+        postCode: address.zip,
+        country: 'IL'
       },
-      items: [{
-        merchantReference: `item-${orderId}`,
-        sku,
-        copies: 1,
-        sizing: 'fillPrintArea',
-        attributes: orderAttributes,
-        assets: [{ printArea: 'default', url: photoUrl }]
+      products: [{
+        itemReferenceId: `item-${orderId}`,
+        productUid: sku,
+        quantity: 1,
+        files: [{ type: 'default', url: photoUrl }]
       }]
     })
   });
 
-  if (!prodigiRes.ok) {
-    const err = await prodigiRes.json().catch(() => ({}));
-    return jsonRes({ error: `שגיאת Prodigi: ${err.detail || prodigiRes.status}` }, 500, request);
+  if (!gelatoRes.ok) {
+    const err = await gelatoRes.json().catch(() => ({}));
+    return jsonRes({ error: `שגיאת Gelato: ${err.message || gelatoRes.status}` }, 500, request);
   }
-  const pd = await prodigiRes.json();
-  const prodigiOrderId = pd.order?.id || '';
+  const pd = await gelatoRes.json();
+  const prodigiOrderId = pd.id || '';
 
   // Human-readable product label
   const productLabel = typeEntry && sizeEntry ? `${typeEntry.label} — ${sizeEntry.label}` : sku;
@@ -855,12 +836,12 @@ async function handlePrintCancel(request, env) {
     return new Response(cancelPage('פג תוקף הביטול (שעה אחרי ההזמנה)', false), { headers: { 'Content-Type': 'text/html;charset=UTF-8' } });
   }
 
-  // Cancel at Prodigi
+  // Cancel at Gelato
   if (order.prodigi_order_id) {
-    await fetch(`https://api.prodigi.com/v4.0/orders/${order.prodigi_order_id}/actions/cancel`, {
+    await fetch(`${GELATO_API}/orders/${order.prodigi_order_id}/cancel`, {
       method: 'POST',
-      headers: { 'X-API-Key': env.PRODIGI_API_KEY, 'Content-Type': 'application/json' }
-    });
+      headers: { 'X-API-KEY': env.GELATO_API_KEY, 'Content-Type': 'application/json' }
+    }).catch(() => {});
   }
 
   await env.DB.prepare('UPDATE print_orders SET status=? WHERE id=?').bind('cancelled', token).run();
@@ -893,32 +874,36 @@ async function handlePrintWebhook(request, env) {
   const payload = await request.json().catch(() => null);
   if (!payload) return new Response('ok', { status: 200 });
 
-  const prodigiOrderId = payload.data?.order?.id || payload.subject;
-  const stage = payload.data?.order?.status?.stage;
-  if (!prodigiOrderId || !stage) return new Response('ok', { status: 200 });
+  // Gelato webhook format: { event: 'order_status_updated', order: { id, orderReferenceId, status, shipments } }
+  const gelatoOrderId = payload.order?.id || payload.order?.orderReferenceId;
+  const status = payload.order?.status;
+  if (!gelatoOrderId || !status) return new Response('ok', { status: 200 });
 
-  // Map Prodigi stage to our status
+  // Map Gelato status to our status
   const STATUS_MAP = {
-    'InProgress': 'in_production',
-    'Complete':   'shipped',
-    'Cancelled':  'cancelled',
+    'in_production': 'in_production',
+    'printed':       'in_production',
+    'shipped':       'shipped',
+    'delivered':     'shipped',
+    'cancelled':     'cancelled',
+    'failed':        'cancelled',
   };
-  const newStatus = STATUS_MAP[stage];
+  const newStatus = STATUS_MAP[status.toLowerCase()];
   if (!newStatus) return new Response('ok', { status: 200 });
 
   await env.DB.prepare(
     'UPDATE print_orders SET status=? WHERE prodigi_order_id=? AND status != ?'
-  ).bind(newStatus, prodigiOrderId, 'cancelled').run();
+  ).bind(newStatus, gelatoOrderId, 'cancelled').run();
 
   // Send shipping notification to customer when shipped
   if (newStatus === 'shipped' && env.RESEND_API_KEY) {
     const order = await env.DB.prepare(
       'SELECT * FROM print_orders WHERE prodigi_order_id=?'
-    ).bind(prodigiOrderId).first();
+    ).bind(gelatoOrderId).first();
     if (order?.customer_email) {
       const fromEmail = env.FROM_EMAIL || 'amit@amitphotos.com';
-      const shipments = payload.data?.order?.shipments || [];
-      const tracking = shipments[0]?.tracking?.number || '';
+      const shipments = payload.order?.shipments || [];
+      const tracking = shipments[0]?.trackingCode || shipments[0]?.tracking?.number || '';
       const html = `<!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head><meta charset="UTF-8"></head>
