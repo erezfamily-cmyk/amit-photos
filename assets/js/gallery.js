@@ -1045,7 +1045,6 @@ const PrintShop = (() => {
   let selectedType = null;
   let selectedSku = null;
   let selectedPrice = null;
-  let selectedWrap = null;
 
   function showStep(n) {
     [1, 2, 3].forEach(i => {
@@ -1057,7 +1056,7 @@ const PrintShop = (() => {
 
   async function open(photo) {
     currentPhoto = photo;
-    selectedType = null; selectedSku = null; selectedPrice = null; selectedWrap = null;
+    selectedType = null; selectedSku = null; selectedPrice = null;
     document.getElementById('print-modal-img').src = photo.thumbnail || photo.url;
     document.getElementById('print-modal-title').textContent = photo.title || '';
     document.getElementById('print-price-display').textContent = '';
@@ -1076,7 +1075,6 @@ const PrintShop = (() => {
   }
 
   const TYPE_ICONS = {
-    photo: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2" y="5" width="20" height="15" rx="1.5"/><circle cx="12" cy="12.5" r="3.5"/><path d="M9 5l1.2-2h3.6L15 5" stroke-linecap="round"/><circle cx="18.5" cy="8" r=".8" fill="currentColor" stroke="none"/></svg>`,
     canvas: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="3" width="18" height="18" rx="1"/><path d="M3 8h18M3 16h18M8 3v18M16 3v18" stroke-width="1" opacity=".5"/><circle cx="12" cy="12" r="2" stroke-width="1.5"/></svg>`,
     poster: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="5" y="2" width="14" height="20" rx="1"/><path d="M8 7h8M8 11h8M8 15h5" stroke-linecap="round"/></svg>`,
   };
@@ -1116,26 +1114,16 @@ const PrintShop = (() => {
 
   function selectType(type) {
     selectedType = type;
-    selectedSku = null; selectedPrice = null; selectedWrap = null;
+    selectedSku = null; selectedPrice = null;
     const t = catalog[type];
-    const photoLandscape = currentPhoto && (currentPhoto.width || 0) > (currentPhoto.height || 0);
     document.getElementById('print-type-label').textContent = t.label;
-    document.getElementById('print-wrap-section').classList.add('hidden');
     document.getElementById('print-to-details-btn').classList.remove('visible');
     const container = document.getElementById('print-size-options');
-    container.innerHTML = t.sizes.map(s => {
-      const isSquare = parseFloat(s.w) === parseFloat(s.h);
-      const useLandscape = photoLandscape && !isSquare;
-      const dw = useLandscape ? s.h : s.w;
-      const dh = useLandscape ? s.w : s.h;
-      const minW = useLandscape ? s.minH : s.minW;
-      const minH = useLandscape ? s.minW : s.minH;
-      const label = useLandscape ? swapDimLabel(s.label) : s.label;
-      return `<button type="button" class="print-size-btn" data-sku="${s.sku}" data-w="${dw}" data-h="${dh}" data-minw="${minW}" data-minh="${minH}">
-        ${sizeVisual(dw, dh)}
-        <span>${label}</span>
-      </button>`;
-    }).join('');
+    container.innerHTML = t.sizes.map(s =>
+      `<button type="button" class="print-size-btn" data-sku="${s.sku}" data-minw="${s.minW}" data-minh="${s.minH}">
+        <span>${s.label}</span>
+      </button>`
+    ).join('');
     container.querySelectorAll('.print-size-btn').forEach(btn => {
       btn.addEventListener('click', () => selectSize(btn));
     });
@@ -1337,47 +1325,17 @@ const PrintShop = (() => {
     return 'ok';
   }
 
-  function renderWrapOptions() {
-    selectedWrap = null;
-    document.getElementById('print-to-details-btn').classList.remove('visible');
-    const WRAPS = [
-      { value: 'ImageWrap',  label: 'גלריה',  desc: 'התמונה עוטפת את הצדדים', visual: 'image-wrap' },
-      { value: 'MirrorWrap', label: 'מראה',   desc: 'קצוות התמונה משוקפים',   visual: 'mirror-wrap' },
-      { value: 'White',      label: 'לבן',    desc: 'שוליים לבנים נקיים',     visual: 'white-wrap' },
-      { value: 'Black',      label: 'שחור',   desc: 'שוליים שחורים',          visual: 'black-wrap' },
-    ];
-    const wrapContainer = document.getElementById('print-wrap-options');
-    wrapContainer.innerHTML = WRAPS.map(w =>
-      `<button type="button" class="print-wrap-btn" data-wrap="${w.value}">
-        <span class="wrap-visual wrap-visual--${w.visual}" aria-hidden="true"></span>
-        <span class="wrap-text"><strong>${w.label}</strong><span>${w.desc}</span></span>
-      </button>`
-    ).join('');
-    wrapContainer.querySelectorAll('.print-wrap-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        wrapContainer.querySelectorAll('.print-wrap-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        selectedWrap = btn.dataset.wrap;
-        document.getElementById('print-to-details-btn').classList.add('visible');
-      });
-    });
-    document.getElementById('print-wrap-section').classList.remove('hidden');
-  }
 
   async function selectSize(btn) {
     document.getElementById('print-size-options').querySelectorAll('.print-size-btn')
       .forEach(b => b.classList.toggle('active', b === btn));
     selectedSku = btn.dataset.sku;
-    selectedPrice = null; selectedWrap = null;
+    selectedPrice = null;
     document.getElementById('print-to-details-btn').classList.remove('visible');
-    document.getElementById('print-wrap-section').classList.add('hidden');
 
-    // Show crop preview immediately
-    const aspectW = parseFloat(btn.dataset.w);
-    const aspectH = parseFloat(btn.dataset.h);
-    const minW    = parseFloat(btn.dataset.minw);
-    const minH    = parseFloat(btn.dataset.minh);
-    initCropPreview(getLightboxUrl(currentPhoto.url), aspectW, aspectH, minW, minH);
+    const minW = parseFloat(btn.dataset.minw);
+    const minH = parseFloat(btn.dataset.minh);
+    initCropPreview(getLightboxUrl(currentPhoto.url), minW, minH, minW, minH);
 
     document.getElementById('print-price-display').textContent = 'טוען מחיר...';
     try {
@@ -1390,11 +1348,7 @@ const PrintShop = (() => {
       if (r.ok) {
         selectedPrice = data.sellPrice;
         document.getElementById('print-price-display').textContent = `$${data.sellPrice} — כולל משלוח לישראל`;
-        if (selectedType === 'canvas') {
-          renderWrapOptions(); // shows wrap section, continue btn hidden until wrap picked
-        } else {
-          document.getElementById('print-to-details-btn').classList.add('visible');
-        }
+        document.getElementById('print-to-details-btn').classList.add('visible');
       } else {
         document.getElementById('print-price-display').textContent = data.error || 'שגיאה בטעינת מחיר';
       }
@@ -1405,7 +1359,6 @@ const PrintShop = (() => {
 
   function goToDetails() {
     if (!selectedSku || !selectedPrice) return;
-    if (selectedType === 'canvas' && !selectedWrap) return;
     document.getElementById('print-pay-amount').textContent = `$${selectedPrice}`;
     document.getElementById('print-error').textContent = '';
     showStep(3);
@@ -1453,9 +1406,7 @@ const PrintShop = (() => {
 
     const address = { name, phone, email, line1, city, zip, cropUrl };
     const customB64 = btoa(unescape(encodeURIComponent(JSON.stringify(address))));
-    const itemNumber = selectedWrap
-      ? `PRINT_${currentPhoto.id}_${selectedSku}:${selectedWrap}`
-      : `PRINT_${currentPhoto.id}_${selectedSku}`;
+    const itemNumber = `PRINT_${currentPhoto.id}_${selectedSku}`;
     const sizeEntry = catalog[selectedType]?.sizes.find(s => s.sku === selectedSku);
     const itemName = `${currentPhoto.title || 'תמונה'} — ${sizeEntry?.label || ''}`;
 
@@ -1483,8 +1434,6 @@ const PrintShop = (() => {
     document.getElementById('print-back-1').addEventListener('click', () => {
       showStep(1);
       document.getElementById('print-preview-wrap').classList.add('hidden');
-      document.getElementById('print-wrap-section').classList.add('hidden');
-      selectedWrap = null;
     });
     document.getElementById('print-back-2').addEventListener('click', () => {
       showStep(2);

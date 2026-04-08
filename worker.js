@@ -656,16 +656,13 @@ async function handlePrintOrderComplete(request, env) {
   if (!tx || !itemNumber) return jsonRes({ error: 'חסרים פרמטרים' }, 400, request);
   if (!env.PAYPAL_PDT_TOKEN) return jsonRes({ error: 'PDT token לא מוגדר' }, 500, request);
 
-  // Parse: PRINT_{photoId}_{sku} or PRINT_{photoId}_{sku}:{wrap}
+  // Parse: PRINT_{photoId}_{sku}
   if (!itemNumber.startsWith('PRINT_')) return jsonRes({ error: 'item_number לא תקין' }, 400, request);
   const rest = itemNumber.slice(6);
   const firstUnderscore = rest.indexOf('_');
   if (firstUnderscore === -1) return jsonRes({ error: 'item_number לא תקין' }, 400, request);
   const photoId = rest.substring(0, firstUnderscore);
-  const skuAndWrap = rest.substring(firstUnderscore + 1);
-  const colonIdx = skuAndWrap.indexOf(':');
-  const sku = colonIdx === -1 ? skuAndWrap : skuAndWrap.substring(0, colonIdx);
-  const wrapValue = colonIdx === -1 ? null : (skuAndWrap.substring(colonIdx + 1) || null);
+  const sku = rest.substring(firstUnderscore + 1);
 
   // Verify PayPal
   let paypalText;
