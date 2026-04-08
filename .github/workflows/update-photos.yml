@@ -34,6 +34,9 @@ jobs:
           GOOGLE_TOKEN_JSON: ${{ secrets.GOOGLE_TOKEN }}
         run: python src/agent_photos.py
 
+      - name: עדכון Sitemap
+        run: python src/generate_sitemap.py
+
       - name: בדוק אם יש שינויים
         id: changes
         run: |
@@ -44,7 +47,7 @@ jobs:
         run: |
           git config user.name "Photos Agent"
           git config user.email "agent@amitphotos.com"
-          git add data/photos.json
+          git add data/photos.json sitemap.xml
           git commit -m "🤖 עדכון אוטומטי: תמונות חדשות מ-Google Drive"
           git pull --rebase origin main
           git push origin main

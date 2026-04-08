@@ -1,15 +1,2251 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://amitphotos.com/</loc>
-    <lastmod>2026-04-05</lastmod>
-    <changefreq>weekly</changefreq>
+    <lastmod>2026-04-08</lastmod>
+    <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://amitphotos.com/download.html</loc>
-    <lastmod>2026-03-30</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.3</priority>
+    <loc>https://amitphotos.com/</loc>
+    <lastmod>2026-04-08</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1jmBaBvk8rKoV5rvARPayvd010U_CW_gp&sz=w600</image:loc>
+      <image:title>כניסה לשירותים ציבוריים</image:title>
+      <image:caption>כיור וינטג' תלוי על קיר בין שתי דלתות עתיקות</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1Lin1fkPbPPkPq79TeljA6LDLv_rzG1F9&sz=w600</image:loc>
+      <image:title>מכולות משא צבעוניות</image:title>
+      <image:caption>שתי מכולות משא צהובה ואדומה עם נעליים וציוד אחסון</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1_rxjKeg8Fm-Pr37s3uHbT5po91HwCT0f&sz=w600</image:loc>
+      <image:title>אוסף בקבוקי יין ירוקים</image:title>
+      <image:caption>שורות של בקבוקי יין ירוקים מסודרים בתא אחסון קר וקוטו</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1FD7o7nYN8Semdl2W2eaE7_mEHiKpbHCM&sz=w600</image:loc>
+      <image:title>חלון לבן על כחול</image:title>
+      <image:caption>חלון תריס לבן עם פריטים על רקע קיר כחול עתיק</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1urStD-M6I3FRdNOOBg22Kn0N6-csR3L5&sz=w600</image:loc>
+      <image:title>חלון כחול עתיק</image:title>
+      <image:caption>חלון כחול בשיטור עץ עם ידיות מתכת על קיר בהיר</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1VxjOZ0V3dyUIRAtzHNkSVoWpNykkNw8d&sz=w600</image:loc>
+      <image:title>חלון בקיר אדום</image:title>
+      <image:caption>חלון עם משקופים אפורים בקיר מטויח בצבע אדום עוגבי</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1rPOKfINEQiiwQSkoflezhxgLH0WI1ygG&sz=w600</image:loc>
+      <image:title>טקסטורות וצבעים מופשטים אמנות</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1PO8ftae1KQLyfWLF58mYeHcBmv4_9fz6&sz=w600</image:loc>
+      <image:title>חפצי וינטג' טבע דומם קומפוזיציה</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1mkj7yjz3I-Y951ZoHVSH_-6v8FjL66ap&sz=w600</image:loc>
+      <image:title>חלון כחול על קיר צהוב</image:title>
+      <image:caption>חלון אליפטי כחול עם מסגרת חומה על רקע קיר צהוב</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=13xVSea2recyRuCOKwzzRZntXwPMJHWoz&sz=w600</image:loc>
+      <image:title>גיאומטריה בצבעים</image:title>
+      <image:caption>קומפוזיציה מינימליסטית של צורות גיאומטריות בכחול ואדום</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1MoJcye0TH-X8JnZNFJlk-101A4iuqWS7&sz=w600</image:loc>
+      <image:title>גיאומטריה של צבעים</image:title>
+      <image:caption>צורות גיאומטריות צבעוניות עם חלונות עגולים כחולים</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=11AnFgtB5Ch-asooNb6dVFPdOdvZ6C0y_&sz=w600</image:loc>
+      <image:title>אורות ארכיטקטוניים</image:title>
+      <image:caption>תקרה מואורת בתבנית גיאומטרית של קווים כתומים ולבנים</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1cqtkYy8vr20KSAuajsQ1Ppirv7YBchPv&sz=w600</image:loc>
+      <image:title>סוכריות ורודות</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1Vp_xpnwXpsi_ocqwMEshnoPIza5FpRZ5&sz=w600</image:loc>
+      <image:title>פנינים זהב וכסף</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1DhDoQ_nfrWXjGVeXaUDQRym9w52kN77w&sz=w600</image:loc>
+      <image:title>תולעי סוכר צבעוניות</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1oukcNbPlg4Y9dXqgxGkP7zMXE4roZAyj&sz=w600</image:loc>
+      <image:title>סחלבים אדומים</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1GOdKAxmW8Xev5kcjZR3pCF4_GW7owLxU&sz=w600</image:loc>
+      <image:title>גלגלי צבע</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1EZ-2jnCDVgVLuykryr3OjWlw2aPt4GuG&sz=w600</image:loc>
+      <image:title>מטבעות שוקולד</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1DQKZ5yTcOFnXw8nqpPz1RMQ8u0DZ-pG5&sz=w600</image:loc>
+      <image:title>קיר האהבה</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1up7HPt-rgyqJVYem3vPbShJePescnCZc&sz=w600</image:loc>
+      <image:title>טextiles צבעוניים תלויים</image:title>
+      <image:caption>אוסף של בדים וטextiles בעיצובים מסורתיים בצבעים חמים</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1d8LFk1t2KZRu2o8VmgJxszQCFPbEW-lg&sz=w600</image:loc>
+      <image:title>שדה פרחים בשפע</image:title>
+      <image:caption>שדה רחב מלא פרחים צהובים עם שביל מפתל בין עצים</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1MYPjGXaSH8bE9-RpJr8X0ZX8gEDKq2K6&sz=w600</image:loc>
+      <image:title>טורבינת רוח בנוף ישראלי</image:title>
+      <image:caption>טורבינת רוח יחידה על רקע נוף ירוק וההרים הרחוקים</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1OZKg38_Q0BLEzqhDGCLVP2r0yHSPXW2P&sz=w600</image:loc>
+      <image:title>ירוק</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1bjUIgbamO_clsQDgrMHU8QDAfNA1mXuD&sz=w600</image:loc>
+      <image:title>אור בוקר</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=15DHem8sAK2c9pkuXzPd03rP34-UnHe3M&sz=w600</image:loc>
+      <image:title>שקט בשדה לבנדר</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=19T9mcLvqy-4zoP-pdkFFgImvFeJM8co1&sz=w600</image:loc>
+      <image:title>רשת של חיבורים</image:title>
+      <image:caption>דמות אדם תלויה ברשת קוים גיאומטרית על רקע שמיים כחולים</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1M0MNq47h_rck94IU0GlqlX9yIA5_6MMe&sz=w600</image:loc>
+      <image:title>שדה בזריחה</image:title>
+      <image:caption>דרך עפר בשדה חקלאי עם שמש זורחת על האופק</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1Ky7uRmF5GurOE5OH_vtk-u_0iSWxcfQu&sz=w600</image:loc>
+      <image:title>מגדל ארגזים בנגב</image:title>
+      <image:caption>מבנה אמנותי מארגזים עץ בשדה קרוב בנוף ישראלי</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1wE6dcdkaciBGBWTqztbGuQTSdJRr_Mw1&sz=w600</image:loc>
+      <image:title>מגדל דוד בלילה</image:title>
+      <image:caption>מגדל דוד ובחומות ירושלים בתאורת ערב עם עקבות אור של תנועה</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1CUMXBEV1qLilGxw0eMMi_G5S3XuUrUeB&sz=w600</image:loc>
+      <image:title>בית נטוש בשדה</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1XEuYM78FLDe1J3r8kFbHQbjRB_BssErN&sz=w600</image:loc>
+      <image:title>נוף ים המלח מהמצפה</image:title>
+      <image:caption>נוף פנורמי של ים המלח מנקודת צפייה גבוהה בערפילי חום</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1KDUlqmuPI2047DDStVYUdXNvbcbn1lB-&sz=w600</image:loc>
+      <image:title>נוף ים המלח מהמצודה</image:title>
+      <image:caption>מבט על ים המלח והערבה דרך חלון אבן עתיק בצוק הר סדום</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1m6IFLTq0pfpdgENTItciXddOOGIOUzt2&sz=w600</image:loc>
+      <image:title>שדה חיטה בעמק יזרעאל</image:title>
+      <image:caption>שדה חיטה זהוב בשעת הקציר עם הרים ברקע בזריחה</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1RwVJCbbNJAk-JUZI087Gm9kpMBM6fnJr&sz=w600</image:loc>
+      <image:title>תחנת אוטובוס בשדה</image:title>
+      <image:caption>תא המתנה ירוק בודד על רקע שדות צהובים וירוקים רחבים</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1UEHatC39tA67plADlcepZ4giuxRKRcfk&sz=w600</image:loc>
+      <image:title>נוף טבע בישראל מבט פנורמי</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1IBAfg_OCYwqil4w957gA-b0ferLS1_5G&sz=w600</image:loc>
+      <image:title>שדה תירס בעמק הישראלי</image:title>
+      <image:caption>שדה תירס שופע בירוקות מול הרים וב עדשת תצפית רחבה</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1G6p9VgAqYn0G48z3vOQsMl_nPib5HyF8&sz=w600</image:loc>
+      <image:title>פרדס בחורף</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1Lt5WDWOxYerwcxNF3ZwLUET-9_tA7Q4b&sz=w600</image:loc>
+      <image:title>בריכת הטיט של הים המלח</image:title>
+      <image:caption>בריכת טיט טבעית על חוף הים המלח בישראל</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1oyNjIb0iUVnfCah6IAjgFnDCZGKtq7gA&sz=w600</image:loc>
+      <image:title>שקט של מים</image:title>
+      <image:caption>נוף מינימליסטי של אגם שקט עם שמיים맑은 כחולים</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1rroI9xJY7BrYpb0QDM3rf9LmAuMTujlj&sz=w600</image:loc>
+      <image:title>חלון לים</image:title>
+      <image:caption>נוף ים וחוף דרך צינור בטון על החוף</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=18l1NkO-12l3fgP6JEMu6p1oL3RSBixX8&sz=w600</image:loc>
+      <image:title>הים התיכון הזוהר</image:title>
+      <image:caption>סלעים עתיקים על החוף עם נוף הרים וסירות דיג רחוק</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=14vthzIuM_Gi0Bl5IsQbogDajHKad6B1r&sz=w600</image:loc>
+      <image:title>שקט על שפת הים</image:title>
+      <image:caption>שתי כיסאות לבנים על החוף מול נוף הרים עד אופק הים</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1n7ml6jRSlfDWtrILiPi8oqevBQtelUoG&sz=w600</image:loc>
+      <image:title>שקט של שקיעה בים</image:title>
+      <image:caption>כיסאות חלומיים על חוף שלו עם הרים מרוחקים בשקיעה סגולה</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=18yuQlOZTp7sf-JjpfCBVCRItafDJSuG0&sz=w600</image:loc>
+      <image:title>שקיעה סגולה על הים</image:title>
+      <image:caption>חוף שקט עם השתקפות סגולות של שקיעה יפה על מי הים</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1nLh9i-XaerEFjja5UUD3KfZgg1jRPv5J&sz=w600</image:loc>
+      <image:title>שחפים בערפל</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1bZhip7_LBDGQWL6KwGfzPP9vMMaK_I0_&sz=w600</image:loc>
+      <image:title>הנדידה של העגורנים</image:title>
+      <image:caption>עדר ענק של עגורנים נוחתים בשדה ישראלי בעת הנדידה השנתית</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1YIY2z5GedI2Av8vuozdyUP38CyedES4B&sz=w600</image:loc>
+      <image:title>עגורים בטיסה</image:title>
+      <image:caption>זוג עגורים עפים בשמיים צלולים מעל הנוף</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1_GPklSlYpaxTmLnu7bArKoDZSUDaNgfR&sz=w600</image:loc>
+      <image:title>שקיעה על חופי סלע</image:title>
+      <image:caption>שקיעה מעוצבת על חוף סלעי עם גלים חלקים וציפורים בשמיים</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=16hKNONU3uhqCUBBG2VS0oIK_KqWP3lP6&sz=w600</image:loc>
+      <image:title>גלים על הסלע</image:title>
+      <image:caption>גלי ים מקציפים מתנגשים בסלעי החוף בתנועה מתמשכת</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1M5kXPLpXu6PfoGkfd4JdW6Id1faF0dKA&sz=w600</image:loc>
+      <image:title>כנסייה עם כיפה כחולה בסנטוריני</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1P0_tbOufdRIALyGsCnhBXKN4D_C_m8rh&sz=w600</image:loc>
+      <image:title>שקיעה על החופים</image:title>
+      <image:caption>שקיעה זהובה על חופי סלע עם גלים שוקעים בכחול השקט</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1H1XNPcnpmQmlyM8aaqFG8cK5DFZFNVlt&sz=w600</image:loc>
+      <image:title>חלון אל הים</image:title>
+      <image:caption>נוף ימי דרך חור בסלע עתיק על החוף</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1gQiDx1lCA3I00hm980ZTHnAWb3GjnC-d&sz=w600</image:loc>
+      <image:title>הר החרמון בשלג</image:title>
+      <image:caption>הר החרמון המושלג בעונת החורף, נראה מנוף תחומי בישראל</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1kiRdVJO2wVz5LF1BsCwxg9I23GeQX85E&sz=w600</image:loc>
+      <image:title>דיג בשקיעה על הסלע</image:title>
+      <image:caption>דייגים על סלע בחוף הים בשקיעה זהובה עם אנשים בים</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1Rwx9jKcw9RERPNi2Rf1PdXuRbGrDIHXC&sz=w600</image:loc>
+      <image:title>שקיעה על ים סוף</image:title>
+      <image:caption>כסאות חוף לבנים על חוף ים סוף בזריחה ורודה</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1LLJ3g6rQlEhnQ_nTZhcyWrWifVa3XKgt&sz=w600</image:loc>
+      <image:title>שקיעה על הסלעים</image:title>
+      <image:caption>שקיעה אדומה מעל חוף סלעוני עם הים השקט במרחק</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1STznCFeJOu31QkoqVMHTm7i_cXvevzro&sz=w600</image:loc>
+      <image:title>אמנות רחוב עם עין</image:title>
+      <image:caption>ציור גרافיטי צבעוני של עין גדולה על קיר עם קרחון</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1Yrm9Ix9wGU-h70l7GadHkAFOfHTRM8M2&sz=w600</image:loc>
+      <image:title>פרפר שועל על קוץ</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1qAYmV4wg-5I8isvUTrP1kZnT1leAHkvA&sz=w600</image:loc>
+      <image:title>ורד ורוד עדין</image:title>
+      <image:caption>תצלום מקרוב של ורד ורוד בפריחה מלאה עם עלים משופעים</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1_OgIaYrGEs5a2CWXgIw-1dQSGGoSsgKz&sz=w600</image:loc>
+      <image:title>דבורה לעבר פרח אירוס</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1goFHFB1TSGwfiXwOFzG_QKdzboq7wueQ&sz=w600</image:loc>
+      <image:title>זוג שפיריות מזדווגות</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1JEHgCiemUvp3zHUxNiXtxnsA9r6-aV9G&sz=w600</image:loc>
+      <image:title>שפיריות בזיווג על ענף</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1SNmXBUg7djQB4jgKPDFHu7SXlgjP3krj&sz=w600</image:loc>
+      <image:title>שפיריות מזדווגות בנוף</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1sFRvwHnpOODK4KEkEaJCsHNZGl35oBrA&sz=w600</image:loc>
+      <image:title>פרפר ציר מצוי על פרח ורוד</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1qN86Ph1fZkA4zbFRKqMHzuk_Nkrh3Ovm&sz=w600</image:loc>
+      <image:title>פרפר ציר — מבט מהצד</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1KfM1ZQss1JmKtQjbk2_-Rfak_FI_g4p5&sz=w600</image:loc>
+      <image:title>פרפר ציר על פרח כתום</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1B1OIi_niEjTde-YsqN9yu4hb2Oang76t&sz=w600</image:loc>
+      <image:title>פרפר קטן על ציניה ורודה</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1jM6WxSM-WFWihhnhgqURVJAyhVsS62rH&sz=w600</image:loc>
+      <image:title>פרפר על פרח — רקע כהה</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=10rE-_ZJqqxcpfrcIDulapy2WIk_ZbPLQ&sz=w600</image:loc>
+      <image:title>שבלול זעיר על קצה עלה</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=15Lr-mM2Y0Bkzd7r_YcOXxghEjLOJM3dA&sz=w600</image:loc>
+      <image:title>פרת משה רבנו על צמח</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1GjwX2sGR2KDTdK8nFPRoJnpTlVAH9-JK&sz=w600</image:loc>
+      <image:title>עלה בשינוי עונות</image:title>
+      <image:caption>תקריב של עלה בתהליך שינוי צבע מירוק ליוקרתי</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1EyqJyuAVzyIdqtd3zToyDsPN3pcN9MwA&sz=w600</image:loc>
+      <image:title>עלים בשינוי עונתי</image:title>
+      <image:caption>תקריב של עלים צהובים וכתומים בתהליך שינוי צבע הסתווי</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=16Scx1OhcvEY-JkM7g4barZWZAf0uugXl&sz=w600</image:loc>
+      <image:title>פרפר כחול על פרח צהוב</image:title>
+      <image:caption>פרפר כחול עם שוליים לבנים מונח על květר צהוב זעיר</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1-oLwxYgYjKDWNeIzJPsVbIPjhBOGT70I&sz=w600</image:loc>
+      <image:title>שפירית אדומה על מקל</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1YNcAYWbn10SGtWab0Ei0lo3jFiFsQ6wZ&sz=w600</image:loc>
+      <image:title>חיפושית מתכתית ירוקה על עלה</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1u99GC6e2o2WTuvvNQEgIEChBKwIeKmlI&sz=w600</image:loc>
+      <image:title>זבוב טורף עם טרף</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1mghtHqO8attO4O_zEveQ7-67qxPc6QyE&sz=w600</image:loc>
+      <image:title>bugs on flowers and plants</image:title>
+      <image:caption>bugs on flowers and plants</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1YgAewuWweRkbHoaesOM02fVfHzGaeqWt&sz=w600</image:loc>
+      <image:title>bugs on flowers and plants</image:title>
+      <image:caption>bugs on flowers and plants</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1xm2G91H4wwei6drJdQ0CliJzi2oWWnlZ&sz=w600</image:loc>
+      <image:title>פשפש אדום-שחור על עלה</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=11cMWzDs5DL_Nwnlw89bJ1sHl1Su78bk9&sz=w600</image:loc>
+      <image:title>פרפר לבן על גבעול דשא</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=10rJ6dY9KkGS9pk1tOjo4U-uLaGyGY4HF&sz=w600</image:loc>
+      <image:title>דבורה על חמניה</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1CHad4RIp3K8sApGtZwDEJcM5z1Ay5mEl&sz=w600</image:loc>
+      <image:title>פרפר ציר על חמניה</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1QQoex9zF408TTs9PG49saKwCXsKIclgA&sz=w600</image:loc>
+      <image:title>שבלול על גבעול</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=176UGqCG8j3MmdJ2u7Wp05fETAnQruL3Q&sz=w600</image:loc>
+      <image:title>שבלול על קצה עלה</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1R5jm4QZChik_NTc1CoZnfNr56FQmz7qI&sz=w600</image:loc>
+      <image:title>עכביש על קורה</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1zGIjUE5iH16qUupQ5xGXZBC0Qn9eYlAq&sz=w600</image:loc>
+      <image:title>פרפר לבן על מרגנית</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=12j16hqpKwFflypGVYZrvXhFDCH0YgeCT&sz=w600</image:loc>
+      <image:title>דבורה מוכסת אבקה על חמניה</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1rNOjwjjmhzbQp32q7byiXHj5UJB0tYgd&sz=w600</image:loc>
+      <image:title>פרפר כחול על עלה</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1uzpLjW0eCjvfwVcaaLAUGmShrA0Y0Lo0&sz=w600</image:loc>
+      <image:title>פרפר כתום-שחור על עשב</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1-mXFplfs5E1LS9_Ss3T5SpzfVr1VK0Iv&sz=w600</image:loc>
+      <image:title>פרפר כחול על צמח</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1U1fMS581LcGhLDtWACy8egYhZSDevuzK&sz=w600</image:loc>
+      <image:title>עכביש סרטן לבן בתוך פרח</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1rszBmosFZprvt4HBLPl6rDYYbcvhjTkx&sz=w600</image:loc>
+      <image:title>קורת עכביש עם טיפות טל</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1pGM9mPLg74SmiXFaEHkwTR-0VQJQMDte&sz=w600</image:loc>
+      <image:title>דבורה מתקרבת לחמניה</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1kVMLX7V2GeD-pHr08pSJY_3rKUOh-cXy&sz=w600</image:loc>
+      <image:title>עין הזיקית בתקריב</image:title>
+      <image:caption>צילום מקרוב של עין זיקית עם קשקשי עור בטונים זהובים וכחולים</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1T_sZuDJIECAtqscPBtZ1qoi7KECxxmLu&sz=w600</image:loc>
+      <image:title>פרחים ורודים בתקריב</image:title>
+      <image:caption>זר פרחים צפוף בגוונים של ורוד, שמנת וזהב בתצילום מאקרו עדין</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=12RvFwqLBEYL56rREul7msc4RkgSqixCI&sz=w600</image:loc>
+      <image:title>פרפר לבן על פרח צהוב</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=17mo_iKP7eCZ2FnBRuTt_nryuR9PE6ix2&sz=w600</image:loc>
+      <image:title>פשפש מפוספס על פרח צהוב</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=11yoUDllDSHs-Xd2pM0j2XstXAWWNfma1&sz=w600</image:loc>
+      <image:title>פשפש מפוספס — מבט קדמי</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1zl8_GL199PPhkc-XWHWZg_8xopZLWlDY&sz=w600</image:loc>
+      <image:title>שתי דבורים על שן הארי</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1rmw76dUcvnJ2_LyPpLrfyRzf6XcUzQcN&sz=w600</image:loc>
+      <image:title>פרת משה רבנו על ענף פורח</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=18uLTZQeZAKyncopUkptt-srqQhEr7C8F&sz=w600</image:loc>
+      <image:title>דבורה אוספת צוף מפרח לבן</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1RcH4xVxzRxpOexVhzDgdumhhif5cTjm5&sz=w600</image:loc>
+      <image:title>פרפר על ציניה ורודה צילום מאקרו</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1epbtb8U6y-k_8I04hWejfgbET_mEcNF0&sz=w600</image:loc>
+      <image:title>עכביש סרטן לבן מתחת לעלה</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1caAXpctdX8dqyi66FyKXU9V3ogXZ9Lq3&sz=w600</image:loc>
+      <image:title>פרטי אדריכלות במסגד השייח' זאיד אבו דאבי</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1GNE_KfvZrhA7Xx8VxyzL1iB2Q-zolMhD&sz=w600</image:loc>
+      <image:title>דפוסי קרח בים</image:title>
+      <image:caption>קרחון צף עם דפוסים גיאומטריים בתווך מימי כחול</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1elM6XHeRrV9uMv_5xDr7NC1KqVpMRnUH&sz=w600</image:loc>
+      <image:title>תבנית גיאומטרית מודרנית</image:title>
+      <image:caption>תקרה לבנה בעיצוב גיאומטרי עם דפוס חוזר של צורות משושים</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1z65uWUxPZhNE29Zr2x3nKZT6wtlg5adj&sz=w600</image:loc>
+      <image:title>מסגד השיח זايد בלילה</image:title>
+      <image:caption>המסגד הגדול של אבו דאבי מואר בכחול עם השתקפויות בבריכה</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1v55SlYVU99eLo8-vd_L82rg3nR1nzAx4&sz=w600</image:loc>
+      <image:title>שערים מוארים באבו דאבי</image:title>
+      <image:caption>שערים אסלמיים מעוטרים מוארים בלילה עם השתקפויות בנוזל</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1zb3ko2DjGynX-08EUC2f0otErldWwmI0&sz=w600</image:loc>
+      <image:title>עיטורי זהב באבו דאבי</image:title>
+      <image:caption>עיטור אדריכלי זהוב בעיצוב עלים דקורטיבי מפואר</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1MV_NtWD-Xf8QOS3vYgtqzm_OKSUVDykh&sz=w600</image:loc>
+      <image:title>קשתות לבנות בשיק</image:title>
+      <image:caption>מסדרון מעוקל עם קשתות אדריכליות וניתוקים זהב בסגנון מודרני</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1Z1U6pMT9PBNuVYHwg8PIh8B4uTFqm9bJ&sz=w600</image:loc>
+      <image:title>תקרה מעוטרת באבו דאבי</image:title>
+      <image:caption>תקרה עגולה מעוטרת בדוגמה ספירלית זהב על רקע פרחוני</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1SpNHplCgfyVPnaCmLM2-Qev61Kg1Xv1i&sz=w600</image:loc>
+      <image:title>דלתות הנצנצות של אבו דאבי</image:title>
+      <image:caption>דלתות מעוטרות עם דוגמניות גיאומטריות וחרוזים כחולים במסגד מפואר</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1FKUiZlTrxzGJBzokEqVR1W1_pSoUT4ip&sz=w600</image:loc>
+      <image:title>מסגד השיח זايد הלבן</image:title>
+      <image:caption>אולם תפילה מפואר עם עיטורים פלוראליים בזהב ושחור</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1-XeHZVRXouPbQVrsbIMbhWy18f33V6BK&sz=w600</image:loc>
+      <image:title>משכן הלבן באבו דאבי</image:title>
+      <image:caption>אולם מפואר בעמודים שחורים עם תליונים זהובים ומים משתקפים</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1FcgYpVjgppXtq1eVZUfRSNFMMR-fmlIB&sz=w600</image:loc>
+      <image:title>הנצנצים הלבנים של שייח זאיד</image:title>
+      <image:caption>הקשתות המעוקלות של המסגד בלילה, מוארות בצבע כחול וזהב</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1VCl8Dl8bupSfuDmmc5hVCadHsPoGNpWI&sz=w600</image:loc>
+      <image:title>פנים המסגד הגדול אבו דאבי</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1aiFLu6Xd2oiSs9NiOz_GCsBOYACRv5UW&sz=w600</image:loc>
+      <image:title>פנס רחוב בדובאי</image:title>
+      <image:caption>פנס תאורה עירוני מודרני בעיצוב מינימליסטי על רקע שמיים מעוננים</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1tAWNSWmCXNdcTQGU-TT20ySVbeVFe_C2&sz=w600</image:loc>
+      <image:title>עץ בנוף הטidal</image:title>
+      <image:caption>עץ בודד בוצי בטidal של אבו דאבי, מוקף בשרשי מנגרוב</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1ymzu2KYiBGiI4BxvNcPK7KXph_zKzo4s&sz=w600</image:loc>
+      <image:title>דפוס גיאומטרי מודרני</image:title>
+      <image:caption>קשת מעוקלת עם דפוס תחרה גיאומטרי בנויה בעיצוב עכשווי</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1xuz8fZwN1ajgGNjhviVUmYzYULbKTgiM&sz=w600</image:loc>
+      <image:title>פסיפס עתיק בעיר הופעות</image:title>
+      <image:caption>פסיפס רומי עתיק עם דמויות חיות וקישוט גיאומטרי עדין</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1SfNXSzwHzS0VdC_XxSM5BjEJ5VU8b8kX&sz=w600</image:loc>
+      <image:title>פסל טווס בין פרחים</image:title>
+      <image:caption>פסל טווס אפור מוקף בפרחים סגולים ורודים זוהרים</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1IoZa57mDdGzA9b9BYPb227VyBey5-uqt&sz=w600</image:loc>
+      <image:title>פרחי שמש בפריחה</image:title>
+      <image:caption>זר פרחי שמש צהובים פורחים בגן עם רקע מטושטש בוורוד וכחול</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1ngd6Y2Y10r2Q5q-QfEAVsCsLf_4PxTLX&sz=w600</image:loc>
+      <image:title>תבניות בחול דיונות המדבר איחוד האמירויות</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1buUeH8gXugxMmlUoLc-PIt-0TNno29Pk&sz=w600</image:loc>
+      <image:title>שכונת המגדלים באבו דאבי</image:title>
+      <image:caption>נוף מרהיב של מגדלי דירות בעיר אבו דאבי תחת שמיים כחולים</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1_IvlJLJrkF89OLeJAMVt6a7nih0K97vb&sz=w600</image:loc>
+      <image:title>שחף לבן באבו דאבי</image:title>
+      <image:caption>שחף לבן עומד בתנוחת צפייה על רקע טבעי מטושטש</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1WDLpmzbGdaOzlEgi892ya1JTR-ClsUGo&sz=w600</image:loc>
+      <image:title>כרישים מעל דובאי</image:title>
+      <image:caption>פסל כרישים ברונזי על רקע בניינים גבוהים בדובאי</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1gbXCTI9IS7-ZaR4nN9_2ncKgZ9fy_YDT&sz=w600</image:loc>
+      <image:title>מגדלי אבו דאבי</image:title>
+      <image:caption>נוף אורבני של מגדלים גבוהים בשמיים כחולים וצלל דרמטי</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1VtjWqoHmdb9GNoa-fFzsaAx5yh4nOIV8&sz=w600</image:loc>
+      <image:title>דוגמה עיגולים צהובים</image:title>
+      <image:caption>תבנית גיאומטרית של עיגולים צהובים על רקע חום עמוק</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1zio7LG17bD8Mw3LZ2MNK2U9cBFSutZg3&sz=w600</image:loc>
+      <image:title>דלעת צהובה בדוט אומנות</image:title>
+      <image:caption>דלעת דקורטיבית עם נקודות צהובות על רקע עיצוב גיאומטרי</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1Yq5GKzGTtvi1QNr9CE9IKNjN5zMzrIsS&sz=w600</image:loc>
+      <image:title>מבנה זכוכית ומגדל</image:title>
+      <image:caption>נוף אורבני של מגדל גבוה המשתקף דרך חזית זכוכית מודרנית</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=18cRXTPt645lzlxtSNGM3RwYcsTcRS-ZY&sz=w600</image:loc>
+      <image:title>אדריכלות מודרנית באבו דאבי קו רקיע</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1YfaXr8zQe5xf8pe8UDB3u9M9vfwTwqi5&sz=w600</image:loc>
+      <image:title>נוף מן המרכז</image:title>
+      <image:caption>מבט מן הגג אל הרחוב המרכזי בעיר, בין בנייני גבוהים</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=18nRQRH0sIVe-Qpkv-Kq47M_cHdE34CCp&sz=w600</image:loc>
+      <image:title>ספירלה אדריכלית בגומחה</image:title>
+      <image:caption>תקרה עגולה עם טבעות תאורה קונצנטריות בעיצוב מודרני</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1Dkd-op4PAj-PmOfonjBuOK6iNRNDv_fc&sz=w600</image:loc>
+      <image:title>מוזיאון שיח האמارات</image:title>
+      <image:caption>בניין אייקוני עם כיתוב ערבי בעיצוב מודרני בשקיעה</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1a1VOdUcAqr7cjBkcz0vlYXrB2B_1iIgj&sz=w600</image:loc>
+      <image:title>מטרו אבו דאבי</image:title>
+      <image:caption>נוף פנימי של תחנת מטרו עם עיצוב ארכיטקטוני מודרני</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1lcsyJwCpdLQQLyuJP0JRBmU9uMZeAjOs&sz=w600</image:loc>
+      <image:title>אמנות אור ועיצוב</image:title>
+      <image:caption>התקנת אמנות אור מודרנית עם דוגמנים גיאומטריים בעיצוב עכשווי</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1bEJ1UIcdfRcMcnpxQqMryijXs_Ry_4i6&sz=w600</image:loc>
+      <image:title>ספירלה של אור וצבע</image:title>
+      <image:caption>מבנה ספירלי מודרני עם תאורת LED וכדור זוהר במרכזו</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1yBGbXhMfV2LZLGnnQzeCYMQ6wuL9Y3Lb&sz=w600</image:loc>
+      <image:title>אדריכלות מודרנית באבו דאבי</image:title>
+      <image:caption>מבנה גיאומטרי עם עקומות לבנות וחלונות מעוצבים בעיצוב מודרני</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1nB904YN725_dwEKjL8ymddeV2IhU53A6&sz=w600</image:loc>
+      <image:title>תצוגת אור דיגיטלית בתוך מים</image:title>
+      <image:caption>אלפי טלפונים מוארים בכחול וסגול משתקפים על בריכה מימית</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1bbJ5yT-g_ZWwddX1OFJTWYgWIqNNhp1k&sz=w600</image:loc>
+      <image:title>מוזיאון אור בדובאי</image:title>
+      <image:caption>מתקן אומנות דיגיטלי עם אלף אורות צבעוניים משקפלים בתוך מים</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1aw7oPUP-MtB5eoC4a0xup8hITN-OHBAk&sz=w600</image:loc>
+      <image:title>פנס אבו דאבי בלילה</image:title>
+      <image:caption>עיר אורות צבעונית בחושך עם פנסים מוארים בצבעים עוצמתיים</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1Mpe0rBFj0tmdpFcM6hkESNVWETHNTPcA&sz=w600</image:loc>
+      <image:title>עין אדריכלית בלילה</image:title>
+      <image:caption>בניין מודרני בעיצוב גיאומטרי עם השתקפות במים בחושך</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1D-HIuhwyagpmg_FPY9p5InN0PNwqEuds&sz=w600</image:loc>
+      <image:title>אדריכלות מודרנית באבו דאבי</image:title>
+      <image:caption>בנייה עתידנית עם חלונות מוארים וקווים גיאומטריים בעיצוב מינימליסטי</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1Vkby6HIwK2ZVcCFeHCKvYhaWByC8p-2j&sz=w600</image:loc>
+      <image:title>מוזיאון שייח זיד בלילה</image:title>
+      <image:caption>בניין עגול מעוצב בעיצוב מודרני בעלון תאורה ליליית בחזית גדול.</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1SjSzrMp_yDPlg5zQB6T2v2qucq30xC6s&sz=w600</image:loc>
+      <image:title>פנים פסנתר מוזיקלי</image:title>
+      <image:caption>מפרטי פנימיים של פסנתר עם מיתרים וחלקים מכניים</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1DtOuAfxbJEn5jeUqxk1i-iQKzEBfZhZI&sz=w600</image:loc>
+      <image:title>אור וגיאומטריה</image:title>
+      <image:caption>תקרה עם עיגולים מאירים וחרוזים זוהרים בעיצוב גיאומטרי</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1VnaK8BHWzDJqSaHRcfe6H3XLM_g-qQjK&sz=w600</image:loc>
+      <image:title>קרניים של אור</image:title>
+      <image:caption>פרטים אדריכליים מזהבים בעיצוב רדיאלי מסוגנן של מסגד</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1hVX9LJjscf8nCipAMq7D070FW_Pq1VYN&sz=w600</image:loc>
+      <image:title>穹顶הדום של השיख זאיד</image:title>
+      <image:caption>תקרה מעוטרת בדוגמנות גיאומטרית וזהב בעמק דאבי</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1sLnUk4IAP5DuPc70zGunF1IB0wdGGUbF&sz=w600</image:loc>
+      <image:title>תקרה זהובה במסגד</image:title>
+      <image:caption>תקרה מעוטרת בזהב וקרמיקה בעיצוב איסלמי מסורתי</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=14nbsn6h2adsT88U5rticB3zxI52UsRDp&sz=w600</image:loc>
+      <image:title>דוגמנית גיאומטרית איסלאמית</image:title>
+      <image:caption>עיטור תקרה מסורתי עם כוכבים וקרניים בתכנית סימטרית</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1R7MRKRy895wj2ZYEJ83zvwQ2VVBtgGdR&sz=w600</image:loc>
+      <image:title>תקרה מעוטרת באבו דאבי</image:title>
+      <image:caption>תקרה עגולה מעוטרת בעיטורים גיאומטריים וסימטריים בזהב</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1K1nbSXkM9cX0YtgahVUi7lnoP5ka6DyR&sz=w600</image:loc>
+      <image:title>שקיעה במסגד שייח זאיד</image:title>
+      <image:caption>שקיעה זהובה מעל מסגד הSheikh Zayed במרכז אבו דאבי</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1SIxnuMcpiqxFq_zlU4ri07OZIA8x0aQW&sz=w600</image:loc>
+      <image:title>שקיעה בשער המסגד</image:title>
+      <image:caption>שקיעה זהובה דרך קשתות אבו דאבי עם השתקפות מוזהבות</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=145bRagq1kywQjjPwkKWOy-TUl-JJT3AR&sz=w600</image:loc>
+      <image:title>כיפת מוזיאון הלובר אבו דאבי</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1yZWuy3xO7QXTbRq5R7Wb_wK8xPTqIYPD&sz=w600</image:loc>
+      <image:title>מסגד השייח זايد הגדול</image:title>
+      <image:caption>החזית המרשימה של המסגד בתאורת ערב עם בריכת המים המשקפת</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1PqxX8FurNmCAzIVnbp14zpxYggasNcEc&sz=w600</image:loc>
+      <image:title>אדריכלות צבעונית בואבו דאבי</image:title>
+      <image:caption>מדרגות מתכת מול קירות גיאומטריים בצבעים תוססים וחיים</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1gQIo-qNqKmRbMsEX--MLBpBgT7zXobVE&sz=w600</image:loc>
+      <image:title>קיר כבוד בליברפול</image:title>
+      <image:caption>ציור קיר של שחקן כדורגל אגדי עם סטטיסטיקות קריירה.</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1SjO7yA1pjZHCa4L8RGgg-_l2YP2ScRqo&sz=w600</image:loc>
+      <image:title>חנות אנטיקות בלונדון</image:title>
+      <image:caption>חזית חנות וינטג' קלאסית המוכרת ספרים וקולקציות ישנות בבריטניה</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=14OQokD36-Gk58vl2QtBndXxbcJcUIn5_&sz=w600</image:loc>
+      <image:title>רחוב בכפר אנגלי בתי אבן</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1w1p6SNGzdI68LLsc9pIWQ7XL0vJvNsPL&sz=w600</image:loc>
+      <image:title>אמנות רחוב עם דבורים</image:title>
+      <image:caption>ציור קיר צבעוני בעיצוב מודרני עם דבורים על יד כחולה</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1E811mT_4RpRmw_gr474v8zhto1UeQLdS&sz=w600</image:loc>
+      <image:title>פרחי טוליפ ורודים</image:title>
+      <image:caption>טוליפים ורודים פורחים בגן אנגלי עם עלים ירוקים</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1Pv0soGD_IhNDAAErMDAQVKa5EXfPHwkJ&sz=w600</image:loc>
+      <image:title>דייזיז בגן אנגלי</image:title>
+      <image:caption>פרחי דייזי לבנים פורחים בדשא ירוק טרי באנגליה</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1uGgnITeoQdRlUd4QXM1Qrzlc_CyQdb4j&sz=w600</image:loc>
+      <image:title>שלט רחוב בלונדון</image:title>
+      <image:caption>שלט כתובת של רחוב בייסווטר בלונדון, מוקף בעלווה ירוקה</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=10bfzIIsdJFAC65ZBhZV604-GFz9OFSup&sz=w600</image:loc>
+      <image:title>השתקפויות בנהר אנגלי</image:title>
+      <image:caption>עמודי עץ משתקפים בשקט מימי הנהר היורקשיר</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1TgpPqZBR95o0_u3TJ3R-B-lB-u-jjogp&sz=w600</image:loc>
+      <image:title>אמנות רחוב צבעונית באנגליה</image:title>
+      <image:caption>ציור קיר תוססני בדמויות דינמיות וחלונות אמיתיים</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1fVitqkVFG0gD9TAynlTD8lh6vRyXxo7M&sz=w600</image:loc>
+      <image:title>חלונות אדומים באנגליה</image:title>
+      <image:caption>חזית בנייה עתיקה עם חלונות אדומים בעיצוב מסורתי אנגלי</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1b5XrI_E8G7ho1SHA_7LhWUxhvF4ercL4&sz=w600</image:loc>
+      <image:title>אמנות קיר צבעונית באנגליה</image:title>
+      <image:caption>ציור קיר בוהמי עם דמויות צבעוניות וחלונות לבנים</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=18Y1gl9j0RVk5Wuo4G7qI-Fx6sVaQsqSe&sz=w600</image:loc>
+      <image:title>פיל צבעוני בלונדון</image:title>
+      <image:caption>פסל פיל מעוטר בצבעים תוססים ברחוב בלונדון</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1NNsNM4NjlUyFuuxyJxtdp0L-_qOwatsp&sz=w600</image:loc>
+      <image:title>זכרונות מלונדון</image:title>
+      <image:caption>אוסף של מזכרות וסוביניר בריטיים אדומים עם סמלי לונדון.</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1OsHP7dGm0yYcyIUhVC_QbSWt3wZ0hEEc&sz=w600</image:loc>
+      <image:title>רחוב עמוס בלונדון</image:title>
+      <image:caption>תמונה מטושטשת של רחוב עירוני בעלוול גבוה עם הולכי רגל</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1YysIZRwu1sxnIddmfBQR4F_gyodlxsdO&sz=w600</image:loc>
+      <image:title>אדריכלות מנזר באת' אנגליה</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1pCcQm4UOVgTSJ4mlbTYEomdEo6yCdQGU&sz=w600</image:loc>
+      <image:title>D'Arblay Street בלונדון</image:title>
+      <image:caption>שלט רחוב קלאסי של וסטמינסטר על קיר לבנים כחול</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=16rSgsmOqjZgQkLjk4ws0I2ZNtfZT6CUo&sz=w600</image:loc>
+      <image:title>דגלי בריטניה בלונדון</image:title>
+      <image:caption>דגלי האיחוד הבריטי תלויים על חזית בנייני היסטוריים בלונדון</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1DyvFemrLJmJ9_DcczDzKq8RteE7cgevG&sz=w600</image:loc>
+      <image:title>מבנה היסטורי באוניברסיטת אוקספורד אנגליה</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=10U8_BHPncFPy-y2vqmPjuMAJaOV6aSpd&sz=w600</image:loc>
+      <image:title>עבודה בגובה בלונדון</image:title>
+      <image:caption>עובדים בעלית חיתוך מכונית ליד קיר כתום בעיר</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1jzfuF0ygh7Q9541-mQud1vk7NcqlI6C9&sz=w600</image:loc>
+      <image:title>אמנות רחוב בלונדון</image:title>
+      <image:caption>ציור קיר סוריאליסטי עם דמות אישה וגדולי עיניים ביטוי אמנותי</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1TfNPONwVKSmCtxq5no6qcFnZbtd3Bx5R&sz=w600</image:loc>
+      <image:title>אמנות קיר בלונדון</image:title>
+      <image:caption>ציור קיר מונוכרום מעוצב של דמות אנושית על בריק בעיר</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1Os6cdaNLFE7nE0XTm3fd9zJqVDsU2HPW&sz=w600</image:loc>
+      <image:title>אמנות קיר בלונדון</image:title>
+      <image:caption>ציור קיר מופשט בצבעים עשירים המתאר דמות עם פרחים לבנים</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1VXT35ZonkAjh09hMKdHY9Sk-EtWGX5_c&sz=w600</image:loc>
+      <image:title>חצר קולג' באוקספורד אדריכלות</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1mRpdsYRmUdaacH1FTUpcTAA8h7BOgkXv&sz=w600</image:loc>
+      <image:title>גשר אבן בקוטסוולדס אנגליה</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1Gtg0jN4Ji3bBl-VHQRju9M4WhhCEmGoQ&sz=w600</image:loc>
+      <image:title>אומנות רחוב רובוטית</image:title>
+      <image:caption>ציור קיר יצירתי של רובוט בלום כחול וכתום על שחור</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=13nIqNH9-ga_b7fToQsoMw1lWU9hFP5h0&sz=w600</image:loc>
+      <image:title>אמנות קיר באנגליה</image:title>
+      <image:caption>ציור קיר קלאסי של אישה עם פרחים צבעוניים בסביבה</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1XdvVh5rW_HQpqx61OVV3oO3Ew9anSwvK&sz=w600</image:loc>
+      <image:title>אזהרה לרוכבי אופניים</image:title>
+      <image:caption>שלט תנועה אנגלי המזהיר מנוכחות רוכבי אופניים בכביש</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1fg6k8AhN8yHprSRmXx7UQFnYi0g_Hab6&sz=w600</image:loc>
+      <image:title>אמנות רחוב פוליטית בלונדון</image:title>
+      <image:caption>מוזאיקה של פוסטרים פוליטיים בסגנון פופ ארט על קיר בעיר</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=11lRfo9G3v18yxhYPMGO-FFew_KrFMFkv&sz=w600</image:loc>
+      <image:title>הצוקים הלבנים של דובר אנגליה</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1sXcBYBmB6LKEN28bOXSlEq6q94Oy7XAo&sz=w600</image:loc>
+      <image:title>אמנות רחוב בלונדון</image:title>
+      <image:caption>פורטרט של אישה בסגנון פופ ארט על קיר בעיר</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1Duc1Ky98Yt9a3lUCHi7gGt19ou8_uzTA&sz=w600</image:loc>
+      <image:title>אמנות רחוב בלונדון</image:title>
+      <image:caption>ציור קיר של ציפור גדולה בטכניקת קו שחור על לבנים עתיקות</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1BmHFnp_2eqfYT9D78Uu4019k9hAT9iEW&sz=w600</image:loc>
+      <image:title>אדריכלות קתדרלה היסטורית אנגליה</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1fexmAkIm46K61b-PITUQuFLCVG8q0Uu1&sz=w600</image:loc>
+      <image:title>אוניברסיטת קיימברידג' ונהר הקאם</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1gdsKZ9UpW4lPuvzhcbcPLxedASPml6-H&sz=w600</image:loc>
+      <image:title>אמנות רחוב בלונדון</image:title>
+      <image:caption>ציור קיר צבעוני של פנים אישה עם שיער זורם בסגנון אומנות עירונית</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1PHZ_kjBRX_ifAjHi-k9O79r2H_YD7t7k&sz=w600</image:loc>
+      <image:title>שעון רחוב בלונדון</image:title>
+      <image:caption>שעון דקורטיבי עתיק על רקע שמיים כחולים בעיר לונדון</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=13W42seB31mX09kxMi24W9WaJU9bAAOdq&sz=w600</image:loc>
+      <image:title>רחוב לונדוני בגשם</image:title>
+      <image:caption>תמונה מטושטשת של רחוב אנגלי בעת גשום עם אורות עדשה</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=16q5moGvz_Qvrmk8iI3DNTE9JDmA_f5Kd&sz=w600</image:loc>
+      <image:title>עיניים הלונדון</image:title>
+      <image:caption>גלגל התצפיות המפורסם בלונדון מואר על ידי השמש בין עננים</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1IqkYIpfg_myAW-f0wywKi4tg06Zgr2Qd&sz=w600</image:loc>
+      <image:title>רץ בשדרת העצים</image:title>
+      <image:caption>רץ בודד על דרך מוצלה בין שורות עצים ירוקות באנגליה</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1Qnp_IEW63u5v_lRG9-zyiaP57hSFuxdg&sz=w600</image:loc>
+      <image:title>כביש בטונל ירוק</image:title>
+      <image:caption>רכב נוסע בכביש צר המוקף בעצים וגדילים עבים באנגליה</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1UKIQ5TWf6BU0OmUhmtB9hyXHk40o9QAH&sz=w600</image:loc>
+      <image:title>שביל ביער בסתיו גרמניה</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=16YgTIBO-Qojrm0zQIQslrCV9_bmEb0SQ&sz=w600</image:loc>
+      <image:title>מונומנט היסטורי בברלין גרמניה</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1I2si-uc6APVK0OOMdkBGqhrerrMd2eDz&sz=w600</image:loc>
+      <image:title>עץ בודד בשדה ירוק</image:title>
+      <image:caption>עץ יחיד עומד בשדה ירוק רחב תחת שמיים בהירים</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1XLpGpRUl1Qe56sc6g517chVWdPrzIhAD&sz=w600</image:loc>
+      <image:title>שקט הערב בגרמניה</image:title>
+      <image:caption>רחוב צר בשעת הדtwilight עם פנס עתיק וכנסייה רחוקה</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1Bi0pZgIkYDSl74ec9UC9tI6X3c0X7N4z&sz=w600</image:loc>
+      <image:title>צל של פנס בגרמניה</image:title>
+      <image:caption>פנס עתיק מטיל צל דרמטי על קיר אבן צהוב תחת שמיים כחולים</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1w8O_ZqZ8Q-yzKFr5YcOZELcOn4s-nMsY&sz=w600</image:loc>
+      <image:title>פנס וצל על הקיר</image:title>
+      <image:caption>פנס עתיק מטיל צל דרמטי על קיר בנייה עם שמיים כחולים</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1RnLj3UwKAqNolnTK8LmfVUI_QmfR9ffo&sz=w600</image:loc>
+      <image:title>כיכר עיר היסטורית בגרמניה</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1jNHa6TWHEJPXhU0feONC_yZMdqehbEd-&sz=w600</image:loc>
+      <image:title>חלון זכוכית צבעונית גרמני</image:title>
+      <image:caption>חלון זכוכית צבעונית מעוטר בדוגמות גיאומטריות וצבעים עוינים.</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1oOoJHPqVKYarqTOJUJ7PQ0qv3d4IDrm9&sz=w600</image:loc>
+      <image:title>השתקפות בנהר גרמני</image:title>
+      <image:caption>בתים עתיקים משתקפים בזהירות במי הנהר השקט</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1M3vy3gkX5WbO7u3x5iwHYQY_z6K68rki&sz=w600</image:loc>
+      <image:title>נשר הים האמריקאי</image:title>
+      <image:caption>תמונת פורטרט של נשר הים בעל ראש לבן וחזה חום על רקע שחור</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1GH-pRSXoTrNDjmd7zgg8Oiya2r5Jo_je&sz=w600</image:loc>
+      <image:title>נשר ק秃ראש בפרופיל</image:title>
+      <image:caption>נשר אמריקאי עם ראש לבן וגוף שחור על רקע חום</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=10ybFm3HSayPX2SvYxr279qi7MC84vWHE&sz=w600</image:loc>
+      <image:title>נשר האריה המלוכי</image:title>
+      <image:caption>דיוקן קרוב של נשר אמריקני עם ראש לבן וחזה כהה על רקע שחור</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=18LVMgW3oVFcp6q-8pB-iRwPwMHru5r6N&sz=w600</image:loc>
+      <image:title>נשר זהוב צעיר</image:title>
+      <image:caption>דיוקן קרוב של ציפור טורף צעירה במזכר קשוח וחד</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1oB-I3elJCfqczTwoWn7JYxnOcyqoclrj&sz=w600</image:loc>
+      <image:title>נשר זהוב בגרמניה</image:title>
+      <image:caption>תמונת פורטרט מקרוב של נשר זהוב עם רקע שחור</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1xTyWkvZEfKFiP2YQMZ_qf5GgyTPROzn3&sz=w600</image:loc>
+      <image:title>עץ בודד בשדה ירוק</image:title>
+      <image:caption>עץ בודד עומד בעמקי שדה ירוק במרחקים של גרמניה</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1SXdH6qZNQz1uMF3esSQAHpflvKWw6Hnw&sz=w600</image:loc>
+      <image:title>שדה ירוק בגרמניה</image:title>
+      <image:caption>נוף רועם של שדה ירוק עם עץ בודד ויער צפוף ברקע</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1hb61cfQlsoS1ROWmT8r4kE6Ng2nQNdGg&sz=w600</image:loc>
+      <image:title>סנאי בענפי היער</image:title>
+      <image:caption>סנאי חום עומד על ענף מכוסה שmoss ביער גרמני ירוק</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=19gBeOQYE1-FvkLtA-fzPwiiKf8xF-i0V&sz=w600</image:loc>
+      <image:title>בית טימברד גרמני עתיק</image:title>
+      <image:caption>בניין מסורתי גרמני עם קורות עץ וקישוטים גיאומטריים יפים</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1uG7W_jsw5SHP7eVh_pE4PaUi5eMzl9MX&sz=w600</image:loc>
+      <image:title>כרמים בגרמניה</image:title>
+      <image:caption>שדות כרמים ירוקים על המדרונות בגרמניה עם נוף הררי מקסים</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1v_AifY9gLwMSGjQ95lsulCP6MaiL7Qj4&sz=w600</image:loc>
+      <image:title>מדוזות זוהרות בחושך</image:title>
+      <image:caption>מדוזות בעלות זוהר כחול יפה שוחות בעומק הים האפל</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1tg2z-fvban2eXxY_Y0j0o-3TIAHKNnp3&sz=w600</image:loc>
+      <image:title>ירקות טריים בשוק</image:title>
+      <image:caption>גזר כתום וצנוניות אדומות신 טריים במשחק צבעים חויה בשוק</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1aAVQrQeiZEgiDo_JMoqyiLo9n6x3qpfu&sz=w600</image:loc>
+      <image:title>ירקות טריים בשוק</image:title>
+      <image:caption>תערוכת ירקות צבעוניים בשוק הקיץ הגרמני</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=17TBkjwBoT2x1yzuxvm8Vgs314SEZvwMf&sz=w600</image:loc>
+      <image:title>גזר טרי בשוק</image:title>
+      <image:caption>סלסלות גזר צהוב וכתום신tרי במשק חקלאי גרמני</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1den9gI7vGQGgDKFhGfRlJ3kqpkEikTcC&sz=w600</image:loc>
+      <image:title>זינניות צבעוניות</image:title>
+      <image:caption>אוסף פרחי זינניה בצבעים עזים של ורוד, כתום ואדום</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1VO9kO_wqs-ziA1jUwQH343YJ5wNgxMWF&sz=w600</image:loc>
+      <image:title>תימנון קתדרלה גותית</image:title>
+      <image:caption>דלת כניסה מעוטרת של קתדרלה גותית בגרמניה עם פסלים דקורטיביים</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=11wxIXv9ZTmahj7_7L3QacFztEomMFgk4&sz=w600</image:loc>
+      <image:title>דלת קתדרלה גותית</image:title>
+      <image:caption>דלת עתיקה בדוגמת גותית עם עיטורים מפורטים וקשתות מעוקלות</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1hWbN5TL_IKSS-FITYFo8LC5BgUmoUA39&sz=w600</image:loc>
+      <image:title>חלונות ויטראז גוטיים</image:title>
+      <image:caption>חלונות ויטראז צבעוניים מהתקופה הגותית בקתדרלה גרמנית</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=14rG5W3jwcADiqLxUREUXAqKPjGbGxulA&sz=w600</image:loc>
+      <image:title>שקיעה ים תיכונית בחוף יוון</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1nPkQltk-kwphzeMCSkBxiMjoWOL-nU92&sz=w600</image:loc>
+      <image:title>שדה פרחים בהולנד</image:title>
+      <image:caption>שדה פרחים אדומים שופע מתחת לעצים ירוקים עבים בהולנד</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=16_kIsahWG_P5Glk3AVqv4Q95ZKqSoXV9&sz=w600</image:loc>
+      <image:title>ערב בהולנד</image:title>
+      <image:caption>תעלה הולנדית בשקיעה עם מגדל עתיק ובנייני אדום עתיקים</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1UW89XVzBQ7IL7ei8re_pxx7y3z_1WYjd&sz=w600</image:loc>
+      <image:title>עץ עתיק בהולנד</image:title>
+      <image:caption>טקסטורת עץ מעבר לזמן עם צבע טורקיז בוהק ותבליטים טבעיים</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1yX492uqDKYSZtMlBeJ9RFySzpUT-ppx8&sz=w600</image:loc>
+      <image:title>אריחי רצפה הולנדיים</image:title>
+      <image:caption>תבנית צבעונית של אריחים מרובעים בגוונים אדומים, כחולים וקרם</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1uDhUdoUgBx1ZbM8hmRBCQSl9JmHiW1bd&sz=w600</image:loc>
+      <image:title>נוף הולנדי מסורתי צילום אמנותי</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=115eqcCv8hlzJp7T5hVcqrVJeMOLQbxa6&sz=w600</image:loc>
+      <image:title>בתי תעלות באמסטרדם והשתקפות</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1MEXl9agfUsf8bX-LrVXQ9fQoMN3R6F2R&sz=w600</image:loc>
+      <image:title>דרך כפרית בהולנד</image:title>
+      <image:caption>שדות ירוקים וסיחים לאורך דרך כפרית בנוף הולנדי אופייני</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1eV1m_7ednH16DOdthfISdMi-qhaeAguw&sz=w600</image:loc>
+      <image:title>טחנות הרוח ההולנדיות</image:title>
+      <image:caption>נוף קלאסי הולנדי עם טחנות רוח מסורתיות לאורך התעלה השקטה</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1ECRFTE6sAMkCwPwCK2yblfvgOfUDLram&sz=w600</image:loc>
+      <image:title>טחנת רוח הולנדית</image:title>
+      <image:caption>טחנת רוח מסורתית על גשר עץ מעל תעלה בהולנד</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1KMCA9iUrSibvmGIoOP341nTxkb2f8uFx&sz=w600</image:loc>
+      <image:title>טחנת רוח הולנדית</image:title>
+      <image:caption>טחנת רוח מסורתית על גדות תעלה בהולנד עם אווז לבן</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1o1YBlK6a6yx8tYXB71Mux391w1kLKbaE&sz=w600</image:loc>
+      <image:title>טחנת רוח הולנדית</image:title>
+      <image:caption>טחנת רוח מסורתית על גדות תעלה הולנדית בנוף ירוק ושלום</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1PMHbwVK89VV6-pJFms4_0hiwG-yCS3KA&sz=w600</image:loc>
+      <image:title>ינשוף עם עיניים זהובות</image:title>
+      <image:caption>ינשוף מדהים עם עיניים כתומות בוהקות על רקע שחור</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1ByCvB6E1ZptVJNxNEYUMPbkZYLVfflRO&sz=w600</image:loc>
+      <image:title>טירת מואר בהולנד</image:title>
+      <image:caption>טירה עתיקה עם מגדלים מרשימים וגנים מטופלים בסביבתה</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1vKAYdSH0PGYUvRhTl59v_CLvvRAOKyzR&sz=w600</image:loc>
+      <image:title>טחנות הרוח ההולנדיות</image:title>
+      <image:caption>טחנות רוח מסורתיות על גדת הנהר בהולנד, בין דשא ירוק</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1_SUtLt8EAkXhLt92VGtPDwiz0CP9BGqX&sz=w600</image:loc>
+      <image:title>גגות אדומים של יוון</image:title>
+      <image:caption>קונסטרוקציה מסורתית יוונית עם גגות אריחים אדומים ועד עתיקה</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1A5PDiwG9dUZI2AKTBJQMPqVG-EY76yby&sz=w600</image:loc>
+      <image:title>קומיני עתיקים ביוון</image:title>
+      <image:caption>קומיני עץ ולבנים עם גגות כתום בכפר יווני מסורתי</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1edGYGkeg96Bk2-Cp93ESOpTn_fjD3IdV&sz=w600</image:loc>
+      <image:title>שקיעה על הים ביוון</image:title>
+      <image:caption>דמות בודדת על רציף משקיפה לשקיעה מתהפכת מעל הימים היווניים</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=15eQX3B704rjwH40d-SLDlRTRODP8JsGy&sz=w600</image:loc>
+      <image:title>שער אבן בעיר העתיקה</image:title>
+      <image:caption>שער אבן מואר בתאורה חמימה בעיר יוונית עתיקה בלילה</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1xVy1KFYjrd_33fbJsuQ3QgmdXnNmM3eq&sz=w600</image:loc>
+      <image:title>שתי דובים בקפה יווני</image:title>
+      <image:caption>פסלי דובים יושבים בקפה עם משקה וספר בין שתיהן</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1OvOmi9DDMOShB2QTj7pP--P_vbi-3T3C&sz=w600</image:loc>
+      <image:title>אדריכלות יוונית כחול ולבן</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1sN2DiFiRBMTNPqf3POewpYefbbSebKMV&sz=w600</image:loc>
+      <image:title>רשתות דיג יווניות</image:title>
+      <image:caption>רשתות דיג מסורתיות עם צפים אדומים על החוף היווני</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1MuKUkfLsKWhuwizKoOjjgFsyyqvEv5Q8&sz=w600</image:loc>
+      <image:title>חצר כפרית ביוון</image:title>
+      <image:caption>חצר אבן מסורתית בכפר יווני עם בתים עתיקים וצל טבעי</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1f8P_3sz4yVElh3ejItjZIujzvtCb4ixO&sz=w600</image:loc>
+      <image:title>קיר צהוב יווני</image:title>
+      <image:caption>קיר צהוב עתיק בעל סדקים וגדול ירוק טבעי ביוון</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1k9gIfRFpdQ_D3ZBd8ecirMXqQBGBEtST&sz=w600</image:loc>
+      <image:title>עמקי מטאורה ביוון</image:title>
+      <image:caption>נוף עוצר נשימה של סלעים ענקיים, כפרים וחקלאות בעמק מטאורה</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1hZCGkvLlriQTJR0gq0ZAIeAop-pG4nqv&sz=w600</image:loc>
+      <image:title>קורות רעפים יווניים עתיקים</image:title>
+      <image:caption>בתים עתיקים עם גגות רעפים אבן בכפר יווני מסורתי</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=18RmlIY8iORAWgeySZXlrehhg9ywlpc5D&sz=w600</image:loc>
+      <image:title>כרמים ירוקים ביוון</image:title>
+      <image:caption>שדות כרמים מעוטרים בעצים ירוקים בעמק יווני פורה</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1_aR8jkePIvKyJ-5sL8Wc5N9BhXlC_OnY&sz=w600</image:loc>
+      <image:title>דלתות תורכוז עתיקות ביוון</image:title>
+      <image:caption>דלתות כחולות עם פטינה עתיקה בשביל צר בכפר יווני</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1O5kxNYqAFLcYuJJkN_6gVaHtLBO_-5qL&sz=w600</image:loc>
+      <image:title>חנות דבש יוונית מסורתית</image:title>
+      <image:caption>מדפים עמוסים בצנצנות דבש וריבות בצבעים תופסי עין</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1GJPkn3GfQ2qpX3cxTVva4voGz9m0i44E&sz=w600</image:loc>
+      <image:title>חנות ריבות יוונית מסורתית</image:title>
+      <image:caption>מדפים עם צנצנות ריבה וממרחים יווניים צבעוניים בחנות מקומית</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1mMxsQIX70Ojcrdn-T5MB9LYWoXwIakTD&sz=w600</image:loc>
+      <image:title>קליפות עץ עתיק</image:title>
+      <image:caption>מרקם מפורט של קליפת עץ מיובשת בגוונים אפורים וחומים</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1nKqihv18Bce0Q-B3KSkTHJHTwzFXF-47&sz=w600</image:loc>
+      <image:title>דלת עתיקה יוונית</image:title>
+      <image:caption>דלת עץ כחולה עם חומרה מתכתית וקסם היסטורי של יוון</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1g9FjR7lI5b1G5o7Swv3L9wyR4Pmj5IqG&sz=w600</image:loc>
+      <image:title>השתקפות בימים היוונים</image:title>
+      <image:caption>השתקפות של בנייה ועצים במים טורקיזים של אגם או ים ביוון</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1IaD571TCZXpmWAkVNjR9On2MPau0HT7K&sz=w600</image:loc>
+      <image:title>פרחים סגולים יוונים</image:title>
+      <image:caption>זרקתון פרחים סגולים עם לב לבן בעדינות בטבע יווני</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1jvLVyX8GysbfXZN78Rbbyp0WsUNdmNUy&sz=w600</image:loc>
+      <image:title>גשר אבן על הנהר</image:title>
+      <image:caption>נהר זורם תחת גשר אבן עתיק בתוך עמק ירוק בהרי יוון</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1ws3TKrzadnML6NYfJnNxsRben26DFKO2&sz=w600</image:loc>
+      <image:title>מפלות המים של יוון</image:title>
+      <image:caption>מפל מימי עוצמתי עם מים טורקיזים זורמים בין סלעים</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1oQ0SiZm5NsCuAP4qxgB2zZUbwrXrqxTW&sz=w600</image:loc>
+      <image:title>סמטה לבנה באי יווני צילום רחוב</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1L2si56DPncjQ7YPgrnSn8qQ_V-JK-6Qe&sz=w600</image:loc>
+      <image:title>חלון בעלי הזרעים</image:title>
+      <image:caption>חלון עתיק מוסתר בתוך כיסוי צמחיה ירוקה בעיירה יוונית</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1peWEB-o9X0w8ouezEqnNop20NRVyHnqr&sz=w600</image:loc>
+      <image:title>ירקות טריים מיוונית</image:title>
+      <image:caption>דלעת צהובה וכרוב ירוק על רקע עץ טורקיז</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=19thgJ1SLZtLlziRWLWfCTVV1irhjtmGX&sz=w600</image:loc>
+      <image:title>מפלי מים ביוון</image:title>
+      <image:caption>מפלי מים עוצמתיים בין סלעים ירוקים בקניון יווני מרהיב</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1rmutyjSPsV0L-WBVKFfO0USF7l4anBdg&sz=w600</image:loc>
+      <image:title>צלב על כנסייה יוונית</image:title>
+      <image:caption>צלב עץ זהוב על קומת כנסייה קלאסית מול שמיים כחולים</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1h2mARoqKNE1tSLSO8e15DdCzku44pH5Z&sz=w600</image:loc>
+      <image:title>דלת עתיקה יוונית</image:title>
+      <image:caption>דלת עץ מעוטרת עם פרטים מתכתיים וחריטות זהב עדינות</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=12nEvb5jWhki41SoS3G7JTlaJ2nKE7wsR&sz=w600</image:loc>
+      <image:title>מנזרי מטאורה יוון נוף הררי</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1RL3drU2FA9li_--J3fb1lPkUae7J4np6&sz=w600</image:loc>
+      <image:title>שוברי גלים יוונים</image:title>
+      <image:caption>שוברי גלים בטון לבן על חוף יווני תחת שמיים כחולים.</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1bwCjLweaRzBfN-yMzW9GUPwdBJL-QNRr&sz=w600</image:loc>
+      <image:title>אופק כחול אינסופי</image:title>
+      <image:caption>נוף ים יווני עם שמיים맑은 וקו אופק ברור</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1hjxpbXvrYRHBK9rqSXVW9lucISvhJTCZ&sz=w600</image:loc>
+      <image:title>מפל מים בגוונים כחולים</image:title>
+      <image:caption>מפל מימי בעיצוב סלעי טבעיים ובריכה בצבע טורקיז עמוק</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1Tof9c4pWfn0bEwBEMz7m48OWlWyrWkk3&sz=w600</image:loc>
+      <image:title>מנזר על הסלע</image:title>
+      <image:caption>מנזר עתיק על צוק סלעי בנוף הררי יווני משגע</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1bNUD9_bLskhZpw8hrpTt-kNceho6fUsy&sz=w600</image:loc>
+      <image:title>ילד בחופי יוון</image:title>
+      <image:caption>ילד עומד בים בזריחה, סירות דיג מטושטשות ברקע</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1sPaSdngAz71GjCD1WytEIh9LkExcV9MY&sz=w600</image:loc>
+      <image:title>חלון יווני עם נוף</image:title>
+      <image:caption>חלון מסורתי יווני עם נוף ירוק וחפצי עיצוב בפנים</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1caBkdcEpt-4bIsN-3YRzsTAfOZ2g9Rpu&sz=w600</image:loc>
+      <image:title>חוף טורקיז ביוון</image:title>
+      <image:caption>חוף יחידה עם מים כחולים וסלעים בתוך מדרון עציץ</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=11j8dfbuZSBVGmr4GA40UzmrdLh0gscqR&sz=w600</image:loc>
+      <image:title>חוף טורקיז ביוון</image:title>
+      <image:caption>רחצים נהנים במים הצלולים של חוף יווני יפהפה</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1gnUdX0Lg7kKhK-RamHVeE6hgeiy7qYSZ&sz=w600</image:loc>
+      <image:title>רשתות דיג ביוונית</image:title>
+      <image:caption>רשתות דיג צהובות תלויות על החוף היווני עם כדורים אדומים</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1YD55X9pPo8FWHPqAaIpgw3b_TpS3SjX7&sz=w600</image:loc>
+      <image:title>חתול ביוון העתיקה</image:title>
+      <image:caption>חתול מחוספס על אבנים עתיקות מול בניין היסטורי ביוון</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1-QdedjPvx0mSSFlH10h3x8-XdJ5_K0Zx&sz=w600</image:loc>
+      <image:title>נהר בעמק ההרים</image:title>
+      <image:caption>נהר זורם בעמק משופע בין הרים סלעיים ויער צפוף בירוקות.</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1oQteqzfUcTFhLPVXBFPZ38e1VNxsaUVn&sz=w600</image:loc>
+      <image:title>יער מחטים צפוף</image:title>
+      <image:caption>נוף אווירי של יער אורן סמיך ירוק בהרים</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1VZxtR1NTYTMzystC1lvlsKnxqYtOIbmP&sz=w600</image:loc>
+      <image:title>עלים סתווים על המים</image:title>
+      <image:caption>עלים צהובים ואדומים של סתיו משתקפים ליד המים הכחולים הכהים</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1cZAEVIRmfezR3uZmFPD_GDYDa8Jxc2gB&sz=w600</image:loc>
+      <image:title>אגם הרים שקט</image:title>
+      <image:caption>אגם שקט המשקף את השמיים והיערות הצפופים סביבו</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1H0zUqPotU1YWoYbE4QaGXs6HKfZXPuYX&sz=w600</image:loc>
+      <image:title>פסגה בעננים</image:title>
+      <image:caption>הר גבוה מכוסה בערפל עם שלג ושמש זורחת</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1oLMFZwBI9Gd0cjS47Vy-eVwUx5a8vsKm&sz=w600</image:loc>
+      <image:title>הרים אבן ירוקים</image:title>
+      <image:caption>נוף הרי סלע לבן ובוץ ירוק בשיא הטבע הבלקני</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1YDWBlKGtD-orHgW0vZZJj-p1PU9IZ5Jg&sz=w600</image:loc>
+      <image:title>גשר מעל הים</image:title>
+      <image:caption>גשר מודרני חוצה מפרץ ים כחול תוך יצירת צל דרמטי</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1KIl1-gUdJbG1xXQt6_ykpm0EfKPPk-nX&sz=w600</image:loc>
+      <image:title>מנהרה אבן עתיקה</image:title>
+      <image:caption>מנהרה עתיקה מחוצצת בסלע עם זרם מים וירקרוק טבעי</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1L-4-iziL6Crvbf4IpR7tvVu2IpXw_hSp&sz=w600</image:loc>
+      <image:title>קיר תרבות כדורגל</image:title>
+      <image:caption>אוסף עצום של תגים ותמונות של קבוצות כדורגל אירופיות על קיר</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1FleBc74zF7KqAQXs_Imv4pW-ZpHgRgnw&sz=w600</image:loc>
+      <image:title>קיר תיעוד וזכרונות</image:title>
+      <image:caption>אוסף עשיר של תגים וסמלים המהווה מונומנט לתרבות מקומית</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1Xu2mARpZncQYYOoXIlvrv6w-v8QKtVSP&sz=w600</image:loc>
+      <image:title>יער סתיו בהרים</image:title>
+      <image:caption>נוף אווירי של יער הררי בצבעי סתיו עוגבים וזהובים</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1eQHDV-FQHuGwe4SbpaTCc4iGCgYtFI0H&sz=w600</image:loc>
+      <image:title>פרח מכוסה כfrost</image:title>
+      <image:caption>פרח לבן מעוד בשלג או כפור, על רקע טבעי כהה וזהוב</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1d1NZ8fqExLKJhWQfVx-_p0v70XrZ91yT&sz=w600</image:loc>
+      <image:title>ציפורי המים בטבע</image:title>
+      <image:caption>שתי ציפורי דיג שחורות על ענף מעל מים בטבע פתוח</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1mR7B8iqgFOBLc_LhTRxF0JPxCkOajkEf&sz=w600</image:loc>
+      <image:title>פרחים שרופים על המים</image:title>
+      <image:caption>פרחים יבשים צפים על פני מים כחולים זכים</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1-MyJWzUCYUp7UKLd5cPUdmB6t3pgp6Ns&sz=w600</image:loc>
+      <image:title>אגם עם שושנות מים</image:title>
+      <image:caption>נוף אווירי של אגם שקט מכוסה בעלי שושנת מים ירוקים</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1z23dvVT8aWaL90C7uJtcz8SllgfsCwOH&sz=w600</image:loc>
+      <image:title>סירה אדומה על המים</image:title>
+      <image:caption>סירת דיג עם השתקפות יפות במים הצלולים והכחולים</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1kRGeOdFxk06K9bXrTPC9qhC4rkwNxz_N&sz=w600</image:loc>
+      <image:title>השתקפות בים הכחול</image:title>
+      <image:caption>סירה אדומה משתקפת במים צלולים של הים התיכון</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1bTf1shjIVeMLxmMSrmP3d-8lqa8vPlCg&sz=w600</image:loc>
+      <image:title>חתול רחוב בשוק העתיק</image:title>
+      <image:caption>חתול שחור ולבן צופה למצלמה על רחוב אבן ישן</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=10JxlwcIji_xR4H-ocfIpEauC4IqKC45e&sz=w600</image:loc>
+      <image:title>חתימה על עץ עתיק</image:title>
+      <image:caption>כתובת לבנה על חבית עץ בלוי, עדות להיסטוריה ותרבות</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1KR_9fDJvlzYkpkT4SBQ8ojYvLWutUZtL&sz=w600</image:loc>
+      <image:title>סירה בודדה בים השקט</image:title>
+      <image:caption>סירת דיג לבנה עוגנת בשקט על מים כחולים עם ציפורים מרחוק</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=18QyNaG4FB0PI4D2Vcrwb1mEfi4oRlMEU&sz=w600</image:loc>
+      <image:title>פרחים כחולים בעונת האביב</image:title>
+      <image:caption>פרחים כחולים עדינים בשדה צבעוני מול רקע טבעי מטושטש</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1XGushvst1Gd4fJaitgrmT0g94HhfrcUi&sz=w600</image:loc>
+      <image:title>טלאים צבעוניים בשוק</image:title>
+      <image:caption>שטיחים וטלאים מסורתיים עם צבעים עוצמתיים תלויים בשוק</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1kFhLNVLTM7SKYxWuV2gzEIyWrwdfkwcW&sz=w600</image:loc>
+      <image:title>דמויות סנטה קלאוס מעוטרות</image:title>
+      <image:caption>פסלוני סנטה קלאוס צבעוניים וגמלים מעוטרים בזהב ואדום</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1F83TrJE58tuYvpjoTEppO4sLlR_B9h6I&sz=w600</image:loc>
+      <image:title>חתול בנח על הרחוב</image:title>
+      <image:caption>חתול אדום לבן שוכב על מדרכה מרוצפת בדוגמת משבצות</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1aSyJCX8VuJlc28OQ8pT4HXrzZhQvy8qo&sz=w600</image:loc>
+      <image:title>נורות טורקיות כחולות</image:title>
+      <image:caption>מנורות מוזאיקה מסורתיות בצבעים חמים וכחול עוצר נשימה</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=19Q-SGNEyuCzAc8cbmMMeXeSzVpaFJazV&sz=w600</image:loc>
+      <image:title>אגם שקט בסלובקיה</image:title>
+      <image:caption>אגם שקט משתקף בין יערות צפופים ועצים הופכים צבע לסתיו</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1mplPGZRcTguwJ24aQWKWgltTHsudEIr2&sz=w600</image:loc>
+      <image:title>פסל כבש עתיק</image:title>
+      <image:caption>פסל מתכת של ראש כבש עם קרניים מעוקלות, עיצוב מסורתי סלובקי</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1_Veq6buDjoWYBjz49v9w2_RFFZ4Zu_Cd&sz=w600</image:loc>
+      <image:title>בית ציפור עתיק בסלובקיה</image:title>
+      <image:caption>בית ציפור עץ עם חור עגול על גג רעפים בשלל צבעים</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1nUCTMYuPdBqMshHRz2ThiXe4R5qc63TY&sz=w600</image:loc>
+      <image:title>חלון עתיק בגג סלובקי</image:title>
+      <image:caption>חלון מעץ עתיק בגג אריחים מכוסה טחב בסלובקיה</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=16z-bJaEjNcwUpviw28lgDiAV_NMug-Ic&sz=w600</image:loc>
+      <image:title>נוף הרים סלובקי</image:title>
+      <image:caption>שדות ירוקים וצוקי אורנים בהרי סלובקיה, צילום אווירי</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1wEW9UC71Dnca2E6WYWw5qqt4nWAuhlJn&sz=w600</image:loc>
+      <image:title>נוף סלובקי בסתיו</image:title>
+      <image:caption>שדה ירוק מתוך יער צפוף בעונת הסתיו הקדומה</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=14v7JbtjQX03bOhyywk4w3VwiWFtq5vRq&sz=w600</image:loc>
+      <image:title>בית עץ סלובקי</image:title>
+      <image:caption>בית עץ מסורתי עם חלונות אפלים וערימת עצים בחזית</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1taihR0eG_8acGVbfe76QQ0d_v20A1Pq1&sz=w600</image:loc>
+      <image:title>בית עתיק בסלובקיה</image:title>
+      <image:caption>חזית עץ מעוטרת בדוגמאות אתניות מסורתיות וחלונות עתיקים</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1GkIX48BOMYyS_v-o1Rv6mqJQqOZRH5D0&sz=w600</image:loc>
+      <image:title>בית עם דוגמנות סלובקית</image:title>
+      <image:caption>בית מסורתי בסלובקיה עם קישוטים גיאומטריים לבנים וזרעים אדומים</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1_a6lttAlcebpHimEUXAe6ah0wfrMUMPO&sz=w600</image:loc>
+      <image:title>חלון צהוב בקיר כחול</image:title>
+      <image:caption>חלון צהוב עם מסגרת עץ בקיר כחול מעץ בסלובקיה</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1_rvROOsKzW5uy4ICPVqOTOhsnEfvAKDN&sz=w600</image:loc>
+      <image:title>סתיו בסלובקיה</image:title>
+      <image:caption>עצים בעלים זהובים ותופסים בצבעי סתיו עשירים</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1RWz2ZIrTCbwxA6A9sEGhUol4i4hOIo5y&sz=w600</image:loc>
+      <image:title>רובין אירופי בסלובקיה</image:title>
+      <image:caption>ציפור רובין קטנה עם חזה כתום עומדת על אזור מוסוגר בירוק</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1lraiJ-ll34As0arwxTDdeuI84tY3LaLg&sz=w600</image:loc>
+      <image:title>נוף הררי בסלובקיה הרי הטטרה</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1zEdwwkBZymZDz0Ox08whcH7AIMza3fmo&sz=w600</image:loc>
+      <image:title>יער ירוק בסלובקיה</image:title>
+      <image:caption>שביל יער צפוף עם אור שמש זהוב וגזעים נפלים על הקרקע</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1FffSq1Efh0FGtGtspYnkXmfHE0T_bwEf&sz=w600</image:loc>
+      <image:title>בית ורוד בסלובקיה</image:title>
+      <image:caption>דלת עתיקה וחלון על קיר ורוד עם סימני בלאי של שנים</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1QmWH16e2CsXg9vCf8AGlOQynd2OUY01A&sz=w600</image:loc>
+      <image:title>חזיתות פראג</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1ZA_dDv5o1IIU3HCsjn-z5uTl9pMP_loB&sz=w600</image:loc>
+      <image:title>פסל ושעון</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1RZovqk9ivjEcC0x-TDDL7fyoKzPbYCBD&sz=w600</image:loc>
+      <image:title>שחר על גשר קארלוב</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1eOIDRz1hUQa8ZU2jTlmroTIgtg1twdh6&sz=w600</image:loc>
+      <image:title>צלליות שקיעה</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=13e4_-dZYmpJ6IzKA-LYSKyC1GW2xUMlw&sz=w600</image:loc>
+      <image:title>אור בקצה המנהרה</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1yyoxGxrH43m_n1Zs-4vY5SjpyhUcWkth&sz=w600</image:loc>
+      <image:title>דייג בודד</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1Isx2nOOojjOZ8WFnG8l94a3ZiSykyJ5-&sz=w600</image:loc>
+      <image:title>מזרקת העיר</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1BMopuR06xvtl85U0SUFS3I_hJtt0sRFj&sz=w600</image:loc>
+      <image:title>סמטה צבעונית</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1qgcuYmnA3LEYpCHoY1FnpykPbOgMMgDJ&sz=w600</image:loc>
+      <image:title>גלגל תבן</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1cjNhaJ1rr2rbnbsHJBVw8Rr7nxnEJhV9&sz=w600</image:loc>
+      <image:title>מגדל בשקיעה</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=15t5id-f_ULlYV3YQA6iAf5YShDMJcMyz&sz=w600</image:loc>
+      <image:title>עיר בתוך המים</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1QfirjVJnizNRTYdxqEqLTxiVN8uirsXJ&sz=w600</image:loc>
+      <image:title>עגינה לפני הסערה</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1TO9Zqce6xzSvFCThwTOxKo-CBA-lizu7&sz=w600</image:loc>
+      <image:title>שער הטירה</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1lRbbVKKtIb2ZB-3UCDu3g0Idk1xaavs_&sz=w600</image:loc>
+      <image:title>חצר הטירה</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1dEnlhyIGafN2XRJsX15pTYIOplyEnbmW&sz=w600</image:loc>
+      <image:title>שמים מבעד לחלון</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1y6iG3IiFk0GlsCUsBZsepI4Np7JEFH0O&sz=w600</image:loc>
+      <image:title>לוחם קרנבל</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1zRydz-feBGM0nA4GVqS2xlblOyfmEYT0&sz=w600</image:loc>
+      <image:title>ליצנית חייכנית</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1qS2yrWz66Xt2XQtmxjLbi30BBFrqGXB1&sz=w600</image:loc>
+      <image:title>מבט דרך זכוכית מגדלת</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=15vSnXub3qWplVF87Yw7YGpEXrOh5KHj_&sz=w600</image:loc>
+      <image:title>נקודות צהוב שחור</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1jStHSSDQG3tC32p6zLS94bT7fi7j2BrA&sz=w600</image:loc>
+      <image:title>פרצוף ג'וקר</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=100AYpaK0jeKjH_qzGfF6jNPd7katXEZR&sz=w600</image:loc>
+      <image:title>ציור חי</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1JFmSumQcXYhX4flmCGZbWXeO5bgIUU8-&sz=w600</image:loc>
+      <image:title>זקן הקסמים</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1O6AzQfr_Av8rOsdRffwNBvumKBGugOQF&sz=w600</image:loc>
+      <image:title>שמחת פורים</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=15h8IlkqnlorfEseEFBHjNikOSgMvsCQ_&sz=w600</image:loc>
+      <image:title>חמניות צהובות</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=14dXkH2hZxQMYqIh6v5i91YmbM3Xf9b5l&sz=w600</image:loc>
+      <image:title>עלים ירוקים בחושך</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1R3Lv_smqPJSptwBwlDNsnn59fijMhPW4&sz=w600</image:loc>
+      <image:title>פרח לבן עדין</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1B3uddNdrCbRL_ldEWMJcUVe1L4A3f42E&sz=w600</image:loc>
+      <image:title>כתר הציקלמן</image:title>
+      <image:caption>פרח ציקלמן ורוד עם עלים מתפתלים על רקע שחור</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1T1ysYl7OBegcFnpAHThQqZX8-nV6_0oR&sz=w600</image:loc>
+      <image:title>ורדה ורודה בתפתחות</image:title>
+      <image:caption>ורדה ורודה עדינה בתפתחות מלאה עם עלי כותרת משיריים</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1glcm3u0LLLWC4sw-r8GgsnIyMYgGT3L_&sz=w600</image:loc>
+      <image:title>פרח אדום עדין</image:title>
+      <image:caption>פרח אדום בעדינות על רקע טבעי מטושטש וירוק</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1_IZewWsa8jDUNLATxFo5i7rZEyUakKm6&sz=w600</image:loc>
+      <image:title>פריחת אביב צילום מאקרו תקריב</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1A8y2S1s8pDnIzK0lbW6NpxJS5plJcYzJ&sz=w600</image:loc>
+      <image:title>פרח אדום בשמש</image:title>
+      <image:caption>פרח אדום זוהר עם אור שמש חודר דרך עלי הכותרת</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1UHAnI17wVt8l6w6tNGjcxBPKoMGFchos&sz=w600</image:loc>
+      <image:title>עלים ירוקים בתאורת שמש</image:title>
+      <image:caption>עלים ירוקים בהירים מוארים מאחור, מציגים מבנה ורידי עדין ודקיק</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1Z-qtX5WfnR8N7tWtgSLLx4uBWQUIm_wf&sz=w600</image:loc>
+      <image:title>פרחים ורודים עדינים</image:title>
+      <image:caption>אשכול פרחים ורודים בעלי עלי כ萼חמש בצבע עדין על רקע ירוק מטושטש</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1heVuuhd-zNbofmd1jqmB_mkJmdxEY_pf&sz=w600</image:loc>
+      <image:title>פרחים סגולים עדינים</image:title>
+      <image:caption>אוסף של פרחים סגולים וורודים עם עלי כותרת עדינים ולב צהוב</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1JK0T5D9bSH3ZJJ0_HMWAWVa6bUi-BoaG&sz=w600</image:loc>
+      <image:title>ורד ורוד מלא</image:title>
+      <image:caption>פרח ורד עדין בגוון ורוד בהיר עם עלי כותרת שכבתיים</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1hz0djJ0vvaJn81qutGPOsos4LTs1Ysx8&sz=w600</image:loc>
+      <image:title>אנמונה סגולה על אדום</image:title>
+      <image:caption>פרח אנמונה בגוני סגול וכחול על רקע אדום עוז</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=101p4QYL3gWSjMG-vtvTaCjCsF2GNpYoK&sz=w600</image:loc>
+      <image:title>פרח ירוק מואר</image:title>
+      <image:caption>פרח ירוק עם עלי כותרת משובחים, מוקף בתאורה חמה מלפנים</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1r_VnEdgHtk5mswJRNcQFXX6q8ulb8GbB&sz=w600</image:loc>
+      <image:title>חמנייה בתפרחת מלאה</image:title>
+      <image:caption>פרח חמנייה צהוב זוהר עם פרחוני הדיסק בפוקוס מושלם</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1F3Mqm_32vZ1IzS2W73VxFvDUgMpdNlRX&sz=w600</image:loc>
+      <image:title>חמנייה על רקע כחול</image:title>
+      <image:caption>פרח חמנייה צהוב בוהק על רקע שמיים כחול צלול</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1utEEIbAWMpJ2zgwXH5WkUEiQcAklsDgr&sz=w600</image:loc>
+      <image:title>חמנייה בשדה צהוב</image:title>
+      <image:caption>חמנייה בודדה בוהקת מול רקע של שדה פורח תחת שמיים כחולים</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1bBx1W0YjlrkW8mPhXcgrTyu5LipA1aRW&sz=w600</image:loc>
+      <image:title>פרחי דill בשמש</image:title>
+      <image:caption>ענפי דill ירוקים עם פרחים צהובים על רקע שמיים כחולים</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1O51BSknGAdKbwmMqj_7_V54OFmRhLEjJ&sz=w600</image:loc>
+      <image:title>פרח צהוב בהדר</image:title>
+      <image:caption>פרח צהוב עדין על רקע טבעי מטושטש עם עלים ירוקים</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1_XRUpQJywTayw2BqOYcGZFxPxvny52Hx&sz=w600</image:loc>
+      <image:title>אורחים</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1zupqb8Pn3m5timQeu4yweQsALEcg52Am&sz=w600</image:loc>
+      <image:title>מגע</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1gluRqx-0OMZNnU-NcepCezxMn4d0OoHX&sz=w600</image:loc>
+      <image:title>נטפי בוקר</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1kWZO1rkQHY_NGlT68-exrPm2UCBDlerd&sz=w600</image:loc>
+      <image:title>עיניים גדולות</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1HzQTuShfHFp4kc_CX88gH0u_RbWyPoem&sz=w600</image:loc>
+      <image:title>עולם אחר</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1IKN9iMton4KCv6Hd95P6Jzat_UJ8enwP&sz=w600</image:loc>
+      <image:title>קנה מידה אחר</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1kSeTTgA6_paqmajQwzko7rz_N1MkRlGK&sz=w600</image:loc>
+      <image:title>עיני חרק</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1ywazk9jJpymO8e5HzLBMkCCWAsgiHGMZ&sz=w600</image:loc>
+      <image:title>דרדר סגול בודד</image:title>
+      <image:caption>פרח דרדר סגול על קנה ירוק על רקע טבעי מטושטש</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1w6kUvKc5OAlZAVgwmbE-kxTE0KUzTfvB&sz=w600</image:loc>
+      <image:title>פרח בר צילום מאקרו טבע</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1LjG0BlIz52uvjeXZVVWg8ww4lQgifpAI&sz=w600</image:loc>
+      <image:title>פרח ורוד בעדינות</image:title>
+      <image:caption>פרח ורוד עם עלים דקיקים על רקע מטושטש וכחול</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1yWJqBqlMSiE7F5oee354pYsvUgYX2HOk&sz=w600</image:loc>
+      <image:title>פרח וקסום בורגונדי</image:title>
+      <image:caption>פרח בעל עלי כותרת ורודים עם פתח מרכזי בורגונדי עמוק</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1EuRqwjvmu0VyTJOxniz0JjhjtyrjvZZr&sz=w600</image:loc>
+      <image:title>פרחי לילך סגולים</image:title>
+      <image:caption>אשכול פרחי לילך בוורוד סגול עמוק בפוקוס קרוב</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1foMx3KXghHVjGnWirDuk1bI8aX5TWVf3&sz=w600</image:loc>
+      <image:title>סחלב ורוד זוהר</image:title>
+      <image:caption>פרח סחלב בגוון ורוד עדין עם לב עמוק, תאורת שמש טבעית</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1oqNW9C1s7P014P66F3GsmlntZRchV8gL&sz=w600</image:loc>
+      <image:title>אורכידאות לבנות עדינות</image:title>
+      <image:caption>פרחי אורכידאה לבנים עם לב צהוב בתאורה רכה וטבעית</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=17SuzI9UwZUmhtJp4PfGDW2jemWbc0xK_&sz=w600</image:loc>
+      <image:title>פרחי אורכידיאה לבנים</image:title>
+      <image:caption>פרח אורכידיאה לבן עם פסים סגולים בהירים ודקים</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1TZRbWTabXrbCpUqXJc-EfFLsUaA4XXT-&sz=w600</image:loc>
+      <image:title>עלים ירוקים בשמש</image:title>
+      <image:caption>ענפים עדינים עם עלים ירוקים זוהרים בקרני האור הטבעי</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1Zpb1brFjrBGYnT0-dNx289Ola3kx6FrI&sz=w600</image:loc>
+      <image:title>אנתוריום אדום עוצמתי</image:title>
+      <image:caption>פרח אנתוריום אדום בוהק עם אבקן ירוק על רקע כהה</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1D7F-UDEoPqZFWujHMPcIzNQPlzJHEijf&sz=w600</image:loc>
+      <image:title>פרח בגוונים סגולים</image:title>
+      <image:caption>פרח עדין בעל עלי כותרת סגולים וצהובים בעדינות מתגלגלים</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1WsDtgO0Tb0s5_mMjQHedTsqdY08T5lGg&sz=w600</image:loc>
+      <image:title>פרח בגוונים סגולים</image:title>
+      <image:caption>פרח עדין בעלי עלי כותרת סגולים ולבנים עם שושנת צהובה במרכזו</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1g9b703RhSdonj-wADDYevbzEY0gF6jTX&sz=w600</image:loc>
+      <image:title>סחלב צהוב עדין</image:title>
+      <image:caption>סחלב צהוב עם גרעין סגול נושף בעדינות על הענף</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1FPEE1GSfd0YFtKob7cIcUAAL6jx6O8L_&sz=w600</image:loc>
+      <image:title>סחלב לבן עדין</image:title>
+      <image:caption>פרח סחלב לבן עם אבקני אבקה צהובים וגדילים עדינים</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1dgj0v5OkiTy5XzNiwzngCBiH2crLrMla&sz=w600</image:loc>
+      <image:title>פרחי פוקסגלוב סגולים</image:title>
+      <image:caption>פרחים סגולים עדינים תלויים על גבעול ירוק עם טל על עלים</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1ZgvZFQ5APlGXKzwrLMe4g7xAA-qPTZ5z&sz=w600</image:loc>
+      <image:title>פרחי סחלב סגולים</image:title>
+      <image:caption>פרחי סחלב סגולים עם פרחים משניים בטשטוש ירוק</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1W8-F5AawLNWCzmCszaZX_YDp0A2oyn34&sz=w600</image:loc>
+      <image:title>פרחי אורכידאה לבנים</image:title>
+      <image:caption>פרחי אורכידאה לבנים עם קשתות צהובות וניצנים ירוקים</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=118RM_kkpXjvAFKP51Wf4VrBMre5vOki4&sz=w600</image:loc>
+      <image:title>פרחי אורכידיה צהובה</image:title>
+      <image:caption>אורכידיה צהובה עם פרחים פתוחים על רקע כהה וטבעי</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1zOwofy1H65KuCYXlDMJEDRVgKlwVycAZ&sz=w600</image:loc>
+      <image:title>פרחי קלנדולה כתומים</image:title>
+      <image:caption>אשכול פרחים כתומים עם לבבות צהובים בוהקים בשמש</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1-iqxlYN773fYnouAo4H6C4MSrWGWRFZc&sz=w600</image:loc>
+      <image:title>חמנייה בשדה</image:title>
+      <image:caption>פרח חמנייה צהוב בשיא פריחתו מול שמיים כחולים</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1-JFHR1mY8XRbwjgyKnPT_bNfx9Ki6pPm&sz=w600</image:loc>
+      <image:title>זרע דנדליון בעדינות</image:title>
+      <image:caption>זרע דנדליון בודד על רקע ירוק מטושטש בתאורה רכה</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1QypvXLHHP8rDUHQ6EqD1MeR-WUhc7faY&sz=w600</image:loc>
+      <image:title>סוקולנט ירוק בעלי טבעת</image:title>
+      <image:caption>צמח סוקולנט בעל עלים בצורת רוזטה בגוונים ירוקים עדינים</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1XNy3wMrU-T3WL2F1Fz7yUb1sJ6ksvoE-&sz=w600</image:loc>
+      <image:title>דייזי סגול וחלום</image:title>
+      <image:caption>פרח דייזי לבן עם קשתות סגולות ובוטון כחול כהה על רקע ירוק מטושטש</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1qil2hRqCyyh6PAvlIMymboMnFp56rOcK&sz=w600</image:loc>
+      <image:title>נרקיסים לבנים וצהובים</image:title>
+      <image:caption>פרחי נרקיס בעלי עלים לבנים וגביע צהוב זוהר</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1Oj4LIdYrQU-KR9aPCVLFsTnhBJnPdh8U&sz=w600</image:loc>
+      <image:title>פרח כחול עדין</image:title>
+      <image:caption>פרח בגוון סגול עמוק על רקע ירוק מעומעם</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=11S3_-5DsrJxf2UfW7IpBzV1RHw9pb_Br&sz=w600</image:loc>
+      <image:title>פעמון כחול עדין</image:title>
+      <image:caption>פרח פעמון סגול עמוק מפורח על רקע צהוב רך</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1pp9jL6s0w6kjknl5kla09hCqUg-dQ3Tt&sz=w600</image:loc>
+      <image:title>ניצן אדום בהתפתחות</image:title>
+      <image:caption>ניצן פרח אדום עם עלים ירוקים שעומד להתפתח על רקע טבעי מטושטש</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1p8Cc-Ep8K3DLs5-8_TiKZaVlgsrHKxmy&sz=w600</image:loc>
+      <image:title>לב הפרח</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1GnxpRoCS5LirQ8mLT7YLEMqKxNldXTZn&sz=w600</image:loc>
+      <image:title>אשכולות</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1hsdrGoRp-cnxnkhV0t5JyBxKZpvxxJ5B&sz=w600</image:loc>
+      <image:title>ביצת חרק</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1SJeu7flTIkmy_3fxFAsujh1eC5FPr2yq&sz=w600</image:loc>
+      <image:title>אשכולות אדומים</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1ZZcSp_kHfqhkoJS4or3hKEssAhuwg49d&sz=w600</image:loc>
+      <image:title>ניצן סגול</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1Sq3RncvzHkqHMdDfX151-XqfxFL7KJEH&sz=w600</image:loc>
+      <image:title>ניצן פרח עדין צילום טבע מאקרו</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1uLGoiQB0E6fzEynhPBJ3YkAM7Cq0lVYr&sz=w600</image:loc>
+      <image:title>פרח ורוד על עלים ירוקים</image:title>
+      <image:caption>אשכול פרחים ורודים בוהקים על רקע עלים מפוספסים בירוק</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1m-H52tW1jcxbamcmCjFWuI-zRGhJJxDn&sz=w600</image:loc>
+      <image:title>פרח ורוד עם סוגר ירוק</image:title>
+      <image:caption>קרוב-אפ של פרח ורוד בוהק עם עלי כותרת ירוקים בעלי טל בוקר</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1980pro99hL69jyuLJEGw0fq8STDetDmY&sz=w600</image:loc>
+      <image:title>פרח סגול עם טללים</image:title>
+      <image:caption>פרח בגוון סגול עמוק עם טללי בוקר על עלקות דקיקות</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1MW9XKOyKEsV627l8G7FHaSw6_LGUoqo_&sz=w600</image:loc>
+      <image:title>תחרה לבנה של הטבע</image:title>
+      <image:caption>פרח דלול בעלי תוספות דקיקות לבנות וירוקות מעוטרות</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=18g1PblF8G72MpzgAfBZNnyx5k-mEplag&sz=w600</image:loc>
+      <image:title>קוצים בשיבולת</image:title>
+      <image:caption>פרח קוצני בשלבי בשלות עם עלי כוללים ירוקים על גבעול</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=16M8xBlYPOkOdxRhbTYgDnEO-YYJA8SZX&sz=w600</image:loc>
+      <image:title>פרח כתום בודד</image:title>
+      <image:caption>פרח כתום עדין עם עלי ירוקים על רקע טבעי מטושטש</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1AuT3n7Ykq3ZF9FM-GNjLbSJ50NWdGsGM&sz=w600</image:loc>
+      <image:title>קוצן לבן בחושך</image:title>
+      <image:caption>פרח קוצני לבן עם עלים ירוקים חדים על רקע אפל</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=12fEjoqIEq7EP5wShazViF5JdcDNsCQyG&sz=w600</image:loc>
+      <image:title>ספירלת ירוקה של החיים</image:title>
+      <image:caption>ענף עם ניצניצים ירוקים מסודרים בסדר ספירלי על גבע סגול</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1qzyKie4Igl-ln3V-DjqQzKSWVlzZXM0b&sz=w600</image:loc>
+      <image:title>חיפושית על חיננית</image:title>
+      <image:caption>חיפושית אדומה על פרח חיננית לבן עם עלקות צהובות</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1scG81LoWFkCf-mJ1ycF5lTvX-2qg1HMm&sz=w600</image:loc>
+      <image:title>גרברה סגולה בין צהובות</image:title>
+      <image:caption>פרח גרברה סגול עוצמתי בודד בין פרחים צהובים מטושטשים</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=11kAItcnIw7H_GGmyA1AUsyfIKsBVBugq&sz=w600</image:loc>
+      <image:title>פרחי ליליק סגולים</image:title>
+      <image:caption>אשכול צפוף של פרחי ליליק סגולים עדינים על רקע ירוק מטושטש</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1O-biotFOnn_alqxevn2m0TtkWbviW2Hw&sz=w600</image:loc>
+      <image:title>לב אדום על גדר</image:title>
+      <image:caption>נעילת לב אדום על גדר תיל ירוקה כסימן אהבה ותקווה</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1o4AFxDQKI4qb9oMdxBCNfCWOMm6icu1o&sz=w600</image:loc>
+      <image:title>גיאומטריה דיגיטלית כחולה</image:title>
+      <image:caption>מופשטות של צורות גיאומטריות וקווים המחוברים בטונים כחולים וטורקיז</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1gk7ghTSA_HcFvgDg3fsO6E-ZUcbVgQWY&sz=w600</image:loc>
+      <image:title>אורות נאון כחולים וירוקים</image:title>
+      <image:caption>צילום אבסטרקטי של צינורות נאון זוהרים בצבעים כחול, ירוק ולבן על רקע כהה.</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1JwYa8GeoKrQY0m39VBCrqRDe9bgtx2iA&sz=w600</image:loc>
+      <image:title>סערת צבעים מופשטת</image:title>
+      <image:caption>צינורות נאון כחולים בעיצוב ספירלי עם אור חם במרכז</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1QS-lkXmxbF9PJzU-s2P2373jKIX8Vdpf&sz=w600</image:loc>
+      <image:title>כדורים בתנועה</image:title>
+      <image:caption>מערך של כדורים כחולים בגדלים שונים על רקע שחור</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1iCWLjcS_uBoMPkO3J2LSRpY1Fi192T6A&sz=w600</image:loc>
+      <image:title>טקסטורה של קוקטוס</image:title>
+      <image:caption>זיפי קוקטוס בעלי כיסוי קרחוני יוצרים דוגמה גיאומטרית מופשטת</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1TnVzi2L8ZLCBh0c_NMRf6MCipgw-oDsG&sz=w600</image:loc>
+      <image:title>כוסות כחול וזהב</image:title>
+      <image:caption>סידור מופשט של כוסות צבעוניות בכחול וזהב עם השתקפויות אור</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1QDuFcuGl-MMn8bbzdNSZQLj8iXTEc2Ox&sz=w600</image:loc>
+      <image:title>קשיות צבע בהדרגה</image:title>
+      <image:caption>מבנה גיאומטרי של קשיות צבעוניות במעבר חלק בין צהוב לירוק וורוד</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=193ChTPGZ2eYwTeL634t5nz_QMnd02xeK&sz=w600</image:loc>
+      <image:title>מופשטות בצבעים חמים</image:title>
+      <image:caption>קומפוזיציה אבסטרקטית של עיגולים צבעוניים בגרדיינט חם מזהב עד ורוד</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1ampVjADrXXRaQvJkTuwnwKro1a0w9P2L&sz=w600</image:loc>
+      <image:title>טקסטורת לחות יבשה</image:title>
+      <image:caption>טקסטורה מופשטת של אבן וטחב בגוונים אפורים ולבנים</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1rS4FzYkwKAlpUxInIkv7dcw_em72fpP2&sz=w600</image:loc>
+      <image:title>ורד ורוד עדין</image:title>
+      <image:caption>תמונת מקרוב של ורד ורוד בעלי עלי כותרת רכים ומעוקלים</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1hxahzabb1AHEAXyYO-Z8oKqFwvDZuol6&sz=w600</image:loc>
+      <image:title>דנדליון בהתפרקות</image:title>
+      <image:caption>פרח הנשיאה בשלב התפרקות עם זרעים בעלי כנפיים עדינות</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=11CB5ZK5gWbW1N3yxOggz07vMA4BkVeJg&sz=w600</image:loc>
+      <image:title>סימטריה של הטבע</image:title>
+      <image:caption>מבנה גיאומטרי מושלם של פרח דנדליון בעת הופכו לזרע</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1nCBHHTe1uLLHJK5U6swTl5FLRmyapQob&sz=w600</image:loc>
+      <image:title>פלטת צבעים זהובה</image:title>
+      <image:caption>מקרוב של צבעי איפור במסגרות זהב מסודרות בשורות</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=14qNCsr-QNn0MLc-abJRV_HcZD_AOFItY&sz=w600</image:loc>
+      <image:title>פליטת הסתיו</image:title>
+      <image:caption>עלים צבעוניים בשלבי ניוול, משתנים מירוק לצהוב ואדום</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1jov8nfOezxvf0nz-Uq3aFTR6lCmk62S6&sz=w600</image:loc>
+      <image:title>מינימליזם של זרעים</image:title>
+      <image:caption>ארבע צנצנות זכוכית המכילות זרעים שונים על רקע חום אחיד</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=13-Vj1zwX1WiCAW0JXByc-7GS2aMSAkny&sz=w600</image:loc>
+      <image:title>מקרוב תות שדה</image:title>
+      <image:caption>צילום מקרוב של פני תות אדום עם טקסטורה עדינה על רקע ירוק מטושטש</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1WZUI8vzx_VBpg6yfXb_mAth6guweU2JH&sz=w600</image:loc>
+      <image:title>עדינות של טבע</image:title>
+      <image:caption>מקרוב של זרעים עדינים בתאורה רכה ונעימה</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1uBai-6tPfU2lN0MBkcocyfXyNyXXeXd8&sz=w600</image:loc>
+      <image:title>צילום מופשט תנועה ואור</image:title>
+      <image:caption></image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=133-YvkHkjHupL7-a-ocHs6hTAlgCH6Am&sz=w600</image:loc>
+      <image:title>סימטריה אדומה</image:title>
+      <image:caption>דוגמה גיאומטרית סימטרית בצבע אדום עוז עם פרטים מקושתים</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1eAY-e_8t2KA_a4g0nrIus6aRFa4jIr4j&sz=w600</image:loc>
+      <image:title>סלילי טל ירוקים</image:title>
+      <image:caption>טיפות טל משתקפות על עלים מסולסלים בצבע ירוק עמוק</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1Q4-zZB-SnLz0Ei3tFkeTe62OPWuPvOaT&sz=w600</image:loc>
+      <image:title>ספירלות ירוקות של טבע</image:title>
+      <image:caption>צילום מקרוב של עלה מסולסל בגוונים ירוקים וזהובים עם עומק וטקסטורה</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1zElYUv45yfChIkkBhWiOxVsuQmParSrS&sz=w600</image:loc>
+      <image:title>תחת הרשת הצהובה</image:title>
+      <image:caption>סדף אדום חבוי בתוך רשת דיג צהובה עתיקה על הקרקע</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1-zHOPxA1O_SNYJQNgh7HpAqtm3RfDllT&sz=w600</image:loc>
+      <image:title>עין הגג</image:title>
+      <image:caption>חלון קשת בעדשת קרמיקה על רקע דלק אבן בעיצוב גיאומטרי</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1l1-rlJkl0l5xft9AdAkcgMzOYWkY0aqo&sz=w600</image:loc>
+      <image:title>צבעים וטקסטורות מרובדות</image:title>
+      <image:caption>הרכבה אבסטרקטית של חומרים צבעוניים וטקסטורות מורכבות בדגם חזותי עשיר</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=12yC9WcIfq2liDpZXDh3_JK9RBaxZtj8G&sz=w600</image:loc>
+      <image:title>צבעים וטקסטורות</image:title>
+      <image:caption>קומפוזיציה אבסטרקטית של בדים צבעוניים ישנים עם טקסטורות עשירות</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1-j_StuhGng1VrlBLZbOvttUqXF8BHj80&sz=w600</image:loc>
+      <image:title>חרוזים צבעוניים זוהרים</image:title>
+      <image:caption>אוסף חרוזים שקופים וצבעוניים עם אור רך ומנצנץ</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1VapbJsV6ADUiXjyDwOFPMNnYqRS-5b4i&sz=w600</image:loc>
+      <image:title>קווים ירוקים וקוצים</image:title>
+      <image:caption>תבנית אבסטרקטית של גבעול כקטוס עם קוצים צפופים וקווים אנכיים</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1bCPZFc40QtK4loEsDEtNqvZ4-UtS7XMs&sz=w600</image:loc>
+      <image:title>צבעים בתנועה</image:title>
+      <image:caption>סדרה צבעונית של צורות חדות בגרדציות צבע עוזות ודינמיות</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1aYWwR25_GX10e7fqzNyWQDzYeHOLq8bE&sz=w600</image:loc>
+      <image:title>טלה עם טיפות רוס</image:title>
+      <image:caption>קורי עכביש מכוסה בטיפות טל זוהר בשמש הבוקר</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1POBPyXo8c-t1oZWe69z-NH4UDtO-fcwu&sz=w600</image:loc>
+      <image:title>גלים של צבע</image:title>
+      <image:caption>תנועה אבסטרקטית של צבעים כחולים וצהובים במטפורה נזלת</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1FzHlnK1Mj5awNstDqYFZ6BGjbzmbNA_R&sz=w600</image:loc>
+      <image:title>רשת החיים של העלה</image:title>
+      <image:caption>פרט מקרוב של עורקי עלה ירוקה המציגים את מבנהה המורכב והסימטרי</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1SMdR3WP3i7gxALOh1jQGblgf9N6i4G9m&sz=w600</image:loc>
+      <image:title>פרח השמש הזהוב</image:title>
+      <image:caption>תצלום מקרוב של פרח חמנייה עם פרטי עלי הכלנית בצבעים חמים</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1_nNBWRuQm0QsRVCTRYc2DMPfG5t5ciwk&sz=w600</image:loc>
+      <image:title>קוצי הסבר ירוקים</image:title>
+      <image:caption>מסך קרוב של קוצים חדים על פני קactus ירוק עדין</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1xJHXlR19ElZ4SVcF_5-iMZqD3PJhOuS9&sz=w600</image:loc>
+      <image:title>עיני הטווס המלכותי</image:title>
+      <image:caption>נוצות טווס הודי עם עיניים זוהרות בירוק וכחול עמוק</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1Oncer_8vC4XzjDXPKtHxVwVLLTFxT_Rr&sz=w600</image:loc>
+      <image:title>קיר בוץ מופשט</image:title>
+      <image:caption>טקסטורה טבעית של קיר בוץ עם הצללים ודפוסים עדינים</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1_nMygIC3UIuFjY_xtRNxL9a0tdm8VSmS&sz=w600</image:loc>
+      <image:title>טקסטורת עץ זית עתיק</image:title>
+      <image:caption>גוון וקמטים של קליפת עץ זית מזוקן, מעוצב בדפוסים טבעיים</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1n1-Ob-qJURqvptSc8SADLQWarG5Fbnj-&sz=w600</image:loc>
+      <image:title>ספירלה תלויה</image:title>
+      <image:caption>חוט מעוקל בספירלה על רקע כחול מינימליסטי</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://drive.google.com/thumbnail?id=1QfIyE05hrV0QQogIOft7k-Y4smeS28BN&sz=w600</image:loc>
+      <image:title>רקע כוסות קריסטל</image:title>
+      <image:caption>שורות של כוסות זכוכית שקופות עם השתקפויות אור יוצרות דפוס אבסטרקטי</image:caption>
+    </image:image>
   </url>
 </urlset>
