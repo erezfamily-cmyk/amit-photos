@@ -1332,7 +1332,7 @@ const PrintShop = (() => {
 
     const minW = parseFloat(btn.dataset.minw);
     const minH = parseFloat(btn.dataset.minh);
-    initCropPreview(getLightboxUrl(currentPhoto.url), minW, minH, minW, minH);
+    initCropPreview(getFullResUrl(currentPhoto), minW, minH, minW, minH);
 
     document.getElementById('print-price-display').textContent = 'טוען מחיר...';
     try {
@@ -1345,6 +1345,9 @@ const PrintShop = (() => {
       if (r.ok) {
         selectedPrice = data.sellPrice;
         document.getElementById('print-price-display').textContent = `$${data.sellPrice} — כולל משלוח לישראל`;
+        // Show customs warning if price may exceed $75 threshold
+        const customsEl = document.getElementById('print-customs-notice');
+        if (customsEl) customsEl.classList.toggle('visible', data.sellPrice >= 75);
         // Show continue button only if resolution is ok
         const resEl = document.getElementById('print-res-warning');
         if (!resEl || !resEl.classList.contains('print-res-block')) {
