@@ -1229,22 +1229,21 @@ const PrintShop = (() => {
       cropOffsetY = Math.round((cropFrameH - dispH) / 2);
       img.style.transform = `translate(${cropOffsetX}px, ${cropOffsetY}px)`;
 
-      // Resolution check
+      // Resolution check (300 DPI requirement)
       if (minW && minH) {
         const resEl = document.getElementById('print-res-warning');
         const level = checkResolution(img, minW, minH);
         if (level === 'block') {
           resEl.className = 'print-res-block';
-          resEl.textContent = '❌ הרזולוציה נמוכה מדי לגודל זה — בחר גודל קטן יותר';
+          resEl.textContent = '❌ רזולוציה נמוכה מדי לגודל זה — בחר גודל קטן יותר';
           document.getElementById('print-to-details-btn').classList.remove('visible');
           selectedPrice = null;
         } else if (level === 'warn') {
           resEl.className = 'print-res-warn';
-          resEl.textContent = '⚠️ הרזולוציה בינונית — התוצאה עשויה להיות פחות חדה';
+          resEl.textContent = '⚠️ רזולוציה נמוכה מהמומלץ — ההדפסה עשויה להיות פחות חדה';
         } else {
-          resEl.className = '';
-          resEl.textContent = '✓ רזולוציה מתאימה להדפסה';
           resEl.className = 'print-res-ok';
+          resEl.textContent = '✓ רזולוציה מתאימה ל-300 DPI';
         }
       }
     };
@@ -1308,20 +1307,18 @@ const PrintShop = (() => {
 
   function checkResolution(imgEl, minW, minH) {
     // Returns: 'ok' | 'warn' | 'block'
-    // Uses real Prodigi pixel requirements (minW x minH)
+    // minW x minH = minimum pixels required at 300 DPI for this print size
     const pw = imgEl.naturalWidth;
     const ph = imgEl.naturalHeight;
     if (!pw || !ph || !minW || !minH) return 'ok';
 
-    // For fillPrintArea: image must cover the print area
-    // Scale to fill: take max scale so both dimensions are covered
+    // Image must cover the print area — take the worst dimension
     const scaleW = minW / pw;
     const scaleH = minH / ph;
     const scale = Math.max(scaleW, scaleH);
 
-    // scale > 1 means image needs to be upscaled
-    if (scale > 2.0) return 'block';   // need more than 2x upscale
-    if (scale > 1.2) return 'warn';    // need 20%-200% upscale
+    if (scale > 2.0) return 'block';  // יותר מ-2x הגדלה — איכות גרועה
+    if (scale > 1.0) return 'warn';   // כל הגדלה — עלולה לפגוע בחדות
     return 'ok';
   }
 
@@ -1348,7 +1345,11 @@ const PrintShop = (() => {
       if (r.ok) {
         selectedPrice = data.sellPrice;
         document.getElementById('print-price-display').textContent = `$${data.sellPrice} — כולל משלוח לישראל`;
-        document.getElementById('print-to-details-btn').classList.add('visible');
+        // Show continue button only if resolution is ok
+        const resEl = document.getElementById('print-res-warning');
+        if (!resEl || !resEl.classList.contains('print-res-block')) {
+          document.getElementById('print-to-details-btn').classList.add('visible');
+        }
       } else {
         document.getElementById('print-price-display').textContent = data.error || 'שגיאה בטעינת מחיר';
       }
