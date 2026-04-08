@@ -607,6 +607,15 @@ const PRINT_CATALOG = {
       { label: '40×50 ס"מ', sku: 'canvas_16x20-inch-400x500-mm_canvas_wood-fsc-slim_4-0_ver',  minW: 4724, minH: 5906 },
       { label: '45×60 ס"מ', sku: 'canvas_18x24-inch-450x600-mm_canvas_wood-fsc-slim_4-0_ver',  minW: 5315, minH: 7087 },
     ]
+  },
+  metallic: {
+    label: 'הדפסה על מתכת',
+    desc: 'הדפסה על אלומיניום 3mm — גימור מבריק יוקרתי, מוכן לתלייה — כולל משלוח לישראל',
+    sizes: [
+      { label: '30×30 ס"מ (12×12")', sku: 'metallic_12x12-inch-300x300-mm_3-mm_4-0_ver', minW: 3543, minH: 3543 },
+      { label: '30×40 ס"מ (12×16")', sku: 'metallic_12x16-inch-300x400-mm_3-mm_4-0_ver', minW: 3543, minH: 4724 },
+      { label: '30×45 ס"מ (12×18")', sku: 'metallic_12x18-inch-300x450-mm_3-mm_4-0_ver', minW: 3543, minH: 5315 },
+    ]
   }
 };
 
