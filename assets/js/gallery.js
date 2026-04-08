@@ -1075,8 +1075,9 @@ const PrintShop = (() => {
   }
 
   const TYPE_ICONS = {
-    canvas: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="3" width="18" height="18" rx="1"/><path d="M3 8h18M3 16h18M8 3v18M16 3v18" stroke-width="1" opacity=".5"/><circle cx="12" cy="12" r="2" stroke-width="1.5"/></svg>`,
-    poster: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="5" y="2" width="14" height="20" rx="1"/><path d="M8 7h8M8 11h8M8 15h5" stroke-linecap="round"/></svg>`,
+    canvas:   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="3" width="18" height="18" rx="1"/><path d="M3 8h18M3 16h18M8 3v18M16 3v18" stroke-width="1" opacity=".5"/><circle cx="12" cy="12" r="2" stroke-width="1.5"/></svg>`,
+    poster:   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="5" y="2" width="14" height="20" rx="1"/><path d="M8 7h8M8 11h8M8 15h5" stroke-linecap="round"/></svg>`,
+    metallic: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="3" width="18" height="18" rx="1"/><path d="M3 3l5 5m8-5l-5 5m-3 6l-5 5m16-5l-5 5" stroke-width="1" opacity=".6"/><rect x="6" y="6" width="12" height="12" rx=".5" stroke-width="1.2"/></svg>`,
   };
 
   function renderTypes() {
