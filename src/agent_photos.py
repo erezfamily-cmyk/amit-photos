@@ -27,6 +27,7 @@ from pathlib import Path
 # ===== PATHS =====
 ROOT = Path(__file__).parent.parent
 DATA_FILE = ROOT / "data" / "photos.json"
+LAST_SCAN_FILE = ROOT / "data" / "last_scan.json"
 CREDENTIALS_FILE = ROOT / "credentials.json"
 TOKEN_FILE = ROOT / "token.json"
 
@@ -237,6 +238,35 @@ def load_existing_photos():
     return {}
 
 
+def load_last_scan_time():
+    """קורא את זמן הסריקה האחרונה מ-data/last_scan.json. מחזיר ISO string או None."""
+    if LAST_SCAN_FILE.exists():
+        try:
+            return json.loads(LAST_SCAN_FILE.read_text(encoding="utf-8")).get("last_scan_time")
+        except Exception:
+            pass
+    return None
+
+
+def save_last_scan_time(iso_time):
+    """שומר את זמן הסריקה הנוכחית ב-data/last_scan.json."""
+    LAST_SCAN_FILE.write_text(
+        json.dumps({"last_scan_time": iso_time}, ensure_ascii=False, indent=2),
+        encoding="utf-8"
+    )
+
+
+def has_new_files(session, since_iso):
+    """בודק אם יש קבצי תמונה שהשתנו מאז since_iso. מחזיר True/False."""
+    params = {
+        "q": f"mimeType contains 'image/' and modifiedTime > '{since_iso}' and trashed=false",
+        "fields": "files(id)",
+        "pageSize": 1,
+    }
+    data = drive_get(session, "files", params)
+    return len(data.get("files", [])) > 0
+
+
 def main():
     sys.stdout.reconfigure(encoding="utf-8")
 
@@ -247,6 +277,18 @@ def main():
 
     print("🔐 מתחבר ל-Google Drive...")
     session = get_drive_session()
+
+    from datetime import datetime, timezone
+    now_iso = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+    last_scan = load_last_scan_time()
+    if last_scan and not DRY_RUN:
+        print(f"⏱️  סריקה אחרונה: {last_scan}")
+        print("🔍 בודק אם יש תמונות חדשות...")
+        if not has_new_files(session, last_scan):
+            print("✅ אין תמונות חדשות מאז הסריקה האחרונה — מסיים.")
+            save_last_scan_time(now_iso)
+            return
 
     print(f"📂 מחפש תיקייה '{PORTFOLIO_FOLDER}'...")
     portfolio = find_folder(session, PORTFOLIO_FOLDER)
@@ -367,6 +409,8 @@ def main():
         encoding="utf-8"
     )
     print(f"💾 נשמר ל-{DATA_FILE}")
+    save_last_scan_time(now_iso)
+    print(f"🕐 זמן סריקה נשמר: {now_iso}")
 
 
 if __name__ == "__main__":
