@@ -1223,6 +1223,10 @@ nav.scrolled { border-bottom-color: rgba(200, 169, 110, 0.3); }
   color: var(--text-muted);
   line-height: 1.5;
 }
+.buy-modal-note--warning {
+  color: #c8a96e;
+  margin-top: .4rem;
+}
 @media (max-width: 480px) {
   .buy-size-options { grid-template-columns: 1fr; }
   .buy-modal-inner { padding: 2rem 1.25rem; }
