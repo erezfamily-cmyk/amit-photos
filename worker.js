@@ -882,13 +882,15 @@ async function handlePrintWebhook(request, env) {
   const payload = await request.json().catch(() => null);
   if (!payload) return new Response('ok', { status: 200 });
 
-  // Gelato webhook format: { event: 'order_status_updated', order: { id, orderReferenceId, status, shipments } }
-  const gelatoOrderId = payload.order?.id || payload.order?.orderReferenceId;
-  const status = payload.order?.status;
+  // Gelato webhook format: { event, orderId, orderReferenceId, fulfillmentStatus, items: [{fulfillments: [{trackingCode, trackingUrl}]}] }
+  const gelatoOrderId = payload.orderId || payload.orderReferenceId;
+  const status = payload.fulfillmentStatus;
   if (!gelatoOrderId || !status) return new Response('ok', { status: 200 });
 
   // Map Gelato status to our status
   const STATUS_MAP = {
+    'created':       'in_production',
+    'passed':        'in_production',
     'in_production': 'in_production',
     'printed':       'in_production',
     'shipped':       'shipped',
@@ -910,8 +912,8 @@ async function handlePrintWebhook(request, env) {
     ).bind(gelatoOrderId).first();
     if (order?.customer_email) {
       const fromEmail = env.FROM_EMAIL || 'amit@amitphotos.com';
-      const shipments = payload.order?.shipments || [];
-      const tracking = shipments[0]?.trackingCode || shipments[0]?.tracking?.number || '';
+      const fulfillments = payload.items?.[0]?.fulfillments || [];
+      const tracking = fulfillments[0]?.trackingCode || '';
       const html = `<!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head><meta charset="UTF-8"></head>
