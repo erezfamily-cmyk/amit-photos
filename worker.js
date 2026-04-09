@@ -720,16 +720,22 @@ async function handlePrintOrderComplete(request, env) {
       orderReferenceId: orderId,
       customerReferenceId: orderId,
       currency: 'USD',
-      recipient: {
-        name: address.name,
-        email: address.email || '',
-        phone: address.phone || '',
-        addressLine1: address.line1,
-        city: address.city,
-        postCode: address.zip,
-        country: 'IL'
-      },
-      products: [{
+      shippingAddress: (() => {
+        const parts = (address.name || '').trim().split(/\s+/);
+        const firstName = parts[0] || 'לקוח';
+        const lastName = parts.slice(1).join(' ') || '-';
+        return {
+          firstName,
+          lastName,
+          email: address.email || '',
+          phone: address.phone || '',
+          addressLine1: address.line1,
+          city: address.city,
+          postCode: address.zip,
+          country: 'IL'
+        };
+      })(),
+      items: [{
         itemReferenceId: `item-${orderId}`,
         productUid: sku,
         quantity: 1,
