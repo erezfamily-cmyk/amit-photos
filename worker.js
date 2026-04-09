@@ -852,9 +852,10 @@ async function handlePrintCancel(request, env) {
 
   // Cancel at Gelato
   if (order.prodigi_order_id) {
-    await fetch(`${GELATO_API}/orders/${order.prodigi_order_id}/cancel`, {
+    await fetch('https://api.gelato.com/v2/order/cancel', {
       method: 'POST',
-      headers: { 'X-API-KEY': env.GELATO_API_KEY, 'Content-Type': 'application/json' }
+      headers: { 'X-API-KEY': env.GELATO_API_KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ orderReferenceId: order.prodigi_order_id })
     }).catch(() => {});
   }
 
