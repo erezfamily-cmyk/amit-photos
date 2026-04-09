@@ -652,7 +652,9 @@ async function handlePrintQuote(request, env) {
   if (!quote) return jsonRes({ error: 'לא התקבלה הצעת מחיר' }, 500, request);
 
   const productCost = parseFloat(quote.products?.[0]?.price || 0);
-  const shippingCost = parseFloat(quote.shipmentMethods?.[0]?.price || 0);
+  const methods = quote.shipmentMethods || [];
+  const cheapestMethod = methods.length ? methods.reduce((a, b) => a.price < b.price ? a : b) : null;
+  const shippingCost = parseFloat(cheapestMethod?.price || 0);
   const totalCost = productCost + shippingCost;
   // Markup: 1.6x total cost (product + shipping), rounded up to nearest $5
   const sellPrice = Math.ceil((totalCost * 1.6) / 5) * 5;
@@ -809,7 +811,7 @@ async function handlePrintOrderComplete(request, env) {
       <tr><td style="padding:.4rem 0;color:#888">כתובת</td><td>${address.line1}, ${address.city} ${address.zip}</td></tr>
       <tr><td style="padding:.4rem 0;color:#888">מוצר</td><td>${productLabel}</td></tr>
       <tr><td style="padding:.4rem 0;color:#888">מחיר</td><td><strong>$${sellPrice}</strong></td></tr>
-      <tr><td style="padding:.4rem 0;color:#888">Prodigi ID</td><td style="font-size:.82rem;color:#aaa">${gelatoOrderId||'—'}</td></tr>
+      <tr><td style="padding:.4rem 0;color:#888">Gelato ID</td><td style="font-size:.82rem;color:#aaa">${gelatoOrderId||'—'}</td></tr>
     </table>
   </div>
 </body></html>`;
