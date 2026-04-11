@@ -2039,7 +2039,14 @@ const PrintOrders = (() => {
         <td style="font-size:.85rem">${o.product_label||o.sku||'—'}</td>
         <td style="color:var(--accent)">$${o.sell_price||'—'}</td>
         <td style="font-size:.78rem;color:var(--text-muted)">${o.prodigi_order_id||'—'}</td>
-        <td><span class="badge-status">${o.status||'—'}</span></td>
+        <td>
+          <span class="badge-status" id="status-badge-${o.id}">${o.status||'—'}</span>
+          ${o.status === 'in_production'
+            ? `<button type="button" class="btn btn-ghost btn-sm refresh-status-btn"
+                 data-order-id="${o.id}" style="margin-right:.4rem;padding:.1rem .4rem;font-size:.75rem"
+                 title="רענן סטטוס מ-Gelato">🔄</button>`
+            : ''}
+        </td>
         <td>
           ${cancelled
             ? `<a href="${paypalLink}" target="_blank" class="btn btn-danger btn-sm">החזר ב-PayPal</a>`
@@ -2058,6 +2065,33 @@ const PrintOrders = (() => {
   }
 
   $('print-orders-refresh-btn').addEventListener('click', load);
+
+  $('print-orders-tbody').addEventListener('click', async e => {
+    const btn = e.target.closest('.refresh-status-btn');
+    if (!btn) return;
+    const orderId = btn.dataset.orderId;
+    btn.disabled = true;
+    btn.textContent = '⏳';
+    try {
+      const r = await fetch('/api/print/refresh-status', {
+        method: 'POST',
+        headers: authHeaders(),
+        body: JSON.stringify({ orderId }),
+      });
+      const res = await r.json();
+      if (!r.ok) { toast(res.error || 'שגיאה', 'error'); btn.textContent = '🔄'; btn.disabled = false; return; }
+      const badge = document.getElementById(`status-badge-${orderId}`);
+      if (badge) badge.textContent = res.status;
+      if (res.changed) {
+        toast(`סטטוס עודכן: ${res.status}`, 'success');
+        if (res.status !== 'in_production') btn.remove();
+      } else {
+        toast('אין שינוי בסטטוס', 'info');
+        btn.textContent = '🔄';
+        btn.disabled = false;
+      }
+    } catch { toast('שגיאת רשת', 'error'); btn.textContent = '🔄'; btn.disabled = false; }
+  });
 
   return { load };
 })();
