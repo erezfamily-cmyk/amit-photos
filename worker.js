@@ -884,6 +884,61 @@ function cancelPage(message, success) {
 </body></html>`;
 }
 
+async function handlePrintRefreshStatus(request, env) {
+  if (request.method !== 'POST') return jsonRes({ error: 'method not allowed' }, 405, request);
+  if (!await checkAuth(request, env)) return unauth(request);
+
+  const { orderId } = await request.json().catch(() => ({}));
+  if (!orderId) return jsonRes({ error: 'orderId חסר' }, 400, request);
+
+  const order = await env.DB.prepare(
+    'SELECT id, prodigi_order_id, status FROM print_orders WHERE id=?'
+  ).bind(orderId).first();
+  if (!order) return jsonRes({ error: 'הזמנה לא נמצאה' }, 404, request);
+
+  const gelatoOrderId = order.prodigi_order_id;
+  if (!gelatoOrderId) return jsonRes({ error: 'אין Gelato order ID' }, 400, request);
+
+  const gelatoRes = await fetch(
+    `https://api.gelato.com/v2/order/status/${gelatoOrderId}`,
+    { headers: { 'X-API-KEY': env.GELATO_API_KEY } }
+  );
+  if (!gelatoRes.ok) {
+    const err = await gelatoRes.text();
+    return jsonRes({ error: `שגיאת Gelato: ${gelatoRes.status} ${err}` }, 502, request);
+  }
+  const gelatoData = await gelatoRes.json();
+
+  const STATUS_MAP = {
+    'created':       'in_production',
+    'passed':        'in_production',
+    'in_production': 'in_production',
+    'printed':       'in_production',
+    'shipped':       'shipped',
+    'delivered':     'shipped',
+    'cancelled':     'cancelled',
+    'failed':        'cancelled',
+  };
+  const rawStatus = (gelatoData.productionStatus || '').toLowerCase();
+  const newStatus = STATUS_MAP[rawStatus];
+
+  if (newStatus && newStatus !== order.status && order.status !== 'cancelled') {
+    await env.DB.prepare(
+      'UPDATE print_orders SET status=? WHERE id=?'
+    ).bind(newStatus, orderId).run();
+  }
+
+  const tracking = gelatoData.trackingCode?.[0] || '';
+  return jsonRes({
+    orderId,
+    previousStatus: order.status,
+    status: newStatus || order.status,
+    gelatoStatus: rawStatus,
+    tracking,
+    changed: !!(newStatus && newStatus !== order.status && order.status !== 'cancelled'),
+  }, 200, request);
+}
+
 async function handlePrintWebhook(request, env) {
   if (request.method !== 'POST') return new Response('ok', { status: 200 });
   const payload = await request.json().catch(() => null);
@@ -1255,6 +1310,7 @@ export default {
     if (path === '/api/print/order-complete') return handlePrintOrderComplete(request, env);
     if (path === '/api/print/cancel')         return handlePrintCancel(request, env);
     if (path === '/api/print/webhook')        return handlePrintWebhook(request, env);
+    if (path === '/api/print/refresh-status') return handlePrintRefreshStatus(request, env);
     if (path === '/api/print/orders')         return handlePrintOrders(request, env);
     if (path === '/api/proxy-image')          return handleImageProxy(request, env);
     if (path === '/api/analytics')         return handleAnalytics(request, env);
