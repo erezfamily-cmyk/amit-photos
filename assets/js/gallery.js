@@ -139,8 +139,15 @@ async function loadPhotos() {
     ]);
     const jsonPhotos = jsonRes.status === 'fulfilled' ? (jsonRes.value || []) : [];
     const apiPhotos  = apiRes.status  === 'fulfilled' ? (apiRes.value  || []) : [];
+    const jsonById = Object.fromEntries(jsonPhotos.map(p => [p.id, p]));
     const apiIds = new Set(apiPhotos.map(p => p.id));
-    allPhotos = [...apiPhotos, ...jsonPhotos.filter(p => !apiIds.has(p.id))];
+    allPhotos = [
+      ...apiPhotos.map(ap => {
+        const jp = jsonById[ap.id];
+        return jp ? { ...ap, parent_category: ap.parent_category ?? jp.parent_category } : ap;
+      }),
+      ...jsonPhotos.filter(p => !apiIds.has(p.id))
+    ];
     if (!allPhotos.length) allPhotos = getDemoPhotos();
   } catch {
     allPhotos = getDemoPhotos();
