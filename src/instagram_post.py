@@ -175,6 +175,26 @@ def post_to_instagram(photo, caption):
     creation_id = container_data["id"]
     print(f"📦 Container נוצר: {creation_id}")
 
+    # המתן עד שה-container מוכן
+    import time
+    for attempt in range(10):
+        time.sleep(5)
+        status_resp = requests.get(
+            f"{GRAPH_API}/{creation_id}",
+            params={"fields": "status_code", "access_token": ACCESS_TOKEN},
+            timeout=30,
+        )
+        status = status_resp.json().get("status_code", "")
+        print(f"⏳ סטטוס container: {status}")
+        if status == "FINISHED":
+            break
+        if status == "ERROR":
+            print(f"❌ שגיאת עיבוד container: {status_resp.json()}")
+            sys.exit(1)
+    else:
+        print("❌ Container לא הושלם בזמן")
+        sys.exit(1)
+
     # שלב 2: פרסם
     publish_url = f"{GRAPH_API}/{IG_USER_ID}/media_publish"
     publish_resp = requests.post(publish_url, data={
