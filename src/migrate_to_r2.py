@@ -63,6 +63,7 @@ def migrate_photo(photo, dry_run=False):
                 "title": photo.get("title", ""),
                 "category": photo.get("category", ""),
                 "description": photo.get("description", ""),
+                "parent_category": photo.get("parent_category", ""),
             },
             timeout=60,
         )
