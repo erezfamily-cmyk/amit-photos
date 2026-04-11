@@ -17,8 +17,19 @@ DATA_FILE = ROOT / "data" / "photos.json"
 WORKER_URL = os.environ.get("WORKER_URL", "https://amitphotos.com")
 ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "")
 
+SESSION_TOKEN = None
+
+def login():
+    global SESSION_TOKEN
+    r = requests.post(f"{WORKER_URL}/api/login", json={"password": ADMIN_PASSWORD}, timeout=15)
+    if r.ok:
+        SESSION_TOKEN = r.json().get("token", "")
+        return bool(SESSION_TOKEN)
+    print(f"❌ התחברות נכשלה: {r.status_code} {r.text[:100]}")
+    return False
+
 def auth_headers():
-    return {"X-Admin-Password": ADMIN_PASSWORD}
+    return {"X-Session-Token": SESSION_TOKEN}
 
 def already_migrated():
     """שלוף filenames שכבר ב-D1 (כולל unpublished)"""
@@ -83,6 +94,12 @@ def main():
     if not ADMIN_PASSWORD:
         print("❌ חסר ADMIN_PASSWORD כ-environment variable")
         sys.exit(1)
+
+    if not dry_run:
+        print("🔐 מתחבר...")
+        if not login():
+            sys.exit(1)
+        print("✅ התחברות הצליחה")
 
     with open(DATA_FILE, encoding="utf-8") as f:
         photos = json.load(f)
