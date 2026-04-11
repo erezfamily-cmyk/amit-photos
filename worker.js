@@ -27,12 +27,18 @@ function jsonRes(data, status = 200, request = null) {
 function unauth(request) { return jsonRes({ error: 'לא מורשה' }, 401, request); }
 
 async function checkAuth(request, env) {
+  // Session token (כניסה רגילה לאדמין)
   const token = request.headers.get('X-Session-Token');
-  if (!token) return false;
-  const session = await env.DB.prepare(
-    'SELECT token FROM sessions WHERE token=? AND expires_at > ?'
-  ).bind(token, new Date().toISOString()).first();
-  return !!session;
+  if (token) {
+    const session = await env.DB.prepare(
+      'SELECT token FROM sessions WHERE token=? AND expires_at > ?'
+    ).bind(token, new Date().toISOString()).first();
+    return !!session;
+  }
+  // Admin password (לסקריפטים אוטומטיים כמו מיגרציה)
+  const pwd = request.headers.get('X-Admin-Password');
+  if (pwd && env.ADMIN_PASSWORD && pwd === env.ADMIN_PASSWORD) return true;
+  return false;
 }
 
 // ===== LOGIN =====

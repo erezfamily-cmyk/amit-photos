@@ -21,11 +21,11 @@ def auth_headers():
     return {"X-Admin-Password": ADMIN_PASSWORD}
 
 def already_migrated():
-    """שלוף IDs שכבר ב-D1"""
+    """שלוף filenames שכבר ב-D1 (כולל unpublished)"""
     try:
-        r = requests.get(f"{WORKER_URL}/api/photos", headers=auth_headers(), timeout=15)
+        r = requests.get(f"{WORKER_URL}/api/photos?admin=1", headers=auth_headers(), timeout=15)
         if r.ok:
-            return {p["filename"] for p in r.json()}
+            return {p["filename"] for p in r.json() if p.get("filename")}
     except Exception as e:
         print(f"⚠️  לא ניתן לגשת ל-API: {e}")
     return set()
