@@ -150,19 +150,39 @@ def generate_caption(photo):
     return msg.content[0].text.strip()
 
 
+def upload_to_public_host(source_url):
+    """מוריד תמונה ומעלה לשרת ציבורי — נדרש כי Facebook לא ניגש ל-Google Drive."""
+    resp = requests.get(source_url, timeout=30)
+    resp.raise_for_status()
+    upload = requests.post(
+        "https://catbox.moe/user/api.php",
+        data={"reqtype": "fileupload"},
+        files={"fileToUpload": ("photo.jpg", resp.content, "image/jpeg")},
+        timeout=60,
+    )
+    upload.raise_for_status()
+    public_url = upload.text.strip()
+    print(f"⬆️  תמונה הועלתה: {public_url}")
+    return public_url
+
+
 def post_to_facebook(photo, message):
     """מפרסם תמונה עם הודעה לעמוד הפייסבוק."""
-    thumbnail_url = photo.get("thumbnail") or photo.get("url")
+    source_url = photo.get("thumbnail") or photo.get("url")
+    print("⬆️  מעלה תמונה לשרת ציבורי...")
+    image_url = upload_to_public_host(source_url)
 
     url = f"{GRAPH_API}/{PAGE_ID}/photos"
     payload = {
-        "url": thumbnail_url,
+        "url": image_url,
         "message": message,
         "access_token": ACCESS_TOKEN,
     }
 
     resp = requests.post(url, data=payload, timeout=30)
-    resp.raise_for_status()
+    if not resp.ok:
+        print(f"❌ שגיאת Facebook API: {resp.status_code} — {resp.text}")
+        sys.exit(1)
     result = resp.json()
 
     if "id" in result:
