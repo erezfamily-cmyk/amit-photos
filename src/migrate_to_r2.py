@@ -32,11 +32,12 @@ def auth_headers():
     return {"X-Session-Token": SESSION_TOKEN}
 
 def already_migrated():
-    """שלוף filenames שכבר ב-D1 (כולל unpublished)"""
+    """שלוף filenames שכבר ב-R2 (url מתחיל ב-/photos/)"""
     try:
         r = requests.get(f"{WORKER_URL}/api/photos?admin=1", headers=auth_headers(), timeout=15)
         if r.ok:
-            return {p["filename"] for p in r.json() if p.get("filename")}
+            return {p["filename"] for p in r.json()
+                    if p.get("filename") and (p.get("url") or "").startswith("/photos/")}
     except Exception as e:
         print(f"⚠️  לא ניתן לגשת ל-API: {e}")
     return set()

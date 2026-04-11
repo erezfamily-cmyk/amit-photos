@@ -1532,7 +1532,7 @@ const Photos = (() => {
 
   function showLbPhoto() {
     const p = lbList[lbIdx];
-    $('lb-img').src = p.url || p.thumbnail || '';
+    $('lb-img').src = (p.url && p.url.startsWith('/')) ? p.url : (p.thumbnail || p.url || '');
     $('lb-caption').textContent = [p.title, p.category].filter(Boolean).join(' · ');
   }
 
