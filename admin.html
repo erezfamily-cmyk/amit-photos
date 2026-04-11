@@ -1272,9 +1272,10 @@ const Photos = (() => {
       fetch('/api/photos?admin=1', { headers: authHeaders() }).then(r => r.ok ? r.json() : []).catch(() => []),
       fetch('data/photos.json').then(r => r.ok ? r.json() : []).catch(() => [])
     ]);
-    // שלב: D1 קודם, אחר כך Google Drive (ללא כפילויות)
+    // שלב: D1 קודם, אחר כך Google Drive (ללא כפילויות לפי ID ו-filename)
     const d1Ids = new Set(d1Photos.map(p => p.id));
-    const drivePhotos = jsonPhotos.filter(p => !d1Ids.has(p.id)).map(p => ({ ...p, _source: 'drive' }));
+    const d1Filenames = new Set(d1Photos.map(p => p.filename).filter(Boolean));
+    const drivePhotos = jsonPhotos.filter(p => !d1Ids.has(p.id) && !d1Filenames.has(p.filename)).map(p => ({ ...p, _source: 'drive' }));
     data = [...d1Photos.map(p => ({ ...p, _source: 'r2' })), ...drivePhotos];
     render();
     initUpload();
