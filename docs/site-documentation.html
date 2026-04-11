@@ -1,0 +1,1240 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>amitphotos.com — תיעוד מלא</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700&display=swap');
+
+  :root {
+    --gold: #b8860b;
+    --gold-light: #d4a843;
+    --dark: #1a1a1a;
+    --mid: #2d2d2d;
+    --light: #f8f6f2;
+    --border: #d0c8b8;
+    --text: #1a1a1a;
+    --muted: #666;
+    --accent-bg: #faf7f0;
+    --page-width: 210mm;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Heebo', Arial, sans-serif;
+    font-size: 10.5pt;
+    line-height: 1.75;
+    color: var(--text);
+    background: #f0ece4;
+    direction: rtl;
+  }
+
+  /* ===== PRINT WRAPPER ===== */
+  .page-wrap {
+    max-width: 800px;
+    margin: 0 auto;
+    background: #fff;
+    box-shadow: 0 4px 40px rgba(0,0,0,0.15);
+  }
+
+  /* ===== COVER PAGE ===== */
+  .cover {
+    background: linear-gradient(160deg, #0a0a0a 60%, #1a1508 100%);
+    color: #fff;
+    padding: 80px 60px 60px;
+    min-height: 280px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    page-break-after: always;
+  }
+  .cover-logo {
+    font-size: 11pt;
+    letter-spacing: 0.35em;
+    color: var(--gold-light);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    font-weight: 400;
+  }
+  .cover-title {
+    font-size: 28pt;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 12px;
+    color: #fff;
+  }
+  .cover-subtitle {
+    font-size: 11pt;
+    color: rgba(255,255,255,0.6);
+    font-weight: 300;
+    margin-bottom: 40px;
+  }
+  .cover-meta {
+    display: flex;
+    gap: 40px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(200,169,110,0.3);
+  }
+  .cover-meta-item label {
+    display: block;
+    font-size: 7pt;
+    letter-spacing: 0.2em;
+    color: var(--gold-light);
+    text-transform: uppercase;
+    margin-bottom: 3px;
+  }
+  .cover-meta-item span {
+    font-size: 9.5pt;
+    color: rgba(255,255,255,0.8);
+  }
+
+  /* ===== BODY CONTENT ===== */
+  .content {
+    padding: 50px 60px;
+  }
+
+  /* ===== CHAPTER HEADER ===== */
+  .chapter {
+    margin-top: 52px;
+    margin-bottom: 28px;
+    page-break-before: auto;
+  }
+  .chapter:first-child { margin-top: 0; }
+  .chapter-num {
+    font-size: 7.5pt;
+    letter-spacing: 0.25em;
+    color: var(--gold);
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 5px;
+  }
+  .chapter-title {
+    font-size: 17pt;
+    font-weight: 700;
+    color: var(--dark);
+    border-bottom: 2px solid var(--gold);
+    padding-bottom: 10px;
+    line-height: 1.3;
+  }
+  .chapter-desc {
+    margin-top: 10px;
+    color: var(--muted);
+    font-size: 9.5pt;
+  }
+
+  /* ===== SECTION ===== */
+  .section {
+    margin-top: 28px;
+  }
+  .section-title {
+    font-size: 11.5pt;
+    font-weight: 700;
+    color: var(--dark);
+    margin-bottom: 10px;
+    padding-right: 10px;
+    border-right: 3px solid var(--gold);
+  }
+
+  /* ===== PARAGRAPH ===== */
+  p {
+    margin-bottom: 10px;
+    line-height: 1.78;
+  }
+
+  /* ===== TABLE ===== */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 14px 0;
+    font-size: 9.5pt;
+  }
+  th {
+    background: var(--dark);
+    color: #fff;
+    font-weight: 600;
+    padding: 7px 11px;
+    text-align: right;
+    font-size: 9pt;
+    letter-spacing: 0.02em;
+  }
+  td {
+    padding: 6px 11px;
+    border-bottom: 1px solid #e8e2d8;
+    vertical-align: top;
+  }
+  tr:nth-child(even) td { background: var(--accent-bg); }
+  tr:last-child td { border-bottom: none; }
+  table.bordered { border: 1px solid var(--border); }
+  table.bordered th, table.bordered td { border: 1px solid var(--border); }
+
+  /* ===== BADGES / PILLS ===== */
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 99px;
+    font-size: 8pt;
+    font-weight: 600;
+    margin: 2px;
+  }
+  .badge-gold { background: #fdf3dc; color: #8a5f00; border: 1px solid #e0c070; }
+  .badge-blue { background: #e8f0ff; color: #1a3a8a; border: 1px solid #a0b8e8; }
+  .badge-green { background: #e8f8ee; color: #1a6a30; border: 1px solid #80c898; }
+  .badge-red { background: #ffe8e8; color: #8a1a1a; border: 1px solid #e89898; }
+  .badge-gray { background: #f0eee8; color: #555; border: 1px solid #ccc; }
+
+  /* ===== INFO BOX ===== */
+  .info-box {
+    background: var(--accent-bg);
+    border: 1px solid var(--border);
+    border-right: 4px solid var(--gold);
+    padding: 14px 18px;
+    margin: 14px 0;
+    border-radius: 0 4px 4px 0;
+    font-size: 9.5pt;
+  }
+  .info-box strong {
+    display: block;
+    margin-bottom: 5px;
+    color: var(--dark);
+    font-size: 10pt;
+  }
+
+  .warn-box {
+    background: #fffbec;
+    border: 1px solid #e8d890;
+    border-right: 4px solid #c8a820;
+    padding: 12px 16px;
+    margin: 12px 0;
+    font-size: 9.5pt;
+  }
+
+  /* ===== FEATURE GRID ===== */
+  .feature-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 14px 0;
+  }
+  .feature-card {
+    background: var(--accent-bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 12px 14px;
+  }
+  .feature-card-title {
+    font-weight: 700;
+    font-size: 9.5pt;
+    color: var(--dark);
+    margin-bottom: 5px;
+  }
+  .feature-card p { margin-bottom: 0; font-size: 9pt; color: var(--muted); }
+
+  /* ===== CODE ===== */
+  code {
+    font-family: 'Courier New', monospace;
+    font-size: 8.5pt;
+    background: #f0ece4;
+    padding: 1px 5px;
+    border-radius: 3px;
+    color: #5a3e00;
+  }
+
+  /* ===== LIST ===== */
+  ul, ol {
+    padding-right: 20px;
+    margin-bottom: 10px;
+    font-size: 9.5pt;
+  }
+  li { margin-bottom: 4px; }
+  li::marker { color: var(--gold); }
+
+  /* ===== TIMELINE ===== */
+  .timeline {
+    position: relative;
+    padding-right: 20px;
+    border-right: 2px solid var(--gold);
+    margin: 14px 0;
+  }
+  .timeline-item {
+    position: relative;
+    margin-bottom: 14px;
+    padding-right: 16px;
+  }
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    right: -26px;
+    top: 6px;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--gold);
+    border: 2px solid #fff;
+  }
+  .timeline-label {
+    font-size: 8pt;
+    color: var(--gold);
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .timeline-text {
+    font-size: 9.5pt;
+    color: var(--text);
+    margin-top: 2px;
+  }
+
+  /* ===== STAT GRID ===== */
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin: 16px 0;
+  }
+  .stat-card {
+    background: var(--dark);
+    color: #fff;
+    padding: 14px 12px;
+    border-radius: 4px;
+    text-align: center;
+  }
+  .stat-num {
+    font-size: 20pt;
+    font-weight: 700;
+    color: var(--gold-light);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .stat-label {
+    font-size: 8pt;
+    color: rgba(255,255,255,0.6);
+    line-height: 1.3;
+  }
+
+  /* ===== DIVIDER ===== */
+  hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 28px 0;
+  }
+
+  /* ===== TOC ===== */
+  .toc {
+    background: var(--accent-bg);
+    border: 1px solid var(--border);
+    padding: 24px 28px;
+    margin-bottom: 40px;
+  }
+  .toc-title {
+    font-size: 11pt;
+    font-weight: 700;
+    margin-bottom: 14px;
+    color: var(--dark);
+  }
+  .toc-list {
+    list-style: none;
+    padding: 0;
+  }
+  .toc-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 4px 0;
+    border-bottom: 1px dotted var(--border);
+    font-size: 9.5pt;
+  }
+  .toc-list li:last-child { border-bottom: none; }
+  .toc-list .toc-num { color: var(--gold); font-weight: 700; margin-left: 8px; }
+  .toc-list .toc-section { color: var(--muted); font-size: 8.5pt; }
+  .toc-list li.sub { padding-right: 18px; }
+
+  /* ===== PRINT ===== */
+  @media print {
+    body { background: #fff; font-size: 10pt; }
+    .page-wrap { box-shadow: none; max-width: 100%; }
+    .cover { padding: 60px 50px; min-height: 240px; }
+    .content { padding: 40px 50px; }
+    .chapter { page-break-before: auto; }
+    .chapter.break { page-break-before: always; }
+    .feature-grid { break-inside: avoid; }
+    table { break-inside: avoid; font-size: 9pt; }
+    .stat-grid { break-inside: avoid; }
+  }
+
+  /* ===== FOOTER TAG ===== */
+  .doc-footer {
+    background: var(--dark);
+    color: rgba(255,255,255,0.4);
+    padding: 20px 60px;
+    font-size: 8pt;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .doc-footer span { color: var(--gold-light); }
+
+  /* ===== ENDPOINT LIST ===== */
+  .endpoint {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    padding: 5px 0;
+    border-bottom: 1px solid #f0ece4;
+    font-size: 9pt;
+  }
+  .endpoint:last-child { border-bottom: none; }
+  .method {
+    font-size: 7.5pt;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 3px;
+    min-width: 38px;
+    text-align: center;
+  }
+  .method.get { background: #e8f5e9; color: #1b5e20; }
+  .method.post { background: #e3f2fd; color: #0d47a1; }
+  .method.patch { background: #fff8e1; color: #e65100; }
+  .method.delete { background: #fce4ec; color: #880e4f; }
+  .path { font-family: 'Courier New', monospace; font-size: 9pt; color: #333; flex: 0 0 auto; }
+  .desc { color: var(--muted); flex: 1; }
+
+  /* Priority indicators */
+  .priority { font-size: 8pt; font-weight: 700; }
+  .priority.high { color: #c0392b; }
+  .priority.medium { color: #e67e22; }
+  .priority.low { color: #27ae60; }
+</style>
+</head>
+<body>
+<div class="page-wrap">
+
+<!-- ======================================================
+     COVER
+====================================================== -->
+<div class="cover">
+  <div class="cover-logo">Amit Photos — תיעוד מקיף</div>
+  <div class="cover-title">amitphotos.com<br>מסמך אדריכלות ויכולות</div>
+  <div class="cover-subtitle">כל מה שיודע האתר, איך הוא עובד, ומה מתוכנן לעתיד</div>
+  <div class="cover-meta">
+    <div class="cover-meta-item">
+      <label>תאריך עדכון</label>
+      <span>אפריל 2026</span>
+    </div>
+    <div class="cover-meta-item">
+      <label>גרסה</label>
+      <span>2.0</span>
+    </div>
+    <div class="cover-meta-item">
+      <label>כתובת</label>
+      <span>amitphotos.com</span>
+    </div>
+    <div class="cover-meta-item">
+      <label>תמונות בגלריה</label>
+      <span>471+</span>
+    </div>
+  </div>
+</div>
+
+<!-- ======================================================
+     CONTENT
+====================================================== -->
+<div class="content">
+
+<!-- TOC -->
+<div class="toc">
+  <div class="toc-title">תוכן עניינים</div>
+  <ul class="toc-list">
+    <li><span><span class="toc-num">1</span> סקירת האתר</span><span class="toc-section">מה האתר עושה</span></li>
+    <li><span><span class="toc-num">2</span> ארכיטקטורה טכנית</span><span class="toc-section">Stack, Hosting, DB, Storage</span></li>
+    <li><span><span class="toc-num">3</span> ממשק המשתמש (Frontend)</span><span class="toc-section">כל הסקשנים והפיצ'רים</span></li>
+    <li class="sub"><span>— גלריה</span><span class="toc-section">תמונות, פילטרים, לייטבוקס</span></li>
+    <li class="sub"><span>— חנות הדפסות</span><span class="toc-section">Gelato, PayPal, מייל</span></li>
+    <li class="sub"><span>— עגלת קניות</span><span class="toc-section">Cart, הנחות חבילה</span></li>
+    <li><span><span class="toc-num">4</span> פאנל ניהול</span><span class="toc-section">Admin, תמונות, לקוחות, ניוזלטר</span></li>
+    <li><span><span class="toc-num">5</span> Backend — Cloudflare Worker</span><span class="toc-section">API endpoints, אבטחה</span></li>
+    <li><span><span class="toc-num">6</span> מסד הנתונים</span><span class="toc-section">Cloudflare D1, טבלאות</span></li>
+    <li><span><span class="toc-num">7</span> אוטומציות</span><span class="toc-section">GitHub Actions, לוחות זמנים</span></li>
+    <li><span><span class="toc-num">8</span> אינטגרציות AI</span><span class="toc-section">Claude Vision, כותרות, כיתובים</span></li>
+    <li><span><span class="toc-num">9</span> PWA ו-Service Worker</span><span class="toc-section">offline, cache</span></li>
+    <li><span><span class="toc-num">10</span> SEO ונראות</span><span class="toc-section">מטא, OG, Schema.org</span></li>
+    <li><span><span class="toc-num">11</span> אבטחה</span><span class="toc-section">Auth, CORS, Image Protection</span></li>
+    <li><span><span class="toc-num">12</span> שיפורים מתוכננים לעתיד</span><span class="toc-section">Roadmap לפי עדיפות</span></li>
+  </ul>
+</div>
+
+<!-- ======================================================
+     CHAPTER 1 — OVERVIEW
+====================================================== -->
+<div class="chapter">
+  <div class="chapter-num">פרק 01</div>
+  <div class="chapter-title">סקירת האתר</div>
+  <div class="chapter-desc">מה amitphotos.com עושה, למי הוא מיועד, ומה הוא מציע</div>
+</div>
+
+<p>
+  <strong>amitphotos.com</strong> הוא אתר פורטפוליו + חנות דיגיטלית לצלם אמנותי ישראלי בשם עמית ארז.
+  האתר פועל ב-RTL עברית מלאה ומציע שני מוצרים עיקריים:
+</p>
+
+<div class="feature-grid">
+  <div class="feature-card">
+    <div class="feature-card-title">📥 קבצים דיגיטליים</div>
+    <p>קנייה ישירה של תמונה דיגיטלית ב-3 רזולוציות (רשת / הדפסה / מלא), הורדה מיידית אחרי תשלום PayPal.</p>
+  </div>
+  <div class="feature-card">
+    <div class="feature-card-title">🖼️ הדפסות פיזיות</div>
+    <p>הזמנת הדפסה (פוסטר / קנבס / מתכת) שנשלחת ישירות לבית הלקוח מ-Gelato — ללא מגע ידני.</p>
+  </div>
+  <div class="feature-card">
+    <div class="feature-card-title">📱 רשתות חברתיות</div>
+    <p>פרסום אוטומטי יומי/שבועי לאינסטגרם, פייסבוק ופינטרסט עם כיתובים שנוצרים ע"י Claude AI.</p>
+  </div>
+  <div class="feature-card">
+    <div class="feature-card-title">📧 ניוזלטר</div>
+    <p>הרשמה לניוזלטר מהאתר, מייל ברוך הבא אוטומטי, שליחת עדכונים לכלל הנרשמים מהאדמין.</p>
+  </div>
+</div>
+
+<div class="stat-grid">
+  <div class="stat-card">
+    <div class="stat-num">471+</div>
+    <div class="stat-label">תמונות בגלריה</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-num">15</div>
+    <div class="stat-label">קטגוריות</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-num">3</div>
+    <div class="stat-label">סוגי הדפסה</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-num">5</div>
+    <div class="stat-label">אוטומציות פעילות</div>
+  </div>
+</div>
+
+<!-- ======================================================
+     CHAPTER 2 — ARCHITECTURE
+====================================================== -->
+<div class="chapter break">
+  <div class="chapter-num">פרק 02</div>
+  <div class="chapter-title">ארכיטקטורה טכנית</div>
+  <div class="chapter-desc">Stack מלא — Hosting, Database, Storage, ושירותים חיצוניים</div>
+</div>
+
+<table class="bordered">
+  <thead>
+    <tr><th>שכבה</th><th>טכנולוגיה / שירות</th><th>תפקיד</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>Hosting + Edge</strong></td><td>Cloudflare Workers</td><td>מגיש את כל האתר + מטפל ב-API, רץ בכל 300+ מיקומי Edge בעולם</td></tr>
+    <tr><td><strong>Static Assets</strong></td><td>Cloudflare Workers Assets</td><td>HTML, CSS, JS, תמונות סטטיות — כולל תיקיית assets/</td></tr>
+    <tr><td><strong>Database</strong></td><td>Cloudflare D1 (SQLite)</td><td>תמונות, לקוחות, נרשמים, הזמנות, אנליטיקה, sessions</td></tr>
+    <tr><td><strong>Image Storage</strong></td><td>Cloudflare R2</td><td>אחסון תמונות גדולות (bucket: amit-photos-images) — ללא עלות egress</td></tr>
+    <tr><td><strong>Frontend</strong></td><td>HTML5 + CSS3 + Vanilla JS</td><td>ללא frameworks — index.html, admin.html, download.html, print-complete.html</td></tr>
+    <tr><td><strong>פונטים</strong></td><td>Google Fonts</td><td>Syne 700/800 (כותרות) + Heebo 300-700 (עברית)</td></tr>
+    <tr><td><strong>תשלומים</strong></td><td>PayPal Payments Standard</td><td>קבצים דיגיטליים + הדפסות — PDT לאימות תשלום</td></tr>
+    <tr><td><strong>הדפסות</strong></td><td>Gelato API v4</td><td>ייצור + משלוח הדפסות ישירות ללקוח (Print-on-Demand)</td></tr>
+    <tr><td><strong>מייל</strong></td><td>Resend API</td><td>אישורי הזמנה, עדכוני משלוח, ניוזלטר, איפוס סיסמה</td></tr>
+    <tr><td><strong>פניות</strong></td><td>Web3Forms</td><td>קבלת טפסי "צור קשר" → מייל לאדמין</td></tr>
+    <tr><td><strong>AI</strong></td><td>Claude Haiku (Anthropic)</td><td>כותרות עבריות, alt text, כיתובי רשתות חברתיות</td></tr>
+    <tr><td><strong>Python Scripts</strong></td><td>Python 3 + GitHub Actions</td><td>אוטומציות: שליפת תמונות מ-Drive, פרסום לרשתות</td></tr>
+    <tr><td><strong>Source Images</strong></td><td>Google Drive</td><td>מקור התמונות המקוריות — תיקיית Portfolio/ עם תת-תיקיות</td></tr>
+    <tr><td><strong>CI/CD</strong></td><td>GitHub Actions + Wrangler</td><td>deploy אוטומטי ל-Cloudflare Worker בכל push</td></tr>
+    <tr><td><strong>Analytics</strong></td><td>Google Analytics (GA4) + D1</td><td>GA4 לנתוני קהל, D1 לנתוני page views יומיים מה-Worker</td></tr>
+    <tr><td><strong>Domain</strong></td><td>amitphotos.com</td><td>Cloudflare DNS + SSL אוטומטי</td></tr>
+  </tbody>
+</table>
+
+<div class="info-box">
+  <strong>🔄 זרימת נתונים</strong>
+  Google Drive (תמונות מקוריות) → GitHub Actions (ממיר + מייצר JSON) →
+  Cloudflare R2 (אחסון) + D1 (מטא-דאטה) → Cloudflare Worker (API) → Browser (Frontend JS)
+</div>
+
+<!-- ======================================================
+     CHAPTER 3 — FRONTEND
+====================================================== -->
+<div class="chapter break">
+  <div class="chapter-num">פרק 03</div>
+  <div class="chapter-title">ממשק המשתמש (Frontend)</div>
+  <div class="chapter-desc">כל הסקשנים, הפיצ'רים, ולוגיקת JavaScript</div>
+</div>
+
+<div class="section">
+  <div class="section-title">מבנה הדף הראשי (index.html)</div>
+
+  <table>
+    <thead><tr><th>סקשן</th><th>תוכן</th><th>פיצ'רים מיוחדים</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Hero</strong></td><td>כותרת ראשית, tagline, 2 כפתורי CTA</td><td>Parallax scroll (40% מהירות גלילה), reduced-motion support</td></tr>
+      <tr><td><strong>Featured</strong></td><td>5 תמונות נבחרות</td><td>Deterministic weekly rotation — אותן 5 תמונות כל שבוע, מתחלפות כל ראשון</td></tr>
+      <tr><td><strong>גלריה</strong></td><td>471 תמונות עם פילטרים + חיפוש</td><td>ראו סקשן גלריה בהמשך</td></tr>
+      <tr><td><strong>אודות</strong></td><td>תמונת פורטרט, 3 stats</td><td>500+ תמונות, 8 שנות צילום, 3 גדלים</td></tr>
+      <tr><td><strong>כיצד לרכוש</strong></td><td>4 שלבים ויזואליים</td><td>גלל → לחץ → שלם ב-PayPal → הורד</td></tr>
+      <tr><td><strong>הציוד שלי</strong></td><td>3 כרטיסי ציוד (גוף / עדשות / אביזרים)</td><td>אייקוני SVG מותאמים</td></tr>
+      <tr><td><strong>לקוחות ממליצים</strong></td><td>3 ציטוטים + דירוג כוכבים</td><td>Hardcoded כרגע</td></tr>
+      <tr><td><strong>מחירון</strong></td><td>3 packages: ₪19 / ₪59 / ₪129</td><td>Popular badge על חבילת הדפסה</td></tr>
+      <tr><td><strong>FAQ הדפסות</strong></td><td>8 שאלות נפוצות</td><td>Accordion (פתיחה/סגירה)</td></tr>
+      <tr><td><strong>צור קשר</strong></td><td>טופס + WhatsApp + מייל</td><td>ולידציה, שמירה ב-D1, שליחה דרך Web3Forms</td></tr>
+      <tr><td><strong>ניוזלטר</strong></td><td>שדה מייל + שם + כפתור</td><td>מייל ברוך הבא אוטומטי, הרשמה ל-D1</td></tr>
+      <tr><td><strong>Footer</strong></td><td>קישורים, רשתות חברתיות, מייל</td><td>—</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="section">
+  <div class="section-title">גלריה — פיצ'רים</div>
+
+  <p>הגלריה היא הלב של האתר. היא בנויה ב-JavaScript טהור ללא ספריות.</p>
+
+  <table>
+    <thead><tr><th>פיצ'ר</th><th>פירוט</th></tr></thead>
+    <tbody>
+      <tr><td><strong>טעינת נתונים</strong></td><td>שולפת במקביל מ-<code>data/photos.json</code> (fallback) ומ-<code>/api/photos</code> (D1), ממזגת את שניהם</td></tr>
+      <tr><td><strong>Skeleton Loading</strong></td><td>8 placeholder cards בגבהים אקראיים עד טעינת התמונות</td></tr>
+      <tr><td><strong>רנדור</strong></td><td>100 תמונות בלבד בכל פעם (shuffle אקראי), Masonry-like layout</td></tr>
+      <tr><td><strong>Infinite Scroll</strong></td><td>IntersectionObserver על sentinel element — טוען 25 תמונות נוספות בכל גלילה</td></tr>
+      <tr><td><strong>פילטרים</strong></td><td>היררכיים: קטגוריות ראשיות + קבוצות עם תת-קטגוריות (למשל "מקומות בעולם" → 10 מדינות)</td></tr>
+      <tr><td><strong>חיפוש</strong></td><td>חיפוש real-time לפי שם תמונה (case-insensitive), בשילוב עם הפילטרים</td></tr>
+      <tr><td><strong>Scroll Reveal</strong></td><td>תמונות נכנסות עם animation stagger לפי מיקום אנכי (עד 330ms delay)</td></tr>
+      <tr><td><strong>הגנת תמונות</strong></td><td>בלוק קליק ימני, חסימת גרירה, חסימת Ctrl+S, overlay שקוף על כל תמונה</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="section">
+  <div class="section-title">לייטבוקס (Lightbox)</div>
+
+  <table>
+    <thead><tr><th>פיצ'ר</th><th>פירוט</th></tr></thead>
+    <tbody>
+      <tr><td><strong>ניווט</strong></td><td>חצים על המסך, מקלדת (←/→/Esc), swipe מובייל (מעל 50px)</td></tr>
+      <tr><td><strong>זום</strong></td><td>לחיצה על התמונה מגדילה/מקטינה, Esc יוצא מזום</td></tr>
+      <tr><td><strong>מצגת</strong></td><td>מעבר אוטומטי כל 3 שניות, כפתור עצירה</td></tr>
+      <tr><td><strong>Progress Bar</strong></td><td>מד סרגל המציג מיקום בגלריה (N/total)</td></tr>
+      <tr><td><strong>EXIF Data</strong></td><td>Chips: מצלמה, focal length, aperture, shutter, ISO</td></tr>
+      <tr><td><strong>תמונות קשורות</strong></td><td>עד 10 תמונות מאותה קטגוריה, ניתנות ללחיצה</td></tr>
+      <tr><td><strong>Wall Mockup</strong></td><td>"ראה על הקיר" — תצוגה ויזואלית של התמונה כאילו תלויה על קיר</td></tr>
+      <tr><td><strong>שיתוף</strong></td><td>WhatsApp, Facebook, Copy Link — URL ייחודי לכל תמונה (<code>/photo/{id}</code>)</td></tr>
+      <tr><td><strong>Deep Link</strong></td><td>hash ב-URL (<code>#photo-{id}</code>) — שיתוף ופתיחה ישירה לתמונה ספציפית</td></tr>
+      <tr><td><strong>כפתור רכישה</strong></td><td>פותח Buy Modal עם 3 גדלים זמינים לפי רזולוציית המקור</td></tr>
+      <tr><td><strong>כפתור הדפסה</strong></td><td>פותח Print Shop Modal (ראו סקשן הדפסות)</td></tr>
+      <tr><td><strong>כפתור הורדה</strong></td><td>עם הגנת סיסמה — שולח POST ל-<code>/functions/download</code></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="section">
+  <div class="section-title">עגלת קניות (Cart)</div>
+
+  <p>עגלה לרכישת קבצים דיגיטליים מרובים בחבילה:</p>
+
+  <ul>
+    <li>כפתור "+ סל" על כל תמונה בגלריה</li>
+    <li>Badge עם מונה על כפתור הסל הצף</li>
+    <li>בחירת גודל אחד לכל העגלה: קטן (₪19) / בינוני (₪59) / גדול (₪129)</li>
+    <li><strong>הנחת חבילה:</strong> 20% הנחה על 3 תמונות ומעלה</li>
+    <li>Checkout → PayPal עם item list מלא</li>
+    <li>Toggle: לחיצה נוספת על "+ סל" מוציאה את התמונה מהעגלה</li>
+  </ul>
+</div>
+
+<div class="section">
+  <div class="section-title">חנות הדפסות (Print Shop)</div>
+
+  <p>פתוח מה-Lightbox, פועל ב-3 שלבים ויזואליים:</p>
+
+  <div class="timeline">
+    <div class="timeline-item">
+      <div class="timeline-label">שלב 1</div>
+      <div class="timeline-text"><strong>בחירת סוג:</strong> פוסטר / קנבס / מתכת — עם תיאור ואייקון לכל אחד. המחיר נשלף חי מ-Gelato API (<code>/api/print/quote</code>).</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-label">שלב 2</div>
+      <div class="timeline-text"><strong>בחירת גודל + חיתוך:</strong> כלי crop שמסתובב אוטומטית לפי יחס הגודל. בדיקת רזולוציה מינימלית — מונעת הזמנה אם התמונה קטנה מדי. הצגת הערת מכס אם מחיר ≥ $75.</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-label">שלב 3</div>
+      <div class="timeline-text"><strong>פרטי משלוח + תשלום:</strong> שם, מייל, טלפון, כתובת (שורה, עיר, מיקוד). PayPal Payment Standard. אחרי תשלום → <code>/api/print/order-complete</code> → Gelato order.</div>
+    </div>
+  </div>
+
+  <table>
+    <thead><tr><th>סוג</th><th>גדלים זמינים</th><th>מחיר משוקלל (1.6× עלות Gelato)</th></tr></thead>
+    <tbody>
+      <tr><td>פוסטר (נייר מט 170gsm)</td><td>20×25, 30×40, 40×50, A3, A2, 45×60, 60×90</td><td>$34–$85</td></tr>
+      <tr><td>קנבס (מסגרת עץ)</td><td>20×20, 20×25, 30×40, 40×50, 45×60</td><td>$38–$86</td></tr>
+      <tr><td>מתכת (אלומיניום 3mm)</td><td>30×30, 30×40, 30×45</td><td>$70–$82</td></tr>
+    </tbody>
+  </table>
+
+  <div class="info-box">
+    <strong>📧 אוטומציית מיילים בהדפסות</strong>
+    (1) לקוח מקבל מייל אישור + כפתור ביטול (תוקף שעה). (2) כשסטטוס עובר ל-shipped ב-Gelato, מייל שילוח נשלח אוטומטית עם מספר מעקב. (3) אדמין מקבל התראה על כל הזמנה חדשה.
+  </div>
+</div>
+
+<!-- ======================================================
+     CHAPTER 4 — ADMIN
+====================================================== -->
+<div class="chapter break">
+  <div class="chapter-num">פרק 04</div>
+  <div class="chapter-title">פאנל ניהול (Admin)</div>
+  <div class="chapter-desc">admin.html — לוח בקרה מלא לניהול האתר</div>
+</div>
+
+<p>
+  כניסה דרך סיסמה. אחרי כניסה מוצלחת — session token נשמר (תוקף 8 שעות).
+  ניסיונות כושלים מעלים מונה; לאחר 5 ניסיונות — נעילה ל-15 דקות לפי IP.
+</p>
+
+<div class="section">
+  <div class="section-title">לשוניות הניהול</div>
+
+  <table>
+    <thead><tr><th>לשונית</th><th>מה מראה</th><th>פעולות</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>לוח בקרה</strong></td>
+        <td>מד תמונות / נרשמים / פניות, סטטוס מהיר</td>
+        <td>—</td>
+      </tr>
+      <tr>
+        <td><strong>תמונות</strong></td>
+        <td>כל התמונות ב-D1 (כולל לא-פורסמות)</td>
+        <td>עריכת כותרת/קטגוריה, פרסום/הסרה, מחיקה, העלאה ידנית (drag&drop), כותרת AI, alt text AI</td>
+      </tr>
+      <tr>
+        <td><strong>נרשמים</strong></td>
+        <td>רשימת נרשמים לניוזלטר עם תאריך</td>
+        <td>מחיקת נרשם</td>
+      </tr>
+      <tr>
+        <td><strong>לקוחות</strong></td>
+        <td>כל פניות טופס צור קשר</td>
+        <td>שינוי סטטוס, כפתור "השב" (פותח Gmail), צפייה בפנייה, מחיקה</td>
+      </tr>
+      <tr>
+        <td><strong>הזמנות הדפסה</strong></td>
+        <td>טבלת הזמנות: תאריך, לקוח, טלפון, מייל, כתובת, מוצר, מחיר, Gelato ID, סטטוס</td>
+        <td>רענן סטטוס מ-Gelato, החזר כספי PayPal, הורדת לוג</td>
+      </tr>
+      <tr>
+        <td><strong>ניוזלטר</strong></td>
+        <td>עורך נושא + גוף + תצוגה מקדימה (iframe)</td>
+        <td>שליחה לכל הנרשמים</td>
+      </tr>
+      <tr>
+        <td><strong>אנליטיקה</strong></td>
+        <td>גרף page views 30 יום + פירוט מדינות</td>
+        <td>—</td>
+      </tr>
+      <tr>
+        <td><strong>הגדרות</strong></td>
+        <td>שינוי סיסמה, trigger workflow, repair R2</td>
+        <td>הפעלת GitHub Actions, תיקון תמונות ב-R2</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="section">
+  <div class="section-title">תהליך העלאת תמונה ידנית מהאדמין</div>
+  <div class="timeline">
+    <div class="timeline-item">
+      <div class="timeline-label">1</div>
+      <div class="timeline-text">גרירה/בחירת קובץ + אופציונלי: thumbnail נפרד</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-label">2</div>
+      <div class="timeline-text">Worker מעלה ל-R2 תחת UUID כמפתח</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-label">3</div>
+      <div class="timeline-text">אם הכותרת גנרית (ללא עברית) — Claude Haiku מנתח את התמונה ויוצר כותרת עברית קצרה</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-label">4</div>
+      <div class="timeline-text">רשומה נשמרת ב-D1 עם status=unpublished</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-label">5</div>
+      <div class="timeline-text">אדמין מפרסם ידנית → published=1 → מופיע בגלריה</div>
+    </div>
+  </div>
+</div>
+
+<!-- ======================================================
+     CHAPTER 5 — BACKEND / API
+====================================================== -->
+<div class="chapter break">
+  <div class="chapter-num">פרק 05</div>
+  <div class="chapter-title">Backend — Cloudflare Worker</div>
+  <div class="chapter-desc">API endpoints, לוגיקת עסקים, אבטחה</div>
+</div>
+
+<p>כל הלוגיקה של השרת רצה בקובץ <code>worker.js</code> אחד, שנפרס ל-Cloudflare Workers.</p>
+
+<div class="section">
+  <div class="section-title">Authentication Endpoints</div>
+  <div class="endpoint"><span class="method post">POST</span><code class="path">/api/login</code><span class="desc">כניסה בסיסמה. בדיקת brute force (5 ניסיונות → נעילה 15 דק'). מחזיר session token (תוקף 8 שעות).</span></div>
+  <div class="endpoint"><span class="method post">POST</span><code class="path">/api/logout</code><span class="desc">מחיקת session מה-DB.</span></div>
+  <div class="endpoint"><span class="method post">POST</span><code class="path">/api/forgot-password</code><span class="desc">שולח מייל עם קישור איפוס (תוקף 30 דקות) דרך Resend.</span></div>
+  <div class="endpoint"><span class="method post">POST</span><code class="path">/api/reset-password</code><span class="desc">מאמת token + מעדכן סיסמה ב-D1. מוחק כל ה-sessions הקיימות.</span></div>
+</div>
+
+<div class="section">
+  <div class="section-title">Photos Endpoints</div>
+  <div class="endpoint"><span class="method get">GET</span><code class="path">/api/photos</code><span class="desc">מחזיר תמונות published. עם ?admin=1 מחזיר הכל (דורש auth).</span></div>
+  <div class="endpoint"><span class="method post">POST</span><code class="path">/api/upload</code><span class="desc">העלאה ל-R2 + שמירה ב-D1 + כותרת AI אוטומטית (דורש auth).</span></div>
+  <div class="endpoint"><span class="method patch">PATCH</span><code class="path">/api/photos</code><span class="desc">עדכון כותרת/קטגוריה/published (דורש auth). אם כותרת גנרית — מפעיל Claude.</span></div>
+  <div class="endpoint"><span class="method delete">DEL</span><code class="path">/api/photos?id=...</code><span class="desc">מחיקה מ-D1 + מ-R2 (דורש auth).</span></div>
+  <div class="endpoint"><span class="method post">POST</span><code class="path">/api/fill-titles</code><span class="desc">מעבר על כל התמונות ללא כותרת עברית → Claude מייצר כותרות (batch, דורש auth).</span></div>
+  <div class="endpoint"><span class="method post">POST</span><code class="path">/api/generate-alt</code><span class="desc">מייצר alt text עברי לרשימת תמונות (Claude Vision, דורש auth).</span></div>
+  <div class="endpoint"><span class="method post">POST</span><code class="path">/api/repair-r2</code><span class="desc">덮어쓰기 קובץ ב-R2 ללא שינוי D1 — לתיקון שגיאות.</span></div>
+</div>
+
+<div class="section">
+  <div class="section-title">Print Shop Endpoints</div>
+  <div class="endpoint"><span class="method get">GET</span><code class="path">/api/print/catalog</code><span class="desc">מחזיר את קטלוג ההדפסות (סוגים, גדלים, SKUs של Gelato).</span></div>
+  <div class="endpoint"><span class="method post">POST</span><code class="path">/api/print/quote</code><span class="desc">שולח ל-Gelato → מחשב מחיר (×1.6 ומעגל ל-$5).</span></div>
+  <div class="endpoint"><span class="method post">POST</span><code class="path">/api/print/upload-crop</code><span class="desc">מעלה גרסת חיתוך של תמונה ל-R2.</span></div>
+  <div class="endpoint"><span class="method post">POST</span><code class="path">/api/print/order-complete</code><span class="desc">אחרי PayPal: מאמת PDT → יוצר הזמנה ב-Gelato → שומר ב-D1 → שולח מייל אישור.</span></div>
+  <div class="endpoint"><span class="method get">GET</span><code class="path">/api/print/cancel?token=...</code><span class="desc">ביטול הזמנה (בתוך שעה). מבטל ב-Gelato + מעדכן D1.</span></div>
+  <div class="endpoint"><span class="method post">POST</span><code class="path">/api/print/webhook</code><span class="desc">Gelato webhook → עדכון סטטוס + מייל שילוח ללקוח כש-shipped.</span></div>
+  <div class="endpoint"><span class="method post">POST</span><code class="path">/api/print/refresh-status</code><span class="desc">שולח שאילתה ל-Gelato ומעדכן סטטוס הזמנה ספציפית (דורש auth).</span></div>
+  <div class="endpoint"><span class="method get">GET</span><code class="path">/api/print/orders</code><span class="desc">מחזיר כל ההזמנות מ-D1 (דורש auth).</span></div>
+</div>
+
+<div class="section">
+  <div class="section-title">Customers & Subscribers Endpoints</div>
+  <div class="endpoint"><span class="method post">POST</span><code class="path">/api/customers</code><span class="desc">שמירת פנייה מטופס "צור קשר" (ציבורי).</span></div>
+  <div class="endpoint"><span class="method get">GET</span><code class="path">/api/customers</code><span class="desc">כל הפניות (דורש auth).</span></div>
+  <div class="endpoint"><span class="method post">POST</span><code class="path">/api/subscribers</code><span class="desc">הרשמה לניוזלטר — שמירה ב-D1 + מייל ברוך הבא (ציבורי).</span></div>
+  <div class="endpoint"><span class="method get">GET</span><code class="path">/api/subscribers</code><span class="desc">כל הנרשמים (דורש auth).</span></div>
+  <div class="endpoint"><span class="method post">POST</span><code class="path">/api/newsletter</code><span class="desc">שליחת ניוזלטר לכל הנרשמים (דורש auth).</span></div>
+  <div class="endpoint"><span class="method get">GET</span><code class="path">/api/unsubscribe?id=...</code><span class="desc">הסרה מניוזלטר (ציבורי — קישור מהמייל).</span></div>
+</div>
+
+<div class="section">
+  <div class="section-title">Infrastructure Endpoints</div>
+  <div class="endpoint"><span class="method get">GET</span><code class="path">/api/verify-payment</code><span class="desc">אימות PayPal PDT + חזרת URL להורדה לפי גודל שנבחר.</span></div>
+  <div class="endpoint"><span class="method post">POST</span><code class="path">/api/trigger-workflow</code><span class="desc">מפעיל GitHub Actions workflow (update-photos.yml וכו') ע"י API.</span></div>
+  <div class="endpoint"><span class="method get">GET</span><code class="path">/api/analytics</code><span class="desc">Page views 30 יום + פירוט מדינות (דורש auth).</span></div>
+  <div class="endpoint"><span class="method get">GET</span><code class="path">/photos/{key}</code><span class="desc">הגשת תמונה מ-R2 ישירות.</span></div>
+</div>
+
+<!-- ======================================================
+     CHAPTER 6 — DATABASE
+====================================================== -->
+<div class="chapter break">
+  <div class="chapter-num">פרק 06</div>
+  <div class="chapter-title">מסד הנתונים — Cloudflare D1</div>
+  <div class="chapter-desc">SQLite שמנוהל ע"י Cloudflare, נגיש מה-Worker בלי latency</div>
+</div>
+
+<table class="bordered">
+  <thead>
+    <tr><th>טבלה</th><th>עמודות עיקריות</th><th>תוכן</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>photos</code></td>
+      <td>id, title, category, description, r2_key, url, thumbnail, published, created_at</td>
+      <td>כל התמונות. published=1 מופיע בגלריה. r2_key מצביע על R2.</td>
+    </tr>
+    <tr>
+      <td><code>subscribers</code></td>
+      <td>id, name, email, notes, created_at</td>
+      <td>נרשמים לניוזלטר — כרגע 2 נרשמים.</td>
+    </tr>
+    <tr>
+      <td><code>customers</code></td>
+      <td>id, name, email, phone, date, type, status, subject, notes, created_at</td>
+      <td>פניות מ"צור קשר". status: ממתין / טופל / סגור.</td>
+    </tr>
+    <tr>
+      <td><code>print_orders</code></td>
+      <td>id, prodigi_order_id, photo_id, sku, product_label, sell_price, customer_*, address_*, paypal_tx, status, created_at</td>
+      <td>הזמנות הדפסה. status: in_production / shipped / cancelled.</td>
+    </tr>
+    <tr>
+      <td><code>analytics</code></td>
+      <td>date, page, views</td>
+      <td>Page views יומיים לפי דף.</td>
+    </tr>
+    <tr>
+      <td><code>analytics_countries</code></td>
+      <td>date, country, views</td>
+      <td>Page views יומיים לפי מדינה (CF-IPCountry header).</td>
+    </tr>
+    <tr>
+      <td><code>sessions</code></td>
+      <td>token, created_at, expires_at</td>
+      <td>Session tokens לאדמין. נוקו אוטומטית בכל login.</td>
+    </tr>
+    <tr>
+      <td><code>login_attempts</code></td>
+      <td>ip, count, last_attempt</td>
+      <td>מונה ניסיונות כניסה כושלים לפי IP.</td>
+    </tr>
+    <tr>
+      <td><code>settings</code></td>
+      <td>key, value</td>
+      <td>הגדרות מערכת — כולל admin_password אם עודכנה.</td>
+    </tr>
+    <tr>
+      <td><code>reset_tokens</code></td>
+      <td>token, expires_at</td>
+      <td>Tokens לאיפוס סיסמה (תוקף 30 דקות).</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="info-box">
+  <strong>📌 מצב נוכחי של הנתונים</strong>
+  D1 מכיל ~12 תמונות (המועברות ל-R2). 471 התמונות הנותרות עדיין ב-<code>data/photos.json</code> עם URLs של Google Drive. מיגרציה מלאה ל-R2 בתהליך.
+</div>
+
+<!-- ======================================================
+     CHAPTER 7 — AUTOMATIONS
+====================================================== -->
+<div class="chapter break">
+  <div class="chapter-num">פרק 07</div>
+  <div class="chapter-title">אוטומציות — GitHub Actions</div>
+  <div class="chapter-desc">5 תהליכים אוטומטיים שרצים על לוח זמנים קבוע</div>
+</div>
+
+<table class="bordered">
+  <thead>
+    <tr><th>Workflow</th><th>לוח זמנים</th><th>שלבים</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>עדכון תמונות</strong><br><code>update-photos.yml</code></td>
+      <td>כל יום<br>09:00 UTC</td>
+      <td>
+        1. Google Drive OAuth (token.json)<br>
+        2. שליפת תמונות חדשות<br>
+        3. כותרות AI (Claude Haiku)<br>
+        4. עדכון data/photos.json<br>
+        5. migrate_to_r2.py (העברת תמונות ל-Cloudflare R2)<br>
+        6. Deploy ל-Cloudflare Worker (wrangler deploy)
+      </td>
+    </tr>
+    <tr>
+      <td><strong>פרסום אינסטגרם</strong><br><code>instagram.yml</code></td>
+      <td>ראשון, רביעי, שישי<br>12:00 UTC</td>
+      <td>
+        1. בחירת תמונה לא-מפורסמת (anti-repeat JSON)<br>
+        2. Claude Vision → כיתוב יצירתי + hashtags<br>
+        3. Instagram Graph API → פרסום<br>
+        4. עדכון instagram_posted.json
+      </td>
+    </tr>
+    <tr>
+      <td><strong>פרסום פייסבוק</strong><br><code>facebook.yml</code></td>
+      <td>שלישי, שישי<br>11:00 UTC</td>
+      <td>
+        1. בחירת תמונה לא-מפורסמת<br>
+        2. Claude Vision → תיאור פוסט<br>
+        3. Facebook Graph API → פרסום<br>
+        4. עדכון facebook_posted.json
+      </td>
+    </tr>
+    <tr>
+      <td><strong>פרסום Pinterest</strong><br><code>pinterest.yml</code></td>
+      <td>כל יום<br>10:00 UTC</td>
+      <td>
+        1. בחירת 3 תמונות לא-מפורסמות<br>
+        2. יצירת לוחות לפי קטגוריה (אם לא קיים)<br>
+        3. Pinterest API v5 → פרסום 3 Pins<br>
+        4. עדכון pinterest_posted.json
+      </td>
+    </tr>
+    <tr>
+      <td><strong>מיגרציה ל-R2</strong><br><code>migrate_to_r2.py</code></td>
+      <td>ידני / אחרי עדכון תמונות</td>
+      <td>
+        1. קריאת data/photos.json<br>
+        2. הורדת תמונה מ-Google Drive<br>
+        3. העלאה ל-R2 + רישום ב-D1<br>
+        4. דה-דופליקציה לפי filename
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="info-box">
+  <strong>🔄 Anti-Repeat Logic</strong>
+  כל פלטפורמה שומרת קובץ JSON (<code>data/instagram_posted.json</code>, <code>facebook_posted.json</code>, <code>pinterest_posted.json</code>)
+  עם IDs שפורסמו. תמונה לא תפורסם שוב עד שכל התמונות עברו רוטציה — ואז המעגל מתחיל מחדש.
+</div>
+
+<div class="warn-box">
+  <strong>⚠️ מגבלה ידועה:</strong> טוקן פייסבוק פג תוקף מדי פעם ומצריך חידוש ידני. פתרון מתוכנן: Long-Lived Token עם workflow חידוש אוטומטי.
+</div>
+
+<!-- ======================================================
+     CHAPTER 8 — AI INTEGRATIONS
+====================================================== -->
+<div class="chapter break">
+  <div class="chapter-num">פרק 08</div>
+  <div class="chapter-title">אינטגרציות AI</div>
+  <div class="chapter-desc">Claude Haiku — שימושים שונים ב-Vision ו-Text</div>
+</div>
+
+<p>האתר משתמש ב-<strong>Claude Haiku</strong> (claude-haiku-4-5-20251001) בכמה מקומות:</p>
+
+<table class="bordered">
+  <thead>
+    <tr><th>שימוש</th><th>טריגר</th><th>Prompt</th><th>Output</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>כותרת עברית לתמונה</strong></td>
+      <td>העלאה ידנית / עדכון / batch</td>
+      <td>תמונה + קטגוריה → "תן כותרת קצרה ויפה בעברית 2–4 מילים"</td>
+      <td>2–4 מילים עבריות</td>
+    </tr>
+    <tr>
+      <td><strong>Alt Text עברי</strong></td>
+      <td>כפתור "Generate Alt" בניהול</td>
+      <td>תמונה + קטגוריה → "כתוב alt text תיאורי עד 10 מילים"</td>
+      <td>משפט אחד עברי</td>
+    </tr>
+    <tr>
+      <td><strong>כיתוב אינסטגרם</strong></td>
+      <td>GitHub Actions (ראשון/רביעי/שישי)</td>
+      <td>תמונה + כותרת + קטגוריה + EXIF → כיתוב יצירתי + hashtags</td>
+      <td>2–4 שורות + hashtags</td>
+    </tr>
+    <tr>
+      <td><strong>תיאור פייסבוק</strong></td>
+      <td>GitHub Actions (שלישי/שישי)</td>
+      <td>תמונה + מידע → פוסט מותאם לפייסבוק</td>
+      <td>פסקה + hashtags</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="info-box">
+  <strong>🤖 הגנה מפני כותרות גנריות</strong>
+  הפונקציה <code>isGenericTitle()</code> בודקת אם הכותרת מכילה תו עברי כלשהו.
+  אם לא — היא נחשבת גנרית ו-Claude מוזמן לייצר כותרת. זה מונע כותרות כמו "IMG_4567" מלהגיע לגלריה.
+</div>
+
+<!-- ======================================================
+     CHAPTER 9 — PWA + SERVICE WORKER
+====================================================== -->
+<div class="chapter">
+  <div class="chapter-num">פרק 09</div>
+  <div class="chapter-title">PWA ו-Service Worker</div>
+  <div class="chapter-desc">אתר מותקן כאפליקציה, גישה offline</div>
+</div>
+
+<p>האתר מוגדר כ-<strong>Progressive Web App</strong> עם תמיכה בהתקנה ו-offline:</p>
+
+<div class="feature-grid">
+  <div class="feature-card">
+    <div class="feature-card-title">📦 Cache Strategy</div>
+    <p>Cache-first לקבצים סטטיים (CSS/JS/HTML). Network-first ל-<code>photos.json</code> (תמיד עדכני).</p>
+  </div>
+  <div class="feature-card">
+    <div class="feature-card-title">🔄 Cache Management</div>
+    <p>שם Cache: <code>amit-photos-v2</code>. בהפעלה — מוחק caches ישנים. skipWaiting + clients.claim.</p>
+  </div>
+  <div class="feature-card">
+    <div class="feature-card-title">📱 Manifest</div>
+    <p>שם: "עמית | צילום". Display: standalone (כאפליקציה). RTL + lang=he. אייקון SVG מוטמע.</p>
+  </div>
+  <div class="feature-card">
+    <div class="feature-card-title">🌐 Cross-Origin</div>
+    <p>תמונות Google Drive הן cross-origin — לא נשמרות ב-cache (מחמירות עם שרתי Cloudflare R2 פנימיים).</p>
+  </div>
+</div>
+
+<!-- ======================================================
+     CHAPTER 10 — SEO
+====================================================== -->
+<div class="chapter">
+  <div class="chapter-num">פרק 10</div>
+  <div class="chapter-title">SEO ונראות</div>
+  <div class="chapter-desc">מטא, Open Graph, Schema.org, Sitemap</div>
+</div>
+
+<table>
+  <thead><tr><th>מרכיב SEO</th><th>מה קיים</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Meta Tags</strong></td><td>title, description, keywords, charset, viewport</td></tr>
+    <tr><td><strong>Open Graph</strong></td><td>og:title, og:description, og:image (1200px), og:type, og:url, og:locale (he_IL)</td></tr>
+    <tr><td><strong>Twitter Card</strong></td><td>summary_large_image, title, description, image</td></tr>
+    <tr><td><strong>JSON-LD</strong></td><td>Schema.org Person: שם, תפקיד, כתובת (מודיעין), טלפון, מייל, knowsAbout</td></tr>
+    <tr><td><strong>Dynamic OG</strong></td><td>בפתיחת Lightbox — meta tags מתעדכנים לתמונה הנוכחית. URL: <code>/photo/{id}</code></td></tr>
+    <tr><td><strong>Sitemap</strong></td><td><code>sitemap.xml</code> — מכיל את כל דפי האתר</td></tr>
+    <tr><td><strong>Robots.txt</strong></td><td>Allow: /, Disallow: /admin</td></tr>
+    <tr><td><strong>Alt Text</strong></td><td>כותרת עברית לכל תמונה (AI-generated). Alt text נוסף דרך Claude Vision.</td></tr>
+    <tr><td><strong>Google Analytics</strong></td><td>GA4: G-XM6T3E8QWN</td></tr>
+    <tr><td><strong>Pinterest Verify</strong></td><td>meta p:domain_verify</td></tr>
+    <tr><td><strong>Canonical</strong></td><td>URL: https://amitphotos.com/</td></tr>
+  </tbody>
+</table>
+
+<!-- ======================================================
+     CHAPTER 11 — SECURITY
+====================================================== -->
+<div class="chapter">
+  <div class="chapter-num">פרק 11</div>
+  <div class="chapter-title">אבטחה</div>
+  <div class="chapter-desc">CORS, Auth, Image Protection, Headers</div>
+</div>
+
+<table>
+  <thead><tr><th>איום</th><th>הגנה</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Admin Brute Force</strong></td><td>נעילה ל-15 דקות אחרי 5 ניסיונות כושלים לפי IP. מונה ב-D1.</td></tr>
+    <tr><td><strong>Session Hijacking</strong></td><td>UUID random token. תוקף 8 שעות. נקייה אוטומטית בכל login. HTTPS בלבד.</td></tr>
+    <tr><td><strong>Password Reset Abuse</strong></td><td>Token חד-פעמי עם תוקף 30 דקות. נמחק מיד אחרי שימוש.</td></tr>
+    <tr><td><strong>CORS</strong></td><td>רשימת Origins מורשים: amitphotos.com ו-www.amitphotos.com בלבד.</td></tr>
+    <tr><td><strong>Clickjacking</strong></td><td>X-Frame-Options: DENY (ב-_headers של Cloudflare).</td></tr>
+    <tr><td><strong>MIME Sniffing</strong></td><td>X-Content-Type-Options: nosniff.</td></tr>
+    <tr><td><strong>Referrer Leakage</strong></td><td>Referrer-Policy: strict-origin-when-cross-origin.</td></tr>
+    <tr><td><strong>גניבת תמונות</strong></td><td>בלוק קליק ימני, חסימת גרירה, Ctrl+S מבוטל, overlay שקוף על כל תמונה.</td></tr>
+    <tr><td><strong>Download Protection</strong></td><td>הורדת תמונה מוגנת בסיסמה ב-Lightbox.</td></tr>
+    <tr><td><strong>PayPal Fraud</strong></td><td>אימות PDT מ-PayPal לפני מסירת קישור הורדה/הפעלת הזמנה Gelato.</td></tr>
+  </tbody>
+</table>
+
+<!-- ======================================================
+     CHAPTER 12 — ROADMAP
+====================================================== -->
+<div class="chapter break">
+  <div class="chapter-num">פרק 12</div>
+  <div class="chapter-title">שיפורים מתוכננים — Roadmap</div>
+  <div class="chapter-desc">לפי עדיפות: גבוהה / בינונית / נמוכה</div>
+</div>
+
+<div class="section">
+  <div class="section-title"><span class="priority high">● עדיפות גבוהה</span></div>
+
+  <table>
+    <thead><tr><th>#</th><th>שיפור</th><th>למה חשוב</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td><strong>השלמת מיגרציה ל-R2</strong></td>
+        <td>כרגע 459 מתוך 471 תמונות עדיין ב-Google Drive. URLs של Drive עלולים לפוג, לחסם, או להיות איטיים. R2 מהיר, אמין, ובשליטה מלאה.</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td><strong>טוקן פייסבוק Long-Lived + חידוש אוטומטי</strong></td>
+        <td>הטוקן פג תוקף ומחייב פעולה ידנית. Workflow שמחדש Token לפני תפוגה = zero-downtime אוטומציה.</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td><strong>היסטוריית ניוזלטר</strong></td>
+        <td>אין תיעוד של מיילים ששלחנו — קשה לדעת מה נשלח, מתי, ולמי. טבלת <code>newsletter_sends</code> ב-D1 תפתור זאת.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="section">
+  <div class="section-title"><span class="priority medium">● עדיפות בינונית</span></div>
+
+  <table>
+    <thead><tr><th>#</th><th>שיפור</th><th>פירוט</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>4</td>
+        <td><strong>כיתובים חכמים ל-Pinterest</strong></td>
+        <td>Instagram ופייסבוק משתמשים ב-Claude Vision לכיתובים מותאמים. Pinterest מפרסם עם תיאור גנרי בלבד. הוספת Claude Vision לפינטרסט תשפר engagement.</td>
+      </tr>
+      <tr>
+        <td>5</td>
+        <td><strong>המלצות לקוחות מהאדמין</strong></td>
+        <td>כרגע 3 ציטוטים hardcoded ב-HTML. כשיהיו לקוחות אמיתיים, כדאי לנהל המלצות מהאדמין (CRUD ב-D1).</td>
+      </tr>
+      <tr>
+        <td>6</td>
+        <td><strong>בחירה מרובה בגלריה</strong></td>
+        <td>Shift+Click לבחירת טווח תמונות. שיתוף/הורדה/הוספה לסל של כמה בבת-אחת.</td>
+      </tr>
+      <tr>
+        <td>7</td>
+        <td><strong>עמוד מצב הזמנה ללקוח</strong></td>
+        <td>לקוח שהזמין הדפסה מקבל רק מייל. עמוד <code>/order/{id}</code> שמציג סטטוס חי מ-Gelato = שקיפות ללקוח.</td>
+      </tr>
+      <tr>
+        <td>8</td>
+        <td><strong>Funnel Analytics</strong></td>
+        <td>כמה אנשים פתחו Lightbox → כמה לחצו "רכישה" → כמה השלימו תשלום. כרגע אין tracking על funnel זה.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="section">
+  <div class="section-title"><span class="priority low">● עדיפות נמוכה / עתיד</span></div>
+
+  <table>
+    <thead><tr><th>#</th><th>שיפור</th><th>פירוט</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>9</td>
+        <td><strong>Gelato Branded Inserts</strong></td>
+        <td>פתק תודה ממותג עם לוגו + URL בתוך אריזת ההדפסה. דורש Gelato+ מנוי + כניסה לתוכנית בטא.</td>
+      </tr>
+      <tr>
+        <td>10</td>
+        <td><strong>Google Photos → Drive אוטומטי</strong></td>
+        <td>כרגע עמית מעלה ידנית ל-Drive ואז Script שולף. אינטגרציה ישירה Google Photos → R2 תחסוך שלב.</td>
+      </tr>
+      <tr>
+        <td>11</td>
+        <td><strong>תגובות לסטוריז אינסטגרם</strong></td>
+        <td>auto-reply לתגובות על פוסטים — "תודה! תוכלו לרכוש ב-amitphotos.com" עם Claude.</td>
+      </tr>
+      <tr>
+        <td>12</td>
+        <td><strong>כלי Crop מתקדם</strong></td>
+        <td>הוספת rotation + flip לכלי ה-crop בחנות הדפסות. גרירה חלקה יותר על מובייל.</td>
+      </tr>
+      <tr>
+        <td>13</td>
+        <td><strong>Wishlist / Favorites</strong></td>
+        <td>שמירת תמונות מועדפות ב-localStorage עם אפשרות שיתוף. מגביר engagement ומשפר conversion.</td>
+      </tr>
+      <tr>
+        <td>14</td>
+        <td><strong>A/B Testing מחירים</strong></td>
+        <td>בדיקת מחירים שונים לאוכלוסיות שונות לאופטימיזציה של revenue. דורש analytics משופר.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<hr>
+
+<div class="info-box">
+  <strong>📊 סיכום</strong>
+  amitphotos.com הוא אתר מלא ומקצועי הפועל על תשתית Cloudflare (Worker + D1 + R2), מנוהל ע"י Admin מלא,
+  עם אוטומציות ל-3 רשתות חברתיות, חנות הדפסות פיזיות אוטומטית לחלוטין, ו-AI מוטמע ב-5 נקודות שונות.
+  המערכת פועלת כמעט ללא מגע ידני יום-יומי — מלבד חידוש טוקן פייסבוק לפעמים.
+</div>
+
+</div><!-- /content -->
+
+<!-- FOOTER -->
+<div class="doc-footer">
+  <span>amitphotos.com — מסמך אדריכלות</span>
+  <span>גרסה 2.0 | אפריל 2026 | <span>סודי — לשימוש פנימי</span></span>
+</div>
+
+</div><!-- /page-wrap -->
+</body>
+</html>
