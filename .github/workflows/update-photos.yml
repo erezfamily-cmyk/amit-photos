@@ -53,7 +53,7 @@ jobs:
           git push origin main
 
       - name: Deploy ל-Cloudflare
-        if: steps.changes.outputs.changed == 'true'
+        if: steps.changes.outputs.changed == 'true' || github.event_name == 'workflow_dispatch'
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: 439cc74123631d21ff905817aca9785d
