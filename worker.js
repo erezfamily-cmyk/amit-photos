@@ -326,6 +326,20 @@ async function handlePhotos(request, env) {
   return jsonRes({ error: 'method not allowed' }, 405);
 }
 
+// ===== REPAIR R2 — overwrite existing R2 key without touching D1 =====
+async function handleRepairR2(request, env) {
+  if (request.method !== 'POST') return jsonRes({ error: 'method not allowed' }, 405, request);
+  if (!await checkAuth(request, env)) return unauth(request);
+  const formData = await request.formData();
+  const key = formData.get('key');
+  const file = formData.get('file');
+  if (!key || !file || typeof file === 'string') return jsonRes({ error: 'key/file חסר' }, 400, request);
+  await env.PHOTOS.put(key, file.stream(), {
+    httpMetadata: { contentType: file.type || 'image/jpeg' },
+  });
+  return jsonRes({ ok: true, key }, 200, request);
+}
+
 // ===== UPLOAD =====
 async function handleUpload(request, env) {
   if (!await checkAuth(request, env)) return unauth(request);
@@ -1303,6 +1317,7 @@ export default {
     if (path === '/api/customers')         return handleCustomers(request, env);
     if (path === '/api/photos')            return handlePhotos(request, env);
     if (path === '/api/upload')            return handleUpload(request, env);
+    if (path === '/api/repair-r2')         return handleRepairR2(request, env);
     if (path === '/api/fill-titles')       return handleFillTitles(request, env);
     if (path === '/api/generate-alt')      return handleGenerateAlt(request, env);
     if (path === '/api/trigger-workflow')  return handleTriggerWorkflow(request, env);
