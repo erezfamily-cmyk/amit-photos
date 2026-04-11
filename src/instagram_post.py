@@ -163,7 +163,9 @@ def post_to_instagram(photo, caption):
         "caption":      caption,
         "access_token": ACCESS_TOKEN,
     }, timeout=30)
-    container_resp.raise_for_status()
+    if not container_resp.ok:
+        print(f"❌ שגיאת Instagram API: {container_resp.status_code} — {container_resp.text}")
+        sys.exit(1)
     container_data = container_resp.json()
 
     if "id" not in container_data:
