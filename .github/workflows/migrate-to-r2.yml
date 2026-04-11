@@ -1,10 +1,12 @@
 name: מיגרציה מ-Drive ל-R2
 
 on:
-  workflow_dispatch:  # הפעלה ידנית
-  workflow_run:
-    workflows: ["עדכון תמונות אוטומטי"]
-    types: [completed]
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'repair = תיקון קבצים פגומים, normal = העלאת חדשים'
+        required: false
+        default: 'normal'
 
 jobs:
   migrate:
@@ -20,10 +22,22 @@ jobs:
           python-version: '3.11'
 
       - name: התקנת חבילות
-        run: pip install requests
+        run: pip install requests google-auth google-auth-oauthlib google-auth-httplib2
 
-      - name: הרצת מיגרציה
+      - name: הרצת מיגרציה (repair)
+        if: ${{ github.event.inputs.mode == 'repair' }}
         env:
           ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
           WORKER_URL: https://amitphotos.com
+          GOOGLE_CREDENTIALS_JSON: ${{ secrets.GOOGLE_CREDENTIALS }}
+          GOOGLE_TOKEN_JSON: ${{ secrets.GOOGLE_TOKEN }}
+        run: python src/migrate_to_r2.py --repair
+
+      - name: הרצת מיגרציה (normal)
+        if: ${{ github.event.inputs.mode != 'repair' }}
+        env:
+          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
+          WORKER_URL: https://amitphotos.com
+          GOOGLE_CREDENTIALS_JSON: ${{ secrets.GOOGLE_CREDENTIALS }}
+          GOOGLE_TOKEN_JSON: ${{ secrets.GOOGLE_TOKEN }}
         run: python src/migrate_to_r2.py
