@@ -130,13 +130,31 @@ def generate_caption(photo):
     return msg.content[0].text.strip()
 
 
+def upload_to_public_host(source_url):
+    """מוריד תמונה ומעלה לשרת ציבורי זמני — נדרש כי Instagram לא ניגש ל-Google Drive."""
+    resp = requests.get(source_url, timeout=30)
+    resp.raise_for_status()
+    upload = requests.post(
+        "https://catbox.moe/user/api.php",
+        data={"reqtype": "fileupload"},
+        files={"fileToUpload": ("photo.jpg", resp.content, "image/jpeg")},
+        timeout=60,
+    )
+    upload.raise_for_status()
+    public_url = upload.text.strip()
+    print(f"⬆️  תמונה הועלתה: {public_url}")
+    return public_url
+
+
 def post_to_instagram(photo, caption):
     """
     פרסום לאינסטגרם בשני שלבים:
     1. יצירת media container
     2. פרסום ה-container
     """
-    image_url = photo.get("thumbnail") or photo.get("url")
+    source_url = photo.get("thumbnail") or photo.get("url")
+    print("⬆️  מעלה תמונה לשרת ציבורי...")
+    image_url = upload_to_public_host(source_url)
 
     # שלב 1: צור container
     container_url = f"{GRAPH_API}/{IG_USER_ID}/media"
