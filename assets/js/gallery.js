@@ -354,23 +354,25 @@ function initFilters() {
 
   let html = `<button class="filter-btn active" data-cat="all">הכל <span class="filter-count">${allPhotos.length}</span></button>`;
 
+  const esc = s => s.replace(/"/g, '&quot;');
+
   // קטגוריות ראשיות (ללא parent)
   (hierarchy[null] || new Set()).forEach(cat => {
     const count = allPhotos.filter(p => p.category === cat && !p.parent_category).length;
-    html += `<button class="filter-btn" data-cat="${cat}">${cat} <span class="filter-count">${count}</span></button>`;
+    html += `<button class="filter-btn" data-cat="${esc(cat)}">${cat} <span class="filter-count">${count}</span></button>`;
   });
 
   // קבוצות עם parent
   Object.keys(hierarchy).filter(k => k !== 'null' && k !== null).forEach(parent => {
     const totalCount = allPhotos.filter(p => p.parent_category === parent).length;
     html += `<div class="filter-group">
-      <button class="filter-btn filter-group-btn" data-parent="${parent}">
+      <button class="filter-btn filter-group-btn" data-parent="${esc(parent)}">
         ${parent} <span class="filter-count">${totalCount}</span> <span class="filter-arrow">▾</span>
       </button>
       <div class="filter-group-sub" style="display:none">`;
     hierarchy[parent].forEach(sub => {
       const count = allPhotos.filter(p => p.category === sub && p.parent_category === parent).length;
-      html += `<button class="filter-btn filter-sub-btn" data-cat="${sub}" data-parent="${parent}">${sub} <span class="filter-count">${count}</span></button>`;
+      html += `<button class="filter-btn filter-sub-btn" data-cat="${esc(sub)}" data-parent="${esc(parent)}">${sub} <span class="filter-count">${count}</span></button>`;
     });
     html += `</div></div>`;
   });
