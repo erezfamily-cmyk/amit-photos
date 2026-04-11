@@ -1,7 +1,10 @@
 name: מיגרציה מ-Drive ל-R2
 
 on:
-  workflow_dispatch:  # הפעלה ידנית בלבד
+  workflow_dispatch:  # הפעלה ידנית
+  workflow_run:
+    workflows: ["עדכון תמונות אוטומטי"]
+    types: [completed]
 
 jobs:
   migrate:
