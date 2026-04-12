@@ -906,7 +906,7 @@
 <div class="chapter break">
   <div class="chapter-num">פרק 07</div>
   <div class="chapter-title">אוטומציות — GitHub Actions</div>
-  <div class="chapter-desc">5 תהליכים אוטומטיים שרצים על לוח זמנים קבוע</div>
+  <div class="chapter-desc">6 תהליכים אוטומטיים שרצים על לוח זמנים קבוע + מנגנון auto-recovery</div>
 </div>
 
 <table class="bordered">
@@ -915,8 +915,17 @@
   </thead>
   <tbody>
     <tr>
+      <td><strong>חידוש טוקני Meta</strong><br><code>token-refresh.yml</code></td>
+      <td>ה-1 בכל חודש<br>04:30 UTC</td>
+      <td>
+        1. Meta Graph API → fb_exchange_token → USER token חדש (60 יום)<br>
+        2. GitHub API → הצפנת הטוקן (libsodium) + עדכון Secret<br>
+        3. אימות: /me → Amit Erez ✓
+      </td>
+    </tr>
+    <tr>
       <td><strong>עדכון תמונות</strong><br><code>update-photos.yml</code></td>
-      <td>כל יום<br>09:00 UTC</td>
+      <td>כל יום<br>06:00 UTC</td>
       <td>
         1. Google Drive OAuth (token.json)<br>
         2. שליפת תמונות חדשות<br>
@@ -927,28 +936,8 @@
       </td>
     </tr>
     <tr>
-      <td><strong>פרסום אינסטגרם</strong><br><code>instagram.yml</code></td>
-      <td>ראשון, רביעי, שישי<br>12:00 UTC</td>
-      <td>
-        1. בחירת תמונה לא-מפורסמת (anti-repeat JSON)<br>
-        2. Claude Vision → כיתוב יצירתי + hashtags<br>
-        3. Instagram Graph API → פרסום<br>
-        4. עדכון instagram_posted.json
-      </td>
-    </tr>
-    <tr>
-      <td><strong>פרסום פייסבוק</strong><br><code>facebook.yml</code></td>
-      <td>שלישי, שישי<br>11:00 UTC</td>
-      <td>
-        1. בחירת תמונה לא-מפורסמת<br>
-        2. Claude Vision → תיאור פוסט<br>
-        3. Facebook Graph API → פרסום<br>
-        4. עדכון facebook_posted.json
-      </td>
-    </tr>
-    <tr>
-      <td><strong>פרסום Pinterest</strong><br><code>pinterest.yml</code></td>
-      <td>כל יום<br>10:00 UTC</td>
+      <td><strong>פרסום Pinterest</strong><br><code>pinterest-post.yml</code></td>
+      <td>כל יום<br>07:00 UTC</td>
       <td>
         1. בחירת 3 תמונות לא-מפורסמות<br>
         2. יצירת לוחות לפי קטגוריה (אם לא קיים)<br>
@@ -957,7 +946,29 @@
       </td>
     </tr>
     <tr>
-      <td><strong>מיגרציה ל-R2</strong><br><code>migrate_to_r2.py</code></td>
+      <td><strong>פרסום פייסבוק</strong><br><code>facebook-post.yml</code></td>
+      <td>שלישי, שישי<br>08:00 UTC</td>
+      <td>
+        1. בחירת תמונה לא-מפורסמת<br>
+        2. Claude Vision → תיאור פוסט<br>
+        3. העלאה לשרת ציבורי זמני (litterbox / 0x0.st)<br>
+        4. Facebook Graph API → פרסום<br>
+        5. עדכון facebook_posted.json
+      </td>
+    </tr>
+    <tr>
+      <td><strong>פרסום אינסטגרם</strong><br><code>instagram-post.yml</code></td>
+      <td>ראשון, רביעי, שישי<br>09:00 UTC</td>
+      <td>
+        1. בחירת תמונה לא-מפורסמת (anti-repeat JSON)<br>
+        2. Claude Vision → כיתוב יצירתי + hashtags<br>
+        3. העלאה לשרת ציבורי זמני (litterbox / 0x0.st, או R2 ישיר)<br>
+        4. Instagram Graph API → container → publish<br>
+        5. עדכון instagram_posted.json
+      </td>
+    </tr>
+    <tr>
+      <td><strong>מיגרציה ל-R2</strong><br><code>migrate-to-r2.yml</code></td>
       <td>ידני / אחרי עדכון תמונות</td>
       <td>
         1. קריאת data/photos.json<br>
@@ -970,13 +981,24 @@
 </table>
 
 <div class="info-box">
+  <strong>🛡️ Auto-Recovery — מנגנון כפול</strong><br><br>
+  <strong>1. Retry אוטומטי:</strong> כל workflow מנסה עד 3 פעמים עם המתנה של 60 שניות בין כל ניסיון.
+  שגיאות רשת, timeouts ותקלות זמניות מטופלות אוטומטית. אם כל הניסיונות נכשלו — GitHub שולח email לבעל ה-repo.<br><br>
+  <strong>2. חידוש טוקן חודשי:</strong> <code>token-refresh.yml</code> רץ ב-1 בכל חודש ומחדש את <code>INSTAGRAM_PAGE_TOKEN</code>
+  (USER token בתוקף 60 יום) לפני שיפוג. עדכון GitHub Secret מתבצע אוטומטית דרך GitHub API עם הצפנת libsodium.
+  <code>FACEBOOK_PAGE_TOKEN</code> לא דורש חידוש — Page token קבוע כשנגזר מ-long-lived user token.
+</div>
+
+<div class="info-box">
   <strong>🔄 Anti-Repeat Logic</strong>
   כל פלטפורמה שומרת קובץ JSON (<code>data/instagram_posted.json</code>, <code>facebook_posted.json</code>, <code>pinterest_posted.json</code>)
   עם IDs שפורסמו. תמונה לא תפורסם שוב עד שכל התמונות עברו רוטציה — ואז המעגל מתחיל מחדש.
 </div>
 
-<div class="warn-box">
-  <strong>⚠️ מגבלה ידועה:</strong> טוקן פייסבוק פג תוקף מדי פעם ומצריך חידוש ידני. פתרון מתוכנן: Long-Lived Token עם workflow חידוש אוטומטי.
+<div class="info-box">
+  <strong>📸 העלאת תמונות לרשתות חברתיות</strong>
+  תמונות ב-Cloudflare R2 (<code>https://amitphotos.com/photos/</code>) נשלחות ישירות ל-API.
+  תמונות מ-Google Drive מועלות תחילה לשרת ציבורי זמני: <code>litterbox.catbox.moe</code> (1 שעה) עם fallback ל-<code>0x0.st</code>.
 </div>
 
 <!-- ======================================================
@@ -1131,11 +1153,6 @@
       </tr>
       <tr>
         <td>2</td>
-        <td><strong>טוקן פייסבוק Long-Lived + חידוש אוטומטי</strong></td>
-        <td>הטוקן פג תוקף ומחייב פעולה ידנית. Workflow שמחדש Token לפני תפוגה = zero-downtime אוטומציה.</td>
-      </tr>
-      <tr>
-        <td>3</td>
         <td><strong>היסטוריית ניוזלטר</strong></td>
         <td>אין תיעוד של מיילים ששלחנו — קשה לדעת מה נשלח, מתי, ולמי. טבלת <code>newsletter_sends</code> ב-D1 תפתור זאת.</td>
       </tr>
