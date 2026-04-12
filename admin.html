@@ -383,6 +383,17 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
   .main-content{margin-right:0;margin-top:56px;padding:1.25rem 1rem}
   .photos-grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}
 }
+
+/* ===== UTILITY ===== */
+.forgot-desc{color:var(--text-muted);font-size:.85rem;margin-bottom:1.5rem}
+.analytics-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem}
+.analytics-header .dash-recent-title{margin-bottom:0}
+.analytics-total{color:var(--accent);font-family:var(--font-display);font-size:1.4rem;font-weight:700}
+.analytics-chart{display:flex;align-items:flex-end;gap:4px;height:120px;margin-bottom:1.25rem}
+.analytics-countries-label{margin-bottom:.5rem;font-size:.8rem;color:var(--text-muted);font-weight:500}
+.analytics-countries{display:flex;flex-wrap:wrap;gap:.5rem 1rem;font-size:.85rem;color:var(--text-muted)}
+.form-field--end{justify-content:flex-end}
+.form-field--end .btn{align-self:flex-end}
 </style>
 </head>
 <body>
@@ -403,7 +414,7 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
   <div class="login-card" id="forgot-card" style="display:none">
     <div class="login-logo">AMIT PHOTOS</div>
     <div class="login-sub">שכחת סיסמה</div>
-    <p style="color:var(--text-muted);font-size:.85rem;margin-bottom:1.5rem">נשלח קישור לאיפוס לכתובת erez.family@gmail.com</p>
+    <p class="forgot-desc">נשלח קישור לאיפוס לכתובת erez.family@gmail.com</p>
     <button class="btn-login" id="send-reset-btn">שלח קישור לאיפוס</button>
     <div class="login-error" id="forgot-error"></div>
     <div class="login-success" id="forgot-success"></div>
@@ -521,13 +532,13 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
         <h1 class="section-title">סטטיסטיקות</h1>
       </div>
       <div class="dash-recent" id="analytics-box">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem">
-          <div class="dash-recent-title" style="margin-bottom:0">צפיות באתר — 30 יום אחרונים</div>
-          <span id="dash-analytics-total" style="color:var(--accent);font-family:var(--font-display);font-size:1.4rem;font-weight:700"></span>
+        <div class="analytics-header">
+          <div class="dash-recent-title">צפיות באתר — 30 יום אחרונים</div>
+          <span id="dash-analytics-total" class="analytics-total"></span>
         </div>
-        <div id="dash-chart" style="display:flex;align-items:flex-end;gap:4px;height:120px;margin-bottom:1.25rem"></div>
-        <div style="margin-bottom:.5rem;font-size:.8rem;color:var(--text-muted);font-weight:500">מדינות</div>
-        <div id="dash-countries" style="display:flex;flex-wrap:wrap;gap:.5rem 1rem;font-size:.85rem;color:var(--text-muted)"></div>
+        <div id="dash-chart" class="analytics-chart"></div>
+        <div class="analytics-countries-label">מדינות</div>
+        <div id="dash-countries" class="analytics-countries"></div>
       </div>
     </section>
 
@@ -647,8 +658,8 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
           <div class="form-field"><label>שם</label><input type="text" id="sub-name" placeholder="ישראל ישראלי"></div>
           <div class="form-field"><label>מייל</label><input type="email" id="sub-email" placeholder="mail@example.com"></div>
           <div class="form-field"><label>הערות</label><input type="text" id="sub-notes" placeholder="הערה כלשהי..."></div>
-          <div class="form-field" style="justify-content:flex-end">
-            <button class="btn btn-primary" id="add-sub-btn" style="align-self:flex-end">הוסף</button>
+          <div class="form-field form-field--end">
+            <button class="btn btn-primary" id="add-sub-btn">הוסף</button>
           </div>
         </div>
       </div>
