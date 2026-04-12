@@ -32,7 +32,17 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.AMIT_PHOTO_AGENT }}
           GOOGLE_CREDENTIALS_JSON: ${{ secrets.GOOGLE_CREDENTIALS }}
           GOOGLE_TOKEN_JSON: ${{ secrets.GOOGLE_TOKEN }}
-        run: python src/agent_photos.py
+        run: |
+          for attempt in 1 2 3; do
+            python src/agent_photos.py && break
+            if [ $attempt -lt 3 ]; then
+              echo "ניסיון $attempt נכשל — ממתין 60 שניות..."
+              sleep 60
+            else
+              echo "כל הניסיונות נכשלו"
+              exit 1
+            fi
+          done
 
       - name: עדכון Sitemap
         run: python src/generate_sitemap.py
