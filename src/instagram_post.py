@@ -132,17 +132,40 @@ def generate_caption(photo):
 
 def upload_to_public_host(source_url):
     """מוריד תמונה ומעלה לשרת ציבורי זמני — נדרש כי Instagram לא ניגש ל-Google Drive."""
+    # אם כבר URL ציבורי מ-R2 שלנו — אין צורך להעלות
+    if source_url.startswith("https://amitphotos.com/photos/"):
+        print(f"⬆️  תמונה ב-R2, URL ישיר: {source_url}")
+        return source_url
+
     resp = requests.get(source_url, timeout=30)
     resp.raise_for_status()
+    img_bytes = resp.content
+
+    # נסה litterbox (זמני 1 שעה) — ממשק אנונימי אמין יותר מ-catbox user API
+    try:
+        upload = requests.post(
+            "https://litterbox.catbox.moe/resources/internals/api.php",
+            data={"reqtype": "fileupload", "time": "1h"},
+            files={"fileToUpload": ("photo.jpg", img_bytes, "image/jpeg")},
+            timeout=60,
+        )
+        upload.raise_for_status()
+        public_url = upload.text.strip()
+        if public_url.startswith("http"):
+            print(f"⬆️  תמונה הועלתה (litterbox): {public_url}")
+            return public_url
+    except Exception as e:
+        print(f"⚠️  litterbox נכשל ({e}), מנסה 0x0.st...")
+
+    # Fallback: 0x0.st
     upload = requests.post(
-        "https://catbox.moe/user/api.php",
-        data={"reqtype": "fileupload"},
-        files={"fileToUpload": ("photo.jpg", resp.content, "image/jpeg")},
+        "https://0x0.st",
+        files={"file": ("photo.jpg", img_bytes, "image/jpeg")},
         timeout=60,
     )
     upload.raise_for_status()
     public_url = upload.text.strip()
-    print(f"⬆️  תמונה הועלתה: {public_url}")
+    print(f"⬆️  תמונה הועלתה (0x0.st): {public_url}")
     return public_url
 
 
