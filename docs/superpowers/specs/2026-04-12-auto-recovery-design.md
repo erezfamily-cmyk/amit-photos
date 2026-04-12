@@ -40,13 +40,12 @@
 **Secrets נדרשים (חדשים):**
 | Secret | תיאור |
 |--------|--------|
-| `META_APP_ID` | App ID של "Amit Post API" (ל-Instagram) |
-| `META_APP_SECRET` | App Secret של "Amit Post API" |
-| `FACEBOOK_META_APP_ID` | App ID של האפליקציה לפייסבוק |
-| `FACEBOOK_META_APP_SECRET` | App Secret של האפליקציה לפייסבוק |
+| `META_APP_ID` | App ID של "Amit Post API" (`1263941552517505`) — משמש גם ל-Instagram וגם ל-Facebook |
+| `META_APP_SECRET` | App Secret של "Amit Post API" (מה-Meta Developer Console) |
 | `GH_PAT` | GitHub Personal Access Token עם הרשאת `secrets:write` |
 
-> הערה: `GITHUB_TOKEN` המובנה ב-Actions אינו מאפשר עדכון secrets — נדרש PAT.
+> **הערה:** אותה אפליקציה ("Amit Post API") מטפלת בשניהם — Instagram User Token + Facebook Page Token נגזר ממנו דרך `/me/accounts`.
+> `GITHUB_TOKEN` המובנה ב-Actions אינו מאפשר עדכון secrets — נדרש PAT.
 
 **Failure handling:**  
 אם החידוש נכשל → workflow נכשל → GitHub שולח email אוטומטית (built-in behavior).
@@ -108,8 +107,9 @@
 
 | קובץ | שינוי |
 |------|-------|
-| `src/refresh_meta_token.py` | **חדש** — סקריפט חידוש טוקן Meta |
+| `src/refresh_meta_token.py` | **חדש** — סקריפט חידוש טוקן Meta (Instagram + Facebook ביחד) |
 | `.github/workflows/token-refresh.yml` | **חדש** — workflow חודשי |
+| `src/facebook_post.py` | תיקון `upload_to_public_host` — החלפת catbox.moe בלitterbox + 0x0.st (זהה ל-instagram_post.py) |
 | `.github/workflows/instagram-post.yml` | הוספת retry לשלב הפרסום |
 | `.github/workflows/facebook-post.yml` | הוספת retry לשלב הפרסום |
 | `.github/workflows/pinterest-post.yml` | הוספת retry לשלב הפרסום |
@@ -120,7 +120,5 @@
 ## Secrets חדשים לצור ב-GitHub
 
 1. `META_APP_ID` = `1263941552517505`
-2. `META_APP_SECRET` = (מה-Meta Developer Console)
-3. `FACEBOOK_META_APP_ID` = (לבדוק איזה App משמש לפייסבוק)
-4. `FACEBOOK_META_APP_SECRET` = (בהתאם)
-5. `GH_PAT` = Personal Access Token חדש עם `repo` scope (כולל secrets write)
+2. `META_APP_SECRET` = (מה-Meta Developer Console — לא נשמר בזיכרון)
+3. `GH_PAT` = Personal Access Token חדש עם `repo` scope (כולל secrets write)
