@@ -43,10 +43,11 @@
       cursor: pointer;
       border: none;
       transition: opacity 0.2s;
-      margin-bottom: 1.5rem;
+      margin-bottom: 0.75rem;
     }
     .dl-btn:hover { opacity: 0.85; }
     .dl-btn:disabled { opacity: 0.5; cursor: default; }
+    .dl-list { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1rem; }
     .note { color: #555; font-size: 0.8rem; margin-top: 1rem; }
     .back { color: #888; font-size: 0.85rem; margin-top: 1.5rem; display: block; text-decoration: none; }
     .back:hover { color: #c8a96e; }
@@ -70,8 +71,8 @@
     <h1 id="status-title">מאמת תשלום...</h1>
     <p class="sub" id="status-sub">אנא המתן, בודק את פרטי התשלום עם PayPal.</p>
     <div id="dl-area" style="display:none">
-      <a class="dl-btn" id="dl-btn" download>הורד תמונה ↓</a>
-      <p class="note">הקובץ ישמר אוטומטית במחשב שלך.</p>
+      <div id="dl-list" class="dl-list"></div>
+      <p class="note">הקישורים תקפים ל-24 שעות ולשימוש חד-פעמי.</p>
     </div>
     <a href="/" class="back">← חזרה לגלריה</a>
   </div>
@@ -80,10 +81,16 @@
     async function init() {
       const params = new URLSearchParams(window.location.search);
       const tx = params.get('tx');
-      const itemNumber = params.get('item_number');
+
+      // item_number: first try URL param (rm=2), then localStorage (fallback)
+      let itemNumber = params.get('item_number');
+      if (!itemNumber) {
+        itemNumber = localStorage.getItem('pending_item_number');
+      }
+      // Clear regardless — don't want stale data on next visit
+      localStorage.removeItem('pending_item_number');
 
       if (!tx || !itemNumber) {
-        // ייתכן שהגיע ישירות ללא פרמטרים — PayPal לא הוסיף tx
         showManual();
         return;
       }
@@ -92,7 +99,9 @@
         const res = await fetch(`/api/verify-payment?tx=${encodeURIComponent(tx)}&item_number=${encodeURIComponent(itemNumber)}`);
         const data = await res.json();
 
-        if (data.url) {
+        if (data.urls && data.urls.length > 0) {
+          showSuccessMulti(data.urls, data.title || 'חבילת תמונות');
+        } else if (data.url) {
           showSuccess(data.url, data.title || 'תמונה');
         } else {
           showError(data.error || 'שגיאה באימות התשלום');
@@ -106,11 +115,29 @@
       document.getElementById('status-icon').textContent = '✓';
       document.getElementById('status-title').textContent = 'תודה על הרכישה!';
       document.getElementById('status-sub').textContent = `התשלום אושר. לחץ להורדת "${title}".`;
-      const btn = document.getElementById('dl-btn');
+      const list = document.getElementById('dl-list');
+      const btn = document.createElement('a');
+      btn.className = 'dl-btn';
       btn.href = url;
+      btn.textContent = `הורד: ${title} ↓`;
+      list.appendChild(btn);
       document.getElementById('dl-area').style.display = 'block';
-      // הורדה אוטומטית
       setTimeout(() => { btn.click(); }, 800);
+    }
+
+    function showSuccessMulti(urls, title) {
+      document.getElementById('status-icon').textContent = '✓';
+      document.getElementById('status-title').textContent = 'תודה על הרכישה!';
+      document.getElementById('status-sub').textContent = `התשלום אושר. ${urls.length} תמונות מוכנות להורדה.`;
+      const list = document.getElementById('dl-list');
+      urls.forEach((item, i) => {
+        const btn = document.createElement('a');
+        btn.className = 'dl-btn';
+        btn.href = item.url;
+        btn.textContent = `הורד: ${item.title || `תמונה ${i + 1}`} ↓`;
+        list.appendChild(btn);
+      });
+      document.getElementById('dl-area').style.display = 'block';
     }
 
     function showError(msg) {
