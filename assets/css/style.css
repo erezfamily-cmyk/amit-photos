@@ -117,6 +117,29 @@ nav.scrolled { border-bottom-color: rgba(200, 169, 110, 0.3); }
 .nav-links a:hover,
 .nav-links a.active { color: var(--text); }
 
+.lang-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-inline-start: 0.5rem;
+}
+.lang-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 0.7rem;
+  padding: 0.15rem 0.25rem;
+  font-family: inherit;
+  letter-spacing: 0.05em;
+  transition: color 0.2s;
+}
+.lang-btn.active { color: var(--accent); font-weight: 700; }
+.lang-btn:hover { color: var(--accent); }
+.lang-toggle span { color: #333; }
+
 .nav-hamburger {
   display: none;
   flex-direction: column;
@@ -2557,3 +2580,11 @@ footer {
   margin-top: 0.3rem;
   display: block;
 }
+
+/* ===== LTR DIRECTION OVERRIDES ===== */
+[dir="ltr"] .about-text .section-title,
+[dir="ltr"] .about-text .section-label { text-align: left; justify-content: flex-start; }
+[dir="ltr"] .faq-question { text-align: left; }
+[dir="ltr"] .faq-question::after { margin-right: 0; margin-left: .5rem; }
+[dir="ltr"] .print-size-btn,
+[dir="ltr"] .print-wrap-btn { text-align: left; }

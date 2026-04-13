@@ -6,6 +6,7 @@
   <title>אישור הזמנה — עמית פוטוס</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <script src="assets/js/i18n.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -45,28 +46,37 @@
     }
     .error { color: #e55; }
     #spinner { color: #888; }
+    .lang-toggle { display: flex; align-items: center; justify-content: flex-end; gap: 0.25rem; margin-bottom: 1.5rem; }
+    .lang-btn { background: none; border: none; color: #555; cursor: pointer; font-size: 0.75rem; padding: 0.2rem 0.3rem; font-family: inherit; }
+    .lang-btn.active { color: #c8a96e; }
+    .lang-btn:hover { color: #c8a96e; }
   </style>
 </head>
 <body>
   <div class="card">
+    <div class="lang-toggle">
+      <button type="button" class="lang-btn active" data-lang="he" onclick="setLang('he')">HE</button>
+      <span>|</span>
+      <button type="button" class="lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
+    </div>
     <div class="logo">AMIT PHOTOS</div>
     <div id="spinner">
       <div class="icon">⏳</div>
-      <h1>מאמת תשלום ויוצר הזמנה...</h1>
+      <h1 data-i18n="pc.loading">מאמת תשלום ויוצר הזמנה...</h1>
     </div>
     <div id="success" style="display:none">
       <div class="icon">✅</div>
-      <h1>ההזמנה התקבלה!</h1>
-      <p>ההדפסה נשלחה לייצור ותגיע לביתך תוך 7–14 ימי עסקים.</p>
-      <p>אם הזנת מייל — תקבל עדכון כשהמוצר יישלח.</p>
+      <h1 data-i18n="pc.ok.title">ההזמנה התקבלה!</h1>
+      <p data-i18n="pc.ok.p1">ההדפסה נשלחה לייצור ותגיע לביתך תוך 7–14 ימי עסקים.</p>
+      <p data-i18n="pc.ok.p2">אם הזנת מייל — תקבל עדכון כשהמוצר יישלח.</p>
       <p class="order-id" id="order-id"></p>
-      <a href="/" class="btn">חזרה לגלריה</a>
+      <a href="/" class="btn" data-i18n="pc.ok.back">חזרה לגלריה</a>
     </div>
     <div id="error-state" style="display:none">
       <div class="icon">❌</div>
-      <h1>משהו השתבש</h1>
+      <h1 data-i18n="pc.err.title">משהו השתבש</h1>
       <p class="error" id="error-msg"></p>
-      <a href="/" class="btn">חזרה לאתר</a>
+      <a href="/" class="btn" data-i18n="pc.err.back">חזרה לאתר</a>
     </div>
   </div>
 
@@ -79,7 +89,7 @@
       if (!tx || !itemNumber || !itemNumber.startsWith('PRINT_')) {
         document.getElementById('spinner').style.display = 'none';
         document.getElementById('error-state').style.display = 'block';
-        document.getElementById('error-msg').textContent = 'פרמטרים חסרים — אנא צור קשר.';
+        document.getElementById('error-msg').textContent = t('pc.err.params');
         return;
       }
 
@@ -94,16 +104,16 @@
         if (r.ok) {
           document.getElementById('success').style.display = 'block';
           if (data.orderId) {
-            document.getElementById('order-id').textContent = `מספר הזמנה: ${data.orderId}`;
+            document.getElementById('order-id').textContent = t('pc.ok.order', { id: data.orderId });
           }
         } else {
           document.getElementById('error-state').style.display = 'block';
-          document.getElementById('error-msg').textContent = data.error || 'שגיאה לא ידועה';
+          document.getElementById('error-msg').textContent = data.error || t('pc.err.unknown');
         }
       } catch {
         document.getElementById('spinner').style.display = 'none';
         document.getElementById('error-state').style.display = 'block';
-        document.getElementById('error-msg').textContent = 'שגיאת רשת — אנא נסה שוב או צור קשר.';
+        document.getElementById('error-msg').textContent = t('pc.err.net');
       }
     })();
   </script>

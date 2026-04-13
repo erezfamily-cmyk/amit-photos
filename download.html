@@ -6,6 +6,7 @@
   <title>תודה על הרכישה | עמית תמונות</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;700&display=swap" rel="stylesheet" />
+  <script src="assets/js/i18n.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -51,6 +52,10 @@
     .note { color: #555; font-size: 0.8rem; margin-top: 1rem; }
     .back { color: #888; font-size: 0.85rem; margin-top: 1.5rem; display: block; text-decoration: none; }
     .back:hover { color: #c8a96e; }
+    .lang-toggle { display: flex; align-items: center; justify-content: flex-end; gap: 0.25rem; margin-bottom: 1.5rem; }
+    .lang-btn { background: none; border: none; color: #555; cursor: pointer; font-size: 0.75rem; padding: 0.2rem 0.3rem; font-family: inherit; }
+    .lang-btn.active { color: #c8a96e; }
+    .lang-btn:hover { color: #c8a96e; }
     .spinner {
       display: inline-block;
       width: 1.2rem; height: 1.2rem;
@@ -67,14 +72,19 @@
 </head>
 <body>
   <div class="card">
+    <div class="lang-toggle">
+      <button type="button" class="lang-btn active" data-lang="he" onclick="setLang('he')">HE</button>
+      <span>|</span>
+      <button type="button" class="lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
+    </div>
     <div class="icon" id="status-icon">⏳</div>
-    <h1 id="status-title">מאמת תשלום...</h1>
-    <p class="sub" id="status-sub">אנא המתן, בודק את פרטי התשלום עם PayPal.</p>
+    <h1 id="status-title" data-i18n="dl.verifying.title">מאמת תשלום...</h1>
+    <p class="sub" id="status-sub" data-i18n="dl.verifying.sub">אנא המתן, בודק את פרטי התשלום עם PayPal.</p>
     <div id="dl-area" style="display:none">
       <div id="dl-list" class="dl-list"></div>
-      <p class="note">הקישורים תקפים ל-24 שעות ולשימוש חד-פעמי.</p>
+      <p class="note" data-i18n="dl.expire.note">הקישורים תקפים ל-24 שעות ולשימוש חד-פעמי.</p>
     </div>
-    <a href="/" class="back">← חזרה לגלריה</a>
+    <a href="/" class="back" data-i18n="dl.back">← חזרה לגלריה</a>
   </div>
 
   <script>
@@ -115,13 +125,13 @@
 
     function showSuccess(url, title) {
       document.getElementById('status-icon').textContent = '✓';
-      document.getElementById('status-title').textContent = 'תודה על הרכישה!';
-      document.getElementById('status-sub').textContent = `התשלום אושר. לחץ להורדת "${title}".`;
+      document.getElementById('status-title').textContent = t('dl.success.title');
+      document.getElementById('status-sub').textContent = t('dl.success.sub', { title });
       const list = document.getElementById('dl-list');
       const btn = document.createElement('a');
       btn.className = 'dl-btn';
       btn.href = url;
-      btn.textContent = `הורד: ${title} ↓`;
+      btn.textContent = t('dl.download', { title });
       list.appendChild(btn);
       document.getElementById('dl-area').style.display = 'block';
       setTimeout(() => { btn.click(); }, 800);
@@ -129,14 +139,14 @@
 
     function showSuccessMulti(urls, title) {
       document.getElementById('status-icon').textContent = '✓';
-      document.getElementById('status-title').textContent = 'תודה על הרכישה!';
-      document.getElementById('status-sub').textContent = `התשלום אושר. ${urls.length} תמונות מוכנות להורדה.`;
+      document.getElementById('status-title').textContent = t('dl.success.title');
+      document.getElementById('status-sub').textContent = t('dl.success.multi', { count: urls.length });
       const list = document.getElementById('dl-list');
       urls.forEach((item, i) => {
         const btn = document.createElement('a');
         btn.className = 'dl-btn';
         btn.href = item.url;
-        btn.textContent = `הורד: ${item.title || `תמונה ${i + 1}`} ↓`;
+        btn.textContent = t('dl.download', { title: item.title || String(i + 1) });
         list.appendChild(btn);
       });
       document.getElementById('dl-area').style.display = 'block';
@@ -144,20 +154,20 @@
 
     function showError(msg) {
       document.getElementById('status-icon').textContent = '✗';
-      document.getElementById('status-title').textContent = 'לא ניתן לאמת תשלום';
-      document.getElementById('status-sub').innerHTML = `<span class="error">${msg}</span><br/><br/>אם שילמת ולא קיבלת את הקובץ, <a href="mailto:erez.family@gmail.com" style="color:#c8a96e">שלח מייל</a> עם אישור התשלום.`;
+      document.getElementById('status-title').textContent = t('dl.error.title');
+      document.getElementById('status-sub').innerHTML = `<span class="error">${msg}</span><br/><br/>${t('dl.error.sub')}`;
     }
 
     function showAlreadyProcessed() {
       document.getElementById('status-icon').textContent = '⚠️';
-      document.getElementById('status-title').textContent = 'הקישור כבר נוצר';
-      document.getElementById('status-sub').innerHTML = 'עסקה זו כבר עובדה ונשלחו קישורי הורדה. אם לא קיבלת את הקבצים, <a href="mailto:erez.family@gmail.com" style="color:#c8a96e">שלח מייל</a> עם מספר העסקה.';
+      document.getElementById('status-title').textContent = t('dl.already.title');
+      document.getElementById('status-sub').innerHTML = t('dl.already.sub');
     }
 
     function showManual() {
       document.getElementById('status-icon').textContent = '📧';
-      document.getElementById('status-title').textContent = 'תשלום התקבל';
-      document.getElementById('status-sub').textContent = 'הקובץ יישלח אליך במייל בקרוב. אם לא קיבלת תוך שעה — צור קשר.';
+      document.getElementById('status-title').textContent = t('dl.manual.title');
+      document.getElementById('status-sub').textContent = t('dl.manual.sub');
     }
 
     init();
