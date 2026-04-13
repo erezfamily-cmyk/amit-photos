@@ -103,6 +103,8 @@
           showSuccessMulti(data.urls, data.title || 'חבילת תמונות');
         } else if (data.url) {
           showSuccess(data.url, data.title || 'תמונה');
+        } else if (res.status === 409) {
+          showAlreadyProcessed();
         } else {
           showError(data.error || 'שגיאה באימות התשלום');
         }
@@ -144,6 +146,12 @@
       document.getElementById('status-icon').textContent = '✗';
       document.getElementById('status-title').textContent = 'לא ניתן לאמת תשלום';
       document.getElementById('status-sub').innerHTML = `<span class="error">${msg}</span><br/><br/>אם שילמת ולא קיבלת את הקובץ, <a href="mailto:erez.family@gmail.com" style="color:#c8a96e">שלח מייל</a> עם אישור התשלום.`;
+    }
+
+    function showAlreadyProcessed() {
+      document.getElementById('status-icon').textContent = '⚠️';
+      document.getElementById('status-title').textContent = 'הקישור כבר נוצר';
+      document.getElementById('status-sub').innerHTML = 'עסקה זו כבר עובדה ונשלחו קישורי הורדה. אם לא קיבלת את הקבצים, <a href="mailto:erez.family@gmail.com" style="color:#c8a96e">שלח מייל</a> עם מספר העסקה.';
     }
 
     function showManual() {

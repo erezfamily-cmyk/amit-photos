@@ -598,6 +598,10 @@ async function handleVerifyPayment(request, env) {
   if (!tx || !itemNumber) return jsonRes({ error: 'חסרים פרמטרים' }, 400, request);
   if (!pdtToken) return jsonRes({ error: 'PAYPAL_PDT_TOKEN לא מוגדר' }, 500, request);
 
+  // Prevent duplicate processing of the same transaction
+  const existing = await env.DB.prepare('SELECT token FROM download_tokens WHERE tx = ? LIMIT 1').bind(tx).first();
+  if (existing) return jsonRes({ error: 'עסקה זו כבר עובדה' }, 409, request);
+
   // Parse item_number — supports both single photo and cart
   let photoIds, size;
   if (itemNumber.startsWith('CART_')) {
@@ -649,8 +653,8 @@ async function handleVerifyPayment(request, env) {
   for (const photoId of photoIds) {
     const token = crypto.randomUUID();
     await env.DB.prepare(
-      'INSERT INTO download_tokens (token, photo_ids, size, used, expires_at, created_at) VALUES (?, ?, ?, 0, ?, ?)'
-    ).bind(token, JSON.stringify([photoId]), size, expires, now).run();
+      'INSERT INTO download_tokens (token, photo_ids, size, tx, used, expires_at, created_at) VALUES (?, ?, ?, ?, 0, ?, ?)'
+    ).bind(token, JSON.stringify([photoId]), size, tx, expires, now).run();
     tokens.push(token);
   }
 
