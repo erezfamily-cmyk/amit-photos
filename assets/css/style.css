@@ -2582,9 +2582,26 @@ footer {
 }
 
 /* ===== LTR DIRECTION OVERRIDES ===== */
+
+/* Root direction — overrides body { direction: rtl } */
+[dir="ltr"] body { direction: ltr; }
+
+/* Text alignment flips */
 [dir="ltr"] .about-text .section-title,
 [dir="ltr"] .about-text .section-label { text-align: left; justify-content: flex-start; }
 [dir="ltr"] .faq-question { text-align: left; }
 [dir="ltr"] .faq-question::after { margin-right: 0; margin-left: .5rem; }
 [dir="ltr"] .print-size-btn,
 [dir="ltr"] .print-wrap-btn { text-align: left; }
+[dir="ltr"] .pricing-features { text-align: left; }
+
+/* Inputs and selects with hardcoded direction: rtl */
+[dir="ltr"] .gallery-search { direction: ltr; }
+[dir="ltr"] .form-group input,
+[dir="ltr"] .form-group textarea,
+[dir="ltr"] .form-group select { direction: ltr; }
+[dir="ltr"] .newsletter-input { direction: ltr; }
+[dir="ltr"] .print-input { direction: ltr; }
+
+/* Modals with hardcoded direction: rtl */
+[dir="ltr"] .buy-modal-inner > * { direction: ltr; }
