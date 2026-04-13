@@ -552,6 +552,32 @@ async function handleFillTitles(request, env) {
   return jsonRes({ updated: updated.length, total: toFill.length, titles: updated });
 }
 
+// ===== DOWNLOAD TOKEN =====
+async function handleDownload(request, env, token) {
+  if (!token) return jsonRes({ error: 'token חסר' }, 400, request);
+
+  const row = await env.DB.prepare(
+    'SELECT * FROM download_tokens WHERE token = ?'
+  ).bind(token).first();
+
+  if (!row) return jsonRes({ error: 'קישור לא תקין' }, 404, request);
+  if (row.used) return jsonRes({ error: 'קישור זה כבר שומש' }, 410, request);
+  if (Math.floor(Date.now() / 1000) > row.expires_at) return jsonRes({ error: 'פג תוקף הקישור' }, 410, request);
+
+  // Mark as used
+  await env.DB.prepare('UPDATE download_tokens SET used = 1 WHERE token = ?').bind(token).run();
+
+  // Get photo from D1
+  const photoIds = JSON.parse(row.photo_ids);
+  const photoId = photoIds[0];
+  const photo = await env.DB.prepare('SELECT r2_key FROM photos WHERE id = ?').bind(photoId).first();
+
+  if (!photo?.r2_key) return jsonRes({ error: 'תמונה לא נמצאה' }, 404, request);
+
+  const origin = new URL(request.url).origin;
+  return Response.redirect(`${origin}/photos/${photo.r2_key}`, 302);
+}
+
 // ===== VERIFY PAYPAL PAYMENT =====
 async function handleVerifyPayment(request, env) {
   if (request.method !== 'GET') return jsonRes({ error: 'method not allowed' }, 405, request);
@@ -563,13 +589,27 @@ async function handleVerifyPayment(request, env) {
   if (!tx || !itemNumber) return jsonRes({ error: 'חסרים פרמטרים' }, 400, request);
   if (!pdtToken) return jsonRes({ error: 'PAYPAL_PDT_TOKEN לא מוגדר' }, 500, request);
 
-  const lastUnderscore = itemNumber.lastIndexOf('_');
-  if (lastUnderscore === -1) return jsonRes({ error: 'item_number לא תקין' }, 400, request);
-  const fileId = itemNumber.substring(0, lastUnderscore);
-  const size = itemNumber.substring(lastUnderscore + 1);
-  const SIZE_MAP = { small: 'w1500', medium: 'w3000', large: null };
-  if (!Object.prototype.hasOwnProperty.call(SIZE_MAP, size)) return jsonRes({ error: 'גודל לא תקין' }, 400, request);
+  // Parse item_number — supports both single photo and cart
+  let photoIds, size;
+  if (itemNumber.startsWith('CART_')) {
+    // Format: CART_{size}_{id1,id2,...}
+    const rest = itemNumber.slice(5); // remove 'CART_'
+    const firstUnderscore = rest.indexOf('_');
+    if (firstUnderscore === -1) return jsonRes({ error: 'item_number לא תקין' }, 400, request);
+    size = rest.substring(0, firstUnderscore);
+    photoIds = rest.substring(firstUnderscore + 1).split(',').filter(Boolean);
+  } else {
+    // Format: {photo_id}_{size}
+    const lastUnderscore = itemNumber.lastIndexOf('_');
+    if (lastUnderscore === -1) return jsonRes({ error: 'item_number לא תקין' }, 400, request);
+    photoIds = [itemNumber.substring(0, lastUnderscore)];
+    size = itemNumber.substring(lastUnderscore + 1);
+  }
 
+  const VALID_SIZES = ['small', 'medium', 'large'];
+  if (!VALID_SIZES.includes(size)) return jsonRes({ error: 'גודל לא תקין' }, 400, request);
+
+  // Verify payment with PayPal PDT
   let paypalText;
   try {
     const res = await fetch('https://www.paypal.com/cgi-bin/webscr', {
@@ -592,11 +632,30 @@ async function handleVerifyPayment(request, env) {
   }
   if (txData['payment_status'] !== 'Completed') return jsonRes({ error: `סטטוס: ${txData['payment_status']}` }, 402, request);
 
-  const sz = SIZE_MAP[size];
-  const downloadUrl = sz
-    ? `https://drive.google.com/thumbnail?id=${fileId}&sz=${sz}`
-    : `https://drive.google.com/uc?export=download&id=${fileId}`;
-  return jsonRes({ url: downloadUrl, title: txData['item_name'] || 'תמונה' }, 200, request);
+  // Create download tokens in D1 (one per photo)
+  const now = Math.floor(Date.now() / 1000);
+  const expires = now + 86400; // 24 hours
+  const tokens = [];
+
+  for (const photoId of photoIds) {
+    const token = crypto.randomUUID();
+    await env.DB.prepare(
+      'INSERT INTO download_tokens (token, photo_ids, size, used, expires_at, created_at) VALUES (?, ?, ?, 0, ?, ?)'
+    ).bind(token, JSON.stringify([photoId]), size, expires, now).run();
+    tokens.push(token);
+  }
+
+  const title = txData['item_name'] || 'תמונה';
+  if (tokens.length === 1) {
+    return jsonRes({ url: `/api/download/${tokens[0]}`, title }, 200, request);
+  }
+
+  // For cart: fetch each photo's title from D1
+  const urlItems = await Promise.all(photoIds.map(async (photoId, i) => {
+    const photo = await env.DB.prepare('SELECT title FROM photos WHERE id = ?').bind(photoId).first();
+    return { url: `/api/download/${tokens[i]}`, title: photo?.title || `תמונה ${i + 1}` };
+  }));
+  return jsonRes({ urls: urlItems, title }, 200, request);
 }
 
 // ===== PRINT SHOP =====
@@ -1325,6 +1384,7 @@ export default {
     if (path === '/api/unsubscribe')       return handleUnsubscribe(request, env);
     if (path === '/api/reply')             return handleReply(request, env);
     if (path === '/api/verify-payment')    return handleVerifyPayment(request, env);
+    if (path.startsWith('/api/download/')) return handleDownload(request, env, path.slice('/api/download/'.length));
     if (path === '/api/print/catalog')        return handlePrintCatalog(request, env);
     if (path === '/api/print/quote')          return handlePrintQuote(request, env);
     if (path === '/api/print/upload-crop')    return handlePrintUploadCrop(request, env);

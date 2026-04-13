@@ -920,18 +920,21 @@ function cartCheckout() {
 
   const itemIds = cart.map(p => p.id).join(',');
   const itemNames = cart.map(p => p.title).join(', ');
+  const itemNumber = `CART_${cartSize}_${itemIds}`;
+
+  localStorage.setItem('pending_item_number', itemNumber);
 
   const params = new URLSearchParams({
     cmd: '_xclick',
     business: PAYPAL_EMAIL,
     item_name: `חבילת תמונות (${cart.length}) — ${cartSize}`,
-    item_number: `CART_${cartSize}_${itemIds}`,
+    item_number: itemNumber,
     amount: finalPrice,
     currency_code: 'ILS',
     no_shipping: '1',
     return: `${SITE_URL}/download.html`,
     cancel_return: `${SITE_URL}/`,
-    rm: '1',
+    rm: '2',
   });
 
   window.location.href = `https://www.paypal.com/cgi-bin/webscr?${params.toString()}`;
@@ -1011,20 +1014,21 @@ function closeBuyModal() {
 
 function redirectToPayPal(photo, size) {
   const s = SIZES[size];
-  const fileIdMatch = photo.url.match(/[?&]id=([\w-]+)/);
-  const fileId = fileIdMatch ? fileIdMatch[1] : photo.id;
+  const itemNumber = `${photo.id}_${size}`;
+
+  localStorage.setItem('pending_item_number', itemNumber);
 
   const params = new URLSearchParams({
     cmd: '_xclick',
     business: PAYPAL_EMAIL,
     item_name: `${photo.title} — ${s.label}`,
-    item_number: `${fileId}_${size}`,
+    item_number: itemNumber,
     amount: s.price,
     currency_code: 'ILS',
     no_shipping: '1',
     return: `${SITE_URL}/download.html`,
     cancel_return: `${SITE_URL}/`,
-    rm: '1',
+    rm: '2',
   });
 
   window.location.href = `https://www.paypal.com/cgi-bin/webscr?${params.toString()}`;
