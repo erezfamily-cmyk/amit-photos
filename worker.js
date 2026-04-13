@@ -564,18 +564,27 @@ async function handleDownload(request, env, token) {
   if (row.used) return jsonRes({ error: 'קישור זה כבר שומש' }, 410, request);
   if (Math.floor(Date.now() / 1000) > row.expires_at) return jsonRes({ error: 'פג תוקף הקישור' }, 410, request);
 
-  // Mark as used
+  // Mark as used before serving (prevents reuse even if fetch fails)
   await env.DB.prepare('UPDATE download_tokens SET used = 1 WHERE token = ?').bind(token).run();
 
   // Get photo from D1
   const photoIds = JSON.parse(row.photo_ids);
   const photoId = photoIds[0];
-  const photo = await env.DB.prepare('SELECT r2_key FROM photos WHERE id = ?').bind(photoId).first();
+  const photo = await env.DB.prepare('SELECT r2_key, title FROM photos WHERE id = ?').bind(photoId).first();
 
   if (!photo?.r2_key) return jsonRes({ error: 'תמונה לא נמצאה' }, 404, request);
 
-  const origin = new URL(request.url).origin;
-  return Response.redirect(`${origin}/photos/${photo.r2_key}`, 302);
+  const object = await env.PHOTOS.get(photo.r2_key);
+  if (!object) return jsonRes({ error: 'קובץ לא נמצא ב-R2' }, 404, request);
+
+  const filename = (photo.title || 'photo').replace(/[^\w\u0590-\u05ff .-]/g, '_') + '.jpg';
+  return new Response(object.body, {
+    headers: {
+      'Content-Type': object.httpMetadata?.contentType || 'image/jpeg',
+      'Content-Disposition': `attachment; filename*=UTF-8''${encodeURIComponent(filename)}`,
+      'Cache-Control': 'no-store',
+    },
+  });
 }
 
 // ===== VERIFY PAYPAL PAYMENT =====
