@@ -1093,14 +1093,24 @@ const PrintShop = (() => {
     metallic: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="3" width="18" height="18" rx="1"/><path d="M3 3l5 5m8-5l-5 5m-3 6l-5 5m16-5l-5 5" stroke-width="1" opacity=".6"/><rect x="6" y="6" width="12" height="12" rx=".5" stroke-width="1.2"/></svg>`,
   };
 
+  function typeLabel(key, val) {
+    return t(`print.type.${key}.label`) || val.label;
+  }
+  function typeDesc(key, val) {
+    return t(`print.type.${key}.desc`) || val.desc;
+  }
+  function sizeLabel(label) {
+    return getLang() === 'en' ? label.replace(/ס"מ/g, 'cm') : label;
+  }
+
   function renderTypes() {
     const container = document.getElementById('print-type-options');
     container.innerHTML = Object.entries(catalog).map(([key, val]) =>
       `<button type="button" class="print-type-btn" data-type="${key}">
         <span class="print-type-icon">${TYPE_ICONS[key] || ''}</span>
         <span class="print-type-text">
-          <strong>${val.label}</strong>
-          <span class="print-type-desc">${val.desc}</span>
+          <strong>${typeLabel(key, val)}</strong>
+          <span class="print-type-desc">${typeDesc(key, val)}</span>
         </span>
       </button>`
     ).join('');
@@ -1129,13 +1139,13 @@ const PrintShop = (() => {
   function selectType(type) {
     selectedType = type;
     selectedSku = null; selectedPrice = null;
-    const t = catalog[type];
-    document.getElementById('print-type-label').textContent = t.label;
+    const entry = catalog[type];
+    document.getElementById('print-type-label').textContent = typeLabel(type, entry);
     document.getElementById('print-to-details-btn').classList.remove('visible');
     const container = document.getElementById('print-size-options');
-    container.innerHTML = t.sizes.map(s =>
+    container.innerHTML = entry.sizes.map(s =>
       `<button type="button" class="print-size-btn" data-sku="${s.sku}" data-minw="${s.minW}" data-minh="${s.minH}">
-        <span>${s.label}</span>
+        <span>${sizeLabel(s.label)}</span>
       </button>`
     ).join('');
     container.querySelectorAll('.print-size-btn').forEach(btn => {
@@ -1475,13 +1485,18 @@ const PrintShop = (() => {
     document.getElementById('print-pay-btn').addEventListener('click', pay);
   }
 
-  return { init, open };
+  function onLangChange() {
+    if (catalog) renderTypes();
+  }
+
+  return { init, open, onLangChange };
 })();
 
 // Re-render gallery and filters when language changes
 window.onLangChange = function() {
   initFilters();
   renderGallery();
+  PrintShop.onLangChange();
 };
 
 // ===== SERVICE WORKER =====

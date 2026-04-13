@@ -274,6 +274,14 @@ const TRANSLATIONS = {
     'print.price':      '${{price}} — כולל משלוח לישראל',
     'print.price.err':  'שגיאה בטעינת מחיר',
 
+    // print types (catalog override)
+    'print.type.poster.label':   'פוסטר — נייר אמנות מט',
+    'print.type.poster.desc':    'נייר אמנות 170gsm, פינישינג מט — כולל משלוח לישראל',
+    'print.type.canvas.label':   'הדפסה על קנבס',
+    'print.type.canvas.desc':    'קנבס מתוח על מסגרת עץ, מוכן לתלייה — כולל משלוח לישראל',
+    'print.type.metallic.label': 'הדפסה על מתכת',
+    'print.type.metallic.desc':  'הדפסה על אלומיניום 3mm — גימור מבריק יוקרתי, מוכן לתלייה — כולל משלוח לישראל',
+
     // download.html
     'dl.verifying.title':'מאמת תשלום...',
     'dl.verifying.sub': 'אנא המתן, בודק את פרטי התשלום עם PayPal.',
@@ -555,6 +563,14 @@ const TRANSLATIONS = {
     'print.res.req':    'Required {{dim}}px+',
     'print.price':      '${{price}} — shipping included',
     'print.price.err':  'Error loading price',
+
+    // print types (catalog override)
+    'print.type.poster.label':   'Poster — Matte Art Paper',
+    'print.type.poster.desc':    '170gsm art paper, matte finish — shipping to Israel included',
+    'print.type.canvas.label':   'Canvas Print',
+    'print.type.canvas.desc':    'Canvas stretched on a wooden frame, ready to hang — shipping included',
+    'print.type.metallic.label': 'Metal Print',
+    'print.type.metallic.desc':  '3mm aluminum print — glossy luxury finish, ready to hang — shipping included',
 
     // download.html
     'dl.verifying.title':'Verifying payment...',
