@@ -200,7 +200,7 @@ function renderGallery(append = false) {
   if (!grid) return;
 
   if (filteredPhotos.length === 0) {
-    grid.innerHTML = `<p style="text-align:center;color:var(--text-muted);padding:4rem">אין תמונות בקטגוריה זו.</p>`;
+    grid.innerHTML = `<p style="text-align:center;color:var(--text-muted);padding:4rem">${t('gallery.empty')}</p>`;
     updateSentinel();
     return;
   }
@@ -228,11 +228,11 @@ function renderGallery(append = false) {
       <div class="gallery-item-overlay">
         <div class="gallery-item-info">
           <h3>${photo.title}</h3>
-          <span>${photo.category}</span>
+          <span>${getCategoryLabel(photo.category)}</span>
         </div>
         <div class="gallery-item-actions">
-          <button class="gallery-cart-btn" data-idx="${idx}" aria-label="הוסף לסל">+ סל</button>
-          <button class="gallery-buy-btn" data-idx="${idx}" aria-label="רכישת ${photo.title}">רכישה ←</button>
+          <button class="gallery-cart-btn" data-idx="${idx}" aria-label="${t('gallery.btn.cart')}">${t('gallery.btn.cart')}</button>
+          <button class="gallery-buy-btn" data-idx="${idx}" aria-label="${t('gallery.btn.buy')}">${t('gallery.btn.buy')}</button>
         </div>
       </div>`;
     galRevealObs?.observe(item);
@@ -352,14 +352,14 @@ function initFilters() {
     hierarchy[parent].add(p.category);
   });
 
-  let html = `<button class="filter-btn active" data-cat="all">הכל <span class="filter-count">${allPhotos.length}</span></button>`;
+  let html = `<button class="filter-btn active" data-cat="all">${t('gallery.filter.all')} <span class="filter-count">${allPhotos.length}</span></button>`;
 
   const esc = s => s.replace(/"/g, '&quot;');
 
   // קטגוריות ראשיות (ללא parent)
   (hierarchy[null] || new Set()).forEach(cat => {
     const count = allPhotos.filter(p => p.category === cat && !p.parent_category).length;
-    html += `<button class="filter-btn" data-cat="${esc(cat)}">${cat} <span class="filter-count">${count}</span></button>`;
+    html += `<button class="filter-btn" data-cat="${esc(cat)}">${getCategoryLabel(cat)} <span class="filter-count">${count}</span></button>`;
   });
 
   // קבוצות עם parent
@@ -367,12 +367,12 @@ function initFilters() {
     const totalCount = allPhotos.filter(p => p.parent_category === parent).length;
     html += `<div class="filter-group">
       <button class="filter-btn filter-group-btn" data-parent="${esc(parent)}">
-        ${parent} <span class="filter-count">${totalCount}</span> <span class="filter-arrow">▾</span>
+        ${getCategoryLabel(parent)} <span class="filter-count">${totalCount}</span> <span class="filter-arrow">▾</span>
       </button>
       <div class="filter-group-sub" style="display:none">`;
     hierarchy[parent].forEach(sub => {
       const count = allPhotos.filter(p => p.category === sub && p.parent_category === parent).length;
-      html += `<button class="filter-btn filter-sub-btn" data-cat="${esc(sub)}" data-parent="${esc(parent)}">${sub} <span class="filter-count">${count}</span></button>`;
+      html += `<button class="filter-btn filter-sub-btn" data-cat="${esc(sub)}" data-parent="${esc(parent)}">${getCategoryLabel(sub)} <span class="filter-count">${count}</span></button>`;
     });
     html += `</div></div>`;
   });
@@ -518,7 +518,7 @@ function initLightbox() {
 
 function startSlideshow() {
   const btn = document.getElementById('lb-slideshow');
-  if (btn) btn.textContent = '⏸ עצור';
+  if (btn) btn.textContent = t('lb.slideshow.stop');
   slideshowTimer = setInterval(() => navigateLightbox(1), 3000);
 }
 
@@ -526,7 +526,7 @@ function stopSlideshow() {
   clearInterval(slideshowTimer);
   slideshowTimer = null;
   const btn = document.getElementById('lb-slideshow');
-  if (btn) btn.textContent = '▶ מצגת';
+  if (btn) btn.textContent = t('lb.slideshow.start');
 }
 
 function getLightboxUrl(url) {
@@ -624,7 +624,7 @@ function openLightbox(idx) {
       const driveMatch = photo.url.match(/[?&]id=([\w-]+)/);
       if (!driveMatch) { window.open(photo.url, '_blank'); return; }
       const fileId = driveMatch[1];
-      const pwd = prompt('הזן סיסמה להורדת התמונה:');
+      const pwd = prompt(t('lb.password.prompt'));
       if (!pwd) return;
       fetch('/functions/download', {
         method: 'POST',
@@ -633,9 +633,9 @@ function openLightbox(idx) {
         if (data.url) {
           window.open(data.url, '_blank');
         } else {
-          alert('סיסמה שגויה. נסה שוב.');
+          alert(t('lb.password.wrong'));
         }
-      }).catch(() => alert('שגיאה. נסה שוב.'));
+      }).catch(() => alert(t('lb.error')));
     };
     dlBtn.href = '#';
   }
@@ -654,7 +654,7 @@ function openLightbox(idx) {
     copyBtn.onclick = () => {
       navigator.clipboard.writeText(shareUrl).then(() => {
         const orig = copyBtn.textContent;
-        copyBtn.textContent = '✓ הועתק!';
+        copyBtn.textContent = t('lb.copied');
         setTimeout(() => { copyBtn.textContent = orig; }, 2000);
       });
     };
@@ -732,20 +732,20 @@ function validateForm(form) {
 
   const name = form.querySelector('[name="name"]');
   if (!name.value.trim()) {
-    showFieldError(name, 'נא להזין שם');
+    showFieldError(name, t('form.v.name'));
     valid = false;
   }
 
   const email = form.querySelector('[name="email"]');
   const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim());
   if (!emailOk) {
-    showFieldError(email, 'נא להזין כתובת אימייל תקינה');
+    showFieldError(email, t('form.v.email'));
     valid = false;
   }
 
   const msg = form.querySelector('[name="message"]');
   if (!msg.value.trim()) {
-    showFieldError(msg, 'נא להזין הודעה');
+    showFieldError(msg, t('form.v.message'));
     valid = false;
   }
 
@@ -773,7 +773,7 @@ function initContactForm() {
     if (!validateForm(form)) return;
 
     const btn = form.querySelector('.form-submit');
-    btn.textContent = 'שולח...';
+    btn.textContent = t('form.sending');
     btn.disabled = true;
 
     try {
@@ -799,9 +799,9 @@ function initContactForm() {
       if (!res.ok || !data.success) throw new Error(data.message || `status ${res.status}`);
     } catch (err) {
       console.error('Form error:', err);
-      btn.textContent = 'שלח הודעה ←';
+      btn.textContent = t('form.submit');
       btn.disabled = false;
-      alert('שגיאה בשליחה, נסה שוב.');
+      alert(t('form.error'));
       return;
     }
 
@@ -869,14 +869,14 @@ function closeCartModal() {
 function renderCartItems() {
   const container = document.getElementById('cart-items');
   if (cart.length === 0) {
-    container.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:1rem">הסל ריק</p>';
+    container.innerHTML = `<p style="color:var(--text-muted);text-align:center;padding:1rem">${t('cart.empty')}</p>`;
     return;
   }
   container.innerHTML = cart.map(photo => `
     <div class="cart-item" data-id="${photo.id}">
       <img src="${photo.thumbnail || photo.url}" alt="${photo.title}" />
       <span class="cart-item-title">${photo.title}</span>
-      <button class="cart-item-remove" data-id="${photo.id}" aria-label="הסר">✕</button>
+      <button class="cart-item-remove" data-id="${photo.id}" aria-label="${t('cart.remove.aria')}">✕</button>
     </div>
   `).join('');
 
@@ -1259,15 +1259,15 @@ const PrintShop = (() => {
         const level = checkResolution(img, minW, minH);
         if (level === 'block') {
           resEl.className = 'print-res-block';
-          resEl.textContent = '❌ רזולוציה נמוכה מדי לגודל זה — בחר גודל קטן יותר';
+          resEl.textContent = t('print.res.low');
           document.getElementById('print-to-details-btn').classList.remove('visible');
           selectedPrice = null;
         } else if (level === 'warn') {
           resEl.className = 'print-res-warn';
-          resEl.textContent = '⚠️ רזולוציה נמוכה מהמומלץ — ההדפסה עשויה להיות פחות חדה';
+          resEl.textContent = t('print.res.warn');
         } else {
           resEl.className = 'print-res-ok';
-          resEl.textContent = '✓ רזולוציה מתאימה ל-300 DPI';
+          resEl.textContent = t('print.res.ok');
         }
       }
     };
@@ -1358,7 +1358,7 @@ const PrintShop = (() => {
     const minH = parseFloat(btn.dataset.minh);
     initCropPreview(getFullResUrl(currentPhoto), minW, minH, minW, minH);
 
-    document.getElementById('print-price-display').textContent = 'טוען מחיר...';
+    document.getElementById('print-price-display').textContent = t('print.loading');
     try {
       const r = await fetch('/api/print/quote', {
         method: 'POST',
@@ -1368,7 +1368,7 @@ const PrintShop = (() => {
       const data = await r.json();
       if (r.ok) {
         selectedPrice = data.sellPrice;
-        document.getElementById('print-price-display').textContent = `$${data.sellPrice} — כולל משלוח לישראל`;
+        document.getElementById('print-price-display').textContent = t('print.price', { price: data.sellPrice });
         // Show customs warning if price may exceed $75 threshold
         const customsEl = document.getElementById('print-customs-notice');
         if (customsEl) customsEl.classList.toggle('visible', data.sellPrice >= 75);
@@ -1378,10 +1378,10 @@ const PrintShop = (() => {
           document.getElementById('print-to-details-btn').classList.add('visible');
         }
       } else {
-        document.getElementById('print-price-display').textContent = data.error || 'שגיאה בטעינת מחיר';
+        document.getElementById('print-price-display').textContent = data.error || t('print.price.err');
       }
     } catch {
-      document.getElementById('print-price-display').textContent = 'שגיאת רשת';
+      document.getElementById('print-price-display').textContent = t('print.err.net');
     }
   }
 
@@ -1406,14 +1406,14 @@ const PrintShop = (() => {
     const zip = document.getElementById('print-zip').value.trim();
 
     if (!name || !phone || !line1 || !city || !zip) {
-      document.getElementById('print-error').textContent = 'נא למלא את כל השדות המסומנים ב-*';
+      document.getElementById('print-error').textContent = t('print.v.fields');
       return;
     }
 
     const payBtn = document.getElementById('print-pay-btn');
     const origHtml = payBtn.innerHTML;
     payBtn.disabled = true;
-    payBtn.textContent = 'מעבד חיתוך...';
+    payBtn.textContent = t('print.processing');
 
     let cropUrl = null;
     try {
@@ -1477,6 +1477,20 @@ const PrintShop = (() => {
 
   return { init, open };
 })();
+
+// ===== i18n CATEGORY HELPER =====
+function getCategoryLabel(cat) {
+  if (typeof currentLang !== 'undefined' && currentLang === 'en' && typeof CATEGORY_MAP !== 'undefined') {
+    return CATEGORY_MAP[cat] || cat;
+  }
+  return cat;
+}
+
+// Re-render gallery and filters when language changes
+window.onLangChange = function() {
+  initFilters();
+  renderGallery();
+};
 
 // ===== SERVICE WORKER =====
 if ('serviceWorker' in navigator) {

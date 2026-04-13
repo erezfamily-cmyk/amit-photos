@@ -64,12 +64,22 @@
       transition: opacity 0.2s;
     }
     a:hover { opacity: 0.85; }
+    .lang-toggle { position: fixed; top: 1rem; right: 1rem; display: flex; align-items: center; gap: 0.25rem; }
+    .lang-btn { background: none; border: none; color: #555; cursor: pointer; font-size: 0.75rem; padding: 0.2rem 0.3rem; font-family: inherit; }
+    .lang-btn.active { color: #c8a96e; }
+    .lang-btn:hover { color: #c8a96e; }
   </style>
+  <script src="assets/js/i18n.js"></script>
 </head>
 <body>
+  <div class="lang-toggle">
+    <button type="button" class="lang-btn active" data-lang="he" onclick="setLang('he')">HE</button>
+    <span>|</span>
+    <button type="button" class="lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
+  </div>
   <div class="num">404</div>
-  <h1>הדף לא נמצא</h1>
-  <p>נראה שהתמונה הזו זזה... חזור לגלריה הראשית.</p>
-  <a href="index.html">חזרה לבית</a>
+  <h1 data-i18n="404.title">הדף לא נמצא</h1>
+  <p data-i18n="404.p">נראה שהתמונה הזו זזה... חזור לגלריה הראשית.</p>
+  <a href="index.html" data-i18n="404.btn">חזרה לבית</a>
 </body>
 </html>
