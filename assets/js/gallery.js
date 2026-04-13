@@ -1478,14 +1478,6 @@ const PrintShop = (() => {
   return { init, open };
 })();
 
-// ===== i18n CATEGORY HELPER =====
-function getCategoryLabel(cat) {
-  if (typeof currentLang !== 'undefined' && currentLang === 'en' && typeof CATEGORY_MAP !== 'undefined') {
-    return CATEGORY_MAP[cat] || cat;
-  }
-  return cat;
-}
-
 // Re-render gallery and filters when language changes
 window.onLangChange = function() {
   initFilters();
