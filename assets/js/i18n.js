@@ -1,10 +1,29 @@
 // ===== i18n — bilingual support (HE / EN) =====
 
 const CATEGORY_MAP = {
+  // Original simple categories
   'טבע': 'Nature', 'פורטרט': 'Portrait', 'עירוני': 'Urban',
   'אירועים': 'Events', 'מאקרו': 'Macro', 'נופים': 'Landscapes',
   'ספורט': 'Sport', 'אדריכלות': 'Architecture', 'חיות': 'Wildlife',
   'ים': 'Sea', 'מדבר': 'Desert', 'עצים': 'Trees',
+  // D1 actual categories
+  'מאקרו-צילומי תקריב': 'Macro & Close-ups',
+  'טבע דומם': 'Still Life',
+  'ישראל': 'Israel',
+  'פורטרטים': 'Portraits',
+  'פרחים וצמחים': 'Flowers & Plants',
+  'צילום מופשט': 'Abstract Photography',
+  'מקומות בעולם': 'Places Around the World',
+  // Sub-categories (countries/cities)
+  'אבו דאבי': 'Abu Dhabi',
+  'אנגליה': 'England',
+  'גרמניה': 'Germany',
+  'הולנד': 'Netherlands',
+  'יוון': 'Greece',
+  'מונטנגרו': 'Montenegro',
+  'סלובקיה': 'Slovakia',
+  'סן דיאגו - ארה"ב': 'San Diego, USA',
+  'צכיה': 'Czech Republic',
 };
 
 const TRANSLATIONS = {
