@@ -620,23 +620,14 @@ async function handleVerifyPayment(request, env) {
   const VALID_SIZES = ['small', 'medium', 'large'];
   if (!VALID_SIZES.includes(size)) return jsonRes({ error: 'גודל לא תקין' }, 400, request);
 
-  // Verify with PayPal IPN validation
-  const ipnParams = new URLSearchParams(params);
-  ipnParams.set('cmd', '_notify-validate');
-  let ipnResult;
-  try {
-    const res = await fetch('https://www.paypal.com/cgi-bin/webscr', {
-      method: 'POST',
-      body: ipnParams.toString(),
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    });
-    ipnResult = await res.text();
-  } catch {
-    return jsonRes({ error: 'שגיאה בתקשורת עם PayPal' }, 502, request);
-  }
+  // Verify payment from PayPal return-URL params
+  const PAYPAL_RECEIVER_ID = 'UQS28ADG97TPW'; // amit erez PayPal account ID
+  const receiverId = params.get('receiver_id');
+  const mcCurrency = params.get('mc_currency');
 
-  if (ipnResult !== 'VERIFIED') return jsonRes({ error: 'התשלום לא אומת', debug: ipnResult }, 402, request);
-  if (paymentStatus !== 'Completed') return jsonRes({ error: `סטטוס: ${paymentStatus}` }, 402, request);
+  if (paymentStatus !== 'Completed') return jsonRes({ error: `סטטוס תשלום: ${paymentStatus || 'חסר'}` }, 402, request);
+  if (receiverId !== PAYPAL_RECEIVER_ID) return jsonRes({ error: 'חשבון PayPal לא תואם' }, 402, request);
+  if (mcCurrency !== 'ILS') return jsonRes({ error: 'מטבע לא תואם' }, 402, request);
 
   // Create download tokens in D1 (one per photo)
   const now = Math.floor(Date.now() / 1000);
@@ -651,8 +642,9 @@ async function handleVerifyPayment(request, env) {
     tokens.push(token);
   }
 
-  const title = txData['item_name'] || 'תמונה';
   if (tokens.length === 1) {
+    const photo = await env.DB.prepare('SELECT title FROM photos WHERE id = ?').bind(photoIds[0]).first();
+    const title = photo?.title || 'תמונה';
     return jsonRes({ url: `/api/download/${tokens[0]}`, title }, 200, request);
   }
 
@@ -661,6 +653,7 @@ async function handleVerifyPayment(request, env) {
     const photo = await env.DB.prepare('SELECT title FROM photos WHERE id = ?').bind(photoId).first();
     return { url: `/api/download/${tokens[i]}`, title: photo?.title || `תמונה ${i + 1}` };
   }));
+  const title = params.get('item_name') || 'חבילת תמונות';
   return jsonRes({ urls: urlItems, title }, 200, request);
 }
 
