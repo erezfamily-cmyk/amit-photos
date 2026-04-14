@@ -703,9 +703,18 @@ function handleInitialHash() {
   const hash = window.location.hash;
   if (!hash.startsWith('#photo-')) return;
   const photoId = hash.replace('#photo-', '');
-  const idx = filteredPhotos.findIndex(p => String(p.id) === photoId);
+  let idx = filteredPhotos.findIndex(p => String(p.id) === photoId);
+  if (idx === -1) {
+    // חפש ב-allPhotos והוסף לתצוגה
+    const photo = allPhotos.find(p => String(p.id) === photoId);
+    if (photo) {
+      filteredPhotos.unshift(photo);
+      displayedCount = Math.max(displayedCount, 1);
+      renderGallery();
+      idx = 0;
+    }
+  }
   if (idx !== -1) {
-    // וודא שהתמונה נמצאת בתצוגה
     if (idx >= displayedCount) {
       displayedCount = idx + 1;
       renderGallery();
