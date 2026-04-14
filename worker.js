@@ -635,7 +635,7 @@ async function handleVerifyPayment(request, env) {
     return jsonRes({ error: 'שגיאה בתקשורת עם PayPal' }, 502, request);
   }
 
-  if (!paypalText.startsWith('SUCCESS')) return jsonRes({ error: 'התשלום לא אומת' }, 402, request);
+  if (!paypalText.startsWith('SUCCESS')) return jsonRes({ error: 'התשלום לא אומת', debug: paypalText.slice(0, 300) }, 402, request);
 
   const lines = paypalText.split('\n');
   const txData = {};
