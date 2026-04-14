@@ -986,7 +986,11 @@ function openBuyModal(photo) {
   modal._photo = photo;
   document.getElementById('buy-modal-title').textContent = photo.title;
   const previewImg = document.getElementById('buy-modal-img');
-  if (previewImg) { previewImg.src = photo.thumbnail || photo.url; previewImg.alt = photo.title; }
+  if (previewImg) {
+    previewImg.alt = photo.title;
+    previewImg.src = photo.thumbnail || photo.url;
+    previewImg.onerror = () => { if (photo.url && previewImg.src !== photo.url) previewImg.src = photo.url; };
+  }
 
   // קבע אילו גדלים זמינים לפי רזולוציית המקור
   const maxDim = Math.max(photo.width || 0, photo.height || 0);
@@ -1004,10 +1008,10 @@ function openBuyModal(photo) {
     if (size === 'large' && pxEl) {
       pxEl.textContent = maxDim >= 5000
         ? `${photo.width}×${photo.height}px`
-        : `נדרש ${5000}px+ (קובץ זה: ${maxDim}px)`;
+        : t('buy.size.requires', { min: 5000, actual: maxDim });
     }
     if (size === 'medium' && pxEl && maxDim < 3000) {
-      pxEl.textContent = `נדרש 3000px+ (קובץ זה: ${maxDim}px)`;
+      pxEl.textContent = t('buy.size.requires', { min: 3000, actual: maxDim });
     }
   });
 
