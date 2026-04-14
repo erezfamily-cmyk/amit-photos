@@ -1402,10 +1402,11 @@ export default {
       trackPageView(env, request);
     }
 
-    // מנע קאש על photos.json כדי שעדכונים יופיעו מיידית
-    if (path === '/data/photos.json') {
+    // קבצים שמשתנים בכל deploy — תמיד לאמת עם השרת
+    const ext = path.split('.').pop().toLowerCase();
+    if (['html', 'js', 'css', 'json'].includes(ext) || path === '/') {
       const newRes = new Response(res.body, res);
-      newRes.headers.set('Cache-Control', 'no-store');
+      newRes.headers.set('Cache-Control', 'no-cache');
       return newRes;
     }
 
