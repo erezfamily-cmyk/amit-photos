@@ -232,6 +232,7 @@ const TRANSLATIONS = {
     'buy.size.large.px':'רזולוציה מקסימלית',
     'buy.size.large.use':'הדפסה גדולה',
     'buy.recommended':  'מומלץ',
+    'buy.size.requires': 'נדרש {{min}}px+ (קובץ זה: {{actual}}px)',
     'buy.note':         'לאחר התשלום הקובץ יורד אוטומטית. תשלום מאובטח דרך PayPal.',
 
     // Print modal
@@ -522,6 +523,7 @@ const TRANSLATIONS = {
     'buy.size.large.px':'Maximum Resolution',
     'buy.size.large.use':'Large Printing',
     'buy.recommended':  'Recommended',
+    'buy.size.requires': 'Requires {{min}}px+ (this file: {{actual}}px)',
     'buy.note':         'After payment the file downloads automatically. Secure payment via PayPal.',
 
     // Print modal
