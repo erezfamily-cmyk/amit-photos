@@ -763,9 +763,16 @@ async function handlePrintOrderComplete(request, env) {
   if (receiverId !== PAYPAL_RECEIVER_ID) return jsonRes({ error: 'חשבון PayPal לא תואם' }, 402, request);
   if (mcCurrency !== 'USD') return jsonRes({ error: 'מטבע לא תואם' }, 402, request);
 
-  // Decode address from custom field (sent by us in PayPal params, returned as-is)
+  // Prevent duplicate Gelato orders for the same transaction
+  const existingOrder = await env.DB.prepare('SELECT id FROM print_orders WHERE paypal_tx = ? LIMIT 1').bind(tx).first();
+  if (existingOrder) return jsonRes({ orderId: existingOrder.id }, 200, request);
+
+  // Decode address from custom field (URLSearchParams turns + into space, restore before atob)
   let address;
-  try { address = JSON.parse(atob(urlParams.get('custom') || '')); }
+  try {
+    const customRaw = (urlParams.get('custom') || '').replace(/ /g, '+');
+    address = JSON.parse(atob(customRaw));
+  }
   catch { return jsonRes({ error: 'נתוני כתובת חסרים' }, 400, request); }
 
   // Get photo URL from DB; prefer pre-cropped URL if client uploaded one
