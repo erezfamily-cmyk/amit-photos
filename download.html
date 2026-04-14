@@ -90,9 +90,9 @@
   <script>
     async function init() {
       const params = new URLSearchParams(window.location.search);
-      const tx = params.get('tx');
+      const tx = params.get('txn_id') || params.get('tx');
 
-      // item_number: first try URL param (rm=2), then localStorage (fallback)
+      // item_number: first try URL param, then localStorage (fallback)
       let itemNumber = params.get('item_number');
       if (!itemNumber) {
         itemNumber = localStorage.getItem('pending_item_number');
@@ -106,7 +106,9 @@
       }
 
       try {
-        const res = await fetch(`/api/verify-payment?tx=${encodeURIComponent(tx)}&item_number=${encodeURIComponent(itemNumber)}`);
+        // שלח את כל הפרמטרים של PayPal לאימות IPN
+        const allParams = window.location.search.slice(1);
+        const res = await fetch(`/api/verify-payment?item_number=${encodeURIComponent(itemNumber)}&${allParams}`);
         const data = await res.json();
 
         if (data.urls && data.urls.length > 0) {

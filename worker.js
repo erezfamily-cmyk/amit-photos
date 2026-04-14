@@ -591,12 +591,12 @@ async function handleDownload(request, env, token) {
 async function handleVerifyPayment(request, env) {
   if (request.method !== 'GET') return jsonRes({ error: 'method not allowed' }, 405, request);
   const url = new URL(request.url);
-  const tx = url.searchParams.get('tx');
-  const itemNumber = url.searchParams.get('item_number');
-  const pdtToken = env.PAYPAL_PDT_TOKEN;
+  const params = url.searchParams;
+  const itemNumber = params.get('item_number');
+  const tx = params.get('txn_id') || params.get('tx');
+  const paymentStatus = params.get('payment_status');
 
   if (!tx || !itemNumber) return jsonRes({ error: 'חסרים פרמטרים', tx: tx||'missing', item: itemNumber||'missing' }, 400, request);
-  if (!pdtToken) return jsonRes({ error: 'PAYPAL_PDT_TOKEN לא מוגדר' }, 500, request);
 
   // Prevent duplicate processing of the same transaction
   const existing = await env.DB.prepare('SELECT token FROM download_tokens WHERE tx = ? LIMIT 1').bind(tx).first();
@@ -605,14 +605,12 @@ async function handleVerifyPayment(request, env) {
   // Parse item_number — supports both single photo and cart
   let photoIds, size;
   if (itemNumber.startsWith('CART_')) {
-    // Format: CART_{size}_{id1,id2,...}
-    const rest = itemNumber.slice(5); // remove 'CART_'
+    const rest = itemNumber.slice(5);
     const firstUnderscore = rest.indexOf('_');
     if (firstUnderscore === -1) return jsonRes({ error: 'item_number לא תקין' }, 400, request);
     size = rest.substring(0, firstUnderscore);
     photoIds = rest.substring(firstUnderscore + 1).split(',').filter(Boolean);
   } else {
-    // Format: {photo_id}_{size}
     const lastUnderscore = itemNumber.lastIndexOf('_');
     if (lastUnderscore === -1) return jsonRes({ error: 'item_number לא תקין' }, 400, request);
     photoIds = [itemNumber.substring(0, lastUnderscore)];
@@ -622,28 +620,23 @@ async function handleVerifyPayment(request, env) {
   const VALID_SIZES = ['small', 'medium', 'large'];
   if (!VALID_SIZES.includes(size)) return jsonRes({ error: 'גודל לא תקין' }, 400, request);
 
-  // Verify payment with PayPal PDT
-  let paypalText;
+  // Verify with PayPal IPN validation
+  const ipnParams = new URLSearchParams(params);
+  ipnParams.set('cmd', '_notify-validate');
+  let ipnResult;
   try {
     const res = await fetch('https://www.paypal.com/cgi-bin/webscr', {
       method: 'POST',
-      body: new URLSearchParams({ cmd: '_notify-synch', tx, at: pdtToken }),
+      body: ipnParams.toString(),
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     });
-    paypalText = await res.text();
+    ipnResult = await res.text();
   } catch {
     return jsonRes({ error: 'שגיאה בתקשורת עם PayPal' }, 502, request);
   }
 
-  if (!paypalText.startsWith('SUCCESS')) return jsonRes({ error: 'התשלום לא אומת', debug: paypalText.slice(0, 300), tx, tokenLen: pdtToken.length }, 402, request);
-
-  const lines = paypalText.split('\n');
-  const txData = {};
-  for (let i = 1; i < lines.length; i++) {
-    const eq = lines[i].indexOf('=');
-    if (eq !== -1) txData[decodeURIComponent(lines[i].substring(0, eq))] = decodeURIComponent(lines[i].substring(eq + 1));
-  }
-  if (txData['payment_status'] !== 'Completed') return jsonRes({ error: `סטטוס: ${txData['payment_status']}` }, 402, request);
+  if (ipnResult !== 'VERIFIED') return jsonRes({ error: 'התשלום לא אומת', debug: ipnResult }, 402, request);
+  if (paymentStatus !== 'Completed') return jsonRes({ error: `סטטוס: ${paymentStatus}` }, 402, request);
 
   // Create download tokens in D1 (one per photo)
   const now = Math.floor(Date.now() / 1000);
