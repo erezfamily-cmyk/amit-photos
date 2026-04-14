@@ -1468,7 +1468,7 @@ const PrintShop = (() => {
       custom: customB64,
       return: `${SITE_URL}/print-complete.html`,
       cancel_return: `${SITE_URL}/`,
-      rm: '1',
+      rm: '2',
     });
     window.location.href = `https://www.paypal.com/cgi-bin/webscr?${params.toString()}`;
   }

@@ -83,7 +83,7 @@
   <script>
     (async () => {
       const params = new URLSearchParams(window.location.search);
-      const tx = params.get('tx');
+      const tx = params.get('txn_id') || params.get('tx');
       const itemNumber = params.get('item_number');
 
       if (!tx || !itemNumber || !itemNumber.startsWith('PRINT_')) {
@@ -94,10 +94,11 @@
       }
 
       try {
+        const allParams = window.location.search.slice(1);
         const r = await fetch('/api/print/order-complete', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ tx, itemNumber })
+          body: JSON.stringify({ tx, itemNumber, allParams })
         });
         const data = await r.json();
         document.getElementById('spinner').style.display = 'none';

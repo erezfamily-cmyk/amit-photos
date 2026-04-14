@@ -741,9 +741,8 @@ async function handlePrintQuote(request, env) {
 
 async function handlePrintOrderComplete(request, env) {
   if (request.method !== 'POST') return jsonRes({ error: 'method not allowed' }, 405, request);
-  const { tx, itemNumber } = await request.json().catch(() => ({}));
+  const { tx, itemNumber, allParams } = await request.json().catch(() => ({}));
   if (!tx || !itemNumber) return jsonRes({ error: 'חסרים פרמטרים' }, 400, request);
-  if (!env.PAYPAL_PDT_TOKEN) return jsonRes({ error: 'PDT token לא מוגדר' }, 500, request);
 
   // Parse: PRINT_{photoId}_{sku}
   if (!itemNumber.startsWith('PRINT_')) return jsonRes({ error: 'item_number לא תקין' }, 400, request);
@@ -753,28 +752,20 @@ async function handlePrintOrderComplete(request, env) {
   const photoId = rest.substring(0, firstUnderscore);
   const sku = rest.substring(firstUnderscore + 1);
 
-  // Verify PayPal
-  let paypalText;
-  try {
-    const r = await fetch('https://www.paypal.com/cgi-bin/webscr', {
-      method: 'POST',
-      body: new URLSearchParams({ cmd: '_notify-synch', tx, at: env.PAYPAL_PDT_TOKEN }),
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    });
-    paypalText = await r.text();
-  } catch { return jsonRes({ error: 'שגיאה בתקשורת עם PayPal' }, 502, request); }
+  // Verify PayPal via return-URL params (rm=2 sends all fields)
+  const urlParams = new URLSearchParams(allParams || '');
+  const paymentStatus = urlParams.get('payment_status');
+  const receiverId = urlParams.get('receiver_id');
+  const mcCurrency = urlParams.get('mc_currency');
+  const PAYPAL_RECEIVER_ID = 'UQS28ADG97TPW';
 
-  if (!paypalText.startsWith('SUCCESS')) return jsonRes({ error: 'התשלום לא אומת' }, 402, request);
-  const txData = {};
-  paypalText.split('\n').slice(1).forEach(line => {
-    const eq = line.indexOf('=');
-    if (eq !== -1) txData[decodeURIComponent(line.substring(0, eq))] = decodeURIComponent(line.substring(eq + 1));
-  });
-  if (txData['payment_status'] !== 'Completed') return jsonRes({ error: `סטטוס: ${txData['payment_status']}` }, 402, request);
+  if (paymentStatus !== 'Completed') return jsonRes({ error: `סטטוס תשלום: ${paymentStatus || 'חסר'}` }, 402, request);
+  if (receiverId !== PAYPAL_RECEIVER_ID) return jsonRes({ error: 'חשבון PayPal לא תואם' }, 402, request);
+  if (mcCurrency !== 'USD') return jsonRes({ error: 'מטבע לא תואם' }, 402, request);
 
-  // Decode address from custom field
+  // Decode address from custom field (sent by us in PayPal params, returned as-is)
   let address;
-  try { address = JSON.parse(atob(txData['custom'] || '')); }
+  try { address = JSON.parse(atob(urlParams.get('custom') || '')); }
   catch { return jsonRes({ error: 'נתוני כתובת חסרים' }, 400, request); }
 
   // Get photo URL from DB; prefer pre-cropped URL if client uploaded one
@@ -831,7 +822,7 @@ async function handlePrintOrderComplete(request, env) {
 
   // Human-readable product label
   const productLabel = typeEntry && sizeEntry ? `${typeEntry.label} — ${sizeEntry.label}` : sku;
-  const sellPrice = parseFloat(txData['mc_gross'] || 0);
+  const sellPrice = parseFloat(urlParams.get('mc_gross') || 0);
 
   await env.DB.prepare(
     `INSERT INTO print_orders (id, prodigi_order_id, photo_id, sku, product_label, sell_price, customer_name, customer_email, customer_phone, address_line1, address_city, address_zip, paypal_tx, status, created_at)
