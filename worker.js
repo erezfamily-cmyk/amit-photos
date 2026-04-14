@@ -595,7 +595,7 @@ async function handleVerifyPayment(request, env) {
   const itemNumber = url.searchParams.get('item_number');
   const pdtToken = env.PAYPAL_PDT_TOKEN;
 
-  if (!tx || !itemNumber) return jsonRes({ error: 'חסרים פרמטרים' }, 400, request);
+  if (!tx || !itemNumber) return jsonRes({ error: 'חסרים פרמטרים', tx: tx||'missing', item: itemNumber||'missing' }, 400, request);
   if (!pdtToken) return jsonRes({ error: 'PAYPAL_PDT_TOKEN לא מוגדר' }, 500, request);
 
   // Prevent duplicate processing of the same transaction
@@ -635,7 +635,7 @@ async function handleVerifyPayment(request, env) {
     return jsonRes({ error: 'שגיאה בתקשורת עם PayPal' }, 502, request);
   }
 
-  if (!paypalText.startsWith('SUCCESS')) return jsonRes({ error: 'התשלום לא אומת' }, 402, request);
+  if (!paypalText.startsWith('SUCCESS')) return jsonRes({ error: 'התשלום לא אומת', debug: paypalText.slice(0, 300), tx, tokenLen: pdtToken.length }, 402, request);
 
   const lines = paypalText.split('\n');
   const txData = {};
