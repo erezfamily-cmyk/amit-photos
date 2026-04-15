@@ -112,13 +112,9 @@ def generate_pin_description(photo, anthropic_key):
     if thumbnail_url.startswith("/"):
         thumbnail_url = f"{SITE_URL}{thumbnail_url}"
 
-    image_content = []
-    if thumbnail_url:
-        image_content = [{"type": "image", "source": {"type": "url", "url": thumbnail_url}}]
-
     meta = f"Photo: {title}" + (f" | Category: {category}" if category else "") + (f" | {description}" if description else "")
 
-    user_content = image_content + [{"type": "text", "text": f"""Write a Pinterest pin description for this photo.
+    user_content = [{"type": "text", "text": f"""Write a Pinterest pin description for this photo.
 
 {meta}
 
@@ -157,7 +153,6 @@ def publish_pin(token, board_id, photo, anthropic_key):
         "board_id":    board_id,
         "title":       f"{title} — {category}" if title else category,
         "description": description,
-        "link":        f"{SITE_URL}/photo/{photo['id']}",
         "media_source": {"source_type": "image_url", "url": image_url},
     }
 
