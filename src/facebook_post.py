@@ -114,35 +114,35 @@ def generate_caption(photo):
         meta_lines.append(f"חשיפה: {exif['shutter']}s")
     meta_text = "\n".join(meta_lines) if meta_lines else "(אין מטה-דאטה)"
 
-    system_prompt = """אתה מנהל סושיאל-מדיה לצלם ישראלי בשם עמית.
-אתה כותב פוסטים לפייסבוק בעברית — קצרים, רגשיים, מושכים.
-סגנון: אינטימי, אמנותי, מעורר השראה. לא שיווקי-מדי.
-אל תשתמש ב-hashtags מסוימים — רק אם הם טבעיים.
-הפוסט צריך להרגיש כמו סיפור קצר על הרגע בתמונה."""
+    system_prompt = """You are a social media manager for an Israeli photographer named Amit.
+Write Facebook posts in Hebrew — short, emotional, engaging.
+Style: intimate, artistic, inspiring. Not too promotional.
+CRITICAL: Use ONLY Hebrew characters for the Hebrew text. Never mix Arabic script with Hebrew.
+The post should feel like a short story about the moment in the photo.
+You may use 1-3 relevant emojis. No hashtags unless they feel natural."""
 
     user_content = image_content + [
         {
             "type": "text",
-            "text": f"""תכתוב פוסט פייסבוק עבור התמונה הזו.
+            "text": f"""Write a Facebook post for this photo.
 
-מטה-דאטה:
+Metadata:
 {meta_text}
 
-קישור לאתר: {link}
+Website link: {link}
 
-הנחיות:
-- 3-6 שורות בעברית
-- תאר את הרגש / האווירה / הרגע שנלכד בתמונה
-- בסוף הפוסט שים את הקישור לאתר (בשורה נפרדת)
-- אל תכתוב "קישור:" לפני הקישור — רק את ה-URL
-- אפשר להוסיף 1-3 emoji מתאימים (לא יותר)
-- כתוב רק את טקסט הפוסט, ללא הסברים נוספים"""
+Instructions:
+- 3-6 lines in Hebrew (Hebrew letters only, no Arabic)
+- Describe the emotion / atmosphere / moment captured in the photo
+- At the end of the post, put the website link on a separate line (just the URL, no "link:" prefix)
+- 1-3 emojis max
+- Output only the post text, no extra explanations"""
         }
     ]
 
     msg = client.messages.create(
-        model="claude-haiku-4-5-20251001",
-        max_tokens=400,
+        model="claude-sonnet-4-6",
+        max_tokens=500,
         system=system_prompt,
         messages=[{"role": "user", "content": user_content}],
     )
