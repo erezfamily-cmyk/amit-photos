@@ -1355,6 +1355,97 @@ async function handlePrintUploadCrop(request, env) {
   return jsonRes({ url: `${origin}/photos/${key}` }, 200, request);
 }
 
+// ===== SITEMAP =====
+async function handleSitemap(request, env) {
+  const base = 'https://amitphotos.com';
+  function absUrl(u) {
+    if (!u) return '';
+    return u.startsWith('http') ? u : `${base}${u.startsWith('/') ? '' : '/'}${u}`;
+  }
+  const now = new Date().toISOString().split('T')[0];
+
+  // דפים סטטיים
+  const staticPages = [
+    { loc: '/',            priority: '1.0', changefreq: 'weekly'  },
+    { loc: '/#gallery',   priority: '0.9', changefreq: 'daily'   },
+    { loc: '/#about',     priority: '0.6', changefreq: 'monthly' },
+    { loc: '/#pricing',   priority: '0.7', changefreq: 'monthly' },
+    { loc: '/#contact',   priority: '0.5', changefreq: 'monthly' },
+  ];
+
+  // תמונות מ-D1
+  let photoUrls = [];
+  try {
+    const { results } = await env.DB.prepare(
+      'SELECT id, title, thumbnail, category, created_at FROM photos WHERE published=1 ORDER BY created_at DESC LIMIT 1000'
+    ).all();
+
+    photoUrls = results.map(p => {
+      const lastmod = p.created_at ? p.created_at.split('T')[0] : now;
+      const imageTag = p.thumbnail ? `
+    <image:image>
+      <image:loc>${escXml(absUrl(p.thumbnail))}</image:loc>
+      <image:title>${escXml(p.title || '')}</image:title>
+      <image:caption>${escXml(p.category || '')}</image:caption>
+    </image:image>` : '';
+      return `  <url>
+    <loc>${base}/photo/${escXml(p.id)}</loc>
+    <lastmod>${lastmod}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>${imageTag}
+  </url>`;
+    });
+  } catch { /* DB לא זמין — sitemap ללא תמונות */ }
+
+  const staticXml = staticPages.map(p => `  <url>
+    <loc>${base}${p.loc}</loc>
+    <lastmod>${now}</lastmod>
+    <changefreq>${p.changefreq}</changefreq>
+    <priority>${p.priority}</priority>
+  </url>`).join('\n');
+
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+${staticXml}
+${photoUrls.join('\n')}
+</urlset>`;
+
+  return new Response(xml, {
+    headers: {
+      'Content-Type': 'application/xml; charset=UTF-8',
+      'Cache-Control': 'public, max-age=900, s-maxage=0',  // edge: no cache; browser: 15min
+    },
+  });
+}
+
+function escXml(str) {
+  return String(str || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&apos;');
+}
+
+// ===== ROBOTS.TXT =====
+function handleRobots(request) {
+  const base = 'https://amitphotos.com';
+  const txt = `User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /admin
+
+Sitemap: ${base}/sitemap.xml`;
+
+  return new Response(txt, {
+    headers: {
+      'Content-Type': 'text/plain; charset=UTF-8',
+      'Cache-Control': 'public, max-age=86400',
+    },
+  });
+}
+
 // ===== MAIN ROUTER =====
 export default {
   async fetch(request, env) {
@@ -1394,6 +1485,8 @@ export default {
     if (path === '/api/analytics')         return handleAnalytics(request, env);
     if (path.startsWith('/photos/'))       return servePhoto(path.slice('/photos/'.length), env);
     if (path.startsWith('/photo/'))        return servePhotoPage(path.slice('/photo/'.length), env);
+    if (path === '/sitemap.xml')           return handleSitemap(request, env);
+    if (path === '/robots.txt')            return handleRobots(request);
 
     // Static assets — track page views for HTML pages
     const res = await env.ASSETS.fetch(request);
