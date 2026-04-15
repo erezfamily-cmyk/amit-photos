@@ -1403,10 +1403,14 @@ export default {
     }
 
     // קבצים שמשתנים בכל deploy — תמיד לאמת עם השרת
-    const ext = path.split('.').pop().toLowerCase();
-    if (['html', 'js', 'css', 'json'].includes(ext) || path === '/') {
+    const ext = path.includes('.') ? path.split('.').pop().toLowerCase() : '';
+    const isHtml = ext === 'html' || ext === '' || path === '/'; // נתיבים ללא סיומת = HTML
+    const isDynamic = isHtml || ['js', 'css', 'json'].includes(ext);
+    if (isDynamic) {
       const newRes = new Response(res.body, res);
-      newRes.headers.set('Cache-Control', 'no-cache');
+      // HTML: no-store מונע כל קאש (דפדפן + CDN)
+      // JS/CSS/JSON: no-cache = חייב לאמת עם שרת לפני שימוש
+      newRes.headers.set('Cache-Control', isHtml ? 'no-store' : 'no-cache');
       return newRes;
     }
 
