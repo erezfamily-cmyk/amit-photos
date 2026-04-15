@@ -233,6 +233,14 @@ const TRANSLATIONS = {
     'buy.size.large.use':'הדפסה גדולה',
     'buy.recommended':  'מומלץ',
     'buy.size.requires': 'נדרש {{min}}px+ (קובץ זה: {{actual}}px)',
+    'buy.step.size.done': 'רזולוציה',
+    'buy.step.confirm':   'אישור',
+    'buy.confirm.buying': 'אתה קונה',
+    'buy.total':          'סה״כ לתשלום',
+    'buy.paypal.btn':     'שלם עם PayPal',
+    'buy.secure.note':    '🔒 תועבר לדף התשלום המאובטח של PayPal',
+    'buy.auto.download':  'הקובץ יורד אוטומטית לאחר האישור',
+    'buy.back':           '← חזרה',
     'buy.note':         'לאחר התשלום הקובץ יורד אוטומטית. תשלום מאובטח דרך PayPal.',
 
     // Print modal
@@ -524,6 +532,14 @@ const TRANSLATIONS = {
     'buy.size.large.use':'Large Printing',
     'buy.recommended':  'Recommended',
     'buy.size.requires': 'Requires {{min}}px+ (this file: {{actual}}px)',
+    'buy.step.size.done': 'Resolution',
+    'buy.step.confirm':   'Confirm',
+    'buy.confirm.buying': "You're buying",
+    'buy.total':          'Total',
+    'buy.paypal.btn':     'Pay with PayPal',
+    'buy.secure.note':    "🔒 You'll be redirected to PayPal's secure checkout",
+    'buy.auto.download':  'File downloads automatically after payment',
+    'buy.back':           '← Back',
     'buy.note':         'After payment the file downloads automatically. Secure payment via PayPal.',
 
     // Print modal
