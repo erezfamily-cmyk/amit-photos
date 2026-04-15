@@ -97,32 +97,33 @@ def generate_caption(photo):
     if exif.get("shutter"):  meta_lines.append(f"חשיפה: {exif['shutter']}s")
     meta_text = "\n".join(meta_lines) if meta_lines else "(אין מטה-דאטה)"
 
-    system_prompt = """אתה מנהל סושיאל-מדיה לצלם ישראלי בשם עמית.
-אתה כותב כיתובים לאינסטגרם — ויזואליים, רגשיים, מעוררי השראה.
-סגנון: קצר, אינטימי, אמנותי. מרגיש כמו רגע אמיתי.
-אינסטגרם: hashtags חשובים לחשיפה — הוסף 10-15 hashtags רלוונטיים בסוף.
-אל תכניס קישורים לטקסט — רק "🔗 amitphotos.com (link in bio)" בסוף הטקסט הראשי."""
+    system_prompt = """You are a social media manager for an Israeli photographer named Amit.
+Write Instagram captions in Hebrew — visual, emotional, inspiring.
+Style: short, intimate, artistic. Feels like a real moment.
+CRITICAL: Use ONLY Hebrew characters for the Hebrew text. Never mix Arabic script with Hebrew.
+Hashtags at the end should be in English (and optionally some Hebrew hashtags).
+Do not include URLs in the text body — only "🔗 amitphotos.com (link in bio)" at the end of the main text."""
 
     user_content = image_content + [{
         "type": "text",
-        "text": f"""תכתוב כיתוב אינסטגרם עבור התמונה הזו.
+        "text": f"""Write an Instagram caption for this photo.
 
-מטה-דאטה:
+Metadata:
 {meta_text}
 
-מבנה הכיתוב (בדיוק בסדר הזה):
-1. 2-4 שורות בעברית — תיאור רגשי/אמנותי של הרגע
-2. שורה ריקה
+Caption structure (exactly in this order):
+1. 2-4 lines in Hebrew — emotional/artistic description of the moment (Hebrew letters only, no Arabic)
+2. Empty line
 3. 🔗 amitphotos.com (link in bio)
-4. שורה ריקה
-5. hashtags: תערובת עברית ואנגלית — צילום, nature, photography, Israel וכו' — 10-15 סה"כ
+4. Empty line
+5. Hashtags: mix of English and Hebrew — photography, nature, Israel etc. — 10-15 total
 
-כתוב רק את הכיתוב, ללא הסברים נוספים."""
+Output only the caption, no extra explanations."""
     }]
 
     msg = client.messages.create(
-        model="claude-haiku-4-5-20251001",
-        max_tokens=500,
+        model="claude-sonnet-4-6",
+        max_tokens=600,
         system=system_prompt,
         messages=[{"role": "user", "content": user_content}],
     )
