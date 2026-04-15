@@ -1,10 +1,9 @@
 name: פרסום ל-Pinterest אוטומטי
 
 on:
-  # כל יום ב-07:00 UTC = 10:00 ישראל
+  # כל יום ב-14:00 UTC = 17:00 ישראל
   schedule:
-    - cron: '0 7 * * *'
-  # הפעלה ידנית
+    - cron: '0 14 * * *'
   workflow_dispatch:
 
 jobs:
@@ -23,11 +22,12 @@ jobs:
           python-version: '3.11'
 
       - name: התקנת חבילות
-        run: pip install requests
+        run: pip install requests anthropic
 
       - name: פרסום ל-Pinterest
         env:
           PINTEREST_ACCESS_TOKEN: ${{ secrets.PINTEREST_ACCESS_TOKEN }}
+          ANTHROPIC_API_KEY: ${{ secrets.AMIT_PHOTO_AGENT }}
         run: |
           for attempt in 1 2 3; do
             python src/pinterest_post.py && break
