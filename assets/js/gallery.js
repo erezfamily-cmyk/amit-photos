@@ -968,13 +968,28 @@ function initBuyModal() {
   document.getElementById('buy-modal-close').addEventListener('click', closeBuyModal);
   modal.addEventListener('click', e => { if (e.target === modal) closeBuyModal(); });
 
-  modal.querySelectorAll('.buy-size-btn').forEach(btn => {
+  // Step 1: clicking a size row auto-advances to step 2
+  document.getElementById('buy-step-1').querySelectorAll('.buy-size-row').forEach(btn => {
     btn.addEventListener('click', () => {
-      const size = btn.dataset.size;
+      if (btn.disabled || btn.classList.contains('buy-size-unavailable')) return;
       const photo = modal._photo;
       if (!photo) return;
-      redirectToPayPal(photo, size);
+      showBuyStep2(photo, btn.dataset.size);
     });
+  });
+
+  // Step 2: PayPal button
+  document.getElementById('buy-paypal-btn').addEventListener('click', () => {
+    const photo = modal._photo;
+    const size  = modal._selectedSize;
+    if (!photo || !size) return;
+    redirectToPayPal(photo, size);
+  });
+
+  // Step 2: back button
+  document.getElementById('buy-back-btn').addEventListener('click', () => {
+    document.getElementById('buy-step-2').classList.add('buy-step-hidden');
+    document.getElementById('buy-step-1').classList.remove('buy-step-hidden');
   });
 
   document.addEventListener('keydown', e => {
@@ -986,17 +1001,19 @@ function openBuyModal(photo) {
   if (!photo) return;
   const modal = document.getElementById('buy-modal');
   modal._photo = photo;
-  document.getElementById('buy-modal-title').textContent = photo.title;
+
+  // Photo preview + title
   const previewImg = document.getElementById('buy-modal-img');
   if (previewImg) {
     previewImg.alt = photo.title;
     previewImg.src = photo.thumbnail || photo.url;
     previewImg.onerror = () => { if (photo.url && previewImg.src !== photo.url) previewImg.src = photo.url; };
   }
+  document.getElementById('buy-modal-title').textContent = photo.title;
 
-  // קבע אילו גדלים זמינים לפי רזולוציית המקור
+  // Size availability based on source resolution
   const maxDim = Math.max(photo.width || 0, photo.height || 0);
-  modal.querySelectorAll('.buy-size-btn').forEach(btn => {
+  document.getElementById('buy-step-1').querySelectorAll('.buy-size-row').forEach(btn => {
     const size = btn.dataset.size;
     let available = true;
     if (size === 'medium' && maxDim < 3000) available = false;
@@ -1005,7 +1022,6 @@ function openBuyModal(photo) {
     btn.disabled = !available;
     btn.classList.toggle('buy-size-unavailable', !available);
 
-    // עדכן תיאור הגודל בפועל
     const pxEl = btn.querySelector('.buy-size-px');
     if (size === 'large' && pxEl) {
       pxEl.textContent = maxDim >= 5000
@@ -1017,8 +1033,42 @@ function openBuyModal(photo) {
     }
   });
 
+  // Always start at step 1
+  document.getElementById('buy-step-1').classList.remove('buy-step-hidden');
+  document.getElementById('buy-step-2').classList.add('buy-step-hidden');
+
   modal.classList.add('open');
   document.body.style.overflow = 'hidden';
+}
+
+function showBuyStep2(photo, size) {
+  const modal = document.getElementById('buy-modal');
+  modal._selectedSize = size;
+
+  const s = SIZES[size];
+
+  // Thumbnail
+  const confirmImg = document.getElementById('buy-confirm-img');
+  confirmImg.alt = photo.title;
+  confirmImg.src = photo.thumbnail || photo.url;
+  confirmImg.onerror = () => { if (photo.url && confirmImg.src !== photo.url) confirmImg.src = photo.url; };
+
+  // Title + size label
+  document.getElementById('buy-confirm-title').textContent = photo.title;
+
+  const maxDim = Math.max(photo.width || 0, photo.height || 0);
+  let pxLabel;
+  if (size === 'small')  pxLabel = '1500px';
+  if (size === 'medium') pxLabel = '3000px';
+  if (size === 'large')  pxLabel = maxDim >= 5000 ? `${photo.width}×${photo.height}px` : t('buy.size.large.px');
+  document.getElementById('buy-confirm-size').textContent = `${t('buy.size.' + size)} · ${pxLabel}`;
+
+  // Price
+  document.getElementById('buy-total-amount').textContent = `₪${s.price}`;
+
+  // Show step 2
+  document.getElementById('buy-step-1').classList.add('buy-step-hidden');
+  document.getElementById('buy-step-2').classList.remove('buy-step-hidden');
 }
 
 function closeBuyModal() {
