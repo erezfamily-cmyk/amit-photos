@@ -9,7 +9,6 @@ import os
 import sys
 import time
 import random
-import base64
 import requests
 import anthropic
 from pathlib import Path
@@ -114,14 +113,8 @@ def generate_pin_description(photo, anthropic_key):
         thumbnail_url = f"{SITE_URL}{thumbnail_url}"
 
     image_content = []
-    try:
-        resp = requests.get(thumbnail_url, timeout=20)
-        resp.raise_for_status()
-        mime = resp.headers.get("Content-Type", "image/jpeg").split(";")[0].strip()
-        b64  = base64.standard_b64encode(resp.content).decode()
-        image_content = [{"type": "image", "source": {"type": "base64", "media_type": mime, "data": b64}}]
-    except Exception as e:
-        print(f"   ⚠️  לא הצלחתי להוריד תמונה: {e}")
+    if thumbnail_url:
+        image_content = [{"type": "image", "source": {"type": "url", "url": thumbnail_url}}]
 
     meta = f"Photo: {title}" + (f" | Category: {category}" if category else "") + (f" | {description}" if description else "")
 
