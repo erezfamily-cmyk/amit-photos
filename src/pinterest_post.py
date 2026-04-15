@@ -74,6 +74,8 @@ def pinterest_post_req(token, endpoint, body):
         headers={"Authorization": f"Bearer {token}", "Content-Type": "application/json"},
         json=body, timeout=15,
     )
+    if not res.ok:
+        print(f"   ⚠️  Pinterest {res.status_code}: {res.text}")
     res.raise_for_status()
     return res.json()
 
