@@ -1,110 +1,49 @@
+#!/usr/bin/env python3
 """
-pinterest_post.py
------------------
-Agent אוטומטי שמפרסם 3 תמונות ביום ל-Pinterest.
-- יוצר לוח נפרד לכל קטגוריה (אם לא קיים)
-- בוחר תמונות שלא פורסמו עדיין
-- שומר מעקב ב-data/pinterest_posted.json
-
-הרצה:
-  python src/pinterest_post.py           # פרסום רגיל
-  python src/pinterest_post.py --dry-run # רק מציג, לא מפרסם
+Pinterest Auto-Post Agent
+מפרסם 3 תמונות ביום ל-Pinterest עם תיאורים שנוצרים ע"י Claude Vision.
 """
 
 import json
 import os
 import sys
 import time
+import random
+import base64
+import requests
+import anthropic
 from pathlib import Path
 
-ROOT = Path(__file__).parent.parent
-DATA_FILE = ROOT / "data" / "photos.json"
+ROOT        = Path(__file__).parent.parent
 POSTED_FILE = ROOT / "data" / "pinterest_posted.json"
-
+SITE_URL    = "https://amitphotos.com"
 PINTEREST_API = "https://api.pinterest.com/v5"
-SITE_URL = "https://amitphotos.com"
-PINS_PER_DAY = 3
-
-DRY_RUN = "--dry-run" in sys.argv
+PINS_PER_DAY  = 3
+DRY_RUN       = "--dry-run" in sys.argv
 
 
-def pinterest_get(token, endpoint, params=None):
-    import requests
-    res = requests.get(
-        f"{PINTEREST_API}/{endpoint}",
-        headers={"Authorization": f"Bearer {token}"},
-        params=params,
-        timeout=15,
-    )
-    res.raise_for_status()
-    return res.json()
+def load_photos():
+    """טוען תמונות מ-D1 API, עם fallback ל-JSON."""
+    try:
+        resp = requests.get(f"{SITE_URL}/api/photos", timeout=15)
+        resp.raise_for_status()
+        photos = resp.json()
+        valid = [p for p in photos if p.get("title") and not p["title"].upper().startswith("DSC_")]
+        if valid:
+            print(f"✅ נטענו {len(valid)} תמונות מ-D1 API")
+            return valid
+    except Exception as e:
+        print(f"⚠️  D1 API נכשל ({e}) — fallback ל-JSON")
 
+    json_file = ROOT / "data" / "photos.json"
+    if json_file.exists():
+        photos = json.loads(json_file.read_text(encoding="utf-8"))
+        valid = [p for p in photos if p.get("title") and not p["title"].upper().startswith("DSC_")]
+        print(f"📁 נטענו {len(valid)} תמונות מ-JSON (fallback)")
+        return valid
 
-def pinterest_post(token, endpoint, body):
-    import requests
-    res = requests.post(
-        f"{PINTEREST_API}/{endpoint}",
-        headers={"Authorization": f"Bearer {token}", "Content-Type": "application/json"},
-        json=body,
-        timeout=15,
-    )
-    res.raise_for_status()
-    return res.json()
-
-
-def get_or_create_board(token, category_name):
-    """מחזיר board_id לפי שם קטגוריה — יוצר אם לא קיים."""
-    # חפש לוח קיים
-    data = pinterest_get(token, "boards", {"page_size": 250})
-    boards = data.get("items", [])
-    for board in boards:
-        if board["name"] == category_name:
-            print(f"   📋 לוח קיים: {category_name} ({board['id']})")
-            return board["id"]
-
-    # צור לוח חדש
-    if DRY_RUN:
-        print(f"   [dry-run] היה יוצר לוח: {category_name}")
-        return f"dry-run-board-{category_name}"
-
-    board = pinterest_post(token, "boards", {
-        "name": category_name,
-        "description": f"צילומי {category_name} מאת עמית ארז | {SITE_URL}",
-        "privacy": "PUBLIC",
-    })
-    print(f"   ✅ לוח חדש נוצר: {category_name} ({board['id']})")
-    time.sleep(1)
-    return board["id"]
-
-
-def publish_pin(token, board_id, photo):
-    """מפרסם pin אחד ל-Pinterest."""
-    title = photo.get("title", "")
-    description = photo.get("description", "")
-    category = photo.get("category", "")
-    image_url = photo.get("thumbnail") or photo.get("url", "")
-
-    desc_parts = []
-    if description:
-        desc_parts.append(description)
-    desc_parts.append(f"צילום: עמית ארז | {SITE_URL}")
-
-    body = {
-        "board_id": board_id,
-        "title": f"{title} — {category}" if title else category,
-        "description": " | ".join(desc_parts),
-        "link": SITE_URL,
-        "media_source": {
-            "source_type": "image_url",
-            "url": image_url,
-        },
-    }
-
-    if DRY_RUN:
-        print(f"   [dry-run] היה מפרסם: {title} → לוח {board_id}")
-        return {"id": f"dry-run-{photo['id']}"}
-
-    return pinterest_post(token, "pins", body)
+    print("❌ לא נמצא מקור תמונות")
+    sys.exit(1)
 
 
 def load_posted():
@@ -117,10 +56,123 @@ def load_posted():
 
 
 def save_posted(posted_ids):
-    POSTED_FILE.write_text(
-        json.dumps(sorted(posted_ids), ensure_ascii=False, indent=2),
-        encoding="utf-8"
+    POSTED_FILE.write_text(json.dumps(sorted(posted_ids), ensure_ascii=False, indent=2), encoding="utf-8")
+
+
+def pinterest_get(token, endpoint, params=None):
+    res = requests.get(
+        f"{PINTEREST_API}/{endpoint}",
+        headers={"Authorization": f"Bearer {token}"},
+        params=params, timeout=15,
     )
+    res.raise_for_status()
+    return res.json()
+
+
+def pinterest_post_req(token, endpoint, body):
+    res = requests.post(
+        f"{PINTEREST_API}/{endpoint}",
+        headers={"Authorization": f"Bearer {token}", "Content-Type": "application/json"},
+        json=body, timeout=15,
+    )
+    res.raise_for_status()
+    return res.json()
+
+
+def get_or_create_board(token, category_name):
+    data   = pinterest_get(token, "boards", {"page_size": 250})
+    boards = data.get("items", [])
+    for board in boards:
+        if board["name"] == category_name:
+            print(f"   📋 לוח קיים: {category_name} ({board['id']})")
+            return board["id"]
+
+    if DRY_RUN:
+        print(f"   [dry-run] היה יוצר לוח: {category_name}")
+        return f"dry-run-board-{category_name}"
+
+    board = pinterest_post_req(token, "boards", {
+        "name": category_name,
+        "description": f"צילומי {category_name} מאת עמית ארז | {SITE_URL}",
+        "privacy": "PUBLIC",
+    })
+    print(f"   ✅ לוח חדש נוצר: {category_name} ({board['id']})")
+    time.sleep(1)
+    return board["id"]
+
+
+def generate_pin_description(photo, anthropic_key):
+    """יוצר תיאור pin עם Claude Vision."""
+    client = anthropic.Anthropic(api_key=anthropic_key)
+
+    title       = photo.get("title", "")
+    category    = photo.get("category", "")
+    description = photo.get("description", "")
+
+    thumbnail_url = photo.get("thumbnail") or photo.get("url", "")
+    if thumbnail_url.startswith("/"):
+        thumbnail_url = f"{SITE_URL}{thumbnail_url}"
+
+    image_content = []
+    try:
+        resp = requests.get(thumbnail_url, timeout=20)
+        resp.raise_for_status()
+        mime = resp.headers.get("Content-Type", "image/jpeg").split(";")[0].strip()
+        b64  = base64.standard_b64encode(resp.content).decode()
+        image_content = [{"type": "image", "source": {"type": "base64", "media_type": mime, "data": b64}}]
+    except Exception as e:
+        print(f"   ⚠️  לא הצלחתי להוריד תמונה: {e}")
+
+    meta = f"Photo: {title}" + (f" | Category: {category}" if category else "") + (f" | {description}" if description else "")
+
+    user_content = image_content + [{"type": "text", "text": f"""Write a Pinterest pin description for this photo.
+
+{meta}
+
+Requirements:
+- 2-3 sentences in English, engaging and descriptive
+- Mention Israel/Israeli nature/scenery if relevant
+- End with: "Available for purchase at amitphotos.com"
+- Include 5-8 relevant keywords naturally (not as hashtags)
+
+Output only the description text."""}]
+
+    msg = client.messages.create(
+        model="claude-sonnet-4-6",
+        max_tokens=300,
+        messages=[{"role": "user", "content": user_content}],
+    )
+    return msg.content[0].text.strip()
+
+
+def publish_pin(token, board_id, photo, anthropic_key):
+    title         = photo.get("title", "")
+    category      = photo.get("category", "")
+    image_url     = photo.get("thumbnail") or photo.get("url", "")
+    if image_url.startswith("/"):
+        image_url = f"{SITE_URL}{image_url}"
+
+    # צור תיאור עם Claude
+    try:
+        description = generate_pin_description(photo, anthropic_key)
+        print(f"   ✍️  תיאור: {description[:80]}...")
+    except Exception as e:
+        print(f"   ⚠️  Claude נכשל ({e}) — תיאור בסיסי")
+        description = f"{title} | {category} | צילום: עמית ארז | {SITE_URL}"
+
+    body = {
+        "board_id":    board_id,
+        "title":       f"{title} — {category}" if title else category,
+        "description": description,
+        "link":        f"{SITE_URL}/photo/{photo['id']}",
+        "media_source": {"source_type": "image_url", "url": image_url},
+    }
+
+    if DRY_RUN:
+        print(f"   [dry-run] היה מפרסם: {title} → לוח {board_id}")
+        return {"id": f"dry-run-{photo['id']}"}
+
+    return pinterest_post_req(token, "pins", body)
 
 
 def main():
@@ -131,16 +183,15 @@ def main():
         print("❌ חסר PINTEREST_ACCESS_TOKEN")
         sys.exit(1)
 
-    # טען תמונות
-    if not DATA_FILE.exists():
-        print("❌ לא נמצא data/photos.json")
-        sys.exit(1)
-    photos = json.loads(DATA_FILE.read_text(encoding="utf-8"))
+    anthropic_key = os.environ.get("ANTHROPIC_API_KEY", "").strip()
+    if not anthropic_key:
+        print("⚠️  אין ANTHROPIC_API_KEY — תיאורים יהיו בסיסיים")
+
+    photos = load_photos()
     posted = load_posted()
 
     print(f"📋 סה\"כ תמונות: {len(photos)}, כבר פורסמו: {len(posted)}")
 
-    # בנה מילון קטגוריה → רשימת תמונות שלא פורסמו
     by_category = {}
     for p in photos:
         if p["id"] in posted:
@@ -155,18 +206,15 @@ def main():
             cat = p.get("category", "כללי")
             by_category.setdefault(cat, []).append(p)
 
-    # בחר קטגוריות רנדומליות (ללא repetition)
-    import random
     categories = list(by_category.keys())
     random.shuffle(categories)
-    selected_categories = categories[:PINS_PER_DAY]
+    selected = categories[:PINS_PER_DAY]
 
-    # מטמון לוחות
     board_cache = {}
+    published   = 0
 
-    published = 0
-    for cat in selected_categories:
-        photos_in_cat = by_category[cat]
+    for cat in selected:
+        photos_in_cat = by_category.get(cat, [])
         if not photos_in_cat:
             continue
 
@@ -174,23 +222,17 @@ def main():
         print(f"\n📌 מפרסם: {photo.get('title', photo['id'])} → {cat}")
 
         try:
-            # קבל/צור לוח
             if cat not in board_cache:
                 board_cache[cat] = get_or_create_board(token, cat)
             board_id = board_cache[cat]
 
-            # פרסם pin
-            result = publish_pin(token, board_id, photo)
-            pin_id = result.get("id", "")
-            print(f"   ✅ פורסם! Pin ID: {pin_id}")
-
+            result = publish_pin(token, board_id, photo, anthropic_key)
+            print(f"   ✅ פורסם! Pin ID: {result.get('id', '')}")
             posted.add(photo["id"])
             published += 1
-            time.sleep(2)  # הגבלת קצב
-
+            time.sleep(3)
         except Exception as e:
             print(f"   ❌ שגיאה: {e}")
-            continue
 
     print(f"\n{'=' * 40}")
     print(f"✅ פורסמו {published} תמונות היום")

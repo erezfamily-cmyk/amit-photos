@@ -14,27 +14,46 @@ import anthropic
 from pathlib import Path
 
 # ===== הגדרות =====
-PHOTOS_FILE = Path(__file__).parent.parent / "data" / "photos.json"
 POSTED_FILE = Path(__file__).parent.parent / "data" / "facebook_posted.json"
-SITE_URL = "https://amitphotos.com"
-GRAPH_API = "https://graph.facebook.com/v21.0"
+SITE_URL    = "https://amitphotos.com"
+GRAPH_API   = "https://graph.facebook.com/v21.0"
 
-PAGE_ID = os.environ.get("FACEBOOK_PAGE_ID", "")
-ACCESS_TOKEN = os.environ.get("FACEBOOK_PAGE_TOKEN", "")
+PAGE_ID           = os.environ.get("FACEBOOK_PAGE_ID", "")
+ACCESS_TOKEN      = os.environ.get("FACEBOOK_PAGE_TOKEN", "")
 ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "").strip()
+
+# ===== Hashtag pools לפייסבוק (פחות מאינסטגרם — 3-5 בלבד) =====
+HASHTAG_POOLS = {
+    "default":  ["#צילום #photography #ישראל", "#אמנות #art #photographer", "#digitalart #israel #fineartphotography"],
+    "טבע":      ["#טבע #nature #naturephotography", "#wildlife #ישראל_יפה #macro", "#הטבע_הישראלי #outdoors #naturelover"],
+    "פורטרט":   ["#פורטרט #portrait #portraitphotography", "#people #humanportrait #צילום_אנשים"],
+    "עירוני":   ["#עיר #urban #streetphotography", "#architecture #cityscape #israel_urban"],
+    "אירועים":  ["#אירועים #events #celebration", "#wedding #חתונה #moments #eventphotography"],
+}
 
 
 def load_photos():
-    if not PHOTOS_FILE.exists():
-        print("❌ לא נמצא data/photos.json")
-        sys.exit(1)
-    photos = json.loads(PHOTOS_FILE.read_text(encoding="utf-8"))
-    # סנן תמונות ללא כותרת גנרית (DSC_...)
-    valid = [
-        p for p in photos
-        if p.get("title") and not p["title"].upper().startswith("DSC_")
-    ]
-    return valid
+    """טוען תמונות מ-D1 API (מקור האמת), עם fallback ל-JSON."""
+    try:
+        resp = requests.get(f"{SITE_URL}/api/photos", timeout=15)
+        resp.raise_for_status()
+        photos = resp.json()
+        valid = [p for p in photos if p.get("title") and not p["title"].upper().startswith("DSC_")]
+        if valid:
+            print(f"✅ נטענו {len(valid)} תמונות מ-D1 API")
+            return valid
+    except Exception as e:
+        print(f"⚠️  D1 API נכשל ({e}) — נסיון fallback ל-JSON")
+
+    json_file = Path(__file__).parent.parent / "data" / "photos.json"
+    if json_file.exists():
+        photos = json.loads(json_file.read_text(encoding="utf-8"))
+        valid = [p for p in photos if p.get("title") and not p["title"].upper().startswith("DSC_")]
+        print(f"📁 נטענו {len(valid)} תמונות מ-JSON (fallback)")
+        return valid
+
+    print("❌ לא נמצא מקור תמונות")
+    sys.exit(1)
 
 
 def load_posted():
@@ -44,23 +63,23 @@ def load_posted():
 
 
 def save_posted(data):
-    POSTED_FILE.write_text(
-        json.dumps(data, ensure_ascii=False, indent=2),
-        encoding="utf-8"
-    )
+    POSTED_FILE.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
 
 
 def pick_photo(photos, posted_ids):
     unposted = [p for p in photos if p["id"] not in posted_ids]
     if not unposted:
-        # כל התמונות פורסמו — התחל מחדש (rotation)
         print("🔄 כל התמונות פורסמו — מתחיל rotation מחדש")
         return random.choice(photos)
     return random.choice(unposted)
 
 
+def get_hashtags(category):
+    pool = HASHTAG_POOLS.get(category, HASHTAG_POOLS["default"])
+    return random.choice(pool)
+
+
 def fetch_image_as_base64(url):
-    """מוריד תמונה ומחזיר אותה כ-base64."""
     resp = requests.get(url, timeout=30)
     resp.raise_for_status()
     content_type = resp.headers.get("Content-Type", "image/jpeg").split(";")[0].strip()
@@ -69,76 +88,59 @@ def fetch_image_as_base64(url):
 
 
 def generate_caption(photo):
-    """משתמש ב-Claude Vision כדי לכתוב פוסט פייסבוק יצירתי בעברית."""
+    """משתמש ב-Claude Vision כדי לכתוב פוסט פייסבוק יצירתי."""
     client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
 
-    title = photo.get("title", "")
-    category = photo.get("category", "")
+    title       = photo.get("title", "")
+    category    = photo.get("category", "")
     description = photo.get("description", "")
-    exif = photo.get("exif") or {}
-    photo_id = photo["id"]
-    link = f"{SITE_URL}/#photo-{photo_id}"
+    exif        = photo.get("exif") or {}
+    photo_id    = photo["id"]
+    buy_link    = f"{SITE_URL}/photo/{photo_id}"
 
-    # נסה להוריד את התמונה (thumbnail)
     thumbnail_url = photo.get("thumbnail") or photo.get("url")
+    if thumbnail_url and thumbnail_url.startswith("/"):
+        thumbnail_url = f"{SITE_URL}{thumbnail_url}"
+
     image_content = []
     try:
         b64, mime_type = fetch_image_as_base64(thumbnail_url)
-        image_content = [{
-            "type": "image",
-            "source": {
-                "type": "base64",
-                "media_type": mime_type,
-                "data": b64,
-            },
-        }]
-        print("🖼️  תמונה הורדה בהצלחה לניתוח Vision")
+        image_content = [{"type": "image", "source": {"type": "base64", "media_type": mime_type, "data": b64}}]
+        print("🖼️  תמונה הורדה לניתוח Vision")
     except Exception as e:
         print(f"⚠️  לא הצלחתי להוריד תמונה ({e}) — ממשיך בלי Vision")
 
-    # בנה context למטה
     meta_lines = []
-    if title:
-        meta_lines.append(f"שם התמונה: {title}")
-    if category:
-        meta_lines.append(f"קטגוריה: {category}")
-    if description:
-        meta_lines.append(f"תיאור: {description}")
-    if exif.get("camera"):
-        meta_lines.append(f"מצלמה: {exif['camera']}")
-    if exif.get("focal"):
-        meta_lines.append(f"מרחק מוקד: {exif['focal']}mm")
-    if exif.get("aperture"):
-        meta_lines.append(f"צמצם: f/{exif['aperture']}")
-    if exif.get("shutter"):
-        meta_lines.append(f"חשיפה: {exif['shutter']}s")
-    meta_text = "\n".join(meta_lines) if meta_lines else "(אין מטה-דאטה)"
+    if title:                meta_lines.append(f"Photo name: {title}")
+    if category:             meta_lines.append(f"Category: {category}")
+    if description:          meta_lines.append(f"Description: {description}")
+    if exif.get("camera"):   meta_lines.append(f"Camera: {exif['camera']}")
+    if exif.get("focal"):    meta_lines.append(f"Focal length: {exif['focal']}mm")
+    if exif.get("aperture"): meta_lines.append(f"Aperture: f/{exif['aperture']}")
+    if exif.get("shutter"):  meta_lines.append(f"Shutter: {exif['shutter']}s")
+    meta_text = "\n".join(meta_lines) if meta_lines else "(no metadata)"
+
+    hashtags = get_hashtags(category)
 
     system_prompt = """You are a social media manager for an Israeli photographer named Amit.
 Write Facebook posts in Hebrew — short, emotional, engaging.
 Style: intimate, artistic, inspiring. Not too promotional.
 CRITICAL: Use ONLY Hebrew characters for the Hebrew text. Never mix Arabic script with Hebrew.
 The post should feel like a short story about the moment in the photo.
-You may use 1-3 relevant emojis. No hashtags unless they feel natural."""
+You may use 1-3 relevant emojis. Do not add hashtags — they will be added separately."""
 
-    user_content = image_content + [
-        {
-            "type": "text",
-            "text": f"""Write a Facebook post for this photo.
+    user_content = image_content + [{"type": "text", "text": f"""Write a Facebook post for this photo.
 
 Metadata:
 {meta_text}
 
-Website link: {link}
+Post structure (exactly in this order):
+1. 3-5 lines in Hebrew — describe the emotion/atmosphere/moment (Hebrew letters only, no Arabic)
+2. Empty line
+3. 🛍️ לרכישת התמונה: {buy_link}
 
-Instructions:
-- 3-6 lines in Hebrew (Hebrew letters only, no Arabic)
-- Describe the emotion / atmosphere / moment captured in the photo
-- At the end of the post, put the website link on a separate line (just the URL, no "link:" prefix)
-- 1-3 emojis max
-- Output only the post text, no extra explanations"""
-        }
-    ]
+Output only the post text (no hashtags, no extra explanations).
+"""}]
 
     msg = client.messages.create(
         model="claude-sonnet-4-6",
@@ -147,12 +149,12 @@ Instructions:
         messages=[{"role": "user", "content": user_content}],
     )
 
-    return msg.content[0].text.strip()
+    post_text = msg.content[0].text.strip()
+    return f"{post_text}\n\n{hashtags}"
 
 
 def upload_to_public_host(source_url):
-    """מוריד תמונה ומעלה לשרת ציבורי — נדרש כי Facebook לא ניגש ל-Google Drive."""
-    if source_url.startswith("https://amitphotos.com/photos/"):
+    if source_url.startswith(f"{SITE_URL}/photos/"):
         print(f"⬆️  תמונה ב-R2, URL ישיר: {source_url}")
         return source_url
 
@@ -175,11 +177,7 @@ def upload_to_public_host(source_url):
     except Exception as e:
         print(f"⚠️  litterbox נכשל ({e}), מנסה 0x0.st...")
 
-    upload = requests.post(
-        "https://0x0.st",
-        files={"file": ("photo.jpg", img_bytes, "image/jpeg")},
-        timeout=60,
-    )
+    upload = requests.post("https://0x0.st", files={"file": ("photo.jpg", img_bytes, "image/jpeg")}, timeout=60)
     upload.raise_for_status()
     public_url = upload.text.strip()
     print(f"⬆️  תמונה הועלתה (0x0.st): {public_url}")
@@ -187,29 +185,24 @@ def upload_to_public_host(source_url):
 
 
 def post_to_facebook(photo, message):
-    """מפרסם תמונה עם הודעה לעמוד הפייסבוק."""
     source_url = photo.get("thumbnail") or photo.get("url")
+    if source_url and source_url.startswith("/"):
+        source_url = f"{SITE_URL}{source_url}"
+
     print("⬆️  מעלה תמונה לשרת ציבורי...")
     image_url = upload_to_public_host(source_url)
 
-    url = f"{GRAPH_API}/{PAGE_ID}/photos"
-    payload = {
-        "url": image_url,
-        "message": message,
-        "access_token": ACCESS_TOKEN,
-    }
-
-    resp = requests.post(url, data=payload, timeout=30)
+    resp = requests.post(f"{GRAPH_API}/{PAGE_ID}/photos", data={
+        "url": image_url, "message": message, "access_token": ACCESS_TOKEN,
+    }, timeout=30)
     if not resp.ok:
         print(f"❌ שגיאת Facebook API: {resp.status_code} — {resp.text}")
         sys.exit(1)
     result = resp.json()
-
     if "id" in result:
         return result["id"]
-    else:
-        print(f"❌ תשובה לא צפויה מ-Facebook: {result}")
-        sys.exit(1)
+    print(f"❌ תשובה לא צפויה מ-Facebook: {result}")
+    sys.exit(1)
 
 
 def main():
@@ -220,9 +213,9 @@ def main():
         print("❌ חסר: ANTHROPIC_API_KEY")
         sys.exit(1)
 
-    photos = load_photos()
+    photos      = load_photos()
     posted_data = load_posted()
-    posted_ids = set(posted_data.get("posted_ids", []))
+    posted_ids  = set(posted_data.get("posted_ids", []))
 
     photo = pick_photo(photos, posted_ids)
     print(f"📸 תמונה נבחרה: {photo['title']}")
@@ -235,7 +228,6 @@ def main():
     post_id = post_to_facebook(photo, caption)
     print(f"✅ פורסם בהצלחה! Facebook post ID: {post_id}")
 
-    # עדכן מעקב
     posted_data["posted_ids"] = list(posted_ids | {photo["id"]})
     save_posted(posted_data)
     print("💾 עודכן data/facebook_posted.json")

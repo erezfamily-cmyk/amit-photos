@@ -1,0 +1,38 @@
+name: Instagram Story אוטומטי
+
+on:
+  # כל יום ב-08:00 UTC = 11:00 ישראל (בוקר — Stories נצפים בכל שעות)
+  schedule:
+    - cron: '0 8 * * *'
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'latest = מה-post האחרון, random = רנדומלי'
+        required: false
+        default: 'latest'
+
+jobs:
+  instagram-story:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Python setup
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: התקנת חבילות
+        run: pip install requests
+
+      - name: פרסום Story
+        env:
+          INSTAGRAM_USER_ID: ${{ secrets.INSTAGRAM_USER_ID }}
+          INSTAGRAM_PAGE_TOKEN: ${{ secrets.INSTAGRAM_PAGE_TOKEN }}
+        run: |
+          MODE="${{ github.event.inputs.mode || 'latest' }}"
+          FLAG=""
+          if [ "$MODE" = "latest" ]; then FLAG="--latest"; fi
+          python src/instagram_story.py $FLAG
