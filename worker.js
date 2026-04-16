@@ -661,7 +661,7 @@ async function handleVerifyPayment(request, env) {
   if (!VALID_SIZES.includes(size)) return jsonRes({ error: 'גודל לא תקין' }, 400, request);
 
   // בדיקת סכום — לוודא שהסכום ששולם תואם למחיר הנכון
-  const PRICES = { small: 19, medium: 59, large: 129 };
+  const PRICES = { small: 1, medium: 59, large: 129 };
   const BUNDLE_MIN = 3;
   const BUNDLE_DISCOUNT = 0.1;
   const mcGross = parseFloat(txData.mc_gross || 0);
