@@ -661,14 +661,18 @@ async function handleVerifyPayment(request, env) {
   if (!VALID_SIZES.includes(size)) return jsonRes({ error: 'גודל לא תקין' }, 400, request);
 
   // בדיקת סכום — לוודא שהסכום ששולם תואם למחיר הנכון
-  const PRICES = { small: 1, medium: 59, large: 129 };
+  const PRICES = { small: 19, medium: 59, large: 129 };
+  const PRICE_OVERRIDES = { '3ba1bbd0-8c63-400c-8a2c-18c674996399_small': 1 };
   const BUNDLE_MIN = 3;
   const BUNDLE_DISCOUNT = 0.1;
   const mcGross = parseFloat(txData.mc_gross || 0);
   const unitPrice = PRICES[size];
   const subtotal = photoIds.length * unitPrice;
   const discount = photoIds.length >= BUNDLE_MIN ? Math.round(subtotal * BUNDLE_DISCOUNT) : 0;
-  const expectedPrice = subtotal - discount;
+  const overrideKey = photoIds.length === 1 ? `${photoIds[0]}_${size}` : null;
+  const expectedPrice = (overrideKey && PRICE_OVERRIDES[overrideKey] != null)
+    ? PRICE_OVERRIDES[overrideKey]
+    : subtotal - discount;
 
   if (mcGross < expectedPrice) {
     return jsonRes({ error: `סכום ששולם (${mcGross}₪) נמוך מהמחיר (${expectedPrice}₪)` }, 402, request);
