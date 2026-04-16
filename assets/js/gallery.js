@@ -1,6 +1,6 @@
 // ===== STATE =====
 const PURCHASES_ENABLED = false;      // ← השבת רכישות עד שה-PayPal מאומת
-const TEST_PHOTO_ID = '3ba1bbd0-8c63-400c-8a2c-18c674996399'; // תמונת בדיקה בלבד
+const TEST_PHOTO_ID = '1jmBaBvk8rKoV5rvARPayvd010U_CW_gp'; // תמונת בדיקה בלבד
 function canBuy(photo) { return PURCHASES_ENABLED || photo?.id === TEST_PHOTO_ID; }
 let allPhotos = [];
 let filteredPhotos = [];
@@ -977,7 +977,7 @@ const SIZES = {
 
 // מחיר בדיקה — תמונה ספציפית במחיר מיוחד (לבדיקות בלבד)
 const PRICE_OVERRIDES = {
-  '3ba1bbd0-8c63-400c-8a2c-18c674996399': { small: 1 },
+  '1jmBaBvk8rKoV5rvARPayvd010U_CW_gp': { small: 1 },
 };
 function getEffectivePrice(photoId, size) {
   return PRICE_OVERRIDES[photoId]?.[size] ?? SIZES[size]?.price;

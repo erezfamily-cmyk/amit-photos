@@ -636,7 +636,7 @@ async function handleVerifyPayment(request, env) {
 
   // בדיקת סכום — לוודא שהסכום ששולם תואם למחיר הנכון
   const PRICES = { small: 19, medium: 59, large: 129 };
-  const PRICE_OVERRIDES = { '3ba1bbd0-8c63-400c-8a2c-18c674996399_small': 1 };
+  const PRICE_OVERRIDES = { '1jmBaBvk8rKoV5rvARPayvd010U_CW_gp_small': 1 };
   const BUNDLE_MIN = 3;
   const BUNDLE_DISCOUNT = 0.1;
   const mcGross = parseFloat(params.get('mc_gross') || 0);
