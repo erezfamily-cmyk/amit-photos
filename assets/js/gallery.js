@@ -956,7 +956,7 @@ const PAYPAL_EMAIL = 'erez.family@gmail.com';
 const SITE_URL = 'https://amitphotos.com';
 
 const SIZES = {
-  small:  { label: 'קובץ רשת (1500px)',   price: 19,  sz: 'w1500' },
+  small:  { label: 'קובץ רשת (1500px)',   price: 1,  sz: 'w1500' },
   medium: { label: 'קובץ הדפסה (3000px)', price: 59,  sz: 'w3000' },
   large:  { label: 'קובץ מלא',            price: 129, sz: 'w6000' },
 };
