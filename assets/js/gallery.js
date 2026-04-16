@@ -156,7 +156,7 @@ async function loadPhotos() {
   }
 
   const shuffled = [...allPhotos].sort(() => Math.random() - 0.5);
-  filteredPhotos = shuffled.slice(0, 100);
+  filteredPhotos = shuffled;
   displayedCount = Math.min(PAGE_SIZE, filteredPhotos.length);
   renderGallery();
 }
@@ -334,7 +334,7 @@ function applyFilters() {
   });
 
   if (cat === 'all' && !query) {
-    pool = [...pool].sort(() => Math.random() - 0.5).slice(0, 100);
+    pool = [...pool].sort(() => Math.random() - 0.5);
   }
   filteredPhotos = pool;
   displayedCount = Math.min(PAGE_SIZE, filteredPhotos.length);
@@ -824,7 +824,7 @@ function initContactForm() {
 // ===== CART =====
 let cart = []; // [{ id, title, thumbnail, url, width, height }]
 let cartSize = 'small';
-const CART_PRICES = { small: 39, medium: 89, large: 179 };
+const CART_PRICES = { small: 19, medium: 59, large: 129 };
 const BUNDLE_DISCOUNT = 0.2;
 const BUNDLE_MIN = 3;
 
@@ -956,9 +956,9 @@ const PAYPAL_EMAIL = 'erez.family@gmail.com';
 const SITE_URL = 'https://amitphotos.com';
 
 const SIZES = {
-  small:  { label: 'קובץ רשת (1500px)',   price: 39,  sz: 'w1500' },
-  medium: { label: 'קובץ הדפסה (3000px)', price: 89,  sz: 'w3000' },
-  large:  { label: 'קובץ מלא',            price: 179, sz: 'w6000' },
+  small:  { label: 'קובץ רשת (1500px)',   price: 19,  sz: 'w1500' },
+  medium: { label: 'קובץ הדפסה (3000px)', price: 59,  sz: 'w3000' },
+  large:  { label: 'קובץ מלא',            price: 129, sz: 'w6000' },
 };
 
 function initBuyModal() {
@@ -1080,8 +1080,10 @@ function closeBuyModal() {
 function redirectToPayPal(photo, size) {
   const s = SIZES[size];
   const itemNumber = `${photo.id}_${size}`;
+  const email = document.getElementById('buy-email')?.value?.trim() || '';
 
   localStorage.setItem('pending_item_number', itemNumber);
+  if (email) localStorage.setItem('pending_buyer_email', email);
 
   const params = new URLSearchParams({
     cmd: '_xclick',
