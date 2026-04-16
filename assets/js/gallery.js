@@ -686,7 +686,7 @@ function openLightbox(idx) {
   const lbBuy   = document.getElementById('lb-buy');
   const lbPrint = document.getElementById('lb-print');
   if (lbBuy)   lbBuy.style.display   = canBuy(photo) ? '' : 'none';
-  if (lbPrint) lbPrint.style.display = canBuy(photo) ? '' : 'none';
+  if (lbPrint) lbPrint.style.display = PURCHASES_ENABLED ? '' : 'none';
 
   document.getElementById('lightbox').classList.add('open');
   document.body.style.overflow = 'hidden';
