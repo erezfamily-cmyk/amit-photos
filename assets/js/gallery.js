@@ -155,6 +155,13 @@ async function loadPhotos() {
     allPhotos = getDemoPhotos();
   }
 
+  // קבץ ארצות תחת "ארצות" אם אין parent_category מוגדר
+  allPhotos = allPhotos.map(p =>
+    LOCATION_CATEGORIES.has(p.category) && !p.parent_category
+      ? { ...p, parent_category: 'ארצות' }
+      : p
+  );
+
   const shuffled = [...allPhotos].sort(() => Math.random() - 0.5);
   filteredPhotos = shuffled;
   displayedCount = Math.min(PAGE_SIZE, filteredPhotos.length);
@@ -954,6 +961,12 @@ function cartCheckout() {
 // ===== BUY MODAL =====
 const PAYPAL_EMAIL = 'erez.family@gmail.com';
 const SITE_URL = 'https://amitphotos.com';
+
+// קטגוריות מיקום — יקובצו אוטומטית תחת "ארצות"
+const LOCATION_CATEGORIES = new Set([
+  'ישראל','אבו דאבי','אנגליה','גרמניה','הולנד',
+  'יוון','מונטנגרו','סלובקיה','סן דיאגו - ארה"ב','צכיה',
+]);
 
 const SIZES = {
   small:  { label: 'קובץ רשת (1500px)',   price: 19,  sz: 'w1500' },

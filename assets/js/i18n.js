@@ -14,6 +14,7 @@ const CATEGORY_MAP = {
   'פרחים וצמחים': 'Flowers & Plants',
   'צילום מופשט': 'Abstract Photography',
   'מקומות בעולם': 'Places Around the World',
+  'ארצות': 'Locations',
   // Sub-categories (countries/cities)
   'אבו דאבי': 'Abu Dhabi',
   'אנגליה': 'England',
