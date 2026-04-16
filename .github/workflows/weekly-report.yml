@@ -20,7 +20,7 @@ jobs:
           python-version: '3.11'
 
       - name: התקנת חבילות
-        run: pip install requests
+        run: pip install requests anthropic
 
       - name: שליחת דוח שבועי
         env:
@@ -29,5 +29,13 @@ jobs:
           FACEBOOK_PAGE_ID: ${{ secrets.FACEBOOK_PAGE_ID }}
           FACEBOOK_PAGE_TOKEN: ${{ secrets.FACEBOOK_PAGE_TOKEN }}
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.AMIT_PHOTO_AGENT }}
           REPORT_EMAIL: erez.family@gmail.com
         run: python src/weekly_report.py
+
+      - name: Commit דוח JSON
+        run: |
+          git config user.name "Weekly Report Agent"
+          git config user.email "agent@amitphotos.com"
+          git add data/social_report.json
+          git diff --staged --quiet || (git commit -m "📊 עדכון דוח שבועי סושיאל מדיה" && git pull --rebase origin main && git push origin main)

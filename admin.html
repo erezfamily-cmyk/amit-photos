@@ -394,6 +394,17 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
 .analytics-countries{display:flex;flex-wrap:wrap;gap:.5rem 1rem;font-size:.85rem;color:var(--text-muted)}
 .form-field--end{justify-content:flex-end}
 .form-field--end .btn{align-self:flex-end}
+/* Social section */
+.social-loading{color:var(--text-muted);padding:2rem 0}
+.social-date{color:var(--text-muted);font-size:.85rem;margin-bottom:1.5rem}
+.social-platform-title{font-family:var(--font-display);font-size:1.1rem;margin-bottom:1rem}
+.social-platform-title--ig{color:#e1306c}
+.social-platform-title--fb{color:#1877f2}
+.social-platform-title--ai{color:var(--accent)}
+.social-stats-row{margin-bottom:1.5rem}
+.social-best{margin-bottom:2rem}
+.social-recs{background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:1.5rem}
+.social-error{color:var(--red);padding:1rem}
 </style>
 </head>
 <body>
@@ -471,6 +482,10 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
         <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><polyline points="6 9 6 2 18 2 18 9" stroke-width="1.5"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" stroke-width="1.5"/><rect x="6" y="14" width="12" height="8" rx="1" stroke-width="1.5"/></svg>
         הדפסות
       </div>
+      <div class="nav-item" data-section="social">
+        <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><circle cx="18" cy="5" r="3" stroke-width="1.5"/><circle cx="6" cy="12" r="3" stroke-width="1.5"/><circle cx="18" cy="19" r="3" stroke-width="1.5"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49" stroke-width="1.5"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49" stroke-width="1.5"/></svg>
+        סושיאל
+      </div>
     </nav>
     <div class="sidebar-footer">
       <button class="btn-logout" id="logout-btn">התנתק</button>
@@ -540,6 +555,30 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
         <div class="analytics-countries-label">מדינות</div>
         <div id="dash-countries" class="analytics-countries"></div>
       </div>
+    </section>
+
+    <!-- SOCIAL MEDIA SECTION -->
+    <section class="section" id="section-social">
+      <div class="section-header">
+        <h1 class="section-title">סושיאל מדיה</h1>
+        <button type="button" class="btn btn-ghost btn-sm" id="social-refresh-btn">רענן</button>
+      </div>
+      <div id="social-loading" class="social-loading">טוען נתונים...</div>
+      <div id="social-content" hidden>
+        <p id="social-date" class="social-date"></p>
+
+        <h2 class="social-platform-title social-platform-title--ig">📸 Instagram</h2>
+        <div class="dash-grid social-stats-row" id="social-ig-stats"></div>
+        <div class="dash-recent social-best" id="social-ig-best"></div>
+
+        <h2 class="social-platform-title social-platform-title--fb">📘 Facebook</h2>
+        <div class="dash-grid social-stats-row" id="social-fb-stats"></div>
+        <div class="dash-recent social-best" id="social-fb-best"></div>
+
+        <h2 class="social-platform-title social-platform-title--ai">🤖 המלצות לשבוע הבא</h2>
+        <div id="social-recommendations" class="social-recs"></div>
+      </div>
+      <div id="social-error" class="social-error" hidden></div>
     </section>
 
     <!-- PRINT ORDERS SECTION -->
@@ -1125,6 +1164,7 @@ document.querySelectorAll('.nav-item').forEach(item => {
     if (item.dataset.section === 'analytics') Dashboard.loadAnalytics();
     if (item.dataset.section === 'newsletter') Newsletter.init();
     if (item.dataset.section === 'print-orders') PrintOrders.load();
+    if (item.dataset.section === 'social') SocialSection.load();
   });
 });
 
@@ -2104,6 +2144,68 @@ const PrintOrders = (() => {
       }
     } catch { toast('שגיאת רשת', 'error'); btn.textContent = '🔄'; btn.disabled = false; }
   });
+
+  return { load };
+})();
+
+/* ===== SOCIAL MEDIA ===== */
+const SocialSection = (() => {
+  const REPORT_URL = 'https://raw.githubusercontent.com/erezfamily-cmyk/amit-photos/main/data/social_report.json';
+
+  function statCard(label, value) {
+    return `<div class="dash-stat"><div class="dash-stat-value">${value ?? '—'}</div><div class="dash-stat-label">${label}</div></div>`;
+  }
+
+  function bestPost(post, captionKey, likesKey) {
+    if (!post || !post[captionKey]) return '<p style="color:var(--text-muted)">אין נתונים</p>';
+    return `<p><strong>⭐ הפוסט הטוב ביותר:</strong> ${post[captionKey]}… <span style="color:var(--accent)">❤️ ${post[likesKey]}</span></p>`;
+  }
+
+  async function load() {
+    $('social-loading').hidden = false;
+    $('social-content').hidden = true;
+    $('social-error').hidden = true;
+
+    try {
+      const r = await fetch(REPORT_URL + '?t=' + Date.now());
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      const d = await r.json();
+
+      $('social-date').textContent = `דוח לשבוע שהסתיים ב-${d.week_ending || ''} | עודכן: ${new Date(d.generated_at).toLocaleString('he-IL')}`;
+
+      // Instagram stats
+      $('social-ig-stats').innerHTML =
+        statCard('עוקבים', d.ig?.followers?.toLocaleString()) +
+        statCard('פוסטים השבוע', d.ig?.posts_this_week) +
+        statCard('לייקים', d.ig?.total_likes) +
+        statCard('תגובות', d.ig?.total_comments);
+      $('social-ig-best').innerHTML = bestPost(d.ig?.best_post, 'caption', 'likes');
+
+      // Facebook stats
+      $('social-fb-stats').innerHTML =
+        statCard('עוקבים', d.fb?.fans?.toLocaleString()) +
+        statCard('פוסטים השבוע', d.fb?.posts_this_week) +
+        statCard('לייקים', d.fb?.total_likes) +
+        statCard('תגובות', d.fb?.total_comments);
+      $('social-fb-best').innerHTML = bestPost(d.fb?.best_post, 'message', 'likes');
+
+      // Recommendations
+      const recs = d.recommendations || [];
+      $('social-recommendations').innerHTML = recs.length
+        ? '<ol style="padding-right:1.25rem;line-height:2">' + recs.map(r => `<li>${r}</li>`).join('') + '</ol>'
+        : '<p style="color:var(--text-muted)">אין המלצות עדיין — יופיעו לאחר הרצת הדוח השבועי</p>';
+
+      $('social-loading').hidden = true;
+      $('social-content').hidden = false;
+    } catch (e) {
+      $('social-loading').hidden = true;
+      $('social-error').hidden = false;
+      $('social-error').textContent = 'שגיאה בטעינת הדוח — ייתכן שהדוח השבועי טרם רץ. ' + e.message;
+    }
+  }
+
+  $('social-refresh-btn').addEventListener('click', load);
+  document.addEventListener('section:social', load);
 
   return { load };
 })();

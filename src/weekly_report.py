@@ -8,7 +8,11 @@ import os
 import sys
 import json
 import requests
+import anthropic
+from pathlib import Path
 from datetime import datetime, timedelta, timezone
+
+ROOT = Path(__file__).parent.parent
 
 GRAPH_API    = "https://graph.facebook.com/v21.0"
 RESEND_API   = "https://api.resend.com/emails"
@@ -17,7 +21,8 @@ IG_USER_ID   = os.environ.get("INSTAGRAM_USER_ID", "")
 IG_TOKEN     = os.environ.get("INSTAGRAM_PAGE_TOKEN", "")
 FB_PAGE_ID   = os.environ.get("FACEBOOK_PAGE_ID", "")
 FB_TOKEN     = os.environ.get("FACEBOOK_PAGE_TOKEN", "")
-RESEND_KEY   = os.environ.get("RESEND_API_KEY", "")
+RESEND_KEY      = os.environ.get("RESEND_API_KEY", "")
+ANTHROPIC_KEY   = os.environ.get("ANTHROPIC_API_KEY", "")
 REPORT_EMAIL = os.environ.get("REPORT_EMAIL", "erez.family@gmail.com")
 
 
@@ -224,6 +229,90 @@ def send_email(subject, html):
     return resp.json()
 
 
+def generate_ai_recommendations(ig_posts, ig_account, fb_posts, fb_page):
+    """יוצר המלצות AI מבוססות על ביצועי השבוע."""
+    if not ANTHROPIC_KEY:
+        return ["אין ANTHROPIC_API_KEY — המלצות לא זמינות"]
+
+    ig_total_likes    = sum(p.get("like_count", 0) for p in ig_posts)
+    ig_total_comments = sum(p.get("comments_count", 0) for p in ig_posts)
+    ig_best = max(ig_posts, key=lambda p: p.get("like_count", 0), default=None)
+    fb_total_likes    = sum(p.get("likes", {}).get("summary", {}).get("total_count", 0) for p in fb_posts)
+    fb_best = max(fb_posts, key=lambda p: p.get("likes", {}).get("summary", {}).get("total_count", 0), default=None)
+
+    summary = f"""Weekly social media performance for Amit Erez Photography (Israeli photographer):
+
+Instagram:
+- Followers: {ig_account.get('followers_count', '?')}
+- Posts this week: {len(ig_posts)}
+- Total likes: {ig_total_likes}
+- Total comments: {ig_total_comments}
+- Best post: {(ig_best.get('caption') or '')[:100] if ig_best else 'none'} ({ig_best.get('like_count', 0) if ig_best else 0} likes)
+
+Facebook:
+- Fans: {fb_page.get('fan_count', '?')}
+- Posts this week: {len(fb_posts)}
+- Total likes: {fb_total_likes}
+- Best post: {(fb_best.get('message') or '')[:100] if fb_best else 'none'} ({fb_best.get('likes', {}).get('summary', {}).get('total_count', 0) if fb_best else 0} likes)"""
+
+    try:
+        client = anthropic.Anthropic(api_key=ANTHROPIC_KEY)
+        msg = client.messages.create(
+            model="claude-sonnet-4-6",
+            max_tokens=500,
+            messages=[{"role": "user", "content": f"""{summary}
+
+Based on this data, provide exactly 4 actionable recommendations in Hebrew for next week.
+Each recommendation should be specific, practical, and based on the data.
+Format: a simple JSON array of 4 strings, no markdown, no explanation outside the array.
+Example: ["המלצה 1", "המלצה 2", "המלצה 3", "המלצה 4"]"""}],
+        )
+        text = msg.content[0].text.strip()
+        return json.loads(text)
+    except Exception as e:
+        print(f"⚠️  AI recommendations נכשל: {e}")
+        return ["לא הצלחתי לייצר המלצות השבוע"]
+
+
+def save_social_report(ig_posts, ig_account, fb_posts, fb_page, recommendations):
+    """שומר דוח JSON לשימוש האדמין."""
+    ig_best = max(ig_posts, key=lambda p: p.get("like_count", 0), default=None)
+    fb_best = max(fb_posts, key=lambda p: p.get("likes", {}).get("summary", {}).get("total_count", 0), default=None)
+
+    report = {
+        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "week_ending": datetime.now().strftime("%d/%m/%Y"),
+        "ig": {
+            "followers": ig_account.get("followers_count", 0),
+            "media_count": ig_account.get("media_count", 0),
+            "posts_this_week": len(ig_posts),
+            "total_likes": sum(p.get("like_count", 0) for p in ig_posts),
+            "total_comments": sum(p.get("comments_count", 0) for p in ig_posts),
+            "best_post": {
+                "caption": (ig_best.get("caption") or "")[:120] if ig_best else "",
+                "likes": ig_best.get("like_count", 0) if ig_best else 0,
+                "date": ig_best.get("timestamp", "")[:10] if ig_best else "",
+            },
+        },
+        "fb": {
+            "fans": fb_page.get("fan_count", 0),
+            "posts_this_week": len(fb_posts),
+            "total_likes": sum(p.get("likes", {}).get("summary", {}).get("total_count", 0) for p in fb_posts),
+            "total_comments": sum(p.get("comments", {}).get("summary", {}).get("total_count", 0) for p in fb_posts),
+            "best_post": {
+                "message": (fb_best.get("message") or "")[:120] if fb_best else "",
+                "likes": fb_best.get("likes", {}).get("summary", {}).get("total_count", 0) if fb_best else 0,
+                "date": fb_best.get("created_time", "")[:10] if fb_best else "",
+            },
+        },
+        "recommendations": recommendations,
+    }
+
+    out = ROOT / "data" / "social_report.json"
+    out.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
+    print(f"💾 דוח נשמר ל-{out}")
+
+
 def main():
     if not RESEND_KEY:
         print("❌ חסר RESEND_API_KEY")
@@ -236,6 +325,14 @@ def main():
     print("📊 אוסף נתוני Facebook...")
     fb_posts = fetch_fb_posts()
     fb_page  = fetch_fb_page_insights()
+
+    print("🤖 מייצר המלצות AI...")
+    recommendations = generate_ai_recommendations(ig_posts, ig_account, fb_posts, fb_page)
+    for i, r in enumerate(recommendations, 1):
+        print(f"   {i}. {r}")
+
+    print("💾 שומר דוח JSON...")
+    save_social_report(ig_posts, ig_account, fb_posts, fb_page, recommendations)
 
     print("✉️  בונה דוח...")
     html = build_html_report(ig_posts, ig_account, fb_posts, fb_page)
