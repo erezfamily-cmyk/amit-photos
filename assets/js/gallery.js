@@ -1,5 +1,7 @@
 // ===== STATE =====
-const PURCHASES_ENABLED = false; // ← השבת רכישות עד שה-PayPal מאומת
+const PURCHASES_ENABLED = false;      // ← השבת רכישות עד שה-PayPal מאומת
+const TEST_PHOTO_ID = '3ba1bbd0-8c63-400c-8a2c-18c674996399'; // תמונת בדיקה בלבד
+function canBuy(photo) { return PURCHASES_ENABLED || photo?.id === TEST_PHOTO_ID; }
 let allPhotos = [];
 let filteredPhotos = [];
 let currentIndex = 0;
@@ -241,8 +243,8 @@ function renderGallery(append = false) {
           <span>${getCategoryLabel(photo.category)}</span>
         </div>
         <div class="gallery-item-actions">
-          ${PURCHASES_ENABLED ? `<button class="gallery-cart-btn" data-idx="${idx}" aria-label="${t('gallery.btn.cart')}">${t('gallery.btn.cart')}</button>` : ''}
-          ${PURCHASES_ENABLED ? `<button class="gallery-buy-btn" data-idx="${idx}" aria-label="${t('gallery.btn.buy')}">${t('gallery.btn.buy')}</button>` : ''}
+          ${canBuy(photo) ? `<button class="gallery-cart-btn" data-idx="${idx}" aria-label="${t('gallery.btn.cart')}">${t('gallery.btn.cart')}</button>` : ''}
+          ${canBuy(photo) ? `<button class="gallery-buy-btn" data-idx="${idx}" aria-label="${t('gallery.btn.buy')}">${t('gallery.btn.buy')}</button>` : ''}
         </div>
       </div>`;
     galRevealObs?.observe(item);
@@ -448,11 +450,7 @@ function initLightbox() {
   // Buy button
   const buyBtn = document.getElementById('lb-buy');
   if (buyBtn) {
-    if (!PURCHASES_ENABLED) {
-      buyBtn.style.display = 'none';
-    } else {
-      buyBtn.addEventListener('click', () => openBuyModal(filteredPhotos[currentIndex]));
-    }
+    buyBtn.addEventListener('click', () => openBuyModal(filteredPhotos[currentIndex]));
   }
 
   PrintShop.init();
@@ -683,6 +681,10 @@ function openLightbox(idx) {
 
   // URL hash for direct sharing
   history.replaceState(null, '', '#photo-' + photo.id);
+
+  // Buy button visibility per photo
+  const lbBuy = document.getElementById('lb-buy');
+  if (lbBuy) lbBuy.style.display = canBuy(photo) ? '' : 'none';
 
   document.getElementById('lightbox').classList.add('open');
   document.body.style.overflow = 'hidden';
