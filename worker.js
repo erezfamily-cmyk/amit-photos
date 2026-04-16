@@ -450,14 +450,17 @@ async function generateHebrewTitle(imageUrl, category, env) {
           role: 'user',
           content: [
             { type: 'image', source: { type: 'url', url: imageUrl } },
-            { type: 'text', text: `זוהי תמונה מגלריית הצילום של הצלם עמית ארז, קטגוריה: ${category || 'כללי'}.\nתן לתמונה כותרת קצרה ויפה בעברית — 2 עד 4 מילים בלבד.\nהחזר רק את הכותרת, ללא פיסוק נוסף.` }
+            { type: 'text', text: `זוהי תמונה מגלריית הצילום של הצלם עמית ארז, קטגוריה: ${category || 'כללי'}.\nתן לתמונה כותרת קצרה ויפה בעברית — 2 עד 4 מילים בלבד.\nחובה: השתמש באותיות עבריות בלבד (Unicode U+05D0–U+05EA ורווחים). אסור בתכלית האיסור להשתמש בערבית, סינית, אנגלית או כל שפה אחרת.\nהחזר רק את הכותרת, ללא פיסוק נוסף.` }
           ]
         }]
       })
     });
     if (!res.ok) return null;
     const data = await res.json();
-    return data.content?.[0]?.text?.replace(/[\*_`#\n\r]/g, '').trim().replace(/^['"]|['"]$/g, '') || null;
+    const raw = data.content?.[0]?.text?.replace(/[\*_`#\n\r]/g, '').trim().replace(/^['"]|['"]$/g, '') || null;
+    // דחה כותרת שמכילה תווים שאינם עברית/רווח
+    if (raw && /[^\u05D0-\u05EA\u05F0-\u05F4 ,.\-–—'״׳]/.test(raw)) return null;
+    return raw;
   } catch {
     return null;
   }

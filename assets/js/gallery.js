@@ -136,26 +136,21 @@ async function loadPhotos() {
   showSkeletons(grid);
 
   try {
-    const [jsonRes, apiRes] = await Promise.allSettled([
-      fetch('data/photos.json').then(r => r.ok ? r.json() : []),
-      fetch('/api/photos').then(r => r.ok ? r.json() : [])
-    ]);
-    const jsonPhotos = jsonRes.status === 'fulfilled' ? (jsonRes.value || []) : [];
-    const apiPhotos  = apiRes.status  === 'fulfilled' ? (apiRes.value  || []) : [];
-    const jsonById = Object.fromEntries(jsonPhotos.map(p => [p.id, p]));
-    if (apiPhotos.length > 0) {
-      // API (D1) is the source of truth — JSON only supplements parent_category
-      allPhotos = apiPhotos.map(ap => {
-        const jp = jsonById[ap.id];
-        return jp ? { ...ap, parent_category: ap.parent_category ?? jp.parent_category } : ap;
-      });
+    const apiRes = await fetch('/api/photos');
+    if (apiRes.ok) {
+      allPhotos = await apiRes.json();
     } else {
-      // API failed — fall back to JSON entirely
-      allPhotos = jsonPhotos;
+      throw new Error('api failed');
     }
     if (!allPhotos.length) allPhotos = getDemoPhotos();
   } catch {
-    allPhotos = getDemoPhotos();
+    // fallback to JSON
+    try {
+      const jsonRes = await fetch('data/photos.json');
+      allPhotos = jsonRes.ok ? await jsonRes.json() : getDemoPhotos();
+    } catch {
+      allPhotos = getDemoPhotos();
+    }
   }
 
   // קבץ ארצות תחת "ארצות" אם אין parent_category מוגדר
