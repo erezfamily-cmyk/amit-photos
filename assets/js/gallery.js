@@ -682,9 +682,11 @@ function openLightbox(idx) {
   // URL hash for direct sharing
   history.replaceState(null, '', '#photo-' + photo.id);
 
-  // Buy button visibility per photo
-  const lbBuy = document.getElementById('lb-buy');
-  if (lbBuy) lbBuy.style.display = canBuy(photo) ? '' : 'none';
+  // Buy / Print button visibility per photo
+  const lbBuy   = document.getElementById('lb-buy');
+  const lbPrint = document.getElementById('lb-print');
+  if (lbBuy)   lbBuy.style.display   = canBuy(photo) ? '' : 'none';
+  if (lbPrint) lbPrint.style.display = canBuy(photo) ? '' : 'none';
 
   document.getElementById('lightbox').classList.add('open');
   document.body.style.overflow = 'hidden';
