@@ -90,25 +90,25 @@
   <script>
     async function init() {
       const params = new URLSearchParams(window.location.search);
-      const tx = params.get('txn_id') || params.get('tx');
 
-      // item_number: first try URL param, then localStorage (fallback)
+      // tx = PDT token שPayPal מוסיף ל-return URL (נדרש לאימות אמיתי)
+      const tx = params.get('tx');
+
+      // item_number: מ-URL או localStorage כגיבוי
       let itemNumber = params.get('item_number');
-      if (!itemNumber) {
-        itemNumber = localStorage.getItem('pending_item_number');
-      }
-      // Clear regardless — don't want stale data on next visit
+      if (!itemNumber) itemNumber = localStorage.getItem('pending_item_number');
       localStorage.removeItem('pending_item_number');
 
-      if (!tx || !itemNumber) {
+      if (!tx) {
         showManual();
         return;
       }
 
       try {
-        // שלח את כל הפרמטרים של PayPal לאימות IPN
-        const allParams = window.location.search.slice(1);
-        const res = await fetch(`/api/verify-payment?item_number=${encodeURIComponent(itemNumber)}&${allParams}`);
+        // שלח רק tx (+ item_number כרמז); השרת מאמת מול PayPal ישירות
+        const query = new URLSearchParams({ tx });
+        if (itemNumber) query.set('item_number', itemNumber);
+        const res = await fetch(`/api/verify-payment?${query.toString()}`);
         const data = await res.json();
 
         if (data.urls && data.urls.length > 0) {

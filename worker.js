@@ -592,22 +592,57 @@ async function handleDownload(request, env, token) {
   });
 }
 
-// ===== VERIFY PAYPAL PAYMENT =====
+// ===== VERIFY PAYPAL PAYMENT (PDT — server-to-server) =====
 async function handleVerifyPayment(request, env) {
   if (request.method !== 'GET') return jsonRes({ error: 'method not allowed' }, 405, request);
   const url = new URL(request.url);
   const params = url.searchParams;
-  const itemNumber = params.get('item_number');
-  const tx = params.get('txn_id') || params.get('tx');
-  const paymentStatus = params.get('payment_status');
 
-  if (!tx || !itemNumber) return jsonRes({ error: 'חסרים פרמטרים', tx: tx||'missing', item: itemNumber||'missing' }, 400, request);
+  // tx = PDT token שPayPal שולח ב-return URL (לא ניתן לזיוף)
+  const tx = params.get('tx');
+  const itemNumberHint = params.get('item_number'); // גיבוי בלבד; הנתון האמיתי מגיע מ-PayPal
 
-  // Prevent duplicate processing of the same transaction
-  const existing = await env.DB.prepare('SELECT token FROM download_tokens WHERE tx = ? LIMIT 1').bind(tx).first();
-  if (existing) return jsonRes({ error: 'עסקה זו כבר עובדה' }, 409, request);
+  if (!tx) return jsonRes({ error: 'חסר PDT token (tx)' }, 400, request);
+  if (!env.PAYPAL_PDT_TOKEN) return jsonRes({ error: 'PAYPAL_PDT_TOKEN לא מוגדר' }, 500, request);
 
-  // Parse item_number — supports both single photo and cart
+  // ===== אימות server-to-server מול PayPal =====
+  let paypalText;
+  try {
+    const pdtRes = await fetch('https://www.paypal.com/cgi-bin/webscr', {
+      method: 'POST',
+      body: new URLSearchParams({ cmd: '_notify-synch', tx, at: env.PAYPAL_PDT_TOKEN }),
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    });
+    paypalText = await pdtRes.text();
+  } catch {
+    return jsonRes({ error: 'שגיאה בתקשורת עם PayPal' }, 502, request);
+  }
+
+  if (!paypalText.startsWith('SUCCESS')) {
+    return jsonRes({ error: 'התשלום לא אומת על ידי PayPal' }, 402, request);
+  }
+
+  // כל הנתונים מגיעים מ-PayPal ישירות — לא מה-URL של הדפדפן
+  const txData = parsePDTResponse(paypalText);
+
+  if (txData.payment_status !== 'Completed') {
+    return jsonRes({ error: `סטטוס תשלום: ${txData.payment_status || 'חסר'}` }, 402, request);
+  }
+
+  const PAYPAL_RECEIVER_ID = 'UQS28ADG97TPW';
+  if (txData.receiver_id !== PAYPAL_RECEIVER_ID) {
+    return jsonRes({ error: 'חשבון PayPal לא תואם' }, 402, request);
+  }
+
+  if (txData.mc_currency !== 'ILS') {
+    return jsonRes({ error: 'מטבע לא תואם' }, 402, request);
+  }
+
+  // item_number מ-PayPal (מה שנשלח בלחיצה על הכפתור — לא ניתן לשנות)
+  const itemNumber = txData.item_number || itemNumberHint;
+  if (!itemNumber) return jsonRes({ error: 'item_number חסר' }, 400, request);
+
+  // פענוח item_number
   let photoIds, size;
   if (itemNumber.startsWith('CART_')) {
     const rest = itemNumber.slice(5);
@@ -625,41 +660,63 @@ async function handleVerifyPayment(request, env) {
   const VALID_SIZES = ['small', 'medium', 'large'];
   if (!VALID_SIZES.includes(size)) return jsonRes({ error: 'גודל לא תקין' }, 400, request);
 
-  // Verify payment from PayPal return-URL params
-  const PAYPAL_RECEIVER_ID = 'UQS28ADG97TPW'; // amit erez PayPal account ID
-  const receiverId = params.get('receiver_id');
-  const mcCurrency = params.get('mc_currency');
+  // בדיקת סכום — לוודא שהסכום ששולם תואם למחיר הנכון
+  const PRICES = { small: 19, medium: 59, large: 129 };
+  const BUNDLE_MIN = 3;
+  const BUNDLE_DISCOUNT = 0.1;
+  const mcGross = parseFloat(txData.mc_gross || 0);
+  const unitPrice = PRICES[size];
+  const subtotal = photoIds.length * unitPrice;
+  const discount = photoIds.length >= BUNDLE_MIN ? Math.round(subtotal * BUNDLE_DISCOUNT) : 0;
+  const expectedPrice = subtotal - discount;
 
-  if (paymentStatus !== 'Completed') return jsonRes({ error: `סטטוס תשלום: ${paymentStatus || 'חסר'}` }, 402, request);
-  if (receiverId !== PAYPAL_RECEIVER_ID) return jsonRes({ error: 'חשבון PayPal לא תואם' }, 402, request);
-  if (mcCurrency !== 'ILS') return jsonRes({ error: 'מטבע לא תואם' }, 402, request);
+  if (mcGross < expectedPrice) {
+    return jsonRes({ error: `סכום ששולם (${mcGross}₪) נמוך מהמחיר (${expectedPrice}₪)` }, 402, request);
+  }
 
-  // Create download tokens in D1 (one per photo)
+  // txn_id מ-PayPal (לא מה-URL) — למניעת עיבוד כפול
+  const txnId = txData.txn_id;
+  if (!txnId) return jsonRes({ error: 'txn_id חסר ב-PayPal' }, 402, request);
+
+  const existing = await env.DB.prepare('SELECT token FROM download_tokens WHERE tx = ? LIMIT 1').bind(txnId).first();
+  if (existing) return jsonRes({ error: 'עסקה זו כבר עובדה' }, 409, request);
+
+  // יצירת download tokens ב-D1
   const now = Math.floor(Date.now() / 1000);
-  const expires = now + 86400; // 24 hours
+  const expires = now + 86400; // 24 שעות
   const tokens = [];
 
   for (const photoId of photoIds) {
     const token = crypto.randomUUID();
     await env.DB.prepare(
       'INSERT INTO download_tokens (token, photo_ids, size, tx, used, expires_at, created_at) VALUES (?, ?, ?, ?, 0, ?, ?)'
-    ).bind(token, JSON.stringify([photoId]), size, tx, expires, now).run();
+    ).bind(token, JSON.stringify([photoId]), size, txnId, expires, now).run();
     tokens.push(token);
   }
 
   if (tokens.length === 1) {
     const photo = await env.DB.prepare('SELECT title FROM photos WHERE id = ?').bind(photoIds[0]).first();
-    const title = photo?.title || 'תמונה';
-    return jsonRes({ url: `/api/download/${tokens[0]}`, title }, 200, request);
+    return jsonRes({ url: `/api/download/${tokens[0]}`, title: photo?.title || 'תמונה' }, 200, request);
   }
 
-  // For cart: fetch each photo's title from D1
   const urlItems = await Promise.all(photoIds.map(async (photoId, i) => {
     const photo = await env.DB.prepare('SELECT title FROM photos WHERE id = ?').bind(photoId).first();
     return { url: `/api/download/${tokens[i]}`, title: photo?.title || `תמונה ${i + 1}` };
   }));
-  const title = params.get('item_name') || 'חבילת תמונות';
-  return jsonRes({ urls: urlItems, title }, 200, request);
+  return jsonRes({ urls: urlItems, title: txData.item_name || 'חבילת תמונות' }, 200, request);
+}
+
+function parsePDTResponse(text) {
+  const lines = text.split('\n');
+  const result = {};
+  for (let i = 1; i < lines.length; i++) {
+    const eq = lines[i].indexOf('=');
+    if (eq !== -1) {
+      result[decodeURIComponent(lines[i].substring(0, eq).trim())] =
+        decodeURIComponent(lines[i].substring(eq + 1).trim());
+    }
+  }
+  return result;
 }
 
 // ===== PRINT SHOP =====
