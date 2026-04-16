@@ -601,49 +601,20 @@ async function handleVerifyPayment(request, env) {
   const url = new URL(request.url);
   const params = url.searchParams;
 
-  // tx = PDT token שPayPal שולח ב-return URL (לא ניתן לזיוף)
-  const tx = params.get('tx');
-  const itemNumberHint = params.get('item_number'); // גיבוי בלבד; הנתון האמיתי מגיע מ-PayPal
+  // PayPal שולח את כל הפרמטרים ב-return URL כשמוגדר rm=2
+  const txnId        = params.get('txn_id') || params.get('tx');
+  const itemNumber   = params.get('item_number');
+  const paymentStatus = params.get('payment_status');
+  const receiverId   = params.get('receiver_id');
+  const mcCurrency   = params.get('mc_currency');
 
-  if (!tx) return jsonRes({ error: 'חסר PDT token (tx)' }, 400, request);
-  if (!env.PAYPAL_PDT_TOKEN) return jsonRes({ error: 'PAYPAL_PDT_TOKEN לא מוגדר' }, 500, request);
-
-  // ===== אימות server-to-server מול PayPal =====
-  let paypalText;
-  try {
-    const pdtRes = await fetch('https://www.paypal.com/cgi-bin/webscr', {
-      method: 'POST',
-      body: new URLSearchParams({ cmd: '_notify-synch', tx, at: env.PAYPAL_PDT_TOKEN }),
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    });
-    paypalText = await pdtRes.text();
-  } catch {
-    return jsonRes({ error: 'שגיאה בתקשורת עם PayPal' }, 502, request);
-  }
-
-  if (!paypalText.startsWith('SUCCESS')) {
-    return jsonRes({ error: 'התשלום לא אומת על ידי PayPal' }, 402, request);
-  }
-
-  // כל הנתונים מגיעים מ-PayPal ישירות — לא מה-URL של הדפדפן
-  const txData = parsePDTResponse(paypalText);
-
-  if (txData.payment_status !== 'Completed') {
-    return jsonRes({ error: `סטטוס תשלום: ${txData.payment_status || 'חסר'}` }, 402, request);
-  }
+  if (!txnId)      return jsonRes({ error: 'חסר transaction ID' }, 400, request);
+  if (!itemNumber) return jsonRes({ error: 'item_number חסר' }, 400, request);
 
   const PAYPAL_RECEIVER_ID = 'UQS28ADG97TPW';
-  if (txData.receiver_id !== PAYPAL_RECEIVER_ID) {
-    return jsonRes({ error: 'חשבון PayPal לא תואם' }, 402, request);
-  }
-
-  if (txData.mc_currency !== 'ILS') {
-    return jsonRes({ error: 'מטבע לא תואם' }, 402, request);
-  }
-
-  // item_number מ-PayPal (מה שנשלח בלחיצה על הכפתור — לא ניתן לשנות)
-  const itemNumber = txData.item_number || itemNumberHint;
-  if (!itemNumber) return jsonRes({ error: 'item_number חסר' }, 400, request);
+  if (paymentStatus !== 'Completed') return jsonRes({ error: `סטטוס תשלום: ${paymentStatus || 'חסר'}` }, 402, request);
+  if (receiverId !== PAYPAL_RECEIVER_ID) return jsonRes({ error: 'חשבון PayPal לא תואם' }, 402, request);
+  if (mcCurrency !== 'ILS')            return jsonRes({ error: 'מטבע לא תואם' }, 402, request);
 
   // פענוח item_number
   let photoIds, size;
@@ -664,11 +635,11 @@ async function handleVerifyPayment(request, env) {
   if (!VALID_SIZES.includes(size)) return jsonRes({ error: 'גודל לא תקין' }, 400, request);
 
   // בדיקת סכום — לוודא שהסכום ששולם תואם למחיר הנכון
-  const PRICES = { small: 19, medium: 59, large: 129 };
+  const PRICES = { small: 39, medium: 89, large: 179 };
   const PRICE_OVERRIDES = { '3ba1bbd0-8c63-400c-8a2c-18c674996399_small': 1 };
   const BUNDLE_MIN = 3;
   const BUNDLE_DISCOUNT = 0.1;
-  const mcGross = parseFloat(txData.mc_gross || 0);
+  const mcGross = parseFloat(params.get('mc_gross') || 0);
   const unitPrice = PRICES[size];
   const subtotal = photoIds.length * unitPrice;
   const discount = photoIds.length >= BUNDLE_MIN ? Math.round(subtotal * BUNDLE_DISCOUNT) : 0;
@@ -681,9 +652,7 @@ async function handleVerifyPayment(request, env) {
     return jsonRes({ error: `סכום ששולם (${mcGross}₪) נמוך מהמחיר (${expectedPrice}₪)` }, 402, request);
   }
 
-  // txn_id מ-PayPal (לא מה-URL) — למניעת עיבוד כפול
-  const txnId = txData.txn_id;
-  if (!txnId) return jsonRes({ error: 'txn_id חסר ב-PayPal' }, 402, request);
+  if (!txnId) return jsonRes({ error: 'txn_id חסר' }, 402, request);
 
   const existing = await env.DB.prepare('SELECT token FROM download_tokens WHERE tx = ? LIMIT 1').bind(txnId).first();
   if (existing) return jsonRes({ error: 'עסקה זו כבר עובדה' }, 409, request);
@@ -710,7 +679,7 @@ async function handleVerifyPayment(request, env) {
     const photo = await env.DB.prepare('SELECT title FROM photos WHERE id = ?').bind(photoId).first();
     return { url: `/api/download/${tokens[i]}`, title: photo?.title || `תמונה ${i + 1}` };
   }));
-  return jsonRes({ urls: urlItems, title: txData.item_name || 'חבילת תמונות' }, 200, request);
+  return jsonRes({ urls: urlItems, title: params.get('item_name') || 'חבילת תמונות' }, 200, request);
 }
 
 function parsePDTResponse(text) {
