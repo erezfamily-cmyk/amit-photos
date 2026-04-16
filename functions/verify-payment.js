@@ -19,14 +19,29 @@ export async function onRequestGet({ request, env }) {
     return new Response(JSON.stringify({ error: 'PDT לא מוגדר' }), { status: 500, headers });
   }
 
-  const lastUnderscore = itemNumber.lastIndexOf('_');
-  if (lastUnderscore === -1) {
-    return new Response(JSON.stringify({ error: 'item_number לא תקין' }), { status: 400, headers });
-  }
-  const fileId = itemNumber.substring(0, lastUnderscore);
-  const size = itemNumber.substring(lastUnderscore + 1);
-
   const SIZE_MAP = { small: 'w1500', medium: 'w3000', large: null };
+
+  // פענוח item_number — שני פורמטים:
+  // תמונה בודדת: {photoId}_{size}
+  // חבילה:       CART_{size}_{id1,id2,...}
+  let size, fileIds;
+  if (itemNumber.startsWith('CART_')) {
+    const withoutPrefix = itemNumber.slice(5); // "small_id1,id2"
+    const firstUnderscore = withoutPrefix.indexOf('_');
+    if (firstUnderscore === -1) {
+      return new Response(JSON.stringify({ error: 'item_number לא תקין' }), { status: 400, headers });
+    }
+    size    = withoutPrefix.substring(0, firstUnderscore);
+    fileIds = withoutPrefix.substring(firstUnderscore + 1).split(',').filter(Boolean);
+  } else {
+    const lastUnderscore = itemNumber.lastIndexOf('_');
+    if (lastUnderscore === -1) {
+      return new Response(JSON.stringify({ error: 'item_number לא תקין' }), { status: 400, headers });
+    }
+    size    = itemNumber.substring(lastUnderscore + 1);
+    fileIds = [itemNumber.substring(0, lastUnderscore)];
+  }
+
   if (!Object.prototype.hasOwnProperty.call(SIZE_MAP, size)) {
     return new Response(JSON.stringify({ error: 'גודל לא תקין' }), { status: 400, headers });
   }
@@ -55,11 +70,23 @@ export async function onRequestGet({ request, env }) {
   }
 
   const sz = SIZE_MAP[size];
-  const downloadUrl = sz
-    ? `https://drive.google.com/thumbnail?id=${fileId}&sz=${sz}`
-    : `https://drive.google.com/uc?export=download&id=${fileId}`;
+  const makeUrl = id => sz
+    ? `https://drive.google.com/thumbnail?id=${id}&sz=${sz}`
+    : `https://drive.google.com/uc?export=download&id=${id}`;
 
-  return new Response(JSON.stringify({ url: downloadUrl, title: txData['item_name'] || 'תמונה' }), { status: 200, headers });
+  if (fileIds.length === 1) {
+    return new Response(JSON.stringify({
+      url:   makeUrl(fileIds[0]),
+      title: txData['item_name'] || 'תמונה',
+    }), { status: 200, headers });
+  }
+
+  // חבילה — מחזיר מערך
+  const urls = fileIds.map((id, i) => ({ url: makeUrl(id), title: `תמונה ${i + 1}` }));
+  return new Response(JSON.stringify({
+    urls,
+    title: txData['item_name'] || 'חבילת תמונות',
+  }), { status: 200, headers });
 }
 
 function parsePayPalResponse(response) {

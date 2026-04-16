@@ -32,14 +32,16 @@ export async function onRequestGet({ request, env }) {
 }
 
 export async function onRequestPost({ request, env }) {
-  if (!checkAuth(request, env)) return unauthorized();
+  // ציבורי — פניות מהאתר (צור קשר, רכישה) נשמרות ללא אימות
+  // עדכון קיים דורש אימות
   const body = await request.json().catch(() => ({}));
   const { id, name, email, phone, date, type, status, subject, notes } = body;
 
   if (!name) return new Response(JSON.stringify({ error: 'שם חסר' }), { status: 400, headers });
 
   if (id) {
-    // עדכון קיים
+    // עדכון קיים — דורש אימות אדמין
+    if (!checkAuth(request, env)) return unauthorized();
     await env.DB.prepare(
       `UPDATE customers SET name=?, email=?, phone=?, date=?, type=?, status=?, subject=?, notes=?
        WHERE id=?`

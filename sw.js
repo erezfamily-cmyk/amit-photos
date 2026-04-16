@@ -4,6 +4,7 @@ const STATIC = [
   '/index.html',
   '/assets/css/style.css',
   '/assets/js/gallery.js',
+  '/assets/js/i18n.js',
   '/data/photos.json',
   '/404.html',
 ];
@@ -51,6 +52,6 @@ self.addEventListener('fetch', e => {
         caches.open(CACHE).then(c => c.put(e.request, clone));
       }
       return res;
-    })).catch(() => caches.match('/amit-photos/404.html'))
+    })).catch(() => caches.match('/404.html'))
   );
 });
