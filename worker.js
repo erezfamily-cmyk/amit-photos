@@ -635,7 +635,7 @@ async function handleVerifyPayment(request, env) {
   if (!VALID_SIZES.includes(size)) return jsonRes({ error: 'גודל לא תקין' }, 400, request);
 
   // בדיקת סכום — לוודא שהסכום ששולם תואם למחיר הנכון
-  const PRICES = { small: 39, medium: 89, large: 179 };
+  const PRICES = { small: 19, medium: 59, large: 129 };
   const PRICE_OVERRIDES = { '3ba1bbd0-8c63-400c-8a2c-18c674996399_small': 1 };
   const BUNDLE_MIN = 3;
   const BUNDLE_DISCOUNT = 0.1;
