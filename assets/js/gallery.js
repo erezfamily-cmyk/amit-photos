@@ -1,4 +1,5 @@
 // ===== STATE =====
+const PURCHASES_ENABLED = false; // ← השבת רכישות עד שה-PayPal מאומת
 let allPhotos = [];
 let filteredPhotos = [];
 let currentIndex = 0;
@@ -240,8 +241,8 @@ function renderGallery(append = false) {
           <span>${getCategoryLabel(photo.category)}</span>
         </div>
         <div class="gallery-item-actions">
-          <button class="gallery-cart-btn" data-idx="${idx}" aria-label="${t('gallery.btn.cart')}">${t('gallery.btn.cart')}</button>
-          <button class="gallery-buy-btn" data-idx="${idx}" aria-label="${t('gallery.btn.buy')}">${t('gallery.btn.buy')}</button>
+          ${PURCHASES_ENABLED ? `<button class="gallery-cart-btn" data-idx="${idx}" aria-label="${t('gallery.btn.cart')}">${t('gallery.btn.cart')}</button>` : ''}
+          ${PURCHASES_ENABLED ? `<button class="gallery-buy-btn" data-idx="${idx}" aria-label="${t('gallery.btn.buy')}">${t('gallery.btn.buy')}</button>` : ''}
         </div>
       </div>`;
     galRevealObs?.observe(item);
@@ -447,7 +448,11 @@ function initLightbox() {
   // Buy button
   const buyBtn = document.getElementById('lb-buy');
   if (buyBtn) {
-    buyBtn.addEventListener('click', () => openBuyModal(filteredPhotos[currentIndex]));
+    if (!PURCHASES_ENABLED) {
+      buyBtn.style.display = 'none';
+    } else {
+      buyBtn.addEventListener('click', () => openBuyModal(filteredPhotos[currentIndex]));
+    }
   }
 
   PrintShop.init();
@@ -851,7 +856,14 @@ function initCart() {
     });
   });
 
-  document.getElementById('cart-checkout-btn')?.addEventListener('click', cartCheckout);
+  const checkoutBtn = document.getElementById('cart-checkout-btn');
+  if (checkoutBtn) {
+    if (!PURCHASES_ENABLED) {
+      checkoutBtn.style.display = 'none';
+    } else {
+      checkoutBtn.addEventListener('click', cartCheckout);
+    }
+  }
 }
 
 function addToCart(photo, itemEl) {
