@@ -1011,24 +1011,24 @@ function openBuyModal(photo) {
   }
   document.getElementById('buy-modal-title').textContent = photo.title;
 
-  // Size availability based on source resolution
+  // Size availability based on source resolution (only restrict if dimensions are known)
   const maxDim = Math.max(photo.width || 0, photo.height || 0);
+  const knownDims = maxDim > 0;
   document.getElementById('buy-step-1').querySelectorAll('.buy-size-row').forEach(btn => {
     const size = btn.dataset.size;
     let available = true;
-    if (size === 'medium' && maxDim < 3000) available = false;
-    if (size === 'large'  && maxDim < 5000) available = false;
+    if (knownDims && size === 'medium' && maxDim < 3000) available = false;
+    if (knownDims && size === 'large'  && maxDim < 5000) available = false;
 
     btn.disabled = !available;
     btn.classList.toggle('buy-size-unavailable', !available);
 
     const pxEl = btn.querySelector('.buy-size-px');
     if (size === 'large' && pxEl) {
-      pxEl.textContent = maxDim >= 5000
-        ? `${photo.width}×${photo.height}px`
-        : t('buy.size.requires', { min: 5000, actual: maxDim });
+      if (maxDim >= 5000) pxEl.textContent = `${photo.width}×${photo.height}px`;
+      else if (knownDims) pxEl.textContent = t('buy.size.requires', { min: 5000, actual: maxDim });
     }
-    if (size === 'medium' && pxEl && maxDim < 3000) {
+    if (size === 'medium' && pxEl && knownDims && maxDim < 3000) {
       pxEl.textContent = t('buy.size.requires', { min: 3000, actual: maxDim });
     }
   });
