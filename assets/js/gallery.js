@@ -956,10 +956,18 @@ const PAYPAL_EMAIL = 'erez.family@gmail.com';
 const SITE_URL = 'https://amitphotos.com';
 
 const SIZES = {
-  small:  { label: 'קובץ רשת (1500px)',   price: 1,  sz: 'w1500' },
+  small:  { label: 'קובץ רשת (1500px)',   price: 19,  sz: 'w1500' },
   medium: { label: 'קובץ הדפסה (3000px)', price: 59,  sz: 'w3000' },
   large:  { label: 'קובץ מלא',            price: 129, sz: 'w6000' },
 };
+
+// מחיר בדיקה — תמונה ספציפית במחיר מיוחד (לבדיקות בלבד)
+const PRICE_OVERRIDES = {
+  '3ba1bbd0-8c63-400c-8a2c-18c674996399': { small: 1 },
+};
+function getEffectivePrice(photoId, size) {
+  return PRICE_OVERRIDES[photoId]?.[size] ?? SIZES[size]?.price;
+}
 
 function initBuyModal() {
   const modal = document.getElementById('buy-modal');
@@ -1064,7 +1072,7 @@ function showBuyStep2(photo, size) {
   document.getElementById('buy-confirm-size').textContent = `${t('buy.size.' + size)} · ${pxLabel}`;
 
   // Price
-  document.getElementById('buy-total-amount').textContent = `₪${s.price}`;
+  document.getElementById('buy-total-amount').textContent = `₪${getEffectivePrice(photo.id, size)}`;
 
   // Show step 2
   document.getElementById('buy-step-1').classList.add('buy-step-hidden');
@@ -1090,7 +1098,7 @@ function redirectToPayPal(photo, size) {
     business: PAYPAL_EMAIL,
     item_name: `${photo.title} — ${s.label}`,
     item_number: itemNumber,
-    amount: s.price,
+    amount: getEffectivePrice(photo.id, size),
     currency_code: 'ILS',
     no_shipping: '1',
     return: `${SITE_URL}/download.html`,
