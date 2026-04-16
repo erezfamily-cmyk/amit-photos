@@ -167,6 +167,8 @@ async function handleSubscribers(request, env) {
   if (method === 'POST') {
     const { name, email, notes } = await request.json().catch(() => ({}));
     if (!email) return jsonRes({ error: 'מייל חסר' }, 400, request);
+    const existing = await env.DB.prepare('SELECT id FROM subscribers WHERE email = ?').bind(email).first();
+    if (existing) return jsonRes({ ok: true, already: true }, 200, request);
     const id = crypto.randomUUID();
     await env.DB.prepare(
       'INSERT INTO subscribers (id, name, email, notes, created_at) VALUES (?,?,?,?,?)'
@@ -371,6 +373,8 @@ async function handleUpload(request, env) {
   const url = `/photos/${key}`;
   const category = formData.get('category') || '';
   let title = formData.get('title') || '';
+  const width  = parseInt(formData.get('width')  || '0', 10) || null;
+  const height = parseInt(formData.get('height') || '0', 10) || null;
 
   // אם אין כותרת עברית — נסה לייצר אחת אוטומטית
   if (isGenericTitle(title)) {
@@ -380,11 +384,12 @@ async function handleUpload(request, env) {
   }
 
   await env.DB.prepare(
-    `INSERT INTO photos (id,title,category,description,filename,r2_key,url,thumbnail,created_at,published) VALUES (?,?,?,?,?,?,?,?,?,0)`
+    `INSERT INTO photos (id,title,category,description,filename,r2_key,url,thumbnail,width,height,created_at,published) VALUES (?,?,?,?,?,?,?,?,?,?,?,0)`
   ).bind(
     id, title, category,
     formData.get('description') || '',
     file.name, key, url, thumbUrl,
+    width, height,
     new Date().toISOString()
   ).run();
 
