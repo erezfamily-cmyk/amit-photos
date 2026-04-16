@@ -178,10 +178,6 @@ Output only the caption text (no hashtags, no extra explanations).
 
 
 def upload_to_public_host(source_url):
-    if source_url.startswith(f"{SITE_URL}/photos/"):
-        print(f"⬆️  תמונה ב-R2, URL ישיר: {source_url}")
-        return source_url
-
     resp = requests.get(source_url, timeout=30)
     resp.raise_for_status()
     img_bytes = resp.content
