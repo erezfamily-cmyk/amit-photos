@@ -17,13 +17,16 @@ export async function onRequestOptions() {
 }
 
 export async function onRequestGet({ request, env }) {
-  const pwd = request.headers.get('X-Admin-Password');
-  if (!pwd || pwd !== env.ADMIN_PASSWORD) return unauthorized();
+  // ציבורי — הגלריה הציבורית קוראת endpoint זה ללא אימות
+  const url = new URL(request.url);
+  const adminMode = request.headers.get('X-Admin-Password') === env.ADMIN_PASSWORD;
 
-  const { results } = await env.DB.prepare(
-    'SELECT * FROM photos ORDER BY created_at DESC'
-  ).all();
+  // אדמין מקבל את כל העמודות; ציבור מקבל שדות ציבוריים בלבד
+  const query = adminMode
+    ? 'SELECT * FROM photos ORDER BY created_at DESC'
+    : 'SELECT id, title, category, parent_category, url, thumbnail, description, width, height, exif FROM photos ORDER BY created_at DESC';
 
+  const { results } = await env.DB.prepare(query).all();
   return new Response(JSON.stringify(results), { headers: HEADERS });
 }
 

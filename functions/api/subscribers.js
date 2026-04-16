@@ -32,9 +32,14 @@ export async function onRequestGet({ request, env }) {
 }
 
 export async function onRequestPost({ request, env }) {
-  if (!checkAuth(request, env)) return unauthorized();
+  // ציבורי — אין צורך באימות להרשמה לניוזלטר
   const { name, email, notes } = await request.json().catch(() => ({}));
   if (!email) return new Response(JSON.stringify({ error: 'מייל חסר' }), { status: 400, headers });
+
+  // בדיקת כפילות
+  const existing = await env.DB.prepare('SELECT id FROM subscribers WHERE email = ?').bind(email).first();
+  if (existing) return new Response(JSON.stringify({ ok: true, already: true }), { headers });
+
   const id = crypto.randomUUID();
   await env.DB.prepare(
     'INSERT INTO subscribers (id, name, email, notes, created_at) VALUES (?, ?, ?, ?, ?)'

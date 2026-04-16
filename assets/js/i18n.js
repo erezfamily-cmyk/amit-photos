@@ -298,7 +298,7 @@ const TRANSLATIONS = {
     // download.html
     'dl.verifying.title':'מאמת תשלום...',
     'dl.verifying.sub': 'אנא המתן, בודק את פרטי התשלום עם PayPal.',
-    'dl.expire.note':   'הקישורים תקפים ל-24 שעות ולשימוש חד-פעמי.',
+    'dl.expire.note':   'שמור את הקובץ לאחר ההורדה — לשאלות פנה ב-WhatsApp.',
     'dl.back':          '← חזרה לגלריה',
     'dl.success.title': 'תודה על הרכישה!',
     'dl.success.sub':   'התשלום אושר. לחץ להורדת "{{title}}".',
@@ -601,7 +601,7 @@ const TRANSLATIONS = {
     // download.html
     'dl.verifying.title':'Verifying payment...',
     'dl.verifying.sub': 'Please wait, verifying payment details with PayPal.',
-    'dl.expire.note':   'Links are valid for 24 hours and single use only.',
+    'dl.expire.note':   'Save the file after downloading — for questions contact via WhatsApp.',
     'dl.back':          '← Back to Gallery',
     'dl.success.title': 'Thank you for your purchase!',
     'dl.success.sub':   'Payment confirmed. Click to download "{{title}}".',
