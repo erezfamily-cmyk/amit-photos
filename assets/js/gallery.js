@@ -136,21 +136,11 @@ async function loadPhotos() {
   showSkeletons(grid);
 
   try {
-    const apiRes = await fetch('/api/photos');
-    if (apiRes.ok) {
-      allPhotos = await apiRes.json();
-    } else {
-      throw new Error('api failed');
-    }
+    const jsonRes = await fetch('data/photos.json');
+    allPhotos = jsonRes.ok ? await jsonRes.json() : getDemoPhotos();
     if (!allPhotos.length) allPhotos = getDemoPhotos();
   } catch {
-    // fallback to JSON
-    try {
-      const jsonRes = await fetch('data/photos.json');
-      allPhotos = jsonRes.ok ? await jsonRes.json() : getDemoPhotos();
-    } catch {
-      allPhotos = getDemoPhotos();
-    }
+    allPhotos = getDemoPhotos();
   }
 
   // קבץ ארצות תחת "ארצות" אם אין parent_category מוגדר
