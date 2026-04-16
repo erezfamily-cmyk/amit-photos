@@ -1092,6 +1092,45 @@ nav.scrolled { border-bottom-color: rgba(200, 169, 110, 0.3); }
   color: #0a0a0a;
 }
 
+/* מובייל — כפתור רכישה בלייטבוקס בולט ורחב */
+@media (hover: none) {
+  .lb-actions {
+    flex-wrap: wrap;
+    padding: 0.5rem 1rem 0;
+    gap: 0.5rem;
+  }
+  .lb-buy-btn {
+    order: -1;
+    width: 100%;
+    justify-content: center;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+  }
+}
+
+/* ===== BUY EMAIL ROW ===== */
+.buy-email-row {
+  margin: 0.75rem 0 1rem;
+}
+.buy-email-input {
+  width: 100%;
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 4px;
+  padding: 0.6rem 0.85rem;
+  color: var(--text);
+  font-size: 0.85rem;
+  font-family: var(--font-body);
+  direction: rtl;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+.buy-email-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+.buy-email-input::placeholder { color: var(--text-muted); }
+
 /* ===== BUY MODAL ===== */
 .buy-modal {
   display: none;

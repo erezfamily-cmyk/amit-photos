@@ -612,9 +612,9 @@
       <div class="cart-size-row">
         <label class="cart-size-label" data-i18n="cart.size.label">בחר גודל לכל התמונות:</label>
         <div class="cart-size-btns">
-          <button class="cart-size-btn active" data-size="small" data-price="39">רשת ₪39</button>
-          <button class="cart-size-btn" data-size="medium" data-price="89">הדפסה ₪89</button>
-          <button class="cart-size-btn" data-size="large" data-price="179">מלא ₪179</button>
+          <button class="cart-size-btn active" data-size="small" data-price="19">רשת ₪19</button>
+          <button class="cart-size-btn" data-size="medium" data-price="59">הדפסה ₪59</button>
+          <button class="cart-size-btn" data-size="large" data-price="129">מלא ₪129</button>
         </div>
       </div>
 
@@ -663,30 +663,30 @@
         <h3 class="buy-modal-title" id="buy-modal-title"></h3>
 
         <div class="buy-size-options-v2">
-          <button type="button" class="buy-size-row" data-size="small" data-price="39">
+          <button type="button" class="buy-size-row" data-size="small" data-price="19">
             <div class="buy-size-row-left">
               <span class="buy-size-name" data-i18n="buy.size.small">קובץ רשת</span>
               <span class="buy-size-px">1500px</span>
               <span class="buy-size-use" data-i18n="buy.size.small.use">רשתות חברתיות</span>
             </div>
-            <span class="buy-size-price">₪39</span>
+            <span class="buy-size-price">₪19</span>
           </button>
-          <button type="button" class="buy-size-row buy-size-popular" data-size="medium" data-price="89">
+          <button type="button" class="buy-size-row buy-size-popular" data-size="medium" data-price="59">
             <span class="buy-size-badge" data-i18n="buy.recommended">מומלץ</span>
             <div class="buy-size-row-left">
               <span class="buy-size-name" data-i18n="buy.size.medium">קובץ הדפסה</span>
               <span class="buy-size-px">3000px</span>
               <span class="buy-size-use" data-i18n="buy.size.medium.use">הדפסה עד A4</span>
             </div>
-            <span class="buy-size-price">₪89</span>
+            <span class="buy-size-price">₪59</span>
           </button>
-          <button type="button" class="buy-size-row" data-size="large" data-price="179">
+          <button type="button" class="buy-size-row" data-size="large" data-price="129">
             <div class="buy-size-row-left">
               <span class="buy-size-name" data-i18n="buy.size.large">קובץ מלא</span>
               <span class="buy-size-px buy-size-large-px" data-i18n="buy.size.large.px">רזולוציה מקסימלית</span>
               <span class="buy-size-use" data-i18n="buy.size.large.use">הדפסה גדולה</span>
             </div>
-            <span class="buy-size-price">₪179</span>
+            <span class="buy-size-price">₪129</span>
           </button>
         </div>
       </div>
@@ -721,13 +721,17 @@
           <span class="buy-total-amount" id="buy-total-amount">₪89</span>
         </div>
 
+        <div class="buy-email-row">
+          <input type="email" id="buy-email" class="buy-email-input" data-i18n-placeholder="buy.email.placeholder" placeholder="מייל לקבלת הקישור גם במייל (אופציונלי)" />
+        </div>
+
         <button type="button" class="buy-paypal-btn" id="buy-paypal-btn">
           <span data-i18n="buy.paypal.btn">שלם עם PayPal</span>
         </button>
 
         <p class="buy-modal-note buy-paypal-note">
           <span data-i18n="buy.secure.note">🔒 תועבר לדף התשלום המאובטח של PayPal</span><br>
-          <span data-i18n="buy.auto.download">הקובץ יורד אוטומטית לאחר האישור</span>
+          <span data-i18n="buy.auto.download">הקובץ יורד אוטומטית לאחר האישור — וישלח גם למייל אם הזנת אחד</span>
         </p>
 
         <button type="button" class="buy-back-btn" id="buy-back-btn" data-i18n="buy.back">← חזרה</button>
