@@ -1560,6 +1560,7 @@ nav.scrolled { border-bottom-color: rgba(200, 169, 110, 0.3); }
 @media (max-width: 480px) {
   .buy-size-options { grid-template-columns: 1fr; }
   .buy-modal-inner { padding: 2rem 1.25rem; }
+  .buy-size-guide { display: none; }
 }
 
 /* ===== PRINT MODAL ===== */
