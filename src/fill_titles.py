@@ -13,7 +13,12 @@ DATA_FILE = ROOT / "data" / "photos.json"
 def is_generic_title(title):
     if not title:
         return True
-    return bool(re.match(r'^(IMG|DSC|DSCN|MJH|greece|P|PIC|photo|image)[_\-]?\S*$', title, re.IGNORECASE))
+    if re.match(r'^(IMG|DSC|DSCN|MJH|greece|P|PIC|photo|image)[_\-]?\S*$', title, re.IGNORECASE):
+        return True
+    # כותרת עם תווים שאינם עברית/רווח/פיסוק — צריך לחדש
+    allowed = set(' ,.:;-–—\'"״׳/()0123456789')
+    non_hebrew = [c for c in title if not ('\u05D0' <= c <= '\u05EA') and c not in allowed]
+    return len(non_hebrew) > 0
 
 def generate_title(file_id, category):
     import anthropic, requests
@@ -24,7 +29,7 @@ def generate_title(file_id, category):
         img_b64 = base64.standard_b64encode(res.content).decode("utf-8")
         client = anthropic.Anthropic()
         msg = client.messages.create(
-            model="claude-haiku-4-5-20251001",
+            model="claude-sonnet-4-6",
             max_tokens=30,
             messages=[{"role": "user", "content": [
                 {"type": "image", "source": {"type": "base64", "media_type": "image/jpeg", "data": img_b64}},
