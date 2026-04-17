@@ -580,19 +580,27 @@ async function handleDownload(request, env, token) {
   const photoId = photoIds[0];
   const photo = await env.DB.prepare('SELECT r2_key, title FROM photos WHERE id = ?').bind(photoId).first();
 
-  if (!photo?.r2_key) return jsonRes({ error: 'תמונה לא נמצאה' }, 404, request);
+  // R2 photo
+  if (photo?.r2_key) {
+    const object = await env.PHOTOS.get(photo.r2_key);
+    if (!object) return jsonRes({ error: 'קובץ לא נמצא ב-R2' }, 404, request);
+    const filename = (photo.title || 'photo').replace(/[^\w\u0590-\u05ff .-]/g, '_') + '.jpg';
+    return new Response(object.body, {
+      headers: {
+        'Content-Type': object.httpMetadata?.contentType || 'image/jpeg',
+        'Content-Disposition': `attachment; filename*=UTF-8''${encodeURIComponent(filename)}`,
+        'Cache-Control': 'no-store',
+      },
+    });
+  }
 
-  const object = await env.PHOTOS.get(photo.r2_key);
-  if (!object) return jsonRes({ error: 'קובץ לא נמצא ב-R2' }, 404, request);
-
-  const filename = (photo.title || 'photo').replace(/[^\w\u0590-\u05ff .-]/g, '_') + '.jpg';
-  return new Response(object.body, {
-    headers: {
-      'Content-Type': object.httpMetadata?.contentType || 'image/jpeg',
-      'Content-Disposition': `attachment; filename*=UTF-8''${encodeURIComponent(filename)}`,
-      'Cache-Control': 'no-store',
-    },
-  });
+  // Google Drive fallback — photo not in R2 yet
+  const SZ_MAP = { small: 'w1500', medium: 'w3000', large: null };
+  const sz = SZ_MAP[row.size];
+  const driveUrl = sz
+    ? `https://lh3.googleusercontent.com/d/${photoId}=${sz}`
+    : `https://drive.google.com/uc?export=download&id=${photoId}`;
+  return Response.redirect(driveUrl, 302);
 }
 
 // ===== VERIFY PAYPAL PAYMENT (PDT — server-to-server) =====
