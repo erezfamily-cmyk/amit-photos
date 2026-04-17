@@ -105,9 +105,9 @@
       }
 
       try {
-        // שלח רק tx (+ item_number כרמז); השרת מאמת מול PayPal ישירות
-        const query = new URLSearchParams({ tx });
-        if (itemNumber) query.set('item_number', itemNumber);
+        // העבר את כל פרמטרי PayPal מה-return URL לשרת לאימות
+        const query = new URLSearchParams(window.location.search);
+        if (itemNumber && !query.get('item_number')) query.set('item_number', itemNumber);
         const res = await fetch(`/api/verify-payment?${query.toString()}`);
         const data = await res.json();
 

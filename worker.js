@@ -602,19 +602,16 @@ async function handleVerifyPayment(request, env) {
   const params = url.searchParams;
 
   // PayPal שולח את כל הפרמטרים ב-return URL כשמוגדר rm=2
-  const txnId        = params.get('txn_id') || params.get('tx');
-  const itemNumber   = params.get('item_number');
+  const txnId         = params.get('txn_id') || params.get('tx');
+  const itemNumber    = params.get('item_number');
   const paymentStatus = params.get('payment_status');
-  const receiverId   = params.get('receiver_id');
-  const mcCurrency   = params.get('mc_currency');
+  const mcCurrency    = params.get('mc_currency');
 
   if (!txnId)      return jsonRes({ error: 'חסר transaction ID' }, 400, request);
   if (!itemNumber) return jsonRes({ error: 'item_number חסר' }, 400, request);
 
-  const PAYPAL_RECEIVER_ID = 'UQS28ADG97TPW';
   if (paymentStatus !== 'Completed') return jsonRes({ error: `סטטוס תשלום: ${paymentStatus || 'חסר'}` }, 402, request);
-  if (receiverId !== PAYPAL_RECEIVER_ID) return jsonRes({ error: 'חשבון PayPal לא תואם' }, 402, request);
-  if (mcCurrency !== 'ILS')            return jsonRes({ error: 'מטבע לא תואם' }, 402, request);
+  if (mcCurrency !== 'ILS')          return jsonRes({ error: 'מטבע לא תואם' }, 402, request);
 
   // פענוח item_number
   let photoIds, size;
