@@ -610,8 +610,12 @@ async function handleVerifyPayment(request, env) {
   if (!txnId)      return jsonRes({ error: 'חסר transaction ID' }, 400, request);
   if (!itemNumber) return jsonRes({ error: 'item_number חסר' }, 400, request);
 
-  if (paymentStatus !== 'Completed') return jsonRes({ error: `סטטוס תשלום: ${paymentStatus || 'חסר'}` }, 402, request);
-  if (mcCurrency !== 'ILS')          return jsonRes({ error: 'מטבע לא תואם' }, 402, request);
+  const receiverId    = params.get('receiver_id');
+  const PAYPAL_RECEIVER_ID = 'UQS28ADG97TPW';
+
+  if (paymentStatus !== 'Completed')     return jsonRes({ error: `סטטוס תשלום: ${paymentStatus || 'חסר'}` }, 402, request);
+  if (receiverId !== PAYPAL_RECEIVER_ID) return jsonRes({ error: 'חשבון PayPal לא תואם' }, 402, request);
+  if (mcCurrency !== 'ILS')             return jsonRes({ error: 'מטבע לא תואם' }, 402, request);
 
   // פענוח item_number
   let photoIds, size;
