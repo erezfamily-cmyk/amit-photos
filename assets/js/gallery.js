@@ -1045,6 +1045,11 @@ function openBuyModal(photo) {
     btn.disabled = !available;
     btn.classList.toggle('buy-size-unavailable', !available);
 
+    const price = getEffectivePrice(photo.id, size);
+    const priceEl = btn.querySelector('.buy-size-price');
+    if (priceEl) priceEl.textContent = `₪${price}`;
+    btn.dataset.price = price;
+
     const pxEl = btn.querySelector('.buy-size-px');
     if (size === 'large' && pxEl) {
       if (maxDim >= 5000) pxEl.textContent = `${photo.width}×${photo.height}px`;
