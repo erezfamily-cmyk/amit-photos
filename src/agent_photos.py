@@ -70,6 +70,7 @@ def get_drive_session():
             creds.refresh(Request())
         tmp_creds.unlink(missing_ok=True)
         tmp_token.unlink(missing_ok=True)
+        (ROOT / "token_refreshed.json").write_text(creds.to_json())
     elif TOKEN_FILE.exists():
         creds = Credentials.from_authorized_user_file(str(TOKEN_FILE), SCOPES)
         if creds.expired and creds.refresh_token:

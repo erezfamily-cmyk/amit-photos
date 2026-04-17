@@ -44,6 +44,17 @@ jobs:
             fi
           done
 
+      - name: עדכן GOOGLE_TOKEN אחרי רענון
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+        run: |
+          if [ -f token_refreshed.json ] && [ -n "$GH_TOKEN" ]; then
+            gh secret set GOOGLE_TOKEN < token_refreshed.json
+            echo "✅ GOOGLE_TOKEN עודכן"
+            rm token_refreshed.json
+          fi
+
       - name: עדכון Sitemap
         run: python src/generate_sitemap.py
 
