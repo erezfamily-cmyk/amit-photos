@@ -676,18 +676,19 @@ async function handleVerifyPayment(request, env, ctx) {
   if (!VALID_SIZES.includes(size)) return jsonRes({ error: 'גודל לא תקין' }, 400, request);
 
   // בדיקת סכום — לוודא שהסכום ששולם תואם למחיר הנכון
-  const PRICES = { small: 19, medium: 59, large: 129 };
-  const PRICE_OVERRIDES = { '1jmBaBvk8rKoV5rvARPayvd010U_CW_gp_small': 1 };
+  const PRICES = await getGlobalPrices(env);
   const BUNDLE_MIN = 3;
   const BUNDLE_DISCOUNT = 0.1;
   const mcGross = parseFloat(params.get('mc_gross') || 0);
-  const unitPrice = PRICES[size];
+  let unitPrice = PRICES[size];
+  // per-photo price override (only for single-photo purchases)
+  if (photoIds.length === 1) {
+    const photoRow = await env.DB.prepare("SELECT price_override FROM photos WHERE id = ?").bind(photoIds[0]).first();
+    if (photoRow?.price_override != null) unitPrice = photoRow.price_override;
+  }
   const subtotal = photoIds.length * unitPrice;
   const discount = photoIds.length >= BUNDLE_MIN ? Math.round(subtotal * BUNDLE_DISCOUNT) : 0;
-  const overrideKey = photoIds.length === 1 ? `${photoIds[0]}_${size}` : null;
-  const expectedPrice = (overrideKey && PRICE_OVERRIDES[overrideKey] != null)
-    ? PRICE_OVERRIDES[overrideKey]
-    : subtotal - discount;
+  const expectedPrice = subtotal - discount;
 
   if (mcGross < expectedPrice) {
     return jsonRes({ error: `סכום ששולם (${mcGross}₪) נמוך מהמחיר (${expectedPrice}₪)` }, 402, request);
@@ -1551,6 +1552,41 @@ async function handleNewBadgeSettings(request, env) {
   return jsonRes({ error: 'method not allowed' }, 405, request);
 }
 
+async function getGlobalPrices(env) {
+  const row = await env.DB.prepare("SELECT value FROM settings WHERE key='prices'").first();
+  if (row?.value) {
+    try { return JSON.parse(row.value); } catch {}
+  }
+  return { small: 19, medium: 59, large: 129 };
+}
+
+async function handleAdminPrices(request, env) {
+  if (request.method === 'GET') {
+    const prices = await getGlobalPrices(env);
+    return jsonRes(prices, 200, request);
+  }
+  if (request.method === 'POST') {
+    if (!await checkAuth(request, env)) return unauth(request);
+    const body = await request.json().catch(() => ({}));
+    const { small, medium, large } = body;
+    if ([small, medium, large].some(v => isNaN(parseFloat(v)) || parseFloat(v) < 0))
+      return jsonRes({ error: 'מחיר לא תקין' }, 400, request);
+    const prices = { small: parseFloat(small), medium: parseFloat(medium), large: parseFloat(large) };
+    await env.DB.prepare("INSERT OR REPLACE INTO settings (key, value) VALUES ('prices', ?)").bind(JSON.stringify(prices)).run();
+    return jsonRes({ ok: true, prices }, 200, request);
+  }
+  return jsonRes({ error: 'method not allowed' }, 405, request);
+}
+
+async function handleAdminPhotoPrice(request, env) {
+  if (!await checkAuth(request, env)) return unauth(request);
+  const { photo_id, price_override } = await request.json().catch(() => ({}));
+  if (!photo_id) return jsonRes({ error: 'photo_id required' }, 400, request);
+  const val = price_override === null || price_override === '' ? null : parseFloat(price_override);
+  await env.DB.prepare("UPDATE photos SET price_override = ? WHERE id = ?").bind(val, photo_id).run();
+  return jsonRes({ ok: true }, 200, request);
+}
+
 async function handleTogglePhotoNew(request, env) {
   if (!await checkAuth(request, env)) return unauth(request);
   const { photo_id, is_new, title, category, url, thumbnail } = await request.json().catch(() => ({}));
@@ -1661,6 +1697,8 @@ export default {
     if (path === '/api/admin/purchases')   return handleAdminPurchases(request, env);
     if (path === '/api/admin/create-token' && request.method === 'POST') return handleAdminCreateToken(request, env);
     if (path === '/api/new-badge-settings') return handleNewBadgeSettings(request, env);
+    if (path === '/api/admin/prices') return handleAdminPrices(request, env);
+    if (path === '/api/admin/photo-price' && request.method === 'POST') return handleAdminPhotoPrice(request, env);
     if (path === '/api/admin/toggle-photo-new' && request.method === 'POST') return handleTogglePhotoNew(request, env);
     if (path === '/api/admin/migrate-amount' && request.method === 'POST') {
       if (!await checkAuth(request, env)) return unauth(request);
