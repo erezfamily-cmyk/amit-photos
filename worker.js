@@ -683,8 +683,13 @@ async function handleVerifyPayment(request, env, ctx) {
   let unitPrice = PRICES[size];
   // per-photo price override (only for single-photo purchases)
   if (photoIds.length === 1) {
-    const photoRow = await env.DB.prepare("SELECT price_override FROM photos WHERE id = ?").bind(photoIds[0]).first();
-    if (photoRow?.price_override != null) unitPrice = photoRow.price_override;
+    const photoRow = await env.DB.prepare("SELECT price_overrides FROM photos WHERE id = ?").bind(photoIds[0]).first();
+    if (photoRow?.price_overrides) {
+      try {
+        const ov = JSON.parse(photoRow.price_overrides);
+        if (ov[size] != null) unitPrice = ov[size];
+      } catch {}
+    }
   }
   const subtotal = photoIds.length * unitPrice;
   const discount = photoIds.length >= BUNDLE_MIN ? Math.round(subtotal * BUNDLE_DISCOUNT) : 0;
@@ -1582,8 +1587,9 @@ async function handleAdminPhotoPrice(request, env) {
   if (!await checkAuth(request, env)) return unauth(request);
   const { photo_id, price_override } = await request.json().catch(() => ({}));
   if (!photo_id) return jsonRes({ error: 'photo_id required' }, 400, request);
-  const val = price_override === null || price_override === '' ? null : parseFloat(price_override);
-  await env.DB.prepare("UPDATE photos SET price_override = ? WHERE id = ?").bind(val, photo_id).run();
+  // price_override is JSON object {small, medium, large} or null
+  const val = price_override === null ? null : JSON.stringify(price_override);
+  await env.DB.prepare("UPDATE photos SET price_overrides = ? WHERE id = ?").bind(val, photo_id).run();
   return jsonRes({ ok: true }, 200, request);
 }
 
