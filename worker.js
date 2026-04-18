@@ -383,14 +383,15 @@ async function handleUpload(request, env) {
     if (aiTitle) title = aiTitle;
   }
 
+  const now = new Date().toISOString();
   await env.DB.prepare(
-    `INSERT INTO photos (id,title,category,description,filename,r2_key,url,thumbnail,width,height,created_at,published) VALUES (?,?,?,?,?,?,?,?,?,?,?,0)`
+    `INSERT INTO photos (id,title,category,description,filename,r2_key,url,thumbnail,width,height,created_at,added_at,published) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,0)`
   ).bind(
     id, title, category,
     formData.get('description') || '',
     file.name, key, url, thumbUrl,
     width, height,
-    new Date().toISOString()
+    now, now.slice(0, 10)
   ).run();
 
   return jsonRes({ ok: true, id, url, thumbnail: thumbUrl, key, title });
@@ -1529,6 +1530,35 @@ Sitemap: ${base}/sitemap.xml`;
   });
 }
 
+// ===== NEW BADGE SETTINGS =====
+async function getNewBadgeDays(env) {
+  const row = await env.DB.prepare("SELECT value FROM settings WHERE key = 'new_badge_days'").first();
+  return parseInt(row?.value || '7', 10);
+}
+
+async function handleNewBadgeSettings(request, env) {
+  if (request.method === 'GET') {
+    const days = await getNewBadgeDays(env);
+    return jsonRes({ days }, 200, request);
+  }
+  if (request.method === 'POST') {
+    if (!await checkAuth(request, env)) return unauth(request);
+    const { days } = await request.json().catch(() => ({}));
+    if (!days || isNaN(days) || days < 1) return jsonRes({ error: 'invalid days' }, 400, request);
+    await env.DB.prepare("INSERT OR REPLACE INTO settings (key, value) VALUES ('new_badge_days', ?)").bind(String(days)).run();
+    return jsonRes({ ok: true, days }, 200, request);
+  }
+  return jsonRes({ error: 'method not allowed' }, 405, request);
+}
+
+async function handleTogglePhotoNew(request, env) {
+  if (!await checkAuth(request, env)) return unauth(request);
+  const { photo_id, is_new } = await request.json().catch(() => ({}));
+  if (!photo_id) return jsonRes({ error: 'photo_id required' }, 400, request);
+  await env.DB.prepare("UPDATE photos SET is_new = ? WHERE id = ?").bind(is_new ? 1 : 0, photo_id).run();
+  return jsonRes({ ok: true }, 200, request);
+}
+
 // ===== ADMIN PURCHASES =====
 async function handleAdminPurchases(request, env) {
   if (!await checkAuth(request, env)) return unauth(request);
@@ -1624,6 +1654,8 @@ export default {
     if (path === '/api/verify-payment')    return handleVerifyPayment(request, env, ctx);
     if (path === '/api/admin/purchases')   return handleAdminPurchases(request, env);
     if (path === '/api/admin/create-token' && request.method === 'POST') return handleAdminCreateToken(request, env);
+    if (path === '/api/new-badge-settings') return handleNewBadgeSettings(request, env);
+    if (path === '/api/admin/toggle-photo-new' && request.method === 'POST') return handleTogglePhotoNew(request, env);
     if (path === '/api/admin/migrate-amount' && request.method === 'POST') {
       if (!await checkAuth(request, env)) return unauth(request);
       await env.DB.prepare('ALTER TABLE download_tokens ADD COLUMN amount REAL DEFAULT 0').run().catch(() => {});
