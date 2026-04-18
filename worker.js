@@ -1553,9 +1553,15 @@ async function handleNewBadgeSettings(request, env) {
 
 async function handleTogglePhotoNew(request, env) {
   if (!await checkAuth(request, env)) return unauth(request);
-  const { photo_id, is_new } = await request.json().catch(() => ({}));
+  const { photo_id, is_new, title, category, url, thumbnail } = await request.json().catch(() => ({}));
   if (!photo_id) return jsonRes({ error: 'photo_id required' }, 400, request);
-  await env.DB.prepare("UPDATE photos SET is_new = ? WHERE id = ?").bind(is_new ? 1 : 0, photo_id).run();
+  const result = await env.DB.prepare("UPDATE photos SET is_new = ? WHERE id = ?").bind(is_new ? 1 : 0, photo_id).run();
+  if (result.changes === 0 && is_new) {
+    // Drive photo not yet in D1 — insert minimal record
+    await env.DB.prepare(
+      "INSERT OR IGNORE INTO photos (id, title, category, url, thumbnail, is_new, published) VALUES (?,?,?,?,?,1,1)"
+    ).bind(photo_id, title||'', category||'', url||'', thumbnail||'').run();
+  }
   return jsonRes({ ok: true }, 200, request);
 }
 
