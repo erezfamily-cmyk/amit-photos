@@ -120,6 +120,10 @@ nav.scrolled { border-bottom-color: rgba(200, 169, 110, 0.3); }
   color: #c8a96e !important;
   font-weight: 600;
 }
+#nav-sale {
+  color: #34d399 !important;
+  font-weight: 600;
+}
 
 .nav-links a::after {
   content: '';
