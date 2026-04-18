@@ -112,8 +112,29 @@ def fetch_image_as_base64(url):
     return b64, content_type
 
 
+def describe_image(client, image_content, meta_text):
+    """שלב ראשון: Claude מתאר מה הוא רואה בתמונה."""
+    if not image_content:
+        return ""
+    msg = client.messages.create(
+        model="claude-sonnet-4-6",
+        max_tokens=300,
+        messages=[{"role": "user", "content": image_content + [{"type": "text", "text": f"""Describe this photo in detail. Focus on:
+- Exact subject (what/who is in the frame)
+- Setting and environment
+- Lighting conditions (direction, quality, time of day)
+- Composition technique (macro, wide, portrait, long exposure, etc.)
+- Any notable visual elements or details
+
+Metadata available: {meta_text}
+
+Be factual and precise. 3-5 sentences in English."""}]}],
+    )
+    return msg.content[0].text.strip()
+
+
 def generate_caption(photo):
-    """משתמש ב-Claude Vision כדי לכתוב כיתוב אינסטגרם יצירתי."""
+    """שלב ראשון: Vision תיאור. שלב שני: caption מבוסס תיאור + EXIF."""
     client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
 
     title       = photo.get("title", "")
@@ -122,7 +143,6 @@ def generate_caption(photo):
     exif        = photo.get("exif") or {}
 
     thumbnail_url = photo.get("thumbnail") or photo.get("url")
-    # המר URL יחסי למוחלט
     if thumbnail_url and thumbnail_url.startswith("/"):
         thumbnail_url = f"{SITE_URL}{thumbnail_url}"
 
@@ -142,31 +162,45 @@ def generate_caption(photo):
     if exif.get("focal"):     meta_lines.append(f"Focal length: {exif['focal']}mm")
     if exif.get("aperture"):  meta_lines.append(f"Aperture: f/{exif['aperture']}")
     if exif.get("shutter"):   meta_lines.append(f"Shutter: {exif['shutter']}s")
+    if exif.get("iso"):       meta_lines.append(f"ISO: {exif['iso']}")
     meta_text = "\n".join(meta_lines) if meta_lines else "(no metadata)"
+
+    # שלב 1: תיאור Vision
+    vision_description = describe_image(client, image_content, meta_text)
+    if vision_description:
+        print(f"👁️  תיאור Vision: {vision_description[:80]}…")
 
     hashtags = get_hashtags(category)
 
+    exif_parts = []
+    if exif.get("aperture"): exif_parts.append(f"f/{exif['aperture']}")
+    if exif.get("shutter"):  exif_parts.append(f"{exif['shutter']}s")
+    if exif.get("focal"):    exif_parts.append(f"{exif['focal']}mm")
+    if exif.get("iso"):      exif_parts.append(f"ISO {exif['iso']}")
+    if exif.get("camera"):   exif_parts.append(exif['camera'])
+    exif_line = " · ".join(exif_parts) if exif_parts else ""
+
     system_prompt = """You are writing Instagram captions for an Israeli photographer named Amit.
-Style: factual, precise, informative — like a photographer explaining their craft.
-CRITICAL: Use ONLY Hebrew characters for Hebrew text. Never mix Arabic script with Hebrew.
-Do not include URLs in the text body.
-Do not write hashtags — they will be added separately."""
+Style: factual, precise, informative — like a photographer explaining their craft to fellow photographers.
+CRITICAL: Write in Hebrew only. Never mix Arabic script with Hebrew characters.
+Do not include URLs. Do not write hashtags."""
 
-    user_content = image_content + [{"type": "text", "text": f"""Write an Instagram caption for this photo.
+    caption_prompt = f"""Write an Instagram caption based on this photo analysis.
 
-Metadata:
-{meta_text}
+Vision description: {vision_description or '(not available)'}
+Metadata: {meta_text}
+EXIF summary: {exif_line or '(not available)'}
 
-Caption structure (exactly in this order):
-1. One sentence describing exactly what is in the photo (subject, location if known, technique — e.g. macro, long exposure, portrait).
-2. One sentence about the photographer's creative choices: framing, light, angle, timing.
-3. Technical line in Hebrew listing available EXIF params (aperture, shutter, focal length, camera) — only include fields that are available in the metadata.
+Caption structure (in this exact order):
+1. One precise sentence: what is in the frame, technique used (macro/long exposure/portrait/etc.), location if identifiable.
+2. One sentence: what compositional or lighting choice Amit made and why it works.
+3. If EXIF data is available — one technical line listing the settings (aperture, shutter, focal length, ISO, camera). If not available, skip this line entirely.
 4. Empty line
 5. 🛍️ זמין לרכישה — amitphotos.com (link in bio)
 
-Write in Hebrew. Be specific and concrete — no poetic metaphors, no emotional language. Describe what you actually see.
-Output only the caption text (no hashtags, no extra explanations).
-"""}]
+Write in Hebrew. Be specific — no metaphors, no emotional language. Output only the caption."""
+
+    user_content = image_content + [{"type": "text", "text": caption_prompt}]
 
     msg = client.messages.create(
         model="claude-sonnet-4-6",
