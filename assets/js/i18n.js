@@ -247,6 +247,8 @@ const TRANSLATIONS = {
     'buy.auto.download':  'הקובץ יורד אוטומטית לאחר האישור',
     'buy.back':           '← חזרה',
     'buy.note':         'לאחר התשלום הקובץ יורד אוטומטית. תשלום מאובטח דרך PayPal.',
+    'buy.alt.prefix':   'ניתן לרכוש גם ב',
+    'buy.alt.suffix':   ' בפנייה טלפונית:',
 
     // Print modal
     'print.label':      'הזמנת הדפסה',
@@ -550,6 +552,8 @@ const TRANSLATIONS = {
     'buy.auto.download':  'File downloads automatically after payment',
     'buy.back':           '← Back',
     'buy.note':         'After payment the file downloads automatically. Secure payment via PayPal.',
+    'buy.alt.prefix':   'Also available via Bit / Paybox — call us:',
+    'buy.alt.suffix':   '',
 
     // Print modal
     'print.label':      'Print Order',
@@ -691,6 +695,10 @@ function setLang(lang) {
   _lang = lang;
   localStorage.setItem('lang', lang);
   applyTranslations();
+  const phoneEl = document.getElementById('buy-alt-phone');
+  if (phoneEl) {
+    phoneEl.textContent = lang === 'en' ? '+972 50-333-3227' : '050-3333227';
+  }
   // Re-render dynamic gallery content if available
   if (typeof window.onLangChange === 'function') window.onLangChange();
 }
