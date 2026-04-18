@@ -389,6 +389,7 @@ def main():
                 "width": meta.get("width", 1920),
                 "height": meta.get("height", 1080),
                 "exif": exif if exif else None,
+                "added_at": __import__('datetime').date.today().isoformat(),
             }
             all_photos.append(photo)
             new_count += 1
