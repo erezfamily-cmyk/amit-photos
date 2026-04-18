@@ -1896,7 +1896,7 @@ const Photos = (() => {
     let left = rect.left - popupW + rect.width;
     if (left < 8) left = 8;
     popup.style.left = left + 'px';
-    popup.style.top = (rect.bottom + 6 + window.scrollY) + 'px';
+    popup.style.top = (rect.bottom + 6) + 'px';
     document.getElementById('popup-save-btn').onclick = async () => {
       const small = parseFloat($('popup-price-small').value);
       const medium = parseFloat($('popup-price-medium').value);
