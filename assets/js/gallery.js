@@ -145,9 +145,21 @@ async function loadPhotos() {
   showSkeletons(grid);
 
   try {
-    const jsonRes = await fetch('data/photos.json');
+    const [jsonRes, apiRes] = await Promise.all([
+      fetch('data/photos.json'),
+      fetch('/api/photos').catch(() => null)
+    ]);
     allPhotos = jsonRes.ok ? await jsonRes.json() : getDemoPhotos();
     if (!allPhotos.length) allPhotos = getDemoPhotos();
+    // מזג is_new ו-added_at מה-API
+    if (apiRes?.ok) {
+      const apiPhotos = await apiRes.json().catch(() => []);
+      const apiMap = new Map(apiPhotos.map(p => [p.id, p]));
+      allPhotos = allPhotos.map(p => {
+        const a = apiMap.get(p.id);
+        return a ? { ...p, is_new: a.is_new, added_at: a.added_at } : p;
+      });
+    }
   } catch {
     allPhotos = getDemoPhotos();
   }
