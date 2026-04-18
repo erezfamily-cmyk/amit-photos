@@ -689,6 +689,15 @@ nav.scrolled { border-bottom-color: rgba(200, 169, 110, 0.3); }
   pointer-events: none;
 }
 
+.filter-btn-new {
+  border-color: #c8a96e !important;
+  color: #c8a96e !important;
+}
+.filter-btn-new.active, .filter-btn-new:hover {
+  background: #c8a96e !important;
+  color: #000 !important;
+}
+
 .gallery-item {
   break-inside: avoid;
   margin-bottom: 12px;
