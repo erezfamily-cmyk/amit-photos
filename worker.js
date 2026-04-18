@@ -603,8 +603,39 @@ async function handleDownload(request, env, token) {
   return Response.redirect(driveUrl, 302);
 }
 
+// ===== PURCHASE NOTIFICATIONS =====
+async function sendPurchaseEmail(env, { titles, size, amount, txnId, tokens, origin }) {
+  if (!env.RESEND_API_KEY) return;
+  const adminEmail = env.ADMIN_EMAIL || 'contact@amitphotos.com';
+  const fromEmail = 'Amit Photos <onboarding@resend.dev>';
+  const sizeLabel = { small: 'קובץ רשת', medium: 'קובץ הדפסה', large: 'קובץ מלא' }[size] || size;
+  const tokenLinks = tokens.map(t => `<a href="${origin}/api/download/${t}">${origin}/api/download/${t}</a>`).join('<br>');
+  const html = `
+    <div dir="rtl" style="font-family:Arial,sans-serif;padding:24px">
+      <h2>📸 רכישה חדשה ב-Amit Photos!</h2>
+      <p><strong>תמונות:</strong> ${titles.join(', ')}</p>
+      <p><strong>גודל:</strong> ${sizeLabel}</p>
+      <p><strong>סכום:</strong> ₪${amount}</p>
+      <p><strong>Transaction:</strong> ${txnId}</p>
+      <p><strong>קישורי הורדה:</strong><br>${tokenLinks}</p>
+    </div>`;
+  await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ from: fromEmail, to: adminEmail, subject: `רכישה חדשה 📸 — ${titles[0]} (${sizeLabel})`, html }),
+  }).catch(() => {});
+}
+
+async function sendPurchaseWhatsApp(env, { titles, size, amount, txnId }) {
+  if (!env.CALLMEBOT_PHONE || !env.CALLMEBOT_APIKEY) return;
+  const sizeLabel = { small: 'רשת', medium: 'הדפסה', large: 'מלא' }[size] || size;
+  const msg = `רכישה חדשה! 📸 ${titles.join(', ')} | ${sizeLabel} | ₪${amount} | ${txnId}`;
+  const url = `https://api.callmebot.com/whatsapp.php?phone=${env.CALLMEBOT_PHONE}&text=${encodeURIComponent(msg)}&apikey=${env.CALLMEBOT_APIKEY}`;
+  await fetch(url).catch(() => {});
+}
+
 // ===== VERIFY PAYPAL PAYMENT (PDT — server-to-server) =====
-async function handleVerifyPayment(request, env) {
+async function handleVerifyPayment(request, env, ctx) {
   if (request.method !== 'GET') return jsonRes({ error: 'method not allowed' }, 405, request);
   const url = new URL(request.url);
   const params = url.searchParams;
@@ -674,20 +705,25 @@ async function handleVerifyPayment(request, env) {
   for (const photoId of photoIds) {
     const token = crypto.randomUUID();
     await env.DB.prepare(
-      'INSERT INTO download_tokens (token, photo_ids, size, tx, used, expires_at, created_at) VALUES (?, ?, ?, ?, 0, ?, ?)'
-    ).bind(token, JSON.stringify([photoId]), size, txnId, expires, now).run();
+      'INSERT INTO download_tokens (token, photo_ids, size, tx, used, expires_at, created_at, amount) VALUES (?, ?, ?, ?, 0, ?, ?, ?)'
+    ).bind(token, JSON.stringify([photoId]), size, txnId, expires, now, mcGross / photoIds.length).run();
     tokens.push(token);
   }
 
+  // Collect titles and send notifications (fire-and-forget)
+  const notifTitles = await Promise.all(photoIds.map(async id => {
+    const r = await env.DB.prepare('SELECT title FROM photos WHERE id = ?').bind(id).first();
+    return r?.title || id;
+  }));
+  const origin = new URL(request.url).origin;
+  ctx.waitUntil(sendPurchaseEmail(env, { titles: notifTitles, size, amount: mcGross, txnId, tokens, origin }));
+  ctx.waitUntil(sendPurchaseWhatsApp(env, { titles: notifTitles, size, amount: mcGross, txnId }));
+
   if (tokens.length === 1) {
-    const photo = await env.DB.prepare('SELECT title FROM photos WHERE id = ?').bind(photoIds[0]).first();
-    return jsonRes({ url: `/api/download/${tokens[0]}`, title: photo?.title || 'תמונה' }, 200, request);
+    return jsonRes({ url: `/api/download/${tokens[0]}`, title: notifTitles[0] }, 200, request);
   }
 
-  const urlItems = await Promise.all(photoIds.map(async (photoId, i) => {
-    const photo = await env.DB.prepare('SELECT title FROM photos WHERE id = ?').bind(photoId).first();
-    return { url: `/api/download/${tokens[i]}`, title: photo?.title || `תמונה ${i + 1}` };
-  }));
+  const urlItems = photoIds.map((photoId, i) => ({ url: `/api/download/${tokens[i]}`, title: notifTitles[i] }));
   return jsonRes({ urls: urlItems, title: params.get('item_name') || 'חבילת תמונות' }, 200, request);
 }
 
@@ -1493,9 +1529,76 @@ Sitemap: ${base}/sitemap.xml`;
   });
 }
 
+// ===== ADMIN PURCHASES =====
+async function handleAdminPurchases(request, env) {
+  if (!await checkAuth(request, env)) return unauth(request);
+  const url = new URL(request.url);
+  const filter = url.searchParams.get('filter') || 'all';
+  const now = Math.floor(Date.now() / 1000);
+
+  let whereClauses = [];
+  if (filter === 'active')  whereClauses.push(`t.used = 0 AND t.expires_at > ${now}`);
+  if (filter === 'used')    whereClauses.push(`t.used = 1`);
+  if (filter === 'expired') whereClauses.push(`t.used = 0 AND t.expires_at <= ${now}`);
+  const where = whereClauses.length ? `WHERE ${whereClauses[0]}` : '';
+
+  const rows = await env.DB.prepare(`
+    SELECT t.token, t.photo_ids, t.size, t.tx, t.used, t.expires_at, t.created_at,
+           COALESCE(t.amount, 0) as amount,
+           p.title
+    FROM download_tokens t
+    LEFT JOIN photos p ON json_extract(t.photo_ids, '$[0]') = p.id
+    ${where}
+    ORDER BY t.created_at DESC
+    LIMIT 200
+  `).all();
+
+  const stats = await env.DB.prepare(`
+    SELECT
+      COALESCE(SUM(amount), 0) as total_revenue,
+      COUNT(*) as total_purchases,
+      SUM(CASE WHEN created_at >= ${now - 30*86400} THEN 1 ELSE 0 END) as this_month
+    FROM download_tokens
+  `).first();
+
+  const topPhotos = await env.DB.prepare(`
+    SELECT p.title, COUNT(*) as cnt
+    FROM download_tokens t
+    LEFT JOIN photos p ON json_extract(t.photo_ids, '$[0]') = p.id
+    WHERE p.title IS NOT NULL
+    GROUP BY json_extract(t.photo_ids, '$[0]')
+    ORDER BY cnt DESC
+    LIMIT 5
+  `).all();
+
+  return jsonRes({
+    tokens: rows.results,
+    stats: { ...stats, top_photos: topPhotos.results }
+  }, 200, request);
+}
+
+async function handleAdminCreateToken(request, env) {
+  if (!await checkAuth(request, env)) return unauth(request);
+  const { photo_id, size } = await request.json().catch(() => ({}));
+  if (!photo_id || !size) return jsonRes({ error: 'photo_id and size required' }, 400, request);
+  const VALID_SIZES = ['small', 'medium', 'large'];
+  if (!VALID_SIZES.includes(size)) return jsonRes({ error: 'invalid size' }, 400, request);
+
+  const now = Math.floor(Date.now() / 1000);
+  const expires = now + 30 * 86400;
+  const token = crypto.randomUUID();
+
+  await env.DB.prepare(
+    'INSERT INTO download_tokens (token, photo_ids, size, tx, used, expires_at, created_at, amount) VALUES (?, ?, ?, ?, 0, ?, ?, 0)'
+  ).bind(token, JSON.stringify([photo_id]), size, `MANUAL_${token.slice(0,8)}`, expires, now).run();
+
+  const origin = new URL(request.url).origin;
+  return jsonRes({ token, url: `${origin}/api/download/${token}` }, 200, request);
+}
+
 // ===== MAIN ROUTER =====
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
     const url = new URL(request.url);
     const path = url.pathname;
 
@@ -1518,7 +1621,14 @@ export default {
     if (path === '/api/newsletter')        return handleNewsletter(request, env);
     if (path === '/api/unsubscribe')       return handleUnsubscribe(request, env);
     if (path === '/api/reply')             return handleReply(request, env);
-    if (path === '/api/verify-payment')    return handleVerifyPayment(request, env);
+    if (path === '/api/verify-payment')    return handleVerifyPayment(request, env, ctx);
+    if (path === '/api/admin/purchases')   return handleAdminPurchases(request, env);
+    if (path === '/api/admin/create-token' && request.method === 'POST') return handleAdminCreateToken(request, env);
+    if (path === '/api/admin/migrate-amount' && request.method === 'POST') {
+      if (!await checkAuth(request, env)) return unauth(request);
+      await env.DB.prepare('ALTER TABLE download_tokens ADD COLUMN amount REAL DEFAULT 0').run().catch(() => {});
+      return jsonRes({ ok: true }, 200, request);
+    }
     if (path.startsWith('/api/download/')) return handleDownload(request, env, path.slice('/api/download/'.length));
     if (path === '/api/print/catalog')        return handlePrintCatalog(request, env);
     if (path === '/api/print/quote')          return handlePrintQuote(request, env);

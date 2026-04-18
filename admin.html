@@ -486,6 +486,10 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
         <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><circle cx="18" cy="5" r="3" stroke-width="1.5"/><circle cx="6" cy="12" r="3" stroke-width="1.5"/><circle cx="18" cy="19" r="3" stroke-width="1.5"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49" stroke-width="1.5"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49" stroke-width="1.5"/></svg>
         סושיאל
       </div>
+      <div class="nav-item" data-section="purchases">
+        <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-1.5 6h13M7 13L5.4 5M10 21a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm7 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2z" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        רכישות
+      </div>
     </nav>
     <div class="sidebar-footer">
       <button class="btn-logout" id="logout-btn">התנתק</button>
@@ -769,6 +773,67 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
       <div id="cust-empty" class="empty-state" style="display:none">
         <div class="empty-icon">👥</div>
         <p>אין לקוחות או פניות עדיין</p>
+      </div>
+    </section>
+
+    <section id="section-purchases" class="section">
+      <h2 class="section-title">רכישות</h2>
+
+      <!-- Stats -->
+      <div class="stats-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.5rem">
+        <div class="stat-card" style="background:var(--bg-card);border:1px solid var(--border);border-radius:6px;padding:1.25rem;text-align:center">
+          <div class="stat-val" id="pur-total-revenue" style="font-size:1.75rem;font-weight:700;color:var(--accent)">—</div>
+          <div style="color:var(--text-muted);font-size:.8rem;margin-top:.25rem">סה"כ הכנסות</div>
+        </div>
+        <div class="stat-card" style="background:var(--bg-card);border:1px solid var(--border);border-radius:6px;padding:1.25rem;text-align:center">
+          <div class="stat-val" id="pur-this-month" style="font-size:1.75rem;font-weight:700;color:var(--accent)">—</div>
+          <div style="color:var(--text-muted);font-size:.8rem;margin-top:.25rem">30 ימים אחרונים</div>
+        </div>
+        <div class="stat-card" style="background:var(--bg-card);border:1px solid var(--border);border-radius:6px;padding:1.25rem;text-align:center">
+          <div id="pur-top-photos" style="font-size:.85rem;color:var(--text-muted);line-height:1.8">—</div>
+          <div style="color:var(--text-muted);font-size:.8rem;margin-top:.25rem">פופולריות</div>
+        </div>
+      </div>
+
+      <!-- Filter + Create -->
+      <div style="display:flex;gap:.75rem;align-items:center;margin-bottom:1rem;flex-wrap:wrap">
+        <div style="display:flex;gap:.5rem">
+          <button type="button" class="pur-filter-btn btn-sm active" data-filter="all">הכל</button>
+          <button type="button" class="pur-filter-btn btn-sm" data-filter="active">פעיל</button>
+          <button type="button" class="pur-filter-btn btn-sm" data-filter="used">שומש</button>
+          <button type="button" class="pur-filter-btn btn-sm" data-filter="expired">פג</button>
+        </div>
+        <button type="button" class="btn-accent btn-sm" id="pur-create-btn" style="margin-right:auto">+ צור טוקן</button>
+      </div>
+
+      <!-- Create token form (hidden) -->
+      <div id="pur-create-form" style="display:none;background:var(--bg-card);border:1px solid var(--border);border-radius:6px;padding:1rem;margin-bottom:1rem">
+        <div style="display:flex;gap:.75rem;align-items:flex-end;flex-wrap:wrap">
+          <div>
+            <label style="font-size:.8rem;color:var(--text-muted);display:block;margin-bottom:.25rem">Photo ID</label>
+            <input id="pur-new-photo-id" class="input-sm" placeholder="1jmBaBvk8rKo..." style="width:280px">
+          </div>
+          <div>
+            <label style="font-size:.8rem;color:var(--text-muted);display:block;margin-bottom:.25rem">גודל</label>
+            <select id="pur-new-size" class="input-sm">
+              <option value="small">קובץ רשת</option>
+              <option value="medium">קובץ הדפסה</option>
+              <option value="large">קובץ מלא</option>
+            </select>
+          </div>
+          <button type="button" class="btn-accent btn-sm" id="pur-create-submit">צור</button>
+        </div>
+        <div id="pur-create-result" style="margin-top:.75rem;font-size:.85rem;color:var(--accent)"></div>
+      </div>
+
+      <!-- Table -->
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead><tr>
+            <th>תמונה</th><th>גודל</th><th>סכום</th><th>תאריך</th><th>סטטוס</th><th>txn</th><th>קישור</th>
+          </tr></thead>
+          <tbody id="pur-table-body"></tbody>
+        </table>
       </div>
     </section>
   </main>
@@ -1165,6 +1230,7 @@ document.querySelectorAll('.nav-item').forEach(item => {
     if (item.dataset.section === 'newsletter') Newsletter.init();
     if (item.dataset.section === 'print-orders') PrintOrders.load();
     if (item.dataset.section === 'social') SocialSection.load();
+    if (item.dataset.section === 'purchases') Purchases.load();
   });
 });
 
@@ -2212,6 +2278,94 @@ const SocialSection = (() => {
   document.addEventListener('section:social', load);
 
   return { load };
+})();
+
+// ===== PURCHASES =====
+const Purchases = (() => {
+  let currentFilter = 'all';
+
+  function statusBadge(t) {
+    const now = Math.floor(Date.now() / 1000);
+    if (t.used) return '<span style="color:#e05">שומש</span>';
+    if (t.expires_at < now) return '<span style="color:#888">פג תוקף</span>';
+    return '<span style="color:#4c4">פעיל</span>';
+  }
+
+  function formatDate(ts) {
+    return new Date(ts * 1000).toLocaleDateString('he-IL');
+  }
+
+  async function load(filter) {
+    if (filter) currentFilter = filter;
+    const res = await fetch(`/api/admin/purchases?filter=${currentFilter}`, { headers: authHeaders() });
+    if (!res.ok) return;
+    const data = await res.json();
+
+    $('pur-total-revenue').textContent = `₪${Math.round(data.stats.total_revenue || 0)}`;
+    $('pur-this-month').textContent = data.stats.this_month || 0;
+    $('pur-top-photos').innerHTML = (data.stats.top_photos || [])
+      .map(p => `${p.title} (${p.cnt})`).join('<br>') || '—';
+
+    const tbody = $('pur-table-body');
+    tbody.innerHTML = '';
+    (data.tokens || []).forEach(t => {
+      const sizeLabel = { small: 'רשת', medium: 'הדפסה', large: 'מלא' }[t.size] || t.size;
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.title || t.photo_ids}</td>
+        <td>${sizeLabel}</td>
+        <td>${t.amount ? `₪${t.amount}` : '—'}</td>
+        <td>${formatDate(t.created_at)}</td>
+        <td>${statusBadge(t)}</td>
+        <td style="font-size:.7rem;color:var(--text-muted)">${(t.tx||'').slice(0,12)}…</td>
+        <td><button type="button" class="btn-sm" onclick="navigator.clipboard.writeText('${window.location.origin}/api/download/${t.token}')">העתק</button></td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  function initCreate() {
+    $('pur-create-btn').addEventListener('click', () => {
+      const form = $('pur-create-form');
+      form.style.display = form.style.display === 'none' ? 'block' : 'none';
+    });
+
+    $('pur-create-submit').addEventListener('click', async () => {
+      const photoId = $('pur-new-photo-id').value.trim();
+      const size = $('pur-new-size').value;
+      if (!photoId) return;
+      const res = await fetch('/api/admin/create-token', {
+        method: 'POST',
+        headers: authHeaders(),
+        body: JSON.stringify({ photo_id: photoId, size })
+      });
+      const data = await res.json();
+      if (data.url) {
+        $('pur-create-result').innerHTML = `✅ <a href="${data.url}" target="_blank">${data.url}</a>`;
+        load();
+      } else {
+        $('pur-create-result').textContent = `שגיאה: ${data.error}`;
+      }
+    });
+  }
+
+  function initFilters() {
+    document.querySelectorAll('.pur-filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.pur-filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        load(btn.dataset.filter);
+      });
+    });
+  }
+
+  let inited = false;
+  return {
+    load: (filter) => {
+      if (!inited) { initCreate(); initFilters(); inited = true; }
+      load(filter);
+    }
+  };
 })();
 </script>
 </body>
