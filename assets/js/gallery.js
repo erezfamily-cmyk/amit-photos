@@ -465,6 +465,10 @@ function initLightbox() {
   wallModal.addEventListener('click', e => { if (e.target === wallModal) closeWallMockup(); });
   document.addEventListener('keydown', e => { if (e.key === 'Escape' && wallModal.classList.contains('open')) closeWallMockup(); });
 
+  document.getElementById('wall-color-picker').addEventListener('input', e => {
+    wallModal.style.background = e.target.value;
+  });
+
   // Back to gallery button (mobile)
   const backBtn = document.getElementById('lb-back');
   if (backBtn) {
