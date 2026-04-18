@@ -140,6 +140,7 @@ input,textarea,select{font-family:var(--font);direction:rtl}
 .btn-sm{padding:.35rem .7rem;font-size:.8rem}
 .btn-icon{width:30px;height:30px;padding:0;display:inline-flex;align-items:center;justify-content:center;background:transparent;border:1px solid var(--border);color:var(--text-muted);border-radius:var(--radius);transition:all .2s}
 .btn-icon:hover{border-color:var(--accent);color:var(--accent)}
+.btn-icon.active{border-color:#c8a96e;color:#c8a96e}
 .btn-icon.danger:hover{border-color:var(--red);color:var(--red)}
 
 /* Newsletter */
@@ -640,6 +641,18 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
         </div>
       </div>
       <div class="stats-bar" id="photos-stats"></div>
+
+      <!-- New badge settings -->
+      <div style="display:flex;align-items:center;gap:.75rem;padding:.65rem .85rem;background:var(--bg-card);border:1px solid var(--border);border-radius:6px;margin-bottom:1rem;font-size:.85rem">
+        <span>תג "חדש" — הצג על תמונות שנוספו ב-</span>
+        <select id="new-badge-days-select" class="input-sm" style="width:auto">
+          <option value="7">7 ימים</option>
+          <option value="14">14 ימים</option>
+          <option value="30">30 ימים</option>
+        </select>
+        <button type="button" class="btn-accent btn-sm" id="new-badge-days-save">שמור</button>
+        <span id="new-badge-days-status" style="color:var(--text-muted);font-size:.8rem"></span>
+      </div>
 
       <div class="photos-toolbar">
         <input type="text" id="photos-search" placeholder="חיפוש לפי כותרת או קטגוריה...">
@@ -1438,6 +1451,9 @@ const Photos = (() => {
             <button class="btn-icon" title="העתק ID" onclick="event.stopPropagation();navigator.clipboard.writeText('${p.id}').then(()=>{this.title='הועתק!';setTimeout(()=>this.title='העתק ID',1500)})">
               <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor"><rect x="9" y="9" width="13" height="13" rx="2" stroke-width="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke-width="2"/></svg>
             </button>
+            <button class="btn-icon${p.is_new ? ' active' : ''}" title="${p.is_new ? 'הסר תג חדש' : 'סמן כחדש'}" id="new-btn-${p.id}" onclick="event.stopPropagation();Photos.toggleNew('${p.id}')">
+              <svg width="13" height="13" fill="${p.is_new ? 'currentColor' : 'none'}" viewBox="0 0 24 24" stroke="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" stroke-width="2"/></svg>
+            </button>
             <button class="btn-icon" title="ערוך" onclick="event.stopPropagation();Photos.openEditById('${p.id}')">
               <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" stroke-width="2"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" stroke-width="2"/></svg>
             </button>
@@ -1792,7 +1808,36 @@ const Photos = (() => {
   $('publish-photo-btn').addEventListener('click', () => setPublished(true));
   $('unpublish-photo-btn').addEventListener('click', () => setPublished(false));
 
-  return { init, openEdit, openEditById, confirmDelete, cardClick, toggleSelect, getData: () => data };
+  // New badge settings
+  async function loadNewBadgeSettings() {
+    const r = await fetch('/api/new-badge-settings', { headers: authHeaders() }).catch(() => null);
+    if (!r?.ok) return;
+    const d = await r.json().catch(() => null);
+    if (d?.days) $('new-badge-days-select').value = String(d.days);
+  }
+
+  $('new-badge-days-save').addEventListener('click', async () => {
+    const days = parseInt($('new-badge-days-select').value);
+    const r = await fetch('/api/new-badge-settings', {
+      method: 'POST', headers: authHeaders(), body: JSON.stringify({ days })
+    });
+    $('new-badge-days-status').textContent = r.ok ? '✓ נשמר' : '✗ שגיאה';
+    setTimeout(() => { $('new-badge-days-status').textContent = ''; }, 2000);
+  });
+
+  async function toggleNew(id) {
+    const idx = data.findIndex(p => p.id === id);
+    if (idx < 0) return;
+    const newVal = data[idx].is_new ? 0 : 1;
+    const r = await fetch('/api/admin/toggle-photo-new', {
+      method: 'POST', headers: authHeaders(), body: JSON.stringify({ photo_id: id, is_new: newVal })
+    });
+    if (!r.ok) { toast('שגיאה בעדכון תג', 'error'); return; }
+    data[idx].is_new = newVal;
+    render();
+  }
+
+  return { init: async () => { await init(); loadNewBadgeSettings(); }, openEdit, openEditById, confirmDelete, cardClick, toggleSelect, toggleNew, getData: () => data };
 })();
 
 // ===== SUBSCRIBERS =====
