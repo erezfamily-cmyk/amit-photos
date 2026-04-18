@@ -1843,8 +1843,10 @@ const Photos = (() => {
     const idx = data.findIndex(p => p.id === id);
     if (idx < 0) return;
     const newVal = data[idx].is_new ? 0 : 1;
+    const p = data[idx];
     const r = await fetch('/api/admin/toggle-photo-new', {
-      method: 'POST', headers: authHeaders(), body: JSON.stringify({ photo_id: id, is_new: newVal })
+      method: 'POST', headers: authHeaders(),
+      body: JSON.stringify({ photo_id: id, is_new: newVal, title: p.title, category: p.category, url: p.url, thumbnail: p.thumbnail })
     });
     if (!r.ok) { toast('שגיאה בעדכון תג', 'error'); return; }
     data[idx].is_new = newVal;
