@@ -1332,6 +1332,16 @@ nav.scrolled { border-bottom-color: rgba(200, 169, 110, 0.3); }
 .buy-size-popular {
   border-color: rgba(200, 169, 110, 0.4);
 }
+.buy-size-original-price {
+  color: #666;
+  font-size: .85em;
+  font-weight: 400;
+  text-decoration: line-through;
+}
+.buy-size-sale-price {
+  color: #34d399;
+  font-weight: 700;
+}
 .buy-size-sale-badge {
   position: absolute;
   top: -0.55rem;

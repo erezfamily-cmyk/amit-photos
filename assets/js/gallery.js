@@ -1115,16 +1115,18 @@ function openBuyModal(photo) {
 
     const price = getEffectivePrice(photo.id, size);
     const priceEl = btn.querySelector('.buy-size-price');
-    if (priceEl) priceEl.textContent = `₪${price}`;
     btn.dataset.price = price;
 
-    // sale badge
+    // sale badge + strikethrough original price
     btn.querySelector('.buy-size-sale-badge')?.remove();
     if (price < globalPrices[size]) {
+      if (priceEl) priceEl.innerHTML = `<s class="buy-size-original-price">₪${globalPrices[size]}</s> <span class="buy-size-sale-price">₪${price}</span>`;
       const badge = document.createElement('span');
       badge.className = 'buy-size-sale-badge';
       badge.textContent = '🏷 מבצע';
       btn.appendChild(badge);
+    } else {
+      if (priceEl) priceEl.textContent = `₪${price}`;
     }
 
     const pxEl = btn.querySelector('.buy-size-px');
