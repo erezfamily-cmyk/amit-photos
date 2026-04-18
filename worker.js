@@ -1680,6 +1680,10 @@ export default {
     const url = new URL(request.url);
     const path = url.pathname;
 
+    if (url.hostname === 'www.amitphotos.com') {
+      return Response.redirect('https://amitphotos.com' + url.pathname + url.search, 301);
+    }
+
     if (request.method === 'OPTIONS') {
       return new Response(null, { status: 204, headers: corsHeaders(request) });
     }
