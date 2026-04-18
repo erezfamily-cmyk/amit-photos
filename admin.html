@@ -2241,6 +2241,12 @@ const SocialSection = (() => {
 
     try {
       const r = await fetch(REPORT_URL + '?t=' + Date.now());
+      if (r.status === 404) {
+        $('social-loading').hidden = true;
+        $('social-error').hidden = false;
+        $('social-error').textContent = 'הדוח השבועי טרם נוצר — ירוץ בסוף השבוע הראשון.';
+        return;
+      }
       if (!r.ok) throw new Error(`HTTP ${r.status}`);
       const d = await r.json();
 
