@@ -1,5 +1,44 @@
 [
   {
+    "id": "1fzILbCfGU46rRqXBgQMymBvGQvqzNItY",
+    "title": "אבנים תלויות בחוט",
+    "category": "טבע דומם",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=1fzILbCfGU46rRqXBgQMymBvGQvqzNItY",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1fzILbCfGU46rRqXBgQMymBvGQvqzNItY&sz=w600",
+    "description": "קבוצת אבנים קטנות תלויות בחוט לבן על רקע חול בהיר",
+    "filename": "DSC_0100.jpg",
+    "width": 4288,
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "18.0-70.0 mm f/3.5-4.5",
+      "focal": 56,
+      "aperture": 7.1,
+      "iso": 100,
+      "shutter": 0.003125
+    }
+  },
+  {
+    "id": "1_NTq-zQKgMq0c5ik-1rYwtdBcUjjUCf0",
+    "title": "צהוב בשלג לבן",
+    "category": "טבע דומם",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=1_NTq-zQKgMq0c5ik-1rYwtdBcUjjUCf0",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1_NTq-zQKgMq0c5ik-1rYwtdBcUjjUCf0&sz=w600",
+    "description": "עמוד צהוב עתיק בשלג, עצים מכוסים לאחור",
+    "filename": "DSC_1930.jpg",
+    "width": 1506,
+    "height": 1000,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "focal": 46,
+      "aperture": 8,
+      "iso": 250,
+      "shutter": 0.01
+    }
+  },
+  {
     "id": "1jmBaBvk8rKoV5rvARPayvd010U_CW_gp",
     "title": "כניסה לשירותים ציבוריים",
     "category": "טבע דומם",
@@ -424,6 +463,44 @@
     "alt": "שקט בשדה לבנדר"
   },
   {
+    "id": "1ShiRcz-EvlJu6CG55sxIKZiCoLHgTSnx",
+    "title": "הכותל המערבי והעיר העתיקה",
+    "category": "ישראל",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=1ShiRcz-EvlJu6CG55sxIKZiCoLHgTSnx",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1ShiRcz-EvlJu6CG55sxIKZiCoLHgTSnx&sz=w600",
+    "description": "הכותל המערבי בירושלים עם הכיפה הזהובה של המסגד בטקסיס ברקע",
+    "filename": "DSC_0023.jpg",
+    "width": 4288,
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "focal": 20,
+      "aperture": 8,
+      "iso": 200,
+      "shutter": 0.004
+    }
+  },
+  {
+    "id": "1h-vakTBK3E0E0vSB19L9vUiMp1J6xGei",
+    "title": "הנפת הדגל על הגבעה",
+    "category": "ישראל",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=1h-vakTBK3E0E0vSB19L9vUiMp1J6xGei",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1h-vakTBK3E0E0vSB19L9vUiMp1J6xGei&sz=w600",
+    "description": "איש מניף דגל ישראלי על גבעת חול ברקע שמיים כחולים",
+    "filename": "DSC_0044.jpg",
+    "width": 1506,
+    "height": 1000,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "focal": 300,
+      "aperture": 4,
+      "iso": 200,
+      "shutter": 0.001
+    }
+  },
+  {
     "id": "19T9mcLvqy-4zoP-pdkFFgImvFeJM8co1",
     "title": "רשת של חיבורים",
     "category": "ישראל",
@@ -441,6 +518,26 @@
       "aperture": 4,
       "iso": 200,
       "shutter": 0.005
+    }
+  },
+  {
+    "id": "1wcG251Jn3FX9vakQqntFTEhNxNx8pfXv",
+    "title": "רימון בוגר על הענף",
+    "category": "ישראל",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=1wcG251Jn3FX9vakQqntFTEhNxNx8pfXv",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1wcG251Jn3FX9vakQqntFTEhNxNx8pfXv&sz=w600",
+    "description": "פרי רימון אדום בוגר תלוי על ענף עם עלים ירוקים",
+    "filename": "DSC_1981.JPG",
+    "width": 4288,
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "105.0 mm f/2.8",
+      "focal": 105,
+      "aperture": 3,
+      "iso": 100,
+      "shutter": 0.0025
     }
   },
   {
@@ -501,6 +598,24 @@
       "aperture": 22,
       "iso": 100,
       "shutter": 30
+    }
+  },
+  {
+    "id": "1wiKB353EM0WFo7WdLq0Fn9CYs94W3jZH",
+    "title": "טחנת רוח בשלג",
+    "category": "ישראל",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=1wiKB353EM0WFo7WdLq0Fn9CYs94W3jZH",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1wiKB353EM0WFo7WdLq0Fn9CYs94W3jZH&sz=w600",
+    "description": "טחנת רוח עתיקה מוקפת בעצים מושלגים תחת שמיים כחולים",
+    "filename": "DSC_2651.jpg",
+    "width": 3008,
+    "height": 2000,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D70",
+      "focal": 56,
+      "aperture": 11,
+      "shutter": 1.3
     }
   },
   {
@@ -710,6 +825,26 @@
     }
   },
   {
+    "id": "1sSsqlOdB9U07ScTa_q0bSPGr6vKEURuw",
+    "title": "זית עתיק בירושלים",
+    "category": "ישראל",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=1sSsqlOdB9U07ScTa_q0bSPGr6vKEURuw",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1sSsqlOdB9U07ScTa_q0bSPGr6vKEURuw&sz=w600",
+    "description": "עץ זית עתיק על רקע החומות העתיקות של העיר העתיקה",
+    "filename": "DSC_6585.jpg",
+    "width": 4288,
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "10.0-20.0 mm f/4.0-5.6",
+      "focal": 18,
+      "aperture": 5.3,
+      "iso": 100,
+      "shutter": 0.01
+    }
+  },
+  {
     "id": "18l1NkO-12l3fgP6JEMu6p1oL3RSBixX8",
     "title": "הים התיכון הזוהר",
     "category": "ישראל",
@@ -800,6 +935,122 @@
     "width": 950,
     "height": 631,
     "alt": "שחפים בערפל"
+  },
+  {
+    "id": "1mWsIli-Syyl6EHN8u7yXck3KSDEcSCDT",
+    "title": "חלון כחול בקיר לבנים",
+    "category": "ישראל",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=1mWsIli-Syyl6EHN8u7yXck3KSDEcSCDT",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1mWsIli-Syyl6EHN8u7yXck3KSDEcSCDT&sz=w600",
+    "description": "חלון כחול מעוקס בקיר אדום עם תגיות מספרים",
+    "filename": "DSC_9710.jpg",
+    "width": 1506,
+    "height": 1000,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "focal": 70,
+      "aperture": 8,
+      "iso": 200,
+      "shutter": 0.01
+    }
+  },
+  {
+    "id": "1QJLpgSQb3KyodrBYvMzz5HYIClrPzl6S",
+    "title": "כיפת האור",
+    "category": "ישראל",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=1QJLpgSQb3KyodrBYvMzz5HYIClrPzl6S",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1QJLpgSQb3KyodrBYvMzz5HYIClrPzl6S&sz=w600",
+    "description": "כיפה עתיקה עם חלון מרכזי המשדר אור בהיר לתוך הקתדרלה",
+    "filename": "DSC_9767.jpg",
+    "width": 1506,
+    "height": 1000,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "focal": 10,
+      "aperture": 5,
+      "iso": 640,
+      "shutter": 0.06666667
+    }
+  },
+  {
+    "id": "13jJVAw9k9pKQwuyjpeIUvIRURU8XE-qI",
+    "title": "כיפה זהובה של כנסייה",
+    "category": "ישראל",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=13jJVAw9k9pKQwuyjpeIUvIRURU8XE-qI",
+    "thumbnail": "https://drive.google.com/thumbnail?id=13jJVAw9k9pKQwuyjpeIUvIRURU8XE-qI&sz=w600",
+    "description": "תקרה מהממת עם כיפה זהובה מעוטרת ודמויות דתיות",
+    "filename": "DSC_9833.jpg",
+    "width": 1506,
+    "height": 1000,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "focal": 10,
+      "aperture": 5,
+      "iso": 400,
+      "shutter": 0.125
+    }
+  },
+  {
+    "id": "1X4w3gmZ_d0rFuBXWUfyNpSu4g0fIF9xq",
+    "title": "דלת ירוקה עם צלב",
+    "category": "ישראל",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=1X4w3gmZ_d0rFuBXWUfyNpSu4g0fIF9xq",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1X4w3gmZ_d0rFuBXWUfyNpSu4g0fIF9xq&sz=w600",
+    "description": "דלת ירוקה עתיקה עם צלבים כתומים בקיר כחול שחוק",
+    "filename": "DSC_9901.jpg",
+    "width": 1492,
+    "height": 1000,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "focal": 18,
+      "aperture": 6.3,
+      "iso": 200,
+      "shutter": 0.01
+    }
+  },
+  {
+    "id": "1JoBySABa-oPJm55RJfRpqHprHK8O8wrd",
+    "title": "בלון אוויר בשמיים",
+    "category": "ישראל",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=1JoBySABa-oPJm55RJfRpqHprHK8O8wrd",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1JoBySABa-oPJm55RJfRpqHprHK8O8wrd&sz=w600",
+    "description": "בלון אוויר חם צל על רקע שמיים כחולים בהירים",
+    "filename": "DSC_9919.jpg",
+    "width": 2848,
+    "height": 4288,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 200,
+      "aperture": 11,
+      "iso": 100,
+      "shutter": 0.000125
+    }
+  },
+  {
+    "id": "1wFMyUMJLaU4L94btk_ak5bobUFAUSsqK",
+    "title": "בלון אוויר על השמש",
+    "category": "ישראל",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=1wFMyUMJLaU4L94btk_ak5bobUFAUSsqK",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1wFMyUMJLaU4L94btk_ak5bobUFAUSsqK&sz=w600",
+    "description": "בלון אוויר חם מתעופף מול השמש בשעת הזריחה או השקיעה",
+    "filename": "DSC_9921.jpg",
+    "width": 2848,
+    "height": 4288,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 200,
+      "aperture": 11,
+      "iso": 100,
+      "shutter": 0.00015625
+    }
   },
   {
     "id": "1bZhip7_LBDGQWL6KwGfzPP9vMMaK_I0_",
@@ -984,6 +1235,46 @@
     }
   },
   {
+    "id": "1-J_jZHUAdtYpOgU4L3SHrBzqVoKLEmvE",
+    "title": "הליכה על מזח",
+    "category": "ישראל",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=1-J_jZHUAdtYpOgU4L3SHrBzqVoKLEmvE",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1-J_jZHUAdtYpOgU4L3SHrBzqVoKLEmvE&sz=w600",
+    "description": "מזח עץ מגודר המשתרע מעל מימיות שקטות בעת אפור",
+    "filename": "MJH_8634 copy.jpg",
+    "width": 4669,
+    "height": 3113,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "10.0-20.0 mm f/3.5",
+      "focal": 10,
+      "aperture": 3.5,
+      "iso": 100,
+      "shutter": 0.001
+    }
+  },
+  {
+    "id": "1Kf6WIK62Xn9sc9lcnGu0vm2bUBLOsgUk",
+    "title": "מסלול בנחל ההולכה",
+    "category": "ישראל",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=1Kf6WIK62Xn9sc9lcnGu0vm2bUBLOsgUk",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1Kf6WIK62Xn9sc9lcnGu0vm2bUBLOsgUk&sz=w600",
+    "description": "גשר עץ משפחתי על פני ביצה ירוקה ועשבייה",
+    "filename": "MJH_8686 copy.jpg",
+    "width": 4800,
+    "height": 3200,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "10.0-20.0 mm f/3.5",
+      "focal": 10,
+      "aperture": 10,
+      "iso": 100,
+      "shutter": 0.008
+    }
+  },
+  {
     "id": "1Rwx9jKcw9RERPNi2Rf1PdXuRbGrDIHXC",
     "title": "שקיעה על ים סוף",
     "category": "ישראל",
@@ -1021,6 +1312,44 @@
       "aperture": 6.3,
       "iso": 100,
       "shutter": 25
+    }
+  },
+  {
+    "id": "1fDFiKrA61df9a2W4s-wwm-VlV9HQbZqa",
+    "title": "ארכיטקטורה צבעונית עירונית",
+    "category": "ישראל",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=1fDFiKrA61df9a2W4s-wwm-VlV9HQbZqa",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1fDFiKrA61df9a2W4s-wwm-VlV9HQbZqa&sz=w600",
+    "description": "חזית בנין מודרני בעל חלונות גדולים וצבעים חמים וסוגים שונים",
+    "filename": "Z72_0210.JPG",
+    "width": 8256,
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "focal": 200,
+      "aperture": 2.8,
+      "iso": 280,
+      "shutter": 0.000125
+    }
+  },
+  {
+    "id": "1PTQ7groQ9MUH75RwdJuEMZqbtjq3AYXD",
+    "title": "לוחות גלישה צבעוניים",
+    "category": "ישראל",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=1PTQ7groQ9MUH75RwdJuEMZqbtjq3AYXD",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1PTQ7groQ9MUH75RwdJuEMZqbtjq3AYXD&sz=w600",
+    "description": "אוסף לוחות גלישה בצבעים עוזים מסודרים בשורות על מדף",
+    "filename": "Z72_0219.JPG",
+    "width": 8256,
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "focal": 200,
+      "aperture": 2.8,
+      "iso": 560,
+      "shutter": 0.000125
     }
   },
   {
@@ -2723,6 +3052,746 @@
     }
   },
   {
+    "id": "1_Pga6DrvdkTb_9zkw1hBGMXHLp8KHfkT",
+    "title": "עמודים קורינתיים עתיקים",
+    "category": "איטליה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1_Pga6DrvdkTb_9zkw1hBGMXHLp8KHfkT",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1_Pga6DrvdkTb_9zkw1hBGMXHLp8KHfkT&sz=w600",
+    "description": "פרט אדריכלי של עמודים קורינתיים מעוטרים בעלי כותרות מפוסלות בדיוק",
+    "filename": "DSC_1902.JPG",
+    "width": 4288,
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 200,
+      "aperture": 2.8,
+      "iso": 160,
+      "shutter": 0.004
+    }
+  },
+  {
+    "id": "1SJ9wF8FE6MSy2qJNMt0SHbPCLQmzbRNe",
+    "title": "עמודים קלאסיים איטלקיים",
+    "category": "איטליה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1SJ9wF8FE6MSy2qJNMt0SHbPCLQmzbRNe",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1SJ9wF8FE6MSy2qJNMt0SHbPCLQmzbRNe&sz=w600",
+    "description": "עמודים אבן מעוטרים בדוגמנות קורינתיות עתיקות ברומא",
+    "filename": "DSC_1904.JPG",
+    "width": 2848,
+    "height": 4288,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 200,
+      "aperture": 2.8,
+      "iso": 160,
+      "shutter": 0.005
+    }
+  },
+  {
+    "id": "1k342FS13XbZStn_u8XWy3BGEw28gKPTr",
+    "title": "חלון איטלקי קלאסי",
+    "category": "איטליה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1k342FS13XbZStn_u8XWy3BGEw28gKPTr",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1k342FS13XbZStn_u8XWy3BGEw28gKPTr&sz=w600",
+    "description": "חלון עתיק בקיר כתום עם סורגים ודמויות דקורטיביות בפנים",
+    "filename": "DSC_2770.JPG",
+    "width": 4288,
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "17.0-55.0 mm f/2.8",
+      "focal": 22,
+      "aperture": 2.8,
+      "iso": 125,
+      "shutter": 0.002
+    }
+  },
+  {
+    "id": "1Tn-a5p6UuESo_MR6qD8zMuvdIxEjyMkt",
+    "title": "נעלות אהבה בגשר רימו",
+    "category": "איטליה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1Tn-a5p6UuESo_MR6qD8zMuvdIxEjyMkt",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1Tn-a5p6UuESo_MR6qD8zMuvdIxEjyMkt&sz=w600",
+    "description": "אלפי נעלות תלויות על גשר ברומא, סמל של אהבה וזיכרונות",
+    "filename": "DSC_2787.JPG",
+    "width": 4288,
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 102,
+      "aperture": 2.8,
+      "iso": 125,
+      "shutter": 0.004
+    }
+  },
+  {
+    "id": "1-G47Eq3eLQ6y11uHySJfv1EI0XHQSxA2",
+    "title": "שערי הים הכחול",
+    "category": "איטליה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1-G47Eq3eLQ6y11uHySJfv1EI0XHQSxA2",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1-G47Eq3eLQ6y11uHySJfv1EI0XHQSxA2&sz=w600",
+    "description": "רציף עם עמודים מפוספסים בשמפניה וגישה למים הים התיכון הצלולים",
+    "filename": "DSC_2869.JPG",
+    "width": 4288,
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "10.0-20.0 mm f/4.0-5.6",
+      "focal": 14,
+      "aperture": 8,
+      "iso": 100,
+      "shutter": 0.004
+    }
+  },
+  {
+    "id": "1Qt69tACle3_iNROBY-zUUdcl7d2wuZLJ",
+    "title": "סימן דרך באיטליה",
+    "category": "איטליה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1Qt69tACle3_iNROBY-zUUdcl7d2wuZLJ",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1Qt69tACle3_iNROBY-zUUdcl7d2wuZLJ&sz=w600",
+    "description": "סימן צבעוני על רצפת אבן בדרך איטליאית",
+    "filename": "DSC_2927.JPG",
+    "width": 4288,
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "10.0-20.0 mm f/4.0-5.6",
+      "focal": 20,
+      "aperture": 8,
+      "iso": 100,
+      "shutter": 0.004
+    }
+  },
+  {
+    "id": "12nOaszoYBiTKyxachL58lUYLa-vxYzd8",
+    "title": "מבצר עתיק באיטליה",
+    "category": "איטליה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=12nOaszoYBiTKyxachL58lUYLa-vxYzd8",
+    "thumbnail": "https://drive.google.com/thumbnail?id=12nOaszoYBiTKyxachL58lUYLa-vxYzd8&sz=w600",
+    "description": "מבט עילי על מצודה אבן עם חוזקים, שמיים כחולים וציפור עפה",
+    "filename": "DSC_2965_1.JPG",
+    "width": 4288,
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "10.0-20.0 mm f/4.0-5.6",
+      "focal": 10,
+      "aperture": 5,
+      "iso": 100,
+      "shutter": 0.00125
+    }
+  },
+  {
+    "id": "1uysCQie5FVgaEyh9rTXJjHVGy1M5wkD8",
+    "title": "מגדל עתיק באיטליה",
+    "category": "איטליה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1uysCQie5FVgaEyh9rTXJjHVGy1M5wkD8",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1uysCQie5FVgaEyh9rTXJjHVGy1M5wkD8&sz=w600",
+    "description": "מגדל אבן מימי הביניים שצולם מפנים החצר בשמיים כחולים",
+    "filename": "DSC_2966.JPG",
+    "width": 2848,
+    "height": 4288,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "10.0-20.0 mm f/4.0-5.6",
+      "focal": 10,
+      "aperture": 5,
+      "iso": 100,
+      "shutter": 0.001
+    }
+  },
+  {
+    "id": "13NNSHjffgqeX_YXwmscFygWCoEFuCouD",
+    "title": "נוף טוסקני דרך החלון",
+    "category": "איטליה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=13NNSHjffgqeX_YXwmscFygWCoEFuCouD",
+    "thumbnail": "https://drive.google.com/thumbnail?id=13NNSHjffgqeX_YXwmscFygWCoEFuCouD&sz=w600",
+    "description": "נוף כפרי איטלקי עם בתים צהובים וגגות אדומים, מבעד לחלון עתיק",
+    "filename": "DSC_2987.JPG",
+    "width": 2848,
+    "height": 4288,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "10.0-20.0 mm f/4.0-5.6",
+      "focal": 16,
+      "aperture": 8,
+      "iso": 100,
+      "shutter": 0.0025
+    }
+  },
+  {
+    "id": "1f7GG76McQzESDn4sSreSTbUQmqHIcPdD",
+    "title": "טירה עתיקה בפדובה",
+    "category": "איטליה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1f7GG76McQzESDn4sSreSTbUQmqHIcPdD",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1f7GG76McQzESDn4sSreSTbUQmqHIcPdD&sz=w600",
+    "description": "טירה מימי הביניים עם מגדלים גבוהים ערוץ מים בעיר פדובה באיטליה",
+    "filename": "DSC_3052.JPG",
+    "width": 4288,
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "10.0-20.0 mm f/4.0-5.6",
+      "focal": 10,
+      "aperture": 8,
+      "iso": 100,
+      "shutter": 0.004
+    }
+  },
+  {
+    "id": "1pErr33e_QZpYy2dBT1PJGH7sYo-GRrx3",
+    "title": "תמרור נשיקה באיטליה",
+    "category": "איטליה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1pErr33e_QZpYy2dBT1PJGH7sYo-GRrx3",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1pErr33e_QZpYy2dBT1PJGH7sYo-GRrx3&sz=w600",
+    "description": "תמרור כחול עם דמויות גבר ואישה וכיתוב נשיקה בבקשה",
+    "filename": "DSC_3147.JPG",
+    "width": 4171,
+    "height": 2769,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "17.0-55.0 mm f/2.8",
+      "focal": 34,
+      "aperture": 2.8,
+      "iso": 160,
+      "shutter": 0.00015625
+    }
+  },
+  {
+    "id": "1xvxrunjC5cVZZIOYrBpzHG6vFJtO5sOe",
+    "title": "ענפים לבנים בחוף",
+    "category": "איטליה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1xvxrunjC5cVZZIOYrBpzHG6vFJtO5sOe",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1xvxrunjC5cVZZIOYrBpzHG6vFJtO5sOe&sz=w600",
+    "description": "ענפים עץ מעופעפים על רקע קיר אדום וים כחול",
+    "filename": "DSC_3288_1.JPG",
+    "width": 4075,
+    "height": 2690,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "105.0 mm f/2.8",
+      "focal": 105,
+      "aperture": 3,
+      "iso": 100,
+      "shutter": 0.01
+    }
+  },
+  {
+    "id": "1PmTkW-UQpiqHNrsQFepqpwXLTX0B-rBi",
+    "title": "גלגל ענק בסילואט",
+    "category": "איטליה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1PmTkW-UQpiqHNrsQFepqpwXLTX0B-rBi",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1PmTkW-UQpiqHNrsQFepqpwXLTX0B-rBi&sz=w600",
+    "description": "גלגל ענק מואר מפעם שחור על רקע שמיים כחולים בהירים",
+    "filename": "DSC_3398.JPG",
+    "width": 4288,
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "17.0-55.0 mm f/2.8",
+      "focal": 20,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.000125
+    }
+  },
+  {
+    "id": "1ZJotfpUOSjFHaBkjTJnEO2XltNs4Gs1G",
+    "title": "אור מהעומק",
+    "category": "איטליה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1ZJotfpUOSjFHaBkjTJnEO2XltNs4Gs1G",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1ZJotfpUOSjFHaBkjTJnEO2XltNs4Gs1G&sz=w600",
+    "description": "מנהרה עתיקה באיטליה משדרת אור בוהק לעבר השמיים",
+    "filename": "DSC_4175.JPG",
+    "width": 2848,
+    "height": 4288,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "10.0-20.0 mm f/4.0-5.6",
+      "focal": 20,
+      "aperture": 5.6,
+      "iso": 100,
+      "shutter": 0.4
+    }
+  },
+  {
+    "id": "1edGoDWUmmGB7K-bnFnzFSOb6Gayus6vq",
+    "title": "קפה בשמש איטלקית",
+    "category": "איטליה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1edGoDWUmmGB7K-bnFnzFSOb6Gayus6vq",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1edGoDWUmmGB7K-bnFnzFSOb6Gayus6vq&sz=w600",
+    "description": "כיסאות צבעוניים בטרסת קפה עם צללים דרמטיים בשמש",
+    "filename": "DSC_4493.jpg",
+    "width": 4288,
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "10.0-20.0 mm f/4.0-5.6",
+      "focal": 20,
+      "aperture": 5.6,
+      "iso": 100,
+      "shutter": 0.002
+    }
+  },
+  {
+    "id": "1EjebolomtAsuGq74PQc8Pxkf5LotVBv-",
+    "title": "שקט על המים",
+    "category": "איטליה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1EjebolomtAsuGq74PQc8Pxkf5LotVBv-",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1EjebolomtAsuGq74PQc8Pxkf5LotVBv-&sz=w600",
+    "description": "סירות דייגים בשקיעה מול תיבת הרים בחוף איטלקי.",
+    "filename": "DSC_4613.jpg",
+    "width": 4165,
+    "height": 2738,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 200,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.00025
+    }
+  },
+  {
+    "id": "1kdVLlS65NmJqr112XAjizNoSeYbINCLL",
+    "title": "אלפקה בנעליים ורודות",
+    "category": "איטליה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1kdVLlS65NmJqr112XAjizNoSeYbINCLL",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1kdVLlS65NmJqr112XAjizNoSeYbINCLL&sz=w600",
+    "description": "אלפקה חום עם רתם אדום על רקע שדה ירוק",
+    "filename": "DSC_4791.jpg",
+    "width": 4288,
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 180,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.0005
+    }
+  },
+  {
+    "id": "1mo-KaL5oz61Fhi5m9etIKiSsyR1TYWIC",
+    "title": "אגם גארדה באיטליה",
+    "category": "איטליה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1mo-KaL5oz61Fhi5m9etIKiSsyR1TYWIC",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1mo-KaL5oz61Fhi5m9etIKiSsyR1TYWIC&sz=w600",
+    "description": "נוף פנורמי של אגם גארדה מהרים המקיפים אותו בצפון איטליה",
+    "filename": "DSC_4962.JPG",
+    "width": 4288,
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "17.0-55.0 mm f/2.8",
+      "focal": 23,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.003125
+    }
+  },
+  {
+    "id": "1g4JVNcNsxalFFpCs-K5DbYghO0Hd0UlH",
+    "title": "טיול בהרי האלפים",
+    "category": "איטליה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1g4JVNcNsxalFFpCs-K5DbYghO0Hd0UlH",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1g4JVNcNsxalFFpCs-K5DbYghO0Hd0UlH&sz=w600",
+    "description": "טיולן עוצר על מדרון ירוק עם נוף של עמקי הרים בתשתית",
+    "filename": "DSC_5100.JPG",
+    "width": 4288,
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 200,
+      "aperture": 9,
+      "iso": 100,
+      "shutter": 0.002
+    }
+  },
+  {
+    "id": "1uZomxGVZR5o2lmkQKCWp17nIiQeOFHPQ",
+    "title": "חנות מזון איטלקית קטנה",
+    "category": "איטליה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1uZomxGVZR5o2lmkQKCWp17nIiQeOFHPQ",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1uZomxGVZR5o2lmkQKCWp17nIiQeOFHPQ&sz=w600",
+    "description": "חנות מוצרים מקומיים בעיר קטנה באיטליה עם תצוגה מושכת",
+    "filename": "DSC_5406.JPG",
+    "width": 4288,
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "17.0-55.0 mm f/2.8",
+      "focal": 17,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.00625
+    }
+  },
+  {
+    "id": "1dY-uEmCygFx8GbPyM3zp1uwMkyToOL3R",
+    "title": "אמנות רחוב איטלקית",
+    "category": "איטליה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1dY-uEmCygFx8GbPyM3zp1uwMkyToOL3R",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1dY-uEmCygFx8GbPyM3zp1uwMkyToOL3R&sz=w600",
+    "description": "דמות מתכת שחורה של בנאי עם חתול על קיר צבעוני",
+    "filename": "DSC_5429.JPG",
+    "width": 4288,
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "17.0-55.0 mm f/2.8",
+      "focal": 30,
+      "aperture": 2.8,
+      "iso": 160,
+      "shutter": 0.004
+    }
+  },
+  {
+    "id": "1LmeA_lzVmKf92DKboiWe09WObAssZJX2",
+    "title": "גיאומטריה של צבעים",
+    "category": "איטליה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1LmeA_lzVmKf92DKboiWe09WObAssZJX2",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1LmeA_lzVmKf92DKboiWe09WObAssZJX2&sz=w600",
+    "description": "חלוקה גיאומטרית של קירות בצבעי אדום, לבן וטקסטורות אבן",
+    "filename": "DSC_5438.jpg",
+    "width": 4288,
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "17.0-55.0 mm f/2.8",
+      "focal": 55,
+      "aperture": 2.8,
+      "iso": 160,
+      "shutter": 0.005
+    }
+  },
+  {
+    "id": "1x0aWsyEodSum5i_qkD7Nw-auAyOLQANI",
+    "title": "חזית אדומה איטלקית",
+    "category": "איטליה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1x0aWsyEodSum5i_qkD7Nw-auAyOLQANI",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1x0aWsyEodSum5i_qkD7Nw-auAyOLQANI&sz=w600",
+    "description": "קיר אדום עם חלונות ירוקים וזרע פרחים ורודים",
+    "filename": "DSC_5568.jpg",
+    "width": 4217,
+    "height": 2801,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 125,
+      "aperture": 2.8,
+      "iso": 160,
+      "shutter": 0.0025
+    }
+  },
+  {
+    "id": "1fRjnuGzJW0uBfc9ese3fD3U0onBlslQn",
+    "title": "אווז בזהב הערב",
+    "category": "איטליה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1fRjnuGzJW0uBfc9ese3fD3U0onBlslQn",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1fRjnuGzJW0uBfc9ese3fD3U0onBlslQn&sz=w600",
+    "description": "אווז שוחה בבריכה עם זהב השמש מתחזר במים",
+    "filename": "DSC_5865.JPG",
+    "width": 4288,
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 160,
+      "aperture": 2.8,
+      "iso": 200,
+      "shutter": 0.000125
+    }
+  },
+  {
+    "id": "1t5XFhAn3AZa13cWd1cQjCpFWGspfWCA2",
+    "title": "שקיעה על הרציף",
+    "category": "איטליה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1t5XFhAn3AZa13cWd1cQjCpFWGspfWCA2",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1t5XFhAn3AZa13cWd1cQjCpFWGspfWCA2&sz=w600",
+    "description": "רציף עתיק בשקיעה זהובה מעל מים שקטים ושלווים",
+    "filename": "DSC_5955.JPG",
+    "width": 4288,
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "10.0-20.0 mm f/4.0-5.6",
+      "focal": 10,
+      "aperture": 18,
+      "iso": 125,
+      "shutter": 4
+    }
+  },
+  {
+    "id": "1iOR60uSBp61uVqLaV3kdFMhTaVqgUU-H",
+    "title": "שקיעה על הברווז",
+    "category": "איטליה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1iOR60uSBp61uVqLaV3kdFMhTaVqgUU-H",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1iOR60uSBp61uVqLaV3kdFMhTaVqgUU-H&sz=w600",
+    "description": "עמוד עץ בודד בזריחה אדומה מעל מים שקטים וברווזים שוחים",
+    "filename": "DSC_5959a.jpg",
+    "width": 4000,
+    "height": 2657,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "10.0-20.0 mm f/4.0-5.6",
+      "focal": 20,
+      "aperture": 5.6,
+      "iso": 200,
+      "shutter": 0.8
+    }
+  },
+  {
+    "id": "1fO0SCGXyCGCJv4zWl8GbihPxYtg-TP-J",
+    "title": "אגם טורקיז בדולומיטים",
+    "category": "איטליה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1fO0SCGXyCGCJv4zWl8GbihPxYtg-TP-J",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1fO0SCGXyCGCJv4zWl8GbihPxYtg-TP-J&sz=w600",
+    "description": "אגם צלול בצבע טורקיז מדהים מוקף בעצים וחוד הר תלול באיטליה",
+    "filename": "DSC_7350.JPG",
+    "width": 4288,
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "10.0-20.0 mm f/4.0-5.6",
+      "focal": 17,
+      "aperture": 6.3,
+      "iso": 100,
+      "shutter": 0.033333335
+    }
+  },
+  {
+    "id": "1AZtajkzS-jdhy-OdGYQ8OO44XGLMoBqZ",
+    "title": "השתקפויות בזכוכית",
+    "category": "איטליה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1AZtajkzS-jdhy-OdGYQ8OO44XGLMoBqZ",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1AZtajkzS-jdhy-OdGYQ8OO44XGLMoBqZ&sz=w600",
+    "description": "השתקפויות של שמיים והרים בחזיתות זכוכית מודרניות",
+    "filename": "DSC_7460.JPG",
+    "width": 4288,
+    "height": 2644,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 102,
+      "aperture": 5.6,
+      "iso": 100,
+      "shutter": 0.0008
+    }
+  },
+  {
+    "id": "1W7wDXDdElAC0V922wUZT3Jp5ga6TiLTe",
+    "title": "פסגות הדולומיטים המושלגות",
+    "category": "איטליה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1W7wDXDdElAC0V922wUZT3Jp5ga6TiLTe",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1W7wDXDdElAC0V922wUZT3Jp5ga6TiLTe&sz=w600",
+    "description": "נוף הרי של הדולומיטים באיטליה עם שיא מושלג בעונת החורף",
+    "filename": "DSC_7794.JPG",
+    "width": 4288,
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 70,
+      "aperture": 7.1,
+      "iso": 100,
+      "shutter": 0.003125
+    }
+  },
+  {
+    "id": "1V2x1O-7f6CMhpmNghfzq3ce5r9yI-HKB",
+    "title": "הרים בערפל הזהב",
+    "category": "איטליה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1V2x1O-7f6CMhpmNghfzq3ce5r9yI-HKB",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1V2x1O-7f6CMhpmNghfzq3ce5r9yI-HKB&sz=w600",
+    "description": "נוף הררי עוטוף בערפל זהוב עם עצים אפלים בקדמת התמונה",
+    "filename": "DSC_8190.JPG",
+    "width": 4288,
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "17.0-55.0 mm f/2.8",
+      "focal": 35,
+      "aperture": 5,
+      "iso": 160,
+      "shutter": 0.016666668
+    }
+  },
+  {
+    "id": "1CishrXKue-hFYL275vH4EQBbD-WsVWks",
+    "title": "צלם בהרי האלפים",
+    "category": "איטליה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1CishrXKue-hFYL275vH4EQBbD-WsVWks",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1CishrXKue-hFYL275vH4EQBbD-WsVWks&sz=w600",
+    "description": "צלם מקצועי תופס את יופי הנוף ההררי של איטליה",
+    "filename": "DSC_8266.JPG",
+    "width": 4288,
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "17.0-55.0 mm f/2.8",
+      "focal": 31,
+      "aperture": 5.6,
+      "iso": 100,
+      "shutter": 0.003125
+    }
+  },
+  {
+    "id": "1DSJ9J0MijqQFWik4S8DTOq6LEJjvjCF_",
+    "title": "הרים ירוקים באלפים",
+    "category": "איטליה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1DSJ9J0MijqQFWik4S8DTOq6LEJjvjCF_",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1DSJ9J0MijqQFWik4S8DTOq6LEJjvjCF_&sz=w600",
+    "description": "נוף הררי עם עשב ירוק, סלעים חשופים וער דליל באיטליה",
+    "filename": "DSC_8270.JPG",
+    "width": 4288,
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "17.0-55.0 mm f/2.8",
+      "focal": 17,
+      "aperture": 5.6,
+      "iso": 100,
+      "shutter": 0.008
+    }
+  },
+  {
+    "id": "1MTpwB7ibsqzmObpCV3mD7OxRaS2apMcl",
+    "title": "איל בעמק איטלקי",
+    "category": "איטליה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1MTpwB7ibsqzmObpCV3mD7OxRaS2apMcl",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1MTpwB7ibsqzmObpCV3mD7OxRaS2apMcl&sz=w600",
+    "description": "איל עם קרניים מרשימות עומד בשדה ירוק בהרי איטליה",
+    "filename": "DSC_8741.JPG",
+    "width": 2616,
+    "height": 3938,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 155,
+      "aperture": 6.3,
+      "iso": 200,
+      "shutter": 0.008
+    }
+  },
+  {
+    "id": "1BgYcFKYr1Gw72UPuk1rntr3qBWsIjMtA",
+    "title": "הרים תלולים באלפים",
+    "category": "איטליה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1BgYcFKYr1Gw72UPuk1rntr3qBWsIjMtA",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1BgYcFKYr1Gw72UPuk1rntr3qBWsIjMtA&sz=w600",
+    "description": "בקתה בודדה בעמק אלפיני עם הרים דרמטיים ברקע",
+    "filename": "DSC_8831.JPG",
+    "width": 4288,
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "17.0-55.0 mm f/2.8",
+      "focal": 55,
+      "aperture": 8,
+      "iso": 100,
+      "shutter": 0.005
+    }
+  },
+  {
+    "id": "1bce9TcOAT4ptfHZ81N02-izWqaB5EsyW",
+    "title": "שלום הרים באיטליה",
+    "category": "איטליה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1bce9TcOAT4ptfHZ81N02-izWqaB5EsyW",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1bce9TcOAT4ptfHZ81N02-izWqaB5EsyW&sz=w600",
+    "description": "נוף הררי מרהיב עם פסגות תלולות וחממות ירוקות בדולומיטים",
+    "filename": "DSC_8900.JPG",
+    "width": 4288,
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "17.0-55.0 mm f/2.8",
+      "focal": 17,
+      "aperture": 8,
+      "iso": 100,
+      "shutter": 0.0125
+    }
+  },
+  {
+    "id": "1ewrtQSHlp1lA-hhcAWXi6kMRL55EbWB3",
+    "title": "משחקייה בהרי דולומיטים",
+    "category": "איטליה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1ewrtQSHlp1lA-hhcAWXi6kMRL55EbWB3",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1ewrtQSHlp1lA-hhcAWXi6kMRL55EbWB3&sz=w600",
+    "description": "משחקייה בשדה עם נוף מדהים להרים באיטליה",
+    "filename": "DSC_9897.JPG",
+    "width": 4288,
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "10.0-20.0 mm f/4.0-5.6",
+      "focal": 13,
+      "aperture": 4.5,
+      "iso": 100,
+      "shutter": 0.005
+    }
+  },
+  {
+    "id": "1jlW8act1cjRxqbBMOnTrhzGhKlQliXJW",
+    "title": "כיפת סנט פיטר ברומא",
+    "category": "איטליה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1jlW8act1cjRxqbBMOnTrhzGhKlQliXJW",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1jlW8act1cjRxqbBMOnTrhzGhKlQliXJW&sz=w600",
+    "description": "כיפה מעוקלת של בזיליקת סנט פיטר בוותיקן תחת שמיים עננים",
+    "filename": "MJH_0652.jpg",
+    "width": 7198,
+    "height": 4804,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 200,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.0003125
+    }
+  },
+  {
     "id": "1gQIo-qNqKmRbMsEX--MLBpBgT7zXobVE",
     "title": "קיר כבוד בליברפול",
     "category": "אנגליה",
@@ -4350,6 +5419,206 @@
     }
   },
   {
+    "id": "11Vyi3Ad51oScJTdB4EGQ6BNF3kYv6wWX",
+    "title": "גדלי זכוכית בוינה",
+    "category": "וינה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=11Vyi3Ad51oScJTdB4EGQ6BNF3kYv6wWX",
+    "thumbnail": "https://drive.google.com/thumbnail?id=11Vyi3Ad51oScJTdB4EGQ6BNF3kYv6wWX&sz=w600",
+    "description": "התקנת אמנות מודרנית של צינורות זכוכית תלויים במוזיאון וינה",
+    "filename": "DSC_2679.jpg",
+    "width": 4288,
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 200,
+      "aperture": 2.8,
+      "iso": 3200,
+      "shutter": 0.0015625
+    }
+  },
+  {
+    "id": "1DM6yPMdb8m2sLnp_SzRSNwf16-XkC6I8",
+    "title": "עיטור חג המולד בווינה",
+    "category": "וינה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1DM6yPMdb8m2sLnp_SzRSNwf16-XkC6I8",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1DM6yPMdb8m2sLnp_SzRSNwf16-XkC6I8&sz=w600",
+    "description": "קישוט חגיגי בצבעי אדום לבן על רקע עלים ירוקים",
+    "filename": "DSC_2769.jpg",
+    "width": 4288,
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 98,
+      "aperture": 2.8,
+      "iso": 400,
+      "shutter": 0.00125
+    }
+  },
+  {
+    "id": "1M8r3DntAypHvGHlXE1WXmzcsmVugZynJ",
+    "title": "אור וצבע בוינה",
+    "category": "וינה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1M8r3DntAypHvGHlXE1WXmzcsmVugZynJ",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1M8r3DntAypHvGHlXE1WXmzcsmVugZynJ&sz=w600",
+    "description": "תצוגת אורות צבעוניים עם סמלים מזוהרים בלילה",
+    "filename": "DSC_2854.jpg",
+    "width": 4288,
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 125,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.01
+    }
+  },
+  {
+    "id": "1FvomTWx7emUQ24d-HGLVFhJPAN2XZre8",
+    "title": "אורות ניאון צבעוניים",
+    "category": "וינה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1FvomTWx7emUQ24d-HGLVFhJPAN2XZre8",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1FvomTWx7emUQ24d-HGLVFhJPAN2XZre8&sz=w600",
+    "description": "סימנים זוהרים בצבעי ניאון חם וקור על רקע שחור",
+    "filename": "DSC_2855.jpg",
+    "width": 4288,
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 190,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.025
+    }
+  },
+  {
+    "id": "16JksTb54GxGdNXggLtx0h54ccMB_HDKC",
+    "title": "עלים זהובים בוינה",
+    "category": "וינה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=16JksTb54GxGdNXggLtx0h54ccMB_HDKC",
+    "thumbnail": "https://drive.google.com/thumbnail?id=16JksTb54GxGdNXggLtx0h54ccMB_HDKC&sz=w600",
+    "description": "עלים יבשים בגוונים זהובים על רקע שמיים כחולים",
+    "filename": "DSC_2870.jpg",
+    "width": 4288,
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 190,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.0005
+    }
+  },
+  {
+    "id": "1Qu0K5kU5iYf_xbL7QnWA9xJkjhMNjmC7",
+    "title": "פסל זהוב בווינה",
+    "category": "וינה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1Qu0K5kU5iYf_xbL7QnWA9xJkjhMNjmC7",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1Qu0K5kU5iYf_xbL7QnWA9xJkjhMNjmC7&sz=w600",
+    "description": "יצירת אמנות מודרנית עם עלים זהובים על רקע השמיים",
+    "filename": "DSC_2871.jpg",
+    "width": 4288,
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 200,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.0005
+    }
+  },
+  {
+    "id": "11ooCLRKwfOnN-5tgkdwuzepvvXgKizFm",
+    "title": "לחם טרי בווינה",
+    "category": "וינה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=11ooCLRKwfOnN-5tgkdwuzepvvXgKizFm",
+    "thumbnail": "https://drive.google.com/thumbnail?id=11ooCLRKwfOnN-5tgkdwuzepvvXgKizFm&sz=w600",
+    "description": "ערימת כיכרות לחם שחור טריות עם קרום בוץ עטוף בקמח",
+    "filename": "DSC_2899.jpg",
+    "width": 4288,
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 70,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.06666667
+    }
+  },
+  {
+    "id": "1_7eWyYvV4LQjmahWnjtgVWVpF5NzV8eB",
+    "title": "עלה על צבעים",
+    "category": "וינה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1_7eWyYvV4LQjmahWnjtgVWVpF5NzV8eB",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1_7eWyYvV4LQjmahWnjtgVWVpF5NzV8eB&sz=w600",
+    "description": "עלה יבש על רקע רצועות צבעוניות בוהקות",
+    "filename": "DSC_2904.jpg",
+    "width": 4288,
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 190,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.0125
+    }
+  },
+  {
+    "id": "1L3ezTlpYFjQUmN2VjkY-gZqyt8SXQpN1",
+    "title": "ניגודים אורבניים בווינה",
+    "category": "וינה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1L3ezTlpYFjQUmN2VjkY-gZqyt8SXQpN1",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1L3ezTlpYFjQUmN2VjkY-gZqyt8SXQpN1&sz=w600",
+    "description": "בניינים קלאסיים בצבעים חמים מול מגדל מודרני כחול בווינה",
+    "filename": "DSC_2992.jpg",
+    "width": 2784,
+    "height": 4191,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 140,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.003125
+    }
+  },
+  {
+    "id": "1uyXOiJrHVkzhBxPDtVk-xeXRAoiQXA4c",
+    "title": "פסל הכנר הזהוב בווינה",
+    "category": "וינה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1uyXOiJrHVkzhBxPDtVk-xeXRAoiQXA4c",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1uyXOiJrHVkzhBxPDtVk-xeXRAoiQXA4c&sz=w600",
+    "description": "פסל זהוב של נגן כנור בתאורה דרמטית על רקע אדריכלות עתיקה",
+    "filename": "DSC_3049.jpg",
+    "width": 4288,
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 200,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.0015625
+    }
+  },
+  {
     "id": "1_SUtLt8EAkXhLt92VGtPDwiz0CP9BGqX",
     "title": "גגות אדומים של יוון",
     "category": "יוון",
@@ -5616,6 +6885,318 @@
     }
   },
   {
+    "id": "1KGonmbsils305yHCKmPFKlg2jg-nwMyI",
+    "title": "אגם בלד בסלובקיה",
+    "category": "סלובקיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1KGonmbsils305yHCKmPFKlg2jg-nwMyI",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1KGonmbsils305yHCKmPFKlg2jg-nwMyI&sz=w600",
+    "description": "נוף פסטורלי של אגם שקט המשקף את הרים ויער סלובקי",
+    "filename": "DSC_2915.jpg",
+    "width": 4288,
+    "height": 2848,
+    "exif": null
+  },
+  {
+    "id": "12B_zbYfp0PfNXuwr57ZUdCt-NbOBhBGM",
+    "title": "כפר בערפל סלובקי",
+    "category": "סלובקיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=12B_zbYfp0PfNXuwr57ZUdCt-NbOBhBGM",
+    "thumbnail": "https://drive.google.com/thumbnail?id=12B_zbYfp0PfNXuwr57ZUdCt-NbOBhBGM&sz=w600",
+    "description": "שדות חרושים בשורות מסודרות מול כפר מעוטף בערפל עבה",
+    "filename": "DSC_3222.jpg",
+    "width": 4288,
+    "height": 2848,
+    "exif": null
+  },
+  {
+    "id": "1AF3IHHUQjVKgxhoVFpXUVPxwo0nzsR8L",
+    "title": "חמניות בגן סלובקי",
+    "category": "סלובקיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1AF3IHHUQjVKgxhoVFpXUVPxwo0nzsR8L",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1AF3IHHUQjVKgxhoVFpXUVPxwo0nzsR8L&sz=w600",
+    "description": "חמניות צהובות עם עלים ירוקים בתאורת שמש טבעית",
+    "filename": "DSC_3225.jpg",
+    "width": 3935,
+    "height": 2638,
+    "exif": null
+  },
+  {
+    "id": "1DKV8fePHvPbFLArxDDCRuGsX9eT48ZKd",
+    "title": "שדה בערפל בוקר",
+    "category": "סלובקיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1DKV8fePHvPbFLArxDDCRuGsX9eT48ZKd",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1DKV8fePHvPbFLArxDDCRuGsX9eT48ZKd&sz=w600",
+    "description": "שדה חקלאי מכוסה בערפל צפוף עם אור שמש חודר דרך העננים",
+    "filename": "DSC_3232.jpg",
+    "width": 4192,
+    "height": 2784,
+    "exif": null
+  },
+  {
+    "id": "1rnPc_omjbwHSS-v0Nn0H8vOOKMdhbJzQ",
+    "title": "קרני אור מעל הרים",
+    "category": "סלובקיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1rnPc_omjbwHSS-v0Nn0H8vOOKMdhbJzQ",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1rnPc_omjbwHSS-v0Nn0H8vOOKMdhbJzQ&sz=w600",
+    "description": "שמיים דרמטיים עם קרני שמש חודרות בעננים וצל הר בחזית",
+    "filename": "DSC_3425.jpg",
+    "width": 4079,
+    "height": 2710,
+    "exif": null
+  },
+  {
+    "id": "1BDuA3GaWEFgPQ1E_YBHaOxdckVc19I52",
+    "title": "שמיים דרמטיים על השדה",
+    "category": "סלובקיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1BDuA3GaWEFgPQ1E_YBHaOxdckVc19I52",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1BDuA3GaWEFgPQ1E_YBHaOxdckVc19I52&sz=w600",
+    "description": "נוף רעם כפרי עם ענני סערה מרשימים מעל שדה ירוק",
+    "filename": "DSC_3427.jpg",
+    "width": 4288,
+    "height": 2848,
+    "exif": null
+  },
+  {
+    "id": "1xwICPgKQr7IAa7BFcEZRX5D1XtXzwKI6",
+    "title": "בתים צבעוניים על המים",
+    "category": "סלובקיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1xwICPgKQr7IAa7BFcEZRX5D1XtXzwKI6",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1xwICPgKQr7IAa7BFcEZRX5D1XtXzwKI6&sz=w600",
+    "description": "שורת בתים עתיקים צבעוניים הצמודים למים בעיר חופית יורופית",
+    "filename": "DSC_3991.jpg",
+    "width": 4288,
+    "height": 2848,
+    "exif": null
+  },
+  {
+    "id": "1xFCCXmt-TccoiYHfKn1IgesB1-eOFXxW",
+    "title": "שחקן על הסלע",
+    "category": "סלובקיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1xFCCXmt-TccoiYHfKn1IgesB1-eOFXxW",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1xFCCXmt-TccoiYHfKn1IgesB1-eOFXxW&sz=w600",
+    "description": "ציפור ימית צעירה עומדת על סלע עם רקע ים כחול",
+    "filename": "DSC_3997.jpg",
+    "width": 4288,
+    "height": 2848,
+    "exif": null
+  },
+  {
+    "id": "1T3AlnkrZgHC4Un5lwtvCZe-BHHTyIpWM",
+    "title": "ענבים בשוק סלובקי",
+    "category": "סלובקיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1T3AlnkrZgHC4Un5lwtvCZe-BHHTyIpWM",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1T3AlnkrZgHC4Un5lwtvCZe-BHHTyIpWM&sz=w600",
+    "description": "ענבים שחורים וירוקים신선ים בתצוגת שוק מקומי",
+    "filename": "DSC_4006.jpg",
+    "width": 4288,
+    "height": 2848,
+    "exif": null
+  },
+  {
+    "id": "1iWQn5wcKdqof2vbTL2RKfc0cqy2PYYkw",
+    "title": "פירות בשוק הסלובקי",
+    "category": "סלובקיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1iWQn5wcKdqof2vbTL2RKfc0cqy2PYYkw",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1iWQn5wcKdqof2vbTL2RKfc0cqy2PYYkw&sz=w600",
+    "description": "בננות צהובות신עות ותפוחים חומים בתצוגת שוק מקומי",
+    "filename": "DSC_4008.jpg",
+    "width": 4288,
+    "height": 2848,
+    "exif": null
+  },
+  {
+    "id": "15TXspElMXYHqpUwZ6zBqgjP6rcTkesZ5",
+    "title": "סימן מסחר של תיקים בסלובקיה",
+    "category": "סלובקיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=15TXspElMXYHqpUwZ6zBqgjP6rcTkesZ5",
+    "thumbnail": "https://drive.google.com/thumbnail?id=15TXspElMXYHqpUwZ6zBqgjP6rcTkesZ5&sz=w600",
+    "description": "שלט קיר בצורת חץ המציג תיקים עם הכתובת Maria Smit Hand Made",
+    "filename": "DSC_4032.jpg",
+    "width": 4288,
+    "height": 2848,
+    "exif": null
+  },
+  {
+    "id": "1SsFp99trIbo8w03i5Of037TrC9Gl9rD7",
+    "title": "פסל בסלובקיה",
+    "category": "סלובקיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1SsFp99trIbo8w03i5Of037TrC9Gl9rD7",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1SsFp99trIbo8w03i5Of037TrC9Gl9rD7&sz=w600",
+    "description": "פסל ברונזה עתיק של דמות אישה המחזיקה עלים, בעיר סלובקית",
+    "filename": "DSC_4103.jpg",
+    "width": 2848,
+    "height": 4288,
+    "exif": null
+  },
+  {
+    "id": "1MWEHD-h0zZbCaWqd_Z1T9ZQa9tQBfZoU",
+    "title": "סירה מסורתית בים",
+    "category": "סלובקיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1MWEHD-h0zZbCaWqd_Z1T9ZQa9tQBfZoU",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1MWEHD-h0zZbCaWqd_Z1T9ZQa9tQBfZoU&sz=w600",
+    "description": "סירה עתיקה עם נוסעים ועופות המעופפים סביבה בים הפתוח",
+    "filename": "DSC_4212.jpg",
+    "width": 4123,
+    "height": 2738,
+    "exif": null
+  },
+  {
+    "id": "1QGGYuIxDyLaAtBXU0krCzUo0cRpR1E4j",
+    "title": "כלים מוזיקליים בזהב",
+    "category": "סלובקיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1QGGYuIxDyLaAtBXU0krCzUo0cRpR1E4j",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1QGGYuIxDyLaAtBXU0krCzUo0cRpR1E4j&sz=w600",
+    "description": "שורה של חצוצרות זהובות מברוקות בפרט מקרוב",
+    "filename": "MJH_0480.jpg",
+    "width": 4912,
+    "height": 7360,
+    "exif": null
+  },
+  {
+    "id": "1QwW1cIMSz9-x2dzgwLJLL7T5ncS0pxfy",
+    "title": "פנים חייכות על הדלת",
+    "category": "סלובקיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1QwW1cIMSz9-x2dzgwLJLL7T5ncS0pxfy",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1QwW1cIMSz9-x2dzgwLJLL7T5ncS0pxfy&sz=w600",
+    "description": "אמנות רחוב מצחיקה של פנים צוחקות על דלת לבנה בסלובקיה",
+    "filename": "MJH_1297.jpg",
+    "width": 4912,
+    "height": 7360,
+    "exif": null
+  },
+  {
+    "id": "13Ok9EB50SSnSNQwQpIAWlyjZGtaENzQ_",
+    "title": "רוז'מברג בסלובקיה",
+    "category": "סלובקיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=13Ok9EB50SSnSNQwQpIAWlyjZGtaENzQ_",
+    "thumbnail": "https://drive.google.com/thumbnail?id=13Ok9EB50SSnSNQwQpIAWlyjZGtaENzQ_&sz=w600",
+    "description": "בנייני צבעוניים וכנסייה בעיר ההיסטורית רוז'מברג שבסלובקיה",
+    "filename": "MJH_1407.jpg",
+    "width": 7360,
+    "height": 4912,
+    "exif": null
+  },
+  {
+    "id": "14Wuxa0ljfjXiHKq46_QNx1QHDE6st2R4",
+    "title": "חלונות בעיר סלובקית",
+    "category": "סלובקיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=14Wuxa0ljfjXiHKq46_QNx1QHDE6st2R4",
+    "thumbnail": "https://drive.google.com/thumbnail?id=14Wuxa0ljfjXiHKq46_QNx1QHDE6st2R4&sz=w600",
+    "description": "שני חלונות עם תריסים חומים על קיר עץ עתיק שחור",
+    "filename": "MJH_8071.jpg",
+    "width": 7360,
+    "height": 4912,
+    "exif": null
+  },
+  {
+    "id": "1JjR5T6S3efLb1ZOox2HgNy0swQSYSQAF",
+    "title": "הרים ירוקים בסלובקיה",
+    "category": "סלובקיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1JjR5T6S3efLb1ZOox2HgNy0swQSYSQAF",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1JjR5T6S3efLb1ZOox2HgNy0swQSYSQAF&sz=w600",
+    "description": "נוף אלפיני עם עשב ירוק, גדרות עץ ועצים נדירים",
+    "filename": "MJH_8164.jpg",
+    "width": 7360,
+    "height": 4912,
+    "exif": null
+  },
+  {
+    "id": "1DZ4sQlmc_EtLFGgjDPXgwvOUrg5AA26a",
+    "title": "פסל סוס עתיק",
+    "category": "סלובקיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1DZ4sQlmc_EtLFGgjDPXgwvOUrg5AA26a",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1DZ4sQlmc_EtLFGgjDPXgwvOUrg5AA26a&sz=w600",
+    "description": "פסל אבן של ראש סוס בעיצוב קלאסי, מכוסה בשכבת ירקרקה מהזמן",
+    "filename": "MJH_8561.jpg",
+    "width": 4912,
+    "height": 7360,
+    "exif": null
+  },
+  {
+    "id": "1TPNlreRbs3TujrntJtJFQYnfNyXyltxx",
+    "title": "ילד בשדרת רטובה",
+    "category": "סלובקיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1TPNlreRbs3TujrntJtJFQYnfNyXyltxx",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1TPNlreRbs3TujrntJtJFQYnfNyXyltxx&sz=w600",
+    "description": "ילד עומד בשדרה רטובה בעיר עם השתקפויות בתא המים",
+    "filename": "MJH_8800.jpg",
+    "width": 7360,
+    "height": 4912,
+    "exif": null
+  },
+  {
+    "id": "11TOu6rFq-4Odxzbod9TjRnVeynGmYjyu",
+    "title": "ברווז בתנוחת הליכה",
+    "category": "סלובקיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=11TOu6rFq-4Odxzbod9TjRnVeynGmYjyu",
+    "thumbnail": "https://drive.google.com/thumbnail?id=11TOu6rFq-4Odxzbod9TjRnVeynGmYjyu&sz=w600",
+    "description": "ברווז פורש כנפיים בזמן הליכה במים עדינים",
+    "filename": "MJH_9270.jpg",
+    "width": 7360,
+    "height": 4912,
+    "exif": null
+  },
+  {
+    "id": "1xP3s71xaGckWfDXDS7u_W_MI1jFxSZiM",
+    "title": "ברווז בעיר המים",
+    "category": "סלובקיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1xP3s71xaGckWfDXDS7u_W_MI1jFxSZiM",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1xP3s71xaGckWfDXDS7u_W_MI1jFxSZiM&sz=w600",
+    "description": "ברווז שחור שוחה בין גלים על מים כהים וזוהרים",
+    "filename": "MJH_9309.jpg",
+    "width": 7360,
+    "height": 4912,
+    "exif": null
+  },
+  {
+    "id": "13VlnLQzoZcZDd073gKfNYufYlf_B4J1z",
+    "title": "ברווז בבריכת יללים",
+    "category": "סלובקיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=13VlnLQzoZcZDd073gKfNYufYlf_B4J1z",
+    "thumbnail": "https://drive.google.com/thumbnail?id=13VlnLQzoZcZDd073gKfNYufYlf_B4J1z&sz=w600",
+    "description": "ברווז שוחה בבריכה שקטה מוקפת עלי יללים ירוקים",
+    "filename": "MJH_9366.jpg",
+    "width": 7360,
+    "height": 4912,
+    "exif": null
+  },
+  {
+    "id": "1LpyeYlxL8XaiUaF8nBebkxMO8OCXu7dm",
+    "title": "נהר טורקיז בסלובקיה",
+    "category": "סלובקיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1LpyeYlxL8XaiUaF8nBebkxMO8OCXu7dm",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1LpyeYlxL8XaiUaF8nBebkxMO8OCXu7dm&sz=w600",
+    "description": "נהר בעל מים בצבע טורקיז עוצר בין יערות וסלעים בעמק אלפיני",
+    "filename": "MJH_9471.jpg",
+    "width": 7360,
+    "height": 4912,
+    "exif": null
+  },
+  {
     "id": "19Q-SGNEyuCzAc8cbmMMeXeSzVpaFJazV",
     "title": "אגם שקט בסלובקיה",
     "category": "סלובקיה",
@@ -6687,6 +8268,26 @@
     "width": 441,
     "height": 294,
     "alt": "שמחת פורים"
+  },
+  {
+    "id": "11-TX9S2XFZXspF3BQqbP81COUhwauXNP",
+    "title": "פריחת אביב ורודה",
+    "category": "פרחים וצמחים",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=11-TX9S2XFZXspF3BQqbP81COUhwauXNP",
+    "thumbnail": "https://drive.google.com/thumbnail?id=11-TX9S2XFZXspF3BQqbP81COUhwauXNP&sz=w600",
+    "description": "עצים בפריחה מלאה עם פרחים ורודים עדינים בתחילת האביב",
+    "filename": "AMI_1741.JPG",
+    "width": 4288,
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300S",
+      "lens": "AF-S Nikkor 70-200mm f/2.8G ED VR II",
+      "focal": 200,
+      "aperture": 9,
+      "iso": 200,
+      "shutter": 0.016666668
+    }
   },
   {
     "id": "15h8IlkqnlorfEseEFBHjNikOSgMvsCQ_",
@@ -8193,6 +9794,63 @@
     }
   },
   {
+    "id": "1XCdGKDdJdUtTZxPm3mBAz_tl0LCZQnNW",
+    "title": "כחול וחוט דיג",
+    "category": "צילום מופשט",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=1XCdGKDdJdUtTZxPm3mBAz_tl0LCZQnNW",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1XCdGKDdJdUtTZxPm3mBAz_tl0LCZQnNW&sz=w600",
+    "description": "רשת דיג משועממת תלויה על רקע כחול עתיק ומתכלה",
+    "filename": "DSC_1351.JPG",
+    "width": 6192,
+    "height": 4128,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "focal": 112,
+      "aperture": 3.2,
+      "iso": 80,
+      "shutter": 0.0008
+    }
+  },
+  {
+    "id": "1EVmidUYC8clg_uGoiIXnWSkpK8uANVxs",
+    "title": "רשתות דיג עתיקות",
+    "category": "צילום מופשט",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=1EVmidUYC8clg_uGoiIXnWSkpK8uANVxs",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1EVmidUYC8clg_uGoiIXnWSkpK8uANVxs&sz=w600",
+    "description": "קרקע דיג מעומדת עם אבנים ובתופים, במרקם טבעי עשיר וערטילאי",
+    "filename": "DSC_1352.JPG",
+    "width": 6192,
+    "height": 4128,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "focal": 135,
+      "aperture": 3.2,
+      "iso": 80,
+      "shutter": 0.0002
+    }
+  },
+  {
+    "id": "1xFGsDWS_bHu18KgoPYUeSjabzV9KUcqx",
+    "title": "בודד בים",
+    "category": "צילום מופשט",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=1xFGsDWS_bHu18KgoPYUeSjabzV9KUcqx",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1xFGsDWS_bHu18KgoPYUeSjabzV9KUcqx&sz=w600",
+    "description": "מצוף ושרשרת בודדים בתוך מים שקטים וכחולים",
+    "filename": "DSC_1356.JPG",
+    "width": 6192,
+    "height": 4128,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "focal": 200,
+      "aperture": 3.2,
+      "iso": 80,
+      "shutter": 0.001
+    }
+  },
+  {
     "id": "1hxahzabb1AHEAXyYO-Z8oKqFwvDZuol6",
     "title": "דנדליון בהתפרקות",
     "category": "צילום מופשט",
@@ -8213,6 +9871,44 @@
     }
   },
   {
+    "id": "1zcEgwt3k3r1hGpcHatr7X7jGnG245lq5",
+    "title": "כדורים צהובים בחוט",
+    "category": "צילום מופשט",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=1zcEgwt3k3r1hGpcHatr7X7jGnG245lq5",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1zcEgwt3k3r1hGpcHatr7X7jGnG245lq5&sz=w600",
+    "description": "רשת צהובה עם כדורים מרוססים ליד בד טורקיז",
+    "filename": "DSC_1371.JPG",
+    "width": 6192,
+    "height": 4128,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "focal": 200,
+      "aperture": 2.8,
+      "iso": 80,
+      "shutter": 0.000625
+    }
+  },
+  {
+    "id": "1GCPZrkCQmvffy1g-IPMR_ybFXsLMQPvA",
+    "title": "גלים צבעוניים",
+    "category": "צילום מופשט",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=1GCPZrkCQmvffy1g-IPMR_ybFXsLMQPvA",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1GCPZrkCQmvffy1g-IPMR_ybFXsLMQPvA&sz=w600",
+    "description": "טקסטורה עשירה של בדים צבעוניים עם קווים מעוגלים וחיתוכים עדינים",
+    "filename": "DSC_1372.JPG",
+    "width": 6192,
+    "height": 4128,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "focal": 200,
+      "aperture": 2.8,
+      "iso": 80,
+      "shutter": 0.0004
+    }
+  },
+  {
     "id": "11CB5ZK5gWbW1N3yxOggz07vMA4BkVeJg",
     "title": "סימטריה של הטבע",
     "category": "צילום מופשט",
@@ -8230,6 +9926,44 @@
       "aperture": 4,
       "iso": 100,
       "shutter": 0.005
+    }
+  },
+  {
+    "id": "1SxSnHiEti9KCkW-VlX7X3T_-uHVm0vO4",
+    "title": "טקסטורות של חלודה וצבע",
+    "category": "צילום מופשט",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=1SxSnHiEti9KCkW-VlX7X3T_-uHVm0vO4",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1SxSnHiEti9KCkW-VlX7X3T_-uHVm0vO4&sz=w600",
+    "description": "קונטיינרים ישנים בצהוב וכחול עם עקבות של זמן וכלי עבודה",
+    "filename": "DSC_1418.JPG",
+    "width": 6192,
+    "height": 4128,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "focal": 70,
+      "aperture": 2.8,
+      "iso": 80,
+      "shutter": 0.0008
+    }
+  },
+  {
+    "id": "1wOE2vWVbQdquBXkQckc7h_gdrZEngqQL",
+    "title": "חלודה וזיכרון",
+    "category": "צילום מופשט",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=1wOE2vWVbQdquBXkQckc7h_gdrZEngqQL",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1wOE2vWVbQdquBXkQckc7h_gdrZEngqQL&sz=w600",
+    "description": "מתכת מחוספסת בגוונים של כחול וחום, משקפת מעבר של זמן",
+    "filename": "DSC_1423.JPG",
+    "width": 6192,
+    "height": 4128,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "focal": 200,
+      "aperture": 2.8,
+      "iso": 80,
+      "shutter": 0.0008
     }
   },
   {
