@@ -116,6 +116,11 @@ nav.scrolled { border-bottom-color: rgba(200, 169, 110, 0.3); }
   position: relative;
 }
 
+#nav-new {
+  color: #c8a96e !important;
+  font-weight: 600;
+}
+
 .nav-links a::after {
   content: '';
   position: absolute;
