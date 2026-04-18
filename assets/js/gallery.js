@@ -1,3 +1,10 @@
+const NEW_DAYS = 7; // ימים להצגת תג "חדש"
+function isNew(photo) {
+  if (!photo.added_at) return false;
+  const diff = (Date.now() - new Date(photo.added_at)) / 86400000;
+  return diff <= NEW_DAYS;
+}
+
 // ===== STATE =====
 const PURCHASES_ENABLED = true;      // ← השבת רכישות עד שה-PayPal מאומת
 const TEST_PHOTO_ID = '1jmBaBvk8rKoV5rvARPayvd010U_CW_gp'; // תמונת בדיקה בלבד
@@ -222,6 +229,7 @@ function renderGallery(append = false) {
         oncontextmenu="return false"
       />
       <div class="img-protect-overlay"></div>
+      ${isNew(photo) ? '<div class="gallery-new-badge">חדש</div>' : ''}
       <div class="gallery-item-overlay">
         <div class="gallery-item-info">
           <h3>${photo.title}</h3>

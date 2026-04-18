@@ -681,6 +681,14 @@ nav.scrolled { border-bottom-color: rgba(200, 169, 110, 0.3); }
   column-gap: 12px;
 }
 
+.gallery-new-badge {
+  position: absolute; top: 10px; right: 10px; z-index: 5;
+  background: #c8a96e; color: #000;
+  font-size: .65rem; font-weight: 700; letter-spacing: .5px;
+  padding: .2rem .5rem; border-radius: 3px;
+  pointer-events: none;
+}
+
 .gallery-item {
   break-inside: avoid;
   margin-bottom: 12px;
