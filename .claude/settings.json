@@ -38,7 +38,23 @@
       "Bash(curl -s \"https://product.gelatoapis.com/v3/catalogs/posters/products?limit=200\" -H \"X-API-KEY: 490bdbe7-b100-4fdd-9bf9-49bab8001558-12407137-ebcc-4542-b8a0-49e961bc3c32:7ae7c558-106a-4e8f-9717-ad307da51ca4\")",
       "Bash(curl -s \"https://product.gelatoapis.com/v3/catalogs/posters/products?limit=5\" -H \"X-API-KEY: 490bdbe7-b100-4fdd-9bf9-49bab8001558-12407137-ebcc-4542-b8a0-49e961bc3c32:7ae7c558-106a-4e8f-9717-ad307da51ca4\")",
       "Bash(curl -s \"https://product.gelatoapis.com/v3/catalogs/hanging-posters/products?limit=5\" -H \"X-API-KEY: 490bdbe7-b100-4fdd-9bf9-49bab8001558-12407137-ebcc-4542-b8a0-49e961bc3c32:7ae7c558-106a-4e8f-9717-ad307da51ca4\")",
-      "Bash(curl -s \"https://product.gelatoapis.com/v3/catalogs/default/products?limit=200\" -H \"X-API-KEY: 490bdbe7-b100-4fdd-9bf9-49bab8001558-12407137-ebcc-4542-b8a0-49e961bc3c32:7ae7c558-106a-4e8f-9717-ad307da51ca4\")"
+      "Bash(curl -s \"https://product.gelatoapis.com/v3/catalogs/default/products?limit=200\" -H \"X-API-KEY: 490bdbe7-b100-4fdd-9bf9-49bab8001558-12407137-ebcc-4542-b8a0-49e961bc3c32:7ae7c558-106a-4e8f-9717-ad307da51ca4\")",
+      "Read(//c/Users/erezf/AppData/Roaming/npm/node_modules/wrangler/node_modules/@cloudflare//**)",
+      "Read(//c/Users/erezf/AppData/Local/npm-cache/_npx//**)",
+      "Bash(curl -s \"https://amitphotos.com/sitemap.xml\")",
+      "Bash(curl -s \"https://amitphotos.com/robots.txt\")",
+      "Bash(wrangler d1 *)",
+      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__list_network_requests",
+      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__performance_start_trace",
+      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__get_network_request",
+      "Bash(curl -s -I \"https://erezfamily-cmyk.github.io/amit-photos/data/photos.json\")",
+      "Read(//c/Users/erezf/AppData/Local/Temp/chrome-devtools-mcp-KnWEpw/**)",
+      "Read(//c/Users/erezf/.claude/**)",
+      "Read(//c/Users/erezf/AppData/Roaming/Claude/**)",
+      "Bash(sed -n '1189,1230p' assets/css/style.css)",
+      "Bash(sed -n '1550,1575p' assets/css/style.css)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" \"https://drive.google.com/thumbnail?id=11o26WyWty86CrIFjPnqp94n2h5ChU1Wp&sz=w1200\" -A \"facebookexternalhit/1.1\")",
+      "Bash(curl -s \"https://amitphotos.com/api/photos?admin=1\" -H \"X-Session-Token: test\")"
     ],
     "additionalDirectories": [
       "c:\\temp"
