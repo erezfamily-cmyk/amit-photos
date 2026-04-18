@@ -168,6 +168,8 @@ input,textarea,select{font-family:var(--font);direction:rtl}
   padding:.4rem .9rem;border-radius:20px;font-size:.8rem;color:var(--text-muted);
 }
 .stat-chip strong{color:var(--accent);font-weight:600}
+.stat-chip-link{cursor:pointer;transition:border-color .15s,color .15s}
+.stat-chip-link:hover{border-color:var(--accent);color:var(--text)}
 
 /* Photo grid */
 .photos-grid{
@@ -1386,9 +1388,13 @@ const Photos = (() => {
   let lbList = [], lbIdx = 0;
 
   function getDisplayData() {
-    let d = data.filter(p => !searchQ ||
-      (p.title||'').toLowerCase().includes(searchQ.toLowerCase()) ||
-      (p.category||'').toLowerCase().includes(searchQ.toLowerCase()));
+    let d = data.filter(p => {
+      if (!searchQ) return true;
+      if (searchQ === '_source:r2') return p._source === 'r2';
+      if (searchQ === '_source:drive') return p._source === 'drive';
+      const q = searchQ.toLowerCase();
+      return (p.title||'').toLowerCase().includes(q) || (p.category||'').toLowerCase().includes(q);
+    });
     if      (sortBy === 'oldest')    d = [...d].reverse();
     else if (sortBy === 'name-asc')  d = [...d].sort((a,b) => (a.title||'').localeCompare(b.title||'', 'he'));
     else if (sortBy === 'name-desc') d = [...d].sort((a,b) => (b.title||'').localeCompare(a.title||'', 'he'));
@@ -1417,14 +1423,22 @@ const Photos = (() => {
     renderCategoryDatalist();
   }
 
+  function filterByChip(q) {
+    searchQ = q;
+    $('photos-search').value = q;
+    render();
+    $('photos-grid').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
   function renderStats() {
     const cats = {};
     data.forEach(p => { cats[p.category] = (cats[p.category]||0)+1; });
+    const chip = (label, q) => `<div class="stat-chip stat-chip-link" onclick="Photos.filterByChip('${q.replace(/'/g,"\\'")}')"><strong>${label}</strong></div>`;
     const html = [
-      `<div class="stat-chip"><strong>${data.length}</strong> תמונות סה"כ</div>`,
-      `<div class="stat-chip"><strong>${data.filter(p=>p._source==='r2').length}</strong> ב-R2</div>`,
-      `<div class="stat-chip"><strong>${data.filter(p=>p._source==='drive').length}</strong> ב-Drive</div>`,
-      ...Object.entries(cats).map(([c,n])=>`<div class="stat-chip"><strong>${n}</strong> ${c}</div>`)
+      chip(`${data.length} תמונות סה"כ`, ''),
+      chip(`${data.filter(p=>p._source==='r2').length} ב-R2`, '_source:r2'),
+      chip(`${data.filter(p=>p._source==='drive').length} ב-Drive`, '_source:drive'),
+      ...Object.entries(cats).sort((a,b)=>b[1]-a[1]).map(([c,n])=>chip(`${n} ${c}`, c))
     ].join('');
     $('photos-stats').innerHTML = html;
   }
@@ -1837,7 +1851,7 @@ const Photos = (() => {
     render();
   }
 
-  return { init: async () => { await init(); loadNewBadgeSettings(); }, openEdit, openEditById, confirmDelete, cardClick, toggleSelect, toggleNew, getData: () => data };
+  return { init: async () => { await init(); loadNewBadgeSettings(); }, openEdit, openEditById, confirmDelete, cardClick, toggleSelect, toggleNew, filterByChip, getData: () => data };
 })();
 
 // ===== SUBSCRIBERS =====
