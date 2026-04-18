@@ -1,6 +1,19 @@
 let NEW_DAYS = 7;
 fetch('/api/new-badge-settings').then(r => r.ok ? r.json() : null).then(d => { if (d?.days) NEW_DAYS = d.days; }).catch(() => {});
 
+let globalPrices = { small: 19, medium: 59, large: 129 };
+fetch('/api/admin/prices').then(r => r.ok ? r.json() : null).then(d => { if (d) globalPrices = d; }).catch(() => {});
+
+function isOnSale(photo) {
+  if (!photo.price_overrides) return false;
+  try {
+    const ov = typeof photo.price_overrides === 'string' ? JSON.parse(photo.price_overrides) : photo.price_overrides;
+    return (ov.small != null && ov.small < globalPrices.small) ||
+           (ov.medium != null && ov.medium < globalPrices.medium) ||
+           (ov.large != null && ov.large < globalPrices.large);
+  } catch { return false; }
+}
+
 function isNew(photo) {
   if (photo.is_new) return true;
   if (!photo.added_at) return false;
@@ -157,7 +170,7 @@ async function loadPhotos() {
       const apiMap = new Map(apiPhotos.map(p => [p.id, p]));
       allPhotos = allPhotos.map(p => {
         const a = apiMap.get(p.id);
-        return a ? { ...p, is_new: a.is_new, added_at: a.added_at } : p;
+        return a ? { ...p, is_new: a.is_new, added_at: a.added_at, price_overrides: a.price_overrides } : p;
       });
     }
   } catch {
@@ -244,6 +257,7 @@ function renderGallery(append = false) {
       />
       <div class="img-protect-overlay"></div>
       ${isNew(photo) ? '<div class="gallery-new-badge">חדש</div>' : ''}
+      ${isOnSale(photo) ? '<div class="gallery-sale-badge">🏷 מבצע</div>' : ''}
       <div class="gallery-item-overlay">
         <div class="gallery-item-info">
           <h3>${photo.title}</h3>
@@ -342,6 +356,8 @@ function applyFilters() {
       matchCat = true;
     } else if (cat === 'new') {
       matchCat = isNew(p);
+    } else if (cat === 'sale') {
+      matchCat = isOnSale(p);
     } else if (parent) {
       // תת-קטגוריה ספציפית
       matchCat = p.category === cat && p.parent_category === parent;
@@ -374,8 +390,10 @@ function initFilters() {
   });
 
   const newCount = allPhotos.filter(isNew).length;
+  const saleCount = allPhotos.filter(isOnSale).length;
   const newBadgeBtn = newCount > 0 ? `<button class="filter-btn filter-btn-new" data-cat="new">✦ ${t('gallery.filter.new') || 'חדש'} <span class="filter-count">${newCount}</span></button>` : '';
-  let html = `<button class="filter-btn active" data-cat="all">${t('gallery.filter.all')} <span class="filter-count">${allPhotos.length}</span></button>${newBadgeBtn}`;
+  const saleBadgeBtn = saleCount > 0 ? `<button class="filter-btn filter-btn-sale" data-cat="sale">🏷 מבצע <span class="filter-count">${saleCount}</span></button>` : '';
+  let html = `<button class="filter-btn active" data-cat="all">${t('gallery.filter.all')} <span class="filter-count">${allPhotos.length}</span></button>${newBadgeBtn}${saleBadgeBtn}`;
 
   const esc = s => s.replace(/"/g, '&quot;');
 
