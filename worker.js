@@ -1699,6 +1699,10 @@ export default {
       // HTML: no-store מונע כל קאש (דפדפן + CDN)
       // JS/CSS/JSON: no-cache = חייב לאמת עם שרת לפני שימוש
       newRes.headers.set('Cache-Control', isHtml ? 'no-store' : 'no-cache');
+      if (isHtml) {
+        newRes.headers.set('CDN-Cache-Control', 'no-store');
+        newRes.headers.set('Cloudflare-CDN-Cache-Control', 'no-store');
+      }
       return newRes;
     }
 
