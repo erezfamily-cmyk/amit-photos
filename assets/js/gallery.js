@@ -407,6 +407,12 @@ function initFilters() {
     btn.addEventListener('click', () => {
       bar.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
+      const cat = btn.dataset.cat;
+      if (cat && cat !== 'all') {
+        history.replaceState(null, '', '#filter-' + cat);
+      } else {
+        history.replaceState(null, '', window.location.pathname);
+      }
       applyFilters();
     });
   });
@@ -734,6 +740,17 @@ function navigateLightbox(dir) {
 // ===== DEEP LINK — פתיחה לפי hash =====
 function handleInitialHash() {
   const hash = window.location.hash;
+  if (hash.startsWith('#filter-')) {
+    const cat = hash.replace('#filter-', '');
+    const btn = document.querySelector(`.filter-btn[data-cat="${cat}"]`);
+    if (btn) {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      applyFilters();
+      document.getElementById('gallery')?.scrollIntoView({ behavior: 'smooth' });
+    }
+    return;
+  }
   if (!hash.startsWith('#photo-')) return;
   const photoId = hash.replace('#photo-', '');
   let idx = filteredPhotos.findIndex(p => String(p.id) === photoId);
