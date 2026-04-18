@@ -146,12 +146,11 @@ def generate_caption(photo):
 
     hashtags = get_hashtags(category)
 
-    system_prompt = """You are a social media manager for an Israeli photographer named Amit.
-Write Instagram captions in Hebrew — visual, emotional, inspiring.
-Style: short, intimate, artistic. Feels like a real moment.
-CRITICAL: Use ONLY Hebrew characters for the Hebrew text. Never mix Arabic script with Hebrew.
-Do not include URLs in the text body — only "🔗 amitphotos.com (link in bio)" at the end of the main text.
-Do not write the hashtags — they will be added separately."""
+    system_prompt = """You are writing Instagram captions for an Israeli photographer named Amit.
+Style: factual, precise, informative — like a photographer explaining their craft.
+CRITICAL: Use ONLY Hebrew characters for Hebrew text. Never mix Arabic script with Hebrew.
+Do not include URLs in the text body.
+Do not write hashtags — they will be added separately."""
 
     user_content = image_content + [{"type": "text", "text": f"""Write an Instagram caption for this photo.
 
@@ -159,10 +158,13 @@ Metadata:
 {meta_text}
 
 Caption structure (exactly in this order):
-1. 2-4 lines in Hebrew — emotional/artistic description of the moment (Hebrew letters only, no Arabic)
-2. Empty line
-3. 🛍️ זמין לרכישה — amitphotos.com (link in bio)
+1. One sentence describing exactly what is in the photo (subject, location if known, technique — e.g. macro, long exposure, portrait).
+2. One sentence about the photographer's creative choices: framing, light, angle, timing.
+3. Technical line in Hebrew listing available EXIF params (aperture, shutter, focal length, camera) — only include fields that are available in the metadata.
+4. Empty line
+5. 🛍️ זמין לרכישה — amitphotos.com (link in bio)
 
+Write in Hebrew. Be specific and concrete — no poetic metaphors, no emotional language. Describe what you actually see.
 Output only the caption text (no hashtags, no extra explanations).
 """}]
 
