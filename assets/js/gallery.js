@@ -1,8 +1,10 @@
-const NEW_DAYS = 7; // ימים להצגת תג "חדש"
+let NEW_DAYS = 7;
+fetch('/api/new-badge-settings').then(r => r.ok ? r.json() : null).then(d => { if (d?.days) NEW_DAYS = d.days; }).catch(() => {});
+
 function isNew(photo) {
+  if (photo.is_new) return true;
   if (!photo.added_at) return false;
-  const diff = (Date.now() - new Date(photo.added_at)) / 86400000;
-  return diff <= NEW_DAYS;
+  return (Date.now() - new Date(photo.added_at)) / 86400000 <= NEW_DAYS;
 }
 
 // ===== STATE =====
@@ -326,6 +328,8 @@ function applyFilters() {
     let matchCat;
     if (cat === 'all') {
       matchCat = true;
+    } else if (cat === 'new') {
+      matchCat = isNew(p);
     } else if (parent) {
       // תת-קטגוריה ספציפית
       matchCat = p.category === cat && p.parent_category === parent;
@@ -357,7 +361,9 @@ function initFilters() {
     hierarchy[parent].add(p.category);
   });
 
-  let html = `<button class="filter-btn active" data-cat="all">${t('gallery.filter.all')} <span class="filter-count">${allPhotos.length}</span></button>`;
+  const newCount = allPhotos.filter(isNew).length;
+  const newBadgeBtn = newCount > 0 ? `<button class="filter-btn filter-btn-new" data-cat="new">✦ ${t('gallery.filter.new') || 'חדש'} <span class="filter-count">${newCount}</span></button>` : '';
+  let html = `<button class="filter-btn active" data-cat="all">${t('gallery.filter.all')} <span class="filter-count">${allPhotos.length}</span></button>${newBadgeBtn}`;
 
   const esc = s => s.replace(/"/g, '&quot;');
 
