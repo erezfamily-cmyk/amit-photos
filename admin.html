@@ -196,6 +196,7 @@ input,textarea,select{font-family:var(--font);direction:rtl}
 }
 .photo-actions{display:flex;gap:.4rem;margin-top:.65rem}
 .draft-badge{margin-right:.4rem;font-size:.68rem;font-weight:600;color:#e8a000;background:rgba(232,160,0,.12);border:1px solid rgba(232,160,0,.3);padding:.1rem .4rem;border-radius:10px;vertical-align:middle}
+.sale-badge{margin-right:.4rem;font-size:.68rem;font-weight:700;color:#34d399;background:rgba(52,211,153,.12);border:1px solid rgba(52,211,153,.35);padding:.1rem .4rem;border-radius:10px;vertical-align:middle}
 
 /* Upload zone */
 .upload-zone{
@@ -1454,6 +1455,17 @@ const Photos = (() => {
     $('photos-stats').innerHTML = html;
   }
 
+  function isOnSale(p) {
+    if (!p.price_overrides) return false;
+    try {
+      const ov = JSON.parse(p.price_overrides);
+      const gs = parseFloat($('price-small').value) || 19;
+      const gm = parseFloat($('price-medium').value) || 59;
+      const gl = parseFloat($('price-large').value) || 129;
+      return (ov.small != null && ov.small < gs) || (ov.medium != null && ov.medium < gm) || (ov.large != null && ov.large < gl);
+    } catch { return false; }
+  }
+
   function renderGrid() {
     const disp = getDisplayData();
     const grid = $('photos-grid');
@@ -1470,7 +1482,7 @@ const Photos = (() => {
             onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%2275%22%3E%3Crect fill=%22%23111%22 width=%22100%25%22 height=%22100%25%22/%3E%3C/svg%3E'">
         </div>
         <div class="photo-info">
-          <div class="photo-title">${p.title||'ללא כותרת'}${p.published===0?'<span class="draft-badge">טיוטה</span>':''}</div>
+          <div class="photo-title">${p.title||'ללא כותרת'}${p.published===0?'<span class="draft-badge">טיוטה</span>':''}${isOnSale(p)?'<span class="sale-badge">%</span>':''}</div>
           <span class="cat-badge">${p.category||'ללא קטגוריה'}</span>
           <div class="photo-actions">
             <button class="btn-icon" title="העתק ID" onclick="event.stopPropagation();navigator.clipboard.writeText('${p.id}').then(()=>{this.title='הועתק!';setTimeout(()=>this.title='העתק ID',1500)})">
