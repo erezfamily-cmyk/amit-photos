@@ -1118,6 +1118,15 @@ function openBuyModal(photo) {
     if (priceEl) priceEl.textContent = `₪${price}`;
     btn.dataset.price = price;
 
+    // sale badge
+    btn.querySelector('.buy-size-sale-badge')?.remove();
+    if (price < globalPrices[size]) {
+      const badge = document.createElement('span');
+      badge.className = 'buy-size-sale-badge';
+      badge.textContent = '🏷 מבצע';
+      btn.appendChild(badge);
+    }
+
     const pxEl = btn.querySelector('.buy-size-px');
     if (size === 'large' && pxEl) {
       if (maxDim >= 5000) pxEl.textContent = `${photo.width}×${photo.height}px`;
