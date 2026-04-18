@@ -141,6 +141,7 @@ input,textarea,select{font-family:var(--font);direction:rtl}
 .btn-icon{width:30px;height:30px;padding:0;display:inline-flex;align-items:center;justify-content:center;background:transparent;border:1px solid var(--border);color:var(--text-muted);border-radius:var(--radius);transition:all .2s}
 .btn-icon:hover{border-color:var(--accent);color:var(--accent)}
 .btn-icon.active{border-color:#c8a96e;color:#c8a96e}
+.btn-icon.price-active{border-color:#60a5fa;color:#60a5fa}
 .btn-icon.danger:hover{border-color:var(--red);color:var(--red)}
 
 /* Newsletter */
@@ -1475,8 +1476,8 @@ const Photos = (() => {
             <button class="btn-icon" title="העתק ID" onclick="event.stopPropagation();navigator.clipboard.writeText('${p.id}').then(()=>{this.title='הועתק!';setTimeout(()=>this.title='העתק ID',1500)})">
               <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor"><rect x="9" y="9" width="13" height="13" rx="2" stroke-width="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke-width="2"/></svg>
             </button>
-            <button class="btn-icon${p.price_override != null ? ' active' : ''}" title="${p.price_override != null ? 'מחיר: ₪'+p.price_override+' — לחץ לניקוי' : 'קבע מחיר מיוחד'}" onclick="event.stopPropagation();Photos.setPhotoPrice('${p.id}', ${p.price_override ?? 'null'})">
-              <svg width="13" height="13" fill="${p.price_override != null ? 'currentColor' : 'none'}" viewBox="0 0 24 24" stroke="currentColor"><circle cx="12" cy="12" r="10" stroke-width="2"/><line x1="12" y1="8" x2="12" y2="12" stroke-width="2"/><line x1="12" y1="16" x2="12.01" y2="16" stroke-width="2"/></svg>
+            <button class="btn-icon${p.price_overrides ? ' price-active' : ''}" title="${p.price_overrides ? 'מחיר מיוחד מוגדר' : 'קבע מחיר מיוחד'}" onclick="event.stopPropagation();Photos.setPhotoPrice(event, '${p.id}')">
+              <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor"><circle cx="12" cy="12" r="10" stroke-width="2"/><line x1="12" y1="8" x2="12" y2="12" stroke-width="2"/><line x1="12" y1="16" x2="12.01" y2="16" stroke-width="2"/></svg>
             </button>
             <button class="btn-icon${p.is_new ? ' active' : ''}" title="${p.is_new ? 'הסר תג חדש' : 'סמן כחדש'}" id="new-btn-${p.id}" onclick="event.stopPropagation();Photos.toggleNew('${p.id}')">
               <svg width="13" height="13" fill="${p.is_new ? 'currentColor' : 'none'}" viewBox="0 0 24 24" stroke="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" stroke-width="2"/></svg>
@@ -1872,23 +1873,50 @@ const Photos = (() => {
     setTimeout(() => { $('new-badge-days-status').textContent = ''; }, 2000);
   });
 
-  async function setPhotoPrice(id, currentOverride) {
-    if (currentOverride !== null) {
-      if (!confirm('מחק את המחיר המיוחד לתמונה זו?')) return;
-      await fetch('/api/admin/photo-price', { method: 'POST', headers: authHeaders(), body: JSON.stringify({ photo_id: id, price_override: null }) });
-      const idx = data.findIndex(p => p.id === id);
-      if (idx >= 0) { data[idx].price_override = null; render(); }
+  let _pricepopupPhotoId = null;
+
+  async function setPhotoPrice(e, id) {
+    const popup = document.getElementById('price-popup');
+    if (_pricepopupPhotoId === id && popup.style.display !== 'none') {
+      popup.style.display = 'none';
+      _pricepopupPhotoId = null;
       return;
     }
-    const val = prompt('קבע מחיר מיוחד לתמונה זו (₪), או השאר ריק לביטול:');
-    if (val === null || val.trim() === '') return;
-    const price = parseFloat(val);
-    if (isNaN(price) || price < 0) { toast('מחיר לא תקין', 'error'); return; }
-    const r = await fetch('/api/admin/photo-price', { method: 'POST', headers: authHeaders(), body: JSON.stringify({ photo_id: id, price_override: price }) });
-    if (!r.ok) { toast('שגיאה בשמירה', 'error'); return; }
-    const idx = data.findIndex(p => p.id === id);
-    if (idx >= 0) { data[idx].price_override = price; render(); }
-    toast(`מחיר מיוחד נשמר: ₪${price}`);
+    _pricepopupPhotoId = id;
+    const globalPrices = { small: parseFloat($('price-small').value)||19, medium: parseFloat($('price-medium').value)||59, large: parseFloat($('price-large').value)||129 };
+    const photo = data.find(p => p.id === id);
+    let overrides = null;
+    if (photo?.price_overrides) { try { overrides = JSON.parse(photo.price_overrides); } catch {} }
+    $('popup-price-small').value = overrides?.small ?? globalPrices.small;
+    $('popup-price-medium').value = overrides?.medium ?? globalPrices.medium;
+    $('popup-price-large').value = overrides?.large ?? globalPrices.large;
+    const rect = e.currentTarget.getBoundingClientRect();
+    popup.style.display = 'block';
+    const popupW = 230;
+    let left = rect.left - popupW + rect.width;
+    if (left < 8) left = 8;
+    popup.style.left = left + 'px';
+    popup.style.top = (rect.bottom + 6 + window.scrollY) + 'px';
+    document.getElementById('popup-save-btn').onclick = async () => {
+      const small = parseFloat($('popup-price-small').value);
+      const medium = parseFloat($('popup-price-medium').value);
+      const large = parseFloat($('popup-price-large').value);
+      if ([small, medium, large].some(isNaN)) { toast('מחיר לא תקין', 'error'); return; }
+      const r = await fetch('/api/admin/photo-price', { method: 'POST', headers: authHeaders(), body: JSON.stringify({ photo_id: id, price_override: { small, medium, large } }) });
+      if (!r.ok) { toast('שגיאה בשמירה', 'error'); return; }
+      const idx = data.findIndex(p => p.id === id);
+      if (idx >= 0) { data[idx].price_overrides = JSON.stringify({ small, medium, large }); render(); }
+      popup.style.display = 'none'; _pricepopupPhotoId = null;
+      toast('מחיר מיוחד נשמר');
+    };
+    document.getElementById('popup-reset-btn').onclick = async () => {
+      if (!confirm('לאפס את המחיר המיוחד לברירת המחדל?')) return;
+      await fetch('/api/admin/photo-price', { method: 'POST', headers: authHeaders(), body: JSON.stringify({ photo_id: id, price_override: null }) });
+      const idx = data.findIndex(p => p.id === id);
+      if (idx >= 0) { data[idx].price_overrides = null; render(); }
+      popup.style.display = 'none'; _pricepopupPhotoId = null;
+      toast('מחיר אופס לברירת מחדל');
+    };
   }
 
   async function toggleNew(id) {
@@ -1904,6 +1932,14 @@ const Photos = (() => {
     data[idx].is_new = newVal;
     render();
   }
+
+  document.addEventListener('click', (e) => {
+    const popup = document.getElementById('price-popup');
+    if (popup && popup.style.display !== 'none' && !popup.contains(e.target) && !e.target.closest('.btn-icon')) {
+      popup.style.display = 'none';
+      _pricepopupPhotoId = null;
+    }
+  });
 
   return { init: async () => { await init(); loadNewBadgeSettings(); loadPriceSettings(); }, openEdit, openEditById, confirmDelete, cardClick, toggleSelect, toggleNew, setPhotoPrice, filterByChip, getData: () => data };
 })();
@@ -2490,5 +2526,19 @@ const Purchases = (() => {
   };
 })();
 </script>
+
+<!-- Price override popup -->
+<div id="price-popup" style="display:none;position:fixed;z-index:9999;background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:1rem;min-width:220px;box-shadow:0 4px 20px rgba(0,0,0,.5)">
+  <div style="font-size:.85rem;font-weight:600;margin-bottom:.75rem;color:var(--text)">מחיר מיוחד לתמונה זו (₪)</div>
+  <div style="display:flex;flex-direction:column;gap:.5rem;margin-bottom:.75rem">
+    <label style="display:flex;justify-content:space-between;align-items:center;font-size:.82rem">קטנה <input type="number" id="popup-price-small" class="input-sm" style="width:70px" min="0" step="1"></label>
+    <label style="display:flex;justify-content:space-between;align-items:center;font-size:.82rem">בינונית <input type="number" id="popup-price-medium" class="input-sm" style="width:70px" min="0" step="1"></label>
+    <label style="display:flex;justify-content:space-between;align-items:center;font-size:.82rem">גדולה <input type="number" id="popup-price-large" class="input-sm" style="width:70px" min="0" step="1"></label>
+  </div>
+  <div style="display:flex;gap:.5rem">
+    <button type="button" class="btn-accent btn-sm" id="popup-save-btn" style="flex:1">עדכן מחירים</button>
+    <button type="button" id="popup-reset-btn" style="background:var(--bg);border:1px solid var(--border);color:var(--text-muted);border-radius:4px;cursor:pointer;padding:.25rem .6rem;font-size:.8rem">אפס</button>
+  </div>
+</div>
 </body>
 </html>
