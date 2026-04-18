@@ -890,7 +890,7 @@ function initContactForm() {
 // ===== CART =====
 let cart = []; // [{ id, title, thumbnail, url, width, height }]
 let cartSize = 'small';
-const CART_PRICES = { small: 19, medium: 59, large: 129 };
+function getCartPrices() { return globalPrices; }
 const BUNDLE_DISCOUNT = 0.2;
 const BUNDLE_MIN = 3;
 
@@ -982,7 +982,7 @@ function renderCartItems() {
 }
 
 function renderCartSummary() {
-  const price = CART_PRICES[cartSize] || 39;
+  const price = getCartPrices()[cartSize] || 39;
   const total = cart.length * price;
   const hasDiscount = cart.length >= BUNDLE_MIN;
   const discount = hasDiscount ? Math.round(total * BUNDLE_DISCOUNT) : 0;
@@ -996,7 +996,7 @@ function renderCartSummary() {
 
 function cartCheckout() {
   if (cart.length === 0) return;
-  const price = CART_PRICES[cartSize] || 39;
+  const price = getCartPrices()[cartSize] || 39;
   const total = cart.length * price;
   const hasDiscount = cart.length >= BUNDLE_MIN;
   const discount = hasDiscount ? Math.round(total * BUNDLE_DISCOUNT) : 0;
@@ -1035,17 +1035,20 @@ const LOCATION_CATEGORIES = new Set([
 ]);
 
 const SIZES = {
-  small:  { label: 'קובץ רשת (1500px)',   price: 19,  sz: 'w1500' },
-  medium: { label: 'קובץ הדפסה (3000px)', price: 59,  sz: 'w3000' },
-  large:  { label: 'קובץ מלא',            price: 129, sz: 'w6000' },
+  small:  { label: 'קובץ רשת (1500px)',   sz: 'w1500' },
+  medium: { label: 'קובץ הדפסה (3000px)', sz: 'w3000' },
+  large:  { label: 'קובץ מלא',            sz: 'w6000' },
 };
 
-// מחיר בדיקה — תמונה ספציפית במחיר מיוחד (לבדיקות בלבד)
-const PRICE_OVERRIDES = {
-  '1jmBaBvk8rKoV5rvARPayvd010U_CW_gp': { small: 1 },
-};
 function getEffectivePrice(photoId, size) {
-  return PRICE_OVERRIDES[photoId]?.[size] ?? SIZES[size]?.price;
+  const photo = allPhotos.find(p => p.id === photoId);
+  if (photo?.price_overrides) {
+    try {
+      const ov = typeof photo.price_overrides === 'string' ? JSON.parse(photo.price_overrides) : photo.price_overrides;
+      if (ov[size] != null) return ov[size];
+    } catch {}
+  }
+  return globalPrices[size];
 }
 
 function initBuyModal() {
