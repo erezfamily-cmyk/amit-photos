@@ -1482,7 +1482,7 @@ const Photos = (() => {
             onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%2275%22%3E%3Crect fill=%22%23111%22 width=%22100%25%22 height=%22100%25%22/%3E%3C/svg%3E'">
         </div>
         <div class="photo-info">
-          <div class="photo-title">${p.title||'ללא כותרת'}${p.published===0?'<span class="draft-badge">טיוטה</span>':''}${isOnSale(p)?'<span class="sale-badge">%</span>':''}</div>
+          <div class="photo-title">${p.title||'ללא כותרת'}${p.published===0?'<span class="draft-badge">טיוטה</span>':''}${isOnSale(p)?'<span class="sale-badge">🏷 מבצע</span>':''}</div>
           <span class="cat-badge">${p.category||'ללא קטגוריה'}</span>
           <div class="photo-actions">
             <button class="btn-icon" title="העתק ID" onclick="event.stopPropagation();navigator.clipboard.writeText('${p.id}').then(()=>{this.title='הועתק!';setTimeout(()=>this.title='העתק ID',1500)})">
