@@ -626,11 +626,11 @@ async function sendPurchaseEmail(env, { titles, size, amount, txnId, tokens, ori
   }).catch(() => {});
 }
 
-async function sendPurchaseWhatsApp(env, { titles, size, amount, txnId }) {
-  if (!env.CALLMEBOT_PHONE || !env.CALLMEBOT_APIKEY) return;
+async function sendPurchaseTelegram(env, { titles, size, amount, txnId }) {
+  if (!env.CALLMEBOT_TELEGRAM_USER) return;
   const sizeLabel = { small: 'רשת', medium: 'הדפסה', large: 'מלא' }[size] || size;
   const msg = `רכישה חדשה! 📸 ${titles.join(', ')} | ${sizeLabel} | ₪${amount} | ${txnId}`;
-  const url = `https://api.callmebot.com/whatsapp.php?phone=${env.CALLMEBOT_PHONE}&text=${encodeURIComponent(msg)}&apikey=${env.CALLMEBOT_APIKEY}`;
+  const url = `https://api.callmebot.com/text.php?user=@${env.CALLMEBOT_TELEGRAM_USER}&text=${encodeURIComponent(msg)}`;
   await fetch(url).catch(() => {});
 }
 
@@ -717,7 +717,7 @@ async function handleVerifyPayment(request, env, ctx) {
   }));
   const origin = new URL(request.url).origin;
   ctx.waitUntil(sendPurchaseEmail(env, { titles: notifTitles, size, amount: mcGross, txnId, tokens, origin }));
-  ctx.waitUntil(sendPurchaseWhatsApp(env, { titles: notifTitles, size, amount: mcGross, txnId }));
+  ctx.waitUntil(sendPurchaseTelegram(env, { titles: notifTitles, size, amount: mcGross, txnId }));
 
   if (tokens.length === 1) {
     return jsonRes({ url: `/api/download/${tokens[0]}`, title: notifTitles[0] }, 200, request);
