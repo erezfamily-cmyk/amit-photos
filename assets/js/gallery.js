@@ -200,10 +200,23 @@ function updateWeekPhotoStrip() {
   if (!strip) return;
   const weekPhoto = allPhotos.find(p => p.is_week_photo);
   if (!weekPhoto) { strip.style.display = 'none'; return; }
-  document.getElementById('wps-img').src = weekPhoto.thumbnail || weekPhoto.url;
+
+  const src = weekPhoto.thumbnail || weekPhoto.url;
+  document.getElementById('wps-img').src = src;
   document.getElementById('wps-img').alt = weekPhoto.title;
+  document.getElementById('wps-img-lg').src = weekPhoto.url || src;
+  document.getElementById('wps-img-lg').alt = weekPhoto.title;
   document.getElementById('wps-title').textContent = weekPhoto.title;
   document.getElementById('wps-buy-btn').onclick = () => openBuyModal(weekPhoto);
+  document.getElementById('wps-img-lg').onclick = () => openBuyModal(weekPhoto);
+
+  const toggle = document.getElementById('wps-toggle');
+  const expanded = document.getElementById('wps-expanded');
+  toggle.onclick = () => {
+    const isOpen = expanded.classList.toggle('open');
+    toggle.textContent = isOpen ? t('week.collapse') : t('week.expand');
+  };
+
   strip.style.display = '';
 }
 

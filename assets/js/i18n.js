@@ -56,6 +56,11 @@ const TRANSLATIONS = {
     'gallery.btn.print':'הדפסה ←',
     'gallery.btn.buy':  'רכישה ←',
     'gallery.btn.cart': '+ סל',
+    'week.label':    '⭐ תמונת השבוע',
+    'week.discount': '25% הנחה השבוע על כל גדלי הרכישה',
+    'week.buy':      'רכוש עכשיו',
+    'week.expand':   'הצג תמונה ▼',
+    'week.collapse': 'סגור ▲',
 
     // About
     'about.label':      'קצת עליי',
@@ -363,6 +368,11 @@ const TRANSLATIONS = {
     'gallery.btn.print':'Print →',
     'gallery.btn.buy':  'Purchase →',
     'gallery.btn.cart': '+ Cart',
+    'week.label':    '⭐ Photo of the Week',
+    'week.discount': '25% off all purchase sizes this week',
+    'week.buy':      'Buy Now',
+    'week.expand':   'Show Photo ▼',
+    'week.collapse': 'Close ▲',
 
     // About
     'about.label':      'About Me',
