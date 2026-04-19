@@ -13,6 +13,9 @@ function isOnSale(photo) {
            (ov.large != null && ov.large < globalPrices.large);
   } catch { return false; }
 }
+function isWeekPhoto(photo) {
+  return !!photo.is_week_photo;
+}
 
 function isNew(photo) {
   if (photo.is_new) return true;
@@ -170,7 +173,7 @@ async function loadPhotos() {
       const apiMap = new Map(apiPhotos.map(p => [p.id, p]));
       allPhotos = allPhotos.map(p => {
         const a = apiMap.get(p.id);
-        return a ? { ...p, is_new: a.is_new, added_at: a.added_at, price_overrides: a.price_overrides } : p;
+        return a ? { ...p, is_new: a.is_new, added_at: a.added_at, price_overrides: a.price_overrides, is_week_photo: a.is_week_photo, week_photo_discount: a.week_photo_discount } : p;
       });
     }
   } catch {
@@ -259,6 +262,7 @@ function renderGallery(append = false) {
       <div class="img-protect-overlay"></div>
       ${isNew(photo) ? '<div class="gallery-new-badge">חדש</div>' : ''}
       ${isOnSale(photo) ? '<div class="gallery-sale-badge">🏷 מבצע</div>' : ''}
+      ${isWeekPhoto(photo) ? '<div class="gallery-week-badge">⭐ תמונת השבוע</div>' : ''}
       <div class="gallery-item-overlay">
         <div class="gallery-item-info">
           <h3>${photo.title}</h3>
@@ -1049,6 +1053,9 @@ function getEffectivePrice(photoId, size) {
       if (ov[size] != null) return ov[size];
     } catch {}
   }
+  if (photo?.is_week_photo && photo?.week_photo_discount) {
+    return Math.round(globalPrices[size] * (1 - photo.week_photo_discount));
+  }
   return globalPrices[size];
 }
 
@@ -1124,7 +1131,7 @@ function openBuyModal(photo) {
       if (priceEl) priceEl.innerHTML = `<s class="buy-size-original-price">₪${globalPrices[size]}</s> <span class="buy-size-sale-price">₪${price}</span>`;
       const badge = document.createElement('span');
       badge.className = 'buy-size-sale-badge';
-      badge.textContent = '🏷 מבצע';
+      badge.textContent = photo.is_week_photo ? '⭐ תמונת השבוע' : '🏷 מבצע';
       btn.appendChild(badge);
     } else {
       if (priceEl) priceEl.textContent = `₪${price}`;
