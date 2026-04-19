@@ -1574,6 +1574,33 @@ async function getGlobalPrices(env) {
   return { small: 19, medium: 59, large: 129 };
 }
 
+async function handlePhotoOfWeekSuggest(request, env) {
+  if (!await checkAuth(request, env)) return unauth(request);
+  const { results } = await env.DB.prepare(`
+    SELECT p.id, p.title, p.thumbnail,
+           COUNT(t.token) as purchase_count
+    FROM photos p
+    LEFT JOIN download_tokens t ON json_extract(t.photo_ids, '$[0]') = p.id
+    WHERE p.published = 1
+    GROUP BY p.id
+    ORDER BY purchase_count ASC
+  `).all();
+  if (!results.length) return jsonRes({ error: 'אין תמונות זמינות' }, 404, request);
+  const bottomCount = Math.max(1, Math.floor(results.length * 0.2));
+  const candidates = results.slice(0, bottomCount);
+  const photo = candidates[Math.floor(Math.random() * candidates.length)];
+  return jsonRes({ photo: { id: photo.id, title: photo.title, thumbnail: photo.thumbnail } }, 200, request);
+}
+
+async function handlePhotoOfWeekSet(request, env) {
+  if (!await checkAuth(request, env)) return unauth(request);
+  const { photo_id } = await request.json().catch(() => ({}));
+  if (!photo_id) return jsonRes({ error: 'photo_id required' }, 400, request);
+  await env.DB.prepare("INSERT OR REPLACE INTO settings (key, value) VALUES ('photo_of_week_id', ?)").bind(photo_id).run();
+  await env.DB.prepare("INSERT OR IGNORE INTO settings (key, value) VALUES ('photo_of_week_discount', '0.25')").run();
+  return jsonRes({ ok: true }, 200, request);
+}
+
 async function handleAdminPrices(request, env) {
   if (request.method === 'GET') {
     const prices = await getGlobalPrices(env);
@@ -1742,6 +1769,8 @@ export default {
     if (path === '/api/admin/prices') return handleAdminPrices(request, env);
     if (path === '/api/admin/photo-price' && request.method === 'POST') return handleAdminPhotoPrice(request, env);
     if (path === '/api/photos/reorder' && request.method === 'POST') return handlePhotosReorder(request, env);
+    if (path === '/api/admin/photo-of-week/suggest' && request.method === 'POST') return handlePhotoOfWeekSuggest(request, env);
+    if (path === '/api/admin/photo-of-week/set' && request.method === 'POST') return handlePhotoOfWeekSet(request, env);
     if (path === '/api/admin/toggle-photo-new' && request.method === 'POST') return handleTogglePhotoNew(request, env);
     if (path === '/api/admin/migrate-amount' && request.method === 'POST') {
       if (!await checkAuth(request, env)) return unauth(request);
