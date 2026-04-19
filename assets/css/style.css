@@ -705,6 +705,13 @@ nav.scrolled { border-bottom-color: rgba(200, 169, 110, 0.3); }
   padding: .2rem .5rem; border-radius: 3px;
   pointer-events: none;
 }
+.gallery-week-badge {
+  position: absolute; bottom: 10px; left: 10px; z-index: 5;
+  background: #c9a84c; color: #fff;
+  font-size: .65rem; font-weight: 700; letter-spacing: .5px;
+  padding: .2rem .5rem; border-radius: 3px;
+  pointer-events: none;
+}
 
 .filter-btn-new {
   border-color: #c8a96e !important;
