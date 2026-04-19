@@ -160,8 +160,8 @@ def main():
     if source_url.startswith("/"):
         source_url = f"{SITE_URL}{source_url}"
 
-    # Instagram יכול לגשת ישירות ל-lh3.googleusercontent.com ול-R2 — אין צורך ב-upload ביניים
-    image_url = source_url
+    print(f"⬆️  מעלה תמונה לשרת ציבורי...")
+    image_url = upload_to_public_host(source_url)
     print(f"📤 מפרסם Story מ-URL: {image_url}")
     story_id = post_story(image_url)
     print(f"✅ Story פורסם! ID: {story_id}")
