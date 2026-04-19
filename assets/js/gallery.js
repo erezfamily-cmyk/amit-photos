@@ -184,8 +184,9 @@ async function loadPhotos() {
       : p
   );
 
-  const shuffled = [...allPhotos].sort(() => Math.random() - 0.5);
-  filteredPhotos = shuffled;
+  const withOrder    = allPhotos.filter(p => p.sort_order != null).sort((a, b) => a.sort_order - b.sort_order);
+  const withoutOrder = allPhotos.filter(p => p.sort_order == null).sort(() => Math.random() - 0.5);
+  filteredPhotos = [...withOrder, ...withoutOrder];
   displayedCount = Math.min(PAGE_SIZE, filteredPhotos.length);
   renderGallery();
 }
@@ -368,10 +369,10 @@ function applyFilters() {
     return matchCat && matchSearch;
   });
 
-  if (cat === 'all' && !query) {
-    pool = [...pool].sort(() => Math.random() - 0.5);
-  }
-  filteredPhotos = pool;
+  // תמונות עם sort_order קודמות לפי סדר, שאר התמונות אחריהן בסדר אקראי
+  const withOrder    = pool.filter(p => p.sort_order != null).sort((a, b) => a.sort_order - b.sort_order);
+  const withoutOrder = pool.filter(p => p.sort_order == null).sort(() => Math.random() - 0.5);
+  filteredPhotos = [...withOrder, ...withoutOrder];
   displayedCount = Math.min(PAGE_SIZE, filteredPhotos.length);
   renderGallery();
 }
