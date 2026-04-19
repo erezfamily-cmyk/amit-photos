@@ -1601,6 +1601,12 @@ async function handlePhotoOfWeekSet(request, env) {
   return jsonRes({ ok: true }, 200, request);
 }
 
+async function handlePhotoOfWeekClear(request, env) {
+  if (!await checkAuth(request, env)) return unauth(request);
+  await env.DB.prepare("DELETE FROM settings WHERE key='photo_of_week_id'").run();
+  return jsonRes({ ok: true }, 200, request);
+}
+
 async function handleAdminPrices(request, env) {
   if (request.method === 'GET') {
     const prices = await getGlobalPrices(env);
@@ -1771,6 +1777,7 @@ export default {
     if (path === '/api/photos/reorder' && request.method === 'POST') return handlePhotosReorder(request, env);
     if (path === '/api/admin/photo-of-week/suggest' && request.method === 'POST') return handlePhotoOfWeekSuggest(request, env);
     if (path === '/api/admin/photo-of-week/set' && request.method === 'POST') return handlePhotoOfWeekSet(request, env);
+    if (path === '/api/admin/photo-of-week/clear' && request.method === 'POST') return handlePhotoOfWeekClear(request, env);
     if (path === '/api/admin/toggle-photo-new' && request.method === 'POST') return handleTogglePhotoNew(request, env);
     if (path === '/api/admin/migrate-amount' && request.method === 'POST') {
       if (!await checkAuth(request, env)) return unauth(request);

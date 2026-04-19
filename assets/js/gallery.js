@@ -212,10 +212,16 @@ function updateWeekPhotoStrip() {
 
   const toggle = document.getElementById('wps-toggle');
   const expanded = document.getElementById('wps-expanded');
-  toggle.onclick = () => {
+  const smallImg = document.getElementById('wps-img');
+
+  function toggleExpand() {
     const isOpen = expanded.classList.toggle('open');
     toggle.textContent = isOpen ? t('week.collapse') : t('week.expand');
-  };
+  }
+
+  toggle.onclick = toggleExpand;
+  smallImg.onclick = toggleExpand;
+  smallImg.style.cursor = 'pointer';
 
   strip.style.display = '';
 }

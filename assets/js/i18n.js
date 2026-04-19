@@ -369,7 +369,7 @@ const TRANSLATIONS = {
     'gallery.btn.buy':  'Purchase →',
     'gallery.btn.cart': '+ Cart',
     'week.label':    '⭐ Photo of the Week',
-    'week.discount': '25% off all purchase sizes this week',
+    'week.discount': '25% off this week — all sizes',
     'week.buy':      'Buy Now',
     'week.expand':   'Show Photo ▼',
     'week.collapse': 'Close ▲',
