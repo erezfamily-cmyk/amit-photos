@@ -61,16 +61,17 @@ def get_latest_posted_photo(photos):
 
 
 def upload_to_public_host(source_url):
-    print(f"⬇️  מוריד: {source_url}")
-    resp = requests.get(source_url, timeout=30)
+    print(f"⬇️  מוריד: {source_url}", flush=True)
+    resp = requests.get(source_url, timeout=30, headers={"User-Agent": "Mozilla/5.0"})
     resp.raise_for_status()
     img_bytes = resp.content
     content_type = resp.headers.get("Content-Type", "")
-    print(f"📄 Content-Type: {content_type}, גודל: {len(img_bytes)} bytes")
+    print(f"📄 Content-Type: {content_type}, גודל: {len(img_bytes)} bytes", flush=True)
 
     if not content_type.startswith("image/"):
         raise ValueError(f"URL לא מחזיר תמונה: {content_type}\nתוכן: {resp.text[:200]}")
 
+    # 1. litterbox
     try:
         upload = requests.post(
             "https://litterbox.catbox.moe/resources/internals/api.php",
@@ -81,17 +82,30 @@ def upload_to_public_host(source_url):
         upload.raise_for_status()
         public_url = upload.text.strip()
         if public_url.startswith("http"):
-            print(f"⬆️  הועלה (litterbox): {public_url}")
+            print(f"⬆️  הועלה (litterbox): {public_url}", flush=True)
             return public_url
-        print(f"⚠️  litterbox תגובה לא תקינה: {public_url!r}")
+        print(f"⚠️  litterbox תגובה לא תקינה: {public_url!r}", flush=True)
     except Exception as e:
-        print(f"⚠️  litterbox נכשל ({e}), מנסה 0x0.st...")
+        print(f"⚠️  litterbox נכשל ({e}), מנסה 0x0.st...", flush=True)
 
-    upload = requests.post("https://0x0.st", files={"file": ("photo.jpg", img_bytes, "image/jpeg")}, timeout=60)
-    upload.raise_for_status()
-    public_url = upload.text.strip()
-    print(f"⬆️  הועלה (0x0.st): {public_url}")
-    return public_url
+    # 2. 0x0.st
+    try:
+        upload = requests.post("https://0x0.st", files={"file": ("photo.jpg", img_bytes, "image/jpeg")}, timeout=60)
+        upload.raise_for_status()
+        public_url = upload.text.strip()
+        if public_url.startswith("http"):
+            print(f"⬆️  הועלה (0x0.st): {public_url}", flush=True)
+            return public_url
+    except Exception as e:
+        print(f"⚠️  0x0.st נכשל ({e}), מנסה imgbb...", flush=True)
+
+    # 3. imgbb (ללא API key — anonymous)
+    import base64
+    b64 = base64.b64encode(img_bytes).decode()
+    upload = requests.post("https://api.imgbb.com/1/upload",
+        data={"key": "public", "image": b64}, timeout=60)
+    # imgbb ללא key תמיד ייכשל — נזרוק שגיאה ברורה
+    raise RuntimeError(f"כל שירותי ה-upload נכשלו. imgbb: {upload.status_code} {upload.text[:100]}")
 
 
 def post_story(image_url):
