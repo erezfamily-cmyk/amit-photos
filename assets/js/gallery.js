@@ -192,6 +192,19 @@ async function loadPhotos() {
   filteredPhotos = [...withOrder, ...withoutOrder];
   displayedCount = Math.min(PAGE_SIZE, filteredPhotos.length);
   renderGallery();
+  updateWeekPhotoStrip();
+}
+
+function updateWeekPhotoStrip() {
+  const strip = document.getElementById('week-photo-strip');
+  if (!strip) return;
+  const weekPhoto = allPhotos.find(p => p.is_week_photo);
+  if (!weekPhoto) { strip.style.display = 'none'; return; }
+  document.getElementById('wps-img').src = weekPhoto.thumbnail || weekPhoto.url;
+  document.getElementById('wps-img').alt = weekPhoto.title;
+  document.getElementById('wps-title').textContent = weekPhoto.title;
+  document.getElementById('wps-buy-btn').onclick = () => openBuyModal(weekPhoto);
+  strip.style.display = '';
 }
 
 // ===== SKELETONS =====

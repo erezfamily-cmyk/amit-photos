@@ -713,6 +713,36 @@ nav.scrolled { border-bottom-color: rgba(200, 169, 110, 0.3); }
   pointer-events: none;
 }
 
+/* ===== WEEK PHOTO STRIP ===== */
+.week-photo-strip {
+  display: flex; align-items: center; gap: 1rem;
+  padding: .85rem 1.25rem;
+  background: linear-gradient(135deg, rgba(201,168,76,.1) 0%, rgba(201,168,76,.04) 100%);
+  border: 1px solid rgba(201,168,76,.35);
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  direction: rtl;
+}
+.wps-img {
+  width: 60px; height: 60px;
+  object-fit: cover; border-radius: 6px; flex-shrink: 0;
+}
+.wps-info { display: flex; flex-direction: column; gap: .2rem; flex: 1; }
+.wps-label { font-size: .7rem; font-weight: 700; letter-spacing: .5px; color: #c9a84c; }
+.wps-title { font-size: .95rem; font-weight: 600; color: var(--text, #fff); }
+.wps-discount { font-size: .8rem; color: var(--text-muted, #888); }
+.wps-btn {
+  background: #c9a84c; color: #000; border: none;
+  padding: .55rem 1.1rem; border-radius: 5px;
+  font-size: .82rem; font-weight: 700; cursor: pointer;
+  white-space: nowrap; transition: opacity .15s; flex-shrink: 0;
+}
+.wps-btn:hover { opacity: .82; }
+@media (max-width: 500px) {
+  .week-photo-strip { flex-wrap: wrap; }
+  .wps-btn { width: 100%; text-align: center; margin-top: .25rem; }
+}
+
 .filter-btn-new {
   border-color: #c8a96e !important;
   color: #c8a96e !important;
