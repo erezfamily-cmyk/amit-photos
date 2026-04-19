@@ -740,6 +740,13 @@ nav.scrolled { border-bottom-color: rgba(200, 169, 110, 0.3); }
   white-space: nowrap; flex-shrink: 0; transition: background .15s;
 }
 .wps-toggle-btn:hover { background: rgba(201,168,76,.12); }
+.wps-preview-btn {
+  background: transparent; color: #c9a84c; border: 1px solid rgba(201,168,76,.6);
+  padding: .4rem .75rem; border-radius: 5px;
+  font-size: .78rem; font-weight: 600; cursor: pointer;
+  white-space: nowrap; flex-shrink: 0; transition: background .15s;
+}
+.wps-preview-btn:hover { background: rgba(201,168,76,.15); }
 .wps-btn {
   background: #c9a84c; color: #000; border: none;
   padding: .55rem 1.1rem; border-radius: 5px;
@@ -759,7 +766,7 @@ nav.scrolled { border-bottom-color: rgba(200, 169, 110, 0.3); }
 }
 @media (max-width: 500px) {
   .wps-row { flex-wrap: wrap; }
-  .wps-toggle-btn, .wps-btn { flex: 1; text-align: center; }
+  .wps-toggle-btn, .wps-preview-btn, .wps-btn { flex: 1; text-align: center; }
 }
 
 .filter-btn-new {

@@ -552,6 +552,11 @@ function initLightbox() {
   wallModal.addEventListener('click', e => { if (e.target === wallModal) closeWallMockup(); });
   document.addEventListener('keydown', e => { if (e.key === 'Escape' && wallModal.classList.contains('open')) closeWallMockup(); });
 
+  document.getElementById('wps-preview-btn').addEventListener('click', () => {
+    const weekPhoto = allPhotos.find(p => p.is_week_photo);
+    if (weekPhoto) openWallMockup(weekPhoto);
+  });
+
   document.getElementById('wall-color-picker').addEventListener('input', e => {
     wallModal.style.background = e.target.value;
   });

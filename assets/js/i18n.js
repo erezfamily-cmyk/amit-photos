@@ -59,6 +59,7 @@ const TRANSLATIONS = {
     'week.label':    '⭐ תמונת השבוע',
     'week.discount': '25% הנחה השבוע על כל גדלי הרכישה',
     'week.buy':      'רכוש עכשיו',
+    'week.preview':  '🖼 תצוגה על הקיר',
     'week.expand':   'הצג תמונה ▼',
     'week.collapse': 'סגור ▲',
 
@@ -371,6 +372,7 @@ const TRANSLATIONS = {
     'week.label':    '⭐ Photo of the Week',
     'week.discount': '25% off this week — all sizes',
     'week.buy':      'Buy Now',
+    'week.preview':  '🖼 Preview on Wall',
     'week.expand':   'Show Photo ▼',
     'week.collapse': 'Close ▲',
 
