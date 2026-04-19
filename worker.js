@@ -269,8 +269,8 @@ async function handlePhotos(request, env) {
     // ?admin=1 מחייב auth; גישה ציבורית — רק published
     if (adminAll && !await checkAuth(request, env)) return unauth(request);
     const sql = adminAll
-      ? 'SELECT * FROM photos ORDER BY created_at DESC'
-      : 'SELECT * FROM photos WHERE published=1 ORDER BY created_at DESC';
+      ? 'SELECT * FROM photos ORDER BY CASE WHEN sort_order IS NULL THEN 1 ELSE 0 END, sort_order ASC, created_at DESC'
+      : 'SELECT * FROM photos WHERE published=1 ORDER BY CASE WHEN sort_order IS NULL THEN 1 ELSE 0 END, sort_order ASC, created_at DESC';
     const { results } = await env.DB.prepare(sql).all();
     return jsonRes(results);
   }
@@ -1583,6 +1583,16 @@ async function handleAdminPrices(request, env) {
   return jsonRes({ error: 'method not allowed' }, 405, request);
 }
 
+async function handlePhotosReorder(request, env) {
+  if (!await checkAuth(request, env)) return unauth(request);
+  const orders = await request.json().catch(() => null);
+  if (!Array.isArray(orders)) return jsonRes({ error: 'expected array [{id, sort_order}]' }, 400, request);
+  for (const { id, sort_order } of orders) {
+    await env.DB.prepare('UPDATE photos SET sort_order=? WHERE id=?').bind(sort_order, id).run();
+  }
+  return jsonRes({ ok: true, updated: orders.length }, 200, request);
+}
+
 async function handleAdminPhotoPrice(request, env) {
   if (!await checkAuth(request, env)) return unauth(request);
   const { photo_id, price_override } = await request.json().catch(() => ({}));
@@ -1709,6 +1719,7 @@ export default {
     if (path === '/api/new-badge-settings') return handleNewBadgeSettings(request, env);
     if (path === '/api/admin/prices') return handleAdminPrices(request, env);
     if (path === '/api/admin/photo-price' && request.method === 'POST') return handleAdminPhotoPrice(request, env);
+    if (path === '/api/photos/reorder' && request.method === 'POST') return handlePhotosReorder(request, env);
     if (path === '/api/admin/toggle-photo-new' && request.method === 'POST') return handleTogglePhotoNew(request, env);
     if (path === '/api/admin/migrate-amount' && request.method === 'POST') {
       if (!await checkAuth(request, env)) return unauth(request);
