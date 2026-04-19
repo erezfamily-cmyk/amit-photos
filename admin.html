@@ -339,6 +339,13 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
 .photos-toolbar select{background:#0d0d0d;border:1px solid var(--border);color:var(--text);padding:.5rem .85rem;border-radius:var(--radius);font-size:.875rem;outline:none;cursor:pointer}
 .photos-toolbar select option{background:#111}
 
+/* ===== DRAG & DROP ===== */
+.drag-handle{cursor:grab;padding:.2rem .35rem;color:var(--text-muted);font-size:1rem;user-select:none;line-height:1;opacity:.5}
+.drag-handle:hover{opacity:1}
+.drag-handle:active{cursor:grabbing}
+.photo-card.drag-over{outline:2px solid var(--accent);outline-offset:2px}
+.photo-card.dragging{opacity:.4}
+
 /* ===== BULK ===== */
 .bulk-bar{background:var(--accent-dim);border:1px solid rgba(200,169,110,.25);border-radius:6px;padding:.6rem 1rem;margin-bottom:.75rem;display:none;align-items:center;gap:.75rem}
 .bulk-bar.show{display:flex}
@@ -1432,6 +1439,7 @@ const Photos = (() => {
   let searchQ = '', sortBy = 'newest';
   let selected = new Set(), selectMode = false;
   let lbList = [], lbIdx = 0;
+  let dragSrcId = null;
 
   function getDisplayData() {
     let d = data.filter(p => {
@@ -1509,7 +1517,7 @@ const Photos = (() => {
     }
     grid.className = 'photos-grid' + (selectMode ? ' select-mode' : '');
     grid.innerHTML = disp.map(p => `
-      <div class="photo-card${selected.has(p.id)?' selected':''}" id="card-${p.id}" onclick="Photos.cardClick('${p.id}')">
+      <div class="photo-card${selected.has(p.id)?' selected':''}" id="card-${p.id}" draggable="true" data-photo-id="${p.id}" onclick="Photos.cardClick('${p.id}')">
         <div class="photo-thumb">
           <div class="cb-wrap"><input type="checkbox" ${selected.has(p.id)?'checked':''} onclick="event.stopPropagation();Photos.toggleSelect('${p.id}')"></div>
           <img loading="lazy" src="${p.thumbnail||p.url}" alt="${p.title||''}"
@@ -1519,6 +1527,7 @@ const Photos = (() => {
           <div class="photo-title">${p.title||'ללא כותרת'}${p.published===0?'<span class="draft-badge">טיוטה</span>':''}${isOnSale(p)?'<span class="sale-badge">🏷 מבצע</span>':''}</div>
           <span class="cat-badge">${p.category||'ללא קטגוריה'}</span>
           <div class="photo-actions">
+            <span class="drag-handle" onclick="event.stopPropagation()" title="גרור לסדר">⠿</span>
             <button class="btn-icon" title="העתק ID" onclick="event.stopPropagation();navigator.clipboard.writeText('${p.id}').then(()=>{this.title='הועתק!';setTimeout(()=>this.title='העתק ID',1500)})">
               <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor"><rect x="9" y="9" width="13" height="13" rx="2" stroke-width="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke-width="2"/></svg>
             </button>
@@ -1762,6 +1771,49 @@ const Photos = (() => {
 
   $('photos-search').addEventListener('input', e => { searchQ = e.target.value.trim(); renderGrid(); });
   $('photos-sort').addEventListener('change', e => { sortBy = e.target.value; renderGrid(); });
+
+  // Drag & drop reorder
+  const photosGrid = $('photos-grid');
+  photosGrid.addEventListener('dragstart', e => {
+    const card = e.target.closest('.photo-card');
+    if (!card) return;
+    dragSrcId = card.dataset.photoId;
+    setTimeout(() => card.classList.add('dragging'), 0);
+    e.dataTransfer.effectAllowed = 'move';
+  });
+  photosGrid.addEventListener('dragend', e => {
+    const card = e.target.closest('.photo-card');
+    if (card) card.classList.remove('dragging');
+    document.querySelectorAll('.photo-card.drag-over').forEach(c => c.classList.remove('drag-over'));
+  });
+  photosGrid.addEventListener('dragover', e => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    const card = e.target.closest('.photo-card');
+    document.querySelectorAll('.photo-card.drag-over').forEach(c => c.classList.remove('drag-over'));
+    if (card && card.dataset.photoId !== dragSrcId) card.classList.add('drag-over');
+  });
+  photosGrid.addEventListener('drop', async e => {
+    e.preventDefault();
+    const targetCard = e.target.closest('.photo-card');
+    if (!targetCard || !dragSrcId || targetCard.dataset.photoId === dragSrcId) return;
+    targetCard.classList.remove('drag-over');
+    const targetId = targetCard.dataset.photoId;
+    const srcIdx  = data.findIndex(p => p.id === dragSrcId);
+    const tgtIdx  = data.findIndex(p => p.id === targetId);
+    if (srcIdx < 0 || tgtIdx < 0) return;
+    const [moved] = data.splice(srcIdx, 1);
+    data.splice(tgtIdx, 0, moved);
+    const orders = data.map((p, i) => ({ id: p.id, sort_order: i + 1 }));
+    data.forEach((p, i) => { p.sort_order = i + 1; });
+    renderGrid();
+    const res = await fetch('/api/photos/reorder', {
+      method: 'POST',
+      headers: { ...authHeaders(), 'Content-Type': 'application/json' },
+      body: JSON.stringify(orders)
+    });
+    toast(res.ok ? 'סדר הגלריה עודכן' : 'שגיאה בשמירת הסדר');
+  });
 
   $('select-mode-btn').addEventListener('click', () => {
     selectMode = !selectMode;
