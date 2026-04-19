@@ -204,7 +204,7 @@ function updateWeekPhotoStrip() {
   const src = weekPhoto.thumbnail || weekPhoto.url;
   document.getElementById('wps-img').src = src;
   document.getElementById('wps-img').alt = weekPhoto.title;
-  document.getElementById('wps-img-lg').src = weekPhoto.url || src;
+  document.getElementById('wps-img-lg').src = getLightboxUrl(weekPhoto.url || src);
   document.getElementById('wps-img-lg').alt = weekPhoto.title;
   document.getElementById('wps-title').textContent = weekPhoto.title;
   document.getElementById('wps-buy-btn').onclick = () => openBuyModal(weekPhoto);
