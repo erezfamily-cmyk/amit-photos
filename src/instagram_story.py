@@ -61,9 +61,15 @@ def get_latest_posted_photo(photos):
 
 
 def upload_to_public_host(source_url):
+    print(f"⬇️  מוריד: {source_url}")
     resp = requests.get(source_url, timeout=30)
     resp.raise_for_status()
     img_bytes = resp.content
+    content_type = resp.headers.get("Content-Type", "")
+    print(f"📄 Content-Type: {content_type}, גודל: {len(img_bytes)} bytes")
+
+    if not content_type.startswith("image/"):
+        raise ValueError(f"URL לא מחזיר תמונה: {content_type}\nתוכן: {resp.text[:200]}")
 
     try:
         upload = requests.post(
@@ -77,12 +83,15 @@ def upload_to_public_host(source_url):
         if public_url.startswith("http"):
             print(f"⬆️  הועלה (litterbox): {public_url}")
             return public_url
+        print(f"⚠️  litterbox תגובה לא תקינה: {public_url!r}")
     except Exception as e:
         print(f"⚠️  litterbox נכשל ({e}), מנסה 0x0.st...")
 
     upload = requests.post("https://0x0.st", files={"file": ("photo.jpg", img_bytes, "image/jpeg")}, timeout=60)
     upload.raise_for_status()
-    return upload.text.strip()
+    public_url = upload.text.strip()
+    print(f"⬆️  הועלה (0x0.st): {public_url}")
+    return public_url
 
 
 def post_story(image_url):
