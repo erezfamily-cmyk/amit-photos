@@ -110,13 +110,18 @@ def fetch_image_as_base64(url, max_bytes=4_500_000):
     content_type = resp.headers.get("Content-Type", "image/jpeg").split(";")[0].strip()
     img_bytes = resp.content
 
-    if len(img_bytes) > max_bytes:
+    if True:  # תמיד נעבד כדי לבדוק מימדים וגודל
         try:
             from PIL import Image
             import io
             img = Image.open(io.BytesIO(img_bytes))
             img = img.convert("RGB")
-            # הקטן עד שמתאים ל-4.5MB
+            # הגבל מימדים ל-7000 פיקסל בצד הארוך
+            max_dim = 7000
+            if max(img.size) > max_dim:
+                img.thumbnail((max_dim, max_dim), Image.LANCZOS)
+                print(f"📐 שינוי גודל: {img.size}")
+            # דחוס עד שמתאים ל-4.5MB
             quality = 85
             while quality >= 40:
                 buf = io.BytesIO()
@@ -128,7 +133,6 @@ def fetch_image_as_base64(url, max_bytes=4_500_000):
             content_type = "image/jpeg"
             print(f"🗜️  דחוס ל-{len(img_bytes)//1024}KB (quality={quality})")
         except ImportError:
-            # PIL לא זמין — הקטן ריזולוציה ידנית
             pass
 
     b64 = base64.standard_b64encode(img_bytes).decode("utf-8")
