@@ -1645,7 +1645,10 @@ async function handleAdminPurchases(request, env) {
     SELECT
       COALESCE(SUM(amount), 0) as total_revenue,
       COUNT(*) as total_purchases,
-      SUM(CASE WHEN created_at >= ${now - 30*86400} THEN 1 ELSE 0 END) as this_month
+      SUM(CASE WHEN created_at >= ${now - 30*86400} THEN 1 ELSE 0 END) as this_month,
+      COALESCE(SUM(CASE WHEN size='small' THEN amount ELSE 0 END), 0) as rev_small,
+      COALESCE(SUM(CASE WHEN size='medium' THEN amount ELSE 0 END), 0) as rev_medium,
+      COALESCE(SUM(CASE WHEN size='large' THEN amount ELSE 0 END), 0) as rev_large
     FROM download_tokens
   `).first();
 
@@ -1659,9 +1662,19 @@ async function handleAdminPurchases(request, env) {
     LIMIT 5
   `).all();
 
+  const dailyRev = await env.DB.prepare(`
+    SELECT
+      strftime('%Y-%m-%d', datetime(created_at, 'unixepoch')) as day,
+      COALESCE(SUM(amount), 0) as revenue
+    FROM download_tokens
+    WHERE created_at >= ${now - 30*86400}
+    GROUP BY day
+    ORDER BY day ASC
+  `).all();
+
   return jsonRes({
     tokens: rows.results,
-    stats: { ...stats, top_photos: topPhotos.results }
+    stats: { ...stats, top_photos: topPhotos.results, daily_revenue: dailyRev.results }
   }, 200, request);
 }
 

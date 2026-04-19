@@ -811,15 +811,22 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
         <div class="stat-card" style="background:var(--bg-card);border:1px solid var(--border);border-radius:6px;padding:1.25rem;text-align:center">
           <div class="stat-val" id="pur-total-revenue" style="font-size:1.75rem;font-weight:700;color:var(--accent)">—</div>
           <div style="color:var(--text-muted);font-size:.8rem;margin-top:.25rem">סה"כ הכנסות</div>
+          <div id="pur-rev-by-size" style="margin-top:.6rem;font-size:.75rem;color:var(--text-muted);line-height:1.7"></div>
         </div>
         <div class="stat-card" style="background:var(--bg-card);border:1px solid var(--border);border-radius:6px;padding:1.25rem;text-align:center">
           <div class="stat-val" id="pur-this-month" style="font-size:1.75rem;font-weight:700;color:var(--accent)">—</div>
-          <div style="color:var(--text-muted);font-size:.8rem;margin-top:.25rem">30 ימים אחרונים</div>
+          <div style="color:var(--text-muted);font-size:.8rem;margin-top:.25rem">30 ימים אחרונים — מכירות</div>
         </div>
         <div class="stat-card" style="background:var(--bg-card);border:1px solid var(--border);border-radius:6px;padding:1.25rem;text-align:center">
           <div id="pur-top-photos" style="font-size:.85rem;color:var(--text-muted);line-height:1.8">—</div>
           <div style="color:var(--text-muted);font-size:.8rem;margin-top:.25rem">פופולריות</div>
         </div>
+      </div>
+
+      <!-- 30-day revenue chart -->
+      <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:6px;padding:1rem;margin-bottom:1.5rem">
+        <div style="font-size:.8rem;color:var(--text-muted);margin-bottom:.5rem">הכנסות — 30 ימים אחרונים</div>
+        <div id="pur-chart" style="height:80px;display:flex;align-items:flex-end;gap:2px;overflow:hidden"></div>
       </div>
 
       <!-- Filter + Create -->
@@ -2471,10 +2478,25 @@ const Purchases = (() => {
     if (!res.ok) return;
     const data = await res.json();
 
-    $('pur-total-revenue').textContent = `₪${Math.round(data.stats.total_revenue || 0)}`;
-    $('pur-this-month').textContent = data.stats.this_month || 0;
-    $('pur-top-photos').innerHTML = (data.stats.top_photos || [])
+    const s = data.stats;
+    $('pur-total-revenue').textContent = `₪${Math.round(s.total_revenue || 0)}`;
+    $('pur-rev-by-size').innerHTML = [
+      `רשת: ₪${Math.round(s.rev_small||0)}`,
+      `הדפסה: ₪${Math.round(s.rev_medium||0)}`,
+      `מלא: ₪${Math.round(s.rev_large||0)}`
+    ].join('<br>');
+    $('pur-this-month').textContent = s.this_month || 0;
+    $('pur-top-photos').innerHTML = (s.top_photos || [])
       .map(p => `${p.title} (${p.cnt})`).join('<br>') || '—';
+
+    const daily = s.daily_revenue || [];
+    const maxRev = Math.max(...daily.map(d => d.revenue), 1);
+    $('pur-chart').innerHTML = daily.length
+      ? daily.map(d => {
+          const pct = Math.round((d.revenue / maxRev) * 100);
+          return `<div title="${d.day.slice(5)}: ₪${Math.round(d.revenue)}" style="flex:1;min-width:4px;background:var(--accent);opacity:.7;height:${pct}%;border-radius:2px 2px 0 0"></div>`;
+        }).join('')
+      : '<div style="color:var(--text-muted);font-size:.8rem;padding:.5rem">אין נתונים</div>';
 
     const tbody = $('pur-table-body');
     tbody.innerHTML = '';
