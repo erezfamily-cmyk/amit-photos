@@ -681,8 +681,35 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
       </div>
       <div class="bulk-bar" id="bulk-bar">
         <span class="bulk-count" id="bulk-count">0 נבחרו</span>
-        <button class="btn btn-danger btn-sm" id="bulk-delete-btn">מחק נבחרים</button>
-        <button class="btn btn-ghost btn-sm" id="bulk-cancel-btn">ביטול</button>
+        <button type="button" class="btn btn-sm" style="background:var(--accent-dim);color:var(--accent);border:1px solid var(--accent)" id="bulk-cat-btn">קטגוריה</button>
+        <button type="button" class="btn btn-sm" style="background:var(--accent-dim);color:var(--accent);border:1px solid var(--accent)" id="bulk-price-btn">מחיר</button>
+        <button type="button" class="btn btn-danger btn-sm" id="bulk-delete-btn">מחק</button>
+        <button type="button" class="btn btn-ghost btn-sm" id="bulk-cancel-btn">ביטול</button>
+      </div>
+
+      <!-- Bulk category panel -->
+      <div id="bulk-cat-panel" style="display:none;background:var(--bg-card);border:1px solid var(--border);border-radius:6px;padding:.75rem;margin-bottom:.75rem;align-items:center;gap:.75rem">
+        <select id="bulk-cat-select" class="input-sm">
+          <option value="">-- בחר קטגוריה --</option>
+          <option value="טבע">טבע</option>
+          <option value="פורטרט">פורטרט</option>
+          <option value="עירוני">עירוני</option>
+          <option value="אירועים">אירועים</option>
+        </select>
+        <button type="button" class="btn btn-accent btn-sm" id="bulk-cat-save">שמור</button>
+        <button type="button" class="btn btn-ghost btn-sm" id="bulk-cat-cancel">ביטול</button>
+      </div>
+
+      <!-- Bulk price panel -->
+      <div id="bulk-price-panel" style="display:none;background:var(--bg-card);border:1px solid var(--border);border-radius:6px;padding:.75rem;margin-bottom:.75rem">
+        <div style="display:flex;gap:.75rem;align-items:center;flex-wrap:wrap">
+          <label style="font-size:.8rem;color:var(--text-muted)">רשת ₪<input id="bulk-p-small" type="number" class="input-sm" style="width:60px;margin-right:.25rem" min="0"></label>
+          <label style="font-size:.8rem;color:var(--text-muted)">הדפסה ₪<input id="bulk-p-medium" type="number" class="input-sm" style="width:60px;margin-right:.25rem" min="0"></label>
+          <label style="font-size:.8rem;color:var(--text-muted)">מלא ₪<input id="bulk-p-large" type="number" class="input-sm" style="width:60px;margin-right:.25rem" min="0"></label>
+          <button type="button" class="btn btn-accent btn-sm" id="bulk-price-save">שמור</button>
+          <button type="button" class="btn btn-ghost btn-sm" id="bulk-price-cancel">ביטול</button>
+          <button type="button" class="btn btn-ghost btn-sm" id="bulk-price-reset" style="color:var(--text-muted)">אפס מחירים</button>
+        </div>
       </div>
 
       <!-- Upload zone -->
@@ -1764,6 +1791,83 @@ const Photos = (() => {
     $('bulk-bar').classList.remove('show');
     render();
     toast(`נמחקו ${count} תמונות`);
+  });
+
+  // Bulk category
+  $('bulk-cat-btn').addEventListener('click', () => {
+    $('bulk-cat-panel').style.display = 'flex';
+    $('bulk-price-panel').style.display = 'none';
+  });
+  $('bulk-cat-cancel').addEventListener('click', () => { $('bulk-cat-panel').style.display = 'none'; });
+  $('bulk-cat-save').addEventListener('click', async () => {
+    const cat = $('bulk-cat-select').value;
+    if (!cat) return toast('בחר קטגוריה');
+    const ids = [...selected];
+    for (const id of ids) {
+      const photo = data.find(p => p.id === id);
+      await fetch('/api/photos', {
+        method: 'PATCH',
+        headers: { ...authHeaders(), 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, category: cat, title: photo?.title || '', description: photo?.description || '' })
+      });
+      const idx = data.findIndex(p => p.id === id);
+      if (idx >= 0) data[idx] = { ...data[idx], category: cat };
+    }
+    $('bulk-cat-panel').style.display = 'none';
+    selected.clear(); selectMode = false;
+    $('select-mode-btn').textContent = 'בחר';
+    $('bulk-bar').classList.remove('show');
+    renderGrid();
+    toast(`עודכנה קטגוריה ל-${ids.length} תמונות`);
+  });
+
+  // Bulk price
+  $('bulk-price-btn').addEventListener('click', () => {
+    $('bulk-price-panel').style.display = 'block';
+    $('bulk-cat-panel').style.display = 'none';
+  });
+  $('bulk-price-cancel').addEventListener('click', () => { $('bulk-price-panel').style.display = 'none'; });
+  $('bulk-price-reset').addEventListener('click', async () => {
+    if (!confirm(`לאפס מחירי override ל-${selected.size} תמונות?`)) return;
+    const ids = [...selected];
+    for (const id of ids) {
+      await fetch('/api/admin/photo-price', {
+        method: 'POST',
+        headers: { ...authHeaders(), 'Content-Type': 'application/json' },
+        body: JSON.stringify({ photo_id: id, price_override: null })
+      });
+      const idx = data.findIndex(p => p.id === id);
+      if (idx >= 0) data[idx] = { ...data[idx], price_overrides: null };
+    }
+    $('bulk-price-panel').style.display = 'none';
+    selected.clear(); selectMode = false;
+    $('select-mode-btn').textContent = 'בחר';
+    $('bulk-bar').classList.remove('show');
+    renderGrid();
+    toast(`אופסו מחירי override ל-${ids.length} תמונות`);
+  });
+  $('bulk-price-save').addEventListener('click', async () => {
+    const small  = parseFloat($('bulk-p-small').value);
+    const medium = parseFloat($('bulk-p-medium').value);
+    const large  = parseFloat($('bulk-p-large').value);
+    if ([small, medium, large].some(isNaN)) return toast('מלא את כל המחירים');
+    const override = { small, medium, large };
+    const ids = [...selected];
+    for (const id of ids) {
+      await fetch('/api/admin/photo-price', {
+        method: 'POST',
+        headers: { ...authHeaders(), 'Content-Type': 'application/json' },
+        body: JSON.stringify({ photo_id: id, price_override: override })
+      });
+      const idx = data.findIndex(p => p.id === id);
+      if (idx >= 0) data[idx] = { ...data[idx], price_overrides: JSON.stringify(override) };
+    }
+    $('bulk-price-panel').style.display = 'none';
+    selected.clear(); selectMode = false;
+    $('select-mode-btn').textContent = 'בחר';
+    $('bulk-bar').classList.remove('show');
+    renderGrid();
+    toast(`עודכן מחיר ל-${ids.length} תמונות`);
   });
 
   $('add-photo-btn').addEventListener('click', () => $('upload-file-input').click());
