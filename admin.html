@@ -692,6 +692,7 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
           <button type="button" class="btn-accent btn-sm" id="week-suggest-btn">הצע תמונה</button>
           <button type="button" class="btn-accent btn-sm hidden" id="week-confirm-btn">קבע</button>
           <button type="button" class="btn btn-ghost btn-sm hidden" id="week-resuggest-btn">הצע אחרת</button>
+          <button type="button" class="btn btn-ghost btn-sm hidden" id="week-clear-btn" style="color:#f87171">הסר</button>
           <span id="week-photo-status" style="color:var(--text-muted);font-size:.8rem"></span>
         </div>
         <div id="week-photo-preview" class="hidden" style="display:flex;align-items:center;gap:.75rem">
@@ -2163,6 +2164,7 @@ const WeekPhoto = (() => {
     $('week-confirm-btn').classList.add('hidden');
     $('week-resuggest-btn').classList.add('hidden');
     $('week-photo-preview').classList.add('hidden');
+    weekPhoto ? $('week-clear-btn').classList.remove('hidden') : $('week-clear-btn').classList.add('hidden');
     _suggestion = null;
   }
 
@@ -2200,6 +2202,18 @@ const WeekPhoto = (() => {
   });
 
   $('week-resuggest-btn').addEventListener('click', () => $('week-suggest-btn').click());
+
+  $('week-clear-btn').addEventListener('click', async () => {
+    $('week-photo-status').textContent = 'מסיר…';
+    const r = await fetch('/api/admin/photo-of-week/clear', {
+      method: 'POST', headers: authHeaders()
+    }).catch(() => null);
+    if (!r?.ok) { $('week-photo-status').textContent = 'שגיאה'; return; }
+    $('week-photo-status').textContent = '✓ הוסר';
+    setTimeout(() => { $('week-photo-status').textContent = ''; }, 2000);
+    await Photos.init();
+    init(Photos.getData());
+  });
 
   return { init };
 })();
