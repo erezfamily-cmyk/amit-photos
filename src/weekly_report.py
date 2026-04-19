@@ -62,7 +62,7 @@ def fetch_fb_posts():
     since = int((datetime.now(timezone.utc) - timedelta(days=7)).timestamp())
     try:
         resp = requests.get(f"{GRAPH_API}/{FB_PAGE_ID}/feed", params={
-            "fields": "id,message,created_time,likes.summary(true),comments.summary(true)",
+            "fields": "id,message,created_time,reactions.summary(true),comments.summary(true)",
             "since":  since,
             "limit":  20,
             "access_token": FB_TOKEN,
@@ -98,9 +98,9 @@ def build_html_report(ig_posts, ig_account, fb_posts, fb_page):
     ig_followers = ig_account.get("followers_count", "—")
 
     # Facebook stats
-    fb_total_likes    = sum(p.get("likes", {}).get("summary", {}).get("total_count", 0) for p in fb_posts)
+    fb_total_likes    = sum(p.get("reactions", {}).get("summary", {}).get("total_count", 0) for p in fb_posts)
     fb_total_comments = sum(p.get("comments", {}).get("summary", {}).get("total_count", 0) for p in fb_posts)
-    fb_best = max(fb_posts, key=lambda p: p.get("likes", {}).get("summary", {}).get("total_count", 0), default=None)
+    fb_best = max(fb_posts, key=lambda p: p.get("reactions", {}).get("summary", {}).get("total_count", 0), default=None)
     fb_fans = fb_page.get("fan_count", "—")
 
     def post_rows(posts, platform):
@@ -113,7 +113,7 @@ def build_html_report(ig_posts, ig_account, fb_posts, fb_page):
                 caption = (p.get("caption") or "")[:60].replace("\n", " ")
             else:
                 date    = p.get("created_time", "")[:10]
-                likes   = p.get("likes", {}).get("summary", {}).get("total_count", 0)
+                likes   = p.get("reactions", {}).get("summary", {}).get("total_count", 0)
                 comments= p.get("comments", {}).get("summary", {}).get("total_count", 0)
                 caption = (p.get("message") or "")[:60].replace("\n", " ")
             rows += f"""<tr>
@@ -237,8 +237,8 @@ def generate_ai_recommendations(ig_posts, ig_account, fb_posts, fb_page):
     ig_total_likes    = sum(p.get("like_count", 0) for p in ig_posts)
     ig_total_comments = sum(p.get("comments_count", 0) for p in ig_posts)
     ig_best = max(ig_posts, key=lambda p: p.get("like_count", 0), default=None)
-    fb_total_likes    = sum(p.get("likes", {}).get("summary", {}).get("total_count", 0) for p in fb_posts)
-    fb_best = max(fb_posts, key=lambda p: p.get("likes", {}).get("summary", {}).get("total_count", 0), default=None)
+    fb_total_likes    = sum(p.get("reactions", {}).get("summary", {}).get("total_count", 0) for p in fb_posts)
+    fb_best = max(fb_posts, key=lambda p: p.get("reactions", {}).get("summary", {}).get("total_count", 0), default=None)
 
     summary = f"""Weekly social media performance for Amit Erez Photography (Israeli photographer):
 
@@ -277,7 +277,7 @@ Example: ["המלצה 1", "המלצה 2", "המלצה 3", "המלצה 4"]"""}],
 def save_social_report(ig_posts, ig_account, fb_posts, fb_page, recommendations):
     """שומר דוח JSON לשימוש האדמין."""
     ig_best = max(ig_posts, key=lambda p: p.get("like_count", 0), default=None)
-    fb_best = max(fb_posts, key=lambda p: p.get("likes", {}).get("summary", {}).get("total_count", 0), default=None)
+    fb_best = max(fb_posts, key=lambda p: p.get("reactions", {}).get("summary", {}).get("total_count", 0), default=None)
 
     report = {
         "generated_at": datetime.now(timezone.utc).isoformat(),
@@ -297,7 +297,7 @@ def save_social_report(ig_posts, ig_account, fb_posts, fb_page, recommendations)
         "fb": {
             "fans": fb_page.get("fan_count", 0),
             "posts_this_week": len(fb_posts),
-            "total_likes": sum(p.get("likes", {}).get("summary", {}).get("total_count", 0) for p in fb_posts),
+            "total_likes": sum(p.get("reactions", {}).get("summary", {}).get("total_count", 0) for p in fb_posts),
             "total_comments": sum(p.get("comments", {}).get("summary", {}).get("total_count", 0) for p in fb_posts),
             "best_post": {
                 "message": (fb_best.get("message") or "")[:120] if fb_best else "",
