@@ -3,6 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>
+// אם הדף הגיע מ-browser cache — טען מחדש מהשרת
+(function() {
+  var nav = performance.getEntriesByType('navigation')[0];
+  if (nav && nav.transferSize === 0 && nav.encodedBodySize > 0) {
+    location.reload(true);
+  }
+})();
+</script>
 <title>AMIT PHOTOS — ניהול</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Heebo:wght@300;400;500;600&display=swap" rel="stylesheet">
