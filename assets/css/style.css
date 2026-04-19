@@ -2598,7 +2598,7 @@ footer {
 /* Cream mat */
 .wall-frame-mat {
   background: #f0e9da;
-  padding: 22px;
+  padding: 36px 22px;
   box-shadow: inset 0 0 12px rgba(0,0,0,0.06);
 }
 
