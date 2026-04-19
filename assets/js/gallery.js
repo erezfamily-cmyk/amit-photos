@@ -204,11 +204,13 @@ function updateWeekPhotoStrip() {
   const src = weekPhoto.thumbnail || weekPhoto.url;
   document.getElementById('wps-img').src = src;
   document.getElementById('wps-img').alt = weekPhoto.title;
-  document.getElementById('wps-img-lg').src = getLightboxUrl(weekPhoto.url || src);
-  document.getElementById('wps-img-lg').alt = weekPhoto.title;
+  const lgImg = document.getElementById('wps-img-lg');
+  lgImg.src = getLightboxUrl(weekPhoto.url || src);
+  lgImg.alt = weekPhoto.title;
+  lgImg.onerror = () => { if (lgImg.src !== src) lgImg.src = src; };
   document.getElementById('wps-title').textContent = weekPhoto.title;
   document.getElementById('wps-buy-btn').onclick = () => openBuyModal(weekPhoto);
-  document.getElementById('wps-img-lg').onclick = () => openBuyModal(weekPhoto);
+  lgImg.onclick = () => openBuyModal(weekPhoto);
 
   const toggle = document.getElementById('wps-toggle');
   const expanded = document.getElementById('wps-expanded');

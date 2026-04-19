@@ -756,13 +756,18 @@ nav.scrolled { border-bottom-color: rgba(200, 169, 110, 0.3); }
 .wps-btn:hover { opacity: .82; }
 .wps-expanded {
   max-height: 0; overflow: hidden;
-  transition: max-height .35s ease;
+  transition: max-height .4s ease;
 }
-.wps-expanded.open { max-height: 520px; }
+.wps-expanded.open { max-height: 620px; }
 .wps-img-lg {
   display: block; width: 100%; max-height: 480px;
   object-fit: contain; cursor: pointer;
   background: rgba(0,0,0,.3);
+}
+.wps-expanded-actions {
+  display: flex; gap: .75rem; padding: .75rem 1.25rem;
+  direction: rtl; justify-content: flex-start;
+  border-top: 1px solid rgba(201,168,76,.15);
 }
 @media (max-width: 500px) {
   .wps-row { flex-wrap: wrap; }
