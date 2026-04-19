@@ -134,13 +134,19 @@
 
     <!-- Week Photo Strip -->
     <div id="week-photo-strip" class="week-photo-strip reveal reveal-delay-1" style="display:none">
-      <img id="wps-img" class="wps-img" src="" alt="">
-      <div class="wps-info">
-        <span class="wps-label">⭐ תמונת השבוע</span>
-        <span id="wps-title" class="wps-title"></span>
-        <span class="wps-discount">25% הנחה השבוע על כל גדלי הרכישה</span>
+      <div class="wps-row">
+        <img id="wps-img" class="wps-img-sm" src="" alt="">
+        <div class="wps-info">
+          <span class="wps-label" data-i18n="week.label">⭐ תמונת השבוע</span>
+          <span id="wps-title" class="wps-title"></span>
+          <span class="wps-discount" data-i18n="week.discount">25% הנחה השבוע על כל גדלי הרכישה</span>
+        </div>
+        <button type="button" class="wps-toggle-btn" id="wps-toggle" data-i18n="week.expand">הצג תמונה ▼</button>
+        <button type="button" class="wps-btn" id="wps-buy-btn" data-i18n="week.buy">רכוש עכשיו</button>
       </div>
-      <button class="wps-btn" id="wps-buy-btn">רכוש עכשיו</button>
+      <div class="wps-expanded" id="wps-expanded">
+        <img id="wps-img-lg" class="wps-img-lg" src="" alt="">
+      </div>
     </div>
 
     <div class="gallery-search-wrap reveal reveal-delay-1">

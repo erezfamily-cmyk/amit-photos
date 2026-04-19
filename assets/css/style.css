@@ -715,32 +715,51 @@ nav.scrolled { border-bottom-color: rgba(200, 169, 110, 0.3); }
 
 /* ===== WEEK PHOTO STRIP ===== */
 .week-photo-strip {
-  display: flex; align-items: center; gap: 1rem;
-  padding: .85rem 1.25rem;
   background: linear-gradient(135deg, rgba(201,168,76,.1) 0%, rgba(201,168,76,.04) 100%);
   border: 1px solid rgba(201,168,76,.35);
   border-radius: 8px;
   margin-bottom: 1.5rem;
-  direction: rtl;
+  overflow: hidden;
 }
-.wps-img {
-  width: 60px; height: 60px;
+.wps-row {
+  display: flex; align-items: center; gap: 1rem;
+  padding: .85rem 1.25rem; direction: rtl;
+}
+.wps-img-sm {
+  width: 64px; height: 64px;
   object-fit: cover; border-radius: 6px; flex-shrink: 0;
 }
-.wps-info { display: flex; flex-direction: column; gap: .2rem; flex: 1; }
+.wps-info { display: flex; flex-direction: column; gap: .2rem; flex: 1; min-width: 0; }
 .wps-label { font-size: .7rem; font-weight: 700; letter-spacing: .5px; color: #c9a84c; }
-.wps-title { font-size: .95rem; font-weight: 600; color: var(--text, #fff); }
+.wps-title { font-size: .95rem; font-weight: 600; color: var(--text, #fff); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .wps-discount { font-size: .8rem; color: var(--text-muted, #888); }
+.wps-toggle-btn {
+  background: transparent; color: #c9a84c; border: 1px solid rgba(201,168,76,.4);
+  padding: .4rem .75rem; border-radius: 5px;
+  font-size: .78rem; font-weight: 600; cursor: pointer;
+  white-space: nowrap; flex-shrink: 0; transition: background .15s;
+}
+.wps-toggle-btn:hover { background: rgba(201,168,76,.12); }
 .wps-btn {
   background: #c9a84c; color: #000; border: none;
   padding: .55rem 1.1rem; border-radius: 5px;
   font-size: .82rem; font-weight: 700; cursor: pointer;
-  white-space: nowrap; transition: opacity .15s; flex-shrink: 0;
+  white-space: nowrap; flex-shrink: 0; transition: opacity .15s;
 }
 .wps-btn:hover { opacity: .82; }
+.wps-expanded {
+  max-height: 0; overflow: hidden;
+  transition: max-height .35s ease;
+}
+.wps-expanded.open { max-height: 520px; }
+.wps-img-lg {
+  display: block; width: 100%; max-height: 480px;
+  object-fit: contain; cursor: pointer;
+  background: rgba(0,0,0,.3);
+}
 @media (max-width: 500px) {
-  .week-photo-strip { flex-wrap: wrap; }
-  .wps-btn { width: 100%; text-align: center; margin-top: .25rem; }
+  .wps-row { flex-wrap: wrap; }
+  .wps-toggle-btn, .wps-btn { flex: 1; text-align: center; }
 }
 
 .filter-btn-new {
