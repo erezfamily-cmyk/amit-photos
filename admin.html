@@ -684,6 +684,23 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
         <span id="new-badge-days-status" style="color:var(--text-muted);font-size:.8rem"></span>
       </div>
 
+      <!-- Week Photo Section -->
+      <div id="week-photo-box" style="display:flex;flex-direction:column;gap:.6rem;background:var(--bg-card);border:1px solid var(--border);border-radius:6px;padding:.75rem 1rem;margin-bottom:1rem;font-size:.85rem">
+        <div style="display:flex;align-items:center;gap:.75rem;flex-wrap:wrap">
+          <span style="font-weight:600">⭐ תמונת השבוע</span>
+          <div id="week-photo-current" style="flex:1;color:var(--text-muted)">טוען…</div>
+          <button type="button" class="btn-accent btn-sm" id="week-suggest-btn">הצע תמונה</button>
+          <button type="button" class="btn-accent btn-sm hidden" id="week-confirm-btn">קבע</button>
+          <button type="button" class="btn btn-ghost btn-sm hidden" id="week-resuggest-btn">הצע אחרת</button>
+          <span id="week-photo-status" style="color:var(--text-muted);font-size:.8rem"></span>
+        </div>
+        <div id="week-photo-preview" class="hidden" style="display:flex;align-items:center;gap:.75rem">
+          <img id="week-preview-img" style="width:48px;height:48px;object-fit:cover;border-radius:4px;border:1px solid var(--border)" alt="">
+          <span id="week-preview-title" style="color:var(--text)"></span>
+          <span style="color:var(--text-muted)">— 25% הנחה על כל הגדלים</span>
+        </div>
+      </div>
+
       <div class="photos-toolbar">
         <input type="text" id="photos-search" placeholder="חיפוש לפי כותרת או קטגוריה...">
         <select id="photos-sort">
@@ -1287,6 +1304,7 @@ function authHeaders() {
     await Promise.all([Photos.init(), Subscribers.load(), Customers.load()]);
     Dashboard.init(Photos.getData(), Subscribers.getData(), Customers.getData());
     Dashboard.loadAnalytics();
+    WeekPhoto.init(Photos.getData());
   }
 })();
 
@@ -2126,6 +2144,64 @@ const Photos = (() => {
   });
 
   return { init: async () => { await init(); loadNewBadgeSettings(); loadPriceSettings(); }, openEdit, openEditById, confirmDelete, cardClick, toggleSelect, toggleNew, setPhotoPrice, filterByChip, getData: () => data };
+})();
+
+// ===== WEEK PHOTO =====
+const WeekPhoto = (() => {
+  let _suggestion = null;
+
+  function init(photos) {
+    const weekPhoto = (photos || []).find(p => p.is_week_photo);
+    const currentDiv = $('week-photo-current');
+    if (weekPhoto) {
+      currentDiv.innerHTML = `<img src="${weekPhoto.thumbnail || weekPhoto.url}" style="width:28px;height:28px;object-fit:cover;border-radius:3px;border:1px solid var(--border);vertical-align:middle;margin-left:.4rem" alt=""> ${weekPhoto.title}`;
+      $('week-suggest-btn').textContent = 'החלף';
+    } else {
+      currentDiv.innerHTML = '<span>לא נבחרה תמונת שבוע</span>';
+      $('week-suggest-btn').textContent = 'הצע תמונה';
+    }
+    $('week-confirm-btn').classList.add('hidden');
+    $('week-resuggest-btn').classList.add('hidden');
+    $('week-photo-preview').classList.add('hidden');
+    _suggestion = null;
+  }
+
+  $('week-suggest-btn').addEventListener('click', async () => {
+    $('week-photo-status').textContent = 'טוען…';
+    const r = await fetch('/api/admin/photo-of-week/suggest', {
+      method: 'POST', headers: authHeaders()
+    }).catch(() => null);
+    if (!r?.ok) {
+      const err = await r?.json().catch(() => ({}));
+      $('week-photo-status').textContent = err?.error || 'שגיאה';
+      return;
+    }
+    const { photo } = await r.json();
+    _suggestion = photo;
+    $('week-preview-img').src = photo.thumbnail || '';
+    $('week-preview-title').textContent = photo.title;
+    $('week-photo-preview').classList.remove('hidden');
+    $('week-confirm-btn').classList.remove('hidden');
+    $('week-resuggest-btn').classList.remove('hidden');
+    $('week-photo-status').textContent = '';
+  });
+
+  $('week-confirm-btn').addEventListener('click', async () => {
+    if (!_suggestion) return;
+    $('week-photo-status').textContent = 'שומר…';
+    const r = await fetch('/api/admin/photo-of-week/set', {
+      method: 'POST', headers: authHeaders(), body: JSON.stringify({ photo_id: _suggestion.id })
+    }).catch(() => null);
+    if (!r?.ok) { $('week-photo-status').textContent = 'שגיאה'; return; }
+    $('week-photo-status').textContent = '✓ נשמר';
+    setTimeout(() => { $('week-photo-status').textContent = ''; }, 2000);
+    await Photos.init();
+    init(Photos.getData());
+  });
+
+  $('week-resuggest-btn').addEventListener('click', () => $('week-suggest-btn').click());
+
+  return { init };
 })();
 
 // ===== SUBSCRIBERS =====
