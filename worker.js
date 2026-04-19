@@ -272,7 +272,16 @@ async function handlePhotos(request, env) {
       ? 'SELECT * FROM photos ORDER BY CASE WHEN sort_order IS NULL THEN 1 ELSE 0 END, sort_order ASC, created_at DESC'
       : 'SELECT * FROM photos WHERE published=1 ORDER BY CASE WHEN sort_order IS NULL THEN 1 ELSE 0 END, sort_order ASC, created_at DESC';
     const { results } = await env.DB.prepare(sql).all();
-    return jsonRes(results);
+    const weekRow = await env.DB.prepare("SELECT value FROM settings WHERE key='photo_of_week_id'").first();
+    const discountRow = await env.DB.prepare("SELECT value FROM settings WHERE key='photo_of_week_discount'").first();
+    const weekPhotoId = weekRow?.value || '';
+    const weekDiscount = parseFloat(discountRow?.value || '0.25');
+    const photos = results.map(p => ({
+      ...p,
+      is_week_photo: !!(weekPhotoId && p.id === weekPhotoId),
+      week_photo_discount: (weekPhotoId && p.id === weekPhotoId) ? weekDiscount : 0,
+    }));
+    return jsonRes(photos);
   }
 
   if (!await checkAuth(request, env)) return unauth(request);
