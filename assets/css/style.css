@@ -733,6 +733,16 @@ nav.scrolled { border-bottom-color: rgba(200, 169, 110, 0.3); }
 .wps-label { font-size: .7rem; font-weight: 700; letter-spacing: .5px; color: #c9a84c; }
 .wps-title { font-size: .95rem; font-weight: 600; color: var(--text, #fff); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .wps-discount { font-size: .8rem; color: var(--text-muted, #888); }
+.wps-caption-short {
+  font-size: .78rem; color: var(--text-muted, #999);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  max-width: 100%; display: block; direction: rtl;
+}
+.wps-caption-full {
+  font-size: .88rem; color: var(--text, #ddd); line-height: 1.6;
+  direction: rtl; padding: .75rem 1.25rem .25rem;
+  margin: 0; white-space: pre-wrap;
+}
 .wps-toggle-btn {
   background: transparent; color: #c9a84c; border: 1px solid rgba(201,168,76,.4);
   padding: .4rem .75rem; border-radius: 5px;
