@@ -1601,6 +1601,21 @@ async function handlePhotoOfWeekSet(request, env) {
   if (!photo_id) return jsonRes({ error: 'photo_id required' }, 400, request);
   await env.DB.prepare("INSERT OR REPLACE INTO settings (key, value) VALUES ('photo_of_week_id', ?)").bind(photo_id).run();
   await env.DB.prepare("INSERT OR IGNORE INTO settings (key, value) VALUES ('photo_of_week_discount', '0.25')").run();
+  // fire-and-forget: trigger social posting workflow
+  fetch(
+    `https://api.github.com/repos/erezfamily-cmyk/amit-photos/actions/workflows/week-photo-social.yml/dispatches`,
+    {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${env.GITHUB_TOKEN}`,
+        'Accept': 'application/vnd.github+json',
+        'Content-Type': 'application/json',
+        'User-Agent': 'amit-photos-worker',
+        'X-GitHub-Api-Version': '2022-11-28',
+      },
+      body: JSON.stringify({ ref: 'main' }),
+    }
+  ).catch(() => {}); // intentionally not awaited
   return jsonRes({ ok: true }, 200, request);
 }
 
