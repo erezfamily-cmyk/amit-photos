@@ -274,12 +274,15 @@ async function handlePhotos(request, env) {
     const { results } = await env.DB.prepare(sql).all();
     const weekRow = await env.DB.prepare("SELECT value FROM settings WHERE key='photo_of_week_id'").first();
     const discountRow = await env.DB.prepare("SELECT value FROM settings WHERE key='photo_of_week_discount'").first();
+    const captionRow = await env.DB.prepare("SELECT value FROM settings WHERE key='photo_of_week_caption'").first();
     const weekPhotoId = weekRow?.value || '';
     const weekDiscount = parseFloat(discountRow?.value || '0.25');
+    const weekCaption = captionRow?.value || '';
     const photos = results.map(p => ({
       ...p,
       is_week_photo: !!(weekPhotoId && p.id === weekPhotoId),
       week_photo_discount: (weekPhotoId && p.id === weekPhotoId) ? weekDiscount : 0,
+      week_photo_caption: (weekPhotoId && p.id === weekPhotoId) ? weekCaption : '',
     }));
     return jsonRes(photos);
   }
@@ -1604,6 +1607,18 @@ async function handlePhotoOfWeekSet(request, env) {
 async function handlePhotoOfWeekClear(request, env) {
   if (!await checkAuth(request, env)) return unauth(request);
   await env.DB.prepare("DELETE FROM settings WHERE key='photo_of_week_id'").run();
+  await env.DB.prepare("DELETE FROM settings WHERE key='photo_of_week_caption'").run();
+  return jsonRes({ ok: true }, 200, request);
+}
+
+async function handlePhotoOfWeekCaption(request, env) {
+  const authHeader = request.headers.get('Authorization') || '';
+  if (authHeader !== `Bearer ${env.ADMIN_PASSWORD}`) {
+    if (!await checkAuth(request, env)) return unauth(request);
+  }
+  const { caption } = await request.json().catch(() => ({}));
+  if (!caption) return jsonRes({ error: 'caption required' }, 400, request);
+  await env.DB.prepare("INSERT OR REPLACE INTO settings (key, value) VALUES ('photo_of_week_caption', ?)").bind(caption).run();
   return jsonRes({ ok: true }, 200, request);
 }
 
@@ -1778,6 +1793,7 @@ export default {
     if (path === '/api/admin/photo-of-week/suggest' && request.method === 'POST') return handlePhotoOfWeekSuggest(request, env);
     if (path === '/api/admin/photo-of-week/set' && request.method === 'POST') return handlePhotoOfWeekSet(request, env);
     if (path === '/api/admin/photo-of-week/clear' && request.method === 'POST') return handlePhotoOfWeekClear(request, env);
+    if (path === '/api/admin/photo-of-week/caption' && request.method === 'POST') return handlePhotoOfWeekCaption(request, env);
     if (path === '/api/admin/toggle-photo-new' && request.method === 'POST') return handleTogglePhotoNew(request, env);
     if (path === '/api/admin/migrate-amount' && request.method === 'POST') {
       if (!await checkAuth(request, env)) return unauth(request);
