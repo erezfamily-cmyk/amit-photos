@@ -36,13 +36,25 @@ week-photo-social.yml
 
 ### 1. worker.js — `handlePhotoOfWeekSet`
 
-**Change:** after saving `photo_of_week_id`, trigger the new GitHub Actions workflow:
+**Change:** after saving `photo_of_week_id`, trigger the new GitHub Actions workflow by inlining the same GitHub dispatch fetch call that exists in `handleTriggerWorkflow`:
 
 ```js
-await triggerGitHubWorkflow(env, 'week-photo-social.yml', { photo_id });
+await fetch(
+  `https://api.github.com/repos/erezfamily-cmyk/amit-photos/actions/workflows/week-photo-social.yml/dispatches`,
+  {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${env.GITHUB_TOKEN}`,
+      'Accept': 'application/vnd.github+json',
+      'Content-Type': 'application/json',
+      'User-Agent': 'amit-photos-worker',
+      'X-GitHub-Api-Version': '2022-11-28',
+    },
+    body: JSON.stringify({ ref: 'main' }),
+  }
+);
+// fire-and-forget — don't await or block on this
 ```
-
-Uses the existing `triggerGitHubWorkflow` helper (already used elsewhere in worker.js).
 
 ---
 
@@ -164,11 +176,17 @@ document.getElementById('wps-caption-full').textContent = caption;
 
 ---
 
-## Secrets Required
+## Auth — Caption Endpoint
 
-- `ADMIN_TOKEN` — new secret needed in GitHub Actions + Cloudflare Worker (for the caption endpoint auth)
+The caption endpoint requires admin auth. The Python workflow script authenticates using `ADMIN_PASSWORD` as a Bearer token:
 
-OR reuse the existing pattern: the workflow calls the caption endpoint with a shared secret header.
+```
+Authorization: Bearer <ADMIN_PASSWORD>
+```
+
+Worker checks: `request.headers.get('Authorization') === 'Bearer ' + env.ADMIN_PASSWORD`
+
+`ADMIN_PASSWORD` is already a Cloudflare Worker secret and will be added as a GitHub Actions secret.
 
 ---
 
