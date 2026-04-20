@@ -220,8 +220,8 @@ function updateWeekPhotoStrip() {
     : (weekPhoto.week_photo_caption || '');
   const shortEl = document.getElementById('wps-caption-short');
   const fullEl  = document.getElementById('wps-caption-full');
-  if (shortEl) shortEl.textContent = caption.length > 80 ? caption.slice(0, 80) + '…' : caption;
-  if (fullEl)  fullEl.textContent  = caption;
+  if (shortEl) { shortEl.textContent = caption.length > 80 ? caption.slice(0, 80) + '…' : caption; shortEl.style.display = caption ? '' : 'none'; }
+  if (fullEl)  { fullEl.textContent = caption; fullEl.style.display = caption ? '' : 'none'; }
   document.getElementById('wps-buy-btn').onclick = () => openBuyModal(weekPhoto);
   lgImg.onclick = () => openBuyModal(weekPhoto);
 
