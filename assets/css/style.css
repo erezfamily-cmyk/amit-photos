@@ -768,7 +768,7 @@ nav.scrolled { border-bottom-color: rgba(200, 169, 110, 0.3); }
   max-height: 0; overflow: hidden;
   transition: max-height .4s ease;
 }
-.wps-expanded.open { max-height: 640px; padding: .75rem 0 0; }
+.wps-expanded.open { max-height: 1000px; padding: .75rem 0 0; }
 .wps-img-lg {
   display: block; width: 100%; max-height: 480px;
   object-fit: contain; cursor: pointer;
