@@ -220,8 +220,9 @@ function updateWeekPhotoStrip() {
     : (weekPhoto.week_photo_caption || '');
   const shortEl = document.getElementById('wps-caption-short');
   const fullEl  = document.getElementById('wps-caption-full');
-  if (shortEl) { shortEl.textContent = caption.length > 80 ? caption.slice(0, 80) + '…' : caption; shortEl.style.display = caption ? '' : 'none'; }
-  if (fullEl)  { fullEl.textContent = caption; fullEl.style.display = caption ? '' : 'none'; }
+  const captionDir = getLang() === 'en' ? 'ltr' : 'rtl';
+  if (shortEl) { shortEl.textContent = caption.length > 80 ? caption.slice(0, 80) + '…' : caption; shortEl.style.display = caption ? '' : 'none'; shortEl.style.direction = captionDir; shortEl.style.textAlign = getLang() === 'en' ? 'left' : 'right'; }
+  if (fullEl)  { fullEl.textContent = caption; fullEl.style.display = caption ? '' : 'none'; fullEl.style.direction = captionDir; fullEl.style.textAlign = getLang() === 'en' ? 'left' : 'right'; }
   document.getElementById('wps-buy-btn').onclick = () => openBuyModal(weekPhoto);
   lgImg.onclick = () => openBuyModal(weekPhoto);
 
