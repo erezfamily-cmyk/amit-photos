@@ -128,11 +128,24 @@ def generate_caption(photo):
     return caption
 
 
-def save_caption_to_db(caption):
+def translate_caption(caption_he):
+    """מתרגם את הכיתוב העברי לאנגלית."""
+    client = anthropic.Anthropic(api_key=ANTHROPIC_KEY)
+    msg = client.messages.create(
+        model="claude-sonnet-4-6",
+        max_tokens=600,
+        messages=[{"role": "user", "content": f"Translate the following Hebrew photo caption to English. Keep the first-person voice, personal tone, and authentic feel. Output only the translated text.\n\n{caption_he}"}],
+    )
+    caption_en = msg.content[0].text.strip()
+    print(f"🌐 תרגום לאנגלית ({len(caption_en)} chars)")
+    return caption_en
+
+
+def save_caption_to_db(caption, caption_en=""):
     """שומר את הכיתוב ל-DB דרך ה-API."""
     resp = requests.post(
         f"{SITE_URL}/api/admin/photo-of-week/caption",
-        json={"caption": caption},
+        json={"caption": caption, "caption_en": caption_en},
         headers={"Authorization": f"Bearer {ADMIN_TOKEN}"},
         timeout=15,
     )
@@ -232,11 +245,12 @@ def main():
         print("❌ חסר ANTHROPIC_API_KEY")
         sys.exit(1)
 
-    photo   = get_week_photo()
-    caption = generate_caption(photo)
-    print(f"\n--- כיתוב ---\n{caption}\n-----------\n")
+    photo      = get_week_photo()
+    caption    = generate_caption(photo)
+    caption_en = translate_caption(caption)
+    print(f"\n--- כיתוב עברית ---\n{caption}\n--- English ---\n{caption_en}\n-----------\n")
 
-    save_caption_to_db(caption)
+    save_caption_to_db(caption, caption_en)
     post_to_instagram(photo, caption)
     post_to_facebook(photo, caption)
 

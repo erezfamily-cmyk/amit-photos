@@ -275,14 +275,17 @@ async function handlePhotos(request, env) {
     const weekRow = await env.DB.prepare("SELECT value FROM settings WHERE key='photo_of_week_id'").first();
     const discountRow = await env.DB.prepare("SELECT value FROM settings WHERE key='photo_of_week_discount'").first();
     const captionRow = await env.DB.prepare("SELECT value FROM settings WHERE key='photo_of_week_caption'").first();
+    const captionEnRow = await env.DB.prepare("SELECT value FROM settings WHERE key='photo_of_week_caption_en'").first();
     const weekPhotoId = weekRow?.value || '';
     const weekDiscount = parseFloat(discountRow?.value || '0.25');
     const weekCaption = captionRow?.value || '';
+    const weekCaptionEn = captionEnRow?.value || '';
     const photos = results.map(p => ({
       ...p,
       is_week_photo: !!(weekPhotoId && p.id === weekPhotoId),
       week_photo_discount: (weekPhotoId && p.id === weekPhotoId) ? weekDiscount : 0,
       week_photo_caption: (weekPhotoId && p.id === weekPhotoId) ? weekCaption : '',
+      week_photo_caption_en: (weekPhotoId && p.id === weekPhotoId) ? weekCaptionEn : '',
     }));
     return jsonRes(photos);
   }
@@ -1623,6 +1626,7 @@ async function handlePhotoOfWeekClear(request, env) {
   if (!await checkAuth(request, env)) return unauth(request);
   await env.DB.prepare("DELETE FROM settings WHERE key='photo_of_week_id'").run();
   await env.DB.prepare("DELETE FROM settings WHERE key='photo_of_week_caption'").run();
+  await env.DB.prepare("DELETE FROM settings WHERE key='photo_of_week_caption_en'").run();
   return jsonRes({ ok: true }, 200, request);
 }
 
@@ -1630,9 +1634,10 @@ async function handlePhotoOfWeekCaption(request, env) {
   const authHeader = request.headers.get('Authorization') || '';
   const bearerValid = env.ADMIN_PASSWORD && authHeader === `Bearer ${env.ADMIN_PASSWORD}`;
   if (!bearerValid && !await checkAuth(request, env)) return unauth(request);
-  const { caption } = await request.json().catch(() => ({}));
+  const { caption, caption_en } = await request.json().catch(() => ({}));
   if (!caption) return jsonRes({ error: 'caption required' }, 400, request);
   await env.DB.prepare("INSERT OR REPLACE INTO settings (key, value) VALUES ('photo_of_week_caption', ?)").bind(caption).run();
+  if (caption_en) await env.DB.prepare("INSERT OR REPLACE INTO settings (key, value) VALUES ('photo_of_week_caption_en', ?)").bind(caption_en).run();
   return jsonRes({ ok: true }, 200, request);
 }
 
