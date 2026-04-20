@@ -215,6 +215,11 @@ function updateWeekPhotoStrip() {
   lgImg.alt = weekPhoto.title;
   lgImg.onerror = () => { if (lgImg.src !== src) lgImg.src = src; };
   document.getElementById('wps-title').textContent = weekPhoto.title;
+  const caption = weekPhoto.week_photo_caption || '';
+  const shortEl = document.getElementById('wps-caption-short');
+  const fullEl  = document.getElementById('wps-caption-full');
+  if (shortEl) shortEl.textContent = caption.length > 80 ? caption.slice(0, 80) + '…' : caption;
+  if (fullEl)  fullEl.textContent  = caption;
   document.getElementById('wps-buy-btn').onclick = () => openBuyModal(weekPhoto);
   lgImg.onclick = () => openBuyModal(weekPhoto);
 
