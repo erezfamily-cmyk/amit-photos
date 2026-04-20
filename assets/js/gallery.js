@@ -165,17 +165,23 @@ async function loadPhotos() {
       fetch('data/photos.json'),
       fetch('/api/photos').catch(() => null)
     ]);
-    allPhotos = jsonRes.ok ? await jsonRes.json() : getDemoPhotos();
-    if (!allPhotos.length) allPhotos = getDemoPhotos();
-    // מזג is_new ו-added_at מה-API
+    const jsonPhotos = jsonRes.ok ? await jsonRes.json().catch(() => []) : [];
     if (apiRes?.ok) {
       const apiPhotos = await apiRes.json().catch(() => []);
-      const apiMap = new Map(apiPhotos.map(p => [p.id, p]));
-      allPhotos = allPhotos.map(p => {
-        const a = apiMap.get(p.id);
-        return a ? { ...p, is_new: a.is_new, added_at: a.added_at, price_overrides: a.price_overrides, is_week_photo: a.is_week_photo, week_photo_discount: a.week_photo_discount } : p;
-      });
+      if (apiPhotos.length) {
+        // API is primary — merge thumbnail/url from JSON for photos that have them
+        const jsonMap = new Map(jsonPhotos.map(p => [p.id, p]));
+        allPhotos = apiPhotos.map(p => {
+          const j = jsonMap.get(p.id);
+          return j ? { ...j, ...p } : p;
+        });
+      } else {
+        allPhotos = jsonPhotos;
+      }
+    } else {
+      allPhotos = jsonPhotos;
     }
+    if (!allPhotos.length) allPhotos = getDemoPhotos();
   } catch {
     allPhotos = getDemoPhotos();
   }
