@@ -215,14 +215,14 @@ function updateWeekPhotoStrip() {
   lgImg.alt = weekPhoto.title;
   lgImg.onerror = () => { if (lgImg.src !== src) lgImg.src = src; };
   document.getElementById('wps-title').textContent = weekPhoto.title;
-  const caption = getLang() === 'en'
-    ? (weekPhoto.week_photo_caption_en || '')
-    : (weekPhoto.week_photo_caption || '');
+  const isEn = getLang() === 'en';
+  const caption = isEn ? (weekPhoto.week_photo_caption_en || '') : (weekPhoto.week_photo_caption || '');
   const shortEl = document.getElementById('wps-caption-short');
   const fullEl  = document.getElementById('wps-caption-full');
-  const captionDir = getLang() === 'en' ? 'ltr' : 'rtl';
-  if (shortEl) { shortEl.textContent = caption.length > 80 ? caption.slice(0, 80) + '…' : caption; shortEl.style.display = caption ? '' : 'none'; shortEl.style.direction = captionDir; shortEl.style.textAlign = getLang() === 'en' ? 'left' : 'right'; }
-  if (fullEl)  { fullEl.textContent = caption; fullEl.style.display = caption ? '' : 'none'; fullEl.style.direction = captionDir; fullEl.style.textAlign = getLang() === 'en' ? 'left' : 'right'; }
+  const captionDir = isEn ? 'ltr' : 'rtl';
+  const captionAlign = isEn ? 'left' : 'right';
+  if (shortEl) { shortEl.textContent = caption.length > 80 ? caption.slice(0, 80) + '…' : caption; shortEl.style.display = caption ? '' : 'none'; shortEl.style.direction = captionDir; shortEl.style.textAlign = captionAlign; }
+  if (fullEl)  { fullEl.textContent = caption; fullEl.style.display = caption ? '' : 'none'; fullEl.style.direction = captionDir; fullEl.style.textAlign = captionAlign; }
   document.getElementById('wps-buy-btn').onclick = () => openBuyModal(weekPhoto);
   lgImg.onclick = () => openBuyModal(weekPhoto);
 

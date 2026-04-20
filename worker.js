@@ -272,14 +272,14 @@ async function handlePhotos(request, env) {
       ? 'SELECT * FROM photos ORDER BY CASE WHEN sort_order IS NULL THEN 1 ELSE 0 END, sort_order ASC, created_at DESC'
       : 'SELECT * FROM photos WHERE published=1 ORDER BY CASE WHEN sort_order IS NULL THEN 1 ELSE 0 END, sort_order ASC, created_at DESC';
     const { results } = await env.DB.prepare(sql).all();
-    const weekRow = await env.DB.prepare("SELECT value FROM settings WHERE key='photo_of_week_id'").first();
-    const discountRow = await env.DB.prepare("SELECT value FROM settings WHERE key='photo_of_week_discount'").first();
-    const captionRow = await env.DB.prepare("SELECT value FROM settings WHERE key='photo_of_week_caption'").first();
-    const captionEnRow = await env.DB.prepare("SELECT value FROM settings WHERE key='photo_of_week_caption_en'").first();
-    const weekPhotoId = weekRow?.value || '';
-    const weekDiscount = parseFloat(discountRow?.value || '0.25');
-    const weekCaption = captionRow?.value || '';
-    const weekCaptionEn = captionEnRow?.value || '';
+    const { results: settingsRows } = await env.DB.prepare(
+      "SELECT key, value FROM settings WHERE key IN ('photo_of_week_id','photo_of_week_discount','photo_of_week_caption','photo_of_week_caption_en')"
+    ).all();
+    const settings = Object.fromEntries(settingsRows.map(r => [r.key, r.value]));
+    const weekPhotoId   = settings['photo_of_week_id'] || '';
+    const weekDiscount  = parseFloat(settings['photo_of_week_discount'] || '0.25');
+    const weekCaption   = settings['photo_of_week_caption'] || '';
+    const weekCaptionEn = settings['photo_of_week_caption_en'] || '';
     const photos = results.map(p => ({
       ...p,
       is_week_photo: !!(weekPhotoId && p.id === weekPhotoId),
@@ -413,6 +413,24 @@ async function handleUpload(request, env) {
 }
 
 // ===== TRIGGER GITHUB ACTIONS =====
+function dispatchWorkflow(workflow, env) {
+  if (!env.GITHUB_TOKEN) return;
+  fetch(
+    `https://api.github.com/repos/erezfamily-cmyk/amit-photos/actions/workflows/${workflow}/dispatches`,
+    {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${env.GITHUB_TOKEN}`,
+        'Accept': 'application/vnd.github+json',
+        'Content-Type': 'application/json',
+        'User-Agent': 'amit-photos-worker',
+        'X-GitHub-Api-Version': '2022-11-28',
+      },
+      body: JSON.stringify({ ref: 'main' }),
+    }
+  ).catch(() => {});
+}
+
 async function handleTriggerWorkflow(request, env) {
   if (!await checkAuth(request, env)) return unauth(request);
   if (request.method !== 'POST') return jsonRes({ error: 'method not allowed' }, 405);
@@ -1604,29 +1622,13 @@ async function handlePhotoOfWeekSet(request, env) {
   if (!photo_id) return jsonRes({ error: 'photo_id required' }, 400, request);
   await env.DB.prepare("INSERT OR REPLACE INTO settings (key, value) VALUES ('photo_of_week_id', ?)").bind(photo_id).run();
   await env.DB.prepare("INSERT OR IGNORE INTO settings (key, value) VALUES ('photo_of_week_discount', '0.25')").run();
-  // fire-and-forget: trigger social posting workflow
-  fetch(
-    `https://api.github.com/repos/erezfamily-cmyk/amit-photos/actions/workflows/week-photo-social.yml/dispatches`,
-    {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${env.GITHUB_TOKEN}`,
-        'Accept': 'application/vnd.github+json',
-        'Content-Type': 'application/json',
-        'User-Agent': 'amit-photos-worker',
-        'X-GitHub-Api-Version': '2022-11-28',
-      },
-      body: JSON.stringify({ ref: 'main' }),
-    }
-  ).catch(() => {}); // intentionally not awaited
+  dispatchWorkflow('week-photo-social.yml', env);
   return jsonRes({ ok: true }, 200, request);
 }
 
 async function handlePhotoOfWeekClear(request, env) {
   if (!await checkAuth(request, env)) return unauth(request);
-  await env.DB.prepare("DELETE FROM settings WHERE key='photo_of_week_id'").run();
-  await env.DB.prepare("DELETE FROM settings WHERE key='photo_of_week_caption'").run();
-  await env.DB.prepare("DELETE FROM settings WHERE key='photo_of_week_caption_en'").run();
+  await env.DB.prepare("DELETE FROM settings WHERE key IN ('photo_of_week_id','photo_of_week_caption','photo_of_week_caption_en')").run();
   return jsonRes({ ok: true }, 200, request);
 }
 

@@ -22,6 +22,14 @@ FB_TOKEN      = os.environ.get("FACEBOOK_PAGE_TOKEN", "")
 ANTHROPIC_KEY = os.environ.get("ANTHROPIC_API_KEY", "").strip()
 ADMIN_TOKEN   = os.environ.get("ADMIN_TOKEN", "")
 
+_anthropic = None
+
+def get_anthropic_client():
+    global _anthropic
+    if _anthropic is None:
+        _anthropic = anthropic.Anthropic(api_key=ANTHROPIC_KEY)
+    return _anthropic
+
 HASHTAGS_BY_CATEGORY = {
     "default": "#photography #photooftheday #israeliphotographer #amitphotos #צילום #ישראל",
     "טבע":     "#nature #naturephotography #wildlife #israel_nature #הטבע_הישראלי #amitphotos",
@@ -76,7 +84,7 @@ def fetch_image_as_base64(url, max_bytes=4_500_000):
 
 def generate_caption(photo):
     """Claude Vision מנתח את התמונה וכותב כיתוב בגוף ראשון בעברית."""
-    client = anthropic.Anthropic(api_key=ANTHROPIC_KEY)
+    client = get_anthropic_client()
 
     img_url = photo.get("url") or photo.get("thumbnail")
     image_content = []
@@ -130,7 +138,7 @@ def generate_caption(photo):
 
 def translate_caption(caption_he):
     """מתרגם את הכיתוב העברי לאנגלית."""
-    client = anthropic.Anthropic(api_key=ANTHROPIC_KEY)
+    client = get_anthropic_client()
     msg = client.messages.create(
         model="claude-sonnet-4-6",
         max_tokens=600,
@@ -184,19 +192,22 @@ def upload_to_public_host(source_url):
     return upload.text.strip()
 
 
-def post_to_instagram(photo, caption):
+def prepare_post_assets(photo):
+    """מחזיר image_url ו-hashtags מוכנים לפרסום."""
+    source_url = photo.get("url") or photo.get("thumbnail")
+    if source_url and source_url.startswith("/"):
+        source_url = f"{SITE_URL}{source_url}"
+    image_url = upload_to_public_host(source_url)
+    hashtags  = HASHTAGS_BY_CATEGORY.get(photo.get("category", ""), HASHTAGS_BY_CATEGORY["default"])
+    return image_url, hashtags
+
+
+def post_to_instagram(photo, caption, image_url, hashtags):
     """מפרסם לאינסטגרם עם הכיתוב + hashtags."""
     if not IG_USER_ID or not IG_TOKEN:
         print("⚠️  חסרים INSTAGRAM_USER_ID / INSTAGRAM_PAGE_TOKEN — מדלג")
         return
 
-    source_url = photo.get("url") or photo.get("thumbnail")
-    if source_url and source_url.startswith("/"):
-        source_url = f"{SITE_URL}{source_url}"
-
-    image_url = upload_to_public_host(source_url)
-    hashtags  = HASHTAGS_BY_CATEGORY.get(photo.get("category", ""), HASHTAGS_BY_CATEGORY["default"])
-    buy_link  = f"{SITE_URL}/photo/{photo['id']}"
     full_caption = f"{caption}\n\n🛍️ זמין לרכישה — amitphotos.com (link in bio)\n\n{hashtags}"
 
     container = requests.post(f"{GRAPH_API}/{IG_USER_ID}/media", data={
@@ -216,19 +227,13 @@ def post_to_instagram(photo, caption):
         print(f"❌ IG publish נכשל: {publish.status_code} — {publish.text}")
 
 
-def post_to_facebook(photo, caption):
+def post_to_facebook(photo, caption, image_url, hashtags):
     """מפרסם לפייסבוק עם הכיתוב + hashtags."""
     if not FB_PAGE_ID or not FB_TOKEN:
         print("⚠️  חסרים FACEBOOK_PAGE_ID / FACEBOOK_PAGE_TOKEN — מדלג")
         return
 
-    source_url = photo.get("url") or photo.get("thumbnail")
-    if source_url and source_url.startswith("/"):
-        source_url = f"{SITE_URL}{source_url}"
-
-    image_url = upload_to_public_host(source_url)
-    hashtags  = HASHTAGS_BY_CATEGORY.get(photo.get("category", ""), HASHTAGS_BY_CATEGORY["default"])
-    buy_link  = f"{SITE_URL}/photo/{photo['id']}"
+    buy_link     = f"{SITE_URL}/photo/{photo['id']}"
     full_caption = f"{caption}\n\n🛍️ לרכישת התמונה: {buy_link}\n\n{hashtags}"
 
     resp = requests.post(f"{GRAPH_API}/{FB_PAGE_ID}/photos", data={
@@ -250,9 +255,10 @@ def main():
     caption_en = translate_caption(caption)
     print(f"\n--- כיתוב עברית ---\n{caption}\n--- English ---\n{caption_en}\n-----------\n")
 
+    image_url, hashtags = prepare_post_assets(photo)
     save_caption_to_db(caption, caption_en)
-    post_to_instagram(photo, caption)
-    post_to_facebook(photo, caption)
+    post_to_instagram(photo, caption, image_url, hashtags)
+    post_to_facebook(photo, caption, image_url, hashtags)
 
 
 if __name__ == "__main__":
