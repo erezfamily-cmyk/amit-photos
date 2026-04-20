@@ -1730,6 +1730,7 @@ const PrintShop = (() => {
 window.onLangChange = function() {
   initFilters();
   renderGallery();
+  updateWeekPhotoStrip();
   PrintShop.onLangChange();
 };
 
