@@ -1613,9 +1613,8 @@ async function handlePhotoOfWeekClear(request, env) {
 
 async function handlePhotoOfWeekCaption(request, env) {
   const authHeader = request.headers.get('Authorization') || '';
-  if (authHeader !== `Bearer ${env.ADMIN_PASSWORD}`) {
-    if (!await checkAuth(request, env)) return unauth(request);
-  }
+  const bearerValid = env.ADMIN_PASSWORD && authHeader === `Bearer ${env.ADMIN_PASSWORD}`;
+  if (!bearerValid && !await checkAuth(request, env)) return unauth(request);
   const { caption } = await request.json().catch(() => ({}));
   if (!caption) return jsonRes({ error: 'caption required' }, 400, request);
   await env.DB.prepare("INSERT OR REPLACE INTO settings (key, value) VALUES ('photo_of_week_caption', ?)").bind(caption).run();
