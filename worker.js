@@ -1831,6 +1831,12 @@ export default {
       await env.DB.prepare('ALTER TABLE download_tokens ADD COLUMN amount REAL DEFAULT 0').run().catch(() => {});
       return jsonRes({ ok: true }, 200, request);
     }
+    if (path === '/api/admin/migrate-photo-dimensions' && request.method === 'POST') {
+      if (!await checkAuth(request, env)) return unauth(request);
+      await env.DB.prepare('ALTER TABLE photos ADD COLUMN width INTEGER').run().catch(() => {});
+      await env.DB.prepare('ALTER TABLE photos ADD COLUMN height INTEGER').run().catch(() => {});
+      return jsonRes({ ok: true }, 200, request);
+    }
     if (path.startsWith('/api/download/')) return handleDownload(request, env, path.slice('/api/download/'.length));
     if (path === '/api/print/catalog')        return handlePrintCatalog(request, env);
     if (path === '/api/print/quote')          return handlePrintQuote(request, env);
