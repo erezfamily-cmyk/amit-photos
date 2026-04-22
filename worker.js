@@ -404,16 +404,17 @@ async function handleUpload(request, env) {
     if (aiTitle) title = aiTitle;
   }
 
+  const published = formData.get('published') === '1' ? 1 : 0;
   const now = new Date().toISOString();
   try {
     await env.DB.prepare(
-      `INSERT INTO photos (id,title,category,description,filename,r2_key,url,thumbnail,width,height,created_at,added_at,published) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,0)`
+      `INSERT INTO photos (id,title,category,description,filename,r2_key,url,thumbnail,width,height,created_at,added_at,published) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)`
     ).bind(
       id, title, category,
       formData.get('description') || '',
       file.name, key, url, thumbUrl,
       width, height,
-      now, now.slice(0, 10)
+      now, now.slice(0, 10), published
     ).run();
   } catch (e) {
     return jsonRes({ error: `DB insert failed: ${e.message}` }, 500, request);

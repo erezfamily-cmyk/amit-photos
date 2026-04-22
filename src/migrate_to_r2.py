@@ -128,6 +128,7 @@ def migrate_photo(drive_session, photo, dry_run=False):
                 "category": photo.get("category", ""),
                 "description": photo.get("description", ""),
                 "parent_category": photo.get("parent_category", ""),
+                "published": "1",
             },
             timeout=60,
         )
