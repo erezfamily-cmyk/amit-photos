@@ -370,18 +370,24 @@ async function handleUpload(request, env) {
   const id = crypto.randomUUID();
   const key = `${id}.${ext}`;
 
-  await env.PHOTOS.put(key, file.stream(), {
-    httpMetadata: { contentType: file.type || 'image/jpeg' },
-  });
+  try {
+    await env.PHOTOS.put(key, file.stream(), {
+      httpMetadata: { contentType: file.type || 'image/jpeg' },
+    });
+  } catch (e) {
+    return jsonRes({ error: `R2 upload failed: ${e.message}` }, 500, request);
+  }
 
   // שמור thumbnail אם נשלח
   const thumb = formData.get('thumb');
   let thumbUrl = `/photos/${key}`;
   if (thumb && typeof thumb !== 'string') {
     const thumbKey = `thumb_${id}.jpg`;
-    await env.PHOTOS.put(thumbKey, thumb.stream(), {
-      httpMetadata: { contentType: 'image/jpeg' },
-    });
+    try {
+      await env.PHOTOS.put(thumbKey, thumb.stream(), {
+        httpMetadata: { contentType: 'image/jpeg' },
+      });
+    } catch { /* thumb failure is non-fatal */ }
     thumbUrl = `/photos/${thumbKey}`;
   }
 
@@ -399,15 +405,19 @@ async function handleUpload(request, env) {
   }
 
   const now = new Date().toISOString();
-  await env.DB.prepare(
-    `INSERT INTO photos (id,title,category,description,filename,r2_key,url,thumbnail,width,height,created_at,added_at,published) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,0)`
-  ).bind(
-    id, title, category,
-    formData.get('description') || '',
-    file.name, key, url, thumbUrl,
-    width, height,
-    now, now.slice(0, 10)
-  ).run();
+  try {
+    await env.DB.prepare(
+      `INSERT INTO photos (id,title,category,description,filename,r2_key,url,thumbnail,width,height,created_at,added_at,published) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,0)`
+    ).bind(
+      id, title, category,
+      formData.get('description') || '',
+      file.name, key, url, thumbUrl,
+      width, height,
+      now, now.slice(0, 10)
+    ).run();
+  } catch (e) {
+    return jsonRes({ error: `DB insert failed: ${e.message}` }, 500, request);
+  }
 
   return jsonRes({ ok: true, id, url, thumbnail: thumbUrl, key, title });
 }
