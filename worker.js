@@ -694,7 +694,7 @@ async function handleVerifyPayment(request, env, ctx) {
   if (!itemNumber) return jsonRes({ error: 'item_number חסר' }, 400, request);
 
   const receiverId    = params.get('receiver_id');
-  const PAYPAL_RECEIVER_ID = 'UQS28ADG97TPW';
+  const PAYPAL_RECEIVER_ID = env.PAYPAL_RECEIVER_ID;
 
   if (paymentStatus !== 'Completed')     return jsonRes({ error: `סטטוס תשלום: ${paymentStatus || 'חסר'}` }, 402, request);
   if (receiverId !== PAYPAL_RECEIVER_ID) return jsonRes({ error: 'חשבון PayPal לא תואם' }, 402, request);
@@ -890,7 +890,7 @@ async function handlePrintOrderComplete(request, env) {
   const paymentStatus = urlParams.get('payment_status');
   const receiverId = urlParams.get('receiver_id');
   const mcCurrency = urlParams.get('mc_currency');
-  const PAYPAL_RECEIVER_ID = 'UQS28ADG97TPW';
+  const PAYPAL_RECEIVER_ID = env.PAYPAL_RECEIVER_ID;
 
   if (paymentStatus !== 'Completed') return jsonRes({ error: `סטטוס תשלום: ${paymentStatus || 'חסר'}` }, 402, request);
   if (receiverId !== PAYPAL_RECEIVER_ID) return jsonRes({ error: 'חשבון PayPal לא תואם' }, 402, request);
