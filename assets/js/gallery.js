@@ -186,10 +186,10 @@ async function loadPhotos() {
     allPhotos = getDemoPhotos();
   }
 
-  // קבץ ארצות תחת "ארצות" אם אין parent_category מוגדר
+  // קבץ מדינות תחת "מקומות בעולם" אם אין parent_category מוגדר
   allPhotos = allPhotos.map(p =>
     LOCATION_CATEGORIES.has(p.category) && !p.parent_category
-      ? { ...p, parent_category: 'ארצות' }
+      ? { ...p, parent_category: 'מקומות בעולם' }
       : p
   );
 
@@ -1086,10 +1086,11 @@ function cartCheckout() {
 const PAYPAL_EMAIL = 'erez.family@gmail.com';
 const SITE_URL = 'https://amitphotos.com';
 
-// קטגוריות מיקום — יקובצו אוטומטית תחת "ארצות"
+// קטגוריות מיקום — יקובצו אוטומטית תחת "מקומות בעולם"
 const LOCATION_CATEGORIES = new Set([
-  'ישראל','אבו דאבי','אנגליה','גרמניה','הולנד',
-  'יוון','מונטנגרו','סלובקיה','סן דיאגו - ארה"ב','צכיה',
+  'אבו דאבי','איטליה','אנגליה','גרמניה','הולנד',
+  'וינה','טנזניה','יוון','מונטנגרו','סלובקיה',
+  'סן דיאגו - ארה"ב','ספרד ואנדורה','צכיה',
 ]);
 
 const SIZES = {
