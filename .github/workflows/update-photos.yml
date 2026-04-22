@@ -94,6 +94,14 @@ jobs:
             -H "Content-Type: application/json" \
             --data '{"purge_everything":true}' | python3 -c "import sys,json; r=json.load(sys.stdin); print('cache purged' if r.get('success') else f'purge failed: {r}')"
 
+      - name: DB migrations (idempotent)
+        if: steps.changes.outputs.changed == 'true' || github.event_name == 'workflow_dispatch'
+        env:
+          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
+        run: |
+          curl -s -X POST https://amitphotos.com/api/admin/migrate-photo-dimensions \
+            -H "X-Admin-Password: ${ADMIN_PASSWORD}" | python3 -c "import sys,json; r=json.load(sys.stdin); print('DB migration:', r)"
+
       - name: מיגרציה תמונות חדשות ל-R2
         if: steps.changes.outputs.changed == 'true' || github.event_name == 'workflow_dispatch'
         env:
