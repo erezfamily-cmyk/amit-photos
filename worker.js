@@ -1409,6 +1409,17 @@ async function servePhotoPage(photoId, env) {
     } catch (_) {}
   }
 
+  // תמונות קשורות מאותה קטגוריה
+  let relatedPhotos = [];
+  if (photo?.category) {
+    try {
+      const { results } = await env.DB.prepare(
+        'SELECT id, title, thumbnail FROM photos WHERE published=1 AND category=? AND id!=? ORDER BY RANDOM() LIMIT 6'
+      ).bind(photo.category, photoId).all();
+      relatedPhotos = results;
+    } catch (_) {}
+  }
+
   const title    = photo?.title       || 'עמית ארז | צילום אמנותי';
   const desc     = photo?.description || 'תמונות אמנותיות דיגיטליות לרכישה — טבע, פורטרט, נופי ישראל ועוד.';
   const category = photo?.category    || '';
@@ -1460,6 +1471,13 @@ async function servePhotoPage(photoId, env) {
     .desc{font-size:1rem;line-height:1.7;opacity:.85;margin-bottom:1.5rem}
     .buy{display:inline-block;background:#c9a96e;color:#0a0a0a;padding:.7rem 1.8rem;border-radius:4px;font-weight:600;font-size:1rem}
     .buy:hover{background:#e0c080;text-decoration:none}
+    .cat-link{color:#c9a96e;font-size:.9rem}
+    .cat-link:hover{text-decoration:underline}
+    .related{max-width:900px;width:100%;margin-top:3rem}
+    .related h2{font-size:1.1rem;margin-bottom:1rem;opacity:.7}
+    .rel-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+    .rel-grid a img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:4px;display:block;transition:opacity .2s}
+    .rel-grid a img:hover{opacity:.8}
     .credit{margin-top:3rem;font-size:.8rem;opacity:.4}
   </style>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1472,10 +1490,20 @@ async function servePhotoPage(photoId, env) {
   </div>
   <div class="info">
     <h1>${title}</h1>
-    ${category ? `<p class="category">${category}</p>` : ''}
+    ${category ? `<p class="category"><a href="https://amitphotos.com/category/${encodeURIComponent(category)}" class="cat-link">← כל תמונות ${category}</a></p>` : ''}
     ${desc ? `<p class="desc">${desc}</p>` : ''}
     <a class="buy" href="https://amitphotos.com/#photo-${photoId}">לרכישת התמונה</a>
   </div>
+  ${relatedPhotos.length ? `
+  <div class="related">
+    <h2>תמונות נוספות מ${category}</h2>
+    <div class="rel-grid">
+      ${relatedPhotos.map(r => {
+        const rImg = (r.thumbnail||'').startsWith('/') ? `https://amitphotos.com${r.thumbnail}` : r.thumbnail||'';
+        return `<a href="https://amitphotos.com/photo/${r.id}"><img src="${rImg}" alt="${r.title||''}" loading="lazy" /></a>`;
+      }).join('')}
+    </div>
+  </div>` : ''}
   <p class="credit">© עמית ארז — amitphotos.com</p>
 </body>
 </html>`;
@@ -1485,6 +1513,102 @@ async function servePhotoPage(photoId, env) {
       'Content-Type': 'text/html; charset=UTF-8',
       'Cache-Control': 'public, max-age=3600',
     },
+  });
+}
+
+// ===== CATEGORY PAGE =====
+async function handleCategoryPage(category, env) {
+  if (!category) return Response.redirect('https://amitphotos.com', 302);
+
+  let photos = [];
+  try {
+    const { results } = await env.DB.prepare(
+      'SELECT id, title, description, thumbnail, url FROM photos WHERE published=1 AND category=? ORDER BY sort_order ASC, created_at DESC LIMIT 200'
+    ).bind(category).all();
+    photos = results;
+  } catch (_) {}
+
+  if (!photos.length) return Response.redirect('https://amitphotos.com', 302);
+
+  const base = 'https://amitphotos.com';
+  const pageUrl = `${base}/category/${encodeURIComponent(category)}`;
+  const pageTitle = `צילומי ${category} | עמית ארז`;
+  const pageDesc = `${photos.length} תמונות צילום מ${category} מאת הצלם עמית ארז. כל התמונות זמינות לרכישה ולהורדה דיגיטלית.`;
+  const ogImage = photos[0]?.thumbnail?.startsWith('/') ? `${base}${photos[0].thumbnail}` : photos[0]?.thumbnail || '';
+
+  const schema = JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": pageTitle,
+    "description": pageDesc,
+    "url": pageUrl,
+    "numberOfItems": photos.length,
+    "creator": { "@type": "Person", "name": "עמית ארז", "url": base },
+    "hasPart": photos.slice(0, 10).map(p => ({
+      "@type": "ImageObject",
+      "name": p.title || category,
+      "url": `${base}/photo/${p.id}`,
+      "contentUrl": p.thumbnail?.startsWith('/') ? `${base}${p.thumbnail}` : p.thumbnail,
+    })),
+  });
+
+  const cards = photos.map(p => {
+    const img = p.thumbnail?.startsWith('/') ? `${base}${p.thumbnail}` : p.thumbnail || '';
+    const title = p.title || category;
+    return `<a href="${base}/photo/${p.id}" class="card">
+      <img src="${img}" alt="${escXml(title)}" loading="lazy" />
+      <span>${escXml(title)}</span>
+    </a>`;
+  }).join('\n');
+
+  const html = `<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>${pageTitle}</title>
+  <meta name="description" content="${pageDesc}" />
+  <meta property="og:title" content="${pageTitle}" />
+  <meta property="og:description" content="${pageDesc}" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="${pageUrl}" />
+  ${ogImage ? `<meta property="og:image" content="${ogImage}" />` : ''}
+  <meta property="og:locale" content="he_IL" />
+  <link rel="canonical" href="${pageUrl}" />
+  <script type="application/ld+json">${schema}</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{background:#0a0a0a;color:#f0f0f0;font-family:'Heebo',sans-serif;padding:2rem 1rem}
+    a{color:inherit;text-decoration:none}
+    .back{display:inline-block;color:#c9a96e;margin-bottom:2rem;font-size:.9rem}
+    .back:hover{text-decoration:underline}
+    h1{font-size:2rem;font-weight:600;margin-bottom:.4rem}
+    .sub{opacity:.5;font-size:.9rem;margin-bottom:2rem}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+    .card{display:flex;flex-direction:column;border-radius:6px;overflow:hidden;background:#1a1a1a;transition:transform .2s}
+    .card:hover{transform:translateY(-3px)}
+    .card img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block}
+    .card span{padding:.6rem .8rem;font-size:.8rem;opacity:.8}
+    .footer{margin-top:3rem;text-align:center}
+    .btn{display:inline-block;background:#c9a96e;color:#0a0a0a;padding:.7rem 2rem;border-radius:4px;font-weight:600}
+    .btn:hover{background:#e0c080}
+  </style>
+</head>
+<body>
+  <a class="back" href="${base}">← עמית ארז | גלריה</a>
+  <h1>צילומי ${escXml(category)}</h1>
+  <p class="sub">${photos.length} תמונות · צלם: עמית ארז</p>
+  <div class="grid">${cards}</div>
+  <div class="footer">
+    <a class="btn" href="${base}">לכל הגלריה</a>
+  </div>
+</body>
+</html>`;
+
+  return new Response(html, {
+    headers: { 'Content-Type': 'text/html; charset=UTF-8', 'Cache-Control': 'public, max-age=1800' },
   });
 }
 
@@ -1546,6 +1670,20 @@ async function handleSitemap(request, env) {
     { loc: '/', priority: '1.0', changefreq: 'weekly' },
   ];
 
+  // דפי קטגוריה
+  let categoryUrls = [];
+  try {
+    const { results: cats } = await env.DB.prepare(
+      'SELECT DISTINCT category, MAX(created_at) as last FROM photos WHERE published=1 AND category!=? GROUP BY category'
+    ).bind('').all();
+    categoryUrls = cats.map(c => `  <url>
+    <loc>${base}/category/${escXml(encodeURIComponent(c.category))}</loc>
+    <lastmod>${c.last ? c.last.split('T')[0] : now}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>`);
+  } catch (_) {}
+
   // תמונות מ-D1
   let photoUrls = [];
   try {
@@ -1581,6 +1719,7 @@ async function handleSitemap(request, env) {
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
 ${staticXml}
+${categoryUrls.join('\n')}
 ${photoUrls.join('\n')}
 </urlset>`;
 
@@ -1890,6 +2029,7 @@ export default {
     if (path === '/api/analytics')         return handleAnalytics(request, env);
     if (path.startsWith('/photos/'))       return servePhoto(path.slice('/photos/'.length), env);
     if (path.startsWith('/photo/'))        return servePhotoPage(path.slice('/photo/'.length), env);
+    if (path.startsWith('/category/'))     return handleCategoryPage(decodeURIComponent(path.slice('/category/'.length)), env);
     if (path === '/sitemap.xml')           return handleSitemap(request, env);
     if (path === '/robots.txt')            return handleRobots(request);
 
