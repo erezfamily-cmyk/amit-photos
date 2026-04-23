@@ -1541,13 +1541,9 @@ async function handleSitemap(request, env) {
   }
   const now = new Date().toISOString().split('T')[0];
 
-  // דפים סטטיים
+  // דפים סטטיים — ללא hash URLs (Google מתעלם מהם)
   const staticPages = [
-    { loc: '/',            priority: '1.0', changefreq: 'weekly'  },
-    { loc: '/#gallery',   priority: '0.9', changefreq: 'daily'   },
-    { loc: '/#about',     priority: '0.6', changefreq: 'monthly' },
-    { loc: '/#pricing',   priority: '0.7', changefreq: 'monthly' },
-    { loc: '/#contact',   priority: '0.5', changefreq: 'monthly' },
+    { loc: '/', priority: '1.0', changefreq: 'weekly' },
   ];
 
   // תמונות מ-D1
