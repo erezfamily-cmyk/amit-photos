@@ -6,7 +6,6 @@ Week Photo Social Agent
 
 import base64
 import os
-import random
 import sys
 
 import anthropic
@@ -223,33 +222,74 @@ def save_caption_to_db(caption, caption_en=""):
         print(f"⚠️  שמירת כיתוב נכשלה: {resp.status_code} — {resp.text}")
 
 
+def upload_bytes_to_public_host(img_bytes, filename="image.jpg"):
+    """מעלה bytes לשרת ציבורי, מחזיר URL."""
+    try:
+        r = requests.post(
+            "https://litterbox.catbox.moe/resources/internals/api.php",
+            data={"reqtype": "fileupload", "time": "1h"},
+            files={"fileToUpload": (filename, img_bytes, "image/jpeg")},
+            timeout=60,
+        )
+        if r.ok and r.text.strip().startswith("http"):
+            url = r.text.strip()
+            print(f"⬆️  הועלה (litterbox): {url}")
+            return url
+    except Exception as e:
+        print(f"⚠️  litterbox נכשל ({e})")
+    r = requests.post("https://0x0.st", files={"file": (filename, img_bytes, "image/jpeg")}, timeout=60)
+    r.raise_for_status()
+    url = r.text.strip()
+    print(f"⬆️  הועלה (0x0.st): {url}")
+    return url
+
+
 def upload_to_public_host(source_url):
     """מעלה תמונה לשרת ציבורי (R2 ישיר / litterbox / 0x0.st)."""
     if source_url.startswith(f"{SITE_URL}/photos/"):
         print(f"⬆️  תמונה ב-R2, URL ישיר: {source_url}")
         return source_url
+    resp = requests.get(source_url, timeout=30)
+    resp.raise_for_status()
+    return upload_bytes_to_public_host(resp.content)
+
+
+def create_story_image_bytes(source_url):
+    """יוצר תמונת 9:16 לסטורי אינסטגרם: התמונה המקורית במרכז + רקע מטושטש."""
+    from PIL import Image, ImageFilter
+    import io
+
+    if source_url.startswith("/"):
+        source_url = f"{SITE_URL}{source_url}"
 
     resp = requests.get(source_url, timeout=30)
     resp.raise_for_status()
-    img_bytes = resp.content
 
-    try:
-        upload = requests.post(
-            "https://litterbox.catbox.moe/resources/internals/api.php",
-            data={"reqtype": "fileupload", "time": "1h"},
-            files={"fileToUpload": ("photo.jpg", img_bytes, "image/jpeg")},
-            timeout=60,
-        )
-        if upload.ok and upload.text.strip().startswith("http"):
-            print(f"⬆️  תמונה הועלתה (litterbox): {upload.text.strip()}")
-            return upload.text.strip()
-    except Exception as e:
-        print(f"⚠️  litterbox נכשל ({e})")
+    STORY_W, STORY_H = 1080, 1920
+    img = Image.open(io.BytesIO(resp.content)).convert("RGB")
+    orig_w, orig_h = img.size
 
-    upload = requests.post("https://0x0.st", files={"file": ("photo.jpg", img_bytes, "image/jpeg")}, timeout=60)
-    upload.raise_for_status()
-    print(f"⬆️  תמונה הועלתה (0x0.st): {upload.text.strip()}")
-    return upload.text.strip()
+    # רקע: scale לכסות קנבס במלואו → חיתוך → טשטוש → כהה
+    bg_scale = max(STORY_W / orig_w, STORY_H / orig_h)
+    bg = img.resize((int(orig_w * bg_scale) + 2, int(orig_h * bg_scale) + 2), Image.LANCZOS)
+    bw, bh = bg.size
+    bg = bg.crop(((bw - STORY_W) // 2, (bh - STORY_H) // 2,
+                   (bw - STORY_W) // 2 + STORY_W, (bh - STORY_H) // 2 + STORY_H))
+    bg = bg.filter(ImageFilter.GaussianBlur(radius=25))
+    dark = Image.new("RGB", (STORY_W, STORY_H), (0, 0, 0))
+    bg = Image.blend(bg, dark, 0.35)
+
+    # תמונה מרכזית: fit בתוך 80% מגובה הקנבס (מרווח לטקסט אינסטגרם)
+    fit_scale = min(STORY_W / orig_w, (STORY_H * 0.8) / orig_h)
+    fg = img.resize((int(orig_w * fit_scale), int(orig_h * fit_scale)), Image.LANCZOS)
+    paste_x = (STORY_W - fg.width) // 2
+    paste_y = (STORY_H - fg.height) // 2
+    bg.paste(fg, (paste_x, paste_y))
+
+    buf = io.BytesIO()
+    bg.save(buf, format="JPEG", quality=92)
+    print(f"📐 סטורי נוצר: {STORY_W}x{STORY_H}, {len(buf.getvalue())//1024}KB")
+    return buf.getvalue()
 
 
 def prepare_post_assets(photo):
@@ -263,15 +303,21 @@ def prepare_post_assets(photo):
 
 
 def post_to_instagram(photo, caption, image_url, hashtags):
-    """מפרסם לאינסטגרם עם הכיתוב + hashtags + location."""
+    """מפרסם לאינסטגרם עם הכיתוב + hashtags + location + alt_text."""
     if not IG_USER_ID or not IG_TOKEN:
         print("⚠️  חסרים INSTAGRAM_USER_ID / INSTAGRAM_PAGE_TOKEN — מדלג")
         return
 
     full_caption = f"{caption}\n\n{SHARE_CTA}\n\n🛍️ זמין לרכישה — amitphotos.com (link in bio)\n\n{hashtags}"
+    alt_text = photo.get("description") or photo.get("title") or ""
     location_id = get_location_id(photo.get("category", ""), IG_TOKEN)
 
-    container_data = {"image_url": image_url, "caption": full_caption, "access_token": IG_TOKEN}
+    container_data = {
+        "image_url": image_url,
+        "caption": full_caption,
+        "alt_text": alt_text,
+        "access_token": IG_TOKEN,
+    }
     if location_id:
         container_data["location_id"] = location_id
 
@@ -292,6 +338,31 @@ def post_to_instagram(photo, caption, image_url, hashtags):
         print(f"✅ פורסם לאינסטגרם! ID: {publish.json().get('id')}")
     else:
         print(f"❌ IG publish נכשל: {publish.status_code} — {publish.text}")
+
+
+def post_to_instagram_story(story_url):
+    """מפרסם סטורי לאינסטגרם."""
+    if not IG_USER_ID or not IG_TOKEN:
+        print("⚠️  חסרים פרטי אינסטגרם — מדלג על סטורי")
+        return
+
+    container = requests.post(f"{GRAPH_API}/{IG_USER_ID}/media", data={
+        "image_url": story_url,
+        "media_type": "STORIES",
+        "access_token": IG_TOKEN,
+    }, timeout=30)
+    if not container.ok:
+        print(f"❌ Story container נכשל: {container.status_code} — {container.text}")
+        return
+
+    container_id = container.json().get("id")
+    publish = requests.post(f"{GRAPH_API}/{IG_USER_ID}/media_publish", data={
+        "creation_id": container_id, "access_token": IG_TOKEN,
+    }, timeout=30)
+    if publish.ok:
+        print(f"✅ סטורי פורסם! ID: {publish.json().get('id')}")
+    else:
+        print(f"❌ Story publish נכשל: {publish.status_code} — {publish.text}")
 
 
 def post_to_facebook(photo, caption, image_url, hashtags):
@@ -326,6 +397,16 @@ def main():
     save_caption_to_db(caption, caption_en)
     post_to_instagram(photo, caption, image_url, hashtags)
     post_to_facebook(photo, caption, image_url, hashtags)
+
+    # סטורי אינסטגרם — תמונה בפורמט 9:16 עם רקע מטושטש
+    source_url = photo.get("url") or photo.get("thumbnail") or ""
+    if source_url:
+        try:
+            story_bytes = create_story_image_bytes(source_url)
+            story_url   = upload_bytes_to_public_host(story_bytes, "story.jpg")
+            post_to_instagram_story(story_url)
+        except Exception as e:
+            print(f"⚠️  סטורי נכשל: {e}")
 
 
 if __name__ == "__main__":
