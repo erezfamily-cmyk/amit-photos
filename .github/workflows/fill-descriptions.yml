@@ -1,0 +1,32 @@
+name: מילוי תיאורים חסרים
+
+on:
+  workflow_dispatch:
+    inputs:
+      all:
+        description: 'מלא הכל (לא רק 50 ראשונים)'
+        type: boolean
+        default: false
+
+jobs:
+  fill:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - run: pip install requests anthropic
+
+      - name: מילוי תיאורים
+        env:
+          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
+          ANTHROPIC_API_KEY: ${{ secrets.AMIT_PHOTO_AGENT }}
+        run: |
+          if [ "${{ github.event.inputs.all }}" = "true" ]; then
+            python src/fill_descriptions.py --all
+          else
+            python src/fill_descriptions.py
+          fi
