@@ -25,13 +25,38 @@ def login():
     print(f"❌ התחברות נכשלה: {r.status_code}")
     sys.exit(1)
 
+def fetch_as_base64(url):
+    """מוריד תמונה ומחזיר base64."""
+    import base64, io
+    r = requests.get(url, timeout=30)
+    r.raise_for_status()
+    img_bytes = r.content
+    try:
+        from PIL import Image
+        img = Image.open(io.BytesIO(img_bytes)).convert("RGB")
+        if max(img.size) > 1600:
+            img.thumbnail((1600, 1600), Image.LANCZOS)
+        buf = io.BytesIO()
+        img.save(buf, format="JPEG", quality=75)
+        img_bytes = buf.getvalue()
+    except ImportError:
+        pass
+    return base64.standard_b64encode(img_bytes).decode("utf-8")
+
+
 def generate_description(client, photo):
-    img_url = photo.get("url") or photo.get("thumbnail") or ""
+    img_url = photo.get("thumbnail") or photo.get("url") or ""
     if img_url.startswith("/"):
         img_url = f"{SITE_URL}{img_url}"
 
     category = photo.get("category", "")
     title    = photo.get("title", "")
+
+    try:
+        b64 = fetch_as_base64(img_url)
+        image_content = {"type": "image", "source": {"type": "base64", "media_type": "image/jpeg", "data": b64}}
+    except Exception as e:
+        raise RuntimeError(f"הורדת תמונה נכשלה: {e}")
 
     msg = client.messages.create(
         model="claude-sonnet-4-6",
@@ -39,7 +64,7 @@ def generate_description(client, photo):
         messages=[{
             "role": "user",
             "content": [
-                {"type": "image", "source": {"type": "url", "url": img_url}},
+                image_content,
                 {"type": "text", "text": f"""תמונת צילום של הצלם עמית ארז.
 כותרת: {title}
 קטגוריה: {category}
