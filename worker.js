@@ -1411,30 +1411,73 @@ async function servePhotoPage(photoId, env) {
 
   const title    = photo?.title       || 'עמית ארז | צילום אמנותי';
   const desc     = photo?.description || 'תמונות אמנותיות דיגיטליות לרכישה — טבע, פורטרט, נופי ישראל ועוד.';
-  const imageUrl = photo?.thumbnail   || photo?.url || 'https://amitphotos.com/assets/images/og-default.jpg';
+  const category = photo?.category    || '';
+  const rawUrl   = photo?.url || photo?.thumbnail || '';
+  const imageUrl = rawUrl.startsWith('/') ? `https://amitphotos.com${rawUrl}` : rawUrl || 'https://amitphotos.com/assets/images/og-default.jpg';
   const pageUrl  = `https://amitphotos.com/photo/${photoId}`;
-  const siteUrl  = `https://amitphotos.com/#photo-${photoId}`;
+
+  const schema = JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "ImageObject",
+    "name": title,
+    "description": desc,
+    "contentUrl": imageUrl,
+    "url": pageUrl,
+    "creator": { "@type": "Person", "name": "עמית ארז", "url": "https://amitphotos.com" },
+    ...(category ? { "about": category } : {}),
+  });
 
   const html = `<!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
   <meta charset="UTF-8" />
-  <title>${title} | עמית ארז</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>${title} | עמית ארז צילום</title>
+  <meta name="description" content="${desc}" />
   <meta property="og:title" content="${title} | עמית ארז" />
   <meta property="og:description" content="${desc}" />
   <meta property="og:type" content="article" />
   <meta property="og:url" content="${pageUrl}" />
   <meta property="og:image" content="${imageUrl}" />
-  <meta property="og:image:width" content="1200" />
   <meta property="og:locale" content="he_IL" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="${title} | עמית ארז" />
   <meta name="twitter:description" content="${desc}" />
   <meta name="twitter:image" content="${imageUrl}" />
-  <meta http-equiv="refresh" content="0; url=${siteUrl}" />
-  <script>window.location.replace('${siteUrl}');</script>
+  <link rel="canonical" href="${pageUrl}" />
+  <script type="application/ld+json">${schema}</script>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{background:#0a0a0a;color:#f0f0f0;font-family:'Heebo',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:2rem 1rem}
+    a{color:#c9a96e;text-decoration:none}
+    a:hover{text-decoration:underline}
+    .back{align-self:flex-start;margin-bottom:1.5rem;font-size:.9rem;opacity:.8}
+    .photo-wrap{max-width:900px;width:100%}
+    img{width:100%;height:auto;border-radius:8px;display:block}
+    .info{max-width:900px;width:100%;margin-top:1.5rem}
+    h1{font-size:1.6rem;font-weight:600;margin-bottom:.5rem}
+    .category{font-size:.9rem;opacity:.6;margin-bottom:.75rem}
+    .desc{font-size:1rem;line-height:1.7;opacity:.85;margin-bottom:1.5rem}
+    .buy{display:inline-block;background:#c9a96e;color:#0a0a0a;padding:.7rem 1.8rem;border-radius:4px;font-weight:600;font-size:1rem}
+    .buy:hover{background:#e0c080;text-decoration:none}
+    .credit{margin-top:3rem;font-size:.8rem;opacity:.4}
+  </style>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600&display=swap" rel="stylesheet">
 </head>
-<body></body>
+<body>
+  <a class="back" href="https://amitphotos.com">← חזרה לגלריה</a>
+  <div class="photo-wrap">
+    <img src="${imageUrl}" alt="${title}" loading="lazy" />
+  </div>
+  <div class="info">
+    <h1>${title}</h1>
+    ${category ? `<p class="category">${category}</p>` : ''}
+    ${desc ? `<p class="desc">${desc}</p>` : ''}
+    <a class="buy" href="https://amitphotos.com/#photo-${photoId}">לרכישת התמונה</a>
+  </div>
+  <p class="credit">© עמית ארז — amitphotos.com</p>
+</body>
 </html>`;
 
   return new Response(html, {
