@@ -31,12 +31,72 @@ def get_anthropic_client():
     return _anthropic
 
 HASHTAGS_BY_CATEGORY = {
-    "default": "#photography #photooftheday #israeliphotographer #amitphotos #צילום #ישראל",
-    "טבע":     "#nature #naturephotography #wildlife #israel_nature #הטבע_הישראלי #amitphotos",
-    "פורטרט":  "#portrait #portraitphotography #צילום_פורטרט #amitphotos #israeliphotographer",
-    "עירוני":  "#urban #streetphotography #architecture #israel_urban #amitphotos",
-    "אירועים": "#events #weddingphotography #momentscaptured #amitphotos #צילום",
+    "default":           "#photography #photooftheday #israeliphotographer #amitphotos #צילום #ישראל",
+    "טבע":               "#nature #naturephotography #wildlife #israel_nature #הטבע_הישראלי #amitphotos",
+    "פורטרט":            "#portrait #portraitphotography #צילום_פורטרט #amitphotos #israeliphotographer",
+    "פורטרטים":          "#portrait #portraitphotography #צילום_פורטרט #amitphotos #israeliphotographer",
+    "עירוני":            "#urban #streetphotography #architecture #israel_urban #amitphotos",
+    "אירועים":           "#events #weddingphotography #momentscaptured #amitphotos #צילום",
+    "פרחים וצמחים":      "#flowers #naturephotography #macro #botanicalphotography #amitphotos",
+    "בעלי חיים":         "#wildlife #animalphotography #nature #wildlifephotography #amitphotos",
+    "מאקרו-צילומי תקריב": "#macro #macrophotography #closeup #details #amitphotos",
+    "טבע דומם":          "#stilllife #stilllifephotography #art #amitphotos",
+    "צילום מופשט":       "#abstract #abstractphotography #art #fineart #amitphotos",
+    "ישראל":             "#israel #israeliphotographer #visitisrael #amitphotos #ישראל",
+    "אבו דאבי":          "#abudhabi #uae #travel #travelphotography #amitphotos",
+    "איטליה":            "#italy #italia #travel #travelphotography #amitphotos",
+    "אנגליה":            "#england #uk #london #travel #travelphotography #amitphotos",
+    "גרמניה":            "#germany #deutschland #travel #travelphotography #amitphotos",
+    "הולנד":             "#netherlands #holland #amsterdam #travel #amitphotos",
+    "וינה":              "#vienna #wien #austria #travel #travelphotography #amitphotos",
+    "טנזניה":            "#tanzania #africa #safari #wildlife #travelphotography #amitphotos",
+    "יוון":              "#greece #hellas #travel #travelphotography #amitphotos",
+    "מונטנגרו":          "#montenegro #balkans #travel #travelphotography #amitphotos",
+    "סלובקיה":           "#slovakia #europe #travel #travelphotography #amitphotos",
+    'סן דיאגו - ארה"ב':  "#sandiego #california #usa #travel #travelphotography #amitphotos",
+    "ספרד ואנדורה":      "#spain #espana #andorra #travel #travelphotography #amitphotos",
+    "צכיה":              "#czechrepublic #prague #europe #travel #amitphotos",
 }
+
+CATEGORY_TO_LOCATION_SEARCH = {
+    "ישראל":             "Israel",
+    "אבו דאבי":          "Abu Dhabi",
+    "איטליה":            "Italy",
+    "אנגליה":            "England",
+    "גרמניה":            "Germany",
+    "הולנד":             "Netherlands",
+    "וינה":              "Vienna",
+    "טנזניה":            "Tanzania",
+    "יוון":              "Greece",
+    "מונטנגרו":          "Montenegro",
+    "סלובקיה":           "Slovakia",
+    'סן דיאגו - ארה"ב':  "San Diego",
+    "ספרד ואנדורה":      "Spain",
+    "צכיה":              "Czech Republic",
+}
+
+SHARE_CTA = "אהבתם? שתפו עם מי שאוהב צילום 🙏"
+
+
+def get_location_id(category, token):
+    """מחפש Facebook Place ID לפי קטגוריה — מחזיר None אם לא נמצא."""
+    search_term = CATEGORY_TO_LOCATION_SEARCH.get(category)
+    if not search_term:
+        return None
+    try:
+        r = requests.get(
+            f"{GRAPH_API}/search",
+            params={"type": "place", "q": search_term, "fields": "id,name", "access_token": token},
+            timeout=10,
+        )
+        if r.ok:
+            data = r.json().get("data", [])
+            if data:
+                print(f"📍 נמצא location: {data[0]['name']} (id: {data[0]['id']})")
+                return data[0]["id"]
+    except Exception as e:
+        print(f"⚠️  חיפוש location נכשל: {e}")
+    return None
 
 
 def get_week_photo():
@@ -203,16 +263,23 @@ def prepare_post_assets(photo):
 
 
 def post_to_instagram(photo, caption, image_url, hashtags):
-    """מפרסם לאינסטגרם עם הכיתוב + hashtags."""
+    """מפרסם לאינסטגרם עם הכיתוב + hashtags + location."""
     if not IG_USER_ID or not IG_TOKEN:
         print("⚠️  חסרים INSTAGRAM_USER_ID / INSTAGRAM_PAGE_TOKEN — מדלג")
         return
 
-    full_caption = f"{caption}\n\n🛍️ זמין לרכישה — amitphotos.com (link in bio)\n\n{hashtags}"
+    full_caption = f"{caption}\n\n{SHARE_CTA}\n\n🛍️ זמין לרכישה — amitphotos.com (link in bio)\n\n{hashtags}"
+    location_id = get_location_id(photo.get("category", ""), IG_TOKEN)
 
-    container = requests.post(f"{GRAPH_API}/{IG_USER_ID}/media", data={
-        "image_url": image_url, "caption": full_caption, "access_token": IG_TOKEN,
-    }, timeout=30)
+    container_data = {"image_url": image_url, "caption": full_caption, "access_token": IG_TOKEN}
+    if location_id:
+        container_data["location_id"] = location_id
+
+    container = requests.post(f"{GRAPH_API}/{IG_USER_ID}/media", data=container_data, timeout=30)
+    if not container.ok and location_id:
+        print(f"⚠️  IG container עם location נכשל — מנסה בלי location")
+        del container_data["location_id"]
+        container = requests.post(f"{GRAPH_API}/{IG_USER_ID}/media", data=container_data, timeout=30)
     if not container.ok:
         print(f"❌ IG container נכשל: {container.status_code} — {container.text}")
         return
@@ -234,7 +301,7 @@ def post_to_facebook(photo, caption, image_url, hashtags):
         return
 
     buy_link     = f"{SITE_URL}/photo/{photo['id']}"
-    full_caption = f"{caption}\n\n🛍️ לרכישת התמונה: {buy_link}\n\n{hashtags}"
+    full_caption = f"{caption}\n\n{SHARE_CTA}\n\n🛍️ לרכישת התמונה: {buy_link}\n\n{hashtags}"
 
     resp = requests.post(f"{GRAPH_API}/{FB_PAGE_ID}/photos", data={
         "url": image_url, "message": full_caption, "access_token": FB_TOKEN,
