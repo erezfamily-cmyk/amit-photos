@@ -1871,6 +1871,83 @@ async function handleAdminPhotoPrice(request, env) {
   return jsonRes({ ok: true }, 200, request);
 }
 
+async function handleAdminFeatured(request, env) {
+  if (request.method === 'GET') {
+    const row = await env.DB.prepare("SELECT value FROM settings WHERE key='featured_ids'").first();
+    const ids = row?.value ? JSON.parse(row.value).filter(Boolean) : [];
+    return jsonRes({ ids }, 200, request);
+  }
+  if (request.method === 'POST') {
+    if (!await checkAuth(request, env)) return unauth(request);
+    const { ids } = await request.json().catch(() => ({}));
+    if (!Array.isArray(ids)) return jsonRes({ error: 'ids array required' }, 400, request);
+    await env.DB.prepare("INSERT OR REPLACE INTO settings (key, value) VALUES ('featured_ids', ?)").bind(JSON.stringify(ids)).run();
+    return jsonRes({ ok: true }, 200, request);
+  }
+  return jsonRes({ error: 'method not allowed' }, 405, request);
+}
+
+async function handlePricesPage(request, env) {
+  const prices = await getGlobalPrices(env);
+  const html = `<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>מחירים — עמית צילום</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;600;700&family=Syne:wght@700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:#0a0a0a;color:#f0ede8;font-family:'Heebo',sans-serif;direction:rtl;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem 1rem}
+h1{font-family:'Syne',sans-serif;font-size:2rem;color:#c8a96e;margin-bottom:.5rem;text-align:center}
+.subtitle{color:#888;margin-bottom:3rem;text-align:center;font-size:.95rem}
+.cards{display:flex;gap:1.5rem;flex-wrap:wrap;justify-content:center;max-width:700px;width:100%}
+.card{background:#111;border:1px solid #222;border-radius:8px;padding:2rem 1.5rem;flex:1;min-width:180px;max-width:200px;text-align:center;transition:border-color .25s}
+.card:hover{border-color:#c8a96e}
+.card-label{font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:#888;margin-bottom:.75rem}
+.card-size{font-family:'Syne',sans-serif;font-size:1.6rem;color:#fff;margin-bottom:.25rem}
+.card-dims{font-size:.75rem;color:#666;margin-bottom:1.25rem}
+.card-price{font-size:2rem;font-weight:700;color:#c8a96e}
+.card-mp{font-size:.72rem;color:#666;margin-top:.3rem}
+.note{margin-top:2.5rem;color:#555;font-size:.8rem;text-align:center;max-width:480px;line-height:1.6}
+a.back{display:inline-flex;align-items:center;gap:.4rem;margin-top:2rem;color:#888;font-size:.85rem;text-decoration:none;transition:color .2s}
+a.back:hover{color:#c8a96e}
+</style>
+</head>
+<body>
+<h1>מחירי הורדה</h1>
+<p class="subtitle">קבצים דיגיטליים באיכות גבוהה — הורדה מיידית לאחר תשלום</p>
+<div class="cards">
+  <div class="card">
+    <div class="card-label">S</div>
+    <div class="card-size">קטן</div>
+    <div class="card-dims">2000×1333 פיקסל</div>
+    <div class="card-price">₪${prices.small}</div>
+    <div class="card-mp">~6MP · הדפסה עד 10×15 ס"מ</div>
+  </div>
+  <div class="card">
+    <div class="card-label">M</div>
+    <div class="card-size">בינוני</div>
+    <div class="card-dims">4000×2667 פיקסל</div>
+    <div class="card-price">₪${prices.medium}</div>
+    <div class="card-mp">~24MP · הדפסה 21×30 ס"מ</div>
+  </div>
+  <div class="card">
+    <div class="card-label">L</div>
+    <div class="card-size">גדול</div>
+    <div class="card-dims">6000×4000 פיקסל</div>
+    <div class="card-price">₪${prices.large}</div>
+    <div class="card-mp">~54MP · A2 ומעלה</div>
+  </div>
+</div>
+<p class="note">כל התמונות נמכרות לשימוש אישי בלבד. לשימוש מסחרי — <a href="/#contact" style="color:#c8a96e">צרו קשר</a>.</p>
+<a class="back" href="/">← חזרה לגלריה</a>
+</body>
+</html>`;
+  return new Response(html, { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
+}
+
 async function handleTogglePhotoNew(request, env) {
   if (!await checkAuth(request, env)) return unauth(request);
   const { photo_id, is_new, title, category, url, thumbnail } = await request.json().catch(() => ({}));
@@ -2006,6 +2083,8 @@ export default {
     if (path === '/api/admin/photo-of-week/clear' && request.method === 'POST') return handlePhotoOfWeekClear(request, env);
     if (path === '/api/admin/photo-of-week/caption' && request.method === 'POST') return handlePhotoOfWeekCaption(request, env);
     if (path === '/api/admin/toggle-photo-new' && request.method === 'POST') return handleTogglePhotoNew(request, env);
+    if (path === '/api/admin/featured') return handleAdminFeatured(request, env);
+    if (path === '/prices') return handlePricesPage(request, env);
     if (path === '/api/admin/migrate-amount' && request.method === 'POST') {
       if (!await checkAuth(request, env)) return unauth(request);
       await env.DB.prepare('ALTER TABLE download_tokens ADD COLUMN amount REAL DEFAULT 0').run().catch(() => {});

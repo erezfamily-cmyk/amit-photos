@@ -713,6 +713,23 @@ nav.scrolled { border-bottom-color: rgba(200, 169, 110, 0.3); }
   pointer-events: none;
 }
 
+.gallery-wish-btn {
+  position: absolute; top: 10px; left: 10px; z-index: 6;
+  background: rgba(0,0,0,0.45);
+  border: none; border-radius: 50%;
+  width: 30px; height: 30px;
+  font-size: 1rem; line-height: 1;
+  color: #fff; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s, color 0.2s, background 0.2s;
+}
+.gallery-item:hover .gallery-wish-btn,
+.gallery-wish-btn.wished { opacity: 1; }
+.gallery-wish-btn.wished { color: #e05050; }
+.gallery-wish-btn:hover { background: rgba(0,0,0,0.65); }
+@media (hover: none) { .gallery-wish-btn { opacity: 1; } }
+
 /* ===== WEEK PHOTO STRIP ===== */
 .week-photo-strip {
   background: linear-gradient(135deg, rgba(201,168,76,.1) 0%, rgba(201,168,76,.04) 100%);

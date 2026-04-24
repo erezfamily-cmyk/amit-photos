@@ -1464,6 +1464,7 @@ const Newsletter = (() => {
 // ===== PHOTOS =====
 const Photos = (() => {
   let data = [];
+  let featuredIds = new Set();
   let searchQ = '', sortBy = 'newest';
   let selected = new Set(), selectMode = false;
   let lbList = [], lbIdx = 0;
@@ -1486,10 +1487,12 @@ const Photos = (() => {
 
   async function init() {
     // טען תמונות מ-D1 + photos.json במקביל
-    const [d1Photos, jsonPhotos] = await Promise.all([
+    const [d1Photos, jsonPhotos, featuredRes] = await Promise.all([
       fetch('/api/photos?admin=1', { headers: authHeaders() }).then(r => r.ok ? r.json() : []).catch(() => []),
-      fetch('data/photos.json').then(r => r.ok ? r.json() : []).catch(() => [])
+      fetch('data/photos.json').then(r => r.ok ? r.json() : []).catch(() => []),
+      fetch('/api/admin/featured', { headers: authHeaders() }).then(r => r.ok ? r.json() : {}).catch(() => ({}))
     ]);
+    featuredIds = new Set(featuredRes.ids || []);
     // שלב: D1 קודם, אחר כך Google Drive (ללא כפילויות לפי ID ו-filename)
     const d1Ids = new Set(d1Photos.map(p => p.id));
     const d1Filenames = new Set(d1Photos.map(p => p.filename).filter(Boolean));
@@ -1564,6 +1567,9 @@ const Photos = (() => {
             </button>
             <button class="btn-icon${p.is_new ? ' active' : ''}" title="${p.is_new ? 'הסר תג חדש' : 'סמן כחדש'}" id="new-btn-${p.id}" onclick="event.stopPropagation();Photos.toggleNew('${p.id}')">
               <svg width="13" height="13" fill="${p.is_new ? 'currentColor' : 'none'}" viewBox="0 0 24 24" stroke="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" stroke-width="2"/></svg>
+            </button>
+            <button class="btn-icon${featuredIds.has(p.id) ? ' active' : ''}" title="${featuredIds.has(p.id) ? 'הסר מ"מובחר"' : 'הוסף ל"מובחר"'}" id="feat-btn-${p.id}" onclick="event.stopPropagation();Photos.toggleFeatured('${p.id}')">
+              <svg width="13" height="13" fill="${featuredIds.has(p.id) ? 'currentColor' : 'none'}" viewBox="0 0 24 24" stroke="currentColor"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" stroke-width="2"/></svg>
             </button>
             <button class="btn-icon" title="ערוך" onclick="event.stopPropagation();Photos.openEditById('${p.id}')">
               <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" stroke-width="2"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" stroke-width="2"/></svg>
@@ -2122,6 +2128,16 @@ const Photos = (() => {
     };
   }
 
+  async function toggleFeatured(id) {
+    featuredIds.has(id) ? featuredIds.delete(id) : featuredIds.add(id);
+    const r = await fetch('/api/admin/featured', {
+      method: 'POST', headers: authHeaders(),
+      body: JSON.stringify({ ids: [...featuredIds] })
+    });
+    if (!r.ok) { toast('שגיאה בשמירת מובחר', 'error'); return; }
+    render();
+  }
+
   async function toggleNew(id) {
     const idx = data.findIndex(p => p.id === id);
     if (idx < 0) return;
@@ -2144,7 +2160,7 @@ const Photos = (() => {
     }
   });
 
-  return { init: async () => { await init(); loadNewBadgeSettings(); loadPriceSettings(); }, openEdit, openEditById, confirmDelete, cardClick, toggleSelect, toggleNew, setPhotoPrice, filterByChip, getData: () => data };
+  return { init: async () => { await init(); loadNewBadgeSettings(); loadPriceSettings(); }, openEdit, openEditById, confirmDelete, cardClick, toggleSelect, toggleNew, toggleFeatured, setPhotoPrice, filterByChip, getData: () => data };
 })();
 
 // ===== WEEK PHOTO =====

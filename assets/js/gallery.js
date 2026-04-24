@@ -293,11 +293,13 @@ function renderGallery(append = false) {
 
   if (!append) grid.innerHTML = '';
 
+  const wishlist = getWishlist();
   slice.forEach((photo, i) => {
     const idx = startIdx + i;
     const item = document.createElement('div');
     item.className = 'gallery-item';
     item.dataset.idx = idx;
+    const wished = wishlist.has(photo.id);
     item.innerHTML = `
       <img
         src="${photo.thumbnail || photo.url}"
@@ -311,6 +313,7 @@ function renderGallery(append = false) {
       ${isNew(photo) ? '<div class="gallery-new-badge">חדש</div>' : ''}
       ${isOnSale(photo) ? '<div class="gallery-sale-badge">🏷 מבצע</div>' : ''}
       ${isWeekPhoto(photo) ? '<div class="gallery-week-badge">⭐ תמונת השבוע</div>' : ''}
+      <button class="gallery-wish-btn${wished ? ' wished' : ''}" data-id="${photo.id}" aria-label="שמור למועדפים">${wished ? '♥' : '♡'}</button>
       <div class="gallery-item-overlay">
         <div class="gallery-item-info">
           <h3>${photo.title}</h3>
@@ -323,7 +326,13 @@ function renderGallery(append = false) {
       </div>`;
     galRevealObs?.observe(item);
     item.addEventListener('click', e => {
-      if (e.target.closest('.gallery-cart-btn')) {
+      if (e.target.closest('.gallery-wish-btn')) {
+        const btn = e.target.closest('.gallery-wish-btn');
+        toggleWishlist(photo.id);
+        const w = getWishlist().has(photo.id);
+        btn.textContent = w ? '♥' : '♡';
+        btn.classList.toggle('wished', w);
+      } else if (e.target.closest('.gallery-cart-btn')) {
         addToCart(photo, item);
       } else if (e.target.closest('.gallery-buy-btn')) {
         openBuyModal(photo);
@@ -343,19 +352,65 @@ function updateSentinel() {
   sentinel.style.display = displayedCount < filteredPhotos.length ? 'block' : 'none';
 }
 
+// ===== WISHLIST =====
+function getWishlist() {
+  try { return new Set(JSON.parse(localStorage.getItem('amit_wishlist') || '[]')); }
+  catch { return new Set(); }
+}
+function toggleWishlist(id) {
+  const w = getWishlist();
+  w.has(id) ? w.delete(id) : w.add(id);
+  localStorage.setItem('amit_wishlist', JSON.stringify([...w]));
+  refreshWishlistFilter();
+}
+function refreshWishlistFilter() {
+  const bar = document.getElementById('filter-bar');
+  if (!bar) return;
+  const count = getWishlist().size;
+  let btn = bar.querySelector('[data-cat="wishlist"]');
+  if (count === 0) {
+    btn?.remove();
+  } else {
+    if (!btn) {
+      btn = document.createElement('button');
+      btn.className = 'filter-btn filter-btn-wishlist';
+      btn.dataset.cat = 'wishlist';
+      btn.addEventListener('click', () => {
+        bar.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        applyFilters();
+      });
+      bar.appendChild(btn);
+    }
+    btn.innerHTML = `❤ ${t('gallery.filter.wishlist') || 'מועדפים'} <span class="filter-count">${count}</span>`;
+  }
+}
+
 // ===== FEATURED =====
-function initFeatured() {
+async function initFeatured() {
   const grid = document.getElementById('featured-grid');
   if (!grid || allPhotos.length === 0) return;
 
-  // Deterministic weekly selection — same 5 photos all week, rotates each Sunday
-  const weekNum = Math.floor(Date.now() / (7 * 24 * 60 * 60 * 1000));
-  const seededSort = (a, b) => {
-    const ha = (weekNum * 2654435761 + hashStr(a.id)) >>> 0;
-    const hb = (weekNum * 2654435761 + hashStr(b.id)) >>> 0;
-    return ha - hb;
-  };
-  const picks = [...allPhotos].sort(seededSort).slice(0, 5);
+  let picks = [];
+  try {
+    const r = await fetch('/api/admin/featured');
+    if (r.ok) {
+      const { ids } = await r.json();
+      if (ids && ids.length > 0)
+        picks = ids.map(id => allPhotos.find(p => p.id === id)).filter(Boolean);
+    }
+  } catch {}
+
+  if (picks.length === 0) {
+    // Fallback: deterministic weekly selection
+    const weekNum = Math.floor(Date.now() / (7 * 24 * 60 * 60 * 1000));
+    const seededSort = (a, b) => {
+      const ha = (weekNum * 2654435761 + hashStr(a.id)) >>> 0;
+      const hb = (weekNum * 2654435761 + hashStr(b.id)) >>> 0;
+      return ha - hb;
+    };
+    picks = [...allPhotos].sort(seededSort).slice(0, 5);
+  }
 
   grid.innerHTML = picks.map((photo, i) => `
     <div class="featured-item" data-id="${photo.id}">
@@ -411,6 +466,8 @@ function applyFilters() {
       matchCat = isNew(p);
     } else if (cat === 'sale') {
       matchCat = isOnSale(p);
+    } else if (cat === 'wishlist') {
+      matchCat = getWishlist().has(p.id);
     } else if (parent) {
       // תת-קטגוריה ספציפית
       matchCat = p.category === cat && p.parent_category === parent;
