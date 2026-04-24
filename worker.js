@@ -1811,6 +1811,7 @@ async function handlePhotoOfWeekSet(request, env) {
   if (!photo_id) return jsonRes({ error: 'photo_id required' }, 400, request);
   await env.DB.prepare("INSERT OR REPLACE INTO settings (key, value) VALUES ('photo_of_week_id', ?)").bind(photo_id).run();
   await env.DB.prepare("INSERT OR IGNORE INTO settings (key, value) VALUES ('photo_of_week_discount', '0.25')").run();
+  await env.DB.prepare("DELETE FROM settings WHERE key IN ('photo_of_week_caption','photo_of_week_caption_en')").run();
   dispatchWorkflow('week-photo-social.yml', env);
   return jsonRes({ ok: true }, 200, request);
 }
