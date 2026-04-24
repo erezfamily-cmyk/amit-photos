@@ -1330,6 +1330,13 @@ const PrintShop = (() => {
     document.getElementById('print-modal-title').textContent = photo.title || '';
     document.getElementById('print-price-display').textContent = '';
     document.getElementById('print-error').textContent = '';
+    // Reset crop state so old photo doesn't show for new selection
+    const cropImg = document.getElementById('print-crop-img');
+    if (cropImg) cropImg.src = '';
+    const previewWrap = document.getElementById('print-preview-wrap');
+    if (previewWrap) previewWrap.classList.add('hidden');
+    currentCropImageUrl = '';
+    cropOffsetX = 0; cropOffsetY = 0;
     showStep(1);
     document.getElementById('print-modal').classList.add('open');
     document.body.style.overflow = 'hidden';
@@ -1401,6 +1408,7 @@ const PrintShop = (() => {
     const container = document.getElementById('print-size-options');
     container.innerHTML = entry.sizes.map(s =>
       `<button type="button" class="print-size-btn" data-sku="${s.sku}" data-minw="${s.minW}" data-minh="${s.minH}">
+        ${sizeVisual(s.minW, s.minH)}
         <span>${sizeLabel(s.label)}</span>
       </button>`
     ).join('');
