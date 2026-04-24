@@ -1140,8 +1140,7 @@ function initBuyModal() {
 
   // Step 2: back button
   document.getElementById('buy-back-btn').addEventListener('click', () => {
-    document.getElementById('buy-step-2').classList.add('buy-step-hidden');
-    document.getElementById('buy-step-1').classList.remove('buy-step-hidden');
+    transitionBuyStep('buy-step-2', 'buy-step-1', 'back');
   });
 
   document.addEventListener('keydown', e => {
@@ -1201,7 +1200,7 @@ function openBuyModal(photo) {
     }
   });
 
-  // Always start at step 1
+  // Always start at step 1 (no animation on open)
   document.getElementById('buy-step-1').classList.remove('buy-step-hidden');
   document.getElementById('buy-step-2').classList.add('buy-step-hidden');
 
@@ -1209,11 +1208,24 @@ function openBuyModal(photo) {
   document.body.style.overflow = 'hidden';
 }
 
+function transitionBuyStep(fromId, toId, direction) {
+  const from = document.getElementById(fromId);
+  const to   = document.getElementById(toId);
+  const exitCls  = `buy-step-exit-${direction}`;
+  const enterCls = `buy-step-enter-${direction}`;
+  from.classList.add(exitCls);
+  from.addEventListener('animationend', () => {
+    from.classList.remove(exitCls);
+    from.classList.add('buy-step-hidden');
+    to.classList.remove('buy-step-hidden');
+    to.classList.add(enterCls);
+    to.addEventListener('animationend', () => to.classList.remove(enterCls), { once: true });
+  }, { once: true });
+}
+
 function showBuyStep2(photo, size) {
   const modal = document.getElementById('buy-modal');
   modal._selectedSize = size;
-
-  const s = SIZES[size];
 
   // Thumbnail
   const confirmImg = document.getElementById('buy-confirm-img');
@@ -1231,12 +1243,21 @@ function showBuyStep2(photo, size) {
   if (size === 'large')  pxLabel = maxDim >= 5000 ? `${photo.width}×${photo.height}px` : t('buy.size.large.px');
   document.getElementById('buy-confirm-size').textContent = `${t('buy.size.' + size)} · ${pxLabel}`;
 
-  // Price
-  document.getElementById('buy-total-amount').textContent = `₪${getEffectivePrice(photo.id, size)}`;
+  // Price breakdown
+  const originalPrice  = globalPrices[size];
+  const effectivePrice = getEffectivePrice(photo.id, size);
+  document.getElementById('buy-original-price').textContent = `₪${originalPrice}`;
+  const discountRow = document.getElementById('buy-discount-row');
+  if (effectivePrice < originalPrice) {
+    document.getElementById('buy-discount-label').textContent  = photo.is_week_photo ? '⭐ הנחת תמונת השבוע' : '🏷 הנחה';
+    document.getElementById('buy-discount-amount').textContent = `−₪${originalPrice - effectivePrice}`;
+    discountRow.classList.add('visible');
+  } else {
+    discountRow.classList.remove('visible');
+  }
+  document.getElementById('buy-total-amount').textContent = `₪${effectivePrice}`;
 
-  // Show step 2
-  document.getElementById('buy-step-1').classList.add('buy-step-hidden');
-  document.getElementById('buy-step-2').classList.remove('buy-step-hidden');
+  transitionBuyStep('buy-step-1', 'buy-step-2', 'fwd');
 }
 
 function closeBuyModal() {
