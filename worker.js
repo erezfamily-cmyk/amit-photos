@@ -1673,6 +1673,11 @@ async function handleSitemap(request, env) {
     return u.startsWith('http') ? u : `${base}${u.startsWith('/') ? '' : '/'}${u}`;
   }
   const now = new Date().toISOString().split('T')[0];
+  function toDate(str) {
+    if (!str) return now;
+    const d = new Date(str);
+    return isNaN(d.getTime()) ? now : d.toISOString().split('T')[0];
+  }
 
   // דפים סטטיים — ללא hash URLs (Google מתעלם מהם)
   const staticPages = [
@@ -1687,7 +1692,7 @@ async function handleSitemap(request, env) {
     ).bind('').all();
     categoryUrls = cats.map(c => `  <url>
     <loc>${base}/category/${escXml(encodeURIComponent(c.category))}</loc>
-    <lastmod>${c.last ? c.last.split('T')[0] : now}</lastmod>
+    <lastmod>${toDate(c.last)}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>`);
@@ -1701,7 +1706,7 @@ async function handleSitemap(request, env) {
     ).all();
 
     photoUrls = results.map(p => {
-      const lastmod = p.created_at ? p.created_at.split('T')[0] : now;
+      const lastmod = toDate(p.created_at);
       const imageTag = p.thumbnail ? `
     <image:image>
       <image:loc>${escXml(absUrl(p.thumbnail))}</image:loc>
