@@ -1445,16 +1445,20 @@ async function servePhotoPage(photoId, env) {
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>${title} | עמית ארז צילום</title>
   <meta name="description" content="${desc}" />
+  <meta property="og:site_name" content="עמית ארז צילום" />
   <meta property="og:title" content="${title} | עמית ארז" />
   <meta property="og:description" content="${desc}" />
-  <meta property="og:type" content="article" />
+  <meta property="og:type" content="website" />
   <meta property="og:url" content="${pageUrl}" />
   <meta property="og:image" content="${imageUrl}" />
+  <meta property="og:image:alt" content="${title}" />
   <meta property="og:locale" content="he_IL" />
   <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@amite" />
   <meta name="twitter:title" content="${title} | עמית ארז" />
   <meta name="twitter:description" content="${desc}" />
   <meta name="twitter:image" content="${imageUrl}" />
+  <meta name="twitter:image:alt" content="${title}" />
   <link rel="canonical" href="${pageUrl}" />
   <script type="application/ld+json">${schema}</script>
   <style>
@@ -1568,12 +1572,17 @@ async function handleCategoryPage(category, env) {
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>${pageTitle}</title>
   <meta name="description" content="${pageDesc}" />
+  <meta property="og:site_name" content="עמית ארז צילום" />
   <meta property="og:title" content="${pageTitle}" />
   <meta property="og:description" content="${pageDesc}" />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="${pageUrl}" />
-  ${ogImage ? `<meta property="og:image" content="${ogImage}" />` : ''}
+  ${ogImage ? `<meta property="og:image" content="${ogImage}" /><meta property="og:image:alt" content="${escXml(category)}" />` : ''}
   <meta property="og:locale" content="he_IL" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="${pageTitle}" />
+  <meta name="twitter:description" content="${pageDesc}" />
+  ${ogImage ? `<meta name="twitter:image" content="${ogImage}" />` : ''}
   <link rel="canonical" href="${pageUrl}" />
   <script type="application/ld+json">${schema}</script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
