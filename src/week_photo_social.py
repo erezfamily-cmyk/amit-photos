@@ -223,20 +223,24 @@ def save_caption_to_db(caption, caption_en=""):
 
 
 def upload_bytes_to_public_host(img_bytes, filename="image.jpg"):
-    """מעלה bytes לשרת ציבורי, מחזיר URL."""
-    try:
-        r = requests.post(
-            "https://litterbox.catbox.moe/resources/internals/api.php",
-            data={"reqtype": "fileupload", "time": "1h"},
-            files={"fileToUpload": (filename, img_bytes, "image/jpeg")},
-            timeout=60,
-        )
-        if r.ok and r.text.strip().startswith("http"):
-            url = r.text.strip()
-            print(f"⬆️  הועלה (litterbox): {url}")
-            return url
-    except Exception as e:
-        print(f"⚠️  litterbox נכשל ({e})")
+    """מעלה bytes ל-R2 דרך ה-API שלנו, מחזיר URL."""
+    if ADMIN_TOKEN:
+        try:
+            r = requests.post(
+                f"{SITE_URL}/api/admin/upload-story",
+                data=img_bytes,
+                headers={"Authorization": f"Bearer {ADMIN_TOKEN}", "Content-Type": "image/jpeg"},
+                timeout=60,
+            )
+            if r.ok:
+                url = r.json().get("url", "")
+                if url:
+                    print(f"⬆️  הועלה (R2): {url}")
+                    return url
+        except Exception as e:
+            print(f"⚠️  R2 upload נכשל ({e}) — עובר ל-fallback")
+
+    # fallback: 0x0.st
     r = requests.post("https://0x0.st", files={"file": (filename, img_bytes, "image/jpeg")}, timeout=60)
     r.raise_for_status()
     url = r.text.strip()
