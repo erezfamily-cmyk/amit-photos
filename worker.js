@@ -1871,6 +1871,15 @@ async function handleAdminPhotoPrice(request, env) {
   return jsonRes({ ok: true }, 200, request);
 }
 
+async function handleUploadStory(request, env) {
+  if (!await checkAuth(request, env)) return unauth(request);
+  const bytes = await request.arrayBuffer();
+  if (!bytes.byteLength) return jsonRes({ error: 'empty body' }, 400, request);
+  await env.BUCKET.put('story/latest.jpg', bytes, { httpMetadata: { contentType: 'image/jpeg' } });
+  const url = `${new URL(request.url).origin}/photos/story/latest.jpg`;
+  return jsonRes({ url }, 200, request);
+}
+
 async function handleAdminFeatured(request, env) {
   if (request.method === 'GET') {
     const row = await env.DB.prepare("SELECT value FROM settings WHERE key='featured_ids'").first();
@@ -2084,6 +2093,7 @@ export default {
     if (path === '/api/admin/photo-of-week/caption' && request.method === 'POST') return handlePhotoOfWeekCaption(request, env);
     if (path === '/api/admin/toggle-photo-new' && request.method === 'POST') return handleTogglePhotoNew(request, env);
     if (path === '/api/admin/featured') return handleAdminFeatured(request, env);
+    if (path === '/api/admin/upload-story' && request.method === 'POST') return handleUploadStory(request, env);
     if (path === '/prices') return handlePricesPage(request, env);
     if (path === '/api/admin/migrate-amount' && request.method === 'POST') {
       if (!await checkAuth(request, env)) return unauth(request);
