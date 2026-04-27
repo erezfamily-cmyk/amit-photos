@@ -1047,6 +1047,18 @@ nav.scrolled { border-bottom-color: rgba(200, 169, 110, 0.3); }
   text-transform: uppercase;
 }
 
+.gallery-item-price {
+  display: inline-block;
+  margin-top: 0.3rem;
+  font-size: 0.75rem;
+  color: #fff;
+  background: rgba(0,0,0,0.45);
+  padding: 0.15em 0.5em;
+  border-radius: 3px;
+  letter-spacing: 0.03em;
+  font-weight: 600;
+}
+
 /* ===== SKELETON LOADING ===== */
 .skeleton {
   break-inside: avoid;
