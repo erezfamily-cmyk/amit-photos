@@ -199,6 +199,7 @@ async function loadPhotos() {
   displayedCount = Math.min(PAGE_SIZE, filteredPhotos.length);
   renderGallery();
   updateWeekPhotoStrip();
+  window.dispatchEvent(new Event('photos-ready'));
 }
 
 function updateWeekPhotoStrip() {
@@ -1821,6 +1822,43 @@ window.onLangChange = function() {
   updateWeekPhotoStrip();
   PrintShop.onLangChange();
 };
+
+// ===== WEEK PHOTO POPUP =====
+(function initWeekPopup() {
+  const STORAGE_KEY = 'week_popup_dismissed';
+  const DELAY_MS = 30000;
+
+  function dismissed() {
+    try { return !!sessionStorage.getItem(STORAGE_KEY); } catch { return false; }
+  }
+  function dismiss() {
+    try { sessionStorage.setItem(STORAGE_KEY, '1'); } catch {}
+    document.getElementById('week-popup').classList.remove('open');
+  }
+
+  function show(photo) {
+    const popup = document.getElementById('week-popup');
+    document.getElementById('week-popup-img').src = photo.thumbnail || photo.url;
+    document.getElementById('week-popup-img').alt = photo.title || '';
+    document.getElementById('week-popup-title').textContent = photo.title || '';
+
+    const pct = photo.week_photo_discount ? Math.round(photo.week_photo_discount * 100) : 25;
+    document.querySelector('.week-popup-discount').textContent = `${pct}% הנחה השבוע על רכישה!`;
+
+    document.getElementById('week-popup-close').onclick = dismiss;
+    popup.addEventListener('click', e => { if (e.target === popup) dismiss(); });
+    document.getElementById('week-popup-cta').onclick = () => { dismiss(); openBuyModal(photo); };
+
+    popup.classList.add('open');
+  }
+
+  window.addEventListener('photos-ready', () => {
+    if (dismissed()) return;
+    const weekPhoto = allPhotos.find(p => p.is_week_photo);
+    if (!weekPhoto) return;
+    setTimeout(() => { if (!dismissed()) show(weekPhoto); }, DELAY_MS);
+  });
+})();
 
 // ===== SERVICE WORKER =====
 if ('serviceWorker' in navigator) {
