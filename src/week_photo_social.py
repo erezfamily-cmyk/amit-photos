@@ -283,15 +283,49 @@ def create_story_image_bytes(source_url):
     dark = Image.new("RGB", (STORY_W, STORY_H), (0, 0, 0))
     bg = Image.blend(bg, dark, 0.35)
 
-    # תמונה מרכזית: fit בתוך 80% מגובה הקנבס (מרווח לטקסט אינסטגרם)
-    fit_scale = min(STORY_W / orig_w, (STORY_H * 0.8) / orig_h)
+    # תמונה מרכזית: fit בתוך 78% מגובה הקנבס (מרווח לטקסט + link sticker)
+    fit_scale = min(STORY_W / orig_w, (STORY_H * 0.78) / orig_h)
     fg = img.resize((int(orig_w * fit_scale), int(orig_h * fit_scale)), Image.LANCZOS)
     paste_x = (STORY_W - fg.width) // 2
-    paste_y = (STORY_H - fg.height) // 2
+    paste_y = (STORY_H - fg.height) // 2 - 60  # מוזז מעט למעלה לפינות ל-sticker
     bg.paste(fg, (paste_x, paste_y))
 
+    # Link sticker — pill לבן חצי-שקוף עם amitphotos.com
+    from PIL import ImageDraw, ImageFont
+    draw = ImageDraw.Draw(bg, "RGBA")
+
+    text = "amitphotos.com"
+    font_size = 38
+    try:
+        font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", font_size)
+    except Exception:
+        font = ImageFont.load_default()
+
+    bbox = draw.textbbox((0, 0), text, font=font)
+    text_w = bbox[2] - bbox[0]
+    text_h = bbox[3] - bbox[1]
+
+    pad_x, pad_y = 36, 20
+    pill_w = text_w + pad_x * 2
+    pill_h = text_h + pad_y * 2
+    pill_x = (STORY_W - pill_w) // 2
+    pill_y = STORY_H - 220
+
+    # צייר pill (מלבן מעוגל) עם שקיפות
+    r = pill_h // 2
+    draw.rounded_rectangle(
+        [pill_x, pill_y, pill_x + pill_w, pill_y + pill_h],
+        radius=r,
+        fill=(255, 255, 255, 220),
+    )
+
+    # טקסט כהה במרכז ה-pill
+    text_x = pill_x + pad_x - bbox[0]
+    text_y = pill_y + pad_y - bbox[1]
+    draw.text((text_x, text_y), text, font=font, fill=(30, 30, 30, 255))
+
     buf = io.BytesIO()
-    bg.save(buf, format="JPEG", quality=92)
+    bg.convert("RGB").save(buf, format="JPEG", quality=92)
     print(f"📐 סטורי נוצר: {STORY_W}x{STORY_H}, {len(buf.getvalue())//1024}KB")
     return buf.getvalue()
 
