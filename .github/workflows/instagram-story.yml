@@ -9,7 +9,7 @@ on:
       mode:
         description: 'latest = מה-post האחרון, random = רנדומלי'
         required: false
-        default: 'latest'
+        default: 'random'
 
 jobs:
   instagram-story:

@@ -17,7 +17,8 @@ from pathlib import Path
 
 GRAPH_API    = "https://graph.facebook.com/v21.0"
 SITE_URL     = "https://amitphotos.com"
-POSTED_FILE  = Path(__file__).parent.parent / "data" / "instagram_posted.json"
+POSTED_FILE        = Path(__file__).parent.parent / "data" / "instagram_posted.json"
+STORY_POSTED_FILE  = Path(__file__).parent.parent / "data" / "instagram_story_posted.json"
 
 IG_USER_ID   = os.environ.get("INSTAGRAM_USER_ID", "")
 ACCESS_TOKEN = os.environ.get("INSTAGRAM_PAGE_TOKEN", "")
@@ -180,8 +181,17 @@ def main():
         else:
             print(f"📸 Story מה-post האחרון: {photo['title']}")
     else:
-        photo = random.choice(photos)
-        print(f"📸 תמונה רנדומלית: {photo['title']}")
+        used_ids = set()
+        if STORY_POSTED_FILE.exists():
+            used_ids = set(json.loads(STORY_POSTED_FILE.read_text(encoding="utf-8")).get("posted_ids", []))
+        candidates = [p for p in photos if p["id"] not in used_ids]
+        if not candidates:
+            used_ids = set()
+            candidates = photos
+            STORY_POSTED_FILE.write_text(json.dumps({"posted_ids": []}, ensure_ascii=False), encoding="utf-8")
+            print("🔄 כל התמונות כוסו — מתחיל מחדש")
+        photo = random.choice(candidates)
+        print(f"📸 תמונה רנדומלית: {photo['title']} ({len(candidates)} זמינות)")
 
     source_url = photo.get("url") or photo.get("thumbnail", "")
     if source_url.startswith("/"):
@@ -192,6 +202,14 @@ def main():
     print(f"📤 מפרסם Story מ-URL: {image_url}")
     story_id = post_story(image_url)
     print(f"✅ Story פורסם! ID: {story_id}")
+
+    if not USE_LATEST:
+        data = {"posted_ids": []}
+        if STORY_POSTED_FILE.exists():
+            data = json.loads(STORY_POSTED_FILE.read_text(encoding="utf-8"))
+        if photo["id"] not in data["posted_ids"]:
+            data["posted_ids"].append(photo["id"])
+        STORY_POSTED_FILE.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
 
 
 if __name__ == "__main__":
