@@ -1894,6 +1894,20 @@ async function handleAdminPhotoDimensions(request, env) {
   return jsonRes({ ok: true, updated: updates.length }, 200, request);
 }
 
+async function handleAdminReplacePhoto(request, env, photoId) {
+  if (!await checkAuth(request, env)) return unauth(request);
+  const bytes = await request.arrayBuffer();
+  if (!bytes.byteLength) return jsonRes({ error: 'empty body' }, 400, request);
+  const url = new URL(request.url);
+  const width  = parseInt(url.searchParams.get('width')  || '0');
+  const height = parseInt(url.searchParams.get('height') || '0');
+  await env.BUCKET.put(`${photoId}.jpg`, bytes, { httpMetadata: { contentType: 'image/jpeg' } });
+  if (width && height) {
+    await env.DB.prepare('UPDATE photos SET width=?, height=? WHERE id=?').bind(width, height, photoId).run();
+  }
+  return jsonRes({ ok: true }, 200, request);
+}
+
 async function handleUploadStory(request, env) {
   if (!await checkAuth(request, env)) return unauth(request);
   const bytes = await request.arrayBuffer();
@@ -2117,6 +2131,7 @@ export default {
     if (path === '/api/admin/toggle-photo-new' && request.method === 'POST') return handleTogglePhotoNew(request, env);
     if (path === '/api/admin/featured') return handleAdminFeatured(request, env);
     if (path === '/api/admin/upload-story' && request.method === 'POST') return handleUploadStory(request, env);
+    if (path.startsWith('/api/admin/replace-photo/') && request.method === 'POST') return handleAdminReplacePhoto(request, env, path.slice('/api/admin/replace-photo/'.length));
     if (path === '/api/admin/photo-dimensions' && request.method === 'POST') return handleAdminPhotoDimensions(request, env);
     if (path === '/prices') return handlePricesPage(request, env);
     if (path === '/api/admin/migrate-amount' && request.method === 'POST') {
