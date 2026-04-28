@@ -245,26 +245,73 @@ def upload_to_public_host(source_url):
     resp.raise_for_status()
     img_bytes = resp.content
 
-    try:
-        upload = requests.post(
-            "https://litterbox.catbox.moe/resources/internals/api.php",
-            data={"reqtype": "fileupload", "time": "1h"},
-            files={"fileToUpload": ("photo.jpg", img_bytes, "image/jpeg")},
-            timeout=60,
-        )
-        upload.raise_for_status()
-        public_url = upload.text.strip()
-        if public_url.startswith("http"):
-            print(f"⬆️  תמונה הועלתה (litterbox): {public_url}")
-            return public_url
-    except Exception as e:
-        print(f"⚠️  litterbox נכשל ({e}), מנסה 0x0.st...")
+    hosts = [
+        ("litterbox", _try_litterbox),
+        ("catbox", _try_catbox),
+        ("tmpfiles", _try_tmpfiles),
+        ("0x0.st", _try_0x0),
+    ]
+    last_err = None
+    for name, fn in hosts:
+        try:
+            url = fn(img_bytes)
+            if url:
+                print(f"⬆️  תמונה הועלתה ({name}): {url}")
+                return url
+        except Exception as e:
+            print(f"⚠️  {name} נכשל ({e}), מנסה הבא...")
+            last_err = e
 
-    upload = requests.post("https://0x0.st", files={"file": ("photo.jpg", img_bytes, "image/jpeg")}, timeout=60)
-    upload.raise_for_status()
-    public_url = upload.text.strip()
-    print(f"⬆️  תמונה הועלתה (0x0.st): {public_url}")
-    return public_url
+    raise RuntimeError(f"כל שירותי ה-upload נכשלו. שגיאה אחרונה: {last_err}")
+
+
+def _try_litterbox(img_bytes):
+    r = requests.post(
+        "https://litterbox.catbox.moe/resources/internals/api.php",
+        data={"reqtype": "fileupload", "time": "1h"},
+        files={"fileToUpload": ("photo.jpg", img_bytes, "image/jpeg")},
+        timeout=60,
+    )
+    r.raise_for_status()
+    url = r.text.strip()
+    return url if url.startswith("http") else None
+
+
+def _try_catbox(img_bytes):
+    r = requests.post(
+        "https://catbox.moe/user/api.php",
+        data={"reqtype": "fileupload"},
+        files={"fileToUpload": ("photo.jpg", img_bytes, "image/jpeg")},
+        timeout=60,
+    )
+    r.raise_for_status()
+    url = r.text.strip()
+    return url if url.startswith("http") else None
+
+
+def _try_tmpfiles(img_bytes):
+    r = requests.post(
+        "https://tmpfiles.org/api/v1/upload",
+        files={"file": ("photo.jpg", img_bytes, "image/jpeg")},
+        timeout=60,
+    )
+    r.raise_for_status()
+    data = r.json()
+    url = data.get("data", {}).get("url", "")
+    # tmpfiles returns page URL; convert to direct download
+    url = url.replace("tmpfiles.org/", "tmpfiles.org/dl/")
+    return url if url.startswith("http") else None
+
+
+def _try_0x0(img_bytes):
+    r = requests.post(
+        "https://0x0.st",
+        files={"file": ("photo.jpg", img_bytes, "image/jpeg")},
+        timeout=60,
+    )
+    r.raise_for_status()
+    url = r.text.strip()
+    return url if url.startswith("http") else None
 
 
 def post_to_instagram(photo, caption):
