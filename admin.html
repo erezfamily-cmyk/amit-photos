@@ -206,6 +206,10 @@ input,textarea,select{font-family:var(--font);direction:rtl}
 .photo-actions{display:flex;gap:.4rem;margin-top:.65rem}
 .draft-badge{margin-right:.4rem;font-size:.68rem;font-weight:600;color:#e8a000;background:rgba(232,160,0,.12);border:1px solid rgba(232,160,0,.3);padding:.1rem .4rem;border-radius:10px;vertical-align:middle}
 .sale-badge{margin-right:.4rem;font-size:.68rem;font-weight:700;color:#34d399;background:rgba(52,211,153,.12);border:1px solid rgba(52,211,153,.35);padding:.1rem .4rem;border-radius:10px;vertical-align:middle}
+.res-badge{margin-right:.3rem;font-size:.62rem;font-weight:600;padding:.1rem .35rem;border-radius:8px;vertical-align:middle}
+.res-ok{color:#34d399;background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.25)}
+.res-mid{color:#a78bfa;background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.25)}
+.res-low{color:#f87171;background:rgba(248,113,113,.12);border:1px solid rgba(248,113,113,.3)}
 
 /* Upload zone */
 .upload-zone{
@@ -1556,7 +1560,7 @@ const Photos = (() => {
         </div>
         <div class="photo-info">
           <div class="photo-title">${p.title||'ללא כותרת'}${p.published===0?'<span class="draft-badge">טיוטה</span>':''}${isOnSale(p)?'<span class="sale-badge">🏷 מבצע</span>':''}</div>
-          <span class="cat-badge">${p.category||'ללא קטגוריה'}</span>
+          <span class="cat-badge">${p.category||'ללא קטגוריה'}</span>${(()=>{if(!p.width||!p.height)return'';const mx=Math.max(p.width,p.height);const cls=mx<2000?'res-badge res-low':mx<5000?'res-badge res-mid':'res-badge res-ok';return`<span class="${cls}">${p.width}×${p.height}</span>`;})()}
           <div class="photo-actions">
             <span class="drag-handle" onclick="event.stopPropagation()" title="גרור לסדר">⠿</span>
             <button class="btn-icon" title="העתק ID" onclick="event.stopPropagation();navigator.clipboard.writeText('${p.id}').then(()=>{this.title='הועתק!';setTimeout(()=>this.title='העתק ID',1500)})">
