@@ -35,7 +35,7 @@ def push_batch(updates):
     r = requests.post(
         f"{SITE_URL}/api/admin/photo-dimensions",
         json={"updates": updates},
-        headers={"Authorization": f"Bearer {ADMIN_TOKEN}"},
+        headers={"X-Admin-Password": ADMIN_TOKEN},
         timeout=30,
     )
     r.raise_for_status()
