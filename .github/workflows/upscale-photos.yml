@@ -14,7 +14,7 @@ jobs:
           python-version: '3.11'
 
       - name: התקנת חבילות
-        run: pip install requests pillow torch torchvision basicsr realesrgan opencv-python-headless
+        run: pip install requests pillow numpy opencv-contrib-python-headless
 
       - name: Deploy Worker
         env:
