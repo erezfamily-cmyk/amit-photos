@@ -23,7 +23,11 @@ def measure(url):
     full = url if url.startswith("http") else f"{SITE_URL}{url}"
     r = requests.get(full, timeout=30)
     r.raise_for_status()
+    ct = r.headers.get("Content-Type", "")
+    if not ct.startswith("image/"):
+        raise ValueError(f"לא תמונה: {ct}")
     img = Image.open(io.BytesIO(r.content))
+    img.load()
     return img.width, img.height
 
 
@@ -62,13 +66,20 @@ def main():
             print(f"  [{i}/{total}] ⚠️  {photo['title'][:40]}: {e}")
 
         if len(updates) >= BATCH_SIZE:
-            push_batch(updates)
-            print(f"  💾 שמרתי {len(updates)} רשומות")
-            updates.clear()
+            try:
+                push_batch(updates)
+                print(f"  💾 שמרתי {len(updates)} רשומות")
+                updates.clear()
+            except Exception as e:
+                print(f"  ❌ שגיאת שמירה: {e} — ממשיך")
+                updates.clear()
 
     if updates:
-        push_batch(updates)
-        print(f"  💾 שמרתי {len(updates)} רשומות")
+        try:
+            push_batch(updates)
+            print(f"  💾 שמרתי {len(updates)} רשומות")
+        except Exception as e:
+            print(f"  ❌ שגיאת שמירה אחרונה: {e}")
 
     print(f"\n✅ הושלם: {ok} עודכנו, {fail} נכשלו")
 
