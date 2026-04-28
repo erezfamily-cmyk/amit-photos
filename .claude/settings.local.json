@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__list_pages",
+      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__navigate_page",
+      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__take_screenshot",
+      "Bash(python3 -c \"import json; photos=json.load\\(open\\('data/photos.json'\\)\\); print\\(photos[0].get\\('thumbnail','NO THUMB'\\)[:100]\\)\")",
+      "Bash(node -e \"const p=require\\('./data/photos.json'\\); console.log\\(p[0].thumbnail || p[0].url || 'no url'\\)\")",
+      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__evaluate_script",
+      "mcp__claude_ai_Cloudflare_Developer_Platform__r2_bucket_get"
+    ]
+  }
+}

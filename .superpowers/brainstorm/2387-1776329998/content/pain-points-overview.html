@@ -1,0 +1,153 @@
+<style>
+  body { direction: rtl; }
+  .pain-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin: 20px 0;
+  }
+  .pain-card {
+    background: #1e1e1e;
+    border: 1px solid #333;
+    border-radius: 10px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+  }
+  .pain-card:hover { border-color: #888; background: #252525; }
+  .pain-card.selected { border-color: #c8a96e; background: #1f1a10; }
+  .pain-card .severity {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 20px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .sev-critical { background: #4a1212; color: #ff6b6b; }
+  .sev-high { background: #2a1e0a; color: #f0a030; }
+  .sev-medium { background: #0f1e2a; color: #6bb5ff; }
+  .pain-card h3 { margin: 0 0 6px; font-size: 14px; color: #f0ede8; }
+  .pain-card p { margin: 0; font-size: 12px; color: #999; line-height: 1.5; }
+  .pain-card .evidence {
+    margin-top: 8px;
+    font-size: 11px;
+    color: #666;
+    font-family: monospace;
+    background: #111;
+    padding: 4px 8px;
+    border-radius: 4px;
+    direction: ltr;
+    text-align: left;
+  }
+  .section-intro {
+    background: #1a1a1a;
+    border-right: 3px solid #c8a96e;
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    border-radius: 0 8px 8px 0;
+  }
+  .section-intro p { margin: 0; color: #ccc; font-size: 13px; }
+  .instructions {
+    text-align: center;
+    color: #888;
+    font-size: 12px;
+    margin-top: 16px;
+  }
+</style>
+
+<h2>כאבי הלקוחות באתר amitphotos.com</h2>
+<p class="subtitle">ניתוח מעמיק של הקוד — לחץ על הכאבים שהכי חשוב לך לפתור</p>
+
+<div class="section-intro">
+  <p>מצאתי <strong>8 כאבים ספציפיים</strong> בקוד ובזרימת הרכישה. חלקם קריטיים (גורמים לאבדן מכירות), חלקם פחות דחופים. בחר מה מדאיג אותך הכי הרבה.</p>
+</div>
+
+<div class="pain-grid options" data-multiselect>
+
+  <div class="option pain-card" data-choice="pricing-mismatch" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <span class="severity sev-critical">קריטי</span>
+      <h3>⚠️ אי-עקביות במחירים</h3>
+      <p>דף המחירים מציג ₪19/59/129, אבל מודל הרכישה מציג ₪39/89/179. לקוח שרואה את ההפרש עלול לאבד אמון ולנטוש.</p>
+      <div class="evidence">pricing page: ₪19/59/129 vs buy-modal: ₪39/89/179</div>
+    </div>
+  </div>
+
+  <div class="option pain-card" data-choice="mobile-hover" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <span class="severity sev-critical">קריטי</span>
+      <h3>📱 כפתורי רכישה נסתרים במובייל</h3>
+      <p>כפתורי "הוסף לסל" ו"רכישה" מופיעים רק על hover בגלריה. במובייל אין hover — לחיצה על תמונה פותחת לייטבוקס, לא רכישה.</p>
+      <div class="evidence">gallery-item-overlay shows on :hover only</div>
+    </div>
+  </div>
+
+  <div class="option pain-card" data-choice="download-trust" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <span class="severity sev-high">גבוה</span>
+      <h3>🔒 חרדת ההורדה אחרי תשלום</h3>
+      <p>אחרי PayPal הלקוח מגיע ל-download.html. אין מנגנון ודאי שיוודא שיוכל להוריד — מה אם הדפדפן נסגר? מה אם הלינק פג?</p>
+      <div class="evidence">return: SITE_URL/download.html (no email backup visible)</div>
+    </div>
+  </div>
+
+  <div class="option pain-card" data-choice="cart-size" onclick="toggleSelect(this)">
+    <div class="letter">D</div>
+    <div class="content">
+      <span class="severity sev-high">גבוה</span>
+      <h3>🛒 גודל אחד לכל הסל</h3>
+      <p>בסל הקניות יש גודל אחד לכל התמונות. לקוח שרוצה תמונה אחת לרשת ואחת להדפסה — לא יכול לשלם פעם אחת.</p>
+      <div class="evidence">cart: single cartSize for all items</div>
+    </div>
+  </div>
+
+  <div class="option pain-card" data-choice="search-discovery" onclick="toggleSelect(this)">
+    <div class="letter">E</div>
+    <div class="content">
+      <span class="severity sev-high">גבוה</span>
+      <h3>🔍 קושי למצוא תמונה ספציפית</h3>
+      <p>הגלריה מוצגת בסדר אקראי, ומוגבלת ל-100 תמונות מתוך 500+. חיפוש לפי שם בלבד — אין חיפוש לפי מיקום, צבע, מצב רוח.</p>
+      <div class="evidence">filteredPhotos = shuffled.slice(0, 100) — 80% of photos hidden</div>
+    </div>
+  </div>
+
+  <div class="option pain-card" data-choice="no-preview-quality" onclick="toggleSelect(this)">
+    <div class="letter">F</div>
+    <div class="content">
+      <span class="severity sev-medium">בינוני</span>
+      <h3>🖼️ אין תצוגה מקדימה של מה שיקבלו</h3>
+      <p>הלקוח רוכש קובץ דיגיטלי אך לא יכול לראות את האיכות האמיתית — רק thumbnail מוקטן עם ווטרמארק. אין השוואה של רזולוציות.</p>
+      <div class="evidence">lb-watermark always visible, no quality preview</div>
+    </div>
+  </div>
+
+  <div class="option pain-card" data-choice="htb-mismatch" onclick="toggleSelect(this)">
+    <div class="letter">G</div>
+    <div class="content">
+      <span class="severity sev-medium">בינוני</span>
+      <h3>📋 הוראות רכישה לא מדויקות</h3>
+      <p>סעיף "כיצד לרכוש?" אומר "לחץ על תמונה" אבל בפועל צריך ללחוץ על כפתור "רכישה" שמופיע על hover. מבלבל.</p>
+      <div class="evidence">htb.s2.desc: "לחץ רכישה" vs actual UX flow</div>
+    </div>
+  </div>
+
+  <div class="option pain-card" data-choice="social-proof" onclick="toggleSelect(this)">
+    <div class="letter">H</div>
+    <div class="content">
+      <span class="severity sev-medium">בינוני</span>
+      <h3>⭐ עדויות לקוחות נראות מזויפות</h3>
+      <p>3 ביקורות, כולן 5 כוכבים, שמות חלקיים, ללא תמונה. לקוחות מתוחכמים יזהו שאלה generic — פוגע באמינות.</p>
+      <div class="evidence">3 hardcoded testimonials, all ★★★★★, no photos</div>
+    </div>
+  </div>
+
+</div>
+
+<p class="instructions">לחץ על כמה כאבים שרלוונטיים לך (ניתן לבחור כמה) — ואז ספר לי בטרמינל מה הכי דוחק</p>
