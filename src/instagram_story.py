@@ -183,7 +183,7 @@ def main():
         photo = random.choice(photos)
         print(f"📸 תמונה רנדומלית: {photo['title']}")
 
-    source_url = photo.get("thumbnail") or photo.get("url", "")
+    source_url = photo.get("url") or photo.get("thumbnail", "")
     if source_url.startswith("/"):
         source_url = f"{SITE_URL}{source_url}"
 
