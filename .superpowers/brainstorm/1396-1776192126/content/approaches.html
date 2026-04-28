@@ -1,0 +1,98 @@
+<h2>ממשק קנייה — 3 גישות</h2>
+<p class="subtitle">כרגע: לחיצה על גודל → מעבר מיידי ל-PayPal. רוצים משהו יותר מעוצב ומרגיע.</p>
+
+<div class="cards">
+
+  <div class="card" data-choice="wizard" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#0a0a0a;padding:1.5rem;font-family:sans-serif;color:#f0ede8;border-radius:4px 4px 0 0">
+      <div style="display:flex;gap:0.5rem;justify-content:center;margin-bottom:1rem">
+        <div style="display:flex;align-items:center;gap:0.4rem">
+          <div style="width:22px;height:22px;border-radius:50%;background:#c8a96e;color:#000;font-size:0.65rem;font-weight:700;display:flex;align-items:center;justify-content:center">1</div>
+          <span style="font-size:0.7rem;color:#c8a96e">בחר גודל</span>
+        </div>
+        <div style="width:24px;height:1px;background:#444;margin:auto"></div>
+        <div style="display:flex;align-items:center;gap:0.4rem">
+          <div style="width:22px;height:22px;border-radius:50%;background:#333;color:#888;font-size:0.65rem;font-weight:700;display:flex;align-items:center;justify-content:center">2</div>
+          <span style="font-size:0.7rem;color:#555">סיכום</span>
+        </div>
+        <div style="width:24px;height:1px;background:#444;margin:auto"></div>
+        <div style="display:flex;align-items:center;gap:0.4rem">
+          <div style="width:22px;height:22px;border-radius:50%;background:#333;color:#888;font-size:0.65rem;font-weight:700;display:flex;align-items:center;justify-content:center">3</div>
+          <span style="font-size:0.7rem;color:#555">תשלום</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:0.5rem">
+        <div style="flex:1;background:#1a1a1a;border:1px solid #333;border-radius:3px;padding:0.6rem;text-align:center;font-size:0.7rem">
+          <div style="color:#c8a96e;font-weight:700">קובץ רשת</div>
+          <div style="color:#666;font-size:0.6rem">1500px</div>
+          <div style="color:#fff;margin-top:0.3rem">₪39</div>
+        </div>
+        <div style="flex:1;background:#c8a96e;border-radius:3px;padding:0.6rem;text-align:center;font-size:0.7rem">
+          <div style="color:#000;font-weight:700">קובץ הדפסה</div>
+          <div style="color:#5a4a2a;font-size:0.6rem">3000px</div>
+          <div style="color:#000;margin-top:0.3rem">₪89</div>
+        </div>
+        <div style="flex:1;background:#1a1a1a;border:1px solid #333;border-radius:3px;padding:0.6rem;text-align:center;font-size:0.7rem">
+          <div style="color:#c8a96e;font-weight:700">קובץ מלא</div>
+          <div style="color:#666;font-size:0.6rem">מקסימלי</div>
+          <div style="color:#fff;margin-top:0.3rem">₪179</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A — אשף שלבים (Wizard)</h3>
+      <p>שלב 1: בחר גודל → שלב 2: סיכום הזמנה עם תמונה + מחיר → שלב 3: "עובר ל-PayPal..." עם ספינר. מרגיש כמו checkout אמיתי.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="drawer" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#0a0a0a;padding:1.5rem;font-family:sans-serif;color:#f0ede8;border-radius:4px 4px 0 0">
+      <div style="display:flex;gap:1rem">
+        <div style="width:70px;height:90px;background:#1a1a1a;border-radius:3px;overflow:hidden">
+          <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=140&h=180&fit=crop" style="width:100%;height:100%;object-fit:cover;opacity:0.85" />
+        </div>
+        <div style="flex:1">
+          <div style="font-size:0.65rem;color:#888;margin-bottom:0.2rem">שפיריות בזיווג על ענף</div>
+          <div style="font-size:0.7rem;color:#c8a96e;font-weight:700;margin-bottom:0.5rem">PURCHASE PHOTO</div>
+          <div style="display:flex;flex-direction:column;gap:0.3rem">
+            <div style="background:#1a1a1a;border:1px solid #333;border-radius:2px;padding:0.4rem 0.6rem;font-size:0.65rem;display:flex;justify-content:space-between">
+              <span>קובץ רשת <span style="color:#666">1500px</span></span><span style="color:#c8a96e">₪39</span>
+            </div>
+            <div style="background:#c8a96e;border-radius:2px;padding:0.4rem 0.6rem;font-size:0.65rem;display:flex;justify-content:space-between">
+              <span style="color:#000;font-weight:700">קובץ הדפסה <span style="color:#5a4a2a">3000px</span></span><span style="color:#000;font-weight:700">₪89</span>
+            </div>
+            <div style="background:#1a1a1a;border:1px solid #333;border-radius:2px;padding:0.4rem 0.6rem;font-size:0.65rem;display:flex;justify-content:space-between">
+              <span>קובץ מלא <span style="color:#666">מקס׳</span></span><span style="color:#c8a96e">₪179</span>
+            </div>
+          </div>
+          <div style="margin-top:0.5rem;background:#c8a96e;border-radius:2px;padding:0.35rem;text-align:center;font-size:0.65rem;font-weight:700;color:#000">המשך לתשלום →</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B — מודל מפורט</h3>
+      <p>מודל אחד, אבל מעוצב יותר: תמונה + שם בצד שמאל, אפשרויות מימין, כפתור "המשך לתשלום" בולט. לא wizard — פחות שלבים, יותר עיצוב.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="confirm" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#0a0a0a;padding:1.5rem;font-family:sans-serif;color:#f0ede8;border-radius:4px 4px 0 0">
+      <div style="text-align:center">
+        <div style="font-size:0.6rem;color:#888;margin-bottom:0.3rem">אישור הזמנה</div>
+        <div style="width:60px;height:60px;margin:0 auto 0.5rem;background:#1a1a1a;border-radius:3px;overflow:hidden">
+          <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=120&h=120&fit=crop" style="width:100%;height:100%;object-fit:cover;opacity:0.85" />
+        </div>
+        <div style="font-size:0.7rem;color:#c8a96e;margin-bottom:0.15rem">שפיריות בזיווג על ענף</div>
+        <div style="font-size:0.65rem;color:#888;margin-bottom:0.5rem">קובץ הדפסה — 3000px</div>
+        <div style="font-size:1.1rem;font-weight:700;margin-bottom:0.75rem">₪89</div>
+        <div style="background:#0070ba;border-radius:3px;padding:0.4rem;font-size:0.65rem;font-weight:700;color:#fff;margin-bottom:0.3rem">💳 PayPal</div>
+        <div style="font-size:0.55rem;color:#555">בלחיצה תועבר לדף התשלום המאובטח של PayPal</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C — אישור לפני תשלום</h3>
+      <p>בוחרים גודל → מוצג מסך אישור עם תמונה, שם, גודל, מחיר, וכפתור PayPal ברור. פשוט — שלב בחירה + שלב אישור בלבד.</p>
+    </div>
+  </div>
+
+</div>

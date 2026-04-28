@@ -1,0 +1,86 @@
+<style>
+  body { direction: rtl; }
+  .audit-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 16px 0;
+  }
+  .audit-card {
+    background: #1a1a1a;
+    border: 1px solid #2a2a2a;
+    border-radius: 10px;
+    padding: 15px;
+  }
+  .sev { display: inline-block; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; margin-bottom: 8px; text-transform: uppercase; }
+  .sev-bug   { background: #4a0a0a; color: #ff4444; }
+  .sev-high  { background: #2a1a00; color: #ffa040; }
+  .sev-med   { background: #0a1a2a; color: #60b0ff; }
+  .audit-card h3 { margin: 0 0 5px; font-size: 13px; color: #f0ede8; }
+  .audit-card p  { margin: 0; font-size: 11.5px; color: #999; line-height: 1.55; }
+  .code { font-family: monospace; font-size: 10px; background: #111; padding: 3px 7px; border-radius: 3px; display: block; margin-top: 6px; direction: ltr; text-align: left; color: #c8a96e; }
+  .section-label { font-size: 11px; color: #c8a96e; text-transform: uppercase; letter-spacing: 1px; margin: 20px 0 10px; padding-bottom: 6px; border-bottom: 1px solid #2a2a2a; }
+</style>
+
+<h2>ביקורת עמוקה — ממצאים נוספים</h2>
+<p class="subtitle">בדיקת functions, service worker, ו-API — נמצאו 7 בעיות</p>
+
+<div class="section-label">🔴 באגים שגורמים לכשלון שקט — הלקוח לא יודע שמשהו נשבר</div>
+<div class="audit-grid">
+
+  <div class="audit-card">
+    <span class="sev sev-bug">באג קריטי</span>
+    <h3>📧 ניוזלטר לא עובד בכלל</h3>
+    <p>הנרשם לוחץ "הרשמה" — הקוד שולח POST ל-/api/subscribers ללא כותרת אימות. ה-API דורש <code>X-Admin-Password</code> ומחזיר 401. הנרשם רואה הודעת שגיאה, או גרוע מכך — שקט.</p>
+    <span class="code">checkAuth() → 401 Unauthorized (no header sent)</span>
+  </div>
+
+  <div class="audit-card">
+    <span class="sev sev-bug">באג קריטי</span>
+    <h3>📋 פניות מטופס הקשר לא נשמרות ב-DB</h3>
+    <p>טופס הצור-קשר שולח POST ל-/api/customers ללא כותרת אימות. הפנייה עוברת ל-Web3Forms (מייל מגיע) — אבל לא נשמרת ב-D1. לוח הניהול מפסיד פניות.</p>
+    <span class="code">fetch('/api/customers', { /* no X-Admin-Password */ })</span>
+  </div>
+
+  <div class="audit-card">
+    <span class="sev sev-bug">באג קריטי</span>
+    <h3>🖼️ גלריה ציבורית תמיד מ-JSON, לא מ-D1</h3>
+    <p>ה-API <code>/api/photos</code> מוגן עם סיסמה. הגלריה קוראת אותו ללא כותרת → מקבלת 401 → נופלת ל-photos.json. עדכונים ב-D1 לא מופיעים לגולשים.</p>
+    <span class="code">fetch('/api/photos') → 401 → fallback to JSON</span>
+  </div>
+
+  <div class="audit-card">
+    <span class="sev sev-bug">באג</span>
+    <h3>🛒 רכישת חבילה (סל) — וידוא תשלום נשבר</h3>
+    <p>item_number של סל: <code>CART_small_id1,id2,id3</code>. verify-payment.js עושה <code>lastIndexOf('_')</code> → מקבל fileId="CART_small" ו-size="id1,id2..." — לא תקין. קניית חבילה לא תעבד.</p>
+    <span class="code">lastIndexOf('_') fails for CART_ prefix</span>
+  </div>
+
+</div>
+
+<div class="section-label">🟠 בעיות גבוהות — תקלות חוויית משתמש</div>
+<div class="audit-grid">
+
+  <div class="audit-card">
+    <span class="sev sev-high">גבוה</span>
+    <h3>⚠️ Service Worker — נתיב 404 שגוי</h3>
+    <p>ה-SW מגדיר fallback ל-<code>/amit-photos/404.html</code> (נתיב ישן מגיטהאב). האתר חי ב-amitphotos.com/404.html. גולש offline יקבל שגיאת רשת במקום עמוד 404 יפה.</p>
+    <span class="code">caches.match('/amit-photos/404.html') ← wrong path</span>
+  </div>
+
+  <div class="audit-card">
+    <span class="sev sev-high">גבוה</span>
+    <h3>⏳ הודעת "24 שעות / חד-פעמי" שקרית</h3>
+    <p>דף ההורדה מציג "הקישורים תקפים ל-24 שעות ולשימוש חד-פעמי" — אבל הלינקים הם Google Drive thumbnails קבועים. אין תפוגה. הגולש מאמין שצריך להוריד מיד ועלול לפאניקה.</p>
+    <span class="code">drive.google.com/thumbnail?id=...&sz=w1500 (permanent)</span>
+  </div>
+
+  <div class="audit-card">
+    <span class="sev sev-med">בינוני</span>
+    <h3>📬 כפילויות ניוזלטר</h3>
+    <p>ה-API לא בודק אם המייל כבר קיים לפני INSERT. אותו מייל יכול להירשם פעמים רבות. אחרי שתתקן את באג ה-auth — כדאי להוסיף בדיקת UNIQUE.</p>
+    <span class="code">INSERT without checking existing email</span>
+  </div>
+
+</div>
+<p style="text-align:center;color:#666;font-size:11px;margin-top:14px">4 באגים קריטיים + 3 בעיות נוספות — ספר לי בטרמינל איפה להתחיל</p>
