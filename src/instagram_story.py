@@ -61,6 +61,10 @@ def get_latest_posted_photo(photos):
 
 
 def upload_to_public_host(source_url):
+    if source_url.startswith(f"{SITE_URL}/"):
+        print(f"⬆️  תמונה ב-R2, URL ישיר: {source_url}", flush=True)
+        return source_url
+
     print(f"⬇️  מוריד: {source_url}", flush=True)
     resp = requests.get(source_url, timeout=30, headers={"User-Agent": "Mozilla/5.0"})
     resp.raise_for_status()
