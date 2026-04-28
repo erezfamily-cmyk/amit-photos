@@ -249,6 +249,7 @@ def upload_to_public_host(source_url):
         ("litterbox", _try_litterbox),
         ("catbox", _try_catbox),
         ("tmpfiles", _try_tmpfiles),
+        ("uguu", _try_uguu),
         ("0x0.st", _try_0x0),
     ]
     last_err = None
@@ -298,9 +299,22 @@ def _try_tmpfiles(img_bytes):
     r.raise_for_status()
     data = r.json()
     url = data.get("data", {}).get("url", "")
-    # tmpfiles returns page URL; convert to direct download
     url = url.replace("tmpfiles.org/", "tmpfiles.org/dl/")
-    return url if url.startswith("http") else None
+    url = url.replace("http://", "https://")
+    return url if url.startswith("https://") else None
+
+
+def _try_uguu(img_bytes):
+    r = requests.post(
+        "https://uguu.se/upload",
+        files={"files[]": ("photo.jpg", img_bytes, "image/jpeg")},
+        timeout=60,
+    )
+    r.raise_for_status()
+    data = r.json()
+    files = data.get("files", [])
+    url = files[0].get("url", "") if files else ""
+    return url if url.startswith("https://") else None
 
 
 def _try_0x0(img_bytes):
