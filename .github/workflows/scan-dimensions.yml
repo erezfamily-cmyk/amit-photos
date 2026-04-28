@@ -2,6 +2,8 @@ name: סריקת ממדי תמונות
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: '0 3 * * *'  # כל לילה ב-03:00 UTC — סורק תמונות חדשות ללא ממדים
 
 jobs:
   scan:
