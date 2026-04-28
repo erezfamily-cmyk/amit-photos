@@ -33,7 +33,15 @@ jobs:
           INSTAGRAM_PAGE_TOKEN: ${{ secrets.INSTAGRAM_PAGE_TOKEN }}
           PYTHONUNBUFFERED: "1"
         run: |
-          MODE="${{ github.event.inputs.mode || 'latest' }}"
+          MODE="${{ github.event.inputs.mode || 'random' }}"
           FLAG=""
           if [ "$MODE" = "latest" ]; then FLAG="--latest"; fi
           python src/instagram_story.py $FLAG
+
+      - name: שמירת היסטוריית Stories
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/instagram_story_posted.json
+          git diff --cached --quiet || git commit -m "🤖 עדכון instagram_story_posted.json"
+          git push
