@@ -1885,6 +1885,15 @@ async function handleAdminPhotoPrice(request, env) {
   return jsonRes({ ok: true }, 200, request);
 }
 
+async function handleAdminPhotoDimensions(request, env) {
+  if (!await checkAuth(request, env)) return unauth(request);
+  const { updates } = await request.json().catch(() => ({}));
+  if (!Array.isArray(updates) || !updates.length) return jsonRes({ error: 'updates array required' }, 400, request);
+  const stmt = env.DB.prepare('UPDATE photos SET width=?, height=? WHERE id=?');
+  await env.DB.batch(updates.map(({ id, width, height }) => stmt.bind(width, height, id)));
+  return jsonRes({ ok: true, updated: updates.length }, 200, request);
+}
+
 async function handleUploadStory(request, env) {
   if (!await checkAuth(request, env)) return unauth(request);
   const bytes = await request.arrayBuffer();
@@ -2108,6 +2117,7 @@ export default {
     if (path === '/api/admin/toggle-photo-new' && request.method === 'POST') return handleTogglePhotoNew(request, env);
     if (path === '/api/admin/featured') return handleAdminFeatured(request, env);
     if (path === '/api/admin/upload-story' && request.method === 'POST') return handleUploadStory(request, env);
+    if (path === '/api/admin/photo-dimensions' && request.method === 'POST') return handleAdminPhotoDimensions(request, env);
     if (path === '/prices') return handlePricesPage(request, env);
     if (path === '/api/admin/migrate-amount' && request.method === 'POST') {
       if (!await checkAuth(request, env)) return unauth(request);
