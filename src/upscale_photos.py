@@ -24,30 +24,32 @@ def get_small_photos():
     ]
 
 
-def upscale_realesrgan(img_bytes, scale):
+def download_model(scale):
+    import os
+    model_name = f"EDSR_x{scale}.pb"
+    if os.path.exists(model_name):
+        return model_name
+    url = f"https://github.com/Saafke/EDSR_Tensorflow/raw/master/models/{model_name}"
+    r = requests.get(url, timeout=60)
+    r.raise_for_status()
+    with open(model_name, "wb") as f:
+        f.write(r.content)
+    return model_name
+
+
+def upscale_opencv(img_bytes, scale):
     import numpy as np
     import cv2
-    from realesrgan import RealESRGANer
-    from basicsr.archs.rrdbnet_arch import RRDBNet
+    from cv2 import dnn_superres
 
-    model = RRDBNet(num_in_ch=3, num_out_ch=3, num_feat=64,
-                    num_block=23, num_grow_ch=32, scale=scale)
-    model_url = (
-        f"https://github.com/xinntao/Real-ESRGAN/releases/download/v0.1.0/"
-        f"RealESRGAN_x{scale}plus.pth"
-    )
-    upsampler = RealESRGANer(
-        scale=scale,
-        model_path=model_url,
-        model=model,
-        tile=256,
-        tile_pad=10,
-        pre_pad=0,
-        half=False,
-    )
+    model_path = download_model(scale)
+    sr = dnn_superres.DnnSuperResImpl_create()
+    sr.readModel(model_path)
+    sr.setModel("edsr", scale)
+
     nparr = np.frombuffer(img_bytes, np.uint8)
     img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-    output, _ = upsampler.enhance(img, outscale=scale)
+    output = sr.upsample(img)
     _, buf = cv2.imencode(".jpg", output, [cv2.IMWRITE_JPEG_QUALITY, 92])
     return buf.tobytes(), output.shape[1], output.shape[0]
 
@@ -81,7 +83,7 @@ def main():
             orig = requests.get(url, timeout=30)
             orig.raise_for_status()
 
-            upscaled_bytes, new_w, new_h = upscale_realesrgan(orig.content, scale)
+            upscaled_bytes, new_w, new_h = upscale_opencv(orig.content, scale)
             replace_photo(photo["id"], upscaled_bytes, new_w, new_h)
             print(f"    ✅ {new_w}×{new_h}")
             ok += 1
