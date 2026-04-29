@@ -296,6 +296,77 @@
       }
       return b;
     }
+
+    // ===== RENDER & STATE =====
+    let board = [];
+    let moveCount = 0;
+    let timerInterval = null;
+    let secondsElapsed = 0;
+    let gameActive = false;
+
+    function formatTime(secs) {
+      const m = String(Math.floor(secs / 60)).padStart(2, '0');
+      const s = String(secs % 60).padStart(2, '0');
+      return `${m}:${s}`;
+    }
+
+    function renderBoard(photo) {
+      const boardEl = document.getElementById('board');
+      boardEl.innerHTML = '';
+      board.forEach((value, idx) => {
+        const tile = document.createElement('div');
+        tile.className = 'tile' + (value === 0 ? ' empty' : '');
+        tile.dataset.idx = idx;
+        if (value !== 0) {
+          const solvedIdx = value - 1;
+          const solvedRow = Math.floor(solvedIdx / SIZE);
+          const solvedCol = solvedIdx % SIZE;
+          tile.style.backgroundImage = `url('${photo.thumbnail}')`;
+          tile.style.backgroundSize = `${SIZE * 100}% ${SIZE * 100}%`;
+          tile.style.backgroundPosition =
+            `${solvedCol * (100 / (SIZE - 1))}% ${solvedRow * (100 / (SIZE - 1))}%`;
+        }
+        tile.addEventListener('click', () => handleTileClick(idx));
+        boardEl.appendChild(tile);
+      });
+    }
+
+    function handleTileClick(idx) {
+      if (!gameActive) return;
+      const next = moveTile(board, idx);
+      if (!next) return;
+      board = next;
+      moveCount++;
+      document.getElementById('moves').textContent = `${moveCount} מהלכים`;
+      renderBoard(currentPhoto);
+      if (isSolved(board)) onWin();
+    }
+
+    function startGame(photo) {
+      board = shuffle(solvedBoard());
+      moveCount = 0;
+      secondsElapsed = 0;
+      gameActive = true;
+      document.getElementById('moves').textContent = '0 מהלכים';
+      document.getElementById('timer').textContent = '00:00';
+      clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        secondsElapsed++;
+        document.getElementById('timer').textContent = formatTime(secondsElapsed);
+      }, 1000);
+      renderBoard(photo);
+    }
+
+    function onWin() {
+      // TASK 6
+    }
+
+    async function init() {
+      const photo = await loadRandomPhoto();
+      startGame(photo);
+    }
+
+    init();
   </script>
 </body>
 </html>
