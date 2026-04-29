@@ -227,7 +227,26 @@
   </main>
 
   <div id="win-modal" class="hidden">
-    <!-- TASK 6 -->
+    <div class="win-box">
+      <img id="win-photo-img" class="win-photo" src="" alt="">
+      <div class="win-content">
+        <div class="win-title">🏆 כל הכבוד!</div>
+        <div class="win-subtitle" id="win-photo-name"></div>
+        <div class="win-stats-text" id="win-stats-text"></div>
+        <div class="win-discount">
+          🎁 כמתנה על הפתרון — <strong>20% הנחה</strong> לרכישת התמונה<br>
+          <small style="color:var(--text-muted)">בתוקף 24 שעות</small>
+        </div>
+        <div class="win-actions">
+          <a id="win-gallery-btn" href="#" class="win-btn win-btn-primary">📸 לתמונה בגלריה + הנחה</a>
+          <div class="win-share-row">
+            <a id="win-whatsapp-btn" href="#" target="_blank" class="win-btn win-btn-whatsapp">💬 שתף</a>
+            <button id="win-copy-btn" class="win-btn win-btn-secondary">🔗 העתק קישור</button>
+          </div>
+          <button id="win-new-btn" class="win-btn win-btn-secondary">🔄 פאזל חדש</button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script>
@@ -358,7 +377,36 @@
     }
 
     function onWin() {
-      // TASK 6
+      gameActive = false;
+      clearInterval(timerInterval);
+
+      const galleryUrl = `../index.html?photo=${currentPhoto.id}&discount=puzzle`;
+      const shareUrl   = `https://amitphotos.com/puzzle/`;
+      const shareText  = `פתרתי פאזל של "${currentPhoto.title}" באתר עמית ארז! 🧩\nרוצה לנסות? `;
+
+      document.getElementById('win-photo-img').src = currentPhoto.thumbnail;
+      document.getElementById('win-photo-img').alt = currentPhoto.title;
+      document.getElementById('win-photo-name').textContent = `"${currentPhoto.title}"`;
+      document.getElementById('win-stats-text').textContent =
+        `${formatTime(secondsElapsed)} · ${moveCount} מהלכים`;
+      document.getElementById('win-gallery-btn').href = galleryUrl;
+      document.getElementById('win-whatsapp-btn').href =
+        `https://wa.me/?text=${encodeURIComponent(shareText + shareUrl)}`;
+
+      document.getElementById('win-copy-btn').addEventListener('click', () => {
+        navigator.clipboard.writeText(shareUrl).then(() => {
+          const btn = document.getElementById('win-copy-btn');
+          btn.textContent = '✓ הועתק!';
+          setTimeout(() => { btn.textContent = '🔗 העתק קישור'; }, 2000);
+        });
+      });
+
+      document.getElementById('win-new-btn').addEventListener('click', () => {
+        document.getElementById('win-modal').classList.add('hidden');
+        init();
+      });
+
+      document.getElementById('win-modal').classList.remove('hidden');
     }
 
     async function init() {
