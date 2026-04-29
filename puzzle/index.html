@@ -82,6 +82,25 @@
       margin-top: 0.15rem;
     }
 
+    .size-row {
+      display: flex;
+      gap: 0.5rem;
+    }
+    .size-btn {
+      flex: 1;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-family: var(--font);
+      font-size: 0.82rem;
+      padding: 0.35rem 0;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: color var(--transition), border-color var(--transition), background var(--transition);
+    }
+    .size-btn:hover { color: var(--accent); border-color: var(--accent); }
+    .size-btn.active { background: var(--accent); color: #0a0a0a; border-color: var(--accent); font-weight: 700; }
+
     #board {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -118,18 +137,19 @@
       font-size: 0.88rem;
     }
 
-    #swap-btn {
+    #swap-btn, #solve-btn {
+      flex: 1;
       background: transparent;
       border: 1px solid var(--border);
       color: var(--text-muted);
       font-family: var(--font);
       font-size: 0.82rem;
-      padding: 0.4rem 0.9rem;
+      padding: 0.4rem 0;
       border-radius: var(--radius);
       cursor: pointer;
       transition: color var(--transition), border-color var(--transition);
     }
-    #swap-btn:hover {
+    #swap-btn:hover, #solve-btn:hover {
       color: var(--accent);
       border-color: var(--accent);
     }
@@ -234,12 +254,19 @@
         <div id="photo-title"></div>
         <div id="photo-category"></div>
       </div>
+      <div class="size-row">
+        <button type="button" class="size-btn active" data-size="3" onclick="setSize(3)">3×3 קל</button>
+        <button type="button" class="size-btn" data-size="4" onclick="setSize(4)">4×4 מאתגר</button>
+      </div>
       <div id="board"></div>
       <div id="stats">
         <span id="timer">00:00</span>
         <span id="moves">0 מהלכים</span>
       </div>
-      <button type="button" id="swap-btn" onclick="init()">🔀 החלף תמונה</button>
+      <div class="size-row">
+        <button type="button" id="swap-btn" onclick="init()">🔀 החלף תמונה</button>
+        <button type="button" id="solve-btn" onclick="solveGame()">💡 פתור</button>
+      </div>
     </div>
   </main>
 
@@ -281,8 +308,24 @@
     }
 
     // ===== GAME LOGIC =====
-    const SIZE = 4;
-    const TOTAL = SIZE * SIZE;
+    let SIZE = 3;
+    let TOTAL = SIZE * SIZE;
+
+    function setSize(n) {
+      SIZE = n;
+      TOTAL = SIZE * SIZE;
+      document.querySelectorAll('.size-btn').forEach(b =>
+        b.classList.toggle('active', +b.dataset.size === n)
+      );
+      startGame(currentPhoto);
+    }
+
+    function solveGame() {
+      if (!gameActive) return;
+      board = solvedBoard();
+      renderBoard(currentPhoto);
+      onWin();
+    }
 
     function solvedBoard() {
       return [...Array(TOTAL - 1).keys()].map(i => i + 1).concat(0);
@@ -348,6 +391,7 @@
 
     function renderBoard(photo) {
       const boardEl = document.getElementById('board');
+      boardEl.style.gridTemplateColumns = `repeat(${SIZE}, 1fr)`;
       boardEl.innerHTML = '';
       board.forEach((value, idx) => {
         const tile = document.createElement('div');
