@@ -409,6 +409,47 @@
       document.getElementById('win-modal').classList.remove('hidden');
     }
 
+    // ===== KEYBOARD =====
+    document.addEventListener('keydown', (e) => {
+      if (!gameActive) return;
+      const emptyIdx = emptyIndex(board);
+      const eRow = Math.floor(emptyIdx / SIZE);
+      const eCol = emptyIdx % SIZE;
+      let tileIdx = -1;
+      // Arrow key direction = direction the tile moves (tile slides into empty)
+      if (e.key === 'ArrowUp'    && eRow < SIZE - 1) tileIdx = emptyIdx + SIZE;
+      if (e.key === 'ArrowDown'  && eRow > 0)        tileIdx = emptyIdx - SIZE;
+      if (e.key === 'ArrowLeft'  && eCol < SIZE - 1) tileIdx = emptyIdx + 1;
+      if (e.key === 'ArrowRight' && eCol > 0)        tileIdx = emptyIdx - 1;
+      if (tileIdx >= 0) { e.preventDefault(); handleTileClick(tileIdx); }
+    });
+
+    // ===== SWIPE =====
+    let touchStartX = 0, touchStartY = 0;
+
+    document.getElementById('board').addEventListener('touchstart', (e) => {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    }, { passive: true });
+
+    document.getElementById('board').addEventListener('touchend', (e) => {
+      if (!gameActive) return;
+      const dx = e.changedTouches[0].clientX - touchStartX;
+      const dy = e.changedTouches[0].clientY - touchStartY;
+      const emptyIdx = emptyIndex(board);
+      const eRow = Math.floor(emptyIdx / SIZE);
+      const eCol = emptyIdx % SIZE;
+      let tileIdx = -1;
+      if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 30) {
+        if (dx < 0 && eCol < SIZE - 1) tileIdx = emptyIdx + 1;
+        if (dx > 0 && eCol > 0)        tileIdx = emptyIdx - 1;
+      } else if (Math.abs(dy) > 30) {
+        if (dy < 0 && eRow < SIZE - 1) tileIdx = emptyIdx + SIZE;
+        if (dy > 0 && eRow > 0)        tileIdx = emptyIdx - SIZE;
+      }
+      if (tileIdx >= 0) handleTileClick(tileIdx);
+    }, { passive: true });
+
     async function init() {
       const photo = await loadRandomPhoto();
       startGame(photo);
