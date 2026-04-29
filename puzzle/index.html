@@ -231,7 +231,18 @@
   </div>
 
   <script>
-    // TASKS 3-7
+    // ===== STATE =====
+    let currentPhoto = null;
+
+    // ===== PHOTO LOADING =====
+    async function loadRandomPhoto() {
+      const res = await fetch('../data/photos.json');
+      const photos = await res.json();
+      currentPhoto = photos[Math.floor(Math.random() * photos.length)];
+      document.getElementById('photo-title').textContent = currentPhoto.title;
+      document.getElementById('photo-category').textContent = currentPhoto.category;
+      return currentPhoto;
+    }
   </script>
 </body>
 </html>
