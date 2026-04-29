@@ -874,6 +874,37 @@ function navigateLightbox(dir) {
 
 // ===== DEEP LINK — פתיחה לפי hash =====
 function handleInitialHash() {
+  // Puzzle discount: ?photo=ID&discount=puzzle
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('discount') === 'puzzle') {
+    const photoId = urlParams.get('photo');
+    if (photoId) {
+      let idx = filteredPhotos.findIndex(p => String(p.id) === photoId);
+      if (idx === -1) {
+        const photo = allPhotos.find(p => String(p.id) === photoId);
+        if (photo) {
+          filteredPhotos.unshift(photo);
+          displayedCount = Math.max(displayedCount, 1);
+          renderGallery();
+          idx = 0;
+        }
+      }
+      if (idx !== -1) {
+        openLightbox(idx);
+        const banner = document.getElementById('puzzle-discount-banner');
+        if (banner) {
+          banner.classList.remove('hidden');
+          const photo = filteredPhotos[idx];
+          const waText = encodeURIComponent(
+            `היי עמית, ניצחתי בפאזל ורוצה לרכוש את התמונה "${photo.title}" במחיר המוזל 😊`
+          );
+          document.getElementById('puzzle-discount-contact').href =
+            `https://wa.me/972503333227?text=${waText}`;
+        }
+      }
+    }
+    return;
+  }
   const hash = window.location.hash;
   if (hash.startsWith('#filter-')) {
     const cat = hash.replace('#filter-', '');
