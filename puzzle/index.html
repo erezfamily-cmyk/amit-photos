@@ -98,7 +98,7 @@
 
     .tile {
       background-color: var(--bg-card);
-      background-size: 400% 400%;
+      position: relative;
       cursor: pointer;
       transition: opacity var(--transition);
     }
@@ -340,10 +340,12 @@
           const solvedIdx = value - 1;
           const solvedRow = Math.floor(solvedIdx / SIZE);
           const solvedCol = solvedIdx % SIZE;
-          tile.style.backgroundImage = `url('${photo.thumbnail}')`;
-          tile.style.backgroundSize = `${SIZE * 100}% ${SIZE * 100}%`;
-          tile.style.backgroundPosition =
-            `${solvedCol * (100 / (SIZE - 1))}% ${solvedRow * (100 / (SIZE - 1))}%`;
+          tile.style.overflow = 'hidden';
+          const img = document.createElement('img');
+          img.src = photo.thumbnail;
+          img.draggable = false;
+          img.style.cssText = `position:absolute;width:${SIZE*100}%;height:${SIZE*100}%;top:${-solvedRow*100}%;left:${-solvedCol*100}%;pointer-events:none;user-select:none;`;
+          tile.appendChild(img);
         }
         tile.addEventListener('click', () => handleTileClick(idx));
         boardEl.appendChild(tile);
