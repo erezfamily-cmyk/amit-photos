@@ -386,6 +386,31 @@
     .win-share-row { display: flex; gap: 0.45rem; }
     .win-share-row .win-btn { flex: 1; }
 
+    .win-redirect-bar {
+      background: rgba(200,169,110,0.12);
+      border: 1px solid rgba(200,169,110,0.25);
+      border-radius: var(--radius);
+      padding: 0.55rem 0.75rem;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+    }
+    .win-redirect-bar span { flex: 1; }
+    .win-cancel-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-family: var(--font);
+      font-size: 0.75rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: var(--radius);
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
     /* ===== MOBILE ===== */
     @media (max-width: 400px) {
       nav { padding: 0.75rem 1rem; }
@@ -460,6 +485,10 @@
             <button type="button" id="win-copy-btn" class="win-btn win-btn-secondary">🔗 העתק</button>
           </div>
           <button type="button" id="win-new-btn" class="win-btn win-btn-secondary">🔄 פאזל חדש</button>
+        </div>
+        <div id="win-redirect-bar" class="win-redirect-bar">
+          <span id="win-redirect-text">מועבר לגלריה בעוד <strong>3</strong>...</span>
+          <button type="button" class="win-cancel-btn" onclick="cancelRedirect()">בטל</button>
         </div>
       </div>
     </div>
@@ -630,11 +659,21 @@
       renderBoard(photo);
     }
 
+    let redirectTimer = null;
+    let redirectCountdown = null;
+
+    function cancelRedirect() {
+      clearTimeout(redirectTimer);
+      clearInterval(redirectCountdown);
+      document.getElementById('win-redirect-bar').style.display = 'none';
+    }
+
     function onWin() {
       gameActive = false;
       clearInterval(timerInterval);
+      cancelRedirect();
 
-      const galleryUrl = `../index.html?photo=${currentPhoto.id}&discount=puzzle`;
+      const galleryUrl = `https://amitphotos.com/?photo=${currentPhoto.id}&discount=puzzle`;
       const shareUrl   = `https://amitphotos.com/puzzle/`;
       const shareText  = `פתרתי פאזל של "${currentPhoto.title}" באתר עמית ארז! 🧩\nרוצה לנסות? `;
 
@@ -656,9 +695,28 @@
       };
 
       document.getElementById('win-new-btn').onclick = () => {
+        cancelRedirect();
         document.getElementById('win-modal').classList.add('hidden');
         init();
       };
+
+      // auto-redirect countdown
+      const bar = document.getElementById('win-redirect-bar');
+      const txt = document.getElementById('win-redirect-text');
+      bar.style.display = '';
+      let secs = 3;
+      txt.innerHTML = `מועבר לגלריה בעוד <strong>${secs}</strong>...`;
+      redirectCountdown = setInterval(() => {
+        secs--;
+        if (secs > 0) {
+          txt.innerHTML = `מועבר לגלריה בעוד <strong>${secs}</strong>...`;
+        } else {
+          clearInterval(redirectCountdown);
+        }
+      }, 1000);
+      redirectTimer = setTimeout(() => {
+        window.location.href = galleryUrl;
+      }, 3000);
 
       document.getElementById('win-modal').classList.remove('hidden');
     }
