@@ -393,18 +393,18 @@
       document.getElementById('win-whatsapp-btn').href =
         `https://wa.me/?text=${encodeURIComponent(shareText + shareUrl)}`;
 
-      document.getElementById('win-copy-btn').addEventListener('click', () => {
+      document.getElementById('win-copy-btn').onclick = () => {
         navigator.clipboard.writeText(shareUrl).then(() => {
           const btn = document.getElementById('win-copy-btn');
           btn.textContent = '✓ הועתק!';
           setTimeout(() => { btn.textContent = '🔗 העתק קישור'; }, 2000);
         });
-      });
+      };
 
-      document.getElementById('win-new-btn').addEventListener('click', () => {
+      document.getElementById('win-new-btn').onclick = () => {
         document.getElementById('win-modal').classList.add('hidden');
         init();
-      });
+      };
 
       document.getElementById('win-modal').classList.remove('hidden');
     }
