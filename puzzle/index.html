@@ -2,8 +2,24 @@
 <html lang="he" dir="rtl">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>פאזל הזזה | עמית ארז</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>פאזל הזזה | עמית ארז — צלם אמנותי</title>
+  <meta name="description" content="פתור את הפאזל וגלה תמונת צילום אמנותית של עמית ארז. גלריה דיגיטלית לרכישה." />
+
+  <!-- Open Graph — controls preview when sharing on WhatsApp / Facebook -->
+  <meta property="og:title" content="🧩 פאזל הזזה | עמית ארז" />
+  <meta property="og:description" content="פתור את הפאזל וזכה ב-20% הנחה על תמונה אמנותית. מאתגר? בוא ננסה!" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://amitphotos.com/puzzle/" />
+  <meta property="og:image" content="https://lh3.googleusercontent.com/d/1mkj7yjz3I-Y951ZoHVSH_-6v8FjL66ap=w1200" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:locale" content="he_IL" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="🧩 פאזל הזזה | עמית ארז" />
+  <meta name="twitter:description" content="פתור את הפאזל וזכה ב-20% הנחה על תמונה אמנותית" />
+  <meta name="twitter:image" content="https://lh3.googleusercontent.com/d/1mkj7yjz3I-Y951ZoHVSH_-6v8FjL66ap=w1200" />
+
   <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -30,39 +46,142 @@
       min-height: 100vh;
       display: flex;
       flex-direction: column;
+      overflow-x: hidden;
     }
 
-    nav {
-      padding: 1rem 2rem;
-      border-bottom: 1px solid var(--border);
+    /* ===== SPLASH ===== */
+    #splash {
+      position: fixed;
+      inset: 0;
+      z-index: 300;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      overflow: hidden;
     }
-
-    .nav-logo {
+    #splash-bg {
+      position: absolute;
+      inset: 0;
+      background: var(--bg);
+    }
+    #splash-bg img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      opacity: 0.18;
+      filter: blur(12px);
+      transform: scale(1.05);
+    }
+    .splash-card {
+      position: relative;
+      background: rgba(17,17,17,0.92);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2.5rem 2rem;
+      max-width: 360px;
+      width: 100%;
+      text-align: center;
+      backdrop-filter: blur(4px);
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .splash-logo {
       font-family: var(--font-display);
-      font-size: 1.2rem;
+      font-size: 1.5rem;
       color: var(--accent);
       text-decoration: none;
     }
+    .splash-tagline {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-top: -0.25rem;
+    }
+    .splash-divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 0.5rem 0;
+    }
+    .splash-emoji { font-size: 2.5rem; }
+    .splash-title {
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      color: var(--text);
+    }
+    .splash-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.55;
+    }
+    .splash-start {
+      margin-top: 0.5rem;
+      background: var(--accent);
+      color: #0a0a0a;
+      border: none;
+      font-family: var(--font);
+      font-size: 1rem;
+      font-weight: 700;
+      padding: 0.85rem;
+      border-radius: var(--radius);
+      cursor: pointer;
+      width: 100%;
+      transition: background var(--transition);
+      min-height: 48px;
+    }
+    .splash-start:hover { background: var(--accent-hover); }
+    .splash-note {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
 
+    /* ===== NAV ===== */
+    nav {
+      padding: 0.9rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-logo {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .nav-share {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-family: var(--font);
+      font-size: 0.78rem;
+      padding: 0.3rem 0.75rem;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: color var(--transition), border-color var(--transition);
+      min-height: 36px;
+    }
+    .nav-share:hover { color: var(--accent); border-color: var(--accent); }
+
+    /* ===== MAIN ===== */
     main {
       flex: 1;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 2rem 1rem;
+      padding: 1.5rem 1rem;
     }
 
     #game-container {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 1rem;
+      gap: 0.85rem;
       width: 100%;
       max-width: 420px;
     }
 
     .puzzle-label {
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       color: var(--text-muted);
       letter-spacing: 0.1em;
       text-transform: uppercase;
@@ -72,19 +191,33 @@
 
     #photo-title {
       font-family: var(--font-display);
-      font-size: 1.2rem;
+      font-size: 1.15rem;
       color: var(--accent);
     }
 
     #photo-category {
-      font-size: 0.82rem;
+      font-size: 0.8rem;
       color: var(--text-muted);
-      margin-top: 0.15rem;
+      margin-top: 0.1rem;
     }
 
+    .photo-credit {
+      font-size: 0.72rem;
+      color: var(--border);
+      margin-top: 0.2rem;
+    }
+    .photo-credit a {
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color var(--transition);
+    }
+    .photo-credit a:hover { color: var(--accent); }
+
+    /* ===== SIZE BUTTONS ===== */
     .size-row {
       display: flex;
       gap: 0.5rem;
+      width: 100%;
     }
     .size-btn {
       flex: 1;
@@ -93,14 +226,16 @@
       color: var(--text-muted);
       font-family: var(--font);
       font-size: 0.82rem;
-      padding: 0.35rem 0;
+      padding: 0;
       border-radius: var(--radius);
       cursor: pointer;
       transition: color var(--transition), border-color var(--transition), background var(--transition);
+      min-height: 44px;
     }
     .size-btn:hover { color: var(--accent); border-color: var(--accent); }
     .size-btn.active { background: var(--accent); color: #0a0a0a; border-color: var(--accent); font-weight: 700; }
 
+    /* ===== BOARD ===== */
     #board {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -109,8 +244,8 @@
       border: 3px solid var(--border);
       border-radius: var(--radius);
       overflow: hidden;
-      width: min(90vw, 400px);
-      height: min(90vw, 400px);
+      width: min(92vw, 400px);
+      height: min(92vw, 400px);
       user-select: none;
       touch-action: none;
     }
@@ -121,15 +256,13 @@
       cursor: pointer;
       transition: opacity var(--transition);
     }
-
-    .tile:hover { opacity: 0.82; }
-
+    .tile:active { opacity: 0.7; }
     .tile.empty {
       background: var(--bg);
       cursor: default;
     }
-    .tile.empty:hover { opacity: 1; }
 
+    /* ===== STATS ===== */
     #stats {
       display: flex;
       gap: 2rem;
@@ -137,24 +270,28 @@
       font-size: 0.88rem;
     }
 
-    #swap-btn, #solve-btn {
+    /* ===== BOTTOM BUTTONS ===== */
+    .action-row {
+      display: flex;
+      gap: 0.5rem;
+      width: 100%;
+    }
+    .action-btn {
       flex: 1;
       background: transparent;
       border: 1px solid var(--border);
       color: var(--text-muted);
       font-family: var(--font);
-      font-size: 0.82rem;
-      padding: 0.4rem 0;
+      font-size: 0.8rem;
       border-radius: var(--radius);
       cursor: pointer;
       transition: color var(--transition), border-color var(--transition);
+      min-height: 44px;
+      padding: 0;
     }
-    #swap-btn:hover, #solve-btn:hover {
-      color: var(--accent);
-      border-color: var(--accent);
-    }
+    .action-btn:hover { color: var(--accent); border-color: var(--accent); }
 
-    /* Win modal */
+    /* ===== WIN MODAL ===== */
     .hidden { display: none !important; }
 
     #win-modal {
@@ -167,6 +304,7 @@
       z-index: 200;
       padding: 1rem;
       backdrop-filter: blur(8px);
+      overflow-y: auto;
     }
 
     .win-box {
@@ -176,51 +314,52 @@
       max-width: 400px;
       width: 100%;
       overflow: hidden;
+      margin: auto;
     }
 
     .win-photo {
       width: 100%;
-      height: 200px;
+      height: 180px;
       object-fit: cover;
       display: block;
     }
 
     .win-content {
-      padding: 1.5rem;
+      padding: 1.25rem;
       text-align: center;
       display: flex;
       flex-direction: column;
-      gap: 0.75rem;
+      gap: 0.65rem;
     }
 
     .win-title {
       font-family: var(--font-display);
-      font-size: 1.4rem;
+      font-size: 1.3rem;
       color: var(--accent);
     }
 
-    .win-subtitle { color: var(--text-muted); font-size: 0.9rem; }
-    .win-stats-text { font-size: 0.82rem; color: var(--text-muted); }
+    .win-subtitle { color: var(--text-muted); font-size: 0.88rem; }
+    .win-stats-text { font-size: 0.8rem; color: var(--text-muted); }
 
     .win-discount {
       background: linear-gradient(135deg, rgba(200,169,110,0.15), rgba(200,169,110,0.05));
       border: 1px solid rgba(200,169,110,0.3);
       border-radius: var(--radius);
-      padding: 0.75rem;
-      font-size: 0.88rem;
+      padding: 0.65rem;
+      font-size: 0.85rem;
       color: var(--accent);
       line-height: 1.5;
     }
-    .win-discount strong { font-size: 1rem; }
+    .win-discount strong { font-size: 0.95rem; }
 
-    .win-actions { display: flex; flex-direction: column; gap: 0.5rem; }
+    .win-actions { display: flex; flex-direction: column; gap: 0.45rem; }
 
     .win-btn {
       display: block;
       width: 100%;
-      padding: 0.72rem;
+      padding: 0.75rem;
       border-radius: var(--radius);
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       font-weight: 600;
       font-family: var(--font);
       cursor: pointer;
@@ -228,6 +367,11 @@
       text-decoration: none;
       text-align: center;
       transition: opacity var(--transition);
+      min-height: 48px;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     .win-btn:hover { opacity: 0.82; }
 
@@ -239,20 +383,47 @@
       border: 1px solid var(--border);
     }
 
-    .win-share-row { display: flex; gap: 0.5rem; }
+    .win-share-row { display: flex; gap: 0.45rem; }
     .win-share-row .win-btn { flex: 1; }
+
+    /* ===== MOBILE ===== */
+    @media (max-width: 400px) {
+      nav { padding: 0.75rem 1rem; }
+      main { padding: 1rem 0.75rem; }
+      #game-container { gap: 0.7rem; }
+      .splash-card { padding: 2rem 1.5rem; }
+    }
   </style>
 </head>
 <body>
+
+  <!-- SPLASH -->
+  <div id="splash">
+    <div id="splash-bg"><img id="splash-bg-img" src="" alt=""></div>
+    <div class="splash-card">
+      <a href="../index.html" class="splash-logo">עמית ארז</a>
+      <p class="splash-tagline">צלם אמנותי | גלריה דיגיטלית לרכישה</p>
+      <hr class="splash-divider">
+      <div class="splash-emoji">🧩</div>
+      <div class="splash-title">פאזל הזזה</div>
+      <p class="splash-desc">פתור את הפאזל וזכה ב-<strong style="color:var(--accent)">20% הנחה</strong> על רכישת התמונה</p>
+      <button type="button" class="splash-start" onclick="hideSplash()">התחל לשחק ←</button>
+      <p class="splash-note">3×3 קל · 4×4 מאתגר</p>
+    </div>
+  </div>
+
   <nav>
     <a href="../index.html" class="nav-logo">עמית ארז</a>
+    <button type="button" class="nav-share" onclick="shareChallenge()">📤 שתף אתגר</button>
   </nav>
+
   <main>
     <div id="game-container">
       <p class="puzzle-label">🧩 פאזל הזזה</p>
       <div id="photo-info">
         <div id="photo-title"></div>
         <div id="photo-category"></div>
+        <p class="photo-credit">צילום: <a href="../index.html">עמית ארז</a> · <a href="../index.html">גלריה לרכישה</a></p>
       </div>
       <div class="size-row">
         <button type="button" class="size-btn active" data-size="3" onclick="setSize(3)">3×3 קל</button>
@@ -263,9 +434,10 @@
         <span id="timer">00:00</span>
         <span id="moves">0 מהלכים</span>
       </div>
-      <div class="size-row">
-        <button type="button" id="swap-btn" onclick="init()">🔀 החלף תמונה</button>
-        <button type="button" id="solve-btn" onclick="solveGame()">💡 פתור</button>
+      <div class="action-row">
+        <button type="button" class="action-btn" onclick="init()">🔀 החלף</button>
+        <button type="button" class="action-btn" onclick="shareChallenge()">📤 שתף</button>
+        <button type="button" class="action-btn" onclick="solveGame()">💡 פתור</button>
       </div>
     </div>
   </main>
@@ -285,9 +457,9 @@
           <a id="win-gallery-btn" href="#" class="win-btn win-btn-primary">📸 לתמונה בגלריה + הנחה</a>
           <div class="win-share-row">
             <a id="win-whatsapp-btn" href="#" target="_blank" class="win-btn win-btn-whatsapp">💬 שתף</a>
-            <button id="win-copy-btn" class="win-btn win-btn-secondary">🔗 העתק קישור</button>
+            <button type="button" id="win-copy-btn" class="win-btn win-btn-secondary">🔗 העתק</button>
           </div>
-          <button id="win-new-btn" class="win-btn win-btn-secondary">🔄 פאזל חדש</button>
+          <button type="button" id="win-new-btn" class="win-btn win-btn-secondary">🔄 פאזל חדש</button>
         </div>
       </div>
     </div>
@@ -296,6 +468,23 @@
   <script>
     // ===== STATE =====
     let currentPhoto = null;
+    let splashDismissed = false;
+
+    // ===== SPLASH =====
+    function hideSplash() {
+      splashDismissed = true;
+      const el = document.getElementById('splash');
+      el.style.transition = 'opacity 0.4s ease';
+      el.style.opacity = '0';
+      setTimeout(() => el.style.display = 'none', 400);
+    }
+
+    // ===== SHARE =====
+    function shareChallenge() {
+      const url = 'https://amitphotos.com/puzzle/';
+      const text = `🧩 נסה לפתור את פאזל הצילום של עמית ארז!\nזכה ב-20% הנחה על תמונה אמנותית: `;
+      window.open(`https://wa.me/?text=${encodeURIComponent(text + url)}`, '_blank');
+    }
 
     // ===== PHOTO LOADING =====
     async function loadRandomPhoto() {
@@ -304,6 +493,9 @@
       currentPhoto = photos[Math.floor(Math.random() * photos.length)];
       document.getElementById('photo-title').textContent = currentPhoto.title;
       document.getElementById('photo-category').textContent = currentPhoto.category;
+      // Update splash background
+      const bgImg = document.getElementById('splash-bg-img');
+      if (bgImg) bgImg.src = currentPhoto.thumbnail;
       return currentPhoto;
     }
 
@@ -329,7 +521,6 @@
 
     function solvedBoard() {
       return [...Array(TOTAL - 1).keys()].map(i => i + 1).concat(0);
-      // → [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,0]
     }
 
     function emptyIndex(board) {
@@ -460,7 +651,7 @@
         navigator.clipboard.writeText(shareUrl).then(() => {
           const btn = document.getElementById('win-copy-btn');
           btn.textContent = '✓ הועתק!';
-          setTimeout(() => { btn.textContent = '🔗 העתק קישור'; }, 2000);
+          setTimeout(() => { btn.textContent = '🔗 העתק'; }, 2000);
         });
       };
 
@@ -479,7 +670,6 @@
       const eRow = Math.floor(emptyIdx / SIZE);
       const eCol = emptyIdx % SIZE;
       let tileIdx = -1;
-      // Arrow key direction = direction the tile moves (tile slides into empty)
       if (e.key === 'ArrowUp'    && eRow < SIZE - 1) tileIdx = emptyIdx + SIZE;
       if (e.key === 'ArrowDown'  && eRow > 0)        tileIdx = emptyIdx - SIZE;
       if (e.key === 'ArrowLeft'  && eCol < SIZE - 1) tileIdx = emptyIdx + 1;
