@@ -5,8 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>פאזל הזזה | עמית ארז — צלם אמנותי</title>
   <meta name="description" content="פתור את הפאזל וגלה תמונת צילום אמנותית של עמית ארז. גלריה דיגיטלית לרכישה." />
-
-  <!-- Open Graph — controls preview when sharing on WhatsApp / Facebook -->
   <meta property="og:title" content="🧩 פאזל הזזה | עמית ארז" />
   <meta property="og:description" content="פתור את הפאזל וזכה ב-20% הנחה על תמונה אמנותית. מאתגר? בוא ננסה!" />
   <meta property="og:type" content="website" />
@@ -19,399 +17,181 @@
   <meta name="twitter:title" content="🧩 פאזל הזזה | עמית ארז" />
   <meta name="twitter:description" content="פתור את הפאזל וזכה ב-20% הנחה על תמונה אמנותית" />
   <meta name="twitter:image" content="https://lh3.googleusercontent.com/d/1mkj7yjz3I-Y951ZoHVSH_-6v8FjL66ap=w1200" />
-
   <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
-      --bg: #0a0a0a;
-      --bg-card: #111111;
-      --accent: #c8a96e;
-      --accent-hover: #e0c080;
-      --text: #f0ede8;
-      --text-muted: #888;
-      --border: #222;
-      --radius: 4px;
-      --font: 'Heebo', sans-serif;
-      --font-display: 'Syne', sans-serif;
+      --bg: #0a0a0a; --bg-card: #111111; --accent: #c8a96e; --accent-hover: #e0c080;
+      --text: #f0ede8; --text-muted: #888; --border: #222; --radius: 4px;
+      --font: 'Heebo', sans-serif; --font-display: 'Syne', sans-serif;
       --transition: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
     }
-
     body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: var(--font);
-      direction: rtl;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      overflow-x: hidden;
+      background: var(--bg); color: var(--text); font-family: var(--font);
+      direction: rtl; min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden;
     }
 
-    /* ===== SPLASH ===== */
+    /* SPLASH */
     #splash {
-      position: fixed;
-      inset: 0;
-      z-index: 300;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 1.5rem;
-      overflow: hidden;
+      position: fixed; inset: 0; z-index: 300;
+      display: flex; align-items: center; justify-content: center;
+      padding: 1.5rem; overflow: hidden;
     }
-    #splash-bg {
-      position: absolute;
-      inset: 0;
-      background: var(--bg);
-    }
-    #splash-bg img {
-      width: 100%; height: 100%;
-      object-fit: cover;
-      opacity: 0.18;
-      filter: blur(12px);
-      transform: scale(1.05);
-    }
+    #splash-bg { position: absolute; inset: 0; background: var(--bg); }
+    #splash-bg img { width: 100%; height: 100%; object-fit: cover; opacity: 0.18; filter: blur(12px); transform: scale(1.05); }
     .splash-card {
-      position: relative;
-      background: rgba(17,17,17,0.92);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 2.5rem 2rem;
-      max-width: 360px;
-      width: 100%;
-      text-align: center;
-      backdrop-filter: blur(4px);
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
+      position: relative; background: rgba(17,17,17,0.92); border: 1px solid var(--border);
+      border-radius: 16px; padding: 2.5rem 2rem; max-width: 360px; width: 100%;
+      text-align: center; -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
+      display: flex; flex-direction: column; gap: 0.75rem;
     }
-    .splash-logo {
-      font-family: var(--font-display);
-      font-size: 1.5rem;
-      color: var(--accent);
-      text-decoration: none;
-    }
-    .splash-tagline {
-      font-size: 0.82rem;
-      color: var(--text-muted);
-      margin-top: -0.25rem;
-    }
-    .splash-divider {
-      border: none;
-      border-top: 1px solid var(--border);
-      margin: 0.5rem 0;
-    }
+    .splash-logo { font-family: var(--font-display); font-size: 1.5rem; color: var(--accent); text-decoration: none; }
+    .splash-tagline { font-size: 0.82rem; color: var(--text-muted); margin-top: -0.25rem; }
+    .splash-divider { border: none; border-top: 1px solid var(--border); margin: 0.5rem 0; }
     .splash-emoji { font-size: 2.5rem; }
-    .splash-title {
-      font-family: var(--font-display);
-      font-size: 1.2rem;
-      color: var(--text);
-    }
-    .splash-desc {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-      line-height: 1.55;
-    }
+    .splash-title { font-family: var(--font-display); font-size: 1.2rem; color: var(--text); }
+    .splash-desc { font-size: 0.85rem; color: var(--text-muted); line-height: 1.55; }
     .splash-start {
-      margin-top: 0.5rem;
-      background: var(--accent);
-      color: #0a0a0a;
-      border: none;
-      font-family: var(--font);
-      font-size: 1rem;
-      font-weight: 700;
-      padding: 0.85rem;
-      border-radius: var(--radius);
-      cursor: pointer;
-      width: 100%;
-      transition: background var(--transition);
-      min-height: 48px;
+      margin-top: 0.5rem; background: var(--accent); color: #0a0a0a; border: none;
+      font-family: var(--font); font-size: 1rem; font-weight: 700; padding: 0.85rem;
+      border-radius: var(--radius); cursor: pointer; width: 100%;
+      transition: background var(--transition); min-height: 48px;
     }
     .splash-start:hover { background: var(--accent-hover); }
-    .splash-note {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-    }
+    .splash-note { font-size: 0.75rem; color: var(--text-muted); }
 
-    /* ===== NAV ===== */
+    /* NAV */
     nav {
-      padding: 0.9rem 1.5rem;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      padding: 0.9rem 1.5rem; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
     }
-    .nav-logo {
-      font-family: var(--font-display);
-      font-size: 1.1rem;
-      color: var(--accent);
-      text-decoration: none;
-    }
+    .nav-logo { font-family: var(--font-display); font-size: 1.1rem; color: var(--accent); text-decoration: none; }
     .nav-share {
-      background: transparent;
-      border: 1px solid var(--border);
-      color: var(--text-muted);
-      font-family: var(--font);
-      font-size: 0.78rem;
-      padding: 0.3rem 0.75rem;
-      border-radius: var(--radius);
-      cursor: pointer;
-      transition: color var(--transition), border-color var(--transition);
-      min-height: 36px;
+      background: transparent; border: 1px solid var(--border); color: var(--text-muted);
+      font-family: var(--font); font-size: 0.78rem; padding: 0.3rem 0.75rem;
+      border-radius: var(--radius); cursor: pointer;
+      transition: color var(--transition), border-color var(--transition); min-height: 36px;
     }
     .nav-share:hover { color: var(--accent); border-color: var(--accent); }
 
-    /* ===== MAIN ===== */
-    main {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 1.5rem 1rem;
-    }
-
-    #game-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0.85rem;
-      width: 100%;
-      max-width: 420px;
-    }
-
-    .puzzle-label {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-    }
-
+    /* MAIN */
+    main { flex: 1; display: flex; align-items: center; justify-content: center; padding: 1.5rem 1rem; }
+    #game-container { display: flex; flex-direction: column; align-items: center; gap: 0.85rem; width: 100%; max-width: 420px; }
+    .puzzle-label { font-size: 0.75rem; color: var(--text-muted); letter-spacing: 0.1em; text-transform: uppercase; }
     #photo-info { text-align: center; }
-
-    #photo-title {
-      font-family: var(--font-display);
-      font-size: 1.15rem;
-      color: var(--accent);
-    }
-
-    #photo-category {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      margin-top: 0.1rem;
-    }
-
-    .photo-credit {
-      font-size: 0.72rem;
-      color: var(--border);
-      margin-top: 0.2rem;
-    }
-    .photo-credit a {
-      color: var(--text-muted);
-      text-decoration: none;
-      transition: color var(--transition);
-    }
+    #photo-title { font-family: var(--font-display); font-size: 1.15rem; color: var(--accent); }
+    #photo-category { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.1rem; }
+    .photo-credit { font-size: 0.72rem; color: var(--border); margin-top: 0.2rem; }
+    .photo-credit a { color: var(--text-muted); text-decoration: none; transition: color var(--transition); }
     .photo-credit a:hover { color: var(--accent); }
 
-    /* ===== SIZE BUTTONS ===== */
-    .size-row {
-      display: flex;
-      gap: 0.5rem;
-      width: 100%;
-    }
+    /* SIZE BUTTONS */
+    .size-row { display: flex; gap: 0.5rem; width: 100%; }
     .size-btn {
-      flex: 1;
-      background: transparent;
-      border: 1px solid var(--border);
-      color: var(--text-muted);
-      font-family: var(--font);
-      font-size: 0.82rem;
-      padding: 0;
-      border-radius: var(--radius);
-      cursor: pointer;
-      transition: color var(--transition), border-color var(--transition), background var(--transition);
+      flex: 1; background: transparent; border: 1px solid var(--border); color: var(--text-muted);
+      font-family: var(--font); font-size: 0.82rem; padding: 0; border-radius: var(--radius);
+      cursor: pointer; transition: color var(--transition), border-color var(--transition), background var(--transition);
       min-height: 44px;
     }
     .size-btn:hover { color: var(--accent); border-color: var(--accent); }
     .size-btn.active { background: var(--accent); color: #0a0a0a; border-color: var(--accent); font-weight: 700; }
 
-    /* ===== BOARD ===== */
+    /* BOARD */
     #board {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 3px;
-      background: var(--border);
-      border: 3px solid var(--border);
-      border-radius: var(--radius);
-      overflow: hidden;
-      width: min(92vw, 400px);
-      height: min(92vw, 400px);
-      user-select: none;
-      touch-action: none;
+      position: relative; background: var(--border); border: 3px solid var(--border);
+      border-radius: var(--radius); overflow: hidden;
+      width: min(92vw, 400px); height: min(92vw, 400px);
+      -webkit-user-select: none; user-select: none; touch-action: none;
     }
-
     .tile {
-      background-color: var(--bg-card);
-      position: relative;
-      cursor: pointer;
-      transition: opacity var(--transition);
+      position: absolute; background-color: var(--bg-card);
+      cursor: pointer; overflow: hidden;
     }
-    .tile:active { opacity: 0.7; }
-    .tile.empty {
-      background: var(--bg);
-      cursor: default;
-    }
+    .tile:active { opacity: 0.75; }
+    .tile.empty { background: var(--bg); cursor: default; }
 
-    /* ===== STATS ===== */
-    #stats {
-      display: flex;
-      gap: 2rem;
-      color: var(--text-muted);
-      font-size: 0.88rem;
+    @keyframes tile-glow {
+      0%   { filter: brightness(1); }
+      50%  { filter: brightness(1.55) saturate(1.2); }
+      100% { filter: brightness(1); }
     }
+    .tile-won { animation: tile-glow 0.55s ease; }
 
-    /* ===== BOTTOM BUTTONS ===== */
-    .action-row {
-      display: flex;
-      gap: 0.5rem;
-      width: 100%;
-    }
+    /* STATS */
+    #stats { display: flex; gap: 2rem; color: var(--text-muted); font-size: 0.88rem; }
+
+    /* BOTTOM BUTTONS */
+    .action-row { display: flex; gap: 0.5rem; width: 100%; }
     .action-btn {
-      flex: 1;
-      background: transparent;
-      border: 1px solid var(--border);
-      color: var(--text-muted);
-      font-family: var(--font);
-      font-size: 0.8rem;
-      border-radius: var(--radius);
-      cursor: pointer;
+      flex: 1; background: transparent; border: 1px solid var(--border); color: var(--text-muted);
+      font-family: var(--font); font-size: 0.8rem; border-radius: var(--radius); cursor: pointer;
       transition: color var(--transition), border-color var(--transition);
-      min-height: 44px;
-      padding: 0;
+      min-height: 44px; padding: 0;
     }
     .action-btn:hover { color: var(--accent); border-color: var(--accent); }
 
-    /* ===== WIN MODAL ===== */
+    /* WIN MODAL */
     .hidden { display: none !important; }
-
     #win-modal {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.88);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 200;
-      padding: 1rem;
-      backdrop-filter: blur(8px);
-      overflow-y: auto;
+      position: fixed; inset: 0; background: rgba(0,0,0,0.88);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 200; padding: 1rem; -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); overflow-y: auto;
     }
-
     .win-box {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      max-width: 400px;
-      width: 100%;
-      overflow: hidden;
-      margin: auto;
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 12px; max-width: 400px; width: 100%; overflow: hidden; margin: auto;
     }
-
-    .win-photo {
-      width: 100%;
-      height: 180px;
-      object-fit: cover;
-      display: block;
-    }
-
+    .win-photo { width: 100%; height: 180px; object-fit: cover; display: block; }
     .win-content {
-      padding: 1.25rem;
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      gap: 0.65rem;
+      padding: 1.25rem; text-align: center;
+      display: flex; flex-direction: column; gap: 0.5rem;
     }
-
-    .win-title {
-      font-family: var(--font-display);
-      font-size: 1.3rem;
-      color: var(--accent);
-    }
-
+    .win-title { font-family: var(--font-display); font-size: 1.3rem; color: var(--accent); }
     .win-subtitle { color: var(--text-muted); font-size: 0.88rem; }
     .win-stats-text { font-size: 0.8rem; color: var(--text-muted); }
 
+    @keyframes record-pop {
+      0% { transform: scale(0.7); opacity: 0; }
+      60% { transform: scale(1.1); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .win-record { font-size: 0.88rem; font-weight: 700; color: #ffd700; animation: record-pop 0.5s ease; }
+
     .win-discount {
       background: linear-gradient(135deg, rgba(200,169,110,0.15), rgba(200,169,110,0.05));
-      border: 1px solid rgba(200,169,110,0.3);
-      border-radius: var(--radius);
-      padding: 0.65rem;
-      font-size: 0.85rem;
-      color: var(--accent);
-      line-height: 1.5;
+      border: 1px solid rgba(200,169,110,0.3); border-radius: var(--radius);
+      padding: 0.65rem; font-size: 0.85rem; color: var(--accent); line-height: 1.5;
     }
     .win-discount strong { font-size: 0.95rem; }
+    .win-timer { color: var(--text-muted); font-size: 0.78rem; display: block; margin-top: 0.2rem; }
 
     .win-actions { display: flex; flex-direction: column; gap: 0.45rem; }
-
     .win-btn {
-      display: block;
-      width: 100%;
-      padding: 0.75rem;
-      border-radius: var(--radius);
-      font-size: 0.88rem;
-      font-weight: 600;
-      font-family: var(--font);
-      cursor: pointer;
-      border: none;
-      text-decoration: none;
-      text-align: center;
-      transition: opacity var(--transition);
-      min-height: 48px;
-      line-height: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: flex; align-items: center; justify-content: center;
+      width: 100%; padding: 0.75rem; border-radius: var(--radius);
+      font-size: 0.88rem; font-weight: 600; font-family: var(--font);
+      cursor: pointer; border: none; text-decoration: none; text-align: center;
+      transition: opacity var(--transition); min-height: 48px;
     }
     .win-btn:hover { opacity: 0.82; }
-
     .win-btn-primary  { background: var(--accent); color: #0a0a0a; }
     .win-btn-whatsapp { background: #25D366; color: #fff; }
-    .win-btn-secondary {
-      background: transparent;
-      color: var(--text-muted);
-      border: 1px solid var(--border);
-    }
-
+    .win-btn-secondary { background: transparent; color: var(--text-muted); border: 1px solid var(--border); }
     .win-share-row { display: flex; gap: 0.45rem; }
     .win-share-row .win-btn { flex: 1; }
 
     .win-redirect-bar {
-      background: rgba(200,169,110,0.12);
-      border: 1px solid rgba(200,169,110,0.25);
-      border-radius: var(--radius);
-      padding: 0.55rem 0.75rem;
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 0.5rem;
+      background: rgba(200,169,110,0.12); border: 1px solid rgba(200,169,110,0.25);
+      border-radius: var(--radius); padding: 0.55rem 0.75rem; font-size: 0.8rem;
+      color: var(--text-muted); display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;
     }
     .win-redirect-bar span { flex: 1; }
     .win-cancel-btn {
-      background: transparent;
-      border: 1px solid var(--border);
-      color: var(--text-muted);
-      font-family: var(--font);
-      font-size: 0.75rem;
-      padding: 0.25rem 0.6rem;
-      border-radius: var(--radius);
-      cursor: pointer;
-      white-space: nowrap;
+      background: transparent; border: 1px solid var(--border); color: var(--text-muted);
+      font-family: var(--font); font-size: 0.75rem; padding: 0.25rem 0.6rem;
+      border-radius: var(--radius); cursor: pointer; white-space: nowrap;
     }
 
-    /* ===== MOBILE ===== */
     @media (max-width: 400px) {
       nav { padding: 0.75rem 1rem; }
       main { padding: 1rem 0.75rem; }
@@ -422,7 +202,6 @@
 </head>
 <body>
 
-  <!-- SPLASH -->
   <div id="splash">
     <div id="splash-bg"><img id="splash-bg-img" src="" alt=""></div>
     <div class="splash-card">
@@ -460,7 +239,7 @@
         <span id="moves">0 מהלכים</span>
       </div>
       <div class="action-row">
-        <button type="button" class="action-btn" onclick="init()">🔀 החלף</button>
+        <button type="button" class="action-btn" onclick="newPhoto()">🔀 החלף</button>
         <button type="button" class="action-btn" onclick="shareChallenge()">📤 שתף</button>
         <button type="button" class="action-btn" onclick="solveGame()">💡 פתור</button>
       </div>
@@ -474,9 +253,11 @@
         <div class="win-title">🏆 כל הכבוד!</div>
         <div class="win-subtitle" id="win-photo-name"></div>
         <div class="win-stats-text" id="win-stats-text"></div>
+        <div id="win-prev-record" class="win-stats-text hidden"></div>
+        <div id="win-new-record" class="win-record hidden">🥇 שיא אישי חדש!</div>
         <div class="win-discount">
-          🎁 כמתנה על הפתרון — <strong>20% הנחה</strong> לרכישת התמונה<br>
-          <small style="color:var(--text-muted)">בתוקף 24 שעות</small>
+          🎁 כמתנה על הפתרון — <strong>20% הנחה</strong> לרכישת התמונה
+          <span id="win-discount-timer" class="win-timer"></span>
         </div>
         <div class="win-actions">
           <a id="win-gallery-btn" href="#" class="win-btn win-btn-primary">📸 לתמונה בגלריה + הנחה</a>
@@ -495,46 +276,323 @@
   </div>
 
   <script>
-    // ===== STATE =====
     let currentPhoto = null;
-    let splashDismissed = false;
+    let allPhotos    = null;
+    let nextPhoto    = null;
+    let currentSeed  = 0;
+    let SIZE         = 3;
+    let TOTAL        = 9;
+    let board        = [];
+    let moveCount    = 0;
+    let timerInterval   = null;
+    let secondsElapsed  = 0;
+    let gameActive      = false;
+    let redirectTimer   = null;
+    let redirectCountdown = null;
+    let discountInterval  = null;
+    let resizeTimeout     = null;
 
     // ===== SPLASH =====
     function hideSplash() {
-      splashDismissed = true;
       const el = document.getElementById('splash');
       el.style.transition = 'opacity 0.4s ease';
       el.style.opacity = '0';
       setTimeout(() => el.style.display = 'none', 400);
     }
 
+    // ===== RECORDS =====
+    function getRecord(size) {
+      try { return JSON.parse(localStorage.getItem(`amit_puzzle_best_${size}`)); } catch { return null; }
+    }
+    function maybeNewRecord(size, time, moves) {
+      const prev = getRecord(size);
+      if (!prev || time < prev.time) {
+        localStorage.setItem(`amit_puzzle_best_${size}`, JSON.stringify({ time, moves }));
+        return true;
+      }
+      return false;
+    }
+
+    // ===== SEEDED PRNG (xorshift32) =====
+    function mkRandom(seed) {
+      let s = (seed >>> 0) || 1;
+      return () => {
+        s ^= s << 13; s ^= s >> 17; s ^= s << 5;
+        return (s >>> 0) / 0xffffffff;
+      };
+    }
+
+    // ===== PHOTOS =====
+    async function fetchPhotos() {
+      if (allPhotos) return allPhotos;
+      const res = await fetch('../data/photos.json');
+      allPhotos = await res.json();
+      return allPhotos;
+    }
+
+    function pickRandom(photos, exclude) {
+      const pool = exclude ? photos.filter(p => p.id !== exclude.id) : photos;
+      return pool[Math.floor(Math.random() * pool.length)];
+    }
+
+    function preloadNext() {
+      if (!allPhotos || !currentPhoto) return;
+      const p = pickRandom(allPhotos, currentPhoto);
+      nextPhoto = p;
+      new Image().src = p.thumbnail;
+    }
+
     // ===== SHARE =====
     function shareChallenge() {
-      const url = 'https://amitphotos.com/puzzle/';
-      const text = `🧩 נסה לפתור את פאזל הצילום של עמית ארז!\nזכה ב-20% הנחה על תמונה אמנותית: `;
+      const url  = `https://amitphotos.com/puzzle/?photo=${currentPhoto.id}&seed=${currentSeed}`;
+      const text = `🧩 אתגר פאזל! האם תצליח לפתור את "${currentPhoto.title}" של עמית ארז?\n`;
       window.open(`https://wa.me/?text=${encodeURIComponent(text + url)}`, '_blank');
     }
 
-    // ===== PHOTO LOADING =====
-    async function loadRandomPhoto() {
-      const res = await fetch('../data/photos.json');
-      const photos = await res.json();
-      currentPhoto = photos[Math.floor(Math.random() * photos.length)];
-      document.getElementById('photo-title').textContent = currentPhoto.title;
-      document.getElementById('photo-category').textContent = currentPhoto.category;
-      // Update splash background
-      const bgImg = document.getElementById('splash-bg-img');
-      if (bgImg) bgImg.src = currentPhoto.thumbnail;
-      return currentPhoto;
+    function cancelRedirect() {
+      clearTimeout(redirectTimer);
+      clearInterval(redirectCountdown);
+      const bar = document.getElementById('win-redirect-bar');
+      if (bar) bar.style.display = 'none';
     }
 
-    // ===== GAME LOGIC =====
-    let SIZE = 3;
-    let TOTAL = SIZE * SIZE;
+    // ===== PUZZLE LOGIC =====
+    function solvedBoard() {
+      return [...Array(TOTAL - 1).keys()].map(i => i + 1).concat(0);
+    }
+    function emptyIdx(b) { return b.indexOf(0); }
+    function canMove(b, i) {
+      const ei = emptyIdx(b);
+      const tr = Math.floor(i / SIZE),  tc = i % SIZE;
+      const er = Math.floor(ei / SIZE), ec = ei % SIZE;
+      return (tr === er && Math.abs(tc - ec) === 1) || (tc === ec && Math.abs(tr - er) === 1);
+    }
+    function moveTile(b, i) {
+      if (!canMove(b, i)) return null;
+      const next = [...b], ei = emptyIdx(b);
+      [next[i], next[ei]] = [next[ei], next[i]];
+      return next;
+    }
+    function isSolved(b) {
+      return b.every((v, i) => v === (i === TOTAL - 1 ? 0 : i + 1));
+    }
+    function shuffle(b, seed) {
+      const rand = mkRandom(seed);
+      let arr = [...b], ei = emptyIdx(arr);
+      for (let i = 0; i < 200; i++) {
+        const row = Math.floor(ei / SIZE), col = ei % SIZE;
+        const nb = [];
+        if (row > 0)        nb.push(ei - SIZE);
+        if (row < SIZE - 1) nb.push(ei + SIZE);
+        if (col > 0)        nb.push(ei - 1);
+        if (col < SIZE - 1) nb.push(ei + 1);
+        const pick = nb[Math.floor(rand() * nb.length)];
+        [arr[ei], arr[pick]] = [arr[pick], arr[ei]];
+        ei = pick;
+      }
+      return arr;
+    }
 
+    // ===== BOARD RENDERING (absolute-positioned tiles, CSS transitions) =====
+    function getTileSize() {
+      const boardEl = document.getElementById('board');
+      const w = boardEl.offsetWidth || 300;
+      const gap = 3;
+      return { tileW: (w - (SIZE - 1) * gap) / SIZE, gap };
+    }
+
+    function initTiles(photo) {
+      const boardEl = document.getElementById('board');
+      boardEl.innerHTML = '';
+      for (let value = 0; value < TOTAL; value++) {
+        const tile = document.createElement('div');
+        tile.dataset.value = String(value);
+        tile.className = value === 0 ? 'tile empty' : 'tile';
+        if (value !== 0) {
+          const sr = Math.floor((value - 1) / SIZE);
+          const sc = (value - 1) % SIZE;
+          const img = document.createElement('img');
+          img.src = photo.thumbnail;
+          img.draggable = false;
+          img.style.cssText = `position:absolute;width:${SIZE*100}%;height:${SIZE*100}%;top:${-sr*100}%;left:${-sc*100}%;pointer-events:none;user-select:none;`;
+          tile.appendChild(img);
+        }
+        tile.addEventListener('click', () => handleTileClick(board.indexOf(value)));
+        boardEl.appendChild(tile);
+      }
+    }
+
+    function updateTilePositions(animate) {
+      const boardEl = document.getElementById('board');
+      const { tileW, gap } = getTileSize();
+      if (!tileW) { requestAnimationFrame(() => updateTilePositions(animate)); return; }
+      board.forEach((value, idx) => {
+        const tile = boardEl.querySelector(`[data-value="${value}"]`);
+        if (!tile) return;
+        const row = Math.floor(idx / SIZE), col = idx % SIZE;
+        tile.style.transition = animate ? 'left 0.12s ease, top 0.12s ease' : 'none';
+        tile.style.left   = `${col * (tileW + gap)}px`;
+        tile.style.top    = `${row * (tileW + gap)}px`;
+        tile.style.width  = `${tileW}px`;
+        tile.style.height = `${tileW}px`;
+      });
+    }
+
+    function formatTime(s) {
+      return `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;
+    }
+
+    // ===== INPUT =====
+    function handleTileClick(idx) {
+      if (!gameActive) return;
+      const next = moveTile(board, idx);
+      if (!next) return;
+      board = next;
+      moveCount++;
+      document.getElementById('moves').textContent = `${moveCount} מהלכים`;
+      updateTilePositions(true);
+      if (isSolved(board)) setTimeout(onWin, 150);
+    }
+
+    document.addEventListener('keydown', e => {
+      if (!gameActive) return;
+      const ei = emptyIdx(board);
+      const er = Math.floor(ei / SIZE), ec = ei % SIZE;
+      let t = -1;
+      if (e.key === 'ArrowUp'    && er < SIZE-1) t = ei + SIZE;
+      if (e.key === 'ArrowDown'  && er > 0)      t = ei - SIZE;
+      if (e.key === 'ArrowLeft'  && ec < SIZE-1) t = ei + 1;
+      if (e.key === 'ArrowRight' && ec > 0)      t = ei - 1;
+      if (t >= 0) { e.preventDefault(); handleTileClick(t); }
+    });
+
+    let tx = 0, ty = 0;
+    document.getElementById('board').addEventListener('touchstart', e => {
+      tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+    }, { passive: true });
+    document.getElementById('board').addEventListener('touchend', e => {
+      if (!gameActive) return;
+      const dx = e.changedTouches[0].clientX - tx;
+      const dy = e.changedTouches[0].clientY - ty;
+      const ei = emptyIdx(board);
+      const er = Math.floor(ei / SIZE), ec = ei % SIZE;
+      let t = -1;
+      if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 30) {
+        if (dx < 0 && ec < SIZE-1) t = ei + 1;
+        if (dx > 0 && ec > 0)      t = ei - 1;
+      } else if (Math.abs(dy) > 30) {
+        if (dy < 0 && er < SIZE-1) t = ei + SIZE;
+        if (dy > 0 && er > 0)      t = ei - SIZE;
+      }
+      if (t >= 0) handleTileClick(t);
+    }, { passive: true });
+
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(() => updateTilePositions(false), 100);
+    });
+
+    // ===== WIN =====
+    function celebrate() {
+      const tiles = document.getElementById('board').querySelectorAll('.tile:not(.empty)');
+      tiles.forEach((tile, i) => {
+        setTimeout(() => {
+          tile.classList.add('tile-won');
+          setTimeout(() => tile.classList.remove('tile-won'), 600);
+        }, i * 35);
+      });
+    }
+
+    function startDiscountTimer() {
+      clearInterval(discountInterval);
+      const expiry = Date.now() + 24 * 3600 * 1000;
+      const el = document.getElementById('win-discount-timer');
+      function tick() {
+        const ms = expiry - Date.now();
+        if (ms <= 0) { el.textContent = 'פג תוקף'; clearInterval(discountInterval); return; }
+        const h = Math.floor(ms / 3600000);
+        const m = Math.floor((ms % 3600000) / 60000);
+        const s = Math.floor((ms % 60000) / 1000);
+        el.textContent = `בתוקף עוד ${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+      }
+      tick();
+      discountInterval = setInterval(tick, 1000);
+    }
+
+    function onWin() {
+      gameActive = false;
+      clearInterval(timerInterval);
+      cancelRedirect();
+      celebrate();
+
+      const galleryUrl = `https://amitphotos.com/?photo=${currentPhoto.id}&discount=puzzle`;
+      const shareUrl   = `https://amitphotos.com/puzzle/?photo=${currentPhoto.id}&seed=${currentSeed}`;
+      const shareText  = `פתרתי פאזל של "${currentPhoto.title}" באתר עמית ארז! 🧩\nנסה גם אתה: `;
+
+      const prevRecord = getRecord(SIZE);
+      const isNew = maybeNewRecord(SIZE, secondsElapsed, moveCount);
+
+      document.getElementById('win-photo-img').src = currentPhoto.thumbnail;
+      document.getElementById('win-photo-img').alt = currentPhoto.title;
+      document.getElementById('win-photo-name').textContent = `"${currentPhoto.title}"`;
+      document.getElementById('win-stats-text').textContent = `${formatTime(secondsElapsed)} · ${moveCount} מהלכים`;
+
+      const recordEl = document.getElementById('win-new-record');
+      const prevEl   = document.getElementById('win-prev-record');
+      if (isNew) {
+        recordEl.classList.remove('hidden');
+        if (prevRecord) {
+          prevEl.textContent = `שיא קודם: ${formatTime(prevRecord.time)} · ${prevRecord.moves} מהלכים`;
+          prevEl.classList.remove('hidden');
+        } else {
+          prevEl.classList.add('hidden');
+        }
+      } else {
+        recordEl.classList.add('hidden');
+        if (prevRecord) {
+          prevEl.textContent = `הרקורד שלך: ${formatTime(prevRecord.time)} · ${prevRecord.moves} מהלכים`;
+          prevEl.classList.remove('hidden');
+        } else {
+          prevEl.classList.add('hidden');
+        }
+      }
+
+      document.getElementById('win-gallery-btn').href = galleryUrl;
+      document.getElementById('win-whatsapp-btn').href =
+        `https://wa.me/?text=${encodeURIComponent(shareText + shareUrl)}`;
+      document.getElementById('win-copy-btn').onclick = () => {
+        navigator.clipboard.writeText(shareUrl).then(() => {
+          const btn = document.getElementById('win-copy-btn');
+          btn.textContent = '✓ הועתק!';
+          setTimeout(() => { btn.textContent = '🔗 העתק'; }, 2000);
+        });
+      };
+      document.getElementById('win-new-btn').onclick = () => {
+        cancelRedirect();
+        document.getElementById('win-modal').classList.add('hidden');
+        newPhoto();
+      };
+
+      startDiscountTimer();
+
+      const bar = document.getElementById('win-redirect-bar');
+      const txt = document.getElementById('win-redirect-text');
+      bar.style.display = '';
+      let secs = 3;
+      txt.innerHTML = `מועבר לגלריה בעוד <strong>${secs}</strong>...`;
+      redirectCountdown = setInterval(() => {
+        secs--;
+        if (secs > 0) txt.innerHTML = `מועבר לגלריה בעוד <strong>${secs}</strong>...`;
+        else clearInterval(redirectCountdown);
+      }, 1000);
+      redirectTimer = setTimeout(() => { window.location.href = galleryUrl; }, 3000);
+
+      document.getElementById('win-modal').classList.remove('hidden');
+    }
+
+    // ===== GAME START =====
     function setSize(n) {
-      SIZE = n;
-      TOTAL = SIZE * SIZE;
+      SIZE = n; TOTAL = n * n;
       document.querySelectorAll('.size-btn').forEach(b =>
         b.classList.toggle('active', +b.dataset.size === n)
       );
@@ -543,112 +601,17 @@
 
     function solveGame() {
       if (!gameActive) return;
+      gameActive = false;
+      clearInterval(timerInterval);
       board = solvedBoard();
-      renderBoard(currentPhoto);
-      onWin();
+      updateTilePositions(true);
+      setTimeout(onWin, 200);
     }
 
-    function solvedBoard() {
-      return [...Array(TOTAL - 1).keys()].map(i => i + 1).concat(0);
-    }
-
-    function emptyIndex(board) {
-      return board.indexOf(0);
-    }
-
-    function canMove(board, tileIdx) {
-      const emptyIdx = emptyIndex(board);
-      const tileRow = Math.floor(tileIdx / SIZE);
-      const tileCol = tileIdx % SIZE;
-      const emptyRow = Math.floor(emptyIdx / SIZE);
-      const emptyCol = emptyIdx % SIZE;
-      return (tileRow === emptyRow && Math.abs(tileCol - emptyCol) === 1) ||
-             (tileCol === emptyCol && Math.abs(tileRow - emptyRow) === 1);
-    }
-
-    function moveTile(board, tileIdx) {
-      if (!canMove(board, tileIdx)) return null;
-      const next = [...board];
-      const emptyIdx = emptyIndex(board);
-      [next[tileIdx], next[emptyIdx]] = [next[emptyIdx], next[tileIdx]];
-      return next;
-    }
-
-    function isSolved(board) {
-      return board.every((v, i) => v === (i === TOTAL - 1 ? 0 : i + 1));
-    }
-
-    function shuffle(board) {
-      let b = [...board];
-      let lastEmpty = emptyIndex(b);
-      for (let i = 0; i < 200; i++) {
-        const row = Math.floor(lastEmpty / SIZE);
-        const col = lastEmpty % SIZE;
-        const neighbors = [];
-        if (row > 0)         neighbors.push(lastEmpty - SIZE);
-        if (row < SIZE - 1)  neighbors.push(lastEmpty + SIZE);
-        if (col > 0)         neighbors.push(lastEmpty - 1);
-        if (col < SIZE - 1)  neighbors.push(lastEmpty + 1);
-        const pick = neighbors[Math.floor(Math.random() * neighbors.length)];
-        [b[lastEmpty], b[pick]] = [b[pick], b[lastEmpty]];
-        lastEmpty = pick;
-      }
-      return b;
-    }
-
-    // ===== RENDER & STATE =====
-    let board = [];
-    let moveCount = 0;
-    let timerInterval = null;
-    let secondsElapsed = 0;
-    let gameActive = false;
-
-    function formatTime(secs) {
-      const m = String(Math.floor(secs / 60)).padStart(2, '0');
-      const s = String(secs % 60).padStart(2, '0');
-      return `${m}:${s}`;
-    }
-
-    function renderBoard(photo) {
-      const boardEl = document.getElementById('board');
-      boardEl.style.gridTemplateColumns = `repeat(${SIZE}, 1fr)`;
-      boardEl.innerHTML = '';
-      board.forEach((value, idx) => {
-        const tile = document.createElement('div');
-        tile.className = 'tile' + (value === 0 ? ' empty' : '');
-        tile.dataset.idx = idx;
-        if (value !== 0) {
-          const solvedIdx = value - 1;
-          const solvedRow = Math.floor(solvedIdx / SIZE);
-          const solvedCol = solvedIdx % SIZE;
-          tile.style.overflow = 'hidden';
-          const img = document.createElement('img');
-          img.src = photo.thumbnail;
-          img.draggable = false;
-          img.style.cssText = `position:absolute;width:${SIZE*100}%;height:${SIZE*100}%;top:${-solvedRow*100}%;left:${-solvedCol*100}%;pointer-events:none;user-select:none;`;
-          tile.appendChild(img);
-        }
-        tile.addEventListener('click', () => handleTileClick(idx));
-        boardEl.appendChild(tile);
-      });
-    }
-
-    function handleTileClick(idx) {
-      if (!gameActive) return;
-      const next = moveTile(board, idx);
-      if (!next) return;
-      board = next;
-      moveCount++;
-      document.getElementById('moves').textContent = `${moveCount} מהלכים`;
-      renderBoard(currentPhoto);
-      if (isSolved(board)) onWin();
-    }
-
-    function startGame(photo) {
-      board = shuffle(solvedBoard());
-      moveCount = 0;
-      secondsElapsed = 0;
-      gameActive = true;
+    function startGame(photo, seed) {
+      currentSeed = seed || Math.floor(Math.random() * 1000000);
+      board = shuffle(solvedBoard(), currentSeed);
+      moveCount = 0; secondsElapsed = 0; gameActive = true;
       document.getElementById('moves').textContent = '0 מהלכים';
       document.getElementById('timer').textContent = '00:00';
       clearInterval(timerInterval);
@@ -656,114 +619,37 @@
         secondsElapsed++;
         document.getElementById('timer').textContent = formatTime(secondsElapsed);
       }, 1000);
-      renderBoard(photo);
+      initTiles(photo);
+      updateTilePositions(false);
     }
 
-    let redirectTimer = null;
-    let redirectCountdown = null;
-
-    function cancelRedirect() {
-      clearTimeout(redirectTimer);
-      clearInterval(redirectCountdown);
-      document.getElementById('win-redirect-bar').style.display = 'none';
+    async function newPhoto() {
+      const photos = await fetchPhotos();
+      currentPhoto = nextPhoto || pickRandom(photos, currentPhoto);
+      nextPhoto = null;
+      document.getElementById('photo-title').textContent = currentPhoto.title;
+      document.getElementById('photo-category').textContent = currentPhoto.category;
+      document.getElementById('splash-bg-img').src = currentPhoto.thumbnail;
+      startGame(currentPhoto);
+      preloadNext();
     }
-
-    function onWin() {
-      gameActive = false;
-      clearInterval(timerInterval);
-      cancelRedirect();
-
-      const galleryUrl = `https://amitphotos.com/?photo=${currentPhoto.id}&discount=puzzle`;
-      const shareUrl   = `https://amitphotos.com/puzzle/`;
-      const shareText  = `פתרתי פאזל של "${currentPhoto.title}" באתר עמית ארז! 🧩\nרוצה לנסות? `;
-
-      document.getElementById('win-photo-img').src = currentPhoto.thumbnail;
-      document.getElementById('win-photo-img').alt = currentPhoto.title;
-      document.getElementById('win-photo-name').textContent = `"${currentPhoto.title}"`;
-      document.getElementById('win-stats-text').textContent =
-        `${formatTime(secondsElapsed)} · ${moveCount} מהלכים`;
-      document.getElementById('win-gallery-btn').href = galleryUrl;
-      document.getElementById('win-whatsapp-btn').href =
-        `https://wa.me/?text=${encodeURIComponent(shareText + shareUrl)}`;
-
-      document.getElementById('win-copy-btn').onclick = () => {
-        navigator.clipboard.writeText(shareUrl).then(() => {
-          const btn = document.getElementById('win-copy-btn');
-          btn.textContent = '✓ הועתק!';
-          setTimeout(() => { btn.textContent = '🔗 העתק'; }, 2000);
-        });
-      };
-
-      document.getElementById('win-new-btn').onclick = () => {
-        cancelRedirect();
-        document.getElementById('win-modal').classList.add('hidden');
-        init();
-      };
-
-      // auto-redirect countdown
-      const bar = document.getElementById('win-redirect-bar');
-      const txt = document.getElementById('win-redirect-text');
-      bar.style.display = '';
-      let secs = 3;
-      txt.innerHTML = `מועבר לגלריה בעוד <strong>${secs}</strong>...`;
-      redirectCountdown = setInterval(() => {
-        secs--;
-        if (secs > 0) {
-          txt.innerHTML = `מועבר לגלריה בעוד <strong>${secs}</strong>...`;
-        } else {
-          clearInterval(redirectCountdown);
-        }
-      }, 1000);
-      redirectTimer = setTimeout(() => {
-        window.location.href = galleryUrl;
-      }, 3000);
-
-      document.getElementById('win-modal').classList.remove('hidden');
-    }
-
-    // ===== KEYBOARD =====
-    document.addEventListener('keydown', (e) => {
-      if (!gameActive) return;
-      const emptyIdx = emptyIndex(board);
-      const eRow = Math.floor(emptyIdx / SIZE);
-      const eCol = emptyIdx % SIZE;
-      let tileIdx = -1;
-      if (e.key === 'ArrowUp'    && eRow < SIZE - 1) tileIdx = emptyIdx + SIZE;
-      if (e.key === 'ArrowDown'  && eRow > 0)        tileIdx = emptyIdx - SIZE;
-      if (e.key === 'ArrowLeft'  && eCol < SIZE - 1) tileIdx = emptyIdx + 1;
-      if (e.key === 'ArrowRight' && eCol > 0)        tileIdx = emptyIdx - 1;
-      if (tileIdx >= 0) { e.preventDefault(); handleTileClick(tileIdx); }
-    });
-
-    // ===== SWIPE =====
-    let touchStartX = 0, touchStartY = 0;
-
-    document.getElementById('board').addEventListener('touchstart', (e) => {
-      touchStartX = e.touches[0].clientX;
-      touchStartY = e.touches[0].clientY;
-    }, { passive: true });
-
-    document.getElementById('board').addEventListener('touchend', (e) => {
-      if (!gameActive) return;
-      const dx = e.changedTouches[0].clientX - touchStartX;
-      const dy = e.changedTouches[0].clientY - touchStartY;
-      const emptyIdx = emptyIndex(board);
-      const eRow = Math.floor(emptyIdx / SIZE);
-      const eCol = emptyIdx % SIZE;
-      let tileIdx = -1;
-      if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 30) {
-        if (dx < 0 && eCol < SIZE - 1) tileIdx = emptyIdx + 1;
-        if (dx > 0 && eCol > 0)        tileIdx = emptyIdx - 1;
-      } else if (Math.abs(dy) > 30) {
-        if (dy < 0 && eRow < SIZE - 1) tileIdx = emptyIdx + SIZE;
-        if (dy > 0 && eRow > 0)        tileIdx = emptyIdx - SIZE;
-      }
-      if (tileIdx >= 0) handleTileClick(tileIdx);
-    }, { passive: true });
 
     async function init() {
-      const photo = await loadRandomPhoto();
-      startGame(photo);
+      const photos = await fetchPhotos();
+      const p = new URLSearchParams(location.search);
+      const urlPhotoId = p.get('photo');
+      const urlSeed    = p.get('seed') ? parseInt(p.get('seed')) : null;
+
+      currentPhoto = urlPhotoId
+        ? (photos.find(ph => String(ph.id) === urlPhotoId) || pickRandom(photos))
+        : pickRandom(photos);
+
+      document.getElementById('photo-title').textContent = currentPhoto.title;
+      document.getElementById('photo-category').textContent = currentPhoto.category;
+      document.getElementById('splash-bg-img').src = currentPhoto.thumbnail;
+
+      startGame(currentPhoto, urlSeed);
+      preloadNext();
     }
 
     init();
