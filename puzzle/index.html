@@ -243,6 +243,59 @@
       document.getElementById('photo-category').textContent = currentPhoto.category;
       return currentPhoto;
     }
+
+    // ===== GAME LOGIC =====
+    const SIZE = 4;
+    const TOTAL = SIZE * SIZE;
+
+    function solvedBoard() {
+      return [...Array(TOTAL - 1).keys()].map(i => i + 1).concat(0);
+      // → [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,0]
+    }
+
+    function emptyIndex(board) {
+      return board.indexOf(0);
+    }
+
+    function canMove(board, tileIdx) {
+      const emptyIdx = emptyIndex(board);
+      const tileRow = Math.floor(tileIdx / SIZE);
+      const tileCol = tileIdx % SIZE;
+      const emptyRow = Math.floor(emptyIdx / SIZE);
+      const emptyCol = emptyIdx % SIZE;
+      return (tileRow === emptyRow && Math.abs(tileCol - emptyCol) === 1) ||
+             (tileCol === emptyCol && Math.abs(tileRow - emptyRow) === 1);
+    }
+
+    function moveTile(board, tileIdx) {
+      if (!canMove(board, tileIdx)) return null;
+      const next = [...board];
+      const emptyIdx = emptyIndex(board);
+      [next[tileIdx], next[emptyIdx]] = [next[emptyIdx], next[tileIdx]];
+      return next;
+    }
+
+    function isSolved(board) {
+      return board.every((v, i) => v === (i === TOTAL - 1 ? 0 : i + 1));
+    }
+
+    function shuffle(board) {
+      let b = [...board];
+      let lastEmpty = emptyIndex(b);
+      for (let i = 0; i < 200; i++) {
+        const row = Math.floor(lastEmpty / SIZE);
+        const col = lastEmpty % SIZE;
+        const neighbors = [];
+        if (row > 0)         neighbors.push(lastEmpty - SIZE);
+        if (row < SIZE - 1)  neighbors.push(lastEmpty + SIZE);
+        if (col > 0)         neighbors.push(lastEmpty - 1);
+        if (col < SIZE - 1)  neighbors.push(lastEmpty + 1);
+        const pick = neighbors[Math.floor(Math.random() * neighbors.length)];
+        [b[lastEmpty], b[pick]] = [b[pick], b[lastEmpty]];
+        lastEmpty = pick;
+      }
+      return b;
+    }
   </script>
 </body>
 </html>
