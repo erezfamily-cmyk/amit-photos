@@ -28,7 +28,9 @@
     }
     body {
       background: var(--bg); color: var(--text); font-family: var(--font);
-      direction: rtl; min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden;
+      direction: rtl; min-height: 100vh; min-height: 100dvh;
+      display: flex; flex-direction: column; overflow-x: hidden;
+      overscroll-behavior: none;
     }
 
     /* SPLASH */
@@ -68,20 +70,21 @@
     .nav-logo { font-family: var(--font-display); font-size: 1.1rem; color: var(--accent); text-decoration: none; }
     .nav-share {
       background: transparent; border: 1px solid var(--border); color: var(--text-muted);
-      font-family: var(--font); font-size: 0.78rem; padding: 0.3rem 0.75rem;
+      font-family: var(--font); font-size: 0.78rem; padding: 0 0.75rem;
       border-radius: var(--radius); cursor: pointer;
-      transition: color var(--transition), border-color var(--transition); min-height: 36px;
+      transition: color var(--transition), border-color var(--transition);
+      min-height: 44px; touch-action: manipulation;
     }
     .nav-share:hover { color: var(--accent); border-color: var(--accent); }
 
     /* MAIN */
-    main { flex: 1; display: flex; align-items: center; justify-content: center; padding: 1.5rem 1rem; }
-    #game-container { display: flex; flex-direction: column; align-items: center; gap: 0.85rem; width: 100%; max-width: 420px; }
+    main { flex: 1; display: flex; align-items: center; justify-content: center; padding: 1rem 0.75rem; }
+    #game-container { display: flex; flex-direction: column; align-items: center; gap: 0.65rem; width: 100%; max-width: 420px; }
     .puzzle-label { font-size: 0.75rem; color: var(--text-muted); letter-spacing: 0.1em; text-transform: uppercase; }
     #photo-info { text-align: center; }
     #photo-title { font-family: var(--font-display); font-size: 1.15rem; color: var(--accent); }
     #photo-category { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.1rem; }
-    .photo-credit { font-size: 0.72rem; color: var(--border); margin-top: 0.2rem; }
+    .photo-credit { font-size: 0.72rem; color: #444; margin-top: 0.2rem; }
     .photo-credit a { color: var(--text-muted); text-decoration: none; transition: color var(--transition); }
     .photo-credit a:hover { color: var(--accent); }
 
@@ -91,7 +94,7 @@
       flex: 1; background: transparent; border: 1px solid var(--border); color: var(--text-muted);
       font-family: var(--font); font-size: 0.82rem; padding: 0; border-radius: var(--radius);
       cursor: pointer; transition: color var(--transition), border-color var(--transition), background var(--transition);
-      min-height: 44px;
+      min-height: 44px; touch-action: manipulation;
     }
     .size-btn:hover { color: var(--accent); border-color: var(--accent); }
     .size-btn.active { background: var(--accent); color: #0a0a0a; border-color: var(--accent); font-weight: 700; }
@@ -100,12 +103,13 @@
     #board {
       position: relative; background: var(--border); border: 3px solid var(--border);
       border-radius: var(--radius); overflow: hidden;
-      width: min(92vw, 400px); height: min(92vw, 400px);
+      width: min(88vw, 400px); height: min(88vw, calc(100dvh - 260px), 400px);
       -webkit-user-select: none; user-select: none; touch-action: none;
     }
     .tile {
       position: absolute; background-color: var(--bg-card);
       cursor: pointer; overflow: hidden;
+      -webkit-tap-highlight-color: transparent;
     }
     .tile:active { opacity: 0.75; }
     .tile.empty { background: var(--bg); cursor: default; }
@@ -126,7 +130,7 @@
       flex: 1; background: transparent; border: 1px solid var(--border); color: var(--text-muted);
       font-family: var(--font); font-size: 0.8rem; border-radius: var(--radius); cursor: pointer;
       transition: color var(--transition), border-color var(--transition);
-      min-height: 44px; padding: 0;
+      min-height: 44px; padding: 0; touch-action: manipulation;
     }
     .action-btn:hover { color: var(--accent); border-color: var(--accent); }
 
@@ -139,9 +143,10 @@
     }
     .win-box {
       background: var(--bg-card); border: 1px solid var(--border);
-      border-radius: 12px; max-width: 400px; width: 100%; overflow: hidden; margin: auto;
+      border-radius: 12px; max-width: 400px; width: 100%;
+      max-height: 96dvh; overflow-y: auto; overflow-x: hidden; margin: auto;
     }
-    .win-photo { width: 100%; height: 180px; object-fit: cover; display: block; }
+    .win-photo { width: 100%; height: 150px; object-fit: cover; display: block; }
     .win-content {
       padding: 1.25rem; text-align: center;
       display: flex; flex-direction: column; gap: 0.5rem;
@@ -172,6 +177,7 @@
       font-size: 0.88rem; font-weight: 600; font-family: var(--font);
       cursor: pointer; border: none; text-decoration: none; text-align: center;
       transition: opacity var(--transition); min-height: 48px;
+      touch-action: manipulation; -webkit-tap-highlight-color: transparent;
     }
     .win-btn:hover { opacity: 0.82; }
     .win-btn-primary  { background: var(--accent); color: #0a0a0a; }
@@ -188,15 +194,25 @@
     .win-redirect-bar span { flex: 1; }
     .win-cancel-btn {
       background: transparent; border: 1px solid var(--border); color: var(--text-muted);
-      font-family: var(--font); font-size: 0.75rem; padding: 0.25rem 0.6rem;
+      font-family: var(--font); font-size: 0.75rem; padding: 0 0.75rem;
       border-radius: var(--radius); cursor: pointer; white-space: nowrap;
+      min-height: 36px; touch-action: manipulation;
     }
 
     @media (max-width: 400px) {
-      nav { padding: 0.75rem 1rem; }
-      main { padding: 1rem 0.75rem; }
-      #game-container { gap: 0.7rem; }
+      nav { padding: 0.7rem 1rem; }
+      main { padding: 0.75rem 0.6rem; }
+      #game-container { gap: 0.5rem; }
       .splash-card { padding: 2rem 1.5rem; }
+      .puzzle-label { display: none; }
+      #photo-title { font-size: 1rem; }
+      #stats { font-size: 0.82rem; gap: 1.5rem; }
+    }
+    @media (max-height: 650px) {
+      .puzzle-label { display: none; }
+      .win-photo { height: 110px; }
+      main { padding: 0.5rem 0.75rem; }
+      #game-container { gap: 0.45rem; }
     }
   </style>
 </head>
@@ -443,6 +459,10 @@
     }
 
     // ===== INPUT =====
+    function vibrate(pattern) {
+      try { navigator.vibrate(pattern); } catch {}
+    }
+
     function handleTileClick(idx) {
       if (!gameActive) return;
       const next = moveTile(board, idx);
@@ -451,6 +471,7 @@
       moveCount++;
       document.getElementById('moves').textContent = `${moveCount} מהלכים`;
       updateTilePositions(true);
+      vibrate(10);
       if (isSolved(board)) setTimeout(onWin, 150);
     }
 
@@ -494,6 +515,7 @@
 
     // ===== WIN =====
     function celebrate() {
+      vibrate([0, 80, 60, 120]);
       const tiles = document.getElementById('board').querySelectorAll('.tile:not(.empty)');
       tiles.forEach((tile, i) => {
         setTimeout(() => {
