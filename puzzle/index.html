@@ -118,6 +118,22 @@
       font-size: 0.88rem;
     }
 
+    #swap-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-family: var(--font);
+      font-size: 0.82rem;
+      padding: 0.4rem 0.9rem;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: color var(--transition), border-color var(--transition);
+    }
+    #swap-btn:hover {
+      color: var(--accent);
+      border-color: var(--accent);
+    }
+
     /* Win modal */
     .hidden { display: none !important; }
 
@@ -223,6 +239,7 @@
         <span id="timer">00:00</span>
         <span id="moves">0 מהלכים</span>
       </div>
+      <button type="button" id="swap-btn" onclick="init()">🔀 החלף תמונה</button>
     </div>
   </main>
 
