@@ -283,10 +283,6 @@
           </div>
           <button type="button" id="win-new-btn" class="win-btn win-btn-secondary">🔄 פאזל חדש</button>
         </div>
-        <div id="win-redirect-bar" class="win-redirect-bar">
-          <span id="win-redirect-text">מועבר לגלריה בעוד <strong>3</strong>...</span>
-          <button type="button" class="win-cancel-btn" onclick="cancelRedirect()">בטל</button>
-        </div>
       </div>
     </div>
   </div>
@@ -303,8 +299,6 @@
     let timerInterval   = null;
     let secondsElapsed  = 0;
     let gameActive      = false;
-    let redirectTimer   = null;
-    let redirectCountdown = null;
     let discountInterval  = null;
     let resizeTimeout     = null;
 
@@ -365,12 +359,6 @@
       window.open(`https://wa.me/?text=${encodeURIComponent(text + url)}`, '_blank');
     }
 
-    function cancelRedirect() {
-      clearTimeout(redirectTimer);
-      clearInterval(redirectCountdown);
-      const bar = document.getElementById('win-redirect-bar');
-      if (bar) bar.style.display = 'none';
-    }
 
     // ===== PUZZLE LOGIC =====
     function solvedBoard() {
@@ -544,7 +532,6 @@
     function onWin() {
       gameActive = false;
       clearInterval(timerInterval);
-      cancelRedirect();
       celebrate();
 
       const galleryUrl = `https://amitphotos.com/?photo=${currentPhoto.id}&discount=puzzle`;
@@ -590,24 +577,11 @@
         });
       };
       document.getElementById('win-new-btn').onclick = () => {
-        cancelRedirect();
         document.getElementById('win-modal').classList.add('hidden');
         newPhoto();
       };
 
       startDiscountTimer();
-
-      const bar = document.getElementById('win-redirect-bar');
-      const txt = document.getElementById('win-redirect-text');
-      bar.style.display = '';
-      let secs = 3;
-      txt.innerHTML = `מועבר לגלריה בעוד <strong>${secs}</strong>...`;
-      redirectCountdown = setInterval(() => {
-        secs--;
-        if (secs > 0) txt.innerHTML = `מועבר לגלריה בעוד <strong>${secs}</strong>...`;
-        else clearInterval(redirectCountdown);
-      }, 1000);
-      redirectTimer = setTimeout(() => { window.location.href = galleryUrl; }, 3000);
 
       document.getElementById('win-modal').classList.remove('hidden');
     }
