@@ -34,6 +34,8 @@ let displayedCount = 0;
 const PAGE_SIZE = 25;
 let slideshowTimer = null;
 let isZoomed = false;
+let puzzleDiscountPhotoId = null; // set when arriving from puzzle with ?discount=puzzle
+const PUZZLE_DISCOUNT = 0.20;
 
 // ===== IMAGE PROTECTION =====
 document.addEventListener('keydown', e => {
@@ -879,6 +881,7 @@ function handleInitialHash() {
   if (urlParams.get('discount') === 'puzzle') {
     const photoId = urlParams.get('photo');
     if (photoId) {
+      puzzleDiscountPhotoId = photoId;
       let idx = filteredPhotos.findIndex(p => String(p.id) === photoId);
       if (idx === -1) {
         const photo = allPhotos.find(p => String(p.id) === photoId);
@@ -1200,6 +1203,9 @@ function getEffectivePrice(photoId, size) {
   if (photo?.is_week_photo && photo?.week_photo_discount) {
     return Math.round(globalPrices[size] * (1 - photo.week_photo_discount));
   }
+  if (puzzleDiscountPhotoId && String(photoId) === String(puzzleDiscountPhotoId)) {
+    return Math.round(globalPrices[size] * (1 - PUZZLE_DISCOUNT));
+  }
   return globalPrices[size];
 }
 
@@ -1274,7 +1280,8 @@ function openBuyModal(photo) {
       if (priceEl) priceEl.innerHTML = `<s class="buy-size-original-price">₪${globalPrices[size]}</s> <span class="buy-size-sale-price">₪${price}</span>`;
       const badge = document.createElement('span');
       badge.className = 'buy-size-sale-badge';
-      badge.textContent = photo.is_week_photo ? '⭐ תמונת השבוע' : '🏷 מבצע';
+      const isPuzzle = puzzleDiscountPhotoId && String(photo.id) === String(puzzleDiscountPhotoId);
+      badge.textContent = photo.is_week_photo ? '⭐ תמונת השבוע' : (isPuzzle ? '🧩 הנחת פאזל' : '🏷 מבצע');
       btn.appendChild(badge);
     } else {
       if (priceEl) priceEl.textContent = `₪${price}`;
