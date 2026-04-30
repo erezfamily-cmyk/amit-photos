@@ -314,6 +314,8 @@
     let gameActive      = false;
     let discountInterval  = null;
     let resizeTimeout     = null;
+    let solutionPath      = [];
+    let shuffledBoard     = [];
 
     // ===== SPLASH =====
     function hideSplash() {
@@ -396,6 +398,7 @@
     function shuffle(b, seed) {
       const rand = mkRandom(seed);
       let arr = [...b], ei = emptyIdx(arr);
+      const picks = [];
       for (let i = 0; i < 200; i++) {
         const row = Math.floor(ei / SIZE), col = ei % SIZE;
         const nb = [];
@@ -404,10 +407,15 @@
         if (col > 0)        nb.push(ei - 1);
         if (col < SIZE - 1) nb.push(ei + 1);
         const pick = nb[Math.floor(rand() * nb.length)];
+        picks.push(pick);
         [arr[ei], arr[pick]] = [arr[pick], arr[ei]];
         ei = pick;
       }
-      return arr;
+      // Reverse the shuffle path to get the solution:
+      // each step i placed a tile at ei_i; undoing in reverse means clicking ei_i back.
+      // Solution = [picks[198], picks[197], ..., picks[0], TOTAL-1]
+      const solution = picks.slice(0, -1).reverse().concat([TOTAL - 1]);
+      return { board: arr, solution };
     }
 
     // ===== BOARD RENDERING (absolute-positioned tiles, CSS transitions) =====
@@ -614,14 +622,31 @@
       if (!gameActive) return;
       gameActive = false;
       clearInterval(timerInterval);
-      board = solvedBoard();
-      updateTilePositions(true);
-      setTimeout(onWin, 200);
+
+      // Reset to the original shuffled position (instant, no animation)
+      board = [...shuffledBoard];
+      updateTilePositions(false);
+
+      // Speed: target ~8 seconds total, min 50ms/move, max 180ms/move
+      const delay = Math.min(180, Math.max(50, Math.floor(8000 / solutionPath.length)));
+      let i = 0;
+
+      function step() {
+        if (i >= solutionPath.length) { setTimeout(onWin, 250); return; }
+        const next = moveTile(board, solutionPath[i]);
+        if (next) { board = next; updateTilePositions(true); vibrate(6); }
+        i++;
+        setTimeout(step, delay);
+      }
+      setTimeout(step, 180); // small pause before starting
     }
 
     function startGame(photo, seed) {
       currentSeed = seed || Math.floor(Math.random() * 1000000);
-      board = shuffle(solvedBoard(), currentSeed);
+      const result = shuffle(solvedBoard(), currentSeed);
+      board = result.board;
+      shuffledBoard = [...result.board];
+      solutionPath = result.solution;
       moveCount = 0; secondsElapsed = 0; gameActive = true;
       document.getElementById('moves').textContent = '0 מהלכים';
       document.getElementById('timer').textContent = '00:00';
