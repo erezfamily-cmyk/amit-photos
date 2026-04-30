@@ -128,6 +128,7 @@
   .section {
     margin-top: 28px;
   }
+  .section p + p, .section .mt-sm { margin-top: 0.75rem; }
   .section-title {
     font-size: 11.5pt;
     font-weight: 700;
@@ -1246,10 +1247,152 @@
 
 </div><!-- /content -->
 
+<!-- ======================================================
+     פרק 09 — עדכונים אפריל 2026
+====================================================== -->
+<div class="chapter break">
+  <div class="chapter-num">פרק 09</div>
+  <div class="chapter-title">עדכונים — אפריל 2026</div>
+  <div class="chapter-desc">כל השינויים שבוצעו: פאזל, הנחות, סושיאל, אדמין, תיקוני Actions</div>
+</div>
+
+<div class="section">
+  <div class="section-title">פאזל הזזה (puzzle/index.html)</div>
+
+  <p>דף משחק עצמאי — פאזל הזזה קלאסי (8-puzzle / 15-puzzle) על תמונות של עמית. HTML + CSS + JS בקובץ אחד, ללא תלויות חיצוניות.</p>
+
+  <table>
+    <thead><tr><th>פיצ'ר</th><th>פירוט</th></tr></thead>
+    <tbody>
+      <tr><td><strong>מסך פתיחה</strong></td><td>Splash עם לוגו + OG tags לשיתוף ברשתות חברתיות</td></tr>
+      <tr><td><strong>קושי</strong></td><td>בחירת 3×3 / 4×4, החלפת תמונה תוך כדי משחק</td></tr>
+      <tr><td><strong>אנימציית קוביות</strong></td><td>כל קוביה ממוקמת באבסולוט עם <code>transition: left/top 0.12s ease</code></td></tr>
+      <tr><td><strong>טעינת תמונה</strong></td><td>Shimmer skeleton עד שהתמונה עולה (composite-only, <code>will-change: transform</code>)</td></tr>
+      <tr><td><strong>שליטה מובייל</strong></td><td>Swipe (touch events), <code>100dvh</code>, <code>overscroll-behavior:none</code>, touch targets 44px, haptic feedback</td></tr>
+      <tr><td><strong>שליטה דסקטופ</strong></td><td>לחיצה על קוביה סמוכה לריק, חצי מקלדת</td></tr>
+      <tr><td><strong>פתרון אוטומטי (💡)</strong></td><td>אנימציה שמזיזה את הקוביות ופותרת את הפאזל לבד. אלגוריתם: תיעוד <code>picks[]</code> בזמן הערבוב → פתרון = <code>picks.slice(0,-1).reverse().concat([TOTAL-1])</code></td></tr>
+      <tr><td><strong>סטטיסטיקות</strong></td><td>שעון + מונה מהלכים, שיאים אישיים ב-localStorage לפי גודל לוח</td></tr>
+      <tr><td><strong>מסך ניצחון</strong></td><td>תמונה, זמן + מהלכים, השוואה לשיא, countdown 24 שעות להנחה</td></tr>
+      <tr><td><strong>לינק הנחה</strong></td><td><code>https://amitphotos.com/?photo=&lt;id&gt;&amp;discount=puzzle</code> — מפעיל 20% הנחה אוטומטית בגלריה</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="section">
+  <div class="section-title">הנחת פאזל — אינטגרציה בגלריה (gallery.js)</div>
+
+  <table>
+    <thead><tr><th>רכיב</th><th>שינוי</th></tr></thead>
+    <tbody>
+      <tr><td><code>puzzleDiscountPhotoId</code></td><td>משתנה גלובלי — מוגדר כשמגיעים עם <code>?discount=puzzle&amp;photo=ID</code></td></tr>
+      <tr><td><code>PUZZLE_DISCOUNT = 0.20</code></td><td>קבוע 20% הנחה</td></tr>
+      <tr><td><code>handleInitialHash()</code></td><td>שומר את ה-ID, פותח לייטבוקס, מציג בנר עם לינק וואטסאפ מוכן</td></tr>
+      <tr><td><code>getEffectivePrice()</code></td><td>מחיל 20% הנחה לפוטו שהגיע מפאזל. סדר עדיפות: price_overrides → week_photo_discount → puzzle_discount → מחיר רגיל</td></tr>
+      <tr><td><code>openBuyModal()</code></td><td>מציג מחיר מוקהה (<code>&lt;s&gt;</code>) + מחיר מוזל + בדג' <code>🧩 הנחת פאזל</code></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="section">
+  <div class="section-title">שיפורי אדמין (admin.html)</div>
+
+  <table>
+    <thead><tr><th>שינוי</th><th>פירוט</th></tr></thead>
+    <tbody>
+      <tr><td><strong>בדג' ⭐ שבוע</strong></td><td>מוצג על כרטיסיית תמונה כשיש <code>is_week_photo = true</code> (לא היה קיים לפני)</td></tr>
+      <tr><td><strong>כפתור 🧩</strong></td><td>בשורת פעולות של כל תמונה — לחיצה מעתיקה לינק הנחת פאזל ללוח: <code>https://amitphotos.com/?photo=&lt;id&gt;&amp;discount=puzzle</code></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="section">
+  <div class="section-title">עדכון סגנון כיתובים — כל פלטפורמות הסושיאל</div>
+
+  <p><strong>לפני:</strong> כיתוב שירי/רגשי בגוף ראשון. <strong>אחרי:</strong> עובדתי + טכני — מה בפריים, החלטה טכנית, נתוני EXIF.</p>
+
+  <table>
+    <thead><tr><th>פלטפורמה</th><th>קובץ</th><th>מבנה כיתוב</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>Instagram</td>
+        <td><code>src/instagram_post.py</code></td>
+        <td>1. מה בפריים + ז'אנר + מיקום &nbsp;2. החלטה טכנית/קומפוזיציונית &nbsp;3. שורת EXIF (אם קיים) &nbsp;4. "זמין לרכישה — amitphotos.com" &nbsp;5. hashtags</td>
+      </tr>
+      <tr>
+        <td>Facebook</td>
+        <td><code>src/facebook_post.py</code></td>
+        <td>אותו מבנה + לינק רכישה ישיר לתמונה</td>
+      </tr>
+      <tr>
+        <td>תמונת השבוע</td>
+        <td><code>src/week_photo_social.py</code></td>
+        <td>אותו מבנה — פורסם לאינסטגרם ופייסבוק במקביל</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p class="mt-sm"><strong>שדות EXIF שנוספו:</strong> aperture · shutter · focal · ISO · camera — נאספים ומוצגים כשורה אחת: <code>f/2.8 · 1/500s · 85mm · ISO 400 · Nikon Z6</code></p>
+</div>
+
+<div class="section">
+  <div class="section-title">תיקוני GitHub Actions</div>
+
+  <table>
+    <thead><tr><th>בעיה</th><th>שגיאה</th><th>תיקון</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>Anthropic 5MB limit</strong></td>
+        <td><code>image exceeds 5 MB maximum</code></td>
+        <td>הפחתת <code>max_bytes</code> מ-4.5MB ל-3.75MB (base64 מנפח ×1.33, כך 4.5MB raw → ~6MB base64). הקטנת מימדים מ-7000px ל-2000px לפני קידוד. שינוי בכל 3 הסקריפטים.</td>
+      </tr>
+      <tr>
+        <td><strong>Instagram דוחה catbox URLs</strong></td>
+        <td><code>Only photo or video can be accepted</code></td>
+        <td>אם ה-URL כבר ב-amitphotos.com (R2/Cloudflare) — משתמשים ישירות. אחרת מעלים ל-R2 שלנו דרך <code>/api/admin/upload-story</code>. נוסף <code>ADMIN_TOKEN</code> ל-instagram-post.yml.</td>
+      </tr>
+      <tr>
+        <td><strong>pillow חסר בפייסבוק</strong></td>
+        <td>ImportError בזמן דחיסת תמונה</td>
+        <td>נוסף <code>pillow</code> ל-facebook-post.yml</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="section">
+  <div class="section-title">פרומו פאזל שבועי (src/puzzle_social_post.py)</div>
+
+  <p>Workflow חדש שמתפרסם אוטומטית כל יום שני ב-18:00 ישראל לאינסטגרם ופייסבוק.</p>
+
+  <table>
+    <thead><tr><th>שלב</th><th>פירוט</th></tr></thead>
+    <tbody>
+      <tr><td>בחירת תמונה</td><td>רנדומלית מ-API</td></tr>
+      <tr><td>Claude Vision</td><td>מנתח התמונה + מייצר כיתוב עברי: משפט מסקרן על התמונה + הזמנה לשחק + "20% הנחה" + לינק</td></tr>
+      <tr><td>העלאה</td><td>R2 ישיר אם קיים, אחרת upload דרך admin API</td></tr>
+      <tr><td>פרסום</td><td>Instagram Graph API + Facebook Graph API</td></tr>
+      <tr><td>Cron</td><td><code>0 15 * * 1</code> — כל שני 15:00 UTC = 18:00 ישראל</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<hr>
+
+<div class="info-box">
+  <strong>📊 סיכום</strong>
+  amitphotos.com הוא אתר מלא ומקצועי הפועל על תשתית Cloudflare (Worker + D1 + R2), מנוהל ע"י Admin מלא,
+  עם אוטומציות ל-3 רשתות חברתיות, חנות הדפסות פיזיות אוטומטית לחלוטין, ו-AI מוטמע ב-5 נקודות שונות.
+  המערכת פועלת כמעט ללא מגע ידני יום-יומי — מלבד חידוש טוקן פייסבוק לפעמים.
+  <br><br>
+  <strong>נוסף באפריל 2026:</strong> פאזל הזזה עם מערכת הנחות אוטומטית, פרומו שבועי לסושיאל, תיקוני GitHub Actions, ועדכון סגנון כיתובים לכל הפלטפורמות.
+</div>
+
+</div><!-- /content -->
+
 <!-- FOOTER -->
 <div class="doc-footer">
   <span>amitphotos.com — מסמך אדריכלות</span>
-  <span>גרסה 2.0 | אפריל 2026 | <span>סודי — לשימוש פנימי</span></span>
+  <span>גרסה 2.1 | אפריל 2026 | <span>סודי — לשימוש פנימי</span></span>
 </div>
 
 </div><!-- /page-wrap -->
