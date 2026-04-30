@@ -317,10 +317,10 @@ function buildOptions(correct) {
 
 async function loadQuestions() {
   try {
-    const resp = await fetch('/api/photos');
+    const resp = await fetch(`/api/quiz-photos?v=${Date.now()}`);
     if (!resp.ok) throw new Error('API error');
     const photos = await resp.json();
-    const eligible = photos.filter(p => p.quiz_eligible);
+    const eligible = photos;
     if (eligible.length < QUESTIONS) {
       document.getElementById('error-msg').textContent =
         `לא מספיק תמונות לקוויז (${eligible.length} מתוך ${QUESTIONS} נדרשות).`;
@@ -328,7 +328,10 @@ async function loadQuestions() {
       document.getElementById('loading').style.display = 'none';
       return false;
     }
-    const selected = shuffle(eligible).slice(0, QUESTIONS);
+    const weekPhoto = eligible.find(p => p.is_week_photo);
+    const pool = weekPhoto ? eligible.filter(p => !p.is_week_photo) : eligible;
+    const rest = shuffle(pool).slice(0, weekPhoto ? QUESTIONS - 1 : QUESTIONS);
+    const selected = shuffle(weekPhoto ? [weekPhoto, ...rest] : rest);
     questions = selected.map(photo => {
       const correctCountry = CATEGORY_COUNTRY[photo.category] || photo.category;
       return { photo, correctCountry, options: buildOptions(correctCountry) };
@@ -456,8 +459,20 @@ function showResult() {
   });
 
   if (won) {
-    document.getElementById('discount-box').style.display = '';
+    const discountKey = 'quiz_discount_used';
+    const lastWin = parseInt(localStorage.getItem(discountKey) || '0');
+    const hoursSince = (Date.now() - lastWin) / 3600000;
+    const discountActive = hoursSince >= 24;
+    if (discountActive) localStorage.setItem(discountKey, Date.now());
+
+    document.getElementById('discount-box').style.display = discountActive ? '' : 'none';
     document.getElementById('btn-gallery').style.display = '';
+    document.getElementById('btn-gallery').href = discountActive
+      ? `${SITE_URL}/?discount=quiz`
+      : SITE_URL;
+    document.getElementById('btn-gallery').textContent = discountActive
+      ? '🛍️ לגלריה עם ההנחה'
+      : '🛍️ לגלריה';
     const waText = encodeURIComponent(`ניצחתי במשחק "מאיפה הצילום?" של עמית! קיבלתי 20% הנחה 🎁 — ${QUIZ_URL}`);
     document.getElementById('btn-share').href = `https://wa.me/?text=${waText}`;
   } else {
