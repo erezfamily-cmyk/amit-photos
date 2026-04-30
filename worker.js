@@ -352,6 +352,18 @@ async function handlePhotos(request, env) {
   return jsonRes({ error: 'method not allowed' }, 405);
 }
 
+async function handleQuizPhotos(request, env) {
+  const { results } = await env.DB.prepare(
+    'SELECT id, title, category, thumbnail, url, quiz_description FROM photos WHERE published=1 AND quiz_eligible=1'
+  ).all();
+  const weekRow = await env.DB.prepare(
+    "SELECT value FROM settings WHERE key='photo_of_week_id'"
+  ).first();
+  const weekId = weekRow?.value || '';
+  const photos = results.map(p => weekId && p.id === weekId ? { ...p, is_week_photo: true } : p);
+  return jsonRes(photos);
+}
+
 // ===== REPAIR R2 — overwrite existing R2 key without touching D1 =====
 async function handleRepairR2(request, env) {
   if (request.method !== 'POST') return jsonRes({ error: 'method not allowed' }, 405, request);
@@ -2118,6 +2130,7 @@ export default {
     if (path === '/api/subscribers')       return handleSubscribers(request, env);
     if (path === '/api/customers')         return handleCustomers(request, env);
     if (path === '/api/photos')            return handlePhotos(request, env);
+    if (path === '/api/quiz-photos')       return handleQuizPhotos(request, env);
     if (path === '/api/upload')            return handleUpload(request, env);
     if (path === '/api/repair-r2')         return handleRepairR2(request, env);
     if (path === '/api/fill-titles')       return handleFillTitles(request, env);
