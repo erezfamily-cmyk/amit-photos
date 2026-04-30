@@ -387,6 +387,7 @@ function handleAnswer(chosen, clickedBtn) {
     clickedBtn.classList.add('correct');
     document.getElementById('feedback').textContent = '✅ נכון! ניחשת יפה';
     document.getElementById('feedback').className = 'feedback correct';
+    document.getElementById('feedback').style.display = '';
   } else {
     results.push(false);
     clickedBtn.classList.add('wrong');
@@ -396,6 +397,7 @@ function handleAnswer(chosen, clickedBtn) {
     });
     document.getElementById('feedback').textContent = `❌ טעות — התשובה הנכונה: ${q.correctCountry}`;
     document.getElementById('feedback').className = 'feedback wrong';
+    document.getElementById('feedback').style.display = '';
   }
 
   // Disable all buttons
@@ -431,7 +433,7 @@ function nextQuestion() {
 function showResult() {
   document.getElementById('game-screen').style.display = 'none';
   const resultScreen = document.getElementById('result-screen');
-  resultScreen.style.display = '';
+  resultScreen.style.display = 'block';
 
   const won = score >= WIN_SCORE;
 
