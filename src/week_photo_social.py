@@ -167,23 +167,29 @@ def generate_caption(photo):
     if exif.get("iso"):       meta_lines.append(f"ISO: {exif['iso']}")
     meta_text = "\n".join(meta_lines) if meta_lines else ""
 
-    prompt = f"""אתה עמית, צלם ישראלי. נתח את התמונה וכתוב פוסט בגוף ראשון בעברית.
+    exif_parts = []
+    if exif.get("aperture"): exif_parts.append(f"f/{exif['aperture']}")
+    if exif.get("shutter"):  exif_parts.append(f"{exif['shutter']}s")
+    if exif.get("focal"):    exif_parts.append(f"{exif['focal']}mm")
+    if exif.get("iso"):      exif_parts.append(f"ISO {exif['iso']}")
+    if exif.get("camera"):   exif_parts.append(exif['camera'])
+    exif_line = " · ".join(exif_parts) if exif_parts else ""
 
-כתוב:
-- מה צילמת ואיפה
-- מה הרגשת ברגע הצילום
-- איך צילמת — אור, זמן, טכניקה (בהתבסס על מה שאתה רואה בתמונה ועל המטא-דאטה)
+    prompt = f"""Write a social media post for this photo by Israeli photographer Amit.
 
-כללים:
-- גוף ראשון (אני, צילמתי, הלכתי)
-- עברית בלבד, ללא תווי ערבית
-- סגנון אישי, חם, אמיתי — לא פרסומי
-- אל תתחיל ב"אני" — תתחיל ישירות מהסצנה
-- כ-120 מילים
+Metadata:
+{meta_text or '(not available)'}
+EXIF summary: {exif_line or '(not available)'}
 
-{f"מטא-דאטה:{chr(10)}{meta_text}" if meta_text else ""}
+Post structure (exactly in this order):
+1. One sentence: what is in the frame — subject, genre (macro/landscape/portrait/long exposure/etc.), location if identifiable.
+2. One sentence: the key technical or compositional decision — lighting conditions, time of day, framing choice.
+3. If EXIF data is available — one line listing the shooting settings (aperture, shutter speed, focal length, ISO, camera). If not available, skip this line entirely.
 
-כתוב רק את הטקסט עצמו, ללא כותרת."""
+Rules:
+- Write in Hebrew only. Never mix Arabic script with Hebrew characters.
+- Be specific and factual — no metaphors, no emotional language.
+- Output only the post text, no titles or extra explanations."""
 
     msg = client.messages.create(
         model="claude-sonnet-4-6",
