@@ -305,30 +305,39 @@ async function handlePhotos(request, env) {
   }
 
   if (method === 'PATCH') {
-    const { id, title, category, description, published } = await request.json().catch(() => ({}));
-    if (!id) return jsonRes({ error: 'id חסר' }, 400);
+    if (!await checkAuth(request, env)) return unauth(request);
+    const body = await request.json().catch(() => ({}));
+    const { id } = body;
+    if (!id) return jsonRes({ error: 'id חסר' }, 400, request);
 
-    // פרסום/ביטול פרסום בלבד
-    if (published !== undefined) {
-      await env.DB.prepare('UPDATE photos SET published=? WHERE id=?').bind(published ? 1 : 0, id).run();
-      return jsonRes({ ok: true, published: published ? 1 : 0 });
+    if (body.published !== undefined) {
+      await env.DB.prepare('UPDATE photos SET published=? WHERE id=?').bind(body.published ? 1 : 0, id).run();
+      return jsonRes({ ok: true, published: body.published ? 1 : 0 }, 200, request);
     }
 
-    let finalTitle = title || '';
+    if (body.quiz_eligible !== undefined || body.quiz_description !== undefined) {
+      const current = await env.DB.prepare('SELECT quiz_eligible, quiz_description FROM photos WHERE id=?').bind(id).first();
+      if (!current) return jsonRes({ error: 'תמונה לא נמצאה' }, 404, request);
+      const newEligible = body.quiz_eligible !== undefined ? (body.quiz_eligible ? 1 : 0) : current.quiz_eligible;
+      const newDesc     = body.quiz_description !== undefined ? body.quiz_description : current.quiz_description;
+      await env.DB.prepare('UPDATE photos SET quiz_eligible=?, quiz_description=? WHERE id=?').bind(newEligible, newDesc, id).run();
+      return jsonRes({ ok: true, quiz_eligible: newEligible, quiz_description: newDesc }, 200, request);
+    }
+
+    let finalTitle = body.title || '';
     // אם הכותרת גנרית — נסה לייצר עברית אוטומטית
     if (isGenericTitle(finalTitle)) {
       const row = await env.DB.prepare('SELECT r2_key FROM photos WHERE id=?').bind(id).first();
       if (row?.r2_key) {
         const origin = new URL(request.url).origin;
-        const aiTitle = await generateHebrewTitle(`${origin}/photos/${row.r2_key}`, category || '', env);
+        const aiTitle = await generateHebrewTitle(`${origin}/photos/${row.r2_key}`, body.category || '', env);
         if (aiTitle) finalTitle = aiTitle;
       }
     }
-
     await env.DB.prepare(
       'UPDATE photos SET title=?,category=?,description=? WHERE id=?'
-    ).bind(finalTitle, category||'', description||'', id).run();
-    return jsonRes({ ok: true, title: finalTitle });
+    ).bind(finalTitle, body.category || '', body.description || '', id).run();
+    return jsonRes({ ok: true, title: finalTitle }, 200, request);
   }
 
   if (method === 'DELETE') {
