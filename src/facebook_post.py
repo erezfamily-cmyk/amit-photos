@@ -79,11 +79,35 @@ def get_hashtags(category):
     return random.choice(pool)
 
 
-def fetch_image_as_base64(url):
+def fetch_image_as_base64(url, max_bytes=3_750_000):
+    # max_bytes is raw limit: base64 inflates ~33%, so 3.75MB raw → ~5MB base64 (Anthropic limit)
     resp = requests.get(url, timeout=30)
     resp.raise_for_status()
     content_type = resp.headers.get("Content-Type", "image/jpeg").split(";")[0].strip()
-    b64 = base64.standard_b64encode(resp.content).decode("utf-8")
+    img_bytes = resp.content
+
+    try:
+        from PIL import Image
+        import io
+        img = Image.open(io.BytesIO(img_bytes))
+        img = img.convert("RGB")
+        if max(img.size) > 2000:
+            img.thumbnail((2000, 2000), Image.LANCZOS)
+            print(f"📐 שינוי גודל: {img.size}")
+        quality = 85
+        while quality >= 40:
+            buf = io.BytesIO()
+            img.save(buf, format="JPEG", quality=quality)
+            img_bytes = buf.getvalue()
+            if len(img_bytes) <= max_bytes:
+                break
+            quality -= 15
+        content_type = "image/jpeg"
+        print(f"🗜️  דחוס ל-{len(img_bytes)//1024}KB (quality={quality})")
+    except ImportError:
+        pass
+
+    b64 = base64.standard_b64encode(img_bytes).decode("utf-8")
     return b64, content_type
 
 

@@ -111,7 +111,8 @@ def get_week_photo():
     return week
 
 
-def fetch_image_as_base64(url, max_bytes=4_500_000):
+def fetch_image_as_base64(url, max_bytes=3_750_000):
+    # max_bytes is raw limit: base64 inflates ~33%, so 3.75MB raw → ~5MB base64 (Anthropic limit)
     """מוריד תמונה ומחזיר base64 + mime type. דוחס אם צריך."""
     if url.startswith("/"):
         url = f"{SITE_URL}{url}"
@@ -123,8 +124,8 @@ def fetch_image_as_base64(url, max_bytes=4_500_000):
         from PIL import Image
         import io
         img = Image.open(io.BytesIO(img_bytes)).convert("RGB")
-        if max(img.size) > 7000:
-            img.thumbnail((7000, 7000), Image.LANCZOS)
+        if max(img.size) > 2000:
+            img.thumbnail((2000, 2000), Image.LANCZOS)
         quality = 85
         while quality >= 40:
             buf = io.BytesIO()
