@@ -915,10 +915,7 @@ function handleInitialHash() {
     const banner = document.getElementById('puzzle-discount-banner');
     if (banner) {
       banner.classList.remove('hidden');
-      const bannerTitle = banner.querySelector('.puzzle-discount-title');
-      const bannerSub   = banner.querySelector('.puzzle-discount-sub');
-      if (bannerTitle) bannerTitle.textContent = '🌍 הנחת קוויז 20%';
-      if (bannerSub)   bannerSub.textContent   = 'ניצחת במשחק — ההנחה בתוקף על כל התמונות';
+      banner.innerHTML = '🎁 ניצחת בקוויז! <strong>20% הנחה</strong> על כל תמונות הגלריה';
     }
     return;
   }
