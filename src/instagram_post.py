@@ -104,36 +104,34 @@ def get_hashtags(category):
     return f"{base} {always}"
 
 
-def fetch_image_as_base64(url, max_bytes=4_500_000):
+def fetch_image_as_base64(url, max_bytes=3_750_000):
+    # max_bytes is raw limit: base64 inflates ~33%, so 3.75MB raw → ~5MB base64 (Anthropic limit)
     resp = requests.get(url, timeout=30)
     resp.raise_for_status()
     content_type = resp.headers.get("Content-Type", "image/jpeg").split(";")[0].strip()
     img_bytes = resp.content
 
-    if True:  # תמיד נעבד כדי לבדוק מימדים וגודל
-        try:
-            from PIL import Image
-            import io
-            img = Image.open(io.BytesIO(img_bytes))
-            img = img.convert("RGB")
-            # הגבל מימדים ל-7000 פיקסל בצד הארוך
-            max_dim = 7000
-            if max(img.size) > max_dim:
-                img.thumbnail((max_dim, max_dim), Image.LANCZOS)
-                print(f"📐 שינוי גודל: {img.size}")
-            # דחוס עד שמתאים ל-4.5MB
-            quality = 85
-            while quality >= 40:
-                buf = io.BytesIO()
-                img.save(buf, format="JPEG", quality=quality)
-                img_bytes = buf.getvalue()
-                if len(img_bytes) <= max_bytes:
-                    break
-                quality -= 15
-            content_type = "image/jpeg"
-            print(f"🗜️  דחוס ל-{len(img_bytes)//1024}KB (quality={quality})")
-        except ImportError:
-            pass
+    try:
+        from PIL import Image
+        import io
+        img = Image.open(io.BytesIO(img_bytes))
+        img = img.convert("RGB")
+        max_dim = 2000
+        if max(img.size) > max_dim:
+            img.thumbnail((max_dim, max_dim), Image.LANCZOS)
+            print(f"📐 שינוי גודל: {img.size}")
+        quality = 85
+        while quality >= 40:
+            buf = io.BytesIO()
+            img.save(buf, format="JPEG", quality=quality)
+            img_bytes = buf.getvalue()
+            if len(img_bytes) <= max_bytes:
+                break
+            quality -= 15
+        content_type = "image/jpeg"
+        print(f"🗜️  דחוס ל-{len(img_bytes)//1024}KB (quality={quality})")
+    except ImportError:
+        pass
 
     b64 = base64.standard_b64encode(img_bytes).decode("utf-8")
     return b64, content_type
@@ -329,12 +327,18 @@ def _try_0x0(img_bytes):
 
 
 def post_to_instagram(photo, caption):
-    source_url = photo.get("thumbnail") or photo.get("url")
+    # Prefer full-res R2 URL; Instagram requires a publicly accessible CDN URL
+    source_url = photo.get("url") or photo.get("thumbnail")
     if source_url and source_url.startswith("/"):
         source_url = f"{SITE_URL}{source_url}"
 
-    print("⬆️  מעלה תמונה לשרת ציבורי...")
-    image_url = upload_to_public_host(source_url)
+    # If already on our CDN (Cloudflare R2), use directly — avoids unreliable third-party hosts
+    if source_url and source_url.startswith(f"{SITE_URL}/"):
+        print(f"⬆️  תמונה ב-R2, URL ישיר: {source_url}")
+        image_url = source_url
+    else:
+        print("⬆️  מעלה תמונה לשרת ציבורי...")
+        image_url = upload_to_public_host(source_url)
 
     container_resp = requests.post(f"{GRAPH_API}/{IG_USER_ID}/media", data={
         "image_url": image_url, "caption": caption, "access_token": ACCESS_TOKEN,
