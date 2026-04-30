@@ -21,6 +21,7 @@ GRAPH_API   = "https://graph.facebook.com/v21.0"
 IG_USER_ID        = os.environ.get("INSTAGRAM_USER_ID", "")
 ACCESS_TOKEN      = os.environ.get("INSTAGRAM_PAGE_TOKEN", "")
 ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "").strip()
+ADMIN_TOKEN       = os.environ.get("ADMIN_TOKEN", "")
 
 # ===== Hashtag pools לפי קטגוריה (rotation למניעת shadowban) =====
 HASHTAG_POOLS = {
@@ -238,12 +239,27 @@ Write in Hebrew. Be specific — no metaphors, no emotional language. Output onl
     return f"{caption_text}\n\n{hashtags}"
 
 
+def _try_r2(img_bytes):
+    if not ADMIN_TOKEN:
+        return None
+    r = requests.post(
+        f"{SITE_URL}/api/admin/upload-story",
+        data=img_bytes,
+        headers={"Authorization": f"Bearer {ADMIN_TOKEN}", "Content-Type": "image/jpeg"},
+        timeout=60,
+    )
+    r.raise_for_status()
+    url = r.json().get("url", "")
+    return url if url.startswith("http") else None
+
+
 def upload_to_public_host(source_url):
     resp = requests.get(source_url, timeout=30)
     resp.raise_for_status()
     img_bytes = resp.content
 
     hosts = [
+        ("r2", _try_r2),
         ("litterbox", _try_litterbox),
         ("catbox", _try_catbox),
         ("tmpfiles", _try_tmpfiles),
