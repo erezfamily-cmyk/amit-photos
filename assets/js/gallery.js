@@ -36,6 +36,8 @@ let slideshowTimer = null;
 let isZoomed = false;
 let puzzleDiscountPhotoId = null; // set when arriving from puzzle with ?discount=puzzle
 const PUZZLE_DISCOUNT = 0.20;
+let quizDiscountActive = false; // set when arriving from quiz with ?discount=quiz
+const QUIZ_DISCOUNT = 0.20;
 
 // ===== IMAGE PROTECTION =====
 document.addEventListener('keydown', e => {
@@ -908,6 +910,18 @@ function handleInitialHash() {
     }
     return;
   }
+  if (urlParams.get('discount') === 'quiz') {
+    quizDiscountActive = true;
+    const banner = document.getElementById('puzzle-discount-banner');
+    if (banner) {
+      banner.classList.remove('hidden');
+      const bannerTitle = banner.querySelector('.puzzle-discount-title');
+      const bannerSub   = banner.querySelector('.puzzle-discount-sub');
+      if (bannerTitle) bannerTitle.textContent = '🌍 הנחת קוויז 20%';
+      if (bannerSub)   bannerSub.textContent   = 'ניצחת במשחק — ההנחה בתוקף על כל התמונות';
+    }
+    return;
+  }
   const hash = window.location.hash;
   if (hash.startsWith('#filter-')) {
     const cat = hash.replace('#filter-', '');
@@ -1206,6 +1220,9 @@ function getEffectivePrice(photoId, size) {
   if (puzzleDiscountPhotoId && String(photoId) === String(puzzleDiscountPhotoId)) {
     return Math.round(globalPrices[size] * (1 - PUZZLE_DISCOUNT));
   }
+  if (quizDiscountActive) {
+    return Math.round(globalPrices[size] * (1 - QUIZ_DISCOUNT));
+  }
   return globalPrices[size];
 }
 
@@ -1281,7 +1298,13 @@ function openBuyModal(photo) {
       const badge = document.createElement('span');
       badge.className = 'buy-size-sale-badge';
       const isPuzzle = puzzleDiscountPhotoId && String(photo.id) === String(puzzleDiscountPhotoId);
-      badge.textContent = photo.is_week_photo ? '⭐ תמונת השבוע' : (isPuzzle ? '🧩 הנחת פאזל' : '🏷 מבצע');
+      badge.textContent = photo.is_week_photo
+        ? '⭐ תמונת השבוע'
+        : isPuzzle
+          ? '🧩 הנחת פאזל'
+          : quizDiscountActive
+            ? '🌍 הנחת קוויז'
+            : '🏷 מבצע';
       btn.appendChild(badge);
     } else {
       if (priceEl) priceEl.textContent = `₪${price}`;
@@ -1346,7 +1369,13 @@ function showBuyStep2(photo, size) {
   document.getElementById('buy-original-price').textContent = `₪${originalPrice}`;
   const discountRow = document.getElementById('buy-discount-row');
   if (effectivePrice < originalPrice) {
-    document.getElementById('buy-discount-label').textContent  = photo.is_week_photo ? '⭐ הנחת תמונת השבוע' : '🏷 הנחה';
+    document.getElementById('buy-discount-label').textContent = photo.is_week_photo
+      ? '⭐ הנחת תמונת השבוע'
+      : puzzleDiscountPhotoId && String(photo.id) === String(puzzleDiscountPhotoId)
+        ? '🧩 הנחת פאזל'
+        : quizDiscountActive
+          ? '🌍 הנחת קוויז'
+          : '🏷 הנחה';
     document.getElementById('buy-discount-amount').textContent = `−₪${originalPrice - effectivePrice}`;
     discountRow.classList.add('visible');
   } else {
