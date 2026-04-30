@@ -17,6 +17,8 @@
   <meta name="twitter:title" content="🧩 פאזל הזזה | עמית ארז" />
   <meta name="twitter:description" content="פתור את הפאזל וזכה ב-20% הנחה על תמונה אמנותית" />
   <meta name="twitter:image" content="https://lh3.googleusercontent.com/d/1mkj7yjz3I-Y951ZoHVSH_-6v8FjL66ap=w1200" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -106,10 +108,20 @@
       width: min(88vw, 400px); height: min(88vw, calc(100dvh - 260px), 400px);
       -webkit-user-select: none; user-select: none; touch-action: none;
     }
+    @keyframes tile-shimmer {
+      0%   { transform: translateX(-100%); }
+      100% { transform: translateX(200%); }
+    }
     .tile {
       position: absolute; background-color: #1c1c1c;
-      cursor: pointer; overflow: hidden;
+      cursor: pointer; overflow: hidden; border-radius: 3px;
       -webkit-tap-highlight-color: transparent;
+    }
+    .tile.loading::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.055) 50%, transparent 100%);
+      will-change: transform;
+      animation: tile-shimmer 1.4s ease infinite;
     }
     .tile:active { opacity: 0.7; transform: scale(0.97); }
     .tile.empty { background: #0d0d0d; cursor: default; }
@@ -416,10 +428,12 @@
         if (value !== 0) {
           const sr = Math.floor((value - 1) / SIZE);
           const sc = (value - 1) % SIZE;
+          tile.classList.add('loading');
           const img = document.createElement('img');
           img.src = photo.thumbnail;
           img.draggable = false;
           img.style.cssText = `position:absolute;width:${SIZE*100}%;height:${SIZE*100}%;top:${-sr*100}%;left:${-sc*100}%;pointer-events:none;user-select:none;`;
+          img.onload = () => tile.classList.remove('loading');
           tile.appendChild(img);
         }
         tile.addEventListener('click', () => handleTileClick(board.indexOf(value)));
