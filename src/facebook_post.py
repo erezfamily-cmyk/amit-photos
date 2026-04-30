@@ -118,28 +118,38 @@ def generate_caption(photo):
     if exif.get("focal"):    meta_lines.append(f"Focal length: {exif['focal']}mm")
     if exif.get("aperture"): meta_lines.append(f"Aperture: f/{exif['aperture']}")
     if exif.get("shutter"):  meta_lines.append(f"Shutter: {exif['shutter']}s")
+    if exif.get("iso"):      meta_lines.append(f"ISO: {exif['iso']}")
     meta_text = "\n".join(meta_lines) if meta_lines else "(no metadata)"
+
+    exif_parts = []
+    if exif.get("aperture"): exif_parts.append(f"f/{exif['aperture']}")
+    if exif.get("shutter"):  exif_parts.append(f"{exif['shutter']}s")
+    if exif.get("focal"):    exif_parts.append(f"{exif['focal']}mm")
+    if exif.get("iso"):      exif_parts.append(f"ISO {exif['iso']}")
+    if exif.get("camera"):   exif_parts.append(exif['camera'])
+    exif_line = " · ".join(exif_parts) if exif_parts else ""
 
     hashtags = get_hashtags(category)
 
-    system_prompt = """You are a social media manager for an Israeli photographer named Amit.
-Write Facebook posts in Hebrew — short, emotional, engaging.
-Style: intimate, artistic, inspiring. Not too promotional.
-CRITICAL: Use ONLY Hebrew characters for the Hebrew text. Never mix Arabic script with Hebrew.
-The post should feel like a short story about the moment in the photo.
-You may use 1-3 relevant emojis. Do not add hashtags — they will be added separately."""
+    system_prompt = """You are writing Facebook posts for an Israeli photographer named Amit.
+Style: factual, informative, educational — explain what was photographed and how it was shot.
+CRITICAL: Write in Hebrew only. Never mix Arabic script with Hebrew characters.
+Do not include hashtags."""
 
     user_content = image_content + [{"type": "text", "text": f"""Write a Facebook post for this photo.
 
 Metadata:
 {meta_text}
+EXIF summary: {exif_line or '(not available)'}
 
 Post structure (exactly in this order):
-1. 3-5 lines in Hebrew — describe the emotion/atmosphere/moment (Hebrew letters only, no Arabic)
-2. Empty line
-3. 🛍️ לרכישת התמונה: {buy_link}
+1. One sentence: what is in the frame — subject, genre (macro/landscape/portrait/long exposure/etc.), location if identifiable.
+2. One sentence: the key technical or compositional decision — lighting conditions, time of day, framing choice.
+3. If EXIF data is available — one line listing the shooting settings (aperture, shutter speed, focal length, ISO, camera). If not available, skip this line entirely.
+4. Empty line
+5. 🛍️ לרכישת התמונה: {buy_link}
 
-Output only the post text (no hashtags, no extra explanations).
+Write in Hebrew. Be specific and factual — no metaphors, no poetic language. Output only the post text.
 """}]
 
     msg = client.messages.create(
