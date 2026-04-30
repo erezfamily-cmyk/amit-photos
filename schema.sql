@@ -56,3 +56,17 @@ CREATE TABLE IF NOT EXISTS reset_tokens (
   token      TEXT PRIMARY KEY,
   expires_at TEXT NOT NULL
 );
+
+-- שדות שנוספו ב-ALTER TABLE לאחר יצירת הטבלה הראשונית:
+-- ALTER TABLE photos ADD COLUMN published INTEGER DEFAULT 1;
+-- ALTER TABLE photos ADD COLUMN price_overrides TEXT DEFAULT NULL;
+-- ALTER TABLE photos ADD COLUMN is_week_photo INTEGER DEFAULT 0;
+-- ALTER TABLE photos ADD COLUMN week_photo_discount REAL DEFAULT 0;
+-- ALTER TABLE photos ADD COLUMN week_photo_caption TEXT DEFAULT '';
+-- ALTER TABLE photos ADD COLUMN week_photo_caption_en TEXT DEFAULT '';
+-- ALTER TABLE photos ADD COLUMN width INTEGER DEFAULT 0;
+-- ALTER TABLE photos ADD COLUMN height INTEGER DEFAULT 0;
+-- ALTER TABLE photos ADD COLUMN added_at TEXT DEFAULT NULL;
+-- ALTER TABLE photos ADD COLUMN is_new INTEGER DEFAULT 0;
+-- ALTER TABLE photos ADD COLUMN quiz_eligible INTEGER DEFAULT 0;
+-- ALTER TABLE photos ADD COLUMN quiz_description TEXT DEFAULT '';
