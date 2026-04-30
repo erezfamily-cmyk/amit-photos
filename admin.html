@@ -206,6 +206,7 @@ input,textarea,select{font-family:var(--font);direction:rtl}
 .photo-actions{display:flex;gap:.4rem;margin-top:.65rem}
 .draft-badge{margin-right:.4rem;font-size:.68rem;font-weight:600;color:#e8a000;background:rgba(232,160,0,.12);border:1px solid rgba(232,160,0,.3);padding:.1rem .4rem;border-radius:10px;vertical-align:middle}
 .sale-badge{margin-right:.4rem;font-size:.68rem;font-weight:700;color:#34d399;background:rgba(52,211,153,.12);border:1px solid rgba(52,211,153,.35);padding:.1rem .4rem;border-radius:10px;vertical-align:middle}
+.btn-icon.quiz-active { color: #34d399; }
 .res-badge{margin-right:.3rem;font-size:.62rem;font-weight:600;padding:.1rem .35rem;border-radius:8px;vertical-align:middle}
 .res-ok{color:#34d399;background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.25)}
 .res-mid{color:#a78bfa;background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.25)}
@@ -1559,11 +1560,12 @@ const Photos = (() => {
             onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%2275%22%3E%3Crect fill=%22%23111%22 width=%22100%25%22 height=%22100%25%22/%3E%3C/svg%3E'">
         </div>
         <div class="photo-info">
-          <div class="photo-title">${p.title||'ללא כותרת'}${p.published===0?'<span class="draft-badge">טיוטה</span>':''}${isOnSale(p)?'<span class="sale-badge">🏷 מבצע</span>':''}${p.is_week_photo?'<span class="sale-badge" style="color:#f59e0b;background:rgba(245,158,11,.12);border-color:rgba(245,158,11,.35)">⭐ שבוע</span>':''}</div>
+          <div class="photo-title">${p.title||'ללא כותרת'}${p.published===0?'<span class="draft-badge">טיוטה</span>':''}${isOnSale(p)?'<span class="sale-badge">🏷 מבצע</span>':''}${p.is_week_photo?'<span class="sale-badge" style="color:#f59e0b;background:rgba(245,158,11,.12);border-color:rgba(245,158,11,.35)">⭐ שבוע</span>':''}${p.quiz_eligible?'<span class="sale-badge" style="color:#34d399;background:rgba(52,211,153,.1);border-color:rgba(52,211,153,.3)">🌍 קוויז</span>':''}</div>
           <span class="cat-badge">${p.category||'ללא קטגוריה'}</span>${(()=>{if(!p.width||!p.height)return'';const mx=Math.max(p.width,p.height);const cls=mx<2000?'res-badge res-low':mx<5000?'res-badge res-mid':'res-badge res-ok';return`<span class="${cls}">${p.width}×${p.height}</span>`;})()}
           <div class="photo-actions">
             <span class="drag-handle" onclick="event.stopPropagation()" title="גרור לסדר">⠿</span>
             <button class="btn-icon" title="העתק לינק הנחת פאזל 20%" onclick="event.stopPropagation();navigator.clipboard.writeText('https://amitphotos.com/?photo=${p.id}&discount=puzzle').then(()=>{this.textContent='✓';setTimeout(()=>{this.textContent='🧩';},1500)})">🧩</button>
+            <button class="btn-icon${p.quiz_eligible?' quiz-active':''}" title="לחיצה: העתק לינק קוויז | לחיצה כפולה: ${p.quiz_eligible?'הסר מקוויז':'סמן לקוויז'}" onclick="event.stopPropagation();navigator.clipboard.writeText('https://amitphotos.com/?discount=quiz').then(()=>{this.textContent='✓';setTimeout(()=>{this.textContent='🌍';},1500)})" ondblclick="event.stopPropagation();toggleQuizEligible('${p.id}',${!!p.quiz_eligible})">🌍</button>
             <button class="btn-icon" title="העתק ID" onclick="event.stopPropagation();navigator.clipboard.writeText('${p.id}').then(()=>{this.title='הועתק!';setTimeout(()=>this.title='העתק ID',1500)})">
               <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor"><rect x="9" y="9" width="13" height="13" rx="2" stroke-width="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke-width="2"/></svg>
             </button>
@@ -2165,8 +2167,26 @@ const Photos = (() => {
     }
   });
 
-  return { init: async () => { await init(); loadNewBadgeSettings(); loadPriceSettings(); }, openEdit, openEditById, confirmDelete, cardClick, toggleSelect, toggleNew, toggleFeatured, setPhotoPrice, filterByChip, getData: () => data };
+  return { init: async () => { await init(); loadNewBadgeSettings(); loadPriceSettings(); }, openEdit, openEditById, confirmDelete, cardClick, toggleSelect, toggleNew, toggleFeatured, setPhotoPrice, filterByChip, getData: () => data, render, get list() { return data; } };
 })();
+
+async function toggleQuizEligible(photoId, currentState) {
+  const newState = !currentState;
+  try {
+    const resp = await fetch('/api/photos', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', 'X-Session-Token': SESSION_TOKEN },
+      body: JSON.stringify({ id: photoId, quiz_eligible: newState }),
+    });
+    if (!resp.ok) throw new Error(await resp.text());
+    const data = await resp.json();
+    const photo = Photos.list.find(p => p.id === photoId);
+    if (photo) photo.quiz_eligible = data.quiz_eligible;
+    Photos.render();
+  } catch(e) {
+    alert('שגיאה: ' + e.message);
+  }
+}
 
 // ===== WEEK PHOTO =====
 const WeekPhoto = (() => {
