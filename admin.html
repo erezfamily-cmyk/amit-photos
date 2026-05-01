@@ -520,6 +520,10 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
         <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-1.5 6h13M7 13L5.4 5M10 21a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm7 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2z" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
         רכישות
       </div>
+      <div class="nav-item" data-section="learn">
+        <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        בית ספר לצילום
+      </div>
     </nav>
     <div class="sidebar-footer">
       <button class="btn-logout" id="logout-btn">התנתק</button>
@@ -874,6 +878,28 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
       </div>
     </section>
 
+    <!-- LEARN SECTION -->
+    <section class="section" id="section-learn">
+      <div class="section-header">
+        <h1 class="section-title">📚 בית ספר לצילום</h1>
+        <div class="section-actions">
+          <button type="button" class="btn btn-primary btn-sm" id="learn-generate-btn" onclick="learnGenerate()">ייצר ניתוח חדש עכשיו</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr>
+            <th>תמונה</th>
+            <th>כלל קומפוזיציה</th>
+            <th>פורסם</th>
+            <th>פעולות</th>
+          </tr></thead>
+          <tbody id="learn-table-body"></tbody>
+        </table>
+      </div>
+      <p id="learn-empty" class="empty-msg hidden">אין ניתוחים עדיין</p>
+    </section>
+
     <section id="section-purchases" class="section">
       <h2 class="section-title">רכישות</h2>
 
@@ -1083,6 +1109,53 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
   <div class="dialog-footer">
     <button class="btn btn-primary" id="save-cust-btn">שמור</button>
     <button class="btn btn-ghost" onclick="document.getElementById('cust-dialog').close()">ביטול</button>
+  </div>
+</dialog>
+
+<!-- LEARN EDIT DIALOG -->
+<dialog id="learn-edit-dialog" style="width:min(640px,95vw)">
+  <div class="dialog-header">
+    <span class="dialog-title">עריכת ניתוח צילום</span>
+    <button class="dialog-close" onclick="closeLearnModal()">✕</button>
+  </div>
+  <div class="dialog-body">
+    <input type="hidden" id="learn-edit-id">
+    <div class="form-field">
+      <label>טקסט קומפוזיציה (HTML)</label>
+      <textarea id="learn-edit-html" rows="5" placeholder="תוכן HTML לסעיף הקומפוזיציה..."></textarea>
+    </div>
+    <div class="form-row">
+      <div class="form-field">
+        <label>צמצם — הסבר</label>
+        <input type="text" id="learn-edit-aperture" placeholder="למשל: צמצם רחב f/1.8 יוצר בוקה עמוקה...">
+      </div>
+      <div class="form-field">
+        <label>מהירות תריס — הסבר</label>
+        <input type="text" id="learn-edit-shutter" placeholder="למשל: תריס מהיר 1/500 מקפיא תנועה...">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-field">
+        <label>ISO — הסבר</label>
+        <input type="text" id="learn-edit-iso" placeholder="למשל: ISO נמוך 100 מפחית רעש...">
+      </div>
+      <div class="form-field">
+        <label>עדשה / מיקוד — הסבר</label>
+        <input type="text" id="learn-edit-focal" placeholder="למשל: עדשה 85mm מאידאלית לפורטרטים...">
+      </div>
+    </div>
+    <div class="form-field">
+      <label>תגיות (מופרדות בפסיקים)</label>
+      <input type="text" id="learn-edit-tags" placeholder="בוקה, חוק השליש, תאורה טבעית">
+    </div>
+    <div class="form-field">
+      <label>הערות על נקודות (JSON מערך)</label>
+      <textarea id="learn-edit-annotations" rows="4" placeholder='[{"x":50,"y":30,"label":"נקודת מיקוד ראשית"}]'></textarea>
+    </div>
+  </div>
+  <div class="dialog-footer">
+    <button class="btn btn-primary" onclick="learnSave()">שמור</button>
+    <button class="btn btn-ghost" onclick="closeLearnModal()">ביטול</button>
   </div>
 </dialog>
 
@@ -1337,6 +1410,7 @@ document.querySelectorAll('.nav-item').forEach(item => {
     if (item.dataset.section === 'print-orders') PrintOrders.load();
     if (item.dataset.section === 'social') SocialSection.load();
     if (item.dataset.section === 'purchases') Purchases.load();
+    if (item.dataset.section === 'learn') loadLearn();
   });
 });
 
@@ -2895,6 +2969,137 @@ const Purchases = (() => {
     }
   };
 })();
+
+// ===== בית ספר לצילום =====
+const RULE_LABELS = {
+  rule_of_thirds: 'חוק השליש',
+  symmetry: 'סימטריה',
+  leading_lines: 'קווי הובלה',
+  golden_ratio: 'יחס הזהב',
+  framing: 'ממסגר',
+  negative_space: 'מרחב שלילי'
+};
+
+let currentAnalysis = null;
+
+async function loadLearn() {
+  try {
+    const res = await fetch('/api/analyses', { headers: authHeaders() });
+    if (!res.ok) throw new Error(await res.text());
+    const data = await res.json();
+    const tbody = $('learn-table-body');
+    const empty = $('learn-empty');
+    tbody.innerHTML = '';
+    if (!data.length) {
+      empty.classList.remove('hidden');
+      return;
+    }
+    empty.classList.add('hidden');
+    data.forEach(a => {
+      const ruleLabel = RULE_LABELS[a.composition_rule] || a.composition_rule || '—';
+      const published = a.published_at ? new Date(a.published_at).toLocaleDateString('he-IL') : '—';
+      const thumb = a.thumbnail ? `<img src="${a.thumbnail}" style="width:48px;height:36px;object-fit:cover;border-radius:3px;border:1px solid var(--border);vertical-align:middle;margin-left:.5rem" alt="">` : '';
+      const title = a.title || a.photo_id;
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${thumb}<span style="vertical-align:middle">${title}</span></td>
+        <td><span class="cat-badge">${ruleLabel}</span></td>
+        <td style="color:var(--text-muted);font-size:.85rem">${published}</td>
+        <td><button class="btn btn-ghost btn-sm" onclick="learnEdit('${a.photo_id}')">עריכה</button></td>
+      `;
+      tbody.appendChild(tr);
+    });
+  } catch(e) {
+    toast('שגיאה בטעינת ניתוחים: ' + e.message, 'error');
+  }
+}
+
+async function learnEdit(photoId) {
+  try {
+    const res = await fetch('/api/analyses/' + photoId, { headers: authHeaders() });
+    if (!res.ok) throw new Error(await res.text());
+    const analysis = await res.json();
+    currentAnalysis = analysis;
+
+    let camera = {};
+    try { camera = typeof analysis.camera_json === 'string' ? JSON.parse(analysis.camera_json) : (analysis.camera_json || {}); } catch {}
+    currentAnalysis.camera = camera;
+
+    let tags = [];
+    try { tags = typeof analysis.tags_json === 'string' ? JSON.parse(analysis.tags_json) : (analysis.tags_json || []); } catch {}
+
+    $('learn-edit-id').value = photoId;
+    $('learn-edit-html').value = analysis.composition_html || '';
+    $('learn-edit-aperture').value = (camera.aperture && camera.aperture.explanation) || '';
+    $('learn-edit-shutter').value = (camera.shutter && camera.shutter.explanation) || '';
+    $('learn-edit-iso').value = (camera.iso && camera.iso.explanation) || '';
+    $('learn-edit-focal').value = (camera.focal && camera.focal.explanation) || '';
+    $('learn-edit-tags').value = Array.isArray(tags) ? tags.join(', ') : (tags || '');
+    $('learn-edit-annotations').value = typeof analysis.annotations_json === 'string'
+      ? analysis.annotations_json
+      : JSON.stringify(analysis.annotations_json || [], null, 2);
+
+    document.getElementById('learn-edit-dialog').showModal();
+  } catch(e) {
+    toast('שגיאה בטעינת ניתוח: ' + e.message, 'error');
+  }
+}
+
+async function learnSave() {
+  const photoId = $('learn-edit-id').value;
+  const camera = currentAnalysis && currentAnalysis.camera ? currentAnalysis.camera : {};
+  const body = {
+    composition_html: $('learn-edit-html').value,
+    camera_json: JSON.stringify({
+      aperture: { value: (camera.aperture && camera.aperture.value) || '', explanation: $('learn-edit-aperture').value },
+      shutter:  { value: (camera.shutter  && camera.shutter.value)  || '', explanation: $('learn-edit-shutter').value },
+      iso:      { value: (camera.iso      && camera.iso.value)      || '', explanation: $('learn-edit-iso').value },
+      focal:    { value: (camera.focal    && camera.focal.value)    || '', explanation: $('learn-edit-focal').value }
+    }),
+    tags_json: JSON.stringify($('learn-edit-tags').value.split(',').map(t => t.trim()).filter(Boolean)),
+    annotations_json: $('learn-edit-annotations').value
+  };
+  try {
+    const res = await fetch('/api/analyses/' + photoId, {
+      method: 'PUT',
+      headers: authHeaders(),
+      body: JSON.stringify(body)
+    });
+    if (!res.ok) throw new Error(await res.text());
+    closeLearnModal();
+    loadLearn();
+    toast('ניתוח נשמר בהצלחה');
+  } catch(e) {
+    toast('שגיאה בשמירה: ' + e.message, 'error');
+  }
+}
+
+function closeLearnModal() {
+  document.getElementById('learn-edit-dialog').close();
+  currentAnalysis = null;
+}
+
+async function learnGenerate() {
+  const btn = $('learn-generate-btn');
+  btn.disabled = true;
+  btn.textContent = 'מייצר...';
+  try {
+    const res = await fetch('/api/analyses/generate', { method: 'POST', headers: authHeaders() });
+    const data = await res.json();
+    btn.disabled = false;
+    btn.textContent = 'ייצר ניתוח חדש עכשיו';
+    if (data.photo_id) {
+      toast('ניתוח חדש נוצר עבור: ' + (data.title || data.photo_id));
+      loadLearn();
+    } else {
+      toast('שגיאה: ' + (data.error || JSON.stringify(data)), 'error');
+    }
+  } catch(e) {
+    btn.disabled = false;
+    btn.textContent = 'ייצר ניתוח חדש עכשיו';
+    toast('שגיאה: ' + e.message, 'error');
+  }
+}
 </script>
 
 <!-- Price override popup -->
