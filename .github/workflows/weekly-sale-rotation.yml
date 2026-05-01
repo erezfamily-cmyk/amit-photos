@@ -1,0 +1,23 @@
+name: רוטציה שבועית — מבצע תמונות
+
+on:
+  schedule:
+    - cron: '0 21 * * 6'  # שבת 21:00 UTC = ראשון 00:00 ישראל
+  workflow_dispatch:
+
+jobs:
+  rotate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: הפעלת רוטציה
+        run: |
+          RESPONSE=$(curl -s -o /tmp/rotate_response.json -w "%{http_code}" \
+            -X POST https://amitphotos.com/api/sale/rotate \
+            -H "X-Admin-Password: ${{ secrets.ADMIN_PASSWORD }}")
+          echo "HTTP Status: $RESPONSE"
+          cat /tmp/rotate_response.json
+          if [ "$RESPONSE" != "200" ]; then
+            echo "❌ Rotation failed with status $RESPONSE"
+            exit 1
+          fi
+          echo "✅ Rotation succeeded"
