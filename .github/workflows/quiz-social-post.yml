@@ -1,9 +1,8 @@
-name: פרסום פרומו קוויז שבועי
+name: פרסום פרומו קוויז דו-שבועי
 
 on:
-  # כל רביעי ב-15:00 UTC = 18:00 ישראל
   schedule:
-    - cron: '0 15 * * 3'
+    - cron: '0 15 * * 3'  # כל רביעי 15:00 UTC = 18:00 ישראל
   workflow_dispatch:
 
 jobs:
@@ -14,15 +13,30 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: בדיקה דו-שבועית
+        id: check
+        run: |
+          WEEK=$(date +%V)
+          if [ $(( WEEK % 2 )) -eq 0 ]; then
+            echo "run=true" >> $GITHUB_OUTPUT
+            echo "שבוע $WEEK — שבוע זוגי, מפרסמים"
+          else
+            echo "run=false" >> $GITHUB_OUTPUT
+            echo "שבוע $WEEK — שבוע אי-זוגי, מדלגים"
+          fi
+
       - name: Python setup
+        if: steps.check.outputs.run == 'true'
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
       - name: התקנת חבילות
+        if: steps.check.outputs.run == 'true'
         run: pip install requests anthropic pillow
 
       - name: פרסום פרומו קוויז
+        if: steps.check.outputs.run == 'true'
         env:
           INSTAGRAM_USER_ID: ${{ secrets.INSTAGRAM_USER_ID }}
           INSTAGRAM_PAGE_TOKEN: ${{ secrets.INSTAGRAM_PAGE_TOKEN }}
