@@ -2247,13 +2247,12 @@ async function handleAnalysesGenerate(request, env) {
   if (request.method !== 'POST') return jsonRes({ error: 'POST only' }, 405, request);
   if (!env.ANTHROPIC_API_KEY) return jsonRes({ error: 'ANTHROPIC_API_KEY חסר' }, 500, request);
 
-  // 1. Pick 5 candidates (unanalyzed, have EXIF, published)
+  // 1. Pick 5 candidates (unanalyzed, published)
   const { results: candidates } = await env.DB.prepare(`
-    SELECT p.id, p.title, p.thumbnail, p.url, p.exif, p.description
+    SELECT p.id, p.title, p.thumbnail, p.url, p.description
     FROM photos p
     LEFT JOIN photo_analyses a ON a.photo_id = p.id
     WHERE a.photo_id IS NULL
-      AND p.exif IS NOT NULL
       AND p.published = 1
     ORDER BY RANDOM()
     LIMIT 5
@@ -2306,12 +2305,6 @@ async function handleAnalysesGenerate(request, env) {
 
   const chosen = candidates[pickData.index] || candidates[0];
   const rule = pickData.rule || 'rule_of_thirds';
-  const exif = JSON.parse(chosen.exif || '{}');
-  const focalVal = exif.focal || '?';
-  const apertureVal = exif.aperture || '?';
-  const shutterVal = exif.shutter ? `1/${Math.round(1 / exif.shutter)}` : '?';
-  const isoVal = exif.iso || '?';
-  const cameraVal = exif.camera || '';
 
   // 3. Ask Claude sonnet for full analysis
   const analysisRes = await fetch('https://api.anthropic.com/v1/messages', {
@@ -2330,15 +2323,11 @@ async function handleAnalysesGenerate(request, env) {
           { type: 'image', source: { type: 'url', url: chosen.thumbnail || chosen.url } },
           { type: 'text', text: `אתה מורה לצילום כותב מדריך לצלמן מתחיל על התמונה הזו.
 
-נתוני מצלמה:
-- כותרת: ${chosen.title || ''}
-- תיאור: ${chosen.description || ''}
-- מצלמה: ${cameraVal}
-- מרחק מוקד: ${focalVal}mm
-- צמצם: f/${apertureVal}
-- תריס: ${shutterVal}s
-- ISO: ${isoVal}
-- חוק צילום לנתח: ${rule}
+כותרת: ${chosen.title || ''}
+תיאור: ${chosen.description || ''}
+חוק צילום לנתח: ${rule}
+
+נתח את התמונה והעריך את הגדרות המצלמה הסבירות ביותר (צמצם, מהירות תריס, ISO, מרחק מוקד) לפי מה שניתן לראות בתמונה — עומק שדה, טשטוש תנועה, רעש, זווית.
 
 החזר JSON בלבד (ללא markdown), בדיוק במבנה הזה:
 {
@@ -2346,10 +2335,10 @@ async function handleAnalysesGenerate(request, env) {
     {"x_pct": 0-100, "y_pct": 0-100, "label": "שורה1\\nשורה2", "anchor": "left|right|top|bottom"}
   ],
   "camera_analysis": {
-    "aperture": {"value": "f/${apertureVal}", "explanation": "הסבר קצר בעברית"},
-    "shutter":  {"value": "${shutterVal}s",   "explanation": "הסבר קצר בעברית"},
-    "iso":      {"value": "${isoVal}",        "explanation": "הסבר קצר בעברית"},
-    "focal":    {"value": "${focalVal}mm",    "explanation": "הסבר קצר בעברית"}
+    "aperture": {"value": "f/X.X", "explanation": "הסבר קצר בעברית"},
+    "shutter":  {"value": "1/XXXs", "explanation": "הסבר קצר בעברית"},
+    "iso":      {"value": "XXX",    "explanation": "הסבר קצר בעברית"},
+    "focal":    {"value": "XXXmm",  "explanation": "הסבר קצר בעברית"}
   },
   "composition_html": "<p><strong>כותרת:</strong> טקסט ראשון...</p><p><strong>כותרת:</strong> טקסט שני...</p><p><strong>כותרת:</strong> טקסט שלישי...</p>",
   "tags": ["תג1", "תג2", "תג3", "תג4"]
