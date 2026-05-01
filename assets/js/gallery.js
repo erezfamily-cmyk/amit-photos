@@ -912,6 +912,23 @@ function handleInitialHash() {
     }
     return;
   }
+  if (urlParams.get('discount') === 'sale') {
+    const photoId = urlParams.get('photo');
+    if (photoId) {
+      let idx = filteredPhotos.findIndex(p => String(p.id) === photoId);
+      if (idx === -1) {
+        const photo = allPhotos.find(p => String(p.id) === photoId);
+        if (photo) {
+          filteredPhotos.unshift(photo);
+          displayedCount = Math.max(displayedCount, 1);
+          renderGallery();
+          idx = 0;
+        }
+      }
+      if (idx !== -1) openBuyModal(filteredPhotos[idx]);
+    }
+    return;
+  }
   if (urlParams.get('discount') === 'quiz') {
     quizDiscountActive = true;
     const banner = document.getElementById('puzzle-discount-banner');
