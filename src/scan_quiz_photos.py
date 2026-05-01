@@ -21,16 +21,35 @@ ELIGIBLE_CATEGORIES = {
     "טנזניה", "מונטנגרו", "סלובקיה", "סן דיאגו", "ספרד ואנדורה", "צכיה", "אבו דאבי",
 }
 
-PROMPT = """Does this photo show a recognizable landmark, building, or location that people would clearly identify?
+CATEGORY_COUNTRY = {
+    "ישראל": "Israel", "איטליה": "Italy", "אנגליה": "England / UK",
+    "יוון": "Greece", "וינה": "Austria (Vienna)", "הולנד": "Netherlands",
+    "גרמניה": "Germany", "טנזניה": "Tanzania", "מונטנגרו": "Montenegro",
+    "סלובקיה": "Slovakia", "סן דיאגו": "USA (San Diego)", "ספרד ואנדורה": "Spain / Andorra",
+    "צכיה": "Czech Republic", "אבו דאבי": "UAE (Abu Dhabi / Dubai)",
+}
+
+CATEGORY_KEYWORD = {
+    "ישראל": "ישראל", "איטליה": "איטליה", "אנגליה": "אנגליה",
+    "יוון": "יוון", "וינה": "אוסטריה", "הולנד": "הולנד",
+    "גרמניה": "גרמניה", "טנזניה": "טנזניה", "מונטנגרו": "מונטנגרו",
+    "סלובקיה": "סלובקיה", "סן דיאגו": "ארה", "ספרד ואנדורה": "ספרד",
+    "צכיה": "צ", "אבו דאבי": "אמירויות",
+}
+
+def build_prompt(category):
+    country = CATEGORY_COUNTRY.get(category, category)
+    return f"""This photo was taken in {country}.
+Does it show a recognizable landmark, building, or specific location that people would clearly identify?
 Examples of YES: Eiffel Tower, Colosseum, Big Ben, Western Wall, Santorini buildings, Florence Cathedral.
 Examples of NO: flowers, nature without landmarks, abstract, portrait of people, generic street with no recognizable feature.
 
-If YES, return only valid JSON:
-{"eligible": true, "description": "Name — brief factual description, City, Country (in Hebrew)"}
-Example: {"eligible": true, "description": "הקולוסיאום — אמפיתיאטרון רומי מהמאה הראשונה לספירה. רומא, איטליה."}
+If YES, return only valid JSON (description must mention the correct country: {country}):
+{{"eligible": true, "description": "Name — brief factual description, City, Country (in Hebrew)"}}
+Example: {{"eligible": true, "description": "הקולוסיאום — אמפיתיאטרון רומי מהמאה הראשונה לספירה. רומא, איטליה."}}
 
 If NO, return only:
-{"eligible": false}
+{{"eligible": false}}
 
 Return ONLY the JSON, nothing else."""
 
@@ -77,6 +96,7 @@ def analyze_photo(client, photo):
         print(f"  ⚠️  הורדה נכשלה ({e})")
         return None
 
+    prompt = build_prompt(photo.get("category", ""))
     try:
         msg = client.messages.create(
             model="claude-haiku-4-5-20251001",
@@ -85,12 +105,11 @@ def analyze_photo(client, photo):
                 "role": "user",
                 "content": [
                     {"type": "image", "source": {"type": "base64", "media_type": "image/jpeg", "data": b64}},
-                    {"type": "text", "text": PROMPT},
+                    {"type": "text", "text": prompt},
                 ]
             }]
         )
         text = msg.content[0].text.strip()
-        # Extract JSON even if wrapped in markdown
         start = text.find('{')
         end   = text.rfind('}') + 1
         result = json.loads(text[start:end])
@@ -116,18 +135,44 @@ def patch_photo(photo_id, quiz_eligible, quiz_description=""):
         print(f"  ✅ עודכן: eligible={quiz_eligible}")
 
 
+def is_description_wrong(photo):
+    """Returns True if quiz_description mentions the wrong country."""
+    desc = photo.get("quiz_description", "")
+    category = photo.get("category", "")
+    keyword = CATEGORY_KEYWORD.get(category)
+    if not keyword or not desc:
+        return False
+    return keyword not in desc
+
+def load_quiz_photos():
+    """Fetch only photos already marked quiz_eligible=1."""
+    resp = requests.get(f"{SITE_URL}/api/quiz-photos", timeout=15)
+    resp.raise_for_status()
+    return resp.json()
+
 def main():
     if not ANTHROPIC_API_KEY:
         print("❌ חסר ANTHROPIC_API_KEY")
         sys.exit(1)
 
-    photos = load_photos()
+    rescan_only = "--rescan-wrong" in sys.argv
+
+    if rescan_only:
+        all_quiz = load_quiz_photos()
+        photos = [p for p in all_quiz if is_description_wrong(p)]
+        print(f"🔍 נמצאו {len(photos)} תמונות עם תיאור שגוי מתוך {len(all_quiz)}")
+    else:
+        photos = load_photos()
+
     client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
 
-    marked = 0
+    fixed = 0
     for i, photo in enumerate(photos, 1):
         title = photo.get("title", "ללא כותרת")
-        print(f"\n[{i}/{len(photos)}] {title}")
+        cat   = photo.get("category", "")
+        print(f"\n[{i}/{len(photos)}] {title} ({cat})")
+        if rescan_only:
+            print(f"  ישן: {photo.get('quiz_description', '')}")
 
         result = analyze_photo(client, photo)
         if result is None:
@@ -135,14 +180,14 @@ def main():
 
         if result.get("eligible"):
             desc = result.get("description", "")
-            print(f"  🌍 מזוהה: {desc}")
+            print(f"  🌍 חדש: {desc}")
             patch_photo(photo["id"], True, desc)
-            marked += 1
+            fixed += 1
         else:
-            print("  — לא מזוהה")
-            # Optionally clear if previously marked (skip by default)
+            print("  — לא מזוהה, מנקה תיאור")
+            patch_photo(photo["id"], False, "")
 
-    print(f"\n✅ סריקה הסתיימה — {marked} תמונות סומנו כמתאימות לקוויז")
+    print(f"\n✅ סריקה הסתיימה — {fixed} תמונות עודכנו")
 
 
 if __name__ == "__main__":
