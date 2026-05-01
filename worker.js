@@ -2523,8 +2523,8 @@ function buildRuleOverlay(rule, annotations) {
     </g>`;
     }
     const lines = annotations.map(a => {
-      const x = a.x_pct || 50;
-      const y = a.y_pct || 50;
+      const x = parseFloat(a.x_pct) || 50;
+      const y = parseFloat(a.y_pct) || 50;
       const fromX = x < 50 ? 2 : 98;
       const fromY = y < 50 ? 2 : 98;
       const dx = x - fromX;
@@ -2562,9 +2562,11 @@ function buildRuleOverlay(rule, annotations) {
 
 function buildAnnotations(annotations) {
   return annotations.map(ann => {
+    const x = parseFloat(ann.x_pct) || 0;
+    const y = parseFloat(ann.y_pct) || 0;
     const labelLines = (ann.label || '').split('\n').map(l => escXml(l)).join('<br>');
     const anchorClass = `ann-${ann.anchor || 'right'}`;
-    return `<div class="ann" style="left:${ann.x_pct}%;top:${ann.y_pct}%">
+    return `<div class="ann" style="left:${x}%;top:${y}%">
       <div class="ann-dot"></div>
       <div class="ann-label ${anchorClass}">${labelLines}</div>
     </div>`;
@@ -2584,9 +2586,10 @@ async function handleLearnAnalysis(env, photoId) {
     return new Response(`<!DOCTYPE html><html lang="he" dir="rtl"><head><meta charset="utf-8"><title>לא נמצא</title><style>body{background:#0a0a0a;color:#f0ede8;font-family:'Heebo',sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;gap:1rem}</style></head><body><h1 style="color:#c8a96e;font-size:2rem">404</h1><p>הניתוח לא נמצא</p><a href="/learn/" style="color:#c8a96e">← חזרה לבית ספר לצילום</a></body></html>`, {status: 404, headers: {'Content-Type': 'text/html;charset=utf-8'}});
   }
 
-  const annotations = JSON.parse(row.annotations_json || '[]');
-  const camera = JSON.parse(row.camera_json || '{}');
-  const tags = JSON.parse(row.tags_json || '[]');
+  let annotations = [], camera = {}, tags = [];
+  try { annotations = JSON.parse(row.annotations_json || '[]'); } catch (_) { annotations = []; }
+  try { camera = JSON.parse(row.camera_json || '{}'); } catch (_) { camera = {}; }
+  try { tags = JSON.parse(row.tags_json || '[]'); } catch (_) { tags = []; }
   const ruleLabel = RULE_LABELS[row.composition_rule] || row.composition_rule;
   const imgUrl = (photo.thumbnail || photo.url || '') + '?w=900';
   const buyUrl = `https://amitphotos.com/?photo=${encodeURIComponent(photoId)}`;
@@ -2669,7 +2672,7 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direc
     <h1 class="page-title">${escXml(row.title)}</h1>
     <span class="rule-badge">${escXml(ruleLabel)}</span>
   </div>
-  <a class="buy-btn" href="${buyUrl}">רכוש תמונה זו ←</a>
+  <a class="buy-btn" href="${escXml(buyUrl)}">רכוש תמונה זו ←</a>
 </div>
 
 <div class="photo-wrap">
@@ -2711,14 +2714,14 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direc
 <div class="section">
   <h2>🎨 ניתוח קומפוזיציה</h2>
   <div class="comp-box">
-    ${row.composition_html || ''}
+    ${String(row.composition_html || '').replace(/<(?!\/?(?:p|strong|em|br|span|div)\b)[^>]*>/gi, '')}
     <div class="tags-row">${tagPills}</div>
   </div>
 </div>
 
 <div class="nav-row">
   <a href="/learn/">← כל הניתוחים</a>
-  <a href="${buyUrl}">רכוש תמונה זו</a>
+  <a href="${escXml(buyUrl)}">רכוש תמונה זו</a>
   <a href="https://amitphotos.com">לגלריה</a>
 </div>
 </body>
