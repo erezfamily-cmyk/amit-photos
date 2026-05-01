@@ -282,11 +282,7 @@ body {
       <div class="win-title" id="result-title">כל הכבוד!</div>
       <div class="win-sub" id="result-sub">ענית נכון על 5 מתוך 5</div>
       <div class="win-score" id="win-score"></div>
-      <div class="discount-box" id="discount-box" style="display:none">
-        🎁 זכית ב<strong>הנחה 20%</strong> על כל תמונה בגלריה<br>
-        <small style="color:#a88040">בתוקף 24 שעות מרגע הניצחון</small>
-      </div>
-      <a class="result-btn btn-gold" id="btn-gallery" href="https://amitphotos.com/?discount=quiz">🛍️ לגלריה עם ההנחה</a>
+      <a class="result-btn btn-gold" id="btn-gallery" href="https://amitphotos.com/sale/">🛍️ לגלריה המבצע</a>
       <a class="result-btn btn-whatsapp" id="btn-share" href="#" target="_blank">💬 שתף בוואטסאפ</a>
       <button class="result-btn btn-dark" id="btn-retry">🔄 סיבוב חדש</button>
     </div>
@@ -568,24 +564,10 @@ function showResult() {
   });
 
   if (won) {
-    const discountKey = 'quiz_discount_used';
-    const lastWin = parseInt(localStorage.getItem(discountKey) || '0');
-    const hoursSince = (Date.now() - lastWin) / 3600000;
-    const discountActive = hoursSince >= 24;
-    if (discountActive) localStorage.setItem(discountKey, Date.now());
-
-    document.getElementById('discount-box').style.display = discountActive ? '' : 'none';
     document.getElementById('btn-gallery').style.display = '';
-    document.getElementById('btn-gallery').href = discountActive
-      ? `${SITE_URL}/?discount=quiz`
-      : SITE_URL;
-    document.getElementById('btn-gallery').textContent = discountActive
-      ? '🛍️ לגלריה עם ההנחה'
-      : '🛍️ לגלריה';
-    const waText = encodeURIComponent(`ניצחתי במשחק "מאיפה הצילום?" של עמית! קיבלתי 20% הנחה 🎁 — ${QUIZ_URL}`);
+    const waText = encodeURIComponent(`ניצחתי במשחק "מאיפה הצילום?" של עמית! 🎉 — ${QUIZ_URL}`);
     document.getElementById('btn-share').href = `https://wa.me/?text=${waText}`;
   } else {
-    document.getElementById('discount-box').style.display = 'none';
     document.getElementById('btn-gallery').style.display = 'none';
     document.getElementById('result-badge').textContent = '🌍 סיבוב הושלם';
   }
