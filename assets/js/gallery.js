@@ -317,15 +317,15 @@ function renderGallery(append = false) {
         oncontextmenu="return false"
       />
       <div class="img-protect-overlay"></div>
-      ${isNew(photo) ? '<div class="gallery-new-badge">חדש</div>' : ''}
-      ${isOnSale(photo) ? '<div class="gallery-sale-badge">🏷 מבצע</div>' : ''}
-      ${isWeekPhoto(photo) ? '<div class="gallery-week-badge">⭐ תמונת השבוע</div>' : ''}
+      ${isNew(photo) ? `<div class="gallery-new-badge">${t('gallery.badge.new')}</div>` : ''}
+      ${isOnSale(photo) ? `<div class="gallery-sale-badge">${t('gallery.badge.sale')}</div>` : ''}
+      ${isWeekPhoto(photo) ? `<div class="gallery-week-badge">${t('gallery.badge.week')}</div>` : ''}
       <button class="gallery-wish-btn${wished ? ' wished' : ''}" data-id="${photo.id}" aria-label="שמור למועדפים">${wished ? '♥' : '♡'}</button>
       <div class="gallery-item-overlay">
         <div class="gallery-item-info">
           <h3>${photo.title}</h3>
           <span>${getCategoryLabel(photo.category)}</span>
-          ${canBuy(photo) ? `<span class="gallery-item-price">החל מ-₪${getEffectivePrice(photo.id, 'small')}</span>` : ''}
+          ${canBuy(photo) ? `<span class="gallery-item-price">${t('gallery.price.from')}₪${getEffectivePrice(photo.id, 'small')}</span>` : ''}
         </div>
         <div class="gallery-item-actions">
           ${canBuy(photo) ? `<button class="gallery-cart-btn" data-idx="${idx}" aria-label="${t('gallery.btn.cart')}">${t('gallery.btn.cart')}</button>` : ''}
@@ -390,7 +390,7 @@ function refreshWishlistFilter() {
       });
       bar.appendChild(btn);
     }
-    btn.innerHTML = `❤ ${t('gallery.filter.wishlist') || 'מועדפים'} <span class="filter-count">${count}</span>`;
+    btn.innerHTML = `❤ ${t('gallery.filter.wishlist')} <span class="filter-count">${count}</span>`;
   }
 }
 
@@ -509,8 +509,8 @@ function initFilters() {
 
   const newCount = allPhotos.filter(isNew).length;
   const saleCount = allPhotos.filter(isOnSale).length;
-  const newBadgeBtn = newCount > 0 ? `<button class="filter-btn filter-btn-new" data-cat="new">✦ ${t('gallery.filter.new') || 'חדש'} <span class="filter-count">${newCount}</span></button>` : '';
-  const saleBadgeBtn = saleCount > 0 ? `<button class="filter-btn filter-btn-sale" data-cat="sale">🏷 מבצע <span class="filter-count">${saleCount}</span></button>` : '';
+  const newBadgeBtn = newCount > 0 ? `<button class="filter-btn filter-btn-new" data-cat="new">✦ ${t('gallery.filter.new')} <span class="filter-count">${newCount}</span></button>` : '';
+  const saleBadgeBtn = saleCount > 0 ? `<button class="filter-btn filter-btn-sale" data-cat="sale">🏷 ${t('gallery.filter.sale')} <span class="filter-count">${saleCount}</span></button>` : '';
   let html = `<button class="filter-btn active" data-cat="all">${t('gallery.filter.all')} <span class="filter-count">${allPhotos.length}</span></button>${newBadgeBtn}${saleBadgeBtn}`;
 
   const esc = s => s.replace(/"/g, '&quot;');
