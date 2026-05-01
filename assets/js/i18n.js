@@ -32,6 +32,7 @@ const TRANSLATIONS = {
     // Nav
     'nav.gallery':      'גלריה',
     'nav.new':          'חדש באתר',
+    'nav.sale':         'מבצע',
     'nav.how-to-buy':   'כיצד לרכוש',
     'nav.pricing':      'מחירים',
     'nav.contact':      'צור קשר',
@@ -351,6 +352,7 @@ const TRANSLATIONS = {
     // Nav
     'nav.gallery':      'Gallery',
     'nav.new':          'New',
+    'nav.sale':         'Sale',
     'nav.how-to-buy':   'How to Buy',
     'nav.pricing':      'Pricing',
     'nav.contact':      'Contact',
