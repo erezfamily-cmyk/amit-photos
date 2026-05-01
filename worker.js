@@ -377,7 +377,7 @@ async function handleSalePhotos(request, env) {
   const { results } = await env.DB.prepare(
     'SELECT id, title, category, thumbnail, url, sale_started_at FROM photos WHERE published=1 AND on_sale=1 ORDER BY RANDOM()'
   ).all();
-  return jsonRes(results || [], 200, request);
+  return jsonRes(results, 200, request);
 }
 
 async function handleSaleRotate(request, env) {
@@ -394,11 +394,11 @@ async function handleSaleRotate(request, env) {
 
   if (results.length === 0) return jsonRes({ error: 'No published photos found' }, 400, request);
 
-  for (const photo of results) {
-    await env.DB.prepare(
-      'UPDATE photos SET on_sale=1, sale_started_at=? WHERE id=?'
-    ).bind(now, photo.id).run();
-  }
+  const stmts = results.map(photo =>
+    env.DB.prepare('UPDATE photos SET on_sale=1, sale_started_at=? WHERE id=?')
+      .bind(now, photo.id)
+  );
+  await env.DB.batch(stmts);
 
   return jsonRes({ ok: true, rotated: results.length, next_rotation: nextRotation }, 200, request);
 }
