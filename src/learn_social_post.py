@@ -106,6 +106,8 @@ def main():
     composition_html = data.get("composition_html", "")
     tags_raw = data.get("tags_json", "[]")
     image_url = data.get("thumbnail") or data.get("url", "")
+    if image_url and image_url.startswith("/"):
+        image_url = f"https://www.amitphotos.com{image_url}"
 
     print(f"📸 ניתוח חדש: {title} ({photo_id})")
 
