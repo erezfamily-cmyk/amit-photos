@@ -2168,6 +2168,29 @@ async function handleAdminCreateToken(request, env) {
   return jsonRes({ token, url: `${origin}/api/download/${token}` }, 200, request);
 }
 
+async function handleMigrateAnalyses(request, env) {
+  if (!await checkAuth(request, env)) return unauth(request);
+  if (request.method !== 'POST') return jsonRes({ error: 'POST only' }, 405, request);
+  try {
+    await env.DB.prepare(`
+      CREATE TABLE IF NOT EXISTS photo_analyses (
+        photo_id TEXT PRIMARY KEY,
+        composition_rule TEXT NOT NULL,
+        annotations_json TEXT NOT NULL DEFAULT '[]',
+        camera_json TEXT NOT NULL DEFAULT '{}',
+        composition_html TEXT NOT NULL DEFAULT '',
+        tags_json TEXT NOT NULL DEFAULT '[]',
+        title TEXT NOT NULL DEFAULT '',
+        published_at TEXT NOT NULL,
+        created_at TEXT NOT NULL DEFAULT (datetime('now'))
+      )
+    `).run();
+    return jsonRes({ ok: true, message: 'photo_analyses table ready' }, 200, request);
+  } catch (e) {
+    return jsonRes({ error: String(e) }, 500, request);
+  }
+}
+
 // ===== MAIN ROUTER =====
 export default {
   async fetch(request, env, ctx) {
@@ -2228,6 +2251,7 @@ export default {
       await env.DB.prepare('ALTER TABLE photos ADD COLUMN height INTEGER').run().catch(() => {});
       return jsonRes({ ok: true }, 200, request);
     }
+    if (path === '/api/admin/migrate-analyses' && request.method === 'POST') return handleMigrateAnalyses(request, env);
     if (path.startsWith('/api/download/')) return handleDownload(request, env, path.slice('/api/download/'.length));
     if (path === '/api/print/catalog')        return handlePrintCatalog(request, env);
     if (path === '/api/print/quote')          return handlePrintQuote(request, env);
