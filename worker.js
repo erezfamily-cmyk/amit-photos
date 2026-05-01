@@ -2262,51 +2262,18 @@ async function handleAnalysesGenerate(request, env) {
     return jsonRes({ error: 'אין תמונות זמינות לניתוח' }, 404, request);
   }
 
-  // 2. Ask Claude haiku to pick the best photo for educational analysis
-  const pickContent = [
-    {
-      type: 'text',
-      text: `אתה מורה לצילום. מוצגות לך ${candidates.length} תמונות. בחר אחת שמדגימה חוק צילום בצורה הכי ברורה לצלמן מתחיל.
+  // 2. Pick first candidate (already random), fetch image as base64
+  const chosen = candidates[0];
 
-חוקים אפשריים: rule_of_thirds, symmetry, leading_lines, golden_ratio, framing, negative_space
+  const imgPath = chosen.thumbnail || chosen.url;
+  const imgAbsUrl = imgPath.startsWith('/') ? `https://amitphotos.com${imgPath}` : imgPath;
+  const imgFetch = await fetch(imgAbsUrl);
+  if (!imgFetch.ok) return jsonRes({ error: `Could not fetch photo: ${imgFetch.status}` }, 502, request);
+  const imgBuffer = await imgFetch.arrayBuffer();
+  const imgB64 = btoa(String.fromCharCode(...new Uint8Array(imgBuffer)));
+  const imgMime = imgFetch.headers.get('content-type') || 'image/jpeg';
 
-החזר JSON בלבד (ללא markdown):
-{"index": 0-${candidates.length - 1}, "rule": "שם_החוק", "reason": "משפט אחד בעברית"}`
-    },
-    ...candidates.map((c, i) => ({
-      type: 'image',
-      source: { type: 'url', url: (c.thumbnail || c.url).startsWith('/') ? `https://amitphotos.com${c.thumbnail || c.url}` : (c.thumbnail || c.url) }
-    }))
-  ];
-
-  const pickRes = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'x-api-key': env.ANTHROPIC_API_KEY,
-      'anthropic-version': '2023-06-01',
-      'content-type': 'application/json',
-    },
-    body: JSON.stringify({
-      model: 'claude-haiku-4-5-20251001',
-      max_tokens: 200,
-      messages: [{ role: 'user', content: pickContent }]
-    })
-  });
-  if (!pickRes.ok) return jsonRes({ error: 'Claude API error (pick)' }, 502, request);
-
-  let pickData;
-  try {
-    const pickJson = await pickRes.json();
-    const raw = pickJson.content?.[0]?.text?.trim() || '{}';
-    pickData = JSON.parse(raw.replace(/```json\n?|\n?```/g, ''));
-  } catch {
-    pickData = { index: 0, rule: 'rule_of_thirds' };
-  }
-
-  const chosen = candidates[pickData.index] || candidates[0];
-  const rule = pickData.rule || 'rule_of_thirds';
-
-  // 3. Ask Claude sonnet for full analysis
+  // 3. Ask Claude sonnet for composition rule selection + full analysis
   const analysisRes = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: {
@@ -2320,17 +2287,19 @@ async function handleAnalysesGenerate(request, env) {
       messages: [{
         role: 'user',
         content: [
-          { type: 'image', source: { type: 'url', url: (chosen.thumbnail || chosen.url).startsWith('/') ? `https://amitphotos.com${chosen.thumbnail || chosen.url}` : (chosen.thumbnail || chosen.url) } },
+          { type: 'image', source: { type: 'base64', media_type: imgMime, data: imgB64 } },
           { type: 'text', text: `אתה מורה לצילום כותב מדריך לצלמן מתחיל על התמונה הזו.
 
 כותרת: ${chosen.title || ''}
 תיאור: ${chosen.description || ''}
-חוק צילום לנתח: ${rule}
 
-נתח את התמונה והעריך את הגדרות המצלמה הסבירות ביותר (צמצם, מהירות תריס, ISO, מרחק מוקד) לפי מה שניתן לראות בתמונה — עומק שדה, טשטוש תנועה, רעש, זווית.
+בחר את חוק הצילום שהתמונה מדגימה הכי ברור מתוך: rule_of_thirds, symmetry, leading_lines, golden_ratio, framing, negative_space
+
+נתח את התמונה והעריך את הגדרות המצלמה הסבירות ביותר לפי מה שניתן לראות — עומק שדה, טשטוש תנועה, רעש, זווית.
 
 החזר JSON בלבד (ללא markdown), בדיוק במבנה הזה:
 {
+  "composition_rule": "שם_החוק",
   "annotations": [
     {"x_pct": 0-100, "y_pct": 0-100, "label": "שורה1\\nשורה2", "anchor": "left|right|top|bottom"}
   ],
@@ -2353,7 +2322,10 @@ async function handleAnalysesGenerate(request, env) {
       }]
     })
   });
-  if (!analysisRes.ok) return jsonRes({ error: 'Claude API error (analysis)' }, 502, request);
+  if (!analysisRes.ok) {
+    const analysisErr = await analysisRes.text().catch(() => '');
+    return jsonRes({ error: `Claude API error (analysis) ${analysisRes.status}: ${analysisErr.slice(0, 300)}` }, 502, request);
+  }
 
   let analysis;
   try {
@@ -2365,6 +2337,7 @@ async function handleAnalysesGenerate(request, env) {
   }
 
   // 4. Save to D1
+  const rule = analysis.composition_rule || 'rule_of_thirds';
   const now = new Date().toISOString();
   await env.DB.prepare(`
     INSERT OR REPLACE INTO photo_analyses
