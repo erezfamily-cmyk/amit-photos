@@ -2254,6 +2254,8 @@ async function handleAnalysesGenerate(request, env) {
     LEFT JOIN photo_analyses a ON a.photo_id = p.id
     WHERE a.photo_id IS NULL
       AND p.published = 1
+      AND p.r2_key IS NOT NULL
+      AND p.r2_key != ''
     ORDER BY RANDOM()
     LIMIT 5
   `).all();
@@ -2270,16 +2272,21 @@ async function handleAnalysesGenerate(request, env) {
   const thumbR2Key = thumbPath.startsWith('/photos/') ? thumbPath.slice('/photos/'.length) : (chosen.r2_key || '');
   const r2Obj = thumbR2Key ? await env.PHOTOS.get(thumbR2Key) : null;
   let imgB64, imgMime;
+  const toB64 = (buf) => {
+    const bytes = new Uint8Array(buf);
+    let binary = '';
+    for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+    return btoa(binary);
+  };
+
   if (r2Obj) {
-    const imgBuffer = await r2Obj.arrayBuffer();
-    imgB64 = btoa(String.fromCharCode(...new Uint8Array(imgBuffer)));
+    imgB64 = toB64(await r2Obj.arrayBuffer());
     imgMime = r2Obj.httpMetadata?.contentType || 'image/jpeg';
   } else {
     // Fallback: try main photo from R2
     const mainObj = chosen.r2_key ? await env.PHOTOS.get(chosen.r2_key) : null;
-    if (!mainObj) return jsonRes({ error: 'Photo not found in R2' }, 404, request);
-    const imgBuffer = await mainObj.arrayBuffer();
-    imgB64 = btoa(String.fromCharCode(...new Uint8Array(imgBuffer)));
+    if (!mainObj) return jsonRes({ error: `Photo not found in R2 (tried: ${thumbR2Key}, ${chosen.r2_key})` }, 404, request);
+    imgB64 = toB64(await mainObj.arrayBuffer());
     imgMime = mainObj.httpMetadata?.contentType || 'image/jpeg';
   }
 
