@@ -69,6 +69,15 @@ body {
 .score-badge    { color: var(--accent); font-size: 0.72rem; font-weight: 700; white-space: nowrap; transition: transform 0.2s, color 0.2s; display: inline-block; }
 .score-badge.bump { transform: scale(1.15); }
 
+/* Timer */
+.timer-track { height: 3px; background: #1e1e1e; }
+.timer-fill  { height: 100%; width: 100%; background: var(--green); transition: width 1s linear, background 0.5s; }
+.timer-fill.warn   { background: #f59e0b; }
+.timer-fill.danger { background: var(--red); }
+.timer-num { font-size: 0.72rem; font-weight: 700; color: var(--green); white-space: nowrap; min-width: 1.4rem; text-align: center; transition: color 0.3s; }
+.timer-num.warn    { color: #f59e0b; }
+.timer-num.danger  { color: var(--red); }
+
 /* Photo */
 .photo-area {
   position: relative;
@@ -244,7 +253,9 @@ body {
       <span class="score-badge" id="score-badge">✓ 0 נכון</span>
       <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
       <span class="progress-text" id="progress-text">1 / 5</span>
+      <span class="timer-num" id="timer-num">15</span>
     </div>
+    <div class="timer-track"><div class="timer-fill" id="timer-fill"></div></div>
 
     <div class="photo-area">
       <img id="question-img" src="" alt="">
@@ -318,6 +329,63 @@ let current      = 0;
 let score        = 0;
 let results      = [];  // true/false per question
 let answered     = false;
+
+const TIMER_SECONDS = 15;
+let timerInterval = null;
+let timeLeft = TIMER_SECONDS;
+
+function startTimer() {
+  clearTimer();
+  timeLeft = TIMER_SECONDS;
+  updateTimerUI();
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    updateTimerUI();
+    if (timeLeft <= 0) { clearTimer(); timeUp(); }
+  }, 1000);
+}
+
+function clearTimer() {
+  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+}
+
+function updateTimerUI() {
+  const fill = document.getElementById('timer-fill');
+  const num  = document.getElementById('timer-num');
+  if (!fill || !num) return;
+  fill.style.width = (timeLeft / TIMER_SECONDS * 100) + '%';
+  num.textContent  = timeLeft;
+  const danger = timeLeft <= 4;
+  const warn   = timeLeft <= 8 && !danger;
+  fill.className = 'timer-fill' + (danger ? ' danger' : warn ? ' warn' : '');
+  num.className  = 'timer-num'  + (danger ? ' danger' : warn ? ' warn' : '');
+}
+
+function timeUp() {
+  if (answered) return;
+  answered = true;
+  results.push(false);
+  document.querySelectorAll('.answer-btn').forEach(b => {
+    b.disabled = true;
+    if (b.textContent === questions[current].correctCountry) b.classList.add('correct');
+  });
+  const fb = document.getElementById('feedback');
+  fb.textContent = `⏱ נגמר הזמן — התשובה: ${questions[current].correctCountry}`;
+  fb.className = 'feedback wrong';
+  fb.style.display = 'block';
+  const q = questions[current];
+  if (q.photo.quiz_description) {
+    const descEl = document.getElementById('photo-desc');
+    const desc = q.photo.quiz_description;
+    const dashIdx = desc.indexOf(' — ');
+    descEl.innerHTML = dashIdx > -1
+      ? `<strong>${desc.slice(0, dashIdx)}</strong>${desc.slice(dashIdx)}`
+      : desc;
+    descEl.style.display = 'block';
+  }
+  document.getElementById('next-btn').style.display = 'block';
+  document.getElementById('score-badge').textContent = `✓ ${score} נכון`;
+}
 
 function shuffle(arr) {
   const a = [...arr];
@@ -395,11 +463,14 @@ function renderQuestion() {
     btn.onclick = () => handleAnswer(country, btn);
     answersEl.appendChild(btn);
   });
+
+  startTimer();
 }
 
 function handleAnswer(chosen, clickedBtn) {
   if (answered) return;
   answered = true;
+  clearTimer();
   const q = questions[current];
   const isCorrect = chosen === q.correctCountry;
 
@@ -457,6 +528,7 @@ function nextQuestion() {
 }
 
 function showResult() {
+  clearTimer();
   document.getElementById('game-screen').style.display = 'none';
   const resultScreen = document.getElementById('result-screen');
   resultScreen.style.display = 'block';
