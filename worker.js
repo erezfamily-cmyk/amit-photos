@@ -2249,7 +2249,7 @@ async function handleAnalysesGenerate(request, env) {
 
   // 1. Pick 5 candidates (unanalyzed, published)
   const { results: candidates } = await env.DB.prepare(`
-    SELECT p.id, p.title, p.thumbnail, p.url, p.description
+    SELECT p.id, p.title, p.thumbnail, p.url, p.r2_key, p.description
     FROM photos p
     LEFT JOIN photo_analyses a ON a.photo_id = p.id
     WHERE a.photo_id IS NULL
@@ -2262,16 +2262,26 @@ async function handleAnalysesGenerate(request, env) {
     return jsonRes({ error: 'אין תמונות זמינות לניתוח' }, 404, request);
   }
 
-  // 2. Pick first candidate (already random), fetch image as base64
+  // 2. Pick first candidate (already random), fetch image from R2
   const chosen = candidates[0];
 
-  const imgPath = chosen.thumbnail || chosen.url;
-  const imgAbsUrl = imgPath.startsWith('/') ? `https://amitphotos.com${imgPath}` : imgPath;
-  const imgFetch = await fetch(imgAbsUrl);
-  if (!imgFetch.ok) return jsonRes({ error: `Could not fetch photo: ${imgFetch.status}` }, 502, request);
-  const imgBuffer = await imgFetch.arrayBuffer();
-  const imgB64 = btoa(String.fromCharCode(...new Uint8Array(imgBuffer)));
-  const imgMime = imgFetch.headers.get('content-type') || 'image/jpeg';
+  // Derive thumbnail R2 key from thumbnail path (strip leading /photos/)
+  const thumbPath = chosen.thumbnail || chosen.url || '';
+  const thumbR2Key = thumbPath.startsWith('/photos/') ? thumbPath.slice('/photos/'.length) : (chosen.r2_key || '');
+  const r2Obj = thumbR2Key ? await env.PHOTOS.get(thumbR2Key) : null;
+  let imgB64, imgMime;
+  if (r2Obj) {
+    const imgBuffer = await r2Obj.arrayBuffer();
+    imgB64 = btoa(String.fromCharCode(...new Uint8Array(imgBuffer)));
+    imgMime = r2Obj.httpMetadata?.contentType || 'image/jpeg';
+  } else {
+    // Fallback: try main photo from R2
+    const mainObj = chosen.r2_key ? await env.PHOTOS.get(chosen.r2_key) : null;
+    if (!mainObj) return jsonRes({ error: 'Photo not found in R2' }, 404, request);
+    const imgBuffer = await mainObj.arrayBuffer();
+    imgB64 = btoa(String.fromCharCode(...new Uint8Array(imgBuffer)));
+    imgMime = mainObj.httpMetadata?.contentType || 'image/jpeg';
+  }
 
   // 3. Ask Claude sonnet for composition rule selection + full analysis
   const analysisRes = await fetch('https://api.anthropic.com/v1/messages', {
