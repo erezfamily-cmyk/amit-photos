@@ -2191,6 +2191,220 @@ async function handleMigrateAnalyses(request, env) {
   }
 }
 
+async function handleAnalysesList(request, env) {
+  if (!await checkAuth(request, env)) return unauth(request);
+  try {
+    const { results } = await env.DB.prepare(
+      `SELECT a.photo_id, a.title, a.composition_rule, a.published_at,
+              p.thumbnail
+       FROM photo_analyses a
+       LEFT JOIN photos p ON p.id = a.photo_id
+       ORDER BY a.published_at DESC`
+    ).all();
+    return jsonRes(results || [], 200, request);
+  } catch (e) {
+    return jsonRes({ error: String(e) }, 500, request);
+  }
+}
+
+async function handleAnalysesGet(request, env, photoId) {
+  if (!await checkAuth(request, env)) return unauth(request);
+  try {
+    const row = await env.DB.prepare(
+      'SELECT * FROM photo_analyses WHERE photo_id = ?'
+    ).bind(photoId).first();
+    if (!row) return jsonRes({ error: 'לא נמצא' }, 404, request);
+    return jsonRes({
+      ...row,
+      annotations: JSON.parse(row.annotations_json || '[]'),
+      camera: JSON.parse(row.camera_json || '{}'),
+      tags: JSON.parse(row.tags_json || '[]'),
+    }, 200, request);
+  } catch (e) {
+    return jsonRes({ error: String(e) }, 500, request);
+  }
+}
+
+async function handleAnalysesUpdate(request, env, photoId) {
+  if (!await checkAuth(request, env)) return unauth(request);
+  if (request.method !== 'PUT') return jsonRes({ error: 'PUT only' }, 405, request);
+  const body = await request.json().catch(() => ({}));
+  const fields = [];
+  const values = [];
+  if (body.composition_html !== undefined) { fields.push('composition_html = ?'); values.push(body.composition_html); }
+  if (body.tags_json !== undefined)        { fields.push('tags_json = ?');        values.push(body.tags_json); }
+  if (body.camera_json !== undefined)      { fields.push('camera_json = ?');      values.push(body.camera_json); }
+  if (body.annotations_json !== undefined) { fields.push('annotations_json = ?'); values.push(body.annotations_json); }
+  if (body.title !== undefined)            { fields.push('title = ?');            values.push(body.title); }
+  if (!fields.length) return jsonRes({ error: 'אין שדות לעדכון' }, 400, request);
+  values.push(photoId);
+  await env.DB.prepare(`UPDATE photo_analyses SET ${fields.join(', ')} WHERE photo_id = ?`).bind(...values).run();
+  return jsonRes({ ok: true }, 200, request);
+}
+
+async function handleAnalysesGenerate(request, env) {
+  if (!await checkAuth(request, env)) return unauth(request);
+  if (request.method !== 'POST') return jsonRes({ error: 'POST only' }, 405, request);
+  if (!env.ANTHROPIC_API_KEY) return jsonRes({ error: 'ANTHROPIC_API_KEY חסר' }, 500, request);
+
+  // 1. Pick 5 candidates (unanalyzed, have EXIF, published)
+  const { results: candidates } = await env.DB.prepare(`
+    SELECT p.id, p.title, p.thumbnail, p.url, p.exif, p.description
+    FROM photos p
+    LEFT JOIN photo_analyses a ON a.photo_id = p.id
+    WHERE a.photo_id IS NULL
+      AND p.exif IS NOT NULL
+      AND p.published = 1
+    ORDER BY RANDOM()
+    LIMIT 5
+  `).all();
+
+  if (!candidates || candidates.length === 0) {
+    return jsonRes({ error: 'אין תמונות זמינות לניתוח' }, 404, request);
+  }
+
+  // 2. Ask Claude haiku to pick the best photo for educational analysis
+  const pickContent = [
+    {
+      type: 'text',
+      text: `אתה מורה לצילום. מוצגות לך ${candidates.length} תמונות. בחר אחת שמדגימה חוק צילום בצורה הכי ברורה לצלמן מתחיל.
+
+חוקים אפשריים: rule_of_thirds, symmetry, leading_lines, golden_ratio, framing, negative_space
+
+החזר JSON בלבד (ללא markdown):
+{"index": 0-${candidates.length - 1}, "rule": "שם_החוק", "reason": "משפט אחד בעברית"}`
+    },
+    ...candidates.map((c, i) => ({
+      type: 'image',
+      source: { type: 'url', url: c.thumbnail || c.url }
+    }))
+  ];
+
+  const pickRes = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'x-api-key': env.ANTHROPIC_API_KEY,
+      'anthropic-version': '2023-06-01',
+      'content-type': 'application/json',
+    },
+    body: JSON.stringify({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 200,
+      messages: [{ role: 'user', content: pickContent }]
+    })
+  });
+  if (!pickRes.ok) return jsonRes({ error: 'Claude API error (pick)' }, 502, request);
+
+  let pickData;
+  try {
+    const pickJson = await pickRes.json();
+    const raw = pickJson.content?.[0]?.text?.trim() || '{}';
+    pickData = JSON.parse(raw.replace(/```json\n?|\n?```/g, ''));
+  } catch {
+    pickData = { index: 0, rule: 'rule_of_thirds' };
+  }
+
+  const chosen = candidates[pickData.index] || candidates[0];
+  const rule = pickData.rule || 'rule_of_thirds';
+  const exif = JSON.parse(chosen.exif || '{}');
+  const focalVal = exif.focal || '?';
+  const apertureVal = exif.aperture || '?';
+  const shutterVal = exif.shutter ? `1/${Math.round(1 / exif.shutter)}` : '?';
+  const isoVal = exif.iso || '?';
+  const cameraVal = exif.camera || '';
+
+  // 3. Ask Claude sonnet for full analysis
+  const analysisRes = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'x-api-key': env.ANTHROPIC_API_KEY,
+      'anthropic-version': '2023-06-01',
+      'content-type': 'application/json',
+    },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 1500,
+      messages: [{
+        role: 'user',
+        content: [
+          { type: 'image', source: { type: 'url', url: chosen.thumbnail || chosen.url } },
+          { type: 'text', text: `אתה מורה לצילום כותב מדריך לצלמן מתחיל על התמונה הזו.
+
+נתוני מצלמה:
+- כותרת: ${chosen.title || ''}
+- תיאור: ${chosen.description || ''}
+- מצלמה: ${cameraVal}
+- מרחק מוקד: ${focalVal}mm
+- צמצם: f/${apertureVal}
+- תריס: ${shutterVal}s
+- ISO: ${isoVal}
+- חוק צילום לנתח: ${rule}
+
+החזר JSON בלבד (ללא markdown), בדיוק במבנה הזה:
+{
+  "annotations": [
+    {"x_pct": 0-100, "y_pct": 0-100, "label": "שורה1\\nשורה2", "anchor": "left|right|top|bottom"}
+  ],
+  "camera_analysis": {
+    "aperture": {"value": "f/${apertureVal}", "explanation": "הסבר קצר בעברית"},
+    "shutter":  {"value": "${shutterVal}s",   "explanation": "הסבר קצר בעברית"},
+    "iso":      {"value": "${isoVal}",        "explanation": "הסבר קצר בעברית"},
+    "focal":    {"value": "${focalVal}mm",    "explanation": "הסבר קצר בעברית"}
+  },
+  "composition_html": "<p><strong>כותרת:</strong> טקסט ראשון...</p><p><strong>כותרת:</strong> טקסט שני...</p><p><strong>כותרת:</strong> טקסט שלישי...</p>",
+  "tags": ["תג1", "תג2", "תג3", "תג4"]
+}
+
+חוקים:
+- annotations: 3-5 נקודות, בפיזור על התמונה
+- composition_html: בדיוק 3 פסקאות עם <strong> בתחילת כל אחת
+- tags: 4-6 מילים קצרות בעברית
+- הכל בעברית` }
+        ]
+      }]
+    })
+  });
+  if (!analysisRes.ok) return jsonRes({ error: 'Claude API error (analysis)' }, 502, request);
+
+  let analysis;
+  try {
+    const analysisJson = await analysisRes.json();
+    const raw = analysisJson.content?.[0]?.text?.trim() || '{}';
+    analysis = JSON.parse(raw.replace(/```json\n?|\n?```/g, ''));
+  } catch (e) {
+    return jsonRes({ error: 'Failed to parse Claude response: ' + String(e) }, 502, request);
+  }
+
+  // 4. Save to D1
+  const now = new Date().toISOString();
+  await env.DB.prepare(`
+    INSERT OR REPLACE INTO photo_analyses
+      (photo_id, composition_rule, annotations_json, camera_json, composition_html, tags_json, title, published_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+  `).bind(
+    chosen.id,
+    rule,
+    JSON.stringify(analysis.annotations || []),
+    JSON.stringify(analysis.camera_analysis || {}),
+    analysis.composition_html || '',
+    JSON.stringify(analysis.tags || []),
+    chosen.title || '',
+    now
+  ).run();
+
+  // 5. Return for social posting
+  return jsonRes({
+    ok: true,
+    photo_id: chosen.id,
+    title: chosen.title,
+    thumbnail: chosen.thumbnail || chosen.url,
+    composition_rule: rule,
+    tags: analysis.tags || [],
+    composition_html: analysis.composition_html || '',
+    learn_url: `https://amitphotos.com/learn/${chosen.id}`,
+  }, 200, request);
+}
+
 // ===== MAIN ROUTER =====
 export default {
   async fetch(request, env, ctx) {
@@ -2252,6 +2466,10 @@ export default {
       return jsonRes({ ok: true }, 200, request);
     }
     if (path === '/api/admin/migrate-analyses' && request.method === 'POST') return handleMigrateAnalyses(request, env);
+    if (path === '/api/analyses' && request.method === 'GET')                    return handleAnalysesList(request, env);
+    if (path === '/api/analyses/generate' && request.method === 'POST')          return handleAnalysesGenerate(request, env);
+    if (path.startsWith('/api/analyses/') && request.method === 'GET')           return handleAnalysesGet(request, env, path.slice('/api/analyses/'.length));
+    if (path.startsWith('/api/analyses/') && request.method === 'PUT')           return handleAnalysesUpdate(request, env, path.slice('/api/analyses/'.length));
     if (path.startsWith('/api/download/')) return handleDownload(request, env, path.slice('/api/download/'.length));
     if (path === '/api/print/catalog')        return handlePrintCatalog(request, env);
     if (path === '/api/print/quote')          return handlePrintQuote(request, env);
