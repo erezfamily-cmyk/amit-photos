@@ -2275,7 +2275,7 @@ async function handleAnalysesGenerate(request, env) {
     },
     ...candidates.map((c, i) => ({
       type: 'image',
-      source: { type: 'url', url: c.thumbnail || c.url }
+      source: { type: 'url', url: (c.thumbnail || c.url).startsWith('/') ? `https://amitphotos.com${c.thumbnail || c.url}` : (c.thumbnail || c.url) }
     }))
   ];
 
@@ -2320,7 +2320,7 @@ async function handleAnalysesGenerate(request, env) {
       messages: [{
         role: 'user',
         content: [
-          { type: 'image', source: { type: 'url', url: chosen.thumbnail || chosen.url } },
+          { type: 'image', source: { type: 'url', url: (chosen.thumbnail || chosen.url).startsWith('/') ? `https://amitphotos.com${chosen.thumbnail || chosen.url}` : (chosen.thumbnail || chosen.url) } },
           { type: 'text', text: `אתה מורה לצילום כותב מדריך לצלמן מתחיל על התמונה הזו.
 
 כותרת: ${chosen.title || ''}
