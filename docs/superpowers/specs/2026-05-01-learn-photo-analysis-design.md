@@ -180,6 +180,54 @@ Hebrew only for now. English keys can be added later when the site's i18n system
 
 ---
 
+## Implementation Notes (בוצע 2026-05-01)
+
+### שינויים מהדיזיין המקורי
+
+**Claude API — שיחה אחת בלבד:**
+הדיזיין המקורי תכנן שני שלבים: haiku לבחירת תמונה (ציון 0-10) + sonnet לניתוח מלא.
+במימוש: שיחה אחת לsonnet — בחירת חוק הקומפוזיציה + ניתוח מלא ביחד.
+ה-`LIMIT 5` של SQL מחזיר מועמדים רנדומליים, הסונט בוחר ומנתח את הראשון.
+
+**הגבלת גודל תמונה:**
+Anthropic API מקבל מקסימום ~5MB base64. תמונות full-res מהגלריה גדולות מדי (7-9MB).
+פתרון: `WHERE p.width <= 2000` — כ-50 תמונות קטנות מספיק.
+CF Image Resizing לא זמין בפלאן הנוכחי.
+
+**R2 ישיר (לא HTTP):**
+Worker לא יכול לבצע HTTP request לדומיין שלו (522 timeout).
+פתרון: `env.PHOTOS.get(r2_key)` — קריאה ישירה מ-R2 binding.
+
+**base64 encoding:**
+`btoa(String.fromCharCode(...new Uint8Array(buf)))` — spread operator קורס על קבצים גדולים (stack overflow).
+פתרון: לולאה מפורשת:
+
+```javascript
+const bytes = new Uint8Array(buf);
+let binary = '';
+for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+return btoa(binary);
+```
+
+**Auth בסקריפט Python:**
+`learn_social_post.py` משתמש ב-`X-Admin-Password` (לא `X-Session-Token` — session tokens הם client-side only).
+
+**URLs מוחלטים לסושיאל:**
+Worker מחזיר thumbnail כ-`/photos/...` (relative). Python מוסיף `https://www.amitphotos.com` לפני פרסום.
+
+### קולומנים קיימים בטבלת photos
+
+`exif` — **לא קיים** בטבלה. אין לכלול בשאילתות.
+`width`, `height` — קיימים, שימושיים לסינון גודל תמונה.
+`r2_key` — מפתח ב-R2 bucket. חלק מהתמונות ריקות/null.
+
+### Workflow — learn-generate.yml
+
+אין צורך ב-`ANTHROPIC_API_KEY` ב-GitHub Secrets — קריאות Claude מתבצעות server-side בWorker.
+הWorkflow מריץ `src/learn_social_post.py` שמזמין את `POST /api/analyses/generate` בלבד.
+
+---
+
 ## Facebook / Instagram Post Format
 
 **Facebook:**
