@@ -2248,6 +2248,7 @@ async function handleAnalysesGenerate(request, env) {
   if (!env.ANTHROPIC_API_KEY) return jsonRes({ error: 'ANTHROPIC_API_KEY חסר' }, 500, request);
 
   // 1. Pick 5 candidates (unanalyzed, published)
+  // Prefer photos with smaller dimensions (more likely to fit Claude's 5MB image limit)
   const { results: candidates } = await env.DB.prepare(`
     SELECT p.id, p.title, p.thumbnail, p.url, p.r2_key, p.description
     FROM photos p
@@ -2256,6 +2257,8 @@ async function handleAnalysesGenerate(request, env) {
       AND p.published = 1
       AND p.r2_key IS NOT NULL
       AND p.r2_key != ''
+      AND p.width > 0
+      AND p.width <= 2000
     ORDER BY RANDOM()
     LIMIT 5
   `).all();
@@ -2273,23 +2276,13 @@ async function handleAnalysesGenerate(request, env) {
     return btoa(binary);
   };
 
-  // Use Cloudflare Image Resizing to get a ~900px version (avoids 5MB Claude limit)
-  const photoR2Key = chosen.r2_key;
-  const resizedFetch = await fetch(`https://www.amitphotos.com/photos/${photoR2Key}`, {
-    cf: { image: { width: 900, quality: 75, format: 'jpeg' } },
-    headers: { 'x-no-resize': '1' },
-  });
-  let imgB64, imgMime = 'image/jpeg';
-  if (resizedFetch.ok) {
-    imgB64 = toB64(await resizedFetch.arrayBuffer());
-    imgMime = resizedFetch.headers.get('content-type') || 'image/jpeg';
-  } else {
-    // Fallback: try raw R2 fetch and hope it's under 5MB
-    const r2Obj = await env.PHOTOS.get(photoR2Key);
-    if (!r2Obj) return jsonRes({ error: `Photo not found in R2: ${photoR2Key}` }, 404, request);
-    imgB64 = toB64(await r2Obj.arrayBuffer());
-    imgMime = r2Obj.httpMetadata?.contentType || 'image/jpeg';
-  }
+  // Fetch image from R2 — photos with width <= 2000 should fit Claude's 5MB limit
+  const chosen = candidates[0];
+  const r2Obj = await env.PHOTOS.get(chosen.r2_key);
+  if (!r2Obj) return jsonRes({ error: `Photo not found in R2: ${chosen.r2_key}` }, 404, request);
+  let imgB64 = null, imgMime = 'image/jpeg';
+  imgB64 = toB64(await r2Obj.arrayBuffer());
+  imgMime = r2Obj.httpMetadata?.contentType || 'image/jpeg';
 
   // 3. Ask Claude sonnet for composition rule selection + full analysis
   const analysisRes = await fetch('https://api.anthropic.com/v1/messages', {
