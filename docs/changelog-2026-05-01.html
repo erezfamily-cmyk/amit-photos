@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+<meta charset="utf-8">
+<title>סיכום פיתוח — 1 במאי 2026 | Amit Photos</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;600;700&family=Syne:wght@700&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Heebo', Arial, sans-serif;
+    direction: rtl;
+    background: #fff;
+    color: #1a1a1a;
+    font-size: 13px;
+    line-height: 1.65;
+    padding: 0;
+  }
+
+  /* Print layout */
+  @page {
+    size: A4;
+    margin: 20mm 18mm 20mm 18mm;
+  }
+
+  @media print {
+    .no-print { display: none; }
+    body { font-size: 11px; }
+    h1 { font-size: 22px; }
+    h2 { font-size: 15px; }
+    h3 { font-size: 12px; }
+    .page-break { page-break-before: always; }
+  }
+
+  .wrapper {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 32px 28px;
+  }
+
+  /* Header */
+  .doc-header {
+    border-bottom: 3px solid #c8a96e;
+    padding-bottom: 16px;
+    margin-bottom: 28px;
+  }
+  .doc-header h1 {
+    font-family: 'Syne', Arial, sans-serif;
+    font-size: 26px;
+    color: #c8a96e;
+    margin-bottom: 4px;
+  }
+  .doc-header .meta {
+    font-size: 12px;
+    color: #777;
+    display: flex;
+    gap: 20px;
+  }
+  .doc-header .meta span::before { content: '• '; color: #c8a96e; }
+
+  /* Section */
+  section {
+    margin-bottom: 32px;
+  }
+  section h2 {
+    font-family: 'Syne', Arial, sans-serif;
+    font-size: 16px;
+    color: #c8a96e;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 6px;
+    margin-bottom: 14px;
+  }
+
+  /* Feature block */
+  .feature {
+    background: #fafafa;
+    border: 1px solid #e8e8e8;
+    border-right: 3px solid #c8a96e;
+    border-radius: 4px;
+    padding: 12px 14px;
+    margin-bottom: 12px;
+  }
+  .feature h3 {
+    font-size: 13px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .feature h3 .badge {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 10px;
+    background: #e8f5e9;
+    color: #2e7d32;
+    border: 1px solid #c8e6c9;
+  }
+  .feature h3 .badge.fix { background: #fff3e0; color: #e65100; border-color: #ffcc80; }
+  .feature h3 .badge.chore { background: #f3f4f6; color: #555; border-color: #ddd; }
+  .feature p { color: #444; font-size: 12.5px; margin-bottom: 5px; }
+  .feature .files {
+    font-size: 11px;
+    color: #888;
+    font-family: 'Courier New', monospace;
+    margin-top: 6px;
+  }
+  .feature .files span { margin-left: 10px; }
+
+  /* Summary table */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    margin-top: 8px;
+  }
+  th {
+    background: #f5f0e8;
+    color: #7a5c2e;
+    font-weight: 700;
+    padding: 8px 10px;
+    text-align: right;
+    border: 1px solid #e0d5c0;
+  }
+  td {
+    padding: 7px 10px;
+    border: 1px solid #eee;
+    vertical-align: top;
+  }
+  tr:nth-child(even) td { background: #fafaf8; }
+  .tag-feat { color: #2e7d32; font-weight: 600; }
+  .tag-fix  { color: #e65100; font-weight: 600; }
+  .tag-chore { color: #555; font-weight: 600; }
+
+  /* Stats row */
+  .stats-row {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  .stat-box {
+    flex: 1;
+    min-width: 120px;
+    background: #faf7f2;
+    border: 1px solid #e0d5c0;
+    border-radius: 6px;
+    padding: 12px;
+    text-align: center;
+  }
+  .stat-box .num {
+    font-family: 'Syne', Arial, sans-serif;
+    font-size: 28px;
+    color: #c8a96e;
+    font-weight: 700;
+    line-height: 1;
+  }
+  .stat-box .lbl { font-size: 11px; color: #888; margin-top: 3px; }
+
+  /* Commit list */
+  .commits { list-style: none; font-size: 11.5px; }
+  .commits li {
+    padding: 5px 0;
+    border-bottom: 1px solid #f0f0f0;
+    display: flex;
+    gap: 10px;
+    align-items: baseline;
+  }
+  .commits li:last-child { border: none; }
+  .commit-sha {
+    font-family: 'Courier New', monospace;
+    color: #999;
+    font-size: 10px;
+    min-width: 52px;
+  }
+  .commit-msg { color: #333; }
+
+  footer {
+    margin-top: 40px;
+    border-top: 1px solid #eee;
+    padding-top: 12px;
+    font-size: 11px;
+    color: #aaa;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  /* Print button */
+  .print-btn {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    background: #c8a96e;
+    color: #000;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 18px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Heebo', sans-serif;
+    box-shadow: 0 2px 8px rgba(0,0,0,.15);
+  }
+  .print-btn:hover { background: #e0c080; }
+</style>
+</head>
+<body>
+
+<button class="print-btn no-print" onclick="window.print()">🖨️ שמור כ-PDF</button>
+
+<div class="wrapper">
+
+  <div class="doc-header">
+    <h1>סיכום פיתוח — Amit Photos</h1>
+    <div class="meta">
+      <span>תאריך: 1 במאי 2026</span>
+      <span>Branch: main</span>
+      <span>Site: amitphotos.com</span>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-row">
+    <div class="stat-box"><div class="num">9</div><div class="lbl">commits</div></div>
+    <div class="stat-box"><div class="num">5</div><div class="lbl">פיצ'רים חדשים</div></div>
+    <div class="stat-box"><div class="num">4</div><div class="lbl">תיקוני באגים</div></div>
+    <div class="stat-box"><div class="num">8</div><div class="lbl">קבצים שונו</div></div>
+  </div>
+
+  <!-- Section 1: i18n -->
+  <section>
+    <h2>🌐 תרגום ולוקליזציה (אנגלית/עברית)</h2>
+
+    <div class="feature">
+      <h3>תרגום Badge-ים ופילטרים בגלריה <span class="badge fix">תיקון</span></h3>
+      <p>Badge-ים של "מבצע", "חדש" ו-"תמונת השבוע" על כרטיסי הגלריה היו כתובים בעברית קשיחה גם במצב אנגלית. הוחלפו בקריאות לפונקציית <code>t()</code> עם מפתחות i18n חדשים. כפתורי הפילטר "מבצע", "חדש" ו-"מועדפים" תוקנו גם הם. "החל מ-" במחיר הכרטיס הוחלף ב-<code>t('gallery.price.from')</code> → "From " באנגלית.</p>
+      <div class="files">
+        <span>assets/js/gallery.js</span>
+        <span>assets/js/i18n.js</span>
+      </div>
+    </div>
+
+    <div class="feature">
+      <h3>תרגום קישור "מבצע" בניווט <span class="badge fix">תיקון</span></h3>
+      <p>קישור "מבצע" בניווט העליון חסר <code>data-i18n</code> ולכן הציג עברית גם במצב אנגלית. נוסף <code>data-i18n="nav.sale"</code> ומפתח תרגום "Sale".</p>
+      <div class="files"><span>index.html</span><span>assets/js/i18n.js</span></div>
+    </div>
+
+    <div class="feature">
+      <h3>תרגום שם הלוגו ו-Tagline <span class="badge">feat</span></h3>
+      <p>הלוגו "עמית ארז | עולם של צבעים מבעד לעדשה" הציג עברית קשיחה גם באנגלית. פוצל לשני <code>span</code> עם <code>data-i18n</code> — באנגלית מוצג "Amit Erez | A World of Colors Through the Lens".</p>
+      <div class="files"><span>index.html</span><span>assets/js/i18n.js</span></div>
+    </div>
+  </section>
+
+  <!-- Section 2: Quiz -->
+  <section>
+    <h2>🧩 שיפורי קוויז</h2>
+
+    <div class="feature">
+      <h3>10 שאלות במקום 5 <span class="badge">feat</span></h3>
+      <p>הקוויז שודרג מ-5 ל-10 שאלות. סף הניצחון עלה מ-3/5 ל-6/10 — שמירה על 60% קושי. כל הלוגיקה (progress bar, dots, ניצחון) דינמית ועודכנה אוטומטית דרך הקבועים.</p>
+      <div class="files"><span>quiz/index.html</span></div>
+    </div>
+
+    <div class="feature">
+      <h3>כפתור שיתוף לפייסבוק <span class="badge">feat</span></h3>
+      <p>נוסף כפתור "שתף בפייסבוק" 📘 בצד כפתור ה-WhatsApp הקיים — מופיע רק במסך ניצחון (6/10+). לחיצה פותחת את <code>facebook.com/sharer/sharer.php</code> עם לינק לקוויז. בלוס — הכפתור מוסתר.</p>
+      <div class="files"><span>quiz/index.html</span></div>
+    </div>
+
+    <div class="feature">
+      <h3>פרסום אוטומטי דו-שבועי <span class="badge">feat</span></h3>
+      <p>ה-workflow שמפרסם פרומו לאינסטגרם ופייסבוק שונה מפעם בשבוע לפעם בשבועיים. נוסף step שבודק את מספר שבוע ISO באמצעות Python <code>isocalendar()</code> — שבועות זוגיים בלבד מפרסמים. שבועות אי-זוגיים — ה-step נדלג ללא שגיאה.</p>
+      <div class="files"><span>.github/workflows/quiz-social-post.yml</span></div>
+    </div>
+  </section>
+
+  <!-- Section 3: Bugs -->
+  <section>
+    <h2>🐛 תיקוני באגים</h2>
+
+    <div class="feature">
+      <h3>מחירי מכירה לא הוצגו נכון בכרטיסי הגלריה <span class="badge fix">תיקון</span></h3>
+      <p>כרטיסי גלריה הציגו תמיד את המחיר המלא (₪19) גם לתמונות במבצע. הסיבה: שורת המחיר בכרטיס קראה ישירות מ-<code>price_overrides</code> במקום לקרוא ל-<code>getEffectivePrice()</code> שמטפלת בכל סוגי ההנחה. תוקן — עכשיו תמונות עם <code>on_sale=1</code> מציגות "החל מ-₪15".</p>
+      <div class="files"><span>assets/js/gallery.js</span></div>
+    </div>
+
+    <div class="feature">
+      <h3>לחיצה על תמונה בדף המבצע לא פתחה את מודל הרכישה <span class="badge fix">תיקון</span></h3>
+      <p>דף המבצע (<code>/sale/</code>) שולח למשתמש ל-<code>/?photo=ID&amp;discount=sale</code> בלחיצה על תמונה — אבל <code>gallery.js</code> לא ידעה לטפל ב-<code>discount=sale</code>. נוסף handler שמוצא את התמונה ופותח ישירות את מודל הרכישה שלה.</p>
+      <div class="files"><span>assets/js/gallery.js</span></div>
+    </div>
+  </section>
+
+  <!-- Section 4: Admin -->
+  <section>
+    <h2>🛠️ ממשק ניהול</h2>
+
+    <div class="feature">
+      <h3>הכנסה לפי תמונה ב-Top Photos <span class="badge">feat</span></h3>
+      <p>רשימת "פופולריות" בדשבורד הרכישות הציגה רק ספירה (<code>שם תמונה (3)</code>). עודכן ה-SQL ב-Worker להחזיר גם <code>SUM(amount)</code>, והתצוגה בממשק עודכנה ל-<code>שם תמונה — 3x · ₪57</code>.</p>
+      <div class="files"><span>worker.js</span><span>admin.html</span></div>
+    </div>
+  </section>
+
+  <!-- Section 5: Games -->
+  <section>
+    <h2>🎯 עמוד אתגרים</h2>
+
+    <div class="feature">
+      <h3>עמוד /games/ — Hub לאתגרים <span class="badge">feat</span></h3>
+      <p>נוצר עמוד חדש <code>amitphotos.com/games/</code> המרכז את כל האתגרים האינטראקטיביים. כרטיסיות לקוויז 🌍 ולפאזל 🧩 עם תיאור, מה מרוויחים, וכפתור "שחק עכשיו". עוצב להרחבה עתידית — כל אתגר חדש יתווסף ככרטיסייה. נוסף קישור "אתגרים" בניווט הראשי (בין "מבצע" ל-"כיצד לרכוש"), עם תרגום "Challenges" באנגלית.</p>
+      <div class="files"><span>games/index.html (חדש)</span><span>index.html</span><span>assets/js/i18n.js</span></div>
+    </div>
+  </section>
+
+  <!-- Commits table -->
+  <section class="page-break">
+    <h2>📋 רשימת Commits</h2>
+    <table>
+      <thead>
+        <tr>
+          <th style="width:70px">SHA</th>
+          <th>הודעה</th>
+          <th style="width:60px">סוג</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="commit-sha">82f1c46</td><td>localize sale/new/week badges and filter buttons + price prefix via i18n</td><td class="tag-fix">fix</td></tr>
+        <tr><td class="commit-sha">14989de</td><td>add nav.sale i18n key and wire data-i18n to nav sale link</td><td class="tag-fix">fix</td></tr>
+        <tr><td class="commit-sha">3b8b574</td><td>translate nav logo name and tagline to English</td><td class="tag-feat">feat</td></tr>
+        <tr><td class="commit-sha">f19b50f</td><td>upgrade quiz to 10 questions, win threshold 6/10</td><td class="tag-feat">feat</td></tr>
+        <tr><td class="commit-sha">f246966</td><td>add Facebook share button on quiz win screen</td><td class="tag-feat">feat</td></tr>
+        <tr><td class="commit-sha">ceb3427</td><td>make quiz social promo biweekly (even ISO weeks only)</td><td class="tag-feat">feat</td></tr>
+        <tr><td class="commit-sha">508cdea</td><td>handle ?discount=sale&photo=ID to open buy modal from sale page</td><td class="tag-fix">fix</td></tr>
+        <tr><td class="commit-sha">3f1c0fc</td><td>add revenue per photo in admin top-photos stats</td><td class="tag-feat">feat</td></tr>
+        <tr><td class="commit-sha">b225a4f</td><td>add /games/ challenges hub page with quiz and puzzle cards</td><td class="tag-feat">feat</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- Files changed -->
+  <section>
+    <h2>📁 קבצים שהשתנו</h2>
+    <table>
+      <thead>
+        <tr><th>קובץ</th><th>שינוי</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>assets/js/gallery.js</code></td><td>תיקון מחיר כרטיס, handler מבצע, לוקליזציה badge-ים</td></tr>
+        <tr><td><code>assets/js/i18n.js</code></td><td>מפתחות תרגום חדשים: badges, filters, price.from, nav.challenges, nav.logo</td></tr>
+        <tr><td><code>index.html</code></td><td>לוגו עם data-i18n, nav.sale, nav.challenges</td></tr>
+        <tr><td><code>quiz/index.html</code></td><td>QUESTIONS=10, WIN_SCORE=6, כפתור Facebook, CSS btn-facebook</td></tr>
+        <tr><td><code>.github/workflows/quiz-social-post.yml</code></td><td>שינוי לפרסום דו-שבועי עם Python isocalendar</td></tr>
+        <tr><td><code>worker.js</code></td><td>הוספת SUM(amount) לquery של top_photos</td></tr>
+        <tr><td><code>admin.html</code></td><td>תצוגת הכנסה לפי תמונה ב-top photos</td></tr>
+        <tr><td><code>games/index.html</code></td><td>קובץ חדש — עמוד hub לאתגרים</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <footer>
+    <span>Amit Photos — amitphotos.com</span>
+    <span>נוצר: 1 במאי 2026</span>
+  </footer>
+
+</div>
+</body>
+</html>
