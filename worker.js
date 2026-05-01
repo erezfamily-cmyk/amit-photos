@@ -2559,7 +2559,7 @@ async function handleLearnAnalysis(env, photoId) {
   ).bind(photoId).first().catch(() => null);
 
   const photo = await env.DB.prepare(
-    'SELECT id, title, thumbnail, url, exif FROM photos WHERE id = ?'
+    'SELECT id, title, thumbnail, url FROM photos WHERE id = ?'
   ).bind(photoId).first().catch(() => null);
 
   if (!row || !photo) {
