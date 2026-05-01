@@ -16,14 +16,15 @@ jobs:
       - name: בדיקה דו-שבועית
         id: check
         run: |
-          WEEK=$(date +%V)
-          if [ $(( WEEK % 2 )) -eq 0 ]; then
-            echo "run=true" >> $GITHUB_OUTPUT
-            echo "שבוע $WEEK — שבוע זוגי, מפרסמים"
-          else
-            echo "run=false" >> $GITHUB_OUTPUT
-            echo "שבוע $WEEK — שבוע אי-זוגי, מדלגים"
-          fi
+          python3 << 'EOF'
+          import datetime, os
+          week = datetime.datetime.utcnow().isocalendar()[1]
+          run = 'true' if week % 2 == 0 else 'false'
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+              f.write(f'run={run}\n')
+          label = 'זוגי, מפרסמים' if week % 2 == 0 else 'אי-זוגי, מדלגים'
+          print(f'שבוע {week} — שבוע {label}')
+          EOF
 
       - name: Python setup
         if: steps.check.outputs.run == 'true'
