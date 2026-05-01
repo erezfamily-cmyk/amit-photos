@@ -154,8 +154,8 @@ async function init() {
   try {
     const photos = await fetch('/api/sale-photos').then(r => r.json());
     document.getElementById('loading').style.display = 'none';
-    if (!photos.length) { document.getElementById('empty').style.display = ''; return; }
-    if (photos[0].sale_started_at) startCountdown(photos[0].sale_started_at);
+    if (!photos.length || !photos[0].sale_started_at) { document.getElementById('empty').style.display = ''; return; }
+    startCountdown(photos[0].sale_started_at);
     renderGrid(photos);
   } catch (_) {
     document.getElementById('loading').textContent = 'שגיאה בטעינה. נסו שוב מאוחר יותר.';
