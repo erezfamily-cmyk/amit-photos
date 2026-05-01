@@ -30,6 +30,8 @@ const CATEGORY_MAP = {
 const TRANSLATIONS = {
   he: {
     // Nav
+    'nav.logo.name':    'עמית ארז',
+    'nav.logo.tagline': ' | עולם של צבעים מבעד לעדשה',
     'nav.gallery':      'גלריה',
     'nav.new':          'חדש באתר',
     'nav.sale':         'מבצע',
@@ -350,6 +352,8 @@ const TRANSLATIONS = {
 
   en: {
     // Nav
+    'nav.logo.name':    'Amit Erez',
+    'nav.logo.tagline': ' | A World of Colors Through the Lens',
     'nav.gallery':      'Gallery',
     'nav.new':          'New',
     'nav.sale':         'Sale',
