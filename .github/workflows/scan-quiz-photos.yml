@@ -23,4 +23,4 @@ jobs:
         env:
           ANTHROPIC_API_KEY: ${{ secrets.AMIT_PHOTO_AGENT }}
           ADMIN_TOKEN: ${{ secrets.ADMIN_PASSWORD }}
-        run: python src/scan_quiz_photos.py
+        run: python src/scan_quiz_photos.py --rescan-wrong
