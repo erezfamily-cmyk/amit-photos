@@ -2501,6 +2501,200 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direc
   return new Response(html, { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
 }
 
+function buildRuleOverlay(rule) {
+  const gold = 'rgba(200,169,110,0.55)';
+  const dash = '6,4';
+  if (rule === 'rule_of_thirds') return `
+    <line x1="33.3%" y1="0" x2="33.3%" y2="100%" stroke="${gold}" stroke-width="1.5" stroke-dasharray="${dash}"/>
+    <line x1="66.6%" y1="0" x2="66.6%" y2="100%" stroke="${gold}" stroke-width="1.5" stroke-dasharray="${dash}"/>
+    <line x1="0" y1="33.3%" x2="100%" y2="33.3%" stroke="${gold}" stroke-width="1.5" stroke-dasharray="${dash}"/>
+    <line x1="0" y1="66.6%" x2="100%" y2="66.6%" stroke="${gold}" stroke-width="1.5" stroke-dasharray="${dash}"/>
+    <circle cx="33.3%" cy="33.3%" r="5" fill="${gold}"/>
+    <circle cx="66.6%" cy="33.3%" r="5" fill="${gold}"/>
+    <circle cx="33.3%" cy="66.6%" r="5" fill="${gold}"/>
+    <circle cx="66.6%" cy="66.6%" r="5" fill="${gold}"/>`;
+  if (rule === 'symmetry') return `
+    <line x1="50%" y1="0" x2="50%" y2="100%" stroke="${gold}" stroke-width="2" stroke-dasharray="${dash}"/>`;
+  if (rule === 'leading_lines') return `
+    <line x1="0" y1="100%" x2="60%" y2="30%" stroke="${gold}" stroke-width="2" stroke-dasharray="${dash}"/>
+    <polygon points="60%,25% 57%,35% 63%,35%" fill="${gold}"/>`;
+  if (rule === 'framing') return `
+    <rect x="10%" y="10%" width="80%" height="80%" fill="none" stroke="${gold}" stroke-width="2" stroke-dasharray="${dash}"/>`;
+  if (rule === 'negative_space') return `
+    <rect x="0" y="0" width="40%" height="100%" fill="rgba(200,169,110,0.08)"/>`;
+  if (rule === 'golden_ratio') return `
+    <rect x="0" y="0" width="61.8%" height="100%" fill="none" stroke="${gold}" stroke-width="1.5" stroke-dasharray="${dash}"/>
+    <line x1="61.8%" y1="0" x2="61.8%" y2="100%" stroke="${gold}" stroke-width="2"/>`;
+  return '';
+}
+
+function buildAnnotations(annotations) {
+  return annotations.map(ann => {
+    const labelLines = (ann.label || '').split('\n').map(l => escXml(l)).join('<br>');
+    const anchorClass = `ann-${ann.anchor || 'right'}`;
+    return `<div class="ann" style="left:${ann.x_pct}%;top:${ann.y_pct}%">
+      <div class="ann-dot"></div>
+      <div class="ann-label ${anchorClass}">${labelLines}</div>
+    </div>`;
+  }).join('\n');
+}
+
+async function handleLearnAnalysis(env, photoId) {
+  const row = await env.DB.prepare(
+    'SELECT * FROM photo_analyses WHERE photo_id = ?'
+  ).bind(photoId).first().catch(() => null);
+
+  if (!row) return Response.redirect('https://amitphotos.com/learn/', 302);
+
+  const photo = await env.DB.prepare(
+    'SELECT id, title, thumbnail, url, exif FROM photos WHERE id = ?'
+  ).bind(photoId).first().catch(() => null);
+
+  if (!photo) return Response.redirect('https://amitphotos.com/learn/', 302);
+
+  const annotations = JSON.parse(row.annotations_json || '[]');
+  const camera = JSON.parse(row.camera_json || '{}');
+  const tags = JSON.parse(row.tags_json || '[]');
+  const ruleLabel = RULE_LABELS[row.composition_rule] || row.composition_rule;
+  const imgUrl = (photo.thumbnail || photo.url || '') + '?w=900';
+  const buyUrl = `https://amitphotos.com/?photo=${encodeURIComponent(photoId)}`;
+
+  const cameraCards = ['aperture', 'shutter', 'iso', 'focal'].map(key => {
+    const c = camera[key] || {};
+    const labels = { aperture: 'צמצם', shutter: 'מהירות תריס', iso: 'ISO', focal: 'מרחק מוקד' };
+    return `<div class="cam-card">
+      <div class="cam-label">${labels[key]}</div>
+      <div class="cam-value">${escXml(c.value || '—')}</div>
+      <div class="cam-desc">${escXml(c.explanation || '')}</div>
+    </div>`;
+  }).join('\n');
+
+  const tagPills = tags.map(t => `<span class="tag">${escXml(t)}</span>`).join('');
+
+  const html = `<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>${escXml(row.title)} — ניתוח צילום | Amit Photos</title>
+<meta name="description" content="ניתוח צילומי של &quot;${escXml(row.title)}&quot; — ${escXml(ruleLabel)}, הגדרות מצלמה, ופירוש הקומפוזיציה.">
+<meta property="og:title" content="📸 ${escXml(row.title)} | ניתוח צילום">
+<meta property="og:description" content="ניתוח ${escXml(ruleLabel)} — הגדרות מצלמה ופירוש הקומפוזיציה. מדריך לצלמן מתחיל.">
+<meta property="og:image" content="${escXml(photo.thumbnail || photo.url || '')}">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://amitphotos.com/learn/${escXml(photoId)}">
+<meta property="og:locale" content="he_IL">
+<link rel="canonical" href="https://amitphotos.com/learn/${escXml(photoId)}">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0a0a0a;--surface:#111;--border:#222;--accent:#c8a96e;--text:#f0ede8;--muted:#888}
+body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direction:rtl;min-height:100vh;padding:0 0 4rem}
+.site-header{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.25rem;border-bottom:1px solid var(--border)}
+.site-title{font-family:'Syne',sans-serif;font-size:1.1rem;color:var(--accent);text-decoration:none}
+.page-header{padding:1.5rem 1.25rem .5rem;max-width:900px;margin:0 auto;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:.5rem}
+.page-title{font-family:'Syne',sans-serif;font-size:1.4rem;color:var(--text)}
+.rule-badge{font-size:.72rem;color:var(--accent);background:rgba(200,169,110,.1);border:1px solid rgba(200,169,110,.25);border-radius:4px;padding:3px 9px;margin-top:.3rem;display:inline-block}
+.buy-btn{background:var(--accent);color:#000;font-weight:700;font-size:.82rem;border-radius:8px;padding:.5rem 1rem;text-decoration:none;white-space:nowrap;flex-shrink:0}
+.photo-wrap{position:relative;max-width:900px;margin:0 auto 1.5rem;padding:0 .75rem}
+.photo-wrap img{width:100%;border-radius:10px;display:block}
+.rule-overlay{position:absolute;top:.75rem;left:.75rem;right:.75rem;bottom:0;width:calc(100% - 1.5rem);height:100%;pointer-events:none}
+.ann{position:absolute;transform:translate(-50%,-50%);pointer-events:none}
+.ann-dot{width:10px;height:10px;border-radius:50%;background:var(--accent);border:2px solid #000;position:relative;z-index:2}
+.ann-label{position:absolute;background:rgba(0,0,0,.85);border:1px solid var(--accent);border-radius:7px;padding:.3rem .55rem;font-size:.68rem;color:var(--text);line-height:1.45;white-space:nowrap;z-index:3}
+.ann-right{left:16px;top:-10px}
+.ann-left{right:16px;top:-10px}
+.ann-bottom{top:16px;left:50%;transform:translateX(-50%)}
+.ann-top{bottom:16px;left:50%;transform:translateX(-50%)}
+.cam-cards{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;padding:0 .75rem;max-width:900px;margin:0 auto 1.5rem}
+@media(min-width:600px){.cam-cards{grid-template-columns:repeat(4,1fr)}}
+.cam-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:.85rem}
+.cam-label{font-size:.7rem;color:var(--muted);margin-bottom:.25rem}
+.cam-value{font-family:'Syne',sans-serif;font-size:1.05rem;color:var(--accent)}
+.cam-desc{font-size:.7rem;color:var(--muted);margin-top:.3rem;line-height:1.4}
+.section{max-width:900px;margin:0 auto 1.5rem;padding:0 .75rem}
+.section h2{font-family:'Syne',sans-serif;color:var(--accent);font-size:1.05rem;margin-bottom:.75rem}
+.bokeh-box{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem}
+.comp-box{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.1rem;font-size:.85rem;color:var(--muted);line-height:1.75}
+.comp-box p{margin-bottom:.7rem}
+.comp-box p:last-child{margin-bottom:0}
+.comp-box strong{color:var(--text)}
+.tags-row{display:flex;flex-wrap:wrap;gap:.3rem;margin-top:.75rem}
+.tag{font-size:.72rem;color:var(--accent);background:rgba(200,169,110,.1);border:1px solid rgba(200,169,110,.25);border-radius:5px;padding:2px 8px}
+.nav-row{text-align:center;padding:1rem}
+.nav-row a{color:var(--accent);font-size:.85rem;text-decoration:none;margin:0 .75rem}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <a class="site-title" href="https://amitphotos.com">Amit Photos</a>
+  <a href="/learn/" style="color:var(--muted);font-size:.8rem;text-decoration:none">📸 בית ספר לצילום</a>
+</header>
+
+<div class="page-header">
+  <div>
+    <h1 class="page-title">${escXml(row.title)}</h1>
+    <span class="rule-badge">${escXml(ruleLabel)}</span>
+  </div>
+  <a class="buy-btn" href="${buyUrl}">רכוש תמונה זו ←</a>
+</div>
+
+<div class="photo-wrap">
+  <img src="${escXml(imgUrl)}" alt="${escXml(row.title)}">
+  <svg class="rule-overlay" viewBox="0 0 100 100" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    ${buildRuleOverlay(row.composition_rule)}
+  </svg>
+  ${buildAnnotations(annotations)}
+</div>
+
+<div class="cam-cards">${cameraCards}</div>
+
+<div class="section">
+  <h2>📊 איך נוצר הבוקה</h2>
+  <div class="bokeh-box">
+    <svg viewBox="0 0 500 180" style="width:100%;max-width:500px;display:block;margin:0 auto">
+      <rect x="20" y="65" width="55" height="50" rx="5" fill="#1a1a1a" stroke="#c8a96e" stroke-width="1.5"/>
+      <text x="47" y="95" text-anchor="middle" fill="#c8a96e" font-size="10" font-family="Heebo">מצלמה</text>
+      <ellipse cx="75" cy="90" rx="9" ry="20" fill="#222" stroke="#c8a96e" stroke-width="1.5"/>
+      <line x1="84" y1="72" x2="210" y2="90" stroke="rgba(200,169,110,.7)" stroke-width="1"/>
+      <line x1="84" y1="90" x2="210" y2="90" stroke="rgba(200,169,110,.7)" stroke-width="1"/>
+      <line x1="84" y1="108" x2="210" y2="90" stroke="rgba(200,169,110,.7)" stroke-width="1"/>
+      <line x1="210" y1="0" x2="210" y2="180" stroke="#4ade80" stroke-width="2" stroke-dasharray="4,3"/>
+      <text x="214" y="20" fill="#4ade80" font-size="10" font-family="Heebo">נושא (חד)</text>
+      <circle cx="210" cy="90" r="5" fill="#4ade80"/>
+      <line x1="210" y1="90" x2="410" y2="50" stroke="rgba(136,136,136,.5)" stroke-width="1"/>
+      <line x1="210" y1="90" x2="410" y2="90" stroke="rgba(136,136,136,.5)" stroke-width="1"/>
+      <line x1="210" y1="90" x2="410" y2="130" stroke="rgba(136,136,136,.5)" stroke-width="1"/>
+      <line x1="410" y1="0" x2="410" y2="180" stroke="#888" stroke-width="1.5" stroke-dasharray="4,3"/>
+      <text x="414" y="20" fill="#888" font-size="10" font-family="Heebo">רקע (מטושטש)</text>
+      <circle cx="410" cy="50" r="16" fill="none" stroke="rgba(200,169,110,.4)" stroke-width="1.5"/>
+      <circle cx="410" cy="90" r="16" fill="none" stroke="rgba(200,169,110,.4)" stroke-width="1.5"/>
+      <circle cx="410" cy="130" r="16" fill="none" stroke="rgba(200,169,110,.4)" stroke-width="1.5"/>
+      <text x="75" y="145" text-anchor="middle" fill="#c8a96e" font-size="9" font-family="Heebo">פתח עדשה = עומק שדה</text>
+    </svg>
+  </div>
+</div>
+
+<div class="section">
+  <h2>🎨 ניתוח קומפוזיציה</h2>
+  <div class="comp-box">
+    ${row.composition_html || ''}
+    <div class="tags-row">${tagPills}</div>
+  </div>
+</div>
+
+<div class="nav-row">
+  <a href="/learn/">← כל הניתוחים</a>
+  <a href="${buyUrl}">רכוש תמונה זו</a>
+  <a href="https://amitphotos.com">לגלריה</a>
+</div>
+</body>
+</html>`;
+
+  return new Response(html, { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
+}
+
 // ===== MAIN ROUTER =====
 export default {
   async fetch(request, env, ctx) {
@@ -2580,6 +2774,7 @@ export default {
     if (path.startsWith('/photos/'))       return servePhoto(path.slice('/photos/'.length), env, request);
     if (path.startsWith('/photo/'))        return servePhotoPage(path.slice('/photo/'.length), env);
     if (path.startsWith('/category/'))     return handleCategoryPage(decodeURIComponent(path.slice('/category/'.length)), env);
+    if (path.startsWith('/learn/') && path.length > '/learn/'.length)  return handleLearnAnalysis(env, decodeURIComponent(path.slice('/learn/'.length)));
     if (path === '/learn' || path === '/learn/')   return handleLearnIndex(env);
     if (path === '/sitemap.xml')           return handleSitemap(request, env);
     if (path === '/robots.txt')            return handleRobots(request);
