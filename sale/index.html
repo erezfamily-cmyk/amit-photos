@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>מבצע השבוע — Amit Photos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #0a0a0a; --surface: #111; --border: #222;
+  --accent: #c8a96e; --red: #ef4444; --text: #fff; --muted: #888;
+}
+body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--text);
+  direction: rtl; min-height: 100vh; padding: 0 0 4rem; }
+
+.site-header { display: flex; align-items: center; justify-content: space-between;
+  padding: 1rem 1.25rem; border-bottom: 1px solid var(--border); }
+.site-title { font-family: 'Syne', sans-serif; font-size: 1.1rem;
+  color: var(--accent); text-decoration: none; }
+
+.sale-banner {
+  background: linear-gradient(135deg, rgba(200,169,110,0.12), rgba(200,169,110,0.04));
+  border-bottom: 1px solid rgba(200,169,110,0.25);
+  padding: 1.25rem 1.25rem 1rem;
+  text-align: center;
+}
+.sale-title { font-family: 'Syne', sans-serif; font-size: 1.4rem;
+  color: var(--accent); margin-bottom: 0.2rem; }
+.sale-sub { color: var(--muted); font-size: 0.82rem; margin-bottom: 0.85rem; }
+.countdown { display: flex; justify-content: center; gap: 0.5rem; }
+.countdown-unit { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 8px;
+  padding: 0.35rem 0.65rem; text-align: center; min-width: 52px; }
+.countdown-num { font-size: 1.1rem; font-weight: 700; color: var(--accent); display: block; }
+.countdown-label { font-size: 0.6rem; color: var(--muted); }
+.countdown-sep { color: var(--muted); align-self: center; font-size: 1rem; }
+.sale-note { font-size: 0.72rem; color: #555; margin-top: 0.6rem; }
+
+.photo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+  padding: 1rem 0.75rem; max-width: 680px; margin: 0 auto; }
+.photo-card { background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; overflow: hidden; cursor: pointer;
+  transition: border-color 0.2s, transform 0.15s; }
+.photo-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+.photo-card img { width: 100%; aspect-ratio: 4/3; object-fit: cover;
+  display: block; background: #1a1a1a; }
+.card-info { padding: 0.5rem 0.6rem 0.6rem; }
+.card-cat { font-size: 0.65rem; color: var(--muted); margin-bottom: 4px; }
+.card-prices { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.price-original { font-size: 0.7rem; color: #444; text-decoration: line-through; }
+.price-sale { font-size: 0.88rem; font-weight: 700; color: var(--accent); }
+.sale-badge { background: rgba(239,68,68,0.15); color: var(--red);
+  font-size: 0.6rem; padding: 2px 5px; border-radius: 4px;
+  border: 1px solid rgba(239,68,68,0.3); margin-right: auto; }
+
+#loading, #empty { text-align: center; color: var(--muted);
+  padding: 4rem 1rem; font-size: 0.9rem; }
+
+.sale-footer { text-align: center; padding: 1.5rem; }
+.sale-footer a { color: var(--accent); font-size: 0.85rem; text-decoration: none; }
+
+@media (min-width: 640px) {
+  .photo-grid { grid-template-columns: repeat(3, 1fr); }
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <a class="site-title" href="https://amitphotos.com">Amit Photos</a>
+  <span style="color:var(--muted);font-size:0.8rem">🏷️ מבצע השבוע</span>
+</header>
+
+<div class="sale-banner">
+  <div class="sale-title">🏷️ מבצע השבוע</div>
+  <div class="sale-sub">50 תמונות נבחרות ב-20% הנחה</div>
+  <div class="countdown" id="countdown">
+    <div class="countdown-unit"><span class="countdown-num" id="cd-days">--</span><span class="countdown-label">ימים</span></div>
+    <div class="countdown-sep">:</div>
+    <div class="countdown-unit"><span class="countdown-num" id="cd-hours">--</span><span class="countdown-label">שעות</span></div>
+    <div class="countdown-sep">:</div>
+    <div class="countdown-unit"><span class="countdown-num" id="cd-mins">--</span><span class="countdown-label">דקות</span></div>
+  </div>
+  <div class="sale-note">המבצע מתחלף כל שבוע</div>
+</div>
+
+<div id="loading">טוען תמונות...</div>
+<div id="empty" style="display:none">המבצע יתחיל בקרוב — חזרו מחר!</div>
+<div class="photo-grid" id="photo-grid" style="display:none"></div>
+
+<div class="sale-footer">
+  <a href="https://amitphotos.com">← לגלריה המלאה</a>
+</div>
+
+<script>
+const SITE_URL = 'https://amitphotos.com';
+const SALE_DISCOUNT = 0.20;
+const BASE_PRICES = { small: 19, medium: 59, large: 129 };
+
+async function loadPrices() {
+  try {
+    const d = await fetch('/api/admin/prices').then(r => r.ok ? r.json() : null);
+    if (d) Object.assign(BASE_PRICES, d);
+  } catch (_) {}
+}
+
+function salePrice(size) {
+  return Math.round(BASE_PRICES[size] * (1 - SALE_DISCOUNT));
+}
+
+function startCountdown(saleStartedAt) {
+  const saleEnd = new Date(saleStartedAt);
+  saleEnd.setDate(saleEnd.getDate() + 7);
+
+  function tick() {
+    const diff = saleEnd - Date.now();
+    if (diff <= 0) { document.getElementById('countdown').textContent = 'המבצע הסתיים'; return; }
+    const days  = Math.floor(diff / 86400000);
+    const hours = Math.floor((diff % 86400000) / 3600000);
+    const mins  = Math.floor((diff % 3600000)  / 60000);
+    document.getElementById('cd-days').textContent  = String(days).padStart(2,'0');
+    document.getElementById('cd-hours').textContent = String(hours).padStart(2,'0');
+    document.getElementById('cd-mins').textContent  = String(mins).padStart(2,'0');
+  }
+  tick();
+  setInterval(tick, 30000);
+}
+
+function renderGrid(photos) {
+  const grid = document.getElementById('photo-grid');
+  grid.innerHTML = photos.map(photo => `
+    <div class="photo-card" onclick="openBuy('${photo.id}')">
+      <img src="${photo.thumbnail || photo.url}?w=400" alt="${photo.title || ''}" loading="lazy">
+      <div class="card-info">
+        <div class="card-cat">${photo.category || ''}</div>
+        <div class="card-prices">
+          <span class="price-original">₪${BASE_PRICES.small}</span>
+          <span class="price-sale">₪${salePrice('small')}</span>
+          <span class="sale-badge">20% הנחה</span>
+        </div>
+      </div>
+    </div>
+  `).join('');
+  grid.style.display = '';
+}
+
+function openBuy(photoId) {
+  window.location.href = `${SITE_URL}/?photo=${photoId}&discount=sale`;
+}
+
+async function init() {
+  await loadPrices();
+  try {
+    const photos = await fetch('/api/sale-photos').then(r => r.json());
+    document.getElementById('loading').style.display = 'none';
+    if (!photos.length) { document.getElementById('empty').style.display = ''; return; }
+    if (photos[0].sale_started_at) startCountdown(photos[0].sale_started_at);
+    renderGrid(photos);
+  } catch (_) {
+    document.getElementById('loading').textContent = 'שגיאה בטעינה. נסו שוב מאוחר יותר.';
+  }
+}
+
+init();
+</script>
+</body>
+</html>
