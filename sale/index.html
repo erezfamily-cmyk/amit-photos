@@ -124,29 +124,37 @@ function startCountdown(saleStartedAt) {
     document.getElementById('cd-mins').textContent  = String(mins).padStart(2,'0');
   }
   tick();
-  setInterval(tick, 30000);
+  setInterval(tick, 10000);
+}
+
+function esc(s) {
+  return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
 
 function renderGrid(photos) {
   const grid = document.getElementById('photo-grid');
   grid.innerHTML = photos.map(photo => `
-    <div class="photo-card" onclick="openBuy('${photo.id}')">
-      <img src="${photo.thumbnail || photo.url}?w=400" alt="${photo.title || ''}" loading="lazy">
+    <div class="photo-card" data-id="${esc(photo.id)}">
+      <img src="${esc(photo.thumbnail || photo.url)}?w=400" alt="${esc(photo.title)}" loading="lazy">
       <div class="card-info">
-        <div class="card-cat">${photo.category || ''}</div>
+        <div class="card-cat">${esc(photo.category)}</div>
         <div class="card-prices">
           <span class="price-original">₪${BASE_PRICES.small}</span>
-          <span class="price-sale">₪${salePrice('small')}</span>
+          <span class="price-sale">החל מ ₪${salePrice('small')}</span>
           <span class="sale-badge">20% הנחה</span>
         </div>
       </div>
     </div>
   `).join('');
+  grid.addEventListener('click', e => {
+    const card = e.target.closest('.photo-card');
+    if (card) openBuy(card.dataset.id);
+  });
   grid.style.display = '';
 }
 
 function openBuy(photoId) {
-  window.location.href = `${SITE_URL}/?photo=${photoId}&discount=sale`;
+  window.location.href = `${SITE_URL}/?photo=${encodeURIComponent(photoId)}&discount=sale`;
 }
 
 async function init() {
