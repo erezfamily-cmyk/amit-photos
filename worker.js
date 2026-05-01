@@ -2124,7 +2124,7 @@ async function handleAdminPurchases(request, env) {
   `).first();
 
   const topPhotos = await env.DB.prepare(`
-    SELECT p.title, COUNT(*) as cnt
+    SELECT p.title, COUNT(*) as cnt, COALESCE(SUM(t.amount), 0) as revenue
     FROM download_tokens t
     LEFT JOIN photos p ON json_extract(t.photo_ids, '$[0]') = p.id
     WHERE p.title IS NOT NULL

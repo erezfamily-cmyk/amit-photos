@@ -2823,7 +2823,7 @@ const Purchases = (() => {
     ].join('<br>');
     $('pur-this-month').textContent = s.this_month || 0;
     $('pur-top-photos').innerHTML = (s.top_photos || [])
-      .map(p => `${p.title} (${p.cnt})`).join('<br>') || '—';
+      .map(p => `${p.title} — ${p.cnt}x · ₪${Math.round(p.revenue)}`).join('<br>') || '—';
 
     const daily = s.daily_revenue || [];
     const maxRev = Math.max(...daily.map(d => d.revenue), 1);
