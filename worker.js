@@ -2501,7 +2501,7 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direc
   return new Response(html, { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
 }
 
-function buildRuleOverlay(rule) {
+function buildRuleOverlay(rule, annotations) {
   const gold = 'rgba(200,169,110,0.55)';
   const dash = '6,4';
   if (rule === 'rule_of_thirds') return `
@@ -2515,16 +2515,48 @@ function buildRuleOverlay(rule) {
     <circle cx="66.6%" cy="66.6%" r="5" fill="${gold}"/>`;
   if (rule === 'symmetry') return `
     <line x1="50%" y1="0" x2="50%" y2="100%" stroke="${gold}" stroke-width="2" stroke-dasharray="${dash}"/>`;
-  if (rule === 'leading_lines') return `
-    <line x1="0" y1="100%" x2="60%" y2="30%" stroke="${gold}" stroke-width="2" stroke-dasharray="${dash}"/>
-    <polygon points="60%,25% 57%,35% 63%,35%" fill="${gold}"/>`;
+  if (rule === 'leading_lines') {
+    if (!annotations || annotations.length === 0) {
+      return `<g stroke="${gold}" fill="${gold}" opacity="0.8">
+      <line x1="5%" y1="95%" x2="60%" y2="30%" stroke-width="2"/>
+      <polygon points="60%,25% 57%,35% 63%,35%"/>
+    </g>`;
+    }
+    const lines = annotations.map(a => {
+      const x = a.x_pct || 50;
+      const y = a.y_pct || 50;
+      const fromX = x < 50 ? 2 : 98;
+      const fromY = y < 50 ? 2 : 98;
+      const dx = x - fromX;
+      const dy = y - fromY;
+      const len = Math.sqrt(dx*dx + dy*dy);
+      const nx = dx/len; const ny = dy/len;
+      const ax = x - nx*8; const ay = y - ny*8;
+      const p1x = ax - ny*4; const p1y = ay + nx*4;
+      const p2x = ax + ny*4; const p2y = ay - nx*4;
+      return `<line x1="${fromX}%" y1="${fromY}%" x2="${x}%" y2="${y}%" stroke="${gold}" stroke-width="2" opacity="0.8"/>
+      <polygon points="${x}%,${y}% ${p1x}%,${p1y}% ${p2x}%,${p2y}%" fill="${gold}" opacity="0.8"/>`;
+    }).join('');
+    return `<g>${lines}</g>`;
+  }
   if (rule === 'framing') return `
     <rect x="10%" y="10%" width="80%" height="80%" fill="none" stroke="${gold}" stroke-width="2" stroke-dasharray="${dash}"/>`;
   if (rule === 'negative_space') return `
     <rect x="0" y="0" width="40%" height="100%" fill="rgba(200,169,110,0.08)"/>`;
-  if (rule === 'golden_ratio') return `
-    <rect x="0" y="0" width="61.8%" height="100%" fill="none" stroke="${gold}" stroke-width="1.5" stroke-dasharray="${dash}"/>
-    <line x1="61.8%" y1="0" x2="61.8%" y2="100%" stroke="${gold}" stroke-width="2"/>`;
+  if (rule === 'golden_ratio') {
+    const g = 0.618;
+    return `
+    <g stroke="${gold}" fill="none" stroke-width="1.5" opacity="0.7">
+      <!-- Golden rectangle border -->
+      <rect x="0" y="0" width="100%" height="100%" fill="none" stroke="${gold}" stroke-width="1" stroke-dasharray="4,4" opacity="0.4"/>
+      <!-- Golden ratio vertical divide -->
+      <line x1="${g*100}%" y1="0" x2="${g*100}%" y2="100%" stroke-dasharray="4,4" opacity="0.5"/>
+      <!-- Spiral arcs (quarter circles progressively smaller) -->
+      <path d="M ${g*100}%,0 A ${g*100}%,100% 0 0 0 0,100%" stroke-width="2" opacity="0.9"/>
+      <path d="M 0,${g*100}% A ${(1-g)*100}%,${(1-g)*100}% 0 0 1 ${(1-g)*100}%,100%" stroke-width="1.8" opacity="0.8"/>
+      <path d="M ${(1-g)*100}%,${g*(1-g)*100}% A ${g*(1-g)*100}%,${g*(1-g)*100}% 0 0 0 0,${g*(1-g)*100}%" stroke-width="1.5" opacity="0.7"/>
+    </g>`;
+  }
   return '';
 }
 
@@ -2544,13 +2576,13 @@ async function handleLearnAnalysis(env, photoId) {
     'SELECT * FROM photo_analyses WHERE photo_id = ?'
   ).bind(photoId).first().catch(() => null);
 
-  if (!row) return Response.redirect('https://amitphotos.com/learn/', 302);
-
   const photo = await env.DB.prepare(
     'SELECT id, title, thumbnail, url, exif FROM photos WHERE id = ?'
   ).bind(photoId).first().catch(() => null);
 
-  if (!photo) return Response.redirect('https://amitphotos.com/learn/', 302);
+  if (!row || !photo) {
+    return new Response(`<!DOCTYPE html><html lang="he" dir="rtl"><head><meta charset="utf-8"><title>לא נמצא</title><style>body{background:#0a0a0a;color:#f0ede8;font-family:'Heebo',sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;gap:1rem}</style></head><body><h1 style="color:#c8a96e;font-size:2rem">404</h1><p>הניתוח לא נמצא</p><a href="/learn/" style="color:#c8a96e">← חזרה לבית ספר לצילום</a></body></html>`, {status: 404, headers: {'Content-Type': 'text/html;charset=utf-8'}});
+  }
 
   const annotations = JSON.parse(row.annotations_json || '[]');
   const camera = JSON.parse(row.camera_json || '{}');
@@ -2643,7 +2675,7 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direc
 <div class="photo-wrap">
   <img src="${escXml(imgUrl)}" alt="${escXml(row.title)}">
   <svg class="rule-overlay" viewBox="0 0 100 100" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-    ${buildRuleOverlay(row.composition_rule)}
+    ${buildRuleOverlay(row.composition_rule, annotations)}
   </svg>
   ${buildAnnotations(annotations)}
 </div>
