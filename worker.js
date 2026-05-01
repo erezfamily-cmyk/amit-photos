@@ -2264,14 +2264,8 @@ async function handleAnalysesGenerate(request, env) {
     return jsonRes({ error: 'אין תמונות זמינות לניתוח' }, 404, request);
   }
 
-  // 2. Pick first candidate (already random), fetch image from R2
-  const chosen = candidates[0];
-
-  // Derive thumbnail R2 key from thumbnail path (strip leading /photos/)
-  const thumbPath = chosen.thumbnail || chosen.url || '';
-  const thumbR2Key = thumbPath.startsWith('/photos/') ? thumbPath.slice('/photos/'.length) : (chosen.r2_key || '');
-  const r2Obj = thumbR2Key ? await env.PHOTOS.get(thumbR2Key) : null;
-  let imgB64, imgMime;
+  // 2. Find a photo that fits Claude's 5MB image limit — check each candidate
+  const MAX_IMG_BYTES = 3_500_000; // 3.5MB raw → ~4.7MB base64, safely under 5MB
   const toB64 = (buf) => {
     const bytes = new Uint8Array(buf);
     let binary = '';
@@ -2279,16 +2273,26 @@ async function handleAnalysesGenerate(request, env) {
     return btoa(binary);
   };
 
-  if (r2Obj) {
-    imgB64 = toB64(await r2Obj.arrayBuffer());
-    imgMime = r2Obj.httpMetadata?.contentType || 'image/jpeg';
-  } else {
-    // Fallback: try main photo from R2
-    const mainObj = chosen.r2_key ? await env.PHOTOS.get(chosen.r2_key) : null;
-    if (!mainObj) return jsonRes({ error: `Photo not found in R2 (tried: ${thumbR2Key}, ${chosen.r2_key})` }, 404, request);
-    imgB64 = toB64(await mainObj.arrayBuffer());
-    imgMime = mainObj.httpMetadata?.contentType || 'image/jpeg';
+  let chosen = null, imgB64 = null, imgMime = 'image/jpeg';
+  for (const candidate of candidates) {
+    const thumbPath = candidate.thumbnail || candidate.url || '';
+    const thumbKey = thumbPath.startsWith('/photos/') ? thumbPath.slice('/photos/'.length) : (candidate.r2_key || '');
+    const keys = [...new Set([thumbKey, candidate.r2_key].filter(Boolean))];
+    for (const key of keys) {
+      const head = await env.PHOTOS.head(key);
+      if (head && head.size <= MAX_IMG_BYTES) {
+        const obj = await env.PHOTOS.get(key);
+        if (obj) {
+          chosen = candidate;
+          imgB64 = toB64(await obj.arrayBuffer());
+          imgMime = obj.httpMetadata?.contentType || 'image/jpeg';
+          break;
+        }
+      }
+    }
+    if (chosen) break;
   }
+  if (!chosen) return jsonRes({ error: 'No suitable photo found (all images exceed 3.5MB)' }, 404, request);
 
   // 3. Ask Claude sonnet for composition rule selection + full analysis
   const analysisRes = await fetch('https://api.anthropic.com/v1/messages', {
