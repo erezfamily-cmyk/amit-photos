@@ -383,8 +383,8 @@ function timeUp() {
       : desc;
     descEl.style.display = 'block';
   }
-  document.getElementById('next-btn').style.display = 'block';
   document.getElementById('score-badge').textContent = `✓ ${score} נכון`;
+  setTimeout(nextQuestion, 2000);
 }
 
 function shuffle(arr) {
@@ -484,17 +484,16 @@ function handleAnswer(chosen, clickedBtn) {
     setTimeout(() => badge.classList.remove('bump'), 200);
     document.getElementById('feedback').textContent = '✅ נכון! ניחשת יפה';
     document.getElementById('feedback').className = 'feedback correct';
-    document.getElementById('feedback').style.display = '';
+    document.getElementById('feedback').style.display = 'block';
   } else {
     results.push(false);
     clickedBtn.classList.add('wrong');
-    // highlight correct
     document.querySelectorAll('.answer-btn').forEach(b => {
       if (b.textContent === q.correctCountry) b.classList.add('correct');
     });
     document.getElementById('feedback').textContent = `❌ טעות — התשובה הנכונה: ${q.correctCountry}`;
     document.getElementById('feedback').className = 'feedback wrong';
-    document.getElementById('feedback').style.display = '';
+    document.getElementById('feedback').style.display = 'block';
   }
 
   // Disable all buttons
@@ -503,19 +502,21 @@ function handleAnswer(chosen, clickedBtn) {
   // Show description
   if (q.photo.quiz_description) {
     const descEl = document.getElementById('photo-desc');
-    // First sentence is bolded (up to first em-dash or comma or end)
     const desc = q.photo.quiz_description;
     const dashIdx = desc.indexOf(' — ');
-    if (dashIdx > -1) {
-      descEl.innerHTML = `<strong>${desc.slice(0, dashIdx)}</strong>${desc.slice(dashIdx)}`;
-    } else {
-      descEl.textContent = desc;
-    }
+    descEl.innerHTML = dashIdx > -1
+      ? `<strong>${desc.slice(0, dashIdx)}</strong>${desc.slice(dashIdx)}`
+      : desc;
     descEl.style.display = 'block';
   }
 
-  document.getElementById('next-btn').style.display = 'block';
   document.getElementById('score-badge').textContent = `✓ ${score} נכון`;
+
+  if (isCorrect) {
+    document.getElementById('next-btn').style.display = 'block';
+  } else {
+    setTimeout(nextQuestion, 2000);
+  }
 }
 
 function nextQuestion() {
