@@ -2405,6 +2405,102 @@ async function handleAnalysesGenerate(request, env) {
   }, 200, request);
 }
 
+// ===== LEARN INDEX =====
+const RULE_LABELS = {
+  rule_of_thirds: 'חוק השליש',
+  symmetry: 'סימטריה',
+  leading_lines: 'קווים מובילים',
+  golden_ratio: 'יחס הזהב',
+  framing: 'מסגור',
+  negative_space: 'מרחב שלילי',
+};
+
+async function handleLearnIndex(env) {
+  const { results: analyses } = await env.DB.prepare(
+    `SELECT a.photo_id, a.title, a.composition_rule, a.tags_json, a.published_at,
+            p.thumbnail
+     FROM photo_analyses a
+     LEFT JOIN photos p ON p.id = a.photo_id
+     ORDER BY a.published_at DESC`
+  ).all().catch(() => ({ results: [] }));
+
+  const cards = (analyses || []).map(a => {
+    const thumb = a.thumbnail || '';
+    const ruleLabel = RULE_LABELS[a.composition_rule] || a.composition_rule;
+    const tags = JSON.parse(a.tags_json || '[]').slice(0, 3).map(t => `<span class="tag">${escXml(t)}</span>`).join('');
+    const date = a.published_at ? a.published_at.slice(0, 10) : '';
+    return `<a class="learn-card" href="/learn/${escXml(a.photo_id)}">
+      <img src="${escXml(thumb)}" alt="${escXml(a.title)}" loading="lazy">
+      <div class="learn-card-body">
+        <div class="learn-card-rule">${escXml(ruleLabel)}</div>
+        <div class="learn-card-title">${escXml(a.title)}</div>
+        <div class="learn-card-tags">${tags}</div>
+        <div class="learn-card-date">${escXml(date)}</div>
+      </div>
+    </a>`;
+  }).join('\n');
+
+  const empty = analyses.length === 0
+    ? '<p style="text-align:center;color:#888;padding:4rem">הניתוח הראשון יפורסם בקרוב — חזרו מחר!</p>'
+    : '';
+
+  const html = `<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>בית ספר לצילום — Amit Photos</title>
+<meta name="description" content="ניתוח צילומי מעמיק של תמונות אמנות — חוק השליש, בוקה, קומפוזיציה. מדריך לצלמן מתחיל.">
+<meta property="og:title" content="📸 בית ספר לצילום | Amit Photos">
+<meta property="og:description" content="ניתוח צילומי מעמיק — חוקי קומפוזיציה, הגדרות מצלמה, ופירוש כל בחירה של הצלם.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://amitphotos.com/learn/">
+<meta property="og:locale" content="he_IL">
+<link rel="canonical" href="https://amitphotos.com/learn/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0a0a0a;--surface:#111;--border:#222;--accent:#c8a96e;--text:#f0ede8;--muted:#888}
+body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direction:rtl;min-height:100vh;padding:0 0 4rem}
+.site-header{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.25rem;border-bottom:1px solid var(--border)}
+.site-title{font-family:'Syne',sans-serif;font-size:1.1rem;color:var(--accent);text-decoration:none}
+.page-hero{text-align:center;padding:2.5rem 1.25rem 1.5rem}
+.page-hero h1{font-family:'Syne',sans-serif;font-size:1.8rem;color:var(--accent);margin-bottom:.5rem}
+.page-hero p{color:var(--muted);font-size:.9rem;max-width:380px;margin:0 auto}
+.grid{display:grid;grid-template-columns:1fr;gap:1rem;padding:1.25rem;max-width:900px;margin:0 auto}
+@media(min-width:520px){.grid{grid-template-columns:1fr 1fr}}
+@media(min-width:800px){.grid{grid-template-columns:1fr 1fr 1fr}}
+.learn-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;text-decoration:none;color:inherit;transition:border-color .2s,transform .15s;display:flex;flex-direction:column}
+.learn-card:hover{border-color:var(--accent);transform:translateY(-3px)}
+.learn-card img{width:100%;aspect-ratio:4/3;object-fit:cover;background:#1a1a1a}
+.learn-card-body{padding:.75rem}
+.learn-card-rule{font-size:.7rem;color:var(--accent);background:rgba(200,169,110,.1);border:1px solid rgba(200,169,110,.25);border-radius:4px;display:inline-block;padding:2px 7px;margin-bottom:.4rem}
+.learn-card-title{font-family:'Syne',sans-serif;font-size:.95rem;color:var(--text);margin-bottom:.4rem}
+.learn-card-tags{display:flex;flex-wrap:wrap;gap:3px;margin-bottom:.3rem}
+.tag{font-size:.65rem;color:var(--muted);background:#1a1a1a;border:1px solid var(--border);border-radius:4px;padding:1px 5px}
+.learn-card-date{font-size:.65rem;color:#555}
+.back-link{text-align:center;padding:1rem}
+.back-link a{color:var(--accent);font-size:.85rem;text-decoration:none}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <a class="site-title" href="https://amitphotos.com">Amit Photos</a>
+  <span style="color:var(--muted);font-size:.8rem">📸 בית ספר לצילום</span>
+</header>
+<div class="page-hero">
+  <h1>📸 בית ספר לצילום</h1>
+  <p>ניתוח צילומי מעמיק — חוקי קומפוזיציה, הגדרות מצלמה, ומה הצלם חשב</p>
+</div>
+<div class="grid">${cards}${empty}</div>
+<div class="back-link"><a href="https://amitphotos.com">← לגלריה המלאה</a></div>
+</body>
+</html>`;
+
+  return new Response(html, { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
+}
+
 // ===== MAIN ROUTER =====
 export default {
   async fetch(request, env, ctx) {
@@ -2484,6 +2580,7 @@ export default {
     if (path.startsWith('/photos/'))       return servePhoto(path.slice('/photos/'.length), env, request);
     if (path.startsWith('/photo/'))        return servePhotoPage(path.slice('/photo/'.length), env);
     if (path.startsWith('/category/'))     return handleCategoryPage(decodeURIComponent(path.slice('/category/'.length)), env);
+    if (path === '/learn' || path === '/learn/')   return handleLearnIndex(env);
     if (path === '/sitemap.xml')           return handleSitemap(request, env);
     if (path === '/robots.txt')            return handleRobots(request);
 
