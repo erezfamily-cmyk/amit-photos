@@ -325,7 +325,7 @@ function renderGallery(append = false) {
         <div class="gallery-item-info">
           <h3>${photo.title}</h3>
           <span>${getCategoryLabel(photo.category)}</span>
-          ${canBuy(photo) ? `<span class="gallery-item-price">החל מ-₪${(() => { try { const ov = photo.price_overrides ? (typeof photo.price_overrides === 'string' ? JSON.parse(photo.price_overrides) : photo.price_overrides) : {}; const s = ov.small ?? globalPrices.small; return s; } catch { return globalPrices.small; } })()}</span>` : ''}
+          ${canBuy(photo) ? `<span class="gallery-item-price">החל מ-₪${getEffectivePrice(photo.id, 'small')}</span>` : ''}
         </div>
         <div class="gallery-item-actions">
           ${canBuy(photo) ? `<button class="gallery-cart-btn" data-idx="${idx}" aria-label="${t('gallery.btn.cart')}">${t('gallery.btn.cart')}</button>` : ''}
