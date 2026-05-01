@@ -226,6 +226,8 @@ body {
 }
 .btn-gold  { background: var(--accent); color: #111; }
 .btn-whatsapp { background: #25D366; color: #fff; }
+.btn-facebook { background: #1877f2; color: #fff; }
+.btn-facebook:hover { background: #1465d4; }
 .btn-dark  { background: #1a1a1a; border: 1px solid #2a2a2a; color: var(--muted); }
 
 /* Loading / error */
@@ -284,6 +286,7 @@ body {
       <div class="win-score" id="win-score"></div>
       <a class="result-btn btn-gold" id="btn-gallery" href="https://amitphotos.com/sale/">🛍️ לגלריה המבצע</a>
       <a class="result-btn btn-whatsapp" id="btn-share" href="#" target="_blank">💬 שתף בוואטסאפ</a>
+      <a class="result-btn btn-facebook" id="btn-share-fb" href="#" target="_blank">📘 שתף בפייסבוק</a>
       <button class="result-btn btn-dark" id="btn-retry">🔄 סיבוב חדש</button>
     </div>
   </div>
@@ -567,8 +570,11 @@ function showResult() {
     document.getElementById('btn-gallery').style.display = '';
     const waText = encodeURIComponent(`ניצחתי במשחק "מאיפה הצילום?" של עמית! 🎉 — ${QUIZ_URL}`);
     document.getElementById('btn-share').href = `https://wa.me/?text=${waText}`;
+    document.getElementById('btn-share-fb').href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(QUIZ_URL)}`;
+    document.getElementById('btn-share-fb').style.display = '';
   } else {
     document.getElementById('btn-gallery').style.display = 'none';
+    document.getElementById('btn-share-fb').style.display = 'none';
     document.getElementById('result-badge').textContent = '🌍 סיבוב הושלם';
   }
 
