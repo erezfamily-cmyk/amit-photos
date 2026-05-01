@@ -441,7 +441,7 @@ function renderQuestion() {
 
   // Photo
   const img = document.getElementById('question-img');
-  img.src = q.photo.thumbnail || q.photo.url;
+  img.src = photoUrl(q.photo);
   img.alt = '';
 
   // Hide desc + feedback + next btn
@@ -465,6 +465,19 @@ function renderQuestion() {
   });
 
   startTimer();
+  preloadNext();
+}
+
+function photoUrl(photo) {
+  const base = photo.thumbnail || photo.url;
+  return base + (base.includes('?') ? '&' : '?') + 'w=600';
+}
+
+function preloadNext() {
+  const next = questions[current + 1];
+  if (!next) return;
+  const img = new Image();
+  img.src = photoUrl(next.photo);
 }
 
 function handleAnswer(chosen, clickedBtn) {

@@ -1642,7 +1642,27 @@ async function handleCategoryPage(category, env) {
   });
 }
 
-async function servePhoto(key, env) {
+async function servePhoto(key, env, request) {
+  const url = new URL(request.url);
+  const w = parseInt(url.searchParams.get('w')) || 0;
+
+  // Cloudflare Image Resizing — gracefully degrades if not enabled on the account
+  if (w && !request.headers.get('x-no-resize')) {
+    try {
+      const origin = url.origin;
+      const resized = await fetch(`${origin}/photos/${key}`, {
+        cf: { image: { width: w, quality: 75, format: 'webp' } },
+        headers: { 'x-no-resize': '1' },
+      });
+      if (resized.ok) {
+        const headers = new Headers(resized.headers);
+        headers.set('Cache-Control', 'public, max-age=31536000, immutable');
+        headers.set('Access-Control-Allow-Origin', '*');
+        return new Response(resized.body, { headers });
+      }
+    } catch (_) {}
+  }
+
   const object = await env.PHOTOS.get(key);
   if (!object) return new Response('Not found', { status: 404 });
   return new Response(object.body, {
@@ -2178,7 +2198,7 @@ export default {
     if (path === '/api/print/orders')         return handlePrintOrders(request, env);
     if (path === '/api/proxy-image')          return handleImageProxy(request, env);
     if (path === '/api/analytics')         return handleAnalytics(request, env);
-    if (path.startsWith('/photos/'))       return servePhoto(path.slice('/photos/'.length), env);
+    if (path.startsWith('/photos/'))       return servePhoto(path.slice('/photos/'.length), env, request);
     if (path.startsWith('/photo/'))        return servePhotoPage(path.slice('/photo/'.length), env);
     if (path.startsWith('/category/'))     return handleCategoryPage(decodeURIComponent(path.slice('/category/'.length)), env);
     if (path === '/sitemap.xml')           return handleSitemap(request, env);
