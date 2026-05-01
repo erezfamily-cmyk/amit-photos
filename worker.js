@@ -324,6 +324,15 @@ async function handlePhotos(request, env) {
       return jsonRes({ ok: true, quiz_eligible: newEligible, quiz_description: newDesc }, 200, request);
     }
 
+    if (body.on_sale !== undefined) {
+      const newOnSale = body.on_sale ? 1 : 0;
+      const startedAt = body.on_sale ? new Date().toISOString() : null;
+      await env.DB.prepare(
+        'UPDATE photos SET on_sale=?, sale_started_at=? WHERE id=?'
+      ).bind(newOnSale, startedAt, id).run();
+      return jsonRes({ ok: true, on_sale: newOnSale }, 200, request);
+    }
+
     let finalTitle = body.title || '';
     // אם הכותרת גנרית — נסה לייצר עברית אוטומטית
     if (isGenericTitle(finalTitle)) {
@@ -362,6 +371,36 @@ async function handleQuizPhotos(request, env) {
   const weekId = weekRow?.value || '';
   const photos = results.map(p => weekId && p.id === weekId ? { ...p, is_week_photo: true } : p);
   return jsonRes(photos);
+}
+
+async function handleSalePhotos(request, env) {
+  const { results } = await env.DB.prepare(
+    'SELECT id, title, category, thumbnail, url, sale_started_at FROM photos WHERE published=1 AND on_sale=1 ORDER BY RANDOM()'
+  ).all();
+  return jsonRes(results || [], 200, request);
+}
+
+async function handleSaleRotate(request, env) {
+  if (!await checkAuth(request, env)) return unauth(request);
+
+  const now = new Date().toISOString();
+  const nextRotation = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+
+  await env.DB.prepare('UPDATE photos SET on_sale=0, sale_started_at=NULL WHERE on_sale=1').run();
+
+  const { results } = await env.DB.prepare(
+    'SELECT id FROM photos WHERE published=1 ORDER BY RANDOM() LIMIT 50'
+  ).all();
+
+  if (results.length === 0) return jsonRes({ error: 'No published photos found' }, 400, request);
+
+  for (const photo of results) {
+    await env.DB.prepare(
+      'UPDATE photos SET on_sale=1, sale_started_at=? WHERE id=?'
+    ).bind(now, photo.id).run();
+  }
+
+  return jsonRes({ ok: true, rotated: results.length, next_rotation: nextRotation }, 200, request);
 }
 
 // ===== REPAIR R2 — overwrite existing R2 key without touching D1 =====
@@ -2151,6 +2190,8 @@ export default {
     if (path === '/api/customers')         return handleCustomers(request, env);
     if (path === '/api/photos')            return handlePhotos(request, env);
     if (path === '/api/quiz-photos')       return handleQuizPhotos(request, env);
+    if (path === '/api/sale-photos')       return handleSalePhotos(request, env);
+    if (path === '/api/sale/rotate' && request.method === 'POST') return handleSaleRotate(request, env);
     if (path === '/api/upload')            return handleUpload(request, env);
     if (path === '/api/repair-r2')         return handleRepairR2(request, env);
     if (path === '/api/fill-titles')       return handleFillTitles(request, env);
