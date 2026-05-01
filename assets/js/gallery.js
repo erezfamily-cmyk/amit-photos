@@ -39,6 +39,7 @@ let puzzleDiscountPhotoId = null; // set when arriving from puzzle with ?discoun
 const PUZZLE_DISCOUNT = 0.20;
 let quizDiscountActive = false; // set when arriving from quiz with ?discount=quiz
 const QUIZ_DISCOUNT = 0.20;
+const SALE_DISCOUNT = 0.20;
 
 // ===== IMAGE PROTECTION =====
 document.addEventListener('keydown', e => {
@@ -1220,6 +1221,9 @@ function getEffectivePrice(photoId, size) {
   }
   if (quizDiscountActive) {
     return Math.round(globalPrices[size] * (1 - QUIZ_DISCOUNT));
+  }
+  if (photo?.on_sale) {
+    return Math.round(globalPrices[size] * (1 - SALE_DISCOUNT));
   }
   return globalPrices[size];
 }
