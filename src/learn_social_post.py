@@ -47,7 +47,7 @@ def generate_analysis():
         sys.exit(1)
     resp = requests.post(
         f"{SITE_URL}/api/analyses/generate",
-        headers={"X-Session-Token": ADMIN_TOKEN},
+        headers={"X-Admin-Password": ADMIN_TOKEN},
         timeout=120
     )
     if not resp.ok:
