@@ -206,6 +206,10 @@ input,textarea,select{font-family:var(--font);direction:rtl}
 .photo-actions{display:flex;gap:.4rem;margin-top:.65rem}
 .draft-badge{margin-right:.4rem;font-size:.68rem;font-weight:600;color:#e8a000;background:rgba(232,160,0,.12);border:1px solid rgba(232,160,0,.3);padding:.1rem .4rem;border-radius:10px;vertical-align:middle}
 .sale-badge{margin-right:.4rem;font-size:.68rem;font-weight:700;color:#34d399;background:rgba(52,211,153,.12);border:1px solid rgba(52,211,153,.35);padding:.1rem .4rem;border-radius:10px;vertical-align:middle}
+.admin-badge{margin-right:.4rem;font-size:.68rem;font-weight:600;padding:.1rem .4rem;border-radius:10px;vertical-align:middle;cursor:pointer}
+.admin-badge-sale{background:rgba(239,68,68,0.15);color:#ef4444;border:1px solid rgba(239,68,68,0.3)}
+.admin-badge-sale-off{background:#1a1a1a;color:#555;border:1px solid #333;font-size:.65rem}
+.admin-badge-sale-off:hover{color:#ef4444;border-color:rgba(239,68,68,0.3)}
 .btn-icon.quiz-active { color: #34d399; }
 .res-badge{margin-right:.3rem;font-size:.62rem;font-weight:600;padding:.1rem .35rem;border-radius:8px;vertical-align:middle}
 .res-ok{color:#34d399;background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.25)}
@@ -659,6 +663,7 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
             <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" stroke-width="1.5" stroke-linecap="round"/></svg>
             כותרות AI — Drive
           </button>
+          <button class="btn btn-ghost btn-sm" onclick="rotateSale()" title="בחר 50 תמונות רנדומליות למבצע השבוע">🔄 רוטציה ידנית</button>
           <button class="btn btn-primary btn-sm" id="add-photo-btn">
             <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><line x1="12" y1="5" x2="12" y2="19" stroke-width="2"/><line x1="5" y1="12" x2="19" y2="12" stroke-width="2"/></svg>
             הוסף תמונה
@@ -1534,6 +1539,7 @@ const Photos = (() => {
   }
 
   function isOnSale(p) {
+    if (p.on_sale) return true;
     if (!p.price_overrides) return false;
     try {
       const ov = JSON.parse(p.price_overrides);
@@ -1560,7 +1566,7 @@ const Photos = (() => {
             onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%2275%22%3E%3Crect fill=%22%23111%22 width=%22100%25%22 height=%22100%25%22/%3E%3C/svg%3E'">
         </div>
         <div class="photo-info">
-          <div class="photo-title">${p.title||'ללא כותרת'}${p.published===0?'<span class="draft-badge">טיוטה</span>':''}${isOnSale(p)?'<span class="sale-badge">🏷 מבצע</span>':''}${p.is_week_photo?'<span class="sale-badge" style="color:#f59e0b;background:rgba(245,158,11,.12);border-color:rgba(245,158,11,.35)">⭐ שבוע</span>':''}${p.quiz_eligible?'<span class="sale-badge" style="color:#34d399;background:rgba(52,211,153,.1);border-color:rgba(52,211,153,.3)">🌍 קוויז</span>':''}</div>
+          <div class="photo-title">${p.title||'ללא כותרת'}${p.published===0?'<span class="draft-badge">טיוטה</span>':''}${isOnSale(p)?'<span class="sale-badge">🏷 מבצע</span>':''}${p.is_week_photo?'<span class="sale-badge" style="color:#f59e0b;background:rgba(245,158,11,.12);border-color:rgba(245,158,11,.35)">⭐ שבוע</span>':''}${p.quiz_eligible?'<span class="sale-badge" style="color:#34d399;background:rgba(52,211,153,.1);border-color:rgba(52,211,153,.3)">🌍 קוויז</span>':''}${p.on_sale?`<span class="admin-badge admin-badge-sale" onclick="toggleSale('${p.id}',false,event)" title="הסר ממבצע">מבצע</span>`:`<span class="admin-badge admin-badge-sale-off" onclick="toggleSale('${p.id}',true,event)" title="הוסף למבצע">+מבצע</span>`}</div>
           <span class="cat-badge">${p.category||'ללא קטגוריה'}</span>${(()=>{if(!p.width||!p.height)return'';const mx=Math.max(p.width,p.height);const cls=mx<2000?'res-badge res-low':mx<5000?'res-badge res-mid':'res-badge res-ok';return`<span class="${cls}">${p.width}×${p.height}</span>`;})()}
           <div class="photo-actions">
             <span class="drag-handle" onclick="event.stopPropagation()" title="גרור לסדר">⠿</span>
@@ -2185,6 +2191,40 @@ async function toggleQuizEligible(photoId, currentState) {
     Photos.render();
   } catch(e) {
     alert('שגיאה: ' + e.message);
+  }
+}
+
+async function toggleSale(id, newValue, event) {
+  event?.stopPropagation();
+  if (!newValue && !confirm('להסיר תמונה זו מהמבצע?')) return;
+  try {
+    const resp = await fetch('/api/photos', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', 'X-Session-Token': SESSION_TOKEN },
+      body: JSON.stringify({ id, on_sale: newValue }),
+    });
+    if (!resp.ok) throw new Error(await resp.text());
+    const photo = Photos.list.find(p => p.id === id);
+    if (photo) photo.on_sale = newValue ? 1 : 0;
+    Photos.render();
+  } catch(e) {
+    alert('שגיאה: ' + e.message);
+  }
+}
+
+async function rotateSale() {
+  if (!confirm('להחליף את 50 תמונות המבצע? הישנות יחזרו למחיר רגיל.')) return;
+  try {
+    const resp = await fetch('/api/sale/rotate', {
+      method: 'POST',
+      headers: { 'X-Session-Token': SESSION_TOKEN },
+    });
+    if (!resp.ok) throw new Error(await resp.text());
+    const data = await resp.json();
+    alert(`✅ הרוטציה הצליחה — ${data.rotated} תמונות חדשות במבצע`);
+    location.reload();
+  } catch(e) {
+    alert('שגיאה ברוטציה: ' + e.message);
   }
 }
 
