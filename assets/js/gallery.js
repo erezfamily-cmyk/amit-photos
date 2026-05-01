@@ -5,6 +5,7 @@ let globalPrices = { small: 19, medium: 59, large: 129 };
 fetch('/api/admin/prices').then(r => r.ok ? r.json() : null).then(d => { if (d) globalPrices = d; }).catch(() => {});
 
 function isOnSale(photo) {
+  if (photo.on_sale) return true;
   if (!photo.price_overrides) return false;
   try {
     const ov = typeof photo.price_overrides === 'string' ? JSON.parse(photo.price_overrides) : photo.price_overrides;
