@@ -1,0 +1,9 @@
+node_modules
+.git
+.github
+docs
+src
+puzzle
+assets/css
+assets/js
+data
