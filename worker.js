@@ -2357,7 +2357,8 @@ async function handleAnalysesGenerate(request, env) {
 {
   "composition_rule": "שם_החוק",
   "annotations": [
-    {"x_pct": 0-100, "y_pct": 0-100, "label": "שורה1\\nשורה2", "anchor": "left|right|top|bottom"}
+    {"x_pct": 0-100, "y_pct": 0-100, "label": "שורה1\\nשורה2", "anchor": "left|right|top|bottom"},
+    {"type": "line", "x1_pct": 0-100, "y1_pct": 0-100, "x2_pct": 0-100, "y2_pct": 0-100}
   ],
   "camera_analysis": {
     "aperture": {"value": "f/X.X", "explanation": "הסבר קצר בעברית — מה הצמצם הזה משיג בתמונה הספציפית הזו (לא תמיד בוקה — אם הכל חד, הסבר למה צמצם סגור)"},
@@ -2370,7 +2371,7 @@ async function handleAnalysesGenerate(request, env) {
 }
 
 חוקים:
-- annotations: 3-5 נקודות שמסמנות בדיוק את האלמנטים שמדגימים את חוק הצילום שבחרת — לדוגמה ב-leading_lines: סמן את הקווים עצמם ואת נקודת ההתכנסות; ב-rule_of_thirds: סמן את נקודות הכוח הרלוונטיות
+- annotations: 3-5 אלמנטים שמדגימים את חוק הצילום. ב-leading_lines: השתמש ב-type="line" עם x1_pct/y1_pct/x2_pct/y2_pct כדי לצייר את הקווים האמיתיים על התמונה (לדוג' קו גג הבניינים, קו המדרכה, כולם מתכנסים לנקודת המגוז) + נקודת dot אחת על נקודת ההתכנסות עם label. בחוקים אחרים: השתמש בנקודות רגילות ללא type
 - composition_html: בדיוק 3 פסקאות עם <strong> בתחילת כל אחת — פסקה 1: מה חוק הקומפוזיציה ואיך הוא מופיע בתמונה הזו ספציפית; פסקה 2: מה עוד מעניין בתמונה מבחינה ויזואלית; פסקה 3: מה הצלמן המתחיל יכול ללמוד מזה
 - tags: 4-6 מילים קצרות בעברית
 - הכל בעברית` }
@@ -2534,28 +2535,19 @@ function buildRuleOverlay(rule, annotations) {
   if (rule === 'symmetry') return `
     <line x1="50%" y1="0" x2="50%" y2="100%" stroke="${gold}" stroke-width="2" stroke-dasharray="${dash}"/>`;
   if (rule === 'leading_lines') {
-    if (!annotations || annotations.length === 0) {
-      return `<g stroke="${gold}" fill="${gold}" opacity="0.8">
+    const lineAnns = annotations.filter(a => a.type === 'line');
+    if (lineAnns.length > 0) {
+      const svgLines = lineAnns.map(a => {
+        const x1 = parseFloat(a.x1_pct) || 0, y1 = parseFloat(a.y1_pct) || 0;
+        const x2 = parseFloat(a.x2_pct) || 100, y2 = parseFloat(a.y2_pct) || 50;
+        return `<line x1="${x1}%" y1="${y1}%" x2="${x2}%" y2="${y2}%" stroke="${gold}" stroke-width="2.5" opacity="0.85" stroke-linecap="round"/>`;
+      }).join('');
+      return `<g>${svgLines}</g>`;
+    }
+    return `<g stroke="${gold}" fill="${gold}" opacity="0.8">
       <line x1="5%" y1="95%" x2="60%" y2="30%" stroke-width="2"/>
       <polygon points="60%,25% 57%,35% 63%,35%"/>
     </g>`;
-    }
-    const lines = annotations.map(a => {
-      const x = parseFloat(a.x_pct) || 50;
-      const y = parseFloat(a.y_pct) || 50;
-      const fromX = x < 50 ? 2 : 98;
-      const fromY = y < 50 ? 2 : 98;
-      const dx = x - fromX;
-      const dy = y - fromY;
-      const len = Math.sqrt(dx*dx + dy*dy);
-      const nx = dx/len; const ny = dy/len;
-      const ax = x - nx*8; const ay = y - ny*8;
-      const p1x = ax - ny*4; const p1y = ay + nx*4;
-      const p2x = ax + ny*4; const p2y = ay - nx*4;
-      return `<line x1="${fromX}%" y1="${fromY}%" x2="${x}%" y2="${y}%" stroke="${gold}" stroke-width="2" opacity="0.8"/>
-      <polygon points="${x}%,${y}% ${p1x}%,${p1y}% ${p2x}%,${p2y}%" fill="${gold}" opacity="0.8"/>`;
-    }).join('');
-    return `<g>${lines}</g>`;
   }
   if (rule === 'framing') return `
     <rect x="10%" y="10%" width="80%" height="80%" fill="none" stroke="${gold}" stroke-width="2" stroke-dasharray="${dash}"/>`;
@@ -2703,7 +2695,7 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direc
 
 <div class="cam-cards">${cameraCards}</div>
 
-<div class="section">
+<div class="section" id="bokeh-section" style="${(() => { const f = parseFloat((camera.aperture?.value || '').replace('f/', '')); return (!isNaN(f) && f <= 4) ? '' : 'display:none'; })()}">
   <h2>📊 איך נוצר הבוקה</h2>
   <div class="bokeh-box">
     <svg viewBox="0 0 500 180" style="width:100%;max-width:500px;display:block;margin:0 auto">
