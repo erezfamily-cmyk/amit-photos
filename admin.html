@@ -3171,17 +3171,33 @@ async function learnEdit(photoId) {
     try { tags = typeof analysis.tags_json === 'string' ? JSON.parse(analysis.tags_json) : (analysis.tags_json || []); } catch {}
 
     $('learn-edit-id').value = photoId;
-    $('learn-edit-html').value = analysis.composition_html || '';
+
+    // thumbnail header
+    const thumb = analysis.photo_thumbnail || analysis.photo_url || '';
+    currentAnalysis._thumb = thumb;
+    const thumbEl = $('learn-edit-thumb');
+    if (thumbEl) { thumbEl.src = thumb; thumbEl.style.display = thumb ? '' : 'none'; }
+    const titleLabelEl = $('learn-edit-title-label');
+    if (titleLabelEl) titleLabelEl.textContent = analysis.photo_title || analysis.title || photoId;
+
+    // composition: parse HTML → 3 label+body pairs
+    const parts = parseCompHtml(analysis.composition_html || '');
+    [1,2,3].forEach((i, idx) => {
+      $('learn-edit-comp-label-' + i).value = parts[idx].label;
+      $('learn-edit-comp-body-'  + i).value = parts[idx].body;
+    });
+
     $('learn-edit-aperture').value = (camera.aperture && camera.aperture.explanation) || '';
-    $('learn-edit-shutter').value = (camera.shutter && camera.shutter.explanation) || '';
-    $('learn-edit-iso').value = (camera.iso && camera.iso.explanation) || '';
-    $('learn-edit-focal').value = (camera.focal && camera.focal.explanation) || '';
+    $('learn-edit-shutter').value  = (camera.shutter  && camera.shutter.explanation)  || '';
+    $('learn-edit-iso').value      = (camera.iso      && camera.iso.explanation)      || '';
+    $('learn-edit-focal').value    = (camera.focal    && camera.focal.explanation)    || '';
     $('learn-edit-tags').value = Array.isArray(tags) ? tags.join(', ') : (tags || '');
     $('learn-edit-annotations').value = typeof analysis.annotations_json === 'string'
       ? analysis.annotations_json
       : JSON.stringify(analysis.annotations_json || [], null, 2);
 
     document.getElementById('learn-edit-dialog').showModal();
+    updatePreview(null);
   } catch(e) {
     toast('שגיאה בטעינת ניתוח: ' + e.message, 'error');
   }
@@ -3191,7 +3207,7 @@ async function learnSave() {
   const photoId = $('learn-edit-id').value;
   const camera = currentAnalysis && currentAnalysis.camera ? currentAnalysis.camera : {};
   const body = {
-    composition_html: $('learn-edit-html').value,
+    composition_html: buildCompHtml(),
     camera_json: JSON.stringify({
       aperture: { value: (camera.aperture && camera.aperture.value) || '', explanation: $('learn-edit-aperture').value },
       shutter:  { value: (camera.shutter  && camera.shutter.value)  || '', explanation: $('learn-edit-shutter').value },
