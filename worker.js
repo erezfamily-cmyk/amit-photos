@@ -2270,8 +2270,7 @@ async function handleAnalysesGenerate(request, env) {
     return jsonRes({ error: 'אין תמונות זמינות לניתוח' }, 404, request);
   }
 
-  // 2. Pick first candidate, fetch resized version via CF Image Resizing subrequest
-  const chosen = candidates[0];
+  // 2. Pick first candidate whose R2 file is under 4.5MB (Claude's hard limit is 5MB)
   const toB64 = (buf) => {
     const bytes = new Uint8Array(buf);
     let binary = '';
@@ -2279,9 +2278,18 @@ async function handleAnalysesGenerate(request, env) {
     return btoa(binary);
   };
 
-  // Fetch image from R2 — photos with width <= 2000 should fit Claude's 5MB limit
-  const r2Obj = await env.PHOTOS.get(chosen.r2_key);
-  if (!r2Obj) return jsonRes({ error: `Photo not found in R2: ${chosen.r2_key}` }, 404, request);
+  let chosen = null;
+  let r2Obj = null;
+  for (const candidate of candidates) {
+    const obj = await env.PHOTOS.get(candidate.r2_key);
+    if (!obj) continue;
+    if (obj.size <= 4.5 * 1024 * 1024) {
+      chosen = candidate;
+      r2Obj = obj;
+      break;
+    }
+  }
+  if (!chosen || !r2Obj) return jsonRes({ error: 'לא נמצאה תמונה מתחת ל-5MB לניתוח (נסה שוב)' }, 404, request);
   let imgB64 = null, imgMime = 'image/jpeg';
   imgB64 = toB64(await r2Obj.arrayBuffer());
   imgMime = r2Obj.httpMetadata?.contentType || 'image/jpeg';
