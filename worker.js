@@ -2249,6 +2249,7 @@ async function handleAnalysesUpdate(request, env, photoId) {
   const body = await request.json().catch(() => ({}));
   const fields = [];
   const values = [];
+  if (body.composition_rule !== undefined) { fields.push('composition_rule = COALESCE(?, composition_rule)'); values.push(body.composition_rule || null); }
   if (body.composition_html !== undefined) { fields.push('composition_html = ?'); values.push(body.composition_html); }
   if (body.tags_json !== undefined)        { fields.push('tags_json = ?');        values.push(body.tags_json); }
   if (body.camera_json !== undefined)      { fields.push('camera_json = ?');      values.push(body.camera_json); }

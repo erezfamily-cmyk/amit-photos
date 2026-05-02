@@ -3301,6 +3301,7 @@ async function learnSave() {
   const photoId = $('learn-edit-id').value;
   const camera = currentAnalysis && currentAnalysis.camera ? currentAnalysis.camera : {};
   const body = {
+    composition_rule: (currentAnalysis && currentAnalysis.composition_rule) || '',
     composition_html: buildCompHtml(),
     camera_json: JSON.stringify({
       aperture: { value: (camera.aperture && camera.aperture.value) || '', explanation: $('learn-edit-aperture').value },
@@ -3447,6 +3448,84 @@ async function analyzePhoto(photoId, btn) {
     btn.disabled = false;
     btn.textContent = orig;
   }
+}
+
+// ===== VISUAL ANNOTATION EDITOR =====
+const annEditor = {
+  rule: 'leading_lines',
+  annotations: [],
+  mode: 'line',
+  selectedIdx: -1,
+  dragData: null,
+  tempLine: null,
+  drawStart: null,
+};
+
+function annEdOpen() {
+  if (!currentAnalysis) return;
+  const rule = currentAnalysis.composition_rule || 'leading_lines';
+  annEditor.rule = rule;
+  annEditor.annotations = annGetRows().map(a => Object.assign({}, a));
+  annEditor.mode = 'line';
+  annEditor.selectedIdx = -1;
+  annEditor.dragData = null;
+  annEditor.tempLine = null;
+  annEditor.drawStart = null;
+
+  const select = $('ann-ed-rule');
+  if (select) select.value = rule;
+  annEdSetMode('line');
+
+  const img = $('ann-editor-img');
+  const thumb = currentAnalysis._thumb || '';
+  img.src = thumb;
+
+  const titleEl = $('ann-ed-title-label');
+  if (titleEl) titleEl.textContent = 'עורך ויזואלי — ' + (currentAnalysis.photo_title || currentAnalysis.title || '');
+
+  document.getElementById('ann-editor-dialog').showModal();
+
+  // Wire pointer events (only once)
+  const svg = $('ann-editor-svg');
+  if (!svg._annWired) {
+    svg._annWired = true;
+    svg.addEventListener('pointerdown', annEdCanvasPointerDown);
+    svg.addEventListener('pointermove', annEdCanvasPointerMove);
+    svg.addEventListener('pointerup',   annEdCanvasPointerUp);
+  }
+
+  annEdRender();
+}
+
+function annEdClose() {
+  document.getElementById('ann-editor-dialog').close();
+}
+
+function annEdSetMode(mode) {
+  annEditor.mode = mode;
+  annEditor.selectedIdx = -1;
+  annEditor.dragData = null;
+  annEditor.tempLine = null;
+  annEditor.drawStart = null;
+  ['line','dot','select','delete'].forEach(m => {
+    const btn = $('ann-tool-' + m);
+    if (btn) btn.classList.toggle('active', m === mode);
+  });
+  const svg = $('ann-editor-svg');
+  if (svg) svg.style.cursor = mode === 'select' ? 'default' : 'crosshair';
+  annEdRender();
+}
+
+function annEdSetRule(rule) {
+  annEditor.rule = rule;
+  annEdRender();
+}
+
+function annEdSave() {
+  $('learn-edit-annotations').value = JSON.stringify(annEditor.annotations);
+  annRender(annEditor.annotations);
+  if (currentAnalysis) currentAnalysis.composition_rule = annEditor.rule;
+  annEdClose();
 }
 
 document.addEventListener('DOMContentLoaded', () => {
