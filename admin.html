@@ -1151,49 +1151,79 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
 </dialog>
 
 <!-- LEARN EDIT DIALOG -->
-<dialog id="learn-edit-dialog" style="width:min(640px,95vw)">
+<dialog id="learn-edit-dialog" class="learn-edit-dialog">
   <div class="dialog-header">
     <span class="dialog-title">עריכת ניתוח צילום</span>
     <button class="dialog-close" onclick="closeLearnModal()">✕</button>
   </div>
-  <div class="dialog-body">
-    <input type="hidden" id="learn-edit-id">
-    <div class="form-field">
-      <label>טקסט קומפוזיציה (HTML)</label>
-      <textarea id="learn-edit-html" rows="5" placeholder="תוכן HTML לסעיף הקומפוזיציה..."></textarea>
-    </div>
-    <div class="form-row">
-      <div class="form-field">
-        <label>צמצם — הסבר</label>
-        <input type="text" id="learn-edit-aperture" placeholder="למשל: צמצם רחב f/1.8 יוצר בוקה עמוקה...">
+  <div class="learn-edit-split">
+    <!-- Right: form -->
+    <div class="learn-edit-form" id="learn-edit-form-col">
+      <div class="dialog-body">
+        <input type="hidden" id="learn-edit-id">
+        <div class="learn-edit-photo-header">
+          <img id="learn-edit-thumb" src="" alt="" style="display:none">
+          <span id="learn-edit-title-label"></span>
+        </div>
+        <div class="form-field">
+          <label>ניתוח קומפוזיציה (3 פסקאות)</label>
+          <div class="comp-paragraphs">
+            <div class="comp-para-row">
+              <input type="text" id="learn-edit-comp-label-1" placeholder="כותרת 1 (למשל: פוקוס)">
+              <textarea id="learn-edit-comp-body-1" rows="2" placeholder="טקסט הפסקה הראשונה..."></textarea>
+            </div>
+            <div class="comp-para-row">
+              <input type="text" id="learn-edit-comp-label-2" placeholder="כותרת 2">
+              <textarea id="learn-edit-comp-body-2" rows="2" placeholder="טקסט הפסקה השנייה..."></textarea>
+            </div>
+            <div class="comp-para-row">
+              <input type="text" id="learn-edit-comp-label-3" placeholder="כותרת 3">
+              <textarea id="learn-edit-comp-body-3" rows="2" placeholder="טקסט הפסקה השלישית..."></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-field">
+            <label>צמצם — הסבר</label>
+            <input type="text" id="learn-edit-aperture" placeholder="למשל: צמצם רחב f/1.8 יוצר בוקה עמוקה...">
+          </div>
+          <div class="form-field">
+            <label>מהירות תריס — הסבר</label>
+            <input type="text" id="learn-edit-shutter" placeholder="למשל: תריס מהיר 1/500 מקפיא תנועה...">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-field">
+            <label>ISO — הסבר</label>
+            <input type="text" id="learn-edit-iso" placeholder="למשל: ISO נמוך 100 מפחית רעש...">
+          </div>
+          <div class="form-field">
+            <label>עדשה / מיקוד — הסבר</label>
+            <input type="text" id="learn-edit-focal" placeholder="למשל: עדשה 85mm מאידאלית לפורטרטים...">
+          </div>
+        </div>
+        <div class="form-field">
+          <label>תגיות (מופרדות בפסיקים)</label>
+          <input type="text" id="learn-edit-tags" placeholder="בוקה, חוק השליש, תאורה טבעית">
+        </div>
+        <div class="form-field">
+          <label>הערות על נקודות (JSON מערך)</label>
+          <textarea id="learn-edit-annotations" rows="4" placeholder='[{"x":50,"y":30,"label":"נקודת מיקוד ראשית"}]'></textarea>
+        </div>
       </div>
-      <div class="form-field">
-        <label>מהירות תריס — הסבר</label>
-        <input type="text" id="learn-edit-shutter" placeholder="למשל: תריס מהיר 1/500 מקפיא תנועה...">
-      </div>
     </div>
-    <div class="form-row">
-      <div class="form-field">
-        <label>ISO — הסבר</label>
-        <input type="text" id="learn-edit-iso" placeholder="למשל: ISO נמוך 100 מפחית רעש...">
-      </div>
-      <div class="form-field">
-        <label>עדשה / מיקוד — הסבר</label>
-        <input type="text" id="learn-edit-focal" placeholder="למשל: עדשה 85mm מאידאלית לפורטרטים...">
-      </div>
-    </div>
-    <div class="form-field">
-      <label>תגיות (מופרדות בפסיקים)</label>
-      <input type="text" id="learn-edit-tags" placeholder="בוקה, חוק השליש, תאורה טבעית">
-    </div>
-    <div class="form-field">
-      <label>הערות על נקודות (JSON מערך)</label>
-      <textarea id="learn-edit-annotations" rows="4" placeholder='[{"x":50,"y":30,"label":"נקודת מיקוד ראשית"}]'></textarea>
+    <!-- Left: preview -->
+    <div class="learn-edit-preview" id="learn-edit-preview-col">
+      <div class="learn-preview-label">תצוגה מקדימה</div>
+      <div class="learn-preview-body" id="learn-preview-body"></div>
     </div>
   </div>
-  <div class="dialog-footer">
-    <button class="btn btn-primary" onclick="learnSave()">שמור</button>
-    <button class="btn btn-ghost" onclick="closeLearnModal()">ביטול</button>
+  <div class="dialog-footer" style="justify-content:space-between;align-items:center">
+    <button class="btn btn-ghost btn-sm learn-preview-toggle" id="learn-preview-toggle" onclick="toggleLearnPreview()">הצג תצוגה מקדימה</button>
+    <div style="display:flex;gap:.6rem">
+      <button class="btn btn-primary" onclick="learnSave()">שמור</button>
+      <button class="btn btn-ghost" onclick="closeLearnModal()">ביטול</button>
+    </div>
   </div>
 </dialog>
 
