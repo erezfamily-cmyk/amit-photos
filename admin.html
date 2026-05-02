@@ -3082,6 +3082,80 @@ async function loadLearn() {
   }
 }
 
+function parseCompHtml(html) {
+  const out = [{label:'',body:''},{label:'',body:''},{label:'',body:''}];
+  const re = /<p><strong>([^<]*?):<\/strong>\s*([\s\S]*?)<\/p>/g;
+  let m, i = 0;
+  while ((m = re.exec(html)) !== null && i < 3) {
+    out[i++] = { label: m[1].trim(), body: m[2].trim() };
+  }
+  return out;
+}
+
+function buildCompHtml() {
+  return [1,2,3].map(i => {
+    const label = ($('learn-edit-comp-label-' + i)?.value || '').trim();
+    const body  = ($('learn-edit-comp-body-'  + i)?.value || '').trim();
+    if (!label && !body) return '';
+    return `<p><strong>${label}:</strong> ${body}</p>`;
+  }).filter(Boolean).join('\n');
+}
+
+function escHtml(s) {
+  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function updatePreview(highlightId) {
+  const previewBody = $('learn-preview-body');
+  if (!previewBody) return;
+
+  const camera = (currentAnalysis && currentAnalysis.camera) || {};
+  const camKeys   = ['aperture','shutter','iso','focal'];
+  const camLabels = {aperture:'צמצם',shutter:'מהירות תריס',iso:'ISO',focal:'מרחק מוקד'};
+  const camInputs = {aperture:'learn-edit-aperture',shutter:'learn-edit-shutter',iso:'learn-edit-iso',focal:'learn-edit-focal'};
+
+  const cameraHtml = camKeys.map(k => {
+    const val = (camera[k] && camera[k].value) || '—';
+    const exp = $(camInputs[k])?.value || '';
+    return `<div class="lpv-cam-card">
+      <div class="lpv-cam-label">${camLabels[k]}</div>
+      <div class="lpv-cam-value">${escHtml(val)}</div>
+      <div class="lpv-cam-desc">${escHtml(exp)}</div>
+    </div>`;
+  }).join('');
+
+  const compHtml = [1,2,3].map(i => {
+    const label = ($('learn-edit-comp-label-' + i)?.value || '').trim();
+    const body  = ($('learn-edit-comp-body-'  + i)?.value || '').trim();
+    if (!label && !body) return '';
+    return `<p><strong>${escHtml(label)}:</strong> ${escHtml(body)}</p>`;
+  }).filter(Boolean).join('');
+
+  const tagsHtml = ($('learn-edit-tags')?.value || '')
+    .split(',').map(t=>t.trim()).filter(Boolean)
+    .map(t=>`<span class="lpv-tag">${escHtml(t)}</span>`).join('');
+
+  const thumb = currentAnalysis?._thumb || '';
+
+  previewBody.innerHTML =
+    (thumb ? `<img src="${escHtml(thumb)}" style="width:100%;border-radius:8px;display:block;margin-bottom:.75rem" alt="">` : '') +
+    `<div class="lpv-cam-cards" id="lpv-cam-cards">${cameraHtml}</div>` +
+    `<div class="lpv-section">` +
+      `<div class="lpv-section-title">🎨 ניתוח קומפוזיציה</div>` +
+      `<div class="lpv-comp-box" id="lpv-comp-box">${compHtml}<div class="lpv-tags-row" id="lpv-tags-row">${tagsHtml}</div></div>` +
+    `</div>`;
+
+  if (highlightId) {
+    const el = document.getElementById(highlightId);
+    if (el) {
+      el.classList.remove('preview-highlight');
+      void el.offsetWidth;
+      el.classList.add('preview-highlight');
+      setTimeout(() => el.classList.remove('preview-highlight'), 700);
+    }
+  }
+}
+
 async function learnEdit(photoId) {
   try {
     const res = await fetch('/api/analyses/' + photoId, { headers: authHeaders() });
