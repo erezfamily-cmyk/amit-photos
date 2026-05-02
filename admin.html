@@ -3519,8 +3519,9 @@ function annEdSetRule(rule) {
 }
 
 function annEdSave() {
-  $('learn-edit-annotations').value = JSON.stringify(annEditor.annotations);
+  // annRender calls syncAnnHidden internally, so write the full array after it
   annRender(annEditor.annotations.filter(a => a.type !== 'line'));
+  $('learn-edit-annotations').value = JSON.stringify(annEditor.annotations);
   if (currentAnalysis) currentAnalysis.composition_rule = annEditor.rule;
   annEdClose();
 }
