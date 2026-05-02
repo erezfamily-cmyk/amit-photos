@@ -3484,15 +3484,17 @@ function annEdOpen() {
   const svg = $('ann-editor-svg');
   if (!svg._annWired) {
     svg._annWired = true;
-    svg.addEventListener('pointerdown', annEdCanvasPointerDown);
-    svg.addEventListener('pointermove', annEdCanvasPointerMove);
-    svg.addEventListener('pointerup',   annEdCanvasPointerUp);
+    svg.addEventListener('pointerdown',  annEdCanvasPointerDown);
+    svg.addEventListener('pointermove',  annEdCanvasPointerMove);
+    svg.addEventListener('pointerup',    annEdCanvasPointerUp);
+    svg.addEventListener('pointercancel', annEdCanvasPointerUp);
   }
 
   annEdRender();
 }
 
 function annEdClose() {
+  annEdRemovePopup();
   document.getElementById('ann-editor-dialog').close();
 }
 
@@ -3700,7 +3702,6 @@ function annEdCanvasPointerUp(e) {
         label: ''
       };
       annEditor.annotations.push(newLine);
-      const newIdx = annEditor.annotations.length - 1;
       annEditor.tempLine = null;
       annEditor.drawStart = null;
       annEdRender();
@@ -3709,7 +3710,7 @@ function annEdCanvasPointerUp(e) {
       const mx = rect.left + (newLine.x1_pct + newLine.x2_pct) / 2 / 100 * rect.width;
       const my = rect.top  + (newLine.y1_pct + newLine.y2_pct) / 2 / 100 * rect.height;
       annEdShowLabelPopup(mx, my, '', label => {
-        annEditor.annotations[newIdx].label = label;
+        newLine.label = label;
         annEdRender();
       }, true);
     } else {
