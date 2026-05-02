@@ -2520,6 +2520,127 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direc
   return new Response(html, { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
 }
 
+function buildPhysicsDiagram(camera) {
+  const gold = '#c8a96e', green = '#4ade80', muted = '#888';
+  const apertureVal = parseFloat((camera.aperture?.value || '').replace('f/', ''));
+  const focalVal    = parseFloat((camera.focal?.value    || '').replace(/[^0-9.]/g, ''));
+  const shutterStr  = camera.shutter?.value || '';
+  let shutterSec = null;
+  const m1 = shutterStr.match(/^1\/(\d+)/);
+  if (m1) shutterSec = 1 / parseInt(m1[1]);
+  else { const m2 = shutterStr.match(/^(\d*\.?\d+)/); if (m2) shutterSec = parseFloat(m2[1]); }
+
+  if (!isNaN(apertureVal) && apertureVal <= 4) return {
+    title: '📊 עומק שדה ובוקה',
+    svg: `<svg viewBox="0 0 500 180" style="width:100%;max-width:500px;display:block;margin:0 auto">
+      <rect x="20" y="65" width="55" height="50" rx="5" fill="#1a1a1a" stroke="${gold}" stroke-width="1.5"/>
+      <text x="47" y="94" text-anchor="middle" fill="${gold}" font-size="10" font-family="Heebo">מצלמה</text>
+      <ellipse cx="75" cy="90" rx="9" ry="20" fill="#222" stroke="${gold}" stroke-width="1.5"/>
+      <line x1="84" y1="72" x2="210" y2="90" stroke="rgba(200,169,110,.7)" stroke-width="1"/>
+      <line x1="84" y1="90" x2="210" y2="90" stroke="rgba(200,169,110,.7)" stroke-width="1"/>
+      <line x1="84" y1="108" x2="210" y2="90" stroke="rgba(200,169,110,.7)" stroke-width="1"/>
+      <line x1="210" y1="0" x2="210" y2="180" stroke="${green}" stroke-width="2" stroke-dasharray="4,3"/>
+      <text x="214" y="20" fill="${green}" font-size="10" font-family="Heebo">נושא (חד)</text>
+      <circle cx="210" cy="90" r="5" fill="${green}"/>
+      <line x1="210" y1="90" x2="410" y2="50" stroke="rgba(136,136,136,.5)" stroke-width="1"/>
+      <line x1="210" y1="90" x2="410" y2="90" stroke="rgba(136,136,136,.5)" stroke-width="1"/>
+      <line x1="210" y1="90" x2="410" y2="130" stroke="rgba(136,136,136,.5)" stroke-width="1"/>
+      <line x1="410" y1="0" x2="410" y2="180" stroke="${muted}" stroke-width="1.5" stroke-dasharray="4,3"/>
+      <text x="414" y="20" fill="${muted}" font-size="10" font-family="Heebo">רקע (מטושטש)</text>
+      <circle cx="410" cy="50" r="16" fill="none" stroke="rgba(200,169,110,.4)" stroke-width="1.5"/>
+      <circle cx="410" cy="90" r="16" fill="none" stroke="rgba(200,169,110,.4)" stroke-width="1.5"/>
+      <circle cx="410" cy="130" r="16" fill="none" stroke="rgba(200,169,110,.4)" stroke-width="1.5"/>
+      <text x="75" y="158" text-anchor="middle" fill="${gold}" font-size="9" font-family="Heebo">פתח עדשה רחב = עומק שדה רדוד = בוקה</text>
+    </svg>`
+  };
+
+  if (!isNaN(focalVal) && focalVal <= 28) return {
+    title: '📊 זווית רחבה ופרספקטיבה',
+    svg: `<svg viewBox="0 0 500 180" style="width:100%;max-width:500px;display:block;margin:0 auto">
+      <rect x="10" y="70" width="48" height="40" rx="5" fill="#1a1a1a" stroke="${gold}" stroke-width="1.5"/>
+      <text x="34" y="93" text-anchor="middle" fill="${gold}" font-size="9" font-family="Heebo">מצלמה</text>
+      <text x="34" y="105" text-anchor="middle" fill="${gold}" font-size="8" font-family="Heebo">${focalVal}mm</text>
+      <line x1="58" y1="90" x2="470" y2="15"  stroke="rgba(200,169,110,.5)" stroke-width="1.5" stroke-dasharray="4,3"/>
+      <line x1="58" y1="90" x2="470" y2="165" stroke="rgba(200,169,110,.5)" stroke-width="1.5" stroke-dasharray="4,3"/>
+      <rect x="100" y="52" width="18" height="76" rx="3" fill="${green}" opacity="0.85"/>
+      <text x="109" y="143" text-anchor="middle" fill="${green}" font-size="9" font-family="Heebo">קרוב</text>
+      <rect x="240" y="72" width="12" height="36" rx="2" fill="${gold}" opacity="0.65"/>
+      <text x="246" y="122" text-anchor="middle" fill="${gold}" font-size="9" font-family="Heebo">ביניים</text>
+      <rect x="370" y="83" width="7" height="14" rx="2" fill="${muted}" opacity="0.7"/>
+      <text x="374" y="108" text-anchor="middle" fill="${muted}" font-size="9" font-family="Heebo">רחוק</text>
+      <line x1="100" y1="52"  x2="378" y2="81"  stroke="rgba(200,169,110,.3)" stroke-width="1"/>
+      <line x1="118" y1="128" x2="378" y2="97" stroke="rgba(200,169,110,.3)" stroke-width="1"/>
+      <text x="250" y="170" text-anchor="middle" fill="${gold}" font-size="9" font-family="Heebo">שדה ראייה רחב — קרוב נראה גדול, רחוק קטן → עומק דרמטי</text>
+    </svg>`
+  };
+
+  if (!isNaN(focalVal) && focalVal >= 85) return {
+    title: '📊 דחיסת טלה',
+    svg: `<svg viewBox="0 0 500 180" style="width:100%;max-width:500px;display:block;margin:0 auto">
+      <rect x="10" y="70" width="55" height="40" rx="5" fill="#1a1a1a" stroke="${gold}" stroke-width="1.5"/>
+      <text x="37" y="93" text-anchor="middle" fill="${gold}" font-size="9" font-family="Heebo">מצלמה</text>
+      <text x="37" y="105" text-anchor="middle" fill="${gold}" font-size="8" font-family="Heebo">${focalVal}mm</text>
+      <line x1="65" y1="90" x2="460" y2="68"  stroke="rgba(200,169,110,.5)" stroke-width="1.5" stroke-dasharray="4,3"/>
+      <line x1="65" y1="90" x2="460" y2="112" stroke="rgba(200,169,110,.5)" stroke-width="1.5" stroke-dasharray="4,3"/>
+      <rect x="210" y="72" width="16" height="36" rx="3" fill="${green}" opacity="0.85"/>
+      <text x="218" y="122" text-anchor="middle" fill="${green}" font-size="9" font-family="Heebo">קרוב</text>
+      <rect x="320" y="74" width="14" height="32" rx="3" fill="${gold}" opacity="0.7"/>
+      <text x="327" y="120" text-anchor="middle" fill="${gold}" font-size="9" font-family="Heebo">רחוק</text>
+      <line x1="226" y1="90" x2="318" y2="90" stroke="rgba(200,169,110,.5)" stroke-width="1.5" stroke-dasharray="3,2"/>
+      <text x="272" y="84" text-anchor="middle" fill="${muted}" font-size="9" font-family="Heebo">נראים קרובים</text>
+      <text x="260" y="170" text-anchor="middle" fill="${gold}" font-size="9" font-family="Heebo">שדה ראייה צר — מרחקים נדחסים, רקע נראה קרוב יותר</text>
+    </svg>`
+  };
+
+  if (shutterSec !== null && shutterSec >= 1/30) return {
+    title: '📊 חשיפה ארוכה ותנועה',
+    svg: `<svg viewBox="0 0 500 180" style="width:100%;max-width:500px;display:block;margin:0 auto">
+      <rect x="20" y="70" width="50" height="40" rx="5" fill="#1a1a1a" stroke="${gold}" stroke-width="1.5"/>
+      <text x="45" y="93" text-anchor="middle" fill="${gold}" font-size="9" font-family="Heebo">מצלמה</text>
+      <text x="45" y="105" text-anchor="middle" fill="${gold}" font-size="8" font-family="Heebo">${shutterStr}</text>
+      <rect x="200" y="58" width="18" height="64" rx="3" fill="${green}" opacity="0.9"/>
+      <text x="209" y="136" text-anchor="middle" fill="${green}" font-size="9" font-family="Heebo">נייח (חד)</text>
+      <ellipse cx="370" cy="90" rx="65" ry="14" fill="rgba(200,169,110,.18)" stroke="rgba(200,169,110,.35)" stroke-width="1"/>
+      <ellipse cx="335" cy="90" rx="14" ry="14" fill="rgba(200,169,110,.55)"/>
+      <text x="370" y="118" text-anchor="middle" fill="${gold}" font-size="9" font-family="Heebo">נע (מטושטש)</text>
+      <line x1="200" y1="158" x2="430" y2="158" stroke="${muted}" stroke-width="1.5"/>
+      <polygon points="430,154 440,158 430,162" fill="${muted}"/>
+      <text x="315" y="172" text-anchor="middle" fill="${muted}" font-size="9" font-family="Heebo">זמן חשיפה</text>
+      <text x="250" y="22" text-anchor="middle" fill="${gold}" font-size="9" font-family="Heebo">שאטר פתוח זמן רב → תנועה נרשמת כטשטוש</text>
+    </svg>`
+  };
+
+  if (shutterSec !== null && shutterSec <= 1/500) return {
+    title: '📊 הקפאת תנועה',
+    svg: `<svg viewBox="0 0 500 180" style="width:100%;max-width:500px;display:block;margin:0 auto">
+      <rect x="20" y="70" width="50" height="40" rx="5" fill="#1a1a1a" stroke="${gold}" stroke-width="1.5"/>
+      <text x="45" y="93" text-anchor="middle" fill="${gold}" font-size="9" font-family="Heebo">מצלמה</text>
+      <text x="45" y="105" text-anchor="middle" fill="${gold}" font-size="8" font-family="Heebo">${shutterStr}</text>
+      <line x1="185" y1="90" x2="270" y2="90" stroke="rgba(200,169,110,.3)" stroke-width="6" stroke-linecap="round"/>
+      <polygon points="272,85 282,90 272,95" fill="rgba(200,169,110,.4)"/>
+      <text x="228" y="60" text-anchor="middle" fill="${muted}" font-size="9" font-family="Heebo">כיוון תנועה</text>
+      <circle cx="330" cy="90" r="22" fill="none" stroke="${gold}" stroke-width="2"/>
+      <circle cx="330" cy="90" r="6"  fill="${gold}"/>
+      <text x="330" y="128" text-anchor="middle" fill="${gold}" font-size="9" font-family="Heebo">קפוא ברגע</text>
+      <text x="260" y="170" text-anchor="middle" fill="${gold}" font-size="9" font-family="Heebo">שאטר מהיר מאוד = תנועה קפואה לחלוטין</text>
+    </svg>`
+  };
+
+  return {
+    title: '📊 ISO ורעש דיגיטלי',
+    svg: `<svg viewBox="0 0 500 180" style="width:100%;max-width:500px;display:block;margin:0 auto">
+      <text x="120" y="25" text-anchor="middle" fill="${green}" font-size="11" font-family="Heebo">ISO נמוך (נקי)</text>
+      ${Array.from({length:36},(_,i)=>`<rect x="${40+(i%6)*16}" y="${35+Math.floor(i/6)*16}" width="13" height="13" rx="1" fill="rgba(74,222,128,.7)" stroke="rgba(74,222,128,.3)" stroke-width=".5"/>`).join('')}
+      <text x="370" y="25" text-anchor="middle" fill="#ef4444" font-size="11" font-family="Heebo">ISO גבוה (רעש)</text>
+      ${Array.from({length:36},(_,i)=>{const c=['rgba(239,68,68,.8)','rgba(200,169,110,.6)','rgba(136,136,136,.9)','rgba(239,68,68,.4)','rgba(74,222,128,.5)'];return`<rect x="${290+(i%6)*16}" y="${35+Math.floor(i/6)*16}" width="13" height="13" rx="1" fill="${c[(i*37+13)%5]}" stroke="rgba(0,0,0,.3)" stroke-width=".5"/>`;}).join('')}
+      <line x1="200" y1="80" x2="273" y2="80" stroke="${muted}" stroke-width="1.5"/>
+      <polygon points="273,76 283,80 273,84" fill="${muted}"/>
+      <text x="237" y="73" text-anchor="middle" fill="${muted}" font-size="9" font-family="Heebo">ISO עולה</text>
+      <text x="250" y="168" text-anchor="middle" fill="${gold}" font-size="9" font-family="Heebo">רגישות גבוהה לאור = יותר רעש בפיקסלים</text>
+    </svg>`
+  };
+}
+
 function buildRuleOverlay(rule, annotations) {
   const gold = 'rgba(200,169,110,0.55)';
   const dash = '6,4';
@@ -2695,31 +2816,7 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direc
 
 <div class="cam-cards">${cameraCards}</div>
 
-<div class="section" id="bokeh-section" style="${(() => { const f = parseFloat((camera.aperture?.value || '').replace('f/', '')); return (!isNaN(f) && f <= 4) ? '' : 'display:none'; })()}">
-  <h2>📊 איך נוצר הבוקה</h2>
-  <div class="bokeh-box">
-    <svg viewBox="0 0 500 180" style="width:100%;max-width:500px;display:block;margin:0 auto">
-      <rect x="20" y="65" width="55" height="50" rx="5" fill="#1a1a1a" stroke="#c8a96e" stroke-width="1.5"/>
-      <text x="47" y="95" text-anchor="middle" fill="#c8a96e" font-size="10" font-family="Heebo">מצלמה</text>
-      <ellipse cx="75" cy="90" rx="9" ry="20" fill="#222" stroke="#c8a96e" stroke-width="1.5"/>
-      <line x1="84" y1="72" x2="210" y2="90" stroke="rgba(200,169,110,.7)" stroke-width="1"/>
-      <line x1="84" y1="90" x2="210" y2="90" stroke="rgba(200,169,110,.7)" stroke-width="1"/>
-      <line x1="84" y1="108" x2="210" y2="90" stroke="rgba(200,169,110,.7)" stroke-width="1"/>
-      <line x1="210" y1="0" x2="210" y2="180" stroke="#4ade80" stroke-width="2" stroke-dasharray="4,3"/>
-      <text x="214" y="20" fill="#4ade80" font-size="10" font-family="Heebo">נושא (חד)</text>
-      <circle cx="210" cy="90" r="5" fill="#4ade80"/>
-      <line x1="210" y1="90" x2="410" y2="50" stroke="rgba(136,136,136,.5)" stroke-width="1"/>
-      <line x1="210" y1="90" x2="410" y2="90" stroke="rgba(136,136,136,.5)" stroke-width="1"/>
-      <line x1="210" y1="90" x2="410" y2="130" stroke="rgba(136,136,136,.5)" stroke-width="1"/>
-      <line x1="410" y1="0" x2="410" y2="180" stroke="#888" stroke-width="1.5" stroke-dasharray="4,3"/>
-      <text x="414" y="20" fill="#888" font-size="10" font-family="Heebo">רקע (מטושטש)</text>
-      <circle cx="410" cy="50" r="16" fill="none" stroke="rgba(200,169,110,.4)" stroke-width="1.5"/>
-      <circle cx="410" cy="90" r="16" fill="none" stroke="rgba(200,169,110,.4)" stroke-width="1.5"/>
-      <circle cx="410" cy="130" r="16" fill="none" stroke="rgba(200,169,110,.4)" stroke-width="1.5"/>
-      <text x="75" y="145" text-anchor="middle" fill="#c8a96e" font-size="9" font-family="Heebo">פתח עדשה = עומק שדה</text>
-    </svg>
-  </div>
-</div>
+${(() => { const d = buildPhysicsDiagram(camera); return `<div class="section"><h2>${d.title}</h2><div class="bokeh-box">${d.svg}</div></div>`; })()}
 
 <div class="section">
   <h2>🎨 ניתוח קומפוזיציה</h2>
