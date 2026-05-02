@@ -436,6 +436,87 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
 .social-recs{background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:1.5rem}
 .social-error{color:var(--red);padding:1rem}
 
+/* ===== VISUAL ANNOTATION EDITOR ===== */
+#ann-editor-dialog {
+  width: 100vw; height: 100vh; max-width: 100vw; max-height: 100vh;
+  margin: 0; padding: 0; border: none; background: #0d0d0d;
+  display: flex; flex-direction: column;
+}
+#ann-editor-dialog::backdrop { background: #000; }
+.ann-ed-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 8px 16px; background: #141414; border-bottom: 1px solid #2a2a2a;
+  flex-shrink: 0;
+}
+.ann-ed-title { color: #c8a96e; font-size: 14px; font-weight: 600; }
+.ann-ed-body {
+  display: flex; flex: 1; overflow: hidden;
+}
+.ann-ed-sidebar {
+  width: 148px; flex-shrink: 0; background: #161616;
+  border-right: 1px solid #222; display: flex; flex-direction: column;
+  padding: 10px 8px; gap: 10px; overflow-y: auto;
+}
+.ann-ed-sidebar-title {
+  font-size: 9px; text-transform: uppercase; letter-spacing: .1em;
+  color: #555; margin-bottom: 2px;
+}
+.ann-ed-rule-select {
+  width: 100%; background: #222; border: 1px solid #333; border-radius: 4px;
+  color: #c8a96e; font-size: 11px; padding: 4px 6px;
+}
+.ann-ed-tools { display: flex; flex-direction: column; gap: 4px; }
+.ann-ed-tool-btn {
+  background: #222; border: 1px solid #333; border-radius: 4px;
+  color: #ccc; font-size: 11px; padding: 5px 6px; text-align: right;
+  cursor: pointer; display: flex; align-items: center; gap: 5px;
+}
+.ann-ed-tool-btn.active { background: #2a2010; border-color: #c8a96e; color: #c8a96e; }
+.ann-ed-elem-list {
+  flex: 1; overflow-y: auto; background: #1a1a1a; border: 1px solid #282828;
+  border-radius: 4px; padding: 4px;
+}
+.ann-ed-elem-item {
+  font-size: 9px; color: #888; padding: 3px 4px;
+  border-bottom: 1px solid #1e1e1e; display: flex;
+  justify-content: space-between; align-items: center; gap: 4px;
+}
+.ann-ed-elem-item.selected { color: #6ab0ff; }
+.ann-ed-elem-del { color: #c44; cursor: pointer; flex-shrink: 0; }
+.ann-ed-save-btn {
+  background: #c8a96e; color: #111; font-size: 12px; font-weight: 700;
+  border: none; border-radius: 5px; padding: 8px; cursor: pointer; width: 100%;
+}
+.ann-ed-canvas-outer {
+  flex: 1; overflow: auto; background: #111;
+  display: flex; align-items: flex-start; justify-content: center;
+}
+.ann-ed-canvas-inner {
+  position: relative; display: inline-block;
+  min-width: min-content; cursor: crosshair;
+}
+#ann-editor-img { display: block; max-width: 100%; height: auto; }
+#ann-editor-svg {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  overflow: visible;
+}
+.ann-ed-popup {
+  position: fixed; background: #1e1e1e; border: 1px solid #3a3a3a;
+  border-radius: 6px; padding: 8px 10px; z-index: 10000;
+  display: flex; gap: 6px; align-items: center; box-shadow: 0 4px 16px #0008;
+}
+.ann-ed-popup input {
+  background: #111; border: 1px solid #333; border-radius: 4px;
+  color: #eee; font-size: 12px; padding: 3px 7px; width: 140px;
+}
+.ann-ed-popup button {
+  background: #c8a96e; color: #111; border: none; border-radius: 4px;
+  font-size: 11px; font-weight: 700; padding: 4px 8px; cursor: pointer;
+}
+.ann-ed-popup .btn-skip {
+  background: #2a2a2a; color: #aaa;
+}
+
 /* ===== LEARN EDIT SPLIT DIALOG ===== */
 .learn-edit-dialog{position:fixed!important;inset:0!important;width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important;margin:0!important;border-radius:0!important;border:none!important;overflow:hidden}
 .learn-edit-dialog[open]{display:flex!important;flex-direction:column}
@@ -1228,6 +1309,7 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
   <div class="dialog-footer" style="justify-content:space-between;align-items:center">
     <button class="btn btn-ghost btn-sm learn-preview-toggle" id="learn-preview-toggle" onclick="toggleLearnPreview()">הצג תצוגה מקדימה</button>
     <div style="display:flex;gap:.6rem">
+      <button class="btn btn-ghost btn-sm" onclick="annEdOpen()">✏️ ערוך ויזואלי</button>
       <button class="btn btn-primary" onclick="learnSave()">שמור</button>
       <button class="btn btn-ghost" onclick="closeLearnModal()">ביטול</button>
     </div>
@@ -3369,6 +3451,49 @@ document.addEventListener('DOMContentLoaded', () => {
   learnWireInputs();
 });
 </script>
+
+<!-- Visual Annotation Editor -->
+<dialog id="ann-editor-dialog">
+  <div class="ann-ed-header">
+    <span class="ann-ed-title" id="ann-ed-title-label">עורך ויזואלי</span>
+    <button class="dialog-close" onclick="annEdClose()">✕</button>
+  </div>
+  <div class="ann-ed-body">
+    <div class="ann-ed-sidebar">
+      <div>
+        <div class="ann-ed-sidebar-title">חוק קומפוזיציה</div>
+        <select class="ann-ed-rule-select" id="ann-ed-rule" onchange="annEdSetRule(this.value)">
+          <option value="leading_lines">↗ קווים מובילים</option>
+          <option value="rule_of_thirds">⊞ חוק השליש</option>
+          <option value="golden_ratio">⬦ יחס הזהב</option>
+          <option value="symmetry">| סימטריה</option>
+          <option value="framing">▭ מסגור</option>
+          <option value="negative_space">◩ מרחב שלילי</option>
+        </select>
+      </div>
+      <div>
+        <div class="ann-ed-sidebar-title">כלי ציור</div>
+        <div class="ann-ed-tools">
+          <button class="ann-ed-tool-btn active" id="ann-tool-line"   onclick="annEdSetMode('line')">✏️ צייר קו</button>
+          <button class="ann-ed-tool-btn"        id="ann-tool-dot"    onclick="annEdSetMode('dot')">📍 הוסף נקודה</button>
+          <button class="ann-ed-tool-btn"        id="ann-tool-select" onclick="annEdSetMode('select')">↖ בחר/הזז</button>
+          <button class="ann-ed-tool-btn"        id="ann-tool-delete" onclick="annEdSetMode('delete')">🗑 מחק</button>
+        </div>
+      </div>
+      <div style="flex:1;overflow:hidden;display:flex;flex-direction:column;gap:4px">
+        <div class="ann-ed-sidebar-title">אלמנטים</div>
+        <div class="ann-ed-elem-list" id="ann-ed-elem-list"></div>
+      </div>
+      <button class="ann-ed-save-btn" onclick="annEdSave()">שמור</button>
+    </div>
+    <div class="ann-ed-canvas-outer" id="ann-ed-canvas-outer">
+      <div class="ann-ed-canvas-inner" id="ann-ed-canvas-inner">
+        <img id="ann-editor-img" alt="">
+        <svg id="ann-editor-svg" viewBox="0 0 100 100" preserveAspectRatio="none"></svg>
+      </div>
+    </div>
+  </div>
+</dialog>
 
 <!-- Price override popup -->
 <div id="price-popup" style="display:none;position:fixed;z-index:9999;background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:1rem;min-width:220px;box-shadow:0 4px 20px rgba(0,0,0,.5)">
