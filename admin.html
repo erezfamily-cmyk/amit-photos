@@ -3543,7 +3543,7 @@ function annEdRuleOverlaySVG(rule, annotations) {
     const vp = annotations.find(a => !a.type && a.label && a.label.includes('מגוז'))
              || annotations.find(a => !a.type);
     if (vp) {
-      const vx = parseFloat(vp.x_pct) ?? 80, vy = parseFloat(vp.y_pct) ?? 50;
+      const vx = parseFloat(vp.x_pct) || 80, vy = parseFloat(vp.y_pct) || 50;
       const sx = vx >= 50 ? 0 : 100;
       return [-35,-12,12,35].map(off => {
         const sy = Math.max(2, Math.min(98, vy + off));
