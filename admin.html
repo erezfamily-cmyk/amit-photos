@@ -3523,6 +3523,115 @@ function annEdSave() {
   annEdClose();
 }
 
+function annEdRuleOverlaySVG(rule, annotations) {
+  const gold = 'rgba(200,169,110,0.45)';
+  const dash = '1.5,1';
+  if (rule === 'rule_of_thirds') return `
+    <line x1="33.3" y1="0" x2="33.3" y2="100" stroke="${gold}" stroke-width=".4" stroke-dasharray="${dash}"/>
+    <line x1="66.6" y1="0" x2="66.6" y2="100" stroke="${gold}" stroke-width=".4" stroke-dasharray="${dash}"/>
+    <line x1="0" y1="33.3" x2="100" y2="33.3" stroke="${gold}" stroke-width=".4" stroke-dasharray="${dash}"/>
+    <line x1="0" y1="66.6" x2="100" y2="66.6" stroke="${gold}" stroke-width=".4" stroke-dasharray="${dash}"/>
+    <circle cx="33.3" cy="33.3" r="1.2" fill="${gold}"/>
+    <circle cx="66.6" cy="33.3" r="1.2" fill="${gold}"/>
+    <circle cx="33.3" cy="66.6" r="1.2" fill="${gold}"/>
+    <circle cx="66.6" cy="66.6" r="1.2" fill="${gold}"/>`;
+  if (rule === 'symmetry') return `
+    <line x1="50" y1="0" x2="50" y2="100" stroke="${gold}" stroke-width=".5" stroke-dasharray="${dash}"/>`;
+  if (rule === 'framing') return `
+    <rect x="8" y="8" width="84" height="84" fill="none" stroke="${gold}" stroke-width=".6" stroke-dasharray="${dash}"/>`;
+  if (rule === 'leading_lines') {
+    const vp = annotations.find(a => !a.type && a.label && a.label.includes('מגוז'))
+             || annotations.find(a => !a.type);
+    if (vp) {
+      const vx = parseFloat(vp.x_pct) ?? 80, vy = parseFloat(vp.y_pct) ?? 50;
+      const sx = vx >= 50 ? 0 : 100;
+      return [-35,-12,12,35].map(off => {
+        const sy = Math.max(2, Math.min(98, vy + off));
+        return `<line x1="${sx}" y1="${sy}" x2="${vx}" y2="${vy}" stroke="${gold}" stroke-width=".5" opacity=".7"/>`;
+      }).join('');
+    }
+    return '';
+  }
+  if (rule === 'golden_ratio') return `
+    <rect x="0" y="0" width="61.8" height="100" fill="none" stroke="${gold}" stroke-width=".4" stroke-dasharray="${dash}"/>
+    <rect x="0" y="0" width="61.8" height="61.8" fill="none" stroke="${gold}" stroke-width=".4" stroke-dasharray="${dash}"/>`;
+  if (rule === 'negative_space') return `
+    <line x1="0" y1="0" x2="100" y2="100" stroke="${gold}" stroke-width=".4" stroke-dasharray="${dash}"/>`;
+  return '';
+}
+
+function annEdRender() {
+  const svg = $('ann-editor-svg');
+  if (!svg) return;
+
+  const gold = '#c8a96e';
+  const selectedColor = '#6ab0ff';
+  let html = '';
+
+  html += annEdRuleOverlaySVG(annEditor.rule, annEditor.annotations);
+
+  annEditor.annotations.forEach((ann, idx) => {
+    const isSelected = idx === annEditor.selectedIdx;
+    const color = isSelected ? selectedColor : gold;
+    if (ann.type === 'line') {
+      const x1 = ann.x1_pct, y1 = ann.y1_pct, x2 = ann.x2_pct, y2 = ann.y2_pct;
+      html += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"
+        stroke="${color}" stroke-width="${isSelected ? 1 : .7}" stroke-linecap="round"
+        data-ann-idx="${idx}" style="cursor:pointer"/>`;
+      if (ann.label) {
+        const mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
+        html += `<text x="${mx}" y="${my - 1.5}" text-anchor="middle"
+          font-size="3" fill="${color}" style="pointer-events:none">${escSvgText(ann.label)}</text>`;
+      }
+    } else {
+      const x = ann.x_pct, y = ann.y_pct;
+      html += `<circle cx="${x}" cy="${y}" r="${isSelected ? 2 : 1.5}"
+        fill="${color}" data-ann-idx="${idx}" style="cursor:pointer"/>`;
+      if (ann.label) {
+        const dy = ann.anchor === 'top' ? -3 : 3;
+        const anchor = ann.anchor === 'right' ? 'start' : ann.anchor === 'left' ? 'end' : 'middle';
+        html += `<text x="${x}" y="${y + dy}" text-anchor="${anchor}"
+          font-size="2.8" fill="${color}" style="pointer-events:none">${escSvgText(ann.label)}</text>`;
+      }
+    }
+  });
+
+  if (annEditor.tempLine) {
+    const t = annEditor.tempLine;
+    html += `<line x1="${t.x1}" y1="${t.y1}" x2="${t.x2}" y2="${t.y2}"
+      stroke="${gold}" stroke-width=".6" stroke-dasharray="2,1" opacity=".8"/>`;
+  }
+
+  svg.innerHTML = html;
+
+  if (annEditor.mode === 'select' || annEditor.mode === 'delete') {
+    svg.querySelectorAll('[data-ann-idx]').forEach(el => {
+      el.addEventListener('pointerdown', e => {
+        e.stopPropagation();
+        const idx = parseInt(el.getAttribute('data-ann-idx'));
+        annEdElementPointerDown(e, idx);
+      });
+    });
+  }
+
+  const list = $('ann-ed-elem-list');
+  if (list) {
+    list.innerHTML = annEditor.annotations.map((ann, idx) => {
+      const isSelected = idx === annEditor.selectedIdx;
+      const icon = ann.type === 'line' ? '—' : '•';
+      const name = ann.label || (ann.type === 'line' ? 'קו' : 'נקודה');
+      return `<div class="ann-ed-elem-item${isSelected ? ' selected' : ''}">
+        <span>${icon} ${escHtml(name)}</span>
+        <span class="ann-ed-elem-del" onclick="annEdDeleteIdx(${idx})">×</span>
+      </div>`;
+    }).join('');
+  }
+}
+
+function escSvgText(s) {
+  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   learnWireInputs();
 });
