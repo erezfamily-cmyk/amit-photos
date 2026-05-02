@@ -3760,6 +3760,34 @@ function annEdRemovePopup() {
   if (p) p.remove();
 }
 
+function annEdElementPointerDown(e, idx) {
+  if (annEditor.mode === 'delete') {
+    annEdDeleteIdx(idx);
+    return;
+  }
+  if (annEditor.mode === 'select') {
+    annEditor.selectedIdx = idx;
+    const ann = annEditor.annotations[idx];
+    annEditor.dragData = ann.type === 'line'
+      ? { idx,
+          startX: annEdSvgPos(e).x, startY: annEdSvgPos(e).y,
+          origX1: ann.x1_pct, origY1: ann.y1_pct,
+          origX2: ann.x2_pct, origY2: ann.y2_pct }
+      : { idx,
+          startX: annEdSvgPos(e).x, startY: annEdSvgPos(e).y,
+          origX: ann.x_pct, origY: ann.y_pct };
+    const svg = $('ann-editor-svg');
+    svg.setPointerCapture(e.pointerId);
+    annEdRender();
+  }
+}
+
+function annEdDeleteIdx(idx) {
+  annEditor.annotations.splice(idx, 1);
+  if (annEditor.selectedIdx >= annEditor.annotations.length) annEditor.selectedIdx = -1;
+  annEdRender();
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   learnWireInputs();
 });
