@@ -437,7 +437,7 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
 .social-error{color:var(--red);padding:1rem}
 
 /* ===== LEARN EDIT SPLIT DIALOG ===== */
-.learn-edit-dialog{width:100vw!important;max-width:100vw!important;height:100vh!important;max-height:100vh!important;margin:0!important;border-radius:0!important;overflow:hidden;display:flex;flex-direction:column}
+.learn-edit-dialog{position:fixed!important;inset:0!important;width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important;margin:0!important;border-radius:0!important;border:none!important;overflow:hidden;display:flex;flex-direction:column}
 .learn-edit-split{display:flex;flex:1;overflow:hidden;min-height:0}
 .learn-edit-form{width:380px;flex-shrink:0;overflow-y:auto;border-left:1px solid var(--border)}
 .learn-edit-preview{flex:1;overflow-y:auto;background:#0a0a0a;display:flex;flex-direction:column}
@@ -466,6 +466,11 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
 @keyframes lpvHighlight{0%{outline:2px solid rgba(200,169,110,.8)}100%{outline:2px solid transparent}}
 .preview-highlight{animation:lpvHighlight .65s ease-out forwards;border-radius:8px}
 .learn-preview-toggle{display:none}
+.ann-row{display:grid;grid-template-columns:1fr auto auto auto auto;gap:.3rem;align-items:center}
+.ann-row input{background:var(--bg);border:1px solid var(--border);color:var(--text);border-radius:4px;padding:.25rem .4rem;font-size:.75rem;min-width:0}
+.ann-row select{background:var(--bg);border:1px solid var(--border);color:var(--text);border-radius:4px;padding:.25rem .3rem;font-size:.75rem}
+.ann-row-del{background:transparent;border:none;color:var(--text-muted);cursor:pointer;font-size:.9rem;padding:.1rem .3rem;line-height:1}
+.ann-row-del:hover{color:#e55}
 @media(max-width:900px){
   .learn-edit-dialog{width:min(640px,96vw)!important}
   .learn-edit-preview{display:none}
@@ -1207,8 +1212,9 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
           <input type="text" id="learn-edit-tags" placeholder="בוקה, חוק השליש, תאורה טבעית">
         </div>
         <div class="form-field">
-          <label>הערות על נקודות (JSON מערך)</label>
-          <textarea id="learn-edit-annotations" rows="4" placeholder='[{"x":50,"y":30,"label":"נקודת מיקוד ראשית"}]'></textarea>
+          <label>נקודות על התמונה <button type="button" class="btn btn-ghost btn-sm" style="font-size:.7rem;padding:.15rem .5rem" onclick="annAddRow()">+ הוסף</button></label>
+          <div id="ann-rows" style="display:flex;flex-direction:column;gap:.4rem"></div>
+          <input type="hidden" id="learn-edit-annotations">
         </div>
       </div>
     </div>
@@ -3192,9 +3198,11 @@ async function learnEdit(photoId) {
     $('learn-edit-iso').value      = (camera.iso      && camera.iso.explanation)      || '';
     $('learn-edit-focal').value    = (camera.focal    && camera.focal.explanation)    || '';
     $('learn-edit-tags').value = Array.isArray(tags) ? tags.join(', ') : (tags || '');
-    $('learn-edit-annotations').value = typeof analysis.annotations_json === 'string'
-      ? analysis.annotations_json
-      : JSON.stringify(analysis.annotations_json || [], null, 2);
+    const annData = typeof analysis.annotations_json === 'string'
+      ? JSON.parse(analysis.annotations_json || '[]')
+      : (analysis.annotations_json || []);
+    $('learn-edit-annotations').value = JSON.stringify(annData);
+    annRender(annData);
 
     document.getElementById('learn-edit-dialog').showModal();
     updatePreview(null);
@@ -3235,6 +3243,56 @@ async function learnSave() {
 function closeLearnModal() {
   document.getElementById('learn-edit-dialog').close();
   currentAnalysis = null;
+}
+
+// ===== ANNOTATIONS UI =====
+const ANN_ANCHORS = ['bottom','right','left','top'];
+
+function annRender(rows) {
+  const container = $('ann-rows');
+  if (!container) return;
+  container.innerHTML = '';
+  (rows || []).forEach((ann, idx) => {
+    const row = document.createElement('div');
+    row.className = 'ann-row';
+    row.innerHTML = `
+      <input type="text" placeholder="תיאור" value="${escHtml(ann.label||'')}" oninput="annUpdate(${idx},'label',this.value)">
+      <input type="number" placeholder="X%" min="0" max="100" value="${ann.x_pct??ann.x??50}" style="width:52px" oninput="annUpdate(${idx},'x_pct',+this.value)">
+      <input type="number" placeholder="Y%" min="0" max="100" value="${ann.y_pct??ann.y??50}" style="width:52px" oninput="annUpdate(${idx},'y_pct',+this.value)">
+      <select onchange="annUpdate(${idx},'anchor',this.value)">${ANN_ANCHORS.map(a=>`<option value="${a}"${(ann.anchor||'bottom')===a?' selected':''}>${a}</option>`).join('')}</select>
+      <button class="ann-row-del" onclick="annRemove(${idx})" title="מחק">✕</button>`;
+    container.appendChild(row);
+  });
+  syncAnnHidden();
+}
+
+function annGetRows() {
+  try { return JSON.parse($('learn-edit-annotations').value || '[]'); } catch { return []; }
+}
+function syncAnnHidden() {
+  const container = $('ann-rows');
+  if (!container) return;
+  const rows = Array.from(container.querySelectorAll('.ann-row')).map(row => {
+    const inputs = row.querySelectorAll('input');
+    const sel = row.querySelector('select');
+    return { label: inputs[0].value, x_pct: +inputs[1].value, y_pct: +inputs[2].value, anchor: sel.value };
+  });
+  $('learn-edit-annotations').value = JSON.stringify(rows);
+}
+function annUpdate(idx, key, val) {
+  syncAnnHidden();
+}
+function annRemove(idx) {
+  const rows = annGetRows();
+  rows.splice(idx, 1);
+  $('learn-edit-annotations').value = JSON.stringify(rows);
+  annRender(rows);
+}
+function annAddRow() {
+  const rows = annGetRows();
+  rows.push({ label: '', x_pct: 50, y_pct: 50, anchor: 'bottom' });
+  $('learn-edit-annotations').value = JSON.stringify(rows);
+  annRender(rows);
 }
 
 function learnWireInputs() {
