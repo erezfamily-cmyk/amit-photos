@@ -2422,9 +2422,9 @@ async function handleLearnIndex(env) {
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>בית ספר לצילום — Amit Photos</title>
+<title>ניתוח תמונות — Amit Photos</title>
 <meta name="description" content="ניתוח צילומי מעמיק של תמונות אמנות — חוק השליש, בוקה, קומפוזיציה. מדריך לצלמן מתחיל.">
-<meta property="og:title" content="📸 בית ספר לצילום | Amit Photos">
+<meta property="og:title" content="📸 ניתוח תמונות | Amit Photos">
 <meta property="og:description" content="ניתוח צילומי מעמיק — חוקי קומפוזיציה, הגדרות מצלמה, ופירוש כל בחירה של הצלם.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://amitphotos.com/learn/">
@@ -2460,10 +2460,10 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direc
 <body>
 <header class="site-header">
   <a class="site-title" href="https://amitphotos.com">Amit Photos</a>
-  <span style="color:var(--muted);font-size:.8rem">📸 בית ספר לצילום</span>
+  <span style="color:var(--muted);font-size:.8rem">📸 ניתוח תמונות</span>
 </header>
 <div class="page-hero">
-  <h1>📸 בית ספר לצילום</h1>
+  <h1>📸 ניתוח תמונות</h1>
   <p>ניתוח צילומי מעמיק — חוקי קומפוזיציה, הגדרות מצלמה, ומה הצלם חשב</p>
 </div>
 <div class="grid">${cards}${empty}</div>
@@ -2556,7 +2556,7 @@ async function handleLearnAnalysis(env, photoId) {
   ).bind(photoId).first().catch(() => null);
 
   if (!row || !photo) {
-    return new Response(`<!DOCTYPE html><html lang="he" dir="rtl"><head><meta charset="utf-8"><title>לא נמצא</title><style>body{background:#0a0a0a;color:#f0ede8;font-family:'Heebo',sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;gap:1rem}</style></head><body><h1 style="color:#c8a96e;font-size:2rem">404</h1><p>הניתוח לא נמצא</p><a href="/learn/" style="color:#c8a96e">← חזרה לבית ספר לצילום</a></body></html>`, {status: 404, headers: {'Content-Type': 'text/html;charset=utf-8'}});
+    return new Response(`<!DOCTYPE html><html lang="he" dir="rtl"><head><meta charset="utf-8"><title>לא נמצא</title><style>body{background:#0a0a0a;color:#f0ede8;font-family:'Heebo',sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;gap:1rem}</style></head><body><h1 style="color:#c8a96e;font-size:2rem">404</h1><p>הניתוח לא נמצא</p><a href="/learn/" style="color:#c8a96e">← חזרה לניתוח תמונות</a></body></html>`, {status: 404, headers: {'Content-Type': 'text/html;charset=utf-8'}});
   }
 
   let annotations = [], camera = {}, tags = [];
@@ -2637,7 +2637,7 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direc
 <body>
 <header class="site-header">
   <a class="site-title" href="https://amitphotos.com">Amit Photos</a>
-  <a href="/learn/" style="color:var(--muted);font-size:.8rem;text-decoration:none">📸 בית ספר לצילום</a>
+  <a href="/learn/" style="color:var(--muted);font-size:.8rem;text-decoration:none">📸 ניתוח תמונות</a>
 </header>
 
 <div class="page-header">
