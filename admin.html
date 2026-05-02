@@ -3520,7 +3520,7 @@ function annEdSetRule(rule) {
 
 function annEdSave() {
   $('learn-edit-annotations').value = JSON.stringify(annEditor.annotations);
-  annRender(annEditor.annotations.filter(a => !a.type));
+  annRender(annEditor.annotations.filter(a => a.type !== 'line'));
   if (currentAnalysis) currentAnalysis.composition_rule = annEditor.rule;
   annEdClose();
 }
@@ -3689,6 +3689,10 @@ function annEdCanvasPointerMove(e) {
 }
 
 function annEdCanvasPointerUp(e) {
+  if (e.type === 'pointercancel') {
+    annEditor.tempLine = null; annEditor.drawStart = null; annEditor.dragData = null;
+    annEdRender(); return;
+  }
   if (annEditor.mode === 'line' && annEditor.drawStart) {
     const pos = annEdSvgPos(e);
     const dx = pos.x - annEditor.drawStart.x;
@@ -3792,6 +3796,7 @@ function annEdDeleteIdx(idx) {
 
 document.addEventListener('DOMContentLoaded', () => {
   learnWireInputs();
+  document.getElementById('ann-editor-dialog').addEventListener('cancel', annEdRemovePopup);
 });
 </script>
 
