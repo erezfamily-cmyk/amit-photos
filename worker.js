@@ -2280,7 +2280,6 @@ async function handleAnalysesGenerate(request, env) {
   };
 
   // Fetch image from R2 — photos with width <= 2000 should fit Claude's 5MB limit
-  const chosen = candidates[0];
   const r2Obj = await env.PHOTOS.get(chosen.r2_key);
   if (!r2Obj) return jsonRes({ error: `Photo not found in R2: ${chosen.r2_key}` }, 404, request);
   let imgB64 = null, imgMime = 'image/jpeg';
