@@ -2250,24 +2250,47 @@ async function handleAnalysesGenerate(request, env) {
   if (request.method !== 'POST') return jsonRes({ error: 'POST only' }, 405, request);
   if (!env.ANTHROPIC_API_KEY) return jsonRes({ error: 'ANTHROPIC_API_KEY חסר' }, 500, request);
 
-  // 1. Pick 5 candidates (unanalyzed, published)
-  // Prefer photos with smaller dimensions (more likely to fit Claude's 5MB image limit)
-  const { results: candidates } = await env.DB.prepare(`
-    SELECT p.id, p.title, p.thumbnail, p.url, p.r2_key, p.description
-    FROM photos p
-    LEFT JOIN photo_analyses a ON a.photo_id = p.id
-    WHERE a.photo_id IS NULL
-      AND p.published = 1
-      AND p.r2_key IS NOT NULL
-      AND p.r2_key != ''
-      AND p.width > 0
-      AND p.width <= 2000
-    ORDER BY RANDOM()
-    LIMIT 5
-  `).all();
+  // Support optional photo_id in POST body for card-level analysis
+  let requestedPhotoId = null;
+  try {
+    const body = await request.json().catch(() => ({}));
+    requestedPhotoId = body?.photo_id || null;
+  } catch (_) {}
 
-  if (!candidates || candidates.length === 0) {
-    return jsonRes({ error: 'אין תמונות זמינות לניתוח' }, 404, request);
+  let candidates;
+  if (requestedPhotoId) {
+    // Specific photo requested — fetch it directly (re-analysis allowed)
+    const { results } = await env.DB.prepare(`
+      SELECT id, title, thumbnail, url, r2_key, description
+      FROM photos
+      WHERE id = ?
+        AND r2_key IS NOT NULL
+        AND r2_key != ''
+    `).bind(requestedPhotoId).all();
+    candidates = results;
+    if (!candidates || candidates.length === 0) {
+      return jsonRes({ error: 'תמונה לא נמצאה או חסר r2_key' }, 404, request);
+    }
+  } else {
+    // 1. Pick 5 candidates (unanalyzed, published)
+    // Prefer photos with smaller dimensions (more likely to fit Claude's 5MB image limit)
+    const { results } = await env.DB.prepare(`
+      SELECT p.id, p.title, p.thumbnail, p.url, p.r2_key, p.description
+      FROM photos p
+      LEFT JOIN photo_analyses a ON a.photo_id = p.id
+      WHERE a.photo_id IS NULL
+        AND p.published = 1
+        AND p.r2_key IS NOT NULL
+        AND r2_key != ''
+        AND p.width > 0
+        AND p.width <= 2000
+      ORDER BY RANDOM()
+      LIMIT 5
+    `).all();
+    candidates = results;
+    if (!candidates || candidates.length === 0) {
+      return jsonRes({ error: 'אין תמונות זמינות לניתוח' }, 404, request);
+    }
   }
 
   // 2. Pick first candidate whose R2 file is under 4.5MB (Claude's hard limit is 5MB)
