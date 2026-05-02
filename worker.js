@@ -2211,7 +2211,10 @@ async function handleAnalysesGet(request, env, photoId) {
   if (!await checkAuth(request, env)) return unauth(request);
   try {
     const row = await env.DB.prepare(
-      'SELECT * FROM photo_analyses WHERE photo_id = ?'
+      `SELECT a.*, p.thumbnail AS photo_thumbnail, p.url AS photo_url, p.title AS photo_title
+       FROM photo_analyses a
+       LEFT JOIN photos p ON p.id = a.photo_id
+       WHERE a.photo_id = ?`
     ).bind(photoId).first();
     if (!row) return jsonRes({ error: 'לא נמצא' }, 404, request);
     return jsonRes({
