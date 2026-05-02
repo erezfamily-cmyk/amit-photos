@@ -3237,6 +3237,27 @@ function closeLearnModal() {
   currentAnalysis = null;
 }
 
+function learnWireInputs() {
+  [1,2,3].forEach(i => {
+    $('learn-edit-comp-label-' + i)?.addEventListener('input', () => updatePreview('lpv-comp-box'));
+    $('learn-edit-comp-body-'  + i)?.addEventListener('input', () => updatePreview('lpv-comp-box'));
+  });
+  ['learn-edit-aperture','learn-edit-shutter','learn-edit-iso','learn-edit-focal'].forEach(id => {
+    $(id)?.addEventListener('input', () => updatePreview('lpv-cam-cards'));
+  });
+  $('learn-edit-tags')?.addEventListener('input', () => updatePreview('lpv-tags-row'));
+}
+
+function toggleLearnPreview() {
+  const formCol    = $('learn-edit-form-col');
+  const previewCol = $('learn-edit-preview-col');
+  const btn        = $('learn-preview-toggle');
+  const showingPreview = previewCol.classList.contains('preview-visible');
+  previewCol.classList.toggle('preview-visible', !showingPreview);
+  formCol.classList.toggle('form-hidden', !showingPreview);
+  btn.textContent = showingPreview ? 'הצג תצוגה מקדימה' : 'חזרה לעריכה';
+}
+
 async function learnGenerate() {
   const btn = $('learn-generate-btn');
   btn.disabled = true;
@@ -3258,6 +3279,10 @@ async function learnGenerate() {
     toast('שגיאה: ' + e.message, 'error');
   }
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+  learnWireInputs();
+});
 </script>
 
 <!-- Price override popup -->
