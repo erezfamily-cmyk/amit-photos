@@ -3339,6 +3339,31 @@ async function learnGenerate() {
   }
 }
 
+async function analyzePhoto(photoId, btn) {
+  btn.disabled = true;
+  const orig = btn.textContent;
+  btn.textContent = '⏳';
+  try {
+    const res = await fetch('/api/analyses/generate', {
+      method: 'POST',
+      headers: { ...authHeaders(), 'content-type': 'application/json' },
+      body: JSON.stringify({ photo_id: photoId })
+    });
+    const data = await res.json();
+    if (data.photo_id) {
+      toast('ניתוח נוצר: ' + (data.title || data.photo_id));
+      loadLearn();
+    } else {
+      toast('שגיאה: ' + (data.error || JSON.stringify(data)), 'error');
+    }
+  } catch(e) {
+    toast('שגיאה: ' + e.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = orig;
+  }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   learnWireInputs();
 });
