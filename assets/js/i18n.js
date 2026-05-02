@@ -36,7 +36,7 @@ const TRANSLATIONS = {
     'nav.new':          'חדש באתר',
     'nav.sale':         'מבצע',
     'nav.challenges':   'אתגרים',
-    'nav.learn':        'בית ספר לצילום',
+    'nav.learn':        'ניתוח תמונות',
     'nav.how-to-buy':   'כיצד לרכוש',
     'nav.pricing':      'מחירים',
     'nav.contact':      'צור קשר',
