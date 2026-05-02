@@ -2357,8 +2357,7 @@ async function handleAnalysesGenerate(request, env) {
 {
   "composition_rule": "שם_החוק",
   "annotations": [
-    {"x_pct": 0-100, "y_pct": 0-100, "label": "שורה1\\nשורה2", "anchor": "left|right|top|bottom"},
-    {"type": "line", "x1_pct": 0-100, "y1_pct": 0-100, "x2_pct": 0-100, "y2_pct": 0-100}
+    {"x_pct": 0-100, "y_pct": 0-100, "label": "שורה1\\nשורה2", "anchor": "left|right|top|bottom"}
   ],
   "camera_analysis": {
     "aperture": {"value": "f/X.X", "explanation": "הסבר קצר בעברית — מה הצמצם הזה משיג בתמונה הספציפית הזו (לא תמיד בוקה — אם הכל חד, הסבר למה צמצם סגור)"},
@@ -2371,7 +2370,7 @@ async function handleAnalysesGenerate(request, env) {
 }
 
 חוקים:
-- annotations: 3-5 אלמנטים שמדגימים את חוק הצילום. ב-leading_lines: זהה את נקודת המגוז בתמונה ואת הקווים האמיתיים שמתכנסים אליה (קו גג הבניינים, קו המדרכה, קו תחתית הבניינים וכו'). עבור כל קו: x1/y1 הם נקודת ההתחלה בצד הקרוב (שיכול להיות בכל פינה), x2/y2 הם נקודת הסיום בצד הרחוק ליד המגוז. הקווים חייבים להיות אלכסוניים — y1 ו-y2 חייבים להיות שונים זה מזה! קו אופקי (y1==y2) אינו קו פרספקטיבה. דוגמה לסמטה עם מגוז מימין: קו גג {"type":"line","x1_pct":0,"y1_pct":20,"x2_pct":95,"y2_pct":35}, קו מדרכה {"type":"line","x1_pct":0,"y1_pct":90,"x2_pct":95,"y2_pct":55}. הוסף גם נקודת dot אחת על נקודת ההתכנסות עם label "נקודת מגוז". בחוקים אחרים: השתמש בנקודות רגילות ללא type
+- annotations: 3-5 נקודות שמדגימות את חוק הצילום. ב-leading_lines: הוסף נקודה אחת על נקודת המגוז (ההתכנסות) עם label "נקודת מגוז", והשאר 2-3 נקודות על אלמנטים חשובים. הקוד יצייר את קווי הפרספקטיבה אוטומטית מנקודת המגוז. בחוקים אחרים: נקודות על אלמנטים רלוונטיים
 - composition_html: בדיוק 3 פסקאות עם <strong> בתחילת כל אחת — פסקה 1: מה חוק הקומפוזיציה ואיך הוא מופיע בתמונה הזו ספציפית; פסקה 2: מה עוד מעניין בתמונה מבחינה ויזואלית; פסקה 3: מה הצלמן המתחיל יכול ללמוד מזה
 - tags: 4-6 מילים קצרות בעברית
 - הכל בעברית` }
@@ -2656,14 +2655,17 @@ function buildRuleOverlay(rule, annotations) {
   if (rule === 'symmetry') return `
     <line x1="50%" y1="0" x2="50%" y2="100%" stroke="${gold}" stroke-width="2" stroke-dasharray="${dash}"/>`;
   if (rule === 'leading_lines') {
-    const lineAnns = annotations.filter(a => a.type === 'line');
-    if (lineAnns.length > 0) {
-      const svgLines = lineAnns.map(a => {
-        const x1 = parseFloat(a.x1_pct) || 0, y1 = parseFloat(a.y1_pct) || 0;
-        const x2 = parseFloat(a.x2_pct) || 100, y2 = parseFloat(a.y2_pct) || 50;
-        return `<line x1="${x1}%" y1="${y1}%" x2="${x2}%" y2="${y2}%" stroke="${gold}" stroke-width="2.5" opacity="0.85" stroke-linecap="round"/>`;
+    const vp = annotations.find(a => !a.type && a.label && (a.label.includes('מגוז') || a.label.includes('התכנסות'))) || annotations.find(a => !a.type);
+    if (vp) {
+      const vx = parseFloat(vp.x_pct) ?? 80;
+      const vy = parseFloat(vp.y_pct) ?? 50;
+      const fromLeft = vx >= 50;
+      const sx = fromLeft ? 0 : 100;
+      const lines = [-35, -12, 12, 35].map(off => {
+        const sy = Math.max(2, Math.min(98, vy + off));
+        return `<line x1="${sx}%" y1="${sy}%" x2="${vx}%" y2="${vy}%" stroke="${gold}" stroke-width="2.5" opacity="0.85" stroke-linecap="round"/>`;
       }).join('');
-      return `<g>${svgLines}</g>`;
+      return `<g>${lines}</g>`;
     }
     return `<g stroke="${gold}" fill="${gold}" opacity="0.8">
       <line x1="5%" y1="95%" x2="60%" y2="30%" stroke-width="2"/>
