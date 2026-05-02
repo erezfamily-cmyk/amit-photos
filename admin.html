@@ -3761,13 +3761,14 @@ function annEdRemovePopup() {
 }
 
 function annEdElementPointerDown(e, idx) {
+  const ann = annEditor.annotations[idx];
+  if (!ann) return;
   if (annEditor.mode === 'delete') {
     annEdDeleteIdx(idx);
     return;
   }
   if (annEditor.mode === 'select') {
     annEditor.selectedIdx = idx;
-    const ann = annEditor.annotations[idx];
     annEditor.dragData = ann.type === 'line'
       ? { idx,
           startX: annEdSvgPos(e).x, startY: annEdSvgPos(e).y,
@@ -3785,6 +3786,7 @@ function annEdElementPointerDown(e, idx) {
 function annEdDeleteIdx(idx) {
   annEditor.annotations.splice(idx, 1);
   if (annEditor.selectedIdx >= annEditor.annotations.length) annEditor.selectedIdx = -1;
+  if (annEditor.dragData && annEditor.dragData.idx === idx) annEditor.dragData = null;
   annEdRender();
 }
 
