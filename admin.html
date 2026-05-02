@@ -3466,11 +3466,6 @@ function annEdOpen() {
   const rule = currentAnalysis.composition_rule || 'leading_lines';
   annEditor.rule = rule;
   annEditor.annotations = annGetRows().map(a => Object.assign({}, a));
-  annEditor.mode = 'line';
-  annEditor.selectedIdx = -1;
-  annEditor.dragData = null;
-  annEditor.tempLine = null;
-  annEditor.drawStart = null;
 
   const select = $('ann-ed-rule');
   if (select) select.value = rule;
@@ -3523,7 +3518,7 @@ function annEdSetRule(rule) {
 
 function annEdSave() {
   $('learn-edit-annotations').value = JSON.stringify(annEditor.annotations);
-  annRender(annEditor.annotations);
+  annRender(annEditor.annotations.filter(a => !a.type));
   if (currentAnalysis) currentAnalysis.composition_rule = annEditor.rule;
   annEdClose();
 }
