@@ -3632,6 +3632,133 @@ function escSvgText(s) {
   return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
+function annEdSvgPos(e) {
+  const svg = $('ann-editor-svg');
+  const rect = svg.getBoundingClientRect();
+  return {
+    x: Math.max(0, Math.min(100, (e.clientX - rect.left) / rect.width * 100)),
+    y: Math.max(0, Math.min(100, (e.clientY - rect.top) / rect.height * 100))
+  };
+}
+
+function annEdCanvasPointerDown(e) {
+  if (annEditor.mode === 'line') {
+    const pos = annEdSvgPos(e);
+    annEditor.drawStart = pos;
+    annEditor.tempLine = { x1: pos.x, y1: pos.y, x2: pos.x, y2: pos.y };
+    const svg = $('ann-editor-svg');
+    svg.setPointerCapture(e.pointerId);
+  } else if (annEditor.mode === 'dot') {
+    const pos = annEdSvgPos(e);
+    annEdShowLabelPopup(e.clientX, e.clientY, '', label => {
+      annEditor.annotations.push({ x_pct: pos.x, y_pct: pos.y, label, anchor: 'bottom' });
+      annEdRender();
+    });
+  } else if (annEditor.mode === 'select') {
+    annEditor.selectedIdx = -1;
+    annEdRender();
+  }
+}
+
+function annEdCanvasPointerMove(e) {
+  if (annEditor.mode === 'line' && annEditor.drawStart) {
+    const pos = annEdSvgPos(e);
+    annEditor.tempLine = {
+      x1: annEditor.drawStart.x, y1: annEditor.drawStart.y,
+      x2: pos.x, y2: pos.y
+    };
+    annEdRender();
+  } else if (annEditor.mode === 'select' && annEditor.dragData) {
+    const pos = annEdSvgPos(e);
+    const d = annEditor.dragData;
+    const dx = pos.x - d.startX, dy = pos.y - d.startY;
+    const ann = annEditor.annotations[d.idx];
+    if (ann.type === 'line') {
+      ann.x1_pct = Math.max(0, Math.min(100, d.origX1 + dx));
+      ann.y1_pct = Math.max(0, Math.min(100, d.origY1 + dy));
+      ann.x2_pct = Math.max(0, Math.min(100, d.origX2 + dx));
+      ann.y2_pct = Math.max(0, Math.min(100, d.origY2 + dy));
+    } else {
+      ann.x_pct = Math.max(0, Math.min(100, d.origX + dx));
+      ann.y_pct = Math.max(0, Math.min(100, d.origY + dy));
+    }
+    annEdRender();
+  }
+}
+
+function annEdCanvasPointerUp(e) {
+  if (annEditor.mode === 'line' && annEditor.drawStart) {
+    const pos = annEdSvgPos(e);
+    const dx = pos.x - annEditor.drawStart.x;
+    const dy = pos.y - annEditor.drawStart.y;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    if (dist > 2) {
+      const newLine = {
+        type: 'line',
+        x1_pct: annEditor.drawStart.x, y1_pct: annEditor.drawStart.y,
+        x2_pct: pos.x, y2_pct: pos.y,
+        label: ''
+      };
+      annEditor.annotations.push(newLine);
+      const newIdx = annEditor.annotations.length - 1;
+      annEditor.tempLine = null;
+      annEditor.drawStart = null;
+      annEdRender();
+      const svg = $('ann-editor-svg');
+      const rect = svg.getBoundingClientRect();
+      const mx = rect.left + (newLine.x1_pct + newLine.x2_pct) / 2 / 100 * rect.width;
+      const my = rect.top  + (newLine.y1_pct + newLine.y2_pct) / 2 / 100 * rect.height;
+      annEdShowLabelPopup(mx, my, '', label => {
+        annEditor.annotations[newIdx].label = label;
+        annEdRender();
+      }, true);
+    } else {
+      annEditor.tempLine = null;
+      annEditor.drawStart = null;
+      annEdRender();
+    }
+  } else if (annEditor.mode === 'select' && annEditor.dragData) {
+    annEditor.dragData = null;
+  }
+}
+
+function annEdShowLabelPopup(clientX, clientY, defaultValue, onConfirm, allowSkip = false) {
+  annEdRemovePopup();
+  const popup = document.createElement('div');
+  popup.className = 'ann-ed-popup';
+  popup.id = 'ann-ed-label-popup';
+  popup.style.left = Math.min(clientX, window.innerWidth - 280) + 'px';
+  popup.style.top  = Math.min(clientY + 10, window.innerHeight - 60) + 'px';
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.value = defaultValue;
+  input.placeholder = 'תווית (אופציונלי)';
+  const okBtn = document.createElement('button');
+  okBtn.textContent = 'אישור';
+  const confirm = () => { annEdRemovePopup(); onConfirm(input.value.trim()); };
+  okBtn.onclick = confirm;
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter') confirm();
+    if (e.key === 'Escape') { annEdRemovePopup(); if (allowSkip) onConfirm(''); }
+  });
+  popup.appendChild(input);
+  popup.appendChild(okBtn);
+  if (allowSkip) {
+    const skipBtn = document.createElement('button');
+    skipBtn.textContent = 'דלג';
+    skipBtn.className = 'btn-skip';
+    skipBtn.onclick = () => { annEdRemovePopup(); onConfirm(''); };
+    popup.appendChild(skipBtn);
+  }
+  document.body.appendChild(popup);
+  input.focus();
+}
+
+function annEdRemovePopup() {
+  const p = $('ann-ed-label-popup');
+  if (p) p.remove();
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   learnWireInputs();
 });
