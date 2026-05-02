@@ -2336,7 +2336,7 @@ async function handleAnalysesGenerate(request, env) {
 
 בחר את חוק הצילום שהתמונה מדגימה הכי ברור מתוך: rule_of_thirds, symmetry, leading_lines, golden_ratio, framing, negative_space
 
-נתח את התמונה והעריך את הגדרות המצלמה הסבירות ביותר לפי מה שניתן לראות — עומק שדה, טשטוש תנועה, רעש, זווית.
+נתח את התמונה והעריך את הגדרות המצלמה הסבירות ביותר לפי מה שניתן לראות בפועל — התחשב בכל ארבעת הפרמטרים: חשיפה, תנועה, רעש, מרחק צילום.
 
 החזר JSON בלבד (ללא markdown), בדיוק במבנה הזה:
 {
@@ -2345,7 +2345,7 @@ async function handleAnalysesGenerate(request, env) {
     {"x_pct": 0-100, "y_pct": 0-100, "label": "שורה1\\nשורה2", "anchor": "left|right|top|bottom"}
   ],
   "camera_analysis": {
-    "aperture": {"value": "f/X.X", "explanation": "הסבר קצר בעברית"},
+    "aperture": {"value": "f/X.X", "explanation": "הסבר קצר בעברית — מה הצמצם הזה משיג בתמונה הספציפית הזו (לא תמיד בוקה — אם הכל חד, הסבר למה צמצם סגור)"},
     "shutter":  {"value": "1/XXXs", "explanation": "הסבר קצר בעברית"},
     "iso":      {"value": "XXX",    "explanation": "הסבר קצר בעברית"},
     "focal":    {"value": "XXXmm",  "explanation": "הסבר קצר בעברית"}
@@ -2355,8 +2355,8 @@ async function handleAnalysesGenerate(request, env) {
 }
 
 חוקים:
-- annotations: 3-5 נקודות, בפיזור על התמונה
-- composition_html: בדיוק 3 פסקאות עם <strong> בתחילת כל אחת
+- annotations: 3-5 נקודות שמסמנות בדיוק את האלמנטים שמדגימים את חוק הצילום שבחרת — לדוגמה ב-leading_lines: סמן את הקווים עצמם ואת נקודת ההתכנסות; ב-rule_of_thirds: סמן את נקודות הכוח הרלוונטיות
+- composition_html: בדיוק 3 פסקאות עם <strong> בתחילת כל אחת — פסקה 1: מה חוק הקומפוזיציה ואיך הוא מופיע בתמונה הזו ספציפית; פסקה 2: מה עוד מעניין בתמונה מבחינה ויזואלית; פסקה 3: מה הצלמן המתחיל יכול ללמוד מזה
 - tags: 4-6 מילים קצרות בעברית
 - הכל בעברית` }
         ]
