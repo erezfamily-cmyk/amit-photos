@@ -1809,12 +1809,27 @@ async function handleSitemap(request, env) {
     <priority>${p.priority}</priority>
   </url>`).join('\n');
 
+  // דפי ניתוח תמונות
+  let learnUrls = [];
+  try {
+    const { results: analyses } = await env.DB.prepare(
+      'SELECT photo_id, published_at FROM photo_analyses ORDER BY published_at DESC'
+    ).all();
+    learnUrls = analyses.map(a => `  <url>
+    <loc>${base}/learn/${escXml(a.photo_id)}</loc>
+    <lastmod>${toDate(a.published_at)}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>`);
+  } catch (_) {}
+
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
 ${staticXml}
 ${categoryUrls.join('\n')}
 ${photoUrls.join('\n')}
+${learnUrls.join('\n')}
 </urlset>`;
 
   return new Response(xml, {
