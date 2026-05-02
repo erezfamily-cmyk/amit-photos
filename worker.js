@@ -2251,11 +2251,8 @@ async function handleAnalysesGenerate(request, env) {
   if (!env.ANTHROPIC_API_KEY) return jsonRes({ error: 'ANTHROPIC_API_KEY חסר' }, 500, request);
 
   // Support optional photo_id in POST body for card-level analysis
-  let requestedPhotoId = null;
-  try {
-    const body = await request.json().catch(() => ({}));
-    requestedPhotoId = body?.photo_id || null;
-  } catch (_) {}
+  const body = await request.json().catch(() => ({}));
+  const requestedPhotoId = body?.photo_id ?? null;
 
   let candidates;
   if (requestedPhotoId) {
