@@ -3595,45 +3595,62 @@ function annEdRender() {
 
   const gold = '#c8a96e';
   const selectedColor = '#6ab0ff';
-  let html = '';
+  const interactive = annEditor.mode === 'select' || annEditor.mode === 'delete';
+  let svgHtml = '';
+  let labelHtml = '';
 
-  html += annEdRuleOverlaySVG(annEditor.rule, annEditor.annotations);
+  svgHtml += annEdRuleOverlaySVG(annEditor.rule, annEditor.annotations);
 
   annEditor.annotations.forEach((ann, idx) => {
     const isSelected = idx === annEditor.selectedIdx;
     const color = isSelected ? selectedColor : gold;
     if (ann.type === 'line') {
       const x1 = ann.x1_pct, y1 = ann.y1_pct, x2 = ann.x2_pct, y2 = ann.y2_pct;
-      html += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"
+      svgHtml += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"
         stroke="${color}" stroke-width="${isSelected ? 1 : .7}" stroke-linecap="round"
         data-ann-idx="${idx}" style="cursor:pointer"/>`;
       if (ann.label) {
         const mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
-        html += `<text x="${mx}" y="${my - 1.5}" text-anchor="middle"
-          font-size="3" fill="${color}" style="pointer-events:none">${escSvgText(ann.label)}</text>`;
+        const border = isSelected ? '2px solid #6ab0ff' : '1px solid rgba(255,255,255,.15)';
+        labelHtml += `<div data-ann-idx="${idx}" style="position:absolute;left:${mx}%;top:${my}%;
+          transform:translate(-50%,-60%);background:rgba(0,0,0,.78);color:#fff;
+          font-family:Heebo,Arial,sans-serif;font-size:13px;line-height:1.35;
+          padding:4px 9px;border-radius:4px;white-space:nowrap;direction:rtl;border:${border};
+          ${interactive ? 'pointer-events:auto;cursor:pointer' : ''}"
+          ${interactive ? `onpointerdown="event.stopPropagation();annEdElementPointerDown(event,${idx})"` : ''}
+        >${escHtml(ann.label)}</div>`;
       }
     } else {
       const x = ann.x_pct, y = ann.y_pct;
-      html += `<circle cx="${x}" cy="${y}" r="${isSelected ? 2 : 1.5}"
+      svgHtml += `<circle cx="${x}" cy="${y}" r="${isSelected ? 2 : 1.5}"
         fill="${color}" data-ann-idx="${idx}" style="cursor:pointer"/>`;
       if (ann.label) {
-        const dy = ann.anchor === 'top' ? -3 : 3;
-        const anchor = ann.anchor === 'right' ? 'start' : ann.anchor === 'left' ? 'end' : 'middle';
-        html += `<text x="${x}" y="${y + dy}" text-anchor="${anchor}"
-          font-size="2.8" fill="${color}" style="pointer-events:none">${escSvgText(ann.label)}</text>`;
+        const border = isSelected ? '2px solid #6ab0ff' : '1px solid rgba(255,255,255,.15)';
+        labelHtml += `<div data-ann-idx="${idx}" style="position:absolute;left:${x}%;top:${y}%;
+          transform:translate(-50%,-115%);background:rgba(0,0,0,.78);color:#fff;
+          font-family:Heebo,Arial,sans-serif;font-size:13px;line-height:1.35;
+          padding:4px 9px;border-radius:4px;white-space:nowrap;direction:rtl;border:${border};
+          ${interactive ? 'pointer-events:auto;cursor:pointer' : ''}"
+          ${interactive ? `onpointerdown="event.stopPropagation();annEdElementPointerDown(event,${idx})"` : ''}
+        >${escHtml(ann.label)}</div>`;
       }
     }
   });
 
   if (annEditor.tempLine) {
     const t = annEditor.tempLine;
-    html += `<line x1="${t.x1}" y1="${t.y1}" x2="${t.x2}" y2="${t.y2}"
+    svgHtml += `<line x1="${t.x1}" y1="${t.y1}" x2="${t.x2}" y2="${t.y2}"
       stroke="${gold}" stroke-width=".6" stroke-dasharray="2,1" opacity=".8"/>`;
   }
 
-  svg.innerHTML = html;
+  svg.innerHTML = svgHtml;
+  const labelLayer = $('ann-ed-label-layer');
+  if (labelLayer) {
+    labelLayer.style.pointerEvents = interactive ? 'none' : 'none';
+    labelLayer.innerHTML = labelHtml;
+  }
 
-  if (annEditor.mode === 'select' || annEditor.mode === 'delete') {
+  if (interactive) {
     svg.querySelectorAll('[data-ann-idx]').forEach(el => {
       el.addEventListener('pointerdown', e => {
         e.stopPropagation();
@@ -3884,6 +3901,7 @@ document.addEventListener('DOMContentLoaded', () => {
       <div class="ann-ed-canvas-inner" id="ann-ed-canvas-inner">
         <img id="ann-editor-img" alt="">
         <svg id="ann-editor-svg" viewBox="0 0 100 100" preserveAspectRatio="none"></svg>
+        <div id="ann-ed-label-layer" style="position:absolute;inset:0;pointer-events:none"></div>
       </div>
     </div>
   </div>
