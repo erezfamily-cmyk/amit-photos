@@ -3651,7 +3651,10 @@ function annEdRender() {
       const name = ann.label || (ann.type === 'line' ? 'קו' : 'נקודה');
       return `<div class="ann-ed-elem-item${isSelected ? ' selected' : ''}">
         <span>${icon} ${escHtml(name)}</span>
-        <span class="ann-ed-elem-del" onclick="annEdDeleteIdx(${idx})">×</span>
+        <span style="display:flex;gap:3px;flex-shrink:0">
+          <span class="ann-ed-elem-del" style="color:#888" onclick="annEdEditLabel(null,${idx})" title="ערוך">✏️</span>
+          <span class="ann-ed-elem-del" onclick="annEdDeleteIdx(${idx})">×</span>
+        </span>
       </div>`;
     }).join('');
   }
@@ -3799,6 +3802,11 @@ function annEdElementPointerDown(e, idx) {
     return;
   }
   if (annEditor.mode === 'select') {
+    // Second click on already-selected element → edit label
+    if (annEditor.selectedIdx === idx) {
+      annEdEditLabel(e, idx);
+      return;
+    }
     annEditor.selectedIdx = idx;
     annEditor.dragData = ann.type === 'line'
       ? { idx,
@@ -3812,6 +3820,17 @@ function annEdElementPointerDown(e, idx) {
     svg.setPointerCapture(e.pointerId);
     annEdRender();
   }
+}
+
+function annEdEditLabel(e, idx) {
+  const ann = annEditor.annotations[idx];
+  if (!ann) return;
+  const clientX = e ? e.clientX : window.innerWidth / 2;
+  const clientY = e ? e.clientY : window.innerHeight / 2;
+  annEdShowLabelPopup(clientX, clientY, ann.label || '', newLabel => {
+    ann.label = newLabel;
+    annEdRender();
+  });
 }
 
 function annEdDeleteIdx(idx) {
