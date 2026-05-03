@@ -2856,6 +2856,9 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direc
   ${buildAnnotations(annotations)}
   ${buildAnnotationLabels(annotations)}
 </div>
+${annotations.length > 0 ? `<div style="text-align:center;margin-top:.5rem;margin-bottom:.5rem;min-height:2rem">
+  <button id="ann-hide-btn" onclick="annHideAll()" style="display:none;background:rgba(200,169,110,.1);border:1px solid rgba(200,169,110,.3);color:#c8a96e;border-radius:20px;padding:.35rem 1.2rem;font-family:'Heebo',sans-serif;font-size:.82rem;cursor:pointer">הסתר ביאורים</button>
+</div>` : ''}
 
 <div class="cam-cards">${cameraCards}</div>
 
@@ -2885,11 +2888,17 @@ ${(() => { const d = buildPhysicsDiagram(camera); return `<div class="section"><
     byIdx[i].push(el);
   });
   const indices = Object.keys(byIdx).map(Number).sort((a, b) => a - b);
+  const hideBtn = document.getElementById('ann-hide-btn');
   indices.forEach((idx, step) => {
     setTimeout(() => {
       byIdx[idx].forEach(el => { el.style.opacity = '1'; });
+      if (step === indices.length - 1 && hideBtn) hideBtn.style.display = 'inline-block';
     }, 700 + step * 2000);
   });
+  window.annHideAll = function() {
+    all.forEach(el => { el.style.opacity = '0'; });
+    if (hideBtn) hideBtn.style.display = 'none';
+  };
 })();
 </script>
 </body>
