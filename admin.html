@@ -1010,6 +1010,7 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
       <div class="section-header">
         <h1 class="section-title">📚 ניתוח תמונות</h1>
         <div class="section-actions">
+          <button type="button" class="btn btn-ghost btn-sm" onclick="learnPublishAll()">עדכן הכל</button>
           <button type="button" class="btn btn-primary btn-sm" id="learn-generate-btn" onclick="learnGenerate()">ייצר ניתוח חדש עכשיו</button>
         </div>
       </div>
@@ -3333,6 +3334,17 @@ async function learnSave() {
 function closeLearnModal() {
   document.getElementById('learn-edit-dialog').close();
   currentAnalysis = null;
+}
+
+async function learnPublishAll() {
+  if (!confirm('לפרסם את כל הניתוחים עכשיו?')) return;
+  const res = await fetch('/api/analyses/publish-all', {
+    method: 'POST',
+    headers: authHeaders()
+  });
+  if (!res.ok) { toast('שגיאה בעדכון', 'error'); return; }
+  toast('✓ כל הניתוחים עודכנו');
+  loadLearn();
 }
 
 async function learnPublish(photoId) {

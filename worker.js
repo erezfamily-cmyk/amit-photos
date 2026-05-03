@@ -2243,6 +2243,13 @@ async function handleAnalysesGet(request, env, photoId) {
   }
 }
 
+async function handleAnalysesPublishAll(request, env) {
+  if (!await checkAuth(request, env)) return unauth(request);
+  const now = new Date().toISOString();
+  await env.DB.prepare('UPDATE photo_analyses SET published_at = ?').bind(now).run();
+  return jsonRes({ ok: true }, 200, request);
+}
+
 async function handleAnalysesUpdate(request, env, photoId) {
   if (!await checkAuth(request, env)) return unauth(request);
   if (request.method !== 'PUT') return jsonRes({ error: 'PUT only' }, 405, request);
@@ -2903,6 +2910,7 @@ export default {
     }
     if (path === '/api/admin/migrate-analyses' && request.method === 'POST') return handleMigrateAnalyses(request, env);
     if (path === '/api/analyses' && request.method === 'GET')                    return handleAnalysesList(request, env);
+    if (path === '/api/analyses/publish-all' && request.method === 'POST')       return handleAnalysesPublishAll(request, env);
     if (path === '/api/analyses/generate' && request.method === 'POST')          return handleAnalysesGenerate(request, env);
     if (path.startsWith('/api/analyses/') && request.method === 'GET')           return handleAnalysesGet(request, env, path.slice('/api/analyses/'.length));
     if (path.startsWith('/api/analyses/') && request.method === 'PUT')           return handleAnalysesUpdate(request, env, path.slice('/api/analyses/'.length));
