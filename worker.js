@@ -2888,7 +2888,7 @@ ${(() => { const d = buildPhysicsDiagram(camera); return `<div class="section"><
   indices.forEach((idx, step) => {
     setTimeout(() => {
       byIdx[idx].forEach(el => { el.style.opacity = '1'; });
-    }, 700 + step * 1100);
+    }, 700 + step * 2000);
   });
 })();
 </script>
