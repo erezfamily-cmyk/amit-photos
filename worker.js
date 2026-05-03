@@ -2702,13 +2702,43 @@ function buildRuleOverlay(rule, annotations) {
   return '';
 }
 
+function buildAnnotationSVGLines(annotations) {
+  const lineAnns = annotations.filter(a => a.type === 'line' || a.type === 'arrow');
+  if (!lineAnns.length) return '';
+  const gold = '#c8a96e';
+  const defs = `<defs>
+    <marker id="pw-arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="4" markerHeight="4" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="${gold}"/>
+    </marker>
+  </defs>`;
+  const els = lineAnns.map(ann => {
+    const idx = annotations.indexOf(ann);
+    const x1 = parseFloat(ann.x1_pct) || 0, y1 = parseFloat(ann.y1_pct) || 0;
+    const x2 = parseFloat(ann.x2_pct) || 0, y2 = parseFloat(ann.y2_pct) || 0;
+    const arrowAttr = ann.type === 'arrow' ? ` marker-end="url(#pw-arr)"` : '';
+    return `<line data-ann-idx="${idx}" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${gold}" stroke-width="0.8" stroke-linecap="round"${arrowAttr} style="opacity:0;transition:opacity .4s"/>`;
+  }).join('\n');
+  return defs + els;
+}
+
+function buildAnnotationLabels(annotations) {
+  return annotations.filter(a => (a.type === 'line' || a.type === 'arrow') && a.label).map(ann => {
+    const idx = annotations.indexOf(ann);
+    const x1 = parseFloat(ann.x1_pct) || 0, y1 = parseFloat(ann.y1_pct) || 0;
+    const x2 = parseFloat(ann.x2_pct) || 0, y2 = parseFloat(ann.y2_pct) || 0;
+    const mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
+    return `<div data-ann-idx="${idx}" style="position:absolute;left:${mx}%;top:${my}%;transform:translate(-50%,-130%);background:rgba(0,0,0,.85);border:1px solid rgba(200,169,110,.4);border-radius:6px;padding:3px 8px;font-size:.68rem;color:#f0ede8;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .4s">${escXml(ann.label)}</div>`;
+  }).join('\n');
+}
+
 function buildAnnotations(annotations) {
-  return annotations.map(ann => {
+  return annotations.filter(a => a.type !== 'line' && a.type !== 'arrow').map((ann, _) => {
+    const idx = annotations.indexOf(ann);
     const x = parseFloat(ann.x_pct) || 0;
     const y = parseFloat(ann.y_pct) || 0;
     const labelLines = (ann.label || '').split('\n').map(l => escXml(l)).join('<br>');
     const anchorClass = `ann-${ann.anchor || 'right'}`;
-    return `<div class="ann" style="left:${x}%;top:${y}%">
+    return `<div class="ann" data-ann-idx="${idx}" style="left:${x}%;top:${y}%;opacity:0;transition:opacity .4s">
       <div class="ann-dot"></div>
       <div class="ann-label ${anchorClass}">${labelLines}</div>
     </div>`;
@@ -2777,7 +2807,9 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direc
 .photo-wrap{position:relative;max-width:900px;margin:0 auto 1.5rem;padding:0 .75rem}
 .photo-wrap img{width:100%;border-radius:10px;display:block}
 .rule-overlay{position:absolute;top:.75rem;left:.75rem;right:.75rem;bottom:0;width:calc(100% - 1.5rem);height:100%;pointer-events:none}
-.ann{position:absolute;transform:translate(-50%,-50%);pointer-events:none}
+.ann{position:absolute;transform:translate(-50%,-50%);pointer-events:none;opacity:0;transition:opacity .4s}
+.reveal-btn{background:rgba(200,169,110,.12);border:1px solid rgba(200,169,110,.35);color:#c8a96e;border-radius:20px;padding:.4rem 1.4rem;font-family:'Heebo',sans-serif;font-size:.85rem;cursor:pointer;transition:background .2s}
+.reveal-btn:hover{background:rgba(200,169,110,.2)}
 .ann-dot{width:10px;height:10px;border-radius:50%;background:var(--accent);border:2px solid #000;position:relative;z-index:2}
 .ann-label{position:absolute;background:rgba(0,0,0,.85);border:1px solid var(--accent);border-radius:7px;padding:.3rem .55rem;font-size:.68rem;color:var(--text);line-height:1.45;white-space:nowrap;z-index:3}
 .ann-right{left:16px;top:-10px}
@@ -2821,9 +2853,15 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direc
   <img src="${escXml(imgUrl)}" alt="${escXml(row.title)}">
   <svg class="rule-overlay" viewBox="0 0 100 100" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
     ${buildRuleOverlay(row.composition_rule, annotations)}
+    ${buildAnnotationSVGLines(annotations)}
   </svg>
   ${buildAnnotations(annotations)}
+  ${buildAnnotationLabels(annotations)}
 </div>
+${annotations.length > 0 ? `<div style="text-align:center;margin-bottom:1.5rem">
+  <button class="reveal-btn" id="reveal-btn">הבא ←</button>
+  <span id="reveal-counter" style="color:#888;font-size:.78rem;margin-right:.75rem"></span>
+</div>` : ''}
 
 <div class="cam-cards">${cameraCards}</div>
 
@@ -2842,6 +2880,30 @@ ${(() => { const d = buildPhysicsDiagram(camera); return `<div class="section"><
   <a href="${escXml(buyUrl)}">רכוש תמונה זו</a>
   <a href="https://amitphotos.com">לגלריה</a>
 </div>
+<script>
+(function() {
+  const TOTAL = ${annotations.length};
+  const btn = document.getElementById('reveal-btn');
+  const counter = document.getElementById('reveal-counter');
+  if (!btn || TOTAL === 0) return;
+  let shown = 0;
+  function revealOne() {
+    const els = document.querySelectorAll('[data-ann-idx="' + shown + '"]');
+    els.forEach(el => { el.style.opacity = '1'; });
+    shown++;
+    if (counter) counter.textContent = shown + ' / ' + TOTAL;
+    if (shown >= TOTAL) { btn.textContent = 'הסתר הכל'; btn.onclick = hideAll; }
+  }
+  function hideAll() {
+    shown = 0;
+    document.querySelectorAll('[data-ann-idx]').forEach(el => { el.style.opacity = '0'; });
+    if (counter) counter.textContent = '';
+    btn.textContent = 'הבא ←';
+    btn.onclick = revealOne;
+  }
+  btn.onclick = revealOne;
+})();
+</script>
 </body>
 </html>`;
 
