@@ -2323,20 +2323,36 @@ async function handleAnalysesGenerate(request, env) {
   };
 
   let chosen = null;
-  let r2Obj = null;
+  let imgBuf = null, imgMime = 'image/jpeg';
+
   for (const candidate of candidates) {
-    const obj = await env.PHOTOS.get(candidate.r2_key);
-    if (!obj) continue;
-    if (obj.size <= 4.5 * 1024 * 1024) {
+    const obj = candidate.r2_key ? await env.PHOTOS.get(candidate.r2_key) : null;
+    if (obj && obj.size <= 4.5 * 1024 * 1024) {
       chosen = candidate;
-      r2Obj = obj;
+      imgBuf = await obj.arrayBuffer();
+      imgMime = obj.httpMetadata?.contentType || 'image/jpeg';
       break;
     }
+    // R2 too large or missing — try fetching thumbnail URL instead
+    const thumbUrl = candidate.thumbnail || candidate.url;
+    if (thumbUrl) {
+      try {
+        const resp = await fetch(thumbUrl);
+        if (resp.ok) {
+          const buf = await resp.arrayBuffer();
+          if (buf.byteLength <= 4.5 * 1024 * 1024) {
+            chosen = candidate;
+            imgBuf = buf;
+            imgMime = resp.headers.get('content-type') || 'image/jpeg';
+            break;
+          }
+        }
+      } catch (_) { /* try next */ }
+    }
   }
-  if (!chosen || !r2Obj) return jsonRes({ error: 'לא נמצאה תמונה מתחת ל-5MB לניתוח (נסה שוב)' }, 404, request);
-  let imgB64 = null, imgMime = 'image/jpeg';
-  imgB64 = toB64(await r2Obj.arrayBuffer());
-  imgMime = r2Obj.httpMetadata?.contentType || 'image/jpeg';
+  if (!chosen || !imgBuf) return jsonRes({ error: 'לא נמצאה תמונה מתחת ל-5MB לניתוח (נסה שוב)' }, 404, request);
+  let imgB64 = null;
+  imgB64 = toB64(imgBuf);
 
   // 3. Ask Claude sonnet for composition rule selection + full analysis
   const analysisRes = await fetch('https://api.anthropic.com/v1/messages', {
