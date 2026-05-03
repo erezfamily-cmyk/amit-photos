@@ -2333,12 +2333,27 @@ async function handleAnalysesGenerate(request, env) {
       imgSource = { type: 'base64', media_type: mime, data: toB64(await obj.arrayBuffer()) };
       break;
     }
-    // R2 too large or missing — use URL source (Claude fetches directly, no size limit on our end)
+    // R2 too large or missing — use URL source if HTTPS, else fetch and base64
     const imgUrl = candidate.thumbnail || candidate.url;
     if (imgUrl) {
-      chosen = candidate;
-      imgSource = { type: 'url', url: imgUrl };
-      break;
+      if (imgUrl.startsWith('https://')) {
+        chosen = candidate;
+        imgSource = { type: 'url', url: imgUrl };
+        break;
+      }
+      // Non-HTTPS URL — fetch and base64 encode
+      try {
+        const resp = await fetch(imgUrl);
+        if (resp.ok) {
+          const buf = await resp.arrayBuffer();
+          if (buf.byteLength <= 4.5 * 1024 * 1024) {
+            chosen = candidate;
+            const mime = resp.headers.get('content-type') || 'image/jpeg';
+            imgSource = { type: 'base64', media_type: mime, data: toB64(buf) };
+            break;
+          }
+        }
+      } catch (_) { /* try next */ }
     }
   }
   if (!chosen || !imgSource) return jsonRes({ error: 'לא נמצאה תמונה לניתוח' }, 404, request);
