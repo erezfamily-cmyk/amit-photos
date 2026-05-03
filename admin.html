@@ -3811,7 +3811,8 @@ function annEdShowLabelPopup(clientX, clientY, defaultValue, onConfirm, allowSki
     skipBtn.onclick = () => { annEdRemovePopup(); onConfirm(''); };
     popup.appendChild(skipBtn);
   }
-  document.body.appendChild(popup);
+  const dialog = document.getElementById('ann-editor-dialog');
+  (dialog || document.body).appendChild(popup);
   input.focus();
 }
 
