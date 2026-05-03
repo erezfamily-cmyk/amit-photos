@@ -2255,6 +2255,7 @@ async function handleAnalysesUpdate(request, env, photoId) {
   if (body.camera_json !== undefined)      { fields.push('camera_json = ?');      values.push(body.camera_json); }
   if (body.annotations_json !== undefined) { fields.push('annotations_json = ?'); values.push(body.annotations_json); }
   if (body.title !== undefined)            { fields.push('title = ?');            values.push(body.title); }
+  if (body.published_at !== undefined)     { fields.push('published_at = ?');     values.push(body.published_at); }
   if (!fields.length) return jsonRes({ error: 'אין שדות לעדכון' }, 400, request);
   values.push(photoId);
   await env.DB.prepare(`UPDATE photo_analyses SET ${fields.join(', ')} WHERE photo_id = ?`).bind(...values).run();

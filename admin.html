@@ -3165,7 +3165,10 @@ async function loadLearn() {
         <td>${thumb}<span style="vertical-align:middle">${title}</span></td>
         <td><span class="cat-badge">${ruleLabel}</span></td>
         <td style="color:var(--text-muted);font-size:.85rem">${published}</td>
-        <td><button class="btn btn-ghost btn-sm" onclick="learnEdit('${a.photo_id}')">עריכה</button></td>
+        <td style="display:flex;gap:.4rem;align-items:center">
+          <button class="btn btn-ghost btn-sm" onclick="learnEdit('${a.photo_id}')">עריכה</button>
+          <button class="btn btn-primary btn-sm" onclick="learnPublish('${a.photo_id}')">פרסם</button>
+        </td>
       `;
       tbody.appendChild(tr);
     });
@@ -3330,6 +3333,17 @@ async function learnSave() {
 function closeLearnModal() {
   document.getElementById('learn-edit-dialog').close();
   currentAnalysis = null;
+}
+
+async function learnPublish(photoId) {
+  const res = await fetch('/api/analyses/' + photoId, {
+    method: 'PUT',
+    headers: authHeaders(),
+    body: JSON.stringify({ published_at: new Date().toISOString() })
+  });
+  if (!res.ok) { toast('שגיאה בפרסום', 'error'); return; }
+  toast('✓ ניתוח פורסם');
+  loadLearn();
 }
 
 // ===== ANNOTATIONS UI =====
