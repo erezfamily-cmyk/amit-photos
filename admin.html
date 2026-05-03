@@ -3530,7 +3530,7 @@ function annEdSetMode(mode) {
   annEditor.dragData = null;
   annEditor.tempLine = null;
   annEditor.drawStart = null;
-  ['line','dot','select','delete'].forEach(m => {
+  ['line','dot','arrow','select','delete'].forEach(m => {
     const btn = $('ann-tool-' + m);
     if (btn) btn.classList.toggle('active', m === mode);
   });
@@ -3546,7 +3546,7 @@ function annEdSetRule(rule) {
 
 function annEdSave() {
   // annRender calls syncAnnHidden internally, so write the full array after it
-  annRender(annEditor.annotations.filter(a => a.type !== 'line'));
+  annRender(annEditor.annotations.filter(a => a.type !== 'line' && a.type !== 'arrow'));
   $('learn-edit-annotations').value = JSON.stringify(annEditor.annotations);
   if (currentAnalysis) currentAnalysis.composition_rule = annEditor.rule;
   annEdClose();
@@ -3596,7 +3596,14 @@ function annEdRender() {
   const gold = '#c8a96e';
   const selectedColor = '#6ab0ff';
   const interactive = annEditor.mode === 'select' || annEditor.mode === 'delete';
-  let svgHtml = '';
+  let svgHtml = `<defs>
+    <marker id="aed-arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="4" markerHeight="4" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="${gold}"/>
+    </marker>
+    <marker id="aed-arr-sel" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="4" markerHeight="4" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="${selectedColor}"/>
+    </marker>
+  </defs>`;
   let labelHtml = '';
 
   svgHtml += annEdRuleOverlaySVG(annEditor.rule, annEditor.annotations);
@@ -3604,10 +3611,11 @@ function annEdRender() {
   annEditor.annotations.forEach((ann, idx) => {
     const isSelected = idx === annEditor.selectedIdx;
     const color = isSelected ? selectedColor : gold;
-    if (ann.type === 'line') {
+    if (ann.type === 'line' || ann.type === 'arrow') {
       const x1 = ann.x1_pct, y1 = ann.y1_pct, x2 = ann.x2_pct, y2 = ann.y2_pct;
+      const arrowMarker = ann.type === 'arrow' ? ` marker-end="url(#aed-arr${isSelected ? '-sel' : ''})"` : '';
       svgHtml += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"
-        stroke="${color}" stroke-width="${isSelected ? 1 : .7}" stroke-linecap="round"
+        stroke="${color}" stroke-width="${isSelected ? 1 : .7}" stroke-linecap="round"${arrowMarker}
         data-ann-idx="${idx}" style="cursor:pointer"/>`;
       if (ann.label) {
         const mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
@@ -3639,8 +3647,9 @@ function annEdRender() {
 
   if (annEditor.tempLine) {
     const t = annEditor.tempLine;
+    const tmpArrow = annEditor.mode === 'arrow' ? ' marker-end="url(#aed-arr)"' : '';
     svgHtml += `<line x1="${t.x1}" y1="${t.y1}" x2="${t.x2}" y2="${t.y2}"
-      stroke="${gold}" stroke-width=".6" stroke-dasharray="2,1" opacity=".8"/>`;
+      stroke="${gold}" stroke-width=".6" stroke-dasharray="2,1" opacity=".8"${tmpArrow}/>`;
   }
 
   svg.innerHTML = svgHtml;
@@ -3664,8 +3673,8 @@ function annEdRender() {
   if (list) {
     list.innerHTML = annEditor.annotations.map((ann, idx) => {
       const isSelected = idx === annEditor.selectedIdx;
-      const icon = ann.type === 'line' ? '—' : '•';
-      const name = ann.label || (ann.type === 'line' ? 'קו' : 'נקודה');
+      const icon = ann.type === 'line' ? '—' : ann.type === 'arrow' ? '→' : '•';
+      const name = ann.label || (ann.type === 'line' ? 'קו' : ann.type === 'arrow' ? 'חץ' : 'נקודה');
       return `<div class="ann-ed-elem-item${isSelected ? ' selected' : ''}">
         <span>${icon} ${escHtml(name)}</span>
         <span style="display:flex;gap:3px;flex-shrink:0">
@@ -3691,7 +3700,7 @@ function annEdSvgPos(e) {
 }
 
 function annEdCanvasPointerDown(e) {
-  if (annEditor.mode === 'line') {
+  if (annEditor.mode === 'line' || annEditor.mode === 'arrow') {
     const pos = annEdSvgPos(e);
     annEditor.drawStart = pos;
     annEditor.tempLine = { x1: pos.x, y1: pos.y, x2: pos.x, y2: pos.y };
@@ -3710,7 +3719,7 @@ function annEdCanvasPointerDown(e) {
 }
 
 function annEdCanvasPointerMove(e) {
-  if (annEditor.mode === 'line' && annEditor.drawStart) {
+  if ((annEditor.mode === 'line' || annEditor.mode === 'arrow') && annEditor.drawStart) {
     const pos = annEdSvgPos(e);
     annEditor.tempLine = {
       x1: annEditor.drawStart.x, y1: annEditor.drawStart.y,
@@ -3722,7 +3731,7 @@ function annEdCanvasPointerMove(e) {
     const d = annEditor.dragData;
     const dx = pos.x - d.startX, dy = pos.y - d.startY;
     const ann = annEditor.annotations[d.idx];
-    if (ann.type === 'line') {
+    if (ann.type === 'line' || ann.type === 'arrow') {
       ann.x1_pct = Math.max(0, Math.min(100, d.origX1 + dx));
       ann.y1_pct = Math.max(0, Math.min(100, d.origY1 + dy));
       ann.x2_pct = Math.max(0, Math.min(100, d.origX2 + dx));
@@ -3740,14 +3749,14 @@ function annEdCanvasPointerUp(e) {
     annEditor.tempLine = null; annEditor.drawStart = null; annEditor.dragData = null;
     annEdRender(); return;
   }
-  if (annEditor.mode === 'line' && annEditor.drawStart) {
+  if ((annEditor.mode === 'line' || annEditor.mode === 'arrow') && annEditor.drawStart) {
     const pos = annEdSvgPos(e);
     const dx = pos.x - annEditor.drawStart.x;
     const dy = pos.y - annEditor.drawStart.y;
     const dist = Math.sqrt(dx * dx + dy * dy);
     if (dist > 2) {
       const newLine = {
-        type: 'line',
+        type: annEditor.mode,
         x1_pct: annEditor.drawStart.x, y1_pct: annEditor.drawStart.y,
         x2_pct: pos.x, y2_pct: pos.y,
         label: ''
@@ -3825,7 +3834,7 @@ function annEdElementPointerDown(e, idx) {
       return;
     }
     annEditor.selectedIdx = idx;
-    annEditor.dragData = ann.type === 'line'
+    annEditor.dragData = (ann.type === 'line' || ann.type === 'arrow')
       ? { idx,
           startX: annEdSvgPos(e).x, startY: annEdSvgPos(e).y,
           origX1: ann.x1_pct, origY1: ann.y1_pct,
@@ -3887,6 +3896,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="ann-ed-tools">
           <button class="ann-ed-tool-btn active" id="ann-tool-line"   onclick="annEdSetMode('line')">✏️ צייר קו</button>
           <button class="ann-ed-tool-btn"        id="ann-tool-dot"    onclick="annEdSetMode('dot')">📍 הוסף נקודה</button>
+          <button class="ann-ed-tool-btn"        id="ann-tool-arrow"  onclick="annEdSetMode('arrow')">➡️ חץ</button>
           <button class="ann-ed-tool-btn"        id="ann-tool-select" onclick="annEdSetMode('select')">↖ בחר/הזז</button>
           <button class="ann-ed-tool-btn"        id="ann-tool-delete" onclick="annEdSetMode('delete')">🗑 מחק</button>
         </div>
