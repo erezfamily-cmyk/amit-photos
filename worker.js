@@ -2356,7 +2356,10 @@ async function handleAnalysesGenerate(request, env) {
       } catch (_) { /* try next */ }
     }
   }
-  if (!chosen || !imgSource) return jsonRes({ error: 'לא נמצאה תמונה לניתוח' }, 404, request);
+  if (!chosen || !imgSource) {
+    const dbg = candidates.map(c => ({ id: c.id, r2: c.r2_key || null, thumb: c.thumbnail || null, url: c.url || null }));
+    return jsonRes({ error: 'לא נמצאה תמונה לניתוח', debug: dbg }, 404, request);
+  }
 
   // 3. Ask Claude sonnet for composition rule selection + full analysis
   const analysisRes = await fetch('https://api.anthropic.com/v1/messages', {
