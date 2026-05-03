@@ -2808,8 +2808,6 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direc
 .photo-wrap img{width:100%;border-radius:10px;display:block}
 .rule-overlay{position:absolute;top:.75rem;left:.75rem;right:.75rem;bottom:0;width:calc(100% - 1.5rem);height:100%;pointer-events:none}
 .ann{position:absolute;transform:translate(-50%,-50%);pointer-events:none;opacity:0;transition:opacity .4s}
-.reveal-btn{background:rgba(200,169,110,.12);border:1px solid rgba(200,169,110,.35);color:#c8a96e;border-radius:20px;padding:.4rem 1.4rem;font-family:'Heebo',sans-serif;font-size:.85rem;cursor:pointer;transition:background .2s}
-.reveal-btn:hover{background:rgba(200,169,110,.2)}
 .ann-dot{width:10px;height:10px;border-radius:50%;background:var(--accent);border:2px solid #000;position:relative;z-index:2}
 .ann-label{position:absolute;background:rgba(0,0,0,.85);border:1px solid var(--accent);border-radius:7px;padding:.3rem .55rem;font-size:.68rem;color:var(--text);line-height:1.45;white-space:nowrap;z-index:3}
 .ann-right{left:16px;top:-10px}
@@ -2858,10 +2856,6 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direc
   ${buildAnnotations(annotations)}
   ${buildAnnotationLabels(annotations)}
 </div>
-${annotations.length > 0 ? `<div style="text-align:center;margin-bottom:1.5rem">
-  <button class="reveal-btn" id="reveal-btn">הבא ←</button>
-  <span id="reveal-counter" style="color:#888;font-size:.78rem;margin-right:.75rem"></span>
-</div>` : ''}
 
 <div class="cam-cards">${cameraCards}</div>
 
@@ -2882,26 +2876,20 @@ ${(() => { const d = buildPhysicsDiagram(camera); return `<div class="section"><
 </div>
 <script>
 (function() {
-  const TOTAL = ${annotations.length};
-  const btn = document.getElementById('reveal-btn');
-  const counter = document.getElementById('reveal-counter');
-  if (!btn || TOTAL === 0) return;
-  let shown = 0;
-  function revealOne() {
-    const els = document.querySelectorAll('[data-ann-idx="' + shown + '"]');
-    els.forEach(el => { el.style.opacity = '1'; });
-    shown++;
-    if (counter) counter.textContent = shown + ' / ' + TOTAL;
-    if (shown >= TOTAL) { btn.textContent = 'הסתר הכל'; btn.onclick = hideAll; }
-  }
-  function hideAll() {
-    shown = 0;
-    document.querySelectorAll('[data-ann-idx]').forEach(el => { el.style.opacity = '0'; });
-    if (counter) counter.textContent = '';
-    btn.textContent = 'הבא ←';
-    btn.onclick = revealOne;
-  }
-  btn.onclick = revealOne;
+  const all = document.querySelectorAll('[data-ann-idx]');
+  if (!all.length) return;
+  const byIdx = {};
+  all.forEach(el => {
+    const i = el.dataset.annIdx;
+    if (!byIdx[i]) byIdx[i] = [];
+    byIdx[i].push(el);
+  });
+  const indices = Object.keys(byIdx).map(Number).sort((a, b) => a - b);
+  indices.forEach((idx, step) => {
+    setTimeout(() => {
+      byIdx[idx].forEach(el => { el.style.opacity = '1'; });
+    }, 700 + step * 1100);
+  });
 })();
 </script>
 </body>
