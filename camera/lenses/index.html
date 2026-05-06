@@ -83,6 +83,17 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
 .bokeh-label { position: absolute; bottom: 6px; right: 8px; font-size: .7rem;
   background: rgba(0,0,0,.7); padding: .2rem .5rem; border-radius: 4px; color: var(--accent); }
 
+/* Compare grid */
+.compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; margin-top: .75rem; }
+@media (max-width: 480px) { .compare-grid { grid-template-columns: 1fr; } }
+.compare-card { background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 10px; overflow: hidden; }
+.compare-card img { width: 100%; aspect-ratio: 3/2; object-fit: cover; display: block; }
+.compare-card .cc-label { padding: .6rem .75rem; font-size: .82rem;
+  color: var(--accent); font-family: 'Syne', sans-serif; }
+.compare-card .cc-desc { padding: 0 .75rem .75rem; font-size: .78rem;
+  color: var(--muted); line-height: 1.55; }
+
 /* CTA */
 .cta-section { text-align: center; padding: 3rem 1.25rem;
   max-width: 500px; margin: 0 auto; }
@@ -167,6 +178,26 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
       <div class="slider-value" id="apertureVal">f/1.8</div>
     </div>
     <p class="slider-desc" id="apertureDesc"></p>
+  </div>
+</section>
+
+<section class="section" id="compare">
+  <div class="section-label">חלק 3</div>
+  <h2>Wide vs Telephoto — אותו עולם, שתי עדשות</h2>
+  <p>עדשה רחבה תכניס יותר לפריים אבל "תדחוף" את הרקע. עדשה ארוכה תדחוס מרחקים ותייצר רקע מטושטש יותר.</p>
+  <div class="compare-grid">
+    <div class="compare-card">
+      <img src="https://drive.google.com/thumbnail?id=1ShiRcz-EvlJu6CG55sxIKZiCoLHgTSnx&sz=w500"
+           alt="הכותל המערבי — Wide">
+      <div class="cc-label">~18mm — Wide</div>
+      <div class="cc-desc">שדה ראייה רחב, הכל בפריים, פרספקטיבה מוגזמת</div>
+    </div>
+    <div class="compare-card">
+      <img src="https://drive.google.com/thumbnail?id=17RW9kh-Ry3KiqOj_yM3oCK8FPOC88_JN&sz=w500"
+           alt="ינשוף שלג — Telephoto">
+      <div class="cc-label">300mm+ — Telephoto</div>
+      <div class="cc-desc">תקריב, רקע דחוס ומטושטש, נושא מוגדר</div>
+    </div>
   </div>
 </section>
 
