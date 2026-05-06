@@ -741,6 +741,8 @@ function setLang(lang) {
   }
   // Re-render dynamic gallery content if available
   if (typeof window.onLangChange === 'function') window.onLangChange();
+  // Sync injected nav (nav.js) if present
+  if (typeof window.applyNavLang === 'function' && !window.__navLangApplying) window.applyNavLang(lang);
 }
 
 // Apply on load
