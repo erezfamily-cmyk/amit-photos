@@ -1445,7 +1445,7 @@ function authHeaders() {
 
 (function initAuth() {
   const saved = sessionStorage.getItem('admin_session');
-  if (saved) { SESSION_TOKEN = saved; showAdmin(); }
+  if (saved) { SESSION_TOKEN = saved; setTimeout(showAdmin, 0); }
 
   $('login-btn').addEventListener('click', doLogin);
   $('password-input').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
@@ -3169,6 +3169,7 @@ async function loadLearn() {
         <td style="display:flex;gap:.4rem;align-items:center">
           <button class="btn btn-ghost btn-sm" onclick="learnEdit('${a.photo_id}')">עריכה</button>
           <button class="btn btn-primary btn-sm" onclick="learnPublish('${a.photo_id}')">פרסם</button>
+          ${a.published_at ? `<a href="/photo/${a.photo_id}" target="_blank" class="btn btn-ghost btn-sm" title="פתח דף מפורסם" style="text-decoration:none">↗</a>` : ''}
         </td>
       `;
       tbody.appendChild(tr);
