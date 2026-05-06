@@ -2805,6 +2805,14 @@ async function handleLearnAnalysis(env, photoId) {
     return new Response(`<!DOCTYPE html><html lang="he" dir="rtl"><head><meta charset="utf-8"><title>לא נמצא</title><style>body{background:#0a0a0a;color:#f0ede8;font-family:'Heebo',sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;gap:1rem}</style></head><body><h1 style="color:#c8a96e;font-size:2rem">404</h1><p>הניתוח לא נמצא</p><a href="/learn/" style="color:#c8a96e">← חזרה לניתוח תמונות</a></body></html>`, {status: 404, headers: {'Content-Type': 'text/html;charset=utf-8'}});
   }
 
+  // Prev/next and more analyses — run in parallel
+  const [prevRow, nextRow, moreRows] = await Promise.all([
+    env.DB.prepare(`SELECT a.photo_id, a.title FROM photo_analyses a WHERE a.published_at > ? AND a.published_at IS NOT NULL ORDER BY a.published_at ASC LIMIT 1`).bind(row.published_at || '').first().catch(() => null),
+    env.DB.prepare(`SELECT a.photo_id, a.title FROM photo_analyses a WHERE a.published_at < ? AND a.published_at IS NOT NULL ORDER BY a.published_at DESC LIMIT 1`).bind(row.published_at || '').first().catch(() => null),
+    env.DB.prepare(`SELECT a.photo_id, a.title, a.composition_rule, p.thumbnail, p.url FROM photo_analyses a LEFT JOIN photos p ON p.id = a.photo_id WHERE a.photo_id != ? AND a.published_at IS NOT NULL ORDER BY RANDOM() LIMIT 4`).bind(photoId).all().catch(() => ({ results: [] })),
+  ]);
+  const moreAnalyses = moreRows?.results || [];
+
   let annotations = [], camera = {}, tags = [];
   try { annotations = JSON.parse(row.annotations_json || '[]'); } catch (_) { annotations = []; }
   try { camera = JSON.parse(row.camera_json || '{}'); } catch (_) { camera = {}; }
@@ -2878,6 +2886,23 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direc
 .tag{font-size:.72rem;color:var(--accent);background:rgba(200,169,110,.1);border:1px solid rgba(200,169,110,.25);border-radius:5px;padding:2px 8px}
 .nav-row{text-align:center;padding:1rem}
 .nav-row a{color:var(--accent);font-size:.85rem;text-decoration:none;margin:0 .75rem}
+.analysis-nav{display:flex;justify-content:space-between;align-items:center;max-width:900px;margin:0 auto 2rem;padding:0 .75rem;gap:.5rem}
+.analysis-nav a{display:flex;flex-direction:column;gap:.2rem;padding:.6rem 1rem;background:var(--surface);border:1px solid var(--border);border-radius:8px;text-decoration:none;flex:1;max-width:45%;transition:border-color .2s}
+.analysis-nav a:hover{border-color:var(--accent)}
+.analysis-nav .nav-dir{font-size:.68rem;color:var(--muted)}
+.analysis-nav .nav-title{font-size:.82rem;color:var(--text);overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.analysis-nav .nav-next{text-align:right}
+.analysis-nav .nav-prev{text-align:left}
+.more-section{max-width:900px;margin:0 auto 2rem;padding:0 .75rem}
+.more-section h2{font-family:'Syne',sans-serif;color:var(--accent);font-size:1.05rem;margin-bottom:.75rem}
+.more-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.75rem}
+@media(min-width:600px){.more-grid{grid-template-columns:repeat(4,1fr)}}
+.more-card{display:block;text-decoration:none;background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden;transition:border-color .2s}
+.more-card:hover{border-color:var(--accent)}
+.more-card img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block}
+.more-card-body{padding:.5rem .6rem}
+.more-card-rule{font-size:.65rem;color:var(--accent);margin-bottom:.2rem}
+.more-card-title{font-size:.78rem;color:var(--text);overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 </style>
 </head>
 <body>
@@ -2918,6 +2943,30 @@ ${(() => { const d = buildPhysicsDiagram(camera); return `<div class="section"><
     <div class="tags-row">${tagPills}</div>
   </div>
 </div>
+
+${(prevRow || nextRow) ? `
+<div class="analysis-nav">
+  ${prevRow ? `<a href="/learn/${escXml(prevRow.photo_id)}" class="nav-next"><span class="nav-dir">← ניתוח חדש יותר</span><span class="nav-title">${escXml(prevRow.title)}</span></a>` : '<span></span>'}
+  ${nextRow ? `<a href="/learn/${escXml(nextRow.photo_id)}" class="nav-prev"><span class="nav-dir">ניתוח קודם →</span><span class="nav-title">${escXml(nextRow.title)}</span></a>` : '<span></span>'}
+</div>` : ''}
+
+${moreAnalyses.length > 0 ? `
+<div class="more-section">
+  <h2>📸 ניתוחים נוספים</h2>
+  <div class="more-grid">
+    ${moreAnalyses.map(a => {
+      const thumb = (a.thumbnail || a.url || '') + '?w=300';
+      const label = RULE_LABELS[a.composition_rule] || a.composition_rule || '';
+      return `<a class="more-card" href="/learn/${escXml(a.photo_id)}">
+        <img src="${escXml(thumb)}" alt="${escXml(a.title)}" loading="lazy">
+        <div class="more-card-body">
+          <div class="more-card-rule">${escXml(label)}</div>
+          <div class="more-card-title">${escXml(a.title)}</div>
+        </div>
+      </a>`;
+    }).join('')}
+  </div>
+</div>` : ''}
 
 <div class="nav-row">
   <a href="/learn/">← כל הניתוחים</a>
