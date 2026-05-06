@@ -3169,7 +3169,7 @@ async function loadLearn() {
         <td style="display:flex;gap:.4rem;align-items:center">
           <button class="btn btn-ghost btn-sm" onclick="learnEdit('${a.photo_id}')">עריכה</button>
           <button class="btn btn-primary btn-sm" onclick="learnPublish('${a.photo_id}')">פרסם</button>
-          ${a.published_at ? `<a href="/photo/${a.photo_id}" target="_blank" class="btn btn-ghost btn-sm" title="פתח דף מפורסם" style="text-decoration:none">↗</a>` : ''}
+          ${a.published_at ? `<a href="/photo/${a.photo_id}" target="_blank" class="btn btn-ghost btn-sm" title="פתח דף מפורסם" style="text-decoration:none;display:inline-flex;align-items:center;gap:.25rem"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>צפה</a>` : ''}
         </td>
       `;
       tbody.appendChild(tr);
