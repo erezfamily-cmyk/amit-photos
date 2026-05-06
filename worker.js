@@ -2818,7 +2818,7 @@ async function handleLearnAnalysis(env, photoId) {
   try { camera = JSON.parse(row.camera_json || '{}'); } catch (_) { camera = {}; }
   try { tags = JSON.parse(row.tags_json || '[]'); } catch (_) { tags = []; }
   const ruleLabel = RULE_LABELS[row.composition_rule] || row.composition_rule;
-  const imgUrl = (photo.thumbnail || photo.url || '') + '?w=900';
+  const imgUrl = (photo.url || photo.thumbnail || '') + '?w=900';
   const buyUrl = `https://amitphotos.com/?photo=${encodeURIComponent(photoId)}`;
 
   const cameraCards = ['aperture', 'shutter', 'iso', 'focal'].map(key => {
