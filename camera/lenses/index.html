@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>עדשות — בית ספר לצילום | Amit Photos</title>
+<meta name="description" content="למד על עדשות מצלמה — מרחק מוקד, בוקה, Wide vs Telephoto — עם אינטראקציה ויזואלית.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #0a0a0a; --surface: #111; --surface2: #181818; --border: #222;
+  --accent: #c8a96e; --text: #f0ede8; --muted: #888;
+}
+body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--text);
+  direction: rtl; min-height: 100vh; padding-bottom: 4rem; }
+
+/* Header */
+.site-header { display: flex; align-items: center; justify-content: space-between;
+  padding: .9rem 1.5rem; border-bottom: 1px solid var(--border); }
+.site-title { font-family: 'Syne', sans-serif; font-size: 1.05rem;
+  color: var(--accent); text-decoration: none; }
+.header-back { font-size: .8rem; color: var(--muted); text-decoration: none; }
+.header-back:hover { color: var(--accent); }
+
+/* Hero */
+.hero { text-align: center; padding: 2.5rem 1.5rem 1.5rem; }
+.hero-badge { display: inline-block; font-size: .72rem;
+  background: rgba(200,169,110,.12); border: 1px solid rgba(200,169,110,.3);
+  color: var(--accent); border-radius: 20px; padding: .3rem .8rem;
+  margin-bottom: .75rem; letter-spacing: .05em; }
+.hero h1 { font-family: 'Syne', sans-serif; font-size: 2rem;
+  color: var(--accent); margin-bottom: .5rem; }
+.hero p { color: var(--muted); font-size: .9rem; max-width: 420px; margin: 0 auto; }
+
+/* TOC */
+.toc { position: sticky; top: 0; z-index: 10;
+  background: rgba(10,10,10,.92); backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+  padding: .6rem 1.25rem; display: flex; gap: 1.25rem; overflow-x: auto; }
+.toc a { font-size: .77rem; color: var(--muted); text-decoration: none; white-space: nowrap; }
+.toc a.active { color: var(--accent); }
+.toc a:hover { color: var(--text); }
+
+/* Sections */
+.section { max-width: 760px; margin: 0 auto; padding: 2.5rem 1.25rem;
+  border-bottom: 1px solid var(--border); }
+.section-label { font-size: .7rem; text-transform: uppercase; letter-spacing: .12em;
+  color: var(--accent); margin-bottom: .5rem; }
+.section h2 { font-family: 'Syne', sans-serif; font-size: 1.3rem; margin-bottom: .6rem; }
+.section > p { color: var(--muted); font-size: .88rem; line-height: 1.7; margin-bottom: 1rem; }
+
+/* Demo cards */
+.demo-card { background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; padding: 1.5rem; margin-top: .75rem; }
+
+/* Slider rows */
+.slider-row { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; }
+.slider-row label { font-size: .8rem; color: var(--muted); white-space: nowrap; }
+.slider-row input[type=range] { flex: 1; accent-color: var(--accent); cursor: pointer; }
+.slider-value { font-family: 'Syne', sans-serif; color: var(--accent);
+  font-size: 1.15rem; min-width: 4rem; text-align: center; }
+.slider-desc { font-size: .82rem; color: var(--muted); text-align: center;
+  margin-top: .75rem; min-height: 1.4em; }
+
+/* CTA */
+.cta-section { text-align: center; padding: 3rem 1.25rem;
+  max-width: 500px; margin: 0 auto; }
+.cta-section h3 { font-family: 'Syne', sans-serif; font-size: 1.2rem;
+  color: var(--accent); margin-bottom: .75rem; }
+.cta-section p { color: var(--muted); font-size: .87rem;
+  margin-bottom: 1.25rem; line-height: 1.6; }
+.cta-btn { display: inline-block; background: var(--accent); color: #000;
+  font-weight: 700; font-size: .9rem; border-radius: 8px;
+  padding: .7rem 1.6rem; text-decoration: none; transition: background .15s; }
+.cta-btn:hover { background: #e0c080; }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <a class="site-title" href="https://amitphotos.com">Amit Photos</a>
+  <a class="header-back" href="/camera/">← בית ספר לצילום</a>
+</header>
+
+<div class="hero">
+  <div class="hero-badge">📷 בית ספר לצילום</div>
+  <h1>עדשות</h1>
+  <p>גרור, חקור, הבן — איך מרחק מוקד, צמצם ועדשה משנים את התמונה</p>
+</div>
+
+<nav class="toc">
+  <a href="#focal">מרחק מוקד</a>
+  <a href="#bokeh">בוקה וצמצם</a>
+  <a href="#compare">Wide vs Tele</a>
+  <a href="#anatomy">אנטומיה</a>
+</nav>
+
+<!-- Sections will be added in Tasks 3-6 -->
+
+<div class="cta-section">
+  <h3>עכשיו תראה את זה בתמונות אמיתיות</h3>
+  <p>עמית צילם עם עדשות שונות — זהה בוקה, wide shots ותקריבים בגלריה.</p>
+  <a href="https://amitphotos.com" class="cta-btn">לגלריה המלאה ←</a>
+</div>
+
+<script>
+// TOC active state on scroll
+const tocLinks = document.querySelectorAll('.toc a');
+const sections = ['focal','bokeh','compare','anatomy'].map(id=>document.getElementById(id)).filter(Boolean);
+function updateToc(){
+  const scrollY = window.scrollY + 120;
+  let active = null;
+  for(const s of sections){ if(s.offsetTop <= scrollY) active = s.id; }
+  tocLinks.forEach(a=>a.classList.toggle('active', a.getAttribute('href')==='#'+active));
+}
+window.addEventListener('scroll', updateToc, {passive:true});
+updateToc();
+</script>
+</body>
+</html>
