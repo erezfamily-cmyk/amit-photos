@@ -2702,10 +2702,10 @@ function buildRuleOverlay(rule, annotations) {
     <line x1="66.6%" y1="0" x2="66.6%" y2="100%" stroke="${gold}" stroke-width="0.8" stroke-dasharray="${dash}" opacity="0.7"/>
     <line x1="0" y1="33.3%" x2="100%" y2="33.3%" stroke="${gold}" stroke-width="0.8" stroke-dasharray="${dash}" opacity="0.7"/>
     <line x1="0" y1="66.6%" x2="100%" y2="66.6%" stroke="${gold}" stroke-width="0.8" stroke-dasharray="${dash}" opacity="0.7"/>
-    <circle cx="33.3%" cy="33.3%" r="3" fill="${gold}" opacity="0.7"/>
-    <circle cx="66.6%" cy="33.3%" r="3" fill="${gold}" opacity="0.7"/>
-    <circle cx="33.3%" cy="66.6%" r="3" fill="${gold}" opacity="0.7"/>
-    <circle cx="66.6%" cy="66.6%" r="3" fill="${gold}" opacity="0.7"/>`;
+    <circle cx="33.3%" cy="33.3%" r="1.5" fill="${gold}" opacity="0.6"/>
+    <circle cx="66.6%" cy="33.3%" r="1.5" fill="${gold}" opacity="0.6"/>
+    <circle cx="33.3%" cy="66.6%" r="1.5" fill="${gold}" opacity="0.6"/>
+    <circle cx="66.6%" cy="66.6%" r="1.5" fill="${gold}" opacity="0.6"/>`;
   if (rule === 'symmetry') return `
     <line x1="50%" y1="0" x2="50%" y2="100%" stroke="${gold}" stroke-width="2" stroke-dasharray="${dash}"/>`;
   if (rule === 'leading_lines') {
@@ -2863,8 +2863,8 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direc
 .photo-wrap img{width:100%;border-radius:10px;display:block}
 .rule-overlay{position:absolute;top:.75rem;left:.75rem;right:.75rem;bottom:0;width:calc(100% - 1.5rem);height:100%;pointer-events:none}
 .ann{position:absolute;transform:translate(-50%,-50%);pointer-events:none;opacity:0;transition:opacity .4s}
-.ann-dot{width:10px;height:10px;border-radius:50%;background:var(--accent);border:2px solid #000;position:relative;z-index:2}
-.ann-label{position:absolute;background:rgba(0,0,0,.85);border:1px solid var(--accent);border-radius:7px;padding:.3rem .55rem;font-size:.68rem;color:var(--text);line-height:1.45;white-space:nowrap;z-index:3}
+.ann-dot{width:5px;height:5px;border-radius:50%;background:#e05555;border:1.5px solid #000;position:relative;z-index:2}
+.ann-label{position:absolute;background:rgba(0,0,0,.85);border:1px solid #e05555;border-radius:7px;padding:.3rem .55rem;font-size:.68rem;color:var(--text);line-height:1.45;white-space:nowrap;z-index:3}
 .ann-right{left:16px;top:-10px}
 .ann-left{right:16px;top:-10px}
 .ann-bottom{top:16px;left:50%;transform:translateX(-50%)}
