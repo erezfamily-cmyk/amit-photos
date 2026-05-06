@@ -1,0 +1,660 @@
+# Camera Education — דף עדשות Implementation Plan
+
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+
+**Goal:** בניית Hub `/camera/` ודף אינטראקטיבי `/camera/lenses/` עם 4 חלקים: סליידר מרחק מוקד, סליידר בוקה, השוואת Wide vs Tele, ואנימציית SVG אנטומיה.
+
+**Architecture:** שני קבצי HTML סטטיים חדשים + עדכון nav ב-index.html. ללא backend. תמונות מגיעות ישירות מ-Google Drive/lh3 URLs שמחוץ ל-JSON. עיצוב ירוש CSS variables מהאתר הקיים.
+
+**Tech Stack:** HTML5, CSS3, Vanilla JS, Google Fonts (Heebo + Syne), SVG animation (CSS keyframes)
+
+> **הערה על בדיקות:** אין test framework בפרויקט. כל "בדיקה" = פתח `http://localhost:8000/camera/` ואמת ויזואלית.
+
+---
+
+## File Map
+
+| פעולה | קובץ |
+|--------|------|
+| Create | `camera/index.html` |
+| Create | `camera/lenses/index.html` |
+| Modify | `index.html` — הוספת nav link |
+| Modify | `assets/js/i18n.js` — הוספת `nav.camera` |
+
+---
+
+## Task 1: Hub Page — `camera/index.html`
+
+**Files:**
+- Create: `camera/index.html`
+
+- [ ] **Step 1: הקמת תיקייה וקובץ**
+
+```bash
+mkdir -p camera
+```
+
+- [ ] **Step 2: צור `camera/index.html`**
+
+```html
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>מצלמה — Amit Photos</title>
+<meta name="description" content="בית ספר לצילום — למד על עדשות, פילטרים וכפתורי המצלמה עם דיאגרמות אינטראקטיביות.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #0a0a0a; --surface: #111; --border: #222;
+  --accent: #c8a96e; --text: #f0ede8; --muted: #888;
+}
+body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--text);
+  direction: rtl; min-height: 100vh; padding: 0 0 4rem; }
+
+.site-header { display: flex; align-items: center; justify-content: space-between;
+  padding: 1rem 1.25rem; border-bottom: 1px solid var(--border); }
+.site-title { font-family: 'Syne', sans-serif; font-size: 1.1rem;
+  color: var(--accent); text-decoration: none; }
+
+.page-hero { text-align: center; padding: 2.5rem 1.25rem 1.5rem; }
+.page-hero .badge { display: inline-block; font-size: .72rem;
+  background: rgba(200,169,110,.12); border: 1px solid rgba(200,169,110,.3);
+  color: var(--accent); border-radius: 20px; padding: .3rem .8rem; margin-bottom: .75rem; }
+.page-hero h1 { font-family: 'Syne', sans-serif; font-size: 1.8rem;
+  color: var(--accent); margin-bottom: .5rem; }
+.page-hero p { color: var(--muted); font-size: .9rem; max-width: 360px; margin: 0 auto; }
+
+.cards { display: grid; grid-template-columns: 1fr;
+  gap: 1rem; padding: 1.25rem; max-width: 640px; margin: 0 auto; }
+@media (min-width: 520px) { .cards { grid-template-columns: 1fr 1fr; } }
+
+.card { background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; padding: 1.5rem 1.25rem; display: flex;
+  flex-direction: column; gap: .75rem;
+  transition: border-color .2s, transform .15s; text-decoration: none; color: inherit; }
+.card:hover { border-color: var(--accent); transform: translateY(-3px); }
+.card-emoji { font-size: 2.4rem; line-height: 1; }
+.card-title { font-family: 'Syne', sans-serif; font-size: 1.15rem; color: var(--accent); }
+.card-desc { font-size: .85rem; color: var(--muted); line-height: 1.55; flex: 1; }
+.card-cta { margin-top: .25rem; display: inline-block; background: var(--accent);
+  color: #000; font-weight: 700; font-size: .85rem; border-radius: 8px;
+  padding: .55rem 1.1rem; text-decoration: none; transition: background .15s; }
+.card-cta:hover { background: #e0c080; }
+.card-soon { opacity: .4; cursor: default; pointer-events: none; }
+
+.back-link { text-align: center; padding: 1rem; }
+.back-link a { color: var(--accent); font-size: .85rem; text-decoration: none; }
+</style>
+</head>
+<body>
+<header class="site-header">
+  <a class="site-title" href="https://amitphotos.com">Amit Photos</a>
+  <span style="color:var(--muted);font-size:.8rem">📷 מצלמה</span>
+</header>
+
+<div class="page-hero">
+  <div class="badge">📷 בית ספר לצילום</div>
+  <h1>מצלמה</h1>
+  <p>למד איך עדשות, פילטרים וכפתורי המצלמה עובדים — עם דיאגרמות אינטראקטיביות</p>
+</div>
+
+<div class="cards">
+  <a class="card" href="/camera/lenses/">
+    <div class="card-emoji">🔭</div>
+    <div class="card-title">עדשות</div>
+    <div class="card-desc">מרחק מוקד, בוקה, Wide vs Telephoto — גרור סליידר וראה כיצד העדשה משנה את התמונה</div>
+    <span class="card-cta">התחל ללמוד</span>
+  </a>
+
+  <div class="card card-soon">
+    <div class="card-emoji">🎨</div>
+    <div class="card-title">פילטרים</div>
+    <div class="card-desc">בקרוב — מה כל פילטר עושה לתמונה</div>
+  </div>
+
+  <div class="card card-soon">
+    <div class="card-emoji">🎛</div>
+    <div class="card-title">כפתורי מצלמה</div>
+    <div class="card-desc">בקרוב — ISO, צמצם, מהירות תריס</div>
+  </div>
+</div>
+
+<div class="back-link">
+  <a href="https://amitphotos.com">← לגלריה המלאה</a>
+</div>
+</body>
+</html>
+```
+
+- [ ] **Step 3: בדיקה**
+
+הרץ `python -m http.server 8000` מתיקיית הפרויקט ופתח `http://localhost:8000/camera/`.
+ודא: 3 כרטיסיות, כרטיסיית "עדשות" לחיצה, שתי האחרות מעומעמות (`.card-soon`).
+
+- [ ] **Step 4: Commit**
+
+```bash
+git add camera/index.html
+git commit -m "feat: add /camera/ hub page with lenses card"
+```
+
+---
+
+## Task 2: Lenses Page — skeleton, nav, TOC, hero
+
+**Files:**
+- Create: `camera/lenses/index.html`
+
+- [ ] **Step 1: צור תיקייה וקובץ עם skeleton**
+
+```bash
+mkdir -p camera/lenses
+```
+
+צור `camera/lenses/index.html`:
+
+```html
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>עדשות — בית ספר לצילום | Amit Photos</title>
+<meta name="description" content="למד על עדשות מצלמה — מרחק מוקד, בוקה, Wide vs Telephoto — עם אינטראקציה ויזואלית.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #0a0a0a; --surface: #111; --surface2: #181818; --border: #222;
+  --accent: #c8a96e; --text: #f0ede8; --muted: #888;
+}
+body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--text);
+  direction: rtl; min-height: 100vh; padding-bottom: 4rem; }
+
+/* Header */
+.site-header { display: flex; align-items: center; justify-content: space-between;
+  padding: .9rem 1.5rem; border-bottom: 1px solid var(--border); }
+.site-title { font-family: 'Syne', sans-serif; font-size: 1.05rem;
+  color: var(--accent); text-decoration: none; }
+.header-back { font-size: .8rem; color: var(--muted); text-decoration: none; }
+.header-back:hover { color: var(--accent); }
+
+/* Hero */
+.hero { text-align: center; padding: 2.5rem 1.5rem 1.5rem; }
+.hero-badge { display: inline-block; font-size: .72rem;
+  background: rgba(200,169,110,.12); border: 1px solid rgba(200,169,110,.3);
+  color: var(--accent); border-radius: 20px; padding: .3rem .8rem;
+  margin-bottom: .75rem; letter-spacing: .05em; }
+.hero h1 { font-family: 'Syne', sans-serif; font-size: 2rem;
+  color: var(--accent); margin-bottom: .5rem; }
+.hero p { color: var(--muted); font-size: .9rem; max-width: 420px; margin: 0 auto; }
+
+/* TOC */
+.toc { position: sticky; top: 0; z-index: 10;
+  background: rgba(10,10,10,.92); backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+  padding: .6rem 1.25rem; display: flex; gap: 1.25rem; overflow-x: auto; }
+.toc a { font-size: .77rem; color: var(--muted); text-decoration: none; white-space: nowrap; }
+.toc a.active { color: var(--accent); }
+.toc a:hover { color: var(--text); }
+
+/* Sections */
+.section { max-width: 760px; margin: 0 auto; padding: 2.5rem 1.25rem;
+  border-bottom: 1px solid var(--border); }
+.section-label { font-size: .7rem; text-transform: uppercase; letter-spacing: .12em;
+  color: var(--accent); margin-bottom: .5rem; }
+.section h2 { font-family: 'Syne', sans-serif; font-size: 1.3rem; margin-bottom: .6rem; }
+.section > p { color: var(--muted); font-size: .88rem; line-height: 1.7; margin-bottom: 1rem; }
+
+/* Demo cards */
+.demo-card { background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; padding: 1.5rem; margin-top: .75rem; }
+
+/* Slider rows */
+.slider-row { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; }
+.slider-row label { font-size: .8rem; color: var(--muted); white-space: nowrap; }
+.slider-row input[type=range] { flex: 1; accent-color: var(--accent); cursor: pointer; }
+.slider-value { font-family: 'Syne', sans-serif; color: var(--accent);
+  font-size: 1.15rem; min-width: 4rem; text-align: center; }
+.slider-desc { font-size: .82rem; color: var(--muted); text-align: center;
+  margin-top: .75rem; min-height: 1.4em; }
+
+/* CTA */
+.cta-section { text-align: center; padding: 3rem 1.25rem;
+  max-width: 500px; margin: 0 auto; }
+.cta-section h3 { font-family: 'Syne', sans-serif; font-size: 1.2rem;
+  color: var(--accent); margin-bottom: .75rem; }
+.cta-section p { color: var(--muted); font-size: .87rem;
+  margin-bottom: 1.25rem; line-height: 1.6; }
+.cta-btn { display: inline-block; background: var(--accent); color: #000;
+  font-weight: 700; font-size: .9rem; border-radius: 8px;
+  padding: .7rem 1.6rem; text-decoration: none; transition: background .15s; }
+.cta-btn:hover { background: #e0c080; }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <a class="site-title" href="https://amitphotos.com">Amit Photos</a>
+  <a class="header-back" href="/camera/">← בית ספר לצילום</a>
+</header>
+
+<div class="hero">
+  <div class="hero-badge">📷 בית ספר לצילום</div>
+  <h1>עדשות</h1>
+  <p>גרור, חקור, הבן — איך מרחק מוקד, צמצם ועדשה משנים את התמונה</p>
+</div>
+
+<nav class="toc">
+  <a href="#focal">מרחק מוקד</a>
+  <a href="#bokeh">בוקה וצמצם</a>
+  <a href="#compare">Wide vs Tele</a>
+  <a href="#anatomy">אנטומיה</a>
+</nav>
+
+<!-- Sections will be added in Tasks 3-6 -->
+
+<div class="cta-section">
+  <h3>עכשיו תראה את זה בתמונות אמיתיות</h3>
+  <p>עמית צילם עם עדשות שונות — זהה בוקה, wide shots ותקריבים בגלריה.</p>
+  <a href="https://amitphotos.com" class="cta-btn">לגלריה המלאה ←</a>
+</div>
+
+<script>
+// TOC active state on scroll
+const tocLinks = document.querySelectorAll('.toc a');
+const sections = ['focal','bokeh','compare','anatomy'].map(id=>document.getElementById(id)).filter(Boolean);
+function updateToc(){
+  const scrollY = window.scrollY + 120;
+  let active = null;
+  for(const s of sections){ if(s.offsetTop <= scrollY) active = s.id; }
+  tocLinks.forEach(a=>a.classList.toggle('active', a.getAttribute('href')==='#'+active));
+}
+window.addEventListener('scroll', updateToc, {passive:true});
+updateToc();
+</script>
+</body>
+</html>
+```
+
+- [ ] **Step 2: בדיקה**
+
+פתח `http://localhost:8000/camera/lenses/`.
+ודא: hero נטען, TOC דביק, כפתור "← בית ספר לצילום" מחזיר ל-`/camera/`, כפתור CTA מוביל לגלריה.
+
+- [ ] **Step 3: Commit**
+
+```bash
+git add camera/lenses/index.html
+git commit -m "feat: add /camera/lenses/ skeleton with nav, hero, TOC, CTA"
+```
+
+---
+
+## Task 3: Section 1 — סליידר מרחק מוקד
+
+**Files:**
+- Modify: `camera/lenses/index.html`
+
+הוסף את ה-section לפני `<div class="cta-section">`:
+
+- [ ] **Step 1: הוסף CSS לסליידר מוקד** (בתוך `<style>`)
+
+```css
+/* Focal length */
+.focal-canvas { position: relative; border-radius: 10px; overflow: hidden;
+  background: #000; aspect-ratio: 16/9; }
+.focal-canvas img { width: 100%; height: 100%; object-fit: cover;
+  transition: transform .35s ease; display: block; }
+.focal-hint-row { display: flex; justify-content: space-between;
+  font-size: .75rem; color: var(--muted); margin-top: .4rem; }
+```
+
+- [ ] **Step 2: הוסף HTML של החלק** (לפני `<div class="cta-section">`)
+
+```html
+<section class="section" id="focal">
+  <div class="section-label">חלק 1</div>
+  <h2>מרחק מוקד — כמה רואים?</h2>
+  <p>מרחק מוקד (מ"מ) קובע כמה שדה ראייה נכנס לפריים. ערך נמוך = עדשה רחבה = נוף שלם. ערך גבוה = טלפוטו = תקריב.</p>
+  <div class="demo-card">
+    <div class="slider-row">
+      <label>18mm</label>
+      <input type="range" id="focalSlider" min="18" max="200" value="35"
+             aria-label="מרחק מוקד" oninput="updateFocal(this.value)">
+      <label>200mm</label>
+      <div class="slider-value" id="focalVal">35mm</div>
+    </div>
+    <div class="focal-canvas">
+      <img id="focalImg"
+           src="https://drive.google.com/thumbnail?id=1WYUZNgWTJ5m46zjVstal1kEfpQI_Nntb&sz=w800"
+           alt="שדה תירס בעמק הירדן">
+    </div>
+    <div class="focal-hint-row">
+      <span>18mm — רחב, הכל בפריים</span>
+      <span>200mm — תקריב, דחיסת מרחקים</span>
+    </div>
+    <p class="slider-desc" id="focalDesc"></p>
+  </div>
+</section>
+```
+
+- [ ] **Step 3: הוסף JS** (בתוך `<script>`, לפני קוד ה-TOC)
+
+```js
+const FOCAL_DESCS = {
+  18: 'עדשה רחבה — מושלמת לנופים ואדריכלות, מעוות פרספקטיבה',
+  35: 'קרובה לעין האנושית — רב-תכליתית לרחוב ודוקומנטרי',
+  50: 'נורמלי — פרספקטיבה טבעית ללא עיוות',
+  85: 'פורטרטים — בוקה יפה, ללא עיוות פנים',
+  135: 'טלפוטו קצר — דחיסת רקע נחמדה',
+  200: 'טלפוטו — ספורט, חיות בר, תקריבים ממרחק'
+};
+
+function updateFocal(v) {
+  v = parseInt(v);
+  document.getElementById('focalVal').textContent = v + 'mm';
+  const scale = 1 + (v - 18) / (200 - 18) * 1.5;
+  document.getElementById('focalImg').style.transform = `scale(${scale})`;
+  const closest = Object.keys(FOCAL_DESCS).reduce((a, b) =>
+    Math.abs(b - v) < Math.abs(a - v) ? b : a);
+  document.getElementById('focalDesc').textContent = FOCAL_DESCS[closest];
+}
+updateFocal(35);
+```
+
+- [ ] **Step 4: בדיקה**
+
+פתח `http://localhost:8000/camera/lenses/`.
+גרור סליידר מ-18 ל-200 — התמונה אמורה להתקרב (scale מגדל), הטקסט התחתון משתנה.
+
+- [ ] **Step 5: Commit**
+
+```bash
+git add camera/lenses/index.html
+git commit -m "feat: add focal length interactive slider to lenses page"
+```
+
+---
+
+## Task 4: Section 2 — סליידר בוקה וצמצם
+
+**Files:**
+- Modify: `camera/lenses/index.html`
+
+- [ ] **Step 1: הוסף CSS** (בתוך `<style>`)
+
+```css
+/* Bokeh */
+.bokeh-split { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; margin-bottom: 1rem; }
+.bokeh-img { border-radius: 8px; overflow: hidden; position: relative; aspect-ratio: 4/3; }
+.bokeh-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.bokeh-blur { position: absolute; inset: 0;
+  backdrop-filter: blur(0px); -webkit-backdrop-filter: blur(0px);
+  transition: backdrop-filter .25s, -webkit-backdrop-filter .25s; }
+.bokeh-label { position: absolute; bottom: 6px; right: 8px; font-size: .7rem;
+  background: rgba(0,0,0,.7); padding: .2rem .5rem; border-radius: 4px; color: var(--accent); }
+```
+
+- [ ] **Step 2: הוסף HTML** (אחרי `</section>` של חלק 1, לפני `<div class="cta-section">`)
+
+```html
+<section class="section" id="bokeh">
+  <div class="section-label">חלק 2</div>
+  <h2>בוקה — הטשטוש הקסום</h2>
+  <p>צמצם פתוח (f/1.8) = עומק שדה רדוד = רקע מטושטש, הנושא בולט. צמצם סגור (f/16) = הכל חד.</p>
+  <div class="demo-card">
+    <div class="bokeh-split">
+      <div class="bokeh-img">
+        <img src="https://drive.google.com/thumbnail?id=10D5va4MnAh7QpagtevvTqzipMA3cS_8c&sz=w400"
+             alt="פרפר לבן על פרחים — נושא">
+        <div class="bokeh-label">נושא</div>
+      </div>
+      <div class="bokeh-img">
+        <img src="https://lh3.googleusercontent.com/d/1d8LFk1t2KZRu2o8VmgJxszQCFPbEW-lg=w400"
+             alt="שדה פרחים — רקע">
+        <div class="bokeh-blur" id="bgBlur"></div>
+        <div class="bokeh-label">רקע</div>
+      </div>
+    </div>
+    <div class="slider-row">
+      <label>f/1.8</label>
+      <input type="range" id="apertureSlider" min="1.8" max="16" step="0.5" value="1.8"
+             aria-label="צמצם" oninput="updateAperture(this.value)">
+      <label>f/16</label>
+      <div class="slider-value" id="apertureVal">f/1.8</div>
+    </div>
+    <p class="slider-desc" id="apertureDesc"></p>
+  </div>
+</section>
+```
+
+- [ ] **Step 3: הוסף JS** (בתוך `<script>`, לפני קוד ה-TOC)
+
+```js
+function updateAperture(v) {
+  v = parseFloat(v);
+  document.getElementById('apertureVal').textContent = 'f/' + v.toFixed(1);
+  const blur = ((16 - v) / 15) * 14;
+  const blurVal = `blur(${blur.toFixed(1)}px)`;
+  document.getElementById('bgBlur').style.backdropFilter = blurVal;
+  document.getElementById('bgBlur').style.webkitBackdropFilter = blurVal;
+  const desc = v < 4
+    ? 'צמצם פתוח — רקע מיטשטש, הנושא בולט. אידיאלי לפורטרטים.'
+    : v < 10
+    ? 'צמצם בינוני — עומק שדה מאוזן.'
+    : 'צמצם סגור — כל השדה חד. אידיאלי לנופים.';
+  document.getElementById('apertureDesc').textContent = desc;
+}
+updateAperture(1.8);
+```
+
+- [ ] **Step 4: בדיקה**
+
+גרור סליידר מ-f/1.8 ל-f/16 — תמונת הרקע (שדה פרחים) אמורה לעבור מטשטוש מקסימלי לחד לגמרי. תמונת הנושא (פרפר) נשארת חדה.
+
+- [ ] **Step 5: Commit**
+
+```bash
+git add camera/lenses/index.html
+git commit -m "feat: add bokeh aperture interactive slider to lenses page"
+```
+
+---
+
+## Task 5: Section 3 — Wide vs Telephoto השוואה
+
+**Files:**
+- Modify: `camera/lenses/index.html`
+
+- [ ] **Step 1: הוסף CSS** (בתוך `<style>`)
+
+```css
+/* Compare grid */
+.compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; margin-top: .75rem; }
+.compare-card { background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 10px; overflow: hidden; }
+.compare-card img { width: 100%; aspect-ratio: 3/2; object-fit: cover; display: block; }
+.compare-card .cc-label { padding: .6rem .75rem; font-size: .82rem;
+  color: var(--accent); font-family: 'Syne', sans-serif; }
+.compare-card .cc-desc { padding: 0 .75rem .75rem; font-size: .78rem;
+  color: var(--muted); line-height: 1.55; }
+```
+
+- [ ] **Step 2: הוסף HTML** (אחרי `</section>` של חלק 2)
+
+```html
+<section class="section" id="compare">
+  <div class="section-label">חלק 3</div>
+  <h2>Wide vs Telephoto — אותו עולם, שתי עדשות</h2>
+  <p>עדשה רחבה תכניס יותר לפריים אבל "תדחוף" את הרקע. עדשה ארוכה תדחוס מרחקים ותייצר רקע מטושטש יותר.</p>
+  <div class="compare-grid">
+    <div class="compare-card">
+      <img src="https://drive.google.com/thumbnail?id=1ShiRcz-EvlJu6CG55sxIKZiCoLHgTSnx&sz=w500"
+           alt="הכותל המערבי — Wide">
+      <div class="cc-label">~18mm — Wide</div>
+      <div class="cc-desc">שדה ראייה רחב, הכל בפריים, פרספקטיבה מוגזמת</div>
+    </div>
+    <div class="compare-card">
+      <img src="https://drive.google.com/thumbnail?id=17RW9kh-Ry3KiqOj_yM3oCK8FPOC88_JN&sz=w500"
+           alt="ינשוף שלג — Telephoto">
+      <div class="cc-label">300mm+ — Telephoto</div>
+      <div class="cc-desc">תקריב, רקע דחוס ומטושטש, נושא מוגדר</div>
+    </div>
+  </div>
+</section>
+```
+
+- [ ] **Step 3: בדיקה**
+
+ודא שני כרטיסי תמונות מוצגים זה לצד זה. בדוק על מסך צר (מובייל) שהגריד לא נשבר — אם כן, הוסף `@media (max-width: 480px) { .compare-grid { grid-template-columns: 1fr; } }` ל-CSS.
+
+- [ ] **Step 4: Commit**
+
+```bash
+git add camera/lenses/index.html
+git commit -m "feat: add wide vs telephoto comparison section to lenses page"
+```
+
+---
+
+## Task 6: Section 4 — אנטומיה של עדשה (SVG)
+
+**Files:**
+- Modify: `camera/lenses/index.html`
+
+- [ ] **Step 1: הוסף CSS** (בתוך `<style>`)
+
+```css
+/* Anatomy SVG */
+.anatomy-wrap { background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; padding: 1.5rem; margin-top: .75rem; text-align: center; }
+.anatomy-wrap svg { max-width: 100%; height: auto; }
+@keyframes ray-travel {
+  0%   { stroke-dashoffset: 300; opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { stroke-dashoffset: 0; opacity: 0; }
+}
+.light-ray {
+  stroke-dasharray: 300;
+  animation: ray-travel 2.4s linear infinite;
+}
+```
+
+- [ ] **Step 2: הוסף HTML** (אחרי `</section>` של חלק 3)
+
+```html
+<section class="section" id="anatomy">
+  <div class="section-label">חלק 4</div>
+  <h2>מה קורה לאור בתוך העדשה?</h2>
+  <p>האור נכנס מהשמאל, מתכופף דרך אלמנטי הזכוכית, ומתמקד לנקודה אחת על הסנסור — זה המיקוד.</p>
+  <div class="anatomy-wrap">
+    <svg viewBox="0 0 520 190" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="דיאגרמת מעבר אור בעדשה">
+      <!-- Lens barrel -->
+      <rect x="190" y="35" width="140" height="120" rx="8"
+            fill="#1a1a1a" stroke="#333" stroke-width="1.5"/>
+      <text x="260" y="28" text-anchor="middle" font-size="11" fill="#888" font-family="Heebo,sans-serif">עדשה</text>
+
+      <!-- Glass elements (3 ellipses) -->
+      <ellipse cx="228" cy="95" rx="9"  ry="42" fill="rgba(200,169,110,.07)" stroke="#c8a96e" stroke-width="1.5" opacity=".8"/>
+      <ellipse cx="260" cy="95" rx="13" ry="52" fill="rgba(200,169,110,.05)" stroke="#c8a96e" stroke-width="1.5" opacity=".6"/>
+      <ellipse cx="295" cy="95" rx="9"  ry="42" fill="rgba(200,169,110,.07)" stroke="#c8a96e" stroke-width="1.5" opacity=".8"/>
+
+      <!-- Sensor -->
+      <rect x="350" y="60" width="14" height="70" rx="3"
+            fill="#2a2a2a" stroke="#666" stroke-width="1.5"/>
+      <text x="370" y="80"  font-size="10" fill="#888" font-family="Heebo,sans-serif">סנסור</text>
+      <text x="370" y="95"  font-size="9"  fill="#666" font-family="Heebo,sans-serif">(CMOS)</text>
+
+      <!-- Light source label -->
+      <text x="22" y="58" font-size="10" fill="#888" font-family="Heebo,sans-serif">אור</text>
+
+      <!-- Animated light rays (3 rays converging to sensor center) -->
+      <line class="light-ray" x1="22" y1="65"  x2="357" y2="95" stroke="#c8a96e" stroke-width="1.8" opacity=".85"/>
+      <line class="light-ray" x1="22" y1="95"  x2="357" y2="95" stroke="#c8a96e" stroke-width="1.8" opacity=".9"  style="animation-delay:.6s"/>
+      <line class="light-ray" x1="22" y1="125" x2="357" y2="95" stroke="#c8a96e" stroke-width="1.8" opacity=".85" style="animation-delay:1.2s"/>
+
+      <!-- Focus point dot -->
+      <circle cx="357" cy="95" r="3.5" fill="#c8a96e" opacity=".9"/>
+
+      <!-- Caption -->
+      <text x="260" y="175" text-anchor="middle" font-size="10" fill="#555" font-family="Heebo,sans-serif">3 קרני אור מתכנסות לנקודה אחת — מיקוד</text>
+    </svg>
+  </div>
+</section>
+```
+
+- [ ] **Step 3: בדיקה**
+
+ודא: 3 קרני אור זורמות מהשמאל לסנסור ברצף (עם delay), נקודת מיקוד מואר בסנסור, אלמנטי הזכוכית נראים.
+
+- [ ] **Step 4: Commit**
+
+```bash
+git add camera/lenses/index.html
+git commit -m "feat: add lens anatomy SVG animation to lenses page"
+```
+
+---
+
+## Task 7: עדכון nav ו-i18n
+
+**Files:**
+- Modify: `index.html:90`
+- Modify: `assets/js/i18n.js`
+
+- [ ] **Step 1: עדכן `assets/js/i18n.js`**
+
+בבלוק `he:` (שורה ~38), אחרי `'nav.challenges': 'אתגרים',` הוסף:
+```js
+'nav.camera':     'מצלמה',
+```
+
+בבלוק `en:` (שורה ~362), אחרי `'nav.challenges': 'Challenges',` הוסף:
+```js
+'nav.camera':     'Camera',
+```
+
+- [ ] **Step 2: עדכן `index.html`**
+
+בשורה 90 (ליד `nav.challenges`), אחרי שורת "אתגרים" הוסף:
+```html
+<li><a href="/camera/" data-i18n="nav.camera">מצלמה</a></li>
+```
+
+כך שהסדר יהיה:
+```html
+<li><a href="/games/" data-i18n="nav.challenges">אתגרים</a></li>
+<li><a href="/camera/" data-i18n="nav.camera">מצלמה</a></li>
+<li><a href="/learn/" data-i18n="nav.learn">ניתוח תמונות</a></li>
+```
+
+- [ ] **Step 3: בדיקה**
+
+פתח `http://localhost:8000/`. ודא:
+- "מצלמה" מופיע בניווט בין "אתגרים" ל"ניתוח תמונות"
+- החלפת שפה לאנגלית מציגה "Camera"
+- לחיצה מנווטת ל-`/camera/`
+
+- [ ] **Step 4: בדיקה מלאה — זרימה שלמה**
+
+1. `http://localhost:8000/` → לחץ "מצלמה" → מגיע ל-Hub
+2. לחץ כרטיסיית "עדשות" → מגיע לדף עדשות
+3. גרור כל 3 סליידרים — כולם עובדים
+4. גלול למטה — TOC מדגיש את הסעיף הנכון
+5. לחץ "לגלריה המלאה" → מגיע לדף הבית
+
+- [ ] **Step 5: Commit + Push**
+
+```bash
+git add index.html assets/js/i18n.js
+git commit -m "feat: add camera nav link and i18n keys"
+git push
+```
