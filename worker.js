@@ -2696,16 +2696,16 @@ function buildPhysicsDiagram(camera) {
 
 function buildRuleOverlay(rule, annotations) {
   const gold = 'rgba(200,169,110,0.55)';
-  const dash = '6,4';
+  const dash = '5,5';
   if (rule === 'rule_of_thirds') return `
-    <line x1="33.3%" y1="0" x2="33.3%" y2="100%" stroke="${gold}" stroke-width="1.5" stroke-dasharray="${dash}"/>
-    <line x1="66.6%" y1="0" x2="66.6%" y2="100%" stroke="${gold}" stroke-width="1.5" stroke-dasharray="${dash}"/>
-    <line x1="0" y1="33.3%" x2="100%" y2="33.3%" stroke="${gold}" stroke-width="1.5" stroke-dasharray="${dash}"/>
-    <line x1="0" y1="66.6%" x2="100%" y2="66.6%" stroke="${gold}" stroke-width="1.5" stroke-dasharray="${dash}"/>
-    <circle cx="33.3%" cy="33.3%" r="5" fill="${gold}"/>
-    <circle cx="66.6%" cy="33.3%" r="5" fill="${gold}"/>
-    <circle cx="33.3%" cy="66.6%" r="5" fill="${gold}"/>
-    <circle cx="66.6%" cy="66.6%" r="5" fill="${gold}"/>`;
+    <line x1="33.3%" y1="0" x2="33.3%" y2="100%" stroke="${gold}" stroke-width="0.8" stroke-dasharray="${dash}" opacity="0.7"/>
+    <line x1="66.6%" y1="0" x2="66.6%" y2="100%" stroke="${gold}" stroke-width="0.8" stroke-dasharray="${dash}" opacity="0.7"/>
+    <line x1="0" y1="33.3%" x2="100%" y2="33.3%" stroke="${gold}" stroke-width="0.8" stroke-dasharray="${dash}" opacity="0.7"/>
+    <line x1="0" y1="66.6%" x2="100%" y2="66.6%" stroke="${gold}" stroke-width="0.8" stroke-dasharray="${dash}" opacity="0.7"/>
+    <circle cx="33.3%" cy="33.3%" r="3" fill="${gold}" opacity="0.7"/>
+    <circle cx="66.6%" cy="33.3%" r="3" fill="${gold}" opacity="0.7"/>
+    <circle cx="33.3%" cy="66.6%" r="3" fill="${gold}" opacity="0.7"/>
+    <circle cx="66.6%" cy="66.6%" r="3" fill="${gold}" opacity="0.7"/>`;
   if (rule === 'symmetry') return `
     <line x1="50%" y1="0" x2="50%" y2="100%" stroke="${gold}" stroke-width="2" stroke-dasharray="${dash}"/>`;
   if (rule === 'leading_lines') {
