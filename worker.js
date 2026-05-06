@@ -2286,12 +2286,10 @@ async function handleAnalysesGenerate(request, env) {
       SELECT id, title, thumbnail, url, r2_key, description
       FROM photos
       WHERE id = ?
-        AND r2_key IS NOT NULL
-        AND r2_key != ''
     `).bind(requestedPhotoId).all();
     candidates = results;
     if (!candidates || candidates.length === 0) {
-      return jsonRes({ error: 'תמונה לא נמצאה או חסר r2_key' }, 404, request);
+      return jsonRes({ error: 'תמונה לא נמצאה' }, 404, request);
     }
   } else {
     // 1. Pick 5 candidates (unanalyzed, published)
