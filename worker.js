@@ -2695,19 +2695,19 @@ function buildPhysicsDiagram(camera) {
 }
 
 function buildRuleOverlay(rule, annotations) {
-  const gold = 'rgba(200,169,110,0.55)';
+  const red = '#e05555';
   const dash = '5,5';
   if (rule === 'rule_of_thirds') return `
-    <line x1="33.3%" y1="0" x2="33.3%" y2="100%" stroke="${gold}" stroke-width="0.8" stroke-dasharray="${dash}" opacity="0.7"/>
-    <line x1="66.6%" y1="0" x2="66.6%" y2="100%" stroke="${gold}" stroke-width="0.8" stroke-dasharray="${dash}" opacity="0.7"/>
-    <line x1="0" y1="33.3%" x2="100%" y2="33.3%" stroke="${gold}" stroke-width="0.8" stroke-dasharray="${dash}" opacity="0.7"/>
-    <line x1="0" y1="66.6%" x2="100%" y2="66.6%" stroke="${gold}" stroke-width="0.8" stroke-dasharray="${dash}" opacity="0.7"/>
-    <circle cx="33.3%" cy="33.3%" r="1.5" fill="${gold}" opacity="0.6"/>
-    <circle cx="66.6%" cy="33.3%" r="1.5" fill="${gold}" opacity="0.6"/>
-    <circle cx="33.3%" cy="66.6%" r="1.5" fill="${gold}" opacity="0.6"/>
-    <circle cx="66.6%" cy="66.6%" r="1.5" fill="${gold}" opacity="0.6"/>`;
+    <line x1="33.3%" y1="0" x2="33.3%" y2="100%" stroke="${red}" stroke-width="0.6" stroke-dasharray="${dash}" opacity="0.85"/>
+    <line x1="66.6%" y1="0" x2="66.6%" y2="100%" stroke="${red}" stroke-width="0.6" stroke-dasharray="${dash}" opacity="0.85"/>
+    <line x1="0" y1="33.3%" x2="100%" y2="33.3%" stroke="${red}" stroke-width="0.6" stroke-dasharray="${dash}" opacity="0.85"/>
+    <line x1="0" y1="66.6%" x2="100%" y2="66.6%" stroke="${red}" stroke-width="0.6" stroke-dasharray="${dash}" opacity="0.85"/>
+    <circle cx="33.3%" cy="33.3%" r="1.5" fill="${red}" opacity="0.7"/>
+    <circle cx="66.6%" cy="33.3%" r="1.5" fill="${red}" opacity="0.7"/>
+    <circle cx="33.3%" cy="66.6%" r="1.5" fill="${red}" opacity="0.7"/>
+    <circle cx="66.6%" cy="66.6%" r="1.5" fill="${red}" opacity="0.7"/>`;
   if (rule === 'symmetry') return `
-    <line x1="50%" y1="0" x2="50%" y2="100%" stroke="${gold}" stroke-width="2" stroke-dasharray="${dash}"/>`;
+    <line x1="50%" y1="0" x2="50%" y2="100%" stroke="${red}" stroke-width="0.6" stroke-dasharray="${dash}" opacity="0.85"/>`;
   if (rule === 'leading_lines') {
     // If explicit line/arrow annotations already exist, skip the auto overlay
     if (annotations.some(a => a.type === 'line' || a.type === 'arrow')) return '';
@@ -2719,31 +2719,28 @@ function buildRuleOverlay(rule, annotations) {
       const sx = fromLeft ? 0 : 100;
       const lines = [-35, -12, 12, 35].map(off => {
         const sy = Math.max(2, Math.min(98, vy + off));
-        return `<line x1="${sx}%" y1="${sy}%" x2="${vx}%" y2="${vy}%" stroke="${gold}" stroke-width="2.5" opacity="0.85" stroke-linecap="round"/>`;
+        return `<line x1="${sx}%" y1="${sy}%" x2="${vx}%" y2="${vy}%" stroke="${red}" stroke-width="0.6" opacity="0.85" stroke-linecap="round"/>`;
       }).join('');
       return `<g>${lines}</g>`;
     }
-    return `<g stroke="${gold}" fill="${gold}" opacity="0.8">
-      <line x1="5%" y1="95%" x2="60%" y2="30%" stroke-width="2"/>
+    return `<g stroke="${red}" fill="${red}" opacity="0.85">
+      <line x1="5%" y1="95%" x2="60%" y2="30%" stroke-width="0.6"/>
       <polygon points="60%,25% 57%,35% 63%,35%"/>
     </g>`;
   }
   if (rule === 'framing') return `
-    <rect x="10%" y="10%" width="80%" height="80%" fill="none" stroke="${gold}" stroke-width="2" stroke-dasharray="${dash}"/>`;
+    <rect x="10%" y="10%" width="80%" height="80%" fill="none" stroke="${red}" stroke-width="0.6" stroke-dasharray="${dash}" opacity="0.85"/>`;
   if (rule === 'negative_space') return `
-    <rect x="0" y="0" width="40%" height="100%" fill="rgba(200,169,110,0.08)"/>`;
+    <rect x="0" y="0" width="40%" height="100%" fill="rgba(224,85,85,0.07)"/>`;
   if (rule === 'golden_ratio') {
     const g = 0.618;
     return `
-    <g stroke="${gold}" fill="none" stroke-width="1.5" opacity="0.7">
-      <!-- Golden rectangle border -->
-      <rect x="0" y="0" width="100%" height="100%" fill="none" stroke="${gold}" stroke-width="1" stroke-dasharray="4,4" opacity="0.4"/>
-      <!-- Golden ratio vertical divide -->
-      <line x1="${g*100}%" y1="0" x2="${g*100}%" y2="100%" stroke-dasharray="4,4" opacity="0.5"/>
-      <!-- Spiral arcs (quarter circles progressively smaller) -->
-      <path d="M ${g*100}%,0 A ${g*100}%,100% 0 0 0 0,100%" stroke-width="2" opacity="0.9"/>
-      <path d="M 0,${g*100}% A ${(1-g)*100}%,${(1-g)*100}% 0 0 1 ${(1-g)*100}%,100%" stroke-width="1.8" opacity="0.8"/>
-      <path d="M ${(1-g)*100}%,${g*(1-g)*100}% A ${g*(1-g)*100}%,${g*(1-g)*100}% 0 0 0 0,${g*(1-g)*100}%" stroke-width="1.5" opacity="0.7"/>
+    <g stroke="${red}" fill="none" stroke-width="0.6" opacity="0.85">
+      <rect x="0" y="0" width="100%" height="100%" fill="none" stroke-dasharray="4,4" opacity="0.5"/>
+      <line x1="${g*100}%" y1="0" x2="${g*100}%" y2="100%" stroke-dasharray="4,4"/>
+      <path d="M ${g*100}%,0 A ${g*100}%,100% 0 0 0 0,100%"/>
+      <path d="M 0,${g*100}% A ${(1-g)*100}%,${(1-g)*100}% 0 0 1 ${(1-g)*100}%,100%"/>
+      <path d="M ${(1-g)*100}%,${g*(1-g)*100}% A ${g*(1-g)*100}%,${g*(1-g)*100}% 0 0 0 0,${g*(1-g)*100}%"/>
     </g>`;
   }
   return '';
@@ -2863,8 +2860,8 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direc
 .photo-wrap img{width:100%;border-radius:10px;display:block}
 .rule-overlay{position:absolute;top:.75rem;left:.75rem;right:.75rem;bottom:0;width:calc(100% - 1.5rem);height:100%;pointer-events:none}
 .ann{position:absolute;transform:translate(-50%,-50%);pointer-events:none;opacity:0;transition:opacity .4s}
-.ann-dot{width:5px;height:5px;border-radius:50%;background:#e05555;border:1.5px solid #000;position:relative;z-index:2}
-.ann-label{position:absolute;background:rgba(0,0,0,.85);border:1px solid #e05555;border-radius:7px;padding:.3rem .55rem;font-size:.68rem;color:var(--text);line-height:1.45;white-space:nowrap;z-index:3}
+.ann-dot{width:10px;height:10px;border-radius:50%;background:var(--accent);border:2px solid #000;position:relative;z-index:2}
+.ann-label{position:absolute;background:rgba(0,0,0,.85);border:1px solid var(--accent);border-radius:7px;padding:.3rem .55rem;font-size:.68rem;color:var(--text);line-height:1.45;white-space:nowrap;z-index:3}
 .ann-right{left:16px;top:-10px}
 .ann-left{right:16px;top:-10px}
 .ann-bottom{top:16px;left:50%;transform:translateX(-50%)}
