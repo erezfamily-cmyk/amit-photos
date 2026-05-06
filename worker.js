@@ -2086,6 +2086,7 @@ a.back:hover{color:#c8a96e}
 <a class="back" href="/">← חזרה לגלריה</a>
 </body>
 </html>`;
+  return new Response(html, { headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-cache, no-store, must-revalidate' } });
   return new Response(html, { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
 }
 
@@ -2333,27 +2334,54 @@ async function handleAnalysesGenerate(request, env) {
       imgSource = { type: 'base64', media_type: mime, data: toB64(await obj.arrayBuffer()) };
       break;
     }
-    // R2 too large or missing — use URL source if HTTPS, else fetch and base64
+    // R2 too large — try thumbnail directly from R2, then URL source
     const imgUrl = candidate.thumbnail || candidate.url;
     if (imgUrl) {
-      if (imgUrl.startsWith('https://')) {
-        chosen = candidate;
-        imgSource = { type: 'url', url: imgUrl };
-        break;
-      }
-      // Non-HTTPS URL — fetch and base64 encode
-      try {
-        const resp = await fetch(imgUrl);
-        if (resp.ok) {
-          const buf = await resp.arrayBuffer();
-          if (buf.byteLength <= 4.5 * 1024 * 1024) {
+      // For relative /photos/ URLs: extract key and fetch thumbnail from R2 directly
+      if (imgUrl.startsWith('/photos/')) {
+        const thumbKey = imgUrl.slice('/photos/'.length);
+        if (thumbKey && thumbKey !== candidate.r2_key) {
+          const thumbObj = await env.PHOTOS.get(thumbKey);
+          if (thumbObj && thumbObj.size <= 10 * 1024 * 1024) {
             chosen = candidate;
-            const mime = resp.headers.get('content-type') || 'image/jpeg';
-            imgSource = { type: 'base64', media_type: mime, data: toB64(buf) };
+            const mime = thumbObj.httpMetadata?.contentType || 'image/jpeg';
+            imgSource = { type: 'base64', media_type: mime, data: toB64(await thumbObj.arrayBuffer()) };
             break;
           }
         }
-      } catch (_) { /* try next */ }
+        // No separate thumbnail — subrequest to self with absolute URL
+        try {
+          const origin = new URL(request.url).origin;
+          const resp = await fetch(`${origin}${imgUrl}`);
+          if (resp.ok) {
+            const buf = await resp.arrayBuffer();
+            if (buf.byteLength <= 10 * 1024 * 1024) {
+              chosen = candidate;
+              const mime = resp.headers.get('content-type') || 'image/jpeg';
+              imgSource = { type: 'base64', media_type: mime, data: toB64(buf) };
+              break;
+            }
+          }
+        } catch (_) { /* try next */ }
+      } else if (imgUrl.startsWith('https://')) {
+        chosen = candidate;
+        imgSource = { type: 'url', url: imgUrl };
+        break;
+      } else {
+        // Other non-HTTPS URL — fetch and base64 encode
+        try {
+          const resp = await fetch(imgUrl);
+          if (resp.ok) {
+            const buf = await resp.arrayBuffer();
+            if (buf.byteLength <= 10 * 1024 * 1024) {
+              chosen = candidate;
+              const mime = resp.headers.get('content-type') || 'image/jpeg';
+              imgSource = { type: 'base64', media_type: mime, data: toB64(buf) };
+              break;
+            }
+          }
+        } catch (_) { /* try next */ }
+      }
     }
   }
   if (!chosen || !imgSource) {
@@ -3030,7 +3058,7 @@ export default {
       const newRes = new Response(res.body, res);
       // HTML: no-store מונע כל קאש (דפדפן + CDN)
       // JS/CSS/JSON: no-cache = חייב לאמת עם שרת לפני שימוש
-      newRes.headers.set('Cache-Control', isHtml ? 'no-store' : 'no-cache');
+      newRes.headers.set('Cache-Control', isHtml ? 'no-cache, no-store, must-revalidate' : 'no-cache');
       if (isHtml) {
         newRes.headers.set('CDN-Cache-Control', 'no-store');
         newRes.headers.set('Cloudflare-CDN-Cache-Control', 'no-store');
