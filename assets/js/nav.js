@@ -2,6 +2,58 @@
 (function () {
   const isHome = window.location.pathname === '/' || window.location.pathname === '/index.html';
 
+  // ── Nav translations (standalone, no dependency on i18n.js) ──────────────────
+  const NAV_T = {
+    he: {
+      logoName: 'עמית ארז',
+      logoTagline: ' | עולם של צבעים מבעד לעדשה',
+      gallery: 'גלריה', navNew: 'חדש באתר', navSale: 'מבצע',
+      challenges: 'אתגרים', camera: 'למד לצלם', learn: 'ניתוח תמונות',
+      howToBuy: 'כיצד לרכוש', pricing: 'מחירים', contact: 'צור קשר',
+      menu: 'תפריט'
+    },
+    en: {
+      logoName: 'Amit Erez',
+      logoTagline: ' | A World of Colors Through the Lens',
+      gallery: 'Gallery', navNew: 'New', navSale: 'Sale',
+      challenges: 'Challenges', camera: 'Learn Photography', learn: 'Photo School',
+      howToBuy: 'How to Buy', pricing: 'Pricing', contact: 'Contact',
+      menu: 'Menu'
+    }
+  };
+
+  let currentLang = (localStorage.getItem('lang') || 'he');
+
+  function applyNavLang(lang) {
+    currentLang = lang;
+    const t = NAV_T[lang] || NAV_T.he;
+    const nav = document.getElementById('main-nav');
+    if (!nav) return;
+    const q = function (sel) { return nav.querySelector(sel); };
+    const logoName = q('[data-nav="logo.name"]');
+    const logoTag  = q('[data-nav="logo.tagline"]');
+    if (logoName) logoName.textContent = t.logoName;
+    if (logoTag)  logoTag.textContent  = t.logoTagline;
+    const map = {
+      'nav.gallery': t.gallery, 'nav.new': t.navNew, 'nav.sale': t.navSale,
+      'nav.challenges': t.challenges, 'nav.camera': t.camera, 'nav.learn': t.learn,
+      'nav.how-to-buy': t.howToBuy, 'nav.pricing': t.pricing, 'nav.contact': t.contact
+    };
+    nav.querySelectorAll('[data-i18n]').forEach(function (el) {
+      const key = el.dataset.i18n;
+      if (map[key] !== undefined) el.textContent = map[key];
+    });
+    nav.querySelectorAll('.lang-btn').forEach(function (b) {
+      b.classList.toggle('active', b.dataset.lang === lang);
+    });
+    // sync with global setLang if available
+    if (typeof setLang === 'function' && typeof window.__navLangApplying === 'undefined') {
+      window.__navLangApplying = true;
+      setLang(lang);
+      delete window.__navLangApplying;
+    }
+  }
+
   function a(href) {
     return (!isHome && href.startsWith('#')) ? '/' + href : href;
   }
@@ -105,7 +157,7 @@ nav#main-nav .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px)
   nav.id = 'main-nav';
   nav.innerHTML = `
 <a href="${isHome ? '#hero' : '/'}" class="nav-logo">
-  <span data-i18n="nav.logo.name">עמית ארז</span><span class="nav-logo-tagline" data-i18n="nav.logo.tagline"> | עולם של צבעים מבעד לעדשה</span>
+  <span data-nav="logo.name" data-i18n="nav.logo.name">עמית ארז</span><span class="nav-logo-tagline" data-nav="logo.tagline" data-i18n="nav.logo.tagline"> | עולם של צבעים מבעד לעדשה</span>
 </a>
 <ul class="nav-links">
   <li><a href="${a('#gallery')}" data-i18n="nav.gallery">גלריה</a></li>
@@ -163,14 +215,18 @@ nav#main-nav .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px)
   // ── Lang toggle ────────────────────────────────────────────────────────────────
   nav.querySelectorAll('.lang-btn').forEach(function (btn) {
     btn.addEventListener('click', function () {
-      const lang = this.dataset.lang;
-      nav.querySelectorAll('.lang-btn').forEach(function (b) {
-        b.classList.toggle('active', b.dataset.lang === lang);
-      });
-      if (typeof setLang === 'function') setLang(lang);
+      applyNavLang(this.dataset.lang);
     });
   });
 
-  // ── i18n ────────────────────────────────────────────────────────────────────
-  if (typeof applyTranslations === 'function') applyTranslations();
+  // ── i18n sync ───────────────────────────────────────────────────────────────
+  // If i18n.js is present, let it drive the nav too; otherwise nav handles itself
+  if (typeof applyTranslations === 'function') {
+    applyTranslations();
+  } else {
+    applyNavLang(currentLang);
+  }
+
+  // Expose so external code (e.g. i18n.js setLang) can re-translate the nav
+  window.applyNavLang = applyNavLang;
 })();
