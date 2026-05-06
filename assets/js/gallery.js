@@ -724,7 +724,7 @@ function openLightbox(idx) {
     img.style.opacity = '1';
   };
   window._currentLightboxPhoto = photo;
-  img.src = getLightboxUrl(photo.url);
+  img.src = getLightboxUrl(photo.thumbnail || photo.url);
   img.alt = photo.alt || photo.title;
   document.getElementById('lb-title').textContent = photo.title;
   const catEl = document.getElementById('lb-cat');
