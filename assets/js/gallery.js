@@ -771,8 +771,10 @@ function openLightbox(idx) {
     if (related.length >= 2) {
       relatedTrack.innerHTML = related.map(p => {
         const relIdx = filteredPhotos.findIndex(x => x.id === p.id);
+        const src = p.thumbnail || p.url;
+        const thumbSrc = src?.startsWith('/photos/') ? src + '?w=150' : src;
         return `<div class="lb-related-thumb" data-id="${p.id}" data-idx="${relIdx}">
-          <img src="${p.thumbnail || p.url}" alt="${p.title}" loading="lazy" />
+          <img src="${thumbSrc}" alt="${p.title}" loading="lazy" />
         </div>`;
       }).join('');
       relatedTrack.querySelectorAll('.lb-related-thumb').forEach(t => {
