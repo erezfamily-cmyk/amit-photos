@@ -2709,6 +2709,8 @@ function buildRuleOverlay(rule, annotations) {
   if (rule === 'symmetry') return `
     <line x1="50%" y1="0" x2="50%" y2="100%" stroke="${gold}" stroke-width="2" stroke-dasharray="${dash}"/>`;
   if (rule === 'leading_lines') {
+    // If explicit line/arrow annotations already exist, skip the auto overlay
+    if (annotations.some(a => a.type === 'line' || a.type === 'arrow')) return '';
     const vp = annotations.find(a => !a.type && a.label && (a.label.includes('מגוז') || a.label.includes('התכנסות'))) || annotations.find(a => !a.type);
     if (vp) {
       const vx = parseFloat(vp.x_pct) ?? 80;
