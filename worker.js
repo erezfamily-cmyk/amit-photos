@@ -2361,12 +2361,8 @@ async function handleAnalysesGenerate(request, env) {
             }
           }
         } catch (_) { /* try next */ }
-      } else if (imgUrl.startsWith('https://')) {
-        chosen = candidate;
-        imgSource = { type: 'url', url: imgUrl };
-        break;
       } else {
-        // Other non-HTTPS URL — fetch and base64 encode
+        // HTTPS or other URL — fetch in Worker to avoid robots.txt restrictions
         try {
           const resp = await fetch(imgUrl);
           if (resp.ok) {
