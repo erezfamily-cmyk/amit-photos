@@ -73,6 +73,16 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
 .focal-hint-row { display: flex; justify-content: space-between;
   font-size: .75rem; color: var(--muted); margin-top: .4rem; }
 
+/* Bokeh */
+.bokeh-split { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; margin-bottom: 1rem; }
+.bokeh-img { border-radius: 8px; overflow: hidden; position: relative; aspect-ratio: 4/3; }
+.bokeh-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.bokeh-blur { position: absolute; inset: 0;
+  -webkit-backdrop-filter: blur(0px); backdrop-filter: blur(0px);
+  transition: -webkit-backdrop-filter .25s, backdrop-filter .25s; }
+.bokeh-label { position: absolute; bottom: 6px; right: 8px; font-size: .7rem;
+  background: rgba(0,0,0,.7); padding: .2rem .5rem; border-radius: 4px; color: var(--accent); }
+
 /* CTA */
 .cta-section { text-align: center; padding: 3rem 1.25rem;
   max-width: 500px; margin: 0 auto; }
@@ -131,6 +141,35 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
   </div>
 </section>
 
+<section class="section" id="bokeh">
+  <div class="section-label">חלק 2</div>
+  <h2>בוקה — הטשטוש הקסום</h2>
+  <p>צמצם פתוח (f/1.8) = עומק שדה רדוד = רקע מטושטש, הנושא בולט. צמצם סגור (f/16) = הכל חד.</p>
+  <div class="demo-card">
+    <div class="bokeh-split">
+      <div class="bokeh-img">
+        <img src="https://drive.google.com/thumbnail?id=10D5va4MnAh7QpagtevvTqzipMA3cS_8c&sz=w400"
+             alt="פרפר לבן על פרחים — נושא">
+        <div class="bokeh-label">נושא</div>
+      </div>
+      <div class="bokeh-img">
+        <img src="https://lh3.googleusercontent.com/d/1d8LFk1t2KZRu2o8VmgJxszQCFPbEW-lg=w400"
+             alt="שדה פרחים — רקע">
+        <div class="bokeh-blur" id="bgBlur"></div>
+        <div class="bokeh-label">רקע</div>
+      </div>
+    </div>
+    <div class="slider-row">
+      <label>f/1.8</label>
+      <input type="range" id="apertureSlider" min="1.8" max="16" step="0.5" value="1.8"
+             aria-label="צמצם" oninput="updateAperture(this.value)">
+      <label>f/16</label>
+      <div class="slider-value" id="apertureVal">f/1.8</div>
+    </div>
+    <p class="slider-desc" id="apertureDesc"></p>
+  </div>
+</section>
+
 <!-- Sections will be added in Tasks 3-6 -->
 
 <div class="cta-section">
@@ -159,6 +198,22 @@ function updateFocal(v) {
   document.getElementById('focalDesc').textContent = FOCAL_DESCS[closest];
 }
 updateFocal(35);
+
+function updateAperture(v) {
+  v = parseFloat(v);
+  document.getElementById('apertureVal').textContent = 'f/' + v.toFixed(1);
+  const blur = ((16 - v) / 15) * 14;
+  const blurVal = `blur(${blur.toFixed(1)}px)`;
+  document.getElementById('bgBlur').style.webkitBackdropFilter = blurVal;
+  document.getElementById('bgBlur').style.backdropFilter = blurVal;
+  const desc = v < 4
+    ? 'צמצם פתוח — רקע מיטשטש, הנושא בולט. אידיאלי לפורטרטים.'
+    : v < 10
+    ? 'צמצם בינוני — עומק שדה מאוזן.'
+    : 'צמצם סגור — כל השדה חד. אידיאלי לנופים.';
+  document.getElementById('apertureDesc').textContent = desc;
+}
+updateAperture(1.8);
 
 // TOC active state on scroll
 const tocLinks = document.querySelectorAll('.toc a');
