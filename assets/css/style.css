@@ -1275,9 +1275,10 @@ nav.scrolled { border-bottom-color: rgba(200, 169, 110, 0.3); }
 #lb-desc {
   font-size: 0.8rem;
   color: var(--text-muted);
-  margin-top: 0.3rem;
+  margin: 0.3rem auto 0;
   white-space: normal;
   max-width: 400px;
+  text-align: center;
 }
 
 .lb-spinner {
