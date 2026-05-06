@@ -65,6 +65,14 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
 .slider-desc { font-size: .82rem; color: var(--muted); text-align: center;
   margin-top: .75rem; min-height: 1.4em; }
 
+/* Focal length */
+.focal-canvas { position: relative; border-radius: 10px; overflow: hidden;
+  background: #000; aspect-ratio: 16/9; }
+.focal-canvas img { width: 100%; height: 100%; object-fit: cover;
+  transition: transform .35s ease; display: block; }
+.focal-hint-row { display: flex; justify-content: space-between;
+  font-size: .75rem; color: var(--muted); margin-top: .4rem; }
+
 /* CTA */
 .cta-section { text-align: center; padding: 3rem 1.25rem;
   max-width: 500px; margin: 0 auto; }
@@ -98,6 +106,31 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
   <a href="#anatomy">אנטומיה</a>
 </nav>
 
+<section class="section" id="focal">
+  <div class="section-label">חלק 1</div>
+  <h2>מרחק מוקד — כמה רואים?</h2>
+  <p>מרחק מוקד (מ"מ) קובע כמה שדה ראייה נכנס לפריים. ערך נמוך = עדשה רחבה = נוף שלם. ערך גבוה = טלפוטו = תקריב.</p>
+  <div class="demo-card">
+    <div class="slider-row">
+      <label>18mm</label>
+      <input type="range" id="focalSlider" min="18" max="200" value="35"
+             aria-label="מרחק מוקד" oninput="updateFocal(this.value)">
+      <label>200mm</label>
+      <div class="slider-value" id="focalVal">35mm</div>
+    </div>
+    <div class="focal-canvas">
+      <img id="focalImg"
+           src="https://drive.google.com/thumbnail?id=1WYUZNgWTJ5m46zjVstal1kEfpQI_Nntb&sz=w800"
+           alt="שדה תירס בעמק הירדן">
+    </div>
+    <div class="focal-hint-row">
+      <span>18mm — רחב, הכל בפריים</span>
+      <span>200mm — תקריב, דחיסת מרחקים</span>
+    </div>
+    <p class="slider-desc" id="focalDesc"></p>
+  </div>
+</section>
+
 <!-- Sections will be added in Tasks 3-6 -->
 
 <div class="cta-section">
@@ -107,6 +140,26 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
 </div>
 
 <script>
+const FOCAL_DESCS = {
+  18: 'עדשה רחבה — מושלמת לנופים ואדריכלות, מעוות פרספקטיבה',
+  35: 'קרובה לעין האנושית — רב-תכליתית לרחוב ודוקומנטרי',
+  50: 'נורמלי — פרספקטיבה טבעית ללא עיוות',
+  85: 'פורטרטים — בוקה יפה, ללא עיוות פנים',
+  135: 'טלפוטו קצר — דחיסת רקע נחמדה',
+  200: 'טלפוטו — ספורט, חיות בר, תקריבים ממרחק'
+};
+
+function updateFocal(v) {
+  v = parseInt(v);
+  document.getElementById('focalVal').textContent = v + 'mm';
+  const scale = 1 + (v - 18) / (200 - 18) * 1.5;
+  document.getElementById('focalImg').style.transform = `scale(${scale})`;
+  const closest = Object.keys(FOCAL_DESCS).reduce((a, b) =>
+    Math.abs(b - v) < Math.abs(a - v) ? b : a);
+  document.getElementById('focalDesc').textContent = FOCAL_DESCS[closest];
+}
+updateFocal(35);
+
 // TOC active state on scroll
 const tocLinks = document.querySelectorAll('.toc a');
 const sections = ['focal','bokeh','compare','anatomy'].map(id=>document.getElementById(id)).filter(Boolean);
