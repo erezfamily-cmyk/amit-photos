@@ -2535,8 +2535,6 @@ async function handleLearnIndex(env) {
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{--bg:#0a0a0a;--surface:#111;--border:#222;--accent:#c8a96e;--text:#f0ede8;--muted:#888}
 body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direction:rtl;min-height:100vh;padding:0 0 4rem}
-.site-header{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.25rem;border-bottom:1px solid var(--border)}
-.site-title{font-family:'Syne',sans-serif;font-size:1.1rem;color:var(--accent);text-decoration:none}
 .page-hero{text-align:center;padding:2.5rem 1.25rem 1.5rem}
 .page-hero h1{font-family:'Syne',sans-serif;font-size:1.8rem;color:var(--accent);margin-bottom:.5rem}
 .page-hero p{color:var(--muted);font-size:.9rem;max-width:380px;margin:0 auto}
@@ -2555,12 +2553,9 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direc
 .back-link{text-align:center;padding:1rem}
 .back-link a{color:var(--accent);font-size:.85rem;text-decoration:none}
 </style>
+<script src="/assets/js/nav.js" defer></script>
 </head>
 <body>
-<header class="site-header">
-  <a class="site-title" href="https://amitphotos.com">Amit Photos</a>
-  <span style="color:var(--muted);font-size:.8rem">📸 ניתוח תמונות</span>
-</header>
 <div class="page-hero">
   <h1>📸 ניתוח תמונות</h1>
   <p>ניתוח צילומי מעמיק — חוקי קומפוזיציה, הגדרות מצלמה, ומה הצלם חשב</p>
@@ -2850,8 +2845,6 @@ async function handleLearnAnalysis(env, photoId) {
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{--bg:#0a0a0a;--surface:#111;--border:#222;--accent:#c8a96e;--text:#f0ede8;--muted:#888}
 body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direction:rtl;min-height:100vh;padding:0 0 4rem}
-.site-header{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.25rem;border-bottom:1px solid var(--border)}
-.site-title{font-family:'Syne',sans-serif;font-size:1.1rem;color:var(--accent);text-decoration:none}
 .page-header{padding:1.5rem 1.25rem .5rem;max-width:900px;margin:0 auto;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:.5rem}
 .page-title{font-family:'Syne',sans-serif;font-size:1.4rem;color:var(--text)}
 .rule-badge{font-size:.72rem;color:var(--accent);background:rgba(200,169,110,.1);border:1px solid rgba(200,169,110,.25);border-radius:4px;padding:3px 9px;margin-top:.3rem;display:inline-block}
@@ -2901,13 +2894,9 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direc
 .more-card-rule{font-size:.65rem;color:var(--accent);margin-bottom:.2rem}
 .more-card-title{font-size:.78rem;color:var(--text);overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 </style>
+<script src="/assets/js/nav.js" defer></script>
 </head>
 <body>
-<header class="site-header">
-  <a class="site-title" href="https://amitphotos.com">Amit Photos</a>
-  <a href="/learn/" style="color:var(--muted);font-size:.8rem;text-decoration:none">📸 ניתוח תמונות</a>
-</header>
-
 <div class="page-header">
   <div>
     <h1 class="page-title">${escXml(row.title)}</h1>
