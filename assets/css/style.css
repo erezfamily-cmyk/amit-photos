@@ -2439,9 +2439,16 @@ nav.scrolled { border-bottom-color: rgba(200, 169, 110, 0.3); }
   border-left: 2px solid var(--accent);
 }
 
-.about-contact-link {
+.about-contact-link,
+.about-list-link {
   text-decoration: underline;
   text-underline-offset: 4px;
+  color: inherit;
+  transition: color 0.2s;
+}
+
+.about-list-link:hover {
+  color: var(--accent);
 }
 
 .about-text p {
