@@ -1,0 +1,53 @@
+name: פרסום ל-Threads אוטומטי
+
+on:
+  # שני וחמישי ב-15:00 UTC = 18:00 ישראל (ערב — שעות שיא ב-Threads)
+  # לא מתנגש עם: Facebook (שלישי/חמישי 19:00), Instagram (ראשון/רביעי/שישי 20:00)
+  schedule:
+    - cron: '0 15 * * 1,4'
+  workflow_dispatch:
+
+jobs:
+  threads-post:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Python setup
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: התקנת חבילות
+        run: pip install requests anthropic pillow
+
+      - name: פרסום תמונה ל-Threads
+        env:
+          THREADS_USER_ID: ${{ secrets.THREADS_USER_ID }}
+          THREADS_ACCESS_TOKEN: ${{ secrets.THREADS_ACCESS_TOKEN }}
+          ANTHROPIC_API_KEY: ${{ secrets.AMIT_PHOTO_AGENT }}
+          ADMIN_TOKEN: ${{ secrets.ADMIN_PASSWORD }}
+        run: |
+          for attempt in 1 2 3; do
+            python src/threads_post.py && break
+            if [ $attempt -lt 3 ]; then
+              echo "ניסיון $attempt נכשל — ממתין 60 שניות..."
+              sleep 60
+            else
+              echo "כל הניסיונות נכשלו"
+              exit 1
+            fi
+          done
+
+      - name: עדכון מעקב פרסומים
+        run: |
+          git config user.name "Threads Agent"
+          git config user.email "agent@amitphotos.com"
+          git add data/threads_posted.json
+          git diff --staged --quiet || (git commit -m "🤖 עדכון threads_posted.json" && git pull --rebase origin main && git push origin main)
