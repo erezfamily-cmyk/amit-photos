@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>צילום ספורט ותנועה — בית ספר לצילום | Amit Photos</title>
+<meta name="description" content="למד לצלם ספורט ותנועה — מהירות תריס, panning, הגדרות ועדשות — עם תמונות אמיתיות של עמית.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #0a0a0a; --surface: #111; --surface2: #181818; --border: #222;
+  --accent: #c8a96e; --text: #f0ede8; --muted: #888;
+}
+body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--text);
+  direction: rtl; min-height: 100vh; padding-bottom: 4rem; }
+
+.hero { text-align: center; padding: 2.5rem 1.5rem 1.5rem; }
+.hero-badge { display: inline-block; font-size: .72rem;
+  background: rgba(200,169,110,.12); border: 1px solid rgba(200,169,110,.3);
+  color: var(--accent); border-radius: 20px; padding: .3rem .8rem;
+  margin-bottom: .75rem; letter-spacing: .05em; }
+.hero h1 { font-family: 'Syne', sans-serif; font-size: 2rem;
+  color: var(--accent); margin-bottom: .5rem; }
+.hero p { color: var(--muted); font-size: .9rem; max-width: 440px; margin: 0 auto; }
+
+.toc { position: sticky; top: 0; z-index: 10;
+  background: rgba(10,10,10,.92); backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+  padding: .6rem 1.25rem; display: flex; gap: 1.25rem; overflow-x: auto; }
+.toc a { font-size: .77rem; color: var(--muted); text-decoration: none; white-space: nowrap; }
+.toc a.active { color: var(--accent); }
+.toc a:hover { color: var(--text); }
+
+.section { max-width: 760px; margin: 0 auto; padding: 2.5rem 1.25rem;
+  border-bottom: 1px solid var(--border); }
+.section-label { font-size: .7rem; text-transform: uppercase; letter-spacing: .12em;
+  color: var(--accent); margin-bottom: .5rem; }
+.section h2 { font-family: 'Syne', sans-serif; font-size: 1.3rem; margin-bottom: .6rem; }
+.section > p { color: var(--muted); font-size: .88rem; line-height: 1.7; margin-bottom: 1rem; }
+
+.demo-card { background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; padding: 1.5rem; margin-top: .75rem; }
+
+.slider-row { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; }
+.slider-row label { font-size: .8rem; color: var(--muted); white-space: nowrap; }
+.slider-row input[type=range] { flex: 1; accent-color: var(--accent); cursor: pointer; }
+.slider-value { font-family: 'Syne', sans-serif; color: var(--accent);
+  font-size: 1.05rem; min-width: 5rem; text-align: center; }
+.slider-desc { font-size: .82rem; color: var(--muted); text-align: center;
+  margin-top: .75rem; min-height: 1.4em; }
+
+.focal-canvas { position: relative; border-radius: 10px; overflow: hidden;
+  background: #000; aspect-ratio: 16/9; }
+.focal-canvas img { width: 100%; height: 100%; object-fit: cover; display: block;
+  transition: filter .2s ease; }
+.focal-hint-row { display: flex; justify-content: space-between;
+  font-size: .75rem; color: var(--muted); margin-top: .4rem; }
+
+/* Panning demo */
+.panning-stage { position: relative; border-radius: 10px; overflow: hidden;
+  background: #060606; aspect-ratio: 16/9; }
+.panning-subject { position: absolute; top: 50%; transform: translateY(-50%);
+  width: 22%; transition: filter .2s ease; }
+.panning-subject img { width: 100%; display: block; border-radius: 6px; }
+.panning-bg { position: absolute; inset: 0;
+  background: linear-gradient(90deg, #0a0a0a 0%, #0f0f0f 50%, #0a0a0a 100%);
+  transition: filter .2s ease; }
+.panning-hint { font-size: .72rem; color: var(--muted); text-align: center; margin-top: .4rem; }
+
+/* Compare grid */
+.compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; margin-top: .75rem; }
+@media (max-width: 480px) { .compare-grid { grid-template-columns: 1fr; } }
+.compare-card { background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 10px; overflow: hidden; }
+.compare-card img { width: 100%; aspect-ratio: 3/2; object-fit: cover; display: block; }
+.compare-card .cc-label { padding: .6rem .75rem; font-size: .82rem;
+  color: var(--accent); font-family: 'Syne', sans-serif; }
+.compare-card .cc-desc { padding: 0 .75rem .75rem; font-size: .78rem;
+  color: var(--muted); line-height: 1.55; }
+
+/* אינפוגרפיקה */
+.infographic-wrap { background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; overflow: hidden; margin-top: .75rem; cursor: zoom-in;
+  transition: border-color .2s; }
+.infographic-wrap:hover { border-color: var(--accent); }
+.infographic-wrap img { width: 100%; display: block; }
+.infographic-hint { text-align: center; font-size: .75rem; color: var(--muted);
+  padding: .6rem; border-top: 1px solid var(--border); }
+
+.lightbox { display: none; position: fixed; inset: 0; z-index: 1000;
+  background: rgba(0,0,0,.92); align-items: center; justify-content: center;
+  padding: 1rem; cursor: zoom-out; }
+.lightbox.open { display: flex; }
+.lightbox img { max-width: 100%; max-height: 90vh; object-fit: contain; border-radius: 8px; }
+
+/* גלריה */
+.gallery-filters { display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: 1.25rem; }
+.filter-btn { font-size: .78rem; padding: .35rem .85rem; border-radius: 20px;
+  border: 1px solid var(--border); background: transparent; color: var(--muted);
+  cursor: pointer; transition: all .15s; font-family: 'Heebo', sans-serif; }
+.filter-btn:hover { border-color: var(--accent); color: var(--text); }
+.filter-btn.active { background: var(--accent); border-color: var(--accent); color: #000; font-weight: 700; }
+
+.gallery-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: .6rem; }
+@media (max-width: 520px) { .gallery-grid { grid-template-columns: repeat(2, 1fr); } }
+.gallery-item { border-radius: 8px; overflow: hidden; aspect-ratio: 1;
+  background: var(--surface); position: relative; text-decoration: none; display: block; }
+.gallery-item img { width: 100%; height: 100%; object-fit: cover; display: block;
+  transition: transform .25s; }
+.gallery-item:hover img { transform: scale(1.05); }
+.gallery-item .g-label { position: absolute; bottom: 0; inset-inline: 0;
+  background: linear-gradient(transparent, rgba(0,0,0,.75));
+  padding: .75rem .5rem .4rem; font-size: .7rem; color: #ddd;
+  opacity: 0; transition: opacity .2s; }
+.gallery-item:hover .g-label { opacity: 1; }
+.gallery-item.hidden { display: none; }
+
+.cta-section { text-align: center; padding: 3rem 1.25rem; max-width: 500px; margin: 0 auto; }
+.cta-section h3 { font-family: 'Syne', sans-serif; font-size: 1.2rem;
+  color: var(--accent); margin-bottom: .75rem; }
+.cta-section p { color: var(--muted); font-size: .87rem; margin-bottom: 1.25rem; line-height: 1.6; }
+.cta-btn { display: inline-block; background: var(--accent); color: #000;
+  font-weight: 700; font-size: .9rem; border-radius: 8px;
+  padding: .7rem 1.6rem; text-decoration: none; transition: background .15s; }
+.cta-btn:hover { background: #e0c080; }
+</style>
+<script src="/assets/js/nav.js" defer></script>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-badge">📷 בית ספר לצילום</div>
+  <h1>צילום ספורט ותנועה</h1>
+  <p>איך לקפוא תנועה בשיאה, ליצור blur של מהירות, ולתפוס את הרגע המושלם</p>
+</div>
+
+<nav class="toc">
+  <a href="#shutter">מהירות תריס</a>
+  <a href="#panning">פנינג</a>
+  <a href="#guide">מדריך מלא</a>
+  <a href="#gallery">גלריה</a>
+</nav>
+
+<section class="section" id="shutter">
+  <div class="section-label">חלק 1</div>
+  <h2>מהירות תריס — קפיאה מול תנועה</h2>
+  <p>תריס מהיר (1/1000 ומעלה) קופא את התנועה בחדות מוחלטת. תריס איטי יוצר blur — תחושה של מהירות ואנרגיה. גרור כדי לראות את ההבדל.</p>
+  <div class="demo-card">
+    <div class="slider-row">
+      <label>1/30</label>
+      <input type="range" id="shutterSlider" min="1" max="6" step="1" value="1"
+             aria-label="מהירות תריס" oninput="updateShutter(this.value)">
+      <label>1/2000</label>
+      <div class="slider-value" id="shutterVal">1/30</div>
+    </div>
+    <div class="focal-canvas">
+      <img id="shutterImg"
+           src="https://drive.google.com/thumbnail?id=1We5NhoA8RoEVMLisV1Uf4XjeAq792gv&sz=w800"
+           alt="נשר לבן בטיסה">
+    </div>
+    <div class="focal-hint-row">
+      <span>1/30 — blur תנועה, אנרגיה</span>
+      <span>1/2000 — קפיאה מוחלטת</span>
+    </div>
+    <p class="slider-desc" id="shutterDesc"></p>
+  </div>
+</section>
+
+<section class="section" id="panning">
+  <div class="section-label">חלק 2</div>
+  <h2>פנינג — לעקוב אחרי התנועה</h2>
+  <p>טכניקת פנינג: עוקבים אחרי הנושא עם המצלמה בזמן הצילום. הנושא יוצא חד, הרקע מיטשטש — תחושת מהירות דרמטית.</p>
+  <div class="demo-card">
+    <div class="slider-row">
+      <label>ללא פנינג</label>
+      <input type="range" id="panningSlider" min="0" max="4" step="1" value="0"
+             aria-label="עוצמת פנינג" oninput="updatePanning(this.value)">
+      <label>פנינג מלא</label>
+      <div class="slider-value" id="panningVal">כבוי</div>
+    </div>
+    <div class="compare-grid">
+      <div class="compare-card">
+        <img id="panningSharp"
+             src="https://drive.google.com/thumbnail?id=1HphOzUpFxAxTEL4oKEHsASqyWLi00bG&sz=w500"
+             alt="סוסים לבנים בטבע — נושא" style="transition: filter .25s;">
+        <div class="cc-label">נושא — חד</div>
+        <div class="cc-desc" id="panningSharpDesc">הנושא שרואים נשאר חד כי המצלמה עוקבת אחריו</div>
+      </div>
+      <div class="compare-card">
+        <img id="panningBg"
+             src="https://lh3.googleusercontent.com/d/1bCPZFc40QtK4loEsDEtNqvZ4-UtS7XMs=w500"
+             alt="רקע — blur תנועה" style="transition: filter .25s;">
+        <div class="cc-label">רקע — blur</div>
+        <div class="cc-desc" id="panningBgDesc">הרקע מיטשטש אופקית — תחושת מהירות</div>
+      </div>
+    </div>
+    <p class="slider-desc" id="panningDesc"></p>
+  </div>
+</section>
+
+<section class="section" id="guide">
+  <div class="section-label">חלק 3</div>
+  <h2>הגדרות, עדשות וטכניקות</h2>
+  <p>המדריך המלא — מ-ISO ומהירות תריס דרך בחירת עדשה נכונה ועד לטיפים מקצועיים לצילום ספורט.</p>
+  <div class="infographic-wrap" onclick="openLightbox()">
+    <img src="/assets/infographics/sports-infographic.png"
+         alt="מדריך צילום ספורט ותנועה">
+    <div class="infographic-hint">לחץ להגדלה 🔍</div>
+  </div>
+</section>
+
+<section class="section" id="gallery">
+  <div class="section-label">חלק 4</div>
+  <h2>תנועה בעדשה של עמית</h2>
+  <p>ציפורים בטיסה, סוסים ותמונות תנועה — דוגמאות מהגלריה. עוד תמונות ספורט יתווספו בקרוב.</p>
+
+  <div class="gallery-filters">
+    <button class="filter-btn active" onclick="filterGallery('all', this)">הכל</button>
+    <button class="filter-btn" onclick="filterGallery('טיסה', this)">🦅 טיסה</button>
+    <button class="filter-btn" onclick="filterGallery('תנועה', this)">💨 תנועה</button>
+    <button class="filter-btn" onclick="filterGallery('חיות', this)">🐎 חיות</button>
+  </div>
+
+  <div class="gallery-grid">
+    <!-- טיסה -->
+    <a class="gallery-item" data-cat="טיסה" href="https://amitphotos.com/photo/1We5NhoA8RoEVMLisV1Uf4XjeAq792gv" target="_blank">
+      <img src="https://drive.google.com/thumbnail?id=1We5NhoA8RoEVMLisV1Uf4XjeAq792gv&sz=w400" alt="נשר לבן בטיסה" loading="lazy">
+      <div class="g-label">נשר לבן בטיסה</div>
+    </a>
+    <a class="gallery-item" data-cat="טיסה" href="https://amitphotos.com/photo/1YIY2z5GedI2Av8vuozdyUP38CyedES4B" target="_blank">
+      <img src="https://lh3.googleusercontent.com/d/1YIY2z5GedI2Av8vuozdyUP38CyedES4B=w400" alt="עגורים בטיסה" loading="lazy">
+      <div class="g-label">עגורים בטיסה</div>
+    </a>
+    <a class="gallery-item" data-cat="טיסה" href="https://amitphotos.com/photo/15KL0atFHVvE87zq3Z-Ni67UCAXxKvZf" target="_blank">
+      <img src="https://drive.google.com/thumbnail?id=15KL0atFHVvE87zq3Z-Ni67UCAXxKvZf&sz=w400" alt="ציפור בשקיעה" loading="lazy">
+      <div class="g-label">ציפור בשקיעה</div>
+    </a>
+    <a class="gallery-item" data-cat="טיסה" href="https://amitphotos.com/photo/18LVMgW3oVFcp6q-8pB-iRwPwMHru5r6N" target="_blank">
+      <img src="https://lh3.googleusercontent.com/d/18LVMgW3oVFcp6q-8pB-iRwPwMHru5r6N=w400" alt="נשר זהוב צעיר" loading="lazy">
+      <div class="g-label">נשר זהוב צעיר</div>
+    </a>
+    <!-- תנועה -->
+    <a class="gallery-item" data-cat="תנועה" href="https://amitphotos.com/photo/1QS-lkXmxbF9PJzU-s2P2373jKIX8Vdpf" target="_blank">
+      <img src="https://lh3.googleusercontent.com/d/1QS-lkXmxbF9PJzU-s2P2373jKIX8Vdpf=w400" alt="כדורים בתנועה" loading="lazy">
+      <div class="g-label">כדורים בתנועה</div>
+    </a>
+    <a class="gallery-item" data-cat="תנועה" href="https://amitphotos.com/photo/1uBai-6tPfU2lN0MBkcocyfXyNyXXeXd8" target="_blank">
+      <img src="https://lh3.googleusercontent.com/d/1uBai-6tPfU2lN0MBkcocyfXyNyXXeXd8=w400" alt="צילום מופשט תנועה ואור" loading="lazy">
+      <div class="g-label">תנועה ואור</div>
+    </a>
+    <a class="gallery-item" data-cat="תנועה" href="https://amitphotos.com/photo/1bCPZFc40QtK4loEsDEtNqvZ4-UtS7XMs" target="_blank">
+      <img src="https://lh3.googleusercontent.com/d/1bCPZFc40QtK4loEsDEtNqvZ4-UtS7XMs=w400" alt="צבעים בתנועה" loading="lazy">
+      <div class="g-label">צבעים בתנועה</div>
+    </a>
+    <a class="gallery-item" data-cat="תנועה" href="https://amitphotos.com/photo/16hKNONU3uhqCUBBG2VS0oIK_KqWP3lP6" target="_blank">
+      <img src="https://lh3.googleusercontent.com/d/16hKNONU3uhqCUBBG2VS0oIK_KqWP3lP6=w400" alt="גלים על הסלע" loading="lazy">
+      <div class="g-label">גלים על הסלע</div>
+    </a>
+    <!-- חיות -->
+    <a class="gallery-item" data-cat="חיות" href="https://amitphotos.com/photo/1HphOzUpFxAxTEL4oKEHsASqyWLi00bG" target="_blank">
+      <img src="https://drive.google.com/thumbnail?id=1HphOzUpFxAxTEL4oKEHsASqyWLi00bG&sz=w400" alt="סוסים לבנים בטבע" loading="lazy">
+      <div class="g-label">סוסים לבנים בטבע</div>
+    </a>
+    <a class="gallery-item" data-cat="חיות" href="https://amitphotos.com/photo/1bodaBU83Oil4iE9LOAKI0dsXZYEMrb_" target="_blank">
+      <img src="https://drive.google.com/thumbnail?id=1bodaBU83Oil4iE9LOAKI0dsXZYEMrb_&sz=w400" alt="סוסים לבנים בטבע" loading="lazy">
+      <div class="g-label">סוסים בתנועה</div>
+    </a>
+    <a class="gallery-item" data-cat="חיות" href="https://amitphotos.com/photo/1SKAexUhbEmJuhbvVwDyvC2UllzihL7y" target="_blank">
+      <img src="https://drive.google.com/thumbnail?id=1SKAexUhbEmJuhbvVwDyvC2UllzihL7y&sz=w400" alt="טווס בעיסתון" loading="lazy">
+      <div class="g-label">טווס בעיסתון</div>
+    </a>
+    <a class="gallery-item" data-cat="חיות" href="https://amitphotos.com/photo/18RCV1kI-fK-biLnd4dfwuyBnxGULbp1" target="_blank">
+      <img src="https://drive.google.com/thumbnail?id=18RCV1kI-fK-biLnd4dfwuyBnxGULbp1&sz=w400" alt="שלדג צוחק על הענף" loading="lazy">
+      <div class="g-label">שלדג צוחק על הענף</div>
+    </a>
+  </div>
+</section>
+
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <img src="/assets/infographics/sports-infographic.png" alt="מדריך צילום ספורט ותנועה">
+</div>
+
+<div class="cta-section">
+  <h3>ראה תנועה בגלריה המלאה</h3>
+  <p>ציפורים בטיסה, נוף ועוד — הגלריה של עמית מחכה לך.</p>
+  <a href="https://amitphotos.com" class="cta-btn">לגלריה המלאה ←</a>
+</div>
+
+<script>
+const SHUTTER_STEPS = [
+  { val: '1/30',   blur: 8,  desc: '1/30 שניה — blur תנועה חזק. מתאים לתנועה איטית בלבד.' },
+  { val: '1/60',   blur: 5,  desc: '1/60 שניה — blur בינוני. ניתן להרגיש את התנועה.' },
+  { val: '1/125',  blur: 3,  desc: '1/125 שניה — קצת blur. מתאים לריצה אנושית.' },
+  { val: '1/250',  blur: 1.5,desc: '1/250 שניה — כמעט חד. אידיאלי לספורט כללי.' },
+  { val: '1/500',  blur: 0.5,desc: '1/500 שניה — חד מאוד. ציפורים, רכיבה, כדורגל.' },
+  { val: '1/2000', blur: 0,  desc: '1/2000 שניה — קפיאה מוחלטת. כנף מקופאת באוויר.' }
+];
+function updateShutter(v) {
+  const s = SHUTTER_STEPS[parseInt(v) - 1];
+  document.getElementById('shutterVal').textContent = s.val;
+  document.getElementById('shutterImg').style.filter = s.blur > 0 ? `blur(${s.blur}px)` : 'none';
+  document.getElementById('shutterDesc').textContent = s.desc;
+}
+updateShutter(1);
+
+const PANNING_STEPS = [
+  { label: 'כבוי',     bgBlur: 0,   subjectBlur: 0,   desc: 'ללא פנינג — שניהם מיטשטשים עם תריס איטי.' },
+  { label: 'חלש',      bgBlur: 3,   subjectBlur: 1.5, desc: 'פנינג חלש — הרקע מתחיל להיטשטש אופקית.' },
+  { label: 'בינוני',   bgBlur: 7,   subjectBlur: 0.5, desc: 'פנינג בינוני — הנושא כמעט חד, הרקע זורם.' },
+  { label: 'טוב',      bgBlur: 12,  subjectBlur: 0,   desc: 'פנינג טוב — נושא חד, רקע מיטשטש דרמטית.' },
+  { label: 'מושלם',   bgBlur: 18,  subjectBlur: 0,   desc: 'פנינג מושלם — תחושת מהירות מקסימלית!' }
+];
+function updatePanning(v) {
+  const s = PANNING_STEPS[parseInt(v)];
+  document.getElementById('panningVal').textContent = s.label;
+  document.getElementById('panningSharp').style.filter = s.subjectBlur > 0 ? `blur(${s.subjectBlur}px)` : 'none';
+  document.getElementById('panningBg').style.filter = s.bgBlur > 0 ? `blur(${s.bgBlur}px)` : 'none';
+  document.getElementById('panningDesc').textContent = s.desc;
+}
+updatePanning(0);
+
+function openLightbox() {
+  document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+
+function filterGallery(cat, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.gallery-item').forEach(item => {
+    item.classList.toggle('hidden', cat !== 'all' && item.dataset.cat !== cat);
+  });
+}
+
+const tocLinks = document.querySelectorAll('.toc a');
+const sections = ['shutter','panning','guide','gallery'].map(id => document.getElementById(id)).filter(Boolean);
+function updateToc() {
+  const scrollY = window.scrollY + 120;
+  let active = null;
+  for (const s of sections) { if (s.offsetTop <= scrollY) active = s.id; }
+  tocLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + active));
+}
+window.addEventListener('scroll', updateToc, { passive: true });
+updateToc();
+</script>
+</body>
+</html>
