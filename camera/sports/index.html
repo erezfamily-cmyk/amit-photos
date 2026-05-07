@@ -26,8 +26,8 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
 .hero p { color: var(--muted); font-size: .9rem; max-width: 440px; margin: 0 auto; }
 
 .toc { position: sticky; top: 0; z-index: 10;
-  background: rgba(10,10,10,.92); backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: rgba(10,10,10,.92); -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
   border-bottom: 1px solid var(--border);
   padding: .6rem 1.25rem; display: flex; gap: 1.25rem; overflow-x: auto; }
 .toc a { font-size: .77rem; color: var(--muted); text-decoration: none; white-space: nowrap; }
@@ -75,7 +75,7 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
 @media (max-width: 480px) { .compare-grid { grid-template-columns: 1fr; } }
 .compare-card { background: var(--surface2); border: 1px solid var(--border);
   border-radius: 10px; overflow: hidden; }
-.compare-card img { width: 100%; aspect-ratio: 3/2; object-fit: cover; display: block; }
+.compare-card img { width: 100%; aspect-ratio: 3/2; object-fit: cover; display: block; transition: filter .25s; }
 .compare-card .cc-label { padding: .6rem .75rem; font-size: .82rem;
   color: var(--accent); font-family: 'Syne', sans-serif; }
 .compare-card .cc-desc { padding: 0 .75rem .75rem; font-size: .78rem;
@@ -158,8 +158,8 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
     </div>
     <div class="focal-canvas">
       <img id="shutterImg"
-           src="https://drive.google.com/thumbnail?id=1We5NhoA8RoEVMLisV1Uf4XjeAq792gv&sz=w800"
-           alt="נשר לבן בטיסה">
+           src="/assets/img/sports/runner-sharp.png"
+           alt="רץ בפעולה">
     </div>
     <div class="focal-hint-row">
       <span>1/30 — blur תנועה, אנרגיה</span>
@@ -184,15 +184,15 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
     <div class="compare-grid">
       <div class="compare-card">
         <img id="panningSharp"
-             src="https://drive.google.com/thumbnail?id=1HphOzUpFxAxTEL4oKEHsASqyWLi00bG&sz=w500"
-             alt="סוסים לבנים בטבע — נושא" style="transition: filter .25s;">
+             src="/assets/img/sports/cyclist-panning.png"
+             alt="רוכב — נושא חד">
         <div class="cc-label">נושא — חד</div>
         <div class="cc-desc" id="panningSharpDesc">הנושא שרואים נשאר חד כי המצלמה עוקבת אחריו</div>
       </div>
       <div class="compare-card">
         <img id="panningBg"
-             src="https://lh3.googleusercontent.com/d/1bCPZFc40QtK4loEsDEtNqvZ4-UtS7XMs=w500"
-             alt="רקע — blur תנועה" style="transition: filter .25s;">
+             src="/assets/img/sports/cyclist-panning.png"
+             alt="רקע — blur תנועה">
         <div class="cc-label">רקע — blur</div>
         <div class="cc-desc" id="panningBgDesc">הרקע מיטשטש אופקית — תחושת מהירות</div>
       </div>
@@ -218,61 +218,61 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
   <p>ציפורים בטיסה, סוסים ותמונות תנועה — דוגמאות מהגלריה. עוד תמונות ספורט יתווספו בקרוב.</p>
 
   <div class="gallery-filters">
-    <button class="filter-btn active" onclick="filterGallery('all', this)">הכל</button>
-    <button class="filter-btn" onclick="filterGallery('טיסה', this)">🦅 טיסה</button>
-    <button class="filter-btn" onclick="filterGallery('תנועה', this)">💨 תנועה</button>
-    <button class="filter-btn" onclick="filterGallery('חיות', this)">🐎 חיות</button>
+    <button type="button" class="filter-btn active" onclick="filterGallery('all', this)">הכל</button>
+    <button type="button" class="filter-btn" onclick="filterGallery('טיסה', this)">🦅 טיסה</button>
+    <button type="button" class="filter-btn" onclick="filterGallery('תנועה', this)">💨 תנועה</button>
+    <button type="button" class="filter-btn" onclick="filterGallery('חיות', this)">🐎 חיות</button>
   </div>
 
   <div class="gallery-grid">
     <!-- טיסה -->
-    <a class="gallery-item" data-cat="טיסה" href="https://amitphotos.com/photo/1We5NhoA8RoEVMLisV1Uf4XjeAq792gv" target="_blank">
+    <a class="gallery-item" data-cat="טיסה" href="https://amitphotos.com/photo/1We5NhoA8RoEVMLisV1Uf4XjeAq792gv" target="_blank" rel="noopener">
       <img src="https://drive.google.com/thumbnail?id=1We5NhoA8RoEVMLisV1Uf4XjeAq792gv&sz=w400" alt="נשר לבן בטיסה" loading="lazy">
       <div class="g-label">נשר לבן בטיסה</div>
     </a>
-    <a class="gallery-item" data-cat="טיסה" href="https://amitphotos.com/photo/1YIY2z5GedI2Av8vuozdyUP38CyedES4B" target="_blank">
+    <a class="gallery-item" data-cat="טיסה" href="https://amitphotos.com/photo/1YIY2z5GedI2Av8vuozdyUP38CyedES4B" target="_blank" rel="noopener">
       <img src="https://lh3.googleusercontent.com/d/1YIY2z5GedI2Av8vuozdyUP38CyedES4B=w400" alt="עגורים בטיסה" loading="lazy">
       <div class="g-label">עגורים בטיסה</div>
     </a>
-    <a class="gallery-item" data-cat="טיסה" href="https://amitphotos.com/photo/15KL0atFHVvE87zq3Z-Ni67UCAXxKvZf" target="_blank">
+    <a class="gallery-item" data-cat="טיסה" href="https://amitphotos.com/photo/15KL0atFHVvE87zq3Z-Ni67UCAXxKvZf" target="_blank" rel="noopener">
       <img src="https://drive.google.com/thumbnail?id=15KL0atFHVvE87zq3Z-Ni67UCAXxKvZf&sz=w400" alt="ציפור בשקיעה" loading="lazy">
       <div class="g-label">ציפור בשקיעה</div>
     </a>
-    <a class="gallery-item" data-cat="טיסה" href="https://amitphotos.com/photo/18LVMgW3oVFcp6q-8pB-iRwPwMHru5r6N" target="_blank">
+    <a class="gallery-item" data-cat="טיסה" href="https://amitphotos.com/photo/18LVMgW3oVFcp6q-8pB-iRwPwMHru5r6N" target="_blank" rel="noopener">
       <img src="https://lh3.googleusercontent.com/d/18LVMgW3oVFcp6q-8pB-iRwPwMHru5r6N=w400" alt="נשר זהוב צעיר" loading="lazy">
       <div class="g-label">נשר זהוב צעיר</div>
     </a>
     <!-- תנועה -->
-    <a class="gallery-item" data-cat="תנועה" href="https://amitphotos.com/photo/1QS-lkXmxbF9PJzU-s2P2373jKIX8Vdpf" target="_blank">
+    <a class="gallery-item" data-cat="תנועה" href="https://amitphotos.com/photo/1QS-lkXmxbF9PJzU-s2P2373jKIX8Vdpf" target="_blank" rel="noopener">
       <img src="https://lh3.googleusercontent.com/d/1QS-lkXmxbF9PJzU-s2P2373jKIX8Vdpf=w400" alt="כדורים בתנועה" loading="lazy">
       <div class="g-label">כדורים בתנועה</div>
     </a>
-    <a class="gallery-item" data-cat="תנועה" href="https://amitphotos.com/photo/1uBai-6tPfU2lN0MBkcocyfXyNyXXeXd8" target="_blank">
+    <a class="gallery-item" data-cat="תנועה" href="https://amitphotos.com/photo/1uBai-6tPfU2lN0MBkcocyfXyNyXXeXd8" target="_blank" rel="noopener">
       <img src="https://lh3.googleusercontent.com/d/1uBai-6tPfU2lN0MBkcocyfXyNyXXeXd8=w400" alt="צילום מופשט תנועה ואור" loading="lazy">
       <div class="g-label">תנועה ואור</div>
     </a>
-    <a class="gallery-item" data-cat="תנועה" href="https://amitphotos.com/photo/1bCPZFc40QtK4loEsDEtNqvZ4-UtS7XMs" target="_blank">
+    <a class="gallery-item" data-cat="תנועה" href="https://amitphotos.com/photo/1bCPZFc40QtK4loEsDEtNqvZ4-UtS7XMs" target="_blank" rel="noopener">
       <img src="https://lh3.googleusercontent.com/d/1bCPZFc40QtK4loEsDEtNqvZ4-UtS7XMs=w400" alt="צבעים בתנועה" loading="lazy">
       <div class="g-label">צבעים בתנועה</div>
     </a>
-    <a class="gallery-item" data-cat="תנועה" href="https://amitphotos.com/photo/16hKNONU3uhqCUBBG2VS0oIK_KqWP3lP6" target="_blank">
+    <a class="gallery-item" data-cat="תנועה" href="https://amitphotos.com/photo/16hKNONU3uhqCUBBG2VS0oIK_KqWP3lP6" target="_blank" rel="noopener">
       <img src="https://lh3.googleusercontent.com/d/16hKNONU3uhqCUBBG2VS0oIK_KqWP3lP6=w400" alt="גלים על הסלע" loading="lazy">
       <div class="g-label">גלים על הסלע</div>
     </a>
     <!-- חיות -->
-    <a class="gallery-item" data-cat="חיות" href="https://amitphotos.com/photo/1HphOzUpFxAxTEL4oKEHsASqyWLi00bG" target="_blank">
+    <a class="gallery-item" data-cat="חיות" href="https://amitphotos.com/photo/1HphOzUpFxAxTEL4oKEHsASqyWLi00bG" target="_blank" rel="noopener">
       <img src="https://drive.google.com/thumbnail?id=1HphOzUpFxAxTEL4oKEHsASqyWLi00bG&sz=w400" alt="סוסים לבנים בטבע" loading="lazy">
       <div class="g-label">סוסים לבנים בטבע</div>
     </a>
-    <a class="gallery-item" data-cat="חיות" href="https://amitphotos.com/photo/1bodaBU83Oil4iE9LOAKI0dsXZYEMrb_" target="_blank">
+    <a class="gallery-item" data-cat="חיות" href="https://amitphotos.com/photo/1bodaBU83Oil4iE9LOAKI0dsXZYEMrb_" target="_blank" rel="noopener">
       <img src="https://drive.google.com/thumbnail?id=1bodaBU83Oil4iE9LOAKI0dsXZYEMrb_&sz=w400" alt="סוסים לבנים בטבע" loading="lazy">
       <div class="g-label">סוסים בתנועה</div>
     </a>
-    <a class="gallery-item" data-cat="חיות" href="https://amitphotos.com/photo/1SKAexUhbEmJuhbvVwDyvC2UllzihL7y" target="_blank">
+    <a class="gallery-item" data-cat="חיות" href="https://amitphotos.com/photo/1SKAexUhbEmJuhbvVwDyvC2UllzihL7y" target="_blank" rel="noopener">
       <img src="https://drive.google.com/thumbnail?id=1SKAexUhbEmJuhbvVwDyvC2UllzihL7y&sz=w400" alt="טווס בעיסתון" loading="lazy">
       <div class="g-label">טווס בעיסתון</div>
     </a>
-    <a class="gallery-item" data-cat="חיות" href="https://amitphotos.com/photo/18RCV1kI-fK-biLnd4dfwuyBnxGULbp1" target="_blank">
+    <a class="gallery-item" data-cat="חיות" href="https://amitphotos.com/photo/18RCV1kI-fK-biLnd4dfwuyBnxGULbp1" target="_blank" rel="noopener">
       <img src="https://drive.google.com/thumbnail?id=18RCV1kI-fK-biLnd4dfwuyBnxGULbp1&sz=w400" alt="שלדג צוחק על הענף" loading="lazy">
       <div class="g-label">שלדג צוחק על הענף</div>
     </a>
