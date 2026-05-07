@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>חשיפה — ISO, צמצם ותריס | בית ספר לצילום | Amit Photos</title>
+<meta name="description" content="המשולש של הצלם — ISO, צמצם ותריס. שלושה סליידרים שמשנים את החשיפה בזמן אמת.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #0a0a0a; --surface: #111; --surface2: #181818; --border: #222;
+  --accent: #c8a96e; --text: #f0ede8; --muted: #888;
+  --iso-color: #e87a5a; --shutter-color: #5dbf8a; --aperture-color: #6090d8;
+}
+body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--text);
+  direction: rtl; min-height: 100vh; padding-bottom: 5rem; }
+
+.breadcrumb { font-size: .8rem; color: var(--muted); padding: 1.25rem 1.5rem 0;
+  max-width: 780px; margin: 0 auto; }
+.breadcrumb a { color: var(--accent); text-decoration: none; }
+
+.hero { text-align: center; padding: 2.5rem 1.5rem 1.5rem; }
+.hero-badge { display: inline-block; font-size: .72rem;
+  background: rgba(200,169,110,.12); border: 1px solid rgba(200,169,110,.3);
+  color: var(--accent); border-radius: 20px; padding: .3rem .8rem; margin-bottom: .75rem; }
+.hero h1 { font-family: 'Syne', sans-serif; font-size: 2rem; color: var(--accent); margin-bottom: .5rem; }
+.hero p { color: var(--muted); font-size: .95rem; max-width: 500px; margin: 0 auto; line-height: 1.65; }
+
+.article { max-width: 780px; margin: 0 auto; padding: 0 1.25rem; }
+.section { margin-bottom: 3rem; }
+.section-label { font-size: .72rem; color: var(--accent); text-transform: uppercase;
+  letter-spacing: .1em; margin-bottom: .5rem; }
+.section h2 { font-family: 'Syne', sans-serif; font-size: 1.4rem; color: var(--text); margin-bottom: 1rem; }
+.section p { color: var(--muted); line-height: 1.75; margin-bottom: .85rem; font-size: .95rem; }
+.section p strong { color: var(--text); }
+.divider { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+
+/* ===== EXPOSURE SIMULATOR ===== */
+.lab { background: var(--surface); border: 1px solid rgba(200,169,110,.3);
+  border-radius: 18px; padding: 1.5rem; margin: 1.5rem 0; }
+.lab-title { font-family: 'Syne', sans-serif; font-size: 1.05rem; color: var(--accent);
+  text-align: center; margin-bottom: 1.5rem; }
+
+.sim-preview {
+  position: relative; border-radius: 12px; overflow: hidden; background: #000;
+  margin-bottom: 1.5rem; aspect-ratio: 16/9; display: flex; align-items: center; justify-content: center;
+}
+.sim-canvas { width: 100%; height: 100%; display: block; border-radius: 12px; }
+
+.sim-status {
+  position: absolute; top: .75rem; right: .75rem;
+  background: rgba(0,0,0,.7); border: 1px solid rgba(255,255,255,.15);
+  border-radius: 10px; padding: .5rem .9rem; font-size: .8rem;
+  backdrop-filter: blur(6px); display: flex; gap: .75rem; align-items: center;
+}
+.ev-badge {
+  font-family: 'Syne', sans-serif; font-size: 1rem; color: var(--accent);
+  border-right: 1px solid rgba(255,255,255,.15); padding-right: .75rem;
+}
+.sim-note { font-size: .78rem; color: var(--muted); }
+
+.noise-label {
+  position: absolute; bottom: .75rem; left: .75rem;
+  background: rgba(200,80,60,.75); border-radius: 8px;
+  padding: .35rem .75rem; font-size: .75rem; color: #fff;
+  opacity: 0; transition: opacity .4s;
+}
+.blur-label {
+  position: absolute; bottom: .75rem; right: 4rem;
+  background: rgba(96,144,216,.75); border-radius: 8px;
+  padding: .35rem .75rem; font-size: .75rem; color: #fff;
+  opacity: 0; transition: opacity .4s;
+}
+
+/* Sliders */
+.sliders { display: flex; flex-direction: column; gap: 1.25rem; }
+
+.slider-row { display: flex; flex-direction: column; gap: .4rem; }
+.slider-header { display: flex; justify-content: space-between; align-items: center; }
+.slider-name { font-size: .9rem; font-weight: 600; display: flex; align-items: center; gap: .4rem; }
+.slider-dot { width: 10px; height: 10px; border-radius: 50%; }
+.slider-value { font-family: monospace; font-size: .95rem; color: var(--accent); font-weight: 700; }
+.slider-hint { font-size: .75rem; color: var(--muted); }
+
+input[type=range] {
+  -webkit-appearance: none; width: 100%; height: 6px; border-radius: 3px;
+  outline: none; cursor: pointer; background: var(--border);
+}
+input[type=range].iso-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%; background: var(--iso-color); border: 2px solid #fff; }
+input[type=range].shutter-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%; background: var(--shutter-color); border: 2px solid #fff; }
+input[type=range].aperture-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%; background: var(--aperture-color); border: 2px solid #fff; }
+
+.scale-labels { display: flex; justify-content: space-between; font-size: .7rem; color: var(--muted); }
+
+/* Triangle */
+.triangle-section { margin: 1.5rem 0; }
+.triangle-title { font-family: 'Syne', sans-serif; font-size: 1.1rem; color: var(--text); text-align: center; margin-bottom: 1rem; }
+.triangle-wrap { display: flex; justify-content: center; }
+.triangle-svg { max-width: 340px; width: 100%; }
+
+/* Effect cards */
+.effect-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: .75rem; margin: 1.5rem 0; }
+@media (max-width: 520px) { .effect-grid { grid-template-columns: 1fr; } }
+.effect-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 1rem; }
+.effect-card-header { display: flex; align-items: center; gap: .5rem; margin-bottom: .5rem; }
+.effect-dot { width: 12px; height: 12px; border-radius: 50%; }
+.effect-name { font-family: 'Syne', sans-serif; font-size: .9rem; }
+.effect-desc { font-size: .8rem; color: var(--muted); line-height: 1.55; }
+.effect-tradeoff { font-size: .75rem; color: var(--accent); margin-top: .4rem; }
+
+/* Infographic */
+.infographic-wrap { background: var(--surface); border: 1px solid var(--border);
+  border-radius: 16px; overflow: hidden; margin: 1.5rem 0; padding: 1.5rem; }
+.stop-diagram { display: flex; flex-direction: column; gap: 1rem; }
+.stop-row { display: flex; align-items: center; gap: .75rem; }
+.stop-label { font-size: .8rem; color: var(--muted); min-width: 80px; text-align: left; }
+.stop-bar-wrap { flex: 1; height: 28px; background: var(--border); border-radius: 6px; overflow: hidden; position: relative; }
+.stop-bar { height: 100%; border-radius: 6px; display: flex; align-items: center; justify-content: flex-end; padding-right: .5rem; font-size: .72rem; font-weight: 700; color: #000; transition: width .5s; }
+
+.nav-prev { text-align: center; padding: 1.5rem; }
+.nav-prev a { color: var(--accent); font-size: .85rem; text-decoration: none; }
+</style>
+<script src="/assets/js/nav.js" defer></script>
+</head>
+<body>
+
+<div class="breadcrumb">
+  <a href="/camera/">למד לצלם</a> ← חשיפה
+</div>
+
+<div class="hero">
+  <div class="hero-badge">☀️ חשיפה</div>
+  <h1>המשולש של הצלם</h1>
+  <p>ISO, צמצם ותריס — שלושה פרמטרים שקובעים כמה אור יגיע לחיישן, ולכל אחד יש מחיר</p>
+</div>
+
+<div class="article">
+
+  <!-- SIMULATOR -->
+  <div class="section">
+    <div class="lab">
+      <div class="lab-title">🎚️ סימולטור חשיפה — גרור ותראה</div>
+
+      <div class="sim-preview">
+        <canvas class="sim-canvas" id="simCanvas"></canvas>
+        <div class="sim-status">
+          <span class="ev-badge" id="evBadge">EV 0</span>
+          <span class="sim-note" id="evNote">חשיפה תקינה</span>
+        </div>
+        <div class="noise-label" id="noiseLabel">רעש גבוה</div>
+        <div class="blur-label" id="blurLabel">טשטוש תנועה</div>
+      </div>
+
+      <div class="sliders">
+        <!-- ISO -->
+        <div class="slider-row">
+          <div class="slider-header">
+            <div class="slider-name">
+              <span class="slider-dot" style="background:var(--iso-color)"></span>
+              ISO — רגישות חיישן
+            </div>
+            <span class="slider-value" id="isoVal">ISO 400</span>
+          </div>
+          <input type="range" class="iso-slider" id="isoSlider" min="0" max="6" value="2">
+          <div class="scale-labels">
+            <span>100</span><span>200</span><span>400</span><span>800</span><span>1600</span><span>3200</span><span>6400</span>
+          </div>
+          <div class="slider-hint">⬆ ISO גבוה = יותר אור, אבל גם יותר רעש (גרעיניות)</div>
+        </div>
+
+        <!-- Shutter Speed -->
+        <div class="slider-row">
+          <div class="slider-header">
+            <div class="slider-name">
+              <span class="slider-dot" style="background:var(--shutter-color)"></span>
+              מהירות תריס — זמן חשיפה
+            </div>
+            <span class="slider-value" id="shutterVal">1/125</span>
+          </div>
+          <input type="range" class="shutter-slider" id="shutterSlider" min="0" max="7" value="4">
+          <div class="scale-labels">
+            <span>1/1000</span><span>1/500</span><span>1/250</span><span>1/125</span><span>1/60</span><span>1/30</span><span>1/15</span><span>1/8</span>
+          </div>
+          <div class="slider-hint">⬇ תריס איטי = יותר אור, אבל טשטוש תנועה אם לא יציב</div>
+        </div>
+
+        <!-- Aperture -->
+        <div class="slider-row">
+          <div class="slider-header">
+            <div class="slider-name">
+              <span class="slider-dot" style="background:var(--aperture-color)"></span>
+              צמצם — גודל פתח העדשה
+            </div>
+            <span class="slider-value" id="apertureVal">f/5.6</span>
+          </div>
+          <input type="range" class="aperture-slider" id="apertureSlider" min="0" max="6" value="3">
+          <div class="scale-labels">
+            <span>f/1.4</span><span>f/2</span><span>f/2.8</span><span>f/5.6</span><span>f/8</span><span>f/11</span><span>f/16</span>
+          </div>
+          <div class="slider-hint">⬅ f קטן = פתח גדול = יותר אור + רקע מטושטש (בוקה)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- TRIANGLE -->
+  <div class="section">
+    <div class="section-label">עקרון יסוד</div>
+    <h2>משולש החשיפה</h2>
+    <p>שלושת הפרמטרים תלויים זה בזה. שינוי אחד מחייב התאמה של השניים האחרים כדי לשמור על אותה חשיפה — אבל לכל שינוי יש השפעה נוספת מעבר לאור.</p>
+
+    <div class="triangle-wrap">
+      <svg class="triangle-svg" viewBox="0 0 340 280" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Triangle -->
+        <polygon points="170,24 320,250 20,250" stroke="#333" stroke-width="2" fill="rgba(200,169,110,0.05)"/>
+        <!-- Labels at vertices -->
+        <text x="170" y="16" text-anchor="middle" fill="#c8a96e" font-family="Syne,sans-serif" font-size="13">ISO</text>
+        <text x="325" y="260" text-anchor="start" fill="#e87a5a" font-family="Syne,sans-serif" font-size="12">תריס</text>
+        <text x="15" y="260" text-anchor="end" fill="#6090d8" font-family="Syne,sans-serif" font-size="12">צמצם</text>
+        <!-- Side labels (tradeoffs) -->
+        <text x="255" y="150" text-anchor="middle" fill="#888" font-size="11" transform="rotate(50 255 150)">רעש ↔ אור</text>
+        <text x="85" y="150" text-anchor="middle" fill="#888" font-size="11" transform="rotate(-50 85 150)">בוקה ↔ שדה</text>
+        <text x="170" y="268" text-anchor="middle" fill="#888" font-size="11">טשטוש ↔ קפאון</text>
+        <!-- Center label -->
+        <text x="170" y="165" text-anchor="middle" fill="#c8a96e" font-family="Syne,sans-serif" font-size="15" font-weight="bold">חשיפה</text>
+        <text x="170" y="183" text-anchor="middle" fill="#666" font-size="11">EV = const</text>
+        <!-- Dots -->
+        <circle cx="170" cy="24" r="5" fill="#c8a96e"/>
+        <circle cx="320" cy="250" r="5" fill="#e87a5a"/>
+        <circle cx="20" cy="250" r="5" fill="#6090d8"/>
+      </svg>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- EFFECT CARDS -->
+  <div class="section">
+    <div class="section-label">יתרונות ומחירים</div>
+    <h2>לכל פרמטר יש מחיר</h2>
+    <p>חשיפה נכונה אפשר להשיג בדרכים שונות — אבל לכל בחירה יש תוצאה לא רק בכמות האור.</p>
+
+    <div class="effect-grid">
+      <div class="effect-card">
+        <div class="effect-card-header">
+          <div class="effect-dot" style="background:var(--iso-color)"></div>
+          <div class="effect-name">ISO</div>
+        </div>
+        <div class="effect-desc">מגביר את רגישות החיישן לאור. מאפשר לצלם בחשכה בלי לשנות את שאר הפרמטרים.</div>
+        <div class="effect-tradeoff">⚠ ISO גבוה = רעש (גרעיניות דיגיטלית) בעיקר בצללים</div>
+      </div>
+
+      <div class="effect-card">
+        <div class="effect-card-header">
+          <div class="effect-dot" style="background:var(--shutter-color)"></div>
+          <div class="effect-name">תריס</div>
+        </div>
+        <div class="effect-desc">קובע כמה זמן החיישן חשוף לאור. תריס מהיר מקפיא תנועה; איטי יוצר טשטוש.</div>
+        <div class="effect-tradeoff">⚠ תריס איטי מחייב חצובה. מתחת ל-1/60 — קשה להחזיק יציב</div>
+      </div>
+
+      <div class="effect-card">
+        <div class="effect-card-header">
+          <div class="effect-dot" style="background:var(--aperture-color)"></div>
+          <div class="effect-name">צמצם</div>
+        </div>
+        <div class="effect-desc">גודל פתח העדשה. f קטן = פתח גדול = יותר אור + עומק שדה רדוד (בוקה).</div>
+        <div class="effect-tradeoff">⚠ f גדול (f/16) = פחות בוקה אבל נדרש יותר אור. f קטן (f/1.4) = בוקה חזק</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- STOPS EXPLAINER -->
+  <div class="section">
+    <div class="section-label">שפת הצלמים</div>
+    <h2>מהו "סטופ" (Stop)?</h2>
+    <p>צלמים מדברים ב<strong>סטופים</strong> — יחידת מדידה שאומרת "כפל או חלק את האור ב-2".</p>
+    <p>כל הגדלה של ISO בפקטור 2 (למשל 400→800) = סטופ אחד יותר אור. אותו הדבר לתריס ולצמצם.</p>
+
+    <div class="infographic-wrap">
+      <div class="stop-diagram">
+        <div class="stop-row">
+          <div class="stop-label">ISO 100</div>
+          <div class="stop-bar-wrap">
+            <div class="stop-bar" style="width:12%;background:#444">x1</div>
+          </div>
+        </div>
+        <div class="stop-row">
+          <div class="stop-label">ISO 200</div>
+          <div class="stop-bar-wrap">
+            <div class="stop-bar" style="width:24%;background:#554">x2</div>
+          </div>
+        </div>
+        <div class="stop-row">
+          <div class="stop-label">ISO 400</div>
+          <div class="stop-bar-wrap">
+            <div class="stop-bar" style="width:37%;background:#665">x4</div>
+          </div>
+        </div>
+        <div class="stop-row">
+          <div class="stop-label">ISO 800</div>
+          <div class="stop-bar-wrap">
+            <div class="stop-bar" style="width:52%;background:#776">x8</div>
+          </div>
+        </div>
+        <div class="stop-row">
+          <div class="stop-label">ISO 1600</div>
+          <div class="stop-bar-wrap">
+            <div class="stop-bar" style="width:67%;background:#c8a96e">x16</div>
+          </div>
+        </div>
+        <div class="stop-row">
+          <div class="stop-label">ISO 3200</div>
+          <div class="stop-bar-wrap">
+            <div class="stop-bar" style="width:83%;background:#e0b870">x32</div>
+          </div>
+        </div>
+        <div class="stop-row">
+          <div class="stop-label">ISO 6400</div>
+          <div class="stop-bar-wrap">
+            <div class="stop-bar" style="width:100%;background:#f0ca80">x64</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p>כל שורה כאן = סטופ אחד. כל סטופ = כפל ב-2. שים לב שה"קפיצה" האחרונה (מ-3200 ל-6400) נותנת פי 2 אור בדיוק כמו הראשונה (מ-100 ל-200) — אבל שם זה כמעט לא ניכר, ופה זה שינוי עצום.</p>
+  </div>
+
+  <hr class="divider">
+
+  <!-- SHOOTING MODES -->
+  <div class="section">
+    <div class="section-label">מצבי צילום</div>
+    <h2>A, S, P, M — מה כל מצב עושה?</h2>
+    <p>הדיאל שעל גוף המצלמה מחליט מי שולט על אילו פרמטרים:</p>
+
+    <div class="effect-grid" style="grid-template-columns: 1fr 1fr;">
+      <div class="effect-card">
+        <div class="effect-card-header">
+          <div class="effect-dot" style="background:#6090d8"></div>
+          <div class="effect-name">A / Av — עדיפות צמצם</div>
+        </div>
+        <div class="effect-desc">אתה קובע את ה-f, המצלמה בוחרת את מהירות התריס. מצב מועדף לפורטרט ונוף.</div>
+      </div>
+      <div class="effect-card">
+        <div class="effect-card-header">
+          <div class="effect-dot" style="background:#5dbf8a"></div>
+          <div class="effect-name">S / Tv — עדיפות תריס</div>
+        </div>
+        <div class="effect-desc">אתה קובע את מהירות התריס, המצלמה בוחרת צמצם. מצוין לספורט ותנועה.</div>
+      </div>
+      <div class="effect-card">
+        <div class="effect-card-header">
+          <div class="effect-dot" style="background:#888"></div>
+          <div class="effect-name">P — תוכנית</div>
+        </div>
+        <div class="effect-desc">המצלמה בוחרת הכל. אתה יכול "להסיט" את הצמדה. טוב להתחלה מהירה.</div>
+      </div>
+      <div class="effect-card">
+        <div class="effect-card-header">
+          <div class="effect-dot" style="background:#c8a96e"></div>
+          <div class="effect-name">M — ידני</div>
+        </div>
+        <div class="effect-desc">אתה שולט על הכל. הקושי גדול יותר, אבל התוצאות צפויות לחלוטין. מומלץ ללמוד.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="nav-prev">
+  <a href="/camera/">← חזרה לבית ספר לצילום</a>
+</div>
+
+<script>
+const isoVals = [100, 200, 400, 800, 1600, 3200, 6400];
+const shutterVals = ['1/1000','1/500','1/250','1/125','1/60','1/30','1/15','1/8'];
+const apertureVals = ['f/1.4','f/2','f/2.8','f/5.6','f/8','f/11','f/16'];
+// EV contributions (relative, centered at defaults: ISO 400=2, shutter 1/125=4->index 3, aperture f/5.6=3)
+const isoEV  = [0,1,2,3,4,5,6];         // more ISO = more light
+const shutEV = [-3,-2,-1,0,1,2,3,4];   // slower shutter = more light
+const aperEV = [5,4,3,2,1,0,-1];        // smaller f = more light (f/1.4 is most open)
+
+const canvas = document.getElementById('simCanvas');
+const ctx = canvas.getContext('2d');
+
+let baseImg = null;
+const img = new Image();
+img.crossOrigin = 'anonymous';
+img.src = '/assets/img/camera/sample-landscape.jpg';
+img.onerror = () => { baseImg = null; drawFallback(); };
+img.onload = () => { baseImg = img; redraw(); };
+
+function drawFallback() {
+  const w = canvas.width, h = canvas.height;
+  ctx.fillStyle = '#1a1a1a';
+  ctx.fillRect(0, 0, w, h);
+  // Draw a simple landscape scene
+  const grad = ctx.createLinearGradient(0, 0, 0, h);
+  grad.addColorStop(0, '#0a0a1a');
+  grad.addColorStop(0.5, '#1a2a4a');
+  grad.addColorStop(1, '#0a1a0a');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, w, h);
+  // Moon/sun
+  ctx.beginPath();
+  ctx.arc(w*0.7, h*0.25, 30, 0, Math.PI*2);
+  ctx.fillStyle = '#fffbe0';
+  ctx.fill();
+  // Mountains
+  ctx.beginPath();
+  ctx.moveTo(0, h); ctx.lineTo(w*0.2, h*0.45); ctx.lineTo(w*0.4, h*0.65);
+  ctx.lineTo(w*0.55, h*0.38); ctx.lineTo(w*0.75, h*0.6);
+  ctx.lineTo(w, h*0.42); ctx.lineTo(w, h); ctx.closePath();
+  ctx.fillStyle = '#1a2a1a';
+  ctx.fill();
+}
+
+function resizeCanvas() {
+  const rect = canvas.parentElement.getBoundingClientRect();
+  canvas.width = rect.width || 640;
+  canvas.height = canvas.width * 9/16;
+  redraw();
+}
+
+function getEV() {
+  const i = parseInt(document.getElementById('isoSlider').value);
+  const s = parseInt(document.getElementById('shutterSlider').value);
+  const a = parseInt(document.getElementById('apertureSlider').value);
+  return isoEV[i] + shutEV[s] + aperEV[a];
+}
+
+function redraw() {
+  const w = canvas.width, h = canvas.height;
+  if (!w || !h) return;
+
+  const i = parseInt(document.getElementById('isoSlider').value);
+  const s = parseInt(document.getElementById('shutterSlider').value);
+  const a = parseInt(document.getElementById('apertureSlider').value);
+  const ev = getEV();
+
+  // Base reference EV (ISO 400, 1/125, f/5.6) = isoEV[2]+shutEV[3]+aperEV[3] = 2+0+2 = 4
+  const refEV = 4;
+  const evDiff = ev - refEV;
+
+  // Brightness factor: 2^evDiff
+  const brightFactor = Math.pow(2, evDiff);
+
+  ctx.clearRect(0, 0, w, h);
+
+  if (baseImg) {
+    ctx.drawImage(baseImg, 0, 0, w, h);
+  } else {
+    drawFallback();
+  }
+
+  // Apply brightness overlay
+  if (brightFactor > 1) {
+    // Over-exposed: white overlay
+    const alpha = Math.min(0.9, (brightFactor - 1) / 6);
+    ctx.fillStyle = `rgba(255,255,255,${alpha})`;
+    ctx.fillRect(0, 0, w, h);
+  } else if (brightFactor < 1) {
+    // Under-exposed: dark overlay
+    const alpha = Math.min(0.9, (1 - brightFactor) / 1.2);
+    ctx.fillStyle = `rgba(0,0,0,${alpha})`;
+    ctx.fillRect(0, 0, w, h);
+  }
+
+  // Noise overlay for high ISO
+  if (i >= 4) {
+    const noiseStrength = (i - 3) * 0.06;
+    addNoise(ctx, w, h, noiseStrength);
+  }
+
+  // Motion blur indicator for slow shutter
+  if (s >= 6) {
+    const blurAlpha = (s - 5) * 0.08;
+    addMotionBlurEffect(ctx, w, h, blurAlpha);
+  }
+
+  // Update labels
+  const noiseLabel = document.getElementById('noiseLabel');
+  const blurLabel = document.getElementById('blurLabel');
+  noiseLabel.style.opacity = i >= 4 ? '1' : '0';
+  blurLabel.style.opacity = s >= 6 ? '1' : '0';
+
+  // Update EV badge
+  const evRelative = ev - refEV;
+  const badge = document.getElementById('evBadge');
+  const note = document.getElementById('evNote');
+  badge.textContent = evRelative === 0 ? 'EV 0' : (evRelative > 0 ? `EV +${evRelative}` : `EV ${evRelative}`);
+
+  if (evRelative >= 2) note.textContent = 'חשוף מדי — לבן בהיר';
+  else if (evRelative === 1) note.textContent = 'מעט חשוף מדי';
+  else if (evRelative === 0) note.textContent = 'חשיפה תקינה ✓';
+  else if (evRelative === -1) note.textContent = 'מעט חשיפת חסר';
+  else note.textContent = 'חשיפת חסר — חשוך';
+}
+
+function addNoise(ctx, w, h, strength) {
+  const imageData = ctx.getImageData(0, 0, w, h);
+  const data = imageData.data;
+  for (let i = 0; i < data.length; i += 4) {
+    const n = (Math.random() - 0.5) * strength * 255;
+    data[i]   = Math.max(0, Math.min(255, data[i]   + n));
+    data[i+1] = Math.max(0, Math.min(255, data[i+1] + n * 0.7));
+    data[i+2] = Math.max(0, Math.min(255, data[i+2] + n * 0.5));
+  }
+  ctx.putImageData(imageData, 0, 0);
+}
+
+function addMotionBlurEffect(ctx, w, h, alpha) {
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  for (let dx = 1; dx <= 8; dx++) {
+    ctx.drawImage(canvas, dx * 3, 0, w, h, 0, 0, w, h);
+  }
+  ctx.restore();
+}
+
+function updateSliders() {
+  const i = parseInt(document.getElementById('isoSlider').value);
+  const s = parseInt(document.getElementById('shutterSlider').value);
+  const a = parseInt(document.getElementById('apertureSlider').value);
+
+  document.getElementById('isoVal').textContent = `ISO ${isoVals[i]}`;
+  document.getElementById('shutterVal').textContent = shutterVals[s];
+  document.getElementById('apertureVal').textContent = apertureVals[a];
+
+  redraw();
+}
+
+document.getElementById('isoSlider').addEventListener('input', updateSliders);
+document.getElementById('shutterSlider').addEventListener('input', updateSliders);
+document.getElementById('apertureSlider').addEventListener('input', updateSliders);
+
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+updateSliders();
+</script>
+</body>
+</html>
