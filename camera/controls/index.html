@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>כפתורי מצלמה — Auto עד Manual | בית ספר לצילום | Amit Photos</title>
+<meta name="description" content="מצב Auto עד Manual — מה כל כפתור עושה, למה כדאי לעבור ל-M, ואיך לשלוט על המצלמה בפועל.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #0a0a0a; --surface: #111; --surface2: #181818; --border: #222;
+  --accent: #c8a96e; --text: #f0ede8; --muted: #888;
+}
+body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--text);
+  direction: rtl; min-height: 100vh; padding-bottom: 5rem; }
+
+.breadcrumb { font-size: .8rem; color: var(--muted); padding: 1.25rem 1.5rem 0;
+  max-width: 780px; margin: 0 auto; }
+.breadcrumb a { color: var(--accent); text-decoration: none; }
+
+.hero { text-align: center; padding: 2.5rem 1.5rem 1.5rem; }
+.hero-badge { display: inline-block; font-size: .72rem;
+  background: rgba(200,169,110,.12); border: 1px solid rgba(200,169,110,.3);
+  color: var(--accent); border-radius: 20px; padding: .3rem .8rem; margin-bottom: .75rem; }
+.hero h1 { font-family: 'Syne', sans-serif; font-size: 2rem; color: var(--accent); margin-bottom: .5rem; }
+.hero p { color: var(--muted); font-size: .95rem; max-width: 500px; margin: 0 auto; line-height: 1.65; }
+
+.article { max-width: 780px; margin: 0 auto; padding: 0 1.25rem; }
+.section { margin-bottom: 3rem; }
+.section-label { font-size: .72rem; color: var(--accent); text-transform: uppercase;
+  letter-spacing: .1em; margin-bottom: .5rem; }
+.section h2 { font-family: 'Syne', sans-serif; font-size: 1.4rem; color: var(--text); margin-bottom: 1rem; }
+.section p { color: var(--muted); line-height: 1.75; margin-bottom: .85rem; font-size: .95rem; }
+.section p strong { color: var(--text); }
+.divider { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+
+/* DIAL */
+.lab { background: var(--surface); border: 1px solid rgba(200,169,110,.3);
+  border-radius: 18px; padding: 1.5rem; margin: 1.5rem 0; }
+.lab-title { font-family: 'Syne', sans-serif; font-size: 1.05rem; color: var(--accent);
+  text-align: center; margin-bottom: 1.25rem; }
+
+.dial-wrap { display: flex; flex-direction: column; align-items: center; gap: 1.25rem; }
+.dial-canvas-wrap { width: 100%; max-width: 360px; }
+.dial-canvas { width: 100%; display: block; }
+
+.dial-info { background: var(--surface2); border: 1px solid var(--border); border-radius: 12px;
+  padding: 1.1rem 1.25rem; width: 100%; }
+.dial-mode-name { font-family: 'Syne', sans-serif; font-size: 1.15rem; color: var(--accent); margin-bottom: .25rem; }
+.dial-mode-sub { font-size: .8rem; color: var(--muted); margin-bottom: .75rem; }
+.dial-params { display: flex; gap: .75rem; flex-wrap: wrap; margin-bottom: .75rem; }
+.param-pill { padding: .3rem .7rem; border-radius: 20px; font-size: .78rem; font-weight: 700; }
+.param-you { background: rgba(200,169,110,.15); border: 1px solid rgba(200,169,110,.4); color: var(--accent); }
+.param-cam { background: rgba(136,136,136,.12); border: 1px solid #333; color: var(--muted); }
+.dial-tip { font-size: .82rem; color: var(--muted); line-height: 1.6; }
+.dial-tip strong { color: var(--text); }
+
+/* BUTTON MAP */
+.button-map { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; margin: 1.5rem 0; }
+@media (max-width: 480px) { .button-map { grid-template-columns: 1fr; } }
+.btn-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 12px;
+  padding: 1rem 1.1rem; display: flex; gap: .75rem; align-items: flex-start; }
+.btn-icon { font-size: 1.5rem; line-height: 1; flex-shrink: 0; }
+.btn-info { flex: 1; }
+.btn-name { font-family: 'Syne', sans-serif; font-size: .9rem; color: var(--accent); margin-bottom: .3rem; }
+.btn-desc { font-size: .8rem; color: var(--muted); line-height: 1.5; }
+.btn-pro { font-size: .75rem; color: #5dbf8a; margin-top: .3rem; }
+
+/* FOCUS MODES */
+.focus-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: .75rem; margin: 1.5rem 0; }
+@media (max-width: 480px) { .focus-grid { grid-template-columns: 1fr; } }
+.focus-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 1rem; text-align: center; }
+.focus-icon { font-size: 1.8rem; margin-bottom: .4rem; }
+.focus-name { font-family: 'Syne', sans-serif; font-size: .9rem; color: var(--accent); margin-bottom: .35rem; }
+.focus-desc { font-size: .78rem; color: var(--muted); line-height: 1.5; }
+.focus-when { font-size: .72rem; color: #5dbf8a; margin-top: .35rem; }
+
+.nav-prev { text-align: center; padding: 1.5rem; }
+.nav-prev a { color: var(--accent); font-size: .85rem; text-decoration: none; }
+</style>
+<script src="/assets/js/nav.js" defer></script>
+</head>
+<body>
+
+<div class="breadcrumb">
+  <a href="/camera/">למד לצלם</a> ← כפתורי מצלמה
+</div>
+
+<div class="hero">
+  <div class="hero-badge">🎛 כפתורי מצלמה</div>
+  <h1>מ-Auto ל-Manual</h1>
+  <p>מה כל כפתור עושה, למה כדאי לצאת מ-Auto, ואיך לשלוט על המצלמה במקום שהיא תשלוט עליך</p>
+</div>
+
+<div class="article">
+
+  <!-- DIAL INTERACTIVE -->
+  <div class="section">
+    <div class="lab">
+      <div class="lab-title">🎚️ דיאל מצבי צילום — לחץ על מצב לפרטים</div>
+
+      <div class="dial-wrap">
+        <div class="dial-canvas-wrap">
+          <canvas class="dial-canvas" id="dialCanvas" height="200"></canvas>
+        </div>
+
+        <div class="dial-info" id="dialInfo">
+          <div class="dial-mode-name" id="dialModeName">Auto — אוטומטי מלא</div>
+          <div class="dial-mode-sub" id="dialModeSub">המצלמה קובעת הכל</div>
+          <div class="dial-params" id="dialParams">
+            <span class="param-pill param-cam">ISO — מצלמה</span>
+            <span class="param-pill param-cam">תריס — מצלמה</span>
+            <span class="param-pill param-cam">צמצם — מצלמה</span>
+          </div>
+          <div class="dial-tip" id="dialTip">מצב האוטומטי עובד טוב בתנאים רגילים, אבל המצלמה לא יודעת <strong>מה חשוב לך</strong> בתמונה. היא תנסה להיות "בסדר" — לא מרהיבה.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- WHY MANUAL -->
+  <div class="section">
+    <div class="section-label">למה M?</div>
+    <h2>למה כדאי ללמוד מצב Manual?</h2>
+    <p>המצב האוטומטי נועד כדי "לא לפספס רגעים". אבל כשתרצה <strong>תמונה שנראית כמו שראית אותה בראש</strong> — תצטרך לשלוט.</p>
+    <p>בסטודיו, בזריחה, בצילום ספורט לילי — כל מצב שבו האור קבוע ויש לך זמן לחשוב, M נותן לך תמונות שהמצלמה לא הייתה מגיעה אליהן לבד.</p>
+    <p><strong>איך ללמוד M בצעד אחד:</strong> בצה"ל לומדים לירות לפני שנותנים רישיון נהיגה. קבע ISO ותריס, ושחק רק עם הצמצם. אחרי שבוע — תתחיל להרגיש את הקשר.</p>
+  </div>
+
+  <hr class="divider">
+
+  <!-- KEY BUTTONS -->
+  <div class="section">
+    <div class="section-label">מפת הכפתורים</div>
+    <h2>הכפתורים שכדאי להכיר</h2>
+
+    <div class="button-map">
+      <div class="btn-card">
+        <div class="btn-icon">☀️</div>
+        <div class="btn-info">
+          <div class="btn-name">פיצוי חשיפה (EV ±)</div>
+          <div class="btn-desc">מאפשר להבהיר/להכהות את התמונה ב-Auto/A/S מבלי לשנות מצב. הכפתור הכי שימושי שיש.</div>
+          <div class="btn-pro">✦ +1 EV = הבהר את הרקע. -1 EV = הכהה לפני שגורסים לצללים.</div>
+        </div>
+      </div>
+
+      <div class="btn-card">
+        <div class="btn-icon">🎯</div>
+        <div class="btn-info">
+          <div class="btn-name">AF / MF — מיקוד</div>
+          <div class="btn-desc">מעבר בין מיקוד אוטומטי (AF) לידני (MF). בצילום מאקרו, ערפל, או כשהמצלמה "בורחת" — עבור ל-MF.</div>
+          <div class="btn-pro">✦ "Back-button focus" — הפרד מיקוד מצילום לאצבע אחרת.</div>
+        </div>
+      </div>
+
+      <div class="btn-card">
+        <div class="btn-icon">📏</div>
+        <div class="btn-info">
+          <div class="btn-name">מדידת חשיפה (Metering)</div>
+          <div class="btn-desc">קובע איפה המצלמה "מודדת" אור. Matrix/Evaluative מודד את כל הפריים. Spot מודד נקודה אחת בלבד.</div>
+          <div class="btn-pro">✦ Spot Metering על הפנים = פורטרט מושלם גם ברקע בהיר.</div>
+        </div>
+      </div>
+
+      <div class="btn-card">
+        <div class="btn-icon">⚡</div>
+        <div class="btn-info">
+          <div class="btn-name">פלאש — כפתור סינכרון</div>
+          <div class="btn-desc">השלמת אור בפורטרט חיצוני ("fill flash") אפילו ביום. מונע צללים קשים בצילום פנים.</div>
+          <div class="btn-pro">✦ Flash -1EV = פלאש שלא נראה כמו פלאש. טבעי לחלוטין.</div>
+        </div>
+      </div>
+
+      <div class="btn-card">
+        <div class="btn-icon">🔢</div>
+        <div class="btn-info">
+          <div class="btn-name">ISO — רגישות ידנית</div>
+          <div class="btn-desc">ISO Auto עובד בצורה מפתיעה טובה ב-2024. אבל תגדיר לו "ISO Auto Max" לפי המצלמה שלך.</div>
+          <div class="btn-pro">✦ תגדיר ISO Max = 1600 לרוב המצלמות, 6400 לגופים מלאים חדשים.</div>
+        </div>
+      </div>
+
+      <div class="btn-card">
+        <div class="btn-icon">🖼</div>
+        <div class="btn-info">
+          <div class="btn-name">RAW / JPEG</div>
+          <div class="btn-desc">RAW = קובץ גולמי לעריכה. JPEG = דחוס, סגור, קטן. לא כפתור אחד — בתפריט, אבל חייבים לדעת.</div>
+          <div class="btn-pro">✦ צלם RAW+JPEG תמיד — ה-JPEG לשיתוף מהיר, ה-RAW לעריכה.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- FOCUS MODES -->
+  <div class="section">
+    <div class="section-label">מיקוד</div>
+    <h2>מצבי מיקוד — AF-S, AF-C, MF</h2>
+
+    <div class="focus-grid">
+      <div class="focus-card">
+        <div class="focus-icon">📍</div>
+        <div class="focus-name">AF-S / One-Shot</div>
+        <div class="focus-desc">מיקוד חד-פעמי — מנעל ולא מניח. אידיאלי לנושאים שלא זזים.</div>
+        <div class="focus-when">מתי: פורטרט, נוף, ארכיטקטורה</div>
+      </div>
+      <div class="focus-card">
+        <div class="focus-icon">🎯</div>
+        <div class="focus-name">AF-C / AI Servo</div>
+        <div class="focus-desc">מיקוד מתמשך — עוקב אחרי הנושא בזמן אמת כל עוד הכפתור לחוץ.</div>
+        <div class="focus-when">מתי: ספורט, בעלי חיים, ילדים</div>
+      </div>
+      <div class="focus-card">
+        <div class="focus-icon">🔧</div>
+        <div class="focus-name">MF — ידני</div>
+        <div class="focus-desc">אתה מסובב את טבעת המיקוד בעצמך. מדויק, איטי, ושולט לחלוטין.</div>
+        <div class="focus-when">מתי: מאקרו, ערפל, אסטרו</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- QUICK START -->
+  <div class="section">
+    <div class="section-label">התחלה מהירה</div>
+    <h2>הגדרות ברירת מחדל לצלם מתחיל</h2>
+    <p>אם אתה לא יודע מה לשנות — הגדרות האלה יעבדו טוב ב-90% מהמצבים:</p>
+
+    <div class="button-map" style="grid-template-columns:1fr">
+      <div class="btn-card">
+        <div class="btn-icon">1️⃣</div>
+        <div class="btn-info">
+          <div class="btn-name">מצב: Aperture Priority (A/Av)</div>
+          <div class="btn-desc">אתה שולט על הבוקה, המצלמה שולטת על הבהירות הכללית. הכי נוח ללמוד איתו.</div>
+        </div>
+      </div>
+      <div class="btn-card">
+        <div class="btn-icon">2️⃣</div>
+        <div class="btn-info">
+          <div class="btn-name">ISO: Auto (Max 1600)</div>
+          <div class="btn-desc">תן למצלמה לנהל ISO כשאתה לומד. רק הגדר מקסימום כדי לא לקבל רעש קיצוני.</div>
+        </div>
+      </div>
+      <div class="btn-card">
+        <div class="btn-icon">3️⃣</div>
+        <div class="btn-info">
+          <div class="btn-name">פיצוי חשיפה: תמיד זמין</div>
+          <div class="btn-desc">קח רגע ללמוד איפה כפתור ה-EV± על המצלמה שלך. תשתמש בו בכל צילום.</div>
+        </div>
+      </div>
+      <div class="btn-card">
+        <div class="btn-icon">4️⃣</div>
+        <div class="btn-info">
+          <div class="btn-name">פורמט: RAW + JPEG</div>
+          <div class="btn-desc">ה-JPEG לשיתוף מהיר, ה-RAW לעריכה מאוחר יותר כשתהיה מוכן.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="nav-prev">
+  <a href="/camera/">← חזרה לבית ספר לצילום</a>
+</div>
+
+<script>
+const modes = [
+  {
+    key: 'AUTO', label: 'Auto',
+    name: 'Auto — אוטומטי מלא',
+    sub: 'המצלמה קובעת הכל',
+    params: [
+      {label:'ISO', who:'cam'}, {label:'תריס', who:'cam'}, {label:'צמצם', who:'cam'}
+    ],
+    tip: 'מצב האוטומטי עובד טוב בתנאים רגילים, אבל המצלמה לא יודעת <strong>מה חשוב לך</strong> בתמונה. היא תנסה להיות "בסדר" — לא מרהיבה.',
+    color: '#888', angle: -110
+  },
+  {
+    key: 'P', label: 'P',
+    name: 'P — תוכנית',
+    sub: 'המצלמה בוחרת, אתה יכול להסיט',
+    params: [
+      {label:'ISO', who:'you'}, {label:'תריס', who:'cam'}, {label:'צמצם', who:'cam'}
+    ],
+    tip: 'בדומה ל-Auto, אבל אתה שולט על ISO ויכול "להסיט" את הצמדה של תריס/צמצם. <strong>טוב להתחלה מהירה</strong> של מצבים מיוחדים.',
+    color: '#5dbf8a', angle: -60
+  },
+  {
+    key: 'A', label: 'A / Av',
+    name: 'A / Av — עדיפות צמצם',
+    sub: 'אתה שולט על הבוקה',
+    params: [
+      {label:'ISO', who:'you'}, {label:'תריס', who:'cam'}, {label:'צמצם — אתה', who:'you'}
+    ],
+    tip: 'אתה קובע את h-f (עומק שדה / בוקה), המצלמה מחשבת תריס. <strong>המצב הנפוץ ביותר</strong> — נוף, פורטרט, מאקרו.',
+    color: '#6090d8', angle: -10
+  },
+  {
+    key: 'S', label: 'S / Tv',
+    name: 'S / Tv — עדיפות תריס',
+    sub: 'אתה שולט על התנועה',
+    params: [
+      {label:'ISO', who:'you'}, {label:'תריס — אתה', who:'you'}, {label:'צמצם', who:'cam'}
+    ],
+    tip: 'אתה קובע כמה מהיר/איטי התריס, המצלמה בוחרת צמצם. <strong>מצוין לספורט</strong> (תריס מהיר) או צילום מים/שביל אור (תריס איטי).',
+    color: '#e87a5a', angle: 40
+  },
+  {
+    key: 'M', label: 'M',
+    name: 'M — ידני מלא',
+    sub: 'אתה שולט על הכל',
+    params: [
+      {label:'ISO — אתה', who:'you'}, {label:'תריס — אתה', who:'you'}, {label:'צמצם — אתה', who:'you'}
+    ],
+    tip: 'שליטה מלאה. <strong>הקשה ביותר, המדויק ביותר.</strong> כשהאור קבוע (סטודיו, שקיעה ספציפית), M נותן תוצאות שה-Auto לא יגיע אליהן לעולם.',
+    color: '#c8a96e', angle: 90
+  }
+];
+
+const canvas = document.getElementById('dialCanvas');
+const ctx = canvas.getContext('2d');
+let selectedMode = 0;
+
+function resizeDial() {
+  const w = canvas.parentElement.getBoundingClientRect().width || 360;
+  canvas.width = w;
+  canvas.height = w * 0.56;
+  drawDial();
+}
+
+function drawDial() {
+  const w = canvas.width, h = canvas.height;
+  ctx.clearRect(0,0,w,h);
+  const cx = w/2, cy = h*0.6, r = Math.min(w*0.42, h*0.8);
+
+  // Dial body
+  const grad = ctx.createRadialGradient(cx, cy, r*0.3, cx, cy, r);
+  grad.addColorStop(0, '#2a2a2a');
+  grad.addColorStop(1, '#111');
+  ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI*2);
+  ctx.fillStyle = grad; ctx.fill();
+  ctx.strokeStyle = '#333'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI*2); ctx.stroke();
+
+  // Inner circle
+  ctx.beginPath(); ctx.arc(cx, cy, r*0.3, 0, Math.PI*2);
+  ctx.fillStyle = '#1a1a1a'; ctx.fill();
+  ctx.strokeStyle = '#444'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.arc(cx, cy, r*0.3, 0, Math.PI*2); ctx.stroke();
+
+  // Mode marks
+  modes.forEach((m, i) => {
+    const angleRad = (m.angle - 90) * Math.PI / 180;
+    const px = cx + Math.cos(angleRad) * r * 0.68;
+    const py = cy + Math.sin(angleRad) * r * 0.68;
+    const isSelected = i === selectedMode;
+
+    // Circle mark
+    ctx.beginPath(); ctx.arc(px, py, isSelected ? 14 : 10, 0, Math.PI*2);
+    ctx.fillStyle = isSelected ? m.color : '#333';
+    ctx.fill();
+    if (isSelected) {
+      ctx.strokeStyle = m.color; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(px, py, 18, 0, Math.PI*2); ctx.stroke();
+    }
+
+    // Label
+    ctx.fillStyle = isSelected ? '#000' : m.color;
+    ctx.font = `bold ${isSelected ? 9 : 8}px Syne,sans-serif`;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(m.label, px, py);
+
+    // Tick lines
+    const tickOuter = cx + Math.cos(angleRad) * r * 0.96;
+    const tickInner = cx + Math.cos(angleRad) * r * 0.84;
+    const tickOuterY = cy + Math.sin(angleRad) * r * 0.96;
+    const tickInnerY = cy + Math.sin(angleRad) * r * 0.84;
+    ctx.strokeStyle = isSelected ? m.color : '#444';
+    ctx.lineWidth = isSelected ? 2 : 1;
+    ctx.beginPath(); ctx.moveTo(tickOuter, tickOuterY); ctx.lineTo(tickInner, tickInnerY); ctx.stroke();
+  });
+
+  // Center dot
+  ctx.beginPath(); ctx.arc(cx, cy, 5, 0, Math.PI*2);
+  ctx.fillStyle = '#555'; ctx.fill();
+
+  // Pointer arrow at top
+  const sel = modes[selectedMode];
+  const arrowAngle = (sel.angle - 90) * Math.PI / 180;
+  const arrowTip = { x: cx + Math.cos(arrowAngle) * r * 0.35, y: cy + Math.sin(arrowAngle) * r * 0.35 };
+  ctx.strokeStyle = sel.color; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(arrowTip.x, arrowTip.y); ctx.stroke();
+  ctx.beginPath(); ctx.arc(arrowTip.x, arrowTip.y, 4, 0, Math.PI*2);
+  ctx.fillStyle = sel.color; ctx.fill();
+}
+
+function updateInfo() {
+  const m = modes[selectedMode];
+  document.getElementById('dialModeName').textContent = m.name;
+  document.getElementById('dialModeSub').textContent = m.sub;
+  document.getElementById('dialTip').innerHTML = m.tip;
+  const params = document.getElementById('dialParams');
+  params.innerHTML = m.params.map(p =>
+    `<span class="param-pill param-${p.who}">${p.label}</span>`
+  ).join('');
+}
+
+canvas.addEventListener('click', (e) => {
+  const rect = canvas.getBoundingClientRect();
+  const mx = (e.clientX - rect.left) * (canvas.width / rect.width);
+  const my = (e.clientY - rect.top) * (canvas.height / rect.height);
+  const cx = canvas.width/2, cy = canvas.height*0.6;
+  const r = Math.min(canvas.width*0.42, canvas.height*0.8);
+
+  let closest = -1, minDist = 1e9;
+  modes.forEach((m, i) => {
+    const angleRad = (m.angle - 90) * Math.PI / 180;
+    const px = cx + Math.cos(angleRad) * r * 0.68;
+    const py = cy + Math.sin(angleRad) * r * 0.68;
+    const d = Math.hypot(mx-px, my-py);
+    if (d < minDist) { minDist = d; closest = i; }
+  });
+
+  if (closest >= 0 && minDist < r * 0.28) {
+    selectedMode = closest;
+    drawDial();
+    updateInfo();
+  }
+});
+
+window.addEventListener('resize', resizeDial);
+resizeDial();
+updateInfo();
+</script>
+</body>
+</html>
