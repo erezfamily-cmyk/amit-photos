@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>פילטרים למצלמה — בית ספר לצילום | Amit Photos</title>
+<meta name="description" content="UV, ND, CPL, GND, Warm, IR — מה כל פילטר עושה לתמונה, ומתי לצרף אותו לעדשה. כולל דמו אינטראקטיבי.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #0a0a0a; --surface: #111; --surface2: #181818; --border: #222;
+  --accent: #c8a96e; --text: #f0ede8; --muted: #888; --green: #5dbf8a; --blue: #6090d8;
+}
+body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--text);
+  direction: rtl; min-height: 100vh; padding-bottom: 5rem; }
+
+.breadcrumb { font-size: .8rem; color: var(--muted); padding: 1.25rem 1.5rem 0;
+  max-width: 780px; margin: 0 auto; }
+.breadcrumb a { color: var(--accent); text-decoration: none; }
+
+.hero { text-align: center; padding: 2.5rem 1.5rem 1.5rem; }
+.hero-badge { display: inline-block; font-size: .72rem;
+  background: rgba(200,169,110,.12); border: 1px solid rgba(200,169,110,.3);
+  color: var(--accent); border-radius: 20px; padding: .3rem .8rem; margin-bottom: .75rem; }
+.hero h1 { font-family: 'Syne', sans-serif; font-size: 2rem; color: var(--accent); margin-bottom: .5rem; }
+.hero p { color: var(--muted); font-size: .95rem; max-width: 500px; margin: 0 auto; line-height: 1.65; }
+
+.article { max-width: 780px; margin: 0 auto; padding: 0 1.25rem; }
+.section { margin-bottom: 3rem; }
+.section-label { font-size: .72rem; color: var(--accent); text-transform: uppercase;
+  letter-spacing: .1em; margin-bottom: .5rem; }
+.section h2 { font-family: 'Syne', sans-serif; font-size: 1.4rem; color: var(--text); margin-bottom: 1rem; }
+.section p { color: var(--muted); line-height: 1.75; margin-bottom: .85rem; font-size: .95rem; }
+.section p strong { color: var(--text); }
+.divider { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+
+/* Infographic */
+.infographic-wrap { background: var(--surface); border: 1px solid var(--border);
+  border-radius: 16px; overflow: hidden; margin: 1.5rem 0; text-align: center; }
+.infographic-wrap img { width: 100%; max-width: 560px; display: block; margin: 0 auto; }
+.infographic-caption { font-size: .78rem; color: var(--muted); padding: .75rem; }
+
+/* ===== INTERACTIVE FILTER LAB ===== */
+.lab { background: var(--surface); border: 1px solid rgba(200,169,110,.3);
+  border-radius: 18px; padding: 1.5rem; margin: 1.5rem 0; }
+.lab-title { font-family: 'Syne', sans-serif; font-size: 1.05rem; color: var(--accent);
+  text-align: center; margin-bottom: 1.25rem; }
+
+.demo-img-wrap {
+  position: relative; border-radius: 12px; overflow: hidden;
+  margin-bottom: 1.25rem; background: #000;
+  max-height: 400px; display: flex; align-items: center; justify-content: center;
+}
+#demo-img {
+  width: 100%; display: block; border-radius: 12px;
+  transition: filter .5s ease;
+  max-height: 400px; object-fit: cover;
+}
+#gnd-overlay {
+  position: absolute; top: 0; left: 0; right: 0; height: 52%;
+  background: linear-gradient(to bottom, rgba(0,0,0,.72) 0%, transparent 100%);
+  pointer-events: none; border-radius: 12px 12px 0 0;
+  opacity: 0; transition: opacity .5s ease;
+}
+#gnd-overlay.active { opacity: 1; }
+
+.before-after {
+  position: absolute; bottom: .75rem; left: .75rem;
+  background: rgba(0,0,0,.65); border: 1px solid rgba(255,255,255,.15);
+  color: #fff; font-size: .75rem; border-radius: 8px;
+  padding: .35rem .75rem; cursor: pointer; backdrop-filter: blur(4px);
+  transition: background .2s;
+}
+.before-after:hover { background: rgba(200,169,110,.4); }
+
+/* Filter selector */
+.filter-selector {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: .6rem;
+  margin-bottom: 1.25rem;
+}
+@media (max-width: 480px) { .filter-selector { grid-template-columns: repeat(3, 1fr); } }
+
+.filter-btn {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 10px; padding: .65rem .4rem; cursor: pointer;
+  text-align: center; transition: border-color .2s, background .2s;
+  display: flex; flex-direction: column; align-items: center; gap: .3rem;
+}
+.filter-btn:hover { border-color: rgba(200,169,110,.4); }
+.filter-btn.active {
+  border-color: var(--accent); background: rgba(200,169,110,.1);
+}
+.filter-btn .f-emoji { font-size: 1.4rem; line-height: 1; }
+.filter-btn .f-label { font-size: .7rem; color: var(--muted); line-height: 1.3; }
+.filter-btn.active .f-label { color: var(--accent); }
+
+/* Filter description panel */
+.filter-desc {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 12px; padding: 1rem 1.25rem; min-height: 72px;
+  display: flex; align-items: flex-start; gap: .75rem;
+}
+.filter-desc-icon { font-size: 1.8rem; flex-shrink: 0; margin-top: .1rem; }
+.filter-desc-text { font-size: .88rem; color: var(--text); line-height: 1.6; }
+.filter-desc-name { font-family: 'Syne', sans-serif; font-size: .95rem;
+  color: var(--accent); margin-bottom: .3rem; }
+
+/* When-to-use grid */
+.usage-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .85rem; margin: 1.25rem 0; }
+@media (max-width: 480px) { .usage-grid { grid-template-columns: 1fr; } }
+.usage-card { background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; padding: 1rem; }
+.usage-name { font-family: 'Syne', sans-serif; font-size: .88rem; color: var(--accent); margin-bottom: .35rem; }
+.usage-when { font-size: .8rem; color: var(--green); margin-bottom: .25rem; font-weight: 600; }
+.usage-skip { font-size: .8rem; color: var(--muted); }
+
+/* Tip / Exercise */
+.tip-box { background: rgba(200,169,110,.08); border: 1px solid rgba(200,169,110,.25);
+  border-radius: 12px; padding: 1.25rem 1.5rem; margin: 1.5rem 0; }
+.tip-label { font-size: .72rem; color: var(--accent); font-weight: 700; letter-spacing: .08em; margin-bottom: .4rem; }
+.tip-box p { font-size: .9rem; color: var(--text); line-height: 1.65; margin: 0; }
+.exercise-box { background: rgba(93,191,138,.07); border: 1px solid rgba(93,191,138,.25);
+  border-radius: 12px; padding: 1.25rem 1.5rem; margin: 1.5rem 0; }
+.exercise-label { font-size: .72rem; color: var(--green); font-weight: 700; letter-spacing: .08em; margin-bottom: .4rem; }
+.exercise-box p { font-size: .9rem; color: var(--text); line-height: 1.65; margin: 0; }
+
+@media (max-width: 540px) { .infographic-wrap img { max-width: 100%; } }
+</style>
+<script src="/assets/js/nav.js" defer></script>
+</head>
+<body>
+
+<div class="breadcrumb"><a href="/camera/">למד לצלם</a> ← פילטרים</div>
+
+<div class="hero">
+  <div class="hero-badge">📷 בית ספר לצילום</div>
+  <h1>🎨 פילטרים למצלמה</h1>
+  <p>זכוכית קטנה שמשנה הכל — כל פילטר פותר בעיה שאי-אפשר לפתור אחרי הצילום. לחץ על פילטר ותראה בזמן אמת מה הוא עושה לתמונה.</p>
+</div>
+
+<div class="article">
+
+  <div class="section">
+    <div class="section-label">אינפוגרפיקה</div>
+    <h2>מפת הפילטרים</h2>
+    <div class="infographic-wrap">
+      <img src="/assets/infographics/filters-infographic.jpg" alt="סוגי פילטרים למצלמה — אינפוגרפיקה" loading="lazy">
+      <div class="infographic-caption">לחץ על פילטר בדמו למטה כדי לראות את האפקט בחיים</div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="section">
+    <div class="section-label">מעבדת פילטרים</div>
+    <h2>ראה בזמן אמת</h2>
+    <p>לחץ על כל פילטר ותראה איך הוא משנה את התמונה. הסימולציה מבוססת CSS ומדויקת לאפקט הויזואלי — לא ל-100%, אבל מספיק כדי להבין את הרעיון.</p>
+
+    <div class="lab">
+      <div class="lab-title">🔬 מעבדת הפילטרים</div>
+
+      <div class="demo-img-wrap">
+        <img id="demo-img"
+          src="https://drive.google.com/thumbnail?id=1cZAEVIRmfezR3uZmFPD_GDYDa8Jxc2gB&sz=w900"
+          alt="תמונת דמו לפילטרים — אגם הרים">
+        <div id="gnd-overlay"></div>
+        <button class="before-after" id="before-after-btn">⟷ ללא פילטר</button>
+      </div>
+
+      <div class="filter-selector" id="filter-selector"></div>
+
+      <div class="filter-desc" id="filter-desc">
+        <div class="filter-desc-icon" id="desc-icon">📷</div>
+        <div>
+          <div class="filter-desc-name" id="desc-name">ללא פילטר</div>
+          <div class="filter-desc-text" id="desc-text">בחר פילטר למעלה כדי לראות את האפקט ולקרוא עליו</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="section">
+    <div class="section-label">מתי להשתמש</div>
+    <h2>פילטר נכון לרגע נכון</h2>
+
+    <div class="usage-grid">
+      <div class="usage-card">
+        <div class="usage-name">🔵 UV</div>
+        <div class="usage-when">✅ תמיד — השאר קבוע</div>
+        <div class="usage-skip">❌ אין סיבה לא להשתמש</div>
+      </div>
+      <div class="usage-card">
+        <div class="usage-name">⬛ ND</div>
+        <div class="usage-when">✅ יום שמשי חזק, מפל מים, מים זורמים, אנשים נעלמים</div>
+        <div class="usage-skip">❌ בלילה או בתאורה חלשה</div>
+      </div>
+      <div class="usage-card">
+        <div class="usage-name">💫 CPL (מקטב)</div>
+        <div class="usage-when">✅ צילום שמיים, מים, חלונות, יער ירוק</div>
+        <div class="usage-skip">❌ בלילה, לא עוזר לפנסים מלאכותיים</div>
+      </div>
+      <div class="usage-card">
+        <div class="usage-name">▓ GND</div>
+        <div class="usage-when">✅ שקיעה/זריחה, נוף עם שמיים בהירים מאוד</div>
+        <div class="usage-skip">❌ כשהאופק לא ישר (עצים, הרים)</div>
+      </div>
+      <div class="usage-card">
+        <div class="usage-name">🌅 Warm</div>
+        <div class="usage-when">✅ פורטרטים, נוף חמים, שעת הזהב מדויקת</div>
+        <div class="usage-skip">❌ כשרוצים קרירות ואווירה ניטרלית</div>
+      </div>
+      <div class="usage-card">
+        <div class="usage-name">🌿 IR</div>
+        <div class="usage-when">✅ אמנות, נוף עם הרבה עלים, שמיים דרמטיים</div>
+        <div class="usage-skip">❌ דורש מצלמה עם רגישות IR או חשיפה ארוכה מאוד</div>
+      </div>
+    </div>
+
+    <div class="tip-box">
+      <div class="tip-label">💡 חוק הזהב של הפילטרים</div>
+      <p>CPL ו-GND הם הפילטרים שלא ניתן <strong>לשחזר בפוסט-פרודקשן</strong> — מה שלא צולם, לא ניתן להוסיף. ND ו-Warm ניתן לדמות בפוסט, אבל פחות טוב. UV — אין לו כמעט אפקט ויזואלי, אך הוא מגן על העדשה שעולה אלפי שקלים.</p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="section">
+    <div class="section-label">פילטר עגול vs מרובע</div>
+    <h2>איזה מערכת לבחור?</h2>
+
+    <p><strong>עגול (Screw-On)</strong> — מתברג ישירות על העדשה. קל, זול, מהיר. מושלם ל-UV, ND, CPL. הבעיה: כל עדשה בקוטר אחר (52mm, 67mm, 77mm...) — אתה צריך פילטר שונה לכל אחת, או <strong>Step-Up Ring</strong> שמאפשר להשתמש בפילטר אחד גדול על כל העדשות.</p>
+    <p><strong>מרובע / 100mm System</strong> — מסגרת שנתפסת על העדשה, הפילטרים (זכוכית שטוחה) מחליקים פנימה. גמיש יותר לסטים של פילטרים ולחיבור כמה פילטרים יחד. יקר יותר, אבל אידיאלי לצלם נוף רציני.</p>
+
+    <div class="tip-box">
+      <div class="tip-label">💡 המלצה למתחיל</div>
+      <p>קנו <strong>CPL + UV</strong> בקוטר הגדול ביותר שיש לכם (לרוב 77mm) + Step-Up Ring. אל תבזבזו על מערכת מרובעת עד שאתם יודעים שאתם צלמי נוף רציניים.</p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="section">
+    <div class="section-label">תרגיל מעשי</div>
+    <h2>יום ה-CPL</h2>
+
+    <div class="exercise-box">
+      <div class="exercise-label">📷 המשימה</div>
+      <p>
+        צאו לצלם עם <strong>CPL</strong> (או השאילו אחד) בין 10:00–14:00 שמש חזקה.<br><br>
+        <strong>שלב 1:</strong> צלמו שמיים כחולים — סובבו את ה-CPL לאט ותצפו איך השמיים מחשיכים.<br>
+        <strong>שלב 2:</strong> מצאו שלולית או חלון עם השתקפות — צלמו עם ובלי CPL.<br>
+        <strong>שלב 3:</strong> השוו את 4 הצילומים. ההבדל יפתיע אתכם.<br><br>
+        <em>בונוס: נסו ND על מפל מים עם חשיפה של 2–5 שניות.</em>
+      </p>
+    </div>
+  </div>
+
+  <div style="text-align:center;padding:1rem 0 2rem">
+    <a href="/camera/types/" style="color:var(--accent);font-size:.9rem;text-decoration:none">← סוגי מצלמות וחיישנים</a>
+    <span style="color:var(--border);margin:0 .75rem">|</span>
+    <a href="/camera/" style="color:var(--accent);font-size:.9rem;text-decoration:none">כל הנושאים ←</a>
+  </div>
+
+</div>
+
+<script>
+const FILTERS = [
+  { id: 'none',  label: 'ללא פילטר', emoji: '📷',
+    css: 'none', gnd: false,
+    name: 'ללא פילטר',
+    desc: 'האור הגולמי שנכנס לעדשה — בסיס ההשוואה. ככה רואה המצלמה ללא התערבות.' },
+  { id: 'uv',   label: 'UV', emoji: '🔵',
+    css: 'none', gnd: false,
+    name: 'פילטר UV',
+    desc: 'לא משנה את הצבעים הנראים לעין — אבל מסנן קרינת UV שמכחילה תמונות בגובה ובים, ומגן על העדשה מגרידות. כמו ביטוח זול לעדשה יקרה.' },
+  { id: 'nd',   label: 'ND צפצפת', emoji: '⬛',
+    css: 'brightness(0.22) contrast(0.88)', gnd: false,
+    name: 'פילטר ND (Neutral Density)',
+    desc: 'מקטין את כמות האור ב-3–10 עצורים. מאפשר חשיפה ארוכה ביום: מים כמו משי, ענן מטושטש, אנשים שנעלמים מהרחוב. הכרחי לצלמי נוף.' },
+  { id: 'cpl',  label: 'CPL מקטב', emoji: '🌀',
+    css: 'saturate(2) contrast(1.12) brightness(0.9)', gnd: false,
+    name: 'פילטר CPL (Circular Polarizer)',
+    desc: 'מסנן גלי אור מקוטבים — שמיים הופכים לכחול עמוק, השתקפויות ממים וזכוכית נעלמות, ירק של עלים בוהק. אפקט שלא ניתן לשחזור בפוסט.' },
+  { id: 'gnd',  label: 'GND מדורג', emoji: '▓',
+    css: 'none', gnd: true,
+    name: 'פילטר GND (Graduated ND)',
+    desc: 'מחשיך חצי מהתמונה בהדרגה — בדרך כלל השמיים. מאזן את ההפרש בין שמיים בהירים מאוד לקרקע כהה. הכרחי לצילום שקיעה מקצועי.' },
+  { id: 'warm', label: 'Warm חיום', emoji: '🌅',
+    css: 'sepia(0.55) saturate(1.6) hue-rotate(-25deg) brightness(1.05)', gnd: false,
+    name: 'פילטר Warm (חיום)',
+    desc: 'מוסיף גוון כתום-זהב שמדמה אור שעת הזהב. מעניק חום ורגש לפורטרטים, ומדגיש את האדמומיות של שקיעות. קל לדמות בפוסט, אבל נחמד בשטח.' },
+  { id: 'color', label: 'צבע כחול', emoji: '💜',
+    css: 'hue-rotate(190deg) saturate(1.3) brightness(0.95)', gnd: false,
+    name: 'פילטר צבע (Color)',
+    desc: 'מעביר את כל הגוונים לכיוון צבע ספציפי. משמש לאפקטים אמנותיים, דמיית ירח כחלחל, או יצירת מצב-רוח. קיימים בעשרות גוונים.' },
+  { id: 'ir',   label: 'IR אינפרא', emoji: '🌿',
+    css: 'grayscale(1) contrast(2.4) brightness(1.6)', gnd: false,
+    name: 'פילטר IR (אינפרא-אדום)',
+    desc: 'מעביר רק אור אינפרא-אדום. עלים הופכים לבנים כשלג, שמיים כהים כלילה — עולם מקביל בשחור-לבן. דורש חשיפה ארוכה או מצלמה מותאמת IR.' },
+];
+
+let currentFilter = FILTERS[0];
+let showingOriginal = false;
+
+const img = document.getElementById('demo-img');
+const gndOverlay = document.getElementById('gnd-overlay');
+const descIcon = document.getElementById('desc-icon');
+const descName = document.getElementById('desc-name');
+const descText = document.getElementById('filter-desc').querySelector('.filter-desc-text');
+const baBtn = document.getElementById('before-after-btn');
+
+function applyFilter(f) {
+  currentFilter = f;
+  showingOriginal = false;
+  baBtn.textContent = '⟷ ללא פילטר';
+
+  img.style.filter = f.css;
+  gndOverlay.classList.toggle('active', f.gnd);
+
+  descIcon.textContent = f.emoji;
+  descName.textContent = f.name;
+  descText.textContent = f.desc;
+
+  document.querySelectorAll('.filter-btn').forEach(b =>
+    b.classList.toggle('active', b.dataset.id === f.id));
+}
+
+function buildSelector() {
+  const sel = document.getElementById('filter-selector');
+  FILTERS.forEach(f => {
+    const btn = document.createElement('button');
+    btn.className = 'filter-btn' + (f.id === 'none' ? ' active' : '');
+    btn.dataset.id = f.id;
+    btn.innerHTML = `<span class="f-emoji">${f.emoji}</span><span class="f-label">${f.label}</span>`;
+    btn.addEventListener('click', () => applyFilter(f));
+    sel.appendChild(btn);
+  });
+}
+
+baBtn.addEventListener('click', () => {
+  showingOriginal = !showingOriginal;
+  if (showingOriginal) {
+    img.style.filter = 'none';
+    gndOverlay.classList.remove('active');
+    baBtn.textContent = '↩ חזור לפילטר';
+  } else {
+    img.style.filter = currentFilter.css;
+    gndOverlay.classList.toggle('active', currentFilter.gnd);
+    baBtn.textContent = '⟷ ללא פילטר';
+  }
+});
+
+buildSelector();
+applyFilter(FILTERS[0]);
+</script>
+</body>
+</html>
