@@ -1762,6 +1762,22 @@ async function handleSitemap(request, env) {
   // דפים סטטיים — ללא hash URLs (Google מתעלם מהם)
   const staticPages = [
     { loc: '/', priority: '1.0', changefreq: 'weekly' },
+    { loc: '/learn/', priority: '0.8', changefreq: 'weekly' },
+    { loc: '/camera/', priority: '0.9', changefreq: 'weekly' },
+    { loc: '/camera/exposure/', priority: '0.8', changefreq: 'monthly' },
+    { loc: '/camera/composition/', priority: '0.8', changefreq: 'monthly' },
+    { loc: '/camera/controls/', priority: '0.8', changefreq: 'monthly' },
+    { loc: '/camera/lenses/', priority: '0.8', changefreq: 'monthly' },
+    { loc: '/camera/light/', priority: '0.8', changefreq: 'monthly' },
+    { loc: '/camera/filters/', priority: '0.8', changefreq: 'monthly' },
+    { loc: '/camera/types/', priority: '0.8', changefreq: 'monthly' },
+    { loc: '/camera/editing/', priority: '0.8', changefreq: 'monthly' },
+    { loc: '/camera/software/', priority: '0.8', changefreq: 'monthly' },
+    { loc: '/camera/visual-language/', priority: '0.8', changefreq: 'monthly' },
+    { loc: '/games/', priority: '0.7', changefreq: 'monthly' },
+    { loc: '/quiz/', priority: '0.7', changefreq: 'monthly' },
+    { loc: '/puzzle/', priority: '0.7', changefreq: 'monthly' },
+    { loc: '/sale/', priority: '0.7', changefreq: 'weekly' },
   ];
 
   // דפי קטגוריה
