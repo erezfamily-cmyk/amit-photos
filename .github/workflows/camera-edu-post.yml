@@ -1,0 +1,54 @@
+name: פרסום קידום בית ספר לצילום
+
+on:
+  # שני וחמישי ב-09:00 UTC = 12:00 ישראל — לא מתנגש עם פוסטי התמונות
+  schedule:
+    - cron: '0 9 * * 1,4'
+  workflow_dispatch:
+
+jobs:
+  camera-edu-post:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Python setup
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: התקנת חבילות
+        run: pip install requests anthropic pillow
+
+      - name: פרסום קידום דפי הלימוד
+        env:
+          FACEBOOK_PAGE_ID: ${{ secrets.FACEBOOK_PAGE_ID }}
+          FACEBOOK_PAGE_TOKEN: ${{ secrets.FACEBOOK_PAGE_TOKEN }}
+          INSTAGRAM_USER_ID: ${{ secrets.INSTAGRAM_USER_ID }}
+          INSTAGRAM_PAGE_TOKEN: ${{ secrets.INSTAGRAM_PAGE_TOKEN }}
+          ANTHROPIC_API_KEY: ${{ secrets.AMIT_PHOTO_AGENT }}
+          ADMIN_TOKEN: ${{ secrets.ADMIN_PASSWORD }}
+        run: |
+          for attempt in 1 2 3; do
+            python src/camera_edu_post.py && break
+            if [ $attempt -lt 3 ]; then
+              echo "ניסיון $attempt נכשל — ממתין 60 שניות..."
+              sleep 60
+            else
+              echo "כל הניסיונות נכשלו"
+              exit 1
+            fi
+          done
+
+      - name: עדכון מעקב פרסומים
+        run: |
+          git config user.name "Camera Edu Agent"
+          git config user.email "agent@amitphotos.com"
+          git add data/camera_edu_posted.json
+          git diff --staged --quiet || (git commit -m "🤖 עדכון camera_edu_posted.json" && git pull --rebase origin main && git push origin main)
