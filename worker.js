@@ -1773,6 +1773,7 @@ async function handleSitemap(request, env) {
     { loc: '/camera/types/', priority: '0.8', changefreq: 'monthly' },
     { loc: '/camera/editing/', priority: '0.8', changefreq: 'monthly' },
     { loc: '/camera/software/', priority: '0.8', changefreq: 'monthly' },
+    { loc: '/camera/macro/', priority: '0.8', changefreq: 'monthly' },
     { loc: '/camera/visual-language/', priority: '0.8', changefreq: 'monthly' },
     { loc: '/games/', priority: '0.7', changefreq: 'monthly' },
     { loc: '/quiz/', priority: '0.7', changefreq: 'monthly' },
