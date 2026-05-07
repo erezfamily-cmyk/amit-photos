@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>סוגי מצלמות וחיישנים — בית ספר לצילום | Amit Photos</title>
+<meta name="description" content="Full Frame vs APS-C vs סמארטפון — Crop Factor אינטראקטיבי, מחשבון מרחק מוקד, ו-DSLR vs Mirrorless.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #0a0a0a; --surface: #111; --surface2: #181818; --border: #222;
+  --accent: #c8a96e; --text: #f0ede8; --muted: #888; --green: #5dbf8a; --blue: #6090d8;
+  --purple: #a078d8;
+}
+body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--text);
+  direction: rtl; min-height: 100vh; padding-bottom: 5rem; }
+
+.breadcrumb { font-size: .8rem; color: var(--muted); padding: 1.25rem 1.5rem 0;
+  max-width: 780px; margin: 0 auto; }
+.breadcrumb a { color: var(--accent); text-decoration: none; }
+
+.hero { text-align: center; padding: 2.5rem 1.5rem 1.5rem; }
+.hero-badge { display: inline-block; font-size: .72rem;
+  background: rgba(200,169,110,.12); border: 1px solid rgba(200,169,110,.3);
+  color: var(--accent); border-radius: 20px; padding: .3rem .8rem; margin-bottom: .75rem; }
+.hero h1 { font-family: 'Syne', sans-serif; font-size: 2rem; color: var(--accent); margin-bottom: .5rem; }
+.hero p { color: var(--muted); font-size: .95rem; max-width: 500px; margin: 0 auto; line-height: 1.65; }
+
+.article { max-width: 780px; margin: 0 auto; padding: 0 1.25rem; }
+.section { margin-bottom: 3rem; }
+.section-label { font-size: .72rem; color: var(--accent); text-transform: uppercase;
+  letter-spacing: .1em; margin-bottom: .5rem; }
+.section h2 { font-family: 'Syne', sans-serif; font-size: 1.4rem; color: var(--text); margin-bottom: 1rem; }
+.section p { color: var(--muted); line-height: 1.75; margin-bottom: .85rem; font-size: .95rem; }
+.section p strong { color: var(--text); }
+.divider { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+
+/* Infographic */
+.infographic-wrap { background: var(--surface); border: 1px solid var(--border);
+  border-radius: 16px; overflow: hidden; margin: 1.5rem 0; text-align: center; }
+.infographic-wrap img { width: 100%; max-width: 560px; display: block; margin: 0 auto; }
+.infographic-caption { font-size: .78rem; color: var(--muted); padding: .75rem; }
+
+/* ===== CROP FACTOR DEMO ===== */
+.crop-lab {
+  background: var(--surface); border: 1px solid rgba(200,169,110,.3);
+  border-radius: 18px; padding: 1.5rem; margin: 1.5rem 0;
+}
+.crop-lab-title {
+  font-family: 'Syne', sans-serif; font-size: 1.05rem; color: var(--accent);
+  text-align: center; margin-bottom: 1.25rem;
+}
+
+.crop-demo-wrap {
+  position: relative; border-radius: 12px; overflow: hidden;
+  margin-bottom: 1rem; background: #000;
+  aspect-ratio: 16/9;
+}
+#crop-img {
+  width: 100%; height: 100%; object-fit: cover;
+  transform-origin: center center;
+  transition: transform .6s cubic-bezier(.4,0,.2,1);
+  display: block;
+}
+
+/* Sensor overlay boxes */
+.crop-overlay {
+  position: absolute; inset: 0; pointer-events: none;
+}
+.sensor-box {
+  position: absolute; border: 2px solid;
+  border-radius: 2px;
+  display: flex; align-items: flex-end; justify-content: flex-end;
+  opacity: 0; transition: opacity .4s ease;
+}
+.sensor-box.visible { opacity: 1; }
+#box-ff   { inset: 0; border-color: var(--accent); }
+#box-apsc {
+  border-color: var(--blue);
+  top: 16.7%; left: 16.7%; right: 16.7%; bottom: 16.7%;
+}
+#box-mft  {
+  border-color: var(--purple);
+  top: 25%; left: 25%; right: 25%; bottom: 25%;
+}
+#box-phone {
+  border-color: var(--green);
+  top: 35%; left: 35%; right: 35%; bottom: 35%;
+}
+.sensor-tag {
+  font-size: .65rem; font-family: 'Syne', sans-serif;
+  padding: 2px 6px; border-radius: 3px 0 0 0;
+  position: absolute; bottom: 0; left: 0;
+}
+#box-ff   .sensor-tag { background: var(--accent); color: #000; }
+#box-apsc .sensor-tag { background: var(--blue); color: #fff; }
+#box-mft  .sensor-tag { background: var(--purple); color: #fff; }
+#box-phone .sensor-tag { background: var(--green); color: #000; }
+
+/* Sensor buttons */
+.sensor-btns {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: .6rem;
+  margin-bottom: 1.25rem;
+}
+@media (max-width: 480px) { .sensor-btns { grid-template-columns: repeat(2, 1fr); } }
+
+.sensor-btn {
+  padding: .7rem .5rem; border-radius: 10px; border: 1px solid var(--border);
+  background: var(--surface2); cursor: pointer; text-align: center;
+  transition: border-color .2s, background .2s;
+}
+.sensor-btn:hover { border-color: rgba(200,169,110,.4); }
+.sensor-btn.active-ff    { border-color: var(--accent); background: rgba(200,169,110,.1); }
+.sensor-btn.active-apsc  { border-color: var(--blue);   background: rgba(96,144,216,.1); }
+.sensor-btn.active-mft   { border-color: var(--purple);  background: rgba(160,120,216,.1); }
+.sensor-btn.active-phone { border-color: var(--green);   background: rgba(93,191,138,.1); }
+.sb-name { font-family: 'Syne', sans-serif; font-size: .8rem; color: var(--text); margin-bottom: .2rem; }
+.sb-crop { font-size: .72rem; color: var(--muted); }
+
+.crop-info-panel {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 12px; padding: 1rem 1.25rem;
+  display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; text-align: center;
+}
+@media (max-width: 480px) { .crop-info-panel { grid-template-columns: 1fr; } }
+.cip-val { font-family: 'Syne', sans-serif; font-size: 1.6rem; color: var(--accent); }
+.cip-label { font-size: .75rem; color: var(--muted); margin-top: .2rem; }
+
+/* Focal calc */
+.focal-calc {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; padding: 1.25rem; margin: 1.5rem 0;
+}
+.focal-calc h3 { font-family: 'Syne', sans-serif; font-size: .95rem; color: var(--accent);
+  margin-bottom: 1rem; text-align: center; }
+.focal-input-row {
+  display: flex; align-items: center; gap: .75rem; margin-bottom: 1rem;
+  flex-wrap: wrap; justify-content: center;
+}
+.focal-input-row label { font-size: .85rem; color: var(--muted); }
+.focal-input-row input {
+  background: var(--surface2); border: 1px solid var(--border);
+  color: var(--text); font-family: 'Syne', sans-serif; font-size: 1.2rem;
+  width: 80px; text-align: center; border-radius: 8px; padding: .4rem .5rem;
+  outline: none;
+}
+.focal-input-row input:focus { border-color: var(--accent); }
+.focal-input-row span { font-size: .85rem; color: var(--muted); }
+.focal-results { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: .6rem; }
+@media (max-width: 520px) { .focal-results { grid-template-columns: 1fr 1fr; } }
+.fr-card { background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 10px; padding: .75rem; text-align: center; }
+.fr-sensor { font-size: .7rem; color: var(--muted); margin-bottom: .3rem; }
+.fr-mm { font-family: 'Syne', sans-serif; font-size: 1.3rem; }
+.fr-mm.ff    { color: var(--accent); }
+.fr-mm.apsc  { color: var(--blue); }
+.fr-mm.mft   { color: var(--purple); }
+.fr-mm.phone { color: var(--green); }
+.fr-label { font-size: .65rem; color: var(--muted); margin-top: .2rem; }
+
+/* Camera type comparison */
+.cam-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin: 1.25rem 0; }
+@media (max-width: 540px) { .cam-grid { grid-template-columns: 1fr; } }
+.cam-card { background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; padding: 1.25rem; }
+.cam-icon { font-size: 2.2rem; margin-bottom: .6rem; }
+.cam-name { font-family: 'Syne', sans-serif; font-size: 1rem; color: var(--accent); margin-bottom: .75rem; }
+.cam-pros, .cam-cons { font-size: .8rem; line-height: 1.6; }
+.cam-pros { color: var(--green); margin-bottom: .5rem; }
+.cam-cons { color: var(--muted); }
+.cam-pros li, .cam-cons li { list-style: none; padding-right: 0; margin-bottom: .2rem; }
+.cam-pros li::before { content: '✅ '; }
+.cam-cons li::before { content: '❌ '; }
+
+/* Decision helper */
+.decision-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .85rem; margin: 1.25rem 0; }
+@media (max-width: 480px) { .decision-grid { grid-template-columns: 1fr; } }
+.decision-card { background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; padding: 1rem; }
+.decision-who { font-size: .8rem; color: var(--accent); font-family: 'Syne', sans-serif; margin-bottom: .35rem; }
+.decision-pick { font-size: .85rem; color: var(--text); }
+
+/* Tip / Exercise */
+.tip-box { background: rgba(200,169,110,.08); border: 1px solid rgba(200,169,110,.25);
+  border-radius: 12px; padding: 1.25rem 1.5rem; margin: 1.5rem 0; }
+.tip-label { font-size: .72rem; color: var(--accent); font-weight: 700; letter-spacing: .08em; margin-bottom: .4rem; }
+.tip-box p { font-size: .9rem; color: var(--text); line-height: 1.65; margin: 0; }
+.exercise-box { background: rgba(93,191,138,.07); border: 1px solid rgba(93,191,138,.25);
+  border-radius: 12px; padding: 1.25rem 1.5rem; margin: 1.5rem 0; }
+.exercise-label { font-size: .72rem; color: var(--green); font-weight: 700; letter-spacing: .08em; margin-bottom: .4rem; }
+.exercise-box p { font-size: .9rem; color: var(--text); line-height: 1.65; margin: 0; }
+</style>
+<script src="/assets/js/nav.js" defer></script>
+</head>
+<body>
+
+<div class="breadcrumb"><a href="/camera/">למד לצלם</a> ← סוגי מצלמות</div>
+
+<div class="hero">
+  <div class="hero-badge">📷 בית ספר לצילום</div>
+  <h1>📷 מצלמות וחיישנים</h1>
+  <p>Full Frame, APS-C, Mirrorless, DSLR, סמארטפון — מה ההבדל באמת, ואיך גודל החיישן משנה כל תמונה. עם דמו אינטראקטיבי.</p>
+</div>
+
+<div class="article">
+
+  <div class="section">
+    <div class="section-label">אינפוגרפיקה</div>
+    <h2>Full Frame vs Crop Sensor</h2>
+    <div class="infographic-wrap">
+      <img src="/assets/infographics/sensor-infographic.jpg" alt="Full Frame vs Crop Sensor — אינפוגרפיקה" loading="lazy">
+      <div class="infographic-caption">גלול למטה לדמו האינטראקטיבי שמראה בדיוק מה כל חיישן "רואה"</div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="section">
+    <div class="section-label">דמו אינטראקטיבי</div>
+    <h2>מה החיישן שלך רואה?</h2>
+    <p>לחץ על סוג החיישן — המסגרת מראה בדיוק איזה חלק מהפריים כל חיישן "כורך". שים לב כמה מידע נחתך בסמארטפון לעומת Full Frame.</p>
+
+    <div class="crop-lab">
+      <div class="crop-lab-title">🔍 מה החיישן שלך רואה?</div>
+
+      <div class="crop-demo-wrap">
+        <img id="crop-img"
+          src="https://drive.google.com/thumbnail?id=1-QdedjPvx0mSSFlH10h3x8-XdJ5_K0Zx&sz=w900"
+          alt="תמונת דמו — נהר בעמק ההרים">
+        <div class="crop-overlay">
+          <div class="sensor-box" id="box-ff">
+            <span class="sensor-tag">Full Frame 36×24mm</span>
+          </div>
+          <div class="sensor-box" id="box-apsc">
+            <span class="sensor-tag">APS-C ×1.5</span>
+          </div>
+          <div class="sensor-box" id="box-mft">
+            <span class="sensor-tag">Micro 4/3 ×2</span>
+          </div>
+          <div class="sensor-box" id="box-phone">
+            <span class="sensor-tag">סמארטפון ×~6</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sensor-btns">
+        <button class="sensor-btn active-ff" data-sensor="ff" onclick="setSensor('ff')">
+          <div class="sb-name" style="color:var(--accent)">Full Frame</div>
+          <div class="sb-crop">×1.0 — 36×24mm</div>
+        </button>
+        <button class="sensor-btn" data-sensor="apsc" onclick="setSensor('apsc')">
+          <div class="sb-name">APS-C</div>
+          <div class="sb-crop">×1.5 — 23.5×15.6mm</div>
+        </button>
+        <button class="sensor-btn" data-sensor="mft" onclick="setSensor('mft')">
+          <div class="sb-name">Micro 4/3</div>
+          <div class="sb-crop">×2.0 — 17.3×13mm</div>
+        </button>
+        <button class="sensor-btn" data-sensor="phone" onclick="setSensor('phone')">
+          <div class="sb-name">סמארטפון</div>
+          <div class="sb-crop">×~6 — ~6×4.5mm</div>
+        </button>
+      </div>
+
+      <div class="crop-info-panel">
+        <div>
+          <div class="cip-val" id="info-crop">×1.0</div>
+          <div class="cip-label">Crop Factor</div>
+        </div>
+        <div>
+          <div class="cip-val" id="info-equiv">50mm</div>
+          <div class="cip-label">שקול ל-50mm על FF</div>
+        </div>
+        <div>
+          <div class="cip-val" id="info-bokeh">🔵🔵🔵</div>
+          <div class="cip-label">פוטנציאל בוקה</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Focal Length Calculator -->
+    <div class="focal-calc">
+      <h3>🧮 מחשבון מרחק מוקד</h3>
+      <div class="focal-input-row">
+        <label>עדשה שלך:</label>
+        <input type="number" id="focal-input" value="50" min="1" max="2000">
+        <span>mm</span>
+      </div>
+      <div class="focal-results">
+        <div class="fr-card">
+          <div class="fr-sensor">Full Frame</div>
+          <div class="fr-mm ff" id="fr-ff">50mm</div>
+          <div class="fr-label">×1.0</div>
+        </div>
+        <div class="fr-card">
+          <div class="fr-sensor">APS-C</div>
+          <div class="fr-mm apsc" id="fr-apsc">75mm</div>
+          <div class="fr-label">×1.5</div>
+        </div>
+        <div class="fr-card">
+          <div class="fr-sensor">Micro 4/3</div>
+          <div class="fr-mm mft" id="fr-mft">100mm</div>
+          <div class="fr-label">×2.0</div>
+        </div>
+        <div class="fr-card">
+          <div class="fr-sensor">סמארטפון</div>
+          <div class="fr-mm phone" id="fr-phone">~300mm</div>
+          <div class="fr-label">×~6</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="section">
+    <div class="section-label">סוגי גוף המצלמה</div>
+    <h2>DSLR, Mirrorless, סמארטפון</h2>
+    <p>גודל החיישן הוא מה שבפנים — סוג הגוף הוא השאלה כיצד האור מגיע אליו.</p>
+
+    <div class="cam-grid">
+      <div class="cam-card">
+        <div class="cam-icon">📸</div>
+        <div class="cam-name">DSLR</div>
+        <ul class="cam-pros">
+          <li>סוללה ארוכת טווח</li>
+          <li>עדשות זולות יותר</li>
+          <li>EVF אופטי — אמיתי</li>
+          <li>עמידות בדוקה בשטח</li>
+        </ul>
+        <ul class="cam-cons">
+          <li>כבד ובולט</li>
+          <li>מראה מכנית — רעש ורטט</li>
+          <li>פחות מתאים לוידאו</li>
+        </ul>
+      </div>
+      <div class="cam-card">
+        <div class="cam-icon">🎥</div>
+        <div class="cam-name">Mirrorless</div>
+        <ul class="cam-pros">
+          <li>קומפקטי יחסית</li>
+          <li>EVF דיגיטלי — WYSIWYG</li>
+          <li>מצוין לוידאו 4K+</li>
+          <li>AF מהיר ומדויק</li>
+        </ul>
+        <ul class="cam-cons">
+          <li>סוללה פחות חזקה</li>
+          <li>עדשות יקרות יותר</li>
+          <li>מתחמם בצילום ממושך</li>
+        </ul>
+      </div>
+      <div class="cam-card">
+        <div class="cam-icon">📱</div>
+        <div class="cam-name">סמארטפון</div>
+        <ul class="cam-pros">
+          <li>תמיד בכיס</li>
+          <li>Computational Photography</li>
+          <li>שיתוף מיידי</li>
+          <li>הכי קל ונוח</li>
+        </ul>
+        <ul class="cam-cons">
+          <li>חיישן קטן = רעש גבוה</li>
+          <li>בוקה מזויפת (AI)</li>
+          <li>שליטה ידנית מוגבלת</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="tip-box">
+      <div class="tip-label">💡 האמת שאף אחד לא אומר</div>
+      <p>הצלם הכי טוב הוא זה <strong>שיש לו מצלמה</strong>. iPhone מודרני עם עין טובה יכריע DSLR ישן בידי מישהו שלא מבין קומפוזיציה. בחרו מצלמה שתרצו לקחת איתכם — לא את היפה ביותר על הנייר.</p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="section">
+    <div class="section-label">לאיזה צלם אתה?</div>
+    <h2>מה מתאים לך?</h2>
+
+    <div class="decision-grid">
+      <div class="decision-card">
+        <div class="decision-who">🏔️ צלם נוף ו-Landscape</div>
+        <div class="decision-pick">Full Frame Mirrorless — Sony A7, Nikon Z, Canon R. חיישן גדול = ביצועי ISO מעולים בשקיעות ולילה.</div>
+      </div>
+      <div class="decision-card">
+        <div class="decision-who">🦅 צלם ספורט ו-Wildlife</div>
+        <div class="decision-pick">APS-C עם Telephoto — Crop Factor נותן לך reach חינמי. Nikon Z50, Canon R7.</div>
+      </div>
+      <div class="decision-card">
+        <div class="decision-who">👤 צלם פורטרטים</div>
+        <div class="decision-pick">Full Frame עם 50mm/85mm פריים — בוקה טבעי ואור עשיר בחיישן גדול. Sony A7C, Nikon Z6.</div>
+      </div>
+      <div class="decision-card">
+        <div class="decision-who">🎬 יוצר תוכן וידאו</div>
+        <div class="decision-pick">Mirrorless עם 4K — Sony ZV-E10, Fujifilm X-S20. קל, גמיש, וידאו מעולה.</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="section">
+    <div class="section-label">תרגיל מעשי</div>
+    <h2>צלם עם "Crop מנטלי"</h2>
+
+    <div class="exercise-box">
+      <div class="exercise-label">📷 המשימה</div>
+      <p>
+        צאו לצלם עם הציוד שיש לכם. לפני שלוחצים על ההדק —<br><br>
+        <strong>שלב 1:</strong> תסתכלו על הסצנה ודמיינו שאתם מחזיקים Full Frame עם עדשת 35mm. מה הפריים הרחב שתראו?<br>
+        <strong>שלב 2:</strong> עכשיו דמיינו APS-C עם אותה עדשה. חשבו: מה נחתך? מה נשאר?<br>
+        <strong>שלב 3:</strong> צלמו פעמיים — פריים מלא ופריים צר יותר (zoom). השוו.<br><br>
+        <em>מטרה: להתחיל לחשוב ב-"שפת הפריים" של הציוד שלכם — לא מה שיש, אלא מה שרואים.</em>
+      </p>
+    </div>
+  </div>
+
+  <div style="text-align:center;padding:1rem 0 2rem">
+    <a href="/camera/filters/" style="color:var(--accent);font-size:.9rem;text-decoration:none">← פילטרים למצלמה</a>
+    <span style="color:var(--border);margin:0 .75rem">|</span>
+    <a href="/camera/" style="color:var(--accent);font-size:.9rem;text-decoration:none">כל הנושאים ←</a>
+  </div>
+
+</div>
+
+<script>
+const SENSORS = {
+  ff:    { crop: 1.0,   zoom: 1.0, bokeh: '🔵🔵🔵🔵', equiv: '50', cls: 'active-ff' },
+  apsc:  { crop: 1.5,   zoom: 1.5, bokeh: '🔵🔵🔵',   equiv: '33', cls: 'active-apsc' },
+  mft:   { crop: 2.0,   zoom: 2.0, bokeh: '🔵🔵',     equiv: '25', cls: 'active-mft' },
+  phone: { crop: 6.0,   zoom: 6.0, bokeh: '🔵',       equiv: '8',  cls: 'active-phone' },
+};
+
+const BOXES = { ff: 'box-ff', apsc: 'box-apsc', mft: 'box-mft', phone: 'box-phone' };
+
+let currentSensor = 'ff';
+
+function setSensor(id) {
+  const s = SENSORS[id];
+  currentSensor = id;
+
+  // Zoom image to simulate what sensor sees
+  document.getElementById('crop-img').style.transform = `scale(${s.zoom})`;
+
+  // Show only this sensor's box (and FF always as reference)
+  Object.keys(BOXES).forEach(k => {
+    const box = document.getElementById(BOXES[k]);
+    box.classList.toggle('visible', k === 'ff' || k === id);
+  });
+
+  // Update info panel
+  document.getElementById('info-crop').textContent = `×${s.crop.toFixed(1)}`;
+  const focalVal = parseInt(document.getElementById('focal-input').value) || 50;
+  document.getElementById('info-equiv').textContent =
+    Math.round(focalVal / s.crop) + 'mm';
+  document.getElementById('info-bokeh').textContent = s.bokeh;
+
+  // Update button states
+  document.querySelectorAll('.sensor-btn').forEach(b => {
+    b.className = 'sensor-btn';
+    if (b.dataset.sensor === id) b.className += ' ' + s.cls;
+  });
+}
+
+// Focal length calculator
+function updateFocal() {
+  const mm = parseInt(document.getElementById('focal-input').value) || 50;
+  document.getElementById('fr-ff').textContent    = mm + 'mm';
+  document.getElementById('fr-apsc').textContent  = Math.round(mm * 1.5) + 'mm';
+  document.getElementById('fr-mft').textContent   = Math.round(mm * 2.0) + 'mm';
+  document.getElementById('fr-phone').textContent = '~' + Math.round(mm * 6) + 'mm';
+
+  // Update info equiv if sensor is active
+  const s = SENSORS[currentSensor];
+  document.getElementById('info-equiv').textContent = Math.round(mm / s.crop) + 'mm';
+}
+
+document.getElementById('focal-input').addEventListener('input', updateFocal);
+
+// Init
+setSensor('ff');
+// Show FF box always
+document.getElementById('box-ff').classList.add('visible');
+updateFocal();
+</script>
+</body>
+</html>
