@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>להבין את האור — בית ספר לצילום | Amit Photos</title>
+<meta name="description" content="מדריך מעשי לשליטה באור — אור רך מול קשה, טמפרטורת צבע, שעות הקסם וזוויות תאורה.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #0a0a0a; --surface: #111; --surface2: #181818; --border: #222;
+  --accent: #c8a96e; --text: #f0ede8; --muted: #888;
+  --warm: #e8a040; --cool: #6090d8; --green: #5dbf8a;
+}
+body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--text);
+  direction: rtl; min-height: 100vh; padding-bottom: 5rem; }
+
+/* Hero */
+.hero { text-align: center; padding: 3rem 1.5rem 2rem; }
+.hero-badge { display: inline-block; font-size: .72rem;
+  background: rgba(200,169,110,.12); border: 1px solid rgba(200,169,110,.3);
+  color: var(--accent); border-radius: 20px; padding: .3rem .8rem; margin-bottom: .75rem; }
+.hero h1 { font-family: 'Syne', sans-serif; font-size: 2rem; color: var(--accent); margin-bottom: .5rem; }
+.hero p { color: var(--muted); font-size: .95rem; max-width: 480px; margin: 0 auto; line-height: 1.65; }
+
+/* Article layout */
+.article { max-width: 780px; margin: 0 auto; padding: 0 1.25rem; }
+
+.section { margin-bottom: 3rem; }
+.section-label { font-size: .72rem; color: var(--accent); text-transform: uppercase;
+  letter-spacing: .1em; margin-bottom: .5rem; }
+.section h2 { font-family: 'Syne', sans-serif; font-size: 1.4rem; color: var(--text);
+  margin-bottom: 1rem; }
+.section p { color: var(--muted); line-height: 1.75; margin-bottom: .85rem; font-size: .95rem; }
+.section p strong { color: var(--text); }
+
+/* Divider */
+.divider { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+
+/* Diagram card */
+.diagram { background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; padding: 1.5rem; margin: 1.5rem 0; }
+.diagram-title { font-family: 'Syne', sans-serif; font-size: .95rem;
+  color: var(--accent); margin-bottom: 1.25rem; text-align: center; }
+
+/* Soft vs Hard comparison */
+.compare-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.compare-card { background: var(--surface2); border-radius: 10px; padding: 1.1rem; text-align: center; }
+.compare-icon { margin-bottom: .75rem; }
+.compare-title { font-family: 'Syne', sans-serif; font-size: .9rem; margin-bottom: .4rem; }
+.compare-desc { font-size: .8rem; color: var(--muted); line-height: 1.5; }
+.tag-hard { color: #e07060; }
+.tag-soft { color: var(--green); }
+
+/* Temperature bar */
+.temp-bar { position: relative; height: 28px; border-radius: 14px;
+  background: linear-gradient(to left, #6090d8, #fff4e0, #e8a040, #c04010);
+  margin: 1rem 0 .5rem; }
+.temp-labels { display: flex; justify-content: space-between; font-size: .75rem; color: var(--muted); }
+.temp-points { display: flex; justify-content: space-between; margin-top: .75rem; }
+.temp-point { text-align: center; font-size: .78rem; }
+.temp-point .tp-icon { font-size: 1.4rem; display: block; margin-bottom: .25rem; }
+.temp-point .tp-label { color: var(--muted); }
+.temp-point .tp-k { color: var(--accent); font-size: .7rem; }
+
+/* Magic hours timeline */
+.timeline { position: relative; padding: 0; list-style: none; }
+.timeline::before { content: ''; position: absolute; top: 0; bottom: 0; right: 12px;
+  width: 2px; background: var(--border); }
+.tl-item { position: relative; padding: 0 2.5rem 1.5rem 0; }
+.tl-dot { position: absolute; right: 4px; top: 4px; width: 18px; height: 18px;
+  border-radius: 50%; border: 2px solid var(--border); }
+.tl-gold { background: #e8a040; border-color: #e8a040; }
+.tl-blue { background: #4070b8; border-color: #4070b8; }
+.tl-mid { background: var(--surface2); }
+.tl-title { font-family: 'Syne', sans-serif; font-size: .95rem; margin-bottom: .3rem; }
+.tl-desc { font-size: .85rem; color: var(--muted); line-height: 1.55; }
+
+/* Direction diagram */
+.direction-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: .85rem; }
+.dir-card { background: var(--surface2); border-radius: 10px; padding: 1rem; text-align: center; }
+.dir-svg { margin-bottom: .6rem; }
+.dir-title { font-family: 'Syne', sans-serif; font-size: .85rem; margin-bottom: .3rem; }
+.dir-desc { font-size: .78rem; color: var(--muted); line-height: 1.45; }
+
+/* Tip box */
+.tip-box { background: rgba(200,169,110,.08); border: 1px solid rgba(200,169,110,.25);
+  border-radius: 12px; padding: 1.25rem 1.5rem; margin: 1.5rem 0; }
+.tip-label { font-size: .72rem; color: var(--accent); font-weight: 700;
+  letter-spacing: .08em; margin-bottom: .4rem; }
+.tip-box p { font-size: .9rem; color: var(--text); line-height: 1.65; margin: 0; }
+
+/* Exercise box */
+.exercise-box { background: rgba(93,191,138,.07); border: 1px solid rgba(93,191,138,.25);
+  border-radius: 12px; padding: 1.25rem 1.5rem; margin: 1.5rem 0; }
+.exercise-label { font-size: .72rem; color: var(--green); font-weight: 700;
+  letter-spacing: .08em; margin-bottom: .4rem; }
+.exercise-box p { font-size: .9rem; color: var(--text); line-height: 1.65; margin: 0; }
+
+/* Breadcrumb */
+.breadcrumb { font-size: .8rem; color: var(--muted); padding: 1.25rem 1.5rem 0;
+  max-width: 780px; margin: 0 auto; }
+.breadcrumb a { color: var(--accent); text-decoration: none; }
+.breadcrumb a:hover { text-decoration: underline; }
+
+@media (max-width: 540px) {
+  .compare-row { grid-template-columns: 1fr; }
+  .direction-grid { grid-template-columns: 1fr; }
+  .temp-points { flex-wrap: wrap; gap: .5rem; justify-content: center; }
+}
+</style>
+<script src="/assets/js/nav.js" defer></script>
+</head>
+<body>
+
+<div class="breadcrumb"><a href="/camera/">למד לצלם</a> ← אור וצבע</div>
+
+<div class="hero">
+  <div class="hero-badge">📷 בית ספר לצילום</div>
+  <h1>🌅 להבין את האור</h1>
+  <p>האור הוא "החומר" של הצלם. הוא יכול להפוך סצנה משעממת לדרמטית, מרגשת או נקייה — ובמדריך הזה תלמד לשלוט בו.</p>
+</div>
+
+<div class="article">
+
+  <!-- Section 1: Soft vs Hard -->
+  <div class="section">
+    <div class="section-label">חלק 1</div>
+    <h2>איכות האור: רך מול קשה</h2>
+    <p>כשמסתכלים על תמונה, הצללים הם אלו שמספרים לנו על איכות האור. הצלל הוא לא "בעיה" — הוא הנשמה של התמונה.</p>
+
+    <div class="diagram">
+      <div class="diagram-title">רך מול קשה — מה ההבדל?</div>
+      <div class="compare-row">
+        <div class="compare-card">
+          <div class="compare-icon">
+            <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
+              <!-- Hard sun -->
+              <circle cx="32" cy="22" r="10" fill="#e8a040" opacity=".9"/>
+              <line x1="32" y1="4" x2="32" y2="10" stroke="#e8a040" stroke-width="2.5" stroke-linecap="round"/>
+              <line x1="32" y1="34" x2="32" y2="40" stroke="#e8a040" stroke-width="2.5" stroke-linecap="round"/>
+              <line x1="50" y1="22" x2="56" y2="22" stroke="#e8a040" stroke-width="2.5" stroke-linecap="round"/>
+              <line x1="8" y1="22" x2="14" y2="22" stroke="#e8a040" stroke-width="2.5" stroke-linecap="round"/>
+              <line x1="46" y1="8" x2="50" y2="12" stroke="#e8a040" stroke-width="2.5" stroke-linecap="round"/>
+              <line x1="14" y1="32" x2="18" y2="36" stroke="#e8a040" stroke-width="2.5" stroke-linecap="round"/>
+              <!-- Sharp shadow -->
+              <rect x="20" y="46" width="28" height="12" rx="2" fill="#1a1a1a"/>
+              <line x1="32" y1="38" x2="20" y2="46" stroke="#333" stroke-width="1"/>
+              <line x1="32" y1="38" x2="48" y2="46" stroke="#333" stroke-width="1"/>
+            </svg>
+          </div>
+          <div class="compare-title tag-hard">אור קשה (Hard Light)</div>
+          <div class="compare-desc">שמש ישירה בצהריים. צללים <strong>חדים וכהים</strong>. ניגודיות גבוהה. מתאים לאפקטים דרמטיים, טקסטורות וצילום אדריכלי.</div>
+        </div>
+        <div class="compare-card">
+          <div class="compare-icon">
+            <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
+              <!-- Cloudy sun -->
+              <circle cx="32" cy="20" r="8" fill="#e8a040" opacity=".5"/>
+              <ellipse cx="24" cy="32" rx="12" ry="8" fill="#888" opacity=".4"/>
+              <ellipse cx="36" cy="30" rx="14" ry="9" fill="#aaa" opacity=".35"/>
+              <ellipse cx="44" cy="34" rx="10" ry="7" fill="#999" opacity=".35"/>
+              <!-- Soft shadow -->
+              <rect x="18" y="46" width="28" height="12" rx="6" fill="#2a2a2a" opacity=".6"/>
+            </svg>
+          </div>
+          <div class="compare-title tag-soft">אור רך (Soft Light)</div>
+          <div class="compare-desc">יום מעונן או וילון לבן. צללים <strong>עדינים ומטושטשים</strong>. מחמיא מאוד לפנים. הכי פופולרי לצילומי פורטרט.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tip-box">
+      <div class="tip-label">💡 טיפ מהשטח</div>
+      <p>ביום שמש חזק, חפשו אזור מוצל — מתחת לעץ, ליד בניין, או מתחת לגג. האור שם יהיה הרבה יותר רך ומחמיא.</p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- Section 2: Color Temperature -->
+  <div class="section">
+    <div class="section-label">חלק 2</div>
+    <h2>טמפרטורת צבע: חם מול קר</h2>
+    <p>לכל מקור אור יש "טמפרטורה" שנמדדת ב-Kelvin. זה קובע אם התמונה תרגיש חמה ונעימה, או נקייה ומודרנית.</p>
+
+    <div class="diagram">
+      <div class="diagram-title">סקלת הטמפרטורה</div>
+      <div class="temp-bar"></div>
+      <div class="temp-labels"><span>קר (כחול)</span><span>נייטרלי</span><span>חם (כתום)</span></div>
+      <div class="temp-points" style="margin-top:1.25rem">
+        <div class="temp-point">
+          <span class="tp-icon">🕯️</span>
+          <div class="tp-label">נר / שקיעה</div>
+          <div class="tp-k">~2000K</div>
+        </div>
+        <div class="temp-point">
+          <span class="tp-icon">💡</span>
+          <div class="tp-label">לא-ספיר</div>
+          <div class="tp-k">~3000K</div>
+        </div>
+        <div class="temp-point">
+          <span class="tp-icon">☀️</span>
+          <div class="tp-label">אור יום</div>
+          <div class="tp-k">~5500K</div>
+        </div>
+        <div class="temp-point">
+          <span class="tp-icon">⛅</span>
+          <div class="tp-label">יום מעונן</div>
+          <div class="tp-k">~7000K</div>
+        </div>
+        <div class="temp-point">
+          <span class="tp-icon">🌫️</span>
+          <div class="tp-label">צל עמוק</div>
+          <div class="tp-k">~10000K</div>
+        </div>
+      </div>
+    </div>
+
+    <p><strong>אור חם (צהוב/כתום)</strong> — יוצר תחושה של נעימות, ביתיות ואינטימיות. נפלא לפורטרטים וצילומי אווירה.</p>
+    <p><strong>אור קר (לבן/כחול)</strong> — נראה נקי, מודרני ומדויק. מתאים לצילומי מוצר ואדריכלות.</p>
+    <p>במצלמה, ה-<strong>White Balance</strong> מאפשר לכם לכוונן את הטמפרטורה ידנית — או לתת למצלמה להחליט (Auto WB).</p>
+  </div>
+
+  <hr class="divider">
+
+  <!-- Section 3: Magic Hours -->
+  <div class="section">
+    <div class="section-label">חלק 3</div>
+    <h2>שעות הקסם</h2>
+    <p>ישנם שני "חלונות" ביום שבהם האור הוא פשוט קסום — כל צלם שווה את שמו מכיר אותם בעל פה.</p>
+
+    <div class="diagram">
+      <div class="diagram-title">ציר הזמן של האור</div>
+      <ul class="timeline">
+        <li class="tl-item">
+          <div class="tl-dot tl-gold"></div>
+          <div class="tl-title" style="color:#e8a040">🌅 שעת הזהב (Golden Hour)</div>
+          <div class="tl-desc">השעה שאחרי הזריחה והשעה שלפני השקיעה. השמש נמוכה, האור רך וצבוע בכתום-זהב. הצללים ארוכים ומעניינים. זה הזמן שבו <strong style="color:var(--text)">הכל נראה טוב</strong>.</div>
+        </li>
+        <li class="tl-item">
+          <div class="tl-dot tl-blue"></div>
+          <div class="tl-title" style="color:#6090d8">🌆 השעה הכחולה (Blue Hour)</div>
+          <div class="tl-desc">הדקות הקצרות מיד אחרי שהשמש נעלמת. השמיים הופכים לכחול עמוק ומסתורי. מושלם לצילומי נוף עירוני עם תאורת רחוב.</div>
+        </li>
+        <li class="tl-item">
+          <div class="tl-dot tl-mid"></div>
+          <div class="tl-title" style="color:var(--muted)">☀️ אמצע היום</div>
+          <div class="tl-desc">האור הקשה ביותר. צלמים מנוסים בדרך כלל נמנעים מלצלם פורטרטים ונוף בשעות אלו, אלא אם הם מחפשים אפקט ספציפי.</div>
+        </li>
+      </ul>
+    </div>
+
+    <div class="tip-box">
+      <div class="tip-label">💡 טיפ מהשטח</div>
+      <p>השתמשו באפליקציות כמו <strong>PhotoPills</strong> או <strong>Sun Surveyor</strong> כדי לתכנן מראש בדיוק מתי ואיפה תהיה שעת הזהב במיקום הצילום שלכם.</p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- Section 4: Light Direction -->
+  <div class="section">
+    <div class="section-label">חלק 4</div>
+    <h2>כיוון האור וזוויות צילום</h2>
+    <p>הזווית שממנה מגיע האור קובעת את הדרמה ואת העומק בתמונה שלכם. אותו נוף, אותה שעה — כיוון שונה משנה הכל.</p>
+
+    <div class="diagram">
+      <div class="direction-grid">
+        <div class="dir-card">
+          <div class="dir-svg">
+            <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+              <!-- Person silhouette -->
+              <ellipse cx="28" cy="36" rx="8" ry="12" fill="#333"/>
+              <circle cx="28" cy="20" r="6" fill="#333"/>
+              <!-- Rim light glow -->
+              <ellipse cx="28" cy="36" rx="10" ry="14" fill="none" stroke="#e8a040" stroke-width="1.5" opacity=".6"/>
+              <circle cx="28" cy="20" r="8" fill="none" stroke="#e8a040" stroke-width="1.5" opacity=".6"/>
+              <!-- Light from back -->
+              <line x1="28" y1="4" x2="28" y2="8" stroke="#e8a040" stroke-width="2" stroke-linecap="round"/>
+              <line x1="16" y1="6" x2="18" y2="9" stroke="#e8a040" stroke-width="1.5" stroke-linecap="round"/>
+              <line x1="40" y1="6" x2="38" y2="9" stroke="#e8a040" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="dir-title" style="color:#e8a040">אור אחורי</div>
+          <div class="dir-desc">האור מאחורי הנושא. יוצר "הילה" סביב קווי המתאר ומפריד מהרקע. דרמטי מאוד.</div>
+        </div>
+        <div class="dir-card">
+          <div class="dir-svg">
+            <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+              <ellipse cx="28" cy="36" rx="8" ry="12" fill="#555"/>
+              <circle cx="28" cy="20" r="6" fill="#555"/>
+              <!-- Half shadow on person -->
+              <ellipse cx="32" cy="36" rx="5" ry="12" fill="#222"/>
+              <circle cx="31" cy="20" r="4" fill="#222"/>
+              <!-- Light from side -->
+              <line x1="8" y1="28" x2="14" y2="28" stroke="#e8a040" stroke-width="2" stroke-linecap="round"/>
+              <line x1="8" y1="22" x2="13" y2="24" stroke="#e8a040" stroke-width="1.5" stroke-linecap="round"/>
+              <line x1="8" y1="34" x2="13" y2="32" stroke="#e8a040" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="dir-title" style="color:var(--accent)">אור צידי</div>
+          <div class="dir-desc">מדגיש טקסטורות ועומק. מושלם להרים, סלעים וכל נושא תלת-ממדי.</div>
+        </div>
+        <div class="dir-card">
+          <div class="dir-svg">
+            <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+              <ellipse cx="28" cy="36" rx="8" ry="12" fill="#777"/>
+              <circle cx="28" cy="20" r="6" fill="#777"/>
+              <!-- Light from front (flat) -->
+              <line x1="48" y1="28" x2="42" y2="28" stroke="#e8a040" stroke-width="2" stroke-linecap="round"/>
+              <line x1="48" y1="22" x2="43" y2="24" stroke="#e8a040" stroke-width="1.5" stroke-linecap="round"/>
+              <line x1="48" y1="34" x2="43" y2="32" stroke="#e8a040" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="dir-title" style="color:var(--muted)">אור חזיתי</div>
+          <div class="dir-desc">מגיע ממאחורי הצלם. "משטיח" את הנושא ומעלים צללים. קל לשימוש אך פחות מרגש.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tip-box">
+      <div class="tip-label">💡 טיפ של מקצוענים</div>
+      <p>אל תפחדו לצלם לכיוון האור (אור אחורי). אם רוצים את הנושא חד — מקדו עליו. אם רוצים צללית שחורה — מקדו על האור שברקע.</p>
+    </div>
+
+    <div class="tip-box" style="background:rgba(96,144,216,.08);border-color:rgba(96,144,216,.25)">
+      <div class="tip-label" style="color:#6090d8">🔍 טיפ נוסף</div>
+      <p>חפשו תמיד את ה<strong>צל</strong> — לא רק את האור. הצל הוא מה שנותן לתמונה עומק ותחושת תלת-ממד. ביום שמש חזק, פינת הצל שבקרבת מקום היא הנכס הגדול ביותר שלכם.</p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- Exercise -->
+  <div class="section">
+    <div class="section-label">תרגיל מעשי</div>
+    <h2>אותו חפץ — שלוש זוויות</h2>
+    <p>הצבו חפץ פשוט (כוס קפה, תפוח, בקבוק) ליד חלון עם אור טבעי. צלמו אותו שלוש פעמים:</p>
+
+    <div class="exercise-box">
+      <div class="exercise-label">📷 המשימה</div>
+      <p>
+        <strong>1. אור חזיתי</strong> — אתם מצד האור, הנושא מולכם.<br><br>
+        <strong>2. אור צידי</strong> — הנושא בפינה 90° לאור, שימו לב לצללים על הצד.<br><br>
+        <strong>3. אור אחורי</strong> — הנושא בין הצלם לחלון. שחקו עם החשיפה וראו מה קורה.<br><br>
+        שימו לב: <em>כמה שונה האווירה בכל אחת?</em>
+      </p>
+    </div>
+  </div>
+
+  <div style="text-align:center;padding:1rem 0 2rem">
+    <a href="/camera/" style="color:var(--accent);font-size:.9rem;text-decoration:none">← חזרה לכל הנושאים</a>
+  </div>
+
+</div>
+</body>
+</html>

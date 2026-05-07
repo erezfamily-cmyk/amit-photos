@@ -2406,6 +2406,44 @@ nav.scrolled { border-bottom-color: rgba(200, 169, 110, 0.3); }
 .about-text .section-title { text-align: right; }
 .about-text .section-label { text-align: right; justify-content: flex-end; }
 
+.about-subtitle {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 1.75rem 0 0.6rem;
+  letter-spacing: 0.01em;
+}
+
+.about-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.about-list li {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  line-height: 1.7;
+  padding-right: 1rem;
+  border-right: 2px solid var(--accent);
+}
+
+[dir="ltr"] .about-list li {
+  padding-right: 0;
+  padding-left: 1rem;
+  border-right: none;
+  border-left: 2px solid var(--accent);
+}
+
+.about-contact-link {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
 .about-text p {
   color: var(--text-muted);
   margin-bottom: 1.25rem;

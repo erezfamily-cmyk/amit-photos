@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>שפה צילומית אישית — בית ספר לצילום | Amit Photos</title>
+<meta name="description" content="איך לפתח קול ייחודי בצילום — נושאים, זוויות, אווירה ועקביות שהופכים תמונות לאמנות.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #0a0a0a; --surface: #111; --surface2: #181818; --border: #222;
+  --accent: #c8a96e; --text: #f0ede8; --muted: #888; --green: #5dbf8a;
+  --purple: #a078d8;
+}
+body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--text);
+  direction: rtl; min-height: 100vh; padding-bottom: 5rem; }
+
+.hero { text-align: center; padding: 3rem 1.5rem 2rem; }
+.hero-badge { display: inline-block; font-size: .72rem;
+  background: rgba(200,169,110,.12); border: 1px solid rgba(200,169,110,.3);
+  color: var(--accent); border-radius: 20px; padding: .3rem .8rem; margin-bottom: .75rem; }
+.hero h1 { font-family: 'Syne', sans-serif; font-size: 2rem; color: var(--accent); margin-bottom: .5rem; }
+.hero p { color: var(--muted); font-size: .95rem; max-width: 480px; margin: 0 auto; line-height: 1.65; }
+
+.article { max-width: 780px; margin: 0 auto; padding: 0 1.25rem; }
+.section { margin-bottom: 3rem; }
+.section-label { font-size: .72rem; color: var(--accent); text-transform: uppercase;
+  letter-spacing: .1em; margin-bottom: .5rem; }
+.section h2 { font-family: 'Syne', sans-serif; font-size: 1.4rem; color: var(--text); margin-bottom: 1rem; }
+.section p { color: var(--muted); line-height: 1.75; margin-bottom: .85rem; font-size: .95rem; }
+.section p strong { color: var(--text); }
+.divider { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+
+/* DNA grid */
+.dna-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1.5rem 0; }
+.dna-card { background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; padding: 1.25rem; }
+.dna-icon { font-size: 1.8rem; margin-bottom: .6rem; }
+.dna-title { font-family: 'Syne', sans-serif; font-size: .95rem; color: var(--accent); margin-bottom: .4rem; }
+.dna-desc { font-size: .82rem; color: var(--muted); line-height: 1.55; }
+
+/* Steps */
+.steps { list-style: none; counter-reset: steps; }
+.steps li { counter-increment: steps; position: relative;
+  padding: 1rem 1rem 1rem 3.5rem; margin-bottom: .75rem;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 10px; }
+.steps li::before { content: counter(steps); position: absolute; left: 1rem; top: 50%;
+  transform: translateY(-50%);
+  width: 28px; height: 28px; border-radius: 50%; background: rgba(200,169,110,.15);
+  color: var(--accent); font-family: 'Syne', sans-serif; font-size: .85rem;
+  display: flex; align-items: center; justify-content: center; }
+.steps li strong { color: var(--text); display: block; margin-bottom: .25rem; font-size: .9rem; }
+.steps li span { font-size: .83rem; color: var(--muted); line-height: 1.5; }
+
+/* Style scale */
+.scale-wrap { background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; padding: 1.5rem; margin: 1.5rem 0; }
+.scale-title { font-family: 'Syne', sans-serif; font-size: .95rem; color: var(--accent);
+  text-align: center; margin-bottom: 1.25rem; }
+.scale-bar { position: relative; height: 8px; background: linear-gradient(to left, var(--purple), var(--accent));
+  border-radius: 4px; margin: 1rem 0 .5rem; }
+.scale-ends { display: flex; justify-content: space-between; }
+.scale-end { font-size: .8rem; text-align: center; max-width: 140px; }
+.scale-end .se-title { font-family: 'Syne', sans-serif; color: var(--text); margin-bottom: .25rem; font-size: .85rem; }
+.scale-end .se-desc { color: var(--muted); font-size: .75rem; line-height: 1.4; }
+.scale-center { text-align: center; margin-top: .75rem;
+  font-size: .82rem; color: var(--accent); font-style: italic; }
+
+/* Tip / Exercise */
+.tip-box { background: rgba(200,169,110,.08); border: 1px solid rgba(200,169,110,.25);
+  border-radius: 12px; padding: 1.25rem 1.5rem; margin: 1.5rem 0; }
+.tip-label { font-size: .72rem; color: var(--accent); font-weight: 700;
+  letter-spacing: .08em; margin-bottom: .4rem; }
+.tip-box p { font-size: .9rem; color: var(--text); line-height: 1.65; margin: 0; }
+.exercise-box { background: rgba(93,191,138,.07); border: 1px solid rgba(93,191,138,.25);
+  border-radius: 12px; padding: 1.25rem 1.5rem; margin: 1.5rem 0; }
+.exercise-label { font-size: .72rem; color: var(--green); font-weight: 700;
+  letter-spacing: .08em; margin-bottom: .4rem; }
+.exercise-box p { font-size: .9rem; color: var(--text); line-height: 1.65; margin: 0; }
+
+.breadcrumb { font-size: .8rem; color: var(--muted); padding: 1.25rem 1.5rem 0;
+  max-width: 780px; margin: 0 auto; }
+.breadcrumb a { color: var(--accent); text-decoration: none; }
+
+@media (max-width: 540px) { .dna-grid { grid-template-columns: 1fr; } }
+</style>
+<script src="/assets/js/nav.js" defer></script>
+</head>
+<body>
+
+<div class="breadcrumb"><a href="/camera/">למד לצלם</a> ← שפה צילומית</div>
+
+<div class="hero">
+  <div class="hero-badge">📷 בית ספר לצילום</div>
+  <h1>🖼️ לפתח קול משלך</h1>
+  <p>צילום הוא לא רק טכנולוגיה — הוא דרך לראות את העולם. שפה צילומית אישית היא מה שגורם למישהו להסתכל על תמונה ולדעת מיד שאתה צילמת אותה.</p>
+</div>
+
+<div class="article">
+
+  <div class="section">
+    <div class="section-label">חלק 1</div>
+    <h2>מהי בעצם שפה צילומית?</h2>
+    <p>תחשבו על זה כמו בישול: לכולם יש את אותם המצרכים — אור, מצלמה, עדשה — אבל כל אחד מוציא מנה עם טעם אחר. השפה שלכם מורכבת משלושה עמודי תווך:</p>
+
+    <div class="dna-grid">
+      <div class="dna-card">
+        <div class="dna-icon">🎯</div>
+        <div class="dna-title">הנושאים (ה"מה")</div>
+        <div class="dna-desc">מה מושך אתכם? טבע פראי, רחובות סואנים, או פרטים קטנים ומופשטים? הנושא שחוזר בעבודות שלכם הוא הלב של השפה.</div>
+      </div>
+      <div class="dna-card">
+        <div class="dna-icon">👁️</div>
+        <div class="dna-title">הזווית (ה"איך")</div>
+        <div class="dna-desc">האם אתם מצלמים מגובה העיניים, מנקודה נמוכה ודרמטית, או מלמעלה? הזווית שבחרתם חוזרת היא חלק מהחתימה שלכם.</div>
+      </div>
+      <div class="dna-card">
+        <div class="dna-icon">🌗</div>
+        <div class="dna-title">האווירה (ה"רגש")</div>
+        <div class="dna-desc">האם התמונות שלכם מוארות ושמחות, או אפלות ומסתוריות? קרות ועירוניות, או חמות ואינטימיות?</div>
+      </div>
+      <div class="dna-card">
+        <div class="dna-icon">🔁</div>
+        <div class="dna-title">העקביות</div>
+        <div class="dna-desc">שימוש חוזר בצבעים, בנושאים, בסגנון עריכה — הוא מה שמהפך אוסף תמונות לגוף עבודה מזוהה.</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="section">
+    <div class="section-label">חלק 2</div>
+    <h2>איך מוצאים את הסגנון שלכם?</h2>
+    <p>סגנון לא מוצאים ביום אחד — הוא נבנה עם הזמן. הנה שלוש דרכים להאיץ את התהליך:</p>
+
+    <ul class="steps">
+      <li>
+        <strong>אוצרות (Curating)</strong>
+        <span>עברו על 20 התמונות הכי טובות שלכם מהשנה האחרונה. שימו אותן אחת ליד השנייה. מה משותף להן? תגלו שאתם תמיד נמשכים לצבעים מסוימים בלי שתמיד שמים לב.</span>
+      </li>
+      <li>
+        <strong>השראה, לא העתקה</strong>
+        <span>הסתכלו על צלמים שאתם אוהבים ושאלו: "מה בדיוק אני אוהב כאן?" — האם זה השימוש בצל? ניקיון הפריים? קחו את האלמנט הזה ויישמו אותו בדרך שלכם.</span>
+      </li>
+      <li>
+        <strong>שבירת חוקים מודעת</strong>
+        <span>אחרי שלמדתם את "חוק השלישים", נסו לשבור אותו בכוונה. שפה אישית נוצרת לעיתים קרובות דווקא במקום שבו החוקים נגמרים.</span>
+      </li>
+    </ul>
+  </div>
+
+  <hr class="divider">
+
+  <div class="section">
+    <div class="section-label">חלק 3</div>
+    <h2>סקאלת הסגנון</h2>
+    <p>אין סגנון "נכון" — אבל כדאי לדעת איפה אתם עומדים על הסקאלה. ברגע שמבינים את זה, קל יותר לעשות בחירות עקביות.</p>
+
+    <div class="scale-wrap">
+      <div class="scale-title">מהיכן מגיע ה"קול" שלכם?</div>
+      <div class="scale-ends">
+        <div class="scale-end">
+          <div class="se-title">טבעי ונאמן</div>
+          <div class="se-desc">עריכה עדינה, צבעים קרובים למציאות, חדות ונקיון</div>
+        </div>
+        <div class="scale-end">
+          <div class="se-title">אומנותי ודרמטי</div>
+          <div class="se-desc">צבעים עזים, ניגודיות גבוהה, אווירה חלומית</div>
+        </div>
+      </div>
+      <div class="scale-bar"></div>
+      <div class="scale-center">הקול האישי שלכם — המקום שבו אתם בוחרים לעמוד</div>
+    </div>
+
+    <div class="tip-box">
+      <div class="tip-label">💡 טיפ מפתח</div>
+      <p>נסו ליצור <strong>"סדרות"</strong> של 5–10 תמונות סביב נושא אחד או סגנון עריכה אחד. זה יאלץ אתכם לחשוב כמו יוצרים ולא רק כמו צלמים מזדמנים.</p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="section">
+    <div class="section-label">תרגיל מעשי</div>
+    <h2>יום של צבע אחד</h2>
+
+    <div class="exercise-box">
+      <div class="exercise-label">📷 המשימה</div>
+      <p>
+        צאו לסיבוב צילום של שעה. המטרה: לצלם רק דברים שמופיע בהם <strong>צבע מסוים אחד</strong> (למשל: כחול, אדום, או כתום).<br><br>
+        אל תצלמו שום דבר אחר.<br><br>
+        <em>למה זה עוזר?</em> זה מאמן את העין לסנן רעשים ולהתמקד באלמנט ויזואלי אחד — הצעד הראשון ליצירת שפה אישית.
+      </p>
+    </div>
+  </div>
+
+  <div style="text-align:center;padding:1rem 0 2rem">
+    <a href="/camera/" style="color:var(--accent);font-size:.9rem;text-decoration:none">← חזרה לכל הנושאים</a>
+  </div>
+
+</div>
+</body>
+</html>
