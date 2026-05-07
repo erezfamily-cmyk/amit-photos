@@ -73,6 +73,12 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://amitphotos.com/learn/</loc>
+    <lastmod>2026-05-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://amitphotos.com/games/</loc>
     <lastmod>2026-05-07</lastmod>
     <changefreq>monthly</changefreq>
