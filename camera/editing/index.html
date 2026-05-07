@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>עריכת תמונות — בית ספר לצילום | Amit Photos</title>
+<meta name="description" content="עריכה ככלי ביטוי — RAW, חמשת האלמנטים, AI בעריכה מודרנית, ואיך לא לאבד את הקו.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #0a0a0a; --surface: #111; --surface2: #181818; --border: #222;
+  --accent: #c8a96e; --text: #f0ede8; --muted: #888; --green: #5dbf8a; --blue: #6090d8;
+}
+body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--text);
+  direction: rtl; min-height: 100vh; padding-bottom: 5rem; }
+
+.hero { text-align: center; padding: 3rem 1.5rem 2rem; }
+.hero-badge { display: inline-block; font-size: .72rem;
+  background: rgba(200,169,110,.12); border: 1px solid rgba(200,169,110,.3);
+  color: var(--accent); border-radius: 20px; padding: .3rem .8rem; margin-bottom: .75rem; }
+.hero h1 { font-family: 'Syne', sans-serif; font-size: 2rem; color: var(--accent); margin-bottom: .5rem; }
+.hero p { color: var(--muted); font-size: .95rem; max-width: 480px; margin: 0 auto; line-height: 1.65; }
+
+.article { max-width: 780px; margin: 0 auto; padding: 0 1.25rem; }
+.section { margin-bottom: 3rem; }
+.section-label { font-size: .72rem; color: var(--accent); text-transform: uppercase;
+  letter-spacing: .1em; margin-bottom: .5rem; }
+.section h2 { font-family: 'Syne', sans-serif; font-size: 1.4rem; color: var(--text); margin-bottom: 1rem; }
+.section p { color: var(--muted); line-height: 1.75; margin-bottom: .85rem; font-size: .95rem; }
+.section p strong { color: var(--text); }
+.divider { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+
+/* RAW vs JPEG */
+.raw-compare { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1.25rem 0; }
+.raw-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 1.1rem; }
+.raw-label { font-family: 'Syne', sans-serif; font-size: .9rem; margin-bottom: .6rem; }
+.raw-bar-wrap { margin-bottom: .6rem; }
+.raw-bar-label { font-size: .73rem; color: var(--muted); margin-bottom: .25rem; }
+.raw-bar { height: 8px; border-radius: 4px; }
+.raw-desc { font-size: .8rem; color: var(--muted); line-height: 1.5; }
+
+/* Elements grid */
+.el-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .85rem; margin: 1.25rem 0; }
+.el-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 1rem; }
+.el-icon { font-size: 1.5rem; margin-bottom: .4rem; }
+.el-title { font-family: 'Syne', sans-serif; font-size: .85rem; color: var(--accent); margin-bottom: .3rem; }
+.el-desc { font-size: .8rem; color: var(--muted); line-height: 1.5; }
+
+/* Workflow steps */
+.workflow { display: flex; flex-direction: column; gap: 0; margin: 1.25rem 0; }
+.wf-step { display: flex; align-items: flex-start; gap: 1rem; padding: .9rem 0;
+  border-bottom: 1px solid var(--border); }
+.wf-step:last-child { border-bottom: none; }
+.wf-num { width: 32px; height: 32px; border-radius: 50%; background: rgba(200,169,110,.15);
+  color: var(--accent); font-family: 'Syne', sans-serif; font-size: .85rem;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.wf-content strong { display: block; color: var(--text); font-size: .9rem; margin-bottom: .2rem; }
+.wf-content span { font-size: .82rem; color: var(--muted); line-height: 1.5; }
+
+/* AI cards */
+.ai-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: .85rem; margin: 1.25rem 0; }
+.ai-card { background: var(--surface); border: 1px solid rgba(96,144,216,.3);
+  border-radius: 10px; padding: 1rem; }
+.ai-name { font-family: 'Syne', sans-serif; font-size: .85rem; color: var(--blue); margin-bottom: .3rem; }
+.ai-desc { font-size: .78rem; color: var(--muted); line-height: 1.5; }
+
+.tip-box { background: rgba(200,169,110,.08); border: 1px solid rgba(200,169,110,.25);
+  border-radius: 12px; padding: 1.25rem 1.5rem; margin: 1.5rem 0; }
+.tip-label { font-size: .72rem; color: var(--accent); font-weight: 700; letter-spacing: .08em; margin-bottom: .4rem; }
+.tip-box p { font-size: .9rem; color: var(--text); line-height: 1.65; margin: 0; }
+.exercise-box { background: rgba(93,191,138,.07); border: 1px solid rgba(93,191,138,.25);
+  border-radius: 12px; padding: 1.25rem 1.5rem; margin: 1.5rem 0; }
+.exercise-label { font-size: .72rem; color: var(--green); font-weight: 700; letter-spacing: .08em; margin-bottom: .4rem; }
+.exercise-box p { font-size: .9rem; color: var(--text); line-height: 1.65; margin: 0; }
+
+.breadcrumb { font-size: .8rem; color: var(--muted); padding: 1.25rem 1.5rem 0;
+  max-width: 780px; margin: 0 auto; }
+.breadcrumb a { color: var(--accent); text-decoration: none; }
+
+@media (max-width: 540px) {
+  .raw-compare, .el-grid { grid-template-columns: 1fr; }
+  .ai-grid { grid-template-columns: 1fr 1fr; }
+}
+</style>
+<script src="/assets/js/nav.js" defer></script>
+</head>
+<body>
+
+<div class="breadcrumb"><a href="/camera/">למד לצלם</a> ← עריכת תמונות</div>
+
+<div class="hero">
+  <div class="hero-badge">📷 בית ספר לצילום</div>
+  <h1>✨ עריכה ככלי ביטוי</h1>
+  <p>עריכה היא לא "תיקון טעויות" — היא המשך ישיר של תהליך היצירה. כאן הופך הצילום לסיפור שרציתם לספר.</p>
+</div>
+
+<div class="article">
+
+  <div class="section">
+    <div class="section-label">חלק 1</div>
+    <h2>הכל מתחיל בקובץ RAW</h2>
+    <p>קובץ ה-RAW הוא ה"נגטיב הדיגיטלי" שלכם. בניגוד ל-JPEG, הוא שומר את <strong>כל המידע</strong> שהחיישן קלט — ומאפשר לכם לשלוט בתוצאה הסופית.</p>
+
+    <div class="raw-compare">
+      <div class="raw-card">
+        <div class="raw-label" style="color:var(--accent)">📁 RAW</div>
+        <div class="raw-bar-wrap">
+          <div class="raw-bar-label">מידע שנשמר</div>
+          <div class="raw-bar" style="background:linear-gradient(to left,var(--accent),#e8a040);width:100%"></div>
+        </div>
+        <div class="raw-bar-wrap">
+          <div class="raw-bar-label">גמישות בעריכה</div>
+          <div class="raw-bar" style="background:var(--green);width:90%"></div>
+        </div>
+        <div class="raw-desc">שליטה מלאה בצללים, בהיילייטס וצבעים. גודל קובץ גדול יותר.</div>
+      </div>
+      <div class="raw-card">
+        <div class="raw-label" style="color:var(--muted)">🖼️ JPEG</div>
+        <div class="raw-bar-wrap">
+          <div class="raw-bar-label">מידע שנשמר</div>
+          <div class="raw-bar" style="background:#555;width:40%"></div>
+        </div>
+        <div class="raw-bar-wrap">
+          <div class="raw-bar-label">גמישות בעריכה</div>
+          <div class="raw-bar" style="background:#555;width:30%"></div>
+        </div>
+        <div class="raw-desc">המצלמה מחליטה בשבילכם. קובץ קטן. מתאים כשאין תוכניות לעריכה.</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="section">
+    <div class="section-label">חלק 2</div>
+    <h2>חמשת אלמנטי הסגנון בעריכה</h2>
+    <p>כדי לייצר סגנון עקבי, כדאי להכיר את ה"כפתורים" שמשפיעים על האווירה:</p>
+
+    <div class="el-grid">
+      <div class="el-card">
+        <div class="el-icon">☀️</div>
+        <div class="el-title">חשיפה וניגודיות</div>
+        <div class="el-desc">האם התמונה תהיה מוארת ו"אוורירית" (High Key) או כהה ודרמטית (Low Key)?</div>
+      </div>
+      <div class="el-card">
+        <div class="el-icon">🌡️</div>
+        <div class="el-title">טמפרטורת צבע</div>
+        <div class="el-desc">האם תשאירו את האור הטבעי, או "תחממו" אותו כדי ליצור נוסטלגיה ורוך?</div>
+      </div>
+      <div class="el-card">
+        <div class="el-icon">🎨</div>
+        <div class="el-title">Color Grading</div>
+        <div class="el-desc">הדגשת גוונים ספציפיים. למשל — הדגשת כחול בים לעומת החלשת הירוקים מסביב.</div>
+      </div>
+      <div class="el-card">
+        <div class="el-icon">✂️</div>
+        <div class="el-title">חיתוך (Crop)</div>
+        <div class="el-desc">לפעמים התמונה הטובה ביותר נמצאת בתוך התמונה שצילמתם. חיתוך נכון משנה קומפוזיציה.</div>
+      </div>
+      <div class="el-card" style="grid-column: span 2">
+        <div class="el-icon">🔍</div>
+        <div class="el-title">חדות וטקסטורה</div>
+        <div class="el-desc">הדגשת פרטים בטבע (סלעים, עלים) לעומת החלקת עור בפורטרטים. אותו כלי, שני שימושים הפוכים.</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="section">
+    <div class="section-label">חלק 3</div>
+    <h2>כלי AI בעריכה מודרנית</h2>
+    <p>בינה מלאכותית שינתה את חוקי המשחק. היא לא מחליפה את הצלם — היא משדרגת את היכולות שלו.</p>
+
+    <div class="ai-grid">
+      <div class="ai-card">
+        <div class="ai-name">Topaz Photo AI</div>
+        <div class="ai-desc">ניקוי רעשים דיגיטליים וחידוד פרטים. מציל תמונות שצולמו ב-ISO גבוה.</div>
+      </div>
+      <div class="ai-card">
+        <div class="ai-name">Luminar Neo</div>
+        <div class="ai-desc">החלפת שמיים, תאורה מלאכותית, והחלקת פנים — בשניות.</div>
+      </div>
+      <div class="ai-card">
+        <div class="ai-name">Generative Fill</div>
+        <div class="ai-desc">הסרת אובייקטים מסיחים ומילוי קצוות — ישירות בפוטושופ.</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="section">
+    <div class="section-label">חלק 4</div>
+    <h2>זרימת עבודה מומלצת</h2>
+    <p>סדר הפעולות חשוב. כך שומרים על איכות ועקביות:</p>
+
+    <div class="workflow">
+      <div class="wf-step">
+        <div class="wf-num">1</div>
+        <div class="wf-content"><strong>פריקה (Ingest)</strong><span>העברת קבצים מהכרטיס למחשב + גיבוי ראשוני</span></div>
+      </div>
+      <div class="wf-step">
+        <div class="wf-num">2</div>
+        <div class="wf-content"><strong>סינון (Culling)</strong><span>מחיקת תמונות לא חדות או כפולות. שמרו רק את הטובות</span></div>
+      </div>
+      <div class="wf-step">
+        <div class="wf-num">3</div>
+        <div class="wf-content"><strong>תיקונים בסיסיים</strong><span>חשיפה, איזון לבן וחיתוך</span></div>
+      </div>
+      <div class="wf-step">
+        <div class="wf-num">4</div>
+        <div class="wf-content"><strong>עריכה אומנותית</strong><span>החלת סגנון אישי, Color Grading</span></div>
+      </div>
+      <div class="wf-step">
+        <div class="wf-num">5</div>
+        <div class="wf-content"><strong>ליטוש סופי</strong><span>ניקוי רעשים, הסרת פגמים</span></div>
+      </div>
+      <div class="wf-step">
+        <div class="wf-num">6</div>
+        <div class="wf-content"><strong>ייצוא</strong><span>התאמת גודל ואיכות ליעד — אתר, רשתות חברתיות, הדפסה</span></div>
+      </div>
+    </div>
+
+    <div class="tip-box">
+      <div class="tip-label">💡 מתי "יותר מדי" זה יותר מדי?</div>
+      <p>סיימתם לערוך? קחו הפסקה של 10 דקות מהמסך. כשתחזרו, תראו את התמונה בעיניים רעננות — ולרוב תרצו להוריד קצת מהעוצמה של האפקטים.</p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="section">
+    <div class="section-label">תרגיל מעשי</div>
+    <h2>אותה תמונה — שלושה סיפורים</h2>
+
+    <div class="exercise-box">
+      <div class="exercise-label">📷 המשימה</div>
+      <p>
+        קחו תמונה אחת שצילמתם. ערכו אותה בשלוש דרכים שונות לחלוטין:<br><br>
+        <strong>1. שחור-לבן דרמטי</strong> — ניגודיות גבוהה, ללא צבע.<br>
+        <strong>2. חמה ורכה</strong> — גוון כתום-זהב, אור שמשי.<br>
+        <strong>3. קרה וקולנועית</strong> — גוון כחול-ירוק, צל נוסף.<br><br>
+        <em>שימו לב: איך כל עריכה משנה את התחושה שהתמונה מעבירה?</em>
+      </p>
+    </div>
+  </div>
+
+  <div style="text-align:center;padding:1rem 0 2rem">
+    <a href="/camera/" style="color:var(--accent);font-size:.9rem;text-decoration:none">← חזרה לכל הנושאים</a>
+    <span style="color:var(--border);margin:0 .75rem">|</span>
+    <a href="/camera/software/" style="color:var(--accent);font-size:.9rem;text-decoration:none">תוכנות עריכה ←</a>
+  </div>
+
+</div>
+</body>
+</html>
