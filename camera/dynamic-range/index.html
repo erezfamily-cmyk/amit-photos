@@ -12,7 +12,6 @@
 :root {
   --bg: #0a0a0a; --surface: #111; --surface2: #181818; --border: #222;
   --accent: #c8a96e; --text: #f0ede8; --muted: #888;
-  --hi-color: #ff5533; --lo-color: #3366ff; --ok-color: #55cc88;
 }
 body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--text);
   direction: rtl; min-height: 100vh; padding-bottom: 5rem; }
@@ -43,50 +42,97 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
 .lab-title { font-family: 'Syne', sans-serif; font-size: 1.05rem; color: var(--accent);
   text-align: center; margin-bottom: 1.25rem; }
 
-/* Canvas preview */
-.sim-wrap { position: relative; border-radius: 12px; overflow: hidden; background: #000;
-  margin-bottom: 1rem; aspect-ratio: 16/9; }
-#drCanvas { width: 100%; height: 100%; display: block; image-rendering: pixelated; }
-
-/* Floating badges */
-.clip-badge {
-  position: absolute; top: .75rem; padding: .4rem .85rem;
-  border-radius: 8px; font-size: .78rem; font-weight: 700;
-  backdrop-filter: blur(6px); transition: opacity .3s;
+/* Photo picker */
+.photo-picker { display: flex; gap: .5rem; flex-wrap: wrap; justify-content: center; margin-bottom: 1.25rem; }
+.photo-btn {
+  background: var(--surface2); border: 1.5px solid var(--border); color: var(--muted);
+  border-radius: 8px; padding: .4rem .9rem; font-size: .8rem; cursor: pointer;
+  font-family: inherit; transition: border-color .15s, color .15s;
 }
-.clip-hi { left: .75rem; background: rgba(255,85,51,.85); color: #fff; }
-.clip-lo { right: .75rem; background: rgba(51,102,255,.85); color: #fff; }
-.clip-badge.hidden { opacity: 0; pointer-events: none; }
+.photo-btn:hover { border-color: #555; color: var(--text); }
+.photo-btn.active { border-color: var(--accent); color: var(--accent); }
 
-.ev-status {
-  position: absolute; bottom: .75rem; left: 50%; transform: translateX(-50%);
-  background: rgba(0,0,0,.7); border: 1px solid rgba(255,255,255,.15);
-  border-radius: 10px; padding: .45rem .9rem; font-size: .82rem;
-  backdrop-filter: blur(6px); white-space: nowrap; color: var(--text);
+/* ===== Compare slider ===== */
+.compare-outer {
+  position: relative; border-radius: 14px; overflow: hidden;
+  aspect-ratio: 3/2; background: #000; cursor: col-resize;
+  -webkit-user-select: none; user-select: none; touch-action: pan-y;
 }
-.ev-status span { color: var(--accent); font-weight: 700; }
+.compare-img {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; pointer-events: none; display: block;
+}
+.img-a { /* expose for subject — brighter */
+  filter: brightness(2.0) saturate(0.75);
+  z-index: 1;
+}
+.img-b { /* expose for highlights — darker */
+  filter: brightness(0.32) contrast(1.15) saturate(1.1);
+  z-index: 2;
+  clip-path: inset(0 50% 0 0);
+}
+.compare-line {
+  position: absolute; top: 0; bottom: 0; z-index: 10;
+  width: 2px; background: #fff; left: 50%;
+  transform: translateX(-50%); pointer-events: none;
+}
+.compare-handle {
+  position: absolute; top: 50%; left: 50%; z-index: 11;
+  width: 40px; height: 40px; border-radius: 50%;
+  background: #fff; box-shadow: 0 2px 12px rgba(0,0,0,.5);
+  transform: translate(-50%,-50%);
+  display: flex; align-items: center; justify-content: center;
+  pointer-events: none;
+}
+.compare-handle svg { width: 18px; height: 18px; }
 
-/* Legend */
-.legend { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;
-  margin-bottom: 1.25rem; }
-.legend-item { display: flex; align-items: center; gap: .4rem; font-size: .8rem; color: var(--muted); }
-.legend-dot { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
+/* Side labels */
+.compare-label {
+  position: absolute; bottom: .75rem; z-index: 12;
+  background: rgba(0,0,0,.72); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+  border-radius: 8px; padding: .35rem .8rem;
+  font-size: .75rem; font-weight: 700; pointer-events: none;
+}
+.label-a { left: .75rem; color: #ffaa66; }
+.label-b { right: .75rem; color: #66aaff; }
 
-/* Presets */
-.presets { display: flex; gap: .5rem; flex-wrap: wrap; justify-content: center; margin-bottom: 1.25rem; }
+.compare-hint { text-align: center; font-size: .78rem; color: var(--muted); margin-top: .6rem; margin-bottom: 1.25rem; }
+
+/* ===== DR simulator ===== */
+.dr-preview {
+  position: relative; border-radius: 14px; overflow: hidden;
+  aspect-ratio: 3/2; background: #000; margin-bottom: 1rem;
+}
+.dr-img { width: 100%; height: 100%; object-fit: cover; display: block;
+  transition: filter .15s; }
+
+.dr-badges {
+  position: absolute; inset: 0; pointer-events: none;
+  display: flex; align-items: flex-start; justify-content: space-between;
+  padding: .75rem;
+}
+.dr-badge {
+  background: rgba(0,0,0,.72); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+  border-radius: 8px; padding: .35rem .75rem;
+  font-size: .75rem; font-weight: 700;
+  opacity: 0; transition: opacity .3s;
+}
+.badge-hi { color: #ff6644; }
+.badge-lo { color: #6699ff; }
+.badge-ok { color: #55cc88; position: absolute; bottom: .75rem; left: 50%; transform: translateX(-50%); }
+
+.preset-btns { display: flex; gap: .5rem; flex-wrap: wrap; justify-content: center; margin-bottom: 1rem; }
 .preset-btn {
-  background: var(--surface2); border: 1px solid var(--border); color: var(--muted);
+  background: var(--surface2); border: 1.5px solid var(--border); color: var(--muted);
   border-radius: 8px; padding: .4rem .85rem; font-size: .78rem; cursor: pointer;
   font-family: inherit; transition: border-color .15s, color .15s;
 }
-.preset-btn:hover, .preset-btn.active { border-color: var(--accent); color: var(--accent); }
+.preset-btn.active { border-color: var(--accent); color: var(--accent); }
 
-/* Sliders */
-.sliders { display: flex; flex-direction: column; gap: 1.25rem; margin-bottom: 1.25rem; }
-.slider-row { display: flex; flex-direction: column; gap: .4rem; }
+.slider-row { display: flex; flex-direction: column; gap: .4rem; margin-bottom: .5rem; }
 .slider-header { display: flex; justify-content: space-between; align-items: center; }
 .slider-name { font-size: .9rem; font-weight: 600; display: flex; align-items: center; gap: .5rem; }
-.slider-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.slider-dot { width: 10px; height: 10px; border-radius: 50%; }
 .slider-value { font-family: monospace; font-size: .95rem; color: var(--accent); font-weight: 700; }
 .slider-hint { font-size: .75rem; color: var(--muted); }
 
@@ -94,34 +140,29 @@ input[type=range] {
   -webkit-appearance: none; width: 100%; height: 6px; border-radius: 3px;
   outline: none; cursor: pointer; background: var(--border);
 }
-input[type=range].dr-slider::-webkit-slider-thumb {
+input[type=range]::-webkit-slider-thumb {
   -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%;
-  background: var(--ok-color); border: 2px solid #fff;
+  background: var(--accent); border: 2px solid #fff; cursor: pointer;
 }
-input[type=range].ev-slider::-webkit-slider-thumb {
-  -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%;
-  background: var(--accent); border: 2px solid #fff;
-}
-.scale-labels { display: flex; justify-content: space-between; font-size: .7rem; color: var(--muted); }
 
-/* Histogram */
-.histogram-wrap { background: var(--surface2); border: 1px solid var(--border);
-  border-radius: 10px; overflow: hidden; }
-.histogram-label { font-size: .72rem; color: var(--muted); text-align: center;
-  padding: .4rem; border-bottom: 1px solid var(--border); }
-#histCanvas { width: 100%; display: block; height: 60px; }
-
-/* Stops scale */
-.stops-scale { display: flex; gap: .5rem; margin: 1.5rem 0; }
-.stops-row { flex: 1; display: flex; flex-direction: column; gap: .3rem; }
-.stops-label { font-size: .72rem; color: var(--muted); text-align: center; }
-.stops-bar-wrap { height: 22px; background: var(--border); border-radius: 4px; overflow: hidden;
-  position: relative; }
+/* Stops comparison */
+.stops-row { display: flex; flex-direction: column; gap: .3rem; margin-bottom: .65rem; }
+.stops-label { font-size: .78rem; color: var(--muted); }
+.stops-bar-wrap { height: 22px; background: var(--border); border-radius: 4px; overflow: hidden; }
 .stops-bar { height: 100%; border-radius: 4px; display: flex; align-items: center;
-  padding: 0 .4rem; font-size: .68rem; font-weight: 700; white-space: nowrap;
-  overflow: hidden; transition: width .4s; }
+  padding: 0 .5rem; font-size: .7rem; font-weight: 700; color: #000;
+  background: linear-gradient(90deg, #3366ff 0%, #55cc88 40%, #ffaa44 75%, #ff5533 100%);
+  transition: width .5s; white-space: nowrap; overflow: hidden; }
+.bar-8   { width: 50%; }
+.bar-11  { width: 69%; }
+.bar-13  { width: 75%; }
+.bar-15  { width: 88%; }
+.bar-eye { width: 100%; background: linear-gradient(90deg,#3366ff,#55cc88,#c8a96e); }
+.slider-dot-green { background: #55cc88; }
+.scale-labels { display: flex; justify-content: space-between; font-size: .7rem; color: var(--muted); }
+.note-text { margin-top: 1.25rem; }
 
-/* Tips cards */
+/* Tips */
 .tips-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
 @media (max-width: 500px) { .tips-grid { grid-template-columns: 1fr; } }
 .tip-card { background: var(--surface2); border: 1px solid var(--border);
@@ -156,165 +197,149 @@ input[type=range].ev-slider::-webkit-slider-thumb {
       <strong>טווח דינמי</strong> הוא ההבדל בין הנקודה הכהה ביותר לבהירה ביותר שמצלמה יכולה לצלם בו-זמנית עם פרטים. הוא נמדד ב<strong>סטופים</strong> (stops / EV) — כל סטופ = פי שניים אור.
     </p>
     <p>
-      העין האנושית מסתגלת בצורה מדהימה — היא רואה בו-זמנית טווח של כ-<strong>20 סטופ</strong>. מצלמה טובה? <strong>12–15 סטופ</strong>. סמארטפון ישן? כ-<strong>8 סטופ</strong>. כשהסצנה רחבה מהטווח — מה שמחוץ לגבולות פשוט נעלם.
+      העין האנושית רואה בו-זמנית טווח של כ-<strong>20 סטופ</strong>. מצלמה מקצועית? <strong>13–15 סטופ</strong>. סמארטפון ישן? כ-<strong>8 סטופ</strong>. כשהסצנה רחבה מהטווח — מה שמחוץ לגבולות פשוט נעלם, לתמיד.
     </p>
     <p>
-      הבעיה הקלאסית: בחדר עם חלון בהיר, אתה רוצה לראות גם את הפנים בחדר וגם את הנוף בחוץ. הסצנה הזו יכולה לפרוש על <strong>10–14 סטופ</strong> — ולא לכל מצלמה יש כאלה.
+      הבעיה הקלאסית: נוף עם שמיים בהירים ואדמה כהה, או פורטרט מול חלון. הסצנה פורשת על 10–14 סטופ — ולא לכל מצלמה יש כאלה.
     </p>
   </div>
 
   <hr class="divider">
 
-  <!-- ===== LAB ===== -->
+  <!-- ===== LAB 1: COMPARE SLIDER ===== -->
   <div class="section">
-    <div class="section-label">סימולטור אינטראקטיבי</div>
-    <h2>נסה בעצמך</h2>
+    <div class="section-label">אינטראקטיבי</div>
+    <h2>גרור: חשיפה לשמיים ↔ חשיפה לאדמה</h2>
 
     <div class="lab">
-      <div class="lab-title">🏠 חדר עם חלון — גרור את הסליידרים</div>
+      <div class="lab-title">📷 אותה תמונה, שתי הגדרות — גרור את הקו</div>
 
-      <div class="sim-wrap">
-        <canvas id="drCanvas" width="400" height="225"></canvas>
-        <div class="clip-badge clip-hi hidden" id="clipHi">🔥 שרוף — <span id="hiPct">0</span>%</div>
-        <div class="clip-badge clip-lo hidden" id="clipLo">🌑 שחור — <span id="loPct">0</span>%</div>
-        <div class="ev-status">טווח מצלמה: <span id="evStatus">12 סטופ</span> | חשיפה: <span id="expStatus">EV 0</span></div>
+      <!-- Photo picker -->
+      <div class="photo-picker">
+        <button type="button" class="photo-btn active" onclick="setPhoto(0)">🌄 שדה בזריחה</button>
+        <button type="button" class="photo-btn" onclick="setPhoto(1)">☀️ אור בוקר</button>
+        <button type="button" class="photo-btn" onclick="setPhoto(2)">🌊 שקיעה ים המלח</button>
+        <button type="button" class="photo-btn" onclick="setPhoto(3)">🏔️ נוף ים המלח</button>
       </div>
 
-      <div class="legend">
-        <div class="legend-item"><div class="legend-dot" style="background:#888"></div>חשוף נכון</div>
-        <div class="legend-item"><div class="legend-dot" style="background:var(--hi-color)"></div>שרוף (highlights)</div>
-        <div class="legend-item"><div class="legend-dot" style="background:var(--lo-color)"></div>שחור (shadows)</div>
-      </div>
-
-      <!-- Presets -->
-      <div class="presets">
-        <button class="preset-btn" onclick="setPreset(8,0)">📱 סמארטפון ישן (8 סטופ)</button>
-        <button class="preset-btn" onclick="setPreset(11,0)">📱 סמארטפון מודרני (11)</button>
-        <button class="preset-btn active" onclick="setPreset(12,0)">📷 Mirrorless (12)</button>
-        <button class="preset-btn" onclick="setPreset(14,0)">🎥 Pro (14 סטופ)</button>
-      </div>
-
-      <!-- Sliders -->
-      <div class="sliders">
-        <div class="slider-row">
-          <div class="slider-header">
-            <div class="slider-name">
-              <span class="slider-dot" style="background:var(--ok-color)"></span>
-              טווח דינמי — כמה סטופ המצלמה מסוגלת לתפוס
-            </div>
-            <span class="slider-value" id="drVal">12 סטופ</span>
-          </div>
-          <input type="range" class="dr-slider" id="drSlider" min="5" max="16" value="12" step="0.5">
-          <div class="scale-labels">
-            <span>5</span><span>7</span><span>9</span><span>11</span><span>13</span><span>16</span>
-          </div>
-          <div class="slider-hint">⬆ יותר סטופים = יותר פרטים בו-זמנית בצל ובאור</div>
+      <!-- Compare slider -->
+      <div class="compare-outer" id="compareOuter">
+        <img class="compare-img img-a" id="imgA" src="" alt="חשיפה לאדמה">
+        <img class="compare-img img-b" id="imgB" src="" alt="חשיפה לשמיים">
+        <div class="compare-line" id="compareLine"></div>
+        <div class="compare-handle" id="compareHandle">
+          <svg viewBox="0 0 18 18" fill="none" stroke="#333" stroke-width="2" stroke-linecap="round">
+            <line x1="6" y1="4" x2="2" y2="9"/><line x1="6" y1="14" x2="2" y2="9"/>
+            <line x1="12" y1="4" x2="16" y2="9"/><line x1="12" y1="14" x2="16" y2="9"/>
+          </svg>
         </div>
-
-        <div class="slider-row">
-          <div class="slider-header">
-            <div class="slider-name">
-              <span class="slider-dot" style="background:var(--accent)"></span>
-              פיצוי חשיפה — לאן כוונת את המצלמה
-            </div>
-            <span class="slider-value" id="evVal">EV 0</span>
-          </div>
-          <input type="range" class="ev-slider" id="evSlider" min="-4" max="4" value="0" step="0.5">
-          <div class="scale-labels">
-            <span>−4</span><span>−2</span><span>0</span><span>+2</span><span>+4</span>
-          </div>
-          <div class="slider-hint">⬅ EV שלילי = חשיפה לאזורים הבהירים (שמיים) | EV חיובי = חשיפה לצל</div>
-        </div>
+        <div class="compare-label label-a">🔥 חשיפה לאדמה — שמיים שרופים</div>
+        <div class="compare-label label-b">🌑 חשיפה לשמיים — אדמה שחורה</div>
       </div>
 
-      <!-- Histogram -->
-      <div class="histogram-wrap">
-        <div class="histogram-label">היסטוגרמה — התפלגות הבהירות</div>
-        <canvas id="histCanvas" width="400" height="60"></canvas>
+      <div class="compare-hint">← גרור את הקו ימינה/שמאלה לגילוי</div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ===== LAB 2: DR SIMULATOR ===== -->
+  <div class="section">
+    <div class="section-label">סימולטור</div>
+    <h2>כמה סטופ יש למצלמה שלך?</h2>
+
+    <div class="lab">
+      <div class="lab-title">🎚️ שנה את הטווח הדינמי — ראה מה נשמר</div>
+
+      <div class="dr-preview">
+        <img class="dr-img" id="drImg" src="" alt="סימולטור טווח דינמי">
+        <div class="dr-badges">
+          <div class="dr-badge badge-hi" id="badgeHi">🔥 שרוף</div>
+          <div class="dr-badge badge-lo" id="badgeLo">🌑 שחור</div>
+        </div>
+        <div class="dr-badge badge-ok" id="badgeOk">✓ מאוזן</div>
+      </div>
+
+      <div class="preset-btns">
+        <button type="button" class="preset-btn" onclick="setDrPreset(8)">📱 סמארטפון ישן — 8 סטופ</button>
+        <button type="button" class="preset-btn" onclick="setDrPreset(11)">📱 iPhone מודרני — 11</button>
+        <button type="button" class="preset-btn active" onclick="setDrPreset(13)">📷 Mirrorless — 13</button>
+        <button type="button" class="preset-btn" onclick="setDrPreset(15)">🎥 Pro — 15 סטופ</button>
+      </div>
+
+      <div class="slider-row">
+        <div class="slider-header">
+          <div class="slider-name">
+            <span class="slider-dot slider-dot-green"></span>
+            טווח דינמי — כמה סטופ המצלמה תופסת
+          </div>
+          <span class="slider-value" id="drValDisplay">13 סטופ</span>
+        </div>
+        <input type="range" id="drSlider" min="5" max="16" value="13" step="0.5" aria-label="טווח דינמי בסטופים" oninput="updateDr()">
+        <div class="scale-labels">
+          <span>5 — סמארטפון ישן</span><span>16 — חיישן מדעי</span>
+        </div>
+        <div class="slider-hint">⬆ יותר סטופים = יותר פרטים בו-זמנית בצל ובאור</div>
       </div>
     </div>
   </div>
 
   <hr class="divider">
 
-  <!-- Stops comparison -->
+  <!-- Stops comparison table -->
   <div class="section">
     <div class="section-label">השוואה</div>
     <h2>כמה סטופ יש לכל מצלמה?</h2>
 
-    <div class="stops-scale">
-      <div class="stops-row">
-        <div class="stops-label">סמארטפון ישן</div>
-        <div class="stops-bar-wrap">
-          <div class="stops-bar" style="width:50%;background:linear-gradient(90deg,#2244cc,#55cc88,#ff5533)">8 סטופ</div>
-        </div>
-      </div>
+    <div class="stops-row">
+      <div class="stops-label">סמארטפון ישן</div>
+      <div class="stops-bar-wrap"><div class="stops-bar bar-8">8 סטופ</div></div>
     </div>
-    <div class="stops-scale">
-      <div class="stops-row">
-        <div class="stops-label">iPhone / Pixel חדש</div>
-        <div class="stops-bar-wrap">
-          <div class="stops-bar" style="width:69%;background:linear-gradient(90deg,#2244cc,#55cc88,#ff5533)">11 סטופ</div>
-        </div>
-      </div>
+    <div class="stops-row">
+      <div class="stops-label">iPhone / Pixel מודרני</div>
+      <div class="stops-bar-wrap"><div class="stops-bar bar-11">11 סטופ</div></div>
     </div>
-    <div class="stops-scale">
-      <div class="stops-row">
-        <div class="stops-label">DSLR / Mirrorless</div>
-        <div class="stops-bar-wrap">
-          <div class="stops-bar" style="width:75%;background:linear-gradient(90deg,#2244cc,#55cc88,#ff5533)">12–13 סטופ</div>
-        </div>
-      </div>
+    <div class="stops-row">
+      <div class="stops-label">DSLR / Mirrorless בסיסי</div>
+      <div class="stops-bar-wrap"><div class="stops-bar bar-13">12–13 סטופ</div></div>
     </div>
-    <div class="stops-scale">
-      <div class="stops-row">
-        <div class="stops-label">מצלמה מקצועית (Sony / Nikon Z)</div>
-        <div class="stops-bar-wrap">
-          <div class="stops-bar" style="width:88%;background:linear-gradient(90deg,#2244cc,#55cc88,#ff5533)">14–15 סטופ</div>
-        </div>
-      </div>
+    <div class="stops-row">
+      <div class="stops-label">Sony A7 IV / Nikon Z8</div>
+      <div class="stops-bar-wrap"><div class="stops-bar bar-15">14–15 סטופ</div></div>
     </div>
-    <div class="stops-scale">
-      <div class="stops-row">
-        <div class="stops-label">עין אנושית (תוך כדי הסתגלות)</div>
-        <div class="stops-bar-wrap">
-          <div class="stops-bar" style="width:100%;background:linear-gradient(90deg,#2244cc,#55cc88,#c8a96e)">~20 סטופ</div>
-        </div>
-      </div>
+    <div class="stops-row">
+      <div class="stops-label">עין אנושית (עם הסתגלות)</div>
+      <div class="stops-bar-wrap"><div class="stops-bar bar-eye">~20 סטופ</div></div>
     </div>
 
-    <p style="margin-top:1.25rem">
-      שים לב שהפרש של <strong>3 סטופ</strong> בין סמארטפון ישן למצלמה מקצועית נשמע קטן — אבל כי כל סטופ הוא פי שניים, מדובר במעשה ב-<strong>פי 8 יותר מידע</strong> אורי.
-    </p>
+    <p class="note-text">הפרש של <strong>3 סטופ</strong> בין סמארטפון מודרני לפרו נשמע קטן — אבל כל סטופ הוא פי שניים, כלומר מדובר במעשה ב-<strong>פי 8 יותר מידע אורי</strong>.</p>
   </div>
 
   <hr class="divider">
 
-  <!-- Practical tips -->
   <div class="section">
     <div class="section-label">פרקטיקה</div>
     <h2>מה עושים עם זה בשטח?</h2>
-
     <div class="tips-grid">
       <div class="tip-card">
         <div class="tip-icon">🌅</div>
         <div class="tip-title">צלם בשעת הזהב</div>
-        <div class="tip-body">בבוקר ובשקיעה, ההבדל בין האור הכהה לבהיר קטן הרבה יותר — הסצנה מתכנסת לטווח שהמצלמה יכולה לאחוז.</div>
+        <div class="tip-body">בבוקר ובשקיעה, ההפרש בין האור לצל קטן הרבה יותר — הסצנה כולה נכנסת לטווח של המצלמה.</div>
       </div>
       <div class="tip-card">
         <div class="tip-icon">📄</div>
         <div class="tip-title">צלם RAW, לא JPEG</div>
-        <div class="tip-body">RAW שומר את כל המידע שהחיישן תפס. ב-Lightroom תוכל להציל 3–4 סטופ של פרטים בצל ובאור שב-JPEG כבר נעלמו.</div>
+        <div class="tip-body">RAW שומר את כל המידע שהחיישן תפס. ב-Lightroom ניתן להציל 3–4 סטופ של פרטים שב-JPEG כבר נעלמו.</div>
       </div>
       <div class="tip-card">
         <div class="tip-icon">📊</div>
         <div class="tip-title">תסתכל על ההיסטוגרמה</div>
-        <div class="tip-body">אל תסמוך על המסך — צריכה לראות את ההיסטוגרמה. "שריפה" בקצה הימני = highlights נעלמים. שכן "מרסק" בשמאל = צל ללא פרטים.</div>
+        <div class="tip-body">שריפה בקצה הימני = highlights אבודים. ערמה בשמאל = צל ללא פרטים. ההיסטוגרמה לא משקרת — המסך כן.</div>
       </div>
       <div class="tip-card">
         <div class="tip-icon">🔢</div>
-        <div class="tip-title">Bracketing — שלוש חשיפות</div>
-        <div class="tip-body">צלם את אותו פריים ב-EV−2, EV 0, EV+2 — ואז מזג בפוסט. זה HDR. לא לכולם, אבל בנופים סטטיים זה כלי חזק.</div>
+        <div class="tip-title">Bracketing — 3 חשיפות</div>
+        <div class="tip-body">צלם EV−2, EV 0, EV+2 ומזג בפוסט. בנופים סטטיים זה מדמה 18+ סטופ — יותר ממה שהעין רואה.</div>
       </div>
     </div>
   </div>
@@ -328,206 +353,117 @@ input[type=range].ev-slider::-webkit-slider-thumb {
 </div>
 
 <script>
-// ===== Scene generation =====
-// EV values representing true luminance of each pixel in the "room with window" scene
-function getSceneEV(nx, ny) {
-  // Window: bright sky through center
-  const wx1 = 0.28, wx2 = 0.72, wy1 = 0.06, wy2 = 0.70;
-  if (nx > wx1 && nx < wx2 && ny > wy1 && ny < wy2) {
-    // Sky inside window — brighter at top
-    const t = (ny - wy1) / (wy2 - wy1); // 0=top, 1=bottom
-    return 5.8 - t * 1.2; // +5.8 to +4.6 EV
+const PHOTOS = [
+  {
+    label: 'שדה בזריחה',
+    src: 'https://lh3.googleusercontent.com/d/1M0MNq47h_rck94IU0GlqlX9yIA5_6MMe=w900'
+  },
+  {
+    label: 'אור בוקר',
+    src: 'https://lh3.googleusercontent.com/d/1bjUIgbamO_clsQDgrMHU8QDAfNA1mXuD=w900'
+  },
+  {
+    label: 'שקיעה ים המלח',
+    src: 'https://drive.google.com/thumbnail?id=1DxW6tvUyqpNfWR2ss_fL_amXTuL82xvA&sz=w900'
+  },
+  {
+    label: 'נוף ים המלח',
+    src: 'https://lh3.googleusercontent.com/d/1XEuYM78FLDe1J3r8kFbHQbjRB_BssErN=w900'
   }
+];
 
-  // Window frame (dark wood border)
-  const fx = 0.025, fy = 0.03;
-  if (nx > wx1 - fx && nx < wx2 + fx && ny > wy1 - fy && ny < wy2 + fy) {
-    return -1.0;
-  }
+let currentPhoto = 0;
+let currentDR = 13;
 
-  // Sill/ledge at bottom of window
-  if (nx > wx1 - 0.04 && nx < wx2 + 0.04 && ny > wy2 && ny < wy2 + 0.05) {
-    return -0.5;
-  }
-
-  // Floor: dark, with slight light pool near window base
-  if (ny > 0.72) {
-    const t = (ny - 0.72) / 0.28; // 0 near window, 1 at bottom
-    const cx = Math.abs(nx - 0.5) * 2; // 0=center, 1=edge
-    const lightPool = Math.max(0, 1 - cx * 2) * Math.max(0, 1 - t * 3);
-    return -4.5 - t * 2.0 + lightPool * 1.5;
-  }
-
-  // Ceiling
-  if (ny < 0.05) return -2.8;
-
-  // Walls: dark with subtle gradient — slightly lit near window sides
-  const leftWall = nx < 0.28 - 0.025;
-  const rightWall = nx > 0.72 + 0.025;
-  if (leftWall || rightWall) {
-    const distFromWindow = leftWall
-      ? (0.255 - nx) / 0.255
-      : (nx - 0.745) / 0.255;
-    const vertCenter = Math.abs(ny - 0.38) * 2;
-    const ambientBoost = Math.max(0, 1 - distFromWindow * 2) * Math.max(0, 1 - vertCenter);
-    return -3.5 - distFromWindow * 1.5 + ambientBoost * 0.8;
-  }
-
-  // Small plant silhouette in bottom-left corner
-  const plantX = nx - 0.10, plantY = ny - 0.80;
-  if (plantY > 0 && plantY < 0.18 && plantX > -0.02 && plantX < 0.10) {
-    const stem = Math.abs(plantX - 0.04) < 0.012 && plantY < 0.18;
-    if (stem) return -5.5;
-  }
-
-  // Upper side walls (above window, beside it)
-  return -3.0 - Math.abs(nx - 0.5) * 1.5;
+function setPhoto(idx) {
+  currentPhoto = idx;
+  const url = PHOTOS[idx].src;
+  document.getElementById('imgA').src = url;
+  document.getElementById('imgB').src = url;
+  document.getElementById('drImg').src = url;
+  document.querySelectorAll('.photo-btn').forEach((b, i) => b.classList.toggle('active', i === idx));
 }
 
-// ===== Build scene EV lookup table =====
-const W = 400, H = 225;
-const sceneEV = new Float32Array(W * H);
-for (let y = 0; y < H; y++) {
-  for (let x = 0; x < W; x++) {
-    sceneEV[y * W + x] = getSceneEV(x / W, y / H);
-  }
+// ===== Compare slider =====
+const outer = document.getElementById('compareOuter');
+const imgB  = document.getElementById('imgB');
+const line  = document.getElementById('compareLine');
+const handle= document.getElementById('compareHandle');
+let dragging = false;
+
+function setComparePos(pct) {
+  pct = Math.max(3, Math.min(97, pct));
+  const ltr = 100 - pct; // because dir=rtl, "left" in CSS is physical left
+  imgB.style.clipPath  = `inset(0 0 0 ${ltr}%)`;
+  line.style.left   = `${ltr}%`;
+  handle.style.left = `${ltr}%`;
 }
 
-// ===== Render canvas =====
-const canvas = document.getElementById('drCanvas');
-const ctx = canvas.getContext('2d');
-const histCanvas = document.getElementById('histCanvas');
-const histCtx = histCanvas.getContext('2d');
-const imgData = ctx.createImageData(W, H);
-const data = imgData.data;
-
-let currentDR = 12, currentEV = 0;
-
-function render() {
-  const lowEV  = currentEV - currentDR / 2;
-  const highEV = currentEV + currentDR / 2;
-
-  let hiCount = 0, loCount = 0;
-  const hist = new Float32Array(64).fill(0);
-
-  for (let i = 0; i < W * H; i++) {
-    const ev = sceneEV[i];
-    const base = i * 4;
-
-    if (ev > highEV) {
-      // Highlight clipped
-      data[base]   = 255;
-      data[base+1] = 85;
-      data[base+2] = 51;
-      data[base+3] = 255;
-      hiCount++;
-      hist[63]++;
-    } else if (ev < lowEV) {
-      // Shadow clipped
-      data[base]   = 20;
-      data[base+1] = 40;
-      data[base+2] = 180;
-      data[base+3] = 255;
-      loCount++;
-      hist[0]++;
-    } else {
-      // Properly captured — map to display
-      const t = (ev - lowEV) / currentDR; // 0-1
-      const display = Math.pow(Math.max(0, Math.min(1, t)), 1 / 2.2); // gamma
-      const v = Math.round(display * 255);
-      data[base] = data[base+1] = data[base+2] = v;
-      data[base+3] = 255;
-      hist[Math.min(63, Math.round(t * 63))]++;
-    }
-  }
-
-  ctx.putImageData(imgData, 0, 0);
-
-  const total = W * H;
-  const hiPct = Math.round(hiCount / total * 100);
-  const loPct = Math.round(loCount / total * 100);
-
-  const clipHi = document.getElementById('clipHi');
-  const clipLo = document.getElementById('clipLo');
-  clipHi.classList.toggle('hidden', hiPct === 0);
-  clipLo.classList.toggle('hidden', loPct === 0);
-  document.getElementById('hiPct').textContent = hiPct;
-  document.getElementById('loPct').textContent = loPct;
-
-  // Draw histogram
-  histCtx.clearRect(0, 0, 400, 60);
-  const HW = histCanvas.width, HH = histCanvas.height;
-  const maxH = Math.max(...hist) || 1;
-
-  // Background
-  histCtx.fillStyle = '#181818';
-  histCtx.fillRect(0, 0, HW, HH);
-
-  const barW = HW / 64;
-  for (let b = 0; b < 64; b++) {
-    const h = (hist[b] / maxH) * (HH - 4);
-    const x = b * barW;
-    if (b === 0 && loCount > 0) {
-      histCtx.fillStyle = '#3366ff';
-    } else if (b === 63 && hiCount > 0) {
-      histCtx.fillStyle = '#ff5533';
-    } else {
-      // Gradient from dark blue to white
-      const t = b / 63;
-      const v = Math.round(t * 200 + 55);
-      histCtx.fillStyle = `rgb(${v},${v},${v})`;
-    }
-    histCtx.fillRect(x, HH - h - 2, barW - 1, h);
-  }
-
-  // Axis line
-  histCtx.strokeStyle = '#333';
-  histCtx.lineWidth = 1;
-  histCtx.beginPath();
-  histCtx.moveTo(0, HH - 2);
-  histCtx.lineTo(HW, HH - 2);
-  histCtx.stroke();
-
-  // Labels on histogram
-  histCtx.fillStyle = '#3366ff';
-  histCtx.font = '9px Heebo, sans-serif';
-  histCtx.fillText('צל', 4, HH - 4);
-  histCtx.fillStyle = '#ff5533';
-  histCtx.textAlign = 'right';
-  histCtx.fillText('אור', HW - 4, HH - 4);
-  histCtx.textAlign = 'start';
+function getClientX(e) {
+  return e.touches ? e.touches[0].clientX : e.clientX;
 }
 
-function update() {
+outer.addEventListener('mousedown',  e => { dragging = true; e.preventDefault(); });
+outer.addEventListener('touchstart', e => { dragging = true; }, { passive: true });
+window.addEventListener('mouseup',   () => dragging = false);
+window.addEventListener('touchend',  () => dragging = false);
+
+function onMove(e) {
+  if (!dragging) return;
+  const rect = outer.getBoundingClientRect();
+  // In RTL, physical left = "right" conceptually; we want pct from right
+  const physLeft = getClientX(e) - rect.left;
+  const physPct  = (physLeft / rect.width) * 100;       // 0=left edge 100=right edge
+  const rtlPct   = 100 - physPct;                        // 0=right edge 100=left edge
+  setComparePos(rtlPct);
+}
+
+window.addEventListener('mousemove', onMove);
+window.addEventListener('touchmove', onMove, { passive: true });
+
+// Initial position
+setComparePos(50);
+
+// ===== DR simulator =====
+function updateDr() {
   currentDR = parseFloat(document.getElementById('drSlider').value);
-  currentEV = parseFloat(document.getElementById('evSlider').value);
+  document.getElementById('drValDisplay').textContent = currentDR + ' סטופ';
 
-  document.getElementById('drVal').textContent  = currentDR + ' סטופ';
-  document.getElementById('evVal').textContent  = (currentEV >= 0 ? '+' : '') + currentEV;
-  document.getElementById('evStatus').textContent = currentDR + ' סטופ';
-  document.getElementById('expStatus').textContent = 'EV ' + (currentEV >= 0 ? '+' : '') + currentEV;
+  // Map DR to CSS filter: low DR = high contrast (clipping), high DR = natural
+  // At DR=5: very high contrast, clipped both ends
+  // At DR=16: natural, no clipping
+  const t = (currentDR - 5) / 11; // 0-1
+  const contrast    = 3.5 - t * 2.5;        // 3.5 → 1.0
+  const brightness  = 0.75 + t * 0.25;      // 0.75 → 1.0
+  const saturate    = 0.6 + t * 0.4;        // 0.6 → 1.0
 
-  // Update active preset
-  document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('drImg').style.filter =
+    `contrast(${contrast.toFixed(2)}) brightness(${brightness.toFixed(2)}) saturate(${saturate.toFixed(2)})`;
 
-  render();
-}
+  // Show/hide badges based on DR level
+  const hiVisible = currentDR < 11;
+  const loVisible = currentDR < 10;
+  const okVisible = currentDR >= 12;
 
-function setPreset(dr, ev) {
-  document.getElementById('drSlider').value = dr;
-  document.getElementById('evSlider').value = ev;
-  update();
-  // Mark active preset
+  document.getElementById('badgeHi').style.opacity = hiVisible ? '1' : '0';
+  document.getElementById('badgeLo').style.opacity = loVisible ? '1' : '0';
+  document.getElementById('badgeOk').style.opacity = okVisible ? '1' : '0';
+
+  // Update active preset button
   document.querySelectorAll('.preset-btn').forEach(b => {
-    b.classList.toggle('active', b.textContent.includes('(' + dr));
+    const stops = parseFloat(b.textContent.match(/\d+/)?.[0]);
+    b.classList.toggle('active', Math.abs(stops - currentDR) < 0.6);
   });
 }
 
-document.getElementById('drSlider').addEventListener('input', update);
-document.getElementById('evSlider').addEventListener('input', update);
+function setDrPreset(dr) {
+  document.getElementById('drSlider').value = dr;
+  updateDr();
+}
 
-// Initial render
-update();
+// Init
+setPhoto(0);
+updateDr();
 </script>
 </body>
 </html>
