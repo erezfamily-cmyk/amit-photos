@@ -1775,6 +1775,7 @@ async function handleSitemap(request, env) {
     { loc: '/camera/software/', priority: '0.8', changefreq: 'monthly' },
     { loc: '/camera/sports/', priority: '0.8', changefreq: 'monthly' },
     { loc: '/camera/macro/', priority: '0.8', changefreq: 'monthly' },
+    { loc: '/camera/dynamic-range/', priority: '0.8', changefreq: 'monthly' },
     { loc: '/camera/visual-language/', priority: '0.8', changefreq: 'monthly' },
     { loc: '/games/', priority: '0.7', changefreq: 'monthly' },
     { loc: '/quiz/', priority: '0.7', changefreq: 'monthly' },
