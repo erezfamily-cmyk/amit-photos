@@ -170,8 +170,9 @@ Post structure (exactly in this order):
 1. One sentence: what is in the frame — subject, genre (macro/landscape/portrait/long exposure/etc.), location if identifiable.
 2. One sentence: the key technical or compositional decision — lighting conditions, time of day, framing choice.
 3. If EXIF data is available — one line listing the shooting settings (aperture, shutter speed, focal length, ISO, camera). If not available, skip this line entirely.
-4. Empty line
-5. 🛍️ לרכישת התמונה: {buy_link}
+4. One short, engaging open-ended question directed at the audience about the photo's mood, technique, or subject (to encourage comments).
+5. Empty line
+6. 🛍️ לרכישת התמונה: {buy_link}
 
 Write in Hebrew. Be specific and factual — no metaphors, no poetic language. Output only the post text.
 """}]

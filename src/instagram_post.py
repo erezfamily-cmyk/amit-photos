@@ -221,8 +221,9 @@ Caption structure (in this exact order):
 1. One precise sentence: what is in the frame, technique used (macro/long exposure/portrait/etc.), location if identifiable.
 2. One sentence: what compositional or lighting choice Amit made and why it works.
 3. If EXIF data is available — one technical line listing the settings (aperture, shutter, focal length, ISO, camera). If not available, skip this line entirely.
-4. Empty line
-5. 🛍️ זמין לרכישה — amitphotos.com (link in bio)
+4. One short, engaging open-ended question directed at the audience about the photo's mood, technique, or subject (to encourage comments).
+5. Empty line
+6. 🛍️ זמין לרכישה — amitphotos.com (link in bio)
 
 Write in Hebrew. Be specific — no metaphors, no emotional language. Output only the caption."""
 
