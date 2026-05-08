@@ -39,7 +39,8 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
   flex-direction: column; gap: .75rem;
   transition: border-color .2s, transform .15s; text-decoration: none; color: inherit; }
 .card:hover { border-color: var(--accent); transform: translateY(-3px); }
-.card-emoji { font-size: 2.4rem; line-height: 1; }
+.card-icon { line-height: 1; }
+.card-icon svg { width: 48px; height: 48px; stroke: var(--accent); fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
 .card-title { font-family: 'Syne', sans-serif; font-size: 1.15rem; color: var(--accent); }
 .card-desc { font-size: .85rem; color: var(--muted); line-height: 1.55; flex: 1; }
 .card-cta { margin-top: .25rem; display: inline-block; background: var(--accent);
@@ -64,84 +65,84 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
 
 <div class="cards">
   <a class="card" href="/camera/lenses/">
-    <div class="card-emoji">🔭</div>
+    <div class="card-icon"><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="17"/><circle cx="24" cy="24" r="10"/><circle cx="24" cy="24" r="3"/></svg></div>
     <div class="card-title">עדשות</div>
     <div class="card-desc">מרחק מוקד, בוקה, Wide vs Telephoto — גרור סליידר וראה כיצד העדשה משנה את התמונה</div>
     <span class="card-cta">התחל ללמוד</span>
   </a>
 
   <a class="card" href="/camera/light/">
-    <div class="card-emoji">🌅</div>
+    <div class="card-icon"><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="8"/><line x1="24" y1="4" x2="24" y2="10"/><line x1="24" y1="38" x2="24" y2="44"/><line x1="4" y1="24" x2="10" y2="24"/><line x1="38" y1="24" x2="44" y2="24"/><line x1="8.7" y1="8.7" x2="13" y2="13"/><line x1="35" y1="35" x2="39.3" y2="39.3"/><line x1="39.3" y1="8.7" x2="35" y2="13"/><line x1="13" y1="35" x2="8.7" y2="39.3"/></svg></div>
     <div class="card-title">אור וצבע</div>
     <div class="card-desc">אור רך מול קשה, טמפרטורת צבע, שעות הקסם — כל מה שצריך לדעת על האור שמעצב את התמונה</div>
     <span class="card-cta">התחל ללמוד</span>
   </a>
 
   <a class="card" href="/camera/visual-language/">
-    <div class="card-emoji">🖼️</div>
+    <div class="card-icon"><svg viewBox="0 0 48 48"><rect x="5" y="9" width="38" height="30" rx="3"/><path d="M5 29 L14 19 L23 25 L32 15 L43 27"/><circle cx="13" cy="17" r="3"/></svg></div>
     <div class="card-title">שפה צילומית</div>
     <div class="card-desc">לפתח קול אישי ייחודי — נושאים, זוויות, אווירה ועקביות שהופכים תמונות לאמנות</div>
     <span class="card-cta">התחל ללמוד</span>
   </a>
 
   <a class="card" href="/camera/editing/">
-    <div class="card-emoji">✏️</div>
+    <div class="card-icon"><svg viewBox="0 0 48 48"><line x1="7" y1="14" x2="41" y2="14"/><circle cx="29" cy="14" r="4"/><line x1="7" y1="24" x2="41" y2="24"/><circle cx="18" cy="24" r="4"/><line x1="7" y1="34" x2="41" y2="34"/><circle cx="33" cy="34" r="4"/></svg></div>
     <div class="card-title">עריכה ככלי ביטוי</div>
     <div class="card-desc">RAW vs JPEG, חמשת אלמנטי העריכה, זרימת עבודה מקצועית מהייצוא ועד הייצוא</div>
     <span class="card-cta">התחל ללמוד</span>
   </a>
 
   <a class="card" href="/camera/software/">
-    <div class="card-emoji">⚙️</div>
+    <div class="card-icon"><svg viewBox="0 0 48 48"><rect x="5" y="8" width="38" height="26" rx="3"/><line x1="5" y1="15" x2="43" y2="15"/><circle cx="10" cy="11.5" r="1.5"/><circle cx="15" cy="11.5" r="1.5"/><circle cx="20" cy="11.5" r="1.5"/><rect x="9" y="19" width="8" height="7" rx="2"/><rect x="20" y="19" width="8" height="7" rx="2"/><rect x="31" y="19" width="7" height="7" rx="2"/><line x1="19" y1="34" x2="16" y2="42"/><line x1="29" y1="34" x2="32" y2="42"/><line x1="13" y1="42" x2="35" y2="42"/></svg></div>
     <div class="card-title">תוכנות וארגון</div>
     <div class="card-desc">Lightroom, Capture One, Photoshop — השוואה + ניהול קבצים, גיבוי 3-2-1, וכלי AI שחובה להכיר</div>
     <span class="card-cta">התחל ללמוד</span>
   </a>
 
   <a class="card" href="/camera/exposure/">
-    <div class="card-emoji">☀️</div>
+    <div class="card-icon"><svg viewBox="0 0 48 48"><path d="M7 34 A17 17 0 0 1 41 34"/><line x1="24" y1="34" x2="24" y2="18"/><circle cx="24" cy="34" r="3"/><line x1="24" y1="17" x2="24" y2="13"/><line x1="34.7" y1="19.8" x2="32.4" y2="23.8"/><line x1="39.5" y1="28.5" x2="35.6" y2="28.5"/><line x1="13.3" y1="19.8" x2="15.6" y2="23.8"/><line x1="8.5" y1="28.5" x2="12.4" y2="28.5"/></svg></div>
     <div class="card-title">חשיפה</div>
     <div class="card-desc">המשולש של הצלם — ISO, צמצם ותריס — שלושה סליידרים שמשנים את התמונה בזמן אמת</div>
     <span class="card-cta">התחל ללמוד</span>
   </a>
 
   <a class="card" href="/camera/composition/">
-    <div class="card-emoji">🔲</div>
+    <div class="card-icon"><svg viewBox="0 0 48 48"><rect x="5" y="5" width="38" height="38" rx="3"/><line x1="17.7" y1="5" x2="17.7" y2="43"/><line x1="30.3" y1="5" x2="30.3" y2="43"/><line x1="5" y1="17.7" x2="43" y2="17.7"/><line x1="5" y1="30.3" x2="43" y2="30.3"/></svg></div>
     <div class="card-title">קומפוזיציה</div>
     <div class="card-desc">חוק השליש, מסגור, קווים מובילים — גלה מה הופך תמונה ממצולמת למדוברת</div>
     <span class="card-cta">התחל ללמוד</span>
   </a>
 
   <a class="card" href="/camera/filters/">
-    <div class="card-emoji">🎨</div>
+    <div class="card-icon"><svg viewBox="0 0 48 48"><path d="M6 10 L24 28 L42 10 Z"/><line x1="16" y1="28" x2="32" y2="28"/><line x1="19" y1="34" x2="29" y2="34"/><line x1="22" y1="40" x2="26" y2="40"/></svg></div>
     <div class="card-title">פילטרים</div>
     <div class="card-desc">UV, ND, CPL, GND — לחץ על פילטר ותראה בזמן אמת מה הוא עושה לתמונה</div>
     <span class="card-cta">התחל ללמוד</span>
   </a>
 
   <a class="card" href="/camera/types/">
-    <div class="card-emoji">📷</div>
+    <div class="card-icon"><svg viewBox="0 0 48 48"><rect x="4" y="14" width="40" height="26" rx="4"/><circle cx="24" cy="27" r="9"/><circle cx="24" cy="27" r="5"/><path d="M17 14 L20 8 H28 L31 14"/><rect x="34" y="18" width="5" height="3" rx="1"/></svg></div>
     <div class="card-title">סוגי מצלמות</div>
     <div class="card-desc">Full Frame vs APS-C vs סמארטפון — דמו Crop Factor אינטראקטיבי + מחשבון מרחק מוקד</div>
     <span class="card-cta">התחל ללמוד</span>
   </a>
 
   <a class="card" href="/camera/controls/">
-    <div class="card-emoji">🎛</div>
+    <div class="card-icon"><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="16"/><circle cx="24" cy="24" r="5"/><line x1="24" y1="19" x2="24" y2="10"/><line x1="24" y1="8" x2="24" y2="11"/><line x1="36.9" y1="12" x2="34.2" y2="16.6"/><line x1="40" y1="24" x2="36" y2="24"/><line x1="11.1" y1="12" x2="13.8" y2="16.6"/><line x1="8" y1="24" x2="12" y2="24"/><line x1="12" y1="36.9" x2="14.7" y2="32.3"/><line x1="36" y1="36.9" x2="33.3" y2="32.3"/><line x1="24" y1="40" x2="24" y2="36"/></svg></div>
     <div class="card-title">כפתורי מצלמה</div>
     <div class="card-desc">מצב Auto עד Manual — איפה כל כפתור ומה הוא עושה, ולמה צריך לעבור ל-M</div>
     <span class="card-cta">התחל ללמוד</span>
   </a>
 
   <a class="card" href="/camera/sports/">
-    <div class="card-emoji">⚡</div>
+    <div class="card-icon"><svg viewBox="0 0 48 48"><path d="M28 4 L13 26 H22 L20 44 L35 22 H26 Z"/></svg></div>
     <div class="card-title">ספורט ותנועה</div>
     <div class="card-desc">מהירות תריס, פנינג, קפיאת תנועה — איך לצלם את הרגע בשיאו</div>
     <span class="card-cta">התחל ללמוד</span>
   </a>
 
   <a class="card" href="/camera/macro/">
-    <div class="card-emoji">🔍</div>
+    <div class="card-icon"><svg viewBox="0 0 48 48"><circle cx="20" cy="20" r="13"/><line x1="30" y1="30" x2="42" y2="42"/></svg></div>
     <div class="card-title">צילום מאקרו</div>
     <div class="card-desc">יחס הגדלה, עומק שדה דק, ציוד וטכניקות — גלה את העולם הנסתר של הקטן</div>
     <span class="card-cta">התחל ללמוד</span>
