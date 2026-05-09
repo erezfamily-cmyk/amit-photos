@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>עומק שדה — Amit Photos</title>
+<meta name="description" content="למד על עומק שדה ובוקה — חישוב DOF אינטראקטיבי עם סימולציה ויזואלית על תמונות אמיתיות.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #0a0a0a; --surface: #111; --border: #222;
+  --accent: #c8a96e; --text: #f0ede8; --muted: #888;
+}
+body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--text);
+  direction: rtl; min-height: 100vh; padding: 0 0 4rem; }
+
+.page-hero { text-align: center; padding: 2.5rem 1.25rem 1.5rem; }
+.page-hero .badge { display: inline-block; font-size: .72rem;
+  background: rgba(200,169,110,.12); border: 1px solid rgba(200,169,110,.3);
+  color: var(--accent); border-radius: 20px; padding: .3rem .8rem; margin-bottom: .75rem; }
+.page-hero h1 { font-family: 'Syne', sans-serif; font-size: 1.8rem;
+  color: var(--accent); margin-bottom: .5rem; }
+.page-hero p { color: var(--muted); font-size: .9rem; max-width: 420px; margin: 0 auto; }
+
+.demo-wrap { max-width: 960px; margin: 0 auto; padding: 0 1.25rem 2rem; }
+
+/* Photo picker */
+.photo-picker { display: flex; gap: .6rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
+.photo-btn { flex: 1; min-width: 140px; background: var(--surface);
+  border: 1px solid var(--border); border-radius: 10px; overflow: hidden;
+  cursor: pointer; transition: border-color .2s; padding: 0; }
+.photo-btn:hover { border-color: #555; }
+.photo-btn.active { border-color: var(--accent); }
+.photo-btn img { width: 100%; height: 70px; object-fit: cover; display: block; }
+.photo-btn span { display: block; font-size: .72rem; color: var(--muted);
+  padding: .35rem .5rem; text-align: center; }
+
+/* Main layout */
+.interactive { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 1.25rem; }
+@media (max-width: 640px) { .interactive { grid-template-columns: 1fr; } }
+
+/* Photo panel with DOF simulation */
+.photo-panel { background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; overflow: hidden; }
+.photo-container { position: relative; aspect-ratio: 4/3; overflow: hidden; background: #000; }
+.photo-blurred { position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; transition: filter .15s; }
+.photo-sharp { position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; transition: -webkit-mask-size .15s, mask-size .15s; }
+.dof-label { position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%);
+  background: rgba(0,0,0,.7); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  color: #fff; font-size: .72rem; padding: .3rem .75rem; border-radius: 20px;
+  border: 1px solid rgba(255,255,255,.15); white-space: nowrap; }
+.photo-info { padding: .75rem 1rem; display: flex; justify-content: space-between; align-items: center; }
+.photo-title-el { font-size: .85rem; color: var(--text); }
+.photo-hint { font-size: .72rem; color: var(--muted); }
+
+/* DOF results panel */
+.dof-panel { background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; padding: 1rem; display: flex; flex-direction: column; gap: .85rem; }
+.dof-title { font-size: .85rem; font-weight: 600; color: var(--text); }
+
+.dof-result-main { text-align: center; background: #0d0d0d; border-radius: 10px;
+  padding: 1rem; border: 1px solid var(--border); }
+.dof-aperture-display { font-family: 'Syne', sans-serif; font-size: 2.2rem;
+  color: var(--accent); line-height: 1; margin-bottom: .2rem; }
+.dof-aperture-label { font-size: .75rem; color: var(--muted); }
+
+.dof-bar-wrap { margin-top: .75rem; }
+.dof-bar-label { display: flex; justify-content: space-between;
+  font-size: .68rem; color: var(--muted); margin-bottom: .35rem; }
+.dof-bar { position: relative; height: 10px; background: #1a1a1a;
+  border-radius: 5px; overflow: hidden; }
+.dof-bar-fill { height: 100%; background: linear-gradient(to left, var(--accent), rgba(200,169,110,.4));
+  border-radius: 5px; transition: width .2s; min-width: 4px; }
+
+.dof-numbers { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: .5rem; }
+.dof-num { background: #0d0d0d; border: 1px solid var(--border);
+  border-radius: 8px; padding: .6rem .5rem; text-align: center; }
+.dof-num .n-val { font-family: 'Syne', sans-serif; font-size: 1rem; color: var(--accent); }
+.dof-num .n-label { font-size: .65rem; color: var(--muted); margin-top: .15rem; }
+.dof-num.infinity .n-val { color: #aaa; }
+
+/* DOF diagram */
+.dof-diagram { background: #0d0d0d; border-radius: 10px; padding: .75rem;
+  border: 1px solid var(--border); }
+.dof-diagram svg { width: 100%; height: 80px; display: block; }
+
+/* Sliders area */
+.sliders-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+@media (max-width: 640px) { .sliders-wrap { grid-template-columns: 1fr; } }
+
+.slider-card { background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; padding: 1.1rem; }
+.slider-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: .85rem; }
+.slider-label { font-size: .85rem; font-weight: 600; }
+.slider-cur { font-family: 'Syne', sans-serif; font-size: 1.3rem; color: var(--accent); }
+.slider-unit { font-size: .72rem; color: var(--muted); }
+
+input[type=range].control-slider {
+  width: 100%; -webkit-appearance: none; appearance: none;
+  height: 6px; border-radius: 3px; background: #222; outline: none; cursor: pointer;
+}
+input[type=range].control-slider::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%;
+  background: var(--accent); border: 2px solid #000;
+  box-shadow: 0 0 0 2px rgba(200,169,110,.4); cursor: grab;
+}
+input[type=range].control-slider:active::-webkit-slider-thumb { cursor: grabbing; }
+
+.tick-labels { display: flex; justify-content: space-between;
+  font-size: .62rem; color: #444; margin-top: .3rem; }
+
+/* Focal length buttons */
+.focal-btns { display: flex; gap: .4rem; flex-wrap: wrap; margin-top: .5rem; }
+.focal-btn { flex: 1; min-width: 44px; background: #0d0d0d; border: 1px solid var(--border);
+  border-radius: 8px; padding: .4rem .3rem; font-size: .78rem; color: var(--muted);
+  cursor: pointer; font-family: inherit; text-align: center; transition: all .15s; }
+.focal-btn:hover { border-color: #555; color: var(--text); }
+.focal-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(200,169,110,.08); }
+
+/* Sensor type */
+.sensor-btns { display: flex; gap: .5rem; margin-top: .5rem; }
+.sensor-btn { flex: 1; background: #0d0d0d; border: 1px solid var(--border);
+  border-radius: 8px; padding: .45rem; font-size: .75rem; color: var(--muted);
+  cursor: pointer; font-family: inherit; text-align: center; transition: all .15s; }
+.sensor-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(200,169,110,.08); }
+
+/* Info cards */
+.info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem; margin-top: 1.5rem; }
+.info-card { background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; padding: 1.1rem 1rem; }
+.info-card h3 { font-family: 'Syne', sans-serif; font-size: .9rem; color: var(--accent); margin-bottom: .4rem; }
+.info-card p { font-size: .8rem; color: var(--muted); line-height: 1.55; }
+
+.back-link { text-align: center; padding: 1.5rem 1rem 0; }
+.back-link a { color: var(--accent); font-size: .85rem; text-decoration: none; }
+</style>
+<script src="/assets/js/nav.js" defer></script>
+</head>
+<body>
+
+<div class="page-hero">
+  <div class="badge">📷 בית ספר לצילום</div>
+  <h1>עומק שדה — DOF ובוקה</h1>
+  <p>מה קובע כמה הרקע מטושטש? שנה צמצם, מרחק ועדשה — ראה את ההבדל בזמן אמת</p>
+</div>
+
+<div class="demo-wrap">
+
+  <div class="photo-picker" id="picker"></div>
+
+  <div class="interactive">
+
+    <!-- Photo simulation -->
+    <div class="photo-panel">
+      <div class="photo-container" id="photo-container">
+        <img class="photo-blurred" id="photo-blurred" src="" alt="">
+        <img class="photo-sharp" id="photo-sharp" src="" alt="">
+        <div class="dof-label" id="dof-label">f/2.8 · 85mm · 3m</div>
+      </div>
+      <div class="photo-info">
+        <span class="photo-title-el" id="photo-title-el"></span>
+        <span class="photo-hint">סימולציית בוקה</span>
+      </div>
+    </div>
+
+    <!-- DOF results -->
+    <div class="dof-panel">
+      <div class="dof-title">חישוב עומק שדה</div>
+
+      <div class="dof-result-main">
+        <div class="dof-aperture-display" id="aperture-display">f/2.8</div>
+        <div class="dof-aperture-label">עומק שדה: <span id="dof-total-display">רדוד</span></div>
+        <div class="dof-bar-wrap">
+          <div class="dof-bar-label">
+            <span>רדוד מאוד</span><span>רדוד</span><span>עמוק</span><span>אינסוף</span>
+          </div>
+          <div class="dof-bar">
+            <div class="dof-bar-fill" id="dof-bar-fill" style="width:20%"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dof-numbers">
+        <div class="dof-num">
+          <div class="n-val" id="near-val">2.8m</div>
+          <div class="n-label">תחילת פוקוס</div>
+        </div>
+        <div class="dof-num">
+          <div class="n-val" id="dof-val">0.4m</div>
+          <div class="n-label">עומק שדה</div>
+        </div>
+        <div class="dof-num" id="far-num">
+          <div class="n-val" id="far-val">3.2m</div>
+          <div class="n-label">סוף פוקוס</div>
+        </div>
+      </div>
+
+      <div class="dof-diagram">
+        <svg id="dof-svg" viewBox="0 0 300 80">
+          <!-- Camera -->
+          <rect x="2" y="28" width="22" height="24" rx="3" fill="#333" stroke="#555" stroke-width="1"/>
+          <rect x="8" y="22" width="10" height="8" rx="2" fill="#555"/>
+          <circle cx="13" cy="40" r="7" fill="#1a1a1a" stroke="#888" stroke-width="1.5"/>
+          <circle cx="13" cy="40" r="3" fill="#444"/>
+          <!-- Focus cone -->
+          <polygon id="dof-cone" points="24,40 150,20 150,60" fill="rgba(200,169,110,0.08)" stroke="none"/>
+          <!-- DOF zone -->
+          <rect id="dof-zone" x="120" y="22" width="30" height="36" rx="2"
+            fill="rgba(200,169,110,0.15)" stroke="rgba(200,169,110,0.5)" stroke-width="1"/>
+          <!-- Focus point -->
+          <line id="focus-line" x1="150" y1="15" x2="150" y2="65"
+            stroke="rgba(200,169,110,0.4)" stroke-width="1" stroke-dasharray="3,2"/>
+          <circle id="focus-dot" cx="150" cy="40" r="4" fill="var(--accent)"/>
+          <!-- Labels -->
+          <text id="label-near" x="105" y="75" font-size="7" fill="#666" text-anchor="middle">קרוב</text>
+          <text id="label-far" x="155" y="75" font-size="7" fill="#666" text-anchor="middle">רחוק</text>
+          <text x="13" y="72" font-size="7" fill="#666" text-anchor="middle">מצלמה</text>
+        </svg>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Controls -->
+  <div class="sliders-wrap">
+
+    <!-- Aperture -->
+    <div class="slider-card">
+      <div class="slider-header">
+        <span class="slider-label">צמצם (Aperture)</span>
+        <span><span class="slider-cur" id="ap-val">f/2.8</span></span>
+      </div>
+      <input type="range" id="ap-slider" class="control-slider"
+        min="0" max="9" value="3" step="1" aria-label="צמצם">
+      <div class="tick-labels">
+        <span>f/1.4</span><span>f/2</span><span>f/2.8</span><span>f/4</span><span>f/5.6</span>
+        <span>f/8</span><span>f/11</span><span>f/16</span><span>f/22</span><span>f/32</span>
+      </div>
+    </div>
+
+    <!-- Distance -->
+    <div class="slider-card">
+      <div class="slider-header">
+        <span class="slider-label">מרחק פוקוס</span>
+        <span><span class="slider-cur" id="dist-val">3</span> <span class="slider-unit">מטר</span></span>
+      </div>
+      <input type="range" id="dist-slider" class="control-slider"
+        min="0.5" max="20" value="3" step="0.1" aria-label="מרחק פוקוס">
+      <div class="tick-labels">
+        <span>0.5m</span><span>2m</span><span>5m</span><span>10m</span><span>20m</span>
+      </div>
+    </div>
+
+    <!-- Focal length -->
+    <div class="slider-card">
+      <div class="slider-header">
+        <span class="slider-label">עדשה (Focal Length)</span>
+        <span><span class="slider-cur" id="focal-cur">85</span> <span class="slider-unit">מ"מ</span></span>
+      </div>
+      <div class="focal-btns" id="focal-btns">
+        <button type="button" class="focal-btn" data-f="24">24mm</button>
+        <button type="button" class="focal-btn" data-f="35">35mm</button>
+        <button type="button" class="focal-btn" data-f="50">50mm</button>
+        <button type="button" class="focal-btn active" data-f="85">85mm</button>
+        <button type="button" class="focal-btn" data-f="135">135mm</button>
+        <button type="button" class="focal-btn" data-f="200">200mm</button>
+        <button type="button" class="focal-btn" data-f="300">300mm</button>
+      </div>
+    </div>
+
+    <!-- Sensor -->
+    <div class="slider-card">
+      <div class="slider-header">
+        <span class="slider-label">סוג חיישן</span>
+        <span class="slider-cur" id="sensor-coc" style="font-size:.85rem">Full Frame</span>
+      </div>
+      <div class="sensor-btns" id="sensor-btns">
+        <button type="button" class="sensor-btn active" data-coc="0.029">Full Frame</button>
+        <button type="button" class="sensor-btn" data-coc="0.019">APS-C</button>
+        <button type="button" class="sensor-btn" data-coc="0.015">מיקרו 4/3</button>
+        <button type="button" class="sensor-btn" data-coc="0.007">סמארטפון</button>
+      </div>
+      <div class="tick-labels" style="margin-top:.5rem">
+        <span>עומק שדה רדוד יותר ←</span>
+        <span>→ עמוק יותר</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Info cards -->
+  <div class="info-grid">
+    <div class="info-card">
+      <h3>צמצם פתוח = בוקה</h3>
+      <p>f/1.4 נותן רקע מטושטש בולט. f/16 שומר הכל חד. לפורטרטים — f/1.8–f/2.8. לנוף — f/8–f/11.</p>
+    </div>
+    <div class="info-card">
+      <h3>עדשה ארוכה = פחות DOF</h3>
+      <p>300mm מטשטש הרבה יותר מ-24mm באותו צמצם ומרחק. לכן צלמי ספורט ועופות אוהבים עדשות ארוכות.</p>
+    </div>
+    <div class="info-card">
+      <h3>קרוב יותר = רדוד יותר</h3>
+      <p>ככל שמתקרבים לנושא — עומק השדה קטן. בצילום מאקרו (0.3m) — מילימטרים בודדים בפוקוס.</p>
+    </div>
+    <div class="info-card">
+      <h3>סמארטפון ≠ בוקה</h3>
+      <p>חיישן קטן = עומק שדה עמוק מאוד. הבוקה של סמארטפונים מדומה תוכנתית (Portrait Mode).</p>
+    </div>
+  </div>
+
+  <div class="back-link">
+    <a href="/camera/">← חזרה לבית הספר לצילום</a>
+  </div>
+
+</div>
+
+<script>
+const PHOTOS = [
+  { title: 'עוז של נשר', url: 'https://drive.google.com/thumbnail?id=1FH_T3RTNUiI1f0cTktFnEEdJY-lO3sNi&sz=w800' },
+  { title: 'לטאה ירוקה', url: 'https://drive.google.com/thumbnail?id=1_PoGi7uS5MRl0h-unx91_g21IcPI0Oj6&sz=w800' },
+  { title: 'תינשוף בור', url: 'https://drive.google.com/thumbnail?id=1RS7CNmOqlgKzVp6TEsqT2At4zO4eODS_&sz=w800' },
+  { title: 'נשר לבן בטיסה', url: 'https://drive.google.com/thumbnail?id=1We5NhoA8RoEVMLisV1Uf4XjeAq792gv9&sz=w800' }
+];
+
+const APERTURES = [1.4, 2, 2.8, 4, 5.6, 8, 11, 16, 22, 32];
+
+let focalLen = 85;
+let aperture = 2.8;
+let distance = 3;
+let coc = 0.029; // Full Frame
+
+// Build picker
+const picker = document.getElementById('picker');
+PHOTOS.forEach((p, i) => {
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'photo-btn' + (i === 0 ? ' active' : '');
+  btn.innerHTML = `<img src="${p.url}" alt="${p.title}" loading="lazy"><span>${p.title}</span>`;
+  btn.addEventListener('click', () => {
+    picker.querySelectorAll('.photo-btn').forEach((b, j) => b.classList.toggle('active', j === i));
+    document.getElementById('photo-blurred').src = p.url;
+    document.getElementById('photo-sharp').src = p.url;
+    document.getElementById('photo-title-el').textContent = p.title;
+  });
+  picker.appendChild(btn);
+});
+
+// Init photos
+document.getElementById('photo-blurred').src = PHOTOS[0].url;
+document.getElementById('photo-sharp').src = PHOTOS[0].url;
+document.getElementById('photo-title-el').textContent = PHOTOS[0].title;
+
+// Aperture slider
+const apSlider = document.getElementById('ap-slider');
+apSlider.addEventListener('input', () => {
+  aperture = APERTURES[parseInt(apSlider.value)];
+  document.getElementById('ap-val').textContent = 'f/' + aperture;
+  update();
+});
+
+// Distance slider
+const distSlider = document.getElementById('dist-slider');
+distSlider.addEventListener('input', () => {
+  distance = parseFloat(distSlider.value);
+  document.getElementById('dist-val').textContent = distance.toFixed(1);
+  update();
+});
+
+// Focal length buttons
+document.querySelectorAll('.focal-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.focal-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    focalLen = parseInt(btn.dataset.f);
+    document.getElementById('focal-cur').textContent = focalLen;
+    update();
+  });
+});
+
+// Sensor buttons
+document.querySelectorAll('.sensor-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.sensor-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    coc = parseFloat(btn.dataset.coc);
+    document.getElementById('sensor-coc').textContent = btn.textContent;
+    update();
+  });
+});
+
+function calcDOF(f, N, d, CoC) {
+  // f = focal length mm, N = f-number, d = distance mm, CoC = mm
+  const H = (f * f) / (N * CoC) + f; // hyperfocal distance
+  const near = (d * H) / (H + d);
+  let far, dof;
+  if (d >= H) {
+    far = Infinity;
+    dof = Infinity;
+  } else {
+    far = (d * H) / (H - d);
+    dof = far - near;
+  }
+  return { near, far, dof, H };
+}
+
+function formatDist(mm) {
+  if (mm === Infinity) return '∞';
+  const m = mm / 1000;
+  if (m >= 100) return '>100m';
+  if (m >= 10) return m.toFixed(0) + 'm';
+  return m.toFixed(1) + 'm';
+}
+
+function update() {
+  const d_mm = distance * 1000;
+  const f_mm = focalLen;
+  const res = calcDOF(f_mm, aperture, d_mm, coc);
+
+  const nearM = res.near / 1000;
+  const farM = res.far === Infinity ? Infinity : res.far / 1000;
+  const dofM = res.dof === Infinity ? Infinity : res.dof / 1000;
+
+  // Update displays
+  document.getElementById('aperture-display').textContent = 'f/' + aperture;
+  document.getElementById('near-val').textContent = formatDist(res.near);
+  document.getElementById('far-val').textContent = formatDist(res.far);
+
+  let dofLabel, barPct;
+  if (dofM === Infinity) {
+    dofLabel = 'אינסוף';
+    barPct = 100;
+    document.getElementById('dof-val').textContent = '∞';
+    document.getElementById('far-num').classList.add('infinity');
+  } else {
+    document.getElementById('far-num').classList.remove('infinity');
+    if (dofM < 0.1) { dofLabel = 'רדוד מאוד'; barPct = 5; }
+    else if (dofM < 0.5) { dofLabel = 'רדוד'; barPct = 15; }
+    else if (dofM < 2) { dofLabel = 'בינוני'; barPct = 35; }
+    else if (dofM < 10) { dofLabel = 'עמוק'; barPct = 60; }
+    else { dofLabel = 'עמוק מאוד'; barPct = 85; }
+
+    const dofStr = dofM < 0.1 ? (dofM * 100).toFixed(0) + 'cm' :
+                   dofM < 1 ? dofM.toFixed(2) + 'm' : dofM.toFixed(1) + 'm';
+    document.getElementById('dof-val').textContent = dofStr;
+  }
+
+  document.getElementById('dof-total-display').textContent = dofLabel;
+  document.getElementById('dof-bar-fill').style.width = barPct + '%';
+
+  // Update label
+  document.getElementById('dof-label').textContent =
+    `f/${aperture} · ${focalLen}mm · ${distance.toFixed(1)}m`;
+
+  // Update photo blur simulation
+  const blurPx = Math.max(0, (10 - Math.log2(aperture) * 1.5) * (focalLen / 85) * (3 / distance));
+  const sharpSize = Math.max(20, Math.min(90, 100 - barPct * 0.7));
+
+  document.getElementById('photo-blurred').style.filter = `blur(${Math.min(blurPx, 12).toFixed(1)}px)`;
+
+  const radialMask = `radial-gradient(ellipse ${sharpSize}% ${sharpSize * 0.75}% at center, black ${sharpSize * 0.4}%, transparent ${sharpSize}%)`;
+  document.getElementById('photo-sharp').style.webkitMaskImage = radialMask;
+  document.getElementById('photo-sharp').style.maskImage = radialMask;
+
+  // Update SVG diagram
+  updateDiagram(nearM, distance, farM === Infinity ? distance * 3 : farM);
+}
+
+function updateDiagram(near, focus, far) {
+  const W = 300, camX = 24, maxDist = Math.max(far * 1.2, 20);
+  const toX = d => camX + (d / maxDist) * (W - camX - 10);
+
+  const focusX = toX(focus);
+  const nearX = toX(near);
+  const farX = Math.min(toX(Math.min(far, maxDist * 0.9)), W - 10);
+
+  // Cone (wider aperture = wider cone)
+  const coneAngle = Math.max(5, 25 - Math.log2(aperture) * 3);
+  document.getElementById('dof-cone').setAttribute('points',
+    `${camX},40 ${W - 10},${40 - coneAngle} ${W - 10},${40 + coneAngle}`);
+
+  // DOF zone
+  const zoneW = Math.max(6, farX - nearX);
+  document.getElementById('dof-zone').setAttribute('x', nearX);
+  document.getElementById('dof-zone').setAttribute('width', zoneW);
+
+  // Focus line
+  document.getElementById('focus-line').setAttribute('x1', focusX);
+  document.getElementById('focus-line').setAttribute('x2', focusX);
+  document.getElementById('focus-dot').setAttribute('cx', focusX);
+
+  document.getElementById('label-near').setAttribute('x', nearX);
+  document.getElementById('label-far').setAttribute('x', Math.min(farX, W - 15));
+}
+
+update();
+</script>
+</body>
+</html>
