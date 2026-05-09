@@ -46,7 +46,7 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
   border-radius: 14px; overflow: hidden; }
 .photo-container { position: relative; aspect-ratio: 4/3; overflow: hidden; background: #000; }
 .photo-container img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.photo-container canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.main-photo-img { transition: filter .12s; }
 .photo-info { padding: .75rem 1rem; display: flex; justify-content: space-between; align-items: center; }
 .photo-title { font-size: .85rem; color: var(--text); }
 .photo-scene { font-size: .72rem; color: var(--accent); font-weight: 600; }
@@ -81,9 +81,9 @@ input[type=range]#wb-slider {
   width: 100%; -webkit-appearance: none; appearance: none;
   height: 14px; border-radius: 7px; outline: none; cursor: pointer;
   background: linear-gradient(to right,
-    #4488ff 0%, #88aaff 15%, #aabbff 25%,
-    #ffffff 40%, #fffaf0 50%,
-    #ffcc88 65%, #ffaa44 75%, #ff8822 88%, #ff6600 100%);
+    #ff6600 0%, #ffaa44 15%, #ffdd99 28%,
+    #fffaf0 42%, #ffffff 50%,
+    #aabbff 65%, #88aaff 78%, #4488ff 100%);
 }
 input[type=range]#wb-slider::-webkit-slider-thumb {
   -webkit-appearance: none; appearance: none;
@@ -142,8 +142,7 @@ input[type=range]#wb-slider:active::-webkit-slider-thumb { cursor: grabbing; }
     <!-- Photo -->
     <div class="photo-panel">
       <div class="photo-container">
-        <img id="main-photo" src="" alt="" crossorigin="anonymous">
-        <canvas id="wb-canvas"></canvas>
+        <img id="main-photo" src="" alt="" class="main-photo-img">
       </div>
       <div class="photo-info">
         <span class="photo-title" id="photo-title-el"></span>
@@ -172,13 +171,13 @@ input[type=range]#wb-slider:active::-webkit-slider-thumb { cursor: grabbing; }
       <input type="range" id="wb-slider" min="2000" max="10000" value="5500" step="50" aria-label="טמפרטורת צבע בקלוין">
     </div>
     <div class="scale-labels">
-      <span>2000K קר</span>
+      <span>חם 2000K</span>
       <span>3200K</span>
       <span>4000K</span>
       <span>5500K</span>
       <span>6500K</span>
       <span>8000K</span>
-      <span>חם 10000K</span>
+      <span>קר 10000K</span>
     </div>
     <div class="wb-reading">
       <span class="wb-name-badge" id="wb-badge">אור יום</span>
@@ -232,49 +231,23 @@ input[type=range]#wb-slider:active::-webkit-slider-thumb { cursor: grabbing; }
 
 <script>
 const PHOTOS = [
-  {
-    id: 'eagle',
-    title: 'עוז של נשר',
-    scene: 'תאורה מלאכותית',
-    url: 'https://drive.google.com/thumbnail?id=1FH_T3RTNUiI1f0cTktFnEEdJY-lO3sNi&sz=w800',
-    baseK: 5500
-  },
-  {
-    id: 'owl-sky',
-    title: 'תינשוף בור',
-    scene: 'אור יום — שמיים',
-    url: 'https://drive.google.com/thumbnail?id=1RS7CNmOqlgKzVp6TEsqT2At4zO4eODS_&sz=w800',
-    baseK: 6000
-  },
-  {
-    id: 'owl-white',
-    title: 'ינשוף שלג',
-    scene: 'אור יום מפוזר',
-    url: 'https://drive.google.com/thumbnail?id=17RW9kh-Ry3KiqOj_yM3oCK8FPOC88_JN&sz=w800',
-    baseK: 5800
-  },
-  {
-    id: 'lizard',
-    title: 'לטאה ירוקה',
-    scene: 'צל — טבע',
-    url: 'https://drive.google.com/thumbnail?id=1_PoGi7uS5MRl0h-unx91_g21IcPI0Oj6&sz=w800',
-    baseK: 6500
-  }
+  { title: 'עוז של נשר',  scene: 'תאורה מלאכותית', url: 'https://drive.google.com/thumbnail?id=1FH_T3RTNUiI1f0cTktFnEEdJY-lO3sNi&sz=w800' },
+  { title: 'תינשוף בור',  scene: 'אור יום — שמיים',  url: 'https://drive.google.com/thumbnail?id=1RS7CNmOqlgKzVp6TEsqT2At4zO4eODS_&sz=w800' },
+  { title: 'ינשוף שלג',   scene: 'אור יום מפוזר',    url: 'https://drive.google.com/thumbnail?id=17RW9kh-Ry3KiqOj_yM3oCK8FPOC88_JN&sz=w800' },
+  { title: 'לטאה ירוקה',  scene: 'צל — טבע',         url: 'https://drive.google.com/thumbnail?id=1_PoGi7uS5MRl0h-unx91_g21IcPI0Oj6&sz=w800' }
 ];
 
 const PRESETS = [
-  { name: 'נרות / להבה', k: 2000, color: '#ff7722', desc: 'אווירה חמה מאוד' },
-  { name: 'הלוגן / ליבון', k: 3200, color: '#ffaa44', desc: 'מנורות פנים רגילות' },
-  { name: 'פלואורסנט', k: 4200, color: '#ddeeff', desc: 'תאורת משרד/מטבח' },
-  { name: 'אור יום (Daylight)', k: 5500, color: '#fff8f0', desc: 'שמש ישירה בצהריים' },
-  { name: 'עננים (Cloudy)', k: 6500, color: '#eef4ff', desc: 'יום מעונן, עמום' },
-  { name: 'צל (Shade)', k: 8000, color: '#bbccff', desc: 'בצל — כחלחל' }
+  { name: 'נרות / להבה',       k: 2000, color: '#ff7722', desc: 'אווירה חמה מאוד — כתום עז' },
+  { name: 'הלוגן / ליבון',     k: 3200, color: '#ffaa44', desc: 'מנורות פנים רגילות' },
+  { name: 'פלואורסנט',         k: 4200, color: '#ddeeff', desc: 'תאורת משרד/מטבח' },
+  { name: 'אור יום (Daylight)', k: 5500, color: '#fff8f0', desc: 'שמש ישירה — ניטרלי' },
+  { name: 'עננים (Cloudy)',     k: 6500, color: '#eef4ff', desc: 'יום מעונן, עמום' },
+  { name: 'צל (Shade)',         k: 8000, color: '#bbccff', desc: 'בצל — כחלחל קר' }
 ];
 
-let currentPhoto = 0;
 let currentK = 5500;
-let imgEl, canvasEl, ctx;
-let imgLoaded = false;
+const photoEl = document.getElementById('main-photo');
 
 // Build picker
 const picker = document.getElementById('picker');
@@ -283,7 +256,13 @@ PHOTOS.forEach((p, i) => {
   btn.type = 'button';
   btn.className = 'photo-btn' + (i === 0 ? ' active' : '');
   btn.innerHTML = `<img src="${p.url}" alt="${p.title}" loading="lazy"><span>${p.title}</span>`;
-  btn.addEventListener('click', () => selectPhoto(i));
+  btn.addEventListener('click', () => {
+    picker.querySelectorAll('.photo-btn').forEach((b, j) => b.classList.toggle('active', j === i));
+    photoEl.src = p.url;
+    document.getElementById('photo-title-el').textContent = p.title;
+    document.getElementById('photo-scene-el').textContent = p.scene;
+    applyFilter();
+  });
   picker.appendChild(btn);
 });
 
@@ -300,129 +279,69 @@ PRESETS.forEach((pr, i) => {
       <span class="preset-k">${pr.k.toLocaleString()}K — ${pr.desc}</span>
     </div>`;
   btn.addEventListener('click', () => {
-    setK(pr.k);
     document.getElementById('wb-slider').value = pr.k;
     document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
+    setK(pr.k);
   });
   presetList.appendChild(btn);
 });
 
 // Slider
-const slider = document.getElementById('wb-slider');
-slider.addEventListener('input', () => {
-  setK(parseInt(slider.value));
-  // find closest preset
+document.getElementById('wb-slider').addEventListener('input', function() {
+  const k = parseInt(this.value);
+  setK(k);
   let closest = null, closestDist = Infinity;
   document.querySelectorAll('.preset-btn').forEach((btn, i) => {
-    const dist = Math.abs(PRESETS[i].k - currentK);
+    const dist = Math.abs(PRESETS[i].k - k);
     if (dist < closestDist) { closestDist = dist; closest = btn; }
   });
   document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
-  if (closestDist < 400 && closest) closest.classList.add('active');
+  if (closestDist < 500 && closest) closest.classList.add('active');
 });
 
 function setK(k) {
   currentK = k;
   document.getElementById('temp-val').textContent = k.toLocaleString();
   updateBadge(k);
-  applyWB();
+  applyFilter();
 }
 
 function updateBadge(k) {
   const badge = document.getElementById('wb-badge');
   let name, color, bg;
-  if (k < 3000) { name = '🕯️ נרות — חם מאוד'; color = '#ff8833'; bg = 'rgba(255,136,51,.15)'; }
-  else if (k < 3800) { name = '💡 הלוגן — חם'; color = '#ffaa44'; bg = 'rgba(255,170,68,.15)'; }
-  else if (k < 4800) { name = '🏭 פלואורסנט'; color = '#aaccff'; bg = 'rgba(170,204,255,.1)'; }
-  else if (k < 6000) { name = '☀️ אור יום'; color = '#c8a96e'; bg = 'rgba(200,169,110,.12)'; }
-  else if (k < 7500) { name = '☁️ עננים'; color = '#aabbff'; bg = 'rgba(170,187,255,.12)'; }
-  else { name = '🌑 צל — קר'; color = '#88aaff'; bg = 'rgba(136,170,255,.15)'; }
+  if (k < 3000)      { name = '🕯️ נרות — חם מאוד';  color = '#ff8833'; bg = 'rgba(255,136,51,.15)'; }
+  else if (k < 3800) { name = '💡 הלוגן — חם';       color = '#ffaa44'; bg = 'rgba(255,170,68,.15)'; }
+  else if (k < 4800) { name = '🏭 פלואורסנט';        color = '#c8c8aa'; bg = 'rgba(200,200,170,.1)'; }
+  else if (k < 6000) { name = '☀️ אור יום — ניטרלי'; color = '#c8a96e'; bg = 'rgba(200,169,110,.12)'; }
+  else if (k < 7500) { name = '☁️ עננים — קריר';    color = '#aabbff'; bg = 'rgba(170,187,255,.12)'; }
+  else               { name = '🌑 צל — קר מאוד';     color = '#88aaff'; bg = 'rgba(136,170,255,.15)'; }
   badge.textContent = name;
   badge.style.color = color;
   badge.style.borderColor = color;
   badge.style.background = bg;
 }
 
-// WB color shift: convert K to RGB tint offset
-function kToTint(k) {
-  // Neutral at 5500K. Below=warm tint (R+,B-), Above=cool tint (R-,B+)
-  const norm = (k - 5500) / 7500; // -0.47 to +0.6
-  // warm/cool: negative norm = warmer camera setting (photo looks cooler)
-  // but we're simulating: lower K setting = camera adds warm compensation = photo looks warm
-  const r = Math.round(norm < 0 ? -norm * 60 : -norm * 30);
-  const b = Math.round(norm > 0 ? norm * 80 : norm * 40);
-  const g = Math.round(norm * 10);
-  return { r, g, b };
-}
-
-function applyWB() {
-  if (!imgLoaded || !ctx) return;
-
-  const img = imgEl;
-  const canvas = canvasEl;
-  const W = canvas.width, H = canvas.height;
-
-  ctx.drawImage(img, 0, 0, W, H);
-  const imageData = ctx.getImageData(0, 0, W, H);
-  const data = imageData.data;
-
-  const tint = kToTint(currentK);
-
-  for (let i = 0; i < data.length; i += 4) {
-    data[i]     = Math.max(0, Math.min(255, data[i]     + tint.r));
-    data[i + 1] = Math.max(0, Math.min(255, data[i + 1] + tint.g));
-    data[i + 2] = Math.max(0, Math.min(255, data[i + 2] + tint.b));
+// Low K (2000) = warm light source → orange/warm image
+// High K (10000) = cool light source (shade) → blue/cool image
+function applyFilter() {
+  const diff = currentK - 5500;
+  const norm = diff / 3500; // ~-1 (warm) to ~+1 (cool)
+  let filter;
+  if (norm < 0) {
+    const w = Math.min(Math.abs(norm), 1);
+    filter = `sepia(${(w * 0.65).toFixed(2)}) hue-rotate(${(-w * 12).toFixed(0)}deg) saturate(${(1 + w * 0.35).toFixed(2)})`;
+  } else {
+    const c = Math.min(norm, 1);
+    filter = `hue-rotate(${(c * 28).toFixed(0)}deg) saturate(${(1 + c * 0.25).toFixed(2)}) brightness(${(1 + c * 0.06).toFixed(2)})`;
   }
-  ctx.putImageData(imageData, 0, 0);
+  photoEl.style.filter = filter;
 }
 
-function selectPhoto(i) {
-  currentPhoto = i;
-  picker.querySelectorAll('.photo-btn').forEach((b, j) => b.classList.toggle('active', j === i));
-  const p = PHOTOS[i];
-  document.getElementById('photo-title-el').textContent = p.title;
-  document.getElementById('photo-scene-el').textContent = p.scene;
-
-  imgLoaded = false;
-  imgEl = document.getElementById('main-photo');
-  imgEl.src = '';
-
-  const newImg = new Image();
-  newImg.crossOrigin = 'anonymous';
-  newImg.onload = () => {
-    imgEl.src = newImg.src;
-    canvasEl = document.getElementById('wb-canvas');
-    canvasEl.width = newImg.naturalWidth || 800;
-    canvasEl.height = newImg.naturalHeight || 600;
-    ctx = canvasEl.getContext('2d');
-    imgLoaded = true;
-    applyWB();
-  };
-  newImg.onerror = () => {
-    // CORS blocked — fall back to CSS filter only
-    imgEl.src = p.url;
-    canvasEl.style.display = 'none';
-    applyWBcss();
-    imgLoaded = false;
-  };
-  newImg.src = p.url;
-}
-
-function applyWBcss() {
-  // CSS fallback: use hue-rotate + sepia for warm/cool simulation
-  const norm = (currentK - 5500) / 7500;
-  const hue = norm * -30; // cool=positive hue, warm=negative
-  const sepia = norm < 0 ? Math.abs(norm) * 0.4 : 0;
-  const saturate = 1 + Math.abs(norm) * 0.2;
-  imgEl.style.filter = `hue-rotate(${hue.toFixed(1)}deg) sepia(${sepia.toFixed(2)}) saturate(${saturate.toFixed(2)})`;
-}
-
-// Init canvas
-canvasEl = document.getElementById('wb-canvas');
-ctx = canvasEl.getContext('2d');
-
-selectPhoto(0);
+// Init
+photoEl.src = PHOTOS[0].url;
+document.getElementById('photo-title-el').textContent = PHOTOS[0].title;
+document.getElementById('photo-scene-el').textContent = PHOTOS[0].scene;
 setK(5500);
 </script>
 </body>
