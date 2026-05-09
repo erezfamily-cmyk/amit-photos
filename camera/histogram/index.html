@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>היסטוגרם — Amit Photos</title>
+<meta name="description" content="למד לקרוא היסטוגרם — הכלי החשוב ביותר לחשיפה נכונה. דמו אינטראקטיבי עם תמונות אמיתיות.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #0a0a0a; --surface: #111; --border: #222;
+  --accent: #c8a96e; --text: #f0ede8; --muted: #888;
+}
+body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--text);
+  direction: rtl; min-height: 100vh; padding: 0 0 4rem; }
+
+.page-hero { text-align: center; padding: 2.5rem 1.25rem 1.5rem; }
+.page-hero .badge { display: inline-block; font-size: .72rem;
+  background: rgba(200,169,110,.12); border: 1px solid rgba(200,169,110,.3);
+  color: var(--accent); border-radius: 20px; padding: .3rem .8rem; margin-bottom: .75rem; }
+.page-hero h1 { font-family: 'Syne', sans-serif; font-size: 1.8rem;
+  color: var(--accent); margin-bottom: .5rem; }
+.page-hero p { color: var(--muted); font-size: .9rem; max-width: 400px; margin: 0 auto; }
+
+.demo-wrap { max-width: 960px; margin: 0 auto; padding: 0 1.25rem 2rem; }
+
+/* Photo picker */
+.photo-picker { display: flex; gap: .6rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
+.photo-btn { flex: 1; min-width: 140px; background: var(--surface);
+  border: 1px solid var(--border); border-radius: 10px; overflow: hidden;
+  cursor: pointer; transition: border-color .2s; padding: 0; }
+.photo-btn:hover { border-color: #555; }
+.photo-btn.active { border-color: var(--accent); }
+.photo-btn img { width: 100%; height: 70px; object-fit: cover; display: block; }
+.photo-btn span { display: block; font-size: .72rem; color: var(--muted);
+  padding: .35rem .5rem; text-align: center; }
+
+/* Main interactive area */
+.interactive { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+@media (max-width: 640px) { .interactive { grid-template-columns: 1fr; } }
+
+/* Photo panel */
+.photo-panel { background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; overflow: hidden; }
+.photo-container { position: relative; aspect-ratio: 4/3; overflow: hidden; }
+.photo-container img { width: 100%; height: 100%; object-fit: cover;
+  display: block; transition: filter .05s; }
+.clip-overlay { position: absolute; inset: 0; pointer-events: none; }
+.clip-shadow { position: absolute; inset: 0; background: rgba(0,0,200,.25);
+  opacity: 0; transition: opacity .2s; }
+.clip-highlight { position: absolute; inset: 0; background: rgba(255,80,80,.25);
+  opacity: 0; transition: opacity .2s; }
+.photo-info { padding: .75rem 1rem; display: flex; justify-content: space-between; align-items: center; }
+.photo-title { font-size: .85rem; color: var(--text); }
+.photo-type { font-size: .72rem; color: var(--accent); font-weight: 600; }
+
+/* Histogram panel */
+.hist-panel { background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; padding: 1rem; display: flex; flex-direction: column; gap: .75rem; }
+.hist-header { display: flex; justify-content: space-between; align-items: center; }
+.hist-title { font-size: .85rem; color: var(--text); font-weight: 600; }
+.hist-channels { display: flex; gap: .5rem; }
+.ch-btn { background: none; border: 1px solid var(--border); border-radius: 6px;
+  font-size: .68rem; padding: .2rem .5rem; cursor: pointer; color: var(--muted);
+  font-family: inherit; transition: all .15s; }
+.ch-btn.active { color: #fff; border-color: currentColor; }
+.ch-btn[data-ch="L"].active { background: rgba(200,169,110,.3); border-color: var(--accent); color: var(--accent); }
+.ch-btn[data-ch="R"].active { background: rgba(255,80,80,.3); border-color: #f55; color: #f88; }
+.ch-btn[data-ch="G"].active { background: rgba(80,200,80,.3); border-color: #5c5; color: #8d8; }
+.ch-btn[data-ch="B"].active { background: rgba(80,120,255,.3); border-color: #55f; color: #88f; }
+
+.hist-canvas-wrap { position: relative; background: #0d0d0d; border-radius: 8px;
+  border: 1px solid #1a1a1a; overflow: hidden; }
+canvas#hist { display: block; width: 100%; height: 140px; }
+.hist-axis { display: flex; justify-content: space-between;
+  font-size: .65rem; color: #444; padding: .2rem .2rem 0; }
+
+/* Clipping indicators */
+.clip-info { display: flex; gap: .5rem; }
+.clip-badge { flex: 1; text-align: center; border-radius: 8px; padding: .4rem .5rem;
+  font-size: .72rem; border: 1px solid transparent; transition: all .2s; }
+.clip-badge.warn { border-color: currentColor; }
+.clip-shadow-badge { color: #5599ff; }
+.clip-shadow-badge.warn { background: rgba(85,153,255,.1); }
+.clip-highlight-badge { color: #ff5555; }
+.clip-highlight-badge.warn { background: rgba(255,85,85,.1); }
+
+/* Exposure slider */
+.exposure-wrap { background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; padding: 1.25rem; margin-top: 1.25rem; }
+.exp-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 1rem; }
+.exp-label { font-size: .9rem; font-weight: 600; }
+.exp-value { font-family: 'Syne', sans-serif; font-size: 1.4rem; color: var(--accent); }
+.exp-unit { font-size: .75rem; color: var(--muted); }
+.stops-track { position: relative; margin-bottom: .4rem; }
+input[type=range]#exp-slider {
+  width: 100%; -webkit-appearance: none; appearance: none;
+  height: 6px; border-radius: 3px; background: linear-gradient(to left, #f55 0%, #f55 14.3%, #888 14.3%, #888 85.7%, #55f 85.7%, #55f 100%);
+  outline: none; cursor: pointer;
+}
+input[type=range]#exp-slider::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 22px; height: 22px; border-radius: 50%;
+  background: var(--accent); border: 3px solid #000;
+  box-shadow: 0 0 0 2px var(--accent); cursor: grab;
+}
+input[type=range]#exp-slider:active::-webkit-slider-thumb { cursor: grabbing; }
+.stops-labels { display: flex; justify-content: space-between;
+  font-size: .65rem; color: #444; }
+.stops-labels span { text-align: center; width: 14.28%; }
+
+.reading-tip { margin-top: .6rem; font-size: .8rem; color: var(--muted);
+  text-align: center; min-height: 1.2em; transition: color .3s; }
+.reading-tip.good { color: #4d9; }
+.reading-tip.warn { color: #fa5; }
+.reading-tip.bad { color: #f55; }
+
+/* Info cards */
+.info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem; margin-top: 1.5rem; }
+.info-card { background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; padding: 1.1rem 1rem; }
+.info-card .ic-icon { font-size: 1.4rem; margin-bottom: .5rem; }
+.info-card h3 { font-family: 'Syne', sans-serif; font-size: .95rem;
+  color: var(--accent); margin-bottom: .4rem; }
+.info-card p { font-size: .8rem; color: var(--muted); line-height: 1.55; }
+
+.back-link { text-align: center; padding: 1.5rem 1rem 0; }
+.back-link a { color: var(--accent); font-size: .85rem; text-decoration: none; }
+</style>
+<script src="/assets/js/nav.js" defer></script>
+</head>
+<body>
+
+<div class="page-hero">
+  <div class="badge">📷 בית ספר לצילום</div>
+  <h1>היסטוגרם — לקרוא את האור</h1>
+  <p>שנה חשיפה וראה בזמן אמת איך ההיסטוגרם זז — ומתי הפרטים "נשרפים" או נעלמים</p>
+</div>
+
+<div class="demo-wrap">
+
+  <!-- Photo picker -->
+  <div class="photo-picker" id="picker"></div>
+
+  <!-- Interactive -->
+  <div class="interactive">
+
+    <!-- Photo -->
+    <div class="photo-panel">
+      <div class="photo-container">
+        <img id="main-photo" src="" alt="">
+        <div class="clip-overlay">
+          <div class="clip-shadow" id="clip-shadow-overlay"></div>
+          <div class="clip-highlight" id="clip-hl-overlay"></div>
+        </div>
+      </div>
+      <div class="photo-info">
+        <span class="photo-title" id="photo-title-el"></span>
+        <span class="photo-type" id="photo-type-el"></span>
+      </div>
+    </div>
+
+    <!-- Histogram -->
+    <div class="hist-panel">
+      <div class="hist-header">
+        <span class="hist-title">היסטוגרם</span>
+        <div class="hist-channels">
+          <button type="button" class="ch-btn active" data-ch="L">בהירות</button>
+          <button type="button" class="ch-btn" data-ch="R">R</button>
+          <button type="button" class="ch-btn" data-ch="G">G</button>
+          <button type="button" class="ch-btn" data-ch="B">B</button>
+        </div>
+      </div>
+      <div class="hist-canvas-wrap">
+        <canvas id="hist" width="400" height="140"></canvas>
+      </div>
+      <div class="hist-axis">
+        <span>שחור (0)</span>
+        <span>אפור</span>
+        <span>לבן (255)</span>
+      </div>
+      <div class="clip-info">
+        <div class="clip-badge clip-shadow-badge" id="clip-shadow-badge">⬛ צללים בסדר</div>
+        <div class="clip-badge clip-highlight-badge" id="clip-hl-badge">⬜ הבהרות בסדר</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Exposure slider -->
+  <div class="exposure-wrap">
+    <div class="exp-header">
+      <span class="exp-label">שינוי חשיפה</span>
+      <span><span class="exp-value" id="exp-val">0</span> <span class="exp-unit">סטופים (EV)</span></span>
+    </div>
+    <div class="stops-track">
+      <input type="range" id="exp-slider" min="-42" max="42" value="0" step="1" aria-label="שינוי חשיפה בסטופים">
+    </div>
+    <div class="stops-labels">
+      <span>-3</span><span>-2</span><span>-1</span><span>0</span><span>+1</span><span>+2</span><span>+3</span>
+    </div>
+    <div class="reading-tip" id="reading-tip">גרור את הסליידר לשינוי חשיפה</div>
+  </div>
+
+  <!-- Info cards -->
+  <div class="info-grid">
+    <div class="info-card">
+      <div class="ic-icon">⬛</div>
+      <h3>קצה שמאל — צללים</h3>
+      <p>ערכים 0–30. כשהגרף "נשפך" משמאל — הפרטים בצל נעלמים לחלוטין (underexposed).</p>
+    </div>
+    <div class="info-card">
+      <div class="ic-icon">🎯</div>
+      <h3>אמצע — אפורים בינוניים</h3>
+      <p>ערכים 100–150. רוב הפרטים החשובים נמצאים כאן. היסטוגרם "הגון" נמצא סביב האמצע.</p>
+    </div>
+    <div class="info-card">
+      <div class="ic-icon">⬜</div>
+      <h3>קצה ימין — הבהרות</h3>
+      <p>ערכים 225–255. כשהגרף "נשפך" מימין — פרטי אור נשרפים ללבן טהור (overexposed).</p>
+    </div>
+    <div class="info-card">
+      <div class="ic-icon">📐</div>
+      <h3>אין היסטוגרם "נכון"</h3>
+      <p>תמונה כהה במכוון תהיה שמאלית. High-key תהיה ימינית. המטרה: לא לאבד פרטים שרצית לשמר.</p>
+    </div>
+  </div>
+
+  <div class="back-link">
+    <a href="/camera/">← חזרה לבית הספר לצילום</a>
+  </div>
+
+</div>
+
+<script>
+const PHOTOS = [
+  {
+    id: 'eagle-dark',
+    title: 'עוז של נשר',
+    type: 'Low-key — כהה',
+    url: 'https://drive.google.com/thumbnail?id=1FH_T3RTNUiI1f0cTktFnEEdJY-lO3sNi&sz=w800',
+    // histogram profile: dark subject on black BG, peak around 35 with long tail to 180
+    profile: { peaks: [{c:30, w:22, h:1.0}, {c:90, w:25, h:0.35}, {c:160, w:18, h:0.15}], channels: {R:[35,24,1.0,90,26,0.35], G:[28,20,0.9,85,22,0.3], B:[25,18,0.8,80,18,0.2]} }
+  },
+  {
+    id: 'owl-white',
+    title: 'ינשוף שלג',
+    type: 'High-key — בהיר',
+    url: 'https://drive.google.com/thumbnail?id=17RW9kh-Ry3KiqOj_yM3oCK8FPOC88_JN&sz=w800',
+    // bright white owl, right-heavy
+    profile: { peaks: [{c:200, w:28, h:1.0}, {c:235, w:18, h:0.7}, {c:110, w:20, h:0.2}], channels: {R:[205,28,1.0,238,16,0.65], G:[198,26,0.95,232,17,0.7], B:[188,24,0.75,220,14,0.45]} }
+  },
+  {
+    id: 'bird-sky',
+    title: 'נשר בטיסה',
+    type: 'קונטרסט גבוה',
+    url: 'https://drive.google.com/thumbnail?id=1We5NhoA8RoEVMLisV1Uf4XjeAq792gv9&sz=w800',
+    // white bird against bright sky — bimodal
+    profile: { peaks: [{c:180, w:30, h:0.8}, {c:230, w:15, h:1.0}, {c:50, w:15, h:0.3}], channels: {R:[185,30,0.8,232,14,1.0,50,15,0.25], G:[178,28,0.75,228,14,0.95,48,14,0.2], B:[190,32,0.85,235,16,0.9,55,16,0.35]} }
+  },
+  {
+    id: 'owl-sky',
+    title: 'תינשוף בור',
+    type: 'חשיפה מאוזנת',
+    url: 'https://drive.google.com/thumbnail?id=1RS7CNmOqlgKzVp6TEsqT2At4zO4eODS_&sz=w800',
+    // balanced - brown owl + blue sky
+    profile: { peaks: [{c:120, w:35, h:0.9}, {c:170, w:25, h:0.6}, {c:65, w:20, h:0.4}], channels: {R:[125,32,0.9,172,24,0.55,68,18,0.35], G:[118,30,0.85,165,22,0.6,60,16,0.3], B:[145,38,1.0,185,26,0.5,80,20,0.45]} }
+  }
+];
+
+let currentPhoto = 0;
+let currentChannel = 'L';
+let currentEV = 0;
+
+// Build picker
+const picker = document.getElementById('picker');
+PHOTOS.forEach((p, i) => {
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'photo-btn' + (i === 0 ? ' active' : '');
+  btn.innerHTML = `<img src="${p.url}" alt="${p.title}" loading="lazy"><span>${p.title}</span>`;
+  btn.addEventListener('click', () => selectPhoto(i));
+  picker.appendChild(btn);
+});
+
+function selectPhoto(i) {
+  currentPhoto = i;
+  picker.querySelectorAll('.photo-btn').forEach((b, j) => b.classList.toggle('active', j === i));
+  const p = PHOTOS[i];
+  document.getElementById('main-photo').src = p.url;
+  document.getElementById('photo-title-el').textContent = p.title;
+  document.getElementById('photo-type-el').textContent = p.type;
+  drawHistogram();
+}
+
+// Channel buttons
+document.querySelectorAll('.ch-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.ch-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentChannel = btn.dataset.ch;
+    drawHistogram();
+  });
+});
+
+// Exposure slider
+const slider = document.getElementById('exp-slider');
+const expVal = document.getElementById('exp-val');
+
+slider.addEventListener('input', () => {
+  const raw = parseInt(slider.value);
+  currentEV = raw / 14; // -3..+3
+  const display = currentEV >= 0 ? '+' + currentEV.toFixed(1) : currentEV.toFixed(1);
+  expVal.textContent = display.replace('.0', '');
+  updatePhoto();
+  drawHistogram();
+  updateTip();
+});
+
+function updatePhoto() {
+  const brightness = Math.pow(2, currentEV);
+  document.getElementById('main-photo').style.filter = `brightness(${brightness.toFixed(3)})`;
+}
+
+// Generate histogram bins from profile
+function generateBins(profile, channel, evShift) {
+  const bins = new Float32Array(256);
+  let peaks;
+  if (channel === 'L') {
+    peaks = profile.peaks;
+  } else {
+    const ch = profile.channels[channel];
+    peaks = [];
+    for (let i = 0; i < ch.length; i += 3) {
+      peaks.push({c: ch[i], w: ch[i+1], h: ch[i+2]});
+    }
+  }
+
+  // shift amount: each stop = 36.5 pixels
+  const shift = evShift * 36.5;
+
+  peaks.forEach(pk => {
+    const center = pk.c + shift;
+    const sigma = pk.w;
+    const amplitude = pk.h * 3000;
+    for (let x = 0; x < 256; x++) {
+      const d = x - center;
+      bins[x] += amplitude * Math.exp(-(d * d) / (2 * sigma * sigma));
+    }
+  });
+
+  // Add slight noise floor
+  for (let x = 0; x < 256; x++) {
+    bins[x] += Math.random() * 8;
+  }
+
+  return bins;
+}
+
+function getChannelColor(ch) {
+  if (ch === 'L') return { fill: 'rgba(200,169,110,0.7)', stroke: '#c8a96e' };
+  if (ch === 'R') return { fill: 'rgba(255,80,80,0.65)', stroke: '#ff5555' };
+  if (ch === 'G') return { fill: 'rgba(80,200,80,0.65)', stroke: '#55cc55' };
+  if (ch === 'B') return { fill: 'rgba(80,120,255,0.65)', stroke: '#5577ff' };
+}
+
+function drawHistogram() {
+  const canvas = document.getElementById('hist');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0, 0, W, H);
+
+  const profile = PHOTOS[currentPhoto].profile;
+  const bins = generateBins(profile, currentChannel, currentEV);
+
+  // Find max for normalization
+  let maxVal = 0;
+  for (let x = 5; x < 251; x++) maxVal = Math.max(maxVal, bins[x]);
+  if (maxVal === 0) return;
+
+  // Draw grid lines
+  ctx.strokeStyle = '#1a1a1a';
+  ctx.lineWidth = 1;
+  [64, 128, 192].forEach(x => {
+    const px = (x / 255) * W;
+    ctx.beginPath(); ctx.moveTo(px, 0); ctx.lineTo(px, H); ctx.stroke();
+  });
+
+  // Clip zones (red tint for bins at edge)
+  const shadowClip = bins[0] + bins[1] + bins[2] > maxVal * 0.15;
+  const hlClip = bins[253] + bins[254] + bins[255] > maxVal * 0.15;
+
+  // Clip zone overlays on canvas
+  if (shadowClip) {
+    ctx.fillStyle = 'rgba(85,153,255,0.08)';
+    ctx.fillRect(0, 0, W * 0.05, H);
+  }
+  if (hlClip) {
+    ctx.fillStyle = 'rgba(255,80,80,0.08)';
+    ctx.fillRect(W * 0.95, 0, W * 0.05, H);
+  }
+
+  // Draw histogram curve
+  const color = getChannelColor(currentChannel);
+  ctx.beginPath();
+  ctx.moveTo(0, H);
+  for (let x = 0; x < 256; x++) {
+    const px = (x / 255) * W;
+    const py = H - (bins[x] / maxVal) * H * 0.92;
+    if (x === 0) ctx.lineTo(px, py);
+    else ctx.lineTo(px, py);
+  }
+  ctx.lineTo(W, H);
+  ctx.closePath();
+
+  const grad = ctx.createLinearGradient(0, 0, 0, H);
+  grad.addColorStop(0, color.fill);
+  grad.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = grad;
+  ctx.fill();
+
+  ctx.beginPath();
+  for (let x = 0; x < 256; x++) {
+    const px = (x / 255) * W;
+    const py = H - (bins[x] / maxVal) * H * 0.92;
+    if (x === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+  }
+  ctx.strokeStyle = color.stroke;
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+
+  // Clipping spikes at edges
+  if (shadowClip) {
+    const spikeH = Math.min((bins[0] / maxVal) * H * 1.5, H);
+    ctx.fillStyle = '#5599ff';
+    ctx.fillRect(0, H - spikeH, 4, spikeH);
+  }
+  if (hlClip) {
+    const spikeH = Math.min((bins[255] / maxVal) * H * 1.5, H);
+    ctx.fillStyle = '#ff5555';
+    ctx.fillRect(W - 4, H - spikeH, 4, spikeH);
+  }
+
+  // Update clip badges
+  const shadowBadge = document.getElementById('clip-shadow-badge');
+  const hlBadge = document.getElementById('clip-hl-badge');
+  const shadowOverlay = document.getElementById('clip-shadow-overlay');
+  const hlOverlay = document.getElementById('clip-hl-overlay');
+
+  if (shadowClip) {
+    shadowBadge.textContent = '⬛ צללים נחסמים!';
+    shadowBadge.classList.add('warn');
+    shadowOverlay.style.opacity = '1';
+  } else {
+    shadowBadge.textContent = '⬛ צללים בסדר';
+    shadowBadge.classList.remove('warn');
+    shadowOverlay.style.opacity = '0';
+  }
+
+  if (hlClip) {
+    hlBadge.textContent = '⬜ הבהרות נשרפות!';
+    hlBadge.classList.add('warn');
+    hlOverlay.style.opacity = '1';
+  } else {
+    hlBadge.textContent = '⬜ הבהרות בסדר';
+    hlBadge.classList.remove('warn');
+    hlOverlay.style.opacity = '0';
+  }
+}
+
+function updateTip() {
+  const tip = document.getElementById('reading-tip');
+  const shadowClip = currentEV < -2;
+  const hlClip = currentEV > 2;
+
+  if (currentEV < -2.2) {
+    tip.textContent = '⚠️ חשיפת חסר קיצונית — פרטים בצל נעלמים לחלוטין';
+    tip.className = 'reading-tip bad';
+  } else if (currentEV < -1) {
+    tip.textContent = '↙ חשיפת חסר — ההיסטוגרם זז שמאלה, צללים מתעמקים';
+    tip.className = 'reading-tip warn';
+  } else if (currentEV > 2.2) {
+    tip.textContent = '⚠️ חשיפת יתר קיצונית — פרטי האור "נשרפים" ללבן';
+    tip.className = 'reading-tip bad';
+  } else if (currentEV > 1) {
+    tip.textContent = '↗ חשיפת יתר — ההיסטוגרם זז ימינה, הבהרות מאירות';
+    tip.className = 'reading-tip warn';
+  } else {
+    tip.textContent = '✓ חשיפה טובה — פרטים נשמרים בשני הקצוות';
+    tip.className = 'reading-tip good';
+  }
+}
+
+// Init
+selectPhoto(0);
+updateTip();
+</script>
+</body>
+</html>
