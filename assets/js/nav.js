@@ -229,4 +229,32 @@ nav#main-nav .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px)
 
   // Expose so external code (e.g. i18n.js setLang) can re-translate the nav
   window.applyNavLang = applyNavLang;
+
+  // ── Footer ────────────────────────────────────────────────────────────────────
+  const footerStyle = document.createElement('style');
+  footerStyle.textContent = `
+footer#main-footer {
+  text-align: center; padding: 1.5rem 1.25rem;
+  border-top: 1px solid #222; margin-top: 2rem;
+  font-family: 'Heebo', sans-serif; font-size: 0.78rem; color: #555;
+}
+footer#main-footer a { color: #888; text-decoration: none; transition: color 0.2s; }
+footer#main-footer a:hover { color: #c8a96e; }
+`;
+  document.head.appendChild(footerStyle);
+
+  const footer = document.createElement('footer');
+  footer.id = 'main-footer';
+  const privacyHe = 'מדיניות פרטיות';
+  const privacyEn = 'Privacy Policy';
+  footer.innerHTML = `<a href="/privacy/" id="footer-privacy">${currentLang === 'en' ? privacyEn : privacyHe}</a>`;
+  document.body.appendChild(footer);
+
+  const origApplyNavLang = applyNavLang;
+  applyNavLang = function(lang) {
+    origApplyNavLang(lang);
+    const fp = document.getElementById('footer-privacy');
+    if (fp) fp.textContent = lang === 'en' ? privacyEn : privacyHe;
+  };
+  window.applyNavLang = applyNavLang;
 })();
