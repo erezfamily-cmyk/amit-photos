@@ -207,6 +207,8 @@ function renderSpot(loc) {
     if (parts.length === 2) {
       document.getElementById('waze-link').href = `https://waze.com/ul?ll=${parts[0]},${parts[1]}&navigate=yes`;
       document.getElementById('waze-wrap').style.display = 'block';
+      loadSunTimes(lat, lng);
+      loadWeather(lat, lng);
     }
   }
 
@@ -220,6 +222,39 @@ function renderSpot(loc) {
         ${loc.equipment ? `<li><strong>ציוד:</strong> ${loc.equipment}</li>` : ''}
         ${loc.coordinates ? `<li><strong>ניווט:</strong> <a href="https://www.google.com/maps/search/?api=1&query=${loc.coordinates}" target="_blank" style="color:var(--accent)">פתח במפות Google</a></li>` : ''}
       </ul>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin:1rem 0">
+        <div id="sun-widget" style="display:none;background:#111;border:1px solid #222;border-radius:8px;padding:1rem 1.25rem">
+          <div style="font-size:.75rem;color:#666;margin-bottom:.6rem;font-family:'Heebo',sans-serif">זמני צילום היום</div>
+          <div style="display:flex;gap:1.5rem;flex-wrap:wrap">
+            <div>
+              <span style="font-size:1.1rem">🌅</span>
+              <span style="font-size:.85rem;color:#c8a96e;font-weight:700" id="sun-rise">--:--</span>
+              <div style="font-size:.7rem;color:#666">זריחה</div>
+            </div>
+            <div>
+              <span style="font-size:1.1rem">🌇</span>
+              <span style="font-size:.85rem;color:#c8a96e;font-weight:700" id="sun-set">--:--</span>
+              <div style="font-size:.7rem;color:#666">שקיעה</div>
+            </div>
+            <div>
+              <span style="font-size:1.1rem">✨</span>
+              <span style="font-size:.85rem;color:#c8a96e;font-weight:700" id="golden-hour">--:--</span>
+              <div style="font-size:.7rem;color:#666">שעת זהב</div>
+            </div>
+          </div>
+        </div>
+        <div id="weather-widget" style="display:none;background:#111;border:1px solid #222;border-radius:8px;padding:1rem 1.25rem">
+          <div style="font-size:.75rem;color:#666;margin-bottom:.6rem;font-family:'Heebo',sans-serif">מזג אוויר עכשווי</div>
+          <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap">
+            <div style="font-size:2rem" id="weather-icon">—</div>
+            <div>
+              <div style="font-size:1.4rem;font-weight:700;color:#f0ede8" id="weather-temp">--°</div>
+              <div style="font-size:.75rem;color:#888" id="weather-desc">--</div>
+            </div>
+            <div style="font-size:.8rem;color:#666" id="weather-wind"></div>
+          </div>
+        </div>
+      </div>
     </div>
     ${loc.related_guides && loc.related_guides.length ? `
     <div class="section">
@@ -273,6 +308,55 @@ document.getElementById('btn-send-corr').addEventListener('click', async () => {
   btn.textContent = 'נשלח!';
   setTimeout(() => { document.getElementById('correction-modal').classList.remove('open'); btn.disabled = false; btn.textContent = 'שלח'; }, 1500);
 });
+
+const WMO = {
+  0:'☀️ בהיר', 1:'🌤 בהיר ברובו', 2:'⛅ מעונן חלקית', 3:'☁️ מעונן',
+  45:'🌫 ערפל', 48:'🌫 ערפל קרח',
+  51:'🌦 טפטוף קל', 53:'🌦 טפטוף', 55:'🌧 טפטוף כבד',
+  61:'🌧 גשם קל', 63:'🌧 גשם', 65:'🌧 גשם כבד',
+  71:'🌨 שלג קל', 73:'❄️ שלג', 75:'❄️ שלג כבד',
+  80:'🌦 מקלחות קלות', 81:'🌧 מקלחות', 82:'⛈ מקלחות כבדות',
+  95:'⛈ סופת רעמים', 99:'⛈ סופה עם ברד'
+};
+
+async function loadSunTimes(lat, lng) {
+  try {
+    const res = await fetch(`https://api.sunrise-sunset.org/json?lat=${lat}&lng=${lng}&formatted=0`);
+    const data = await res.json();
+    if (data.status !== 'OK') return;
+
+    function toLocalTime(utcStr) {
+      const d = new Date(utcStr);
+      return d.toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Jerusalem' });
+    }
+
+    const sunriseTime = new Date(data.results.sunrise);
+    const goldenHour = new Date(sunriseTime.getTime() + 60 * 60 * 1000);
+
+    document.getElementById('sun-rise').textContent = toLocalTime(data.results.sunrise);
+    document.getElementById('sun-set').textContent = toLocalTime(data.results.sunset);
+    document.getElementById('golden-hour').textContent = toLocalTime(goldenHour.toISOString());
+    document.getElementById('sun-widget').style.display = 'block';
+  } catch(e) {}
+}
+
+async function loadWeather(lat, lng) {
+  try {
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m,weathercode,windspeed_10m&timezone=Asia/Jerusalem`;
+    const res = await fetch(url);
+    const data = await res.json();
+    const c = data.current;
+    if (!c) return;
+
+    const wmoEntry = WMO[c.weathercode] || '🌡 --';
+    const [icon, ...descParts] = wmoEntry.split(' ');
+    document.getElementById('weather-icon').textContent = icon;
+    document.getElementById('weather-temp').textContent = Math.round(c.temperature_2m) + '°C';
+    document.getElementById('weather-desc').textContent = descParts.join(' ');
+    document.getElementById('weather-wind').textContent = `💨 ${Math.round(c.windspeed_10m)} קמ"ש`;
+    document.getElementById('weather-widget').style.display = 'block';
+  } catch(e) {}
+}
 
 loadSpot();
 </script>
