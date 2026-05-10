@@ -26,6 +26,19 @@ function jsonRes(data, status = 200, request = null) {
 }
 function unauth(request) { return jsonRes({ error: 'לא מורשה' }, 401, request); }
 
+function slugify(text) {
+  const map = {
+    'א':'a','ב':'b','ג':'g','ד':'d','ה':'h','ו':'v','ז':'z','ח':'ch','ט':'t',
+    'י':'y','כ':'k','ך':'k','ל':'l','מ':'m','ם':'m','נ':'n','ן':'n','ס':'s',
+    'ע':'a','פ':'p','ף':'p','צ':'tz','ץ':'tz','ק':'k','ר':'r','ש':'sh','ת':'t'
+  };
+  return text
+    .split('').map(c => map[c] || c).join('')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
 async function checkAuth(request, env) {
   // Session token (כניסה רגילה לאדמין)
   const token = request.headers.get('X-Session-Token');
