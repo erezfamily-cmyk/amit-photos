@@ -3070,11 +3070,12 @@ async function handleLocationsSuggest(request, env) {
     <p style="background:#111;padding:1rem;border-radius:4px;white-space:pre-wrap">${message}</p>
   </div>`;
 
-  await fetch('https://api.resend.com/emails', {
+  const emailRes = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: { 'Authorization': `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({ from: 'Amit Photos <onboarding@resend.dev>', to: ['erez.family@gmail.com'], subject, html })
   });
+  if (!emailRes.ok) return jsonRes({ error: 'שגיאה בשליחת המייל' }, 502, request);
 
   return jsonRes({ ok: true }, 200, request);
 }
@@ -3197,8 +3198,11 @@ async function handleAdminLocationsUpdate(request, env, slug) {
   }
 
   if (sets.length === 0) return jsonRes({ error: 'אין שדות לעדכון' }, 400, request);
-  vals.push(slug);
 
+  const exists = await env.DB.prepare('SELECT id FROM locations WHERE id = ?').bind(slug).first();
+  if (!exists) return jsonRes({ error: 'לא נמצא' }, 404, request);
+
+  vals.push(slug);
   await env.DB.prepare(`UPDATE locations SET ${sets.join(', ')} WHERE id = ?`).bind(...vals).run();
   const loc = await env.DB.prepare('SELECT * FROM locations WHERE id = ?').bind(slug).first();
   if (!loc) return jsonRes({ error: 'לא נמצא' }, 404, request);
@@ -3216,6 +3220,7 @@ async function handleAdminLocationsDelete(request, env, slug) {
     await env.PHOTOS.delete(p.r2_key).catch(() => {});
   }
 
+  await env.DB.prepare('DELETE FROM location_photos WHERE location_id = ?').bind(slug).run();
   await env.DB.prepare('DELETE FROM locations WHERE id = ?').bind(slug).run();
   return jsonRes({ ok: true }, 200, request);
 }
@@ -3247,6 +3252,16 @@ async function handleAdminLocationsEnrich(request, env, slug) {
 
   const updated = await env.DB.prepare('SELECT * FROM locations WHERE id = ?').bind(slug).first();
   return jsonRes({ ...updated, related_guides: JSON.parse(updated.related_guides || '[]') }, 200, request);
+}
+
+async function handleAdminLocationsGet(request, env, slug) {
+  if (!await checkAuth(request, env)) return unauth(request);
+  const loc = await env.DB.prepare('SELECT * FROM locations WHERE id = ?').bind(slug).first();
+  if (!loc) return jsonRes({ error: 'לא נמצא' }, 404, request);
+  const { results: photos } = await env.DB.prepare(
+    'SELECT * FROM location_photos WHERE location_id = ? ORDER BY sort_order ASC'
+  ).bind(slug).all();
+  return jsonRes({ ...loc, related_guides: JSON.parse(loc.related_guides || '[]'), photos: photos || [] }, 200, request);
 }
 
 // ===== LOCATION PHOTOS MANAGEMENT =====
@@ -3411,16 +3426,8 @@ export default {
     // Locations admin API
     if (path === '/api/admin/locations' && request.method === 'GET')    return handleAdminLocationsList(request, env);
     if (path === '/api/admin/locations' && request.method === 'POST')   return handleAdminLocationsCreate(request, env);
-    if (path.startsWith('/api/admin/locations/') && request.method === 'GET') {
-      const slug = path.slice('/api/admin/locations/'.length).split('/')[0];
-      if (!await checkAuth(request, env)) return unauth(request);
-      const loc = await env.DB.prepare('SELECT * FROM locations WHERE id = ?').bind(slug).first();
-      if (!loc) return jsonRes({ error: 'לא נמצא' }, 404, request);
-      const { results: photos } = await env.DB.prepare(
-        'SELECT * FROM location_photos WHERE location_id = ? ORDER BY sort_order ASC'
-      ).bind(slug).all();
-      return jsonRes({ ...loc, related_guides: JSON.parse(loc.related_guides || '[]'), photos: photos || [] }, 200, request);
-    }
+    if (path.startsWith('/api/admin/locations/') && request.method === 'GET')
+      return handleAdminLocationsGet(request, env, path.slice('/api/admin/locations/'.length).split('/')[0]);
     if (path.startsWith('/api/admin/locations/') && request.method === 'PUT') {
       const slug = path.slice('/api/admin/locations/'.length).split('/')[0];
       const rest = path.slice('/api/admin/locations/'.length + slug.length);
@@ -3435,6 +3442,7 @@ export default {
         if (parts[2] === 'reorder') return handleAdminLocationPhotosReorder(request, env, locSlug);
         return handleAdminLocationPhotosAdd(request, env, locSlug);
       }
+      return jsonRes({ error: 'לא נמצא' }, 404, request);
     }
     if (path.startsWith('/api/admin/locations/') && request.method === 'DELETE') {
       const afterPrefix = path.slice('/api/admin/locations/'.length);
