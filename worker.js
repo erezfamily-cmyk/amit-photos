@@ -279,9 +279,21 @@ async function handlePhotos(request, env) {
   if (method === 'GET') {
     const url = new URL(request.url);
     const adminAll = url.searchParams.get('admin') === '1';
+    const q = url.searchParams.get('q') || '';
+    const limitParam = parseInt(url.searchParams.get('limit')) || 0;
     // ?admin=1 מחייב auth; גישה ציבורית — רק published
     if (adminAll && !await checkAuth(request, env)) return unauth(request);
-    const sql = adminAll
+
+    let sql, params;
+    if (q && !adminAll) {
+      // title search (public, published only)
+      sql = `SELECT id, title, category, url, thumbnail FROM photos WHERE title LIKE ? AND published = 1 ORDER BY created_at DESC${limitParam ? ' LIMIT ?' : ''}`;
+      params = limitParam ? [`%${q}%`, limitParam] : [`%${q}%`];
+      const { results: qResults } = await env.DB.prepare(sql).bind(...params).all();
+      return jsonRes(qResults, 200, request);
+    }
+
+    sql = adminAll
       ? 'SELECT * FROM photos ORDER BY CASE WHEN sort_order IS NULL THEN 1 ELSE 0 END, sort_order ASC, created_at DESC'
       : 'SELECT * FROM photos WHERE published=1 ORDER BY CASE WHEN sort_order IS NULL THEN 1 ELSE 0 END, sort_order ASC, created_at DESC';
     const { results } = await env.DB.prepare(sql).all();
@@ -3521,6 +3533,13 @@ export default {
       if (parts[1] === 'photos') {
         if (parts[2] === 'reorder') return handleAdminLocationPhotosReorder(request, env, locSlug);
         if (parts[2] && parts[3] === 'add-to-gallery') return handleAdminLocationPhotoAddToGallery(request, env, locSlug, parts[2]);
+        if (parts[2] && parts[3] === 'forsale') {
+          if (!await checkAuth(request, env)) return unauth(request);
+          const { for_sale } = await request.json().catch(() => ({}));
+          await env.DB.prepare('UPDATE location_photos SET for_sale = ? WHERE id = ? AND location_id = ?')
+            .bind(for_sale ? 1 : 0, parts[2], locSlug).run();
+          return jsonRes({ ok: true }, 200, request);
+        }
         return handleAdminLocationPhotosAdd(request, env, locSlug);
       }
       return jsonRes({ error: 'לא נמצא' }, 404, request);
