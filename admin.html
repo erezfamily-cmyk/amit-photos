@@ -1046,7 +1046,30 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
     <section class="section" id="section-locations">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem">
         <h2 style="font-family:'Syne',sans-serif;color:var(--accent)">מקומות לצילום</h2>
-        <button id="btn-new-location" style="background:var(--accent);color:#0a0a0a;border:none;padding:.6rem 1.25rem;border-radius:4px;font-weight:700;cursor:pointer">+ מקום חדש</button>
+        <button id="btn-new-location" style="background:var(--accent);color:#0a0a0a;border:none;padding:.6rem 1.25rem;border-radius:4px;font-weight:700;cursor:pointer">מקום חדש +</button>
+      </div>
+      <div id="loc-new-form" style="display:none;background:#111;border:1px solid #333;border-radius:6px;padding:1rem;margin-bottom:1.25rem">
+        <div style="display:flex;gap:.75rem;flex-wrap:wrap;align-items:flex-end">
+          <div>
+            <label style="display:block;font-size:.8rem;color:#888;margin-bottom:.3rem">שם המקום</label>
+            <input id="loc-new-name" type="text" required placeholder="שם המקום..." style="background:#0a0a0a;border:1px solid #333;color:#f0ede8;padding:.5rem .75rem;border-radius:4px;font-family:'Heebo',sans-serif;min-width:200px">
+          </div>
+          <div>
+            <label style="display:block;font-size:.8rem;color:#888;margin-bottom:.3rem">אזור</label>
+            <select id="loc-new-region" style="background:#0a0a0a;border:1px solid #333;color:#f0ede8;padding:.5rem .75rem;border-radius:4px;font-family:'Heebo',sans-serif">
+              <option value="">— בחר —</option>
+              <option value="צפון">צפון</option>
+              <option value="מרכז">מרכז</option>
+              <option value="ירושלים">ירושלים</option>
+              <option value="דרום">דרום</option>
+              <option value="נגב">נגב</option>
+              <option value="הרי אילת">הרי אילת</option>
+            </select>
+          </div>
+          <button id="btn-create-location" style="background:var(--accent);color:#0a0a0a;border:none;padding:.5rem 1rem;border-radius:4px;font-weight:700;cursor:pointer;font-size:.85rem">צור מקום</button>
+          <button id="btn-cancel-new-location" style="background:transparent;border:1px solid #444;color:#888;padding:.5rem 1rem;border-radius:4px;cursor:pointer;font-size:.85rem">ביטול</button>
+        </div>
+        <div id="loc-new-form-error" style="color:#e05555;font-size:.8rem;margin-top:.5rem"></div>
       </div>
       <div id="locations-list"></div>
       <div id="location-editor" style="display:none"></div>
@@ -4037,14 +4060,14 @@ document.addEventListener('DOMContentLoaded', () => {
       ['/camera/exposure/','חשיפה'],['/camera/depth-of-field/','עומק שדה'],
       ['/camera/white-balance/','איזון לבן'],['/camera/histogram/','היסטוגרם'],
       ['/camera/light/','אור'],['/camera/dynamic-range/','דינמיק ריינג'],
-      ['/camera/controls/','בקרות'],['/camera/lenses/','עדשות'],['/camera/types/','סוגי מצלמות']
+      ['/camera/controls/','בקרות']
     ];
     const relGuides = loc.related_guides || [];
     ed.innerHTML = `
-      <button id="btn-back-locations" style="background:transparent;border:none;color:#888;cursor:pointer;margin-bottom:1.5rem;font-size:.85rem">← חזרה לרשימה</button>
+      <button id="btn-back-locations" style="background:transparent;border:none;color:#888;cursor:pointer;margin-bottom:1.5rem;font-size:.85rem">הסר ×</button>
       <div style="display:flex;gap:.75rem;flex-wrap:wrap;margin-bottom:1.5rem">
         <button id="btn-save-location" style="background:var(--accent);color:#0a0a0a;border:none;padding:.6rem 1.25rem;border-radius:4px;font-weight:700;cursor:pointer">שמור</button>
-        <button id="btn-enrich-location" style="background:transparent;border:1px solid var(--accent);color:var(--accent);padding:.6rem 1.25rem;border-radius:4px;cursor:pointer">✨ העשר מ-AI</button>
+        <button id="btn-enrich-location" style="background:transparent;border:1px solid var(--accent);color:var(--accent);padding:.6rem 1.25rem;border-radius:4px;cursor:pointer">העשר מחדש מ-AI</button>
         <button id="btn-delete-location" style="background:transparent;border:1px solid #e05555;color:#e05555;padding:.6rem 1.25rem;border-radius:4px;cursor:pointer">מחק</button>
         <a href="/locations/spot/?slug=${loc.id}" target="_blank" style="background:transparent;border:1px solid #333;color:#888;padding:.6rem 1.25rem;border-radius:4px;font-size:.85rem;text-decoration:none">צפה בדף</a>
       </div>
@@ -4112,6 +4135,12 @@ document.addEventListener('DOMContentLoaded', () => {
           <div style="font-size:.85rem;color:#888;margin-bottom:.5rem">קשר מהגלריה</div>
           <input id="gallery-search" placeholder="חפש תמונה לפי כותרת..." style="width:100%;background:#0a0a0a;border:1px solid #222;color:#f0ede8;padding:.55rem .8rem;border-radius:4px;font-family:'Heebo',sans-serif;margin-bottom:.5rem">
           <div id="gallery-search-results" style="max-height:200px;overflow-y:auto;border:1px solid #222;border-radius:4px"></div>
+          <div style="display:flex;align-items:center;gap:.75rem;margin-top:.5rem">
+            <label style="display:flex;align-items:center;gap:.35rem;font-size:.8rem;color:#888">
+              <input type="checkbox" id="gallery-for-sale" style="accent-color:var(--accent)"> למכירה
+            </label>
+            <button id="btn-add-gallery-photo" disabled style="background:var(--accent);color:#0a0a0a;border:none;padding:.4rem .9rem;border-radius:4px;font-weight:700;cursor:pointer;font-size:.8rem;opacity:.45">הוסף לגלריה</button>
+          </div>
         </div>
         <div>
           <div style="font-size:.85rem;color:#888;margin-bottom:.5rem">העלה תמונה בלעדית</div>
@@ -4124,6 +4153,7 @@ document.addEventListener('DOMContentLoaded', () => {
       </div>
       <div id="loc-photos-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:.75rem"></div>
     `;
+    window._selectedGalleryPhotoId = null;
     renderLocPhotosGrid();
     bindPhotosPanelEvents();
   }
@@ -4132,12 +4162,58 @@ document.addEventListener('DOMContentLoaded', () => {
     const grid = document.getElementById('loc-photos-grid');
     if (!locPhotos.length) { grid.innerHTML = '<p style="color:#888;font-size:.85rem">אין תמונות עדיין.</p>'; return; }
     grid.innerHTML = locPhotos.map(p => `
-      <div style="position:relative;border:1px solid #222;border-radius:6px;overflow:hidden" data-photo-id="${p.id}">
-        <img src="${p.thumbnail || p.url}" style="width:100%;aspect-ratio:1;object-fit:cover;display:block">
+      <div draggable="true" data-photo-id="${p.id}" style="position:relative;border:1px solid #222;border-radius:6px;overflow:hidden;cursor:grab">
+        <img src="${p.thumbnail || p.url}" style="width:100%;aspect-ratio:1;object-fit:cover;display:block;pointer-events:none">
         <div style="position:absolute;top:.25rem;right:.25rem;background:rgba(0,0,0,.7);border-radius:3px;padding:.15rem .35rem;font-size:.65rem;color:#888">${p.type === 'exclusive' ? '★' : '◈'}</div>
         <button onclick="removeLocPhoto('${p.id}')" style="position:absolute;top:.25rem;left:.25rem;background:rgba(200,0,0,.8);border:none;color:#fff;border-radius:3px;padding:.15rem .4rem;cursor:pointer;font-size:.7rem">✕</button>
       </div>
     `).join('');
+    bindGridDragReorder(grid);
+  }
+
+  function bindGridDragReorder(grid) {
+    let dragSrc = null;
+    grid.addEventListener('dragstart', e => {
+      const item = e.target.closest('[data-photo-id]');
+      if (!item) return;
+      dragSrc = item;
+      e.dataTransfer.effectAllowed = 'move';
+      setTimeout(() => item.style.opacity = '.4', 0);
+    });
+    grid.addEventListener('dragend', e => {
+      const item = e.target.closest('[data-photo-id]');
+      if (item) item.style.opacity = '';
+      grid.querySelectorAll('[data-photo-id]').forEach(el => el.style.outline = '');
+    });
+    grid.addEventListener('dragover', e => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      const item = e.target.closest('[data-photo-id]');
+      grid.querySelectorAll('[data-photo-id]').forEach(el => el.style.outline = '');
+      if (item && item !== dragSrc) item.style.outline = '2px solid var(--accent)';
+    });
+    grid.addEventListener('drop', async e => {
+      e.preventDefault();
+      const target = e.target.closest('[data-photo-id]');
+      if (!target || target === dragSrc || !dragSrc) return;
+      grid.querySelectorAll('[data-photo-id]').forEach(el => el.style.outline = '');
+      dragSrc.style.opacity = '';
+      // Reorder DOM
+      const items = Array.from(grid.querySelectorAll('[data-photo-id]'));
+      const srcIdx = items.indexOf(dragSrc);
+      const tgtIdx = items.indexOf(target);
+      if (srcIdx < tgtIdx) grid.insertBefore(dragSrc, target.nextSibling);
+      else grid.insertBefore(dragSrc, target);
+      // Collect new order
+      const order = Array.from(grid.querySelectorAll('[data-photo-id]')).map(el => el.dataset.photoId);
+      // POST reorder
+      await fetch(`/api/admin/locations/${locSlug}/photos/reorder`, {
+        method: 'POST',
+        headers: { 'X-Session-Token': SESSION_TOKEN, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ order })
+      });
+      dragSrc = null;
+    });
   }
 
   function bindPhotosPanelEvents() {
@@ -4147,6 +4223,9 @@ document.addEventListener('DOMContentLoaded', () => {
       const q = this.value.trim();
       if (!q) { document.getElementById('gallery-search-results').innerHTML = ''; return; }
       searchTimeout = setTimeout(() => searchGalleryPhotos(q), 300);
+    });
+    document.getElementById('btn-add-gallery-photo').addEventListener('click', () => {
+      if (window._selectedGalleryPhotoId) addGalleryPhoto(window._selectedGalleryPhotoId);
     });
     document.getElementById('btn-upload-exclusive').addEventListener('click', async () => {
       const file = document.getElementById('exclusive-upload').files[0];
@@ -4183,18 +4262,28 @@ document.addEventListener('DOMContentLoaded', () => {
     const results = document.getElementById('gallery-search-results');
     if (!photos.length) { results.innerHTML = '<p style="padding:.5rem;font-size:.8rem;color:#888">אין תוצאות</p>'; return; }
     results.innerHTML = photos.map(p => `
-      <div style="display:flex;align-items:center;gap:.5rem;padding:.4rem .6rem;border-bottom:1px solid #1a1a1a;cursor:pointer" onclick="addGalleryPhoto('${p.id}')">
+      <div data-select-photo-id="${p.id}" style="display:flex;align-items:center;gap:.5rem;padding:.4rem .6rem;border-bottom:1px solid #1a1a1a;cursor:pointer">
         <img src="${p.thumbnail}" style="width:36px;height:36px;object-fit:cover;border-radius:3px">
         <span style="font-size:.8rem">${p.title || p.id}</span>
       </div>
     `).join('');
+    results.querySelectorAll('[data-select-photo-id]').forEach(row => {
+      row.addEventListener('click', () => {
+        results.querySelectorAll('[data-select-photo-id]').forEach(r => r.style.background = '');
+        row.style.background = 'rgba(200,169,110,.18)';
+        window._selectedGalleryPhotoId = row.dataset.selectPhotoId;
+        const addBtn = document.getElementById('btn-add-gallery-photo');
+        if (addBtn) { addBtn.disabled = false; addBtn.style.opacity = '1'; }
+      });
+    });
   }
 
   window.addGalleryPhoto = async function(photoId) {
+    const forSale = document.getElementById('gallery-for-sale') && document.getElementById('gallery-for-sale').checked ? 1 : 0;
     const res = await fetch(`/api/admin/locations/${locSlug}/photos`, {
       method: 'POST',
       headers: { 'X-Session-Token': SESSION_TOKEN, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ photo_id: photoId, for_sale: 1 })
+      body: JSON.stringify({ photo_id: photoId, for_sale: forSale })
     });
     if (res.ok) {
       const p = await res.json();
@@ -4202,6 +4291,9 @@ document.addEventListener('DOMContentLoaded', () => {
       renderLocPhotosGrid();
       document.getElementById('gallery-search').value = '';
       document.getElementById('gallery-search-results').innerHTML = '';
+      window._selectedGalleryPhotoId = null;
+      const addBtn = document.getElementById('btn-add-gallery-photo');
+      if (addBtn) { addBtn.disabled = true; addBtn.style.opacity = '.45'; }
     }
   };
 
@@ -4263,7 +4355,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         alert('הושלם! בדוק ועדכן לפי הצורך.');
       } else { alert('שגיאה ב-AI enrich'); }
-      btn.disabled = false; btn.textContent = '✨ העשר מ-AI';
+      btn.disabled = false; btn.textContent = 'העשר מחדש מ-AI';
     });
     document.getElementById('btn-delete-location').addEventListener('click', async () => {
       if (!confirm(`למחוק את "${loc.title}"? הפעולה בלתי הפיכה.`)) return;
@@ -4281,24 +4373,41 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  document.getElementById('btn-new-location').addEventListener('click', async () => {
-    const title = prompt('שם המקום:');
-    if (!title || !title.trim()) return;
-    const region = prompt('אזור (צפון / מרכז / ירושלים / דרום / נגב / הרי אילת):') || '';
-    const btn = document.getElementById('btn-new-location');
-    btn.disabled = true; btn.textContent = '⏳ יוצר ומעשיר...';
+  document.getElementById('btn-new-location').addEventListener('click', () => {
+    document.getElementById('loc-new-form').style.display = 'block';
+    document.getElementById('loc-new-name').focus();
+  });
+
+  document.getElementById('btn-cancel-new-location').addEventListener('click', () => {
+    document.getElementById('loc-new-form').style.display = 'none';
+    document.getElementById('loc-new-name').value = '';
+    document.getElementById('loc-new-region').value = '';
+    document.getElementById('loc-new-form-error').textContent = '';
+  });
+
+  document.getElementById('btn-create-location').addEventListener('click', async () => {
+    const name = document.getElementById('loc-new-name').value.trim();
+    const region = document.getElementById('loc-new-region').value;
+    const errEl = document.getElementById('loc-new-form-error');
+    if (!name) { errEl.textContent = 'יש להזין שם מקום'; return; }
+    errEl.textContent = '';
+    const btn = document.getElementById('btn-create-location');
+    btn.disabled = true; btn.textContent = '⏳ יוצר...';
     const res = await fetch('/api/admin/locations', {
       method: 'POST',
       headers: { 'X-Session-Token': SESSION_TOKEN, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ title: title.trim(), region })
+      body: JSON.stringify({ name, region })
     });
-    btn.disabled = false; btn.textContent = '+ מקום חדש';
+    btn.disabled = false; btn.textContent = 'צור מקום';
     if (res.ok) {
       const loc = await res.json();
-      await editLocation(loc.id);
+      document.getElementById('loc-new-form').style.display = 'none';
+      document.getElementById('loc-new-name').value = '';
+      document.getElementById('loc-new-region').value = '';
+      renderEditor(loc);
     } else {
       const err = await res.json().catch(() => ({}));
-      alert(err.error || 'שגיאה ביצירה');
+      errEl.textContent = err.error || 'שגיאה ביצירה';
     }
   });
 
