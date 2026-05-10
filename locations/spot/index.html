@@ -4,6 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>מקום צילום — Amit Photos</title>
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="עמית ארז | צילום">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&display=swap" rel="stylesheet">
 <style>
@@ -175,13 +178,74 @@ const slug = params.get('slug');
 
 if (!slug) { location.href = '/locations/'; }
 
+function setMeta(property, content) {
+  let el = document.querySelector(`meta[property="${property}"]`) ||
+           document.querySelector(`meta[name="${property}"]`);
+  if (!el) {
+    el = document.createElement('meta');
+    const isOg = property.startsWith('og:') || property.startsWith('twitter:');
+    el.setAttribute(isOg ? 'property' : 'name', property);
+    document.head.appendChild(el);
+  }
+  el.setAttribute('content', content);
+}
+
+function setLocationMeta(loc, coverUrl) {
+  setMeta('og:title', loc.title + ' | מקומות לצילום — עמית ארז');
+  setMeta('twitter:title', loc.title + ' | מקומות לצילום');
+  const desc = (loc.description || '').slice(0, 160);
+  setMeta('og:description', desc);
+  setMeta('twitter:description', desc);
+  setMeta('description', desc);
+  if (coverUrl) {
+    setMeta('og:image', coverUrl);
+    setMeta('twitter:image', coverUrl);
+    setMeta('twitter:card', 'summary_large_image');
+  }
+  setMeta('og:url', location.href);
+  document.title = loc.title + ' | מקומות לצילום — עמית ארז';
+}
+
+function setJsonLd(loc) {
+  const coords = loc.coordinates ? loc.coordinates.split(',').map(s => s.trim()) : null;
+  const ld = {
+    '@context': 'https://schema.org',
+    '@type': 'TouristAttraction',
+    'name': loc.title,
+    'description': loc.description || '',
+    'url': location.href,
+    'address': {
+      '@type': 'PostalAddress',
+      'addressCountry': 'IL',
+      'addressRegion': loc.region || ''
+    }
+  };
+  if (coords && coords.length === 2) {
+    ld['geo'] = {
+      '@type': 'GeoCoordinates',
+      'latitude': coords[0],
+      'longitude': coords[1]
+    };
+  }
+  let script = document.getElementById('location-jsonld');
+  if (!script) {
+    script = document.createElement('script');
+    script.id = 'location-jsonld';
+    script.type = 'application/ld+json';
+    document.head.appendChild(script);
+  }
+  script.textContent = JSON.stringify(ld);
+}
+
 async function loadSpot() {
   try {
     const res = await fetch(`/api/locations/${slug}`);
     if (!res.ok) { location.href = '/locations/'; return; }
     const loc = await res.json();
     renderSpot(loc);
-    document.title = `${loc.title} — Amit Photos`;
+    const coverUrl = (loc.photos && loc.photos.length) ? (loc.photos[0].url || '') : '';
+    setLocationMeta(loc, coverUrl);
+    setJsonLd(loc);
     loadNextLocation(slug, loc.region);
   } catch {
     document.getElementById('hero-content').innerHTML = '<p style="color:#888">שגיאה בטעינה.</p>';

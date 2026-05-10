@@ -1881,6 +1881,55 @@ function escXml(str) {
     .replace(/'/g, '&apos;');
 }
 
+// ===== LOCATION SPOT PAGE — SERVER-SIDE OG INJECTION =====
+async function handleLocationSpotPage(request, env) {
+  const slug = new URL(request.url).searchParams.get('slug');
+
+  // Fetch location data
+  const loc = await env.DB.prepare(
+    'SELECT id, title, description, region, coordinates FROM locations WHERE id = ? AND published = 1'
+  ).bind(slug).first().catch(() => null);
+
+  // Fetch the static HTML
+  const assetRes = await env.ASSETS.fetch(new Request(new URL('/locations/spot/', request.url).href));
+  if (!assetRes.ok) return assetRes;
+
+  let html = await assetRes.text();
+
+  if (loc) {
+    const title = escXml(loc.title + ' | מקומות לצילום — עמית ארז');
+    const desc = escXml((loc.description || '').slice(0, 160));
+    const pageUrl = escXml(request.url);
+
+    // Get cover photo
+    const cover = await env.DB.prepare(
+      'SELECT url FROM location_photos WHERE location_id = ? ORDER BY sort_order ASC LIMIT 1'
+    ).bind(slug).first().catch(() => null);
+    const imgUrl = escXml(cover?.url || 'https://amitphotos.com/assets/img/og-default.jpg');
+
+    const ogTags = `
+  <meta property="og:title" content="${title}">
+  <meta property="og:description" content="${desc}">
+  <meta property="og:url" content="${pageUrl}">
+  <meta property="og:image" content="${imgUrl}">
+  <meta property="og:type" content="website">
+  <meta name="description" content="${desc}">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="${title}">
+  <meta name="twitter:description" content="${desc}">
+  <meta name="twitter:image" content="${imgUrl}">`;
+
+    html = html.replace('</head>', ogTags + '\n</head>');
+  }
+
+  return new Response(html, {
+    headers: {
+      'Content-Type': 'text/html; charset=UTF-8',
+      'Cache-Control': 'public, max-age=300',
+    },
+  });
+}
+
 // ===== ROBOTS.TXT =====
 function handleRobots(request) {
   const base = 'https://amitphotos.com';
@@ -3502,6 +3551,11 @@ export default {
     if (path === '/learn' || path === '/learn/')   return handleLearnIndex(env);
     if (path === '/sitemap.xml')           return handleSitemap(request, env);
     if (path === '/robots.txt')            return handleRobots(request);
+
+    // Server-side OG injection for location spot pages
+    if ((path === '/locations/spot/' || path === '/locations/spot/index.html') && new URL(request.url).searchParams.get('slug')) {
+      return handleLocationSpotPage(request, env);
+    }
 
     // Static assets — track page views for HTML pages
     const res = await env.ASSETS.fetch(request);
