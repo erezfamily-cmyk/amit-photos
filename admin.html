@@ -1046,7 +1046,10 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
     <section class="section" id="section-locations">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem">
         <h2 style="font-family:'Syne',sans-serif;color:var(--accent)">מקומות לצילום</h2>
-        <button id="btn-new-location" style="background:var(--accent);color:#0a0a0a;border:none;padding:.6rem 1.25rem;border-radius:4px;font-weight:700;cursor:pointer">מקום חדש +</button>
+        <div style="display:flex;gap:.5rem;align-items:center">
+          <button id="btn-backup-report" style="background:transparent;border:1px solid #555;color:#aaa;padding:.5rem 1rem;border-radius:4px;font-size:.8rem;cursor:pointer;font-family:'Heebo',sans-serif">☁ לא מגובה ל-Drive</button>
+          <button id="btn-new-location" style="background:var(--accent);color:#0a0a0a;border:none;padding:.6rem 1.25rem;border-radius:4px;font-weight:700;cursor:pointer">מקום חדש +</button>
+        </div>
       </div>
       <div id="loc-new-form" style="display:none;background:#111;border:1px solid #333;border-radius:6px;padding:1rem;margin-bottom:1.25rem">
         <div style="display:flex;gap:.75rem;flex-wrap:wrap;align-items:flex-end">
@@ -1067,6 +1070,15 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
       </div>
       <div id="locations-list"></div>
       <div id="location-editor" style="display:none"></div>
+      <div id="loc-backup-panel" style="display:none;background:#111;border:1px solid #333;border-radius:6px;padding:1.25rem;margin-top:1rem">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+          <h3 style="margin:0;font-size:1rem;color:#f0ede8">תמונות שאינן מגובות ל-Drive</h3>
+          <button id="btn-backup-close" style="background:none;border:none;color:#888;cursor:pointer;font-size:1.1rem">×</button>
+        </div>
+        <p style="font-size:.8rem;color:#888;margin:0 0 1rem">אלו תמונות שהועלו ישירות לאתר ולא קיימות ב-Google Drive. הורד כל תמונה ושמור ב-Drive לגיבוי.</p>
+        <div id="loc-backup-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:.75rem"></div>
+        <p id="loc-backup-empty" style="display:none;color:#666;font-size:.85rem;text-align:center;padding:1rem">אין תמונות R2 — הכל מגובה ✓</p>
+      </div>
     </section>
 
     <section id="section-purchases" class="section">
@@ -4185,6 +4197,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <img src="${escHtml(p.thumbnail || p.url)}" style="width:100%;aspect-ratio:1;object-fit:cover;display:block;pointer-events:none">
         <div style="position:absolute;top:.25rem;right:.25rem;background:rgba(0,0,0,.7);border-radius:3px;padding:.15rem .35rem;font-size:.65rem;color:#888">${p.type === 'exclusive' ? '★' : '◈'}</div>
         <button onclick="removeLocPhoto('${escHtml(p.id)}')" style="position:absolute;top:.25rem;left:.25rem;background:rgba(200,0,0,.8);border:none;color:#fff;border-radius:3px;padding:.15rem .4rem;cursor:pointer;font-size:.7rem">✕</button>
+        ${(p.url && (p.url.includes('amitphotos.com/photos/') || p.url.startsWith('/photos/'))) ? `<div style="position:absolute;top:26px;left:4px;background:rgba(0,0,0,0.75);border:1px solid #f87171;border-radius:3px;padding:1px 5px;font-size:.65rem;color:#f87171;font-family:'Heebo',sans-serif">לא על Drive</div><a href="${escHtml(p.url)}" download style="position:absolute;bottom:4px;left:4px;background:rgba(0,0,0,0.75);border:1px solid #888;border-radius:3px;padding:2px 6px;font-size:.65rem;color:#ccc;text-decoration:none;font-family:'Heebo',sans-serif">⬇ הורד</a>` : ''}
       </div>
     `).join('');
     bindGridDragReorder(grid);
@@ -4510,6 +4523,58 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   window._loadLocationsList = loadLocationsList;
+
+  // Backup report
+  document.getElementById('btn-backup-report').addEventListener('click', async () => {
+    const panel = document.getElementById('loc-backup-panel');
+    panel.style.display = 'block';
+    panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+    const grid = document.getElementById('loc-backup-grid');
+    const empty = document.getElementById('loc-backup-empty');
+    grid.innerHTML = '<p style="color:#888;font-size:.85rem">טוען...</p>';
+    empty.style.display = 'none';
+
+    try {
+      const res = await fetch('/api/admin/locations', { headers: authHeaders() });
+      const locations = await res.json();
+
+      const r2Photos = [];
+      for (const loc of (locations.locations || locations)) {
+        const r = await fetch(`/api/admin/locations/${loc.id}`, { headers: authHeaders() });
+        const data = await r.json();
+        const photos = data.photos || [];
+        for (const p of photos) {
+          if (p.url && (p.url.includes('amitphotos.com/photos/') || p.url.startsWith('/photos/'))) {
+            r2Photos.push({ ...p, locationTitle: loc.title, locationId: loc.id });
+          }
+        }
+      }
+
+      if (r2Photos.length === 0) {
+        grid.innerHTML = '';
+        empty.style.display = 'block';
+        return;
+      }
+
+      empty.style.display = 'none';
+      grid.innerHTML = r2Photos.map(p => `
+        <div style="background:#0a0a0a;border:1px solid #222;border-radius:6px;overflow:hidden;position:relative">
+          <img src="${escHtml(p.thumbnail || p.url)}" style="width:100%;aspect-ratio:1;object-fit:cover;display:block" loading="lazy">
+          <div style="padding:.5rem">
+            <div style="font-size:.7rem;color:#c8a96e;margin-bottom:.2rem">${escHtml(p.locationTitle)}</div>
+            <a href="${escHtml(p.url)}" download style="display:block;text-align:center;background:#1a1a1a;border:1px solid #444;border-radius:3px;padding:.3rem;font-size:.75rem;color:#ccc;text-decoration:none;font-family:'Heebo',sans-serif">⬇ הורד לגיבוי</a>
+          </div>
+        </div>
+      `).join('');
+    } catch (e) {
+      grid.innerHTML = '<p style="color:#f87171;font-size:.85rem">שגיאה בטעינה</p>';
+    }
+  });
+
+  document.getElementById('btn-backup-close').addEventListener('click', () => {
+    document.getElementById('loc-backup-panel').style.display = 'none';
+  });
 })();
 </script>
 </body>
