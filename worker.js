@@ -3430,14 +3430,13 @@ export default {
       return handleAdminLocationsGet(request, env, path.slice('/api/admin/locations/'.length).split('/')[0]);
     if (path.startsWith('/api/admin/locations/') && request.method === 'PUT') {
       const slug = path.slice('/api/admin/locations/'.length).split('/')[0];
-      const rest = path.slice('/api/admin/locations/'.length + slug.length);
-      if (rest === '/enrich') return handleAdminLocationsEnrich(request, env, slug);
       return handleAdminLocationsUpdate(request, env, slug);
     }
     if (path.startsWith('/api/admin/locations/') && request.method === 'POST') {
       const afterPrefix = path.slice('/api/admin/locations/'.length);
       const parts = afterPrefix.split('/');
       const locSlug = parts[0];
+      if (parts[1] === 'enrich') return handleAdminLocationsEnrich(request, env, locSlug);
       if (parts[1] === 'photos') {
         if (parts[2] === 'reorder') return handleAdminLocationPhotosReorder(request, env, locSlug);
         return handleAdminLocationPhotosAdd(request, env, locSlug);

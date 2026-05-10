@@ -4415,7 +4415,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const res = await fetch('/api/admin/locations', {
       method: 'POST',
       headers: { ...authHeaders(), 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, region })
+      body: JSON.stringify({ title: name, region })
     });
     btn.disabled = false; btn.textContent = 'צור מקום';
     if (res.ok) {
