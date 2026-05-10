@@ -3021,6 +3021,323 @@ ${moreAnalyses.length > 0 ? `
   return new Response(html, { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
 }
 
+// ===== LOCATIONS API =====
+
+async function handleLocationsList(request, env) {
+  const { results } = await env.DB.prepare(`
+    SELECT l.id, l.title, l.region, l.best_time, l.coordinates,
+           lp.url AS cover_url, lp.thumbnail AS cover_thumb
+    FROM locations l
+    LEFT JOIN location_photos lp ON lp.location_id = l.id AND lp.sort_order = (
+      SELECT MIN(sort_order) FROM location_photos WHERE location_id = l.id
+    )
+    WHERE l.published = 1
+    ORDER BY l.created_at DESC
+  `).all();
+  return jsonRes(results || [], 200, request);
+}
+
+async function handleLocationsGet(request, env, slug) {
+  const loc = await env.DB.prepare(
+    'SELECT * FROM locations WHERE id = ? AND published = 1'
+  ).bind(slug).first();
+  if (!loc) return jsonRes({ error: 'לא נמצא' }, 404, request);
+
+  const { results: photos } = await env.DB.prepare(
+    'SELECT * FROM location_photos WHERE location_id = ? ORDER BY sort_order ASC'
+  ).bind(slug).all();
+
+  return jsonRes({ ...loc, related_guides: JSON.parse(loc.related_guides || '[]'), photos: photos || [] }, 200, request);
+}
+
+async function handleLocationsSuggest(request, env) {
+  if (request.method !== 'POST') return jsonRes({ error: 'POST only' }, 405, request);
+  if (!env.RESEND_API_KEY) return jsonRes({ error: 'RESEND_API_KEY חסר' }, 500, request);
+
+  const { type, location_slug, sender_name, message } = await request.json().catch(() => ({}));
+  if (!message || !message.trim()) return jsonRes({ error: 'הודעה ריקה' }, 400, request);
+
+  const isNew = type === 'new';
+  const subject = isNew
+    ? `הצעת מקום חדש${sender_name ? ` מ-${sender_name}` : ''}`
+    : `תיקון למקום: ${location_slug}${sender_name ? ` מ-${sender_name}` : ''}`;
+
+  const html = `<div dir="rtl" style="font-family:Arial,sans-serif;max-width:520px;margin:auto">
+    <h2 style="color:#c8a96e">${subject}</h2>
+    ${sender_name ? `<p><strong>שם:</strong> ${sender_name}</p>` : ''}
+    ${!isNew ? `<p><strong>מקום:</strong> ${location_slug}</p>` : ''}
+    <p><strong>הודעה:</strong></p>
+    <p style="background:#111;padding:1rem;border-radius:4px;white-space:pre-wrap">${message}</p>
+  </div>`;
+
+  await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ from: 'Amit Photos <onboarding@resend.dev>', to: ['erez.family@gmail.com'], subject, html })
+  });
+
+  return jsonRes({ ok: true }, 200, request);
+}
+
+// ===== ADMIN LOCATIONS CRUD =====
+
+async function enrichLocationWithAI(locationName, env) {
+  if (!env.ANTHROPIC_API_KEY) return null;
+
+  const GUIDE_PATHS = [
+    '/camera/filters/', '/camera/composition/', '/camera/exposure/',
+    '/camera/depth-of-field/', '/camera/white-balance/', '/camera/histogram/',
+    '/camera/light/', '/camera/dynamic-range/', '/camera/controls/',
+    '/camera/lenses/', '/camera/types/'
+  ];
+
+  const prompt = `You are helping a professional Israeli photographer catalog shooting locations.
+For the location "${locationName}", return a JSON object with these fields:
+- description: 2-3 sentences in Hebrew about the location and its photographic qualities
+- best_time: best time(s) to photograph there (Hebrew, e.g. "זריחה — שעת הזהב")
+- equipment: recommended camera equipment (Hebrew, e.g. "חצובה, עדשה 14-24mm, פילטר ND")
+- my_tip: one personal photography tip in Hebrew, first person (e.g. "אני ממליץ להגיע...")
+- coordinates: "lat,lng" GPS string for this location in Israel (e.g. "31.7683,35.2137")
+- related_guides: array of 1-3 paths from this list that are most relevant: ${JSON.stringify(GUIDE_PATHS)}
+
+Return ONLY valid JSON, no markdown fences, no extra text.`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'x-api-key': env.ANTHROPIC_API_KEY,
+        'anthropic-version': '2023-06-01',
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 800,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+    const data = await res.json();
+    const text = data?.content?.[0]?.text || '';
+    return JSON.parse(text);
+  } catch {
+    return null;
+  }
+}
+
+async function handleAdminLocationsList(request, env) {
+  if (!await checkAuth(request, env)) return unauth(request);
+  const { results } = await env.DB.prepare(`
+    SELECT l.id, l.title, l.region, l.published,
+           COUNT(lp.id) AS photo_count
+    FROM locations l
+    LEFT JOIN location_photos lp ON lp.location_id = l.id
+    GROUP BY l.id
+    ORDER BY l.created_at DESC
+  `).all();
+  return jsonRes(results || [], 200, request);
+}
+
+async function handleAdminLocationsCreate(request, env) {
+  if (!await checkAuth(request, env)) return unauth(request);
+  if (request.method !== 'POST') return jsonRes({ error: 'POST only' }, 405, request);
+
+  const { title, region } = await request.json().catch(() => ({}));
+  if (!title || !title.trim()) return jsonRes({ error: 'כותרת חסרה' }, 400, request);
+
+  const id = slugify(title);
+  const now = new Date().toISOString();
+
+  const existing = await env.DB.prepare('SELECT id FROM locations WHERE id = ?').bind(id).first();
+  if (existing) return jsonRes({ error: `slug "${id}" כבר קיים` }, 409, request);
+
+  await env.DB.prepare(
+    'INSERT INTO locations (id, title, region, published, created_at) VALUES (?,?,?,0,?)'
+  ).bind(id, title.trim(), region || '', now).run();
+
+  const enriched = await enrichLocationWithAI(title, env);
+  if (enriched) {
+    await env.DB.prepare(`
+      UPDATE locations SET
+        description = ?, best_time = ?, equipment = ?,
+        my_tip = ?, coordinates = ?, related_guides = ?
+      WHERE id = ?
+    `).bind(
+      enriched.description || '',
+      enriched.best_time || '',
+      enriched.equipment || '',
+      enriched.my_tip || '',
+      enriched.coordinates || '',
+      JSON.stringify(enriched.related_guides || []),
+      id
+    ).run();
+  }
+
+  const loc = await env.DB.prepare('SELECT * FROM locations WHERE id = ?').bind(id).first();
+  return jsonRes({ ...loc, related_guides: JSON.parse(loc.related_guides || '[]') }, 201, request);
+}
+
+async function handleAdminLocationsUpdate(request, env, slug) {
+  if (!await checkAuth(request, env)) return unauth(request);
+  if (request.method !== 'PUT') return jsonRes({ error: 'PUT only' }, 405, request);
+
+  const body = await request.json().catch(() => ({}));
+  const fields = ['title','region','description','best_time','equipment','my_tip','coordinates','published'];
+  const sets = [];
+  const vals = [];
+
+  for (const f of fields) {
+    if (body[f] !== undefined) {
+      sets.push(`${f} = ?`);
+      vals.push(f === 'published' ? (body[f] ? 1 : 0) : body[f]);
+    }
+  }
+  if (body.related_guides !== undefined) {
+    sets.push('related_guides = ?');
+    vals.push(JSON.stringify(body.related_guides));
+  }
+
+  if (sets.length === 0) return jsonRes({ error: 'אין שדות לעדכון' }, 400, request);
+  vals.push(slug);
+
+  await env.DB.prepare(`UPDATE locations SET ${sets.join(', ')} WHERE id = ?`).bind(...vals).run();
+  const loc = await env.DB.prepare('SELECT * FROM locations WHERE id = ?').bind(slug).first();
+  if (!loc) return jsonRes({ error: 'לא נמצא' }, 404, request);
+  return jsonRes({ ...loc, related_guides: JSON.parse(loc.related_guides || '[]') }, 200, request);
+}
+
+async function handleAdminLocationsDelete(request, env, slug) {
+  if (!await checkAuth(request, env)) return unauth(request);
+  if (request.method !== 'DELETE') return jsonRes({ error: 'DELETE only' }, 405, request);
+
+  const { results: exclusivePhotos } = await env.DB.prepare(
+    "SELECT r2_key FROM location_photos WHERE location_id = ? AND type = 'exclusive' AND r2_key IS NOT NULL"
+  ).bind(slug).all();
+  for (const p of exclusivePhotos || []) {
+    await env.PHOTOS.delete(p.r2_key).catch(() => {});
+  }
+
+  await env.DB.prepare('DELETE FROM locations WHERE id = ?').bind(slug).run();
+  return jsonRes({ ok: true }, 200, request);
+}
+
+async function handleAdminLocationsEnrich(request, env, slug) {
+  if (!await checkAuth(request, env)) return unauth(request);
+  if (request.method !== 'POST') return jsonRes({ error: 'POST only' }, 405, request);
+
+  const loc = await env.DB.prepare('SELECT title FROM locations WHERE id = ?').bind(slug).first();
+  if (!loc) return jsonRes({ error: 'לא נמצא' }, 404, request);
+
+  const enriched = await enrichLocationWithAI(loc.title, env);
+  if (!enriched) return jsonRes({ error: 'AI enrich נכשל' }, 500, request);
+
+  await env.DB.prepare(`
+    UPDATE locations SET
+      description = ?, best_time = ?, equipment = ?,
+      my_tip = ?, coordinates = ?, related_guides = ?
+    WHERE id = ?
+  `).bind(
+    enriched.description || '',
+    enriched.best_time || '',
+    enriched.equipment || '',
+    enriched.my_tip || '',
+    enriched.coordinates || '',
+    JSON.stringify(enriched.related_guides || []),
+    slug
+  ).run();
+
+  const updated = await env.DB.prepare('SELECT * FROM locations WHERE id = ?').bind(slug).first();
+  return jsonRes({ ...updated, related_guides: JSON.parse(updated.related_guides || '[]') }, 200, request);
+}
+
+// ===== LOCATION PHOTOS MANAGEMENT =====
+
+async function handleAdminLocationPhotosAdd(request, env, slug) {
+  if (!await checkAuth(request, env)) return unauth(request);
+  if (request.method !== 'POST') return jsonRes({ error: 'POST only' }, 405, request);
+
+  const loc = await env.DB.prepare('SELECT id FROM locations WHERE id = ?').bind(slug).first();
+  if (!loc) return jsonRes({ error: 'מקום לא נמצא' }, 404, request);
+
+  const contentType = request.headers.get('content-type') || '';
+
+  if (contentType.includes('multipart/form-data')) {
+    const formData = await request.formData();
+    const file = formData.get('file');
+    const forSale = formData.get('for_sale') === '1' ? 1 : 0;
+    if (!file) return jsonRes({ error: 'קובץ חסר' }, 400, request);
+
+    const ext = file.name.split('.').pop().toLowerCase() || 'jpg';
+    const uuid = crypto.randomUUID();
+    const r2Key = `locations/${slug}/${uuid}.${ext}`;
+    const buf = await file.arrayBuffer();
+    await env.PHOTOS.put(r2Key, buf, { httpMetadata: { contentType: file.type || 'image/jpeg' } });
+
+    const url = `https://photos.amitphotos.com/${r2Key}`;
+    const { results: maxSort } = await env.DB.prepare(
+      'SELECT MAX(sort_order) AS m FROM location_photos WHERE location_id = ?'
+    ).bind(slug).all();
+    const nextSort = (maxSort?.[0]?.m ?? -1) + 1;
+
+    const id = crypto.randomUUID();
+    await env.DB.prepare(
+      'INSERT INTO location_photos (id, location_id, type, r2_key, url, thumbnail, sort_order, for_sale) VALUES (?,?,?,?,?,?,?,?)'
+    ).bind(id, slug, 'exclusive', r2Key, url, url, nextSort, forSale).run();
+
+    return jsonRes({ id, type: 'exclusive', url, thumbnail: url, sort_order: nextSort, for_sale: forSale }, 201, request);
+
+  } else {
+    const { photo_id, for_sale } = await request.json().catch(() => ({}));
+    if (!photo_id) return jsonRes({ error: 'photo_id חסר' }, 400, request);
+
+    const photo = await env.DB.prepare('SELECT url, thumbnail FROM photos WHERE id = ?').bind(photo_id).first();
+    if (!photo) return jsonRes({ error: 'תמונה לא נמצאה' }, 404, request);
+
+    const { results: maxSort } = await env.DB.prepare(
+      'SELECT MAX(sort_order) AS m FROM location_photos WHERE location_id = ?'
+    ).bind(slug).all();
+    const nextSort = (maxSort?.[0]?.m ?? -1) + 1;
+
+    const id = crypto.randomUUID();
+    await env.DB.prepare(
+      'INSERT INTO location_photos (id, location_id, type, photo_id, url, thumbnail, sort_order, for_sale) VALUES (?,?,?,?,?,?,?,?)'
+    ).bind(id, slug, 'gallery', photo_id, photo.url, photo.thumbnail, nextSort, for_sale ? 1 : 0).run();
+
+    return jsonRes({ id, type: 'gallery', photo_id, url: photo.url, thumbnail: photo.thumbnail, sort_order: nextSort, for_sale: for_sale ? 1 : 0 }, 201, request);
+  }
+}
+
+async function handleAdminLocationPhotosDelete(request, env, slug, photoEntryId) {
+  if (!await checkAuth(request, env)) return unauth(request);
+  if (request.method !== 'DELETE') return jsonRes({ error: 'DELETE only' }, 405, request);
+
+  const entry = await env.DB.prepare(
+    "SELECT type, r2_key FROM location_photos WHERE id = ? AND location_id = ?"
+  ).bind(photoEntryId, slug).first();
+  if (!entry) return jsonRes({ error: 'לא נמצא' }, 404, request);
+
+  if (entry.type === 'exclusive' && entry.r2_key) {
+    await env.PHOTOS.delete(entry.r2_key).catch(() => {});
+  }
+
+  await env.DB.prepare('DELETE FROM location_photos WHERE id = ?').bind(photoEntryId).run();
+  return jsonRes({ ok: true }, 200, request);
+}
+
+async function handleAdminLocationPhotosReorder(request, env, slug) {
+  if (!await checkAuth(request, env)) return unauth(request);
+  if (request.method !== 'POST') return jsonRes({ error: 'POST only' }, 405, request);
+
+  const { order } = await request.json().catch(() => ({}));
+  if (!Array.isArray(order)) return jsonRes({ error: 'order חסר' }, 400, request);
+
+  for (let i = 0; i < order.length; i++) {
+    await env.DB.prepare(
+      'UPDATE location_photos SET sort_order = ? WHERE id = ? AND location_id = ?'
+    ).bind(i, order[i], slug).run();
+  }
+  return jsonRes({ ok: true }, 200, request);
+}
+
 // ===== MAIN ROUTER =====
 export default {
   async fetch(request, env, ctx) {
@@ -3087,6 +3404,46 @@ export default {
     if (path === '/api/analyses/generate' && request.method === 'POST')          return handleAnalysesGenerate(request, env);
     if (path.startsWith('/api/analyses/') && request.method === 'GET')           return handleAnalysesGet(request, env, path.slice('/api/analyses/'.length));
     if (path.startsWith('/api/analyses/') && request.method === 'PUT')           return handleAnalysesUpdate(request, env, path.slice('/api/analyses/'.length));
+    // Locations public API
+    if (path === '/api/locations' && request.method === 'GET')          return handleLocationsList(request, env);
+    if (path === '/api/locations/suggest' && request.method === 'POST') return handleLocationsSuggest(request, env);
+    if (path.startsWith('/api/locations/') && request.method === 'GET') return handleLocationsGet(request, env, path.slice('/api/locations/'.length));
+    // Locations admin API
+    if (path === '/api/admin/locations' && request.method === 'GET')    return handleAdminLocationsList(request, env);
+    if (path === '/api/admin/locations' && request.method === 'POST')   return handleAdminLocationsCreate(request, env);
+    if (path.startsWith('/api/admin/locations/') && request.method === 'GET') {
+      const slug = path.slice('/api/admin/locations/'.length).split('/')[0];
+      if (!await checkAuth(request, env)) return unauth(request);
+      const loc = await env.DB.prepare('SELECT * FROM locations WHERE id = ?').bind(slug).first();
+      if (!loc) return jsonRes({ error: 'לא נמצא' }, 404, request);
+      const { results: photos } = await env.DB.prepare(
+        'SELECT * FROM location_photos WHERE location_id = ? ORDER BY sort_order ASC'
+      ).bind(slug).all();
+      return jsonRes({ ...loc, related_guides: JSON.parse(loc.related_guides || '[]'), photos: photos || [] }, 200, request);
+    }
+    if (path.startsWith('/api/admin/locations/') && request.method === 'PUT') {
+      const slug = path.slice('/api/admin/locations/'.length).split('/')[0];
+      const rest = path.slice('/api/admin/locations/'.length + slug.length);
+      if (rest === '/enrich') return handleAdminLocationsEnrich(request, env, slug);
+      return handleAdminLocationsUpdate(request, env, slug);
+    }
+    if (path.startsWith('/api/admin/locations/') && request.method === 'POST') {
+      const afterPrefix = path.slice('/api/admin/locations/'.length);
+      const parts = afterPrefix.split('/');
+      const locSlug = parts[0];
+      if (parts[1] === 'photos') {
+        if (parts[2] === 'reorder') return handleAdminLocationPhotosReorder(request, env, locSlug);
+        return handleAdminLocationPhotosAdd(request, env, locSlug);
+      }
+    }
+    if (path.startsWith('/api/admin/locations/') && request.method === 'DELETE') {
+      const afterPrefix = path.slice('/api/admin/locations/'.length);
+      const parts = afterPrefix.split('/');
+      if (parts[1] === 'photos' && parts[2]) {
+        return handleAdminLocationPhotosDelete(request, env, parts[0], parts[2]);
+      }
+      return handleAdminLocationsDelete(request, env, parts[0]);
+    }
     if (path.startsWith('/api/download/')) return handleDownload(request, env, path.slice('/api/download/'.length));
     if (path === '/api/print/catalog')        return handlePrintCatalog(request, env);
     if (path === '/api/print/quote')          return handlePrintQuote(request, env);
