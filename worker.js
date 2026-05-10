@@ -3443,6 +3443,11 @@ async function handleAdminLocationPhotoAddToGallery(request, env, slug, photoId)
     now
   ).run();
 
+  // Link the new gallery photo back to the location photo entry
+  await env.DB.prepare(
+    'UPDATE location_photos SET photo_id = ?, for_sale = 1 WHERE id = ? AND location_id = ?'
+  ).bind(newId, photoId, slug).run();
+
   return jsonRes({ id: newId, title, category }, 201, request);
 }
 

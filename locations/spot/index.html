@@ -337,7 +337,7 @@ function renderSpot(loc) {
           ${loc.photos.map((p, i) => `
             <div class="gallery-item" data-url="${imgSrc(p.url, 900)}">
               <img src="${imgSrc(p.thumbnail || p.url, 400)}" alt="${escHtml(loc.title)} — תמונה ${i+1}" loading="lazy">
-              ${p.for_sale ? `<a class="for-sale-btn" href="/?photo=${escHtml(p.photo_id || '')}" target="_blank">לרכישה</a>` : ''}
+              ${p.for_sale && p.photo_id ? `<a class="for-sale-btn" href="/?photo=${escHtml(p.photo_id)}" target="_blank">לרכישה</a>` : ''}
             </div>
           `).join('')}
         </div>
