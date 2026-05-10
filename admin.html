@@ -1894,6 +1894,10 @@ const Photos = (() => {
                 <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><rect x="9" y="9" width="13" height="13" rx="2" stroke-width="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke-width="2"/></svg>
                 העתק ID
               </button>
+              <div class="photo-menu-sep"></div>
+              <button class="photo-menu-item" onclick="closeAllPhotoMenus();linkPhotoToLocation('${p.id}','${p.url}','${p.thumbnail}')">
+                📍 מקומות לצילום
+              </button>
               ${p._source==='r2' ? `
               <div class="photo-menu-sep"></div>
               <button class="photo-menu-item danger" onclick="closeAllPhotoMenus();Photos.confirmDelete('${p.id}')">
@@ -4203,10 +4207,57 @@ document.addEventListener('DOMContentLoaded', () => {
         <img src="${escHtml(r2Src(p.thumbnail || p.url, 300))}" style="width:100%;aspect-ratio:1;object-fit:cover;display:block;pointer-events:none">
         <div style="position:absolute;top:.25rem;right:.25rem;background:rgba(0,0,0,.7);border-radius:3px;padding:.15rem .35rem;font-size:.65rem;color:#888">${p.type === 'exclusive' ? '★' : '◈'}</div>
         <button onclick="removeLocPhoto('${escHtml(p.id)}')" style="position:absolute;top:.25rem;left:.25rem;background:rgba(200,0,0,.8);border:none;color:#fff;border-radius:3px;padding:.15rem .4rem;cursor:pointer;font-size:.7rem">✕</button>
+        <input type="checkbox" class="loc-photo-sale-cb" data-id="${escHtml(p.id)}"
+          style="position:absolute;top:4px;right:28px;width:16px;height:16px;cursor:pointer;accent-color:#c8a96e;z-index:2">
         ${(p.url && (p.url.includes('amitphotos.com/photos/') || p.url.startsWith('/photos/'))) ? `<div style="position:absolute;top:26px;left:4px;background:rgba(0,0,0,0.75);border:1px solid #f87171;border-radius:3px;padding:1px 5px;font-size:.65rem;color:#f87171;font-family:'Heebo',sans-serif">לא על Drive</div><a href="${escHtml(p.url)}" download style="position:absolute;bottom:4px;left:4px;background:rgba(0,0,0,0.75);border:1px solid #888;border-radius:3px;padding:2px 6px;font-size:.65rem;color:#ccc;text-decoration:none;font-family:'Heebo',sans-serif">⬇ הורד</a>` : ''}
       </div>
     `).join('');
     bindGridDragReorder(grid);
+
+    // Bulk bar
+    let bulkBar = document.getElementById('loc-bulk-bar');
+    if (!bulkBar) {
+      bulkBar = document.createElement('div');
+      bulkBar.id = 'loc-bulk-bar';
+      bulkBar.innerHTML = `
+        <span id="loc-bulk-count" style="font-size:.85rem;color:#aaa;font-family:'Heebo',sans-serif">0 נבחרו</span>
+        <button onclick="bulkSetForSale()" style="background:#c8a96e;color:#0a0a0a;border:none;padding:.4rem 1rem;border-radius:4px;font-weight:700;cursor:pointer;font-family:'Heebo',sans-serif;font-size:.85rem">✓ עדכן למכירה</button>
+      `;
+      grid.after(bulkBar);
+    }
+    bulkBar.style.cssText = 'display:none;margin-top:.75rem;padding:.6rem 1rem;background:#1a1a1a;border:1px solid #333;border-radius:6px;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap';
+
+    // Wire checkboxes
+    document.querySelectorAll('.loc-photo-sale-cb').forEach(cb => {
+      cb.addEventListener('change', () => {
+        const checked = document.querySelectorAll('.loc-photo-sale-cb:checked');
+        bulkBar.style.display = checked.length > 0 ? 'flex' : 'none';
+        document.getElementById('loc-bulk-count').textContent = checked.length + ' נבחרו';
+      });
+    });
+  }
+
+  async function bulkSetForSale() {
+    const checked = [...document.querySelectorAll('.loc-photo-sale-cb:checked')];
+    if (!checked.length || !locSlug) return;
+    const ids = checked.map(cb => cb.dataset.id);
+    let failed = 0;
+    for (const id of ids) {
+      try {
+        const r = await fetch(`/api/admin/locations/${locSlug}/photos/${id}/forsale`, {
+          method: 'POST',
+          headers: { ...authHeaders(), 'Content-Type': 'application/json' },
+          body: JSON.stringify({ for_sale: 1 })
+        });
+        if (!r.ok) failed++;
+      } catch { failed++; }
+    }
+    if (failed) alert(`${failed} עדכונים נכשלו`);
+    // Reload location photos from server
+    try {
+      const r = await fetch(`/api/admin/locations/${locSlug}`, { headers: authHeaders() });
+      if (r.ok) { const loc = await r.json(); locPhotos = loc.photos || []; renderLocPhotosGrid(); }
+    } catch(_) {}
   }
 
   function bindGridDragReorder(grid) {
@@ -4582,6 +4633,91 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('loc-backup-panel').style.display = 'none';
   });
 })();
+</script>
+
+<!-- Link photo to location modal -->
+<div id="link-to-location-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:10000;align-items:center;justify-content:center">
+  <div style="background:#111;border:1px solid #333;border-radius:10px;padding:1.5rem;width:min(380px,90vw)">
+    <h3 style="margin:0 0 1rem;font-size:1rem;color:#f0ede8;font-family:'Heebo',sans-serif">שייך תמונה למקום לצילום</h3>
+    <div id="link-location-img-preview" style="margin-bottom:1rem"></div>
+    <select id="link-location-select" style="width:100%;background:#0a0a0a;border:1px solid #333;color:#f0ede8;padding:.6rem .75rem;border-radius:4px;font-family:'Heebo',sans-serif;font-size:.9rem;margin-bottom:.5rem">
+      <option value="">טוען מקומות...</option>
+    </select>
+    <label style="display:flex;align-items:center;gap:.5rem;font-size:.85rem;color:#aaa;margin-bottom:1rem;font-family:'Heebo',sans-serif;cursor:pointer">
+      <input type="checkbox" id="link-location-forsale"> למכירה מדף המקום
+    </label>
+    <div style="display:flex;gap:.75rem;justify-content:flex-end">
+      <button onclick="closeLinkToLocationModal()" style="background:transparent;border:1px solid #444;color:#aaa;padding:.5rem 1rem;border-radius:4px;cursor:pointer;font-family:'Heebo',sans-serif">ביטול</button>
+      <button onclick="confirmLinkToLocation()" style="background:var(--accent,#c8a96e);color:#0a0a0a;border:none;padding:.5rem 1.25rem;border-radius:4px;font-weight:700;cursor:pointer;font-family:'Heebo',sans-serif">שייך</button>
+    </div>
+    <div id="link-location-error" style="color:#f87171;font-size:.8rem;margin-top:.5rem;font-family:'Heebo',sans-serif"></div>
+  </div>
+</div>
+
+<script>
+let _linkPhotoId = null, _linkPhotoUrl = null;
+
+async function linkPhotoToLocation(photoId, photoUrl, photoThumb) {
+  _linkPhotoId = photoId;
+  _linkPhotoUrl = photoUrl;
+  const modal = document.getElementById('link-to-location-modal');
+  modal.style.display = 'flex';
+  document.getElementById('link-location-error').textContent = '';
+  document.getElementById('link-location-forsale').checked = false;
+
+  // preview
+  const preview = document.getElementById('link-location-img-preview');
+  if (photoThumb || photoUrl) {
+    preview.innerHTML = `<img src="${photoThumb || photoUrl}" style="width:100%;height:80px;object-fit:cover;border-radius:6px;border:1px solid #333">`;
+  }
+
+  // load locations
+  const sel = document.getElementById('link-location-select');
+  sel.innerHTML = '<option value="">טוען...</option>';
+  try {
+    const res = await fetch('/api/admin/locations', { headers: authHeaders() });
+    const locs = await res.json();
+    const list = Array.isArray(locs) ? locs : (locs.locations || []);
+    if (!list.length) {
+      sel.innerHTML = '<option value="">אין מקומות זמינים</option>';
+      return;
+    }
+    sel.innerHTML = '<option value="">— בחר מקום —</option>' +
+      list.map(l => `<option value="${l.id}">${l.title}${l.region ? ' (' + l.region + ')' : ''}</option>`).join('');
+  } catch(e) {
+    sel.innerHTML = '<option value="">שגיאה בטעינה</option>';
+  }
+}
+
+function closeLinkToLocationModal() {
+  document.getElementById('link-to-location-modal').style.display = 'none';
+  _linkPhotoId = null;
+}
+
+async function confirmLinkToLocation() {
+  const slug = document.getElementById('link-location-select').value;
+  const forSale = document.getElementById('link-location-forsale').checked ? 1 : 0;
+  const errEl = document.getElementById('link-location-error');
+  if (!slug) { errEl.textContent = 'יש לבחור מקום'; return; }
+  if (!_linkPhotoId) return;
+
+  try {
+    const res = await fetch(`/api/admin/locations/${slug}/photos`, {
+      method: 'POST',
+      headers: { ...authHeaders(), 'Content-Type': 'application/json' },
+      body: JSON.stringify({ photo_id: _linkPhotoId, for_sale: forSale })
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      errEl.textContent = err.error || 'שגיאה';
+      return;
+    }
+    closeLinkToLocationModal();
+    if (typeof toast === 'function') toast('התמונה שויכה למקום');
+  } catch(e) {
+    errEl.textContent = 'שגיאת רשת';
+  }
+}
 </script>
 </body>
 </html>
