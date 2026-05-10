@@ -4012,7 +4012,7 @@ document.addEventListener('DOMContentLoaded', () => {
 (function() {
   let locSlug = null;
   let locPhotos = [];
-  let selectedGalleryPhotoId = null;
+  let selectedGalleryPhotoIds = new Set();
 
   const REGIONS = ['צפון', 'מרכז', 'ירושלים', 'דרום', 'נגב', 'הרי אילת'];
 
@@ -4156,11 +4156,23 @@ document.addEventListener('DOMContentLoaded', () => {
             <input type="checkbox" id="exclusive-for-sale" style="accent-color:var(--accent)"> להציע בחנות
           </label>
           <button id="btn-upload-exclusive" style="margin-top:.75rem;background:var(--accent);color:#0a0a0a;border:none;padding:.5rem 1rem;border-radius:4px;font-weight:700;cursor:pointer;font-size:.8rem">העלה</button>
+          <div id="loc-add-to-gallery-section" style="margin-top:.75rem;display:flex;flex-direction:column;gap:.5rem">
+            <label style="display:flex;align-items:center;gap:.5rem;font-size:.85rem;cursor:pointer">
+              <input type="checkbox" id="loc-add-to-main-gallery">
+              <span>הוסף גם לגלריה הראשית</span>
+            </label>
+            <div id="loc-gallery-category-row" style="display:none;gap:.5rem;flex-wrap:wrap">
+              <select id="loc-gallery-category" style="background:#0a0a0a;border:1px solid #333;color:#f0ede8;padding:.4rem .75rem;border-radius:4px;font-family:'Heebo',sans-serif;font-size:.85rem">
+                <option value="">טוען קטגוריות...</option>
+              </select>
+              <input type="text" id="loc-gallery-new-category" placeholder="שם גלריה חדשה..." style="display:none;background:#0a0a0a;border:1px solid #444;color:#f0ede8;padding:.4rem .75rem;border-radius:4px;font-family:'Heebo',sans-serif;font-size:.85rem;min-width:160px">
+            </div>
+          </div>
         </div>
       </div>
       <div id="loc-photos-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:.75rem"></div>
     `;
-    selectedGalleryPhotoId = null;
+    selectedGalleryPhotoIds = new Set();
     renderLocPhotosGrid();
     bindPhotosPanelEvents();
   }
@@ -4239,9 +4251,45 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!q) { document.getElementById('gallery-search-results').innerHTML = ''; return; }
       searchTimeout = setTimeout(() => searchGalleryPhotos(q), 300);
     });
-    document.getElementById('btn-add-gallery-photo').addEventListener('click', () => {
-      if (selectedGalleryPhotoId) addGalleryPhoto(selectedGalleryPhotoId);
+    document.getElementById('btn-add-gallery-photo').addEventListener('click', async () => {
+      if (!selectedGalleryPhotoIds.size) return;
+      const ids = Array.from(selectedGalleryPhotoIds);
+      for (const id of ids) {
+        await addGalleryPhoto(id);
+      }
+      selectedGalleryPhotoIds = new Set();
+      updateAddGalleryBtn();
+      document.getElementById('gallery-search').value = '';
+      document.getElementById('gallery-search-results').innerHTML = '';
     });
+    // "Add to main gallery" checkbox wiring
+    document.getElementById('loc-add-to-main-gallery').addEventListener('change', async function() {
+      const row = document.getElementById('loc-gallery-category-row');
+      if (this.checked) {
+        row.style.display = 'flex';
+        // Fetch categories
+        try {
+          const res = await fetch('/api/photos?limit=500', { headers: authHeaders() });
+          const data = await res.json();
+          const photos = data.photos || data || [];
+          const cats = [...new Set(photos.map(p => p.category).filter(Boolean))].sort();
+          const sel = document.getElementById('loc-gallery-category');
+          sel.innerHTML = '<option value="">— בחר קטגוריה —</option>' +
+            cats.map(c => `<option value="${escHtml(c)}">${escHtml(c)}</option>`).join('') +
+            '<option value="__new__">גלריה חדשה...</option>';
+        } catch (e) {
+          // leave default option
+        }
+      } else {
+        row.style.display = 'none';
+        document.getElementById('loc-gallery-new-category').style.display = 'none';
+      }
+    });
+    document.getElementById('loc-gallery-category').addEventListener('change', function() {
+      const newInput = document.getElementById('loc-gallery-new-category');
+      newInput.style.display = this.value === '__new__' ? '' : 'none';
+    });
+
     document.getElementById('btn-upload-exclusive').addEventListener('click', async () => {
       const file = document.getElementById('exclusive-upload').files[0];
       if (!file) return;
@@ -4260,9 +4308,37 @@ document.addEventListener('DOMContentLoaded', () => {
         const p = await res.json();
         locPhotos.push(p);
         renderLocPhotosGrid();
+        // If "add to main gallery" is checked, call the add-to-gallery endpoint
+        const addToGallery = document.getElementById('loc-add-to-main-gallery').checked;
+        let galleryCategory = document.getElementById('loc-gallery-category').value;
+        if (galleryCategory === '__new__') {
+          galleryCategory = document.getElementById('loc-gallery-new-category').value.trim();
+        }
+        if (addToGallery && galleryCategory) {
+          await fetch(`/api/admin/locations/${locSlug}/photos/${p.id}/add-to-gallery`, {
+            method: 'POST',
+            headers: { ...authHeaders(), 'Content-Type': 'application/json' },
+            body: JSON.stringify({ category: galleryCategory })
+          });
+        }
       } else { alert('שגיאה בהעלאה'); }
       btn.disabled = false; btn.textContent = 'העלה';
     });
+  }
+
+  function updateAddGalleryBtn() {
+    const addBtn = document.getElementById('btn-add-gallery-photo');
+    if (!addBtn) return;
+    const n = selectedGalleryPhotoIds.size;
+    if (n === 0) {
+      addBtn.disabled = true;
+      addBtn.style.opacity = '.45';
+      addBtn.textContent = 'הוסף לגלריה';
+    } else {
+      addBtn.disabled = false;
+      addBtn.style.opacity = '1';
+      addBtn.textContent = `הוסף ${n} נבחרות`;
+    }
   }
 
   async function searchGalleryPhotos(q) {
@@ -4274,18 +4350,26 @@ document.addEventListener('DOMContentLoaded', () => {
     const results = document.getElementById('gallery-search-results');
     if (!photos.length) { results.innerHTML = '<p style="padding:.5rem;font-size:.8rem;color:#888">אין תוצאות</p>'; return; }
     results.innerHTML = photos.map(p => `
-      <div data-select-photo-id="${escHtml(p.id)}" style="display:flex;align-items:center;gap:.5rem;padding:.4rem .6rem;border-bottom:1px solid #1a1a1a;cursor:pointer">
+      <div data-select-photo-id="${escHtml(p.id)}" style="display:flex;align-items:center;gap:.5rem;padding:.4rem .6rem;border-bottom:1px solid #1a1a1a;cursor:pointer;user-select:none">
+        <input type="checkbox" data-cb-photo-id="${escHtml(p.id)}" style="accent-color:var(--accent);cursor:pointer;flex-shrink:0" ${selectedGalleryPhotoIds.has(p.id) ? 'checked' : ''}>
         <img src="${escHtml(p.thumbnail)}" style="width:36px;height:36px;object-fit:cover;border-radius:3px">
         <span style="font-size:.8rem">${escHtml(p.title || p.id)}</span>
       </div>
     `).join('');
     results.querySelectorAll('[data-select-photo-id]').forEach(row => {
-      row.addEventListener('click', () => {
-        results.querySelectorAll('[data-select-photo-id]').forEach(r => r.style.background = '');
-        row.style.background = 'rgba(200,169,110,.18)';
-        selectedGalleryPhotoId = row.dataset.selectPhotoId;
-        const addBtn = document.getElementById('btn-add-gallery-photo');
-        if (addBtn) { addBtn.disabled = false; addBtn.style.opacity = '1'; }
+      const cb = row.querySelector('[data-cb-photo-id]');
+      const photoId = row.dataset.selectPhotoId;
+      row.addEventListener('click', (e) => {
+        if (e.target === cb) return; // let checkbox handle its own click
+        cb.checked = !cb.checked;
+        if (cb.checked) selectedGalleryPhotoIds.add(photoId);
+        else selectedGalleryPhotoIds.delete(photoId);
+        updateAddGalleryBtn();
+      });
+      cb.addEventListener('change', () => {
+        if (cb.checked) selectedGalleryPhotoIds.add(photoId);
+        else selectedGalleryPhotoIds.delete(photoId);
+        updateAddGalleryBtn();
       });
     });
   }
@@ -4301,11 +4385,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const p = await res.json();
       locPhotos.push(p);
       renderLocPhotosGrid();
-      document.getElementById('gallery-search').value = '';
-      document.getElementById('gallery-search-results').innerHTML = '';
-      selectedGalleryPhotoId = null;
-      const addBtn = document.getElementById('btn-add-gallery-photo');
-      if (addBtn) { addBtn.disabled = true; addBtn.style.opacity = '.45'; }
     }
   };
 

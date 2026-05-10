@@ -3353,6 +3353,38 @@ async function handleAdminLocationPhotosReorder(request, env, slug) {
   return jsonRes({ ok: true }, 200, request);
 }
 
+async function handleAdminLocationPhotoAddToGallery(request, env, slug, photoId) {
+  if (!await checkAuth(request, env)) return unauth(request);
+
+  const { category } = await request.json().catch(() => ({}));
+  if (!category) return jsonRes({ error: 'קטגוריה חסרה' }, 400, request);
+
+  // Get the location photo record
+  const locPhoto = await env.DB.prepare(
+    'SELECT url, thumbnail, r2_key FROM location_photos WHERE id = ? AND location_id = ?'
+  ).bind(photoId, slug).first();
+  if (!locPhoto) return jsonRes({ error: 'תמונה לא נמצאה' }, 404, request);
+
+  // Generate AI title
+  const title = await generateHebrewTitle(locPhoto.url, category, env) || category;
+
+  // Insert into photos table
+  const newId = crypto.randomUUID();
+  const now = new Date().toISOString();
+  await env.DB.prepare(
+    `INSERT INTO photos (id, title, category, description, filename, r2_key, url, thumbnail, created_at, published, is_new)
+     VALUES (?,?,?,?,?,?,?,?,?,1,1)`
+  ).bind(
+    newId, title, category, '', '',
+    locPhoto.r2_key || '',
+    locPhoto.url,
+    locPhoto.thumbnail || locPhoto.url,
+    now
+  ).run();
+
+  return jsonRes({ id: newId, title, category }, 201, request);
+}
+
 // ===== MAIN ROUTER =====
 export default {
   async fetch(request, env, ctx) {
@@ -3439,6 +3471,7 @@ export default {
       if (parts[1] === 'enrich') return handleAdminLocationsEnrich(request, env, locSlug);
       if (parts[1] === 'photos') {
         if (parts[2] === 'reorder') return handleAdminLocationPhotosReorder(request, env, locSlug);
+        if (parts[2] && parts[3] === 'add-to-gallery') return handleAdminLocationPhotoAddToGallery(request, env, locSlug, parts[2]);
         return handleAdminLocationPhotosAdd(request, env, locSlug);
       }
       return jsonRes({ error: 'לא נמצא' }, 404, request);
