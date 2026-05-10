@@ -3287,7 +3287,7 @@ async function handleAdminLocationPhotosAdd(request, env, slug) {
     const buf = await file.arrayBuffer();
     await env.PHOTOS.put(r2Key, buf, { httpMetadata: { contentType: file.type || 'image/jpeg' } });
 
-    const url = `https://photos.amitphotos.com/${r2Key}`;
+    const url = `${new URL(request.url).origin}/photos/${r2Key}`;
     const { results: maxSort } = await env.DB.prepare(
       'SELECT MAX(sort_order) AS m FROM location_photos WHERE location_id = ?'
     ).bind(slug).all();
