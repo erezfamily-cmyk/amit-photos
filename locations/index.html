@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>מקומות לצילום — Amit Photos</title>
+<meta name="description" content="מקומות מומלצים לצילום בישראל — טיפים, ציוד, שעות מומלצות וגלריה מכל מקום.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0a0a0a;--surface:#111;--border:#222;--accent:#c8a96e;--text:#f0ede8;--muted:#888;}
+body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direction:rtl;min-height:100vh;padding:0 0 4rem}
+.page-hero{text-align:center;padding:2.5rem 1.25rem 1.5rem}
+.badge{display:inline-block;font-size:.72rem;background:rgba(200,169,110,.12);border:1px solid rgba(200,169,110,.3);color:var(--accent);border-radius:20px;padding:.3rem .8rem;margin-bottom:.75rem}
+.page-hero h1{font-family:'Syne',sans-serif;font-size:2rem;color:var(--accent);margin-bottom:.5rem}
+.page-hero p{color:var(--muted);font-size:.9rem;max-width:420px;margin:0 auto 1.25rem}
+.btn-suggest{background:var(--accent);color:#0a0a0a;border:none;padding:.65rem 1.5rem;border-radius:4px;font-weight:700;font-size:.9rem;cursor:pointer;transition:background .2s}
+.btn-suggest:hover{background:#e0c080}
+.filters{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;padding:.75rem 1.25rem 1.25rem}
+.filter-btn{background:transparent;border:1px solid var(--border);color:var(--muted);padding:.4rem .9rem;border-radius:20px;font-size:.8rem;cursor:pointer;transition:all .2s;font-family:'Heebo',sans-serif}
+.filter-btn.active,.filter-btn:hover{border-color:var(--accent);color:var(--accent)}
+.grid{display:grid;grid-template-columns:1fr;gap:1.25rem;padding:0 1.25rem;max-width:1100px;margin:0 auto}
+@media(min-width:520px){.grid{grid-template-columns:1fr 1fr}}
+@media(min-width:900px){.grid{grid-template-columns:repeat(3,1fr)}}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;text-decoration:none;color:inherit;transition:border-color .2s,transform .15s;display:block}
+.card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.card-img{width:100%;aspect-ratio:3/2;object-fit:cover;background:#1a1a1a;display:block}
+.card-body{padding:1rem}
+.card-title{font-family:'Syne',sans-serif;font-size:1rem;margin-bottom:.3rem}
+.card-meta{font-size:.8rem;color:var(--muted)}
+.empty{text-align:center;color:var(--muted);padding:3rem 1.25rem;font-size:.9rem}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:2000;display:none;align-items:center;justify-content:center;padding:1.25rem}
+.modal-overlay.open{display:flex}
+.modal{background:#111;border:1px solid #333;border-radius:12px;padding:2rem;width:100%;max-width:460px}
+.modal h2{font-family:'Syne',sans-serif;color:var(--accent);margin-bottom:1.25rem}
+.modal label{display:block;font-size:.85rem;color:var(--muted);margin-bottom:.3rem}
+.modal input,.modal textarea,.modal select{width:100%;background:#0a0a0a;border:1px solid var(--border);color:var(--text);padding:.65rem .9rem;border-radius:4px;font-size:.9rem;font-family:'Heebo',sans-serif;direction:rtl;margin-bottom:1rem;outline:none}
+.modal input:focus,.modal textarea:focus{border-color:var(--accent)}
+.modal textarea{min-height:100px;resize:vertical}
+.modal-actions{display:flex;gap:.75rem;justify-content:flex-end;margin-top:.5rem}
+.btn-cancel{background:transparent;border:1px solid var(--border);color:var(--muted);padding:.6rem 1.25rem;border-radius:4px;font-size:.85rem;cursor:pointer}
+.btn-submit{background:var(--accent);color:#0a0a0a;border:none;padding:.6rem 1.5rem;border-radius:4px;font-weight:700;font-size:.85rem;cursor:pointer}
+</style>
+</head>
+<body>
+<script src="/assets/js/nav.js"></script>
+
+<div class="page-hero">
+  <div class="badge">📍 מקומות לצילום</div>
+  <h1>מקומות שווים בישראל</h1>
+  <p>מדריך צילום לוקיישנים — טיפים, ציוד, שעות מומלצות וגלריה מכל מקום.</p>
+  <button class="btn-suggest" id="btn-open-suggest">הצע מקום חדש</button>
+</div>
+
+<div class="filters" id="filters">
+  <button class="filter-btn active" data-region="">הכל</button>
+  <button class="filter-btn" data-region="צפון">צפון</button>
+  <button class="filter-btn" data-region="מרכז">מרכז</button>
+  <button class="filter-btn" data-region="ירושלים">ירושלים</button>
+  <button class="filter-btn" data-region="דרום">דרום</button>
+  <button class="filter-btn" data-region="נגב">נגב</button>
+  <button class="filter-btn" data-region="הרי אילת">הרי אילת</button>
+</div>
+
+<div class="grid" id="grid"></div>
+
+<div class="modal-overlay" id="suggest-modal">
+  <div class="modal">
+    <h2>הצע מקום לצילום</h2>
+    <label>שמך (אופציונלי)</label>
+    <input type="text" id="suggest-name" placeholder="שם">
+    <label>שם המקום</label>
+    <input type="text" id="suggest-location" placeholder="למשל: נחל נטפים">
+    <label>אזור</label>
+    <select id="suggest-region">
+      <option value="">בחר אזור</option>
+      <option>צפון</option><option>מרכז</option><option>ירושלים</option>
+      <option>דרום</option><option>נגב</option><option>הרי אילת</option>
+    </select>
+    <label>תיאור / טיפ</label>
+    <textarea id="suggest-message" placeholder="ספר על המקום..."></textarea>
+    <div class="modal-actions">
+      <button class="btn-cancel" id="btn-cancel-suggest">ביטול</button>
+      <button class="btn-submit" id="btn-send-suggest">שלח</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let allLocations = [];
+let activeRegion = '';
+
+async function loadLocations() {
+  const grid = document.getElementById('grid');
+  try {
+    const res = await fetch('/api/locations');
+    allLocations = await res.json();
+    renderGrid();
+  } catch {
+    grid.innerHTML = '<p class="empty">שגיאה בטעינת המקומות.</p>';
+  }
+}
+
+function renderGrid() {
+  const grid = document.getElementById('grid');
+  const filtered = activeRegion
+    ? allLocations.filter(l => l.region === activeRegion)
+    : allLocations;
+
+  if (!filtered.length) {
+    grid.innerHTML = '<p class="empty">אין מקומות עדיין.</p>';
+    return;
+  }
+
+  grid.innerHTML = filtered.map(l => `
+    <a class="card" href="/locations/spot/?slug=${l.id}">
+      <img class="card-img" src="${l.cover_thumb || l.cover_url || ''}" alt="${l.title}" loading="lazy" onerror="this.style.display='none'">
+      <div class="card-body">
+        <div class="card-title">${l.title}</div>
+        <div class="card-meta">${l.region || ''}${l.best_time ? ' · ' + l.best_time : ''}</div>
+      </div>
+    </a>
+  `).join('');
+}
+
+document.getElementById('filters').addEventListener('click', e => {
+  const btn = e.target.closest('.filter-btn');
+  if (!btn) return;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  activeRegion = btn.dataset.region;
+  renderGrid();
+});
+
+document.getElementById('btn-open-suggest').addEventListener('click', () => {
+  document.getElementById('suggest-modal').classList.add('open');
+});
+document.getElementById('btn-cancel-suggest').addEventListener('click', () => {
+  document.getElementById('suggest-modal').classList.remove('open');
+});
+document.getElementById('btn-send-suggest').addEventListener('click', async () => {
+  const name = document.getElementById('suggest-name').value.trim();
+  const location = document.getElementById('suggest-location').value.trim();
+  const region = document.getElementById('suggest-region').value;
+  const message = document.getElementById('suggest-message').value.trim();
+
+  if (!location || !message) { alert('נא למלא שם מקום ותיאור.'); return; }
+
+  const btn = document.getElementById('btn-send-suggest');
+  btn.disabled = true; btn.textContent = 'שולח...';
+
+  await fetch('/api/locations/suggest', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ type: 'new', sender_name: name, message: `${location}${region ? ' (' + region + ')' : ''}\n\n${message}` })
+  });
+
+  btn.textContent = 'נשלח!';
+  setTimeout(() => { document.getElementById('suggest-modal').classList.remove('open'); btn.disabled = false; btn.textContent = 'שלח'; }, 1500);
+});
+
+loadLocations();
+</script>
+</body>
+</html>
