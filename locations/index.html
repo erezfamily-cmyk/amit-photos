@@ -7,6 +7,8 @@
 <meta name="description" content="מקומות מומלצים לצילום בישראל — טיפים, ציוד, שעות מומלצות וגלריה מכל מקום.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{--bg:#0a0a0a;--surface:#111;--border:#222;--accent:#c8a96e;--text:#f0ede8;--muted:#888;}
@@ -44,6 +46,17 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direc
 .sort-bar{display:flex;align-items:center;gap:.5rem;margin-bottom:1.5rem;justify-content:flex-end;padding:0 1.25rem;max-width:1100px;margin-left:auto;margin-right:auto}
 .sort-bar span{font-size:.8rem;color:#666}
 .sort-bar select{background:#111;border:1px solid #333;color:#aaa;padding:.3rem .6rem;border-radius:4px;font-family:'Heebo',sans-serif;font-size:.8rem;cursor:pointer}
+.leaflet-popup-content-wrapper{background:#111 !important;color:#f0ede8 !important;border:1px solid #333 !important;border-radius:8px !important}
+.leaflet-popup-tip{background:#111 !important}
+.leaflet-popup-content{margin:8px 12px !important}
+.loc-popup-title{font-weight:700;font-size:.9rem;color:#c8a96e}
+.loc-popup-region{font-size:.75rem;color:#888;margin-top:2px}
+.loc-popup-link{display:inline-block;margin-top:6px;font-size:.78rem;color:#c8a96e;text-decoration:none}
+.map-section{max-width:1100px;margin:0 auto 1.5rem;padding:0 1.25rem}
+.btn-toggle-map{background:transparent;border:1px solid #444;color:#aaa;padding:.45rem 1rem;border-radius:20px;font-size:.8rem;font-family:'Heebo',sans-serif;cursor:pointer;transition:all .2s;margin-bottom:.75rem}
+.btn-toggle-map:hover{border-color:var(--accent);color:var(--accent)}
+.map-container{display:none;border-radius:10px;overflow:hidden;border:1px solid #333;height:380px}
+.locations-map{height:100%;width:100%}
 </style>
 </head>
 <body>
@@ -74,6 +87,13 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direc
     <option value="region">לפי אזור</option>
     <option value="photos">מספר תמונות</option>
   </select>
+</div>
+
+<div class="map-section">
+  <button type="button" id="btn-toggle-map" class="btn-toggle-map">🗺 הצג מפה</button>
+  <div id="map-container" class="map-container">
+    <div id="locations-map" class="locations-map"></div>
+  </div>
 </div>
 
 <div class="grid" id="grid"></div>
@@ -200,6 +220,58 @@ document.getElementById('btn-send-suggest').addEventListener('click', async () =
 
   btn.textContent = 'נשלח!';
   setTimeout(() => { document.getElementById('suggest-modal').classList.remove('open'); btn.disabled = false; btn.textContent = 'שלח'; }, 1500);
+});
+
+let mapInstance = null;
+let mapInitialized = false;
+
+function initMap(locations) {
+  if (mapInitialized) {
+    mapInstance.eachLayer(l => { if (l instanceof L.CircleMarker) mapInstance.removeLayer(l); });
+  } else {
+    mapInstance = L.map('locations-map', { zoomControl: true }).setView([31.5, 35.0], 7);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors',
+      maxZoom: 18
+    }).addTo(mapInstance);
+    mapInitialized = true;
+  }
+
+  const locs = locations.filter(l => l.coordinates && l.coordinates.includes(','));
+  locs.forEach(l => {
+    const [lat, lng] = l.coordinates.split(',').map(s => parseFloat(s.trim()));
+    if (isNaN(lat) || isNaN(lng)) return;
+
+    const marker = L.circleMarker([lat, lng], {
+      radius: 8,
+      fillColor: '#c8a96e',
+      color: '#fff',
+      weight: 2,
+      opacity: 1,
+      fillOpacity: 0.9
+    }).addTo(mapInstance);
+
+    marker.bindPopup(`
+      <div class="loc-popup-title">${escHtml(l.title)}</div>
+      <div class="loc-popup-region">${escHtml(l.region || '')}</div>
+      <a class="loc-popup-link" href="/locations/spot/?slug=${encodeURIComponent(l.id)}">צפה במקום →</a>
+    `);
+  });
+
+  if (locs.length > 0) {
+    setTimeout(() => mapInstance.invalidateSize(), 100);
+  }
+}
+
+document.getElementById('btn-toggle-map').addEventListener('click', function() {
+  const container = document.getElementById('map-container');
+  const isOpen = container.style.display !== 'none';
+  container.style.display = isOpen ? 'none' : 'block';
+  this.textContent = isOpen ? '🗺 הצג מפה' : '🗺 הסתר מפה';
+  if (!isOpen) {
+    initMap(allLocations);
+    setTimeout(() => mapInstance && mapInstance.invalidateSize(), 150);
+  }
 });
 
 loadLocations();
