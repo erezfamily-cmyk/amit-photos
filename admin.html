@@ -661,6 +661,10 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
         <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
         ניתוח תמונות
       </div>
+      <div class="nav-item" data-section="locations">
+        <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" stroke-width="1.5"/><circle cx="12" cy="9" r="2.5" stroke-width="1.5"/></svg>
+        מקומות
+      </div>
     </nav>
     <div class="sidebar-footer">
       <button class="btn-logout" id="logout-btn">התנתק</button>
@@ -1036,6 +1040,16 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
         </table>
       </div>
       <p id="learn-empty" class="empty-msg hidden">אין ניתוחים עדיין</p>
+    </section>
+
+    <!-- LOCATIONS SECTION -->
+    <section class="section" id="section-locations">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem">
+        <h2 style="font-family:'Syne',sans-serif;color:var(--accent)">מקומות לצילום</h2>
+        <button id="btn-new-location" style="background:var(--accent);color:#0a0a0a;border:none;padding:.6rem 1.25rem;border-radius:4px;font-weight:700;cursor:pointer">+ מקום חדש</button>
+      </div>
+      <div id="locations-list"></div>
+      <div id="location-editor" style="display:none"></div>
     </section>
 
     <section id="section-purchases" class="section">
@@ -1581,6 +1595,7 @@ document.querySelectorAll('.nav-item').forEach(item => {
     if (item.dataset.section === 'social') SocialSection.load();
     if (item.dataset.section === 'purchases') Purchases.load();
     if (item.dataset.section === 'learn') loadLearn();
+    if (item.dataset.section === 'locations') window._loadLocationsList && window._loadLocationsList();
   });
 });
 
@@ -3974,5 +3989,321 @@ document.addEventListener('DOMContentLoaded', () => {
     <button type="button" id="popup-reset-btn" style="background:var(--bg);border:1px solid var(--border);color:var(--text-muted);border-radius:4px;cursor:pointer;padding:.25rem .6rem;font-size:.8rem">אפס</button>
   </div>
 </div>
+
+<script>
+// ===== LOCATIONS ADMIN =====
+(function() {
+  let locSlug = null;
+  let locPhotos = [];
+
+  async function loadLocationsList() {
+    const res = await fetch('/api/admin/locations', { headers: { 'X-Session-Token': SESSION_TOKEN } });
+    const list = await res.json();
+    const el = document.getElementById('locations-list');
+    if (!list.length) { el.innerHTML = '<p style="color:#888">אין מקומות עדיין.</p>'; return; }
+    el.innerHTML = `<table style="width:100%;border-collapse:collapse">
+      <thead><tr style="color:#888;font-size:.8rem;text-align:right">
+        <th style="padding:.5rem">שם</th><th>אזור</th><th>תמונות</th><th>סטטוס</th><th></th>
+      </tr></thead>
+      <tbody>${list.map(l => `
+        <tr style="border-top:1px solid #222">
+          <td style="padding:.6rem">${l.title}</td>
+          <td style="color:#888">${l.region || '—'}</td>
+          <td style="color:#888">${l.photo_count || 0}</td>
+          <td><span style="color:${l.published ? '#4caf7d' : '#888'}">${l.published ? 'פורסם' : 'טיוטה'}</span></td>
+          <td><button onclick="editLocation('${l.id}')" style="background:transparent;border:1px solid #333;color:#ccc;padding:.3rem .75rem;border-radius:4px;cursor:pointer;font-size:.8rem">עריכה</button></td>
+        </tr>`).join('')}
+      </tbody></table>`;
+  }
+
+  window.editLocation = async function(slug) {
+    locSlug = slug;
+    const res = await fetch(`/api/admin/locations/${slug}`, {
+      headers: { 'X-Session-Token': SESSION_TOKEN }
+    });
+    if (!res.ok) { alert('שגיאה בטעינת המקום'); return; }
+    const loc = await res.json();
+    locPhotos = loc.photos || [];
+    renderEditor(loc);
+  };
+
+  function renderEditor(loc) {
+    document.getElementById('locations-list').style.display = 'none';
+    document.getElementById('btn-new-location').style.display = 'none';
+    const ed = document.getElementById('location-editor');
+    ed.style.display = 'block';
+    const GUIDES = [
+      ['/camera/filters/','פילטרים'],['/camera/composition/','קומפוזיציה'],
+      ['/camera/exposure/','חשיפה'],['/camera/depth-of-field/','עומק שדה'],
+      ['/camera/white-balance/','איזון לבן'],['/camera/histogram/','היסטוגרם'],
+      ['/camera/light/','אור'],['/camera/dynamic-range/','דינמיק ריינג'],
+      ['/camera/controls/','בקרות'],['/camera/lenses/','עדשות'],['/camera/types/','סוגי מצלמות']
+    ];
+    const relGuides = loc.related_guides || [];
+    ed.innerHTML = `
+      <button id="btn-back-locations" style="background:transparent;border:none;color:#888;cursor:pointer;margin-bottom:1.5rem;font-size:.85rem">← חזרה לרשימה</button>
+      <div style="display:flex;gap:.75rem;flex-wrap:wrap;margin-bottom:1.5rem">
+        <button id="btn-save-location" style="background:var(--accent);color:#0a0a0a;border:none;padding:.6rem 1.25rem;border-radius:4px;font-weight:700;cursor:pointer">שמור</button>
+        <button id="btn-enrich-location" style="background:transparent;border:1px solid var(--accent);color:var(--accent);padding:.6rem 1.25rem;border-radius:4px;cursor:pointer">✨ העשר מ-AI</button>
+        <button id="btn-delete-location" style="background:transparent;border:1px solid #e05555;color:#e05555;padding:.6rem 1.25rem;border-radius:4px;cursor:pointer">מחק</button>
+        <a href="/locations/spot/?slug=${loc.id}" target="_blank" style="background:transparent;border:1px solid #333;color:#888;padding:.6rem 1.25rem;border-radius:4px;font-size:.85rem;text-decoration:none">צפה בדף</a>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem">
+        <div>
+          <label style="display:block;font-size:.8rem;color:#888;margin-bottom:.3rem">כותרת</label>
+          <input id="loc-title" value="${loc.title || ''}" style="width:100%;background:#0a0a0a;border:1px solid #222;color:#f0ede8;padding:.6rem .8rem;border-radius:4px;font-family:'Heebo',sans-serif">
+        </div>
+        <div>
+          <label style="display:block;font-size:.8rem;color:#888;margin-bottom:.3rem">אזור</label>
+          <select id="loc-region" style="width:100%;background:#0a0a0a;border:1px solid #222;color:#f0ede8;padding:.6rem .8rem;border-radius:4px;font-family:'Heebo',sans-serif">
+            ${['','צפון','מרכז','ירושלים','דרום','נגב','הרי אילת'].map(r => `<option ${loc.region===r?'selected':''}>${r}</option>`).join('')}
+          </select>
+        </div>
+      </div>
+      <div style="margin-bottom:1rem">
+        <label style="display:block;font-size:.8rem;color:#888;margin-bottom:.3rem">תיאור</label>
+        <textarea id="loc-description" style="width:100%;background:#0a0a0a;border:1px solid #222;color:#f0ede8;padding:.6rem .8rem;border-radius:4px;min-height:80px;font-family:'Heebo',sans-serif;direction:rtl">${loc.description || ''}</textarea>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem">
+        <div>
+          <label style="display:block;font-size:.8rem;color:#888;margin-bottom:.3rem">זמן מומלץ</label>
+          <input id="loc-best-time" value="${loc.best_time || ''}" style="width:100%;background:#0a0a0a;border:1px solid #222;color:#f0ede8;padding:.6rem .8rem;border-radius:4px;font-family:'Heebo',sans-serif">
+        </div>
+        <div>
+          <label style="display:block;font-size:.8rem;color:#888;margin-bottom:.3rem">קואורדינטות (lat,lng)</label>
+          <input id="loc-coords" value="${loc.coordinates || ''}" style="width:100%;background:#0a0a0a;border:1px solid #222;color:#f0ede8;padding:.6rem .8rem;border-radius:4px;font-family:'Heebo',sans-serif">
+        </div>
+      </div>
+      <div style="margin-bottom:1rem">
+        <label style="display:block;font-size:.8rem;color:#888;margin-bottom:.3rem">ציוד מומלץ</label>
+        <input id="loc-equipment" value="${loc.equipment || ''}" style="width:100%;background:#0a0a0a;border:1px solid #222;color:#f0ede8;padding:.6rem .8rem;border-radius:4px;font-family:'Heebo',sans-serif">
+      </div>
+      <div style="margin-bottom:1rem">
+        <label style="display:block;font-size:.8rem;color:#888;margin-bottom:.3rem">הטיפ שלי</label>
+        <textarea id="loc-tip" style="width:100%;background:#0a0a0a;border:1px solid #222;color:#f0ede8;padding:.6rem .8rem;border-radius:4px;min-height:70px;font-family:'Heebo',sans-serif;direction:rtl">${loc.my_tip || ''}</textarea>
+      </div>
+      <div style="margin-bottom:1.5rem">
+        <label style="display:block;font-size:.8rem;color:#888;margin-bottom:.5rem">מדריכים קשורים</label>
+        <div style="display:flex;flex-wrap:wrap;gap:.5rem">
+          ${GUIDES.map(([path, label]) => `
+            <label style="display:flex;align-items:center;gap:.35rem;background:#141414;border:1px solid #222;border-radius:20px;padding:.3rem .75rem;cursor:pointer;font-size:.8rem">
+              <input type="checkbox" value="${path}" ${relGuides.includes(path)?'checked':''} style="accent-color:var(--accent)">
+              ${label}
+            </label>`).join('')}
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:2rem">
+        <label style="font-size:.85rem;color:#888">פרסום:</label>
+        <input type="checkbox" id="loc-published" ${loc.published ? 'checked' : ''} style="accent-color:var(--accent);width:18px;height:18px">
+        <label for="loc-published" style="font-size:.85rem">מפורסם</label>
+      </div>
+      <h3 style="font-family:'Syne',sans-serif;font-size:1rem;margin-bottom:1rem">תמונות</h3>
+      <div id="loc-photos-panel"></div>
+    `;
+    renderPhotosPanel();
+    bindEditorEvents(loc);
+  }
+
+  function renderPhotosPanel() {
+    const panel = document.getElementById('loc-photos-panel');
+    panel.innerHTML = `
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem">
+        <div>
+          <div style="font-size:.85rem;color:#888;margin-bottom:.5rem">קשר מהגלריה</div>
+          <input id="gallery-search" placeholder="חפש תמונה לפי כותרת..." style="width:100%;background:#0a0a0a;border:1px solid #222;color:#f0ede8;padding:.55rem .8rem;border-radius:4px;font-family:'Heebo',sans-serif;margin-bottom:.5rem">
+          <div id="gallery-search-results" style="max-height:200px;overflow-y:auto;border:1px solid #222;border-radius:4px"></div>
+        </div>
+        <div>
+          <div style="font-size:.85rem;color:#888;margin-bottom:.5rem">העלה תמונה בלעדית</div>
+          <input type="file" id="exclusive-upload" accept="image/*" style="font-size:.8rem;color:#888;margin-bottom:.5rem">
+          <label style="display:flex;align-items:center;gap:.4rem;font-size:.8rem;color:#888">
+            <input type="checkbox" id="exclusive-for-sale" style="accent-color:var(--accent)"> להציע בחנות
+          </label>
+          <button id="btn-upload-exclusive" style="margin-top:.75rem;background:var(--accent);color:#0a0a0a;border:none;padding:.5rem 1rem;border-radius:4px;font-weight:700;cursor:pointer;font-size:.8rem">העלה</button>
+        </div>
+      </div>
+      <div id="loc-photos-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:.75rem"></div>
+    `;
+    renderLocPhotosGrid();
+    bindPhotosPanelEvents();
+  }
+
+  function renderLocPhotosGrid() {
+    const grid = document.getElementById('loc-photos-grid');
+    if (!locPhotos.length) { grid.innerHTML = '<p style="color:#888;font-size:.85rem">אין תמונות עדיין.</p>'; return; }
+    grid.innerHTML = locPhotos.map(p => `
+      <div style="position:relative;border:1px solid #222;border-radius:6px;overflow:hidden" data-photo-id="${p.id}">
+        <img src="${p.thumbnail || p.url}" style="width:100%;aspect-ratio:1;object-fit:cover;display:block">
+        <div style="position:absolute;top:.25rem;right:.25rem;background:rgba(0,0,0,.7);border-radius:3px;padding:.15rem .35rem;font-size:.65rem;color:#888">${p.type === 'exclusive' ? '★' : '◈'}</div>
+        <button onclick="removeLocPhoto('${p.id}')" style="position:absolute;top:.25rem;left:.25rem;background:rgba(200,0,0,.8);border:none;color:#fff;border-radius:3px;padding:.15rem .4rem;cursor:pointer;font-size:.7rem">✕</button>
+      </div>
+    `).join('');
+  }
+
+  function bindPhotosPanelEvents() {
+    let searchTimeout;
+    document.getElementById('gallery-search').addEventListener('input', function() {
+      clearTimeout(searchTimeout);
+      const q = this.value.trim();
+      if (!q) { document.getElementById('gallery-search-results').innerHTML = ''; return; }
+      searchTimeout = setTimeout(() => searchGalleryPhotos(q), 300);
+    });
+    document.getElementById('btn-upload-exclusive').addEventListener('click', async () => {
+      const file = document.getElementById('exclusive-upload').files[0];
+      if (!file) return;
+      const forSale = document.getElementById('exclusive-for-sale').checked ? '1' : '0';
+      const fd = new FormData();
+      fd.append('file', file);
+      fd.append('for_sale', forSale);
+      const btn = document.getElementById('btn-upload-exclusive');
+      btn.disabled = true; btn.textContent = 'מעלה...';
+      const res = await fetch(`/api/admin/locations/${locSlug}/photos`, {
+        method: 'POST',
+        headers: { 'X-Session-Token': SESSION_TOKEN },
+        body: fd
+      });
+      if (res.ok) {
+        const p = await res.json();
+        locPhotos.push(p);
+        renderLocPhotosGrid();
+      } else { alert('שגיאה בהעלאה'); }
+      btn.disabled = false; btn.textContent = 'העלה';
+    });
+  }
+
+  async function searchGalleryPhotos(q) {
+    const res = await fetch(`/api/photos?limit=10`, {
+      headers: { 'X-Session-Token': SESSION_TOKEN }
+    });
+    const data = await res.json();
+    const photos = (data.photos || data || []).filter(p =>
+      (p.title || '').toLowerCase().includes(q.toLowerCase()) ||
+      (p.id || '').toLowerCase().includes(q.toLowerCase())
+    ).slice(0, 10);
+    const results = document.getElementById('gallery-search-results');
+    if (!photos.length) { results.innerHTML = '<p style="padding:.5rem;font-size:.8rem;color:#888">אין תוצאות</p>'; return; }
+    results.innerHTML = photos.map(p => `
+      <div style="display:flex;align-items:center;gap:.5rem;padding:.4rem .6rem;border-bottom:1px solid #1a1a1a;cursor:pointer" onclick="addGalleryPhoto('${p.id}')">
+        <img src="${p.thumbnail}" style="width:36px;height:36px;object-fit:cover;border-radius:3px">
+        <span style="font-size:.8rem">${p.title || p.id}</span>
+      </div>
+    `).join('');
+  }
+
+  window.addGalleryPhoto = async function(photoId) {
+    const res = await fetch(`/api/admin/locations/${locSlug}/photos`, {
+      method: 'POST',
+      headers: { 'X-Session-Token': SESSION_TOKEN, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ photo_id: photoId, for_sale: 1 })
+    });
+    if (res.ok) {
+      const p = await res.json();
+      locPhotos.push(p);
+      renderLocPhotosGrid();
+      document.getElementById('gallery-search').value = '';
+      document.getElementById('gallery-search-results').innerHTML = '';
+    }
+  };
+
+  window.removeLocPhoto = async function(photoEntryId) {
+    if (!confirm('להסיר תמונה זו מהמקום?')) return;
+    const res = await fetch(`/api/admin/locations/${locSlug}/photos/${photoEntryId}`, {
+      method: 'DELETE',
+      headers: { 'X-Session-Token': SESSION_TOKEN }
+    });
+    if (res.ok) {
+      locPhotos = locPhotos.filter(p => p.id !== photoEntryId);
+      renderLocPhotosGrid();
+    }
+  };
+
+  function bindEditorEvents(loc) {
+    document.getElementById('btn-back-locations').addEventListener('click', () => {
+      document.getElementById('location-editor').style.display = 'none';
+      document.getElementById('locations-list').style.display = 'block';
+      document.getElementById('btn-new-location').style.display = '';
+      locSlug = null;
+    });
+    document.getElementById('btn-save-location').addEventListener('click', async () => {
+      const body = {
+        title: document.getElementById('loc-title').value,
+        region: document.getElementById('loc-region').value,
+        description: document.getElementById('loc-description').value,
+        best_time: document.getElementById('loc-best-time').value,
+        coordinates: document.getElementById('loc-coords').value,
+        equipment: document.getElementById('loc-equipment').value,
+        my_tip: document.getElementById('loc-tip').value,
+        related_guides: Array.from(document.querySelectorAll('#location-editor input[type=checkbox][value]')).filter(c => c.checked).map(c => c.value),
+        published: document.getElementById('loc-published').checked ? 1 : 0
+      };
+      const res = await fetch(`/api/admin/locations/${locSlug}`, {
+        method: 'PUT',
+        headers: { 'X-Session-Token': SESSION_TOKEN, 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+      if (res.ok) { alert('נשמר!'); } else { alert('שגיאה בשמירה'); }
+    });
+    document.getElementById('btn-enrich-location').addEventListener('click', async () => {
+      const btn = document.getElementById('btn-enrich-location');
+      btn.disabled = true; btn.textContent = '✨ מעשיר...';
+      const res = await fetch(`/api/admin/locations/${locSlug}/enrich`, {
+        method: 'POST',
+        headers: { 'X-Session-Token': SESSION_TOKEN }
+      });
+      if (res.ok) {
+        const updated = await res.json();
+        document.getElementById('loc-description').value = updated.description || '';
+        document.getElementById('loc-best-time').value = updated.best_time || '';
+        document.getElementById('loc-equipment').value = updated.equipment || '';
+        document.getElementById('loc-tip').value = updated.my_tip || '';
+        document.getElementById('loc-coords').value = updated.coordinates || '';
+        const guides = updated.related_guides || [];
+        document.querySelectorAll('#location-editor input[type=checkbox][value]').forEach(cb => {
+          cb.checked = guides.includes(cb.value);
+        });
+        alert('הושלם! בדוק ועדכן לפי הצורך.');
+      } else { alert('שגיאה ב-AI enrich'); }
+      btn.disabled = false; btn.textContent = '✨ העשר מ-AI';
+    });
+    document.getElementById('btn-delete-location').addEventListener('click', async () => {
+      if (!confirm(`למחוק את "${loc.title}"? הפעולה בלתי הפיכה.`)) return;
+      const res = await fetch(`/api/admin/locations/${locSlug}`, {
+        method: 'DELETE',
+        headers: { 'X-Session-Token': SESSION_TOKEN }
+      });
+      if (res.ok) {
+        document.getElementById('location-editor').style.display = 'none';
+        document.getElementById('locations-list').style.display = 'block';
+        document.getElementById('btn-new-location').style.display = '';
+        locSlug = null;
+        loadLocationsList();
+      }
+    });
+  }
+
+  document.getElementById('btn-new-location').addEventListener('click', async () => {
+    const title = prompt('שם המקום:');
+    if (!title || !title.trim()) return;
+    const region = prompt('אזור (צפון / מרכז / ירושלים / דרום / נגב / הרי אילת):') || '';
+    const btn = document.getElementById('btn-new-location');
+    btn.disabled = true; btn.textContent = '⏳ יוצר ומעשיר...';
+    const res = await fetch('/api/admin/locations', {
+      method: 'POST',
+      headers: { 'X-Session-Token': SESSION_TOKEN, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title: title.trim(), region })
+    });
+    btn.disabled = false; btn.textContent = '+ מקום חדש';
+    if (res.ok) {
+      const loc = await res.json();
+      await editLocation(loc.id);
+    } else {
+      const err = await res.json().catch(() => ({}));
+      alert(err.error || 'שגיאה ביצירה');
+    }
+  });
+
+  window._loadLocationsList = loadLocationsList;
+})();
+</script>
 </body>
 </html>
