@@ -732,6 +732,7 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
     <section class="section" id="section-analytics">
       <div class="section-header">
         <h1 class="section-title">סטטיסטיקות</h1>
+        <button type="button" class="btn btn-ghost btn-sm" onclick="loadPhotoAnalytics()">רענן</button>
       </div>
       <div class="dash-recent" id="analytics-box">
         <div class="analytics-header">
@@ -741,6 +742,31 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
         <div id="dash-chart" class="analytics-chart"></div>
         <div class="analytics-countries-label">מדינות</div>
         <div id="dash-countries" class="analytics-countries"></div>
+      </div>
+
+      <div class="dash-recent" style="margin-top:1.5rem" id="photo-analytics-box">
+        <div class="dash-recent-title" style="margin-bottom:1.25rem">פאנל המרה — תמונות (30 יום)</div>
+        <div id="photo-analytics-loading" style="color:var(--text-muted);font-size:.85rem">טוען...</div>
+        <div id="photo-analytics-content" hidden>
+          <div style="overflow-x:auto">
+            <table class="data-table" id="funnel-table">
+              <thead><tr>
+                <th>תמונה</th>
+                <th>קטגוריה</th>
+                <th title="פתיחות לייטבוקס">👁 צפיות</th>
+                <th title="לחיצות כיצד לרכוש">🛒 כוונת רכישה</th>
+                <th title="רכישות בפועל">💰 רכישות</th>
+                <th>הכנסה (₪)</th>
+                <th title="צפיות → רכישה">המרה</th>
+              </tr></thead>
+              <tbody id="funnel-tbody"></tbody>
+            </table>
+          </div>
+          <div style="margin-top:1.5rem">
+            <div class="dash-recent-title" style="margin-bottom:.75rem;font-size:.9rem">הכי מצולמות (לייטבוקס)</div>
+            <div id="top-views-bars" style="display:flex;flex-direction:column;gap:.5rem"></div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -1497,6 +1523,62 @@ const Dashboard = (() => {
   return { init, loadAnalytics };
 })();
 
+async function loadPhotoAnalytics() {
+  const loading = document.getElementById('photo-analytics-loading');
+  const content = document.getElementById('photo-analytics-content');
+  if (loading) loading.hidden = false;
+  if (content) content.hidden = true;
+  try {
+    const r = await fetch('/api/admin/photo-analytics', { headers: authHeaders() });
+    if (!r.ok) { if (loading) loading.textContent = 'שגיאה בטעינה'; return; }
+    const { views, intents, purchases } = await r.json();
+
+    const intentMap = Object.fromEntries((intents || []).map(x => [x.photo_id, x.count]));
+    const purchaseMap = Object.fromEntries((purchases || []).map(x => [x.photo_id, { count: x.count, revenue: x.revenue || 0 }]));
+    const maxViews = Math.max(...(views || []).map(x => x.count), 1);
+
+    const tbody = document.getElementById('funnel-tbody');
+    if (tbody) {
+      if (!views || !views.length) {
+        tbody.innerHTML = '<tr><td colspan="7" style="color:var(--text-muted);text-align:center;padding:1rem">אין נתונים עדיין — נאספים מרגע הפעלת המעקב</td></tr>';
+      } else {
+        tbody.innerHTML = views.map(v => {
+          const intent = intentMap[v.photo_id] || 0;
+          const p = purchaseMap[v.photo_id] || { count: 0, revenue: 0 };
+          const conv = v.count > 0 ? ((p.count / v.count) * 100).toFixed(1) : '0.0';
+          const convColor = parseFloat(conv) >= 5 ? '#34d399' : parseFloat(conv) >= 1 ? '#c8a96e' : 'var(--text-muted)';
+          return `<tr>
+            <td style="font-weight:500;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${v.photo_title}">${v.photo_title || v.photo_id}</td>
+            <td style="color:var(--text-muted);font-size:.8rem">${v.category || '—'}</td>
+            <td style="text-align:center">${v.count}</td>
+            <td style="text-align:center">${intent}</td>
+            <td style="text-align:center">${p.count}</td>
+            <td style="text-align:center">${p.revenue ? '₪' + p.revenue : '—'}</td>
+            <td style="text-align:center;color:${convColor};font-weight:600">${conv}%</td>
+          </tr>`;
+        }).join('');
+      }
+    }
+
+    const barsEl = document.getElementById('top-views-bars');
+    if (barsEl && views && views.length) {
+      barsEl.innerHTML = views.slice(0, 10).map(v => {
+        const pct = Math.round((v.count / maxViews) * 100);
+        return `<div style="display:flex;align-items:center;gap:.75rem;font-size:.82rem">
+          <div style="width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text-muted)" title="${v.photo_title}">${v.photo_title || v.photo_id}</div>
+          <div style="flex:1;height:12px;background:#222;border-radius:4px;overflow:hidden">
+            <div style="height:100%;width:${pct}%;background:var(--accent);border-radius:4px;transition:width .4s"></div>
+          </div>
+          <div style="width:30px;text-align:left;color:var(--text)">${v.count}</div>
+        </div>`;
+      }).join('');
+    }
+
+    if (loading) loading.hidden = true;
+    if (content) content.hidden = false;
+  } catch { if (loading) loading.textContent = 'שגיאה'; }
+}
+
 // ===== AUTH =====
 let SESSION_TOKEN = '';
 
@@ -1626,7 +1708,7 @@ document.querySelectorAll('.nav-item').forEach(item => {
     document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
     item.classList.add('active');
     $('section-' + item.dataset.section).classList.add('active');
-    if (item.dataset.section === 'analytics') Dashboard.loadAnalytics();
+    if (item.dataset.section === 'analytics') { Dashboard.loadAnalytics(); loadPhotoAnalytics(); }
     if (item.dataset.section === 'newsletter') Newsletter.init();
     if (item.dataset.section === 'print-orders') PrintOrders.load();
     if (item.dataset.section === 'social') SocialSection.load();

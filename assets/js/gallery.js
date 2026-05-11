@@ -1,3 +1,14 @@
+function trackEvent(type, photo) {
+  if (typeof gtag === 'function') {
+    gtag('event', type, { photo_id: photo.id, photo_title: photo.title, category: photo.category });
+  }
+  fetch('/api/track', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ event_type: type, photo_id: photo.id, photo_title: photo.title, category: photo.category })
+  }).catch(() => {});
+}
+
 let NEW_DAYS = 7;
 fetch('/api/new-badge-settings').then(r => r.ok ? r.json() : null).then(d => { if (d?.days) NEW_DAYS = d.days; }).catch(() => {});
 
@@ -854,6 +865,7 @@ function openLightbox(idx) {
 
   document.getElementById('lightbox').classList.add('open');
   document.body.style.overflow = 'hidden';
+  trackEvent('photo_view', photo);
 }
 
 function closeLightbox() {
@@ -1299,6 +1311,7 @@ function initBuyModal() {
 
 function openBuyModal(photo) {
   if (!photo) return;
+  trackEvent('purchase_intent', photo);
   const modal = document.getElementById('buy-modal');
   modal._photo = photo;
 

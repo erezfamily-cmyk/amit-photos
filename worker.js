@@ -1342,6 +1342,37 @@ function buildNewsletterHtml(subject, body, unsubscribeUrl, name) {
 </body></html>`;
 }
 
+async function handleTrackEvent(request, env) {
+  try {
+    const { event_type, photo_id, photo_title, category } = await request.json();
+    if (!['photo_view', 'purchase_intent'].includes(event_type) || !photo_id) return jsonRes({ ok: false });
+    await env.DB.prepare(
+      'INSERT INTO photo_events (event_type, photo_id, photo_title, category, created_at) VALUES (?, ?, ?, ?, ?)'
+    ).bind(event_type, String(photo_id), photo_title || '', category || '', new Date().toISOString()).run();
+    return jsonRes({ ok: true });
+  } catch { return jsonRes({ ok: false }); }
+}
+
+async function handleAdminPhotoAnalytics(request, env) {
+  if (!await isAdmin(request, env)) return jsonRes({ error: 'Unauthorized' }, 401, request);
+  const since = new Date(Date.now() - 30 * 86400000).toISOString();
+  const [views, intents, purchases] = await Promise.all([
+    env.DB.prepare(
+      `SELECT photo_id, photo_title, category, COUNT(*) as count FROM photo_events
+       WHERE event_type='photo_view' AND created_at>=? GROUP BY photo_id ORDER BY count DESC LIMIT 20`
+    ).bind(since).all(),
+    env.DB.prepare(
+      `SELECT photo_id, COUNT(*) as count FROM photo_events
+       WHERE event_type='purchase_intent' AND created_at>=? GROUP BY photo_id ORDER BY count DESC LIMIT 20`
+    ).bind(since).all(),
+    env.DB.prepare(
+      `SELECT photo_id, COUNT(*) as count, ROUND(SUM(sell_price),0) as revenue FROM print_orders
+       WHERE created_at>=? GROUP BY photo_id ORDER BY count DESC LIMIT 20`
+    ).bind(since).all(),
+  ]);
+  return jsonRes({ views: views.results, intents: intents.results, purchases: purchases.results });
+}
+
 async function handleNewsletter(request, env) {
   if (!await checkAuth(request, env)) return unauth(request);
   if (request.method !== 'POST') return jsonRes({ error: 'method not allowed' }, 405, request);
@@ -3477,6 +3508,8 @@ export default {
     if (path === '/api/sale/rotate' && request.method === 'POST') return handleSaleRotate(request, env);
     if (path === '/api/upload')            return handleUpload(request, env);
     if (path === '/api/repair-r2')         return handleRepairR2(request, env);
+    if (path === '/api/track' && request.method === 'POST') return handleTrackEvent(request, env);
+    if (path === '/api/admin/photo-analytics') return handleAdminPhotoAnalytics(request, env);
     if (path === '/api/fill-titles')       return handleFillTitles(request, env);
     if (path === '/api/generate-alt')      return handleGenerateAlt(request, env);
     if (path === '/api/trigger-workflow')  return handleTriggerWorkflow(request, env);
