@@ -1354,7 +1354,7 @@ async function handleTrackEvent(request, env) {
 }
 
 async function handleAdminPhotoAnalytics(request, env) {
-  if (!await isAdmin(request, env)) return jsonRes({ error: 'Unauthorized' }, 401, request);
+  if (!await checkAuth(request, env)) return jsonRes({ error: 'Unauthorized' }, 401, request);
   const since = new Date(Date.now() - 30 * 86400000).toISOString();
   const [views, intents, purchases] = await Promise.all([
     env.DB.prepare(
