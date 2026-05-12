@@ -2382,6 +2382,69 @@
     "alt": "פרדס בחורף"
   },
   {
+    "id": "1k4LOA2xLBmYw70cLpGmHZYaAWD9H5Um1",
+    "title": "שקיעה על הים המלח",
+    "category": "ישראל",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=1k4LOA2xLBmYw70cLpGmHZYaAWD9H5Um1",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1k4LOA2xLBmYw70cLpGmHZYaAWD9H5Um1&sz=w600",
+    "description": "שקיעה זהובה מעל הים המלח עם הרים במרחק",
+    "filename": "DSC_4223.jpg",
+    "width": 7847,
+    "height": 5231,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 135,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.0004
+    },
+    "added_at": "2026-05-12"
+  },
+  {
+    "id": "16j_rX_naRMuSfKdFW8bKZSyxwDE3UauF",
+    "title": "פסיפס עתיק בעיצוב גיאומטרי",
+    "category": "ישראל",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=16j_rX_naRMuSfKdFW8bKZSyxwDE3UauF",
+    "thumbnail": "https://drive.google.com/thumbnail?id=16j_rX_naRMuSfKdFW8bKZSyxwDE3UauF&sz=w600",
+    "description": "פסיפס רומי עתיק עם דוגמה פרחונית בצבעים חמים ודקיק",
+    "filename": "DSC_4475.jpg",
+    "width": 8256,
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 122,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.008
+    },
+    "added_at": "2026-05-12"
+  },
+  {
+    "id": "12eyfynKrz_S0MYb7iib3kPJIWiyJq9h4",
+    "title": "נוף דרך החלון",
+    "category": "ישראל",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=12eyfynKrz_S0MYb7iib3kPJIWiyJq9h4",
+    "thumbnail": "https://drive.google.com/thumbnail?id=12eyfynKrz_S0MYb7iib3kPJIWiyJq9h4&sz=w600",
+    "description": "נוף פנורמי של הנקב ולים בעומק מחלון קדום בסלע",
+    "filename": "DSC_4570.jpg",
+    "width": 3378,
+    "height": 5075,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 19,
+      "aperture": 22,
+      "iso": 100,
+      "shutter": 0.0005
+    },
+    "added_at": "2026-05-12"
+  },
+  {
     "id": "18DIDTE3rXGWNtSFWb1sNpfG8MAAMwFSj",
     "title": "תבנית גיאומטרית בעיצוב ברזל",
     "category": "ישראל",
@@ -3537,6 +3600,153 @@
       "iso": 125,
       "shutter": 0.0125
     }
+  },
+  {
+    "id": "1CPCFPvgrjD0Iy5la2_Ce4O6iq0wsfC8n",
+    "title": "קיר עתיק עם ציור חיה",
+    "category": "ישראל",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=1CPCFPvgrjD0Iy5la2_Ce4O6iq0wsfC8n",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1CPCFPvgrjD0Iy5la2_Ce4O6iq0wsfC8n&sz=w600",
+    "description": "ציור עתיק של חיה קוצנית על קיר סיד בעיר עתיקה",
+    "filename": "Z72_3480.jpg",
+    "width": 6015,
+    "height": 4047,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "24-70mm f/2.8G",
+      "focal": 70,
+      "aperture": 2.8,
+      "iso": 80,
+      "shutter": 0.0125
+    },
+    "added_at": "2026-05-12"
+  },
+  {
+    "id": "1VoVEkmlkhTUbSix1WrCZMrNsN6rdrWGc",
+    "title": "תאורה אדומה בחוד סלע",
+    "category": "ישראל",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=1VoVEkmlkhTUbSix1WrCZMrNsN6rdrWGc",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1VoVEkmlkhTUbSix1WrCZMrNsN6rdrWGc&sz=w600",
+    "description": "סלע מואר בתאורה אדומה וזהובה בלילה עם כבל חשמל.",
+    "filename": "Z72_3548.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 10,
+      "aperture": 3.5,
+      "iso": 500,
+      "shutter": 0.06666667
+    },
+    "added_at": "2026-05-12"
+  },
+  {
+    "id": "1H5-NOwIjqDF2DGlefiLdrN17mxoEw8y4",
+    "title": "חקירה בחושך עמוק",
+    "category": "ישראל",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=1H5-NOwIjqDF2DGlefiLdrN17mxoEw8y4",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1H5-NOwIjqDF2DGlefiLdrN17mxoEw8y4&sz=w600",
+    "description": "צלם חוקר שרידים עתיקים בתנאי תאורה דרמטית בתוך מערה או מתחנות עתיקות",
+    "filename": "Z72_3571.jpg",
+    "width": 4691,
+    "height": 3172,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 10,
+      "aperture": 3.5,
+      "iso": 800,
+      "shutter": 0.06666667
+    },
+    "added_at": "2026-05-12"
+  },
+  {
+    "id": "1E7l8W4Afo4kcmjVLGChBzg8USLwA3xO5",
+    "title": "חדר אמבטיה רומי עתיק",
+    "category": "ישראל",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=1E7l8W4Afo4kcmjVLGChBzg8USLwA3xO5",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1E7l8W4Afo4kcmjVLGChBzg8USLwA3xO5&sz=w600",
+    "description": "חדר אמבטיה מהתקופה הרומית עם בריכה שימור ועקשורה קדומה",
+    "filename": "Z72_3588.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 10,
+      "aperture": 3.5,
+      "iso": 360,
+      "shutter": 0.06666667
+    },
+    "added_at": "2026-05-12"
+  },
+  {
+    "id": "1EgGTTkpZozR98a_hCPDvgRSUbPk1SUsE",
+    "title": "מערה עתיקה בישראל",
+    "category": "ישראל",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=1EgGTTkpZozR98a_hCPDvgRSUbPk1SUsE",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1EgGTTkpZozR98a_hCPDvgRSUbPk1SUsE&sz=w600",
+    "description": "כניסה למערה עתיקה עם קירות אבן ושרידים ארכיאולוגיים",
+    "filename": "Z72_3629.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 12,
+      "aperture": 3.5,
+      "iso": 4500,
+      "shutter": 0.05
+    },
+    "added_at": "2026-05-12"
+  },
+  {
+    "id": "1Gs6pYmKOfonZmHIGsK89dyS0o1h1onfL",
+    "title": "אור מהמערה",
+    "category": "ישראל",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=1Gs6pYmKOfonZmHIGsK89dyS0o1h1onfL",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1Gs6pYmKOfonZmHIGsK89dyS0o1h1onfL&sz=w600",
+    "description": "נוף טבעי דרך פתח מערה עם אור שמש חודר מבחוץ",
+    "filename": "Z72_3634.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 20,
+      "aperture": 3.5,
+      "iso": 64,
+      "shutter": 0.008
+    },
+    "added_at": "2026-05-12"
+  },
+  {
+    "id": "1B0UgLPfs-7uGQgpa24zxE_cZkqgDHXoE",
+    "title": "חלון אור בנקביל",
+    "category": "ישראל",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=1B0UgLPfs-7uGQgpa24zxE_cZkqgDHXoE",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1B0UgLPfs-7uGQgpa24zxE_cZkqgDHXoE&sz=w600",
+    "description": "קרן אור חודרת לחלל אפל של מערה עתיקה עם זרם מים",
+    "filename": "Z72_3658.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 10,
+      "aperture": 3.5,
+      "iso": 180,
+      "shutter": 0.06666667
+    },
+    "added_at": "2026-05-12"
   },
   {
     "id": "1RwK5FcaujMNipNnWx8gHmNCjO1p4N9ru",
@@ -13602,6 +13812,48 @@
     }
   },
   {
+    "id": "1dx0yoxb2yzeJ_GAeIG4wjB9v__QFAPdk",
+    "title": "אורכידיאה לבנה עם כותרת צהובה",
+    "category": "פרחים וצמחים",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=1dx0yoxb2yzeJ_GAeIG4wjB9v__QFAPdk",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1dx0yoxb2yzeJ_GAeIG4wjB9v__QFAPdk&sz=w600",
+    "description": "פרח אורכידיאה לבן עדין עם מרכז צהוב וניצני ירוק טריים",
+    "filename": "DSC_6434.jpg",
+    "width": 8256,
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 105mm f/2.8G",
+      "focal": 105,
+      "aperture": 3.2,
+      "iso": 64,
+      "shutter": 0.00125
+    },
+    "added_at": "2026-05-12"
+  },
+  {
+    "id": "1HSV3xhmE2vx8x-E--Fgfhvypm8VSdRtk",
+    "title": "פרחי אורכידיה צהובים",
+    "category": "פרחים וצמחים",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=1HSV3xhmE2vx8x-E--Fgfhvypm8VSdRtk",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1HSV3xhmE2vx8x-E--Fgfhvypm8VSdRtk&sz=w600",
+    "description": "אורכידיה צהובה עדינה עם פרחים פתוחים על רקע שחור",
+    "filename": "DSC_6441.jpg",
+    "width": 8256,
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 105mm f/2.8G",
+      "focal": 105,
+      "aperture": 3.2,
+      "iso": 64,
+      "shutter": 0.003125
+    },
+    "added_at": "2026-05-12"
+  },
+  {
     "id": "118RM_kkpXjvAFKP51Wf4VrBMre5vOki4",
     "title": "פרחי אורכידיה צהובה",
     "category": "פרחים וצמחים",
@@ -13622,6 +13874,48 @@
     }
   },
   {
+    "id": "1CVwfgUt1Isa6EpFrQUvxNIqSLjE101mp",
+    "title": "עלה מפוספס בירוק וצהוב",
+    "category": "פרחים וצמחים",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=1CVwfgUt1Isa6EpFrQUvxNIqSLjE101mp",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1CVwfgUt1Isa6EpFrQUvxNIqSLjE101mp&sz=w600",
+    "description": "תצלום מקרוב של עלה עם דוגמת פסים צהובה וירוקה יפה",
+    "filename": "DSC_6454.jpg",
+    "width": 8256,
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 105mm f/2.8G",
+      "focal": 105,
+      "aperture": 7.1,
+      "iso": 200,
+      "shutter": 0.008
+    },
+    "added_at": "2026-05-12"
+  },
+  {
+    "id": "1j7VYECR1kmTBqQuFChurwHj6FIqexGKr",
+    "title": "עלים ורודים וירוקים",
+    "category": "פרחים וצמחים",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=1j7VYECR1kmTBqQuFChurwHj6FIqexGKr",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1j7VYECR1kmTBqQuFChurwHj6FIqexGKr&sz=w600",
+    "description": "קלוז אפ של עלים בעלי דוגמה מנוקדת בצבעים ורוד, ירוק ולבן",
+    "filename": "DSC_6462.jpg",
+    "width": 8256,
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 105mm f/2.8G",
+      "focal": 105,
+      "aperture": 7.1,
+      "iso": 1600,
+      "shutter": 0.008
+    },
+    "added_at": "2026-05-12"
+  },
+  {
     "id": "1zOwofy1H65KuCYXlDMJEDRVgKlwVycAZ",
     "title": "פרחי קלנדולה כתומים",
     "category": "פרחים וצמחים",
@@ -13640,6 +13934,174 @@
       "iso": 110,
       "shutter": 0.008
     }
+  },
+  {
+    "id": "1jiAGq5cA9xBVXvHy2XmoiHKrE60GJAmA",
+    "title": "פרחים אדומים זוהרים",
+    "category": "פרחים וצמחים",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=1jiAGq5cA9xBVXvHy2XmoiHKrE60GJAmA",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1jiAGq5cA9xBVXvHy2XmoiHKrE60GJAmA&sz=w600",
+    "description": "אשכול פרחים אדומים וכתומים בעלי פרחונים עדינים על רקע כהה",
+    "filename": "DSC_6478.jpg",
+    "width": 8256,
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 105mm f/2.8G",
+      "focal": 105,
+      "aperture": 3,
+      "iso": 110,
+      "shutter": 0.008
+    },
+    "added_at": "2026-05-12"
+  },
+  {
+    "id": "1WjIUcUmBTSmXiddKf4cbwq5iGJKsDlAN",
+    "title": "פרחים אדומים זוהרים",
+    "category": "פרחים וצמחים",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=1WjIUcUmBTSmXiddKf4cbwq5iGJKsDlAN",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1WjIUcUmBTSmXiddKf4cbwq5iGJKsDlAN&sz=w600",
+    "description": "אשכול של פרחים אדומים עם גבעולים צהובים בזיקה קרובה",
+    "filename": "DSC_6486.jpg",
+    "width": 8256,
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 105mm f/2.8G",
+      "focal": 105,
+      "aperture": 8,
+      "iso": 1400,
+      "shutter": 0.008
+    },
+    "added_at": "2026-05-12"
+  },
+  {
+    "id": "1aWvIq6UesAKJtBeSqIl6Rz-piPWSs6O4",
+    "title": "פרחים אדומים בוהקים",
+    "category": "פרחים וצמחים",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=1aWvIq6UesAKJtBeSqIl6Rz-piPWSs6O4",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1aWvIq6UesAKJtBeSqIl6Rz-piPWSs6O4&sz=w600",
+    "description": "אדומים ותפוחים עם גבעולים צהובים בהירים, צילום מקרוב מקצועי",
+    "filename": "DSC_6488.jpg",
+    "width": 5504,
+    "height": 8256,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 105mm f/2.8G",
+      "focal": 105,
+      "aperture": 8,
+      "iso": 1600,
+      "shutter": 0.008
+    },
+    "added_at": "2026-05-12"
+  },
+  {
+    "id": "1FprO13rnQoafTUatbRngExuyNr2B-MN_",
+    "title": "שורות קוקטוס ירוקות",
+    "category": "פרחים וצמחים",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=1FprO13rnQoafTUatbRngExuyNr2B-MN_",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1FprO13rnQoafTUatbRngExuyNr2B-MN_&sz=w600",
+    "description": "תצלום קרוב של שורות אנכיות של קוקטוס עם קוצים דקים וצפופים",
+    "filename": "DSC_6534.jpg",
+    "width": 7395,
+    "height": 4930,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 200,
+      "aperture": 8,
+      "iso": 220,
+      "shutter": 0.005
+    },
+    "added_at": "2026-05-12"
+  },
+  {
+    "id": "1aH-721Gd8P1hqM9iLvwlJxQoORmTmO95",
+    "title": "פרחים ורודים בפריחה",
+    "category": "פרחים וצמחים",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=1aH-721Gd8P1hqM9iLvwlJxQoORmTmO95",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1aH-721Gd8P1hqM9iLvwlJxQoORmTmO95&sz=w600",
+    "description": "אשכול צפוף של פרחים ורודים קטנים בעלי פרחים חמישה עלים",
+    "filename": "DSC_6648.jpg",
+    "width": 8256,
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 105mm f/2.8G",
+      "focal": 105,
+      "aperture": 3.3,
+      "iso": 64,
+      "shutter": 0.00125
+    },
+    "added_at": "2026-05-12"
+  },
+  {
+    "id": "1CbK7i7hBGCBnvqDh0CZGpl4tYb6TrcV6",
+    "title": "פרחים צבעוניים בשורות",
+    "category": "פרחים וצמחים",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=1CbK7i7hBGCBnvqDh0CZGpl4tYb6TrcV6",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1CbK7i7hBGCBnvqDh0CZGpl4tYb6TrcV6&sz=w600",
+    "description": "אוסף פרחים בצבעים עוצמתיים מסודרים בשורות צפופות",
+    "filename": "DSC_6668.jpg",
+    "width": 8256,
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 105mm f/2.8G",
+      "focal": 105,
+      "aperture": 3.2,
+      "iso": 1800,
+      "shutter": 0.008
+    },
+    "added_at": "2026-05-12"
+  },
+  {
+    "id": "1xinFd1WA9EIEtMrxxuVizi2CvQCgeEGW",
+    "title": "עלים ירוקים עם טל",
+    "category": "פרחים וצמחים",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=1xinFd1WA9EIEtMrxxuVizi2CvQCgeEGW",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1xinFd1WA9EIEtMrxxuVizi2CvQCgeEGW&sz=w600",
+    "description": "צמח עדין בעלים ירוקים בהירים עטופים בטל בוקר",
+    "filename": "DSC_6679.jpg",
+    "width": 8256,
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 105mm f/2.8G",
+      "focal": 105,
+      "aperture": 3.5,
+      "iso": 2000,
+      "shutter": 0.008
+    },
+    "added_at": "2026-05-12"
+  },
+  {
+    "id": "1ljizznGbEUagBw331mjdefRBmh_cydWG",
+    "title": "סנסביירה ירוקה",
+    "category": "פרחים וצמחים",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=1ljizznGbEUagBw331mjdefRBmh_cydWG",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1ljizznGbEUagBw331mjdefRBmh_cydWG&sz=w600",
+    "description": "צמח הנחש בעל עלים מחודדים עם דוגמות אפורות וצהובות",
+    "filename": "DSC_6683.jpg",
+    "width": 8256,
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 105mm f/2.8G",
+      "focal": 105,
+      "aperture": 3.2,
+      "iso": 320,
+      "shutter": 0.008
+    },
+    "added_at": "2026-05-12"
   },
   {
     "id": "1-iqxlYN773fYnouAo4H6C4MSrWGWRFZc",
