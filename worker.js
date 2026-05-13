@@ -3492,6 +3492,8 @@ async function handlePinterestBoards(request, env) {
   ]);
   const user = await userRes.json();
   const boards = await boardsRes.json();
+  const debug = new URL(request.url).searchParams.get('debug');
+  if (debug) return jsonRes({ user_raw: user, boards_raw: boards }, 200, request);
   return jsonRes({ username: user.username || '', boards: boards.items || [] }, 200, request);
 }
 
