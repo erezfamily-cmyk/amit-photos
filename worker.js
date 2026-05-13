@@ -3140,7 +3140,7 @@ async function handleLocationsGet(request, env, slug) {
     'SELECT * FROM location_photos WHERE location_id = ? ORDER BY sort_order ASC'
   ).bind(slug).all();
 
-  return jsonRes({ ...loc, related_guides: JSON.parse(loc.related_guides || '[]'), photos: photos || [] }, 200, request);
+  return jsonRes({ ...loc, related_guides: JSON.parse(loc.related_guides || '[]'), extra_links: JSON.parse(loc.extra_links || '[]'), photos: photos || [] }, 200, request);
 }
 
 async function handleLocationsSuggest(request, env) {
@@ -3289,6 +3289,10 @@ async function handleAdminLocationsUpdate(request, env, slug) {
     sets.push('related_guides = ?');
     vals.push(JSON.stringify(body.related_guides));
   }
+  if (body.extra_links !== undefined) {
+    sets.push('extra_links = ?');
+    vals.push(JSON.stringify(body.extra_links));
+  }
 
   if (sets.length === 0) return jsonRes({ error: 'אין שדות לעדכון' }, 400, request);
 
@@ -3299,7 +3303,7 @@ async function handleAdminLocationsUpdate(request, env, slug) {
   await env.DB.prepare(`UPDATE locations SET ${sets.join(', ')} WHERE id = ?`).bind(...vals).run();
   const loc = await env.DB.prepare('SELECT * FROM locations WHERE id = ?').bind(slug).first();
   if (!loc) return jsonRes({ error: 'לא נמצא' }, 404, request);
-  return jsonRes({ ...loc, related_guides: JSON.parse(loc.related_guides || '[]') }, 200, request);
+  return jsonRes({ ...loc, related_guides: JSON.parse(loc.related_guides || '[]'), extra_links: JSON.parse(loc.extra_links || '[]') }, 200, request);
 }
 
 async function handleAdminLocationsDelete(request, env, slug) {
@@ -3354,7 +3358,7 @@ async function handleAdminLocationsGet(request, env, slug) {
   const { results: photos } = await env.DB.prepare(
     'SELECT * FROM location_photos WHERE location_id = ? ORDER BY sort_order ASC'
   ).bind(slug).all();
-  return jsonRes({ ...loc, related_guides: JSON.parse(loc.related_guides || '[]'), photos: photos || [] }, 200, request);
+  return jsonRes({ ...loc, related_guides: JSON.parse(loc.related_guides || '[]'), extra_links: JSON.parse(loc.extra_links || '[]'), photos: photos || [] }, 200, request);
 }
 
 // ===== LOCATION PHOTOS MANAGEMENT =====
