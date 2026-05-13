@@ -1121,15 +1121,20 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
         <div style="font-size:.85rem;color:var(--text-muted);margin-bottom:1rem">
           תמונות שלא פורסמו עדיין יישלחו לפינטרסט לפי קטגוריה. לוחות חדשים ייווצרו אוטומטית.
           <br>פרסום אוטומטי פעיל — תמונות חדשות מתפרסמות מיד עם ההעלאה.
+          <br><span style="color:#E60023;font-weight:600">⚠️ פינטרסט מגביל פרסום מהיר — מומלץ להריץ כמה פעמים ביום, לא הכל בפעם אחת.</span>
         </div>
         <div style="display:flex;gap:.75rem;align-items:center;flex-wrap:wrap">
-          <button onclick="pinterestSyncCategory(10)" id="pinterest-sync-btn"
+          <button onclick="pinterestSyncCategory(1)" id="pinterest-sync-btn"
             style="background:#E60023;color:#fff;border:none;border-radius:7px;padding:.65rem 1.25rem;font-size:.88rem;font-weight:700;cursor:pointer;font-family:inherit">
-            10 לכל קטגוריה
+            1 לכל קטגוריה
           </button>
-          <button onclick="pinterestSyncBatch(20)"
+          <button onclick="pinterestSyncCategory(2)"
+            style="background:#E60023;color:#fff;border:none;border-radius:7px;padding:.65rem 1.25rem;font-size:.88rem;font-weight:700;cursor:pointer;font-family:inherit;opacity:.8">
+            2 לכל קטגוריה
+          </button>
+          <button onclick="pinterestSyncBatch(10)"
             style="background:transparent;color:#E60023;border:1px solid #E60023;border-radius:7px;padding:.65rem 1.25rem;font-size:.88rem;font-weight:600;cursor:pointer;font-family:inherit">
-            סנכרן 20 הבאות
+            סנכרן 10 הבאות
           </button>
         </div>
         <div id="pinterest-sync-status" style="margin-top:.75rem;font-size:.85rem"></div>
@@ -1660,13 +1665,14 @@ async function pinterestSyncCategory(per) {
     const data = await r.json();
     if (!r.ok) throw new Error(data.error || 'שגיאה');
     status.style.color = '#34d399';
-    status.innerHTML = `✅ פורסמו ${data.posted} תמונות ב-${data.categories?.length || 0} קטגוריות${data.failed ? ` (${data.failed} נכשלו)` : ''}.<br>נותרו ${data.remaining} לא מפורסמות.`;
+    const failNote = data.failed ? ` (${data.failed} נחסמו ע"י פינטרסט — נסה שוב מאוחר יותר)` : '';
+    status.innerHTML = `✅ פורסמו ${data.posted} תמונות ב-${data.categories?.length || 0} קטגוריות${failNote}.<br>נותרו ${data.remaining} לא מפורסמות.`;
     Photos.render && Photos.render();
   } catch(e) {
     status.style.color = '#f87171';
     status.textContent = 'שגיאה: ' + e.message;
   } finally {
-    if (btn) { btn.disabled = false; btn.textContent = '10 לכל קטגוריה'; }
+    if (btn) { btn.disabled = false; btn.textContent = `${per} לכל קטגוריה`; }
   }
 }
 
@@ -1683,7 +1689,8 @@ async function pinterestSyncBatch(limit) {
     const data = await r.json();
     if (!r.ok) throw new Error(data.error || 'שגיאה');
     status.style.color = '#34d399';
-    status.textContent = `✅ פורסמו ${data.posted}${data.failed ? ` (${data.failed} נכשלו)` : ''}. נותרו ${data.remaining}.`;
+    const batchNote = data.failed ? ` (${data.failed} נחסמו — נסה שוב מאוחר)` : '';
+    status.textContent = `✅ פורסמו ${data.posted}${batchNote}. נותרו ${data.remaining}.`;
     Photos.render && Photos.render();
   } catch(e) {
     status.style.color = '#f87171';
