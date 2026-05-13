@@ -9,7 +9,7 @@
       logoTagline: ' | עולם של צבעים מבעד לעדשה',
       gallery: 'גלריה', navNew: 'חדש באתר', navSale: 'מבצע',
       challenges: 'אתגרים', camera: 'למד לצלם', learn: 'ניתוח תמונות',
-      howToBuy: 'כיצד לרכוש', pricing: 'מחירים', contact: 'צור קשר', locations: 'מקומות',
+      howToBuy: 'כיצד לרכוש', pricing: 'מחירים', contact: 'צור קשר', locations: 'מקומות לצילום',
       menu: 'תפריט'
     },
     en: {
@@ -166,7 +166,7 @@ nav#main-nav .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px)
   <li><a href="${a('#gallery')}" id="nav-sale" data-i18n="nav.sale">מבצע</a></li>
   <li><a href="/games/" data-i18n="nav.challenges">אתגרים</a></li>
   <li><a href="/camera/" data-i18n="nav.camera">למד לצלם</a></li>
-  <li><a href="/locations/" data-i18n="nav.locations">מקומות</a></li>
+  <li><a href="/locations/" data-i18n="nav.locations">מקומות לצילום</a></li>
   <li><a href="/learn/" data-i18n="nav.learn">ניתוח תמונות</a></li>
   <li><a href="${a('#how-to-buy')}" data-i18n="nav.how-to-buy">כיצד לרכוש</a></li>
   <li><a href="${a('#pricing')}" data-i18n="nav.pricing">מחירים</a></li>
