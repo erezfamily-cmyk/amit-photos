@@ -1448,6 +1448,10 @@ nav.scrolled { border-bottom-color: rgba(200, 169, 110, 0.3); }
   border-color: #25d366;
   color: #25d366;
 }
+.lb-pinterest:hover {
+  border-color: #e60023;
+  color: #e60023;
+}
 .lb-buy-btn {
   background: var(--accent);
   border-color: var(--accent);
