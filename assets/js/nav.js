@@ -222,12 +222,10 @@ nav#main-nav .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px)
   });
 
   // ── i18n sync ───────────────────────────────────────────────────────────────
-  // If i18n.js is present, let it drive the nav too; otherwise nav handles itself
   if (typeof applyTranslations === 'function') {
     applyTranslations();
-  } else {
-    applyNavLang(currentLang);
   }
+  applyNavLang(currentLang);
 
   // Expose so external code (e.g. i18n.js setLang) can re-translate the nav
   window.applyNavLang = applyNavLang;
