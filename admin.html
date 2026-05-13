@@ -1597,31 +1597,68 @@ function insertLocLink(fieldId) {
   ta.focus();
 }
 
-async function adminConnectPinterest() {
-  const btn = document.getElementById('pinterest-connect-btn');
-  const errEl = document.getElementById('pinterest-error');
-  btn.textContent = 'מתחבר...';
-  btn.disabled = true;
-  errEl.hidden = true;
-  try {
-    const res = await fetch('/api/pinterest/boards', { headers: authHeaders() });
-    const data = await res.json();
-    if (data.error) throw new Error(data.error);
-    if (data.username) document.getElementById('pinterest-username').textContent = '@' + data.username;
-    const list = document.getElementById('pinterest-boards-list');
-    list.innerHTML = (data.boards || []).map(b => `
+function adminConnectPinterest() {
+  window.location.href = '/api/pinterest/auth';
+}
+
+async function loadPinterestStatus() {
+  const res = await fetch('/api/pinterest/status', { headers: authHeaders() }).catch(() => null);
+  if (!res || !res.ok) return;
+  const data = await res.json();
+  const connectBtn = $('pinterest-connect-btn');
+  const resultEl = $('pinterest-result');
+  if (data.connected) {
+    if (connectBtn) { connectBtn.textContent = 'מחובר ✓'; connectBtn.style.background = '#166534'; connectBtn.disabled = true; }
+    const usernameEl = $('pinterest-username');
+    if (usernameEl) usernameEl.textContent = data.username ? '@' + data.username : '';
+    const list = $('pinterest-boards-list');
+    if (list) list.innerHTML = (data.boards || []).map(b => `
       <div style="display:flex;align-items:center;justify-content:space-between;padding:.5rem .75rem;background:#1a1a1a;border-radius:6px;margin-bottom:.4rem;font-size:.85rem">
         <span style="font-weight:600">${b.name}</span>
         <span style="color:var(--text-muted)">${b.pin_count ?? 0} פינים</span>
       </div>`).join('') || '<div style="color:var(--text-muted);font-size:.85rem">אין לוחות</div>';
-    document.getElementById('pinterest-result').hidden = false;
-    btn.textContent = 'מחובר ✓';
-    btn.style.background = '#166534';
-  } catch(e) {
-    errEl.textContent = 'שגיאה: ' + e.message;
-    errEl.hidden = false;
-    btn.textContent = 'Connect with Pinterest';
+    if (resultEl) resultEl.hidden = false;
+    window._pinterestBoards = data.boards || [];
+  }
+}
+
+let _pinPhotoId = null;
+function openPinModal(photoId) {
+  _pinPhotoId = photoId;
+  const boards = window._pinterestBoards || [];
+  if (!boards.length) { toast('יש לחבר חשבון Pinterest תחילה'); return; }
+  const select = $('pin-board-select');
+  select.innerHTML = boards.map(b => `<option value="${b.id}">${b.name} (${b.pin_count ?? 0} פינים)</option>`).join('');
+  $('pin-description').value = '';
+  $('pin-modal-status').textContent = '';
+  $('pin-modal-submit').disabled = false;
+  $('pin-modal-submit').textContent = 'פרסם';
+  document.getElementById('pin-modal').showModal();
+}
+
+async function submitPin() {
+  const boardId = $('pin-board-select').value;
+  const description = $('pin-description').value.trim();
+  const btn = $('pin-modal-submit');
+  const status = $('pin-modal-status');
+  btn.disabled = true; btn.textContent = 'מפרסם...';
+  status.style.color = 'var(--text-muted)'; status.textContent = '';
+  try {
+    const r = await fetch('/api/pinterest/post', {
+      method: 'POST',
+      headers: { ...authHeaders(), 'Content-Type': 'application/json' },
+      body: JSON.stringify({ photo_id: _pinPhotoId, board_id: boardId, description }),
+    });
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.error || 'שגיאה');
+    status.style.color = '#34d399';
+    status.innerHTML = `✅ פורסם! <a href="${data.pin_url}" target="_blank" style="color:#34d399">צפה בפין</a>`;
+    btn.textContent = 'סגור';
+    btn.onclick = () => { document.getElementById('pin-modal').close(); btn.onclick = null; btn.onclick = submitPin; };
     btn.disabled = false;
+  } catch(e) {
+    status.style.color = '#f87171'; status.textContent = 'שגיאה: ' + e.message;
+    btn.textContent = 'פרסם'; btn.disabled = false;
   }
 }
 
@@ -1794,6 +1831,22 @@ function authHeaders() {
     Dashboard.init(Photos.getData(), Subscribers.getData(), Customers.getData());
     Dashboard.loadAnalytics();
     WeekPhoto.init(Photos.getData());
+    // handle pinterest OAuth callback redirect
+    const sp = new URLSearchParams(location.search);
+    if (sp.has('pinterest') || sp.has('pinterest_error')) {
+      const sec = sp.get('section') || 'pinterest';
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      const navEl = document.querySelector(`.nav-item[data-section="${sec}"]`);
+      if (navEl) navEl.classList.add('active');
+      $('section-' + sec)?.classList.add('active');
+      history.replaceState(null, '', location.pathname);
+      if (sp.has('pinterest_error')) {
+        const errEl = $('pinterest-error');
+        if (errEl) { errEl.textContent = 'שגיאה: ' + sp.get('pinterest_error'); errEl.hidden = false; }
+      }
+      loadPinterestStatus();
+    }
   }
 })();
 
@@ -1817,6 +1870,7 @@ document.querySelectorAll('.nav-item').forEach(item => {
     if (item.dataset.section === 'purchases') Purchases.load();
     if (item.dataset.section === 'learn') loadLearn();
     if (item.dataset.section === 'locations') window._loadLocationsList && window._loadLocationsList();
+    if (item.dataset.section === 'pinterest') loadPinterestStatus();
   });
 });
 
@@ -2090,6 +2144,11 @@ const Photos = (() => {
               <button class="photo-menu-item" onclick="closeAllPhotoMenus();linkPhotoToLocation('${p.id}','${p.url}','${p.thumbnail}')">
                 📍 מקומות לצילום
               </button>
+              ${window._pinterestBoards?.length ? `
+              <button class="photo-menu-item" onclick="closeAllPhotoMenus();openPinModal('${p.id}')">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12c0 5.084 3.163 9.426 7.627 11.174-.105-.949-.2-2.405.042-3.441.218-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738a.36.36 0 0 1 .083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.359-.632-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/></svg>
+                פרסם לפינטרסט
+              </button>` : ''}
               ${p._source==='r2' ? `
               <div class="photo-menu-sep"></div>
               <button class="photo-menu-item danger" onclick="closeAllPhotoMenus();Photos.confirmDelete('${p.id}')">
@@ -5027,5 +5086,29 @@ async function confirmLinkToLocation() {
   window.openPhotoPicker = openPhotoPicker;
 })();
 </script>
+
+<!-- Pinterest Pin Modal -->
+<dialog id="pin-modal" style="background:#111;border:1px solid #333;border-radius:12px;padding:1.5rem;width:100%;max-width:420px;color:#f0f0f0">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem">
+    <div style="display:flex;align-items:center;gap:.6rem">
+      <div style="width:32px;height:32px;background:#E60023;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;font-size:.9rem">P</div>
+      <h3 style="margin:0;font-family:'Syne',sans-serif;color:#c8a96e">פרסם לפינטרסט</h3>
+    </div>
+    <button onclick="document.getElementById('pin-modal').close()" style="background:none;border:none;color:#888;font-size:1.25rem;cursor:pointer;line-height:1">✕</button>
+  </div>
+  <div style="margin-bottom:1rem">
+    <label style="font-size:.82rem;color:#888;display:block;margin-bottom:.4rem">לוח</label>
+    <select id="pin-board-select" style="width:100%;background:#1a1a1a;border:1px solid #333;border-radius:6px;padding:.6rem .75rem;color:#f0f0f0;font-size:.9rem;font-family:inherit"></select>
+  </div>
+  <div style="margin-bottom:1.25rem">
+    <label style="font-size:.82rem;color:#888;display:block;margin-bottom:.4rem">תיאור (אופציונלי)</label>
+    <textarea id="pin-description" rows="3" placeholder="תיאור הפין — ריק = ברירת מחדל" style="width:100%;box-sizing:border-box;background:#1a1a1a;border:1px solid #333;border-radius:6px;padding:.6rem .75rem;color:#f0f0f0;font-size:.88rem;font-family:inherit;resize:vertical"></textarea>
+  </div>
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:.75rem">
+    <div id="pin-modal-status" style="font-size:.85rem;flex:1"></div>
+    <button id="pin-modal-submit" onclick="submitPin()" style="background:#E60023;color:#fff;border:none;border-radius:7px;padding:.65rem 1.4rem;font-size:.9rem;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap">פרסם</button>
+  </div>
+</dialog>
+
 </body>
 </html>
