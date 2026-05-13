@@ -1560,6 +1560,20 @@ const Dashboard = (() => {
   return { init, loadAnalytics };
 })();
 
+function insertLocLink(fieldId) {
+  const text = prompt('טקסט הקישור:');
+  if (!text) return;
+  const url = prompt('כתובת URL:');
+  if (!url) return;
+  const ta = document.getElementById(fieldId);
+  if (!ta) return;
+  const insert = `[${text}](${url})`;
+  const start = ta.selectionStart, end = ta.selectionEnd;
+  ta.value = ta.value.slice(0, start) + insert + ta.value.slice(end);
+  ta.selectionStart = ta.selectionEnd = start + insert.length;
+  ta.focus();
+}
+
 async function adminConnectPinterest() {
   const btn = document.getElementById('pinterest-connect-btn');
   const errEl = document.getElementById('pinterest-error');
@@ -4268,7 +4282,10 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
       </div>
       <div style="margin-bottom:1rem">
-        <label style="display:block;font-size:.8rem;color:#888;margin-bottom:.3rem">תיאור</label>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.3rem">
+          <label style="font-size:.8rem;color:#888">תיאור</label>
+          <button type="button" onclick="insertLocLink('loc-description')" style="font-size:.72rem;color:var(--accent);background:none;border:none;cursor:pointer;padding:0">🔗 הוסף קישור</button>
+        </div>
         <textarea id="loc-description" style="width:100%;background:#0a0a0a;border:1px solid #222;color:#f0ede8;padding:.6rem .8rem;border-radius:4px;min-height:80px;font-family:'Heebo',sans-serif;direction:rtl">${escHtml(loc.description)}</textarea>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem">
@@ -4286,7 +4303,10 @@ document.addEventListener('DOMContentLoaded', () => {
         <input id="loc-equipment" value="${escHtml(loc.equipment)}" style="width:100%;background:#0a0a0a;border:1px solid #222;color:#f0ede8;padding:.6rem .8rem;border-radius:4px;font-family:'Heebo',sans-serif">
       </div>
       <div style="margin-bottom:1rem">
-        <label style="display:block;font-size:.8rem;color:#888;margin-bottom:.3rem">הטיפ שלי</label>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.3rem">
+          <label style="font-size:.8rem;color:#888">הטיפ שלי</label>
+          <button type="button" onclick="insertLocLink('loc-tip')" style="font-size:.72rem;color:var(--accent);background:none;border:none;cursor:pointer;padding:0">🔗 הוסף קישור</button>
+        </div>
         <textarea id="loc-tip" style="width:100%;background:#0a0a0a;border:1px solid #222;color:#f0ede8;padding:.6rem .8rem;border-radius:4px;min-height:70px;font-family:'Heebo',sans-serif;direction:rtl">${escHtml(loc.my_tip)}</textarea>
       </div>
       <div style="margin-bottom:1.5rem">
