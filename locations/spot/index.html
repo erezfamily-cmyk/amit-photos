@@ -289,6 +289,7 @@ function renderSpot(loc) {
   document.getElementById('details-section').innerHTML = `
     ${loc.description ? `<div class="section"><p style="line-height:1.8;font-size:.95rem">${renderText(loc.description)}</p></div>` : ''}
     ${loc.my_tip ? `<div class="section"><h2>הטיפ שלי</h2><div class="tip-box">${renderText(loc.my_tip)}</div></div>` : ''}
+    ${loc.extra_links && loc.extra_links.length ? `<div class="section"><h2>מידע נוסף</h2><ul class="specs-list">${loc.extra_links.map(lnk=>`<li><a href="${escHtml(lnk.url)}" target="_blank" rel="noopener" style="color:var(--accent)">${escHtml(lnk.label)}</a></li>`).join('')}</ul></div>` : ''}
     <div class="section">
       <h2>מפרט צילום</h2>
       <ul class="specs-list">

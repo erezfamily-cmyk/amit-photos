@@ -1560,15 +1560,38 @@ const Dashboard = (() => {
   return { init, loadAnalytics };
 })();
 
+function addExtraLink() {
+  const container = document.getElementById('loc-extra-links');
+  if (!container) return;
+  const idx = Date.now();
+  const div = document.createElement('div');
+  div.style.cssText = 'display:flex;gap:.5rem;align-items:center';
+  div.dataset.linkIdx = idx;
+  div.innerHTML = `
+    <input placeholder="תווית (למשל: אתר הפארק)" style="flex:1;background:#0a0a0a;border:1px solid #222;color:#f0ede8;padding:.4rem .6rem;border-radius:4px;font-family:'Heebo',sans-serif;font-size:.82rem" class="extra-link-label">
+    <input placeholder="https://..." style="flex:2;background:#0a0a0a;border:1px solid #222;color:#f0ede8;padding:.4rem .6rem;border-radius:4px;font-family:'Heebo',sans-serif;font-size:.82rem;direction:ltr" class="extra-link-url">
+    <button type="button" onclick="this.closest('[data-link-idx]').remove()" style="background:none;border:none;color:#555;cursor:pointer;font-size:1rem;padding:0 .25rem">✕</button>`;
+  container.appendChild(div);
+  div.querySelector('.extra-link-label').focus();
+}
+
+function getExtraLinks() {
+  return [...document.querySelectorAll('#loc-extra-links [data-link-idx]')].map(row => ({
+    label: row.querySelector('.extra-link-label').value.trim(),
+    url: row.querySelector('.extra-link-url').value.trim()
+  })).filter(l => l.label && l.url);
+}
+
 function insertLocLink(fieldId) {
-  const text = prompt('טקסט הקישור:');
-  if (!text) return;
-  const url = prompt('כתובת URL:');
-  if (!url) return;
   const ta = document.getElementById(fieldId);
   if (!ta) return;
-  const insert = `[${text}](${url})`;
   const start = ta.selectionStart, end = ta.selectionEnd;
+  const selected = ta.value.slice(start, end).trim();
+  const text = selected || prompt('טקסט הקישור:');
+  if (!text) return;
+  const url = prompt('כתובת URL (https://...):');
+  if (!url) return;
+  const insert = `[${text}](${url})`;
   ta.value = ta.value.slice(0, start) + insert + ta.value.slice(end);
   ta.selectionStart = ta.selectionEnd = start + insert.length;
   ta.focus();
@@ -4319,6 +4342,20 @@ document.addEventListener('DOMContentLoaded', () => {
             </label>`).join('')}
         </div>
       </div>
+      <div style="margin-bottom:1.5rem">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem">
+          <label style="font-size:.8rem;color:#888">מידע נוסף — קישורים</label>
+          <button type="button" onclick="addExtraLink()" style="font-size:.75rem;color:var(--accent);background:none;border:1px solid var(--accent);border-radius:4px;cursor:pointer;padding:.2rem .6rem">+ הוסף קישור</button>
+        </div>
+        <div id="loc-extra-links" style="display:flex;flex-direction:column;gap:.5rem">
+          ${(loc.extra_links||[]).map((lnk,i) => `
+            <div style="display:flex;gap:.5rem;align-items:center" data-link-idx="${i}">
+              <input placeholder="תווית (למשל: אתר הפארק)" value="${escHtml(lnk.label||'')}" style="flex:1;background:#0a0a0a;border:1px solid #222;color:#f0ede8;padding:.4rem .6rem;border-radius:4px;font-family:'Heebo',sans-serif;font-size:.82rem" class="extra-link-label">
+              <input placeholder="https://..." value="${escHtml(lnk.url||'')}" style="flex:2;background:#0a0a0a;border:1px solid #222;color:#f0ede8;padding:.4rem .6rem;border-radius:4px;font-family:'Heebo',sans-serif;font-size:.82rem;direction:ltr" class="extra-link-url">
+              <button type="button" onclick="this.closest('[data-link-idx]').remove()" style="background:none;border:none;color:#555;cursor:pointer;font-size:1rem;padding:0 .25rem">✕</button>
+            </div>`).join('')}
+        </div>
+      </div>
       <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:2rem">
         <label style="font-size:.85rem;color:#888">פרסום:</label>
         <input type="checkbox" id="loc-published" ${loc.published ? 'checked' : ''} style="accent-color:var(--accent);width:18px;height:18px">
@@ -4662,6 +4699,7 @@ document.addEventListener('DOMContentLoaded', () => {
         equipment: document.getElementById('loc-equipment').value,
         my_tip: document.getElementById('loc-tip').value,
         related_guides: Array.from(document.querySelectorAll('#location-editor input[type=checkbox][value]')).filter(c => c.checked).map(c => c.value),
+        extra_links: getExtraLinks(),
         published: document.getElementById('loc-published').checked ? 1 : 0
       };
       const res = await fetch(`/api/admin/locations/${locSlug}`, {
