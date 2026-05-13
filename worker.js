@@ -3482,7 +3482,20 @@ async function handleAdminLocationPhotoAddToGallery(request, env, slug, photoId)
   return jsonRes({ id: newId, title, category }, 201, request);
 }
 
-// ===== PINTEREST OAUTH =====
+// ===== PINTEREST =====
+async function handlePinterestBoards(request, env) {
+  const token = env.PINTEREST_ACCESS_TOKEN;
+  if (!token) return jsonRes({ error: 'token not configured' }, 500, request);
+  const [userRes, boardsRes] = await Promise.all([
+    fetch('https://api.pinterest.com/v5/user_account', { headers: { Authorization: `Bearer ${token}` } }),
+    fetch('https://api.pinterest.com/v5/boards?page_size=25', { headers: { Authorization: `Bearer ${token}` } }),
+  ]);
+  const user = await userRes.json();
+  const boards = await boardsRes.json();
+  return jsonRes({ username: user.username || '', boards: boards.items || [] }, 200, request);
+}
+
+
 async function handlePinterestAuth(request, env) {
   const appId = env.PINTEREST_APP_ID;
   if (!appId) return new Response('PINTEREST_APP_ID לא מוגדר', { status: 500 });
@@ -3576,6 +3589,7 @@ export default {
     if (path === '/api/track' && request.method === 'POST') return handleTrackEvent(request, env);
     if (path === '/api/pinterest/auth') return handlePinterestAuth(request, env);
     if (path === '/api/pinterest/callback') return handlePinterestCallback(request, env);
+    if (path === '/api/pinterest/boards') return handlePinterestBoards(request, env);
     if (path === '/api/admin/photo-analytics') return handleAdminPhotoAnalytics(request, env);
     if (path === '/api/fill-titles')       return handleFillTitles(request, env);
     if (path === '/api/generate-alt')      return handleGenerateAlt(request, env);
