@@ -3482,6 +3482,71 @@ async function handleAdminLocationPhotoAddToGallery(request, env, slug, photoId)
   return jsonRes({ id: newId, title, category }, 201, request);
 }
 
+// ===== PINTEREST OAUTH =====
+async function handlePinterestAuth(request, env) {
+  const appId = env.PINTEREST_APP_ID;
+  if (!appId) return new Response('PINTEREST_APP_ID לא מוגדר', { status: 500 });
+  const origin = new URL(request.url).origin;
+  const redirectUri = `${origin}/api/pinterest/callback`;
+  const state = crypto.randomUUID();
+  const params = new URLSearchParams({
+    client_id: appId,
+    redirect_uri: redirectUri,
+    response_type: 'code',
+    scope: 'boards:read,pins:read,pins:write',
+    state,
+  });
+  return Response.redirect(`https://www.pinterest.com/oauth/?${params}`, 302);
+}
+
+async function handlePinterestCallback(request, env) {
+  const url = new URL(request.url);
+  const code = url.searchParams.get('code');
+  const error = url.searchParams.get('error');
+  const origin = url.origin;
+  const redirectUri = `${origin}/api/pinterest/callback`;
+  const connectPage = `${origin}/pinterest-connect/`;
+
+  if (error || !code) {
+    return Response.redirect(`${connectPage}?error=${encodeURIComponent(error || 'no_code')}`, 302);
+  }
+
+  try {
+    const appId = env.PINTEREST_APP_ID;
+    const appSecret = env.PINTEREST_APP_SECRET;
+    const credentials = btoa(`${appId}:${appSecret}`);
+
+    const tokenRes = await fetch('https://api.pinterest.com/v5/oauth/token', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Basic ${credentials}`,
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: new URLSearchParams({ grant_type: 'authorization_code', code, redirect_uri: redirectUri }),
+    });
+    const tokenData = await tokenRes.json();
+    if (!tokenData.access_token) throw new Error(tokenData.message || 'no token');
+
+    const token = tokenData.access_token;
+
+    // Fetch user + boards in parallel
+    const [userRes, boardsRes] = await Promise.all([
+      fetch('https://api.pinterest.com/v5/user_account', { headers: { Authorization: `Bearer ${token}` } }),
+      fetch('https://api.pinterest.com/v5/boards?page_size=25', { headers: { Authorization: `Bearer ${token}` } }),
+    ]);
+    const userData = await userRes.json();
+    const boardsData = await boardsRes.json();
+
+    const username = userData.username || '';
+    const boards = boardsData.items || [];
+
+    const dest = `${connectPage}?connected=1&username=${encodeURIComponent(username)}&boards=${encodeURIComponent(JSON.stringify(boards))}`;
+    return Response.redirect(dest, 302);
+  } catch (e) {
+    return Response.redirect(`${connectPage}?error=${encodeURIComponent(e.message)}`, 302);
+  }
+}
+
 // ===== MAIN ROUTER =====
 export default {
   async fetch(request, env, ctx) {
@@ -3509,6 +3574,8 @@ export default {
     if (path === '/api/upload')            return handleUpload(request, env);
     if (path === '/api/repair-r2')         return handleRepairR2(request, env);
     if (path === '/api/track' && request.method === 'POST') return handleTrackEvent(request, env);
+    if (path === '/api/pinterest/auth') return handlePinterestAuth(request, env);
+    if (path === '/api/pinterest/callback') return handlePinterestCallback(request, env);
     if (path === '/api/admin/photo-analytics') return handleAdminPhotoAnalytics(request, env);
     if (path === '/api/fill-titles')       return handleFillTitles(request, env);
     if (path === '/api/generate-alt')      return handleGenerateAlt(request, env);
