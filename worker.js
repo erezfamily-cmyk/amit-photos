@@ -3521,7 +3521,7 @@ async function handlePinterestAuth(request, env) {
     client_id: appId,
     redirect_uri: redirectUri,
     response_type: 'code',
-    scope: 'boards:read,pins:read,pins:write',
+    scope: 'boards:read,pins:read,user_accounts:read',
     state,
   });
   return Response.redirect(`https://www.pinterest.com/oauth/?${params}`, 302);
