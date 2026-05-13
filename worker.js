@@ -444,7 +444,7 @@ async function handleRepairR2(request, env) {
 }
 
 // ===== UPLOAD =====
-async function handleUpload(request, env) {
+async function handleUpload(request, env, ctx) {
   if (!await checkAuth(request, env)) return unauth(request);
   if (request.method !== 'POST') return jsonRes({ error: 'method not allowed' }, 405);
 
@@ -504,6 +504,12 @@ async function handleUpload(request, env) {
     ).run();
   } catch (e) {
     return jsonRes({ error: `DB insert failed: ${e.message}` }, 500, request);
+  }
+
+  // Auto-post to Pinterest in background (non-blocking)
+  if (ctx) {
+    const photoForPin = { url, thumbnail: thumbUrl, title, category, description: formData.get('description') || '' };
+    ctx.waitUntil(autoPostPhotoToPinterest(id, photoForPin, env));
   }
 
   return jsonRes({ ok: true, id, url, thumbnail: thumbUrl, key, title });
@@ -3488,6 +3494,102 @@ async function handleAdminLocationPhotoAddToGallery(request, env, slug, photoId)
 }
 
 // ===== PINTEREST =====
+async function findOrCreateBoard(categoryName, env, token) {
+  const cacheKey = `pinterest_board_${categoryName}`;
+  const cached = await env.DB.prepare(`SELECT value FROM settings WHERE key=?`).bind(cacheKey).first();
+  if (cached) return cached.value;
+
+  const boardsRes = await fetch('https://api.pinterest.com/v5/boards?page_size=100', {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  const boardsData = await boardsRes.json();
+  const boards = boardsData.items || [];
+
+  const match = boards.find(b => b.name.toLowerCase() === categoryName.toLowerCase());
+  const upsertCache = (id) => env.DB.prepare(
+    `INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value=excluded.value`
+  ).bind(cacheKey, id).run();
+
+  if (match) {
+    await upsertCache(match.id);
+    return match.id;
+  }
+
+  const createRes = await fetch('https://api.pinterest.com/v5/boards', {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name: categoryName, privacy: 'PUBLIC' }),
+  });
+  const board = await createRes.json();
+  if (board.id) {
+    await upsertCache(board.id);
+    return board.id;
+  }
+  return null;
+}
+
+async function autoPostPhotoToPinterest(photoId, photo, env) {
+  try {
+    const token = await getPinterestToken(env);
+    if (!token || !photo.category) return;
+    const boardId = await findOrCreateBoard(photo.category, env, token);
+    if (!boardId) return;
+    const pinRes = await fetch('https://api.pinterest.com/v5/pins', {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        link: `https://amitphotos.com/?photo=${photoId}`,
+        title: photo.title || '',
+        description: (photo.description || '') + '\n\nעמית ארז צילום | amitphotos.com',
+        board_id: boardId,
+        media_source: { source_type: 'image_url', url: `https://amitphotos.com${photo.url}` },
+      }),
+    });
+    const pinData = await pinRes.json();
+    if (pinData.id) {
+      await env.DB.prepare(`UPDATE photos SET pinterest_pin_id=? WHERE id=?`).bind(pinData.id, photoId).run();
+    }
+  } catch { /* silent */ }
+}
+
+async function handlePinterestSyncAll(request, env) {
+  if (!await checkAuth(request, env)) return jsonRes({ error: 'unauth' }, 401, request);
+  const token = await getPinterestToken(env);
+  if (!token) return jsonRes({ error: 'Pinterest לא מחובר' }, 400, request);
+  const limit = Math.min(parseInt(new URL(request.url).searchParams.get('limit') || '20'), 50);
+  const { results } = await env.DB.prepare(
+    `SELECT * FROM photos WHERE (pinterest_pin_id IS NULL OR pinterest_pin_id='') AND published=1 ORDER BY created_at DESC LIMIT ?`
+  ).bind(limit).all();
+  let posted = 0, failed = 0;
+  for (const photo of results) {
+    try {
+      const boardId = await findOrCreateBoard(photo.category, env, token);
+      if (!boardId) { failed++; continue; }
+      const pinRes = await fetch('https://api.pinterest.com/v5/pins', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          link: `https://amitphotos.com/?photo=${photo.id}`,
+          title: photo.title || '',
+          description: (photo.description || '') + '\n\nעמית ארז צילום | amitphotos.com',
+          board_id: boardId,
+          media_source: { source_type: 'image_url', url: `https://amitphotos.com${photo.url}` },
+        }),
+      });
+      const pinData = await pinRes.json();
+      if (pinData.id) {
+        await env.DB.prepare(`UPDATE photos SET pinterest_pin_id=? WHERE id=?`).bind(pinData.id, photo.id).run();
+        posted++;
+      } else { failed++; }
+    } catch { failed++; }
+  }
+  const remaining = await env.DB.prepare(
+    `SELECT COUNT(*) as cnt FROM photos WHERE (pinterest_pin_id IS NULL OR pinterest_pin_id='') AND published=1`
+  ).first();
+  return jsonRes({ posted, failed, remaining: remaining?.cnt || 0 }, 200, request);
+}
+
+
 async function storePinterestTokens(env, tokenData) {
   const { access_token, refresh_token, expires_in, refresh_token_expires_in } = tokenData;
   const expiresAt = Date.now() + (expires_in || 2592000) * 1000;
@@ -3651,7 +3753,7 @@ export default {
     if (path === '/api/quiz-photos')       return handleQuizPhotos(request, env);
     if (path === '/api/sale-photos')       return handleSalePhotos(request, env);
     if (path === '/api/sale/rotate' && request.method === 'POST') return handleSaleRotate(request, env);
-    if (path === '/api/upload')            return handleUpload(request, env);
+    if (path === '/api/upload')            return handleUpload(request, env, ctx);
     if (path === '/api/repair-r2')         return handleRepairR2(request, env);
     if (path === '/api/track' && request.method === 'POST') return handleTrackEvent(request, env);
     if (path === '/api/pinterest/auth') return handlePinterestAuth(request, env);
@@ -3659,6 +3761,7 @@ export default {
     if (path === '/api/pinterest/boards') return handlePinterestBoards(request, env);
     if (path === '/api/pinterest/status') return handlePinterestStatus(request, env);
     if (path === '/api/pinterest/post' && request.method === 'POST') return handlePinterestPost(request, env);
+    if (path === '/api/pinterest/sync-all' && request.method === 'POST') return handlePinterestSyncAll(request, env);
     if (path === '/api/admin/photo-analytics') return handleAdminPhotoAnalytics(request, env);
     if (path === '/api/fill-titles')       return handleFillTitles(request, env);
     if (path === '/api/generate-alt')      return handleGenerateAlt(request, env);
