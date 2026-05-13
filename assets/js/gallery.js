@@ -836,6 +836,12 @@ function openLightbox(idx) {
   const fbBtn = document.getElementById('lb-share-fb');
   if (fbBtn) fbBtn.href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`;
 
+  const pinBtn = document.getElementById('lb-share-pin');
+  if (pinBtn) {
+    const imgUrl = window.location.origin + '/photos/' + photo.id + '.jpg';
+    pinBtn.href = `https://pinterest.com/pin/create/button/?url=${encodeURIComponent(shareUrl)}&media=${encodeURIComponent(photo.url || imgUrl)}&description=${encodeURIComponent(photo.title + (photo.description ? ' — ' + photo.description : '') + ' | עמית ארז צילום')}`;
+  }
+
   const copyBtn = document.getElementById('lb-copy-link');
   if (copyBtn) {
     copyBtn.onclick = () => {
