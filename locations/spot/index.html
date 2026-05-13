@@ -32,10 +32,15 @@ h1{font-family:'Syne',sans-serif;font-size:2rem;color:var(--accent);margin-botto
 .guide-chip:hover{border-color:var(--accent);color:var(--accent)}
 .gallery-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
 @media(min-width:600px){.gallery-grid{grid-template-columns:repeat(3,1fr)}}
-.gallery-item{position:relative;aspect-ratio:3/2;overflow:hidden;border-radius:6px;cursor:pointer}
-.gallery-item img{width:100%;height:100%;object-fit:cover;transition:transform .3s}
-.gallery-item:hover img{transform:scale(1.04)}
-.for-sale-btn{position:absolute;bottom:.5rem;left:.5rem;background:var(--accent);color:#0a0a0a;border:none;border-radius:4px;padding:.3rem .7rem;font-size:.75rem;font-weight:700;cursor:pointer;text-decoration:none}
+.gallery-item{border-radius:6px;overflow:hidden;background:#111;display:flex;flex-direction:column}
+.gallery-item .photo-wrap{aspect-ratio:3/2;overflow:hidden}
+.gallery-item .photo-wrap img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .3s}
+.gallery-item:hover .photo-wrap img{transform:scale(1.04)}
+.photo-btns{display:flex;gap:.4rem;padding:.5rem;justify-content:center}
+.btn-gallery{flex:1;text-align:center;background:#1a1a1a;border:1px solid var(--border);color:var(--muted);border-radius:4px;padding:.35rem .5rem;font-size:.75rem;font-family:'Heebo',sans-serif;text-decoration:none;transition:all .2s}
+.btn-gallery:hover{border-color:var(--accent);color:var(--accent)}
+.btn-sale{flex:1;text-align:center;background:var(--accent);color:#0a0a0a;border:none;border-radius:4px;padding:.35rem .5rem;font-size:.75rem;font-weight:700;font-family:'Heebo',sans-serif;text-decoration:none;transition:opacity .2s}
+.btn-sale:hover{opacity:.85}
 .lb{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:3000;display:none;align-items:center;justify-content:center}
 .lb.open{display:flex}
 .lb img{max-width:90vw;max-height:88vh;border-radius:4px;object-fit:contain}
@@ -340,26 +345,16 @@ function renderSpot(loc) {
         <h2>גלריה מהמקום</h2>
         <div class="gallery-grid">
           ${loc.photos.map((p, i) => `
-            <div class="gallery-item" data-url="${imgSrc(p.url, 900)}" data-photo-id="${escHtml(p.photo_id||'')}">
-              <img src="${imgSrc(p.thumbnail || p.url, 400)}" alt="${escHtml(loc.title)} — תמונה ${i+1}" loading="lazy">
-              ${p.for_sale && p.photo_id ? `<a class="for-sale-btn" href="/?photo=${escHtml(p.photo_id)}" target="_blank">לרכישה</a>` : ''}
+            <div class="gallery-item">
+              <div class="photo-wrap">
+                <img src="${imgSrc(p.thumbnail || p.url, 400)}" alt="${escHtml(loc.title)} — תמונה ${i+1}" loading="lazy">
+              </div>
+              <div class="photo-btns">
+                ${p.photo_id ? `<a class="btn-gallery" href="/?photo=${escHtml(p.photo_id)}" target="_blank">לגלריה</a>` : ''}
+                ${p.for_sale && p.photo_id ? `<a class="btn-sale" href="/?photo=${escHtml(p.photo_id)}" target="_blank">לרכישה</a>` : ''}
+              </div>
             </div>
           `).join('')}
-        </div>
-      </div>
-    `;
-    document.querySelectorAll('.gallery-item').forEach(item => {
-      item.addEventListener('click', e => {
-        if (e.target.classList.contains('for-sale-btn')) return;
-        const photoId = item.dataset.photoId;
-        if (photoId) {
-          window.open('/?photo=' + photoId, '_blank');
-        } else {
-          document.getElementById('lb-img').src = item.dataset.url;
-          document.getElementById('lb').classList.add('open');
-        }
-      });
-    });
   }
 }
 
