@@ -201,6 +201,7 @@ input,textarea,select{font-family:var(--font);direction:rtl}
 .photo-thumb{
   aspect-ratio:4/3;overflow:hidden;background:#111;position:relative;
 }
+.pin-badge{position:absolute;bottom:.4rem;left:.4rem;width:20px;height:20px;background:#E60023;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:900;color:#fff;z-index:2;opacity:.9}
 .photo-thumb img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .4s}
 .photo-card:hover .photo-thumb img{transform:scale(1.04)}
 .photo-info{padding:.75rem}
@@ -1121,13 +1122,13 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
           <br>פרסום אוטומטי פעיל — תמונות חדשות מתפרסמות מיד עם ההעלאה.
         </div>
         <div style="display:flex;gap:.75rem;align-items:center;flex-wrap:wrap">
-          <button onclick="pinterestSyncBatch(20)" id="pinterest-sync-btn"
+          <button onclick="pinterestSyncCategory(10)" id="pinterest-sync-btn"
             style="background:#E60023;color:#fff;border:none;border-radius:7px;padding:.65rem 1.25rem;font-size:.88rem;font-weight:700;cursor:pointer;font-family:inherit">
-            סנכרן 20 תמונות
+            10 לכל קטגוריה
           </button>
-          <button onclick="pinterestSyncBatch(50)"
+          <button onclick="pinterestSyncBatch(20)"
             style="background:transparent;color:#E60023;border:1px solid #E60023;border-radius:7px;padding:.65rem 1.25rem;font-size:.88rem;font-weight:600;cursor:pointer;font-family:inherit">
-            סנכרן 50 תמונות
+            סנכרן 20 הבאות
           </button>
         </div>
         <div id="pinterest-sync-status" style="margin-top:.75rem;font-size:.85rem"></div>
@@ -1645,10 +1646,33 @@ async function loadPinterestStatus() {
   }
 }
 
-async function pinterestSyncBatch(limit) {
+async function pinterestSyncCategory(per) {
   const btn = $('pinterest-sync-btn');
   const status = $('pinterest-sync-status');
   if (btn) { btn.disabled = true; btn.textContent = 'מסנכרן...'; }
+  status.style.color = 'var(--text-muted)';
+  status.textContent = `שולח ${per} תמונות לכל קטגוריה...`;
+  try {
+    const r = await fetch(`/api/pinterest/sync-by-category?per=${per}`, {
+      method: 'POST', headers: authHeaders()
+    });
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.error || 'שגיאה');
+    status.style.color = '#34d399';
+    status.innerHTML = `✅ פורסמו ${data.posted} תמונות ב-${data.categories?.length || 0} קטגוריות${data.failed ? ` (${data.failed} נכשלו)` : ''}.<br>נותרו ${data.remaining} לא מפורסמות.`;
+    Photos.render && Photos.render();
+  } catch(e) {
+    status.style.color = '#f87171';
+    status.textContent = 'שגיאה: ' + e.message;
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = '10 לכל קטגוריה'; }
+  }
+}
+
+async function pinterestSyncBatch(limit) {
+  const btn = $('pinterest-sync-btn');
+  const status = $('pinterest-sync-status');
+  if (btn) { btn.disabled = true; }
   status.style.color = 'var(--text-muted)';
   status.textContent = 'שולח תמונות לפינטרסט...';
   try {
@@ -1658,12 +1682,13 @@ async function pinterestSyncBatch(limit) {
     const data = await r.json();
     if (!r.ok) throw new Error(data.error || 'שגיאה');
     status.style.color = '#34d399';
-    status.textContent = `✅ פורסמו ${data.posted} תמונות${data.failed ? ` (${data.failed} נכשלו)` : ''}. נותרו ${data.remaining} לא מפורסמות.`;
+    status.textContent = `✅ פורסמו ${data.posted}${data.failed ? ` (${data.failed} נכשלו)` : ''}. נותרו ${data.remaining}.`;
+    Photos.render && Photos.render();
   } catch(e) {
     status.style.color = '#f87171';
     status.textContent = 'שגיאה: ' + e.message;
   } finally {
-    if (btn) { btn.disabled = false; btn.textContent = 'סנכרן 20 תמונות'; }
+    if (btn) { btn.disabled = false; }
   }
 }
 
@@ -2142,6 +2167,7 @@ const Photos = (() => {
       <div class="photo-card${selected.has(p.id)?' selected':''}" id="card-${p.id}" draggable="true" data-photo-id="${p.id}" onclick="Photos.cardClick('${p.id}')">
         <div class="photo-thumb">
           <div class="cb-wrap"><input type="checkbox" ${selected.has(p.id)?'checked':''} onclick="event.stopPropagation();Photos.toggleSelect('${p.id}')"></div>
+          ${p.pinterest_pin_id ? `<div class="pin-badge" title="מפורסם בפינטרסט">P</div>` : ''}
           <img loading="lazy" src="${p.thumbnail||p.url}" alt="${p.title||''}"
             onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%2275%22%3E%3Crect fill=%22%23111%22 width=%22100%25%22 height=%22100%25%22/%3E%3C/svg%3E'">
         </div>
