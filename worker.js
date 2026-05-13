@@ -3552,6 +3552,50 @@ async function autoPostPhotoToPinterest(photoId, photo, env) {
   } catch { /* silent */ }
 }
 
+async function handlePinterestSyncByCategory(request, env) {
+  if (!await checkAuth(request, env)) return jsonRes({ error: 'unauth' }, 401, request);
+  const token = await getPinterestToken(env);
+  if (!token) return jsonRes({ error: 'Pinterest לא מחובר' }, 400, request);
+  const perCategory = parseInt(new URL(request.url).searchParams.get('per') || '10');
+
+  // Select up to N unpinned photos per category
+  const { results } = await env.DB.prepare(`
+    SELECT * FROM (
+      SELECT *, ROW_NUMBER() OVER (PARTITION BY category ORDER BY created_at DESC) as rn
+      FROM photos
+      WHERE (pinterest_pin_id IS NULL OR pinterest_pin_id='') AND published=1
+    ) WHERE rn <= ?
+  `).bind(perCategory).all();
+
+  let posted = 0, failed = 0;
+  for (const photo of results) {
+    try {
+      const boardId = await findOrCreateBoard(photo.category, env, token);
+      if (!boardId) { failed++; continue; }
+      const pinRes = await fetch('https://api.pinterest.com/v5/pins', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          link: `https://amitphotos.com/?photo=${photo.id}`,
+          title: photo.title || '',
+          description: (photo.description || '') + '\n\nעמית ארז צילום | amitphotos.com',
+          board_id: boardId,
+          media_source: { source_type: 'image_url', url: `https://amitphotos.com${photo.url}` },
+        }),
+      });
+      const pinData = await pinRes.json();
+      if (pinData.id) {
+        await env.DB.prepare(`UPDATE photos SET pinterest_pin_id=? WHERE id=?`).bind(pinData.id, photo.id).run();
+        posted++;
+      } else { failed++; }
+    } catch { failed++; }
+  }
+  const remaining = await env.DB.prepare(
+    `SELECT COUNT(*) as cnt FROM photos WHERE (pinterest_pin_id IS NULL OR pinterest_pin_id='') AND published=1`
+  ).first();
+  return jsonRes({ posted, failed, remaining: remaining?.cnt || 0, categories: [...new Set(results.map(p => p.category))] }, 200, request);
+}
+
 async function handlePinterestSyncAll(request, env) {
   if (!await checkAuth(request, env)) return jsonRes({ error: 'unauth' }, 401, request);
   const token = await getPinterestToken(env);
@@ -3762,6 +3806,7 @@ export default {
     if (path === '/api/pinterest/status') return handlePinterestStatus(request, env);
     if (path === '/api/pinterest/post' && request.method === 'POST') return handlePinterestPost(request, env);
     if (path === '/api/pinterest/sync-all' && request.method === 'POST') return handlePinterestSyncAll(request, env);
+    if (path === '/api/pinterest/sync-by-category' && request.method === 'POST') return handlePinterestSyncByCategory(request, env);
     if (path === '/api/admin/photo-analytics') return handleAdminPhotoAnalytics(request, env);
     if (path === '/api/fill-titles')       return handleFillTitles(request, env);
     if (path === '/api/generate-alt')      return handleGenerateAlt(request, env);
