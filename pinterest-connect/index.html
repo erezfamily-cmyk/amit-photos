@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>חיבור Pinterest — עמית ארז</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@800&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: #0a0a0a;
+  color: #f0ede8;
+  font-family: 'Heebo', sans-serif;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+.card {
+  background: #111;
+  border: 1px solid #222;
+  border-radius: 16px;
+  padding: 3rem 2.5rem;
+  max-width: 480px;
+  width: 100%;
+  text-align: center;
+}
+.logo {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #c8a96e;
+  margin-bottom: 2rem;
+}
+.pinterest-icon {
+  width: 56px; height: 56px;
+  background: #E60023;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 1.5rem;
+  font-size: 1.8rem;
+  color: #fff;
+  font-weight: 900;
+}
+h1 { font-size: 1.4rem; font-weight: 700; margin-bottom: .75rem; }
+.subtitle { color: #888; font-size: .9rem; line-height: 1.6; margin-bottom: 2rem; }
+.connect-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: .75rem;
+  background: #E60023;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: .85rem 2rem;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background .2s, transform .15s;
+  font-family: 'Heebo', sans-serif;
+}
+.connect-btn:hover { background: #c1001e; transform: translateY(-1px); }
+.connect-btn svg { flex-shrink: 0; }
+.permissions {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #222;
+  text-align: right;
+}
+.permissions-title { font-size: .78rem; color: #555; margin-bottom: .75rem; }
+.perm-item {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  font-size: .82rem;
+  color: #777;
+  margin-bottom: .4rem;
+}
+.perm-item::before { content: '✓'; color: #c8a96e; font-weight: 700; }
+
+/* Success state */
+.success-card { display: none; }
+.success-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+.boards-list {
+  margin-top: 1.5rem;
+  text-align: right;
+}
+.boards-title {
+  font-size: .85rem;
+  color: #888;
+  margin-bottom: .75rem;
+}
+.board-item {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  padding: .6rem .75rem;
+  background: #1a1a1a;
+  border-radius: 8px;
+  margin-bottom: .5rem;
+  font-size: .88rem;
+}
+.board-thumb {
+  width: 36px; height: 36px;
+  border-radius: 6px;
+  background: #222;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+.board-name { font-weight: 600; }
+.board-count { color: #666; font-size: .78rem; }
+.error-msg {
+  background: #1f0a0a;
+  border: 1px solid #4a1515;
+  color: #f87171;
+  border-radius: 8px;
+  padding: .75rem 1rem;
+  font-size: .85rem;
+  margin-top: 1rem;
+  display: none;
+}
+</style>
+</head>
+<body>
+<div class="card" id="main-card">
+  <div class="logo">AMIT EREZ PHOTOGRAPHY</div>
+  <div class="pinterest-icon">P</div>
+  <h1>חיבור לחשבון Pinterest</h1>
+  <p class="subtitle">חבר את חשבון Pinterest שלך כדי לנהל פינים ולוחות ישירות מכאן</p>
+  <a href="/api/pinterest/auth" class="connect-btn" id="connect-btn">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M12 0C5.373 0 0 5.373 0 12c0 5.084 3.163 9.426 7.627 11.174-.105-.949-.2-2.405.042-3.441.218-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738a.36.36 0 0 1 .083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.359-.632-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/></svg>
+    Connect with Pinterest
+  </a>
+  <div class="permissions">
+    <div class="permissions-title">הרשאות שיתבקשו:</div>
+    <div class="perm-item">קריאת לוחות (Boards)</div>
+    <div class="perm-item">קריאת פינים (Pins)</div>
+    <div class="perm-item">יצירת פינים חדשים</div>
+  </div>
+</div>
+
+<div class="card success-card" id="success-card">
+  <div class="logo">AMIT EREZ PHOTOGRAPHY</div>
+  <div class="success-icon">✅</div>
+  <h1>החשבון מחובר בהצלחה!</h1>
+  <p class="subtitle" id="success-user"></p>
+  <div class="boards-list" id="boards-list">
+    <div class="boards-title">הלוחות שלך ב-Pinterest:</div>
+    <div id="boards-items">טוען לוחות...</div>
+  </div>
+</div>
+
+<div class="error-msg" id="error-msg"></div>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+if (params.get('connected') === '1') {
+  document.getElementById('main-card').style.display = 'none';
+  document.getElementById('success-card').style.display = 'block';
+
+  const username = params.get('username') || '';
+  if (username) {
+    document.getElementById('success-user').textContent = `מחובר בתור: @${username}`;
+  }
+
+  const boardsRaw = params.get('boards');
+  const boardsEl = document.getElementById('boards-items');
+  if (boardsRaw) {
+    try {
+      const boards = JSON.parse(decodeURIComponent(boardsRaw));
+      if (boards.length) {
+        boardsEl.innerHTML = boards.map(b => `
+          <div class="board-item">
+            ${b.media?.image_cover_url ? `<img class="board-thumb" src="${b.media.image_cover_url}" alt="${b.name}" onerror="this.style.display='none'">` : '<div class="board-thumb"></div>'}
+            <div>
+              <div class="board-name">${b.name}</div>
+              <div class="board-count">${b.pin_count ?? ''} פינים</div>
+            </div>
+          </div>
+        `).join('');
+      } else {
+        boardsEl.textContent = 'אין לוחות עדיין';
+      }
+    } catch { boardsEl.textContent = 'טעינת לוחות נכשלה'; }
+  }
+} else if (params.get('error')) {
+  const err = document.getElementById('error-msg');
+  err.textContent = 'שגיאה: ' + params.get('error');
+  err.style.display = 'block';
+}
+</script>
+</body>
+</html>
