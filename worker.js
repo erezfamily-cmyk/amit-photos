@@ -3488,46 +3488,102 @@ async function handleAdminLocationPhotoAddToGallery(request, env, slug, photoId)
 }
 
 // ===== PINTEREST =====
-async function handlePinterestBoards(request, env) {
-  const token = env.PINTEREST_ACCESS_TOKEN;
-  if (!token) return jsonRes({ error: 'token not configured' }, 500, request);
-  const [userRes, boardsRes] = await Promise.all([
-    fetch('https://api.pinterest.com/v5/user_account', { headers: { Authorization: `Bearer ${token}` } }),
-    fetch('https://api.pinterest.com/v5/boards?page_size=25', { headers: { Authorization: `Bearer ${token}` } }),
-  ]);
-  const user = await userRes.json();
-  const boards = await boardsRes.json();
-  const debug = new URL(request.url).searchParams.get('debug');
-  if (debug) return jsonRes({ user_raw: user, boards_raw: boards }, 200, request);
-  // If API blocked (pending approval), return demo data
-  if (user.code === 3 || boards.code === 3) {
-    return jsonRes({
-      username: 'amiterezphotography',
-      boards: [
-        { name: 'ישראל יפה', pin_count: 47 },
-        { name: 'מדבר ונגב', pin_count: 23 },
-        { name: 'ירושלים', pin_count: 31 },
-        { name: 'זריחות ושקיעות', pin_count: 18 },
-        { name: 'צילום לילה', pin_count: 12 },
-      ]
-    }, 200, request);
-  }
-  return jsonRes({ username: user.username || '', boards: boards.items || [] }, 200, request);
+async function storePinterestTokens(env, tokenData) {
+  const { access_token, refresh_token, expires_in, refresh_token_expires_in } = tokenData;
+  const expiresAt = Date.now() + (expires_in || 2592000) * 1000;
+  const upsert = (k, v) => env.DB.prepare(
+    `INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value=excluded.value`
+  ).bind(k, String(v)).run();
+  const ops = [
+    upsert('pinterest_access_token', access_token),
+    upsert('pinterest_token_expires_at', expiresAt),
+  ];
+  if (refresh_token) ops.push(upsert('pinterest_refresh_token', refresh_token));
+  await Promise.all(ops);
 }
 
+async function getPinterestToken(env) {
+  const [tokenRow, expiryRow, refreshRow] = await Promise.all([
+    env.DB.prepare("SELECT value FROM settings WHERE key='pinterest_access_token'").first(),
+    env.DB.prepare("SELECT value FROM settings WHERE key='pinterest_token_expires_at'").first(),
+    env.DB.prepare("SELECT value FROM settings WHERE key='pinterest_refresh_token'").first(),
+  ]);
+  if (!tokenRow) return null;
+  const expiresAt = parseInt(expiryRow?.value || '0');
+  if (Date.now() < expiresAt - 60000) return tokenRow.value;
+  if (!refreshRow) return null;
+  try {
+    const credentials = btoa(`${env.PINTEREST_APP_ID}:${env.PINTEREST_APP_SECRET}`);
+    const res = await fetch('https://api.pinterest.com/v5/oauth/token', {
+      method: 'POST',
+      headers: { 'Authorization': `Basic ${credentials}`, 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({ grant_type: 'refresh_token', refresh_token: refreshRow.value }),
+    });
+    const data = await res.json();
+    if (!data.access_token) return null;
+    await storePinterestTokens(env, data);
+    return data.access_token;
+  } catch { return null; }
+}
+
+async function handlePinterestStatus(request, env) {
+  if (!await checkAuth(request, env)) return jsonRes({ error: 'unauth' }, 401, request);
+  const token = await getPinterestToken(env);
+  if (!token) return jsonRes({ connected: false }, 200, request);
+  const [usernameRow, boardsRes] = await Promise.all([
+    env.DB.prepare("SELECT value FROM settings WHERE key='pinterest_username'").first(),
+    fetch('https://api.pinterest.com/v5/boards?page_size=50', { headers: { Authorization: `Bearer ${token}` } }),
+  ]);
+  const boardsData = await boardsRes.json();
+  return jsonRes({ connected: true, username: usernameRow?.value || '', boards: boardsData.items || [] }, 200, request);
+}
+
+async function handlePinterestPost(request, env) {
+  if (!await checkAuth(request, env)) return jsonRes({ error: 'unauth' }, 401, request);
+  const { photo_id, board_id, description } = await request.json();
+  if (!photo_id || !board_id) return jsonRes({ error: 'photo_id ו-board_id נדרשים' }, 400, request);
+  const token = await getPinterestToken(env);
+  if (!token) return jsonRes({ error: 'Pinterest לא מחובר — חבר חשבון בהגדרות' }, 400, request);
+  const photo = await env.DB.prepare('SELECT * FROM photos WHERE id=?').bind(photo_id).first();
+  if (!photo) return jsonRes({ error: 'תמונה לא נמצאה' }, 404, request);
+  const pinRes = await fetch('https://api.pinterest.com/v5/pins', {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      link: `https://amitphotos.com/?photo=${photo_id}`,
+      title: photo.title || '',
+      description: description || ((photo.description || '') + ' | עמית ארז צילום'),
+      board_id,
+      media_source: { source_type: 'image_url', url: photo.url },
+    }),
+  });
+  const pinData = await pinRes.json();
+  if (!pinRes.ok) return jsonRes({ error: pinData.message || 'שגיאה ביצירת פין' }, 500, request);
+  return jsonRes({ success: true, pin_id: pinData.id, pin_url: `https://www.pinterest.com/pin/${pinData.id}/` }, 200, request);
+}
+
+async function handlePinterestBoards(request, env) {
+  if (!await checkAuth(request, env)) return jsonRes({ error: 'unauth' }, 401, request);
+  const token = await getPinterestToken(env);
+  if (!token) return jsonRes({ error: 'Pinterest לא מחובר' }, 400, request);
+  const boardsRes = await fetch('https://api.pinterest.com/v5/boards?page_size=50', {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  const boards = await boardsRes.json();
+  return jsonRes({ boards: boards.items || [] }, 200, request);
+}
 
 async function handlePinterestAuth(request, env) {
   const appId = env.PINTEREST_APP_ID;
   if (!appId) return new Response('PINTEREST_APP_ID לא מוגדר', { status: 500 });
   const origin = new URL(request.url).origin;
   const redirectUri = `${origin}/api/pinterest/callback`;
-  const state = crypto.randomUUID();
   const params = new URLSearchParams({
     client_id: appId,
     redirect_uri: redirectUri,
     response_type: 'code',
-    scope: 'boards:read,pins:read,user_accounts:read',
-    state,
+    scope: 'boards:read,pins:read,pins:write,user_accounts:read',
+    state: crypto.randomUUID(),
   });
   return Response.redirect(`https://www.pinterest.com/oauth/?${params}`, 302);
 }
@@ -3538,45 +3594,36 @@ async function handlePinterestCallback(request, env) {
   const error = url.searchParams.get('error');
   const origin = url.origin;
   const redirectUri = `${origin}/api/pinterest/callback`;
-  const connectPage = `${origin}/pinterest-connect/`;
 
   if (error || !code) {
-    return Response.redirect(`${connectPage}?error=${encodeURIComponent(error || 'no_code')}`, 302);
+    return Response.redirect(`${origin}/admin.html?section=pinterest&pinterest_error=${encodeURIComponent(error || 'no_code')}`, 302);
   }
 
   try {
-    const appId = env.PINTEREST_APP_ID;
-    const appSecret = env.PINTEREST_APP_SECRET;
-    const credentials = btoa(`${appId}:${appSecret}`);
-
+    const credentials = btoa(`${env.PINTEREST_APP_ID}:${env.PINTEREST_APP_SECRET}`);
     const tokenRes = await fetch('https://api.pinterest.com/v5/oauth/token', {
       method: 'POST',
-      headers: {
-        'Authorization': `Basic ${credentials}`,
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
+      headers: { 'Authorization': `Basic ${credentials}`, 'Content-Type': 'application/x-www-form-urlencoded' },
       body: new URLSearchParams({ grant_type: 'authorization_code', code, redirect_uri: redirectUri }),
     });
     const tokenData = await tokenRes.json();
     if (!tokenData.access_token) throw new Error(tokenData.message || 'no token');
 
-    const token = tokenData.access_token;
+    await storePinterestTokens(env, tokenData);
 
-    // Fetch user + boards in parallel
-    const [userRes, boardsRes] = await Promise.all([
-      fetch('https://api.pinterest.com/v5/user_account', { headers: { Authorization: `Bearer ${token}` } }),
-      fetch('https://api.pinterest.com/v5/boards?page_size=25', { headers: { Authorization: `Bearer ${token}` } }),
-    ]);
+    const userRes = await fetch('https://api.pinterest.com/v5/user_account', {
+      headers: { Authorization: `Bearer ${tokenData.access_token}` },
+    });
     const userData = await userRes.json();
-    const boardsData = await boardsRes.json();
+    if (userData.username) {
+      await env.DB.prepare(
+        `INSERT INTO settings (key, value) VALUES ('pinterest_username', ?) ON CONFLICT(key) DO UPDATE SET value=excluded.value`
+      ).bind(userData.username).run();
+    }
 
-    const username = userData.username || '';
-    const boards = boardsData.items || [];
-
-    const dest = `${connectPage}?connected=1&username=${encodeURIComponent(username)}&boards=${encodeURIComponent(JSON.stringify(boards))}`;
-    return Response.redirect(dest, 302);
+    return Response.redirect(`${origin}/admin.html?section=pinterest&pinterest=connected`, 302);
   } catch (e) {
-    return Response.redirect(`${connectPage}?error=${encodeURIComponent(e.message)}`, 302);
+    return Response.redirect(`${origin}/admin.html?section=pinterest&pinterest_error=${encodeURIComponent(e.message)}`, 302);
   }
 }
 
@@ -3610,6 +3657,8 @@ export default {
     if (path === '/api/pinterest/auth') return handlePinterestAuth(request, env);
     if (path === '/api/pinterest/callback') return handlePinterestCallback(request, env);
     if (path === '/api/pinterest/boards') return handlePinterestBoards(request, env);
+    if (path === '/api/pinterest/status') return handlePinterestStatus(request, env);
+    if (path === '/api/pinterest/post' && request.method === 'POST') return handlePinterestPost(request, env);
     if (path === '/api/admin/photo-analytics') return handleAdminPhotoAnalytics(request, env);
     if (path === '/api/fill-titles')       return handleFillTitles(request, env);
     if (path === '/api/generate-alt')      return handleGenerateAlt(request, env);
