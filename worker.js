@@ -15,6 +15,7 @@ function corsHeaders(request) {
     'Access-Control-Allow-Methods': 'GET,POST,DELETE,PATCH,OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type,X-Session-Token',
     'Vary': 'Origin',
+    'Cache-Control': 'no-store',
   };
 }
 
