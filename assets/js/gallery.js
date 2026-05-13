@@ -964,7 +964,7 @@ function handleInitialHash() {
         idx = 0;
       }
     }
-    if (idx !== -1) openBuyModal(filteredPhotos[idx]);
+    if (idx !== -1) openLightbox(idx);
     return;
   }
   const hash = window.location.hash;
