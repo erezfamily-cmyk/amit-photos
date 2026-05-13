@@ -3528,6 +3528,13 @@ async function findOrCreateBoard(categoryName, env, token) {
   return null;
 }
 
+function toAbsolutePhotoUrl(url) {
+  if (!url) return '';
+  const s = url.trim();
+  if (s.startsWith('http')) return s;
+  return `https://amitphotos.com${s.startsWith('/') ? '' : '/'}${s}`;
+}
+
 async function autoPostPhotoToPinterest(photoId, photo, env) {
   try {
     const token = await getPinterestToken(env);
@@ -3542,7 +3549,7 @@ async function autoPostPhotoToPinterest(photoId, photo, env) {
         title: photo.title || '',
         description: (photo.description || '') + '\n\nעמית ארז צילום | amitphotos.com',
         board_id: boardId,
-        media_source: { source_type: 'image_url', url: `https://amitphotos.com${photo.url}` },
+        media_source: { source_type: 'image_url', url: toAbsolutePhotoUrl(photo.url) },
       }),
     });
     const pinData = await pinRes.json();
@@ -3563,15 +3570,17 @@ async function handlePinterestSyncByCategory(request, env) {
     SELECT * FROM (
       SELECT *, ROW_NUMBER() OVER (PARTITION BY category ORDER BY created_at DESC) as rn
       FROM photos
-      WHERE (pinterest_pin_id IS NULL OR pinterest_pin_id='') AND published=1
+      WHERE (pinterest_pin_id IS NULL OR pinterest_pin_id='') AND published=1 AND r2_key IS NOT NULL AND r2_key != ''
     ) WHERE rn <= ?
   `).bind(perCategory).all();
 
   let posted = 0, failed = 0;
+  const errors = [];
   for (const photo of results) {
     try {
       const boardId = await findOrCreateBoard(photo.category, env, token);
-      if (!boardId) { failed++; continue; }
+      if (!boardId) { failed++; errors.push(`no_board:${photo.category}`); continue; }
+      const photoUrl = toAbsolutePhotoUrl(photo.url);
       const pinRes = await fetch('https://api.pinterest.com/v5/pins', {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
@@ -3580,20 +3589,23 @@ async function handlePinterestSyncByCategory(request, env) {
           title: photo.title || '',
           description: (photo.description || '') + '\n\nעמית ארז צילום | amitphotos.com',
           board_id: boardId,
-          media_source: { source_type: 'image_url', url: `https://amitphotos.com${photo.url}` },
+          media_source: { source_type: 'image_url', url: photoUrl },
         }),
       });
       const pinData = await pinRes.json();
       if (pinData.id) {
         await env.DB.prepare(`UPDATE photos SET pinterest_pin_id=? WHERE id=?`).bind(pinData.id, photo.id).run();
         posted++;
-      } else { failed++; }
-    } catch { failed++; }
+      } else {
+        failed++;
+        if (errors.length < 10) errors.push(pinData.message || pinData.code || JSON.stringify(pinData).slice(0, 120));
+      }
+    } catch(e) { failed++; if (errors.length < 10) errors.push(e.message); }
   }
   const remaining = await env.DB.prepare(
-    `SELECT COUNT(*) as cnt FROM photos WHERE (pinterest_pin_id IS NULL OR pinterest_pin_id='') AND published=1`
+    `SELECT COUNT(*) as cnt FROM photos WHERE (pinterest_pin_id IS NULL OR pinterest_pin_id='') AND published=1 AND r2_key IS NOT NULL AND r2_key != ''`
   ).first();
-  return jsonRes({ posted, failed, remaining: remaining?.cnt || 0, categories: [...new Set(results.map(p => p.category))] }, 200, request);
+  return jsonRes({ posted, failed, errors, remaining: remaining?.cnt || 0, categories: [...new Set(results.map(p => p.category))] }, 200, request);
 }
 
 async function handlePinterestSyncAll(request, env) {
@@ -3602,13 +3614,15 @@ async function handlePinterestSyncAll(request, env) {
   if (!token) return jsonRes({ error: 'Pinterest לא מחובר' }, 400, request);
   const limit = Math.min(parseInt(new URL(request.url).searchParams.get('limit') || '20'), 50);
   const { results } = await env.DB.prepare(
-    `SELECT * FROM photos WHERE (pinterest_pin_id IS NULL OR pinterest_pin_id='') AND published=1 ORDER BY created_at DESC LIMIT ?`
+    `SELECT * FROM photos WHERE (pinterest_pin_id IS NULL OR pinterest_pin_id='') AND published=1 AND r2_key IS NOT NULL AND r2_key != '' ORDER BY created_at DESC LIMIT ?`
   ).bind(limit).all();
   let posted = 0, failed = 0;
+  const errors = [];
   for (const photo of results) {
     try {
       const boardId = await findOrCreateBoard(photo.category, env, token);
-      if (!boardId) { failed++; continue; }
+      if (!boardId) { failed++; errors.push(`no_board:${photo.category}`); continue; }
+      const photoUrl = toAbsolutePhotoUrl(photo.url);
       const pinRes = await fetch('https://api.pinterest.com/v5/pins', {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
@@ -3617,20 +3631,23 @@ async function handlePinterestSyncAll(request, env) {
           title: photo.title || '',
           description: (photo.description || '') + '\n\nעמית ארז צילום | amitphotos.com',
           board_id: boardId,
-          media_source: { source_type: 'image_url', url: `https://amitphotos.com${photo.url}` },
+          media_source: { source_type: 'image_url', url: photoUrl },
         }),
       });
       const pinData = await pinRes.json();
       if (pinData.id) {
         await env.DB.prepare(`UPDATE photos SET pinterest_pin_id=? WHERE id=?`).bind(pinData.id, photo.id).run();
         posted++;
-      } else { failed++; }
-    } catch { failed++; }
+      } else {
+        failed++;
+        if (errors.length < 10) errors.push(pinData.message || pinData.code || JSON.stringify(pinData).slice(0, 120));
+      }
+    } catch(e) { failed++; if (errors.length < 10) errors.push(e.message); }
   }
   const remaining = await env.DB.prepare(
-    `SELECT COUNT(*) as cnt FROM photos WHERE (pinterest_pin_id IS NULL OR pinterest_pin_id='') AND published=1`
+    `SELECT COUNT(*) as cnt FROM photos WHERE (pinterest_pin_id IS NULL OR pinterest_pin_id='') AND published=1 AND r2_key IS NOT NULL AND r2_key != ''`
   ).first();
-  return jsonRes({ posted, failed, remaining: remaining?.cnt || 0 }, 200, request);
+  return jsonRes({ posted, failed, errors, remaining: remaining?.cnt || 0 }, 200, request);
 }
 
 
@@ -3700,7 +3717,7 @@ async function handlePinterestPost(request, env) {
       title: photo.title || '',
       description: description || ((photo.description || '') + ' | עמית ארז צילום'),
       board_id,
-      media_source: { source_type: 'image_url', url: photo.url },
+      media_source: { source_type: 'image_url', url: toAbsolutePhotoUrl(photo.url) },
     }),
   });
   const pinData = await pinRes.json();
