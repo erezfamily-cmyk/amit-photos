@@ -3724,13 +3724,9 @@ export default {
     const isDynamic = isHtml || ['js', 'css', 'json'].includes(ext);
     if (isDynamic) {
       const newRes = new Response(res.body, res);
-      // HTML: no-store מונע כל קאש (דפדפן + CDN)
-      // JS/CSS/JSON: no-cache = חייב לאמת עם שרת לפני שימוש
-      newRes.headers.set('Cache-Control', isHtml ? 'no-cache, no-store, must-revalidate' : 'no-cache');
-      if (isHtml) {
-        newRes.headers.set('CDN-Cache-Control', 'no-store');
-        newRes.headers.set('Cloudflare-CDN-Cache-Control', 'no-store');
-      }
+      newRes.headers.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+      newRes.headers.set('CDN-Cache-Control', 'no-store');
+      newRes.headers.set('Cloudflare-CDN-Cache-Control', 'no-store');
       return newRes;
     }
 
