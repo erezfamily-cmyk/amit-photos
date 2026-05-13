@@ -1624,8 +1624,9 @@ async function loadPinterestStatus() {
 }
 
 let _pinPhotoId = null;
-function openPinModal(photoId) {
+async function openPinModal(photoId) {
   _pinPhotoId = photoId;
+  if (!window._pinterestBoards?.length) await loadPinterestStatus();
   const boards = window._pinterestBoards || [];
   if (!boards.length) { toast('יש לחבר חשבון Pinterest תחילה'); return; }
   const select = $('pin-board-select');
