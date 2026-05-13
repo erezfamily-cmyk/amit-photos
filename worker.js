@@ -3563,7 +3563,7 @@ async function handlePinterestSyncByCategory(request, env) {
   if (!await checkAuth(request, env)) return jsonRes({ error: 'unauth' }, 401, request);
   const token = await getPinterestToken(env);
   if (!token) return jsonRes({ error: 'Pinterest לא מחובר' }, 400, request);
-  const perCategory = parseInt(new URL(request.url).searchParams.get('per') || '10');
+  const perCategory = Math.min(parseInt(new URL(request.url).searchParams.get('per') || '3'), 5);
 
   // Select up to N unpinned photos per category
   const { results } = await env.DB.prepare(`
@@ -3601,6 +3601,7 @@ async function handlePinterestSyncByCategory(request, env) {
         if (errors.length < 10) errors.push(pinData.message || pinData.code || JSON.stringify(pinData).slice(0, 120));
       }
     } catch(e) { failed++; if (errors.length < 10) errors.push(e.message); }
+    await new Promise(r => setTimeout(r, 600));
   }
   const remaining = await env.DB.prepare(
     `SELECT COUNT(*) as cnt FROM photos WHERE (pinterest_pin_id IS NULL OR pinterest_pin_id='') AND published=1 AND r2_key IS NOT NULL AND r2_key != ''`
@@ -3612,7 +3613,7 @@ async function handlePinterestSyncAll(request, env) {
   if (!await checkAuth(request, env)) return jsonRes({ error: 'unauth' }, 401, request);
   const token = await getPinterestToken(env);
   if (!token) return jsonRes({ error: 'Pinterest לא מחובר' }, 400, request);
-  const limit = Math.min(parseInt(new URL(request.url).searchParams.get('limit') || '20'), 50);
+  const limit = Math.min(parseInt(new URL(request.url).searchParams.get('limit') || '20'), 20);
   const { results } = await env.DB.prepare(
     `SELECT * FROM photos WHERE (pinterest_pin_id IS NULL OR pinterest_pin_id='') AND published=1 AND r2_key IS NOT NULL AND r2_key != '' ORDER BY created_at DESC LIMIT ?`
   ).bind(limit).all();
@@ -3643,6 +3644,7 @@ async function handlePinterestSyncAll(request, env) {
         if (errors.length < 10) errors.push(pinData.message || pinData.code || JSON.stringify(pinData).slice(0, 120));
       }
     } catch(e) { failed++; if (errors.length < 10) errors.push(e.message); }
+    await new Promise(r => setTimeout(r, 600));
   }
   const remaining = await env.DB.prepare(
     `SELECT COUNT(*) as cnt FROM photos WHERE (pinterest_pin_id IS NULL OR pinterest_pin_id='') AND published=1 AND r2_key IS NOT NULL AND r2_key != ''`
