@@ -3240,7 +3240,7 @@ async function handleLocationsGet(request, env, slug) {
     const [lat, lng] = loc.coordinates.split(',').map(s => parseFloat(s.trim()));
     if (!isNaN(lat) && !isNaN(lng)) {
       const { results: others } = await env.DB.prepare(
-        "SELECT id, title, coordinates, cover_thumb FROM locations WHERE published = 1 AND id != ? AND coordinates IS NOT NULL AND coordinates != ''"
+        "SELECT l.id, l.title, l.coordinates, (SELECT lp.thumbnail FROM location_photos lp WHERE lp.location_id = l.id ORDER BY lp.sort_order ASC LIMIT 1) AS cover_thumb FROM locations l WHERE l.published = 1 AND l.id != ? AND l.coordinates IS NOT NULL AND l.coordinates != ''"
       ).bind(slug).all();
       nearby = (others || [])
         .map(o => {
@@ -3329,14 +3329,22 @@ Return ONLY valid JSON, no markdown fences, no extra text.`;
       },
       body: JSON.stringify({
         model: 'claude-sonnet-4-6',
-        max_tokens: 800,
+        max_tokens: 1500,
         messages: [{ role: 'user', content: prompt }]
       })
     });
+    if (!res.ok) {
+      const errText = await res.text();
+      console.error('Anthropic API error:', res.status, errText.slice(0, 300));
+      return null;
+    }
     const data = await res.json();
     const text = data?.content?.[0]?.text || '';
-    return JSON.parse(text);
-  } catch {
+    // Strip markdown fences if present
+    const clean = text.replace(/^```json\s*/i, '').replace(/```\s*$/, '').trim();
+    return JSON.parse(clean);
+  } catch (e) {
+    console.error('enrichLocationWithAI error:', e?.message);
     return null;
   }
 }
