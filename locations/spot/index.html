@@ -73,6 +73,27 @@ h1{font-family:'Syne',sans-serif;font-size:2rem;color:var(--accent);margin-botto
   nav#main-nav, footer#main-footer, .share-row, #correction-modal, #correction-trigger { display:none !important; }
   body { background:#fff !important; color:#000 !important; }
 }
+/* when_to_visit */
+.seasons-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem;margin:.75rem 0}
+.season-card{border-radius:6px;padding:.6rem .5rem;text-align:center;font-family:'Heebo',sans-serif}
+.season-card.good{background:rgba(200,169,110,.18);border:1px solid rgba(200,169,110,.4)}
+.season-card.ok{background:rgba(100,180,100,.1);border:1px solid rgba(100,180,100,.25)}
+.season-card.bad{background:rgba(80,80,80,.12);border:1px solid #2a2a2a}
+.season-card .s-emoji{font-size:1.1rem}
+.season-card .s-name{font-size:.7rem;color:#888;margin:.2rem 0}
+.season-card .s-note{font-size:.68rem;color:#aaa;line-height:1.4}
+.season-card.good .s-note{color:#c8a96e}
+/* recommended_gear */
+.gear-chips{display:flex;flex-wrap:wrap;gap:.4rem;margin:.6rem 0}
+.gear-chip{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:12px;padding:.3rem .75rem;font-size:.78rem;color:#aaa;font-family:'Heebo',sans-serif}
+.gear-chip.primary{border-color:rgba(200,169,110,.5);color:#c8a96e;font-weight:600}
+/* nearby */
+.nearby-list{display:flex;flex-direction:column;gap:.5rem;margin:.6rem 0}
+.nearby-item{display:flex;align-items:center;justify-content:space-between;background:#141414;border:1px solid #222;border-radius:6px;padding:.5rem .85rem;text-decoration:none;color:var(--text);transition:border-color .2s}
+.nearby-item:hover{border-color:var(--accent)}
+.nearby-name{font-size:.88rem}
+.nearby-dist{font-size:.75rem;color:var(--muted)}
+@media(max-width:480px){.seasons-grid{grid-template-columns:repeat(2,1fr)}}
 </style>
 </head>
 <body>
@@ -95,6 +116,7 @@ h1{font-family:'Syne',sans-serif;font-size:2rem;color:var(--accent);margin-botto
 </div>
 <div id="details-section"></div>
 <div id="gallery-section"></div>
+<div id="nearby-section"></div>
 
 <div id="next-loc-nav">
   <div id="next-loc-label">מקום נוסף באזור זה</div>
@@ -262,6 +284,46 @@ async function loadSpot() {
   }
 }
 
+function renderSeasons(wt) {
+  if (!wt) return '';
+  const SEASONS = [
+    { key: 'summer', label: 'קיץ', emoji: '☀️' },
+    { key: 'fall',   label: 'סתיו', emoji: '🍂' },
+    { key: 'winter', label: 'חורף', emoji: '❄️' },
+    { key: 'spring', label: 'אביב', emoji: '🌸' }
+  ];
+  const cards = SEASONS.map(s => {
+    const d = wt[s.key] || {};
+    const cls = d.rating === 'good' ? 'good' : d.rating === 'bad' ? 'bad' : 'ok';
+    return `<div class="season-card ${cls}">
+      <div class="s-emoji">${s.emoji}</div>
+      <div class="s-name">${s.label}</div>
+      <div class="s-note">${escHtml(d.note || '')}</div>
+    </div>`;
+  }).join('');
+  return `<div class="section"><h2>מתי לבוא</h2><div class="seasons-grid">${cards}</div></div>`;
+}
+
+function renderGear(gear) {
+  if (!gear || !gear.length) return '';
+  const chips = gear.map(g => {
+    const cls = g.primary ? 'gear-chip primary' : 'gear-chip';
+    return `<span class="${cls}">${escHtml(g.name)}</span>`;
+  }).join('');
+  return `<div class="section"><h2>ציוד מומלץ</h2><div class="gear-chips">${chips}</div></div>`;
+}
+
+function renderNearby(nearby) {
+  if (!nearby || !nearby.length) return '';
+  const items = nearby.map(n =>
+    `<a class="nearby-item" href="/locations/spot/?slug=${encodeURIComponent(n.id)}">
+      <span class="nearby-name">${escHtml(n.title)}</span>
+      <span class="nearby-dist">${n.km} ק"מ →</span>
+    </a>`
+  ).join('');
+  return `<div class="section"><h2>מקומות קרובים</h2><div class="nearby-list">${items}</div></div>`;
+}
+
 function renderSpot(loc) {
   document.getElementById('hero-content').innerHTML = `
     <div class="badge">📍 ${escHtml(loc.region || 'מקום צילום')}</div>
@@ -288,6 +350,8 @@ function renderSpot(loc) {
 
   document.getElementById('details-section').innerHTML = `
     ${loc.description ? `<div class="section"><p style="line-height:1.8;font-size:.95rem">${renderText(loc.description)}</p></div>` : ''}
+    ${renderSeasons(loc.when_to_visit)}
+    ${renderGear(loc.recommended_gear)}
     ${loc.my_tip ? `<div class="section"><h2>הטיפ שלי</h2><div class="tip-box">${renderText(loc.my_tip)}</div></div>` : ''}
     ${loc.extra_links && loc.extra_links.length ? `<div class="section"><h2>מידע נוסף</h2><ul class="specs-list">${loc.extra_links.map(lnk=>`<li><a href="${escHtml(lnk.url)}" target="_blank" rel="noopener" style="color:var(--accent)">${escHtml(lnk.label)}</a></li>`).join('')}</ul></div>` : ''}
     <div class="section">
@@ -360,6 +424,7 @@ function renderSpot(loc) {
       </div>
     `;
   }
+  document.getElementById('nearby-section').innerHTML = renderNearby(loc.nearby);
 }
 
 document.getElementById('lb-close').addEventListener('click', () => document.getElementById('lb').classList.remove('open'));
