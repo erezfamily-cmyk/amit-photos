@@ -960,6 +960,7 @@ function handleInitialHash() {
   }
   if (urlParams.get('photo') && !urlParams.get('discount')) {
     const photoId = urlParams.get('photo');
+    const openBuy = urlParams.get('buy') === '1';
     let idx = filteredPhotos.findIndex(p => String(p.id) === photoId);
     if (idx === -1) {
       const photo = allPhotos.find(p => String(p.id) === photoId);
@@ -970,7 +971,10 @@ function handleInitialHash() {
         idx = 0;
       }
     }
-    if (idx !== -1) openLightbox(idx);
+    if (idx !== -1) {
+      if (openBuy) openBuyModal(filteredPhotos[idx]);
+      else openLightbox(idx);
+    }
     return;
   }
   const hash = window.location.hash;
