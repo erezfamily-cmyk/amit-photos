@@ -3216,6 +3216,14 @@ async function handleLocationsList(request, env) {
   return jsonRes(results || [], 200, request);
 }
 
+function haversineKm(lat1, lng1, lat2, lng2) {
+  const R = 6371;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLng = (lng2 - lng1) * Math.PI / 180;
+  const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)**2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+
 async function handleLocationsGet(request, env, slug) {
   const loc = await env.DB.prepare(
     'SELECT * FROM locations WHERE id = ? AND published = 1'
@@ -3226,12 +3234,32 @@ async function handleLocationsGet(request, env, slug) {
     'SELECT * FROM location_photos WHERE location_id = ? ORDER BY sort_order ASC'
   ).bind(slug).all();
 
+  // Compute nearby (up to 3 closest published locations with coordinates)
+  let nearby = [];
+  if (loc.coordinates) {
+    const [lat, lng] = loc.coordinates.split(',').map(s => parseFloat(s.trim()));
+    if (!isNaN(lat) && !isNaN(lng)) {
+      const { results: others } = await env.DB.prepare(
+        "SELECT id, title, coordinates, cover_thumb FROM locations WHERE published = 1 AND id != ? AND coordinates IS NOT NULL AND coordinates != ''"
+      ).bind(slug).all();
+      nearby = (others || [])
+        .map(o => {
+          const [olat, olng] = o.coordinates.split(',').map(s => parseFloat(s.trim()));
+          return isNaN(olat) ? null : { id: o.id, title: o.title, cover_thumb: o.cover_thumb, km: Math.round(haversineKm(lat, lng, olat, olng)) };
+        })
+        .filter(Boolean)
+        .sort((a, b) => a.km - b.km)
+        .slice(0, 3);
+    }
+  }
+
   return jsonRes({
     ...loc,
     related_guides: JSON.parse(loc.related_guides || '[]'),
     extra_links: JSON.parse(loc.extra_links || '[]'),
     when_to_visit: loc.when_to_visit ? JSON.parse(loc.when_to_visit) : null,
     recommended_gear: loc.recommended_gear ? JSON.parse(loc.recommended_gear) : null,
+    nearby,
     photos: photos || []
   }, 200, request);
 }
