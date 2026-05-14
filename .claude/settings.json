@@ -87,7 +87,9 @@
       "Skill(superpowers:writing-plans)",
       "Skill(superpowers:writing-plans:*)",
       "Skill(superpowers:subagent-driven-development)",
-      "Skill(superpowers:subagent-driven-development:*)"
+      "Skill(superpowers:subagent-driven-development:*)",
+      "PowerShell(Invoke-RestMethod -Uri 'https://amitphotos.com/api/locations/mtzdh' -UseBasicParsing)",
+      "PowerShell(curl.exe -s \"https://amitphotos.com/api/locations/mtzdh\" 2>&1)"
     ],
     "additionalDirectories": [
       "c:\\temp"
