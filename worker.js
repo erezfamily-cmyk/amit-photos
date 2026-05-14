@@ -3226,7 +3226,14 @@ async function handleLocationsGet(request, env, slug) {
     'SELECT * FROM location_photos WHERE location_id = ? ORDER BY sort_order ASC'
   ).bind(slug).all();
 
-  return jsonRes({ ...loc, related_guides: JSON.parse(loc.related_guides || '[]'), extra_links: JSON.parse(loc.extra_links || '[]'), photos: photos || [] }, 200, request);
+  return jsonRes({
+    ...loc,
+    related_guides: JSON.parse(loc.related_guides || '[]'),
+    extra_links: JSON.parse(loc.extra_links || '[]'),
+    when_to_visit: loc.when_to_visit ? JSON.parse(loc.when_to_visit) : null,
+    recommended_gear: loc.recommended_gear ? JSON.parse(loc.recommended_gear) : null,
+    photos: photos || []
+  }, 200, request);
 }
 
 async function handleLocationsSuggest(request, env) {
@@ -3277,8 +3284,10 @@ For the location "${locationName}", return a JSON object with these fields:
 - best_time: best time(s) to photograph there (Hebrew, e.g. "זריחה — שעת הזהב")
 - equipment: recommended camera equipment (Hebrew, e.g. "חצובה, עדשה 14-24mm, פילטר ND")
 - my_tip: one personal photography tip in Hebrew, first person (e.g. "אני ממליץ להגיע...")
-- coordinates: "lat,lng" GPS string for this location in Israel (e.g. "31.7683,35.2137")
+- coordinates: "lat,lng" GPS string for this location (e.g. "31.7683,35.2137"). For international locations use real GPS.
 - related_guides: array of 1-3 paths from this list that are most relevant: ${JSON.stringify(GUIDE_PATHS)}
+- when_to_visit: object with keys "summer","fall","winter","spring". Each value: {"rating":"good"|"ok"|"bad","note":"one short Hebrew sentence about light/weather/crowds"}
+- recommended_gear: array of objects [{name:"Hebrew gear name", primary:true|false}]. Mark the single most important lens/item as primary:true. 3-6 items total.
 
 Return ONLY valid JSON, no markdown fences, no extra text.`;
 
@@ -3339,7 +3348,8 @@ async function handleAdminLocationsCreate(request, env) {
     await env.DB.prepare(`
       UPDATE locations SET
         description = ?, best_time = ?, equipment = ?,
-        my_tip = ?, coordinates = ?, related_guides = ?
+        my_tip = ?, coordinates = ?, related_guides = ?,
+        when_to_visit = ?, recommended_gear = ?
       WHERE id = ?
     `).bind(
       enriched.description || '',
@@ -3348,6 +3358,8 @@ async function handleAdminLocationsCreate(request, env) {
       enriched.my_tip || '',
       enriched.coordinates || '',
       JSON.stringify(enriched.related_guides || []),
+      enriched.when_to_visit ? JSON.stringify(enriched.when_to_visit) : null,
+      enriched.recommended_gear ? JSON.stringify(enriched.recommended_gear) : null,
       id
     ).run();
   }
@@ -3361,7 +3373,7 @@ async function handleAdminLocationsUpdate(request, env, slug) {
   if (request.method !== 'PUT') return jsonRes({ error: 'PUT only' }, 405, request);
 
   const body = await request.json().catch(() => ({}));
-  const fields = ['title','region','description','best_time','equipment','my_tip','coordinates','published'];
+  const fields = ['title','region','description','best_time','equipment','my_tip','coordinates','published','when_to_visit','recommended_gear'];
   const sets = [];
   const vals = [];
 
@@ -3421,7 +3433,8 @@ async function handleAdminLocationsEnrich(request, env, slug) {
   await env.DB.prepare(`
     UPDATE locations SET
       description = ?, best_time = ?, equipment = ?,
-      my_tip = ?, coordinates = ?, related_guides = ?
+      my_tip = ?, coordinates = ?, related_guides = ?,
+      when_to_visit = ?, recommended_gear = ?
     WHERE id = ?
   `).bind(
     enriched.description || '',
@@ -3430,6 +3443,8 @@ async function handleAdminLocationsEnrich(request, env, slug) {
     enriched.my_tip || '',
     enriched.coordinates || '',
     JSON.stringify(enriched.related_guides || []),
+    enriched.when_to_visit ? JSON.stringify(enriched.when_to_visit) : null,
+    enriched.recommended_gear ? JSON.stringify(enriched.recommended_gear) : null,
     slug
   ).run();
 
