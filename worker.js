@@ -3485,7 +3485,13 @@ async function handleAdminLocationsEnrich(request, env, slug) {
   ).run();
 
   const updated = await env.DB.prepare('SELECT * FROM locations WHERE id = ?').bind(slug).first();
-  return jsonRes({ ...updated, related_guides: JSON.parse(updated.related_guides || '[]') }, 200, request);
+  return jsonRes({
+    ...updated,
+    related_guides: JSON.parse(updated.related_guides || '[]'),
+    extra_links: JSON.parse(updated.extra_links || '[]'),
+    when_to_visit: updated.when_to_visit ? JSON.parse(updated.when_to_visit) : null,
+    recommended_gear: updated.recommended_gear ? JSON.parse(updated.recommended_gear) : null
+  }, 200, request);
 }
 
 async function handleAdminLocationsGet(request, env, slug) {
