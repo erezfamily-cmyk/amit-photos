@@ -20,3 +20,6 @@ bucket_name = "amit-photos-images"
 [[routes]]
 pattern = "www.amitphotos.com/*"
 zone_name = "amitphotos.com"
+
+[triggers]
+crons = ["0 */2 * * *"]

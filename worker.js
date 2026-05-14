@@ -4131,4 +4131,78 @@ export default {
 
     return res;
   },
+
+  async scheduled(event, env, ctx) {
+    ctx.waitUntil(runPinterestCronSync(env));
+  },
 };
+
+async function runPinterestCronSync(env) {
+  try {
+    const token = await getPinterestToken(env);
+    if (!token) return;
+
+    // סבב עברית — 1 לכל קטגוריה
+    const { results: heResults } = await env.DB.prepare(`
+      SELECT * FROM (
+        SELECT *, ROW_NUMBER() OVER (PARTITION BY category ORDER BY created_at DESC) as rn
+        FROM photos
+        WHERE (pinterest_pin_id IS NULL OR pinterest_pin_id='') AND published=1 AND r2_key IS NOT NULL AND r2_key != ''
+      ) WHERE rn <= 1
+    `).all();
+
+    for (const photo of heResults) {
+      try {
+        const boardId = await findOrCreateBoard(photo.category, env, token);
+        if (!boardId) continue;
+        const pinRes = await fetch('https://api.pinterest.com/v5/pins', {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            link: `https://amitphotos.com/?photo=${photo.id}&buy=1`,
+            title: photo.title || '',
+            description: (photo.description || '') + '\n\nעמית ארז צילום | amitphotos.com',
+            board_id: boardId,
+            media_source: { source_type: 'image_url', url: toAbsolutePhotoUrl(photo.url) },
+          }),
+        });
+        const pinData = await pinRes.json();
+        if (pinData.id) await env.DB.prepare(`UPDATE photos SET pinterest_pin_id=? WHERE id=?`).bind(pinData.id, photo.id).run();
+      } catch { /* silent */ }
+      await new Promise(r => setTimeout(r, 600));
+    }
+
+    // הפסקה בין עברית לאנגלית
+    await new Promise(r => setTimeout(r, 3000));
+
+    // סבב אנגלית — 3 תמונות
+    const { results: enResults } = await env.DB.prepare(
+      `SELECT * FROM photos WHERE (pinterest_pin_id_en IS NULL OR pinterest_pin_id_en='') AND published=1 AND r2_key IS NOT NULL AND r2_key != '' ORDER BY created_at DESC LIMIT 3`
+    ).all();
+
+    for (const photo of enResults) {
+      try {
+        const [boardIdEn, titleEn] = await Promise.all([
+          findOrCreateBoardEn(photo.category, env, token),
+          translateTitleEn(photo.title, photo.description, photo.category, env),
+        ]);
+        if (!boardIdEn) continue;
+        const englishCategory = HE_TO_EN_CATEGORY[photo.category] || photo.category;
+        const pinRes = await fetch('https://api.pinterest.com/v5/pins', {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            link: `https://amitphotos.com/?photo=${photo.id}&buy=1`,
+            title: titleEn || `${englishCategory} | Amit Erez`,
+            description: `Fine art photography by Israeli photographer Amit Erez.\n${englishCategory}. Available as high-quality prints at amitphotos.com.\n#photography #fineartphotography #israeliphotographer #amiterezphotography`,
+            board_id: boardIdEn,
+            media_source: { source_type: 'image_url', url: toAbsolutePhotoUrl(photo.url) },
+          }),
+        });
+        const pinData = await pinRes.json();
+        if (pinData.id) await env.DB.prepare(`UPDATE photos SET pinterest_pin_id_en=? WHERE id=?`).bind(pinData.id, photo.id).run();
+      } catch { /* silent */ }
+      await new Promise(r => setTimeout(r, 600));
+    }
+  } catch { /* silent */ }
+}
