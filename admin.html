@@ -1116,25 +1116,36 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
       </div>
 
       <!-- Sync section -->
-      <div class="dash-recent" style="max-width:480px;margin-top:1.5rem" id="pinterest-sync-section" hidden>
+      <div class="dash-recent" style="max-width:540px;margin-top:1.5rem" id="pinterest-sync-section" hidden>
         <div style="font-size:1rem;font-weight:700;margin-bottom:.75rem">סנכרון תמונות לפינטרסט</div>
-        <div style="font-size:.85rem;color:var(--text-muted);margin-bottom:1rem">
-          תמונות שלא פורסמו עדיין יישלחו לפינטרסט לפי קטגוריה. לוחות חדשים ייווצרו אוטומטית.
-          <br>פרסום אוטומטי פעיל — תמונות חדשות מתפרסמות מיד עם ההעלאה.
-          <br><span style="color:#E60023;font-weight:600">⚠️ פינטרסט מגביל פרסום מהיר — מומלץ להריץ כמה פעמים ביום, לא הכל בפעם אחת.</span>
+        <div style="font-size:.85rem;color:var(--text-muted);margin-bottom:.75rem">
+          פרסום אוטומטי פעיל — תמונות חדשות מתפרסמות מיד בשני הלוחות.
+          <br><span style="color:#E60023;font-weight:600">⚠️ פינטרסט מגביל פרסום מהיר — הרץ כמה פעמים ביום.</span>
         </div>
-        <div style="display:flex;gap:.75rem;align-items:center;flex-wrap:wrap">
+        <div style="font-size:.82rem;font-weight:700;color:var(--text-muted);margin-bottom:.4rem">🇮🇱 לוחות עברית (לקהל ישראלי)</div>
+        <div style="display:flex;gap:.6rem;align-items:center;flex-wrap:wrap;margin-bottom:1rem">
           <button onclick="pinterestSyncCategory(1)" id="pinterest-sync-btn"
-            style="background:#E60023;color:#fff;border:none;border-radius:7px;padding:.65rem 1.25rem;font-size:.88rem;font-weight:700;cursor:pointer;font-family:inherit">
+            style="background:#E60023;color:#fff;border:none;border-radius:7px;padding:.55rem 1rem;font-size:.85rem;font-weight:700;cursor:pointer;font-family:inherit">
             1 לכל קטגוריה
           </button>
           <button onclick="pinterestSyncCategory(2)"
-            style="background:#E60023;color:#fff;border:none;border-radius:7px;padding:.65rem 1.25rem;font-size:.88rem;font-weight:700;cursor:pointer;font-family:inherit;opacity:.8">
+            style="background:#E60023;color:#fff;border:none;border-radius:7px;padding:.55rem 1rem;font-size:.85rem;font-weight:700;cursor:pointer;font-family:inherit;opacity:.8">
             2 לכל קטגוריה
           </button>
           <button onclick="pinterestSyncBatch(10)"
-            style="background:transparent;color:#E60023;border:1px solid #E60023;border-radius:7px;padding:.65rem 1.25rem;font-size:.88rem;font-weight:600;cursor:pointer;font-family:inherit">
-            סנכרן 10 הבאות
+            style="background:transparent;color:#E60023;border:1px solid #E60023;border-radius:7px;padding:.55rem 1rem;font-size:.85rem;font-weight:600;cursor:pointer;font-family:inherit">
+            10 הבאות
+          </button>
+        </div>
+        <div style="font-size:.82rem;font-weight:700;color:var(--text-muted);margin-bottom:.4rem">🌍 לוחות אנגלית (לקהל בינלאומי)</div>
+        <div style="display:flex;gap:.6rem;align-items:center;flex-wrap:wrap">
+          <button onclick="pinterestSyncEnBatch(3)" id="pinterest-sync-en-btn"
+            style="background:#0a66c2;color:#fff;border:none;border-radius:7px;padding:.55rem 1rem;font-size:.85rem;font-weight:700;cursor:pointer;font-family:inherit">
+            3 תמונות + תרגום
+          </button>
+          <button onclick="pinterestSyncEnBatch(5)"
+            style="background:#0a66c2;color:#fff;border:none;border-radius:7px;padding:.55rem 1rem;font-size:.85rem;font-weight:700;cursor:pointer;font-family:inherit;opacity:.8">
+            5 תמונות + תרגום
           </button>
         </div>
         <div id="pinterest-sync-status" style="margin-top:.75rem;font-size:.85rem"></div>
@@ -1700,6 +1711,30 @@ async function pinterestSyncBatch(limit) {
   }
 }
 
+async function pinterestSyncEnBatch(limit) {
+  const btn = $('pinterest-sync-en-btn');
+  const status = $('pinterest-sync-status');
+  if (btn) { btn.disabled = true; btn.textContent = 'מתרגם ומפרסם...'; }
+  status.style.color = 'var(--text-muted)';
+  status.textContent = `מתרגם ומפרסם ${limit} תמונות ללוחות אנגלית...`;
+  try {
+    const r = await fetch(`/api/pinterest/sync-en?limit=${limit}`, {
+      method: 'POST', headers: authHeaders()
+    });
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.error || 'שגיאה');
+    status.style.color = '#34d399';
+    const failNote = data.failed ? ` (${data.failed} נכשלו)` : '';
+    status.innerHTML = `✅ 🌍 פורסמו ${data.posted} תמונות באנגלית${failNote}.<br>נותרו ${data.remaining} ללא לוח אנגלי.`;
+    Photos.render && Photos.render();
+  } catch(e) {
+    status.style.color = '#f87171';
+    status.textContent = 'שגיאה: ' + e.message;
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = '3 תמונות + תרגום'; }
+  }
+}
+
 let _pinPhotoId = null;
 async function openPinModal(photoId) {
   _pinPhotoId = photoId;
@@ -2175,7 +2210,7 @@ const Photos = (() => {
       <div class="photo-card${selected.has(p.id)?' selected':''}" id="card-${p.id}" draggable="true" data-photo-id="${p.id}" onclick="Photos.cardClick('${p.id}')">
         <div class="photo-thumb">
           <div class="cb-wrap"><input type="checkbox" ${selected.has(p.id)?'checked':''} onclick="event.stopPropagation();Photos.toggleSelect('${p.id}')"></div>
-          ${p.pinterest_pin_id ? `<div class="pin-badge" title="מפורסם בפינטרסט">P</div>` : ''}
+          ${(p.pinterest_pin_id || p.pinterest_pin_id_en) ? `<div class="pin-badge" title="${p.pinterest_pin_id && p.pinterest_pin_id_en ? 'מפורסם בפינטרסט (עברית + אנגלית)' : p.pinterest_pin_id ? 'מפורסם בפינטרסט (עברית)' : 'מפורסם בפינטרסט (אנגלית)'}" style="${p.pinterest_pin_id && p.pinterest_pin_id_en ? '' : 'opacity:.5'}">P</div>` : ''}
           <img loading="lazy" src="${p.thumbnail||p.url}" alt="${p.title||''}"
             onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%2275%22%3E%3Crect fill=%22%23111%22 width=%22100%25%22 height=%22100%25%22/%3E%3C/svg%3E'">
         </div>
