@@ -4506,6 +4506,14 @@ document.addEventListener('DOMContentLoaded', () => {
         <input id="loc-equipment" value="${escHtml(loc.equipment)}" style="width:100%;background:#0a0a0a;border:1px solid #222;color:#f0ede8;padding:.6rem .8rem;border-radius:4px;font-family:'Heebo',sans-serif">
       </div>
       <div style="margin-bottom:1rem">
+        <label style="display:block;font-size:.8rem;color:#888;margin-bottom:.3rem">מתי לבוא (JSON)</label>
+        <textarea id="loc-when-to-visit" style="width:100%;background:#0a0a0a;border:1px solid #222;color:#f0ede8;padding:.6rem .8rem;border-radius:4px;min-height:70px;font-family:monospace;direction:ltr;font-size:.78rem">${escHtml(loc.when_to_visit || '')}</textarea>
+      </div>
+      <div style="margin-bottom:1rem">
+        <label style="display:block;font-size:.8rem;color:#888;margin-bottom:.3rem">ציוד מומלץ (JSON)</label>
+        <textarea id="loc-recommended-gear" style="width:100%;background:#0a0a0a;border:1px solid #222;color:#f0ede8;padding:.6rem .8rem;border-radius:4px;min-height:60px;font-family:monospace;direction:ltr;font-size:.78rem">${escHtml(loc.recommended_gear || '')}</textarea>
+      </div>
+      <div style="margin-bottom:1rem">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.3rem">
           <label style="font-size:.8rem;color:#888">הטיפ שלי</label>
           <button type="button" onclick="insertLocLink('loc-tip')" style="font-size:.72rem;color:var(--accent);background:none;border:none;cursor:pointer;padding:0">🔗 הוסף קישור</button>
@@ -4873,6 +4881,8 @@ document.addEventListener('DOMContentLoaded', () => {
         best_time: document.getElementById('loc-best-time').value,
         coordinates: document.getElementById('loc-coords').value,
         equipment: document.getElementById('loc-equipment').value,
+        when_to_visit: document.getElementById('loc-when-to-visit').value || null,
+        recommended_gear: document.getElementById('loc-recommended-gear').value || null,
         my_tip: document.getElementById('loc-tip').value,
         related_guides: Array.from(document.querySelectorAll('#location-editor input[type=checkbox][value]')).filter(c => c.checked).map(c => c.value),
         extra_links: getExtraLinks(),
@@ -4897,6 +4907,8 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('loc-description').value = updated.description || '';
         document.getElementById('loc-best-time').value = updated.best_time || '';
         document.getElementById('loc-equipment').value = updated.equipment || '';
+        document.getElementById('loc-when-to-visit').value = updated.when_to_visit || '';
+        document.getElementById('loc-recommended-gear').value = updated.recommended_gear || '';
         document.getElementById('loc-tip').value = updated.my_tip || '';
         document.getElementById('loc-coords').value = updated.coordinates || '';
         const guides = updated.related_guides || [];
