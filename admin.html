@@ -1675,9 +1675,10 @@ async function pinterestSyncCategory(per) {
     });
     const data = await r.json();
     if (!r.ok) throw new Error(data.error || 'שגיאה');
-    status.style.color = '#34d399';
-    const failNote = data.failed ? ` (${data.failed} נחסמו ע"י פינטרסט — נסה שוב מאוחר יותר)` : '';
-    status.innerHTML = `✅ פורסמו ${data.posted} תמונות ב-${data.categories?.length || 0} קטגוריות${failNote}.<br>נותרו ${data.remaining} לא מפורסמות.`;
+    status.style.color = data.posted > 0 ? '#34d399' : '#f87171';
+    const failNote = data.failed ? ` (${data.failed} נחסמו)` : '';
+    const errDetail = data.errors?.length ? `<br><small style="opacity:.7">${data.errors.slice(0,3).join(' | ')}</small>` : '';
+    status.innerHTML = `${data.posted > 0 ? '✅' : '❌'} פורסמו ${data.posted} תמונות ב-${data.categories?.length || 0} קטגוריות${failNote}.<br>נותרו ${data.remaining} לא מפורסמות.${errDetail}`;
     Photos.render && Photos.render();
   } catch(e) {
     status.style.color = '#f87171';
@@ -1699,9 +1700,10 @@ async function pinterestSyncBatch(limit) {
     });
     const data = await r.json();
     if (!r.ok) throw new Error(data.error || 'שגיאה');
-    status.style.color = '#34d399';
-    const batchNote = data.failed ? ` (${data.failed} נחסמו — נסה שוב מאוחר)` : '';
-    status.textContent = `✅ פורסמו ${data.posted}${batchNote}. נותרו ${data.remaining}.`;
+    status.style.color = data.posted > 0 ? '#34d399' : '#f87171';
+    const batchNote = data.failed ? ` (${data.failed} נחסמו)` : '';
+    const errDetail = data.errors?.length ? `<br><small style="opacity:.7">${data.errors.slice(0,3).join(' | ')}</small>` : '';
+    status.innerHTML = `${data.posted > 0 ? '✅' : '❌'} פורסמו ${data.posted}${batchNote}. נותרו ${data.remaining}.${errDetail}`;
     Photos.render && Photos.render();
   } catch(e) {
     status.style.color = '#f87171';
@@ -1723,9 +1725,10 @@ async function pinterestSyncEnBatch(limit) {
     });
     const data = await r.json();
     if (!r.ok) throw new Error(data.error || 'שגיאה');
-    status.style.color = '#34d399';
+    status.style.color = data.posted > 0 ? '#34d399' : '#f87171';
     const failNote = data.failed ? ` (${data.failed} נכשלו)` : '';
-    status.innerHTML = `✅ 🌍 פורסמו ${data.posted} תמונות באנגלית${failNote}.<br>נותרו ${data.remaining} ללא לוח אנגלי.`;
+    const errDetail = data.errors?.length ? `<br><small style="opacity:.7">${data.errors.slice(0,3).join(' | ')}</small>` : '';
+    status.innerHTML = `${data.posted > 0 ? '✅' : '❌'} 🌍 פורסמו ${data.posted} תמונות באנגלית${failNote}.<br>נותרו ${data.remaining} ללא לוח אנגלי.${errDetail}`;
     Photos.render && Photos.render();
   } catch(e) {
     status.style.color = '#f87171';
