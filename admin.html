@@ -1646,6 +1646,12 @@ async function loadPinterestStatus() {
   const data = await res.json();
   const connectBtn = $('pinterest-connect-btn');
   const resultEl = $('pinterest-result');
+  if (data.expired) {
+    const errEl = $('pinterest-error');
+    if (errEl) { errEl.textContent = 'הטוקן של Pinterest פג תוקף — יש לחבר מחדש'; errEl.hidden = false; }
+    if (connectBtn) { connectBtn.textContent = 'חבר מחדש'; connectBtn.style.background = '#E60023'; connectBtn.disabled = false; }
+    return;
+  }
   if (data.connected) {
     if (connectBtn) { connectBtn.textContent = 'מחובר ✓'; connectBtn.style.background = '#166534'; connectBtn.disabled = true; }
     const usernameEl = $('pinterest-username');

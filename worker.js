@@ -3933,6 +3933,7 @@ async function handlePinterestStatus(request, env) {
     env.DB.prepare("SELECT value FROM settings WHERE key='pinterest_username'").first(),
     fetch('https://api.pinterest.com/v5/boards?page_size=50', { headers: { Authorization: `Bearer ${token}` } }),
   ]);
+  if (!boardsRes.ok) return jsonRes({ connected: false, expired: true }, 200, request);
   const boardsData = await boardsRes.json();
   return jsonRes({ connected: true, username: usernameRow?.value || '', boards: boardsData.items || [] }, 200, request);
 }
