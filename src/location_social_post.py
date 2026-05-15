@@ -101,57 +101,56 @@ Page URL: {page_url}"""
 
     if platform == "instagram":
         system = (
-            "You write Instagram captions for an Israeli nature photographer named Amit. "
-            "Style: inspiring, grounded, mentions what makes it special for photography. "
-            "Write only in Hebrew."
+            "אתה עמית, צלם ישראלי, כותב בגוף ראשון על מקומות שצילמת בהם. "
+            "סגנון: אישי, מעניין, נגיש — כאילו אתה ממליץ לחבר על מקום שגילית. "
+            "כשיש מונח טכני — מסביר אותו בסוגריים. כתוב בעברית בלבד."
         )
         prompt = f"""{context}
 
-Write an Instagram caption (3-4 sentences). Mention the region and what time of year is best.
-End with 📍 {page_url} and one engaging question to the audience.
-Then on a new line add these hashtags exactly:
+כתוב כיתוב אינסטגרם בגוף ראשון (2-3 משפטים). ספר איפה הייתי, מה מיוחד במקום לצילום ומתי כדאי לבוא.
+סיים ב-📍 {page_url}
+ואז שורת hashtags:
 #צילום_נוף #landscape #israel #travelphotography #photospot #amitphotos #ישראל #טבע #ig_israel
 
-Output only the caption."""
+פלט רק את הכיתוב."""
 
     elif platform == "facebook":
         system = (
-            "You write Facebook posts for an Israeli photographer named Amit. "
-            "Style: warm, informative, personal — as if recommending the spot to friends. "
-            "Write only in Hebrew."
+            "אתה עמית, צלם ישראלי, כותב בגוף ראשון על מקומות שצילמת בהם לפייסבוק. "
+            "סגנון: חם, אישי, חינוכי — כאילו אתה מסביר לחבר למה המקום שווה ביקור. "
+            "כשיש מונח טכני — מסביר אותו בסוגריים. כתוב בעברית בלבד."
         )
         prompt = f"""{context}
 
-Write a Facebook post (3-4 sentences). Explain what makes this location special for photography.
-Include the URL: {page_url}
-End with: #צילום #ישראל #photography #nature
+כתוב פוסט פייסבוק בגוף ראשון (2-3 משפטים). ספר מה מיוחד במקום מבחינה צילומית, מתי כדאי להגיע ומה טיפ אחד שלמדתי שם.
+כלול את הקישור: {page_url}
+סיים עם: #צילום #ישראל #photography #nature
 
-Output only the post."""
+פלט רק את הפוסט."""
 
     elif platform == "threads":
         system = (
-            "You write short Threads posts for an Israeli photographer named Amit. "
-            "Style: concise, direct, confident — one sharp observation. "
-            "Write only in Hebrew."
+            "אתה עמית, צלם ישראלי, כותב בגוף ראשון על מקומות שצילמת בהם ל-Threads. "
+            "קצר מאוד — משפט-שניים. ישיר ותכליתי. כתוב בעברית בלבד."
         )
         prompt = f"""{context}
 
-Write a Threads post (2 short sentences max). One punchy observation about what makes this spot worth visiting.
-End with {page_url} and a short question.
-Hashtags (1 line): #צילום #ישראל
+כתוב פוסט Threads קצר בגוף ראשון (עד 2 משפטים). משהו ספציפי ומעניין שגיליתי במקום הזה.
+סיים ב-{page_url}
+ואז: #צילום #ישראל
 
-Output only the post."""
+פלט רק את הפוסט."""
 
     else:  # pinterest
         system = (
-            "You write Pinterest pin descriptions for travel and photography content. "
-            "Style: practical, inspiring, SEO-friendly. Write in English."
+            "You are Amit, an Israeli photographer, writing in first person about locations you've photographed. "
+            "Style: practical, personal, inspiring. Write in English."
         )
         prompt = f"""{context}
 
-Write a Pinterest description (2-3 sentences). Mention Israel, mention the photographic opportunity.
+Write a Pinterest description in first person (2-3 sentences). Share what makes this location special for photography and when I recommend visiting.
 End with: 'Full guide at amitphotos.com'
-Do not add hashtags.
+No hashtags. No questions.
 
 Output only the description."""
 

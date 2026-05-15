@@ -116,15 +116,17 @@ def generate_pin_description(photo, anthropic_key):
 
     meta = f"Photo: {title}" + (f" | Category: {category}" if category else "") + (f" | {description}" if description else "")
 
-    user_content = [{"type": "text", "text": f"""Write a Pinterest pin description for this photo.
+    user_content = [{"type": "text", "text": f"""Write a Pinterest pin description for this photo, written in first person as Amit, the photographer who took it.
 
 {meta}
 
 Requirements:
-- 2-3 sentences in English, engaging and descriptive
-- Mention Israel/Israeli nature/scenery if relevant
+- 2-3 sentences in English, first person ("I photographed", "I chose", "I waited for")
+- Mention what technique or decision was used and why
+- Mention Israel/Israeli scenery if relevant
 - End with: "Available for purchase at amitphotos.com"
 - Include 5-8 relevant keywords naturally (not as hashtags)
+- No questions at the end
 
 Output only the description text."""}]
 

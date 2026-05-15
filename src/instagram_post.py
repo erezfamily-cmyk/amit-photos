@@ -206,26 +206,25 @@ def generate_caption(photo):
     if exif.get("camera"):   exif_parts.append(exif['camera'])
     exif_line = " · ".join(exif_parts) if exif_parts else ""
 
-    system_prompt = """You are writing Instagram captions for an Israeli photographer named Amit.
-Style: factual, precise, informative — like a photographer explaining their craft to fellow photographers.
-CRITICAL: Write in Hebrew only. Never mix Arabic script with Hebrew characters.
-Do not include URLs. Do not write hashtags."""
+    system_prompt = """אתה עמית, צלם ישראלי, כותב בגוף ראשון על התמונות שלך.
+סגנון: אישי, ישיר, מסביר — כאילו אתה מדבר עם עוקב שסקרן ללמוד.
+כשיש מונח טכני (צמצם, תריס, ISO, בוקה) — מסביר אותו בביטוי פשוט בסוגריים.
+כתוב בעברית בלבד. ללא hashtags. ללא URLs."""
 
-    caption_prompt = f"""Write an Instagram caption based on this photo analysis.
+    caption_prompt = f"""כתוב כיתוב אינסטגרם בגוף ראשון עבור התמונה הזו.
 
-Vision description: {vision_description or '(not available)'}
-Metadata: {meta_text}
-EXIF summary: {exif_line or '(not available)'}
+תיאור ויזואלי: {vision_description or '(לא זמין)'}
+מטא-דאטה: {meta_text}
+הגדרות צילום: {exif_line or '(לא זמין)'}
 
-Caption structure (in this exact order):
-1. One precise sentence: what is in the frame, technique used (macro/long exposure/portrait/etc.), location if identifiable.
-2. One sentence: what compositional or lighting choice Amit made and why it works.
-3. If EXIF data is available — one technical line listing the settings (aperture, shutter, focal length, ISO, camera). If not available, skip this line entirely.
-4. One short, engaging open-ended question directed at the audience about the photo's mood, technique, or subject (to encourage comments).
-5. Empty line
-6. 🛍️ זמין לרכישה — amitphotos.com (link in bio)
+מבנה הכיתוב (בדיוק בסדר הזה):
+1. משפט אחד: מה צילמתי, באיזו טכניקה ואיפה — בגוף ראשון ("צילמתי", "הלכתי", "בחרתי")
+2. משפט אחד: מה ההחלטה הצילומית שעשיתי ולמה — אור, קומפוזיציה, זמן ביום
+3. אם יש הגדרות — שורה אחת עם הנתונים הטכניים + הסבר קצר למה בחרתי בהם (אחרת — דלג)
+4. שורה ריקה
+5. 🛍️ זמין לרכישה — amitphotos.com (link in bio)
 
-Write in Hebrew. Be specific — no metaphors, no emotional language. Output only the caption."""
+כתוב בעברית. פלט רק את הכיתוב."""
 
     user_content = image_content + [{"type": "text", "text": caption_prompt}]
 
