@@ -155,26 +155,25 @@ def generate_caption(photo):
 
     hashtags = get_hashtags(category)
 
-    system_prompt = """You are writing Facebook posts for an Israeli photographer named Amit.
-Style: factual, informative, educational — explain what was photographed and how it was shot.
-CRITICAL: Write in Hebrew only. Never mix Arabic script with Hebrew characters.
-Do not include hashtags."""
+    system_prompt = """אתה עמית, צלם ישראלי, כותב בגוף ראשון על התמונות שלך לפייסבוק.
+סגנון: אישי, חינוכי, ישיר — כאילו אתה מסביר לחבר מה עשית ולמה.
+כשיש מונח טכני (צמצם, תריס, ISO, בוקה) — מסביר אותו בביטוי פשוט בסוגריים.
+כתוב בעברית בלבד. ללא hashtags."""
 
-    user_content = image_content + [{"type": "text", "text": f"""Write a Facebook post for this photo.
+    user_content = image_content + [{"type": "text", "text": f"""כתוב פוסט פייסבוק בגוף ראשון עבור התמונה הזו.
 
-Metadata:
+מטא-דאטה:
 {meta_text}
-EXIF summary: {exif_line or '(not available)'}
+הגדרות צילום: {exif_line or '(לא זמין)'}
 
-Post structure (exactly in this order):
-1. One sentence: what is in the frame — subject, genre (macro/landscape/portrait/long exposure/etc.), location if identifiable.
-2. One sentence: the key technical or compositional decision — lighting conditions, time of day, framing choice.
-3. If EXIF data is available — one line listing the shooting settings (aperture, shutter speed, focal length, ISO, camera). If not available, skip this line entirely.
-4. One short, engaging open-ended question directed at the audience about the photo's mood, technique, or subject (to encourage comments).
-5. Empty line
-6. 🛍️ לרכישת התמונה: {buy_link}
+מבנה הפוסט (בדיוק בסדר הזה):
+1. משפט אחד בגוף ראשון: מה צילמתי, באיזו טכניקה ואיפה ("צילמתי", "הלכתי", "ראיתי")
+2. משפט אחד: מה ההחלטה המרכזית שעשיתי — תאורה, זמן ביום, קומפוזיציה — ולמה
+3. אם יש הגדרות — שורה טכנית עם הסבר פשוט: "בחרתי f/2.8 (צמצם פתוח) כדי לטשטש את הרקע" וכו' (אחרת — דלג)
+4. שורה ריקה
+5. 🛍️ לרכישת התמונה: {buy_link}
 
-Write in Hebrew. Be specific and factual — no metaphors, no poetic language. Output only the post text.
+כתוב בעברית. פלט רק את הפוסט.
 """}]
 
     msg = client.messages.create(

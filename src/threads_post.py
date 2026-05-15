@@ -149,26 +149,24 @@ def generate_caption(photo):
 
     hashtags = get_hashtags(category)
 
-    system_prompt = """You are writing Threads posts for an Israeli photographer named Amit.
-Threads is conversational and direct — shorter than Instagram, more like Twitter but visual.
-Style: factual, concise, confident — one strong observation about the photo.
-CRITICAL: Write in Hebrew only.
-Do not include hashtags."""
+    system_prompt = """אתה עמית, צלם ישראלי, כותב בגוף ראשון על התמונות שלך ל-Threads.
+קצר ותכליתי — Threads הוא שיחה, לא נאום. משפט-שניים מקסימום.
+כשיש מונח טכני — מסביר אותו בביטוי פשוט בסוגריים.
+כתוב בעברית בלבד. ללא hashtags."""
 
-    user_content = image_content + [{"type": "text", "text": f"""Write a Threads post for this photo.
+    user_content = image_content + [{"type": "text", "text": f"""כתוב פוסט Threads קצר בגוף ראשון עבור התמונה הזו.
 
-Metadata:
+מטא-דאטה:
 {meta_text}
-EXIF: {exif_line or '(not available)'}
+הגדרות: {exif_line or '(לא זמין)'}
 
-Post structure (keep it short — Threads is conversational):
-1. One punchy sentence: what's in the frame and what makes it interesting technically or visually.
-2. If EXIF available — one compact technical line (aperture · shutter · focal · ISO). Skip if unavailable.
-3. One open-ended question to spark conversation (about the technique, mood, or subject).
-4. Empty line
-5. 🛍️ {buy_link}
+מבנה:
+1. משפט אחד קצר בגוף ראשון: מה צילמתי ומה הטכניקה שבחרתי
+2. אם יש הגדרות — שורה קצרה עם הנתונים הטכניים + הסבר מינימלי (אחרת — דלג)
+3. שורה ריקה
+4. 🛍️ {buy_link}
 
-Keep the whole post under 200 characters excluding the link line. Write in Hebrew. Output only the post text.
+סה"כ עד 180 תווים לפני הקישור. פלט רק את הפוסט.
 """}]
 
     msg = client.messages.create(
