@@ -4464,7 +4464,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
     const relGuides = loc.related_guides || [];
     ed.innerHTML = `
-      <button id="btn-back-locations" style="background:transparent;border:none;color:#888;cursor:pointer;margin-bottom:1.5rem;font-size:.85rem">הסר ×</button>
+      <button id="btn-back-locations" style="background:transparent;border:none;color:#888;cursor:pointer;margin-bottom:1.5rem;font-size:.85rem">← חזרה לרשימה</button>
       <div style="display:flex;gap:.75rem;flex-wrap:wrap;margin-bottom:1.5rem">
         <button id="btn-save-location" style="background:var(--accent);color:#0a0a0a;border:none;padding:.6rem 1.25rem;border-radius:4px;font-weight:700;cursor:pointer">שמור</button>
         <button id="btn-enrich-location" style="background:transparent;border:1px solid var(--accent);color:var(--accent);padding:.6rem 1.25rem;border-radius:4px;cursor:pointer">העשר מחדש מ-AI</button>
@@ -4893,7 +4893,13 @@ document.addEventListener('DOMContentLoaded', () => {
         headers: { ...authHeaders(), 'Content-Type': 'application/json' },
         body: JSON.stringify(body)
       });
-      if (res.ok) { alert('נשמר!'); } else { alert('שגיאה בשמירה'); }
+      if (res.ok) {
+        document.getElementById('location-editor').style.display = 'none';
+        document.getElementById('locations-list').style.display = 'block';
+        document.getElementById('btn-new-location').style.display = '';
+        locSlug = null;
+        await loadLocations();
+      } else { alert('שגיאה בשמירה'); }
     });
     document.getElementById('btn-enrich-location').addEventListener('click', async () => {
       const btn = document.getElementById('btn-enrich-location');
