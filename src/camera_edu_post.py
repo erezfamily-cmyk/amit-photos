@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Camera Education Promo Post
-מפרסם פוסט קידומי לפייסבוק ולאינסטגרם שמוביל לדפי הלימוד של אמית.
+מפרסם פוסט קידומי לכל 4 רשתות חברתיות שמוביל לדפי הלימוד של אמית.
 משתמש בתמונה אמיתית מהגלריה + כיתוב שמסביר טכניקה ומזמין ללמוד.
 """
 
@@ -10,6 +10,7 @@ import os
 import sys
 import random
 import base64
+import time
 import requests
 import anthropic
 from pathlib import Path
@@ -18,13 +19,20 @@ from pathlib import Path
 POSTED_FILE = Path(__file__).parent.parent / "data" / "camera_edu_posted.json"
 SITE_URL    = "https://amitphotos.com"
 GRAPH_API   = "https://graph.facebook.com/v21.0"
+THREADS_API = "https://graph.threads.net/v1.0"
+PINTEREST_API = "https://api.pinterest.com/v5"
 
 PAGE_ID           = os.environ.get("FACEBOOK_PAGE_ID", "")
 FB_TOKEN          = os.environ.get("FACEBOOK_PAGE_TOKEN", "")
 IG_USER_ID        = os.environ.get("INSTAGRAM_USER_ID", "")
 IG_TOKEN          = os.environ.get("INSTAGRAM_PAGE_TOKEN", "")
+THREADS_USER_ID   = os.environ.get("THREADS_USER_ID", "")
+THREADS_TOKEN     = os.environ.get("THREADS_ACCESS_TOKEN", "")
+PINTEREST_TOKEN   = os.environ.get("PINTEREST_ACCESS_TOKEN", "")
 ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "").strip()
 ADMIN_TOKEN       = os.environ.get("ADMIN_TOKEN", "")
+
+PINTEREST_BOARD = "Photography Education & Techniques"
 
 # ===== דפי הלימוד =====
 EDUCATION_PAGES = [
@@ -118,6 +126,60 @@ EDUCATION_PAGES = [
         "angle": "כפתורי מצלמה — מ-Auto ל-Manual",
         "hook": "כפתור ה-EV± הוא הכלי הכי חשוב על המצלמה שרוב הצלמים לא משתמשים בו מספיק.",
     },
+    {
+        "key": "macro",
+        "url": f"{SITE_URL}/camera/macro/",
+        "title": "צילום מאקרו",
+        "emoji": "🔬",
+        "best_categories": ["טבע"],
+        "angle": "צילום מאקרו — יחס הגדלה, עומק שדה דק וציוד",
+        "hook": "בצילום מאקרו עומק השדה יכול להיות פחות ממילימטר — ולזה צריך תכנון מדויק.",
+    },
+    {
+        "key": "sports",
+        "url": f"{SITE_URL}/camera/sports/",
+        "title": "צילום ספורט ותנועה",
+        "emoji": "⚡",
+        "best_categories": ["אירועים"],
+        "angle": "צילום ספורט ותנועה — תריס מהיר, AI tracking ו-burst",
+        "hook": "אחיזת הרגע הנכון לא עניין של מזל — זה תכנון של זמן תריס ו-tracking מראש.",
+    },
+    {
+        "key": "dynamic-range",
+        "url": f"{SITE_URL}/camera/dynamic-range/",
+        "title": "טווח דינמי",
+        "emoji": "🌗",
+        "best_categories": ["טבע", "עירוני"],
+        "angle": "טווח דינמי — מה רואה החיישן מול מה רואה העין",
+        "hook": "למה שמיים בהירים עם נוף חשוך? כי לחיישן טווח דינמי מוגבל — והפתרון לא תמיד HDR.",
+    },
+    {
+        "key": "histogram",
+        "url": f"{SITE_URL}/camera/histogram/",
+        "title": "היסטוגרמה",
+        "emoji": "📊",
+        "best_categories": ["טבע", "עירוני", "פורטרט"],
+        "angle": "היסטוגרמה — לקרוא חשיפה בלי להסתמך על מסך",
+        "hook": "המסך של המצלמה משקר — ההיסטוגרמה לא. צלם שיודע לקרוא אותה חשוף נכון בכל תאורה.",
+    },
+    {
+        "key": "depth-of-field",
+        "url": f"{SITE_URL}/camera/depth-of-field/",
+        "title": "עומק שדה",
+        "emoji": "🎯",
+        "best_categories": ["פורטרט", "טבע"],
+        "angle": "עומק שדה ובוקה — חישוב DOF וסימולציה ויזואלית",
+        "hook": "עומק השדה הוא לא אפקט עריכה — הוא נוצר בשניה שבה לוחצים על שחרור.",
+    },
+    {
+        "key": "white-balance",
+        "url": f"{SITE_URL}/camera/white-balance/",
+        "title": "איזון לבן",
+        "emoji": "⬜",
+        "best_categories": ["פורטרט", "עירוני"],
+        "angle": "איזון לבן — טמפרטורת צבע, Kelvin וצבעי עור",
+        "hook": "האם העור בפורטרט שלך נראה צהוב? זה לא שאלה של עריכה — זה איזון לבן שגוי בשידור חי.",
+    },
 ]
 
 # ===== Hashtag pools =====
@@ -131,6 +193,12 @@ EDU_HASHTAGS_IG = [
     "#photography #learnphotography #photographytips #cameraschool #ישראל #צילום #למד_לצלם #photooftheday",
     "#photographylessons #cameratips #learnphotography #photographylovers #צלם #טיפצילום #israel_photography",
     "#photographyeducation #photographylife #camerawork #צילום #ישראל #photographytechniques #photoart",
+]
+
+EDU_HASHTAGS_THREADS = [
+    "#צילום #photography #cameratips",
+    "#learnphotography #צלם #ישראל",
+    "#photographytips #צילום_ישראלי",
 ]
 
 
@@ -207,7 +275,7 @@ def fetch_image_as_base64(url, max_bytes=3_750_000):
 
 
 def generate_posts(photo, page):
-    """מייצר פוסט לפייסבוק ופוסט לאינסטגרם בקריאת API אחת."""
+    """מייצר פוסטים לכל 4 הפלטפורמות."""
     client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
 
     thumbnail_url = photo.get("thumbnail") or photo.get("url")
@@ -232,9 +300,9 @@ def generate_posts(photo, page):
 
     system_prompt = """אתה כותב פוסטים לרשתות חברתיות בשביל צלם ישראלי בשם אמית.
 סגנון: מקצועי, חינוכי, תכליתי — כמו צלם שמסביר את הרמה שלו לצלמים אחרים.
-כתוב בעברית בלבד."""
+כתוב בעברית בלבד (חוץ מגרסת Pinterest שבאנגלית)."""
 
-    prompt = f"""כתוב שני גרסאות של פוסט קידומי שמשלב את התמונה עם קידום הדף הלימודי.
+    prompt = f"""כתוב ארבע גרסאות של פוסט קידומי שמשלב את התמונה עם קידום הדף הלימודי.
 
 נושא הדף: {page['angle']}
 Hook: {page['hook']}
@@ -243,41 +311,60 @@ EXIF התמונה: {exif_line or '(לא זמין)'}
 כותרת התמונה: {photo.get('title', '')}
 
 **גרסה 1 — פייסבוק:**
-מבנה:
-1. משפט פתיחה (hook) שמקשר בין התמונה לנושא הלימודי — מה רואים בפריים ואיזה עיקרון צילומי הוא מדגים
-2. אם יש EXIF — שורת הגדרות טכניות קצרה (אחרת — דלג)
-3. 2-3 שורות שמסבירות בקצרה מה ילמד מי שיכנס לדף (תיזר — לא כל הסיפור)
+1. משפט פתיחה (hook) שמקשר בין התמונה לנושא הלימודי
+2. אם יש EXIF — שורת הגדרות טכניות (אחרת דלג)
+3. 2-3 שורות שמסבירות בקצרה מה ילמד מי שיכנס לדף
 4. שורה ריקה
 5. 👉 ללמוד עוד: {page['url']}
 
 **גרסה 2 — אינסטגרם:**
-מבנה:
-1. שורת hook קצרה ומושכת שמקשרת בין התמונה לנושא
-2. אם יש EXIF — שורת הגדרות טכניות (אחרת — דלג)
+1. שורת hook קצרה ומושכת
+2. אם יש EXIF — שורת הגדרות טכניות (אחרת דלג)
 3. 1-2 שורות קצרות עם teaser של מה לומדים בדף
 4. שורה ריקה
 5. 👉 קישור בביו ← {page['title']} {page['emoji']}
 
-פרד בין הגרסאות עם: ---SEPARATOR---
-כתוב רק את הטקסט של הפוסטים, ללא כותרות כמו "גרסה 1" וכו'."""
+**גרסה 3 — Threads:**
+1. משפט אחד חד ומדויק שמקשר בין התמונה לטיפ הטכני
+2. שאלה קצרה אחת לקהל
+3. שורה ריקה
+4. {page['url']}
+(קצר מאוד — מקסימום 150 תווים עד לפני הקישור)
+
+**גרסה 4 — Pinterest (באנגלית):**
+2-3 משפטים שמסבירים מה לומדים בדף. מדגישים את הערך המעשי.
+מסיים ב: "Full guide at amitphotos.com"
+(ללא hashtags)
+
+הפרד בין הגרסאות עם: ---SEP---
+כתוב רק את הטקסט, ללא כותרות כמו "גרסה 1" וכו'."""
 
     user_content = image_content + [{"type": "text", "text": prompt}]
     msg = client.messages.create(
         model="claude-sonnet-4-6",
-        max_tokens=800,
+        max_tokens=1200,
         system=system_prompt,
         messages=[{"role": "user", "content": user_content}],
     )
 
     text = msg.content[0].text.strip()
-    parts = text.split("---SEPARATOR---")
-    fb_text  = parts[0].strip() if len(parts) >= 1 else text
-    ig_text  = parts[1].strip() if len(parts) >= 2 else fb_text
+    parts = [p.strip() for p in text.split("---SEP---")]
 
-    fb_hashtags = random.choice(EDU_HASHTAGS_FB)
-    ig_hashtags = random.choice(EDU_HASHTAGS_IG)
+    fb_text        = parts[0] if len(parts) > 0 else text
+    ig_text        = parts[1] if len(parts) > 1 else fb_text
+    threads_text   = parts[2] if len(parts) > 2 else ig_text[:200]
+    pinterest_text = parts[3] if len(parts) > 3 else ""
 
-    return f"{fb_text}\n\n{fb_hashtags}", f"{ig_text}\n\n{ig_hashtags}"
+    fb_hashtags      = random.choice(EDU_HASHTAGS_FB)
+    ig_hashtags      = random.choice(EDU_HASHTAGS_IG)
+    threads_hashtags = random.choice(EDU_HASHTAGS_THREADS)
+
+    return (
+        f"{fb_text}\n\n{fb_hashtags}",
+        f"{ig_text}\n\n{ig_hashtags}",
+        f"{threads_text}\n\n{threads_hashtags}",
+        pinterest_text,
+    )
 
 
 def get_public_image_url(photo):
@@ -292,7 +379,6 @@ def get_public_image_url(photo):
     resp.raise_for_status()
     img_bytes = resp.content
 
-    # Try upload hosts
     for name, fn in [("r2", _try_r2), ("litterbox", _try_litterbox), ("catbox", _try_catbox), ("0x0", _try_0x0)]:
         try:
             url = fn(img_bytes)
@@ -308,12 +394,10 @@ def get_public_image_url(photo):
 def _try_r2(img_bytes):
     if not ADMIN_TOKEN:
         return None
-    r = requests.post(
-        f"{SITE_URL}/api/admin/upload-story",
+    r = requests.post(f"{SITE_URL}/api/admin/upload-story",
         data=img_bytes,
         headers={"Authorization": f"Bearer {ADMIN_TOKEN}", "Content-Type": "image/jpeg"},
-        timeout=60,
-    )
+        timeout=60)
     r.raise_for_status()
     url = r.json().get("url", "")
     return url if url.startswith("http") else None
@@ -345,41 +429,23 @@ def _try_0x0(img_bytes):
     return url if url.startswith("http") else None
 
 
-def post_to_facebook(photo, message):
-    source_url = photo.get("thumbnail") or photo.get("url")
-    if source_url and source_url.startswith("/"):
-        source_url = f"{SITE_URL}{source_url}"
-
-    resp = requests.get(source_url, timeout=30)
-    resp.raise_for_status()
-    img_bytes = resp.content
-
-    image_url = None
-    for name, fn in [("r2", _try_r2), ("litterbox", _try_litterbox), ("catbox", _try_catbox), ("0x0", _try_0x0)]:
-        try:
-            image_url = fn(img_bytes)
-            if image_url:
-                print(f"⬆️  FB — הועלה ל-{name}")
-                break
-        except Exception as e:
-            print(f"⚠️  FB upload {name} נכשל ({e})")
-
-    if not image_url:
-        image_url = source_url  # last resort: original URL
-
+def post_to_facebook(image_url, message):
+    if not PAGE_ID or not FB_TOKEN:
+        print("⚠️  Facebook credentials חסרים — דלג")
+        return None
     resp = requests.post(f"{GRAPH_API}/{PAGE_ID}/photos", data={
-        "url": image_url, "message": message, "access_token": FB_TOKEN,
+        "url": image_url, "caption": message, "access_token": FB_TOKEN,
     }, timeout=30)
     if not resp.ok:
         print(f"❌ Facebook API: {resp.status_code} — {resp.text}")
         return None
-    result = resp.json()
-    return result.get("id")
+    return resp.json().get("id")
 
 
-def post_to_instagram(photo, caption):
-    import time
-    image_url = get_public_image_url(photo)
+def post_to_instagram(image_url, caption):
+    if not IG_USER_ID or not IG_TOKEN:
+        print("⚠️  Instagram credentials חסרים — דלג")
+        return None
 
     container_resp = requests.post(f"{GRAPH_API}/{IG_USER_ID}/media", data={
         "image_url": image_url, "caption": caption, "access_token": IG_TOKEN,
@@ -410,21 +476,102 @@ def post_to_instagram(photo, caption):
     publish_resp = requests.post(f"{GRAPH_API}/{IG_USER_ID}/media_publish", data={
         "creation_id": creation_id, "access_token": IG_TOKEN,
     }, timeout=30)
-    publish_resp.raise_for_status()
-    result = publish_resp.json()
-    return result.get("id")
+    if not publish_resp.ok:
+        print(f"❌ Instagram publish: {publish_resp.status_code} — {publish_resp.text}")
+        return None
+    return publish_resp.json().get("id")
+
+
+def post_to_threads(image_url, text):
+    if not THREADS_USER_ID or not THREADS_TOKEN:
+        print("⚠️  Threads credentials חסרים — דלג")
+        return None
+
+    container = requests.post(f"{THREADS_API}/{THREADS_USER_ID}/threads",
+        params={"access_token": THREADS_TOKEN},
+        json={"media_type": "IMAGE", "image_url": image_url, "text": text},
+        timeout=30)
+    if not container.ok:
+        print(f"❌ Threads container: {container.status_code} — {container.text}")
+        return None
+    container_id = container.json().get("id")
+    if not container_id:
+        return None
+    print(f"📦 Threads container: {container_id}")
+
+    for _ in range(12):
+        time.sleep(5)
+        r = requests.get(f"{THREADS_API}/{container_id}",
+            params={"fields": "status,error_message", "access_token": THREADS_TOKEN},
+            timeout=30).json()
+        status = r.get("status", "")
+        print(f"⏳ Threads: {status}")
+        if status == "FINISHED":
+            break
+        if status == "ERROR":
+            print(f"❌ Threads error: {r.get('error_message', '')}")
+            return None
+
+    publish = requests.post(f"{THREADS_API}/{THREADS_USER_ID}/threads_publish",
+        params={"access_token": THREADS_TOKEN},
+        json={"creation_id": container_id}, timeout=30)
+    if not publish.ok:
+        print(f"❌ Threads publish: {publish.status_code} — {publish.text}")
+        return None
+    return publish.json().get("id")
+
+
+def _get_or_create_pinterest_board(token, board_name):
+    data = requests.get(f"{PINTEREST_API}/boards",
+        headers={"Authorization": f"Bearer {token}"},
+        params={"page_size": 250}, timeout=15).json()
+    for b in data.get("items", []):
+        if b["name"] == board_name:
+            print(f"📋 לוח Pinterest קיים: {board_name}")
+            return b["id"]
+    b = requests.post(f"{PINTEREST_API}/boards",
+        headers={"Authorization": f"Bearer {token}", "Content-Type": "application/json"},
+        json={"name": board_name, "description": f"Photography tutorials and techniques by Amit | {SITE_URL}/camera/", "privacy": "PUBLIC"},
+        timeout=15)
+    b.raise_for_status()
+    board_id = b.json().get("id")
+    print(f"✅ לוח Pinterest חדש: {board_name} ({board_id})")
+    time.sleep(1)
+    return board_id
+
+
+def post_to_pinterest(image_url, description, page):
+    if not PINTEREST_TOKEN:
+        print("⚠️  Pinterest token חסר — דלג")
+        return None
+    try:
+        board_id = _get_or_create_pinterest_board(PINTEREST_TOKEN, PINTEREST_BOARD)
+    except Exception as e:
+        print(f"❌ Pinterest board error: {e}")
+        return None
+
+    pin = requests.post(f"{PINTEREST_API}/pins",
+        headers={"Authorization": f"Bearer {PINTEREST_TOKEN}", "Content-Type": "application/json"},
+        json={
+            "board_id": board_id,
+            "title": f"{page['title']} — Photography Guide",
+            "description": description or f"Learn about {page['angle']} at amitphotos.com",
+            "link": page["url"],
+            "media_source": {"source_type": "image_url", "url": image_url},
+        }, timeout=20)
+    if not pin.ok:
+        print(f"❌ Pinterest pin: {pin.status_code} — {pin.text}")
+        return None
+    pin_id = pin.json().get("id")
+    time.sleep(3)
+    return pin_id
 
 
 def main():
-    missing = []
-    if not PAGE_ID or not FB_TOKEN:
-        missing.append("FACEBOOK_PAGE_ID / FACEBOOK_PAGE_TOKEN")
-    if not IG_USER_ID or not IG_TOKEN:
-        missing.append("INSTAGRAM_USER_ID / INSTAGRAM_PAGE_TOKEN")
+    sys.stdout.reconfigure(encoding="utf-8")
+
     if not ANTHROPIC_API_KEY:
-        missing.append("ANTHROPIC_API_KEY")
-    if missing:
-        print(f"❌ חסרים: {', '.join(missing)}")
+        print("❌ חסר ANTHROPIC_API_KEY")
         sys.exit(1)
 
     photos      = load_photos()
@@ -434,41 +581,43 @@ def main():
     page  = pick_page(posted_keys)
     photo = pick_photo_for_page(photos, page)
 
-    print(f"📚 דף לימוד נבחר: {page['title']} ({page['url']})")
-    print(f"📸 תמונה נבחרה: {photo.get('title', photo['id'])}")
+    print(f"📚 דף לימוד: {page['title']} ({page['url']})")
+    print(f"📸 תמונה: {photo.get('title', photo['id'])}")
 
     print("✍️  מייצר פוסטים עם Claude Vision...")
-    fb_caption, ig_caption = generate_posts(photo, page)
+    fb_caption, ig_caption, threads_caption, pinterest_desc = generate_posts(photo, page)
+    print(f"\nFacebook preview: {fb_caption[:120]}...\n")
 
-    print(f"\n--- פייסבוק ---\n{fb_caption}\n")
-    print(f"--- אינסטגרם ---\n{ig_caption}\n---------------\n")
+    image_url = get_public_image_url(photo)
 
-    fb_id = None
-    ig_id = None
+    results = {}
 
-    if PAGE_ID and FB_TOKEN:
-        print("📤 מפרסם לפייסבוק...")
-        fb_id = post_to_facebook(photo, fb_caption)
-        if fb_id:
-            print(f"✅ פייסבוק: {fb_id}")
-        else:
-            print("❌ פרסום לפייסבוק נכשל")
+    print("📤 מפרסם לפייסבוק...")
+    results["facebook"] = post_to_facebook(image_url, fb_caption)
+    print(f"{'✅' if results['facebook'] else '❌'} Facebook: {results['facebook']}")
 
-    if IG_USER_ID and IG_TOKEN:
-        print("📤 מפרסם לאינסטגרם...")
-        ig_id = post_to_instagram(photo, ig_caption)
-        if ig_id:
-            print(f"✅ אינסטגרם: {ig_id}")
-        else:
-            print("❌ פרסום לאינסטגרם נכשל")
+    print("📤 מפרסם לאינסטגרם...")
+    results["instagram"] = post_to_instagram(image_url, ig_caption)
+    print(f"{'✅' if results['instagram'] else '❌'} Instagram: {results['instagram']}")
 
-    if fb_id or ig_id:
+    print("📤 מפרסם ל-Threads...")
+    results["threads"] = post_to_threads(image_url, threads_caption)
+    print(f"{'✅' if results['threads'] else '❌'} Threads: {results['threads']}")
+
+    print("📤 מפרסם ל-Pinterest...")
+    results["pinterest"] = post_to_pinterest(image_url, pinterest_desc, page)
+    print(f"{'✅' if results['pinterest'] else '❌'} Pinterest: {results['pinterest']}")
+
+    if any(results.values()):
         posted_data["posted_keys"] = list(posted_keys | {page["key"]})
         save_posted(posted_data)
         print(f"💾 עודכן data/camera_edu_posted.json")
     else:
-        print("❌ שני הפרסומים נכשלו — לא מעדכן מעקב")
+        print("❌ כל הפרסומים נכשלו — לא מעדכן מעקב")
         sys.exit(1)
+
+    success = sum(1 for v in results.values() if v)
+    print(f"\n✅ הסתיים — {success}/4 רשתות פורסמו בהצלחה")
 
 
 if __name__ == "__main__":
