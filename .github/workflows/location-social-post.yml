@@ -1,0 +1,57 @@
+name: פרסום מקום לצילום לרשתות חברתיות
+
+on:
+  # כל 3 ימים ב-17:00 UTC = 20:00 ישראל
+  schedule:
+    - cron: '0 17 */3 * *'
+  workflow_dispatch:
+
+jobs:
+  location-social-post:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Python setup
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: התקנת חבילות
+        run: pip install requests anthropic pillow
+
+      - name: פרסום מקום לרשתות חברתיות
+        env:
+          INSTAGRAM_USER_ID: ${{ secrets.INSTAGRAM_USER_ID }}
+          INSTAGRAM_PAGE_TOKEN: ${{ secrets.INSTAGRAM_PAGE_TOKEN }}
+          FACEBOOK_PAGE_ID: ${{ secrets.FACEBOOK_PAGE_ID }}
+          FACEBOOK_PAGE_TOKEN: ${{ secrets.FACEBOOK_PAGE_TOKEN }}
+          PINTEREST_ACCESS_TOKEN: ${{ secrets.PINTEREST_ACCESS_TOKEN }}
+          THREADS_USER_ID: ${{ secrets.THREADS_USER_ID }}
+          THREADS_ACCESS_TOKEN: ${{ secrets.THREADS_ACCESS_TOKEN }}
+          ANTHROPIC_API_KEY: ${{ secrets.AMIT_PHOTO_AGENT }}
+          ADMIN_TOKEN: ${{ secrets.ADMIN_PASSWORD }}
+        run: |
+          for attempt in 1 2 3; do
+            python src/location_social_post.py && break
+            if [ $attempt -lt 3 ]; then
+              echo "ניסיון $attempt נכשל — ממתין 60 שניות..."
+              sleep 60
+            else
+              echo "כל הניסיונות נכשלו"
+              exit 1
+            fi
+          done
+
+      - name: עדכון מעקב פרסומים
+        run: |
+          git config user.name "Location Social Agent"
+          git config user.email "agent@amitphotos.com"
+          git add data/location_social_posted.json
+          git diff --staged --quiet || (git commit -m "🤖 עדכון location_social_posted.json" && git pull --rebase origin main && git push origin main)
