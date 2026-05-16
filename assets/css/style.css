@@ -449,6 +449,30 @@ nav.scrolled { border-bottom-color: rgba(200, 169, 110, 0.3); }
   box-shadow: 0 4px 24px rgba(0,0,0,0.45);
 }
 
+/* ===== FEATURED CTA ===== */
+.featured-cta-wrap {
+  display: flex;
+  justify-content: center;
+  padding: 1.25rem 0 0.5rem;
+}
+.featured-cta-btn {
+  background: transparent;
+  border: 1px solid rgba(200, 169, 110, 0.5);
+  color: var(--accent, #c8a96e);
+  padding: 0.6rem 1.75rem;
+  border-radius: 2px;
+  font-family: var(--font);
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+.featured-cta-btn:hover {
+  background: rgba(200, 169, 110, 0.08);
+  border-color: var(--accent, #c8a96e);
+}
+.filter-btn-best { border-color: rgba(200, 169, 110, 0.35); }
+
 .filter-btn {
   background: transparent;
   border: 1px solid var(--border);

@@ -461,6 +461,25 @@ async function initFeatured() {
       if (idx !== -1) openLightbox(idx);
     });
   });
+
+  const bestCount = allPhotos.filter(p => p.sort_order != null).length;
+  if (bestCount > 0) {
+    const cta = document.createElement('div');
+    cta.className = 'featured-cta-wrap';
+    cta.innerHTML = `<button class="featured-cta-btn" id="featured-cta-btn">${t('featured.cta')} <span class="filter-count">${bestCount}</span></button>`;
+    grid.parentElement.appendChild(cta);
+    cta.querySelector('#featured-cta-btn').addEventListener('click', () => {
+      document.getElementById('gallery')?.scrollIntoView({ behavior: 'smooth' });
+      setTimeout(() => {
+        const bestBtn = document.querySelector('.filter-btn-best');
+        if (bestBtn) {
+          document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+          bestBtn.classList.add('active');
+          applyFilters();
+        }
+      }, 600);
+    });
+  }
 }
 
 function hashStr(s) {
@@ -493,6 +512,8 @@ function applyFilters() {
     let matchCat;
     if (cat === 'all') {
       matchCat = true;
+    } else if (cat === 'best') {
+      matchCat = p.sort_order != null;
     } else if (cat === 'new') {
       matchCat = isNew(p);
     } else if (cat === 'sale') {
@@ -532,9 +553,11 @@ function initFilters() {
 
   const newCount = allPhotos.filter(isNew).length;
   const saleCount = allPhotos.filter(isOnSale).length;
+  const bestCount = allPhotos.filter(p => p.sort_order != null).length;
   const newBadgeBtn = newCount > 0 ? `<button class="filter-btn filter-btn-new" data-cat="new">✦ ${t('gallery.filter.new')} <span class="filter-count">${newCount}</span></button>` : '';
   const saleBadgeBtn = saleCount > 0 ? `<button class="filter-btn filter-btn-sale" data-cat="sale">🏷 ${t('gallery.filter.sale')} <span class="filter-count">${saleCount}</span></button>` : '';
-  let html = `<button class="filter-btn active" data-cat="all">${t('gallery.filter.all')} <span class="filter-count">${allPhotos.length}</span></button>${newBadgeBtn}${saleBadgeBtn}`;
+  const bestBadgeBtn = bestCount > 0 ? `<button class="filter-btn filter-btn-best" data-cat="best">⭐ ${t('gallery.filter.best')} <span class="filter-count">${bestCount}</span></button>` : '';
+  let html = `<button class="filter-btn active" data-cat="all">${t('gallery.filter.all')} <span class="filter-count">${allPhotos.length}</span></button>${bestBadgeBtn}${newBadgeBtn}${saleBadgeBtn}`;
 
   const esc = s => s.replace(/"/g, '&quot;');
 
