@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html dir="rtl" lang="he">
+<html lang="he" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -198,22 +198,22 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
 </head>
 <body>
 
-<div class="breadcrumb"><a href="/camera/">למד לצלם</a> ← סוגי מצלמות</div>
+<div class="breadcrumb"><a href="/camera/" data-he="למד לצלם" data-en="Photography School">למד לצלם</a> ← <span data-he="סוגי מצלמות" data-en="Camera Types">סוגי מצלמות</span></div>
 
 <div class="hero">
-  <div class="hero-badge">📷 בית ספר לצילום</div>
-  <h1>📷 מצלמות וחיישנים</h1>
-  <p>Full Frame, APS-C, Mirrorless, DSLR, סמארטפון — מה ההבדל באמת, ואיך גודל החיישן משנה כל תמונה. עם דמו אינטראקטיבי.</p>
+  <div class="hero-badge" data-he="📷 בית ספר לצילום" data-en="📷 Photography School">📷 בית ספר לצילום</div>
+  <h1 data-he="📷 מצלמות וחיישנים" data-en="📷 Cameras & Sensors">📷 מצלמות וחיישנים</h1>
+  <p data-he="Full Frame, APS-C, Mirrorless, DSLR, סמארטפון — מה ההבדל באמת, ואיך גודל החיישן משנה כל תמונה. עם דמו אינטראקטיבי." data-en="Full Frame, APS-C, Mirrorless, DSLR, Smartphone — what's the real difference, and how sensor size changes every shot. With an interactive demo.">Full Frame, APS-C, Mirrorless, DSLR, סמארטפון — מה ההבדל באמת, ואיך גודל החיישן משנה כל תמונה. עם דמו אינטראקטיבי.</p>
 </div>
 
 <div class="article">
 
   <div class="section">
-    <div class="section-label">אינפוגרפיקה</div>
+    <div class="section-label" data-he="אינפוגרפיקה" data-en="Infographic">אינפוגרפיקה</div>
     <h2>Full Frame vs Crop Sensor</h2>
     <div class="infographic-wrap">
       <img src="/assets/infographics/sensor-infographic.jpg" alt="Full Frame vs Crop Sensor — אינפוגרפיקה" loading="lazy">
-      <div class="infographic-caption">גלול למטה לדמו האינטראקטיבי שמראה בדיוק מה כל חיישן "רואה"</div>
+      <div class="infographic-caption" data-he="גלול למטה לדמו האינטראקטיבי שמראה בדיוק מה כל חיישן &quot;רואה&quot;" data-en="Scroll down for the interactive demo showing exactly what each sensor &quot;sees&quot;">גלול למטה לדמו האינטראקטיבי שמראה בדיוק מה כל חיישן "רואה"</div>
     </div>
 
   </div>
@@ -221,12 +221,12 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
   <hr class="divider">
 
   <div class="section">
-    <div class="section-label">דמו אינטראקטיבי</div>
-    <h2>מה החיישן שלך רואה?</h2>
-    <p>לחץ על סוג החיישן — המסגרת מראה בדיוק איזה חלק מהפריים כל חיישן "כורך". שים לב כמה מידע נחתך בסמארטפון לעומת Full Frame.</p>
+    <div class="section-label" data-he="דמו אינטראקטיבי" data-en="Interactive Demo">דמו אינטראקטיבי</div>
+    <h2 data-he="מה החיישן שלך רואה?" data-en="What Does Your Sensor See?">מה החיישן שלך רואה?</h2>
+    <p data-he="לחץ על סוג החיישן — המסגרת מראה בדיוק איזה חלק מהפריים כל חיישן &quot;כורך&quot;. שים לב כמה מידע נחתך בסמארטפון לעומת Full Frame." data-en="Click a sensor type — the frame shows exactly which part of the scene each sensor &quot;crops&quot;. Notice how much is cut off in a smartphone vs Full Frame.">לחץ על סוג החיישן — המסגרת מראה בדיוק איזה חלק מהפריים כל חיישן "כורך". שים לב כמה מידע נחתך בסמארטפון לעומת Full Frame.</p>
 
     <div class="crop-lab">
-      <div class="crop-lab-title">🔍 מה החיישן שלך רואה?</div>
+      <div class="crop-lab-title" data-he="🔍 מה החיישן שלך רואה?" data-en="🔍 What Does Your Sensor See?">🔍 מה החיישן שלך רואה?</div>
 
       <div class="crop-demo-wrap">
         <img id="crop-img"
@@ -243,7 +243,7 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
             <span class="sensor-tag">Micro 4/3 ×2</span>
           </div>
           <div class="sensor-box" id="box-phone">
-            <span class="sensor-tag">סמארטפון ×~6</span>
+            <span class="sensor-tag" data-he="סמארטפון ×~6" data-en="Smartphone ×~6">סמארטפון ×~6</span>
           </div>
         </div>
       </div>
@@ -262,7 +262,7 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
           <div class="sb-crop">×2.0 — 17.3×13mm</div>
         </button>
         <button class="sensor-btn" data-sensor="phone" onclick="setSensor('phone')">
-          <div class="sb-name">סמארטפון</div>
+          <div class="sb-name" data-he="סמארטפון" data-en="Smartphone">סמארטפון</div>
           <div class="sb-crop">×~6 — ~6×4.5mm</div>
         </button>
       </div>
@@ -274,20 +274,20 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
         </div>
         <div>
           <div class="cip-val" id="info-equiv">50mm</div>
-          <div class="cip-label">שקול ל-50mm על FF</div>
+          <div class="cip-label" data-he="שקול ל-50mm על FF" data-en="Equivalent on FF (50mm lens)">שקול ל-50mm על FF</div>
         </div>
         <div>
           <div class="cip-val" id="info-bokeh">🔵🔵🔵</div>
-          <div class="cip-label">פוטנציאל בוקה</div>
+          <div class="cip-label" data-he="פוטנציאל בוקה" data-en="Bokeh Potential">פוטנציאל בוקה</div>
         </div>
       </div>
     </div>
 
     <!-- Focal Length Calculator -->
     <div class="focal-calc">
-      <h3>🧮 מחשבון מרחק מוקד</h3>
+      <h3 data-he="🧮 מחשבון מרחק מוקד" data-en="🧮 Focal Length Calculator">🧮 מחשבון מרחק מוקד</h3>
       <div class="focal-input-row">
-        <label>עדשה שלך:</label>
+        <label data-he="עדשה שלך:" data-en="Your lens:">עדשה שלך:</label>
         <input type="number" id="focal-input" value="50" min="1" max="2000">
         <span>mm</span>
       </div>
@@ -308,7 +308,7 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
           <div class="fr-label">×2.0</div>
         </div>
         <div class="fr-card">
-          <div class="fr-sensor">סמארטפון</div>
+          <div class="fr-sensor" data-he="סמארטפון" data-en="Smartphone">סמארטפון</div>
           <div class="fr-mm phone" id="fr-phone">~300mm</div>
           <div class="fr-label">×~6</div>
         </div>
@@ -319,86 +319,86 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
   <hr class="divider">
 
   <div class="section">
-    <div class="section-label">סוגי גוף המצלמה</div>
-    <h2>DSLR, Mirrorless, סמארטפון</h2>
-    <p>גודל החיישן הוא מה שבפנים — סוג הגוף הוא השאלה כיצד האור מגיע אליו.</p>
+    <div class="section-label" data-he="סוגי גוף המצלמה" data-en="Camera Body Types">סוגי גוף המצלמה</div>
+    <h2 data-he="DSLR, Mirrorless, סמארטפון" data-en="DSLR, Mirrorless, Smartphone">DSLR, Mirrorless, סמארטפון</h2>
+    <p data-he="גודל החיישן הוא מה שבפנים — סוג הגוף הוא השאלה כיצד האור מגיע אליו." data-en="Sensor size is what's inside — body type is how light reaches it.">גודל החיישן הוא מה שבפנים — סוג הגוף הוא השאלה כיצד האור מגיע אליו.</p>
 
     <div class="cam-grid">
       <div class="cam-card">
         <div class="cam-icon">📸</div>
         <div class="cam-name">DSLR</div>
         <ul class="cam-pros">
-          <li>סוללה ארוכת טווח</li>
-          <li>עדשות זולות יותר</li>
-          <li>EVF אופטי — אמיתי</li>
-          <li>עמידות בדוקה בשטח</li>
+          <li data-he="סוללה ארוכת טווח" data-en="Long battery life">סוללה ארוכת טווח</li>
+          <li data-he="עדשות זולות יותר" data-en="Cheaper lenses">עדשות זולות יותר</li>
+          <li data-he="EVF אופטי — אמיתי" data-en="Optical viewfinder — real">EVF אופטי — אמיתי</li>
+          <li data-he="עמידות בדוקה בשטח" data-en="Proven field durability">עמידות בדוקה בשטח</li>
         </ul>
         <ul class="cam-cons">
-          <li>כבד ובולט</li>
-          <li>מראה מכנית — רעש ורטט</li>
-          <li>פחות מתאים לוידאו</li>
+          <li data-he="כבד ובולט" data-en="Heavy and bulky">כבד ובולט</li>
+          <li data-he="מראה מכנית — רעש ורטט" data-en="Mechanical mirror — noise and vibration">מראה מכנית — רעש ורטט</li>
+          <li data-he="פחות מתאים לוידאו" data-en="Less suited for video">פחות מתאים לוידאו</li>
         </ul>
       </div>
       <div class="cam-card">
         <div class="cam-icon">🎥</div>
         <div class="cam-name">Mirrorless</div>
         <ul class="cam-pros">
-          <li>קומפקטי יחסית</li>
-          <li>EVF דיגיטלי — WYSIWYG</li>
-          <li>מצוין לוידאו 4K+</li>
-          <li>AF מהיר ומדויק</li>
+          <li data-he="קומפקטי יחסית" data-en="Relatively compact">קומפקטי יחסית</li>
+          <li data-he="EVF דיגיטלי — WYSIWYG" data-en="Digital EVF — WYSIWYG">EVF דיגיטלי — WYSIWYG</li>
+          <li data-he="מצוין לוידאו 4K+" data-en="Excellent for 4K+ video">מצוין לוידאו 4K+</li>
+          <li data-he="AF מהיר ומדויק" data-en="Fast and accurate AF">AF מהיר ומדויק</li>
         </ul>
         <ul class="cam-cons">
-          <li>סוללה פחות חזקה</li>
-          <li>עדשות יקרות יותר</li>
-          <li>מתחמם בצילום ממושך</li>
+          <li data-he="סוללה פחות חזקה" data-en="Weaker battery life">סוללה פחות חזקה</li>
+          <li data-he="עדשות יקרות יותר" data-en="More expensive lenses">עדשות יקרות יותר</li>
+          <li data-he="מתחמם בצילום ממושך" data-en="Overheats during long sessions">מתחמם בצילום ממושך</li>
         </ul>
       </div>
       <div class="cam-card">
         <div class="cam-icon">📱</div>
-        <div class="cam-name">סמארטפון</div>
+        <div class="cam-name" data-he="סמארטפון" data-en="Smartphone">סמארטפון</div>
         <ul class="cam-pros">
-          <li>תמיד בכיס</li>
+          <li data-he="תמיד בכיס" data-en="Always in your pocket">תמיד בכיס</li>
           <li>Computational Photography</li>
-          <li>שיתוף מיידי</li>
-          <li>הכי קל ונוח</li>
+          <li data-he="שיתוף מיידי" data-en="Instant sharing">שיתוף מיידי</li>
+          <li data-he="הכי קל ונוח" data-en="Lightest and most convenient">הכי קל ונוח</li>
         </ul>
         <ul class="cam-cons">
-          <li>חיישן קטן = רעש גבוה</li>
-          <li>בוקה מזויפת (AI)</li>
-          <li>שליטה ידנית מוגבלת</li>
+          <li data-he="חיישן קטן = רעש גבוה" data-en="Small sensor = high noise">חיישן קטן = רעש גבוה</li>
+          <li data-he="בוקה מזויפת (AI)" data-en="Fake bokeh (AI)">בוקה מזויפת (AI)</li>
+          <li data-he="שליטה ידנית מוגבלת" data-en="Limited manual control">שליטה ידנית מוגבלת</li>
         </ul>
       </div>
     </div>
 
     <div class="tip-box">
-      <div class="tip-label">💡 האמת שאף אחד לא אומר</div>
-      <p>הצלם הכי טוב הוא זה <strong>שיש לו מצלמה</strong>. iPhone מודרני עם עין טובה יכריע DSLR ישן בידי מישהו שלא מבין קומפוזיציה. בחרו מצלמה שתרצו לקחת איתכם — לא את היפה ביותר על הנייר.</p>
+      <div class="tip-label" data-he="💡 האמת שאף אחד לא אומר" data-en="💡 The Truth Nobody Tells You">💡 האמת שאף אחד לא אומר</div>
+      <p data-he="הצלם הכי טוב הוא זה שיש לו מצלמה. iPhone מודרני עם עין טובה יכריע DSLR ישן בידי מישהו שלא מבין קומפוזיציה. בחרו מצלמה שתרצו לקחת איתכם — לא את היפה ביותר על הנייר." data-en="The best camera is the one you have. A modern iPhone with a good eye beats an old DSLR in hands that don't understand composition. Choose the camera you'll actually carry — not the best one on paper.">הצלם הכי טוב הוא זה <strong>שיש לו מצלמה</strong>. iPhone מודרני עם עין טובה יכריע DSLR ישן בידי מישהו שלא מבין קומפוזיציה. בחרו מצלמה שתרצו לקחת איתכם — לא את היפה ביותר על הנייר.</p>
     </div>
   </div>
 
   <hr class="divider">
 
   <div class="section">
-    <div class="section-label">לאיזה צלם אתה?</div>
-    <h2>מה מתאים לך?</h2>
+    <div class="section-label" data-he="לאיזה צלם אתה?" data-en="Which Photographer Are You?">לאיזה צלם אתה?</div>
+    <h2 data-he="מה מתאים לך?" data-en="What Suits You?">מה מתאים לך?</h2>
 
     <div class="decision-grid">
       <div class="decision-card">
-        <div class="decision-who">🏔️ צלם נוף ו-Landscape</div>
-        <div class="decision-pick">Full Frame Mirrorless — Sony A7, Nikon Z, Canon R. חיישן גדול = ביצועי ISO מעולים בשקיעות ולילה.</div>
+        <div class="decision-who" data-he="🏔️ צלם נוף ו-Landscape" data-en="🏔️ Landscape Photographer">🏔️ צלם נוף ו-Landscape</div>
+        <div class="decision-pick" data-he="Full Frame Mirrorless — Sony A7, Nikon Z, Canon R. חיישן גדול = ביצועי ISO מעולים בשקיעות ולילה." data-en="Full Frame Mirrorless — Sony A7, Nikon Z, Canon R. Large sensor = excellent ISO performance at sunsets and night.">Full Frame Mirrorless — Sony A7, Nikon Z, Canon R. חיישן גדול = ביצועי ISO מעולים בשקיעות ולילה.</div>
       </div>
       <div class="decision-card">
-        <div class="decision-who">🦅 צלם ספורט ו-Wildlife</div>
-        <div class="decision-pick">APS-C עם Telephoto — Crop Factor נותן לך reach חינמי. Nikon Z50, Canon R7.</div>
+        <div class="decision-who" data-he="🦅 צלם ספורט ו-Wildlife" data-en="🦅 Sports & Wildlife Photographer">🦅 צלם ספורט ו-Wildlife</div>
+        <div class="decision-pick" data-he="APS-C עם Telephoto — Crop Factor נותן לך reach חינמי. Nikon Z50, Canon R7." data-en="APS-C with Telephoto — Crop Factor gives you free reach. Nikon Z50, Canon R7.">APS-C עם Telephoto — Crop Factor נותן לך reach חינמי. Nikon Z50, Canon R7.</div>
       </div>
       <div class="decision-card">
-        <div class="decision-who">👤 צלם פורטרטים</div>
-        <div class="decision-pick">Full Frame עם 50mm/85mm פריים — בוקה טבעי ואור עשיר בחיישן גדול. Sony A7C, Nikon Z6.</div>
+        <div class="decision-who" data-he="👤 צלם פורטרטים" data-en="👤 Portrait Photographer">👤 צלם פורטרטים</div>
+        <div class="decision-pick" data-he="Full Frame עם 50mm/85mm פריים — בוקה טבעי ואור עשיר בחיישן גדול. Sony A7C, Nikon Z6." data-en="Full Frame with 50mm/85mm prime — natural bokeh and rich light on a large sensor. Sony A7C, Nikon Z6.">Full Frame עם 50mm/85mm פריים — בוקה טבעי ואור עשיר בחיישן גדול. Sony A7C, Nikon Z6.</div>
       </div>
       <div class="decision-card">
-        <div class="decision-who">🎬 יוצר תוכן וידאו</div>
-        <div class="decision-pick">Mirrorless עם 4K — Sony ZV-E10, Fujifilm X-S20. קל, גמיש, וידאו מעולה.</div>
+        <div class="decision-who" data-he="🎬 יוצר תוכן וידאו" data-en="🎬 Video Content Creator">🎬 יוצר תוכן וידאו</div>
+        <div class="decision-pick" data-he="Mirrorless עם 4K — Sony ZV-E10, Fujifilm X-S20. קל, גמיש, וידאו מעולה." data-en="Mirrorless with 4K — Sony ZV-E10, Fujifilm X-S20. Light, flexible, excellent video.">Mirrorless עם 4K — Sony ZV-E10, Fujifilm X-S20. קל, גמיש, וידאו מעולה.</div>
       </div>
     </div>
   </div>
@@ -406,25 +406,25 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
   <hr class="divider">
 
   <div class="section">
-    <div class="section-label">תרגיל מעשי</div>
-    <h2>צלם עם "Crop מנטלי"</h2>
+    <div class="section-label" data-he="תרגיל מעשי" data-en="Practical Exercise">תרגיל מעשי</div>
+    <h2 data-he="צלם עם &quot;Crop מנטלי&quot;" data-en="Shoot with a &quot;Mental Crop&quot;">צלם עם "Crop מנטלי"</h2>
 
     <div class="exercise-box">
-      <div class="exercise-label">📷 המשימה</div>
-      <p>
+      <div class="exercise-label" data-he="📷 המשימה" data-en="📷 The Assignment">📷 המשימה</div>
+      <p data-he="צאו לצלם עם הציוד שיש לכם. לפני שלוחצים על ההדק — שלב 1: תסתכלו על הסצנה ודמיינו שאתם מחזיקים Full Frame עם עדשת 35mm. מה הפריים הרחב שתראו? שלב 2: עכשיו דמיינו APS-C עם אותה עדשה. חשבו: מה נחתך? מה נשאר? שלב 3: צלמו פעמיים — פריים מלא ופריים צר יותר (zoom). השוו. מטרה: להתחיל לחשוב ב-&quot;שפת הפריים&quot; של הציוד שלכם — לא מה שיש, אלא מה שרואים." data-en="Go out and shoot with the gear you have. Before pressing the shutter — Step 1: Look at the scene and imagine holding a Full Frame with a 35mm lens. What wide frame would you see? Step 2: Now imagine APS-C with the same lens. What gets cropped? What remains? Step 3: Shoot twice — a full frame and a tighter frame (zoom). Compare. Goal: start thinking in the &quot;frame language&quot; of your gear — not what you have, but what you see.">
         צאו לצלם עם הציוד שיש לכם. לפני שלוחצים על ההדק —<br><br>
-        <strong>שלב 1:</strong> תסתכלו על הסצנה ודמיינו שאתם מחזיקים Full Frame עם עדשת 35mm. מה הפריים הרחב שתראו?<br>
-        <strong>שלב 2:</strong> עכשיו דמיינו APS-C עם אותה עדשה. חשבו: מה נחתך? מה נשאר?<br>
-        <strong>שלב 3:</strong> צלמו פעמיים — פריים מלא ופריים צר יותר (zoom). השוו.<br><br>
-        <em>מטרה: להתחיל לחשוב ב-"שפת הפריים" של הציוד שלכם — לא מה שיש, אלא מה שרואים.</em>
+        <strong data-he="שלב 1:" data-en="Step 1:">שלב 1:</strong> תסתכלו על הסצנה ודמיינו שאתם מחזיקים Full Frame עם עדשת 35mm. מה הפריים הרחב שתראו?<br>
+        <strong data-he="שלב 2:" data-en="Step 2:">שלב 2:</strong> עכשיו דמיינו APS-C עם אותה עדשה. חשבו: מה נחתך? מה נשאר?<br>
+        <strong data-he="שלב 3:" data-en="Step 3:">שלב 3:</strong> צלמו פעמיים — פריים מלא ופריים צר יותר (zoom). השוו.<br><br>
+        <em data-he="מטרה: להתחיל לחשוב ב-&quot;שפת הפריים&quot; של הציוד שלכם — לא מה שיש, אלא מה שרואים." data-en="Goal: start thinking in the &quot;frame language&quot; of your gear — not what you have, but what you see.">מטרה: להתחיל לחשוב ב-"שפת הפריים" של הציוד שלכם — לא מה שיש, אלא מה שרואים.</em>
       </p>
     </div>
   </div>
 
   <div style="text-align:center;padding:1rem 0 2rem">
-    <a href="/camera/filters/" style="color:var(--accent);font-size:.9rem;text-decoration:none">← פילטרים למצלמה</a>
+    <a href="/camera/filters/" style="color:var(--accent);font-size:.9rem;text-decoration:none" data-he="← פילטרים למצלמה" data-en="← Camera Filters">← פילטרים למצלמה</a>
     <span style="color:var(--border);margin:0 .75rem">|</span>
-    <a href="/camera/" style="color:var(--accent);font-size:.9rem;text-decoration:none">כל הנושאים ←</a>
+    <a href="/camera/" style="color:var(--accent);font-size:.9rem;text-decoration:none" data-he="כל הנושאים ←" data-en="All Topics ←">כל הנושאים ←</a>
   </div>
 
 </div>
@@ -488,6 +488,24 @@ setSensor('ff');
 // Show FF box always
 document.getElementById('box-ff').classList.add('visible');
 updateFocal();
+
+// ── Bilingual support ──
+function getLang() { return localStorage.getItem('lang') || 'he'; }
+function applyLang() {
+  const lang = getLang();
+  const isEn = lang === 'en';
+  document.documentElement.dir = isEn ? 'ltr' : 'rtl';
+  document.documentElement.lang = lang;
+  document.body.style.direction = isEn ? 'ltr' : 'rtl';
+  document.title = isEn
+    ? 'Camera Types — Full Frame, APS-C & Smartphone | Photography School | Amit Photos'
+    : 'סוגי מצלמות וחיישנים — בית ספר לצילום | Amit Photos';
+  document.querySelectorAll('[data-he]').forEach(el => {
+    el.textContent = isEn ? (el.dataset.en || el.dataset.he) : el.dataset.he;
+  });
+}
+applyLang();
+window.addEventListener('storage', e => { if (e.key === 'lang') applyLang(); });
 </script>
 </body>
 </html>
