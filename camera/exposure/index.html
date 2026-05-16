@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html dir="rtl" lang="he">
+<html lang="he" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -127,13 +127,14 @@ input[type=range].aperture-slider::-webkit-slider-thumb { -webkit-appearance: no
 <body>
 
 <div class="breadcrumb">
-  <a href="/camera/">למד לצלם</a> ← חשיפה
+  <a href="/camera/" data-he="למד לצלם" data-en="Photography School">למד לצלם</a>
+  <span data-he=" ← חשיפה" data-en=" ← Exposure"> ← חשיפה</span>
 </div>
 
 <div class="hero">
-  <div class="hero-badge">☀️ חשיפה</div>
-  <h1>המשולש של הצלם</h1>
-  <p>ISO, צמצם ותריס — שלושה פרמטרים שקובעים כמה אור יגיע לחיישן, ולכל אחד יש מחיר</p>
+  <div class="hero-badge" data-he="☀️ חשיפה" data-en="☀️ Exposure">☀️ חשיפה</div>
+  <h1 data-he="המשולש של הצלם" data-en="The Exposure Triangle">המשולש של הצלם</h1>
+  <p data-he="ISO, צמצם ותריס — שלושה פרמטרים שקובעים כמה אור יגיע לחיישן, ולכל אחד יש מחיר" data-en="ISO, aperture and shutter speed — three parameters that determine how much light reaches the sensor, and each has a trade-off">ISO, צמצם ותריס — שלושה פרמטרים שקובעים כמה אור יגיע לחיישן, ולכל אחד יש מחיר</p>
 </div>
 
 <div class="article">
@@ -141,16 +142,16 @@ input[type=range].aperture-slider::-webkit-slider-thumb { -webkit-appearance: no
   <!-- SIMULATOR -->
   <div class="section">
     <div class="lab">
-      <div class="lab-title">🎚️ סימולטור חשיפה — גרור ותראה</div>
+      <div class="lab-title" data-he="🎚️ סימולטור חשיפה — גרור ותראה" data-en="🎚️ Exposure Simulator — Drag & See">🎚️ סימולטור חשיפה — גרור ותראה</div>
 
       <div class="sim-preview">
         <canvas class="sim-canvas" id="simCanvas"></canvas>
         <div class="sim-status">
           <span class="ev-badge" id="evBadge">EV 0</span>
-          <span class="sim-note" id="evNote">חשיפה תקינה</span>
+          <span class="sim-note" id="evNote"></span>
         </div>
-        <div class="noise-label" id="noiseLabel">רעש גבוה</div>
-        <div class="blur-label" id="blurLabel">טשטוש תנועה</div>
+        <div class="noise-label" id="noiseLabel" data-he="רעש גבוה" data-en="High Noise">רעש גבוה</div>
+        <div class="blur-label" id="blurLabel" data-he="טשטוש תנועה" data-en="Motion Blur">טשטוש תנועה</div>
       </div>
 
       <div class="sliders">
@@ -159,15 +160,15 @@ input[type=range].aperture-slider::-webkit-slider-thumb { -webkit-appearance: no
           <div class="slider-header">
             <div class="slider-name">
               <span class="slider-dot" style="background:var(--iso-color)"></span>
-              ISO — רגישות חיישן
+              <span data-he="ISO — רגישות חיישן" data-en="ISO — Sensor Sensitivity">ISO — רגישות חיישן</span>
             </div>
             <span class="slider-value" id="isoVal">ISO 400</span>
           </div>
-          <input type="range" class="iso-slider" id="isoSlider" min="0" max="6" value="2">
+          <input type="range" class="iso-slider" id="isoSlider" min="0" max="6" value="2" aria-label="ISO sensitivity">
           <div class="scale-labels">
             <span>100</span><span>200</span><span>400</span><span>800</span><span>1600</span><span>3200</span><span>6400</span>
           </div>
-          <div class="slider-hint">⬆ ISO גבוה = יותר אור, אבל גם יותר רעש (גרעיניות)</div>
+          <div class="slider-hint" data-he="⬆ ISO גבוה = יותר אור, אבל גם יותר רעש (גרעיניות)" data-en="⬆ High ISO = more light, but also more noise (grain)">⬆ ISO גבוה = יותר אור, אבל גם יותר רעש (גרעיניות)</div>
         </div>
 
         <!-- Shutter Speed -->
@@ -175,15 +176,15 @@ input[type=range].aperture-slider::-webkit-slider-thumb { -webkit-appearance: no
           <div class="slider-header">
             <div class="slider-name">
               <span class="slider-dot" style="background:var(--shutter-color)"></span>
-              מהירות תריס — זמן חשיפה
+              <span data-he="מהירות תריס — זמן חשיפה" data-en="Shutter Speed — Exposure Time">מהירות תריס — זמן חשיפה</span>
             </div>
             <span class="slider-value" id="shutterVal">1/125</span>
           </div>
-          <input type="range" class="shutter-slider" id="shutterSlider" min="0" max="7" value="4">
+          <input type="range" class="shutter-slider" id="shutterSlider" min="0" max="7" value="4" aria-label="Shutter speed">
           <div class="scale-labels">
             <span>1/1000</span><span>1/500</span><span>1/250</span><span>1/125</span><span>1/60</span><span>1/30</span><span>1/15</span><span>1/8</span>
           </div>
-          <div class="slider-hint">⬇ תריס איטי = יותר אור, אבל טשטוש תנועה אם לא יציב</div>
+          <div class="slider-hint" data-he="⬇ תריס איטי = יותר אור, אבל טשטוש תנועה אם לא יציב" data-en="⬇ Slow shutter = more light, but motion blur if not steady">⬇ תריס איטי = יותר אור, אבל טשטוש תנועה אם לא יציב</div>
         </div>
 
         <!-- Aperture -->
@@ -191,15 +192,15 @@ input[type=range].aperture-slider::-webkit-slider-thumb { -webkit-appearance: no
           <div class="slider-header">
             <div class="slider-name">
               <span class="slider-dot" style="background:var(--aperture-color)"></span>
-              צמצם — גודל פתח העדשה
+              <span data-he="צמצם — גודל פתח העדשה" data-en="Aperture — Lens Opening Size">צמצם — גודל פתח העדשה</span>
             </div>
             <span class="slider-value" id="apertureVal">f/5.6</span>
           </div>
-          <input type="range" class="aperture-slider" id="apertureSlider" min="0" max="6" value="3">
+          <input type="range" class="aperture-slider" id="apertureSlider" min="0" max="6" value="3" aria-label="Aperture">
           <div class="scale-labels">
             <span>f/1.4</span><span>f/2</span><span>f/2.8</span><span>f/5.6</span><span>f/8</span><span>f/11</span><span>f/16</span>
           </div>
-          <div class="slider-hint">⬅ f קטן = פתח גדול = יותר אור + רקע מטושטש (בוקה)</div>
+          <div class="slider-hint" data-he="⬅ f קטן = פתח גדול = יותר אור + רקע מטושטש (בוקה)" data-en="⬅ Small f = large opening = more light + blurred background (bokeh)">⬅ f קטן = פתח גדול = יותר אור + רקע מטושטש (בוקה)</div>
         </div>
       </div>
     </div>
@@ -209,9 +210,9 @@ input[type=range].aperture-slider::-webkit-slider-thumb { -webkit-appearance: no
 
   <!-- TRIANGLE -->
   <div class="section">
-    <div class="section-label">עקרון יסוד</div>
-    <h2>משולש החשיפה</h2>
-    <p>שלושת הפרמטרים תלויים זה בזה. שינוי אחד מחייב התאמה של השניים האחרים כדי לשמור על אותה חשיפה — אבל לכל שינוי יש השפעה נוספת מעבר לאור.</p>
+    <div class="section-label" data-he="עקרון יסוד" data-en="Core Principle">עקרון יסוד</div>
+    <h2 data-he="משולש החשיפה" data-en="The Exposure Triangle">משולש החשיפה</h2>
+    <p data-he="שלושת הפרמטרים תלויים זה בזה. שינוי אחד מחייב התאמה של השניים האחרים כדי לשמור על אותה חשיפה — אבל לכל שינוי יש השפעה נוספת מעבר לאור." data-en="The three parameters are interdependent. Changing one requires adjusting the other two to maintain the same exposure — but every change has an additional effect beyond light.">שלושת הפרמטרים תלויים זה בזה. שינוי אחד מחייב התאמה של השניים האחרים כדי לשמור על אותה חשיפה — אבל לכל שינוי יש השפעה נוספת מעבר לאור.</p>
 
     <div class="triangle-wrap">
       <svg class="triangle-svg" viewBox="0 0 340 280" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -219,14 +220,20 @@ input[type=range].aperture-slider::-webkit-slider-thumb { -webkit-appearance: no
         <polygon points="170,24 320,250 20,250" stroke="#333" stroke-width="2" fill="rgba(200,169,110,0.05)"/>
         <!-- Labels at vertices -->
         <text x="170" y="16" text-anchor="middle" fill="#c8a96e" font-family="Syne,sans-serif" font-size="13">ISO</text>
-        <text x="325" y="260" text-anchor="start" fill="#e87a5a" font-family="Syne,sans-serif" font-size="12">תריס</text>
-        <text x="15" y="260" text-anchor="end" fill="#6090d8" font-family="Syne,sans-serif" font-size="12">צמצם</text>
+        <text x="325" y="260" text-anchor="start" fill="#e87a5a" font-family="Syne,sans-serif" font-size="12"
+              data-he="תריס" data-en="Shutter">תריס</text>
+        <text x="15" y="260" text-anchor="end" fill="#6090d8" font-family="Syne,sans-serif" font-size="12"
+              data-he="צמצם" data-en="Aperture">צמצם</text>
         <!-- Side labels (tradeoffs) -->
-        <text x="255" y="150" text-anchor="middle" fill="#888" font-size="11" transform="rotate(50 255 150)">רעש ↔ אור</text>
-        <text x="85" y="150" text-anchor="middle" fill="#888" font-size="11" transform="rotate(-50 85 150)">בוקה ↔ שדה</text>
-        <text x="170" y="268" text-anchor="middle" fill="#888" font-size="11">טשטוש ↔ קפאון</text>
+        <text x="255" y="150" text-anchor="middle" fill="#888" font-size="11" transform="rotate(50 255 150)"
+              data-he="רעש ↔ אור" data-en="Noise ↔ Light">רעש ↔ אור</text>
+        <text x="85" y="150" text-anchor="middle" fill="#888" font-size="11" transform="rotate(-50 85 150)"
+              data-he="בוקה ↔ שדה" data-en="Bokeh ↔ Depth">בוקה ↔ שדה</text>
+        <text x="170" y="268" text-anchor="middle" fill="#888" font-size="11"
+              data-he="טשטוש ↔ קפאון" data-en="Blur ↔ Freeze">טשטוש ↔ קפאון</text>
         <!-- Center label -->
-        <text x="170" y="165" text-anchor="middle" fill="#c8a96e" font-family="Syne,sans-serif" font-size="15" font-weight="bold">חשיפה</text>
+        <text x="170" y="165" text-anchor="middle" fill="#c8a96e" font-family="Syne,sans-serif" font-size="15" font-weight="bold"
+              data-he="חשיפה" data-en="Exposure">חשיפה</text>
         <text x="170" y="183" text-anchor="middle" fill="#666" font-size="11">EV = const</text>
         <!-- Dots -->
         <circle cx="170" cy="24" r="5" fill="#c8a96e"/>
@@ -240,9 +247,9 @@ input[type=range].aperture-slider::-webkit-slider-thumb { -webkit-appearance: no
 
   <!-- EFFECT CARDS -->
   <div class="section">
-    <div class="section-label">יתרונות ומחירים</div>
-    <h2>לכל פרמטר יש מחיר</h2>
-    <p>חשיפה נכונה אפשר להשיג בדרכים שונות — אבל לכל בחירה יש תוצאה לא רק בכמות האור.</p>
+    <div class="section-label" data-he="יתרונות ומחירים" data-en="Benefits & Trade-offs">יתרונות ומחירים</div>
+    <h2 data-he="לכל פרמטר יש מחיר" data-en="Every Parameter Has a Cost">לכל פרמטר יש מחיר</h2>
+    <p data-he="חשיפה נכונה אפשר להשיג בדרכים שונות — אבל לכל בחירה יש תוצאה לא רק בכמות האור." data-en="Correct exposure can be achieved in many ways — but every choice has consequences beyond just the amount of light.">חשיפה נכונה אפשר להשיג בדרכים שונות — אבל לכל בחירה יש תוצאה לא רק בכמות האור.</p>
 
     <div class="effect-grid">
       <div class="effect-card">
@@ -250,26 +257,26 @@ input[type=range].aperture-slider::-webkit-slider-thumb { -webkit-appearance: no
           <div class="effect-dot" style="background:var(--iso-color)"></div>
           <div class="effect-name">ISO</div>
         </div>
-        <div class="effect-desc">מגביר את רגישות החיישן לאור. מאפשר לצלם בחשכה בלי לשנות את שאר הפרמטרים.</div>
-        <div class="effect-tradeoff">⚠ ISO גבוה = רעש (גרעיניות דיגיטלית) בעיקר בצללים</div>
+        <div class="effect-desc" data-he="מגביר את רגישות החיישן לאור. מאפשר לצלם בחשכה בלי לשנות את שאר הפרמטרים." data-en="Amplifies the sensor's sensitivity to light. Lets you shoot in the dark without changing other parameters.">מגביר את רגישות החיישן לאור. מאפשר לצלם בחשכה בלי לשנות את שאר הפרמטרים.</div>
+        <div class="effect-tradeoff" data-he="⚠ ISO גבוה = רעש (גרעיניות דיגיטלית) בעיקר בצללים" data-en="⚠ High ISO = noise (digital grain) especially in shadows">⚠ ISO גבוה = רעש (גרעיניות דיגיטלית) בעיקר בצללים</div>
       </div>
 
       <div class="effect-card">
         <div class="effect-card-header">
           <div class="effect-dot" style="background:var(--shutter-color)"></div>
-          <div class="effect-name">תריס</div>
+          <div class="effect-name" data-he="תריס" data-en="Shutter">תריס</div>
         </div>
-        <div class="effect-desc">קובע כמה זמן החיישן חשוף לאור. תריס מהיר מקפיא תנועה; איטי יוצר טשטוש.</div>
-        <div class="effect-tradeoff">⚠ תריס איטי מחייב חצובה. מתחת ל-1/60 — קשה להחזיק יציב</div>
+        <div class="effect-desc" data-he="קובע כמה זמן החיישן חשוף לאור. תריס מהיר מקפיא תנועה; איטי יוצר טשטוש." data-en="Determines how long the sensor is exposed to light. Fast shutter freezes motion; slow creates blur.">קובע כמה זמן החיישן חשוף לאור. תריס מהיר מקפיא תנועה; איטי יוצר טשטוש.</div>
+        <div class="effect-tradeoff" data-he="⚠ תריס איטי מחייב חצובה. מתחת ל-1/60 — קשה להחזיק יציב" data-en="⚠ Slow shutter requires a tripod. Below 1/60 — hard to hold steady">⚠ תריס איטי מחייב חצובה. מתחת ל-1/60 — קשה להחזיק יציב</div>
       </div>
 
       <div class="effect-card">
         <div class="effect-card-header">
           <div class="effect-dot" style="background:var(--aperture-color)"></div>
-          <div class="effect-name">צמצם</div>
+          <div class="effect-name" data-he="צמצם" data-en="Aperture">צמצם</div>
         </div>
-        <div class="effect-desc">גודל פתח העדשה. f קטן = פתח גדול = יותר אור + עומק שדה רדוד (בוקה).</div>
-        <div class="effect-tradeoff">⚠ f גדול (f/16) = פחות בוקה אבל נדרש יותר אור. f קטן (f/1.4) = בוקה חזק</div>
+        <div class="effect-desc" data-he="גודל פתח העדשה. f קטן = פתח גדול = יותר אור + עומק שדה רדוד (בוקה)." data-en="The lens opening size. Small f = large opening = more light + shallow depth of field (bokeh).">גודל פתח העדשה. f קטן = פתח גדול = יותר אור + עומק שדה רדוד (בוקה).</div>
+        <div class="effect-tradeoff" data-he="⚠ f גדול (f/16) = פחות בוקה אבל נדרש יותר אור. f קטן (f/1.4) = בוקה חזק" data-en="⚠ Large f (f/16) = less bokeh but needs more light. Small f (f/1.4) = strong bokeh">⚠ f גדול (f/16) = פחות בוקה אבל נדרש יותר אור. f קטן (f/1.4) = בוקה חזק</div>
       </div>
     </div>
   </div>
@@ -278,96 +285,62 @@ input[type=range].aperture-slider::-webkit-slider-thumb { -webkit-appearance: no
 
   <!-- STOPS EXPLAINER -->
   <div class="section">
-    <div class="section-label">שפת הצלמים</div>
-    <h2>מהו "סטופ" (Stop)?</h2>
-    <p>צלמים מדברים ב<strong>סטופים</strong> — יחידת מדידה שאומרת "כפל או חלק את האור ב-2".</p>
-    <p>כל הגדלה של ISO בפקטור 2 (למשל 400→800) = סטופ אחד יותר אור. אותו הדבר לתריס ולצמצם.</p>
+    <div class="section-label" data-he="שפת הצלמים" data-en="Photographers' Language">שפת הצלמים</div>
+    <h2 data-he='מהו "סטופ" (Stop)?' data-en='What Is a "Stop"?'>מהו "סטופ" (Stop)?</h2>
+    <p data-he='צלמים מדברים ב&lt;strong&gt;סטופים&lt;/strong&gt; — יחידת מדידה שאומרת "כפל או חלק את האור ב-2".' data-en="Photographers talk in stops — a unit of measurement meaning &quot;double or halve the light.&quot;">צלמים מדברים ב<strong>סטופים</strong> — יחידת מדידה שאומרת "כפל או חלק את האור ב-2".</p>
+    <p data-he="כל הגדלה של ISO בפקטור 2 (למשל 400→800) = סטופ אחד יותר אור. אותו הדבר לתריס ולצמצם." data-en="Each ISO doubling (e.g. 400→800) = one stop more light. Same applies to shutter speed and aperture.">כל הגדלה של ISO בפקטור 2 (למשל 400→800) = סטופ אחד יותר אור. אותו הדבר לתריס ולצמצם.</p>
 
     <div class="infographic-wrap">
       <div class="stop-diagram">
-        <div class="stop-row">
-          <div class="stop-label">ISO 100</div>
-          <div class="stop-bar-wrap">
-            <div class="stop-bar" style="width:12%;background:#444">x1</div>
-          </div>
-        </div>
-        <div class="stop-row">
-          <div class="stop-label">ISO 200</div>
-          <div class="stop-bar-wrap">
-            <div class="stop-bar" style="width:24%;background:#554">x2</div>
-          </div>
-        </div>
-        <div class="stop-row">
-          <div class="stop-label">ISO 400</div>
-          <div class="stop-bar-wrap">
-            <div class="stop-bar" style="width:37%;background:#665">x4</div>
-          </div>
-        </div>
-        <div class="stop-row">
-          <div class="stop-label">ISO 800</div>
-          <div class="stop-bar-wrap">
-            <div class="stop-bar" style="width:52%;background:#776">x8</div>
-          </div>
-        </div>
-        <div class="stop-row">
-          <div class="stop-label">ISO 1600</div>
-          <div class="stop-bar-wrap">
-            <div class="stop-bar" style="width:67%;background:#c8a96e">x16</div>
-          </div>
-        </div>
-        <div class="stop-row">
-          <div class="stop-label">ISO 3200</div>
-          <div class="stop-bar-wrap">
-            <div class="stop-bar" style="width:83%;background:#e0b870">x32</div>
-          </div>
-        </div>
-        <div class="stop-row">
-          <div class="stop-label">ISO 6400</div>
-          <div class="stop-bar-wrap">
-            <div class="stop-bar" style="width:100%;background:#f0ca80">x64</div>
-          </div>
-        </div>
+        <div class="stop-row"><div class="stop-label">ISO 100</div><div class="stop-bar-wrap"><div class="stop-bar" style="width:12%;background:#444">x1</div></div></div>
+        <div class="stop-row"><div class="stop-label">ISO 200</div><div class="stop-bar-wrap"><div class="stop-bar" style="width:24%;background:#554">x2</div></div></div>
+        <div class="stop-row"><div class="stop-label">ISO 400</div><div class="stop-bar-wrap"><div class="stop-bar" style="width:37%;background:#665">x4</div></div></div>
+        <div class="stop-row"><div class="stop-label">ISO 800</div><div class="stop-bar-wrap"><div class="stop-bar" style="width:52%;background:#776">x8</div></div></div>
+        <div class="stop-row"><div class="stop-label">ISO 1600</div><div class="stop-bar-wrap"><div class="stop-bar" style="width:67%;background:#c8a96e">x16</div></div></div>
+        <div class="stop-row"><div class="stop-label">ISO 3200</div><div class="stop-bar-wrap"><div class="stop-bar" style="width:83%;background:#e0b870">x32</div></div></div>
+        <div class="stop-row"><div class="stop-label">ISO 6400</div><div class="stop-bar-wrap"><div class="stop-bar" style="width:100%;background:#f0ca80">x64</div></div></div>
       </div>
     </div>
-    <p>כל שורה כאן = סטופ אחד. כל סטופ = כפל ב-2. שים לב שה"קפיצה" האחרונה (מ-3200 ל-6400) נותנת פי 2 אור בדיוק כמו הראשונה (מ-100 ל-200) — אבל שם זה כמעט לא ניכר, ופה זה שינוי עצום.</p>
+    <p data-he='כל שורה כאן = סטופ אחד. כל סטופ = כפל ב-2. שים לב שה"קפיצה" האחרונה (מ-3200 ל-6400) נותנת פי 2 אור בדיוק כמו הראשונה (מ-100 ל-200) — אבל שם זה כמעט לא ניכר, ופה זה שינוי עצום.'
+          data-en='Each row = one stop. Each stop = double the light. Notice the last "jump" (3200→6400) gives exactly 2× more light than the first (100→200) — but there it is barely noticeable, here it is a massive change.'>כל שורה כאן = סטופ אחד. כל סטופ = כפל ב-2. שים לב שה"קפיצה" האחרונה (מ-3200 ל-6400) נותנת פי 2 אור בדיוק כמו הראשונה (מ-100 ל-200) — אבל שם זה כמעט לא ניכר, ופה זה שינוי עצום.</p>
   </div>
 
   <hr class="divider">
 
   <!-- SHOOTING MODES -->
   <div class="section">
-    <div class="section-label">מצבי צילום</div>
-    <h2>A, S, P, M — מה כל מצב עושה?</h2>
-    <p>הדיאל שעל גוף המצלמה מחליט מי שולט על אילו פרמטרים:</p>
+    <div class="section-label" data-he="מצבי צילום" data-en="Shooting Modes">מצבי צילום</div>
+    <h2 data-he="A, S, P, M — מה כל מצב עושה?" data-en="A, S, P, M — What Does Each Mode Do?">A, S, P, M — מה כל מצב עושה?</h2>
+    <p data-he="הדיאל שעל גוף המצלמה מחליט מי שולט על אילו פרמטרים:" data-en="The dial on the camera body decides who controls which parameters:">הדיאל שעל גוף המצלמה מחליט מי שולט על אילו פרמטרים:</p>
 
     <div class="effect-grid" style="grid-template-columns: 1fr 1fr;">
       <div class="effect-card">
         <div class="effect-card-header">
           <div class="effect-dot" style="background:#6090d8"></div>
-          <div class="effect-name">A / Av — עדיפות צמצם</div>
+          <div class="effect-name" data-he="A / Av — עדיפות צמצם" data-en="A / Av — Aperture Priority">A / Av — עדיפות צמצם</div>
         </div>
-        <div class="effect-desc">אתה קובע את ה-f, המצלמה בוחרת את מהירות התריס. מצב מועדף לפורטרט ונוף.</div>
+        <div class="effect-desc" data-he="אתה קובע את ה-f, המצלמה בוחרת את מהירות התריס. מצב מועדף לפורטרט ונוף." data-en="You set the f-stop, the camera chooses shutter speed. Preferred for portrait and landscape.">אתה קובע את ה-f, המצלמה בוחרת את מהירות התריס. מצב מועדף לפורטרט ונוף.</div>
       </div>
       <div class="effect-card">
         <div class="effect-card-header">
           <div class="effect-dot" style="background:#5dbf8a"></div>
-          <div class="effect-name">S / Tv — עדיפות תריס</div>
+          <div class="effect-name" data-he="S / Tv — עדיפות תריס" data-en="S / Tv — Shutter Priority">S / Tv — עדיפות תריס</div>
         </div>
-        <div class="effect-desc">אתה קובע את מהירות התריס, המצלמה בוחרת צמצם. מצוין לספורט ותנועה.</div>
+        <div class="effect-desc" data-he="אתה קובע את מהירות התריס, המצלמה בוחרת צמצם. מצוין לספורט ותנועה." data-en="You set the shutter speed, the camera chooses aperture. Great for sports and motion.">אתה קובע את מהירות התריס, המצלמה בוחרת צמצם. מצוין לספורט ותנועה.</div>
       </div>
       <div class="effect-card">
         <div class="effect-card-header">
           <div class="effect-dot" style="background:#888"></div>
-          <div class="effect-name">P — תוכנית</div>
+          <div class="effect-name" data-he="P — תוכנית" data-en="P — Program">P — תוכנית</div>
         </div>
-        <div class="effect-desc">המצלמה בוחרת הכל. אתה יכול "להסיט" את הצמדה. טוב להתחלה מהירה.</div>
+        <div class="effect-desc" data-he='המצלמה בוחרת הכל. אתה יכול "להסיט" את הצמדה. טוב להתחלה מהירה.' data-en='Camera chooses everything. You can "shift" the pairing. Good for quick shooting.'>המצלמה בוחרת הכל. אתה יכול "להסיט" את הצמדה. טוב להתחלה מהירה.</div>
       </div>
       <div class="effect-card">
         <div class="effect-card-header">
           <div class="effect-dot" style="background:#c8a96e"></div>
-          <div class="effect-name">M — ידני</div>
+          <div class="effect-name" data-he="M — ידני" data-en="M — Manual">M — ידני</div>
         </div>
-        <div class="effect-desc">אתה שולט על הכל. הקושי גדול יותר, אבל התוצאות צפויות לחלוטין. מומלץ ללמוד.</div>
+        <div class="effect-desc" data-he="אתה שולט על הכל. הקושי גדול יותר, אבל התוצאות צפויות לחלוטין. מומלץ ללמוד." data-en="You control everything. More challenging, but results are fully predictable. Highly recommended to learn.">אתה שולט על הכל. הקושי גדול יותר, אבל התוצאות צפויות לחלוטין. מומלץ ללמוד.</div>
       </div>
     </div>
   </div>
@@ -375,17 +348,35 @@ input[type=range].aperture-slider::-webkit-slider-thumb { -webkit-appearance: no
 </div>
 
 <div class="nav-prev">
-  <a href="/camera/">← חזרה לבית ספר לצילום</a>
+  <a href="/camera/" data-he="← חזרה לבית ספר לצילום" data-en="← Back to Photography School">← חזרה לבית ספר לצילום</a>
 </div>
 
 <script>
+function getLang() { return localStorage.getItem('lang') || 'he'; }
+
+const EV_NOTES = {
+  he: {
+    over2:  'חשוף מדי — לבן בהיר',
+    over1:  'מעט חשוף מדי',
+    ok:     'חשיפה תקינה ✓',
+    under1: 'מעט חשיפת חסר',
+    under2: 'חשיפת חסר — חשוך'
+  },
+  en: {
+    over2:  'Overexposed — blown highlights',
+    over1:  'Slightly overexposed',
+    ok:     'Good exposure ✓',
+    under1: 'Slightly underexposed',
+    under2: 'Underexposed — too dark'
+  }
+};
+
 const isoVals = [100, 200, 400, 800, 1600, 3200, 6400];
 const shutterVals = ['1/1000','1/500','1/250','1/125','1/60','1/30','1/15','1/8'];
 const apertureVals = ['f/1.4','f/2','f/2.8','f/5.6','f/8','f/11','f/16'];
-// EV contributions (relative, centered at defaults: ISO 400=2, shutter 1/125=4->index 3, aperture f/5.6=3)
-const isoEV  = [0,1,2,3,4,5,6];         // more ISO = more light
-const shutEV = [-3,-2,-1,0,1,2,3,4];   // slower shutter = more light
-const aperEV = [5,4,3,2,1,0,-1];        // smaller f = more light (f/1.4 is most open)
+const isoEV  = [0,1,2,3,4,5,6];
+const shutEV = [-3,-2,-1,0,1,2,3,4];
+const aperEV = [5,4,3,2,1,0,-1];
 
 const canvas = document.getElementById('simCanvas');
 const ctx = canvas.getContext('2d');
@@ -401,19 +392,16 @@ function drawFallback() {
   const w = canvas.width, h = canvas.height;
   ctx.fillStyle = '#1a1a1a';
   ctx.fillRect(0, 0, w, h);
-  // Draw a simple landscape scene
   const grad = ctx.createLinearGradient(0, 0, 0, h);
   grad.addColorStop(0, '#0a0a1a');
   grad.addColorStop(0.5, '#1a2a4a');
   grad.addColorStop(1, '#0a1a0a');
   ctx.fillStyle = grad;
   ctx.fillRect(0, 0, w, h);
-  // Moon/sun
   ctx.beginPath();
   ctx.arc(w*0.7, h*0.25, 30, 0, Math.PI*2);
   ctx.fillStyle = '#fffbe0';
   ctx.fill();
-  // Mountains
   ctx.beginPath();
   ctx.moveTo(0, h); ctx.lineTo(w*0.2, h*0.45); ctx.lineTo(w*0.4, h*0.65);
   ctx.lineTo(w*0.55, h*0.38); ctx.lineTo(w*0.75, h*0.6);
@@ -444,64 +432,41 @@ function redraw() {
   const s = parseInt(document.getElementById('shutterSlider').value);
   const a = parseInt(document.getElementById('apertureSlider').value);
   const ev = getEV();
-
-  // Base reference EV (ISO 400, 1/125, f/5.6) = isoEV[2]+shutEV[3]+aperEV[3] = 2+0+2 = 4
   const refEV = 4;
   const evDiff = ev - refEV;
-
-  // Brightness factor: 2^evDiff
   const brightFactor = Math.pow(2, evDiff);
 
   ctx.clearRect(0, 0, w, h);
+  if (baseImg) { ctx.drawImage(baseImg, 0, 0, w, h); } else { drawFallback(); }
 
-  if (baseImg) {
-    ctx.drawImage(baseImg, 0, 0, w, h);
-  } else {
-    drawFallback();
-  }
-
-  // Apply brightness overlay
   if (brightFactor > 1) {
-    // Over-exposed: white overlay
     const alpha = Math.min(0.9, (brightFactor - 1) / 6);
     ctx.fillStyle = `rgba(255,255,255,${alpha})`;
     ctx.fillRect(0, 0, w, h);
   } else if (brightFactor < 1) {
-    // Under-exposed: dark overlay
     const alpha = Math.min(0.9, (1 - brightFactor) / 1.2);
     ctx.fillStyle = `rgba(0,0,0,${alpha})`;
     ctx.fillRect(0, 0, w, h);
   }
 
-  // Noise overlay for high ISO
-  if (i >= 4) {
-    const noiseStrength = (i - 3) * 0.06;
-    addNoise(ctx, w, h, noiseStrength);
-  }
+  if (i >= 4) { addNoise(ctx, w, h, (i - 3) * 0.06); }
+  if (s >= 6) { addMotionBlurEffect(ctx, w, h, (s - 5) * 0.08); }
 
-  // Motion blur indicator for slow shutter
-  if (s >= 6) {
-    const blurAlpha = (s - 5) * 0.08;
-    addMotionBlurEffect(ctx, w, h, blurAlpha);
-  }
+  document.getElementById('noiseLabel').style.opacity = i >= 4 ? '1' : '0';
+  document.getElementById('blurLabel').style.opacity = s >= 6 ? '1' : '0';
 
-  // Update labels
-  const noiseLabel = document.getElementById('noiseLabel');
-  const blurLabel = document.getElementById('blurLabel');
-  noiseLabel.style.opacity = i >= 4 ? '1' : '0';
-  blurLabel.style.opacity = s >= 6 ? '1' : '0';
-
-  // Update EV badge
   const evRelative = ev - refEV;
   const badge = document.getElementById('evBadge');
   const note = document.getElementById('evNote');
   badge.textContent = evRelative === 0 ? 'EV 0' : (evRelative > 0 ? `EV +${evRelative}` : `EV ${evRelative}`);
 
-  if (evRelative >= 2) note.textContent = 'חשוף מדי — לבן בהיר';
-  else if (evRelative === 1) note.textContent = 'מעט חשוף מדי';
-  else if (evRelative === 0) note.textContent = 'חשיפה תקינה ✓';
-  else if (evRelative === -1) note.textContent = 'מעט חשיפת חסר';
-  else note.textContent = 'חשיפת חסר — חשוך';
+  const lang = getLang();
+  const n = EV_NOTES[lang] || EV_NOTES.he;
+  if (evRelative >= 2)       note.textContent = n.over2;
+  else if (evRelative === 1) note.textContent = n.over1;
+  else if (evRelative === 0) note.textContent = n.ok;
+  else if (evRelative === -1) note.textContent = n.under1;
+  else                        note.textContent = n.under2;
 }
 
 function addNoise(ctx, w, h, strength) {
@@ -519,9 +484,7 @@ function addNoise(ctx, w, h, strength) {
 function addMotionBlurEffect(ctx, w, h, alpha) {
   ctx.save();
   ctx.globalAlpha = alpha;
-  for (let dx = 1; dx <= 8; dx++) {
-    ctx.drawImage(canvas, dx * 3, 0, w, h, 0, 0, w, h);
-  }
+  for (let dx = 1; dx <= 8; dx++) { ctx.drawImage(canvas, dx * 3, 0, w, h, 0, 0, w, h); }
   ctx.restore();
 }
 
@@ -529,11 +492,9 @@ function updateSliders() {
   const i = parseInt(document.getElementById('isoSlider').value);
   const s = parseInt(document.getElementById('shutterSlider').value);
   const a = parseInt(document.getElementById('apertureSlider').value);
-
   document.getElementById('isoVal').textContent = `ISO ${isoVals[i]}`;
   document.getElementById('shutterVal').textContent = shutterVals[s];
   document.getElementById('apertureVal').textContent = apertureVals[a];
-
   redraw();
 }
 
@@ -541,9 +502,26 @@ document.getElementById('isoSlider').addEventListener('input', updateSliders);
 document.getElementById('shutterSlider').addEventListener('input', updateSliders);
 document.getElementById('apertureSlider').addEventListener('input', updateSliders);
 
+function applyLang() {
+  const lang = getLang();
+  const isEn = lang === 'en';
+  document.documentElement.dir = isEn ? 'ltr' : 'rtl';
+  document.documentElement.lang = lang;
+  document.body.style.direction = isEn ? 'ltr' : 'rtl';
+  document.title = isEn
+    ? 'Exposure — ISO, Aperture & Shutter | Photography School | Amit Photos'
+    : 'חשיפה — ISO, צמצם ותריס | בית ספר לצילום | Amit Photos';
+  document.querySelectorAll('[data-he]').forEach(el => {
+    el.textContent = isEn ? (el.dataset.en || el.dataset.he) : el.dataset.he;
+  });
+  redraw();
+}
+
 window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
 updateSliders();
+applyLang();
+window.addEventListener('storage', e => { if (e.key === 'lang') applyLang(); });
 </script>
 </body>
 </html>
