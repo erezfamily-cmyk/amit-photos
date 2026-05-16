@@ -2305,7 +2305,10 @@ async function handleTogglePhotoNew(request, env) {
   if (!await checkAuth(request, env)) return unauth(request);
   const { photo_id, is_new, title, category, url, thumbnail } = await request.json().catch(() => ({}));
   if (!photo_id) return jsonRes({ error: 'photo_id required' }, 400, request);
-  const result = await env.DB.prepare("UPDATE photos SET is_new = ? WHERE id = ?").bind(is_new ? 1 : 0, photo_id).run();
+  const addedAt = is_new ? new Date().toISOString().split('T')[0] : null;
+  const result = await env.DB.prepare(
+    "UPDATE photos SET is_new = ?, added_at = CASE WHEN ? IS NOT NULL THEN ? ELSE added_at END WHERE id = ?"
+  ).bind(is_new ? 1 : 0, addedAt, addedAt, photo_id).run();
   if ((result.meta?.changes ?? result.changes ?? 0) === 0 && is_new) {
     // Drive photo not yet in D1 — insert minimal record
     await env.DB.prepare(

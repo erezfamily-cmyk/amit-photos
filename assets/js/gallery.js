@@ -30,9 +30,9 @@ function isWeekPhoto(photo) {
 }
 
 function isNew(photo) {
-  if (photo.is_new) return true;
-  if (!photo.added_at) return false;
-  return (Date.now() - new Date(photo.added_at)) / 86400000 <= NEW_DAYS;
+  const dateField = photo.added_at || photo.created_at;
+  if (dateField) return (Date.now() - new Date(dateField)) / 86400000 <= NEW_DAYS;
+  return !!photo.is_new;
 }
 
 // ===== STATE =====
