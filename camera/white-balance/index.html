@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html dir="rtl" lang="he">
+<html lang="he" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>וייט בלאנס — Amit Photos</title>
+<title>וייט בלאנס — טמפרטורת צבע ומה זה קלוין | בית ספר לצילום | Amit Photos</title>
 <meta name="description" content="למד על וייט בלאנס וטמפרטורת צבע — סליידר אינטראקטיבי שמשנה תמונות אמיתיות מקר לחם.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&display=swap" rel="stylesheet">
@@ -127,9 +127,9 @@ input[type=range]#wb-slider:active::-webkit-slider-thumb { cursor: grabbing; }
 <body>
 
 <div class="page-hero">
-  <div class="badge">📷 בית ספר לצילום</div>
-  <h1>וייט בלאנס — טמפרטורת צבע</h1>
-  <p>למה תמונה יוצאת כחולה בחוץ בצל, וכתומה בפנים ליד מנורה? גרור וראה בעצמך</p>
+  <div class="badge" data-he="📷 בית ספר לצילום" data-en="📷 Photography School">📷 בית ספר לצילום</div>
+  <h1 data-he="וייט בלאנס — טמפרטורת צבע" data-en="White Balance — Color Temperature">וייט בלאנס — טמפרטורת צבע</h1>
+  <p data-he="למה תמונה יוצאת כחולה בחוץ בצל, וכתומה בפנים ליד מנורה? גרור וראה בעצמך" data-en="Why does a photo look blue in the shade, and orange indoors near a lamp? Drag and see for yourself">למה תמונה יוצאת כחולה בחוץ בצל, וכתומה בפנים ליד מנורה? גרור וראה בעצמך</p>
 </div>
 
 <div class="demo-wrap">
@@ -152,7 +152,7 @@ input[type=range]#wb-slider:active::-webkit-slider-thumb { cursor: grabbing; }
 
     <!-- Presets -->
     <div class="presets-panel">
-      <div class="presets-title">הגדרות מוכנות (Presets)</div>
+      <div class="presets-title" data-he="הגדרות מוכנות (Presets)" data-en="Ready Presets">הגדרות מוכנות (Presets)</div>
       <div class="preset-list" id="preset-list"></div>
     </div>
 
@@ -161,23 +161,23 @@ input[type=range]#wb-slider:active::-webkit-slider-thumb { cursor: grabbing; }
   <!-- Temperature slider -->
   <div class="temp-wrap">
     <div class="temp-header">
-      <span class="temp-label">טמפרטורת צבע</span>
+      <span class="temp-label" data-he="טמפרטורת צבע" data-en="Color Temperature">טמפרטורת צבע</span>
       <div class="temp-value-wrap">
         <span class="temp-value" id="temp-val">5500</span>
-        <span class="temp-unit">K (קלוין)</span>
+        <span class="temp-unit" data-he="K (קלוין)" data-en="K (Kelvin)">K (קלוין)</span>
       </div>
     </div>
     <div class="slider-track">
       <input type="range" id="wb-slider" min="2000" max="10000" value="5500" step="50" aria-label="טמפרטורת צבע בקלוין">
     </div>
     <div class="scale-labels">
-      <span>חם 2000K</span>
+      <span data-he="חם 2000K" data-en="Warm 2000K">חם 2000K</span>
       <span>3200K</span>
       <span>4000K</span>
       <span>5500K</span>
       <span>6500K</span>
       <span>8000K</span>
-      <span>קר 10000K</span>
+      <span data-he="קר 10000K" data-en="Cool 10000K">קר 10000K</span>
     </div>
     <div class="wb-reading">
       <span class="wb-name-badge" id="wb-badge">אור יום</span>
@@ -188,62 +188,62 @@ input[type=range]#wb-slider:active::-webkit-slider-thumb { cursor: grabbing; }
   <div class="color-info">
     <div class="color-box">
       <div class="color-swatch" id="swatch-cold" style="background:#88aaff"></div>
-      <h4>קר (2000–4000K)</h4>
-      <p>אור שמש בצל, שמיים, עננים. מצלמה פרשה את האור כ"חם" ופיצתה בכחול.</p>
+      <h4 data-he="קר (2000–4000K)" data-en="Cool (2000–4000K)">קר (2000–4000K)</h4>
+      <p data-he="אור שמש בצל, שמיים, עננים. מצלמה פרשה את האור כ&quot;חם&quot; ופיצתה בכחול." data-en="Sunlight in shade, sky, clouds. The camera interpreted the light as &quot;warm&quot; and compensated with blue.">אור שמש בצל, שמיים, עננים. מצלמה פרשה את האור כ"חם" ופיצתה בכחול.</p>
     </div>
     <div class="color-box">
       <div class="color-swatch" id="swatch-neutral" style="background:#fff8f0"></div>
-      <h4>נייטרל (5000–6500K)</h4>
-      <p>אור יום, פלאש. הגדרת ה"טבעי" שמשאירה צבעים כפי שהם.</p>
+      <h4 data-he="נייטרל (5000–6500K)" data-en="Neutral (5000–6500K)">נייטרל (5000–6500K)</h4>
+      <p data-he="אור יום, פלאש. הגדרת ה&quot;טבעי&quot; שמשאירה צבעים כפי שהם." data-en="Daylight, flash. The &quot;natural&quot; setting that keeps colors as they are.">אור יום, פלאש. הגדרת ה"טבעי" שמשאירה צבעים כפי שהם.</p>
     </div>
     <div class="color-box">
       <div class="color-swatch" id="swatch-warm" style="background:#ffaa44"></div>
-      <h4>חם (7000–10000K)</h4>
-      <p>נרות, הלוגן, זריחה/שקיעה. צבע כתמתם-זהוב שיוצר אווירה.</p>
+      <h4 data-he="חם (7000–10000K)" data-en="Warm (7000–10000K)">חם (7000–10000K)</h4>
+      <p data-he="נרות, הלוגן, זריחה/שקיעה. צבע כתמתם-זהוב שיוצר אווירה." data-en="Candles, halogen, sunrise/sunset. An orange-golden hue that creates atmosphere.">נרות, הלוגן, זריחה/שקיעה. צבע כתמתם-זהוב שיוצר אווירה.</p>
     </div>
   </div>
 
   <!-- Info cards -->
   <div class="info-grid">
     <div class="info-card">
-      <div class="ic-top"><div class="ic-dot" style="background:#88aaff"></div><h3>למה כחול בצל?</h3></div>
-      <p>בצל האור מגיע מהשמיים הכחולים, לא מהשמש הישירה. המצלמה ב-Auto WB מתקנת — אבל לא תמיד נכון.</p>
+      <div class="ic-top"><div class="ic-dot" style="background:#88aaff"></div><h3 data-he="למה כחול בצל?" data-en="Why blue in the shade?">למה כחול בצל?</h3></div>
+      <p data-he="בצל האור מגיע מהשמיים הכחולים, לא מהשמש הישירה. המצלמה ב-Auto WB מתקנת — אבל לא תמיד נכון." data-en="In shade, light comes from the blue sky, not direct sun. The camera in Auto WB corrects — but not always accurately.">בצל האור מגיע מהשמיים הכחולים, לא מהשמש הישירה. המצלמה ב-Auto WB מתקנת — אבל לא תמיד נכון.</p>
     </div>
     <div class="info-card">
-      <div class="ic-top"><div class="ic-dot" style="background:#ffaa44"></div><h3>למה כתום בפנים?</h3></div>
-      <p>מנורות ליבון (tungsten) פולטות אור ב-2700–3200K. אם WB מוגדר ל"אור יום" — הכל יוצא כתום-צהוב.</p>
+      <div class="ic-top"><div class="ic-dot" style="background:#ffaa44"></div><h3 data-he="למה כתום בפנים?" data-en="Why orange indoors?">למה כתום בפנים?</h3></div>
+      <p data-he='מנורות ליבון (tungsten) פולטות אור ב-2700–3200K. אם WB מוגדר ל"אור יום" — הכל יוצא כתום-צהוב.' data-en='Incandescent (tungsten) bulbs emit light at 2700–3200K. If WB is set to "Daylight" — everything comes out orange-yellow.'>מנורות ליבון (tungsten) פולטות אור ב-2700–3200K. אם WB מוגדר ל"אור יום" — הכל יוצא כתום-צהוב.</p>
     </div>
     <div class="info-card">
       <div class="ic-top"><div class="ic-dot" style="background:#c8a96e"></div><h3>RAW vs JPEG</h3></div>
-      <p>ב-RAW אפשר לשנות WB בעריכה ללא אובדן איכות. ב-JPEG — הצבע "נאפה" לתוך הקובץ בצילום.</p>
+      <p data-he='ב-RAW אפשר לשנות WB בעריכה ללא אובדן איכות. ב-JPEG — הצבע "נאפה" לתוך הקובץ בצילום.' data-en='In RAW you can change WB in post without quality loss. In JPEG — the color is "baked in" at the time of capture.'>ב-RAW אפשר לשנות WB בעריכה ללא אובדן איכות. ב-JPEG — הצבע "נאפה" לתוך הקובץ בצילום.</p>
     </div>
     <div class="info-card">
-      <div class="ic-top"><div class="ic-dot" style="background:#aaa"></div><h3>Auto WB — מתי לסמוך?</h3></div>
-      <p>טוב לרוב המצבים. אבל בשקיעה — Auto מבטל את הזהב. לפעמים כדאי לנעול ל-5500K ולשמר את האווירה.</p>
+      <div class="ic-top"><div class="ic-dot" style="background:#aaa"></div><h3 data-he="Auto WB — מתי לסמוך?" data-en="Auto WB — When to trust it?">Auto WB — מתי לסמוך?</h3></div>
+      <p data-he="טוב לרוב המצבים. אבל בשקיעה — Auto מבטל את הזהב. לפעמים כדאי לנעול ל-5500K ולשמר את האווירה." data-en="Good for most situations. But at sunset — Auto cancels the golden tones. Sometimes it's worth locking to 5500K to preserve the mood.">טוב לרוב המצבים. אבל בשקיעה — Auto מבטל את הזהב. לפעמים כדאי לנעול ל-5500K ולשמר את האווירה.</p>
     </div>
   </div>
 
   <div class="back-link">
-    <a href="/camera/">← חזרה לבית הספר לצילום</a>
+    <a href="/camera/" data-he="← חזרה לבית הספר לצילום" data-en="← Back to Photography School">← חזרה לבית הספר לצילום</a>
   </div>
 
 </div>
 
 <script>
 const PHOTOS = [
-  { title: 'עוז של נשר',  scene: 'תאורה מלאכותית', url: 'https://drive.google.com/thumbnail?id=1FH_T3RTNUiI1f0cTktFnEEdJY-lO3sNi&sz=w800' },
-  { title: 'תינשוף בור',  scene: 'אור יום — שמיים',  url: 'https://drive.google.com/thumbnail?id=1RS7CNmOqlgKzVp6TEsqT2At4zO4eODS_&sz=w800' },
-  { title: 'ינשוף שלג',   scene: 'אור יום מפוזר',    url: 'https://drive.google.com/thumbnail?id=17RW9kh-Ry3KiqOj_yM3oCK8FPOC88_JN&sz=w800' },
-  { title: 'לטאה ירוקה',  scene: 'צל — טבע',         url: 'https://drive.google.com/thumbnail?id=1_PoGi7uS5MRl0h-unx91_g21IcPI0Oj6&sz=w800' }
+  { title: { he: 'עוז של נשר',  en: 'Eagle Power'    }, scene: { he: 'תאורה מלאכותית',   en: 'Artificial Light'    }, url: 'https://drive.google.com/thumbnail?id=1FH_T3RTNUiI1f0cTktFnEEdJY-lO3sNi&sz=w800' },
+  { title: { he: 'תינשוף בור',  en: 'Burrowing Owl'  }, scene: { he: 'אור יום — שמיים',  en: 'Daylight — Sky'      }, url: 'https://drive.google.com/thumbnail?id=1RS7CNmOqlgKzVp6TEsqT2At4zO4eODS_&sz=w800' },
+  { title: { he: 'ינשוף שלג',   en: 'Snowy Owl'      }, scene: { he: 'אור יום מפוזר',    en: 'Diffused Daylight'   }, url: 'https://drive.google.com/thumbnail?id=17RW9kh-Ry3KiqOj_yM3oCK8FPOC88_JN&sz=w800' },
+  { title: { he: 'לטאה ירוקה',  en: 'Green Lizard'   }, scene: { he: 'צל — טבע',         en: 'Shade — Nature'      }, url: 'https://drive.google.com/thumbnail?id=1_PoGi7uS5MRl0h-unx91_g21IcPI0Oj6&sz=w800' }
 ];
 
 const PRESETS = [
-  { name: 'נרות / להבה',       k: 2000, color: '#ff7722', desc: 'אווירה חמה מאוד — כתום עז' },
-  { name: 'הלוגן / ליבון',     k: 3200, color: '#ffaa44', desc: 'מנורות פנים רגילות' },
-  { name: 'פלואורסנט',         k: 4200, color: '#ddeeff', desc: 'תאורת משרד/מטבח' },
-  { name: 'אור יום (Daylight)', k: 5500, color: '#fff8f0', desc: 'שמש ישירה — ניטרלי' },
-  { name: 'עננים (Cloudy)',     k: 6500, color: '#eef4ff', desc: 'יום מעונן, עמום' },
-  { name: 'צל (Shade)',         k: 8000, color: '#bbccff', desc: 'בצל — כחלחל קר' }
+  { name: { he: 'נרות / להבה',       en: 'Candle / Flame'   }, k: 2000, color: '#ff7722', desc: { he: 'אווירה חמה מאוד — כתום עז',    en: 'Very warm mood — vivid orange'   } },
+  { name: { he: 'הלוגן / ליבון',     en: 'Halogen / Tungsten' }, k: 3200, color: '#ffaa44', desc: { he: 'מנורות פנים רגילות',            en: 'Regular indoor bulbs'            } },
+  { name: { he: 'פלואורסנט',         en: 'Fluorescent'      }, k: 4200, color: '#ddeeff', desc: { he: 'תאורת משרד/מטבח',               en: 'Office / kitchen lighting'       } },
+  { name: { he: 'אור יום (Daylight)', en: 'Daylight'         }, k: 5500, color: '#fff8f0', desc: { he: 'שמש ישירה — ניטרלי',            en: 'Direct sun — neutral'            } },
+  { name: { he: 'עננים (Cloudy)',     en: 'Cloudy'           }, k: 6500, color: '#eef4ff', desc: { he: 'יום מעונן, עמום',               en: 'Overcast day, muted'             } },
+  { name: { he: 'צל (Shade)',         en: 'Shade'            }, k: 8000, color: '#bbccff', desc: { he: 'בצל — כחלחל קר',               en: 'In shade — cool bluish'          } }
 ];
 
 let currentK = 5500;
@@ -255,12 +255,14 @@ PHOTOS.forEach((p, i) => {
   const btn = document.createElement('button');
   btn.type = 'button';
   btn.className = 'photo-btn' + (i === 0 ? ' active' : '');
-  btn.innerHTML = `<img src="${p.url}" alt="${p.title}" loading="lazy"><span>${p.title}</span>`;
+  const titleText = p.title.he;
+  btn.innerHTML = `<img src="${p.url}" alt="${titleText}" loading="lazy"><span data-he="${p.title.he}" data-en="${p.title.en}">${titleText}</span>`;
   btn.addEventListener('click', () => {
     picker.querySelectorAll('.photo-btn').forEach((b, j) => b.classList.toggle('active', j === i));
     photoEl.src = p.url;
-    document.getElementById('photo-title-el').textContent = p.title;
-    document.getElementById('photo-scene-el').textContent = p.scene;
+    const lang = getLang();
+    document.getElementById('photo-title-el').textContent = lang === 'en' ? p.title.en : p.title.he;
+    document.getElementById('photo-scene-el').textContent = lang === 'en' ? p.scene.en : p.scene.he;
     applyFilter();
   });
   picker.appendChild(btn);
@@ -275,8 +277,8 @@ PRESETS.forEach((pr, i) => {
   btn.innerHTML = `
     <div class="preset-dot" style="background:${pr.color}"></div>
     <div class="preset-info">
-      <span class="preset-name">${pr.name}</span>
-      <span class="preset-k">${pr.k.toLocaleString()}K — ${pr.desc}</span>
+      <span class="preset-name" data-he="${pr.name.he}" data-en="${pr.name.en}">${pr.name.he}</span>
+      <span class="preset-k" data-he="${pr.k.toLocaleString()}K — ${pr.desc.he}" data-en="${pr.k.toLocaleString()}K — ${pr.desc.en}">${pr.k.toLocaleString()}K — ${pr.desc.he}</span>
     </div>`;
   btn.addEventListener('click', () => {
     document.getElementById('wb-slider').value = pr.k;
@@ -307,19 +309,23 @@ function setK(k) {
   applyFilter();
 }
 
+const BADGE_NAMES = [
+  { k: 3000, he: '🕯️ נרות — חם מאוד',  en: '🕯️ Candle — Very Warm',  color: '#ff8833', bg: 'rgba(255,136,51,.15)' },
+  { k: 3800, he: '💡 הלוגן — חם',       en: '💡 Halogen — Warm',       color: '#ffaa44', bg: 'rgba(255,170,68,.15)' },
+  { k: 4800, he: '🏭 פלואורסנט',        en: '🏭 Fluorescent',          color: '#c8c8aa', bg: 'rgba(200,200,170,.1)' },
+  { k: 6000, he: '☀️ אור יום — ניטרלי', en: '☀️ Daylight — Neutral',   color: '#c8a96e', bg: 'rgba(200,169,110,.12)' },
+  { k: 7500, he: '☁️ עננים — קריר',    en: '☁️ Cloudy — Cool',         color: '#aabbff', bg: 'rgba(170,187,255,.12)' },
+  { k: Infinity, he: '🌑 צל — קר מאוד', en: '🌑 Shade — Very Cool',    color: '#88aaff', bg: 'rgba(136,170,255,.15)' }
+];
+
 function updateBadge(k) {
   const badge = document.getElementById('wb-badge');
-  let name, color, bg;
-  if (k < 3000)      { name = '🕯️ נרות — חם מאוד';  color = '#ff8833'; bg = 'rgba(255,136,51,.15)'; }
-  else if (k < 3800) { name = '💡 הלוגן — חם';       color = '#ffaa44'; bg = 'rgba(255,170,68,.15)'; }
-  else if (k < 4800) { name = '🏭 פלואורסנט';        color = '#c8c8aa'; bg = 'rgba(200,200,170,.1)'; }
-  else if (k < 6000) { name = '☀️ אור יום — ניטרלי'; color = '#c8a96e'; bg = 'rgba(200,169,110,.12)'; }
-  else if (k < 7500) { name = '☁️ עננים — קריר';    color = '#aabbff'; bg = 'rgba(170,187,255,.12)'; }
-  else               { name = '🌑 צל — קר מאוד';     color = '#88aaff'; bg = 'rgba(136,170,255,.15)'; }
-  badge.textContent = name;
-  badge.style.color = color;
-  badge.style.borderColor = color;
-  badge.style.background = bg;
+  const lang = getLang();
+  const entry = BADGE_NAMES.find(b => k < b.k);
+  badge.textContent = lang === 'en' ? entry.en : entry.he;
+  badge.style.color = entry.color;
+  badge.style.borderColor = entry.color;
+  badge.style.background = entry.bg;
 }
 
 // Low K (2000) = warm light source → orange/warm image
@@ -340,9 +346,36 @@ function applyFilter() {
 
 // Init
 photoEl.src = PHOTOS[0].url;
-document.getElementById('photo-title-el').textContent = PHOTOS[0].title;
-document.getElementById('photo-scene-el').textContent = PHOTOS[0].scene;
+document.getElementById('photo-title-el').textContent = PHOTOS[0].title.he;
+document.getElementById('photo-scene-el').textContent = PHOTOS[0].scene.he;
 setK(5500);
+
+function getLang() { return localStorage.getItem('lang') || 'he'; }
+
+function applyLang() {
+  const lang = getLang();
+  const isEn = lang === 'en';
+  document.documentElement.dir = isEn ? 'ltr' : 'rtl';
+  document.documentElement.lang = lang;
+  document.body.style.direction = isEn ? 'ltr' : 'rtl';
+  document.title = isEn
+    ? 'White Balance — Color Temperature & Kelvin Scale | Photography School | Amit Photos'
+    : 'וייט בלאנס — טמפרטורת צבע ומה זה קלוין | בית ספר לצילום | Amit Photos';
+  document.querySelectorAll('[data-he]').forEach(el => {
+    el.textContent = isEn ? (el.dataset.en || el.dataset.he) : el.dataset.he;
+  });
+  // Update photo title/scene for current active photo
+  const activeIdx = [...picker.querySelectorAll('.photo-btn')].findIndex(b => b.classList.contains('active'));
+  if (activeIdx >= 0) {
+    document.getElementById('photo-title-el').textContent = isEn ? PHOTOS[activeIdx].title.en : PHOTOS[activeIdx].title.he;
+    document.getElementById('photo-scene-el').textContent = isEn ? PHOTOS[activeIdx].scene.en : PHOTOS[activeIdx].scene.he;
+  }
+  // Re-render badge with correct language
+  updateBadge(currentK);
+}
+
+applyLang();
+window.addEventListener('storage', e => { if (e.key === 'lang') applyLang(); });
 </script>
 </body>
 </html>
