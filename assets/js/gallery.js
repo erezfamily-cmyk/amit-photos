@@ -63,6 +63,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   initScrollReveal();
   initGalleryReveal();
   initBackToTop();
+  initStickyFilterBar();
   await loadPhotos();
   initFilters();
   initSearch();
@@ -72,6 +73,17 @@ document.addEventListener('DOMContentLoaded', async () => {
   initCart();
   handleInitialHash();
 });
+
+function initStickyFilterBar() {
+  const bar = document.getElementById('filter-bar');
+  if (!bar) return;
+  const sentinel = document.createElement('div');
+  bar.parentElement.insertBefore(sentinel, bar);
+  new IntersectionObserver(
+    ([e]) => bar.classList.toggle('is-stuck', e.intersectionRatio < 1),
+    { threshold: [1], rootMargin: '-64px 0px 0px 0px' }
+  ).observe(sentinel);
+}
 
 // ===== NAV =====
 function initNav() {

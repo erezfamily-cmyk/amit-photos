@@ -431,7 +431,22 @@ nav.scrolled { border-bottom-color: rgba(200, 169, 110, 0.3); }
   flex-wrap: wrap;
   gap: 0.5rem;
   justify-content: center;
-  margin-bottom: 3rem;
+  margin-bottom: 2rem;
+
+  position: sticky;
+  top: 64px;
+  z-index: 90;
+  margin-left: -2.5rem;
+  margin-right: -2.5rem;
+  padding: 0.75rem 2.5rem;
+  background: rgba(8, 8, 8, 0.88);
+  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(18px);
+  border-bottom: 1px solid rgba(200, 169, 110, 0.12);
+  transition: box-shadow 0.2s;
+}
+.filter-bar.is-stuck {
+  box-shadow: 0 4px 24px rgba(0,0,0,0.45);
 }
 
 .filter-btn {
@@ -2851,6 +2866,7 @@ footer {
   .about-stats { gap: 1.5rem; }
   .section { padding: 5rem 1.25rem; }
   nav { padding: 0 1.25rem; }
+  .filter-bar { margin-left: -1.25rem; margin-right: -1.25rem; padding-left: 1.25rem; padding-right: 1.25rem; }
 }
 
 @media (max-width: 480px) {
@@ -2858,7 +2874,7 @@ footer {
   .hero-actions { flex-direction: column; gap: 0.75rem; }
   .hero-cta, .hero-cta-ghost { width: 100%; text-align: center; }
   .section { padding: 4rem 1rem; }
-  .filter-bar { gap: 0.4rem; }
+  .filter-bar { gap: 0.4rem; margin-left: -1rem; margin-right: -1rem; padding-left: 1rem; padding-right: 1rem; }
   .filter-btn { font-size: 0.7rem; padding: 0.45rem 0.8rem; }
   .lightbox-prev, .lightbox-next { width: 36px; height: 36px; font-size: 1.1rem; }
   .lightbox-inner { padding: 3.5rem 3rem 0; }
