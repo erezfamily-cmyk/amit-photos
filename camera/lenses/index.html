@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html dir="rtl" lang="he">
+<html lang="he" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -128,22 +128,22 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
 <body>
 
 <div class="hero">
-  <div class="hero-badge">📷 בית ספר לצילום</div>
-  <h1>עדשות</h1>
-  <p>גרור, חקור, הבן — איך מרחק מוקד, צמצם ועדשה משנים את התמונה</p>
+  <div class="hero-badge" data-he="📷 בית ספר לצילום" data-en="📷 Photography School">📷 בית ספר לצילום</div>
+  <h1 data-he="עדשות" data-en="Lenses">עדשות</h1>
+  <p data-he="גרור, חקור, הבן — איך מרחק מוקד, צמצם ועדשה משנים את התמונה" data-en="Drag, explore, understand — how focal length, aperture and lens choice transform the image">גרור, חקור, הבן — איך מרחק מוקד, צמצם ועדשה משנים את התמונה</p>
 </div>
 
 <nav class="toc">
-  <a href="#focal">מרחק מוקד</a>
-  <a href="#bokeh">בוקה וצמצם</a>
+  <a href="#focal" data-he="מרחק מוקד" data-en="Focal Length">מרחק מוקד</a>
+  <a href="#bokeh" data-he="בוקה וצמצם" data-en="Bokeh & Aperture">בוקה וצמצם</a>
   <a href="#compare">Wide vs Tele</a>
-  <a href="#anatomy">אנטומיה</a>
+  <a href="#anatomy" data-he="אנטומיה" data-en="Anatomy">אנטומיה</a>
 </nav>
 
 <section class="section" id="focal">
-  <div class="section-label">חלק 1</div>
-  <h2>מרחק מוקד — כמה רואים?</h2>
-  <p>מרחק מוקד (מ"מ) קובע כמה שדה ראייה נכנס לפריים. ערך נמוך = עדשה רחבה = נוף שלם. ערך גבוה = טלפוטו = תקריב.</p>
+  <div class="section-label" data-he="חלק 1" data-en="Part 1">חלק 1</div>
+  <h2 data-he="מרחק מוקד — כמה רואים?" data-en="Focal Length — How Much Do You See?">מרחק מוקד — כמה רואים?</h2>
+  <p data-he="מרחק מוקד (מ&quot;מ) קובע כמה שדה ראייה נכנס לפריים. ערך נמוך = עדשה רחבה = נוף שלם. ערך גבוה = טלפוטו = תקריב." data-en="Focal length (mm) determines how much of the scene fits in the frame. Lower value = wide angle = full landscape. Higher value = telephoto = close-up.">מרחק מוקד (מ"מ) קובע כמה שדה ראייה נכנס לפריים. ערך נמוך = עדשה רחבה = נוף שלם. ערך גבוה = טלפוטו = תקריב.</p>
   <div class="demo-card">
     <div class="slider-row">
       <label>18mm</label>
@@ -158,29 +158,29 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
            alt="שדה תירס בעמק הירדן">
     </div>
     <div class="focal-hint-row">
-      <span>18mm — רחב, הכל בפריים</span>
-      <span>200mm — תקריב, דחיסת מרחקים</span>
+      <span id="hint-wide" data-he="18mm — רחב, הכל בפריים" data-en="18mm — wide, everything in frame">18mm — רחב, הכל בפריים</span>
+      <span id="hint-tele" data-he="200mm — תקריב, דחיסת מרחקים" data-en="200mm — telephoto, compressed distances">200mm — תקריב, דחיסת מרחקים</span>
     </div>
     <p class="slider-desc" id="focalDesc"></p>
   </div>
 </section>
 
 <section class="section" id="bokeh">
-  <div class="section-label">חלק 2</div>
-  <h2>בוקה — הטשטוש הקסום</h2>
-  <p>צמצם פתוח (f/1.8) = עומק שדה רדוד = רקע מטושטש, הנושא בולט. צמצם סגור (f/16) = הכל חד.</p>
+  <div class="section-label" data-he="חלק 2" data-en="Part 2">חלק 2</div>
+  <h2 data-he="בוקה — הטשטוש הקסום" data-en="Bokeh — The Magic Blur">בוקה — הטשטוש הקסום</h2>
+  <p data-he="צמצם פתוח (f/1.8) = עומק שדה רדוד = רקע מטושטש, הנושא בולט. צמצם סגור (f/16) = הכל חד." data-en="Wide aperture (f/1.8) = shallow depth of field = blurred background, subject stands out. Closed aperture (f/16) = everything sharp.">צמצם פתוח (f/1.8) = עומק שדה רדוד = רקע מטושטש, הנושא בולט. צמצם סגור (f/16) = הכל חד.</p>
   <div class="demo-card">
     <div class="bokeh-split">
       <div class="bokeh-img">
         <img src="https://drive.google.com/thumbnail?id=10D5va4MnAh7QpagtevvTqzipMA3cS_8c&sz=w400"
              alt="פרפר לבן על פרחים — נושא">
-        <div class="bokeh-label">נושא</div>
+        <div class="bokeh-label" id="label-subject" data-he="נושא" data-en="Subject">נושא</div>
       </div>
       <div class="bokeh-img">
         <img src="https://lh3.googleusercontent.com/d/1d8LFk1t2KZRu2o8VmgJxszQCFPbEW-lg=w400"
              alt="שדה פרחים — רקע">
         <div class="bokeh-blur" id="bgBlur"></div>
-        <div class="bokeh-label">רקע</div>
+        <div class="bokeh-label" id="label-bg" data-he="רקע" data-en="Background">רקע</div>
       </div>
     </div>
     <div class="slider-row">
@@ -195,35 +195,36 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
 </section>
 
 <section class="section" id="compare">
-  <div class="section-label">חלק 3</div>
-  <h2>Wide vs Telephoto — אותו עולם, שתי עדשות</h2>
-  <p>עדשה רחבה תכניס יותר לפריים אבל "תדחוף" את הרקע. עדשה ארוכה תדחוס מרחקים ותייצר רקע מטושטש יותר.</p>
+  <div class="section-label" data-he="חלק 3" data-en="Part 3">חלק 3</div>
+  <h2 data-he="Wide vs Telephoto — אותו עולם, שתי עדשות" data-en="Wide vs Telephoto — Same World, Two Lenses">Wide vs Telephoto — אותו עולם, שתי עדשות</h2>
+  <p data-he="עדשה רחבה תכניס יותר לפריים אבל &quot;תדחוף&quot; את הרקע. עדשה ארוכה תדחוס מרחקים ותייצר רקע מטושטש יותר." data-en="A wide lens fits more in the frame but &quot;pushes&quot; the background away. A long lens compresses distances and creates more background blur.">עדשה רחבה תכניס יותר לפריים אבל "תדחוף" את הרקע. עדשה ארוכה תדחוס מרחקים ותייצר רקע מטושטש יותר.</p>
   <div class="compare-grid">
     <div class="compare-card">
       <img src="https://drive.google.com/thumbnail?id=1ShiRcz-EvlJu6CG55sxIKZiCoLHgTSnx&sz=w500"
            alt="הכותל המערבי — Wide">
       <div class="cc-label">~18mm — Wide</div>
-      <div class="cc-desc">שדה ראייה רחב, הכל בפריים, פרספקטיבה מוגזמת</div>
+      <div class="cc-desc" data-he="שדה ראייה רחב, הכל בפריים, פרספקטיבה מוגזמת" data-en="Wide field of view, everything in frame, exaggerated perspective">שדה ראייה רחב, הכל בפריים, פרספקטיבה מוגזמת</div>
     </div>
     <div class="compare-card">
       <img src="https://drive.google.com/thumbnail?id=17RW9kh-Ry3KiqOj_yM3oCK8FPOC88_JN&sz=w500"
            alt="ינשוף שלג — Telephoto">
       <div class="cc-label">300mm+ — Telephoto</div>
-      <div class="cc-desc">תקריב, רקע דחוס ומטושטש, נושא מוגדר</div>
+      <div class="cc-desc" data-he="תקריב, רקע דחוס ומטושטש, נושא מוגדר" data-en="Close-up, compressed and blurred background, defined subject">תקריב, רקע דחוס ומטושטש, נושא מוגדר</div>
     </div>
   </div>
 </section>
 
 <section class="section" id="anatomy">
-  <div class="section-label">חלק 4</div>
-  <h2>מה קורה לאור בתוך העדשה?</h2>
-  <p>האור נכנס מהשמאל, מתכופף דרך אלמנטי הזכוכית, ומתמקד לנקודה אחת על הסנסור — זה המיקוד.</p>
+  <div class="section-label" data-he="חלק 4" data-en="Part 4">חלק 4</div>
+  <h2 data-he="מה קורה לאור בתוך העדשה?" data-en="What Happens to Light Inside the Lens?">מה קורה לאור בתוך העדשה?</h2>
+  <p data-he="האור נכנס מהשמאל, מתכופף דרך אלמנטי הזכוכית, ומתמקד לנקודה אחת על הסנסור — זה המיקוד." data-en="Light enters from the left, bends through glass elements, and focuses to a single point on the sensor — that's focus.">האור נכנס מהשמאל, מתכופף דרך אלמנטי הזכוכית, ומתמקד לנקודה אחת על הסנסור — זה המיקוד.</p>
   <div class="anatomy-wrap">
     <svg viewBox="0 0 520 190" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="דיאגרמת מעבר אור בעדשה">
       <!-- Lens barrel -->
       <rect x="190" y="35" width="140" height="120" rx="8"
             fill="#1a1a1a" stroke="#333" stroke-width="1.5"/>
-      <text x="260" y="28" text-anchor="middle" font-size="11" fill="#888" font-family="Heebo,sans-serif">עדשה</text>
+      <text x="260" y="28" text-anchor="middle" font-size="11" fill="#888" font-family="Heebo,sans-serif"
+            data-he="עדשה" data-en="Lens">עדשה</text>
 
       <!-- Glass elements (3 ellipses) -->
       <ellipse cx="228" cy="95" rx="9"  ry="42" fill="rgba(200,169,110,.07)" stroke="#c8a96e" stroke-width="1.5" opacity=".8"/>
@@ -233,11 +234,13 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
       <!-- Sensor -->
       <rect x="350" y="60" width="14" height="70" rx="3"
             fill="#2a2a2a" stroke="#666" stroke-width="1.5"/>
-      <text x="370" y="80"  font-size="10" fill="#888" font-family="Heebo,sans-serif">סנסור</text>
+      <text x="370" y="80"  font-size="10" fill="#888" font-family="Heebo,sans-serif"
+            data-he="סנסור" data-en="Sensor">סנסור</text>
       <text x="370" y="95"  font-size="9"  fill="#666" font-family="Heebo,sans-serif">(CMOS)</text>
 
       <!-- Light source label -->
-      <text x="22" y="58" font-size="10" fill="#888" font-family="Heebo,sans-serif">אור</text>
+      <text x="22" y="58" font-size="10" fill="#888" font-family="Heebo,sans-serif"
+            data-he="אור" data-en="Light">אור</text>
 
       <!-- Animated light rays (3 rays converging to sensor center) -->
       <line class="light-ray" x1="22" y1="65"  x2="357" y2="95" stroke="#c8a96e" stroke-width="1.8" opacity=".85"/>
@@ -248,26 +251,39 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
       <circle cx="357" cy="95" r="3.5" fill="#c8a96e" opacity=".9"/>
 
       <!-- Caption -->
-      <text x="260" y="175" text-anchor="middle" font-size="10" fill="#555" font-family="Heebo,sans-serif">3 קרני אור מתכנסות לנקודה אחת — מיקוד</text>
+      <text x="260" y="175" text-anchor="middle" font-size="10" fill="#555" font-family="Heebo,sans-serif"
+            data-he="3 קרני אור מתכנסות לנקודה אחת — מיקוד" data-en="3 light rays converging to a single point — focus">3 קרני אור מתכנסות לנקודה אחת — מיקוד</text>
     </svg>
   </div>
 </section>
 
 
 <div class="cta-section">
-  <h3>עכשיו תראה את זה בתמונות אמיתיות</h3>
-  <p>עמית צילם עם עדשות שונות — זהה בוקה, wide shots ותקריבים בגלריה.</p>
-  <a href="https://amitphotos.com" class="cta-btn">לגלריה המלאה ←</a>
+  <h3 data-he="עכשיו תראה את זה בתמונות אמיתיות" data-en="Now See It in Real Photos">עכשיו תראה את זה בתמונות אמיתיות</h3>
+  <p data-he="עמית צילם עם עדשות שונות — זהה בוקה, wide shots ותקריבים בגלריה." data-en="Amit shot with different lenses — spot bokeh, wide shots and close-ups in the gallery.">עמית צילם עם עדשות שונות — זהה בוקה, wide shots ותקריבים בגלריה.</p>
+  <a href="https://amitphotos.com" class="cta-btn" data-he="לגלריה המלאה ←" data-en="Full Gallery →">לגלריה המלאה ←</a>
 </div>
 
 <script>
+function getLang() { return localStorage.getItem('lang') || 'he'; }
+
 const FOCAL_DESCS = {
-  18: 'עדשה רחבה — מושלמת לנופים ואדריכלות, מעוות פרספקטיבה',
-  35: 'קרובה לעין האנושית — רב-תכליתית לרחוב ודוקומנטרי',
-  50: 'נורמלי — פרספקטיבה טבעית ללא עיוות',
-  85: 'פורטרטים — בוקה יפה, ללא עיוות פנים',
-  135: 'טלפוטו קצר — דחיסת רקע נחמדה',
-  200: 'טלפוטו — ספורט, חיות בר, תקריבים ממרחק'
+  he: {
+    18: 'עדשה רחבה — מושלמת לנופים ואדריכלות, מעוות פרספקטיבה',
+    35: 'קרובה לעין האנושית — רב-תכליתית לרחוב ודוקומנטרי',
+    50: 'נורמלי — פרספקטיבה טבעית ללא עיוות',
+    85: 'פורטרטים — בוקה יפה, ללא עיוות פנים',
+    135: 'טלפוטו קצר — דחיסת רקע נחמדה',
+    200: 'טלפוטו — ספורט, חיות בר, תקריבים ממרחק'
+  },
+  en: {
+    18: 'Wide angle — perfect for landscapes and architecture, distorts perspective',
+    35: 'Close to the human eye — versatile for street and documentary',
+    50: 'Normal — natural perspective with no distortion',
+    85: 'Portraits — beautiful bokeh, no facial distortion',
+    135: 'Short telephoto — pleasant background compression',
+    200: 'Telephoto — sports, wildlife, distant close-ups'
+  }
 };
 
 function updateFocal(v) {
@@ -275,11 +291,26 @@ function updateFocal(v) {
   document.getElementById('focalVal').textContent = v + 'mm';
   const scale = 1 + (v - 18) / (200 - 18) * 1.5;
   document.getElementById('focalImg').style.transform = `scale(${scale})`;
-  const closest = Object.keys(FOCAL_DESCS).reduce((a, b) =>
+  const lang = getLang();
+  const descs = FOCAL_DESCS[lang] || FOCAL_DESCS.he;
+  const closest = Object.keys(descs).reduce((a, b) =>
     Math.abs(b - v) < Math.abs(a - v) ? b : a);
-  document.getElementById('focalDesc').textContent = FOCAL_DESCS[closest];
+  document.getElementById('focalDesc').textContent = descs[closest];
 }
 updateFocal(35);
+
+const APERTURE_DESCS = {
+  he: {
+    open:   'צמצם פתוח — רקע מיטשטש, הנושא בולט. אידיאלי לפורטרטים.',
+    mid:    'צמצם בינוני — עומק שדה מאוזן.',
+    closed: 'צמצם סגור — כל השדה חד. אידיאלי לנופים.'
+  },
+  en: {
+    open:   'Wide open aperture — blurred background, subject stands out. Ideal for portraits.',
+    mid:    'Mid aperture — balanced depth of field.',
+    closed: 'Closed aperture — everything sharp. Ideal for landscapes.'
+  }
+};
 
 function updateAperture(v) {
   v = parseFloat(v);
@@ -288,11 +319,9 @@ function updateAperture(v) {
   const blurVal = `blur(${blur.toFixed(1)}px)`;
   document.getElementById('bgBlur').style.webkitBackdropFilter = blurVal;
   document.getElementById('bgBlur').style.backdropFilter = blurVal;
-  const desc = v < 4
-    ? 'צמצם פתוח — רקע מיטשטש, הנושא בולט. אידיאלי לפורטרטים.'
-    : v < 10
-    ? 'צמצם בינוני — עומק שדה מאוזן.'
-    : 'צמצם סגור — כל השדה חד. אידיאלי לנופים.';
+  const lang = getLang();
+  const d = APERTURE_DESCS[lang] || APERTURE_DESCS.he;
+  const desc = v < 4 ? d.open : v < 10 ? d.mid : d.closed;
   document.getElementById('apertureDesc').textContent = desc;
 }
 updateAperture(1.8);
@@ -308,6 +337,24 @@ function updateToc(){
 }
 window.addEventListener('scroll', updateToc, {passive:true});
 updateToc();
+
+function applyLang() {
+  const lang = getLang();
+  const isEn = lang === 'en';
+  document.documentElement.dir = isEn ? 'ltr' : 'rtl';
+  document.documentElement.lang = lang;
+  document.body.style.direction = isEn ? 'ltr' : 'rtl';
+  document.title = isEn
+    ? 'Lenses — Photography School | Amit Photos'
+    : 'עדשות — בית ספר לצילום | Amit Photos';
+  document.querySelectorAll('[data-he]').forEach(el => {
+    el.textContent = isEn ? (el.dataset.en || el.dataset.he) : el.dataset.he;
+  });
+  updateFocal(parseInt(document.getElementById('focalSlider').value));
+  updateAperture(parseFloat(document.getElementById('apertureSlider').value));
+}
+applyLang();
+window.addEventListener('storage', e => { if (e.key === 'lang') applyLang(); });
 </script>
 </body>
 </html>

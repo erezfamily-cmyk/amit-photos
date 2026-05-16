@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html dir="rtl" lang="he">
+<html lang="he" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -83,13 +83,14 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
 <body>
 
 <div class="breadcrumb">
-  <a href="/camera/">למד לצלם</a> ← קומפוזיציה
+  <a href="/camera/" data-he="למד לצלם" data-en="Photography School">למד לצלם</a>
+  <span data-he=" ← קומפוזיציה" data-en=" ← Composition"> ← קומפוזיציה</span>
 </div>
 
 <div class="hero">
-  <div class="hero-badge">🔲 קומפוזיציה</div>
-  <h1>מה הופך תמונה למדוברת</h1>
-  <p>חוק השליש, מסגור, קווים מובילים — הכלים הבלתי נראים שהצופה מרגיש אפילו בלי לדעת</p>
+  <div class="hero-badge" data-he="🔲 קומפוזיציה" data-en="🔲 Composition">🔲 קומפוזיציה</div>
+  <h1 data-he="מה הופך תמונה למדוברת" data-en="What Makes a Photo Compelling">מה הופך תמונה למדוברת</h1>
+  <p data-he="חוק השליש, מסגור, קווים מובילים — הכלים הבלתי נראים שהצופה מרגיש אפילו בלי לדעת" data-en="Rule of thirds, framing, leading lines — the invisible tools the viewer feels even without knowing why">חוק השליש, מסגור, קווים מובילים — הכלים הבלתי נראים שהצופה מרגיש אפילו בלי לדעת</p>
 </div>
 
 <div class="article">
@@ -97,14 +98,14 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
   <!-- INTERACTIVE DEMO -->
   <div class="section">
     <div class="lab">
-      <div class="lab-title">🎨 בחר כלל קומפוזיציה — ראה איך הוא עובד</div>
+      <div class="lab-title" data-he="🎨 בחר כלל קומפוזיציה — ראה איך הוא עובד" data-en="🎨 Choose a Composition Rule — See How It Works">🎨 בחר כלל קומפוזיציה — ראה איך הוא עובד</div>
 
       <div class="rule-tabs">
-        <button class="rule-tab active" data-rule="thirds">חוק השליש</button>
-        <button class="rule-tab" data-rule="leading">קווים מובילים</button>
-        <button class="rule-tab" data-rule="framing">מסגור</button>
-        <button class="rule-tab" data-rule="symmetry">סימטריה</button>
-        <button class="rule-tab" data-rule="negative">מרחב שלילי</button>
+        <button class="rule-tab active" data-rule="thirds" data-he="חוק השליש" data-en="Rule of Thirds">חוק השליש</button>
+        <button class="rule-tab" data-rule="leading" data-he="קווים מובילים" data-en="Leading Lines">קווים מובילים</button>
+        <button class="rule-tab" data-rule="framing" data-he="מסגור" data-en="Framing">מסגור</button>
+        <button class="rule-tab" data-rule="symmetry" data-he="סימטריה" data-en="Symmetry">סימטריה</button>
+        <button class="rule-tab" data-rule="negative" data-he="מרחב שלילי" data-en="Negative Space">מרחב שלילי</button>
       </div>
 
       <div class="rule-canvas-wrap">
@@ -122,9 +123,9 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
 
   <!-- COMPARE: CENTER VS RULE OF THIRDS -->
   <div class="section">
-    <div class="section-label">לפני ואחרי</div>
-    <h2>אמצע מול חוק השליש</h2>
-    <p>הצבת הנושא בדיוק באמצע יוצרת תמונה "סגורה" וסטטית. הזזה לנקודת שליש פותחת מרחב ויוצרת מתח חיובי.</p>
+    <div class="section-label" data-he="לפני ואחרי" data-en="Before & After">לפני ואחרי</div>
+    <h2 data-he="אמצע מול חוק השליש" data-en="Center vs Rule of Thirds">אמצע מול חוק השליש</h2>
+    <p data-he='הצבת הנושא בדיוק באמצע יוצרת תמונה "סגורה" וסטטית. הזזה לנקודת שליש פותחת מרחב ויוצרת מתח חיובי.' data-en='Placing the subject dead center creates a "closed" static image. Shifting to a third point opens space and creates positive tension.'>הצבת הנושא בדיוק באמצע יוצרת תמונה "סגורה" וסטטית. הזזה לנקודת שליש פותחת מרחב ויוצרת מתח חיובי.</p>
 
     <div class="compare-grid">
       <div class="compare-card">
@@ -132,8 +133,8 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
           <canvas class="compare-canvas" id="compareCenter"></canvas>
         </div>
         <div class="compare-label">
-          <div class="compare-label-title compare-label-bad">✗ נושא באמצע</div>
-          <div class="compare-label-desc">תמונה סטטית, אין מתח, הצופה לא יודע לאן להסתכל</div>
+          <div class="compare-label-title compare-label-bad" data-he="✗ נושא באמצע" data-en="✗ Subject Centered">✗ נושא באמצע</div>
+          <div class="compare-label-desc" data-he="תמונה סטטית, אין מתח, הצופה לא יודע לאן להסתכל" data-en="Static image, no tension, the viewer doesn't know where to look">תמונה סטטית, אין מתח, הצופה לא יודע לאן להסתכל</div>
         </div>
       </div>
       <div class="compare-card">
@@ -141,8 +142,8 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
           <canvas class="compare-canvas" id="compareThirds"></canvas>
         </div>
         <div class="compare-label">
-          <div class="compare-label-title compare-label-good">✓ חוק השליש</div>
-          <div class="compare-label-desc">יש מרחב, יש מתח חיובי, הנושא "נושם"</div>
+          <div class="compare-label-title compare-label-good" data-he="✓ חוק השליש" data-en="✓ Rule of Thirds">✓ חוק השליש</div>
+          <div class="compare-label-desc" data-he='יש מרחב, יש מתח חיובי, הנושא "נושם"' data-en='There is space, positive tension, the subject can "breathe"'>יש מרחב, יש מתח חיובי, הנושא "נושם"</div>
         </div>
       </div>
     </div>
@@ -152,39 +153,39 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
 
   <!-- TIPS -->
   <div class="section">
-    <div class="section-label">כלי קומפוזיציה</div>
-    <h2>6 כלים שכל צלם צריך לדעת</h2>
+    <div class="section-label" data-he="כלי קומפוזיציה" data-en="Composition Tools">כלי קומפוזיציה</div>
+    <h2 data-he="6 כלים שכל צלם צריך לדעת" data-en="6 Tools Every Photographer Needs to Know">6 כלים שכל צלם צריך לדעת</h2>
 
     <div class="tip-grid">
       <div class="tip-card">
         <div class="tip-card-emoji">⚡</div>
-        <div class="tip-card-title">חוק השליש</div>
-        <div class="tip-card-desc">הכלל הבסיסי ביותר — הפריים מחולק ל-9 ריבועים. הנח נושאים על הקווים או בנקודות החיתוך.</div>
+        <div class="tip-card-title" data-he="חוק השליש" data-en="Rule of Thirds">חוק השליש</div>
+        <div class="tip-card-desc" data-he="הכלל הבסיסי ביותר — הפריים מחולק ל-9 ריבועים. הנח נושאים על הקווים או בנקודות החיתוך." data-en="The most fundamental rule — the frame is divided into 9 squares. Place subjects on the lines or at the intersection points.">הכלל הבסיסי ביותר — הפריים מחולק ל-9 ריבועים. הנח נושאים על הקווים או בנקודות החיתוך.</div>
       </div>
       <div class="tip-card">
         <div class="tip-card-emoji">↗</div>
-        <div class="tip-card-title">קווים מובילים</div>
-        <div class="tip-card-desc">כביש, גדר, נהר — קווים שמובילים את העין ישר לנושא. חיזקו את העומק ותחושת המרחק.</div>
+        <div class="tip-card-title" data-he="קווים מובילים" data-en="Leading Lines">קווים מובילים</div>
+        <div class="tip-card-desc" data-he="כביש, גדר, נהר — קווים שמובילים את העין ישר לנושא. חיזקו את העומק ותחושת המרחק." data-en="Road, fence, river — lines that guide the eye straight to the subject. Strengthen depth and sense of distance.">כביש, גדר, נהר — קווים שמובילים את העין ישר לנושא. חיזקו את העומק ותחושת המרחק.</div>
       </div>
       <div class="tip-card">
         <div class="tip-card-emoji">🖼</div>
-        <div class="tip-card-title">מסגור טבעי</div>
-        <div class="tip-card-desc">שימוש בקשת, חלון, ענפי עצים — ליצור מסגרת בתוך הפריים שממקדת את העין בנושא.</div>
+        <div class="tip-card-title" data-he="מסגור טבעי" data-en="Natural Framing">מסגור טבעי</div>
+        <div class="tip-card-desc" data-he="שימוש בקשת, חלון, ענפי עצים — ליצור מסגרת בתוך הפריים שממקדת את העין בנושא." data-en="Using an arch, window, or tree branches — to create a frame within the frame that focuses the eye on the subject.">שימוש בקשת, חלון, ענפי עצים — ליצור מסגרת בתוך הפריים שממקדת את העין בנושא.</div>
       </div>
       <div class="tip-card">
         <div class="tip-card-emoji">⬛</div>
-        <div class="tip-card-title">מרחב שלילי</div>
-        <div class="tip-card-desc">השארת שטח ריק מסביב לנושא. שקט ויזואלי שגורם לנושא לבלוט ולנשום.</div>
+        <div class="tip-card-title" data-he="מרחב שלילי" data-en="Negative Space">מרחב שלילי</div>
+        <div class="tip-card-desc" data-he="השארת שטח ריק מסביב לנושא. שקט ויזואלי שגורם לנושא לבלוט ולנשום." data-en="Leaving empty space around the subject. Visual silence that makes the subject stand out and breathe.">השארת שטח ריק מסביב לנושא. שקט ויזואלי שגורם לנושא לבלוט ולנשום.</div>
       </div>
       <div class="tip-card">
         <div class="tip-card-emoji">🔄</div>
-        <div class="tip-card-title">סימטריה ודפוסים</div>
-        <div class="tip-card-desc">סימטריה יוצרת הרגשה של סדר ויופי. שבירה מכוונת של הסימטריה יוצרת מתח ואינטרס.</div>
+        <div class="tip-card-title" data-he="סימטריה ודפוסים" data-en="Symmetry & Patterns">סימטריה ודפוסים</div>
+        <div class="tip-card-desc" data-he="סימטריה יוצרת הרגשה של סדר ויופי. שבירה מכוונת של הסימטריה יוצרת מתח ואינטרס." data-en="Symmetry creates a sense of order and beauty. Intentional breaking of symmetry creates tension and interest.">סימטריה יוצרת הרגשה של סדר ויופי. שבירה מכוונת של הסימטריה יוצרת מתח ואינטרס.</div>
       </div>
       <div class="tip-card">
         <div class="tip-card-emoji">📐</div>
-        <div class="tip-card-title">קו האופק</div>
-        <div class="tip-card-desc">קו אופק ישר = יציבות. מוטה = תנועה וחוסר שקט. החליט בכוונה — אל תטה במקרה.</div>
+        <div class="tip-card-title" data-he="קו האופק" data-en="Horizon Line">קו האופק</div>
+        <div class="tip-card-desc" data-he="קו אופק ישר = יציבות. מוטה = תנועה וחוסר שקט. החליט בכוונה — אל תטה במקרה." data-en="Straight horizon = stability. Tilted = motion and unease. Decide intentionally — never tilt by accident.">קו אופק ישר = יציבות. מוטה = תנועה וחוסר שקט. החליט בכוונה — אל תטה במקרה.</div>
       </div>
     </div>
   </div>
@@ -193,20 +194,22 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
 
   <!-- PRO TIP -->
   <div class="section">
-    <div class="section-label">טיפ מתקדם</div>
-    <h2>חוקים נועדו להישבר</h2>
-    <p>כל הכללים האלה הם <strong>נקודת מוצא</strong>, לא חוק פיזיקה. צילום של נושא בדיוק באמצע יכול להיות חזק מאוד — אם זה בכוונה, ואם יש לך סיבה.</p>
-    <p>ההבדל בין מתחיל לבין צלם מנוסה: <strong>המתחיל שובר כללים בגלל שהוא לא יודע אותם. המנוסה שובר אותם בגלל שהוא יודע בדיוק מה הוא עושה.</strong></p>
-    <p>כשאתה מפסיק לחשוב על הכללים ומתחיל לחשוב על מה אתה רוצה שהצופה ירגיש — זה כשאתה מתחיל לפתח שפה צילומית אישית.</p>
+    <div class="section-label" data-he="טיפ מתקדם" data-en="Advanced Tip">טיפ מתקדם</div>
+    <h2 data-he="חוקים נועדו להישבר" data-en="Rules Are Meant to Be Broken">חוקים נועדו להישבר</h2>
+    <p data-he="כל הכללים האלה הם נקודת מוצא, לא חוק פיזיקה. צילום של נושא בדיוק באמצע יכול להיות חזק מאוד — אם זה בכוונה, ואם יש לך סיבה." data-en="All these rules are a starting point, not a law of physics. Placing a subject dead center can be very powerful — if it is intentional and you have a reason.">כל הכללים האלה הם <strong>נקודת מוצא</strong>, לא חוק פיזיקה. צילום של נושא בדיוק באמצע יכול להיות חזק מאוד — אם זה בכוונה, ואם יש לך סיבה.</p>
+    <p data-he="ההבדל בין מתחיל לבין צלם מנוסה: המתחיל שובר כללים בגלל שהוא לא יודע אותם. המנוסה שובר אותם בגלל שהוא יודע בדיוק מה הוא עושה." data-en="The difference between a beginner and an experienced photographer: the beginner breaks rules because they don't know them. The experienced one breaks them because they know exactly what they are doing.">ההבדל בין מתחיל לבין צלם מנוסה: <strong>המתחיל שובר כללים בגלל שהוא לא יודע אותם. המנוסה שובר אותם בגלל שהוא יודע בדיוק מה הוא עושה.</strong></p>
+    <p data-he="כשאתה מפסיק לחשוב על הכללים ומתחיל לחשוב על מה אתה רוצה שהצופה ירגיש — זה כשאתה מתחיל לפתח שפה צילומית אישית." data-en="When you stop thinking about rules and start thinking about what you want the viewer to feel — that is when you start developing a personal visual language.">כשאתה מפסיק לחשוב על הכללים ומתחיל לחשוב על מה אתה רוצה שהצופה ירגיש — זה כשאתה מתחיל לפתח שפה צילומית אישית.</p>
   </div>
 
 </div>
 
 <div class="nav-prev">
-  <a href="/camera/">← חזרה לבית ספר לצילום</a>
+  <a href="/camera/" data-he="← חזרה לבית ספר לצילום" data-en="← Back to Photography School">← חזרה לבית ספר לצילום</a>
 </div>
 
 <script>
+function getLang() { return localStorage.getItem('lang') || 'he'; }
+
 // Rule of thirds canvas
 const canvas = document.getElementById('ruleCanvas');
 const ctx = canvas.getContext('2d');
@@ -217,9 +220,17 @@ function resizeCanvas(c) {
   c.height = c.width * 0.75;
 }
 
+const RULE_DESCS = {
+  thirds:  { he: '<strong>חוק השליש</strong> — חלק את הפריים ל-9 חלקים. הנח את הנושא <strong>בנקודת חיתוך</strong> — לא באמצע. הקו האופקי 1/3 מלמטה? שם האופק. 1/3 מלמעלה? שם השמיים.', en: '<strong>Rule of Thirds</strong> — divide the frame into 9 parts. Place the subject at an <strong>intersection point</strong> — not the center. Horizontal line at 1/3 from the bottom? That\'s the horizon. 1/3 from the top? That\'s the sky.' },
+  leading: { he: '<strong>קווים מובילים</strong> — שימוש בכביש, גדר, מסלול רכבת — שמובילים את <strong>עין הצופה</strong> אל תוך הפריים לכיוון הנושא. מחזקים עומק ותחושת מרחק.', en: '<strong>Leading Lines</strong> — using a road, fence, or rail track to guide the <strong>viewer\'s eye</strong> into the frame toward the subject. Strengthens depth and sense of distance.' },
+  framing: { he: '<strong>מסגור טבעי</strong> — שימוש באלמנטים בסביבה (קשת, חלון, ענפים) ליצירת <strong>מסגרת בתוך הפריים</strong>. ממקד את העין ומוסיף שכבת עומק.', en: '<strong>Natural Framing</strong> — using environmental elements (arch, window, branches) to create a <strong>frame within the frame</strong>. Focuses the eye and adds a layer of depth.' },
+  symmetry:{ he: '<strong>סימטריה</strong> — הנחת הנושא בדיוק באמצע יוצרת <strong>איזון ויופי</strong>. עובד נהדר לארכיטקטורה, השתקפויות ופורטרט פרונטלי. שבירת הסימטריה יוצרת מתח.', en: '<strong>Symmetry</strong> — placing the subject dead center creates <strong>balance and beauty</strong>. Works great for architecture, reflections and frontal portraits. Breaking symmetry creates tension.' },
+  negative:{ he: '<strong>מרחב שלילי</strong> — השארת שטח <strong>ריק ומכוון</strong> סביב הנושא. המרחב הריק גורם לנושא לבלוט, לנשום ולהרגיש בודד — אפקט רגשי חזק.', en: '<strong>Negative Space</strong> — leaving <strong>intentionally empty</strong> space around the subject. The empty space makes the subject stand out, breathe and feel solitary — a powerful emotional effect.' }
+};
+
 const rules = {
   thirds: {
-    desc: '<strong>חוק השליש</strong> — חלק את הפריים ל-9 חלקים. הנח את הנושא <strong>בנקודת חיתוך</strong> — לא באמצע. הקו האופקי 1/3 מלמטה? שם האופק. 1/3 מלמעלה? שם השמיים.',
+    desc: '',
     draw(ctx, w, h) {
       // Sky gradient
       const sky = ctx.createLinearGradient(0,0,0,h*0.55);
@@ -258,7 +269,7 @@ const rules = {
   },
 
   leading: {
-    desc: '<strong>קווים מובילים</strong> — שימוש בכביש, גדר, מסלול רכבת — שמובילים את <strong>עין הצופה</strong> אל תוך הפריים לכיוון הנושא. מחזקים עומק ותחושת מרחק.',
+    desc: '',
     draw(ctx, w, h) {
       const sky = ctx.createLinearGradient(0,0,0,h*0.5);
       sky.addColorStop(0,'#0a0a1a'); sky.addColorStop(1,'#1a2a3a');
@@ -286,7 +297,7 @@ const rules = {
   },
 
   framing: {
-    desc: '<strong>מסגור טבעי</strong> — שימוש באלמנטים בסביבה (קשת, חלון, ענפים) ליצירת <strong>מסגרת בתוך הפריים</strong>. ממקד את העין ומוסיף שכבת עומק.',
+    desc: '',
     draw(ctx, w, h) {
       // Background scene (outside)
       const bg = ctx.createLinearGradient(0,0,0,h);
@@ -323,7 +334,7 @@ const rules = {
   },
 
   symmetry: {
-    desc: '<strong>סימטריה</strong> — הנחת הנושא בדיוק באמצע יוצרת <strong>איזון ויופי</strong>. עובד נהדר לארכיטקטורה, השתקפויות ופורטרט פרונטלי. שבירת הסימטריה יוצרת מתח.',
+    desc: '',
     draw(ctx, w, h) {
       // Water reflection scene
       const sky = ctx.createLinearGradient(0,0,0,h/2);
@@ -359,7 +370,7 @@ const rules = {
   },
 
   negative: {
-    desc: '<strong>מרחב שלילי</strong> — השארת שטח <strong>ריק ומכוון</strong> סביב הנושא. המרחב הריק גורם לנושא לבלוט, לנשום ולהרגיש בודד — אפקט רגשי חזק.',
+    desc: '',
     draw(ctx, w, h) {
       // Minimalist misty scene
       const bg = ctx.createLinearGradient(0,0,0,h);
@@ -390,7 +401,7 @@ const rules = {
       ctx.fillRect(0, h*0.1, w*0.65, h*0.7);
       ctx.font = `${w*0.025}px Heebo,sans-serif`;
       ctx.fillStyle='rgba(200,169,110,0.4)'; ctx.textAlign='center';
-      ctx.fillText('מרחב שלילי', w*0.32, h*0.45);
+      ctx.fillText(getLang()==='en' ? 'Negative Space' : 'מרחב שלילי', w*0.32, h*0.45);
     }
   }
 };
@@ -402,7 +413,8 @@ function drawRule(rule) {
   if (!w || !h) return;
   ctx.clearRect(0,0,w,h);
   rules[rule].draw(ctx, w, h);
-  document.getElementById('ruleDesc').innerHTML = rules[rule].desc;
+  const lang = getLang();
+  document.getElementById('ruleDesc').innerHTML = RULE_DESCS[rule][lang] || RULE_DESCS[rule].he;
 }
 
 document.querySelectorAll('.rule-tab').forEach(tab => {
@@ -475,6 +487,23 @@ window.addEventListener('resize', () => {
 });
 
 init();
+
+function applyLang() {
+  const lang = getLang();
+  const isEn = lang === 'en';
+  document.documentElement.dir = isEn ? 'ltr' : 'rtl';
+  document.documentElement.lang = lang;
+  document.body.style.direction = isEn ? 'ltr' : 'rtl';
+  document.title = isEn
+    ? 'Composition — Rule of Thirds, Framing & Leading Lines | Photography School | Amit Photos'
+    : 'קומפוזיציה — חוק השליש, מסגור וקווים מובילים | בית ספר לצילום | Amit Photos';
+  document.querySelectorAll('[data-he]').forEach(el => {
+    el.textContent = isEn ? (el.dataset.en || el.dataset.he) : el.dataset.he;
+  });
+  drawRule(currentRule);
+}
+applyLang();
+window.addEventListener('storage', e => { if (e.key === 'lang') applyLang(); });
 </script>
 </body>
 </html>
