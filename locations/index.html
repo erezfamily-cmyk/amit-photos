@@ -123,6 +123,54 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direc
 <script>
 function escHtml(s) { return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
+function getLang() { return localStorage.getItem('lang') || 'he'; }
+
+const REGION_MAP_EN = {
+  'ישראל': 'Israel', 'איטליה': 'Italy', 'יוון': 'Greece', 'צרפת': 'France',
+  'ספרד': 'Spain', 'פורטוגל': 'Portugal', 'גרמניה': 'Germany',
+  'הולנד': 'Netherlands', 'אנגליה': 'England', 'יפן': 'Japan'
+};
+
+const LABELS = {
+  he: {
+    badge: '📍 מקומות לצילום',
+    title: 'מקומות לצילום',
+    subtitle: 'מקומות מומלצים לצילום בישראל — טיפים, ציוד, שעות מומלצות וגלריה מכל מקום.',
+    suggest: 'הצע מקום +',
+    empty: 'אין מקומות עדיין.',
+    photos: (n) => `${n} תמונות`,
+  },
+  en: {
+    badge: '📍 Photography Locations',
+    title: 'Photography Locations',
+    subtitle: 'Recommended photography spots — tips, gear, best times, and a gallery from each location.',
+    suggest: 'Suggest a Spot +',
+    empty: 'No locations yet.',
+    photos: (n) => `${n} photos`,
+  }
+};
+
+function applyLang() {
+  const lang = getLang();
+  const L = LABELS[lang] || LABELS.he;
+  const isEn = lang === 'en';
+  document.documentElement.dir = isEn ? 'ltr' : 'rtl';
+  document.documentElement.lang = lang;
+  const badge = document.querySelector('.badge');
+  if (badge) badge.textContent = L.badge;
+  const h1 = document.querySelector('.page-hero h1');
+  if (h1) h1.textContent = L.title;
+  const sub = document.querySelector('.page-hero p');
+  if (sub) sub.textContent = L.subtitle;
+  const suggestBtn = document.getElementById('btn-open-suggest');
+  if (suggestBtn) suggestBtn.textContent = L.suggest;
+  renderGrid();
+}
+
+window.addEventListener('storage', (e) => {
+  if (e.key === 'lang') applyLang();
+});
+
 let allLocations = [];
 let activeRegion = '';
 let activeSort = 'default';
@@ -132,7 +180,7 @@ async function loadLocations() {
   try {
     const res = await fetch('/api/locations');
     allLocations = await res.json();
-    renderGrid();
+    applyLang();
   } catch {
     grid.innerHTML = '<p class="empty">שגיאה בטעינת המקומות.</p>';
   }
@@ -166,19 +214,29 @@ function renderGrid() {
     return;
   }
 
-  grid.innerHTML = sorted.map(l => `
+  const lang = getLang();
+  const isEn = lang === 'en';
+  const L = LABELS[lang] || LABELS.he;
+
+  grid.innerHTML = sorted.map(l => {
+    const displayTitle = (isEn && l.title_en) ? l.title_en : l.title;
+    const displayRegion = isEn ? (REGION_MAP_EN[l.region] || l.region || '') : (l.region || '');
+    const photoCount = l.photo_count > 0
+      ? `<span style="font-size:.68rem;background:#1a1a1a;border:1px solid #333;border-radius:10px;padding:1px 7px;color:#888">${L.photos(l.photo_count)}</span>`
+      : '';
+    return `
     <a class="card" href="/locations/spot/?slug=${escHtml(l.id)}">
-      <img class="card-img" src="${escHtml(l.cover_thumb || l.cover_url || '')}" alt="${escHtml(l.title)}" loading="lazy" onerror="this.style.display='none'">
+      <img class="card-img" src="${escHtml(l.cover_thumb || l.cover_url || '')}" alt="${escHtml(displayTitle)}" loading="lazy" onerror="this.style.display='none'">
       <div class="card-body">
-        <div class="card-title">${escHtml(l.title)}</div>
+        <div class="card-title">${escHtml(displayTitle)}</div>
         <div class="card-meta" style="display:flex;align-items:center;gap:.5rem;flex-wrap:wrap">
-          <span>${escHtml(l.region || '')}</span>
-          ${l.photo_count > 0 ? `<span style="font-size:.68rem;background:#1a1a1a;border:1px solid #333;border-radius:10px;padding:1px 7px;color:#888">${l.photo_count} תמונות</span>` : ''}
+          <span>${escHtml(displayRegion)}</span>
+          ${photoCount}
         </div>
         ${l.best_time ? `<div style="font-size:.72rem;color:#888;margin-top:.3rem;display:flex;align-items:center;gap:.25rem"><span style="color:#c8a96e">◷</span><span>${escHtml(l.best_time)}</span></div>` : ''}
       </div>
-    </a>
-  `).join('');
+    </a>`;
+  }).join('');
 }
 
 document.getElementById('filters').addEventListener('click', e => {

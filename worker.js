@@ -3204,7 +3204,7 @@ ${moreAnalyses.length > 0 ? `
 
 async function handleLocationsList(request, env) {
   const { results } = await env.DB.prepare(`
-    SELECT l.id, l.title, l.region, l.best_time, l.coordinates,
+    SELECT l.id, l.title, l.title_en, l.region, l.best_time, l.coordinates,
            lp.url AS cover_url, lp.thumbnail AS cover_thumb
     FROM locations l
     LEFT JOIN location_photos lp ON lp.location_id = l.id AND lp.sort_order = (
@@ -3259,6 +3259,8 @@ async function handleLocationsGet(request, env, slug) {
     extra_links: JSON.parse(loc.extra_links || '[]'),
     when_to_visit: loc.when_to_visit ? JSON.parse(loc.when_to_visit) : null,
     recommended_gear: loc.recommended_gear ? JSON.parse(loc.recommended_gear) : null,
+    when_to_visit_en: loc.when_to_visit_en ? JSON.parse(loc.when_to_visit_en) : null,
+    recommended_gear_en: loc.recommended_gear_en ? JSON.parse(loc.recommended_gear_en) : null,
     nearby,
     photos: photos || []
   }, 200, request);
@@ -3352,7 +3354,7 @@ Return ONLY valid JSON, no markdown fences, no extra text.`;
 async function handleAdminLocationsList(request, env) {
   if (!await checkAuth(request, env)) return unauth(request);
   const { results } = await env.DB.prepare(`
-    SELECT l.id, l.title, l.region, l.published,
+    SELECT l.id, l.title, l.title_en, l.region, l.published,
            COUNT(lp.id) AS photo_count
     FROM locations l
     LEFT JOIN location_photos lp ON lp.location_id = l.id
@@ -3409,7 +3411,11 @@ async function handleAdminLocationsUpdate(request, env, slug) {
   if (request.method !== 'PUT') return jsonRes({ error: 'PUT only' }, 405, request);
 
   const body = await request.json().catch(() => ({}));
-  const fields = ['title','region','description','best_time','equipment','my_tip','coordinates','published','when_to_visit','recommended_gear'];
+  const fields = [
+    'title','region','description','best_time','equipment','my_tip','coordinates','published',
+    'when_to_visit','recommended_gear',
+    'title_en','description_en','best_time_en','equipment_en','my_tip_en'
+  ];
   const sets = [];
   const vals = [];
 
@@ -3426,6 +3432,14 @@ async function handleAdminLocationsUpdate(request, env, slug) {
   if (body.extra_links !== undefined) {
     sets.push('extra_links = ?');
     vals.push(JSON.stringify(body.extra_links));
+  }
+  if (body.when_to_visit_en !== undefined) {
+    sets.push('when_to_visit_en = ?');
+    vals.push(body.when_to_visit_en);
+  }
+  if (body.recommended_gear_en !== undefined) {
+    sets.push('recommended_gear_en = ?');
+    vals.push(body.recommended_gear_en);
   }
 
   if (sets.length === 0) return jsonRes({ error: 'אין שדות לעדכון' }, 400, request);
@@ -3501,7 +3515,91 @@ async function handleAdminLocationsGet(request, env, slug) {
   const { results: photos } = await env.DB.prepare(
     'SELECT * FROM location_photos WHERE location_id = ? ORDER BY sort_order ASC'
   ).bind(slug).all();
-  return jsonRes({ ...loc, related_guides: JSON.parse(loc.related_guides || '[]'), extra_links: JSON.parse(loc.extra_links || '[]'), photos: photos || [] }, 200, request);
+  return jsonRes({
+    ...loc,
+    related_guides: JSON.parse(loc.related_guides || '[]'),
+    extra_links: JSON.parse(loc.extra_links || '[]'),
+    when_to_visit: loc.when_to_visit ? JSON.parse(loc.when_to_visit) : null,
+    recommended_gear: loc.recommended_gear ? JSON.parse(loc.recommended_gear) : null,
+    when_to_visit_en: loc.when_to_visit_en ? JSON.parse(loc.when_to_visit_en) : null,
+    recommended_gear_en: loc.recommended_gear_en ? JSON.parse(loc.recommended_gear_en) : null,
+    photos: photos || []
+  }, 200, request);
+}
+
+async function handleAdminLocationsGenerateEn(request, env, slug) {
+  if (!await checkAuth(request, env)) return unauth(request);
+  if (request.method !== 'POST') return jsonRes({ error: 'POST only' }, 405, request);
+  if (!env.ANTHROPIC_API_KEY) return jsonRes({ error: 'ANTHROPIC_API_KEY חסר' }, 500, request);
+
+  const loc = await env.DB.prepare('SELECT * FROM locations WHERE id = ?').bind(slug).first();
+  if (!loc) return jsonRes({ error: 'לא נמצא' }, 404, request);
+
+  const prompt = `You are Amit Erez, an Israeli travel photographer writing for an international photography audience.
+Translate and adapt the following Hebrew photography location data to English. Write in first person, personal and inspiring tone, as if you visited this place yourself and want to help other photographers get the best shots.
+
+Location data:
+Title: ${loc.title}
+Region: ${loc.region}
+Description: ${loc.description || ''}
+Best time to visit: ${loc.best_time || ''}
+Equipment: ${loc.equipment || ''}
+My tip: ${loc.my_tip || ''}
+When to visit (JSON): ${loc.when_to_visit || 'null'}
+Recommended gear (JSON): ${loc.recommended_gear || 'null'}
+
+Return ONLY valid JSON with these exact keys — no markdown, no explanation:
+{
+  "title_en": "English title",
+  "description_en": "Full adapted English description (3-5 sentences, vivid and location-specific)",
+  "best_time_en": "Best time in English",
+  "equipment_en": "Equipment in English",
+  "my_tip_en": "Personal shooting tip in English",
+  "when_to_visit_en": {"summer":{"rating":"ok","note":"English note"},"fall":{"rating":"good","note":"English note"},"winter":{"rating":"ok","note":"English note"},"spring":{"rating":"good","note":"English note"}},
+  "recommended_gear_en": [{"name":"English gear name","primary":true}]
+}
+
+Rules:
+- For when_to_visit_en: keep the exact same "rating" values from the Hebrew input, translate only the "note" values.
+- For recommended_gear_en: keep the exact same "primary" boolean values, translate gear names to standard English photography terminology (e.g. "עדשה רחבה 16-35mm" becomes "Wide-angle 16-35mm").
+- If a field is empty or null in Hebrew, return an empty string for its English version.`;
+
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'x-api-key': env.ANTHROPIC_API_KEY,
+      'anthropic-version': '2023-06-01',
+      'content-type': 'application/json'
+    },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 1500,
+      messages: [{ role: 'user', content: prompt }]
+    })
+  });
+
+  if (!res.ok) return jsonRes({ error: 'Claude API נכשל', status: res.status }, 502, request);
+  const data = await res.json();
+  const text = (data.content?.[0]?.text || '').trim();
+
+  let parsed;
+  try {
+    parsed = JSON.parse(text);
+  } catch {
+    const match = text.match(/\{[\s\S]*\}/);
+    if (!match) return jsonRes({ error: 'JSON לא תקין מ-Claude' }, 500, request);
+    try { parsed = JSON.parse(match[0]); } catch { return jsonRes({ error: 'JSON לא תקין מ-Claude' }, 500, request); }
+  }
+
+  return jsonRes({
+    title_en: parsed.title_en || '',
+    description_en: parsed.description_en || '',
+    best_time_en: parsed.best_time_en || '',
+    equipment_en: parsed.equipment_en || '',
+    my_tip_en: parsed.my_tip_en || '',
+    when_to_visit_en: typeof parsed.when_to_visit_en === 'object' ? JSON.stringify(parsed.when_to_visit_en) : (parsed.when_to_visit_en || ''),
+    recommended_gear_en: Array.isArray(parsed.recommended_gear_en) ? JSON.stringify(parsed.recommended_gear_en) : (parsed.recommended_gear_en || '')
+  }, 200, request);
 }
 
 // ===== LOCATION PHOTOS MANAGEMENT =====
@@ -4121,6 +4219,7 @@ export default {
       const afterPrefix = path.slice('/api/admin/locations/'.length);
       const parts = afterPrefix.split('/');
       const locSlug = parts[0];
+      if (parts[1] === 'generate-en') return handleAdminLocationsGenerateEn(request, env, locSlug);
       if (parts[1] === 'enrich') return handleAdminLocationsEnrich(request, env, locSlug);
       if (parts[1] === 'photos') {
         if (parts[2] === 'reorder') return handleAdminLocationPhotosReorder(request, env, locSlug);
