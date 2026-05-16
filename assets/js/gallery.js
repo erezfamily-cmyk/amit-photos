@@ -41,6 +41,7 @@ const TEST_PHOTO_ID = '1jmBaBvk8rKoV5rvARPayvd010U_CW_gp'; // תמונת בדי�
 function canBuy(photo) { return PURCHASES_ENABLED || photo?.id === TEST_PHOTO_ID; }
 let allPhotos = [];
 let filteredPhotos = [];
+let featuredIds = [];
 let currentIndex = 0;
 let displayedCount = 0;
 const PAGE_SIZE = 25;
@@ -67,7 +68,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   await loadPhotos();
   initFilters();
   initSearch();
-  initFeatured();
+  await initFeatured();
+  initFilters(); // rebuild after featuredIds are known
   initLightbox();
   initContactForm();
   initCart();
@@ -462,24 +464,22 @@ async function initFeatured() {
     });
   });
 
-  const bestCount = allPhotos.filter(p => p.sort_order != null).length;
-  if (bestCount > 0) {
-    const cta = document.createElement('div');
-    cta.className = 'featured-cta-wrap';
-    cta.innerHTML = `<button class="featured-cta-btn" id="featured-cta-btn">${t('featured.cta')} <span class="filter-count">${bestCount}</span></button>`;
-    grid.parentElement.appendChild(cta);
-    cta.querySelector('#featured-cta-btn').addEventListener('click', () => {
-      document.getElementById('gallery')?.scrollIntoView({ behavior: 'smooth' });
-      setTimeout(() => {
-        const bestBtn = document.querySelector('.filter-btn-best');
-        if (bestBtn) {
-          document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-          bestBtn.classList.add('active');
-          applyFilters();
-        }
-      }, 600);
-    });
-  }
+  featuredIds = picks.map(p => p.id);
+
+  const bestCount = allPhotos.filter(p => p.sort_order != null || featuredIds.includes(p.id)).length;
+  const cta = document.createElement('div');
+  cta.className = 'featured-cta-wrap';
+  cta.innerHTML = `<button class="featured-cta-btn" id="featured-cta-btn">${t('featured.cta')} <span class="filter-count">${bestCount}</span></button>`;
+  grid.parentElement.appendChild(cta);
+  cta.querySelector('#featured-cta-btn').addEventListener('click', () => {
+    document.getElementById('gallery')?.scrollIntoView({ behavior: 'smooth' });
+    setTimeout(() => {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      const bestBtn = document.querySelector('.filter-btn-best');
+      if (bestBtn) bestBtn.classList.add('active');
+      applyFilters();
+    }, 600);
+  });
 }
 
 function hashStr(s) {
@@ -513,7 +513,7 @@ function applyFilters() {
     if (cat === 'all') {
       matchCat = true;
     } else if (cat === 'best') {
-      matchCat = p.sort_order != null;
+      matchCat = p.sort_order != null || featuredIds.includes(p.id);
     } else if (cat === 'new') {
       matchCat = isNew(p);
     } else if (cat === 'sale') {
@@ -553,7 +553,7 @@ function initFilters() {
 
   const newCount = allPhotos.filter(isNew).length;
   const saleCount = allPhotos.filter(isOnSale).length;
-  const bestCount = allPhotos.filter(p => p.sort_order != null).length;
+  const bestCount = allPhotos.filter(p => p.sort_order != null || featuredIds.includes(p.id)).length;
   const newBadgeBtn = newCount > 0 ? `<button class="filter-btn filter-btn-new" data-cat="new">✦ ${t('gallery.filter.new')} <span class="filter-count">${newCount}</span></button>` : '';
   const saleBadgeBtn = saleCount > 0 ? `<button class="filter-btn filter-btn-sale" data-cat="sale">🏷 ${t('gallery.filter.sale')} <span class="filter-count">${saleCount}</span></button>` : '';
   const bestBadgeBtn = bestCount > 0 ? `<button class="filter-btn filter-btn-best" data-cat="best">⭐ ${t('gallery.filter.best')} <span class="filter-count">${bestCount}</span></button>` : '';
