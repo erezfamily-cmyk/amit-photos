@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html dir="rtl" lang="he">
+<html lang="he" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>עומק שדה — Amit Photos</title>
+<title>עומק שדה — DOF ובוקה | בית ספר לצילום | Amit Photos</title>
 <meta name="description" content="למד על עומק שדה ובוקה — חישוב DOF אינטראקטיבי עם סימולציה ויזואלית על תמונות אמיתיות.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&display=swap" rel="stylesheet">
@@ -144,9 +144,9 @@ input[type=range].control-slider:active::-webkit-slider-thumb { cursor: grabbing
 <body>
 
 <div class="page-hero">
-  <div class="badge">📷 בית ספר לצילום</div>
-  <h1>עומק שדה — DOF ובוקה</h1>
-  <p>מה קובע כמה הרקע מטושטש? שנה צמצם, מרחק ועדשה — ראה את ההבדל בזמן אמת</p>
+  <div class="badge" data-he="📷 בית ספר לצילום" data-en="📷 Photography School">📷 בית ספר לצילום</div>
+  <h1 data-he="עומק שדה — DOF ובוקה" data-en="Depth of Field — DOF &amp; Bokeh">עומק שדה — DOF ובוקה</h1>
+  <p data-he="מה קובע כמה הרקע מטושטש? שנה צמצם, מרחק ועדשה — ראה את ההבדל בזמן אמת" data-en="What determines how blurry the background is? Change aperture, distance and focal length — see the difference in real time">מה קובע כמה הרקע מטושטש? שנה צמצם, מרחק ועדשה — ראה את ההבדל בזמן אמת</p>
 </div>
 
 <div class="demo-wrap">
@@ -164,20 +164,20 @@ input[type=range].control-slider:active::-webkit-slider-thumb { cursor: grabbing
       </div>
       <div class="photo-info">
         <span class="photo-title-el" id="photo-title-el"></span>
-        <span class="photo-hint">סימולציית בוקה</span>
+        <span class="photo-hint" data-he="סימולציית בוקה" data-en="Bokeh Simulation">סימולציית בוקה</span>
       </div>
     </div>
 
     <!-- DOF results -->
     <div class="dof-panel">
-      <div class="dof-title">חישוב עומק שדה</div>
+      <div class="dof-title" data-he="חישוב עומק שדה" data-en="Depth of Field Calculation">חישוב עומק שדה</div>
 
       <div class="dof-result-main">
         <div class="dof-aperture-display" id="aperture-display">f/2.8</div>
-        <div class="dof-aperture-label">עומק שדה: <span id="dof-total-display">רדוד</span></div>
+        <div class="dof-aperture-label"><span data-he="עומק שדה:" data-en="Depth of field:">עומק שדה:</span> <span id="dof-total-display">רדוד</span></div>
         <div class="dof-bar-wrap">
           <div class="dof-bar-label">
-            <span>רדוד מאוד</span><span>רדוד</span><span>עמוק</span><span>אינסוף</span>
+            <span data-he="רדוד מאוד" data-en="Very Shallow">רדוד מאוד</span><span data-he="רדוד" data-en="Shallow">רדוד</span><span data-he="עמוק" data-en="Deep">עמוק</span><span data-he="אינסוף" data-en="Infinite">אינסוף</span>
           </div>
           <div class="dof-bar">
             <div class="dof-bar-fill" id="dof-bar-fill" style="width:20%"></div>
@@ -188,15 +188,15 @@ input[type=range].control-slider:active::-webkit-slider-thumb { cursor: grabbing
       <div class="dof-numbers">
         <div class="dof-num">
           <div class="n-val" id="near-val">2.8m</div>
-          <div class="n-label">תחילת פוקוס</div>
+          <div class="n-label" data-he="תחילת פוקוס" data-en="Near limit">תחילת פוקוס</div>
         </div>
         <div class="dof-num">
           <div class="n-val" id="dof-val">0.4m</div>
-          <div class="n-label">עומק שדה</div>
+          <div class="n-label" data-he="עומק שדה" data-en="DOF">עומק שדה</div>
         </div>
         <div class="dof-num" id="far-num">
           <div class="n-val" id="far-val">3.2m</div>
-          <div class="n-label">סוף פוקוס</div>
+          <div class="n-label" data-he="סוף פוקוס" data-en="Far limit">סוף פוקוס</div>
         </div>
       </div>
 
@@ -219,7 +219,7 @@ input[type=range].control-slider:active::-webkit-slider-thumb { cursor: grabbing
           <!-- Labels -->
           <text id="label-near" x="105" y="75" font-size="7" fill="#666" text-anchor="middle">קרוב</text>
           <text id="label-far" x="155" y="75" font-size="7" fill="#666" text-anchor="middle">רחוק</text>
-          <text x="13" y="72" font-size="7" fill="#666" text-anchor="middle">מצלמה</text>
+          <text id="label-camera" x="13" y="72" font-size="7" fill="#666" text-anchor="middle">מצלמה</text>
         </svg>
       </div>
 
@@ -232,7 +232,7 @@ input[type=range].control-slider:active::-webkit-slider-thumb { cursor: grabbing
     <!-- Aperture -->
     <div class="slider-card">
       <div class="slider-header">
-        <span class="slider-label">צמצם (Aperture)</span>
+        <span class="slider-label" data-he="צמצם (Aperture)" data-en="Aperture">צמצם (Aperture)</span>
         <span><span class="slider-cur" id="ap-val">f/2.8</span></span>
       </div>
       <input type="range" id="ap-slider" class="control-slider"
@@ -246,8 +246,8 @@ input[type=range].control-slider:active::-webkit-slider-thumb { cursor: grabbing
     <!-- Distance -->
     <div class="slider-card">
       <div class="slider-header">
-        <span class="slider-label">מרחק פוקוס</span>
-        <span><span class="slider-cur" id="dist-val">3</span> <span class="slider-unit">מטר</span></span>
+        <span class="slider-label" data-he="מרחק פוקוס" data-en="Focus Distance">מרחק פוקוס</span>
+        <span><span class="slider-cur" id="dist-val">3</span> <span class="slider-unit" data-he="מטר" data-en="m">מטר</span></span>
       </div>
       <input type="range" id="dist-slider" class="control-slider"
         min="0.5" max="20" value="3" step="0.1" aria-label="מרחק פוקוס">
@@ -259,8 +259,8 @@ input[type=range].control-slider:active::-webkit-slider-thumb { cursor: grabbing
     <!-- Focal length -->
     <div class="slider-card">
       <div class="slider-header">
-        <span class="slider-label">עדשה (Focal Length)</span>
-        <span><span class="slider-cur" id="focal-cur">85</span> <span class="slider-unit">מ"מ</span></span>
+        <span class="slider-label" data-he='עדשה (Focal Length)' data-en="Focal Length">עדשה (Focal Length)</span>
+        <span><span class="slider-cur" id="focal-cur">85</span> <span class="slider-unit" data-he='מ"מ' data-en="mm">מ"מ</span></span>
       </div>
       <div class="focal-btns" id="focal-btns">
         <button type="button" class="focal-btn" data-f="24">24mm</button>
@@ -276,18 +276,18 @@ input[type=range].control-slider:active::-webkit-slider-thumb { cursor: grabbing
     <!-- Sensor -->
     <div class="slider-card">
       <div class="slider-header">
-        <span class="slider-label">סוג חיישן</span>
+        <span class="slider-label" data-he="סוג חיישן" data-en="Sensor Type">סוג חיישן</span>
         <span class="slider-cur" id="sensor-coc" style="font-size:.85rem">Full Frame</span>
       </div>
       <div class="sensor-btns" id="sensor-btns">
         <button type="button" class="sensor-btn active" data-coc="0.029">Full Frame</button>
         <button type="button" class="sensor-btn" data-coc="0.019">APS-C</button>
-        <button type="button" class="sensor-btn" data-coc="0.015">מיקרו 4/3</button>
-        <button type="button" class="sensor-btn" data-coc="0.007">סמארטפון</button>
+        <button type="button" class="sensor-btn" data-coc="0.015" data-he="מיקרו 4/3" data-en="Micro 4/3">מיקרו 4/3</button>
+        <button type="button" class="sensor-btn" data-coc="0.007" data-he="סמארטפון" data-en="Smartphone">סמארטפון</button>
       </div>
       <div class="tick-labels" style="margin-top:.5rem">
-        <span>עומק שדה רדוד יותר ←</span>
-        <span>→ עמוק יותר</span>
+        <span data-he="עומק שדה רדוד יותר ←" data-en="← Shallower DOF">עומק שדה רדוד יותר ←</span>
+        <span data-he="→ עמוק יותר" data-en="Deeper →">→ עמוק יותר</span>
       </div>
     </div>
 
@@ -296,25 +296,25 @@ input[type=range].control-slider:active::-webkit-slider-thumb { cursor: grabbing
   <!-- Info cards -->
   <div class="info-grid">
     <div class="info-card">
-      <h3>צמצם פתוח = בוקה</h3>
-      <p>f/1.4 נותן רקע מטושטש בולט. f/16 שומר הכל חד. לפורטרטים — f/1.8–f/2.8. לנוף — f/8–f/11.</p>
+      <h3 data-he="צמצם פתוח = בוקה" data-en="Wide Aperture = Bokeh">צמצם פתוח = בוקה</h3>
+      <p data-he="f/1.4 נותן רקע מטושטש בולט. f/16 שומר הכל חד. לפורטרטים — f/1.8–f/2.8. לנוף — f/8–f/11." data-en="f/1.4 gives a strong blurred background. f/16 keeps everything sharp. For portraits — f/1.8–f/2.8. For landscapes — f/8–f/11.">f/1.4 נותן רקע מטושטש בולט. f/16 שומר הכל חד. לפורטרטים — f/1.8–f/2.8. לנוף — f/8–f/11.</p>
     </div>
     <div class="info-card">
-      <h3>עדשה ארוכה = פחות DOF</h3>
-      <p>300mm מטשטש הרבה יותר מ-24mm באותו צמצם ומרחק. לכן צלמי ספורט ועופות אוהבים עדשות ארוכות.</p>
+      <h3 data-he="עדשה ארוכה = פחות DOF" data-en="Long Lens = Less DOF">עדשה ארוכה = פחות DOF</h3>
+      <p data-he="300mm מטשטש הרבה יותר מ-24mm באותו צמצם ומרחק. לכן צלמי ספורט ועופות אוהבים עדשות ארוכות." data-en="300mm blurs the background far more than 24mm at the same aperture and distance. That's why sports and wildlife photographers love long lenses.">300mm מטשטש הרבה יותר מ-24mm באותו צמצם ומרחק. לכן צלמי ספורט ועופות אוהבים עדשות ארוכות.</p>
     </div>
     <div class="info-card">
-      <h3>קרוב יותר = רדוד יותר</h3>
-      <p>ככל שמתקרבים לנושא — עומק השדה קטן. בצילום מאקרו (0.3m) — מילימטרים בודדים בפוקוס.</p>
+      <h3 data-he="קרוב יותר = רדוד יותר" data-en="Closer = Shallower">קרוב יותר = רדוד יותר</h3>
+      <p data-he="ככל שמתקרבים לנושא — עומק השדה קטן. בצילום מאקרו (0.3m) — מילימטרים בודדים בפוקוס." data-en="The closer you are to the subject, the shallower the DOF. In macro photography (0.3m) — only a few millimeters are in focus.">ככל שמתקרבים לנושא — עומק השדה קטן. בצילום מאקרו (0.3m) — מילימטרים בודדים בפוקוס.</p>
     </div>
     <div class="info-card">
-      <h3>סמארטפון ≠ בוקה</h3>
-      <p>חיישן קטן = עומק שדה עמוק מאוד. הבוקה של סמארטפונים מדומה תוכנתית (Portrait Mode).</p>
+      <h3 data-he="סמארטפון ≠ בוקה" data-en="Smartphone ≠ Bokeh">סמארטפון ≠ בוקה</h3>
+      <p data-he="חיישן קטן = עומק שדה עמוק מאוד. הבוקה של סמארטפונים מדומה תוכנתית (Portrait Mode)." data-en="Small sensor = very deep depth of field. Smartphone bokeh is computationally simulated (Portrait Mode).">חיישן קטן = עומק שדה עמוק מאוד. הבוקה של סמארטפונים מדומה תוכנתית (Portrait Mode).</p>
     </div>
   </div>
 
   <div class="back-link">
-    <a href="/camera/">← חזרה לבית הספר לצילום</a>
+    <a href="/camera/" data-he="← חזרה לבית הספר לצילום" data-en="← Back to Photography School">← חזרה לבית הספר לצילום</a>
   </div>
 
 </div>
@@ -430,26 +430,36 @@ function update() {
   document.getElementById('near-val').textContent = formatDist(res.near);
   document.getElementById('far-val').textContent = formatDist(res.far);
 
-  let dofLabel, barPct;
+  const DOF_LABELS = {
+    infinite:   { he: 'אינסוף',    en: 'Infinite' },
+    veryShallow:{ he: 'רדוד מאוד', en: 'Very Shallow' },
+    shallow:    { he: 'רדוד',      en: 'Shallow' },
+    medium:     { he: 'בינוני',    en: 'Medium' },
+    deep:       { he: 'עמוק',      en: 'Deep' },
+    veryDeep:   { he: 'עמוק מאוד', en: 'Very Deep' }
+  };
+
+  let dofKey, barPct;
   if (dofM === Infinity) {
-    dofLabel = 'אינסוף';
+    dofKey = 'infinite';
     barPct = 100;
     document.getElementById('dof-val').textContent = '∞';
     document.getElementById('far-num').classList.add('infinity');
   } else {
     document.getElementById('far-num').classList.remove('infinity');
-    if (dofM < 0.1) { dofLabel = 'רדוד מאוד'; barPct = 5; }
-    else if (dofM < 0.5) { dofLabel = 'רדוד'; barPct = 15; }
-    else if (dofM < 2) { dofLabel = 'בינוני'; barPct = 35; }
-    else if (dofM < 10) { dofLabel = 'עמוק'; barPct = 60; }
-    else { dofLabel = 'עמוק מאוד'; barPct = 85; }
+    if (dofM < 0.1) { dofKey = 'veryShallow'; barPct = 5; }
+    else if (dofM < 0.5) { dofKey = 'shallow'; barPct = 15; }
+    else if (dofM < 2) { dofKey = 'medium'; barPct = 35; }
+    else if (dofM < 10) { dofKey = 'deep'; barPct = 60; }
+    else { dofKey = 'veryDeep'; barPct = 85; }
 
     const dofStr = dofM < 0.1 ? (dofM * 100).toFixed(0) + 'cm' :
                    dofM < 1 ? dofM.toFixed(2) + 'm' : dofM.toFixed(1) + 'm';
     document.getElementById('dof-val').textContent = dofStr;
   }
 
-  document.getElementById('dof-total-display').textContent = dofLabel;
+  const lang = getLang();
+  document.getElementById('dof-total-display').textContent = DOF_LABELS[dofKey][lang];
   document.getElementById('dof-bar-fill').style.width = barPct + '%';
 
   // Update label
@@ -495,9 +505,33 @@ function updateDiagram(near, focus, far) {
 
   document.getElementById('label-near').setAttribute('x', nearX);
   document.getElementById('label-far').setAttribute('x', Math.min(farX, W - 15));
+
+  // Update SVG text labels for language
+  const lang = getLang();
+  document.getElementById('label-near').textContent  = lang === 'en' ? 'Near'   : 'קרוב';
+  document.getElementById('label-far').textContent   = lang === 'en' ? 'Far'    : 'רחוק';
+  document.getElementById('label-camera').textContent = lang === 'en' ? 'Camera' : 'מצלמה';
 }
 
 update();
+
+function getLang() { return localStorage.getItem('lang') || 'he'; }
+function applyLang() {
+  const lang = getLang();
+  const isEn = lang === 'en';
+  document.documentElement.dir = isEn ? 'ltr' : 'rtl';
+  document.documentElement.lang = lang;
+  document.body.style.direction = isEn ? 'ltr' : 'rtl';
+  document.title = isEn
+    ? 'Depth of Field — Bokeh Simulator & DOF Calculator | Photography School | Amit Photos'
+    : 'עומק שדה — DOF ובוקה | בית ספר לצילום | Amit Photos';
+  document.querySelectorAll('[data-he]').forEach(el => {
+    el.textContent = isEn ? (el.dataset.en || el.dataset.he) : el.dataset.he;
+  });
+  update();
+}
+applyLang();
+window.addEventListener('storage', e => { if (e.key === 'lang') applyLang(); });
 </script>
 </body>
 </html>

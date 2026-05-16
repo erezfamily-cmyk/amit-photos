@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html dir="rtl" lang="he">
+<html lang="he" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>היסטוגרם — Amit Photos</title>
+<title>היסטוגרם — לקרוא את האור | בית ספר לצילום | Amit Photos</title>
 <meta name="description" content="למד לקרוא היסטוגרם — הכלי החשוב ביותר לחשיפה נכונה. דמו אינטראקטיבי עם תמונות אמיתיות.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&display=swap" rel="stylesheet">
@@ -135,9 +135,9 @@ input[type=range]#exp-slider:active::-webkit-slider-thumb { cursor: grabbing; }
 <body>
 
 <div class="page-hero">
-  <div class="badge">📷 בית ספר לצילום</div>
-  <h1>היסטוגרם — לקרוא את האור</h1>
-  <p>שנה חשיפה וראה בזמן אמת איך ההיסטוגרם זז — ומתי הפרטים "נשרפים" או נעלמים</p>
+  <div class="badge" data-he="📷 בית ספר לצילום" data-en="📷 Photography School">📷 בית ספר לצילום</div>
+  <h1 data-he="היסטוגרם — לקרוא את האור" data-en="Histogram — Reading the Light">היסטוגרם — לקרוא את האור</h1>
+  <p data-he='שנה חשיפה וראה בזמן אמת איך ההיסטוגרם זז — ומתי הפרטים "נשרפים" או נעלמים' data-en='Change exposure and see in real time how the histogram shifts — and when details get "burned" or disappear'>שנה חשיפה וראה בזמן אמת איך ההיסטוגרם זז — ומתי הפרטים "נשרפים" או נעלמים</p>
 </div>
 
 <div class="demo-wrap">
@@ -166,21 +166,21 @@ input[type=range]#exp-slider:active::-webkit-slider-thumb { cursor: grabbing; }
     <!-- Histogram -->
     <div class="hist-panel">
       <div class="hist-header">
-        <span class="hist-title">היסטוגרם</span>
+        <span class="hist-title" data-he="היסטוגרם" data-en="Histogram">היסטוגרם</span>
         <div class="hist-channels">
-          <button type="button" class="ch-btn active" data-ch="L">בהירות</button>
-          <button type="button" class="ch-btn" data-ch="R">R</button>
-          <button type="button" class="ch-btn" data-ch="G">G</button>
-          <button type="button" class="ch-btn" data-ch="B">B</button>
+          <button type="button" class="ch-btn active" data-ch="L" data-he="בהירות" data-en="Lum">בהירות</button>
+          <button type="button" class="ch-btn" data-ch="R" data-he="R" data-en="Red">R</button>
+          <button type="button" class="ch-btn" data-ch="G" data-he="G" data-en="Green">G</button>
+          <button type="button" class="ch-btn" data-ch="B" data-he="B" data-en="Blue">B</button>
         </div>
       </div>
       <div class="hist-canvas-wrap">
         <canvas id="hist" width="400" height="140"></canvas>
       </div>
       <div class="hist-axis">
-        <span>שחור (0)</span>
-        <span>אפור</span>
-        <span>לבן (255)</span>
+        <span data-he="שחור (0)" data-en="Black (0)">שחור (0)</span>
+        <span data-he="אפור" data-en="Gray">אפור</span>
+        <span data-he="לבן (255)" data-en="White (255)">לבן (255)</span>
       </div>
       <div class="clip-info">
         <div class="clip-badge clip-shadow-badge" id="clip-shadow-badge">⬛ צללים בסדר</div>
@@ -193,8 +193,8 @@ input[type=range]#exp-slider:active::-webkit-slider-thumb { cursor: grabbing; }
   <!-- Exposure slider -->
   <div class="exposure-wrap">
     <div class="exp-header">
-      <span class="exp-label">שינוי חשיפה</span>
-      <span><span class="exp-value" id="exp-val">0</span> <span class="exp-unit">סטופים (EV)</span></span>
+      <span class="exp-label" data-he="שינוי חשיפה" data-en="Exposure">שינוי חשיפה</span>
+      <span><span class="exp-value" id="exp-val">0</span> <span class="exp-unit" data-he="סטופים (EV)" data-en="stops (EV)">סטופים (EV)</span></span>
     </div>
     <div class="stops-track">
       <input type="range" id="exp-slider" min="-42" max="42" value="0" step="1" aria-label="שינוי חשיפה בסטופים">
@@ -202,35 +202,35 @@ input[type=range]#exp-slider:active::-webkit-slider-thumb { cursor: grabbing; }
     <div class="stops-labels">
       <span>-3</span><span>-2</span><span>-1</span><span>0</span><span>+1</span><span>+2</span><span>+3</span>
     </div>
-    <div class="reading-tip" id="reading-tip">גרור את הסליידר לשינוי חשיפה</div>
+    <div class="reading-tip" id="reading-tip" data-he="גרור את הסליידר לשינוי חשיפה" data-en="Drag the slider to change exposure">גרור את הסליידר לשינוי חשיפה</div>
   </div>
 
   <!-- Info cards -->
   <div class="info-grid">
     <div class="info-card">
       <div class="ic-icon">⬛</div>
-      <h3>קצה שמאל — צללים</h3>
-      <p>ערכים 0–30. כשהגרף "נשפך" משמאל — הפרטים בצל נעלמים לחלוטין (underexposed).</p>
+      <h3 data-he="קצה שמאל — צללים" data-en="Left edge — Shadows">קצה שמאל — צללים</h3>
+      <p data-he='ערכים 0–30. כשהגרף "נשפך" משמאל — הפרטים בצל נעלמים לחלוטין (underexposed).' data-en='Values 0–30. When the graph "spills" on the left — shadow details disappear completely (underexposed).'>ערכים 0–30. כשהגרף "נשפך" משמאל — הפרטים בצל נעלמים לחלוטין (underexposed).</p>
     </div>
     <div class="info-card">
       <div class="ic-icon">🎯</div>
-      <h3>אמצע — אפורים בינוניים</h3>
-      <p>ערכים 100–150. רוב הפרטים החשובים נמצאים כאן. היסטוגרם "הגון" נמצא סביב האמצע.</p>
+      <h3 data-he="אמצע — אפורים בינוניים" data-en="Middle — Midtones">אמצע — אפורים בינוניים</h3>
+      <p data-he='ערכים 100–150. רוב הפרטים החשובים נמצאים כאן. היסטוגרם "הגון" נמצא סביב האמצע.' data-en='Values 100–150. Most important details live here. A "decent" histogram sits around the middle.'>ערכים 100–150. רוב הפרטים החשובים נמצאים כאן. היסטוגרם "הגון" נמצא סביב האמצע.</p>
     </div>
     <div class="info-card">
       <div class="ic-icon">⬜</div>
-      <h3>קצה ימין — הבהרות</h3>
-      <p>ערכים 225–255. כשהגרף "נשפך" מימין — פרטי אור נשרפים ללבן טהור (overexposed).</p>
+      <h3 data-he="קצה ימין — הבהרות" data-en="Right edge — Highlights">קצה ימין — הבהרות</h3>
+      <p data-he='ערכים 225–255. כשהגרף "נשפך" מימין — פרטי אור נשרפים ללבן טהור (overexposed).' data-en='Values 225–255. When the graph "spills" on the right — highlight details burn to pure white (overexposed).'>ערכים 225–255. כשהגרף "נשפך" מימין — פרטי אור נשרפים ללבן טהור (overexposed).</p>
     </div>
     <div class="info-card">
       <div class="ic-icon">📐</div>
-      <h3>אין היסטוגרם "נכון"</h3>
-      <p>תמונה כהה במכוון תהיה שמאלית. High-key תהיה ימינית. המטרה: לא לאבד פרטים שרצית לשמר.</p>
+      <h3 data-he='אין היסטוגרם "נכון"' data-en='No "correct" histogram'>אין היסטוגרם "נכון"</h3>
+      <p data-he="תמונה כהה במכוון תהיה שמאלית. High-key תהיה ימינית. המטרה: לא לאבד פרטים שרצית לשמר." data-en="An intentionally dark image will be left-heavy. High-key will be right-heavy. The goal: don't lose details you wanted to keep.">תמונה כהה במכוון תהיה שמאלית. High-key תהיה ימינית. המטרה: לא לאבד פרטים שרצית לשמר.</p>
     </div>
   </div>
 
   <div class="back-link">
-    <a href="/camera/">← חזרה לבית הספר לצילום</a>
+    <a href="/camera/" data-he="← חזרה לבית הספר לצילום" data-en="← Back to Photography School">← חזרה לבית הספר לצילום</a>
   </div>
 
 </div>
@@ -239,32 +239,32 @@ input[type=range]#exp-slider:active::-webkit-slider-thumb { cursor: grabbing; }
 const PHOTOS = [
   {
     id: 'eagle-dark',
-    title: 'עוז של נשר',
-    type: 'Low-key — כהה',
+    title: { he: 'עוז של נשר',  en: 'Eagle Power'       },
+    type:  { he: 'Low-key — כהה', en: 'Low-key — Dark'  },
     url: 'https://drive.google.com/thumbnail?id=1FH_T3RTNUiI1f0cTktFnEEdJY-lO3sNi&sz=w800',
     // histogram profile: dark subject on black BG, peak around 35 with long tail to 180
     profile: { peaks: [{c:30, w:22, h:1.0}, {c:90, w:25, h:0.35}, {c:160, w:18, h:0.15}], channels: {R:[35,24,1.0,90,26,0.35], G:[28,20,0.9,85,22,0.3], B:[25,18,0.8,80,18,0.2]} }
   },
   {
     id: 'owl-white',
-    title: 'ינשוף שלג',
-    type: 'High-key — בהיר',
+    title: { he: 'ינשוף שלג',   en: 'Snowy Owl'           },
+    type:  { he: 'High-key — בהיר', en: 'High-key — Bright' },
     url: 'https://drive.google.com/thumbnail?id=17RW9kh-Ry3KiqOj_yM3oCK8FPOC88_JN&sz=w800',
     // bright white owl, right-heavy
     profile: { peaks: [{c:200, w:28, h:1.0}, {c:235, w:18, h:0.7}, {c:110, w:20, h:0.2}], channels: {R:[205,28,1.0,238,16,0.65], G:[198,26,0.95,232,17,0.7], B:[188,24,0.75,220,14,0.45]} }
   },
   {
     id: 'bird-sky',
-    title: 'נשר בטיסה',
-    type: 'קונטרסט גבוה',
+    title: { he: 'נשר בטיסה',   en: 'Eagle in Flight'    },
+    type:  { he: 'קונטרסט גבוה', en: 'High Contrast'      },
     url: 'https://drive.google.com/thumbnail?id=1We5NhoA8RoEVMLisV1Uf4XjeAq792gv9&sz=w800',
     // white bird against bright sky — bimodal
     profile: { peaks: [{c:180, w:30, h:0.8}, {c:230, w:15, h:1.0}, {c:50, w:15, h:0.3}], channels: {R:[185,30,0.8,232,14,1.0,50,15,0.25], G:[178,28,0.75,228,14,0.95,48,14,0.2], B:[190,32,0.85,235,16,0.9,55,16,0.35]} }
   },
   {
     id: 'owl-sky',
-    title: 'תינשוף בור',
-    type: 'חשיפה מאוזנת',
+    title: { he: 'תינשוף בור',  en: 'Burrowing Owl'      },
+    type:  { he: 'חשיפה מאוזנת', en: 'Balanced Exposure'  },
     url: 'https://drive.google.com/thumbnail?id=1RS7CNmOqlgKzVp6TEsqT2At4zO4eODS_&sz=w800',
     // balanced - brown owl + blue sky
     profile: { peaks: [{c:120, w:35, h:0.9}, {c:170, w:25, h:0.6}, {c:65, w:20, h:0.4}], channels: {R:[125,32,0.9,172,24,0.55,68,18,0.35], G:[118,30,0.85,165,22,0.6,60,16,0.3], B:[145,38,1.0,185,26,0.5,80,20,0.45]} }
@@ -281,7 +281,7 @@ PHOTOS.forEach((p, i) => {
   const btn = document.createElement('button');
   btn.type = 'button';
   btn.className = 'photo-btn' + (i === 0 ? ' active' : '');
-  btn.innerHTML = `<img src="${p.url}" alt="${p.title}" loading="lazy"><span>${p.title}</span>`;
+  btn.innerHTML = `<img src="${p.url}" alt="${p.title.he}" loading="lazy"><span data-he="${p.title.he}" data-en="${p.title.en}">${p.title.he}</span>`;
   btn.addEventListener('click', () => selectPhoto(i));
   picker.appendChild(btn);
 });
@@ -290,9 +290,10 @@ function selectPhoto(i) {
   currentPhoto = i;
   picker.querySelectorAll('.photo-btn').forEach((b, j) => b.classList.toggle('active', j === i));
   const p = PHOTOS[i];
+  const lang = getLang();
   document.getElementById('main-photo').src = p.url;
-  document.getElementById('photo-title-el').textContent = p.title;
-  document.getElementById('photo-type-el').textContent = p.type;
+  document.getElementById('photo-title-el').textContent = lang === 'en' ? p.title.en : p.title.he;
+  document.getElementById('photo-type-el').textContent = lang === 'en' ? p.type.en : p.type.he;
   drawHistogram();
 }
 
@@ -450,53 +451,75 @@ function drawHistogram() {
   const shadowOverlay = document.getElementById('clip-shadow-overlay');
   const hlOverlay = document.getElementById('clip-hl-overlay');
 
+  const isEn = getLang() === 'en';
   if (shadowClip) {
-    shadowBadge.textContent = '⬛ צללים נחסמים!';
+    shadowBadge.textContent = isEn ? '⬛ Shadows clipped!' : '⬛ צללים נחסמים!';
     shadowBadge.classList.add('warn');
     shadowOverlay.style.opacity = '1';
   } else {
-    shadowBadge.textContent = '⬛ צללים בסדר';
+    shadowBadge.textContent = isEn ? '⬛ Shadows OK' : '⬛ צללים בסדר';
     shadowBadge.classList.remove('warn');
     shadowOverlay.style.opacity = '0';
   }
 
   if (hlClip) {
-    hlBadge.textContent = '⬜ הבהרות נשרפות!';
+    hlBadge.textContent = isEn ? '⬜ Highlights blown!' : '⬜ הבהרות נשרפות!';
     hlBadge.classList.add('warn');
     hlOverlay.style.opacity = '1';
   } else {
-    hlBadge.textContent = '⬜ הבהרות בסדר';
+    hlBadge.textContent = isEn ? '⬜ Highlights OK' : '⬜ הבהרות בסדר';
     hlBadge.classList.remove('warn');
     hlOverlay.style.opacity = '0';
   }
 }
 
+const TIPS = [
+  { test: ev => ev < -2.2, he: '⚠️ חשיפת חסר קיצונית — פרטים בצל נעלמים לחלוטין',    en: '⚠️ Extreme underexposure — shadow details completely lost',   cls: 'reading-tip bad'  },
+  { test: ev => ev < -1,   he: '↙ חשיפת חסר — ההיסטוגרם זז שמאלה, צללים מתעמקים',  en: '↙ Underexposed — histogram shifts left, shadows deepen',       cls: 'reading-tip warn' },
+  { test: ev => ev > 2.2,  he: '⚠️ חשיפת יתר קיצונית — פרטי האור "נשרפים" ללבן',   en: '⚠️ Extreme overexposure — highlight details burn to white',    cls: 'reading-tip bad'  },
+  { test: ev => ev > 1,    he: '↗ חשיפת יתר — ההיסטוגרם זז ימינה, הבהרות מאירות',  en: '↗ Overexposed — histogram shifts right, highlights brighten',  cls: 'reading-tip warn' },
+  { test: () => true,      he: '✓ חשיפה טובה — פרטים נשמרים בשני הקצוות',            en: '✓ Good exposure — details preserved at both ends',             cls: 'reading-tip good' }
+];
+
 function updateTip() {
   const tip = document.getElementById('reading-tip');
-  const shadowClip = currentEV < -2;
-  const hlClip = currentEV > 2;
-
-  if (currentEV < -2.2) {
-    tip.textContent = '⚠️ חשיפת חסר קיצונית — פרטים בצל נעלמים לחלוטין';
-    tip.className = 'reading-tip bad';
-  } else if (currentEV < -1) {
-    tip.textContent = '↙ חשיפת חסר — ההיסטוגרם זז שמאלה, צללים מתעמקים';
-    tip.className = 'reading-tip warn';
-  } else if (currentEV > 2.2) {
-    tip.textContent = '⚠️ חשיפת יתר קיצונית — פרטי האור "נשרפים" ללבן';
-    tip.className = 'reading-tip bad';
-  } else if (currentEV > 1) {
-    tip.textContent = '↗ חשיפת יתר — ההיסטוגרם זז ימינה, הבהרות מאירות';
-    tip.className = 'reading-tip warn';
-  } else {
-    tip.textContent = '✓ חשיפה טובה — פרטים נשמרים בשני הקצוות';
-    tip.className = 'reading-tip good';
-  }
+  const isEn = getLang() === 'en';
+  const entry = TIPS.find(t => t.test(currentEV));
+  tip.textContent = isEn ? entry.en : entry.he;
+  tip.className = entry.cls;
 }
 
 // Init
 selectPhoto(0);
 updateTip();
+
+function getLang() { return localStorage.getItem('lang') || 'he'; }
+
+function applyLang() {
+  const lang = getLang();
+  const isEn = lang === 'en';
+  document.documentElement.dir = isEn ? 'ltr' : 'rtl';
+  document.documentElement.lang = lang;
+  document.body.style.direction = isEn ? 'ltr' : 'rtl';
+  document.title = isEn
+    ? 'Histogram — Reading Exposure & Tonal Range | Photography School | Amit Photos'
+    : 'היסטוגרם — לקרוא את האור | בית ספר לצילום | Amit Photos';
+  document.querySelectorAll('[data-he]').forEach(el => {
+    el.textContent = isEn ? (el.dataset.en || el.dataset.he) : el.dataset.he;
+  });
+  // Update photo title/type for current active photo
+  const p = PHOTOS[currentPhoto];
+  if (p) {
+    document.getElementById('photo-title-el').textContent = isEn ? p.title.en : p.title.he;
+    document.getElementById('photo-type-el').textContent  = isEn ? p.type.en  : p.type.he;
+  }
+  // Re-render dynamic text
+  drawHistogram();
+  updateTip();
+}
+
+applyLang();
+window.addEventListener('storage', e => { if (e.key === 'lang') applyLang(); });
 </script>
 </body>
 </html>
