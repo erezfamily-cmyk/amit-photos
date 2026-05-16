@@ -4436,7 +4436,10 @@ document.addEventListener('DOMContentLoaded', () => {
         </tr></thead>
         <tbody>${list.map(l => `
           <tr style="border-top:1px solid #222">
-            <td style="padding:.6rem">${escHtml(l.title)}</td>
+            <td style="padding:.6rem">
+              ${escHtml(l.title)}
+              ${l.title_en ? '<span style="font-size:.68rem;background:#1a2a1a;border:1px solid #2a4a2a;border-radius:10px;padding:1px 6px;color:#4caf7d;margin-right:.4rem">EN</span>' : ''}
+            </td>
             <td style="color:#888">${escHtml(l.region) || '—'}</td>
             <td style="color:#888">${l.photo_count || 0}</td>
             <td><span style="color:${l.published ? '#4caf7d' : '#888'}">${l.published ? 'פורסם' : 'טיוטה'}</span></td>
@@ -4480,6 +4483,11 @@ document.addEventListener('DOMContentLoaded', () => {
         <button id="btn-delete-location" style="background:transparent;border:1px solid #e05555;color:#e05555;padding:.6rem 1.25rem;border-radius:4px;cursor:pointer">מחק</button>
         <a href="/locations/spot/?slug=${escHtml(loc.id)}" target="_blank" style="background:transparent;border:1px solid #333;color:#888;padding:.6rem 1.25rem;border-radius:4px;font-size:.85rem;text-decoration:none">צפה בדף</a>
       </div>
+      <div style="display:flex;gap:0;margin-bottom:1.5rem;border-bottom:1px solid #333">
+        <button id="tab-he" style="background:none;border:none;border-bottom:2px solid var(--accent);color:var(--accent);padding:.5rem 1.25rem;cursor:pointer;font-family:'Heebo',sans-serif;font-size:.9rem;font-weight:700">עברית</button>
+        <button id="tab-en" style="background:none;border:none;border-bottom:2px solid transparent;color:#888;padding:.5rem 1.25rem;cursor:pointer;font-family:'Heebo',sans-serif;font-size:.9rem">English</button>
+      </div>
+      <div id="loc-he-fields">
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem">
         <div>
           <label style="display:block;font-size:.8rem;color:#888;margin-bottom:.3rem">כותרת</label>
@@ -4558,6 +4566,43 @@ document.addEventListener('DOMContentLoaded', () => {
         <input type="checkbox" id="loc-published" ${loc.published ? 'checked' : ''} style="accent-color:var(--accent);width:18px;height:18px">
         <label for="loc-published" style="font-size:.85rem">מפורסם</label>
       </div>
+      </div><!-- end loc-he-fields -->
+      <div id="loc-en-fields" style="display:none;direction:ltr">
+        <div style="margin-bottom:1rem;padding:.75rem 1rem;background:#0d1a0d;border:1px solid #1a3a1a;border-radius:6px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem">
+          <span style="font-size:.85rem;color:#4caf7d">${loc.title_en ? '✓ English content exists — edit below or regenerate' : 'No English content yet — click Generate to create it'}</span>
+          <button id="btn-generate-en" style="background:var(--accent);color:#0a0a0a;border:none;padding:.5rem 1.1rem;border-radius:4px;font-weight:700;cursor:pointer;font-size:.85rem">✨ Generate English</button>
+        </div>
+        <div style="margin-bottom:1rem">
+          <label style="display:block;font-size:.8rem;color:#888;margin-bottom:.3rem">Title (English)</label>
+          <input id="loc-title-en" value="${escHtml(loc.title_en || '')}" placeholder="English title" style="width:100%;background:#0a0a0a;border:1px solid #222;color:#f0ede8;padding:.6rem .8rem;border-radius:4px;font-family:system-ui,sans-serif;direction:ltr">
+        </div>
+        <div style="margin-bottom:1rem">
+          <label style="display:block;font-size:.8rem;color:#888;margin-bottom:.3rem">Description (English)</label>
+          <textarea id="loc-description-en" placeholder="English description..." style="width:100%;background:#0a0a0a;border:1px solid #222;color:#f0ede8;padding:.6rem .8rem;border-radius:4px;min-height:100px;font-family:system-ui,sans-serif;direction:ltr">${escHtml(loc.description_en || '')}</textarea>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem">
+          <div>
+            <label style="display:block;font-size:.8rem;color:#888;margin-bottom:.3rem">Best Time (English)</label>
+            <input id="loc-best-time-en" value="${escHtml(loc.best_time_en || '')}" placeholder="Best time to visit..." style="width:100%;background:#0a0a0a;border:1px solid #222;color:#f0ede8;padding:.6rem .8rem;border-radius:4px;font-family:system-ui,sans-serif;direction:ltr">
+          </div>
+          <div>
+            <label style="display:block;font-size:.8rem;color:#888;margin-bottom:.3rem">Equipment (English)</label>
+            <input id="loc-equipment-en" value="${escHtml(loc.equipment_en || '')}" placeholder="Recommended equipment..." style="width:100%;background:#0a0a0a;border:1px solid #222;color:#f0ede8;padding:.6rem .8rem;border-radius:4px;font-family:system-ui,sans-serif;direction:ltr">
+          </div>
+        </div>
+        <div style="margin-bottom:1rem">
+          <label style="display:block;font-size:.8rem;color:#888;margin-bottom:.3rem">My Tip (English)</label>
+          <textarea id="loc-tip-en" placeholder="Personal shooting tip..." style="width:100%;background:#0a0a0a;border:1px solid #222;color:#f0ede8;padding:.6rem .8rem;border-radius:4px;min-height:80px;font-family:system-ui,sans-serif;direction:ltr">${escHtml(loc.my_tip_en || '')}</textarea>
+        </div>
+        <div style="margin-bottom:1rem">
+          <label style="display:block;font-size:.8rem;color:#888;margin-bottom:.3rem">When to Visit — JSON (English notes)</label>
+          <textarea id="loc-when-to-visit-en" placeholder='{"summer":{"rating":"ok","note":"..."},...}' style="width:100%;background:#0a0a0a;border:1px solid #222;color:#f0ede8;padding:.6rem .8rem;border-radius:4px;min-height:70px;font-family:monospace;direction:ltr;font-size:.78rem">${escHtml(typeof loc.when_to_visit_en === 'string' ? loc.when_to_visit_en : (loc.when_to_visit_en ? JSON.stringify(loc.when_to_visit_en) : ''))}</textarea>
+        </div>
+        <div style="margin-bottom:2rem">
+          <label style="display:block;font-size:.8rem;color:#888;margin-bottom:.3rem">Recommended Gear — JSON (English names)</label>
+          <textarea id="loc-recommended-gear-en" placeholder='[{"name":"Wide-angle 16-35mm","primary":true},...]' style="width:100%;background:#0a0a0a;border:1px solid #222;color:#f0ede8;padding:.6rem .8rem;border-radius:4px;min-height:60px;font-family:monospace;direction:ltr;font-size:.78rem">${escHtml(typeof loc.recommended_gear_en === 'string' ? loc.recommended_gear_en : (loc.recommended_gear_en ? JSON.stringify(loc.recommended_gear_en) : ''))}</textarea>
+        </div>
+      </div><!-- end loc-en-fields -->
       <h3 style="font-family:'Syne',sans-serif;font-size:1rem;margin-bottom:1rem">תמונות</h3>
       <div id="loc-photos-panel"></div>
     `;
@@ -4876,6 +4921,49 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   function bindEditorEvents(loc) {
+    document.getElementById('tab-he').addEventListener('click', function() {
+      document.getElementById('tab-he').style.borderBottom = '2px solid var(--accent)';
+      document.getElementById('tab-he').style.color = 'var(--accent)';
+      document.getElementById('tab-he').style.fontWeight = '700';
+      document.getElementById('tab-en').style.borderBottom = '2px solid transparent';
+      document.getElementById('tab-en').style.color = '#888';
+      document.getElementById('tab-en').style.fontWeight = '';
+      document.getElementById('loc-he-fields').style.display = 'block';
+      document.getElementById('loc-en-fields').style.display = 'none';
+    });
+    document.getElementById('tab-en').addEventListener('click', function() {
+      document.getElementById('tab-en').style.borderBottom = '2px solid var(--accent)';
+      document.getElementById('tab-en').style.color = 'var(--accent)';
+      document.getElementById('tab-en').style.fontWeight = '700';
+      document.getElementById('tab-he').style.borderBottom = '2px solid transparent';
+      document.getElementById('tab-he').style.color = '#888';
+      document.getElementById('tab-he').style.fontWeight = '';
+      document.getElementById('loc-en-fields').style.display = 'block';
+      document.getElementById('loc-he-fields').style.display = 'none';
+    });
+    document.getElementById('btn-generate-en').addEventListener('click', async () => {
+      const btn = document.getElementById('btn-generate-en');
+      btn.disabled = true;
+      btn.textContent = '⏳ Generating...';
+      const res = await fetch(`/api/admin/locations/${locSlug}/generate-en`, {
+        method: 'POST',
+        headers: authHeaders()
+      });
+      if (res.ok) {
+        const data = await res.json();
+        document.getElementById('loc-title-en').value = data.title_en || '';
+        document.getElementById('loc-description-en').value = data.description_en || '';
+        document.getElementById('loc-best-time-en').value = data.best_time_en || '';
+        document.getElementById('loc-equipment-en').value = data.equipment_en || '';
+        document.getElementById('loc-tip-en').value = data.my_tip_en || '';
+        document.getElementById('loc-when-to-visit-en').value = data.when_to_visit_en || '';
+        document.getElementById('loc-recommended-gear-en').value = data.recommended_gear_en || '';
+      } else {
+        alert('Error generating English content');
+      }
+      btn.disabled = false;
+      btn.textContent = '✨ Generate English';
+    });
     document.getElementById('btn-back-locations').addEventListener('click', () => {
       document.getElementById('location-editor').style.display = 'none';
       document.getElementById('locations-list').style.display = 'block';
@@ -4895,7 +4983,14 @@ document.addEventListener('DOMContentLoaded', () => {
         my_tip: document.getElementById('loc-tip').value,
         related_guides: Array.from(document.querySelectorAll('#location-editor input[type=checkbox][value]')).filter(c => c.checked).map(c => c.value),
         extra_links: getExtraLinks(),
-        published: document.getElementById('loc-published').checked ? 1 : 0
+        published: document.getElementById('loc-published').checked ? 1 : 0,
+        title_en: document.getElementById('loc-title-en')?.value || null,
+        description_en: document.getElementById('loc-description-en')?.value || null,
+        best_time_en: document.getElementById('loc-best-time-en')?.value || null,
+        equipment_en: document.getElementById('loc-equipment-en')?.value || null,
+        my_tip_en: document.getElementById('loc-tip-en')?.value || null,
+        when_to_visit_en: document.getElementById('loc-when-to-visit-en')?.value || null,
+        recommended_gear_en: document.getElementById('loc-recommended-gear-en')?.value || null
       };
       const res = await fetch(`/api/admin/locations/${locSlug}`, {
         method: 'PUT',

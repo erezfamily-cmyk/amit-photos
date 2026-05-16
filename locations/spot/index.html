@@ -148,6 +148,31 @@ h1{font-family:'Syne',sans-serif;font-size:2rem;color:var(--accent);margin-botto
 
 <script>
 function escHtml(s){return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+function getLang() { return localStorage.getItem('lang') || 'he'; }
+
+const REGION_MAP_EN = {
+  'ישראל': 'Israel', 'איטליה': 'Italy', 'יוון': 'Greece', 'צרפת': 'France',
+  'ספרד': 'Spain', 'פורטוגל': 'Portugal', 'גרמניה': 'Germany',
+  'הולנד': 'Netherlands', 'אנגליה': 'England', 'יפן': 'Japan',
+  'ארה"ב': 'USA', 'קנדה': 'Canada', 'מרוקו': 'Morocco', 'טורקיה': 'Turkey',
+  'קרואטיה': 'Croatia', 'אוסטריה': 'Austria'
+};
+
+const GUIDE_LABELS_EN = {
+  '/camera/filters/': 'Filters',
+  '/camera/composition/': 'Composition',
+  '/camera/exposure/': 'Exposure',
+  '/camera/depth-of-field/': 'Depth of Field',
+  '/camera/white-balance/': 'White Balance',
+  '/camera/histogram/': 'Histogram',
+  '/camera/light/': 'Light & Color',
+  '/camera/dynamic-range/': 'Dynamic Range',
+  '/camera/controls/': 'Camera Controls',
+  '/camera/lenses/': 'Lenses',
+  '/camera/types/': 'Camera Types'
+};
+
 function renderText(s){
   if(!s) return '';
   return escHtml(s).replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g,
@@ -270,11 +295,22 @@ function setJsonLd(loc) {
 }
 
 async function loadSpot() {
+  const lang = getLang();
+  const isEn = lang === 'en';
+  document.documentElement.dir = isEn ? 'ltr' : 'rtl';
+  document.documentElement.lang = lang;
+  document.body.style.fontFamily = isEn ? "'Inter', system-ui, sans-serif" : '';
+
+  const backLink = document.querySelector('.back-link');
+  if (backLink) backLink.textContent = isEn ? '← Back to Locations' : '← חזרה למקומות';
+  const corrBtn = document.getElementById('btn-open-correction');
+  if (corrBtn) corrBtn.textContent = isEn ? 'Have a tip or correction? Let me know' : 'יש לך טיפ או תיקון? שלח לי';
+
   try {
     const res = await fetch(`/api/locations/${slug}`);
     if (!res.ok) { location.href = '/locations/'; return; }
     const loc = await res.json();
-    renderSpot(loc);
+    renderSpot(loc, lang);
     const coverUrl = (loc.photos && loc.photos.length) ? (loc.photos[0].url || '') : '';
     setLocationMeta(loc, coverUrl);
     setJsonLd(loc);
@@ -284,14 +320,20 @@ async function loadSpot() {
   }
 }
 
-function renderSeasons(wt) {
+window.addEventListener('storage', (e) => {
+  if (e.key === 'lang') loadSpot();
+});
+
+function renderSeasons(wt, lang) {
   if (!wt) return '';
+  const isEn = lang === 'en';
   const SEASONS = [
-    { key: 'summer', label: 'קיץ', emoji: '☀️' },
-    { key: 'fall',   label: 'סתיו', emoji: '🍂' },
-    { key: 'winter', label: 'חורף', emoji: '❄️' },
-    { key: 'spring', label: 'אביב', emoji: '🌸' }
+    { key: 'summer', label: isEn ? 'Summer' : 'קיץ',  emoji: '☀️' },
+    { key: 'fall',   label: isEn ? 'Autumn' : 'סתיו', emoji: '🍂' },
+    { key: 'winter', label: isEn ? 'Winter' : 'חורף', emoji: '❄️' },
+    { key: 'spring', label: isEn ? 'Spring' : 'אביב', emoji: '🌸' }
   ];
+  const heading = isEn ? 'When to Visit' : 'מתי לבוא';
   const cards = SEASONS.map(s => {
     const d = wt[s.key] || {};
     const cls = d.rating === 'good' ? 'good' : d.rating === 'bad' ? 'bad' : 'ok';
@@ -301,34 +343,56 @@ function renderSeasons(wt) {
       <div class="s-note">${escHtml(d.note || '')}</div>
     </div>`;
   }).join('');
-  return `<div class="section"><h2>מתי לבוא</h2><div class="seasons-grid">${cards}</div></div>`;
+  return `<div class="section"><h2>${heading}</h2><div class="seasons-grid">${cards}</div></div>`;
 }
 
-function renderGear(gear) {
+function renderGear(gear, lang) {
   if (!gear || !gear.length) return '';
+  const heading = lang === 'en' ? 'Recommended Gear' : 'ציוד מומלץ';
   const chips = gear.map(g => {
     const cls = g.primary ? 'gear-chip primary' : 'gear-chip';
     return `<span class="${cls}">${escHtml(g.name)}</span>`;
   }).join('');
-  return `<div class="section"><h2>ציוד מומלץ</h2><div class="gear-chips">${chips}</div></div>`;
+  return `<div class="section"><h2>${heading}</h2><div class="gear-chips">${chips}</div></div>`;
 }
 
-function renderNearby(nearby) {
+function renderNearby(nearby, lang) {
   if (!nearby || !nearby.length) return '';
+  const isEn = lang === 'en';
+  const heading = isEn ? 'Nearby Spots' : 'מקומות קרובים';
+  const kmLabel = isEn ? 'km →' : 'ק"מ →';
   const items = nearby.map(n =>
     `<a class="nearby-item" href="/locations/spot/?slug=${encodeURIComponent(n.id)}">
       <span class="nearby-name">${escHtml(n.title)}</span>
-      <span class="nearby-dist">${n.km} ק"מ →</span>
+      <span class="nearby-dist">${n.km} ${kmLabel}</span>
     </a>`
   ).join('');
-  return `<div class="section"><h2>מקומות קרובים</h2><div class="nearby-list">${items}</div></div>`;
+  return `<div class="section"><h2>${heading}</h2><div class="nearby-list">${items}</div></div>`;
 }
 
-function renderSpot(loc) {
+function renderSpot(loc, lang) {
+  const isEn = lang === 'en';
+
+  function t(field) {
+    const enVal = loc[field + '_en'];
+    return (isEn && enVal) ? enVal : (loc[field] || '');
+  }
+
+  const title = t('title');
+  const region = isEn ? (REGION_MAP_EN[loc.region] || loc.region || '') : (loc.region || '');
+  const description = t('description');
+  const best_time = t('best_time');
+  const equipment = t('equipment');
+  const my_tip = t('my_tip');
+  const wt = (isEn && loc.when_to_visit_en) ? loc.when_to_visit_en : loc.when_to_visit;
+  const gear = (isEn && loc.recommended_gear_en) ? loc.recommended_gear_en : loc.recommended_gear;
+  const guideLabels = isEn ? GUIDE_LABELS_EN : GUIDE_LABELS;
+
   document.getElementById('hero-content').innerHTML = `
-    <div class="badge">📍 ${escHtml(loc.region || 'מקום צילום')}</div>
-    <h1>${escHtml(loc.title)}</h1>
-    <div class="region-time">${escHtml(loc.region || '')}${loc.best_time ? ' · ' + escHtml(loc.best_time) : ''}</div>
+    <div class="badge">📍 ${escHtml(region || (isEn ? 'Photography Spot' : 'מקום צילום'))}</div>
+    <h1>${escHtml(title)}</h1>
+    <div class="region-time">${escHtml(region)}${best_time ? ' · ' + escHtml(best_time) : ''}</div>
+    ${isEn && !loc.title_en ? '<div style="font-size:.75rem;color:#888;margin-top:.5rem;padding:.3rem .75rem;background:#1a1a1a;border-radius:4px;display:inline-block">🔜 English translation coming soon</div>' : ''}
   `;
   document.getElementById('share-row').style.display = 'flex';
 
@@ -348,48 +412,48 @@ function renderSpot(loc) {
     }
   }
 
+  const specLabel   = isEn ? 'Photography Specs'   : 'מפרט צילום';
+  const bestLabel   = isEn ? 'Best time:'           : 'זמן מומלץ:';
+  const equipLabel  = isEn ? 'Equipment:'           : 'ציוד:';
+  const navLabel    = isEn ? 'Navigate:'            : 'ניווט:';
+  const mapsLabel   = isEn ? 'Open in Google Maps'  : 'פתח במפות Google';
+  const tipLabel    = isEn ? 'My Tip'               : 'הטיפ שלי';
+  const extraLabel  = isEn ? 'More Info'            : 'מידע נוסף';
+  const guidesLabel = isEn ? 'Related Guides'       : 'מדריכים קשורים';
+  const galleryLabel= isEn ? 'Gallery'              : 'גלריה מהמקום';
+  const sunLabel    = isEn ? "Today's shooting times" : 'זמני צילום היום';
+  const riseLabel   = isEn ? 'Sunrise'              : 'זריחה';
+  const setLabel2   = isEn ? 'Sunset'               : 'שקיעה';
+  const goldLabel   = isEn ? 'Golden Hour'          : 'שעת זהב';
+  const wxLabel     = isEn ? 'Current weather'      : 'מזג אוויר עכשווי';
+
   document.getElementById('details-section').innerHTML = `
-    ${loc.description ? `<div class="section"><p style="line-height:1.8;font-size:.95rem">${renderText(loc.description)}</p></div>` : ''}
-    ${renderSeasons(loc.when_to_visit)}
-    ${renderGear(loc.recommended_gear)}
-    ${loc.my_tip ? `<div class="section"><h2>הטיפ שלי</h2><div class="tip-box">${renderText(loc.my_tip)}</div></div>` : ''}
-    ${loc.extra_links && loc.extra_links.length ? `<div class="section"><h2>מידע נוסף</h2><ul class="specs-list">${loc.extra_links.map(lnk=>`<li><a href="${escHtml(lnk.url)}" target="_blank" rel="noopener" style="color:var(--accent)">${escHtml(lnk.label)}</a></li>`).join('')}</ul></div>` : ''}
+    ${description ? `<div class="section"><p style="line-height:1.8;font-size:.95rem">${renderText(description)}</p></div>` : ''}
+    ${renderSeasons(wt, lang)}
+    ${renderGear(gear, lang)}
+    ${my_tip ? `<div class="section"><h2>${tipLabel}</h2><div class="tip-box">${renderText(my_tip)}</div></div>` : ''}
+    ${loc.extra_links && loc.extra_links.length ? `<div class="section"><h2>${extraLabel}</h2><ul class="specs-list">${loc.extra_links.map(lnk=>`<li><a href="${escHtml(lnk.url)}" target="_blank" rel="noopener" style="color:var(--accent)">${escHtml(lnk.label)}</a></li>`).join('')}</ul></div>` : ''}
     <div class="section">
-      <h2>מפרט צילום</h2>
+      <h2>${specLabel}</h2>
       <ul class="specs-list">
-        ${loc.best_time ? `<li><strong>זמן מומלץ:</strong> ${loc.best_time}</li>` : ''}
-        ${loc.equipment ? `<li><strong>ציוד:</strong> ${loc.equipment}</li>` : ''}
-        ${loc.coordinates ? `<li><strong>ניווט:</strong> <a href="https://www.google.com/maps/search/?api=1&query=${loc.coordinates}" target="_blank" style="color:var(--accent)">פתח במפות Google</a></li>` : ''}
+        ${best_time ? `<li><strong>${bestLabel}</strong> ${best_time}</li>` : ''}
+        ${equipment ? `<li><strong>${equipLabel}</strong> ${equipment}</li>` : ''}
+        ${loc.coordinates ? `<li><strong>${navLabel}</strong> <a href="https://www.google.com/maps/search/?api=1&query=${loc.coordinates}" target="_blank" style="color:var(--accent)">${mapsLabel}</a></li>` : ''}
       </ul>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin:1rem 0">
         <div id="sun-widget" style="display:none;background:#111;border:1px solid #222;border-radius:8px;padding:1rem 1.25rem">
-          <div style="font-size:.75rem;color:#666;margin-bottom:.6rem;font-family:'Heebo',sans-serif">זמני צילום היום</div>
+          <div style="font-size:.75rem;color:#666;margin-bottom:.6rem">${sunLabel}</div>
           <div style="display:flex;gap:1.5rem;flex-wrap:wrap">
-            <div>
-              <span style="font-size:1.1rem">🌅</span>
-              <span style="font-size:.85rem;color:#c8a96e;font-weight:700" id="sun-rise">--:--</span>
-              <div style="font-size:.7rem;color:#666">זריחה</div>
-            </div>
-            <div>
-              <span style="font-size:1.1rem">🌇</span>
-              <span style="font-size:.85rem;color:#c8a96e;font-weight:700" id="sun-set">--:--</span>
-              <div style="font-size:.7rem;color:#666">שקיעה</div>
-            </div>
-            <div>
-              <span style="font-size:1.1rem">✨</span>
-              <span style="font-size:.85rem;color:#c8a96e;font-weight:700" id="golden-hour">--:--</span>
-              <div style="font-size:.7rem;color:#666">שעת זהב</div>
-            </div>
+            <div><span style="font-size:1.1rem">🌅</span><span style="font-size:.85rem;color:#c8a96e;font-weight:700" id="sun-rise">--:--</span><div style="font-size:.7rem;color:#666">${riseLabel}</div></div>
+            <div><span style="font-size:1.1rem">🌇</span><span style="font-size:.85rem;color:#c8a96e;font-weight:700" id="sun-set">--:--</span><div style="font-size:.7rem;color:#666">${setLabel2}</div></div>
+            <div><span style="font-size:1.1rem">✨</span><span style="font-size:.85rem;color:#c8a96e;font-weight:700" id="golden-hour">--:--</span><div style="font-size:.7rem;color:#666">${goldLabel}</div></div>
           </div>
         </div>
         <div id="weather-widget" style="display:none;background:#111;border:1px solid #222;border-radius:8px;padding:1rem 1.25rem">
-          <div style="font-size:.75rem;color:#666;margin-bottom:.6rem;font-family:'Heebo',sans-serif">מזג אוויר עכשווי</div>
+          <div style="font-size:.75rem;color:#666;margin-bottom:.6rem">${wxLabel}</div>
           <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap">
             <div style="font-size:2rem" id="weather-icon">—</div>
-            <div>
-              <div style="font-size:1.4rem;font-weight:700;color:#f0ede8" id="weather-temp">--°</div>
-              <div style="font-size:.75rem;color:#888" id="weather-desc">--</div>
-            </div>
+            <div><div style="font-size:1.4rem;font-weight:700;color:#f0ede8" id="weather-temp">--°</div><div style="font-size:.75rem;color:#888" id="weather-desc">--</div></div>
             <div style="font-size:.8rem;color:#666" id="weather-wind"></div>
           </div>
         </div>
@@ -397,26 +461,28 @@ function renderSpot(loc) {
     </div>
     ${loc.related_guides && loc.related_guides.length ? `
     <div class="section">
-      <h2>מדריכים קשורים</h2>
+      <h2>${guidesLabel}</h2>
       <div class="guides-row">
-        ${loc.related_guides.map(g => `<a class="guide-chip" href="${g}">${GUIDE_LABELS[g] || g}</a>`).join('')}
+        ${loc.related_guides.map(g => `<a class="guide-chip" href="${g}">${guideLabels[g] || g}</a>`).join('')}
       </div>
     </div>` : ''}
   `;
 
   if (loc.photos && loc.photos.length) {
+    const toGalleryLabel = isEn ? 'Gallery' : 'לגלריה';
+    const buyLabel = isEn ? 'Buy' : 'לרכישה';
     document.getElementById('gallery-section').innerHTML = `
       <div class="section">
-        <h2>גלריה מהמקום</h2>
+        <h2>${galleryLabel}</h2>
         <div class="gallery-grid">
           ${loc.photos.map((p, i) => `
             <div class="gallery-item">
               <div class="photo-wrap">
-                <img src="${imgSrc(p.thumbnail || p.url, 400)}" alt="${escHtml(loc.title)} — תמונה ${i+1}" loading="lazy">
+                <img src="${imgSrc(p.thumbnail || p.url, 400)}" alt="${escHtml(title)} — ${isEn ? 'photo' : 'תמונה'} ${i+1}" loading="lazy">
               </div>
               <div class="photo-btns">
-                ${p.photo_id ? `<a class="btn-gallery" href="/?photo=${escHtml(p.photo_id)}" target="_blank">לגלריה</a>` : ''}
-                ${p.for_sale && p.photo_id ? `<a class="btn-sale" href="/?photo=${escHtml(p.photo_id)}" target="_blank">לרכישה</a>` : ''}
+                ${p.photo_id ? `<a class="btn-gallery" href="/?photo=${escHtml(p.photo_id)}" target="_blank">${toGalleryLabel}</a>` : ''}
+                ${p.for_sale && p.photo_id ? `<a class="btn-sale" href="/?photo=${escHtml(p.photo_id)}" target="_blank">${buyLabel}</a>` : ''}
               </div>
             </div>
           `).join('')}
@@ -424,7 +490,7 @@ function renderSpot(loc) {
       </div>
     `;
   }
-  document.getElementById('nearby-section').innerHTML = renderNearby(loc.nearby);
+  document.getElementById('nearby-section').innerHTML = renderNearby(loc.nearby, lang);
 }
 
 document.getElementById('lb-close').addEventListener('click', () => document.getElementById('lb').classList.remove('open'));
