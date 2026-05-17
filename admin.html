@@ -1464,6 +1464,59 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
           <div id="ann-rows" style="display:flex;flex-direction:column;gap:.4rem"></div>
           <input type="hidden" id="learn-edit-annotations">
         </div>
+        <!-- English content section -->
+        <details id="learn-en-section" style="margin-top:1.25rem;border:1px solid #2a2a2a;border-radius:8px;padding:.75rem">
+          <summary style="cursor:pointer;font-size:.85rem;font-weight:600;color:#c8a96e;list-style:none;display:flex;align-items:center;gap:.4rem">
+            <span>🌍</span> English Content <span id="learn-en-badge" style="font-size:.65rem;color:#6dbf67;display:none">✓ translated</span>
+          </summary>
+          <div style="margin-top:.85rem;display:flex;flex-direction:column;gap:.75rem">
+            <div class="form-field">
+              <label style="color:#888;font-size:.78rem">COMPOSITION ANALYSIS</label>
+              <div class="comp-paragraphs">
+                <div class="comp-para-row">
+                  <input type="text" id="learn-edit-comp-label-en-1" placeholder="Heading 1">
+                  <textarea id="learn-edit-comp-body-en-1" rows="2" placeholder="First paragraph text..."></textarea>
+                </div>
+                <div class="comp-para-row">
+                  <input type="text" id="learn-edit-comp-label-en-2" placeholder="Heading 2">
+                  <textarea id="learn-edit-comp-body-en-2" rows="2" placeholder="Second paragraph text..."></textarea>
+                </div>
+                <div class="comp-para-row">
+                  <input type="text" id="learn-edit-comp-label-en-3" placeholder="Heading 3">
+                  <textarea id="learn-edit-comp-body-en-3" rows="2" placeholder="Third paragraph text..."></textarea>
+                </div>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-field">
+                <label style="color:#888;font-size:.78rem">APERTURE</label>
+                <input type="text" id="learn-edit-aperture-en" placeholder="e.g. Wide aperture f/1.8 creates shallow depth of field...">
+              </div>
+              <div class="form-field">
+                <label style="color:#888;font-size:.78rem">SHUTTER SPEED</label>
+                <input type="text" id="learn-edit-shutter-en" placeholder="e.g. Fast shutter 1/500 freezes motion...">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-field">
+                <label style="color:#888;font-size:.78rem">ISO</label>
+                <input type="text" id="learn-edit-iso-en" placeholder="e.g. Low ISO 100 reduces noise...">
+              </div>
+              <div class="form-field">
+                <label style="color:#888;font-size:.78rem">LENS / FOCAL LENGTH</label>
+                <input type="text" id="learn-edit-focal-en" placeholder="e.g. 85mm lens ideal for portraits...">
+              </div>
+            </div>
+            <div class="form-field">
+              <label style="color:#888;font-size:.78rem">TAGS (comma-separated)</label>
+              <input type="text" id="learn-edit-tags-en" placeholder="bokeh, rule of thirds, natural light">
+            </div>
+            <div class="form-field" id="ann-en-section" style="display:none">
+              <label style="color:#888;font-size:.78rem">ANNOTATION LABELS</label>
+              <div id="ann-en-labels" style="display:flex;flex-direction:column;gap:.35rem"></div>
+            </div>
+          </div>
+        </details>
       </div>
     </div>
     <!-- Left: preview -->
@@ -3632,14 +3685,16 @@ async function loadLearn() {
       const published = a.published_at ? new Date(a.published_at).toLocaleDateString('he-IL') : '—';
       const thumb = a.thumbnail ? `<img src="${a.thumbnail}" style="width:48px;height:36px;object-fit:cover;border-radius:3px;border:1px solid var(--border);vertical-align:middle;margin-left:.5rem" alt="">` : '';
       const title = a.title || a.photo_id;
+      const hasEn = !!a.title_en;
       const tr = document.createElement('tr');
       tr.innerHTML = `
-        <td>${thumb}<span style="vertical-align:middle">${title}</span></td>
+        <td>${thumb}<span style="vertical-align:middle">${title}</span>${hasEn ? ' <span style="font-size:.65rem;color:#6dbf67;font-weight:600;margin-right:.3rem">EN✓</span>' : ''}</td>
         <td><span class="cat-badge">${ruleLabel}</span></td>
         <td style="color:var(--text-muted);font-size:.85rem">${published}</td>
-        <td style="display:flex;gap:.4rem;align-items:center">
+        <td style="display:flex;gap:.4rem;align-items:center;flex-wrap:wrap">
           <button class="btn btn-ghost btn-sm" onclick="learnEdit('${a.photo_id}')">עריכה</button>
           <button class="btn btn-primary btn-sm" onclick="learnPublish('${a.photo_id}')">פרסם</button>
+          <button class="btn btn-ghost btn-sm" onclick="learnGenerateEn('${a.photo_id}', this)" title="ייצר/עדכן תרגום אנגלי" style="font-size:.9rem">🌍</button>
           ${a.published_at ? `<a href="/photo/${a.photo_id}" target="_blank" class="btn btn-ghost btn-sm" title="פתח דף מפורסם" style="text-decoration:none;display:inline-flex;align-items:center;gap:.25rem"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>צפה</a>` : ''}
         </td>
       `;
@@ -3766,6 +3821,26 @@ async function learnEdit(photoId) {
     $('learn-edit-annotations').value = JSON.stringify(annData);
     annRender(annData);
 
+    // English fields
+    let cameraEn = {};
+    try { cameraEn = typeof analysis.camera_json_en === 'string' ? JSON.parse(analysis.camera_json_en || '{}') : (analysis.camera_json_en || {}); } catch {}
+    currentAnalysis.cameraEn = cameraEn;
+    const partsEn = parseCompHtml(analysis.composition_html_en || '');
+    [1,2,3].forEach((i, idx) => {
+      $('learn-edit-comp-label-en-' + i).value = partsEn[idx].label;
+      $('learn-edit-comp-body-en-' + i).value  = partsEn[idx].body;
+    });
+    $('learn-edit-aperture-en').value = (cameraEn.aperture && cameraEn.aperture.explanation) || '';
+    $('learn-edit-shutter-en').value  = (cameraEn.shutter  && cameraEn.shutter.explanation)  || '';
+    $('learn-edit-iso-en').value      = (cameraEn.iso      && cameraEn.iso.explanation)      || '';
+    $('learn-edit-focal-en').value    = (cameraEn.focal    && cameraEn.focal.explanation)    || '';
+    let tagsEn = [];
+    try { tagsEn = typeof analysis.tags_json_en === 'string' ? JSON.parse(analysis.tags_json_en || '[]') : (analysis.tags_json_en || []); } catch {}
+    $('learn-edit-tags-en').value = Array.isArray(tagsEn) ? tagsEn.join(', ') : (tagsEn || '');
+    const hasEnContent = !!(analysis.title_en || analysis.composition_html_en);
+    const enBadge = $('learn-en-badge');
+    if (enBadge) enBadge.style.display = hasEnContent ? '' : 'none';
+
     document.getElementById('learn-edit-dialog').showModal();
     updatePreview(null);
   } catch(e) {
@@ -3773,9 +3848,19 @@ async function learnEdit(photoId) {
   }
 }
 
+function buildCompHtmlEn() {
+  return [1,2,3].map(i => {
+    const label = ($('learn-edit-comp-label-en-' + i)?.value || '').trim();
+    const body  = ($('learn-edit-comp-body-en-'  + i)?.value || '').trim();
+    if (!label && !body) return '';
+    return `<p><strong>${label}:</strong> ${body}</p>`;
+  }).filter(Boolean).join('\n');
+}
+
 async function learnSave() {
   const photoId = $('learn-edit-id').value;
   const camera = currentAnalysis && currentAnalysis.camera ? currentAnalysis.camera : {};
+  const cameraEn = currentAnalysis && currentAnalysis.cameraEn ? currentAnalysis.cameraEn : {};
   const body = {
     composition_rule: (currentAnalysis && currentAnalysis.composition_rule) || '',
     composition_html: buildCompHtml(),
@@ -3786,7 +3871,15 @@ async function learnSave() {
       focal:    { value: (camera.focal    && camera.focal.value)    || '', explanation: $('learn-edit-focal').value }
     }),
     tags_json: JSON.stringify($('learn-edit-tags').value.split(',').map(t => t.trim()).filter(Boolean)),
-    annotations_json: $('learn-edit-annotations').value
+    annotations_json: $('learn-edit-annotations').value,
+    composition_html_en: buildCompHtmlEn(),
+    camera_json_en: JSON.stringify({
+      aperture: { value: (cameraEn.aperture && cameraEn.aperture.value) || '', explanation: $('learn-edit-aperture-en').value },
+      shutter:  { value: (cameraEn.shutter  && cameraEn.shutter.value)  || '', explanation: $('learn-edit-shutter-en').value },
+      iso:      { value: (cameraEn.iso      && cameraEn.iso.value)      || '', explanation: $('learn-edit-iso-en').value },
+      focal:    { value: (cameraEn.focal    && cameraEn.focal.value)    || '', explanation: $('learn-edit-focal-en').value }
+    }),
+    tags_json_en: JSON.stringify($('learn-edit-tags-en').value.split(',').map(t => t.trim()).filter(Boolean))
   };
   try {
     const res = await fetch('/api/analyses/' + photoId, {
@@ -3849,6 +3942,37 @@ function annRender(rows) {
     container.appendChild(row);
   });
   syncAnnHidden();
+  annEnRender();
+}
+
+function annEnRender() {
+  const container = $('ann-en-labels');
+  const section = $('ann-en-section');
+  if (!container || !section) return;
+  const rows = annGetRows();
+  const labeled = rows.filter(a => a.label);
+  if (!labeled.length) { section.style.display = 'none'; return; }
+  section.style.display = '';
+  container.innerHTML = '';
+  labeled.forEach(ann => {
+    const absIdx = rows.indexOf(ann);
+    const div = document.createElement('div');
+    div.style.cssText = 'display:flex;gap:.5rem;align-items:center';
+    div.innerHTML = `
+      <span style="font-size:.75rem;color:#555;min-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${escHtml(ann.label)}">${escHtml((ann.label||'').split('\n')[0])}</span>
+      <input type="text" value="${escHtml(ann.label_en||'')}" placeholder="English label..."
+        style="flex:1;background:#1a1a1a;border:1px solid #2a2a2a;color:#f0ede8;padding:.28rem .5rem;border-radius:4px;font-size:.8rem;font-family:inherit"
+        oninput="annUpdateEn(${absIdx}, this.value)">`;
+    container.appendChild(div);
+  });
+}
+
+function annUpdateEn(absIdx, val) {
+  const rows = annGetRows();
+  if (rows[absIdx] !== undefined) {
+    rows[absIdx].label_en = val;
+    $('learn-edit-annotations').value = JSON.stringify(rows);
+  }
 }
 
 function annGetRows() {
@@ -3921,6 +4045,19 @@ async function learnGenerate() {
     btn.textContent = 'ייצר ניתוח חדש עכשיו';
     toast('שגיאה: ' + e.message, 'error');
   }
+}
+
+async function learnGenerateEn(photoId, btn) {
+  btn.disabled = true;
+  const orig = btn.textContent;
+  btn.textContent = '⏳';
+  try {
+    const res = await fetch(`/api/analyses/${photoId}/generate-en`, { method: 'POST', headers: authHeaders() });
+    const data = await res.json();
+    if (data.ok) { toast('✓ תרגום אנגלי נוצר'); loadLearn(); }
+    else toast('שגיאה: ' + (data.error || JSON.stringify(data)), 'error');
+  } catch(e) { toast('שגיאה: ' + e.message, 'error'); }
+  finally { btn.disabled = false; btn.textContent = orig; }
 }
 
 async function analyzePhoto(photoId, btn) {
