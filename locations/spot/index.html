@@ -106,13 +106,13 @@ h1{font-family:'Syne',sans-serif;font-size:2rem;color:var(--accent);margin-botto
     <button type="button" onclick="shareWhatsApp()" class="share-btn share-wa">WhatsApp</button>
     <button type="button" onclick="shareFacebook()" class="share-btn share-fb">Facebook</button>
     <button type="button" onclick="copyLink()" class="share-btn share-copy" id="btn-copy-link">העתק קישור</button>
-    <button type="button" onclick="window.print()" class="share-btn share-copy">🖨 שמור PDF</button>
+    <button type="button" onclick="window.print()" class="share-btn share-copy" id="btn-pdf">🖨 שמור PDF</button>
   </div>
 </div>
 
 <div id="map-section"></div>
 <div id="waze-wrap">
-  <a id="waze-link" href="#" target="_blank" rel="noopener">🧭 נווט ב-Waze</a>
+  <a id="waze-link" href="#" target="_blank" rel="noopener">🧭 <span id="waze-label">נווט ב-Waze</span></a>
 </div>
 <div id="details-section"></div>
 <div id="gallery-section"></div>
@@ -152,11 +152,14 @@ function escHtml(s){return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt
 function getLang() { return localStorage.getItem('lang') || 'he'; }
 
 const REGION_MAP_EN = {
+  'צפון': 'North', 'מרכז': 'Center', 'דרום': 'South',
+  'ירושלים': 'Jerusalem', 'נגב': 'Negev', 'הרי אילת': 'Eilat Mountains',
   'ישראל': 'Israel', 'איטליה': 'Italy', 'יוון': 'Greece', 'צרפת': 'France',
   'ספרד': 'Spain', 'פורטוגל': 'Portugal', 'גרמניה': 'Germany',
   'הולנד': 'Netherlands', 'אנגליה': 'England', 'יפן': 'Japan',
   'ארה"ב': 'USA', 'קנדה': 'Canada', 'מרוקו': 'Morocco', 'טורקיה': 'Turkey',
-  'קרואטיה': 'Croatia', 'אוסטריה': 'Austria'
+  'קרואטיה': 'Croatia', 'אוסטריה': 'Austria', 'תנזניה': 'Tanzania',
+  'איחוד האמירויות': 'UAE'
 };
 
 const GUIDE_LABELS_EN = {
@@ -403,7 +406,7 @@ function renderSpot(loc, lang) {
     const [lat, lng] = parts;
     document.getElementById('map-section').innerHTML = `
       <div class="map-wrap">
-        <iframe src="https://maps.google.com/maps?q=${encodeURIComponent(lat)},${encodeURIComponent(lng)}&z=14&output=embed" loading="lazy" allowfullscreen></iframe>
+        <iframe src="https://maps.google.com/maps?q=${encodeURIComponent(lat)},${encodeURIComponent(lng)}&z=14&output=embed&hl=${lang}" loading="lazy" allowfullscreen></iframe>
       </div>
     `;
     if (parts.length === 2) {
@@ -511,6 +514,8 @@ const SPOT_LABELS = {
     alertFill: 'נא למלא הודעה.',
     copied: '✓ הועתק!',
     copyLink: 'העתק קישור',
+    pdfLabel: '🖨 שמור PDF',
+    wazeLabel: 'נווט ב-Waze',
     nextLocLabel: 'מקום נוסף באזור זה',
   },
   en: {
@@ -525,6 +530,8 @@ const SPOT_LABELS = {
     alertFill: 'Please fill in your message.',
     copied: '✓ Copied!',
     copyLink: 'Copy Link',
+    pdfLabel: '🖨 Save PDF',
+    wazeLabel: 'Navigate with Waze',
     nextLocLabel: 'Another spot in this region',
   }
 };
@@ -545,6 +552,10 @@ function applySpotModalLang() {
     sendBtn.textContent = L.send;
   const copyBtn = document.getElementById('btn-copy-link');
   if (copyBtn && copyBtn.textContent !== L.copied) copyBtn.textContent = L.copyLink;
+  const pdfBtn = document.getElementById('btn-pdf');
+  if (pdfBtn) pdfBtn.textContent = L.pdfLabel;
+  const wazeLabel = document.getElementById('waze-label');
+  if (wazeLabel) wazeLabel.textContent = L.wazeLabel;
   const nextLabel = document.getElementById('next-loc-label');
   if (nextLabel) nextLabel.textContent = L.nextLocLabel;
 }

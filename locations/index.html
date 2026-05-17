@@ -126,9 +126,12 @@ function escHtml(s) { return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&
 function getLang() { return localStorage.getItem('lang') || 'he'; }
 
 const REGION_MAP_EN = {
+  'צפון': 'North', 'מרכז': 'Center', 'דרום': 'South',
+  'ירושלים': 'Jerusalem', 'נגב': 'Negev', 'הרי אילת': 'Eilat Mountains',
   'ישראל': 'Israel', 'איטליה': 'Italy', 'יוון': 'Greece', 'צרפת': 'France',
   'ספרד': 'Spain', 'פורטוגל': 'Portugal', 'גרמניה': 'Germany',
-  'הולנד': 'Netherlands', 'אנגליה': 'England', 'יפן': 'Japan'
+  'הולנד': 'Netherlands', 'אנגליה': 'England', 'יפן': 'Japan',
+  'תנזניה': 'Tanzania', 'איחוד האמירויות': 'UAE'
 };
 
 const LABELS = {
@@ -206,6 +209,7 @@ function applyLang() {
   const isEn = lang === 'en';
   document.documentElement.dir = isEn ? 'ltr' : 'rtl';
   document.documentElement.lang = lang;
+  document.body.style.direction = isEn ? 'ltr' : 'rtl';
 
   const badge = document.querySelector('.badge');
   if (badge) badge.textContent = L.badge;
@@ -278,7 +282,7 @@ let activeSort = 'default';
 async function loadLocations() {
   const grid = document.getElementById('grid');
   try {
-    const res = await fetch('/api/locations');
+    const res = await fetch('/api/locations?t=' + Date.now(), { cache: 'no-store' });
     allLocations = await res.json();
     applyLang();
   } catch {
@@ -334,7 +338,7 @@ function renderGrid() {
           <span>${escHtml(displayRegion)}</span>
           ${photoCount}
         </div>
-        ${l.best_time ? `<div style="font-size:.72rem;color:#888;margin-top:.3rem;display:flex;align-items:center;gap:.25rem"><span style="color:#c8a96e">◷</span><span>${escHtml(l.best_time)}</span></div>` : ''}
+        ${(l.best_time || l.best_time_en) ? `<div style="font-size:.72rem;color:#888;margin-top:.3rem;display:flex;align-items:center;gap:.25rem"><span style="color:#c8a96e">◷</span><span>${escHtml((isEn && l.best_time_en) ? l.best_time_en : l.best_time)}</span></div>` : ''}
       </div>
     </a>`;
   }).join('');
