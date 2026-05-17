@@ -1568,7 +1568,7 @@ async function handleUnsubscribe(request, env) {
 }
 
 // ===== ANALYTICS =====
-async function trackPageView(env, request) {
+async function trackPageView(env, request, page) {
   try {
     const date = new Date().toISOString().slice(0, 10);
     const country = request.headers.get('CF-IPCountry') || 'XX';
@@ -1578,18 +1578,40 @@ async function trackPageView(env, request) {
     await env.DB.prepare(
       'INSERT INTO analytics_countries (date, country, views) VALUES (?, ?, 1) ON CONFLICT(date, country) DO UPDATE SET views = views + 1'
     ).bind(date, country).run();
+    if (page) {
+      await env.DB.prepare(
+        'CREATE TABLE IF NOT EXISTS analytics_pages (date TEXT NOT NULL, page TEXT NOT NULL, views INTEGER DEFAULT 0, PRIMARY KEY(date,page))'
+      ).run().catch(() => {});
+      await env.DB.prepare(
+        'INSERT INTO analytics_pages (date, page, views) VALUES (?,?,1) ON CONFLICT(date,page) DO UPDATE SET views=views+1'
+      ).bind(date, page).run();
+    }
   } catch { /* non-critical */ }
 }
 
 async function handleAnalytics(request, env) {
   if (!await checkAuth(request, env)) return unauth(request);
-  const [{ results: daily }, { results: countries }] = await Promise.all([
+  await env.DB.prepare(
+    'CREATE TABLE IF NOT EXISTS analytics_pages (date TEXT NOT NULL, page TEXT NOT NULL, views INTEGER DEFAULT 0, PRIMARY KEY(date,page))'
+  ).run().catch(() => {});
+  const [{ results: daily }, { results: countries }, { results: pages }, thisWeekRow, prevWeekRow] = await Promise.all([
     env.DB.prepare('SELECT date, views FROM analytics ORDER BY date DESC LIMIT 30').all(),
     env.DB.prepare(
       'SELECT country, SUM(views) as total FROM analytics_countries WHERE date >= date("now", "-30 days") GROUP BY country ORDER BY total DESC LIMIT 10'
     ).all(),
+    env.DB.prepare(
+      'SELECT page, SUM(views) as total FROM analytics_pages WHERE date >= date("now", "-30 days") GROUP BY page ORDER BY total DESC LIMIT 12'
+    ).all(),
+    env.DB.prepare('SELECT SUM(views) as total FROM analytics WHERE date >= date("now","-7 days")').first(),
+    env.DB.prepare('SELECT SUM(views) as total FROM analytics WHERE date >= date("now","-14 days") AND date < date("now","-7 days")').first(),
   ]);
-  return jsonRes({ daily, countries }, 200, request);
+  return jsonRes({
+    daily,
+    countries,
+    pages: pages || [],
+    weekTotal: thisWeekRow?.total || 0,
+    prevWeekTotal: prevWeekRow?.total || 0,
+  }, 200, request);
 }
 
 // ===== SERVE PHOTO FROM R2 =====
@@ -4457,23 +4479,30 @@ export default {
     if (path === '/api/proxy-image')          return handleImageProxy(request, env);
     if (path === '/api/analytics')         return handleAnalytics(request, env);
     if (path.startsWith('/photos/'))       return servePhoto(path.slice('/photos/'.length), env, request);
-    if (path.startsWith('/photo/'))        return servePhotoPage(path.slice('/photo/'.length), env);
-    if (path.startsWith('/category/'))     return handleCategoryPage(decodeURIComponent(path.slice('/category/'.length)), env);
-    if (path.startsWith('/learn/') && path.length > '/learn/'.length)  return handleLearnAnalysis(env, decodeURIComponent(path.slice('/learn/'.length)));
-    if (path === '/learn' || path === '/learn/')   return handleLearnIndex(env);
+    if (path.startsWith('/photo/'))        { trackPageView(env, request, 'photo'); return servePhotoPage(path.slice('/photo/'.length), env); }
+    if (path.startsWith('/category/'))     { trackPageView(env, request, 'category'); return handleCategoryPage(decodeURIComponent(path.slice('/category/'.length)), env); }
+    if (path.startsWith('/learn/') && path.length > '/learn/'.length)  { trackPageView(env, request, 'learn_detail'); return handleLearnAnalysis(env, decodeURIComponent(path.slice('/learn/'.length))); }
+    if (path === '/learn' || path === '/learn/')   { trackPageView(env, request, 'learn'); return handleLearnIndex(env); }
     if (path === '/sitemap.xml')           return handleSitemap(request, env);
     if (path === '/robots.txt')            return handleRobots(request);
 
     // Server-side OG injection for location spot pages
     if ((path === '/locations/spot/' || path === '/locations/spot/index.html') && new URL(request.url).searchParams.get('slug')) {
+      trackPageView(env, request, 'location');
       return handleLocationSpotPage(request, env);
     }
 
     // Static assets — track page views for HTML pages
     const res = await env.ASSETS.fetch(request);
     if (request.method === 'GET' && !path.startsWith('/api/') && (path === '/' || path.endsWith('.html') || path === '')) {
-      const ctx = { waitUntil: (p) => p }; // best-effort
-      trackPageView(env, request);
+      // Map known static paths to page names
+      const staticPage = path === '/' || path === '' ? 'home'
+        : path.startsWith('/camera/') ? 'camera'
+        : path.startsWith('/games/') || path.startsWith('/quiz/') || path.startsWith('/puzzle/') ? 'games'
+        : path.startsWith('/sale/') ? 'sale'
+        : path.startsWith('/locations/') ? 'locations'
+        : 'other';
+      trackPageView(env, request, staticPage);
     }
 
     // קבצים שמשתנים בכל deploy — תמיד לאמת עם השרת
