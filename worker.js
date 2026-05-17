@@ -3699,14 +3699,15 @@ async function handleAdminLocationsGet(request, env, slug) {
   const { results: photos } = await env.DB.prepare(
     'SELECT * FROM location_photos WHERE location_id = ? ORDER BY sort_order ASC'
   ).bind(slug).all();
+  const safeJson = (s, fallback) => { try { return s ? JSON.parse(s) : fallback; } catch { return fallback; } };
   return jsonRes({
     ...loc,
-    related_guides: JSON.parse(loc.related_guides || '[]'),
-    extra_links: JSON.parse(loc.extra_links || '[]'),
-    when_to_visit: loc.when_to_visit ? JSON.parse(loc.when_to_visit) : null,
-    recommended_gear: loc.recommended_gear ? JSON.parse(loc.recommended_gear) : null,
-    when_to_visit_en: loc.when_to_visit_en ? JSON.parse(loc.when_to_visit_en) : null,
-    recommended_gear_en: loc.recommended_gear_en ? JSON.parse(loc.recommended_gear_en) : null,
+    related_guides:     safeJson(loc.related_guides, []),
+    extra_links:        safeJson(loc.extra_links, []),
+    when_to_visit:      safeJson(loc.when_to_visit, null),
+    recommended_gear:   safeJson(loc.recommended_gear, null),
+    when_to_visit_en:   safeJson(loc.when_to_visit_en, null),
+    recommended_gear_en: safeJson(loc.recommended_gear_en, null),
     photos: photos || []
   }, 200, request);
 }
