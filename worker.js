@@ -2488,6 +2488,82 @@ async function handleAnalysesUpdate(request, env, photoId) {
   return jsonRes({ ok: true }, 200, request);
 }
 
+async function handleAnalysesGenerateEn(request, env, photoId) {
+  if (!await checkAuth(request, env)) return unauth(request);
+  if (request.method !== 'POST') return jsonRes({ error: 'POST only' }, 405, request);
+  if (!env.ANTHROPIC_API_KEY) return jsonRes({ error: 'ANTHROPIC_API_KEY חסר' }, 500, request);
+
+  const row = await env.DB.prepare('SELECT * FROM photo_analyses WHERE photo_id = ?').bind(photoId).first();
+  if (!row) return jsonRes({ error: 'לא נמצא' }, 404, request);
+
+  let camera = {};
+  try { camera = JSON.parse(row.camera_json || '{}'); } catch (_) {}
+
+  const cameraStr = ['aperture','shutter','iso','focal'].map(k => {
+    const c = camera[k] || {};
+    return c.value ? `${k}: value="${c.value}", explanation="${c.explanation || ''}"` : '';
+  }).filter(Boolean).join('\n');
+
+  const prompt = `You are Amit Erez, an Israeli fine-art photographer writing educational photo analyses for an international audience.
+Translate the following Hebrew photography analysis to English. Write in first person, personal and inspiring tone.
+
+Photo title: ${row.title}
+Composition rule: ${row.composition_rule}
+
+Camera settings (translate only the explanation, keep the value as-is):
+${cameraStr}
+
+Composition analysis HTML (translate text content only, preserve all HTML tags exactly):
+${row.composition_html || ''}
+
+Return ONLY valid JSON, no markdown:
+{
+  "title_en": "English title",
+  "camera_json_en": {
+    "aperture": {"explanation":"English explanation"},
+    "shutter": {"explanation":"English explanation"},
+    "iso": {"explanation":"English explanation"},
+    "focal": {"explanation":"English explanation"}
+  },
+  "composition_html_en": "<p>...translated HTML...</p>"
+}`;
+
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'x-api-key': env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
+    body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 2000, messages: [{ role: 'user', content: prompt }] })
+  });
+  if (!res.ok) return jsonRes({ error: 'Claude API נכשל', status: res.status }, 502, request);
+
+  const data = await res.json();
+  const text = (data.content?.[0]?.text || '').trim();
+  let parsed;
+  try { parsed = JSON.parse(text); } catch {
+    const match = text.match(/\{[\s\S]*\}/);
+    if (!match) return jsonRes({ error: 'JSON לא תקין' }, 500, request);
+    try { parsed = JSON.parse(match[0]); } catch { return jsonRes({ error: 'JSON לא תקין' }, 500, request); }
+  }
+
+  // Merge camera_json_en values (keep original value, add translated explanation)
+  const camEnMerged = {};
+  for (const k of ['aperture','shutter','iso','focal']) {
+    const orig = camera[k] || {};
+    const trans = (parsed.camera_json_en || {})[k] || {};
+    camEnMerged[k] = { value: orig.value, explanation: trans.explanation || orig.explanation || '' };
+  }
+
+  await env.DB.prepare(`
+    UPDATE photo_analyses SET title_en=?, composition_html_en=?, camera_json_en=? WHERE photo_id=?
+  `).bind(
+    parsed.title_en || row.title,
+    parsed.composition_html_en || row.composition_html || '',
+    JSON.stringify(camEnMerged),
+    photoId
+  ).run();
+
+  return jsonRes({ ok: true, title_en: parsed.title_en }, 200, request);
+}
+
 async function handleAnalysesGenerate(request, env) {
   if (!await checkAuth(request, env)) return unauth(request);
   if (request.method !== 'POST') return jsonRes({ error: 'POST only' }, 405, request);
@@ -2796,6 +2872,7 @@ function applyLang(){
   const lang=getLang(),isEn=lang==='en';
   document.documentElement.dir=isEn?'ltr':'rtl';
   document.documentElement.lang=lang;
+  document.body.style.direction=isEn?'ltr':'rtl';
   document.querySelectorAll('[data-he][data-en]').forEach(el=>{el.textContent=el.dataset[lang]||el.dataset.he});
 }
 document.addEventListener('DOMContentLoaded',applyLang);
@@ -3214,6 +3291,7 @@ function applyLang(){
   const lang=getLang(),isEn=lang==='en';
   document.documentElement.dir=isEn?'ltr':'rtl';
   document.documentElement.lang=lang;
+  document.body.style.direction=isEn?'ltr':'rtl';
   document.querySelectorAll('[data-he][data-en]').forEach(el=>{el.textContent=el.dataset[lang]||el.dataset.he});
   document.querySelectorAll('.lang-he,.lang-en').forEach(el=>{
     el.style.display=el.classList.contains('lang-'+lang)?'':'none';
@@ -4262,6 +4340,8 @@ export default {
     if (path === '/api/analyses' && request.method === 'GET')                    return handleAnalysesList(request, env);
     if (path === '/api/analyses/publish-all' && request.method === 'POST')       return handleAnalysesPublishAll(request, env);
     if (path === '/api/analyses/generate' && request.method === 'POST')          return handleAnalysesGenerate(request, env);
+    if (path.startsWith('/api/analyses/') && path.endsWith('/generate-en') && request.method === 'POST')
+      return handleAnalysesGenerateEn(request, env, path.slice('/api/analyses/'.length).replace('/generate-en',''));
     if (path.startsWith('/api/analyses/') && request.method === 'GET')           return handleAnalysesGet(request, env, path.slice('/api/analyses/'.length));
     if (path.startsWith('/api/analyses/') && request.method === 'PUT')           return handleAnalysesUpdate(request, env, path.slice('/api/analyses/'.length));
     // Locations public API
