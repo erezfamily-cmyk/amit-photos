@@ -276,39 +276,93 @@ Example: ["המלצה 1", "המלצה 2", "המלצה 3", "המלצה 4"]"""}],
 
 def save_social_report(ig_posts, ig_account, fb_posts, fb_page, recommendations):
     """שומר דוח JSON לשימוש האדמין."""
+    out = ROOT / "data" / "social_report.json"
+
+    # שמור נתוני שבוע קודם להשוואה
+    prev = {}
+    if out.exists():
+        try:
+            old = json.loads(out.read_text(encoding="utf-8"))
+            prev = {
+                "ig_followers": old.get("ig", {}).get("followers"),
+                "ig_posts_this_week": old.get("ig", {}).get("posts_this_week"),
+                "ig_total_likes": old.get("ig", {}).get("total_likes"),
+                "fb_fans": old.get("fb", {}).get("fans"),
+                "fb_posts_this_week": old.get("fb", {}).get("posts_this_week"),
+                "fb_total_likes": old.get("fb", {}).get("total_likes"),
+            }
+        except Exception:
+            pass
+
     ig_best = max(ig_posts, key=lambda p: p.get("like_count", 0), default=None)
     fb_best = max(fb_posts, key=lambda p: p.get("reactions", {}).get("summary", {}).get("total_count", 0), default=None)
+
+    ig_total_likes    = sum(p.get("like_count", 0) for p in ig_posts)
+    ig_total_comments = sum(p.get("comments_count", 0) for p in ig_posts)
+    ig_followers      = ig_account.get("followers_count", 0)
+    ig_n              = len(ig_posts)
+
+    fb_total_likes    = sum(p.get("reactions", {}).get("summary", {}).get("total_count", 0) for p in fb_posts)
+    fb_total_comments = sum(p.get("comments", {}).get("summary", {}).get("total_count", 0) for p in fb_posts)
+    fb_fans           = fb_page.get("fan_count", 0)
+    fb_n              = len(fb_posts)
+
+    # Top 5 posts sorted by likes
+    ig_sorted = sorted(ig_posts, key=lambda p: p.get("like_count", 0), reverse=True)[:5]
+    fb_sorted = sorted(fb_posts, key=lambda p: p.get("reactions", {}).get("summary", {}).get("total_count", 0), reverse=True)[:5]
 
     report = {
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "week_ending": datetime.now().strftime("%d/%m/%Y"),
         "ig": {
-            "followers": ig_account.get("followers_count", 0),
+            "followers": ig_followers,
             "media_count": ig_account.get("media_count", 0),
-            "posts_this_week": len(ig_posts),
-            "total_likes": sum(p.get("like_count", 0) for p in ig_posts),
-            "total_comments": sum(p.get("comments_count", 0) for p in ig_posts),
+            "posts_this_week": ig_n,
+            "total_likes": ig_total_likes,
+            "total_comments": ig_total_comments,
+            "avg_likes_per_post": round(ig_total_likes / ig_n, 1) if ig_n else 0,
+            "engagement_rate": round((ig_total_likes + ig_total_comments) / (ig_n * max(ig_followers, 1)), 4) if ig_n else 0,
+            "top_posts": [
+                {
+                    "caption": (p.get("caption") or "")[:100].replace("\n", " "),
+                    "likes": p.get("like_count", 0),
+                    "comments": p.get("comments_count", 0),
+                    "date": (p.get("timestamp") or "")[:10],
+                }
+                for p in ig_sorted
+            ],
             "best_post": {
                 "caption": (ig_best.get("caption") or "")[:120] if ig_best else "",
                 "likes": ig_best.get("like_count", 0) if ig_best else 0,
-                "date": ig_best.get("timestamp", "")[:10] if ig_best else "",
+                "date": (ig_best.get("timestamp") or "")[:10] if ig_best else "",
             },
         },
         "fb": {
-            "fans": fb_page.get("fan_count", 0),
-            "posts_this_week": len(fb_posts),
-            "total_likes": sum(p.get("reactions", {}).get("summary", {}).get("total_count", 0) for p in fb_posts),
-            "total_comments": sum(p.get("comments", {}).get("summary", {}).get("total_count", 0) for p in fb_posts),
+            "fans": fb_fans,
+            "posts_this_week": fb_n,
+            "total_likes": fb_total_likes,
+            "total_comments": fb_total_comments,
+            "avg_likes_per_post": round(fb_total_likes / fb_n, 1) if fb_n else 0,
+            "engagement_rate": round((fb_total_likes + fb_total_comments) / (fb_n * max(fb_fans, 1)), 4) if fb_n else 0,
+            "top_posts": [
+                {
+                    "message": (p.get("message") or "")[:100].replace("\n", " "),
+                    "likes": p.get("reactions", {}).get("summary", {}).get("total_count", 0),
+                    "comments": p.get("comments", {}).get("summary", {}).get("total_count", 0),
+                    "date": (p.get("created_time") or "")[:10],
+                }
+                for p in fb_sorted
+            ],
             "best_post": {
                 "message": (fb_best.get("message") or "")[:120] if fb_best else "",
-                "likes": fb_best.get("likes", {}).get("summary", {}).get("total_count", 0) if fb_best else 0,
-                "date": fb_best.get("created_time", "")[:10] if fb_best else "",
+                "likes": fb_best.get("reactions", {}).get("summary", {}).get("total_count", 0) if fb_best else 0,
+                "date": (fb_best.get("created_time") or "")[:10] if fb_best else "",
             },
         },
+        "prev": prev,
         "recommendations": recommendations,
     }
 
-    out = ROOT / "data" / "social_report.json"
     out.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
     print(f"💾 דוח נשמר ל-{out}")
 
