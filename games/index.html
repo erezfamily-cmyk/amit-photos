@@ -126,6 +126,7 @@ function applyLang(lang) {
   const isEn = lang === 'en';
   document.documentElement.lang = lang;
   document.documentElement.dir = isEn ? 'ltr' : 'rtl';
+  document.body.style.direction = isEn ? 'ltr' : 'rtl';
   document.getElementById('g-title').textContent = L.title;
   document.getElementById('g-sub').textContent = L.sub;
   document.getElementById('q-title').textContent = L.qTitle;
