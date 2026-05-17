@@ -3254,7 +3254,7 @@ window.addEventListener('storage',e=>{if(e.key==='lang')applyLang()});
 
 async function handleLocationsList(request, env) {
   const { results } = await env.DB.prepare(`
-    SELECT l.id, l.title, l.title_en, l.region, l.best_time, l.coordinates,
+    SELECT l.id, l.title, l.title_en, l.region, l.best_time, l.best_time_en, l.coordinates,
            lp.url AS cover_url, lp.thumbnail AS cover_thumb
     FROM locations l
     LEFT JOIN location_photos lp ON lp.location_id = l.id AND lp.sort_order = (
