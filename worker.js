@@ -3295,7 +3295,7 @@ async function handleLocationsGet(request, env, slug) {
       nearby = (others || [])
         .map(o => {
           const [olat, olng] = o.coordinates.split(',').map(s => parseFloat(s.trim()));
-          return isNaN(olat) ? null : { id: o.id, title: o.title, cover_thumb: o.cover_thumb, km: Math.round(haversineKm(lat, lng, olat, olng)) };
+          return isNaN(olat) ? null : { id: o.id, title: o.title, title_en: o.title_en || null, cover_thumb: o.cover_thumb, km: Math.round(haversineKm(lat, lng, olat, olng)) };
         })
         .filter(Boolean)
         .sort((a, b) => a.km - b.km)
