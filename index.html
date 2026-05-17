@@ -315,11 +315,11 @@
         <a href="https://www.instagram.com/amite" target="_blank" rel="noopener" class="platform-card">
           <div class="platform-logo">Instagram</div>
           <div class="platform-stats">
-            <div class="platform-stat"><span>תמונות</span> שבועיות</div>
-            <div class="platform-stat"><span>Stories</span> אוטומטיות</div>
-            <div class="platform-stat"><span>Reels</span> בקרוב</div>
+            <div class="platform-stat"><span id="ig-followers-count">657</span> עוקבים</div>
+            <div class="platform-stat"><span id="ig-media-count">1,222</span> תמונות</div>
+            <div class="platform-stat"><span>Stories</span> שבועיות</div>
           </div>
-          <div class="platform-cta">לעמוד ↗</div>
+          <div class="platform-cta">עקוב ↗</div>
         </a>
 
       </div>
@@ -675,6 +675,9 @@
     <div class="footer-inner">
       <div class="footer-logo">עמית<span> / צילום</span></div>
       <div class="footer-socials">
+        <a href="https://www.instagram.com/amite" class="footer-social-btn" aria-label="Instagram" title="Instagram" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        </a>
         <a href="https://www.threads.com/@amite" class="footer-social-btn" aria-label="Threads" title="Threads" target="_blank" rel="noopener">
           <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.186 24h-.007c-3.581-.024-6.334-1.205-8.184-3.509C2.35 18.44 1.5 15.586 1.5 12.068c0-3.516.85-6.37 2.495-8.423C5.845 1.35 8.598.17 12.179.146h.014c2.65.018 4.928.718 6.771 2.08 1.79 1.322 3.002 3.19 3.603 5.55l-2.29.574c-.992-3.965-3.651-5.969-7.085-5.993-2.759.018-4.86.912-6.245 2.656C5.579 6.727 4.915 9.1 4.915 12.068c0 2.967.664 5.34 1.972 7.055 1.385 1.744 3.486 2.638 6.245 2.656 2.428-.017 4.03-.647 5.356-2.099 1.466-1.602 1.847-3.706 1.744-5.076-.06-.777-.244-1.441-.548-1.976-.475-.826-1.236-1.343-2.273-1.535-.213 1.394-.648 2.545-1.301 3.426-.935 1.26-2.26 1.942-3.934 2.026-1.318.067-2.542-.285-3.444-1.002-.994-.79-1.524-1.939-1.524-3.24 0-2.729 2.116-4.48 5.396-4.48.58 0 1.149.042 1.7.125-.07-.698-.253-1.21-.554-1.527-.383-.412-.995-.618-1.82-.618h-.042c-.82.01-1.738.32-2.195 1.163l-2.04-1.088c.738-1.384 2.167-2.18 3.77-2.18h.075c2.701.023 4.318 1.638 4.52 4.482.09.026.18.053.268.081 1.673.534 2.832 1.582 3.355 3.034.308.853.463 1.831.463 2.907 0 .22-.007.443-.022.671-.137 2.14-.861 4.046-2.122 5.528C16.764 23.196 14.71 24 12.186 24zm-.351-9.605c1.224-.062 2.057-.616 2.573-1.692.301-.625.497-1.384.584-2.262a11.19 11.19 0 00-1.479-.1c-1.867 0-2.884.727-2.884 2.048 0 1.131.811 2.006 1.206 2.006z"/></svg>
         </a>
@@ -715,6 +718,7 @@
       <a id="lb-share-fb" class="lb-action-btn" target="_blank" rel="noopener" data-i18n="lb.facebook">פייסבוק</a>
       <a id="lb-share-pin" class="lb-action-btn lb-pinterest" target="_blank" rel="noopener" data-i18n="lb.pinterest">Pinterest</a>
       <button type="button" id="lb-copy-link" class="lb-action-btn" data-i18n="lb.copy-link">העתק קישור</button>
+      <a href="https://www.instagram.com/amite" class="lb-action-btn lb-ig-follow" target="_blank" rel="noopener">📸 עקוב ב-Instagram</a>
     </div>
     <div id="puzzle-discount-banner" class="hidden">
       🎁 ניצחת בפאזל! <strong>20% הנחה</strong> על התמונה הזו<br>
@@ -1048,6 +1052,19 @@
   </div>
 
   <script src="assets/js/gallery.js?v=1db28456"></script>
+  <script>
+    // טוען נתוני Instagram מהדוח השבועי ומעדכן את כרטיס הפלטפורמות
+    fetch('https://raw.githubusercontent.com/erezfamily-cmyk/amit-photos/main/data/social_report.json')
+      .then(r => r.ok ? r.json() : null)
+      .catch(() => null)
+      .then(d => {
+        if (!d) return;
+        const fc = document.getElementById('ig-followers-count');
+        const mc = document.getElementById('ig-media-count');
+        if (fc && d.ig?.followers) fc.textContent = d.ig.followers.toLocaleString('he-IL');
+        if (mc && d.ig?.media_count) mc.textContent = d.ig.media_count.toLocaleString('he-IL');
+      });
+  </script>
 </body>
 </html>
 .

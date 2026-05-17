@@ -464,6 +464,13 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
 .social-top-posts{margin-bottom:2rem}
 .social-top-posts .data-table{font-size:.82rem}
 .social-top-posts .data-table td{max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.social-health{background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:1.25rem 1.5rem;margin-bottom:2rem;display:grid;grid-template-columns:auto 1fr;gap:1rem;align-items:start}
+.social-health-score{font-size:2.8rem;line-height:1;text-align:center;min-width:56px}
+.social-health-title{font-family:var(--font-display);font-size:1rem;font-weight:700;margin-bottom:.6rem}
+.social-health-issues{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:.45rem}
+.social-health-issue{font-size:.82rem;display:flex;align-items:baseline;gap:.5rem;line-height:1.4}
+.social-health-issue .hi-icon{font-size:.9rem;flex-shrink:0}
+.hi-red{color:#e05}.hi-yellow{color:#f5a623}.hi-green{color:#4caf50}
 
 /* ===== VISUAL ANNOTATION EDITOR ===== */
 #ann-editor-dialog {
@@ -747,8 +754,27 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
     <section class="section" id="section-analytics">
       <div class="section-header">
         <h1 class="section-title">סטטיסטיקות</h1>
-        <button type="button" class="btn btn-ghost btn-sm" onclick="loadPhotoAnalytics()">רענן</button>
+        <button type="button" class="btn btn-ghost btn-sm" onclick="Dashboard.loadAnalytics();loadPhotoAnalytics()">רענן</button>
       </div>
+
+      <!-- W/W summary cards -->
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.5rem" id="analytics-kpi-row">
+        <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:6px;padding:1.1rem;text-align:center">
+          <div id="kpi-week-total" style="font-size:1.75rem;font-weight:700;color:var(--accent)">—</div>
+          <div style="color:var(--text-muted);font-size:.78rem;margin-top:.2rem">צפיות השבוע</div>
+          <div id="kpi-week-delta" style="font-size:.72rem;margin-top:.3rem;color:#888"></div>
+        </div>
+        <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:6px;padding:1.1rem;text-align:center">
+          <div id="kpi-top-country" style="font-size:1.4rem;font-weight:700;color:var(--accent)">—</div>
+          <div style="color:var(--text-muted);font-size:.78rem;margin-top:.2rem">מדינה מובילה</div>
+        </div>
+        <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:6px;padding:1.1rem;text-align:center">
+          <div id="kpi-top-page" style="font-size:1.1rem;font-weight:700;color:var(--accent)">—</div>
+          <div style="color:var(--text-muted);font-size:.78rem;margin-top:.2rem">דף פופולרי ביותר</div>
+        </div>
+      </div>
+
+      <!-- Daily chart + countries -->
       <div class="dash-recent" id="analytics-box">
         <div class="analytics-header">
           <div class="dash-recent-title">צפיות באתר — 30 יום אחרונים</div>
@@ -759,6 +785,14 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
         <div id="dash-countries" class="analytics-countries"></div>
       </div>
 
+      <!-- Top Pages -->
+      <div class="dash-recent" style="margin-top:1.5rem" id="top-pages-box">
+        <div class="dash-recent-title" style="margin-bottom:1rem">דפים נצפים — 30 יום (מעקב פנימי)</div>
+        <div id="top-pages-bars" style="display:flex;flex-direction:column;gap:.45rem"></div>
+        <div id="top-pages-empty" style="color:var(--text-muted);font-size:.82rem;display:none">נתוני דפים ייאספו בימים הקרובים</div>
+      </div>
+
+      <!-- Conversion funnel -->
       <div class="dash-recent" style="margin-top:1.5rem" id="photo-analytics-box">
         <div class="dash-recent-title" style="margin-bottom:1.25rem">פאנל המרה — תמונות (30 יום)</div>
         <div id="photo-analytics-loading" style="color:var(--text-muted);font-size:.85rem">טוען...</div>
@@ -769,7 +803,8 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
                 <th>תמונה</th>
                 <th>קטגוריה</th>
                 <th title="פתיחות לייטבוקס">👁 צפיות</th>
-                <th title="לחיצות כיצד לרכוש">🛒 כוונת רכישה</th>
+                <th title="לחיצות כיצד לרכוש">🛒 כוונה</th>
+                <th title="כוונה ÷ צפיות">% כוונה</th>
                 <th title="רכישות בפועל">💰 רכישות</th>
                 <th>הכנסה (₪)</th>
                 <th title="צפיות → רכישה">המרה</th>
@@ -794,6 +829,7 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
       <div id="social-loading" class="social-loading">טוען נתונים...</div>
       <div id="social-content" hidden>
         <p id="social-date" class="social-date"></p>
+        <div id="social-health"></div>
 
         <h2 class="social-platform-title social-platform-title--ig">📸 Instagram</h2>
         <div class="dash-grid social-stats-row" id="social-ig-stats"></div>
@@ -1630,7 +1666,49 @@ const Dashboard = (() => {
     try {
       const r = await fetch('/api/analytics', { headers: authHeaders() });
       if (!r.ok) return;
-      const { daily, countries } = await r.json();
+      const { daily, countries, pages, weekTotal, prevWeekTotal } = await r.json();
+      const flags = { IL:'🇮🇱', US:'🇺🇸', GB:'🇬🇧', DE:'🇩🇪', FR:'🇫🇷', AU:'🇦🇺', CA:'🇨🇦', NL:'🇳🇱', XX:'🌍' };
+      const pageNames = { home:'דף הבית', photo:'תמונה', category:'קטגוריה', learn:'ניתוח תמונות', learn_detail:'ניתוח בודד', location:'מקום', camera:'מצלמה', games:'אתגרים', sale:'מבצע' };
+
+      // ── KPI cards ────────────────────────────────────────────────────────────
+      if (weekTotal != null) $('kpi-week-total').textContent = weekTotal.toLocaleString();
+      if (weekTotal != null && prevWeekTotal != null) {
+        const deltaEl = $('kpi-week-delta');
+        if (prevWeekTotal > 0) {
+          const pct = Math.round(((weekTotal - prevWeekTotal) / prevWeekTotal) * 100);
+          deltaEl.textContent = `${pct >= 0 ? '+' : ''}${pct}% לעומת שבוע שעבר`;
+          deltaEl.style.color = pct >= 0 ? '#34d399' : '#ef4444';
+        } else {
+          deltaEl.textContent = 'שבוע ראשון';
+        }
+      }
+      if (countries && countries.length) {
+        const top = countries[0];
+        $('kpi-top-country').textContent = (flags[top.country] || '🌍') + ' ' + top.country;
+      }
+      if (pages && pages.length) $('kpi-top-page').textContent = pageNames[pages[0].page] || pages[0].page;
+
+      // ── Top pages bars ───────────────────────────────────────────────────────
+      const barsEl = $('top-pages-bars');
+      const emptyEl = $('top-pages-empty');
+      if (pages && pages.length) {
+        emptyEl.style.display = 'none';
+        const maxP = Math.max(...pages.map(p => p.total || 0), 1);
+        barsEl.innerHTML = pages.slice(0, 10).map(p => {
+          const pct = Math.round((p.total / maxP) * 100);
+          return `<div style="display:flex;align-items:center;gap:.75rem;font-size:.82rem">
+            <div style="width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text-muted)">${pageNames[p.page] || p.page}</div>
+            <div style="flex:1;height:12px;background:#222;border-radius:4px;overflow:hidden">
+              <div style="height:100%;width:${pct}%;background:var(--accent);border-radius:4px;transition:width .4s"></div>
+            </div>
+            <div style="width:36px;text-align:left;color:var(--text)">${p.total}</div>
+          </div>`;
+        }).join('');
+      } else {
+        emptyEl.style.display = '';
+      }
+
+      // ── Daily bar chart ──────────────────────────────────────────────────────
       if (!daily || !daily.length) {
         $('dash-analytics-total').textContent = 'אין נתונים עדיין';
         $('dash-chart').innerHTML = '<div style="color:var(--text-muted);font-size:.85rem;padding:.5rem 0">לא נרשמו צפיות עדיין</div>';
@@ -1638,7 +1716,6 @@ const Dashboard = (() => {
       }
       const total = daily.reduce((s, d) => s + (d.views || 0), 0);
       $('dash-analytics-total').textContent = total.toLocaleString() + ' צפיות';
-      // בר גרף פשוט
       const max = Math.max(...daily.map(d => d.views || 0), 1);
       const sorted = [...daily].sort((a, b) => a.date.localeCompare(b.date));
       $('dash-chart').innerHTML = sorted.map(d => {
@@ -1649,9 +1726,9 @@ const Dashboard = (() => {
           <div style="font-size:9px;color:var(--text-muted);writing-mode:vertical-rl;transform:rotate(180deg);line-height:1">${label}</div>
         </div>`;
       }).join('');
-      // מדינות
-      const flags = { IL:'🇮🇱', US:'🇺🇸', GB:'🇬🇧', DE:'🇩🇪', FR:'🇫🇷', AU:'🇦🇺', CA:'🇨🇦', NL:'🇳🇱', XX:'🌍' };
-      $('dash-countries').innerHTML = countries.slice(0, 8).map(c =>
+
+      // ── Countries ────────────────────────────────────────────────────────────
+      $('dash-countries').innerHTML = (countries || []).slice(0, 8).map(c =>
         `<span>${flags[c.country] || '🌍'} ${c.country} <strong style="color:var(--text)">${c.total}</strong></span>`
       ).join('');
     } catch { /* non-critical */ }
@@ -1863,18 +1940,21 @@ async function loadPhotoAnalytics() {
     const tbody = document.getElementById('funnel-tbody');
     if (tbody) {
       if (!views || !views.length) {
-        tbody.innerHTML = '<tr><td colspan="7" style="color:var(--text-muted);text-align:center;padding:1rem">אין נתונים עדיין — נאספים מרגע הפעלת המעקב</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="8" style="color:var(--text-muted);text-align:center;padding:1rem">אין נתונים עדיין — נאספים מרגע הפעלת המעקב</td></tr>';
       } else {
         tbody.innerHTML = views.map(v => {
           const intent = intentMap[v.photo_id] || 0;
           const p = purchaseMap[v.photo_id] || { count: 0, revenue: 0 };
+          const intentPct = v.count > 0 ? ((intent / v.count) * 100).toFixed(1) : '0.0';
           const conv = v.count > 0 ? ((p.count / v.count) * 100).toFixed(1) : '0.0';
+          const intentColor = parseFloat(intentPct) >= 10 ? '#34d399' : parseFloat(intentPct) >= 3 ? '#c8a96e' : 'var(--text-muted)';
           const convColor = parseFloat(conv) >= 5 ? '#34d399' : parseFloat(conv) >= 1 ? '#c8a96e' : 'var(--text-muted)';
           return `<tr>
             <td style="font-weight:500;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${v.photo_title}">${v.photo_title || v.photo_id}</td>
             <td style="color:var(--text-muted);font-size:.8rem">${v.category || '—'}</td>
             <td style="text-align:center">${v.count}</td>
             <td style="text-align:center">${intent}</td>
+            <td style="text-align:center;color:${intentColor};font-weight:600">${intentPct}%</td>
             <td style="text-align:center">${p.count}</td>
             <td style="text-align:center">${p.revenue ? '₪' + p.revenue : '—'}</td>
             <td style="text-align:center;color:${convColor};font-weight:600">${conv}%</td>
@@ -3531,6 +3611,67 @@ const SocialSection = (() => {
     return (v * 100).toFixed(2) + '%';
   }
 
+  function renderHealth(d) {
+    const igRate  = (d.ig?.engagement_rate ?? 0) * 100;
+    const igPosts = d.ig?.posts_this_week ?? 0;
+    const fbPosts = d.fb?.posts_this_week ?? 0;
+    const igFollowers = d.ig?.followers ?? 0;
+    const igLikes = d.ig?.total_likes ?? 0;
+    const igComments = d.ig?.total_comments ?? 0;
+
+    const issues = [];
+
+    // Engagement rate
+    if (igRate < 0.5) {
+      issues.push({ cls: 'hi-red', icon: '🔴', text: `שיעור מעורבות ${igRate.toFixed(2)}% — נמוך מאוד (יעד: מעל 1%). כתבי כיתובים שמזמינים תגובה.` });
+    } else if (igRate < 1.5) {
+      issues.push({ cls: 'hi-yellow', icon: '🟡', text: `שיעור מעורבות ${igRate.toFixed(2)}% — בינוני. שאלי שאלה בכל פוסט כדי להגדיל תגובות.` });
+    } else {
+      issues.push({ cls: 'hi-green', icon: '🟢', text: `שיעור מעורבות ${igRate.toFixed(2)}% — טוב! המשיכי בסגנון הכיתוב הנוכחי.` });
+    }
+
+    // Posting frequency
+    if (igPosts > 10) {
+      issues.push({ cls: 'hi-red', icon: '🔴', text: `${igPosts} פוסטים השבוע — יותר מדי. אלגוריתם Instagram מעדיף 4–7 פוסטים איכותיים בשבוע.` });
+    } else if (igPosts < 3) {
+      issues.push({ cls: 'hi-yellow', icon: '🟡', text: `רק ${igPosts} פוסטים השבוע — פחות מדי לצמיחה. יעד: לפחות 4–5 פוסטים/שבוע.` });
+    } else {
+      issues.push({ cls: 'hi-green', icon: '🟢', text: `${igPosts} פוסטים השבוע — תדירות טובה.` });
+    }
+
+    // Facebook
+    if (fbPosts === 0) {
+      issues.push({ cls: 'hi-red', icon: '🔴', text: `לא פורסם לפייסבוק השבוע — ${d.fb?.fans ?? 0} עוקבים מחכים לתוכן. שתף את אותן תמונות מ-Instagram.` });
+    } else if (fbPosts < 3) {
+      issues.push({ cls: 'hi-yellow', icon: '🟡', text: `${fbPosts} פוסטים לפייסבוק — מומלץ לפחות 3/שבוע.` });
+    }
+
+    // Likes per follower ratio (overall reach)
+    const reachPct = igFollowers > 0 ? (igLikes / igFollowers * 100).toFixed(1) : 0;
+    if (igFollowers > 0 && reachPct < 2) {
+      issues.push({ cls: 'hi-yellow', icon: '🟡', text: `רק ${reachPct}% מהעוקבים לייקו השבוע — נסה hashtags רלוונטיים ושעות פרסום אופטימליות (20:00–22:00).` });
+    }
+
+    const redCount    = issues.filter(i => i.cls === 'hi-red').length;
+    const yellowCount = issues.filter(i => i.cls === 'hi-yellow').length;
+    const emoji = redCount >= 2 ? '🚨' : redCount === 1 ? '⚠️' : yellowCount > 0 ? '📊' : '✅';
+    const title = redCount >= 2 ? 'יש מה לשפר — בדוק את הנקודות הבאות' :
+                  redCount === 1 ? 'ביצועים בינוניים — תשומת לב נדרשת' :
+                  yellowCount > 0 ? 'ביצועים סבירים — יש מקום לשיפור' : 'ביצועים טובים!';
+
+    const issuesHtml = issues.map(i =>
+      `<li class="social-health-issue"><span class="hi-icon">${i.icon}</span><span class="${i.cls}">${i.text}</span></li>`
+    ).join('');
+
+    $('social-health').innerHTML = `<div class="social-health">
+      <div class="social-health-score">${emoji}</div>
+      <div>
+        <div class="social-health-title">${title}</div>
+        <ul class="social-health-issues">${issuesHtml}</ul>
+      </div>
+    </div>`;
+  }
+
   async function load() {
     $('social-loading').hidden = false;
     $('social-content').hidden = true;
@@ -3548,6 +3689,8 @@ const SocialSection = (() => {
       const d = await r.json();
 
       $('social-date').textContent = `דוח לשבוע שהסתיים ב-${d.week_ending || ''} | עודכן: ${new Date(d.generated_at).toLocaleString('he-IL')}`;
+
+      renderHealth(d);
 
       const prev = d.prev || {};
 
