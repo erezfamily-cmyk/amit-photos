@@ -1,7 +1,12 @@
 #!/usr/bin/env python3
 """
 Weekly Social Media Report
-שולח מייל שבועי עם נתוני ביצועים מאינסטגרם ופייסבוק.
+שולח מייל שבועי עם נתוני ביצועים מאינסטגרם ופייסבוק (מספר עמודים).
+
+הגדרת עמודי פייסבוק:
+  FACEBOOK_PAGE_IDS=label1:page_id1,label2:page_id2,...
+  כל עמוד משתמש באותו FACEBOOK_PAGE_TOKEN (User Access Token).
+  אם FACEBOOK_PAGE_IDS לא מוגדר — נופל ל-FACEBOOK_PAGE_ID הישן.
 """
 
 import os
@@ -19,12 +24,32 @@ RESEND_API   = "https://api.resend.com/emails"
 
 IG_USER_ID   = os.environ.get("INSTAGRAM_USER_ID", "")
 IG_TOKEN     = os.environ.get("INSTAGRAM_PAGE_TOKEN", "")
-FB_PAGE_ID   = os.environ.get("FACEBOOK_PAGE_ID", "")
 FB_TOKEN     = os.environ.get("FACEBOOK_PAGE_TOKEN", "")
 RESEND_KEY      = os.environ.get("RESEND_API_KEY", "")
 ANTHROPIC_KEY   = os.environ.get("ANTHROPIC_API_KEY", "")
 REPORT_EMAIL = os.environ.get("REPORT_EMAIL", "erez.family@gmail.com")
 
+# תמיכה בריבוי עמודים: "label:page_id,label2:page_id2" — או fallback לישן
+_fb_pages_raw = os.environ.get("FACEBOOK_PAGE_IDS", "")
+_fb_page_id_legacy = os.environ.get("FACEBOOK_PAGE_ID", "")
+
+def get_fb_pages():
+    """מחזיר רשימת (label, page_id) לאיסוף נתונים."""
+    if _fb_pages_raw:
+        pages = []
+        for part in _fb_pages_raw.split(","):
+            part = part.strip()
+            if ":" in part:
+                label, pid = part.split(":", 1)
+                pages.append((label.strip(), pid.strip()))
+        if pages:
+            return pages
+    if _fb_page_id_legacy:
+        return [("Facebook", _fb_page_id_legacy)]
+    return []
+
+
+# ===== Instagram =====
 
 def fetch_ig_insights():
     """שולף נתוני אינסטגרם — פוסטים מ-7 ימים אחרונים."""
@@ -57,11 +82,13 @@ def fetch_ig_account_insights():
         return {}
 
 
-def fetch_fb_posts():
-    """שולף פוסטי פייסבוק מ-7 ימים אחרונים עם likes."""
+# ===== Facebook (multi-page) =====
+
+def fetch_fb_page_posts(page_id):
+    """שולף פוסטי פייסבוק מ-7 ימים אחרונים לעמוד ספציפי."""
     since = int((datetime.now(timezone.utc) - timedelta(days=7)).timestamp())
     try:
-        resp = requests.get(f"{GRAPH_API}/{FB_PAGE_ID}/feed", params={
+        resp = requests.get(f"{GRAPH_API}/{page_id}/feed", params={
             "fields": "id,message,created_time,reactions.summary(true),comments.summary(true)",
             "since":  since,
             "limit":  20,
@@ -70,52 +97,82 @@ def fetch_fb_posts():
         resp.raise_for_status()
         return resp.json().get("data", [])
     except Exception as e:
-        print(f"⚠️  Facebook posts נכשל: {e}")
+        print(f"⚠️  Facebook posts ({page_id}) נכשל: {e}")
         return []
 
 
-def fetch_fb_page_insights():
-    """Fans count."""
+def fetch_fb_page_info(page_id):
+    """Fans count + שם עמוד."""
     try:
-        resp = requests.get(f"{GRAPH_API}/{FB_PAGE_ID}", params={
-            "fields": "fan_count,followers_count",
+        resp = requests.get(f"{GRAPH_API}/{page_id}", params={
+            "fields": "name,fan_count,followers_count",
             "access_token": FB_TOKEN,
         }, timeout=15)
         resp.raise_for_status()
         return resp.json()
     except Exception as e:
-        print(f"⚠️  Facebook page insights נכשל: {e}")
+        print(f"⚠️  Facebook page info ({page_id}) נכשל: {e}")
         return {}
 
 
-def build_html_report(ig_posts, ig_account, fb_posts, fb_page):
+def build_fb_page_block(label, page_id):
+    """מחזיר dict מלא לעמוד פייסבוק אחד."""
+    print(f"  📘 שולף עמוד: {label} ({page_id})")
+    posts    = fetch_fb_page_posts(page_id)
+    info     = fetch_fb_page_info(page_id)
+    fans     = info.get("fan_count", 0)
+    name     = info.get("name") or label
+    n        = len(posts)
+
+    total_likes    = sum(p.get("reactions", {}).get("summary", {}).get("total_count", 0) for p in posts)
+    total_comments = sum(p.get("comments",  {}).get("summary", {}).get("total_count", 0) for p in posts)
+    best = max(posts, key=lambda p: p.get("reactions", {}).get("summary", {}).get("total_count", 0), default=None)
+    top5 = sorted(posts, key=lambda p: p.get("reactions", {}).get("summary", {}).get("total_count", 0), reverse=True)[:5]
+
+    return {
+        "label":   label,
+        "name":    name,
+        "page_id": page_id,
+        "fans":    fans,
+        "posts_this_week":    n,
+        "total_likes":        total_likes,
+        "total_comments":     total_comments,
+        "avg_likes_per_post": round(total_likes / n, 1) if n else 0,
+        "engagement_rate":    round((total_likes + total_comments) / (n * max(fans, 1)), 4) if n else 0,
+        "top_posts": [
+            {
+                "message":  (p.get("message") or "")[:100].replace("\n", " "),
+                "likes":    p.get("reactions", {}).get("summary", {}).get("total_count", 0),
+                "comments": p.get("comments",  {}).get("summary", {}).get("total_count", 0),
+                "date":     (p.get("created_time") or "")[:10],
+            }
+            for p in top5
+        ],
+        "best_post": {
+            "message": (best.get("message") or "")[:120] if best else "",
+            "likes":   best.get("reactions", {}).get("summary", {}).get("total_count", 0) if best else 0,
+            "date":    (best.get("created_time") or "")[:10] if best else "",
+        },
+    }
+
+
+# ===== Report builder =====
+
+def build_html_report(ig_posts, ig_account, fb_pages_data):
     week_str = datetime.now().strftime("%d/%m/%Y")
 
-    # Instagram stats
     ig_total_likes    = sum(p.get("like_count", 0) for p in ig_posts)
     ig_total_comments = sum(p.get("comments_count", 0) for p in ig_posts)
     ig_best = max(ig_posts, key=lambda p: p.get("like_count", 0), default=None)
     ig_followers = ig_account.get("followers_count", "—")
 
-    # Facebook stats
-    fb_total_likes    = sum(p.get("reactions", {}).get("summary", {}).get("total_count", 0) for p in fb_posts)
-    fb_total_comments = sum(p.get("comments", {}).get("summary", {}).get("total_count", 0) for p in fb_posts)
-    fb_best = max(fb_posts, key=lambda p: p.get("reactions", {}).get("summary", {}).get("total_count", 0), default=None)
-    fb_fans = fb_page.get("fan_count", "—")
-
-    def post_rows(posts, platform):
+    def post_rows_ig(posts):
         rows = ""
         for p in posts[:5]:
-            if platform == "ig":
-                date    = p.get("timestamp", "")[:10]
-                likes   = p.get("like_count", 0)
-                comments= p.get("comments_count", 0)
-                caption = (p.get("caption") or "")[:60].replace("\n", " ")
-            else:
-                date    = p.get("created_time", "")[:10]
-                likes   = p.get("reactions", {}).get("summary", {}).get("total_count", 0)
-                comments= p.get("comments", {}).get("summary", {}).get("total_count", 0)
-                caption = (p.get("message") or "")[:60].replace("\n", " ")
+            date    = p.get("timestamp", "")[:10]
+            likes   = p.get("like_count", 0)
+            comments= p.get("comments_count", 0)
+            caption = (p.get("caption") or "")[:60].replace("\n", " ")
             rows += f"""<tr>
                 <td style="padding:6px 12px;border-bottom:1px solid #333">{date}</td>
                 <td style="padding:6px 12px;border-bottom:1px solid #333;color:#aaa">{caption}…</td>
@@ -124,93 +181,51 @@ def build_html_report(ig_posts, ig_account, fb_posts, fb_page):
             </tr>"""
         return rows or "<tr><td colspan='4' style='padding:12px;color:#666;text-align:center'>אין פוסטים השבוע</td></tr>"
 
-    ig_best_text = ""
-    if ig_best:
-        ig_best_text = f"<p>⭐ <strong>הפוסט הטוב ביותר:</strong> {(ig_best.get('caption') or '')[:80]}… ({ig_best.get('like_count', 0)} לייקים)</p>"
+    def fb_page_html(page):
+        name  = page.get("name") or page.get("label", "Facebook")
+        fans  = page.get("fans", 0)
+        posts = page.get("posts_this_week", 0)
+        likes = page.get("total_likes", 0)
+        comms = page.get("total_comments", 0)
+        best  = page.get("best_post", {})
+        best_text = ""
+        if best.get("message"):
+            best_text = f"<p>⭐ <strong>הפוסט הטוב ביותר:</strong> {best['message'][:80]}… ({best.get('likes',0)} לייקים)</p>"
+        return f"""
+  <h2 style="color:#1877f2;margin-top:32px">📘 {name}</h2>
+  <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:16px">
+    {''.join(f'<div style="background:#1a1a1a;padding:14px 20px;border-radius:8px;text-align:center;min-width:80px"><div style="font-size:24px;font-weight:bold;color:#c8a96e">{v}</div><div style="color:#888;font-size:12px">{lbl}</div></div>' for v,lbl in [(fans,'עוקבים'),(posts,'פוסטים'),(likes,'לייקים'),(comms,'תגובות')])}
+  </div>
+  {best_text}"""
 
-    fb_best_text = ""
-    if fb_best:
-        fb_likes = fb_best.get("likes", {}).get("summary", {}).get("total_count", 0)
-        fb_best_text = f"<p>⭐ <strong>הפוסט הטוב ביותר:</strong> {(fb_best.get('message') or '')[:80]}… ({fb_likes} לייקים)</p>"
+    fb_sections = "".join(fb_page_html(p) for p in fb_pages_data) if fb_pages_data else "<p style='color:#888'>לא הוגדרו עמודי פייסבוק</p>"
+    ig_best_text = f"<p>⭐ <strong>הפוסט הטוב ביותר:</strong> {(ig_best.get('caption') or '')[:80]}… ({ig_best.get('like_count', 0)} לייקים)</p>" if ig_best else ""
 
     return f"""<!DOCTYPE html>
 <html dir="rtl" lang="he">
 <head><meta charset="UTF-8"><title>דוח שבועי — עמית ארז</title></head>
 <body style="background:#0a0a0a;color:#f0ede8;font-family:Arial,sans-serif;padding:32px;max-width:640px;margin:0 auto">
-  <h1 style="color:#c8a96e;border-bottom:1px solid #333;padding-bottom:12px">
-    📊 דוח סושיאל מדיה שבועי
-  </h1>
+  <h1 style="color:#c8a96e;border-bottom:1px solid #333;padding-bottom:12px">📊 דוח סושיאל מדיה שבועי</h1>
   <p style="color:#888">שבוע שהסתיים ב-{week_str}</p>
 
-  <!-- Instagram -->
   <h2 style="color:#e1306c;margin-top:32px">📸 Instagram</h2>
-  <div style="display:flex;gap:24px;margin-bottom:16px">
-    <div style="background:#1a1a1a;padding:16px 24px;border-radius:8px;flex:1;text-align:center">
-      <div style="font-size:28px;font-weight:bold;color:#c8a96e">{ig_followers}</div>
-      <div style="color:#888;font-size:13px">עוקבים</div>
-    </div>
-    <div style="background:#1a1a1a;padding:16px 24px;border-radius:8px;flex:1;text-align:center">
-      <div style="font-size:28px;font-weight:bold;color:#c8a96e">{len(ig_posts)}</div>
-      <div style="color:#888;font-size:13px">פוסטים השבוע</div>
-    </div>
-    <div style="background:#1a1a1a;padding:16px 24px;border-radius:8px;flex:1;text-align:center">
-      <div style="font-size:28px;font-weight:bold;color:#c8a96e">{ig_total_likes}</div>
-      <div style="color:#888;font-size:13px">לייקים</div>
-    </div>
-    <div style="background:#1a1a1a;padding:16px 24px;border-radius:8px;flex:1;text-align:center">
-      <div style="font-size:28px;font-weight:bold;color:#c8a96e">{ig_total_comments}</div>
-      <div style="color:#888;font-size:13px">תגובות</div>
-    </div>
+  <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:16px">
+    {''.join(f'<div style="background:#1a1a1a;padding:14px 20px;border-radius:8px;text-align:center;min-width:80px"><div style="font-size:24px;font-weight:bold;color:#c8a96e">{v}</div><div style="color:#888;font-size:12px">{lbl}</div></div>' for v,lbl in [(ig_followers,'עוקבים'),(len(ig_posts),'פוסטים'),(ig_total_likes,'לייקים'),(ig_total_comments,'תגובות')])}
   </div>
   {ig_best_text}
   <table style="width:100%;border-collapse:collapse;background:#111;border-radius:8px;overflow:hidden">
-    <thead>
-      <tr style="background:#1a1a1a;color:#c8a96e">
-        <th style="padding:10px 12px;text-align:right">תאריך</th>
-        <th style="padding:10px 12px;text-align:right">כיתוב</th>
-        <th style="padding:10px 12px">לייקים</th>
-        <th style="padding:10px 12px">תגובות</th>
-      </tr>
-    </thead>
-    <tbody>{post_rows(ig_posts, "ig")}</tbody>
+    <thead><tr style="background:#1a1a1a;color:#c8a96e">
+      <th style="padding:10px 12px;text-align:right">תאריך</th>
+      <th style="padding:10px 12px;text-align:right">כיתוב</th>
+      <th style="padding:10px 12px">לייקים</th>
+      <th style="padding:10px 12px">תגובות</th>
+    </tr></thead>
+    <tbody>{post_rows_ig(ig_posts)}</tbody>
   </table>
 
-  <!-- Facebook -->
-  <h2 style="color:#1877f2;margin-top:32px">📘 Facebook</h2>
-  <div style="display:flex;gap:24px;margin-bottom:16px">
-    <div style="background:#1a1a1a;padding:16px 24px;border-radius:8px;flex:1;text-align:center">
-      <div style="font-size:28px;font-weight:bold;color:#c8a96e">{fb_fans}</div>
-      <div style="color:#888;font-size:13px">עוקבים</div>
-    </div>
-    <div style="background:#1a1a1a;padding:16px 24px;border-radius:8px;flex:1;text-align:center">
-      <div style="font-size:28px;font-weight:bold;color:#c8a96e">{len(fb_posts)}</div>
-      <div style="color:#888;font-size:13px">פוסטים השבוע</div>
-    </div>
-    <div style="background:#1a1a1a;padding:16px 24px;border-radius:8px;flex:1;text-align:center">
-      <div style="font-size:28px;font-weight:bold;color:#c8a96e">{fb_total_likes}</div>
-      <div style="color:#888;font-size:13px">לייקים</div>
-    </div>
-    <div style="background:#1a1a1a;padding:16px 24px;border-radius:8px;flex:1;text-align:center">
-      <div style="font-size:28px;font-weight:bold;color:#c8a96e">{fb_total_comments}</div>
-      <div style="color:#888;font-size:13px">תגובות</div>
-    </div>
-  </div>
-  {fb_best_text}
-  <table style="width:100%;border-collapse:collapse;background:#111;border-radius:8px;overflow:hidden">
-    <thead>
-      <tr style="background:#1a1a1a;color:#c8a96e">
-        <th style="padding:10px 12px;text-align:right">תאריך</th>
-        <th style="padding:10px 12px;text-align:right">פוסט</th>
-        <th style="padding:10px 12px">לייקים</th>
-        <th style="padding:10px 12px">תגובות</th>
-      </tr>
-    </thead>
-    <tbody>{post_rows(fb_posts, "fb")}</tbody>
-  </table>
+  {fb_sections}
 
-  <p style="color:#444;font-size:12px;margin-top:40px;text-align:center">
-    דוח אוטומטי — amitphotos.com
-  </p>
+  <p style="color:#444;font-size:12px;margin-top:40px;text-align:center">דוח אוטומטי — amitphotos.com</p>
 </body>
 </html>"""
 
@@ -229,7 +244,7 @@ def send_email(subject, html):
     return resp.json()
 
 
-def generate_ai_recommendations(ig_posts, ig_account, fb_posts, fb_page):
+def generate_ai_recommendations(ig_posts, ig_account, fb_pages_data):
     """יוצר המלצות AI מבוססות על ביצועי השבוע."""
     if not ANTHROPIC_KEY:
         return ["אין ANTHROPIC_API_KEY — המלצות לא זמינות"]
@@ -237,8 +252,10 @@ def generate_ai_recommendations(ig_posts, ig_account, fb_posts, fb_page):
     ig_total_likes    = sum(p.get("like_count", 0) for p in ig_posts)
     ig_total_comments = sum(p.get("comments_count", 0) for p in ig_posts)
     ig_best = max(ig_posts, key=lambda p: p.get("like_count", 0), default=None)
-    fb_total_likes    = sum(p.get("reactions", {}).get("summary", {}).get("total_count", 0) for p in fb_posts)
-    fb_best = max(fb_posts, key=lambda p: p.get("reactions", {}).get("summary", {}).get("total_count", 0), default=None)
+
+    fb_summary = ""
+    for page in fb_pages_data:
+        fb_summary += f"\n  {page['name']}: {page['fans']} עוקבים, {page['posts_this_week']} פוסטים, {page['total_likes']} לייקים"
 
     summary = f"""Weekly social media performance for Amit Erez Photography (Israeli photographer):
 
@@ -249,11 +266,7 @@ Instagram:
 - Total comments: {ig_total_comments}
 - Best post: {(ig_best.get('caption') or '')[:100] if ig_best else 'none'} ({ig_best.get('like_count', 0) if ig_best else 0} likes)
 
-Facebook:
-- Fans: {fb_page.get('fan_count', '?')}
-- Posts this week: {len(fb_posts)}
-- Total likes: {fb_total_likes}
-- Best post: {(fb_best.get('message') or '')[:100] if fb_best else 'none'} ({fb_best.get('likes', {}).get('summary', {}).get('total_count', 0) if fb_best else 0} likes)"""
+Facebook pages:{fb_summary or ' none configured'}"""
 
     try:
         client = anthropic.Anthropic(api_key=ANTHROPIC_KEY)
@@ -274,7 +287,7 @@ Example: ["המלצה 1", "המלצה 2", "המלצה 3", "המלצה 4"]"""}],
         return ["לא הצלחתי לייצר המלצות השבוע"]
 
 
-def save_social_report(ig_posts, ig_account, fb_posts, fb_page, recommendations):
+def save_social_report(ig_posts, ig_account, fb_pages_data, recommendations):
     """שומר דוח JSON לשימוש האדמין."""
     out = ROOT / "data" / "social_report.json"
 
@@ -284,82 +297,66 @@ def save_social_report(ig_posts, ig_account, fb_posts, fb_page, recommendations)
         try:
             old = json.loads(out.read_text(encoding="utf-8"))
             prev = {
-                "ig_followers": old.get("ig", {}).get("followers"),
+                "ig_followers":      old.get("ig", {}).get("followers"),
                 "ig_posts_this_week": old.get("ig", {}).get("posts_this_week"),
-                "ig_total_likes": old.get("ig", {}).get("total_likes"),
-                "fb_fans": old.get("fb", {}).get("fans"),
+                "ig_total_likes":    old.get("ig", {}).get("total_likes"),
+                "fb_fans":           old.get("fb", {}).get("fans"),
                 "fb_posts_this_week": old.get("fb", {}).get("posts_this_week"),
-                "fb_total_likes": old.get("fb", {}).get("total_likes"),
+                "fb_total_likes":    old.get("fb", {}).get("total_likes"),
             }
         except Exception:
             pass
 
     ig_best = max(ig_posts, key=lambda p: p.get("like_count", 0), default=None)
-    fb_best = max(fb_posts, key=lambda p: p.get("reactions", {}).get("summary", {}).get("total_count", 0), default=None)
-
     ig_total_likes    = sum(p.get("like_count", 0) for p in ig_posts)
     ig_total_comments = sum(p.get("comments_count", 0) for p in ig_posts)
     ig_followers      = ig_account.get("followers_count", 0)
     ig_n              = len(ig_posts)
-
-    fb_total_likes    = sum(p.get("reactions", {}).get("summary", {}).get("total_count", 0) for p in fb_posts)
-    fb_total_comments = sum(p.get("comments", {}).get("summary", {}).get("total_count", 0) for p in fb_posts)
-    fb_fans           = fb_page.get("fan_count", 0)
-    fb_n              = len(fb_posts)
-
-    # Top 5 posts sorted by likes
     ig_sorted = sorted(ig_posts, key=lambda p: p.get("like_count", 0), reverse=True)[:5]
-    fb_sorted = sorted(fb_posts, key=lambda p: p.get("reactions", {}).get("summary", {}).get("total_count", 0), reverse=True)[:5]
+
+    # fb backward-compat: aggregate or use first page
+    first_fb = fb_pages_data[0] if fb_pages_data else {}
 
     report = {
         "generated_at": datetime.now(timezone.utc).isoformat(),
-        "week_ending": datetime.now().strftime("%d/%m/%Y"),
+        "week_ending":  datetime.now().strftime("%d/%m/%Y"),
         "ig": {
-            "followers": ig_followers,
-            "media_count": ig_account.get("media_count", 0),
-            "posts_this_week": ig_n,
-            "total_likes": ig_total_likes,
-            "total_comments": ig_total_comments,
+            "followers":          ig_followers,
+            "media_count":        ig_account.get("media_count", 0),
+            "posts_this_week":    ig_n,
+            "total_likes":        ig_total_likes,
+            "total_comments":     ig_total_comments,
             "avg_likes_per_post": round(ig_total_likes / ig_n, 1) if ig_n else 0,
-            "engagement_rate": round((ig_total_likes + ig_total_comments) / (ig_n * max(ig_followers, 1)), 4) if ig_n else 0,
+            "engagement_rate":    round((ig_total_likes + ig_total_comments) / (ig_n * max(ig_followers, 1)), 4) if ig_n else 0,
             "top_posts": [
                 {
-                    "caption": (p.get("caption") or "")[:100].replace("\n", " "),
-                    "likes": p.get("like_count", 0),
+                    "caption":  (p.get("caption") or "")[:100].replace("\n", " "),
+                    "likes":    p.get("like_count", 0),
                     "comments": p.get("comments_count", 0),
-                    "date": (p.get("timestamp") or "")[:10],
+                    "date":     (p.get("timestamp") or "")[:10],
                 }
                 for p in ig_sorted
             ],
             "best_post": {
                 "caption": (ig_best.get("caption") or "")[:120] if ig_best else "",
-                "likes": ig_best.get("like_count", 0) if ig_best else 0,
-                "date": (ig_best.get("timestamp") or "")[:10] if ig_best else "",
+                "likes":   ig_best.get("like_count", 0) if ig_best else 0,
+                "date":    (ig_best.get("timestamp") or "")[:10] if ig_best else "",
             },
         },
+        # backward-compat: first FB page under "fb" key
         "fb": {
-            "fans": fb_fans,
-            "posts_this_week": fb_n,
-            "total_likes": fb_total_likes,
-            "total_comments": fb_total_comments,
-            "avg_likes_per_post": round(fb_total_likes / fb_n, 1) if fb_n else 0,
-            "engagement_rate": round((fb_total_likes + fb_total_comments) / (fb_n * max(fb_fans, 1)), 4) if fb_n else 0,
-            "top_posts": [
-                {
-                    "message": (p.get("message") or "")[:100].replace("\n", " "),
-                    "likes": p.get("reactions", {}).get("summary", {}).get("total_count", 0),
-                    "comments": p.get("comments", {}).get("summary", {}).get("total_count", 0),
-                    "date": (p.get("created_time") or "")[:10],
-                }
-                for p in fb_sorted
-            ],
-            "best_post": {
-                "message": (fb_best.get("message") or "")[:120] if fb_best else "",
-                "likes": fb_best.get("reactions", {}).get("summary", {}).get("total_count", 0) if fb_best else 0,
-                "date": (fb_best.get("created_time") or "")[:10] if fb_best else "",
-            },
+            "fans":               first_fb.get("fans", 0),
+            "posts_this_week":    first_fb.get("posts_this_week", 0),
+            "total_likes":        first_fb.get("total_likes", 0),
+            "total_comments":     first_fb.get("total_comments", 0),
+            "avg_likes_per_post": first_fb.get("avg_likes_per_post", 0),
+            "engagement_rate":    first_fb.get("engagement_rate", 0),
+            "top_posts":          first_fb.get("top_posts", []),
+            "best_post":          first_fb.get("best_post", {"message": "", "likes": 0, "date": ""}),
         },
-        "prev": prev,
+        # all FB pages as array (new)
+        "fb_pages": fb_pages_data,
+        "prev":           prev,
         "recommendations": recommendations,
     }
 
@@ -376,20 +373,22 @@ def main():
     ig_posts   = fetch_ig_insights()
     ig_account = fetch_ig_account_insights()
 
-    print("📊 אוסף נתוני Facebook...")
-    fb_posts = fetch_fb_posts()
-    fb_page  = fetch_fb_page_insights()
+    print("📘 אוסף נתוני Facebook...")
+    pages = get_fb_pages()
+    if not pages:
+        print("⚠️  לא הוגדרו עמודי פייסבוק (FACEBOOK_PAGE_IDS / FACEBOOK_PAGE_ID חסרים)")
+    fb_pages_data = [build_fb_page_block(label, pid) for label, pid in pages]
 
     print("🤖 מייצר המלצות AI...")
-    recommendations = generate_ai_recommendations(ig_posts, ig_account, fb_posts, fb_page)
+    recommendations = generate_ai_recommendations(ig_posts, ig_account, fb_pages_data)
     for i, r in enumerate(recommendations, 1):
         print(f"   {i}. {r}")
 
     print("💾 שומר דוח JSON...")
-    save_social_report(ig_posts, ig_account, fb_posts, fb_page, recommendations)
+    save_social_report(ig_posts, ig_account, fb_pages_data, recommendations)
 
     print("✉️  בונה דוח...")
-    html = build_html_report(ig_posts, ig_account, fb_posts, fb_page)
+    html = build_html_report(ig_posts, ig_account, fb_pages_data)
 
     week_str = datetime.now().strftime("%d/%m/%Y")
     subject  = f"📊 דוח שבועי סושיאל — {week_str}"
