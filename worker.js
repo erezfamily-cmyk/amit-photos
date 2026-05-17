@@ -3641,15 +3641,27 @@ Rules:
     try { parsed = JSON.parse(match[0]); } catch { return jsonRes({ error: 'JSON לא תקין מ-Claude' }, 500, request); }
   }
 
-  return jsonRes({
-    title_en: parsed.title_en || '',
-    description_en: parsed.description_en || '',
-    best_time_en: parsed.best_time_en || '',
-    equipment_en: parsed.equipment_en || '',
-    my_tip_en: parsed.my_tip_en || '',
-    when_to_visit_en: typeof parsed.when_to_visit_en === 'object' ? JSON.stringify(parsed.when_to_visit_en) : (parsed.when_to_visit_en || ''),
-    recommended_gear_en: Array.isArray(parsed.recommended_gear_en) ? JSON.stringify(parsed.recommended_gear_en) : (parsed.recommended_gear_en || '')
-  }, 200, request);
+  const when_to_visit_en = typeof parsed.when_to_visit_en === 'object' ? JSON.stringify(parsed.when_to_visit_en) : (parsed.when_to_visit_en || null);
+  const recommended_gear_en = Array.isArray(parsed.recommended_gear_en) ? JSON.stringify(parsed.recommended_gear_en) : (parsed.recommended_gear_en || null);
+
+  await env.DB.prepare(`
+    UPDATE locations SET
+      title_en = ?, description_en = ?, best_time_en = ?,
+      equipment_en = ?, my_tip_en = ?,
+      when_to_visit_en = ?, recommended_gear_en = ?
+    WHERE id = ?
+  `).bind(
+    parsed.title_en || '',
+    parsed.description_en || '',
+    parsed.best_time_en || '',
+    parsed.equipment_en || '',
+    parsed.my_tip_en || '',
+    when_to_visit_en,
+    recommended_gear_en,
+    slug
+  ).run();
+
+  return jsonRes({ message: 200, title_en: parsed.title_en || '' }, 200, request);
 }
 
 // ===== LOCATION PHOTOS MANAGEMENT =====
