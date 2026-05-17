@@ -217,7 +217,12 @@ nav#main-nav .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px)
   // ── Lang toggle ────────────────────────────────────────────────────────────────
   nav.querySelectorAll('.lang-btn').forEach(function (btn) {
     btn.addEventListener('click', function () {
-      applyNavLang(this.dataset.lang);
+      const lang = this.dataset.lang;
+      applyNavLang(lang);
+      if (typeof setLang !== 'function') {
+        localStorage.setItem('lang', lang);
+        window.dispatchEvent(new StorageEvent('storage', { key: 'lang', newValue: lang, storageArea: localStorage }));
+      }
     });
   });
 
