@@ -1,9 +1,221 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+
+  <!-- דף ראשי -->
   <url>
     <loc>https://amitphotos.com/</loc>
     <lastmod>2026-05-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="he" href="https://amitphotos.com/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://amitphotos.com/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://amitphotos.com/"/>
   </url>
+
+  <!-- מקומות לצילום -->
+  <url>
+    <loc>https://amitphotos.com/locations/</loc>
+    <lastmod>2026-05-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="he" href="https://amitphotos.com/locations/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://amitphotos.com/locations/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://amitphotos.com/locations/"/>
+  </url>
+
+  <!-- מדריכי צילום — דף ראשי -->
+  <url>
+    <loc>https://amitphotos.com/camera/</loc>
+    <lastmod>2026-05-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="he" href="https://amitphotos.com/camera/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://amitphotos.com/camera/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://amitphotos.com/camera/"/>
+  </url>
+
+  <!-- מדריכי צילום — נושאים -->
+  <url>
+    <loc>https://amitphotos.com/camera/exposure/</loc>
+    <lastmod>2026-05-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="he" href="https://amitphotos.com/camera/exposure/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://amitphotos.com/camera/exposure/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://amitphotos.com/camera/exposure/"/>
+  </url>
+
+  <url>
+    <loc>https://amitphotos.com/camera/lenses/</loc>
+    <lastmod>2026-05-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="he" href="https://amitphotos.com/camera/lenses/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://amitphotos.com/camera/lenses/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://amitphotos.com/camera/lenses/"/>
+  </url>
+
+  <url>
+    <loc>https://amitphotos.com/camera/composition/</loc>
+    <lastmod>2026-05-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="he" href="https://amitphotos.com/camera/composition/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://amitphotos.com/camera/composition/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://amitphotos.com/camera/composition/"/>
+  </url>
+
+  <url>
+    <loc>https://amitphotos.com/camera/controls/</loc>
+    <lastmod>2026-05-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="he" href="https://amitphotos.com/camera/controls/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://amitphotos.com/camera/controls/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://amitphotos.com/camera/controls/"/>
+  </url>
+
+  <url>
+    <loc>https://amitphotos.com/camera/depth-of-field/</loc>
+    <lastmod>2026-05-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="he" href="https://amitphotos.com/camera/depth-of-field/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://amitphotos.com/camera/depth-of-field/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://amitphotos.com/camera/depth-of-field/"/>
+  </url>
+
+  <url>
+    <loc>https://amitphotos.com/camera/dynamic-range/</loc>
+    <lastmod>2026-05-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="he" href="https://amitphotos.com/camera/dynamic-range/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://amitphotos.com/camera/dynamic-range/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://amitphotos.com/camera/dynamic-range/"/>
+  </url>
+
+  <url>
+    <loc>https://amitphotos.com/camera/editing/</loc>
+    <lastmod>2026-05-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="he" href="https://amitphotos.com/camera/editing/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://amitphotos.com/camera/editing/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://amitphotos.com/camera/editing/"/>
+  </url>
+
+  <url>
+    <loc>https://amitphotos.com/camera/filters/</loc>
+    <lastmod>2026-05-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="he" href="https://amitphotos.com/camera/filters/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://amitphotos.com/camera/filters/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://amitphotos.com/camera/filters/"/>
+  </url>
+
+  <url>
+    <loc>https://amitphotos.com/camera/histogram/</loc>
+    <lastmod>2026-05-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="he" href="https://amitphotos.com/camera/histogram/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://amitphotos.com/camera/histogram/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://amitphotos.com/camera/histogram/"/>
+  </url>
+
+  <url>
+    <loc>https://amitphotos.com/camera/light/</loc>
+    <lastmod>2026-05-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="he" href="https://amitphotos.com/camera/light/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://amitphotos.com/camera/light/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://amitphotos.com/camera/light/"/>
+  </url>
+
+  <url>
+    <loc>https://amitphotos.com/camera/macro/</loc>
+    <lastmod>2026-05-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="he" href="https://amitphotos.com/camera/macro/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://amitphotos.com/camera/macro/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://amitphotos.com/camera/macro/"/>
+  </url>
+
+  <url>
+    <loc>https://amitphotos.com/camera/software/</loc>
+    <lastmod>2026-05-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="he" href="https://amitphotos.com/camera/software/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://amitphotos.com/camera/software/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://amitphotos.com/camera/software/"/>
+  </url>
+
+  <url>
+    <loc>https://amitphotos.com/camera/sports/</loc>
+    <lastmod>2026-05-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="he" href="https://amitphotos.com/camera/sports/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://amitphotos.com/camera/sports/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://amitphotos.com/camera/sports/"/>
+  </url>
+
+  <url>
+    <loc>https://amitphotos.com/camera/types/</loc>
+    <lastmod>2026-05-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="he" href="https://amitphotos.com/camera/types/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://amitphotos.com/camera/types/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://amitphotos.com/camera/types/"/>
+  </url>
+
+  <url>
+    <loc>https://amitphotos.com/camera/visual-language/</loc>
+    <lastmod>2026-05-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="he" href="https://amitphotos.com/camera/visual-language/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://amitphotos.com/camera/visual-language/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://amitphotos.com/camera/visual-language/"/>
+  </url>
+
+  <url>
+    <loc>https://amitphotos.com/camera/white-balance/</loc>
+    <lastmod>2026-05-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="he" href="https://amitphotos.com/camera/white-balance/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://amitphotos.com/camera/white-balance/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://amitphotos.com/camera/white-balance/"/>
+  </url>
+
+  <!-- מכירות -->
+  <url>
+    <loc>https://amitphotos.com/sale/</loc>
+    <lastmod>2026-05-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="he" href="https://amitphotos.com/sale/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://amitphotos.com/sale/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://amitphotos.com/sale/"/>
+  </url>
+
+  <!-- משחקים -->
+  <url>
+    <loc>https://amitphotos.com/games/</loc>
+    <lastmod>2026-05-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="he" href="https://amitphotos.com/games/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://amitphotos.com/games/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://amitphotos.com/games/"/>
+  </url>
+
 </urlset>
