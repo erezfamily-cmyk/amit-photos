@@ -835,9 +835,7 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
         <div class="dash-grid social-stats-row" id="social-ig-stats"></div>
         <div class="social-top-posts" id="social-ig-top"></div>
 
-        <h2 class="social-platform-title social-platform-title--fb">📘 Facebook</h2>
-        <div class="dash-grid social-stats-row" id="social-fb-stats"></div>
-        <div class="social-top-posts" id="social-fb-top"></div>
+        <div id="social-fb-pages"></div>
 
         <h2 class="social-platform-title social-platform-title--ai">🤖 המלצות לשבוע הבא</h2>
         <div id="social-recommendations" class="social-recs"></div>
@@ -3611,6 +3609,27 @@ const SocialSection = (() => {
     return (v * 100).toFixed(2) + '%';
   }
 
+  function fbSetupGuide() {
+    return `<div class="social-health" style="border-color:#1877f233">
+      <div class="social-health-score">📘</div>
+      <div>
+        <div class="social-health-title">אין עמודי Facebook מחוברים</div>
+        <ul class="social-health-issues">
+          <li class="social-health-issue"><span class="hi-icon">1️⃣</span><span>כנס לכל עמוד Facebook שלך &rarr; <strong>About &rarr; Page Transparency</strong> &rarr; העתק את <strong>Page ID</strong></span></li>
+          <li class="social-health-issue"><span class="hi-icon">2️⃣</span><span>הוסף ב-GitHub Secrets: <code style="background:#111;padding:2px 6px;border-radius:4px">FACEBOOK_PAGE_IDS</code> עם הערך <code style="background:#111;padding:2px 6px;border-radius:4px">erezphoto:PAGE_ID_1,erezfamily:PAGE_ID_2</code></span></li>
+          <li class="social-health-issue"><span class="hi-icon">3️⃣</span><span>הרץ את ה-workflow <strong>דוח שבועי סושיאל מדיה</strong> ידנית — הנתונים יופיעו כאן</span></li>
+        </ul>
+      </div>
+    </div>`;
+  }
+
+  function fbSetupHint(count) {
+    const missing = 3 - count;
+    return `<p style="font-size:.8rem;color:var(--text-muted);margin-bottom:2rem">
+      💡 יש לך עוד עמודים? הוסף אותם ל-<code style="background:#111;padding:1px 5px;border-radius:3px">FACEBOOK_PAGE_IDS</code> ב-GitHub Secrets כדי לעקוב אחריהם כאן.
+    </p>`;
+  }
+
   function renderHealth(d) {
     const igRate  = (d.ig?.engagement_rate ?? 0) * 100;
     const igPosts = d.ig?.posts_this_week ?? 0;
@@ -3727,36 +3746,42 @@ const SocialSection = (() => {
         $('social-ig-top').innerHTML = '';
       }
 
-      // Facebook stats
-      const fbPosts = d.fb?.posts_this_week || 0;
-      const fbLikes = d.fb?.total_likes || 0;
-      const fbComments = d.fb?.total_comments || 0;
-      const fbFans = d.fb?.fans || 0;
-      const fbAvg = d.fb?.avg_likes_per_post ?? (fbPosts > 0 ? +(fbLikes / fbPosts).toFixed(1) : 0);
-      const fbRate = d.fb?.engagement_rate != null
-        ? fmtRate(d.fb.engagement_rate)
-        : (fbPosts > 0 && fbFans > 0 ? ((fbLikes + fbComments) / (fbPosts * fbFans) * 100).toFixed(2) + '%' : '—');
+      // Facebook — multi-page support
+      const fbPages = d.fb_pages?.length ? d.fb_pages : (d.fb ? [{ ...d.fb, name: 'Facebook', label: 'Facebook' }] : []);
 
-      $('social-fb-stats').innerHTML =
-        statCard('עוקבים', fbFans.toLocaleString(), trend(fbFans, prev.fb_fans)) +
-        statCard('פוסטים השבוע', fbPosts, trend(fbPosts, prev.fb_posts_this_week)) +
-        statCard('לייקים', fbLikes, trend(fbLikes, prev.fb_total_likes)) +
-        statCard('תגובות', fbComments) +
-        statCard('שיעור מעורבות', fbRate) +
-        statCard('ממוצע לייקים/פוסט', fbAvg);
-
-      const fbTop = d.fb?.top_posts;
-      if (fbTop?.length) {
-        $('social-fb-top').innerHTML = topPostsTable(fbTop, 'message');
-      } else if (d.fb?.best_post?.message) {
-        $('social-fb-top').innerHTML = topPostsTable([{
-          message: d.fb.best_post.message,
-          likes: d.fb.best_post.likes,
-          comments: 0,
-          date: d.fb.best_post.date,
-        }], 'message');
+      if (!fbPages.length) {
+        $('social-fb-pages').innerHTML = fbSetupGuide();
       } else {
-        $('social-fb-top').innerHTML = '';
+        $('social-fb-pages').innerHTML = fbPages.map((page, idx) => {
+          const fp = page.posts_this_week || 0;
+          const fl = page.total_likes || 0;
+          const fc = page.total_comments || 0;
+          const ff = page.fans || 0;
+          const fa = page.avg_likes_per_post ?? (fp > 0 ? +(fl / fp).toFixed(1) : 0);
+          const fr = page.engagement_rate != null
+            ? fmtRate(page.engagement_rate)
+            : (fp > 0 && ff > 0 ? ((fl + fc) / (fp * ff) * 100).toFixed(2) + '%' : '—');
+          const prevFans  = idx === 0 ? prev.fb_fans  : null;
+          const prevPosts = idx === 0 ? prev.fb_posts_this_week : null;
+          const prevLikes = idx === 0 ? prev.fb_total_likes : null;
+          const pageTitle = page.name || page.label || 'Facebook';
+          const statsHtml = `<div class="dash-grid social-stats-row">
+            ${statCard('עוקבים', ff.toLocaleString(), trend(ff, prevFans))}
+            ${statCard('פוסטים השבוע', fp, trend(fp, prevPosts))}
+            ${statCard('לייקים', fl, trend(fl, prevLikes))}
+            ${statCard('תגובות', fc)}
+            ${statCard('שיעור מעורבות', fr)}
+            ${statCard('ממוצע לייקים/פוסט', fa)}
+          </div>`;
+          const top = page.top_posts;
+          let topHtml = '';
+          if (top?.length) {
+            topHtml = topPostsTable(top, 'message');
+          } else if (page.best_post?.message) {
+            topHtml = topPostsTable([{ message: page.best_post.message, likes: page.best_post.likes, comments: 0, date: page.best_post.date }], 'message');
+          }
+          return `<h2 class="social-platform-title social-platform-title--fb">📘 ${pageTitle}</h2>${statsHtml}<div class="social-top-posts">${topHtml}</div>`;
+        }).join('') + (fbPages.length < 3 ? fbSetupHint(fbPages.length) : '');
       }
 
       // Recommendations
