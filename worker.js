@@ -2425,7 +2425,8 @@ async function handleAnalysesList(request, env) {
   if (!await checkAuth(request, env)) return unauth(request);
   try {
     const { results } = await env.DB.prepare(
-      `SELECT a.photo_id, a.title, a.composition_rule, a.published_at,
+      `SELECT a.photo_id, a.title, a.title_en, a.composition_rule, a.published_at,
+              a.composition_html, a.camera_json,
               p.thumbnail
        FROM photo_analyses a
        LEFT JOIN photos p ON p.id = a.photo_id
@@ -2471,13 +2472,16 @@ async function handleAnalysesUpdate(request, env, photoId) {
   const body = await request.json().catch(() => ({}));
   const fields = [];
   const values = [];
-  if (body.composition_rule !== undefined) { fields.push('composition_rule = COALESCE(?, composition_rule)'); values.push(body.composition_rule || null); }
-  if (body.composition_html !== undefined) { fields.push('composition_html = ?'); values.push(body.composition_html); }
-  if (body.tags_json !== undefined)        { fields.push('tags_json = ?');        values.push(body.tags_json); }
-  if (body.camera_json !== undefined)      { fields.push('camera_json = ?');      values.push(body.camera_json); }
-  if (body.annotations_json !== undefined) { fields.push('annotations_json = ?'); values.push(body.annotations_json); }
-  if (body.title !== undefined)            { fields.push('title = ?');            values.push(body.title); }
-  if (body.published_at !== undefined)     { fields.push('published_at = ?');     values.push(body.published_at); }
+  if (body.composition_rule !== undefined)    { fields.push('composition_rule = COALESCE(?, composition_rule)'); values.push(body.composition_rule || null); }
+  if (body.composition_html !== undefined)    { fields.push('composition_html = ?');    values.push(body.composition_html); }
+  if (body.tags_json !== undefined)           { fields.push('tags_json = ?');           values.push(body.tags_json); }
+  if (body.camera_json !== undefined)         { fields.push('camera_json = ?');         values.push(body.camera_json); }
+  if (body.annotations_json !== undefined)    { fields.push('annotations_json = ?');    values.push(body.annotations_json); }
+  if (body.title !== undefined)               { fields.push('title = ?');               values.push(body.title); }
+  if (body.published_at !== undefined)        { fields.push('published_at = ?');        values.push(body.published_at); }
+  if (body.title_en !== undefined)            { fields.push('title_en = ?');            values.push(body.title_en); }
+  if (body.composition_html_en !== undefined) { fields.push('composition_html_en = ?'); values.push(body.composition_html_en); }
+  if (body.camera_json_en !== undefined)      { fields.push('camera_json_en = ?');      values.push(body.camera_json_en); }
   if (!fields.length) return jsonRes({ error: 'אין שדות לעדכון' }, 400, request);
   values.push(photoId);
   await env.DB.prepare(`UPDATE photo_analyses SET ${fields.join(', ')} WHERE photo_id = ?`).bind(...values).run();
@@ -2700,10 +2704,18 @@ const RULE_LABELS = {
   framing: 'מסגור',
   negative_space: 'מרחב שלילי',
 };
+const RULE_LABELS_EN = {
+  rule_of_thirds: 'Rule of Thirds',
+  symmetry: 'Symmetry',
+  leading_lines: 'Leading Lines',
+  golden_ratio: 'Golden Ratio',
+  framing: 'Framing',
+  negative_space: 'Negative Space',
+};
 
 async function handleLearnIndex(env) {
   const { results: analyses } = await env.DB.prepare(
-    `SELECT a.photo_id, a.title, a.composition_rule, a.tags_json, a.published_at,
+    `SELECT a.photo_id, a.title, a.title_en, a.composition_rule, a.tags_json, a.published_at,
             p.thumbnail
      FROM photo_analyses a
      LEFT JOIN photos p ON p.id = a.photo_id
@@ -2712,14 +2724,16 @@ async function handleLearnIndex(env) {
 
   const cards = (analyses || []).map(a => {
     const thumb = a.thumbnail || '';
-    const ruleLabel = RULE_LABELS[a.composition_rule] || a.composition_rule;
+    const ruleLabelHe = RULE_LABELS[a.composition_rule] || a.composition_rule;
+    const ruleLabelEn = RULE_LABELS_EN[a.composition_rule] || a.composition_rule;
+    const titleEn = a.title_en || a.title;
     const tags = JSON.parse(a.tags_json || '[]').slice(0, 3).map(t => `<span class="tag">${escXml(t)}</span>`).join('');
     const date = a.published_at ? a.published_at.slice(0, 10) : '';
     return `<a class="learn-card" href="/learn/${escXml(a.photo_id)}">
       <img src="${escXml(thumb)}" alt="${escXml(a.title)}" loading="lazy">
       <div class="learn-card-body">
-        <div class="learn-card-rule">${escXml(ruleLabel)}</div>
-        <div class="learn-card-title">${escXml(a.title)}</div>
+        <div class="learn-card-rule" data-he="${escXml(ruleLabelHe)}" data-en="${escXml(ruleLabelEn)}">${escXml(ruleLabelHe)}</div>
+        <div class="learn-card-title" data-he="${escXml(a.title)}" data-en="${escXml(titleEn)}">${escXml(a.title)}</div>
         <div class="learn-card-tags">${tags}</div>
         <div class="learn-card-date">${escXml(date)}</div>
       </div>
@@ -2727,7 +2741,7 @@ async function handleLearnIndex(env) {
   }).join('\n');
 
   const empty = analyses.length === 0
-    ? '<p style="text-align:center;color:#888;padding:4rem">הניתוח הראשון יפורסם בקרוב — חזרו מחר!</p>'
+    ? '<p style="text-align:center;color:#888;padding:4rem" data-he="הניתוח הראשון יפורסם בקרוב — חזרו מחר!" data-en="First analysis coming soon — check back tomorrow!">הניתוח הראשון יפורסם בקרוב — חזרו מחר!</p>'
     : '';
 
   const html = `<!DOCTYPE html>
@@ -2771,11 +2785,22 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direc
 </head>
 <body>
 <div class="page-hero">
-  <h1>📸 ניתוח תמונות</h1>
-  <p>ניתוח צילומי מעמיק — חוקי קומפוזיציה, הגדרות מצלמה, ומה הצלם חשב</p>
+  <h1 data-he="📸 ניתוח תמונות" data-en="📸 Photo Analysis">📸 ניתוח תמונות</h1>
+  <p data-he="ניתוח צילומי מעמיק — חוקי קומפוזיציה, הגדרות מצלמה, ומה הצלם חשב" data-en="Deep photographic analysis — composition rules, camera settings, and the photographer's vision">ניתוח צילומי מעמיק — חוקי קומפוזיציה, הגדרות מצלמה, ומה הצלם חשב</p>
 </div>
 <div class="grid">${cards}${empty}</div>
-<div class="back-link"><a href="https://amitphotos.com">← לגלריה המלאה</a></div>
+<div class="back-link"><a href="https://amitphotos.com" data-he="← לגלריה המלאה" data-en="← Back to Gallery">← לגלריה המלאה</a></div>
+<script>
+function getLang(){return localStorage.getItem('lang')||'he'}
+function applyLang(){
+  const lang=getLang(),isEn=lang==='en';
+  document.documentElement.dir=isEn?'ltr':'rtl';
+  document.documentElement.lang=lang;
+  document.querySelectorAll('[data-he][data-en]').forEach(el=>{el.textContent=el.dataset[lang]||el.dataset.he});
+}
+document.addEventListener('DOMContentLoaded',applyLang);
+window.addEventListener('storage',e=>{if(e.key==='lang')applyLang()});
+</script>
 </body>
 </html>`;
 
@@ -2793,112 +2818,112 @@ function buildPhysicsDiagram(camera) {
   else { const m2 = shutterStr.match(/^(\d*\.?\d+)/); if (m2) shutterSec = parseFloat(m2[1]); }
 
   if (!isNaN(apertureVal) && apertureVal <= 4) return {
-    title: '📊 עומק שדה ובוקה',
+    title: '📊 עומק שדה ובוקה', titleEn: '📊 Depth of Field & Bokeh',
     svg: `<svg viewBox="0 0 500 180" style="width:100%;max-width:500px;display:block;margin:0 auto">
       <rect x="20" y="65" width="55" height="50" rx="5" fill="#1a1a1a" stroke="${gold}" stroke-width="1.5"/>
-      <text x="47" y="94" text-anchor="middle" fill="${gold}" font-size="10" font-family="Heebo">מצלמה</text>
+      <text x="47" y="94" text-anchor="middle" fill="${gold}" font-size="10" font-family="Heebo" data-he="מצלמה" data-en="Camera">מצלמה</text>
       <ellipse cx="75" cy="90" rx="9" ry="20" fill="#222" stroke="${gold}" stroke-width="1.5"/>
       <line x1="84" y1="72" x2="210" y2="90" stroke="rgba(200,169,110,.7)" stroke-width="1"/>
       <line x1="84" y1="90" x2="210" y2="90" stroke="rgba(200,169,110,.7)" stroke-width="1"/>
       <line x1="84" y1="108" x2="210" y2="90" stroke="rgba(200,169,110,.7)" stroke-width="1"/>
       <line x1="210" y1="0" x2="210" y2="180" stroke="${green}" stroke-width="2" stroke-dasharray="4,3"/>
-      <text x="214" y="20" fill="${green}" font-size="10" font-family="Heebo">נושא (חד)</text>
+      <text x="214" y="20" fill="${green}" font-size="10" font-family="Heebo" data-he="נושא (חד)" data-en="Subject (Sharp)">נושא (חד)</text>
       <circle cx="210" cy="90" r="5" fill="${green}"/>
       <line x1="210" y1="90" x2="410" y2="50" stroke="rgba(136,136,136,.5)" stroke-width="1"/>
       <line x1="210" y1="90" x2="410" y2="90" stroke="rgba(136,136,136,.5)" stroke-width="1"/>
       <line x1="210" y1="90" x2="410" y2="130" stroke="rgba(136,136,136,.5)" stroke-width="1"/>
       <line x1="410" y1="0" x2="410" y2="180" stroke="${muted}" stroke-width="1.5" stroke-dasharray="4,3"/>
-      <text x="414" y="20" fill="${muted}" font-size="10" font-family="Heebo">רקע (מטושטש)</text>
+      <text x="414" y="20" fill="${muted}" font-size="10" font-family="Heebo" data-he="רקע (מטושטש)" data-en="Background (Blurred)">רקע (מטושטש)</text>
       <circle cx="410" cy="50" r="16" fill="none" stroke="rgba(200,169,110,.4)" stroke-width="1.5"/>
       <circle cx="410" cy="90" r="16" fill="none" stroke="rgba(200,169,110,.4)" stroke-width="1.5"/>
       <circle cx="410" cy="130" r="16" fill="none" stroke="rgba(200,169,110,.4)" stroke-width="1.5"/>
-      <text x="75" y="158" text-anchor="middle" fill="${gold}" font-size="9" font-family="Heebo">פתח עדשה רחב = עומק שדה רדוד = בוקה</text>
+      <text x="75" y="158" text-anchor="middle" fill="${gold}" font-size="9" font-family="Heebo" data-he="פתח עדשה רחב = עומק שדה רדוד = בוקה" data-en="Wide open aperture = Shallow DOF = Bokeh">פתח עדשה רחב = עומק שדה רדוד = בוקה</text>
     </svg>`
   };
 
   if (!isNaN(focalVal) && focalVal <= 28) return {
-    title: '📊 זווית רחבה ופרספקטיבה',
+    title: '📊 זווית רחבה ופרספקטיבה', titleEn: '📊 Wide Angle & Perspective',
     svg: `<svg viewBox="0 0 500 180" style="width:100%;max-width:500px;display:block;margin:0 auto">
       <rect x="10" y="70" width="48" height="40" rx="5" fill="#1a1a1a" stroke="${gold}" stroke-width="1.5"/>
-      <text x="34" y="93" text-anchor="middle" fill="${gold}" font-size="9" font-family="Heebo">מצלמה</text>
+      <text x="34" y="93" text-anchor="middle" fill="${gold}" font-size="9" font-family="Heebo" data-he="מצלמה" data-en="Camera">מצלמה</text>
       <text x="34" y="105" text-anchor="middle" fill="${gold}" font-size="8" font-family="Heebo">${focalVal}mm</text>
       <line x1="58" y1="90" x2="470" y2="15"  stroke="rgba(200,169,110,.5)" stroke-width="1.5" stroke-dasharray="4,3"/>
       <line x1="58" y1="90" x2="470" y2="165" stroke="rgba(200,169,110,.5)" stroke-width="1.5" stroke-dasharray="4,3"/>
       <rect x="100" y="52" width="18" height="76" rx="3" fill="${green}" opacity="0.85"/>
-      <text x="109" y="143" text-anchor="middle" fill="${green}" font-size="9" font-family="Heebo">קרוב</text>
+      <text x="109" y="143" text-anchor="middle" fill="${green}" font-size="9" font-family="Heebo" data-he="קרוב" data-en="Near">קרוב</text>
       <rect x="240" y="72" width="12" height="36" rx="2" fill="${gold}" opacity="0.65"/>
-      <text x="246" y="122" text-anchor="middle" fill="${gold}" font-size="9" font-family="Heebo">ביניים</text>
+      <text x="246" y="122" text-anchor="middle" fill="${gold}" font-size="9" font-family="Heebo" data-he="ביניים" data-en="Mid">ביניים</text>
       <rect x="370" y="83" width="7" height="14" rx="2" fill="${muted}" opacity="0.7"/>
-      <text x="374" y="108" text-anchor="middle" fill="${muted}" font-size="9" font-family="Heebo">רחוק</text>
+      <text x="374" y="108" text-anchor="middle" fill="${muted}" font-size="9" font-family="Heebo" data-he="רחוק" data-en="Far">רחוק</text>
       <line x1="100" y1="52"  x2="378" y2="81"  stroke="rgba(200,169,110,.3)" stroke-width="1"/>
       <line x1="118" y1="128" x2="378" y2="97" stroke="rgba(200,169,110,.3)" stroke-width="1"/>
-      <text x="250" y="170" text-anchor="middle" fill="${gold}" font-size="9" font-family="Heebo">שדה ראייה רחב — קרוב נראה גדול, רחוק קטן → עומק דרמטי</text>
+      <text x="250" y="170" text-anchor="middle" fill="${gold}" font-size="9" font-family="Heebo" data-he="שדה ראייה רחב — קרוב נראה גדול, רחוק קטן → עומק דרמטי" data-en="Wide field of view — near appears large, far small → dramatic depth">שדה ראייה רחב — קרוב נראה גדול, רחוק קטן → עומק דרמטי</text>
     </svg>`
   };
 
   if (!isNaN(focalVal) && focalVal >= 85) return {
-    title: '📊 דחיסת טלה',
+    title: '📊 דחיסת טלה', titleEn: '📊 Telephoto Compression',
     svg: `<svg viewBox="0 0 500 180" style="width:100%;max-width:500px;display:block;margin:0 auto">
       <rect x="10" y="70" width="55" height="40" rx="5" fill="#1a1a1a" stroke="${gold}" stroke-width="1.5"/>
-      <text x="37" y="93" text-anchor="middle" fill="${gold}" font-size="9" font-family="Heebo">מצלמה</text>
+      <text x="37" y="93" text-anchor="middle" fill="${gold}" font-size="9" font-family="Heebo" data-he="מצלמה" data-en="Camera">מצלמה</text>
       <text x="37" y="105" text-anchor="middle" fill="${gold}" font-size="8" font-family="Heebo">${focalVal}mm</text>
       <line x1="65" y1="90" x2="460" y2="68"  stroke="rgba(200,169,110,.5)" stroke-width="1.5" stroke-dasharray="4,3"/>
       <line x1="65" y1="90" x2="460" y2="112" stroke="rgba(200,169,110,.5)" stroke-width="1.5" stroke-dasharray="4,3"/>
       <rect x="210" y="72" width="16" height="36" rx="3" fill="${green}" opacity="0.85"/>
-      <text x="218" y="122" text-anchor="middle" fill="${green}" font-size="9" font-family="Heebo">קרוב</text>
+      <text x="218" y="122" text-anchor="middle" fill="${green}" font-size="9" font-family="Heebo" data-he="קרוב" data-en="Near">קרוב</text>
       <rect x="320" y="74" width="14" height="32" rx="3" fill="${gold}" opacity="0.7"/>
-      <text x="327" y="120" text-anchor="middle" fill="${gold}" font-size="9" font-family="Heebo">רחוק</text>
+      <text x="327" y="120" text-anchor="middle" fill="${gold}" font-size="9" font-family="Heebo" data-he="רחוק" data-en="Far">רחוק</text>
       <line x1="226" y1="90" x2="318" y2="90" stroke="rgba(200,169,110,.5)" stroke-width="1.5" stroke-dasharray="3,2"/>
-      <text x="272" y="84" text-anchor="middle" fill="${muted}" font-size="9" font-family="Heebo">נראים קרובים</text>
-      <text x="260" y="170" text-anchor="middle" fill="${gold}" font-size="9" font-family="Heebo">שדה ראייה צר — מרחקים נדחסים, רקע נראה קרוב יותר</text>
+      <text x="272" y="84" text-anchor="middle" fill="${muted}" font-size="9" font-family="Heebo" data-he="נראים קרובים" data-en="Appear close">נראים קרובים</text>
+      <text x="260" y="170" text-anchor="middle" fill="${gold}" font-size="9" font-family="Heebo" data-he="שדה ראייה צר — מרחקים נדחסים, רקע נראה קרוב יותר" data-en="Narrow field of view — distances compressed, background appears closer">שדה ראייה צר — מרחקים נדחסים, רקע נראה קרוב יותר</text>
     </svg>`
   };
 
   if (shutterSec !== null && shutterSec >= 1/30) return {
-    title: '📊 חשיפה ארוכה ותנועה',
+    title: '📊 חשיפה ארוכה ותנועה', titleEn: '📊 Long Exposure & Motion',
     svg: `<svg viewBox="0 0 500 180" style="width:100%;max-width:500px;display:block;margin:0 auto">
       <rect x="20" y="70" width="50" height="40" rx="5" fill="#1a1a1a" stroke="${gold}" stroke-width="1.5"/>
-      <text x="45" y="93" text-anchor="middle" fill="${gold}" font-size="9" font-family="Heebo">מצלמה</text>
+      <text x="45" y="93" text-anchor="middle" fill="${gold}" font-size="9" font-family="Heebo" data-he="מצלמה" data-en="Camera">מצלמה</text>
       <text x="45" y="105" text-anchor="middle" fill="${gold}" font-size="8" font-family="Heebo">${shutterStr}</text>
       <rect x="200" y="58" width="18" height="64" rx="3" fill="${green}" opacity="0.9"/>
-      <text x="209" y="136" text-anchor="middle" fill="${green}" font-size="9" font-family="Heebo">נייח (חד)</text>
+      <text x="209" y="136" text-anchor="middle" fill="${green}" font-size="9" font-family="Heebo" data-he="נייח (חד)" data-en="Stationary (Sharp)">נייח (חד)</text>
       <ellipse cx="370" cy="90" rx="65" ry="14" fill="rgba(200,169,110,.18)" stroke="rgba(200,169,110,.35)" stroke-width="1"/>
       <ellipse cx="335" cy="90" rx="14" ry="14" fill="rgba(200,169,110,.55)"/>
-      <text x="370" y="118" text-anchor="middle" fill="${gold}" font-size="9" font-family="Heebo">נע (מטושטש)</text>
+      <text x="370" y="118" text-anchor="middle" fill="${gold}" font-size="9" font-family="Heebo" data-he="נע (מטושטש)" data-en="Moving (Blurred)">נע (מטושטש)</text>
       <line x1="200" y1="158" x2="430" y2="158" stroke="${muted}" stroke-width="1.5"/>
       <polygon points="430,154 440,158 430,162" fill="${muted}"/>
-      <text x="315" y="172" text-anchor="middle" fill="${muted}" font-size="9" font-family="Heebo">זמן חשיפה</text>
-      <text x="250" y="22" text-anchor="middle" fill="${gold}" font-size="9" font-family="Heebo">שאטר פתוח זמן רב → תנועה נרשמת כטשטוש</text>
+      <text x="315" y="172" text-anchor="middle" fill="${muted}" font-size="9" font-family="Heebo" data-he="זמן חשיפה" data-en="Exposure Time">זמן חשיפה</text>
+      <text x="250" y="22" text-anchor="middle" fill="${gold}" font-size="9" font-family="Heebo" data-he="שאטר פתוח זמן רב → תנועה נרשמת כטשטוש" data-en="Long shutter → motion recorded as blur">שאטר פתוח זמן רב → תנועה נרשמת כטשטוש</text>
     </svg>`
   };
 
   if (shutterSec !== null && shutterSec <= 1/500) return {
-    title: '📊 הקפאת תנועה',
+    title: '📊 הקפאת תנועה', titleEn: '📊 Freezing Motion',
     svg: `<svg viewBox="0 0 500 180" style="width:100%;max-width:500px;display:block;margin:0 auto">
       <rect x="20" y="70" width="50" height="40" rx="5" fill="#1a1a1a" stroke="${gold}" stroke-width="1.5"/>
-      <text x="45" y="93" text-anchor="middle" fill="${gold}" font-size="9" font-family="Heebo">מצלמה</text>
+      <text x="45" y="93" text-anchor="middle" fill="${gold}" font-size="9" font-family="Heebo" data-he="מצלמה" data-en="Camera">מצלמה</text>
       <text x="45" y="105" text-anchor="middle" fill="${gold}" font-size="8" font-family="Heebo">${shutterStr}</text>
       <line x1="185" y1="90" x2="270" y2="90" stroke="rgba(200,169,110,.3)" stroke-width="6" stroke-linecap="round"/>
       <polygon points="272,85 282,90 272,95" fill="rgba(200,169,110,.4)"/>
-      <text x="228" y="60" text-anchor="middle" fill="${muted}" font-size="9" font-family="Heebo">כיוון תנועה</text>
+      <text x="228" y="60" text-anchor="middle" fill="${muted}" font-size="9" font-family="Heebo" data-he="כיוון תנועה" data-en="Motion direction">כיוון תנועה</text>
       <circle cx="330" cy="90" r="22" fill="none" stroke="${gold}" stroke-width="2"/>
       <circle cx="330" cy="90" r="6"  fill="${gold}"/>
-      <text x="330" y="128" text-anchor="middle" fill="${gold}" font-size="9" font-family="Heebo">קפוא ברגע</text>
-      <text x="260" y="170" text-anchor="middle" fill="${gold}" font-size="9" font-family="Heebo">שאטר מהיר מאוד = תנועה קפואה לחלוטין</text>
+      <text x="330" y="128" text-anchor="middle" fill="${gold}" font-size="9" font-family="Heebo" data-he="קפוא ברגע" data-en="Frozen in moment">קפוא ברגע</text>
+      <text x="260" y="170" text-anchor="middle" fill="${gold}" font-size="9" font-family="Heebo" data-he="שאטר מהיר מאוד = תנועה קפואה לחלוטין" data-en="Very fast shutter = motion completely frozen">שאטר מהיר מאוד = תנועה קפואה לחלוטין</text>
     </svg>`
   };
 
   return {
-    title: '📊 ISO ורעש דיגיטלי',
+    title: '📊 ISO ורעש דיגיטלי', titleEn: '📊 ISO & Digital Noise',
     svg: `<svg viewBox="0 0 500 180" style="width:100%;max-width:500px;display:block;margin:0 auto">
-      <text x="120" y="25" text-anchor="middle" fill="${green}" font-size="11" font-family="Heebo">ISO נמוך (נקי)</text>
+      <text x="120" y="25" text-anchor="middle" fill="${green}" font-size="11" font-family="Heebo" data-he="ISO נמוך (נקי)" data-en="Low ISO (Clean)">ISO נמוך (נקי)</text>
       ${Array.from({length:36},(_,i)=>`<rect x="${40+(i%6)*16}" y="${35+Math.floor(i/6)*16}" width="13" height="13" rx="1" fill="rgba(74,222,128,.7)" stroke="rgba(74,222,128,.3)" stroke-width=".5"/>`).join('')}
-      <text x="370" y="25" text-anchor="middle" fill="#ef4444" font-size="11" font-family="Heebo">ISO גבוה (רעש)</text>
+      <text x="370" y="25" text-anchor="middle" fill="#ef4444" font-size="11" font-family="Heebo" data-he="ISO גבוה (רעש)" data-en="High ISO (Noisy)">ISO גבוה (רעש)</text>
       ${Array.from({length:36},(_,i)=>{const c=['rgba(239,68,68,.8)','rgba(200,169,110,.6)','rgba(136,136,136,.9)','rgba(239,68,68,.4)','rgba(74,222,128,.5)'];return`<rect x="${290+(i%6)*16}" y="${35+Math.floor(i/6)*16}" width="13" height="13" rx="1" fill="${c[(i*37+13)%5]}" stroke="rgba(0,0,0,.3)" stroke-width=".5"/>`;}).join('')}
       <line x1="200" y1="80" x2="273" y2="80" stroke="${muted}" stroke-width="1.5"/>
       <polygon points="273,76 283,80 273,84" fill="${muted}"/>
-      <text x="237" y="73" text-anchor="middle" fill="${muted}" font-size="9" font-family="Heebo">ISO עולה</text>
-      <text x="250" y="168" text-anchor="middle" fill="${gold}" font-size="9" font-family="Heebo">רגישות גבוהה לאור = יותר רעש בפיקסלים</text>
+      <text x="237" y="73" text-anchor="middle" fill="${muted}" font-size="9" font-family="Heebo" data-he="ISO עולה" data-en="ISO increases">ISO עולה</text>
+      <text x="250" y="168" text-anchor="middle" fill="${gold}" font-size="9" font-family="Heebo" data-he="רגישות גבוהה לאור = יותר רעש בפיקסלים" data-en="Higher light sensitivity = more pixel noise">רגישות גבוהה לאור = יותר רעש בפיקסלים</text>
     </svg>`
   };
 }
@@ -3013,27 +3038,34 @@ async function handleLearnAnalysis(env, photoId) {
 
   // Prev/next and more analyses — run in parallel
   const [prevRow, nextRow, moreRows] = await Promise.all([
-    env.DB.prepare(`SELECT a.photo_id, a.title FROM photo_analyses a WHERE a.published_at > ? AND a.published_at IS NOT NULL ORDER BY a.published_at ASC LIMIT 1`).bind(row.published_at || '').first().catch(() => null),
-    env.DB.prepare(`SELECT a.photo_id, a.title FROM photo_analyses a WHERE a.published_at < ? AND a.published_at IS NOT NULL ORDER BY a.published_at DESC LIMIT 1`).bind(row.published_at || '').first().catch(() => null),
-    env.DB.prepare(`SELECT a.photo_id, a.title, a.composition_rule, p.thumbnail, p.url FROM photo_analyses a LEFT JOIN photos p ON p.id = a.photo_id WHERE a.photo_id != ? AND a.published_at IS NOT NULL ORDER BY RANDOM() LIMIT 4`).bind(photoId).all().catch(() => ({ results: [] })),
+    env.DB.prepare(`SELECT a.photo_id, a.title, a.title_en FROM photo_analyses a WHERE a.published_at > ? AND a.published_at IS NOT NULL ORDER BY a.published_at ASC LIMIT 1`).bind(row.published_at || '').first().catch(() => null),
+    env.DB.prepare(`SELECT a.photo_id, a.title, a.title_en FROM photo_analyses a WHERE a.published_at < ? AND a.published_at IS NOT NULL ORDER BY a.published_at DESC LIMIT 1`).bind(row.published_at || '').first().catch(() => null),
+    env.DB.prepare(`SELECT a.photo_id, a.title, a.title_en, a.composition_rule, p.thumbnail, p.url FROM photo_analyses a LEFT JOIN photos p ON p.id = a.photo_id WHERE a.photo_id != ? AND a.published_at IS NOT NULL ORDER BY RANDOM() LIMIT 4`).bind(photoId).all().catch(() => ({ results: [] })),
   ]);
   const moreAnalyses = moreRows?.results || [];
 
-  let annotations = [], camera = {}, tags = [];
+  let annotations = [], camera = {}, cameraEn = {}, tags = [];
   try { annotations = JSON.parse(row.annotations_json || '[]'); } catch (_) { annotations = []; }
   try { camera = JSON.parse(row.camera_json || '{}'); } catch (_) { camera = {}; }
+  try { cameraEn = JSON.parse(row.camera_json_en || '{}'); } catch (_) { cameraEn = {}; }
   try { tags = JSON.parse(row.tags_json || '[]'); } catch (_) { tags = []; }
-  const ruleLabel = RULE_LABELS[row.composition_rule] || row.composition_rule;
+  const ruleLabelHe = RULE_LABELS[row.composition_rule] || row.composition_rule;
+  const ruleLabelEn = RULE_LABELS_EN[row.composition_rule] || row.composition_rule;
+  const titleEn = row.title_en || row.title;
   const imgUrl = (photo.url || photo.thumbnail || '') + '?w=900';
   const buyUrl = `https://amitphotos.com/?photo=${encodeURIComponent(photoId)}`;
 
+  const labelsHe = { aperture: 'צמצם', shutter: 'מהירות תריס', iso: 'ISO', focal: 'מרחק מוקד' };
+  const labelsEn = { aperture: 'Aperture', shutter: 'Shutter Speed', iso: 'ISO', focal: 'Focal Length' };
   const cameraCards = ['aperture', 'shutter', 'iso', 'focal'].map(key => {
     const c = camera[key] || {};
-    const labels = { aperture: 'צמצם', shutter: 'מהירות תריס', iso: 'ISO', focal: 'מרחק מוקד' };
+    const cEn = cameraEn[key] || {};
+    const descEn = cEn.explanation || c.explanation || '';
     return `<div class="cam-card">
-      <div class="cam-label">${labels[key]}</div>
+      <div class="cam-label" data-he="${escXml(labelsHe[key])}" data-en="${escXml(labelsEn[key])}">${escXml(labelsHe[key])}</div>
       <div class="cam-value">${escXml(c.value || '—')}</div>
-      <div class="cam-desc">${escXml(c.explanation || '')}</div>
+      <div class="cam-desc lang-he">${escXml(c.explanation || '')}</div>
+      <div class="cam-desc lang-en" style="display:none">${escXml(descEn)}</div>
     </div>`;
   }).join('\n');
 
@@ -3045,9 +3077,9 @@ async function handleLearnAnalysis(env, photoId) {
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${escXml(row.title)} — ניתוח צילום | Amit Photos</title>
-<meta name="description" content="ניתוח צילומי של &quot;${escXml(row.title)}&quot; — ${escXml(ruleLabel)}, הגדרות מצלמה, ופירוש הקומפוזיציה.">
+<meta name="description" content="ניתוח צילומי של &quot;${escXml(row.title)}&quot; — ${escXml(ruleLabelHe)}, הגדרות מצלמה, ופירוש הקומפוזיציה.">
 <meta property="og:title" content="📸 ${escXml(row.title)} | ניתוח צילום">
-<meta property="og:description" content="ניתוח ${escXml(ruleLabel)} — הגדרות מצלמה ופירוש הקומפוזיציה. מדריך לצלמן מתחיל.">
+<meta property="og:description" content="ניתוח ${escXml(ruleLabelHe)} — הגדרות מצלמה ופירוש הקומפוזיציה. מדריך לצלמן מתחיל.">
 <meta property="og:image" content="${escXml(photo.thumbnail || photo.url || '')}">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://amitphotos.com/learn/${escXml(photoId)}">
@@ -3113,10 +3145,10 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direc
 <body>
 <div class="page-header">
   <div>
-    <h1 class="page-title">${escXml(row.title)}</h1>
-    <span class="rule-badge">${escXml(ruleLabel)}</span>
+    <h1 class="page-title" data-he="${escXml(row.title)}" data-en="${escXml(titleEn)}">${escXml(row.title)}</h1>
+    <span class="rule-badge" data-he="${escXml(ruleLabelHe)}" data-en="${escXml(ruleLabelEn)}">${escXml(ruleLabelHe)}</span>
   </div>
-  <a class="buy-btn" href="${escXml(buyUrl)}">רכוש תמונה זו ←</a>
+  <a class="buy-btn" href="${escXml(buyUrl)}" data-he="רכוש תמונה זו ←" data-en="Buy This Photo ←">רכוש תמונה זו ←</a>
 </div>
 
 <div class="photo-wrap">
@@ -3129,39 +3161,42 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direc
   ${buildAnnotationLabels(annotations)}
 </div>
 ${annotations.length > 0 ? `<div style="text-align:center;margin-top:.5rem;margin-bottom:.5rem;min-height:2rem">
-  <button id="ann-hide-btn" onclick="annHideAll()" style="display:none;background:rgba(200,169,110,.1);border:1px solid rgba(200,169,110,.3);color:#c8a96e;border-radius:20px;padding:.35rem 1.2rem;font-family:'Heebo',sans-serif;font-size:.82rem;cursor:pointer">הסתר ביאורים</button>
+  <button id="ann-hide-btn" onclick="annHideAll()" style="display:none;background:rgba(200,169,110,.1);border:1px solid rgba(200,169,110,.3);color:#c8a96e;border-radius:20px;padding:.35rem 1.2rem;font-family:'Heebo',sans-serif;font-size:.82rem;cursor:pointer" data-he="הסתר ביאורים" data-en="Hide Annotations">הסתר ביאורים</button>
 </div>` : ''}
 
 <div class="cam-cards">${cameraCards}</div>
 
-${(() => { const d = buildPhysicsDiagram(camera); return `<div class="section"><h2>${d.title}</h2><div class="bokeh-box">${d.svg}</div></div>`; })()}
+${(() => { const d = buildPhysicsDiagram(camera); return `<div class="section"><h2 data-he="${escXml(d.title)}" data-en="${escXml(d.titleEn||d.title)}">${escXml(d.title)}</h2><div class="bokeh-box">${d.svg}</div></div>`; })()}
 
 <div class="section">
-  <h2>🎨 ניתוח קומפוזיציה</h2>
+  <h2 data-he="🎨 ניתוח קומפוזיציה" data-en="🎨 Composition Analysis">🎨 ניתוח קומפוזיציה</h2>
   <div class="comp-box">
-    ${String(row.composition_html || '').replace(/<(?!\/?(?:p|strong|em|br|span|div)\b)[^>]*>/gi, '')}
+    <div class="lang-he">${String(row.composition_html || '').replace(/<(?!\/?(?:p|strong|em|br|span|div)\b)[^>]*>/gi, '')}</div>
+    <div class="lang-en" style="display:none">${String(row.composition_html_en || row.composition_html || '').replace(/<(?!\/?(?:p|strong|em|br|span|div)\b)[^>]*>/gi, '')}</div>
     <div class="tags-row">${tagPills}</div>
   </div>
 </div>
 
 ${(prevRow || nextRow) ? `
 <div class="analysis-nav">
-  ${prevRow ? `<a href="/learn/${escXml(prevRow.photo_id)}" class="nav-next"><span class="nav-dir">← ניתוח חדש יותר</span><span class="nav-title">${escXml(prevRow.title)}</span></a>` : '<span></span>'}
-  ${nextRow ? `<a href="/learn/${escXml(nextRow.photo_id)}" class="nav-prev"><span class="nav-dir">ניתוח קודם →</span><span class="nav-title">${escXml(nextRow.title)}</span></a>` : '<span></span>'}
+  ${prevRow ? `<a href="/learn/${escXml(prevRow.photo_id)}" class="nav-next"><span class="nav-dir" data-he="← ניתוח חדש יותר" data-en="← Newer Analysis">← ניתוח חדש יותר</span><span class="nav-title" data-he="${escXml(prevRow.title)}" data-en="${escXml(prevRow.title_en||prevRow.title)}">${escXml(prevRow.title)}</span></a>` : '<span></span>'}
+  ${nextRow ? `<a href="/learn/${escXml(nextRow.photo_id)}" class="nav-prev"><span class="nav-dir" data-he="ניתוח קודם →" data-en="Older Analysis →">ניתוח קודם →</span><span class="nav-title" data-he="${escXml(nextRow.title)}" data-en="${escXml(nextRow.title_en||nextRow.title)}">${escXml(nextRow.title)}</span></a>` : '<span></span>'}
 </div>` : ''}
 
 ${moreAnalyses.length > 0 ? `
 <div class="more-section">
-  <h2>📸 ניתוחים נוספים</h2>
+  <h2 data-he="📸 ניתוחים נוספים" data-en="📸 More Analyses">📸 ניתוחים נוספים</h2>
   <div class="more-grid">
     ${moreAnalyses.map(a => {
       const thumb = (a.thumbnail || a.url || '') + '?w=300';
-      const label = RULE_LABELS[a.composition_rule] || a.composition_rule || '';
+      const labelHe = RULE_LABELS[a.composition_rule] || a.composition_rule || '';
+      const labelEn = RULE_LABELS_EN[a.composition_rule] || a.composition_rule || '';
+      const aTitleEn = a.title_en || a.title;
       return `<a class="more-card" href="/learn/${escXml(a.photo_id)}">
         <img src="${escXml(thumb)}" alt="${escXml(a.title)}" loading="lazy">
         <div class="more-card-body">
-          <div class="more-card-rule">${escXml(label)}</div>
-          <div class="more-card-title">${escXml(a.title)}</div>
+          <div class="more-card-rule" data-he="${escXml(labelHe)}" data-en="${escXml(labelEn)}">${escXml(labelHe)}</div>
+          <div class="more-card-title" data-he="${escXml(a.title)}" data-en="${escXml(aTitleEn)}">${escXml(a.title)}</div>
         </div>
       </a>`;
     }).join('')}
@@ -3169,11 +3204,23 @@ ${moreAnalyses.length > 0 ? `
 </div>` : ''}
 
 <div class="nav-row">
-  <a href="/learn/">← כל הניתוחים</a>
-  <a href="${escXml(buyUrl)}">רכוש תמונה זו</a>
-  <a href="https://amitphotos.com">לגלריה</a>
+  <a href="/learn/" data-he="← כל הניתוחים" data-en="← All Analyses">← כל הניתוחים</a>
+  <a href="${escXml(buyUrl)}" data-he="רכוש תמונה זו" data-en="Buy This Photo">רכוש תמונה זו</a>
+  <a href="https://amitphotos.com" data-he="לגלריה" data-en="Gallery">לגלריה</a>
 </div>
 <script>
+function getLang(){return localStorage.getItem('lang')||'he'}
+function applyLang(){
+  const lang=getLang(),isEn=lang==='en';
+  document.documentElement.dir=isEn?'ltr':'rtl';
+  document.documentElement.lang=lang;
+  document.querySelectorAll('[data-he][data-en]').forEach(el=>{el.textContent=el.dataset[lang]||el.dataset.he});
+  document.querySelectorAll('.lang-he,.lang-en').forEach(el=>{
+    el.style.display=el.classList.contains('lang-'+lang)?'':'none';
+  });
+}
+document.addEventListener('DOMContentLoaded',applyLang);
+window.addEventListener('storage',e=>{if(e.key==='lang')applyLang()});
 (function() {
   const all = document.querySelectorAll('[data-ann-idx]');
   if (!all.length) return;
