@@ -139,6 +139,30 @@ const LABELS = {
     suggest: 'הצע מקום +',
     empty: 'אין מקומות עדיין.',
     photos: (n) => `${n} תמונות`,
+    sortLabel: 'מיון:',
+    sortDefault: 'ברירת מחדל',
+    sortAlpha: 'א-ב',
+    sortRegion: 'לפי אזור',
+    sortPhotos: 'מספר תמונות',
+    mapShow: '🗺 הצג מפה',
+    mapHide: '🗺 הסתר מפה',
+    filterAll: 'הכל',
+    modalTitle: 'הצע מקום לצילום',
+    labelName: 'שמך (אופציונלי)',
+    placeholderName: 'שם',
+    labelPlace: 'שם המקום',
+    placeholderPlace: 'למשל: נחל נטפים',
+    labelRegion: 'אזור',
+    regionPlaceholder: 'בחר אזור',
+    labelDesc: 'תיאור / טיפ',
+    placeholderDesc: 'ספר על המקום...',
+    cancel: 'ביטול',
+    send: 'שלח',
+    sending: 'שולח...',
+    sent: 'נשלח!',
+    alertFill: 'נא למלא שם מקום ותיאור.',
+    errorLoad: 'שגיאה בטעינת המקומות.',
+    viewSpot: 'צפה במקום →',
   },
   en: {
     badge: '📍 Photography Locations',
@@ -147,6 +171,30 @@ const LABELS = {
     suggest: 'Suggest a Spot +',
     empty: 'No locations yet.',
     photos: (n) => `${n} photos`,
+    sortLabel: 'Sort:',
+    sortDefault: 'Default',
+    sortAlpha: 'A–Z',
+    sortRegion: 'By Region',
+    sortPhotos: 'Photo Count',
+    mapShow: '🗺 Show Map',
+    mapHide: '🗺 Hide Map',
+    filterAll: 'All',
+    modalTitle: 'Suggest a Photography Spot',
+    labelName: 'Your name (optional)',
+    placeholderName: 'Name',
+    labelPlace: 'Location name',
+    placeholderPlace: 'e.g. Ein Gedi',
+    labelRegion: 'Region',
+    regionPlaceholder: 'Choose region',
+    labelDesc: 'Description / Tip',
+    placeholderDesc: 'Tell us about this spot...',
+    cancel: 'Cancel',
+    send: 'Send',
+    sending: 'Sending...',
+    sent: 'Sent!',
+    alertFill: 'Please fill in location name and description.',
+    errorLoad: 'Error loading locations.',
+    viewSpot: 'View spot →',
   }
 };
 
@@ -156,6 +204,7 @@ function applyLang() {
   const isEn = lang === 'en';
   document.documentElement.dir = isEn ? 'ltr' : 'rtl';
   document.documentElement.lang = lang;
+
   const badge = document.querySelector('.badge');
   if (badge) badge.textContent = L.badge;
   const h1 = document.querySelector('.page-hero h1');
@@ -164,6 +213,54 @@ function applyLang() {
   if (sub) sub.textContent = L.subtitle;
   const suggestBtn = document.getElementById('btn-open-suggest');
   if (suggestBtn) suggestBtn.textContent = L.suggest;
+
+  // Sort bar
+  const sortLabel = document.querySelector('.sort-bar span');
+  if (sortLabel) sortLabel.textContent = L.sortLabel;
+  const sortSel = document.getElementById('sort-select');
+  if (sortSel) {
+    const opts = sortSel.options;
+    if (opts[0]) opts[0].textContent = L.sortDefault;
+    if (opts[1]) opts[1].textContent = L.sortAlpha;
+    if (opts[2]) opts[2].textContent = L.sortRegion;
+    if (opts[3]) opts[3].textContent = L.sortPhotos;
+  }
+
+  // Map toggle
+  const mapContainer = document.getElementById('map-container');
+  const mapBtn = document.getElementById('btn-toggle-map');
+  if (mapBtn) {
+    const isOpen = mapContainer && mapContainer.style.display !== 'none';
+    mapBtn.textContent = isOpen ? L.mapHide : L.mapShow;
+  }
+
+  // Filter buttons
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    if (btn.dataset.region === '') btn.textContent = L.filterAll;
+  });
+
+  // Modal
+  const modalTitle = document.querySelector('#suggest-modal .modal h2');
+  if (modalTitle) modalTitle.textContent = L.modalTitle;
+  const labels = document.querySelectorAll('#suggest-modal .modal label');
+  if (labels[0]) labels[0].textContent = L.labelName;
+  if (labels[1]) labels[1].textContent = L.labelPlace;
+  if (labels[2]) labels[2].textContent = L.labelRegion;
+  if (labels[3]) labels[3].textContent = L.labelDesc;
+  const nameInput = document.getElementById('suggest-name');
+  if (nameInput) nameInput.placeholder = L.placeholderName;
+  const locInput = document.getElementById('suggest-location');
+  if (locInput) locInput.placeholder = L.placeholderPlace;
+  const msgInput = document.getElementById('suggest-message');
+  if (msgInput) msgInput.placeholder = L.placeholderDesc;
+  const regionSel = document.getElementById('suggest-region');
+  if (regionSel && regionSel.options[0]) regionSel.options[0].textContent = L.regionPlaceholder;
+  const cancelBtn = document.getElementById('btn-cancel-suggest');
+  if (cancelBtn) cancelBtn.textContent = L.cancel;
+  const sendBtn = document.getElementById('btn-send-suggest');
+  if (sendBtn && sendBtn.textContent !== L.sending && sendBtn.textContent !== L.sent)
+    sendBtn.textContent = L.send;
+
   renderGrid();
 }
 
@@ -182,7 +279,8 @@ async function loadLocations() {
     allLocations = await res.json();
     applyLang();
   } catch {
-    grid.innerHTML = '<p class="empty">שגיאה בטעינת המקומות.</p>';
+    const L = LABELS[getLang()] || LABELS.he;
+    grid.innerHTML = `<p class="empty">${L.errorLoad}</p>`;
   }
 }
 
@@ -210,7 +308,7 @@ function renderGrid() {
   const sorted = getSorted(filtered);
 
   if (!sorted.length) {
-    grid.innerHTML = '<p class="empty">אין מקומות עדיין.</p>';
+    grid.innerHTML = `<p class="empty">${L.empty}</p>`;
     return;
   }
 
@@ -265,10 +363,11 @@ document.getElementById('btn-send-suggest').addEventListener('click', async () =
   const region = document.getElementById('suggest-region').value;
   const message = document.getElementById('suggest-message').value.trim();
 
-  if (!location || !message) { alert('נא למלא שם מקום ותיאור.'); return; }
+  const L = LABELS[getLang()] || LABELS.he;
+  if (!location || !message) { alert(L.alertFill); return; }
 
   const btn = document.getElementById('btn-send-suggest');
-  btn.disabled = true; btn.textContent = 'שולח...';
+  btn.disabled = true; btn.textContent = L.sending;
 
   await fetch('/api/locations/suggest', {
     method: 'POST',
@@ -276,8 +375,8 @@ document.getElementById('btn-send-suggest').addEventListener('click', async () =
     body: JSON.stringify({ type: 'new', sender_name: name, message: `${location}${region ? ' (' + region + ')' : ''}\n\n${message}` })
   });
 
-  btn.textContent = 'נשלח!';
-  setTimeout(() => { document.getElementById('suggest-modal').classList.remove('open'); btn.disabled = false; btn.textContent = 'שלח'; }, 1500);
+  btn.textContent = L.sent;
+  setTimeout(() => { document.getElementById('suggest-modal').classList.remove('open'); btn.disabled = false; btn.textContent = L.send; }, 1500);
 });
 
 let mapInstance = null;
@@ -309,10 +408,14 @@ function initMap(locations) {
       fillOpacity: 0.9
     }).addTo(mapInstance);
 
+    const Lp = LABELS[getLang()] || LABELS.he;
+    const isEnP = getLang() === 'en';
+    const ptitle = (isEnP && l.title_en) ? l.title_en : l.title;
+    const pregion = isEnP ? (REGION_MAP_EN[l.region] || l.region || '') : (l.region || '');
     marker.bindPopup(`
-      <div class="loc-popup-title">${escHtml(l.title)}</div>
-      <div class="loc-popup-region">${escHtml(l.region || '')}</div>
-      <a class="loc-popup-link" href="/locations/spot/?slug=${encodeURIComponent(l.id)}">צפה במקום →</a>
+      <div class="loc-popup-title">${escHtml(ptitle)}</div>
+      <div class="loc-popup-region">${escHtml(pregion)}</div>
+      <a class="loc-popup-link" href="/locations/spot/?slug=${encodeURIComponent(l.id)}">${Lp.viewSpot}</a>
     `);
   });
 
@@ -323,9 +426,10 @@ function initMap(locations) {
 
 document.getElementById('btn-toggle-map').addEventListener('click', function() {
   const container = document.getElementById('map-container');
+  const L = LABELS[getLang()] || LABELS.he;
   const isOpen = container.style.display !== 'none';
   container.style.display = isOpen ? 'none' : 'block';
-  this.textContent = isOpen ? '🗺 הצג מפה' : '🗺 הסתר מפה';
+  this.textContent = isOpen ? L.mapShow : L.mapHide;
   if (!isOpen) {
     initMap(allLocations);
     setTimeout(() => mapInstance && mapInstance.invalidateSize(), 150);

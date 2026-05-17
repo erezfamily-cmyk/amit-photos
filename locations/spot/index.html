@@ -186,11 +186,11 @@ function shareFacebook() {
   window.open('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(location.href));
 }
 function copyLink() {
+  const L = SPOT_LABELS[getLang()] || SPOT_LABELS.he;
   navigator.clipboard.writeText(location.href).then(() => {
     const btn = document.getElementById('btn-copy-link');
-    const orig = btn.textContent;
-    btn.textContent = '✓ הועתק!';
-    setTimeout(() => btn.textContent = orig, 2000);
+    btn.textContent = L.copied;
+    setTimeout(() => { btn.textContent = L.copyLink; }, 2000);
   });
 }
 
@@ -202,7 +202,8 @@ async function loadNextLocation(currentSlug, currentRegion) {
       .filter(l => l.region === currentRegion && l.id !== currentSlug);
     if (!sameRegion.length) return;
     const next = sameRegion[0];
-    document.getElementById('next-loc-title').textContent = next.title;
+    const isEn = getLang() === 'en';
+    document.getElementById('next-loc-title').textContent = (isEn && next.title_en) ? next.title_en : next.title;
     document.getElementById('next-loc-link').href = '/locations/spot/?slug=' + encodeURIComponent(next.id);
     document.getElementById('next-loc-nav').style.display = 'block';
   } catch(e) {}
@@ -321,7 +322,7 @@ async function loadSpot() {
 }
 
 window.addEventListener('storage', (e) => {
-  if (e.key === 'lang') loadSpot();
+  if (e.key === 'lang') { loadSpot(); applySpotModalLang(); }
 });
 
 function renderSeasons(wt, lang) {
@@ -496,24 +497,79 @@ function renderSpot(loc, lang) {
 document.getElementById('lb-close').addEventListener('click', () => document.getElementById('lb').classList.remove('open'));
 document.getElementById('lb').addEventListener('click', e => { if (e.target === document.getElementById('lb')) document.getElementById('lb').classList.remove('open'); });
 
-document.getElementById('btn-open-correction').addEventListener('click', () => document.getElementById('correction-modal').classList.add('open'));
+const SPOT_LABELS = {
+  he: {
+    modalTitle: 'שלח תיקון / טיפ',
+    labelName: 'שמך (אופציונלי)',
+    labelMsg: 'הטיפ / התיקון שלך',
+    placeholderMsg: 'מה תרצה לשתף?',
+    cancel: 'ביטול',
+    send: 'שלח',
+    sending: 'שולח...',
+    sent: 'נשלח!',
+    alertFill: 'נא למלא הודעה.',
+    copied: '✓ הועתק!',
+    copyLink: 'העתק קישור',
+    nextLocLabel: 'מקום נוסף באזור זה',
+  },
+  en: {
+    modalTitle: 'Send a Tip or Correction',
+    labelName: 'Your name (optional)',
+    labelMsg: 'Your tip / correction',
+    placeholderMsg: 'What would you like to share?',
+    cancel: 'Cancel',
+    send: 'Send',
+    sending: 'Sending...',
+    sent: 'Sent!',
+    alertFill: 'Please fill in your message.',
+    copied: '✓ Copied!',
+    copyLink: 'Copy Link',
+    nextLocLabel: 'Another spot in this region',
+  }
+};
+
+function applySpotModalLang() {
+  const L = SPOT_LABELS[getLang()] || SPOT_LABELS.he;
+  const mh2 = document.querySelector('#correction-modal .modal h2');
+  if (mh2) mh2.textContent = L.modalTitle;
+  const mlabels = document.querySelectorAll('#correction-modal .modal label');
+  if (mlabels[0]) mlabels[0].textContent = L.labelName;
+  if (mlabels[1]) mlabels[1].textContent = L.labelMsg;
+  const corrMsg = document.getElementById('corr-message');
+  if (corrMsg) corrMsg.placeholder = L.placeholderMsg;
+  const cancelBtn = document.getElementById('btn-cancel-corr');
+  if (cancelBtn) cancelBtn.textContent = L.cancel;
+  const sendBtn = document.getElementById('btn-send-corr');
+  if (sendBtn && sendBtn.textContent !== L.sending && sendBtn.textContent !== L.sent)
+    sendBtn.textContent = L.send;
+  const copyBtn = document.getElementById('btn-copy-link');
+  if (copyBtn && copyBtn.textContent !== L.copied) copyBtn.textContent = L.copyLink;
+  const nextLabel = document.getElementById('next-loc-label');
+  if (nextLabel) nextLabel.textContent = L.nextLocLabel;
+}
+
+document.getElementById('btn-open-correction').addEventListener('click', () => {
+  applySpotModalLang();
+  document.getElementById('correction-modal').classList.add('open');
+});
 document.getElementById('btn-cancel-corr').addEventListener('click', () => document.getElementById('correction-modal').classList.remove('open'));
 document.getElementById('btn-send-corr').addEventListener('click', async () => {
+  const L = SPOT_LABELS[getLang()] || SPOT_LABELS.he;
   const name = document.getElementById('corr-name').value.trim();
   const message = document.getElementById('corr-message').value.trim();
-  if (!message) { alert('נא למלא הודעה.'); return; }
+  if (!message) { alert(L.alertFill); return; }
   const btn = document.getElementById('btn-send-corr');
-  btn.disabled = true; btn.textContent = 'שולח...';
+  btn.disabled = true; btn.textContent = L.sending;
   await fetch('/api/locations/suggest', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ type: 'correction', location_slug: slug, sender_name: name, message })
   });
-  btn.textContent = 'נשלח!';
-  setTimeout(() => { document.getElementById('correction-modal').classList.remove('open'); btn.disabled = false; btn.textContent = 'שלח'; }, 1500);
+  btn.textContent = L.sent;
+  setTimeout(() => { document.getElementById('correction-modal').classList.remove('open'); btn.disabled = false; btn.textContent = L.send; }, 1500);
 });
 
-const WMO = {
+const WMO_HE = {
   0:'☀️ בהיר', 1:'🌤 בהיר ברובו', 2:'⛅ מעונן חלקית', 3:'☁️ מעונן',
   45:'🌫 ערפל', 48:'🌫 ערפל קרח',
   51:'🌦 טפטוף קל', 53:'🌦 טפטוף', 55:'🌧 טפטוף כבד',
@@ -522,6 +578,18 @@ const WMO = {
   80:'🌦 מקלחות קלות', 81:'🌧 מקלחות', 82:'⛈ מקלחות כבדות',
   95:'⛈ סופת רעמים', 99:'⛈ סופה עם ברד'
 };
+const WMO_EN = {
+  0:'☀️ Clear', 1:'🌤 Mostly Clear', 2:'⛅ Partly Cloudy', 3:'☁️ Overcast',
+  45:'🌫 Foggy', 48:'🌫 Icy Fog',
+  51:'🌦 Light Drizzle', 53:'🌦 Drizzle', 55:'🌧 Heavy Drizzle',
+  61:'🌧 Light Rain', 63:'🌧 Rain', 65:'🌧 Heavy Rain',
+  71:'🌨 Light Snow', 73:'❄️ Snow', 75:'❄️ Heavy Snow',
+  80:'🌦 Light Showers', 81:'🌧 Showers', 82:'⛈ Heavy Showers',
+  95:'⛈ Thunderstorm', 99:'⛈ Storm with Hail'
+};
+function getWMO(code) {
+  return getLang() === 'en' ? (WMO_EN[code] || '🌡 --') : (WMO_HE[code] || '🌡 --');
+}
 
 async function loadSunTimes(lat, lng) {
   try {
@@ -552,17 +620,19 @@ async function loadWeather(lat, lng) {
     const c = data.current;
     if (!c) return;
 
-    const wmoEntry = WMO[c.weathercode] || '🌡 --';
+    const wmoEntry = getWMO(c.weathercode);
     const [icon, ...descParts] = wmoEntry.split(' ');
     document.getElementById('weather-icon').textContent = icon;
     document.getElementById('weather-temp').textContent = Math.round(c.temperature_2m) + '°C';
     document.getElementById('weather-desc').textContent = descParts.join(' ');
-    document.getElementById('weather-wind').textContent = `💨 ${Math.round(c.windspeed_10m)} קמ"ש`;
+    const windUnit = getLang() === 'en' ? 'km/h' : 'קמ"ש';
+    document.getElementById('weather-wind').textContent = `💨 ${Math.round(c.windspeed_10m)} ${windUnit}`;
     document.getElementById('weather-widget').style.display = 'block';
   } catch(e) {}
 }
 
 loadSpot();
+applySpotModalLang();
 </script>
 </body>
 </html>
