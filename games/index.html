@@ -26,11 +26,6 @@
 body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--text);
   direction: rtl; min-height: 100vh; padding: 0 0 4rem; }
 
-.site-header { display: flex; align-items: center; justify-content: space-between;
-  padding: 1rem 1.25rem; border-bottom: 1px solid var(--border); }
-.site-title { font-family: 'Syne', sans-serif; font-size: 1.1rem;
-  color: var(--accent); text-decoration: none; }
-
 .page-hero { text-align: center; padding: 2.5rem 1.25rem 1.5rem; }
 .page-hero h1 { font-family: 'Syne', sans-serif; font-size: 1.8rem;
   color: var(--accent); margin-bottom: .5rem; }
@@ -66,33 +61,89 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
 <body>
 
 <div class="page-hero">
-  <h1>🎯 אתגרים</h1>
-  <p>שחק, אתגר את עצמך — וזכה בהנחות על תמונות אמנותיות</p>
+  <h1 id="g-title">🎯 אתגרים</h1>
+  <p id="g-sub">שחק, אתגר את עצמך — וזכה בהנחות על תמונות אמנותיות</p>
 </div>
 
 <div class="cards">
 
   <a class="card" href="https://amitphotos.com/quiz/">
     <div class="card-emoji">🌍</div>
-    <div class="card-title">מאיפה הצילום?</div>
-    <div class="card-desc">נחש מאיפה בעולם צולמה כל תמונה — מ-10 שאלות. נסיעות, נופים, ערים — האם תזהה?</div>
-    <div class="card-prize">🎁 ענה נכון על 6+ — קבל 20% הנחה על כל הגלריה</div>
-    <span class="card-cta">שחק עכשיו</span>
+    <div class="card-title" id="q-title">מאיפה הצילום?</div>
+    <div class="card-desc" id="q-desc">נחש מאיפה בעולם צולמה כל תמונה — מ-10 שאלות. נסיעות, נופים, ערים — האם תזהה?</div>
+    <div class="card-prize" id="q-prize">🎁 ענה נכון על 6+ — קבל 20% הנחה על כל הגלריה</div>
+    <span class="card-cta" id="q-cta">שחק עכשיו</span>
   </a>
 
   <a class="card" href="https://amitphotos.com/puzzle/">
     <div class="card-emoji">🧩</div>
-    <div class="card-title">פאזל הזזה</div>
-    <div class="card-desc">פתור פאזל הזזה של תמונה אמנותית. מגלים את התמונה חלק חלק — האם תצליח?</div>
-    <div class="card-prize">🎁 פתור את הפאזל — קבל 20% הנחה על אותה תמונה</div>
-    <span class="card-cta">שחק עכשיו</span>
+    <div class="card-title" id="p-title">פאזל הזזה</div>
+    <div class="card-desc" id="p-desc">פתור פאזל הזזה של תמונה אמנותית. מגלים את התמונה חלק חלק — האם תצליח?</div>
+    <div class="card-prize" id="p-prize">🎁 פתור את הפאזל — קבל 20% הנחה על אותה תמונה</div>
+    <span class="card-cta" id="p-cta">שחק עכשיו</span>
   </a>
 
 </div>
 
 <div class="back-link">
-  <a href="https://amitphotos.com">← לגלריה המלאה</a>
+  <a href="https://amitphotos.com" id="g-back">← לגלריה המלאה</a>
 </div>
 
+<script>
+const LABELS = {
+  he: {
+    title: '🎯 אתגרים',
+    sub: 'שחק, אתגר את עצמך — וזכה בהנחות על תמונות אמנותיות',
+    qTitle: 'מאיפה הצילום?',
+    qDesc: 'נחש מאיפה בעולם צולמה כל תמונה — מ-10 שאלות. נסיעות, נופים, ערים — האם תזהה?',
+    qPrize: '🎁 ענה נכון על 6+ — קבל 20% הנחה על כל הגלריה',
+    qCta: 'שחק עכשיו',
+    pTitle: 'פאזל הזזה',
+    pDesc: 'פתור פאזל הזזה של תמונה אמנותית. מגלים את התמונה חלק חלק — האם תצליח?',
+    pPrize: '🎁 פתור את הפאזל — קבל 20% הנחה על אותה תמונה',
+    pCta: 'שחק עכשיו',
+    back: '← לגלריה המלאה'
+  },
+  en: {
+    title: '🎯 Challenges',
+    sub: 'Play, challenge yourself — and win discounts on fine art photography',
+    qTitle: 'Where Was This Photo Taken?',
+    qDesc: 'Guess where in the world each photo was taken — 10 questions. Travel, landscapes, cities — can you tell?',
+    qPrize: '🎁 Answer 6+ correctly — get 20% off the entire gallery',
+    qCta: 'Play Now',
+    pTitle: 'Sliding Puzzle',
+    pDesc: 'Solve a sliding puzzle of a fine art photo. Reveal the image piece by piece — can you do it?',
+    pPrize: '🎁 Solve the puzzle — get 20% off that photo',
+    pCta: 'Play Now',
+    back: '← Back to Gallery'
+  }
+};
+
+function getLang() { return localStorage.getItem('lang') || 'he'; }
+
+function applyLang(lang) {
+  const L = LABELS[lang] || LABELS.he;
+  const isEn = lang === 'en';
+  document.documentElement.lang = lang;
+  document.documentElement.dir = isEn ? 'ltr' : 'rtl';
+  document.getElementById('g-title').textContent = L.title;
+  document.getElementById('g-sub').textContent = L.sub;
+  document.getElementById('q-title').textContent = L.qTitle;
+  document.getElementById('q-desc').textContent = L.qDesc;
+  document.getElementById('q-prize').textContent = L.qPrize;
+  document.getElementById('q-cta').textContent = L.qCta;
+  document.getElementById('p-title').textContent = L.pTitle;
+  document.getElementById('p-desc').textContent = L.pDesc;
+  document.getElementById('p-prize').textContent = L.pPrize;
+  document.getElementById('p-cta').textContent = L.pCta;
+  document.getElementById('g-back').textContent = L.back;
+}
+
+window.addEventListener('storage', e => {
+  if (e.key === 'lang') applyLang(e.newValue || 'he');
+});
+
+applyLang(getLang());
+</script>
 </body>
 </html>

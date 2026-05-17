@@ -3290,7 +3290,7 @@ async function handleLocationsGet(request, env, slug) {
     const [lat, lng] = loc.coordinates.split(',').map(s => parseFloat(s.trim()));
     if (!isNaN(lat) && !isNaN(lng)) {
       const { results: others } = await env.DB.prepare(
-        "SELECT l.id, l.title, l.coordinates, (SELECT lp.thumbnail FROM location_photos lp WHERE lp.location_id = l.id ORDER BY lp.sort_order ASC LIMIT 1) AS cover_thumb FROM locations l WHERE l.published = 1 AND l.id != ? AND l.coordinates IS NOT NULL AND l.coordinates != ''"
+        "SELECT l.id, l.title, l.title_en, l.coordinates, (SELECT lp.thumbnail FROM location_photos lp WHERE lp.location_id = l.id ORDER BY lp.sort_order ASC LIMIT 1) AS cover_thumb FROM locations l WHERE l.published = 1 AND l.id != ? AND l.coordinates IS NOT NULL AND l.coordinates != ''"
       ).bind(slug).all();
       nearby = (others || [])
         .map(o => {

@@ -300,6 +300,7 @@ async function loadSpot() {
   const isEn = lang === 'en';
   document.documentElement.dir = isEn ? 'ltr' : 'rtl';
   document.documentElement.lang = lang;
+  document.body.style.direction = isEn ? 'ltr' : 'rtl';
   document.body.style.fontFamily = isEn ? "'Inter', system-ui, sans-serif" : '';
 
   const backLink = document.querySelector('.back-link');
@@ -364,7 +365,7 @@ function renderNearby(nearby, lang) {
   const kmLabel = isEn ? 'km →' : 'ק"מ →';
   const items = nearby.map(n =>
     `<a class="nearby-item" href="/locations/spot/?slug=${encodeURIComponent(n.id)}">
-      <span class="nearby-name">${escHtml(n.title)}</span>
+      <span class="nearby-name">${escHtml((isEn && n.title_en) ? n.title_en : n.title)}</span>
       <span class="nearby-dist">${n.km} ${kmLabel}</span>
     </a>`
   ).join('');
