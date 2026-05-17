@@ -1718,7 +1718,7 @@ async function servePhotoPage(photoId, env) {
   return new Response(html, {
     headers: {
       'Content-Type': 'text/html; charset=UTF-8',
-      'Cache-Control': 'public, max-age=3600',
+      'Cache-Control': 'no-cache, no-store, must-revalidate',
     },
   });
 }
@@ -1820,7 +1820,7 @@ async function handleCategoryPage(category, env) {
 </html>`;
 
   return new Response(html, {
-    headers: { 'Content-Type': 'text/html; charset=UTF-8', 'Cache-Control': 'public, max-age=1800' },
+    headers: { 'Content-Type': 'text/html; charset=UTF-8', 'Cache-Control': 'no-cache, no-store, must-revalidate' },
   });
 }
 
@@ -2055,7 +2055,7 @@ async function handleLocationSpotPage(request, env) {
   return new Response(html, {
     headers: {
       'Content-Type': 'text/html; charset=UTF-8',
-      'Cache-Control': 'public, max-age=300',
+      'Cache-Control': 'no-cache, no-store, must-revalidate',
     },
   });
 }
@@ -2499,10 +2499,23 @@ async function handleAnalysesGenerateEn(request, env, photoId) {
   let camera = {};
   try { camera = JSON.parse(row.camera_json || '{}'); } catch (_) {}
 
+  let annotations = [];
+  try { annotations = JSON.parse(row.annotations_json || '[]'); } catch (_) {}
+
   const cameraStr = ['aperture','shutter','iso','focal'].map(k => {
     const c = camera[k] || {};
     return c.value ? `${k}: value="${c.value}", explanation="${c.explanation || ''}"` : '';
   }).filter(Boolean).join('\n');
+
+  let tags = [];
+  try { tags = JSON.parse(row.tags_json || '[]'); } catch (_) {}
+
+  const annLabels = annotations
+    .filter(a => a.label)
+    .map((a, i) => `${i}: "${a.label.replace(/\n/g, '\\n')}"`)
+    .join('\n');
+
+  const tagsStr = tags.join(', ');
 
   const prompt = `You are Amit Erez, an Israeli fine-art photographer writing educational photo analyses for an international audience.
 Translate the following Hebrew photography analysis to English. Write in first person, personal and inspiring tone.
@@ -2516,6 +2529,12 @@ ${cameraStr}
 Composition analysis HTML (translate text content only, preserve all HTML tags exactly):
 ${row.composition_html || ''}
 
+${annLabels ? `Annotation labels on the photo (short, concise labels — keep \\n for line breaks):
+${annLabels}` : ''}
+
+${tagsStr ? `Tags (translate to short English keywords, same count):
+${tagsStr}` : ''}
+
 Return ONLY valid JSON, no markdown:
 {
   "title_en": "English title",
@@ -2525,7 +2544,9 @@ Return ONLY valid JSON, no markdown:
     "iso": {"explanation":"English explanation"},
     "focal": {"explanation":"English explanation"}
   },
-  "composition_html_en": "<p>...translated HTML...</p>"
+  "composition_html_en": "<p>...translated HTML...</p>"${annLabels ? `,
+  "annotation_labels_en": {"0": "English label", "1": "English label"}` : ''}${tagsStr ? `,
+  "tags_en": ["tag1", "tag2", "tag3"]` : ''}
 }`;
 
   const res = await fetch('https://api.anthropic.com/v1/messages', {
@@ -2552,14 +2573,32 @@ Return ONLY valid JSON, no markdown:
     camEnMerged[k] = { value: orig.value, explanation: trans.explanation || orig.explanation || '' };
   }
 
-  await env.DB.prepare(`
-    UPDATE photo_analyses SET title_en=?, composition_html_en=?, camera_json_en=? WHERE photo_id=?
-  `).bind(
-    parsed.title_en || row.title,
-    parsed.composition_html_en || row.composition_html || '',
-    JSON.stringify(camEnMerged),
-    photoId
-  ).run();
+  // Merge label_en into each annotation
+  const annLabelsEn = parsed.annotation_labels_en || {};
+  let annIdx = 0;
+  const annotationsUpdated = annotations.map(a => {
+    if (!a.label) return a;
+    const en = annLabelsEn[String(annIdx++)];
+    return en ? { ...a, label_en: en.replace(/\\n/g, '\n') } : a;
+  });
+
+  const tagsEnJson = (parsed.tags_en && Array.isArray(parsed.tags_en) && parsed.tags_en.length)
+    ? JSON.stringify(parsed.tags_en)
+    : null;
+
+  // Try to save tags_en (column may not exist yet — ignore error)
+  try {
+    await env.DB.prepare('ALTER TABLE photo_analyses ADD COLUMN tags_json_en TEXT DEFAULT \'[]\'').run();
+  } catch (_) {}
+
+  const updateFields = tagsEnJson
+    ? 'title_en=?, composition_html_en=?, camera_json_en=?, annotations_json=?, tags_json_en=?'
+    : 'title_en=?, composition_html_en=?, camera_json_en=?, annotations_json=?';
+  const updateValues = tagsEnJson
+    ? [parsed.title_en || row.title, parsed.composition_html_en || row.composition_html || '', JSON.stringify(camEnMerged), JSON.stringify(annotationsUpdated), tagsEnJson, photoId]
+    : [parsed.title_en || row.title, parsed.composition_html_en || row.composition_html || '', JSON.stringify(camEnMerged), JSON.stringify(annotationsUpdated), photoId];
+
+  await env.DB.prepare(`UPDATE photo_analyses SET ${updateFields} WHERE photo_id=?`).bind(...updateValues).run();
 
   return jsonRes({ ok: true, title_en: parsed.title_en }, 200, request);
 }
@@ -2790,8 +2829,11 @@ const RULE_LABELS_EN = {
 };
 
 async function handleLearnIndex(env) {
+  // Ensure tags_json_en column exists
+  try { await env.DB.prepare('ALTER TABLE photo_analyses ADD COLUMN tags_json_en TEXT DEFAULT \'[]\'').run(); } catch (_) {}
+
   const { results: analyses } = await env.DB.prepare(
-    `SELECT a.photo_id, a.title, a.title_en, a.composition_rule, a.tags_json, a.published_at,
+    `SELECT a.photo_id, a.title, a.title_en, a.composition_rule, a.tags_json, a.tags_json_en, a.published_at,
             p.thumbnail
      FROM photo_analyses a
      LEFT JOIN photos p ON p.id = a.photo_id
@@ -2803,7 +2845,14 @@ async function handleLearnIndex(env) {
     const ruleLabelHe = RULE_LABELS[a.composition_rule] || a.composition_rule;
     const ruleLabelEn = RULE_LABELS_EN[a.composition_rule] || a.composition_rule;
     const titleEn = a.title_en || a.title;
-    const tags = JSON.parse(a.tags_json || '[]').slice(0, 3).map(t => `<span class="tag">${escXml(t)}</span>`).join('');
+    const tagsHe = JSON.parse(a.tags_json || '[]').slice(0, 3);
+    const tagsEn = JSON.parse(a.tags_json_en || '[]').slice(0, 3);
+    const tags = tagsHe.map((t, i) => {
+      const en = tagsEn[i];
+      return en
+        ? `<span class="tag"><span class="lang-he">${escXml(t)}</span><span class="lang-en" style="display:none">${escXml(en)}</span></span>`
+        : `<span class="tag">${escXml(t)}</span>`;
+    }).join('');
     const date = a.published_at ? a.published_at.slice(0, 10) : '';
     return `<a class="learn-card" href="/learn/${escXml(a.photo_id)}">
       <img src="${escXml(thumb)}" alt="${escXml(a.title)}" loading="lazy">
@@ -3082,7 +3131,10 @@ function buildAnnotationLabels(annotations) {
     const x1 = parseFloat(ann.x1_pct) || 0, y1 = parseFloat(ann.y1_pct) || 0;
     const x2 = parseFloat(ann.x2_pct) || 0, y2 = parseFloat(ann.y2_pct) || 0;
     const mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
-    return `<div data-ann-idx="${idx}" style="position:absolute;left:${mx}%;top:${my}%;transform:translate(-50%,-130%);background:rgba(0,0,0,.85);border:1px solid rgba(200,169,110,.4);border-radius:6px;padding:3px 8px;font-size:.68rem;color:#f0ede8;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .4s">${escXml(ann.label)}</div>`;
+    const labelContent = ann.label_en
+      ? `<span class="lang-he">${escXml(ann.label)}</span><span class="lang-en" style="display:none">${escXml(ann.label_en)}</span>`
+      : escXml(ann.label);
+    return `<div data-ann-idx="${idx}" style="position:absolute;left:${mx}%;top:${my}%;transform:translate(-50%,-130%);background:rgba(0,0,0,.85);border:1px solid rgba(200,169,110,.4);border-radius:6px;padding:3px 8px;font-size:.68rem;color:#f0ede8;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .4s">${labelContent}</div>`;
   }).join('\n');
 }
 
@@ -3091,11 +3143,14 @@ function buildAnnotations(annotations) {
     const idx = annotations.indexOf(ann);
     const x = parseFloat(ann.x_pct) || 0;
     const y = parseFloat(ann.y_pct) || 0;
-    const labelLines = (ann.label || '').split('\n').map(l => escXml(l)).join('<br>');
     const anchorClass = `ann-${ann.anchor || 'right'}`;
+    const labelHe = (ann.label || '').split('\n').map(l => escXml(l)).join('<br>');
+    const labelContent = ann.label_en
+      ? `<span class="lang-he">${labelHe}</span><span class="lang-en" style="display:none">${ann.label_en.split('\n').map(l => escXml(l)).join('<br>')}</span>`
+      : labelHe;
     return `<div class="ann" data-ann-idx="${idx}" style="left:${x}%;top:${y}%;opacity:0;transition:opacity .4s">
       <div class="ann-dot"></div>
-      <div class="ann-label ${anchorClass}">${labelLines}</div>
+      <div class="ann-label ${anchorClass}">${labelContent}</div>
     </div>`;
   }).join('\n');
 }
