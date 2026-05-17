@@ -903,6 +903,13 @@ function openLightbox(idx) {
   const lbPrint = document.getElementById('lb-print');
   if (lbBuy)   lbBuy.style.display   = canBuy(photo) ? '' : 'none';
   if (lbPrint) lbPrint.style.display = PURCHASES_ENABLED ? '' : 'none';
+  const priceHint = document.getElementById('lb-price-hint');
+  if (priceHint && canBuy(photo)) {
+    const minPrice = getEffectivePrice(photo.id, 'small');
+    priceHint.textContent = `— ${t('gallery.price.from')}₪${minPrice}`;
+  } else if (priceHint) {
+    priceHint.textContent = '';
+  }
 
   document.getElementById('lightbox').classList.add('open');
   document.body.style.overflow = 'hidden';

@@ -286,6 +286,34 @@
     </div>
   </section>
 
+  <!-- ===== EXPLORE ===== -->
+  <section class="section explore-section">
+    <div class="section-header reveal">
+      <p class="section-label" data-i18n="explore.label">מה עוד תמצא כאן</p>
+      <h2 class="section-title" data-i18n="explore.title">ללמוד, לגלות, ליצור</h2>
+    </div>
+    <div class="explore-grid">
+      <a href="/camera/" class="explore-card reveal">
+        <div class="explore-icon">📷</div>
+        <div class="explore-card-title" data-i18n="explore.camera.title">למד לצלם</div>
+        <div class="explore-card-desc" data-i18n="explore.camera.desc">מדריכים מעמיקים — חשיפה, עדשות, קומפוזיציה ועוד. לצלמים מתחילים ומתקדמים.</div>
+        <div class="explore-card-cta" data-i18n="explore.camera.cta">למדריכים ←</div>
+      </a>
+      <a href="/learn/" class="explore-card reveal reveal-delay-1">
+        <div class="explore-icon">🔍</div>
+        <div class="explore-card-title" data-i18n="explore.learn.title">ניתוח תמונות</div>
+        <div class="explore-card-desc" data-i18n="explore.learn.desc">כל תמונה בגלריה עם ניתוח מעמיק — מה מייחד אותה, איך צולמה, ומה אפשר ללמוד ממנה.</div>
+        <div class="explore-card-cta" data-i18n="explore.learn.cta">לניתוחים ←</div>
+      </a>
+      <a href="/locations/" class="explore-card reveal reveal-delay-2">
+        <div class="explore-icon">📍</div>
+        <div class="explore-card-title" data-i18n="explore.locations.title">מקומות לצילום</div>
+        <div class="explore-card-desc" data-i18n="explore.locations.desc">מדריכי מקומות מומלצים בישראל ובעולם — עם טיפים לצילום וזמנים מומלצים.</div>
+        <div class="explore-card-cta" data-i18n="explore.locations.cta">לגלות מקומות ←</div>
+      </a>
+    </div>
+  </section>
+
   <!-- ===== PLATFORMS ===== -->
   <section class="section platforms-section reveal">
     <div class="platforms-inner">
@@ -455,6 +483,7 @@
       <div class="pricing-card reveal">
         <p class="pricing-name" data-i18n="pricing.net.name">קובץ רשת</p>
         <div class="pricing-price"><span class="pricing-currency">₪</span>19</div>
+        <div class="pricing-usd">~$5</div>
         <p class="pricing-period" data-i18n="pricing.per-photo">לתמונה</p>
         <ul class="pricing-features">
           <li data-i18n="pricing.net.f1">רזולוציה 1500px</li>
@@ -468,6 +497,7 @@
         <div class="pricing-badge" data-i18n="pricing.popular">פופולרי</div>
         <p class="pricing-name" data-i18n="pricing.print.name">קובץ הדפסה</p>
         <div class="pricing-price"><span class="pricing-currency">₪</span>59</div>
+        <div class="pricing-usd">~$16</div>
         <p class="pricing-period" data-i18n="pricing.per-photo">לתמונה</p>
         <ul class="pricing-features">
           <li data-i18n="pricing.print.f1">רזולוציה 3000px</li>
@@ -480,6 +510,7 @@
       <div class="pricing-card reveal reveal-delay-2">
         <p class="pricing-name" data-i18n="pricing.full.name">קובץ מלא</p>
         <div class="pricing-price"><span class="pricing-currency">₪</span>129</div>
+        <div class="pricing-usd">~$35</div>
         <p class="pricing-period" data-i18n="pricing.per-photo">לתמונה</p>
         <ul class="pricing-features">
           <li data-i18n="pricing.full.f1">רזולוציה מקסימלית</li>
@@ -713,7 +744,7 @@
       <button id="lb-slideshow" class="lb-action-btn" data-i18n="lb.slideshow.start">▶ מצגת</button>
       <button id="lb-wall" class="lb-action-btn" data-i18n="lb.wall">🖼 על הקיר</button>
       <button id="lb-print" class="lb-action-btn" data-i18n="lb.print">הדפסה ←</button>
-      <button id="lb-buy" class="lb-action-btn lb-buy-btn" data-i18n="lb.buy">רכישה ←</button>
+      <button id="lb-buy" class="lb-action-btn lb-buy-btn"><span data-i18n="lb.buy">רכישה ←</span><span id="lb-price-hint" class="lb-price-hint"></span></button>
       <a id="lb-share-wa" class="lb-action-btn lb-whatsapp" target="_blank" rel="noopener" data-i18n="lb.whatsapp">וואטסאפ</a>
       <a id="lb-share-fb" class="lb-action-btn" target="_blank" rel="noopener" data-i18n="lb.facebook">פייסבוק</a>
       <a id="lb-share-pin" class="lb-action-btn lb-pinterest" target="_blank" rel="noopener" data-i18n="lb.pinterest">Pinterest</a>

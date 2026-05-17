@@ -142,6 +142,19 @@ const TRANSLATIONS = {
     'test.3.name':      'נועה ל.',
     'test.3.event':     'בר מצווה',
 
+    // Explore section (promo for camera/learn/locations)
+    'explore.label':              'מה עוד תמצא כאן',
+    'explore.title':              'ללמוד, לגלות, ליצור',
+    'explore.camera.title':       'למד לצלם',
+    'explore.camera.desc':        'מדריכים מעמיקים — חשיפה, עדשות, קומפוזיציה ועוד. לצלמים מתחילים ומתקדמים.',
+    'explore.camera.cta':         'למדריכים ←',
+    'explore.learn.title':        'ניתוח תמונות',
+    'explore.learn.desc':         'כל תמונה בגלריה עם ניתוח מעמיק — מה מייחד אותה, איך צולמה, ומה אפשר ללמוד ממנה.',
+    'explore.learn.cta':          'לניתוחים ←',
+    'explore.locations.title':    'מקומות לצילום',
+    'explore.locations.desc':     'מדריכי מקומות מומלצים בישראל ובעולם — עם טיפים לצילום וזמנים מומלצים.',
+    'explore.locations.cta':      'לגלות מקומות ←',
+
     // Pricing
     'pricing.label':    'גדלים ומחירים',
     'pricing.title':    'בחר את הגודל שלך',
@@ -480,6 +493,19 @@ const TRANSLATIONS = {
     'test.3.text':      '"Our son will remember this day forever, thanks to the wonderful photos. Thank you Amit!"',
     'test.3.name':      'Noa L.',
     'test.3.event':     'Bar Mitzvah',
+
+    // Explore section (promo for camera/learn/locations)
+    'explore.label':              'Discover More',
+    'explore.title':              'Learn, Explore, Create',
+    'explore.camera.title':       'Learn Photography',
+    'explore.camera.desc':        'In-depth guides on exposure, lenses, composition, and more — for beginners and advanced shooters alike.',
+    'explore.camera.cta':         'View Guides →',
+    'explore.learn.title':        'Photo Analysis',
+    'explore.learn.desc':         'Each gallery photo comes with a deep-dive analysis — what makes it special, how it was shot, and what you can learn from it.',
+    'explore.learn.cta':          'View Analyses →',
+    'explore.locations.title':    'Photography Locations',
+    'explore.locations.desc':     'Curated location guides across Israel and the world — with shooting tips and best-visit times.',
+    'explore.locations.cta':      'Explore Locations →',
 
     // Pricing
     'pricing.label':    'Sizes & Prices',

@@ -1523,6 +1523,63 @@ nav.scrolled { border-bottom-color: rgba(200, 169, 110, 0.3); }
   }
 }
 
+/* ===== LIGHTBOX PRICE HINT ===== */
+.lb-price-hint {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 400;
+  opacity: 0.75;
+  margin-right: 0.4rem;
+}
+
+/* ===== PRICING USD HINT ===== */
+.pricing-usd {
+  display: none;
+  font-size: 0.78rem;
+  color: #666;
+  margin-top: 0.1rem;
+  margin-bottom: 0.3rem;
+}
+html[lang="en"] .pricing-usd { display: block; }
+
+/* ===== EXPLORE SECTION ===== */
+.explore-section { padding-bottom: 0; }
+.explore-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 1.25rem;
+}
+@media (min-width: 600px) { .explore-grid { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 900px) { .explore-grid { grid-template-columns: 1fr 1fr 1fr; } }
+.explore-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1.5rem 1.25rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.2s, transform 0.15s;
+}
+.explore-card:hover { border-color: var(--accent); transform: translateY(-3px); }
+.explore-icon { font-size: 2rem; line-height: 1; }
+.explore-card-title { font-family: var(--font-display); font-size: 1.1rem; color: var(--accent); }
+.explore-card-desc { font-size: 0.82rem; color: var(--text-muted); line-height: 1.6; flex: 1; }
+.explore-card-cta {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--accent);
+  margin-top: 0.25rem;
+  opacity: 0.8;
+  transition: opacity 0.15s;
+}
+.explore-card:hover .explore-card-cta { opacity: 1; }
+
 /* ===== BUY SIZE GUIDE ===== */
 .buy-size-guide {
   display: flex;
