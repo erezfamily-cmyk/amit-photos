@@ -3437,14 +3437,15 @@ async function handleLocationsGet(request, env, slug) {
     }
   }
 
+  const safeJson = (s, fallback) => { try { return s ? JSON.parse(s) : fallback; } catch { return fallback; } };
   return jsonRes({
     ...loc,
-    related_guides: JSON.parse(loc.related_guides || '[]'),
-    extra_links: JSON.parse(loc.extra_links || '[]'),
-    when_to_visit: loc.when_to_visit ? JSON.parse(loc.when_to_visit) : null,
-    recommended_gear: loc.recommended_gear ? JSON.parse(loc.recommended_gear) : null,
-    when_to_visit_en: loc.when_to_visit_en ? JSON.parse(loc.when_to_visit_en) : null,
-    recommended_gear_en: loc.recommended_gear_en ? JSON.parse(loc.recommended_gear_en) : null,
+    related_guides:      safeJson(loc.related_guides, []),
+    extra_links:         safeJson(loc.extra_links, []),
+    when_to_visit:       safeJson(loc.when_to_visit, null),
+    recommended_gear:    safeJson(loc.recommended_gear, null),
+    when_to_visit_en:    safeJson(loc.when_to_visit_en, null),
+    recommended_gear_en: safeJson(loc.recommended_gear_en, null),
     nearby,
     photos: photos || []
   }, 200, request);
@@ -3587,7 +3588,8 @@ async function handleAdminLocationsCreate(request, env) {
   }
 
   const loc = await env.DB.prepare('SELECT * FROM locations WHERE id = ?').bind(id).first();
-  return jsonRes({ ...loc, related_guides: JSON.parse(loc.related_guides || '[]') }, 201, request);
+  const safeJson = (s, fb) => { try { return s ? JSON.parse(s) : fb; } catch { return fb; } };
+  return jsonRes({ ...loc, related_guides: safeJson(loc.related_guides, []) }, 201, request);
 }
 
 async function handleAdminLocationsUpdate(request, env, slug) {
@@ -3635,7 +3637,8 @@ async function handleAdminLocationsUpdate(request, env, slug) {
   await env.DB.prepare(`UPDATE locations SET ${sets.join(', ')} WHERE id = ?`).bind(...vals).run();
   const loc = await env.DB.prepare('SELECT * FROM locations WHERE id = ?').bind(slug).first();
   if (!loc) return jsonRes({ error: 'לא נמצא' }, 404, request);
-  return jsonRes({ ...loc, related_guides: JSON.parse(loc.related_guides || '[]'), extra_links: JSON.parse(loc.extra_links || '[]') }, 200, request);
+  const safeJson = (s, fb) => { try { return s ? JSON.parse(s) : fb; } catch { return fb; } };
+  return jsonRes({ ...loc, related_guides: safeJson(loc.related_guides, []), extra_links: safeJson(loc.extra_links, []) }, 200, request);
 }
 
 async function handleAdminLocationsDelete(request, env, slug) {
