@@ -196,7 +196,7 @@ function copyLink() {
 
 async function loadNextLocation(currentSlug, currentRegion) {
   try {
-    const res = await fetch('/api/locations');
+    const res = await fetch('/api/locations?t=' + Date.now(), { cache: 'no-store' });
     const all = await res.json();
     const sameRegion = (Array.isArray(all) ? all : all.locations || [])
       .filter(l => l.region === currentRegion && l.id !== currentSlug);
@@ -308,7 +308,7 @@ async function loadSpot() {
   if (corrBtn) corrBtn.textContent = isEn ? 'Have a tip or correction? Let me know' : 'יש לך טיפ או תיקון? שלח לי';
 
   try {
-    const res = await fetch(`/api/locations/${slug}`);
+    const res = await fetch(`/api/locations/${slug}?t=${Date.now()}`, { cache: 'no-store' });
     if (!res.ok) { location.href = '/locations/'; return; }
     const loc = await res.json();
     renderSpot(loc, lang);
