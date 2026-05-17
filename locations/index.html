@@ -147,6 +147,7 @@ const LABELS = {
     mapShow: '🗺 הצג מפה',
     mapHide: '🗺 הסתר מפה',
     filterAll: 'הכל',
+    regionNames: { 'צפון':'צפון','מרכז':'מרכז','ירושלים':'ירושלים','דרום':'דרום','נגב':'נגב','הרי אילת':'הרי אילת' },
     modalTitle: 'הצע מקום לצילום',
     labelName: 'שמך (אופציונלי)',
     placeholderName: 'שם',
@@ -179,6 +180,7 @@ const LABELS = {
     mapShow: '🗺 Show Map',
     mapHide: '🗺 Hide Map',
     filterAll: 'All',
+    regionNames: { 'צפון':'North','מרכז':'Center','ירושלים':'Jerusalem','דרום':'South','נגב':'Negev','הרי אילת':'Eilat Mountains' },
     modalTitle: 'Suggest a Photography Spot',
     labelName: 'Your name (optional)',
     placeholderName: 'Name',
@@ -237,6 +239,7 @@ function applyLang() {
   // Filter buttons
   document.querySelectorAll('.filter-btn').forEach(btn => {
     if (btn.dataset.region === '') btn.textContent = L.filterAll;
+    else if (L.regionNames[btn.dataset.region]) btn.textContent = L.regionNames[btn.dataset.region];
   });
 
   // Modal
