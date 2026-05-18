@@ -401,14 +401,14 @@ img.loaded { opacity: 1; }
                 <span class="blur-row-label" data-he="מרחק מרקע" data-en="Distance from background">מרחק מרקע</span>
                 <span class="blur-row-val" id="distVal">1.0 מ׳</span>
               </div>
-              <input type="range" class="blur-slider" id="distSlider" min="5" max="50" value="10" oninput="updateBlur()">
+              <input type="range" class="blur-slider" id="distSlider" min="5" max="50" value="10" oninput="updateBlur()" title="מרחק מרקע">
             </div>
             <div class="blur-row">
               <div class="blur-row-header">
                 <span class="blur-row-label" data-he="צמצם" data-en="Aperture">צמצם</span>
                 <span class="blur-row-val" id="apVal">f/2.8</span>
               </div>
-              <input type="range" class="blur-slider" id="apSlider" min="0" max="10" value="7" oninput="updateBlur()">
+              <input type="range" class="blur-slider" id="apSlider" min="0" max="10" value="7" oninput="updateBlur()" title="צמצם">
             </div>
           </div>
           <div class="blur-result" id="blurResult"></div>
