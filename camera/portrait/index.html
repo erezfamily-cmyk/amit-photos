@@ -736,7 +736,7 @@ function applyLang() {
   document.querySelectorAll('[data-he]').forEach(function(el) {
     el.innerHTML = isEn ? (el.dataset.en || el.dataset.he) : el.dataset.he;
   });
-  document.querySelectorAll('.en-h2, .ls-hero-en').forEach(function(el) {
+  document.querySelectorAll('.en-h2, .ls-hero-en, .ac-label-en').forEach(function(el) {
     el.style.display = isEn ? 'none' : '';
   });
   renderPattern();
