@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="canonical" href="https://amitphotos.com/camera/portrait/" />
+<link rel="alternate" hreflang="he" href="https://amitphotos.com/camera/portrait/" />
+<link rel="alternate" hreflang="en" href="https://amitphotos.com/camera/portrait/" />
+<link rel="alternate" hreflang="x-default" href="https://amitphotos.com/camera/portrait/" />
+<title>צילום פורטרט — מדריך מלא | בית ספר לצילום | Amit Photos</title>
+<meta name="description" content="5 טכניקות לצילום פורטרט: זווית צילום, דפוסי תאורה, מבט ועין בעין, רקע והפרדה, ביטוי ואופי — עם תמונות אמיתיות של עמית ארז.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #0a0a0a; --surface: #111; --surface2: #181818; --border: #222;
+  --accent: #c8a96e; --text: #f0ede8; --muted: #888;
+}
+body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--text); direction: rtl; min-height: 100vh; padding-bottom: 5rem; }
+html { scroll-behavior: smooth; }
+
+/* Breadcrumb */
+.breadcrumb { font-size: .8rem; color: var(--muted); padding: 1.25rem 1.5rem 0; max-width: 900px; margin: 0 auto; }
+.breadcrumb a { color: var(--accent); text-decoration: none; }
+
+/* Hero */
+.ls-hero { position: relative; height: 70vh; min-height: 420px; max-height: 600px; display: flex; align-items: center; justify-content: center; text-align: center; overflow: hidden; margin-bottom: 3rem; }
+.ls-hero-bg { position: absolute; inset: 0; background-image: url('https://drive.google.com/thumbnail?id=1iGsR7oUKjZ75jOxcqdw-plYU72f1LbEp&sz=w1600'); background-size: cover; background-position: center top; filter: brightness(.42); z-index: 0; }
+.ls-hero-content { position: relative; z-index: 1; padding: 2rem; }
+.ls-hero-badge { display: inline-block; font-size: .72rem; letter-spacing: .15em; text-transform: uppercase; background: rgba(200,169,110,.15); border: 1px solid rgba(200,169,110,.35); color: var(--accent); border-radius: 20px; padding: .3rem .9rem; margin-bottom: 1rem; }
+.ls-hero h1 { font-family: 'Syne', sans-serif; font-size: 3rem; color: #fff; margin-bottom: .4rem; line-height: 1.1; }
+.ls-hero-en { font-family: 'Syne', sans-serif; font-size: 1.1rem; color: rgba(255,255,255,.4); margin-bottom: 1rem; }
+.ls-hero-sub { font-size: 1rem; color: rgba(255,255,255,.7); max-width: 480px; margin: 0 auto; line-height: 1.6; }
+
+/* Article */
+.article { max-width: 900px; margin: 0 auto; padding: 0 1.25rem; }
+.divider { border: none; border-top: 1px solid var(--border); margin: 3rem 0; }
+
+/* Sections */
+.ls-section { margin-bottom: 3.5rem; }
+.ls-section-badge { display: inline-flex; align-items: center; gap: .4rem; font-size: .72rem; font-weight: 700; color: #000; background: var(--accent); border-radius: 20px; padding: .25rem .75rem; margin-bottom: .75rem; }
+.ls-section h2 { font-family: 'Syne', sans-serif; font-size: 1.5rem; color: var(--text); margin-bottom: .35rem; }
+.en-h2 { font-family: 'Syne', sans-serif; font-size: 1.1rem; color: var(--muted); margin-bottom: 1rem; }
+.ls-section p { color: var(--muted); line-height: 1.75; margin-bottom: .85rem; font-size: .95rem; }
+.ls-section p strong { color: var(--text); }
+
+/* Two-col layout */
+.ls-two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: start; }
+
+/* Photo */
+.ls-photo { border-radius: 12px; overflow: hidden; aspect-ratio: 3/4; background: #111; }
+.ls-photo img { width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 12px; transition: transform .4s; }
+.ls-photo img:hover { transform: scale(1.02); }
+.ls-photo-caption { font-size: .72rem; color: var(--muted); padding: .4rem 0; text-align: center; }
+
+/* Interactive box */
+.ls-interactive { background: var(--surface); border: 1px solid rgba(200,169,110,.25); border-radius: 14px; padding: 1.25rem; margin-top: 1rem; }
+.ls-interactive-title { font-family: 'Syne', sans-serif; font-size: .85rem; color: var(--accent); margin-bottom: .75rem; }
+
+/* Link out */
+.ls-link-out { display: inline-block; margin-top: .75rem; font-size: .82rem; color: var(--accent); text-decoration: none; border-bottom: 1px solid rgba(200,169,110,.3); padding-bottom: .1rem; }
+.ls-link-out:hover { border-bottom-color: var(--accent); }
+
+/* ── SECTION 1: Angle cards ── */
+.angle-cards { display: flex; gap: .75rem; }
+.angle-card { flex: 1; background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: .75rem .6rem; text-align: center; cursor: pointer; transition: border-color .2s, background .2s; }
+.angle-card:hover { border-color: rgba(200,169,110,.4); }
+.angle-card.active { border-color: var(--accent); background: rgba(200,169,110,.07); }
+.angle-card .ac-icon { font-size: 1.5rem; margin-bottom: .4rem; }
+.angle-card .ac-label { font-size: .78rem; font-weight: 700; color: var(--text); margin-bottom: .35rem; }
+.angle-card .ac-label-en { font-size: .65rem; color: var(--muted); margin-bottom: .5rem; }
+.angle-svg-wrap { margin: .6rem 0; display: flex; justify-content: center; }
+.angle-tip { font-size: .75rem; color: var(--muted); line-height: 1.5; padding: .5rem .6rem; background: rgba(200,169,110,.06); border-radius: 8px; margin-top: .5rem; }
+
+/* ── SECTION 2: Lighting patterns ── */
+.light-pattern-tabs { display: flex; gap: .4rem; flex-wrap: wrap; margin-bottom: .85rem; }
+.lp-tab { flex: 1; min-width: 70px; padding: .4rem; text-align: center; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; cursor: pointer; font-size: .78rem; color: var(--muted); transition: border-color .2s, color .2s; }
+.lp-tab.active { border-color: var(--accent); color: var(--accent); background: rgba(200,169,110,.07); }
+.lp-diagram { display: flex; justify-content: center; margin: .75rem 0; }
+.lp-tip { font-size: .78rem; color: var(--muted); line-height: 1.55; padding: .6rem .75rem; background: rgba(200,169,110,.06); border-radius: 8px; }
+.lp-tip strong { color: var(--text); }
+
+/* ── SECTION 3: Gaze cards ── */
+.gaze-cards { display: flex; gap: .6rem; flex-direction: column; }
+.gaze-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: .65rem .85rem; cursor: pointer; transition: border-color .2s, background .2s; display: flex; gap: .75rem; align-items: flex-start; }
+.gaze-card.active { border-color: var(--accent); background: rgba(200,169,110,.07); }
+.gaze-card .gc-icon { font-size: 1.3rem; flex-shrink: 0; }
+.gaze-card .gc-label { font-size: .82rem; font-weight: 700; color: var(--text); margin-bottom: .2rem; }
+.gaze-card .gc-desc { font-size: .75rem; color: var(--muted); line-height: 1.5; }
+.gaze-card.active .gc-desc { color: #aaa; }
+
+/* ── SECTION 4: Background blur simulator ── */
+.blur-sim { display: flex; flex-direction: column; gap: .75rem; }
+.blur-preview { border-radius: 10px; overflow: hidden; height: 80px; position: relative; display: flex; align-items: center; justify-content: center; }
+.blur-bg { position: absolute; inset: 0; background: linear-gradient(135deg, #1a3a1a 0%, #2d5a2d 40%, #4a8a4a 70%, #6aaa6a 100%); }
+.blur-subject { position: relative; z-index: 1; width: 40px; height: 60px; background: linear-gradient(to bottom, #c8a96e, #a07840); border-radius: 50% 50% 40% 40% / 60% 60% 40% 40%; box-shadow: 0 0 0 3px rgba(0,0,0,.4); }
+.blur-label { font-size: .75rem; color: var(--muted); text-align: center; margin-top: .25rem; }
+.blur-sliders { display: flex; flex-direction: column; gap: .6rem; }
+.blur-row { display: flex; flex-direction: column; gap: .3rem; }
+.blur-row-header { display: flex; justify-content: space-between; font-size: .78rem; }
+.blur-row-label { color: var(--muted); }
+.blur-row-val { color: var(--accent); font-weight: 700; font-family: monospace; }
+input[type=range].blur-slider { -webkit-appearance: none; width: 100%; height: 5px; border-radius: 3px; background: var(--border); outline: none; cursor: pointer; }
+input[type=range].blur-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; background: var(--accent); border: 2px solid #fff; }
+.blur-result { font-size: .75rem; color: var(--muted); text-align: center; padding: .4rem; background: rgba(200,169,110,.06); border-radius: 8px; }
+
+/* ── SECTION 5: Character tip cards ── */
+.char-cards { display: flex; flex-direction: column; gap: .6rem; }
+.char-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: .75rem .9rem; }
+.char-card-header { display: flex; align-items: center; gap: .5rem; margin-bottom: .4rem; }
+.char-card-icon { font-size: 1.1rem; }
+.char-card-title { font-size: .85rem; font-weight: 700; color: var(--accent); }
+.char-card-desc { font-size: .78rem; color: var(--muted); line-height: 1.6; }
+.char-card-desc strong { color: var(--text); }
+.portrait-thumbs { display: flex; gap: .4rem; margin-top: .6rem; }
+.portrait-thumb-sm { width: 48px; height: 64px; border-radius: 6px; overflow: hidden; flex-shrink: 0; }
+.portrait-thumb-sm img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* ── Purchase Gallery ── */
+.purchase-section { background: var(--surface); border-top: 1px solid var(--border); padding: 2.5rem 1.25rem; margin-top: 2rem; }
+.purchase-section .inner { max-width: 900px; margin: 0 auto; }
+.purchase-heading { font-family: 'Syne', sans-serif; font-size: 1.4rem; color: var(--accent); text-align: center; margin-bottom: .35rem; }
+.purchase-sub { color: var(--muted); text-align: center; font-size: .88rem; margin-bottom: 1.75rem; }
+.purchase-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: .75rem; }
+.purchase-thumb { position: relative; border-radius: 10px; overflow: hidden; aspect-ratio: 3/4; background: #111; cursor: pointer; transition: transform .25s; }
+.purchase-thumb:hover { transform: scale(1.03); }
+.purchase-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.purchase-overlay { position: absolute; inset: 0; background: rgba(0,0,0,.6); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .4rem; opacity: 0; transition: opacity .25s; }
+.purchase-thumb:hover .purchase-overlay { opacity: 1; }
+.po-title { font-size: .72rem; color: #fff; font-weight: 600; text-align: center; padding: 0 .5rem; }
+.po-btn { font-size: .7rem; background: var(--accent); color: #000; border-radius: 20px; padding: .2rem .65rem; font-weight: 700; }
+.purchase-cta-wrap { text-align: center; margin-top: 1.5rem; }
+.purchase-cta { display: inline-block; padding: .7rem 2rem; background: var(--accent); color: #000; border-radius: 30px; font-weight: 700; font-size: .95rem; text-decoration: none; transition: opacity .2s; }
+.purchase-cta:hover { opacity: .85; }
+
+/* Nav back */
+.nav-prev { text-align: center; padding: 1.5rem; }
+.nav-prev a { color: var(--accent); font-size: .9rem; text-decoration: none; }
+
+/* Mobile */
+@media (max-width: 640px) {
+  .ls-hero { height: 55vh; }
+  .ls-hero h1 { font-size: 1.8rem; }
+  .ls-two-col { grid-template-columns: 1fr; }
+  .angle-cards { flex-direction: column; }
+  .purchase-grid { grid-template-columns: repeat(2, 1fr); }
+  .light-pattern-tabs { gap: .3rem; }
+  .lp-tab { font-size: .7rem; padding: .35rem; }
+}
+@media (max-width: 380px) { .purchase-grid { grid-template-columns: 1fr; } }
+
+/* Lazy fade */
+img[loading="lazy"] { opacity: 0; transition: opacity .4s; }
+img.loaded { opacity: 1; }
+</style>
+<script src="/assets/js/nav.js" defer></script>
+</head>
+<body>
+
+<div class="breadcrumb">
+  <a href="/camera/" data-he="למד לצלם" data-en="Photography School">למד לצלם</a>
+  <span data-he=" ← פורטרט" data-en=" ← Portrait"> ← פורטרט</span>
+</div>
+
+<div class="ls-hero">
+  <div class="ls-hero-bg"></div>
+  <div class="ls-hero-content">
+    <div class="ls-hero-badge" data-he="🎭 מדריך לצלם המתחיל" data-en="🎭 Beginner's Guide">🎭 מדריך לצלם המתחיל</div>
+    <h1 data-he="צילום פורטרט" data-en="Portrait Photography">צילום פורטרט</h1>
+    <div class="ls-hero-en" data-he="Portrait Photography" data-en="צילום פורטרט">Portrait Photography</div>
+    <p class="ls-hero-sub" data-he="מהיסודות ועד פורטרט אופי — עם התמונות של עמית." data-en="From fundamentals to character portraits — with Amit's photos.">מהיסודות ועד פורטרט אופי — עם התמונות של עמית.</p>
+  </div>
+</div>
+
+<div class="article">
+
+<!-- ══ SECTION 1: זווית צילום ══ -->
+<div class="ls-section" id="angle">
+  <div class="ls-section-badge">01</div>
+  <h2 data-he="זווית צילום" data-en="Camera Angle">זווית צילום</h2>
+  <div class="en-h2" data-he="Camera Angle — How Height Changes Everything" data-en="זווית צילום — איך הגובה משנה הכל">Camera Angle — How Height Changes Everything</div>
+
+  <div class="ls-two-col">
+    <div>
+      <div class="ls-photo">
+        <img src="https://drive.google.com/thumbnail?id=1JFmSumQcXYhX4flmCGZbWXeO5bgIUU8-&sz=w800"
+             alt="זקן הקסמים — עמית ארז" loading="lazy">
+      </div>
+      <div class="ls-photo-caption" data-he="📸 זקן הקסמים — עמית ארז" data-en="📸 Wizard Elder — Amit Erez">📸 זקן הקסמים — עמית ארז</div>
+    </div>
+
+    <div>
+      <p data-he="גובה המצלמה ביחס לפנים משנה הכל. רוב הצלמים המתחילים מצלמים מגובה עיניים שלהם — לא גובה עיניים של הנבדק. זה ההבדל בין פורטרט שטוח לפורטרט שמספר סיפור."
+         data-en="Camera height relative to the face changes everything. Most beginners shoot from their own eye level — not the subject's. That's the difference between a flat portrait and one that tells a story.">גובה המצלמה ביחס לפנים משנה הכל. רוב הצלמים המתחילים מצלמים מגובה עיניים שלהם — לא גובה עיניים של הנבדק. זה ההבדל בין פורטרט שטוח לפורטרט שמספר סיפור.</p>
+
+      <div class="ls-interactive">
+        <div class="ls-interactive-title" data-he="📐 בחר זווית — ראה את האפקט" data-en="📐 Select angle — see the effect">📐 בחר זווית — ראה את האפקט</div>
+        <div class="angle-cards">
+
+          <div class="angle-card" onclick="selectAngle(this,0)">
+            <div class="ac-icon">🔼</div>
+            <div class="ac-label" data-he="מלמעלה" data-en="From Above">מלמעלה</div>
+            <div class="ac-label-en" data-he="From Above" data-en="מלמעלה">From Above</div>
+            <div class="angle-svg-wrap">
+              <svg width="60" height="80" viewBox="0 0 60 80">
+                <ellipse cx="30" cy="52" rx="16" ry="19" fill="#333" stroke="#555" stroke-width="1.5"/>
+                <rect x="25" y="68" width="10" height="10" rx="2" fill="#333"/>
+                <rect x="38" y="10" width="18" height="12" rx="3" fill="#c8a96e"/>
+                <rect x="44" y="7" width="6" height="4" rx="1" fill="#a07840"/>
+                <line x1="38" y1="22" x2="32" y2="38" stroke="#c8a96e" stroke-width="1.5" marker-end="url(#arr)"/>
+                <defs><marker id="arr" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#c8a96e"/></marker></defs>
+              </svg>
+            </div>
+            <div class="angle-tip" data-he="מחליש ומקטין. מתאים לצילום ילדים קטנים — מראה את עולמם." data-en="Weakens and shrinks. Good for small children — shows their world.">מחליש ומקטין. מתאים לצילום ילדים קטנים.</div>
+          </div>
+
+          <div class="angle-card active" onclick="selectAngle(this,1)">
+            <div class="ac-icon">👁️</div>
+            <div class="ac-label" data-he="גובה עיניים" data-en="Eye Level">גובה עיניים</div>
+            <div class="ac-label-en" data-he="Eye Level" data-en="גובה עיניים">Eye Level</div>
+            <div class="angle-svg-wrap">
+              <svg width="60" height="80" viewBox="0 0 60 80">
+                <ellipse cx="30" cy="52" rx="16" ry="19" fill="#333" stroke="#555" stroke-width="1.5"/>
+                <rect x="25" y="68" width="10" height="10" rx="2" fill="#333"/>
+                <rect x="40" y="42" width="18" height="12" rx="3" fill="#c8a96e"/>
+                <rect x="46" y="39" width="6" height="4" rx="1" fill="#a07840"/>
+                <line x1="40" y1="48" x2="30" y2="48" stroke="#c8a96e" stroke-width="1.5" marker-end="url(#arr2)"/>
+                <defs><marker id="arr2" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#c8a96e"/></marker></defs>
+              </svg>
+            </div>
+            <div class="angle-tip" data-he="טבעי ושוויוני. ברירת המחדל הבטוחה לכל סוגי הפורטרט." data-en="Natural and equal. The safe default for all portrait types.">טבעי ושוויוני. ברירת המחדל הבטוחה.</div>
+          </div>
+
+          <div class="angle-card" onclick="selectAngle(this,2)">
+            <div class="ac-icon">🔽</div>
+            <div class="ac-label" data-he="מלמטה" data-en="From Below">מלמטה</div>
+            <div class="ac-label-en" data-he="From Below" data-en="מלמטה">From Below</div>
+            <div class="angle-svg-wrap">
+              <svg width="60" height="80" viewBox="0 0 60 80">
+                <ellipse cx="30" cy="40" rx="16" ry="19" fill="#333" stroke="#555" stroke-width="1.5"/>
+                <rect x="25" y="56" width="10" height="10" rx="2" fill="#333"/>
+                <rect x="38" y="66" width="18" height="12" rx="3" fill="#c8a96e"/>
+                <rect x="44" y="63" width="6" height="4" rx="1" fill="#a07840"/>
+                <line x1="38" y1="70" x2="32" y2="54" stroke="#c8a96e" stroke-width="1.5" marker-end="url(#arr3)"/>
+                <defs><marker id="arr3" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#c8a96e"/></marker></defs>
+              </svg>
+            </div>
+            <div class="angle-tip" data-he="עוצמה ודרמטיות. שים לב: מגדיל את האף. לא מתאים לכל נבדק." data-en="Power and drama. Warning: enlarges the nose. Not for every subject.">עוצמה ודרמטיות. מגדיל את האף — זהירות.</div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<hr class="divider">
+
+<!-- ══ SECTION 2: דפוסי תאורה ══ -->
+<div class="ls-section" id="lighting">
+  <div class="ls-section-badge">02</div>
+  <h2 data-he="דפוסי תאורה" data-en="Lighting Patterns">דפוסי תאורה</h2>
+  <div class="en-h2" data-he="Portrait Lighting Patterns — The 4 Classics" data-en="דפוסי תאורה — 4 הקלאסיים">Portrait Lighting Patterns — The 4 Classics</div>
+
+  <div class="ls-two-col">
+    <div>
+      <div class="ls-photo">
+        <img src="https://drive.google.com/thumbnail?id=1y6iG3IiFk0GlsCUsBZsepI4Np7JEFH0O&sz=w800"
+             alt="לוחם קרנבל — עמית ארז" loading="lazy">
+      </div>
+      <div class="ls-photo-caption" data-he="📸 לוחם קרנבל — עמית ארז" data-en="📸 Carnival Fighter — Amit Erez">📸 לוחם קרנבל — עמית ארז</div>
+    </div>
+
+    <div>
+      <p data-he="צלמי פורטרט מדברים ב-4 דפוסי תאורה קלאסיים. ההבדל ביניהם: מיקום מקור האור ביחס לפנים — ועל אילו חלקים יש צל ואילו מוארים."
+         data-en="Portrait photographers speak in 4 classic lighting patterns. The difference: where the light source sits relative to the face — and which areas are lit vs shadowed.">צלמי פורטרט מדברים ב-4 דפוסי תאורה קלאסיים. ההבדל ביניהם: מיקום מקור האור ביחס לפנים — ועל אילו חלקים יש צל ואילו מוארים.</p>
+
+      <div class="ls-interactive">
+        <div class="ls-interactive-title" data-he="💡 בחר דפוס — ראה דיאגרמת תאורה" data-en="💡 Select pattern — see lighting diagram">💡 בחר דפוס — ראה דיאגרמת תאורה</div>
+        <div class="light-pattern-tabs">
+          <div class="lp-tab active" onclick="selectPattern(this,0)">Rembrandt</div>
+          <div class="lp-tab" onclick="selectPattern(this,1)">Loop</div>
+          <div class="lp-tab" onclick="selectPattern(this,2)">Butterfly</div>
+          <div class="lp-tab" onclick="selectPattern(this,3)">Split</div>
+        </div>
+        <div class="lp-diagram">
+          <svg id="lpSvg" width="140" height="140" viewBox="0 0 140 140">
+            <rect width="140" height="140" fill="#0d0d0d" rx="10"/>
+            <ellipse cx="70" cy="80" rx="32" ry="38" fill="#2a2a2a" stroke="#444" stroke-width="1.5"/>
+            <line id="lpNose" x1="70" y1="80" x2="70" y2="50" stroke="#666" stroke-width="2" stroke-dasharray="4 2"/>
+            <path id="lpShadow" d="" fill="rgba(0,0,0,0.45)"/>
+            <g id="lpLight">
+              <circle r="10" fill="#c8a96e" opacity=".9"/>
+              <line x1="-13" y1="0" x2="-17" y2="0" stroke="#c8a96e" stroke-width="1.5"/>
+              <line x1="13" y1="0" x2="17" y2="0" stroke="#c8a96e" stroke-width="1.5"/>
+              <line x1="0" y1="-13" x2="0" y2="-17" stroke="#c8a96e" stroke-width="1.5"/>
+              <line x1="0" y1="13" x2="0" y2="17" stroke="#c8a96e" stroke-width="1.5"/>
+              <line x1="9" y1="-9" x2="12" y2="-12" stroke="#c8a96e" stroke-width="1.5"/>
+              <line x1="-9" y1="-9" x2="-12" y2="-12" stroke="#c8a96e" stroke-width="1.5"/>
+              <line x1="9" y1="9" x2="12" y2="12" stroke="#c8a96e" stroke-width="1.5"/>
+              <line x1="-9" y1="9" x2="-12" y2="12" stroke="#c8a96e" stroke-width="1.5"/>
+            </g>
+            <line id="lpBeam1" x1="0" y1="0" x2="70" y2="80" stroke="rgba(200,169,110,.2)" stroke-width="1"/>
+            <line id="lpBeam2" x1="0" y1="0" x2="70" y2="80" stroke="rgba(200,169,110,.2)" stroke-width="1"/>
+          </svg>
+        </div>
+        <div class="lp-tip" id="lpTip"></div>
+      </div>
+
+      <a class="ls-link-out" href="/camera/light/" data-he="→ מדריך אור ואיכות תאורה" data-en="→ Light & Color Guide">→ מדריך אור ואיכות תאורה</a>
+    </div>
+  </div>
+</div>
+<hr class="divider">
+
+<!-- ══ SECTION 3: מבט ועין בעין ══ -->
+<div class="ls-section" id="gaze">
+  <div class="ls-section-badge">03</div>
+  <h2 data-he="מבט ועין בעין" data-en="Gaze & Eye Contact">מבט ועין בעין</h2>
+  <div class="en-h2" data-he="Gaze — The Psychology of Where They Look" data-en="מבט — פסיכולוגיה של המבט">Gaze — The Psychology of Where They Look</div>
+
+  <div class="ls-two-col">
+    <div>
+      <div class="ls-photo">
+        <img src="https://drive.google.com/thumbnail?id=1qS2yrWz66Xt2XQtmxjLbi30BBFrqGXB1&sz=w800"
+             alt="מבט דרך זכוכית מגדלת — עמית ארז" loading="lazy">
+      </div>
+      <div class="ls-photo-caption" data-he="📸 מבט דרך זכוכית מגדלת — עמית ארז" data-en="📸 Magnified Gaze — Amit Erez">📸 מבט דרך זכוכית מגדלת — עמית ארז</div>
+    </div>
+
+    <div>
+      <p data-he="איפה הנבדק מסתכל קובע את הרגש שהתמונה יוצרת ואת הקשר עם הצופה. אין תשובה נכונה — יש כוונה נכונה."
+         data-en="Where the subject looks defines the emotion the photo creates and the relationship with the viewer. There's no right answer — only right intention.">איפה הנבדק מסתכל קובע את הרגש שהתמונה יוצרת ואת הקשר עם הצופה. אין תשובה נכונה — יש כוונה נכונה.</p>
+
+      <div class="ls-interactive">
+        <div class="ls-interactive-title" data-he="👁️ בחר סוג מבט — ראה את הרגש" data-en="👁️ Select gaze type — see the emotion">👁️ בחר סוג מבט — ראה את הרגש</div>
+        <div class="gaze-cards">
+
+          <div class="gaze-card active" onclick="selectGaze(this)">
+            <div class="gc-icon">👁️</div>
+            <div>
+              <div class="gc-label" data-he="עין בעין — מבט למצלמה" data-en="Direct Gaze — Looking at Camera">עין בעין — מבט למצלמה</div>
+              <div class="gc-desc" data-he="מושך את הצופה פנימה. יוצר חיבור ישיר, ביטחון, נוכחות. אתגר: הנבדק חייב להרגיש בנוח — אי-נוחות נראית מיד." data-en="Pulls the viewer in. Creates direct connection, confidence, presence. Challenge: the subject must feel comfortable — discomfort is immediately visible.">מושך את הצופה פנימה. יוצר חיבור ישיר, ביטחון, נוכחות. אתגר: הנבדק חייב להרגיש בנוח — אי-נוחות נראית מיד.</div>
+            </div>
+          </div>
+
+          <div class="gaze-card" onclick="selectGaze(this)">
+            <div class="gc-icon">👀</div>
+            <div>
+              <div class="gc-label" data-he="מבט הצידה — מחוץ לפריים" data-en="Looking Away — Off Frame">מבט הצידה — מחוץ לפריים</div>
+              <div class="gc-desc" data-he="יוצר תחושה שהנבדק חושב על משהו. רומנטי, אינטרוספקטיבי, חלמני. תן הוראה ברורה מאיפה להסתכל — ריק לא עובד." data-en="Creates the sense the subject is thinking about something. Romantic, introspective, dreamy. Give a clear direction of where to look — 'just look away' doesn't work.">יוצר תחושה שהנבדק חושב על משהו. רומנטי, אינטרוספקטיבי, חלמני. תן הוראה ברורה מאיפה להסתכל — ריק לא עובד.</div>
+            </div>
+          </div>
+
+          <div class="gaze-card" onclick="selectGaze(this)">
+            <div class="gc-icon">🙈</div>
+            <div>
+              <div class="gc-label" data-he="עיניים עצומות — פנימיות" data-en="Eyes Closed — Introspection">עיניים עצומות — פנימיות</div>
+              <div class="gc-desc" data-he="מסלק את ה'צופה' מהמשוואה — הנבדק לא מתקשר. מתאים לפורטרט שקט ופנימי. טיפ: צלם בזמן צחוק טבעי — תתפוס רגע אמיתי." data-en="Removes the 'viewer' from the equation — the subject isn't communicating. Works for quiet, introspective portraits. Tip: shoot during natural laughter — you'll catch an authentic moment.">מסלק את ה'צופה' מהמשוואה. מתאים לפורטרט שקט ופנימי. טיפ: צלם בזמן צחוק טבעי — תתפוס רגע אמיתי.</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<hr class="divider">
+
+<!-- ══ SECTION 4: רקע והפרדה ══ -->
+<div class="ls-section" id="background">
+  <div class="ls-section-badge">04</div>
+  <h2 data-he="רקע והפרדה" data-en="Background Separation">רקע והפרדה</h2>
+  <div class="en-h2" data-he="Background Separation — Distance + Aperture" data-en="רקע והפרדה — מרחק + צמצם">Background Separation — Distance + Aperture</div>
+
+  <div class="ls-two-col">
+    <div>
+      <div class="ls-photo">
+        <img src="https://drive.google.com/thumbnail?id=100AYpaK0jeKjH_qzGfF6jNPd7katXEZR&sz=w800"
+             alt="ציור חי — עמית ארז" loading="lazy">
+      </div>
+      <div class="ls-photo-caption" data-he="📸 ציור חי — עמית ארז" data-en="📸 Live Painting — Amit Erez">📸 ציור חי — עמית ארז</div>
+    </div>
+
+    <div>
+      <p data-he="הטעות הנפוצה: נבדק צמוד לקיר → הרקע חד ומסיח. הפתרון: <strong>רחק את הנבדק מהרקע</strong> + פתח צמצם (f נמוך). ככל שהנבדק רחוק יותר — הרקע מטושטש יותר, גם בצמצם צר."
+         data-en="The most common mistake: subject pressed against a wall → sharp, distracting background. The fix: <strong>move the subject away from the background</strong> + open the aperture (low f-number). The farther the subject — the blurrier the background, even at narrower apertures.">הטעות הנפוצה: נבדק צמוד לקיר → הרקע חד ומסיח. הפתרון: <strong>רחק את הנבדק מהרקע</strong> + פתח צמצם (f נמוך). ככל שהנבדק רחוק יותר — הרקע מטושטש יותר, גם בצמצם צר.</p>
+
+      <div class="ls-interactive">
+        <div class="ls-interactive-title" data-he="🎛️ שחק עם מרחק וצמצם — ראה בוקה" data-en="🎛️ Adjust distance and aperture — see bokeh">🎛️ שחק עם מרחק וצמצם — ראה בוקה</div>
+        <div class="blur-sim">
+          <div class="blur-preview">
+            <div class="blur-bg" id="blurBg"></div>
+            <div class="blur-subject"></div>
+          </div>
+          <div class="blur-label" id="blurLabel" data-he="נבדק (זהב) | רקע (ירוק)" data-en="Subject (gold) | Background (green)">נבדק (זהב) | רקע (ירוק)</div>
+          <div class="blur-sliders">
+            <div class="blur-row">
+              <div class="blur-row-header">
+                <span class="blur-row-label" data-he="מרחק מרקע" data-en="Distance from background">מרחק מרקע</span>
+                <span class="blur-row-val" id="distVal">1.0 מ׳</span>
+              </div>
+              <input type="range" class="blur-slider" id="distSlider" min="5" max="50" value="10" oninput="updateBlur()">
+            </div>
+            <div class="blur-row">
+              <div class="blur-row-header">
+                <span class="blur-row-label" data-he="צמצם" data-en="Aperture">צמצם</span>
+                <span class="blur-row-val" id="apVal">f/2.8</span>
+              </div>
+              <input type="range" class="blur-slider" id="apSlider" min="0" max="10" value="7" oninput="updateBlur()">
+            </div>
+          </div>
+          <div class="blur-result" id="blurResult"></div>
+        </div>
+      </div>
+
+      <a class="ls-link-out" href="/camera/depth-of-field/" data-he="→ מדריך עומק שדה ובוקה" data-en="→ Depth of Field & Bokeh Guide">→ מדריך עומק שדה ובוקה</a>
+    </div>
+  </div>
+</div>
+<hr class="divider">
+
+<!-- ══ SECTION 5: ביטוי ואופי ══ -->
+<div class="ls-section" id="character">
+  <div class="ls-section-badge">05</div>
+  <h2 data-he="ביטוי ואופי" data-en="Expression & Character">ביטוי ואופי</h2>
+  <div class="en-h2" data-he="Expression & Character — From Neutral to Story" data-en="ביטוי ואופי — מניטרלי לסיפור">Expression & Character — From Neutral to Story</div>
+
+  <div class="ls-two-col">
+    <div>
+      <div class="ls-photo">
+        <img src="https://drive.google.com/thumbnail?id=1zRydz-feBGM0nA4GVqS2xlblOyfmEYT0&sz=w800"
+             alt="ליצנית חייכנית — עמית ארז" loading="lazy">
+      </div>
+      <div class="ls-photo-caption" data-he="📸 ליצנית חייכנית — עמית ארז" data-en="📸 Smiling Clown — Amit Erez">📸 ליצנית חייכנית — עמית ארז</div>
+    </div>
+
+    <div>
+      <p data-he="ביטוי אמיתי לא מגיע בפקודה. הוא מגיע מחיבור, שיחה, הפתעה — ומהנבדק שמרגיש בנוח. פורטרט אופי לוקח את זה צעד קדימה: תחפושת, תאורה דרמטית, פרטים — כל אלה הופכים פנים לסיפור."
+         data-en="Authentic expression doesn't come on command. It comes from connection, conversation, surprise — and a subject who feels comfortable. Character portraits take it further: costume, dramatic lighting, detail — these turn a face into a story.">ביטוי אמיתי לא מגיע בפקודה. הוא מגיע מחיבור, שיחה, הפתעה — ומהנבדק שמרגיש בנוח. פורטרט אופי לוקח את זה צעד קדימה: תחפושת, תאורה דרמטית, פרטים — כל אלה הופכים פנים לסיפור.</p>
+
+      <div class="ls-interactive">
+        <div class="ls-interactive-title" data-he="🎭 3 טכניקות לביטוי אמיתי" data-en="🎭 3 techniques for authentic expression">🎭 3 טכניקות לביטוי אמיתי</div>
+        <div class="char-cards">
+
+          <div class="char-card">
+            <div class="char-card-header">
+              <span class="char-card-icon">🎭</span>
+              <span class="char-card-title" data-he="פורטרט אופי / Character Portrait" data-en="Character Portrait">פורטרט אופי / Character Portrait</span>
+            </div>
+            <div class="char-card-desc" data-he="בחר תחפושת, מקצוע, או תפקיד. אל תצלם אדם — <strong>ספר סיפור</strong>. תאורה דרמטית (Rembrandt/Split) מחזקת את הדמות. ראה: עמית צילם קרנבל, ג'וקר, ליצנית — כל אחת עולם בפני עצמו." data-en="Choose a costume, profession, or role. Don't photograph a person — <strong>tell a story</strong>. Dramatic lighting (Rembrandt/Split) strengthens the character. See: Amit photographed carnival, joker, clown — each a world of its own.">בחר תחפושת, מקצוע, או תפקיד. אל תצלם אדם — <strong>ספר סיפור</strong>. תאורה דרמטית (Rembrandt/Split) מחזקת את הדמות. ראה: עמית צילם קרנבל, ג'וקר, ליצנית — כל אחת עולם בפני עצמו.</div>
+            <div class="portrait-thumbs">
+              <div class="portrait-thumb-sm"><img src="https://drive.google.com/thumbnail?id=1y6iG3IiFk0GlsCUsBZsepI4Np7JEFH0O&sz=w200" alt="קרנבל" loading="lazy"></div>
+              <div class="portrait-thumb-sm"><img src="https://drive.google.com/thumbnail?id=1jStHSSDQG3tC32p6zLS94bT7fi7j2BrA&sz=w200" alt="ג'וקר" loading="lazy"></div>
+              <div class="portrait-thumb-sm"><img src="https://drive.google.com/thumbnail?id=1O6AzQfr_Av8rOsdRffwNBvumKBGugOQF&sz=w200" alt="פורים" loading="lazy"></div>
+            </div>
+          </div>
+
+          <div class="char-card">
+            <div class="char-card-header">
+              <span class="char-card-icon">😂</span>
+              <span class="char-card-title" data-he="ביטוי אמיתי / Authentic Expression" data-en="Authentic Expression">ביטוי אמיתי / Authentic Expression</span>
+            </div>
+            <div class="char-card-desc" data-he="<strong>דבר עם הנבדק.</strong> ספר בדיחה. שאל שאלה מפתיעה. הביטויים האמיתיים ביותר מגיעים <strong>בין הצילומים</strong> — כשהנבדק 'מרפה' ולא בתנוחה. צלם ברצף (burst mode) וחפש את הרגע." data-en="<strong>Talk to your subject.</strong> Tell a joke. Ask a surprising question. The most authentic expressions come <strong>between shots</strong> — when the subject 'lets go' and isn't posing. Shoot in burst mode and find the moment."><strong>דבר עם הנבדק.</strong> ספר בדיחה. שאל שאלה מפתיעה. הביטויים האמיתיים ביותר מגיעים <strong>בין הצילומים</strong> — כשהנבדק 'מרפה' ולא בתנוחה. צלם ברצף (burst mode) וחפש את הרגע.</div>
+          </div>
+
+          <div class="char-card">
+            <div class="char-card-header">
+              <span class="char-card-icon">🎯</span>
+              <span class="char-card-title" data-he="פרטים ספציפיים / Telling Details" data-en="Telling Details">פרטים ספציפיים / Telling Details</span>
+            </div>
+            <div class="char-card-desc" data-he="עיניים, ידיים, שפתיים — <strong>close-up של פרט אחד</strong> יכול לספר יותר מפורטרט מלא. חפש את הפרט שמגדיר את הדמות: קמטים בידיים של זקן, הניצוץ בעיניים, הפרט הקטן שאנשים לא רואים." data-en="Eyes, hands, lips — <strong>a close-up of one detail</strong> can tell more than a full portrait. Find the detail that defines the person: the wrinkles in an elder's hands, the spark in the eyes, the small thing people don't notice.">עיניים, ידיים, שפתיים — <strong>close-up של פרט אחד</strong> יכול לספר יותר מפורטרט מלא. חפש את הפרט שמגדיר את הדמות: קמטים בידיים של זקן, הניצוץ בעיניים, הפרט הקטן שאנשים לא רואים.</div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end article -->
+
+<section class="purchase-section">
+  <div class="inner">
+    <h2 class="purchase-heading" data-he="📸 פורטרטים לרכישה — אמנות על הקיר שלך" data-en="📸 Portrait Prints — Art for Your Wall">📸 פורטרטים לרכישה — אמנות על הקיר שלך</h2>
+    <p class="purchase-sub" data-he="פורטרטים של עמית ארז — זמינים להדפסה בכל גודל" data-en="Portraits by Amit Erez — available for print in any size">פורטרטים של עמית ארז — זמינים להדפסה בכל גודל</p>
+    <div class="purchase-grid">
+
+      <div class="purchase-thumb" onclick="openBuyContact('לוחם קרנבל')">
+        <img src="https://drive.google.com/thumbnail?id=1y6iG3IiFk0GlsCUsBZsepI4Np7JEFH0O&sz=w400" alt="לוחם קרנבל" loading="lazy">
+        <div class="purchase-overlay">
+          <span class="po-title" data-he="לוחם קרנבל" data-en="Carnival Fighter">לוחם קרנבל</span>
+          <span class="po-btn" data-he="לרכישה" data-en="Buy Print">לרכישה</span>
+        </div>
+      </div>
+
+      <div class="purchase-thumb" onclick="openBuyContact('דיוקן בצבעים חיים')">
+        <img src="https://drive.google.com/thumbnail?id=1iGsR7oUKjZ75jOxcqdw-plYU72f1LbEp&sz=w400" alt="דיוקן בצבעים חיים" loading="lazy">
+        <div class="purchase-overlay">
+          <span class="po-title" data-he="דיוקן בצבעים חיים" data-en="Vivid Portrait">דיוקן בצבעים חיים</span>
+          <span class="po-btn" data-he="לרכישה" data-en="Buy Print">לרכישה</span>
+        </div>
+      </div>
+
+      <div class="purchase-thumb" onclick="openBuyContact('ליצנית חייכנית')">
+        <img src="https://drive.google.com/thumbnail?id=1zRydz-feBGM0nA4GVqS2xlblOyfmEYT0&sz=w400" alt="ליצנית חייכנית" loading="lazy">
+        <div class="purchase-overlay">
+          <span class="po-title" data-he="ליצנית חייכנית" data-en="Smiling Clown">ליצנית חייכנית</span>
+          <span class="po-btn" data-he="לרכישה" data-en="Buy Print">לרכישה</span>
+        </div>
+      </div>
+
+      <div class="purchase-thumb" onclick="openBuyContact('מבט דרך זכוכית מגדלת')">
+        <img src="https://drive.google.com/thumbnail?id=1qS2yrWz66Xt2XQtmxjLbi30BBFrqGXB1&sz=w400" alt="מבט דרך זכוכית מגדלת" loading="lazy">
+        <div class="purchase-overlay">
+          <span class="po-title" data-he="מבט דרך זכוכית מגדלת" data-en="Magnified Gaze">מבט דרך זכוכית מגדלת</span>
+          <span class="po-btn" data-he="לרכישה" data-en="Buy Print">לרכישה</span>
+        </div>
+      </div>
+
+      <div class="purchase-thumb" onclick="openBuyContact('פרצוף ג\'וקר')">
+        <img src="https://drive.google.com/thumbnail?id=1jStHSSDQG3tC32p6zLS94bT7fi7j2BrA&sz=w400" alt="פרצוף ג'וקר" loading="lazy">
+        <div class="purchase-overlay">
+          <span class="po-title" data-he="פרצוף ג'וקר" data-en="Joker Face">פרצוף ג'וקר</span>
+          <span class="po-btn" data-he="לרכישה" data-en="Buy Print">לרכישה</span>
+        </div>
+      </div>
+
+      <div class="purchase-thumb" onclick="openBuyContact('ציור חי')">
+        <img src="https://drive.google.com/thumbnail?id=100AYpaK0jeKjH_qzGfF6jNPd7katXEZR&sz=w400" alt="ציור חי" loading="lazy">
+        <div class="purchase-overlay">
+          <span class="po-title" data-he="ציור חי" data-en="Live Painting">ציור חי</span>
+          <span class="po-btn" data-he="לרכישה" data-en="Buy Print">לרכישה</span>
+        </div>
+      </div>
+
+      <div class="purchase-thumb" onclick="openBuyContact('זקן הקסמים')">
+        <img src="https://drive.google.com/thumbnail?id=1JFmSumQcXYhX4flmCGZbWXeO5bgIUU8-&sz=w400" alt="זקן הקסמים" loading="lazy">
+        <div class="purchase-overlay">
+          <span class="po-title" data-he="זקן הקסמים" data-en="Wizard Elder">זקן הקסמים</span>
+          <span class="po-btn" data-he="לרכישה" data-en="Buy Print">לרכישה</span>
+        </div>
+      </div>
+
+      <div class="purchase-thumb" onclick="openBuyContact('שמחת פורים')">
+        <img src="https://drive.google.com/thumbnail?id=1O6AzQfr_Av8rOsdRffwNBvumKBGugOQF&sz=w400" alt="שמחת פורים" loading="lazy">
+        <div class="purchase-overlay">
+          <span class="po-title" data-he="שמחת פורים" data-en="Purim Joy">שמחת פורים</span>
+          <span class="po-btn" data-he="לרכישה" data-en="Buy Print">לרכישה</span>
+        </div>
+      </div>
+
+      <div class="purchase-thumb" onclick="openBuyContact('דיוקן טורקיז עם טלית')">
+        <img src="https://drive.google.com/thumbnail?id=1a106WxbbnFsP2vaBmmLBDBY1MMTjx8Gs&sz=w400" alt="דיוקן טורקיז עם טלית" loading="lazy">
+        <div class="purchase-overlay">
+          <span class="po-title" data-he="דיוקן טורקיז עם טלית" data-en="Turquoise Tallit Portrait">דיוקן טורקיז עם טלית</span>
+          <span class="po-btn" data-he="לרכישה" data-en="Buy Print">לרכישה</span>
+        </div>
+      </div>
+
+      <div class="purchase-thumb" onclick="openBuyContact('נקודות צהוב שחור')">
+        <img src="https://drive.google.com/thumbnail?id=15vSnXub3qWplVF87Yw7YGpEXrOh5KHj_&sz=w400" alt="נקודות צהוב שחור" loading="lazy">
+        <div class="purchase-overlay">
+          <span class="po-title" data-he="נקודות צהוב שחור" data-en="Yellow Black Dots">נקודות צהוב שחור</span>
+          <span class="po-btn" data-he="לרכישה" data-en="Buy Print">לרכישה</span>
+        </div>
+      </div>
+
+      <div class="purchase-thumb" onclick="openBuyContact('פסל של דמות היסטורית')">
+        <img src="https://drive.google.com/thumbnail?id=1XIRbGx9bv3sGCWtJb2NOv4z2LD-ftgaQ&sz=w400" alt="פסל של דמות היסטורית" loading="lazy">
+        <div class="purchase-overlay">
+          <span class="po-title" data-he="פסל של דמות היסטורית" data-en="Historical Figure Sculpture">פסל של דמות היסטורית</span>
+          <span class="po-btn" data-he="לרכישה" data-en="Buy Print">לרכישה</span>
+        </div>
+      </div>
+
+    </div>
+    <div class="purchase-cta-wrap">
+      <a class="purchase-cta" href="https://api.whatsapp.com/send?phone=972503333227"
+         id="buyCtaLink" target="_blank" rel="noopener"
+         data-he="📞 לפרטים ורכישה — WhatsApp" data-en="📞 Contact for Purchase — WhatsApp">📞 לפרטים ורכישה — WhatsApp</a>
+    </div>
+  </div>
+</section>
+
+<div class="nav-prev">
+  <a href="/camera/" data-he="← חזרה לבית ספר לצילום" data-en="← Back to Photography School">← חזרה לבית ספר לצילום</a>
+</div>
+
+<script>
+function getLang() { return localStorage.getItem('lang') || 'he'; }
+
+// Section 1: Camera angle selector
+function selectAngle(el, idx) {
+  document.querySelectorAll('.angle-card').forEach(function(c) { c.classList.remove('active'); });
+  el.classList.add('active');
+}
+
+// Section 2: Lighting patterns
+var LP_DATA = [
+  {
+    name: 'Rembrandt',
+    lx: 25, ly: 25,
+    shadow: 'M70,80 Q55,62 52,80 Q55,95 70,118 Z',
+    tip: {
+      he: '<strong>Rembrandt</strong> — האור ב-45° מעל ומהצד. יוצר משולש אור קטן על הלחי המוצללת. <strong>דרמטי, אופי, קלאסי.</strong> מתאים לפורטרט גברי ו-character portraits.',
+      en: '<strong>Rembrandt</strong> — Light at 45° above and to the side. Creates a small triangle of light on the shadowed cheek. <strong>Dramatic, character, classic.</strong> Works for masculine and character portraits.'
+    }
+  },
+  {
+    name: 'Loop',
+    lx: 35, ly: 18,
+    shadow: 'M70,80 Q60,68 62,80 Q63,92 70,108 Z',
+    tip: {
+      he: '<strong>Loop</strong> — האור מעט מעל ולצד. הצל יוצר "לולאה" קטנה מתחת לאף. <strong>הנפוץ ביותר, מחמיא, מתאים לכולם.</strong> ברירת המחדל של צלמי פורטרט.',
+      en: '<strong>Loop</strong> — Light slightly above and to the side. Shadow creates a small "loop" below the nose. <strong>Most common, flattering, works for everyone.</strong> The portrait photographer\'s default.'
+    }
+  },
+  {
+    name: 'Butterfly',
+    lx: 70, ly: 15,
+    shadow: 'M62,88 Q70,82 78,88 Q75,96 70,100 Q65,96 62,88 Z',
+    tip: {
+      he: '<strong>Butterfly / Paramount</strong> — האור ישר מלפנים ומעל. הצל מתחת לאף מזכיר פרפר. <strong>מחמיא, אופנה, Hollywood.</strong> עובד טוב עם עצמות לחיים בולטות.',
+      en: '<strong>Butterfly / Paramount</strong> — Light directly in front and above. Shadow under nose resembles a butterfly. <strong>Flattering, fashion, Hollywood.</strong> Works great with prominent cheekbones.'
+    }
+  },
+  {
+    name: 'Split',
+    lx: 115, ly: 80,
+    shadow: 'M70,48 Q70,60 70,118 Q52,110 38,80 Q52,50 70,48 Z',
+    tip: {
+      he: '<strong>Split</strong> — האור ב-90° מהצד. מחצית הפנים מוארת, מחצית בצל מוחלט. <strong>דרמטי מאוד, אופי חזק, מסתורי.</strong> לא מחמיא אבל עוצמתי.',
+      en: '<strong>Split</strong> — Light exactly 90° to the side. Half the face lit, half in complete shadow. <strong>Very dramatic, strong character, mysterious.</strong> Not flattering, but powerful.'
+    }
+  }
+];
+var activePattern = 0;
+
+function selectPattern(el, idx) {
+  document.querySelectorAll('.lp-tab').forEach(function(t) { t.classList.remove('active'); });
+  el.classList.add('active');
+  activePattern = idx;
+  renderPattern();
+}
+
+function renderPattern() {
+  var p = LP_DATA[activePattern];
+  var lang = getLang();
+  var lg = document.getElementById('lpLight');
+  if (lg) lg.setAttribute('transform', 'translate(' + p.lx + ',' + p.ly + ')');
+  var b1 = document.getElementById('lpBeam1');
+  var b2 = document.getElementById('lpBeam2');
+  if (b1) { b1.setAttribute('x1', p.lx); b1.setAttribute('y1', p.ly); b1.setAttribute('x2', '38'); b1.setAttribute('y2', '55'); }
+  if (b2) { b2.setAttribute('x1', p.lx); b2.setAttribute('y1', p.ly); b2.setAttribute('x2', '102'); b2.setAttribute('y2', '55'); }
+  var sh = document.getElementById('lpShadow');
+  if (sh) sh.setAttribute('d', p.shadow);
+  var tip = document.getElementById('lpTip');
+  if (tip) tip.innerHTML = p.tip[lang] || p.tip.he;
+}
+
+// Section 3: Gaze selector
+function selectGaze(el) {
+  document.querySelectorAll('.gaze-card').forEach(function(c) { c.classList.remove('active'); });
+  el.classList.add('active');
+}
+
+// Section 4: Background blur simulator
+var AP_STOPS = [1.4, 1.8, 2.0, 2.8, 4.0, 5.6, 8.0, 11, 16, 18, 22];
+
+function updateBlur() {
+  var distRaw = parseInt(document.getElementById('distSlider').value);
+  var apIdx = parseInt(document.getElementById('apSlider').value);
+  var dist = distRaw / 10;
+  var fstop = AP_STOPS[apIdx];
+  var lang = getLang();
+
+  var blurPx = Math.round(dist * 2.2 * (1 - (apIdx / 14)));
+  blurPx = Math.max(0, Math.min(18, blurPx));
+
+  var bg = document.getElementById('blurBg');
+  if (bg) bg.style.filter = 'blur(' + blurPx + 'px)';
+
+  var distEl = document.getElementById('distVal');
+  var apEl = document.getElementById('apVal');
+  if (distEl) distEl.textContent = dist.toFixed(1) + (lang === 'en' ? 'm' : ' מ׳');
+  if (apEl) apEl.textContent = 'f/' + fstop;
+
+  var result = document.getElementById('blurResult');
+  if (result) {
+    var quality = blurPx >= 12 ? (lang === 'en' ? '✅ Strong bokeh — subject pops' : '✅ בוקה חזק — הנבדק בולט')
+                : blurPx >= 6  ? (lang === 'en' ? '👍 Good separation' : '👍 הפרדה טובה')
+                : blurPx >= 2  ? (lang === 'en' ? '⚠️ Weak separation — move subject further' : '⚠️ הפרדה חלשה — רחק את הנבדק מהרקע')
+                :                (lang === 'en' ? '❌ No separation — subject merges with background' : '❌ אין הפרדה — הנבדק נבלע ברקע');
+    result.textContent = quality;
+  }
+}
+
+// Purchase
+function openBuyContact(photoTitle) {
+  var lang = getLang();
+  var msg = lang === 'en'
+    ? encodeURIComponent('Hello! I\'m interested in purchasing a portrait print of "' + photoTitle + '" from your portrait guide.')
+    : encodeURIComponent('שלום! אני מעוניין לרכוש הדפסה של "' + photoTitle + '" מהמדריך לצילום פורטרט.');
+  window.open('https://api.whatsapp.com/send?phone=972503333227&text=' + msg, '_blank');
+}
+
+// Bilingual
+function applyLang() {
+  var lang = getLang();
+  var isEn = lang === 'en';
+  document.documentElement.dir = isEn ? 'ltr' : 'rtl';
+  document.documentElement.lang = lang;
+  document.body.style.direction = isEn ? 'ltr' : 'rtl';
+  document.title = isEn
+    ? 'Portrait Photography — Full Guide | Photography School | Amit Photos'
+    : 'צילום פורטרט — מדריך מלא | בית ספר לצילום | Amit Photos';
+  document.querySelectorAll('[data-he]').forEach(function(el) {
+    el.innerHTML = isEn ? (el.dataset.en || el.dataset.he) : el.dataset.he;
+  });
+  document.querySelectorAll('.en-h2, .ls-hero-en').forEach(function(el) {
+    el.style.display = isEn ? 'none' : '';
+  });
+  renderPattern();
+  updateBlur();
+}
+
+window.setLang = applyLang;
+
+document.querySelectorAll('img[loading="lazy"]').forEach(function(img) {
+  if (img.complete) img.classList.add('loaded');
+  else img.addEventListener('load', function() { img.classList.add('loaded'); });
+});
+
+renderPattern();
+updateBlur();
+applyLang();
+window.addEventListener('storage', function(e) { if (e.key === 'lang') applyLang(); });
+</script>
+</body>
+</html>
