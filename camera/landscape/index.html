@@ -852,7 +852,11 @@ function applyLang() {
     ? 'Landscape Photography — Full Guide | Photography School | Amit Photos'
     : 'צילום לנדסקייפ — מדריך מלא | בית ספר לצילום | Amit Photos';
   document.querySelectorAll('[data-he]').forEach(function(el) {
-    el.textContent = isEn ? (el.dataset.en || el.dataset.he) : el.dataset.he;
+    el.innerHTML = isEn ? (el.dataset.en || el.dataset.he) : el.dataset.he;
+  });
+  // Hide secondary-language subtitles in English (h1/h2 already show English)
+  document.querySelectorAll('.en-h2, .ls-hero-en').forEach(function(el) {
+    el.style.display = isEn ? 'none' : '';
   });
   // Refresh interactive state after lang switch
   var activeCard = document.querySelector('.city-card.active');
