@@ -4423,6 +4423,17 @@ async function nlPickLocation(env) {
   return results[0] ? { ...results[0], idx } : null;
 }
 
+async function nlPickGalleryPhotos(env, heroPhotoId) {
+  const { results } = await env.DB.prepare(
+    'SELECT id, title FROM photos WHERE published=1 AND id != ? ORDER BY RANDOM() LIMIT 3'
+  ).bind(heroPhotoId).all();
+  return (results || []).map(p => ({
+    id: p.id,
+    title: p.title || '',
+    url: `https://amitphotos.com/photos/${p.id}.jpg`
+  }));
+}
+
 async function nlGenerateContent(env, heroPhoto, guide, location, type) {
   const apiKey = env.ANTHROPIC_API_KEY;
   if (!apiKey) throw new Error('ANTHROPIC_API_KEY not set');
@@ -4505,6 +4516,7 @@ async function nlGenerateDraft(env, type) {
   const heroPhoto = await nlPickHeroPhoto(env);
   if (!heroPhoto) throw new Error('No photos found');
 
+  const galleryPhotos = await nlPickGalleryPhotos(env, heroPhoto.id);
   const guide = await nlPickGuide(env);
   const location = type === 'full' ? await nlPickLocation(env) : null;
 
@@ -4522,6 +4534,7 @@ async function nlGenerateDraft(env, type) {
       text_he: generated.location_text_he, text_en: generated.location_text_en } : null,
     tip: { title_he: generated.tip_title_he, title_en: generated.tip_title_en,
       text_he: generated.tip_text_he, text_en: generated.tip_text_en },
+    gallery_photos: galleryPhotos,
     links: [
       { label_he: 'גלריה', label_en: 'Gallery', url: '/' },
       { label_he: 'מדריכים', label_en: 'Guides', url: '/camera/' },
@@ -4531,7 +4544,8 @@ async function nlGenerateDraft(env, type) {
   } : {
     hero: { photo_id: heroPhoto.id, photo_url: photoUrl,
       title_he: heroPhoto.title, text_he: generated.hero_text_he, text_en: generated.hero_text_en },
-    tip: { text_he: generated.tip_text_he, text_en: generated.tip_text_en }
+    tip: { text_he: generated.tip_text_he, text_en: generated.tip_text_en },
+    gallery_photos: galleryPhotos
   };
 
   const titleHe = type === 'full'
