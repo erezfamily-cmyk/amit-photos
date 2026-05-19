@@ -4854,26 +4854,40 @@ a:hover{text-decoration:underline}
   <tbody>${rows || '<tr><td colspan="6" style="text-align:center;color:#888;padding:2rem">אין גיליונות עדיין</td></tr>'}</tbody>
 </table>
 <script>
-const tok = localStorage.getItem('adminToken') || '';
 async function generate(type) {
   const msg = document.getElementById('msg');
-  msg.style.display = 'block';
-  msg.style.background = '#1a1a1a';
-  msg.style.color = '#888';
-  msg.textContent = 'יוצר טיוטה... (עד 30 שניות)';
+  const btns = document.querySelectorAll('button');
+  btns.forEach(b => b.disabled = true);
+  msg.style.cssText = 'display:block;background:#1a2a1a;color:#c8a96e;border:1px solid #c8a96e33;padding:.75rem 1rem;border-radius:8px;font-size:.95rem;margin-bottom:1rem';
+  msg.innerHTML = '<span style="display:inline-block;animation:spin 1s linear infinite;margin-left:.4rem">⏳</span> יוצר טיוטה עם Claude... (עד 30 שניות)';
   try {
     const r = await fetch('/api/admin/newsletter/generate', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-Session-Token': tok },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ type })
     });
     const d = await r.json();
-    if (d.skipped) { msg.style.color = '#ff9800'; msg.textContent = 'גיליון לתקופה זו כבר קיים'; }
-    else if (d.slug) { msg.style.color = '#4caf50'; msg.textContent = 'נוצר! מרענן...'; setTimeout(() => location.reload(), 1000); }
-    else { msg.style.color = '#f44336'; msg.textContent = d.error || 'שגיאה'; }
-  } catch(e) { msg.style.color = '#f44336'; msg.textContent = 'שגיאת רשת: ' + e.message; }
+    if (d.skipped) {
+      msg.style.cssText = 'display:block;background:#2a1a00;color:#ff9800;border:1px solid #ff980033;padding:.75rem 1rem;border-radius:8px;font-size:.95rem;margin-bottom:1rem';
+      msg.textContent = 'גיליון לתקופה זו כבר קיים';
+      btns.forEach(b => b.disabled = false);
+    } else if (d.slug) {
+      msg.style.cssText = 'display:block;background:#0a2a0a;color:#4caf50;border:1px solid #4caf5033;padding:.75rem 1rem;border-radius:8px;font-size:.95rem;margin-bottom:1rem';
+      msg.textContent = '✓ נוצר בהצלחה! מעביר לעריכה...';
+      setTimeout(() => location.href = '/admin/newsletter/' + d.id + '/', 800);
+    } else {
+      msg.style.cssText = 'display:block;background:#2a0a0a;color:#f44336;border:1px solid #f4433633;padding:.75rem 1rem;border-radius:8px;font-size:.95rem;margin-bottom:1rem';
+      msg.textContent = '✗ ' + (d.error || 'שגיאה');
+      btns.forEach(b => b.disabled = false);
+    }
+  } catch(e) {
+    msg.style.cssText = 'display:block;background:#2a0a0a;color:#f44336;border:1px solid #f4433633;padding:.75rem 1rem;border-radius:8px;font-size:.95rem;margin-bottom:1rem';
+    msg.textContent = '✗ שגיאת רשת: ' + e.message;
+    btns.forEach(b => b.disabled = false);
+  }
 }
 </script>
+<style>@keyframes spin{to{transform:rotate(360deg)}}</style>
 </body></html>`, { headers: { 'Content-Type': 'text/html;charset=utf-8' } });
 }
 
