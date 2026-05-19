@@ -262,7 +262,69 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
 
 <!-- SECTION 3: Focus Areas -->
 <div class="demo-wrap" id="focus-areas">
-  <!-- filled in Task 5 -->
+  <h2 class="section-title" data-he="📐 אזורי פוקוס — איפה המצלמה מחפשת?" data-en="📐 Focus Areas — Where Does the Camera Search?">📐 אזורי פוקוס — איפה המצלמה מחפשת?</h2>
+
+  <div class="area-tabs">
+    <button type="button" class="area-tab active" data-area="single"
+      data-he="נקודה בודדת" data-en="Single Point">נקודה בודדת</button>
+    <button type="button" class="area-tab" data-area="zone"
+      data-he="אזור" data-en="Zone">אזור</button>
+    <button type="button" class="area-tab" data-area="wide"
+      data-he="אוטומטי רחב" data-en="Wide / Auto">אוטומטי רחב</button>
+    <button type="button" class="area-tab" data-area="eye"
+      data-he="פנים + עיניים" data-en="Face + Eye AF">פנים + עיניים</button>
+  </div>
+
+  <div class="area-layout">
+    <!-- SVG Viewfinder -->
+    <div class="viewfinder-wrap">
+      <svg id="vf-svg" viewBox="0 0 200 150" style="width:100%;display:block">
+        <!-- Outer frame -->
+        <rect x="2" y="2" width="196" height="146" rx="4"
+          fill="#0d0d0d" stroke="#333" stroke-width="1.5"/>
+        <!-- Corner brackets -->
+        <path d="M12,2 L2,2 L2,12" fill="none" stroke="#555" stroke-width="2"/>
+        <path d="M188,2 L198,2 L198,12" fill="none" stroke="#555" stroke-width="2"/>
+        <path d="M12,148 L2,148 L2,138" fill="none" stroke="#555" stroke-width="2"/>
+        <path d="M188,148 L198,148 L198,138" fill="none" stroke="#555" stroke-width="2"/>
+        <!-- AF point grid: rendered by JS -->
+        <g id="vf-points"></g>
+        <!-- Face outline (hidden by default) -->
+        <ellipse id="vf-face" cx="100" cy="75" rx="35" ry="42"
+          fill="none" stroke="#c8a96e" stroke-width="1.5"
+          stroke-dasharray="4,3" opacity="0" />
+        <circle id="vf-eye-l" cx="85" cy="62" r="5"
+          fill="none" stroke="#c8a96e" stroke-width="1.5" opacity="0"/>
+        <circle id="vf-eye-r" cx="115" cy="62" r="5"
+          fill="none" stroke="#c8a96e" stroke-width="1.5" opacity="0"/>
+        <circle id="vf-eye-dot" cx="85" cy="62" r="2" fill="#c8a96e" opacity="0"/>
+      </svg>
+    </div>
+
+    <!-- Description panel -->
+    <div class="area-desc-wrap">
+      <div class="area-desc active" data-area="single">
+        <h3 data-he="נקודה בודדת" data-en="Single Point">נקודה בודדת</h3>
+        <p data-he="אתה בוחר בדיוק איזו נקודה מהרשת תהיה פעילה. הכי שליטה — הכי מדויק. מתאים לנושאים שאינם בדיוק במרכז הפריים." data-en="You choose exactly which grid point is active. Maximum control, maximum precision. Perfect for off-center subjects.">אתה בוחר בדיוק איזו נקודה מהרשת תהיה פעילה. הכי שליטה — הכי מדויק.</p>
+        <div class="tip" data-he="💡 טיפ: ניתן להזיז את הנקודה עם הג'ויסטיק/מגע על המסך — אל תסמוך תמיד על מרכז." data-en="💡 Tip: Move the point with the joystick or touchscreen — don't always rely on center AF.">💡 טיפ: ניתן להזיז את הנקודה עם הג'ויסטיק/מגע על המסך.</div>
+      </div>
+      <div class="area-desc" data-area="zone">
+        <h3 data-he="אזור (Zone)" data-en="Zone">אזור (Zone)</h3>
+        <p data-he="מספר נקודות סמוכות פעילות יחד. המצלמה בוחרת את הנושא הקרוב ביותר באזור. פחות מדויק מנקודה, אבל הרבה יותר מהיר לנושאים נעים." data-en="A cluster of adjacent points active together. Camera picks the nearest subject in the zone. Less precise than single point, but much faster for moving subjects.">מספר נקודות סמוכות פעילות יחד. המצלמה בוחרת את הנושא הקרוב ביותר באזור.</p>
+        <div class="tip" data-he="💡 טיפ: טוב לספורט ועופות כשהנושא זז בתוך אזור מוגדר." data-en="💡 Tip: Great for sports and birds moving within a defined zone.">💡 טיפ: טוב לספורט ועופות כשהנושא זז בתוך אזור מוגדר.</div>
+      </div>
+      <div class="area-desc" data-area="wide">
+        <h3 data-he="אוטומטי רחב (Wide/Auto)" data-en="Wide / Auto AF">אוטומטי רחב (Wide/Auto)</h3>
+        <p data-he="כל הנקודות פעילות. המצלמה מחליטה לבד מה לפקס. בדרך כלל בוחרת את הנושא הקרוב ביותר. נוח לצילום מהיר — אבל ייתכן שיפקס על הרקע בטעות." data-en="All points active. Camera decides what to focus on — usually the closest subject. Convenient for quick shooting, but may accidentally focus on background.">כל הנקודות פעילות. המצלמה מחליטה לבד — בדרך כלל הנושא הקרוב.</p>
+        <div class="tip" data-he="💡 טיפ: הימנע מכאן לפורטרטים — המצלמה עשויה לפקס על האף במקום העיניים." data-en="💡 Tip: Avoid for portraits — camera may focus on the nose instead of the eyes.">💡 טיפ: הימנע מכאן לפורטרטים — המצלמה עשויה לפקס על האף.</div>
+      </div>
+      <div class="area-desc" data-area="eye">
+        <h3 data-he="זיהוי פנים + עיניים (Eye AF)" data-en="Face + Eye Detection (Eye AF)">זיהוי פנים + עיניים (Eye AF)</h3>
+        <p data-he="מצלמות מודרניות מזהות פנים ועיניים ונועלות אוטומטית על העין הקרובה ביותר. שינוי המשחק לפורטרטים — כמעט אף פעם לא מפספס." data-en="Modern cameras detect faces and eyes, automatically locking on the nearest eye. A game-changer for portraits — almost never misses.">מצלמות מודרניות מזהות פנים ועיניים ונועלות אוטומטית על העין הקרובה.</p>
+        <div class="tip" data-he="💡 טיפ: עובד עם AF-C — המצלמה עוקבת אחרי העין גם כשהנושא זז." data-en="💡 Tip: Works with AI Servo — camera tracks the eye even as the subject moves.">💡 טיפ: עובד עם AI Servo — עוקב אחרי העין גם כשהנושא זז.</div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- SECTION 4: Focus Stacking -->
@@ -359,6 +421,65 @@ function setAfMode(mode) {
   document.querySelectorAll('.mode-info').forEach(el =>
     el.classList.toggle('active', el.dataset.mode === mode));
 }
+
+// ===== FOCUS AREAS =====
+const VF_COLS = 5, VF_ROWS = 3;
+const VF_W = 196, VF_H = 146, VF_X0 = 2, VF_Y0 = 2;
+const ptW = 20, ptH = 16;
+
+function vfPoints() {
+  const pts = [];
+  for (let r = 0; r < VF_ROWS; r++) {
+    for (let c = 0; c < VF_COLS; c++) {
+      const x = VF_X0 + (VF_W / VF_COLS) * c + (VF_W / VF_COLS - ptW) / 2;
+      const y = VF_Y0 + (VF_H / VF_ROWS) * r + (VF_H / VF_ROWS - ptH) / 2;
+      pts.push({ x, y, r, c });
+    }
+  }
+  return pts;
+}
+
+function renderVF(area) {
+  const pts = vfPoints();
+  const g = document.getElementById('vf-points');
+  g.innerHTML = '';
+
+  pts.forEach(p => {
+    let active = false;
+    if (area === 'single') active = p.r === 1 && p.c === 2;
+    if (area === 'zone')   active = p.r >= 0 && p.r <= 2 && p.c >= 1 && p.c <= 3 && !(p.r === 0 && p.c === 1) && !(p.r === 0 && p.c === 3) && !(p.r === 2 && p.c === 1) && !(p.r === 2 && p.c === 3);
+    if (area === 'wide')   active = true;
+    if (area === 'eye')    active = false;
+
+    const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    rect.setAttribute('x', p.x); rect.setAttribute('y', p.y);
+    rect.setAttribute('width', ptW); rect.setAttribute('height', ptH);
+    rect.setAttribute('rx', 2);
+    rect.setAttribute('fill', active ? 'rgba(200,169,110,0.2)' : 'none');
+    rect.setAttribute('stroke', active ? '#c8a96e' : '#333');
+    rect.setAttribute('stroke-width', active ? '1.5' : '1');
+    g.appendChild(rect);
+  });
+
+  const show = area === 'eye' ? '1' : '0';
+  document.getElementById('vf-face').setAttribute('opacity', show);
+  document.getElementById('vf-eye-l').setAttribute('opacity', show);
+  document.getElementById('vf-eye-r').setAttribute('opacity', show);
+  document.getElementById('vf-eye-dot').setAttribute('opacity', show);
+}
+
+document.querySelectorAll('.area-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.area-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    const area = tab.dataset.area;
+    renderVF(area);
+    document.querySelectorAll('.area-desc').forEach(d =>
+      d.classList.toggle('active', d.dataset.area === area));
+  });
+});
+
+renderVF('single');
 
 applyLang();
 window.setLang = applyLang;
