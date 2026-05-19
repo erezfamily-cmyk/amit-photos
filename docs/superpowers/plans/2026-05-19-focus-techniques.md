@@ -1,0 +1,966 @@
+# Focus Techniques Camera Guide — Implementation Plan
+
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+
+**Goal:** Build `/camera/focus/index.html` — an interactive camera guide teaching AF modes, focus areas, and focus stacking, identical in structure to existing `/camera/` guide pages.
+
+**Architecture:** Single static HTML file with inline CSS + vanilla JS. Three interactive sections: AF mode toggle with animated focus overlay on real photos, focus area tabs with SVG viewfinder, and focus stacking canvas slider. Full Hebrew/English i18n via `data-he`/`data-en` attributes + `applyLang()`. Hub page updated with new card.
+
+**Tech Stack:** HTML5, CSS3 (custom properties, keyframe animations), Vanilla JS, SVG, Canvas API, Google Fonts (Heebo + Syne), nav.js, share.js
+
+---
+
+## File Map
+
+| Action | File | Purpose |
+|---|---|---|
+| Create | `camera/focus/index.html` | Full guide page |
+| Modify | `camera/index.html` | Add card for `/camera/focus/` |
+
+---
+
+## Task 1: Scaffold + Hub Card
+
+**Files:**
+- Create: `camera/focus/index.html`
+- Modify: `camera/index.html`
+
+- [ ] **Step 1: Create the directory and scaffold file**
+
+Create `camera/focus/index.html` with this full skeleton (all sections present but empty bodies):
+
+```html
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="canonical" href="https://amitphotos.com/camera/focus/" />
+<link rel="alternate" hreflang="he" href="https://amitphotos.com/camera/focus/" />
+<link rel="alternate" hreflang="en" href="https://amitphotos.com/camera/focus/" />
+<link rel="alternate" hreflang="x-default" href="https://amitphotos.com/camera/focus/" />
+<title>פוקוס — מצבים, נקודות ו-Stacking | בית ספר לצילום | Amit Photos</title>
+<meta name="description" content="למד על מצבי AF, נקודות פוקוס ו-Focus Stacking — דמואים אינטראקטיביים עם תמונות אמיתיות.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&display=swap" rel="stylesheet">
+<style>
+/* CSS goes here in Task 2 */
+</style>
+<script src="/assets/js/nav.js" defer></script>
+<script src="/assets/js/share.js" defer></script>
+</head>
+<body>
+
+<!-- SECTION 1: Hero -->
+<div class="page-hero">
+  <div class="badge" data-he="📷 בית ספר לצילום" data-en="📷 Photography School">📷 בית ספר לצילום</div>
+  <h1 data-he="פוקוס — מצבים, נקודות ו-Stacking" data-en="Focus — Modes, Points &amp; Stacking">פוקוס — מצבים, נקודות ו-Stacking</h1>
+  <p data-he="איך המצלמה מחליטה מה חד? בחר מצב, נסה על תמונות אמיתיות" data-en="How does the camera decide what's sharp? Pick a mode, try it on real photos">איך המצלמה מחליטה מה חד? בחר מצב, נסה על תמונות אמיתיות</p>
+</div>
+
+<!-- SECTION 2: AF Modes Demo -->
+<div class="demo-wrap" id="af-demo">
+  <!-- filled in Task 3–5 -->
+</div>
+
+<!-- SECTION 3: Focus Areas -->
+<div class="demo-wrap" id="focus-areas">
+  <!-- filled in Task 6 -->
+</div>
+
+<!-- SECTION 4: Focus Stacking -->
+<div class="demo-wrap" id="focus-stacking">
+  <!-- filled in Task 7 -->
+</div>
+
+<!-- SECTION 5: Info Cards -->
+<div class="demo-wrap" id="info-cards">
+  <!-- filled in Task 8 -->
+</div>
+
+<!-- Bottom nav -->
+<div class="nav-prev">
+  <a href="/camera/" data-he="← חזרה לבית הספר לצילום" data-en="← Back to Photography School">← חזרה לבית הספר לצילום</a>
+</div>
+
+<script>
+function getLang() { return localStorage.getItem('lang') || 'he'; }
+function applyLang() {
+  const lang = getLang(), isEn = lang === 'en';
+  document.documentElement.dir = isEn ? 'ltr' : 'rtl';
+  document.documentElement.lang = lang;
+  document.body.style.direction = isEn ? 'ltr' : 'rtl';
+  document.title = isEn
+    ? 'Focus Techniques — AF Modes, Points & Stacking | Photography School | Amit Photos'
+    : 'פוקוס — מצבים, נקודות ו-Stacking | בית ספר לצילום | Amit Photos';
+  document.querySelectorAll('[data-he]').forEach(el => {
+    el.textContent = isEn ? (el.dataset.en || el.dataset.he) : el.dataset.he;
+  });
+}
+applyLang();
+window.addEventListener('storage', e => { if (e.key === 'lang') applyLang(); });
+</script>
+</body>
+</html>
+```
+
+- [ ] **Step 2: Add card to `camera/index.html` hub**
+
+Find the grid of camera guide cards in `camera/index.html`. Add a new card for the focus guide. Look for the pattern of existing cards (they use a `.guide-card` or similar class with `href`, icon, title, subtitle). Add:
+
+```html
+<a class="guide-card" href="/camera/focus/">
+  <div class="card-icon">🎯</div>
+  <div class="card-body">
+    <div class="card-title" data-he="פוקוס — מצבים וטכניקות" data-en="Focus — Modes &amp; Techniques">פוקוס — מצבים וטכניקות</div>
+    <div class="card-sub" data-he="AF modes, נקודות, Focus Stacking" data-en="AF modes, focus points, stacking">AF modes, נקודות, Focus Stacking</div>
+  </div>
+</a>
+```
+
+> Note: Match the exact class names already used in `camera/index.html` — open the file first and check.
+
+- [ ] **Step 3: Open in browser and verify both files load**
+
+```bash
+python -m http.server 8000
+# open http://localhost:8000/camera/focus/
+# open http://localhost:8000/camera/
+```
+
+Expected: focus page shows hero text, hub shows new 🎯 card.
+
+- [ ] **Step 4: Commit scaffold**
+
+```bash
+git add camera/focus/index.html camera/index.html
+git commit -m "feat: scaffold focus techniques guide + hub card"
+```
+
+---
+
+## Task 2: CSS Foundation
+
+**Files:**
+- Modify: `camera/focus/index.html` — fill in the `<style>` block
+
+- [ ] **Step 1: Replace the `/* CSS goes here */` comment with full CSS**
+
+```css
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #0a0a0a; --surface: #111; --border: #222;
+  --accent: #c8a96e; --text: #f0ede8; --muted: #888;
+}
+body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--text);
+  direction: rtl; min-height: 100vh; padding: 0 0 4rem; }
+
+/* Hero */
+.page-hero { text-align: center; padding: 2.5rem 1.25rem 1.5rem; }
+.page-hero .badge { display: inline-block; font-size: .72rem;
+  background: rgba(200,169,110,.12); border: 1px solid rgba(200,169,110,.3);
+  color: var(--accent); border-radius: 20px; padding: .3rem .8rem; margin-bottom: .75rem; }
+.page-hero h1 { font-family: 'Syne', sans-serif; font-size: 1.8rem;
+  color: var(--accent); margin-bottom: .5rem; }
+.page-hero p { color: var(--muted); font-size: .9rem; max-width: 420px; margin: 0 auto; }
+
+/* Shared wrapper */
+.demo-wrap { max-width: 960px; margin: 0 auto; padding: 0 1.25rem 2.5rem; }
+.section-title { font-family: 'Syne', sans-serif; font-size: 1.1rem;
+  color: var(--accent); margin-bottom: 1rem; }
+.advanced-badge { display: inline-block; font-size: .68rem;
+  background: rgba(200,169,110,.1); border: 1px solid rgba(200,169,110,.25);
+  color: var(--accent); border-radius: 4px; padding: 2px 8px; margin-right: .5rem; }
+
+/* Photo picker */
+.photo-picker { display: flex; gap: .6rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
+.photo-btn { flex: 1; min-width: 130px; background: var(--surface);
+  border: 1px solid var(--border); border-radius: 10px; overflow: hidden;
+  cursor: pointer; transition: border-color .2s; padding: 0; }
+.photo-btn:hover { border-color: #555; }
+.photo-btn.active { border-color: var(--accent); }
+.photo-btn img { width: 100%; height: 65px; object-fit: cover; display: block; }
+.photo-btn span { display: block; font-size: .7rem; color: var(--muted);
+  padding: .3rem .5rem; text-align: center; }
+
+/* Mode toggle */
+.mode-btns { display: flex; gap: .5rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
+.mode-btn { flex: 1; min-width: 110px; background: var(--surface);
+  border: 1px solid var(--border); border-radius: 10px; padding: .6rem 1rem;
+  font-family: 'Heebo', sans-serif; font-size: .82rem; color: var(--muted);
+  cursor: pointer; transition: all .2s; text-align: center; }
+.mode-btn:hover { border-color: #555; color: var(--text); }
+.mode-btn.active { border-color: var(--accent); color: var(--accent);
+  background: rgba(200,169,110,.08); }
+
+/* AF demo layout */
+.af-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+@media (max-width: 640px) { .af-layout { grid-template-columns: 1fr; } }
+
+/* Photo panel */
+.photo-panel { background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; overflow: hidden; }
+.photo-container { position: relative; aspect-ratio: 4/3; overflow: hidden; background: #000; }
+.photo-container img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* Focus overlay */
+.focus-square { position: absolute; width: 60px; height: 60px;
+  border: 2px solid #00e676; border-radius: 4px;
+  transform: translate(-50%, -50%); pointer-events: none; }
+.focus-square::before, .focus-square::after {
+  content: ''; position: absolute; background: #00e676; }
+.focus-square::before { top: -6px; left: 50%; transform: translateX(-50%);
+  width: 1px; height: 6px; }
+.focus-square::after { bottom: -6px; left: 50%; transform: translateX(-50%);
+  width: 1px; height: 6px; }
+.focus-ring { position: absolute; inset: 0;
+  background: radial-gradient(circle 80px at var(--rx,50%) var(--ry,50%),
+    rgba(200,169,110,.2) 0%, transparent 70%);
+  pointer-events: none; border-radius: inherit; }
+
+/* CSS animations for AF modes */
+@keyframes af-lock { 0%,100% { transform: translate(-50%,-50%) scale(1.2); opacity:.6; }
+  40% { transform: translate(-50%,-50%) scale(1); opacity:1; border-color:#00e676; } }
+@keyframes af-servo { 0%,100% { left:50%;top:50%; }
+  20% { left:60%;top:45%; } 40% { left:55%;top:55%; }
+  60% { left:45%;top:50%; } 80% { left:50%;top:45%; } }
+@keyframes af-ring { 0%,100% { --rx:50%;--ry:50%; }
+  33% { --rx:40%;--ry:60%; } 66% { --rx:60%;--ry:40%; } }
+
+.focus-square.mode-one-shot {
+  left: 50%; top: 50%;
+  animation: af-lock 1s ease-out forwards; }
+.focus-square.mode-servo {
+  animation: af-servo 3s ease-in-out infinite;
+  border-color: #ffb300; }
+.focus-square.mode-mf { display: none; }
+.focus-ring.mode-mf { animation: af-ring 4s ease-in-out infinite; }
+.focus-ring.mode-one-shot, .focus-ring.mode-servo { display: none; }
+
+/* Info panel */
+.info-panel { background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; padding: 1.25rem; display: flex; flex-direction: column; gap: 1rem; }
+.mode-info { display: none; }
+.mode-info.active { display: block; }
+.mode-info-title { font-family: 'Syne', sans-serif; font-size: 1rem;
+  color: var(--accent); margin-bottom: .5rem; }
+.mode-info-when { font-size: .82rem; color: var(--muted); line-height: 1.6;
+  margin-bottom: .75rem; }
+.mode-tip { background: rgba(200,169,110,.08); border: 1px solid rgba(200,169,110,.25);
+  border-radius: 8px; padding: .75rem; font-size: .78rem; color: var(--text);
+  line-height: 1.55; }
+.mode-tip strong { color: var(--accent); }
+
+/* Focus areas */
+.area-tabs { display: flex; gap: .5rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
+.area-tab { flex: 1; min-width: 100px; background: var(--surface);
+  border: 1px solid var(--border); border-radius: 8px; padding: .5rem .75rem;
+  font-family: 'Heebo', sans-serif; font-size: .78rem; color: var(--muted);
+  cursor: pointer; transition: all .2s; text-align: center; }
+.area-tab:hover { border-color: #555; color: var(--text); }
+.area-tab.active { border-color: var(--accent); color: var(--accent);
+  background: rgba(200,169,110,.08); }
+
+.area-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+@media (max-width: 580px) { .area-layout { grid-template-columns: 1fr; } }
+
+.viewfinder-wrap { background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; padding: 1rem; }
+.area-desc-wrap { background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; padding: 1.25rem; }
+.area-desc { display: none; }
+.area-desc.active { display: block; }
+.area-desc h3 { font-family: 'Syne', sans-serif; font-size: .95rem;
+  color: var(--accent); margin-bottom: .5rem; }
+.area-desc p { font-size: .82rem; color: var(--muted); line-height: 1.6; }
+.area-desc .tip { margin-top: .75rem; background: rgba(200,169,110,.08);
+  border: 1px solid rgba(200,169,110,.2); border-radius: 8px;
+  padding: .6rem .8rem; font-size: .78rem; color: var(--text); }
+
+/* Focus stacking */
+.stacking-wrap { background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; overflow: hidden; }
+.stacking-canvas-wrap { position: relative; }
+.stacking-canvas-wrap canvas { width: 100%; display: block; }
+.stacking-label { text-align: center; padding: .5rem;
+  font-size: .75rem; color: var(--accent); font-family: 'Syne', sans-serif; }
+.stacking-controls { padding: 1rem 1.25rem; }
+.stacking-steps { display: flex; gap: .4rem; margin-bottom: 1rem; flex-wrap: wrap; }
+.stack-step { flex: 1; min-width: 70px; background: #0d0d0d;
+  border: 1px solid var(--border); border-radius: 8px; padding: .4rem .5rem;
+  font-size: .72rem; color: var(--muted); cursor: pointer; font-family: inherit;
+  text-align: center; transition: all .15s; }
+.stack-step.active { border-color: var(--accent); color: var(--accent);
+  background: rgba(200,169,110,.08); }
+.stacking-desc { font-size: .8rem; color: var(--muted); line-height: 1.55; }
+
+/* Info grid */
+.info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr));
+  gap: 1rem; }
+.info-card { background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; padding: 1.1rem 1rem; }
+.info-card h3 { font-family: 'Syne', sans-serif; font-size: .9rem;
+  color: var(--accent); margin-bottom: .4rem; }
+.info-card p { font-size: .8rem; color: var(--muted); line-height: 1.55; }
+
+/* Bottom nav */
+.nav-prev { text-align: center; padding: 1.5rem 1rem 0; }
+.nav-prev a { color: var(--accent); font-size: .85rem; text-decoration: none; }
+```
+
+- [ ] **Step 2: Verify in browser — dark theme renders, hero text visible**
+
+Open `http://localhost:8000/camera/focus/` — page should show styled hero and dark background with no layout errors.
+
+- [ ] **Step 3: Commit CSS**
+
+```bash
+git add camera/focus/index.html
+git commit -m "feat: add CSS foundation for focus guide"
+```
+
+---
+
+## Task 3: AF Modes Demo — Photo Picker + Mode Buttons
+
+**Files:**
+- Modify: `camera/focus/index.html` — replace `<!-- filled in Task 3–5 -->` inside `#af-demo`
+
+- [ ] **Step 1: Replace the `#af-demo` div inner content**
+
+```html
+<div class="demo-wrap" id="af-demo">
+  <h2 class="section-title" data-he="🎯 מצבי AF — איזה מצב פוקוס לבחור?" data-en="🎯 AF Modes — Which Focus Mode to Choose?">🎯 מצבי AF — איזה מצב פוקוס לבחור?</h2>
+
+  <!-- Photo picker -->
+  <div class="photo-picker" id="af-picker"></div>
+
+  <!-- Mode toggle -->
+  <div class="mode-btns">
+    <button class="mode-btn active" data-mode="one-shot"
+      data-he="One-Shot AF" data-en="One-Shot AF">One-Shot AF</button>
+    <button class="mode-btn" data-mode="servo"
+      data-he="AI Servo (AF-C)" data-en="AI Servo (AF-C)">AI Servo (AF-C)</button>
+    <button class="mode-btn" data-mode="mf"
+      data-he="Manual Focus (MF)" data-en="Manual Focus (MF)">Manual Focus (MF)</button>
+  </div>
+
+  <!-- Main layout -->
+  <div class="af-layout">
+    <!-- Photo panel -->
+    <div class="photo-panel">
+      <div class="photo-container" id="af-photo-container">
+        <img id="af-photo" src="" alt="">
+        <div class="focus-square mode-one-shot" id="focus-square"></div>
+        <div class="focus-ring mode-one-shot" id="focus-ring"></div>
+      </div>
+      <div style="padding:.6rem 1rem;font-size:.72rem;color:var(--muted)"
+        id="af-photo-title"></div>
+    </div>
+
+    <!-- Info panel -->
+    <div class="info-panel" id="af-info-panel">
+      <!-- filled in Task 5 -->
+    </div>
+  </div>
+</div>
+```
+
+- [ ] **Step 2: Add JS for photo picker + mode toggle (inside `<script>` block)**
+
+Add this JS above the `applyLang()` call:
+
+```js
+// ===== AF MODES DEMO =====
+const AF_PHOTOS = [
+  { id: 'owl',       title: 'ינשוף שלג מתבונן', title_en: 'Snowy Owl',
+    url: 'https://amitphotos.com/photos/069e2c70-b0b5-4140-a49d-47e2df9b98b0.jpg',
+    hint: 'one-shot' },
+  { id: 'eagle',     title: 'נשר לבן בטיסה', title_en: 'White Eagle in Flight',
+    url: 'https://amitphotos.com/photos/286e64f7-bdaa-4bdf-88b8-1c567c4fd333.jpg',
+    hint: 'servo' },
+  { id: 'butterfly', title: 'פרפר ציר על פרח', title_en: 'Butterfly on Flower',
+    url: 'https://amitphotos.com/photos/c68971c4-dbe1-48b0-8e48-3ba69c7a19f5.jpg',
+    hint: 'mf' },
+];
+
+let currentMode = 'one-shot';
+
+// Build photo picker
+const afPicker = document.getElementById('af-picker');
+AF_PHOTOS.forEach((p, i) => {
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'photo-btn' + (i === 0 ? ' active' : '');
+  btn.innerHTML = `<img src="${p.url}" alt="${p.title}" loading="lazy">
+    <span>${p.title}</span>`;
+  btn.addEventListener('click', () => {
+    afPicker.querySelectorAll('.photo-btn').forEach((b, j) =>
+      b.classList.toggle('active', j === i));
+    setAfPhoto(p);
+  });
+  afPicker.appendChild(btn);
+});
+
+function setAfPhoto(p) {
+  document.getElementById('af-photo').src = p.url;
+  document.getElementById('af-photo').alt = p.title;
+  const lang = getLang();
+  document.getElementById('af-photo-title').textContent =
+    lang === 'en' ? p.title_en : p.title;
+}
+setAfPhoto(AF_PHOTOS[0]);
+
+// Mode toggle
+document.querySelectorAll('.mode-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentMode = btn.dataset.mode;
+    setAfMode(currentMode);
+  });
+});
+
+function setAfMode(mode) {
+  const sq = document.getElementById('focus-square');
+  const ring = document.getElementById('focus-ring');
+  // Remove all mode classes
+  sq.className = 'focus-square';
+  ring.className = 'focus-ring';
+  // Force reflow for animation restart
+  void sq.offsetWidth;
+  // Apply new mode class
+  sq.classList.add('mode-' + (mode === 'servo' ? 'servo' : mode === 'mf' ? 'mf' : 'one-shot'));
+  ring.classList.add('mode-' + (mode === 'mf' ? 'mf' : mode === 'servo' ? 'servo' : 'one-shot'));
+  // Update info panel
+  document.querySelectorAll('.mode-info').forEach(el =>
+    el.classList.toggle('active', el.dataset.mode === mode));
+}
+```
+
+- [ ] **Step 3: Verify — photo picker shows 3 photos, mode buttons toggle active state**
+
+Open `http://localhost:8000/camera/focus/` — click each mode button, verify active highlight. Click each photo, verify image changes.
+
+- [ ] **Step 4: Commit**
+
+```bash
+git add camera/focus/index.html
+git commit -m "feat: AF modes demo — photo picker and mode toggle"
+```
+
+---
+
+## Task 4: AF Modes — Info Panel Content
+
+**Files:**
+- Modify: `camera/focus/index.html` — fill `#af-info-panel`
+
+- [ ] **Step 1: Replace `<!-- filled in Task 5 -->` inside `.info-panel`**
+
+```html
+<div class="info-panel" id="af-info-panel">
+
+  <!-- One-Shot -->
+  <div class="mode-info active" data-mode="one-shot">
+    <div class="mode-info-title" data-he="🔒 One-Shot AF — פוקוס נעול" data-en="🔒 One-Shot AF — Lock &amp; Shoot">🔒 One-Shot AF — פוקוס נעול</div>
+    <div class="mode-info-when">
+      <span class="lang-he">לחיצה חצי על ההדק נועלת את הפוקוס. המצלמה לא תמשיך לחפש עד שתשחרר. מתאים לכל נושא שעומד בשקט.</span>
+      <span class="lang-en" style="display:none">Half-press the shutter to lock focus. The camera stops searching until you release. Perfect for any subject that stays still.</span>
+    </div>
+    <div class="mode-tip">
+      <strong data-he="מתי להשתמש:" data-en="Use for:">מתי להשתמש:</strong>
+      <span data-he=" פורטרטים, נוף, אדריכלות, אוכל, ינשוף יושב — כל מה שלא זז." data-en=" Portraits, landscapes, architecture, food, perched birds — anything stationary."> פורטרטים, נוף, אדריכלות, אוכל, ינשוף יושב — כל מה שלא זז.</span>
+    </div>
+  </div>
+
+  <!-- AI Servo -->
+  <div class="mode-info" data-mode="servo">
+    <div class="mode-info-title" data-he="🔄 AI Servo (AF-C) — מעקב רציף" data-en="🔄 AI Servo (AF-C) — Continuous Tracking">🔄 AI Servo (AF-C) — מעקב רציף</div>
+    <div class="mode-info-when">
+      <span class="lang-he">המצלמה מחשבת כל הזמן מחדש איפה הנושא. כל עוד לוחצים חצי על ההדק — הפוקוס עוקב. הנקודה הכתומה זזה עם הציפור.</span>
+      <span class="lang-en" style="display:none">The camera continuously recalculates where the subject is. Hold half-press and the focus follows. The orange square tracks the moving bird.</span>
+    </div>
+    <div class="mode-tip">
+      <strong data-he="מתי להשתמש:" data-en="Use for:">מתי להשתמש:</strong>
+      <span data-he=" ציפורים בטיסה, ספורט, ילדים שרצים, כל נושא שנע לעבר/מהמצלמה." data-en=" Birds in flight, sports, running children, any subject moving toward or away from you."> ציפורים בטיסה, ספורט, ילדים שרצים, כל נושא שנע לעבר/מהמצלמה.</span>
+    </div>
+  </div>
+
+  <!-- MF -->
+  <div class="mode-info" data-mode="mf">
+    <div class="mode-info-title" data-he="🖐 Manual Focus (MF) — שליטה ידנית" data-en="🖐 Manual Focus (MF) — Full Control">🖐 Manual Focus (MF) — שליטה ידנית</div>
+    <div class="mode-info-when">
+      <span class="lang-he">סובב את טבעת הפוקוס בעדשה. לא מסתמך על האלגוריתם של המצלמה. הזהב: מאקרו, חושך, צילום דרך גדר/זכוכית.</span>
+      <span class="lang-en" style="display:none">Rotate the focus ring on the lens. You bypass the camera's algorithm entirely. Essential for: macro, darkness, shooting through fences or glass.</span>
+    </div>
+    <div class="mode-tip">
+      <strong data-he="טיפ — MF Override:" data-en="Tip — MF Override:">טיפ — MF Override:</strong>
+      <span data-he=" לחץ חצי על ההדק (AF), ואז סובב ידנית — 'משכלל' את מה שהמצלמה מצאה." data-en=" Half-press to AF-acquire, then rotate ring to fine-tune — refine what the camera found."> לחץ חצי על ההדק (AF), ואז סובב ידנית — 'משכלל' את מה שהמצלמה מצאה.</span>
+    </div>
+  </div>
+
+</div>
+```
+
+- [ ] **Step 2: Add `.lang-he`/`.lang-en` toggle to `applyLang()`**
+
+The `applyLang()` function already handles `[data-he]` elements. Add this line inside it, after the `querySelectorAll('[data-he]')` loop:
+
+```js
+document.querySelectorAll('.lang-he, .lang-en').forEach(el => {
+  el.style.display = el.classList.contains('lang-' + lang) ? '' : 'none';
+});
+```
+
+- [ ] **Step 3: Verify — toggle modes shows correct info panel content. Switch language (click EN in nav) — text changes.**
+
+- [ ] **Step 4: Commit**
+
+```bash
+git add camera/focus/index.html
+git commit -m "feat: AF modes info panel with he/en content"
+```
+
+---
+
+## Task 5: Focus Areas Section
+
+**Files:**
+- Modify: `camera/focus/index.html` — replace `#focus-areas` content
+
+- [ ] **Step 1: Replace `#focus-areas` div inner content**
+
+```html
+<div class="demo-wrap" id="focus-areas">
+  <h2 class="section-title" data-he="📐 אזורי פוקוס — איפה המצלמה מחפשת?" data-en="📐 Focus Areas — Where Does the Camera Search?">📐 אזורי פוקוס — איפה המצלמה מחפשת?</h2>
+
+  <div class="area-tabs">
+    <button class="area-tab active" data-area="single"
+      data-he="נקודה בודדת" data-en="Single Point">נקודה בודדת</button>
+    <button class="area-tab" data-area="zone"
+      data-he="אזור" data-en="Zone">אזור</button>
+    <button class="area-tab" data-area="wide"
+      data-he="אוטומטי רחב" data-en="Wide / Auto">אוטומטי רחב</button>
+    <button class="area-tab" data-area="eye"
+      data-he="פנים + עיניים" data-en="Face + Eye AF">פנים + עיניים</button>
+  </div>
+
+  <div class="area-layout">
+    <!-- SVG Viewfinder -->
+    <div class="viewfinder-wrap">
+      <svg id="vf-svg" viewBox="0 0 200 150" style="width:100%;display:block">
+        <!-- Outer frame -->
+        <rect x="2" y="2" width="196" height="146" rx="4"
+          fill="#0d0d0d" stroke="#333" stroke-width="1.5"/>
+        <!-- Corner brackets -->
+        <path d="M12,2 L2,2 L2,12" fill="none" stroke="#555" stroke-width="2"/>
+        <path d="M188,2 L198,2 L198,12" fill="none" stroke="#555" stroke-width="2"/>
+        <path d="M12,148 L2,148 L2,138" fill="none" stroke="#555" stroke-width="2"/>
+        <path d="M188,148 L198,148 L198,138" fill="none" stroke="#555" stroke-width="2"/>
+        <!-- AF point grid: 5x3 = 15 points, rendered by JS -->
+        <g id="vf-points"></g>
+        <!-- Face outline (hidden by default) -->
+        <ellipse id="vf-face" cx="100" cy="75" rx="35" ry="42"
+          fill="none" stroke="#c8a96e" stroke-width="1.5"
+          stroke-dasharray="4,3" opacity="0" />
+        <circle id="vf-eye-l" cx="85" cy="62" r="5"
+          fill="none" stroke="#c8a96e" stroke-width="1.5" opacity="0"/>
+        <circle id="vf-eye-r" cx="115" cy="62" r="5"
+          fill="none" stroke="#c8a96e" stroke-width="1.5" opacity="0"/>
+        <circle id="vf-eye-dot" cx="85" cy="62" r="2" fill="#c8a96e" opacity="0"/>
+      </svg>
+    </div>
+
+    <!-- Description panel -->
+    <div class="area-desc-wrap">
+      <div class="area-desc active" data-area="single">
+        <h3 data-he="נקודה בודדת" data-en="Single Point">נקודה בודדת</h3>
+        <p data-he="אתה בוחר בדיוק איזו נקודה מהרשת תהיה פעילה. הכי שליטה — הכי מדויק. מתאים לנושאים שאינם בדיוק במרכז הפריים." data-en="You choose exactly which grid point is active. Maximum control, maximum precision. Perfect for off-center subjects.">אתה בוחר בדיוק איזו נקודה מהרשת תהיה פעילה. הכי שליטה — הכי מדויק.</p>
+        <div class="tip" data-he="💡 טיפ: ניתן להזיז את הנקודה עם הג'ויסטיק/מגע על המסך — אל תסמוך תמיד על מרכז." data-en="💡 Tip: Move the point with the joystick or touchscreen — don't always rely on center AF.">💡 טיפ: ניתן להזיז את הנקודה עם הג'ויסטיק/מגע על המסך.</div>
+      </div>
+      <div class="area-desc" data-area="zone">
+        <h3 data-he="אזור (Zone)" data-en="Zone">אזור (Zone)</h3>
+        <p data-he="מספר נקודות סמוכות פעילות יחד. המצלמה בוחרת את הנושא הקרוב ביותר באזור. פחות מדויק מנקודה, אבל הרבה יותר מהיר לנושאים נעים." data-en="A cluster of adjacent points active together. Camera picks the nearest subject in the zone. Less precise than single point, but much faster for moving subjects.">מספר נקודות סמוכות פעילות יחד. המצלמה בוחרת את הנושא הקרוב ביותר באזור.</p>
+        <div class="tip" data-he="💡 טיפ: טוב לספורט ועופות כשהנושא זז בתוך אזור מוגדר." data-en="💡 Tip: Great for sports and birds moving within a defined zone.">💡 טיפ: טוב לספורט ועופות כשהנושא זז בתוך אזור מוגדר.</div>
+      </div>
+      <div class="area-desc" data-area="wide">
+        <h3 data-he="אוטומטי רחב (Wide/Auto)" data-en="Wide / Auto AF">אוטומטי רחב (Wide/Auto)</h3>
+        <p data-he="כל הנקודות פעילות. המצלמה מחליטה לבד מה לפקס. בדרך כלל בוחרת את הנושא הקרוב ביותר. נוח לצילום מהיר — אבל ייתכן שיפקס על הרקע בטעות." data-en="All points active. Camera decides what to focus on — usually the closest subject. Convenient for quick shooting, but may accidentally focus on background.">כל הנקודות פעילות. המצלמה מחליטה לבד — בדרך כלל הנושא הקרוב.</p>
+        <div class="tip" data-he="💡 טיפ: הימנע מכאן לפורטרטים — המצלמה עשויה לפקס על האף במקום העיניים." data-en="💡 Tip: Avoid for portraits — camera may focus on the nose instead of the eyes.">💡 טיפ: הימנע מכאן לפורטרטים — המצלמה עשויה לפקס על האף.</div>
+      </div>
+      <div class="area-desc" data-area="eye">
+        <h3 data-he="זיהוי פנים + עיניים (Eye AF)" data-en="Face + Eye Detection (Eye AF)">זיהוי פנים + עיניים (Eye AF)</h3>
+        <p data-he="מצלמות מודרניות מזהות פנים ועיניים ונועלות אוטומטית על העין הקרובה ביותר. שינוי המשחק לפורטרטים — כמעט אף פעם לא מפספס." data-en="Modern cameras detect faces and eyes, automatically locking on the nearest eye. A game-changer for portraits — almost never misses.">מצלמות מודרניות מזהות פנים ועיניים ונועלות אוטומטית על העין הקרובה.</p>
+        <div class="tip" data-he="💡 טיפ: עובד עם AF-C — המצלמה עוקבת אחרי העין גם כשהנושא זז." data-en="💡 Tip: Works with AI Servo — camera tracks the eye even as the subject moves.">💡 טיפ: עובד עם AI Servo — עוקב אחרי העין גם כשהנושא זז.</div>
+      </div>
+    </div>
+  </div>
+</div>
+```
+
+- [ ] **Step 2: Add JS for viewfinder + area tabs (inside `<script>`)**
+
+```js
+// ===== FOCUS AREAS =====
+const VF_COLS = 5, VF_ROWS = 3;
+const VF_W = 196, VF_H = 146, VF_X0 = 2, VF_Y0 = 2;
+const ptW = 20, ptH = 16;
+
+function vfPoints() {
+  const pts = [];
+  for (let r = 0; r < VF_ROWS; r++) {
+    for (let c = 0; c < VF_COLS; c++) {
+      const x = VF_X0 + (VF_W / VF_COLS) * c + (VF_W / VF_COLS - ptW) / 2;
+      const y = VF_Y0 + (VF_H / VF_ROWS) * r + (VF_H / VF_ROWS - ptH) / 2;
+      pts.push({ x, y, r, c });
+    }
+  }
+  return pts;
+}
+
+function renderVF(area) {
+  const pts = vfPoints();
+  const g = document.getElementById('vf-points');
+  g.innerHTML = '';
+
+  pts.forEach(p => {
+    let active = false;
+    if (area === 'single') active = p.r === 1 && p.c === 2;
+    if (area === 'zone')   active = p.r >= 0 && p.r <= 2 && p.c >= 1 && p.c <= 3 && !(p.r === 0 && p.c === 1) && !(p.r === 0 && p.c === 3) && !(p.r === 2 && p.c === 1) && !(p.r === 2 && p.c === 3);
+    if (area === 'wide')   active = true;
+    if (area === 'eye')    active = false;
+
+    const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    rect.setAttribute('x', p.x); rect.setAttribute('y', p.y);
+    rect.setAttribute('width', ptW); rect.setAttribute('height', ptH);
+    rect.setAttribute('rx', 2);
+    rect.setAttribute('fill', active ? 'rgba(200,169,110,0.2)' : 'none');
+    rect.setAttribute('stroke', active ? '#c8a96e' : '#333');
+    rect.setAttribute('stroke-width', active ? '1.5' : '1');
+    g.appendChild(rect);
+  });
+
+  // Face/eye overlay for Eye AF
+  const show = area === 'eye' ? '1' : '0';
+  document.getElementById('vf-face').setAttribute('opacity', show);
+  document.getElementById('vf-eye-l').setAttribute('opacity', show);
+  document.getElementById('vf-eye-r').setAttribute('opacity', show);
+  document.getElementById('vf-eye-dot').setAttribute('opacity', show);
+}
+
+// Area tabs
+document.querySelectorAll('.area-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.area-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    const area = tab.dataset.area;
+    renderVF(area);
+    document.querySelectorAll('.area-desc').forEach(d =>
+      d.classList.toggle('active', d.dataset.area === area));
+  });
+});
+
+renderVF('single');
+```
+
+- [ ] **Step 3: Verify — 4 tabs switch viewfinder pattern and description. Eye AF shows face outline.**
+
+- [ ] **Step 4: Commit**
+
+```bash
+git add camera/focus/index.html
+git commit -m "feat: focus areas section with interactive viewfinder"
+```
+
+---
+
+## Task 6: Focus Stacking Section
+
+**Files:**
+- Modify: `camera/focus/index.html` — replace `#focus-stacking` content
+
+- [ ] **Step 1: Replace `#focus-stacking` div inner content**
+
+```html
+<div class="demo-wrap" id="focus-stacking">
+  <h2 class="section-title">
+    <span class="advanced-badge" data-he="מתקדם" data-en="Advanced">מתקדם</span>
+    <span data-he="🔍 Focus Stacking — הרכבת שכבות פוקוס" data-en="🔍 Focus Stacking — Combining Focus Layers">🔍 Focus Stacking — הרכבת שכבות פוקוס</span>
+  </h2>
+
+  <div class="stacking-wrap">
+    <div class="stacking-canvas-wrap">
+      <canvas id="stacking-canvas" width="800" height="450"></canvas>
+      <div class="stacking-label" id="stacking-label"
+        data-he="שכבה 1 — חלק קדמי חד" data-en="Layer 1 — Front in Focus">שכבה 1 — חלק קדמי חד</div>
+    </div>
+    <div class="stacking-controls">
+      <div class="stacking-steps">
+        <button class="stack-step active" data-step="0"
+          data-he="📷 שכבה 1" data-en="📷 Layer 1">📷 שכבה 1</button>
+        <button class="stack-step" data-step="1"
+          data-he="📷 שכבה 2" data-en="📷 Layer 2">📷 שכבה 2</button>
+        <button class="stack-step" data-step="2"
+          data-he="📷 שכבה 3" data-en="📷 Layer 3">📷 שכבה 3</button>
+        <button class="stack-step" data-step="3"
+          data-he="✨ תוצאה" data-en="✨ Result">✨ תוצאה</button>
+      </div>
+      <p class="stacking-desc" id="stacking-desc"
+        data-he="כל צילום שומר חלק אחר של הנושא בפוקוס. ב-Photoshop/Lightroom מאחדים את כל השכבות לתמונה שהכל בה חד — גם כשעומק השדה הוא מילימטרים בודדים."
+        data-en="Each shot keeps a different part of the subject in focus. In Photoshop/Lightroom you merge all layers into one image where everything is sharp — even when DOF is just a few millimeters.">כל צילום שומר חלק אחר של הנושא בפוקוס. מאחדים ב-Photoshop/Lightroom.</p>
+    </div>
+  </div>
+</div>
+```
+
+- [ ] **Step 2: Add Canvas JS for focus stacking demo (inside `<script>`)**
+
+```js
+// ===== FOCUS STACKING CANVAS =====
+(function() {
+  const canvas = document.getElementById('stacking-canvas');
+  const ctx = canvas.getContext('2d');
+  const W = 800, H = 450;
+
+  const STEP_LABELS = {
+    he: ['שכבה 1 — חלק קדמי חד', 'שכבה 2 — אמצע חד', 'שכבה 3 — חלק אחורי חד', '✨ תוצאה — הכל חד!'],
+    en: ['Layer 1 — Front in Focus', 'Layer 2 — Middle in Focus', 'Layer 3 — Background in Focus', '✨ Result — Everything Sharp!']
+  };
+
+  // Draw a stylized macro scene: 3 "petal" layers at different depths
+  function drawScene(step) {
+    ctx.clearRect(0, 0, W, H);
+
+    // Background gradient
+    const bg = ctx.createLinearGradient(0, 0, 0, H);
+    bg.addColorStop(0, '#0a0a14');
+    bg.addColorStop(1, '#050508');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, W, H);
+
+    // Helper: draw a petal/ellipse at position with blur
+    function drawPetal(x, y, rx, ry, color, blurPx, alpha) {
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      if (blurPx > 0) ctx.filter = `blur(${blurPx}px)`;
+      ctx.beginPath();
+      ctx.ellipse(x, y, rx, ry, 0, 0, Math.PI * 2);
+      ctx.fillStyle = color;
+      ctx.fill();
+      // Center dot
+      ctx.filter = 'none';
+      if (blurPx === 0) {
+        ctx.beginPath();
+        ctx.arc(x, y, 6, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(200,169,110,0.8)';
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+
+    // Layer arrangement: front (left), middle (center), back (right)
+    const layers = [
+      { x: W*0.25, y: H*0.55, rx: 90, ry: 55, color: '#7c3f6e', label: 'front' },
+      { x: W*0.50, y: H*0.48, rx: 80, ry: 50, color: '#4a6b3a', label: 'mid' },
+      { x: W*0.75, y: H*0.52, rx: 85, ry: 52, color: '#3a5a7a', label: 'back' },
+    ];
+
+    // Stems
+    [W*0.25, W*0.50, W*0.75].forEach((sx, i) => {
+      const blurStem = step === 3 ? 0 : (step === i ? 0 : 8);
+      ctx.save();
+      if (blurStem > 0) ctx.filter = `blur(${blurStem}px)`;
+      ctx.globalAlpha = 0.4;
+      ctx.beginPath();
+      ctx.moveTo(sx, H);
+      ctx.bezierCurveTo(sx + 20, H*0.8, sx - 10, H*0.7, layers[i].x, layers[i].y + layers[i].ry);
+      ctx.strokeStyle = '#2a4a2a';
+      ctx.lineWidth = 6;
+      ctx.stroke();
+      ctx.restore();
+    });
+
+    layers.forEach((l, i) => {
+      const isSharp = step === 3 || step === i;
+      const blurPx = isSharp ? 0 : (step === 3 ? 0 : (Math.abs(step - i) === 1 ? 6 : 14));
+      const alpha = isSharp ? 1 : 0.6;
+      drawPetal(l.x, l.y, l.rx, l.ry, l.color, blurPx, alpha);
+      // Sharp indicator ring
+      if (isSharp && step !== 3) {
+        ctx.save();
+        ctx.strokeStyle = '#c8a96e';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([6, 4]);
+        ctx.beginPath();
+        ctx.ellipse(l.x, l.y, l.rx + 8, l.ry + 8, 0, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.restore();
+      }
+    });
+
+    // Result indicator
+    if (step === 3) {
+      ctx.save();
+      ctx.font = 'bold 16px Heebo, sans-serif';
+      ctx.fillStyle = '#c8a96e';
+      ctx.textAlign = 'center';
+      ctx.fillText(getLang() === 'en' ? 'All layers merged — everything sharp' : 'כל השכבות ממוזגות — הכל חד', W/2, H - 20);
+      ctx.restore();
+    }
+
+    // Depth labels
+    const depthLabels = { he: ['קדמי', 'אמצע', 'אחורי'], en: ['Front', 'Middle', 'Back'] };
+    const lang = getLang();
+    layers.forEach((l, i) => {
+      const isSharp = step === 3 || step === i;
+      ctx.save();
+      ctx.globalAlpha = isSharp ? 0.9 : 0.3;
+      ctx.font = '12px Heebo, sans-serif';
+      ctx.fillStyle = '#c8a96e';
+      ctx.textAlign = 'center';
+      ctx.fillText(depthLabels[lang][i], l.x, l.y - l.ry - 14);
+      ctx.restore();
+    });
+  }
+
+  let currentStep = 0;
+  drawScene(0);
+
+  document.querySelectorAll('.stack-step').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.stack-step').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentStep = parseInt(btn.dataset.step);
+      drawScene(currentStep);
+      const lang = getLang();
+      const lbl = document.getElementById('stacking-label');
+      lbl.textContent = STEP_LABELS[lang][currentStep];
+    });
+  });
+
+  // Re-draw on language change (labels update)
+  window._stackRedraw = () => { drawScene(currentStep); };
+})();
+```
+
+- [ ] **Step 3: Call `window._stackRedraw?.()` inside `applyLang()`**
+
+Add at the end of the `applyLang()` function body:
+
+```js
+if (window._stackRedraw) window._stackRedraw();
+```
+
+- [ ] **Step 4: Verify — 4 step buttons draw different blur patterns on canvas. Result step shows all sharp.**
+
+- [ ] **Step 5: Commit**
+
+```bash
+git add camera/focus/index.html
+git commit -m "feat: focus stacking canvas demo"
+```
+
+---
+
+## Task 7: Info Cards + Final i18n Polish
+
+**Files:**
+- Modify: `camera/focus/index.html`
+
+- [ ] **Step 1: Replace `#info-cards` inner content**
+
+```html
+<div class="demo-wrap" id="info-cards">
+  <h2 class="section-title" data-he="💡 טיפים מתקדמים" data-en="💡 Pro Tips">💡 טיפים מתקדמים</h2>
+  <div class="info-grid">
+
+    <div class="info-card">
+      <h3 data-he="Back-Button Focus (BBF)" data-en="Back-Button Focus (BBF)">Back-Button Focus (BBF)</h3>
+      <p data-he="העבר את ה-AF מכפתור ההדק לכפתור האגודל (AF-ON). עכשיו: אגודל = פוקוס, הדק = חשיפה בלבד. מאפשר לנעול פוקוס ולצלם כמה שאתה רוצה בלי לאבד את הנעילה." data-en="Move AF from the shutter button to a thumb button (AF-ON). Now: thumb = focus, shutter = exposure only. Lock focus once and shoot freely without losing the lock.">העבר את ה-AF מכפתור ההדק לכפתור האגודל. נעל פוקוס ושמור אותו גם כשאתה מצלם.</p>
+    </div>
+
+    <div class="info-card">
+      <h3 data-he="Eye AF — זיהוי עיניים" data-en="Eye AF — Eye Detection">Eye AF — זיהוי עיניים</h3>
+      <p data-he="מצלמות Sony, Canon R, Nikon Z ופוג'י מודרניות מזהות עיניים בזמן אמת ומתעדכנות אוטומטית. הפעל את מצב 'זיהוי פנים/עיניים' + AF-C. אחד הכלים הכי חזקים לפורטרטים." data-en="Modern Sony, Canon R, Nikon Z and Fuji cameras detect eyes in real time and track automatically. Enable Face/Eye Detection mode + AI Servo. One of the most powerful tools for portraits.">הפעל Face/Eye Detection + AI Servo. המצלמה עוקבת אחרי העין גם כשהנושא זז.</p>
+    </div>
+
+    <div class="info-card">
+      <h3 data-he="Focus Peaking ב-MF" data-en="Focus Peaking in MF">Focus Peaking ב-MF</h3>
+      <p data-he="בעת שימוש ב-MF, הפעל Focus Peaking (בתפריט המצלמה). קצוות חדים יודגשו בצבע (לרוב אדום/לבן). הרבה יותר קל לדעת מה בפוקוס מבלי להגדיל." data-en="When using MF, enable Focus Peaking (in camera menu). Sharp edges are highlighted in color (usually red/white). Much easier to know what's in focus without magnifying.">הפעל Focus Peaking בתפריט. קצוות חדים יסומנו בצבע — אין צורך להגדיל.</p>
+    </div>
+
+    <div class="info-card">
+      <h3 data-he="מרחק היפרפוקל (Hyperfocal)" data-en="Hyperfocal Distance">מרחק היפרפוקל (Hyperfocal)</h3>
+      <p data-he="כשמתמקדים במרחק ההיפרפוקל — כל מה שמחצי המרחק הזה ועד אינסוף יהיה חד. מושלם לצילום נוף עם עדשה רחבה. חשב את המרחק באפליקציה כמו PhotoPills." data-en="Focus at the hyperfocal distance and everything from half that distance to infinity is sharp. Perfect for landscape with a wide lens. Calculate with an app like PhotoPills.">פקס במרחק ההיפרפוקל — כל מה שמחציו ועד אינסוף יהיה חד. מושלם לנוף.</p>
+    </div>
+
+  </div>
+</div>
+```
+
+- [ ] **Step 2: Verify i18n — switch to English, check all 4 cards, all section titles, all mode info text updates correctly**
+
+- [ ] **Step 3: Commit**
+
+```bash
+git add camera/focus/index.html
+git commit -m "feat: info cards and full i18n for focus guide"
+```
+
+---
+
+## Task 8: Deploy + Verify Live
+
+- [ ] **Step 1: Deploy**
+
+```bash
+npx wrangler deploy --minify 2>&1 | tail -5
+```
+
+Expected: `Deployed amit-photos triggers` with a version ID.
+
+- [ ] **Step 2: Open live page and verify**
+
+Open `https://amitphotos.com/camera/focus/` and check:
+- Hero text visible in Hebrew
+- 3 photos load in picker (not broken images)
+- Mode buttons toggle animations correctly
+- Focus areas viewfinder updates
+- Focus stacking canvas renders (not blank)
+- Info cards visible
+- Clicking nav EN/HE switches language throughout
+- Share bar appears before the back-link
+
+- [ ] **Step 3: Check hub**
+
+Open `https://amitphotos.com/camera/` — new 🎯 Focus card visible in grid.
+
+- [ ] **Step 4: Push and final commit**
+
+```bash
+git push
+```
+
+---
+
+## Self-Review
+
+**Spec coverage check:**
+- ✅ Hero (he/en) → Task 1
+- ✅ AF Modes demo: photo picker (3 real photos), 3 mode buttons, animated overlay, info panel → Tasks 3–4
+- ✅ Focus Areas: 4 tabs, SVG viewfinder, descriptions → Task 5
+- ✅ Focus Stacking: canvas + 4-step slider → Task 6
+- ✅ Info cards (4) → Task 7
+- ✅ nav.js + share.js + `.nav-prev` → Task 1 scaffold
+- ✅ canonical/hreflang → Task 1 scaffold
+- ✅ Hub card update → Task 1
+- ✅ Full i18n applyLang() → Tasks 1, 4, 6, 7
+
+**Placeholder scan:** No TBD/TODO. All code is complete.
+
+**Type consistency:**
+- `setAfMode(mode)` defined Task 3, called from click handler Task 3 ✅
+- `renderVF(area)` defined Task 5, called from click handler + init Task 5 ✅
+- `window._stackRedraw` defined Task 6, called in `applyLang()` Task 6 ✅
+- `getLang()` defined Task 1, used across all tasks ✅
