@@ -4395,7 +4395,7 @@ async function nlSetSetting(env, key, value) {
 async function nlPickHeroPhoto(env) {
   const lastId = await nlGetSetting(env, 'nl_last_hero_id') || '';
   const row = await env.DB.prepare(
-    `SELECT id, title, thumbnail FROM photos WHERE id != ? AND thumbnail IS NOT NULL AND published=1 ORDER BY created_at DESC LIMIT 1`
+    `SELECT id, title, url, thumbnail FROM photos WHERE id != ? AND published=1 ORDER BY created_at DESC LIMIT 1`
   ).bind(lastId).first();
   return row || null;
 }
@@ -4536,7 +4536,7 @@ async function nlGenerateDraft(env, type) {
   const generated = await nlGenerateContent(env, heroPhoto, guide, location, type);
 
   // Build content_json
-  const photoUrl = `https://amitphotos.com/photos/${heroPhoto.id}.jpg`;
+  const photoUrl = toAbsolutePhotoUrl(heroPhoto.url || heroPhoto.thumbnail);
   const content = type === 'full' ? {
     hero: { photo_id: heroPhoto.id, photo_url: photoUrl,
       title_he: heroPhoto.title, text_he: generated.hero_text_he, text_en: generated.hero_text_en },
