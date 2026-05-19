@@ -329,7 +329,33 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
 
 <!-- SECTION 4: Focus Stacking -->
 <div class="demo-wrap" id="focus-stacking">
-  <!-- filled in Task 6 -->
+  <h2 class="section-title">
+    <span class="advanced-badge" data-he="מתקדם" data-en="Advanced">מתקדם</span>
+    <span data-he="🔍 Focus Stacking — הרכבת שכבות פוקוס" data-en="🔍 Focus Stacking — Combining Focus Layers">🔍 Focus Stacking — הרכבת שכבות פוקוס</span>
+  </h2>
+
+  <div class="stacking-wrap">
+    <div class="stacking-canvas-wrap">
+      <canvas id="stacking-canvas" width="800" height="450"></canvas>
+      <div class="stacking-label" id="stacking-label"
+        data-he="שכבה 1 — חלק קדמי חד" data-en="Layer 1 — Front in Focus">שכבה 1 — חלק קדמי חד</div>
+    </div>
+    <div class="stacking-controls">
+      <div class="stacking-steps">
+        <button type="button" class="stack-step active" data-step="0"
+          data-he="📷 שכבה 1" data-en="📷 Layer 1">📷 שכבה 1</button>
+        <button type="button" class="stack-step" data-step="1"
+          data-he="📷 שכבה 2" data-en="📷 Layer 2">📷 שכבה 2</button>
+        <button type="button" class="stack-step" data-step="2"
+          data-he="📷 שכבה 3" data-en="📷 Layer 3">📷 שכבה 3</button>
+        <button type="button" class="stack-step" data-step="3"
+          data-he="✨ תוצאה" data-en="✨ Result">✨ תוצאה</button>
+      </div>
+      <p class="stacking-desc" id="stacking-desc"
+        data-he="כל צילום שומר חלק אחר של הנושא בפוקוס. ב-Photoshop/Lightroom מאחדים את כל השכבות לתמונה שהכל בה חד — גם כשעומק השדה הוא מילימטרים בודדים."
+        data-en="Each shot keeps a different part of the subject in focus. In Photoshop/Lightroom you merge all layers into one image where everything is sharp — even when DOF is just a few millimeters.">כל צילום שומר חלק אחר של הנושא בפוקוס. מאחדים ב-Photoshop/Lightroom.</p>
+    </div>
+  </div>
 </div>
 
 <!-- SECTION 5: Info Cards -->
@@ -358,6 +384,7 @@ function applyLang() {
   document.querySelectorAll('.lang-he, .lang-en').forEach(el => {
     el.style.display = el.classList.contains('lang-' + lang) ? '' : 'none';
   });
+  if (window._stackRedraw) window._stackRedraw();
 }
 
 // ===== AF MODES DEMO =====
@@ -480,6 +507,122 @@ document.querySelectorAll('.area-tab').forEach(tab => {
 });
 
 renderVF('single');
+
+// ===== FOCUS STACKING CANVAS =====
+(function() {
+  const canvas = document.getElementById('stacking-canvas');
+  const ctx = canvas.getContext('2d');
+  const W = 800, H = 450;
+
+  const STEP_LABELS = {
+    he: ['שכבה 1 — חלק קדמי חד', 'שכבה 2 — אמצע חד', 'שכבה 3 — חלק אחורי חד', '✨ תוצאה — הכל חד!'],
+    en: ['Layer 1 — Front in Focus', 'Layer 2 — Middle in Focus', 'Layer 3 — Background in Focus', '✨ Result — Everything Sharp!']
+  };
+
+  function drawScene(step) {
+    ctx.clearRect(0, 0, W, H);
+
+    const bg = ctx.createLinearGradient(0, 0, 0, H);
+    bg.addColorStop(0, '#0a0a14');
+    bg.addColorStop(1, '#050508');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, W, H);
+
+    function drawPetal(x, y, rx, ry, color, blurPx, alpha) {
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      if (blurPx > 0) ctx.filter = `blur(${blurPx}px)`;
+      ctx.beginPath();
+      ctx.ellipse(x, y, rx, ry, 0, 0, Math.PI * 2);
+      ctx.fillStyle = color;
+      ctx.fill();
+      ctx.filter = 'none';
+      if (blurPx === 0) {
+        ctx.beginPath();
+        ctx.arc(x, y, 6, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(200,169,110,0.8)';
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+
+    const layers = [
+      { x: W*0.25, y: H*0.55, rx: 90, ry: 55, color: '#7c3f6e', label: 'front' },
+      { x: W*0.50, y: H*0.48, rx: 80, ry: 50, color: '#4a6b3a', label: 'mid' },
+      { x: W*0.75, y: H*0.52, rx: 85, ry: 52, color: '#3a5a7a', label: 'back' },
+    ];
+
+    [W*0.25, W*0.50, W*0.75].forEach((sx, i) => {
+      const blurStem = step === 3 ? 0 : (step === i ? 0 : 8);
+      ctx.save();
+      if (blurStem > 0) ctx.filter = `blur(${blurStem}px)`;
+      ctx.globalAlpha = 0.4;
+      ctx.beginPath();
+      ctx.moveTo(sx, H);
+      ctx.bezierCurveTo(sx + 20, H*0.8, sx - 10, H*0.7, layers[i].x, layers[i].y + layers[i].ry);
+      ctx.strokeStyle = '#2a4a2a';
+      ctx.lineWidth = 6;
+      ctx.stroke();
+      ctx.restore();
+    });
+
+    layers.forEach((l, i) => {
+      const isSharp = step === 3 || step === i;
+      const blurPx = isSharp ? 0 : (Math.abs(step - i) === 1 ? 6 : 14);
+      const alpha = isSharp ? 1 : 0.6;
+      drawPetal(l.x, l.y, l.rx, l.ry, l.color, blurPx, alpha);
+      if (isSharp && step !== 3) {
+        ctx.save();
+        ctx.strokeStyle = '#c8a96e';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([6, 4]);
+        ctx.beginPath();
+        ctx.ellipse(l.x, l.y, l.rx + 8, l.ry + 8, 0, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.restore();
+      }
+    });
+
+    if (step === 3) {
+      ctx.save();
+      ctx.font = 'bold 16px Heebo, sans-serif';
+      ctx.fillStyle = '#c8a96e';
+      ctx.textAlign = 'center';
+      ctx.fillText(getLang() === 'en' ? 'All layers merged — everything sharp' : 'כל השכבות ממוזגות — הכל חד', W/2, H - 20);
+      ctx.restore();
+    }
+
+    const depthLabels = { he: ['קדמי', 'אמצע', 'אחורי'], en: ['Front', 'Middle', 'Back'] };
+    const lang = getLang();
+    layers.forEach((l, i) => {
+      const isSharp = step === 3 || step === i;
+      ctx.save();
+      ctx.globalAlpha = isSharp ? 0.9 : 0.3;
+      ctx.font = '12px Heebo, sans-serif';
+      ctx.fillStyle = '#c8a96e';
+      ctx.textAlign = 'center';
+      ctx.fillText(depthLabels[lang][i], l.x, l.y - l.ry - 14);
+      ctx.restore();
+    });
+  }
+
+  let currentStep = 0;
+  drawScene(0);
+
+  document.querySelectorAll('.stack-step').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.stack-step').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentStep = parseInt(btn.dataset.step);
+      drawScene(currentStep);
+      const lang = getLang();
+      const lbl = document.getElementById('stacking-label');
+      lbl.textContent = STEP_LABELS[lang][currentStep];
+    });
+  });
+
+  window._stackRedraw = () => { drawScene(currentStep); };
+})();
 
 applyLang();
 window.setLang = applyLang;
