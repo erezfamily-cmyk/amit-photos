@@ -120,7 +120,7 @@ Runs on Cron (1st and 15th of month, existing `0 */2 * * *` schedule extended):
 3. Pick hero photo: most recently uploaded photo (`ORDER BY created_at DESC LIMIT 1`) with photo_id not matching the previous issue's hero photo_id
 4. Pick guide: `(last_guide_index + 1) % 19` from ordered list of guide slugs
 5. Pick location: `(last_location_index + 1) % total_locations` from D1 locations table
-6. Call Claude API (`claude-haiku-4-5`) with metadata for all sections → receive JSON with Hebrew + English text for each section
+6. Call Claude API (`claude-opus-4-7`) with metadata for all sections → receive JSON with Hebrew + English text for each section
 7. INSERT into `newsletter_issues` with `status = 'draft'`
 8. Update `newsletter_rotation` in KV
 
