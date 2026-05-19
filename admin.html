@@ -2121,12 +2121,12 @@ $('logout-btn').addEventListener('click', async () => {
 // ===== NAV =====
 document.querySelectorAll('.nav-item').forEach(item => {
   item.addEventListener('click', () => {
+    if (item.dataset.section === 'newsletter') { window.location.href = '/admin/newsletter/'; return; }
     document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
     document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
     item.classList.add('active');
     $('section-' + item.dataset.section).classList.add('active');
     if (item.dataset.section === 'analytics') { Dashboard.loadAnalytics(); loadPhotoAnalytics(); }
-    if (item.dataset.section === 'newsletter') Newsletter.init();
     if (item.dataset.section === 'print-orders') PrintOrders.load();
     if (item.dataset.section === 'social') SocialSection.load();
     if (item.dataset.section === 'purchases') Purchases.load();
