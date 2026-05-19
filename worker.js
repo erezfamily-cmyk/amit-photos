@@ -4572,6 +4572,197 @@ async function runNewsletterCron(env) {
   }
 }
 
+async function handleNlList(env) {
+  const { results } = await env.DB.prepare(
+    `SELECT id, slug, type, issue_number, title_he, published_at, content_json
+     FROM newsletter_issues WHERE status='published' ORDER BY published_at DESC LIMIT 24`
+  ).all();
+
+  const cards = (results || []).map(issue => {
+    const c = JSON.parse(issue.content_json || '{}');
+    const thumb = c.hero?.photo_url || '';
+    const badge = issue.type === 'full' ? 'גיליון מלא' : 'הבזק';
+    const badgeEn = issue.type === 'full' ? 'Full Issue' : 'Flash';
+    const date = issue.published_at ? issue.published_at.slice(0, 10) : '';
+    return `<a class="nl-card" href="/newsletter/${escXml(issue.slug)}/">
+      ${thumb ? `<img src="${escXml(thumb)}" alt="${escXml(issue.title_he)}" loading="lazy">` : '<div class="nl-card-placeholder"></div>'}
+      <div class="nl-card-body">
+        <span class="nl-badge" data-he="${escXml(badge)}" data-en="${escXml(badgeEn)}">${escXml(badge)}</span>
+        <div class="nl-card-title">${escXml(issue.title_he)}</div>
+        <div class="nl-card-date">${escXml(date)}</div>
+      </div>
+    </a>`;
+  }).join('\n');
+
+  const empty = !results?.length
+    ? '<p style="text-align:center;color:#888;padding:4rem">הניוזלטר הראשון יפורסם בקרוב</p>'
+    : '';
+
+  return new Response(`<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ניוזלטר | Amit Photos</title>
+<link rel="canonical" href="https://amitphotos.com/newsletter/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0a0a0a;--surface:#111;--border:#222;--accent:#c8a96e;--text:#f0ede8;--muted:#888}
+body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direction:rtl;min-height:100vh;padding:0 0 4rem}
+.page-hero{text-align:center;padding:2.5rem 1.25rem 1.5rem}
+.page-hero h1{font-family:'Syne',sans-serif;font-size:1.8rem;color:var(--accent);margin-bottom:.5rem}
+.page-hero p{color:var(--muted);font-size:.9rem}
+.nl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1.25rem;padding:1.25rem;max-width:1100px;margin:0 auto}
+.nl-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;text-decoration:none;color:inherit;transition:border-color .2s}
+.nl-card:hover{border-color:var(--accent)}
+.nl-card img,.nl-card-placeholder{width:100%;height:160px;object-fit:cover;display:block;background:#1a1a1a}
+.nl-card-body{padding:.75rem 1rem}
+.nl-badge{display:inline-block;font-size:.68rem;background:rgba(200,169,110,.12);border:1px solid rgba(200,169,110,.3);color:var(--accent);border-radius:20px;padding:2px 8px;margin-bottom:.5rem}
+.nl-card-title{font-family:'Syne',sans-serif;font-size:.95rem;color:var(--text);margin-bottom:.3rem}
+.nl-card-date{font-size:.75rem;color:var(--muted)}
+</style>
+<script src="/assets/js/nav.js" defer></script>
+</head>
+<body>
+<div class="page-hero">
+  <h1 data-he="ניוזלטר" data-en="Newsletter">ניוזלטר</h1>
+  <p data-he="גיליונות חודשיים — תמונות, מדריכים ומקומות צילום" data-en="Monthly issues — photos, guides and shooting locations">גיליונות חודשיים — תמונות, מדריכים ומקומות צילום</p>
+</div>
+<div class="nl-grid">${cards}${empty}</div>
+<script>
+function getLang(){return localStorage.getItem('lang')||'he'}
+function applyLang(){const lang=getLang(),isEn=lang==='en';document.documentElement.dir=isEn?'ltr':'rtl';document.documentElement.lang=lang;document.querySelectorAll('[data-he]').forEach(el=>{el.innerHTML=isEn?(el.dataset.en||el.dataset.he):el.dataset.he})}
+applyLang();window.setLang=applyLang;window.addEventListener('storage',e=>{if(e.key==='lang')applyLang()})
+</script>
+</body></html>`, { headers: { 'Content-Type': 'text/html;charset=utf-8', 'Cache-Control': 'no-cache' } });
+}
+
+async function handleNlIssue(env, slug, isPreview) {
+  const issue = await env.DB.prepare(
+    `SELECT * FROM newsletter_issues WHERE slug=?${isPreview ? '' : " AND status='published'"}`
+  ).bind(slug).first();
+  if (!issue) return new Response('Not found', { status: 404 });
+
+  const c = JSON.parse(issue.content_json || '{}');
+  const isFull = issue.type === 'full';
+  const dateStr = issue.published_at ? issue.published_at.slice(0, 10) : new Date().toISOString().slice(0, 10);
+
+  const heroSection = c.hero ? `
+    <section class="nl-section nl-hero-section">
+      <img src="${escXml(c.hero.photo_url)}" alt="${escXml(c.hero.title_he)}" class="nl-hero-img">
+      <h2 class="nl-photo-title">${escXml(c.hero.title_he)}</h2>
+      <p class="nl-body-text" data-he="${escXml(c.hero.text_he)}" data-en="${escXml(c.hero.text_en || c.hero.text_he)}">${escXml(c.hero.text_he)}</p>
+    </section>` : '';
+
+  const guideSection = isFull && c.guide ? `
+    <section class="nl-section nl-guide-section">
+      <div class="nl-section-badge" data-he="מדריך החודש" data-en="Guide of the Month">מדריך החודש</div>
+      <h2 class="nl-section-title" data-he="${escXml(c.guide.title_he)}" data-en="${escXml(c.guide.title_en || c.guide.title_he)}">${escXml(c.guide.title_he)}</h2>
+      <p class="nl-body-text" data-he="${escXml(c.guide.text_he)}" data-en="${escXml(c.guide.text_en || c.guide.text_he)}">${escXml(c.guide.text_he)}</p>
+      <a class="nl-link" href="/camera/${escXml(c.guide.slug)}/" data-he="קרא את המדריך ←" data-en="Read the guide ←">קרא את המדריך ←</a>
+    </section>` : '';
+
+  const locationSection = isFull && c.location ? `
+    <section class="nl-section nl-location-section">
+      <div class="nl-section-badge" data-he="מקום לצילום" data-en="Photo Location">מקום לצילום</div>
+      <h2 class="nl-section-title">${escXml(c.location.title_he)}</h2>
+      <p class="nl-body-text" data-he="${escXml(c.location.text_he)}" data-en="${escXml(c.location.text_en || c.location.text_he)}">${escXml(c.location.text_he)}</p>
+      <a class="nl-link" href="/locations/" data-he="לכל המקומות ←" data-en="All locations ←">לכל המקומות ←</a>
+    </section>` : '';
+
+  const tipSection = c.tip ? `
+    <section class="nl-section nl-tip-section">
+      <div class="nl-tip-card">
+        <div class="nl-tip-title" data-he="${escXml(c.tip.title_he || 'טיפ החודש')}" data-en="${escXml(c.tip.title_en || 'Tip of the Month')}">${escXml(c.tip.title_he || 'טיפ החודש')}</div>
+        <p data-he="${escXml(c.tip.text_he)}" data-en="${escXml(c.tip.text_en || c.tip.text_he)}">${escXml(c.tip.text_he)}</p>
+      </div>
+    </section>` : '';
+
+  const linksSection = isFull && c.links ? `
+    <section class="nl-section nl-links-section">
+      <div class="nl-section-badge" data-he="קישורים שימושיים" data-en="Useful Links">קישורים שימושיים</div>
+      <div class="nl-links-row">${c.links.map(l =>
+        `<a class="nl-link-pill" href="${escXml(l.url)}" data-he="${escXml(l.label_he)}" data-en="${escXml(l.label_en)}">${escXml(l.label_he)}</a>`
+      ).join('')}</div>
+    </section>` : '';
+
+  const previewBanner = isPreview
+    ? `<div style="background:#7c3f00;color:#fff;text-align:center;padding:.5rem;font-size:.8rem">טיוטה — לא פורסמה</div>` : '';
+
+  const html = `<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${escXml(issue.title_he)} | Amit Photos</title>
+${!isPreview ? `<link rel="canonical" href="https://amitphotos.com/newsletter/${escXml(slug)}/">` : ''}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0a0a0a;--surface:#111;--border:#222;--accent:#c8a96e;--text:#f0ede8;--muted:#888}
+body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direction:rtl;min-height:100vh}
+.nl-header{display:flex;justify-content:space-between;align-items:center;padding:1rem 1.5rem;border-bottom:1px solid var(--border);max-width:800px;margin:0 auto}
+.nl-header-logo{font-family:'Syne',sans-serif;color:var(--accent);text-decoration:none;font-size:1rem}
+.nl-header-meta{font-size:.75rem;color:var(--muted)}
+.nl-issue-title{font-family:'Syne',sans-serif;font-size:1.6rem;color:var(--accent);text-align:center;padding:2rem 1.5rem 1rem;max-width:800px;margin:0 auto}
+.nl-section{max-width:800px;margin:0 auto;padding:1.5rem}
+.nl-hero-img{width:100%;max-height:480px;object-fit:cover;border-radius:12px;display:block;margin-bottom:1rem}
+.nl-photo-title{font-family:'Syne',sans-serif;font-size:1.1rem;color:var(--accent);margin-bottom:.5rem}
+.nl-body-text{color:var(--text);font-size:.95rem;line-height:1.7;margin-bottom:.75rem}
+.nl-section-badge{display:inline-block;font-size:.68rem;background:rgba(200,169,110,.12);border:1px solid rgba(200,169,110,.3);color:var(--accent);border-radius:20px;padding:3px 10px;margin-bottom:.75rem}
+.nl-section-title{font-family:'Syne',sans-serif;font-size:1.1rem;color:var(--text);margin-bottom:.6rem}
+.nl-link{color:var(--accent);font-size:.85rem;text-decoration:none;display:inline-block;margin-top:.25rem}
+.nl-link:hover{text-decoration:underline}
+.nl-tip-card{background:rgba(200,169,110,.08);border:1px solid rgba(200,169,110,.25);border-radius:12px;padding:1.25rem}
+.nl-tip-title{font-family:'Syne',sans-serif;font-size:.95rem;color:var(--accent);margin-bottom:.5rem}
+.nl-links-row{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.5rem}
+.nl-link-pill{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:.4rem .9rem;font-size:.8rem;color:var(--text);text-decoration:none;transition:border-color .2s}
+.nl-link-pill:hover{border-color:var(--accent);color:var(--accent)}
+.nl-divider{max-width:800px;margin:0 auto;border:none;border-top:1px solid var(--border)}
+.nl-footer{text-align:center;padding:2rem;color:var(--muted);font-size:.75rem;max-width:800px;margin:0 auto}
+.nl-footer a{color:var(--muted)}
+@media print{
+  body{background:#fff;color:#111}
+  :root{--bg:#fff;--surface:#f5f5f5;--border:#ccc;--accent:#8b6914;--text:#111;--muted:#555}
+  .nl-header{border-bottom:1px solid #ccc}
+  .nl-link-pill{border:1px solid #ccc;color:#333}
+  nav,.no-print{display:none!important}
+  @page{size:A4;margin:15mm}
+  .nl-section{page-break-inside:avoid}
+}
+</style>
+<script src="/assets/js/nav.js" defer></script>
+</head>
+<body>
+${previewBanner}
+<header class="nl-header">
+  <a class="nl-header-logo" href="/">Amit Photos</a>
+  <span class="nl-header-meta">${escXml(dateStr)}</span>
+</header>
+<h1 class="nl-issue-title">${escXml(issue.title_he)}</h1>
+${heroSection}
+<hr class="nl-divider">
+${guideSection}
+${guideSection ? '<hr class="nl-divider">' : ''}
+${locationSection}
+${locationSection ? '<hr class="nl-divider">' : ''}
+${tipSection}
+${tipSection ? '<hr class="nl-divider">' : ''}
+${linksSection}
+<footer class="nl-footer">
+  <p>© Amit Photos | <a href="/">amitphotos.com</a></p>
+</footer>
+<script>
+function getLang(){return localStorage.getItem('lang')||'he'}
+function applyLang(){const lang=getLang(),isEn=lang==='en';document.documentElement.dir=isEn?'ltr':'rtl';document.documentElement.lang=lang;document.querySelectorAll('[data-he]').forEach(el=>{el.innerHTML=isEn?(el.dataset.en||el.dataset.he):el.dataset.he})}
+applyLang();window.setLang=applyLang;window.addEventListener('storage',e=>{if(e.key==='lang')applyLang()})
+</script>
+</body></html>`;
+
+  return new Response(html, { headers: { 'Content-Type': 'text/html;charset=utf-8', 'Cache-Control': 'no-cache' } });
+}
+
 // ===== MAIN ROUTER =====
 export default {
   async fetch(request, env, ctx) {
