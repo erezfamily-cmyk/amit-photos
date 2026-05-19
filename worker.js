@@ -4425,12 +4425,12 @@ async function nlPickLocation(env) {
 
 async function nlPickGalleryPhotos(env, heroPhotoId) {
   const { results } = await env.DB.prepare(
-    'SELECT id, title FROM photos WHERE published=1 AND id != ? ORDER BY RANDOM() LIMIT 3'
+    'SELECT id, title, url FROM photos WHERE published = 1 AND id != ? ORDER BY RANDOM() LIMIT 3'
   ).bind(heroPhotoId).all();
   return (results || []).map(p => ({
     id: p.id,
     title: p.title || '',
-    url: `https://amitphotos.com/photos/${p.id}.jpg`
+    url: toAbsolutePhotoUrl(p.url)
   }));
 }
 
