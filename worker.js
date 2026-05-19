@@ -4452,7 +4452,19 @@ async function nlGenerateContent(env, heroPhoto, guide, location, type) {
   "tip_title_he": "כותרת קצרה לטיפ (5-7 מילים)",
   "tip_title_en": "short tip title in English",
   "tip_text_he": "טיפ צילום שלא קיים באתר — מקורי, פרקטי, 2-3 משפטים",
-  "tip_text_en": "same tip in English"
+  "tip_text_en": "same tip in English",
+  "guide_steps": [
+    {"num": 1, "title_he": "שם השלב (3-5 מילים)", "text_he": "הסבר קצר (2-3 משפטים)"},
+    {"num": 2, "title_he": "...", "text_he": "..."},
+    {"num": 3, "title_he": "...", "text_he": "..."}
+  ],
+  "sale": {
+    "title_he": "שם המבצע (מקסימום 5 מילים)",
+    "desc_he": "תיאור קצר (עד 10 מילים, כולל תאריך סיום)",
+    "original_price": "₪480",
+    "sale_price": "₪385",
+    "discount_label": "20% הנחה"
+  }
 }
 
 פרטים לתוכן:
@@ -4481,7 +4493,7 @@ async function nlGenerateContent(env, heroPhoto, guide, location, type) {
     },
     body: JSON.stringify({
       model: 'claude-opus-4-7',
-      max_tokens: 1500,
+      max_tokens: 2000,
       system: 'אתה עורך ניוזלטר צילום מקצועי. כתוב עברית תקנית וברורה. טון חם ומקצועי לצלמים. החזר JSON תקין בלבד, ללא שום טקסט נוסף.',
       messages: [{ role: 'user', content: userPrompt }]
     })
@@ -4529,12 +4541,14 @@ async function nlGenerateDraft(env, type) {
     hero: { photo_id: heroPhoto.id, photo_url: photoUrl,
       title_he: heroPhoto.title, text_he: generated.hero_text_he, text_en: generated.hero_text_en },
     guide: { slug: guide.slug, title_he: guide.he, title_en: guide.en,
-      text_he: generated.guide_text_he, text_en: generated.guide_text_en },
+      text_he: generated.guide_text_he, text_en: generated.guide_text_en,
+      steps: Array.isArray(generated.guide_steps) ? generated.guide_steps : [] },
     location: location ? { id: location.id, title_he: location.title,
       text_he: generated.location_text_he, text_en: generated.location_text_en } : null,
     tip: { title_he: generated.tip_title_he, title_en: generated.tip_title_en,
       text_he: generated.tip_text_he, text_en: generated.tip_text_en },
     gallery_photos: galleryPhotos,
+    sale: (generated.sale?.title_he) ? generated.sale : null,
     links: [
       { label_he: 'גלריה', label_en: 'Gallery', url: '/' },
       { label_he: 'מדריכים', label_en: 'Guides', url: '/camera/' },
