@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="canonical" href="https://amitphotos.com/camera/focus/" />
+<link rel="alternate" hreflang="he" href="https://amitphotos.com/camera/focus/" />
+<link rel="alternate" hreflang="en" href="https://amitphotos.com/camera/focus/" />
+<link rel="alternate" hreflang="x-default" href="https://amitphotos.com/camera/focus/" />
+<title>פוקוס — מצבים, נקודות ו-Stacking | בית ספר לצילום | Amit Photos</title>
+<meta name="description" content="למד על מצבי AF, נקודות פוקוס ו-Focus Stacking — דמואים אינטראקטיביים עם תמונות אמיתיות.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&display=swap" rel="stylesheet">
+<style>
+/* CSS goes here in Task 2 */
+</style>
+<script src="/assets/js/nav.js" defer></script>
+<script src="/assets/js/share.js" defer></script>
+</head>
+<body>
+
+<!-- SECTION 1: Hero -->
+<div class="page-hero">
+  <div class="badge" data-he="📷 בית ספר לצילום" data-en="📷 Photography School">📷 בית ספר לצילום</div>
+  <h1 data-he="פוקוס — מצבים, נקודות ו-Stacking" data-en="Focus — Modes, Points &amp; Stacking">פוקוס — מצבים, נקודות ו-Stacking</h1>
+  <p data-he="איך המצלמה מחליטה מה חד? בחר מצב, נסה על תמונות אמיתיות" data-en="How does the camera decide what's sharp? Pick a mode, try it on real photos">איך המצלמה מחליטה מה חד? בחר מצב, נסה על תמונות אמיתיות</p>
+</div>
+
+<!-- SECTION 2: AF Modes Demo -->
+<div class="demo-wrap" id="af-demo">
+  <!-- filled in Task 3 -->
+</div>
+
+<!-- SECTION 3: Focus Areas -->
+<div class="demo-wrap" id="focus-areas">
+  <!-- filled in Task 5 -->
+</div>
+
+<!-- SECTION 4: Focus Stacking -->
+<div class="demo-wrap" id="focus-stacking">
+  <!-- filled in Task 6 -->
+</div>
+
+<!-- SECTION 5: Info Cards -->
+<div class="demo-wrap" id="info-cards">
+  <!-- filled in Task 7 -->
+</div>
+
+<!-- Bottom nav -->
+<div class="nav-prev">
+  <a href="/camera/" data-he="← חזרה לבית הספר לצילום" data-en="← Back to Photography School">← חזרה לבית הספר לצילום</a>
+</div>
+
+<script>
+function getLang() { return localStorage.getItem('lang') || 'he'; }
+function applyLang() {
+  const lang = getLang(), isEn = lang === 'en';
+  document.documentElement.dir = isEn ? 'ltr' : 'rtl';
+  document.documentElement.lang = lang;
+  document.body.style.direction = isEn ? 'ltr' : 'rtl';
+  document.title = isEn
+    ? 'Focus Techniques — AF Modes, Points & Stacking | Photography School | Amit Photos'
+    : 'פוקוס — מצבים, נקודות ו-Stacking | בית ספר לצילום | Amit Photos';
+  document.querySelectorAll('[data-he]').forEach(el => {
+    el.textContent = isEn ? (el.dataset.en || el.dataset.he) : el.dataset.he;
+  });
+}
+applyLang();
+window.addEventListener('storage', e => { if (e.key === 'lang') applyLang(); });
+</script>
+</body>
+</html>
