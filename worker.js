@@ -4762,13 +4762,13 @@ async function handleNlIssue(env, slug, isPreview) {
     <section class="nl-section nl-gallery-section">
       <div class="nl-section-badge">עוד מהסדרה</div>
       <div class="nl-gallery-strip">
-        ${c.gallery_photos.map(photo =>
+        ${c.gallery_photos.slice(0, 3).map(photo =>
           `<a class="nl-gallery-thumb" href="/photos/${escXml(photo.id)}/">
             <img src="${escXml(photo.url)}" alt="${escXml(photo.title)}" loading="lazy">
             <span>${escXml(photo.title)}</span>
           </a>`
         ).join('')}
-        <a class="nl-gallery-more" href="/">עוד תמונות ←</a>
+        <a class="nl-gallery-more" href="/">לכל הגלריה ←</a>
       </div>
     </section>` : '';
 
@@ -5003,6 +5003,7 @@ async function handleAdminNlList(request, env) {
       ? `<span style="color:#4caf50">פורסם</span>`
       : `<span style="color:#ff9800">טיוטה</span>`;
     const date = issue.created_at ? issue.created_at.slice(0, 10) : '';
+    const previewUrl = `/admin/newsletter/${escXml(issue.id)}/preview/`;
     return `<tr>
       <td>${escXml(String(issue.issue_number))}</td>
       <td>${statusBadge}</td>
@@ -5011,7 +5012,9 @@ async function handleAdminNlList(request, env) {
       <td>${escXml(date)}</td>
       <td>
         <a href="/admin/newsletter/${escXml(issue.id)}/">ערוך</a> |
-        <a href="/admin/newsletter/${escXml(issue.id)}/preview/" target="_blank">תצוגה מקדימה</a>
+        <a href="${previewUrl}" target="_blank">תצוגה מקדימה</a> |
+        <a href="#" onclick="showTestModal('${escXml(issue.id)}','${escXml(issue.slug)}');return false">שלח לבדיקה</a> |
+        <a href="#" onclick="deleteAndRecreate('${escXml(issue.id)}','${escXml(issue.type)}');return false" style="color:#f44336">מחק ויצור מחדש</a>
         ${issue.status === 'published' ? ` | <a href="/newsletter/${escXml(issue.slug)}/" target="_blank">צפה</a>` : ''}
       </td>
     </tr>`;
