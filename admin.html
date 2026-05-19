@@ -1989,7 +1989,11 @@ function authHeaders() {
 
 (function initAuth() {
   const saved = sessionStorage.getItem('admin_session');
-  if (saved) { SESSION_TOKEN = saved; setTimeout(showAdmin, 0); }
+  if (saved) {
+    SESSION_TOKEN = saved;
+    document.cookie = 'admin_session=' + SESSION_TOKEN + '; path=/; SameSite=Strict';
+    setTimeout(showAdmin, 0);
+  }
 
   $('login-btn').addEventListener('click', doLogin);
   $('password-input').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
@@ -2078,6 +2082,7 @@ function authHeaders() {
       }
       SESSION_TOKEN = data.token;
       sessionStorage.setItem('admin_session', SESSION_TOKEN);
+      document.cookie = 'admin_session=' + SESSION_TOKEN + '; path=/; SameSite=Strict';
       $('login-screen').style.opacity='0';
       $('login-screen').style.transition='opacity .4s';
       setTimeout(()=>{ $('login-screen').style.display='none'; }, 400);
