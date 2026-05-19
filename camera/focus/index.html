@@ -186,7 +186,39 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
 
 <!-- SECTION 2: AF Modes Demo -->
 <div class="demo-wrap" id="af-demo">
-  <!-- filled in Task 3 -->
+  <h2 class="section-title" data-he="🎯 מצבי AF — איזה מצב פוקוס לבחור?" data-en="🎯 AF Modes — Which Focus Mode to Choose?">🎯 מצבי AF — איזה מצב פוקוס לבחור?</h2>
+
+  <!-- Photo picker -->
+  <div class="photo-picker" id="af-picker"></div>
+
+  <!-- Mode toggle -->
+  <div class="mode-btns">
+    <button type="button" class="mode-btn active" data-mode="one-shot"
+      data-he="One-Shot AF" data-en="One-Shot AF">One-Shot AF</button>
+    <button type="button" class="mode-btn" data-mode="servo"
+      data-he="AI Servo (AF-C)" data-en="AI Servo (AF-C)">AI Servo (AF-C)</button>
+    <button type="button" class="mode-btn" data-mode="mf"
+      data-he="Manual Focus (MF)" data-en="Manual Focus (MF)">Manual Focus (MF)</button>
+  </div>
+
+  <!-- Main layout -->
+  <div class="af-layout">
+    <!-- Photo panel -->
+    <div class="photo-panel">
+      <div class="photo-container" id="af-photo-container">
+        <img id="af-photo" src="" alt="">
+        <div class="focus-square mode-one-shot" id="focus-square"></div>
+        <div class="focus-ring mode-one-shot" id="focus-ring"></div>
+      </div>
+      <div style="padding:.6rem 1rem;font-size:.72rem;color:var(--muted)"
+        id="af-photo-title"></div>
+    </div>
+
+    <!-- Info panel -->
+    <div class="info-panel" id="af-info-panel">
+      <!-- filled in Task 4 -->
+    </div>
+  </div>
 </div>
 
 <!-- SECTION 3: Focus Areas -->
@@ -223,6 +255,69 @@ function applyLang() {
     el.innerHTML = isEn ? (el.dataset.en || el.dataset.he) : el.dataset.he;
   });
 }
+
+// ===== AF MODES DEMO =====
+const AF_PHOTOS = [
+  { id: 'owl',       title: 'ינשוף שלג מתבונן', title_en: 'Snowy Owl',
+    url: 'https://amitphotos.com/photos/069e2c70-b0b5-4140-a49d-47e2df9b98b0.jpg',
+    hint: 'one-shot' },
+  { id: 'eagle',     title: 'נשר לבן בטיסה', title_en: 'White Eagle in Flight',
+    url: 'https://amitphotos.com/photos/286e64f7-bdaa-4bdf-88b8-1c567c4fd333.jpg',
+    hint: 'servo' },
+  { id: 'butterfly', title: 'פרפר ציר על פרח', title_en: 'Butterfly on Flower',
+    url: 'https://amitphotos.com/photos/c68971c4-dbe1-48b0-8e48-3ba69c7a19f5.jpg',
+    hint: 'mf' },
+];
+
+let currentMode = 'one-shot';
+
+// Build photo picker
+const afPicker = document.getElementById('af-picker');
+AF_PHOTOS.forEach((p, i) => {
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'photo-btn' + (i === 0 ? ' active' : '');
+  btn.innerHTML = `<img src="${p.url}" alt="${p.title}" loading="lazy">
+    <span>${p.title}</span>`;
+  btn.addEventListener('click', () => {
+    afPicker.querySelectorAll('.photo-btn').forEach((b, j) =>
+      b.classList.toggle('active', j === i));
+    setAfPhoto(p);
+  });
+  afPicker.appendChild(btn);
+});
+
+function setAfPhoto(p) {
+  document.getElementById('af-photo').src = p.url;
+  document.getElementById('af-photo').alt = p.title;
+  const lang = getLang();
+  document.getElementById('af-photo-title').textContent =
+    lang === 'en' ? p.title_en : p.title;
+}
+setAfPhoto(AF_PHOTOS[0]);
+
+// Mode toggle
+document.querySelectorAll('.mode-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentMode = btn.dataset.mode;
+    setAfMode(currentMode);
+  });
+});
+
+function setAfMode(mode) {
+  const sq = document.getElementById('focus-square');
+  const ring = document.getElementById('focus-ring');
+  sq.className = 'focus-square';
+  ring.className = 'focus-ring';
+  void sq.offsetWidth;
+  sq.classList.add('mode-' + (mode === 'servo' ? 'servo' : mode === 'mf' ? 'mf' : 'one-shot'));
+  ring.classList.add('mode-' + (mode === 'mf' ? 'mf' : mode === 'servo' ? 'servo' : 'one-shot'));
+  document.querySelectorAll('.mode-info').forEach(el =>
+    el.classList.toggle('active', el.dataset.mode === mode));
+}
+
 applyLang();
 window.setLang = applyLang;
 window.addEventListener('storage', e => { if (e.key === 'lang') applyLang(); });
