@@ -62,10 +62,11 @@ function applyLang() {
     ? 'Focus Techniques — AF Modes, Points & Stacking | Photography School | Amit Photos'
     : 'פוקוס — מצבים, נקודות ו-Stacking | בית ספר לצילום | Amit Photos';
   document.querySelectorAll('[data-he]').forEach(el => {
-    el.textContent = isEn ? (el.dataset.en || el.dataset.he) : el.dataset.he;
+    el.innerHTML = isEn ? (el.dataset.en || el.dataset.he) : el.dataset.he;
   });
 }
 applyLang();
+window.setLang = applyLang;
 window.addEventListener('storage', e => { if (e.key === 'lang') applyLang(); });
 </script>
 </body>
