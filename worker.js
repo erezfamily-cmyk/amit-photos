@@ -4884,6 +4884,12 @@ async function handleAdminNlEditor(request, env, id) {
     ? `<button type="button" onclick="publish()">🚀 פרסם</button>`
     : `<span style="color:#4caf50">✓ פורסם ב-${escXml((issue.published_at||'').slice(0,10))}</span>`;
 
+  const sendSection = issue.status === 'published' ? `
+<div style="margin-top:1.5rem;padding-top:1rem;border-top:1px solid #222;display:flex;align-items:center;gap:1rem;flex-wrap:wrap">
+  <button type="button" id="send-btn" onclick="sendToSubs()">📧 שלח לנרשמים (<span id="sub-count">...</span>)</button>
+  <span id="send-msg" style="font-size:.85rem;display:none"></span>
+</div>` : '';
+
   return new Response(`<!DOCTYPE html>
 <html dir="rtl" lang="he">
 <head>
@@ -4912,9 +4918,31 @@ button{background:#c8a96e;color:#000;border:none;padding:.5rem 1.1rem;border-rad
   <a href="/admin/newsletter/"><button type="button" class="btn-secondary">← חזרה לרשימה</button></a>
 </div>
 <div id="msg"></div>
+${sendSection}
 ${heroFields}${guideFields}${locationFields}${tipFields}
 <script>
 const tok = localStorage.getItem('adminToken') || '';
+${issue.status === 'published' ? `
+fetch('/api/subscribers', { headers: {'X-Session-Token': tok} })
+  .then(r => r.json())
+  .then(d => { if (Array.isArray(d)) document.getElementById('sub-count').textContent = d.length; })
+  .catch(() => {});
+async function sendToSubs() {
+  if (!confirm('לשלוח את הגיליון לכל הנרשמים?')) return;
+  const btn = document.getElementById('send-btn');
+  const msg = document.getElementById('send-msg');
+  btn.disabled = true;
+  msg.style.display = 'inline'; msg.style.color = '#888'; msg.textContent = 'שולח...';
+  try {
+    const r = await fetch('/api/admin/newsletter/${escXml(id)}/send', {
+      method: 'POST', headers: {'X-Session-Token': tok}
+    });
+    const d = await r.json();
+    if (d.ok) { msg.style.color = '#4caf50'; msg.textContent = 'נשלח ל-' + d.sent + ' נרשמים ✓'; }
+    else { msg.style.color = '#f44336'; msg.textContent = d.error || 'שגיאה'; }
+  } catch { msg.style.color = '#f44336'; msg.textContent = 'שגיאת רשת'; }
+  btn.disabled = false;
+}` : ''}
 function collectContent() {
   const content = ${JSON.stringify(c)};
   document.querySelectorAll('input[name],textarea[name]').forEach(el => {
