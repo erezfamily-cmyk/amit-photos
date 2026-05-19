@@ -5216,6 +5216,24 @@ async function handleAdminNlEditor(request, env, id) {
     ${field('טקסט עברית','tip','text_he',c.tip.text_he)}
     ${field('טקסט אנגלית','tip','text_en',c.tip.text_en)}` : '';
 
+  const saleFields = issue.type === 'full' ? `
+  <h2>מבצע החודש</h2>
+  ${field('כותרת המבצע (עברית)', 'sale', 'title_he', c.sale?.title_he)}
+  ${field('תיאור (עברית, עד 10 מילים)', 'sale', 'desc_he', c.sale?.desc_he)}
+  ${field('מחיר מקורי', 'sale', 'original_price', c.sale?.original_price)}
+  ${field('מחיר מבצע', 'sale', 'sale_price', c.sale?.sale_price)}
+  ${field('תווית הנחה', 'sale', 'discount_label', c.sale?.discount_label)}` : '';
+
+  const guideStepsFields = issue.type === 'full' && c.guide ? `
+  <h2>שלבי המדריך</h2>
+  ${[0, 1, 2].map(i => {
+    const step = c.guide?.steps?.[i] || {};
+    return `<div class="field"><label>שלב ${i+1} — כותרת</label>
+      <input name="guide.steps.${i}.title_he" value="${escXml(step.title_he || '')}"></div>
+    <div class="field"><label>שלב ${i+1} — טקסט</label>
+      <textarea name="guide.steps.${i}.text_he" rows="3">${escXml(step.text_he || '')}</textarea></div>`;
+  }).join('')}` : '';
+
   const publishBtn = issue.status === 'draft'
     ? `<button type="button" onclick="publish()">🚀 פרסם</button>`
     : `<span style="color:#4caf50">✓ פורסם ב-${escXml((issue.published_at||'').slice(0,10))}</span>`;
@@ -5261,7 +5279,7 @@ button{background:#c8a96e;color:#000;border:none;padding:.5rem 1.1rem;border-rad
 </div>
 <div id="msg"></div>
 ${sendSection}
-${heroFields}${guideFields}${locationFields}${tipFields}
+${heroFields}${guideFields}${guideStepsFields}${locationFields}${tipFields}${saleFields}
 <script>
 const tok = localStorage.getItem('adminToken') || '';
 ${issue.status === 'published' ? `
@@ -5288,9 +5306,22 @@ async function sendToSubs() {
 function collectContent() {
   const content = ${JSON.stringify(c)};
   document.querySelectorAll('input[name],textarea[name]').forEach(el => {
-    const [section, key] = el.name.split('.');
-    if (!content[section]) content[section] = {};
-    content[section][key] = el.value;
+    const parts = el.name.split('.');
+    // 2-part: section.key
+    if (parts.length === 2) {
+      const [section, key] = parts;
+      if (!content[section]) content[section] = {};
+      content[section][key] = el.value;
+    }
+    // 4-part: section.steps.index.key (e.g. guide.steps.0.title_he)
+    else if (parts.length === 4 && parts[1] === 'steps') {
+      const [section, , idxStr, key] = parts;
+      const idx = parseInt(idxStr, 10);
+      if (!content[section]) content[section] = {};
+      if (!Array.isArray(content[section].steps)) content[section].steps = [];
+      while (content[section].steps.length <= idx) content[section].steps.push({});
+      content[section].steps[idx][key] = el.value;
+    }
   });
   return content;
 }
