@@ -4930,9 +4930,15 @@ async function handleAdminNlEditor(request, env, id) {
     ? `<button type="button" onclick="publish()">🚀 פרסם</button>`
     : `<span style="color:#4caf50">✓ פורסם ב-${escXml((issue.published_at||'').slice(0,10))}</span>`;
 
+  const issuePublicUrl = `https://amitphotos.com/newsletter/${escXml(issue.slug)}/`;
+  const fbShareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent('https://amitphotos.com/newsletter/' + issue.slug + '/')}`;
   const sendSection = issue.status === 'published' ? `
 <div style="margin-top:1.5rem;padding-top:1rem;border-top:1px solid #222;display:flex;align-items:center;gap:1rem;flex-wrap:wrap">
   <button type="button" id="send-btn" onclick="sendToSubs()">📧 שלח לנרשמים (<span id="sub-count">...</span>)</button>
+  <a href="${fbShareUrl}" target="_blank" rel="noopener" style="background:#1877f2;color:#fff;border:none;padding:.5rem 1.1rem;border-radius:8px;cursor:pointer;font-size:.85rem;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;gap:.4rem">
+    <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.413c0-3.026 1.791-4.697 4.533-4.697 1.313 0 2.686.236 2.686.236v2.97h-1.513c-1.491 0-1.956.93-1.956 1.886v2.267h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>
+    שתף בפייסבוק
+  </a>
   <span id="send-msg" style="font-size:.85rem;display:none"></span>
 </div>` : '';
 
