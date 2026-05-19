@@ -4763,6 +4763,194 @@ applyLang();window.setLang=applyLang;window.addEventListener('storage',e=>{if(e.
   return new Response(html, { headers: { 'Content-Type': 'text/html;charset=utf-8', 'Cache-Control': 'no-cache' } });
 }
 
+async function handleAdminNlList(request, env) {
+  if (!await checkAuth(request, env)) return new Response('Unauthorized', { status: 401 });
+
+  const { results } = await env.DB.prepare(
+    `SELECT id, slug, type, issue_number, title_he, status, published_at, created_at
+     FROM newsletter_issues ORDER BY created_at DESC LIMIT 50`
+  ).all();
+
+  const rows = (results || []).map(issue => {
+    const statusBadge = issue.status === 'published'
+      ? `<span style="color:#4caf50">פורסם</span>`
+      : `<span style="color:#ff9800">טיוטה</span>`;
+    const date = issue.created_at ? issue.created_at.slice(0, 10) : '';
+    return `<tr>
+      <td>${escXml(String(issue.issue_number))}</td>
+      <td>${statusBadge}</td>
+      <td>${escXml(issue.type === 'full' ? 'מלא' : 'הבזק')}</td>
+      <td>${escXml(issue.title_he)}</td>
+      <td>${escXml(date)}</td>
+      <td>
+        <a href="/admin/newsletter/${escXml(issue.id)}/">ערוך</a> |
+        <a href="/admin/newsletter/${escXml(issue.id)}/preview/" target="_blank">תצוגה מקדימה</a>
+        ${issue.status === 'published' ? ` | <a href="/newsletter/${escXml(issue.slug)}/" target="_blank">צפה</a>` : ''}
+      </td>
+    </tr>`;
+  }).join('');
+
+  return new Response(`<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ניהול ניוזלטר | Admin</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Heebo',Arial,sans-serif;background:#0a0a0a;color:#f0ede8;padding:1.5rem;direction:rtl}
+h1{font-size:1.4rem;color:#c8a96e;margin-bottom:1.25rem}
+.actions{display:flex;gap:.75rem;margin-bottom:1.5rem;flex-wrap:wrap}
+button{background:#c8a96e;color:#000;border:none;padding:.5rem 1.1rem;border-radius:8px;cursor:pointer;font-size:.85rem;font-weight:700}
+button:disabled{opacity:.5;cursor:default}
+#msg{font-size:.85rem;padding:.5rem;border-radius:6px;margin-bottom:1rem;display:none}
+table{width:100%;border-collapse:collapse;font-size:.85rem}
+th,td{padding:.6rem .75rem;border-bottom:1px solid #222;text-align:right}
+th{color:#888;font-weight:600}
+a{color:#c8a96e;text-decoration:none}
+a:hover{text-decoration:underline}
+</style>
+</head>
+<body>
+<h1>ניהול ניוזלטר</h1>
+<div class="actions">
+  <button onclick="generate('full')">📰 צור גיליון מלא</button>
+  <button onclick="generate('flash')">⚡ צור הבזק</button>
+</div>
+<div id="msg"></div>
+<table>
+  <thead><tr><th>#</th><th>סטטוס</th><th>סוג</th><th>כותרת</th><th>תאריך</th><th>פעולות</th></tr></thead>
+  <tbody>${rows || '<tr><td colspan="6" style="text-align:center;color:#888;padding:2rem">אין גיליונות עדיין</td></tr>'}</tbody>
+</table>
+<script>
+const tok = localStorage.getItem('adminToken') || '';
+async function generate(type) {
+  const msg = document.getElementById('msg');
+  msg.style.display = 'block';
+  msg.style.background = '#1a1a1a';
+  msg.style.color = '#888';
+  msg.textContent = 'יוצר טיוטה... (עד 30 שניות)';
+  try {
+    const r = await fetch('/api/admin/newsletter/generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Session-Token': tok },
+      body: JSON.stringify({ type })
+    });
+    const d = await r.json();
+    if (d.skipped) { msg.style.color = '#ff9800'; msg.textContent = 'גיליון לתקופה זו כבר קיים'; }
+    else if (d.slug) { msg.style.color = '#4caf50'; msg.textContent = 'נוצר! מרענן...'; setTimeout(() => location.reload(), 1000); }
+    else { msg.style.color = '#f44336'; msg.textContent = d.error || 'שגיאה'; }
+  } catch(e) { msg.style.color = '#f44336'; msg.textContent = 'שגיאת רשת: ' + e.message; }
+}
+</script>
+</body></html>`, { headers: { 'Content-Type': 'text/html;charset=utf-8' } });
+}
+
+async function handleAdminNlEditor(request, env, id) {
+  if (!await checkAuth(request, env)) return new Response('Unauthorized', { status: 401 });
+  const issue = await env.DB.prepare('SELECT * FROM newsletter_issues WHERE id=?').bind(id).first();
+  if (!issue) return new Response('Not found', { status: 404 });
+  const c = JSON.parse(issue.content_json || '{}');
+
+  const field = (label, key, subkey, val) =>
+    `<div class="field">
+      <label>${escXml(label)}</label>
+      <textarea name="${escXml(key + '.' + subkey)}" rows="3">${escXml(val || '')}</textarea>
+    </div>`;
+
+  const heroFields = c.hero ? `
+    <h2>תמונה ראשית</h2>
+    <div class="field"><label>Photo ID</label><input name="hero.photo_id" value="${escXml(c.hero.photo_id||'')}"></div>
+    ${field('טקסט עברית','hero','text_he',c.hero.text_he)}
+    ${field('טקסט אנגלית','hero','text_en',c.hero.text_en)}` : '';
+
+  const guideFields = c.guide ? `
+    <h2>מדריך החודש</h2>
+    <div class="field"><label>Slug</label><input name="guide.slug" value="${escXml(c.guide.slug||'')}"></div>
+    ${field('טקסט עברית','guide','text_he',c.guide.text_he)}
+    ${field('טקסט אנגלית','guide','text_en',c.guide.text_en)}` : '';
+
+  const locationFields = c.location ? `
+    <h2>מקום לצילום</h2>
+    ${field('טקסט עברית','location','text_he',c.location.text_he)}
+    ${field('טקסט אנגלית','location','text_en',c.location.text_en)}` : '';
+
+  const tipFields = c.tip ? `
+    <h2>טיפ החודש</h2>
+    ${field('כותרת עברית','tip','title_he',c.tip.title_he)}
+    ${field('טקסט עברית','tip','text_he',c.tip.text_he)}
+    ${field('טקסט אנגלית','tip','text_en',c.tip.text_en)}` : '';
+
+  const publishBtn = issue.status === 'draft'
+    ? `<button type="button" onclick="publish()">🚀 פרסם</button>`
+    : `<span style="color:#4caf50">✓ פורסם ב-${escXml((issue.published_at||'').slice(0,10))}</span>`;
+
+  return new Response(`<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>עורך ניוזלטר | Admin</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Heebo',Arial,sans-serif;background:#0a0a0a;color:#f0ede8;padding:1.5rem;direction:rtl;max-width:800px}
+h1{font-size:1.3rem;color:#c8a96e;margin-bottom:1rem}
+h2{font-size:1rem;color:#c8a96e;margin:1.5rem 0 .75rem;border-bottom:1px solid #222;padding-bottom:.4rem}
+.field{margin-bottom:1rem}
+label{display:block;font-size:.8rem;color:#888;margin-bottom:.3rem}
+input,textarea{width:100%;background:#111;border:1px solid #333;color:#f0ede8;padding:.5rem .75rem;border-radius:8px;font-family:inherit;font-size:.85rem;resize:vertical}
+.actions{display:flex;gap:.75rem;margin:1.5rem 0;flex-wrap:wrap;align-items:center}
+button{background:#c8a96e;color:#000;border:none;padding:.5rem 1.1rem;border-radius:8px;cursor:pointer;font-size:.85rem;font-weight:700}
+.btn-secondary{background:#222;color:#f0ede8}
+#msg{font-size:.85rem;padding:.5rem;border-radius:6px;margin-top:.5rem;display:none}
+</style>
+</head>
+<body>
+<h1>${escXml(issue.title_he)}</h1>
+<div class="actions">
+  <button onclick="save()">💾 שמור טיוטה</button>
+  <a href="/admin/newsletter/${escXml(id)}/preview/" target="_blank"><button type="button" class="btn-secondary">👁 תצוגה מקדימה</button></a>
+  ${publishBtn}
+  <a href="/admin/newsletter/"><button type="button" class="btn-secondary">← חזרה לרשימה</button></a>
+</div>
+<div id="msg"></div>
+${heroFields}${guideFields}${locationFields}${tipFields}
+<script>
+const tok = localStorage.getItem('adminToken') || '';
+function collectContent() {
+  const content = ${JSON.stringify(c)};
+  document.querySelectorAll('input[name],textarea[name]').forEach(el => {
+    const [section, key] = el.name.split('.');
+    if (!content[section]) content[section] = {};
+    content[section][key] = el.value;
+  });
+  return content;
+}
+async function save() {
+  const msg = document.getElementById('msg');
+  msg.style.display = 'block'; msg.style.color = '#888'; msg.textContent = 'שומר...';
+  const r = await fetch('/api/admin/newsletter/${escXml(id)}', {
+    method: 'PATCH',
+    headers: {'Content-Type':'application/json','X-Session-Token':tok},
+    body: JSON.stringify({ content_json: JSON.stringify(collectContent()) })
+  });
+  const d = await r.json();
+  msg.style.color = d.ok ? '#4caf50' : '#f44336';
+  msg.textContent = d.ok ? 'נשמר!' : (d.error || 'שגיאה');
+}
+async function publish() {
+  if (!confirm('לפרסם את הגיליון?')) return;
+  const msg = document.getElementById('msg');
+  msg.style.display = 'block'; msg.style.color = '#888'; msg.textContent = 'מפרסם...';
+  const r = await fetch('/api/admin/newsletter/${escXml(id)}/publish', {
+    method: 'POST', headers: {'X-Session-Token':tok}
+  });
+  const d = await r.json();
+  if (d.url) { msg.style.color = '#4caf50'; msg.textContent = 'פורסם! מנתב...'; setTimeout(() => location.href = d.url, 800); }
+  else { msg.style.color = '#f44336'; msg.textContent = d.error || 'שגיאה'; }
+}
+</script>
+</body></html>`, { headers: { 'Content-Type': 'text/html;charset=utf-8' } });
+}
+
 // ===== MAIN ROUTER =====
 export default {
   async fetch(request, env, ctx) {
