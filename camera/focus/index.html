@@ -216,7 +216,46 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
 
     <!-- Info panel -->
     <div class="info-panel" id="af-info-panel">
-      <!-- filled in Task 4 -->
+
+      <!-- One-Shot -->
+      <div class="mode-info active" data-mode="one-shot">
+        <div class="mode-info-title" data-he="🔒 One-Shot AF — פוקוס נעול" data-en="🔒 One-Shot AF — Lock &amp; Shoot">🔒 One-Shot AF — פוקוס נעול</div>
+        <div class="mode-info-when">
+          <span class="lang-he">לחיצה חצי על ההדק נועלת את הפוקוס. המצלמה לא תמשיך לחפש עד שתשחרר. מתאים לכל נושא שעומד בשקט.</span>
+          <span class="lang-en" style="display:none">Half-press the shutter to lock focus. The camera stops searching until you release. Perfect for any subject that stays still.</span>
+        </div>
+        <div class="mode-tip">
+          <strong data-he="מתי להשתמש:" data-en="Use for:">מתי להשתמש:</strong>
+          <span data-he=" פורטרטים, נוף, אדריכלות, אוכל, ינשוף יושב — כל מה שלא זז." data-en=" Portraits, landscapes, architecture, food, perched birds — anything stationary."> פורטרטים, נוף, אדריכלות, אוכל, ינשוף יושב — כל מה שלא זז.</span>
+        </div>
+      </div>
+
+      <!-- AI Servo -->
+      <div class="mode-info" data-mode="servo">
+        <div class="mode-info-title" data-he="🔄 AI Servo (AF-C) — מעקב רציף" data-en="🔄 AI Servo (AF-C) — Continuous Tracking">🔄 AI Servo (AF-C) — מעקב רציף</div>
+        <div class="mode-info-when">
+          <span class="lang-he">המצלמה מחשבת כל הזמן מחדש איפה הנושא. כל עוד לוחצים חצי על ההדק — הפוקוס עוקב. הנקודה הכתומה זזה עם הציפור.</span>
+          <span class="lang-en" style="display:none">The camera continuously recalculates where the subject is. Hold half-press and the focus follows. The orange square tracks the moving bird.</span>
+        </div>
+        <div class="mode-tip">
+          <strong data-he="מתי להשתמש:" data-en="Use for:">מתי להשתמש:</strong>
+          <span data-he=" ציפורים בטיסה, ספורט, ילדים שרצים, כל נושא שנע לעבר/מהמצלמה." data-en=" Birds in flight, sports, running children, any subject moving toward or away from you."> ציפורים בטיסה, ספורט, ילדים שרצים, כל נושא שנע לעבר/מהמצלמה.</span>
+        </div>
+      </div>
+
+      <!-- MF -->
+      <div class="mode-info" data-mode="mf">
+        <div class="mode-info-title" data-he="🖐 Manual Focus (MF) — שליטה ידנית" data-en="🖐 Manual Focus (MF) — Full Control">🖐 Manual Focus (MF) — שליטה ידנית</div>
+        <div class="mode-info-when">
+          <span class="lang-he">סובב את טבעת הפוקוס בעדשה. לא מסתמך על האלגוריתם של המצלמה. הזהב: מאקרו, חושך, צילום דרך גדר/זכוכית.</span>
+          <span class="lang-en" style="display:none">Rotate the focus ring on the lens. You bypass the camera's algorithm entirely. Essential for: macro, darkness, shooting through fences or glass.</span>
+        </div>
+        <div class="mode-tip">
+          <strong data-he="טיפ — MF Override:" data-en="Tip — MF Override:">טיפ — MF Override:</strong>
+          <span data-he=" לחץ חצי על ההדק (AF), ואז סובב ידנית — 'משכלל' את מה שהמצלמה מצאה." data-en=" Half-press to AF-acquire, then rotate ring to fine-tune — refine what the camera found."> לחץ חצי על ההדק (AF), ואז סובב ידנית — 'משכלל' את מה שהמצלמה מצאה.</span>
+        </div>
+      </div>
+
     </div>
   </div>
 </div>
@@ -253,6 +292,9 @@ function applyLang() {
     : 'פוקוס — מצבים, נקודות ו-Stacking | בית ספר לצילום | Amit Photos';
   document.querySelectorAll('[data-he]').forEach(el => {
     el.innerHTML = isEn ? (el.dataset.en || el.dataset.he) : el.dataset.he;
+  });
+  document.querySelectorAll('.lang-he, .lang-en').forEach(el => {
+    el.style.display = el.classList.contains('lang-' + lang) ? '' : 'none';
   });
 }
 
