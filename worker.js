@@ -4772,7 +4772,7 @@ async function handleNlIssue(env, slug, isPreview) {
       </div>
     </section>` : '';
 
-  const saleBannerSection = isFull && c.sale ? `
+  const saleBannerSection = isFull && c.sale?.title_he ? `
     <section class="nl-section nl-sale-section">
       <div class="nl-sale-banner">
         <div class="nl-sale-header">
@@ -4954,7 +4954,7 @@ ${locationSection ? '<hr class="nl-divider">' : ''}
 ${tipSection}
 ${tipSection ? '<hr class="nl-divider">' : ''}
 ${linksSection}
-<hr class="nl-divider">
+${(tipSection || linksSection) ? '<hr class="nl-divider">' : ''}
 ${ctaCardsSection}
 <hr class="nl-divider">
 ${contactCardSection}
