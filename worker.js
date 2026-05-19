@@ -2930,6 +2930,7 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direc
 .back-link a{color:var(--accent);font-size:.85rem;text-decoration:none}
 </style>
 <script src="/assets/js/nav.js" defer></script>
+<script src="/assets/js/share.js" defer></script>
 </head>
 <body>
 <div class="page-hero">
@@ -2937,7 +2938,7 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direc
   <p data-he="ניתוח צילומי מעמיק — חוקי קומפוזיציה, הגדרות מצלמה, ומה הצלם חשב" data-en="Deep photographic analysis — composition rules, camera settings, and the photographer's vision">ניתוח צילומי מעמיק — חוקי קומפוזיציה, הגדרות מצלמה, ומה הצלם חשב</p>
 </div>
 <div class="grid">${cards}${empty}</div>
-<div class="back-link"><a href="https://amitphotos.com" data-he="← לגלריה המלאה" data-en="← Back to Gallery">← לגלריה המלאה</a></div>
+<div class="back-link nav-prev"><a href="https://amitphotos.com" data-he="← לגלריה המלאה" data-en="← Back to Gallery">← לגלריה המלאה</a></div>
 <script>
 function getLang(){return localStorage.getItem('lang')||'he'}
 function applyLang(){
@@ -3283,7 +3284,7 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direc
 .analysis-nav .nav-dir{font-size:.68rem;color:var(--muted)}
 .analysis-nav .nav-title{font-size:.82rem;color:var(--text);overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 .analysis-nav .nav-next{text-align:right}
-.analysis-nav .nav-prev{text-align:left}
+.analysis-nav .nav-older{text-align:left}
 .more-section{max-width:900px;margin:0 auto 2rem;padding:0 .75rem}
 .more-section h2{font-family:'Syne',sans-serif;color:var(--accent);font-size:1.05rem;margin-bottom:.75rem}
 .more-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.75rem}
@@ -3296,6 +3297,7 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direc
 .more-card-title{font-size:.78rem;color:var(--text);overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 </style>
 <script src="/assets/js/nav.js" defer></script>
+<script src="/assets/js/share.js" defer></script>
 </head>
 <body>
 <div class="page-header">
@@ -3335,7 +3337,7 @@ ${(() => { const d = buildPhysicsDiagram(camera); return `<div class="section"><
 ${(prevRow || nextRow) ? `
 <div class="analysis-nav">
   ${prevRow ? `<a href="/learn/${escXml(prevRow.photo_id)}" class="nav-next"><span class="nav-dir" data-he="← ניתוח חדש יותר" data-en="← Newer Analysis">← ניתוח חדש יותר</span><span class="nav-title" data-he="${escXml(prevRow.title)}" data-en="${escXml(prevRow.title_en||prevRow.title)}">${escXml(prevRow.title)}</span></a>` : '<span></span>'}
-  ${nextRow ? `<a href="/learn/${escXml(nextRow.photo_id)}" class="nav-prev"><span class="nav-dir" data-he="ניתוח קודם →" data-en="Older Analysis →">ניתוח קודם →</span><span class="nav-title" data-he="${escXml(nextRow.title)}" data-en="${escXml(nextRow.title_en||nextRow.title)}">${escXml(nextRow.title)}</span></a>` : '<span></span>'}
+  ${nextRow ? `<a href="/learn/${escXml(nextRow.photo_id)}" class="nav-older"><span class="nav-dir" data-he="ניתוח קודם →" data-en="Older Analysis →">ניתוח קודם →</span><span class="nav-title" data-he="${escXml(nextRow.title)}" data-en="${escXml(nextRow.title_en||nextRow.title)}">${escXml(nextRow.title)}</span></a>` : '<span></span>'}
 </div>` : ''}
 
 ${moreAnalyses.length > 0 ? `
@@ -3358,7 +3360,7 @@ ${moreAnalyses.length > 0 ? `
   </div>
 </div>` : ''}
 
-<div class="nav-row">
+<div class="nav-row nav-prev">
   <a href="/learn/" data-he="← כל הניתוחים" data-en="← All Analyses">← כל הניתוחים</a>
   <a href="${escXml(buyUrl)}" data-he="רכוש תמונה זו" data-en="Buy This Photo">רכוש תמונה זו</a>
   <a href="https://amitphotos.com" data-he="לגלריה" data-en="Gallery">לגלריה</a>
