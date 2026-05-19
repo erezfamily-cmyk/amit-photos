@@ -5124,6 +5124,37 @@ export default {
     if (path.startsWith('/photos/'))       return servePhoto(path.slice('/photos/'.length), env, request);
     if (path.startsWith('/photo/'))        { trackPageView(env, request, 'photo'); return servePhotoPage(path.slice('/photo/'.length), env); }
     if (path.startsWith('/category/'))     { trackPageView(env, request, 'category'); return handleCategoryPage(decodeURIComponent(path.slice('/category/'.length)), env); }
+    // Newsletter public routes
+    if (path === '/newsletter' || path === '/newsletter/') return handleNlList(env);
+    if (path.startsWith('/newsletter/') && path.length > '/newsletter/'.length) {
+      const slug = path.slice('/newsletter/'.length).replace(/\/$/, '');
+      return handleNlIssue(env, slug, false);
+    }
+
+    // Newsletter admin pages
+    if (path === '/admin/newsletter' || path === '/admin/newsletter/') return handleAdminNlList(request, env);
+    if (path.match(/^\/admin\/newsletter\/[^/]+\/preview\/?$/)) {
+      const id = path.slice('/admin/newsletter/'.length).replace(/\/preview\/?$/, '');
+      if (!await checkAuth(request, env)) return new Response('Unauthorized', { status: 401 });
+      const issue = await env.DB.prepare('SELECT * FROM newsletter_issues WHERE id=?').bind(id).first();
+      return issue ? handleNlIssue(env, issue.slug, true) : new Response('Not found', { status: 404 });
+    }
+    if (path.match(/^\/admin\/newsletter\/[^/]+\/?$/)) {
+      const id = path.slice('/admin/newsletter/'.length).replace(/\/$/, '');
+      return handleAdminNlEditor(request, env, id);
+    }
+
+    // Newsletter API routes
+    if (path === '/api/admin/newsletter/generate' && request.method === 'POST') return handleAdminNlGenerate(request, env);
+    if (path.match(/^\/api\/admin\/newsletter\/[^/]+$/) && request.method === 'PATCH') {
+      const id = path.slice('/api/admin/newsletter/'.length);
+      return handleAdminNlUpdate(request, env, id);
+    }
+    if (path.match(/^\/api\/admin\/newsletter\/[^/]+\/publish$/) && request.method === 'POST') {
+      const id = path.slice('/api/admin/newsletter/'.length).replace(/\/publish$/, '');
+      return handleAdminNlPublish(request, env, id);
+    }
+
     if (path.startsWith('/learn/') && path.length > '/learn/'.length)  { trackPageView(env, request, 'learn_detail'); return handleLearnAnalysis(env, decodeURIComponent(path.slice('/learn/'.length))); }
     if (path === '/learn' || path === '/learn/')   { trackPageView(env, request, 'learn'); return handleLearnIndex(env); }
     if (path === '/sitemap.xml')           return handleSitemap(request, env);
