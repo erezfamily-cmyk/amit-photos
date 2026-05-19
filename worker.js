@@ -4686,13 +4686,36 @@ async function handleNlIssue(env, slug, isPreview) {
       <p class="nl-body-text" data-he="${escXml(c.hero.text_he)}" data-en="${escXml(c.hero.text_en || c.hero.text_he)}">${escXml(c.hero.text_he)}</p>
     </section>` : '';
 
-  const guideSection = isFull && c.guide ? `
+  const guideSection = isFull && c.guide ? (() => {
+    const hasSteps = Array.isArray(c.guide.steps) && c.guide.steps.length > 0;
+    if (hasSteps) {
+      const pillsHtml = c.guide.steps.map((s, i) =>
+        `<button class="nl-step-pill${i === 0 ? ' nl-step-active' : ''}" onclick="showStep(${i + 1})">שלב ${i + 1}</button>`
+      ).join('');
+      const stepsHtml = c.guide.steps.map((s, i) =>
+        `<div class="nl-step-content" id="step-${i + 1}"${i > 0 ? ' style="display:none"' : ''}>
+          <h3 class="nl-step-title">${escXml(s.title_he)}</h3>
+          <p class="nl-body-text">${escXml(s.text_he)}</p>
+        </div>`
+      ).join('');
+      return `
+    <section class="nl-section nl-guide-section">
+      <div class="nl-section-badge" data-he="מדריך החודש" data-en="Guide of the Month">מדריך החודש</div>
+      <h2 class="nl-section-title" data-he="${escXml(c.guide.title_he)}" data-en="${escXml(c.guide.title_en || c.guide.title_he)}">${escXml(c.guide.title_he)}</h2>
+      <div class="nl-steps-nav">${pillsHtml}</div>
+      ${stepsHtml}
+      <a class="nl-link" href="/camera/${escXml(c.guide.slug)}/" data-he="קרא את המדריך ←" data-en="Read the guide ←">קרא את המדריך ←</a>
+    </section>`;
+    } else {
+      return `
     <section class="nl-section nl-guide-section">
       <div class="nl-section-badge" data-he="מדריך החודש" data-en="Guide of the Month">מדריך החודש</div>
       <h2 class="nl-section-title" data-he="${escXml(c.guide.title_he)}" data-en="${escXml(c.guide.title_en || c.guide.title_he)}">${escXml(c.guide.title_he)}</h2>
       <p class="nl-body-text" data-he="${escXml(c.guide.text_he)}" data-en="${escXml(c.guide.text_en || c.guide.text_he)}">${escXml(c.guide.text_he)}</p>
       <a class="nl-link" href="/camera/${escXml(c.guide.slug)}/" data-he="קרא את המדריך ←" data-en="Read the guide ←">קרא את המדריך ←</a>
-    </section>` : '';
+    </section>`;
+    }
+  })() : '';
 
   const locationSection = isFull && c.location ? `
     <section class="nl-section nl-location-section">
@@ -4717,6 +4740,95 @@ async function handleNlIssue(env, slug, isPreview) {
         `<a class="nl-link-pill" href="${escXml(l.url)}" data-he="${escXml(l.label_he)}" data-en="${escXml(l.label_en)}">${escXml(l.label_he)}</a>`
       ).join('')}</div>
     </section>` : '';
+
+  const wallMockupSection = c.hero ? `
+    <section class="nl-section nl-wall-section">
+      <div class="nl-section-badge">כך היא נראית אצלך בבית</div>
+      <div class="nl-wall-room">
+        <div class="nl-wall-frame">
+          <img src="${escXml(c.hero.photo_url)}" alt="${escXml(c.hero.title_he)}" class="nl-wall-photo">
+        </div>
+        <div class="nl-wall-floor"></div>
+      </div>
+      <div class="nl-wall-cta">
+        <span class="nl-wall-price">מ-₪290</span>
+        <a class="nl-btn-primary" href="/photos/${escXml(c.hero.photo_id)}/">🛒 הזמן הדפסה</a>
+        <a class="nl-btn-secondary" href="/photos/${escXml(c.hero.photo_id)}/">👁 מידות וחומרים</a>
+      </div>
+      <p class="nl-wall-materials">קנבס · אלומיניום · נייר ארכיוני · משלוח עד הבית</p>
+    </section>` : '';
+
+  const galleryStripSection = (c.gallery_photos && c.gallery_photos.length) ? `
+    <section class="nl-section nl-gallery-section">
+      <div class="nl-section-badge">עוד מהסדרה</div>
+      <div class="nl-gallery-strip">
+        ${c.gallery_photos.map(photo =>
+          `<a class="nl-gallery-thumb" href="/photos/${escXml(photo.id)}/">
+            <img src="${escXml(photo.url)}" alt="${escXml(photo.title)}" loading="lazy">
+            <span>${escXml(photo.title)}</span>
+          </a>`
+        ).join('')}
+        <a class="nl-gallery-more" href="/">עוד תמונות ←</a>
+      </div>
+    </section>` : '';
+
+  const saleBannerSection = isFull && c.sale ? `
+    <section class="nl-section nl-sale-section">
+      <div class="nl-sale-banner">
+        <div class="nl-sale-header">
+          <span class="nl-sale-tag">${escXml(c.sale.discount_label)}</span>
+          <span class="nl-sale-title">${escXml(c.sale.title_he)}</span>
+        </div>
+        <p class="nl-sale-desc">${escXml(c.sale.desc_he)}</p>
+        <div class="nl-sale-pricing">
+          <span class="nl-sale-original">${escXml(c.sale.original_price)}</span>
+          <span class="nl-sale-price">${escXml(c.sale.sale_price)}</span>
+        </div>
+        <a class="nl-btn-primary" href="/">לכל המבצעים ←</a>
+      </div>
+    </section>` : '';
+
+  const ctaCardsSection = `
+    <section class="nl-section nl-cta-section">
+      <div class="nl-section-badge">מחפש תמונה לבית או למשרד?</div>
+      <div class="nl-cta-grid">
+        <a class="nl-cta-card" href="/?category=%D7%A0%D7%95%D7%A3">
+          <span class="nl-cta-icon">🛋️</span>
+          <span class="nl-cta-label">לסלון / חדר שינה</span>
+        </a>
+        <a class="nl-cta-card" href="/?category=%D7%A2%D7%99%D7%A8%D7%95%D7%A0%D7%99">
+          <span class="nl-cta-icon">💼</span>
+          <span class="nl-cta-label">למשרד / קליניקה</span>
+        </a>
+        <a class="nl-cta-card" href="/contact/">
+          <span class="nl-cta-icon">🎁</span>
+          <span class="nl-cta-label">מתנה מיוחדת</span>
+        </a>
+        <a class="nl-cta-card" href="/contact/">
+          <span class="nl-cta-icon">✨</span>
+          <span class="nl-cta-label">הדפסה אישית</span>
+        </a>
+      </div>
+    </section>`;
+
+  const contactCardSection = `
+    <section class="nl-section nl-contact-section">
+      <div class="nl-contact-card">
+        <div class="nl-contact-header">
+          <span class="nl-contact-avatar">👨‍🎨</span>
+          <div>
+            <div class="nl-contact-name">עמית — צלם אישי</div>
+            <p class="nl-contact-intro">רוצה לבחור תמונה לבית, לקנות הדפסה, או סתם לשאול? אני כאן.</p>
+          </div>
+        </div>
+        <div class="nl-contact-btns">
+          <a class="nl-contact-btn nl-contact-wa" href="https://wa.me/972503333227" target="_blank" rel="noopener">💬 וואטסאפ ישיר</a>
+          <a class="nl-contact-btn" href="https://bitpay.co.il/app/bizcard/0503333227" target="_blank" rel="noopener">💳 ביט</a>
+          <a class="nl-contact-btn" href="https://payboxapp.page.link/pay?phone=972503333227" target="_blank" rel="noopener">💳 פייבוקס</a>
+        </div>
+        <p class="nl-contact-note">תשלום נוח — ביט, פייבוקס, או כרטיס אשראי באתר</p>
+      </div>
+    </section>`;
 
   const previewBanner = isPreview
     ? `<div style="background:#7c3f00;color:#fff;text-align:center;padding:.5rem;font-size:.8rem">טיוטה — לא פורסמה</div>` : '';
@@ -4751,6 +4863,52 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direc
 .nl-link-pill{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:.4rem .9rem;font-size:.8rem;color:var(--text);text-decoration:none;transition:border-color .2s}
 .nl-link-pill:hover{border-color:var(--accent);color:var(--accent)}
 .nl-divider{max-width:800px;margin:0 auto;border:none;border-top:1px solid var(--border)}
+.nl-wall-section{background:var(--surface);border-radius:16px;overflow:hidden;margin:1rem auto;max-width:800px;padding:1.25rem 1.5rem}
+.nl-wall-room{background:#1a1209;border-radius:12px;padding:1.5rem 2rem .5rem;margin:.75rem 0;position:relative;display:flex;flex-direction:column;align-items:center}
+.nl-wall-frame{border:8px solid #5a3e1b;border-radius:4px;box-shadow:0 8px 32px #0009,inset 0 2px 4px #fff1;width:min(340px,90%);aspect-ratio:4/3;overflow:hidden}
+.nl-wall-photo{width:100%;height:100%;object-fit:cover;display:block}
+.nl-wall-floor{width:calc(100% + 4rem);height:18px;background:linear-gradient(#8b6914,#5a3e1b);margin:0 -2rem -.5rem;opacity:.7}
+.nl-wall-cta{display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;margin:.75rem 0 .25rem}
+.nl-wall-price{font-size:1.1rem;font-weight:700;color:var(--accent)}
+.nl-btn-primary{background:var(--accent);color:#000;text-decoration:none;border-radius:20px;padding:.4rem 1.1rem;font-size:.85rem;font-weight:700}
+.nl-btn-secondary{background:transparent;color:var(--accent);border:1px solid var(--accent);text-decoration:none;border-radius:20px;padding:.4rem 1.1rem;font-size:.85rem}
+.nl-wall-materials{font-size:.75rem;color:var(--muted)}
+.nl-gallery-section{max-width:800px;margin:0 auto;padding:1rem 1.5rem}
+.nl-gallery-strip{display:flex;gap:.75rem;overflow-x:auto;padding-bottom:.5rem;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+.nl-gallery-thumb{flex:0 0 auto;width:120px;text-decoration:none;color:var(--text)}
+.nl-gallery-thumb img{width:120px;height:80px;object-fit:cover;border-radius:8px;display:block;border:1px solid var(--border)}
+.nl-gallery-thumb span{display:block;font-size:.7rem;color:var(--muted);margin-top:.25rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:120px}
+.nl-gallery-more{flex:0 0 auto;display:flex;align-items:center;justify-content:center;width:72px;height:80px;background:rgba(200,169,110,.08);border:1px solid rgba(200,169,110,.25);border-radius:8px;color:var(--accent);font-size:.72rem;text-decoration:none;text-align:center;padding:.25rem}
+.nl-sale-section{max-width:800px;margin:0 auto;padding:1rem 1.5rem}
+.nl-sale-banner{background:linear-gradient(135deg,rgba(200,169,110,.12),rgba(200,169,110,.05));border:1px solid rgba(200,169,110,.35);border-radius:14px;padding:1.25rem 1.5rem}
+.nl-sale-header{display:flex;align-items:center;gap:.75rem;margin-bottom:.5rem;flex-wrap:wrap}
+.nl-sale-tag{background:var(--accent);color:#000;font-size:.72rem;font-weight:700;border-radius:12px;padding:2px 10px}
+.nl-sale-title{font-family:'Syne',sans-serif;font-size:1rem;color:var(--text)}
+.nl-sale-desc{font-size:.85rem;color:var(--muted);margin-bottom:.75rem}
+.nl-sale-pricing{display:flex;align-items:center;gap:.75rem;margin-bottom:.75rem}
+.nl-sale-original{font-size:.9rem;color:var(--muted);text-decoration:line-through}
+.nl-sale-price{font-size:1.2rem;font-weight:700;color:var(--accent)}
+.nl-steps-nav{display:flex;gap:.5rem;margin:.75rem 0;flex-wrap:wrap}
+.nl-step-pill{background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:20px;padding:.35rem .9rem;font-size:.8rem;cursor:pointer;font-family:inherit;transition:background .2s,color .2s,border-color .2s}
+.nl-step-pill.nl-step-active{background:var(--accent);color:#000;border-color:var(--accent)}
+.nl-step-title{font-family:'Syne',sans-serif;font-size:.95rem;color:var(--accent);margin-bottom:.4rem}
+.nl-cta-section{max-width:800px;margin:0 auto;padding:1rem 1.5rem}
+.nl-cta-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-top:.75rem}
+.nl-cta-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1rem;display:flex;flex-direction:column;align-items:center;text-decoration:none;gap:.4rem;transition:border-color .2s}
+.nl-cta-card:hover{border-color:var(--accent)}
+.nl-cta-icon{font-size:1.5rem}
+.nl-cta-label{font-size:.82rem;color:var(--text);text-align:center}
+.nl-contact-section{max-width:800px;margin:0 auto;padding:1rem 1.5rem}
+.nl-contact-card{background:var(--surface);border:1px solid rgba(200,169,110,.3);border-radius:14px;padding:1.25rem 1.5rem}
+.nl-contact-header{display:flex;gap:1rem;align-items:flex-start;margin-bottom:1rem}
+.nl-contact-avatar{font-size:2.5rem;line-height:1}
+.nl-contact-name{font-family:'Syne',sans-serif;font-size:.95rem;color:var(--accent);margin-bottom:.25rem}
+.nl-contact-intro{font-size:.85rem;color:var(--muted)}
+.nl-contact-btns{display:flex;gap:.6rem;flex-wrap:wrap;margin-bottom:.75rem}
+.nl-contact-btn{background:var(--surface);border:1px solid var(--border);color:var(--text);text-decoration:none;border-radius:20px;padding:.4rem 1rem;font-size:.82rem;transition:border-color .2s,color .2s}
+.nl-contact-btn:hover,.nl-contact-wa{border-color:#25d366;color:#25d366}
+.nl-contact-btn:hover:not(.nl-contact-wa){border-color:var(--accent);color:var(--accent)}
+.nl-contact-note{font-size:.72rem;color:var(--muted)}
 .nl-footer{text-align:center;padding:2rem;color:var(--muted);font-size:.75rem;max-width:800px;margin:0 auto}
 .nl-footer a{color:var(--muted)}
 .nl-actions{display:flex;gap:.75rem;flex-wrap:wrap;align-items:center;max-width:800px;margin:1.5rem auto;padding:0 1.5rem}
@@ -4785,6 +4943,10 @@ ${previewBanner}
 <h1 class="nl-issue-title">${escXml(issue.title_he)}</h1>
 ${heroSection}
 <hr class="nl-divider">
+${wallMockupSection}
+${galleryStripSection}
+${saleBannerSection}
+${(wallMockupSection || galleryStripSection || saleBannerSection) ? '<hr class="nl-divider">' : ''}
 ${guideSection}
 ${guideSection ? '<hr class="nl-divider">' : ''}
 ${locationSection}
@@ -4792,6 +4954,10 @@ ${locationSection ? '<hr class="nl-divider">' : ''}
 ${tipSection}
 ${tipSection ? '<hr class="nl-divider">' : ''}
 ${linksSection}
+<hr class="nl-divider">
+${ctaCardsSection}
+<hr class="nl-divider">
+${contactCardSection}
 <footer class="nl-footer">
   <p>© Amit Photos | <a href="/">amitphotos.com</a></p>
 </footer>
@@ -4815,6 +4981,7 @@ ${linksSection}
 function getLang(){return localStorage.getItem('lang')||'he'}
 function applyLang(){const lang=getLang(),isEn=lang==='en';document.documentElement.dir=isEn?'ltr':'rtl';document.documentElement.lang=lang;document.querySelectorAll('[data-he]').forEach(el=>{el.innerHTML=isEn?(el.dataset.en||el.dataset.he):el.dataset.he})}
 applyLang();window.setLang=applyLang;window.addEventListener('storage',e=>{if(e.key==='lang')applyLang()})
+function showStep(n){document.querySelectorAll('.nl-step-content').forEach((el,i)=>{el.style.display=(i+1===n)?'':'none'});document.querySelectorAll('.nl-step-pill').forEach((el,i)=>{el.classList.toggle('nl-step-active',i+1===n)})}
 function copyLink(){navigator.clipboard.writeText(location.href).then(()=>{const el=document.getElementById('copy-label');const orig=el.innerHTML;el.textContent='✓ הועתק!';setTimeout(()=>{el.innerHTML=orig;applyLang()},2000)}).catch(()=>{})}
 async function nlSubscribe(e){e.preventDefault();const email=document.getElementById('nl-email').value.trim();const msg=document.getElementById('nl-sub-msg');const btn=e.target.querySelector('button[type="submit"]');btn.disabled=true;try{const r=await fetch('/api/subscribers',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email})});const d=await r.json();if(d.already){msg.style.color='#c8a96e';msg.textContent='כבר רשום/ה — תקבל את הגיליון הבא!'}else if(d.ok){msg.style.color='#4caf50';msg.textContent='נרשמת! תקבל את הגיליון הבא ישירות למייל 🎉';document.getElementById('nl-email').value=''}else{msg.style.color='#f44336';msg.textContent=d.error||'שגיאה'}}catch{msg.style.color='#f44336';msg.textContent='שגיאת רשת'}btn.disabled=false}
 </script>
