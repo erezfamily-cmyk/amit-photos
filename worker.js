@@ -4349,6 +4349,143 @@ async function handlePinterestCallback(request, env) {
   }
 }
 
+// ===== NEWSLETTER SYSTEM =====
+
+const NL_GUIDE_SLUGS = [
+  'lenses','light','exposure','depth-of-field','filters',
+  'composition','white-balance','histogram','dynamic-range',
+  'editing','software','sports','macro','types',
+  'visual-language','controls','landscape','portrait','focus'
+];
+
+const NL_GUIDE_TITLES = {
+  'lenses':         { he: 'עדשות',             en: 'Lenses' },
+  'light':          { he: 'אור וצבע',           en: 'Light & Color' },
+  'exposure':       { he: 'חשיפה',              en: 'Exposure' },
+  'depth-of-field': { he: 'עומק שדה',           en: 'Depth of Field' },
+  'filters':        { he: 'פילטרים',            en: 'Filters' },
+  'composition':    { he: 'קומפוזיציה',         en: 'Composition' },
+  'white-balance':  { he: 'איזון לבן',          en: 'White Balance' },
+  'histogram':      { he: 'היסטוגרם',           en: 'Histogram' },
+  'dynamic-range':  { he: 'טווח דינמי',         en: 'Dynamic Range' },
+  'editing':        { he: 'עריכה בסיסית',       en: 'Basic Editing' },
+  'software':       { he: 'תוכנות עריכה',       en: 'Editing Software' },
+  'sports':         { he: 'ספורט ותנועה',       en: 'Sports & Motion' },
+  'macro':          { he: 'צילום מאקרו',         en: 'Macro Photography' },
+  'types':          { he: 'סוגי מצלמות',        en: 'Camera Types' },
+  'visual-language':{ he: 'שפה ויזואלית',       en: 'Visual Language' },
+  'controls':       { he: 'כפתורי המצלמה',      en: 'Camera Controls' },
+  'landscape':      { he: 'לנדסקייפ',           en: 'Landscape' },
+  'portrait':       { he: 'פורטרט',             en: 'Portrait' },
+  'focus':          { he: 'פוקוס',              en: 'Focus Techniques' },
+};
+
+async function nlGetSetting(env, key) {
+  const row = await env.DB.prepare('SELECT value FROM settings WHERE key=?').bind(key).first();
+  return row?.value ?? null;
+}
+
+async function nlSetSetting(env, key, value) {
+  await env.DB.prepare(
+    `INSERT INTO settings (key, value) VALUES (?,?) ON CONFLICT(key) DO UPDATE SET value=excluded.value`
+  ).bind(key, String(value)).run();
+}
+
+async function nlPickHeroPhoto(env) {
+  const lastId = await nlGetSetting(env, 'nl_last_hero_id') || '';
+  const row = await env.DB.prepare(
+    `SELECT id, title, thumbnail FROM photos WHERE id != ? AND thumbnail IS NOT NULL ORDER BY created_at DESC LIMIT 1`
+  ).bind(lastId).first();
+  return row || null;
+}
+
+async function nlPickGuide(env) {
+  const raw = await nlGetSetting(env, 'nl_guide_index');
+  const idx = parseInt(raw || '0', 10);
+  const slug = NL_GUIDE_SLUGS[idx % NL_GUIDE_SLUGS.length];
+  return { slug, idx, ...NL_GUIDE_TITLES[slug] };
+}
+
+async function nlPickLocation(env) {
+  const raw = await nlGetSetting(env, 'nl_location_index');
+  const idx = parseInt(raw || '0', 10);
+  const { results } = await env.DB.prepare(
+    `SELECT id, title, description, best_time, my_tip FROM locations WHERE published=1 ORDER BY id LIMIT 1 OFFSET ?`
+  ).bind(idx).all();
+  if (!results.length) {
+    // wrap around
+    const first = await env.DB.prepare(
+      `SELECT id, title, description, best_time, my_tip FROM locations WHERE published=1 ORDER BY id LIMIT 1`
+    ).first();
+    return first ? { ...first, idx: 0 } : null;
+  }
+  return results[0] ? { ...results[0], idx } : null;
+}
+
+async function nlGenerateContent(env, heroPhoto, guide, location, type) {
+  const apiKey = env.ANTHROPIC_API_KEY;
+  if (!apiKey) throw new Error('ANTHROPIC_API_KEY not set');
+
+  let userPrompt;
+  if (type === 'full') {
+    userPrompt = `כתוב תוכן לניוזלטר צילום חודשי. החזר JSON בלבד (ללא markdown), עם השדות הבאים:
+
+{
+  "hero_text_he": "פסקה קצרה (2-3 משפטים) בעברית תקנית על התמונה",
+  "hero_text_en": "same paragraph in English",
+  "guide_text_he": "2 משפטים מעניינים על המדריך הזה",
+  "guide_text_en": "same in English",
+  "location_text_he": "2-3 משפטים על המקום — מה מיוחד בו, מתי ללכת",
+  "location_text_en": "same in English",
+  "tip_title_he": "כותרת קצרה לטיפ (5-7 מילים)",
+  "tip_title_en": "short tip title in English",
+  "tip_text_he": "טיפ צילום שלא קיים באתר — מקורי, פרקטי, 2-3 משפטים",
+  "tip_text_en": "same tip in English"
+}
+
+פרטים לתוכן:
+- תמונה: "${heroPhoto.title}" (קטגוריה: ${heroPhoto.category || 'טבע'})
+- מדריך: "${guide.he}"
+- מקום: "${location.title}" — ${location.description || ''} — הזמן הטוב: ${location.best_time || 'לא צוין'}`;
+  } else {
+    userPrompt = `כתוב תוכן לניוזלטר צילום קצר (הבזק). החזר JSON בלבד:
+
+{
+  "hero_text_he": "משפט אחד קצר וחזק על התמונה",
+  "hero_text_en": "same in English",
+  "tip_text_he": "טיפ קצר אחד — משפט אחד, פרקטי",
+  "tip_text_en": "same in English"
+}
+
+תמונה: "${heroPhoto.title}"`;
+  }
+
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'x-api-key': apiKey,
+      'anthropic-version': '2023-06-01',
+      'content-type': 'application/json'
+    },
+    body: JSON.stringify({
+      model: 'claude-opus-4-7',
+      max_tokens: 1500,
+      system: 'אתה עורך ניוזלטר צילום מקצועי. כתוב עברית תקנית וברורה. טון חם ומקצועי לצלמים. החזר JSON תקין בלבד, ללא שום טקסט נוסף.',
+      messages: [{ role: 'user', content: userPrompt }]
+    })
+  });
+
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error(`Claude API ${res.status}: ${err.slice(0, 200)}`);
+  }
+
+  const data = await res.json();
+  const raw = data.content[0].text.trim();
+  const jsonStr = raw.startsWith('```') ? raw.replace(/^```json?\n?/, '').replace(/\n?```$/, '') : raw;
+  return JSON.parse(jsonStr);
+}
+
 // ===== MAIN ROUTER =====
 export default {
   async fetch(request, env, ctx) {
