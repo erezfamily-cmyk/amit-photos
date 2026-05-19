@@ -41,8 +41,9 @@ function slugify(text) {
 }
 
 async function checkAuth(request, env) {
-  // Session token (כניסה רגילה לאדמין)
-  const token = request.headers.get('X-Session-Token');
+  // Session token — header (fetch requests) or cookie (page navigations)
+  const token = request.headers.get('X-Session-Token')
+    || (request.headers.get('Cookie') || '').match(/(?:^|;\s*)admin_session=([^;]+)/)?.[1];
   if (token) {
     const session = await env.DB.prepare(
       'SELECT token FROM sessions WHERE token=? AND expires_at > ?'
