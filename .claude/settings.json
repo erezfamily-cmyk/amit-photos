@@ -89,7 +89,13 @@
       "Skill(superpowers:subagent-driven-development)",
       "Skill(superpowers:subagent-driven-development:*)",
       "PowerShell(Invoke-RestMethod -Uri 'https://amitphotos.com/api/locations/mtzdh' -UseBasicParsing)",
-      "PowerShell(curl.exe -s \"https://amitphotos.com/api/locations/mtzdh\" 2>&1)"
+      "PowerShell(curl.exe -s \"https://amitphotos.com/api/locations/mtzdh\" 2>&1)",
+      "PowerShell($output = & python3 src/create_locations.py 2>&1; $output; \"Exit code: $LASTEXITCODE\")",
+      "Bash(cat)",
+      "Bash(chmod +x /tmp/create_locations_v2.sh)",
+      "Bash(/tmp/create_locations_v2.sh)",
+      "Bash(curl -s -H \"X-Admin-Password: Hadas2409\" \"https://amitphotos.com/api/admin/locations\")",
+      "Bash(grep -E \"\\\\.\\(js|ts\\)$\")"
     ],
     "additionalDirectories": [
       "c:\\temp"
