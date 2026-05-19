@@ -4951,6 +4951,45 @@ async function publish() {
 </body></html>`, { headers: { 'Content-Type': 'text/html;charset=utf-8' } });
 }
 
+async function handleAdminNlGenerate(request, env) {
+  if (!await checkAuth(request, env)) return unauth(request);
+  if (request.method !== 'POST') return jsonRes({ error: 'method not allowed' }, 405, request);
+  const { type } = await request.json().catch(() => ({}));
+  if (!['full', 'flash'].includes(type)) return jsonRes({ error: 'type must be full or flash' }, 400, request);
+  try {
+    const result = await nlGenerateDraft(env, type);
+    return jsonRes(result, 200, request);
+  } catch(e) {
+    return jsonRes({ error: e.message }, 500, request);
+  }
+}
+
+async function handleAdminNlUpdate(request, env, id) {
+  if (!await checkAuth(request, env)) return unauth(request);
+  if (request.method !== 'PATCH') return jsonRes({ error: 'method not allowed' }, 405, request);
+  const body = await request.json().catch(() => ({}));
+  const updates = [];
+  const binds = [];
+  if (body.title_he !== undefined) { updates.push('title_he=?'); binds.push(body.title_he); }
+  if (body.title_en !== undefined) { updates.push('title_en=?'); binds.push(body.title_en); }
+  if (body.content_json !== undefined) { updates.push('content_json=?'); binds.push(body.content_json); }
+  if (!updates.length) return jsonRes({ error: 'no fields to update' }, 400, request);
+  binds.push(id);
+  await env.DB.prepare(`UPDATE newsletter_issues SET ${updates.join(',')} WHERE id=?`).bind(...binds).run();
+  return jsonRes({ ok: true }, 200, request);
+}
+
+async function handleAdminNlPublish(request, env, id) {
+  if (!await checkAuth(request, env)) return unauth(request);
+  if (request.method !== 'POST') return jsonRes({ error: 'method not allowed' }, 405, request);
+  const issue = await env.DB.prepare('SELECT slug, status FROM newsletter_issues WHERE id=?').bind(id).first();
+  if (!issue) return jsonRes({ error: 'not found' }, 404, request);
+  await env.DB.prepare(
+    `UPDATE newsletter_issues SET status='published', published_at=? WHERE id=?`
+  ).bind(new Date().toISOString(), id).run();
+  return jsonRes({ ok: true, url: `/newsletter/${issue.slug}/` }, 200, request);
+}
+
 // ===== MAIN ROUTER =====
 export default {
   async fetch(request, env, ctx) {
