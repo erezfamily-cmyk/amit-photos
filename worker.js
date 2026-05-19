@@ -4484,7 +4484,7 @@ async function nlGenerateContent(env, heroPhoto, guide, location, type) {
   const raw = (data.content?.[0]?.text ?? '').trim();
   if (!raw) throw new Error('Claude returned empty response');
   const jsonStr = raw.startsWith('```') ? raw.replace(/^```json?\n?/, '').replace(/\n?```$/, '') : raw;
-  return JSON.parse(jsonStr);
+  try { return JSON.parse(jsonStr); } catch { throw new Error(`Claude JSON parse failed: ${jsonStr.slice(0, 100)}`); }
 }
 
 async function nlGenerateDraft(env, type) {
@@ -4563,7 +4563,7 @@ async function nlGenerateDraft(env, type) {
 
 async function runNewsletterCron(env) {
   const day = new Date().getDate();
-  const type = day <= 2 ? 'full' : 'flash'; // 1st = full, 15th = flash
+  const type = day <= 2 ? 'full' : 'flash'; // days 1-2 = full, rest = flash
   try {
     const result = await nlGenerateDraft(env, type);
     console.log('[newsletter cron]', result.skipped ? 'skipped' : `draft created: ${result.slug}`);
