@@ -4990,6 +4990,100 @@ async function handleAdminNlPublish(request, env, id) {
   return jsonRes({ ok: true, url: `/newsletter/${issue.slug}/` }, 200, request);
 }
 
+function nlBuildEmailHtml(issue, issueUrl, unsubscribeUrl, subscriberName) {
+  const c = typeof issue.content_json === 'string'
+    ? JSON.parse(issue.content_json || '{}')
+    : (issue.content_json || {});
+  const greeting = subscriberName
+    ? `<p style="margin:0 0 16px;font-size:14px;color:#d0cdc8">שלום ${escXml(subscriberName)},</p>`
+    : '';
+  const heroHtml = c.hero ? `
+    <img src="${escXml(c.hero.photo_url)}" alt="${escXml(c.hero.title_he)}" width="560" style="width:100%;max-width:560px;height:auto;display:block;border-radius:8px;margin-bottom:16px">
+    <h2 style="margin:0 0 8px;font-size:18px;color:#c8a96e;font-family:Georgia,serif">${escXml(c.hero.title_he)}</h2>
+    <p style="margin:0 0 24px;font-size:14px;line-height:1.7;color:#d0cdc8">${escXml(c.hero.text_he)}</p>` : '';
+  const guideHtml = c.guide ? `
+    <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:20px">
+      <tr><td style="background:#1a1a1a;border-radius:8px;padding:14px 16px">
+        <div style="font-size:10px;color:#c8a96e;letter-spacing:.1em;margin-bottom:6px;text-transform:uppercase">מדריך החודש</div>
+        <div style="font-size:14px;font-weight:700;color:#f0ede8;margin-bottom:6px">${escXml(c.guide.title_he)}</div>
+        <p style="margin:0;font-size:13px;color:#999;line-height:1.6">${escXml(c.guide.text_he)}</p>
+      </td></tr>
+    </table>` : '';
+  const tipHtml = c.tip ? `
+    <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px">
+      <tr><td style="background:#1f1a10;border:1px solid #4a3a1a;border-radius:8px;padding:14px 16px">
+        <div style="font-size:13px;font-weight:700;color:#c8a96e;margin-bottom:6px">${escXml(c.tip.title_he || 'טיפ החודש')}</div>
+        <p style="margin:0;font-size:13px;color:#d0cdc8;line-height:1.6">${escXml(c.tip.text_he)}</p>
+      </td></tr>
+    </table>` : '';
+  return `<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#0a0a0a;font-family:Arial,Helvetica,sans-serif">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#0a0a0a;padding:24px 0">
+  <tr><td align="center">
+    <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#111;border-radius:12px;overflow:hidden">
+      <tr><td style="background:#0a0a0a;padding:24px 32px;text-align:center;border-bottom:1px solid #222">
+        <div style="color:#c8a96e;font-size:20px;font-weight:700;letter-spacing:.2em;font-family:Georgia,serif">AMIT PHOTOS</div>
+        <div style="color:#888;font-size:11px;margin-top:4px">${escXml(issue.title_he)}</div>
+      </td></tr>
+      <tr><td style="padding:28px 32px;direction:rtl;text-align:right">
+        ${greeting}${heroHtml}${guideHtml}${tipHtml}
+        <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:8px">
+          <tr><td align="center">
+            <a href="${escXml(issueUrl)}" style="display:inline-block;background:#c8a96e;color:#000;font-weight:700;font-size:14px;padding:12px 28px;border-radius:8px;text-decoration:none">קרא את הגיליון המלא ←</a>
+          </td></tr>
+        </table>
+      </td></tr>
+      <tr><td style="padding:16px 32px 24px;text-align:center;border-top:1px solid #222">
+        <p style="margin:0 0 6px;color:#666;font-size:11px">קיבלת מייל זה כי נרשמת ל<a href="https://amitphotos.com" style="color:#c8a96e;text-decoration:none">amitphotos.com</a></p>
+        <a href="${escXml(unsubscribeUrl)}" style="color:#555;font-size:10px;text-decoration:underline">הסר אותי מהרשימה</a>
+      </td></tr>
+    </table>
+  </td></tr>
+</table>
+</body></html>`;
+}
+
+async function handleAdminNlSend(request, env, id) {
+  if (!await checkAuth(request, env)) return unauth(request);
+  if (request.method !== 'POST') return jsonRes({ error: 'method not allowed' }, 405, request);
+  if (!env.RESEND_API_KEY) return jsonRes({ error: 'RESEND_API_KEY לא מוגדר' }, 500, request);
+
+  const issue = await env.DB.prepare('SELECT * FROM newsletter_issues WHERE id=?').bind(id).first();
+  if (!issue) return jsonRes({ error: 'not found' }, 404, request);
+  if (issue.status !== 'published') return jsonRes({ error: 'יש לפרסם את הגיליון לפני שליחה' }, 400, request);
+
+  const { results: subscribers } = await env.DB.prepare('SELECT id, email, name FROM subscribers').all();
+  if (!subscribers.length) return jsonRes({ error: 'אין נרשמים ברשימה' }, 400, request);
+
+  const origin = new URL(request.url).origin;
+  const issueUrl = `${origin}/newsletter/${issue.slug}/`;
+  const fromEmail = env.FROM_EMAIL || 'amit@amitphotos.com';
+
+  const batch = subscribers.map(sub => ({
+    from: fromEmail,
+    to: sub.email,
+    subject: issue.title_he,
+    html: nlBuildEmailHtml(issue, issueUrl, `${origin}/api/unsubscribe?token=${sub.id}`, sub.name)
+  }));
+
+  const res = await fetch('https://api.resend.com/emails/batch', {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify(batch)
+  });
+
+  if (!res.ok) {
+    const errBody = await res.json().catch(() => ({}));
+    return jsonRes({ error: `שגיאת Resend: ${errBody.message || res.status}` }, 500, request);
+  }
+
+  const data = await res.json().catch(() => ({}));
+  const sent = Array.isArray(data.data) ? data.data.length : subscribers.length;
+  return jsonRes({ ok: true, sent }, 200, request);
+}
+
 // ===== MAIN ROUTER =====
 export default {
   async fetch(request, env, ctx) {
@@ -5153,6 +5247,10 @@ export default {
     if (path.match(/^\/api\/admin\/newsletter\/[^/]+\/publish$/) && request.method === 'POST') {
       const id = path.slice('/api/admin/newsletter/'.length).replace(/\/publish$/, '');
       return handleAdminNlPublish(request, env, id);
+    }
+    if (path.match(/^\/api\/admin\/newsletter\/[^/]+\/send$/) && request.method === 'POST') {
+      const id = path.slice('/api/admin/newsletter/'.length).replace(/\/send$/, '');
+      return handleAdminNlSend(request, env, id);
     }
 
     if (path.startsWith('/learn/') && path.length > '/learn/'.length)  { trackPageView(env, request, 'learn_detail'); return handleLearnAnalysis(env, decodeURIComponent(path.slice('/learn/'.length))); }
