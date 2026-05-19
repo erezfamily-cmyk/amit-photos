@@ -4487,6 +4487,91 @@ async function nlGenerateContent(env, heroPhoto, guide, location, type) {
   return JSON.parse(jsonStr);
 }
 
+async function nlGenerateDraft(env, type) {
+  // Get next issue number
+  const rawNum = await nlGetSetting(env, 'nl_issue_number');
+  const issueNumber = parseInt(rawNum || '0', 10) + 1;
+
+  const now = new Date();
+  const monthStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+  const slug = `${monthStr}-${type}`;
+
+  // Skip if already exists
+  const existing = await env.DB.prepare('SELECT id FROM newsletter_issues WHERE slug=?').bind(slug).first();
+  if (existing) return { skipped: true, slug };
+
+  // Pick content
+  const heroPhoto = await nlPickHeroPhoto(env);
+  if (!heroPhoto) throw new Error('No photos found');
+
+  const guide = await nlPickGuide(env);
+  const location = type === 'full' ? await nlPickLocation(env) : null;
+
+  // Generate text via Claude
+  const generated = await nlGenerateContent(env, heroPhoto, guide, location, type);
+
+  // Build content_json
+  const photoUrl = `https://amitphotos.com/photos/${heroPhoto.id}.jpg`;
+  const content = type === 'full' ? {
+    hero: { photo_id: heroPhoto.id, photo_url: photoUrl,
+      title_he: heroPhoto.title, text_he: generated.hero_text_he, text_en: generated.hero_text_en },
+    guide: { slug: guide.slug, title_he: guide.he, title_en: guide.en,
+      text_he: generated.guide_text_he, text_en: generated.guide_text_en },
+    location: location ? { id: location.id, title_he: location.title,
+      text_he: generated.location_text_he, text_en: generated.location_text_en } : null,
+    tip: { title_he: generated.tip_title_he, title_en: generated.tip_title_en,
+      text_he: generated.tip_text_he, text_en: generated.tip_text_en },
+    links: [
+      { label_he: 'גלריה', label_en: 'Gallery', url: '/' },
+      { label_he: 'מדריכים', label_en: 'Guides', url: '/camera/' },
+      { label_he: 'מקומות', label_en: 'Locations', url: '/locations/' },
+      { label_he: 'ניתוחי תמונות', label_en: 'Photo Analyses', url: '/learn/' }
+    ]
+  } : {
+    hero: { photo_id: heroPhoto.id, photo_url: photoUrl,
+      title_he: heroPhoto.title, text_he: generated.hero_text_he, text_en: generated.hero_text_en },
+    tip: { text_he: generated.tip_text_he, text_en: generated.tip_text_en }
+  };
+
+  const titleHe = type === 'full'
+    ? `גיליון #${issueNumber} — ${['ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר'][now.getMonth()]} ${now.getFullYear()}`
+    : `הבזק — ${['ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר'][now.getMonth()]} ${now.getFullYear()}`;
+  const titleEn = type === 'full'
+    ? `Issue #${issueNumber} — ${now.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}`
+    : `Flash — ${now.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}`;
+
+  const id = crypto.randomUUID();
+  await env.DB.prepare(
+    `INSERT INTO newsletter_issues (id, slug, type, issue_number, title_he, title_en, content_json, status, created_at)
+     VALUES (?,?,?,?,?,?,?,'draft',?)`
+  ).bind(id, slug, type, issueNumber, titleHe, titleEn, JSON.stringify(content), now.toISOString()).run();
+
+  // Update rotation (only on full issues)
+  if (type === 'full') {
+    await nlSetSetting(env, 'nl_last_hero_id', heroPhoto.id);
+    await nlSetSetting(env, 'nl_guide_index', String((guide.idx + 1) % NL_GUIDE_SLUGS.length));
+    if (location) {
+      const { results: total } = await env.DB.prepare('SELECT COUNT(*) as c FROM locations WHERE published=1').all();
+      const totalLocs = total[0]?.c || 1;
+      await nlSetSetting(env, 'nl_location_index', String((location.idx + 1) % totalLocs));
+    }
+    await nlSetSetting(env, 'nl_issue_number', String(issueNumber));
+  }
+
+  return { id, slug, issueNumber };
+}
+
+async function runNewsletterCron(env) {
+  const day = new Date().getDate();
+  const type = day <= 2 ? 'full' : 'flash'; // 1st = full, 15th = flash
+  try {
+    const result = await nlGenerateDraft(env, type);
+    console.log('[newsletter cron]', result.skipped ? 'skipped' : `draft created: ${result.slug}`);
+  } catch (e) {
+    console.error('[newsletter cron] error:', e.message);
+  }
+}
+
 // ===== MAIN ROUTER =====
 export default {
   async fetch(request, env, ctx) {
@@ -4662,6 +4747,7 @@ export default {
 
   async scheduled(event, env, ctx) {
     ctx.waitUntil(runPinterestCronSync(env));
+    ctx.waitUntil(runNewsletterCron(env));
   },
 };
 
