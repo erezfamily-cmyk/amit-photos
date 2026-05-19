@@ -5029,20 +5029,34 @@ async function handleAdminNlList(request, env) {
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Heebo',Arial,sans-serif;background:#0a0a0a;color:#f0ede8;padding:1.5rem;direction:rtl}
 h1{font-size:1.4rem;color:#c8a96e;margin-bottom:1.25rem}
-.actions{display:flex;gap:.75rem;margin-bottom:1.5rem;flex-wrap:wrap}
+.actions{display:flex;gap:.75rem;margin-bottom:1.5rem;flex-wrap:wrap;align-items:center}
 button{background:#c8a96e;color:#000;border:none;padding:.5rem 1.1rem;border-radius:8px;cursor:pointer;font-size:.85rem;font-weight:700}
 button:disabled{opacity:.5;cursor:default}
+.btn-back{background:transparent;color:#c8a96e;border:1px solid #c8a96e55;font-weight:600}
+.btn-back:hover{border-color:#c8a96e}
 #msg{font-size:.85rem;padding:.5rem;border-radius:6px;margin-bottom:1rem;display:none}
 table{width:100%;border-collapse:collapse;font-size:.85rem}
 th,td{padding:.6rem .75rem;border-bottom:1px solid #222;text-align:right}
 th{color:#888;font-weight:600}
 a{color:#c8a96e;text-decoration:none}
 a:hover{text-decoration:underline}
+.modal-overlay{display:none;position:fixed;inset:0;background:#000a;z-index:100;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:#111;border:1px solid #333;border-radius:12px;padding:1.5rem;width:min(420px,90vw);direction:rtl}
+.modal h2{font-size:1.1rem;color:#c8a96e;margin-bottom:1.25rem}
+.modal label{display:block;font-size:.8rem;color:#888;margin-bottom:.35rem;margin-top:.9rem}
+.modal input{width:100%;background:#0d0d0d;border:1px solid #333;color:#f0ede8;padding:.55rem .75rem;border-radius:7px;font-size:.9rem;font-family:inherit}
+.modal input:focus{outline:none;border-color:#c8a96e55}
+.modal-actions{display:flex;gap:.75rem;margin-top:1.25rem;flex-wrap:wrap}
+.btn-wa{background:#25d366;color:#000}
+.btn-cancel{background:transparent;color:#888;border:1px solid #333}
+#test-msg{font-size:.82rem;margin-top:.75rem;min-height:1.2em}
 </style>
 </head>
 <body>
 <h1>ניהול ניוזלטר</h1>
 <div class="actions">
+  <a href="/admin/"><button type="button" class="btn-back">← חזרה לאדמין</button></a>
   <button onclick="generate('full')">📰 צור גיליון מלא</button>
   <button onclick="generate('flash')">⚡ צור הבזק</button>
 </div>
@@ -5051,7 +5065,59 @@ a:hover{text-decoration:underline}
   <thead><tr><th>#</th><th>סטטוס</th><th>סוג</th><th>כותרת</th><th>תאריך</th><th>פעולות</th></tr></thead>
   <tbody>${rows || '<tr><td colspan="6" style="text-align:center;color:#888;padding:2rem">אין גיליונות עדיין</td></tr>'}</tbody>
 </table>
+
+<div class="modal-overlay" id="test-modal">
+  <div class="modal">
+    <h2>שלח לבדיקה</h2>
+    <label>שלח למייל</label>
+    <input type="email" id="test-email" placeholder="email@example.com">
+    <div class="modal-actions">
+      <button onclick="sendTestEmail()">📧 שלח מייל</button>
+      <button class="btn-wa" onclick="shareWhatsApp()">💬 שתף בווטסאפ</button>
+      <button class="btn-cancel" onclick="closeTestModal()">ביטול</button>
+    </div>
+    <div id="test-msg"></div>
+  </div>
+</div>
+
 <script>
+let _testId = '', _testSlug = '';
+
+function showTestModal(id, slug) {
+  _testId = id; _testSlug = slug;
+  document.getElementById('test-email').value = '';
+  document.getElementById('test-msg').textContent = '';
+  document.getElementById('test-modal').classList.add('open');
+}
+function closeTestModal() {
+  document.getElementById('test-modal').classList.remove('open');
+}
+document.getElementById('test-modal').addEventListener('click', e => { if (e.target === e.currentTarget) closeTestModal(); });
+
+async function sendTestEmail() {
+  const email = document.getElementById('test-email').value.trim();
+  const msgEl = document.getElementById('test-msg');
+  if (!email) { msgEl.style.color='#f44336'; msgEl.textContent='הכנס כתובת מייל'; return; }
+  msgEl.style.color='#888'; msgEl.textContent='שולח...';
+  const tok = localStorage.getItem('session_token') || sessionStorage.getItem('session_token') || '';
+  try {
+    const r = await fetch('/api/admin/newsletter/' + _testId + '/send-test', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json','X-Session-Token':tok},
+      body: JSON.stringify({ email })
+    });
+    const d = await r.json();
+    if (d.ok) { msgEl.style.color='#4caf50'; msgEl.textContent='✓ נשלח! בדוק את תיבת הדואר.'; }
+    else { msgEl.style.color='#f44336'; msgEl.textContent='✗ ' + (d.error || 'שגיאה'); }
+  } catch(e) { msgEl.style.color='#f44336'; msgEl.textContent='✗ שגיאת רשת'; }
+}
+
+function shareWhatsApp() {
+  const previewUrl = 'https://amitphotos.com/admin/newsletter/' + _testId + '/preview/';
+  const text = encodeURIComponent('תוכל להסתכל על הניוזלטר לפני פרסום? ' + previewUrl);
+  window.open('https://wa.me/?text=' + text, '_blank');
+}
+
 async function generate(type) {
   const msg = document.getElementById('msg');
   const btns = document.querySelectorAll('button');
@@ -5080,6 +5146,32 @@ async function generate(type) {
     }
   } catch(e) {
     msg.style.cssText = 'display:block;background:#2a0a0a;color:#f44336;border:1px solid #f4433633;padding:.75rem 1rem;border-radius:8px;font-size:.95rem;margin-bottom:1rem';
+    msg.textContent = '✗ שגיאת רשת: ' + e.message;
+    btns.forEach(b => b.disabled = false);
+  }
+}
+
+async function deleteAndRecreate(id, type) {
+  if (!confirm('בטוח? הגיליון יימחק וייווצר גיליון חדש מאפס.')) return;
+  const msg = document.getElementById('msg');
+  const btns = document.querySelectorAll('button');
+  btns.forEach(b => b.disabled = true);
+  msg.style.cssText = 'display:block;background:#1a0a0a;color:#f44336;border:1px solid #f4433633;padding:.75rem 1rem;border-radius:8px;font-size:.95rem;margin-bottom:1rem';
+  msg.textContent = 'מוחק...';
+  const tok = localStorage.getItem('session_token') || sessionStorage.getItem('session_token') || '';
+  try {
+    const r = await fetch('/api/admin/newsletter/' + id, {
+      method: 'DELETE',
+      headers: {'X-Session-Token': tok}
+    });
+    if (!r.ok) {
+      const d = await r.json().catch(() => ({}));
+      msg.textContent = '✗ ' + (d.error || 'שגיאה במחיקה');
+      btns.forEach(b => b.disabled = false);
+      return;
+    }
+    await generate(type);
+  } catch(e) {
     msg.textContent = '✗ שגיאת רשת: ' + e.message;
     btns.forEach(b => b.disabled = false);
   }
@@ -5323,6 +5415,44 @@ function nlBuildEmailHtml(issue, issueUrl, unsubscribeUrl, subscriberName) {
 </body></html>`;
 }
 
+async function handleAdminNlDelete(request, env, id) {
+  if (!await checkAuth(request, env)) return unauth(request);
+  if (request.method !== 'DELETE') return jsonRes({ error: 'method not allowed' }, 405, request);
+  const issue = await env.DB.prepare('SELECT id FROM newsletter_issues WHERE id=?').bind(id).first();
+  if (!issue) return jsonRes({ error: 'not found' }, 404, request);
+  await env.DB.prepare('DELETE FROM newsletter_issues WHERE id=?').bind(id).run();
+  return jsonRes({ ok: true }, 200, request);
+}
+
+async function handleAdminNlSendTest(request, env, id) {
+  if (!await checkAuth(request, env)) return unauth(request);
+  if (request.method !== 'POST') return jsonRes({ error: 'method not allowed' }, 405, request);
+  if (!env.RESEND_API_KEY) return jsonRes({ error: 'RESEND_API_KEY לא מוגדר' }, 500, request);
+  const body = await request.json().catch(() => ({}));
+  const email = (body.email || '').trim();
+  if (!email) return jsonRes({ error: 'חסר כתובת מייל' }, 400, request);
+  const issue = await env.DB.prepare('SELECT * FROM newsletter_issues WHERE id=?').bind(id).first();
+  if (!issue) return jsonRes({ error: 'not found' }, 404, request);
+  const origin = new URL(request.url).origin;
+  const issueUrl = `${origin}/newsletter/${issue.slug}/`;
+  const fromEmail = env.FROM_EMAIL || 'amit@amitphotos.com';
+  const res = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      from: fromEmail,
+      to: email,
+      subject: `[בדיקה] ${issue.title_he}`,
+      html: nlBuildEmailHtml(issue, issueUrl, null, '')
+    })
+  });
+  if (!res.ok) {
+    const errBody = await res.json().catch(() => ({}));
+    return jsonRes({ error: `שגיאת Resend: ${errBody.message || res.status}` }, 500, request);
+  }
+  return jsonRes({ ok: true }, 200, request);
+}
+
 async function handleAdminNlSend(request, env, id) {
   if (!await checkAuth(request, env)) return unauth(request);
   if (request.method !== 'POST') return jsonRes({ error: 'method not allowed' }, 405, request);
@@ -5529,6 +5659,14 @@ export default {
     if (path.match(/^\/api\/admin\/newsletter\/[^/]+\/send$/) && request.method === 'POST') {
       const id = path.slice('/api/admin/newsletter/'.length).replace(/\/send$/, '');
       return handleAdminNlSend(request, env, id);
+    }
+    if (path.match(/^\/api\/admin\/newsletter\/[^/]+\/send-test$/) && request.method === 'POST') {
+      const id = path.slice('/api/admin/newsletter/'.length).replace(/\/send-test$/, '');
+      return handleAdminNlSendTest(request, env, id);
+    }
+    if (path.match(/^\/api\/admin\/newsletter\/[^/]+$/) && request.method === 'DELETE') {
+      const id = path.slice('/api/admin/newsletter/'.length);
+      return handleAdminNlDelete(request, env, id);
     }
 
     if (path.startsWith('/learn/') && path.length > '/learn/'.length)  { trackPageView(env, request, 'learn_detail'); return handleLearnAnalysis(env, decodeURIComponent(path.slice('/learn/'.length))); }
