@@ -4394,21 +4394,21 @@ async function nlSetSetting(env, key, value) {
 async function nlPickHeroPhoto(env) {
   const lastId = await nlGetSetting(env, 'nl_last_hero_id') || '';
   const row = await env.DB.prepare(
-    `SELECT id, title, thumbnail FROM photos WHERE id != ? AND thumbnail IS NOT NULL ORDER BY created_at DESC LIMIT 1`
+    `SELECT id, title, thumbnail FROM photos WHERE id != ? AND thumbnail IS NOT NULL AND published=1 ORDER BY created_at DESC LIMIT 1`
   ).bind(lastId).first();
   return row || null;
 }
 
 async function nlPickGuide(env) {
   const raw = await nlGetSetting(env, 'nl_guide_index');
-  const idx = parseInt(raw || '0', 10);
+  const idx = parseInt(raw || '0', 10) || 0;
   const slug = NL_GUIDE_SLUGS[idx % NL_GUIDE_SLUGS.length];
   return { slug, idx, ...NL_GUIDE_TITLES[slug] };
 }
 
 async function nlPickLocation(env) {
   const raw = await nlGetSetting(env, 'nl_location_index');
-  const idx = parseInt(raw || '0', 10);
+  const idx = parseInt(raw || '0', 10) || 0;
   const { results } = await env.DB.prepare(
     `SELECT id, title, description, best_time, my_tip FROM locations WHERE published=1 ORDER BY id LIMIT 1 OFFSET ?`
   ).bind(idx).all();
@@ -4481,7 +4481,8 @@ async function nlGenerateContent(env, heroPhoto, guide, location, type) {
   }
 
   const data = await res.json();
-  const raw = data.content[0].text.trim();
+  const raw = (data.content?.[0]?.text ?? '').trim();
+  if (!raw) throw new Error('Claude returned empty response');
   const jsonStr = raw.startsWith('```') ? raw.replace(/^```json?\n?/, '').replace(/\n?```$/, '') : raw;
   return JSON.parse(jsonStr);
 }
