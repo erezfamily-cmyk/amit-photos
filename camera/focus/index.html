@@ -12,7 +12,165 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&display=swap" rel="stylesheet">
 <style>
-/* CSS goes here in Task 2 */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #0a0a0a; --surface: #111; --border: #222;
+  --accent: #c8a96e; --text: #f0ede8; --muted: #888;
+}
+body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--text);
+  direction: rtl; min-height: 100vh; padding: 0 0 4rem; }
+
+/* Hero */
+.page-hero { text-align: center; padding: 2.5rem 1.25rem 1.5rem; }
+.page-hero .badge { display: inline-block; font-size: .72rem;
+  background: rgba(200,169,110,.12); border: 1px solid rgba(200,169,110,.3);
+  color: var(--accent); border-radius: 20px; padding: .3rem .8rem; margin-bottom: .75rem; }
+.page-hero h1 { font-family: 'Syne', sans-serif; font-size: 1.8rem;
+  color: var(--accent); margin-bottom: .5rem; }
+.page-hero p { color: var(--muted); font-size: .9rem; max-width: 420px; margin: 0 auto; }
+
+/* Shared wrapper */
+.demo-wrap { max-width: 960px; margin: 0 auto; padding: 0 1.25rem 2.5rem; }
+.section-title { font-family: 'Syne', sans-serif; font-size: 1.1rem;
+  color: var(--accent); margin-bottom: 1rem; }
+.advanced-badge { display: inline-block; font-size: .68rem;
+  background: rgba(200,169,110,.1); border: 1px solid rgba(200,169,110,.25);
+  color: var(--accent); border-radius: 4px; padding: 2px 8px; margin-right: .5rem; }
+
+/* Photo picker */
+.photo-picker { display: flex; gap: .6rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
+.photo-btn { flex: 1; min-width: 130px; background: var(--surface);
+  border: 1px solid var(--border); border-radius: 10px; overflow: hidden;
+  cursor: pointer; transition: border-color .2s; padding: 0; }
+.photo-btn:hover { border-color: #555; }
+.photo-btn.active { border-color: var(--accent); }
+.photo-btn img { width: 100%; height: 65px; object-fit: cover; display: block; }
+.photo-btn span { display: block; font-size: .7rem; color: var(--muted);
+  padding: .3rem .5rem; text-align: center; }
+
+/* Mode toggle */
+.mode-btns { display: flex; gap: .5rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
+.mode-btn { flex: 1; min-width: 110px; background: var(--surface);
+  border: 1px solid var(--border); border-radius: 10px; padding: .6rem 1rem;
+  font-family: 'Heebo', sans-serif; font-size: .82rem; color: var(--muted);
+  cursor: pointer; transition: all .2s; text-align: center; }
+.mode-btn:hover { border-color: #555; color: var(--text); }
+.mode-btn.active { border-color: var(--accent); color: var(--accent);
+  background: rgba(200,169,110,.08); }
+
+/* AF demo layout */
+.af-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+@media (max-width: 640px) { .af-layout { grid-template-columns: 1fr; } }
+
+/* Photo panel */
+.photo-panel { background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; overflow: hidden; }
+.photo-container { position: relative; aspect-ratio: 4/3; overflow: hidden; background: #000; }
+.photo-container img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* Focus overlay */
+.focus-square { position: absolute; width: 60px; height: 60px;
+  border: 2px solid #00e676; border-radius: 4px;
+  transform: translate(-50%, -50%); pointer-events: none; }
+.focus-square::before, .focus-square::after {
+  content: ''; position: absolute; background: #00e676; }
+.focus-square::before { top: -6px; left: 50%; transform: translateX(-50%);
+  width: 1px; height: 6px; }
+.focus-square::after { bottom: -6px; left: 50%; transform: translateX(-50%);
+  width: 1px; height: 6px; }
+.focus-ring { position: absolute; inset: 0;
+  background: radial-gradient(circle 80px at var(--rx,50%) var(--ry,50%),
+    rgba(200,169,110,.2) 0%, transparent 70%);
+  pointer-events: none; border-radius: inherit; }
+
+/* CSS animations for AF modes */
+@keyframes af-lock { 0%,100% { transform: translate(-50%,-50%) scale(1.2); opacity:.6; }
+  40% { transform: translate(-50%,-50%) scale(1); opacity:1; border-color:#00e676; } }
+@keyframes af-servo { 0%,100% { left:50%;top:50%; }
+  20% { left:60%;top:45%; } 40% { left:55%;top:55%; }
+  60% { left:45%;top:50%; } 80% { left:50%;top:45%; } }
+@keyframes af-ring { 0%,100% { --rx:50%;--ry:50%; }
+  33% { --rx:40%;--ry:60%; } 66% { --rx:60%;--ry:40%; } }
+
+.focus-square.mode-one-shot {
+  left: 50%; top: 50%;
+  animation: af-lock 1s ease-out forwards; }
+.focus-square.mode-servo {
+  animation: af-servo 3s ease-in-out infinite;
+  border-color: #ffb300; }
+.focus-square.mode-mf { display: none; }
+.focus-ring.mode-mf { animation: af-ring 4s ease-in-out infinite; }
+.focus-ring.mode-one-shot, .focus-ring.mode-servo { display: none; }
+
+/* Info panel */
+.info-panel { background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; padding: 1.25rem; display: flex; flex-direction: column; gap: 1rem; }
+.mode-info { display: none; }
+.mode-info.active { display: block; }
+.mode-info-title { font-family: 'Syne', sans-serif; font-size: 1rem;
+  color: var(--accent); margin-bottom: .5rem; }
+.mode-info-when { font-size: .82rem; color: var(--muted); line-height: 1.6;
+  margin-bottom: .75rem; }
+.mode-tip { background: rgba(200,169,110,.08); border: 1px solid rgba(200,169,110,.25);
+  border-radius: 8px; padding: .75rem; font-size: .78rem; color: var(--text);
+  line-height: 1.55; }
+.mode-tip strong { color: var(--accent); }
+
+/* Focus areas */
+.area-tabs { display: flex; gap: .5rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
+.area-tab { flex: 1; min-width: 100px; background: var(--surface);
+  border: 1px solid var(--border); border-radius: 8px; padding: .5rem .75rem;
+  font-family: 'Heebo', sans-serif; font-size: .78rem; color: var(--muted);
+  cursor: pointer; transition: all .2s; text-align: center; }
+.area-tab:hover { border-color: #555; color: var(--text); }
+.area-tab.active { border-color: var(--accent); color: var(--accent);
+  background: rgba(200,169,110,.08); }
+
+.area-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+@media (max-width: 580px) { .area-layout { grid-template-columns: 1fr; } }
+
+.viewfinder-wrap { background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; padding: 1rem; }
+.area-desc-wrap { background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; padding: 1.25rem; }
+.area-desc { display: none; }
+.area-desc.active { display: block; }
+.area-desc h3 { font-family: 'Syne', sans-serif; font-size: .95rem;
+  color: var(--accent); margin-bottom: .5rem; }
+.area-desc p { font-size: .82rem; color: var(--muted); line-height: 1.6; }
+.area-desc .tip { margin-top: .75rem; background: rgba(200,169,110,.08);
+  border: 1px solid rgba(200,169,110,.2); border-radius: 8px;
+  padding: .6rem .8rem; font-size: .78rem; color: var(--text); }
+
+/* Focus stacking */
+.stacking-wrap { background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; overflow: hidden; }
+.stacking-canvas-wrap { position: relative; }
+.stacking-canvas-wrap canvas { width: 100%; display: block; }
+.stacking-label { text-align: center; padding: .5rem;
+  font-size: .75rem; color: var(--accent); font-family: 'Syne', sans-serif; }
+.stacking-controls { padding: 1rem 1.25rem; }
+.stacking-steps { display: flex; gap: .4rem; margin-bottom: 1rem; flex-wrap: wrap; }
+.stack-step { flex: 1; min-width: 70px; background: #0d0d0d;
+  border: 1px solid var(--border); border-radius: 8px; padding: .4rem .5rem;
+  font-size: .72rem; color: var(--muted); cursor: pointer; font-family: inherit;
+  text-align: center; transition: all .15s; }
+.stack-step.active { border-color: var(--accent); color: var(--accent);
+  background: rgba(200,169,110,.08); }
+.stacking-desc { font-size: .8rem; color: var(--muted); line-height: 1.55; }
+
+/* Info grid */
+.info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr));
+  gap: 1rem; }
+.info-card { background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; padding: 1.1rem 1rem; }
+.info-card h3 { font-family: 'Syne', sans-serif; font-size: .9rem;
+  color: var(--accent); margin-bottom: .4rem; }
+.info-card p { font-size: .8rem; color: var(--muted); line-height: 1.55; }
+
+/* Bottom nav */
+.nav-prev { text-align: center; padding: 1.5rem 1rem 0; }
+.nav-prev a { color: var(--accent); font-size: .85rem; text-decoration: none; }
 </style>
 <script src="/assets/js/nav.js" defer></script>
 <script src="/assets/js/share.js" defer></script>
