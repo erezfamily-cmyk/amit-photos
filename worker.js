@@ -4647,6 +4647,8 @@ async function handleNlIssue(env, slug, isPreview) {
   const c = JSON.parse(issue.content_json || '{}');
   const isFull = issue.type === 'full';
   const dateStr = issue.published_at ? issue.published_at.slice(0, 10) : new Date().toISOString().slice(0, 10);
+  const pageUrl = `https://amitphotos.com/newsletter/${slug}/`;
+  const waHref = escXml(`https://wa.me/?text=${encodeURIComponent(issue.title_he + ' — ' + pageUrl)}`);
 
   const heroSection = c.hero ? `
     <section class="nl-section nl-hero-section">
@@ -4722,6 +4724,17 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direc
 .nl-divider{max-width:800px;margin:0 auto;border:none;border-top:1px solid var(--border)}
 .nl-footer{text-align:center;padding:2rem;color:var(--muted);font-size:.75rem;max-width:800px;margin:0 auto}
 .nl-footer a{color:var(--muted)}
+.nl-actions{display:flex;gap:.75rem;flex-wrap:wrap;align-items:center;max-width:800px;margin:1.5rem auto;padding:0 1.5rem}
+.nl-actions button,.nl-actions a{background:transparent;border:1px solid var(--accent);color:var(--accent);border-radius:20px;padding:.4rem 1rem;font-size:.8rem;cursor:pointer;text-decoration:none;font-family:inherit;transition:background .2s,color .2s}
+.nl-actions button:hover,.nl-actions a:hover{background:var(--accent);color:#000}
+.nl-subscribe-section{max-width:800px;margin:1.5rem auto 3rem;padding:0 1.5rem}
+.nl-subscribe-card{background:rgba(200,169,110,.07);border:1px solid rgba(200,169,110,.25);border-radius:14px;padding:1.5rem}
+.nl-subscribe-card h3{font-family:'Syne',sans-serif;font-size:1.05rem;color:var(--accent);margin-bottom:.4rem}
+.nl-subscribe-card p{font-size:.85rem;color:var(--muted);margin-bottom:1rem}
+.nl-sub-form{display:flex;gap:.5rem;flex-wrap:wrap}
+.nl-sub-form input{flex:1;min-width:180px;background:var(--surface);border:1px solid var(--border);color:var(--text);padding:.45rem .75rem;border-radius:8px;font-family:inherit;font-size:.85rem}
+.nl-sub-form button{background:var(--accent);color:#000;border:none;padding:.45rem 1.2rem;border-radius:8px;cursor:pointer;font-weight:700;font-size:.85rem}
+#nl-sub-msg{font-size:.8rem;margin-top:.5rem;min-height:1.2em}
 @media print{
   body{background:#fff;color:#111}
   :root{--bg:#fff;--surface:#f5f5f5;--border:#ccc;--accent:#8b6914;--text:#111;--muted:#555}
@@ -4753,10 +4766,28 @@ ${linksSection}
 <footer class="nl-footer">
   <p>© Amit Photos | <a href="/">amitphotos.com</a></p>
 </footer>
+<div class="nl-actions no-print">
+  <button onclick="window.print()">🖨 <span data-he="הדפס / שמור PDF" data-en="Print / Save PDF">הדפס / שמור PDF</span></button>
+  <a href="${waHref}" target="_blank" rel="noopener">📲 <span data-he="שתף ב-WhatsApp" data-en="Share on WhatsApp">שתף ב-WhatsApp</span></a>
+  <button onclick="copyLink()">🔗 <span id="copy-label" data-he="העתק קישור" data-en="Copy Link">העתק קישור</span></button>
+</div>
+<section class="nl-subscribe-section no-print">
+  <div class="nl-subscribe-card">
+    <h3 data-he="רוצה לקבל את הניוזלטר?" data-en="Want to receive the newsletter?">רוצה לקבל את הניוזלטר?</h3>
+    <p data-he="גיליונות חודשיים — תמונות, מדריכים ומקומות צילום ישירות למייל." data-en="Monthly issues — photos, guides and shooting locations delivered to your inbox.">גיליונות חודשיים — תמונות, מדריכים ומקומות צילום ישירות למייל.</p>
+    <form class="nl-sub-form" onsubmit="nlSubscribe(event)">
+      <input type="email" id="nl-email" placeholder="כתובת המייל שלך" required>
+      <button type="submit" data-he="הרשמה" data-en="Subscribe">הרשמה</button>
+    </form>
+    <p id="nl-sub-msg"></p>
+  </div>
+</section>
 <script>
 function getLang(){return localStorage.getItem('lang')||'he'}
 function applyLang(){const lang=getLang(),isEn=lang==='en';document.documentElement.dir=isEn?'ltr':'rtl';document.documentElement.lang=lang;document.querySelectorAll('[data-he]').forEach(el=>{el.innerHTML=isEn?(el.dataset.en||el.dataset.he):el.dataset.he})}
 applyLang();window.setLang=applyLang;window.addEventListener('storage',e=>{if(e.key==='lang')applyLang()})
+function copyLink(){navigator.clipboard.writeText(location.href).then(()=>{const el=document.getElementById('copy-label');const orig=el.innerHTML;el.textContent='✓ הועתק!';setTimeout(()=>{el.innerHTML=orig;applyLang()},2000)}).catch(()=>{})}
+async function nlSubscribe(e){e.preventDefault();const email=document.getElementById('nl-email').value.trim();const msg=document.getElementById('nl-sub-msg');const btn=e.target.querySelector('button[type="submit"]');btn.disabled=true;try{const r=await fetch('/api/subscribers',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email})});const d=await r.json();if(d.already){msg.style.color='#c8a96e';msg.textContent='כבר רשום/ה — תקבל את הגיליון הבא!'}else if(d.ok){msg.style.color='#4caf50';msg.textContent='נרשמת! תקבל את הגיליון הבא ישירות למייל 🎉';document.getElementById('nl-email').value=''}else{msg.style.color='#f44336';msg.textContent=d.error||'שגיאה'}}catch{msg.style.color='#f44336';msg.textContent='שגיאת רשת'}btn.disabled=false}
 </script>
 </body></html>`;
 
