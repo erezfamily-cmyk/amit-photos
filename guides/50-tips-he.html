@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>50 טיפים לצלם מתחיל — עמית ארז</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;600;700;800&family=Syne:wght@700;800&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --gold: #b8935a;
+  --gold-light: #d4aa70;
+  --dark: #1a1209;
+  --gray: #555;
+  --light-gray: #f5f2ee;
+  --border: #e0d8cc;
+}
+
+body {
+  font-family: 'Heebo', sans-serif;
+  background: #fff;
+  color: var(--dark);
+  direction: rtl;
+  font-size: 10.5pt;
+  line-height: 1.7;
+}
+
+/* ── COVER PAGE ── */
+.cover {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  background: var(--dark);
+  color: #fff;
+  padding: 3rem;
+  position: relative;
+  overflow: hidden;
+  page-break-after: always;
+}
+
+.cover-photo {
+  position: absolute;
+  inset: 0;
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+  opacity: .25;
+}
+
+.cover-content { position: relative; z-index: 1; }
+
+.cover-badge {
+  display: inline-block;
+  border: 1px solid var(--gold-light);
+  color: var(--gold-light);
+  font-size: 9pt;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  padding: .3rem 1rem;
+  border-radius: 20px;
+  margin-bottom: 2rem;
+}
+
+.cover h1 {
+  font-family: 'Syne', sans-serif;
+  font-size: 3.2rem;
+  line-height: 1.15;
+  margin-bottom: 1rem;
+  color: #fff;
+}
+
+.cover h1 span { color: var(--gold-light); }
+
+.cover-sub {
+  font-size: 1.05rem;
+  color: #ccc;
+  max-width: 420px;
+  margin: 0 auto 2.5rem;
+  line-height: 1.6;
+}
+
+.cover-author {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .3rem;
+}
+
+.cover-author-name {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.1rem;
+  color: var(--gold-light);
+}
+
+.cover-author-url {
+  font-size: .8rem;
+  color: #aaa;
+}
+
+.cover-divider {
+  width: 60px;
+  height: 2px;
+  background: var(--gold-light);
+  margin: 1.5rem auto;
+  opacity: .5;
+}
+
+/* ── INTRO PAGE ── */
+.intro {
+  padding: 3rem 3.5rem;
+  page-break-after: always;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.intro h2 {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.6rem;
+  margin-bottom: 1.2rem;
+  color: var(--dark);
+}
+
+.intro p {
+  margin-bottom: 1rem;
+  color: #444;
+  font-size: 10.5pt;
+}
+
+.intro-signature {
+  margin-top: 2rem;
+  font-style: italic;
+  color: var(--gold);
+  font-size: 11pt;
+}
+
+/* ── SECTION HEADER ── */
+.section-header {
+  background: var(--dark);
+  color: #fff;
+  padding: 2.5rem 3rem;
+  page-break-before: always;
+  page-break-after: avoid;
+  position: relative;
+  overflow: hidden;
+}
+
+.section-header-photo {
+  position: absolute;
+  inset: 0;
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+  opacity: .18;
+}
+
+.section-header-content { position: relative; z-index: 1; }
+
+.section-number {
+  font-size: 9pt;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--gold-light);
+  margin-bottom: .4rem;
+}
+
+.section-header h2 {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.8rem;
+  color: #fff;
+  margin-bottom: .4rem;
+}
+
+.section-header p {
+  color: #bbb;
+  font-size: 9.5pt;
+  max-width: 480px;
+}
+
+/* ── TIPS ── */
+.tips-page {
+  padding: 2rem 3rem;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.tip {
+  display: flex;
+  gap: 1.2rem;
+  margin-bottom: 1.5rem;
+  align-items: flex-start;
+  page-break-inside: avoid;
+}
+
+.tip-num {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  background: var(--gold);
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Syne', sans-serif;
+  font-size: 9pt;
+  font-weight: 700;
+  margin-top: 2px;
+}
+
+.tip-body {}
+
+.tip-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 11pt;
+  font-weight: 700;
+  color: var(--dark);
+  margin-bottom: .2rem;
+}
+
+.tip-text {
+  font-size: 10pt;
+  color: #555;
+  line-height: 1.65;
+}
+
+.tip-text strong { color: var(--dark); }
+
+/* ── PHOTO STRIP ── */
+.photo-strip {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: .5rem;
+  margin: 1.5rem 0;
+  page-break-inside: avoid;
+}
+
+.photo-strip img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 6px;
+  display: block;
+}
+
+.photo-full img {
+  width: 100%;
+  max-height: 240px;
+  object-fit: cover;
+  border-radius: 8px;
+  display: block;
+  margin: 1.5rem 0;
+}
+
+.photo-caption {
+  font-size: 8pt;
+  color: #999;
+  text-align: center;
+  margin-top: .3rem;
+  margin-bottom: 1rem;
+  font-style: italic;
+}
+
+/* ── HIGHLIGHT BOX ── */
+.highlight {
+  background: var(--light-gray);
+  border-right: 3px solid var(--gold);
+  padding: .85rem 1.1rem;
+  margin: 1.2rem 0;
+  border-radius: 0 6px 6px 0;
+  font-size: 10pt;
+  color: #444;
+  page-break-inside: avoid;
+}
+
+.highlight strong { color: var(--dark); }
+
+/* ── BACK COVER ── */
+.back-cover {
+  background: var(--dark);
+  color: #fff;
+  padding: 3rem;
+  text-align: center;
+  page-break-before: always;
+  min-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
+
+.back-cover h3 {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.4rem;
+  color: var(--gold-light);
+  margin-bottom: .5rem;
+}
+
+.back-cover p { color: #aaa; font-size: 10pt; max-width: 380px; }
+.back-cover a { color: var(--gold-light); }
+
+/* ── PRINT ── */
+@media print {
+  @page { size: A4; margin: 0; }
+  body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .cover, .section-header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .no-print { display: none; }
+}
+
+@media screen {
+  body { max-width: 800px; margin: 0 auto; box-shadow: 0 0 40px rgba(0,0,0,.12); }
+  .print-btn {
+    position: fixed;
+    bottom: 2rem;
+    left: 2rem;
+    background: var(--gold);
+    color: #fff;
+    border: none;
+    padding: .7rem 1.4rem;
+    border-radius: 8px;
+    font-family: 'Heebo', sans-serif;
+    font-size: .9rem;
+    font-weight: 700;
+    cursor: pointer;
+    z-index: 100;
+    box-shadow: 0 4px 16px rgba(0,0,0,.2);
+  }
+}
+</style>
+</head>
+<body>
+
+<button class="print-btn no-print" onclick="window.print()">🖨 שמור כ-PDF</button>
+
+<!-- COVER -->
+<div class="cover">
+  <img class="cover-photo" src="https://drive.google.com/thumbnail?id=1We5NhoA8RoEVMLisV1Uf4XjeAq792gv9&sz=w1200" alt="">
+  <div class="cover-content">
+    <div class="cover-badge">מדריך לצלם מתחיל</div>
+    <h1><span>50 טיפים</span><br>שיהפכו אותך<br>לצלם טוב יותר</h1>
+    <p class="cover-sub">מהמושגים הבסיסיים ועד לסודות הקומפוזיציה — כל מה שצריך כדי לצלם תמונות שאתה גאה בהן.</p>
+    <div class="cover-divider"></div>
+    <div class="cover-author">
+      <div class="cover-author-name">עמית ארז</div>
+      <div class="cover-author-url">amitphotos.com</div>
+    </div>
+  </div>
+</div>
+
+<!-- INTRO -->
+<div class="intro">
+  <h2>מילה לפני שמתחילים</h2>
+  <p>אני מצלם כבר שנים רבות — עם Nikon D300, D700, ועכשיו Z7. בדרך למדתי המון, בעיקר מטעויות. המדריך הזה הוא כל מה שהייתי רוצה שמישהו יגיד לי בהתחלה.</p>
+  <p>50 הטיפים האלה לא דורשים ידע קודם ולא ציוד יקר. הם דורשים רק דבר אחד: שתצא לצלם.</p>
+  <p>כל טיפ כאן מבוסס על ניסיון אמיתי בשטח — לא תיאוריה. חלקם יהיו ברורים מיד, חלקם יהפכו להיות ברורים רק אחרי שתנסה אותם. שמור את המדריך הזה, וחזור אליו כשאתה תקוע.</p>
+  <p>צלם הרבה. תכשל. תנסה שוב. זה כל הסוד.</p>
+  <div class="intro-signature">— עמית ארז</div>
+</div>
+
+<!-- SECTION 1 -->
+<div class="section-header">
+  <img class="section-header-photo" src="https://drive.google.com/thumbnail?id=1FH_T3RTNUiI1f0cTktFnEEdJY-lO3sNi&sz=w800" alt="">
+  <div class="section-header-content">
+    <div class="section-number">חלק ראשון · טיפים 1–8</div>
+    <h2>הכר את המצלמה שלך</h2>
+    <p>לפני שיוצאים לצלם — חייבים להבין עם מה עובדים. זה לא כואב, מבטיח.</p>
+  </div>
+</div>
+
+<div class="tips-page">
+
+  <div class="tip">
+    <div class="tip-num">1</div>
+    <div class="tip-body">
+      <div class="tip-title">קרא את המדריך — לפחות פעם אחת</div>
+      <div class="tip-text">רוב האנשים לא פותחים אותו בכלל. אלה שכן — מגלים תכונות שלא ידעו שקיימות. <strong>שעתיים עם המדריך שוות עשרות שעות של ניסוי וטעייה.</strong></div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">2</div>
+    <div class="tip-body">
+      <div class="tip-title">צא מ-Auto — מחר בבוקר</div>
+      <div class="tip-text">Aperture Priority (Av או A) הוא הצעד הראשון. אתה שולט על פתח הצמצם — המצלמה מחשבת את שאר. <strong>פתח רחב (f/1.8) = בוקה. פתח צר (f/11) = הכל חד.</strong></div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">3</div>
+    <div class="tip-body">
+      <div class="tip-title">צלם ב-RAW, לא JPEG</div>
+      <div class="tip-text">JPEG הוא תמונה שכבר עברה עיבוד ו"נדחסה". RAW הוא כל המידע שהחיישן קלט — גמיש לתיקון לאחר מכן. <strong>חשיפה קצת שגויה? בRAW ניתן לתקן. בJPEG — לא תמיד.</strong></div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">4</div>
+    <div class="tip-body">
+      <div class="tip-title">שלושה כפתורים ששולטים על הכל</div>
+      <div class="tip-text"><strong>ISO</strong> (רגישות לאור) · <strong>צמצם / Aperture</strong> (כמה אור נכנס) · <strong>מהירות תריס</strong> (כמה זמן האור נכנס). כל שאר הכפתורים הם פרטים. ראשית — למד את השלושה האלה.</div>
+    </div>
+  </div>
+
+  <div class="highlight">
+    <strong>המשולש הזהב:</strong> שנוי בISO משפיע על רעש. שינוי בצמצם משפיע על בוקה ועומק שדה. שינוי במהירות תריס משפיע על תנועה. כשמשנים אחד — צריך לפצות באחד השניים.
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">5</div>
+    <div class="tip-body">
+      <div class="tip-title">ההיסטוגרם לא משקר — המסך כן</div>
+      <div class="tip-text">המסך של המצלמה שקרן. בשמש — נראה כהה מדי. בלילה — נראה בהיר מדי. <strong>ההיסטוגרם הוא גרף אמיתי של חשיפה.</strong> שמאל = כהה, ימין = בהיר. קצה ימין מקוצץ = פרטים שנעלמו.</div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">6</div>
+    <div class="tip-body">
+      <div class="tip-title">קיבוע מוקד — הסוד לתמונות חדות</div>
+      <div class="tip-text">לחץ חצי על כפתור הצילום לפוקוס → כוון את הפריים מחדש → לחץ לגמרי. <strong>זה מאפשר לשים את נקודת הפוקוס בדיוק איפה שרוצים</strong>, לא רק במרכז.</div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">7</div>
+    <div class="tip-body">
+      <div class="tip-title">שלושה מצבי מדידת אור — לדעת מתי להשתמש בכל אחד</div>
+      <div class="tip-text"><strong>Matrix/Evaluative:</strong> המצלמה מודדת את כל הפריים — טוב לרוב הסיטואציות. <strong>Center-Weighted:</strong> דגש על המרכז — לפורטרטים. <strong>Spot:</strong> מודד נקודה אחת בלבד — לתאורות קיצוניות.</div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">8</div>
+    <div class="tip-body">
+      <div class="tip-title">נקה את החיישן — כתם אחד הורס אלף תמונות</div>
+      <div class="tip-text">כתמי אבק ניכרים על שמיים אחידים ועל קירות לבנים. <strong>בדוק על ידי צילום שמיים כחולים בצמצם f/16 — כל כתם יופיע בבירור.</strong> ניקוי חיישן הוא פשוט ולא יקר.</div>
+    </div>
+  </div>
+
+  <div class="photo-strip">
+    <div>
+      <img src="https://drive.google.com/thumbnail?id=1RS7CNmOqlgKzVp6TEsqT2At4zO4eODS_&sz=w800" alt="ינשוף בור">
+      <div class="photo-caption">f/5.6 · 1/800s · ISO 400</div>
+    </div>
+    <div>
+      <img src="https://drive.google.com/thumbnail?id=1_PoGi7uS5MRl0h-unx91_g21IcPI0Oj6&sz=w800" alt="לטאה ירוקה">
+      <div class="photo-caption">105mm מאקרו · f/4 · 1/500s</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- SECTION 2 -->
+<div class="section-header">
+  <img class="section-header-photo" src="https://lh3.googleusercontent.com/d/1M0MNq47h_rck94IU0GlqlX9yIA5_6MMe=w900" alt="">
+  <div class="section-header-content">
+    <div class="section-number">חלק שני · טיפים 9–16</div>
+    <h2>חשיפה נכונה</h2>
+    <p>חשיפה זה לא "בהיר או כהה" — זה השליטה המלאה על כמה אור נכנס לתמונה.</p>
+  </div>
+</div>
+
+<div class="tips-page">
+
+  <div class="tip">
+    <div class="tip-num">9</div>
+    <div class="tip-body">
+      <div class="tip-title">חשיפה נכונה בשטח עדיפה על תיקון בפוסט</div>
+      <div class="tip-text">פוסט-פרודקשן הוא כלי — לא קסם. <strong>תמונה חשופה נכון שומרת פרטים בצל ובהדגשות.</strong> תמונה שרופה (overexposed) — אין לה פרטים בהדגשות, לא משנה כמה מושכים בסליידר.</div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">10</div>
+    <div class="tip-body">
+      <div class="tip-title">ETTR — חשוף לימין</div>
+      <div class="tip-text">Expose To The Right = לחשוף כמה שיותר בהיר בלי לשרוף את ההדגשות. <strong>ההיסטוגרם צריך להתקרב לצד ימין מבלי לגעת בקצה.</strong> זה מפחית רעש ומשמר פרטים בצל.</div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">11</div>
+    <div class="tip-body">
+      <div class="tip-title">ISO — תמיד התחל מהנמוך ביותר</div>
+      <div class="tip-text">ISO גבוה = רגישות לאור גבוהה = יותר רעש. <strong>ISO 100–400: נקי. ISO 800–1600: סביר. ISO 3200+: רעשני</strong> (תלוי במצלמה). תמיד התחל מISO 100 ועלה רק כשחייב.</div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">12</div>
+    <div class="tip-body">
+      <div class="tip-title">כלל האצבע למהירות תריס — למנוע טשטוש</div>
+      <div class="tip-text">מהירות תריס לא פחות מ-<strong>1/מרחק מוקד</strong>. עם עדשת 50mm → מינימום 1/60s. עם 200mm → מינימום 1/200s. <strong>עם stabilization — ניתן לרדת פי 2-4 מתחת.</strong></div>
+    </div>
+  </div>
+
+  <div class="highlight">
+    <strong>טיפ מהיר:</strong> Auto-ISO עם תקרה ידנית (למשל ISO 3200) + מהירות תריס מינימלית (למשל 1/125s) = המצלמה מנהלת את ה-ISO אוטומטית תוך שמירה על מהירות תריס שמונעת טשטוש.
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">13</div>
+    <div class="tip-body">
+      <div class="tip-title">Auto-ISO עם תקרה ידנית — הגדרה שמשנה חיים</div>
+      <div class="tip-text">הגדר Auto-ISO עם מהירות תריס מינימלית בהגדרות המצלמה. <strong>המצלמה תעלה ISO רק כשצריך כדי לשמור את מהירות התריס.</strong> מושלם לצילום ספורט ואירועים.</div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">14</div>
+    <div class="tip-body">
+      <div class="tip-title">ND Filter — חשיפות ארוכות ביום</div>
+      <div class="tip-text">ND מחשיך את האור בלי לשנות צבע. <strong>ND10 = 10 עצירות אור = חשיפה של שניות בצהרי יום.</strong> מים זורמים הופכים לאבק לבן. ים הופך למראה. ענן הופך לבד רך.</div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">15</div>
+    <div class="tip-body">
+      <div class="tip-title">Exposure Compensation (+/-) — הכלי הכי שימושי</div>
+      <div class="tip-text">הכפתור +/- מוסיף או מחסיר חשיפה בלי לשנות מצב. <strong>שלג? +1 עצירה. נושא כהה מול בהיר? -1 עצירה.</strong> רוב המצלמות מאפשרות גישה מהירה לכפתור הזה — משתמש בו תדיר.</div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">16</div>
+    <div class="tip-body">
+      <div class="tip-title">תאורה אחורית — מד על הפנים, לא על הרקע</div>
+      <div class="tip-text">כשהרקע בהיר מהנושא, המצלמה תחשוף לרקע — והנושא יצא כהה. <strong>פתרון: Spot Metering על הפנים, או Exposure Compensation +1 עד +2.</strong> אלטרנטיבה: פלאש fill-in.</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- SECTION 3 -->
+<div class="section-header">
+  <img class="section-header-photo" src="https://drive.google.com/thumbnail?id=1FH_T3RTNUiI1f0cTktFnEEdJY-lO3sNi&sz=w800" alt="">
+  <div class="section-header-content">
+    <div class="section-number">חלק שלישי · טיפים 17–24</div>
+    <h2>קומפוזיציה</h2>
+    <p>מה שמבדיל תמונה מעניינת מצילום רגיל — זה לא הציוד, זה הבחירה של מה נכנס לפריים.</p>
+  </div>
+</div>
+
+<div class="tips-page">
+
+  <div class="tip">
+    <div class="tip-num">17</div>
+    <div class="tip-body">
+      <div class="tip-title">חוק השליש — שים את הנושא בצומת הקווים</div>
+      <div class="tip-text">דמיין שני קווים אנכיים ואופקיים שמחלקים את הפריים לתשעה חלקים שווים. <strong>שים את הנושא הראשי באחת מארבע נקודות הצומת — לא במרכז.</strong> רוב מצלמות תומכות בהצגת הגריד בלייב-ויו.</div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">18</div>
+    <div class="tip-body">
+      <div class="tip-title">קווים מובילים — הזמן לעין לטייל בתמונה</div>
+      <div class="tip-text">כבישים, גדרות, נהרות, מסילות — <strong>כל קו שמתחיל מקצה התמונה ומוביל לנושא.</strong> זה יוצר עומק ומושך את הצופה פנימה. חפש אותם — הם בכל מקום.</div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">19</div>
+    <div class="tip-body">
+      <div class="tip-title">מסגור — הכנס את הנושא לתוך "מסגרת"</div>
+      <div class="tip-text">עצים, קשתות, דלתות, חלונות — <strong>כל אלמנט שמקיף את הנושא יוצר מסגרת טבעית שמרכזת את המבט.</strong> זה גם מוסיף שכבת עומק לתמונה דו-ממדית.</div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">20</div>
+    <div class="tip-body">
+      <div class="tip-title">פשטות — הסר כל מה שלא תורם</div>
+      <div class="tip-text">שאל את עצמך: <strong>"כל דבר בפריים הזה — האם הוא מחזק את הסיפור, או מסיח את הדעת?"</strong> צעד קדימה, בחירת זווית שונה, פתח רחב יותר — לפעמים רק צריך להסיר את הרעש הוויזואלי.</div>
+    </div>
+  </div>
+
+  <div class="photo-full">
+    <img src="https://drive.google.com/thumbnail?id=17RW9kh-Ry3KiqOj_yM3oCK8FPOC88_JN&sz=w900" alt="ינשוף שלג — דוגמה לקומפוזיציה">
+    <div class="photo-caption">שלג לבן + ינשוף לבן = רקע נקי שמדגיש את הנושא. פשטות בקומפוזיציה.</div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">21</div>
+    <div class="tip-body">
+      <div class="tip-title">שנה גובה — אל תצלם תמיד בגובה העיניים</div>
+      <div class="tip-text">מלמטה: הנושא נראה גדול ואמיץ. מלמעלה: מעניק תחושת שליטה ופרספקטיבה. <strong>פשוט לשכב על האדמה או לעלות על ספסל — משנה הכל.</strong></div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">22</div>
+    <div class="tip-body">
+      <div class="tip-title">Space — תן לנושא מקום לנשום</div>
+      <div class="tip-text">אם הנושא מסתכל שמאלה — תן לו מקום בשמאל הפריים. ציפור בטיסה צריכה מקום לאן שהיא עפה. <strong>פריים שנושא "לחוץ" בו מרגיש צפוף ולא נוח לצופה.</strong></div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">23</div>
+    <div class="tip-body">
+      <div class="tip-title">אנכי vs אופקי — נסה את שניהם</div>
+      <div class="tip-text">לפני שמזיז את המצלמה — צלם את שניהם. <strong>נוף כמעט תמיד אופקי. פורטרט לרוב אנכי. ארכיטקטורה — תלוי.</strong> אבל לפעמים הפוך מה שמצופה עובד יותר טוב.</div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">24</div>
+    <div class="tip-body">
+      <div class="tip-title">Negative Space — המקום הריק הוא חלק מהתמונה</div>
+      <div class="tip-text">אדם קטן באמצע שמיים גדולים יוצר תחושת בדידות ויופי. <strong>לפעמים מה שאין בתמונה מספר את הסיפור.</strong> אל תפחד מרקעים ריקים ונקיים.</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- SECTION 4 -->
+<div class="section-header">
+  <img class="section-header-photo" src="https://lh3.googleusercontent.com/d/1M0MNq47h_rck94IU0GlqlX9yIA5_6MMe=w900" alt="">
+  <div class="section-header-content">
+    <div class="section-number">חלק רביעי · טיפים 25–31</div>
+    <h2>להבין את האור</h2>
+    <p>הצילום הוא ציור באור — מי ששולט באור, שולט בתמונה.</p>
+  </div>
+</div>
+
+<div class="tips-page">
+
+  <div class="tip">
+    <div class="tip-num">25</div>
+    <div class="tip-body">
+      <div class="tip-title">שעת הזהב — יקר מכל ציוד</div>
+      <div class="tip-text">שעה אחרי זריחה ושעה לפני שקיעה: האור חם, רך, נמוך. <strong>עור בשעת הזהב נראה מושלם. נוף בשעת הזהב נראה קסום.</strong> שום מסנן לא מחקה את זה. תקום מוקדם.</div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">26</div>
+    <div class="tip-body">
+      <div class="tip-title">שעת הכחול — הסוד של הצלמים</div>
+      <div class="tip-text">20 דקות לפני הזריחה ואחרי השקיעה: השמיים הופכים לכחול עמוק, עדין ואחיד. <strong>אורות עיר דולקים, שמיים כחולים — שילוב שאי אפשר לחמצן.</strong> זה הזמן לצלם ערים בלילה.</div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">27</div>
+    <div class="tip-body">
+      <div class="tip-title">יום מעונן הוא מתנה לפורטרטים</div>
+      <div class="tip-text">עננים מפזרים את אור השמש לאור רך וסביבתי — <strong>מפזר ענקי בחינם.</strong> אין צללים קשים, אין עיניים מצומצמות, אין ניגודיות קיצונית. מושלם לפורטרטים ולמאקרו.</div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">28</div>
+    <div class="tip-body">
+      <div class="tip-title">כיוון האור — שלושה אפקטים שונים לגמרי</div>
+      <div class="tip-text"><strong>קדמי:</strong> שטוח, ללא צללים, פנים בהירות. <strong>צדדי:</strong> דרמטי, מדגיש מרקמים. <strong>אחורי (רימלייט):</strong> מיסטי, מפריד נושא מרקע. <strong>נסה לסובב את הנושא ביחס לאור — לא להזיז את עצמך.</strong></div>
+    </div>
+  </div>
+
+  <div class="highlight">
+    <strong>טיפ מהיר:</strong> פיסת קרטון לבן מחזירה אור לפנים בצל. Reflector מקצועי עושה את אותו הדבר — רק יותר נוח לשאת. לפני שקונים — נסה עם קרטון.
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">29</div>
+    <div class="tip-body">
+      <div class="tip-title">מחזיר אור — ציוד הכי זול עם הכי הרבה השפעה</div>
+      <div class="tip-text">Reflector 5-in-1 עולה 50-100 שקל ומשנה כל פורטרט. <strong>כסוף = חד וניגודי. זהב = חם ורך. לבן = עדין וטבעי.</strong> תמיד יש לי אחד בתיק.</div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">30</div>
+    <div class="tip-body">
+      <div class="tip-title">פלאש ביום — לא רק ללילה</div>
+      <div class="tip-text">כשהשמש חזקה מאחורי הנושא, פלאש fill-in מוסיף אור לפנים. <strong>עצמה נמוכה (‎-1 עד -2 עצירות) = טבעי לגמרי.</strong> אף אחד לא ידע שהשתמשת בפלאש.</div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">31</div>
+    <div class="tip-body">
+      <div class="tip-title">חפש אור מיוחד — הוא מחכה לך</div>
+      <div class="tip-text">פיר אור דרך חלון, פסי אור בין עצים, פתח מנהרה, תאורת נאון בגשם. <strong>האור הדרמטי ביותר הוא לרוב חינמי — צריך רק לשים לב ולחכות.</strong></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- SECTION 5 -->
+<div class="section-header">
+  <img class="section-header-photo" src="https://drive.google.com/thumbnail?id=1_PoGi7uS5MRl0h-unx91_g21IcPI0Oj6&sz=w800" alt="">
+  <div class="section-header-content">
+    <div class="section-number">חלק חמישי · טיפים 32–38</div>
+    <h2>עדשות וציוד</h2>
+    <p>הציוד הוא כלי — לא הסיפור. אבל כלי טוב עוזר.</p>
+  </div>
+</div>
+
+<div class="tips-page">
+
+  <div class="tip">
+    <div class="tip-num">32</div>
+    <div class="tip-body">
+      <div class="tip-title">עדשה טובה > גוף מצלמה יקר</div>
+      <div class="tip-text"><strong>עדשת f/1.4 על גוף ישן תכה גוף יקר עם עדשת kit בכל פעם.</strong> תקציב מוגבל? קנה גוף זול + עדשת פריים טובה. ציוד אופטי לא מתיישן כמו גוף מצלמה.</div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">33</div>
+    <div class="tip-body">
+      <div class="tip-title">50mm f/1.8 — העדשה הראשונה שצריך לקנות</div>
+      <div class="tip-text">זולה ($100-200), קלה, חדה, עם בוקה יפה ופתח רחב לתאורה נמוכה. <strong>ה-"Nifty Fifty" — כינוי שנותן לה בדיוק.</strong> הזווית קרובה לעין האנושית = תמונות שנראות טבעיות.</div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">34</div>
+    <div class="tip-body">
+      <div class="tip-title">חצובה — לא אופציה, חובה</div>
+      <div class="tip-text">חשיפות ארוכות, נוף בזריחה, מאקרו, לילה — בלי חצובה זה לא אפשרי. <strong>חצובת קרבון: קלה ויציבה. מומלץ להשקיע — חצובה טובה מחזיקה עשרים שנה.</strong></div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">35</div>
+    <div class="tip-body">
+      <div class="tip-title">UV Filter — ביטוח זול לעדשה יקרה</div>
+      <div class="tip-text">מגן על הזכוכית הקדמית מפני שריטות, אצבעות ולחות. <strong>עדשה של 2,000 שקל + UV של 60 שקל = שריון.</strong> תמיד על כל עדשה. אף פעם לא מסיר.</div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">36</div>
+    <div class="tip-body">
+      <div class="tip-title">פחות ציוד = יותר יצירתיות</div>
+      <div class="tip-text">לא קח הכל לכל מקום. <strong>הגבלה מאלצת פתרונות יצירתיים.</strong> יום עם עדשה אחת בלבד מלמד יותר על צילום מאשר שבוע עם כל התיק.</div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">37</div>
+    <div class="tip-body">
+      <div class="tip-title">מכפל — להאריך עדשה בלי לשאת עדשה נוספת</div>
+      <div class="tip-text">מכפל ×1.4 על עדשת 300mm = 420mm. מכפל ×2 = 600mm. <strong>מחיר נמוך בהרבה מעדשת טלה חדשה.</strong> מחיר: אובדן עצירת אור (×1.4 = עצירה אחת, ×2 = שתיים).</div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">38</div>
+    <div class="tip-body">
+      <div class="tip-title">ניקוי עדשה — רק כך, לא אחרת</div>
+      <div class="tip-text"><strong>נשיפה עדינה להרמת אבק + בד מיקרופייבר נקי לניגוב עדין בתנועה מעגלית.</strong> טישו, חולצה, מפיות — אסור. הם מגרדים את הציפוי. נוזל ניקוי מיוחד לעדשות — מותר.</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- SECTION 6 -->
+<div class="section-header">
+  <img class="section-header-photo" src="https://drive.google.com/thumbnail?id=1FH_T3RTNUiI1f0cTktFnEEdJY-lO3sNi&sz=w800" alt="">
+  <div class="section-header-content">
+    <div class="section-number">חלק שישי · טיפים 39–44</div>
+    <h2>עריכה</h2>
+    <p>עריכה טובה מביאה תמונה לפוטנציאל שלה — לא מצילה אותה.</p>
+  </div>
+</div>
+
+<div class="tips-page">
+
+  <div class="tip">
+    <div class="tip-num">39</div>
+    <div class="tip-body">
+      <div class="tip-title">עריכה משפרת — לא מצילה</div>
+      <div class="tip-text">תמונה עם בעיות קומפוזיציה, פוקוס רע או חשיפה קיצונית — לא תהפוך לתמונה טובה בעריכה. <strong>הכלל הראשון: לצלם טוב בשטח. העריכה היא הגימור.</strong></div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">40</div>
+    <div class="tip-body">
+      <div class="tip-title">התחל תמיד מחשיפה ולבן</div>
+      <div class="tip-text">לפני כל דבר אחר — <strong>תקן את החשיפה הבסיסית ואת White Balance.</strong> כל תיקון אחר לצבע, ניגודיות ופרטים יהיה מדויק הרבה יותר אחרי שהבסיס נכון.</div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">41</div>
+    <div class="tip-body">
+      <div class="tip-title">פחות סטורציה — כמעט תמיד</div>
+      <div class="tip-text">מתחילים מגזימים בצבעוניות. <strong>סטורציה של 10-20 מספיקה לרוב התמונות.</strong> לבדוק: הוצא את התמונה לשחור-לבן ואז תחזיר צבע — אם הצבע קופץ לעיניים, הגזמת.</div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">42</div>
+    <div class="tip-body">
+      <div class="tip-title">Clarity — בזהירות</div>
+      <div class="tip-text">Clarity מוסיף חדות למרקמים בינוניים. <strong>מעולה לנוף, סלעים, עץ. הרסני לפורטרט</strong> — הופך עור למרקם של ירח. אם צולמת פנים — Clarity = 0 או מינוס קטן.</div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">43</div>
+    <div class="tip-body">
+      <div class="tip-title">שמור Preset — חסוך שעות</div>
+      <div class="tip-text">כשמצאת סגנון שאתה אוהב — שמור אותו כ-Preset בלייטרום. <strong>הפעם הבאה: בחירה + לחיצה + גמור.</strong> עקביות בעריכה גם בונה "סגנון" שמזהים אותו.</div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">44</div>
+    <div class="tip-body">
+      <div class="tip-title">השווה לפני ואחרי — לפעמים המקור יותר טוב</div>
+      <div class="tip-text">אחרי שסיימת לערוך — לחץ \ בלייטרום לראות לפני ואחרי. <strong>לפעמים שלושים דקות עריכה הרסו תמונה שהייתה מושלמת.</strong> יש לחזור אחורה.</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- SECTION 7 -->
+<div class="section-header">
+  <img class="section-header-photo" src="https://drive.google.com/thumbnail?id=1We5NhoA8RoEVMLisV1Uf4XjeAq792gv9&sz=w800" alt="">
+  <div class="section-header-content">
+    <div class="section-number">חלק שביעי · טיפים 45–50</div>
+    <h2>מחשבה ופרקטיקה</h2>
+    <p>הציוד הכי טוב בעולם לא מצלם בשבילך. הרגלים כן.</p>
+  </div>
+</div>
+
+<div class="tips-page">
+
+  <div class="tip">
+    <div class="tip-num">45</div>
+    <div class="tip-body">
+      <div class="tip-title">צלם כל יום — אפילו עם הטלפון</div>
+      <div class="tip-text">העין מתאמנת בצילום. <strong>מי שצולם כל יום שנה — מצלם הרבה יותר טוב ממי שיוצא עם ציוד יקר פעם בחודש.</strong> הטלפון בכיס הוא המצלמה הטובה ביותר שיש לך — כי היא איתך.</div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">46</div>
+    <div class="tip-body">
+      <div class="tip-title">למד מתמונות שאתה אוהב — נתח אותן</div>
+      <div class="tip-text">כשאתה רואה תמונה מרשימה — עצור ושאל: <strong>מאיפה האור? מה קומפוזיציה? מה עדשה שימש? מה גרם לי לעצור?</strong> ניתוח של 5 תמונות ביום שווה שיעור מקצועי.</div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">47</div>
+    <div class="tip-body">
+      <div class="tip-title">קבל ביקורת — זה לא כואב כמו שנדמה</div>
+      <div class="tip-text">הצג עבודות לאנשים שאתה מעריך ושאל בכנות מה לא עובד. <strong>ביקורת אחת כנה שווה מאה "מגניב" של אנשים שלא רוצים לפגוע.</strong></div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">48</div>
+    <div class="tip-body">
+      <div class="tip-title">פחות לחיצות = יותר חשיבה</div>
+      <div class="tip-text">מצלמה דיגיטלית מפתה לצלם מאות תמונות ולקוות שאחת תצא טובה. <strong>תנסה הפוך: עמוד מול הנושא, חשוב על הפריים, ואחר כך לחץ — פעם אחת.</strong> השיפור מיידי.</div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">49</div>
+    <div class="tip-body">
+      <div class="tip-title">תתאהב בנושא שלך</div>
+      <div class="tip-text">הצלמים הטובים ביותר צולמים את מה שהם אוהבים — ציפורים, נוף, ילדים, אוכל. <strong>אהבה לנושא גורמת לסבלנות, להתמדה ולתשומת לב שאי אפשר לזייף.</strong></div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">50</div>
+    <div class="tip-body">
+      <div class="tip-title">הכי חשוב — צא לצלם</div>
+      <div class="tip-text">כל הידע בעולם לא שווה כלום בלי יציאה לשטח. <strong>הציוד הכי טוב הוא זה שיש לך ביד. המצלמה הכי טובה היא זו שאתה לוקח איתך.</strong> עכשיו, לך לצלם.</div>
+    </div>
+  </div>
+
+  <div class="photo-strip">
+    <div>
+      <img src="https://drive.google.com/thumbnail?id=1FH_T3RTNUiI1f0cTktFnEEdJY-lO3sNi&sz=w800" alt="נשר">
+      <div class="photo-caption">300mm · f/6.3 · 1/2000s</div>
+    </div>
+    <div>
+      <img src="https://drive.google.com/thumbnail?id=1We5NhoA8RoEVMLisV1Uf4XjeAq792gv9&sz=w800" alt="נשר בטיסה">
+      <div class="photo-caption">300mm · f/5.6 · 1/3200s</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- BACK COVER -->
+<div class="back-cover">
+  <div>
+    <div style="font-size:2rem;margin-bottom:.5rem">📷</div>
+    <h3>עמית ארז — צלם</h3>
+    <p>מדריכי צילום חינמיים, גלריה, מקומות לצילום בישראל ועוד — הכל ב-<a href="https://amitphotos.com">amitphotos.com</a></p>
+  </div>
+  <div style="margin-top:1.5rem">
+    <p style="font-size:9pt;color:#666;">© 2025 Amit Erez · amitphotos.com · כל הזכויות שמורות</p>
+    <p style="font-size:9pt;color:#555;margin-top:.3rem;">אין לשכפל, לפרסם או לשתף ללא אישור בכתב.</p>
+  </div>
+</div>
+
+</body>
+</html>
