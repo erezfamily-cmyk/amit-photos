@@ -5737,8 +5737,11 @@ function nlBuildEmailHtml(issue, issueUrl, unsubscribeUrl, subscriberName) {
           </td></tr>
         </table>
       </td></tr>
-      <tr><td style="padding:16px 32px 24px;text-align:center;border-top:1px solid #222">
-        <p style="margin:0 0 8px;color:#666;font-size:11px">קיבלת מייל זה כי נרשמת ל<a href="https://amitphotos.com" style="color:#c8a96e;text-decoration:none">amitphotos.com</a></p>
+      <tr><td style="padding:16px 32px 8px;text-align:center">
+        <a href="https://ko-fi.com/amitphotos" style="display:inline-block;background:#f5f0e8;color:#7c5c2e;font-size:13px;font-weight:700;padding:10px 22px;border-radius:8px;text-decoration:none">&#9749; אהבת את הגיליון? קנה לי קפה</a>
+      </td></tr>
+      <tr><td style="padding:8px 32px 24px;text-align:center;border-top:1px solid #222;margin-top:8px">
+        <p style="margin:8px 0 8px;color:#666;font-size:11px">קיבלת מייל זה כי נרשמת ל<a href="https://amitphotos.com" style="color:#c8a96e;text-decoration:none">amitphotos.com</a></p>
         <a href="${escXml(unsubscribeUrl)}" style="color:#888;font-size:12px;text-decoration:underline">Unsubscribe / הסר אותי מהרשימה</a>
       </td></tr>
     </table>
