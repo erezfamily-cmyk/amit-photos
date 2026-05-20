@@ -4742,20 +4742,14 @@ async function handleNlIssue(env, slug, isPreview) {
     </section>` : '';
 
   const wallMockupSection = c.hero ? `
-    <section class="nl-section nl-wall-section">
-      <div class="nl-section-badge">כך היא נראית אצלך בבית</div>
-      <div class="nl-wall-room">
-        <div class="nl-wall-frame">
-          <img src="${escXml(c.hero.photo_url)}" alt="${escXml(c.hero.title_he)}" class="nl-wall-photo">
+    <section class="nl-section nl-print-section">
+      <div class="nl-section-badge">תמונה מוכנה לקיר</div>
+      <a class="nl-print-frame" href="/photos/${escXml(c.hero.photo_id)}/">
+        <div class="nl-print-mat">
+          <img src="${escXml(c.hero.photo_url)}" alt="${escXml(c.hero.title_he)}" class="nl-print-photo">
         </div>
-        <div class="nl-wall-floor"></div>
-      </div>
-      <div class="nl-wall-cta">
-        <span class="nl-wall-price">מ-₪290</span>
-        <a class="nl-btn-primary" href="/photos/${escXml(c.hero.photo_id)}/">🛒 הזמן הדפסה</a>
-        <a class="nl-btn-secondary" href="/photos/${escXml(c.hero.photo_id)}/">👁 מידות וחומרים</a>
-      </div>
-      <p class="nl-wall-materials">קנבס · אלומיניום · נייר ארכיוני · משלוח עד הבית</p>
+      </a>
+      <a class="nl-btn-primary" href="/photos/${escXml(c.hero.photo_id)}/">הזמן הדפסה</a>
     </section>` : '';
 
   const galleryStripSection = (c.gallery_photos && c.gallery_photos.length) ? `
@@ -4793,19 +4787,19 @@ async function handleNlIssue(env, slug, isPreview) {
       <div class="nl-section-badge">מחפש תמונה לבית או למשרד?</div>
       <div class="nl-cta-grid">
         <a class="nl-cta-card" href="/?category=%D7%A0%D7%95%D7%A3">
-          <span class="nl-cta-icon">🛋️</span>
+          <span class="nl-cta-icon"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>
           <span class="nl-cta-label">לסלון / חדר שינה</span>
         </a>
         <a class="nl-cta-card" href="/?category=%D7%A2%D7%99%D7%A8%D7%95%D7%A0%D7%99">
-          <span class="nl-cta-icon">💼</span>
+          <span class="nl-cta-icon"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></span>
           <span class="nl-cta-label">למשרד / קליניקה</span>
         </a>
         <a class="nl-cta-card" href="/contact/">
-          <span class="nl-cta-icon">🎁</span>
+          <span class="nl-cta-icon"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 12 20 22 4 22 4 12"/><rect width="20" height="5" x="2" y="7"/><line x1="12" x2="12" y1="22" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg></span>
           <span class="nl-cta-label">מתנה מיוחדת</span>
         </a>
         <a class="nl-cta-card" href="/contact/">
-          <span class="nl-cta-icon">✨</span>
+          <span class="nl-cta-icon"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg></span>
           <span class="nl-cta-label">הדפסה אישית</span>
         </a>
       </div>
@@ -4873,6 +4867,10 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direc
 .nl-btn-primary{background:var(--accent);color:#000;text-decoration:none;border-radius:20px;padding:.4rem 1.1rem;font-size:.85rem;font-weight:700}
 .nl-btn-secondary{background:transparent;color:var(--accent);border:1px solid var(--accent);text-decoration:none;border-radius:20px;padding:.4rem 1.1rem;font-size:.85rem}
 .nl-wall-materials{font-size:.75rem;color:var(--muted)}
+.nl-print-section{background:var(--surface);border-radius:16px;margin:1rem auto;max-width:800px;padding:1.5rem;display:flex;flex-direction:column;align-items:center;gap:1rem}
+.nl-print-frame{display:block;text-decoration:none;width:min(380px,90%)}
+.nl-print-mat{background:#f8f6f1;padding:14px 14px 28px;border-radius:2px;box-shadow:0 4px 24px #0008,0 1px 3px #0004}
+.nl-print-photo{width:100%;aspect-ratio:4/3;object-fit:cover;display:block}
 .nl-gallery-section{max-width:800px;margin:0 auto;padding:1rem 1.5rem}
 .nl-gallery-strip{display:flex;gap:.75rem;overflow-x:auto;padding-bottom:.5rem;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
 .nl-gallery-thumb{flex:0 0 auto;width:120px;text-decoration:none;color:var(--text)}
@@ -4896,7 +4894,7 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direc
 .nl-cta-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-top:.75rem}
 .nl-cta-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1rem;display:flex;flex-direction:column;align-items:center;text-decoration:none;gap:.4rem;transition:border-color .2s}
 .nl-cta-card:hover{border-color:var(--accent)}
-.nl-cta-icon{font-size:1.5rem}
+.nl-cta-icon{display:flex;align-items:center;justify-content:center;color:var(--accent)}
 .nl-cta-label{font-size:.82rem;color:var(--text);text-align:center}
 .nl-contact-section{max-width:800px;margin:0 auto;padding:1rem 1.5rem}
 .nl-contact-card{background:var(--surface);border:1px solid rgba(200,169,110,.3);border-radius:14px;padding:1.25rem 1.5rem}
