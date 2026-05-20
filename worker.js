@@ -4717,7 +4717,10 @@ async function handleNlIssue(env, slug, isPreview) {
     const hasSteps = Array.isArray(c.guide.steps) && c.guide.steps.length > 0;
     if (hasSteps) {
       const pillsHtml = c.guide.steps.map((s, i) =>
-        `<button class="nl-step-pill${i === 0 ? ' nl-step-active' : ''}" onclick="showStep(${i + 1})">שלב ${i + 1}</button>`
+        `<button class="nl-step-pill${i === 0 ? ' nl-step-active' : ''}" onclick="showStep(${i + 1})">
+          <span class="nl-step-num">${String(i + 1).padStart(2, '0')}</span>
+          <span class="nl-step-label">${escXml(s.title_he)}</span>
+        </button>`
       ).join('');
       const stepsHtml = c.guide.steps.map((s, i) =>
         `<div class="nl-step-content" id="step-${i + 1}"${i > 0 ? ' style="display:none"' : ''}>
@@ -4774,13 +4777,18 @@ async function handleNlIssue(env, slug, isPreview) {
       </div>` : ''}
       <p class="nl-body-text" data-he="${escXml(c.location.text_he)}" data-en="${escXml(c.location.text_en || c.location.text_he)}">${escXml(c.location.text_he)}</p>
       <div class="nl-location-links">
-        <a class="nl-link" href="/locations/" data-he="לכל המקומות ←" data-en="All locations ←">לכל המקומות ←</a>
-        <a class="nl-link nl-maps-link" href="https://www.google.com/maps/search/${encodeURIComponent(c.location.title_he)}" target="_blank" rel="noopener">פתח במפה ↗</a>
+        <a class="nl-location-btn" href="/locations/">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+          לכל המקומות
+        </a>
+        <a class="nl-location-btn" href="https://www.google.com/maps/search/${encodeURIComponent(c.location.title_he)}" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
+          פתח במפה
+        </a>
       </div>
     </section>`;
   })() : '';
 
-  const tipIllustration = c.gallery_photos?.[0];
   const tipSection = c.tip ? `
     <section class="nl-section nl-tip-section">
       <div class="nl-tip-card">
@@ -4789,9 +4797,12 @@ async function handleNlIssue(env, slug, isPreview) {
           <div class="nl-tip-title" data-he="${escXml(c.tip.title_he || 'טיפ החודש')}" data-en="${escXml(c.tip.title_en || 'Tip of the Month')}">${escXml(c.tip.title_he || 'טיפ החודש')}</div>
         </div>
         <div class="nl-tip-grid">
-          <p class="nl-tip-text" data-he="${escXml(c.tip.text_he)}" data-en="${escXml(c.tip.text_en || c.tip.text_he)}">${escXml(c.tip.text_he)}</p>
-          ${tipIllustration ? `<a class="nl-tip-img-wrap" href="/?photo=${escXml(tipIllustration.id)}">
-            <img src="${escXml(tipIllustration.url)}" alt="${escXml(tipIllustration.title)}" class="nl-tip-img" loading="lazy">
+          <div>
+            <p class="nl-tip-text" data-he="${escXml(c.tip.text_he)}" data-en="${escXml(c.tip.text_en || c.tip.text_he)}">${escXml(c.tip.text_he)}</p>
+            <a class="nl-link nl-tip-more" href="/camera/">לטיפים נוספים ומדריכים ←</a>
+          </div>
+          ${c.hero?.photo_url ? `<a class="nl-tip-img-wrap" href="/?photo=${escXml(c.hero.photo_id)}">
+            <img src="${escXml(c.hero.photo_url)}" alt="${escXml(c.hero.title_he)}" class="nl-tip-img" loading="lazy">
           </a>` : ''}
         </div>
       </div>
@@ -4811,7 +4822,7 @@ async function handleNlIssue(env, slug, isPreview) {
       <div class="nl-section-badge">${galleryBadge}</div>
       <div class="nl-gallery-strip">
         ${c.gallery_photos.slice(0, 3).map(photo =>
-          `<a class="nl-gallery-thumb" href="/photos/${escXml(photo.id)}/">
+          `<a class="nl-gallery-thumb" href="/?photo=${escXml(photo.id)}">
             <img src="${escXml(photo.url)}" alt="${escXml(photo.title)}" loading="lazy">
             <span>${escXml(photo.title)}</span>
           </a>`
@@ -4943,8 +4954,10 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direc
 .nl-loc-main-img{width:100%;max-height:320px;object-fit:cover;border-radius:10px;display:block}
 .nl-loc-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:.4rem;margin-top:.4rem}
 .nl-loc-strip-img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:6px;display:block}
-.nl-location-links{display:flex;gap:1rem;align-items:center;flex-wrap:wrap;margin-top:.75rem}
-.nl-maps-link{color:var(--muted);font-size:.82rem}
+.nl-location-links{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap;margin-top:.75rem}
+.nl-location-btn{display:inline-flex;align-items:center;gap:.35rem;background:var(--surface);border:1px solid var(--border);color:var(--text);text-decoration:none;border-radius:20px;padding:.4rem .9rem;font-size:.8rem;transition:border-color .2s}
+.nl-location-btn:hover{border-color:var(--accent);color:var(--accent)}
+.nl-tip-more{display:inline-block;margin-top:.6rem;font-size:.8rem}
 .nl-guide-cta-banner{display:flex;align-items:center;justify-content:space-between;background:rgba(200,169,110,.1);border:1px solid rgba(200,169,110,.35);border-radius:12px;padding:1rem 1.25rem;margin-top:1rem;text-decoration:none;transition:background .2s,border-color .2s}
 .nl-guide-cta-banner:hover{background:rgba(200,169,110,.18);border-color:var(--accent)}
 .nl-guide-cta-label{font-size:.72rem;color:var(--accent);letter-spacing:.04em;margin-bottom:.2rem;text-transform:uppercase}
@@ -4974,9 +4987,12 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direc
 .nl-sale-pricing{display:flex;align-items:center;gap:.75rem;margin-bottom:.75rem}
 .nl-sale-original{font-size:.9rem;color:var(--muted);text-decoration:line-through}
 .nl-sale-price{font-size:1.2rem;font-weight:700;color:var(--accent)}
-.nl-steps-nav{display:flex;gap:.5rem;margin:.75rem 0;flex-wrap:wrap}
-.nl-step-pill{background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:20px;padding:.35rem .9rem;font-size:.8rem;cursor:pointer;font-family:inherit;transition:background .2s,color .2s,border-color .2s}
-.nl-step-pill.nl-step-active{background:var(--accent);color:#000;border-color:var(--accent)}
+.nl-steps-nav{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin:.75rem 0}
+.nl-step-pill{background:var(--surface);border:1px solid var(--border);color:var(--muted);border-radius:10px;padding:.6rem .5rem;font-size:.75rem;cursor:pointer;font-family:inherit;transition:all .2s;display:flex;flex-direction:column;align-items:center;gap:.2rem;text-align:center;line-height:1.35}
+.nl-step-num{font-family:'Syne',sans-serif;font-size:1.1rem;color:var(--border);transition:color .2s}
+.nl-step-label{font-size:.72rem}
+.nl-step-pill.nl-step-active{background:rgba(200,169,110,.1);border-color:var(--accent);color:var(--text)}
+.nl-step-pill.nl-step-active .nl-step-num{color:var(--accent)}
 .nl-step-title{font-family:'Syne',sans-serif;font-size:.95rem;color:var(--accent);margin-bottom:.4rem}
 .nl-cta-section{max-width:800px;margin:0 auto;padding:1rem 1.5rem}
 .nl-cta-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-top:.75rem}
