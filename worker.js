@@ -4460,6 +4460,18 @@ async function nlPickGalleryPhotos(env, heroPhotoId, heroCategory) {
   return (results || []).map(p => ({ id: p.id, title: p.title || '', url: toAbsolutePhotoUrl(p.url) }));
 }
 
+async function nlPickNewPhotos(env, heroPhotoId) {
+  const cutoff = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+  const { results } = await env.DB.prepare(
+    'SELECT id, title, url, thumbnail, category FROM photos WHERE published=1 AND id != ? AND created_at >= ? ORDER BY created_at DESC LIMIT 6'
+  ).bind(heroPhotoId, cutoff).all();
+  return (results || []).map(p => ({
+    id: p.id, title: p.title || '',
+    url: toAbsolutePhotoUrl(p.url || p.thumbnail),
+    category: p.category || ''
+  }));
+}
+
 async function nlGenerateContent(env, heroPhoto, guide, location, type) {
   const apiKey = env.ANTHROPIC_API_KEY;
   if (!apiKey) throw new Error('ANTHROPIC_API_KEY not set');
@@ -4548,6 +4560,7 @@ async function nlGenerateDraft(env, type) {
   if (!heroPhoto) throw new Error('No photos found');
 
   const galleryPhotos = await nlPickGalleryPhotos(env, heroPhoto.id, heroPhoto.category);
+  const newPhotos = await nlPickNewPhotos(env, heroPhoto.id);
   const guide = await nlPickGuide(env);
   const location = type === 'full' ? await nlPickLocation(env) : null;
 
@@ -4569,6 +4582,7 @@ async function nlGenerateDraft(env, type) {
     tip: { title_he: generated.tip_title_he, title_en: generated.tip_title_en,
       text_he: generated.tip_text_he, text_en: generated.tip_text_en },
     gallery_photos: galleryPhotos,
+    new_photos: newPhotos,
     links: [
       { label_he: 'גלריה', label_en: 'Gallery', url: '/' },
       { label_he: 'מדריכים', label_en: 'Guides', url: '/camera/' },
@@ -4580,7 +4594,8 @@ async function nlGenerateDraft(env, type) {
       title_he: heroPhoto.title, category: heroPhoto.category || '',
       text_he: generated.hero_text_he, text_en: generated.hero_text_en },
     tip: { text_he: generated.tip_text_he, text_en: generated.tip_text_en },
-    gallery_photos: galleryPhotos
+    gallery_photos: galleryPhotos,
+    new_photos: newPhotos
   };
 
   const titleHe = type === 'full'
@@ -4828,6 +4843,22 @@ async function handleNlIssue(env, slug, isPreview) {
       ).join('')}</div>
     </section>` : '';
 
+  const newPhotosSection = (c.new_photos && c.new_photos.length) ? `
+    <section class="nl-section nl-new-photos-section">
+      <div class="nl-section-badge" data-he="חדש בגלריה" data-en="New in Gallery">חדש בגלריה</div>
+      <div class="nl-new-photos-grid">
+        ${c.new_photos.map(p => `
+          <a class="nl-new-photo-card" href="/?photo=${escXml(p.id)}">
+            <div class="nl-new-photo-img-wrap">
+              <img src="${escXml(p.url)}" alt="${escXml(p.title)}" loading="lazy">
+              <span class="nl-new-badge" data-he="חדש" data-en="New">חדש</span>
+            </div>
+            <span class="nl-new-photo-title">${escXml(p.title)}</span>
+          </a>`).join('')}
+      </div>
+      <a class="nl-new-gallery-link" href="/" data-he="לכל הגלריה ←" data-en="Full Gallery →">לכל הגלריה ←</a>
+    </section>` : '';
+
   const galleryBadgeHe = c.hero?.category ? `עוד ${escXml(c.hero.category)}` : 'עוד מהגלריה';
   const galleryBadgeEn = c.hero?.category ? `More ${escXml(c.hero.category)}` : 'More from Gallery';
   const galleryStripSection = (c.gallery_photos && c.gallery_photos.length) ? `
@@ -4985,6 +5016,17 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direc
 .nl-print-frame{display:block;text-decoration:none;width:min(380px,90%)}
 .nl-print-mat{background:#f8f6f1;padding:14px 14px 28px;border-radius:2px;box-shadow:0 4px 24px #0008,0 1px 3px #0004}
 .nl-print-photo{width:100%;aspect-ratio:4/3;object-fit:cover;display:block}
+.nl-new-photos-section{max-width:800px;margin:0 auto;padding:1rem 1.5rem}
+.nl-new-photos-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;margin:.75rem 0}
+@media(max-width:520px){.nl-new-photos-grid{grid-template-columns:repeat(2,1fr)}}
+.nl-new-photo-card{display:block;text-decoration:none;color:var(--text)}
+.nl-new-photo-img-wrap{position:relative;border-radius:10px;overflow:hidden;aspect-ratio:4/3;background:#111;margin-bottom:.35rem}
+.nl-new-photo-img-wrap img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .3s}
+.nl-new-photo-card:hover img{transform:scale(1.04)}
+.nl-new-badge{position:absolute;top:.45rem;right:.45rem;background:var(--accent);color:#000;font-size:.6rem;font-weight:700;padding:.12rem .38rem;border-radius:4px;letter-spacing:.05em}
+.nl-new-photo-title{font-size:.75rem;color:var(--muted);display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nl-new-gallery-link{display:inline-block;margin-top:.5rem;font-size:.82rem;color:var(--accent);text-decoration:none}
+.nl-new-gallery-link:hover{text-decoration:underline}
 .nl-gallery-section{max-width:800px;margin:0 auto;padding:1rem 1.5rem}
 .nl-gallery-strip{display:flex;gap:.75rem;overflow-x:auto;padding-bottom:.5rem;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
 .nl-gallery-thumb{flex:0 0 auto;width:120px;text-decoration:none;color:var(--text)}
@@ -5071,6 +5113,8 @@ ${previewBanner}
 <h1 class="nl-issue-title" data-he="${escXml(issue.title_he)}" data-en="${escXml(issue.title_en || issue.title_he)}">${escXml(issue.title_he)}</h1>
 ${heroSection}
 <hr class="nl-divider">
+${newPhotosSection}
+${newPhotosSection ? '<hr class="nl-divider">' : ''}
 ${galleryStripSection}
 ${saleBannerSection}
 ${(galleryStripSection || saleBannerSection) ? '<hr class="nl-divider">' : ''}
