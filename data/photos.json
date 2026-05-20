@@ -146,6 +146,27 @@
     "added_at": "2026-05-16"
   },
   {
+    "id": "1EmeTSNbWd51FxZLM2cFPNeZkuOasH-85",
+    "title": "הגדעון הלילי על הגדר",
+    "category": "בעלי חיים",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=1EmeTSNbWd51FxZLM2cFPNeZkuOasH-85",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1EmeTSNbWd51FxZLM2cFPNeZkuOasH-85&sz=w600",
+    "description": "ציפור מימית בעלת ראש שחור וגוף אפור יושבת על חוט גדר",
+    "filename": "DSC_0805 copy.jpg",
+    "width": 2640,
+    "height": 1823,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D70",
+      "lens": "300.0 mm f/4.0",
+      "focal": 600,
+      "aperture": 8,
+      "iso": 200,
+      "shutter": 0.04
+    },
+    "added_at": "2026-05-20"
+  },
+  {
     "id": "1RcQEqF9fEO47BiHIDQFK78rIPqw1HBFf",
     "title": "דרום אפריקאי בעיתון",
     "category": "בעלי חיים",
@@ -745,7 +766,7 @@
     "width": 1504,
     "height": 1000,
     "exif": null,
-    "added_at": "2026-05-19"
+    "added_at": "2026-05-20"
   },
   {
     "id": "11S40eybbvVMrvc_uceTn6Ge_9NIj0W3Q",
@@ -755,27 +776,6 @@
     "url": "https://drive.google.com/uc?export=view&id=11S40eybbvVMrvc_uceTn6Ge_9NIj0W3Q",
     "thumbnail": "https://drive.google.com/thumbnail?id=11S40eybbvVMrvc_uceTn6Ge_9NIj0W3Q&sz=w600",
     "description": "ינשוף מתבונן קדימה עם עיניים זהובות בוהקות ובירות שחורות",
-    "filename": "MJH_1157.JPG",
-    "width": 7360,
-    "height": 4912,
-    "exif": {
-      "camera": "NIKON CORPORATION NIKON D800",
-      "lens": "300.0 mm f/4.0",
-      "focal": 300,
-      "aperture": 4,
-      "iso": 3600,
-      "shutter": 0.003125
-    },
-    "added_at": "2026-04-22"
-  },
-  {
-    "id": "1vkYKHEfCyp7OPSQhcF8MHF686-hNRkcy",
-    "title": "ינשוף עיניים זהובות",
-    "category": "בעלי חיים",
-    "parent_category": null,
-    "url": "https://drive.google.com/uc?export=view&id=1vkYKHEfCyp7OPSQhcF8MHF686-hNRkcy",
-    "thumbnail": "https://drive.google.com/thumbnail?id=1vkYKHEfCyp7OPSQhcF8MHF686-hNRkcy&sz=w600",
-    "description": "ינשוף צייד עם עיניים זהובות בוהקות וריירות אפודות מפורטות",
     "filename": "MJH_1157.JPG",
     "width": 7360,
     "height": 4912,
@@ -929,27 +929,6 @@
       "iso": 320,
       "shutter": 0.005
     }
-  },
-  {
-    "id": "1RVu7NcD_i7ti0N8bVE_oSDhyhhE2Xag8",
-    "title": "סנאי על ענף מכוסה אזוביות",
-    "category": "בעלי חיים",
-    "parent_category": null,
-    "url": "https://drive.google.com/uc?export=view&id=1RVu7NcD_i7ti0N8bVE_oSDhyhhE2Xag8",
-    "thumbnail": "https://drive.google.com/thumbnail?id=1RVu7NcD_i7ti0N8bVE_oSDhyhhE2Xag8&sz=w600",
-    "description": "סנאי חום עומד על ענף עתיק מכוסה אזוביות ירוקות בצפיפות",
-    "filename": "MJH_3461.JPG",
-    "width": 7360,
-    "height": 4912,
-    "exif": {
-      "camera": "NIKON CORPORATION NIKON D800",
-      "lens": "70.0-200.0 mm f/2.8",
-      "focal": 200,
-      "aperture": 2.8,
-      "iso": 400,
-      "shutter": 0.005
-    },
-    "added_at": "2026-04-22"
   },
   {
     "id": "1hb61cfQlsoS1ROWmT8r4kE6Ng2nQNdGg",
@@ -4877,6 +4856,27 @@
     "added_at": "2026-04-22"
   },
   {
+    "id": "17G4a_sC0PUTCVAQmTPOas7Q2vxnajnHq",
+    "title": "רחיפית על פרח ורוד",
+    "category": "מאקרו-צילומי תקריב",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=17G4a_sC0PUTCVAQmTPOas7Q2vxnajnHq",
+    "thumbnail": "https://drive.google.com/thumbnail?id=17G4a_sC0PUTCVAQmTPOas7Q2vxnajnHq&sz=w600",
+    "description": "רחיפית אוכלת צוף מפרח ורוד עם רקע ירוק מטושטש",
+    "filename": "DSC_2052.jpg",
+    "width": 4288,
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "105.0 mm f/2.8",
+      "focal": 105,
+      "aperture": 8,
+      "iso": 200,
+      "shutter": 0.008
+    },
+    "added_at": "2026-05-20"
+  },
+  {
     "id": "1GjwX2sGR2KDTdK8nFPRoJnpTlVAH9-JK",
     "title": "עלה בשינוי עונות",
     "category": "מאקרו-צילומי תקריב",
@@ -4971,6 +4971,27 @@
     "width": 1539,
     "height": 1000,
     "alt": "זבוב טורף עם טרף"
+  },
+  {
+    "id": "1Nguy1jZ21IKKZKYDYs8mruubS7AiShg6",
+    "title": "נמלה על פרח צהוב",
+    "category": "מאקרו-צילומי תקריב",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=1Nguy1jZ21IKKZKYDYs8mruubS7AiShg6",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1Nguy1jZ21IKKZKYDYs8mruubS7AiShg6&sz=w600",
+    "description": "נמלה שחורה אוספת צוף מפרח צהוב זעיר בצילום מקרוב",
+    "filename": "DSC_3062-1 copy.jpg",
+    "width": 2600,
+    "height": 1853,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D70",
+      "lens": "105.0 mm f/2.8",
+      "focal": 105,
+      "aperture": 13,
+      "iso": 200,
+      "shutter": 0.00625
+    },
+    "added_at": "2026-05-20"
   },
   {
     "id": "1mghtHqO8attO4O_zEveQ7-67qxPc6QyE",
@@ -16584,6 +16605,27 @@
       "iso": 100,
       "shutter": 0.0125
     }
+  },
+  {
+    "id": "1BGts8c4KsNSS4nmBHLmTT7aKUMo0wEAP",
+    "title": "עלי חמנייה זהובים",
+    "category": "פרחים וצמחים",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=1BGts8c4KsNSS4nmBHLmTT7aKUMo0wEAP",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1BGts8c4KsNSS4nmBHLmTT7aKUMo0wEAP&sz=w600",
+    "description": "תקריב אמנותי של עלי חמנייה זהובים ולב הפרח החום",
+    "filename": "DSC_9286 copy.jpg",
+    "width": 3008,
+    "height": 2000,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D70",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 160,
+      "aperture": 2.8,
+      "iso": 200,
+      "shutter": 0.0005
+    },
+    "added_at": "2026-05-20"
   },
   {
     "id": "1Oj4LIdYrQU-KR9aPCVLFsTnhBJnPdh8U",
