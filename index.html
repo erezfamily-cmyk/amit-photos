@@ -24,28 +24,58 @@
 
   <!-- JSON-LD Structured Data -->
   <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "Person",
-    "name": "עמית ארז",
-    "jobTitle": "צלם אמנותי ומעצב גרפי",
-    "url": "https://amitphotos.com/",
-    "image": "https://lh3.googleusercontent.com/d/1mkj7yjz3I-Y951ZoHVSH_-6v8FjL66ap=w1200",
-    "description": "צלם אמנותי ומעצב גרפי ממודיעין, יליד 1972. בוגר לימודי עיצוב, מכללת גורן. מציע תמונות דיגיטליות לרכישה — טבע, מאקרו, נופי ישראל ותיעוד מסעות.",
-    "telephone": "050-3333227",
-    "email": "erez.family@gmail.com",
-    "address": {
-      "@type": "PostalAddress",
-      "addressLocality": "מודיעין",
-      "addressCountry": "IL"
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "עמית ארז",
+      "jobTitle": "צלם אמנותי ומעצב גרפי",
+      "url": "https://amitphotos.com/",
+      "image": {
+        "@type": "ImageObject",
+        "url": "https://lh3.googleusercontent.com/d/1mkj7yjz3I-Y951ZoHVSH_-6v8FjL66ap=w1200",
+        "license": "https://amitphotos.com/privacy/",
+        "acquireLicensePage": "https://amitphotos.com/#gallery",
+        "creditText": "עמית ארז",
+        "copyrightNotice": "© עמית ארז. כל הזכויות שמורות."
+      },
+      "description": "צלם אמנותי ומעצב גרפי ממודיעין, יליד 1972. בוגר לימודי עיצוב, מכללת גורן. מציע תמונות דיגיטליות לרכישה — טבע, מאקרו, נופי ישראל ותיעוד מסעות.",
+      "telephone": "050-3333227",
+      "email": "erez.family@gmail.com",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "מודיעין",
+        "addressCountry": "IL"
+      },
+      "sameAs": [
+        "https://500px.com/amite",
+        "https://gurushots.com/erez.family/photos",
+        "https://www.instagram.com/amite"
+      ],
+      "knowsAbout": ["צילום טבע", "צילום מאקרו", "נופי ישראל", "צילום מסעות", "עיצוב גרפי"]
     },
-    "sameAs": [
-      "https://500px.com/amite",
-      "https://gurushots.com/erez.family/photos",
-      "https://www.instagram.com/amite"
-    ],
-    "knowsAbout": ["צילום טבע", "צילום מאקרו", "נופי ישראל", "צילום מסעות", "עיצוב גרפי"]
-  }
+    {
+      "@context": "https://schema.org",
+      "@type": "ImageGallery",
+      "name": "גלריית עמית ארז — תמונות אמנותיות",
+      "description": "גלריה של תמונות אמנותיות דיגיטליות לרכישה — טבע, מאקרו, נופי ישראל ועוד.",
+      "url": "https://amitphotos.com/#gallery",
+      "author": {
+        "@type": "Person",
+        "name": "עמית ארז",
+        "url": "https://amitphotos.com/"
+      },
+      "license": "https://amitphotos.com/privacy/",
+      "acquireLicensePage": "https://amitphotos.com/#gallery",
+      "creditText": "עמית ארז",
+      "copyrightNotice": "© עמית ארז. כל הזכויות שמורות.",
+      "copyrightYear": "2024",
+      "copyrightHolder": {
+        "@type": "Person",
+        "name": "עמית ארז"
+      }
+    }
+  ]
   </script>
 
   <!-- Favicon -->
