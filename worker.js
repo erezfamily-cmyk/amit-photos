@@ -4702,7 +4702,7 @@ async function handleNlIssue(env, slug, isPreview) {
       <img src="${escXml(c.hero.photo_url)}" alt="${escXml(c.hero.title_he)}" class="nl-hero-img">
       <h2 class="nl-photo-title">${escXml(c.hero.title_he)}</h2>
       <p class="nl-body-text" data-he="${escXml(c.hero.text_he)}" data-en="${escXml(c.hero.text_en || c.hero.text_he)}">${escXml(c.hero.text_he)}</p>
-      <div class="nl-hero-footer">${heroPriceHtml}<a class="nl-btn-secondary nl-hero-order" href="/photos/${escXml(c.hero.photo_id)}/">רכוש קובץ ←</a></div>
+      <div class="nl-hero-footer">${heroPriceHtml}<a class="nl-btn-secondary nl-hero-order" href="/?photo=${escXml(c.hero.photo_id)}">רכוש קובץ ←</a></div>
     </section>` : '';
 
   const guideSection = isFull && c.guide ? (() => {
@@ -4747,6 +4747,7 @@ async function handleNlIssue(env, slug, isPreview) {
       </div>
     </section>` : '';
 
+  const tipIllustration = c.gallery_photos?.[0];
   const tipSection = c.tip ? `
     <section class="nl-section nl-tip-section">
       <div class="nl-tip-card">
@@ -4754,7 +4755,12 @@ async function handleNlIssue(env, slug, isPreview) {
           <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="nl-tip-icon"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>
           <div class="nl-tip-title" data-he="${escXml(c.tip.title_he || 'טיפ החודש')}" data-en="${escXml(c.tip.title_en || 'Tip of the Month')}">${escXml(c.tip.title_he || 'טיפ החודש')}</div>
         </div>
-        <p data-he="${escXml(c.tip.text_he)}" data-en="${escXml(c.tip.text_en || c.tip.text_he)}">${escXml(c.tip.text_he)}</p>
+        <div class="nl-tip-grid">
+          <p class="nl-tip-text" data-he="${escXml(c.tip.text_he)}" data-en="${escXml(c.tip.text_en || c.tip.text_he)}">${escXml(c.tip.text_he)}</p>
+          ${tipIllustration ? `<a class="nl-tip-img-wrap" href="/?photo=${escXml(tipIllustration.id)}">
+            <img src="${escXml(tipIllustration.url)}" alt="${escXml(tipIllustration.title)}" class="nl-tip-img" loading="lazy">
+          </a>` : ''}
+        </div>
       </div>
     </section>` : '';
 
@@ -4797,6 +4803,9 @@ async function handleNlIssue(env, slug, isPreview) {
       </div>
     </section>` : '';
 
+  const _svgWa = `<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;margin-left:4px"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>`;
+  const _svgPhone = `<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;margin-left:4px"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.42 2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.82a16 16 0 0 0 6 6l.87-.87a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>`;
+  const _svgPerson = `<svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>`;
   const _icoHome = `<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>`;
   const _icoBrief = `<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>`;
   const _icoGift = `<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 12 20 22 4 22 4 12"/><rect width="20" height="5" x="2" y="7"/><line x1="12" x2="12" y1="22" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>`;
@@ -4804,7 +4813,7 @@ async function handleNlIssue(env, slug, isPreview) {
   const _icoCamera = `<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3z"/><circle cx="12" cy="13" r="3"/></svg>`;
   const _icoUser = `<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`;
   const _icoImage = `<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>`;
-  const _heroPhotoHref = c.hero?.photo_id ? `/photos/${escXml(c.hero.photo_id)}/` : '/';
+  const _heroPhotoHref = c.hero?.photo_id ? `/?photo=${escXml(c.hero.photo_id)}` : '/';
   const _heroCat = c.hero?.category || '';
   const _ctaByCategory = {
     'פורטרט': [
@@ -4826,38 +4835,19 @@ async function handleNlIssue(env, slug, isPreview) {
       { ico: _icoHome,   label: 'קובץ לסלון',             href: _heroPhotoHref }
     ]
   };
-  const _defaultCta = [
-    { ico: _icoHome,   label: 'קובץ לסלון / חדר שינה',  href: _heroPhotoHref },
-    { ico: _icoBrief,  label: 'קובץ למשרד / קליניקה',   href: _heroPhotoHref },
-    { ico: _icoGift,   label: 'מתנה ייחודית',            href: '/contact/' },
-    { ico: _icoImage,  label: 'כל הגלריה',              href: '/' }
-  ];
-  const _ctaCards = _ctaByCategory[_heroCat] || _defaultCta;
-  const ctaCardsSection = `
-    <section class="nl-section nl-cta-section">
-      <div class="nl-section-badge">מחפש תמונה לבית או למשרד?</div>
-      <div class="nl-cta-grid">
-        ${_ctaCards.map(card => `<a class="nl-cta-card" href="${escXml(card.href)}">
-          <span class="nl-cta-icon">${card.ico}</span>
-          <span class="nl-cta-label">${escXml(card.label)}</span>
-        </a>`).join('')}
-      </div>
-    </section>`;
-
-  const contactCardSection = `
+  const contactOutreachSection = `
     <section class="nl-section nl-contact-section">
       <div class="nl-contact-card">
+        <h2 class="nl-contact-heading">מחפש תמונה לבית ולמשרד?</h2>
         <div class="nl-contact-header">
-          <span class="nl-contact-avatar"><svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></span>
-          <div>
-            <div class="nl-contact-name">עמית — צלם אישי</div>
-            <p class="nl-contact-intro">רוצה לבחור תמונה לבית, לקנות הדפסה, או סתם לשאול? אני כאן.</p>
-          </div>
+          <span class="nl-contact-avatar">${_svgPerson}</span>
+          <div class="nl-contact-name">עמית — צלם אישי</div>
         </div>
         <div class="nl-contact-btns">
-          <a class="nl-contact-btn nl-contact-wa" href="https://wa.me/972503333227" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;margin-left:4px"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> וואטסאפ</a>
-          <a class="nl-contact-btn" href="tel:+972503333227"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;margin-left:4px"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.42 2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.82a16 16 0 0 0 6 6l.87-.87a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg> 050-3333227</a>
+          <a class="nl-contact-btn nl-contact-wa" href="https://wa.me/972503333227" target="_blank" rel="noopener">${_svgWa} וואטסאפ</a>
+          <a class="nl-contact-btn" href="tel:+972503333227">${_svgPhone} 050-3333227</a>
         </div>
+        <p class="nl-contact-quote">רוצה לבחור תמונה לבית? לקנות קובץ, או סתם לשאול? אני כאן.</p>
         <p class="nl-contact-note">ניתן לשלם: ביט · פייבוקס · פייפל</p>
       </div>
     </section>`;
@@ -4909,11 +4899,18 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direc
 .nl-hero-price{display:flex;align-items:center;gap:.5rem}
 .nl-hero-price-orig{font-size:.9rem;color:var(--muted);text-decoration:line-through}
 .nl-hero-price-sale{font-size:1.1rem;font-weight:700;color:var(--accent)}
-.nl-tip-header{display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem}
+.nl-tip-header{display:flex;align-items:center;gap:.5rem;margin-bottom:.75rem}
 .nl-tip-icon{color:var(--accent);flex-shrink:0}
+.nl-tip-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;align-items:center}
+.nl-tip-text{font-size:.85rem;color:var(--text);line-height:1.7}
+.nl-tip-img-wrap{display:block;border-radius:8px;overflow:hidden;border:1px solid var(--border);text-decoration:none}
+.nl-tip-img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block}
+@media(max-width:520px){.nl-tip-grid{grid-template-columns:1fr}.nl-tip-img-wrap{order:-1}}
 .nl-location-links{display:flex;gap:1rem;align-items:center;flex-wrap:wrap;margin-top:.5rem}
 .nl-maps-link{color:var(--muted);font-size:.82rem}
-.nl-contact-note{font-size:.9rem;color:var(--text);margin-top:.5rem;font-weight:600}
+.nl-contact-heading{font-family:'Syne',sans-serif;font-size:1rem;color:var(--accent);margin-bottom:.75rem}
+.nl-contact-quote{font-size:.92rem;color:var(--text);line-height:1.65;margin-top:.75rem}
+.nl-contact-note{font-size:.85rem;color:var(--muted);margin-top:.35rem}
 .nl-unsub-link{background:none;border:none;color:var(--muted);font-size:.78rem;cursor:pointer;text-decoration:underline;padding:0;font-family:inherit}
 .nl-wall-materials{font-size:.75rem;color:var(--muted)}
 .nl-print-section{background:var(--surface);border-radius:16px;margin:1rem auto;max-width:800px;padding:1.5rem;display:flex;flex-direction:column;align-items:center;gap:1rem}
@@ -5001,9 +4998,7 @@ ${tipSection}
 ${tipSection ? '<hr class="nl-divider">' : ''}
 ${linksSection}
 ${(tipSection || linksSection) ? '<hr class="nl-divider">' : ''}
-${ctaCardsSection}
-<hr class="nl-divider">
-${contactCardSection}
+${contactOutreachSection}
 <footer class="nl-footer">
   <p>© Amit Photos | <a href="/">amitphotos.com</a></p>
 </footer>
