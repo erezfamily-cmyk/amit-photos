@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<title>50 Photography Tips for Beginners — Amit Erez</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Syne:wght@700;800&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --gold: #b8935a;
+  --gold-light: #d4aa70;
+  --dark: #1a1209;
+  --gray: #555;
+  --light-gray: #f5f2ee;
+  --border: #e0d8cc;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: #fff;
+  color: var(--dark);
+  direction: ltr;
+  font-size: 10.5pt;
+  line-height: 1.7;
+}
+
+.cover {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  background: var(--dark);
+  color: #fff;
+  padding: 3rem;
+  position: relative;
+  overflow: hidden;
+  page-break-after: always;
+}
+
+.cover-photo {
+  position: absolute;
+  inset: 0;
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+  opacity: .25;
+}
+
+.cover-content { position: relative; z-index: 1; }
+
+.cover-badge {
+  display: inline-block;
+  border: 1px solid var(--gold-light);
+  color: var(--gold-light);
+  font-size: 9pt;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  padding: .3rem 1rem;
+  border-radius: 20px;
+  margin-bottom: 2rem;
+}
+
+.cover h1 {
+  font-family: 'Syne', sans-serif;
+  font-size: 3.2rem;
+  line-height: 1.15;
+  margin-bottom: 1rem;
+  color: #fff;
+}
+
+.cover h1 span { color: var(--gold-light); }
+
+.cover-sub {
+  font-size: 1.05rem;
+  color: #ccc;
+  max-width: 440px;
+  margin: 0 auto 2.5rem;
+  line-height: 1.6;
+}
+
+.cover-author {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .3rem;
+}
+
+.cover-author-name {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.1rem;
+  color: var(--gold-light);
+}
+
+.cover-author-url { font-size: .8rem; color: #aaa; }
+
+.cover-divider {
+  width: 60px;
+  height: 2px;
+  background: var(--gold-light);
+  margin: 1.5rem auto;
+  opacity: .5;
+}
+
+.intro {
+  padding: 3rem 3.5rem;
+  page-break-after: always;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.intro h2 {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.6rem;
+  margin-bottom: 1.2rem;
+}
+
+.intro p { margin-bottom: 1rem; color: #444; font-size: 10.5pt; }
+
+.intro-signature {
+  margin-top: 2rem;
+  font-style: italic;
+  color: var(--gold);
+  font-size: 11pt;
+}
+
+.section-header {
+  background: var(--dark);
+  color: #fff;
+  padding: 2.5rem 3rem;
+  page-break-before: always;
+  page-break-after: avoid;
+  position: relative;
+  overflow: hidden;
+}
+
+.section-header-photo {
+  position: absolute;
+  inset: 0;
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+  opacity: .18;
+}
+
+.section-header-content { position: relative; z-index: 1; }
+
+.section-number {
+  font-size: 9pt;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--gold-light);
+  margin-bottom: .4rem;
+}
+
+.section-header h2 {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.8rem;
+  color: #fff;
+  margin-bottom: .4rem;
+}
+
+.section-header p { color: #bbb; font-size: 9.5pt; max-width: 480px; }
+
+.tips-page {
+  padding: 2rem 3rem;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.tip {
+  display: flex;
+  gap: 1.2rem;
+  margin-bottom: 1.5rem;
+  align-items: flex-start;
+  page-break-inside: avoid;
+}
+
+.tip-num {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  background: var(--gold);
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Syne', sans-serif;
+  font-size: 9pt;
+  font-weight: 700;
+  margin-top: 2px;
+}
+
+.tip-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 11pt;
+  font-weight: 700;
+  color: var(--dark);
+  margin-bottom: .2rem;
+}
+
+.tip-text { font-size: 10pt; color: #555; line-height: 1.65; }
+.tip-text strong { color: var(--dark); }
+
+.photo-strip {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: .5rem;
+  margin: 1.5rem 0;
+  page-break-inside: avoid;
+}
+
+.photo-strip img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 6px;
+  display: block;
+}
+
+.photo-full img {
+  width: 100%;
+  max-height: 240px;
+  object-fit: cover;
+  border-radius: 8px;
+  display: block;
+  margin: 1.5rem 0;
+}
+
+.photo-caption {
+  font-size: 8pt;
+  color: #999;
+  text-align: center;
+  margin-top: .3rem;
+  margin-bottom: 1rem;
+  font-style: italic;
+}
+
+.highlight {
+  background: var(--light-gray);
+  border-left: 3px solid var(--gold);
+  padding: .85rem 1.1rem;
+  margin: 1.2rem 0;
+  border-radius: 0 6px 6px 0;
+  font-size: 10pt;
+  color: #444;
+  page-break-inside: avoid;
+}
+
+.highlight strong { color: var(--dark); }
+
+.back-cover {
+  background: var(--dark);
+  color: #fff;
+  padding: 3rem;
+  text-align: center;
+  page-break-before: always;
+  min-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
+
+.back-cover h3 {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.4rem;
+  color: var(--gold-light);
+  margin-bottom: .5rem;
+}
+
+.back-cover p { color: #aaa; font-size: 10pt; max-width: 380px; }
+.back-cover a { color: var(--gold-light); }
+
+@media print {
+  @page { size: A4; margin: 0; }
+  body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .cover, .section-header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .no-print { display: none; }
+}
+
+@media screen {
+  body { max-width: 800px; margin: 0 auto; box-shadow: 0 0 40px rgba(0,0,0,.12); }
+  .print-btn {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    background: var(--gold);
+    color: #fff;
+    border: none;
+    padding: .7rem 1.4rem;
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: .9rem;
+    font-weight: 700;
+    cursor: pointer;
+    z-index: 100;
+    box-shadow: 0 4px 16px rgba(0,0,0,.2);
+  }
+}
+</style>
+</head>
+<body>
+
+<button class="print-btn no-print" onclick="window.print()">🖨 Save as PDF</button>
+
+<!-- COVER -->
+<div class="cover">
+  <img class="cover-photo" src="https://drive.google.com/thumbnail?id=1We5NhoA8RoEVMLisV1Uf4XjeAq792gv9&sz=w1200" alt="">
+  <div class="cover-content">
+    <div class="cover-badge">Beginner's Photography Guide</div>
+    <h1><span>50 Tips</span> to Make You<br>a Better Photographer</h1>
+    <p class="cover-sub">From the basic concepts to the secrets of composition — everything you need to take photos you're proud of.</p>
+    <div class="cover-divider"></div>
+    <div class="cover-author">
+      <div class="cover-author-name">Amit Erez</div>
+      <div class="cover-author-url">amitphotos.com</div>
+    </div>
+  </div>
+</div>
+
+<!-- INTRO -->
+<div class="intro">
+  <h2>A Word Before We Begin</h2>
+  <p>I've been shooting for many years — with a Nikon D300, D700, and now the Z7. Along the way I learned a lot, mostly from mistakes. This guide is everything I wish someone had told me at the beginning.</p>
+  <p>These 50 tips don't require prior knowledge or expensive gear. They only require one thing: that you go out and shoot.</p>
+  <p>Every tip here is based on real field experience — not theory. Some will make sense immediately, others will only click after you try them. Keep this guide, and come back to it when you're stuck.</p>
+  <p>Shoot a lot. Fail. Try again. That's the whole secret.</p>
+  <div class="intro-signature">— Amit Erez</div>
+</div>
+
+<!-- SECTION 1 -->
+<div class="section-header">
+  <img class="section-header-photo" src="https://drive.google.com/thumbnail?id=1FH_T3RTNUiI1f0cTktFnEEdJY-lO3sNi&sz=w800" alt="">
+  <div class="section-header-content">
+    <div class="section-number">Part One · Tips 1–8</div>
+    <h2>Know Your Camera</h2>
+    <p>Before heading out to shoot — you need to understand what you're working with. It's not painful, I promise.</p>
+  </div>
+</div>
+
+<div class="tips-page">
+
+  <div class="tip">
+    <div class="tip-num">1</div>
+    <div class="tip-body">
+      <div class="tip-title">Read the Manual — At Least Once</div>
+      <div class="tip-text">Most people never open it. Those who do discover features they had no idea existed. <strong>Two hours with the manual is worth dozens of hours of trial and error.</strong></div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">2</div>
+    <div class="tip-body">
+      <div class="tip-title">Get Off Auto — Starting Tomorrow Morning</div>
+      <div class="tip-text">Aperture Priority (Av or A) is the first step. You control the aperture — the camera calculates the rest. <strong>Wide aperture (f/1.8) = bokeh. Narrow aperture (f/11) = everything sharp.</strong></div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">3</div>
+    <div class="tip-body">
+      <div class="tip-title">Shoot RAW, Not JPEG</div>
+      <div class="tip-text">JPEG is a photo that has already been processed and compressed. RAW contains all the data your sensor captured — flexible for correction afterward. <strong>Slightly off exposure? Fixable in RAW. In JPEG — not always.</strong></div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">4</div>
+    <div class="tip-body">
+      <div class="tip-title">Three Controls That Run Everything</div>
+      <div class="tip-text"><strong>ISO</strong> (light sensitivity) · <strong>Aperture</strong> (how much light enters) · <strong>Shutter Speed</strong> (how long light enters). All other controls are details. First — master these three.</div>
+    </div>
+  </div>
+
+  <div class="highlight">
+    <strong>The Golden Triangle:</strong> Changing ISO affects noise. Changing aperture affects bokeh and depth of field. Changing shutter speed affects motion. When you change one — you need to compensate with one of the other two.
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">5</div>
+    <div class="tip-body">
+      <div class="tip-title">The Histogram Doesn't Lie — The Screen Does</div>
+      <div class="tip-text">Your camera's screen is a liar. In bright sun it looks too dark. At night it looks too bright. <strong>The histogram is a real graph of exposure.</strong> Left = dark, Right = bright. Clipped right edge = lost highlight detail.</div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">6</div>
+    <div class="tip-body">
+      <div class="tip-title">Focus Lock — The Secret to Sharp Photos</div>
+      <div class="tip-text">Half-press the shutter to focus → reframe → full press. <strong>This lets you place the focus point exactly where you want it</strong>, not just in the center of the frame.</div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">7</div>
+    <div class="tip-body">
+      <div class="tip-title">Three Metering Modes — Know When to Use Each</div>
+      <div class="tip-text"><strong>Matrix/Evaluative:</strong> Meters the whole frame — good for most situations. <strong>Center-Weighted:</strong> Emphasis on the center — for portraits. <strong>Spot:</strong> Measures a single point — for extreme lighting situations.</div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">8</div>
+    <div class="tip-body">
+      <div class="tip-title">Clean Your Sensor — One Dust Spot Ruins a Thousand Photos</div>
+      <div class="tip-text">Dust spots show clearly on clear skies and white walls. <strong>Test by shooting a clear blue sky at f/16 — every spot will appear clearly.</strong> Sensor cleaning is simple and inexpensive.</div>
+    </div>
+  </div>
+
+  <div class="photo-strip">
+    <div>
+      <img src="https://drive.google.com/thumbnail?id=1RS7CNmOqlgKzVp6TEsqT2At4zO4eODS_&sz=w800" alt="Burrowing Owl">
+      <div class="photo-caption">f/5.6 · 1/800s · ISO 400</div>
+    </div>
+    <div>
+      <img src="https://drive.google.com/thumbnail?id=1_PoGi7uS5MRl0h-unx91_g21IcPI0Oj6&sz=w800" alt="Green Lizard">
+      <div class="photo-caption">105mm macro · f/4 · 1/500s</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- SECTION 2 -->
+<div class="section-header">
+  <img class="section-header-photo" src="https://lh3.googleusercontent.com/d/1M0MNq47h_rck94IU0GlqlX9yIA5_6MMe=w900" alt="">
+  <div class="section-header-content">
+    <div class="section-number">Part Two · Tips 9–16</div>
+    <h2>Nailing Exposure</h2>
+    <p>Exposure isn't just "bright or dark" — it's complete control over how much light enters your photo.</p>
+  </div>
+</div>
+
+<div class="tips-page">
+
+  <div class="tip">
+    <div class="tip-num">9</div>
+    <div class="tip-body">
+      <div class="tip-title">Getting Exposure Right in the Field Beats Fixing in Post</div>
+      <div class="tip-text">Post-processing is a tool — not magic. <strong>A correctly exposed photo preserves detail in both shadows and highlights.</strong> A blown photo has no highlight detail, no matter how far you push the slider.</div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">10</div>
+    <div class="tip-body">
+      <div class="tip-title">ETTR — Expose to the Right</div>
+      <div class="tip-text">Expose as brightly as possible without blowing highlights. <strong>The histogram should approach the right edge without touching it.</strong> This reduces noise and preserves shadow detail.</div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">11</div>
+    <div class="tip-body">
+      <div class="tip-title">ISO — Always Start from the Lowest Setting</div>
+      <div class="tip-text">High ISO = high light sensitivity = more noise. <strong>ISO 100–400: clean. ISO 800–1600: acceptable. ISO 3200+: noisy</strong> (camera-dependent). Always start at ISO 100 and go up only when necessary.</div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">12</div>
+    <div class="tip-body">
+      <div class="tip-title">The Shutter Speed Rule of Thumb — Prevent Camera Shake</div>
+      <div class="tip-text">Shutter speed no slower than <strong>1/focal length</strong>. With a 50mm lens → minimum 1/60s. With 200mm → minimum 1/200s. <strong>With image stabilization — you can go 2–4 stops below that.</strong></div>
+    </div>
+  </div>
+
+  <div class="highlight">
+    <strong>Quick tip:</strong> Auto-ISO with a manual ceiling (e.g., ISO 3200) + minimum shutter speed (e.g., 1/125s) = the camera manages ISO automatically while maintaining a shake-free shutter speed. A game-changing setting.
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">13</div>
+    <div class="tip-body">
+      <div class="tip-title">Auto-ISO with a Manual Ceiling — The Setting That Changes Everything</div>
+      <div class="tip-text">Set Auto-ISO with a minimum shutter speed in your camera settings. <strong>The camera raises ISO only when needed to maintain shutter speed.</strong> Perfect for sports and events.</div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">14</div>
+    <div class="tip-body">
+      <div class="tip-title">ND Filter — Long Exposures in Daylight</div>
+      <div class="tip-text">ND darkens light without changing color. <strong>ND10 = 10 stops of light = seconds-long exposure in bright daylight.</strong> Flowing water becomes silky white. The sea becomes a mirror. Clouds become soft fabric.</div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">15</div>
+    <div class="tip-body">
+      <div class="tip-title">Exposure Compensation (+/−) — The Most Useful Tool</div>
+      <div class="tip-text">The +/- button adds or subtracts exposure without changing mode. <strong>Snow? +1 stop. Dark subject against bright background? -1 stop.</strong> Most cameras give you quick access to this button — use it constantly.</div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">16</div>
+    <div class="tip-body">
+      <div class="tip-title">Backlit Subjects — Meter on the Face, Not the Background</div>
+      <div class="tip-text">When the background is brighter than the subject, the camera exposes for the background — and your subject comes out dark. <strong>Fix: Spot Metering on the face, or Exposure Compensation +1 to +2.</strong> Alternative: fill flash.</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- SECTION 3 -->
+<div class="section-header">
+  <img class="section-header-photo" src="https://drive.google.com/thumbnail?id=1FH_T3RTNUiI1f0cTktFnEEdJY-lO3sNi&sz=w800" alt="">
+  <div class="section-header-content">
+    <div class="section-number">Part Three · Tips 17–24</div>
+    <h2>Composition</h2>
+    <p>What separates an interesting photo from a snapshot — it's not the gear, it's the choice of what enters the frame.</p>
+  </div>
+</div>
+
+<div class="tips-page">
+
+  <div class="tip">
+    <div class="tip-num">17</div>
+    <div class="tip-body">
+      <div class="tip-title">Rule of Thirds — Place Your Subject at the Intersections</div>
+      <div class="tip-text">Imagine two vertical and two horizontal lines dividing the frame into nine equal parts. <strong>Place your main subject at one of the four intersection points — not the center.</strong> Most cameras support displaying this grid in live view.</div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">18</div>
+    <div class="tip-body">
+      <div class="tip-title">Leading Lines — Invite the Eye to Travel Through the Frame</div>
+      <div class="tip-text">Roads, fences, rivers, train tracks — <strong>any line that starts at the edge of the frame and leads to the subject.</strong> This creates depth and draws the viewer in. Look for them — they're everywhere.</div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">19</div>
+    <div class="tip-body">
+      <div class="tip-title">Framing — Place Your Subject Inside a Natural Frame</div>
+      <div class="tip-text">Trees, arches, doorways, windows — <strong>any element that surrounds the subject creates a natural frame that concentrates attention.</strong> It also adds a layer of depth to a two-dimensional image.</div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">20</div>
+    <div class="tip-body">
+      <div class="tip-title">Simplicity — Remove Everything That Doesn't Contribute</div>
+      <div class="tip-text">Ask yourself: <strong>"Does every element in this frame strengthen the story, or distract from it?"</strong> A step forward, a different angle, a wider aperture — sometimes all you need is to remove the visual noise.</div>
+    </div>
+  </div>
+
+  <div class="photo-full">
+    <img src="https://drive.google.com/thumbnail?id=17RW9kh-Ry3KiqOj_yM3oCK8FPOC88_JN&sz=w900" alt="Snowy Owl — composition example">
+    <div class="photo-caption">White owl on white snow = clean background that emphasizes the subject. Simplicity in composition.</div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">21</div>
+    <div class="tip-body">
+      <div class="tip-title">Change Your Height — Don't Always Shoot at Eye Level</div>
+      <div class="tip-text">From below: the subject looks large and powerful. From above: gives a sense of control and perspective. <strong>Simply lying on the ground or standing on a bench changes everything.</strong></div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">22</div>
+    <div class="tip-body">
+      <div class="tip-title">Breathing Room — Give Your Subject Space</div>
+      <div class="tip-text">If the subject is looking left — give it space on the left. A bird in flight needs room in the direction it's flying. <strong>A frame where the subject feels "squeezed" is uncomfortable for the viewer.</strong></div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">23</div>
+    <div class="tip-body">
+      <div class="tip-title">Horizontal vs Vertical — Try Both</div>
+      <div class="tip-text">Before moving on — shoot both orientations. <strong>Landscapes are almost always horizontal. Portraits mostly vertical. Architecture — it depends.</strong> But sometimes the unexpected orientation works better.</div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">24</div>
+    <div class="tip-body">
+      <div class="tip-title">Negative Space — The Empty Area Is Part of the Photo</div>
+      <div class="tip-text">A small figure in a vast sky creates a sense of solitude and beauty. <strong>Sometimes what isn't in the photo tells the story.</strong> Don't be afraid of empty, clean backgrounds.</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- SECTION 4 -->
+<div class="section-header">
+  <img class="section-header-photo" src="https://lh3.googleusercontent.com/d/1M0MNq47h_rck94IU0GlqlX9yIA5_6MMe=w900" alt="">
+  <div class="section-header-content">
+    <div class="section-number">Part Four · Tips 25–31</div>
+    <h2>Understanding Light</h2>
+    <p>Photography is painting with light — whoever controls the light, controls the image.</p>
+  </div>
+</div>
+
+<div class="tips-page">
+
+  <div class="tip">
+    <div class="tip-num">25</div>
+    <div class="tip-body">
+      <div class="tip-title">Golden Hour — Worth More Than Any Gear</div>
+      <div class="tip-text">One hour after sunrise and one hour before sunset: the light is warm, soft, and low. <strong>Skin in golden hour looks perfect. Landscape in golden hour looks magical.</strong> No filter replicates it. Wake up early.</div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">26</div>
+    <div class="tip-body">
+      <div class="tip-title">Blue Hour — The Photographers' Secret</div>
+      <div class="tip-text">Twenty minutes before sunrise and after sunset: the sky turns into a deep, gentle, even blue. <strong>City lights on, deep blue sky — a combination you can't miss.</strong> This is when to shoot cities at night.</div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">27</div>
+    <div class="tip-body">
+      <div class="tip-title">Overcast Day Is a Gift for Portraits</div>
+      <div class="tip-text">Clouds diffuse sunlight into soft, ambient illumination — <strong>a giant free softbox.</strong> No harsh shadows, no squinting eyes, no extreme contrast. Perfect for portraits and macro.</div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">28</div>
+    <div class="tip-body">
+      <div class="tip-title">Light Direction — Three Completely Different Effects</div>
+      <div class="tip-text"><strong>Front light:</strong> Flat, no shadows, bright faces. <strong>Side light:</strong> Dramatic, emphasizes textures. <strong>Back light (rim light):</strong> Mystical, separates subject from background. <strong>Try rotating the subject relative to the light — don't move yourself.</strong></div>
+    </div>
+  </div>
+
+  <div class="highlight">
+    <strong>Quick tip:</strong> A piece of white cardboard reflects light onto faces in shadow. A professional reflector does the same thing — just more convenient to carry. Before buying one — try cardboard.
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">29</div>
+    <div class="tip-body">
+      <div class="tip-title">Reflector — The Cheapest Gear with the Most Impact</div>
+      <div class="tip-text">A 5-in-1 reflector costs almost nothing and transforms every portrait. <strong>Silver = sharp and contrasty. Gold = warm and soft. White = subtle and natural.</strong> I always have one in my bag.</div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">30</div>
+    <div class="tip-body">
+      <div class="tip-title">Flash in Daylight — Not Just for Night</div>
+      <div class="tip-text">When strong sun is behind the subject, fill flash adds light to faces. <strong>Low power (-1 to -2 stops) = completely natural.</strong> Nobody will know you used flash.</div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">31</div>
+    <div class="tip-body">
+      <div class="tip-title">Look for Special Light — It's Waiting for You</div>
+      <div class="tip-text">A shaft of light through a window, rays between trees, the opening of a tunnel, neon lights in rain. <strong>The most dramatic light is usually free — you just need to notice it and wait.</strong></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- SECTION 5 -->
+<div class="section-header">
+  <img class="section-header-photo" src="https://drive.google.com/thumbnail?id=1_PoGi7uS5MRl0h-unx91_g21IcPI0Oj6&sz=w800" alt="">
+  <div class="section-header-content">
+    <div class="section-number">Part Five · Tips 32–38</div>
+    <h2>Lenses & Gear</h2>
+    <p>Gear is a tool — not the story. But a good tool helps.</p>
+  </div>
+</div>
+
+<div class="tips-page">
+
+  <div class="tip">
+    <div class="tip-num">32</div>
+    <div class="tip-body">
+      <div class="tip-title">A Good Lens Beats an Expensive Camera Body</div>
+      <div class="tip-text"><strong>An f/1.4 lens on an old body will beat an expensive body with a kit lens every time.</strong> Limited budget? Buy a modest body + a good prime lens. Optical glass doesn't age like a camera body.</div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">33</div>
+    <div class="tip-body">
+      <div class="tip-title">50mm f/1.8 — The First Lens You Should Buy</div>
+      <div class="tip-text">Inexpensive ($100–200), light, sharp, with beautiful bokeh and a wide aperture for low light. <strong>The "Nifty Fifty" — a nickname that fits perfectly.</strong> The angle is close to the human eye = photos that feel natural.</div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">34</div>
+    <div class="tip-body">
+      <div class="tip-title">Tripod — Not Optional, Mandatory</div>
+      <div class="tip-text">Long exposures, sunrise landscapes, macro, night — impossible without a tripod. <strong>Carbon fiber: light and stable. Worth investing in — a good tripod lasts twenty years.</strong></div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">35</div>
+    <div class="tip-body">
+      <div class="tip-title">UV Filter — Cheap Insurance for Expensive Glass</div>
+      <div class="tip-text">Protects the front element from scratches, fingerprints and moisture. <strong>A $2,000 lens + a $30 UV filter = armor.</strong> Always on every lens. Never removed.</div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">36</div>
+    <div class="tip-body">
+      <div class="tip-title">Less Gear = More Creativity</div>
+      <div class="tip-text">Don't take everything everywhere. <strong>Constraints force creative solutions.</strong> One day with a single lens teaches more about photography than a week with the whole bag.</div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">37</div>
+    <div class="tip-body">
+      <div class="tip-title">Teleconverter — Extend Your Reach Without Buying a New Lens</div>
+      <div class="tip-text">A 1.4× TC on a 300mm lens = 420mm. A 2× TC = 600mm. <strong>Much less expensive than a new telephoto lens.</strong> Cost: you lose light (1.4× = one stop, 2× = two stops).</div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">38</div>
+    <div class="tip-body">
+      <div class="tip-title">Lens Cleaning — Only This Way, No Other</div>
+      <div class="tip-text"><strong>Gentle breath to lift dust + clean microfiber cloth, gentle circular wipe.</strong> Tissue, your shirt, paper towels — forbidden. They scratch the coating. Dedicated lens cleaning solution — allowed.</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- SECTION 6 -->
+<div class="section-header">
+  <img class="section-header-photo" src="https://drive.google.com/thumbnail?id=1FH_T3RTNUiI1f0cTktFnEEdJY-lO3sNi&sz=w800" alt="">
+  <div class="section-header-content">
+    <div class="section-number">Part Six · Tips 39–44</div>
+    <h2>Editing</h2>
+    <p>Good editing brings a photo to its potential — it doesn't rescue it.</p>
+  </div>
+</div>
+
+<div class="tips-page">
+
+  <div class="tip">
+    <div class="tip-num">39</div>
+    <div class="tip-body">
+      <div class="tip-title">Editing Enhances — It Doesn't Save</div>
+      <div class="tip-text">A photo with composition problems, bad focus or extreme exposure won't become a good photo in editing. <strong>Rule one: shoot well in the field. Editing is the finishing touch.</strong></div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">40</div>
+    <div class="tip-body">
+      <div class="tip-title">Always Start with Exposure and White Balance</div>
+      <div class="tip-text">Before anything else — <strong>fix the basic exposure and White Balance.</strong> Every subsequent adjustment to color, contrast and detail will be far more accurate once the foundation is right.</div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">41</div>
+    <div class="tip-body">
+      <div class="tip-title">Less Saturation — Almost Always</div>
+      <div class="tip-text">Beginners overdo color. <strong>Saturation of 10–20 is enough for most photos.</strong> To check: convert to black and white, then restore color — if the color jumps out at you, you've overdone it.</div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">42</div>
+    <div class="tip-body">
+      <div class="tip-title">Clarity — Use It Carefully</div>
+      <div class="tip-text">Clarity adds sharpness to mid-range textures. <strong>Excellent for landscapes, rocks, wood. Destructive for portraits</strong> — turns skin into a lunar landscape. If you shot faces — Clarity at 0 or slightly negative.</div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">43</div>
+    <div class="tip-body">
+      <div class="tip-title">Save a Preset — Save Hours</div>
+      <div class="tip-text">When you find a style you love — save it as a Preset in Lightroom. <strong>Next time: select, click, done.</strong> Consistent editing also builds a recognizable "signature style".</div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">44</div>
+    <div class="tip-body">
+      <div class="tip-title">Compare Before and After — Sometimes the Original Is Better</div>
+      <div class="tip-text">After finishing your edit — press \ in Lightroom to see before and after. <strong>Sometimes thirty minutes of editing ruined a photo that was perfect.</strong> There's always undo.</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- SECTION 7 -->
+<div class="section-header">
+  <img class="section-header-photo" src="https://drive.google.com/thumbnail?id=1We5NhoA8RoEVMLisV1Uf4XjeAq792gv9&sz=w800" alt="">
+  <div class="section-header-content">
+    <div class="section-number">Part Seven · Tips 45–50</div>
+    <h2>Mindset & Practice</h2>
+    <p>The best gear in the world doesn't shoot for you. Habits do.</p>
+  </div>
+</div>
+
+<div class="tips-page">
+
+  <div class="tip">
+    <div class="tip-num">45</div>
+    <div class="tip-body">
+      <div class="tip-title">Shoot Every Day — Even with Your Phone</div>
+      <div class="tip-text">Your eye trains itself through shooting. <strong>Someone who shoots daily for a year takes far better photos than someone who goes out with expensive gear once a month.</strong> The phone in your pocket is the best camera you have — because it's always with you.</div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">46</div>
+    <div class="tip-body">
+      <div class="tip-title">Learn from Photos You Love — Analyze Them</div>
+      <div class="tip-text">When you see an impressive photo — stop and ask: <strong>Where's the light coming from? What's the composition? What lens? What made me stop?</strong> Analyzing five photos a day is worth a professional lesson.</div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">47</div>
+    <div class="tip-body">
+      <div class="tip-title">Accept Critique — It Doesn't Hurt as Much as You Think</div>
+      <div class="tip-text">Show your work to people you respect and sincerely ask what isn't working. <strong>One honest critique is worth a hundred "great shots!" from people who don't want to hurt your feelings.</strong></div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">48</div>
+    <div class="tip-body">
+      <div class="tip-title">Fewer Shots = More Thinking</div>
+      <div class="tip-text">Digital cameras tempt us to shoot hundreds of frames hoping one will be good. <strong>Try the opposite: stand before your subject, think about the frame, then shoot — once.</strong> The improvement is immediate.</div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">49</div>
+    <div class="tip-body">
+      <div class="tip-title">Fall in Love with Your Subject</div>
+      <div class="tip-text">The best photographers shoot what they love — birds, landscapes, children, food. <strong>Love for the subject creates patience, persistence and attention to detail that can't be faked.</strong></div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-num">50</div>
+    <div class="tip-body">
+      <div class="tip-title">Most Important — Go Out and Shoot</div>
+      <div class="tip-text">All the knowledge in the world is worthless without going out to the field. <strong>The best camera is the one you have in your hand. The best gear is the gear you actually take with you.</strong> Now — go shoot.</div>
+    </div>
+  </div>
+
+  <div class="photo-strip">
+    <div>
+      <img src="https://drive.google.com/thumbnail?id=1FH_T3RTNUiI1f0cTktFnEEdJY-lO3sNi&sz=w800" alt="Eagle">
+      <div class="photo-caption">300mm · f/6.3 · 1/2000s</div>
+    </div>
+    <div>
+      <img src="https://drive.google.com/thumbnail?id=1We5NhoA8RoEVMLisV1Uf4XjeAq792gv9&sz=w800" alt="Eagle in flight">
+      <div class="photo-caption">300mm · f/5.6 · 1/3200s</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- BACK COVER -->
+<div class="back-cover">
+  <div>
+    <div style="font-size:2rem;margin-bottom:.5rem">📷</div>
+    <h3>Amit Erez — Photographer</h3>
+    <p>Free photography guides, gallery, shooting locations in Israel and more — all at <a href="https://amitphotos.com">amitphotos.com</a></p>
+  </div>
+  <div style="margin-top:1.5rem">
+    <p style="font-size:9pt;color:#666;">© 2025 Amit Erez · amitphotos.com · All rights reserved.</p>
+    <p style="font-size:9pt;color:#555;margin-top:.3rem;">Do not reproduce, publish or share without written permission.</p>
+  </div>
+</div>
+
+</body>
+</html>
