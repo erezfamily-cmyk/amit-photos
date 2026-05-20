@@ -4512,7 +4512,7 @@ async function nlGenerateContent(env, heroPhoto, guide, location, type) {
     },
     body: JSON.stringify({
       model: 'claude-opus-4-7',
-      max_tokens: 2000,
+      max_tokens: 3500,
       system: 'אתה כותב בשמו של עמית, צלם ישראלי. כתוב תמיד בגוף ראשון ("אני", "לי", "שלי", "צילמתי"). טון אישי וחם, כאילו עמית כותב לחברים קרובים שאוהבים צילום — לא שיווקי, לא פורמלי, אמיתי. החזר JSON תקין בלבד, ללא שום טקסט נוסף.',
       messages: [{ role: 'user', content: userPrompt }]
     })
