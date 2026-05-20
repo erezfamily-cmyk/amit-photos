@@ -4809,16 +4809,16 @@ async function handleNlIssue(env, slug, isPreview) {
     <section class="nl-section nl-contact-section">
       <div class="nl-contact-card">
         <div class="nl-contact-header">
-          <span class="nl-contact-avatar">👨‍🎨</span>
+          <span class="nl-contact-avatar"><svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></span>
           <div>
             <div class="nl-contact-name">עמית — צלם אישי</div>
             <p class="nl-contact-intro">רוצה לבחור תמונה לבית, לקנות הדפסה, או סתם לשאול? אני כאן.</p>
           </div>
         </div>
         <div class="nl-contact-btns">
-          <a class="nl-contact-btn nl-contact-wa" href="https://wa.me/972503333227" target="_blank" rel="noopener">💬 וואטסאפ ישיר</a>
-          <a class="nl-contact-btn" href="https://bitpay.co.il/app/bizcard/0503333227" target="_blank" rel="noopener">💳 ביט</a>
-          <a class="nl-contact-btn" href="https://payboxapp.page.link/pay?phone=972503333227" target="_blank" rel="noopener">💳 פייבוקס</a>
+          <a class="nl-contact-btn nl-contact-wa" href="https://wa.me/972503333227" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;margin-left:4px"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> וואטסאפ ישיר</a>
+          <a class="nl-contact-btn" href="https://bitpay.co.il/app/bizcard/0503333227" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;margin-left:4px"><rect width="22" height="16" x="1" y="4" rx="2" ry="2"/><line x1="1" x2="23" y1="10" y2="10"/></svg> ביט</a>
+          <a class="nl-contact-btn" href="https://payboxapp.page.link/pay?phone=972503333227" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;margin-left:4px"><rect width="22" height="16" x="1" y="4" rx="2" ry="2"/><line x1="1" x2="23" y1="10" y2="10"/></svg> פייבוקס</a>
         </div>
         <p class="nl-contact-note">תשלום נוח — ביט, פייבוקס, או כרטיס אשראי באתר</p>
       </div>
@@ -4899,7 +4899,7 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direc
 .nl-contact-section{max-width:800px;margin:0 auto;padding:1rem 1.5rem}
 .nl-contact-card{background:var(--surface);border:1px solid rgba(200,169,110,.3);border-radius:14px;padding:1.25rem 1.5rem}
 .nl-contact-header{display:flex;gap:1rem;align-items:flex-start;margin-bottom:1rem}
-.nl-contact-avatar{font-size:2.5rem;line-height:1}
+.nl-contact-avatar{display:flex;align-items:center;justify-content:center;width:48px;height:48px;border-radius:50%;background:rgba(200,169,110,.12);border:1px solid rgba(200,169,110,.3);flex-shrink:0;color:var(--accent)}
 .nl-contact-name{font-family:'Syne',sans-serif;font-size:.95rem;color:var(--accent);margin-bottom:.25rem}
 .nl-contact-intro{font-size:.85rem;color:var(--muted)}
 .nl-contact-btns{display:flex;gap:.6rem;flex-wrap:wrap;margin-bottom:.75rem}
