@@ -4741,17 +4741,6 @@ async function handleNlIssue(env, slug, isPreview) {
       ).join('')}</div>
     </section>` : '';
 
-  const wallMockupSection = c.hero ? `
-    <section class="nl-section nl-print-section">
-      <div class="nl-section-badge">תמונה מוכנה לקיר</div>
-      <a class="nl-print-frame" href="/photos/${escXml(c.hero.photo_id)}/">
-        <div class="nl-print-mat">
-          <img src="${escXml(c.hero.photo_url)}" alt="${escXml(c.hero.title_he)}" class="nl-print-photo">
-        </div>
-      </a>
-      <a class="nl-btn-primary" href="/photos/${escXml(c.hero.photo_id)}/">הזמן הדפסה</a>
-    </section>` : '';
-
   const galleryStripSection = (c.gallery_photos && c.gallery_photos.length) ? `
     <section class="nl-section nl-gallery-section">
       <div class="nl-section-badge">עוד מהסדרה</div>
@@ -4941,10 +4930,9 @@ ${previewBanner}
 <h1 class="nl-issue-title">${escXml(issue.title_he)}</h1>
 ${heroSection}
 <hr class="nl-divider">
-${wallMockupSection}
 ${galleryStripSection}
 ${saleBannerSection}
-${(wallMockupSection || galleryStripSection || saleBannerSection) ? '<hr class="nl-divider">' : ''}
+${(galleryStripSection || saleBannerSection) ? '<hr class="nl-divider">' : ''}
 ${guideSection}
 ${guideSection ? '<hr class="nl-divider">' : ''}
 ${locationSection}
