@@ -4395,7 +4395,7 @@ async function nlSetSetting(env, key, value) {
 async function nlPickHeroPhoto(env) {
   const lastId = await nlGetSetting(env, 'nl_last_hero_id') || '';
   const row = await env.DB.prepare(
-    `SELECT id, title, url, thumbnail FROM photos WHERE id != ? AND published=1 ORDER BY created_at DESC LIMIT 1`
+    `SELECT id, title, url, thumbnail, category FROM photos WHERE id != ? AND published=1 ORDER BY created_at DESC LIMIT 1`
   ).bind(lastId).first();
   return row || null;
 }
@@ -4423,15 +4423,18 @@ async function nlPickLocation(env) {
   return results[0] ? { ...results[0], idx } : null;
 }
 
-async function nlPickGalleryPhotos(env, heroPhotoId) {
+async function nlPickGalleryPhotos(env, heroPhotoId, heroCategory) {
+  if (heroCategory) {
+    const { results: samecat } = await env.DB.prepare(
+      'SELECT id, title, url FROM photos WHERE published=1 AND id != ? AND category=? ORDER BY RANDOM() LIMIT 3'
+    ).bind(heroPhotoId, heroCategory).all();
+    if ((samecat || []).length >= 2)
+      return samecat.map(p => ({ id: p.id, title: p.title || '', url: toAbsolutePhotoUrl(p.url) }));
+  }
   const { results } = await env.DB.prepare(
-    'SELECT id, title, url FROM photos WHERE published = 1 AND id != ? ORDER BY RANDOM() LIMIT 3'
+    'SELECT id, title, url FROM photos WHERE published=1 AND id != ? ORDER BY RANDOM() LIMIT 3'
   ).bind(heroPhotoId).all();
-  return (results || []).map(p => ({
-    id: p.id,
-    title: p.title || '',
-    url: toAbsolutePhotoUrl(p.url)
-  }));
+  return (results || []).map(p => ({ id: p.id, title: p.title || '', url: toAbsolutePhotoUrl(p.url) }));
 }
 
 async function nlGenerateContent(env, heroPhoto, guide, location, type) {
@@ -4472,16 +4475,16 @@ async function nlGenerateContent(env, heroPhoto, guide, location, type) {
 - מדריך: "${guide.he}"
 - מקום: "${location.title}" — ${location.description || ''} — הזמן הטוב: ${location.best_time || 'לא צוין'}`;
   } else {
-    userPrompt = `כתוב תוכן לניוזלטר צילום קצר (הבזק). החזר JSON בלבד:
+    userPrompt = `כתוב תוכן להבזק — ניוזלטר קצר ומהיר. כתוב בגוף ראשון, כאילו עמית שולח הודעה ספונטנית לחברים. החזר JSON בלבד:
 
 {
-  "hero_text_he": "משפט אחד קצר וחזק על התמונה",
+  "hero_text_he": "1-2 משפטים אישיים — מה אני מרגיש כלפי התמונה הזו, או מה קרה ברגע הצילום",
   "hero_text_en": "same in English",
-  "tip_text_he": "טיפ קצר אחד — משפט אחד, פרקטי",
+  "tip_text_he": "טיפ אחד שימושי שאני עצמי משתמש בו — קצר, ספציפי, לא כללי",
   "tip_text_en": "same in English"
 }
 
-תמונה: "${heroPhoto.title}"`;
+תמונה: "${heroPhoto.title}" (קטגוריה: ${heroPhoto.category || 'טבע'})`;
   }
 
   const res = await fetch('https://api.anthropic.com/v1/messages', {
@@ -4494,7 +4497,7 @@ async function nlGenerateContent(env, heroPhoto, guide, location, type) {
     body: JSON.stringify({
       model: 'claude-opus-4-7',
       max_tokens: 2000,
-      system: 'אתה עורך ניוזלטר צילום מקצועי. כתוב עברית תקנית וברורה. טון חם ומקצועי לצלמים. החזר JSON תקין בלבד, ללא שום טקסט נוסף.',
+      system: 'אתה כותב בשמו של עמית, צלם ישראלי. כתוב תמיד בגוף ראשון ("אני", "לי", "שלי", "צילמתי"). טון אישי וחם, כאילו עמית כותב לחברים קרובים שאוהבים צילום — לא שיווקי, לא פורמלי, אמיתי. החזר JSON תקין בלבד, ללא שום טקסט נוסף.',
       messages: [{ role: 'user', content: userPrompt }]
     })
   });
@@ -4528,7 +4531,7 @@ async function nlGenerateDraft(env, type) {
   const heroPhoto = await nlPickHeroPhoto(env);
   if (!heroPhoto) throw new Error('No photos found');
 
-  const galleryPhotos = await nlPickGalleryPhotos(env, heroPhoto.id);
+  const galleryPhotos = await nlPickGalleryPhotos(env, heroPhoto.id, heroPhoto.category);
   const guide = await nlPickGuide(env);
   const location = type === 'full' ? await nlPickLocation(env) : null;
 
@@ -4539,7 +4542,8 @@ async function nlGenerateDraft(env, type) {
   const photoUrl = toAbsolutePhotoUrl(heroPhoto.url || heroPhoto.thumbnail);
   const content = type === 'full' ? {
     hero: { photo_id: heroPhoto.id, photo_url: photoUrl,
-      title_he: heroPhoto.title, text_he: generated.hero_text_he, text_en: generated.hero_text_en },
+      title_he: heroPhoto.title, category: heroPhoto.category || '',
+      text_he: generated.hero_text_he, text_en: generated.hero_text_en },
     guide: { slug: guide.slug, title_he: guide.he, title_en: guide.en,
       text_he: generated.guide_text_he, text_en: generated.guide_text_en,
       steps: Array.isArray(generated.guide_steps) ? generated.guide_steps : [] },
@@ -4557,7 +4561,8 @@ async function nlGenerateDraft(env, type) {
     ]
   } : {
     hero: { photo_id: heroPhoto.id, photo_url: photoUrl,
-      title_he: heroPhoto.title, text_he: generated.hero_text_he, text_en: generated.hero_text_en },
+      title_he: heroPhoto.title, category: heroPhoto.category || '',
+      text_he: generated.hero_text_he, text_en: generated.hero_text_en },
     tip: { text_he: generated.tip_text_he, text_en: generated.tip_text_en },
     gallery_photos: galleryPhotos
   };
@@ -4684,6 +4689,7 @@ async function handleNlIssue(env, slug, isPreview) {
       <img src="${escXml(c.hero.photo_url)}" alt="${escXml(c.hero.title_he)}" class="nl-hero-img">
       <h2 class="nl-photo-title">${escXml(c.hero.title_he)}</h2>
       <p class="nl-body-text" data-he="${escXml(c.hero.text_he)}" data-en="${escXml(c.hero.text_en || c.hero.text_he)}">${escXml(c.hero.text_he)}</p>
+      <a class="nl-btn-secondary nl-hero-order" href="/photos/${escXml(c.hero.photo_id)}/">הזמן הדפסה ←</a>
     </section>` : '';
 
   const guideSection = isFull && c.guide ? (() => {
@@ -4741,9 +4747,10 @@ async function handleNlIssue(env, slug, isPreview) {
       ).join('')}</div>
     </section>` : '';
 
+  const galleryBadge = c.hero?.category ? `עוד ${escXml(c.hero.category)}` : 'עוד מהגלריה';
   const galleryStripSection = (c.gallery_photos && c.gallery_photos.length) ? `
     <section class="nl-section nl-gallery-section">
-      <div class="nl-section-badge">עוד מהסדרה</div>
+      <div class="nl-section-badge">${galleryBadge}</div>
       <div class="nl-gallery-strip">
         ${c.gallery_photos.slice(0, 3).map(photo =>
           `<a class="nl-gallery-thumb" href="/photos/${escXml(photo.id)}/">
@@ -4771,26 +4778,49 @@ async function handleNlIssue(env, slug, isPreview) {
       </div>
     </section>` : '';
 
+  const _icoHome = `<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>`;
+  const _icoBrief = `<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>`;
+  const _icoGift = `<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 12 20 22 4 22 4 12"/><rect width="20" height="5" x="2" y="7"/><line x1="12" x2="12" y1="22" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>`;
+  const _icoPrint = `<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>`;
+  const _icoCamera = `<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3z"/><circle cx="12" cy="13" r="3"/></svg>`;
+  const _icoUser = `<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`;
+  const _heroPhotoHref = c.hero?.photo_id ? `/photos/${escXml(c.hero.photo_id)}/` : '/';
+  const _heroCat = c.hero?.category || '';
+  const _ctaByCategory = {
+    'פורטרט': [
+      { ico: _icoUser,   label: 'סשן פורטרט אישי',     href: '/contact/' },
+      { ico: _icoGift,   label: 'מתנה מרגשת',           href: '/contact/' },
+      { ico: _icoHome,   label: 'תמונה לבית',            href: _heroPhotoHref },
+      { ico: _icoPrint,  label: 'עוד פורטרטים',          href: '/?category=%D7%A4%D7%95%D7%A8%D7%98%D7%A8%D7%98' }
+    ],
+    'עירוני': [
+      { ico: _icoHome,   label: 'לסלון / משרד',          href: _heroPhotoHref },
+      { ico: _icoBrief,  label: 'עיצוב ואדריכלות',       href: '/?category=%D7%A2%D7%99%D7%A8%D7%95%D7%A0%D7%99' },
+      { ico: _icoGift,   label: 'מתנה ייחודית',           href: '/contact/' },
+      { ico: _icoPrint,  label: 'הדפסה אישית',            href: '/contact/' }
+    ],
+    'אירועים': [
+      { ico: _icoCamera, label: 'צלם לאירוע שלך',        href: '/contact/' },
+      { ico: _icoBrief,  label: 'חתונה / כנס / תאגיד',  href: '/contact/' },
+      { ico: _icoGift,   label: 'מתנה עסקית',            href: '/contact/' },
+      { ico: _icoHome,   label: 'תמונה לסלון',            href: _heroPhotoHref }
+    ]
+  };
+  const _defaultCta = [
+    { ico: _icoHome,   label: 'לסלון / חדר שינה',       href: _heroPhotoHref },
+    { ico: _icoBrief,  label: 'למשרד / קליניקה',        href: '/?category=%D7%A0%D7%95%D7%A3' },
+    { ico: _icoGift,   label: 'מתנה מיוחדת',            href: '/contact/' },
+    { ico: _icoPrint,  label: 'הדפסה אישית',            href: '/contact/' }
+  ];
+  const _ctaCards = _ctaByCategory[_heroCat] || _defaultCta;
   const ctaCardsSection = `
     <section class="nl-section nl-cta-section">
       <div class="nl-section-badge">מחפש תמונה לבית או למשרד?</div>
       <div class="nl-cta-grid">
-        <a class="nl-cta-card" href="/?category=%D7%A0%D7%95%D7%A3">
-          <span class="nl-cta-icon"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>
-          <span class="nl-cta-label">לסלון / חדר שינה</span>
-        </a>
-        <a class="nl-cta-card" href="/?category=%D7%A2%D7%99%D7%A8%D7%95%D7%A0%D7%99">
-          <span class="nl-cta-icon"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></span>
-          <span class="nl-cta-label">למשרד / קליניקה</span>
-        </a>
-        <a class="nl-cta-card" href="/contact/">
-          <span class="nl-cta-icon"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 12 20 22 4 22 4 12"/><rect width="20" height="5" x="2" y="7"/><line x1="12" x2="12" y1="22" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg></span>
-          <span class="nl-cta-label">מתנה מיוחדת</span>
-        </a>
-        <a class="nl-cta-card" href="/contact/">
-          <span class="nl-cta-icon"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg></span>
-          <span class="nl-cta-label">הדפסה אישית</span>
-        </a>
+        ${_ctaCards.map(card => `<a class="nl-cta-card" href="${escXml(card.href)}">
+          <span class="nl-cta-icon">${card.ico}</span>
+          <span class="nl-cta-label">${escXml(card.label)}</span>
+        </a>`).join('')}
       </div>
     </section>`;
 
@@ -4855,6 +4885,7 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direc
 .nl-wall-price{font-size:1.1rem;font-weight:700;color:var(--accent)}
 .nl-btn-primary{background:var(--accent);color:#000;text-decoration:none;border-radius:20px;padding:.4rem 1.1rem;font-size:.85rem;font-weight:700}
 .nl-btn-secondary{background:transparent;color:var(--accent);border:1px solid var(--accent);text-decoration:none;border-radius:20px;padding:.4rem 1.1rem;font-size:.85rem}
+.nl-hero-order{display:inline-block;margin-top:.25rem}
 .nl-wall-materials{font-size:.75rem;color:var(--muted)}
 .nl-print-section{background:var(--surface);border-radius:16px;margin:1rem auto;max-width:800px;padding:1.5rem;display:flex;flex-direction:column;align-items:center;gap:1rem}
 .nl-print-frame{display:block;text-decoration:none;width:min(380px,90%)}
