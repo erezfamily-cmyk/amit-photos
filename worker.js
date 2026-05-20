@@ -1546,26 +1546,42 @@ async function handleReply(request, env) {
 
 // ===== UNSUBSCRIBE =====
 async function handleUnsubscribe(request, env) {
-  const token = new URL(request.url).searchParams.get('token');
-  const html = (title, msg, color) => new Response(`<!DOCTYPE html>
+  const url = new URL(request.url);
+  const token = url.searchParams.get('token');
+  const msgHtml = (title, msg, icon) => new Response(`<!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${title}</title></head>
 <body style="margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#f4f4f4;font-family:Arial,sans-serif">
   <div style="background:#fff;border-radius:8px;padding:48px 40px;max-width:440px;width:100%;text-align:center;box-shadow:0 2px 12px rgba(0,0,0,.08)">
     <div style="color:#c8a96e;font-size:18px;font-weight:700;letter-spacing:.22em;font-family:Georgia,serif;margin-bottom:24px">AMIT PHOTOS</div>
-    <div style="font-size:2rem;margin-bottom:16px">${color}</div>
+    <div style="font-size:2rem;margin-bottom:16px">${icon}</div>
     <h2 style="margin:0 0 12px;font-size:20px;color:#111">${title}</h2>
     <p style="color:#666;font-size:14px;line-height:1.7;margin:0 0 24px">${msg}</p>
     <a href="https://amitphotos.com" style="display:inline-block;padding:.6rem 1.6rem;background:#0a0a0a;color:#c8a96e;text-decoration:none;border-radius:4px;font-size:14px">חזרה לאתר</a>
   </div>
 </body></html>`, { headers: { 'Content-Type': 'text/html;charset=UTF-8' } });
 
-  if (!token) return html('קישור לא תקין', 'הקישור להסרה אינו תקין.', '❌');
-  const row = await env.DB.prepare('SELECT id FROM subscribers WHERE id=?').bind(token).first().catch(() => null);
-  if (!row) return html('כבר הוסרת', 'כתובת המייל שלך אינה ברשימה.', 'ℹ️');
-  await env.DB.prepare('DELETE FROM subscribers WHERE id=?').bind(token).run();
-  return html('הוסרת בהצלחה', 'הוסרת מרשימת הניוזלטר. לא תקבל עוד מיילים מאיתנו.', '✅');
+  // Token-based (from email link)
+  if (token) {
+    const row = await env.DB.prepare('SELECT id FROM subscribers WHERE id=?').bind(token).first().catch(() => null);
+    if (!row) return msgHtml('כבר הוסרת', 'כתובת המייל שלך אינה ברשימה.', 'ℹ️');
+    await env.DB.prepare('DELETE FROM subscribers WHERE id=?').bind(token).run();
+    return msgHtml('הוסרת בהצלחה', 'הוסרת מרשימת הניוזלטר. לא תקבל עוד מיילים מאיתנו.', '✅');
+  }
+
+  // Email-based (from website form) — POST only
+  if (request.method === 'POST') {
+    const body = await request.json().catch(() => ({}));
+    const email = (body.email || '').trim().toLowerCase();
+    if (!email) return jsonRes({ error: 'נדרשת כתובת מייל' }, 400, request);
+    const row = await env.DB.prepare('SELECT id FROM subscribers WHERE lower(email)=?').bind(email).first().catch(() => null);
+    if (!row) return jsonRes({ ok: true, notFound: true }, 200, request);
+    await env.DB.prepare('DELETE FROM subscribers WHERE id=?').bind(row.id).run();
+    return jsonRes({ ok: true }, 200, request);
+  }
+
+  return msgHtml('קישור לא תקין', 'הקישור להסרה אינו תקין.', '❌');
 }
 
 // ===== ANALYTICS =====
@@ -4460,14 +4476,7 @@ async function nlGenerateContent(env, heroPhoto, guide, location, type) {
     {"num": 1, "title_he": "שם השלב (3-5 מילים)", "text_he": "הסבר קצר (2-3 משפטים)"},
     {"num": 2, "title_he": "...", "text_he": "..."},
     {"num": 3, "title_he": "...", "text_he": "..."}
-  ],
-  "sale": {
-    "title_he": "שם המבצע (מקסימום 5 מילים)",
-    "desc_he": "תיאור קצר (עד 10 מילים, כולל תאריך סיום)",
-    "original_price": "₪480",
-    "sale_price": "₪385",
-    "discount_label": "20% הנחה"
-  }
+  ]
 }
 
 פרטים לתוכן:
@@ -4552,7 +4561,6 @@ async function nlGenerateDraft(env, type) {
     tip: { title_he: generated.tip_title_he, title_en: generated.tip_title_en,
       text_he: generated.tip_text_he, text_en: generated.tip_text_en },
     gallery_photos: galleryPhotos,
-    sale: (generated.sale?.title_he) ? generated.sale : null,
     links: [
       { label_he: 'גלריה', label_en: 'Gallery', url: '/' },
       { label_he: 'מדריכים', label_en: 'Guides', url: '/camera/' },
@@ -4684,12 +4692,17 @@ async function handleNlIssue(env, slug, isPreview) {
   const pageUrl = `https://amitphotos.com/newsletter/${slug}/`;
   const waHref = escXml(`https://wa.me/?text=${encodeURIComponent(issue.title_he + ' — ' + pageUrl)}`);
 
+  const heroPriceHtml = c.sale?.sale_price ? `
+      <div class="nl-hero-price">
+        <span class="nl-hero-price-orig">${escXml(c.sale.original_price || '')}</span>
+        <span class="nl-hero-price-sale">${escXml(c.sale.sale_price)}</span>
+      </div>` : '';
   const heroSection = c.hero ? `
     <section class="nl-section nl-hero-section">
       <img src="${escXml(c.hero.photo_url)}" alt="${escXml(c.hero.title_he)}" class="nl-hero-img">
       <h2 class="nl-photo-title">${escXml(c.hero.title_he)}</h2>
       <p class="nl-body-text" data-he="${escXml(c.hero.text_he)}" data-en="${escXml(c.hero.text_en || c.hero.text_he)}">${escXml(c.hero.text_he)}</p>
-      <a class="nl-btn-secondary nl-hero-order" href="/photos/${escXml(c.hero.photo_id)}/">הזמן הדפסה ←</a>
+      <div class="nl-hero-footer">${heroPriceHtml}<a class="nl-btn-secondary nl-hero-order" href="/photos/${escXml(c.hero.photo_id)}/">רכוש קובץ ←</a></div>
     </section>` : '';
 
   const guideSection = isFull && c.guide ? (() => {
@@ -4728,13 +4741,19 @@ async function handleNlIssue(env, slug, isPreview) {
       <div class="nl-section-badge" data-he="מקום לצילום" data-en="Photo Location">מקום לצילום</div>
       <h2 class="nl-section-title">${escXml(c.location.title_he)}</h2>
       <p class="nl-body-text" data-he="${escXml(c.location.text_he)}" data-en="${escXml(c.location.text_en || c.location.text_he)}">${escXml(c.location.text_he)}</p>
-      <a class="nl-link" href="/locations/" data-he="לכל המקומות ←" data-en="All locations ←">לכל המקומות ←</a>
+      <div class="nl-location-links">
+        <a class="nl-link" href="/locations/" data-he="לכל המקומות ←" data-en="All locations ←">לכל המקומות ←</a>
+        <a class="nl-link nl-maps-link" href="https://www.google.com/maps/search/${encodeURIComponent(c.location.title_he)}" target="_blank" rel="noopener">פתח במפה ↗</a>
+      </div>
     </section>` : '';
 
   const tipSection = c.tip ? `
     <section class="nl-section nl-tip-section">
       <div class="nl-tip-card">
-        <div class="nl-tip-title" data-he="${escXml(c.tip.title_he || 'טיפ החודש')}" data-en="${escXml(c.tip.title_en || 'Tip of the Month')}">${escXml(c.tip.title_he || 'טיפ החודש')}</div>
+        <div class="nl-tip-header">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="nl-tip-icon"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>
+          <div class="nl-tip-title" data-he="${escXml(c.tip.title_he || 'טיפ החודש')}" data-en="${escXml(c.tip.title_en || 'Tip of the Month')}">${escXml(c.tip.title_he || 'טיפ החודש')}</div>
+        </div>
         <p data-he="${escXml(c.tip.text_he)}" data-en="${escXml(c.tip.text_en || c.tip.text_he)}">${escXml(c.tip.text_he)}</p>
       </div>
     </section>` : '';
@@ -4788,29 +4807,29 @@ async function handleNlIssue(env, slug, isPreview) {
   const _heroCat = c.hero?.category || '';
   const _ctaByCategory = {
     'פורטרט': [
-      { ico: _icoUser,   label: 'סשן פורטרט אישי',     href: '/contact/' },
-      { ico: _icoGift,   label: 'מתנה מרגשת',           href: '/contact/' },
-      { ico: _icoHome,   label: 'תמונה לבית',            href: _heroPhotoHref },
-      { ico: _icoPrint,  label: 'עוד פורטרטים',          href: '/?category=%D7%A4%D7%95%D7%A8%D7%98%D7%A8%D7%98' }
+      { ico: _icoUser,   label: 'רכוש קובץ פורטרט',      href: _heroPhotoHref },
+      { ico: _icoGift,   label: 'מתנה מרגשת',            href: '/contact/' },
+      { ico: _icoCamera, label: 'סשן צילום אישי',         href: '/contact/' },
+      { ico: _icoImage,  label: 'כל הגלריה',              href: '/' }
     ],
     'עירוני': [
-      { ico: _icoHome,   label: 'לסלון / משרד',          href: _heroPhotoHref },
-      { ico: _icoBrief,  label: 'עיצוב ואדריכלות',       href: '/?category=%D7%A2%D7%99%D7%A8%D7%95%D7%A0%D7%99' },
-      { ico: _icoGift,   label: 'מתנה ייחודית',           href: '/contact/' },
-      { ico: _icoPrint,  label: 'הדפסה אישית',            href: '/contact/' }
+      { ico: _icoHome,   label: 'קובץ לסלון / משרד',     href: _heroPhotoHref },
+      { ico: _icoBrief,  label: 'עיצוב ואדריכלות',        href: '/?category=%D7%A2%D7%99%D7%A8%D7%95%D7%A0%D7%99' },
+      { ico: _icoGift,   label: 'מתנה ייחודית',            href: '/contact/' },
+      { ico: _icoImage,  label: 'כל הגלריה',              href: '/' }
     ],
     'אירועים': [
-      { ico: _icoCamera, label: 'צלם לאירוע שלך',        href: '/contact/' },
-      { ico: _icoBrief,  label: 'חתונה / כנס / תאגיד',  href: '/contact/' },
-      { ico: _icoGift,   label: 'מתנה עסקית',            href: '/contact/' },
-      { ico: _icoHome,   label: 'תמונה לסלון',            href: _heroPhotoHref }
+      { ico: _icoCamera, label: 'צלם לאירוע שלך',         href: '/contact/' },
+      { ico: _icoBrief,  label: 'חתונה / כנס / תאגיד',   href: '/contact/' },
+      { ico: _icoGift,   label: 'מתנה עסקית',             href: '/contact/' },
+      { ico: _icoHome,   label: 'קובץ לסלון',             href: _heroPhotoHref }
     ]
   };
   const _defaultCta = [
-    { ico: _icoHome,   label: 'לסלון / חדר שינה',       href: _heroPhotoHref },
-    { ico: _icoBrief,  label: 'למשרד / קליניקה',        href: '/?category=%D7%A0%D7%95%D7%A3' },
-    { ico: _icoGift,   label: 'מתנה מיוחדת',            href: '/contact/' },
-    { ico: _icoPrint,  label: 'הדפסה אישית',            href: '/contact/' }
+    { ico: _icoHome,   label: 'קובץ לסלון / חדר שינה',  href: _heroPhotoHref },
+    { ico: _icoBrief,  label: 'קובץ למשרד / קליניקה',   href: _heroPhotoHref },
+    { ico: _icoGift,   label: 'מתנה ייחודית',            href: '/contact/' },
+    { ico: _icoImage,  label: 'כל הגלריה',              href: '/' }
   ];
   const _ctaCards = _ctaByCategory[_heroCat] || _defaultCta;
   const ctaCardsSection = `
@@ -4835,11 +4854,10 @@ async function handleNlIssue(env, slug, isPreview) {
           </div>
         </div>
         <div class="nl-contact-btns">
-          <a class="nl-contact-btn nl-contact-wa" href="https://wa.me/972503333227" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;margin-left:4px"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> וואטסאפ ישיר</a>
-          <a class="nl-contact-btn" href="https://bitpay.co.il/app/bizcard/0503333227" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;margin-left:4px"><rect width="22" height="16" x="1" y="4" rx="2" ry="2"/><line x1="1" x2="23" y1="10" y2="10"/></svg> ביט</a>
-          <a class="nl-contact-btn" href="https://payboxapp.page.link/pay?phone=972503333227" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;margin-left:4px"><rect width="22" height="16" x="1" y="4" rx="2" ry="2"/><line x1="1" x2="23" y1="10" y2="10"/></svg> פייבוקס</a>
+          <a class="nl-contact-btn nl-contact-wa" href="https://wa.me/972503333227" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;margin-left:4px"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> וואטסאפ</a>
+          <a class="nl-contact-btn" href="tel:+972503333227"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;margin-left:4px"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.42 2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.82a16 16 0 0 0 6 6l.87-.87a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg> 050-3333227</a>
         </div>
-        <p class="nl-contact-note">תשלום נוח — ביט, פייבוקס, או כרטיס אשראי באתר</p>
+        <p class="nl-contact-note">ניתן לשלם: ביט · פייבוקס · פייפל</p>
       </div>
     </section>`;
 
@@ -4886,6 +4904,16 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direc
 .nl-btn-primary{background:var(--accent);color:#000;text-decoration:none;border-radius:20px;padding:.4rem 1.1rem;font-size:.85rem;font-weight:700}
 .nl-btn-secondary{background:transparent;color:var(--accent);border:1px solid var(--accent);text-decoration:none;border-radius:20px;padding:.4rem 1.1rem;font-size:.85rem}
 .nl-hero-order{display:inline-block;margin-top:.25rem}
+.nl-hero-footer{display:flex;align-items:center;gap:1rem;margin-top:.5rem;flex-wrap:wrap}
+.nl-hero-price{display:flex;align-items:center;gap:.5rem}
+.nl-hero-price-orig{font-size:.9rem;color:var(--muted);text-decoration:line-through}
+.nl-hero-price-sale{font-size:1.1rem;font-weight:700;color:var(--accent)}
+.nl-tip-header{display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem}
+.nl-tip-icon{color:var(--accent);flex-shrink:0}
+.nl-location-links{display:flex;gap:1rem;align-items:center;flex-wrap:wrap;margin-top:.5rem}
+.nl-maps-link{color:var(--muted);font-size:.82rem}
+.nl-contact-note{font-size:.9rem;color:var(--text);margin-top:.5rem;font-weight:600}
+.nl-unsub-link{background:none;border:none;color:var(--muted);font-size:.78rem;cursor:pointer;text-decoration:underline;padding:0;font-family:inherit}
 .nl-wall-materials{font-size:.75rem;color:var(--muted)}
 .nl-print-section{background:var(--surface);border-radius:16px;margin:1rem auto;max-width:800px;padding:1.5rem;display:flex;flex-direction:column;align-items:center;gap:1rem}
 .nl-print-frame{display:block;text-decoration:none;width:min(380px,90%)}
@@ -4992,6 +5020,16 @@ ${contactCardSection}
       <button type="submit" data-he="הרשמה" data-en="Subscribe">הרשמה</button>
     </form>
     <p id="nl-sub-msg"></p>
+    <div id="nl-unsub-wrap" style="margin-top:.6rem">
+      <button class="nl-unsub-link" onclick="nlShowUnsub()" data-he="הסר אותי מהרשימה" data-en="Unsubscribe">הסר אותי מהרשימה</button>
+    </div>
+    <div id="nl-unsub-form" style="display:none;margin-top:.5rem">
+      <form class="nl-sub-form" onsubmit="nlUnsubscribe(event)">
+        <input type="email" id="nl-unsub-email" placeholder="כתובת המייל שלך" required>
+        <button type="submit" style="background:#444;color:#fff" data-he="הסר" data-en="Remove">הסר</button>
+      </form>
+      <p id="nl-unsub-msg"></p>
+    </div>
   </div>
 </section>
 <script>
@@ -5001,6 +5039,8 @@ applyLang();window.setLang=applyLang;window.addEventListener('storage',e=>{if(e.
 function showStep(n){document.querySelectorAll('.nl-step-content').forEach((el,i)=>{el.style.display=(i+1===n)?'':'none'});document.querySelectorAll('.nl-step-pill').forEach((el,i)=>{el.classList.toggle('nl-step-active',i+1===n)})}
 function copyLink(){navigator.clipboard.writeText(location.href).then(()=>{const el=document.getElementById('copy-label');const orig=el.innerHTML;el.textContent='✓ הועתק!';setTimeout(()=>{el.innerHTML=orig;applyLang()},2000)}).catch(()=>{})}
 async function nlSubscribe(e){e.preventDefault();const email=document.getElementById('nl-email').value.trim();const msg=document.getElementById('nl-sub-msg');const btn=e.target.querySelector('button[type="submit"]');btn.disabled=true;try{const r=await fetch('/api/subscribers',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email})});const d=await r.json();if(d.already){msg.style.color='#c8a96e';msg.textContent='כבר רשום/ה — תקבל את הגיליון הבא!'}else if(d.ok){msg.style.color='#4caf50';msg.textContent='נרשמת! תקבל את הגיליון הבא ישירות למייל 🎉';document.getElementById('nl-email').value=''}else{msg.style.color='#f44336';msg.textContent=d.error||'שגיאה'}}catch{msg.style.color='#f44336';msg.textContent='שגיאת רשת'}btn.disabled=false}
+function nlShowUnsub(){document.getElementById('nl-unsub-form').style.display='';document.getElementById('nl-unsub-wrap').style.display='none'}
+async function nlUnsubscribe(e){e.preventDefault();const email=document.getElementById('nl-unsub-email').value.trim();const msg=document.getElementById('nl-unsub-msg');const btn=e.target.querySelector('button[type="submit"]');btn.disabled=true;try{const r=await fetch('/api/unsubscribe',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email})});const d=await r.json();if(d.ok&&d.notFound){msg.style.color='#c8a96e';msg.textContent='כתובת זו אינה ברשימה'}else if(d.ok){msg.style.color='#4caf50';msg.textContent='הוסרת מהרשימה בהצלחה'}else{msg.style.color='#f44336';msg.textContent=d.error||'שגיאה'}}catch{msg.style.color='#f44336';msg.textContent='שגיאת רשת'}btn.disabled=false}
 </script>
 </body></html>`;
 
