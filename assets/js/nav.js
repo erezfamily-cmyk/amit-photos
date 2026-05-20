@@ -8,7 +8,7 @@
       logoName: 'עמית ארז',
       logoTagline: ' | עולם של צבעים מבעד לעדשה',
       gallery: 'גלריה', navNew: 'חדש באתר', navSale: 'מבצע',
-      challenges: 'אתגרים', camera: 'למד לצלם', learn: 'ניתוח תמונות',
+      challenges: 'אתגרים', camera: 'למד לצלם', learn: 'ניתוח תמונות', gear: 'הציוד שלי',
       howToBuy: 'כיצד לרכוש', pricing: 'מחירים', contact: 'צור קשר', locations: 'מקומות לצילום',
       newsletter: 'ניוזלטר',
       menu: 'תפריט'
@@ -17,7 +17,7 @@
       logoName: 'Amit Erez',
       logoTagline: ' | A World of Colors Through the Lens',
       gallery: 'Gallery', navNew: 'New', navSale: 'Sale',
-      challenges: 'Challenges', camera: 'Learn Photography', learn: 'Photo School',
+      challenges: 'Challenges', camera: 'Learn Photography', learn: 'Photo School', gear: 'My Gear',
       howToBuy: 'How to Buy', pricing: 'Pricing', contact: 'Contact', locations: 'Locations',
       newsletter: 'Newsletter',
       menu: 'Menu'
@@ -38,7 +38,7 @@
     if (logoTag)  logoTag.textContent  = t.logoTagline;
     const map = {
       'nav.gallery': t.gallery, 'nav.new': t.navNew, 'nav.sale': t.navSale,
-      'nav.challenges': t.challenges, 'nav.camera': t.camera, 'nav.learn': t.learn,
+      'nav.challenges': t.challenges, 'nav.camera': t.camera, 'nav.learn': t.learn, 'nav.gear': t.gear,
       'nav.how-to-buy': t.howToBuy, 'nav.pricing': t.pricing, 'nav.contact': t.contact,
       'nav.locations': t.locations, 'nav.newsletter': t.newsletter
     };
@@ -168,6 +168,7 @@ nav#main-nav .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px)
   <li><a href="${a('#gallery')}" id="nav-sale" data-i18n="nav.sale">מבצע</a></li>
   <li><a href="/games/" data-i18n="nav.challenges">אתגרים</a></li>
   <li><a href="/camera/" data-i18n="nav.camera">למד לצלם</a></li>
+  <li><a href="/gear/" data-i18n="nav.gear">הציוד שלי</a></li>
   <li><a href="/locations/" data-i18n="nav.locations">מקומות לצילום</a></li>
   <li><a href="/learn/" data-i18n="nav.learn">ניתוח תמונות</a></li>
   <li><a href="${a('#how-to-buy')}" data-i18n="nav.how-to-buy">כיצד לרכוש</a></li>
