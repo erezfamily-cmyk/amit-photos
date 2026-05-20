@@ -5576,15 +5576,29 @@ async function handleAdminNlUpdate(request, env, id) {
   if (!await checkAuth(request, env)) return unauth(request);
   if (request.method !== 'PATCH') return jsonRes({ error: 'method not allowed' }, 405, request);
   const body = await request.json().catch(() => ({}));
+  const issue = body.issue_number !== undefined
+    ? await env.DB.prepare('SELECT type, title_he, title_en FROM newsletter_issues WHERE id=?').bind(id).first()
+    : null;
   const updates = [];
   const binds = [];
   if (body.title_he !== undefined) { updates.push('title_he=?'); binds.push(body.title_he); }
   if (body.title_en !== undefined) { updates.push('title_en=?'); binds.push(body.title_en); }
   if (body.content_json !== undefined) { updates.push('content_json=?'); binds.push(body.content_json); }
-  if (body.issue_number !== undefined) { updates.push('issue_number=?'); binds.push(body.issue_number); }
+  if (body.issue_number !== undefined) {
+    updates.push('issue_number=?'); binds.push(body.issue_number);
+    if (issue && issue.type === 'full') {
+      const n = body.issue_number;
+      const newHe = (issue.title_he || '').replace(/גיליון #\d+/, `גיליון #${n}`);
+      const newEn = (issue.title_en || '').replace(/Issue #\d+/, `Issue #${n}`);
+      if (newHe !== issue.title_he && !body.title_he) { updates.push('title_he=?'); binds.push(newHe); }
+      if (newEn !== issue.title_en && !body.title_en) { updates.push('title_en=?'); binds.push(newEn); }
+    }
+  }
   if (!updates.length) return jsonRes({ error: 'no fields to update' }, 400, request);
   binds.push(id);
   await env.DB.prepare(`UPDATE newsletter_issues SET ${updates.join(',')} WHERE id=?`).bind(...binds).run();
+  if (body.issue_number !== undefined)
+    await nlSetSetting(env, 'nl_issue_number', String(Math.max(0, body.issue_number - 1)));
   return jsonRes({ ok: true }, 200, request);
 }
 
