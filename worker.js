@@ -5305,7 +5305,7 @@ async function handleAdminNlEditor(request, env, id) {
     </div>`;
 
   const heroFields = c.hero ? `
-    <h2>תמונה ראשית</h2>
+    <h2 style="display:flex;justify-content:space-between;align-items:center"><span>תמונה ראשית</span><button type="button" class="btn-secondary" onclick="swapPhoto()" style="font-size:.75rem;padding:.3rem .7rem">🔄 החלף תמונה</button></h2>
     <div class="field"><label>Photo ID</label><input name="hero.photo_id" value="${escXml(c.hero.photo_id||'')}"></div>
     ${field('טקסט עברית','hero','text_he',c.hero.text_he)}
     ${field('טקסט אנגלית','hero','text_en',c.hero.text_en)}` : '';
@@ -5322,13 +5322,14 @@ async function handleAdminNlEditor(request, env, id) {
     ${field('טקסט אנגלית','location','text_en',c.location.text_en)}` : '';
 
   const tipFields = c.tip ? `
-    <h2>טיפ החודש</h2>
+    <h2 style="display:flex;justify-content:space-between;align-items:center"><span>טיפ החודש</span><button type="button" class="btn-secondary" onclick="regenTip()" style="font-size:.75rem;padding:.3rem .7rem">🎲 טיפ אחר</button></h2>
     ${field('כותרת עברית','tip','title_he',c.tip.title_he)}
     ${field('טקסט עברית','tip','text_he',c.tip.text_he)}
     ${field('טקסט אנגלית','tip','text_en',c.tip.text_en)}` : '';
 
   const saleFields = issue.type === 'full' ? `
   <h2>מבצע החודש</h2>
+  <p style="font-size:.8rem;color:#888;margin-bottom:.75rem">המבצע אינו נוצר אוטומטית — מלא ידנית כאשר יש מבצע אמיתי להציע.</p>
   ${field('כותרת המבצע (עברית)', 'sale', 'title_he', c.sale?.title_he)}
   ${field('תיאור (עברית, עד 10 מילים)', 'sale', 'desc_he', c.sale?.desc_he)}
   ${field('מחיר מקורי', 'sale', 'original_price', c.sale?.original_price)}
@@ -5390,6 +5391,7 @@ button{background:#c8a96e;color:#000;border:none;padding:.5rem 1.1rem;border-rad
 </div>
 <div id="msg"></div>
 ${sendSection}
+<div class="field" style="max-width:180px;margin-top:1rem"><label>מספר גיליון</label><input id="issue-number" type="number" value="${escXml(String(issue.issue_number || ''))}"></div>
 ${heroFields}${guideFields}${guideStepsFields}${locationFields}${tipFields}${saleFields}
 <script>
 const tok = localStorage.getItem('adminToken') || '';
@@ -5439,14 +5441,37 @@ function collectContent() {
 async function save() {
   const msg = document.getElementById('msg');
   msg.style.display = 'block'; msg.style.color = '#888'; msg.textContent = 'שומר...';
+  const body = { content_json: JSON.stringify(collectContent()) };
+  const issueNumEl = document.getElementById('issue-number');
+  if (issueNumEl && issueNumEl.value !== '') body.issue_number = parseInt(issueNumEl.value, 10) || 0;
   const r = await fetch('/api/admin/newsletter/${escXml(id)}', {
     method: 'PATCH',
     headers: {'Content-Type':'application/json','X-Session-Token':tok},
-    body: JSON.stringify({ content_json: JSON.stringify(collectContent()) })
+    body: JSON.stringify(body)
   });
   const d = await r.json();
   msg.style.color = d.ok ? '#4caf50' : '#f44336';
   msg.textContent = d.ok ? 'נשמר!' : (d.error || 'שגיאה');
+}
+async function swapPhoto() {
+  const msg = document.getElementById('msg');
+  msg.style.display = 'block'; msg.style.color = '#888'; msg.textContent = 'מחליף תמונה...';
+  try {
+    const r = await fetch('/api/admin/newsletter/${escXml(id)}/swap-photo', { method: 'POST', headers: {'X-Session-Token': tok} });
+    const d = await r.json();
+    if (d.ok) { msg.style.color = '#4caf50'; msg.textContent = 'תמונה הוחלפה! טוען...'; setTimeout(() => location.reload(), 700); }
+    else { msg.style.color = '#f44336'; msg.textContent = d.error || 'שגיאה'; }
+  } catch { msg.style.color = '#f44336'; msg.textContent = 'שגיאת רשת'; }
+}
+async function regenTip() {
+  const msg = document.getElementById('msg');
+  msg.style.display = 'block'; msg.style.color = '#888'; msg.textContent = 'יוצר טיפ חדש...';
+  try {
+    const r = await fetch('/api/admin/newsletter/${escXml(id)}/regen-tip', { method: 'POST', headers: {'X-Session-Token': tok} });
+    const d = await r.json();
+    if (d.ok) { msg.style.color = '#4caf50'; msg.textContent = 'טיפ חדש! טוען...'; setTimeout(() => location.reload(), 700); }
+    else { msg.style.color = '#f44336'; msg.textContent = d.error || 'שגיאה'; }
+  } catch { msg.style.color = '#f44336'; msg.textContent = 'שגיאת רשת'; }
 }
 async function publish() {
   if (!confirm('לפרסם את הגיליון?')) return;
@@ -5485,6 +5510,7 @@ async function handleAdminNlUpdate(request, env, id) {
   if (body.title_he !== undefined) { updates.push('title_he=?'); binds.push(body.title_he); }
   if (body.title_en !== undefined) { updates.push('title_en=?'); binds.push(body.title_en); }
   if (body.content_json !== undefined) { updates.push('content_json=?'); binds.push(body.content_json); }
+  if (body.issue_number !== undefined) { updates.push('issue_number=?'); binds.push(body.issue_number); }
   if (!updates.length) return jsonRes({ error: 'no fields to update' }, 400, request);
   binds.push(id);
   await env.DB.prepare(`UPDATE newsletter_issues SET ${updates.join(',')} WHERE id=?`).bind(...binds).run();
@@ -5500,6 +5526,85 @@ async function handleAdminNlPublish(request, env, id) {
     `UPDATE newsletter_issues SET status='published', published_at=? WHERE id=?`
   ).bind(new Date().toISOString(), id).run();
   return jsonRes({ ok: true, url: `/newsletter/${issue.slug}/` }, 200, request);
+}
+
+async function handleAdminNlSwapPhoto(request, env, id) {
+  if (!await checkAuth(request, env)) return unauth(request);
+  if (request.method !== 'POST') return jsonRes({ error: 'method not allowed' }, 405, request);
+  const issue = await env.DB.prepare('SELECT * FROM newsletter_issues WHERE id=?').bind(id).first();
+  if (!issue) return jsonRes({ error: 'not found' }, 404, request);
+  const c = JSON.parse(issue.content_json || '{}');
+  const currentPhotoId = c.hero?.photo_id || '';
+  const newPhoto = await env.DB.prepare(
+    'SELECT id, title, url, thumbnail, category FROM photos WHERE published=1 AND id != ? ORDER BY RANDOM() LIMIT 1'
+  ).bind(currentPhotoId).first();
+  if (!newPhoto) return jsonRes({ error: 'no other photos available' }, 400, request);
+  const apiKey = env.ANTHROPIC_API_KEY;
+  if (!apiKey) return jsonRes({ error: 'ANTHROPIC_API_KEY not set' }, 500, request);
+  const userPrompt = issue.type === 'full'
+    ? `כתוב תוכן לניוזלטר צילום. החזר JSON בלבד:\n{"hero_text_he": "פסקה קצרה (2-3 משפטים) בעברית על התמונה", "hero_text_en": "same in English"}\n\nתמונה: "${newPhoto.title}" (קטגוריה: ${newPhoto.category || 'טבע'})`
+    : `כתוב תוכן להבזק. החזר JSON בלבד:\n{"hero_text_he": "1-2 משפטים אישיים על התמונה", "hero_text_en": "same in English"}\n\nתמונה: "${newPhoto.title}" (קטגוריה: ${newPhoto.category || 'טבע'})`;
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
+    body: JSON.stringify({
+      model: 'claude-opus-4-7', max_tokens: 500,
+      system: 'אתה כותב בשמו של עמית, צלם ישראלי. כתוב תמיד בגוף ראשון. החזר JSON תקין בלבד, ללא שום טקסט נוסף.',
+      messages: [{ role: 'user', content: userPrompt }]
+    })
+  });
+  if (!res.ok) return jsonRes({ error: `Claude API ${res.status}` }, 500, request);
+  const data = await res.json();
+  const raw = (data.content?.[0]?.text ?? '').trim();
+  const jsonStr = raw.startsWith('```') ? raw.replace(/^```json?\n?/, '').replace(/\n?```$/, '') : raw;
+  let generated;
+  try { generated = JSON.parse(jsonStr); } catch { return jsonRes({ error: 'Claude JSON parse failed' }, 500, request); }
+  c.hero = {
+    ...c.hero,
+    photo_id: newPhoto.id,
+    photo_url: toAbsolutePhotoUrl(newPhoto.url || newPhoto.thumbnail),
+    title_he: newPhoto.title,
+    category: newPhoto.category || '',
+    text_he: generated.hero_text_he || c.hero?.text_he || '',
+    text_en: generated.hero_text_en || c.hero?.text_en || ''
+  };
+  await env.DB.prepare('UPDATE newsletter_issues SET content_json=? WHERE id=?').bind(JSON.stringify(c), id).run();
+  await nlSetSetting(env, 'nl_last_hero_id', newPhoto.id);
+  return jsonRes({ ok: true }, 200, request);
+}
+
+async function handleAdminNlRegenTip(request, env, id) {
+  if (!await checkAuth(request, env)) return unauth(request);
+  if (request.method !== 'POST') return jsonRes({ error: 'method not allowed' }, 405, request);
+  const issue = await env.DB.prepare('SELECT * FROM newsletter_issues WHERE id=?').bind(id).first();
+  if (!issue) return jsonRes({ error: 'not found' }, 404, request);
+  const c = JSON.parse(issue.content_json || '{}');
+  const apiKey = env.ANTHROPIC_API_KEY;
+  if (!apiKey) return jsonRes({ error: 'ANTHROPIC_API_KEY not set' }, 500, request);
+  const userPrompt = `כתוב טיפ צילום מקורי ופרקטי. החזר JSON בלבד:\n{"tip_title_he": "כותרת קצרה (5-7 מילים)", "tip_title_en": "short tip title", "tip_text_he": "טיפ מקורי ופרקטי, 2-3 משפטים, לא גנרי", "tip_text_en": "same in English"}\n\nהקשר: תמונה "${c.hero?.title_he || ''}" (קטגוריה: ${c.hero?.category || 'טבע'})`;
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
+    body: JSON.stringify({
+      model: 'claude-opus-4-7', max_tokens: 400,
+      system: 'אתה כותב בשמו של עמית, צלם ישראלי. כתוב תמיד בגוף ראשון. החזר JSON תקין בלבד, ללא שום טקסט נוסף.',
+      messages: [{ role: 'user', content: userPrompt }]
+    })
+  });
+  if (!res.ok) return jsonRes({ error: `Claude API ${res.status}` }, 500, request);
+  const data = await res.json();
+  const raw = (data.content?.[0]?.text ?? '').trim();
+  const jsonStr = raw.startsWith('```') ? raw.replace(/^```json?\n?/, '').replace(/\n?```$/, '') : raw;
+  let generated;
+  try { generated = JSON.parse(jsonStr); } catch { return jsonRes({ error: 'Claude JSON parse failed' }, 500, request); }
+  c.tip = {
+    title_he: generated.tip_title_he || c.tip?.title_he || 'טיפ החודש',
+    title_en: generated.tip_title_en || c.tip?.title_en || '',
+    text_he: generated.tip_text_he || c.tip?.text_he || '',
+    text_en: generated.tip_text_en || c.tip?.text_en || ''
+  };
+  await env.DB.prepare('UPDATE newsletter_issues SET content_json=? WHERE id=?').bind(JSON.stringify(c), id).run();
+  return jsonRes({ ok: true }, 200, request);
 }
 
 function nlBuildEmailHtml(issue, issueUrl, unsubscribeUrl, subscriberName) {
@@ -5805,6 +5910,14 @@ export default {
     if (path.match(/^\/api\/admin\/newsletter\/[^/]+\/send-test$/) && request.method === 'POST') {
       const id = path.slice('/api/admin/newsletter/'.length).replace(/\/send-test$/, '');
       return handleAdminNlSendTest(request, env, id);
+    }
+    if (path.match(/^\/api\/admin\/newsletter\/[^/]+\/swap-photo$/) && request.method === 'POST') {
+      const id = path.slice('/api/admin/newsletter/'.length).replace(/\/swap-photo$/, '');
+      return handleAdminNlSwapPhoto(request, env, id);
+    }
+    if (path.match(/^\/api\/admin\/newsletter\/[^/]+\/regen-tip$/) && request.method === 'POST') {
+      const id = path.slice('/api/admin/newsletter/'.length).replace(/\/regen-tip$/, '');
+      return handleAdminNlRegenTip(request, env, id);
     }
     if (path.match(/^\/api\/admin\/newsletter\/[^/]+$/) && request.method === 'DELETE') {
       const id = path.slice('/api/admin/newsletter/'.length);
