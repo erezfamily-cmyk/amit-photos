@@ -4429,14 +4429,21 @@ async function nlPickLocation(env) {
   const { results } = await env.DB.prepare(
     `SELECT id, title, description, best_time, my_tip FROM locations WHERE published=1 ORDER BY id LIMIT 1 OFFSET ?`
   ).bind(idx).all();
+  let loc = null;
   if (!results.length) {
-    // wrap around
     const first = await env.DB.prepare(
       `SELECT id, title, description, best_time, my_tip FROM locations WHERE published=1 ORDER BY id LIMIT 1`
     ).first();
-    return first ? { ...first, idx: 0 } : null;
+    loc = first ? { ...first, idx: 0 } : null;
+  } else {
+    loc = results[0] ? { ...results[0], idx } : null;
   }
-  return results[0] ? { ...results[0], idx } : null;
+  if (!loc) return null;
+  const { results: locPhotos } = await env.DB.prepare(
+    'SELECT url, thumbnail FROM location_photos WHERE location_id = ? ORDER BY sort_order ASC LIMIT 4'
+  ).bind(loc.id).all();
+  loc.photos = (locPhotos || []).map(p => toAbsolutePhotoUrl(p.url || p.thumbnail));
+  return loc;
 }
 
 async function nlPickGalleryPhotos(env, heroPhotoId, heroCategory) {
@@ -4557,7 +4564,8 @@ async function nlGenerateDraft(env, type) {
       text_he: generated.guide_text_he, text_en: generated.guide_text_en,
       steps: Array.isArray(generated.guide_steps) ? generated.guide_steps : [] },
     location: location ? { id: location.id, title_he: location.title,
-      text_he: generated.location_text_he, text_en: generated.location_text_en } : null,
+      text_he: generated.location_text_he, text_en: generated.location_text_en,
+      photos: location.photos || [] } : null,
     tip: { title_he: generated.tip_title_he, title_en: generated.tip_title_en,
       text_he: generated.tip_text_he, text_en: generated.tip_text_en },
     gallery_photos: galleryPhotos,
@@ -4717,13 +4725,21 @@ async function handleNlIssue(env, slug, isPreview) {
           <p class="nl-body-text">${escXml(s.text_he)}</p>
         </div>`
       ).join('');
+      const guideCtaBanner = `
+      <a class="nl-guide-cta-banner" href="/camera/${escXml(c.guide.slug)}/">
+        <div class="nl-guide-cta-text">
+          <div class="nl-guide-cta-label">המדריך המלא באתר</div>
+          <div class="nl-guide-cta-title">${escXml(c.guide.title_he)}</div>
+        </div>
+        <span class="nl-guide-cta-arrow">←</span>
+      </a>`;
       return `
     <section class="nl-section nl-guide-section">
       <div class="nl-section-badge" data-he="מדריך החודש" data-en="Guide of the Month">מדריך החודש</div>
       <h2 class="nl-section-title" data-he="${escXml(c.guide.title_he)}" data-en="${escXml(c.guide.title_en || c.guide.title_he)}">${escXml(c.guide.title_he)}</h2>
       <div class="nl-steps-nav">${pillsHtml}</div>
       ${stepsHtml}
-      <a class="nl-link" href="/camera/${escXml(c.guide.slug)}/" data-he="קרא את המדריך ←" data-en="Read the guide ←">קרא את המדריך ←</a>
+      ${guideCtaBanner}
     </section>`;
     } else {
       return `
@@ -4731,21 +4747,38 @@ async function handleNlIssue(env, slug, isPreview) {
       <div class="nl-section-badge" data-he="מדריך החודש" data-en="Guide of the Month">מדריך החודש</div>
       <h2 class="nl-section-title" data-he="${escXml(c.guide.title_he)}" data-en="${escXml(c.guide.title_en || c.guide.title_he)}">${escXml(c.guide.title_he)}</h2>
       <p class="nl-body-text" data-he="${escXml(c.guide.text_he)}" data-en="${escXml(c.guide.text_en || c.guide.text_he)}">${escXml(c.guide.text_he)}</p>
-      <a class="nl-link" href="/camera/${escXml(c.guide.slug)}/" data-he="קרא את המדריך ←" data-en="Read the guide ←">קרא את המדריך ←</a>
+      <a class="nl-guide-cta-banner" href="/camera/${escXml(c.guide.slug)}/">
+        <div class="nl-guide-cta-text">
+          <div class="nl-guide-cta-label">המדריך המלא באתר</div>
+          <div class="nl-guide-cta-title">${escXml(c.guide.title_he)}</div>
+        </div>
+        <span class="nl-guide-cta-arrow">←</span>
+      </a>
     </section>`;
     }
   })() : '';
 
-  const locationSection = isFull && c.location ? `
+  const locationSection = isFull && c.location ? (() => {
+    const lPhotos = Array.isArray(c.location.photos) ? c.location.photos.filter(Boolean) : [];
+    const mainPhoto = lPhotos[0] || '';
+    const stripPhotos = lPhotos.slice(1, 4);
+    return `
     <section class="nl-section nl-location-section">
       <div class="nl-section-badge" data-he="מקום לצילום" data-en="Photo Location">מקום לצילום</div>
       <h2 class="nl-section-title">${escXml(c.location.title_he)}</h2>
+      ${mainPhoto ? `<div class="nl-loc-photos">
+        <img src="${escXml(mainPhoto)}" alt="${escXml(c.location.title_he)}" class="nl-loc-main-img" loading="lazy">
+        ${stripPhotos.length ? `<div class="nl-loc-strip">${stripPhotos.map(u =>
+          `<img src="${escXml(u)}" alt="" class="nl-loc-strip-img" loading="lazy">`
+        ).join('')}</div>` : ''}
+      </div>` : ''}
       <p class="nl-body-text" data-he="${escXml(c.location.text_he)}" data-en="${escXml(c.location.text_en || c.location.text_he)}">${escXml(c.location.text_he)}</p>
       <div class="nl-location-links">
         <a class="nl-link" href="/locations/" data-he="לכל המקומות ←" data-en="All locations ←">לכל המקומות ←</a>
         <a class="nl-link nl-maps-link" href="https://www.google.com/maps/search/${encodeURIComponent(c.location.title_he)}" target="_blank" rel="noopener">פתח במפה ↗</a>
       </div>
-    </section>` : '';
+    </section>`;
+  })() : '';
 
   const tipIllustration = c.gallery_photos?.[0];
   const tipSection = c.tip ? `
@@ -4906,8 +4939,17 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direc
 .nl-tip-img-wrap{display:block;border-radius:8px;overflow:hidden;border:1px solid var(--border);text-decoration:none}
 .nl-tip-img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block}
 @media(max-width:520px){.nl-tip-grid{grid-template-columns:1fr}.nl-tip-img-wrap{order:-1}}
-.nl-location-links{display:flex;gap:1rem;align-items:center;flex-wrap:wrap;margin-top:.5rem}
+.nl-loc-photos{margin:.75rem 0}
+.nl-loc-main-img{width:100%;max-height:320px;object-fit:cover;border-radius:10px;display:block}
+.nl-loc-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:.4rem;margin-top:.4rem}
+.nl-loc-strip-img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:6px;display:block}
+.nl-location-links{display:flex;gap:1rem;align-items:center;flex-wrap:wrap;margin-top:.75rem}
 .nl-maps-link{color:var(--muted);font-size:.82rem}
+.nl-guide-cta-banner{display:flex;align-items:center;justify-content:space-between;background:rgba(200,169,110,.1);border:1px solid rgba(200,169,110,.35);border-radius:12px;padding:1rem 1.25rem;margin-top:1rem;text-decoration:none;transition:background .2s,border-color .2s}
+.nl-guide-cta-banner:hover{background:rgba(200,169,110,.18);border-color:var(--accent)}
+.nl-guide-cta-label{font-size:.72rem;color:var(--accent);letter-spacing:.04em;margin-bottom:.2rem;text-transform:uppercase}
+.nl-guide-cta-title{font-family:'Syne',sans-serif;font-size:.95rem;color:var(--text)}
+.nl-guide-cta-arrow{font-size:1.3rem;color:var(--accent);flex-shrink:0;margin-right:.5rem}
 .nl-contact-heading{font-family:'Syne',sans-serif;font-size:1rem;color:var(--accent);margin-bottom:.75rem}
 .nl-contact-quote{font-size:.92rem;color:var(--text);line-height:1.65;margin-top:.75rem}
 .nl-contact-note{font-size:.85rem;color:var(--muted);margin-top:.35rem}
