@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="canonical" href="https://amitphotos.com/gear/" />
+<link rel="alternate" hreflang="he" href="https://amitphotos.com/gear/" />
+<link rel="alternate" hreflang="en" href="https://amitphotos.com/gear/" />
+<link rel="alternate" hreflang="x-default" href="https://amitphotos.com/gear/" />
+<title>הציוד שלי — עמית פוטוס | Amit Photos Gear</title>
+<meta name="description" content="הציוד האמיתי שאני משתמש בו — Nikon D700, Z7, עדשות Nikon ו-Sigma, חצובת Slik קרבון ועוד.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #0a0a0a; --surface: #111; --surface2: #181818; --border: #222;
+  --accent: #c8a96e; --text: #f0ede8; --muted: #888;
+}
+body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--text);
+  direction: rtl; min-height: 100vh; padding-bottom: 4rem; }
+
+.site-header { display: flex; align-items: center; justify-content: space-between;
+  padding: .9rem 1.5rem; border-bottom: 1px solid var(--border); }
+.site-title { font-family: 'Syne', sans-serif; font-size: 1.05rem;
+  color: var(--accent); text-decoration: none; }
+.header-back { font-size: .8rem; color: var(--muted); text-decoration: none; }
+.header-back:hover { color: var(--accent); }
+
+.lang-btn { background: none; border: 1px solid var(--border); color: var(--muted);
+  font-size: .75rem; padding: .3rem .7rem; border-radius: 6px; cursor: pointer;
+  transition: color .2s, border-color .2s; font-family: 'Heebo', sans-serif; }
+.lang-btn:hover { color: var(--accent); border-color: var(--accent); }
+
+.hero { max-width: 760px; margin: 0 auto; padding: 2.5rem 1.25rem 1rem; }
+.hero h1 { font-family: 'Syne', sans-serif; font-size: 1.9rem; margin-bottom: .6rem; }
+.hero p { color: var(--muted); font-size: .93rem; line-height: 1.65; max-width: 560px; }
+
+.section { max-width: 760px; margin: 0 auto; padding: 1.5rem 1.25rem .5rem; }
+.section-title { font-family: 'Syne', sans-serif; font-size: .75rem; text-transform: uppercase;
+  letter-spacing: .08em; color: var(--muted); margin-bottom: 1rem;
+  padding-bottom: .5rem; border-bottom: 1px solid var(--border); }
+
+.gear-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: .75rem; margin-bottom: 1.5rem; }
+
+.gear-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+  overflow: hidden; display: flex; flex-direction: column; text-decoration: none;
+  transition: border-color .2s, transform .15s; }
+.gear-card:hover { border-color: rgba(200,169,110,.5); transform: translateY(-2px); }
+.gear-card-ico { aspect-ratio: 3/2; background: var(--surface2); display: flex;
+  align-items: center; justify-content: center; font-size: 2.8rem; }
+.gear-card-body { padding: .9rem; flex: 1; display: flex; flex-direction: column; }
+.gear-card-brand { font-size: .68rem; text-transform: uppercase; letter-spacing: .06em;
+  color: var(--accent); margin-bottom: .2rem; }
+.gear-card-name { font-family: 'Syne', sans-serif; font-size: .9rem; color: var(--text);
+  margin-bottom: .35rem; }
+.gear-card-desc { font-size: .76rem; color: var(--muted); line-height: 1.55; flex: 1; margin-bottom: .8rem; }
+.gear-card-btn { display: block; text-align: center; border: 1px solid rgba(200,169,110,.45);
+  color: var(--accent); font-size: .75rem; font-weight: 700; padding: .4rem .75rem;
+  border-radius: 6px; transition: background .15s, color .15s; }
+.gear-card:hover .gear-card-btn { background: var(--accent); color: #000; }
+
+.gear-card.own-badge .gear-card-ico::after {
+  content: '✓ שלי';
+  position: absolute;
+  top: .5rem;
+  left: .5rem;
+  background: rgba(200,169,110,.15);
+  border: 1px solid rgba(200,169,110,.4);
+  color: var(--accent);
+  font-size: .65rem;
+  font-weight: 700;
+  padding: .2rem .5rem;
+  border-radius: 4px;
+  font-family: 'Heebo', sans-serif;
+}
+.gear-card-ico { position: relative; }
+
+.disclose { max-width: 760px; margin: 0 auto; padding: .5rem 1.25rem 2rem;
+  font-size: .7rem; color: #444; text-align: center; }
+.disclose a { color: #666; }
+
+.kofi-bar { text-align: center; padding: 1.5rem 1.25rem 2rem;
+  border-top: 1px solid var(--border); max-width: 760px; margin: 1rem auto 0; }
+.kofi-bar a { display: inline-flex; align-items: center; gap: .5rem;
+  background: var(--surface); border: 1px solid rgba(200,169,110,.4);
+  color: var(--accent); font-size: .82rem; font-weight: 700;
+  padding: .55rem 1.4rem; border-radius: 8px; text-decoration: none;
+  transition: background .2s, color .2s; }
+.kofi-bar a:hover { background: var(--accent); color: #000; }
+
+@media(max-width: 480px) { .gear-grid { grid-template-columns: 1fr 1fr; } }
+</style>
+</head>
+<body>
+<script src="/assets/js/nav.js"></script>
+
+<header class="site-header">
+  <a class="site-title" href="/">Amit Photos</a>
+  <button class="lang-btn" onclick="toggleLang()" id="lang-btn">EN</button>
+</header>
+
+<div class="hero">
+  <h1 data-he="הציוד שלי" data-en="My Gear">הציוד שלי</h1>
+  <p data-he="הציוד האמיתי שאני משתמש בו בצילומים שלי — גופי מצלמה, עדשות ואקססוריז. קישורי Adorama הם affiliate — אני מקבל עמלה קטנה ללא עלות נוספת לך." data-en="The actual gear I use in my photography — camera bodies, lenses and accessories. Adorama links are affiliate — I earn a small commission at no extra cost to you.">הציוד האמיתי שאני משתמש בו בצילומים שלי — גופי מצלמה, עדשות ואקססוריז. קישורי Adorama הם affiliate — אני מקבל עמלה קטנה ללא עלות נוספת לך.</p>
+</div>
+
+<!-- BODIES -->
+<div class="section">
+  <div class="section-title" data-he="📷 גופי מצלמה" data-en="📷 Camera Bodies">📷 גופי מצלמה</div>
+  <div class="gear-grid">
+
+    <a class="gear-card own-badge" href="https://adorama.prf.hn/click/camref:1101l5Km5i/destination:https://www.adorama.com/catalog.tpl?SearchInfo=Nikon+Z7+mirrorless" target="_blank" rel="noopener sponsored">
+      <div class="gear-card-ico">📷</div>
+      <div class="gear-card-body">
+        <div class="gear-card-brand">Nikon</div>
+        <div class="gear-card-name" data-he="Nikon Z7" data-en="Nikon Z7">Nikon Z7</div>
+        <div class="gear-card-desc" data-he="מירורלס פול-פריים 45MP — הגוף העיקרי שלי. חיישן BSI-CMOS מדהים לתאורה נמוכה ולנוף." data-en="45MP full-frame mirrorless — my primary body. Stunning BSI-CMOS sensor for low light and landscapes.">מירורלס פול-פריים 45MP — הגוף העיקרי שלי. חיישן BSI-CMOS מדהים לתאורה נמוכה ולנוף.</div>
+        <span class="gear-card-btn" data-he="ראה באדוראמה ←" data-en="View at Adorama →">ראה באדוראמה ←</span>
+      </div>
+    </a>
+
+    <a class="gear-card own-badge" href="https://adorama.prf.hn/click/camref:1101l5Km5i/destination:https://www.adorama.com/catalog.tpl?SearchInfo=Nikon+D700+camera" target="_blank" rel="noopener sponsored">
+      <div class="gear-card-ico">📸</div>
+      <div class="gear-card-body">
+        <div class="gear-card-brand">Nikon</div>
+        <div class="gear-card-name" data-he="Nikon D700" data-en="Nikon D700">Nikon D700</div>
+        <div class="gear-card-desc" data-he="DSLR פול-פריים קלאסי — אמין, חסין, ISO מצוין. עדיין בשימוש אצלי לאירועים ולספורט." data-en="Classic full-frame DSLR — reliable, rugged, excellent ISO. Still in use for events and sports.">DSLR פול-פריים קלאסי — אמין, חסין, ISO מצוין. עדיין בשימוש אצלי לאירועים ולספורט.</div>
+        <span class="gear-card-btn" data-he="ראה באדוראמה ←" data-en="View at Adorama →">ראה באדוראמה ←</span>
+      </div>
+    </a>
+
+    <a class="gear-card own-badge" href="https://adorama.prf.hn/click/camref:1101l5Km5i/destination:https://www.adorama.com/catalog.tpl?SearchInfo=Nikon+D300+camera" target="_blank" rel="noopener sponsored">
+      <div class="gear-card-ico">🎞️</div>
+      <div class="gear-card-body">
+        <div class="gear-card-brand">Nikon</div>
+        <div class="gear-card-name" data-he="Nikon D300" data-en="Nikon D300">Nikon D300</div>
+        <div class="gear-card-desc" data-he="APS-C מקצועי — גוף הגיבוי שלי, מוצק כמו סלע. עם מכפל × 1.5 מהעדשות הטלה." data-en="Professional APS-C — my backup body, solid as a rock. With 1.5× crop factor on telephoto lenses.">APS-C מקצועי — גוף הגיבוי שלי, מוצק כמו סלע. עם מכפל × 1.5 מהעדשות הטלה.</div>
+        <span class="gear-card-btn" data-he="ראה באדוראמה ←" data-en="View at Adorama →">ראה באדוראמה ←</span>
+      </div>
+    </a>
+
+  </div>
+</div>
+
+<!-- LENSES -->
+<div class="section">
+  <div class="section-title" data-he="🔭 עדשות" data-en="🔭 Lenses">🔭 עדשות</div>
+  <div class="gear-grid">
+
+    <a class="gear-card own-badge" href="https://adorama.prf.hn/click/camref:1101l5Km5i/destination:https://www.adorama.com/catalog.tpl?SearchInfo=Nikon+70-200mm+lens" target="_blank" rel="noopener sponsored">
+      <div class="gear-card-ico">🔭</div>
+      <div class="gear-card-body">
+        <div class="gear-card-brand">Nikon</div>
+        <div class="gear-card-name" data-he="70-200mm f/2.8" data-en="70-200mm f/2.8">70-200mm f/2.8</div>
+        <div class="gear-card-desc" data-he="סוס העבודה שלי — ספורט, פורטרטים, חיות. בוקה קרמי ומהיר בכל תנאי אור." data-en="My workhorse — sports, portraits, wildlife. Creamy bokeh and fast in any light.">סוס העבודה שלי — ספורט, פורטרטים, חיות. בוקה קרמי ומהיר בכל תנאי אור.</div>
+        <span class="gear-card-btn" data-he="ראה באדוראמה ←" data-en="View at Adorama →">ראה באדוראמה ←</span>
+      </div>
+    </a>
+
+    <a class="gear-card own-badge" href="https://adorama.prf.hn/click/camref:1101l5Km5i/destination:https://www.adorama.com/catalog.tpl?SearchInfo=Nikon+300mm+f4+telephoto" target="_blank" rel="noopener sponsored">
+      <div class="gear-card-ico">🦅</div>
+      <div class="gear-card-body">
+        <div class="gear-card-brand">Nikon</div>
+        <div class="gear-card-name" data-he="300mm f/4 פריים" data-en="300mm f/4 Prime">300mm f/4 פריים</div>
+        <div class="gear-card-desc" data-he="לחיות בר וציפורים — מגיע לנושא מרחק גדול, חד ומהיר. עם מכפל × 1.4 הופך ל-420mm." data-en="For wildlife and birds — reaches distant subjects, sharp and fast. With 1.4× TC becomes 420mm.">לחיות בר וציפורים — מגיע לנושא מרחק גדול, חד ומהיר. עם מכפל × 1.4 הופך ל-420mm.</div>
+        <span class="gear-card-btn" data-he="ראה באדוראמה ←" data-en="View at Adorama →">ראה באדוראמה ←</span>
+      </div>
+    </a>
+
+    <a class="gear-card own-badge" href="https://adorama.prf.hn/click/camref:1101l5Km5i/destination:https://www.adorama.com/catalog.tpl?SearchInfo=Nikon+105mm+macro+lens" target="_blank" rel="noopener sponsored">
+      <div class="gear-card-ico">🔬</div>
+      <div class="gear-card-body">
+        <div class="gear-card-brand">Nikon</div>
+        <div class="gear-card-name" data-he="105mm f/2.8 מאקרו" data-en="105mm f/2.8 Macro">105mm f/2.8 מאקרו</div>
+        <div class="gear-card-desc" data-he="1:1 — מגלה עולם שהעין לא רואה. כפול גם כעדשת פורטרט מצוינת עם בוקה רך." data-en="1:1 — reveals a world the eye can't see. Doubles as an excellent portrait lens with soft bokeh.">1:1 — מגלה עולם שהעין לא רואה. כפול גם כעדשת פורטרט מצוינת עם בוקה רך.</div>
+        <span class="gear-card-btn" data-he="ראה באדוראמה ←" data-en="View at Adorama →">ראה באדוראמה ←</span>
+      </div>
+    </a>
+
+    <a class="gear-card own-badge" href="https://adorama.prf.hn/click/camref:1101l5Km5i/destination:https://www.adorama.com/catalog.tpl?SearchInfo=Sigma+10-20mm+wide+angle+lens" target="_blank" rel="noopener sponsored">
+      <div class="gear-card-ico">🌅</div>
+      <div class="gear-card-body">
+        <div class="gear-card-brand">Sigma</div>
+        <div class="gear-card-name" data-he="10-20mm f/4-5.6" data-en="10-20mm f/4-5.6">10-20mm f/4-5.6</div>
+        <div class="gear-card-desc" data-he="רחב-על לנוף, אדריכלות ואסטרו — תופס את כל המרחב בפריים אחד." data-en="Ultra-wide for landscape, architecture and astro — captures the entire scene in one frame.">רחב-על לנוף, אדריכלות ואסטרו — תופס את כל המרחב בפריים אחד.</div>
+        <span class="gear-card-btn" data-he="ראה באדוראמה ←" data-en="View at Adorama →">ראה באדוראמה ←</span>
+      </div>
+    </a>
+
+    <a class="gear-card own-badge" href="https://adorama.prf.hn/click/camref:1101l5Km5i/destination:https://www.adorama.com/catalog.tpl?SearchInfo=Nikon+18-70mm+lens" target="_blank" rel="noopener sponsored">
+      <div class="gear-card-ico">🎒</div>
+      <div class="gear-card-body">
+        <div class="gear-card-brand">Nikon</div>
+        <div class="gear-card-name" data-he="18-70mm f/3.5-4.5" data-en="18-70mm f/3.5-4.5">18-70mm f/3.5-4.5</div>
+        <div class="gear-card-desc" data-he="עדשת הכל-יום — קלה, רב-תכליתית, הולכת לכל מקום. הבחירה כשלא יודע מה יהיה." data-en="The everyday lens — light, versatile, goes everywhere. My choice when I don't know what to expect.">עדשת הכל-יום — קלה, רב-תכליתית, הולכת לכל מקום. הבחירה כשלא יודע מה יהיה.</div>
+        <span class="gear-card-btn" data-he="ראה באדוראמה ←" data-en="View at Adorama →">ראה באדוראמה ←</span>
+      </div>
+    </a>
+
+    <a class="gear-card own-badge" href="https://adorama.prf.hn/click/camref:1101l5Km5i/destination:https://www.adorama.com/catalog.tpl?SearchInfo=Nikon+50mm+f1.8+lens" target="_blank" rel="noopener sponsored">
+      <div class="gear-card-ico">👁️</div>
+      <div class="gear-card-body">
+        <div class="gear-card-brand">Nikon</div>
+        <div class="gear-card-name" data-he="50mm f/1.8 פריים" data-en="50mm f/1.8 Prime">50mm f/1.8 פריים</div>
+        <div class="gear-card-desc" data-he="הנורמלי — פרספקטיבה טבעית כמו העין, פתח רחב, קטן וקל. העדשה הראשונה שהמלצתי." data-en="The normal — natural perspective like the eye, wide aperture, small and light. The first lens I recommend.">הנורמלי — פרספקטיבה טבעית כמו העין, פתח רחב, קטן וקל. העדשה הראשונה שהמלצתי.</div>
+        <span class="gear-card-btn" data-he="ראה באדוראמה ←" data-en="View at Adorama →">ראה באדוראמה ←</span>
+      </div>
+    </a>
+
+  </div>
+</div>
+
+<!-- ACCESSORIES -->
+<div class="section">
+  <div class="section-title" data-he="🎒 אקססוריז" data-en="🎒 Accessories">🎒 אקססוריז</div>
+  <div class="gear-grid">
+
+    <a class="gear-card own-badge" href="https://adorama.prf.hn/click/camref:1101l5Km5i/destination:https://www.adorama.com/catalog.tpl?SearchInfo=Slik+carbon+tripod" target="_blank" rel="noopener sponsored">
+      <div class="gear-card-ico">🦯</div>
+      <div class="gear-card-body">
+        <div class="gear-card-brand">Slik</div>
+        <div class="gear-card-name" data-he="חצובת קרבון Slik" data-en="Slik Carbon Tripod">חצובת קרבון Slik</div>
+        <div class="gear-card-desc" data-he="קרבון — קל כמו אלומיניום, יציב כמו ברזל. שימוש יומיומי שלי לנוף ולחשיפות ארוכות." data-en="Carbon fiber — as light as aluminum, as stable as steel. My daily use for landscape and long exposures.">קרבון — קל כמו אלומיניום, יציב כמו ברזל. שימוש יומיומי שלי לנוף ולחשיפות ארוכות.</div>
+        <span class="gear-card-btn" data-he="ראה באדוראמה ←" data-en="View at Adorama →">ראה באדוראמה ←</span>
+      </div>
+    </a>
+
+    <a class="gear-card own-badge" href="https://adorama.prf.hn/click/camref:1101l5Km5i/destination:https://www.adorama.com/catalog.tpl?SearchInfo=Nikon+teleconverter+1.4x+2x" target="_blank" rel="noopener sponsored">
+      <div class="gear-card-ico">🔢</div>
+      <div class="gear-card-body">
+        <div class="gear-card-brand">Nikon</div>
+        <div class="gear-card-name" data-he="מכפלים × 1.4 / × 2" data-en="Teleconverters 1.4× / 2×">מכפלים × 1.4 / × 2</div>
+        <div class="gear-card-desc" data-he="מאריכים את העדשה בלי לשאת עדשה נוספת — 300mm הופך ל-600mm עם מכפל × 2." data-en="Extend reach without carrying another lens — 300mm becomes 600mm with 2× TC.">מאריכים את העדשה בלי לשאת עדשה נוספת — 300mm הופך ל-600mm עם מכפל × 2.</div>
+        <span class="gear-card-btn" data-he="ראה באדוראמה ←" data-en="View at Adorama →">ראה באדוראמה ←</span>
+      </div>
+    </a>
+
+    <a class="gear-card own-badge" href="https://adorama.prf.hn/click/camref:1101l5Km5i/destination:https://www.adorama.com/catalog.tpl?SearchInfo=camera+filter+set+CPL+ND+UV" target="_blank" rel="noopener sponsored">
+      <div class="gear-card-ico">🌈</div>
+      <div class="gear-card-body">
+        <div class="gear-card-brand">פילטרים</div>
+        <div class="gear-card-name" data-he="סט פילטרים CPL + ND + UV" data-en="Filter Set CPL + ND + UV">סט פילטרים CPL + ND + UV</div>
+        <div class="gear-card-desc" data-he="CPL לשמיים כחולים, ND לחשיפות ארוכות ביום, UV להגנה. שלושה כלים חיוניים." data-en="CPL for blue skies, ND for daytime long exposures, UV for protection. Three essential tools.">CPL לשמיים כחולים, ND לחשיפות ארוכות ביום, UV להגנה. שלושה כלים חיוניים.</div>
+        <span class="gear-card-btn" data-he="ראה באדוראמה ←" data-en="View at Adorama →">ראה באדוראמה ←</span>
+      </div>
+    </a>
+
+  </div>
+</div>
+
+<div class="disclose" data-he="קישורי שותף — אני מקבל עמלה קטנה על כל רכישה דרך הקישורים, ללא עלות נוספת לך. אני ממליץ רק על ציוד שאני עצמי משתמש בו." data-en="Affiliate links — I earn a small commission on purchases through these links, at no extra cost to you. I only recommend gear I personally use.">קישורי שותף — אני מקבל עמלה קטנה על כל רכישה דרך הקישורים, ללא עלות נוספת לך. אני ממליץ רק על ציוד שאני עצמי משתמש בו.</div>
+
+<div class="kofi-bar">
+  <a href="https://ko-fi.com/amitphotos" target="_blank" rel="noopener">
+    &#9749; <span data-he="אהבת את הדף? קנה לי קפה" data-en="Found this useful? Buy me a coffee">אהבת את הדף? קנה לי קפה</span>
+  </a>
+</div>
+
+<script>
+function getLang() { return localStorage.getItem('lang') || 'he'; }
+function applyLang() {
+  const lang = getLang();
+  const isEn = lang === 'en';
+  document.documentElement.dir = isEn ? 'ltr' : 'rtl';
+  document.documentElement.lang = lang;
+  document.body.style.direction = isEn ? 'ltr' : 'rtl';
+  document.title = isEn ? 'My Gear — Amit Photos' : 'הציוד שלי — עמית פוטוס';
+  document.getElementById('lang-btn').textContent = isEn ? 'HE' : 'EN';
+  document.querySelectorAll('[data-he]').forEach(el => {
+    el.textContent = isEn ? (el.dataset.en || el.dataset.he) : el.dataset.he;
+  });
+}
+function toggleLang() {
+  localStorage.setItem('lang', getLang() === 'he' ? 'en' : 'he');
+  applyLang();
+}
+applyLang();
+window.addEventListener('storage', e => { if (e.key === 'lang') applyLang(); });
+</script>
+</body>
+</html>
