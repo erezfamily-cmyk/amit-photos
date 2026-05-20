@@ -4480,9 +4480,9 @@ async function nlGenerateContent(env, heroPhoto, guide, location, type) {
   "tip_text_he": "טיפ צילום שלא קיים באתר — מקורי, פרקטי, 2-3 משפטים",
   "tip_text_en": "same tip in English",
   "guide_steps": [
-    {"num": 1, "title_he": "שם השלב (3-5 מילים)", "text_he": "הסבר קצר (2-3 משפטים)"},
-    {"num": 2, "title_he": "...", "text_he": "..."},
-    {"num": 3, "title_he": "...", "text_he": "..."}
+    {"num": 1, "title_he": "שם השלב (3-5 מילים)", "title_en": "step name", "text_he": "הסבר קצר (2-3 משפטים)", "text_en": "same in English"},
+    {"num": 2, "title_he": "...", "title_en": "...", "text_he": "...", "text_en": "..."},
+    {"num": 3, "title_he": "...", "title_en": "...", "text_he": "...", "text_en": "..."}
   ]
 }
 
@@ -4708,9 +4708,9 @@ async function handleNlIssue(env, slug, isPreview) {
   const heroSection = c.hero ? `
     <section class="nl-section nl-hero-section">
       <img src="${escXml(c.hero.photo_url)}" alt="${escXml(c.hero.title_he)}" class="nl-hero-img">
-      <h2 class="nl-photo-title">${escXml(c.hero.title_he)}</h2>
+      <h2 class="nl-photo-title" data-he="${escXml(c.hero.title_he)}" data-en="${escXml(c.hero.title_he)}">${escXml(c.hero.title_he)}</h2>
       <p class="nl-body-text" data-he="${escXml(c.hero.text_he)}" data-en="${escXml(c.hero.text_en || c.hero.text_he)}">${escXml(c.hero.text_he)}</p>
-      <div class="nl-hero-footer">${heroPriceHtml}<a class="nl-btn-secondary nl-hero-order" href="/?photo=${escXml(c.hero.photo_id)}">רכוש קובץ ←</a></div>
+      <div class="nl-hero-footer">${heroPriceHtml}<a class="nl-btn-secondary nl-hero-order" href="/?photo=${escXml(c.hero.photo_id)}" data-he="רכוש קובץ ←" data-en="Buy File →">רכוש קובץ ←</a></div>
     </section>` : '';
 
   const guideSection = isFull && c.guide ? (() => {
@@ -4719,7 +4719,7 @@ async function handleNlIssue(env, slug, isPreview) {
       const pillsHtml = c.guide.steps.map((s, i) =>
         `<button class="nl-step-pill${i === 0 ? ' nl-step-active' : ''}" onclick="showStep(${i + 1})">
           <span class="nl-step-num">${String(i + 1).padStart(2, '0')}</span>
-          <span class="nl-step-label">${escXml(s.title_he)}</span>
+          <span class="nl-step-label" data-he="${escXml(s.title_he)}" data-en="${escXml(s.title_en || s.title_he)}">${escXml(s.title_he)}</span>
         </button>`
       ).join('');
       const heroThumb = c.hero?.photo_url || '';
@@ -4733,8 +4733,8 @@ async function handleNlIssue(env, slug, isPreview) {
           <div class="nl-step-body">
             <div class="nl-step-info">
               <div class="nl-step-num-bg">${String(i + 1).padStart(2, '0')}</div>
-              <h3 class="nl-step-title">${escXml(s.title_he)}</h3>
-              <p class="nl-body-text">${escXml(s.text_he)}</p>
+              <h3 class="nl-step-title" data-he="${escXml(s.title_he)}" data-en="${escXml(s.title_en || s.title_he)}">${escXml(s.title_he)}</h3>
+              <p class="nl-body-text" data-he="${escXml(s.text_he)}" data-en="${escXml(s.text_en || s.text_he)}">${escXml(s.text_he)}</p>
             </div>
             ${heroThumb ? `<div class="nl-step-vis"><div class="nl-vis-wrap"><img src="${escXml(heroThumb)}" class="nl-vis-img" loading="lazy" alt="">${_stepOverlays[i] || _stepOverlays[0]}</div></div>` : ''}
           </div>
@@ -4743,10 +4743,10 @@ async function handleNlIssue(env, slug, isPreview) {
       const guideCtaBanner = `
       <a class="nl-guide-cta-banner" href="/camera/${escXml(c.guide.slug)}/">
         <div class="nl-guide-cta-text">
-          <div class="nl-guide-cta-label">המדריך המלא באתר</div>
-          <div class="nl-guide-cta-title">${escXml(c.guide.title_he)}</div>
+          <div class="nl-guide-cta-label" data-he="המדריך המלא באתר" data-en="Full Guide on Site">המדריך המלא באתר</div>
+          <div class="nl-guide-cta-title" data-he="${escXml(c.guide.title_he)}" data-en="${escXml(c.guide.title_en || c.guide.title_he)}">${escXml(c.guide.title_he)}</div>
         </div>
-        <span class="nl-guide-cta-arrow">←</span>
+        <span class="nl-guide-cta-arrow" data-he="←" data-en="→">←</span>
       </a>`;
       return `
     <section class="nl-section nl-guide-section">
@@ -4780,7 +4780,7 @@ async function handleNlIssue(env, slug, isPreview) {
     return `
     <section class="nl-section nl-location-section">
       <div class="nl-section-badge" data-he="מקום לצילום" data-en="Photo Location">מקום לצילום</div>
-      <h2 class="nl-section-title">${escXml(c.location.title_he)}</h2>
+      <h2 class="nl-section-title" data-he="${escXml(c.location.title_he)}" data-en="${escXml(c.location.title_he)}">${escXml(c.location.title_he)}</h2>
       ${mainPhoto ? `<div class="nl-loc-photos">
         <img src="${escXml(mainPhoto)}" alt="${escXml(c.location.title_he)}" class="nl-loc-main-img" loading="lazy">
         ${stripPhotos.length ? `<div class="nl-loc-strip">${stripPhotos.map(u =>
@@ -4791,11 +4791,11 @@ async function handleNlIssue(env, slug, isPreview) {
       <div class="nl-location-links">
         <a class="nl-location-btn" href="/locations/">
           <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-          לכל המקומות
+          <span data-he="לכל המקומות" data-en="All Locations">לכל המקומות</span>
         </a>
         <a class="nl-location-btn" href="https://www.google.com/maps/search/${encodeURIComponent(c.location.title_he)}" target="_blank" rel="noopener">
           <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
-          פתח במפה
+          <span data-he="פתח במפה" data-en="Open in Maps">פתח במפה</span>
         </a>
       </div>
     </section>`;
@@ -4811,7 +4811,7 @@ async function handleNlIssue(env, slug, isPreview) {
         <div class="nl-tip-grid">
           <div>
             <p class="nl-tip-text" data-he="${escXml(c.tip.text_he)}" data-en="${escXml(c.tip.text_en || c.tip.text_he)}">${escXml(c.tip.text_he)}</p>
-            <a class="nl-link nl-tip-more" href="/camera/">לטיפים נוספים ומדריכים ←</a>
+            <a class="nl-link nl-tip-more" href="/camera/" data-he="לטיפים נוספים ומדריכים ←" data-en="More Tips & Guides →">לטיפים נוספים ומדריכים ←</a>
           </div>
           ${c.hero?.photo_url ? `<a class="nl-tip-img-wrap" href="/?photo=${escXml(c.hero.photo_id)}">
             <img src="${escXml(c.hero.photo_url)}" alt="${escXml(c.hero.title_he)}" class="nl-tip-img" loading="lazy">
@@ -4828,10 +4828,11 @@ async function handleNlIssue(env, slug, isPreview) {
       ).join('')}</div>
     </section>` : '';
 
-  const galleryBadge = c.hero?.category ? `עוד ${escXml(c.hero.category)}` : 'עוד מהגלריה';
+  const galleryBadgeHe = c.hero?.category ? `עוד ${escXml(c.hero.category)}` : 'עוד מהגלריה';
+  const galleryBadgeEn = c.hero?.category ? `More ${escXml(c.hero.category)}` : 'More from Gallery';
   const galleryStripSection = (c.gallery_photos && c.gallery_photos.length) ? `
     <section class="nl-section nl-gallery-section">
-      <div class="nl-section-badge">${galleryBadge}</div>
+      <div class="nl-section-badge" data-he="${galleryBadgeHe}" data-en="${galleryBadgeEn}">${galleryBadgeHe}</div>
       <div class="nl-gallery-strip">
         ${c.gallery_photos.slice(0, 3).map(photo =>
           `<a class="nl-gallery-thumb" href="/?photo=${escXml(photo.id)}">
@@ -4839,7 +4840,7 @@ async function handleNlIssue(env, slug, isPreview) {
             <span>${escXml(photo.title)}</span>
           </a>`
         ).join('')}
-        <a class="nl-gallery-more" href="/">לכל הגלריה ←</a>
+        <a class="nl-gallery-more" href="/" data-he="לכל הגלריה ←" data-en="Full Gallery →">לכל הגלריה ←</a>
       </div>
     </section>` : '';
 
@@ -4894,17 +4895,17 @@ async function handleNlIssue(env, slug, isPreview) {
   const contactOutreachSection = `
     <section class="nl-section nl-contact-section">
       <div class="nl-contact-card">
-        <h2 class="nl-contact-heading">מחפש תמונה לבית ולמשרד?</h2>
+        <h2 class="nl-contact-heading" data-he="מחפש תמונה לבית ולמשרד?" data-en="Looking for a photo for home or office?">מחפש תמונה לבית ולמשרד?</h2>
         <div class="nl-contact-header">
           <span class="nl-contact-avatar">${_svgPerson}</span>
-          <div class="nl-contact-name">עמית — צלם אישי</div>
+          <div class="nl-contact-name" data-he="עמית — צלם אישי" data-en="Amit — Personal Photographer">עמית — צלם אישי</div>
         </div>
         <div class="nl-contact-btns">
-          <a class="nl-contact-btn nl-contact-wa" href="https://wa.me/972503333227" target="_blank" rel="noopener">${_svgWa} וואטסאפ</a>
+          <a class="nl-contact-btn nl-contact-wa" href="https://wa.me/972503333227" target="_blank" rel="noopener">${_svgWa} <span data-he="וואטסאפ" data-en="WhatsApp">וואטסאפ</span></a>
           <a class="nl-contact-btn" href="tel:+972503333227">${_svgPhone} 050-3333227</a>
         </div>
-        <p class="nl-contact-quote">רוצה לבחור תמונה לבית? לקנות קובץ, או סתם לשאול? אני כאן.</p>
-        <p class="nl-contact-note">ניתן לשלם: ביט · פייבוקס · פייפל</p>
+        <p class="nl-contact-quote" data-he="רוצה לבחור תמונה לבית? לקנות קובץ, או סתם לשאול? אני כאן." data-en="Want to choose a photo for your home? Buy a file, or just ask? I'm here.">רוצה לבחור תמונה לבית? לקנות קובץ, או סתם לשאול? אני כאן.</p>
+        <p class="nl-contact-note" data-he="ניתן לשלם: ביט · פייבוקס · פייפל" data-en="Payment: Bit · Paybox · PayPal">ניתן לשלם: ביט · פייבוקס · פייפל</p>
       </div>
     </section>`;
 
@@ -5031,6 +5032,8 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direc
 .nl-contact-btn:hover,.nl-contact-wa{border-color:#25d366;color:#25d366}
 .nl-contact-btn:hover:not(.nl-contact-wa){border-color:var(--accent);color:var(--accent)}
 .nl-contact-note{font-size:.72rem;color:var(--muted)}
+.nl-lang-btn{background:transparent;border:1px solid var(--border);color:var(--muted);padding:.22rem .55rem;border-radius:6px;cursor:pointer;font-size:.72rem;font-weight:700;font-family:'Syne',sans-serif;letter-spacing:.06em;transition:border-color .2s,color .2s;line-height:1}
+.nl-lang-btn:hover{border-color:var(--accent);color:var(--accent)}
 .nl-footer{text-align:center;padding:2rem;color:var(--muted);font-size:.75rem;max-width:800px;margin:0 auto}
 .nl-footer a{color:var(--muted)}
 .nl-actions{display:flex;gap:.75rem;flex-wrap:wrap;align-items:center;max-width:800px;margin:1.5rem auto;padding:0 1.5rem}
@@ -5060,9 +5063,12 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direc
 ${previewBanner}
 <header class="nl-header">
   <a class="nl-header-logo" href="/">Amit Photos</a>
-  <span class="nl-header-meta">${escXml(dateStr)}</span>
+  <div style="display:flex;align-items:center;gap:.75rem">
+    <span class="nl-header-meta">${escXml(dateStr)}</span>
+    <button class="nl-lang-btn" id="nl-lang-btn" onclick="toggleLang()">EN</button>
+  </div>
 </header>
-<h1 class="nl-issue-title">${escXml(issue.title_he)}</h1>
+<h1 class="nl-issue-title" data-he="${escXml(issue.title_he)}" data-en="${escXml(issue.title_en || issue.title_he)}">${escXml(issue.title_he)}</h1>
 ${heroSection}
 <hr class="nl-divider">
 ${galleryStripSection}
@@ -5108,7 +5114,8 @@ ${contactOutreachSection}
 </section>
 <script>
 function getLang(){return localStorage.getItem('lang')||'he'}
-function applyLang(){const lang=getLang(),isEn=lang==='en';document.documentElement.dir=isEn?'ltr':'rtl';document.documentElement.lang=lang;document.querySelectorAll('[data-he]').forEach(el=>{el.innerHTML=isEn?(el.dataset.en||el.dataset.he):el.dataset.he})}
+function applyLang(){const lang=getLang(),isEn=lang==='en';document.documentElement.dir=isEn?'ltr':'rtl';document.documentElement.lang=lang;document.querySelectorAll('[data-he]').forEach(el=>{el.innerHTML=isEn?(el.dataset.en||el.dataset.he):el.dataset.he});const btn=document.getElementById('nl-lang-btn');if(btn)btn.textContent=isEn?'HE':'EN'}
+function toggleLang(){const next=getLang()==='he'?'en':'he';localStorage.setItem('lang',next);applyLang()}
 applyLang();window.setLang=applyLang;window.addEventListener('storage',e=>{if(e.key==='lang')applyLang()})
 function showStep(n){document.querySelectorAll('.nl-step-content').forEach((el,i)=>{el.style.display=(i+1===n)?'':'none'});document.querySelectorAll('.nl-step-pill').forEach((el,i)=>{el.classList.toggle('nl-step-active',i+1===n)})}
 function copyLink(){navigator.clipboard.writeText(location.href).then(()=>{const el=document.getElementById('copy-label');const orig=el.innerHTML;el.textContent='✓ הועתק!';setTimeout(()=>{el.innerHTML=orig;applyLang()},2000)}).catch(()=>{})}
