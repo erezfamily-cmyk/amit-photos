@@ -10,6 +10,7 @@
       gallery: 'גלריה', navNew: 'חדש באתר', navSale: 'מבצע',
       challenges: 'אתגרים', camera: 'למד לצלם', learn: 'ניתוח תמונות',
       howToBuy: 'כיצד לרכוש', pricing: 'מחירים', contact: 'צור קשר', locations: 'מקומות לצילום',
+      newsletter: 'ניוזלטר',
       menu: 'תפריט'
     },
     en: {
@@ -18,6 +19,7 @@
       gallery: 'Gallery', navNew: 'New', navSale: 'Sale',
       challenges: 'Challenges', camera: 'Learn Photography', learn: 'Photo School',
       howToBuy: 'How to Buy', pricing: 'Pricing', contact: 'Contact', locations: 'Locations',
+      newsletter: 'Newsletter',
       menu: 'Menu'
     }
   };
@@ -38,7 +40,7 @@
       'nav.gallery': t.gallery, 'nav.new': t.navNew, 'nav.sale': t.navSale,
       'nav.challenges': t.challenges, 'nav.camera': t.camera, 'nav.learn': t.learn,
       'nav.how-to-buy': t.howToBuy, 'nav.pricing': t.pricing, 'nav.contact': t.contact,
-      'nav.locations': t.locations
+      'nav.locations': t.locations, 'nav.newsletter': t.newsletter
     };
     nav.querySelectorAll('[data-i18n]').forEach(function (el) {
       const key = el.dataset.i18n;
@@ -171,6 +173,7 @@ nav#main-nav .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px)
   <li><a href="${a('#how-to-buy')}" data-i18n="nav.how-to-buy">כיצד לרכוש</a></li>
   <li><a href="${a('#pricing')}" data-i18n="nav.pricing">מחירים</a></li>
   <li><a href="${a('#contact')}" data-i18n="nav.contact">צור קשר</a></li>
+  <li><a href="/newsletter/" data-i18n="nav.newsletter">ניוזלטר</a></li>
 </ul>
 <div class="lang-toggle">
   <button type="button" class="lang-btn active" data-lang="he" aria-label="עברית">HE</button>
