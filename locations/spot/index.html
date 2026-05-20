@@ -94,6 +94,9 @@ h1{font-family:'Syne',sans-serif;font-size:2rem;color:var(--accent);margin-botto
 .nearby-name{font-size:.88rem}
 .nearby-dist{font-size:.75rem;color:var(--muted)}
 @media(max-width:480px){.seasons-grid{grid-template-columns:repeat(2,1fr)}}
+.kofi-bar{text-align:center;padding:1.5rem 1.25rem 2rem;border-top:1px solid var(--border);margin-top:1rem}
+.kofi-bar a{display:inline-flex;align-items:center;gap:.5rem;background:var(--surface);border:1px solid rgba(200,169,110,.4);color:var(--accent);font-size:.82rem;font-weight:700;padding:.55rem 1.4rem;border-radius:8px;text-decoration:none;transition:background .2s,color .2s}
+.kofi-bar a:hover{background:var(--accent);color:#000}
 </style>
 </head>
 <body>
@@ -647,5 +650,11 @@ async function loadWeather(lat, lng) {
 loadSpot();
 applySpotModalLang();
 </script>
+
+<div class="kofi-bar">
+  <a href="https://ko-fi.com/amitphotos" target="_blank" rel="noopener">
+    &#9749; <span data-he="מצאת מקום מגניב? קנה לי קפה" data-en="Found a great spot? Buy me a coffee">מצאת מקום מגניב? קנה לי קפה</span>
+  </a>
+</div>
 </body>
 </html>
