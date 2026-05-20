@@ -229,8 +229,33 @@ async function loadPhotos() {
   filteredPhotos = [...withOrder, ...withoutOrder];
   displayedCount = Math.min(PAGE_SIZE, filteredPhotos.length);
   renderGallery();
+  injectImageObjectSchemas(allPhotos);
   updateWeekPhotoStrip();
   window.dispatchEvent(new Event('photos-ready'));
+}
+
+function injectImageObjectSchemas(photos) {
+  const existing = document.getElementById('gallery-images-jsonld');
+  if (existing) existing.remove();
+  const items = photos.slice(0, 50).map(p => ({
+    '@type': 'ImageObject',
+    '@context': 'https://schema.org',
+    'name': p.title || '',
+    'description': p.description || p.title || '',
+    'contentUrl': p.url || '',
+    'thumbnailUrl': p.thumbnail || p.url || '',
+    'license': 'https://amitphotos.com/privacy/',
+    'acquireLicensePage': 'https://amitphotos.com/#gallery',
+    'creditText': 'עמית ארז',
+    'copyrightNotice': '© עמית ארז. כל הזכויות שמורות.',
+    'copyrightYear': '2024',
+    'creator': { '@type': 'Person', 'name': 'עמית ארז', 'url': 'https://amitphotos.com/' }
+  }));
+  const script = document.createElement('script');
+  script.id = 'gallery-images-jsonld';
+  script.type = 'application/ld+json';
+  script.textContent = JSON.stringify(items);
+  document.head.appendChild(script);
 }
 
 function updateWeekPhotoStrip() {
