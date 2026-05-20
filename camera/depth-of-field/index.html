@@ -142,7 +142,19 @@ input[type=range].control-slider:active::-webkit-slider-thumb { cursor: grabbing
 
 .back-link { text-align: center; padding: 1.5rem 1rem 0; }
 .back-link a { color: var(--accent); font-size: .85rem; text-decoration: none; }
-</style>
+
+.gear-section{max-width:760px;margin:0 auto;padding:1.5rem 1.25rem .5rem;border-bottom:1px solid var(--border)}
+.gear-row-label{font-family:'Syne',sans-serif;font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:.75rem}
+.gear-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:.75rem}
+.gear-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;text-decoration:none;transition:border-color .2s}
+.gear-card:hover{border-color:rgba(200,169,110,.45)}
+.gear-card-ico{aspect-ratio:3/2;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:2.5rem}
+.gear-card-body{padding:.85rem;flex:1;display:flex;flex-direction:column}
+.gear-card-name{font-family:'Syne',sans-serif;font-size:.87rem;color:var(--text);margin-bottom:.3rem}
+.gear-card-desc{font-size:.76rem;color:var(--muted);line-height:1.55;flex:1;margin-bottom:.8rem}
+.gear-card-btn{display:block;text-align:center;border:1px solid rgba(200,169,110,.45);color:var(--accent);font-size:.75rem;font-weight:700;padding:.4rem .75rem;border-radius:6px;transition:background .15s,color .15s}
+.gear-card-btn:hover{background:var(--accent);color:#000}
+.gear-disclose{font-size:.67rem;color:#444;text-align:center;padding:.6rem 0 1.5rem}</style>
 <script src="/assets/js/nav.js" defer></script>
 <script src="/assets/js/share.js" defer></script>
 </head>
@@ -318,6 +330,33 @@ input[type=range].control-slider:active::-webkit-slider-thumb { cursor: grabbing
     </div>
   </div>
 
+<div class="gear-section">
+  <div class="gear-row-label" data-he="ציוד מומלץ" data-en="Recommended Gear">ציוד מומלץ</div>
+  <div class="gear-cards">
+    <a class="gear-card" href="https://adorama.prf.hn/click/camref:1101l5Km5i/destination:https://www.adorama.com/catalog.tpl?SearchInfo=85mm+portrait+lens" target="_blank" rel="noopener sponsored">
+      <div class="gear-card-ico">📸</div>
+      <div class="gear-card-body">
+        <div class="gear-card-name" data-he="עדשת פורטרט 85mm" data-en="85mm Portrait Lens">עדשת פורטרט 85mm</div>
+        <div class="gear-card-desc" data-he="בוקה קרמי מקסימלי — הבחירה הקלאסית לעומק שדה רדוד." data-en="Maximum creamy bokeh — the classic choice for shallow depth of field.">בוקה קרמי מקסימלי — הבחירה הקלאסית לעומק שדה רדוד.</div>
+        <span class="gear-card-btn" data-he="ראה באדוראמה ←" data-en="View at Adorama →">ראה באדוראמה ←</span>
+      </div>
+    </a>    <a class="gear-card" href="https://adorama.prf.hn/click/camref:1101l5Km5i/destination:https://www.adorama.com/catalog.tpl?SearchInfo=50mm+f1.4+lens" target="_blank" rel="noopener sponsored">
+      <div class="gear-card-ico">🔭</div>
+      <div class="gear-card-body">
+        <div class="gear-card-name" data-he="עדשת 50mm f/1.4" data-en="50mm f/1.4 Lens">עדשת 50mm f/1.4</div>
+        <div class="gear-card-desc" data-he="פתח רחב במיוחד לעומק שדה רדוד ובוקה בולט בתנאי תאורה חלשים." data-en="Extra-wide aperture for shallow DOF and prominent bokeh in low light.">פתח רחב במיוחד לעומק שדה רדוד ובוקה בולט בתנאי תאורה חלשים.</div>
+        <span class="gear-card-btn" data-he="ראה באדוראמה ←" data-en="View at Adorama →">ראה באדוראמה ←</span>
+      </div>
+    </a>    <a class="gear-card" href="https://adorama.prf.hn/click/camref:1101l5Km5i/destination:https://www.adorama.com/catalog.tpl?SearchInfo=lens+extension+tubes" target="_blank" rel="noopener sponsored">
+      <div class="gear-card-ico">🔧</div>
+      <div class="gear-card-body">
+        <div class="gear-card-name" data-he="טבעות הארכה" data-en="Extension Tubes">טבעות הארכה</div>
+        <div class="gear-card-desc" data-he="מאפשרות לכל עדשה לצלם קרוב — ניסוי נהדר בעומק שדה מינימלי." data-en="Turn any lens into a macro — great experiment with minimal depth of field.">מאפשרות לכל עדשה לצלם קרוב — ניסוי נהדר בעומק שדה מינימלי.</div>
+        <span class="gear-card-btn" data-he="ראה באדוראמה ←" data-en="View at Adorama →">ראה באדוראמה ←</span>
+      </div>
+    </a></div>
+  <div class="gear-disclose" data-he="קישורי שותף — עמלה קטנה, ללא עלות נוספת לך" data-en="Affiliate links — small commission, no extra cost to you">קישורי שותף — עמלה קטנה, ללא עלות נוספת לך</div>
+</div>
   <div class="back-link">
     <a href="/camera/" data-he="← חזרה לבית הספר לצילום" data-en="← Back to Photography School">← חזרה לבית הספר לצילום</a>
   </div>

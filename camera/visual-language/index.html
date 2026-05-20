@@ -89,7 +89,19 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
 .breadcrumb a { color: var(--accent); text-decoration: none; }
 
 @media (max-width: 540px) { .dna-grid { grid-template-columns: 1fr; } }
-</style>
+
+.gear-section{max-width:760px;margin:0 auto;padding:1.5rem 1.25rem .5rem;border-bottom:1px solid var(--border)}
+.gear-row-label{font-family:'Syne',sans-serif;font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:.75rem}
+.gear-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:.75rem}
+.gear-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;text-decoration:none;transition:border-color .2s}
+.gear-card:hover{border-color:rgba(200,169,110,.45)}
+.gear-card-ico{aspect-ratio:3/2;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:2.5rem}
+.gear-card-body{padding:.85rem;flex:1;display:flex;flex-direction:column}
+.gear-card-name{font-family:'Syne',sans-serif;font-size:.87rem;color:var(--text);margin-bottom:.3rem}
+.gear-card-desc{font-size:.76rem;color:var(--muted);line-height:1.55;flex:1;margin-bottom:.8rem}
+.gear-card-btn{display:block;text-align:center;border:1px solid rgba(200,169,110,.45);color:var(--accent);font-size:.75rem;font-weight:700;padding:.4rem .75rem;border-radius:6px;transition:background .15s,color .15s}
+.gear-card-btn:hover{background:var(--accent);color:#000}
+.gear-disclose{font-size:.67rem;color:#444;text-align:center;padding:.6rem 0 1.5rem}</style>
 <script src="/assets/js/nav.js" defer></script>
 <script src="/assets/js/share.js" defer></script>
 </head>
@@ -202,6 +214,33 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
     </div>
   </div>
 
+<div class="gear-section">
+  <div class="gear-row-label" data-he="ציוד מומלץ" data-en="Recommended Gear">ציוד מומלץ</div>
+  <div class="gear-cards">
+    <a class="gear-card" href="https://adorama.prf.hn/click/camref:1101l5Km5i/destination:https://www.adorama.com/catalog.tpl?SearchInfo=photography+inspiration+book" target="_blank" rel="noopener sponsored">
+      <div class="gear-card-ico">📚</div>
+      <div class="gear-card-body">
+        <div class="gear-card-name" data-he="ספר השראה לצילום" data-en="Photography Inspiration Book">ספר השראה לצילום</div>
+        <div class="gear-card-desc" data-he="חשיפה לסגנונות שונים מעצבת את השפה הצילומית האישית שלך." data-en="Exposure to different styles shapes your personal visual language.">חשיפה לסגנונות שונים מעצבת את השפה הצילומית האישית שלך.</div>
+        <span class="gear-card-btn" data-he="ראה באדוראמה ←" data-en="View at Adorama →">ראה באדוראמה ←</span>
+      </div>
+    </a>    <a class="gear-card" href="https://adorama.prf.hn/click/camref:1101l5Km5i/destination:https://www.adorama.com/catalog.tpl?SearchInfo=35mm+prime+lens" target="_blank" rel="noopener sponsored">
+      <div class="gear-card-ico">🔭</div>
+      <div class="gear-card-body">
+        <div class="gear-card-name" data-he="עדשת פריים 35mm" data-en="35mm Prime Lens">עדשת פריים 35mm</div>
+        <div class="gear-card-desc" data-he="זווית כמעט-רחבה לסיפור מרחב — לשפה צילומית קרובה ואישית." data-en="Near-wide angle for storytelling space — close and personal visual style.">זווית כמעט-רחבה לסיפור מרחב — לשפה צילומית קרובה ואישית.</div>
+        <span class="gear-card-btn" data-he="ראה באדוראמה ←" data-en="View at Adorama →">ראה באדוראמה ←</span>
+      </div>
+    </a>    <a class="gear-card" href="https://adorama.prf.hn/click/camref:1101l5Km5i/destination:https://www.adorama.com/catalog.tpl?SearchInfo=camera+bag" target="_blank" rel="noopener sponsored">
+      <div class="gear-card-ico">🎒</div>
+      <div class="gear-card-body">
+        <div class="gear-card-name" data-he="תיק מצלמה קל" data-en="Lightweight Camera Bag">תיק מצלמה קל</div>
+        <div class="gear-card-desc" data-he="תיק נוח לכל-יום — כי השפה הצילומית מתפתחת בצילום יומיומי." data-en="Everyday comfortable bag — because visual language grows from daily shooting.">תיק נוח לכל-יום — כי השפה הצילומית מתפתחת בצילום יומיומי.</div>
+        <span class="gear-card-btn" data-he="ראה באדוראמה ←" data-en="View at Adorama →">ראה באדוראמה ←</span>
+      </div>
+    </a></div>
+  <div class="gear-disclose" data-he="קישורי שותף — עמלה קטנה, ללא עלות נוספת לך" data-en="Affiliate links — small commission, no extra cost to you">קישורי שותף — עמלה קטנה, ללא עלות נוספת לך</div>
+</div>
   <div style="text-align:center;padding:1rem 0 2rem">
     <a href="/camera/" style="color:var(--accent);font-size:.9rem;text-decoration:none" data-he="← חזרה לכל הנושאים" data-en="← Back to Photography School">← חזרה לכל הנושאים</a>
   </div>
