@@ -4722,10 +4722,22 @@ async function handleNlIssue(env, slug, isPreview) {
           <span class="nl-step-label">${escXml(s.title_he)}</span>
         </button>`
       ).join('');
+      const heroThumb = c.hero?.photo_url || '';
+      const _stepOverlays = [
+        `<svg class="nl-vis-svg" viewBox="0 0 300 200" fill="none" xmlns="http://www.w3.org/2000/svg"><line x1="100" y1="0" x2="100" y2="200" stroke="rgba(200,169,110,.55)" stroke-width="1.5"/><line x1="200" y1="0" x2="200" y2="200" stroke="rgba(200,169,110,.55)" stroke-width="1.5"/><line x1="0" y1="67" x2="300" y2="67" stroke="rgba(200,169,110,.55)" stroke-width="1.5"/><line x1="0" y1="133" x2="300" y2="133" stroke="rgba(200,169,110,.55)" stroke-width="1.5"/><circle cx="100" cy="67" r="5" fill="rgba(200,169,110,.85)"/><circle cx="200" cy="67" r="5" fill="rgba(200,169,110,.85)"/><circle cx="100" cy="133" r="5" fill="rgba(200,169,110,.85)"/><circle cx="200" cy="133" r="5" fill="rgba(200,169,110,.85)"/></svg>`,
+        `<svg class="nl-vis-svg" viewBox="0 0 300 200" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><marker id="nl-arr" markerWidth="7" markerHeight="7" refX="3.5" refY="3.5" orient="auto"><polygon points="0,0 7,3.5 0,7" fill="rgba(200,169,110,.85)"/></marker></defs><line x1="15" y1="195" x2="190" y2="78" stroke="rgba(200,169,110,.7)" stroke-width="1.5" marker-end="url(#nl-arr)"/><line x1="70" y1="200" x2="190" y2="78" stroke="rgba(200,169,110,.5)" stroke-width="1.5" marker-end="url(#nl-arr)"/><line x1="0" y1="150" x2="190" y2="78" stroke="rgba(200,169,110,.35)" stroke-width="1.5" marker-end="url(#nl-arr)"/><circle cx="190" cy="78" r="7" stroke="rgba(200,169,110,.9)" stroke-width="1.5"/></svg>`,
+        `<svg class="nl-vis-svg" viewBox="0 0 300 200" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="0" y="0" width="48" height="200" fill="rgba(0,0,0,.32)"/><rect x="252" y="0" width="48" height="200" fill="rgba(0,0,0,.32)"/><rect x="0" y="0" width="300" height="36" fill="rgba(0,0,0,.32)"/><rect x="0" y="164" width="300" height="36" fill="rgba(0,0,0,.32)"/><path d="M20,20 L20,48 M20,20 L48,20" stroke="rgba(200,169,110,.9)" stroke-width="2.5" stroke-linecap="round"/><path d="M280,20 L280,48 M280,20 L252,20" stroke="rgba(200,169,110,.9)" stroke-width="2.5" stroke-linecap="round"/><path d="M20,180 L20,152 M20,180 L48,180" stroke="rgba(200,169,110,.9)" stroke-width="2.5" stroke-linecap="round"/><path d="M280,180 L280,152 M280,180 L252,180" stroke="rgba(200,169,110,.9)" stroke-width="2.5" stroke-linecap="round"/></svg>`
+      ];
       const stepsHtml = c.guide.steps.map((s, i) =>
         `<div class="nl-step-content" id="step-${i + 1}"${i > 0 ? ' style="display:none"' : ''}>
-          <h3 class="nl-step-title">${escXml(s.title_he)}</h3>
-          <p class="nl-body-text">${escXml(s.text_he)}</p>
+          <div class="nl-step-body">
+            <div class="nl-step-info">
+              <div class="nl-step-num-bg">${String(i + 1).padStart(2, '0')}</div>
+              <h3 class="nl-step-title">${escXml(s.title_he)}</h3>
+              <p class="nl-body-text">${escXml(s.text_he)}</p>
+            </div>
+            ${heroThumb ? `<div class="nl-step-vis"><div class="nl-vis-wrap"><img src="${escXml(heroThumb)}" class="nl-vis-img" loading="lazy" alt="">${_stepOverlays[i] || _stepOverlays[0]}</div></div>` : ''}
+          </div>
         </div>`
       ).join('');
       const guideCtaBanner = `
@@ -4994,6 +5006,14 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direc
 .nl-step-pill.nl-step-active{background:rgba(200,169,110,.1);border-color:var(--accent);color:var(--text)}
 .nl-step-pill.nl-step-active .nl-step-num{color:var(--accent)}
 .nl-step-title{font-family:'Syne',sans-serif;font-size:.95rem;color:var(--accent);margin-bottom:.4rem}
+.nl-step-body{display:grid;grid-template-columns:1fr 132px;gap:1rem;align-items:start;margin-top:.25rem}
+.nl-step-info{position:relative}
+.nl-step-num-bg{font-family:'Syne',sans-serif;font-size:3.2rem;font-weight:700;color:rgba(200,169,110,.11);line-height:1;margin-bottom:-.6rem;letter-spacing:-.02em}
+.nl-step-vis{width:132px;flex-shrink:0}
+.nl-vis-wrap{position:relative;border-radius:8px;overflow:hidden;aspect-ratio:3/2;background:#111}
+.nl-vis-img{width:100%;height:100%;object-fit:cover;display:block}
+.nl-vis-svg{position:absolute;inset:0;width:100%;height:100%}
+@media(max-width:480px){.nl-step-body{grid-template-columns:1fr}.nl-step-vis{display:none}}
 .nl-cta-section{max-width:800px;margin:0 auto;padding:1rem 1.5rem}
 .nl-cta-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-top:.75rem}
 .nl-cta-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1rem;display:flex;flex-direction:column;align-items:center;text-decoration:none;gap:.4rem;transition:border-color .2s}
