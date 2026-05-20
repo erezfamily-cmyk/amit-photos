@@ -90,6 +90,13 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
 .kofi-bar a:hover { background: var(--accent); color: #000; }
 
 @media(max-width: 480px) { .gear-grid { grid-template-columns: 1fr 1fr; } }
+
+.gumroad-banner { max-width: 760px; margin: 0 auto; padding: 0 1.25rem 1.5rem; }
+.gumroad-banner-inner { background: linear-gradient(135deg, rgba(200,169,110,.1), rgba(200,169,110,.04)); border: 1px solid rgba(200,169,110,.4); border-radius: 14px; padding: 1.25rem 1.5rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+.gumroad-banner-title { font-family: 'Syne', sans-serif; font-size: .95rem; color: var(--accent); margin-bottom: .3rem; }
+.gumroad-banner-desc { font-size: .83rem; color: var(--muted); }
+.gumroad-banner-btn { flex-shrink: 0; background: var(--accent); color: #000; font-weight: 700; font-size: .85rem; padding: .6rem 1.3rem; border-radius: 8px; text-decoration: none; transition: background .15s; white-space: nowrap; }
+.gumroad-banner-btn:hover { background: #e0c080; }
 </style>
 </head>
 <body>
@@ -250,6 +257,16 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
 </div>
 
 <div class="disclose" data-he="קישורי שותף — אני מקבל עמלה קטנה על כל רכישה דרך הקישורים, ללא עלות נוספת לך. אני ממליץ רק על ציוד שאני עצמי משתמש בו." data-en="Affiliate links — I earn a small commission on purchases through these links, at no extra cost to you. I only recommend gear I personally use.">קישורי שותף — אני מקבל עמלה קטנה על כל רכישה דרך הקישורים, ללא עלות נוספת לך. אני ממליץ רק על ציוד שאני עצמי משתמש בו.</div>
+
+<div class="gumroad-banner">
+  <div class="gumroad-banner-inner">
+    <div>
+      <div class="gumroad-banner-title" data-he="📘 50 טיפים לצלם מתחיל — מדריך PDF" data-en="📘 50 Photography Tips for Beginners — PDF Guide">📘 50 טיפים לצלם מתחיל — מדריך PDF</div>
+      <div class="gumroad-banner-desc" data-he="כל מה שלמדת כאן — בקובץ אחד להורדה. 7$ בלבד." data-en="Everything you learned here — in one downloadable file. Only $7.">כל מה שלמדת כאן — בקובץ אחד להורדה. 7$ בלבד.</div>
+    </div>
+    <a class="gumroad-banner-btn" href="https://erezfamily.gumroad.com/l/50-photo-tips" target="_blank" rel="noopener" data-he="קנה ב-$7 ←" data-en="Buy for $7 →">קנה ב-$7 ←</a>
+  </div>
+</div>
 
 <div class="kofi-bar">
   <a href="https://ko-fi.com/amitphotos" target="_blank" rel="noopener">
