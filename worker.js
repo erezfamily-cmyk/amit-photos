@@ -4515,20 +4515,20 @@ async function nlGenerateContent(env, heroPhoto, guide, location, type) {
 תמונה: "${heroPhoto.title}" (קטגוריה: ${heroPhoto.category || 'טבע'})`;
   }
 
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'x-api-key': apiKey,
-      'anthropic-version': '2023-06-01',
-      'content-type': 'application/json'
-    },
-    body: JSON.stringify({
-      model: 'claude-opus-4-7',
-      max_tokens: 3500,
-      system: 'אתה כותב בשמו של עמית, צלם ישראלי. כתוב תמיד בגוף ראשון ("אני", "לי", "שלי", "צילמתי"). טון אישי וחם, כאילו עמית כותב לחברים קרובים שאוהבים צילום — לא שיווקי, לא פורמלי, אמיתי. החזר JSON תקין בלבד, ללא שום טקסט נוסף.',
-      messages: [{ role: 'user', content: userPrompt }]
-    })
+  const reqBody = JSON.stringify({
+    model: 'claude-opus-4-7',
+    max_tokens: 3500,
+    system: 'אתה כותב בשמו של עמית, צלם ישראלי. כתוב תמיד בגוף ראשון ("אני", "לי", "שלי", "צילמתי"). טון אישי וחם, כאילו עמית כותב לחברים קרובים שאוהבים צילום — לא שיווקי, לא פורמלי, אמיתי. החזר JSON תקין בלבד, ללא שום טקסט נוסף.',
+    messages: [{ role: 'user', content: userPrompt }]
   });
+  const reqHeaders = { 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' };
+
+  let res;
+  for (let attempt = 0; attempt < 3; attempt++) {
+    if (attempt > 0) await new Promise(r => setTimeout(r, attempt * 3000));
+    res = await fetch('https://api.anthropic.com/v1/messages', { method: 'POST', headers: reqHeaders, body: reqBody });
+    if (res.status !== 529) break;
+  }
 
   if (!res.ok) {
     const err = await res.text();
