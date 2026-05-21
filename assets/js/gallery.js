@@ -229,9 +229,8 @@ async function loadPhotos() {
   filteredPhotos = [...withOrder, ...withoutOrder];
   displayedCount = Math.min(PAGE_SIZE, filteredPhotos.length);
   renderGallery();
+  injectImageObjectSchemas(allPhotos);
   updateWeekPhotoStrip();
-  // Defer JSON-LD generation — non-critical, runs when main thread is idle
-  (window.requestIdleCallback || (cb => setTimeout(cb, 200)))(() => injectImageObjectSchemas(allPhotos));
   window.dispatchEvent(new Event('photos-ready'));
 }
 
