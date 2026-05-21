@@ -2054,10 +2054,20 @@ function escXml(str) {
 async function handleLocationSpotPage(request, env) {
   const slug = new URL(request.url).searchParams.get('slug');
 
+  // Reject obviously invalid slugs (template literals, empty, too long)
+  if (!slug || slug.length > 200 || slug.includes('${') || slug.includes('escHtml') || slug.includes('encodeURI')) {
+    return new Response('Not Found', { status: 404 });
+  }
+
   // Fetch location data
   const loc = await env.DB.prepare(
     'SELECT id, title, description, region, coordinates FROM locations WHERE id = ? AND published = 1'
   ).bind(slug).first().catch(() => null);
+
+  // 404 for unknown slugs — prevents Google from indexing junk URLs
+  if (!loc) {
+    return new Response('Not Found', { status: 404 });
+  }
 
   // Fetch the static HTML
   const assetRes = await env.ASSETS.fetch(new Request(new URL('/locations/spot/', request.url).href));
@@ -2065,18 +2075,19 @@ async function handleLocationSpotPage(request, env) {
 
   let html = await assetRes.text();
 
-  if (loc) {
-    const title = escXml(loc.title + ' | מקומות לצילום — עמית ארז');
-    const desc = escXml((loc.description || '').slice(0, 160));
-    const pageUrl = escXml(request.url);
+  const title = escXml(loc.title + ' | מקומות לצילום — עמית ארז');
+  const desc = escXml((loc.description || '').slice(0, 160));
+  const canonicalUrl = `https://amitphotos.com/locations/spot/?slug=${encodeURIComponent(loc.id)}`;
+  const pageUrl = escXml(canonicalUrl);
 
-    // Get cover photo
-    const cover = await env.DB.prepare(
-      'SELECT url FROM location_photos WHERE location_id = ? ORDER BY sort_order ASC LIMIT 1'
-    ).bind(slug).first().catch(() => null);
-    const imgUrl = escXml(cover?.url || 'https://amitphotos.com/assets/img/og-default.jpg');
+  // Get cover photo
+  const cover = await env.DB.prepare(
+    'SELECT url FROM location_photos WHERE location_id = ? ORDER BY sort_order ASC LIMIT 1'
+  ).bind(slug).first().catch(() => null);
+  const imgUrl = escXml(cover?.url || 'https://amitphotos.com/assets/img/og-default.jpg');
 
-    const ogTags = `
+  const ogTags = `
+  <link rel="canonical" href="${pageUrl}">
   <meta property="og:title" content="${title}">
   <meta property="og:description" content="${desc}">
   <meta property="og:url" content="${pageUrl}">
@@ -2088,8 +2099,7 @@ async function handleLocationSpotPage(request, env) {
   <meta name="twitter:description" content="${desc}">
   <meta name="twitter:image" content="${imgUrl}">`;
 
-    html = html.replace('</head>', ogTags + '\n</head>');
-  }
+  html = html.replace('</head>', ogTags + '\n</head>');
 
   return new Response(html, {
     headers: {
