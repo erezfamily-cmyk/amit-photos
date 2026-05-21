@@ -2123,9 +2123,8 @@ async function handleLocationSpotPage(request, env) {
 function handleRobots(request) {
   const base = 'https://amitphotos.com';
   const txt = `User-agent: *
-Allow: /
 Disallow: /api/
-Disallow: /admin
+Disallow: /admin.html
 
 Sitemap: ${base}/sitemap.xml`;
 
