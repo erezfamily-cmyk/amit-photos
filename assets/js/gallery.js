@@ -361,7 +361,7 @@ function renderGallery(append = false) {
       <img
         src="${photo.thumbnail || photo.url}"
         alt="${photo.alt || photo.title}"
-        loading="lazy"
+        ${idx < 3 ? 'loading="eager" fetchpriority="high"' : 'loading="lazy"'}
         onerror="this.closest('.gallery-item').style.display='none'"
         draggable="false"
         oncontextmenu="return false"
