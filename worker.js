@@ -5256,6 +5256,15 @@ a:hover{text-decoration:underline}
 .btn-wa{background:#25d366;color:#000}
 .btn-cancel{background:transparent;color:#888;border:1px solid #333}
 #test-msg{font-size:.82rem;margin-top:.75rem;min-height:1.2em}
+.sub-card{background:#111;border:1px solid #222;border-radius:10px;margin-bottom:1.5rem;overflow:hidden}
+.sub-header{display:flex;justify-content:space-between;align-items:center;padding:.75rem 1rem;cursor:pointer;user-select:none;color:#c8a96e;font-weight:700;font-size:.95rem}
+.sub-header:hover{background:#181818}
+.sub-table{width:100%;border-collapse:collapse;font-size:.82rem}
+.sub-table th,.sub-table td{padding:.5rem .75rem;border-bottom:1px solid #1a1a1a;text-align:right}
+.sub-table th{color:#666;font-weight:600}
+.sub-table tr:last-child td{border-bottom:none}
+.btn-del{background:none;border:none;color:#666;cursor:pointer;font-size:.9rem;padding:.2rem .5rem;border-radius:4px}
+.btn-del:hover{color:#f44336;background:#2a0a0a}
 </style>
 </head>
 <body>
@@ -5266,6 +5275,22 @@ a:hover{text-decoration:underline}
   <button onclick="generate('flash')">⚡ צור הבזק</button>
 </div>
 <div id="msg"></div>
+
+<div class="sub-card">
+  <div class="sub-header" onclick="toggleSubs()">
+    <span>👥 מנויים: <span id="sub-count">...</span></span>
+    <span id="sub-toggle-icon">▼</span>
+  </div>
+  <div id="sub-body" style="display:none">
+    <div style="padding:0 .5rem .5rem">
+    <table class="sub-table">
+      <thead><tr><th>שם</th><th>אימייל</th><th>תאריך</th><th></th></tr></thead>
+      <tbody id="sub-rows"><tr><td colspan="4" style="text-align:center;color:#888;padding:1rem">טוען...</td></tr></tbody>
+    </table>
+    </div>
+  </div>
+</div>
+
 <table>
   <thead><tr><th>#</th><th>סטטוס</th><th>סוג</th><th>כותרת</th><th>תאריך</th><th>פעולות</th></tr></thead>
   <tbody>${rows || '<tr><td colspan="6" style="text-align:center;color:#888;padding:2rem">אין גיליונות עדיין</td></tr>'}</tbody>
@@ -5381,6 +5406,63 @@ async function deleteAndRecreate(id, type) {
     btns.forEach(b => b.disabled = false);
   }
 }
+
+// ===== SUBSCRIBERS =====
+const _tok = localStorage.getItem('session_token') || sessionStorage.getItem('session_token') || '';
+let _subs = [], _subsLoaded = false;
+
+function _escH(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function renderSubRows() {
+  const tbody = document.getElementById('sub-rows');
+  if (!Array.isArray(_subs) || !_subs.length) {
+    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#888;padding:1rem">אין מנויים עדיין</td></tr>';
+    return;
+  }
+  tbody.innerHTML = _subs.map(function(s) {
+    return '<tr><td>' + _escH(s.name) + '</td><td><a href="mailto:' + _escH(s.email) + '">' + _escH(s.email) + '</a></td><td>' + (s.created_at ? s.created_at.slice(0,10) : '') + '</td><td><button class="btn-del" onclick="deleteSub(\'' + _escH(s.id) + '\')">✕</button></td></tr>';
+  }).join('');
+}
+
+async function deleteSub(id) {
+  if (!confirm('למחוק מנוי זה?')) return;
+  const r = await fetch('/api/subscribers?id=' + id, { method:'DELETE', headers:{'X-Session-Token':_tok} });
+  if (r.ok) {
+    _subs = _subs.filter(s => s.id !== id);
+    document.getElementById('sub-count').textContent = _subs.length;
+    renderSubRows();
+  }
+}
+
+function toggleSubs() {
+  const body = document.getElementById('sub-body');
+  const icon = document.getElementById('sub-toggle-icon');
+  const open = body.style.display !== 'none';
+  body.style.display = open ? 'none' : 'block';
+  icon.textContent = open ? '▼' : '▲';
+  if (!open && !_subsLoaded) loadSubsFull();
+}
+
+async function loadSubsFull() {
+  if (_subsLoaded) { renderSubRows(); return; }
+  try {
+    const r = await fetch('/api/subscribers', { headers:{'X-Session-Token':_tok} });
+    _subs = await r.json();
+    _subsLoaded = true;
+    document.getElementById('sub-count').textContent = Array.isArray(_subs) ? _subs.length : '?';
+    renderSubRows();
+  } catch(e) { document.getElementById('sub-rows').innerHTML = '<tr><td colspan="4" style="color:#f44336;padding:1rem">שגיאת טעינה</td></tr>'; }
+}
+
+// טעינת הספירה בלבד עם פתיחת הדף
+(async () => {
+  try {
+    const r = await fetch('/api/subscribers', { headers:{'X-Session-Token':_tok} });
+    _subs = await r.json();
+    _subsLoaded = true;
+    document.getElementById('sub-count').textContent = Array.isArray(_subs) ? _subs.length : '?';
+  } catch(e) { document.getElementById('sub-count').textContent = '?'; }
+})();
 </script>
 <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
 </body></html>`, { headers: { 'Content-Type': 'text/html;charset=utf-8' } });
