@@ -237,7 +237,7 @@ async function loadPhotos() {
 function injectImageObjectSchemas(photos) {
   const existing = document.getElementById('gallery-images-jsonld');
   if (existing) existing.remove();
-  const items = photos.slice(0, 50).map(p => ({
+  const items = photos.slice(0, 10).map(p => ({
     '@type': 'ImageObject',
     '@context': 'https://schema.org',
     'name': p.title || '',
