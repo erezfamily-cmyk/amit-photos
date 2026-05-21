@@ -1,8 +1,9 @@
 {
   "posted_keys": [
-    "controls",
-    "lenses",
     "editing",
+    "histogram",
+    "lenses",
+    "controls",
     "filters"
   ]
 }
