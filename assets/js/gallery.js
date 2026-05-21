@@ -44,7 +44,7 @@ let filteredPhotos = [];
 let featuredIds = [];
 let currentIndex = 0;
 let displayedCount = 0;
-const PAGE_SIZE = 25;
+const PAGE_SIZE = 12;
 let slideshowTimer = null;
 let isZoomed = false;
 let puzzleDiscountPhotoId = null; // set when arriving from puzzle with ?discount=puzzle
@@ -359,7 +359,7 @@ function renderGallery(append = false) {
     const wished = wishlist.has(photo.id);
     item.innerHTML = `
       <img
-        src="${photo.thumbnail || photo.url}"
+        src="${getGalleryThumbUrl(photo.thumbnail || photo.url)}"
         alt="${photo.alt || photo.title}"
         ${idx < 3 ? 'loading="eager" fetchpriority="high"' : 'loading="lazy"'}
         onerror="this.closest('.gallery-item').style.display='none'"
@@ -772,6 +772,20 @@ function stopSlideshow() {
   slideshowTimer = null;
   const btn = document.getElementById('lb-slideshow');
   if (btn) btn.textContent = t('lb.slideshow.start');
+}
+
+function getGalleryThumbUrl(url) {
+  if (!url) return url;
+  // Google Drive — cap at 600px for grid
+  const driveMatch = url.match(/[?&]id=([\w-]+)/);
+  if (driveMatch && url.includes('drive.google.com')) {
+    return `https://drive.google.com/thumbnail?id=${driveMatch[1]}&sz=w600`;
+  }
+  // Google Photos / lh3 — replace or append width param
+  if (url.includes('lh3.googleusercontent.com')) {
+    return url.replace(/=w\d+(-h\d+)?$/, '').replace(/=s\d+$/, '') + '=w600';
+  }
+  return url;
 }
 
 function getLightboxUrl(url) {
