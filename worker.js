@@ -6042,30 +6042,6 @@ export default {
       return handleLocationSpotPage(request, env);
     }
 
-    // Homepage — inject preload hint for first gallery image to improve LCP
-    if ((path === '/' || path === '') && request.method === 'GET') {
-      const [res, firstPhoto] = await Promise.all([
-        env.ASSETS.fetch(request),
-        env.DB.prepare(
-          'SELECT thumbnail, url FROM photos WHERE published=1 ORDER BY sort_order ASC, created_at DESC LIMIT 1'
-        ).first().catch(() => null),
-      ]);
-      if (res.ok && firstPhoto) {
-        const thumb = firstPhoto.thumbnail || firstPhoto.url || '';
-        const thumbUrl = thumb.startsWith('/') ? `https://amitphotos.com${thumb}` : thumb;
-        if (thumbUrl) {
-          const html = await res.text();
-          const preload = `<link rel="preload" as="image" href="${escXml(thumbUrl)}" fetchpriority="high">`;
-          const modified = html.replace('</head>', preload + '\n</head>');
-          return new Response(modified, {
-            headers: { 'Content-Type': 'text/html; charset=UTF-8', 'Cache-Control': 'no-cache, no-store, must-revalidate' },
-          });
-        }
-      }
-      trackPageView(env, request, 'home');
-      return res;
-    }
-
     // Static assets — track page views for HTML pages
     const res = await env.ASSETS.fetch(request);
     if (request.method === 'GET' && !path.startsWith('/api/') && (path === '/' || path.endsWith('.html') || path === '')) {
