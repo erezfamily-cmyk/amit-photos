@@ -1676,6 +1676,10 @@ async function servePhotoPage(photoId, env) {
     "description": desc,
     "contentUrl": imageUrl,
     "url": pageUrl,
+    "license": "https://amitphotos.com/privacy/",
+    "acquireLicensePage": `https://amitphotos.com/?photo=${photoId}`,
+    "creditText": "עמית ארז",
+    "copyrightNotice": "© עמית ארז. כל הזכויות שמורות.",
     "creator": { "@type": "Person", "name": "עמית ארז", "url": "https://amitphotos.com" },
     ...(category ? { "about": category } : {}),
   });
