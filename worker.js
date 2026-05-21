@@ -5408,7 +5408,7 @@ async function deleteAndRecreate(id, type) {
 }
 
 // ===== SUBSCRIBERS =====
-const _tok = localStorage.getItem('session_token') || sessionStorage.getItem('session_token') || '';
+const _tok = sessionStorage.getItem('admin_session') || localStorage.getItem('admin_session') || '';
 let _subs = [], _subsLoaded = false;
 
 function _escH(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
