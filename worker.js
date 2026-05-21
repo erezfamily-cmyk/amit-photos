@@ -5409,11 +5409,11 @@ async function deleteAndRecreate(id, type) {
 
 // ===== SUBSCRIBERS =====
 let _subs = [], _subsLoaded = false;
-
+function _nlTok() { var m = document.cookie.match(/(?:^|;\\s*)admin_session=([^;]+)/); return m ? decodeURIComponent(m[1]) : ''; }
 function _escH(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
 function renderSubRows() {
-  const tbody = document.getElementById('sub-rows');
+  var tbody = document.getElementById('sub-rows');
   if (!Array.isArray(_subs) || !_subs.length) {
     tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#888;padding:1rem">אין מנויים עדיין</td></tr>';
     return;
@@ -5425,18 +5425,18 @@ function renderSubRows() {
 
 async function deleteSub(id) {
   if (!confirm('למחוק מנוי זה?')) return;
-  const r = await fetch('/api/subscribers?id=' + id, { method:'DELETE', credentials:'include' });
+  var r = await fetch('/api/subscribers?id=' + id, { method:'DELETE', headers:{'X-Session-Token':_nlTok()} });
   if (r.ok) {
-    _subs = _subs.filter(s => s.id !== id);
+    _subs = _subs.filter(function(s){ return s.id !== id; });
     document.getElementById('sub-count').textContent = _subs.length;
     renderSubRows();
   }
 }
 
 function toggleSubs() {
-  const body = document.getElementById('sub-body');
-  const icon = document.getElementById('sub-toggle-icon');
-  const open = body.style.display !== 'none';
+  var body = document.getElementById('sub-body');
+  var icon = document.getElementById('sub-toggle-icon');
+  var open = body.style.display !== 'none';
   body.style.display = open ? 'none' : 'block';
   icon.textContent = open ? '▼' : '▲';
   if (!open && !_subsLoaded) loadSubsFull();
@@ -5444,23 +5444,19 @@ function toggleSubs() {
 
 async function loadSubsFull() {
   if (_subsLoaded) { renderSubRows(); return; }
-  try {
-    const r = await fetch('/api/subscribers', { credentials:'include' });
-    _subs = await r.json();
-    _subsLoaded = true;
-    document.getElementById('sub-count').textContent = Array.isArray(_subs) ? _subs.length : '?';
-    renderSubRows();
-  } catch(e) { document.getElementById('sub-rows').innerHTML = '<tr><td colspan="4" style="color:#f44336;padding:1rem">שגיאת טעינה</td></tr>'; }
+  var r = await fetch('/api/subscribers', { headers:{'X-Session-Token':_nlTok()} });
+  if (!r.ok) { document.getElementById('sub-rows').innerHTML = '<tr><td colspan="4" style="color:#f44336;padding:1rem">שגיאת אימות</td></tr>'; return; }
+  _subs = await r.json();
+  _subsLoaded = true;
+  renderSubRows();
 }
 
-// טעינת הספירה עם פתיחת הדף — מסתמך על cookie admin_session
-(async () => {
-  try {
-    const r = await fetch('/api/subscribers', { credentials:'include' });
-    _subs = await r.json();
-    _subsLoaded = true;
-    document.getElementById('sub-count').textContent = Array.isArray(_subs) ? _subs.length : '?';
-  } catch(e) { document.getElementById('sub-count').textContent = '?'; }
+(async function loadSubCount() {
+  var r = await fetch('/api/subscribers', { headers:{'X-Session-Token':_nlTok()} });
+  if (!r.ok) { document.getElementById('sub-count').textContent = '?'; return; }
+  _subs = await r.json();
+  _subsLoaded = true;
+  document.getElementById('sub-count').textContent = Array.isArray(_subs) ? _subs.length : '?';
 })();
 </script>
 <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
