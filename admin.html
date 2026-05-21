@@ -722,32 +722,11 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
         <h1 class="section-title">ניוזלטר</h1>
         <span id="nl-sub-count" class="nl-sub-count"></span>
       </div>
-      <div class="nl-grid">
-        <!-- Composer -->
-        <div>
-          <div class="add-form">
-            <div class="add-form-title">עריכה</div>
-            <div class="form-field">
-              <label>נושא המייל</label>
-              <input type="text" id="nl-subject" class="nl-subject" placeholder="לדוגמה: גלריה חדשה — קיץ 2026">
-            </div>
-            <div class="form-field">
-              <label>תוכן</label>
-              <textarea id="nl-body" class="nl-body" rows="10" placeholder="שלום,&#10;&#10;רציתי לשתף אתכם בגלריה חדשה שהעלתי...&#10;&#10;בברכה,&#10;עמית"></textarea>
-            </div>
-            <button type="button" class="btn btn-primary nl-send-btn" id="nl-send-btn">
-              <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><line x1="22" y1="2" x2="11" y2="13" stroke-width="2"/><polygon points="22 2 15 22 11 13 2 9 22 2" stroke-width="2"/></svg>
-              שלח לכולם
-            </button>
-            <div id="nl-status" class="nl-status"></div>
-          </div>
-        </div>
-        <!-- Preview -->
-        <div>
-          <div class="nl-label">תצוגה מקדימה</div>
-          <iframe id="nl-preview" class="nl-preview" sandbox="allow-same-origin" title="תצוגה מקדימה של המייל"></iframe>
-        </div>
-      </div>
+      <a href="/admin/newsletter/" style="display:inline-block">
+        <button class="btn btn-primary" style="font-size:1rem;padding:.75rem 1.5rem">
+          📰 פתח ניהול ניוזלטר
+        </button>
+      </a>
     </section>
 
     <!-- ANALYTICS SECTION -->
@@ -2194,7 +2173,11 @@ const Reply = (() => {
 
 // ===== NEWSLETTER =====
 const Newsletter = (() => {
-  function buildHtml(subject, body) {
+  function buildHtml(subject, body) { return ''; }
+
+  // placeholder — kept for legacy; real nl managed at /admin/newsletter/
+  // eslint-disable-next-line no-unused-vars
+  function _unused_buildHtml_legacy(subject, body) {
     const safe = body.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
     return `<!DOCTYPE html><html lang="he" dir="rtl"><head><meta charset="UTF-8"></head>
 <body style="margin:0;padding:0;background:#f4f4f4;font-family:Arial,sans-serif">
@@ -2227,7 +2210,6 @@ const Newsletter = (() => {
   }
 
   async function init() {
-    // subscriber count
     try {
       const r = await fetch('/api/subscribers', { headers: authHeaders() });
       if (r.ok) {
@@ -2235,10 +2217,6 @@ const Newsletter = (() => {
         $('nl-sub-count').textContent = `${subs.length} נרשמים ברשימה`;
       }
     } catch {}
-    updatePreview();
-    $('nl-subject').addEventListener('input', updatePreview);
-    $('nl-body').addEventListener('input', updatePreview);
-    $('nl-send-btn').addEventListener('click', send);
   }
 
   async function send() {
