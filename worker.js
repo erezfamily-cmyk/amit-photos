@@ -5408,7 +5408,6 @@ async function deleteAndRecreate(id, type) {
 }
 
 // ===== SUBSCRIBERS =====
-const _tok = sessionStorage.getItem('admin_session') || localStorage.getItem('admin_session') || '';
 let _subs = [], _subsLoaded = false;
 
 function _escH(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
@@ -5426,7 +5425,7 @@ function renderSubRows() {
 
 async function deleteSub(id) {
   if (!confirm('למחוק מנוי זה?')) return;
-  const r = await fetch('/api/subscribers?id=' + id, { method:'DELETE', headers:{'X-Session-Token':_tok} });
+  const r = await fetch('/api/subscribers?id=' + id, { method:'DELETE', credentials:'include' });
   if (r.ok) {
     _subs = _subs.filter(s => s.id !== id);
     document.getElementById('sub-count').textContent = _subs.length;
@@ -5446,7 +5445,7 @@ function toggleSubs() {
 async function loadSubsFull() {
   if (_subsLoaded) { renderSubRows(); return; }
   try {
-    const r = await fetch('/api/subscribers', { headers:{'X-Session-Token':_tok} });
+    const r = await fetch('/api/subscribers', { credentials:'include' });
     _subs = await r.json();
     _subsLoaded = true;
     document.getElementById('sub-count').textContent = Array.isArray(_subs) ? _subs.length : '?';
@@ -5454,10 +5453,10 @@ async function loadSubsFull() {
   } catch(e) { document.getElementById('sub-rows').innerHTML = '<tr><td colspan="4" style="color:#f44336;padding:1rem">שגיאת טעינה</td></tr>'; }
 }
 
-// טעינת הספירה בלבד עם פתיחת הדף
+// טעינת הספירה עם פתיחת הדף — מסתמך על cookie admin_session
 (async () => {
   try {
-    const r = await fetch('/api/subscribers', { headers:{'X-Session-Token':_tok} });
+    const r = await fetch('/api/subscribers', { credentials:'include' });
     _subs = await r.json();
     _subsLoaded = true;
     document.getElementById('sub-count').textContent = Array.isArray(_subs) ? _subs.length : '?';
