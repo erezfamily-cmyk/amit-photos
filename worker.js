@@ -203,7 +203,7 @@ input[type=email]{width:100%;padding:.75rem 1rem;background:#1e1e1e;border:1px s
 input[type=email]::placeholder{color:#666}
 button{width:100%;padding:.8rem 1rem;background:#c8a96e;color:#111;border:none;border-radius:4px;font-size:1rem;font-weight:700;cursor:pointer}
 button:hover{background:#d4b87a}
-.legal{font-size:.7rem;color:#555;margin-top:.6rem;line-height:1.5}
+.legal{font-size:.7rem;color:#f0ede8;font-weight:700;margin-top:.6rem;line-height:1.5}
 .msg{margin-top:.75rem;min-height:1.2em;font-size:.9rem}
 .msg.ok{color:#4caf7d}
 .msg.err{color:#e05555}
@@ -221,7 +221,7 @@ button:hover{background:#d4b87a}
   <div class="right">
     <div class="badge">מתנה חינמית</div>
     <h1>50 טיפים לצילום טוב יותר</h1>
-    <p class="sub">המדריך שהייתי רוצה שיהיה לי כשהתחלתי לצלם</p>
+    <p class="sub">המדריך שהכנתי מהניסיון שלי והאהבה לצלם</p>
     <p class="pdf-meta">PDF · 15 עמ&#39; · ישיר למייל</p>
     <form id="fg-form">
       <input type="email" id="fg-email" placeholder="כתובת המייל שלך" required autocomplete="email">
