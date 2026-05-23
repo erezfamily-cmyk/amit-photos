@@ -2551,6 +2551,17 @@ async function handleAnalysesUpdate(request, env, photoId) {
   return jsonRes({ ok: true }, 200, request);
 }
 
+async function handleAnalysesDelete(request, env, photoId) {
+  if (!await checkAuth(request, env)) return unauth(request);
+  if (request.method !== 'DELETE') return jsonRes({ error: 'DELETE only' }, 405, request);
+  try {
+    await env.DB.prepare('DELETE FROM photo_analyses WHERE photo_id = ?').bind(photoId).run();
+    return jsonRes({ ok: true }, 200, request);
+  } catch (e) {
+    return jsonRes({ error: String(e) }, 500, request);
+  }
+}
+
 async function handleAnalysesGenerateEn(request, env, photoId) {
   if (!await checkAuth(request, env)) return unauth(request);
   if (request.method !== 'POST') return jsonRes({ error: 'POST only' }, 405, request);
@@ -6006,6 +6017,7 @@ export default {
       return handleAnalysesGenerateEn(request, env, path.slice('/api/analyses/'.length).replace('/generate-en',''));
     if (path.startsWith('/api/analyses/') && request.method === 'GET')           return handleAnalysesGet(request, env, path.slice('/api/analyses/'.length));
     if (path.startsWith('/api/analyses/') && request.method === 'PUT')           return handleAnalysesUpdate(request, env, path.slice('/api/analyses/'.length));
+    if (path.startsWith('/api/analyses/') && request.method === 'DELETE')        return handleAnalysesDelete(request, env, path.slice('/api/analyses/'.length));
     // Locations public API
     if (path === '/api/locations' && request.method === 'GET')          return handleLocationsList(request, env);
     if (path === '/api/locations/suggest' && request.method === 'POST') return handleLocationsSuggest(request, env);

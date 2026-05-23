@@ -733,11 +733,11 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
     <section class="section" id="section-analytics">
       <div class="section-header">
         <h1 class="section-title">סטטיסטיקות</h1>
-        <button type="button" class="btn btn-ghost btn-sm" onclick="Dashboard.loadAnalytics();loadPhotoAnalytics()">רענן</button>
+        <button type="button" class="btn btn-ghost btn-sm" onclick="Dashboard.loadAnalytics();Dashboard.loadSocialKpis();loadPhotoAnalytics()">רענן</button>
       </div>
 
       <!-- W/W summary cards -->
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.5rem" id="analytics-kpi-row">
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1rem" id="analytics-kpi-row">
         <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:6px;padding:1.1rem;text-align:center">
           <div id="kpi-week-total" style="font-size:1.75rem;font-weight:700;color:var(--accent)">—</div>
           <div style="color:var(--text-muted);font-size:.78rem;margin-top:.2rem">צפיות השבוע</div>
@@ -750,6 +750,27 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
         <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:6px;padding:1.1rem;text-align:center">
           <div id="kpi-top-page" style="font-size:1.1rem;font-weight:700;color:var(--accent)">—</div>
           <div style="color:var(--text-muted);font-size:.78rem;margin-top:.2rem">דף פופולרי ביותר</div>
+        </div>
+      </div>
+
+      <!-- Social + Newsletter snapshot -->
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.5rem" id="social-kpi-row">
+        <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:6px;padding:1.1rem;text-align:center">
+          <div id="kpi-ig-followers" style="font-size:1.75rem;font-weight:700;color:#e1306c">—</div>
+          <div style="color:var(--text-muted);font-size:.78rem;margin-top:.2rem">📸 Instagram עוקבים</div>
+        </div>
+        <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:6px;padding:1.1rem;text-align:center">
+          <div id="kpi-fb-fans" style="font-size:1.75rem;font-weight:700;color:#1877f2">—</div>
+          <div style="color:var(--text-muted);font-size:.78rem;margin-top:.2rem">📘 Facebook עוקבים</div>
+        </div>
+        <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:6px;padding:1.1rem;text-align:center">
+          <div id="kpi-newsletter-subs" style="font-size:1.75rem;font-weight:700;color:var(--accent)">—</div>
+          <div style="color:var(--text-muted);font-size:.78rem;margin-top:.2rem">✉️ ניוזלטר מנויים</div>
+        </div>
+        <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:6px;padding:1.1rem;text-align:center">
+          <div id="kpi-ig-posts-week" style="font-size:1.75rem;font-weight:700;color:var(--accent)">—</div>
+          <div style="color:var(--text-muted);font-size:.78rem;margin-top:.2rem">📷 פוסטים השבוע</div>
+          <div id="kpi-ig-engagement" style="font-size:.72rem;margin-top:.3rem;color:#888"></div>
         </div>
       </div>
 
@@ -1711,7 +1732,28 @@ const Dashboard = (() => {
     } catch { /* non-critical */ }
   }
 
-  return { init, loadAnalytics };
+  async function loadSocialKpis() {
+    try {
+      // Newsletter count from already-loaded Subscribers module
+      const subCount = Subscribers.getData().length;
+      $('kpi-newsletter-subs').textContent = subCount.toLocaleString();
+
+      // Social stats from social_report.json
+      const r = await fetch('https://raw.githubusercontent.com/erezfamily-cmyk/amit-photos/main/data/social_report.json?t=' + Date.now());
+      if (!r.ok) return;
+      const d = await r.json();
+      const igF = d.ig?.followers;
+      const fbF = d.fb_pages ? d.fb_pages.reduce((s, p) => s + (p.fans || 0), 0) : (d.fb?.fans ?? null);
+      const igPosts = d.ig?.posts_this_week;
+      const igRate = d.ig?.engagement_rate != null ? (d.ig.engagement_rate * 100).toFixed(2) + '%' : null;
+      if (igF != null) $('kpi-ig-followers').textContent = igF.toLocaleString();
+      if (fbF != null) $('kpi-fb-fans').textContent = fbF.toLocaleString();
+      if (igPosts != null) $('kpi-ig-posts-week').textContent = igPosts;
+      if (igRate) $('kpi-ig-engagement').textContent = 'מעורבות: ' + igRate;
+    } catch { /* non-critical */ }
+  }
+
+  return { init, loadAnalytics, loadSocialKpis };
 })();
 
 function addExtraLink() {
@@ -2076,6 +2118,7 @@ function authHeaders() {
     await Promise.all([Photos.init(), Subscribers.load(), Customers.load()]);
     Dashboard.init(Photos.getData(), Subscribers.getData(), Customers.getData());
     Dashboard.loadAnalytics();
+    Dashboard.loadSocialKpis();
     WeekPhoto.init(Photos.getData());
     // handle pinterest OAuth callback redirect
     const sp = new URLSearchParams(location.search);
@@ -3764,7 +3807,7 @@ const SocialSection = (() => {
             topHtml = topPostsTable([{ message: page.best_post.message, likes: page.best_post.likes, comments: 0, date: page.best_post.date }], 'message');
           }
           return `<h2 class="social-platform-title social-platform-title--fb">📘 ${pageTitle}</h2>${statsHtml}<div class="social-top-posts">${topHtml}</div>`;
-        }).join('') + (fbPages.length < 3 ? fbSetupHint(fbPages.length) : '');
+        }).join('');
       }
 
       // Recommendations
@@ -3932,6 +3975,7 @@ async function loadLearn() {
           <button class="btn btn-primary btn-sm" onclick="learnPublish('${a.photo_id}')">פרסם</button>
           <button class="btn btn-ghost btn-sm" onclick="learnGenerateEn('${a.photo_id}', this)" title="ייצר/עדכן תרגום אנגלי" style="font-size:.9rem">🌍</button>
           ${a.published_at ? `<a href="/photo/${a.photo_id}" target="_blank" class="btn btn-ghost btn-sm" title="פתח דף מפורסם" style="text-decoration:none;display:inline-flex;align-items:center;gap:.25rem"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>צפה</a>` : ''}
+          <button class="btn btn-danger btn-sm" onclick="learnDelete('${a.photo_id}', this)" title="מחק ניתוח">🗑</button>
         </td>
       `;
       tbody.appendChild(tr);
@@ -4297,6 +4341,13 @@ async function learnGenerateEn(photoId, btn) {
 }
 
 async function analyzePhoto(photoId, btn) {
+  // Check if analysis already exists before creating a new one
+  try {
+    const check = await fetch(`/api/analyses/${photoId}`, { headers: authHeaders() });
+    if (check.ok) {
+      if (!confirm('כבר קיים ניתוח לתמונה זו. לדרוס אותו?')) return;
+    }
+  } catch(_) {}
   btn.disabled = true;
   const orig = btn.textContent;
   btn.textContent = '⏳';
@@ -4319,6 +4370,17 @@ async function analyzePhoto(photoId, btn) {
     btn.disabled = false;
     btn.textContent = orig;
   }
+}
+
+async function learnDelete(photoId, btn) {
+  if (!confirm('למחוק את הניתוח של תמונה זו לצמיתות?')) return;
+  btn.disabled = true;
+  try {
+    const res = await fetch(`/api/analyses/${photoId}`, { method: 'DELETE', headers: authHeaders() });
+    if (res.ok) { toast('ניתוח נמחק'); loadLearn(); }
+    else { const d = await res.json().catch(()=>{}); toast('שגיאה: ' + (d?.error || res.status), 'error'); }
+  } catch(e) { toast('שגיאה: ' + e.message, 'error'); }
+  finally { btn.disabled = false; }
 }
 
 // ===== VISUAL ANNOTATION EDITOR =====
