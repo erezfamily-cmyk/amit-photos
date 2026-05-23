@@ -2551,6 +2551,40 @@ async function handleAnalysesUpdate(request, env, photoId) {
   return jsonRes({ ok: true }, 200, request);
 }
 
+async function handleAnalysesDedup(request, env) {
+  if (!await checkAuth(request, env)) return unauth(request);
+  if (request.method !== 'POST') return jsonRes({ error: 'POST only' }, 405, request);
+  // Find photo_ids where the same r2_key appears in more than one analysis
+  // Keep the one with a published_at; delete the rest
+  const { results: dupes } = await env.DB.prepare(`
+    SELECT a.photo_id, p.r2_key, a.published_at
+    FROM photo_analyses a
+    INNER JOIN photos p ON p.id = a.photo_id
+    WHERE p.r2_key IN (
+      SELECT p2.r2_key FROM photo_analyses a2
+      INNER JOIN photos p2 ON p2.id = a2.photo_id
+      WHERE p2.r2_key IS NOT NULL AND p2.r2_key != ''
+      GROUP BY p2.r2_key HAVING COUNT(*) > 1
+    )
+    ORDER BY p.r2_key, a.published_at DESC
+  `).all();
+
+  const toDelete = [];
+  const seen = new Set();
+  for (const row of (dupes || [])) {
+    if (seen.has(row.r2_key)) {
+      toDelete.push(row.photo_id);
+    } else {
+      seen.add(row.r2_key);
+    }
+  }
+
+  for (const id of toDelete) {
+    await env.DB.prepare('DELETE FROM photo_analyses WHERE photo_id = ?').bind(id).run();
+  }
+  return jsonRes({ deleted: toDelete.length, ids: toDelete }, 200, request);
+}
+
 async function handleAnalysesDelete(request, env, photoId) {
   if (!await checkAuth(request, env)) return unauth(request);
   if (request.method !== 'DELETE') return jsonRes({ error: 'DELETE only' }, 405, request);
@@ -2699,8 +2733,8 @@ async function handleAnalysesGenerate(request, env) {
       return jsonRes({ error: 'תמונה לא נמצאה' }, 404, request);
     }
   } else {
-    // 1. Pick 5 candidates (unanalyzed, published)
-    // Prefer photos with smaller dimensions (more likely to fit Claude's 5MB image limit)
+    // 1. Pick 5 candidates (unanalyzed, published, unique r2_key)
+    // Exclude photos whose r2_key is already covered by an existing analysis (different photo_id, same image)
     const { results } = await env.DB.prepare(`
       SELECT p.id, p.title, p.thumbnail, p.url, p.r2_key, p.description
       FROM photos p
@@ -2708,9 +2742,14 @@ async function handleAnalysesGenerate(request, env) {
       WHERE a.photo_id IS NULL
         AND p.published = 1
         AND p.r2_key IS NOT NULL
-        AND r2_key != ''
+        AND p.r2_key != ''
         AND p.width > 0
         AND p.width <= 2000
+        AND p.r2_key NOT IN (
+          SELECT p2.r2_key FROM photos p2
+          INNER JOIN photo_analyses a2 ON a2.photo_id = p2.id
+          WHERE p2.r2_key IS NOT NULL AND p2.r2_key != ''
+        )
       ORDER BY RANDOM()
       LIMIT 5
     `).all();
@@ -6011,6 +6050,7 @@ export default {
     }
     if (path === '/api/admin/migrate-analyses' && request.method === 'POST') return handleMigrateAnalyses(request, env);
     if (path === '/api/analyses' && request.method === 'GET')                    return handleAnalysesList(request, env);
+    if (path === '/api/analyses/dedup' && request.method === 'POST')             return handleAnalysesDedup(request, env);
     if (path === '/api/analyses/publish-all' && request.method === 'POST')       return handleAnalysesPublishAll(request, env);
     if (path === '/api/analyses/generate' && request.method === 'POST')          return handleAnalysesGenerate(request, env);
     if (path.startsWith('/api/analyses/') && path.endsWith('/generate-en') && request.method === 'POST')
