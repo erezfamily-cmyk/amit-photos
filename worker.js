@@ -174,6 +174,105 @@ async function handleLogout(request, env) {
   return jsonRes({ ok: true }, 200, request);
 }
 
+// ===== FREE GUIDE LANDING PAGE =====
+async function handleFreeGuide(request, env) {
+  const photo = await env.DB.prepare(
+    `SELECT id, r2_key, title FROM photos WHERE published=1 AND r2_key IS NOT NULL AND r2_key != '' ORDER BY RANDOM() LIMIT 1`
+  ).first();
+  const photoUrl = photo?.r2_key ? `https://amitphotos.com/photos/${photo.r2_key}` : '';
+  const photoTitle = (photo?.title || '').replace(/"/g, '&quot;');
+
+  const html = `<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>50 טיפים לצילום טוב יותר — PDF חינם | Amit Photos</title>
+<meta name="description" content="50 טיפים לצילום שישפרו את התמונות שלך — PDF חינמי ב-15 עמ', ישיר למייל.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Heebo',sans-serif;background:#111;color:#f0ede8;min-height:100vh;display:flex;align-items:center;justify-content:center}
+.wrap{display:flex;max-width:860px;width:100%;min-height:100vh}
+.left{flex:1;background:${photoUrl ? `url('${photoUrl}') center/cover no-repeat` : 'linear-gradient(135deg,#1a1a2e,#0f3460)'};min-height:300px}
+.right{flex:1;padding:3rem 2.5rem;display:flex;flex-direction:column;justify-content:center;direction:rtl}
+.badge{font-size:.7rem;letter-spacing:.15em;color:#c8a96e;text-transform:uppercase;margin-bottom:.6rem}
+h1{font-size:1.9rem;line-height:1.25;margin-bottom:.5rem;color:#f0ede8}
+.sub{font-size:.95rem;color:#aaa;margin-bottom:.4rem}
+.pdf-meta{font-size:.75rem;color:#666;margin-bottom:1.8rem}
+input[type=email]{width:100%;padding:.75rem 1rem;background:#1e1e1e;border:1px solid #444;border-radius:4px;color:#f0ede8;font-size:1rem;margin-bottom:.75rem;direction:rtl}
+input[type=email]::placeholder{color:#666}
+button{width:100%;padding:.8rem 1rem;background:#c8a96e;color:#111;border:none;border-radius:4px;font-size:1rem;font-weight:700;cursor:pointer}
+button:hover{background:#d4b87a}
+.legal{font-size:.7rem;color:#555;margin-top:.6rem;line-height:1.5}
+.msg{margin-top:.75rem;min-height:1.2em;font-size:.9rem}
+.msg.ok{color:#4caf7d}
+.msg.err{color:#e05555}
+.back{font-size:.75rem;color:#666;margin-top:1.5rem}
+.back a{color:#888;text-decoration:none}
+.back a:hover{color:#c8a96e}
+@media(max-width:600px){.wrap{flex-direction:column}.left{min-height:220px}.right{padding:2rem 1.5rem}}
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="wrap">
+  <div class="left" title="${photoTitle}"></div>
+  <div class="right">
+    <div class="badge">מתנה חינמית</div>
+    <h1>50 טיפים לצילום טוב יותר</h1>
+    <p class="sub">המדריך שהייתי רוצה שיהיה לי כשהתחלתי לצלם</p>
+    <p class="pdf-meta">PDF · 15 עמ&#39; · ישיר למייל</p>
+    <form id="fg-form">
+      <input type="email" id="fg-email" placeholder="כתובת המייל שלך" required autocomplete="email">
+      <button type="submit" id="fg-btn">שלח לי את ה-PDF &#x2190;</button>
+      <p class="legal">קבלת ה-PDF + הרשמה לניוזלטר החודשי של עמית ארז. ניתן לבטל בכל עת.</p>
+      <p class="msg" id="fg-msg"></p>
+    </form>
+    <div class="back"><a href="https://amitphotos.com">&#x2190; חזור לאתר</a></div>
+  </div>
+</div>
+<script>
+document.getElementById('fg-form').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const email = document.getElementById('fg-email').value.trim();
+  const btn = document.getElementById('fg-btn');
+  const msg = document.getElementById('fg-msg');
+  btn.disabled = true;
+  btn.textContent = '...';
+  try {
+    const r = await fetch('/api/subscribers?source=lead_magnet', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    });
+    if (r.ok) {
+      msg.className = 'msg ok';
+      msg.textContent = '&#x2713; נשלח! בדוק את תיבת הדואר שלך (גם spam).';
+      document.getElementById('fg-email').value = '';
+      btn.textContent = 'נשלח &#x2713;';
+    } else {
+      msg.className = 'msg err';
+      msg.textContent = 'שגיאה. נסה שוב.';
+      btn.disabled = false;
+      btn.textContent = 'שלח לי את ה-PDF &#x2190;';
+    }
+  } catch {
+    msg.className = 'msg err';
+    msg.textContent = 'שגיאת רשת. נסה שוב.';
+    btn.disabled = false;
+    btn.textContent = 'שלח לי את ה-PDF &#x2190;';
+  }
+});
+</script>
+</body>
+</html>\`;
+
+  return new Response(html, {
+    headers: { 'Content-Type': 'text/html;charset=UTF-8', 'Cache-Control': 'no-store' }
+  });
+}
+
 // ===== SUBSCRIBERS =====
 async function handleSubscribers(request, env) {
   const method = request.method;
@@ -6068,6 +6167,7 @@ export default {
     if (path === '/api/admin/upload-story' && request.method === 'POST') return handleUploadStory(request, env);
     if (path.startsWith('/api/admin/replace-photo/') && request.method === 'POST') return handleAdminReplacePhoto(request, env, path.slice('/api/admin/replace-photo/'.length));
     if (path === '/api/admin/photo-dimensions' && request.method === 'POST') return handleAdminPhotoDimensions(request, env);
+    if (path === '/free-guide' || path === '/free-guide/') return handleFreeGuide(request, env);
     if (path === '/prices') return handlePricesPage(request, env);
     if (path === '/api/admin/migrate-amount' && request.method === 'POST') {
       if (!await checkAuth(request, env)) return unauth(request);
