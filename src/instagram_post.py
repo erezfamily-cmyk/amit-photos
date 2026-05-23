@@ -236,7 +236,8 @@ def generate_caption(photo):
     )
 
     caption_text = msg.content[0].text.strip()
-    return f"{caption_text}\n\n{hashtags}"
+    PDF_FOOTER = "\n\n🎁 PDF חינם — 50 טיפים לצילום:\namitphotos.com/free-guide"
+    return f"{caption_text}{PDF_FOOTER}\n\n{hashtags}"
 
 
 def _try_r2(img_bytes):

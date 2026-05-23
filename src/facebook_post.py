@@ -184,7 +184,8 @@ def generate_caption(photo):
     )
 
     post_text = msg.content[0].text.strip()
-    return f"{post_text}\n\n{hashtags}"
+    PDF_FOOTER = "\n\n🎁 PDF חינם — 50 טיפים לצילום:\namitphotos.com/free-guide"
+    return f"{post_text}{PDF_FOOTER}\n\n{hashtags}"
 
 
 def upload_to_public_host(source_url):
