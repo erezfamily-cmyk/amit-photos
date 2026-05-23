@@ -128,6 +128,7 @@ const TRANSLATIONS = {
     'gear.acc.l1':      'Speedlight — תאורת פלאש חיצונית',
     'gear.acc.l2':      'חצובת קרבון — יציבות מקסימלית',
     'gear.acc.l3':      'פילטרים ND לחשיפות ארוכות',
+    'gear.cta':         'לעמוד הציוד המלא ←',
 
     // Testimonials
     'test.label':       'מה אומרים עליי',
@@ -480,6 +481,7 @@ const TRANSLATIONS = {
     'gear.acc.l1':      'Speedlight — external flash',
     'gear.acc.l2':      'Carbon tripod — maximum stability',
     'gear.acc.l3':      'ND filters for long exposures',
+    'gear.cta':         'View Full Gear Page →',
 
     // Testimonials
     'test.label':       'What People Say',
