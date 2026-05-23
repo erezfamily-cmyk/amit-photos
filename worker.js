@@ -314,7 +314,7 @@ async function handleSubscribers(request, env) {
           console.error('Resend error (existing subscriber PDF):', resendRes.status, errText);
         }
       }
-      return jsonRes({ ok: true, already: true }, 200, request);
+      return jsonRes({ ok: true, already: true, _d: { k: !!env.RESEND_API_KEY, s: source, lm: isLeadMagnetSource } }, 200, request);
     }
     const id = crypto.randomUUID();
     await env.DB.prepare(
