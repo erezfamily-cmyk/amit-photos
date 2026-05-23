@@ -39,7 +39,9 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
 .section { max-width: 760px; margin: 0 auto; padding: 1.5rem 1.25rem .5rem; }
 .section-title { font-family: 'Syne', sans-serif; font-size: .75rem; text-transform: uppercase;
   letter-spacing: .08em; color: var(--muted); margin-bottom: 1rem;
-  padding-bottom: .5rem; border-bottom: 1px solid var(--border); }
+  padding-bottom: .5rem; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: .5rem; }
+.section-title svg { width: 1rem; height: 1rem; stroke: var(--muted); flex-shrink: 0; }
 
 .gear-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: .75rem; margin-bottom: 1.5rem; }
 
@@ -48,7 +50,9 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
   transition: border-color .2s, transform .15s; }
 .gear-card:hover { border-color: rgba(200,169,110,.5); transform: translateY(-2px); }
 .gear-card-ico { aspect-ratio: 3/2; background: var(--surface2); display: flex;
-  align-items: center; justify-content: center; font-size: 2.8rem; }
+  align-items: center; justify-content: center; position: relative;
+  color: var(--accent); }
+.gear-card-ico svg { width: 3rem; height: 3rem; opacity: .7; }
 .gear-card-body { padding: .9rem; flex: 1; display: flex; flex-direction: column; }
 .gear-card-brand { font-size: .68rem; text-transform: uppercase; letter-spacing: .06em;
   color: var(--accent); margin-bottom: .2rem; }
@@ -74,7 +78,6 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
   border-radius: 4px;
   font-family: 'Heebo', sans-serif;
 }
-.gear-card-ico { position: relative; }
 
 .disclose { max-width: 760px; margin: 0 auto; padding: .5rem 1.25rem 2rem;
   font-size: .7rem; color: #444; text-align: center; }
@@ -104,7 +107,7 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
 
 <header class="site-header">
   <a class="site-title" href="/">Amit Photos</a>
-  <button class="lang-btn" onclick="toggleLang()" id="lang-btn">EN</button>
+  <button type="button" class="lang-btn" onclick="toggleLang()" id="lang-btn">EN</button>
 </header>
 
 <div class="hero">
@@ -114,11 +117,16 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
 
 <!-- BODIES -->
 <div class="section">
-  <div class="section-title" data-he="📷 גופי מצלמה" data-en="📷 Camera Bodies">📷 גופי מצלמה</div>
+  <div class="section-title">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2"/><circle cx="12" cy="14" r="4"/><path d="M16 7l-1.5-3h-5L8 7"/></svg>
+    <span data-he="גופי מצלמה" data-en="Camera Bodies">גופי מצלמה</span>
+  </div>
   <div class="gear-grid">
 
-    <a class="gear-card own-badge" href="https://adorama.prf.hn/click/camref:1101l5Km5i/destination:https://www.adorama.com/catalog.tpl?SearchInfo=Nikon+Z7+mirrorless" target="_blank" rel="noopener sponsored">
-      <div class="gear-card-ico">📷</div>
+    <a class="gear-card own-badge" href="https://adorama.prf.hn/click/camref:1101l5Km5i/destination:https://www.adorama.com/nkz7bk.html" target="_blank" rel="noopener sponsored">
+      <div class="gear-card-ico">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2"/><circle cx="12" cy="14" r="4"/><path d="M16 7l-1.5-3h-5L8 7"/><circle cx="18" cy="10" r="1" fill="currentColor" stroke="none"/></svg>
+      </div>
       <div class="gear-card-body">
         <div class="gear-card-brand">Nikon</div>
         <div class="gear-card-name" data-he="Nikon Z7" data-en="Nikon Z7">Nikon Z7</div>
@@ -127,8 +135,10 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
       </div>
     </a>
 
-    <a class="gear-card own-badge" href="https://adorama.prf.hn/click/camref:1101l5Km5i/destination:https://www.adorama.com/catalog.tpl?SearchInfo=Nikon+D700+camera" target="_blank" rel="noopener sponsored">
-      <div class="gear-card-ico">📸</div>
+    <a class="gear-card own-badge" href="https://adorama.prf.hn/click/camref:1101l5Km5i/destination:https://www.adorama.com/nkd700.html" target="_blank" rel="noopener sponsored">
+      <div class="gear-card-ico">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M8 7V5h8v2"/><circle cx="12" cy="14" r="4"/><circle cx="18" cy="10" r="1" fill="currentColor" stroke="none"/></svg>
+      </div>
       <div class="gear-card-body">
         <div class="gear-card-brand">Nikon</div>
         <div class="gear-card-name" data-he="Nikon D700" data-en="Nikon D700">Nikon D700</div>
@@ -137,8 +147,10 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
       </div>
     </a>
 
-    <a class="gear-card own-badge" href="https://adorama.prf.hn/click/camref:1101l5Km5i/destination:https://www.adorama.com/catalog.tpl?SearchInfo=Nikon+D300+camera" target="_blank" rel="noopener sponsored">
-      <div class="gear-card-ico">🎞️</div>
+    <a class="gear-card own-badge" href="https://adorama.prf.hn/click/camref:1101l5Km5i/destination:https://www.adorama.com/nkd300.html" target="_blank" rel="noopener sponsored">
+      <div class="gear-card-ico">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="8" width="18" height="13" rx="2"/><path d="M9 8V6h6v2"/><circle cx="12" cy="14" r="3.5"/><circle cx="17.5" cy="10.5" r=".75" fill="currentColor" stroke="none"/></svg>
+      </div>
       <div class="gear-card-body">
         <div class="gear-card-brand">Nikon</div>
         <div class="gear-card-name" data-he="Nikon D300" data-en="Nikon D300">Nikon D300</div>
@@ -152,64 +164,79 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
 
 <!-- LENSES -->
 <div class="section">
-  <div class="section-title" data-he="🔭 עדשות" data-en="🔭 Lenses">🔭 עדשות</div>
+  <div class="section-title">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="2"/></svg>
+    <span data-he="עדשות" data-en="Lenses">עדשות</span>
+  </div>
   <div class="gear-grid">
 
-    <a class="gear-card own-badge" href="https://adorama.prf.hn/click/camref:1101l5Km5i/destination:https://www.adorama.com/catalog.tpl?SearchInfo=Nikon+70-200mm+lens" target="_blank" rel="noopener sponsored">
-      <div class="gear-card-ico">🔭</div>
+    <a class="gear-card own-badge" href="https://adorama.prf.hn/click/camref:1101l5Km5i/destination:https://www.adorama.com/nk70200vr2.html" target="_blank" rel="noopener sponsored">
+      <div class="gear-card-ico">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="2"/><line x1="12" y1="4" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="20"/><line x1="4" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="20" y2="12"/></svg>
+      </div>
       <div class="gear-card-body">
         <div class="gear-card-brand">Nikon</div>
-        <div class="gear-card-name" data-he="70-200mm f/2.8" data-en="70-200mm f/2.8">70-200mm f/2.8</div>
+        <div class="gear-card-name" data-he="70-200mm f/2.8 VR II" data-en="70-200mm f/2.8 VR II">70-200mm f/2.8 VR II</div>
         <div class="gear-card-desc" data-he="סוס העבודה שלי — ספורט, פורטרטים, חיות. בוקה קרמי ומהיר בכל תנאי אור." data-en="My workhorse — sports, portraits, wildlife. Creamy bokeh and fast in any light.">סוס העבודה שלי — ספורט, פורטרטים, חיות. בוקה קרמי ומהיר בכל תנאי אור.</div>
         <span class="gear-card-btn" data-he="ראה באדוראמה ←" data-en="View at Adorama →">ראה באדוראמה ←</span>
       </div>
     </a>
 
-    <a class="gear-card own-badge" href="https://adorama.prf.hn/click/camref:1101l5Km5i/destination:https://www.adorama.com/catalog.tpl?SearchInfo=Nikon+300mm+f4+telephoto" target="_blank" rel="noopener sponsored">
-      <div class="gear-card-ico">🦅</div>
+    <a class="gear-card own-badge" href="https://adorama.prf.hn/click/camref:1101l5Km5i/destination:https://www.adorama.com/nk300f4pf.html" target="_blank" rel="noopener sponsored">
+      <div class="gear-card-ico">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><path d="M12 4v2M12 18v2M4 12h2M18 12h2M6.34 6.34l1.41 1.41M16.25 16.25l1.41 1.41M6.34 17.66l1.41-1.41M16.25 7.75l1.41-1.41"/></svg>
+      </div>
       <div class="gear-card-body">
         <div class="gear-card-brand">Nikon</div>
-        <div class="gear-card-name" data-he="300mm f/4 פריים" data-en="300mm f/4 Prime">300mm f/4 פריים</div>
+        <div class="gear-card-name" data-he="300mm f/4E PF פריים" data-en="300mm f/4E PF Prime">300mm f/4E PF פריים</div>
         <div class="gear-card-desc" data-he="לחיות בר וציפורים — מגיע לנושא מרחק גדול, חד ומהיר. עם מכפל × 1.4 הופך ל-420mm." data-en="For wildlife and birds — reaches distant subjects, sharp and fast. With 1.4× TC becomes 420mm.">לחיות בר וציפורים — מגיע לנושא מרחק גדול, חד ומהיר. עם מכפל × 1.4 הופך ל-420mm.</div>
         <span class="gear-card-btn" data-he="ראה באדוראמה ←" data-en="View at Adorama →">ראה באדוראמה ←</span>
       </div>
     </a>
 
-    <a class="gear-card own-badge" href="https://adorama.prf.hn/click/camref:1101l5Km5i/destination:https://www.adorama.com/catalog.tpl?SearchInfo=Nikon+105mm+macro+lens" target="_blank" rel="noopener sponsored">
-      <div class="gear-card-ico">🔬</div>
+    <a class="gear-card own-badge" href="https://adorama.prf.hn/click/camref:1101l5Km5i/destination:https://www.adorama.com/nk10528vrmicro.html" target="_blank" rel="noopener sponsored">
+      <div class="gear-card-ico">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="10" cy="10" r="7"/><circle cx="10" cy="10" r="3.5"/><line x1="15.5" y1="15.5" x2="21" y2="21"/><circle cx="10" cy="10" r="1" fill="currentColor" stroke="none"/></svg>
+      </div>
       <div class="gear-card-body">
         <div class="gear-card-brand">Nikon</div>
-        <div class="gear-card-name" data-he="105mm f/2.8 מאקרו" data-en="105mm f/2.8 Macro">105mm f/2.8 מאקרו</div>
+        <div class="gear-card-name" data-he="105mm f/2.8G VR מאקרו" data-en="105mm f/2.8G VR Macro">105mm f/2.8G VR מאקרו</div>
         <div class="gear-card-desc" data-he="1:1 — מגלה עולם שהעין לא רואה. כפול גם כעדשת פורטרט מצוינת עם בוקה רך." data-en="1:1 — reveals a world the eye can't see. Doubles as an excellent portrait lens with soft bokeh.">1:1 — מגלה עולם שהעין לא רואה. כפול גם כעדשת פורטרט מצוינת עם בוקה רך.</div>
         <span class="gear-card-btn" data-he="ראה באדוראמה ←" data-en="View at Adorama →">ראה באדוראמה ←</span>
       </div>
     </a>
 
-    <a class="gear-card own-badge" href="https://adorama.prf.hn/click/camref:1101l5Km5i/destination:https://www.adorama.com/catalog.tpl?SearchInfo=Sigma+10-20mm+wide+angle+lens" target="_blank" rel="noopener sponsored">
-      <div class="gear-card-ico">🌅</div>
+    <a class="gear-card own-badge" href="https://adorama.prf.hn/click/camref:1101l5Km5i/destination:https://www.adorama.com/sg1020f456nh.html" target="_blank" rel="noopener sponsored">
+      <div class="gear-card-ico">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 12c2-5 5.5-8 9-8s7 3 9 8c-2 5-5.5 8-9 8s-7-3-9-8z"/><circle cx="12" cy="12" r="3"/></svg>
+      </div>
       <div class="gear-card-body">
         <div class="gear-card-brand">Sigma</div>
-        <div class="gear-card-name" data-he="10-20mm f/4-5.6" data-en="10-20mm f/4-5.6">10-20mm f/4-5.6</div>
+        <div class="gear-card-name" data-he="10-20mm f/4-5.6 HSM" data-en="10-20mm f/4-5.6 HSM">10-20mm f/4-5.6 HSM</div>
         <div class="gear-card-desc" data-he="רחב-על לנוף, אדריכלות ואסטרו — תופס את כל המרחב בפריים אחד." data-en="Ultra-wide for landscape, architecture and astro — captures the entire scene in one frame.">רחב-על לנוף, אדריכלות ואסטרו — תופס את כל המרחב בפריים אחד.</div>
         <span class="gear-card-btn" data-he="ראה באדוראמה ←" data-en="View at Adorama →">ראה באדוראמה ←</span>
       </div>
     </a>
 
-    <a class="gear-card own-badge" href="https://adorama.prf.hn/click/camref:1101l5Km5i/destination:https://www.adorama.com/catalog.tpl?SearchInfo=Nikon+18-70mm+lens" target="_blank" rel="noopener sponsored">
-      <div class="gear-card-ico">🎒</div>
+    <a class="gear-card own-badge" href="https://adorama.prf.hn/click/camref:1101l5Km5i/destination:https://www.adorama.com/nk1870f3545g.html" target="_blank" rel="noopener sponsored">
+      <div class="gear-card-ico">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="3.5"/><circle cx="12" cy="12" r="1.2" fill="currentColor" stroke="none"/></svg>
+      </div>
       <div class="gear-card-body">
         <div class="gear-card-brand">Nikon</div>
-        <div class="gear-card-name" data-he="18-70mm f/3.5-4.5" data-en="18-70mm f/3.5-4.5">18-70mm f/3.5-4.5</div>
+        <div class="gear-card-name" data-he="18-70mm f/3.5-4.5G DX" data-en="18-70mm f/3.5-4.5G DX">18-70mm f/3.5-4.5G DX</div>
         <div class="gear-card-desc" data-he="עדשת הכל-יום — קלה, רב-תכליתית, הולכת לכל מקום. הבחירה כשלא יודע מה יהיה." data-en="The everyday lens — light, versatile, goes everywhere. My choice when I don't know what to expect.">עדשת הכל-יום — קלה, רב-תכליתית, הולכת לכל מקום. הבחירה כשלא יודע מה יהיה.</div>
         <span class="gear-card-btn" data-he="ראה באדוראמה ←" data-en="View at Adorama →">ראה באדוראמה ←</span>
       </div>
     </a>
 
-    <a class="gear-card own-badge" href="https://adorama.prf.hn/click/camref:1101l5Km5i/destination:https://www.adorama.com/catalog.tpl?SearchInfo=Nikon+50mm+f1.8+lens" target="_blank" rel="noopener sponsored">
-      <div class="gear-card-ico">👁️</div>
+    <a class="gear-card own-badge" href="https://adorama.prf.hn/click/camref:1101l5Km5i/destination:https://www.adorama.com/nk5018g.html" target="_blank" rel="noopener sponsored">
+      <div class="gear-card-ico">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="1" fill="currentColor" stroke="none"/></svg>
+      </div>
       <div class="gear-card-body">
         <div class="gear-card-brand">Nikon</div>
-        <div class="gear-card-name" data-he="50mm f/1.8 פריים" data-en="50mm f/1.8 Prime">50mm f/1.8 פריים</div>
+        <div class="gear-card-name" data-he="50mm f/1.8G פריים" data-en="50mm f/1.8G Prime">50mm f/1.8G פריים</div>
         <div class="gear-card-desc" data-he="הנורמלי — פרספקטיבה טבעית כמו העין, פתח רחב, קטן וקל. העדשה הראשונה שהמלצתי." data-en="The normal — natural perspective like the eye, wide aperture, small and light. The first lens I recommend.">הנורמלי — פרספקטיבה טבעית כמו העין, פתח רחב, קטן וקל. העדשה הראשונה שהמלצתי.</div>
         <span class="gear-card-btn" data-he="ראה באדוראמה ←" data-en="View at Adorama →">ראה באדוראמה ←</span>
       </div>
@@ -220,11 +247,16 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
 
 <!-- ACCESSORIES -->
 <div class="section">
-  <div class="section-title" data-he="🎒 אקססוריז" data-en="🎒 Accessories">🎒 אקססוריז</div>
+  <div class="section-title">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="5" x2="12" y2="21"/><line x1="12" y1="10" x2="4" y2="21"/><line x1="12" y1="10" x2="20" y2="21"/><circle cx="12" cy="5" r="2"/></svg>
+    <span data-he="אקססוריז" data-en="Accessories">אקססוריז</span>
+  </div>
   <div class="gear-grid">
 
-    <a class="gear-card own-badge" href="https://adorama.prf.hn/click/camref:1101l5Km5i/destination:https://www.adorama.com/catalog.tpl?SearchInfo=Slik+carbon+tripod" target="_blank" rel="noopener sponsored">
-      <div class="gear-card-ico">🦯</div>
+    <a class="gear-card own-badge" href="https://adorama.prf.hn/click/camref:1101l5Km5i/destination:https://www.adorama.com/catalog.tpl?SearchInfo=Slik+Pro+CF+carbon+tripod" target="_blank" rel="noopener sponsored">
+      <div class="gear-card-ico">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="5" x2="12" y2="21"/><line x1="12" y1="10" x2="4" y2="21"/><line x1="12" y1="10" x2="20" y2="21"/><circle cx="12" cy="5" r="2"/></svg>
+      </div>
       <div class="gear-card-body">
         <div class="gear-card-brand">Slik</div>
         <div class="gear-card-name" data-he="חצובת קרבון Slik" data-en="Slik Carbon Tripod">חצובת קרבון Slik</div>
@@ -233,18 +265,22 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
       </div>
     </a>
 
-    <a class="gear-card own-badge" href="https://adorama.prf.hn/click/camref:1101l5Km5i/destination:https://www.adorama.com/catalog.tpl?SearchInfo=Nikon+teleconverter+1.4x+2x" target="_blank" rel="noopener sponsored">
-      <div class="gear-card-ico">🔢</div>
+    <a class="gear-card own-badge" href="https://adorama.prf.hn/click/camref:1101l5Km5i/destination:https://www.adorama.com/nktc14eiii.html" target="_blank" rel="noopener sponsored">
+      <div class="gear-card-ico">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="12" r="5"/><circle cx="9" cy="12" r="2"/><path d="M16 9l4 3-4 3"/><line x1="14" y1="12" x2="20" y2="12"/></svg>
+      </div>
       <div class="gear-card-body">
         <div class="gear-card-brand">Nikon</div>
-        <div class="gear-card-name" data-he="מכפלים × 1.4 / × 2" data-en="Teleconverters 1.4× / 2×">מכפלים × 1.4 / × 2</div>
+        <div class="gear-card-name" data-he="מכפלים TC-14E / TC-20E" data-en="Teleconverters TC-14E / TC-20E">מכפלים TC-14E / TC-20E</div>
         <div class="gear-card-desc" data-he="מאריכים את העדשה בלי לשאת עדשה נוספת — 300mm הופך ל-600mm עם מכפל × 2." data-en="Extend reach without carrying another lens — 300mm becomes 600mm with 2× TC.">מאריכים את העדשה בלי לשאת עדשה נוספת — 300mm הופך ל-600mm עם מכפל × 2.</div>
         <span class="gear-card-btn" data-he="ראה באדוראמה ←" data-en="View at Adorama →">ראה באדוראמה ←</span>
       </div>
     </a>
 
-    <a class="gear-card own-badge" href="https://adorama.prf.hn/click/camref:1101l5Km5i/destination:https://www.adorama.com/catalog.tpl?SearchInfo=camera+filter+set+CPL+ND+UV" target="_blank" rel="noopener sponsored">
-      <div class="gear-card-ico">🌈</div>
+    <a class="gear-card own-badge" href="https://adorama.prf.hn/click/camref:1101l5Km5i/destination:https://www.adorama.com/catalog.tpl?SearchInfo=Hoya+filter+kit+CPL+ND+UV+77mm" target="_blank" rel="noopener sponsored">
+      <div class="gear-card-ico">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5.5"/><path d="M8 12a4 4 0 0 1 8 0"/></svg>
+      </div>
       <div class="gear-card-body">
         <div class="gear-card-brand">פילטרים</div>
         <div class="gear-card-name" data-he="סט פילטרים CPL + ND + UV" data-en="Filter Set CPL + ND + UV">סט פילטרים CPL + ND + UV</div>
@@ -261,7 +297,7 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
 <div class="gumroad-banner">
   <div class="gumroad-banner-inner">
     <div>
-      <div class="gumroad-banner-title" data-he="📘 50 טיפים לצלם מתחיל — מדריך PDF" data-en="📘 50 Photography Tips for Beginners — PDF Guide">📘 50 טיפים לצלם מתחיל — מדריך PDF</div>
+      <div class="gumroad-banner-title" data-he="50 טיפים לצלם מתחיל — מדריך PDF" data-en="50 Photography Tips for Beginners — PDF Guide">50 טיפים לצלם מתחיל — מדריך PDF</div>
       <div class="gumroad-banner-desc" data-he="כל מה שלמדת כאן — בקובץ אחד להורדה. 7$ בלבד." data-en="Everything you learned here — in one downloadable file. Only $7.">כל מה שלמדת כאן — בקובץ אחד להורדה. 7$ בלבד.</div>
     </div>
     <a class="gumroad-banner-btn" href="https://erezfamily.gumroad.com/l/50-photo-tips" target="_blank" rel="noopener" data-he="קנה ב-$7 ←" data-en="Buy for $7 →">קנה ב-$7 ←</a>
