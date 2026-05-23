@@ -3773,7 +3773,8 @@ const SocialSection = (() => {
       }
 
       // Facebook — multi-page support
-      const fbPages = d.fb_pages?.length ? d.fb_pages : (d.fb ? [{ ...d.fb, name: 'Facebook', label: 'Facebook' }] : []);
+      const allFbPages = d.fb_pages?.length ? d.fb_pages : (d.fb ? [{ ...d.fb, name: 'Facebook', label: 'Facebook' }] : []);
+      const fbPages = allFbPages.filter(p => (p.fans || 0) > 0 || (p.posts_this_week || 0) > 0 || (p.total_likes || 0) > 0);
 
       if (!fbPages.length) {
         $('social-fb-pages').innerHTML = fbSetupGuide();
