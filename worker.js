@@ -290,7 +290,7 @@ async function handleSubscribers(request, env) {
     if (existing) {
       // אם נרשם קיים מבקש PDF — שלח שוב
       if (isLeadMagnetSource && env.RESEND_API_KEY) {
-        const fromEmail = env.FROM_EMAIL || 'Amit Photos <onboarding@resend.dev>';
+        const fromEmail = env.FROM_EMAIL || 'Amit Photos <amit@amitphotos.com>';
         const resendRes = await fetch('https://api.resend.com/emails', {
           method: 'POST',
           headers: { 'Authorization': `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
@@ -323,7 +323,7 @@ async function handleSubscribers(request, env) {
 
     // שלח מייל אישור לנרשם
     if (env.RESEND_API_KEY) {
-      const fromEmail = env.FROM_EMAIL || 'Amit Photos <onboarding@resend.dev>';
+      const fromEmail = env.FROM_EMAIL || 'Amit Photos <amit@amitphotos.com>';
       const isLeadMagnet = source === 'lead_magnet' || source === 'popup';
       const subject = isLeadMagnet
         ? 'הנה ה-PDF שלך — 50 טיפים לצילום'
