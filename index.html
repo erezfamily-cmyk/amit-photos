@@ -1133,6 +1133,79 @@
         if (mc && d.ig?.media_count) mc.textContent = d.ig.media_count.toLocaleString('he-IL');
       });
   </script>
+  <!-- ===== PDF LEAD MAGNET POPUP ===== -->
+  <div id="pdf-popup" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:9999;align-items:center;justify-content:center;padding:1rem">
+    <div style="background:#1a1a1a;border:1px solid #c8a96e;border-radius:8px;padding:2rem;max-width:400px;width:100%;direction:rtl;position:relative">
+      <button onclick="closePdfPopup()" style="position:absolute;top:.75rem;left:.75rem;background:none;border:none;color:#666;font-size:1.2rem;cursor:pointer;line-height:1">&#x2715;</button>
+      <div style="font-size:.7rem;letter-spacing:.12em;color:#c8a96e;margin-bottom:.4rem">מתנה חינמית</div>
+      <h3 style="font-size:1.2rem;color:#f0ede8;margin-bottom:.3rem">50 טיפים לצילום</h3>
+      <p style="font-size:.85rem;color:#aaa;margin-bottom:1.2rem">PDF חינם — ישיר למייל שלך</p>
+      <form id="popup-form">
+        <input type="email" id="popup-email" placeholder="כתובת המייל שלך" required
+          style="width:100%;padding:.65rem 1rem;background:#111;border:1px solid #444;border-radius:4px;color:#f0ede8;font-size:.95rem;margin-bottom:.6rem;direction:rtl">
+        <button type="submit" id="popup-btn"
+          style="width:100%;padding:.7rem;background:#c8a96e;color:#111;border:none;border-radius:4px;font-weight:700;cursor:pointer;font-size:.95rem">
+          שלח לי &#x2190;
+        </button>
+        <p style="font-size:.65rem;color:#555;margin-top:.5rem">הרשמה + ניוזלטר חודשי. בטל בכל עת.</p>
+        <p id="popup-msg" style="margin-top:.5rem;font-size:.85rem;min-height:1.1em"></p>
+      </form>
+      <p style="text-align:center;margin-top:.8rem">
+        <a href="/free-guide/" style="font-size:.75rem;color:#888;text-decoration:none">לדף ההורדה המלא &#x2190;</a>
+      </p>
+    </div>
+  </div>
+  <script>
+  (function(){
+    if (localStorage.getItem('pdfPopupSeen')) return;
+    var shown = false;
+    function showPdfPopup() {
+      if (shown) return;
+      shown = true;
+      var el = document.getElementById('pdf-popup');
+      el.style.display = 'flex';
+    }
+    document.addEventListener('mouseleave', function(e) {
+      if (e.clientY < 10) showPdfPopup();
+    });
+    setTimeout(showPdfPopup, 30000);
+  })();
+
+  function closePdfPopup() {
+    document.getElementById('pdf-popup').style.display = 'none';
+    localStorage.setItem('pdfPopupSeen', '1');
+  }
+
+  document.getElementById('popup-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    var email = document.getElementById('popup-email').value.trim();
+    var btn = document.getElementById('popup-btn');
+    var msg = document.getElementById('popup-msg');
+    btn.disabled = true; btn.textContent = '...';
+    try {
+      var r = await fetch('/api/subscribers?source=popup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      });
+      if (r.ok) {
+        msg.style.color = '#4caf7d';
+        msg.textContent = '&#x2713; נשלח! בדוק תיבת הדואר (גם spam).';
+        document.getElementById('popup-email').value = '';
+        btn.textContent = 'נשלח &#x2713;';
+        localStorage.setItem('pdfPopupSeen', '1');
+      } else {
+        msg.style.color = '#e05555';
+        msg.textContent = 'שגיאה. נסה שוב.';
+        btn.disabled = false; btn.textContent = 'שלח לי &#x2190;';
+      }
+    } catch {
+      msg.style.color = '#e05555';
+      msg.textContent = 'שגיאת רשת.';
+      btn.disabled = false; btn.textContent = 'שלח לי &#x2190;';
+    }
+  });
+  </script>
 </body>
 </html>
 .
