@@ -180,30 +180,54 @@ async function handleSubscribers(request, env) {
 
   // POST פתוח לציבור — הרשמה לניוזלטר מהאתר
   if (method === 'POST') {
+    // migration idempotent
+    await env.DB.prepare('ALTER TABLE subscribers ADD COLUMN source TEXT DEFAULT \'website\'').run().catch(() => {});
+
     const { name, email, notes } = await request.json().catch(() => ({}));
     if (!email) return jsonRes({ error: 'מייל חסר' }, 400, request);
+    const source = new URL(request.url).searchParams.get('source') || 'website';
     const existing = await env.DB.prepare('SELECT id FROM subscribers WHERE email = ?').bind(email).first();
     if (existing) return jsonRes({ ok: true, already: true }, 200, request);
     const id = crypto.randomUUID();
     await env.DB.prepare(
-      'INSERT INTO subscribers (id, name, email, notes, created_at) VALUES (?,?,?,?,?)'
-    ).bind(id, name || '', email, notes || '', new Date().toISOString()).run();
+      'INSERT INTO subscribers (id, name, email, notes, source, created_at) VALUES (?,?,?,?,?,?)'
+    ).bind(id, name || '', email, notes || '', source, new Date().toISOString()).run();
 
     // שלח מייל אישור לנרשם
     if (env.RESEND_API_KEY) {
       const fromEmail = env.FROM_EMAIL || 'amit@amitphotos.com';
-      const confirmHtml = `<div dir="rtl" style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:2rem;color:#111">
-        <h2 style="color:#c8a96e;font-family:sans-serif">AMIT PHOTOS</h2>
-        <p>שלום${name ? ' ' + name : ''},</p>
-        <p>תודה שנרשמת לניוזלטר של עמית פוטוס! 🎉</p>
-        <p>תקבל עדכונים על תמונות חדשות, מבצעים בלעדיים ותוכן מאחורי הקלעים — ישירות למייל.</p>
-        <hr style="margin-top:2rem;border-color:#ddd">
-        <p style="color:#999;font-size:.8rem">קיבלת מייל זה כי נרשמת לניוזלטר של <a href="https://amitphotos.com">amitphotos.com</a>.</p>
-      </div>`;
+      const isLeadMagnet = source === 'lead_magnet' || source === 'popup';
+      const subject = isLeadMagnet
+        ? 'הנה ה-PDF שלך — 50 טיפים לצילום'
+        : 'ברוך הבא לניוזלטר של עמית פוטוס!';
+      const confirmHtml = isLeadMagnet
+        ? `<div dir="rtl" style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:2rem;background:#111;color:#f0ede8">
+            <h2 style="color:#c8a96e;font-family:sans-serif;margin-bottom:.5rem">AMIT PHOTOS</h2>
+            <h3 style="margin-top:0">50 טיפים לצילום טוב יותר — הPDF שלך מוכן!</h3>
+            <p style="color:#ccc">שלום${name ? ' ' + name : ''},</p>
+            <p style="color:#ccc">תודה! הנה הקישור להורדה:</p>
+            <div style="text-align:center;margin:1.5rem 0">
+              <a href="https://amitphotos.com/50tips-heb.pdf"
+                 style="background:#c8a96e;color:#111;padding:.8rem 2rem;border-radius:4px;text-decoration:none;font-weight:700;font-size:1rem">
+                הורד את ה-PDF ←
+              </a>
+            </div>
+            <p style="color:#aaa;font-size:.9rem">בנוסף, תקבל את הניוזלטר החודשי שלי — תמונות חדשות, מקומות צילום ומדריכים.</p>
+            <hr style="margin-top:2rem;border-color:#333">
+            <p style="color:#666;font-size:.8rem">לביטול הרשמה: <a href="https://amitphotos.com/api/unsubscribe?token=${id}" style="color:#888">לחץ כאן</a></p>
+          </div>`
+        : `<div dir="rtl" style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:2rem;color:#111">
+            <h2 style="color:#c8a96e;font-family:sans-serif">AMIT PHOTOS</h2>
+            <p>שלום${name ? ' ' + name : ''},</p>
+            <p>תודה שנרשמת לניוזלטר של עמית פוטוס! 🎉</p>
+            <p>תקבל עדכונים על תמונות חדשות, מבצעים בלעדיים ותוכן מאחורי הקלעים — ישירות למייל.</p>
+            <hr style="margin-top:2rem;border-color:#ddd">
+            <p style="color:#999;font-size:.8rem">קיבלת מייל זה כי נרשמת לניוזלטר של <a href="https://amitphotos.com">amitphotos.com</a>.</p>
+          </div>`;
       await fetch('https://api.resend.com/emails', {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ from: fromEmail, to: email, subject: 'ברוך הבא לניוזלטר של עמית פוטוס!', html: confirmHtml })
+        body: JSON.stringify({ from: fromEmail, to: email, subject, html: confirmHtml })
       });
     }
 
