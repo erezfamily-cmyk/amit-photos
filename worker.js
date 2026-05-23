@@ -290,8 +290,8 @@ async function handleSubscribers(request, env) {
     if (existing) {
       // אם נרשם קיים מבקש PDF — שלח שוב
       if (isLeadMagnetSource && env.RESEND_API_KEY) {
-        const fromEmail = env.FROM_EMAIL || 'amit@amitphotos.com';
-        await fetch('https://api.resend.com/emails', {
+        const fromEmail = env.FROM_EMAIL || 'Amit Photos <onboarding@resend.dev>';
+        const resendRes = await fetch('https://api.resend.com/emails', {
           method: 'POST',
           headers: { 'Authorization': `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -309,6 +309,10 @@ async function handleSubscribers(request, env) {
             </div>`
           })
         });
+        if (!resendRes.ok) {
+          const errText = await resendRes.text();
+          console.error('Resend error (existing subscriber PDF):', resendRes.status, errText);
+        }
       }
       return jsonRes({ ok: true, already: true }, 200, request);
     }
@@ -319,7 +323,7 @@ async function handleSubscribers(request, env) {
 
     // שלח מייל אישור לנרשם
     if (env.RESEND_API_KEY) {
-      const fromEmail = env.FROM_EMAIL || 'amit@amitphotos.com';
+      const fromEmail = env.FROM_EMAIL || 'Amit Photos <onboarding@resend.dev>';
       const isLeadMagnet = source === 'lead_magnet' || source === 'popup';
       const subject = isLeadMagnet
         ? 'הנה ה-PDF שלך — 50 טיפים לצילום'
@@ -348,11 +352,15 @@ async function handleSubscribers(request, env) {
             <hr style="margin-top:2rem;border-color:#ddd">
             <p style="color:#999;font-size:.8rem">קיבלת מייל זה כי נרשמת לניוזלטר של <a href="https://amitphotos.com">amitphotos.com</a>.</p>
           </div>`;
-      await fetch('https://api.resend.com/emails', {
+      const resendRes = await fetch('https://api.resend.com/emails', {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({ from: fromEmail, to: email, subject, html: confirmHtml })
       });
+      if (!resendRes.ok) {
+        const errText = await resendRes.text();
+        console.error('Resend error (new subscriber):', resendRes.status, errText);
+      }
     }
 
     return jsonRes({ ok: true, id }, 200, request);
