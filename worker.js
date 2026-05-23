@@ -2554,28 +2554,36 @@ async function handleAnalysesUpdate(request, env, photoId) {
 async function handleAnalysesDedup(request, env) {
   if (!await checkAuth(request, env)) return unauth(request);
   if (request.method !== 'POST') return jsonRes({ error: 'POST only' }, 405, request);
-  // Find photo_ids where the same r2_key appears in more than one analysis
-  // Keep the one with a published_at; delete the rest
-  const { results: dupes } = await env.DB.prepare(`
-    SELECT a.photo_id, p.r2_key, a.published_at
+
+  // Fetch all analyses with photo metadata
+  const { results: all } = await env.DB.prepare(`
+    SELECT a.photo_id, a.published_at, a.title,
+           p.r2_key, p.thumbnail
     FROM photo_analyses a
-    INNER JOIN photos p ON p.id = a.photo_id
-    WHERE p.r2_key IN (
-      SELECT p2.r2_key FROM photo_analyses a2
-      INNER JOIN photos p2 ON p2.id = a2.photo_id
-      WHERE p2.r2_key IS NOT NULL AND p2.r2_key != ''
-      GROUP BY p2.r2_key HAVING COUNT(*) > 1
-    )
-    ORDER BY p.r2_key, a.published_at DESC
+    LEFT JOIN photos p ON p.id = a.photo_id
+    ORDER BY a.published_at DESC NULLS LAST
   `).all();
 
   const toDelete = [];
-  const seen = new Set();
-  for (const row of (dupes || [])) {
-    if (seen.has(row.r2_key)) {
+  const seenR2  = new Set();
+  const seenThumb = new Set();
+  const seenTitle = new Set();
+
+  for (const row of (all || [])) {
+    const key = row.r2_key && row.r2_key !== '' ? row.r2_key : null;
+    const thumb = row.thumbnail && row.thumbnail !== '' ? row.thumbnail : null;
+    const title = (row.title || '').trim().toLowerCase();
+
+    const isDupe = (key && seenR2.has(key)) ||
+                   (thumb && seenThumb.has(thumb)) ||
+                   (title && seenTitle.has(title));
+
+    if (isDupe) {
       toDelete.push(row.photo_id);
     } else {
-      seen.add(row.r2_key);
+      if (key)   seenR2.add(key);
+      if (thumb) seenThumb.add(thumb);
+      if (title) seenTitle.add(title);
     }
   }
 
