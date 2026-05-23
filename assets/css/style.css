@@ -3202,6 +3202,20 @@ footer {
 @media (max-width: 480px) {
   .gear-grid { grid-template-columns: 1fr; }
 }
+.gear-cta-wrap { text-align: center; margin-top: 2rem; }
+.gear-cta-btn {
+  display: inline-block;
+  border: 1px solid rgba(200,169,110,.5);
+  color: var(--accent);
+  font-family: 'Syne', sans-serif;
+  font-size: .85rem;
+  font-weight: 700;
+  padding: .6rem 1.6rem;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: background .2s, color .2s;
+}
+.gear-cta-btn:hover { background: var(--accent); color: #000; }
 
 /* ===== WHATSAPP FLOAT ===== */
 .whatsapp-float {
