@@ -1108,6 +1108,7 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
         <h1 class="section-title">📚 ניתוח תמונות</h1>
         <div class="section-actions">
           <button type="button" class="btn btn-ghost btn-sm" onclick="learnPublishAll()">עדכן הכל</button>
+          <button type="button" class="btn btn-ghost btn-sm" id="learn-dedup-btn" onclick="learnDedup()">נקה כפולות</button>
           <button type="button" class="btn btn-primary btn-sm" id="learn-generate-btn" onclick="learnGenerate()">ייצר ניתוח חדש עכשיו</button>
         </div>
       </div>
@@ -2157,7 +2158,7 @@ document.querySelectorAll('.nav-item').forEach(item => {
     if (item.dataset.section === 'print-orders') PrintOrders.load();
     if (item.dataset.section === 'social') SocialSection.load();
     if (item.dataset.section === 'purchases') Purchases.load();
-    if (item.dataset.section === 'learn') loadLearn();
+    if (item.dataset.section === 'learn') { learnDedup().catch(()=>{}); loadLearn(); }
     if (item.dataset.section === 'locations') window._loadLocationsList && window._loadLocationsList();
     if (item.dataset.section === 'pinterest') loadPinterestStatus();
   });
@@ -4371,6 +4372,18 @@ async function analyzePhoto(photoId, btn) {
     btn.disabled = false;
     btn.textContent = orig;
   }
+}
+
+async function learnDedup() {
+  const btn = $('learn-dedup-btn');
+  if (btn) btn.disabled = true;
+  try {
+    const res = await fetch('/api/analyses/dedup', { method: 'POST', headers: authHeaders() });
+    const d = await res.json();
+    if (d.deleted > 0) { toast(`נמחקו ${d.deleted} כפולות`); loadLearn(); }
+    else toast('אין כפולות');
+  } catch(e) { toast('שגיאה: ' + e.message, 'error'); }
+  finally { if (btn) btn.disabled = false; }
 }
 
 async function learnDelete(photoId, btn) {
