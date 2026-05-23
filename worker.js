@@ -289,35 +289,28 @@ async function handleSubscribers(request, env) {
     const isLeadMagnetSource = source === 'lead_magnet' || source === 'popup';
     if (existing) {
       // אם נרשם קיים מבקש PDF — שלח שוב
-      let resendDbg = 'skipped';
       if (isLeadMagnetSource && env.RESEND_API_KEY) {
-        try {
-          const fromEmail = env.FROM_EMAIL || 'Amit Photos <amit@amitphotos.com>';
-          const resendRes = await fetch('https://api.resend.com/emails', {
-            method: 'POST',
-            headers: { 'Authorization': `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              from: fromEmail, to: email,
-              subject: 'הנה ה-PDF שלך — 50 טיפים לצילום',
-              html: `<div dir="rtl" style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:2rem;background:#111;color:#f0ede8">
-                <h2 style="color:#c8a96e">AMIT PHOTOS</h2>
-                <h3>50 טיפים לצילום טוב יותר — הPDF שלך מוכן!</h3>
-                <div style="text-align:center;margin:1.5rem 0">
-                  <a href="https://amitphotos.com/50tips-heb.pdf" style="background:#c8a96e;color:#111;padding:.8rem 2rem;border-radius:4px;text-decoration:none;font-weight:700;font-size:1rem">הורד את ה-PDF ←</a>
-                </div>
-                <p style="color:#aaa;font-size:.9rem">תקבל גם את הניוזלטר החודשי — תמונות, מקומות ומדריכים.</p>
-                <hr style="border-color:#333;margin-top:2rem">
-                <p style="color:#666;font-size:.8rem">לביטול הרשמה: <a href="https://amitphotos.com/api/unsubscribe?token=${existing.id}" style="color:#888">לחץ כאן</a></p>
-              </div>`
-            })
-          });
-          const resendBody = await resendRes.text();
-          resendDbg = `${resendRes.status}:${resendBody}`;
-        } catch (e) {
-          resendDbg = `exception:${e.message}`;
-        }
+        const fromEmail = env.FROM_EMAIL || 'Amit Photos <amit@amitphotos.com>';
+        await fetch('https://api.resend.com/emails', {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            from: fromEmail, to: email,
+            subject: 'הנה ה-PDF שלך — 50 טיפים לצילום',
+            html: `<div dir="rtl" style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:2rem;background:#111;color:#f0ede8">
+              <h2 style="color:#c8a96e">AMIT PHOTOS</h2>
+              <h3>50 טיפים לצילום טוב יותר — הPDF שלך מוכן!</h3>
+              <div style="text-align:center;margin:1.5rem 0">
+                <a href="https://amitphotos.com/50tips-heb.pdf" style="background:#c8a96e;color:#111;padding:.8rem 2rem;border-radius:4px;text-decoration:none;font-weight:700;font-size:1rem">הורד את ה-PDF ←</a>
+              </div>
+              <p style="color:#aaa;font-size:.9rem">תקבל גם את הניוזלטר החודשי — תמונות, מקומות ומדריכים.</p>
+              <hr style="border-color:#333;margin-top:2rem">
+              <p style="color:#666;font-size:.8rem">לביטול הרשמה: <a href="https://amitphotos.com/api/unsubscribe?token=${existing.id}" style="color:#888">לחץ כאן</a></p>
+            </div>`
+          })
+        }).catch(() => {});
       }
-      return jsonRes({ ok: true, already: true, _d: { k: !!env.RESEND_API_KEY, s: source, lm: isLeadMagnetSource, resend: resendDbg } }, 200, request);
+      return jsonRes({ ok: true, already: true }, 200, request);
     }
     const id = crypto.randomUUID();
     await env.DB.prepare(
@@ -361,9 +354,7 @@ async function handleSubscribers(request, env) {
         body: JSON.stringify({ from: fromEmail, to: email, subject, html: confirmHtml })
       });
       if (!resendRes.ok) {
-        const errText = await resendRes.text();
-        console.error('Resend error (new subscriber):', resendRes.status, errText);
-        return jsonRes({ ok: true, id, email_error: `${resendRes.status}: ${errText}` }, 200, request);
+        console.error('Resend error (new subscriber):', resendRes.status, await resendRes.text());
       }
     }
 
