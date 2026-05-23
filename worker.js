@@ -360,6 +360,7 @@ async function handleSubscribers(request, env) {
       if (!resendRes.ok) {
         const errText = await resendRes.text();
         console.error('Resend error (new subscriber):', resendRes.status, errText);
+        return jsonRes({ ok: true, id, email_error: `${resendRes.status}: ${errText}` }, 200, request);
       }
     }
 
