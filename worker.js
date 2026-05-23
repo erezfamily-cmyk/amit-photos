@@ -266,7 +266,7 @@ document.getElementById('fg-form').addEventListener('submit', async function(e) 
 });
 </script>
 </body>
-</html>\`;
+</html>`;
 
   return new Response(html, {
     headers: { 'Content-Type': 'text/html;charset=UTF-8', 'Cache-Control': 'no-store' }
