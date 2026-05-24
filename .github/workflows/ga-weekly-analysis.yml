@@ -1,0 +1,33 @@
+name: ניתוח GA שבועי עם Claude
+
+on:
+  # כל שני ב-07:00 UTC = 10:00 ישראל
+  schedule:
+    - cron: '0 7 * * 1'
+  workflow_dispatch:
+
+jobs:
+  ga-analysis:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Python setup
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: התקנת חבילות
+        run: pip install requests anthropic google-auth
+
+      - name: ניתוח GA שבועי
+        env:
+          GA4_PROPERTY_ID:        ${{ secrets.GA4_PROPERTY_ID }}
+          GA_SERVICE_ACCOUNT_JSON: ${{ secrets.GA_SERVICE_ACCOUNT_JSON }}
+          RESEND_API_KEY:         ${{ secrets.RESEND_API_KEY }}
+          ANTHROPIC_API_KEY:      ${{ secrets.AMIT_PHOTO_AGENT }}
+          REPORT_EMAIL:           erez.family@gmail.com
+          FROM_EMAIL:             "Amit Photos <amit@amitphotos.com>"
+        run: python src/ga_weekly_report.py
