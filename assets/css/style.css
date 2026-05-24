@@ -310,6 +310,9 @@ nav.scrolled { border-bottom-color: rgba(200, 169, 110, 0.3); }
   transition: border-color 0.2s, color 0.2s, transform 0.2s;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+  cursor: pointer;
+  font-family: inherit;
+  text-decoration: none;
 }
 
 .hero-cta-ghost:hover {
