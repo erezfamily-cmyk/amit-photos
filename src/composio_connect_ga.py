@@ -1,33 +1,53 @@
 #!/usr/bin/env python3
 """
-חיבור חד-פעמי של Google Analytics ל-Composio.
-הרץ פעם אחת מהמחשב שלך:
-  pip install composio-core
-  COMPOSIO_API_KEY=your_key python src/composio_connect_ga.py
+חיבור חד-פעמי של Google Analytics ל-Composio דרך REST API ישיר.
 """
 
-import os, sys
-from composio import ComposioToolSet, App
+import os, sys, json, time
+import requests
 
-COMPOSIO_API_KEY = os.environ.get("COMPOSIO_API_KEY", "")
-ENTITY_ID        = os.environ.get("COMPOSIO_ENTITY_ID", "amit")
+API_BASE  = "https://backend.composio.dev/api/v1"
+ENTITY_ID = "amit"
 
-if not COMPOSIO_API_KEY:
-    print("❌ חסר: COMPOSIO_API_KEY")
-    sys.exit(1)
+api_key = os.environ.get("COMPOSIO_API_KEY", "").strip()
+if not api_key:
+    api_key = input("הדבק את Composio API key שלך: ").strip()
 
-toolset = ComposioToolSet(api_key=COMPOSIO_API_KEY)
-entity  = toolset.get_entity(ENTITY_ID)
+headers = {"x-api-key": api_key, "Content-Type": "application/json"}
 
-print(f"🔗 מחבר Google Analytics לentity '{ENTITY_ID}'...")
-request = entity.initiate_connection(app=App.GOOGLEANALYTICS)
-print(f"\n✅ פתח את הקישור הזה בדפדפן ואשר את הגישה:\n\n  {request.redirectUrl}\n")
-print("אחרי האישור — לחץ Enter להמשך...")
-input()
+
+def initiate_connection():
+    resp = requests.post(
+        f"{API_BASE}/connectedAccounts",
+        headers=headers,
+        json={"appName": "googleanalytics", "entityId": ENTITY_ID},
+        timeout=30,
+    )
+    if not resp.ok:
+        print(f"❌ שגיאה {resp.status_code}: {resp.text[:300]}")
+        sys.exit(1)
+    data = resp.json()
+    return data.get("connectionStatus"), data.get("redirectUrl"), data.get("id")
+
+
+def check_connection(conn_id):
+    resp = requests.get(f"{API_BASE}/connectedAccounts/{conn_id}", headers=headers, timeout=15)
+    if not resp.ok:
+        return None
+    return resp.json().get("status")
+
+
+status, redirect_url, conn_id = initiate_connection()
+print(f"\n🔗 פתח את הקישור הזה בדפדפן ואשר גישה ל-Google Analytics:\n\n  {redirect_url}\n")
+input("אחרי האישור — לחץ Enter להמשך...")
 
 # בדוק שהחיבור הצליח
-try:
-    conn = entity.get_connection(app=App.GOOGLEANALYTICS)
-    print(f"✅ חובר בהצלחה! Connection ID: {conn.id}")
-except Exception as e:
-    print(f"⚠️  בדוק שאישרת גישה בדפדפן: {e}")
+for _ in range(10):
+    s = check_connection(conn_id)
+    if s == "ACTIVE":
+        print(f"✅ חובר בהצלחה! Connection ID: {conn_id}")
+        sys.exit(0)
+    print(f"  סטטוס: {s} — ממתין...")
+    time.sleep(3)
+
+print("⚠️  החיבור טרם אושר. נסה להריץ שוב.")

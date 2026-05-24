@@ -8,7 +8,6 @@ import os, sys, json
 from datetime import date, timedelta
 import requests
 import anthropic
-from composio import ComposioToolSet, App
 
 # ===== הגדרות =====
 GA4_PROPERTY_ID  = os.environ.get("GA4_PROPERTY_ID", "")
@@ -34,23 +33,42 @@ HEBREW_CHANNELS = {
 
 
 def get_access_token():
-    """משיג access token מ-Composio לחשבון Google Analytics."""
-    toolset = ComposioToolSet(api_key=COMPOSIO_API_KEY)
-    entity  = toolset.get_entity(COMPOSIO_ENTITY)
-    try:
-        conn = entity.get_connection(app=App.GOOGLEANALYTICS)
-    except Exception as e:
-        print(f"❌ לא מחובר ל-Google Analytics ב-Composio.")
-        print(f"   הרץ תחילה: python src/composio_connect_ga.py")
-        print(f"   שגיאה: {e}")
+    """משיג access token מ-Composio דרך REST API ישיר."""
+    headers = {"x-api-key": COMPOSIO_API_KEY}
+
+    # מצא חיבור פעיל לגוגל אנליטיקס של ה-entity
+    resp = requests.get(
+        "https://backend.composio.dev/api/v1/connectedAccounts",
+        headers=headers,
+        params={"entityId": COMPOSIO_ENTITY, "appName": "googleanalytics"},
+        timeout=15,
+    )
+    if not resp.ok:
+        print(f"❌ Composio error {resp.status_code}: {resp.text[:200]}")
         sys.exit(1)
 
-    params = conn.connectionParams or {}
+    accounts = resp.json().get("items", [])
+    active   = [a for a in accounts if a.get("status") == "ACTIVE"]
+    if not active:
+        print("❌ לא נמצא חיבור פעיל ל-Google Analytics ב-Composio.")
+        print("   הרץ תחילה: python src/composio_connect_ga.py")
+        sys.exit(1)
+
+    conn_id = active[0]["id"]
+
+    # שלוף את ה-access token מהחיבור
+    detail = requests.get(
+        f"https://backend.composio.dev/api/v1/connectedAccounts/{conn_id}",
+        headers=headers,
+        timeout=15,
+    ).json()
+
+    params = detail.get("connectionParams", {})
     token  = (params.get("access_token")
               or params.get("token")
               or params.get("accessToken"))
     if not token:
-        print(f"❌ לא נמצא access_token בחיבור. פרמטרים: {list(params.keys())}")
+        print(f"❌ לא נמצא access_token. מפתחות זמינים: {list(params.keys())}")
         sys.exit(1)
     return token
 
