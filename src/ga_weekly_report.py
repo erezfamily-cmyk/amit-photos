@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-GA4 Weekly Analysis via Composio
+GA4 Weekly Analysis
 שולח ניתוח שבועי של Google Analytics עם המלצות מ-Claude.
 """
 
@@ -11,8 +11,9 @@ import anthropic
 
 # ===== הגדרות =====
 GA4_PROPERTY_ID  = os.environ.get("GA4_PROPERTY_ID", "")
-COMPOSIO_API_KEY = os.environ.get("COMPOSIO_API_KEY", "")
-COMPOSIO_ENTITY  = os.environ.get("COMPOSIO_ENTITY_ID", "amit")
+GA_REFRESH_TOKEN = os.environ.get("GA_REFRESH_TOKEN", "")
+GA_CLIENT_ID     = os.environ.get("GA_CLIENT_ID", "")
+GA_CLIENT_SECRET = os.environ.get("GA_CLIENT_SECRET", "")
 RESEND_KEY       = os.environ.get("RESEND_API_KEY", "")
 ANTHROPIC_KEY    = os.environ.get("ANTHROPIC_API_KEY", "").strip()
 REPORT_EMAIL     = os.environ.get("REPORT_EMAIL", "erez.family@gmail.com")
@@ -33,42 +34,23 @@ HEBREW_CHANNELS = {
 
 
 def get_access_token():
-    """משיג access token מ-Composio דרך REST API ישיר."""
-    headers = {"x-api-key": COMPOSIO_API_KEY}
-
-    # מצא חיבור פעיל לגוגל אנליטיקס של ה-entity
-    resp = requests.get(
-        "https://backend.composio.dev/api/v3/connectedAccounts",
-        headers=headers,
-        params={"entityId": COMPOSIO_ENTITY, "appName": "googleanalytics"},
+    """מחדש access token מ-refresh token."""
+    resp = requests.post(
+        "https://oauth2.googleapis.com/token",
+        data={
+            "client_id":     GA_CLIENT_ID,
+            "client_secret": GA_CLIENT_SECRET,
+            "refresh_token": GA_REFRESH_TOKEN,
+            "grant_type":    "refresh_token",
+        },
         timeout=15,
     )
     if not resp.ok:
-        print(f"❌ Composio error {resp.status_code}: {resp.text[:200]}")
+        print(f"❌ OAuth error {resp.status_code}: {resp.text[:200]}")
         sys.exit(1)
-
-    accounts = resp.json().get("items", [])
-    active   = [a for a in accounts if a.get("status") == "ACTIVE"]
-    if not active:
-        print("❌ לא נמצא חיבור פעיל ל-Google Analytics ב-Composio.")
-        print("   הרץ תחילה: python src/composio_connect_ga.py")
-        sys.exit(1)
-
-    conn_id = active[0]["id"]
-
-    # שלוף את ה-access token מהחיבור
-    detail = requests.get(
-        f"https://backend.composio.dev/api/v3/connectedAccounts/{conn_id}",
-        headers=headers,
-        timeout=15,
-    ).json()
-
-    params = detail.get("connectionParams", {})
-    token  = (params.get("access_token")
-              or params.get("token")
-              or params.get("accessToken"))
+    token = resp.json().get("access_token")
     if not token:
-        print(f"❌ לא נמצא access_token. מפתחות זמינים: {list(params.keys())}")
+        print(f"❌ לא התקבל access_token: {resp.json()}")
         sys.exit(1)
     return token
 
@@ -320,7 +302,8 @@ def send_email(subject, html_body):
 
 
 def main():
-    missing = [v for v, k in [("GA4_PROPERTY_ID", GA4_PROPERTY_ID), ("COMPOSIO_API_KEY", COMPOSIO_API_KEY),
+    missing = [v for v, k in [("GA4_PROPERTY_ID", GA4_PROPERTY_ID), ("GA_REFRESH_TOKEN", GA_REFRESH_TOKEN),
+                               ("GA_CLIENT_ID", GA_CLIENT_ID), ("GA_CLIENT_SECRET", GA_CLIENT_SECRET),
                                ("ANTHROPIC_API_KEY", ANTHROPIC_KEY), ("RESEND_API_KEY", RESEND_KEY)] if not k]
     if missing:
         print(f"❌ חסרים: {', '.join(missing)}")
