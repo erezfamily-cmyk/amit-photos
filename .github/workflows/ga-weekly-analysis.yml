@@ -20,7 +20,7 @@ jobs:
           python-version: '3.11'
 
       - name: התקנת חבילות
-        run: pip install requests anthropic composio-core
+        run: pip install requests anthropic
 
       - name: ניתוח GA שבועי
         env:
