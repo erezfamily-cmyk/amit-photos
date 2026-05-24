@@ -1184,10 +1184,11 @@
     var msg = document.getElementById('popup-msg');
     btn.disabled = true; btn.textContent = '...';
     try {
+      var lang = localStorage.getItem('lang') || 'he';
       var r = await fetch('/api/subscribers?source=popup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email })
+        body: JSON.stringify({ email, lang })
       });
       if (r.ok) {
         msg.style.color = '#4caf7d';
