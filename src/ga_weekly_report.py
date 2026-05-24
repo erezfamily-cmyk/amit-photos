@@ -301,6 +301,49 @@ def send_email(subject, html_body):
     print(f"✅ מייל נשלח: {resp.json().get('id')}")
 
 
+def save_report(data, analysis):
+    """שומר את הדוח ל-data/ga_reports.json לתצוגה באדמין."""
+    from pathlib import Path
+    reports_file = Path(__file__).parent.parent / "data" / "ga_reports.json"
+    reports = []
+    if reports_file.exists():
+        try:
+            reports = json.loads(reports_file.read_text(encoding="utf-8"))
+        except Exception:
+            reports = []
+
+    s = data["summary"]
+    p = data["prev_week"]
+    def delta(c, pv):
+        try:
+            pct = (float(c) - float(pv)) / float(pv) * 100 if float(pv) else 0
+            return f"{'↑' if pct >= 0 else '↓'}{abs(pct):.0f}%"
+        except: return ""
+
+    reports.append({
+        "date":    date.today().strftime("%d.%m.%Y"),
+        "period":  data["period"],
+        "summary": {
+            "sessions":       s["sessions"],
+            "activeUsers":    s["activeUsers"],
+            "pageViews":      s["pageViews"],
+            "bounceRate":     s["bounceRate"],
+            "avgSessionSec":  s["avgSessionSec"],
+            "delta_sessions": delta(s["sessions"], p["sessions"]),
+            "delta_users":    delta(s["activeUsers"], p["activeUsers"]),
+            "delta_views":    delta(s["pageViews"], p["pageViews"]),
+        },
+        "top_pages": data["top_pages"][:5],
+        "sources":   data["sources"][:5],
+        "analysis":  analysis,
+    })
+
+    # שמור רק 12 דוחות אחרונים
+    reports = reports[-12:]
+    reports_file.write_text(json.dumps(reports, ensure_ascii=False, indent=2), encoding="utf-8")
+    print("💾 נשמר ל-data/ga_reports.json")
+
+
 def main():
     missing = [v for v, k in [("GA4_PROPERTY_ID", GA4_PROPERTY_ID), ("GA_REFRESH_TOKEN", GA_REFRESH_TOKEN),
                                ("GA_CLIENT_ID", GA_CLIENT_ID), ("GA_CLIENT_SECRET", GA_CLIENT_SECRET),
@@ -309,7 +352,7 @@ def main():
         print(f"❌ חסרים: {', '.join(missing)}")
         sys.exit(1)
 
-    print("🔐 מתחבר ל-Google Analytics דרך Composio...")
+    print("🔐 מתחבר ל-Google Analytics...")
     token = get_access_token()
 
     print("📊 שולף נתונים מ-GA4...")
@@ -319,6 +362,8 @@ def main():
     print("\n🤖 Claude מנתח נתונים...")
     analysis = generate_analysis(build_data_summary(data))
     print(f"\n--- ניתוח ---\n{analysis}\n")
+
+    save_report(data, analysis)
 
     print("📧 שולח מייל...")
     send_email(f"📊 דוח GA שבועי — {date.today().strftime('%d.%m.%Y')}", build_html_email(data, analysis))
