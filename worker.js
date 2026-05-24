@@ -189,6 +189,14 @@ async function handleFreeGuide(request, env) {
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>50 טיפים לצילום טוב יותר — PDF חינם | Amit Photos</title>
 <meta name="description" content="50 טיפים לצילום שישפרו את התמונות שלך — PDF חינמי ב-15 עמ', ישיר למייל.">
+<meta property="og:title" content="50 טיפים לצילום טוב יותר — PDF חינם">
+<meta property="og:description" content="המדריך שהכנתי מהניסיון שלי והאהבה לצלם — 15 עמודים, ישיר למייל.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://amitphotos.com/free-guide/">
+<meta property="og:locale" content="he_IL">${photoUrl ? `\n<meta property="og:image" content="${photoUrl}">\n<meta property="og:image:alt" content="50 טיפים לצילום — עמית ארז">` : ''}
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="50 טיפים לצילום טוב יותר — PDF חינם">
+<meta name="twitter:description" content="המדריך שהכנתי מהניסיון שלי והאהבה לצלם — 15 עמודים, ישיר למייל.">${photoUrl ? `\n<meta name="twitter:image" content="${photoUrl}">` : ''}
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Heebo',sans-serif;background:#111;color:#f0ede8;min-height:100vh;display:flex;align-items:center;justify-content:center}
@@ -248,7 +256,7 @@ document.getElementById('fg-form').addEventListener('submit', async function(e) 
     });
     if (r.ok) {
       msg.className = 'msg ok';
-      msg.textContent = '✓ נשלח! בדוק את תיבת הדואר שלך (גם spam).';
+      msg.innerHTML = '✓ נשלח! בדוק את תיבת הדואר שלך (גם spam).<br><a href="https://api.whatsapp.com/send?text=' + encodeURIComponent('קיבלתי PDF חינמי עם 50 טיפים לצילום 📸 amitphotos.com/free-guide') + '" target="_blank" rel="noopener" style="display:inline-block;margin-top:.6rem;background:#25D366;color:#fff;padding:.4rem 1rem;border-radius:4px;text-decoration:none;font-size:.85rem">שתף עם חבר צלם ב-WhatsApp</a>';
       document.getElementById('fg-email').value = '';
       btn.textContent = 'נשלח ✓';
     } else {
