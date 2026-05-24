@@ -2217,7 +2217,8 @@ function escXml(str) {
 
 // ===== LOCATION SPOT PAGE — SERVER-SIDE OG INJECTION =====
 async function handleLocationSpotPage(request, env) {
-  const slug = new URL(request.url).searchParams.get('slug');
+  const params = new URL(request.url).searchParams;
+  const slug = params.get('slug') || params.get('id');
 
   // Reject obviously invalid slugs (template literals, empty, too long)
   if (!slug || slug.length > 200 || slug.includes('${') || slug.includes('escHtml') || slug.includes('encodeURI')) {
@@ -2264,7 +2265,9 @@ async function handleLocationSpotPage(request, env) {
   <meta name="twitter:description" content="${desc}">
   <meta name="twitter:image" content="${imgUrl}">`;
 
-  html = html.replace('</head>', ogTags + '\n</head>');
+  html = html
+    .replace(/<title>[^<]*<\/title>/, `<title>${title}</title>`)
+    .replace('</head>', ogTags + '\n</head>');
 
   return new Response(html, {
     headers: {
@@ -6330,7 +6333,7 @@ export default {
     if (path === '/robots.txt')            return handleRobots(request);
 
     // Server-side OG injection for location spot pages
-    if ((path === '/locations/spot/' || path === '/locations/spot/index.html') && new URL(request.url).searchParams.get('slug')) {
+    if ((path === '/locations/spot/' || path === '/locations/spot/index.html') && (new URL(request.url).searchParams.get('slug') || new URL(request.url).searchParams.get('id'))) {
       trackPageView(env, request, 'location');
       return handleLocationSpotPage(request, env);
     }
