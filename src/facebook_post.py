@@ -111,6 +111,38 @@ def fetch_image_as_base64(url, max_bytes=3_750_000):
     return b64, content_type
 
 
+def generate_pdf_promo_caption(photo, client, image_content):
+    """פוסט פרומו אישי ל-PDF החינמי, מעוגן בתמונה הספציפית."""
+    title    = photo.get("title", "")
+    category = photo.get("category", "")
+    hashtags = get_hashtags(category)
+
+    system_prompt = """אתה עמית, צלם ישראלי, כותב בגוף ראשון לפייסבוק.
+סגנון: אישי, כנה — כאילו אתה מדבר עם חבר שרוצה ללמוד לצלם.
+כתוב בעברית בלבד. ללא hashtags. ללא URLs."""
+
+    prompt = f"""כתוב פוסט פייסבוק אישי שבו אתה משתמש בתמונה הזו כדי לספר למה כתבת מדריך חינמי לצלמים.
+
+שם התמונה: {title or 'תמונה שלי'}
+קטגוריה: {category or 'כללי'}
+
+מבנה הפוסט:
+1. משפט אחד על התמונה — מה צילמת ואיפה
+2. 2-3 משפטים אישיים: "כשהתחלתי לצלם, הדבר שהכי קשה היה..." / "שנים לקח לי להבין ש..."
+3. שורה ריקה
+4. "ריכזתי את כל מה שהייתי רוצה לדעת — PDF חינמי, 50 טיפים, 15 עמודים. הקישור: amitphotos.com/free-guide"
+
+כתוב בעברית. פלט רק את הפוסט."""
+
+    msg = client.messages.create(
+        model="claude-sonnet-4-6",
+        max_tokens=450,
+        system=system_prompt,
+        messages=[{"role": "user", "content": image_content + [{"type": "text", "text": prompt}]}],
+    )
+    return f"{msg.content[0].text.strip()}\n\n{hashtags}"
+
+
 def generate_caption(photo):
     """משתמש ב-Claude Vision כדי לכתוב פוסט פייסבוק יצירתי."""
     client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
@@ -184,6 +216,12 @@ def generate_caption(photo):
     )
 
     post_text = msg.content[0].text.strip()
+
+    # 1 מתוך 4 פוסטים — פרומו אישי ל-PDF במקום footer רגיל
+    if random.random() < 0.25:
+        print("🎁 פוסט פרומו PDF (1/4)")
+        return generate_pdf_promo_caption(photo, client, image_content)
+
     PDF_FOOTER = "\n\n🎁 PDF חינם — 50 טיפים לצילום:\namitphotos.com/free-guide"
     return f"{post_text}{PDF_FOOTER}\n\n{hashtags}"
 

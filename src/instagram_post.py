@@ -159,6 +159,39 @@ Be factual and precise. 3-5 sentences in English."""}]}],
     return msg.content[0].text.strip()
 
 
+def generate_pdf_promo_caption(photo, client, image_content, vision_description):
+    """כיתוב פרומו אישי ל-PDF החינמי, מעוגן בתמונה הספציפית."""
+    title    = photo.get("title", "")
+    category = photo.get("category", "")
+
+    system_prompt = """אתה עמית, צלם ישראלי, כותב בגוף ראשון על התמונות שלך.
+סגנון: אישי, כנה, חינוכי — כאילו אתה מדבר עם עוקב שרוצה ללמוד לצלם.
+כתוב בעברית בלבד. ללא hashtags. ללא URLs."""
+
+    prompt = f"""כתוב פוסט אינסטגרם אישי שבו אתה משתמש בתמונה הזו כדי לספר למה כתבת מדריך חינמי לצלמים מתחילים.
+
+תיאור התמונה: {vision_description or title or 'תמונת טבע/פורטרט'}
+קטגוריה: {category or 'כללי'}
+
+מבנה הפוסט:
+1. משפט אחד על התמונה הזו — מה צילמת ואיפה (בגוף ראשון)
+2. 2-3 משפטים: "כשהתחלתי לצלם, אף אחד לא אמר לי..." / "שנים לקח לי להבין ש..." — טיפ אחד קונקרטי שלמדת
+3. שורה ריקה
+4. "ריכזתי את כל מה שהייתי רוצה לדעת — PDF חינמי, 50 טיפים, 15 עמודים. הקישור ב-bio."
+
+כתוב בעברית. פלט רק את הפוסט."""
+
+    msg = client.messages.create(
+        model="claude-sonnet-4-6",
+        max_tokens=450,
+        system=system_prompt,
+        messages=[{"role": "user", "content": image_content + [{"type": "text", "text": prompt}]}],
+    )
+    text = msg.content[0].text.strip()
+    hashtags = get_hashtags(category)
+    return f"{text}\n\n{hashtags}"
+
+
 def generate_caption(photo):
     """שלב ראשון: Vision תיאור. שלב שני: caption מבוסס תיאור + EXIF."""
     client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
@@ -236,6 +269,12 @@ def generate_caption(photo):
     )
 
     caption_text = msg.content[0].text.strip()
+
+    # 1 מתוך 4 פוסטים — פרומו אישי ל-PDF במקום footer רגיל
+    if random.random() < 0.25:
+        print("🎁 פוסט פרומו PDF (1/4)")
+        return generate_pdf_promo_caption(photo, client, image_content, vision_description)
+
     PDF_FOOTER = "\n\n🎁 PDF חינם — 50 טיפים לצילום:\namitphotos.com/free-guide"
     return f"{caption_text}{PDF_FOOTER}\n\n{hashtags}"
 
