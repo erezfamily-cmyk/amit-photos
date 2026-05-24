@@ -741,7 +741,7 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
     <section class="section" id="section-analytics">
       <div class="section-header">
         <h1 class="section-title">סטטיסטיקות</h1>
-        <button type="button" class="btn btn-ghost btn-sm" onclick="Dashboard.loadAnalytics();Dashboard.loadSocialKpis();loadPhotoAnalytics()">רענן</button>
+        <button type="button" class="btn btn-ghost btn-sm" onclick="Dashboard.loadAnalytics();Dashboard.loadSocialKpis();loadPhotoAnalytics();loadGaReports()">רענן</button>
       </div>
 
       <!-- W/W summary cards -->
@@ -825,6 +825,13 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
             <div id="top-views-bars" style="display:flex;flex-direction:column;gap:.5rem"></div>
           </div>
         </div>
+      </div>
+
+      <!-- GA Weekly Reports -->
+      <div class="dash-recent" style="margin-top:1.5rem" id="ga-reports-box">
+        <div class="dash-recent-title" style="margin-bottom:1rem">דוחות GA שבועיים — ניתוח Claude</div>
+        <div id="ga-reports-loading" style="color:var(--text-muted);font-size:.85rem">טוען...</div>
+        <div id="ga-reports-list" hidden></div>
       </div>
     </section>
 
@@ -1951,6 +1958,40 @@ async function submitPin() {
   }
 }
 
+async function loadGaReports() {
+  const loading = document.getElementById('ga-reports-loading');
+  const list    = document.getElementById('ga-reports-list');
+  if (!list) return;
+  try {
+    const r = await fetch('/data/ga_reports.json?t=' + Date.now());
+    if (!r.ok) { if (loading) loading.textContent = 'אין דוחות עדיין'; return; }
+    const reports = await r.json();
+    if (!reports.length) { if (loading) loading.textContent = 'אין דוחות עדיין'; return; }
+    if (loading) loading.hidden = true;
+    list.hidden = false;
+    list.innerHTML = reports.slice().reverse().map(rep => {
+      const s = rep.summary || {};
+      const deltaStyle = d => d && d.includes('↑') ? 'color:#4caf7d' : d && d.includes('↓') ? 'color:#e05555' : 'color:#888';
+      return `<div style="border:1px solid var(--border);border-radius:6px;padding:1rem;margin-bottom:1rem">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem">
+          <span style="font-weight:600;color:var(--accent)">${rep.period || ''}</span>
+          <span style="font-size:.75rem;color:var(--text-muted)">${rep.date || ''}</span>
+        </div>
+        <div style="display:flex;gap:.75rem;flex-wrap:wrap;margin-bottom:.75rem">
+          ${[['סשנים',s.sessions,s.delta_sessions],['משתמשים',s.activeUsers,s.delta_users],['צפיות',s.pageViews,s.delta_views],['Bounce',s.bounceRate,''],['זמן ממוצע',s.avgSessionSec ? s.avgSessionSec+'ש׳':'','']].map(([l,v,d])=>
+            `<div style="background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:.4rem .7rem;font-size:.82rem;text-align:center">
+              <div style="font-weight:700;color:var(--text)">${v||'—'} ${d?`<span style="${deltaStyle(d)};font-size:.75em">${d}</span>`:''}</div>
+              <div style="color:var(--text-muted);font-size:.7rem">${l}</div>
+            </div>`).join('')}
+        </div>
+        <div style="background:var(--bg);border-right:3px solid var(--accent);padding:.6rem .8rem;border-radius:0 4px 4px 0;font-size:.82rem;line-height:1.65;color:var(--text-muted)">${(rep.analysis||'').replace(/\n/g,'<br>')}</div>
+      </div>`;
+    }).join('');
+  } catch(e) {
+    if (loading) loading.textContent = 'שגיאה בטעינה';
+  }
+}
+
 async function loadPhotoAnalytics() {
   const loading = document.getElementById('photo-analytics-loading');
   const content = document.getElementById('photo-analytics-content');
@@ -2162,7 +2203,7 @@ document.querySelectorAll('.nav-item').forEach(item => {
     document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
     item.classList.add('active');
     $('section-' + item.dataset.section).classList.add('active');
-    if (item.dataset.section === 'analytics') { Dashboard.loadAnalytics(); loadPhotoAnalytics(); }
+    if (item.dataset.section === 'analytics') { Dashboard.loadAnalytics(); loadPhotoAnalytics(); loadGaReports(); }
     if (item.dataset.section === 'print-orders') PrintOrders.load();
     if (item.dataset.section === 'social') SocialSection.load();
     if (item.dataset.section === 'purchases') Purchases.load();
