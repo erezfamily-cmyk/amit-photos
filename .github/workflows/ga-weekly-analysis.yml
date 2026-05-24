@@ -20,14 +20,15 @@ jobs:
           python-version: '3.11'
 
       - name: התקנת חבילות
-        run: pip install requests anthropic google-auth
+        run: pip install requests anthropic composio-core
 
       - name: ניתוח GA שבועי
         env:
-          GA4_PROPERTY_ID:        ${{ secrets.GA4_PROPERTY_ID }}
-          GA_SERVICE_ACCOUNT_JSON: ${{ secrets.GA_SERVICE_ACCOUNT_JSON }}
-          RESEND_API_KEY:         ${{ secrets.RESEND_API_KEY }}
-          ANTHROPIC_API_KEY:      ${{ secrets.AMIT_PHOTO_AGENT }}
-          REPORT_EMAIL:           erez.family@gmail.com
-          FROM_EMAIL:             "Amit Photos <amit@amitphotos.com>"
+          GA4_PROPERTY_ID:    ${{ secrets.GA4_PROPERTY_ID }}
+          COMPOSIO_API_KEY:   ${{ secrets.COMPOSIO_API_KEY }}
+          COMPOSIO_ENTITY_ID: amit
+          RESEND_API_KEY:     ${{ secrets.RESEND_API_KEY }}
+          ANTHROPIC_API_KEY:  ${{ secrets.AMIT_PHOTO_AGENT }}
+          REPORT_EMAIL:       erez.family@gmail.com
+          FROM_EMAIL:         "Amit Photos <amit@amitphotos.com>"
         run: python src/ga_weekly_report.py

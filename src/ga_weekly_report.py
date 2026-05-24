@@ -1,61 +1,62 @@
 #!/usr/bin/env python3
 """
-GA4 Weekly Analysis
-שולח ניתוח שבועי של Google Analytics עם המלצות לשיפור מ-Claude.
+GA4 Weekly Analysis via Composio
+שולח ניתוח שבועי של Google Analytics עם המלצות מ-Claude.
 """
 
-import os, sys, json, base64
+import os, sys, json
 from datetime import date, timedelta
 import requests
 import anthropic
+from composio import ComposioToolSet, App
 
 # ===== הגדרות =====
-GA4_PROPERTY_ID   = os.environ.get("GA4_PROPERTY_ID", "")
-GA_CREDS_JSON     = os.environ.get("GA_SERVICE_ACCOUNT_JSON", "")
-RESEND_KEY        = os.environ.get("RESEND_API_KEY", "")
-ANTHROPIC_KEY     = os.environ.get("ANTHROPIC_API_KEY", "").strip()
-REPORT_EMAIL      = os.environ.get("REPORT_EMAIL", "erez.family@gmail.com")
-FROM_EMAIL        = os.environ.get("FROM_EMAIL", "Amit Photos <amit@amitphotos.com>")
+GA4_PROPERTY_ID  = os.environ.get("GA4_PROPERTY_ID", "")
+COMPOSIO_API_KEY = os.environ.get("COMPOSIO_API_KEY", "")
+COMPOSIO_ENTITY  = os.environ.get("COMPOSIO_ENTITY_ID", "amit")
+RESEND_KEY       = os.environ.get("RESEND_API_KEY", "")
+ANTHROPIC_KEY    = os.environ.get("ANTHROPIC_API_KEY", "").strip()
+REPORT_EMAIL     = os.environ.get("REPORT_EMAIL", "erez.family@gmail.com")
+FROM_EMAIL       = os.environ.get("FROM_EMAIL", "Amit Photos <amit@amitphotos.com>")
 
 GA4_API_BASE = "https://analyticsdata.googleapis.com/v1beta"
 
 HEBREW_CHANNELS = {
-    "Organic Search":  "חיפוש אורגני",
-    "Direct":          "כניסה ישירה",
-    "Social":          "רשתות חברתיות",
-    "Referral":        "הפניות",
-    "Email":           "מייל",
-    "Paid Search":     "פרסום ממומן",
-    "Organic Social":  "סושיאל אורגני",
-    "Unassigned":      "לא מוגדר",
+    "Organic Search": "חיפוש אורגני",
+    "Direct":         "כניסה ישירה",
+    "Social":         "רשתות חברתיות",
+    "Referral":       "הפניות",
+    "Email":          "מייל",
+    "Paid Search":    "פרסום ממומן",
+    "Organic Social": "סושיאל אורגני",
+    "Unassigned":     "לא מוגדר",
 }
 
 
 def get_access_token():
-    """מייצר access token מ-service account credentials."""
+    """משיג access token מ-Composio לחשבון Google Analytics."""
+    toolset = ComposioToolSet(api_key=COMPOSIO_API_KEY)
+    entity  = toolset.get_entity(COMPOSIO_ENTITY)
     try:
-        from google.oauth2 import service_account
-        import google.auth.transport.requests as ga_transport
-    except ImportError:
-        print("❌ חסר: pip install google-auth")
+        conn = entity.get_connection(app=App.GOOGLEANALYTICS)
+    except Exception as e:
+        print(f"❌ לא מחובר ל-Google Analytics ב-Composio.")
+        print(f"   הרץ תחילה: python src/composio_connect_ga.py")
+        print(f"   שגיאה: {e}")
         sys.exit(1)
 
-    raw = GA_CREDS_JSON.strip()
-    try:
-        # ניסיון base64 decode
-        creds_dict = json.loads(base64.b64decode(raw).decode())
-    except Exception:
-        creds_dict = json.loads(raw)
-
-    scopes = ["https://www.googleapis.com/auth/analytics.readonly"]
-    creds = service_account.Credentials.from_service_account_info(creds_dict, scopes=scopes)
-    creds.refresh(ga_transport.Request())
-    return creds.token
+    params = conn.connectionParams or {}
+    token  = (params.get("access_token")
+              or params.get("token")
+              or params.get("accessToken"))
+    if not token:
+        print(f"❌ לא נמצא access_token בחיבור. פרמטרים: {list(params.keys())}")
+        sys.exit(1)
+    return token
 
 
 def run_report(token, body):
-    """מריץ GA4 Data API runReport."""
-    url = f"{GA4_API_BASE}/properties/{GA4_PROPERTY_ID}:runReport"
+    url  = f"{GA4_API_BASE}/properties/{GA4_PROPERTY_ID}:runReport"
     resp = requests.post(
         url,
         headers={"Authorization": f"Bearer {token}", "Content-Type": "application/json"},
@@ -69,14 +70,13 @@ def run_report(token, body):
 
 
 def parse_rows(data, metric_keys, dim_key=None):
-    """ממיר תוצאות GA4 לרשימת דיקשנריז."""
     if not data or "rows" not in data:
         return []
     rows = []
     for row in data["rows"]:
-        dims = [d["value"] for d in row.get("dimensionValues", [])]
+        dims    = [d["value"] for d in row.get("dimensionValues", [])]
         metrics = [m["value"] for m in row.get("metricValues", [])]
-        entry = {}
+        entry   = {}
         if dim_key and dims:
             entry[dim_key] = dims[0]
         for i, k in enumerate(metric_keys):
@@ -86,61 +86,46 @@ def parse_rows(data, metric_keys, dim_key=None):
 
 
 def fetch_ga4_data(token):
-    """שולף את כל הדוחות מ-GA4 לשבוע האחרון."""
-    today = date.today()
-    start = (today - timedelta(days=7)).strftime("%Y-%m-%d")
-    end   = today.strftime("%Y-%m-%d")
-    date_range = [{"startDate": start, "endDate": end}]
+    today  = date.today()
+    start  = (today - timedelta(days=7)).strftime("%Y-%m-%d")
+    end    = today.strftime("%Y-%m-%d")
+    dr     = [{"startDate": start, "endDate": end}]
 
-    # 1. מדדי בסיס
     summary_raw = run_report(token, {
-        "dateRanges": date_range,
+        "dateRanges": dr,
         "metrics": [
-            {"name": "sessions"},
-            {"name": "activeUsers"},
-            {"name": "screenPageViews"},
-            {"name": "bounceRate"},
-            {"name": "averageSessionDuration"},
-            {"name": "newUsers"},
+            {"name": "sessions"}, {"name": "activeUsers"},
+            {"name": "screenPageViews"}, {"name": "bounceRate"},
+            {"name": "averageSessionDuration"}, {"name": "newUsers"},
         ],
     })
-
-    # 2. עמודים הכי נצפים
     pages_raw = run_report(token, {
-        "dateRanges": date_range,
+        "dateRanges": dr,
         "dimensions": [{"name": "pagePath"}],
         "metrics": [{"name": "screenPageViews"}, {"name": "sessions"}],
         "orderBys": [{"metric": {"metricName": "screenPageViews"}, "desc": True}],
         "limit": 10,
     })
-
-    # 3. מקורות תנועה
     sources_raw = run_report(token, {
-        "dateRanges": date_range,
+        "dateRanges": dr,
         "dimensions": [{"name": "sessionDefaultChannelGrouping"}],
         "metrics": [{"name": "sessions"}],
         "orderBys": [{"metric": {"metricName": "sessions"}, "desc": True}],
         "limit": 8,
     })
-
-    # 4. מכשירים
     devices_raw = run_report(token, {
-        "dateRanges": date_range,
+        "dateRanges": dr,
         "dimensions": [{"name": "deviceCategory"}],
         "metrics": [{"name": "sessions"}],
         "orderBys": [{"metric": {"metricName": "sessions"}, "desc": True}],
     })
-
-    # 5. ארצות
     countries_raw = run_report(token, {
-        "dateRanges": date_range,
+        "dateRanges": dr,
         "dimensions": [{"name": "country"}],
         "metrics": [{"name": "sessions"}],
         "orderBys": [{"metric": {"metricName": "sessions"}, "desc": True}],
         "limit": 5,
     })
-
-    # 6. השוואה לשבוע הקודם
     prev_start = (today - timedelta(days=14)).strftime("%Y-%m-%d")
     prev_end   = (today - timedelta(days=8)).strftime("%Y-%m-%d")
     prev_raw = run_report(token, {
@@ -148,138 +133,101 @@ def fetch_ga4_data(token):
         "metrics": [{"name": "sessions"}, {"name": "activeUsers"}, {"name": "screenPageViews"}],
     })
 
-    # parse
-    summary_rows = summary_raw.get("rows", []) if summary_raw else []
-    def s(i): return summary_rows[0]["metricValues"][i]["value"] if summary_rows else "0"
+    sr = summary_raw.get("rows", []) if summary_raw else []
+    pr = prev_raw.get("rows", []) if prev_raw else []
+    def s(i): return sr[0]["metricValues"][i]["value"] if sr else "0"
+    def p(i): return pr[0]["metricValues"][i]["value"] if pr else "0"
 
-    prev_rows = prev_raw.get("rows", []) if prev_raw else []
-    def p(i): return prev_rows[0]["metricValues"][i]["value"] if prev_rows else "0"
-
-    pages   = parse_rows(pages_raw,   ["צפיות", "sessions"], "עמוד")
-    sources = parse_rows(sources_raw, ["sessions"],           "מקור")
-    devices = parse_rows(devices_raw, ["sessions"],           "מכשיר")
-    countries = parse_rows(countries_raw, ["sessions"],       "ארץ")
-
-    # תרגום מקורות לעברית
+    sources = parse_rows(sources_raw, ["sessions"], "מקור")
     for r in sources:
         r["מקור"] = HEBREW_CHANNELS.get(r["מקור"], r["מקור"])
 
     return {
         "period": f"{start} → {end}",
         "summary": {
-            "sessions":          s(0),
-            "activeUsers":       s(1),
-            "pageViews":         s(2),
-            "bounceRate":        f"{float(s(3)) * 100:.1f}%",
-            "avgSessionSec":     f"{float(s(4)):.0f}",
-            "newUsers":          s(5),
+            "sessions": s(0), "activeUsers": s(1), "pageViews": s(2),
+            "bounceRate": f"{float(s(3)) * 100:.1f}%",
+            "avgSessionSec": f"{float(s(4)):.0f}", "newUsers": s(5),
         },
-        "prev_week": {
-            "sessions":  p(0),
-            "activeUsers": p(1),
-            "pageViews": p(2),
-        },
-        "top_pages":   pages,
-        "sources":     sources,
-        "devices":     devices,
-        "countries":   countries,
+        "prev_week": {"sessions": p(0), "activeUsers": p(1), "pageViews": p(2)},
+        "top_pages": parse_rows(pages_raw, ["צפיות", "sessions"], "עמוד"),
+        "sources":   sources,
+        "devices":   parse_rows(devices_raw, ["sessions"], "מכשיר"),
+        "countries": parse_rows(countries_raw, ["sessions"], "ארץ"),
     }
 
 
-def delta_str(curr, prev):
-    """מחשב שינוי בין שבועות ומחזיר מחרוזת כמו +12% ↑"""
-    try:
-        c, p = float(curr), float(prev)
-        if p == 0:
-            return ""
-        pct = (c - p) / p * 100
-        arrow = "↑" if pct >= 0 else "↓"
-        return f"{arrow} {abs(pct):.0f}%"
-    except Exception:
-        return ""
-
-
 def build_data_summary(data):
-    """בונה סיכום טקסטואלי לשליחה ל-Claude."""
-    s   = data["summary"]
-    p   = data["prev_week"]
+    s, p = data["summary"], data["prev_week"]
+    def delta(c, pv):
+        try:
+            pct = (float(c) - float(pv)) / float(pv) * 100 if float(pv) else 0
+            return f"{'↑' if pct >= 0 else '↓'} {abs(pct):.0f}%"
+        except: return ""
+
     lines = [
-        f"תקופה: {data['period']}",
-        "",
+        f"תקופה: {data['period']}", "",
         "--- סיכום שבוע ---",
-        f"סשנים:           {s['sessions']}  {delta_str(s['sessions'], p['sessions'])}",
-        f"משתמשים פעילים:  {s['activeUsers']}  {delta_str(s['activeUsers'], p['activeUsers'])}",
-        f"צפיות עמוד:      {s['pageViews']}  {delta_str(s['pageViews'], p['pageViews'])}",
+        f"סשנים:           {s['sessions']}  {delta(s['sessions'], p['sessions'])}",
+        f"משתמשים פעילים:  {s['activeUsers']}  {delta(s['activeUsers'], p['activeUsers'])}",
+        f"צפיות עמוד:      {s['pageViews']}  {delta(s['pageViews'], p['pageViews'])}",
         f"Bounce rate:     {s['bounceRate']}",
         f"זמן ממוצע בסשן: {s['avgSessionSec']} שניות",
         f"משתמשים חדשים:   {s['newUsers']}",
-        "",
-        "--- עמודים הכי פופולריים ---",
+        "", "--- עמודים הכי פופולריים ---",
     ]
-    for i, row in enumerate(data["top_pages"][:8], 1):
-        lines.append(f"  {i}. {row['עמוד']}  — {row['צפיות']} צפיות")
-
+    for i, r in enumerate(data["top_pages"][:8], 1):
+        lines.append(f"  {i}. {r['עמוד']}  — {r['צפיות']} צפיות")
     lines += ["", "--- מקורות תנועה ---"]
-    for row in data["sources"]:
-        lines.append(f"  {row['מקור']}: {row['sessions']} סשנים")
-
+    for r in data["sources"]:
+        lines.append(f"  {r['מקור']}: {r['sessions']} סשנים")
     lines += ["", "--- מכשירים ---"]
-    for row in data["devices"]:
-        lines.append(f"  {row['מכשיר']}: {row['sessions']} סשנים")
-
+    for r in data["devices"]:
+        lines.append(f"  {r['מכשיר']}: {r['sessions']} סשנים")
     lines += ["", "--- ארצות ---"]
-    for row in data["countries"]:
-        lines.append(f"  {row['ארץ']}: {row['sessions']} סשנים")
-
+    for r in data["countries"]:
+        lines.append(f"  {r['ארץ']}: {r['sessions']} סשנים")
     return "\n".join(lines)
 
 
 def generate_analysis(data_summary):
-    """Claude מנתח את הנתונים ומציע המלצות."""
     client = anthropic.Anthropic(api_key=ANTHROPIC_KEY)
-
     msg = client.messages.create(
         model="claude-opus-4-7",
         max_tokens=1000,
         system="""אתה יועץ SEO ושיווק דיגיטלי לאתר הצילום amitphotos.com.
 אתה מנתח נתוני Google Analytics שבועיים ומציע המלצות ספציפיות ומעשיות.
-
-הסגנון שלך:
-- ישיר ותכליתי — לא מבזבז מילים
-- כותב בעברית
-- נותן 3-5 המלצות ספציפיות (לא כלליות) מה לעשות השבוע
-- מזהה הזדמנויות ובעיות בנתונים
-- מדבר על amitphotos.com ועל עמית ארז הצלם""",
-        messages=[{
-            "role": "user",
-            "content": f"""נתוני אנליטיקס שבועיים של amitphotos.com:
+כותב בעברית, ישיר, ללא כותרות מפוצצות. נותן 3-5 המלצות מה לעשות השבוע.""",
+        messages=[{"role": "user", "content": f"""נתוני אנליטיקס שבועיים של amitphotos.com:
 
 {data_summary}
 
 ספק:
-1. 2 משפטים על מה קרה השבוע (עלייה/ירידה, מה בולט)
+1. 2 משפטים על מה קרה השבוע
 2. 3-5 המלצות ספציפיות ומעשיות לשבוע הבא
 3. הזהר מבעיה אחת שרואים בנתונים (אם יש)
 
-כתוב בעברית, ישיר, ללא כותרות מפוצצות.""",
-        }],
+כתוב בעברית, ישיר."""}],
     )
     return msg.content[0].text.strip()
 
 
 def build_html_email(data, analysis):
-    """בונה HTML למייל."""
-    s = data["summary"]
-    p = data["prev_week"]
+    s, p = data["summary"], data["prev_week"]
+
+    def delta_color(c, pv):
+        try:
+            pct = (float(c) - float(pv)) / float(pv) * 100 if float(pv) else 0
+            return ("#27ae60" if pct >= 0 else "#e74c3c", f"{'↑' if pct >= 0 else '↓'} {abs(pct):.0f}%")
+        except: return ("#888", "")
 
     def card(label, value, prev_val=""):
-        d = delta_str(value, prev_val)
-        color = "#27ae60" if "↑" in d else ("#e74c3c" if "↓" in d else "#888")
-        badge = f' <span style="color:{color};font-size:.85em">{d}</span>' if d else ""
-        return f"""<div style="background:#f8f9fa;border-radius:8px;padding:12px 16px;margin:6px;display:inline-block;min-width:140px;text-align:center">
-  <div style="font-size:1.6em;font-weight:700;color:#2c3e50">{value}{badge}</div>
-  <div style="font-size:.78em;color:#888;margin-top:4px">{label}</div>
-</div>"""
+        col, d = delta_color(value, prev_val)
+        badge = f' <span style="color:{col};font-size:.85em">{d}</span>' if d else ""
+        return (f'<div style="background:#f8f9fa;border-radius:8px;padding:12px 16px;margin:6px;'
+                f'display:inline-block;min-width:140px;text-align:center">'
+                f'<div style="font-size:1.6em;font-weight:700;color:#2c3e50">{value}{badge}</div>'
+                f'<div style="font-size:.78em;color:#888;margin-top:4px">{label}</div></div>')
 
     pages_rows = "".join(
         f'<tr><td style="padding:5px 8px;color:#555">{r["עמוד"]}</td>'
@@ -292,39 +240,31 @@ def build_html_email(data, analysis):
         for r in data["sources"]
     )
 
-    analysis_html = analysis.replace("\n", "<br>")
-
     return f"""<!DOCTYPE html>
 <html dir="rtl" lang="he">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>דוח GA שבועי — amitphotos.com</title></head>
 <body style="font-family:Arial,sans-serif;background:#f0f2f5;margin:0;padding:16px">
 <div style="max-width:640px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.08)">
-
   <div style="background:#2c3e50;color:#fff;padding:24px 28px">
     <h1 style="margin:0;font-size:1.3em">📊 דוח Google Analytics שבועי</h1>
     <p style="margin:6px 0 0;opacity:.7;font-size:.9em">{data['period']} — amitphotos.com</p>
   </div>
-
   <div style="padding:20px 24px">
     <h2 style="color:#2c3e50;margin:0 0 12px;font-size:1em">סיכום שבוע</h2>
-    <div style="display:flex;flex-wrap:wrap;gap:0">
-      {card("סשנים", s['sessions'], p['sessions'])}
-      {card("משתמשים פעילים", s['activeUsers'], p['activeUsers'])}
-      {card("צפיות", s['pageViews'], p['pageViews'])}
-      {card("משתמשים חדשים", s['newUsers'])}
-      {card("Bounce rate", s['bounceRate'])}
-      {card("זמן ממוצע", s['avgSessionSec'] + "ש׳")}
-    </div>
+    {card("סשנים", s['sessions'], p['sessions'])}
+    {card("משתמשים פעילים", s['activeUsers'], p['activeUsers'])}
+    {card("צפיות", s['pageViews'], p['pageViews'])}
+    {card("משתמשים חדשים", s['newUsers'])}
+    {card("Bounce rate", s['bounceRate'])}
+    {card("זמן ממוצע", s['avgSessionSec'] + "ש׳")}
   </div>
-
   <div style="padding:0 24px 20px">
     <h2 style="color:#2c3e50;margin:0 0 10px;font-size:1em">ניתוח והמלצות — Claude</h2>
     <div style="background:#f8f9fa;border-right:4px solid #3498db;padding:14px 16px;border-radius:0 8px 8px 0;line-height:1.7;color:#333;font-size:.92em">
-      {analysis_html}
+      {analysis.replace(chr(10), "<br>")}
     </div>
   </div>
-
   <div style="padding:0 24px 20px;display:flex;gap:20px;flex-wrap:wrap">
     <div style="flex:1;min-width:220px">
       <h2 style="color:#2c3e50;margin:0 0 8px;font-size:1em">עמודים פופולריים</h2>
@@ -341,7 +281,6 @@ def build_html_email(data, analysis):
       </table>
     </div>
   </div>
-
   <div style="background:#f8f9fa;padding:14px 24px;text-align:center;color:#aaa;font-size:.78em">
     נשלח אוטומטית מ-amitphotos.com • <a href="https://amitphotos.com" style="color:#3498db">amitphotos.com</a>
   </div>
@@ -363,35 +302,25 @@ def send_email(subject, html_body):
 
 
 def main():
-    if not GA4_PROPERTY_ID:
-        print("❌ חסר: GA4_PROPERTY_ID")
-        sys.exit(1)
-    if not GA_CREDS_JSON:
-        print("❌ חסר: GA_SERVICE_ACCOUNT_JSON")
-        sys.exit(1)
-    if not ANTHROPIC_KEY:
-        print("❌ חסר: ANTHROPIC_API_KEY")
-        sys.exit(1)
-    if not RESEND_KEY:
-        print("❌ חסר: RESEND_API_KEY")
+    missing = [v for v, k in [("GA4_PROPERTY_ID", GA4_PROPERTY_ID), ("COMPOSIO_API_KEY", COMPOSIO_API_KEY),
+                               ("ANTHROPIC_API_KEY", ANTHROPIC_KEY), ("RESEND_API_KEY", RESEND_KEY)] if not k]
+    if missing:
+        print(f"❌ חסרים: {', '.join(missing)}")
         sys.exit(1)
 
-    print("🔐 מתחבר ל-Google Analytics...")
+    print("🔐 מתחבר ל-Google Analytics דרך Composio...")
     token = get_access_token()
 
     print("📊 שולף נתונים מ-GA4...")
     data = fetch_ga4_data(token)
-    data_summary = build_data_summary(data)
-    print(data_summary)
+    print(build_data_summary(data))
 
     print("\n🤖 Claude מנתח נתונים...")
-    analysis = generate_analysis(data_summary)
+    analysis = generate_analysis(build_data_summary(data))
     print(f"\n--- ניתוח ---\n{analysis}\n")
 
     print("📧 שולח מייל...")
-    today_str = date.today().strftime("%d.%m.%Y")
-    html = build_html_email(data, analysis)
-    send_email(f"📊 דוח GA שבועי — {today_str}", html)
+    send_email(f"📊 דוח GA שבועי — {date.today().strftime('%d.%m.%Y')}", build_html_email(data, analysis))
 
 
 if __name__ == "__main__":
