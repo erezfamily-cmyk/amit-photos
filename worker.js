@@ -5172,7 +5172,7 @@ async function handleNlIssue(env, slug, isPreview) {
         <h2 class="nl-contact-heading" data-he="מחפש תמונה לבית ולמשרד?" data-en="Looking for a photo for home or office?">מחפש תמונה לבית ולמשרד?</h2>
         <div class="nl-contact-header">
           <span class="nl-contact-avatar">${_svgPerson}</span>
-          <div class="nl-contact-name" data-he="עמית — צלם אישי" data-en="Amit — Personal Photographer">עמית — צלם אישי</div>
+          <div class="nl-contact-name" data-he="עמית ארז" data-en="Amit Erez">עמית ארז</div>
         </div>
         <div class="nl-contact-btns">
           <a class="nl-contact-btn nl-contact-wa" href="https://wa.me/972503333227" target="_blank" rel="noopener">${_svgWa} <span data-he="וואטסאפ" data-en="WhatsApp">וואטסאפ</span></a>
