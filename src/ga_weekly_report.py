@@ -38,7 +38,7 @@ def get_access_token():
 
     # מצא חיבור פעיל לגוגל אנליטיקס של ה-entity
     resp = requests.get(
-        "https://backend.composio.dev/api/v1/connectedAccounts",
+        "https://backend.composio.dev/api/v3/connectedAccounts",
         headers=headers,
         params={"entityId": COMPOSIO_ENTITY, "appName": "googleanalytics"},
         timeout=15,
@@ -58,7 +58,7 @@ def get_access_token():
 
     # שלוף את ה-access token מהחיבור
     detail = requests.get(
-        f"https://backend.composio.dev/api/v1/connectedAccounts/{conn_id}",
+        f"https://backend.composio.dev/api/v3/connectedAccounts/{conn_id}",
         headers=headers,
         timeout=15,
     ).json()
