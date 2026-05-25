@@ -295,6 +295,10 @@ async function handleSubscribers(request, env) {
 
     const { name, email, notes, lang } = await request.json().catch(() => ({}));
     if (!email) return jsonRes({ error: 'מייל חסר' }, 400, request);
+    if (typeof email !== 'string' || email.length > 254 || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email))
+      return jsonRes({ error: 'מייל לא תקין' }, 400, request);
+    if (name && (typeof name !== 'string' || name.length > 120))
+      return jsonRes({ error: 'שם ארוך מדי' }, 400, request);
     const source = new URL(request.url).searchParams.get('source') || 'website';
     const isEn = lang === 'en';
     const pdfUrl = isEn
@@ -435,6 +439,10 @@ async function handleCustomers(request, env) {
     const body = await request.json().catch(() => ({}));
     const { id, name, email, phone, date, type, status, subject, notes } = body;
     if (!name) return jsonRes({ error: 'שם חסר' }, 400, request);
+    if (typeof name !== 'string' || name.length > 120) return jsonRes({ error: 'שם לא תקין' }, 400, request);
+    if (email && (typeof email !== 'string' || email.length > 254)) return jsonRes({ error: 'מייל לא תקין' }, 400, request);
+    if (subject && (typeof subject !== 'string' || subject.length > 500)) return jsonRes({ error: 'נושא ארוך מדי' }, 400, request);
+    if (notes && (typeof notes !== 'string' || notes.length > 2000)) return jsonRes({ error: 'הודעה ארוכה מדי' }, 400, request);
     if (id) {
       if (!await checkAuth(request, env)) return unauth(request);
       await env.DB.prepare(

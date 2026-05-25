@@ -3249,11 +3249,11 @@ const Subscribers = (() => {
     $('subs-empty').style.display = 'none';
     tbody.innerHTML = rows.map(s => `
       <tr>
-        <td>${s.name||'—'}</td>
-        <td><a href="mailto:${s.email}" style="color:var(--accent)">${s.email}</a></td>
+        <td>${escHtml(s.name||'—')}</td>
+        <td><a href="mailto:${escHtml(s.email)}" style="color:var(--accent)">${escHtml(s.email)}</a></td>
         <td>${fmtDate(s.created_at)}</td>
-        <td style="color:var(--text-muted);font-size:.82rem">${s.notes||'—'}</td>
-        <td><button class="btn btn-danger btn-sm" onclick="Subscribers.remove('${s.id}')">מחק</button></td>
+        <td style="color:var(--text-muted);font-size:.82rem">${escHtml(s.notes||'—')}</td>
+        <td><button class="btn btn-danger btn-sm" onclick="Subscribers.remove('${escHtml(s.id)}')">מחק</button></td>
       </tr>
     `).join('');
   }
@@ -3384,24 +3384,24 @@ const Customers = (() => {
     }
     $('cust-empty').style.display = 'none';
     tbody.innerHTML = rows.map(c => `
-      <tr class="clickable" onclick="Customers.openView('${c.id}')">
-        <td><strong>${c.name||'—'}</strong></td>
-        <td><a href="mailto:${c.email}" style="color:var(--accent)" onclick="event.stopPropagation()">${c.email||'—'}</a></td>
-        <td style="color:var(--text-muted)">${c.phone||'—'}</td>
+      <tr class="clickable" onclick="Customers.openView('${escHtml(c.id)}')">
+        <td><strong>${escHtml(c.name||'—')}</strong></td>
+        <td><a href="mailto:${escHtml(c.email)}" style="color:var(--accent)" onclick="event.stopPropagation()">${escHtml(c.email||'—')}</a></td>
+        <td style="color:var(--text-muted)">${escHtml(c.phone||'—')}</td>
         <td style="color:var(--text-muted);font-size:.82rem">${fmtDate(c.date)}</td>
-        <td><span class="type-badge ${typeClass(c.type)}">${c.type||'—'}</span></td>
-        <td style="font-size:.85rem;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.subject||'—'}</td>
+        <td><span class="type-badge ${typeClass(c.type)}">${escHtml(c.type||'—')}</span></td>
+        <td style="font-size:.85rem;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHtml(c.subject||'—')}</td>
         <td onclick="event.stopPropagation()">
-          <select class="status-select ${statusClass(c.status)}" onchange="Customers.quickStatus('${c.id}', this)">
+          <select class="status-select ${statusClass(c.status)}" onchange="Customers.quickStatus('${escHtml(c.id)}', this)">
             <option ${c.status==='ממתין'?'selected':''}>ממתין</option>
             <option ${c.status==='טופל'?'selected':''}>טופל</option>
             <option ${c.status==='סגור'?'selected':''}>סגור</option>
           </select>
         </td>
-        <td style="color:var(--text-muted);font-size:.82rem;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.notes||'—'}</td>
+        <td style="color:var(--text-muted);font-size:.82rem;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHtml(c.notes||'—')}</td>
         <td onclick="event.stopPropagation()" style="white-space:nowrap;display:flex;gap:.4rem;align-items:center">
-          ${c.email ? `<a class="btn-reply" href="mailto:${c.email}?subject=${encodeURIComponent('Re: '+(c.subject||'פנייה מהאתר'))}&body=${encodeURIComponent('שלום '+c.name+',\n\n')}" target="_blank">השב</a>` : ''}
-          <button class="btn btn-danger btn-sm" onclick="Customers.remove('${c.id}')">מחק</button>
+          ${c.email ? `<a class="btn-reply" href="mailto:${escHtml(c.email)}?subject=${encodeURIComponent('Re: '+(c.subject||'פנייה מהאתר'))}&body=${encodeURIComponent('שלום '+(c.name||'')+',\n\n')}" target="_blank">השב</a>` : ''}
+          <button class="btn btn-danger btn-sm" onclick="Customers.remove('${escHtml(c.id)}')">מחק</button>
         </td>
       </tr>
     `).join('');
