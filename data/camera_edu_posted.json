@@ -2,8 +2,9 @@
   "posted_keys": [
     "editing",
     "histogram",
-    "lenses",
     "controls",
-    "filters"
+    "filters",
+    "lenses",
+    "white-balance"
   ]
 }
