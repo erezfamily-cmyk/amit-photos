@@ -4244,6 +4244,19 @@ async function learnPublishAll() {
 }
 
 async function learnPublish(photoId) {
+  // Check if EN content exists — if not, generate it first
+  try {
+    const check = await fetch('/api/analyses/' + photoId, { headers: authHeaders() });
+    if (check.ok) {
+      const data = await check.json();
+      if (!data.title_en) {
+        toast('מייצר תרגום אנגלי לפני פרסום...');
+        const genRes = await fetch(`/api/analyses/${photoId}/generate-en`, { method: 'POST', headers: authHeaders() });
+        if (!genRes.ok) { toast('שגיאה בייצור תרגום', 'error'); return; }
+      }
+    }
+  } catch (_) {}
+
   const res = await fetch('/api/analyses/' + photoId, {
     method: 'PUT',
     headers: authHeaders(),
