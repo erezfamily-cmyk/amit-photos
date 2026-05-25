@@ -1,6 +1,8 @@
 // Cloudflare Worker — amit-photos
 // מטפל בנתיבי API ומגיש static assets
 
+const GA_SNIPPET = `<script async src="https://www.googletagmanager.com/gtag/js?id=G-530473246"></script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-530473246');</script>`;
+
 const ALLOWED_ORIGINS = ['https://amitphotos.com', 'https://www.amitphotos.com'];
 const SESSION_TTL_HOURS = 8;
 const MAX_LOGIN_ATTEMPTS = 5;
@@ -197,6 +199,7 @@ async function handleFreeGuide(request, env) {
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="50 טיפים לצילום טוב יותר — PDF חינם">
 <meta name="twitter:description" content="המדריך שהכנתי מהניסיון שלי והאהבה לצלם — 15 עמודים, ישיר למייל.">${photoUrl ? `\n<meta name="twitter:image" content="${photoUrl}">` : ''}
+${GA_SNIPPET}
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Heebo',sans-serif;background:#111;color:#f0ede8;min-height:100vh;display:flex;align-items:center;justify-content:center}
@@ -1900,6 +1903,7 @@ async function servePhotoPage(photoId, env) {
   <meta name="twitter:image:alt" content="${title}" />
   <link rel="canonical" href="${pageUrl}" />
   <script type="application/ld+json">${schema}</script>
+  ${GA_SNIPPET}
   <style>
     *{margin:0;padding:0;box-sizing:border-box}
     body{background:#0a0a0a;color:#f0f0f0;font-family:'Heebo',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:2rem 1rem}
@@ -2024,6 +2028,7 @@ async function handleCategoryPage(category, env) {
   ${ogImage ? `<meta name="twitter:image" content="${ogImage}" />` : ''}
   <link rel="canonical" href="${pageUrl}" />
   <script type="application/ld+json">${schema}</script>
+  ${GA_SNIPPET}
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600&display=swap" rel="stylesheet">
   <style>
@@ -2505,6 +2510,7 @@ async function handlePricesPage(request, env) {
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>מחירים — עמית צילום</title>
+${GA_SNIPPET}
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;600;700&family=Syne:wght@700&display=swap" rel="stylesheet">
 <style>
@@ -3199,6 +3205,7 @@ async function handleLearnIndex(env) {
 <meta property="og:url" content="https://amitphotos.com/learn/">
 <meta property="og:locale" content="he_IL">
 <link rel="canonical" href="https://amitphotos.com/learn/">
+${GA_SNIPPET}
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&display=swap" rel="stylesheet">
 <style>
@@ -3535,6 +3542,7 @@ async function handleLearnAnalysis(env, photoId) {
 <meta property="og:url" content="https://amitphotos.com/learn/${escXml(photoId)}">
 <meta property="og:locale" content="he_IL">
 <link rel="canonical" href="https://amitphotos.com/learn/${escXml(photoId)}">
+${GA_SNIPPET}
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&display=swap" rel="stylesheet">
 <style>
@@ -4946,6 +4954,7 @@ async function handleNlList(env) {
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>ניוזלטר | Amit Photos</title>
 <link rel="canonical" href="https://amitphotos.com/newsletter/">
+${GA_SNIPPET}
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&display=swap" rel="stylesheet">
 <style>
@@ -5226,6 +5235,7 @@ async function handleNlIssue(env, slug, isPreview) {
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${escXml(issue.title_he)} | Amit Photos</title>
 ${!isPreview ? `<link rel="canonical" href="https://amitphotos.com/newsletter/${escXml(slug)}/">` : ''}
+${!isPreview ? GA_SNIPPET : ''}
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&display=swap" rel="stylesheet">
 <style>

@@ -7,6 +7,7 @@ compatibility_flags = ["nodejs_compat"]
 directory = "."
 binding = "ASSETS"
 run_worker_first = true
+exclude = [".git/**/*", "node_modules/**/*", "src/**/*", "docs/**/*", "*.sql", "*.ps1", "*.pdf", "*.py"]
 
 [[d1_databases]]
 binding = "DB"
