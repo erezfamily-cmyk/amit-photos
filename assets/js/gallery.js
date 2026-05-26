@@ -491,7 +491,7 @@ async function initFeatured() {
 
   featuredIds = picks.map(p => p.id);
 
-  const bestCount = allPhotos.filter(p => p.sort_order != null || featuredIds.includes(p.id)).length;
+  const bestCount = allPhotos.filter(p => featuredIds.includes(p.id)).length;
   const cta = document.createElement('div');
   cta.className = 'featured-cta-wrap';
   cta.innerHTML = `<button class="featured-cta-btn" id="featured-cta-btn">${t('featured.cta')} <span class="filter-count">${bestCount}</span></button>`;
@@ -538,7 +538,7 @@ function applyFilters() {
     if (cat === 'all') {
       matchCat = true;
     } else if (cat === 'best') {
-      matchCat = p.sort_order != null || featuredIds.includes(p.id);
+      matchCat = featuredIds.includes(p.id);
     } else if (cat === 'new') {
       matchCat = isNew(p);
     } else if (cat === 'sale') {
@@ -578,7 +578,7 @@ function initFilters() {
 
   const newCount = allPhotos.filter(isNew).length;
   const saleCount = allPhotos.filter(isOnSale).length;
-  const bestCount = allPhotos.filter(p => p.sort_order != null || featuredIds.includes(p.id)).length;
+  const bestCount = allPhotos.filter(p => featuredIds.includes(p.id)).length;
   const newBadgeBtn = newCount > 0 ? `<button class="filter-btn filter-btn-new" data-cat="new">✦ ${t('gallery.filter.new')} <span class="filter-count">${newCount}</span></button>` : '';
   const saleBadgeBtn = saleCount > 0 ? `<button class="filter-btn filter-btn-sale" data-cat="sale">🏷 ${t('gallery.filter.sale')} <span class="filter-count">${saleCount}</span></button>` : '';
   const bestBadgeBtn = bestCount > 0 ? `<button class="filter-btn filter-btn-best" data-cat="best">⭐ ${t('gallery.filter.best')} <span class="filter-count">${bestCount}</span></button>` : '';
