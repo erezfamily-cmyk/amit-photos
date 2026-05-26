@@ -29,6 +29,29 @@ function jsonRes(data, status = 200, request = null) {
 }
 function unauth(request) { return jsonRes({ error: 'לא מורשה' }, 401, request); }
 
+const SEC_HEADERS = {
+  'X-Frame-Options': 'SAMEORIGIN',
+  'X-Content-Type-Options': 'nosniff',
+  'Referrer-Policy': 'strict-origin-when-cross-origin',
+  'Content-Security-Policy': [
+    "default-src 'self' https://amitphotos.com",
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com",
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+    "font-src 'self' https://fonts.gstatic.com",
+    "img-src 'self' data: https: blob:",
+    "connect-src 'self' https://amitphotos.com https://analytics.google.com https://www.google-analytics.com https://region1.google-analytics.com",
+    "frame-src https://www.google.com https://www.paypal.com",
+    "frame-ancestors 'self'",
+  ].join('; '),
+};
+
+function htmlRes(html, status = 200, cacheControl = 'no-store') {
+  return new Response(html, {
+    status,
+    headers: { 'Content-Type': 'text/html;charset=UTF-8', 'Cache-Control': cacheControl, ...SEC_HEADERS },
+  });
+}
+
 function slugify(text) {
   const map = {
     'א':'a','ב':'b','ג':'g','ד':'d','ה':'h','ו':'v','ז':'z','ח':'ch','ט':'t',
@@ -279,9 +302,7 @@ document.getElementById('fg-form').addEventListener('submit', async function(e) 
 </body>
 </html>`;
 
-  return new Response(html, {
-    headers: { 'Content-Type': 'text/html;charset=UTF-8', 'Cache-Control': 'no-store' }
-  });
+  return htmlRes(html);
 }
 
 // ===== SUBSCRIBERS =====
@@ -1424,17 +1445,17 @@ async function handlePrintCancel(request, env) {
   if (!token) return new Response('קישור לא תקין', { status: 400 });
 
   const order = await env.DB.prepare('SELECT * FROM print_orders WHERE id=?').bind(token).first();
-  if (!order) return new Response(cancelPage('הזמנה לא נמצאה', false), { status: 404, headers: { 'Content-Type': 'text/html;charset=UTF-8' } });
+  if (!order) return htmlRes(cancelPage('הזמנה לא נמצאה', false), 404);
 
   if (order.status === 'cancelled') {
-    return new Response(cancelPage('ההזמנה כבר בוטלה', false), { headers: { 'Content-Type': 'text/html;charset=UTF-8' } });
+    return htmlRes(cancelPage('ההזמנה כבר בוטלה', false));
   }
 
   // Check 1-hour window
   const created = new Date(order.created_at);
   const diffMin = (Date.now() - created.getTime()) / 60000;
   if (diffMin > 60) {
-    return new Response(cancelPage('פג תוקף הביטול (שעה אחרי ההזמנה)', false), { headers: { 'Content-Type': 'text/html;charset=UTF-8' } });
+    return htmlRes(cancelPage('פג תוקף הביטול (שעה אחרי ההזמנה)', false));
   }
 
   // Cancel at Gelato
@@ -1448,7 +1469,7 @@ async function handlePrintCancel(request, env) {
 
   await env.DB.prepare('UPDATE print_orders SET status=? WHERE id=?').bind('cancelled', token).run();
 
-  return new Response(cancelPage('ההזמנה בוטלה בהצלחה', true), { headers: { 'Content-Type': 'text/html;charset=UTF-8' } });
+  return htmlRes(cancelPage('ההזמנה בוטלה בהצלחה', true));
 }
 
 function cancelPage(message, success) {
@@ -1752,7 +1773,7 @@ async function handleReply(request, env) {
 async function handleUnsubscribe(request, env) {
   const url = new URL(request.url);
   const token = url.searchParams.get('token');
-  const msgHtml = (title, msg, icon) => new Response(`<!DOCTYPE html>
+  const msgHtml = (title, msg, icon) => htmlRes(`<!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${title}</title></head>
@@ -1764,7 +1785,7 @@ async function handleUnsubscribe(request, env) {
     <p style="color:#666;font-size:14px;line-height:1.7;margin:0 0 24px">${msg}</p>
     <a href="https://amitphotos.com" style="display:inline-block;padding:.6rem 1.6rem;background:#0a0a0a;color:#c8a96e;text-decoration:none;border-radius:4px;font-size:14px">חזרה לאתר</a>
   </div>
-</body></html>`, { headers: { 'Content-Type': 'text/html;charset=UTF-8' } });
+</body></html>`);
 
   // Token-based (from email link)
   if (token) {
@@ -1963,12 +1984,7 @@ async function servePhotoPage(photoId, env) {
 </body>
 </html>`;
 
-  return new Response(html, {
-    headers: {
-      'Content-Type': 'text/html; charset=UTF-8',
-      'Cache-Control': 'no-cache, no-store, must-revalidate',
-    },
-  });
+  return htmlRes(html, 200, 'no-cache, no-store, must-revalidate');
 }
 
 // ===== CATEGORY PAGE =====
@@ -2068,9 +2084,7 @@ async function handleCategoryPage(category, env) {
 </body>
 </html>`;
 
-  return new Response(html, {
-    headers: { 'Content-Type': 'text/html; charset=UTF-8', 'Cache-Control': 'no-cache, no-store, must-revalidate' },
-  });
+  return htmlRes(html, 200, 'no-cache, no-store, must-revalidate');
 }
 
 async function servePhoto(key, env, request) {
@@ -2307,6 +2321,19 @@ async function handleLocationSpotPage(request, env) {
   ).bind(slug).first().catch(() => null);
   const imgUrl = escXml(cover?.url || 'https://amitphotos.com/assets/img/og-default.jpg');
 
+  const locationSchema = {
+    "@context": "https://schema.org",
+    "@type": "TouristAttraction",
+    "name": loc.title,
+    "description": (loc.description || '').slice(0, 300),
+    "url": canonicalUrl,
+    "image": cover?.url || '',
+    "inLanguage": "he",
+    ...(loc.coordinates ? (() => { try { const c = JSON.parse(loc.coordinates); return c.lat && c.lng ? { "geo": { "@type": "GeoCoordinates", "latitude": c.lat, "longitude": c.lng } } : {}; } catch(_) { return {}; } })() : {}),
+    "creator": { "@type": "Person", "name": "עמית ארז", "url": "https://amitphotos.com" },
+    "isPartOf": { "@type": "WebSite", "name": "Amit Photos", "url": "https://amitphotos.com" }
+  };
+
   const ogTags = `
   <link rel="canonical" href="${pageUrl}">
   <meta property="og:title" content="${title}">
@@ -2318,18 +2345,14 @@ async function handleLocationSpotPage(request, env) {
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="${title}">
   <meta name="twitter:description" content="${desc}">
-  <meta name="twitter:image" content="${imgUrl}">`;
+  <meta name="twitter:image" content="${imgUrl}">
+  <script type="application/ld+json">${JSON.stringify(locationSchema)}</script>`;
 
   html = html
     .replace(/<title>[^<]*<\/title>/, `<title>${title}</title>`)
     .replace('</head>', ogTags + '\n</head>');
 
-  return new Response(html, {
-    headers: {
-      'Content-Type': 'text/html; charset=UTF-8',
-      'Cache-Control': 'no-cache, no-store, must-revalidate',
-    },
-  });
+  return htmlRes(html, 200, 'no-cache, no-store, must-revalidate');
 }
 
 // ===== ROBOTS.TXT =====
@@ -2569,8 +2592,7 @@ a.back:hover{color:#c8a96e}
 <a class="back" href="/">← חזרה לגלריה</a>
 </body>
 </html>`;
-  return new Response(html, { headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-cache, no-store, must-revalidate' } });
-  return new Response(html, { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
+  return htmlRes(html, 200, 'no-cache, no-store, must-revalidate');
 }
 
 async function handleTogglePhotoNew(request, env) {
@@ -3263,7 +3285,7 @@ window.addEventListener('storage',e=>{if(e.key==='lang')applyLang()});
 </body>
 </html>`;
 
-  return new Response(html, { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
+  return htmlRes(html);
 }
 
 function buildPhysicsDiagram(camera) {
@@ -3498,7 +3520,7 @@ async function handleLearnAnalysis(env, photoId) {
   ).bind(photoId).first().catch(() => null);
 
   if (!row || !photo) {
-    return new Response(`<!DOCTYPE html><html lang="he" dir="rtl"><head><meta charset="utf-8"><title>לא נמצא</title><style>body{background:#0a0a0a;color:#f0ede8;font-family:'Heebo',sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;gap:1rem}</style></head><body><h1 style="color:#c8a96e;font-size:2rem">404</h1><p>הניתוח לא נמצא</p><a href="/learn/" style="color:#c8a96e">← חזרה לניתוח תמונות</a></body></html>`, {status: 404, headers: {'Content-Type': 'text/html;charset=utf-8'}});
+    return htmlRes(`<!DOCTYPE html><html lang="he" dir="rtl"><head><meta charset="utf-8"><title>לא נמצא</title><style>body{background:#0a0a0a;color:#f0ede8;font-family:'Heebo',sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;gap:1rem}</style></head><body><h1 style="color:#c8a96e;font-size:2rem">404</h1><p>הניתוח לא נמצא</p><a href="/learn/" style="color:#c8a96e">← חזרה לניתוח תמונות</a></body></html>`, 404);
   }
 
   // Prev/next and more analyses — run in parallel
@@ -3550,6 +3572,18 @@ async function handleLearnAnalysis(env, photoId) {
 <meta property="og:url" content="https://amitphotos.com/learn/${escXml(photoId)}">
 <meta property="og:locale" content="he_IL">
 <link rel="canonical" href="https://amitphotos.com/learn/${escXml(photoId)}">
+<script type="application/ld+json">${JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": row.title,
+  "description": `ניתוח צילומי של "${row.title}" — ${ruleLabelHe}, הגדרות מצלמה, ופירוש הקומפוזיציה.`,
+  "url": `https://amitphotos.com/learn/${photoId}`,
+  "inLanguage": "he",
+  "image": photo.thumbnail || photo.url || '',
+  "author": { "@type": "Person", "name": "עמית ארז", "url": "https://amitphotos.com" },
+  "publisher": { "@type": "Organization", "name": "Amit Photos", "url": "https://amitphotos.com" },
+  "isPartOf": { "@type": "WebSite", "name": "Amit Photos", "url": "https://amitphotos.com" }
+})}</script>
 ${GA_SNIPPET}
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&display=swap" rel="stylesheet">
@@ -3715,7 +3749,7 @@ window.addEventListener('storage',e=>{if(e.key==='lang')applyLang()});
 </body>
 </html>`;
 
-  return new Response(html, { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
+  return htmlRes(html);
 }
 
 // ===== LOCATIONS API =====
@@ -4956,7 +4990,7 @@ async function handleNlList(env) {
     ? '<p style="text-align:center;color:#888;padding:4rem">הניוזלטר הראשון יפורסם בקרוב</p>'
     : '';
 
-  return new Response(`<!DOCTYPE html>
+  return htmlRes(`<!DOCTYPE html>
 <html dir="rtl" lang="he">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -4994,7 +5028,7 @@ function getLang(){return localStorage.getItem('lang')||'he'}
 function applyLang(){const lang=getLang(),isEn=lang==='en';document.documentElement.dir=isEn?'ltr':'rtl';document.documentElement.lang=lang;document.querySelectorAll('[data-he]').forEach(el=>{el.innerHTML=isEn?(el.dataset.en||el.dataset.he):el.dataset.he})}
 applyLang();window.setLang=applyLang;window.addEventListener('storage',e=>{if(e.key==='lang')applyLang()})
 </script>
-</body></html>`, { headers: { 'Content-Type': 'text/html;charset=utf-8', 'Cache-Control': 'no-cache' } });
+</body></html>`, 200, 'no-cache');
 }
 
 async function handleNlIssue(env, slug, isPreview) {
@@ -5464,7 +5498,7 @@ async function nlUnsubscribe(e){e.preventDefault();const email=document.getEleme
 </script>
 </body></html>`;
 
-  return new Response(html, { headers: { 'Content-Type': 'text/html;charset=utf-8', 'Cache-Control': 'no-cache' } });
+  return htmlRes(html, 200, 'no-cache');
 }
 
 async function handleAdminNlList(request, env) {
@@ -5497,7 +5531,7 @@ async function handleAdminNlList(request, env) {
     </tr>`;
   }).join('');
 
-  return new Response(`<!DOCTYPE html>
+  return htmlRes(`<!DOCTYPE html>
 <html dir="rtl" lang="he">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -5732,7 +5766,7 @@ async function loadSubsFull() {
 })();
 </script>
 <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
-</body></html>`, { headers: { 'Content-Type': 'text/html;charset=utf-8' } });
+</body></html>`);
 }
 
 async function handleAdminNlEditor(request, env, id) {
@@ -5805,7 +5839,7 @@ async function handleAdminNlEditor(request, env, id) {
   <span id="send-msg" style="font-size:.85rem;display:none"></span>
 </div>` : '';
 
-  return new Response(`<!DOCTYPE html>
+  return htmlRes(`<!DOCTYPE html>
 <html dir="rtl" lang="he">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -5928,7 +5962,7 @@ async function publish() {
   else { msg.style.color = '#f44336'; msg.textContent = d.error || 'שגיאה'; }
 }
 </script>
-</body></html>`, { headers: { 'Content-Type': 'text/html;charset=utf-8' } });
+</body></html>`);
 }
 
 async function handleAdminNlGenerate(request, env) {
