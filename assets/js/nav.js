@@ -264,6 +264,126 @@ footer#main-footer a:hover { color: #c8a96e; }
     origApplyNavLang(lang);
     const fp = document.getElementById('footer-privacy');
     if (fp) fp.textContent = lang === 'en' ? privacyEn : privacyHe;
+    // update "read also" section language
+    const raTitle = document.getElementById('nav-read-also-title');
+    const raTitleText = { he: 'קרא גם', en: 'Read Also' };
+    if (raTitle) raTitle.textContent = raTitleText[lang] || raTitleText.he;
+    document.querySelectorAll('.nav-read-also-card').forEach(function(card) {
+      const t = card.dataset[lang] || card.dataset.he;
+      const span = card.querySelector('.nav-rac-title');
+      if (span && t) span.textContent = t;
+    });
   };
   window.applyNavLang = applyNavLang;
+
+  // ── Article Schema + "קרא גם" for /camera/ guides ────────────────────────────
+  const camPath = window.location.pathname.replace(/\/?$/, '/');
+  if (camPath.startsWith('/camera/') && camPath !== '/camera/') {
+    // 1. Article JSON-LD
+    const canonical = (document.querySelector('link[rel="canonical"]') || {}).href || window.location.href;
+    const titleEl = document.querySelector('title');
+    const headline = titleEl ? titleEl.textContent.replace(/\s*\|[^|]*$/, '').trim() : '';
+    const descEl = document.querySelector('meta[name="description"]');
+    const description = descEl ? descEl.getAttribute('content') : '';
+    const schema = {
+      '@context': 'https://schema.org',
+      '@type': 'Article',
+      headline: headline,
+      description: description,
+      url: canonical,
+      inLanguage: 'he',
+      author: { '@type': 'Person', name: 'עמית ארז', url: 'https://amitphotos.com' },
+      publisher: { '@type': 'Organization', name: 'Amit Photos', url: 'https://amitphotos.com' },
+      isPartOf: { '@type': 'WebSite', name: 'Amit Photos', url: 'https://amitphotos.com' }
+    };
+    const schemaScript = document.createElement('script');
+    schemaScript.type = 'application/ld+json';
+    schemaScript.textContent = JSON.stringify(schema);
+    document.head.appendChild(schemaScript);
+
+    // 2. "קרא גם" related guides
+    const GUIDES = [
+      { slug: 'lenses',         he: 'עדשות',             en: 'Lenses' },
+      { slug: 'light',          he: 'אור',                en: 'Light' },
+      { slug: 'visual-language',he: 'שפה ויזואלית',       en: 'Visual Language' },
+      { slug: 'editing',        he: 'עריכה',              en: 'Editing' },
+      { slug: 'software',       he: 'תוכנות',             en: 'Software' },
+      { slug: 'exposure',       he: 'חשיפה',              en: 'Exposure' },
+      { slug: 'composition',    he: 'קומפוזיציה',         en: 'Composition' },
+      { slug: 'filters',        he: 'פילטרים',            en: 'Filters' },
+      { slug: 'types',          he: 'סוגי צילום',         en: 'Photography Types' },
+      { slug: 'controls',       he: 'בקרות מצלמה',        en: 'Camera Controls' },
+      { slug: 'sports',         he: 'ספורט',              en: 'Sports' },
+      { slug: 'macro',          he: 'מאקרו',              en: 'Macro' },
+      { slug: 'depth-of-field', he: 'עומק שדה',           en: 'Depth of Field' },
+      { slug: 'white-balance',  he: 'איזון לבן',          en: 'White Balance' },
+      { slug: 'histogram',      he: 'היסטוגרמה',          en: 'Histogram' },
+      { slug: 'dynamic-range',  he: 'טווח דינמי',         en: 'Dynamic Range' },
+      { slug: 'landscape',      he: 'נוף',                en: 'Landscape' },
+      { slug: 'portrait',       he: 'פורטרט',             en: 'Portrait' },
+      { slug: 'focus',          he: 'פוקוס',              en: 'Focus' },
+      { slug: 'mobile',         he: 'צילום מטלפון',       en: 'Mobile Photography' }
+    ];
+    // detect current slug
+    const currentSlug = camPath.replace('/camera/', '').replace(/\//g, '');
+    const others = GUIDES.filter(function(g) { return g.slug !== currentSlug; });
+    // pick 3 related guides: try adjacent slugs first, fill with random selection
+    const idx = GUIDES.findIndex(function(g) { return g.slug === currentSlug; });
+    const related = [];
+    if (idx > 0) related.push(GUIDES[idx - 1]);
+    if (idx < GUIDES.length - 1) related.push(GUIDES[idx + 1]);
+    // fill to 3 from pool
+    for (var i = 0; i < others.length && related.length < 3; i++) {
+      if (!related.includes(others[i])) related.push(others[i]);
+    }
+    const lang3 = currentLang || 'he';
+    const raTitleText = { he: 'קרא גם', en: 'Read Also' };
+    const raStyle = document.createElement('style');
+    raStyle.textContent = `
+#nav-read-also {
+  max-width: 960px; margin: 3rem auto 1.5rem; padding: 0 1.25rem;
+  font-family: 'Heebo', sans-serif;
+}
+#nav-read-also-title {
+  font-size: 1rem; color: #888; letter-spacing: 0.06em;
+  text-transform: uppercase; margin-bottom: 1rem; display: block;
+}
+#nav-read-also-cards {
+  display: flex; gap: 1rem; flex-wrap: wrap;
+}
+.nav-read-also-card {
+  flex: 1 1 180px; background: #111; border: 1px solid #222;
+  border-radius: 10px; padding: 1rem 1.25rem;
+  text-decoration: none; color: #f0ede8;
+  transition: border-color 0.2s, transform 0.2s;
+  display: flex; align-items: center; gap: 0.6rem;
+}
+.nav-read-also-card:hover {
+  border-color: #c8a96e; transform: translateY(-2px);
+}
+.nav-rac-arrow { color: #c8a96e; font-size: 1.1rem; flex-shrink: 0; }
+.nav-rac-title { font-size: 0.9rem; font-weight: 600; }
+`;
+    document.head.appendChild(raStyle);
+    const raSection = document.createElement('section');
+    raSection.id = 'nav-read-also';
+    raSection.innerHTML = '<span id="nav-read-also-title">' + (raTitleText[lang3] || raTitleText.he) + '</span><div id="nav-read-also-cards"></div>';
+    const cardsDiv = raSection.querySelector('#nav-read-also-cards');
+    related.slice(0, 3).forEach(function(g) {
+      const card = document.createElement('a');
+      card.href = '/camera/' + g.slug + '/';
+      card.className = 'nav-read-also-card';
+      card.dataset.he = g.he;
+      card.dataset.en = g.en;
+      card.innerHTML = '<span class="nav-rac-arrow">&#8592;</span><span class="nav-rac-title">' + (g[lang3] || g.he) + '</span>';
+      cardsDiv.appendChild(card);
+    });
+    // insert before footer
+    const mainFooter = document.getElementById('main-footer');
+    if (mainFooter) {
+      mainFooter.parentNode.insertBefore(raSection, mainFooter);
+    } else {
+      document.body.appendChild(raSection);
+    }
+  }
 })();
