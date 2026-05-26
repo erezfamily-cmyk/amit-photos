@@ -195,8 +195,11 @@ def generate_analysis(data_summary):
     msg = client.messages.create(
         model="claude-opus-4-7",
         max_tokens=1000,
-        system="""אתה יועץ SEO ושיווק דיגיטלי לאתר הצילום amitphotos.com.
-אתה מנתח נתוני Google Analytics שבועיים ומציע המלצות ספציפיות ומעשיות.
+        system="""אתה יועץ SEO ושיווק דיגיטלי לאתר amitphotos.com — גלריית fine art photography של עמית ארז.
+האתר מוכר הדפסות אמנות ותמונות דיגיטליות להורדה, ומציע מדריכי צילום חינוכיים.
+הקהל: אנשים שאוהבים אמנות צילומית, מעצבי פנים, קונים רגשיים — לא מחפשים צלם לאירועים.
+הכנסות מגיעות מ: מכירות דיגיטל (PayPal), הדפסות (Gelato), affiliate (Adorama/Skylum).
+אתה מנתח נתוני Google Analytics שבועיים ומציע המלצות ספציפיות ומעשיות לגלריית fine art.
 כותב בעברית, ישיר, ללא כותרות מפוצצות. נותן 3-5 המלצות מה לעשות השבוע.""",
         messages=[{"role": "user", "content": f"""נתוני אנליטיקס שבועיים של amitphotos.com:
 
