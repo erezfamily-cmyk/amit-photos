@@ -6,6 +6,7 @@
 <title>מאיפה הצילום? — Amit Photos</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&display=swap" rel="stylesheet">
+<script src="/assets/js/nav.js" defer></script>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
@@ -22,26 +23,11 @@ body {
   font-family: 'Heebo', sans-serif;
   background: var(--bg);
   color: var(--text);
-  direction: rtl;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 1.5rem 1rem 3rem;
-}
-.site-header {
-  width: 100%;
-  max-width: 420px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 1.5rem;
-}
-.site-title {
-  font-family: 'Syne', sans-serif;
-  font-size: 1.1rem;
-  color: var(--accent);
-  text-decoration: none;
 }
 .game-card {
   width: 100%;
@@ -90,7 +76,7 @@ body {
 .photo-overlay  { position: absolute; inset: 0; background: linear-gradient(to bottom, transparent 45%, var(--surface) 100%); }
 .question-label {
   position: absolute;
-  top: 10px; right: 10px;
+  top: 10px; inset-inline-end: 10px;
   background: rgba(0,0,0,0.65);
   border: 1px solid #333;
   border-radius: 20px;
@@ -123,7 +109,7 @@ body {
   border: 1px solid #2a2a2a;
   border-radius: 8px;
   padding: 0.6rem 0.5rem;
-  text-align: right;
+  text-align: start;
   cursor: pointer;
   font-size: 0.82rem;
   color: #ccc;
@@ -175,7 +161,7 @@ body {
 }
 .next-btn::after {
   content: ' →';
-  margin-right: 0.3rem;
+  margin-inline-end: 0.3rem;
 }
 
 /* ===== WIN / LOSE SCREEN ===== */
@@ -185,7 +171,7 @@ body {
 }
 .win-photo img { width:100%;height:100%;object-fit:cover;opacity:0.75;display:block; }
 .win-badge {
-  position:absolute; top:10px; right:10px;
+  position:absolute; top:10px; inset-inline-end:10px;
   background: var(--accent); color:#111;
   font-size:0.7rem; font-weight:700;
   padding:3px 10px; border-radius:20px;
@@ -212,11 +198,9 @@ body {
   font-size: 0.83rem;
   color: var(--accent);
   line-height: 1.65;
-  text-align: right;
+  text-align: start;
 }
 .discount-box strong { font-size: 0.95rem; }
-.discount-box-sub { font-size: .78rem; opacity: .85; }
-.discount-box-timer { font-size: .72rem; color: #888; margin-top: .2rem; display: block; }
 .result-btn {
   display: block; width: 100%;
   padding: 0.65rem; border-radius: 8px;
@@ -240,13 +224,15 @@ body {
   color: var(--muted);
 }
 </style>
-<script src="/assets/js/nav.js" defer></script>
 </head>
 <body>
 
 <div class="game-card" id="game-card">
-  <div id="loading">טוען תמונות...</div>
-  <div id="error-msg" style="display:none">לא הצלחנו לטעון תמונות. <a href="https://amitphotos.com" style="color:var(--accent)">חזרה לגלריה</a></div>
+  <div id="loading" data-he="טוען תמונות..." data-en="Loading photos...">טוען תמונות...</div>
+  <div id="error-msg" style="display:none">
+    <span data-he="לא הצלחנו לטעון תמונות." data-en="Failed to load photos.">לא הצלחנו לטעון תמונות.</span>
+    <a href="https://amitphotos.com" style="color:var(--accent)" data-he="חזרה לגלריה" data-en="Back to gallery">חזרה לגלריה</a>
+  </div>
 
   <!-- Game screen -->
   <div id="game-screen" style="display:none">
@@ -261,14 +247,14 @@ body {
     <div class="photo-area">
       <img id="question-img" src="" alt="">
       <div class="photo-overlay"></div>
-      <div class="question-label">🌍 מאיפה הצילום?</div>
+      <div class="question-label" data-he="🌍 מאיפה הצילום?" data-en="🌍 Where Was It Taken?">🌍 מאיפה הצילום?</div>
     </div>
 
     <div class="photo-desc" id="photo-desc"></div>
 
     <div class="answers" id="answers"></div>
     <div class="feedback" id="feedback"></div>
-    <button class="next-btn" id="next-btn">הבא</button>
+    <button class="next-btn" id="next-btn" data-he="הבא" data-en="Next">הבא</button>
   </div>
 
   <!-- Result screen -->
@@ -283,15 +269,14 @@ body {
       <div class="win-title" id="result-title">כל הכבוד!</div>
       <div class="win-sub" id="result-sub"></div>
       <div class="win-score" id="win-score"></div>
-      <div class="discount-box" id="discount-box" hidden>
-        🎁 <strong>20% הנחה על כל הגלריה!</strong><br>
-        <span class="discount-box-sub">ענית נכון על 6+ — ההנחה חלה אוטומטית בקופה</span><br>
-        <span id="quiz-discount-timer" class="discount-box-timer"></span>
-      </div>
-      <a class="result-btn btn-gold" id="btn-gallery" href="https://amitphotos.com/?discount=quiz">🛍️ לגלריה עם ההנחה</a>
-      <a class="result-btn btn-whatsapp" id="btn-share" href="#" target="_blank">💬 שתף בוואטסאפ</a>
-      <a class="result-btn btn-facebook" id="btn-share-fb" href="#" target="_blank">📘 שתף בפייסבוק</a>
-      <button class="result-btn btn-dark" id="btn-retry">🔄 סיבוב חדש</button>
+      <a class="result-btn btn-gold" id="btn-gallery" href="https://amitphotos.com/?discount=quiz"
+         data-he="🛍️ לגלריה עם ההנחה" data-en="🛍️ To Gallery with Discount">🛍️ לגלריה עם ההנחה</a>
+      <a class="result-btn btn-whatsapp" id="btn-share" href="#" target="_blank"
+         data-he="💬 שתף בוואטסאפ" data-en="💬 Share on WhatsApp">💬 שתף בוואטסאפ</a>
+      <a class="result-btn btn-facebook" id="btn-share-fb" href="#" target="_blank"
+         data-he="📘 שתף בפייסבוק" data-en="📘 Share on Facebook">📘 שתף בפייסבוק</a>
+      <button class="result-btn btn-dark" id="btn-retry"
+              data-he="🔄 סיבוב חדש" data-en="🔄 New Round">🔄 סיבוב חדש</button>
     </div>
   </div>
 </div>
@@ -302,6 +287,80 @@ const QUIZ_URL   = `${SITE_URL}/quiz/`;
 const QUESTIONS  = 10;
 const WIN_SCORE  = 6;
 
+// i18n
+let _lang = localStorage.getItem('lang') || 'he';
+
+const COUNTRY_EN = {
+  "🇮🇱 ישראל": "🇮🇱 Israel",
+  "🇮🇹 איטליה": "🇮🇹 Italy",
+  "🇬🇧 אנגליה": "🇬🇧 England",
+  "🇬🇷 יוון": "🇬🇷 Greece",
+  "🇦🇹 אוסטריה": "🇦🇹 Austria",
+  "🇳🇱 הולנד": "🇳🇱 Netherlands",
+  "🇩🇪 גרמניה": "🇩🇪 Germany",
+  "🇹🇿 טנזניה": "🇹🇿 Tanzania",
+  "🇲🇪 מונטנגרו": "🇲🇪 Montenegro",
+  "🇸🇰 סלובקיה": "🇸🇰 Slovakia",
+  "🇺🇸 ארה״ב": "🇺🇸 USA",
+  "🇪🇸 ספרד": "🇪🇸 Spain",
+  "🇨🇿 צ׳כיה": "🇨🇿 Czechia",
+  "🇦🇪 אמירויות": "🇦🇪 UAE"
+};
+
+function locCountry(heLabel) {
+  return _lang === 'en' ? (COUNTRY_EN[heLabel] || heLabel) : heLabel;
+}
+
+const T = {
+  he: {
+    scoreCorrect: n => `✓ ${n} נכון`,
+    feedbackCorrect: '✅ נכון! ניחשת יפה',
+    feedbackWrong: c => `❌ טעות — התשובה הנכונה: ${c}`,
+    feedbackTimeUp: c => `⏱ נגמר הזמן — התשובה: ${c}`,
+    resultBadgeWin: '🌍 סיבוב הושלם!',
+    resultBadgeLoss: '🌍 סיבוב הושלם',
+    resultTitleWin: 'כל הכבוד!',
+    resultTitleLoss: 'כמעט!',
+    resultSub: (s, t) => `ענית נכון על ${s} מתוך ${t} שאלות`,
+    shareText: url => `ניצחתי במשחק "מאיפה הצילום?" של עמית! 🎉 — ${url}`
+  },
+  en: {
+    scoreCorrect: n => `✓ ${n} correct`,
+    feedbackCorrect: '✅ Correct! Well guessed',
+    feedbackWrong: c => `❌ Wrong — The correct answer: ${c}`,
+    feedbackTimeUp: c => `⏱ Time's up — The answer: ${c}`,
+    resultBadgeWin: '🌍 Round complete!',
+    resultBadgeLoss: '🌍 Round complete',
+    resultTitleWin: 'Well done!',
+    resultTitleLoss: 'Almost!',
+    resultSub: (s, t) => `You answered ${s} out of ${t} correctly`,
+    shareText: url => `I won the "Where Was It Taken?" game by Amit! 🎉 — ${url}`
+  }
+};
+
+function tt() { return T[_lang] || T.he; }
+
+function applyTranslations() {
+  document.documentElement.lang = _lang;
+  document.documentElement.dir = _lang === 'en' ? 'ltr' : 'rtl';
+  document.querySelectorAll('[data-he]').forEach(el => {
+    el.textContent = _lang === 'en' ? (el.dataset.en || el.dataset.he) : el.dataset.he;
+  });
+}
+
+function setLang(lang) {
+  _lang = lang;
+  applyTranslations();
+  const badge = document.getElementById('score-badge');
+  if (badge) badge.textContent = tt().scoreCorrect(score);
+}
+
+window.setLang = setLang;
+
+window.addEventListener('storage', e => {
+  if (e.key === 'lang') setLang(e.newValue || 'he');
+});
+
 const COUNTRIES = [
   "🇮🇱 ישראל", "🇮🇹 איטליה", "🇬🇧 אנגליה", "🇬🇷 יוון",
   "🇦🇹 אוסטריה", "🇳🇱 הולנד", "🇩🇪 גרמניה", "🇹🇿 טנזניה",
@@ -309,7 +368,7 @@ const COUNTRIES = [
   "🇨🇿 צ׳כיה", "🇦🇪 אמירויות"
 ];
 
-// Map category name → country label (must match COUNTRIES list)
+// Map category name → HE country label (must match COUNTRIES list)
 const CATEGORY_COUNTRY = {
   "ישראל": "🇮🇱 ישראל",
   "איטליה": "🇮🇹 איטליה",
@@ -327,7 +386,7 @@ const CATEGORY_COUNTRY = {
   "אבו דאבי": "🇦🇪 אמירויות",
 };
 
-let questions    = [];  // [{photo, correctCountry, options:[...4 countries]}]
+let questions    = [];  // [{photo, correctCountry (HE), options:[...4 HE countries]}]
 let current      = 0;
 let score        = 0;
 let results      = [];  // true/false per question
@@ -368,12 +427,13 @@ function timeUp() {
   if (answered) return;
   answered = true;
   results.push(false);
+  const correctLabel = locCountry(questions[current].correctCountry);
   document.querySelectorAll('.answer-btn').forEach(b => {
     b.disabled = true;
-    if (b.textContent === questions[current].correctCountry) b.classList.add('correct');
+    if (b.textContent === correctLabel) b.classList.add('correct');
   });
   const fb = document.getElementById('feedback');
-  fb.textContent = `⏱ נגמר הזמן — התשובה: ${questions[current].correctCountry}`;
+  fb.textContent = tt().feedbackTimeUp(correctLabel);
   fb.className = 'feedback wrong';
   fb.style.display = 'block';
   const q = questions[current];
@@ -386,7 +446,7 @@ function timeUp() {
       : desc;
     descEl.style.display = 'block';
   }
-  document.getElementById('score-badge').textContent = `✓ ${score} נכון`;
+  document.getElementById('score-badge').textContent = tt().scoreCorrect(score);
   setTimeout(nextQuestion, 2000);
 }
 
@@ -399,9 +459,9 @@ function shuffle(arr) {
   return a;
 }
 
-function buildOptions(correct) {
-  const others = shuffle(COUNTRIES.filter(c => c !== correct)).slice(0, 3);
-  return shuffle([correct, ...others]);
+function buildOptions(correctHe) {
+  const others = shuffle(COUNTRIES.filter(c => c !== correctHe)).slice(0, 3);
+  return shuffle([correctHe, ...others]);
 }
 
 async function loadQuestions() {
@@ -411,7 +471,9 @@ async function loadQuestions() {
     const photos = await resp.json();
     const eligible = photos;
     if (eligible.length < QUESTIONS) {
-      document.getElementById('error-msg').textContent =
+      document.getElementById('error-msg').querySelector('[data-he]').dataset.he =
+        `לא מספיק תמונות לקוויז (${eligible.length} מתוך ${QUESTIONS} נדרשות).`;
+      document.getElementById('error-msg').querySelector('[data-he]').textContent =
         `לא מספיק תמונות לקוויז (${eligible.length} מתוך ${QUESTIONS} נדרשות).`;
       document.getElementById('error-msg').style.display = '';
       document.getElementById('loading').style.display = 'none';
@@ -440,7 +502,7 @@ function renderQuestion() {
   // Progress
   document.getElementById('progress-text').textContent = `${current + 1} / ${QUESTIONS}`;
   document.getElementById('progress-fill').style.width = `${(current / QUESTIONS) * 100}%`;
-  document.getElementById('score-badge').textContent = `✓ ${score} נכון`;
+  document.getElementById('score-badge').textContent = tt().scoreCorrect(score);
 
   // Photo
   const img = document.getElementById('question-img');
@@ -455,15 +517,15 @@ function renderQuestion() {
   fb.textContent = '';
   document.getElementById('next-btn').style.display = 'none';
 
-  // Render answer buttons
+  // Render answer buttons (localized)
   const answersEl = document.getElementById('answers');
   answersEl.innerHTML = '';
-  q.options.forEach((country, i) => {
+  q.options.forEach((countryHe, i) => {
     const btn = document.createElement('button');
     btn.className = 'answer-btn';
     btn.style.animationDelay = `${i * 0.08}s`;
-    btn.textContent = country;
-    btn.onclick = () => handleAnswer(country, btn);
+    btn.textContent = locCountry(countryHe);
+    btn.onclick = () => handleAnswer(countryHe, btn);
     answersEl.appendChild(btn);
   });
 
@@ -483,39 +545,37 @@ function preloadNext() {
   img.src = photoUrl(next.photo);
 }
 
-function handleAnswer(chosen, clickedBtn) {
+function handleAnswer(chosenHe, clickedBtn) {
   if (answered) return;
   answered = true;
   clearTimer();
   const q = questions[current];
-  const isCorrect = chosen === q.correctCountry;
+  const isCorrect = chosenHe === q.correctCountry;
+  const correctLabel = locCountry(q.correctCountry);
 
   if (isCorrect) {
     score++;
     results.push(true);
     clickedBtn.classList.add('correct');
-    // Bump score badge
     const badge = document.getElementById('score-badge');
     badge.classList.add('bump');
     setTimeout(() => badge.classList.remove('bump'), 200);
-    document.getElementById('feedback').textContent = '✅ נכון! ניחשת יפה';
+    document.getElementById('feedback').textContent = tt().feedbackCorrect;
     document.getElementById('feedback').className = 'feedback correct';
     document.getElementById('feedback').style.display = 'block';
   } else {
     results.push(false);
     clickedBtn.classList.add('wrong');
     document.querySelectorAll('.answer-btn').forEach(b => {
-      if (b.textContent === q.correctCountry) b.classList.add('correct');
+      if (b.textContent === correctLabel) b.classList.add('correct');
     });
-    document.getElementById('feedback').textContent = `❌ טעות — התשובה הנכונה: ${q.correctCountry}`;
+    document.getElementById('feedback').textContent = tt().feedbackWrong(correctLabel);
     document.getElementById('feedback').className = 'feedback wrong';
     document.getElementById('feedback').style.display = 'block';
   }
 
-  // Disable all buttons
   document.querySelectorAll('.answer-btn').forEach(b => b.disabled = true);
 
-  // Show description
   if (q.photo.quiz_description) {
     const descEl = document.getElementById('photo-desc');
     const desc = q.photo.quiz_description;
@@ -526,7 +586,7 @@ function handleAnswer(chosen, clickedBtn) {
     descEl.style.display = 'block';
   }
 
-  document.getElementById('score-badge').textContent = `✓ ${score} נכון`;
+  document.getElementById('score-badge').textContent = tt().scoreCorrect(score);
 
   if (isCorrect) {
     document.getElementById('next-btn').style.display = 'block';
@@ -552,15 +612,14 @@ function showResult() {
 
   const won = score >= WIN_SCORE;
 
-  // Last question's photo as result image
   const lastPhoto = questions[QUESTIONS - 1].photo;
   document.getElementById('result-img').src = lastPhoto.thumbnail || lastPhoto.url;
 
   document.getElementById('result-trophy').textContent = won ? '🏆' : '📸';
-  document.getElementById('result-title').textContent  = won ? 'כל הכבוד!' : 'כמעט!';
-  document.getElementById('result-sub').textContent    = `ענית נכון על ${score} מתוך ${QUESTIONS} שאלות`;
+  document.getElementById('result-title').textContent  = won ? tt().resultTitleWin : tt().resultTitleLoss;
+  document.getElementById('result-sub').textContent    = tt().resultSub(score, QUESTIONS);
+  document.getElementById('result-badge').textContent  = won ? tt().resultBadgeWin : tt().resultBadgeLoss;
 
-  // Score dots
   const dotContainer = document.getElementById('win-score');
   dotContainer.innerHTML = '';
   results.forEach(r => {
@@ -572,42 +631,28 @@ function showResult() {
 
   if (won) {
     document.getElementById('btn-gallery').style.display = '';
-    const waText = encodeURIComponent(`ניצחתי במשחק "מאיפה הצילום?" של עמית! 🎉 — ${QUIZ_URL}`);
+    const waText = encodeURIComponent(tt().shareText(QUIZ_URL));
     document.getElementById('btn-share').href = `https://wa.me/?text=${waText}`;
     document.getElementById('btn-share-fb').href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(QUIZ_URL)}`;
     document.getElementById('btn-share-fb').style.display = '';
-    // Show discount box with 30-min countdown
-    const discountBox = document.getElementById('discount-box');
-    discountBox.hidden = false;
-    const timerEl = document.getElementById('quiz-discount-timer');
-    const expiry = Date.now() + 30 * 60 * 1000;
-    let discountTick;
-    function updateDiscountTimer() {
-      const left = expiry - Date.now();
-      if (left <= 0) { timerEl.textContent = 'ההנחה פגה — שחק שוב לקבל הנחה חדשה'; clearInterval(discountTick); return; }
-      const m = Math.floor(left / 60000);
-      const s = Math.floor((left % 60000) / 1000);
-      timerEl.textContent = `תוקף ההנחה: ${m}:${String(s).padStart(2,'0')} דקות`;
-    }
-    updateDiscountTimer();
-    discountTick = setInterval(updateDiscountTimer, 1000);
   } else {
     document.getElementById('btn-gallery').style.display = 'none';
     document.getElementById('btn-share-fb').style.display = 'none';
-    document.getElementById('result-badge').textContent = '🌍 סיבוב הושלם';
-    document.getElementById('discount-box').hidden = true;
   }
 
+  // Re-apply translations to static result buttons
+  applyTranslations();
   document.getElementById('btn-retry').onclick = startGame;
 }
 
 async function startGame() {
   current = 0; score = 0; results = []; answered = false;
-  document.getElementById('discount-box').hidden = true;
   document.getElementById('result-screen').style.display = 'none';
   document.getElementById('loading').style.display = '';
   document.getElementById('error-msg').style.display = 'none';
   document.getElementById('game-screen').style.display = 'none';
+
+  applyTranslations();
 
   const ok = await loadQuestions();
   if (!ok) return;
