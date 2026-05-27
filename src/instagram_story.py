@@ -20,33 +20,41 @@ IG_USER_ID   = os.environ.get("INSTAGRAM_USER_ID", "")
 ACCESS_TOKEN = os.environ.get("INSTAGRAM_PAGE_TOKEN", "")
 FB_PAGE_ID   = os.environ.get("FACEBOOK_PAGE_ID", "")
 
-CATEGORIES       = ["טבע", "פורטרט", "עירוני", "אירועים"]
-MUSIC_FILES      = {
-    "טבע":     "nature-ambient.mp3",
-    "פורטרט":  "soft-portrait.mp3",
-    "עירוני":  "urban-electronic.mp3",
-    "אירועים": "cinematic-events.mp3",
-}
 PHOTOS_PER_STORY = 8
 SLIDE_DURATION   = 3.5   # seconds
 TRANSITION_DUR   = 0.7   # cross-fade between slides
 WATERMARK        = "amitphotos.com"
 
-# ffmpeg lavfi sources for procedural ambient audio (fallback when no music file)
-AMBIENT = {
-    "טבע": {
+# Map real album/category names → music file by keyword matching
+NATURE_KEYWORDS   = ["פרחים", "צמחים", "בעלי חיים", "מאקרו", "טבע", "ציפור", "פרח", "חרק"]
+PORTRAIT_KEYWORDS = ["פורטרט"]
+CINEMATIC_KEYWORDS = ["מופשט", "יצירתי", "אמנות", "דומם"]
+# Everything else (travel, locations) → urban-electronic
+
+def get_music_for_category(category):
+    if any(k in category for k in NATURE_KEYWORDS):
+        return "nature-ambient.mp3"
+    if any(k in category for k in PORTRAIT_KEYWORDS):
+        return "soft-portrait.mp3"
+    if any(k in category for k in CINEMATIC_KEYWORDS):
+        return "cinematic-events.mp3"
+    return "urban-electronic.mp3"
+
+# ffmpeg lavfi ambient audio fallback (no music file needed)
+AMBIENT_BY_MUSIC = {
+    "nature-ambient.mp3": {
         "src": "anoisesrc=c=pink:a=0.5:r=44100",
         "af":  "lowpass=f=350,highpass=f=70,volume=0.18",
     },
-    "פורטרט": {
+    "soft-portrait.mp3": {
         "src": "aevalsrc=0.15*sin(2*PI*220*t)+0.1*sin(2*PI*330*t)+0.07*sin(2*PI*440*t)+0.04*sin(2*PI*110*t):s=44100:c=stereo",
         "af":  "aecho=0.6:0.5:900:0.35,lowpass=f=700,volume=0.30",
     },
-    "עירוני": {
+    "urban-electronic.mp3": {
         "src": "anoisesrc=c=white:a=0.35:r=44100",
         "af":  "bandpass=f=180:width_type=h:w=80,volume=0.12",
     },
-    "אירועים": {
+    "cinematic-events.mp3": {
         "src": "aevalsrc=0.18*sin(2*PI*261.63*t)+0.13*sin(2*PI*329.63*t)+0.1*sin(2*PI*392*t)+0.07*sin(2*PI*523.25*t):s=44100:c=stereo",
         "af":  "aecho=0.7:0.6:700:0.4,lowpass=f=1500,volume=0.28",
     },
@@ -56,14 +64,11 @@ AMBIENT = {
 # ── State ─────────────────────────────────────────────────────────────────────
 
 def load_state():
-    default = {
-        "current_category_index": 0,
-        "used_ids_by_category": {c: [] for c in CATEGORIES},
-    }
+    default = {"current_category_index": 0, "used_ids_by_category": {}}
     if not STORY_FILE.exists():
         return default
     data = json.loads(STORY_FILE.read_text(encoding="utf-8"))
-    if "used_ids_by_category" not in data:          # migrate old format
+    if "used_ids_by_category" not in data:
         return default
     return data
 
@@ -92,23 +97,28 @@ def load_photos():
     return []
 
 def select_photos(photos, state):
-    cat_idx  = state.get("current_category_index", 0) % len(CATEGORIES)
-    category = CATEGORIES[cat_idx]
-    pool     = [p for p in photos if p.get("category") == category]
+    from collections import defaultdict
+    by_cat = defaultdict(list)
+    for p in photos:
+        c = p.get("category", "").strip()
+        if c:
+            by_cat[c].append(p)
 
-    if len(pool) < 3:
-        for alt in CATEGORIES:
-            a = [p for p in photos if p.get("category") == alt]
-            if len(a) >= 3:
-                category, pool = alt, a
-                break
+    # All albums with at least 3 photos, sorted for stable daily rotation
+    valid_cats = sorted(c for c, ps in by_cat.items() if len(ps) >= 3)
+    if not valid_cats:
+        return random.sample(photos, min(PHOTOS_PER_STORY, len(photos))), "כללי", 0
+
+    cat_idx  = state.get("current_category_index", 0) % len(valid_cats)
+    category = valid_cats[cat_idx]
+    pool     = by_cat[category]
 
     used  = set(state.get("used_ids_by_category", {}).get(category, []))
     avail = [p for p in pool if p["id"] not in used]
-    if len(avail) < PHOTOS_PER_STORY:
+    if len(avail) < min(PHOTOS_PER_STORY, len(pool)):
         state.setdefault("used_ids_by_category", {})[category] = []
         avail = pool
-        print(f"🔄 קטגוריה '{category}' מתחילה מחדש")
+        print(f"🔄 '{category}' מתחיל מחדש")
 
     selected = random.sample(avail, min(PHOTOS_PER_STORY, len(avail)))
     return selected, category, cat_idx
@@ -259,10 +269,10 @@ def add_watermark(video_path, tmp_dir):
 
 # ── Audio ─────────────────────────────────────────────────────────────────────
 
-def _gen_ambient(category, duration, tmp_dir):
+def _gen_ambient(music_file, duration, tmp_dir):
     """Generate ambient audio via ffmpeg lavfi (no external file needed)."""
     out   = tmp_dir / "ambient.aac"
-    gen   = AMBIENT.get(category, AMBIENT["טבע"])
+    gen   = AMBIENT_BY_MUSIC.get(music_file, AMBIENT_BY_MUSIC["urban-electronic.mp3"])
     fade_st = max(0.0, duration - 2.0)
     af    = f"{gen['af']},afade=t=in:st=0:d=1.5,afade=t=out:st={fade_st:.2f}:d=2"
 
@@ -275,14 +285,15 @@ def _gen_ambient(category, duration, tmp_dir):
     return out if r.returncode == 0 else None
 
 def add_audio(video_path, category, tmp_dir):
-    duration = get_duration(video_path)
-    fade_st  = max(0.0, duration - 2.0)
+    duration  = get_duration(video_path)
+    fade_st   = max(0.0, duration - 2.0)
+    music_file = get_music_for_category(category)
 
     # Prefer real music file if available
-    music = MUSIC_DIR / MUSIC_FILES.get(category, "")
+    music = MUSIC_DIR / music_file
     if not music.exists():
-        print("⚠️  קובץ מוזיקה לא נמצא — מייצר ambient audio")
-        music = _gen_ambient(category, duration, tmp_dir)
+        print(f"⚠️  {music_file} לא נמצא — מייצר ambient audio")
+        music = _gen_ambient(music_file, duration, tmp_dir)
 
     if not music or not Path(music).exists():
         print("⚠️  ללא אודיו")
@@ -462,7 +473,14 @@ def main():
         publish_fb(video_url)
 
     # Save state
-    state["current_category_index"] = (idx + 1) % len(CATEGORIES)
+    from collections import defaultdict
+    by_cat = defaultdict(list)
+    for p in photos:
+        c = p.get("category", "").strip()
+        if c:
+            by_cat[c].append(p)
+    valid_cats = sorted(c for c, ps in by_cat.items() if len(ps) >= 3)
+    state["current_category_index"] = (idx + 1) % max(len(valid_cats), 1)
     state.setdefault("used_ids_by_category", {}).setdefault(cat, []).extend(
         p["id"] for p in selected
     )
