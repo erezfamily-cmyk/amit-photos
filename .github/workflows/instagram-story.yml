@@ -1,15 +1,10 @@
 name: Instagram Story אוטומטי
 
 on:
-  # כל יום ב-08:00 UTC = 11:00 ישראל (בוקר — Stories נצפים בכל שעות)
+  # כל יום 08:00 UTC = 11:00 ישראל
   schedule:
     - cron: '0 8 * * *'
   workflow_dispatch:
-    inputs:
-      mode:
-        description: 'latest = מה-post האחרון, random = רנדומלי'
-        required: false
-        default: 'random'
 
 jobs:
   instagram-story:
@@ -27,18 +22,15 @@ jobs:
       - name: התקנת חבילות
         run: pip install requests
 
-      - name: פרסום Story
+      - name: פרסום Story Slideshow
         env:
           INSTAGRAM_USER_ID: ${{ secrets.INSTAGRAM_USER_ID }}
           INSTAGRAM_PAGE_TOKEN: ${{ secrets.INSTAGRAM_PAGE_TOKEN }}
+          FACEBOOK_PAGE_ID: ${{ secrets.FACEBOOK_PAGE_ID }}
           PYTHONUNBUFFERED: "1"
-        run: |
-          MODE="${{ github.event.inputs.mode || 'random' }}"
-          FLAG=""
-          if [ "$MODE" = "latest" ]; then FLAG="--latest"; fi
-          python src/instagram_story.py $FLAG
+        run: python src/instagram_story.py
 
-      - name: שמירת היסטוריית Stories
+      - name: שמירת היסטוריה
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
