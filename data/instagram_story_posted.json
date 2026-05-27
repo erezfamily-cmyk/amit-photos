@@ -1,4 +1,15 @@
 {
-  "current_category_index": 0,
-  "used_ids_by_category": {}
+  "current_category_index": 1,
+  "used_ids_by_category": {
+    "אבו דאבי": [
+      "6c9e818c-bdd3-402f-b6f5-ee2e668507c9",
+      "5c2b2c34-c529-49a4-82b5-c0d52677699f",
+      "d3e3d820-3c06-4409-8fda-02122e3b32ca",
+      "7f470220-7ca4-4254-9e51-36ed9a51f71d",
+      "fce05cb0-6424-4896-88fc-f2d21bcf5644",
+      "744fb8cc-abf4-4c4e-b667-3c3bf06e184a",
+      "168b4007-b320-44e9-95d0-08ce2b18ebcf",
+      "2978f54f-514a-418a-9d25-7603aed57d99"
+    ]
+  }
 }
