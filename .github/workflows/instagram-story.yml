@@ -44,4 +44,5 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add data/instagram_story_posted.json
           git diff --cached --quiet || git commit -m "🤖 עדכון instagram_story_posted.json"
+          git pull --rebase origin main
           git push
