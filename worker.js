@@ -3259,6 +3259,13 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direc
 .learn-card-date{font-size:.65rem;color:#555}
 .back-link{text-align:center;padding:1rem}
 .back-link a{color:var(--accent);font-size:.85rem;text-decoration:none}
+.learn-affiliate{max-width:900px;margin:1rem auto;padding:0 1.25rem}
+.learn-affiliate-inner{background:linear-gradient(135deg,rgba(200,169,110,.08),rgba(200,169,110,.03));border:1px solid rgba(200,169,110,.3);border-radius:14px;padding:1.1rem 1.4rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.learn-affiliate-text{}
+.learn-affiliate-title{font-family:'Syne',sans-serif;font-size:.9rem;color:var(--accent);margin-bottom:.25rem}
+.learn-affiliate-desc{font-size:.78rem;color:var(--muted)}
+.learn-affiliate-btn{flex-shrink:0;background:var(--accent);color:#000;font-weight:700;font-size:.8rem;padding:.5rem 1.1rem;border-radius:8px;text-decoration:none;white-space:nowrap;transition:background .15s}
+.learn-affiliate-btn:hover{background:#e0c080}
 </style>
 <script src="/assets/js/nav.js" defer></script>
 <script src="/assets/js/share.js" defer></script>
@@ -3269,6 +3276,15 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direc
   <p data-he="ניתוח צילומי מעמיק — חוקי קומפוזיציה, הגדרות מצלמה, ומה הצלם חשב" data-en="Deep photographic analysis — composition rules, camera settings, and the photographer's vision">ניתוח צילומי מעמיק — חוקי קומפוזיציה, הגדרות מצלמה, ומה הצלם חשב</p>
 </div>
 <div class="grid">${cards}${empty}</div>
+<div class="learn-affiliate">
+  <div class="learn-affiliate-inner">
+    <div class="learn-affiliate-text">
+      <div class="learn-affiliate-title" data-he="רוצה לערוך כמו הצלמים שניתחת?" data-en="Want to edit like the photographers you just analyzed?">רוצה לערוך כמו הצלמים שניתחת?</div>
+      <div class="learn-affiliate-desc" data-he="Luminar Neo — עריכת AI חכמה, מוצר מצוין למתחילים ולמקצוענים" data-en="Luminar Neo — smart AI editing, great for beginners and pros alike">Luminar Neo — עריכת AI חכמה, מוצר מצוין למתחילים ולמקצוענים</div>
+    </div>
+    <a class="learn-affiliate-btn" href="https://skylum.evyy.net/c/7325979/1142920/3255" target="_blank" rel="noopener sponsored" data-he="נסה חינם ←" data-en="Try Free →">נסה חינם ←</a>
+  </div>
+</div>
 <div class="back-link nav-prev"><a href="https://amitphotos.com" data-he="← לגלריה המלאה" data-en="← Back to Gallery">← לגלריה המלאה</a></div>
 <script>
 function getLang(){return localStorage.getItem('lang')||'he'}
