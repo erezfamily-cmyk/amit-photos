@@ -1778,7 +1778,7 @@ function addExtraLink() {
   if (!container) return;
   const idx = Date.now();
   const div = document.createElement('div');
-  div.style.cssText = 'display:flex;gap:.5rem;align-items:center';
+  div.style.css?v=9aff906Text = 'display:flex;gap:.5rem;align-items:center';
   div.dataset.linkIdx = idx;
   div.innerHTML = `
     <input placeholder="תווית (למשל: אתר הפארק)" style="flex:1;background:#0a0a0a;border:1px solid #222;color:#f0ede8;padding:.4rem .6rem;border-radius:4px;font-family:'Heebo',sans-serif;font-size:.82rem" class="extra-link-label">
@@ -4302,7 +4302,7 @@ function annEnRender() {
   labeled.forEach(ann => {
     const absIdx = rows.indexOf(ann);
     const div = document.createElement('div');
-    div.style.cssText = 'display:flex;gap:.5rem;align-items:center';
+    div.style.css?v=9aff906Text = 'display:flex;gap:.5rem;align-items:center';
     div.innerHTML = `
       <span style="font-size:.75rem;color:#555;min-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${escHtml(ann.label)}">${escHtml((ann.label||'').split('\n')[0])}</span>
       <input type="text" value="${escHtml(ann.label_en||'')}" placeholder="English label..."
@@ -5216,7 +5216,7 @@ document.addEventListener('DOMContentLoaded', () => {
       `;
       grid.after(bulkBar);
     }
-    bulkBar.style.cssText = 'display:none;margin-top:.75rem;padding:.6rem 1rem;background:#1a1a1a;border:1px solid #333;border-radius:6px;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap';
+    bulkBar.style.css?v=9aff906Text = 'display:none;margin-top:.75rem;padding:.6rem 1rem;background:#1a1a1a;border:1px solid #333;border-radius:6px;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap';
 
     // Wire checkboxes
     document.querySelectorAll('.loc-photo-sale-cb').forEach(cb => {

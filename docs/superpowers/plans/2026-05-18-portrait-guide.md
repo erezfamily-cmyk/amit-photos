@@ -1,4 +1,33 @@
-﻿<!DOCTYPE html>
+# Portrait Photography Guide Implementation Plan
+
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+
+**Goal:** Build `/camera/portrait/index.html` — an interactive Hebrew/English portrait photography guide with 5 sections (angle, lighting patterns, gaze, background separation, expression), Amit's 11 portrait photos, and a purchase gallery.
+
+**Architecture:** Single self-contained HTML file — all CSS inline in `<style>`, all JS inline in `<script>`. Identical pattern to `camera/landscape/index.html`: `data-he`/`data-en` attributes, `applyLang()` with `innerHTML`, `nav.js` injection, `window.setLang` hook. Interactive elements are pure CSS/SVG/JS — no external libraries.
+
+**Tech Stack:** HTML5, CSS3, Vanilla JS, inline SVG for diagrams, Google Drive thumbnail API for images, `assets/js/nav.js`.
+
+---
+
+## File Structure
+
+| Action | File | Responsibility |
+|--------|------|----------------|
+| Create | `camera/portrait/index.html` | Complete page — HTML + CSS + JS, all inline |
+| Modify | `camera/index.html` | Add portrait card to the topic grid |
+
+---
+
+### Task 1: Page Skeleton + Hero
+
+**Files:**
+- Create: `camera/portrait/index.html`
+
+- [ ] **Step 1: Create the file with all base CSS, nav, hero, and bilingual system**
+
+```html
+<!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
 <meta charset="utf-8">
@@ -26,7 +55,7 @@ html { scroll-behavior: smooth; }
 
 /* Hero */
 .ls-hero { position: relative; height: 70vh; min-height: 420px; max-height: 600px; display: flex; align-items: center; justify-content: center; text-align: center; overflow: hidden; margin-bottom: 3rem; }
-.ls-hero-bg { position: absolute; inset: 0; background-image: url('https://drive.google.com/thumbnail?id=1qS2yrWz66Xt2XQtmxjLbi30BBFrqGXB1&sz=w1600'); background-size: cover; background-position: center center; filter: brightness(.42); z-index: 0; }
+.ls-hero-bg { position: absolute; inset: 0; background-image: url('https://drive.google.com/thumbnail?id=1iGsR7oUKjZ75jOxcqdw-plYU72f1LbEp&sz=w1600'); background-size: cover; background-position: center top; filter: brightness(.42); z-index: 0; }
 .ls-hero-content { position: relative; z-index: 1; padding: 2rem; }
 .ls-hero-badge { display: inline-block; font-size: .72rem; letter-spacing: .15em; text-transform: uppercase; background: rgba(200,169,110,.15); border: 1px solid rgba(200,169,110,.35); color: var(--accent); border-radius: 20px; padding: .3rem .9rem; margin-bottom: 1rem; }
 .ls-hero h1 { font-family: 'Syne', sans-serif; font-size: 3rem; color: #fff; margin-bottom: .4rem; line-height: 1.1; }
@@ -153,25 +182,8 @@ input[type=range].blur-slider::-webkit-slider-thumb { -webkit-appearance: none; 
 /* Lazy fade */
 img[loading="lazy"] { opacity: 0; transition: opacity .4s; }
 img.loaded { opacity: 1; }
-
-.gear-section{max-width:760px;margin:0 auto;padding:1.5rem 1.25rem .5rem;border-bottom:1px solid var(--border)}
-.gear-row-label{font-family:'Syne',sans-serif;font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:.75rem}
-.gear-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:.75rem}
-.gear-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;text-decoration:none;transition:border-color .2s}
-.gear-card:hover{border-color:rgba(200,169,110,.45)}
-.gear-card-ico{aspect-ratio:3/2;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:2.5rem}
-.gear-card-body{padding:.85rem;flex:1;display:flex;flex-direction:column}
-.gear-card-name{font-family:'Syne',sans-serif;font-size:.87rem;color:var(--text);margin-bottom:.3rem}
-.gear-card-desc{font-size:.76rem;color:var(--muted);line-height:1.55;flex:1;margin-bottom:.8rem}
-.gear-card-btn{display:block;text-align:center;border:1px solid rgba(200,169,110,.45);color:var(--accent);font-size:.75rem;font-weight:700;padding:.4rem .75rem;border-radius:6px;transition:background .15s,color .15s}
-.gear-card-btn:hover{background:var(--accent);color:#000}
-.gear-disclose{font-size:.67rem;color:#444;text-align:center;padding:.6rem 0 1.5rem}
-.kofi-bar{text-align:center;padding:1.25rem 1.25rem 1.75rem;max-width:760px;margin:0 auto}
-.kofi-bar a{display:inline-flex;align-items:center;gap:.5rem;background:var(--surface);border:1px solid rgba(200,169,110,.4);color:var(--accent);font-size:.82rem;font-weight:700;padding:.55rem 1.4rem;border-radius:8px;text-decoration:none;transition:background .2s,color .2s}
-.kofi-bar a:hover{background:var(--accent);color:#000}.gear-card-ico svg { width: 3rem; height: 3rem; stroke: var(--accent); opacity: .7; }
 </style>
-<script src="/assets/js/nav.js?v=9aff906" defer></script>
-<script src="/assets/js/share.js" defer></script>
+<script src="/assets/js/nav.js" defer></script>
 </head>
 <body>
 
@@ -191,7 +203,73 @@ img.loaded { opacity: 1; }
 </div>
 
 <div class="article">
+<!-- SECTIONS 1-5 inserted in Tasks 2-6 -->
+</div><!-- end article -->
 
+<!-- PURCHASE GALLERY inserted in Task 7 -->
+
+<div class="nav-prev">
+  <a href="/camera/" data-he="← חזרה לבית ספר לצילום" data-en="← Back to Photography School">← חזרה לבית ספר לצילום</a>
+</div>
+
+<script>
+function getLang() { return localStorage.getItem('lang') || 'he'; }
+
+function applyLang() {
+  var lang = getLang();
+  var isEn = lang === 'en';
+  document.documentElement.dir = isEn ? 'ltr' : 'rtl';
+  document.documentElement.lang = lang;
+  document.body.style.direction = isEn ? 'ltr' : 'rtl';
+  document.title = isEn
+    ? 'Portrait Photography — Full Guide | Photography School | Amit Photos'
+    : 'צילום פורטרט — מדריך מלא | בית ספר לצילום | Amit Photos';
+  document.querySelectorAll('[data-he]').forEach(function(el) {
+    el.innerHTML = isEn ? (el.dataset.en || el.dataset.he) : el.dataset.he;
+  });
+  document.querySelectorAll('.en-h2, .ls-hero-en').forEach(function(el) {
+    el.style.display = isEn ? 'none' : '';
+  });
+  if (typeof refreshInteractive === 'function') refreshInteractive(isEn);
+}
+
+window.setLang = applyLang;
+
+document.querySelectorAll('img[loading="lazy"]').forEach(function(img) {
+  if (img.complete) img.classList.add('loaded');
+  else img.addEventListener('load', function() { img.classList.add('loaded'); });
+});
+
+applyLang();
+window.addEventListener('storage', function(e) { if (e.key === 'lang') applyLang(); });
+</script>
+</body>
+</html>
+```
+
+- [ ] **Step 2: Verify in browser**
+
+Run `python -m http.server 8000` from repo root. Open `http://localhost:8000/camera/portrait/`.  
+Expected: dark page, hero photo visible, nav bar, breadcrumb "למד לצלם ← פורטרט", back link at bottom. No JS errors.
+
+- [ ] **Step 3: Commit**
+
+```bash
+git add camera/portrait/index.html
+git commit -m "feat: portrait guide page skeleton + hero + nav"
+git push origin main
+```
+
+---
+
+### Task 2: Section 1 — זווית צילום / Camera Angle
+
+**Files:**
+- Modify: `camera/portrait/index.html` — add section 1 HTML and JS inside `<div class="article">` and `<script>`
+
+- [ ] **Step 1: Add Section 1 HTML** — replace `<!-- SECTIONS 1-5 inserted in Tasks 2-6 -->` with:
+
+```html
 <!-- ══ SECTION 1: זווית צילום ══ -->
 <div class="ls-section" id="angle">
   <div class="ls-section-badge">01</div>
@@ -221,10 +299,14 @@ img.loaded { opacity: 1; }
             <div class="ac-label-en" data-he="From Above" data-en="מלמעלה">From Above</div>
             <div class="angle-svg-wrap">
               <svg width="60" height="80" viewBox="0 0 60 80">
+                <!-- head -->
                 <ellipse cx="30" cy="52" rx="16" ry="19" fill="#333" stroke="#555" stroke-width="1.5"/>
+                <!-- neck -->
                 <rect x="25" y="68" width="10" height="10" rx="2" fill="#333"/>
+                <!-- camera (above, angled down) -->
                 <rect x="38" y="10" width="18" height="12" rx="3" fill="#c8a96e"/>
                 <rect x="44" y="7" width="6" height="4" rx="1" fill="#a07840"/>
+                <!-- lens arrow pointing down-left -->
                 <line x1="38" y1="22" x2="32" y2="38" stroke="#c8a96e" stroke-width="1.5" marker-end="url(#arr)"/>
                 <defs><marker id="arr" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#c8a96e"/></marker></defs>
               </svg>
@@ -240,6 +322,7 @@ img.loaded { opacity: 1; }
               <svg width="60" height="80" viewBox="0 0 60 80">
                 <ellipse cx="30" cy="52" rx="16" ry="19" fill="#333" stroke="#555" stroke-width="1.5"/>
                 <rect x="25" y="68" width="10" height="10" rx="2" fill="#333"/>
+                <!-- camera at eye level, horizontal -->
                 <rect x="40" y="42" width="18" height="12" rx="3" fill="#c8a96e"/>
                 <rect x="46" y="39" width="6" height="4" rx="1" fill="#a07840"/>
                 <line x1="40" y1="48" x2="30" y2="48" stroke="#c8a96e" stroke-width="1.5" marker-end="url(#arr2)"/>
@@ -257,6 +340,7 @@ img.loaded { opacity: 1; }
               <svg width="60" height="80" viewBox="0 0 60 80">
                 <ellipse cx="30" cy="40" rx="16" ry="19" fill="#333" stroke="#555" stroke-width="1.5"/>
                 <rect x="25" y="56" width="10" height="10" rx="2" fill="#333"/>
+                <!-- camera below, angled up -->
                 <rect x="38" y="66" width="18" height="12" rx="3" fill="#c8a96e"/>
                 <rect x="44" y="63" width="6" height="4" rx="1" fill="#a07840"/>
                 <line x1="38" y1="70" x2="32" y2="54" stroke="#c8a96e" stroke-width="1.5" marker-end="url(#arr3)"/>
@@ -273,6 +357,48 @@ img.loaded { opacity: 1; }
 </div>
 <hr class="divider">
 
+<!-- SECTION 2 goes here (Task 3) -->
+<!-- SECTION 3 goes here (Task 4) -->
+<!-- SECTION 4 goes here (Task 5) -->
+<!-- SECTION 5 goes here (Task 6) -->
+```
+
+- [ ] **Step 2: Add Section 1 JS** — inside `<script>`, before `applyLang()` call:
+
+```js
+// Section 1: Camera angle selector
+function selectAngle(el, idx) {
+  document.querySelectorAll('.angle-card').forEach(function(c) { c.classList.remove('active'); });
+  el.classList.add('active');
+}
+
+function refreshInteractive(isEn) {
+  // placeholder — expanded in later tasks
+}
+```
+
+- [ ] **Step 3: Verify in browser**
+
+Section 1 shows wizard photo + 3 angle cards. "Eye Level" is active by default. Clicking each card activates it. Language toggle switches all labels. No console errors.
+
+- [ ] **Step 4: Commit**
+
+```bash
+git add camera/portrait/index.html
+git commit -m "feat: portrait guide section 1 — camera angle"
+git push origin main
+```
+
+---
+
+### Task 3: Section 2 — דפוסי תאורה / Lighting Patterns
+
+**Files:**
+- Modify: `camera/portrait/index.html`
+
+- [ ] **Step 1: Add Section 2 HTML** — replace `<!-- SECTION 2 goes here (Task 3) -->`:
+
+```html
 <!-- ══ SECTION 2: דפוסי תאורה ══ -->
 <div class="ls-section" id="lighting">
   <div class="ls-section-badge">02</div>
@@ -302,10 +428,16 @@ img.loaded { opacity: 1; }
         </div>
         <div class="lp-diagram">
           <svg id="lpSvg" width="140" height="140" viewBox="0 0 140 140">
+            <!-- top-down view: head circle + nose line + light source -->
+            <!-- background -->
             <rect width="140" height="140" fill="#0d0d0d" rx="10"/>
+            <!-- head -->
             <ellipse cx="70" cy="80" rx="32" ry="38" fill="#2a2a2a" stroke="#444" stroke-width="1.5"/>
+            <!-- nose direction (straight up = 12 o'clock) -->
             <line id="lpNose" x1="70" y1="80" x2="70" y2="50" stroke="#666" stroke-width="2" stroke-dasharray="4 2"/>
+            <!-- shadow triangle on face -->
             <path id="lpShadow" d="" fill="rgba(0,0,0,0.45)"/>
+            <!-- light source circle -->
             <g id="lpLight">
               <circle r="10" fill="#c8a96e" opacity=".9"/>
               <line x1="-13" y1="0" x2="-17" y2="0" stroke="#c8a96e" stroke-width="1.5"/>
@@ -317,6 +449,7 @@ img.loaded { opacity: 1; }
               <line x1="9" y1="9" x2="12" y2="12" stroke="#c8a96e" stroke-width="1.5"/>
               <line x1="-9" y1="9" x2="-12" y2="12" stroke="#c8a96e" stroke-width="1.5"/>
             </g>
+            <!-- light beam lines -->
             <line id="lpBeam1" x1="0" y1="0" x2="70" y2="80" stroke="rgba(200,169,110,.2)" stroke-width="1"/>
             <line id="lpBeam2" x1="0" y1="0" x2="70" y2="80" stroke="rgba(200,169,110,.2)" stroke-width="1"/>
           </svg>
@@ -329,7 +462,116 @@ img.loaded { opacity: 1; }
   </div>
 </div>
 <hr class="divider">
+```
 
+- [ ] **Step 2: Add Section 2 JS** — inside `<script>`, before `applyLang()` call:
+
+```js
+// Section 2: Lighting patterns
+var LP_DATA = [
+  {
+    name: 'Rembrandt',
+    // light at ~45° above and to side → position in SVG (top-down view, head at 70,80)
+    lx: 25, ly: 25,
+    shadow: 'M70,80 Q55,62 52,80 Q55,95 70,118 Z',
+    tip: {
+      he: '<strong>Rembrandt</strong> — האור ב-45° מעל ומהצד. יוצר משולש אור קטן על הלחי המוצללת. <strong>דרמטי, אופי, קלאסי.</strong> מתאים לפורטרט גברי ו-character portraits.',
+      en: '<strong>Rembrandt</strong> — Light at 45° above and to the side. Creates a small triangle of light on the shadowed cheek. <strong>Dramatic, character, classic.</strong> Works for masculine and character portraits.'
+    }
+  },
+  {
+    name: 'Loop',
+    lx: 35, ly: 18,
+    shadow: 'M70,80 Q60,68 62,80 Q63,92 70,108 Z',
+    tip: {
+      he: '<strong>Loop</strong> — האור מעט מעל ולצד. הצל יוצר "לולאה" קטנה מתחת לאף. <strong>הנפוץ ביותר, מחמיא, מתאים לכולם.</strong> ברירת המחדל של צלמי פורטרט.',
+      en: '<strong>Loop</strong> — Light slightly above and to the side. Shadow creates a small "loop" below the nose. <strong>Most common, flattering, works for everyone.</strong> The portrait photographer\'s default.'
+    }
+  },
+  {
+    name: 'Butterfly',
+    lx: 70, ly: 15,
+    shadow: 'M62,88 Q70,82 78,88 Q75,96 70,100 Q65,96 62,88 Z',
+    tip: {
+      he: '<strong>Butterfly / Paramount</strong> — האור ישר מלפנים ומעל. הצל מתחת לאף מזכיר פרפר. <strong>מחמיא, אופנה, Hollywood.</strong> עובד טוב עם עצמות לחיים בולטות.',
+      en: '<strong>Butterfly / Paramount</strong> — Light directly in front and above. Shadow under nose resembles a butterfly. <strong>Flattering, fashion, Hollywood.</strong> Works great with prominent cheekbones.'
+    }
+  },
+  {
+    name: 'Split',
+    lx: 115, ly: 80,
+    shadow: 'M70,48 Q70,60 70,118 Q52,110 38,80 Q52,50 70,48 Z',
+    tip: {
+      he: '<strong>Split</strong> — האור ב-90° מהצד. מחצית הפנים מוארת, מחצית בצל מוחלט. <strong>דרמטי מאוד, אופי חזק, מסתורי.</strong> לא מחמיא אבל עוצמתי.',
+      en: '<strong>Split</strong> — Light exactly 90° to the side. Half the face lit, half in complete shadow. <strong>Very dramatic, strong character, mysterious.</strong> Not flattering, but powerful.'
+    }
+  }
+];
+var activePattern = 0;
+
+function selectPattern(el, idx) {
+  document.querySelectorAll('.lp-tab').forEach(function(t) { t.classList.remove('active'); });
+  el.classList.add('active');
+  activePattern = idx;
+  renderPattern();
+}
+
+function renderPattern() {
+  var p = LP_DATA[activePattern];
+  var lang = getLang();
+  // Move light source
+  var lg = document.getElementById('lpLight');
+  if (lg) lg.setAttribute('transform', 'translate(' + p.lx + ',' + p.ly + ')');
+  // Update beam lines
+  var b1 = document.getElementById('lpBeam1');
+  var b2 = document.getElementById('lpBeam2');
+  if (b1) { b1.setAttribute('x1', p.lx); b1.setAttribute('y1', p.ly); b1.setAttribute('x2', '38'); b1.setAttribute('y2', '55'); }
+  if (b2) { b2.setAttribute('x1', p.lx); b2.setAttribute('y1', p.ly); b2.setAttribute('x2', '102'); b2.setAttribute('y2', '55'); }
+  // Shadow
+  var sh = document.getElementById('lpShadow');
+  if (sh) sh.setAttribute('d', p.shadow);
+  // Tip
+  var tip = document.getElementById('lpTip');
+  if (tip) tip.innerHTML = p.tip[lang] || p.tip.he;
+}
+```
+
+- [ ] **Step 3: Update `refreshInteractive`** — replace the placeholder:
+
+```js
+function refreshInteractive(isEn) {
+  renderPattern();
+}
+```
+
+- [ ] **Step 4: Add `renderPattern()` call to Init section** — add before `applyLang()`:
+
+```js
+renderPattern();
+```
+
+- [ ] **Step 5: Verify in browser**
+
+Section 2 shows carnival photo + 4 pattern tabs. Rembrandt active by default — SVG shows light source top-left, shadow on right cheek. Click Loop/Butterfly/Split — light position + shadow + tip all update. Language toggle switches tip text. No errors.
+
+- [ ] **Step 6: Commit**
+
+```bash
+git add camera/portrait/index.html
+git commit -m "feat: portrait guide section 2 — lighting patterns with SVG diagrams"
+git push origin main
+```
+
+---
+
+### Task 4: Section 3 — מבט ועין בעין / Gaze & Eye Contact
+
+**Files:**
+- Modify: `camera/portrait/index.html`
+
+- [ ] **Step 1: Add Section 3 HTML** — replace `<!-- SECTION 3 goes here (Task 4) -->`:
+
+```html
 <!-- ══ SECTION 3: מבט ועין בעין ══ -->
 <div class="ls-section" id="gaze">
   <div class="ls-section-badge">03</div>
@@ -383,7 +625,40 @@ img.loaded { opacity: 1; }
   </div>
 </div>
 <hr class="divider">
+```
 
+- [ ] **Step 2: Add Section 3 JS** — inside `<script>`, before `applyLang()` call:
+
+```js
+// Section 3: Gaze selector
+function selectGaze(el) {
+  document.querySelectorAll('.gaze-card').forEach(function(c) { c.classList.remove('active'); });
+  el.classList.add('active');
+}
+```
+
+- [ ] **Step 3: Verify in browser**
+
+Section 3 shows magnifying glass portrait + 3 gaze cards. Top card active by default. Clicking each card highlights it. Language toggle updates all descriptions. No errors.
+
+- [ ] **Step 4: Commit**
+
+```bash
+git add camera/portrait/index.html
+git commit -m "feat: portrait guide section 3 — gaze and eye contact"
+git push origin main
+```
+
+---
+
+### Task 5: Section 4 — רקע והפרדה / Background Separation
+
+**Files:**
+- Modify: `camera/portrait/index.html`
+
+- [ ] **Step 1: Add Section 4 HTML** — replace `<!-- SECTION 4 goes here (Task 5) -->`:
+
+```html
 <!-- ══ SECTION 4: רקע והפרדה ══ -->
 <div class="ls-section" id="background">
   <div class="ls-section-badge">04</div>
@@ -417,14 +692,14 @@ img.loaded { opacity: 1; }
                 <span class="blur-row-label" data-he="מרחק מרקע" data-en="Distance from background">מרחק מרקע</span>
                 <span class="blur-row-val" id="distVal">1.0 מ׳</span>
               </div>
-              <input type="range" class="blur-slider" id="distSlider" min="5" max="50" value="10" oninput="updateBlur()" title="מרחק מרקע">
+              <input type="range" class="blur-slider" id="distSlider" min="5" max="50" value="10" oninput="updateBlur()">
             </div>
             <div class="blur-row">
               <div class="blur-row-header">
                 <span class="blur-row-label" data-he="צמצם" data-en="Aperture">צמצם</span>
                 <span class="blur-row-val" id="apVal">f/2.8</span>
               </div>
-              <input type="range" class="blur-slider" id="apSlider" min="0" max="10" value="7" oninput="updateBlur()" title="צמצם">
+              <input type="range" class="blur-slider" id="apSlider" min="0" max="10" value="7" oninput="updateBlur()">
             </div>
           </div>
           <div class="blur-result" id="blurResult"></div>
@@ -436,7 +711,83 @@ img.loaded { opacity: 1; }
   </div>
 </div>
 <hr class="divider">
+```
 
+- [ ] **Step 2: Add Section 4 JS** — inside `<script>`, before `applyLang()` call:
+
+```js
+// Section 4: Background blur simulator
+var AP_STOPS = [1.4, 1.8, 2.0, 2.8, 4.0, 5.6, 8.0, 11, 16, 18, 22];
+
+function updateBlur() {
+  var distRaw = parseInt(document.getElementById('distSlider').value); // 5-50 = 0.5-5m
+  var apIdx = parseInt(document.getElementById('apSlider').value); // 0-10
+  var dist = distRaw / 10; // 0.5 - 5.0 metres
+  var fstop = AP_STOPS[apIdx];
+  var lang = getLang();
+
+  // blur formula: more distance = more blur, lower f = more blur
+  // blur px: 0-18px range
+  var blurPx = Math.round(dist * 2.2 * (1 - (apIdx / 14)));
+  blurPx = Math.max(0, Math.min(18, blurPx));
+
+  var bg = document.getElementById('blurBg');
+  if (bg) bg.style.filter = 'blur(' + blurPx + 'px)';
+
+  var distEl = document.getElementById('distVal');
+  var apEl = document.getElementById('apVal');
+  if (distEl) distEl.textContent = dist.toFixed(1) + (lang === 'en' ? 'm' : ' מ׳');
+  if (apEl) apEl.textContent = 'f/' + fstop;
+
+  var result = document.getElementById('blurResult');
+  if (result) {
+    var quality = blurPx >= 12 ? (lang === 'en' ? '✅ Strong bokeh — subject pops' : '✅ בוקה חזק — הנבדק בולט')
+                : blurPx >= 6  ? (lang === 'en' ? '👍 Good separation' : '👍 הפרדה טובה')
+                : blurPx >= 2  ? (lang === 'en' ? '⚠️ Weak separation — move subject further' : '⚠️ הפרדה חלשה — רחק את הנבדק מהרקע')
+                :                (lang === 'en' ? '❌ No separation — subject merges with background' : '❌ אין הפרדה — הנבדק נבלע ברקע');
+    result.textContent = quality;
+  }
+}
+```
+
+- [ ] **Step 3: Update `refreshInteractive`** to include blur update:
+
+```js
+function refreshInteractive(isEn) {
+  renderPattern();
+  updateBlur();
+}
+```
+
+- [ ] **Step 4: Add `updateBlur()` to Init section** — add before `applyLang()`:
+
+```js
+renderPattern();
+updateBlur();
+```
+
+- [ ] **Step 5: Verify in browser**
+
+Section 4 shows portrait photo + dual slider. Default: 1m distance, f/2.8. Drag distance slider right → green background blurs more. Drag aperture right (higher f) → blur decreases. Result text updates with quality indicator. Language toggle switches labels. No errors.
+
+- [ ] **Step 6: Commit**
+
+```bash
+git add camera/portrait/index.html
+git commit -m "feat: portrait guide section 4 — background separation blur simulator"
+git push origin main
+```
+
+---
+
+### Task 6: Section 5 — ביטוי ואופי / Expression & Character
+
+**Files:**
+- Modify: `camera/portrait/index.html`
+
+- [ ] **Step 1: Add Section 5 HTML** — replace `<!-- SECTION 5 goes here (Task 6) -->`:
+
+```html
 <!-- ══ SECTION 5: ביטוי ואופי ══ -->
 <div class="ls-section" id="character">
   <div class="ls-section-badge">05</div>
@@ -469,8 +820,7 @@ img.loaded { opacity: 1; }
             <div class="portrait-thumbs">
               <div class="portrait-thumb-sm"><img src="https://drive.google.com/thumbnail?id=1y6iG3IiFk0GlsCUsBZsepI4Np7JEFH0O&sz=w200" alt="קרנבל" loading="lazy"></div>
               <div class="portrait-thumb-sm"><img src="https://drive.google.com/thumbnail?id=1jStHSSDQG3tC32p6zLS94bT7fi7j2BrA&sz=w200" alt="ג'וקר" loading="lazy"></div>
-              <div class="portrait-thumb-sm"><img src="https://drive.google.com/thumbnail?id=1fBreN9zWSF1vvEteAj39q4mJQN_bB2Kq&sz=w200" alt="קאובוי" loading="lazy"></div>
-              <div class="portrait-thumb-sm"><img src="https://drive.google.com/thumbnail?id=15104pkLiwAIR0BI94exRni-OjnnPOwdf&sz=w200" alt="כוכבת הג'אנגל" loading="lazy"></div>
+              <div class="portrait-thumb-sm"><img src="https://drive.google.com/thumbnail?id=1O6AzQfr_Av8rOsdRffwNBvumKBGugOQF&sz=w200" alt="פורים" loading="lazy"></div>
             </div>
           </div>
 
@@ -480,23 +830,6 @@ img.loaded { opacity: 1; }
               <span class="char-card-title" data-he="ביטוי אמיתי / Authentic Expression" data-en="Authentic Expression">ביטוי אמיתי / Authentic Expression</span>
             </div>
             <div class="char-card-desc" data-he="<strong>דבר עם הנבדק.</strong> ספר בדיחה. שאל שאלה מפתיעה. הביטויים האמיתיים ביותר מגיעים <strong>בין הצילומים</strong> — כשהנבדק 'מרפה' ולא בתנוחה. צלם ברצף (burst mode) וחפש את הרגע." data-en="<strong>Talk to your subject.</strong> Tell a joke. Ask a surprising question. The most authentic expressions come <strong>between shots</strong> — when the subject 'lets go' and isn't posing. Shoot in burst mode and find the moment."><strong>דבר עם הנבדק.</strong> ספר בדיחה. שאל שאלה מפתיעה. הביטויים האמיתיים ביותר מגיעים <strong>בין הצילומים</strong> — כשהנבדק 'מרפה' ולא בתנוחה. צלם ברצף (burst mode) וחפש את הרגע.</div>
-            <div class="portrait-thumbs">
-              <div class="portrait-thumb-sm"><img src="https://drive.google.com/thumbnail?id=1NvmE0txV9fvPP80174n5sHBH_CDB3k6N&sz=w200" alt="הרגע של חיוך" loading="lazy"></div>
-              <div class="portrait-thumb-sm"><img src="https://drive.google.com/thumbnail?id=1JC_n30lzGe7Xmk6QW9tCiA3UnOjjTiTn&sz=w200" alt="חיוך טבעי" loading="lazy"></div>
-            </div>
-          </div>
-
-          <div class="char-card">
-            <div class="char-card-header">
-              <span class="char-card-icon">🎵</span>
-              <span class="char-card-title" data-he="פורטרט עיסוק / Occupation Portrait" data-en="Occupation Portrait">פורטרט עיסוק / Occupation Portrait</span>
-            </div>
-            <div class="char-card-desc" data-he="צלם אדם <strong>בזמן שהוא עושה את מה שהוא אוהב</strong> — נגנית עם כינור, ציירת, ספורטאי. הריכוז מוציא את הביטוי הכי אמיתי. הכלי/הכינור/הציוד הופך לחלק מהדמות — לא אביזר, אלא סיפור." data-en="Photograph someone <strong>doing what they love</strong> — a musician with violin, a painter, an athlete. The focus brings out the most authentic expression. The instrument/tool becomes part of the character — not a prop, but a story.">צלם אדם <strong>בזמן שהוא עושה את מה שהוא אוהב</strong> — נגנית עם כינור, ציירת, ספורטאי. הריכוז מוציא את הביטוי הכי אמיתי. הכלי/הכינור/הציוד הופך לחלק מהדמות — לא אביזר, אלא סיפור.</div>
-            <div class="portrait-thumbs">
-              <div class="portrait-thumb-sm"><img src="https://drive.google.com/thumbnail?id=1CRENDRPU04U_ZI_g8x03jTPvi2eDsiEd&sz=w200" alt="הנגנית והכינור" loading="lazy"></div>
-              <div class="portrait-thumb-sm"><img src="https://drive.google.com/thumbnail?id=19attiFisIGzQ0mJ7F_4kGvilsp1KPt85&sz=w200" alt="נגנית צ'לו" loading="lazy"></div>
-              <div class="portrait-thumb-sm"><img src="https://drive.google.com/thumbnail?id=1wRpx03I0glh-Qd3LjDCIKu7RblcHiMLT&sz=w200" alt="נערה עם גיטרה" loading="lazy"></div>
-            </div>
           </div>
 
           <div class="char-card">
@@ -512,7 +845,31 @@ img.loaded { opacity: 1; }
     </div>
   </div>
 </div>
+```
 
+- [ ] **Step 2: Verify in browser**
+
+Section 5 shows clown photo + 3 character tip cards. Three mini portrait thumbnails appear in the first card (carnival/joker/purim). Language toggle switches all text including bold sections. No errors.
+
+- [ ] **Step 3: Commit**
+
+```bash
+git add camera/portrait/index.html
+git commit -m "feat: portrait guide section 5 — expression and character"
+git push origin main
+```
+
+---
+
+### Task 7: Purchase Gallery + Camera Hub Link
+
+**Files:**
+- Modify: `camera/portrait/index.html` — add purchase section
+- Modify: `camera/index.html` — add portrait card
+
+- [ ] **Step 1: Add purchase gallery HTML** — insert after `</div><!-- end article -->` and before `<div class="nav-prev">`:
+
+```html
 </div><!-- end article -->
 
 <section class="purchase-section">
@@ -617,160 +974,11 @@ img.loaded { opacity: 1; }
     </div>
   </div>
 </section>
+```
 
-<div class="gear-section">
-  <div class="gear-row-label" data-he="ציוד מומלץ" data-en="Recommended Gear">ציוד מומלץ</div>
-  <div class="gear-cards">
-    <a class="gear-card" href="https://adorama.prf.hn/click/camref:1101l5Km5i/destination:https://www.adorama.com/catalog.tpl?SearchInfo=Nikon+AF-S+85mm+f1.8G" target="_blank" rel="noopener sponsored">
-      <div class="gear-card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg></div>
-      <div class="gear-card-body">
-        <div class="gear-card-name" data-he="עדשת פורטרט 85mm" data-en="85mm Portrait Lens">עדשת פורטרט 85mm</div>
-        <div class="gear-card-desc" data-he="מלך הפורטרטים — בוקה קרמי, דחיסת רקע, מחמיא לפנים." data-en="Portrait king — creamy bokeh, background compression, flattering for faces.">מלך הפורטרטים — בוקה קרמי, דחיסת רקע, מחמיא לפנים.</div>
-        <span class="gear-card-btn" data-he="ראה באדוראמה ←" data-en="View at Adorama →">ראה באדוראמה ←</span>
-      </div>
-    </a>    <a class="gear-card" href="https://adorama.prf.hn/click/camref:1101l5Km5i/destination:https://www.adorama.com/catalog.tpl?SearchInfo=Neewer+18+inch+ring+light+kit" target="_blank" rel="noopener sponsored">
-      <div class="gear-card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="1" fill="currentColor" stroke="none"/></svg></div>
-      <div class="gear-card-body">
-        <div class="gear-card-name" data-he="רינג לייט LED" data-en="LED Ring Light">רינג לייט LED</div>
-        <div class="gear-card-desc" data-he="תאורה אחידה ומחמיאה לפורטרט — קטצ'לייט עגול בעיניים." data-en="Even flattering portrait light — creates beautiful circular catchlights in eyes.">תאורה אחידה ומחמיאה לפורטרט — קטצ'לייט עגול בעיניים.</div>
-        <span class="gear-card-btn" data-he="ראה באדוראמה ←" data-en="View at Adorama →">ראה באדוראמה ←</span>
-      </div>
-    </a>    <a class="gear-card" href="https://adorama.prf.hn/click/camref:1101l5Km5i/destination:https://www.adorama.com/catalog.tpl?SearchInfo=Lastolite+HaloCompact+5in1+reflector" target="_blank" rel="noopener sponsored">
-      <div class="gear-card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></div>
-      <div class="gear-card-body">
-        <div class="gear-card-name" data-he="מחזיר אור 5-in-1" data-en="5-in-1 Reflector">מחזיר אור 5-in-1</div>
-        <div class="gear-card-desc" data-he="מחזיר, מפזר ומשנה את כיוון אור השמש — הכלי הכי שימושי בחוץ." data-en="Reflects, diffuses, redirects sunlight — most useful outdoor portrait tool.">מחזיר, מפזר ומשנה את כיוון אור השמש — הכלי הכי שימושי בחוץ.</div>
-        <span class="gear-card-btn" data-he="ראה באדוראמה ←" data-en="View at Adorama →">ראה באדוראמה ←</span>
-      </div>
-    </a>    <a class="gear-card" href="https://skylum.evyy.net/c/7325979/1142920/3255" target="_blank" rel="noopener sponsored">
-      <div class="gear-card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/><circle cx="12" cy="10" r="3"/></svg></div>
-      <div class="gear-card-body">
-        <div class="gear-card-name" data-he="Luminar Neo" data-en="Luminar Neo">Luminar Neo</div>
-        <div class="gear-card-desc" data-he="Portrait Enhancer AI — מחליק עור, מוסיף אור לעיניים ומדגיש תווי פנים בלחיצה." data-en="AI Portrait Enhancer — smooth skin, eye lighting and face shaping in one click.">Portrait Enhancer AI — מחליק עור, מוסיף אור לעיניים ומדגיש תווי פנים בלחיצה.</div>
-        <span class="gear-card-btn" data-he="קנה ב-Skylum ←" data-en="Buy at Skylum →">קנה ב-Skylum ←</span>
-      </div>
-    </a></div>
-  <div class="gear-disclose" data-he="קישורי שותף — עמלה קטנה, ללא עלות נוספת לך" data-en="Affiliate links — small commission, no extra cost to you">קישורי שותף — עמלה קטנה, ללא עלות נוספת לך</div>
-</div>
-<div class="kofi-bar">
-  <a href="https://ko-fi.com/amitphotos" target="_blank" rel="noopener">
-    &#9749; <span data-he="אהבת את המדריך? קנה לי קפה" data-en="Found this guide useful? Buy me a coffee">אהבת את המדריך? קנה לי קפה</span>
-  </a>
-</div>
-<div class="nav-prev">
-<a href="/camera/" data-he="← חזרה לבית ספר לצילום" data-en="← Back to Photography School">← חזרה לבית ספר לצילום</a>
-</div>
+- [ ] **Step 2: Add purchase JS** — inside `<script>`, before `applyLang()`:
 
-<script>
-function getLang() { return localStorage.getItem('lang') || 'he'; }
-
-// Section 1: Camera angle selector
-function selectAngle(el, idx) {
-  document.querySelectorAll('.angle-card').forEach(function(c) { c.classList.remove('active'); });
-  el.classList.add('active');
-}
-
-// Section 2: Lighting patterns
-var LP_DATA = [
-  {
-    name: 'Rembrandt',
-    lx: 25, ly: 25,
-    shadow: 'M70,80 Q55,62 52,80 Q55,95 70,118 Z',
-    tip: {
-      he: '<strong>Rembrandt</strong> — האור ב-45° מעל ומהצד. יוצר משולש אור קטן על הלחי המוצללת. <strong>דרמטי, אופי, קלאסי.</strong> מתאים לפורטרט גברי ו-character portraits.',
-      en: '<strong>Rembrandt</strong> — Light at 45° above and to the side. Creates a small triangle of light on the shadowed cheek. <strong>Dramatic, character, classic.</strong> Works for masculine and character portraits.'
-    }
-  },
-  {
-    name: 'Loop',
-    lx: 35, ly: 18,
-    shadow: 'M70,80 Q60,68 62,80 Q63,92 70,108 Z',
-    tip: {
-      he: '<strong>Loop</strong> — האור מעט מעל ולצד. הצל יוצר "לולאה" קטנה מתחת לאף. <strong>הנפוץ ביותר, מחמיא, מתאים לכולם.</strong> ברירת המחדל של צלמי פורטרט.',
-      en: '<strong>Loop</strong> — Light slightly above and to the side. Shadow creates a small "loop" below the nose. <strong>Most common, flattering, works for everyone.</strong> The portrait photographer\'s default.'
-    }
-  },
-  {
-    name: 'Butterfly',
-    lx: 70, ly: 15,
-    shadow: 'M62,88 Q70,82 78,88 Q75,96 70,100 Q65,96 62,88 Z',
-    tip: {
-      he: '<strong>Butterfly / Paramount</strong> — האור ישר מלפנים ומעל. הצל מתחת לאף מזכיר פרפר. <strong>מחמיא, אופנה, Hollywood.</strong> עובד טוב עם עצמות לחיים בולטות.',
-      en: '<strong>Butterfly / Paramount</strong> — Light directly in front and above. Shadow under nose resembles a butterfly. <strong>Flattering, fashion, Hollywood.</strong> Works great with prominent cheekbones.'
-    }
-  },
-  {
-    name: 'Split',
-    lx: 115, ly: 80,
-    shadow: 'M70,48 Q70,60 70,118 Q52,110 38,80 Q52,50 70,48 Z',
-    tip: {
-      he: '<strong>Split</strong> — האור ב-90° מהצד. מחצית הפנים מוארת, מחצית בצל מוחלט. <strong>דרמטי מאוד, אופי חזק, מסתורי.</strong> לא מחמיא אבל עוצמתי.',
-      en: '<strong>Split</strong> — Light exactly 90° to the side. Half the face lit, half in complete shadow. <strong>Very dramatic, strong character, mysterious.</strong> Not flattering, but powerful.'
-    }
-  }
-];
-var activePattern = 0;
-
-function selectPattern(el, idx) {
-  document.querySelectorAll('.lp-tab').forEach(function(t) { t.classList.remove('active'); });
-  el.classList.add('active');
-  activePattern = idx;
-  renderPattern();
-}
-
-function renderPattern() {
-  var p = LP_DATA[activePattern];
-  var lang = getLang();
-  var lg = document.getElementById('lpLight');
-  if (lg) lg.setAttribute('transform', 'translate(' + p.lx + ',' + p.ly + ')');
-  var b1 = document.getElementById('lpBeam1');
-  var b2 = document.getElementById('lpBeam2');
-  if (b1) { b1.setAttribute('x1', p.lx); b1.setAttribute('y1', p.ly); b1.setAttribute('x2', '38'); b1.setAttribute('y2', '55'); }
-  if (b2) { b2.setAttribute('x1', p.lx); b2.setAttribute('y1', p.ly); b2.setAttribute('x2', '102'); b2.setAttribute('y2', '55'); }
-  var sh = document.getElementById('lpShadow');
-  if (sh) sh.setAttribute('d', p.shadow);
-  var tip = document.getElementById('lpTip');
-  if (tip) tip.innerHTML = p.tip[lang] || p.tip.he;
-}
-
-// Section 3: Gaze selector
-function selectGaze(el) {
-  document.querySelectorAll('.gaze-card').forEach(function(c) { c.classList.remove('active'); });
-  el.classList.add('active');
-}
-
-// Section 4: Background blur simulator
-var AP_STOPS = [1.4, 1.8, 2.0, 2.8, 4.0, 5.6, 8.0, 11, 16, 18, 22];
-
-function updateBlur() {
-  var distRaw = parseInt(document.getElementById('distSlider').value);
-  var apIdx = parseInt(document.getElementById('apSlider').value);
-  var dist = distRaw / 10;
-  var fstop = AP_STOPS[apIdx];
-  var lang = getLang();
-
-  var blurPx = Math.round(dist * 2.2 * (1 - (apIdx / 14)));
-  blurPx = Math.max(0, Math.min(18, blurPx));
-
-  var bg = document.getElementById('blurBg');
-  if (bg) bg.style.filter = 'blur(' + blurPx + 'px)';
-
-  var distEl = document.getElementById('distVal');
-  var apEl = document.getElementById('apVal');
-  if (distEl) distEl.textContent = dist.toFixed(1) + (lang === 'en' ? 'm' : ' מ׳');
-  if (apEl) apEl.textContent = 'f/' + fstop;
-
-  var result = document.getElementById('blurResult');
-  if (result) {
-    var quality = blurPx >= 12 ? (lang === 'en' ? '✅ Strong bokeh — subject pops' : '✅ בוקה חזק — הנבדק בולט')
-                : blurPx >= 6  ? (lang === 'en' ? '👍 Good separation' : '👍 הפרדה טובה')
-                : blurPx >= 2  ? (lang === 'en' ? '⚠️ Weak separation — move subject further' : '⚠️ הפרדה חלשה — רחק את הנבדק מהרקע')
-                :                (lang === 'en' ? '❌ No separation — subject merges with background' : '❌ אין הפרדה — הנבדק נבלע ברקע');
-    result.textContent = quality;
-  }
-}
-
-// Purchase
+```js
 function openBuyContact(photoTitle) {
   var lang = getLang();
   var msg = lang === 'en'
@@ -778,38 +986,93 @@ function openBuyContact(photoTitle) {
     : encodeURIComponent('שלום! אני מעוניין לרכוש הדפסה של "' + photoTitle + '" מהמדריך לצילום פורטרט.');
   window.open('https://api.whatsapp.com/send?phone=972503333227&text=' + msg, '_blank');
 }
+```
 
-// Bilingual
-function applyLang() {
-  var lang = getLang();
-  var isEn = lang === 'en';
-  document.documentElement.dir = isEn ? 'ltr' : 'rtl';
-  document.documentElement.lang = lang;
-  document.body.style.direction = isEn ? 'ltr' : 'rtl';
-  document.title = isEn
-    ? 'Portrait Photography — Full Guide | Photography School | Amit Photos'
-    : 'צילום פורטרט — מדריך מלא | בית ספר לצילום | Amit Photos';
-  document.querySelectorAll('[data-he]').forEach(function(el) {
-    el.innerHTML = isEn ? (el.dataset.en || el.dataset.he) : el.dataset.he;
-  });
-  document.querySelectorAll('.en-h2, .ls-hero-en, .ac-label-en').forEach(function(el) {
-    el.style.display = isEn ? 'none' : '';
-  });
-  renderPattern();
-  updateBlur();
-}
+- [ ] **Step 3: Add portrait card to `camera/index.html`**
 
-window.setLang = applyLang;
+Find the line with the landscape card that was added in the landscape guide (search for `camera/landscape`), then add the portrait card directly after it:
 
-document.querySelectorAll('img[loading="lazy"]').forEach(function(img) {
-  if (img.complete) img.classList.add('loaded');
-  else img.addEventListener('load', function() { img.classList.add('loaded'); });
-});
+```bash
+grep -n "camera/landscape" camera/index.html
+```
 
-renderPattern();
-updateBlur();
-applyLang();
-window.addEventListener('storage', function(e) { if (e.key === 'lang') applyLang(); });
-</script>
-</body>
-</html>
+Insert after the `</a>` closing tag of the landscape card:
+
+```html
+  <a class="card" href="/camera/portrait/">
+    <div class="card-icon"><svg viewBox="0 0 48 48"><ellipse cx="24" cy="20" rx="10" ry="12"/><path d="M8 44 C8 32 40 32 40 44"/><circle cx="24" cy="18" r="3" fill="none" stroke-width="1.5"/></svg></div>
+    <div class="card-title" data-he="פורטרט" data-en="Portrait">פורטרט</div>
+    <div class="card-desc" data-he="זווית צילום, דפוסי תאורה, מבט ורגש — מהיסודות ועד פורטרט אופי ודמות" data-en="Camera angle, lighting patterns, gaze and emotion — from basics to character and expression portraits">זווית צילום, דפוסי תאורה, מבט ורגש — מהיסודות ועד פורטרט אופי ודמות</div>
+    <span class="card-cta" data-he="התחל ללמוד" data-en="Start Learning">התחל ללמוד</span>
+  </a>
+```
+
+- [ ] **Step 4: Full browser test**
+
+Open `http://localhost:8000/camera/portrait/`. Check:
+- [ ] Hero portrait photo loads
+- [ ] All 5 section photos load
+- [ ] Section 1: clicking angle cards highlights them
+- [ ] Section 2: clicking pattern tabs updates SVG + tip text
+- [ ] Section 3: clicking gaze cards highlights them
+- [ ] Section 4: sliders update blur + result text
+- [ ] Section 5: 3 tip cards show, mini thumbnails load
+- [ ] Purchase gallery: 11 photos with hover overlays
+- [ ] Language toggle (EN in nav) → all text switches, secondary subtitles hide
+- [ ] Open `http://localhost:8000/camera/` → portrait card appears
+
+- [ ] **Step 5: Mobile test**
+
+DevTools → device toolbar → iPhone SE (375px). Check:
+- [ ] Hero readable
+- [ ] Two-col sections collapse to single column
+- [ ] Angle cards stack vertically
+- [ ] Purchase grid shows 2 columns
+- [ ] Sliders are tappable
+
+- [ ] **Step 6: Final commit and push**
+
+```bash
+git add camera/portrait/index.html camera/index.html
+git commit -m "feat: portrait photography guide — complete with 5 sections, lighting SVG diagrams, and purchase gallery"
+git push origin main
+```
+
+---
+
+## Self-Review
+
+**Spec coverage:**
+
+| Spec requirement | Task |
+|------------------|------|
+| `/camera/portrait/` page | Task 1 |
+| Hero: דיוקן בצבעים חיים photo | Task 1 |
+| Section 1: Camera Angle + 3 cards + SVG diagrams | Task 2 |
+| Section 2: Lighting Patterns + 4 tabs + top-down SVG | Task 3 |
+| Section 3: Gaze + 3 cards + emotion descriptions | Task 4 |
+| Section 4: Background Separation + dual slider + CSS blur | Task 5 |
+| Section 5: Expression/Character + 3 tip cards + mini thumbs | Task 6 |
+| Purchase gallery: all 11 portrait photos | Task 7 |
+| WhatsApp contact with photo title | Task 7 |
+| Hebrew/English bilingual (data-he/data-en + innerHTML) | Task 1 + all |
+| `.en-h2` and `.ls-hero-en` hidden in English | Task 1 |
+| `nav.js` injection + `window.setLang` | Task 1 |
+| Link to `/camera/light/` in Section 2 | Task 3 |
+| Link to `/camera/depth-of-field/` in Section 4 | Task 5 |
+| Portrait card added to `/camera/` hub | Task 7 |
+| Mobile responsive | Task 1 CSS + Task 7 verification |
+
+**No gaps found.**
+
+**Type consistency:**
+- `selectAngle(el, idx)` — Task 2, used in HTML onclick ✅
+- `selectPattern(el, idx)` — Task 3, used in HTML onclick ✅
+- `renderPattern()` — Task 3, called in Task 5's `refreshInteractive` and Init ✅
+- `selectGaze(el)` — Task 4, used in HTML onclick ✅
+- `updateBlur()` — Task 5, called in `refreshInteractive` and Init ✅
+- `refreshInteractive(isEn)` — defined in Task 2, extended in Task 5, called from `applyLang()` ✅
+- `openBuyContact(photoTitle)` — Task 7, used in HTML onclick ✅
+- `getLang()` — Task 1, used throughout ✅
+
+**Placeholder scan:** No TBD, no "similar to", no incomplete steps. All code is complete. ✅
