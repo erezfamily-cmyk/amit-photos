@@ -10,6 +10,10 @@ on:
         description: 'שם המדריך (למשל: depth-of-field) — ריק = הבא בתור'
         required: false
         default: ''
+      replace_id:
+        description: 'YouTube Video ID למחיקה לפני העלאה (למשל: j2VtQzl2_k4)'
+        required: false
+        default: ''
 
 jobs:
   youtube-tutorial:
@@ -38,11 +42,11 @@ jobs:
           PYTHONUNBUFFERED: "1"
         run: |
           GUIDE="${{ github.event.inputs.guide }}"
-          if [ -n "$GUIDE" ]; then
-            python src/youtube_tutorial.py "$GUIDE"
-          else
-            python src/youtube_tutorial.py
-          fi
+          REPLACE="${{ github.event.inputs.replace_id }}"
+          ARGS=""
+          [ -n "$GUIDE" ] && ARGS="$GUIDE"
+          [ -n "$REPLACE" ] && ARGS="$ARGS --replace $REPLACE"
+          python src/youtube_tutorial.py $ARGS
 
       - name: שמירת היסטוריה
         run: |
