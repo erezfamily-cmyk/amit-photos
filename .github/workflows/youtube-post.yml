@@ -5,6 +5,11 @@ on:
   schedule:
     - cron: '0 9 * * 0'
   workflow_dispatch:
+    inputs:
+      replace_id:
+        description: 'YouTube Video ID למחיקה לפני העלאה מחדש (למשל: 7t2JC2LCL84)'
+        required: false
+        default: ''
 
 jobs:
   youtube-post:
@@ -33,7 +38,13 @@ jobs:
         env:
           YOUTUBE_TOKEN_JSON: ${{ secrets.YOUTUBE_TOKEN_JSON }}
           PYTHONUNBUFFERED: "1"
-        run: python src/youtube_video.py
+        run: |
+          REPLACE="${{ github.event.inputs.replace_id }}"
+          if [ -n "$REPLACE" ]; then
+            python src/youtube_video.py --replace "$REPLACE"
+          else
+            python src/youtube_video.py
+          fi
 
       - name: שמירת היסטוריה
         run: |

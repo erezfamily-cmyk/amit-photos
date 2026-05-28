@@ -309,6 +309,26 @@ def add_music(video_path, tmp_dir):
 
 # ── YouTube upload ────────────────────────────────────────────────────────────
 
+def delete_youtube_video(video_id):
+    """Delete a YouTube video by ID before re-uploading."""
+    token_b64 = os.environ.get("YOUTUBE_TOKEN_JSON", "")
+    if not token_b64 or not video_id:
+        return
+    try:
+        from googleapiclient.discovery import build
+        from google.oauth2.credentials import Credentials
+        from google.auth.transport.requests import Request
+        token_data = json.loads(base64.b64decode(token_b64).decode())
+        creds = Credentials.from_authorized_user_info(token_data)
+        if creds.expired and creds.refresh_token:
+            creds.refresh(Request())
+        youtube = build("youtube", "v3", credentials=creds, cache_discovery=False)
+        youtube.videos().delete(id=video_id).execute()
+        print(f"🗑️  וידאו ישן נמחק: {video_id}")
+    except Exception as e:
+        print(f"⚠️  מחיקה נכשלה: {e}")
+
+
 def upload_to_youtube(video_path, title, description, tags, category):
     token_b64 = os.environ.get("YOUTUBE_TOKEN_JSON", "")
     if not token_b64:
@@ -374,13 +394,47 @@ def build_metadata(category, n_photos):
 # ── Main ──────────────────────────────────────────────────────────────────────
 
 def main():
+    args = sys.argv[1:]
+
+    # --replace VIDEO_ID: delete old video and re-upload same album
+    replace_id = None
+    if "--replace" in args:
+        idx = args.index("--replace")
+        if idx + 1 < len(args):
+            replace_id = args[idx + 1]
+            args = [a for a in args if a not in ("--replace", replace_id)]
+
     photos = load_photos()
     if not photos:
         print("❌ לא נמצאו תמונות")
         sys.exit(1)
 
-    state            = load_state()
-    selected, category = select_album(photos, state)
+    state = load_state()
+
+    # If replacing, force the same album and remove from posted list
+    force_album = args[0] if args else None
+    if replace_id and not force_album:
+        # Re-use last posted album
+        posted = state.get("posted_albums", [])
+        force_album = posted[-1] if posted else None
+        if force_album and force_album in state.get("posted_albums", []):
+            state["posted_albums"].remove(force_album)
+
+    if force_album:
+        by_cat = defaultdict(list)
+        for p in photos:
+            c = p.get("category", "").strip()
+            if c:
+                by_cat[c].append(p)
+        if force_album not in by_cat:
+            print(f"❌ אלבום לא נמצא: {force_album}")
+            sys.exit(1)
+        pool = by_cat[force_album]
+        selected = random.sample(pool, min(MAX_PHOTOS, len(pool)))
+        category = force_album
+    else:
+        selected, category = select_album(photos, state)
+
     print(f"🎬 אלבום: {category} | {len(selected)} תמונות")
 
     with tempfile.TemporaryDirectory() as tmp:
@@ -427,6 +481,10 @@ def main():
         dur = get_duration(Path(final))
         sz  = Path(final).stat().st_size / 1024 / 1024
         print(f"📹 {dur:.0f} שניות | {sz:.0f} MB")
+
+        # Delete old video before uploading improved version
+        if replace_id:
+            delete_youtube_video(replace_id)
 
         # Upload
         title, description, tags = build_metadata(category, len(selected))
