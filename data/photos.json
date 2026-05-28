@@ -210,6 +210,27 @@
     "added_at": "2026-05-28"
   },
   {
+    "id": "1WlGnpJ-56tAmyVSymmPBF1vSHHP-LOcn",
+    "title": "חלונות על הקיר הירוק",
+    "category": "אומנות רחוב",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=1WlGnpJ-56tAmyVSymmPBF1vSHHP-LOcn",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1WlGnpJ-56tAmyVSymmPBF1vSHHP-LOcn&sz=w600",
+    "description": "שני חלונות בעלי מסגרות חומות על קיר צבוע בירוק בהיר",
+    "filename": "MJH_7718 copy.jpg",
+    "width": 7036,
+    "height": 4439,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 200,
+      "aperture": 3.5,
+      "iso": 800,
+      "shutter": 0.005
+    },
+    "added_at": "2026-05-28"
+  },
+  {
     "id": "1f8_Yb2lJxbfvRCP-33_BoznPL-VDtiad",
     "title": "פנס רחוב עתיק",
     "category": "אומנות רחוב",
@@ -311,6 +332,69 @@
       "aperture": 3.5,
       "iso": 160,
       "shutter": 0.02
+    },
+    "added_at": "2026-05-28"
+  },
+  {
+    "id": "1cGnFBOg5BkR3Rl0qdxCe2-wK9oh-H-Hk",
+    "title": "סוס נוצץ על אדום",
+    "category": "אומנות רחוב",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=1cGnFBOg5BkR3Rl0qdxCe2-wK9oh-H-Hk",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1cGnFBOg5BkR3Rl0qdxCe2-wK9oh-H-Hk&sz=w600",
+    "description": "סמל סוס כרום על רקע אדום עמוק, עיצוב מינימליסטי",
+    "filename": "MJH_8260 copy.jpg",
+    "width": 6187,
+    "height": 4129,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "105.0 mm f/2.8",
+      "focal": 105,
+      "aperture": 3,
+      "iso": 100,
+      "shutter": 0.005
+    },
+    "added_at": "2026-05-28"
+  },
+  {
+    "id": "1QD4S-1KYrb3yTRflZnTlFvwNSapGKtzS",
+    "title": "קוקה קולה מיתולוגיה",
+    "category": "אומנות רחוב",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=1QD4S-1KYrb3yTRflZnTlFvwNSapGKtzS",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1QD4S-1KYrb3yTRflZnTlFvwNSapGKtzS&sz=w600",
+    "description": "עיצוב גרפיטי של לוגו קוקה קולה על רקע אדום עם טקסט איטלקי",
+    "filename": "MJH_9052 copy.jpg",
+    "width": 7360,
+    "height": 4912,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 150,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.0025
+    },
+    "added_at": "2026-05-28"
+  },
+  {
+    "id": "1kuDPtjC_CC0sBA8Slu5w3Cq-uh53FUgO",
+    "title": "דלת אדומה על קיר צהוב",
+    "category": "אומנות רחוב",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=1kuDPtjC_CC0sBA8Slu5w3Cq-uh53FUgO",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1kuDPtjC_CC0sBA8Slu5w3Cq-uh53FUgO&sz=w600",
+    "description": "דלת עתיקה אדומה על קיר צהוב וכחול, אומנות רחוב עירונית",
+    "filename": "MJH_9432 copy1.jpg",
+    "width": 6653,
+    "height": 4440,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "24.0-70.0 mm f/2.8",
+      "focal": 62,
+      "aperture": 8,
+      "iso": 100,
+      "shutter": 0.008
     },
     "added_at": "2026-05-28"
   },
