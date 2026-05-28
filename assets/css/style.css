@@ -3562,3 +3562,16 @@ footer {
 .yt-channel-sub { font-size: .85rem; color: var(--muted); }
 .yt-subscribe-wrap { text-align: center; margin-top: 1.25rem; }
 .yt-subscribe-btn { display: inline-flex; align-items: center; gap: .5rem; padding: .75rem 1.75rem; background: #ff0000; color: #fff; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: .95rem; }
+
+/* ===== POSTER MASTER AFFILIATE CARD ===== */
+#wall-art-affiliate { padding: 1rem 1.25rem 2rem; }
+.affiliate-banner-wrap { max-width: 760px; margin: 0 auto; }
+.affiliate-card-inner { display: flex; align-items: center; gap: 1.25rem; padding: 1.25rem 1.5rem; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; text-decoration: none; color: var(--text); transition: border-color .2s; }
+.affiliate-card-inner:hover { border-color: var(--accent); }
+.affiliate-card-icon { flex-shrink: 0; width: 40px; height: 40px; color: var(--accent); }
+.affiliate-card-icon svg { width: 100%; height: 100%; }
+.affiliate-card-text { flex: 1; }
+.affiliate-card-title { font-weight: 600; font-size: 1rem; margin-bottom: .25rem; }
+.affiliate-card-desc { font-size: .85rem; color: var(--muted); }
+.affiliate-card-btn { flex-shrink: 0; font-size: .85rem; color: var(--accent); font-weight: 600; white-space: nowrap; }
+@media (max-width: 600px) { .affiliate-card-inner { flex-direction: column; text-align: center; } .affiliate-card-btn { display: block; } }
