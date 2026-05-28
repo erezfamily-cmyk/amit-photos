@@ -457,6 +457,59 @@ def publish_fb(video_url):
         print(f"⚠️  Facebook Story נכשל ({r.status_code}): {r.text[:200]}")
 
 
+def publish_fb_reels(video_path, category):
+    """Upload video as Facebook Reel (binary upload, 3-phase). Requires FACEBOOK_PAGE_ID."""
+    if not FB_PAGE_ID:
+        return
+    print("🎬 Facebook Reel...")
+
+    # Phase 1: start
+    r = requests.post(f"{GRAPH_API}/{FB_PAGE_ID}/video_reels", data={
+        "upload_phase": "start",
+        "access_token": ACCESS_TOKEN,
+    }, timeout=30)
+    if not r.ok:
+        print(f"⚠️  FB Reels start: {r.status_code} {r.text[:200]}")
+        return
+    d = r.json()
+    video_id   = d.get("video_id")
+    upload_url = d.get("upload_url")
+    if not video_id or not upload_url:
+        print(f"⚠️  FB Reels: {d}")
+        return
+
+    # Phase 2: binary upload
+    video_bytes = Path(video_path).read_bytes()
+    up = requests.put(
+        upload_url,
+        headers={
+            "Authorization": f"OAuth {ACCESS_TOKEN}",
+            "Content-Type":  "video/mp4",
+            "offset":        "0",
+            "file_size":     str(len(video_bytes)),
+        },
+        data=video_bytes,
+        timeout=180,
+    )
+    if not up.ok:
+        print(f"⚠️  FB Reels upload: {up.status_code} {up.text[:200]}")
+        return
+
+    # Phase 3: publish
+    fin = requests.post(f"{GRAPH_API}/{FB_PAGE_ID}/video_reels", data={
+        "upload_phase": "finish",
+        "video_id":     video_id,
+        "title":        f"Photography — {category}",
+        "description":  f"📸 {category}\n\namitphotos.com",
+        "published":    "true",
+        "access_token": ACCESS_TOKEN,
+    }, timeout=30)
+    if fin.ok and fin.json().get("success"):
+        print("✅ Facebook Reel פורסם!")
+    else:
+        print(f"⚠️  FB Reels finish: {fin.status_code} {fin.text[:200]}")
+
+
 # ── Main ──────────────────────────────────────────────────────────────────────
 
 def main():
@@ -536,6 +589,7 @@ def main():
         print(f"✅ Instagram Story: {story_id}")
 
         publish_fb(video_url)
+        publish_fb_reels(Path(final), cat)
 
     # Save state
     from collections import defaultdict
