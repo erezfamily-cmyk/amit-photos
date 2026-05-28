@@ -1,5 +1,341 @@
 [
   {
+    "id": "1WCqfkjhfWvBfiMAespjTDZeHlNFzDO7r",
+    "title": "סימני יד בשדרה",
+    "category": "אומנות רחוב",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=1WCqfkjhfWvBfiMAespjTDZeHlNFzDO7r",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1WCqfkjhfWvBfiMAespjTDZeHlNFzDO7r&sz=w600",
+    "description": "רחוב צר עם קירות צבועים וכתובות, דרך אל אל הידוע",
+    "filename": "AMI_0836 copy.jpg",
+    "width": 4288,
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300S",
+      "lens": "10.0-20.0 mm f/3.5",
+      "focal": 10,
+      "aperture": 3.5,
+      "iso": 400,
+      "shutter": 0.016666668
+    },
+    "added_at": "2026-05-28"
+  },
+  {
+    "id": "1OzwWCGT7S_QYWrF6O4gXwQFIG31aiMgh",
+    "title": "עיניים במהומת צבעים",
+    "category": "אומנות רחוב",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=1OzwWCGT7S_QYWrF6O4gXwQFIG31aiMgh",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1OzwWCGT7S_QYWrF6O4gXwQFIG31aiMgh&sz=w600",
+    "description": "קיר גרפיטי תוסס עם עיניים ענקיות וציור גיאומטרי בצבעים עוזים",
+    "filename": "AMI_0889 copy.jpg",
+    "width": 4288,
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300S",
+      "lens": "24.0-70.0 mm f/2.8",
+      "focal": 48,
+      "aperture": 2.8,
+      "iso": 400,
+      "shutter": 0.0015625
+    },
+    "added_at": "2026-05-28"
+  },
+  {
+    "id": "1annmkK3HpIuAPgKKWmKu1w1MR67m43j4",
+    "title": "חזית צבעונית עם חלונות",
+    "category": "אומנות רחוב",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=1annmkK3HpIuAPgKKWmKu1w1MR67m43j4",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1annmkK3HpIuAPgKKWmKu1w1MR67m43j4&sz=w600",
+    "description": "בניין צבעוני עם חלונות אדומים על רקע אדום וצהוב",
+    "filename": "AMI_1474 copy.jpg",
+    "width": 4050,
+    "height": 2748,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300S",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 110,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.000625
+    },
+    "added_at": "2026-05-28"
+  },
+  {
+    "id": "1ddISYrUYIQOekfHRTUrmWS6A5ewcErQr",
+    "title": "עיניים על הגג",
+    "category": "אומנות רחוב",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=1ddISYrUYIQOekfHRTUrmWS6A5ewcErQr",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1ddISYrUYIQOekfHRTUrmWS6A5ewcErQr&sz=w600",
+    "description": "אומנות רחוב יצירתית של שתי עיניים על קירוי אדום",
+    "filename": "AMI_1479 copy.jpg",
+    "width": 4136,
+    "height": 2747,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300S",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 98,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.002
+    },
+    "added_at": "2026-05-28"
+  },
+  {
+    "id": "15VO8HsWI1uH5KT6dpD9BkFHorJR-fyNf",
+    "title": "פנים צבעוני בקיר",
+    "category": "אומנות רחוב",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=15VO8HsWI1uH5KT6dpD9BkFHorJR-fyNf",
+    "thumbnail": "https://drive.google.com/thumbnail?id=15VO8HsWI1uH5KT6dpD9BkFHorJR-fyNf&sz=w600",
+    "description": "ציור גרפיטי עם דמות מופשטת בצבעים עזים על קיר בשחיקה",
+    "filename": "AMI_3174 copy.jpg",
+    "width": 4288,
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300S",
+      "lens": "24.0-70.0 mm f/2.8",
+      "focal": 50,
+      "aperture": 9,
+      "iso": 100,
+      "shutter": 0.01
+    },
+    "added_at": "2026-05-28"
+  },
+  {
+    "id": "1v2lSC6IvqfbdE9Nv0KPFrazMzMsweizH",
+    "title": "בית הצבעים של הונדה",
+    "category": "אומנות רחוב",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=1v2lSC6IvqfbdE9Nv0KPFrazMzMsweizH",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1v2lSC6IvqfbdE9Nv0KPFrazMzMsweizH&sz=w600",
+    "description": "בניין צבעוני עם קירות כחולים, כתומים וסגולים בסגנון אומנות רחוב",
+    "filename": "DSC_2951 copy.jpg",
+    "width": 4288,
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "17.0-55.0 mm f/2.8",
+      "focal": 19,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.0125
+    },
+    "added_at": "2026-05-28"
+  },
+  {
+    "id": "1PQW6onDb_33gPgaWfeyLQVrzj1KBqDaW",
+    "title": "בית הונדרטווסר הצבעוני",
+    "category": "אומנות רחוב",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=1PQW6onDb_33gPgaWfeyLQVrzj1KBqDaW",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1PQW6onDb_33gPgaWfeyLQVrzj1KBqDaW&sz=w600",
+    "description": "בניין אייקוני עם קירות בצבעים עזים וחלונות צבעוניים בעיצוב אומנותי ייחודי",
+    "filename": "DSC_2965 copy.jpg",
+    "width": 4288,
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "17.0-55.0 mm f/2.8",
+      "focal": 32,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.005
+    },
+    "added_at": "2026-05-28"
+  },
+  {
+    "id": "1xvprxLqiAxFa5eTCg0ifW6hHQdReB6F3",
+    "title": "בית אדום בסימטריה",
+    "category": "אומנות רחוב",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=1xvprxLqiAxFa5eTCg0ifW6hHQdReB6F3",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1xvprxLqiAxFa5eTCg0ifW6hHQdReB6F3&sz=w600",
+    "description": "חזית בית מסורתי אדום עם חלונות זהים וספסל עתיק בחזית",
+    "filename": "DSC_3854 (1) copy.jpg",
+    "width": 4024,
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300",
+      "lens": "17.0-55.0 mm f/2.8",
+      "focal": 19,
+      "aperture": 5,
+      "iso": 100,
+      "shutter": 0.00625
+    },
+    "added_at": "2026-05-28"
+  },
+  {
+    "id": "1m1rOd7kIkPcNXYQozMwl7h7XeNgY0rue",
+    "title": "שכבות של זמן",
+    "category": "אומנות רחוב",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=1m1rOd7kIkPcNXYQozMwl7h7XeNgY0rue",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1m1rOd7kIkPcNXYQozMwl7h7XeNgY0rue&sz=w600",
+    "description": "שלט קרלסברג עתיק עם כתובת בחרוטים על קיר מקומר בירוק",
+    "filename": "DSC_6421 copy.jpg",
+    "width": 6192,
+    "height": 4128,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "24-70mm f/2.8G",
+      "focal": 70,
+      "aperture": 2.8,
+      "iso": 64,
+      "shutter": 0.00625
+    },
+    "added_at": "2026-05-28"
+  },
+  {
+    "id": "1to7-FhYiQPE4OMsTMqzDXpHyIgblTueb",
+    "title": "סימטריה גיאומטרית בצהוב",
+    "category": "אומנות רחוב",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=1to7-FhYiQPE4OMsTMqzDXpHyIgblTueb",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1to7-FhYiQPE4OMsTMqzDXpHyIgblTueb&sz=w600",
+    "description": "חזית בנין צהוב עם חלונות סימטריים וגבולות לבנים מנוקדים",
+    "filename": "MJH_7687 copy.jpg",
+    "width": 7080,
+    "height": 4562,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 98,
+      "aperture": 3.5,
+      "iso": 5600,
+      "shutter": 0.01
+    },
+    "added_at": "2026-05-28"
+  },
+  {
+    "id": "1f8_Yb2lJxbfvRCP-33_BoznPL-VDtiad",
+    "title": "פנס רחוב עתיק",
+    "category": "אומנות רחוב",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=1f8_Yb2lJxbfvRCP-33_BoznPL-VDtiad",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1f8_Yb2lJxbfvRCP-33_BoznPL-VDtiad&sz=w600",
+    "description": "פנס דקורטיבי עם ארבע נורות על רקע שמיים עננים",
+    "filename": "MJH_7739 copy.jpg",
+    "width": 7360,
+    "height": 4912,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 140,
+      "aperture": 3.5,
+      "iso": 100,
+      "shutter": 0.0025
+    },
+    "added_at": "2026-05-28"
+  },
+  {
+    "id": "1PBBgZc8P6Nm_LGeg5zwLVxAiDn80PcOx",
+    "title": "חזית אדומה עם חלונות",
+    "category": "אומנות רחוב",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=1PBBgZc8P6Nm_LGeg5zwLVxAiDn80PcOx",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1PBBgZc8P6Nm_LGeg5zwLVxAiDn80PcOx&sz=w600",
+    "description": "בניין קלאסי עם חזית אדומה וחלונות מסודרים בשורות סימטריות",
+    "filename": "MJH_7741 copy.jpg",
+    "width": 5000,
+    "height": 3570,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 160,
+      "aperture": 3.5,
+      "iso": 100,
+      "shutter": 0.00625
+    },
+    "added_at": "2026-05-28"
+  },
+  {
+    "id": "1s79_1yajSNb1nnEbxPOMtd_FV9MpzUWo",
+    "title": "קורקינט ירוק על קיר",
+    "category": "אומנות רחוב",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=1s79_1yajSNb1nnEbxPOMtd_FV9MpzUWo",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1s79_1yajSNb1nnEbxPOMtd_FV9MpzUWo&sz=w600",
+    "description": "קורקינט ירוק וחלק מעמד מול קיר עם גרפיטי אדום וכחול",
+    "filename": "MJH_7749 copy.jpg",
+    "width": 7003,
+    "height": 4674,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 112,
+      "aperture": 3.5,
+      "iso": 500,
+      "shutter": 0.008
+    },
+    "added_at": "2026-05-28"
+  },
+  {
+    "id": "1unU2NOnnuGw0p9Uee5Tgqb1-KwMYs3bx",
+    "title": "דלת אדומה בקיר ירוק",
+    "category": "אומנות רחוב",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=1unU2NOnnuGw0p9Uee5Tgqb1-KwMYs3bx",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1unU2NOnnuGw0p9Uee5Tgqb1-KwMYs3bx&sz=w600",
+    "description": "חזית בית קולוריתית עם דלת אדומה וחלון עם פרחים",
+    "filename": "MJH_7773 copy.jpg",
+    "width": 7116,
+    "height": 4798,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "24.0-70.0 mm f/2.8",
+      "focal": 48,
+      "aperture": 3.5,
+      "iso": 140,
+      "shutter": 0.02
+    },
+    "added_at": "2026-05-28"
+  },
+  {
+    "id": "1_zb1pjIlD007bkxhEwMDucNFJs2CBeQl",
+    "title": "אופניים אדומים עם פרחים",
+    "category": "אומנות רחוב",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=1_zb1pjIlD007bkxhEwMDucNFJs2CBeQl",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1_zb1pjIlD007bkxhEwMDucNFJs2CBeQl&sz=w600",
+    "description": "אופניים אדומים מעוטרים בעציצי פרחים סגולים על קיר עתיק",
+    "filename": "MJH_7789 copy.jpg",
+    "width": 6584,
+    "height": 4540,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "24.0-70.0 mm f/2.8",
+      "focal": 48,
+      "aperture": 3.5,
+      "iso": 160,
+      "shutter": 0.02
+    },
+    "added_at": "2026-05-28"
+  },
+  {
+    "id": "1fH3HHCvtiK2DzbPIKa-PKc1LzWamdj4o",
+    "title": "חלון על כחול וצהוב",
+    "category": "אומנות רחוב",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=1fH3HHCvtiK2DzbPIKa-PKc1LzWamdj4o",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1fH3HHCvtiK2DzbPIKa-PKc1LzWamdj4o&sz=w600",
+    "description": "חלון עתיק בפריים צהוב וכחול עם זכוכית משובשת",
+    "filename": "MJH_9660 copy.jpg",
+    "width": 7249,
+    "height": 4838,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 170,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.0015625
+    },
+    "added_at": "2026-05-28"
+  },
+  {
     "id": "1F5h4R4wzlMQ_DRq6LrnVXk-O7S9NvADw",
     "title": "ברווז בתעופה",
     "category": "בעלי חיים",
@@ -10013,6 +10349,251 @@
     }
   },
   {
+    "id": "1AG6bcsoKB6Qwkn4VJRhYiEp3CyFdjxyh",
+    "title": "הליכה על דוגמה גיאומטרית",
+    "category": "הונגריה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1AG6bcsoKB6Qwkn4VJRhYiEp3CyFdjxyh",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1AG6bcsoKB6Qwkn4VJRhYiEp3CyFdjxyh&sz=w600",
+    "description": "אישה הולכת על רצפה מעוטרת בדוגמה גיאומטרית מסורתית בהונגריה",
+    "filename": "AMI_5330 (1)-2 copy.jpg",
+    "width": 3788,
+    "height": 2343,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300S",
+      "lens": "24.0-70.0 mm f/2.8",
+      "focal": 66,
+      "aperture": 3.5,
+      "iso": 400,
+      "shutter": 0.008
+    },
+    "added_at": "2026-05-28"
+  },
+  {
+    "id": "1uSC1Qf057AWeQ7TFrnie680L5hbPdJUF",
+    "title": "רגעים יומיומיים בבודפשט",
+    "category": "הונגריה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1uSC1Qf057AWeQ7TFrnie680L5hbPdJUF",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1uSC1Qf057AWeQ7TFrnie680L5hbPdJUF&sz=w600",
+    "description": "אנשים בחצר מוסדית עם רצפת אריחים גיאומטרית יפה בהונגריה",
+    "filename": "AMI_5339 (1) copy.jpg",
+    "width": 3860,
+    "height": 2564,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300S",
+      "lens": "24.0-70.0 mm f/2.8",
+      "focal": 45,
+      "aperture": 3.5,
+      "iso": 400,
+      "shutter": 0.00625
+    },
+    "added_at": "2026-05-28"
+  },
+  {
+    "id": "1wXO2iIYLn0cLnnivVVgYDQ44W_Yyj5KN",
+    "title": "תקרה מהוממת בבודפשט",
+    "category": "הונגריה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1wXO2iIYLn0cLnnivVVgYDQ44W_Yyj5KN",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1wXO2iIYLn0cLnnivVVgYDQ44W_Yyj5KN&sz=w600",
+    "description": "תקרה קלאסית עם זהב ודוגמות גיאומטריות מקסימות בהונגריה",
+    "filename": "AMI_5378 copy.jpg",
+    "width": 4288,
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300S",
+      "lens": "24.0-70.0 mm f/2.8",
+      "focal": 62,
+      "aperture": 2.8,
+      "iso": 400,
+      "shutter": 0.00625
+    },
+    "added_at": "2026-05-28"
+  },
+  {
+    "id": "1dbZkZ_cSIBq0Iz_XbWMxxet50wSmZQWm",
+    "title": "פרלמנט בודפשט בהונגריה",
+    "category": "הונגריה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1dbZkZ_cSIBq0Iz_XbWMxxet50wSmZQWm",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1dbZkZ_cSIBq0Iz_XbWMxxet50wSmZQWm&sz=w600",
+    "description": "בניין הפרלמנט ההונגרי המפואר על שפת נהר הדנובה בבודפשט",
+    "filename": "AMI_5537 copy.jpg",
+    "width": 3992,
+    "height": 2720,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300S",
+      "lens": "24.0-70.0 mm f/2.8",
+      "focal": 24,
+      "aperture": 2.8,
+      "iso": 200,
+      "shutter": 0.002
+    },
+    "added_at": "2026-05-28"
+  },
+  {
+    "id": "1kCvwBdJDzEVz5zf9LtqyatcJxDJdkIWb",
+    "title": "הפרלמנט ההונגרי בבודפשט",
+    "category": "הונגריה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1kCvwBdJDzEVz5zf9LtqyatcJxDJdkIWb",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1kCvwBdJDzEVz5zf9LtqyatcJxDJdkIWb&sz=w600",
+    "description": "בניין הפרלמנט ההונגרי המפואר על שפת נהר הדנובה בבודפשט",
+    "filename": "AMI_5590 copy.jpg",
+    "width": 4288,
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300S",
+      "lens": "24.0-70.0 mm f/2.8",
+      "focal": 24,
+      "aperture": 2.8,
+      "iso": 200,
+      "shutter": 0.0025
+    },
+    "added_at": "2026-05-28"
+  },
+  {
+    "id": "1pHMHqoiNRQgBcVpxBlURNB5I7sMQLd7J",
+    "title": "כנסיית מתיאס בבודפשט",
+    "category": "הונגריה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1pHMHqoiNRQgBcVpxBlURNB5I7sMQLd7J",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1pHMHqoiNRQgBcVpxBlURNB5I7sMQLd7J&sz=w600",
+    "description": "מגדל גותי מעוטר של כנסיית מתיאס ההיסטורית בהונגריה",
+    "filename": "AMI_6068 copy2.jpg",
+    "width": 4288,
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300S",
+      "lens": "10.0-20.0 mm f/3.5",
+      "focal": 10,
+      "aperture": 6.3,
+      "iso": 100,
+      "shutter": 0.001
+    },
+    "added_at": "2026-05-28"
+  },
+  {
+    "id": "1ibr-t2rNjEf-q2R3yIWh-MhoX8v4ubde",
+    "title": "מגדל הדיג בבודפשט",
+    "category": "הונגריה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1ibr-t2rNjEf-q2R3yIWh-MhoX8v4ubde",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1ibr-t2rNjEf-q2R3yIWh-MhoX8v4ubde&sz=w600",
+    "description": "מדרגות עתיקות מובילות לגשר הסמל של בודפשט בהונגריה",
+    "filename": "AMI_6091 copy.jpg",
+    "width": 4073,
+    "height": 2733,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300S",
+      "lens": "10.0-20.0 mm f/3.5",
+      "focal": 10,
+      "aperture": 6.3,
+      "iso": 100,
+      "shutter": 0.002
+    },
+    "added_at": "2026-05-28"
+  },
+  {
+    "id": "1Ib3W6OzG5wh9hagJkzlE734rSDpbeNTz",
+    "title": "מגדל הדייג בבודפשט",
+    "category": "הונגריה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1Ib3W6OzG5wh9hagJkzlE734rSDpbeNTz",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1Ib3W6OzG5wh9hagJkzlE734rSDpbeNTz&sz=w600",
+    "description": "נוף מרהיב של מגדל הדייג הלבן העתיק מעל בודפשט ההונגרית",
+    "filename": "AMI_6112 copy.jpg",
+    "width": 4288,
+    "height": 2848,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D300S",
+      "lens": "10.0-20.0 mm f/3.5",
+      "focal": 10,
+      "aperture": 7.1,
+      "iso": 100,
+      "shutter": 0.003125
+    },
+    "added_at": "2026-05-28"
+  },
+  {
+    "id": "1YUcuTZQOjS6jtW0Qh4Kpt-3jcAwj9biK",
+    "title": "פנס בחושך",
+    "category": "הונגריה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1YUcuTZQOjS6jtW0Qh4Kpt-3jcAwj9biK",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1YUcuTZQOjS6jtW0Qh4Kpt-3jcAwj9biK&sz=w600",
+    "description": "פנס עתיק תלוי על קיר אדום בשעת הערב בהונגריה",
+    "filename": "IMG_0368 copy.jpg",
+    "width": 6467,
+    "height": 4643,
+    "exif": null,
+    "added_at": "2026-05-28"
+  },
+  {
+    "id": "1NS4wbRyc7U1gV2pYyOG1GO3fQOTBoY7g",
+    "title": "הטרמוואי הצהוב בודפשט",
+    "category": "הונגריה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1NS4wbRyc7U1gV2pYyOG1GO3fQOTBoY7g",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1NS4wbRyc7U1gV2pYyOG1GO3fQOTBoY7g&sz=w600",
+    "description": "טרמוואי צהוב קלאסי על פסי הרכבת לחוף הדנובה בהונגריה",
+    "filename": "MJH_1354 copy.jpg",
+    "width": 7360,
+    "height": 4912,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 130,
+      "aperture": 6.3,
+      "iso": 640,
+      "shutter": 0.00625
+    },
+    "added_at": "2026-05-28"
+  },
+  {
+    "id": "1LTEyur5AFNCGIm5868OnDZD3ez6geVeb",
+    "title": "הטרמוואי הצהוב בבודפשט",
+    "category": "הונגריה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1LTEyur5AFNCGIm5868OnDZD3ez6geVeb",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1LTEyur5AFNCGIm5868OnDZD3ez6geVeb&sz=w600",
+    "description": "קו 47 של הטרמוואי הצהוב היסטורי על גשר ירוק בהונגריה",
+    "filename": "MJH_2774 copy.jpg",
+    "width": 6803,
+    "height": 4540,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 175,
+      "aperture": 2.8,
+      "iso": 320,
+      "shutter": 0.0002
+    },
+    "added_at": "2026-05-28"
+  },
+  {
+    "id": "1NCZo6CO63ZvkuFXhfBBHfMzNnXUYlju8",
+    "title": "הפרלמנט ההונגרי בודפשט",
+    "category": "הונגריה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1NCZo6CO63ZvkuFXhfBBHfMzNnXUYlju8",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1NCZo6CO63ZvkuFXhfBBHfMzNnXUYlju8&sz=w600",
+    "description": "בנין הפרלמנט ההונגרי המפואר על גדות נהר הדנובה",
+    "filename": "MJH_3026 copy.jpg",
+    "width": 6966,
+    "height": 4649,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 180,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.0005
+    },
+    "added_at": "2026-05-28"
+  },
+  {
     "id": "11Vyi3Ad51oScJTdB4EGQ6BNF3kYv6wWX",
     "title": "גדלי זכוכית בוינה",
     "category": "וינה",
@@ -12209,147 +12790,25 @@
     "exif": null
   },
   {
-    "id": "1QGGYuIxDyLaAtBXU0krCzUo0cRpR1E4j",
-    "title": "כלים מוזיקליים בזהב",
+    "id": "1dmeCt9jr3ZXVYBwSJkXbEqL-jEKSQtfA",
+    "title": "אגם היער בסלובקיה",
     "category": "סלובקיה",
     "parent_category": "מקומות בעולם",
-    "url": "https://drive.google.com/uc?export=view&id=1QGGYuIxDyLaAtBXU0krCzUo0cRpR1E4j",
-    "thumbnail": "https://drive.google.com/thumbnail?id=1QGGYuIxDyLaAtBXU0krCzUo0cRpR1E4j&sz=w600",
-    "description": "שורה של חצוצרות זהובות מברוקות בפרט מקרוב",
-    "filename": "MJH_0480.jpg",
-    "width": 4912,
-    "height": 7360,
-    "exif": null
-  },
-  {
-    "id": "1QwW1cIMSz9-x2dzgwLJLL7T5ncS0pxfy",
-    "title": "פנים חייכות על הדלת",
-    "category": "סלובקיה",
-    "parent_category": "מקומות בעולם",
-    "url": "https://drive.google.com/uc?export=view&id=1QwW1cIMSz9-x2dzgwLJLL7T5ncS0pxfy",
-    "thumbnail": "https://drive.google.com/thumbnail?id=1QwW1cIMSz9-x2dzgwLJLL7T5ncS0pxfy&sz=w600",
-    "description": "אמנות רחוב מצחיקה של פנים צוחקות על דלת לבנה בסלובקיה",
-    "filename": "MJH_1297.jpg",
-    "width": 4912,
-    "height": 7360,
-    "exif": null
-  },
-  {
-    "id": "13Ok9EB50SSnSNQwQpIAWlyjZGtaENzQ_",
-    "title": "רוז'מברג בסלובקיה",
-    "category": "סלובקיה",
-    "parent_category": "מקומות בעולם",
-    "url": "https://drive.google.com/uc?export=view&id=13Ok9EB50SSnSNQwQpIAWlyjZGtaENzQ_",
-    "thumbnail": "https://drive.google.com/thumbnail?id=13Ok9EB50SSnSNQwQpIAWlyjZGtaENzQ_&sz=w600",
-    "description": "בנייני צבעוניים וכנסייה בעיר ההיסטורית רוז'מברג שבסלובקיה",
-    "filename": "MJH_1407.jpg",
-    "width": 7360,
-    "height": 4912,
-    "exif": null
-  },
-  {
-    "id": "14Wuxa0ljfjXiHKq46_QNx1QHDE6st2R4",
-    "title": "חלונות בעיר סלובקית",
-    "category": "סלובקיה",
-    "parent_category": "מקומות בעולם",
-    "url": "https://drive.google.com/uc?export=view&id=14Wuxa0ljfjXiHKq46_QNx1QHDE6st2R4",
-    "thumbnail": "https://drive.google.com/thumbnail?id=14Wuxa0ljfjXiHKq46_QNx1QHDE6st2R4&sz=w600",
-    "description": "שני חלונות עם תריסים חומים על קיר עץ עתיק שחור",
-    "filename": "MJH_8071.jpg",
-    "width": 7360,
-    "height": 4912,
-    "exif": null
-  },
-  {
-    "id": "1JjR5T6S3efLb1ZOox2HgNy0swQSYSQAF",
-    "title": "הרים ירוקים בסלובקיה",
-    "category": "סלובקיה",
-    "parent_category": "מקומות בעולם",
-    "url": "https://drive.google.com/uc?export=view&id=1JjR5T6S3efLb1ZOox2HgNy0swQSYSQAF",
-    "thumbnail": "https://drive.google.com/thumbnail?id=1JjR5T6S3efLb1ZOox2HgNy0swQSYSQAF&sz=w600",
-    "description": "נוף אלפיני עם עשב ירוק, גדרות עץ ועצים נדירים",
-    "filename": "MJH_8164.jpg",
-    "width": 7360,
-    "height": 4912,
-    "exif": null
-  },
-  {
-    "id": "1DZ4sQlmc_EtLFGgjDPXgwvOUrg5AA26a",
-    "title": "פסל סוס עתיק",
-    "category": "סלובקיה",
-    "parent_category": "מקומות בעולם",
-    "url": "https://drive.google.com/uc?export=view&id=1DZ4sQlmc_EtLFGgjDPXgwvOUrg5AA26a",
-    "thumbnail": "https://drive.google.com/thumbnail?id=1DZ4sQlmc_EtLFGgjDPXgwvOUrg5AA26a&sz=w600",
-    "description": "פסל אבן של ראש סוס בעיצוב קלאסי, מכוסה בשכבת ירקרקה מהזמן",
-    "filename": "MJH_8561.jpg",
-    "width": 4912,
-    "height": 7360,
-    "exif": null
-  },
-  {
-    "id": "1TPNlreRbs3TujrntJtJFQYnfNyXyltxx",
-    "title": "ילד בשדרת רטובה",
-    "category": "סלובקיה",
-    "parent_category": "מקומות בעולם",
-    "url": "https://drive.google.com/uc?export=view&id=1TPNlreRbs3TujrntJtJFQYnfNyXyltxx",
-    "thumbnail": "https://drive.google.com/thumbnail?id=1TPNlreRbs3TujrntJtJFQYnfNyXyltxx&sz=w600",
-    "description": "ילד עומד בשדרה רטובה בעיר עם השתקפויות בתא המים",
-    "filename": "MJH_8800.jpg",
-    "width": 7360,
-    "height": 4912,
-    "exif": null
-  },
-  {
-    "id": "11TOu6rFq-4Odxzbod9TjRnVeynGmYjyu",
-    "title": "ברווז בתנוחת הליכה",
-    "category": "סלובקיה",
-    "parent_category": "מקומות בעולם",
-    "url": "https://drive.google.com/uc?export=view&id=11TOu6rFq-4Odxzbod9TjRnVeynGmYjyu",
-    "thumbnail": "https://drive.google.com/thumbnail?id=11TOu6rFq-4Odxzbod9TjRnVeynGmYjyu&sz=w600",
-    "description": "ברווז פורש כנפיים בזמן הליכה במים עדינים",
-    "filename": "MJH_9270.jpg",
-    "width": 7360,
-    "height": 4912,
-    "exif": null
-  },
-  {
-    "id": "1xP3s71xaGckWfDXDS7u_W_MI1jFxSZiM",
-    "title": "ברווז בעיר המים",
-    "category": "סלובקיה",
-    "parent_category": "מקומות בעולם",
-    "url": "https://drive.google.com/uc?export=view&id=1xP3s71xaGckWfDXDS7u_W_MI1jFxSZiM",
-    "thumbnail": "https://drive.google.com/thumbnail?id=1xP3s71xaGckWfDXDS7u_W_MI1jFxSZiM&sz=w600",
-    "description": "ברווז שחור שוחה בין גלים על מים כהים וזוהרים",
-    "filename": "MJH_9309.jpg",
-    "width": 7360,
-    "height": 4912,
-    "exif": null
-  },
-  {
-    "id": "13VlnLQzoZcZDd073gKfNYufYlf_B4J1z",
-    "title": "ברווז בבריכת יללים",
-    "category": "סלובקיה",
-    "parent_category": "מקומות בעולם",
-    "url": "https://drive.google.com/uc?export=view&id=13VlnLQzoZcZDd073gKfNYufYlf_B4J1z",
-    "thumbnail": "https://drive.google.com/thumbnail?id=13VlnLQzoZcZDd073gKfNYufYlf_B4J1z&sz=w600",
-    "description": "ברווז שוחה בבריכה שקטה מוקפת עלי יללים ירוקים",
-    "filename": "MJH_9366.jpg",
-    "width": 7360,
-    "height": 4912,
-    "exif": null
-  },
-  {
-    "id": "1LpyeYlxL8XaiUaF8nBebkxMO8OCXu7dm",
-    "title": "נהר טורקיז בסלובקיה",
-    "category": "סלובקיה",
-    "parent_category": "מקומות בעולם",
-    "url": "https://drive.google.com/uc?export=view&id=1LpyeYlxL8XaiUaF8nBebkxMO8OCXu7dm",
-    "thumbnail": "https://drive.google.com/thumbnail?id=1LpyeYlxL8XaiUaF8nBebkxMO8OCXu7dm&sz=w600",
-    "description": "נהר בעל מים בצבע טורקיז עוצר בין יערות וסלעים בעמק אלפיני",
-    "filename": "MJH_9471.jpg",
-    "width": 7360,
-    "height": 4912,
-    "exif": null
+    "url": "https://drive.google.com/uc?export=view&id=1dmeCt9jr3ZXVYBwSJkXbEqL-jEKSQtfA",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1dmeCt9jr3ZXVYBwSJkXbEqL-jEKSQtfA&sz=w600",
+    "description": "נוף שרוני של אגם צלול המוקף ביער ירוק עם עץ סתיו בוקע",
+    "filename": "MJH_0137.jpg",
+    "width": 7262,
+    "height": 4742,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 200,
+      "aperture": 3.5,
+      "iso": 100,
+      "shutter": 0.005
+    },
+    "added_at": "2026-05-28"
   },
   {
     "id": "19Q-SGNEyuCzAc8cbmMMeXeSzVpaFJazV",
@@ -12432,6 +12891,19 @@
     }
   },
   {
+    "id": "1QGGYuIxDyLaAtBXU0krCzUo0cRpR1E4j",
+    "title": "כלים מוזיקליים בזהב",
+    "category": "סלובקיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1QGGYuIxDyLaAtBXU0krCzUo0cRpR1E4j",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1QGGYuIxDyLaAtBXU0krCzUo0cRpR1E4j&sz=w600",
+    "description": "שורה של חצוצרות זהובות מברוקות בפרט מקרוב",
+    "filename": "MJH_0480.jpg",
+    "width": 4912,
+    "height": 7360,
+    "exif": null
+  },
+  {
     "id": "16z-bJaEjNcwUpviw28lgDiAV_NMug-Ic",
     "title": "נוף הרים סלובקי",
     "category": "סלובקיה",
@@ -12452,6 +12924,27 @@
     }
   },
   {
+    "id": "1n6UwQFaa0Ya1co-fX_pQzKtaWHkiCbt8",
+    "title": "עמק ירוק בהרי סלובקיה",
+    "category": "סלובקיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1n6UwQFaa0Ya1co-fX_pQzKtaWHkiCbt8",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1n6UwQFaa0Ya1co-fX_pQzKtaWHkiCbt8&sz=w600",
+    "description": "נוף הררי מרהיב עם עמק ירוק, יערות אורן וקשת הרים מושלגים",
+    "filename": "MJH_0582.jpg",
+    "width": 7360,
+    "height": 4912,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 70,
+      "aperture": 11,
+      "iso": 200,
+      "shutter": 0.0125
+    },
+    "added_at": "2026-05-28"
+  },
+  {
     "id": "1wEW9UC71Dnca2E6WYWw5qqt4nWAuhlJn",
     "title": "נוף סלובקי בסתיו",
     "category": "סלובקיה",
@@ -12470,6 +12963,48 @@
       "iso": 280,
       "shutter": 0.005
     }
+  },
+  {
+    "id": "1YVvL0h_o1dG5oq6-AIlnmDBsXVOmR0Kd",
+    "title": "טירת עתיקות בסלובקיה",
+    "category": "סלובקיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1YVvL0h_o1dG5oq6-AIlnmDBsXVOmR0Kd",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1YVvL0h_o1dG5oq6-AIlnmDBsXVOmR0Kd&sz=w600",
+    "description": "חורבות טירה עתיקה על גבעה ירוקה עם נוף כפרי רחב",
+    "filename": "MJH_0875.jpg",
+    "width": 7360,
+    "height": 4912,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "24.0-70.0 mm f/2.8",
+      "focal": 70,
+      "aperture": 5,
+      "iso": 100,
+      "shutter": 0.00625
+    },
+    "added_at": "2026-05-28"
+  },
+  {
+    "id": "1dNeRVquO8JZzjBpV0dDl4IArIxfndmCw",
+    "title": "עמוד מנוקד בסלובקיה",
+    "category": "סלובקיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1dNeRVquO8JZzjBpV0dDl4IArIxfndmCw",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1dNeRVquO8JZzjBpV0dDl4IArIxfndmCw&sz=w600",
+    "description": "עמוד דקורטיבי עתיק בעיצוב מארוני מול שמיים כחולים",
+    "filename": "MJH_0969.jpg",
+    "width": 4800,
+    "height": 3200,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "10.0-20.0 mm f/3.5",
+      "focal": 20,
+      "aperture": 11,
+      "iso": 100,
+      "shutter": 0.005
+    },
+    "added_at": "2026-05-28"
   },
   {
     "id": "1A0nxCZY6_i4TEsRoALuAdOIjQTnhl33g",
@@ -12514,6 +13049,48 @@
     "added_at": "2026-04-24"
   },
   {
+    "id": "1NYLFG8sRsK4fFpdISOfVCEbt8FIAeSS2",
+    "title": "נחל בעמק היער",
+    "category": "סלובקיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1NYLFG8sRsK4fFpdISOfVCEbt8FIAeSS2",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1NYLFG8sRsK4fFpdISOfVCEbt8FIAeSS2&sz=w600",
+    "description": "זרם מימי זורם בין סלעים ועלים נופלים בעמק יערות סלובקיה",
+    "filename": "MJH_1110.jpg",
+    "width": 4800,
+    "height": 3200,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "10.0-20.0 mm f/3.5",
+      "focal": 12,
+      "aperture": 11,
+      "iso": 50,
+      "shutter": 2.5
+    },
+    "added_at": "2026-05-28"
+  },
+  {
+    "id": "1WUX-3Pvjt8v2_Z6NhlHP09Po9ycD61pb",
+    "title": "ערפל בעמק ההרים",
+    "category": "סלובקיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1WUX-3Pvjt8v2_Z6NhlHP09Po9ycD61pb",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1WUX-3Pvjt8v2_Z6NhlHP09Po9ycD61pb&sz=w600",
+    "description": "נוף סתיו אוטוני בעמק ההרים הסלובקי עם ערפל ועצים צהובים",
+    "filename": "MJH_1152.jpg",
+    "width": 4800,
+    "height": 3200,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "10.0-20.0 mm f/3.5",
+      "focal": 18,
+      "aperture": 3.5,
+      "iso": 200,
+      "shutter": 0.003125
+    },
+    "added_at": "2026-05-28"
+  },
+  {
     "id": "14v7JbtjQX03bOhyywk4w3VwiWFtq5vRq",
     "title": "בית עץ סלובקי",
     "category": "סלובקיה",
@@ -12532,6 +13109,19 @@
       "iso": 1400,
       "shutter": 0.008
     }
+  },
+  {
+    "id": "1QwW1cIMSz9-x2dzgwLJLL7T5ncS0pxfy",
+    "title": "פנים חייכות על הדלת",
+    "category": "סלובקיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1QwW1cIMSz9-x2dzgwLJLL7T5ncS0pxfy",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1QwW1cIMSz9-x2dzgwLJLL7T5ncS0pxfy&sz=w600",
+    "description": "אמנות רחוב מצחיקה של פנים צוחקות על דלת לבנה בסלובקיה",
+    "filename": "MJH_1297.jpg",
+    "width": 4912,
+    "height": 7360,
+    "exif": null
   },
   {
     "id": "1N21nlofFQaInC6Tb79YK6x5nmsQHEGgn",
@@ -12574,6 +13164,69 @@
       "shutter": 0.008
     },
     "added_at": "2026-04-24"
+  },
+  {
+    "id": "1JRUTvuZD8LBVi5wfL-lVvr9WwYkmTNSA",
+    "title": "בית עם קישוטים מסורתיים",
+    "category": "סלובקיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1JRUTvuZD8LBVi5wfL-lVvr9WwYkmTNSA",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1JRUTvuZD8LBVi5wfL-lVvr9WwYkmTNSA&sz=w600",
+    "description": "בית סלובקי עם קישוטים עתיקים לבנים וחלונות עץ",
+    "filename": "MJH_1329.jpg",
+    "width": 7360,
+    "height": 4912,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "24.0-70.0 mm f/2.8",
+      "focal": 26,
+      "aperture": 8,
+      "iso": 100,
+      "shutter": 0.025
+    },
+    "added_at": "2026-05-28"
+  },
+  {
+    "id": "1fjs_N05Rc0FKZOdYsIU5GXUU1O2yJRnj",
+    "title": "חלון כפרי בסלובקיה",
+    "category": "סלובקיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1fjs_N05Rc0FKZOdYsIU5GXUU1O2yJRnj",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1fjs_N05Rc0FKZOdYsIU5GXUU1O2yJRnj&sz=w600",
+    "description": "חלון מעץ בעיטור מסורתי עם פרחים בחלונית",
+    "filename": "MJH_1333.jpg",
+    "width": 7360,
+    "height": 4912,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "24.0-70.0 mm f/2.8",
+      "focal": 52,
+      "aperture": 8,
+      "iso": 500,
+      "shutter": 0.02
+    },
+    "added_at": "2026-05-28"
+  },
+  {
+    "id": "1WHoPqeGkvB7Jcj4HVqg0enzXAquAG90_",
+    "title": "בית עם דוגמנות סלובקית מסורתית",
+    "category": "סלובקיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1WHoPqeGkvB7Jcj4HVqg0enzXAquAG90_",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1WHoPqeGkvB7Jcj4HVqg0enzXAquAG90_&sz=w600",
+    "description": "בנין עתיק עם עיטורים גאומטריים בלבן ושחור וחלונות עץ",
+    "filename": "MJH_1359.jpg",
+    "width": 4597,
+    "height": 3020,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "10.0-20.0 mm f/3.5",
+      "focal": 14,
+      "aperture": 3.5,
+      "iso": 100,
+      "shutter": 0.0125
+    },
+    "added_at": "2026-05-28"
   },
   {
     "id": "1taihR0eG_8acGVbfe76QQ0d_v20A1Pq1",
@@ -12637,6 +13290,103 @@
     "added_at": "2026-04-24"
   },
   {
+    "id": "1iwtjsLejcgFzd0l_Jx1Iv2lm1Z8sQFzq",
+    "title": "דלעות ליל כל הקדושים",
+    "category": "סלובקיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1iwtjsLejcgFzd0l_Jx1Iv2lm1Z8sQFzq",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1iwtjsLejcgFzd0l_Jx1Iv2lm1Z8sQFzq&sz=w600",
+    "description": "דלעות צהובות מגולפות בעיצוב מפחיד ליהלום הלוויין",
+    "filename": "MJH_1401.jpg",
+    "width": 7360,
+    "height": 4912,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "24.0-70.0 mm f/2.8",
+      "focal": 62,
+      "aperture": 4,
+      "iso": 125,
+      "shutter": 0.016666668
+    },
+    "added_at": "2026-05-28"
+  },
+  {
+    "id": "13Ok9EB50SSnSNQwQpIAWlyjZGtaENzQ_",
+    "title": "רוז'מברג בסלובקיה",
+    "category": "סלובקיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=13Ok9EB50SSnSNQwQpIAWlyjZGtaENzQ_",
+    "thumbnail": "https://drive.google.com/thumbnail?id=13Ok9EB50SSnSNQwQpIAWlyjZGtaENzQ_&sz=w600",
+    "description": "בנייני צבעוניים וכנסייה בעיר ההיסטורית רוז'מברג שבסלובקיה",
+    "filename": "MJH_1407.jpg",
+    "width": 7360,
+    "height": 4912,
+    "exif": null
+  },
+  {
+    "id": "163KXUyFH6ns-2K4Ij8brc0aEm8WTuWu7",
+    "title": "יערות סלובקיה בסתיו",
+    "category": "סלובקיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=163KXUyFH6ns-2K4Ij8brc0aEm8WTuWu7",
+    "thumbnail": "https://drive.google.com/thumbnail?id=163KXUyFH6ns-2K4Ij8brc0aEm8WTuWu7&sz=w600",
+    "description": "נוף יערות צפוף עם עצים בגוונים סתווניים מעל שדה ירוק",
+    "filename": "MJH_1523.jpg",
+    "width": 7360,
+    "height": 4912,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 170,
+      "aperture": 4,
+      "iso": 180,
+      "shutter": 0.005
+    },
+    "added_at": "2026-05-28"
+  },
+  {
+    "id": "1_mbDZ0uCnf28y-OZmZeRj84VXu6zf2bZ",
+    "title": "אמנות רחוב בסלובקיה",
+    "category": "סלובקיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1_mbDZ0uCnf28y-OZmZeRj84VXu6zf2bZ",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1_mbDZ0uCnf28y-OZmZeRj84VXu6zf2bZ&sz=w600",
+    "description": "ציור קיר צבעוני המשקף בבריכה מים, סלובקיה",
+    "filename": "MJH_1538.jpg",
+    "width": 4912,
+    "height": 7360,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "24.0-70.0 mm f/2.8",
+      "focal": 58,
+      "aperture": 4,
+      "iso": 100,
+      "shutter": 0.008
+    },
+    "added_at": "2026-05-28"
+  },
+  {
+    "id": "1RozbNDh-c8u8_5vCtq13zN9Y3OvSZ0YR",
+    "title": "חלון אדום בסלובקיה",
+    "category": "סלובקיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1RozbNDh-c8u8_5vCtq13zN9Y3OvSZ0YR",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1RozbNDh-c8u8_5vCtq13zN9Y3OvSZ0YR&sz=w600",
+    "description": "חלון עץ אדום עם פרחים בעציץ על קיר עץ צהוב",
+    "filename": "MJH_1610.jpg",
+    "width": 7360,
+    "height": 4912,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 70,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.00625
+    },
+    "added_at": "2026-05-28"
+  },
+  {
     "id": "1bGe6NdFZEmyid87_0VViFAdTZ7oVy2bu",
     "title": "בית עץ סלובקי",
     "category": "סלובקיה",
@@ -12656,6 +13406,27 @@
       "shutter": 0.016666668
     },
     "added_at": "2026-04-24"
+  },
+  {
+    "id": "1QuTWrTFpwq2o3p-5gyCXxW7oyY3UzEtb",
+    "title": "בית כפרי בסלובקיה",
+    "category": "סלובקיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1QuTWrTFpwq2o3p-5gyCXxW7oyY3UzEtb",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1QuTWrTFpwq2o3p-5gyCXxW7oyY3UzEtb&sz=w600",
+    "description": "בית עם קירות צהובים וכניסה אדומה בסגנון מסורתי סלובקי",
+    "filename": "MJH_1651.jpg",
+    "width": 6667,
+    "height": 4445,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "24.0-70.0 mm f/2.8",
+      "focal": 44,
+      "aperture": 10,
+      "iso": 180,
+      "shutter": 0.02
+    },
+    "added_at": "2026-05-28"
   },
   {
     "id": "1_a6lttAlcebpHimEUXAe6ah0wfrMUMPO",
@@ -12699,6 +13470,111 @@
     "added_at": "2026-04-24"
   },
   {
+    "id": "1bDLgNuaFRLIgM8AVrqm4z8jPSDV16in5",
+    "title": "חלון כפרי בסלובקיה",
+    "category": "סלובקיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1bDLgNuaFRLIgM8AVrqm4z8jPSDV16in5",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1bDLgNuaFRLIgM8AVrqm4z8jPSDV16in5&sz=w600",
+    "description": "חלון לבן עם מסגרת שחורה בבית עץ צהוב מסורתי",
+    "filename": "MJH_1679.jpg",
+    "width": 6558,
+    "height": 4387,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "24.0-70.0 mm f/2.8",
+      "focal": 34,
+      "aperture": 10,
+      "iso": 125,
+      "shutter": 0.025
+    },
+    "added_at": "2026-05-28"
+  },
+  {
+    "id": "1WQ9ZRa_M12SnIH2Q3_3vNYOJfyyhnJih",
+    "title": "בתים בעמק הסתיו",
+    "category": "סלובקיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1WQ9ZRa_M12SnIH2Q3_3vNYOJfyyhnJih",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1WQ9ZRa_M12SnIH2Q3_3vNYOJfyyhnJih&sz=w600",
+    "description": "בתים מסורתיים בעמק הרים בסלובקיה מוקפים בעצים סתווים",
+    "filename": "MJH_1872.jpg",
+    "width": 7360,
+    "height": 4912,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 135,
+      "aperture": 14,
+      "iso": 1800,
+      "shutter": 0.00625
+    },
+    "added_at": "2026-05-28"
+  },
+  {
+    "id": "1f45TIvfa5ag8lb8FR7ZrZSSqFU3ohyqg",
+    "title": "בקתה בעומק היער",
+    "category": "סלובקיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1f45TIvfa5ag8lb8FR7ZrZSSqFU3ohyqg",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1f45TIvfa5ag8lb8FR7ZrZSSqFU3ohyqg&sz=w600",
+    "description": "בקתה עתיקה בודדת בלב יער סלובקי צבוע בצבעי סתיו",
+    "filename": "MJH_1877.jpg",
+    "width": 4834,
+    "height": 7243,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 200,
+      "aperture": 14,
+      "iso": 1800,
+      "shutter": 0.005
+    },
+    "added_at": "2026-05-28"
+  },
+  {
+    "id": "1KXjly2X0_6MQpyjT-h5890VRQ8YPWr32",
+    "title": "נוף ירוק בסלובקיה",
+    "category": "סלובקיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1KXjly2X0_6MQpyjT-h5890VRQ8YPWr32",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1KXjly2X0_6MQpyjT-h5890VRQ8YPWr32&sz=w600",
+    "description": "שדה ירוק עם יער צפוף בעונת הסתיו בהרי סלובקיה",
+    "filename": "MJH_1898.jpg",
+    "width": 4800,
+    "height": 3200,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "10.0-20.0 mm f/3.5",
+      "focal": 20,
+      "aperture": 22,
+      "iso": 500,
+      "shutter": 0.033333335
+    },
+    "added_at": "2026-05-28"
+  },
+  {
+    "id": "1RjHNEJzsXWGHQkgbDgLmpzrZ8bVdDYtw",
+    "title": "פסל עץ עם עיניים ירוקות",
+    "category": "סלובקיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1RjHNEJzsXWGHQkgbDgLmpzrZ8bVdDYtw",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1RjHNEJzsXWGHQkgbDgLmpzrZ8bVdDYtw&sz=w600",
+    "description": "יצירת אומנות עץ ענקית בסלובקיה עם חזות מפחידה וביטוי אנושי",
+    "filename": "MJH_1909.jpg",
+    "width": 7360,
+    "height": 4912,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 70,
+      "aperture": 22,
+      "iso": 2800,
+      "shutter": 0.0125
+    },
+    "added_at": "2026-05-28"
+  },
+  {
     "id": "1yVP3P39xy8rVDzcr75Am9oWkgTMb2ydM",
     "title": "מוזיקאי הרחוב המוזר",
     "category": "סלובקיה",
@@ -12718,6 +13594,142 @@
       "shutter": 0.0015625
     },
     "added_at": "2026-04-24"
+  },
+  {
+    "id": "14Wuxa0ljfjXiHKq46_QNx1QHDE6st2R4",
+    "title": "חלונות בעיר סלובקית",
+    "category": "סלובקיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=14Wuxa0ljfjXiHKq46_QNx1QHDE6st2R4",
+    "thumbnail": "https://drive.google.com/thumbnail?id=14Wuxa0ljfjXiHKq46_QNx1QHDE6st2R4&sz=w600",
+    "description": "שני חלונות עם תריסים חומים על קיר עץ עתיק שחור",
+    "filename": "MJH_8071.jpg",
+    "width": 7360,
+    "height": 4912,
+    "exif": null
+  },
+  {
+    "id": "1JjR5T6S3efLb1ZOox2HgNy0swQSYSQAF",
+    "title": "הרים ירוקים בסלובקיה",
+    "category": "סלובקיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1JjR5T6S3efLb1ZOox2HgNy0swQSYSQAF",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1JjR5T6S3efLb1ZOox2HgNy0swQSYSQAF&sz=w600",
+    "description": "נוף אלפיני עם עשב ירוק, גדרות עץ ועצים נדירים",
+    "filename": "MJH_8164.jpg",
+    "width": 7360,
+    "height": 4912,
+    "exif": null
+  },
+  {
+    "id": "1DZ4sQlmc_EtLFGgjDPXgwvOUrg5AA26a",
+    "title": "פסל סוס עתיק",
+    "category": "סלובקיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1DZ4sQlmc_EtLFGgjDPXgwvOUrg5AA26a",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1DZ4sQlmc_EtLFGgjDPXgwvOUrg5AA26a&sz=w600",
+    "description": "פסל אבן של ראש סוס בעיצוב קלאסי, מכוסה בשכבת ירקרקה מהזמן",
+    "filename": "MJH_8561.jpg",
+    "width": 4912,
+    "height": 7360,
+    "exif": null
+  },
+  {
+    "id": "1TPNlreRbs3TujrntJtJFQYnfNyXyltxx",
+    "title": "ילד בשדרת רטובה",
+    "category": "סלובקיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1TPNlreRbs3TujrntJtJFQYnfNyXyltxx",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1TPNlreRbs3TujrntJtJFQYnfNyXyltxx&sz=w600",
+    "description": "ילד עומד בשדרה רטובה בעיר עם השתקפויות בתא המים",
+    "filename": "MJH_8800.jpg",
+    "width": 7360,
+    "height": 4912,
+    "exif": null
+  },
+  {
+    "id": "142LquID-y72nPm0CEeZU4DYCJqtVjYtz",
+    "title": "יער במיסט סלובקי",
+    "category": "סלובקיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=142LquID-y72nPm0CEeZU4DYCJqtVjYtz",
+    "thumbnail": "https://drive.google.com/thumbnail?id=142LquID-y72nPm0CEeZU4DYCJqtVjYtz&sz=w600",
+    "description": "עצים גבוהים מתנשאים דרך ערפל צפוף בנוף הרי סלובקיה",
+    "filename": "MJH_9069.jpg",
+    "width": 4800,
+    "height": 3200,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "10.0-20.0 mm f/3.5",
+      "focal": 20,
+      "aperture": 3.5,
+      "iso": 100,
+      "shutter": 0.001
+    },
+    "added_at": "2026-05-28"
+  },
+  {
+    "id": "1Q-1ORDAZUwjGsYrrxuyDAYt2mo31oE9u",
+    "title": "דבורה על פרח צהוב",
+    "category": "סלובקיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1Q-1ORDAZUwjGsYrrxuyDAYt2mo31oE9u",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1Q-1ORDAZUwjGsYrrxuyDAYt2mo31oE9u&sz=w600",
+    "description": "דבורה אוספת אבקה מפרחי דנדליון צהובים בטבע",
+    "filename": "MJH_9095.jpg",
+    "width": 5935,
+    "height": 3961,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "105.0 mm f/2.8",
+      "focal": 105,
+      "aperture": 3.5,
+      "iso": 100,
+      "shutter": 0.005
+    },
+    "added_at": "2026-05-28"
+  },
+  {
+    "id": "1Nq5Ml7fgBrQ8zxEN-jDgYd07Kgpq9JA6",
+    "title": "נחל בעמק ההרים",
+    "category": "סלובקיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1Nq5Ml7fgBrQ8zxEN-jDgYd07Kgpq9JA6",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1Nq5Ml7fgBrQ8zxEN-jDgYd07Kgpq9JA6&sz=w600",
+    "description": "זרם מימי עוטף סלעים בעמק היער ההרי של סלובקיה",
+    "filename": "MJH_9131.jpg",
+    "width": 4800,
+    "height": 3200,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "10.0-20.0 mm f/3.5",
+      "focal": 10,
+      "aperture": 22,
+      "iso": 50,
+      "shutter": 0.25
+    },
+    "added_at": "2026-05-28"
+  },
+  {
+    "id": "1DslWHTLekFYeWh7MMt3GUCjObmIqLRjW",
+    "title": "מפל במערה סלובקית",
+    "category": "סלובקיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1DslWHTLekFYeWh7MMt3GUCjObmIqLRjW",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1DslWHTLekFYeWh7MMt3GUCjObmIqLRjW&sz=w600",
+    "description": "מפל מים זורם בין סלעים אפורים בקניון עמוק בטבע סלובקיה",
+    "filename": "MJH_9172.jpg",
+    "width": 4800,
+    "height": 3200,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "10.0-20.0 mm f/3.5",
+      "focal": 14,
+      "aperture": 22,
+      "iso": 50,
+      "shutter": 0.6
+    },
+    "added_at": "2026-05-28"
   },
   {
     "id": "1_rvROOsKzW5uy4ICPVqOTOhsnEfvAKDN",
@@ -12760,6 +13772,100 @@
     }
   },
   {
+    "id": "11TOu6rFq-4Odxzbod9TjRnVeynGmYjyu",
+    "title": "ברווז בתנוחת הליכה",
+    "category": "סלובקיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=11TOu6rFq-4Odxzbod9TjRnVeynGmYjyu",
+    "thumbnail": "https://drive.google.com/thumbnail?id=11TOu6rFq-4Odxzbod9TjRnVeynGmYjyu&sz=w600",
+    "description": "ברווז פורש כנפיים בזמן הליכה במים עדינים",
+    "filename": "MJH_9270.jpg",
+    "width": 7360,
+    "height": 4912,
+    "exif": null
+  },
+  {
+    "id": "1xP3s71xaGckWfDXDS7u_W_MI1jFxSZiM",
+    "title": "ברווז בעיר המים",
+    "category": "סלובקיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1xP3s71xaGckWfDXDS7u_W_MI1jFxSZiM",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1xP3s71xaGckWfDXDS7u_W_MI1jFxSZiM&sz=w600",
+    "description": "ברווז שחור שוחה בין גלים על מים כהים וזוהרים",
+    "filename": "MJH_9309.jpg",
+    "width": 7360,
+    "height": 4912,
+    "exif": null
+  },
+  {
+    "id": "13VlnLQzoZcZDd073gKfNYufYlf_B4J1z",
+    "title": "ברווז בבריכת יללים",
+    "category": "סלובקיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=13VlnLQzoZcZDd073gKfNYufYlf_B4J1z",
+    "thumbnail": "https://drive.google.com/thumbnail?id=13VlnLQzoZcZDd073gKfNYufYlf_B4J1z&sz=w600",
+    "description": "ברווז שוחה בבריכה שקטה מוקפת עלי יללים ירוקים",
+    "filename": "MJH_9366.jpg",
+    "width": 7360,
+    "height": 4912,
+    "exif": null
+  },
+  {
+    "id": "1LpyeYlxL8XaiUaF8nBebkxMO8OCXu7dm",
+    "title": "נהר טורקיז בסלובקיה",
+    "category": "סלובקיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1LpyeYlxL8XaiUaF8nBebkxMO8OCXu7dm",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1LpyeYlxL8XaiUaF8nBebkxMO8OCXu7dm&sz=w600",
+    "description": "נהר בעל מים בצבע טורקיז עוצר בין יערות וסלעים בעמק אלפיני",
+    "filename": "MJH_9471.jpg",
+    "width": 7360,
+    "height": 4912,
+    "exif": null
+  },
+  {
+    "id": "1lmjyg5295vw6-DRq4YLteCFU3TuoMWuP",
+    "title": "מדרגות בקניון הסלע",
+    "category": "סלובקיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1lmjyg5295vw6-DRq4YLteCFU3TuoMWuP",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1lmjyg5295vw6-DRq4YLteCFU3TuoMWuP&sz=w600",
+    "description": "שביל עתיק בין צוקי סלע מכוסים אזוב בסלובקיה",
+    "filename": "MJH_9516.jpg",
+    "width": 3200,
+    "height": 4800,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "10.0-20.0 mm f/3.5",
+      "focal": 15,
+      "aperture": 6.3,
+      "iso": 200,
+      "shutter": 0.04
+    },
+    "added_at": "2026-05-28"
+  },
+  {
+    "id": "1D1kLngZf8qGJjkZUfeYdrDsEs1kKEtbm",
+    "title": "שביל הרים בסלובקיה",
+    "category": "סלובקיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1D1kLngZf8qGJjkZUfeYdrDsEs1kKEtbm",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1D1kLngZf8qGJjkZUfeYdrDsEs1kKEtbm&sz=w600",
+    "description": "סולם עץ עתיק בנתיב הרי מוסגר בסלעים וטחבים ירוקים",
+    "filename": "MJH_9520.jpg",
+    "width": 4800,
+    "height": 3200,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "10.0-20.0 mm f/3.5",
+      "focal": 10,
+      "aperture": 6.3,
+      "iso": 100,
+      "shutter": 0.05
+    },
+    "added_at": "2026-05-28"
+  },
+  {
     "id": "1lraiJ-ll34As0arwxTDdeuI84tY3LaLg",
     "title": "נוף הררי בסלובקיה הרי הטטרה",
     "category": "סלובקיה",
@@ -12780,6 +13886,27 @@
     },
     "alt": "נוף הררי בסלובקיה הרי הטטרה",
     "alt_en": "Slovakia mountain landscape High Tatras"
+  },
+  {
+    "id": "1isk2lxIokZ4RyccAwcwbC-jKwpOtNBMk",
+    "title": "חורש יער סלובקי",
+    "category": "סלובקיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1isk2lxIokZ4RyccAwcwbC-jKwpOtNBMk",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1isk2lxIokZ4RyccAwcwbC-jKwpOtNBMk&sz=w600",
+    "description": "נוף מעמיק של יער צפוף עם קרני שמש פוקחות דרך העלים הירוקים",
+    "filename": "MJH_9707.jpg",
+    "width": 4800,
+    "height": 3200,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "10.0-20.0 mm f/3.5",
+      "focal": 10,
+      "aperture": 8,
+      "iso": 125,
+      "shutter": 0.06666667
+    },
+    "added_at": "2026-05-28"
   },
   {
     "id": "1zEdwwkBZymZDz0Ox08whcH7AIMza3fmo",
@@ -12841,6 +13968,48 @@
       "iso": 100,
       "shutter": 0.008
     }
+  },
+  {
+    "id": "1-zJyEmn4Qvcr93mruMKXVFE_Jwur3u-k",
+    "title": "מינרט בעננים",
+    "category": "סלובקיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1-zJyEmn4Qvcr93mruMKXVFE_Jwur3u-k",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1-zJyEmn4Qvcr93mruMKXVFE_Jwur3u-k&sz=w600",
+    "description": "מגדל כנסייה עם פסגה חדה עולה בין עצים לשמיים מעוננים",
+    "filename": "MJH_9955.jpg",
+    "width": 7360,
+    "height": 4912,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "24.0-70.0 mm f/2.8",
+      "focal": 60,
+      "aperture": 10,
+      "iso": 100,
+      "shutter": 0.016666668
+    },
+    "added_at": "2026-05-28"
+  },
+  {
+    "id": "1V9-pG5G9iWpCXbcRuaIGsHtcVa1p3A1B",
+    "title": "מערה תת קרקעית בסלובקיה",
+    "category": "סלובקיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1V9-pG5G9iWpCXbcRuaIGsHtcVa1p3A1B",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1V9-pG5G9iWpCXbcRuaIGsHtcVa1p3A1B&sz=w600",
+    "description": "נהר תת קרקעי זורם בחושך מעמוק בתוך מערה סלובקית עתיקה",
+    "filename": "MJH_9981.jpg",
+    "width": 7360,
+    "height": 4912,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 160,
+      "aperture": 2.8,
+      "iso": 5600,
+      "shutter": 0.00625
+    },
+    "added_at": "2026-05-28"
   },
   {
     "id": "1Nu0_ztxgYV7JV0j8yitKIUfaMoC_wlsY",
@@ -14622,6 +15791,27 @@
     "alt": "שחר על גשר קארלוב"
   },
   {
+    "id": "1tC16MXZeeuqGfO9yZUJeq0jazQbXIf_z",
+    "title": "סילhouette של פראג בשקיעה",
+    "category": "צכיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1tC16MXZeeuqGfO9yZUJeq0jazQbXIf_z",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1tC16MXZeeuqGfO9yZUJeq0jazQbXIf_z&sz=w600",
+    "description": "צללית של ממלכת צכיה בשקיעה זהובה על גשר קרל",
+    "filename": "MJH_0259.jpg",
+    "width": 7360,
+    "height": 4912,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "24.0-70.0 mm f/2.8",
+      "focal": 70,
+      "aperture": 7.1,
+      "iso": 100,
+      "shutter": 0.0004
+    },
+    "added_at": "2026-05-28"
+  },
+  {
     "id": "1eOIDRz1hUQa8ZU2jTlmroTIgtg1twdh6",
     "title": "צלליות שקיעה",
     "category": "צכיה",
@@ -14661,6 +15851,237 @@
     "alt": "דייג בודד"
   },
   {
+    "id": "10zv-m89F2jz_1SZAIOOU5Nes6uHeLtGH",
+    "title": "רחוב עתיק בפראג",
+    "category": "צכיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=10zv-m89F2jz_1SZAIOOU5Nes6uHeLtGH",
+    "thumbnail": "https://drive.google.com/thumbnail?id=10zv-m89F2jz_1SZAIOOU5Nes6uHeLtGH&sz=w600",
+    "description": "נוף עוצר נשימה דרך קשת לרחוב היסטורי עם כנסייה בעומק",
+    "filename": "MJH_0584.jpg",
+    "width": 7360,
+    "height": 4912,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "24.0-70.0 mm f/2.8",
+      "focal": 44,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.0004
+    },
+    "added_at": "2026-05-28"
+  },
+  {
+    "id": "1RdXxJuG6M7UYRyJc-DLZmzxNWsSh8oCv",
+    "title": "קתדרלת גותית בצכיה",
+    "category": "צכיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1RdXxJuG6M7UYRyJc-DLZmzxNWsSh8oCv",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1RdXxJuG6M7UYRyJc-DLZmzxNWsSh8oCv&sz=w600",
+    "description": "תקרה מקשתת עם עמודים גבוהים בקתדרלה גותית יפה",
+    "filename": "MJH_0677.jpg",
+    "width": 4800,
+    "height": 3200,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "10.0-20.0 mm f/3.5",
+      "focal": 11,
+      "aperture": 5.6,
+      "iso": 360,
+      "shutter": 0.06666667
+    },
+    "added_at": "2026-05-28"
+  },
+  {
+    "id": "1iaj0sURo_kJR3ZvLwNiu8R-ygvcsYVYv",
+    "title": "קיר אמנות רחוב בפראג",
+    "category": "צכיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1iaj0sURo_kJR3ZvLwNiu8R-ygvcsYVYv",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1iaj0sURo_kJR3ZvLwNiu8R-ygvcsYVYv&sz=w600",
+    "description": "קיר צבעוני מלא בגרפיטי וכתובות אהבה בעיר פראג בצ'כיה",
+    "filename": "MJH_0981.jpg",
+    "width": 7360,
+    "height": 4912,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "24.0-70.0 mm f/2.8",
+      "focal": 32,
+      "aperture": 2.8,
+      "iso": 450,
+      "shutter": 0.033333335
+    },
+    "added_at": "2026-05-28"
+  },
+  {
+    "id": "1qP9WaY86NgEMwylngJ42fG-BJ56uT4-v",
+    "title": "פסל מריה עם ילדים",
+    "category": "צכיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1qP9WaY86NgEMwylngJ42fG-BJ56uT4-v",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1qP9WaY86NgEMwylngJ42fG-BJ56uT4-v&sz=w600",
+    "description": "פסל אבן קלאסי של אישה עם שלושה ילדים נגד שמיים כחולים",
+    "filename": "MJH_1093.jpg",
+    "width": 7360,
+    "height": 4912,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "24.0-70.0 mm f/2.8",
+      "focal": 60,
+      "aperture": 2.8,
+      "iso": 200,
+      "shutter": 0.000625
+    },
+    "added_at": "2026-05-28"
+  },
+  {
+    "id": "1veD0RvuPJWnWN2NqSAj9Ee8dUr1EXUUO",
+    "title": "שער אבן בפראג",
+    "category": "צכיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1veD0RvuPJWnWN2NqSAj9Ee8dUr1EXUUO",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1veD0RvuPJWnWN2NqSAj9Ee8dUr1EXUUO&sz=w600",
+    "description": "נוף אירופאי קלאסי דרך קשת אבן לרחוב העתיקה בצכיה",
+    "filename": "MJH_1104.jpg",
+    "width": 7360,
+    "height": 4912,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "24.0-70.0 mm f/2.8",
+      "focal": 62,
+      "aperture": 2.8,
+      "iso": 200,
+      "shutter": 0.000625
+    },
+    "added_at": "2026-05-28"
+  },
+  {
+    "id": "1pCeBl9fWStLSNvN1uwgWUlp6-vmW-Qx9",
+    "title": "פחי זבל אמנותיים בפראג",
+    "category": "צכיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1pCeBl9fWStLSNvN1uwgWUlp6-vmW-Qx9",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1pCeBl9fWStLSNvN1uwgWUlp6-vmW-Qx9&sz=w600",
+    "description": "שלושה פחי זבל צבעוניים מעוטרים בציורים וטקסט בעברית בצ'כיה",
+    "filename": "MJH_7598.jpg",
+    "width": 7007,
+    "height": 4710,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "24.0-70.0 mm f/2.8",
+      "focal": 45,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.0008
+    },
+    "added_at": "2026-05-28"
+  },
+  {
+    "id": "13tIaQatNH0cz7WLNffVOfsJIgc9F-LuF",
+    "title": "חנות דובים בפראג",
+    "category": "צכיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=13tIaQatNH0cz7WLNffVOfsJIgc9F-LuF",
+    "thumbnail": "https://drive.google.com/thumbnail?id=13tIaQatNH0cz7WLNffVOfsJIgc9F-LuF&sz=w600",
+    "description": "שלט עץ עם דובים חומים בחנות מזכרות בעיר העתיקה",
+    "filename": "MJH_7673.jpg",
+    "width": 7360,
+    "height": 4912,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 120,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.0005
+    },
+    "added_at": "2026-05-28"
+  },
+  {
+    "id": "1VErxHvo87FE69T7zk_tahLCSrgvz5g0b",
+    "title": "שד על גג בפראג",
+    "category": "צכיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1VErxHvo87FE69T7zk_tahLCSrgvz5g0b",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1VErxHvo87FE69T7zk_tahLCSrgvz5g0b&sz=w600",
+    "description": "פסל ברונזה של שד שרוקד על קורת גג בעיר העתיקה בצכיה",
+    "filename": "MJH_7680.jpg",
+    "width": 6544,
+    "height": 4354,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 200,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.00025
+    },
+    "added_at": "2026-05-28"
+  },
+  {
+    "id": "12OjOzySb0wUuFl-_0Aduo0YNxXCcAFAO",
+    "title": "פנזיון קאפר בצ'כיה",
+    "category": "צכיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=12OjOzySb0wUuFl-_0Aduo0YNxXCcAFAO",
+    "thumbnail": "https://drive.google.com/thumbnail?id=12OjOzySb0wUuFl-_0Aduo0YNxXCcAFAO&sz=w600",
+    "description": "בניין אדום עתיק עם חלונות צהובים וקשת כניסה מעוטרת",
+    "filename": "MJH_8273.jpg",
+    "width": 7138,
+    "height": 4764,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 170,
+      "aperture": 8,
+      "iso": 220,
+      "shutter": 0.005
+    },
+    "added_at": "2026-05-28"
+  },
+  {
+    "id": "1Z_u4ClL3Sw-ugl9J2F1N3WvKcJObL6iA",
+    "title": "אומנות מתכת כחולה",
+    "category": "צכיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1Z_u4ClL3Sw-ugl9J2F1N3WvKcJObL6iA",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1Z_u4ClL3Sw-ugl9J2F1N3WvKcJObL6iA&sz=w600",
+    "description": "דקורציה מתכתית כחולה בעיצוב מעוקל על רקע זהוב",
+    "filename": "MJH_8469.jpg",
+    "width": 7360,
+    "height": 4912,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 200,
+      "aperture": 2.8,
+      "iso": 500,
+      "shutter": 0.005
+    },
+    "added_at": "2026-05-28"
+  },
+  {
+    "id": "1DAp18v65Pidj8TMJFNG-Yt0C5DUzmEDU",
+    "title": "ארכיטקטורה צכית קלאסית",
+    "category": "צכיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1DAp18v65Pidj8TMJFNG-Yt0C5DUzmEDU",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1DAp18v65Pidj8TMJFNG-Yt0C5DUzmEDU&sz=w600",
+    "description": "בניין היסטורי בשטרפה כחולה וכתומה עם עיטורים זהובים עשירים",
+    "filename": "MJH_8547.jpg",
+    "width": 7270,
+    "height": 4807,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 92,
+      "aperture": 2.8,
+      "iso": 50,
+      "shutter": 0.00125
+    },
+    "added_at": "2026-05-28"
+  },
+  {
     "id": "1Isx2nOOojjOZ8WFnG8l94a3ZiSykyJ5-",
     "title": "מזרקת העיר",
     "category": "צכיה",
@@ -14687,6 +16108,69 @@
     "alt": "סמטה צבעונית"
   },
   {
+    "id": "1aEg61W6JW-YfulRtLFjqUB5AdeYKMlls",
+    "title": "יער צפוף בצכיה",
+    "category": "צכיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1aEg61W6JW-YfulRtLFjqUB5AdeYKMlls",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1aEg61W6JW-YfulRtLFjqUB5AdeYKMlls&sz=w600",
+    "description": "יער אורן צפוף עם עלווה ירוקה עבה וקרקע מכוסת שיחים",
+    "filename": "MJH_8782.jpg",
+    "width": 7360,
+    "height": 4912,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "24.0-70.0 mm f/2.8",
+      "focal": 48,
+      "aperture": 2.8,
+      "iso": 50,
+      "shutter": 0.04
+    },
+    "added_at": "2026-05-28"
+  },
+  {
+    "id": "1z5xtOEoiZvh3eYuTqsZ799t82rb1nAxQ",
+    "title": "סלע מכוסה שיבול ביער",
+    "category": "צכיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1z5xtOEoiZvh3eYuTqsZ799t82rb1nAxQ",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1z5xtOEoiZvh3eYuTqsZ799t82rb1nAxQ&sz=w600",
+    "description": "אבן עתיקה מעוטפת בשיבול ירוק בטבע הצכי",
+    "filename": "MJH_8810.jpg",
+    "width": 7360,
+    "height": 4912,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 180,
+      "aperture": 2.8,
+      "iso": 720,
+      "shutter": 0.005
+    },
+    "added_at": "2026-05-28"
+  },
+  {
+    "id": "1aY330YYIZ3vy1W3edXqU3MyKgr9YrU1q",
+    "title": "שביל ביער צפוף",
+    "category": "צכיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1aY330YYIZ3vy1W3edXqU3MyKgr9YrU1q",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1aY330YYIZ3vy1W3edXqU3MyKgr9YrU1q&sz=w600",
+    "description": "הליכה בשביל מיוער בין עצים גבוהים וצפופים בצכיה",
+    "filename": "MJH_8836.jpg",
+    "width": 4800,
+    "height": 3200,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "10.0-20.0 mm f/3.5",
+      "focal": 10,
+      "aperture": 8,
+      "iso": 140,
+      "shutter": 0.06666667
+    },
+    "added_at": "2026-05-28"
+  },
+  {
     "id": "1qgcuYmnA3LEYpCHoY1FnpykPbOgMMgDJ",
     "title": "גלגל תבן",
     "category": "צכיה",
@@ -14698,6 +16182,27 @@
     "height": 294,
     "parent_category": "מקומות בעולם",
     "alt": "גלגל תבן"
+  },
+  {
+    "id": "1SgeMeD3QIxL04jyGDTCDqoAY5XqkcgGz",
+    "title": "חלון בקיר עתיק",
+    "category": "צכיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1SgeMeD3QIxL04jyGDTCDqoAY5XqkcgGz",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1SgeMeD3QIxL04jyGDTCDqoAY5XqkcgGz&sz=w600",
+    "description": "חלון אדום בקיר ורוד וירוק בשכונה עם קסם צכי עתיק",
+    "filename": "MJH_9188.jpg",
+    "width": 4800,
+    "height": 3200,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "10.0-20.0 mm f/3.5",
+      "focal": 20,
+      "aperture": 13,
+      "iso": 1000,
+      "shutter": 0.033333335
+    },
+    "added_at": "2026-05-28"
   },
   {
     "id": "1cjNhaJ1rr2rbnbsHJBVw8Rr7nxnEJhV9",
@@ -14776,6 +16281,195 @@
     "height": 633,
     "parent_category": "מקומות בעולם",
     "alt": "שמים מבעד לחלון"
+  },
+  {
+    "id": "16fKkiE0rd-StcdLJKGxrCeAv-oLLO4AD",
+    "title": "בתים צבעוניים בפראג",
+    "category": "צכיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=16fKkiE0rd-StcdLJKGxrCeAv-oLLO4AD",
+    "thumbnail": "https://drive.google.com/thumbnail?id=16fKkiE0rd-StcdLJKGxrCeAv-oLLO4AD&sz=w600",
+    "description": "ממשק תמונה של בניינים היסטוריים צבעוניים בעיר העתיקה בצכיה",
+    "filename": "MJH_9888.jpg",
+    "width": 7283,
+    "height": 4861,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "24.0-70.0 mm f/2.8",
+      "focal": 38,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.002
+    },
+    "added_at": "2026-05-28"
+  },
+  {
+    "id": "11EdP_amDdFBQX6MRcsn7n39JmIu1IBmv",
+    "title": "ראש סוס מדנים",
+    "category": "צכיה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=11EdP_amDdFBQX6MRcsn7n39JmIu1IBmv",
+    "thumbnail": "https://drive.google.com/thumbnail?id=11EdP_amDdFBQX6MRcsn7n39JmIu1IBmv&sz=w600",
+    "description": "פסל יצירתי של ראש סוס העשוי מבגדים וחומרים ממוחזרים",
+    "filename": "MJH_9914.jpg",
+    "width": 7360,
+    "height": 4912,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "24.0-70.0 mm f/2.8",
+      "focal": 62,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.003125
+    },
+    "added_at": "2026-05-28"
+  },
+  {
+    "id": "10e5DRQ1qHh09UvW2ewdyguD-dmwaSeWk",
+    "title": "פינה צהובה ברומניה",
+    "category": "רומניה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=10e5DRQ1qHh09UvW2ewdyguD-dmwaSeWk",
+    "thumbnail": "https://drive.google.com/thumbnail?id=10e5DRQ1qHh09UvW2ewdyguD-dmwaSeWk&sz=w600",
+    "description": "קיר צהוב עם דלת וקישוט מתכת מעוגל בסגנון עתיק",
+    "filename": "MJH_0665 copy.jpg",
+    "width": 7208,
+    "height": 4811,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 122,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.005
+    },
+    "added_at": "2026-05-28"
+  },
+  {
+    "id": "1LOiCFAJxCmeta8xHbqTUE_NL11bvgj8z",
+    "title": "אמנות קיר בוקרשט",
+    "category": "רומניה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1LOiCFAJxCmeta8xHbqTUE_NL11bvgj8z",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1LOiCFAJxCmeta8xHbqTUE_NL11bvgj8z&sz=w600",
+    "description": "ציור קיר צבעוני של אישה בשוק רומני עם אותיות אדומות וצהובות",
+    "filename": "MJH_1510 copy.jpg",
+    "width": 6941,
+    "height": 4752,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 116,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.00125
+    },
+    "added_at": "2026-05-28"
+  },
+  {
+    "id": "1_dveZ9Xav8w0q1b8F7osNJJ0hPPFv7vK",
+    "title": "כביש מתפתל בהרים",
+    "category": "רומניה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1_dveZ9Xav8w0q1b8F7osNJJ0hPPFv7vK",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1_dveZ9Xav8w0q1b8F7osNJJ0hPPFv7vK&sz=w600",
+    "description": "דרך מעוקלת בנופי הרים ירוקים עם כלים נוסעים",
+    "filename": "MJH_1576 copy.jpg",
+    "width": 7360,
+    "height": 4912,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 122,
+      "aperture": 3.5,
+      "iso": 50,
+      "shutter": 0.008
+    },
+    "added_at": "2026-05-28"
+  },
+  {
+    "id": "1v2OEIB3yQRc69dxX7Nq5SHRfUI-AKUt2",
+    "title": "אי מכוסה שרך בטבע",
+    "category": "רומניה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1v2OEIB3yQRc69dxX7Nq5SHRfUI-AKUt2",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1v2OEIB3yQRc69dxX7Nq5SHRfUI-AKUt2&sz=w600",
+    "description": "אי קטן מכוסה שרך משתקף בمים שקטים של אגם הרים",
+    "filename": "MJH_1642 copy.jpg",
+    "width": 7051,
+    "height": 4706,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 180,
+      "aperture": 3.2,
+      "iso": 50,
+      "shutter": 0.00625
+    },
+    "added_at": "2026-05-28"
+  },
+  {
+    "id": "1MwosL0fxVxFUMZbKBH4ri62wBqaqStTP",
+    "title": "סכר וימה רומניה",
+    "category": "רומניה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1MwosL0fxVxFUMZbKBH4ri62wBqaqStTP",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1MwosL0fxVxFUMZbKBH4ri62wBqaqStTP&sz=w600",
+    "description": "סכר בטון מעוקל על אגם הרים כחול עם דרך עפר לצד",
+    "filename": "MJH_1857 copy.jpg",
+    "width": 4463,
+    "height": 3105,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "10.0-20.0 mm f/3.5",
+      "focal": 10,
+      "aperture": 9,
+      "iso": 100,
+      "shutter": 0.0125
+    },
+    "added_at": "2026-05-28"
+  },
+  {
+    "id": "1308WUBlFdqG3DB63lLN8m4b3IwAzsyAr",
+    "title": "דוב בן יער רומניה",
+    "category": "רומניה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1308WUBlFdqG3DB63lLN8m4b3IwAzsyAr",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1308WUBlFdqG3DB63lLN8m4b3IwAzsyAr&sz=w600",
+    "description": "דוב חום בסביבת יער עם צמחייה ירוקה בדומיניון טבעי",
+    "filename": "MJH_1896 copy.jpg",
+    "width": 6564,
+    "height": 4514,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 200,
+      "aperture": 3.5,
+      "iso": 500,
+      "shutter": 0.005
+    },
+    "added_at": "2026-05-28"
+  },
+  {
+    "id": "1F0FQTgVqYsLRXjNdHd4MwlkPVHbI2vko",
+    "title": "דוב בטבע רומניה",
+    "category": "רומניה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1F0FQTgVqYsLRXjNdHd4MwlkPVHbI2vko",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1F0FQTgVqYsLRXjNdHd4MwlkPVHbI2vko&sz=w600",
+    "description": "דוב חום במצבו הטבעי בחורשים עצומים של רומניה",
+    "filename": "MJH_1900 copy.jpg",
+    "width": 6843,
+    "height": 4567,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "70.0-200.0 mm f/2.8",
+      "focal": 200,
+      "aperture": 3.5,
+      "iso": 560,
+      "shutter": 0.005
+    },
+    "added_at": "2026-05-28"
   },
   {
     "id": "1y6iG3IiFk0GlsCUsBZsepI4Np7JEFH0O",
