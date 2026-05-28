@@ -3550,3 +3550,15 @@ footer {
   font-weight: 700;
   text-decoration: underline;
 }
+
+/* ===== YOUTUBE SECTION ===== */
+#youtube-section { padding: 3rem 1.25rem; }
+#youtube-section .section-desc { color: var(--muted); margin-top: .5rem; font-size: .9rem; }
+#yt-latest { max-width: 720px; margin: 1.5rem auto 0; border-radius: 14px; overflow: hidden; box-shadow: 0 4px 32px rgba(0,0,0,.4); }
+.yt-channel-link { display: flex; align-items: center; justify-content: center; gap: 1rem; padding: 2rem; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; text-decoration: none; color: var(--text); }
+.yt-icon-lg { width: 48px; height: 48px; color: #ff0000; }
+.yt-icon-sm { width: 18px; height: 18px; }
+.yt-channel-title { font-size: 1.1rem; font-weight: 600; }
+.yt-channel-sub { font-size: .85rem; color: var(--muted); }
+.yt-subscribe-wrap { text-align: center; margin-top: 1.25rem; }
+.yt-subscribe-btn { display: inline-flex; align-items: center; gap: .5rem; padding: .75rem 1.75rem; background: #ff0000; color: #fff; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: .95rem; }

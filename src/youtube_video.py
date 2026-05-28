@@ -11,7 +11,7 @@ One-time setup (run locally):
 Weekly: one album per video, ~5 min, intro card + location overlay + outro.
 """
 
-import os, sys, json, random, requests, subprocess, tempfile, shutil, base64
+import os, sys, json, random, requests, subprocess, tempfile, shutil, base64, datetime
 from pathlib import Path
 from collections import defaultdict
 
@@ -377,17 +377,246 @@ def upload_to_youtube(video_path, title, description, tags, category):
     return vid_id
 
 
-def build_metadata(category, n_photos):
-    title = f"{category} | Amit Erez Photography"
-    description = (
-        f"A cinematic photo collection from {category}, "
-        f"featuring {n_photos} photographs by Amit Erez.\n\n"
-        f"🌐 Full gallery: {SITE_URL}\n"
-        f"📷 Fine art prints available\n\n"
-        f"#photography #amitphotos #{category.replace(' ', '')} #Israel"
+def extract_exif(photo_path):
+    """Extract shooting date, camera model, settings from JPEG EXIF."""
+    try:
+        from PIL import Image
+        from PIL.ExifTags import TAGS
+        img  = Image.open(photo_path)
+        raw  = img._getexif()
+        if not raw:
+            return {}
+        exif = {TAGS.get(k, k): v for k, v in raw.items()}
+        result = {}
+        # Date
+        for date_tag in ("DateTimeOriginal", "DateTime"):
+            if date_tag in exif:
+                try:
+                    dt = datetime.datetime.strptime(str(exif[date_tag])[:19], "%Y:%m:%d %H:%M:%S")
+                    result["date"] = dt.strftime("%B %Y")  # e.g. "March 2023"
+                    result["year"] = dt.year
+                except Exception:
+                    pass
+                break
+        # Camera
+        if "Make" in exif and "Model" in exif:
+            make  = str(exif["Make"]).strip()
+            model = str(exif["Model"]).strip()
+            if make.lower() not in model.lower():
+                result["camera"] = f"{make} {model}"
+            else:
+                result["camera"] = model
+        # Lens / settings
+        if "FNumber" in exif:
+            try:
+                result["aperture"] = f"f/{float(exif['FNumber']):.1f}"
+            except Exception:
+                pass
+        if "FocalLengthIn35mmFilm" in exif:
+            result["focal"] = f"{exif['FocalLengthIn35mmFilm']}mm"
+        elif "FocalLength" in exif:
+            try:
+                result["focal"] = f"{int(float(exif['FocalLength']))}mm"
+            except Exception:
+                pass
+        if "ISOSpeedRatings" in exif:
+            result["iso"] = f"ISO {exif['ISOSpeedRatings']}"
+        # GPS
+        if "GPSInfo" in exif:
+            gps = exif["GPSInfo"]
+            try:
+                from PIL.ExifTags import GPSTAGS
+                gps_data = {GPSTAGS.get(k, k): v for k, v in gps.items()}
+                def to_deg(val):
+                    d, m, s = [float(x) for x in val]
+                    return d + m/60 + s/3600
+                lat = to_deg(gps_data["GPSLatitude"])
+                lon = to_deg(gps_data["GPSLongitude"])
+                if gps_data.get("GPSLatitudeRef") == "S":  lat = -lat
+                if gps_data.get("GPSLongitudeRef") == "W": lon = -lon
+                result["gps"] = (lat, lon)
+            except Exception:
+                pass
+        return result
+    except Exception:
+        return {}
+
+def reverse_geocode(lat, lon):
+    """Get place name from GPS coords via Nominatim (free, no key)."""
+    try:
+        r = requests.get(
+            "https://nominatim.openstreetmap.org/reverse",
+            params={"lat": lat, "lon": lon, "format": "json", "zoom": 10},
+            headers={"User-Agent": "amitphotos/1.0"},
+            timeout=5,
+        )
+        if r.ok:
+            data = r.json()
+            addr = data.get("address", {})
+            return (addr.get("city") or addr.get("town") or
+                    addr.get("village") or addr.get("state") or
+                    addr.get("country", ""))
+    except Exception:
+        pass
+    return ""
+
+def collect_exif_summary(photo_paths):
+    """Collect EXIF from a sample of photos and build a summary dict."""
+    cameras, dates, locations, settings = set(), set(), set(), []
+
+    for path in photo_paths[:20]:  # sample first 20 to keep it fast
+        exif = extract_exif(path)
+        if exif.get("camera"):
+            cameras.add(exif["camera"])
+        if exif.get("date"):
+            dates.add(exif["date"])
+        if exif.get("gps"):
+            place = reverse_geocode(*exif["gps"])
+            if place:
+                locations.add(place)
+        s = " · ".join(filter(None, [
+            exif.get("focal"), exif.get("aperture"), exif.get("iso")
+        ]))
+        if s:
+            settings.append(s)
+
+    return {
+        "cameras":   sorted(cameras),
+        "dates":     sorted(dates),
+        "locations": sorted(locations),
+        "settings":  settings[:5],
+    }
+
+def share_youtube_on_social(video_id, category, exif_summary=None):
+    """Post YouTube link to Instagram, Facebook Page, and Threads."""
+    yt_url   = f"https://youtu.be/{video_id}"
+    ig_user  = os.environ.get("INSTAGRAM_USER_ID", "")
+    fb_page  = os.environ.get("FACEBOOK_PAGE_ID", "")
+    token    = os.environ.get("INSTAGRAM_PAGE_TOKEN", "")
+
+    date_str = f" ({', '.join(exif_summary['dates'])})" if exif_summary and exif_summary.get("dates") else ""
+    loc_str  = f"\n📍 {', '.join(exif_summary['locations'])}" if exif_summary and exif_summary.get("locations") else ""
+
+    caption_he = (
+        f"סרטון חדש עלה לערוץ YouTube שלי 🎬\n"
+        f"אלבום: {category}{date_str}{loc_str}\n\n"
+        f"🔗 {yt_url}\n\n"
+        f"#צילום #amitphotos #{category.replace(' ', '')}"
     )
+    caption_en = (
+        f"New video on my YouTube channel 🎬\n"
+        f"Album: {category}{date_str}{loc_str}\n\n"
+        f"🔗 {yt_url}\n\n"
+        f"#photography #amitphotos #{category.replace(' ', '')}"
+    )
+
+    # Instagram — image post with YouTube link in caption
+    if ig_user and token:
+        _post_ig_text(ig_user, token, caption_he)
+
+    # Facebook Page — link post
+    if fb_page and token:
+        _post_fb_link(fb_page, token, yt_url, category, caption_he)
+
+    # Threads — via Instagram Threads API
+    if ig_user and token:
+        _post_threads(ig_user, token, caption_en + f"\n\n{yt_url}")
+
+
+def _post_ig_text(ig_user, token, caption):
+    """Post to Instagram feed (image post with YouTube thumbnail)."""
+    try:
+        # Use a plain text post — IG requires image, use a site screenshot as placeholder
+        r = requests.post(f"{GRAPH_API}/{ig_user}/media", data={
+            "image_url":    f"{SITE_URL}/og-image.jpg",
+            "caption":      caption,
+            "access_token": token,
+        }, timeout=30)
+        if r.ok:
+            creation_id = r.json().get("id")
+            pub = requests.post(f"{GRAPH_API}/{ig_user}/media_publish", data={
+                "creation_id":  creation_id,
+                "access_token": token,
+            }, timeout=30)
+            if pub.ok:
+                print(f"✅ Instagram: פוסט YouTube שותף")
+                return
+        print(f"⚠️  Instagram share: {r.status_code} {r.text[:100]}")
+    except Exception as e:
+        print(f"⚠️  Instagram share: {e}")
+
+
+def _post_fb_link(page_id, token, url, title, message):
+    """Post link to Facebook Page feed."""
+    try:
+        r = requests.post(f"{GRAPH_API}/{page_id}/feed", data={
+            "link":         url,
+            "message":      message,
+            "access_token": token,
+        }, timeout=30)
+        if r.ok:
+            print(f"✅ Facebook: לינק YouTube שותף")
+        else:
+            print(f"⚠️  Facebook share: {r.status_code} {r.text[:100]}")
+    except Exception as e:
+        print(f"⚠️  Facebook share: {e}")
+
+
+def _post_threads(ig_user, token, text):
+    """Post text to Threads."""
+    try:
+        r = requests.post(f"{GRAPH_API}/{ig_user}/threads", data={
+            "media_type":   "TEXT",
+            "text":         text[:500],
+            "access_token": token,
+        }, timeout=30)
+        if r.ok:
+            creation_id = r.json().get("id")
+            pub = requests.post(f"{GRAPH_API}/{ig_user}/threads_publish", data={
+                "creation_id":  creation_id,
+                "access_token": token,
+            }, timeout=30)
+            if pub.ok:
+                print(f"✅ Threads: פוסט YouTube שותף")
+                return
+        print(f"⚠️  Threads share: {r.status_code} {r.text[:100]}")
+    except Exception as e:
+        print(f"⚠️  Threads share: {e}")
+
+
+def build_metadata(category, n_photos, exif_summary=None):
+    title = f"{category} | Amit Erez Photography"
+
+    lines = [
+        f"A cinematic photo collection from {category}, "
+        f"featuring {n_photos} photographs by Amit Erez.",
+        "",
+    ]
+
+    if exif_summary:
+        if exif_summary.get("dates"):
+            lines.append(f"📅 Photographed: {', '.join(exif_summary['dates'])}")
+        if exif_summary.get("locations"):
+            lines.append(f"📍 Locations: {', '.join(exif_summary['locations'])}")
+        if exif_summary.get("cameras"):
+            lines.append(f"📷 Camera: {', '.join(exif_summary['cameras'])}")
+        if exif_summary.get("settings"):
+            lines.append(f"🔭 Settings: {exif_summary['settings'][0]}")
+        lines.append("")
+
+    lines += [
+        f"🌐 Full gallery: {SITE_URL}",
+        f"🖼️  Fine art prints available at {SITE_URL}",
+        "",
+        f"#{category.replace(' ', '')} #photography #AmitErez #amitphotos #Israel #fineart",
+    ]
+
+    description = "\n".join(lines)
     tags = ["photography", "Amit Erez", "amitphotos", category,
-            "fine art", "landscape", "travel photography"]
+            "fine art", "landscape", "travel photography", "Israel"]
+    if exif_summary and exif_summary.get("locations"):
+        tags += list(exif_summary["locations"])[:3]
+
     return title, description, tags
 
 
@@ -449,9 +678,11 @@ def main():
 
         # Download + slides
         print("⬇️  מוריד תמונות...")
+        photo_paths = []
         for i, photo in enumerate(selected):
             try:
                 path  = download_photo(photo, tmp_dir, i)
+                photo_paths.append(path)
                 slide = create_slide(path, i, category, tmp_dir)
                 if slide:
                     clips.append(slide)
@@ -486,8 +717,18 @@ def main():
         if replace_id:
             delete_youtube_video(replace_id)
 
+        # Collect EXIF from downloaded photos
+        print("📊 קורא EXIF...")
+        exif_summary = collect_exif_summary(photo_paths)
+        if exif_summary.get("dates"):
+            print(f"  📅 {', '.join(exif_summary['dates'])}")
+        if exif_summary.get("locations"):
+            print(f"  📍 {', '.join(exif_summary['locations'])}")
+        if exif_summary.get("cameras"):
+            print(f"  📷 {', '.join(exif_summary['cameras'])}")
+
         # Upload
-        title, description, tags = build_metadata(category, len(selected))
+        title, description, tags = build_metadata(category, len(selected), exif_summary)
         vid_id = upload_to_youtube(Path(final), title, description, tags, category)
 
         # Save locally if no upload
@@ -495,6 +736,10 @@ def main():
             out_path = ROOT / f"output_{category.replace(' ', '_')}.mp4"
             shutil.copy(final, out_path)
             print(f"💾 נשמר: {out_path}")
+
+        # Auto-share YouTube link on social media
+        if vid_id:
+            share_youtube_on_social(vid_id, category, exif_summary)
 
     # Update state
     state.setdefault("posted_albums", []).append(category)
