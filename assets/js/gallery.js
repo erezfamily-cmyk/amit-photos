@@ -49,10 +49,10 @@ const HOME_PREVIEW_SIZE = 30;
 let isHomePreview = true; // true when showing "all" filter = random 30
 
 function buildHomePreview() {
-  const pinned = allPhotos.filter(p => p.sort_order != null).sort((a, b) => a.sort_order - b.sort_order);
-  const rest   = allPhotos.filter(p => p.sort_order == null).sort(() => Math.random() - 0.5);
-  const fill   = rest.slice(0, Math.max(0, HOME_PREVIEW_SIZE - pinned.length));
-  return [...pinned, ...fill].sort(() => Math.random() - 0.5);
+  const featuredSet = new Set(featuredIds);
+  const featured = featuredIds.map(id => allPhotos.find(p => p.id === id)).filter(Boolean);
+  const rest = allPhotos.filter(p => !featuredSet.has(p.id)).sort(() => Math.random() - 0.5);
+  return [...featured, ...rest.slice(0, HOME_PREVIEW_SIZE)].sort(() => Math.random() - 0.5);
 }
 let slideshowTimer = null;
 let isZoomed = false;
@@ -79,6 +79,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   initSearch();
   await initFeatured();
   initFilters(); // rebuild after featuredIds are known
+  if (isHomePreview) {
+    filteredPhotos = buildHomePreview();
+    displayedCount = filteredPhotos.length;
+    renderGallery();
+  }
   initLightbox();
   initContactForm();
   initCart();
