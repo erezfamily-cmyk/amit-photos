@@ -1,10 +1,11 @@
 {
   "posted_keys": [
-    "editing",
-    "histogram",
-    "controls",
-    "filters",
     "lenses",
-    "white-balance"
+    "histogram",
+    "white-balance",
+    "filters",
+    "editing",
+    "macro",
+    "controls"
   ]
 }
