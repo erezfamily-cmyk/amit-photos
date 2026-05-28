@@ -47,6 +47,13 @@ let displayedCount = 0;
 const PAGE_SIZE = 12;
 const HOME_PREVIEW_SIZE = 30;
 let isHomePreview = true; // true when showing "all" filter = random 30
+
+function buildHomePreview() {
+  const pinned = allPhotos.filter(p => p.sort_order != null).sort((a, b) => a.sort_order - b.sort_order);
+  const rest   = allPhotos.filter(p => p.sort_order == null).sort(() => Math.random() - 0.5);
+  const fill   = rest.slice(0, Math.max(0, HOME_PREVIEW_SIZE - pinned.length));
+  return [...pinned, ...fill].sort(() => Math.random() - 0.5);
+}
 let slideshowTimer = null;
 let isZoomed = false;
 let puzzleDiscountPhotoId = null; // set when arriving from puzzle with ?discount=puzzle
@@ -230,7 +237,7 @@ async function loadPhotos() {
   );
 
   isHomePreview = true;
-  filteredPhotos = [...allPhotos].sort(() => Math.random() - 0.5).slice(0, HOME_PREVIEW_SIZE);
+  filteredPhotos = buildHomePreview();
   displayedCount = filteredPhotos.length;
   renderGallery();
   injectImageObjectSchemas(allPhotos);
@@ -562,7 +569,7 @@ function applyFilters() {
 
   if (cat === 'all' && !query) {
     isHomePreview = true;
-    filteredPhotos = [...allPhotos].sort(() => Math.random() - 0.5).slice(0, HOME_PREVIEW_SIZE);
+    filteredPhotos = buildHomePreview();
     displayedCount = filteredPhotos.length;
   } else {
     isHomePreview = false;
