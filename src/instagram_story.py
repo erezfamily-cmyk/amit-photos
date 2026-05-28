@@ -25,6 +25,20 @@ SLIDE_DURATION   = 3.5   # seconds
 TRANSITION_DUR   = 0.7   # cross-fade between slides
 WATERMARK        = "amitphotos.com"
 
+# Weekly gear tip — appended as final slide every Sunday
+GEAR_TOOLS = [
+    {
+        "name": "Luminar Neo",
+        "line1": "AI photo editing",
+        "line2": "sky, portraits, landscapes",
+    },
+    {
+        "name": "FlexClip",
+        "line1": "Photos to Reels in minutes",
+        "line2": "no editing experience needed",
+    },
+]
+
 # Map real album/category names → music file by keyword matching
 NATURE_KEYWORDS   = ["פרחים", "צמחים", "בעלי חיים", "מאקרו", "טבע", "ציפור", "פרח", "חרק"]
 PORTRAIT_KEYWORDS = ["פורטרט"]
@@ -267,6 +281,48 @@ def add_watermark(video_path, tmp_dir):
     return out if r.returncode == 0 else video_path
 
 
+# ── Gear slide ───────────────────────────────────────────────────────────────
+
+def should_add_gear_slide():
+    from datetime import datetime
+    return datetime.utcnow().weekday() == 6  # Sunday
+
+def get_current_gear_tool(state):
+    idx = state.get("gear_tool_index", 0) % len(GEAR_TOOLS)
+    return GEAR_TOOLS[idx], idx
+
+def create_gear_slide(tool, tmp_dir):
+    """Dark-background branded tool mention slide (English, ffmpeg drawtext)."""
+    out   = tmp_dir / "gear_slide.mp4"
+    name  = tool["name"].replace("'", "\\'")
+    line1 = tool["line1"].replace("'", "\\'")
+    line2 = tool["line2"].replace("'", "\\'")
+
+    vf = (
+        "drawbox=x=0:y=0:w=1080:h=8:color=0xf0a500:t=fill,"
+        f"drawtext=text='{name}':fontcolor=white:fontsize=72:x=(w-text_w)/2:y=820,"
+        f"drawtext=text='{line1}':fontcolor=white@0.80:fontsize=34:x=(w-text_w)/2:y=924,"
+        f"drawtext=text='{line2}':fontcolor=white@0.65:fontsize=28:x=(w-text_w)/2:y=972,"
+        "drawtext=text='link in bio >>':fontcolor=0xf0a500:fontsize=40:x=(w-text_w)/2:y=1060,"
+        f"drawtext=text='{WATERMARK}':fontcolor=white@0.35:fontsize=22:x=(w-text_w)/2:y=h-55"
+    )
+
+    r = subprocess.run([
+        "ffmpeg", "-y",
+        "-f", "lavfi", "-i", "color=c=0x0f0f23:s=1080x1920:r=30",
+        "-vf", vf,
+        "-t", str(SLIDE_DURATION), "-r", "30",
+        "-c:v", "libx264", "-preset", "fast", "-crf", "22",
+        "-pix_fmt", "yuv420p",
+        str(out),
+    ], capture_output=True, text=True)
+
+    if r.returncode != 0:
+        print(f"⚠️  gear slide error: {r.stderr[-300:]}")
+        return None
+    return out
+
+
 # ── Audio ─────────────────────────────────────────────────────────────────────
 
 def _gen_ambient(music_file, duration, tmp_dir):
@@ -447,6 +503,15 @@ def main():
         if len(slides) < 2:
             print("❌ לא מספיק slides")
             sys.exit(1)
+
+        # Weekly gear tip slide (Sundays)
+        if should_add_gear_slide():
+            gear_tool, gear_idx = get_current_gear_tool(state)
+            print(f"📢 gear slide: {gear_tool['name']}")
+            gs = create_gear_slide(gear_tool, tmp_dir)
+            if gs:
+                slides.append(gs)
+                state["gear_tool_index"] = (gear_idx + 1) % len(GEAR_TOOLS)
 
         # Concat
         print(f"🔗 מחבר {len(slides)} slides עם xfade...")
