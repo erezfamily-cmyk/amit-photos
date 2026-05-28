@@ -7,6 +7,11 @@ on:
       - 'worker.js'
       - 'wrangler.toml'
       - 'admin.html'
+      - 'index.html'
+      - 'assets/**'
+      - 'camera/**'
+      - 'locations/**'
+      - 'data/**'
   workflow_dispatch:
 
 jobs:
