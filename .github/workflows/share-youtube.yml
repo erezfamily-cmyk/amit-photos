@@ -1,0 +1,28 @@
+name: Share YouTube Video on Social Media
+
+on:
+  workflow_dispatch:
+    inputs:
+      video_id:
+        description: 'YouTube Video ID (למשל: 2tdd4vksWyE)'
+        required: true
+      title:
+        description: 'כותרת הסרטון'
+        required: true
+
+jobs:
+  share:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install requests
+      - name: שיתוף ברשתות חברתיות
+        env:
+          INSTAGRAM_USER_ID: ${{ secrets.INSTAGRAM_USER_ID }}
+          INSTAGRAM_PAGE_TOKEN: ${{ secrets.INSTAGRAM_PAGE_TOKEN }}
+          FACEBOOK_PAGE_ID: ${{ secrets.FACEBOOK_PAGE_ID }}
+          PYTHONUNBUFFERED: "1"
+        run: python src/share_youtube.py "${{ github.event.inputs.video_id }}" "${{ github.event.inputs.title }}"
