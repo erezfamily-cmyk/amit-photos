@@ -202,8 +202,9 @@ def create_slide(photo_path, idx, category, tmp_dir):
         f"drawtext=text='{cat_label}':"
         f"fontcolor=white@0.85:fontsize=26:x=40:y=H-60:"
         f"enable='between(t,0.3,{SLIDE_DURATION - 0.5})',"
-        f"drawtext=text='amitphotos.com':"
-        f"fontcolor=white@0.30:fontsize=20:x=W-tw-30:y=H-50,"
+        # Centered copyright watermark — deters frame theft
+        f"drawtext=text='© Amit Erez Photography | amitphotos.com':"
+        f"fontcolor=white@0.45:fontsize=22:x=(W-tw)/2:y=H-44,"
         f"format=yuv420p[out]"
     )
 
