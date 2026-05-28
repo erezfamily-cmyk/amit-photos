@@ -1,5 +1,8 @@
 credentials.json
 token.json
+client_secrets.json
+client_secret_*.json
+node_modules/
 __pycache__/
 *.pyc
 .env
