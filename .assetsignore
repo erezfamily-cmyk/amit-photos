@@ -1,0 +1,12 @@
+.git
+.github
+node_modules
+src
+docs
+*.pdf
+*.sql
+*.ps1
+*.py
+*.md
+.claude
+.superpowers
