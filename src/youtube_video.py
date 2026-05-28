@@ -184,13 +184,17 @@ def create_slide(photo_path, idx, category, tmp_dir):
 
     cat_label = category.replace("'", "\\'")
 
+    # Pre-scale 4x before zoompan — eliminates flickering/judder
+    fw4, fh4 = fw * 4, fh * 4
+
     fc = (
         f"[0:v]scale={W}:{H}:force_original_aspect_ratio=increase,"
-        f"crop={W}:{H},gblur=sigma=28[bg];"
+        f"crop={W}:{H},gblur=sigma=30[bg];"
 
-        f"[0:v]scale={fw}:{fh}[fg_raw];"
+        # Scale up 4x with lanczos for crisp zoompan source
+        f"[0:v]scale={fw4}:{fh4}:flags=lanczos[big];"
 
-        f"[fg_raw]zoompan=z={zoom_expr}:"
+        f"[big]zoompan=z={zoom_expr}:"
         f"x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':"
         f"d={frames}:s={fw}x{fh}:fps=30[fg];"
 
@@ -207,7 +211,9 @@ def create_slide(photo_path, idx, category, tmp_dir):
         "ffmpeg", "-y", "-loop", "1", "-i", str(photo_path),
         "-filter_complex", fc, "-map", "[out]",
         "-t", str(SLIDE_DURATION), "-r", "30",
-        "-c:v", "libx264", "-preset", "fast", "-crf", "22",
+        # CRF 18 + YouTube recommended 8Mbps → crisp quality
+        "-c:v", "libx264", "-preset", "medium", "-crf", "18",
+        "-b:v", "8M", "-maxrate", "10M", "-bufsize", "20M",
         str(out),
     ], capture_output=True, text=True)
 
@@ -227,7 +233,8 @@ def concat_all(clips, tmp_dir):
     r = subprocess.run([
         "ffmpeg", "-y", "-f", "concat", "-safe", "0",
         "-i", str(list_file),
-        "-c:v", "libx264", "-preset", "fast", "-crf", "21",
+        "-c:v", "libx264", "-preset", "medium", "-crf", "18",
+        "-b:v", "8M", "-maxrate", "10M", "-bufsize", "20M",
         str(out),
     ], capture_output=True, text=True)
     if r.returncode != 0:
@@ -238,19 +245,50 @@ def concat_all(clips, tmp_dir):
 
 # ── Audio ─────────────────────────────────────────────────────────────────────
 
+# Public domain classical pieces from Musopen (composer & recording both PD)
+CLASSICAL_TRACKS = [
+    {
+        "name": "Clair de Lune — Debussy",
+        "url":  "https://musopen.org/music/download/6765/",  # direct MP3
+    },
+    {
+        "name": "Moonlight Sonata — Beethoven",
+        "url":  "https://musopen.org/music/download/2615/",
+    },
+    {
+        "name": "Gymnopédie No.1 — Satie",
+        "url":  "https://musopen.org/music/download/1327/",
+    },
+]
+
+CLASSICAL_DIR = Path(__file__).parent.parent / "assets" / "classical"
+
+def get_classical_music():
+    """Return a local classical MP3 if available, else fall back to short tracks."""
+    CLASSICAL_DIR.mkdir(parents=True, exist_ok=True)
+    existing = list(CLASSICAL_DIR.glob("*.mp3"))
+    if existing:
+        return random.choice(existing)
+    return None
+
 def add_music(video_path, tmp_dir):
-    """Loop music to match video duration."""
+    """Loop music to match video duration — classical preferred."""
     duration = get_duration(video_path)
-    fade_st  = max(0.0, duration - 3.0)
+    fade_st  = max(0.0, duration - 4.0)
 
-    # Pick a music file
-    music_files = list(MUSIC_DIR.glob("*.mp3"))
-    if not music_files:
-        print("⚠️  אין מוזיקה — ממשיך בלי")
-        return video_path
+    # Prefer classical (longer, better for YouTube)
+    music = get_classical_music()
+    if not music:
+        music_files = list(MUSIC_DIR.glob("*.mp3"))
+        if not music_files:
+            print("⚠️  אין מוזיקה — ממשיך בלי")
+            return video_path
+        music = random.choice(music_files)
+        print(f"🎵 מוזיקה: {music.name}")
+    else:
+        print(f"🎵 קלאסי: {music.name}")
 
-    music = random.choice(music_files)
-    out   = tmp_dir / "with_music.mp4"
+    out = tmp_dir / "with_music.mp4"
 
     r = subprocess.run([
         "ffmpeg", "-y",
