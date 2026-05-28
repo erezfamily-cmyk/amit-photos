@@ -45,7 +45,7 @@ let featuredIds = [];
 let currentIndex = 0;
 let displayedCount = 0;
 const PAGE_SIZE = 12;
-const HOME_PREVIEW_SIZE = 30;
+const HOME_PREVIEW_SIZE = 20;
 let isHomePreview = true; // true when showing "all" filter = random 30
 
 function buildHomePreview() {
