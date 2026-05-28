@@ -49,10 +49,7 @@ const HOME_PREVIEW_SIZE = 20;
 let isHomePreview = true; // true when showing "all" filter = random 30
 
 function buildHomePreview() {
-  const featuredSet = new Set(featuredIds);
-  const featured = featuredIds.map(id => allPhotos.find(p => p.id === id)).filter(Boolean);
-  const rest = allPhotos.filter(p => !featuredSet.has(p.id)).sort(() => Math.random() - 0.5);
-  return [...featured, ...rest.slice(0, HOME_PREVIEW_SIZE)].sort(() => Math.random() - 0.5);
+  return featuredIds.map(id => allPhotos.find(p => p.id === id)).filter(Boolean);
 }
 let slideshowTimer = null;
 let isZoomed = false;
