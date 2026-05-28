@@ -45,6 +45,8 @@ let featuredIds = [];
 let currentIndex = 0;
 let displayedCount = 0;
 const PAGE_SIZE = 12;
+const HOME_PREVIEW_SIZE = 30;
+let isHomePreview = true; // true when showing "all" filter = random 30
 let slideshowTimer = null;
 let isZoomed = false;
 let puzzleDiscountPhotoId = null; // set when arriving from puzzle with ?discount=puzzle
@@ -227,11 +229,11 @@ async function loadPhotos() {
       : p
   );
 
-  const withOrder    = allPhotos.filter(p => p.sort_order != null).sort((a, b) => a.sort_order - b.sort_order);
-  const withoutOrder = allPhotos.filter(p => p.sort_order == null).sort(() => Math.random() - 0.5);
-  filteredPhotos = [...withOrder, ...withoutOrder];
-  displayedCount = Math.min(PAGE_SIZE, filteredPhotos.length);
+  isHomePreview = true;
+  filteredPhotos = [...allPhotos].sort(() => Math.random() - 0.5).slice(0, HOME_PREVIEW_SIZE);
+  displayedCount = filteredPhotos.length;
   renderGallery();
+  updateSeeAllBtn();
   injectImageObjectSchemas(allPhotos);
   updateWeekPhotoStrip();
   window.dispatchEvent(new Event('photos-ready'));
@@ -410,7 +412,39 @@ function renderGallery(append = false) {
 function updateSentinel() {
   const sentinel = document.getElementById('gallery-sentinel');
   if (!sentinel) return;
-  sentinel.style.display = displayedCount < filteredPhotos.length ? 'block' : 'none';
+  sentinel.style.display = (!isHomePreview && displayedCount < filteredPhotos.length) ? 'block' : 'none';
+}
+
+function updateSeeAllBtn() {
+  const wrap = document.querySelector('.load-more-wrap');
+  if (!wrap) return;
+  const existing = document.getElementById('gallery-see-all-btn');
+  if (isHomePreview) {
+    if (!existing) {
+      const btn = document.createElement('a');
+      btn.id = 'gallery-see-all-btn';
+      btn.href = '#gallery';
+      btn.className = 'gallery-see-all-btn';
+      const isEn = getLang() === 'en';
+      btn.setAttribute('data-he', `↓ עוד ${allPhotos.length.toLocaleString()} תמונות בגלריה המלאה`);
+      btn.setAttribute('data-en', `↓ ${allPhotos.length.toLocaleString()} more photos in the full gallery`);
+      btn.textContent = isEn
+        ? `↓ ${allPhotos.length.toLocaleString()} more photos in the full gallery`
+        : `↓ עוד ${allPhotos.length.toLocaleString()} תמונות בגלריה המלאה`;
+      btn.onclick = e => {
+        e.preventDefault();
+        isHomePreview = false;
+        filteredPhotos = [...allPhotos].sort(() => Math.random() - 0.5);
+        displayedCount = Math.min(PAGE_SIZE, filteredPhotos.length);
+        renderGallery();
+        updateSeeAllBtn();
+        updateSentinel();
+      };
+      wrap.appendChild(btn);
+    }
+  } else {
+    if (existing) existing.remove();
+  }
 }
 
 // ===== WISHLIST =====
@@ -558,12 +592,19 @@ function applyFilters() {
     return matchCat && matchSearch;
   });
 
-  // תמונות עם sort_order קודמות לפי סדר, שאר התמונות אחריהן בסדר אקראי
-  const withOrder    = pool.filter(p => p.sort_order != null).sort((a, b) => a.sort_order - b.sort_order);
-  const withoutOrder = pool.filter(p => p.sort_order == null).sort(() => Math.random() - 0.5);
-  filteredPhotos = [...withOrder, ...withoutOrder];
-  displayedCount = Math.min(PAGE_SIZE, filteredPhotos.length);
+  if (cat === 'all' && !query) {
+    isHomePreview = true;
+    filteredPhotos = [...allPhotos].sort(() => Math.random() - 0.5).slice(0, HOME_PREVIEW_SIZE);
+    displayedCount = filteredPhotos.length;
+  } else {
+    isHomePreview = false;
+    const withOrder    = pool.filter(p => p.sort_order != null).sort((a, b) => a.sort_order - b.sort_order);
+    const withoutOrder = pool.filter(p => p.sort_order == null).sort(() => Math.random() - 0.5);
+    filteredPhotos = [...withOrder, ...withoutOrder];
+    displayedCount = Math.min(PAGE_SIZE, filteredPhotos.length);
+  }
   renderGallery();
+  updateSeeAllBtn();
 }
 
 // ===== FILTERS =====
