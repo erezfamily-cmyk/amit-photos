@@ -435,8 +435,10 @@ def upload_to_youtube(video_path, slug, n_photos):
                 f"Learn {title} through real photography examples.\n\n"
                 f"In this tutorial, Amit Erez — a fine art photographer based in Israel — "
                 f"walks you through practical techniques with {n_photos} real photos.\n\n"
-                f"📷 Full photography guide: {SITE_URL}/camera/{slug}/\n"
-                f"🌐 Gallery: {SITE_URL}\n\n"
+                f"📷 Full photography guide:\n"
+                f"https://amitphotos.com/camera/{slug}/\n\n"
+                f"🌐 Full gallery:\n"
+                f"https://amitphotos.com\n\n"
                 f"#photography #{title.replace(' ','')} #photographytutorial #AmitErez"
             ),
             "tags": ["photography", "tutorial", title, "Amit Erez", "amitphotos",

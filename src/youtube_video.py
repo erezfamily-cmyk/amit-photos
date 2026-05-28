@@ -605,8 +605,11 @@ def build_metadata(category, n_photos, exif_summary=None):
         lines.append("")
 
     lines += [
-        f"🌐 Full gallery: {SITE_URL}",
-        f"🖼️  Fine art prints available at {SITE_URL}",
+        "🌐 Full gallery:",
+        SITE_URL,
+        "",
+        "🖼️  Fine art prints available:",
+        SITE_URL + "/sale/",
         "",
         f"#{category.replace(' ', '')} #photography #AmitErez #amitphotos #Israel #fineart",
     ]
