@@ -542,8 +542,35 @@ def process_guide(slug, photos, tmp_dir):
     return vid_id or True
 
 
+def _delete_youtube_video(video_id):
+    token_b64 = os.environ.get("YOUTUBE_TOKEN_JSON", "")
+    if not token_b64 or not video_id:
+        return
+    try:
+        from googleapiclient.discovery import build
+        from google.oauth2.credentials import Credentials
+        from google.auth.transport.requests import Request
+        creds = Credentials.from_authorized_user_info(
+            json.loads(base64.b64decode(token_b64).decode()))
+        if creds.expired and creds.refresh_token:
+            creds.refresh(Request())
+        build("youtube", "v3", credentials=creds,
+              cache_discovery=False).videos().delete(id=video_id).execute()
+        print(f"🗑️  נמחק: {video_id}")
+    except Exception as e:
+        print(f"⚠️  מחיקה: {e}")
+
+
 def main():
     args = sys.argv[1:]
+
+    # --replace VIDEO_ID
+    replace_id = None
+    if "--replace" in args:
+        idx = args.index("--replace")
+        if idx + 1 < len(args):
+            replace_id = args[idx + 1]
+            args = [a for a in args if a not in ("--replace", replace_id)]
 
     if not ELEVENLABS_KEY:
         print("⚠️  ELEVENLABS_API_KEY לא מוגדר")
@@ -564,6 +591,11 @@ def main():
 
     for slug in guides:
         with tempfile.TemporaryDirectory() as tmp:
+            # Delete old video before uploading improved version
+            if replace_id:
+                _delete_youtube_video(replace_id)
+                replace_id = None
+
             result = process_guide(slug, photos, Path(tmp))
             if result:
                 state.setdefault("posted_guides", []).append(slug)
