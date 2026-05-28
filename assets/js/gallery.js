@@ -233,7 +233,6 @@ async function loadPhotos() {
   filteredPhotos = [...allPhotos].sort(() => Math.random() - 0.5).slice(0, HOME_PREVIEW_SIZE);
   displayedCount = filteredPhotos.length;
   renderGallery();
-  updateSeeAllBtn();
   injectImageObjectSchemas(allPhotos);
   updateWeekPhotoStrip();
   window.dispatchEvent(new Event('photos-ready'));
@@ -415,37 +414,6 @@ function updateSentinel() {
   sentinel.style.display = (!isHomePreview && displayedCount < filteredPhotos.length) ? 'block' : 'none';
 }
 
-function updateSeeAllBtn() {
-  const wrap = document.querySelector('.load-more-wrap');
-  if (!wrap) return;
-  const existing = document.getElementById('gallery-see-all-btn');
-  if (isHomePreview) {
-    if (!existing) {
-      const btn = document.createElement('a');
-      btn.id = 'gallery-see-all-btn';
-      btn.href = '#gallery';
-      btn.className = 'gallery-see-all-btn';
-      const isEn = getLang() === 'en';
-      btn.setAttribute('data-he', `↓ עוד ${allPhotos.length.toLocaleString()} תמונות בגלריה המלאה`);
-      btn.setAttribute('data-en', `↓ ${allPhotos.length.toLocaleString()} more photos in the full gallery`);
-      btn.textContent = isEn
-        ? `↓ ${allPhotos.length.toLocaleString()} more photos in the full gallery`
-        : `↓ עוד ${allPhotos.length.toLocaleString()} תמונות בגלריה המלאה`;
-      btn.onclick = e => {
-        e.preventDefault();
-        isHomePreview = false;
-        filteredPhotos = [...allPhotos].sort(() => Math.random() - 0.5);
-        displayedCount = Math.min(PAGE_SIZE, filteredPhotos.length);
-        renderGallery();
-        updateSeeAllBtn();
-        updateSentinel();
-      };
-      wrap.appendChild(btn);
-    }
-  } else {
-    if (existing) existing.remove();
-  }
-}
 
 // ===== WISHLIST =====
 function getWishlist() {
@@ -604,7 +572,6 @@ function applyFilters() {
     displayedCount = Math.min(PAGE_SIZE, filteredPhotos.length);
   }
   renderGallery();
-  updateSeeAllBtn();
 }
 
 // ===== FILTERS =====
