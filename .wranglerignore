@@ -9,3 +9,7 @@ puzzle
 assets/css
 assets/js
 data
+*.sql
+*.ps1
+*.pdf
+*.py
