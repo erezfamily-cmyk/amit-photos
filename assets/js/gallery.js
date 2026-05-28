@@ -213,6 +213,9 @@ async function loadPhotos() {
       allPhotos = jsonPhotos;
     }
     if (!allPhotos.length) allPhotos = getDemoPhotos();
+    // dedup by id
+    const seen = new Set();
+    allPhotos = allPhotos.filter(p => { if (seen.has(p.id)) return false; seen.add(p.id); return true; });
   } catch {
     allPhotos = getDemoPhotos();
   }
@@ -1332,7 +1335,7 @@ const SITE_URL = 'https://amitphotos.com';
 // קטגוריות מיקום — יקובצו אוטומטית תחת "מקומות בעולם"
 const LOCATION_CATEGORIES = new Set([
   'אבו דאבי','איטליה','אנגליה','גרמניה','הולנד',
-  'וינה','טנזניה','יוון','מונטנגרו','סלובקיה',
+  'וינה','טנזניה','יוון','הונגריה','רומניה','מונטנגרו','סלובקיה',
   'סן דיאגו - ארה"ב','ספרד ואנדורה','צכיה',
 ]);
 
