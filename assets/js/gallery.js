@@ -583,13 +583,43 @@ function applyFilters() {
     displayedCount = Math.min(PAGE_SIZE, filteredPhotos.length);
   }
 
-  // On homepage: toggle between featured grid and masonry gallery
-  const featuredSec = document.getElementById('featured');
-  const galleryWrap = document.getElementById('gallery-grid-wrap');
-  if (featuredSec) featuredSec.style.display = isHomePreview ? '' : 'none';
-  if (galleryWrap) galleryWrap.style.display  = isHomePreview ? 'none' : '';
+  // עדכון כותרת הסקציה
+  const ctxLabel = document.getElementById('gallery-context-label');
+  if (ctxLabel) {
+    if (isHomePreview) {
+      ctxLabel.textContent = getLang() === 'en' ? 'My Picks' : 'הבחירות שלי';
+    } else {
+      const catName = cat === 'best' ? t('gallery.filter.best')
+                    : cat === 'new'  ? t('gallery.filter.new')
+                    : cat === 'sale' ? t('gallery.filter.sale')
+                    : getCategoryLabel(cat);
+      ctxLabel.textContent = catName;
+    }
+  }
+
+  // On homepage: animated toggle between featured grid and masonry gallery
+  setHomeView(isHomePreview);
 
   renderGallery();
+}
+
+function setHomeView(showFeatured) {
+  const featuredSec = document.getElementById('featured');
+  const galleryWrap = document.getElementById('gallery-grid-wrap');
+  if (!featuredSec && !galleryWrap) return;
+
+  const from = showFeatured ? galleryWrap : featuredSec;
+  const to   = showFeatured ? featuredSec : galleryWrap;
+
+  if (from && from.style.display !== 'none') {
+    from.style.opacity = '0';
+    setTimeout(() => { from.style.display = 'none'; }, 170);
+  }
+  if (to && to.style.display === 'none') {
+    to.style.opacity = '0';
+    to.style.display = '';
+    requestAnimationFrame(() => requestAnimationFrame(() => { to.style.opacity = '1'; }));
+  }
 }
 
 // ===== FILTERS =====
@@ -612,9 +642,13 @@ function initFilters() {
   const saleBadgeBtn = saleCount > 0 ? `<button class="filter-btn filter-btn-sale" data-cat="sale">🏷 ${t('gallery.filter.sale')} <span class="filter-count">${saleCount}</span></button>` : '';
   const bestBadgeBtn = bestCount > 0 ? `<button class="filter-btn filter-btn-best" data-cat="best">⭐ ${t('gallery.filter.best')} <span class="filter-count">${bestCount}</span></button>` : '';
 
+  // בדף הבית: ALL מציג רק מועדפות — הספירה חייבת לשקף את מה שנראה
+  const isHomepage = !!document.getElementById('featured-grid');
+  const allCount = isHomepage && featuredIds.length > 0 ? featuredIds.length : allPhotos.length;
+
   // שורה 1: פילטרים מיוחדים
   let row1 = `<div class="filter-row filter-row-special">
-    <button class="filter-btn active" data-cat="all">${t('gallery.filter.all')} <span class="filter-count">${allPhotos.length}</span></button>${bestBadgeBtn}${newBadgeBtn}${saleBadgeBtn}
+    <button class="filter-btn active" data-cat="all">${t('gallery.filter.all')} <span class="filter-count">${allCount}</span></button>${bestBadgeBtn}${newBadgeBtn}${saleBadgeBtn}
   </div>`;
 
   const esc = s => s.replace(/"/g, '&quot;');

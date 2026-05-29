@@ -438,7 +438,25 @@ nav.scrolled { border-bottom-color: rgba(200, 169, 110, 0.3); }
 /* wrapper שמעניק את ה-padding הנדרש לביטול negative margins של .filter-bar */
 .home-filter-wrap {
   padding: 0 2.5rem;
-  margin-bottom: 2.5rem;
+  margin-bottom: 2rem;
+}
+
+/* כותרת קטגוריה פעילה מעל הגריד */
+.gallery-context-label {
+  text-align: center;
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(200, 169, 110, 0.6);
+  margin: 0 0 1.25rem;
+  min-height: 1em;
+  transition: opacity 0.2s;
+}
+
+/* fade transition בין מצבי גלריה */
+.featured-section,
+#gallery-grid-wrap {
+  transition: opacity 0.17s ease;
 }
 
 /* ===== FILTER TABS ===== */
