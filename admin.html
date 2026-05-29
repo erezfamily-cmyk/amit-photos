@@ -612,7 +612,7 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
       <input type="password" id="password-input" placeholder="סיסמה" autocomplete="off" style="width:100%;padding-left:2.5rem">
       <button type="button" id="pwd-toggle" style="position:absolute;left:.5rem;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:1.1rem;padding:0;line-height:1">&#128065;</button>
     </div>
-    <button class="btn-login" id="login-btn" onclick="doLogin()">כניסה</button>
+    <button class="btn-login" id="login-btn" onclick="(window.doLogin||function(){var p=document.getElementById('password-input').value;if(!p)return;fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:p})}).then(function(r){return r.json().then(function(d){if(!r.ok){document.getElementById('login-error').textContent=d.error||'סיסמה שגויה';return;}sessionStorage.setItem('admin_session',d.token);localStorage.setItem('admin_session',d.token);document.getElementById('login-screen').style.display='none';document.getElementById('admin-ui').classList.add('visible');});}).catch(function(){document.getElementById('login-error').textContent='שגיאת חיבור';});})()">כניסה</button>
     <div class="login-error" id="login-error"></div>
     <button class="login-forgot" id="forgot-btn">שכחת סיסמה?</button>
   </div>
