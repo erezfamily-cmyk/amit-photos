@@ -161,12 +161,21 @@
     </div>
   </section>
 
-  <!-- ===== GALLERY ===== -->
-  <section class="gallery-section" id="gallery">
-    <div id="filter-bar"></div>
-    <div id="gallery-grid"></div>
-    <div id="gallery-sentinel"></div>
+  <!-- ===== FILTER BAR ===== -->
+  <div id="filter-bar"></div>
+
+  <!-- ===== FEATURED (shown when "all" filter) ===== -->
+  <section class="featured-section" id="featured">
+    <div class="featured-grid" id="featured-grid">
+      <!-- Populated by JS -->
+    </div>
   </section>
+
+  <!-- Gallery grid (shown when category filter is active) -->
+  <div id="gallery-grid-wrap" style="display:none">
+    <div id="gallery-grid" class="gallery-grid home-gallery-grid"></div>
+    <div id="gallery-sentinel"></div>
+  </div>
 
   <!-- Hidden elements for JS compatibility -->
   <div style="display:none">

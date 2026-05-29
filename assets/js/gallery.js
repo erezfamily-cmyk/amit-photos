@@ -582,6 +582,13 @@ function applyFilters() {
     filteredPhotos = [...withOrder, ...withoutOrder];
     displayedCount = Math.min(PAGE_SIZE, filteredPhotos.length);
   }
+
+  // On homepage: toggle between featured grid and masonry gallery
+  const featuredSec = document.getElementById('featured');
+  const galleryWrap = document.getElementById('gallery-grid-wrap');
+  if (featuredSec) featuredSec.style.display = isHomePreview ? '' : 'none';
+  if (galleryWrap) galleryWrap.style.display  = isHomePreview ? 'none' : '';
+
   renderGallery();
 }
 
