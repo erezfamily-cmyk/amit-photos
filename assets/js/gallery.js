@@ -646,9 +646,12 @@ function initFilters() {
   const isHomepage = !!document.getElementById('featured-grid');
   const allCount = isHomepage && featuredIds.length > 0 ? featuredIds.length : allPhotos.length;
 
+  // בדף הבית "הכל" = מועדפות, אז כפתור "מובחרות" מיותר ומבלבל
+  const effectiveBestBtn = isHomepage ? '' : bestBadgeBtn;
+
   // שורה 1: פילטרים מיוחדים
   let row1 = `<div class="filter-row filter-row-special">
-    <button class="filter-btn active" data-cat="all">${t('gallery.filter.all')} <span class="filter-count">${allCount}</span></button>${bestBadgeBtn}${newBadgeBtn}${saleBadgeBtn}
+    <button class="filter-btn active" data-cat="all">${t('gallery.filter.all')} <span class="filter-count">${allCount}</span></button>${effectiveBestBtn}${newBadgeBtn}${saleBadgeBtn}
   </div>`;
 
   const esc = s => s.replace(/"/g, '&quot;');
