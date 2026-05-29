@@ -40,7 +40,7 @@ const SEC_HEADERS = {
     "font-src 'self' https://fonts.gstatic.com",
     "img-src 'self' data: https: blob:",
     "connect-src 'self' https://amitphotos.com https://analytics.google.com https://www.google-analytics.com https://region1.google-analytics.com",
-    "frame-src https://www.google.com https://www.paypal.com",
+    "frame-src https://www.google.com https://www.paypal.com https://www.openstreetmap.org",
     "frame-ancestors 'self'",
   ].join('; '),
 };
