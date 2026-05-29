@@ -460,8 +460,7 @@ function refreshWishlistFilter() {
 
 // ===== FEATURED =====
 async function initFeatured() {
-  const grid = document.getElementById('featured-grid');
-  if (!grid || allPhotos.length === 0) return;
+  if (allPhotos.length === 0) return;
 
   let picks = [];
   try {
@@ -484,6 +483,11 @@ async function initFeatured() {
     picks = [...allPhotos].sort(seededSort).slice(0, 5);
   }
 
+  featuredIds = picks.map(p => p.id);
+
+  const grid = document.getElementById('featured-grid');
+  if (!grid) return;
+
   grid.innerHTML = picks.map((photo, i) => `
     <div class="featured-item" data-id="${photo.id}">
       <img src="${photo.thumbnail || photo.url}" alt="${photo.title}" loading="lazy" />
@@ -502,8 +506,6 @@ async function initFeatured() {
       if (idx !== -1) openLightbox(idx);
     });
   });
-
-  featuredIds = picks.map(p => p.id);
 
   const bestCount = allPhotos.filter(p => featuredIds.includes(p.id)).length;
   const cta = document.createElement('div');

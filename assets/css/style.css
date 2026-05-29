@@ -430,6 +430,11 @@ nav.scrolled { border-bottom-color: rgba(200, 169, 110, 0.3); }
   to { transform: rotate(360deg); }
 }
 
+/* ===== HOME GALLERY SECTION ===== */
+.gallery-section {
+  padding: 2rem 0 4rem;
+}
+
 /* ===== FILTER TABS ===== */
 .filter-bar {
   display: flex;
