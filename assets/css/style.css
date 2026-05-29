@@ -444,9 +444,8 @@ nav.scrolled { border-bottom-color: rgba(200, 169, 110, 0.3); }
 /* ===== FILTER TABS ===== */
 .filter-bar {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  justify-content: center;
+  flex-direction: column;
+  gap: 0;
   margin-bottom: 2rem;
 
   position: sticky;
@@ -454,8 +453,8 @@ nav.scrolled { border-bottom-color: rgba(200, 169, 110, 0.3); }
   z-index: 90;
   margin-left: -2.5rem;
   margin-right: -2.5rem;
-  padding: 0.75rem 2.5rem;
-  background: rgba(8, 8, 8, 0.88);
+  padding: 0.6rem 2.5rem 0.5rem;
+  background: rgba(8, 8, 8, 0.92);
   -webkit-backdrop-filter: blur(18px);
   backdrop-filter: blur(18px);
   border-bottom: 1px solid rgba(200, 169, 110, 0.12);
@@ -463,6 +462,31 @@ nav.scrolled { border-bottom-color: rgba(200, 169, 110, 0.3); }
 }
 .filter-bar.is-stuck {
   box-shadow: 0 4px 24px rgba(0,0,0,0.45);
+}
+
+/* שורת פילטרים מיוחדים (ALL / BEST OF / NEW / SALE) */
+.filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+}
+.filter-row-special {
+  padding-bottom: 0.45rem;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.filter-row-cats {
+  padding-top: 0.45rem;
+}
+/* כפתורי קטגוריות — קצת יותר קטנים מהמיוחדים */
+.filter-row-cats .filter-btn {
+  font-size: 0.72rem;
+  padding: 0.35rem 0.9rem;
+  opacity: 0.8;
+}
+.filter-row-cats .filter-btn:hover,
+.filter-row-cats .filter-btn.active {
+  opacity: 1;
 }
 
 /* ===== FEATURED CTA ===== */

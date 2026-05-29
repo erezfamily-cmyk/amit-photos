@@ -15,6 +15,10 @@ const CATEGORY_MAP = {
   'צילום מופשט': 'Abstract Photography',
   'מקומות בעולם': 'Places Around the World',
   'ארצות': 'Locations',
+  'בעלי חיים': 'Wildlife',
+  'אומנות רחוב': 'Street Art',
+  'צילום ספורט': 'Sports',
+  'אדריכלות ועיצוב': 'Architecture & Design',
   // Sub-categories (countries/cities)
   'אבו דאבי': 'Abu Dhabi',
   'אנגליה': 'England',
