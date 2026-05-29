@@ -10,6 +10,9 @@ on:
         description: 'כותרת הסרטון'
         required: true
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   share:
     runs-on: ubuntu-latest

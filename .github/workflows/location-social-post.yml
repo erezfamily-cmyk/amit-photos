@@ -6,6 +6,9 @@ on:
     - cron: '0 17 */3 * *'
   workflow_dispatch:
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   location-social-post:
     runs-on: ubuntu-latest

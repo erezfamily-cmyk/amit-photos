@@ -3,6 +3,9 @@ name: בדיקת פינים ב-Pinterest
 on:
   workflow_dispatch:
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   list-pins:
     runs-on: ubuntu-latest

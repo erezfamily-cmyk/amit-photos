@@ -5,6 +5,9 @@ on:
     - cron: '0 15 * * 3'  # כל רביעי 15:00 UTC = 18:00 ישראל
   workflow_dispatch:
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   quiz-promo:
     runs-on: ubuntu-latest
