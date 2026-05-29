@@ -610,7 +610,7 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
     <div class="login-sub">ממשק ניהול</div>
     <div class="pwd-wrap" style="position:relative;width:100%">
       <input type="password" id="password-input" placeholder="סיסמה" autocomplete="off" style="width:100%;padding-left:2.5rem">
-      <button type="button" id="pwd-toggle" onclick="var i=document.getElementById('password-input');i.type=i.type==='password'?'text':'password';this.textContent=i.type==='password'?'👁':'🙈'" style="position:absolute;left:.5rem;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:1.1rem;padding:0;line-height:1">👁</button>
+      <button type="button" id="pwd-toggle" style="position:absolute;left:.5rem;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:1.1rem;padding:0;line-height:1">&#128065;</button>
     </div>
     <button class="btn-login" id="login-btn" onclick="doLogin()">כניסה</button>
     <div class="login-error" id="login-error"></div>
@@ -2073,6 +2073,14 @@ function authHeaders() {
 
   // נקה autofill ישן בטעינה
   setTimeout(() => { $('password-input').value = ''; }, 200);
+
+  // כפתור עין — הצג/הסתר סיסמה
+  $('pwd-toggle').addEventListener('click', () => {
+    const inp = $('password-input');
+    const showing = inp.type === 'text';
+    inp.type = showing ? 'password' : 'text';
+    $('pwd-toggle').textContent = showing ? '\u{1F441}' : '\u{1F648}';
+  });
 
   $('login-btn').addEventListener('click', doLogin);
   $('password-input').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
