@@ -2060,9 +2060,10 @@ function authHeaders() {
 }
 
 (function initAuth() {
-  const saved = sessionStorage.getItem('admin_session');
+  const saved = sessionStorage.getItem('admin_session') || localStorage.getItem('admin_session');
   if (saved) {
     SESSION_TOKEN = saved;
+    sessionStorage.setItem('admin_session', saved);
     document.cookie = 'admin_session=' + SESSION_TOKEN + '; path=/; SameSite=Strict';
     setTimeout(showAdmin, 0);
   }
@@ -2157,6 +2158,7 @@ function authHeaders() {
       }
       SESSION_TOKEN = data.token;
       sessionStorage.setItem('admin_session', SESSION_TOKEN);
+      localStorage.setItem('admin_session', SESSION_TOKEN);
       document.cookie = 'admin_session=' + SESSION_TOKEN + '; path=/; SameSite=Strict';
       $('login-screen').style.opacity='0';
       $('login-screen').style.transition='opacity .4s';
@@ -2196,6 +2198,7 @@ function authHeaders() {
 $('logout-btn').addEventListener('click', async () => {
   await fetch('/api/logout', { method: 'POST', headers: authHeaders() }).catch(()=>{});
   sessionStorage.removeItem('admin_session');
+  localStorage.removeItem('admin_session');
   location.reload();
 });
 
