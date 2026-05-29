@@ -5,6 +5,9 @@ on:
     - cron: '0 21 * * 6'  # שבת 21:00 UTC = ראשון 00:00 ישראל
   workflow_dispatch:
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   rotate:
     runs-on: ubuntu-latest
