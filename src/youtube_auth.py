@@ -19,7 +19,10 @@ except ImportError:
     print("חסר: pip install google-auth-oauthlib")
     sys.exit(1)
 
-SCOPES = ["https://www.googleapis.com/auth/youtube.upload"]
+SCOPES = [
+    "https://www.googleapis.com/auth/youtube.upload",
+    "https://www.googleapis.com/auth/youtube.force-ssl",  # needed for description updates
+]
 SECRETS = Path("client_secrets.json")
 
 if not SECRETS.exists():
