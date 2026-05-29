@@ -1,0 +1,42 @@
+name: Check YouTube Description
+
+on:
+  workflow_dispatch:
+    inputs:
+      video_id:
+        description: 'YouTube video ID'
+        required: true
+        default: 'j2VtQzI2_k4'
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install google-api-python-client google-auth
+      - name: Print description
+        env:
+          YOUTUBE_TOKEN_JSON: ${{ secrets.YOUTUBE_TOKEN_JSON }}
+        run: |
+          python - <<'EOF'
+          import os, json, base64
+          from googleapiclient.discovery import build
+          from google.oauth2.credentials import Credentials
+          from google.auth.transport.requests import Request
+
+          creds = Credentials.from_authorized_user_info(
+              json.loads(base64.b64decode(os.environ["YOUTUBE_TOKEN_JSON"]).decode()))
+          if creds.expired and creds.refresh_token:
+              creds.refresh(Request())
+          yt = build("youtube", "v3", credentials=creds, cache_discovery=False)
+
+          vid_id = "${{ github.event.inputs.video_id }}"
+          resp = yt.videos().list(part="snippet", id=vid_id).execute()
+          desc = resp["items"][0]["snippet"]["description"]
+          print("=== DESCRIPTION ===")
+          for i, line in enumerate(desc.splitlines(), 1):
+              print(f"{i:3}: {repr(line)}")
+          EOF
