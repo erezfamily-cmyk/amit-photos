@@ -608,8 +608,11 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
   <div class="login-card" id="login-card">
     <div class="login-logo">AMIT PHOTOS</div>
     <div class="login-sub">ממשק ניהול</div>
-    <input type="password" id="password-input" placeholder="סיסמה" autocomplete="off">
-    <button class="btn-login" id="login-btn">כניסה</button>
+    <div class="pwd-wrap" style="position:relative;width:100%">
+      <input type="password" id="password-input" placeholder="סיסמה" autocomplete="off" style="width:100%;padding-left:2.5rem">
+      <button type="button" id="pwd-toggle" onclick="var i=document.getElementById('password-input');i.type=i.type==='password'?'text':'password';this.textContent=i.type==='password'?'👁':'🙈'" style="position:absolute;left:.5rem;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:1.1rem;padding:0;line-height:1">👁</button>
+    </div>
+    <button class="btn-login" id="login-btn" onclick="doLogin()">כניסה</button>
     <div class="login-error" id="login-error"></div>
     <button class="login-forgot" id="forgot-btn">שכחת סיסמה?</button>
   </div>
@@ -2168,6 +2171,7 @@ function authHeaders() {
       $('login-error').textContent = 'שגיאת חיבור';
     }
   }
+  window.doLogin = doLogin;
 
   async function showAdmin() {
     $('admin-ui').classList.add('visible');
