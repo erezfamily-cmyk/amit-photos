@@ -2067,6 +2067,10 @@ function authHeaders() {
     setTimeout(showAdmin, 0);
   }
 
+  // נקה autofill ישן בטעינה
+  setTimeout(() => { $('password-input').value = ''; }, 100);
+  $('password-input').addEventListener('focus', () => { $('password-input').value = ''; });
+
   $('login-btn').addEventListener('click', doLogin);
   $('password-input').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
 
