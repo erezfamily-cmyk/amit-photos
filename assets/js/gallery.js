@@ -76,7 +76,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   initSearch();
   await initFeatured();
   initFilters(); // rebuild after featuredIds are known
-  if (isHomePreview) {
+  // בדף הבית: הפעל פילטר "מובחרות" כברירת מחדל
+  if (document.getElementById('featured-grid') && featuredIds.length > 0) {
+    applyFilters();
+  } else if (isHomePreview) {
     filteredPhotos = buildHomePreview();
     displayedCount = filteredPhotos.length;
     renderGallery();
@@ -571,7 +574,9 @@ function applyFilters() {
     return matchCat && matchSearch;
   });
 
-  if (cat === 'all' && !query) {
+  const onHomepage = !!document.getElementById('featured-grid');
+  if (onHomepage && cat === 'best' && !query) {
+    // בדף הבית: "מובחרות" = גריד מועדפות קומפקטי
     isHomePreview = true;
     filteredPhotos = buildHomePreview();
     displayedCount = filteredPhotos.length;
@@ -642,16 +647,11 @@ function initFilters() {
   const saleBadgeBtn = saleCount > 0 ? `<button class="filter-btn filter-btn-sale" data-cat="sale">🏷 ${t('gallery.filter.sale')} <span class="filter-count">${saleCount}</span></button>` : '';
   const bestBadgeBtn = bestCount > 0 ? `<button class="filter-btn filter-btn-best" data-cat="best">⭐ ${t('gallery.filter.best')} <span class="filter-count">${bestCount}</span></button>` : '';
 
-  // בדף הבית: ALL מציג רק מועדפות — הספירה חייבת לשקף את מה שנראה
   const isHomepage = !!document.getElementById('featured-grid');
-  const allCount = isHomepage && featuredIds.length > 0 ? featuredIds.length : allPhotos.length;
 
-  // בדף הבית "הכל" = מועדפות, אז כפתור "מובחרות" מיותר ומבלבל
-  const effectiveBestBtn = isHomepage ? '' : bestBadgeBtn;
-
-  // שורה 1: פילטרים מיוחדים
+  // שורה 1: פילטרים מיוחדים — בדף הבית BEST OF פעיל כברירת מחדל
   let row1 = `<div class="filter-row filter-row-special">
-    <button class="filter-btn active" data-cat="all">${t('gallery.filter.all')} <span class="filter-count">${allCount}</span></button>${effectiveBestBtn}${newBadgeBtn}${saleBadgeBtn}
+    <button class="filter-btn${isHomepage ? '' : ' active'}" data-cat="all">${t('gallery.filter.all')} <span class="filter-count">${allPhotos.length}</span></button>${bestBadgeBtn.replace('class="filter-btn', `class="filter-btn${isHomepage ? ' active' : ''}`)}${newBadgeBtn}${saleBadgeBtn}
   </div>`;
 
   const esc = s => s.replace(/"/g, '&quot;');
