@@ -411,7 +411,7 @@ function renderSpot(loc, lang) {
     const [lat, lng] = parts;
     document.getElementById('map-section').innerHTML = `
       <div class="map-wrap">
-        <iframe src="https://maps.google.com/maps?q=${encodeURIComponent(lat)},${encodeURIComponent(lng)}&z=14&output=embed&hl=${lang}" loading="lazy" allowfullscreen></iframe>
+        <iframe src="https://www.openstreetmap.org/export/embed.html?bbox=${parseFloat(lng)-0.02},${parseFloat(lat)-0.02},${parseFloat(lng)+0.02},${parseFloat(lat)+0.02}&layer=mapnik&marker=${lat},${lng}" loading="lazy" allowfullscreen></iframe>
       </div>
     `;
     if (parts.length === 2) {
