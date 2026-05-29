@@ -2075,12 +2075,15 @@ function authHeaders() {
   setTimeout(() => { $('password-input').value = ''; }, 200);
 
   // כפתור עין — הצג/הסתר סיסמה
-  $('pwd-toggle').addEventListener('click', () => {
-    const inp = $('password-input');
-    const showing = inp.type === 'text';
-    inp.type = showing ? 'password' : 'text';
-    $('pwd-toggle').textContent = showing ? '\u{1F441}' : '\u{1F648}';
-  });
+  const pwdToggle = $('pwd-toggle');
+  if (pwdToggle) {
+    pwdToggle.addEventListener('click', () => {
+      const inp = $('password-input');
+      const showing = inp.type === 'text';
+      inp.type = showing ? 'password' : 'text';
+      pwdToggle.textContent = showing ? String.fromCodePoint(0x1F441) : String.fromCodePoint(0x1F648);
+    });
+  }
 
   $('login-btn').addEventListener('click', doLogin);
   $('password-input').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
