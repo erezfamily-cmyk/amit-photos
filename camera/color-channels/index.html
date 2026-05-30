@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="canonical" href="https://amitphotos.com/camera/color-channels/" />
+<link rel="alternate" hreflang="he" href="https://amitphotos.com/camera/color-channels/" />
+<link rel="alternate" hreflang="en" href="https://amitphotos.com/camera/color-channels/" />
+<link rel="alternate" hreflang="x-default" href="https://amitphotos.com/camera/color-channels/" />
+<title>ערוצי צבע — מה המצלמה באמת רואה | בית ספר לצילום | Amit Photos</title>
+<meta name="description" content="למד מה זה ערוצי RGB, מה כל ערוץ רואה, ואיך ניתן לנצל זאת בצילום ועריכה — עם שני דמואים אינטראקטיביים.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #0a0a0a; --surface: #111; --surface2: #181818; --border: #222;
+  --accent: #c8a96e; --text: #f0ede8; --muted: #888; --green: #5dbf8a;
+  --red: #e06060; --channel-g: #5dbf8a; --channel-b: #6090d8;
+}
+body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--text);
+  direction: rtl; min-height: 100vh; padding-bottom: 5rem; }
+
+.breadcrumb { font-size: .8rem; color: var(--muted); padding: 1.25rem 1.5rem 0;
+  max-width: 780px; margin: 0 auto; }
+.breadcrumb a { color: var(--accent); text-decoration: none; }
+
+.hero { text-align: center; padding: 2.5rem 1.5rem 1.5rem; }
+.hero-badge { display: inline-block; font-size: .72rem;
+  background: rgba(200,169,110,.12); border: 1px solid rgba(200,169,110,.3);
+  color: var(--accent); border-radius: 20px; padding: .3rem .8rem; margin-bottom: .75rem; }
+.hero h1 { font-family: 'Syne', sans-serif; font-size: 2rem; color: var(--accent); margin-bottom: .5rem; }
+.hero p { color: var(--muted); font-size: .95rem; max-width: 520px; margin: 0 auto; line-height: 1.65; }
+
+.article { max-width: 780px; margin: 0 auto; padding: 0 1.25rem; }
+.section { margin-bottom: 3rem; }
+.section-label { font-size: .72rem; color: var(--accent); text-transform: uppercase;
+  letter-spacing: .1em; margin-bottom: .5rem; }
+.section h2 { font-family: 'Syne', sans-serif; font-size: 1.4rem; color: var(--text); margin-bottom: 1rem; }
+.section p { color: var(--muted); line-height: 1.75; margin-bottom: .85rem; font-size: .95rem; }
+.section p strong { color: var(--text); }
+.divider { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+
+/* RGB PILLS */
+.rgb-pills { display: flex; gap: .65rem; margin: 1.25rem 0; flex-wrap: wrap; }
+.rgb-pill { display: flex; align-items: center; gap: .55rem;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 24px; padding: .5rem 1rem; font-size: .88rem; }
+.rgb-pill-dot { width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; }
+.rgb-pill-dot.r { background: #e06060; }
+.rgb-pill-dot.g { background: #5dbf8a; }
+.rgb-pill-dot.b { background: #6090d8; }
+.rgb-pill-text { color: var(--text); }
+.rgb-pill-sub { color: var(--muted); font-size: .78rem; margin-right: .3rem; }
+
+/* LAB SHARED */
+.lab { background: var(--surface); border: 1px solid rgba(200,169,110,.3);
+  border-radius: 18px; padding: 1.5rem; margin: 1.5rem 0; }
+.lab-title { font-family: 'Syne', sans-serif; font-size: 1.05rem; color: var(--accent);
+  text-align: center; margin-bottom: 1.25rem; }
+
+/* DEMO A */
+.channel-btns { display: flex; gap: .5rem; margin-bottom: 1rem; flex-wrap: wrap; }
+.channel-btn {
+  flex: 1; min-width: 60px; padding: .55rem .5rem; border-radius: 10px;
+  border: 2px solid var(--border); background: var(--surface2);
+  cursor: pointer; font-size: .82rem; font-weight: 700; color: var(--muted);
+  transition: border-color .2s, color .2s, background .2s; text-align: center;
+}
+.channel-btn:hover { border-color: rgba(200,169,110,.4); color: var(--text); }
+.channel-btn.active-full { border-color: var(--accent); color: var(--accent); background: rgba(200,169,110,.08); }
+.channel-btn.active-r { border-color: var(--red); color: var(--red); background: rgba(224,96,96,.1); }
+.channel-btn.active-g { border-color: var(--channel-g); color: var(--channel-g); background: rgba(93,191,138,.1); }
+.channel-btn.active-b { border-color: var(--channel-b); color: var(--channel-b); background: rgba(96,144,216,.1); }
+
+.demo-img-wrap { border-radius: 12px; overflow: hidden; background: #000;
+  position: relative; aspect-ratio: 3/2; }
+.demo-img-wrap img { width: 100%; height: 100%; object-fit: cover; display: block;
+  transition: filter .4s ease; }
+
+.channel-desc { margin-top: 1rem; background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 10px; padding: .9rem 1.1rem; font-size: .88rem; color: var(--text); line-height: 1.6; }
+.channel-desc strong { color: var(--accent); }
+
+/* DEMO B */
+.mixer-img-wrap { border-radius: 12px; overflow: hidden; background: #000;
+  aspect-ratio: 3/2; margin-bottom: 1.25rem; }
+.mixer-img-wrap img { width: 100%; height: 100%; object-fit: cover; display: block;
+  transition: filter .3s ease; filter: grayscale(1); }
+
+.mixer-presets { display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: 1.25rem; }
+.mixer-preset {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 8px; padding: .4rem .85rem; cursor: pointer;
+  font-size: .78rem; color: var(--muted); transition: border-color .2s, color .2s;
+}
+.mixer-preset:hover, .mixer-preset.active { border-color: rgba(200,169,110,.4); color: var(--accent); }
+
+.mixer-controls { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 1rem; }
+.mixer-row { display: flex; align-items: center; gap: .85rem; }
+.mixer-label { font-size: .82rem; font-weight: 700; min-width: 18px; text-align: center; }
+.mixer-label.r { color: var(--red); }
+.mixer-label.g { color: var(--channel-g); }
+.mixer-label.b { color: var(--channel-b); }
+.mixer-slider { flex: 1; -webkit-appearance: none; appearance: none;
+  height: 4px; border-radius: 2px; outline: none; cursor: pointer; }
+.mixer-slider.r { background: linear-gradient(to right, #333, #e06060); accent-color: var(--red); }
+.mixer-slider.g { background: linear-gradient(to right, #333, #5dbf8a); accent-color: var(--channel-g); }
+.mixer-slider.b { background: linear-gradient(to right, #333, #6090d8); accent-color: var(--channel-b); }
+.mixer-val { font-size: .8rem; color: var(--muted); min-width: 32px; }
+
+.mixer-desc { background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 10px; padding: .9rem 1.1rem; font-size: .88rem;
+  color: var(--text); line-height: 1.6; }
+.mixer-desc strong { color: var(--accent); }
+
+/* USES GRID */
+.uses-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: .75rem; margin: 1.25rem 0; }
+@media (max-width: 520px) { .uses-grid { grid-template-columns: 1fr; } }
+.use-card { background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; padding: 1rem 1.1rem; }
+.use-card-icon { margin-bottom: .6rem; }
+.use-card-icon svg { width: 32px; height: 32px; fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.use-card-title { font-family: 'Syne', sans-serif; font-size: .88rem; color: var(--accent); margin-bottom: .3rem; }
+.use-card-body { font-size: .8rem; color: var(--muted); line-height: 1.55; }
+
+/* GEAR */
+.gear-section{max-width:760px;margin:0 auto;padding:1.5rem 1.25rem .5rem;border-top:1px solid var(--border)}
+.gear-row-label{font-size:.68rem;text-transform:uppercase;letter-spacing:.14em;color:var(--accent);display:flex;align-items:center;gap:.75rem;margin-bottom:1rem}
+.gear-row-label::after{content:'';flex:1;height:1px;background:var(--border)}
+.gear-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:.75rem}
+.gear-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;text-decoration:none;transition:border-color .2s}
+.gear-card:hover{border-color:rgba(200,169,110,.45)}
+.gear-card-ico{aspect-ratio:3/2;background:var(--surface2);display:flex;align-items:center;justify-content:center}
+.gear-card-ico svg{width:48px;height:48px;stroke:var(--accent);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.gear-card-body{padding:.85rem;flex:1;display:flex;flex-direction:column}
+.gear-card-name{font-family:'Syne',sans-serif;font-size:.87rem;color:var(--text);margin-bottom:.3rem}
+.gear-card-desc{font-size:.76rem;color:var(--muted);line-height:1.55;flex:1;margin-bottom:.8rem}
+.gear-card-btn{display:block;text-align:center;border:1px solid rgba(200,169,110,.45);color:var(--accent);font-size:.75rem;font-weight:700;padding:.4rem .75rem;border-radius:6px;transition:background .15s,color .15s}
+.gear-card-btn:hover{background:var(--accent);color:#000}
+.gear-disclose{font-size:.67rem;color:#444;text-align:center;padding:.6rem 0 1.5rem}
+
+.kofi-bar{text-align:center;padding:1.25rem 1.25rem 1.75rem;max-width:760px;margin:0 auto}
+.kofi-bar a{display:inline-flex;align-items:center;gap:.5rem;background:var(--surface);border:1px solid rgba(200,169,110,.4);color:var(--accent);font-size:.82rem;font-weight:700;padding:.55rem 1.4rem;border-radius:8px;text-decoration:none;transition:background .2s,color .2s}
+.kofi-bar a:hover{background:var(--accent);color:#000}
+
+.tip-box { background: rgba(200,169,110,.08); border: 1px solid rgba(200,169,110,.25);
+  border-radius: 12px; padding: 1.25rem 1.5rem; margin: 1.5rem 0; }
+.tip-box-label { font-size: .72rem; color: var(--accent); font-weight: 700; letter-spacing: .08em; margin-bottom: .4rem; }
+.tip-box p { font-size: .9rem; color: var(--text); line-height: 1.65; margin: 0; }
+</style>
+<script src="/assets/js/nav.js?v=9aff906" defer></script>
+<script src="/assets/js/share.js" defer></script>
+</head>
+<body>
+
+<div class="breadcrumb">
+  <a href="/camera/" data-he="למד לצלם" data-en="Photography School">למד לצלם</a>
+  ← <span data-he="ערוצי צבע" data-en="Color Channels">ערוצי צבע</span>
+</div>
+
+<div class="hero">
+  <div class="hero-badge" data-he="📷 בית ספר לצילום" data-en="📷 Photography School">📷 בית ספר לצילום</div>
+  <h1 data-he="🎨 ערוצי צבע" data-en="🎨 Color Channels">🎨 ערוצי צבע</h1>
+  <p data-he="כל תמונה דיגיטלית מורכבת משלוש שכבות סודיות. כשמבינים אותן — מבינים צבע." data-en="Every digital photo is made of three hidden layers. Once you understand them — you understand color.">כל תמונה דיגיטלית מורכבת משלוש שכבות סודיות. כשמבינים אותן — מבינים צבע.</p>
+</div>
+
+<div class="article">
+
+  <div class="section">
+    <div class="section-label" data-he="הבסיס" data-en="The Basics">הבסיס</div>
+    <h2 data-he="מה זה ערוץ?" data-en="What Is a Channel?">מה זה ערוץ?</h2>
+    <p data-he="תמונה דיגיטלית היא לא תמונה אחת — היא <strong>שלוש תמונות שחור-לבן</strong> שמונחות אחת על השנייה. כל אחת מהן מייצגת ערוץ צבע אחד: אדום, ירוק, או כחול." data-en="A digital photo is not one image — it's <strong>three grayscale images</strong> stacked on top of each other. Each one represents one color channel: red, green, or blue.">תמונה דיגיטלית היא לא תמונה אחת — היא <strong>שלוש תמונות שחור-לבן</strong> שמונחות אחת על השנייה. כל אחת מהן מייצגת ערוץ צבע אחד: אדום, ירוק, או כחול.</p>
+    <p data-he="כל ערוץ מספר כמה מהצבע שלו קיים בכל נקודה: <strong>לבן = הרבה, שחור = אין</strong>. המסך מחבר את שלושתם בו-זמנית — ומתקבלים כל הצבעים שאנחנו מכירים." data-en="Each channel tells us how much of its color exists at each point: <strong>white = a lot, black = none</strong>. The screen combines all three simultaneously — producing every color we know.">כל ערוץ מספר כמה מהצבע שלו קיים בכל נקודה: <strong>לבן = הרבה, שחור = אין</strong>. המסך מחבר את שלושתם בו-זמנית — ומתקבלים כל הצבעים שאנחנו מכירים.</p>
+
+    <div class="rgb-pills">
+      <div class="rgb-pill">
+        <div class="rgb-pill-dot r"></div>
+        <span class="rgb-pill-text" data-he="ערוץ אדום" data-en="Red Channel">ערוץ אדום</span>
+        <span class="rgb-pill-sub" data-he="— עור, שקיעות, אש" data-en="— skin, sunsets, fire">— עור, שקיעות, אש</span>
+      </div>
+      <div class="rgb-pill">
+        <div class="rgb-pill-dot g"></div>
+        <span class="rgb-pill-text" data-he="ערוץ ירוק" data-en="Green Channel">ערוץ ירוק</span>
+        <span class="rgb-pill-sub" data-he="— עצים, שדות, הכי בהיר" data-en="— trees, fields, brightest">— עצים, שדות, הכי בהיר</span>
+      </div>
+      <div class="rgb-pill">
+        <div class="rgb-pill-dot b"></div>
+        <span class="rgb-pill-text" data-he="ערוץ כחול" data-en="Blue Channel">ערוץ כחול</span>
+        <span class="rgb-pill-sub" data-he="— שמיים, מים, הכי רועש" data-en="— sky, water, noisiest">— שמיים, מים, הכי רועש</span>
+      </div>
+    </div>
+
+    <div class="tip-box">
+      <div class="tip-box-label" data-he="💡 למה RGB ולא צבעים אחרים?" data-en="💡 Why RGB and not other colors?">💡 למה RGB ולא צבעים אחרים?</div>
+      <p data-he="העין האנושית מכילה שלושה סוגי קולטנים — לאדום, לירוק ולכחול. המצלמה פשוט מחקה את העין. כל צבע שאנחנו רואים הוא שילוב של שלושת האותות האלה." data-en="The human eye has three types of receptors — for red, green, and blue. The camera simply mimics the eye. Every color we see is a combination of these three signals.">העין האנושית מכילה שלושה סוגי קולטנים — לאדום, לירוק ולכחול. המצלמה פשוט מחקה את העין. כל צבע שאנחנו רואים הוא שילוב של שלושת האותות האלה.</p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="section">
+    <div class="section-label" data-he="דמו א׳" data-en="Demo A">דמו א׳</div>
+    <h2 data-he="מה כל ערוץ רואה?" data-en="What Does Each Channel See?">מה כל ערוץ רואה?</h2>
+    <p data-he='לחצו על כל ערוץ ותראו איך הוא "מבין" את התמונה — היכן הוא בוהק והיכן הוא כהה.' data-en='Click each channel and see how it "reads" the image — where it is bright and where it is dark.'>לחצו על כל ערוץ ותראו איך הוא "מבין" את התמונה — היכן הוא בוהק והיכן הוא כהה.</p>
+
+    <div class="lab">
+      <div class="lab-title" data-he="🔬 הפרדת ערוצים" data-en="🔬 Channel Separation">🔬 הפרדת ערוצים</div>
+
+      <div class="channel-btns">
+        <button class="channel-btn active-full" data-ch="full">
+          <span data-he="מלא" data-en="Full">מלא</span>
+        </button>
+        <button class="channel-btn" data-ch="r">
+          R — <span data-he="אדום" data-en="Red">אדום</span>
+        </button>
+        <button class="channel-btn" data-ch="g">
+          G — <span data-he="ירוק" data-en="Green">ירוק</span>
+        </button>
+        <button class="channel-btn" data-ch="b">
+          B — <span data-he="כחול" data-en="Blue">כחול</span>
+        </button>
+      </div>
+
+      <div class="demo-img-wrap">
+        <img id="ch-img"
+          src="https://drive.google.com/thumbnail?id=1OzwWCGT7S_QYWrF6O4gXwQFIG31aiMgh&sz=w900"
+          alt="עיניים במהומת צבעים — גרפיטי צבעוני">
+      </div>
+
+      <div class="channel-desc" id="ch-desc"></div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="section">
+    <div class="section-label" data-he="דמו ב׳" data-en="Demo B">דמו ב׳</div>
+    <h2 data-he="מיקסר ערוצים — שחור-לבן" data-en="Channel Mixer — Black &amp; White">מיקסר ערוצים — שחור-לבן</h2>
+    <p data-he="כשהופכים תמונה לשחור-לבן, אפשר לשלוט כמה משקל נותנים לכל ערוץ. הגבר R — העור מתבהר. הנמך B — השמיים מחשיכים. גרור את הסליידרים וראה." data-en="When converting to black &amp; white, you can control how much weight each channel gets. Boost R — skin brightens. Lower B — sky darkens. Drag the sliders and see.">כשהופכים תמונה לשחור-לבן, אפשר לשלוט כמה משקל נותנים לכל ערוץ. הגבר R — העור מתבהר. הנמך B — השמיים מחשיכים. גרור את הסליידרים וראה.</p>
+
+    <div class="lab">
+      <div class="lab-title" data-he="🎛️ מיקסר ערוצים" data-en="🎛️ Channel Mixer">🎛️ מיקסר ערוצים</div>
+
+      <div class="mixer-presets" id="mixer-presets">
+        <button class="mixer-preset active" data-r="100" data-g="100" data-b="100"
+          data-he="ניטרלי" data-en="Neutral">ניטרלי</button>
+        <button class="mixer-preset" data-r="180" data-g="80" data-b="40"
+          data-he="עור בהיר" data-en="Bright Skin">עור בהיר</button>
+        <button class="mixer-preset" data-r="80" data-g="100" data-b="20"
+          data-he="שמיים כהים" data-en="Dark Sky">שמיים כהים</button>
+        <button class="mixer-preset" data-r="140" data-g="100" data-b="60"
+          data-he="קלאסי" data-en="Classic">קלאסי</button>
+      </div>
+
+      <div class="mixer-img-wrap">
+        <img id="mixer-img"
+          src="https://drive.google.com/thumbnail?id=1iGsR7oUKjZ75jOxcqdw-plYU72f1LbEp&sz=w900"
+          alt="דיוקן בצבעים חיים">
+      </div>
+
+      <div class="mixer-controls">
+        <div class="mixer-row">
+          <span class="mixer-label r">R</span>
+          <input class="mixer-slider r" type="range" id="slider-r" min="0" max="200" value="100">
+          <span class="mixer-val" id="val-r">100</span>
+        </div>
+        <div class="mixer-row">
+          <span class="mixer-label g">G</span>
+          <input class="mixer-slider g" type="range" id="slider-g" min="0" max="200" value="100">
+          <span class="mixer-val" id="val-g">100</span>
+        </div>
+        <div class="mixer-row">
+          <span class="mixer-label b">B</span>
+          <input class="mixer-slider b" type="range" id="slider-b" min="0" max="200" value="100">
+          <span class="mixer-val" id="val-b">100</span>
+        </div>
+      </div>
+
+      <div class="mixer-desc" id="mixer-desc"></div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="section">
+    <div class="section-label" data-he="שימושים מעשיים" data-en="Practical Uses">שימושים מעשיים</div>
+    <h2 data-he="למה זה חשוב?" data-en="Why Does This Matter?">למה זה חשוב?</h2>
+
+    <div class="uses-grid">
+      <div class="use-card">
+        <div class="use-card-icon">
+          <svg viewBox="0 0 24 24" stroke="#c8a96e"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18"/></svg>
+        </div>
+        <div class="use-card-title" data-he="שחור-לבן" data-en="Black &amp; White">שחור-לבן</div>
+        <div class="use-card-body" data-he="מיקסר ערוצים קובע איזה צבע יהפוך לאיזה גוון אפור. בלי שליטה בערוצים — כל צבע הופך לאפור שרירותי." data-en="The channel mixer determines what color becomes what shade of gray. Without channel control — every color turns into an arbitrary gray.">מיקסר ערוצים קובע איזה צבע יהפוך לאיזה גוון אפור. בלי שליטה בערוצים — כל צבע הופך לאפור שרירותי.</div>
+      </div>
+      <div class="use-card">
+        <div class="use-card-icon">
+          <svg viewBox="0 0 24 24" stroke="#c8a96e"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        </div>
+        <div class="use-card-title" data-he="וייט בלאנס" data-en="White Balance">וייט בלאנס</div>
+        <div class="use-card-body" data-he="וייט בלאנס = שינוי החוזק היחסי בין ערוצים. R חזק → תמונה חמה. B חזק → תמונה קרה. זה כל הסוד." data-en="White balance = changing the relative strength between channels. Strong R → warm image. Strong B → cold image. That's the whole secret.">וייט בלאנס = שינוי החוזק היחסי בין ערוצים. R חזק → תמונה חמה. B חזק → תמונה קרה. זה כל הסוד.</div>
+      </div>
+      <div class="use-card">
+        <div class="use-card-icon">
+          <svg viewBox="0 0 24 24" stroke="#c8a96e"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/></svg>
+        </div>
+        <div class="use-card-title" data-he="Color Grading" data-en="Color Grading">Color Grading</div>
+        <div class="use-card-body" data-he='סרטים יוצרים "לוק" ייחודי על ידי הדגשת ערוצים ספציפיים. Teal &amp; Orange: G חזק בצל, R חזק בפנים. זה כל הסוד של הקולנוע.' data-en='Films create a unique "look" by emphasizing specific channels. Teal &amp; Orange: strong G in shadows, strong R in faces. That is the secret of cinematic color.'>סרטים יוצרים "לוק" ייחודי על ידי הדגשת ערוצים ספציפיים. Teal &amp; Orange: G חזק בצל, R חזק בפנים. זה כל הסוד של הקולנוע.</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="text-align:center;padding:1rem 0 2rem">
+    <a href="/camera/black-and-white/" style="color:var(--accent);font-size:.9rem;text-decoration:none"
+       data-he="← צילום שחור-לבן" data-en="← Black &amp; White Photography">← צילום שחור-לבן</a>
+    <span style="color:var(--border);margin:0 .75rem">|</span>
+    <a href="/camera/white-balance/" style="color:var(--accent);font-size:.9rem;text-decoration:none"
+       data-he="וייט בלאנס ←" data-en="White Balance ←">וייט בלאנס ←</a>
+  </div>
+
+</div>
+
+<div class="gear-section">
+  <div class="gear-row-label" data-he="ציוד מומלץ" data-en="Recommended Gear">ציוד מומלץ</div>
+  <div class="gear-cards">
+    <a class="gear-card" href="https://skylum.evyy.net/c/3782640/1738804/5925" target="_blank" rel="noopener sponsored">
+      <div class="gear-card-ico"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/><line x1="7" y1="9" x2="10" y2="9"/><circle cx="12" cy="9" r="2"/><line x1="14" y1="9" x2="17" y2="9"/><line x1="7" y1="13" x2="13" y2="13"/><circle cx="15" cy="13" r="2"/></svg></div>
+      <div class="gear-card-body">
+        <div class="gear-card-name" data-he="Luminar Neo" data-en="Luminar Neo">Luminar Neo</div>
+        <div class="gear-card-desc" data-he="מיקסר ערוצים מתקדם + כלי AI לעריכת שחור-לבן וcolor grading. קל מלייטרום, תוצאות מדהימות." data-en="Advanced channel mixer + AI tools for B&W editing and color grading. Easier than Lightroom, stunning results.">מיקסר ערוצים מתקדם + כלי AI לעריכת שחור-לבן וcolor grading. קל מלייטרום, תוצאות מדהימות.</div>
+        <span class="gear-card-btn" data-he="ראה ב-Skylum ←" data-en="View at Skylum →">ראה ב-Skylum ←</span>
+      </div>
+    </a>
+    <a class="gear-card" href="https://adorama.prf.hn/click/camref:1101l5Km5i/destination:https://www.adorama.com/catalog.tpl?SearchInfo=IPS+monitor+color+accurate" target="_blank" rel="noopener sponsored">
+      <div class="gear-card-ico"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/><circle cx="12" cy="10" r="3"/></svg></div>
+      <div class="gear-card-body">
+        <div class="gear-card-name" data-he="מסך IPS מדויק לצבע" data-en="Color-Accurate IPS Monitor">מסך IPS מדויק לצבע</div>
+        <div class="gear-card-desc" data-he="אם המסך לא מדויק — הערוצים שלך לא מדויקים. מסך IPS מכויל מראה את הצבעים כפי שהם באמת." data-en="If your monitor isn't accurate — your channels aren't accurate. A calibrated IPS monitor shows colors as they really are.">אם המסך לא מדויק — הערוצים שלך לא מדויקים. מסך IPS מכויל מראה את הצבעים כפי שהם באמת.</div>
+        <span class="gear-card-btn" data-he="ראה באדוראמה ←" data-en="View at Adorama →">ראה באדוראמה ←</span>
+      </div>
+    </a>
+    <a class="gear-card" href="https://adorama.prf.hn/click/camref:1101l5Km5i/destination:https://www.adorama.com/catalog.tpl?SearchInfo=datacolor+spyder+monitor+calibration" target="_blank" rel="noopener sponsored">
+      <div class="gear-card-ico"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="9"/><line x1="12" y1="15" x2="12" y2="22"/></svg></div>
+      <div class="gear-card-body">
+        <div class="gear-card-name" data-he="Datacolor Spyder — כיול מסך" data-en="Datacolor Spyder — Calibration">Datacolor Spyder — כיול מסך</div>
+        <div class="gear-card-desc" data-he="כלי כיול שמודד ומתקן את הצבעים על המסך — ההשקעה הכי חשובה לעורך צבע רציני." data-en="Calibration tool that measures and corrects your monitor's colors — the most important investment for serious color editing.">כלי כיול שמודד ומתקן את הצבעים על המסך — ההשקעה הכי חשובה לעורך צבע רציני.</div>
+        <span class="gear-card-btn" data-he="ראה באדוראמה ←" data-en="View at Adorama →">ראה באדוראמה ←</span>
+      </div>
+    </a>
+  </div>
+  <div class="gear-disclose" data-he="קישורי שותף — עמלה קטנה, ללא עלות נוספת לך" data-en="Affiliate links — small commission, no extra cost to you">קישורי שותף — עמלה קטנה, ללא עלות נוספת לך</div>
+</div>
+
+<div class="kofi-bar">
+  <a href="https://ko-fi.com/amitphotos" target="_blank" rel="noopener">
+    &#9749; <span data-he="אהבת את המדריך? קנה לי קפה" data-en="Found this guide useful? Buy me a coffee">אהבת את המדריך? קנה לי קפה</span>
+  </a>
+</div>
+
+<script>
+var CH_DATA = {
+  full: {
+    filter: 'none',
+    activeClass: 'active-full',
+    descHe: '<strong>תמונה מלאה</strong> — שלושת הערוצים יחד יוצרים את כל הצבעים. הגרפיטי הצבעוני מכיל כמויות שונות של R, G ו-B בכל אזור.',
+    descEn: '<strong>Full image</strong> — all three channels together create every color. The colorful graffiti contains different amounts of R, G and B in each area.'
+  },
+  r: {
+    filter: 'sepia(1) saturate(5) hue-rotate(320deg) brightness(0.9)',
+    activeClass: 'active-r',
+    descHe: '<strong>ערוץ אדום</strong> — בהיר היכן שיש הרבה אדום. שימו לב: אזורים ירוקים וכחולים נהיים כהים כי הם מכילים מעט אדום.',
+    descEn: '<strong>Red channel</strong> — bright where there is a lot of red. Notice: green and blue areas become dark because they contain little red.'
+  },
+  g: {
+    filter: 'sepia(1) saturate(4) hue-rotate(60deg) brightness(0.85)',
+    activeClass: 'active-g',
+    descHe: '<strong>ערוץ ירוק</strong> — בדרך כלל הבהיר מבין השלושה. העין האנושית רגישה יותר לירוק, ולכן המצלמה מקצה לו יותר מידע.',
+    descEn: '<strong>Green channel</strong> — usually the brightest of the three. The human eye is more sensitive to green, so the camera allocates more information to it.'
+  },
+  b: {
+    filter: 'sepia(1) saturate(4) hue-rotate(185deg) brightness(0.85)',
+    activeClass: 'active-b',
+    descHe: '<strong>ערוץ כחול</strong> — בדרך כלל הכהה ביותר, ומכיל הכי הרבה רעש דיגיטלי. שמיים כחולים יהיו כאן בהירים, עור כהה.',
+    descEn: '<strong>Blue channel</strong> — usually the darkest, and contains the most digital noise. Blue skies will be bright here, skin will be dark.'
+  }
+};
+
+var chImg = document.getElementById('ch-img');
+var chDesc = document.getElementById('ch-desc');
+var chBtns = document.querySelectorAll('.channel-btn');
+
+function isEn() { return (localStorage.getItem('lang') || 'he') === 'en'; }
+
+function setChannel(ch) {
+  var d = CH_DATA[ch];
+  chImg.style.filter = d.filter;
+  chDesc.innerHTML = isEn() ? d.descEn : d.descHe;
+  chBtns.forEach(function(b) {
+    b.className = 'channel-btn' + (b.dataset.ch === ch ? ' ' + d.activeClass : '');
+  });
+}
+
+chBtns.forEach(function(btn) {
+  btn.addEventListener('click', function() { setChannel(btn.dataset.ch); });
+});
+
+/* MIXER */
+var mixerImg = document.getElementById('mixer-img');
+var sliderR = document.getElementById('slider-r');
+var sliderG = document.getElementById('slider-g');
+var sliderB = document.getElementById('slider-b');
+var valR = document.getElementById('val-r');
+var valG = document.getElementById('val-g');
+var valB = document.getElementById('val-b');
+var mixerDesc = document.getElementById('mixer-desc');
+
+var MIXER_DESCS = [
+  { test: function(r,g,b){ return r > 150; },
+    he: '<strong>עור בהיר ופורטרטים מוצלחים:</strong> R גבוה מבהיר את גוון העור ומחדד את מרקם הפנים — הסוד של פורטרט שחור-לבן מקצועי.',
+    en: '<strong>Bright skin and successful portraits:</strong> High R brightens skin tone and sharpens facial texture — the secret of professional B&W portraits.' },
+  { test: function(r,g,b){ return b < 50; },
+    he: '<strong>שמיים דרמטיים:</strong> B נמוך מחשיך שמיים כחולים — כמו פילטר אינפרא-אדום. אפקט קלאסי בצילום לנדסקייפ.',
+    en: '<strong>Dramatic skies:</strong> Low B darkens blue skies — like an infrared filter. A classic effect in landscape photography.' },
+  { test: function(r,g,b){ return true; },
+    he: '<strong>ניטרלי:</strong> כל ערוץ שווה — זה הממיר שהמצלמה עושה אוטומטית. תוצאה טובה, אבל ניתן לשפר עם שליטה בערוצים.',
+    en: '<strong>Neutral:</strong> All channels equal — this is the conversion the camera does automatically. Good result, but you can improve with channel control.' }
+];
+
+function updateMixer() {
+  var r = parseInt(sliderR.value);
+  var g = parseInt(sliderG.value);
+  var b = parseInt(sliderB.value);
+  valR.textContent = r;
+  valG.textContent = g;
+  valB.textContent = b;
+  var brightness = (r * 0.299 + g * 0.587 + b * 0.114) / 100;
+  brightness = Math.max(0.3, Math.min(2.0, brightness));
+  var spread = Math.max(r, g, b) - Math.min(r, g, b);
+  var contrast = 1 + spread / 800;
+  mixerImg.style.filter = 'grayscale(1) brightness(' + brightness.toFixed(2) + ') contrast(' + contrast.toFixed(2) + ')';
+  for (var i = 0; i < MIXER_DESCS.length; i++) {
+    if (MIXER_DESCS[i].test(r, g, b)) {
+      mixerDesc.innerHTML = isEn() ? MIXER_DESCS[i].en : MIXER_DESCS[i].he;
+      break;
+    }
+  }
+}
+
+sliderR.addEventListener('input', function() { document.querySelectorAll('.mixer-preset').forEach(function(b){ b.classList.remove('active'); }); updateMixer(); });
+sliderG.addEventListener('input', function() { document.querySelectorAll('.mixer-preset').forEach(function(b){ b.classList.remove('active'); }); updateMixer(); });
+sliderB.addEventListener('input', function() { document.querySelectorAll('.mixer-preset').forEach(function(b){ b.classList.remove('active'); }); updateMixer(); });
+
+document.getElementById('mixer-presets').addEventListener('click', function(e) {
+  var btn = e.target.closest('.mixer-preset');
+  if (!btn) return;
+  document.querySelectorAll('.mixer-preset').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+  sliderR.value = btn.dataset.r;
+  sliderG.value = btn.dataset.g;
+  sliderB.value = btn.dataset.b;
+  updateMixer();
+});
+
+function applyLang() {
+  var en = isEn();
+  document.documentElement.dir = en ? 'ltr' : 'rtl';
+  document.documentElement.lang = en ? 'en' : 'he';
+  document.body.style.direction = en ? 'ltr' : 'rtl';
+  document.title = en
+    ? 'Color Channels — What the Camera Really Sees | Amit Photos'
+    : 'ערוצי צבע — מה המצלמה באמת רואה | Amit Photos';
+  document.querySelectorAll('[data-he]').forEach(function(el) {
+    el.textContent = en ? (el.dataset.en || el.dataset.he) : el.dataset.he;
+  });
+  var activeBtn = document.querySelector('.channel-btn[class*="active-"]');
+  if (activeBtn) setChannel(activeBtn.dataset.ch);
+  updateMixer();
+}
+
+applyLang();
+setChannel('full');
+updateMixer();
+window.addEventListener('storage', function(e) { if (e.key === 'lang') applyLang(); });
+</script>
+</body>
+</html>
