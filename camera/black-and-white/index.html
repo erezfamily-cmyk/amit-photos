@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="canonical" href="https://amitphotos.com/camera/black-and-white/" />
+<link rel="alternate" hreflang="he" href="https://amitphotos.com/camera/black-and-white/" />
+<link rel="alternate" hreflang="en" href="https://amitphotos.com/camera/black-and-white/" />
+<link rel="alternate" hreflang="x-default" href="https://amitphotos.com/camera/black-and-white/" />
+<title>צילום שחור לבן — מה הופך תמונה לעוצמתית | בית ספר לצילום | Amit Photos</title>
+<meta name="description" content="למד מה הופך תמונה לעוצמתית בשחור-לבן: ניגוד, מרקם, אור וצורה. כולל דמו אינטראקטיבי עם תמונות אמיתיות.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #0a0a0a; --surface: #111; --surface2: #181818; --border: #222;
+  --accent: #c8a96e; --text: #f0ede8; --muted: #888; --green: #5dbf8a; --blue: #6090d8;
+}
+body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--text);
+  direction: rtl; min-height: 100vh; padding-bottom: 5rem; }
+
+.breadcrumb { font-size: .8rem; color: var(--muted); padding: 1.25rem 1.5rem 0;
+  max-width: 780px; margin: 0 auto; }
+.breadcrumb a { color: var(--accent); text-decoration: none; }
+
+.hero { text-align: center; padding: 2.5rem 1.5rem 1.5rem; }
+.hero-badge { display: inline-block; font-size: .72rem;
+  background: rgba(200,169,110,.12); border: 1px solid rgba(200,169,110,.3);
+  color: var(--accent); border-radius: 20px; padding: .3rem .8rem; margin-bottom: .75rem; }
+.hero h1 { font-family: 'Syne', sans-serif; font-size: 2rem; color: var(--accent); margin-bottom: .5rem; }
+.hero p { color: var(--muted); font-size: .95rem; max-width: 520px; margin: 0 auto; line-height: 1.65; }
+
+.article { max-width: 780px; margin: 0 auto; padding: 0 1.25rem; }
+.section { margin-bottom: 3rem; }
+.section-label { font-size: .72rem; color: var(--accent); text-transform: uppercase;
+  letter-spacing: .1em; margin-bottom: .5rem; }
+.section h2 { font-family: 'Syne', sans-serif; font-size: 1.4rem; color: var(--text); margin-bottom: 1rem; }
+.section p { color: var(--muted); line-height: 1.75; margin-bottom: .85rem; font-size: .95rem; }
+.section p strong { color: var(--text); }
+.divider { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+
+/* ===== DRAG-TO-REVEAL SLIDER ===== */
+.lab { background: var(--surface); border: 1px solid rgba(200,169,110,.3);
+  border-radius: 18px; padding: 1.5rem; margin: 1.5rem 0; }
+.lab-title { font-family: 'Syne', sans-serif; font-size: 1.05rem; color: var(--accent);
+  text-align: center; margin-bottom: 1.25rem; }
+
+.demo-tabs { display: flex; gap: .5rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
+.demo-tab {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 10px; padding: .55rem 1rem; cursor: pointer;
+  font-size: .82rem; color: var(--muted); transition: border-color .2s, color .2s;
+  display: flex; align-items: center; gap: .4rem;
+}
+.demo-tab:hover { border-color: rgba(200,169,110,.4); color: var(--text); }
+.demo-tab.active { border-color: var(--accent); color: var(--accent); background: rgba(200,169,110,.08); }
+
+.slider-wrap {
+  position: relative; border-radius: 12px; overflow: hidden;
+  cursor: ew-resize; user-select: none; touch-action: none;
+  aspect-ratio: 3/2; background: #111;
+}
+.slider-wrap img {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; display: block; pointer-events: none;
+}
+.slider-color { z-index: 1; }
+.slider-bw {
+  z-index: 2;
+  filter: grayscale(1);
+  clip-path: inset(0 50% 0 0);
+}
+.slider-line {
+  position: absolute; top: 0; bottom: 0; z-index: 3;
+  width: 3px; background: #fff; left: 50%;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+.slider-handle {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 44px; height: 44px; border-radius: 50%;
+  background: #fff; display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem; box-shadow: 0 2px 8px rgba(0,0,0,.5);
+  pointer-events: none;
+}
+.slider-label-color {
+  position: absolute; bottom: .75rem; right: .85rem; z-index: 4;
+  background: rgba(0,0,0,.55); color: #fff; font-size: .72rem;
+  padding: .25rem .6rem; border-radius: 6px; backdrop-filter: blur(4px);
+  pointer-events: none;
+}
+.slider-label-bw {
+  position: absolute; bottom: .75rem; left: .85rem; z-index: 4;
+  background: rgba(0,0,0,.55); color: #fff; font-size: .72rem;
+  padding: .25rem .6rem; border-radius: 6px; backdrop-filter: blur(4px);
+  pointer-events: none;
+}
+.slider-hint {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+  z-index: 5; background: rgba(0,0,0,.65); color: #fff; font-size: .8rem;
+  padding: .4rem .9rem; border-radius: 8px; pointer-events: none;
+  transition: opacity .3s; white-space: nowrap;
+}
+.slider-hint.hidden { opacity: 0; }
+
+.demo-lesson {
+  margin-top: 1rem; background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 10px; padding: .9rem 1.1rem; font-size: .88rem;
+  color: var(--text); line-height: 1.6;
+}
+.demo-lesson strong { color: var(--accent); }
+
+/* ===== 4 TIPS GRID ===== */
+.tips-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .85rem; margin: 1.25rem 0; }
+@media (max-width: 480px) { .tips-grid { grid-template-columns: 1fr; } }
+.tip-card { background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; padding: 1rem 1.1rem; display: flex; gap: .75rem; align-items: flex-start; }
+.tip-card-icon { font-size: 1.6rem; flex-shrink: 0; }
+.tip-card-title { font-family: 'Syne', sans-serif; font-size: .9rem; color: var(--accent); margin-bottom: .25rem; }
+.tip-card-body { font-size: .82rem; color: var(--muted); line-height: 1.55; }
+
+/* ===== B&W GALLERY ===== */
+.bw-gallery { display: grid; grid-template-columns: repeat(2, 1fr); gap: .65rem; margin: 1.25rem 0; }
+@media (min-width: 560px) { .bw-gallery { grid-template-columns: repeat(4, 1fr); } }
+.bw-gallery img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 10px;
+  display: block; border: 1px solid var(--border); transition: opacity .2s; }
+.bw-gallery img:hover { opacity: .8; }
+
+/* ===== GEAR ===== */
+.gear-section{max-width:760px;margin:0 auto;padding:1.5rem 1.25rem .5rem;border-top:1px solid var(--border)}
+.gear-row-label{font-size:.68rem;text-transform:uppercase;letter-spacing:.14em;color:var(--accent);display:flex;align-items:center;gap:.75rem;margin-bottom:1rem}
+.gear-row-label::after{content:'';flex:1;height:1px;background:var(--border)}
+.gear-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:.75rem}
+.gear-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;text-decoration:none;transition:border-color .2s}
+.gear-card:hover{border-color:rgba(200,169,110,.45)}
+.gear-card-ico{aspect-ratio:3/2;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:2.5rem}
+.gear-card-body{padding:.85rem;flex:1;display:flex;flex-direction:column}
+.gear-card-name{font-family:'Syne',sans-serif;font-size:.87rem;color:var(--text);margin-bottom:.3rem}
+.gear-card-desc{font-size:.76rem;color:var(--muted);line-height:1.55;flex:1;margin-bottom:.8rem}
+.gear-card-btn{display:block;text-align:center;border:1px solid rgba(200,169,110,.45);color:var(--accent);font-size:.75rem;font-weight:700;padding:.4rem .75rem;border-radius:6px;transition:background .15s,color .15s}
+.gear-card-btn:hover{background:var(--accent);color:#000}
+.gear-disclose{font-size:.67rem;color:#444;text-align:center;padding:.6rem 0 1.5rem}
+
+.kofi-bar{text-align:center;padding:1.25rem 1.25rem 1.75rem;max-width:760px;margin:0 auto}
+.kofi-bar a{display:inline-flex;align-items:center;gap:.5rem;background:var(--surface);border:1px solid rgba(200,169,110,.4);color:var(--accent);font-size:.82rem;font-weight:700;padding:.55rem 1.4rem;border-radius:8px;text-decoration:none;transition:background .2s,color .2s}
+.kofi-bar a:hover{background:var(--accent);color:#000}
+
+.tip-box { background: rgba(200,169,110,.08); border: 1px solid rgba(200,169,110,.25);
+  border-radius: 12px; padding: 1.25rem 1.5rem; margin: 1.5rem 0; }
+.tip-box-label { font-size: .72rem; color: var(--accent); font-weight: 700; letter-spacing: .08em; margin-bottom: .4rem; }
+.tip-box p { font-size: .9rem; color: var(--text); line-height: 1.65; margin: 0; }
+
+.exercise-box { background: rgba(93,191,138,.07); border: 1px solid rgba(93,191,138,.25);
+  border-radius: 12px; padding: 1.25rem 1.5rem; margin: 1.5rem 0; }
+.exercise-label { font-size: .72rem; color: var(--green); font-weight: 700; letter-spacing: .08em; margin-bottom: .4rem; }
+.exercise-box p { font-size: .9rem; color: var(--text); line-height: 1.65; margin: 0; }
+</style>
+<script src="/assets/js/nav.js?v=9aff906" defer></script>
+<script src="/assets/js/share.js" defer></script>
+</head>
+<body>
+
+<div class="breadcrumb">
+  <a href="/camera/" data-he="למד לצלם" data-en="Photography School">למד לצלם</a>
+  ← <span data-he="שחור-לבן" data-en="Black &amp; White">שחור-לבן</span>
+</div>
+
+<div class="hero">
+  <div class="hero-badge" data-he="📷 בית ספר לצילום" data-en="📷 Photography School">📷 בית ספר לצילום</div>
+  <h1 data-he="⚫ צילום שחור-לבן" data-en="⚫ Black &amp; White Photography">⚫ צילום שחור-לבן</h1>
+  <p data-he="כשמסירים את הצבע, מה נשאר? אור, צורה, מרקם, וסיפור. גרור את הקו על התמונות ותגלה מה עובד — ומה לא." data-en="When you remove color, what remains? Light, shape, texture, and story. Drag the line across the photos to discover what works — and what doesn't.">כשמסירים את הצבע, מה נשאר? אור, צורה, מרקם, וסיפור. גרור את הקו על התמונות ותגלה מה עובד — ומה לא.</p>
+</div>
+
+<div class="article">
+
+  <div class="section">
+    <div class="section-label" data-he="הרעיון" data-en="The Concept">הרעיון</div>
+    <h2 data-he="למה שחור-לבן?" data-en="Why Black &amp; White?">למה שחור-לבן?</h2>
+    <p data-he="צבע מסיח את הדעת. הוא מושך את העין ויכול להסתיר תמונה חלשה. בשחור-לבן, אין לאן להתחבא: <strong>הניגוד, הצורה והאור</strong> הם הכל." data-en="Color is distracting. It draws the eye and can hide a weak image. In black and white, there's nowhere to hide: <strong>contrast, shape, and light</strong> are everything.">צבע מסיח את הדעת. הוא מושך את העין ויכול להסתיר תמונה חלשה. בשחור-לבן, אין לאן להתחבא: <strong>הניגוד, הצורה והאור</strong> הם הכל.</p>
+    <p data-he="זה גם למה שחור-לבן הוא מבחן אמת: תמונה חלשה נהיית עוד יותר חלשה. אבל תמונה עם אור טוב, קומפוזיציה חזקה ומרקם מעניין — שחור-לבן רק מגדיל את העוצמה שלה." data-en="This is also why black and white is a true test: a weak image becomes even weaker. But a photo with good light, strong composition, and interesting texture — black and white only amplifies its power.">זה גם למה שחור-לבן הוא מבחן אמת: תמונה חלשה נהיית עוד יותר חלשה. אבל תמונה עם אור טוב, קומפוזיציה חזקה ומרקם מעניין — שחור-לבן רק מגדיל את העוצמה שלה.</p>
+    <p data-he="<strong>הסוד שרוב המתחילים לא יודעים:</strong> בשחור-לבן, צבעים שנראים שונים יכולים להפוך לאותו גוון אפור. עגבנייה אדומה על עלה ירוק — בצבע הניגוד ברור. בשחור-לבן? שניהם אפורים כמעט זהים. הניגוד נעלם." data-en="<strong>The secret most beginners don't know:</strong> In black and white, colors that look different can become the same shade of gray. A red tomato on a green leaf — in color the contrast is obvious. In black and white? Both turn nearly identical gray. The contrast disappears."><strong>הסוד שרוב המתחילים לא יודעים:</strong> בשחור-לבן, צבעים שנראים שונים יכולים להפוך לאותו גוון אפור. עגבנייה אדומה על עלה ירוק — בצבע הניגוד ברור. בשחור-לבן? שניהם אפורים כמעט זהים. הניגוד נעלם.</p>
+  </div>
+
+  <hr class="divider">
+
+  <div class="section">
+    <div class="section-label" data-he="בוחן הניגוד" data-en="Contrast Test">בוחן הניגוד</div>
+    <h2 data-he="גרור וגלה" data-en="Drag to Discover">גרור וגלה</h2>
+    <p data-he="שלוש תמונות מהגלריה של עמית. גרור את הקו ימינה/שמאלה — שמאל=צבע, ימין=שחור-לבן. ראה בעצמך מה עובד ומה לא." data-en="Three photos from Amit's gallery. Drag the line left/right — left=color, right=black &amp; white. See for yourself what works and what doesn't.">שלוש תמונות מהגלריה של עמית. גרור את הקו ימינה/שמאלה — שמאל=צבע, ימין=שחור-לבן. ראה בעצמך מה עובד ומה לא.</p>
+
+    <div class="lab">
+      <div class="lab-title" data-he="🔬 בוחן הניגוד" data-en="🔬 Contrast Test">🔬 בוחן הניגוד</div>
+
+      <div class="demo-tabs" id="demo-tabs">
+        <button class="demo-tab active" data-idx="0">
+          🌻 <span data-he="שדה גלגלים" data-en="Sunflower Field">שדה גלגלים</span>
+        </button>
+        <button class="demo-tab" data-idx="1">
+          🏰 <span data-he="מגדל דוד" data-en="Tower of David">מגדל דוד</span>
+        </button>
+        <button class="demo-tab" data-idx="2">
+          🧑 <span data-he="פורטרט" data-en="Portrait">פורטרט</span>
+        </button>
+      </div>
+
+      <div class="slider-wrap" id="slider-wrap">
+        <img class="slider-color" id="slider-img-color" src="" alt="">
+        <img class="slider-bw" id="slider-img-bw" src="" alt="">
+        <div class="slider-line" id="slider-line"></div>
+        <div class="slider-handle" id="slider-handle">↔</div>
+        <div class="slider-label-color" id="label-color" data-he="צבע" data-en="Color">צבע</div>
+        <div class="slider-label-bw" id="label-bw" data-he="שחור-לבן" data-en="B&amp;W">שחור-לבן</div>
+        <div class="slider-hint" id="slider-hint" data-he="← גרור →" data-en="← Drag →">← גרור →</div>
+      </div>
+
+      <div class="demo-lesson" id="demo-lesson"></div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="section">
+    <div class="section-label" data-he="בשטח" data-en="In the Field">בשטח</div>
+    <h2 data-he="4 דברים לחפש לפני הצילום" data-en="4 Things to Look For Before Shooting">4 דברים לחפש לפני הצילום</h2>
+    <p data-he="לפני שאתם לוחצים על ההדק, שאלו את עצמכם:" data-en="Before pressing the shutter, ask yourself:">לפני שאתם לוחצים על ההדק, שאלו את עצמכם:</p>
+
+    <div class="tips-grid">
+      <div class="tip-card">
+        <div class="tip-card-icon">🌑</div>
+        <div>
+          <div class="tip-card-title" data-he="ניגוד טון" data-en="Tonal Contrast">ניגוד טון</div>
+          <div class="tip-card-body" data-he="האם האובייקט כהה מהרקע? בשחור-לבן לא חשוב אם הצבעים שונים — חשוב שהבהירות שלהם שונה. עצמו עיניים ונסו לראות את הסצנה רק בבהירות." data-en="Is the subject darker than the background? In B&W it doesn't matter if the colors differ — what matters is whether their brightness differs. Squint your eyes and try to see the scene only in brightness.">האם האובייקט כהה מהרקע? בשחור-לבן לא חשוב אם הצבעים שונים — חשוב שהבהירות שלהם שונה. עצמו עיניים ונסו לראות את הסצנה רק בבהירות.</div>
+        </div>
+      </div>
+      <div class="tip-card">
+        <div class="tip-card-icon">✨</div>
+        <div>
+          <div class="tip-card-title" data-he="אור ממוקד" data-en="Directional Light">אור ממוקד</div>
+          <div class="tip-card-body" data-he="צל חד שמגיע מכיוון אחד יוצר ניגוד טבעי. אור אחיד ושטוח (כמו יום מעונן) יוצר תמונה שטוחה בשחור-לבן. חפשו צל על קיר, על פנים, על אדמה." data-en="A hard shadow coming from one direction creates natural contrast. Flat even light (like an overcast day) creates a flat B&W image. Look for shadows on a wall, face, or ground.">צל חד שמגיע מכיוון אחד יוצר ניגוד טבעי. אור אחיד ושטוח (כמו יום מעונן) יוצר תמונה שטוחה בשחור-לבן. חפשו צל על קיר, על פנים, על אדמה.</div>
+        </div>
+      </div>
+      <div class="tip-card">
+        <div class="tip-card-icon">🧱</div>
+        <div>
+          <div class="tip-card-title" data-he="מרקם" data-en="Texture">מרקם</div>
+          <div class="tip-card-body" data-he="עץ, אבן, עור, בד, חול — מרקמים מתחדדים בשחור-לבן כי הצבע לא מסיח. אם יש מרקם מעניין בסצנה, שחור-לבן יגרום לו לבלוט." data-en="Wood, stone, skin, fabric, sand — textures sharpen in B&W because color no longer distracts. If there's an interesting texture in the scene, B&W will make it stand out.">עץ, אבן, עור, בד, חול — מרקמים מתחדדים בשחור-לבן כי הצבע לא מסיח. אם יש מרקם מעניין בסצנה, שחור-לבן יגרום לו לבלוט.</div>
+        </div>
+      </div>
+      <div class="tip-card">
+        <div class="tip-card-icon">📐</div>
+        <div>
+          <div class="tip-card-title" data-he="צורה וקומפוזיציה" data-en="Shape &amp; Composition">צורה וקומפוזיציה</div>
+          <div class="tip-card-body" data-he="קווים, עקומות, גיאומטריה — כשהצבע לא מסיח, הצורה הופכת לכוכב. קשת, גשר, צלליות, מדרגות — כולם מרוויחים בשחור-לבן." data-en="Lines, curves, geometry — when color doesn't distract, shape becomes the star. An arch, bridge, silhouette, staircase — all gain power in B&W.">קווים, עקומות, גיאומטריה — כשהצבע לא מסיח, הצורה הופכת לכוכב. קשת, גשר, צלליות, מדרגות — כולם מרוויחים בשחור-לבן.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tip-box">
+      <div class="tip-box-label" data-he="💡 הטריק של הצלמים הוותיקים" data-en="💡 The Veteran Photographers' Trick">💡 הטריק של הצלמים הוותיקים</div>
+      <p data-he="עצמו עיניים עד שרואים רק מטושטש. אם הסצנה עדיין מעניינת בלי פרטים — יש ניגוד. אם הכל מתמזג לאפור אחד — תמצאו אור אחר." data-en="Squint until you see only blur. If the scene still looks interesting without detail — there's contrast. If everything blends into one gray — find different light.">עצמו עיניים עד שרואים רק מטושטש. אם הסצנה עדיין מעניינת בלי פרטים — יש ניגוד. אם הכל מתמזג לאפור אחד — תמצאו אור אחר.</p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="section">
+    <div class="section-label" data-he="מהגלריה" data-en="From the Gallery">מהגלריה</div>
+    <h2 data-he="תמונות שחור-לבן של עמית" data-en="Amit's Black &amp; White Photos">תמונות שחור-לבן של עמית</h2>
+    <p data-he="שימו לב לניגוד, למרקם ולאור בכל אחת מהתמונות." data-en="Notice the contrast, texture, and light in each photo.">שימו לב לניגוד, למרקם ולאור בכל אחת מהתמונות.</p>
+
+    <div class="bw-gallery">
+      <img src="https://drive.google.com/thumbnail?id=1qG7AiiT_--8pSoj6QjvDXYOj7hJX91ly&sz=w600"
+           alt="גרברה לבנה בשחור לבן" loading="lazy">
+      <img src="https://drive.google.com/thumbnail?id=1TiiDb6i3gKiHyn2MA42hOY6JEHIsx_Qq&sz=w600"
+           alt="שמחה של ילדות" loading="lazy">
+      <img src="https://drive.google.com/thumbnail?id=1AZXTYjZfoxFWdX2lR2jmK_eE1SWRyzgD&sz=w600"
+           alt="שעון על השולחן" loading="lazy">
+      <img src="https://drive.google.com/thumbnail?id=1zp8xbRsZfeSoReHWOdfRdB7A1klXttab&sz=w600"
+           alt="תפר היסטוריה" loading="lazy">
+    </div>
+
+    <div style="text-align:center;margin-top:.75rem">
+      <a href="/?cat=שחור-לבן" style="color:var(--accent);font-size:.85rem;text-decoration:none"
+         data-he="ראה את כל תמונות שחור-לבן ←" data-en="See all B&amp;W photos ←">ראה את כל תמונות שחור-לבן ←</a>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="section">
+    <div class="section-label" data-he="תרגיל מעשי" data-en="Practical Exercise">תרגיל מעשי</div>
+    <h2 data-he="אתגר השחור-לבן" data-en="The B&amp;W Challenge">אתגר השחור-לבן</h2>
+
+    <div class="exercise-box">
+      <div class="exercise-label" data-he="📷 המשימה" data-en="📷 The Assignment">📷 המשימה</div>
+      <p data-he="צאו לשעה אחת לרחוב עם המצלמה." data-en="Go out for one hour on the street with your camera.">
+        צאו לשעה אחת לרחוב עם המצלמה.<br><br>
+        <strong data-he="שלב 1:" data-en="Step 1:">שלב 1:</strong>
+        <span data-he="צלמו 10 תמונות שנראות מעניינות בצבע." data-en="Shoot 10 photos that look interesting in color.">צלמו 10 תמונות שנראות מעניינות בצבע.</span><br>
+        <strong data-he="שלב 2:" data-en="Step 2:">שלב 2:</strong>
+        <span data-he="המירו אותן לשחור-לבן בטלפון (פילטר בסיסי)." data-en="Convert them to B&W on your phone (basic filter).">המירו אותן לשחור-לבן בטלפון (פילטר בסיסי).</span><br>
+        <strong data-he="שלב 3:" data-en="Step 3:">שלב 3:</strong>
+        <span data-he="כמה שרדו? בדרך כלל שלוש-ארבע. אלו הן תמונות עם אור, ניגוד וצורה." data-en="How many survived? Usually three or four. Those are photos with light, contrast, and shape.">כמה שרדו? בדרך כלל שלוש-ארבע. אלו הן תמונות עם אור, ניגוד וצורה.</span><br><br>
+        <em data-he="הבינו למה הן שרדו — ואת השאר השתמשו כשיעור." data-en="Understand why they survived — and use the rest as a lesson.">הבינו למה הן שרדו — ואת השאר השתמשו כשיעור.</em>
+      </p>
+    </div>
+  </div>
+
+  <div style="text-align:center;padding:1rem 0 2rem">
+    <a href="/camera/light/" style="color:var(--accent);font-size:.9rem;text-decoration:none"
+       data-he="← אור בצילום" data-en="← Light in Photography">← אור בצילום</a>
+    <span style="color:var(--border);margin:0 .75rem">|</span>
+    <a href="/camera/editing/" style="color:var(--accent);font-size:.9rem;text-decoration:none"
+       data-he="עריכת תמונות ←" data-en="Photo Editing ←">עריכת תמונות ←</a>
+  </div>
+
+</div>
+
+<div class="gear-section">
+  <div class="gear-row-label" data-he="ציוד מומלץ" data-en="Recommended Gear">ציוד מומלץ</div>
+  <div class="gear-cards">
+    <a class="gear-card" href="https://adorama.prf.hn/click/camref:1101l5Km5i/destination:https://www.adorama.com/catalog.tpl?SearchInfo=50mm+f1.8+lens" target="_blank" rel="noopener sponsored">
+      <div class="gear-card-ico">🎯</div>
+      <div class="gear-card-body">
+        <div class="gear-card-name" data-he="עדשת 50mm f/1.8" data-en="50mm f/1.8 Lens">עדשת 50mm f/1.8</div>
+        <div class="gear-card-desc" data-he="העדשה הכי טובה לשחור-לבן — רוחב שדה טבעי, עומק שדה דרמטי, מחיר נגיש. מושלמת לפורטרטים ורחוב." data-en="The best lens for B&W — natural field of view, dramatic depth of field, affordable. Perfect for portraits and street photography.">העדשה הכי טובה לשחור-לבן — רוחב שדה טבעי, עומק שדה דרמטי, מחיר נגיש. מושלמת לפורטרטים ורחוב.</div>
+        <span class="gear-card-btn" data-he="ראה באדוראמה ←" data-en="View at Adorama →">ראה באדוראמה ←</span>
+      </div>
+    </a>
+    <a class="gear-card" href="https://adorama.prf.hn/click/camref:1101l5Km5i/destination:https://www.adorama.com/catalog.tpl?SearchInfo=ND+filter+77mm" target="_blank" rel="noopener sponsored">
+      <div class="gear-card-ico">⬛</div>
+      <div class="gear-card-body">
+        <div class="gear-card-name" data-he="פילטר ND לחשיפות ארוכות" data-en="ND Filter for Long Exposures">פילטר ND לחשיפות ארוכות</div>
+        <div class="gear-card-desc" data-he="שחור-לבן עם חשיפה ארוכה = ענן מטושטש, מים כמו משי. ND10 מאפשר חשיפה ארוכה גם ביום." data-en="B&W with long exposure = blurred clouds, silky water. ND10 allows long exposures even in daylight.">שחור-לבן עם חשיפה ארוכה = ענן מטושטש, מים כמו משי. ND10 מאפשר חשיפה ארוכה גם ביום.</div>
+        <span class="gear-card-btn" data-he="ראה באדוראמה ←" data-en="View at Adorama →">ראה באדוראמה ←</span>
+      </div>
+    </a>
+    <a class="gear-card" href="https://skylum.evyy.net/c/3782640/1738804/5925" target="_blank" rel="noopener sponsored">
+      <div class="gear-card-ico">🖥️</div>
+      <div class="gear-card-body">
+        <div class="gear-card-name" data-he="Luminar Neo — עריכת שחור-לבן" data-en="Luminar Neo — B&W Editing">Luminar Neo — עריכת שחור-לבן</div>
+        <div class="gear-card-desc" data-he="כלי AI לעריכת שחור-לבן: ניגוד, גרעין פילם, split toning. קל מלייטרום, תוצאות מדהימות." data-en="AI tool for B&W editing: contrast, film grain, split toning. Easier than Lightroom, stunning results.">כלי AI לעריכת שחור-לבן: ניגוד, גרעין פילם, split toning. קל מלייטרום, תוצאות מדהימות.</div>
+        <span class="gear-card-btn" data-he="ראה ב-Skylum ←" data-en="View at Skylum →">ראה ב-Skylum ←</span>
+      </div>
+    </a>
+  </div>
+  <div class="gear-disclose" data-he="קישורי שותף — עמלה קטנה, ללא עלות נוספת לך" data-en="Affiliate links — small commission, no extra cost to you">קישורי שותף — עמלה קטנה, ללא עלות נוספת לך</div>
+</div>
+
+<div class="kofi-bar">
+  <a href="https://ko-fi.com/amitphotos" target="_blank" rel="noopener">
+    &#9749; <span data-he="אהבת את המדריך? קנה לי קפה" data-en="Found this guide useful? Buy me a coffee">אהבת את המדריך? קנה לי קפה</span>
+  </a>
+</div>
+
+<script>
+const DEMOS = [
+  {
+    src: 'https://drive.google.com/thumbnail?id=1LDJDivmCJtNCpb1NhGpV5OQeyfjeh1f2&sz=w900',
+    altHe: 'שדה גלגלים צהוב',
+    altEn: 'Yellow sunflower field',
+    lessonHe: '<strong>מה קרה?</strong> הצהוב של הגלגלים והירוק של הגבעולים — בצבע נראים שונים לגמרי. בשחור-לבן? שניהם קרובים לאותו גוון אפור. הניגוד נחלש. <strong>לקח:</strong> לא כל ניגוד צבע הוא ניגוד טון.',
+    lessonEn: '<strong>What happened?</strong> The yellow of the flowers and the green of the stems look completely different in color. In B&W? Both are nearly the same gray tone. Contrast weakens. <strong>Lesson:</strong> Not every color contrast is a tonal contrast.'
+  },
+  {
+    src: 'https://drive.google.com/thumbnail?id=1ySQLVxa-NZVG-WGwcTi6eMp_aHR80vo8&sz=w900',
+    altHe: 'מגדל דוד בירושלים',
+    altEn: 'Tower of David in Jerusalem',
+    lessonHe: '<strong>מה קרה?</strong> הצורה האדריכלית, הקווים החדים והצל — כולם עובדים מצוין בשחור-לבן. כאן הצבע דווקא הסיח מהצורה. <strong>לקח:</strong> ארכיטקטורה עם צל = שחור-לבן מנצח.',
+    lessonEn: '<strong>What happened?</strong> The architectural form, sharp lines, and shadow all work beautifully in B&W. Here color actually distracted from the shape. <strong>Lesson:</strong> Architecture with shadow = winning B&W.'
+  },
+  {
+    src: 'https://drive.google.com/thumbnail?id=1iGsR7oUKjZ75jOxcqdw-plYU72f1LbEp&sz=w900',
+    altHe: 'דיוקן בצבעים חיים',
+    altEn: 'Vivid color portrait',
+    lessonHe: '<strong>מה קרה?</strong> הצבעים של הפורטרט מסיחים את הדעת. בשחור-לבן — העיניים, הביטוי והמרקם של העור נעשים הדבר הראשון שרואים. <strong>לקח:</strong> פורטרט עם אור טוב תמיד עובד בשחור-לבן.',
+    lessonEn: '<strong>What happened?</strong> The colors of the portrait distract. In B&W — the eyes, expression, and skin texture become the first thing you see. <strong>Lesson:</strong> A portrait with good light always works in B&W.'
+  }
+];
+
+let currentIdx = 0;
+let dragging = false;
+let hintDismissed = false;
+
+const wrap = document.getElementById('slider-wrap');
+const imgColor = document.getElementById('slider-img-color');
+const imgBw = document.getElementById('slider-img-bw');
+const line = document.getElementById('slider-line');
+const handle = document.getElementById('slider-handle');
+const hint = document.getElementById('slider-hint');
+const lesson = document.getElementById('demo-lesson');
+
+function getLang() { return localStorage.getItem('lang') || 'he'; }
+const isEn = () => getLang() === 'en';
+
+function setPosition(pct) {
+  pct = Math.max(2, Math.min(98, pct));
+  imgBw.style.clipPath = 'inset(0 ' + (100 - pct) + '% 0 0)';
+  line.style.left = pct + '%';
+  handle.style.left = pct + '%';
+}
+
+function loadDemo(idx) {
+  const d = DEMOS[idx];
+  imgColor.src = d.src;
+  imgBw.src = d.src;
+  imgColor.alt = isEn() ? d.altEn : d.altHe;
+  imgBw.alt = isEn() ? d.altEn : d.altHe;
+  lesson.innerHTML = isEn() ? d.lessonEn : d.lessonHe;
+  setPosition(50);
+}
+
+function getX(e) {
+  return e.touches ? e.touches[0].clientX : e.clientX;
+}
+
+wrap.addEventListener('mousedown', function() { dragging = true; dismissHint(); });
+wrap.addEventListener('touchstart', function() { dragging = true; dismissHint(); }, { passive: true });
+window.addEventListener('mouseup', function() { dragging = false; });
+window.addEventListener('touchend', function() { dragging = false; });
+
+function onMove(e) {
+  if (!dragging) return;
+  var rect = wrap.getBoundingClientRect();
+  var pct = ((getX(e) - rect.left) / rect.width) * 100;
+  setPosition(pct);
+}
+window.addEventListener('mousemove', onMove);
+window.addEventListener('touchmove', onMove, { passive: true });
+
+function dismissHint() {
+  if (!hintDismissed) { hint.classList.add('hidden'); hintDismissed = true; }
+}
+
+document.getElementById('demo-tabs').addEventListener('click', function(e) {
+  var tab = e.target.closest('.demo-tab');
+  if (!tab) return;
+  currentIdx = parseInt(tab.dataset.idx, 10);
+  document.querySelectorAll('.demo-tab').forEach(function(t) {
+    t.classList.toggle('active', t === tab);
+  });
+  hintDismissed = false;
+  hint.classList.remove('hidden');
+  loadDemo(currentIdx);
+});
+
+function applyLang() {
+  var en = isEn();
+  document.documentElement.dir = en ? 'ltr' : 'rtl';
+  document.documentElement.lang = en ? 'en' : 'he';
+  document.body.style.direction = en ? 'ltr' : 'rtl';
+  document.title = en
+    ? 'Black & White Photography — What Makes a Photo Powerful | Amit Photos'
+    : 'צילום שחור לבן — מה הופך תמונה לעוצמתית | Amit Photos';
+  document.querySelectorAll('[data-he]').forEach(function(el) {
+    el.textContent = en ? (el.dataset.en || el.dataset.he) : el.dataset.he;
+  });
+  loadDemo(currentIdx);
+}
+
+applyLang();
+window.addEventListener('storage', function(e) { if (e.key === 'lang') applyLang(); });
+</script>
+</body>
+</html>
