@@ -456,7 +456,7 @@ function applyLang() {
     ? 'Black & White Photography — What Makes a Photo Powerful | Amit Photos'
     : 'צילום שחור לבן — מה הופך תמונה לעוצמתית | Amit Photos';
   document.querySelectorAll('[data-he]').forEach(function(el) {
-    el.textContent = en ? (el.dataset.en || el.dataset.he) : el.dataset.he;
+    el.innerHTML = en ? (el.dataset.en || el.dataset.he) : el.dataset.he;
   });
   loadDemo(currentIdx);
 }
