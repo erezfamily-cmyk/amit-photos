@@ -441,7 +441,7 @@
           const img = document.createElement('img');
           img.src = photo.thumbnail;
           img.draggable = false;
-          img.style.css?v=9aff906Text = `position:absolute;width:${SIZE*100}%;height:${SIZE*100}%;top:${-sr*100}%;left:${-sc*100}%;pointer-events:none;user-select:none;`;
+          img.style.cssText = `position:absolute;width:${SIZE*100}%;height:${SIZE*100}%;top:${-sr*100}%;left:${-sc*100}%;pointer-events:none;user-select:none;`;
           img.onload = () => tile.classList.remove('loading');
           tile.appendChild(img);
         }
