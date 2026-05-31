@@ -1,0 +1,60 @@
+name: תיקון תמונות שבורות — הסתרה מגלריה (one-shot)
+
+on:
+  workflow_dispatch:
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - name: הסתרת תמונות עם URL שבור מהגלריה
+        env:
+          ADMIN_TOKEN: ${{ secrets.ADMIN_PASSWORD }}
+        run: |
+          python3 - <<'PYEOF'
+          import requests, os
+
+          BASE = "https://amitphotos.com"
+          headers = {"X-Admin-Password": os.environ["ADMIN_TOKEN"], "Content-Type": "application/json"}
+
+          # Photos with broken R2 paths (404 or wrong content-type)
+          broken_ids = [
+              'b30e1703-67c5-4070-8f54-2582716fb0bd',
+              '27095674-6d87-4530-a95d-5f502c1f3acd',
+              '72f220f4-e197-4aab-b580-789f4d1cac27',
+              '363caf7c-27a4-4c55-8370-46990ef90c76',
+              'a3a6c413-ec04-47a3-8300-b6b3f3b10ed9',
+              '8145947a-468f-48f0-a4a5-89a0a6913e26',
+              '43991c12-e56b-4071-95b5-37c379184376',
+              '0a00bc99-0073-443c-90b4-99d144a4d8af',
+              'c2a4cbf0-12cb-4d4d-8a85-793089aa7042',
+              '4a6f6069-2cf0-4719-a35f-fda1f77194aa',
+              'dd4bee4d-561d-4b5e-93e7-c6c903d29ce4',
+              'ac042aba-4182-4bea-b29f-b1aa5e9e627b',
+              'f2ee057f-16ee-4128-9764-5fa9af653ef4',
+              'e24838d0-1e99-4bb2-b811-7a5e6275da28',
+              '14ec6877-a23b-4cec-9c50-afd8db4d138f',
+              '1ddfa3fb-b349-449c-8efb-3c787a765d84',
+              'c99955e3-0b55-45e5-98e8-07e84e0bc1ac',
+              '92591489-0a38-4b39-949e-2d52050223a7',
+          ]
+
+          done = 0
+          for photo_id in broken_ids:
+              r = requests.put(
+                  f"{BASE}/api/photos/{photo_id}",
+                  headers=headers,
+                  json={"published": 0},
+                  timeout=15
+              )
+              if r.ok:
+                  done += 1
+                  print(f"  ✅ הוסתרה: {photo_id[:8]}")
+              else:
+                  print(f"  ❌ שגיאה {photo_id[:8]}: {r.status_code} {r.text[:60]}")
+
+          print(f"\nסיום: הוסתרו {done}/{len(broken_ids)} תמונות שבורות")
+          PYEOF
