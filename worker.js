@@ -5101,7 +5101,7 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direc
 <div class="nl-grid">${cards}${empty}</div>
 <script>
 function getLang(){return localStorage.getItem('lang')||'he'}
-function applyLang(){const lang=getLang(),isEn=lang==='en';document.documentElement.dir=isEn?'ltr':'rtl';document.documentElement.lang=lang;document.querySelectorAll('[data-he]').forEach(el=>{el.innerHTML=isEn?(el.dataset.en||el.dataset.he):el.dataset.he})}
+function applyLang(){const lang=getLang(),isEn=lang==='en';document.documentElement.dir=isEn?'ltr':'rtl';document.documentElement.lang=lang;document.body.style.direction=isEn?'ltr':'rtl';document.querySelectorAll('[data-he]').forEach(el=>{el.innerHTML=isEn?(el.dataset.en||el.dataset.he):el.dataset.he})}
 applyLang();window.setLang=applyLang;window.addEventListener('storage',e=>{if(e.key==='lang')applyLang()})
 </script>
 </body></html>`, 200, 'no-cache');
@@ -5563,7 +5563,7 @@ ${contactOutreachSection}
 </section>
 <script>
 function getLang(){return localStorage.getItem('lang')||'he'}
-function applyLang(forceLang){if(window.__langChanging)return;window.__langChanging=true;const lang=forceLang||getLang();if(forceLang)localStorage.setItem('lang',forceLang);const isEn=lang==='en';document.documentElement.dir=isEn?'ltr':'rtl';document.documentElement.lang=lang;document.querySelectorAll('[data-he]').forEach(el=>{el.innerHTML=isEn?(el.dataset.en||el.dataset.he):el.dataset.he});const btn=document.getElementById('nl-lang-btn');if(btn)btn.textContent=isEn?'HE':'EN';if(typeof window.applyNavLang==='function')window.applyNavLang(lang);window.__langChanging=false}
+function applyLang(forceLang){if(window.__langChanging)return;window.__langChanging=true;const lang=forceLang||getLang();if(forceLang)localStorage.setItem('lang',forceLang);const isEn=lang==='en';document.documentElement.dir=isEn?'ltr':'rtl';document.documentElement.lang=lang;document.body.style.direction=isEn?'ltr':'rtl';document.querySelectorAll('[data-he]').forEach(el=>{el.innerHTML=isEn?(el.dataset.en||el.dataset.he):el.dataset.he});const btn=document.getElementById('nl-lang-btn');if(btn)btn.textContent=isEn?'HE':'EN';if(typeof window.applyNavLang==='function')window.applyNavLang(lang);window.__langChanging=false}
 function toggleLang(){applyLang(getLang()==='he'?'en':'he')}
 applyLang();window.setLang=applyLang;window.addEventListener('storage',e=>{if(e.key==='lang')applyLang()})
 function showStep(n){document.querySelectorAll('.nl-step-content').forEach((el,i)=>{el.style.display=(i+1===n)?'':'none'});document.querySelectorAll('.nl-step-pill').forEach((el,i)=>{el.classList.toggle('nl-step-active',i+1===n)})}

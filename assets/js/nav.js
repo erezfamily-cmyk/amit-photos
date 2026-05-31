@@ -267,6 +267,11 @@ footer#main-footer a:hover { color: #c8a96e; }
   const origApplyNavLang = applyNavLang;
   applyNavLang = function(lang) {
     origApplyNavLang(lang);
+    // Set document direction for all pages
+    var isEn = lang === 'en';
+    document.documentElement.dir = isEn ? 'ltr' : 'rtl';
+    document.documentElement.lang = lang;
+    document.body.style.direction = isEn ? 'ltr' : 'rtl';
     const fp = document.getElementById('footer-privacy');
     if (fp) fp.textContent = lang === 'en' ? privacyEn : privacyHe;
     // update "read also" section language
