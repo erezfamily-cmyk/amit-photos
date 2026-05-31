@@ -1,0 +1,33 @@
+name: בדיקת מצב ניוזלטרים (one-shot)
+
+on:
+  workflow_dispatch:
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: שליפת רשימת גיליונות
+        env:
+          ADMIN_TOKEN: ${{ secrets.ADMIN_PASSWORD }}
+        run: |
+          python3 - <<'PYEOF'
+          import requests, os, json
+
+          BASE = "https://amitphotos.com"
+          TOKEN = os.environ["ADMIN_TOKEN"]
+          headers = {"X-Admin-Password": TOKEN}
+
+          r = requests.get(f"{BASE}/api/admin/newsletter", headers=headers, timeout=30)
+          print(f"Status: {r.status_code}")
+          if not r.ok:
+              print(r.text)
+              raise SystemExit(1)
+          issues = r.json()
+          print(f"סה\"כ גיליונות: {len(issues)}")
+          for i in issues:
+              print(f"  #{i.get('issue_number')} | {i.get('slug')} | {i.get('status')} | {i.get('title_he')} | id={i.get('id')}")
+          PYEOF
