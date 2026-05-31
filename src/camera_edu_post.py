@@ -302,9 +302,9 @@ def generate_posts(photo, page):
 הקהל: אנשים חדשים בתחום הצילום שהמידע מעניין אותם — לא מניחים ידע מוקדם.
 סגנון: אישי, חינוכי, נגיש — כאילו אתה מסביר לחבר משהו שאתה מתלהב ממנו.
 כשמשתמשים במונח טכני (כמו "צמצם" או "ISO") — מסבירים אותו בביטוי פשוט אחד בסוגריים.
-כתוב בעברית בלבד (חוץ מגרסת Pinterest שבאנגלית). ללא שאלות בסוף."""
+כתוב בעברית תקנית וברורה (חוץ מגרסת Pinterest שבאנגלית)."""
 
-    prompt = f"""כתוב ארבע גרסאות של פוסט קידומי בגוף ראשון שמשלב את התמונה עם הדף הלימודי.
+    prompt = f"""כתוב שלוש גרסאות של פוסט קידומי בגוף ראשון שמשלב את התמונה עם הדף הלימודי.
 כתוב כאילו אתה (עמית) מסביר בעצמך על הנושא — לא מדברים על עמית, מדברים בתור עמית.
 
 נושא הדף: {page['angle']}
@@ -314,26 +314,20 @@ EXIF התמונה: {exif_line or '(לא זמין)'}
 כותרת התמונה: {photo.get('title', '')}
 
 **גרסה 1 — פייסבוק:**
-1. משפט פתיחה בגוף ראשון שמקשר בין התמונה לנושא הלימודי ("בתמונה הזו השתמשתי ב...", "כשצילמתי את זה...")
-2. אם יש EXIF — שורה עם ההגדרות + הסבר פשוט למה בחרתי בהן (אחרת דלג)
+1. פתיחה בגוף ראשון שמקשרת בין התמונה לנושא הלימודי — שאלה מסקרנת או פרט מפתיע
+2. אם יש EXIF — שורה עם ההגדרות + הסבר קצר למה בחרתי בהן (אחרת דלג)
 3. 1-2 שורות שמסבירות מה אני מלמד בדף ומה תוכל לעשות אחרי שתקרא
-4. שורה ריקה
-5. 👉 ללמוד עוד: {page['url']}
+4. שאלה לעוקבים שמזמינה תגובה אמיתית
+5. שורה ריקה
+6. 👉 ללמוד עוד: {page['url']}
 
-**גרסה 2 — אינסטגרם:**
-1. משפט hook קצר בגוף ראשון — עובדה מעניינת שגיליתי או טיפ מניסיוני
-2. אם יש EXIF — שורה טכנית קצרה עם הסבר פשוט (אחרת דלג)
-3. שורה אחת — מה אני מלמד בדף
-4. שורה ריקה
-5. 👉 קישור בביו ← {page['title']} {page['emoji']}
-
-**גרסה 3 — Threads:**
+**גרסה 2 — Threads:**
 1-2 משפטים קצרים בגוף ראשון — עובדה ספציפית ומעניינת מהניסיון שלי, ברורה גם למתחיל.
 שורה ריקה
 {page['url']}
 (מקסימום 150 תווים לפני הקישור)
 
-**גרסה 4 — Pinterest (באנגלית):**
+**גרסה 3 — Pinterest (באנגלית):**
 2-3 משפטים בגוף ראשון — מה I teach in this guide ולמה זה שימושי למתחיל. ברור, ללא ז'רגון.
 מסיים ב: "Full guide at amitphotos.com"
 (ללא hashtags, ללא שאלות)
@@ -343,8 +337,8 @@ EXIF התמונה: {exif_line or '(לא זמין)'}
 
     user_content = image_content + [{"type": "text", "text": prompt}]
     msg = client.messages.create(
-        model="claude-sonnet-4-6",
-        max_tokens=1200,
+        model="claude-opus-4-8",
+        max_tokens=1000,
         system=system_prompt,
         messages=[{"role": "user", "content": user_content}],
     )
@@ -353,17 +347,14 @@ EXIF התמונה: {exif_line or '(לא זמין)'}
     parts = [p.strip() for p in text.split("---SEP---")]
 
     fb_text        = parts[0] if len(parts) > 0 else text
-    ig_text        = parts[1] if len(parts) > 1 else fb_text
-    threads_text   = parts[2] if len(parts) > 2 else ig_text[:200]
-    pinterest_text = parts[3] if len(parts) > 3 else ""
+    threads_text   = parts[1] if len(parts) > 1 else fb_text[:200]
+    pinterest_text = parts[2] if len(parts) > 2 else ""
 
     fb_hashtags      = random.choice(EDU_HASHTAGS_FB)
-    ig_hashtags      = random.choice(EDU_HASHTAGS_IG)
     threads_hashtags = random.choice(EDU_HASHTAGS_THREADS)
 
     return (
         f"{fb_text}\n\n{fb_hashtags}",
-        f"{ig_text}\n\n{ig_hashtags}",
         f"{threads_text}\n\n{threads_hashtags}",
         pinterest_text,
     )
@@ -587,7 +578,7 @@ def main():
     print(f"📸 תמונה: {photo.get('title', photo['id'])}")
 
     print("✍️  מייצר פוסטים עם Claude Vision...")
-    fb_caption, ig_caption, threads_caption, pinterest_desc = generate_posts(photo, page)
+    fb_caption, threads_caption, pinterest_desc = generate_posts(photo, page)
     print(f"\nFacebook preview: {fb_caption[:120]}...\n")
 
     image_url = get_public_image_url(photo)
@@ -597,10 +588,6 @@ def main():
     print("📤 מפרסם לפייסבוק...")
     results["facebook"] = post_to_facebook(image_url, fb_caption)
     print(f"{'✅' if results['facebook'] else '❌'} Facebook: {results['facebook']}")
-
-    print("📤 מפרסם לאינסטגרם...")
-    results["instagram"] = post_to_instagram(image_url, ig_caption)
-    print(f"{'✅' if results['instagram'] else '❌'} Instagram: {results['instagram']}")
 
     print("📤 מפרסם ל-Threads...")
     results["threads"] = post_to_threads(image_url, threads_caption)

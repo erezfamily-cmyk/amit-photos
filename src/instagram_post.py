@@ -143,7 +143,7 @@ def describe_image(client, image_content, meta_text):
     if not image_content:
         return ""
     msg = client.messages.create(
-        model="claude-opus-4-7",
+        model="claude-opus-4-8",
         max_tokens=300,
         messages=[{"role": "user", "content": image_content + [{"type": "text", "text": f"""Describe this photo in detail. Focus on:
 - Exact subject (what/who is in the frame)
@@ -180,7 +180,7 @@ def generate_pdf_promo_caption(photo, client, image_content, vision_description)
 עברית בלבד. רק הפוסט."""
 
     msg = client.messages.create(
-        model="claude-opus-4-7",
+        model="claude-opus-4-8",
         max_tokens=450,
         system=system_prompt,
         messages=[{"role": "user", "content": image_content + [{"type": "text", "text": prompt}]}],
@@ -238,20 +238,20 @@ def generate_caption(photo):
     exif_line = " · ".join(exif_parts) if exif_parts else ""
 
     system_prompt = """אתה עמית ארז, צלם ישראלי שמצלם מאהבה אמיתית.
-אתה כותב בגוף ראשון, בעברית טבעית, כאילו שלחת הודעה קצרה לחבר שמעניין אותו צילום.
+אתה כותב בגוף ראשון, בעברית תקנית וברורה, כאילו שלחת הודעה לחבר שמעניין אותו צילום.
 
 הקול שלך:
-- ישיר, אנושי, לא "מקצועי" מדי ולא שיווקי
-- לפעמים מתחיל במה שראית, לפעמים בהחלטה שעשית, לפעמים בשאלה שהצטלב לך
-- כשמסביר משהו טכני — בטבעיות, לא כמו מילון
-- לפעמים קצר (2-3 משפטים), לפעמים קצת יותר ארוך — תלוי בתמונה
-- לא מסיים אותו הדבר בכל פוסט
+- ישיר ואנושי, לא שיווקי ולא "פוסט מקצועי"
+- פותח בשאלה שמעוררת סקרנות — "איפה צילמתי את זה?", "כמה זמן המתנתי לרגע הזה?", "מה גרם לי לשכב על הרצפה?"
+- אחרי השאלה — רמז קטן שמחמם את הסיפור, אבל לא חושף הכל
+- אם יש הגדרות מעניינות — מסביר בטבעיות למה בחרת בהן, לא רשימה יבשה
+- מסיים תמיד עם קריאה אחת לתגובה: שאלה ספציפית לעוקבים ("כתבו בתגובות את הניחוש שלכם", "אתם הייתם בוחרים אחרת?")
 
 תימנע מ:
-- אותו מבנה בכל פוסט
-- ביטויים כמו "שיתוף", "הנה", "חשוב לי לספר", "אני רוצה לשתף"
-- תחושת תבנית או AI
-- לסיים כל פוסט עם שאלה לעוקבים"""
+- ביטויים כמו "שיתוף", "הנה", "חשוב לי לספר"
+- פתיחה שמתארת את התמונה ישירות ("זוהי תמונה של...")
+- תחושת תבנית שחוזרת על עצמה
+- שפה עמומה — כל משפט צריך להגיד משהו ספציפי"""
 
     caption_prompt = f"""כתוב כיתוב אינסטגרם בגוף ראשון עבור התמונה הזו.
 
@@ -259,16 +259,20 @@ def generate_caption(photo):
 {meta_text}
 {f'הגדרות: {exif_line}' if exif_line else ''}
 
-כתוב כמה שורות שמרגישות כאילו עמית כתב אותן עכשיו, לא תבנית.
-אם יש הגדרות מעניינות — שלב אותן בטבעיות.
-סיים עם שורה ריקה ואז: 🛍️ זמין לרכישה — amitphotos.com (link in bio)
+מבנה הכיתוב:
+1. שאלה מסקרנת בשורה הראשונה — WHERE/WHEN/HOW/WHY שמושכת לקרוא הלאה
+2. רמז קטן שמחמם את הסיפור (משפט-שניים)
+3. הסיפור עצמו — מה הרגשת, מה החלטת, מה גילית (2-4 שורות)
+4. אם יש הגדרות מעניינות — שלב אותן בטבעיות
+5. קריאה לתגובה ספציפית ("כתבו בתגובות את הניחוש שלכם" / "הייתם מחכים לאור הזה?")
+6. שורה ריקה ואז: 🛍️ זמין לרכישה — amitphotos.com (link in bio)
 
-עברית בלבד. רק הכיתוב."""
+עברית תקנית וברורה. רק הכיתוב."""
 
     user_content = image_content + [{"type": "text", "text": caption_prompt}]
 
     msg = client.messages.create(
-        model="claude-opus-4-7",
+        model="claude-opus-4-8",
         max_tokens=500,
         system=system_prompt,
         messages=[{"role": "user", "content": user_content}],
