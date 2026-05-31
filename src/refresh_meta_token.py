@@ -106,6 +106,29 @@ def validate_token(token, label):
         print(f"⚠️  {label} אימות נכשל: {resp.text}")
 
 
+FACEBOOK_PAGE_ID = os.environ.get("FACEBOOK_PAGE_ID", "")
+
+
+def get_facebook_page_token(user_token, page_id):
+    """שולף Facebook page access token מ-/me/accounts."""
+    resp = requests.get(
+        f"{GRAPH_API}/me/accounts",
+        params={"access_token": user_token, "limit": 50},
+        timeout=30,
+    )
+    if not resp.ok:
+        print(f"⚠️  /me/accounts נכשל: {resp.status_code} — {resp.text}")
+        return None
+    pages = resp.json().get("data", [])
+    for page in pages:
+        if page.get("id") == page_id:
+            token = page.get("access_token")
+            print(f"✅ נמצא עמוד: {page.get('name')} (ID: {page_id})")
+            return token
+    print(f"⚠️  עמוד {page_id} לא נמצא ב-/me/accounts. עמודים זמינים: {[p.get('id') for p in pages]}")
+    return None
+
+
 def main():
     if not all([META_APP_ID, META_APP_SECRET, INSTAGRAM_PAGE_TOKEN, GH_PAT]):
         print("❌ חסרים משתני סביבה: META_APP_ID, META_APP_SECRET, INSTAGRAM_PAGE_TOKEN, GH_PAT")
@@ -121,8 +144,17 @@ def main():
     print("💾 מעדכן GitHub Secret: INSTAGRAM_PAGE_TOKEN...")
     update_github_secret("INSTAGRAM_PAGE_TOKEN", new_user_token, key_id, public_key)
 
+    if FACEBOOK_PAGE_ID:
+        print("🔄 שולף Facebook Page token מ-/me/accounts...")
+        fb_token = get_facebook_page_token(new_user_token, FACEBOOK_PAGE_ID)
+        if fb_token:
+            update_github_secret("FACEBOOK_PAGE_TOKEN", fb_token, key_id, public_key)
+        else:
+            print("⚠️  לא עודכן FACEBOOK_PAGE_TOKEN — עמוד לא נמצא")
+    else:
+        print("ℹ️  FACEBOOK_PAGE_ID לא מוגדר — מדלג על Facebook token")
+
     print("🎉 חידוש טוקן הושלם בהצלחה!")
-    print("ℹ️  FACEBOOK_PAGE_TOKEN לא מחודש — Page token לא פג כשנגזר מ-long-lived user token.")
 
 
 if __name__ == "__main__":
