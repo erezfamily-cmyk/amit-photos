@@ -5126,7 +5126,9 @@ async function handleNlIssue(env, slug, isPreview) {
       </div>` : '';
   const heroSection = c.hero ? `
     <section class="nl-section nl-hero-section">
-      <img src="${escXml(c.hero.photo_url)}" alt="${escXml(c.hero.title_he)}" class="nl-hero-img">
+      <a href="/?photo=${escXml(c.hero.photo_id)}" style="display:block;text-decoration:none">
+        <img src="${escXml(c.hero.photo_url)}" alt="${escXml(c.hero.title_he)}" class="nl-hero-img">
+      </a>
       <h2 class="nl-photo-title" data-he="${escXml(c.hero.title_he)}" data-en="${escXml(c.hero.title_he)}">${escXml(c.hero.title_he)}</h2>
       <p class="nl-body-text" data-he="${escXml(c.hero.text_he)}" data-en="${escXml(c.hero.text_en || c.hero.text_he)}">${escXml(c.hero.text_he)}</p>
       <div class="nl-hero-footer">${heroPriceHtml}<a class="nl-btn-secondary nl-hero-order" href="/?photo=${escXml(c.hero.photo_id)}" data-he="רכוש קובץ ←" data-en="Buy File →">רכוש קובץ ←</a></div>
@@ -5201,9 +5203,11 @@ async function handleNlIssue(env, slug, isPreview) {
       <div class="nl-section-badge" data-he="מקום לצילום" data-en="Photo Location">מקום לצילום</div>
       <h2 class="nl-section-title" data-he="${escXml(c.location.title_he)}" data-en="${escXml(c.location.title_he)}">${escXml(c.location.title_he)}</h2>
       ${mainPhoto ? `<div class="nl-loc-photos">
-        <img src="${escXml(mainPhoto)}" alt="${escXml(c.location.title_he)}" class="nl-loc-main-img" loading="lazy">
+        <a href="/locations/${escXml(c.location.id || '')}/" style="display:block;text-decoration:none">
+          <img src="${escXml(mainPhoto)}" alt="${escXml(c.location.title_he)}" class="nl-loc-main-img" loading="lazy">
+        </a>
         ${stripPhotos.length ? `<div class="nl-loc-strip">${stripPhotos.map(u =>
-          `<img src="${escXml(u)}" alt="" class="nl-loc-strip-img" loading="lazy">`
+          `<a href="/locations/${escXml(c.location.id || '')}/" style="text-decoration:none"><img src="${escXml(u)}" alt="" class="nl-loc-strip-img" loading="lazy"></a>`
         ).join('')}</div>` : ''}
       </div>` : ''}
       <p class="nl-body-text" data-he="${escXml(c.location.text_he)}" data-en="${escXml(c.location.text_en || c.location.text_he)}">${escXml(c.location.text_he)}</p>
