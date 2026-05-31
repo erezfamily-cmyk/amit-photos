@@ -1,0 +1,90 @@
+name: תיקון תמונה שבורה בניוזלטר (one-shot)
+
+on:
+  workflow_dispatch:
+    inputs:
+      newsletter_id:
+        description: 'Newsletter ID'
+        required: true
+        default: 'e7431de1-7c2d-4578-ab59-a5e568c392da'
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - name: החלפת תמונת Hero שבורה
+        env:
+          ADMIN_TOKEN: ${{ secrets.ADMIN_PASSWORD }}
+          NL_ID: ${{ inputs.newsletter_id }}
+        run: |
+          python3 - <<'PYEOF'
+          import requests, json, os
+
+          BASE = "https://amitphotos.com"
+          NL_ID = os.environ["NL_ID"]
+          headers = {"X-Admin-Password": os.environ["ADMIN_TOKEN"], "Content-Type": "application/json"}
+
+          # 1. Get newsletter content
+          r = requests.get(f"{BASE}/api/admin/newsletter/{NL_ID}", headers=headers, timeout=15)
+          if not r.ok:
+              print(f"❌ GET failed: {r.status_code}")
+              raise SystemExit(1)
+
+          issue = r.json()
+          content = json.loads(issue.get("content_json", "{}"))
+          hero = content.get("hero", {})
+          hero_url = hero.get("photo_url", "")
+          print(f"Current hero URL: {hero_url}")
+
+          # 2. Check if hero URL is broken (location path or 404)
+          is_broken = "locations/" in hero_url or not hero_url.startswith("https://drive.google.com")
+          print(f"Hero broken: {is_broken}")
+
+          if not is_broken:
+              print("✅ Hero photo looks fine, checking gallery photos...")
+              # Check gallery and new photos
+              for section in ["gallery_photos", "new_photos"]:
+                  for p in content.get(section, []):
+                      url = p.get("thumbnail") or p.get("url", "")
+                      if "locations/" in url or ("amitphotos.com" in url and "/photos/" in url and "drive.google.com" not in url):
+                          try:
+                              tr = requests.head(url, timeout=5, allow_redirects=True)
+                              if tr.status_code != 200:
+                                  print(f"  Broken in {section}: {url[:60]}")
+                          except:
+                              print(f"  Error checking: {url[:60]}")
+              raise SystemExit(0)
+
+          # 3. Use swap-photo endpoint to get a new hero
+          print("Swapping hero photo...")
+          sr = requests.post(
+              f"{BASE}/api/admin/newsletter/{NL_ID}/swap-photo",
+              headers=headers,
+              timeout=30
+          )
+          print(f"Swap response: {sr.status_code} {sr.text[:200]}")
+          if sr.ok:
+              print("✅ Hero photo replaced successfully!")
+          else:
+              print(f"❌ Swap failed, trying manual update...")
+              # Get a good Israel photo from API
+              pr = requests.get(f"{BASE}/api/photos", timeout=30)
+              photos = pr.json()
+              israel = [p for p in photos if p.get("category") == "ישראל" and p.get("thumbnail","").startswith("https://drive.google.com")]
+              if israel:
+                  good_photo = israel[0]
+                  content["hero"]["photo_id"] = good_photo["id"]
+                  content["hero"]["photo_url"] = good_photo.get("url") or good_photo.get("thumbnail","")
+                  content["hero"]["title_he"] = good_photo.get("title","")
+                  content["hero"]["category"] = good_photo.get("category","")
+                  patch_r = requests.patch(
+                      f"{BASE}/api/admin/newsletter/{NL_ID}",
+                      headers=headers,
+                      json={"content_json": json.dumps(content)},
+                      timeout=15
+                  )
+                  print(f"Manual patch: {patch_r.status_code} {patch_r.text[:100]}")
+          PYEOF
