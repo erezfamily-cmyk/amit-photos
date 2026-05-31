@@ -6511,6 +6511,12 @@ export default {
 
     // Newsletter API routes
     if (path === '/api/admin/newsletter/generate' && request.method === 'POST') return handleAdminNlGenerate(request, env);
+    if (path.match(/^\/api\/admin\/newsletter\/[^/]+$/) && request.method === 'GET') {
+      if (!await checkAuth(request, env)) return unauth(request);
+      const id = path.slice('/api/admin/newsletter/'.length);
+      const issue = await env.DB.prepare('SELECT * FROM newsletter_issues WHERE id=?').bind(id).first();
+      return issue ? jsonRes(issue, 200, request) : jsonRes({ error: 'not found' }, 404, request);
+    }
     if (path.match(/^\/api\/admin\/newsletter\/[^/]+$/) && request.method === 'PATCH') {
       const id = path.slice('/api/admin/newsletter/'.length);
       return handleAdminNlUpdate(request, env, id);
