@@ -31,5 +31,6 @@ jobs:
           META_APP_ID: ${{ secrets.META_APP_ID }}
           META_APP_SECRET: ${{ secrets.META_APP_SECRET }}
           INSTAGRAM_PAGE_TOKEN: ${{ secrets.INSTAGRAM_PAGE_TOKEN }}
+          FACEBOOK_PAGE_ID: ${{ secrets.FACEBOOK_PAGE_ID }}
           GH_PAT: ${{ secrets.GH_PAT }}
         run: python src/refresh_meta_token.py
