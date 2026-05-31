@@ -4945,12 +4945,12 @@ async function nlGenerateContent(env, heroPhoto, guide, location, type) {
   try { return JSON.parse(jsonStr); } catch { throw new Error(`Claude JSON parse failed: ${jsonStr.slice(0, 100)}`); }
 }
 
-async function nlGenerateDraft(env, type) {
+async function nlGenerateDraft(env, type, monthOverride) {
   // Get next issue number
   const rawNum = await nlGetSetting(env, 'nl_issue_number');
   const issueNumber = parseInt(rawNum || '0', 10) + 1;
 
-  const now = new Date();
+  const now = monthOverride ? new Date(monthOverride + '-01') : new Date();
   const monthStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
   const slug = `${monthStr}-${type}`;
 
@@ -6044,10 +6044,10 @@ async function publish() {
 async function handleAdminNlGenerate(request, env) {
   if (!await checkAuth(request, env)) return unauth(request);
   if (request.method !== 'POST') return jsonRes({ error: 'method not allowed' }, 405, request);
-  const { type } = await request.json().catch(() => ({}));
+  const { type, month } = await request.json().catch(() => ({}));
   if (!['full', 'flash'].includes(type)) return jsonRes({ error: 'type must be full or flash' }, 400, request);
   try {
-    const result = await nlGenerateDraft(env, type);
+    const result = await nlGenerateDraft(env, type, month || null);
     return jsonRes(result, 200, request);
   } catch(e) {
     return jsonRes({ error: e.message }, 500, request);
