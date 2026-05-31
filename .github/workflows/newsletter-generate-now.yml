@@ -9,6 +9,10 @@ on:
         default: 'full'
         type: choice
         options: [full, flash]
+      month:
+        description: 'חודש (YYYY-MM) — ברירת מחדל: החודש הנוכחי'
+        required: false
+        default: ''
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
@@ -21,6 +25,7 @@ jobs:
         env:
           ADMIN_TOKEN: ${{ secrets.ADMIN_PASSWORD }}
           NL_TYPE: ${{ inputs.type }}
+          NL_MONTH: ${{ inputs.month }}
         run: |
           python3 - <<'PYEOF'
           import requests, os, json
@@ -29,10 +34,14 @@ jobs:
           TOKEN = os.environ["ADMIN_TOKEN"]
           TYPE = os.environ.get("NL_TYPE", "full")
 
+          MONTH = os.environ.get("NL_MONTH", "")
+          payload = {"type": TYPE}
+          if MONTH:
+              payload["month"] = MONTH
           r = requests.post(
               f"{BASE}/api/admin/newsletter/generate",
               headers={"X-Admin-Password": TOKEN, "Content-Type": "application/json"},
-              json={"type": TYPE},
+              json=payload,
               timeout=120
           )
           print(f"Status: {r.status_code}")
