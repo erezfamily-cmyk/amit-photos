@@ -6518,7 +6518,7 @@ export default {
     if (path.match(/^\/api\/admin\/newsletter\/[^/]+$/) && request.method === 'GET') {
       if (!await checkAuth(request, env)) return unauth(request);
       const id = path.slice('/api/admin/newsletter/'.length);
-      const issue = await env.DB.prepare('SELECT * FROM newsletter_issues WHERE id=?').bind(id).first();
+      const issue = await env.DB.prepare('SELECT * FROM newsletter_issues WHERE id=? OR slug=?').bind(id, id).first();
       return issue ? jsonRes(issue, 200, request) : jsonRes({ error: 'not found' }, 404, request);
     }
     if (path.match(/^\/api\/admin\/newsletter\/[^/]+$/) && request.method === 'PATCH') {
