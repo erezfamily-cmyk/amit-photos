@@ -12,6 +12,7 @@ Weekly Social Media Report
 import os
 import sys
 import json
+import subprocess
 import requests
 import anthropic
 from pathlib import Path
@@ -84,6 +85,21 @@ def fetch_ig_account_insights():
 
 # ===== Facebook (multi-page) =====
 
+def count_fb_posts_from_git():
+    """סופר פרסומי פייסבוק מ-7 ימים אחרונים לפי git log של facebook_posted.json."""
+    try:
+        result = subprocess.run(
+            ["git", "log", "--since=7 days ago", "--oneline", "--", "data/facebook_posted.json"],
+            capture_output=True, text=True, cwd=ROOT, timeout=10,
+        )
+        count = len([l for l in result.stdout.strip().splitlines() if l])
+        print(f"📋 git fallback: {count} פרסומי פייסבוק ב-7 ימים אחרונים")
+        return count
+    except Exception as e:
+        print(f"⚠️  git fallback נכשל: {e}")
+        return 0
+
+
 def fetch_fb_page_posts(page_id):
     """שולף פוסטי פייסבוק מ-7 ימים אחרונים לעמוד ספציפי."""
     since = int((datetime.now(timezone.utc) - timedelta(days=7)).timestamp())
@@ -97,7 +113,11 @@ def fetch_fb_page_posts(page_id):
         resp.raise_for_status()
         return resp.json().get("data", [])
     except Exception as e:
-        print(f"⚠️  Facebook posts ({page_id}) נכשל: {e}")
+        try:
+            detail = e.response.json() if hasattr(e, "response") else {}
+        except Exception:
+            detail = {}
+        print(f"⚠️  Facebook posts ({page_id}) נכשל: {e} | פרטים: {detail}")
         return []
 
 
@@ -123,6 +143,9 @@ def build_fb_page_block(label, page_id):
     fans     = info.get("fan_count", 0)
     name     = info.get("name") or label
     n        = len(posts)
+    # כשה-API נכשל (token חסר הרשאות קריאה), נשתמש ב-git כ-fallback לספירת פוסטים
+    if n == 0 and not posts:
+        n = count_fb_posts_from_git()
 
     total_likes    = sum(p.get("reactions", {}).get("summary", {}).get("total_count", 0) for p in posts)
     total_comments = sum(p.get("comments",  {}).get("summary", {}).get("total_count", 0) for p in posts)
