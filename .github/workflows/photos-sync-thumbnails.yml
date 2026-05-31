@@ -1,0 +1,53 @@
+name: סנכרון thumbnails לבסיס הנתונים (one-shot)
+
+on:
+  workflow_dispatch:
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: עדכון thumbnail URLs ב-DB
+        env:
+          ADMIN_TOKEN: ${{ secrets.ADMIN_PASSWORD }}
+        run: |
+          python3 - <<'PYEOF'
+          import requests, os, json
+
+          BASE = "https://amitphotos.com"
+          headers = {"X-Admin-Password": os.environ["ADMIN_TOKEN"], "Content-Type": "application/json"}
+
+          with open("data/photos.json") as f:
+              photos = json.load(f)
+
+          # Filter only photos with drive.google.com/thumbnail URLs
+          drive_photos = [{"id": p["id"], "thumbnail": p["thumbnail"], "url": p["url"]}
+                          for p in photos if p.get("thumbnail") and "drive.google.com" in p["thumbnail"]]
+
+          print(f"מסנכרן {len(drive_photos)} תמונות...")
+
+          # Send in batches of 200
+          batch_size = 200
+          total_updated = 0
+          for i in range(0, len(drive_photos), batch_size):
+              batch = drive_photos[i:i+batch_size]
+              r = requests.post(
+                  f"{BASE}/api/admin/photos/sync-thumbnails",
+                  headers=headers,
+                  json={"photos": batch},
+                  timeout=60
+              )
+              if r.ok:
+                  updated = r.json().get("updated", 0)
+                  total_updated += updated
+                  print(f"  סבב {i//batch_size + 1}: עודכנו {updated}")
+              else:
+                  print(f"  ❌ שגיאה: {r.status_code} {r.text[:100]}")
+
+          print(f"\n✅ סיום: עודכנו {total_updated} תמונות בסה\"כ")
+          PYEOF

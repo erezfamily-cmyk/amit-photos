@@ -6381,6 +6381,25 @@ export default {
       await env.DB.prepare('ALTER TABLE photos ADD COLUMN height INTEGER').run().catch(() => {});
       return jsonRes({ ok: true }, 200, request);
     }
+    if (path === '/api/admin/photos/sync-thumbnails' && request.method === 'POST') {
+      if (!await checkAuth(request, env)) return unauth(request);
+      // Sync thumbnail/url from request body (photos.json content) to DB
+      const body = await request.json().catch(() => ({}));
+      const photos = Array.isArray(body.photos) ? body.photos : [];
+      if (!photos.length) return jsonRes({ error: 'no photos' }, 400, request);
+      let updated = 0;
+      const stmts = photos.map(p =>
+        env.DB.prepare("UPDATE photos SET thumbnail=?, url=? WHERE id=? AND (thumbnail != ? OR thumbnail LIKE '%lh3.googleusercontent%')")
+          .bind(p.thumbnail, p.url, p.id, p.thumbnail)
+      );
+      // Batch in groups of 100
+      for (let i = 0; i < stmts.length; i += 100) {
+        const batch = stmts.slice(i, i + 100);
+        const results = await env.DB.batch(batch);
+        updated += results.reduce((s, r) => s + (r.meta?.changes || 0), 0);
+      }
+      return jsonRes({ ok: true, updated }, 200, request);
+    }
     if (path === '/api/admin/photos/translate-titles' && request.method === 'POST') {
       if (!await checkAuth(request, env)) return unauth(request);
       // Add title_en column if missing
