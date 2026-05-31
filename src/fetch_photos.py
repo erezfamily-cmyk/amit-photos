@@ -182,7 +182,7 @@ def generate_title_ai(session, file_id, category):
 
         client = anthropic.Anthropic()
         message = client.messages.create(
-            model="claude-haiku-4-5-20251001",
+            model="claude-sonnet-4-6",
             max_tokens=30,
             messages=[{
                 "role": "user",
