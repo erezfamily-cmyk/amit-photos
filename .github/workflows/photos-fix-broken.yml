@@ -44,10 +44,10 @@ jobs:
 
           done = 0
           for photo_id in broken_ids:
-              r = requests.put(
-                  f"{BASE}/api/photos/{photo_id}",
+              r = requests.patch(
+                  f"{BASE}/api/photos",
                   headers=headers,
-                  json={"published": 0},
+                  json={"id": photo_id, "published": 0},
                   timeout=15
               )
               if r.ok:
