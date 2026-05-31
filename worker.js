@@ -6381,6 +6381,30 @@ export default {
       await env.DB.prepare('ALTER TABLE photos ADD COLUMN height INTEGER').run().catch(() => {});
       return jsonRes({ ok: true }, 200, request);
     }
+    if (path === '/api/admin/photos/translate-titles' && request.method === 'POST') {
+      if (!await checkAuth(request, env)) return unauth(request);
+      // Add title_en column if missing
+      await env.DB.prepare("ALTER TABLE photos ADD COLUMN title_en TEXT DEFAULT ''").run().catch(() => {});
+      // Get batch of untranslated photos
+      const { limit: bLimit } = await request.json().catch(() => ({}));
+      const batchSize = Math.min(parseInt(bLimit) || 30, 50);
+      const { results: batch } = await env.DB.prepare(
+        "SELECT id, title, description, category FROM photos WHERE (title_en IS NULL OR title_en = '') AND published = 1 ORDER BY created_at DESC LIMIT ?"
+      ).bind(batchSize).all();
+      const { results: totalRow } = await env.DB.prepare(
+        "SELECT COUNT(*) as cnt FROM photos WHERE (title_en IS NULL OR title_en = '') AND published = 1"
+      ).all();
+      const remaining = totalRow[0]?.cnt || 0;
+      if (!batch.length) return jsonRes({ ok: true, done: 0, remaining: 0 }, 200, request);
+      // Translate concurrently
+      const results = await Promise.allSettled(batch.map(async p => {
+        const en = await translateTitleEn(p.title, p.description, p.category, env);
+        if (en) await env.DB.prepare("UPDATE photos SET title_en=? WHERE id=?").bind(en, p.id).run();
+        return { id: p.id, title_en: en };
+      }));
+      const done = results.filter(r => r.status === 'fulfilled' && r.value?.title_en).length;
+      return jsonRes({ ok: true, done, remaining: remaining - done }, 200, request);
+    }
     if (path === '/api/admin/migrate-analyses' && request.method === 'POST') return handleMigrateAnalyses(request, env);
     if (path === '/api/analyses' && request.method === 'GET')                    return handleAnalysesList(request, env);
     if (path === '/api/analyses/dedup' && request.method === 'POST')             return handleAnalysesDedup(request, env);
