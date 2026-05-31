@@ -3549,6 +3549,57 @@ async function handleLearnAnalysis(env, photoId) {
 
   let annotations = [], camera = {}, cameraEn = {}, tags = [];
   try { annotations = JSON.parse(row.annotations_json || '[]'); } catch (_) { annotations = []; }
+
+  function buildAnalysisAffiliate(cam) {
+    const aperture = parseFloat((cam.aperture?.value || '').replace('f/', ''));
+    const focal = parseFloat((cam.focal?.value || '').replace(/[^0-9.]/g, ''));
+    const shutterStr = cam.shutter?.value || '';
+    const m1 = shutterStr.match(/^1\/(\d+)/);
+    const m2 = shutterStr.match(/^(\d*\.?\d+)/);
+    const shutterSec = m1 ? 1 / parseInt(m1[1]) : (m2 ? parseFloat(m2[1]) : null);
+
+    let link, titleHe, titleEn, descHe, descEn, btnHe, btnEn;
+    if (!isNaN(aperture) && aperture <= 2) {
+      link = 'https://adorama.prf.hn/click/camref:1101l5Km5i/destination:https://www.adorama.com/catalog.tpl?SearchInfo=50mm+85mm+f1.8+prime+lens';
+      titleHe = '🎯 עדשת פריים מהירה — הסוד מאחורי הבוקה';
+      titleEn = '🎯 Fast Prime Lens — The Secret Behind the Bokeh';
+      descHe = `הצילום הזה בוצע עם פתח f/${aperture} — עדשת פריים מהירה היא ההשקעה שמשפרת יותר מכל.`;
+      descEn = `This shot was taken at f/${aperture} — a fast prime lens is the single investment that improves your photos most.`;
+      btnHe = 'ראה עדשות באדוראמה ←'; btnEn = 'View Lenses at Adorama →';
+    } else if (shutterSec !== null && shutterSec >= 1) {
+      link = 'https://adorama.prf.hn/click/camref:1101l5Km5i/destination:https://www.adorama.com/catalog.tpl?SearchInfo=travel+tripod+lightweight';
+      titleHe = '📐 חצובה — חובה לחשיפות ארוכות';
+      titleEn = '📐 Tripod — Essential for Long Exposures';
+      descHe = `חשיפה של ${cam.shutter?.value || ''} דורשת יציבות מושלמת. חצובה קלה ואיכותית משנה הכל.`;
+      descEn = `An exposure of ${cam.shutter?.value || ''} demands perfect stability. A lightweight quality tripod changes everything.`;
+      btnHe = 'ראה חצובות באדוראמה ←'; btnEn = 'View Tripods at Adorama →';
+    } else if (!isNaN(focal) && focal >= 100) {
+      link = 'https://adorama.prf.hn/click/camref:1101l5Km5i/destination:https://www.adorama.com/catalog.tpl?SearchInfo=70-200mm+telephoto+zoom+lens';
+      titleHe = '🔭 עדשת טלה — דחיסת מרחקים ופרספקטיבה דרמטית';
+      titleEn = '🔭 Telephoto Lens — Distance Compression and Dramatic Perspective';
+      descHe = `עם ${Math.round(focal)}mm השגת דחיסת מרחקים מרשימה. עדשת זום 70-200 מאפשרת לך לשחק עם הפרספקטיבה.`;
+      descEn = `With ${Math.round(focal)}mm you achieved impressive compression. A 70-200 zoom lets you play with perspective.`;
+      btnHe = 'ראה עדשות טלה ←'; btnEn = 'View Telephoto Lenses →';
+    } else {
+      link = 'https://skylum.evyy.net/c/3782640/1738804/5925';
+      titleHe = '✨ Luminar Neo — ערוך כמו הצלמים שאתה לומד מהם';
+      titleEn = '✨ Luminar Neo — Edit Like the Photographers You Learn From';
+      descHe = 'עריכת AI חכמה — שיפור אוטומטי, שליטה על ניגוד ואור, כלי שחור-לבן מקצועיים.';
+      descEn = 'Smart AI editing — auto-enhance, contrast and light control, professional B&W tools.';
+      btnHe = 'נסה חינם ←'; btnEn = 'Try Free →';
+    }
+    return `<div class="analysis-affiliate">
+  <div class="analysis-affiliate-inner">
+    <div>
+      <div class="analysis-affiliate-title" data-he="${escXml(titleHe)}" data-en="${escXml(titleEn)}">${escXml(titleHe)}</div>
+      <div class="analysis-affiliate-desc" data-he="${escXml(descHe)}" data-en="${escXml(descEn)}">${escXml(descHe)}</div>
+      <div class="analysis-affiliate-disclose" data-he="קישור שותף — עמלה קטנה, ללא עלות נוספת לך" data-en="Affiliate link — small commission, no extra cost to you">קישור שותף — עמלה קטנה, ללא עלות נוספת לך</div>
+    </div>
+    <a class="analysis-affiliate-btn" href="${escXml(link)}" target="_blank" rel="noopener sponsored"
+       data-he="${escXml(btnHe)}" data-en="${escXml(btnEn)}">${escXml(btnHe)}</a>
+  </div>
+</div>`;
+  }
   try { camera = JSON.parse(row.camera_json || '{}'); } catch (_) { camera = {}; }
   try { cameraEn = JSON.parse(row.camera_json_en || '{}'); } catch (_) { cameraEn = {}; }
   try { tags = JSON.parse(row.tags_json || '[]'); } catch (_) { tags = []; }
@@ -3655,6 +3706,13 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direc
 .more-card-body{padding:.5rem .6rem}
 .more-card-rule{font-size:.65rem;color:var(--accent);margin-bottom:.2rem}
 .more-card-title{font-size:.78rem;color:var(--text);overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.analysis-affiliate{max-width:900px;margin:1.5rem auto;padding:0 .75rem}
+.analysis-affiliate-inner{background:linear-gradient(135deg,rgba(200,169,110,.08),rgba(200,169,110,.03));border:1px solid rgba(200,169,110,.3);border-radius:14px;padding:1.1rem 1.4rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.analysis-affiliate-title{font-family:'Syne',sans-serif;font-size:.9rem;color:var(--accent);margin-bottom:.25rem}
+.analysis-affiliate-desc{font-size:.78rem;color:var(--muted)}
+.analysis-affiliate-disclose{font-size:.63rem;color:#444;margin-top:.2rem}
+.analysis-affiliate-btn{flex-shrink:0;background:var(--accent);color:#000;font-weight:700;font-size:.8rem;padding:.5rem 1.1rem;border-radius:8px;text-decoration:none;white-space:nowrap;transition:background .15s}
+.analysis-affiliate-btn:hover{background:#e0c080}
 </style>
 <script src="/assets/js/nav.js" defer></script>
 <script src="/assets/js/share.js" defer></script>
@@ -3719,6 +3777,8 @@ ${moreAnalyses.length > 0 ? `
     }).join('')}
   </div>
 </div>` : ''}
+
+${buildAnalysisAffiliate(camera)}
 
 <div class="nav-row nav-prev">
   <a href="/learn/" data-he="← כל הניתוחים" data-en="← All Analyses">← כל הניתוחים</a>
