@@ -1,0 +1,54 @@
+name: תרגום ניתוחי תמונות לאנגלית
+
+on:
+  schedule:
+    - cron: '30 11 */2 * *'  # כל יומיים אחרי generate (שרץ ב-10:00)
+  workflow_dispatch:
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  translate-analyses:
+    runs-on: ubuntu-latest
+    steps:
+      - name: תרגום ניתוחים חסרי אנגלית
+        env:
+          ADMIN_TOKEN: ${{ secrets.ADMIN_PASSWORD }}
+        run: |
+          python3 - <<'PYEOF'
+          import requests, os, time
+
+          BASE = "https://amitphotos.com"
+          TOKEN = os.environ["ADMIN_TOKEN"]
+          headers = {"X-Admin-Password": TOKEN}
+
+          # שליפת כל הניתוחים
+          r = requests.get(f"{BASE}/api/analyses", headers=headers, timeout=30)
+          r.raise_for_status()
+          all_analyses = r.json()
+
+          missing = [a for a in all_analyses if not a.get("title_en")]
+          print(f"סה\"כ ניתוחים: {len(all_analyses)}, חסרי אנגלית: {len(missing)}")
+
+          done = 0
+          for a in missing:
+              pid = a["photo_id"]
+              print(f"מתרגם {pid}...")
+              try:
+                  resp = requests.post(
+                      f"{BASE}/api/analyses/{pid}/generate-en",
+                      headers=headers,
+                      timeout=60
+                  )
+                  if resp.ok:
+                      done += 1
+                      print(f"  ✅ {pid}")
+                  else:
+                      print(f"  ❌ {pid}: {resp.status_code} {resp.text[:100]}")
+              except Exception as e:
+                  print(f"  ❌ {pid}: {e}")
+              time.sleep(2)  # throttle
+
+          print(f"\nסיום: תורגמו {done}/{len(missing)} ניתוחים")
+          PYEOF
