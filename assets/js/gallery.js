@@ -885,7 +885,7 @@ function openLightbox(idx) {
   window._currentLightboxPhoto = photo;
   img.src = getLightboxUrl(photo.thumbnail || photo.url);
   img.alt = photo.alt || photo.title;
-  document.getElementById('lb-title').textContent = photo.title;
+  document.getElementById('lb-title').textContent = (getLang() === 'en' && photo.title_en) ? photo.title_en : photo.title;
   const catEl = document.getElementById('lb-cat');
   catEl.textContent = photo.category;
   catEl.className = 'lb-cat-link';

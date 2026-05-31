@@ -1,0 +1,50 @@
+name: תרגום כותרות תמונות לאנגלית
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 3 * * 0'  # כל ראשון 03:00 UTC — מתרגם חדשות שנוספו
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  translate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: תרגום כותרות תמונות חסרות
+        env:
+          ADMIN_TOKEN: ${{ secrets.ADMIN_PASSWORD }}
+        run: |
+          python3 - <<'PYEOF'
+          import requests, os, time
+
+          BASE = "https://amitphotos.com"
+          headers = {"X-Admin-Password": os.environ["ADMIN_TOKEN"], "Content-Type": "application/json"}
+
+          total_done = 0
+          round_num = 0
+
+          while True:
+              round_num += 1
+              r = requests.post(
+                  f"{BASE}/api/admin/photos/translate-titles",
+                  headers=headers,
+                  json={"limit": 30},
+                  timeout=120
+              )
+              if not r.ok:
+                  print(f"❌ שגיאה: {r.status_code} {r.text[:100]}")
+                  break
+              data = r.json()
+              done = data.get("done", 0)
+              remaining = data.get("remaining", 0)
+              total_done += done
+              print(f"סבב {round_num}: תורגמו {done}, נותרו {remaining}")
+              if remaining == 0 or done == 0:
+                  break
+              time.sleep(3)  # throttle בין בקשות
+
+          print(f"\n✅ סיום: סה\"כ תורגמו {total_done} כותרות")
+          PYEOF
