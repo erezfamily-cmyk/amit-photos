@@ -131,7 +131,7 @@ Requirements:
 Output only the description text."""}]
 
     msg = client.messages.create(
-        model="claude-sonnet-4-6",
+        model="claude-opus-4-8",
         max_tokens=300,
         messages=[{"role": "user", "content": user_content}],
     )

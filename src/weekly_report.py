@@ -294,7 +294,7 @@ Facebook pages:{fb_summary or ' none configured'}"""
     try:
         client = anthropic.Anthropic(api_key=ANTHROPIC_KEY)
         msg = client.messages.create(
-            model="claude-sonnet-4-6",
+            model="claude-opus-4-8",
             max_tokens=500,
             messages=[{"role": "user", "content": f"""{summary}
 

@@ -96,7 +96,7 @@ Rules:
 - Output only the post text"""
 
     msg = client.messages.create(
-        model="claude-sonnet-4-6",
+        model="claude-opus-4-8",
         max_tokens=300,
         messages=[{"role": "user", "content": image_content + [{"type": "text", "text": prompt}]}],
     )

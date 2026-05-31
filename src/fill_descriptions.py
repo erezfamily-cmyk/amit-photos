@@ -59,7 +59,7 @@ def generate_description(client, photo):
         raise RuntimeError(f"הורדת תמונה נכשלה: {e}")
 
     msg = client.messages.create(
-        model="claude-sonnet-4-6",
+        model="claude-opus-4-8",
         max_tokens=120,
         messages=[{
             "role": "user",

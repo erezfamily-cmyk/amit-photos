@@ -29,7 +29,7 @@ def generate_title(file_id, category):
         img_b64 = base64.standard_b64encode(res.content).decode("utf-8")
         client = anthropic.Anthropic()
         msg = client.messages.create(
-            model="claude-sonnet-4-6",
+            model="claude-opus-4-8",
             max_tokens=30,
             messages=[{"role": "user", "content": [
                 {"type": "image", "source": {"type": "base64", "media_type": "image/jpeg", "data": img_b64}},
