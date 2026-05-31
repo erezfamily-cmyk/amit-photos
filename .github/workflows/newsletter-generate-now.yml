@@ -1,0 +1,48 @@
+name: צור ניוזלטר עכשיו (one-shot)
+
+on:
+  workflow_dispatch:
+    inputs:
+      type:
+        description: 'סוג הניוזלטר'
+        required: true
+        default: 'full'
+        type: choice
+        options: [full, flash]
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: יצירת טיוטת ניוזלטר
+        env:
+          ADMIN_TOKEN: ${{ secrets.ADMIN_PASSWORD }}
+          NL_TYPE: ${{ inputs.type }}
+        run: |
+          python3 - <<'PYEOF'
+          import requests, os, json
+
+          BASE = "https://amitphotos.com"
+          TOKEN = os.environ["ADMIN_TOKEN"]
+          TYPE = os.environ.get("NL_TYPE", "full")
+
+          r = requests.post(
+              f"{BASE}/api/admin/newsletter/generate",
+              headers={"X-Admin-Password": TOKEN, "Content-Type": "application/json"},
+              json={"type": TYPE},
+              timeout=120
+          )
+          print(f"Status: {r.status_code}")
+          data = r.json()
+          print(json.dumps(data, ensure_ascii=False, indent=2))
+          if not r.ok:
+              raise SystemExit(1)
+          if data.get("skipped"):
+              print("⚠️  גיליון כזה כבר קיים לחודש הזה — slug:", data.get("slug"))
+          else:
+              print(f"✅ טיוטה נוצרה! Issue #{data.get('issueNumber')} slug={data.get('slug')}")
+              print(f"   ערוך: https://amitphotos.com/admin/newsletter/{data.get('id')}/")
+          PYEOF
