@@ -1,0 +1,48 @@
+name: שליפת תוכן ניוזלטר (one-shot)
+
+on:
+  workflow_dispatch:
+    inputs:
+      newsletter_id:
+        description: 'Newsletter ID'
+        required: true
+        default: 'e7431de1-7c2d-4578-ab59-a5e568c392da'
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  get:
+    runs-on: ubuntu-latest
+    steps:
+      - name: שליפת תוכן ניוזלטר
+        env:
+          ADMIN_TOKEN: ${{ secrets.ADMIN_PASSWORD }}
+          NL_ID: ${{ inputs.newsletter_id }}
+        run: |
+          python3 - <<'PYEOF'
+          import requests, json, os
+
+          BASE = "https://amitphotos.com"
+          NL_ID = os.environ["NL_ID"]
+          headers = {"X-Admin-Password": os.environ["ADMIN_TOKEN"]}
+
+          r = requests.get(f"{BASE}/api/admin/newsletter/{NL_ID}", headers=headers, timeout=15)
+          print(f"Status: {r.status_code}")
+          if not r.ok:
+              print(r.text[:200])
+              raise SystemExit(1)
+
+          d = r.json()
+          content = json.loads(d.get("content_json", "{}"))
+
+          hero = content.get("hero", {})
+          print(f"Hero: {hero.get('photo_id','')} | {hero.get('title_he','')} | {hero.get('photo_url','')[:70]}")
+
+          for section in ["gallery_photos", "new_photos"]:
+              photos = content.get(section, [])
+              print(f"\n{section} ({len(photos)}):")
+              for p in photos[:6]:
+                  url = p.get("thumbnail") or p.get("url","")
+                  print(f"  {p.get('id','?')[:8]} | {url[:70]}")
+          PYEOF
