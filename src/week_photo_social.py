@@ -193,7 +193,7 @@ Rules:
 - Output only the post text, no titles or extra explanations."""
 
     msg = client.messages.create(
-        model="claude-sonnet-4-6",
+        model="claude-opus-4-8",
         max_tokens=600,
         messages=[{"role": "user", "content": image_content + [{"type": "text", "text": prompt}]}],
     )
@@ -206,7 +206,7 @@ def translate_caption(caption_he):
     """מתרגם את הכיתוב העברי לאנגלית."""
     client = get_anthropic_client()
     msg = client.messages.create(
-        model="claude-sonnet-4-6",
+        model="claude-opus-4-8",
         max_tokens=600,
         messages=[{"role": "user", "content": f"Translate the following Hebrew photo caption to English. Keep the first-person voice, personal tone, and authentic feel. Output only the translated text.\n\n{caption_he}"}],
     )

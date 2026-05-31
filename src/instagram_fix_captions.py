@@ -92,7 +92,7 @@ Output only the caption, no extra explanations."""
     }]
 
     msg = client.messages.create(
-        model="claude-sonnet-4-6",
+        model="claude-opus-4-8",
         max_tokens=600,
         system=system_prompt,
         messages=[{"role": "user", "content": user_content}],
