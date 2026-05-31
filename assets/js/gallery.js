@@ -218,7 +218,8 @@ async function loadPhotos() {
         const jsonMap = new Map(jsonPhotos.map(p => [p.id, p]));
         allPhotos = apiPhotos.map(p => {
           const j = jsonMap.get(p.id);
-          return j ? { ...j, ...p } : p;
+          // API is primary for metadata; JSON wins for thumbnail/url (kept up-to-date)
+          return j ? { ...j, ...p, thumbnail: j.thumbnail || p.thumbnail, url: j.url || p.url } : p;
         });
       } else {
         allPhotos = jsonPhotos;
