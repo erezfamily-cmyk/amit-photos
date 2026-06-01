@@ -5740,10 +5740,11 @@ async function generate(type) {
   btns.forEach(b => b.disabled = true);
   msg.style.cssText = 'display:block;background:#1a2a1a;color:#c8a96e;border:1px solid #c8a96e33;padding:.75rem 1rem;border-radius:8px;font-size:.95rem;margin-bottom:1rem';
   msg.innerHTML = '<span style="display:inline-block;animation:spin 1s linear infinite;margin-left:.4rem">⏳</span> יוצר טיוטה עם Claude... (עד 30 שניות)';
+  const tok = localStorage.getItem('session_token') || sessionStorage.getItem('session_token') || '';
   try {
     const r = await fetch('/api/admin/newsletter/generate', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'X-Session-Token': tok },
       body: JSON.stringify({ type })
     });
     const d = await r.json();
