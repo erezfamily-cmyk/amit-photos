@@ -25,8 +25,9 @@ jobs:
 
           total_done = 0
           round_num = 0
+          MAX_ROUNDS = 20  # מגן מפני לולאה אינסופית
 
-          while True:
+          while round_num < MAX_ROUNDS:
               round_num += 1
               r = requests.post(
                   f"{BASE}/api/admin/photos/translate-titles",
