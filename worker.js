@@ -5806,7 +5806,7 @@ function renderSubRows() {
     return;
   }
   tbody.innerHTML = _subs.map(function(s) {
-    return '<tr><td>' + _escH(s.name) + '</td><td><a href="mailto:' + _escH(s.email) + '">' + _escH(s.email) + '</a></td><td>' + (s.created_at ? s.created_at.slice(0,10) : '') + '</td><td><button class="btn-del" onclick="deleteSub(\'' + _escH(s.id) + '\')">✕</button></td></tr>';
+    return '<tr><td>' + _escH(s.name) + '</td><td><a href="mailto:' + _escH(s.email) + '">' + _escH(s.email) + '</a></td><td>' + (s.created_at ? s.created_at.slice(0,10) : '') + '</td><td><button class="btn-del" onclick="deleteSub(\\'' + _escH(s.id) + '\\')">✕</button></td></tr>';
   }).join('');
 }
 
