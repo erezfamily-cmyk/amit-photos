@@ -29,10 +29,12 @@ jobs:
           all_analyses = r.json()
 
           missing = [a for a in all_analyses if not a.get("title_en")]
-          print(f"סה\"כ ניתוחים: {len(all_analyses)}, חסרי אנגלית: {len(missing)}")
+          MAX_PER_RUN = 8
+          batch = missing[:MAX_PER_RUN]
+          print(f"סה\"כ ניתוחים: {len(all_analyses)}, חסרי אנגלית: {len(missing)}, מעבד: {len(batch)}")
 
           done = 0
-          for a in missing:
+          for a in batch:
               pid = a["photo_id"]
               print(f"מתרגם {pid}...")
               try:

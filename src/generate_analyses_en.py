@@ -17,7 +17,7 @@ import anthropic
 
 WORKER_URL = "https://amitphotos.com"
 ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "")
-CLAUDE_MODEL = "claude-haiku-4-5-20251001"
+CLAUDE_MODEL = "claude-sonnet-4-6"
 
 client = anthropic.Anthropic()
 
@@ -88,22 +88,26 @@ Return ONLY valid JSON, no markdown fences."""
     return json.loads(raw)
 
 
+MAX_PER_RUN = 8
+
+
 def main():
     if not ADMIN_PASSWORD:
         print("ERROR: set ADMIN_PASSWORD env variable")
         sys.exit(1)
 
     analyses = get_analyses()
-    print(f"Found {len(analyses)} analyses")
+    missing = [r for r in analyses if not r.get("title_en")]
+    print(f"Found {len(analyses)} analyses, {len(missing)} missing English — processing up to {MAX_PER_RUN}")
 
-    for row in analyses:
+    translated = 0
+    for row in missing:
+        if translated >= MAX_PER_RUN:
+            print(f"Reached limit of {MAX_PER_RUN}, stopping.")
+            break
+
         photo_id = row.get("photo_id") or row.get("id")
         if not photo_id:
-            continue
-
-        # Skip if already translated
-        if row.get("title_en"):
-            print(f"  SKIP {photo_id} — already has title_en")
             continue
 
         print(f"  Translating {photo_id}: {row.get('title', '')[:50]}")
@@ -116,12 +120,13 @@ def main():
                 result["camera_json_en"],
             )
             print(f"    -> {result['title_en'][:60]}")
+            translated += 1
         except Exception as e:
             print(f"    ERROR: {e}")
 
-        time.sleep(1)  # Rate-limit courtesy
+        time.sleep(1)
 
-    print("Done.")
+    print(f"Done. Translated {translated}/{len(missing)}.")
 
 
 if __name__ == "__main__":
