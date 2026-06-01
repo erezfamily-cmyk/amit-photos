@@ -1,0 +1,43 @@
+name: פרסום ניוזלטר לרשתות חברתיות
+
+on:
+  workflow_dispatch:
+    inputs:
+      newsletter_slug:
+        description: 'slug של הניוזלטר (למשל 2026-06-full)'
+        required: false
+        default: '2026-06-full'
+      hero_image_url:
+        description: 'URL לתמונה הראשית (ריק = ברירת מחדל)'
+        required: false
+        default: ''
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  newsletter-social-post:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: התקנת חבילות
+        run: pip install requests anthropic pillow
+
+      - name: פרסום הניוזלטר לרשתות
+        env:
+          NEWSLETTER_SLUG:      ${{ github.event.inputs.newsletter_slug }}
+          HERO_IMAGE_URL:       ${{ github.event.inputs.hero_image_url }}
+          INSTAGRAM_USER_ID:    ${{ secrets.INSTAGRAM_USER_ID }}
+          INSTAGRAM_PAGE_TOKEN: ${{ secrets.INSTAGRAM_PAGE_TOKEN }}
+          FACEBOOK_PAGE_ID:     ${{ secrets.FACEBOOK_PAGE_ID }}
+          FACEBOOK_PAGE_TOKEN:  ${{ secrets.FACEBOOK_PAGE_TOKEN }}
+          THREADS_USER_ID:      ${{ secrets.THREADS_USER_ID }}
+          THREADS_ACCESS_TOKEN: ${{ secrets.THREADS_ACCESS_TOKEN }}
+          ANTHROPIC_API_KEY:    ${{ secrets.AMIT_PHOTO_AGENT }}
+        run: python src/newsletter_social_post.py
