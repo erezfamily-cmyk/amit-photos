@@ -160,38 +160,15 @@ def post_instagram(image_url, caption):
     return True
 
 
-def upload_for_facebook(image_url):
-    """מעלה תמונה לשרת ציבורי שפייסבוק יכול לגשת אליו."""
-    img_bytes = requests.get(image_url, timeout=30).content
-    for fn, args, files_key in [
-        ("litterbox", {"reqtype": "fileupload", "time": "1h"}, "fileToUpload"),
-        ("catbox",    {"reqtype": "fileupload"},                "fileToUpload"),
-    ]:
-        try:
-            r = requests.post(
-                "https://litterbox.catbox.moe/resources/internals/api.php" if fn == "litterbox"
-                else "https://catbox.moe/user/api.php",
-                data=args, files={files_key: ("photo.jpg", img_bytes, "image/jpeg")}, timeout=60,
-            )
-            url = r.text.strip()
-            if url.startswith("http"):
-                print(f"⬆️  הועלה ל-{fn}: {url}")
-                return url
-        except Exception as e:
-            print(f"⚠️  {fn} נכשל: {e}")
-    raise RuntimeError("כל שירותי ה-upload נכשלו")
-
-
 def post_facebook(image_url, caption):
     print("\n📘 מפרסם לפייסבוק...")
-    try:
-        public_url = upload_for_facebook(image_url)
-    except Exception as e:
-        print(f"❌ upload נכשל: {e}")
-        return False
-    resp = requests.post(f"{GRAPH_API}/{FB_PAGE_ID}/photos", data={
-        "url": public_url, "message": caption, "access_token": FB_TOKEN,
-    }, timeout=30)
+    img_bytes = requests.get(image_url, timeout=30).content
+    resp = requests.post(
+        f"{GRAPH_API}/{FB_PAGE_ID}/photos",
+        data={"message": caption, "access_token": FB_TOKEN},
+        files={"source": ("photo.jpg", img_bytes, "image/jpeg")},
+        timeout=60,
+    )
     if not resp.ok:
         print(f"❌ FB: {resp.status_code} — {resp.text}")
         return False
