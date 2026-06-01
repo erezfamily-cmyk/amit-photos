@@ -237,6 +237,11 @@ def generate_caption(photo):
     if exif.get("camera"):   exif_parts.append(exif['camera'])
     exif_line = " · ".join(exif_parts) if exif_parts else ""
 
+    # question format performs 3.7x better — use for every other post
+    import hashlib
+    post_hash = int(hashlib.md5(str(photo.get('id','')).encode()).hexdigest(), 16)
+    use_question_format = (post_hash % 2 == 0)
+
     system_prompt = """אתה עמית ארז, צלם ישראלי שמצלם מאהבה אמיתית.
 אתה כותב בגוף ראשון, בעברית תקנית וברורה, כאילו אתה מסביר לחבר את ההחלטות שעשית בשטח.
 
@@ -248,12 +253,26 @@ def generate_caption(photo):
 - אם המיקום מעניין — מתייחס לחלל, לעומק, לגודל, למה הוא מרגיש כמו שהוא מרגיש בתמונה
 
 תימנע מ:
-- פתיחה עם שאלה — כל פוסט לא צריך להתחיל בשאלה
 - תבנית קבועה שחוזרת על עצמה
 - ביטויים ריקים כמו "שיתוף", "הנה", "חשוב לי לספר"
 - שפה עמומה — כל משפט צריך להגיד משהו ספציפי על הצילום הזה"""
 
-    caption_prompt = f"""כתוב כיתוב אינסטגרם בגוף ראשון עבור התמונה הזו.
+    if use_question_format:
+        caption_prompt = f"""כתוב כיתוב אינסטגרם בפורמט שאלה + רמז עבור התמונה הזו.
+
+מה שרואים בתמונה: {vision_description or '(לא זמין)'}
+{meta_text}
+
+הפורמט:
+1. שאלה מסתורית על המיקום/הנושא — "איפה בעולם צילמתי את זה?" / "מה אתם רואים כאן?" / "כמה זמן לקח לי להגיע לשם?"
+2. רמז קטן שמגרה — משפט אחד שמוסיף מידע אבל לא מגלה הכל
+3. הזמנה לנחש בתגובות — "נחשו 👇" / "תכתבו בתגובות"
+
+סיים עם שורה ריקה ואז: 🛍️ זמין לרכישה — amitphotos.com (link in bio)
+
+עברית תקנית וברורה. רק הכיתוב."""
+    else:
+        caption_prompt = f"""כתוב כיתוב אינסטגרם בגוף ראשון עבור התמונה הזו.
 
 מה שרואים בתמונה: {vision_description or '(לא זמין)'}
 {meta_text}
