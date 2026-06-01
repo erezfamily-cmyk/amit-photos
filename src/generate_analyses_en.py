@@ -17,7 +17,7 @@ import anthropic
 
 WORKER_URL = "https://amitphotos.com"
 ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "")
-CLAUDE_MODEL = "claude-sonnet-4-6"
+CLAUDE_MODEL = "claude-haiku-4-5-20251001"
 
 client = anthropic.Anthropic()
 
