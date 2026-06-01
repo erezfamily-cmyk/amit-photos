@@ -5236,8 +5236,8 @@ async function handleNlIssue(env, slug, isPreview) {
             <p class="nl-tip-text" data-he="${escXml(c.tip.text_he)}" data-en="${escXml(c.tip.text_en || c.tip.text_he)}">${escXml(c.tip.text_he)}</p>
             <a class="nl-link nl-tip-more" href="/camera/" data-he="לטיפים נוספים ומדריכים ←" data-en="More Tips & Guides →">לטיפים נוספים ומדריכים ←</a>
           </div>
-          ${c.hero?.photo_url ? `<a class="nl-tip-img-wrap" href="/?photo=${escXml(c.hero.photo_id)}">
-            <img src="${escXml(c.hero.photo_url)}" alt="${escXml(c.hero.title_he)}" class="nl-tip-img" loading="lazy">
+          ${(c.tip?.photo_url || c.hero?.photo_url) ? `<a class="nl-tip-img-wrap" href="${escXml(c.tip?.photo_url ? '/locations/' : '/?photo=' + (c.hero?.photo_id || ''))}">
+            <img src="${escXml(c.tip?.photo_url || c.hero?.photo_url)}" alt="${escXml(c.tip?.title_he || c.hero?.title_he || '')}" class="nl-tip-img" loading="lazy">
           </a>` : ''}
         </div>
       </div>
