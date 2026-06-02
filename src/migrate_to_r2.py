@@ -23,19 +23,8 @@ DRIVE_API = "https://www.googleapis.com/drive/v3"
 WORKER_URL = os.environ.get("WORKER_URL", "https://amitphotos.com")
 ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "")
 
-SESSION_TOKEN = None
-
-def login():
-    global SESSION_TOKEN
-    r = requests.post(f"{WORKER_URL}/api/login", json={"password": ADMIN_PASSWORD}, timeout=15)
-    if r.ok:
-        SESSION_TOKEN = r.json().get("token", "")
-        return bool(SESSION_TOKEN)
-    print(f"❌ התחברות נכשלה: {r.status_code} {r.text[:100]}")
-    return False
-
 def auth_headers():
-    return {"X-Session-Token": SESSION_TOKEN}
+    return {"X-Admin-Password": ADMIN_PASSWORD}
 
 def get_drive_session():
     """מחזיר requests.Session מאומת מול Google Drive."""
@@ -175,12 +164,6 @@ def main():
     if not ADMIN_PASSWORD:
         print("❌ חסר ADMIN_PASSWORD כ-environment variable")
         sys.exit(1)
-
-    if not dry_run:
-        print("🔐 מתחבר...")
-        if not login():
-            sys.exit(1)
-        print("✅ התחברות הצליחה")
 
     drive_session = get_drive_session()
     if not drive_session and not dry_run:
