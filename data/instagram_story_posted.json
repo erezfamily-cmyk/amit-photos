@@ -1,5 +1,5 @@
 {
-  "current_category_index": 7,
+  "current_category_index": 8,
   "used_ids_by_category": {
     "אבו דאבי": [
       "6c9e818c-bdd3-402f-b6f5-ee2e668507c9",
@@ -68,6 +68,16 @@
       "5e4af805-5907-45ca-b28f-b2974a7a4ab3",
       "e6e3925c-22ad-4640-9782-8dd9e3b2d763",
       "8abec9f4-6849-470a-a688-33a5162079bf"
+    ],
+    "הונגריה": [
+      "7b2dc14a-c675-405b-b98a-d095e694fb83",
+      "0884d265-c0b4-4a43-98ad-8c35c8bc0635",
+      "72b29ee8-bcb7-49bb-9c74-30593c7d1e64",
+      "c4cb71aa-cd08-4592-924e-f1ae9bef78d5",
+      "7bc2e110-b90d-404b-961c-3a7395fb9eb0",
+      "c9510424-9140-4038-b354-9145a4191d4e",
+      "3ede5e16-caf7-49b8-8ad2-7404d5acf3c0",
+      "6bd6be8a-9f39-48cc-abc6-35471a18ee96"
     ]
   },
   "gear_tool_index": 1
