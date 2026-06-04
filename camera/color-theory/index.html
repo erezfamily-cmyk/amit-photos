@@ -126,7 +126,8 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
 @media (max-width: 480px) { .tips-grid { grid-template-columns: 1fr; } }
 .tip-card { background: var(--surface); border: 1px solid var(--border);
   border-radius: 12px; padding: 1rem 1.1rem; display: flex; gap: .75rem; align-items: flex-start; }
-.tip-card-icon { font-size: 1.6rem; flex-shrink: 0; }
+.tip-card-icon { display: flex; align-items: center; justify-content: center; width: 2.25rem; flex-shrink: 0; }
+.tip-card-icon svg { display: block; }
 .tip-card-title { font-family: 'Syne', sans-serif; font-size: .9rem; color: var(--accent); margin-bottom: .25rem; }
 .tip-card-body { font-size: .82rem; color: var(--muted); line-height: 1.55; }
 
@@ -266,28 +267,59 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
 
     <div class="tips-grid">
       <div class="tip-card">
-        <div class="tip-card-icon">⚡</div>
+        <div class="tip-card-icon">
+          <!-- two complementary dots: orange + blue -->
+          <svg width="36" height="18" viewBox="0 0 36 18" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="9" cy="9" r="8" fill="hsl(30,85%,55%)"/>
+            <circle cx="27" cy="9" r="8" fill="hsl(210,85%,58%)"/>
+          </svg>
+        </div>
         <div>
           <div class="tip-card-title" data-he="משלים = מתח, אנלוגי = שלווה" data-en="Complementary = Tension, Analogous = Calm">משלים = מתח, אנלוגי = שלווה</div>
           <div class="tip-card-body" data-he="צבעים משלימים יוצרים ויברציה ומתח דרמטי — האנרגיה שמקפיצה. צבעים אנלוגיים יוצרים זרימה ורוגע. בחרו לפי האווירה: אנרגטי → משלים. שלווה → אנלוגי." data-en="Complementary colors create vibration and dramatic tension. Analogous colors create flow and calm. Choose by mood: energetic → complementary. Peaceful → analogous.">צבעים משלימים יוצרים ויברציה ומתח דרמטי — האנרגיה שמקפיצה. צבעים אנלוגיים יוצרים זרימה ורוגע. בחרו לפי האווירה: אנרגטי → משלים. שלווה → אנלוגי.</div>
         </div>
       </div>
       <div class="tip-card">
-        <div class="tip-card-icon">🌡️</div>
+        <div class="tip-card-icon">
+          <!-- warm/cool split pill -->
+          <svg width="36" height="18" viewBox="0 0 36 18" xmlns="http://www.w3.org/2000/svg">
+            <clipPath id="pill"><rect x="0" y="0" width="36" height="18" rx="9"/></clipPath>
+            <rect x="0" y="0" width="18" height="18" fill="hsl(30,85%,55%)" clip-path="url(#pill)"/>
+            <rect x="18" y="0" width="18" height="18" fill="hsl(210,85%,55%)" clip-path="url(#pill)"/>
+            <rect x="0" y="0" width="36" height="18" rx="9" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+          </svg>
+        </div>
         <div>
           <div class="tip-card-title" data-he="חם וקר ליצירת עומק" data-en="Warm & Cool for Depth">חם וקר ליצירת עומק</div>
           <div class="tip-card-body" data-he="צבעים חמים נראים קרובים יותר, קרים מתרחקים. נושא בטון חם על רקע קר נראה בולט ותלת-ממדי. זו לא טעות של שעת הזהב — זה למה שעת הזהב עובדת." data-en="Warm colors look closer, cool colors recede. A warm-toned subject on a cool background looks prominent and three-dimensional. That's not a coincidence of golden hour — it's why golden hour works.">צבעים חמים נראים קרובים יותר, קרים מתרחקים. נושא בטון חם על רקע קר נראה בולט ותלת-ממדי. זו לא טעות של שעת הזהב — זה למה שעת הזהב עובדת.</div>
         </div>
       </div>
       <div class="tip-card">
-        <div class="tip-card-icon">🎯</div>
+        <div class="tip-card-icon">
+          <!-- 60-30-10 proportion bars -->
+          <svg width="28" height="24" viewBox="0 0 28 24" xmlns="http://www.w3.org/2000/svg">
+            <rect x="0" y="0" width="28" height="9" rx="2" fill="hsl(30,70%,45%)"/>
+            <rect x="0" y="11" width="17" height="6" rx="2" fill="hsl(210,70%,48%)"/>
+            <rect x="0" y="19" width="6" height="5" rx="2" fill="hsl(270,65%,55%)"/>
+          </svg>
+        </div>
         <div>
           <div class="tip-card-title" data-he="כלל 60-30-10" data-en="The 60-30-10 Rule">כלל 60-30-10</div>
           <div class="tip-card-body" data-he="כלל עיצובי: 60% צבע שולט, 30% משני, 10% הדגשה. תמונות שעובדות נוטות לעקוב אחרי יחסים דומים — לא בכוונה, אלא כי פשטות צבעונית תמיד מנצחת." data-en="Design rule: 60% dominant color, 30% secondary, 10% accent. Photos that work tend to follow similar ratios — not intentionally, but because color simplicity always wins.">כלל עיצובי: 60% צבע שולט, 30% משני, 10% הדגשה. תמונות שעובדות נוטות לעקוב אחרי יחסים דומים — לא בכוונה, אלא כי פשטות צבעונית תמיד מנצחת.</div>
         </div>
       </div>
       <div class="tip-card">
-        <div class="tip-card-icon">🛠️</div>
+        <div class="tip-card-icon">
+          <!-- HSL sliders — site accent SVG style -->
+          <svg width="26" height="22" viewBox="0 0 26 22" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round">
+            <line x1="2" y1="4" x2="24" y2="4"/>
+            <circle cx="8" cy="4" r="3" fill="var(--surface)"/>
+            <line x1="2" y1="11" x2="24" y2="11"/>
+            <circle cx="16" cy="11" r="3" fill="var(--surface)"/>
+            <line x1="2" y1="18" x2="24" y2="18"/>
+            <circle cx="10" cy="18" r="3" fill="var(--surface)"/>
+          </svg>
+        </div>
         <div>
           <div class="tip-card-title" data-he="HSL — כלי ההרמוניה בעריכה" data-en="HSL — The Harmony Tool in Editing">HSL — כלי ההרמוניה בעריכה</div>
           <div class="tip-card-body" data-he="בלייטרום ובלומינאר, פאנל HSL מאפשר לבחור כל גוון ולשנות גוון, רוויה ובהירות בנפרד. כך מחזקים הרמוניה שכבר קיימת — או יוצרים הרמוניה שלא הייתה בשטח." data-en="In Lightroom and Luminar, the HSL panel lets you select each hue and change tone, saturation, and brightness independently. This strengthens harmony already present — or creates harmony that wasn't there in the field.">בלייטרום ובלומינאר, פאנל HSL מאפשר לבחור כל גוון ולשנות גוון, רוויה ובהירות בנפרד. כך מחזקים הרמוניה שכבר קיימת — או יוצרים הרמוניה שלא הייתה בשטח.</div>
