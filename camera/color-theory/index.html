@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="canonical" href="https://amitphotos.com/camera/color-theory/" />
+<link rel="alternate" hreflang="he" href="https://amitphotos.com/camera/color-theory/" />
+<link rel="alternate" hreflang="en" href="https://amitphotos.com/camera/color-theory/" />
+<link rel="alternate" hreflang="x-default" href="https://amitphotos.com/camera/color-theory/" />
+<title>תיאוריית צבע — הרמוניה ויזואלית בצילום | בית ספר לצילום | Amit Photos</title>
+<meta name="description" content="למד איך גוונים משלימים, אנלוגיים ושלישיות צבע עובדים בצילום. גלגל צבעים אינטראקטיבי עם תמונות אמיתיות של עמית.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #0a0a0a; --surface: #111; --surface2: #181818; --border: #222;
+  --accent: #c8a96e; --text: #f0ede8; --muted: #888; --green: #5dbf8a; --blue: #6090d8;
+}
+body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--text);
+  direction: rtl; min-height: 100vh; padding-bottom: 5rem; }
+
+.breadcrumb { font-size: .8rem; color: var(--muted); padding: 1.25rem 1.5rem 0;
+  max-width: 780px; margin: 0 auto; }
+.breadcrumb a { color: var(--accent); text-decoration: none; }
+
+.hero { text-align: center; padding: 2.5rem 1.5rem 1.5rem; }
+.hero-badge { display: inline-block; font-size: .72rem;
+  background: rgba(200,169,110,.12); border: 1px solid rgba(200,169,110,.3);
+  color: var(--accent); border-radius: 20px; padding: .3rem .8rem; margin-bottom: .75rem; }
+.hero h1 { font-family: 'Syne', sans-serif; font-size: 2rem; color: var(--accent); margin-bottom: .5rem; }
+.hero p { color: var(--muted); font-size: .95rem; max-width: 520px; margin: 0 auto; line-height: 1.65; }
+
+.article { max-width: 780px; margin: 0 auto; padding: 0 1.25rem; }
+.section { margin-bottom: 3rem; }
+.section-label { font-size: .72rem; color: var(--accent); text-transform: uppercase;
+  letter-spacing: .1em; margin-bottom: .5rem; }
+.section h2 { font-family: 'Syne', sans-serif; font-size: 1.4rem; color: var(--text); margin-bottom: 1rem; }
+.section p { color: var(--muted); line-height: 1.75; margin-bottom: .85rem; font-size: .95rem; }
+.section p strong { color: var(--text); }
+.divider { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+
+/* ===== COLOR CHIPS ===== */
+.color-chips { display: flex; gap: .5rem; margin: 1rem 0 1.25rem; flex-wrap: wrap; }
+.chip { display: flex; align-items: center; gap: .45rem; background: var(--surface);
+  border: 1px solid var(--border); border-radius: 8px; padding: .35rem .7rem;
+  font-size: .82rem; color: var(--muted); }
+.chip-dot { width: 13px; height: 13px; border-radius: 50%; flex-shrink: 0; }
+
+/* ===== HARMONY LAB ===== */
+.lab { background: var(--surface); border: 1px solid rgba(200,169,110,.3);
+  border-radius: 18px; padding: 1.5rem; margin: 1.5rem 0; }
+.lab-title { font-family: 'Syne', sans-serif; font-size: 1.05rem; color: var(--accent);
+  text-align: center; margin-bottom: 1.25rem; }
+
+.harmony-tabs { display: flex; gap: .5rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
+.harmony-tab {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 10px; padding: .55rem 1rem; cursor: pointer;
+  font-size: .82rem; color: var(--muted); transition: border-color .2s, color .2s;
+}
+.harmony-tab:hover { border-color: rgba(200,169,110,.4); color: var(--text); }
+.harmony-tab.active { border-color: var(--accent); color: var(--accent); background: rgba(200,169,110,.08); }
+
+.harmony-content {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  gap: 1.5rem;
+  align-items: center;
+}
+@media (max-width: 540px) {
+  .harmony-content { grid-template-columns: 1fr; justify-items: center; }
+}
+
+/* Color Wheel */
+.wheel-wrap { position: relative; width: 180px; height: 180px; flex-shrink: 0; }
+.wheel-ring {
+  width: 180px; height: 180px; border-radius: 50%;
+  background:
+    radial-gradient(circle, var(--surface) 26%, transparent 26.5%),
+    conic-gradient(
+      hsl(0,100%,58%) 0deg, hsl(15,100%,58%) 15deg,
+      hsl(30,100%,58%) 30deg, hsl(45,100%,58%) 45deg,
+      hsl(60,100%,58%) 60deg, hsl(75,100%,58%) 75deg,
+      hsl(90,100%,58%) 90deg, hsl(105,100%,58%) 105deg,
+      hsl(120,100%,50%) 120deg, hsl(135,100%,50%) 135deg,
+      hsl(150,100%,50%) 150deg, hsl(165,100%,52%) 165deg,
+      hsl(180,100%,48%) 180deg, hsl(195,100%,50%) 195deg,
+      hsl(210,100%,55%) 210deg, hsl(225,100%,55%) 225deg,
+      hsl(240,100%,58%) 240deg, hsl(255,100%,58%) 255deg,
+      hsl(270,100%,58%) 270deg, hsl(285,100%,58%) 285deg,
+      hsl(300,100%,58%) 300deg, hsl(315,100%,58%) 315deg,
+      hsl(330,100%,58%) 330deg, hsl(345,100%,58%) 345deg,
+      hsl(360,100%,58%) 360deg
+    );
+}
+.wheel-svg {
+  position: absolute; top: 0; left: 0;
+  width: 180px; height: 180px;
+  pointer-events: none;
+}
+
+/* Photo side */
+.harmony-photo-wrap { min-width: 0; width: 100%; }
+.harmony-photo-img {
+  width: 100%; aspect-ratio: 4/3; object-fit: cover;
+  border-radius: 12px; display: block;
+  border: 1px solid var(--border);
+  transition: opacity .3s;
+}
+.harmony-photo-title {
+  font-family: 'Syne', sans-serif; font-size: .9rem; color: var(--accent);
+  margin: .65rem 0 .1rem;
+}
+
+.harmony-lesson {
+  margin-top: 1rem; background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 10px; padding: .9rem 1.1rem; font-size: .88rem;
+  color: var(--text); line-height: 1.65;
+}
+.harmony-lesson strong { color: var(--accent); }
+.harmony-examples { font-size: .8rem; color: var(--muted); }
+
+/* ===== 4 TIPS GRID ===== */
+.tips-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .85rem; margin: 1.25rem 0; }
+@media (max-width: 480px) { .tips-grid { grid-template-columns: 1fr; } }
+.tip-card { background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; padding: 1rem 1.1rem; display: flex; gap: .75rem; align-items: flex-start; }
+.tip-card-icon { font-size: 1.6rem; flex-shrink: 0; }
+.tip-card-title { font-family: 'Syne', sans-serif; font-size: .9rem; color: var(--accent); margin-bottom: .25rem; }
+.tip-card-body { font-size: .82rem; color: var(--muted); line-height: 1.55; }
+
+/* ===== GEAR ===== */
+.gear-section{max-width:760px;margin:0 auto;padding:1.5rem 1.25rem .5rem;border-top:1px solid var(--border)}
+.gear-row-label{font-size:.68rem;text-transform:uppercase;letter-spacing:.14em;color:var(--accent);display:flex;align-items:center;gap:.75rem;margin-bottom:1rem}
+.gear-row-label::after{content:'';flex:1;height:1px;background:var(--border)}
+.gear-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:.75rem}
+.gear-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;text-decoration:none;transition:border-color .2s}
+.gear-card:hover{border-color:rgba(200,169,110,.45)}
+.gear-card-ico{aspect-ratio:3/2;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:2.5rem}
+.gear-card-ico svg{width:48px;height:48px;stroke:var(--accent);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.gear-card-body{padding:.85rem;flex:1;display:flex;flex-direction:column}
+.gear-card-name{font-family:'Syne',sans-serif;font-size:.87rem;color:var(--text);margin-bottom:.3rem}
+.gear-card-desc{font-size:.76rem;color:var(--muted);line-height:1.55;flex:1;margin-bottom:.8rem}
+.gear-card-btn{display:block;text-align:center;border:1px solid rgba(200,169,110,.45);color:var(--accent);font-size:.75rem;font-weight:700;padding:.4rem .75rem;border-radius:6px;transition:background .15s,color .15s}
+.gear-card-btn:hover{background:var(--accent);color:#000}
+.gear-disclose{font-size:.67rem;color:#444;text-align:center;padding:.6rem 0 1.5rem}
+
+.kofi-bar{text-align:center;padding:1.25rem 1.25rem 1.75rem;max-width:760px;margin:0 auto}
+.kofi-bar a{display:inline-flex;align-items:center;gap:.5rem;background:var(--surface);border:1px solid rgba(200,169,110,.4);color:var(--accent);font-size:.82rem;font-weight:700;padding:.55rem 1.4rem;border-radius:8px;text-decoration:none;transition:background .2s,color .2s}
+.kofi-bar a:hover{background:var(--accent);color:#000}
+
+.tip-box { background: rgba(200,169,110,.08); border: 1px solid rgba(200,169,110,.25);
+  border-radius: 12px; padding: 1.25rem 1.5rem; margin: 1.5rem 0; }
+.tip-box-label { font-size: .72rem; color: var(--accent); font-weight: 700; letter-spacing: .08em; margin-bottom: .4rem; }
+.tip-box p { font-size: .9rem; color: var(--text); line-height: 1.65; margin: 0; }
+
+.exercise-box { background: rgba(93,191,138,.07); border: 1px solid rgba(93,191,138,.25);
+  border-radius: 12px; padding: 1.25rem 1.5rem; margin: 1.5rem 0; }
+.exercise-label { font-size: .72rem; color: var(--green); font-weight: 700; letter-spacing: .08em; margin-bottom: .4rem; }
+.exercise-box p { font-size: .9rem; color: var(--text); line-height: 1.65; margin: 0; }
+</style>
+<script src="/assets/js/nav.js?v=9aff906" defer></script>
+<script src="/assets/js/share.js" defer></script>
+
+<script type="application/ld+json">
+[
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "תיאוריית צבע — הרמוניה ויזואלית בצילום",
+  "description": "למד איך גוונים משלימים, אנלוגיים ושלישיות צבע עובדים בצילום. גלגל צבעים אינטראקטיבי עם תמונות אמיתיות.",
+  "url": "https://amitphotos.com/camera/color-theory/",
+  "author": { "@type": "Person", "name": "עמית ארז", "url": "https://amitphotos.com" },
+  "publisher": { "@type": "Organization", "name": "Amit Photos", "url": "https://amitphotos.com" },
+  "isPartOf": { "@type": "Course", "name": "בית ספר לצילום", "url": "https://amitphotos.com/camera/" },
+  "inLanguage": "he"
+},
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "בית", "item": "https://amitphotos.com/" },
+    { "@type": "ListItem", "position": 2, "name": "למד לצלם", "item": "https://amitphotos.com/camera/" },
+    { "@type": "ListItem", "position": 3, "name": "תיאוריית צבע", "item": "https://amitphotos.com/camera/color-theory/" }
+  ]
+}
+]
+</script>
+</head>
+<body>
+
+<div class="breadcrumb">
+  <a href="/camera/" data-he="למד לצלם" data-en="Photography School">למד לצלם</a>
+  ← <span data-he="תיאוריית צבע" data-en="Color Theory">תיאוריית צבע</span>
+</div>
+
+<div class="hero">
+  <div class="hero-badge" data-he="📷 בית ספר לצילום" data-en="📷 Photography School">📷 בית ספר לצילום</div>
+  <h1 data-he="🎨 תיאוריית צבע בצילום" data-en="🎨 Color Theory in Photography">🎨 תיאוריית צבע בצילום</h1>
+  <p data-he="למה יש תמונות שמרגישות הרמוניות ואחרות שמרגישות מבולגנות — גם כשהנושא זהה? לרוב זה הצבע. גלה כיצד גוונים משלימים, אנלוגיים ושלישיות עובדים, ולמד לראות את ההרמוניה לפני שלוחצים על ההדק."
+     data-en="Why do some photos feel harmonious while others feel cluttered — even with the same subject? Usually it's the color. Discover how complementary, analogous, and triadic hues work, and learn to see the harmony before pressing the shutter.">למה יש תמונות שמרגישות הרמוניות ואחרות שמרגישות מבולגנות — גם כשהנושא זהה? לרוב זה הצבע. גלה כיצד גוונים משלימים, אנלוגיים ושלישיות עובדים, ולמד לראות את ההרמוניה לפני שלוחצים על ההדק.</p>
+</div>
+
+<div class="article">
+
+  <div class="section">
+    <div class="section-label" data-he="הבסיס" data-en="The Basics">הבסיס</div>
+    <h2 data-he="מה זה גלגל הצבעים?" data-en="What Is the Color Wheel?">מה זה גלגל הצבעים?</h2>
+    <p data-he="גלגל הצבעים הוא מפה של הגוונים. הוא מראה איך צבעים קשורים זה לזה, ואיזה שילובים יוצרים הרמוניה ויזואלית. הצלמים השתמשו בו כבר לפני שהיה Lightroom — ועכשיו הוא מובנה בכל תוכנת עריכה מקצועית."
+       data-en="The color wheel is a map of hues. It shows how colors relate to each other, and which combinations create visual harmony. Photographers used it long before Lightroom — and now it's built into every professional editing app.">גלגל הצבעים הוא מפה של הגוונים. הוא מראה איך צבעים קשורים זה לזה, ואיזה שילובים יוצרים הרמוניה ויזואלית. הצלמים השתמשו בו כבר לפני שהיה Lightroom — ועכשיו הוא מובנה בכל תוכנת עריכה מקצועית.</p>
+    <p data-he="הגלגל מחולק ל-12 גוונים. <strong>שלושה ראשוניים</strong>: אדום, כחול, צהוב — לא ניתן ליצור אותם. <strong>שלושה משניים</strong>: כתום, ירוק, סגול — נוצרים משילוב שניים ראשוניים. <strong>ששה שלישוניים</strong> — שהם כל השאר ביניהם."
+       data-en="The wheel is divided into 12 hues. <strong>Three primary</strong>: red, blue, yellow — cannot be mixed. <strong>Three secondary</strong>: orange, green, purple — made by combining two primaries. <strong>Six tertiary</strong> — everything in between.">הגלגל מחולק ל-12 גוונים. <strong>שלושה ראשוניים</strong>: אדום, כחול, צהוב — לא ניתן ליצור אותם. <strong>שלושה משניים</strong>: כתום, ירוק, סגול — נוצרים משילוב שניים ראשוניים. <strong>ששה שלישוניים</strong> — שהם כל השאר ביניהם.</p>
+
+    <div class="color-chips">
+      <div class="chip"><div class="chip-dot" style="background:hsl(0,85%,55%)"></div><span data-he="אדום" data-en="Red">אדום</span></div>
+      <div class="chip"><div class="chip-dot" style="background:hsl(60,85%,52%)"></div><span data-he="צהוב" data-en="Yellow">צהוב</span></div>
+      <div class="chip"><div class="chip-dot" style="background:hsl(240,85%,58%)"></div><span data-he="כחול" data-en="Blue">כחול</span></div>
+      <div class="chip"><div class="chip-dot" style="background:hsl(30,90%,55%)"></div><span data-he="כתום" data-en="Orange">כתום</span></div>
+      <div class="chip"><div class="chip-dot" style="background:hsl(120,75%,42%)"></div><span data-he="ירוק" data-en="Green">ירוק</span></div>
+      <div class="chip"><div class="chip-dot" style="background:hsl(270,80%,58%)"></div><span data-he="סגול" data-en="Purple">סגול</span></div>
+    </div>
+
+    <p data-he="<strong>הרעיון המרכזי לצלמים:</strong> הגוון של הנושא והגוון של הרקע ביחד קובעים אם התמונה תרגיש שלמה, דרמטית, או עמוסה. לא צריך לדעת את כל התיאוריה — צריך לדעת לזהות כשמשהו עובד, ולמה."
+       data-en="<strong>The key idea for photographers:</strong> The hue of the subject and the hue of the background together determine whether the photo feels complete, dramatic, or cluttered. You don't need to know all the theory — you need to recognize when something works, and why."><strong>הרעיון המרכזי לצלמים:</strong> הגוון של הנושא והגוון של הרקע ביחד קובעים אם התמונה תרגיש שלמה, דרמטית, או עמוסה. לא צריך לדעת את כל התיאוריה — צריך לדעת לזהות כשמשהו עובד, ולמה.</p>
+  </div>
+
+  <hr class="divider">
+
+  <div class="section">
+    <div class="section-label" data-he="גלגל הרמוניה" data-en="Harmony Wheel">גלגל הרמוניה</div>
+    <h2 data-he="ארבעה סוגי הרמוניה — בחר ותגלה" data-en="Four Harmony Types — Choose to Discover">ארבעה סוגי הרמוניה — בחר ותגלה</h2>
+    <p data-he="לחץ על כל סוג הרמוניה כדי לראות כיצד הצבעים מתייחסים בגלגל, ודוגמה מהגלריה של עמית."
+       data-en="Click each harmony type to see how the colors relate on the wheel, and an example from Amit's gallery.">לחץ על כל סוג הרמוניה כדי לראות כיצד הצבעים מתייחסים בגלגל, ודוגמה מהגלריה של עמית.</p>
+
+    <div class="lab">
+      <div class="lab-title" data-he="🎨 גלגל ההרמוניה האינטראקטיבי" data-en="🎨 Interactive Harmony Wheel">🎨 גלגל ההרמוניה האינטראקטיבי</div>
+
+      <div class="harmony-tabs" id="harmony-tabs">
+        <button class="harmony-tab active" data-idx="0" data-he="משלימים" data-en="Complementary">משלימים</button>
+        <button class="harmony-tab" data-idx="1" data-he="אנלוגיים" data-en="Analogous">אנלוגיים</button>
+        <button class="harmony-tab" data-idx="2" data-he="שלישייה" data-en="Triadic">שלישייה</button>
+        <button class="harmony-tab" data-idx="3" data-he="חם וקר" data-en="Warm &amp; Cool">חם וקר</button>
+      </div>
+
+      <div class="harmony-content">
+        <div class="wheel-wrap">
+          <div class="wheel-ring"></div>
+          <svg id="wheel-svg" class="wheel-svg" viewBox="0 0 180 180" xmlns="http://www.w3.org/2000/svg"></svg>
+        </div>
+        <div class="harmony-photo-wrap">
+          <img id="harmony-photo" src="" alt="" class="harmony-photo-img" loading="lazy">
+          <div class="harmony-photo-title" id="harmony-title"></div>
+        </div>
+      </div>
+
+      <div class="harmony-lesson" id="harmony-lesson"></div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="section">
+    <div class="section-label" data-he="בשטח" data-en="In the Field">בשטח</div>
+    <h2 data-he="4 עקרונות לצילום עם הרמוניית צבע" data-en="4 Principles for Color-Harmony Photography">4 עקרונות לצילום עם הרמוניית צבע</h2>
+
+    <div class="tips-grid">
+      <div class="tip-card">
+        <div class="tip-card-icon">⚡</div>
+        <div>
+          <div class="tip-card-title" data-he="משלים = מתח, אנלוגי = שלווה" data-en="Complementary = Tension, Analogous = Calm">משלים = מתח, אנלוגי = שלווה</div>
+          <div class="tip-card-body" data-he="צבעים משלימים יוצרים ויברציה ומתח דרמטי — האנרגיה שמקפיצה. צבעים אנלוגיים יוצרים זרימה ורוגע. בחרו לפי האווירה: אנרגטי → משלים. שלווה → אנלוגי." data-en="Complementary colors create vibration and dramatic tension. Analogous colors create flow and calm. Choose by mood: energetic → complementary. Peaceful → analogous.">צבעים משלימים יוצרים ויברציה ומתח דרמטי — האנרגיה שמקפיצה. צבעים אנלוגיים יוצרים זרימה ורוגע. בחרו לפי האווירה: אנרגטי → משלים. שלווה → אנלוגי.</div>
+        </div>
+      </div>
+      <div class="tip-card">
+        <div class="tip-card-icon">🌡️</div>
+        <div>
+          <div class="tip-card-title" data-he="חם וקר ליצירת עומק" data-en="Warm & Cool for Depth">חם וקר ליצירת עומק</div>
+          <div class="tip-card-body" data-he="צבעים חמים נראים קרובים יותר, קרים מתרחקים. נושא בטון חם על רקע קר נראה בולט ותלת-ממדי. זו לא טעות של שעת הזהב — זה למה שעת הזהב עובדת." data-en="Warm colors look closer, cool colors recede. A warm-toned subject on a cool background looks prominent and three-dimensional. That's not a coincidence of golden hour — it's why golden hour works.">צבעים חמים נראים קרובים יותר, קרים מתרחקים. נושא בטון חם על רקע קר נראה בולט ותלת-ממדי. זו לא טעות של שעת הזהב — זה למה שעת הזהב עובדת.</div>
+        </div>
+      </div>
+      <div class="tip-card">
+        <div class="tip-card-icon">🎯</div>
+        <div>
+          <div class="tip-card-title" data-he="כלל 60-30-10" data-en="The 60-30-10 Rule">כלל 60-30-10</div>
+          <div class="tip-card-body" data-he="כלל עיצובי: 60% צבע שולט, 30% משני, 10% הדגשה. תמונות שעובדות נוטות לעקוב אחרי יחסים דומים — לא בכוונה, אלא כי פשטות צבעונית תמיד מנצחת." data-en="Design rule: 60% dominant color, 30% secondary, 10% accent. Photos that work tend to follow similar ratios — not intentionally, but because color simplicity always wins.">כלל עיצובי: 60% צבע שולט, 30% משני, 10% הדגשה. תמונות שעובדות נוטות לעקוב אחרי יחסים דומים — לא בכוונה, אלא כי פשטות צבעונית תמיד מנצחת.</div>
+        </div>
+      </div>
+      <div class="tip-card">
+        <div class="tip-card-icon">🛠️</div>
+        <div>
+          <div class="tip-card-title" data-he="HSL — כלי ההרמוניה בעריכה" data-en="HSL — The Harmony Tool in Editing">HSL — כלי ההרמוניה בעריכה</div>
+          <div class="tip-card-body" data-he="בלייטרום ובלומינאר, פאנל HSL מאפשר לבחור כל גוון ולשנות גוון, רוויה ובהירות בנפרד. כך מחזקים הרמוניה שכבר קיימת — או יוצרים הרמוניה שלא הייתה בשטח." data-en="In Lightroom and Luminar, the HSL panel lets you select each hue and change tone, saturation, and brightness independently. This strengthens harmony already present — or creates harmony that wasn't there in the field.">בלייטרום ובלומינאר, פאנל HSL מאפשר לבחור כל גוון ולשנות גוון, רוויה ובהירות בנפרד. כך מחזקים הרמוניה שכבר קיימת — או יוצרים הרמוניה שלא הייתה בשטח.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tip-box">
+      <div class="tip-box-label" data-he="💡 איך לראות הרמוניה לפני הצילום" data-en="💡 How to See Harmony Before Shooting">💡 איך לראות הרמוניה לפני הצילום</div>
+      <p data-he="עצמו עיניים למחצה ותסתכלו על הסצנה. האם יש שניים-שלושה גוונים שבולטים? אם כן — מה הקשר ביניהם? שני גוונים ממולם = מתח. גוונים שכנים = שלווה. יותר מארבעה גוונים חזקים = בלגן. קבעו את פלטת הצבעים לפני הצילום, לא רק בעריכה."
+         data-en="Half-squint and look at the scene. Are there two or three dominant hues? If so — what's their relationship? Two opposite hues = tension. Adjacent hues = calm. More than four strong hues = chaos. Set your color palette before shooting, not only in editing.">עצמו עיניים למחצה ותסתכלו על הסצנה. האם יש שניים-שלושה גוונים שבולטים? אם כן — מה הקשר ביניהם? שני גוונים ממולם = מתח. גוונים שכנים = שלווה. יותר מארבעה גוונים חזקים = בלגן. קבעו את פלטת הצבעים לפני הצילום, לא רק בעריכה.</p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="section">
+    <div class="section-label" data-he="תרגיל מעשי" data-en="Practical Exercise">תרגיל מעשי</div>
+    <h2 data-he="אתגר ההרמוניה" data-en="The Harmony Challenge">אתגר ההרמוניה</h2>
+
+    <div class="exercise-box">
+      <div class="exercise-label" data-he="📷 המשימה" data-en="📷 The Assignment">📷 המשימה</div>
+      <p data-he="צאו לצלם עם מטרה אחת בלבד: פלטה מכוונת." data-en="Go out to shoot with one goal only: an intentional palette.">
+        צאו לצלם עם מטרה אחת בלבד: פלטה מכוונת.<br><br>
+        <strong data-he="שלב 1:" data-en="Step 1:">שלב 1:</strong>
+        <span data-he=" בחרו מראש סוג הרמוניה אחד — משלים, אנלוגי, או שלישייה." data-en=" Choose a harmony type in advance — complementary, analogous, or triadic."> בחרו מראש סוג הרמוניה אחד — משלים, אנלוגי, או שלישייה.</span><br>
+        <strong data-he="שלב 2:" data-en="Step 2:">שלב 2:</strong>
+        <span data-he=" צלמו 5 תמונות שמשתמשות רק בצבעים של ההרמוניה שבחרתם — כמה שפחות צבעים נוספים." data-en=" Shoot 5 photos using only colors from your chosen harmony — as few extra colors as possible."> צלמו 5 תמונות שמשתמשות רק בצבעים של ההרמוניה שבחרתם — כמה שפחות צבעים נוספים.</span><br>
+        <strong data-he="שלב 3:" data-en="Step 3:">שלב 3:</strong>
+        <span data-he=" בעריכה: גשו לפאנל HSL וחזקו את ההרמוניה — הגדילו רוויה לצבעים שבחרתם, הקטינו לאחרים." data-en=" In editing: go to HSL and strengthen the harmony — boost saturation for your chosen colors, reduce for others."> בעריכה: גשו לפאנל HSL וחזקו את ההרמוניה — הגדילו רוויה לצבעים שבחרתם, הקטינו לאחרים.</span><br><br>
+        <em data-he="המטרה היא לא תמונה צבעונית — המטרה היא תמונה שיש בה כוונה צבעונית." data-en="The goal isn't a colorful photo — the goal is a photo with color intention.">המטרה היא לא תמונה צבעונית — המטרה היא תמונה שיש בה כוונה צבעונית.</em>
+      </p>
+    </div>
+  </div>
+
+  <div style="text-align:center;padding:1rem 0 2rem">
+    <a href="/camera/black-and-white/" style="color:var(--accent);font-size:.9rem;text-decoration:none"
+       data-he="← שחור-לבן" data-en="← Black &amp; White">← שחור-לבן</a>
+    <span style="color:var(--border);margin:0 .75rem">|</span>
+    <a href="/camera/color-channels/" style="color:var(--accent);font-size:.9rem;text-decoration:none"
+       data-he="ערוצי צבע ←" data-en="Color Channels →">ערוצי צבע ←</a>
+  </div>
+
+</div>
+
+<div class="gear-section">
+  <div class="gear-row-label" data-he="ציוד מומלץ" data-en="Recommended Gear">ציוד מומלץ</div>
+  <div class="gear-cards">
+    <a class="gear-card" href="https://adorama.prf.hn/click/camref:1101l5Km5i/destination:https://www.adorama.com/catalog.tpl?SearchInfo=CPL+polarizing+filter+67mm" target="_blank" rel="noopener sponsored">
+      <div class="gear-card-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><path d="M12 3a9 9 0 0 1 0 18"/></svg></div>
+      <div class="gear-card-body">
+        <div class="gear-card-name" data-he="פילטר CPL — רוויית צבעים טבעית" data-en="CPL Filter — Natural Color Saturation">פילטר CPL — רוויית צבעים טבעית</div>
+        <div class="gear-card-desc" data-he="פילטר מקטב מגביר את הרוויה של שמיים, מים וצמחיה ישר מהמצלמה — הצבעים עמוקים ואמיתיים יותר עוד לפני עריכה." data-en="A polarizing filter boosts saturation of skies, water and foliage straight from camera — deeper and more genuine colors before any editing.">פילטר מקטב מגביר את הרוויה של שמיים, מים וצמחיה ישר מהמצלמה — הצבעים עמוקים ואמיתיים יותר עוד לפני עריכה.</div>
+        <span class="gear-card-btn" data-he="ראה באדוראמה ←" data-en="View at Adorama →">ראה באדוראמה ←</span>
+      </div>
+    </a>
+    <a class="gear-card" href="https://skylum.evyy.net/c/3782640/1738804/5925" target="_blank" rel="noopener sponsored">
+      <div class="gear-card-ico"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/><line x1="5" y1="9" x2="9" y2="9"/><circle cx="11" cy="9" r="2"/><line x1="13" y1="9" x2="19" y2="9"/><line x1="5" y1="14" x2="13" y2="14"/><circle cx="15" cy="14" r="2"/><line x1="17" y1="14" x2="19" y2="14"/></svg></div>
+      <div class="gear-card-body">
+        <div class="gear-card-name" data-he="Luminar Neo — עריכת צבע עם AI" data-en="Luminar Neo — AI Color Editing">Luminar Neo — עריכת צבע עם AI</div>
+        <div class="gear-card-desc" data-he="כלי HSL מתקדם + Color Harmony AI מאפשרים לשנות כל גוון בנפרד. מושלם לחיזוק הרמוניות שכבר קיימות, או ליצירת פלטה מכוונת." data-en="Advanced HSL tools + Color Harmony AI let you adjust each hue independently. Perfect for strengthening existing harmonies, or creating an intentional palette.">כלי HSL מתקדם + Color Harmony AI מאפשרים לשנות כל גוון בנפרד. מושלם לחיזוק הרמוניות שכבר קיימות, או ליצירת פלטה מכוונת.</div>
+        <span class="gear-card-btn" data-he="ראה ב-Skylum ←" data-en="View at Skylum →">ראה ב-Skylum ←</span>
+      </div>
+    </a>
+  </div>
+  <a class="gear-card" href="https://www.awin1.com/cread.php?awinmid=96417&awinaffid=2911221&ued=https%3A%2F%2Fwww.peltierphotocourses.com%2F" target="_blank" rel="noopener sponsored" style="flex-direction:row;align-items:center;gap:.75rem;padding:.85rem;margin-top:.75rem">
+    <div style="font-size:2rem;line-height:1;flex-shrink:0">&#127891;</div>
+    <div class="gear-card-body" style="padding:0">
+      <div class="gear-card-name" data-he="קורסי צילום — מהיסודות ועד מתקדם" data-en="Photography Courses — Beginner to Advanced">קורסי צילום — מהיסודות ועד מתקדם</div>
+      <div class="gear-card-desc" data-he="וידאו, קצב עצמי, כיסוי מלא של כל נושאי הצילום." data-en="Video lessons, self-paced, covering all photography topics.">וידאו, קצב עצמי, כיסוי מלא של כל נושאי הצילום.</div>
+      <span class="gear-card-btn" data-he="לקורסים ←" data-en="View Courses →">לקורסים ←</span>
+    </div>
+  </a>
+  <div class="gear-disclose" data-he="קישורי שותף — עמלה קטנה, ללא עלות נוספת לך" data-en="Affiliate links — small commission, no extra cost to you">קישורי שותף — עמלה קטנה, ללא עלות נוספת לך</div>
+</div>
+
+<div class="kofi-bar">
+  <a href="https://ko-fi.com/amitphotos" target="_blank" rel="noopener">
+    &#9749; <span data-he="אהבת את המדריך? קנה לי קפה" data-en="Found this guide useful? Buy me a coffee">אהבת את המדריך? קנה לי קפה</span>
+  </a>
+</div>
+
+<script>
+var HARMONIES = [
+  {
+    dots: [[30,'hsl(30,90%,55%)'],[210,'hsl(210,90%,60%)']],
+    lines: [[30,210]],
+    divider: false,
+    photoId: '1v2lSC6IvqfbdE9Nv0KPFrazMzMsweizH',
+    photoAltHe: 'בניין עם גוונים כחולים וכתומים',
+    photoAltEn: 'Building with blue and orange hues',
+    titleHe: 'כחול ↔ כתום — הצמד הקלאסי',
+    titleEn: 'Blue ↔ Orange — The Classic Pair',
+    lessonHe: '<strong>צבעים משלימים</strong> — שני גוונים ממולם בגלגל (180° זה מזה). הניגוד ביניהם מקסימלי: כל אחד גורם לשני להיראות עז ובהיר יותר. שמיים כחולים + שקיעה כתומה, בניין כחול + חלודה כתומה — צמד זה נמצא בכל מקום בטבע ובאדריכלות.<br><br><span class="harmony-examples">דוגמאות נפוצות: כחול + כתום ◆ אדום + ירוק ◆ סגול + צהוב</span>',
+    lessonEn: '<strong>Complementary colors</strong> — two hues directly opposite on the wheel (180° apart). Their contrast is maximum: each makes the other appear more vivid and bright. Blue sky + orange sunset, blue building + orange rust — this pair appears everywhere in nature and architecture.<br><br><span class="harmony-examples">Common examples: blue + orange ◆ red + green ◆ purple + yellow</span>'
+  },
+  {
+    dots: [[0,'hsl(0,90%,55%)'],[30,'hsl(30,90%,55%)'],[60,'hsl(60,90%,54%)']],
+    lines: [[0,30],[30,60]],
+    divider: false,
+    photoId: '1LDJDivmCJtNCpb1NhGpV5OQeyfjeh1f2',
+    photoAltHe: 'שדה חמניות — פלטה אנלוגית צהוב-ירוק',
+    photoAltEn: 'Sunflower field — analogous yellow-green palette',
+    titleHe: 'גוונים שכנים — הרמוניה טבעית',
+    titleEn: 'Adjacent Hues — Natural Harmony',
+    lessonHe: '<strong>צבעים אנלוגיים</strong> — שלושה גוונים שכנים בגלגל. הם לעולם לא "נסגרים" — אין ניגוד, אין מתח, רק זרימה. לכן הם מרגישים טבעיים ורגועים. שקיעה עם אדום-כתום-צהוב, יער עם ירוק-ציאן-כחול.<br><br><span class="harmony-examples">דוגמאות: אדום + כתום + צהוב (שקיעה) ◆ ציאן + כחול + סגול (ים בדמדומים) ◆ צהוב + ירוק + ציאן (יער)</span>',
+    lessonEn: '<strong>Analogous colors</strong> — three adjacent hues on the wheel. They never "clash" — no contrast, no tension, only flow. That\'s why they feel natural and calm. A sunset with red-orange-yellow, a forest with green-cyan-blue.<br><br><span class="harmony-examples">Examples: red + orange + yellow (sunset) ◆ cyan + blue + purple (sea at dusk) ◆ yellow + green + cyan (forest)</span>'
+  },
+  {
+    dots: [[0,'hsl(0,90%,55%)'],[120,'hsl(120,75%,42%)'],[240,'hsl(240,90%,60%)']],
+    lines: [[0,120],[120,240],[240,0]],
+    divider: false,
+    photoId: '1OzwWCGT7S_QYWrF6O4gXwQFIG31aiMgh',
+    photoAltHe: 'גרפיטי צבעוני — שלישיית גוונים',
+    photoAltEn: 'Colorful graffiti — triadic palette',
+    titleHe: 'שלישייה — ויברנטי ומאוזן',
+    titleEn: 'Triadic — Vibrant and Balanced',
+    lessonHe: '<strong>שלישיית צבעים</strong> — שלושה גוונים במרחקים שווים (120° זה מזה). יוצרת ויברנטיות, עושר, חיוּת. כדי שלא תרגיש עמוסה — אחד שולט (60%), השניים האחרים תומכים בלבד.<br><br><span class="harmony-examples">דוגמאות: אדום + צהוב + כחול (פלטת הצייר הקלאסית) ◆ כתום + ירוק + סגול ◆ אדריכלות ואמנות רחוב</span>',
+    lessonEn: '<strong>Triadic colors</strong> — three hues equally spaced (120° apart). Creates vibrancy, richness, liveliness. To avoid feeling cluttered — one dominates (60%), the other two support only.<br><br><span class="harmony-examples">Examples: red + yellow + blue (classic painter\'s palette) ◆ orange + green + purple ◆ architecture and street art</span>'
+  },
+  {
+    dots: [[15,'hsl(15,90%,55%)'],[45,'hsl(45,90%,55%)'],[75,'hsl(75,85%,48%)'],
+           [195,'hsl(195,85%,45%)'],[225,'hsl(225,90%,55%)'],[255,'hsl(255,85%,58%)']],
+    lines: [],
+    divider: true,
+    photoId: '1f8_Yb2lJxbfvRCP-33_BoznPL-VDtiad',
+    photoAltHe: 'פנס רחוב — אור חם על שמיים קרים',
+    photoAltEn: 'Street lantern — warm light against cool sky',
+    titleHe: 'חם וקר — עומק מובנה בתמונה',
+    titleEn: 'Warm & Cool — Built-in Depth',
+    lessonHe: '<strong>חצי גלגל חם</strong> (אדום/כתום/צהוב) לעומת <strong>חצי קר</strong> (ציאן/כחול/סגול). ניגוד חם-קר מייצר עומק: צבעים חמים "קופצים" קדימה, קרים מתרחקים. בצילום: אור זהוב שעת הגעה + צל כחול = תלת-ממד מובנה ללא פוסט-פרודקשן.<br><br><span class="harmony-examples">דוגמאות: שעת זהב + צללים כחולים ◆ נר + רקע חדר קר ◆ מנורת רחוב + שמיים לפנות לילה</span>',
+    lessonEn: '<strong>Warm half</strong> (red/orange/yellow) vs. <strong>cool half</strong> (cyan/blue/purple). Warm-cool contrast creates depth: warm colors "pop" forward, cool ones recede. In photography: golden-hour light + blue shadows = built-in 3D without post-processing.<br><br><span class="harmony-examples">Examples: golden hour + blue shadows ◆ candle + cool room background ◆ street lamp + late-night sky</span>'
+  }
+];
+
+function ptFromDeg(deg, r, cx, cy) {
+  var rad = (deg - 0) * Math.PI / 180;
+  return [cx + r * Math.sin(rad), cy - r * Math.cos(rad)];
+}
+
+function buildWheel(h) {
+  var ns = 'http://www.w3.org/2000/svg';
+  var svg = document.getElementById('wheel-svg');
+  while (svg.firstChild) svg.removeChild(svg.firstChild);
+  var cx = 90, cy = 90, r = 66;
+
+  if (h.divider) {
+    var p1 = ptFromDeg(90, r, cx, cy);
+    var p2 = ptFromDeg(270, r, cx, cy);
+    var dl = document.createElementNS(ns, 'line');
+    dl.setAttribute('x1', p1[0]); dl.setAttribute('y1', p1[1]);
+    dl.setAttribute('x2', p2[0]); dl.setAttribute('y2', p2[1]);
+    dl.setAttribute('stroke', 'rgba(255,255,255,0.4)');
+    dl.setAttribute('stroke-width', '1.5');
+    dl.setAttribute('stroke-dasharray', '5 3');
+    svg.appendChild(dl);
+  }
+
+  h.lines.forEach(function(pair) {
+    var pa = ptFromDeg(pair[0], r, cx, cy);
+    var pb = ptFromDeg(pair[1], r, cx, cy);
+    var ln = document.createElementNS(ns, 'line');
+    ln.setAttribute('x1', pa[0]); ln.setAttribute('y1', pa[1]);
+    ln.setAttribute('x2', pb[0]); ln.setAttribute('y2', pb[1]);
+    ln.setAttribute('stroke', 'rgba(255,255,255,0.65)');
+    ln.setAttribute('stroke-width', '2');
+    svg.appendChild(ln);
+  });
+
+  h.dots.forEach(function(dot) {
+    var pt = ptFromDeg(dot[0], r, cx, cy);
+    var c = document.createElementNS(ns, 'circle');
+    c.setAttribute('cx', pt[0]); c.setAttribute('cy', pt[1]);
+    c.setAttribute('r', '9');
+    c.setAttribute('fill', dot[1]);
+    c.setAttribute('stroke', 'white'); c.setAttribute('stroke-width', '2.5');
+    svg.appendChild(c);
+  });
+}
+
+var currentIdx = 0;
+
+function getLang() { return localStorage.getItem('lang') || 'he'; }
+
+function loadHarmony(idx) {
+  var h = HARMONIES[idx];
+  var en = getLang() === 'en';
+  buildWheel(h);
+  var photo = document.getElementById('harmony-photo');
+  photo.style.opacity = '0.5';
+  photo.src = 'https://drive.google.com/thumbnail?id=' + h.photoId + '&sz=w600';
+  photo.alt = en ? h.photoAltEn : h.photoAltHe;
+  photo.onload = function() { photo.style.opacity = '1'; };
+  document.getElementById('harmony-title').innerHTML = en ? h.titleEn : h.titleHe;
+  document.getElementById('harmony-lesson').innerHTML = en ? h.lessonEn : h.lessonHe;
+}
+
+document.getElementById('harmony-tabs').addEventListener('click', function(e) {
+  var tab = e.target.closest('.harmony-tab');
+  if (!tab) return;
+  currentIdx = parseInt(tab.dataset.idx, 10);
+  document.querySelectorAll('.harmony-tab').forEach(function(t) {
+    t.classList.toggle('active', t === tab);
+  });
+  loadHarmony(currentIdx);
+});
+
+function applyLang() {
+  var en = getLang() === 'en';
+  document.documentElement.dir = en ? 'ltr' : 'rtl';
+  document.documentElement.lang = en ? 'en' : 'he';
+  document.body.style.direction = en ? 'ltr' : 'rtl';
+  document.title = en
+    ? 'Color Theory — Visual Harmony in Photography | Amit Photos'
+    : 'תיאוריית צבע — הרמוניה ויזואלית בצילום | Amit Photos';
+  document.querySelectorAll('[data-he]').forEach(function(el) {
+    el.innerHTML = en ? (el.dataset.en || el.dataset.he) : el.dataset.he;
+  });
+  loadHarmony(currentIdx);
+}
+
+applyLang();
+window.addEventListener('storage', function(e) { if (e.key === 'lang') applyLang(); });
+</script>
+</body>
+</html>
