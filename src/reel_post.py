@@ -231,26 +231,23 @@ def _closing_clip(out_path, lang, category, duration):
     draw = ImageDraw.Draw(img)
 
     try:
-        f_he  = ImageFont.truetype(FONT_REGULAR, 52)
-        f_en  = ImageFont.truetype(FONT_BOLD,    62)
-        f_url = ImageFont.truetype(FONT_REGULAR, 48)
+        f_sub = ImageFont.truetype(FONT_REGULAR, 46)
+        f_url = ImageFont.truetype(FONT_BOLD,    72)
     except Exception:
-        f_he = f_en = f_url = ImageFont.load_default()
+        f_sub = f_url = ImageFont.load_default()
 
     def draw_centered(text, font, y, color):
         bb = draw.textbbox((0, 0), text, font=font)
         draw.text(((W - (bb[2] - bb[0])) // 2, y), text, font=font, fill=color)
 
-    cy = H // 2 - 140
+    cy = H // 2 - 90
 
-    draw_centered("בקר באתר שלי",  f_he,  cy,        (200, 200, 220))
-    # English line
-    draw_centered("Visit my website:",    f_en,  cy + 90,   (240, 240, 255))
-    # קו מפריד
-    draw.line([(W // 2 - 140, cy + 175), (W // 2 + 140, cy + 175)],
-              fill=(200, 168, 80), width=2)
-    # URL — צבע זהב כמו האתר
-    draw_centered("www.amitphotos.com",   f_url, cy + 200,  (200, 168, 80))
+    draw_centered("Visit my website:",  f_sub, cy,        (180, 180, 200))
+    # קו מפריד דק
+    draw.line([(W // 2 - 160, cy + 72), (W // 2 + 160, cy + 72)],
+              fill=(200, 168, 80), width=1)
+    # URL בולט — גדול וזהב
+    draw_centered("www.amitphotos.com", f_url, cy + 90,   (200, 168, 80))
 
     with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp:
         img.save(tmp.name)
