@@ -5977,7 +5977,7 @@ async function confirmLinkToLocation() {
     if (reelAllPhotos.length > 0) return;
     sel.innerHTML = '<option value="">טוען...</option>';
     try {
-      const res  = await fetch('/api/photos?admin=1', { headers: { 'X-Session-Token': SESSION_TOKEN } });
+      const res  = await fetch('/api/photos?admin=1&slim=1', { headers: { 'X-Session-Token': SESSION_TOKEN } });
       const data = await res.json();
       reelAllPhotos = Array.isArray(data) ? data : (data.results || data.photos || []);
       const cats = [...new Set(reelAllPhotos.map(p => p.category).filter(Boolean))].sort();

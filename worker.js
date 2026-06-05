@@ -506,10 +506,19 @@ async function handlePhotos(request, env) {
   if (method === 'GET') {
     const url = new URL(request.url);
     const adminAll = url.searchParams.get('admin') === '1';
+    const slim = url.searchParams.get('slim') === '1';
     const q = url.searchParams.get('q') || '';
     const limitParam = parseInt(url.searchParams.get('limit')) || 0;
     // ?admin=1 מחייב auth; גישה ציבורית — רק published
     if (adminAll && !await checkAuth(request, env)) return unauth(request);
+
+    // slim mode — רק שדות לגריד, ללא week photo overhead
+    if (slim && adminAll) {
+      const { results: slimResults } = await env.DB.prepare(
+        'SELECT id, title, category, thumbnail FROM photos ORDER BY CASE WHEN sort_order IS NULL THEN 1 ELSE 0 END, sort_order ASC, created_at DESC'
+      ).all();
+      return jsonRes(slimResults, 200, request);
+    }
 
     let sql, params;
     if (q && !adminAll) {
