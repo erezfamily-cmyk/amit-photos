@@ -1350,7 +1350,7 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
               <label style="font-size:.85rem;color:var(--muted)">בחר עד 5 תמונות לרילס</label>
               <span id="reel-selected-count" style="font-size:.82rem;color:var(--accent);font-weight:700">0/5 נבחרו</span>
             </div>
-            <div id="reel-photo-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-height:520px;overflow-y:scroll;border:1px solid var(--border);border-radius:8px;padding:8px;background:var(--bg);scrollbar-width:thin;direction:ltr"></div>
+            <div id="reel-photo-grid" style="display:grid;grid-template-columns:repeat(3,1fr);grid-auto-rows:120px;gap:8px;max-height:520px;overflow-y:scroll;border:1px solid var(--border);border-radius:8px;padding:8px;background:var(--bg);scrollbar-width:thin;direction:ltr"></div>
             <div style="margin-top:.5rem;display:flex;gap:.5rem">
               <button onclick="reelSelectRandom()" style="flex:1;padding:.4rem;background:var(--surface);border:1px solid var(--border);border-radius:6px;color:var(--muted);font-size:.8rem;cursor:pointer">🎲 אקראי</button>
               <button onclick="reelClearSelection()" style="flex:1;padding:.4rem;background:var(--surface);border:1px solid var(--border);border-radius:6px;color:var(--muted);font-size:.8rem;cursor:pointer">✕ נקה</button>
@@ -5972,15 +5972,16 @@ async function confirmLinkToLocation() {
   let reelAllPhotos = [];
   let reelSelectedIds = new Set();
 
+  let reelCategoriesLoaded = false;
+
   async function loadReelCategories() {
     const sel = document.getElementById('reel-category');
-    if (reelAllPhotos.length > 0) return;
+    if (reelCategoriesLoaded) return;
     sel.innerHTML = '<option value="">טוען...</option>';
     try {
-      const res  = await fetch('/api/photos?admin=1&slim=1', { headers: { 'X-Session-Token': SESSION_TOKEN } });
-      const data = await res.json();
-      reelAllPhotos = Array.isArray(data) ? data : (data.results || data.photos || []);
-      const cats = [...new Set(reelAllPhotos.map(p => p.category).filter(Boolean))].sort();
+      const res = await fetch('/api/photos?admin=1&slim=1&categories_only=1', { headers: { 'X-Session-Token': SESSION_TOKEN } });
+      const cats = await res.json();
+      reelCategoriesLoaded = true;
       sel.innerHTML = '<option value="">— בחר קטגוריה —</option>' +
         cats.map(c => `<option value="${c}">${c}</option>`).join('');
     } catch(e) {
@@ -5989,23 +5990,34 @@ async function confirmLinkToLocation() {
     }
   }
 
-  window.loadReelPhotos = function() {
+  window.loadReelPhotos = async function() {
     const cat = document.getElementById('reel-category').value;
     const picker = document.getElementById('reel-photo-picker');
     const grid   = document.getElementById('reel-photo-grid');
     if (!cat) { picker.style.display = 'none'; return; }
 
     reelSelectedIds.clear();
+    reelAllPhotos = [];
     updateReelCount();
-
-    const photos = reelAllPhotos.filter(p => p.category === cat);
-    grid.innerHTML = photos.map(p => `
-      <div class="reel-thumb" data-id="${p.id}" onclick="toggleReelPhoto('${p.id}')"
-        style="position:relative;cursor:pointer;border-radius:5px;overflow:hidden;aspect-ratio:1;border:2px solid transparent;transition:.15s">
-        <img src="${p.thumbnail}" style="width:100%;height:100%;object-fit:cover" loading="lazy">
-        <div class="reel-check" style="display:none;position:absolute;inset:0;background:rgba(200,169,110,.35);align-items:center;justify-content:center;font-size:1.4rem">✓</div>
-      </div>`).join('');
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--muted);font-size:.85rem">טוען תמונות...</div>';
     picker.style.display = 'block';
+
+    try {
+      const res = await fetch(`/api/photos?admin=1&slim=1&category=${encodeURIComponent(cat)}`, { headers: { 'X-Session-Token': SESSION_TOKEN } });
+      reelAllPhotos = await res.json();
+    } catch(e) {
+      grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:2rem;color:red;font-size:.85rem">שגיאה בטעינה</div>';
+      return;
+    }
+
+    grid.innerHTML = reelAllPhotos.map(p => {
+      const thumb = (p.thumbnail || '').replace(/[?&]sz=w\d+/, '').replace(/(\?|&)?$/, t => t) + (p.thumbnail?.includes('?') ? '&sz=w150' : '?sz=w150');
+      return `<div class="reel-thumb" data-id="${p.id}" onclick="toggleReelPhoto('${p.id}')"
+        style="position:relative;cursor:pointer;border-radius:5px;overflow:hidden;border:2px solid transparent;transition:.15s">
+        <img src="${thumb}" style="width:100%;height:100%;object-fit:cover;display:block">
+        <div class="reel-check" style="display:none;position:absolute;inset:0;background:rgba(200,169,110,.35);align-items:center;justify-content:center;font-size:1.4rem">✓</div>
+      </div>`;
+    }).join('');
   };
 
   window.toggleReelPhoto = function(id) {

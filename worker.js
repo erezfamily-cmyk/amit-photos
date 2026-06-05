@@ -514,9 +514,20 @@ async function handlePhotos(request, env) {
 
     // slim mode — רק שדות לגריד, ללא week photo overhead
     if (slim && adminAll) {
-      const { results: slimResults } = await env.DB.prepare(
-        'SELECT id, title, category, thumbnail FROM photos ORDER BY CASE WHEN sort_order IS NULL THEN 1 ELSE 0 END, sort_order ASC, created_at DESC'
-      ).all();
+      const catFilter = url.searchParams.get('category') || '';
+      const categoriesOnly = url.searchParams.get('categories_only') === '1';
+      if (categoriesOnly) {
+        const { results: catRows } = await env.DB.prepare(
+          'SELECT DISTINCT category FROM photos WHERE category IS NOT NULL AND category != "" ORDER BY category'
+        ).all();
+        return jsonRes(catRows.map(r => r.category), 200, request);
+      }
+      const sql = catFilter
+        ? 'SELECT id, title, category, thumbnail FROM photos WHERE category=? ORDER BY CASE WHEN sort_order IS NULL THEN 1 ELSE 0 END, sort_order ASC, created_at DESC'
+        : 'SELECT id, title, category, thumbnail FROM photos ORDER BY CASE WHEN sort_order IS NULL THEN 1 ELSE 0 END, sort_order ASC, created_at DESC';
+      const { results: slimResults } = catFilter
+        ? await env.DB.prepare(sql).bind(catFilter).all()
+        : await env.DB.prepare(sql).all();
       return jsonRes(slimResults, 200, request);
     }
 
