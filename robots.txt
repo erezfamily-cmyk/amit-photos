@@ -1,6 +1,24 @@
 User-agent: *
 Allow: /
-Disallow: /api/
+
+# Admin & private pages
 Disallow: /admin
+Disallow: /admin.html
+
+# API endpoints
+Disallow: /api/
+
+# Development & internal files
+Disallow: /.superpowers/
+Disallow: /docs/
+Disallow: /pinterest-connect/
+
+# Utility pages not for indexing
+Disallow: /print-complete.html
+Disallow: /download.html
+Disallow: /mockup-map.html
+
+# Dynamic spot page (loaded via JS with parameters)
+Disallow: /locations/spot/
 
 Sitemap: https://amitphotos.com/sitemap.xml
