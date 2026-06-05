@@ -414,45 +414,57 @@ def make_album_reel(category, lang=None, dry_run=False):
     total = n_photos * photo_secs + CLOSING_SECS
     print(f"\n✅ {out_path}  ({total:.0f} שניות)")
 
-    # העלה ל-R2 אם יש credentials
-    r2_url = _upload_to_r2(out_path)
-    if r2_url:
-        print(f"☁️  R2: {r2_url}")
+    # העלה לאחסון ציבורי → שמור URL ל-latest_reel.json
+    dl_url = _publish_reel(out_path, category, lang)
+    if dl_url:
+        print(f"🔗 הורדה: {dl_url}")
 
     return str(out_path)
 
 
-# ── R2 Upload ────────────────────────────────────────────────────────────────
+# ── Publish reel → direct download URL ───────────────────────────────────────
 
-def _upload_to_r2(video_path):
-    """מעלה MP4 ל-Cloudflare R2. מחזיר URL להורדה או None."""
-    account_id  = os.environ.get("CF_ACCOUNT_ID", "")
-    key_id      = os.environ.get("R2_ACCESS_KEY_ID", "")
-    secret_key  = os.environ.get("R2_SECRET_ACCESS_KEY", "")
-    bucket      = "amit-photos-images"
+def _publish_reel(video_path, category, lang):
+    """
+    מעלה ל-0x0.st (permanent, public) ושומר URL ב-data/latest_reel.json.
+    מחזיר את ה-URL או None.
+    """
+    import requests as req
+    import datetime
 
-    if not all([account_id, key_id, secret_key]):
+    video_path = Path(video_path)
+    if not video_path.exists():
         return None
+
+    data = video_path.read_bytes()
+    print(f"📤 מעלה ({len(data)/1024/1024:.1f} MB) ל-0x0.st...")
 
     try:
-        import boto3
-        from botocore.config import Config
-
-        s3 = boto3.client(
-            "s3",
-            endpoint_url=f"https://{account_id}.r2.cloudflarestorage.com",
-            aws_access_key_id=key_id,
-            aws_secret_access_key=secret_key,
-            config=Config(signature_version="s3v4"),
-            region_name="auto",
+        r = req.post(
+            "https://0x0.st",
+            files={"file": (video_path.name, data, "video/mp4")},
+            timeout=120,
         )
-        key = f"reels/{Path(video_path).name}"
-        s3.upload_file(str(video_path), bucket, key,
-                       ExtraArgs={"ContentType": "video/mp4"})
-        return f"https://amitphotos.com/api/reels/file/{Path(video_path).name}"
+        r.raise_for_status()
+        url = r.text.strip()
+        if not url.startswith("http"):
+            raise ValueError(f"תגובה לא תקינה: {url}")
     except Exception as e:
-        print(f"⚠️  R2 upload נכשל: {e}")
+        print(f"⚠️  upload נכשל: {e}")
         return None
+
+    # שמור ב-data/latest_reel.json
+    record = {
+        "url":        url,
+        "category":   category,
+        "lang":       lang,
+        "filename":   video_path.name,
+        "created_at": datetime.datetime.utcnow().isoformat(),
+    }
+    out = ROOT / "data" / "latest_reel.json"
+    out.write_text(json.dumps(record, ensure_ascii=False, indent=2), encoding="utf-8")
+    print(f"💾 שמור ב-{out}")
+    return url
 
 
 # ── Instagram ─────────────────────────────────────────────────────────────────

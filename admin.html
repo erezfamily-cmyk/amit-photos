@@ -6038,9 +6038,11 @@ async function confirmLinkToLocation() {
         btn.textContent = 'צור רילס עכשיו';
 
         if (data.conclusion === 'success') {
-          setStatus('✅', 'הרילס מוכן!', 'לחץ להורדה מ-GitHub Actions');
+          const dlUrl = data.download_url || data.artifact_url;
+          setStatus('✅', 'הרילס מוכן!', dlUrl ? '' : 'בדוק GitHub Actions');
           const link = document.getElementById('reel-download-link');
-          link.href = data.artifact_url;
+          link.href = dlUrl || '#';
+          link.textContent = '📥 הורד סרטון';
           link.style.display = 'inline-block';
         } else {
           setStatus('❌', 'ריצה נכשלה', `סטטוס: ${data.conclusion}`);

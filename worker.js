@@ -828,7 +828,18 @@ async function handleReels(request, env) {
     const res  = await fetch(`${GH}/actions/workflows/reel-maker.yml/runs?per_page=1`, { headers: ghHeaders });
     const data = await res.json();
     const run  = data.workflow_runs?.[0];
-    return jsonRes({ run_id: run?.id, status: run?.status }, 200, request);
+
+    // קרא latest_reel.json לURL להורדה
+    let download_url = null;
+    try {
+      const assetRes = await env.ASSETS.fetch(new Request('https://amitphotos.com/data/latest_reel.json'));
+      if (assetRes.ok) {
+        const reel = await assetRes.json();
+        download_url = reel.url || null;
+      }
+    } catch {}
+
+    return jsonRes({ run_id: run?.id, status: run?.status, download_url }, 200, request);
   }
 
   // GET?run_id=... — סטטוס ריצה
@@ -838,10 +849,23 @@ async function handleReels(request, env) {
   const res = await fetch(`${GH}/actions/runs/${runId}`, { headers: ghHeaders });
   const run = await res.json();
 
+  // קרא latest_reel.json לURL להורדה ישירה
+  let download_url = null;
+  if (run.status === 'completed' && run.conclusion === 'success') {
+    try {
+      const assetRes = await env.ASSETS.fetch(new Request('https://amitphotos.com/data/latest_reel.json'));
+      if (assetRes.ok) {
+        const reel = await assetRes.json();
+        download_url = reel.url || null;
+      }
+    } catch {}
+  }
+
   return jsonRes({
     status:       run.status,
     conclusion:   run.conclusion,
     run_url:      run.html_url,
+    download_url,
     artifact_url: (run.status === 'completed' && run.conclusion === 'success')
       ? `${GH.replace('api.github.com/repos', 'github.com')}/actions/runs/${runId}`
       : null,
