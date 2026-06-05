@@ -52,16 +52,37 @@ ALBUM_OUTPUT = ROOT / "reels_output"
 
 W, H             = 1080, 1920
 FPS              = 30
-ALBUM_SECS       = 10.0
 CLOSING_SECS     = 2.5
-NUM_PHOTOS       = 3
-PHOTO_SECS       = (ALBUM_SECS - CLOSING_SECS) / NUM_PHOTOS   # 2.5s per photo
+
+# Ken Burns mode (no FAL_KEY)
+NUM_PHOTOS_KB    = 3
+PHOTO_SECS_KB    = (10.0 - CLOSING_SECS) / NUM_PHOTOS_KB   # 2.5s each
+
+# Seedance mode (FAL_KEY available)
+NUM_PHOTOS_SD    = 2
+PHOTO_SECS_SD    = 5.0   # Seedance output is 5s per clip
 
 FONT_REGULAR = "C:/Windows/Fonts/arial.ttf"
 FONT_BOLD    = "C:/Windows/Fonts/arialbd.ttf"
 
 IG_USER_ID   = os.environ.get("INSTAGRAM_USER_ID", "")
 ACCESS_TOKEN = os.environ.get("INSTAGRAM_PAGE_TOKEN", "")
+FAL_KEY      = os.environ.get("FAL_KEY", "")
+
+# פרומפטים לתנועה לפי קטגוריה
+MOTION_PROMPTS = {
+    "פרחים וצמחים":       "gentle breeze, petals and leaves swaying softly, macro beauty",
+    "בעלי חיים":           "subtle natural animal movement, breathing, wildlife in habitat",
+    "מאקרו-צילומי תקריב": "micro vibration, delicate texture details, macro world revealed",
+    "צילום מופשט":         "dreamlike slow morphing, abstract color flow, artistic motion",
+    "ישראל":               "slow cinematic camera drift, golden Mediterranean light shift",
+    "טבע דומם":            "gentle light play, soft shadows drifting, still life breathing",
+    "שחור-לבן":            "dramatic light and shadow shift, cinematic noir motion",
+    "טנזניה":              "savanna warm breeze, golden hour glow, African wildlife atmosphere",
+    "ספרד ואנדורה":        "mediterranean warmth, architecture breathing, travel cinematic",
+    "איטליה":              "italian golden light, gentle atmospheric drift, cinematic beauty",
+    "default":             "gentle cinematic motion, subtle atmospheric movement, fine art photography",
+}
 
 
 def _find_ffmpeg():
@@ -254,28 +275,89 @@ def _concat(clip_paths, out_path):
         os.unlink(lst)
 
 
+# ── Video: Seedance 2.0 clip ──────────────────────────────────────────────────
+
+def _seedance_clip(photo_path, out_path, photo_meta, duration=5):
+    """fal.ai Seedance 2.0: מנפש תמונה → MP4 9:16."""
+    try:
+        import fal_client
+    except ImportError:
+        raise RuntimeError("pip install fal-client")
+
+    os.environ["FAL_KEY"] = FAL_KEY
+
+    import urllib.request as ul
+    category = photo_meta.get("category", "")
+    prompt   = MOTION_PROMPTS.get(category, MOTION_PROMPTS["default"])
+
+    print("  📤 מעלה לfal.ai...")
+    img_url = fal_client.upload_file(str(photo_path))
+
+    print("  🌀 Seedance 2.0 מעבד (~30 שניות)...")
+    result = fal_client.run(
+        "fal-ai/bytedance/seedance-2.0/image-to-video",
+        arguments={
+            "image_url":    img_url,
+            "prompt":       prompt,
+            "duration":     str(duration),
+            "aspect_ratio": "9:16",
+        },
+    )
+
+    video_url = result["video"]["url"]
+    print(f"  ✅ וידאו מוכן: {video_url[:60]}...")
+
+    # הורד ונרמל ל-1080×1920 H.264
+    req = ul.Request(video_url, headers={"User-Agent": "Mozilla/5.0"})
+    with ul.urlopen(req, timeout=120) as r:
+        raw_data = r.read()
+
+    with tempfile.NamedTemporaryFile(suffix=".mp4", delete=False) as tmp:
+        tmp.write(raw_data)
+        raw_path = tmp.name
+
+    try:
+        subprocess.run([
+            FFMPEG, "-y", "-i", raw_path,
+            "-vf", (f"scale={W}:{H}:force_original_aspect_ratio=decrease,"
+                    f"pad={W}:{H}:(ow-iw)/2:(oh-ih)/2:black,setsar=1"),
+            "-c:v", "libx264", "-preset", "fast", "-crf", "21",
+            "-r", str(FPS), "-pix_fmt", "yuv420p", "-an",
+            str(out_path),
+        ], capture_output=True, check=True)
+    except subprocess.CalledProcessError as e:
+        raise RuntimeError(f"נרמול Seedance נכשל: {e.stderr[-300:]}")
+    finally:
+        os.unlink(raw_path)
+
+
 # ── יצירת Album Reel ──────────────────────────────────────────────────────────
 
 def make_album_reel(category, lang=None, dry_run=False):
     """
-    בוחר NUM_PHOTOS תמונות אקראיות מהקטגוריה,
-    מייצר רילס 10 שניות עם שקופית סיום.
-    מחזיר נתיב MP4 או None.
+    בוחר תמונות מהקטגוריה ומייצר רילס.
+    - עם FAL_KEY: Seedance 2.0 (2 תמונות × 5s + סיום = ~12.5s)
+    - בלי FAL_KEY: Ken Burns (3 תמונות × 2.5s + סיום = 10s)
     """
+    use_seedance = bool(FAL_KEY)
+    n_photos     = NUM_PHOTOS_SD if use_seedance else NUM_PHOTOS_KB
+    photo_secs   = PHOTO_SECS_SD if use_seedance else PHOTO_SECS_KB
+    mode         = "🌀 Seedance 2.0" if use_seedance else "🎞  Ken Burns"
+
     photos_all = load_photos()
     cat_photos = [p for p in photos_all if p.get("category") == category]
-    if len(cat_photos) < NUM_PHOTOS:
-        print(f"❌ רק {len(cat_photos)} תמונות ב-'{category}', צריך {NUM_PHOTOS}")
+    if len(cat_photos) < n_photos:
+        print(f"❌ רק {len(cat_photos)} תמונות ב-'{category}', צריך {n_photos}")
         return None
 
-    selected = random.sample(cat_photos, NUM_PHOTOS)
+    selected = random.sample(cat_photos, n_photos)
     lang     = _next_cta_lang(lang)
 
     ALBUM_OUTPUT.mkdir(exist_ok=True)
     safe     = category.replace(" ", "_").replace("/", "-").replace('"', "")
     out_path = ALBUM_OUTPUT / f"reel_{safe}_{lang}.mp4"
 
-    print(f"\n🎬 {category} ({lang.upper()})")
+    print(f"\n🎬 {category} ({lang.upper()}) — {mode}")
     for p in selected:
         print(f"   • {p['title']}")
 
@@ -288,24 +370,33 @@ def make_album_reel(category, lang=None, dry_run=False):
         clips = []
 
         for i, photo in enumerate(selected):
-            print(f"⬇  {i+1}/{NUM_PHOTOS}: {photo['title']}")
+            print(f"\n⬇  {i+1}/{n_photos}: {photo['title']}")
             src = tmp / f"photo_{i}.jpg"
             _download_photo(photo, src)
 
             clip = tmp / f"clip_{i}.mp4"
-            _ken_burns_clip(src, clip, PHOTO_SECS,
-                            pan_dir="left" if i % 2 == 0 else "right")
+            if use_seedance:
+                try:
+                    _seedance_clip(src, clip, photo, duration=int(photo_secs))
+                except Exception as e:
+                    print(f"  ⚠️  Seedance נכשל ({e}) — עובר ל-Ken Burns")
+                    _ken_burns_clip(src, clip, photo_secs,
+                                    pan_dir="left" if i % 2 == 0 else "right")
+            else:
+                _ken_burns_clip(src, clip, photo_secs,
+                                pan_dir="left" if i % 2 == 0 else "right")
             clips.append(clip)
 
         closing = tmp / "closing.mp4"
-        print("🖼  שקופית סיום...")
+        print("\n🖼  שקופית סיום...")
         _closing_clip(closing, lang, category, CLOSING_SECS)
         clips.append(closing)
 
         print("🔗 מרכיב...")
         _concat(clips, out_path)
 
-    print(f"✅ {out_path}")
+    total = n_photos * photo_secs + CLOSING_SECS
+    print(f"\n✅ {out_path}  ({total:.0f} שניות)")
     return str(out_path)
 
 
