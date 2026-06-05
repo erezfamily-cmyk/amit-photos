@@ -698,6 +698,10 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
         <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" stroke-width="1.5"/><circle cx="12" cy="9" r="2.5" stroke-width="1.5"/></svg>
         מקומות
       </div>
+      <div class="nav-item" data-section="reels">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="2" y="2" width="20" height="20" rx="4" stroke-width="1.5"/><path d="M8 5v14M16 5v14M2 9h20M2 15h20" stroke-width="1.5"/></svg>
+        רילס
+      </div>
     </nav>
     <div class="sidebar-footer">
       <a href="/free-guide/" target="_blank" style="display:block;text-align:center;margin-bottom:.75rem;color:var(--accent);font-size:.82rem;text-decoration:none;opacity:.8">🎁 דף לידים</a>
@@ -1320,6 +1324,59 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
         </table>
       </div>
     </section>
+
+    <!-- REELS SECTION -->
+    <section class="section" id="section-reels">
+      <div class="section-header">
+        <h1 class="section-title">🎬 יצירת רילס</h1>
+      </div>
+
+      <div style="max-width:520px;margin:0 auto">
+
+        <!-- טופס יצירה -->
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1.5rem">
+          <div style="margin-bottom:1rem">
+            <label style="display:block;font-size:.85rem;color:var(--muted);margin-bottom:.4rem">קטגוריה</label>
+            <select id="reel-category" style="width:100%;padding:.6rem .8rem;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:.95rem">
+              <option value="">טוען קטגוריות...</option>
+            </select>
+          </div>
+
+          <div style="margin-bottom:1.25rem">
+            <label style="display:block;font-size:.85rem;color:var(--muted);margin-bottom:.4rem">שפת שקופית הסיום</label>
+            <div style="display:flex;gap:.5rem">
+              <label style="flex:1;display:flex;align-items:center;gap:.4rem;padding:.5rem .8rem;border:1px solid var(--border);border-radius:6px;cursor:pointer;background:var(--bg)">
+                <input type="radio" name="reel-lang" value="auto" checked> אוטומטי (חלופי)
+              </label>
+              <label style="flex:1;display:flex;align-items:center;gap:.4rem;padding:.5rem .8rem;border:1px solid var(--border);border-radius:6px;cursor:pointer;background:var(--bg)">
+                <input type="radio" name="reel-lang" value="he"> עברית
+              </label>
+              <label style="flex:1;display:flex;align-items:center;gap:.4rem;padding:.5rem .8rem;border:1px solid var(--border);border-radius:6px;cursor:pointer;background:var(--bg)">
+                <input type="radio" name="reel-lang" value="en"> English
+              </label>
+            </div>
+          </div>
+
+          <button id="reel-create-btn" onclick="createReel()"
+            style="width:100%;padding:.75rem;background:var(--accent);color:#000;border:none;border-radius:8px;font-size:1rem;font-weight:700;cursor:pointer">
+            צור רילס עכשיו
+          </button>
+        </div>
+
+        <!-- סטטוס -->
+        <div id="reel-status-box" style="display:none;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;text-align:center">
+          <div id="reel-status-icon" style="font-size:2rem;margin-bottom:.5rem">⏳</div>
+          <div id="reel-status-text" style="font-size:.95rem;color:var(--text)">מפעיל GitHub Actions...</div>
+          <div id="reel-status-sub" style="font-size:.82rem;color:var(--muted);margin-top:.25rem"></div>
+          <a id="reel-download-link" href="#" target="_blank"
+            style="display:none;margin-top:1rem;padding:.6rem 1.2rem;background:var(--accent);color:#000;border-radius:6px;font-weight:700;text-decoration:none;font-size:.9rem">
+            📥 הורד סרטון מ-GitHub
+          </a>
+        </div>
+
+      </div>
+    </section>
+
   </main>
 </div>
 
@@ -5885,6 +5942,107 @@ async function confirmLinkToLocation() {
 
   // Wire the open button (called after renderPhotosPanel)
   window.openPhotoPicker = openPhotoPicker;
+})();
+</script>
+
+<script>
+// ── Reels Section ─────────────────────────────────────────────────────────────
+(function() {
+  let reelPollInterval = null;
+
+  // טען קטגוריות כשנכנסים לסקשן
+  document.querySelector('.nav-item[data-section="reels"]')?.addEventListener('click', loadReelCategories);
+
+  async function loadReelCategories() {
+    const sel = document.getElementById('reel-category');
+    if (sel.options.length > 1) return; // כבר נטען
+    try {
+      const pwd = sessionStorage.getItem('admin_session') || localStorage.getItem('admin_session') || '';
+      const res  = await fetch('/api/photos', { headers: { 'X-Admin-Password': pwd } });
+      const photos = await res.json();
+      const cats   = [...new Set(photos.map(p => p.category).filter(Boolean))].sort();
+      sel.innerHTML = '<option value="">— בחר קטגוריה —</option>' +
+        cats.map(c => `<option value="${c}">${c}</option>`).join('');
+    } catch(e) {
+      sel.innerHTML = '<option value="">שגיאה בטעינה</option>';
+    }
+  }
+
+  window.createReel = async function() {
+    const category = document.getElementById('reel-category').value;
+    const lang     = document.querySelector('input[name="reel-lang"]:checked')?.value || 'auto';
+    if (!category) { alert('בחר קטגוריה'); return; }
+
+    const btn = document.getElementById('reel-create-btn');
+    btn.disabled = true;
+    btn.textContent = 'מפעיל...';
+
+    setStatus('⏳', 'מפעיל GitHub Actions...', '');
+    document.getElementById('reel-status-box').style.display = 'block';
+    document.getElementById('reel-download-link').style.display = 'none';
+
+    try {
+      const pwd = sessionStorage.getItem('admin_session') || localStorage.getItem('admin_session') || '';
+      const res  = await fetch('/api/reels', {
+        method: 'POST',
+        headers: { 'X-Admin-Password': pwd, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ category, lang }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'שגיאה');
+
+      setStatus('🔄', `יוצר רילס: "${category}"`, 'Seedance 2.0 מעבד תמונות... (~3 דקות)');
+      pollStatus(data.run_id);
+    } catch(e) {
+      setStatus('❌', `שגיאה: ${e.message}`, '');
+      btn.disabled = false;
+      btn.textContent = 'צור רילס עכשיו';
+    }
+  };
+
+  function pollStatus(runId) {
+    if (reelPollInterval) clearInterval(reelPollInterval);
+    reelPollInterval = setInterval(() => checkStatus(runId), 12000);
+    checkStatus(runId);
+  }
+
+  async function checkStatus(runId) {
+    try {
+      const pwd = sessionStorage.getItem('admin_session') || localStorage.getItem('admin_session') || '';
+      const res  = await fetch(`/api/reels?run_id=${runId}`, { headers: { 'X-Admin-Password': pwd } });
+      const data = await res.json();
+
+      if (data.status === 'completed') {
+        clearInterval(reelPollInterval);
+        const btn = document.getElementById('reel-create-btn');
+        btn.disabled = false;
+        btn.textContent = 'צור רילס עכשיו';
+
+        if (data.conclusion === 'success') {
+          setStatus('✅', 'הרילס מוכן!', 'לחץ להורדה מ-GitHub Actions');
+          const link = document.getElementById('reel-download-link');
+          link.href = data.artifact_url;
+          link.style.display = 'inline-block';
+        } else {
+          setStatus('❌', 'ריצה נכשלה', `סטטוס: ${data.conclusion}`);
+          const link = document.getElementById('reel-download-link');
+          link.href = data.run_url;
+          link.textContent = '🔍 ראה לוג שגיאה';
+          link.style.display = 'inline-block';
+        }
+      } else {
+        setStatus('🔄', 'מייצר רילס...', `סטטוס: ${data.status}`);
+      }
+    } catch(e) {
+      console.warn('poll error', e);
+    }
+  }
+
+  function setStatus(icon, text, sub) {
+    document.getElementById('reel-status-icon').textContent = icon;
+    document.getElementById('reel-status-text').textContent = text;
+    document.getElementById('reel-status-sub').textContent  = sub;
+  }
 })();
 </script>
 
