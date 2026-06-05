@@ -349,7 +349,7 @@ def _seedance_clip(photo_path, out_path, photo_meta, duration=5):
 
 # ── יצירת Album Reel ──────────────────────────────────────────────────────────
 
-def make_album_reel(category, lang=None, dry_run=False):
+def make_album_reel(category, lang=None, dry_run=False, photo_ids=None):
     """
     בוחר תמונות מהקטגוריה ומייצר רילס.
     - עם FAL_KEY: Seedance 2.0 (2 תמונות × 5s + סיום = ~12.5s)
@@ -366,7 +366,14 @@ def make_album_reel(category, lang=None, dry_run=False):
         print(f"❌ רק {len(cat_photos)} תמונות ב-'{category}', צריך {n_photos}")
         return None
 
-    selected = random.sample(cat_photos, n_photos)
+    if photo_ids:
+        id_set   = set(photo_ids)
+        selected = [p for p in photos_all if p["id"] in id_set][:n_photos]
+        if not selected:
+            print("⚠️  לא נמצאו תמונות עם ה-IDs שנבחרו — בוחר אקראי")
+            selected = random.sample(cat_photos, min(n_photos, len(cat_photos)))
+    else:
+        selected = random.sample(cat_photos, min(n_photos, len(cat_photos)))
     lang     = _next_cta_lang(lang)
 
     ALBUM_OUTPUT.mkdir(exist_ok=True)
@@ -542,6 +549,8 @@ def main():
     ap.add_argument("--category", "-c", required=False, help="שם הקטגוריה")
     ap.add_argument("--lang", "-l", choices=["he", "en"],
                     help="שפת שקופית הסיום (ברירת מחדל: חלופי)")
+    ap.add_argument("--photos", "-p",
+                    help="IDs ספציפיים מופרדים בפסיק (ריק = אקראי)")
     ap.add_argument("--dry-run", action="store_true",
                     help="רק מדפיס מה יבחר, לא מייצר וידאו")
     ap.add_argument("--list", action="store_true", help="הצג קטגוריות זמינות")
@@ -561,7 +570,8 @@ def main():
         ap.print_help()
         return
 
-    out = make_album_reel(args.category, args.lang, dry_run=args.dry_run)
+    ids = set(args.photos.split(",")) if args.photos else None
+    out = make_album_reel(args.category, args.lang, dry_run=args.dry_run, photo_ids=ids)
     if not out or args.dry_run:
         return
 

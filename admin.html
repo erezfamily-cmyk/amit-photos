@@ -1335,18 +1335,34 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
 
         <!-- טופס יצירה -->
         <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1.5rem">
+
+          <!-- קטגוריה -->
           <div style="margin-bottom:1rem">
             <label style="display:block;font-size:.85rem;color:var(--muted);margin-bottom:.4rem">קטגוריה</label>
-            <select id="reel-category" style="width:100%;padding:.6rem .8rem;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:.95rem">
+            <select id="reel-category" onchange="loadReelPhotos()" style="width:100%;padding:.6rem .8rem;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:.95rem">
               <option value="">טוען קטגוריות...</option>
             </select>
           </div>
 
+          <!-- בחירת תמונות -->
+          <div id="reel-photo-picker" style="display:none;margin-bottom:1rem">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem">
+              <label style="font-size:.85rem;color:var(--muted)">בחר עד 5 תמונות לרילס</label>
+              <span id="reel-selected-count" style="font-size:.82rem;color:var(--accent);font-weight:700">0/5 נבחרו</span>
+            </div>
+            <div id="reel-photo-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;max-height:340px;overflow-y:auto;border:1px solid var(--border);border-radius:8px;padding:6px;background:var(--bg)"></div>
+            <div style="margin-top:.5rem;display:flex;gap:.5rem">
+              <button onclick="reelSelectRandom()" style="flex:1;padding:.4rem;background:var(--surface);border:1px solid var(--border);border-radius:6px;color:var(--muted);font-size:.8rem;cursor:pointer">🎲 אקראי</button>
+              <button onclick="reelClearSelection()" style="flex:1;padding:.4rem;background:var(--surface);border:1px solid var(--border);border-radius:6px;color:var(--muted);font-size:.8rem;cursor:pointer">✕ נקה</button>
+            </div>
+          </div>
+
+          <!-- שפה -->
           <div style="margin-bottom:1.25rem">
             <label style="display:block;font-size:.85rem;color:var(--muted);margin-bottom:.4rem">שפת שקופית הסיום</label>
             <div style="display:flex;gap:.5rem">
               <label style="flex:1;display:flex;align-items:center;gap:.4rem;padding:.5rem .8rem;border:1px solid var(--border);border-radius:6px;cursor:pointer;background:var(--bg)">
-                <input type="radio" name="reel-lang" value="auto" checked> אוטומטי (חלופי)
+                <input type="radio" name="reel-lang" value="auto" checked> אוטומטי
               </label>
               <label style="flex:1;display:flex;align-items:center;gap:.4rem;padding:.5rem .8rem;border:1px solid var(--border);border-radius:6px;cursor:pointer;background:var(--bg)">
                 <input type="radio" name="reel-lang" value="he"> עברית
@@ -5953,19 +5969,90 @@ async function confirmLinkToLocation() {
   // טען קטגוריות כשנכנסים לסקשן
   document.querySelector('.nav-item[data-section="reels"]')?.addEventListener('click', loadReelCategories);
 
+  let reelAllPhotos = [];
+  let reelSelectedIds = new Set();
+
   async function loadReelCategories() {
     const sel = document.getElementById('reel-category');
-    if (sel.options.length > 1) return; // כבר נטען
+    if (reelAllPhotos.length > 0) return;
     try {
       const pwd = sessionStorage.getItem('admin_session') || localStorage.getItem('admin_session') || '';
       const res  = await fetch('/api/photos', { headers: { 'X-Admin-Password': pwd } });
-      const photos = await res.json();
-      const cats   = [...new Set(photos.map(p => p.category).filter(Boolean))].sort();
+      reelAllPhotos = await res.json();
+      const cats = [...new Set(reelAllPhotos.map(p => p.category).filter(Boolean))].sort();
       sel.innerHTML = '<option value="">— בחר קטגוריה —</option>' +
         cats.map(c => `<option value="${c}">${c}</option>`).join('');
     } catch(e) {
       sel.innerHTML = '<option value="">שגיאה בטעינה</option>';
     }
+  }
+
+  window.loadReelPhotos = function() {
+    const cat = document.getElementById('reel-category').value;
+    const picker = document.getElementById('reel-photo-picker');
+    const grid   = document.getElementById('reel-photo-grid');
+    if (!cat) { picker.style.display = 'none'; return; }
+
+    reelSelectedIds.clear();
+    updateReelCount();
+
+    const photos = reelAllPhotos.filter(p => p.category === cat);
+    grid.innerHTML = photos.map(p => `
+      <div class="reel-thumb" data-id="${p.id}" onclick="toggleReelPhoto('${p.id}')"
+        style="position:relative;cursor:pointer;border-radius:5px;overflow:hidden;aspect-ratio:1;border:2px solid transparent;transition:.15s">
+        <img src="${p.thumbnail}" style="width:100%;height:100%;object-fit:cover" loading="lazy">
+        <div class="reel-check" style="display:none;position:absolute;inset:0;background:rgba(200,169,110,.35);align-items:center;justify-content:center;font-size:1.4rem">✓</div>
+      </div>`).join('');
+    picker.style.display = 'block';
+  };
+
+  window.toggleReelPhoto = function(id) {
+    if (reelSelectedIds.has(id)) {
+      reelSelectedIds.delete(id);
+    } else {
+      if (reelSelectedIds.size >= 5) { alert('מקסימום 5 תמונות'); return; }
+      reelSelectedIds.add(id);
+    }
+    const el = document.querySelector(`.reel-thumb[data-id="${id}"]`);
+    const check = el?.querySelector('.reel-check');
+    if (reelSelectedIds.has(id)) {
+      el.style.borderColor = 'var(--accent)';
+      check.style.display = 'flex';
+    } else {
+      el.style.borderColor = 'transparent';
+      check.style.display = 'none';
+    }
+    updateReelCount();
+  };
+
+  window.reelSelectRandom = function() {
+    const cat = document.getElementById('reel-category').value;
+    const photos = reelAllPhotos.filter(p => p.category === cat);
+    reelSelectedIds.clear();
+    document.querySelectorAll('.reel-thumb').forEach(el => {
+      el.style.borderColor = 'transparent';
+      el.querySelector('.reel-check').style.display = 'none';
+    });
+    const shuffled = [...photos].sort(() => Math.random() - 0.5).slice(0, 5);
+    shuffled.forEach(p => { reelSelectedIds.add(p.id); });
+    reelSelectedIds.forEach(id => {
+      const el = document.querySelector(`.reel-thumb[data-id="${id}"]`);
+      if (el) { el.style.borderColor = 'var(--accent)'; el.querySelector('.reel-check').style.display = 'flex'; }
+    });
+    updateReelCount();
+  };
+
+  window.reelClearSelection = function() {
+    reelSelectedIds.clear();
+    document.querySelectorAll('.reel-thumb').forEach(el => {
+      el.style.borderColor = 'transparent';
+      el.querySelector('.reel-check').style.display = 'none';
+    });
+    updateReelCount();
+  };
+
+  function updateReelCount() {
+    document.getElementById('reel-selected-count').textContent = `${reelSelectedIds.size}/5 נבחרו`;
   }
 
   window.createReel = async function() {
@@ -5984,10 +6071,11 @@ async function confirmLinkToLocation() {
     const pwd = sessionStorage.getItem('admin_session') || localStorage.getItem('admin_session') || '';
 
     try {
+      const photos = reelSelectedIds.size > 0 ? [...reelSelectedIds].join(',') : '';
       const res  = await fetch('/api/reels', {
         method: 'POST',
         headers: { 'X-Admin-Password': pwd, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ category, lang }),
+        body: JSON.stringify({ category, lang, photos }),
       });
       const text = await res.text();
       let data;

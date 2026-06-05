@@ -16,6 +16,11 @@ on:
           - auto
           - he
           - en
+      photos:
+        description: 'IDs של תמונות ספציפיות (מופרדות בפסיק) — ריק = אקראי'
+        required: false
+        default: ''
+        type: string
       post_to_instagram:
         description: 'פרסם ל-Instagram אחרי יצירה?'
         required: false
@@ -63,7 +68,11 @@ jobs:
             export INSTAGRAM_USER_ID=""
             export INSTAGRAM_PAGE_TOKEN=""
           fi
-          python src/reel_post.py --category "${{ inputs.category }}" $LANG_ARG
+          PHOTOS_ARG=""
+          if [ -n "${{ inputs.photos }}" ]; then
+            PHOTOS_ARG="--photos ${{ inputs.photos }}"
+          fi
+          python src/reel_post.py --category "${{ inputs.category }}" $LANG_ARG $PHOTOS_ARG
 
       - name: שמור latest_reel.json לריפו
         run: |
