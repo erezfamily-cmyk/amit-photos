@@ -1,5 +1,5 @@
 {
-  "current_category_index": 9,
+  "current_category_index": 10,
   "used_ids_by_category": {
     "אבו דאבי": [
       "6c9e818c-bdd3-402f-b6f5-ee2e668507c9",
@@ -88,6 +88,16 @@
       "2527e40a-c563-40e1-9a74-34caf368f489",
       "d267f483-e14a-4573-ae5e-0c704f079681",
       "b38466e5-c344-4184-9b46-d911dc62dddd"
+    ],
+    "טבע דומם": [
+      "f39d002c-bc38-446c-85c3-b6d390492c71",
+      "85275e5f-f992-470b-8ab2-ba64e45bd9d1",
+      "d4b6d40e-7488-473d-9734-b5959ebbd18a",
+      "19e968a5-d1bd-4c8b-9ee8-f99402226c74",
+      "9828f386-20ac-458e-8831-df4f27c57af9",
+      "1ed97a05-9047-4fed-8a02-9df9f10d96a5",
+      "d95156fc-a372-4633-84ab-2687d5b99e37",
+      "d8f82e12-05d0-4619-a0ee-2402b44722bd"
     ]
   },
   "gear_tool_index": 1
