@@ -276,22 +276,58 @@ def _closing_clip(out_path, lang, category, duration):
 
 # ── Video: concat ─────────────────────────────────────────────────────────────
 
-def _concat(clip_paths, out_path):
-    with tempfile.NamedTemporaryFile(
-        mode="w", suffix=".txt", delete=False, encoding="utf-8"
-    ) as f:
-        for p in clip_paths:
-            f.write(f"file '{str(p).replace(chr(92), '/')}'\n")
-        lst = f.name
-    try:
-        r = subprocess.run([
-            FFMPEG, "-y", "-f", "concat", "-safe", "0",
-            "-i", lst, "-c", "copy", str(out_path),
-        ], capture_output=True, text=True)
-        if r.returncode != 0:
-            raise RuntimeError(f"concat נכשל:\n{r.stderr[-400:]}")
-    finally:
-        os.unlink(lst)
+def _concat(clip_paths, out_path, clip_durations=None, xfade_dur=0.5):
+    n = len(clip_paths)
+    if n == 1:
+        shutil.copy2(str(clip_paths[0]), str(out_path))
+        return
+
+    # בלי xfade — concat פשוט
+    if not clip_durations:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".txt", delete=False, encoding="utf-8") as f:
+            for p in clip_paths:
+                f.write(f"file '{str(p).replace(chr(92), '/')}'\n")
+            lst = f.name
+        try:
+            r = subprocess.run([FFMPEG, "-y", "-f", "concat", "-safe", "0",
+                                "-i", lst, "-c", "copy", str(out_path)],
+                               capture_output=True, text=True)
+            if r.returncode != 0:
+                raise RuntimeError(f"concat נכשל:\n{r.stderr[-400:]}")
+        finally:
+            os.unlink(lst)
+        return
+
+    # xfade cross-dissolve בין כל הקליפים
+    inputs = []
+    for p in clip_paths:
+        inputs += ["-i", str(p)]
+
+    # בנה filter_complex: [0][1]xfade=...[v01]; [v01][2]xfade=...[v02]; ...
+    parts = []
+    offset = clip_durations[0] - xfade_dur   # offset מתחיל בסוף הקליפ הראשון
+    prev = "0"
+    for i in range(1, n):
+        label = f"v{i:02d}" if i < n - 1 else "vout"
+        parts.append(
+            f"[{prev}][{i}]xfade=transition=fade:duration={xfade_dur}:offset={offset:.3f}[{label}]"
+        )
+        prev = label
+        if i < n - 1:
+            offset += clip_durations[i] - xfade_dur
+
+    filter_complex = ";".join(parts)
+
+    r = subprocess.run([
+        FFMPEG, "-y", *inputs,
+        "-filter_complex", filter_complex,
+        "-map", "[vout]",
+        "-c:v", "libx264", "-preset", "fast", "-crf", "21",
+        "-r", str(FPS), "-pix_fmt", "yuv420p",
+        str(out_path),
+    ], capture_output=True, text=True)
+    if r.returncode != 0:
+        raise RuntimeError(f"xfade concat נכשל:\n{r.stderr[-600:]}")
 
 
 # ── Video: Seedance 2.0 clip ──────────────────────────────────────────────────
@@ -388,14 +424,11 @@ def _seedance_clip(photo_path, out_path, photo_meta, duration=5):
         raw_path = tmp.name
 
     try:
-        fade = 0.4
         subprocess.run([
             FFMPEG, "-y", "-i", raw_path,
             "-vf", (
                 f"scale={W}:{H}:force_original_aspect_ratio=increase,"
-                f"crop={W}:{H},setsar=1,"
-                f"fade=t=in:st=0:d={fade},"
-                f"fade=t=out:st={duration - fade:.2f}:d={fade}"
+                f"crop={W}:{H},setsar=1"
             ),
             "-c:v", "libx264", "-preset", "fast", "-crf", "21",
             "-r", str(FPS), "-pix_fmt", "yuv420p", "-an",
@@ -475,8 +508,9 @@ def make_album_reel(category, lang=None, dry_run=False, photo_ids=None):
         _closing_clip(closing, lang, category, CLOSING_SECS)
         clips.append(closing)
 
-        print("🔗 מרכיב...")
-        _concat(clips, out_path)
+        print("🔗 מרכיב עם cross-dissolve...")
+        durations = [photo_secs] * len(selected) + [CLOSING_SECS]
+        _concat(clips, out_path, clip_durations=durations)
 
     total = n_photos * photo_secs + CLOSING_SECS
     print(f"\n✅ {out_path}  ({total:.0f} שניות)")
