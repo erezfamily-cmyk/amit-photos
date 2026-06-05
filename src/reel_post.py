@@ -1,51 +1,82 @@
 #!/usr/bin/env python3
 """
-Reel + YouTube Short Auto-Post
-Weekly: picks one photo → 25-second 9:16 video → Instagram Reel + YouTube Short.
+reel_post.py — יוצר רילס 10 שניות מאלבום ומפרסם ל-Instagram
+
+שימוש:
+  python src/reel_post.py --list
+  python src/reel_post.py --category "בעלי חיים"
+  python src/reel_post.py --category "ישראל" --lang en
+  python src/reel_post.py --category "טנזניה" --dry-run   # בדיקה ללא וידאו
 """
 
-import base64
+import argparse
 import json
 import os
 import random
+import shutil
 import subprocess
 import sys
 import tempfile
 import time
 from pathlib import Path
 
-GRAPH_API  = "https://graph.facebook.com/v21.0"
-SITE_URL   = "https://amitphotos.com"
-ROOT       = Path(__file__).parent.parent
-DATA_DIR   = ROOT / "data"
-MUSIC_DIR  = ROOT / "assets" / "music"
+sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+sys.stderr.reconfigure(encoding="utf-8", errors="replace")
 
-POSTED_FILE = DATA_DIR / "reels_posted.json"
+try:
+    from PIL import Image, ImageDraw, ImageFont
+    HAS_PILLOW = True
+except ImportError:
+    HAS_PILLOW = False
 
-W, H           = 1080, 1920
-REEL_DURATION  = 25       # seconds — well under Reels 90s limit, ideal for attention
-WATERMARK      = "amitphotos.com"
-
-IG_USER_ID        = os.environ.get("INSTAGRAM_USER_ID", "")
-ACCESS_TOKEN      = os.environ.get("INSTAGRAM_PAGE_TOKEN", "")
-ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "").strip()
-
-
-# ── State ─────────────────────────────────────────────────────────────────────
-
-def load_posted(path=POSTED_FILE):
-    if Path(path).exists():
-        return json.loads(Path(path).read_text(encoding="utf-8"))
-    return []
+try:
+    from bidi.algorithm import get_display as bidi_display
+    HAS_BIDI = True
+except ImportError:
+    HAS_BIDI = False
 
 
-def save_posted(posted_ids, path=POSTED_FILE):
-    Path(path).write_text(
-        json.dumps(posted_ids, ensure_ascii=False, indent=2), encoding="utf-8"
-    )
+def _bidi(text):
+    return bidi_display(text) if HAS_BIDI else text
 
 
-# ── Photo selection ───────────────────────────────────────────────────────────
+# ── קבועים ───────────────────────────────────────────────────────────────────
+
+GRAPH_API = "https://graph.facebook.com/v21.0"
+SITE_URL  = "https://amitphotos.com"
+ROOT      = Path(__file__).parent.parent
+DATA_DIR  = ROOT / "data"
+
+CTA_COUNTER  = DATA_DIR / "reels_cta_counter.json"
+ALBUM_OUTPUT = ROOT / "reels_output"
+
+W, H             = 1080, 1920
+FPS              = 30
+ALBUM_SECS       = 10.0
+CLOSING_SECS     = 2.5
+NUM_PHOTOS       = 3
+PHOTO_SECS       = (ALBUM_SECS - CLOSING_SECS) / NUM_PHOTOS   # 2.5s per photo
+
+FONT_REGULAR = "C:/Windows/Fonts/arial.ttf"
+FONT_BOLD    = "C:/Windows/Fonts/arialbd.ttf"
+
+IG_USER_ID   = os.environ.get("INSTAGRAM_USER_ID", "")
+ACCESS_TOKEN = os.environ.get("INSTAGRAM_PAGE_TOKEN", "")
+
+
+def _find_ffmpeg():
+    hit = shutil.which("ffmpeg")
+    if hit:
+        return hit
+    base = Path(os.environ.get("LOCALAPPDATA", "")) / "Microsoft" / "WinGet" / "Packages"
+    for p in base.glob("Gyan.FFmpeg_*/**/ffmpeg.exe"):
+        return str(p)
+    return "ffmpeg"
+
+FFMPEG = _find_ffmpeg()
+
+
+# ── תמונות ───────────────────────────────────────────────────────────────────
 
 def load_photos():
     try:
@@ -55,10 +86,9 @@ def load_photos():
         valid = [p for p in resp.json()
                  if p.get("title") and not p["title"].upper().startswith("DSC_")]
         if valid:
-            print(f"✅ {len(valid)} תמונות")
             return valid
-    except Exception as e:
-        print(f"⚠️  API נכשל ({e})")
+    except Exception:
+        pass
     jf = DATA_DIR / "photos.json"
     if jf.exists():
         return [p for p in json.loads(jf.read_text(encoding="utf-8"))
@@ -67,387 +97,326 @@ def load_photos():
     sys.exit(1)
 
 
-def pick_photo(photos, posted_ids):
-    unposted = [p for p in photos if p["id"] not in posted_ids]
-    if not unposted:
-        print("🔄 כל התמונות כוסו — מתחיל rotation")
-        return random.choice(photos)
-    return random.choice(unposted)
+# ── hashtags ─────────────────────────────────────────────────────────────────
+
+HASHTAG_POOLS = {
+    "default":          "#photography #reels #naturephotography #photooftheday #amitphotos #צילום",
+    "פרחים וצמחים":    "#flowers #macrophotography #nature #botanicalphotography #reels #amitphotos",
+    "בעלי חיים":        "#wildlife #animalphotography #nature #wildlifephotography #reels #amitphotos",
+    "מאקרו-צילומי תקריב": "#macro #macrophotography #closeup #details #reels #amitphotos",
+    "צילום מופשט":      "#abstractphotography #abstract #artphotography #reels #amitphotos",
+    "ישראל":            "#israel #ig_israel #israelphoto #isragram #reels #amitphotos",
+    "טבע דומם":         "#stilllife #stilllifephotography #fineart #reels #amitphotos",
+    "שחור-לבן":         "#blackandwhite #bnw #monochrome #bwphotography #reels #amitphotos",
+}
+
+def get_hashtags(category):
+    return HASHTAG_POOLS.get(category, HASHTAG_POOLS["default"])
 
 
-# ── Video helpers ─────────────────────────────────────────────────────────────
+# ── שפת CTA (חלופי) ──────────────────────────────────────────────────────────
 
-def get_dims(path):
-    r = subprocess.run(
-        ["ffprobe", "-v", "quiet", "-select_streams", "v:0",
-         "-show_entries", "stream=width,height", "-of", "json", str(path)],
-        capture_output=True, text=True,
-    )
-    s = json.loads(r.stdout)["streams"][0]
-    return s["width"], s["height"]
-
-
-def fit_dims(w, h, max_w=1020, max_h=1820):
-    ratio = min(max_w / w, max_h / h)
-    return max(int(w * ratio) & ~1, 2), max(int(h * ratio) & ~1, 2)
+def _next_cta_lang(forced=None):
+    if forced:
+        return forced
+    try:
+        data  = json.loads(CTA_COUNTER.read_text(encoding="utf-8"))
+        count = data.get("count", 0)
+    except Exception:
+        count = 0
+    lang = "he" if count % 2 == 0 else "en"
+    CTA_COUNTER.write_text(json.dumps({"count": count + 1}), encoding="utf-8")
+    return lang
 
 
-def download_photo(photo, tmp_dir):
-    import requests
+# ── Video: Ken Burns clip ─────────────────────────────────────────────────────
+
+def _download_photo(photo, dest):
+    """הורד תמונה — קודם Google Drive thumbnail, אחר-כך URL ישיר."""
+    import urllib.request, requests
+    gid = photo.get("id", "")
+    if gid:
+        url = f"https://drive.google.com/thumbnail?id={gid}&sz=w2400"
+        try:
+            req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+            with urllib.request.urlopen(req, timeout=30) as r, open(dest, "wb") as f:
+                f.write(r.read())
+            return
+        except Exception:
+            pass
     url = photo.get("url") or photo.get("thumbnail", "")
     if url.startswith("/"):
         url = f"{SITE_URL}{url}"
     r = requests.get(url, timeout=30, headers={"User-Agent": "Mozilla/5.0"})
     r.raise_for_status()
-    path = tmp_dir / "photo.jpg"
-    path.write_bytes(r.content)
-    return path
+    Path(dest).write_bytes(r.content)
 
 
-def create_reel_slide(photo_path, tmp_dir):
-    """9:16 slide: blurred bg + Ken Burns zoom + watermark."""
-    out    = tmp_dir / "slide.mp4"
-    frames = int(REEL_DURATION * 30)
-
-    try:
-        w, h = get_dims(photo_path)
-    except Exception:
-        w, h = 4000, 3000
-    fw, fh = fit_dims(w, h)
-
-    inc = 0.04 / frames
-    zoom_expr = f"'if(lte(on,1),1.0,min(zoom+{inc:.6f},1.04))'"
-
-    fc = (
-        f"[0:v]scale={W}:{H}:force_original_aspect_ratio=increase,"
-        f"crop={W}:{H},gblur=sigma=28[bg];"
-
-        f"[0:v]scale={fw}:{fh}[fg_raw];"
-
-        f"[fg_raw]zoompan=z={zoom_expr}:"
-        f"x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':"
-        f"d={frames}:s={fw}x{fh}:fps=30[fg];"
-
-        f"[bg][fg]overlay=(W-w)/2:(H-h)/2,"
-        f"drawtext=text='{WATERMARK}':"
-        f"fontcolor=white@0.35:fontsize=24:x=(w-text_w)/2:y=h-55,"
-        f"format=yuv420p[out]"
+def _ken_burns_clip(photo_path, out_path, duration, pan_dir="left"):
+    """Scale landscape photo to cover 9:16 frame, animated pan L↔R."""
+    frames = int(duration * FPS)
+    fade_f = min(12, frames // 5)
+    center = f"(iw-{W})/2"
+    x_expr = (
+        f"{center}-150+300*n/{frames-1}" if pan_dir == "left"
+        else f"{center}+150-300*n/{frames-1}"
     )
-
+    vf = (
+        f"scale=-2:{H},"
+        f"crop={W}:{H}:'{x_expr}':0:eval=frame,"
+        f"fade=t=in:st=0:d={fade_f/FPS:.3f},"
+        f"fade=t=out:st={duration - fade_f/FPS:.3f}:d={fade_f/FPS:.3f},"
+        f"setsar=1"
+    )
     r = subprocess.run([
-        "ffmpeg", "-y", "-loop", "1", "-i", str(photo_path),
-        "-filter_complex", fc, "-map", "[out]",
-        "-t", str(REEL_DURATION), "-r", "30",
-        "-c:v", "libx264", "-preset", "fast", "-crf", "22",
-        str(out),
+        FFMPEG, "-y",
+        "-loop", "1", "-framerate", str(FPS), "-t", str(duration + 0.1),
+        "-i", str(photo_path),
+        "-vf", vf, "-t", str(duration),
+        "-c:v", "libx264", "-preset", "fast", "-crf", "21",
+        "-r", str(FPS), "-pix_fmt", "yuv420p",
+        str(out_path),
     ], capture_output=True, text=True)
-
     if r.returncode != 0:
-        print(f"❌ FFmpeg error: {r.stderr[-400:]}")
-        sys.exit(1)
-    return out
+        raise RuntimeError(f"Ken Burns נכשל:\n{r.stderr[-400:]}")
 
 
-def add_audio(video_path, tmp_dir):
-    """Add background music (mp3 from assets, or generated ambient fallback)."""
-    fade_st = max(0.0, REEL_DURATION - 2.0)
+# ── Video: closing slide ──────────────────────────────────────────────────────
 
-    music_files = list(MUSIC_DIR.glob("*.mp3"))
-    if music_files:
-        music = random.choice(music_files)
-        print(f"🎵 {music.name}")
-    else:
-        print("⚠️  אין mp3 — מייצר ambient")
-        ambient = tmp_dir / "ambient.aac"
-        subprocess.run([
-            "ffmpeg", "-y", "-f", "lavfi",
-            "-i", "anoisesrc=c=pink:a=0.5:r=44100",
-            "-af",
-            f"lowpass=f=350,highpass=f=70,volume=0.18,"
-            f"afade=t=in:st=0:d=1.5,afade=t=out:st={fade_st:.2f}:d=2",
-            "-t", str(REEL_DURATION),
-            "-ar", "44100", "-ac", "2", "-c:a", "aac", "-b:a", "128k",
-            str(ambient),
-        ], capture_output=True)
-        music = ambient if ambient.exists() else None
+def _closing_clip(out_path, lang, category, duration):
+    if not HAS_PILLOW:
+        raise RuntimeError("pip install Pillow")
 
-    if not music or not Path(music).exists():
-        return video_path
+    img  = Image.new("RGB", (W, H), (18, 18, 35))
+    draw = ImageDraw.Draw(img)
 
-    out = tmp_dir / "with_audio.mp4"
-    r = subprocess.run([
-        "ffmpeg", "-y",
-        "-i", str(video_path), "-stream_loop", "-1", "-i", str(music),
-        "-filter_complex",
-        f"[1:a]atrim=0:{REEL_DURATION:.2f},asetpts=PTS-STARTPTS,"
-        f"afade=t=in:st=0:d=1.5,afade=t=out:st={fade_st:.2f}:d=2,"
-        f"volume=0.38[aud]",
-        "-map", "0:v", "-map", "[aud]",
-        "-c:v", "copy", "-c:a", "aac", "-b:a", "128k", "-shortest",
-        str(out),
-    ], capture_output=True, text=True)
+    for y in range(H):           # gradient
+        a = int(25 * y / H)
+        draw.line([(0, y), (W, y)], fill=(18 + a // 3, 18 + a // 2, 35 + a))
 
-    return out if (r.returncode == 0 and out.exists()) else video_path
-
-
-# ── Caption ───────────────────────────────────────────────────────────────────
-
-HASHTAG_POOLS = {
-    "default": [
-        "#photography #reels #naturephotography #landscapephotography",
-        "#photographer #fineartphotography #visualart #photooftheday",
-        "#israeliphotographer #israelphoto #ig_israel #wildlife_photography",
-    ],
-    "טבע": [
-        "#nature #naturephotography #wildlife #macro #reels #naturereels",
-        "#naturelover #earthpix #outdoorphotography #wildlifephotography",
-        "#israel_nature #הטבע_הישראלי #macro_photography",
-    ],
-    "פורטרט": [
-        "#portrait #portraitphotography #reels #portraiture #naturallight",
-        "#portraitreels #humanportrait #emotionalportrait",
-    ],
-    "עירוני": [
-        "#urban #streetphotography #city #architecture #reels",
-        "#streetphoto #cityscape #architecturephotography #urbanreels",
-        "#israel_architecture #tel_aviv #jerusalem",
-    ],
-    "אירועים": [
-        "#events #weddingphotography #celebration #moments #reels",
-        "#wedding #barMitzvah #familyphotography #eventreels",
-    ],
-}
-
-
-def get_hashtags(category):
-    pool = HASHTAG_POOLS.get(category, HASHTAG_POOLS["default"])
-    base = random.choice(pool)
-    return f"{base} #amitphotos #ישראל #צילום #shorts"
-
-
-def generate_caption(photo):
-    import anthropic
-    import io
-
-    client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
-    title       = photo.get("title", "")
-    category    = photo.get("category", "")
-    description = photo.get("description", "")
-
-    thumbnail_url = photo.get("thumbnail") or photo.get("url", "")
-    if thumbnail_url.startswith("/"):
-        thumbnail_url = f"{SITE_URL}{thumbnail_url}"
-
-    image_content = []
     try:
-        import requests
-        resp = requests.get(thumbnail_url, timeout=30)
-        resp.raise_for_status()
-        img_bytes = resp.content
-        try:
-            from PIL import Image
-            img = Image.open(io.BytesIO(img_bytes)).convert("RGB")
-            if max(img.size) > 2000:
-                img.thumbnail((2000, 2000), Image.LANCZOS)
-            buf = io.BytesIO()
-            img.save(buf, format="JPEG", quality=85)
-            img_bytes = buf.getvalue()
-        except ImportError:
-            pass
-        b64 = base64.standard_b64encode(img_bytes).decode()
-        image_content = [{"type": "image", "source": {"type": "base64", "media_type": "image/jpeg", "data": b64}}]
-    except Exception as e:
-        print(f"⚠️  לא הורדה תמונה לcaption ({e})")
+        f_cat = ImageFont.truetype(FONT_REGULAR, 42)
+        f_cta = ImageFont.truetype(FONT_BOLD,    68)
+        f_url = ImageFont.truetype(FONT_REGULAR, 52)
+    except Exception:
+        f_cat = f_cta = f_url = ImageFont.load_default()
 
-    meta = f"שם: {title}" + (f"\nקטגוריה: {category}" if category else "") + (f"\nתיאור: {description}" if description else "")
-    hashtags = get_hashtags(category)
+    def draw_centered(text, font, y, color):
+        bb = draw.textbbox((0, 0), text, font=font)
+        draw.text(((W - (bb[2] - bb[0])) // 2, y), text, font=font, fill=color)
 
-    system_prompt = """אתה עמית ארז, צלם ישראלי שמצלם מאהבה אמיתית.
-כותב בגוף ראשון, עברית ברורה. מתחיל ממה שמעניין בתמונה הספציפית — מיקום, אור, זווית.
-מסביר את טכניקת הצילום. לא שיווקי, לא ביטויים ריקים."""
+    draw_centered(_bidi(category),      f_cat, H // 2 - 220, (160, 160, 180))
+    draw.line([(W // 2 - 120, H // 2 - 140), (W // 2 + 120, H // 2 - 140)],
+              fill=(100, 100, 140), width=2)
+    cta = _bidi("בקר באתר שלי:") if lang == "he" else "Visit my website:"
+    draw_centered(cta,                  f_cta, H // 2 - 80,  (240, 240, 255))
+    draw_centered("www.amitphotos.com", f_url, H // 2 + 40,  (240, 192, 64))
 
-    prompt = f"""כתוב כיתוב Reel קצר (3-4 משפטים) עבור התמונה הזו.
-{meta}
-סיים עם: 🎯 amitphotos.com
-עברית בלבד. רק הכיתוב."""
+    with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp:
+        img.save(tmp.name)
+        png = tmp.name
 
-    msg = client.messages.create(
-        model="claude-opus-4-8",
-        max_tokens=350,
-        system=system_prompt,
-        messages=[{"role": "user", "content": image_content + [{"type": "text", "text": prompt}]}],
-    )
-    text = msg.content[0].text.strip()
-    return f"{text}\n\n{hashtags}"
+    try:
+        fade_f = 15
+        r = subprocess.run([
+            FFMPEG, "-y",
+            "-loop", "1", "-framerate", str(FPS), "-t", str(duration + 0.1),
+            "-i", png,
+            "-vf", f"fade=t=in:st=0:d={fade_f/FPS:.3f},setsar=1",
+            "-t", str(duration),
+            "-c:v", "libx264", "-preset", "fast", "-crf", "21",
+            "-r", str(FPS), "-pix_fmt", "yuv420p",
+            str(out_path),
+        ], capture_output=True, text=True)
+        if r.returncode != 0:
+            raise RuntimeError(f"closing נכשל:\n{r.stderr[-400:]}")
+    finally:
+        os.unlink(png)
 
 
-# ── Upload ────────────────────────────────────────────────────────────────────
+# ── Video: concat ─────────────────────────────────────────────────────────────
 
-def upload_video(video_path):
-    """Upload to catbox.moe (1-hour link) with 0x0.st fallback."""
+def _concat(clip_paths, out_path):
+    with tempfile.NamedTemporaryFile(
+        mode="w", suffix=".txt", delete=False, encoding="utf-8"
+    ) as f:
+        for p in clip_paths:
+            f.write(f"file '{str(p).replace(chr(92), '/')}'\n")
+        lst = f.name
+    try:
+        r = subprocess.run([
+            FFMPEG, "-y", "-f", "concat", "-safe", "0",
+            "-i", lst, "-c", "copy", str(out_path),
+        ], capture_output=True, text=True)
+        if r.returncode != 0:
+            raise RuntimeError(f"concat נכשל:\n{r.stderr[-400:]}")
+    finally:
+        os.unlink(lst)
+
+
+# ── יצירת Album Reel ──────────────────────────────────────────────────────────
+
+def make_album_reel(category, lang=None, dry_run=False):
+    """
+    בוחר NUM_PHOTOS תמונות אקראיות מהקטגוריה,
+    מייצר רילס 10 שניות עם שקופית סיום.
+    מחזיר נתיב MP4 או None.
+    """
+    photos_all = load_photos()
+    cat_photos = [p for p in photos_all if p.get("category") == category]
+    if len(cat_photos) < NUM_PHOTOS:
+        print(f"❌ רק {len(cat_photos)} תמונות ב-'{category}', צריך {NUM_PHOTOS}")
+        return None
+
+    selected = random.sample(cat_photos, NUM_PHOTOS)
+    lang     = _next_cta_lang(lang)
+
+    ALBUM_OUTPUT.mkdir(exist_ok=True)
+    safe     = category.replace(" ", "_").replace("/", "-").replace('"', "")
+    out_path = ALBUM_OUTPUT / f"reel_{safe}_{lang}.mp4"
+
+    print(f"\n🎬 {category} ({lang.upper()})")
+    for p in selected:
+        print(f"   • {p['title']}")
+
+    if dry_run:
+        print("🔍 dry-run — לא מייצר וידאו")
+        return str(out_path)
+
+    with tempfile.TemporaryDirectory() as td:
+        tmp   = Path(td)
+        clips = []
+
+        for i, photo in enumerate(selected):
+            print(f"⬇  {i+1}/{NUM_PHOTOS}: {photo['title']}")
+            src = tmp / f"photo_{i}.jpg"
+            _download_photo(photo, src)
+
+            clip = tmp / f"clip_{i}.mp4"
+            _ken_burns_clip(src, clip, PHOTO_SECS,
+                            pan_dir="left" if i % 2 == 0 else "right")
+            clips.append(clip)
+
+        closing = tmp / "closing.mp4"
+        print("🖼  שקופית סיום...")
+        _closing_clip(closing, lang, category, CLOSING_SECS)
+        clips.append(closing)
+
+        print("🔗 מרכיב...")
+        _concat(clips, out_path)
+
+    print(f"✅ {out_path}")
+    return str(out_path)
+
+
+# ── Instagram ─────────────────────────────────────────────────────────────────
+
+def _upload_video(video_path):
+    """מעלה ל-litterbox (1h) עם fallback ל-0x0.st."""
     import requests
-    data = video_path.read_bytes()
-    mb   = len(data) / 1024 / 1024
-    print(f"📤 {mb:.1f} MB")
+    data = Path(video_path).read_bytes()
+    print(f"📤 {len(data)/1024/1024:.1f} MB")
 
     for name, url, extra in [
         ("litterbox", "https://litterbox.catbox.moe/resources/internals/api.php",
-         {"data": {"reqtype": "fileupload", "time": "1h"}, "file_field": "fileToUpload"}),
-        ("0x0.st", "https://0x0.st",
-         {"file_field": "file"}),
+         {"data": {"reqtype": "fileupload", "time": "1h"}, "field": "fileToUpload"}),
+        ("0x0.st", "https://0x0.st", {"data": {}, "field": "file"}),
     ]:
         try:
-            files     = {extra["file_field"]: ("reel.mp4", data, "video/mp4")}
-            post_data = extra.get("data", {})
-            r = requests.post(url, data=post_data, files=files, timeout=180)
+            r = requests.post(
+                url,
+                data=extra["data"],
+                files={extra["field"]: ("reel.mp4", data, "video/mp4")},
+                timeout=180,
+            )
             r.raise_for_status()
-            public_url = r.text.strip()
-            if public_url.startswith("http"):
-                print(f"⬆️  {name}: {public_url}")
-                return public_url
+            pub = r.text.strip()
+            if pub.startswith("http"):
+                print(f"⬆️  {name}: {pub}")
+                return pub
         except Exception as e:
             print(f"⚠️  {name} נכשל: {e}")
+    raise RuntimeError("upload נכשל לחלוטין")
 
-    raise RuntimeError("כל שירותי ה-upload נכשלו")
 
-
-# ── Instagram Reel ─────────────────────────────────────────────────────────────
-
-def publish_ig_reel(video_url, caption):
+def _publish_ig(video_url, caption):
     import requests
     print("📸 מפרסם IG Reel...")
-
     r = requests.post(f"{GRAPH_API}/{IG_USER_ID}/media", data={
-        "video_url":     video_url,
-        "media_type":    "REELS",
-        "share_to_feed": "true",
-        "caption":       caption,
-        "access_token":  ACCESS_TOKEN,
+        "video_url": video_url, "media_type": "REELS",
+        "share_to_feed": "true", "caption": caption,
+        "access_token": ACCESS_TOKEN,
     }, timeout=30)
     if not r.ok:
-        print(f"❌ IG container: {r.status_code} {r.text[:300]}")
+        print(f"❌ container: {r.status_code} {r.text[:300]}")
         return None
-    creation_id = r.json().get("id")
-    if not creation_id:
-        print(f"❌ {r.json()}")
+    cid = r.json().get("id")
+    if not cid:
         return None
-    print(f"📦 container: {creation_id}")
-
+    print(f"📦 {cid}")
     for attempt in range(24):
         time.sleep(5)
         status = requests.get(
-            f"{GRAPH_API}/{creation_id}",
+            f"{GRAPH_API}/{cid}",
             params={"fields": "status_code", "access_token": ACCESS_TOKEN},
             timeout=30,
         ).json().get("status_code", "")
-        print(f"  ⏳ [{attempt + 1}] {status}")
+        print(f"  ⏳ [{attempt+1}] {status}")
         if status == "FINISHED":
             break
         if status == "ERROR":
-            print("❌ שגיאת עיבוד Instagram")
+            print("❌ שגיאת עיבוד")
             return None
-
     pub = requests.post(f"{GRAPH_API}/{IG_USER_ID}/media_publish", data={
-        "creation_id":  creation_id,
-        "access_token": ACCESS_TOKEN,
+        "creation_id": cid, "access_token": ACCESS_TOKEN,
     }, timeout=30)
     if pub.ok:
-        reel_id = pub.json().get("id")
-        print(f"✅ IG Reel פורסם! ID: {reel_id}")
-        return reel_id
-    print(f"❌ Publish נכשל: {pub.status_code} {pub.text[:200]}")
+        print(f"✅ Reel פורסם! ID: {pub.json().get('id')}")
+        return pub.json().get("id")
+    print(f"❌ Publish נכשל: {pub.status_code}")
     return None
-
-
-# ── YouTube Short ─────────────────────────────────────────────────────────────
-
-def upload_youtube_short(video_path, title, description):
-    token_b64 = os.environ.get("YOUTUBE_TOKEN_JSON", "")
-    if not token_b64:
-        print("⚠️  YOUTUBE_TOKEN_JSON לא מוגדר — מדלג על YouTube")
-        return None
-
-    try:
-        from googleapiclient.discovery import build
-        from googleapiclient.http import MediaFileUpload
-        from google.oauth2.credentials import Credentials
-        from google.auth.transport.requests import Request
-    except ImportError:
-        print("⚠️  חסר: pip install google-api-python-client google-auth")
-        return None
-
-    token_data = json.loads(base64.b64decode(token_b64).decode())
-    creds = Credentials.from_authorized_user_info(token_data)
-    if creds.expired and creds.refresh_token:
-        creds.refresh(Request())
-
-    youtube = build("youtube", "v3", credentials=creds, cache_discovery=False)
-
-    body = {
-        "snippet": {
-            "title":       f"{title[:90]} #Shorts",
-            "description": f"{description}\n\namitphotos.com",
-            "tags":        ["photography", "shorts", "צילום", "ישראל", "amitphotos"],
-            "categoryId":  "19",
-        },
-        "status": {"privacyStatus": "public"},
-    }
-
-    print("📺 מעלה YouTube Short...")
-    media   = MediaFileUpload(str(video_path), mimetype="video/mp4",
-                              resumable=True, chunksize=10 * 1024 * 1024)
-    request = youtube.videos().insert(
-        part=",".join(body.keys()), body=body, media_body=media
-    )
-
-    response = None
-    while response is None:
-        status, response = request.next_chunk()
-        if status:
-            print(f"  ⬆️  {int(status.progress() * 100)}%")
-
-    vid_id = response.get("id")
-    print(f"✅ YouTube Short: https://youtu.be/{vid_id}")
-    return vid_id
 
 
 # ── Main ─────────────────────────────────────────────────────────────────────
 
 def main():
+    ap = argparse.ArgumentParser(description="יוצר Album Reel 10 שניות ומפרסם ל-IG")
+    ap.add_argument("--category", "-c", required=False, help="שם הקטגוריה")
+    ap.add_argument("--lang", "-l", choices=["he", "en"],
+                    help="שפת שקופית הסיום (ברירת מחדל: חלופי)")
+    ap.add_argument("--dry-run", action="store_true",
+                    help="רק מדפיס מה יבחר, לא מייצר וידאו")
+    ap.add_argument("--list", action="store_true", help="הצג קטגוריות זמינות")
+    args = ap.parse_args()
+
+    if args.list:
+        photos = load_photos()
+        cats   = {}
+        for p in photos:
+            cats[p.get("category", "?")] = cats.get(p.get("category", "?"), 0) + 1
+        print("\nקטגוריות זמינות:")
+        for cat, cnt in sorted(cats.items(), key=lambda x: -x[1]):
+            print(f"  {cnt:3d}  {cat}")
+        return
+
+    if not args.category:
+        ap.print_help()
+        return
+
+    out = make_album_reel(args.category, args.lang, dry_run=args.dry_run)
+    if not out or args.dry_run:
+        return
+
     if not IG_USER_ID or not ACCESS_TOKEN:
-        print("❌ חסרים INSTAGRAM_USER_ID / INSTAGRAM_PAGE_TOKEN")
-        sys.exit(1)
+        print("ℹ️  אין IG credentials — הסרטון נשמר מקומית בלבד")
+        return
 
-    photos     = load_photos()
-    posted_ids = load_posted()
-    photo      = pick_photo(photos, posted_ids)
-    print(f"📷 נבחרה: {photo['title']} ({photo.get('category', '')})")
+    lang_used = args.lang or ("he" if "he" in out else "en")
+    cta_line  = "בקר באתר שלי" if lang_used == "he" else "Visit my website"
+    caption   = f"{cta_line}: amitphotos.com\n\n{get_hashtags(args.category)}"
 
-    with tempfile.TemporaryDirectory() as td:
-        tmp = Path(td)
-
-        img_path = download_photo(photo, tmp)
-        print("⬇️  תמונה הורדה")
-
-        slide = create_reel_slide(img_path, tmp)
-        final = add_audio(slide, tmp)
-        print("🎬 וידאו נוצר")
-
-        caption = generate_caption(photo)
-        print(f"✍️  caption: {caption[:60]}…")
-
-        video_url = upload_video(final)
-
-        ig_id = publish_ig_reel(video_url, caption)
-        yt_id = upload_youtube_short(final, photo["title"], caption)
-
-    if ig_id or yt_id:
-        posted_ids.append(photo["id"])
-        save_posted(posted_ids)
-        print(f"💾 נשמר ב-reels_posted.json ({len(posted_ids)} סה\"כ)")
-    else:
-        print("⚠️  שני הפרסומים נכשלו — לא עדכון")
-        sys.exit(1)
+    video_url = _upload_video(Path(out))
+    _publish_ig(video_url, caption)
 
 
 if __name__ == "__main__":
