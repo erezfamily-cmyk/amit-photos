@@ -62,8 +62,20 @@ PHOTO_SECS_KB    = (10.0 - CLOSING_SECS) / NUM_PHOTOS_KB   # 2.5s each
 NUM_PHOTOS_SD    = 2
 PHOTO_SECS_SD    = 5.0   # Seedance output is 5s per clip
 
-FONT_REGULAR = "C:/Windows/Fonts/arial.ttf"
-FONT_BOLD    = "C:/Windows/Fonts/arialbd.ttf"
+def _find_font(names):
+    import platform
+    candidates = (
+        [f"C:/Windows/Fonts/{n}" for n in names] if platform.system() == "Windows"
+        else [f"/usr/share/fonts/truetype/liberation/Liberation{n}" for n in ["Sans-Regular.ttf", "Sans-Bold.ttf"]]
+          + [f"/usr/share/fonts/truetype/dejavu/DejaVuSans{n}" for n in [".ttf", "-Bold.ttf"]]
+    )
+    for c in candidates:
+        if Path(c).exists():
+            return c
+    return None
+
+FONT_REGULAR = _find_font(["arial.ttf", "Arial.ttf"]) or "arial.ttf"
+FONT_BOLD    = _find_font(["arialbd.ttf", "Arial-Bold.ttf"]) or "arial.ttf"
 
 IG_USER_ID   = os.environ.get("INSTAGRAM_USER_ID", "")
 ACCESS_TOKEN = os.environ.get("INSTAGRAM_PAGE_TOKEN", "")
@@ -293,16 +305,21 @@ def _seedance_clip(photo_path, out_path, photo_meta, duration=5):
     print("  📤 מעלה לfal.ai...")
     img_url = fal_client.upload_file(str(photo_path))
 
-    print("  🌀 Seedance 2.0 מעבד (~30 שניות)...")
-    result = fal_client.run(
-        "fal-ai/bytedance/seedance-2.0/image-to-video",
+    print("  🌀 Seedance 2.0 מעבד (~60 שניות)...")
+    # duration: "4" or "15" only (fal.ai Seedance 2.0 valid values)
+    dur_str = "4" if duration <= 5 else "15"
+    handler = fal_client.submit(
+        "bytedance/seedance-2.0/image-to-video",
         arguments={
-            "image_url":    img_url,
-            "prompt":       prompt,
-            "duration":     str(duration),
-            "aspect_ratio": "9:16",
+            "image_url":       img_url,
+            "prompt":          prompt,
+            "duration":        dur_str,
+            "aspect_ratio":    "9:16",
+            "resolution":      "720p",
+            "generate_audio":  False,
         },
     )
+    result = handler.get()
 
     video_url = result["video"]["url"]
     print(f"  ✅ וידאו מוכן: {video_url[:60]}...")

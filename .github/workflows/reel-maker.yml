@@ -39,7 +39,7 @@ jobs:
           python-version: '3.11'
 
       - name: התקנת FFmpeg
-        run: sudo apt-get update -y && sudo apt-get install -y ffmpeg fonts-arial-10x20 || true
+        run: sudo apt-get update -y && sudo apt-get install -y ffmpeg fonts-liberation
 
       - name: התקנת חבילות Python
         run: pip install requests pillow python-bidi fal-client
