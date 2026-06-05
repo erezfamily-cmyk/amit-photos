@@ -789,6 +789,65 @@ async function handleTriggerWorkflow(request, env) {
   return jsonRes({ error: `GitHub API: ${err}` }, res.status);
 }
 
+// ===== REELS — יצירת רילס דרך GitHub Actions =====
+async function handleReels(request, env) {
+  if (!await checkAuth(request, env)) return unauth(request);
+  if (!env.GITHUB_TOKEN) return jsonRes({ error: 'GITHUB_TOKEN לא מוגדר' }, 500, request);
+
+  const GH = 'https://api.github.com/repos/erezfamily-cmyk/amit-photos';
+  const ghHeaders = {
+    'Authorization': `Bearer ${env.GITHUB_TOKEN}`,
+    'Accept': 'application/vnd.github+json',
+    'Content-Type': 'application/json',
+    'User-Agent': 'amit-photos-worker',
+    'X-GitHub-Api-Version': '2022-11-28',
+  };
+
+  // POST — הפעל workflow
+  if (request.method === 'POST') {
+    const body = await request.json().catch(() => ({}));
+    const { category, lang = 'auto' } = body;
+    if (!category) return jsonRes({ error: 'category חסר' }, 400, request);
+
+    const res = await fetch(`${GH}/actions/workflows/reel-maker.yml/dispatches`, {
+      method: 'POST',
+      headers: ghHeaders,
+      body: JSON.stringify({ ref: 'main', inputs: { category, lang } }),
+    });
+
+    if (res.status !== 204) {
+      const err = await res.text();
+      return jsonRes({ error: `GitHub (${res.status}): ${err.slice(0, 200)}` }, 502, request);
+    }
+    return jsonRes({ ok: true }, 200, request);
+  }
+
+  // GET?latest=1 — run_id אחרון
+  const url = new URL(request.url);
+  if (url.searchParams.get('latest')) {
+    const res  = await fetch(`${GH}/actions/workflows/reel-maker.yml/runs?per_page=1`, { headers: ghHeaders });
+    const data = await res.json();
+    const run  = data.workflow_runs?.[0];
+    return jsonRes({ run_id: run?.id, status: run?.status }, 200, request);
+  }
+
+  // GET?run_id=... — סטטוס ריצה
+  const runId = url.searchParams.get('run_id');
+  if (!runId) return jsonRes({ error: 'run_id או latest חסר' }, 400, request);
+
+  const res = await fetch(`${GH}/actions/runs/${runId}`, { headers: ghHeaders });
+  const run = await res.json();
+
+  return jsonRes({
+    status:       run.status,
+    conclusion:   run.conclusion,
+    run_url:      run.html_url,
+    artifact_url: (run.status === 'completed' && run.conclusion === 'success')
+      ? `${GH.replace('api.github.com/repos', 'github.com')}/actions/runs/${runId}`
+      : null,
+  }, 200, request);
+}
+
 // ===== FILL TITLES WITH AI =====
 function isGenericTitle(title) {
   if (!title) return true;
@@ -6357,6 +6416,7 @@ export default {
     if (path === '/api/fill-titles')       return handleFillTitles(request, env);
     if (path === '/api/generate-alt')      return handleGenerateAlt(request, env);
     if (path === '/api/trigger-workflow')  return handleTriggerWorkflow(request, env);
+    if (path === '/api/reels')             return handleReels(request, env);
     if (path === '/api/newsletter')        return handleNewsletter(request, env);
     if (path === '/api/unsubscribe')       return handleUnsubscribe(request, env);
     if (path === '/api/reply')             return handleReply(request, env);
