@@ -226,30 +226,31 @@ def _closing_clip(out_path, lang, category, duration):
     if not HAS_PILLOW:
         raise RuntimeError("pip install Pillow")
 
-    img  = Image.new("RGB", (W, H), (18, 18, 35))
+    # רקע כהה כמו עיצוב האתר
+    img  = Image.new("RGB", (W, H), (10, 10, 14))
     draw = ImageDraw.Draw(img)
 
-    for y in range(H):           # gradient
-        a = int(25 * y / H)
-        draw.line([(0, y), (W, y)], fill=(18 + a // 3, 18 + a // 2, 35 + a))
-
     try:
-        f_cat = ImageFont.truetype(FONT_REGULAR, 42)
-        f_cta = ImageFont.truetype(FONT_BOLD,    68)
-        f_url = ImageFont.truetype(FONT_REGULAR, 52)
+        f_he  = ImageFont.truetype(FONT_REGULAR, 52)
+        f_en  = ImageFont.truetype(FONT_BOLD,    62)
+        f_url = ImageFont.truetype(FONT_REGULAR, 48)
     except Exception:
-        f_cat = f_cta = f_url = ImageFont.load_default()
+        f_he = f_en = f_url = ImageFont.load_default()
 
     def draw_centered(text, font, y, color):
         bb = draw.textbbox((0, 0), text, font=font)
         draw.text(((W - (bb[2] - bb[0])) // 2, y), text, font=font, fill=color)
 
-    draw_centered(_bidi(category),      f_cat, H // 2 - 220, (160, 160, 180))
-    draw.line([(W // 2 - 120, H // 2 - 140), (W // 2 + 120, H // 2 - 140)],
-              fill=(100, 100, 140), width=2)
-    cta = _bidi("בקר באתר שלי:") if lang == "he" else "Visit my website:"
-    draw_centered(cta,                  f_cta, H // 2 - 80,  (240, 240, 255))
-    draw_centered("www.amitphotos.com", f_url, H // 2 + 40,  (240, 192, 64))
+    cy = H // 2 - 140
+
+    draw_centered("בקר באתר שלי",  f_he,  cy,        (200, 200, 220))
+    # English line
+    draw_centered("Visit my website:",    f_en,  cy + 90,   (240, 240, 255))
+    # קו מפריד
+    draw.line([(W // 2 - 140, cy + 175), (W // 2 + 140, cy + 175)],
+              fill=(200, 168, 80), width=2)
+    # URL — צבע זהב כמו האתר
+    draw_centered("www.amitphotos.com",   f_url, cy + 200,  (200, 168, 80))
 
     with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp:
         img.save(tmp.name)
@@ -387,10 +388,15 @@ def _seedance_clip(photo_path, out_path, photo_meta, duration=5):
         raw_path = tmp.name
 
     try:
+        fade = 0.4
         subprocess.run([
             FFMPEG, "-y", "-i", raw_path,
-            "-vf", (f"scale={W}:{H}:force_original_aspect_ratio=decrease,"
-                    f"pad={W}:{H}:(ow-iw)/2:(oh-ih)/2:black,setsar=1"),
+            "-vf", (
+                f"scale={W}:{H}:force_original_aspect_ratio=increase,"
+                f"crop={W}:{H},setsar=1,"
+                f"fade=t=in:st=0:d={fade},"
+                f"fade=t=out:st={duration - fade:.2f}:d={fade}"
+            ),
             "-c:v", "libx264", "-preset", "fast", "-crf", "21",
             "-r", str(FPS), "-pix_fmt", "yuv420p", "-an",
             str(out_path),
