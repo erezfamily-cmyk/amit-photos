@@ -414,7 +414,46 @@ def make_album_reel(category, lang=None, dry_run=False):
 
     total = n_photos * photo_secs + CLOSING_SECS
     print(f"\n✅ {out_path}  ({total:.0f} שניות)")
+
+    # העלה ל-R2 אם יש credentials
+    r2_url = _upload_to_r2(out_path)
+    if r2_url:
+        print(f"☁️  R2: {r2_url}")
+
     return str(out_path)
+
+
+# ── R2 Upload ────────────────────────────────────────────────────────────────
+
+def _upload_to_r2(video_path):
+    """מעלה MP4 ל-Cloudflare R2. מחזיר URL להורדה או None."""
+    account_id  = os.environ.get("CF_ACCOUNT_ID", "")
+    key_id      = os.environ.get("R2_ACCESS_KEY_ID", "")
+    secret_key  = os.environ.get("R2_SECRET_ACCESS_KEY", "")
+    bucket      = "amit-photos-images"
+
+    if not all([account_id, key_id, secret_key]):
+        return None
+
+    try:
+        import boto3
+        from botocore.config import Config
+
+        s3 = boto3.client(
+            "s3",
+            endpoint_url=f"https://{account_id}.r2.cloudflarestorage.com",
+            aws_access_key_id=key_id,
+            aws_secret_access_key=secret_key,
+            config=Config(signature_version="s3v4"),
+            region_name="auto",
+        )
+        key = f"reels/{Path(video_path).name}"
+        s3.upload_file(str(video_path), bucket, key,
+                       ExtraArgs={"ContentType": "video/mp4"})
+        return f"https://amitphotos.com/api/reels/file/{Path(video_path).name}"
+    except Exception as e:
+        print(f"⚠️  R2 upload נכשל: {e}")
+        return None
 
 
 # ── Instagram ─────────────────────────────────────────────────────────────────

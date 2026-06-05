@@ -848,6 +848,19 @@ async function handleReels(request, env) {
   }, 200, request);
 }
 
+async function handleReelsFile(request, env, filename) {
+  if (!filename) return new Response('not found', { status: 404 });
+  const obj = await env.PHOTOS.get(`reels/${filename}`);
+  if (!obj) return new Response('קובץ לא נמצא', { status: 404 });
+  return new Response(obj.body, {
+    headers: {
+      'Content-Type': 'video/mp4',
+      'Content-Disposition': `attachment; filename="${filename}"`,
+      'Cache-Control': 'no-cache',
+    },
+  });
+}
+
 // ===== FILL TITLES WITH AI =====
 function isGenericTitle(title) {
   if (!title) return true;
@@ -6417,6 +6430,7 @@ export default {
     if (path === '/api/generate-alt')      return handleGenerateAlt(request, env);
     if (path === '/api/trigger-workflow')  return handleTriggerWorkflow(request, env);
     if (path === '/api/reels')             return handleReels(request, env);
+    if (path.startsWith('/api/reels/file/')) return handleReelsFile(request, env, path.slice('/api/reels/file/'.length));
     if (path === '/api/newsletter')        return handleNewsletter(request, env);
     if (path === '/api/unsubscribe')       return handleUnsubscribe(request, env);
     if (path === '/api/reply')             return handleReply(request, env);

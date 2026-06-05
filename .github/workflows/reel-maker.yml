@@ -42,13 +42,16 @@ jobs:
         run: sudo apt-get update -y && sudo apt-get install -y ffmpeg fonts-liberation
 
       - name: התקנת חבילות Python
-        run: pip install requests pillow python-bidi fal-client
+        run: pip install requests pillow python-bidi fal-client boto3
 
       - name: יצירת הרילס
         env:
           FAL_KEY: ${{ secrets.FAL_KEY }}
           INSTAGRAM_USER_ID: ${{ secrets.INSTAGRAM_USER_ID }}
           INSTAGRAM_PAGE_TOKEN: ${{ secrets.INSTAGRAM_PAGE_TOKEN }}
+          CF_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
         run: |
           LANG_ARG=""
           if [ "${{ inputs.lang }}" != "auto" ]; then
