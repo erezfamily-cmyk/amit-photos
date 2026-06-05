@@ -1331,7 +1331,7 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
         <h1 class="section-title">🎬 יצירת רילס</h1>
       </div>
 
-      <div style="max-width:520px;margin:0 auto">
+      <div style="max-width:700px;margin:0 auto">
 
         <!-- טופס יצירה -->
         <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1.5rem">
@@ -1350,7 +1350,7 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
               <label style="font-size:.85rem;color:var(--muted)">בחר עד 5 תמונות לרילס</label>
               <span id="reel-selected-count" style="font-size:.82rem;color:var(--accent);font-weight:700">0/5 נבחרו</span>
             </div>
-            <div id="reel-photo-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;max-height:340px;overflow-y:auto;border:1px solid var(--border);border-radius:8px;padding:6px;background:var(--bg)"></div>
+            <div id="reel-photo-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-height:520px;overflow-y:scroll;border:1px solid var(--border);border-radius:8px;padding:8px;background:var(--bg);scrollbar-width:thin"></div>
             <div style="margin-top:.5rem;display:flex;gap:.5rem">
               <button onclick="reelSelectRandom()" style="flex:1;padding:.4rem;background:var(--surface);border:1px solid var(--border);border-radius:6px;color:var(--muted);font-size:.8rem;cursor:pointer">🎲 אקראי</button>
               <button onclick="reelClearSelection()" style="flex:1;padding:.4rem;background:var(--surface);border:1px solid var(--border);border-radius:6px;color:var(--muted);font-size:.8rem;cursor:pointer">✕ נקה</button>
