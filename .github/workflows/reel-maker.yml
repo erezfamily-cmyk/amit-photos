@@ -75,23 +75,20 @@ jobs:
           fi
           python src/reel_post.py --category "${{ inputs.category }}" $LANG_ARG $PHOTOS_ARG
 
-      - name: שמור latest_reel.json לריפו
+      - name: שמור latest_reel לריפו
         run: |
           git config user.name "Reels Agent"
           git config user.email "agent@amitphotos.com"
-          if [ -f data/latest_reel.json ]; then
-            git add data/latest_reel.json
-            if git diff --staged --quiet; then
-              echo "אין שינויים"
-            else
-              git commit -m "🎬 latest_reel.json עודכן"
-              for i in 1 2 3; do
-                git pull --rebase origin main && git push origin main && break
-                sleep 5
-              done
-            fi
+          [ -f reels_output/latest_reel.mp4 ] && git add reels_output/latest_reel.mp4
+          [ -f data/latest_reel.json ]        && git add data/latest_reel.json
+          if git diff --staged --quiet; then
+            echo "אין שינויים"
           else
-            echo "⚠️  latest_reel.json לא נוצר (upload נכשל) — מדלג"
+            git commit -m "🎬 רילס חדש — $(date -u +%Y-%m-%d)"
+            for i in 1 2 3; do
+              git pull --rebase origin main && git push origin main && break
+              sleep 5
+            done
           fi
 
       - name: העלאת הסרטון כ-Artifact (גיבוי)

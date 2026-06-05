@@ -485,10 +485,14 @@ def make_album_reel(category, lang=None, dry_run=False, photo_ids=None):
 
 # ── Publish reel → direct download URL ───────────────────────────────────────
 
+GITHUB_RAW = "https://raw.githubusercontent.com/erezfamily-cmyk/amit-photos/main/reels_output/latest_reel.mp4"
+
+
 def _publish_reel(video_path, category, lang):
     """
-    מעלה ל-0x0.st (permanent, public) ושומר URL ב-data/latest_reel.json.
-    מחזיר את ה-URL או None.
+    1. מעתיק ל-reels_output/latest_reel.mp4 (ימשוך לריפו ע"י workflow)
+    2. מנסה להעלות ל-0x0.st (3 ניסיונות) לקישור מהיר יותר
+    3. שומר URL ב-data/latest_reel.json
     """
     import requests as req
     import datetime
@@ -497,9 +501,15 @@ def _publish_reel(video_path, category, lang):
     if not video_path.exists():
         return None
 
-    data = video_path.read_bytes()
-    print(f"📤 מעלה ({len(data)/1024/1024:.1f} MB) ל-0x0.st...")
+    # תמיד מעתיק ל-latest_reel.mp4 בריפו (fallback URL)
+    latest_in_repo = ROOT / "reels_output" / "latest_reel.mp4"
+    latest_in_repo.parent.mkdir(exist_ok=True)
+    shutil.copy2(video_path, latest_in_repo)
+    print(f"📁 הועתק ל-{latest_in_repo}")
 
+    # ניסיון העלאה ל-0x0.st
+    data = video_path.read_bytes()
+    print(f"📤 מנסה 0x0.st ({len(data)/1024/1024:.1f} MB)...")
     url = None
     for attempt in range(1, 4):
         try:
@@ -512,14 +522,17 @@ def _publish_reel(video_path, category, lang):
             candidate = r.text.strip()
             if candidate.startswith("http"):
                 url = candidate
+                print(f"✅ 0x0.st: {url}")
                 break
             raise ValueError(f"תגובה לא תקינה: {candidate}")
         except Exception as e:
-            print(f"⚠️  upload נכשל (ניסיון {attempt}/3): {e}")
+            print(f"⚠️  0x0.st ניסיון {attempt}/3 נכשל: {e}")
             if attempt < 3:
                 time.sleep(10)
+
     if not url:
-        return None
+        url = GITHUB_RAW
+        print(f"📎 fallback → GitHub raw: {url}")
 
     # שמור ב-data/latest_reel.json
     record = {
