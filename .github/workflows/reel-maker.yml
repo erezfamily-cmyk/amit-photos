@@ -79,15 +79,19 @@ jobs:
         run: |
           git config user.name "Reels Agent"
           git config user.email "agent@amitphotos.com"
-          git add data/latest_reel.json
-          if git diff --staged --quiet; then
-            echo "אין שינויים"
+          if [ -f data/latest_reel.json ]; then
+            git add data/latest_reel.json
+            if git diff --staged --quiet; then
+              echo "אין שינויים"
+            else
+              git commit -m "🎬 latest_reel.json עודכן"
+              for i in 1 2 3; do
+                git pull --rebase origin main && git push origin main && break
+                sleep 5
+              done
+            fi
           else
-            git commit -m "🎬 latest_reel.json עודכן"
-            for i in 1 2 3; do
-              git pull --rebase origin main && git push origin main && break
-              sleep 5
-            done
+            echo "⚠️  latest_reel.json לא נוצר (upload נכשל) — מדלג"
           fi
 
       - name: העלאת הסרטון כ-Artifact (גיבוי)

@@ -500,18 +500,25 @@ def _publish_reel(video_path, category, lang):
     data = video_path.read_bytes()
     print(f"📤 מעלה ({len(data)/1024/1024:.1f} MB) ל-0x0.st...")
 
-    try:
-        r = req.post(
-            "https://0x0.st",
-            files={"file": (video_path.name, data, "video/mp4")},
-            timeout=120,
-        )
-        r.raise_for_status()
-        url = r.text.strip()
-        if not url.startswith("http"):
-            raise ValueError(f"תגובה לא תקינה: {url}")
-    except Exception as e:
-        print(f"⚠️  upload נכשל: {e}")
+    url = None
+    for attempt in range(1, 4):
+        try:
+            r = req.post(
+                "https://0x0.st",
+                files={"file": (video_path.name, data, "video/mp4")},
+                timeout=180,
+            )
+            r.raise_for_status()
+            candidate = r.text.strip()
+            if candidate.startswith("http"):
+                url = candidate
+                break
+            raise ValueError(f"תגובה לא תקינה: {candidate}")
+        except Exception as e:
+            print(f"⚠️  upload נכשל (ניסיון {attempt}/3): {e}")
+            if attempt < 3:
+                time.sleep(10)
+    if not url:
         return None
 
     # שמור ב-data/latest_reel.json
