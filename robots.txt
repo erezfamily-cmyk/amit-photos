@@ -21,4 +21,10 @@ Disallow: /mockup-map.html
 # Dynamic spot page (loaded via JS with parameters)
 Disallow: /locations/spot/
 
+# Lightbox & discount parameter URLs — canonical handles deindexing but
+# blocking saves crawl budget (356 ?photo= URLs were being crawled)
+Disallow: /*?photo=
+Disallow: /*?discount=
+Disallow: /*?buy=
+
 Sitemap: https://amitphotos.com/sitemap.xml
