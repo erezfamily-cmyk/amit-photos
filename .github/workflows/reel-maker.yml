@@ -1,0 +1,71 @@
+name: 🎬 יצירת Reel ידנית
+
+on:
+  workflow_dispatch:
+    inputs:
+      category:
+        description: 'קטגוריה (למשל: בעלי חיים / ישראל / פרחים וצמחים)'
+        required: true
+        type: string
+      lang:
+        description: 'שפת שקופית הסיום'
+        required: false
+        default: 'auto'
+        type: choice
+        options:
+          - auto
+          - he
+          - en
+      post_to_instagram:
+        description: 'פרסם ל-Instagram אחרי יצירה?'
+        required: false
+        default: false
+        type: boolean
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  make-reel:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: התקנת FFmpeg
+        run: sudo apt-get update -y && sudo apt-get install -y ffmpeg fonts-arial-10x20 || true
+
+      - name: התקנת חבילות Python
+        run: pip install requests pillow python-bidi fal-client
+
+      - name: יצירת הרילס
+        env:
+          FAL_KEY: ${{ secrets.FAL_KEY }}
+          INSTAGRAM_USER_ID: ${{ secrets.INSTAGRAM_USER_ID }}
+          INSTAGRAM_PAGE_TOKEN: ${{ secrets.INSTAGRAM_PAGE_TOKEN }}
+        run: |
+          LANG_ARG=""
+          if [ "${{ inputs.lang }}" != "auto" ]; then
+            LANG_ARG="--lang ${{ inputs.lang }}"
+          fi
+          POST_ARG=""
+          # אם לא נבחר לפרסם — מסיר credentials כדי למנוע פרסום אוטומטי
+          if [ "${{ inputs.post_to_instagram }}" != "true" ]; then
+            export INSTAGRAM_USER_ID=""
+            export INSTAGRAM_PAGE_TOKEN=""
+          fi
+          python src/reel_post.py --category "${{ inputs.category }}" $LANG_ARG
+
+      - name: העלאת הסרטון כ-Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: reel-${{ inputs.category }}
+          path: reels_output/*.mp4
+          retention-days: 30
+          if-no-files-found: error

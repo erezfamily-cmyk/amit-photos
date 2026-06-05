@@ -1,8 +1,6 @@
 name: Reels + YouTube Shorts אוטומטי
 
 on:
-  schedule:
-    - cron: '0 8 * * 0'  # ראשון 08:00 UTC = 11:00 ישראל
   workflow_dispatch:
 
 env:
