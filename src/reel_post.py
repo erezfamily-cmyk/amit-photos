@@ -18,6 +18,7 @@ import subprocess
 import sys
 import tempfile
 import time
+import urllib.request as ul
 from pathlib import Path
 
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -201,7 +202,7 @@ def _ken_burns_clip(photo_path, out_path, duration, pan_dir="left"):
     )
     vf = (
         f"scale=-2:{H},"
-        f"crop={W}:{H}:'{x_expr}':0:eval=frame,"
+        f"crop={W}:{H}:'{x_expr}':0,"
         f"fade=t=in:st=0:d={fade_f/FPS:.3f},"
         f"fade=t=out:st={duration - fade_f/FPS:.3f}:d={fade_f/FPS:.3f},"
         f"setsar=1"
@@ -405,13 +406,13 @@ def _seedance_clip(photo_path, out_path, photo_meta, duration=5):
 def make_album_reel(category, lang=None, dry_run=False, photo_ids=None):
     """
     בוחר תמונות מהקטגוריה ומייצר רילס.
-    - עם FAL_KEY: Seedance 2.0 (2 תמונות × 5s + סיום = ~12.5s)
+    - עם FAL_KEY: Kling 1.6 (5 תמונות × 5s + סיום = ~27.5s)
     - בלי FAL_KEY: Ken Burns (3 תמונות × 2.5s + סיום = 10s)
     """
     use_seedance = bool(FAL_KEY)
     n_photos     = NUM_PHOTOS_SD if use_seedance else NUM_PHOTOS_KB
     photo_secs   = PHOTO_SECS_SD if use_seedance else PHOTO_SECS_KB
-    mode         = "🌀 Seedance 2.0" if use_seedance else "🎞  Ken Burns"
+    mode         = "🌀 Kling 1.6" if use_seedance else "🎞  Ken Burns"
 
     photos_all = load_photos()
     cat_photos = [p for p in photos_all if p.get("category") == category]
