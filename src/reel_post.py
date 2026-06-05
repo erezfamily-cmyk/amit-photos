@@ -77,9 +77,11 @@ def _find_font(names):
 FONT_REGULAR = _find_font(["arial.ttf", "Arial.ttf"]) or "arial.ttf"
 FONT_BOLD    = _find_font(["arialbd.ttf", "Arial-Bold.ttf"]) or "arial.ttf"
 
-IG_USER_ID   = os.environ.get("INSTAGRAM_USER_ID", "")
-ACCESS_TOKEN = os.environ.get("INSTAGRAM_PAGE_TOKEN", "")
-FAL_KEY      = os.environ.get("FAL_KEY", "")
+IG_USER_ID        = os.environ.get("INSTAGRAM_USER_ID", "")
+ACCESS_TOKEN      = os.environ.get("INSTAGRAM_PAGE_TOKEN", "")
+FAL_KEY           = os.environ.get("FAL_KEY", "")
+ANTHROPIC_API_KEY = (os.environ.get("ANTHROPIC_API_KEY") or
+                     os.environ.get("AMIT_PHOTO_AGENT") or "").strip()
 
 # פרומפטים לתנועה לפי קטגוריה
 MOTION_PROMPTS = {
@@ -292,6 +294,58 @@ def _concat(clip_paths, out_path):
 
 # ── Video: Seedance 2.0 clip ──────────────────────────────────────────────────
 
+def _smart_motion_prompt(photo_path, photo_meta):
+    """
+    מייצר פרומפט תנועה מותאם לתמונה הספציפית באמצעות Claude vision.
+    אם אין ANTHROPIC_API_KEY — חוזר לפרומפט קטגוריה גנרי.
+    """
+    if not ANTHROPIC_API_KEY:
+        cat = photo_meta.get("category", "")
+        return MOTION_PROMPTS.get(cat, MOTION_PROMPTS["default"])
+
+    try:
+        import anthropic, base64, io
+        from PIL import Image as PILImage
+
+        # דחוס את התמונה לשליחה מהירה
+        img = PILImage.open(str(photo_path)).convert("RGB")
+        img.thumbnail((768, 768), PILImage.LANCZOS)
+        buf = io.BytesIO()
+        img.save(buf, format="JPEG", quality=80)
+        b64 = base64.standard_b64encode(buf.getvalue()).decode()
+
+        title    = photo_meta.get("title", "")
+        category = photo_meta.get("category", "")
+
+        client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
+        msg = client.messages.create(
+            model="claude-haiku-4-5-20251001",
+            max_tokens=80,
+            messages=[{
+                "role": "user",
+                "content": [
+                    {"type": "image",
+                     "source": {"type": "base64", "media_type": "image/jpeg", "data": b64}},
+                    {"type": "text", "text": (
+                        f"Photo: '{title}' | Category: {category}\n\n"
+                        "Write a concise cinematic motion prompt (max 25 words) for Kling AI video.\n"
+                        "Describe SPECIFIC subtle natural movement visible in THIS photo: "
+                        "what moves, camera direction, light change. "
+                        "Cinematic, realistic, no fantasy. English only. Prompt only."
+                    )}
+                ]
+            }],
+        )
+        prompt = msg.content[0].text.strip()
+        print(f"  💡 פרומפט: {prompt}")
+        return prompt
+
+    except Exception as e:
+        print(f"  ⚠️  Claude prompt נכשל ({e}) — גנרי")
+        cat = photo_meta.get("category", "")
+        return MOTION_PROMPTS.get(cat, MOTION_PROMPTS["default"])
+
+
 def _seedance_clip(photo_path, out_path, photo_meta, duration=5):
     """fal.ai Kling 1.6: מנפש תמונה → MP4 9:16."""
     try:
@@ -301,9 +355,8 @@ def _seedance_clip(photo_path, out_path, photo_meta, duration=5):
 
     os.environ["FAL_KEY"] = FAL_KEY
 
-    import urllib.request as ul
-    category = photo_meta.get("category", "")
-    prompt   = MOTION_PROMPTS.get(category, MOTION_PROMPTS["default"])
+    print("  🧠 מייצר פרומפט חכם...")
+    prompt = _smart_motion_prompt(photo_path, photo_meta)
 
     print("  📤 מעלה לfal.ai...")
     img_url = fal_client.upload_file(str(photo_path))

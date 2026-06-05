@@ -52,6 +52,7 @@ jobs:
       - name: יצירת הרילס
         env:
           FAL_KEY: ${{ secrets.FAL_KEY }}
+          AMIT_PHOTO_AGENT: ${{ secrets.AMIT_PHOTO_AGENT }}
           INSTAGRAM_USER_ID: ${{ secrets.INSTAGRAM_USER_ID }}
           INSTAGRAM_PAGE_TOKEN: ${{ secrets.INSTAGRAM_PAGE_TOKEN }}
           CF_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
