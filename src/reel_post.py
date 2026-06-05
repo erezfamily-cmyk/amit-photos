@@ -58,9 +58,9 @@ CLOSING_SECS     = 2.5
 NUM_PHOTOS_KB    = 3
 PHOTO_SECS_KB    = (10.0 - CLOSING_SECS) / NUM_PHOTOS_KB   # 2.5s each
 
-# Seedance mode (FAL_KEY available)
-NUM_PHOTOS_SD    = 2
-PHOTO_SECS_SD    = 5.0   # Seedance output is 5s per clip
+# Kling/AI mode (FAL_KEY available)
+NUM_PHOTOS_SD    = 5
+PHOTO_SECS_SD    = 5.0   # Kling 1.6 outputs 5s per clip → 5×5=25s + closing
 
 def _find_font(names):
     import platform
@@ -83,17 +83,20 @@ FAL_KEY      = os.environ.get("FAL_KEY", "")
 
 # פרומפטים לתנועה לפי קטגוריה
 MOTION_PROMPTS = {
-    "פרחים וצמחים":       "gentle breeze, petals and leaves swaying softly, macro beauty",
-    "בעלי חיים":           "subtle natural animal movement, breathing, wildlife in habitat",
-    "מאקרו-צילומי תקריב": "micro vibration, delicate texture details, macro world revealed",
-    "צילום מופשט":         "dreamlike slow morphing, abstract color flow, artistic motion",
-    "ישראל":               "slow cinematic camera drift, golden Mediterranean light shift",
-    "טבע דומם":            "gentle light play, soft shadows drifting, still life breathing",
-    "שחור-לבן":            "dramatic light and shadow shift, cinematic noir motion",
-    "טנזניה":              "savanna warm breeze, golden hour glow, African wildlife atmosphere",
-    "ספרד ואנדורה":        "mediterranean warmth, architecture breathing, travel cinematic",
-    "איטליה":              "italian golden light, gentle atmospheric drift, cinematic beauty",
-    "default":             "gentle cinematic motion, subtle atmospheric movement, fine art photography",
+    "פרחים וצמחים":       "cinematic macro shot, gentle breeze moves petals softly, warm golden light, shallow depth of field, smooth slow motion",
+    "בעלי חיים":           "cinematic wildlife shot, animal breathes naturally, subtle body movement, dramatic golden hour lighting, National Geographic style",
+    "מאקרו-צילומי תקריב": "extreme macro cinematic, micro details emerge slowly, gentle vibration, bokeh background, ultra sharp focus pull",
+    "צילום מופשט":         "slow cinematic dolly, dreamlike light rays shift, color gradient flows, artistic atmospheric mood",
+    "ישראל":               "cinematic slow pan across landscape, warm Mediterranean golden light, atmospheric haze, travel film aesthetic",
+    "טבע דומם":            "cinematic product shot, soft dramatic light shifts across surface, subtle shadow movement, luxury still life",
+    "שחור-לבן":            "dramatic noir cinema, deep shadows shift slowly, high contrast light movement, timeless black and white film",
+    "טנזניה":              "epic wildlife cinema, savanna grass sways in warm breeze, golden African sunset atmosphere, documentary style",
+    "ספרד ואנדורה":        "cinematic travel film, warm mediterranean sunlight drifts across scene, gentle atmospheric motion",
+    "איטליה":              "cinematic Italian golden hour, soft warm light glows across architecture, slow atmospheric drift",
+    "סלובקיה":             "cinematic mountain landscape, crisp air atmospheric shimmer, dramatic clouds drift slowly",
+    "גרמניה":              "cinematic European street scene, soft light drifts, atmospheric depth, travel documentary style",
+    "אנגליה":              "cinematic moody British atmosphere, soft diffused light shifts, subtle fog rolls, dramatic sky movement",
+    "default":             "cinematic slow motion, dramatic atmospheric light shift, shallow depth of field, professional photography reveal",
 }
 
 
@@ -290,7 +293,7 @@ def _concat(clip_paths, out_path):
 # ── Video: Seedance 2.0 clip ──────────────────────────────────────────────────
 
 def _seedance_clip(photo_path, out_path, photo_meta, duration=5):
-    """fal.ai Seedance 2.0: מנפש תמונה → MP4 9:16."""
+    """fal.ai Kling 1.6: מנפש תמונה → MP4 9:16."""
     try:
         import fal_client
     except ImportError:
@@ -305,18 +308,14 @@ def _seedance_clip(photo_path, out_path, photo_meta, duration=5):
     print("  📤 מעלה לfal.ai...")
     img_url = fal_client.upload_file(str(photo_path))
 
-    print("  🌀 Seedance 2.0 מעבד (~60 שניות)...")
-    # duration: "4" or "15" only (fal.ai Seedance 2.0 valid values)
-    dur_str = "4" if duration <= 5 else "15"
+    print("  🎬 Kling 1.6 מעבד (~45 שניות)...")
     handler = fal_client.submit(
-        "bytedance/seedance-2.0/image-to-video",
+        "fal-ai/kling-video/v1.6/standard/image-to-video",
         arguments={
-            "image_url":       img_url,
-            "prompt":          prompt,
-            "duration":        dur_str,
-            "aspect_ratio":    "9:16",
-            "resolution":      "720p",
-            "generate_audio":  False,
+            "image_url":    img_url,
+            "prompt":       prompt,
+            "duration":     "5",
+            "aspect_ratio": "9:16",
         },
     )
     result = handler.get()
