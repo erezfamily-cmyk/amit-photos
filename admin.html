@@ -1350,7 +1350,7 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
               <label style="font-size:.85rem;color:var(--muted)">בחר עד 5 תמונות לרילס</label>
               <span id="reel-selected-count" style="font-size:.82rem;color:var(--accent);font-weight:700">0/5 נבחרו</span>
             </div>
-            <div id="reel-photo-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-height:520px;overflow-y:scroll;border:1px solid var(--border);border-radius:8px;padding:8px;background:var(--bg);scrollbar-width:thin"></div>
+            <div id="reel-photo-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-height:520px;overflow-y:scroll;border:1px solid var(--border);border-radius:8px;padding:8px;background:var(--bg);scrollbar-width:thin;direction:ltr"></div>
             <div style="margin-top:.5rem;display:flex;gap:.5rem">
               <button onclick="reelSelectRandom()" style="flex:1;padding:.4rem;background:var(--surface);border:1px solid var(--border);border-radius:6px;color:var(--muted);font-size:.8rem;cursor:pointer">🎲 אקראי</button>
               <button onclick="reelClearSelection()" style="flex:1;padding:.4rem;background:var(--surface);border:1px solid var(--border);border-radius:6px;color:var(--muted);font-size:.8rem;cursor:pointer">✕ נקה</button>
@@ -5975,15 +5975,17 @@ async function confirmLinkToLocation() {
   async function loadReelCategories() {
     const sel = document.getElementById('reel-category');
     if (reelAllPhotos.length > 0) return;
+    sel.innerHTML = '<option value="">טוען...</option>';
     try {
-      const pwd = sessionStorage.getItem('admin_session') || localStorage.getItem('admin_session') || '';
-      const res  = await fetch('/api/photos', { headers: { 'X-Admin-Password': pwd } });
-      reelAllPhotos = await res.json();
+      const res  = await fetch('/api/photos?admin=1', { headers: { 'X-Session-Token': SESSION_TOKEN } });
+      const data = await res.json();
+      reelAllPhotos = Array.isArray(data) ? data : (data.results || data.photos || []);
       const cats = [...new Set(reelAllPhotos.map(p => p.category).filter(Boolean))].sort();
       sel.innerHTML = '<option value="">— בחר קטגוריה —</option>' +
         cats.map(c => `<option value="${c}">${c}</option>`).join('');
     } catch(e) {
       sel.innerHTML = '<option value="">שגיאה בטעינה</option>';
+      console.error('loadReelCategories error:', e);
     }
   }
 
