@@ -34,7 +34,7 @@ export async function onRequestPost({ request, env }) {
     {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${env.GITHUB_TOKEN}`,
+        'Authorization': `Bearer ${env.GH_PAT}`,
         'Accept': 'application/vnd.github+json',
         'Content-Type': 'application/json',
         'X-GitHub-Api-Version': '2022-11-28',
@@ -53,7 +53,7 @@ export async function onRequestPost({ request, env }) {
 
   const runsRes = await fetch(
     `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/actions/workflows/${WORKFLOW_ID}/runs?per_page=1`,
-    { headers: { 'Authorization': `Bearer ${env.GITHUB_TOKEN}`, 'Accept': 'application/vnd.github+json' } }
+    { headers: { 'Authorization': `Bearer ${env.GH_PAT}`, 'Accept': 'application/vnd.github+json' } }
   );
   const runs  = await runsRes.json();
   const runId = runs.workflow_runs?.[0]?.id;
@@ -70,7 +70,7 @@ export async function onRequestGet({ request, env }) {
 
   const runRes = await fetch(
     `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/actions/runs/${runId}`,
-    { headers: { 'Authorization': `Bearer ${env.GITHUB_TOKEN}`, 'Accept': 'application/vnd.github+json' } }
+    { headers: { 'Authorization': `Bearer ${env.GH_PAT}`, 'Accept': 'application/vnd.github+json' } }
   );
   const run = await runRes.json();
 
