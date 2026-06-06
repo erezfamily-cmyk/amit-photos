@@ -84,22 +84,22 @@ FAL_KEY           = os.environ.get("FAL_KEY", "")
 ANTHROPIC_API_KEY = (os.environ.get("ANTHROPIC_API_KEY") or
                      os.environ.get("AMIT_PHOTO_AGENT") or "").strip()
 
-# פרומפטים לתנועה לפי קטגוריה
+# פרומפטים לתנועה לפי קטגוריה — static camera, only in-scene elements move
 MOTION_PROMPTS = {
-    "פרחים וצמחים":       "cinematic macro shot, gentle breeze moves petals softly, warm golden light, shallow depth of field, smooth slow motion",
-    "בעלי חיים":           "cinematic wildlife shot, animal breathes naturally, subtle body movement, dramatic golden hour lighting, National Geographic style",
-    "מאקרו-צילומי תקריב": "extreme macro cinematic, micro details emerge slowly, gentle vibration, bokeh background, ultra sharp focus pull",
-    "צילום מופשט":         "slow cinematic dolly, dreamlike light rays shift, color gradient flows, artistic atmospheric mood",
-    "ישראל":               "cinematic slow pan across landscape, warm Mediterranean golden light, atmospheric haze, travel film aesthetic",
-    "טבע דומם":            "cinematic product shot, soft dramatic light shifts across surface, subtle shadow movement, luxury still life",
-    "שחור-לבן":            "dramatic noir cinema, deep shadows shift slowly, high contrast light movement, timeless black and white film",
-    "טנזניה":              "epic wildlife cinema, savanna grass sways in warm breeze, golden African sunset atmosphere, documentary style",
-    "ספרד ואנדורה":        "cinematic travel film, warm mediterranean sunlight drifts across scene, gentle atmospheric motion",
-    "איטליה":              "cinematic Italian golden hour, soft warm light glows across architecture, slow atmospheric drift",
-    "סלובקיה":             "cinematic mountain landscape, crisp air atmospheric shimmer, dramatic clouds drift slowly",
-    "גרמניה":              "cinematic European street scene, soft light drifts, atmospheric depth, travel documentary style",
-    "אנגליה":              "cinematic moody British atmosphere, soft diffused light shifts, subtle fog rolls, dramatic sky movement",
-    "default":             "cinematic slow motion, dramatic atmospheric light shift, shallow depth of field, professional photography reveal",
+    "פרחים וצמחים":       "static camera, gentle breeze sways petals and leaves in place, warm golden light flickers softly, macro close-up stays locked",
+    "בעלי חיים":           "static camera, animal breathes and blinks naturally, fur ripples in breeze, eyes glisten, subject stays centered",
+    "מאקרו-צילומי תקריב": "static camera locked on subject, micro details shimmer, gentle vibration in place, bokeh depth stays fixed",
+    "צילום מופשט":         "static camera, light rays shift dreamily across subject, color gradients pulse gently, no movement away from center",
+    "ישראל":               "static camera, warm Mediterranean light shifts slowly across scene, distant elements sway gently, subject stays in frame",
+    "טבע דומם":            "static camera, soft light gradually shifts across surface, subtle shadows move in place, object stays perfectly centered",
+    "שחור-לבן":            "static camera, deep shadows shift slowly in place, high contrast light pulses, timeless stillness with subtle motion",
+    "טנזניה":              "static camera, savanna grass sways in warm breeze, animal breathes naturally, golden light shifts, subject stays centered",
+    "ספרד ואנדורה":        "static camera, warm sunlight shifts gently across scene, leaves rustle in place, atmospheric elements move softly",
+    "איטליה":              "static camera, soft golden light glows and shifts across architecture, gentle atmospheric depth, no camera movement",
+    "סלובקיה":             "static camera, clouds drift slowly in background, crisp mountain air shimmers, foreground elements stay locked",
+    "גרמניה":              "static camera, soft light drifts across scene, atmospheric depth stays fixed, subtle environmental motion in place",
+    "אנגליה":              "static camera, soft diffused light shifts gently, subtle fog drifts in background, subject stays centered and sharp",
+    "default":             "static camera locked on subject, dramatic atmospheric light shifts in place, shallow depth of field, subject stays centered",
 }
 
 
@@ -374,10 +374,11 @@ def _smart_motion_prompt(photo_path, photo_meta):
                      "source": {"type": "base64", "media_type": "image/jpeg", "data": b64}},
                     {"type": "text", "text": (
                         f"Photo: '{title}' | Category: {category}\n\n"
-                        "Write a concise cinematic motion prompt (max 25 words) for Kling AI video.\n"
-                        "Describe SPECIFIC subtle natural movement visible in THIS photo: "
-                        "what moves, camera direction, light change. "
-                        "Cinematic, realistic, no fantasy. English only. Prompt only."
+                        "Write a concise motion prompt (max 25 words) for Kling AI video.\n"
+                        "RULES: static camera only — NO pan, NO zoom, NO dolly, NO camera movement.\n"
+                        "Describe ONLY in-scene element animation: what naturally moves in THIS photo "
+                        "(petals sway, animal breathes, light shifts, water ripples, leaves tremble).\n"
+                        "Subject must stay centered in frame. Cinematic, realistic. English only. Prompt only."
                     )}
                 ]
             }],
@@ -479,19 +480,17 @@ def _seedance_clip(photo_path, out_path, photo_meta, duration=5):
     if was_cropped:
         os.unlink(upload_path)
 
-    print("  🎬 Seedance 2.0 Fast מעבד...")
+    print("  🎬 Kling 1.6 Standard מעבד (~4 דקות לקליפ)...")
     import threading
 
     def _run():
         handler = fal_client.submit(
-            "fal-ai/bytedance/seedance-2.0/fast/image-to-video",
+            "fal-ai/kling-video/v1.6/standard/image-to-video",
             arguments={
-                "image_url":      img_url,
-                "prompt":         prompt,
-                "duration":       5,
-                "aspect_ratio":   "9:16",
-                "resolution":     "1080p",
-                "generate_audio": False,
+                "image_url":    img_url,
+                "prompt":       prompt,
+                "duration":     "5",
+                "aspect_ratio": "9:16",
             },
         )
         return handler.get()
