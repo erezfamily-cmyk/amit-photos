@@ -88,8 +88,8 @@ ANTHROPIC_API_KEY = (os.environ.get("ANTHROPIC_API_KEY") or
 MOTION_PROMPTS = {
     "פרחים וצמחים":       "static camera, gentle breeze sways petals and leaves in place, warm golden light flickers softly, macro close-up stays locked",
     "בעלי חיים":           "static camera, animal breathes and blinks naturally, fur ripples in breeze, eyes glisten, subject stays centered",
-    "מאקרו-צילומי תקריב": "static camera locked on subject, micro details shimmer, gentle vibration in place, bokeh depth stays fixed",
-    "חרקים":              "static camera locked on insect, insect moves legs and antennae naturally, wings twitch gently, subject stays perfectly centered",
+    "מאקרו-צילומי תקריב": "LOCKED static frame, ZERO camera movement, subject stays perfectly centered, micro details shimmer in place, wings or legs move naturally, bokeh stays fixed",
+    "חרקים":              "LOCKED static frame, ZERO camera movement, insect legs twitch, antennae wave, wings flutter naturally, insect stays perfectly centered throughout",
     "צילום מופשט":         "static camera, light rays shift dreamily across subject, color gradients pulse gently, no movement away from center",
     "ישראל":               "static camera, warm Mediterranean light shifts slowly across scene, distant elements sway gently, subject stays in frame",
     "טבע דומם":            "static camera, soft light gradually shifts across surface, subtle shadows move in place, object stays perfectly centered",
@@ -433,23 +433,18 @@ def _smart_crop_9x16(photo_path):
                         {"type": "image",
                          "source": {"type": "base64", "media_type": "image/jpeg", "data": b64}},
                         {"type": "text",
-                         "text": "Where is the main subject? Reply with ONE word: left, center, or right."}
+                         "text": "Where is the main subject horizontally? Reply with a number 0-100 representing % from left edge (0=far left, 50=center, 100=far right). Number only."}
                     ]}],
                 )
-                position = msg.content[0].text.strip().lower().split()[0]
-                if position not in ("left", "center", "right"):
-                    position = "center"
-                print(f"  🎯 נושא: {position}")
+                raw = msg.content[0].text.strip().split()[0].rstrip('%')
+                pct = max(10, min(90, int(float(raw))))
+                print(f"  🎯 נושא: {pct}% מהשמאל")
             except Exception:
-                pass
+                pct = 50
 
-        # חשב x offset
-        if position == "left":
-            x = max(0, iw // 6 - crop_w // 2)
-        elif position == "right":
-            x = min(iw - crop_w, iw * 5 // 6 - crop_w // 2)
-        else:
-            x = (iw - crop_w) // 2
+        # חשב x offset לפי אחוז מדויק
+        subject_x = int(iw * pct / 100)
+        x = max(0, min(iw - crop_w, subject_x - crop_w // 2))
 
         cropped = img.crop((x, 0, x + crop_w, ih))
         tmp = tempfile.NamedTemporaryFile(suffix=".jpg", delete=False)
