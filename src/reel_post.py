@@ -456,7 +456,7 @@ def _smart_crop_9x16(photo_path):
         return str(photo_path), False
 
 
-def _seedance_clip(photo_path, out_path, photo_meta, duration=5):
+def _seedance_clip(photo_path, out_path, photo_meta, duration=5, custom_prompt=None):
     """fal.ai Kling 1.6: מנפש תמונה → MP4 9:16."""
     try:
         import fal_client
@@ -468,8 +468,12 @@ def _seedance_clip(photo_path, out_path, photo_meta, duration=5):
     print("  ✂️  חיתוך חכם 9:16...")
     upload_path, was_cropped = _smart_crop_9x16(photo_path)
 
-    print("  🧠 מייצר פרומפט חכם...")
-    prompt = _smart_motion_prompt(photo_path, photo_meta)
+    if custom_prompt:
+        prompt = custom_prompt
+        print(f"  📝 משתמש בפרומפט מותאם")
+    else:
+        print("  🧠 מייצר פרומפט חכם...")
+        prompt = _smart_motion_prompt(photo_path, photo_meta)
 
     print("  📤 מעלה לfal.ai...")
     img_url = fal_client.upload_file(upload_path)
@@ -538,7 +542,7 @@ def _seedance_clip(photo_path, out_path, photo_meta, duration=5):
 
 # ── יצירת Album Reel ──────────────────────────────────────────────────────────
 
-def make_album_reel(category, lang=None, dry_run=False, photo_ids=None):
+def make_album_reel(category, lang=None, dry_run=False, photo_ids=None, custom_prompts=None):
     """
     בוחר תמונות מהקטגוריה ומייצר רילס.
     - עם FAL_KEY: Kling 1.6 (5 תמונות × 5s + סיום = ~27.5s)
@@ -588,8 +592,11 @@ def make_album_reel(category, lang=None, dry_run=False, photo_ids=None):
 
             clip = tmp / f"clip_{i}.mp4"
             if use_seedance:
+                custom_p = (custom_prompts or {}).get(photo["id"])
+                if custom_p:
+                    print(f"  📝 פרומפט מותאם: {custom_p[:60]}...")
                 try:
-                    _seedance_clip(src, clip, photo, duration=int(photo_secs))
+                    _seedance_clip(src, clip, photo, duration=int(photo_secs), custom_prompt=custom_p)
                 except Exception as e:
                     print(f"  ⚠️  Kling נכשל ({e}) — עובר ל-Ken Burns")
                     _ken_burns_clip(src, clip, photo_secs,
@@ -764,6 +771,7 @@ def main():
     ap.add_argument("--dry-run", action="store_true",
                     help="רק מדפיס מה יבחר, לא מייצר וידאו")
     ap.add_argument("--list", action="store_true", help="הצג קטגוריות זמינות")
+    ap.add_argument("--prompts", help="JSON: [{\"id\":\"...\",\"prompt\":\"...\"},...] פרומפטים מותאמים")
     args = ap.parse_args()
 
     if args.list:
@@ -781,7 +789,16 @@ def main():
         return
 
     ids = set(args.photos.split(",")) if args.photos else None
-    out = make_album_reel(args.category, args.lang, dry_run=args.dry_run, photo_ids=ids)
+    custom_prompts = {}
+    prompts_src = args.prompts or os.environ.get("REEL_PROMPTS", "")
+    if prompts_src:
+        try:
+            for item in json.loads(prompts_src):
+                custom_prompts[item["id"]] = item["prompt"]
+            print(f"📝 פרומפטים מותאמים: {len(custom_prompts)} תמונות")
+        except Exception as e:
+            print(f"⚠️  שגיאה בפרומפטים: {e}")
+    out = make_album_reel(args.category, args.lang, dry_run=args.dry_run, photo_ids=ids, custom_prompts=custom_prompts)
     if not out or args.dry_run:
         return
 

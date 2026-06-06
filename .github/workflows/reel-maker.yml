@@ -26,6 +26,11 @@ on:
         required: false
         default: false
         type: boolean
+      prompts:
+        description: 'JSON של פרומפטים מותאמים: [{"id":"...","prompt":"..."},...]'
+        required: false
+        default: ''
+        type: string
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
@@ -59,6 +64,7 @@ jobs:
           R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           PYTHONUNBUFFERED: "1"
+          REEL_PROMPTS: ${{ inputs.prompts }}
         run: |
           LANG_ARG=""
           if [ "${{ inputs.lang }}" != "auto" ]; then

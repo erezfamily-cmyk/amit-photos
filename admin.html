@@ -1373,9 +1373,29 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
             </div>
           </div>
 
+          <!-- עריכת פרומפטים -->
+          <div id="reel-prompts-panel" style="display:none;margin-bottom:1rem">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.6rem">
+              <label style="font-size:.85rem;color:var(--muted);font-weight:600">✏️ עריכת פרומפטים לאנימציה</label>
+              <button onclick="document.getElementById('reel-prompts-panel').style.display='none'"
+                style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:.85rem">✕ סגור</button>
+            </div>
+            <div id="reel-prompts-list" style="display:flex;flex-direction:column;gap:.6rem"></div>
+            <div style="font-size:.75rem;color:var(--muted);margin-top:.5rem;direction:ltr;text-align:left">
+              Tip: describe ONLY element motion (wings flutter, legs twitch). No camera movement.
+            </div>
+          </div>
+
+          <div style="display:flex;gap:.5rem;margin-bottom:.5rem">
+            <button onclick="preparePrompts()"
+              style="flex:1;padding:.6rem;background:var(--surface);border:1px solid var(--accent);border-radius:8px;color:var(--accent);font-size:.9rem;font-weight:600;cursor:pointer">
+              ✏️ ערוך פרומפטים
+            </button>
+          </div>
+
           <button id="reel-create-btn" onclick="createReel()"
             style="width:100%;padding:.75rem;background:var(--accent);color:#000;border:none;border-radius:8px;font-size:1rem;font-weight:700;cursor:pointer">
-            צור רילס עכשיו
+            🎬 צור רילס עכשיו
           </button>
         </div>
 
@@ -6069,6 +6089,43 @@ async function confirmLinkToLocation() {
     document.getElementById('reel-selected-count').textContent = `${reelSelectedIds.size}/5 נבחרו`;
   }
 
+  const DEFAULT_PROMPTS = {
+    'פרחים וצמחים':       'static camera, gentle breeze sways petals and leaves in place, warm golden light flickers softly',
+    'בעלי חיים':           'static camera, animal breathes and blinks naturally, fur ripples in breeze, eyes glisten, subject stays centered',
+    'מאקרו-צילומי תקריב': 'LOCKED static frame, ZERO camera movement, subject centered, wings or legs move naturally, bokeh stays fixed',
+    'צילום מופשט':         'static camera, light rays shift dreamily across subject, color gradients pulse gently',
+    'ישראל':               'static camera, warm Mediterranean light shifts slowly, distant elements sway gently',
+    'טבע דומם':            'static camera, soft light gradually shifts across surface, subtle shadows move in place',
+    'שחור-לבן':            'static camera, deep shadows shift slowly in place, high contrast light pulses',
+    'טנזניה':              'static camera, savanna grass sways in warm breeze, animal breathes, golden light shifts',
+    'default':             'static camera locked on subject, dramatic light shifts in place, subject stays centered',
+  };
+
+  window.preparePrompts = function() {
+    if (reelSelectedIds.size === 0) { alert('בחר לפחות תמונה אחת'); return; }
+    const category = document.getElementById('reel-category').value;
+    const defaultPrompt = DEFAULT_PROMPTS[category] || DEFAULT_PROMPTS['default'];
+    const list = document.getElementById('reel-prompts-list');
+
+    list.innerHTML = [...reelSelectedIds].map(id => {
+      const photo = reelAllPhotos.find(p => p.id === id);
+      if (!photo) return '';
+      const thumb = (photo.thumbnail || '').replace(/[?&]sz=w\d+/, '') + (photo.thumbnail?.includes('?') ? '&sz=w80' : '?sz=w80');
+      return `<div style="display:flex;gap:.6rem;align-items:flex-start;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:.5rem">
+        <img src="${thumb}" style="width:60px;height:60px;object-fit:cover;border-radius:4px;flex-shrink:0">
+        <div style="flex:1;min-width:0">
+          <div style="font-size:.78rem;color:var(--muted);margin-bottom:.3rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${photo.title || id}</div>
+          <textarea data-photo-id="${id}" rows="2"
+            style="width:100%;background:var(--surface);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:.8rem;padding:.3rem .4rem;resize:vertical;direction:ltr;font-family:monospace"
+            placeholder="motion prompt...">${defaultPrompt}</textarea>
+        </div>
+      </div>`;
+    }).join('');
+
+    document.getElementById('reel-prompts-panel').style.display = 'block';
+    document.getElementById('reel-prompts-panel').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  };
+
   window.createReel = async function() {
     const category = document.getElementById('reel-category').value;
     const lang     = document.querySelector('input[name="reel-lang"]:checked')?.value || 'auto';
@@ -6086,10 +6143,19 @@ async function confirmLinkToLocation() {
 
     try {
       const photos = reelSelectedIds.size > 0 ? [...reelSelectedIds].join(',') : '';
+
+      // אסוף פרומפטים ערוכים (אם הפאנל פתוח)
+      const promptsArr = [];
+      document.querySelectorAll('#reel-prompts-list textarea[data-photo-id]').forEach(ta => {
+        const p = ta.value.trim();
+        if (p) promptsArr.push({ id: ta.dataset.photoId, prompt: p });
+      });
+      const promptsJson = promptsArr.length > 0 ? JSON.stringify(promptsArr) : '';
+
       const res  = await fetch('/api/reels', {
         method: 'POST',
         headers: { 'X-Admin-Password': pwd, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ category, lang, photos }),
+        body: JSON.stringify({ category, lang, photos, prompts: promptsJson }),
       });
       const text = await res.text();
       let data;

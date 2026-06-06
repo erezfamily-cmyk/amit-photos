@@ -826,13 +826,13 @@ async function handleReels(request, env) {
   // POST — הפעל workflow
   if (request.method === 'POST') {
     const body = await request.json().catch(() => ({}));
-    const { category, lang = 'auto', photos = '' } = body;
+    const { category, lang = 'auto', photos = '', prompts = '' } = body;
     if (!category) return jsonRes({ error: 'category חסר' }, 400, request);
 
     const res = await fetch(`${GH}/actions/workflows/reel-maker.yml/dispatches`, {
       method: 'POST',
       headers: ghHeaders,
-      body: JSON.stringify({ ref: 'main', inputs: { category, lang, photos } }),
+      body: JSON.stringify({ ref: 'main', inputs: { category, lang, photos, prompts } }),
     });
 
     if (res.status !== 204) {
