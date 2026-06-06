@@ -465,8 +465,21 @@ def _seedance_clip(photo_path, out_path, photo_meta, duration=5, custom_prompt=N
 
     os.environ["FAL_KEY"] = FAL_KEY
 
-    print("  ✂️  חיתוך חכם 9:16...")
-    upload_path, was_cropped = _smart_crop_9x16(photo_path)
+    # זהה אם תמונה רוחבית → pillarbox blur, אחרת 9:16 רגיל
+    from PIL import Image as _PILImg
+    _im = _PILImg.open(str(photo_path))
+    _iw, _ih = _im.size
+    is_landscape = (_iw / _ih) > 1.2
+
+    if is_landscape:
+        upload_path = str(photo_path)
+        was_cropped = False
+        kling_ratio = "16:9"
+        print(f"  🖼  תמונה רוחבית ({_iw}×{_ih}) → Kling 16:9 + pillarbox blur")
+    else:
+        print("  ✂️  תמונה פורטרט — Kling 9:16 ישיר")
+        upload_path, was_cropped = _smart_crop_9x16(photo_path)
+        kling_ratio = "9:16"
 
     if custom_prompt:
         prompt = custom_prompt
@@ -480,7 +493,7 @@ def _seedance_clip(photo_path, out_path, photo_meta, duration=5, custom_prompt=N
     if was_cropped:
         os.unlink(upload_path)
 
-    print("  🎬 Kling 1.6 Standard מעבד (~4 דקות לקליפ)...")
+    print(f"  🎬 Kling 1.6 Standard [{kling_ratio}] מעבד (~4 דקות)...")
     import threading
 
     def _run():
@@ -490,7 +503,7 @@ def _seedance_clip(photo_path, out_path, photo_meta, duration=5, custom_prompt=N
                 "image_url":    img_url,
                 "prompt":       prompt,
                 "duration":     "5",
-                "aspect_ratio": "9:16",
+                "aspect_ratio": kling_ratio,
             },
         )
         return handler.get()
@@ -504,9 +517,9 @@ def _seedance_clip(photo_path, out_path, photo_meta, duration=5, custom_prompt=N
 
     t = threading.Thread(target=_worker, daemon=True)
     t.start()
-    t.join(timeout=1200)  # 20 דקות מקסימום לקליפ
+    t.join(timeout=1200)
     if t.is_alive():
-        raise RuntimeError("Kling Pro timeout: קליפ לא הסתיים תוך 20 דקות")
+        raise RuntimeError("Kling timeout: קליפ לא הסתיים תוך 20 דקות")
     if err_box[0]:
         raise err_box[0]
     result = result_box[0]
@@ -514,7 +527,6 @@ def _seedance_clip(photo_path, out_path, photo_meta, duration=5, custom_prompt=N
     video_url = result["video"]["url"]
     print(f"  ✅ וידאו מוכן: {video_url[:60]}...")
 
-    # הורד ונרמל ל-1080×1920 H.264
     req = ul.Request(video_url, headers={"User-Agent": "Mozilla/5.0"})
     with ul.urlopen(req, timeout=120) as r:
         raw_data = r.read()
@@ -524,18 +536,36 @@ def _seedance_clip(photo_path, out_path, photo_meta, duration=5, custom_prompt=N
         raw_path = tmp.name
 
     try:
-        subprocess.run([
-            FFMPEG, "-y", "-i", raw_path,
-            "-vf", (
-                f"scale={W}:{H}:force_original_aspect_ratio=increase,"
-                f"crop={W}:{H},setsar=1"
-            ),
-            "-c:v", "libx264", "-preset", "fast", "-crf", "21",
-            "-r", str(FPS), "-pix_fmt", "yuv420p", "-an",
-            str(out_path),
-        ], capture_output=True, check=True)
+        if is_landscape:
+            # Pillarbox blur: רקע מטושטש + כהה + הצילום המקורי באמצע
+            vf = (
+                f"[0:v]scale={W}:{H}:force_original_aspect_ratio=increase,"
+                f"crop={W}:{H},boxblur=40:5,"
+                f"eq=brightness=-0.25[bg];"
+                f"[0:v]scale={W}:-2[fg];"
+                f"[bg][fg]overlay=(W-w)/2:(H-h)/2,setsar=1[out]"
+            )
+            subprocess.run([
+                FFMPEG, "-y", "-i", raw_path,
+                "-filter_complex", vf,
+                "-map", "[out]",
+                "-c:v", "libx264", "-preset", "fast", "-crf", "21",
+                "-r", str(FPS), "-pix_fmt", "yuv420p", "-an",
+                str(out_path),
+            ], capture_output=True, check=True)
+        else:
+            subprocess.run([
+                FFMPEG, "-y", "-i", raw_path,
+                "-vf", (
+                    f"scale={W}:{H}:force_original_aspect_ratio=increase,"
+                    f"crop={W}:{H},setsar=1"
+                ),
+                "-c:v", "libx264", "-preset", "fast", "-crf", "21",
+                "-r", str(FPS), "-pix_fmt", "yuv420p", "-an",
+                str(out_path),
+            ], capture_output=True, check=True)
     except subprocess.CalledProcessError as e:
-        raise RuntimeError(f"נרמול Seedance נכשל: {e.stderr[-300:]}")
+        raise RuntimeError(f"נרמול נכשל: {e.stderr[-300:]}")
     finally:
         os.unlink(raw_path)
 
