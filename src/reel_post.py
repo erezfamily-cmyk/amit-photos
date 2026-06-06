@@ -591,11 +591,21 @@ def make_album_reel(category, lang=None, dry_run=False, photo_ids=None):
             _download_photo(photo, src)
 
             clip = tmp / f"clip_{i}.mp4"
+            # Kling רק לתמונות פורטרט/מאקרו — landscape רחבות → Ken Burns
+            use_kling = False
             if use_seedance:
+                from PIL import Image as _PIL
+                _im = _PIL.open(str(src))
+                _iw, _ih = _im.size
+                _ratio = _iw / _ih if _ih else 1
+                use_kling = _ratio < 1.5  # פורטרט או כמעט-ריבוע
+                print(f"  📐 {'Kling (פורטרט)' if use_kling else 'Ken Burns (landscape)'} — {_iw}×{_ih} ratio={_ratio:.2f}")
+
+            if use_kling:
                 try:
                     _seedance_clip(src, clip, photo, duration=int(photo_secs))
                 except Exception as e:
-                    print(f"  ⚠️  Seedance נכשל ({e}) — עובר ל-Ken Burns")
+                    print(f"  ⚠️  Kling נכשל ({e}) — עובר ל-Ken Burns")
                     _ken_burns_clip(src, clip, photo_secs,
                                     pan_dir="left" if i % 2 == 0 else "right")
             else:
