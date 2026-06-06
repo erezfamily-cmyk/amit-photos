@@ -183,7 +183,7 @@ nav#main-nav .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px)
 <a href="https://www.youtube.com/@amiterez3747" target="_blank" rel="noopener" class="nav-yt-btn" aria-label="YouTube">
   <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8zm-13.9 9.4V8.4l6.3 3.6-6.3 3.6z"/></svg>
 </a>
-<a href="https://www.tiktok.com/@amitphotos" target="_blank" rel="noopener" class="nav-tt-btn" aria-label="TikTok">
+<a href="https://www.tiktok.com/@amitphotos.com" target="_blank" rel="noopener" class="nav-tt-btn" aria-label="TikTok">
   <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34v-7.1a8.16 8.16 0 0 0 4.77 1.52V6.27a4.85 4.85 0 0 1-1-.58z"/></svg>
 </a>
 <div class="lang-toggle">
