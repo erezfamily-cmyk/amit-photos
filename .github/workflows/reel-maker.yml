@@ -52,7 +52,7 @@ jobs:
         run: sudo apt-get update -y && sudo apt-get install -y ffmpeg fonts-liberation
 
       - name: התקנת חבילות Python
-        run: pip install requests pillow python-bidi fal-client boto3
+        run: pip install requests pillow python-bidi "fal-client<1.0.0" boto3
 
       - name: יצירת הרילס
         env:
