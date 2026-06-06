@@ -481,7 +481,7 @@ def _seedance_clip(photo_path, out_path, photo_meta, duration=5):
 
     print("  🎬 Kling 1.6 מעבד (~45 שניות)...")
     handler = fal_client.submit(
-        "fal-ai/kling-video/v1.6/standard/image-to-video",
+        "fal-ai/kling-video/v1.6/pro/image-to-video",
         arguments={
             "image_url":    img_url,
             "prompt":       prompt,
