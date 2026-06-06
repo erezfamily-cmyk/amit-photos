@@ -1,5 +1,5 @@
 {
-  "current_category_index": 10,
+  "current_category_index": 11,
   "used_ids_by_category": {
     "אבו דאבי": [
       "6c9e818c-bdd3-402f-b6f5-ee2e668507c9",
@@ -98,6 +98,16 @@
       "1ed97a05-9047-4fed-8a02-9df9f10d96a5",
       "d95156fc-a372-4633-84ab-2687d5b99e37",
       "d8f82e12-05d0-4619-a0ee-2402b44722bd"
+    ],
+    "טנזניה": [
+      "1EMTfLNPMqEOwuczSUtMEdNIj3EDQxRoq",
+      "1P3dwpQ75IwDc21HR7DjoMTGhqGZ1Yubl",
+      "b318c159-8bac-4543-ae50-1851faac4960",
+      "de7df2bb-8abe-4fa1-aa3a-af15b38b88bf",
+      "1dhB6C4soGNsKEmvU2t5eoUPZRLltW9FX",
+      "1QQVpcji2j_OhEtHI7daFV2QMN5tJHmCT",
+      "1F2-F2Z7Se59TH1nSoKuJnD5wYOerpKdn",
+      "ae20affa-cfae-4d82-9a55-676860ffdc77"
     ]
   },
   "gear_tool_index": 1
