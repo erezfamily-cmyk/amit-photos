@@ -479,17 +479,19 @@ def _seedance_clip(photo_path, out_path, photo_meta, duration=5):
     if was_cropped:
         os.unlink(upload_path)
 
-    print("  🎬 Kling 1.6 Standard מעבד (~4 דקות לקליפ)...")
+    print("  🎬 Seedance 2.0 Fast מעבד...")
     import threading
 
     def _run():
         handler = fal_client.submit(
-            "fal-ai/kling-video/v1.6/standard/image-to-video",
+            "fal-ai/bytedance/seedance-2.0/fast/image-to-video",
             arguments={
-                "image_url":    img_url,
-                "prompt":       prompt,
-                "duration":     "5",
-                "aspect_ratio": "9:16",
+                "image_url":      img_url,
+                "prompt":         prompt,
+                "duration":       5,
+                "aspect_ratio":   "9:16",
+                "resolution":     "1080p",
+                "generate_audio": False,
             },
         )
         return handler.get()
