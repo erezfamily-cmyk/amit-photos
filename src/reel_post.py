@@ -192,31 +192,55 @@ def _download_photo(photo, dest):
     Path(dest).write_bytes(r.content)
 
 
-def _ken_burns_clip(photo_path, out_path, duration, pan_dir="left"):
-    """Scale landscape photo to cover 9:16 frame, animated pan L↔R."""
+def _ken_burns_clip(photo_path, out_path, duration, pan_dir="left", pillarbox=False):
+    """Scale photo to 9:16. With pillarbox=True: blurred bg + centered original."""
     frames = int(duration * FPS)
     fade_f = min(12, frames // 5)
-    center = f"(iw-{W})/2"
-    x_expr = (
-        f"{center}-150+300*n/{frames-1}" if pan_dir == "left"
-        else f"{center}+150-300*n/{frames-1}"
-    )
-    vf = (
-        f"scale=-2:{H},"
-        f"crop={W}:{H}:'{x_expr}':0,"
-        f"fade=t=in:st=0:d={fade_f/FPS:.3f},"
-        f"fade=t=out:st={duration - fade_f/FPS:.3f}:d={fade_f/FPS:.3f},"
-        f"setsar=1"
-    )
-    r = subprocess.run([
-        FFMPEG, "-y",
-        "-loop", "1", "-framerate", str(FPS), "-t", str(duration + 0.1),
-        "-i", str(photo_path),
-        "-vf", vf, "-t", str(duration),
-        "-c:v", "libx264", "-preset", "fast", "-crf", "21",
-        "-r", str(FPS), "-pix_fmt", "yuv420p",
-        str(out_path),
-    ], capture_output=True, text=True)
+
+    if pillarbox:
+        # רקע מטושטש כהה + תמונה מקורית מונפשת במרכז (Ken Burns עדין)
+        filter_complex = (
+            f"[0:v]scale={W}:{H}:force_original_aspect_ratio=increase,"
+            f"crop={W}:{H},boxblur=40:5,eq=brightness=-0.25[bg];"
+            f"[0:v]scale={W}:-2[fg];"
+            f"[bg][fg]overlay=(W-w)/2:(H-h)/2,"
+            f"fade=t=in:st=0:d={fade_f/FPS:.3f},"
+            f"fade=t=out:st={duration - fade_f/FPS:.3f}:d={fade_f/FPS:.3f},"
+            f"setsar=1[out]"
+        )
+        r = subprocess.run([
+            FFMPEG, "-y",
+            "-loop", "1", "-framerate", str(FPS), "-t", str(duration + 0.1),
+            "-i", str(photo_path),
+            "-filter_complex", filter_complex,
+            "-map", "[out]", "-t", str(duration),
+            "-c:v", "libx264", "-preset", "fast", "-crf", "21",
+            "-r", str(FPS), "-pix_fmt", "yuv420p",
+            str(out_path),
+        ], capture_output=True, text=True)
+    else:
+        center = f"(iw-{W})/2"
+        x_expr = (
+            f"{center}-150+300*n/{frames-1}" if pan_dir == "left"
+            else f"{center}+150-300*n/{frames-1}"
+        )
+        vf = (
+            f"scale=-2:{H},"
+            f"crop={W}:{H}:'{x_expr}':0,"
+            f"fade=t=in:st=0:d={fade_f/FPS:.3f},"
+            f"fade=t=out:st={duration - fade_f/FPS:.3f}:d={fade_f/FPS:.3f},"
+            f"setsar=1"
+        )
+        r = subprocess.run([
+            FFMPEG, "-y",
+            "-loop", "1", "-framerate", str(FPS), "-t", str(duration + 0.1),
+            "-i", str(photo_path),
+            "-vf", vf, "-t", str(duration),
+            "-c:v", "libx264", "-preset", "fast", "-crf", "21",
+            "-r", str(FPS), "-pix_fmt", "yuv420p",
+            str(out_path),
+        ], capture_output=True, text=True)
+
     if r.returncode != 0:
         raise RuntimeError(f"Ken Burns נכשל:\n{r.stderr[-400:]}")
 
@@ -621,6 +645,9 @@ def make_album_reel(category, lang=None, dry_run=False, photo_ids=None, custom_p
             _download_photo(photo, src)
 
             clip = tmp / f"clip_{i}.mp4"
+            _im = _PILImg.open(str(src))
+            _iw, _ih = _im.size
+            is_landscape = (_iw / _ih) > 1.2
             if use_seedance:
                 custom_p = (custom_prompts or {}).get(photo["id"])
                 if custom_p:
@@ -630,10 +657,12 @@ def make_album_reel(category, lang=None, dry_run=False, photo_ids=None, custom_p
                 except Exception as e:
                     print(f"  ⚠️  Kling נכשל ({e}) — עובר ל-Ken Burns")
                     _ken_burns_clip(src, clip, photo_secs,
-                                    pan_dir="left" if i % 2 == 0 else "right")
+                                    pan_dir="left" if i % 2 == 0 else "right",
+                                    pillarbox=is_landscape)
             else:
                 _ken_burns_clip(src, clip, photo_secs,
-                                pan_dir="left" if i % 2 == 0 else "right")
+                                pan_dir="left" if i % 2 == 0 else "right",
+                                pillarbox=is_landscape)
             clips.append(clip)
 
         closing = tmp / "closing.mp4"
