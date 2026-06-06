@@ -89,6 +89,7 @@ MOTION_PROMPTS = {
     "פרחים וצמחים":       "static camera, gentle breeze sways petals and leaves in place, warm golden light flickers softly, macro close-up stays locked",
     "בעלי חיים":           "static camera, animal breathes and blinks naturally, fur ripples in breeze, eyes glisten, subject stays centered",
     "מאקרו-צילומי תקריב": "static camera locked on subject, micro details shimmer, gentle vibration in place, bokeh depth stays fixed",
+    "חרקים":              "static camera locked on insect, insect moves legs and antennae naturally, wings twitch gently, subject stays perfectly centered",
     "צילום מופשט":         "static camera, light rays shift dreamily across subject, color gradients pulse gently, no movement away from center",
     "ישראל":               "static camera, warm Mediterranean light shifts slowly across scene, distant elements sway gently, subject stays in frame",
     "טבע דומם":            "static camera, soft light gradually shifts across surface, subtle shadows move in place, object stays perfectly centered",
@@ -591,17 +592,7 @@ def make_album_reel(category, lang=None, dry_run=False, photo_ids=None):
             _download_photo(photo, src)
 
             clip = tmp / f"clip_{i}.mp4"
-            # Kling רק לתמונות פורטרט/מאקרו — landscape רחבות → Ken Burns
-            use_kling = False
             if use_seedance:
-                from PIL import Image as _PIL
-                _im = _PIL.open(str(src))
-                _iw, _ih = _im.size
-                _ratio = _iw / _ih if _ih else 1
-                use_kling = _ratio < 1.5  # פורטרט או כמעט-ריבוע
-                print(f"  📐 {'Kling (פורטרט)' if use_kling else 'Ken Burns (landscape)'} — {_iw}×{_ih} ratio={_ratio:.2f}")
-
-            if use_kling:
                 try:
                     _seedance_clip(src, clip, photo, duration=int(photo_secs))
                 except Exception as e:
