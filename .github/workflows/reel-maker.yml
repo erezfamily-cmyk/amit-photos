@@ -58,6 +58,7 @@ jobs:
           CF_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          PYTHONUNBUFFERED: "1"
         run: |
           LANG_ARG=""
           if [ "${{ inputs.lang }}" != "auto" ]; then
