@@ -479,17 +479,38 @@ def _seedance_clip(photo_path, out_path, photo_meta, duration=5):
     if was_cropped:
         os.unlink(upload_path)
 
-    print("  🎬 Kling 1.6 מעבד (~45 שניות)...")
-    handler = fal_client.submit(
-        "fal-ai/kling-video/v1.6/pro/image-to-video",
-        arguments={
-            "image_url":    img_url,
-            "prompt":       prompt,
-            "duration":     "5",
-            "aspect_ratio": "9:16",
-        },
-    )
-    result = handler.get()
+    print("  🎬 Kling 1.6 Pro מעבד (עד 20 דקות לקליפ)...")
+    import signal, threading
+
+    class _Timeout(Exception): pass
+
+    def _run():
+        handler = fal_client.submit(
+            "fal-ai/kling-video/v1.6/pro/image-to-video",
+            arguments={
+                "image_url":    img_url,
+                "prompt":       prompt,
+                "duration":     "5",
+                "aspect_ratio": "9:16",
+            },
+        )
+        return handler.get()
+
+    result_box = [None]
+    err_box    = [None]
+
+    def _worker():
+        try:   result_box[0] = _run()
+        except Exception as e: err_box[0] = e
+
+    t = threading.Thread(target=_worker, daemon=True)
+    t.start()
+    t.join(timeout=1200)  # 20 דקות מקסימום לקליפ
+    if t.is_alive():
+        raise RuntimeError("Kling Pro timeout: קליפ לא הסתיים תוך 20 דקות")
+    if err_box[0]:
+        raise err_box[0]
+    result = result_box[0]
 
     video_url = result["video"]["url"]
     print(f"  ✅ וידאו מוכן: {video_url[:60]}...")
