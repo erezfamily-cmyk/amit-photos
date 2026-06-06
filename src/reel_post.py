@@ -392,6 +392,73 @@ def _smart_motion_prompt(photo_path, photo_meta):
         return MOTION_PROMPTS.get(cat, MOTION_PROMPTS["default"])
 
 
+def _smart_crop_9x16(photo_path):
+    """
+    חותך תמונה רוחבית ל-9:16 עם Claude Vision שמאתר את הנושא.
+    מחזיר path ל-JPEG זמני שיש למחוק אחרי שימוש.
+    """
+    try:
+        import anthropic, base64, io
+        from PIL import Image as PILImage
+
+        img = PILImage.open(str(photo_path)).convert("RGB")
+        iw, ih = img.size
+
+        # אם כבר פורטרט — אין צורך לחתוך
+        if ih >= iw:
+            return str(photo_path), False
+
+        # רוחב החיתוך לפי יחס 9:16
+        crop_w = int(ih * 9 / 16)
+        if crop_w >= iw:
+            return str(photo_path), False
+
+        # שאל את Claude איפה הנושא
+        position = "center"  # default
+        if ANTHROPIC_API_KEY:
+            try:
+                thumb = img.copy()
+                thumb.thumbnail((512, 512), PILImage.LANCZOS)
+                buf = io.BytesIO()
+                thumb.save(buf, format="JPEG", quality=75)
+                b64 = base64.standard_b64encode(buf.getvalue()).decode()
+
+                client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
+                msg = client.messages.create(
+                    model="claude-haiku-4-5-20251001",
+                    max_tokens=10,
+                    messages=[{"role": "user", "content": [
+                        {"type": "image",
+                         "source": {"type": "base64", "media_type": "image/jpeg", "data": b64}},
+                        {"type": "text",
+                         "text": "Where is the main subject? Reply with ONE word: left, center, or right."}
+                    ]}],
+                )
+                position = msg.content[0].text.strip().lower().split()[0]
+                if position not in ("left", "center", "right"):
+                    position = "center"
+                print(f"  🎯 נושא: {position}")
+            except Exception:
+                pass
+
+        # חשב x offset
+        if position == "left":
+            x = max(0, iw // 6 - crop_w // 2)
+        elif position == "right":
+            x = min(iw - crop_w, iw * 5 // 6 - crop_w // 2)
+        else:
+            x = (iw - crop_w) // 2
+
+        cropped = img.crop((x, 0, x + crop_w, ih))
+        tmp = tempfile.NamedTemporaryFile(suffix=".jpg", delete=False)
+        cropped.save(tmp.name, format="JPEG", quality=92)
+        return tmp.name, True
+
+    except Exception as e:
+        print(f"  ⚠️  smart crop נכשל ({e})")
+        return str(photo_path), False
+
+
 def _seedance_clip(photo_path, out_path, photo_meta, duration=5):
     """fal.ai Kling 1.6: מנפש תמונה → MP4 9:16."""
     try:
@@ -401,11 +468,16 @@ def _seedance_clip(photo_path, out_path, photo_meta, duration=5):
 
     os.environ["FAL_KEY"] = FAL_KEY
 
+    print("  ✂️  חיתוך חכם 9:16...")
+    upload_path, was_cropped = _smart_crop_9x16(photo_path)
+
     print("  🧠 מייצר פרומפט חכם...")
     prompt = _smart_motion_prompt(photo_path, photo_meta)
 
     print("  📤 מעלה לfal.ai...")
-    img_url = fal_client.upload_file(str(photo_path))
+    img_url = fal_client.upload_file(upload_path)
+    if was_cropped:
+        os.unlink(upload_path)
 
     print("  🎬 Kling 1.6 מעבד (~45 שניות)...")
     handler = fal_client.submit(
