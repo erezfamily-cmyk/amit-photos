@@ -652,10 +652,19 @@ def make_album_reel(category, lang=None, dry_run=False, photo_ids=None, custom_p
                 custom_p = (custom_prompts or {}).get(photo["id"])
                 if custom_p:
                     print(f"  📝 פרומפט מותאם: {custom_p[:60]}...")
-                try:
-                    _seedance_clip(src, clip, photo, duration=int(photo_secs), custom_prompt=custom_p)
-                except Exception as e:
-                    print(f"  ⚠️  Kling נכשל ({e}) — עובר ל-Ken Burns")
+                kling_ok = False
+                for attempt in range(1, 3):
+                    try:
+                        _seedance_clip(src, clip, photo, duration=int(photo_secs), custom_prompt=custom_p)
+                        kling_ok = True
+                        break
+                    except Exception as e:
+                        print(f"  ⚠️  Kling ניסיון {attempt}/2 נכשל ({e})")
+                        if attempt < 2:
+                            print("  🔄 מנסה שוב בעוד 15 שניות...")
+                            time.sleep(15)
+                if not kling_ok:
+                    print("  ↩️  עובר ל-Ken Burns")
                     _ken_burns_clip(src, clip, photo_secs,
                                     pan_dir="left" if i % 2 == 0 else "right",
                                     pillarbox=is_landscape)
