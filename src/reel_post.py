@@ -230,24 +230,35 @@ def _closing_clip(out_path, lang, category, duration):
     img  = Image.new("RGB", (W, H), (10, 10, 14))
     draw = ImageDraw.Draw(img)
 
+    def fit_font(path, text, max_w, start=120):
+        size = start
+        while size > 30:
+            try:
+                f = ImageFont.truetype(path, size)
+            except Exception:
+                return ImageFont.load_default()
+            bb = ImageDraw.Draw(Image.new("RGB", (1, 1))).textbbox((0, 0), text, font=f)
+            if bb[2] - bb[0] <= max_w:
+                return f
+            size -= 4
+        return ImageFont.load_default()
+
     try:
-        f_sub = ImageFont.truetype(FONT_REGULAR, 46)
-        f_url = ImageFont.truetype(FONT_BOLD,    72)
+        f_sub = ImageFont.truetype(FONT_REGULAR, 62)
     except Exception:
-        f_sub = f_url = ImageFont.load_default()
+        f_sub = ImageFont.load_default()
+    f_url = fit_font(FONT_BOLD, "www.amitphotos.com", W - 80)
 
     def draw_centered(text, font, y, color):
         bb = draw.textbbox((0, 0), text, font=font)
         draw.text(((W - (bb[2] - bb[0])) // 2, y), text, font=font, fill=color)
 
-    cy = H // 2 - 90
+    cy = H // 2 - 110
 
-    draw_centered("Visit my website:",  f_sub, cy,        (180, 180, 200))
-    # קו מפריד דק
-    draw.line([(W // 2 - 160, cy + 72), (W // 2 + 160, cy + 72)],
-              fill=(200, 168, 80), width=1)
-    # URL בולט — גדול וזהב
-    draw_centered("www.amitphotos.com", f_url, cy + 90,   (200, 168, 80))
+    draw_centered("Visit my website:",  f_sub, cy,         (180, 180, 200))
+    draw.line([(W // 2 - 200, cy + 90), (W // 2 + 200, cy + 90)],
+              fill=(200, 168, 80), width=2)
+    draw_centered("www.amitphotos.com", f_url, cy + 115,   (200, 168, 80))
 
     with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp:
         img.save(tmp.name)
