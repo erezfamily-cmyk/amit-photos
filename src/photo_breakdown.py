@@ -107,7 +107,6 @@ def fetch_photo_data(session, photo_id):
     img_r = session.get(
         f"{DRIVE_API}/files/{photo_id}",
         params={"alt": "media"},
-        stream=True,
     )
     img_r.raise_for_status()
     return img_r.content, raw_exif
@@ -129,7 +128,7 @@ def parse_exif(exif):
         result["f_number"]  = float(ap)
 
     et = exif.get("exposureTime")
-    if et:
+    if et and et > 0:
         result["shutter"] = f"1/{round(1/et)}s" if et < 1 else f"{et:.1f}s"
 
     iso = exif.get("isoSpeed")
@@ -180,6 +179,7 @@ def estimate_light_angle(time_str, lat):
                 return 90 - (h - 6) / 6 * 90
             elif 12 <= h < 18:
                 return 180 + (h - 12) / 6 * 90
+        # Returns None for Southern hemisphere, nighttime (18-6h), or missing data.
         return None
     except Exception:
         return None
@@ -202,5 +202,7 @@ if __name__ == "__main__":
     args = ap.parse_args()
     if args.list:
         list_photos()
+    elif args.id:
+        print("--id processing not yet implemented (coming in Task 5)")
     else:
         ap.print_help()
