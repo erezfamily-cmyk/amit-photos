@@ -127,6 +127,68 @@ def fetch_photo_data(session, photo_id):
     return img_r.content, raw_exif
 
 
+# ── EXIF from JPEG bytes (Pillow) — fallback when no Drive credentials ────────
+def read_exif_from_jpeg(jpeg_bytes):
+    """Read EXIF directly from JPEG using Pillow. Returns same dict as parse_exif."""
+    from PIL.ExifTags import TAGS, GPSTAGS
+    try:
+        img = Image.open(io.BytesIO(jpeg_bytes))
+        raw = img._getexif() or {}
+    except Exception:
+        return {}
+
+    data = {TAGS.get(tid, str(tid)): val for tid, val in raw.items()}
+    result = {}
+
+    make  = str(data.get("Make",  "") or "").strip()
+    model = str(data.get("Model", "") or "").strip()
+    if model:
+        result["camera"] = model if model.lower().startswith(make.lower()) else f"{make} {model}".strip()
+
+    def _ratio(v):
+        if v is None: return None
+        try:
+            if hasattr(v, "numerator"): return v.numerator / v.denominator
+            return float(v)
+        except Exception: return None
+
+    ap = _ratio(data.get("FNumber"))
+    if ap:
+        result["aperture"] = f"f/{ap:.1f}"
+        result["f_number"] = ap
+
+    et = _ratio(data.get("ExposureTime"))
+    if et and et > 0:
+        result["shutter"] = f"1/{round(1/et)}s" if et < 1 else f"{et:.1f}s"
+
+    iso = data.get("ISOSpeedRatings") or data.get("PhotographicSensitivity")
+    if iso:
+        result["iso"] = f"ISO {iso}"
+
+    fl = _ratio(data.get("FocalLength"))
+    if fl:
+        result["focal"] = f"{round(fl)}mm"
+
+    gps_info = data.get("GPSInfo") or {}
+    gps = {GPSTAGS.get(k, k): gps_info[k] for k in gps_info}
+
+    def _dms(dms, ref):
+        try:
+            vals = [_ratio(x) for x in dms]
+            dec  = vals[0] + vals[1]/60 + vals[2]/3600
+            return -dec if str(ref) in ("S", "W") else dec
+        except Exception: return None
+
+    if gps.get("GPSLatitude") and gps.get("GPSLongitude"):
+        result["lat"] = _dms(gps["GPSLatitude"],  gps.get("GPSLatitudeRef",  "N"))
+        result["lon"] = _dms(gps["GPSLongitude"], gps.get("GPSLongitudeRef", "E"))
+
+    dt_str = data.get("DateTimeOriginal") or data.get("DateTime") or ""
+    result["time_str"] = str(dt_str)
+
+    return result
+
+
 # ── EXIF parsing ──────────────────────────────────────────────────────────────
 def parse_exif(exif):
     """Convert imageMediaMetadata → display-ready dict."""
@@ -635,13 +697,17 @@ def make_motion_clip(jpeg_bytes, category, out_path, duration=5):
 # ── white framed photo (polaroid reveal) ──────────────────────────────────────
 def make_framed_photo_clip(jpeg_bytes, out_path, duration=4.0):
     """
-    Photo with white polaroid frame tilted -3°, on dark background → MP4.
-    Fades in to feel like a physical print being revealed.
+    Polaroid-framed photo (-3° tilt) composited on the pillarbox blurred
+    background (preserves original aspect ratio). Fades in like a print reveal.
     """
     img = Image.open(io.BytesIO(jpeg_bytes)).convert("RGB")
     iw, ih = img.size
 
-    max_dim = 900
+    # Pillarbox blurred background fills the full 9:16 frame
+    bg_pil = make_pillarbox_base(jpeg_bytes)
+
+    # Scale photo to fit inside the polaroid (max 860px on longer side)
+    max_dim = 860
     scale = min(max_dim / iw, max_dim / ih)
     pw, ph = int(iw * scale), int(ih * scale)
     photo = img.resize((pw, ph), Image.LANCZOS)
@@ -656,11 +722,15 @@ def make_framed_photo_clip(jpeg_bytes, out_path, duration=4.0):
 
     # Drop shadow (slightly offset dark copy behind)
     shadow = Image.new("RGBA", rotated.size, (0, 0, 0, 0))
-    dark   = Image.new("RGBA", rotated.size, (0, 0, 0, 120))
-    shadow.paste(dark, (8, 8), rotated.split()[3])
+    dark   = Image.new("RGBA", rotated.size, (0, 0, 0, 140))
+    shadow.paste(dark, (10, 10), rotated.split()[3])
 
-    # Compose: dark bg → shadow → rotated frame
-    bg = Image.new("RGBA", (W, H), (*BG, 255))
+    # Compose: pillarbox bg (darkened slightly) → shadow → rotated frame
+    bg = bg_pil.convert("RGBA")
+    # Darken the pillarbox a bit more so polaroid pops
+    dark_overlay = Image.new("RGBA", (W, H), (0, 0, 0, 80))
+    bg = Image.alpha_composite(bg, dark_overlay)
+
     rw, rh = rotated.size
     px = (W - rw) // 2
     py = (H - rh) // 2 - 40
@@ -816,11 +886,73 @@ def assemble(clips_with_durations, out_path):
         raise RuntimeError(f"assemble failed:\n{r.stderr[-600:]}")
 
 
+# ── upload video for sharing ──────────────────────────────────────────────────
+def _upload_video(video_path):
+    """Upload to litterbox (1h) with 0x0.st fallback. Returns public URL."""
+    import requests
+    data = Path(video_path).read_bytes()
+    print(f"  Uploading {len(data)/1024/1024:.1f} MB...")
+
+    for name, url, extra in [
+        ("litterbox", "https://litterbox.catbox.moe/resources/internals/api.php",
+         {"data": {"reqtype": "fileupload", "time": "1h"}, "field": "fileToUpload"}),
+        ("0x0.st", "https://0x0.st", {"data": {}, "field": "file"}),
+    ]:
+        try:
+            r = requests.post(
+                url, data=extra["data"],
+                files={extra["field"]: ("breakdown.mp4", data, "video/mp4")},
+                timeout=180,
+            )
+            r.raise_for_status()
+            pub = r.text.strip()
+            if pub.startswith("http"):
+                print(f"  Uploaded ({name}): {pub}")
+                return pub
+        except Exception as e:
+            print(f"  {name} failed: {e}")
+    raise RuntimeError("Upload failed on all services")
+
+
+def _save_to_json(photo, video_url, video_path, duration):
+    """Append/update entry in data/breakdown_videos.json."""
+    json_file = ROOT / "data" / "breakdown_videos.json"
+    records   = []
+    if json_file.exists():
+        try:
+            records = json.loads(json_file.read_text(encoding="utf-8"))
+        except Exception:
+            records = []
+
+    from datetime import datetime
+    entry = {
+        "photo_id":  photo["id"],
+        "title":     photo.get("title", ""),
+        "category":  photo.get("category", ""),
+        "thumbnail": photo.get("thumbnail", ""),
+        "video_url": video_url,
+        "duration":  round(duration, 1),
+        "created":   datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "size_mb":   round(Path(video_path).stat().st_size / 1024 / 1024, 1),
+    }
+    # Replace existing entry for same photo
+    records = [r for r in records if r.get("photo_id") != photo["id"]]
+    records.insert(0, entry)
+
+    json_file.write_text(
+        json.dumps(records, ensure_ascii=False, indent=2),
+        encoding="utf-8",
+    )
+    print(f"  Saved to data/breakdown_videos.json")
+
+
 # ── main ──────────────────────────────────────────────────────────────────────
 def main():
     ap = argparse.ArgumentParser(description="Photo breakdown TikTok video generator")
     ap.add_argument("--id",   help="Photo ID from photos.json")
+    ap.add_argument("--url",  help="Direct photo URL (fallback when no Drive creds)")
     ap.add_argument("--list", action="store_true", help="List all available photos")
+    ap.add_argument("--no-upload", action="store_true", help="Skip upload to file host")
     args = ap.parse_args()
 
     if args.list:
@@ -846,10 +978,34 @@ def main():
 
     print(f"\nPhoto: {title}  [{category}]")
 
-    print("Fetching from Google Drive...")
-    session        = get_drive_session()
-    jpeg, raw_exif = fetch_photo_data(session, args.id)
-    exif           = parse_exif(raw_exif)
+    # ── Fetch JPEG + EXIF ──────────────────────────────────────────────────────
+    jpeg = None
+    exif = {}
+
+    # Try Google Drive first (best EXIF, requires token.json)
+    if CREDS_FILE.exists() and TOKEN_FILE.exists() and not args.url:
+        try:
+            print("Fetching from Google Drive...")
+            session        = get_drive_session()
+            jpeg, raw_exif = fetch_photo_data(session, args.id)
+            exif           = parse_exif(raw_exif)
+        except Exception as e:
+            print(f"  Drive error ({e}) — will try URL fallback")
+            jpeg = None
+
+    # Fallback: download from URL (photo.url or --url arg)
+    if jpeg is None:
+        photo_url = args.url or photo.get("url") or photo.get("thumbnail") or ""
+        if not photo_url:
+            print("No photo URL available. Provide --url or ensure photos.json has 'url' field.")
+            sys.exit(1)
+        print(f"Downloading from URL...")
+        import requests as req_lib
+        r = req_lib.get(photo_url, timeout=60)
+        r.raise_for_status()
+        jpeg = r.content
+        exif = read_exif_from_jpeg(jpeg)
+
     print(f"  Camera : {exif.get('camera', '-')}")
     print(f"  {exif.get('aperture','-')}  {exif.get('shutter','-')}  {exif.get('iso','-')}  {exif.get('focal','-')}")
 
@@ -896,7 +1052,55 @@ def main():
 
     total = motion_dur + breakdown_dur + 4.0 + 2.5
     print(f"\nDone! {out_path} ({total:.0f}s)")
-    print("Upload manually to TikTok")
+
+    # ── Upload + save record ───────────────────────────────────────────────────
+    if not args.no_upload:
+        try:
+            video_url = _upload_video(out_path)
+            _save_to_json(photo, video_url, out_path, total)
+
+            # Commit JSON update
+            print("\nCommitting breakdown_videos.json...")
+            subprocess.run(
+                ["git", "config", "user.name", "Breakdown Agent"],
+                cwd=ROOT, capture_output=True
+            )
+            subprocess.run(
+                ["git", "config", "user.email", "agent@amitphotos.com"],
+                cwd=ROOT, capture_output=True
+            )
+            subprocess.run(
+                ["git", "add", "data/breakdown_videos.json"],
+                cwd=ROOT, check=True, capture_output=True
+            )
+            diff = subprocess.run(
+                ["git", "diff", "--staged", "--quiet"],
+                cwd=ROOT, capture_output=True
+            )
+            if diff.returncode != 0:
+                subprocess.run(
+                    ["git", "commit", "-m", f"breakdown: {title[:50]}"],
+                    cwd=ROOT, check=True, capture_output=True
+                )
+                for _ in range(3):
+                    r = subprocess.run(
+                        ["git", "pull", "--rebase", "origin", "main"],
+                        cwd=ROOT, capture_output=True
+                    )
+                    if r.returncode == 0:
+                        break
+                subprocess.run(
+                    ["git", "push", "origin", "main"],
+                    cwd=ROOT, capture_output=True
+                )
+
+            print(f"\nVideo available: {video_url}")
+        except Exception as e:
+            print(f"\nUpload skipped: {e}")
+    else:
+        print("Upload skipped (--no-upload)")
+
+    print("Ready to upload to TikTok!")
 
 
 if __name__ == "__main__":

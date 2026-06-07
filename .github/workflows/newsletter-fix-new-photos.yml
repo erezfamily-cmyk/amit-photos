@@ -1,0 +1,110 @@
+name: תיקון new_photos שבורות בניוזלטר (one-shot)
+
+on:
+  workflow_dispatch:
+    inputs:
+      newsletter_id:
+        description: 'Newsletter ID or slug'
+        required: true
+        default: '2026-05-full'
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - name: החלפת תמונות שבורות ב-new_photos
+        env:
+          ADMIN_TOKEN: ${{ secrets.ADMIN_PASSWORD }}
+          NL_ID: ${{ inputs.newsletter_id }}
+        run: |
+          python3 - <<'PYEOF'
+          import requests, json, os, random
+
+          BASE = "https://amitphotos.com"
+          NL_ID = os.environ["NL_ID"]
+          headers = {"X-Admin-Password": os.environ["ADMIN_TOKEN"], "Content-Type": "application/json"}
+
+          # 1. Get newsletter content
+          r = requests.get(f"{BASE}/api/admin/newsletter/{NL_ID}", headers=headers, timeout=15)
+          if not r.ok:
+              print(f"❌ GET failed: {r.status_code} {r.text[:100]}")
+              raise SystemExit(1)
+
+          issue = r.json()
+          content = json.loads(issue.get("content_json", "{}"))
+          new_photos = content.get("new_photos", [])
+          print(f"Total new_photos: {len(new_photos)}")
+
+          # 2. Find broken ones (location paths or non-drive.google.com R2 that 404)
+          broken_ids = []
+          for p in new_photos:
+              url = p.get("url") or p.get("thumbnail", "")
+              if "locations/" in url:
+                  print(f"  Broken location path: {p.get('id','?')[:8]} | {url[:60]}")
+                  broken_ids.append(p.get("id"))
+              elif url.startswith("https://amitphotos.com/photos/"):
+                  try:
+                      tr = requests.head(url, timeout=5, allow_redirects=True)
+                      if tr.status_code != 200:
+                          print(f"  Broken 404: {p.get('id','?')[:8]}")
+                          broken_ids.append(p.get("id"))
+                  except:
+                      broken_ids.append(p.get("id"))
+
+          print(f"Broken photos to replace: {len(broken_ids)}")
+          if not broken_ids:
+              print("✅ All new_photos OK")
+              raise SystemExit(0)
+
+          # 3. Get good replacement photos from gallery (Israel or any category)
+          pr = requests.get(f"{BASE}/api/photos", timeout=30)
+          all_photos = pr.json()
+          # Filter: drive.google.com URLs, is_new, not already in newsletter
+          nl_ids = {p.get("id") for p in new_photos}
+          candidates = [p for p in all_photos
+                        if p.get("thumbnail","").startswith("https://drive.google.com")
+                        and p.get("is_new")
+                        and p.get("id") not in nl_ids]
+          random.shuffle(candidates)
+          print(f"Replacement candidates: {len(candidates)}")
+
+          # 4. Replace broken photos
+          replacements = candidates[:len(broken_ids)]
+          if len(replacements) < len(broken_ids):
+              print(f"⚠️  Only {len(replacements)} replacements available, needed {len(broken_ids)}")
+
+          new_photos_fixed = []
+          rep_idx = 0
+          for p in new_photos:
+              if p.get("id") in broken_ids and rep_idx < len(replacements):
+                  rep = replacements[rep_idx]
+                  print(f"  Replacing {p.get('id','?')[:8]} → {rep.get('id','?')[:8]} ({rep.get('title','')})")
+                  new_photos_fixed.append({
+                      "id": rep["id"],
+                      "title": rep.get("title", ""),
+                      "url": rep.get("thumbnail") or rep.get("url",""),
+                      "thumbnail": rep.get("thumbnail",""),
+                      "category": rep.get("category","")
+                  })
+                  rep_idx += 1
+              else:
+                  new_photos_fixed.append(p)
+
+          content["new_photos"] = new_photos_fixed
+
+          # 5. Update newsletter
+          patch_r = requests.patch(
+              f"{BASE}/api/admin/newsletter/{issue['id']}",
+              headers=headers,
+              json={"content_json": json.dumps(content)},
+              timeout=15
+          )
+          print(f"Patch: {patch_r.status_code} {patch_r.text[:100]}")
+          if patch_r.ok:
+              print(f"✅ Newsletter fixed — {len(broken_ids)} photos replaced")
+          else:
+              print(f"❌ Patch failed")
+          PYEOF

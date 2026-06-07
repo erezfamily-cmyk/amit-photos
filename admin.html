@@ -702,6 +702,10 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
         <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="2" y="2" width="20" height="20" rx="4" stroke-width="1.5"/><path d="M8 5v14M16 5v14M2 9h20M2 15h20" stroke-width="1.5"/></svg>
         רילס
       </div>
+      <div class="nav-item" data-section="breakdown">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="18" height="18" rx="2" stroke-width="1.5"/><path d="M3 9h18M9 9v12" stroke-width="1.5"/><circle cx="6" cy="6" r="1" fill="currentColor"/></svg>
+        Breakdown
+      </div>
     </nav>
     <div class="sidebar-footer">
       <a href="/free-guide/" target="_blank" style="display:block;text-align:center;margin-bottom:.75rem;color:var(--accent);font-size:.82rem;text-decoration:none;opacity:.8">🎁 דף לידים</a>
@@ -1408,6 +1412,73 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
             style="display:none;margin-top:1rem;padding:.6rem 1.2rem;background:var(--accent);color:#000;border-radius:6px;font-weight:700;text-decoration:none;font-size:.9rem">
             📥 הורד סרטון מ-GitHub
           </a>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ===== BREAKDOWN VIDEOS ===== -->
+    <section class="section" id="section-breakdown">
+      <div class="section-header">
+        <h1 class="section-title">🎬 Breakdown Videos — TikTok</h1>
+      </div>
+
+      <div style="max-width:760px;margin:0 auto">
+
+        <!-- בחירת תמונה -->
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1.5rem">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+            <h3 style="font-size:1rem;font-weight:600">בחר תמונה מהגלריה</h3>
+            <span id="bd-selected-title" style="font-size:.85rem;color:var(--accent);font-weight:600"></span>
+          </div>
+
+          <!-- סינון קטגוריה -->
+          <div style="margin-bottom:.75rem">
+            <select id="bd-category-filter" onchange="bdFilterPhotos()"
+              style="width:100%;padding:.55rem .8rem;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:.9rem">
+              <option value="">כל הקטגוריות</option>
+            </select>
+          </div>
+
+          <!-- גריד תמונות -->
+          <div id="bd-photo-grid"
+            style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;max-height:420px;overflow-y:auto;border:1px solid var(--border);border-radius:8px;padding:6px;background:var(--bg);scrollbar-width:thin">
+            <div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--muted);font-size:.85rem">טוען תמונות...</div>
+          </div>
+
+          <div style="margin-top:1rem;display:flex;gap:.75rem;align-items:center">
+            <button id="bd-create-btn" onclick="bdCreateVideo()" disabled
+              style="flex:1;padding:.75rem;background:var(--accent);color:#000;border:none;border-radius:8px;font-size:1rem;font-weight:700;cursor:pointer;opacity:.4">
+              🎬 צור Breakdown Video
+            </button>
+            <button onclick="bdCopyCommand()"
+              style="padding:.75rem 1rem;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--muted);font-size:.85rem;cursor:pointer"
+              title="העתק פקודה להרצה מקומית">
+              📋 פקודה
+            </button>
+          </div>
+        </div>
+
+        <!-- סטטוס יצירה -->
+        <div id="bd-status-box" style="display:none;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;text-align:center;margin-bottom:1.5rem">
+          <div id="bd-status-icon" style="font-size:2rem;margin-bottom:.5rem">⏳</div>
+          <div id="bd-status-text" style="font-size:.95rem;color:var(--text)">מפעיל GitHub Actions...</div>
+          <div id="bd-status-sub" style="font-size:.8rem;color:var(--muted);margin-top:.3rem"></div>
+          <a id="bd-artifact-link" href="#" target="_blank"
+            style="display:none;margin-top:1rem;padding:.6rem 1.2rem;background:var(--accent);color:#000;border-radius:6px;font-weight:700;text-decoration:none;font-size:.9rem">
+            📥 הורד מ-GitHub Actions
+          </a>
+        </div>
+
+        <!-- רשימת סרטונים שנוצרו -->
+        <div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem">
+            <h3 style="font-size:1rem;font-weight:600">סרטונים שנוצרו</h3>
+            <button onclick="bdLoadVideos()" style="background:none;border:none;color:var(--accent);cursor:pointer;font-size:.85rem">רענן</button>
+          </div>
+          <div id="bd-videos-list">
+            <div style="text-align:center;padding:2rem;color:var(--muted);font-size:.85rem">טוען...</div>
+          </div>
         </div>
 
       </div>
@@ -6287,6 +6358,193 @@ async function confirmLinkToLocation() {
     <button id="pin-modal-submit" onclick="submitPin()" style="background:#E60023;color:#fff;border:none;border-radius:7px;padding:.65rem 1.4rem;font-size:.9rem;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap">פרסם</button>
   </div>
 </dialog>
+
+
+<script>
+// ===== BREAKDOWN VIDEOS =====
+(function() {
+  let bdAllPhotos = [];
+  let bdSelectedId = null;
+
+  // Load photos + videos when section activates
+  document.querySelector('.nav-item[data-section="breakdown"]')?.addEventListener('click', bdInit);
+
+  async function bdInit() {
+    if (bdAllPhotos.length === 0) await bdLoadPhotos();
+    await bdLoadVideos();
+  }
+
+  async function bdLoadPhotos() {
+    try {
+      const res = await fetch('/data/photos.json');
+      bdAllPhotos = await res.json();
+
+      // Populate category filter
+      const cats = [...new Set(bdAllPhotos.map(p => p.category).filter(Boolean))].sort();
+      const sel = document.getElementById('bd-category-filter');
+      cats.forEach(c => {
+        const o = document.createElement('option');
+        o.value = c; o.textContent = c;
+        sel.appendChild(o);
+      });
+
+      bdRenderGrid(bdAllPhotos);
+    } catch(e) {
+      console.error('bdLoadPhotos:', e);
+    }
+  }
+
+  window.bdFilterPhotos = function() {
+    const cat = document.getElementById('bd-category-filter').value;
+    const filtered = cat ? bdAllPhotos.filter(p => p.category === cat) : bdAllPhotos;
+    bdRenderGrid(filtered);
+  };
+
+  function bdRenderGrid(photos) {
+    const grid = document.getElementById('bd-photo-grid');
+    if (!photos.length) {
+      grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--muted)">אין תמונות</div>';
+      return;
+    }
+    grid.innerHTML = photos.map(p => {
+      const thumb = (p.thumbnail || p.url || '').replace(/sz=w\d+/, 'sz=w120');
+      const sel   = bdSelectedId === p.id;
+      return `<div data-bd-id="${p.id}" title="${(p.title||'').replace(/"/g,'&quot;')}"
+        style="position:relative;border-radius:6px;overflow:hidden;cursor:pointer;
+               border:2px solid ${sel ? 'var(--accent)' : 'transparent'};aspect-ratio:1;background:#111">
+        <img src="${thumb}" style="width:100%;height:100%;object-fit:cover;display:block">
+        ${sel ? '<div style="position:absolute;inset:0;background:rgba(200,169,110,.3)"></div><div style="position:absolute;top:.25rem;right:.25rem;background:var(--accent);border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:.7rem;color:#000;font-weight:700">✓</div>' : ''}
+        <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.75));padding:.25rem .3rem;font-size:.6rem;color:#ccc;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.title||p.id}</div>
+      </div>`;
+    }).join('');
+
+    grid.querySelectorAll('[data-bd-id]').forEach(el => {
+      el.addEventListener('click', () => {
+        bdSelectedId = el.dataset.bdId;
+        const photo = bdAllPhotos.find(p => p.id === bdSelectedId);
+        document.getElementById('bd-selected-title').textContent = photo ? photo.title : '';
+        const btn = document.getElementById('bd-create-btn');
+        btn.disabled = false;
+        btn.style.opacity = '1';
+        bdRenderGrid(
+          document.getElementById('bd-category-filter').value
+            ? bdAllPhotos.filter(p => p.category === document.getElementById('bd-category-filter').value)
+            : bdAllPhotos
+        );
+      });
+    });
+  }
+
+  window.bdCreateVideo = async function() {
+    if (!bdSelectedId) { alert('בחר תמונה'); return; }
+    const pwd = sessionStorage.getItem('admin_session') || localStorage.getItem('admin_session') || '';
+    if (!pwd) { alert('אין session'); return; }
+
+    const btn = document.getElementById('bd-create-btn');
+    btn.disabled = true;
+    btn.textContent = '⏳ מפעיל...';
+
+    const box  = document.getElementById('bd-status-box');
+    const icon = document.getElementById('bd-status-icon');
+    const text = document.getElementById('bd-status-text');
+    const sub  = document.getElementById('bd-status-sub');
+    box.style.display = 'block';
+    icon.textContent  = '⏳';
+    text.textContent  = 'מפעיל GitHub Actions...';
+    sub.textContent   = '';
+
+    const photo = bdAllPhotos.find(p => p.id === bdSelectedId);
+
+    try {
+      // Trigger GitHub Actions workflow_dispatch
+      const [owner, repo] = await getOwnerRepo(pwd);
+      const r = await fetch(`https://api.github.com/repos/${owner}/${repo}/actions/workflows/photo-breakdown.yml/dispatches`, {
+        method: 'POST',
+        headers: { Authorization: `token ${pwd}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ref: 'main', inputs: { photo_id: bdSelectedId } }),
+      });
+
+      if (!r.ok) throw new Error(`GitHub API ${r.status}`);
+
+      icon.textContent = '🎬';
+      text.textContent = `יוצר: "${photo?.title || bdSelectedId}"`;
+      sub.textContent  = 'Breakdown Video יוצר (~10 דקות עם Kling)';
+
+      setTimeout(async () => {
+        try {
+          const runRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/actions/runs?event=workflow_dispatch&per_page=5`, {
+            headers: { Authorization: `token ${pwd}` },
+          });
+          const runs = await runRes.json();
+          const run  = (runs.workflow_runs || []).find(r => r.name && r.name.includes('Breakdown'));
+          if (run) {
+            const artLink = document.getElementById('bd-artifact-link');
+            artLink.href         = `https://github.com/${owner}/${repo}/actions/runs/${run.id}`;
+            artLink.style.display = 'inline-block';
+            artLink.textContent  = '📥 פתח GitHub Actions';
+          }
+        } catch(e) {}
+        btn.disabled    = false;
+        btn.textContent = '🎬 צור Breakdown Video';
+      }, 8000);
+
+    } catch(e) {
+      icon.textContent = '❌';
+      text.textContent = `שגיאה: ${e.message}`;
+      btn.disabled     = false;
+      btn.textContent  = '🎬 צור Breakdown Video';
+    }
+  };
+
+  window.bdCopyCommand = function() {
+    if (!bdSelectedId) { alert('בחר תמונה קודם'); return; }
+    const cmd = `python src/photo_breakdown.py --id ${bdSelectedId}`;
+    navigator.clipboard.writeText(cmd).then(() => {
+      // Show brief feedback
+      const btn = event.currentTarget;
+      const orig = btn.textContent;
+      btn.textContent = '✅ הועתק!';
+      setTimeout(() => { btn.textContent = orig; }, 1500);
+    }).catch(() => prompt('העתק פקודה:', cmd));
+  };
+
+  window.bdLoadVideos = async function() {
+    const list = document.getElementById('bd-videos-list');
+    try {
+      const res  = await fetch('/data/breakdown_videos.json?t=' + Date.now());
+      const vids = await res.json();
+
+      if (!vids.length) {
+        list.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--muted);font-size:.85rem">אין סרטונים עדיין. צור את הראשון!</div>';
+        return;
+      }
+
+      list.innerHTML = vids.map(v => `
+        <div style="display:flex;gap:1rem;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.75rem 1rem;margin-bottom:.5rem">
+          <img src="${v.thumbnail || ''}" style="width:56px;height:56px;object-fit:cover;border-radius:6px;flex-shrink:0;background:#111">
+          <div style="flex:1;min-width:0">
+            <div style="font-size:.9rem;font-weight:600;margin-bottom:.15rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${v.title || v.photo_id}</div>
+            <div style="font-size:.75rem;color:var(--muted)">${v.category || ''} · ${v.duration ? v.duration + 's' : ''} · ${v.size_mb ? v.size_mb + 'MB' : ''} · ${v.created ? v.created.slice(0,10) : ''}</div>
+          </div>
+          ${v.video_url ? `<a href="${v.video_url}" target="_blank" download style="flex-shrink:0;padding:.5rem .9rem;background:var(--accent);color:#000;border-radius:6px;font-weight:700;font-size:.82rem;text-decoration:none">📥 הורד</a>` : '<span style="color:var(--muted);font-size:.8rem">ממתין...</span>'}
+        </div>
+      `).join('');
+    } catch(e) {
+      list.innerHTML = '<div style="text-align:center;padding:1rem;color:var(--muted);font-size:.85rem">לא ניתן לטעון רשימה</div>';
+    }
+  };
+
+  async function getOwnerRepo(pwd) {
+    const r   = await fetch('https://api.github.com/user/repos?per_page=100', {
+      headers: { Authorization: `token ${pwd}` },
+    });
+    const repos = await r.json();
+    const repo  = (repos || []).find(r => r.name === 'amit-photos');
+    if (repo) return [repo.owner.login, repo.name];
+    throw new Error('לא נמצא ריפו amit-photos');
+  }
+})();
+</script>
 
 </body>
 </html>
