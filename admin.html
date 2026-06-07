@@ -6440,47 +6440,65 @@ async function confirmLinkToLocation() {
     const pwd = sessionStorage.getItem('admin_session') || localStorage.getItem('admin_session') || '';
     if (!pwd) { alert('אין session'); return; }
 
-    const btn  = document.getElementById('bd-create-btn');
-    const box  = document.getElementById('bd-status-box');
-    const icon = document.getElementById('bd-status-icon');
-    const text = document.getElementById('bd-status-text');
-    const sub  = document.getElementById('bd-status-sub');
+    const btn   = document.getElementById('bd-create-btn');
+    const box   = document.getElementById('bd-status-box');
+    const icon  = document.getElementById('bd-status-icon');
+    const text2 = document.getElementById('bd-status-text');
+    const sub   = document.getElementById('bd-status-sub');
 
-    btn.disabled      = true;
-    btn.textContent   = '⏳ מפעיל...';
-    box.style.display = 'block';
-    icon.textContent  = '⏳';
-    text.textContent  = 'מפעיל GitHub Actions...';
-    sub.textContent   = '';
+    btn.disabled       = true;
+    btn.textContent    = '⏳ מפעיל...';
+    box.style.display  = 'block';
+    icon.textContent   = '⏳';
+    text2.textContent  = 'מפעיל...';
+    sub.textContent    = '';
     document.getElementById('bd-artifact-link').style.display = 'none';
 
     const photo = bdAllPhotos.find(p => p.id === bdSelectedId);
 
+    const GH_ACTIONS_URL = 'https://github.com/erezfamily-cmyk/amit-photos/actions/workflows/photo-breakdown.yml';
+    const artLink = document.getElementById('bd-artifact-link');
+
     try {
-      const res = await fetch('/api/breakdown', {
+      const res  = await fetch('/api/breakdown', {
         method:  'POST',
         headers: { 'X-Admin-Password': pwd, 'Content-Type': 'application/json' },
         body:    JSON.stringify({ photo_id: bdSelectedId }),
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || `שגיאה ${res.status}`);
 
-      icon.textContent = '🎬';
-      text.textContent = `יוצר: "${photo?.title || bdSelectedId}"`;
-      sub.textContent  = 'Breakdown Video מיוצר (~10 דקות עם Kling). הסרטון יופיע ברשימה למטה לאחר הסיום.';
+      // Parse JSON safely — empty body = not available on this host
+      const text = await res.text();
+      let data = {};
+      try { data = JSON.parse(text); } catch { /* empty / HTML response */ }
 
-      const artLink = document.getElementById('bd-artifact-link');
-      artLink.href         = data.actions || 'https://github.com/erezfamily-cmyk/amit-photos/actions/workflows/photo-breakdown.yml';
-      artLink.style.display = 'inline-block';
-      artLink.textContent  = '🔗 GitHub Actions';
-
+      if (res.ok) {
+        // Netlify / Cloudflare Worker responded
+        icon.textContent  = '🎬';
+        text2.textContent = `יוצר: "${photo?.title || bdSelectedId}"`;
+        sub.textContent   = 'Breakdown Video מיוצר (~10 דקות). הסרטון יופיע ברשימה למטה.';
+        artLink.href         = data.actions || GH_ACTIONS_URL;
+        artLink.style.display = 'inline-block';
+        artLink.textContent  = '🔗 עקוב ב-GitHub Actions';
+        return;
+      }
+      // Non-OK — fall through to manual mode
     } catch(e) {
-      icon.textContent = '❌';
-      text.textContent = `שגיאה: ${e.message}`;
-    } finally {
-      btn.disabled    = false;
-      btn.textContent = '🎬 צור Breakdown Video';
+      // Network / parse error — fall through to manual mode
     }
+
+    // Manual mode: open GitHub Actions directly (user triggers via web UI)
+    icon.textContent  = '🔗';
+    text2.textContent = `הפעל ידנית ב-GitHub Actions`;
+    sub.textContent   = `photo_id: ${bdSelectedId}`;
+    artLink.href         = GH_ACTIONS_URL;
+    artLink.style.display = 'inline-block';
+    artLink.textContent  = '🚀 פתח GitHub Actions להפעלה';
+
+    // Also copy command to clipboard silently
+    try { await navigator.clipboard.writeText(`python src/photo_breakdown.py --id ${bdSelectedId}`); } catch {}
+
+    btn.disabled    = false;
+    btn.textContent = '🎬 צור Breakdown Video';
   };
 
   window.bdCopyCommand = function() {
