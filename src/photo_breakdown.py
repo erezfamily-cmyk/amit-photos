@@ -452,14 +452,14 @@ def _render_frame(base_pil, elements, visible_count, alpha_last):
     img = base_pil.copy().convert("RGBA")
 
     try:
-        f_label = ImageFont.truetype(FONT_REG,  30)
-        f_value = ImageFont.truetype(FONT_BOLD, 46)
-        f_wm    = ImageFont.truetype(FONT_REG,  30)
+        f_label = ImageFont.truetype(FONT_REG,  26)
+        f_value = ImageFont.truetype(FONT_BOLD, 38)
+        f_wm    = ImageFont.truetype(FONT_REG,  26)
     except Exception:
         f_label = f_value = f_wm = ImageFont.load_default()
 
     n_rows    = len(elements)
-    row_h     = 72
+    row_h     = 85
     panel_h   = 50 + n_rows * row_h + 55
     panel_top = H - panel_h - 20
 
@@ -523,11 +523,11 @@ def make_breakdown_clip(base_pil, elements, out_path, duration=17.0):
     1.5s between each element, 3s final hold with all visible.
     """
     total_frames  = int(duration * FPS)
-    reveal_frames = 15   # 0.5s fade-in per element
-    gap_frames    = 45   # 1.5s gap between elements
+    reveal_frames = 9    # 0.3s fade-in per element
+    gap_frames    = 6    # 0.2s gap between elements
 
     schedules = []
-    t = FPS  # 1s initial hold
+    t = 15  # 0.5s initial hold
     for _ in elements:
         schedules.append(t)
         t += reveal_frames + gap_frames
@@ -1031,7 +1031,7 @@ def main():
         motion_dur = 5.0
 
         # 2. EXIF breakdown animation
-        breakdown_dur = max(12.0, len(elems) * 2.5 + 6.0)
+        breakdown_dur = 5.0
         print(f"\n[2/4] Breakdown animation ({breakdown_dur:.0f}s, {len(elems)} elements)...")
         b_clip = td_path / "02_breakdown.mp4"
         make_breakdown_clip(base, elems, b_clip, duration=breakdown_dur)
