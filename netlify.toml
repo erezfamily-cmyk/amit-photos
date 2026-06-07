@@ -3,6 +3,11 @@
   publish = "."
 
 [[redirects]]
+  from = "/api/breakdown"
+  to = "/.netlify/functions/breakdown"
+  status = 200
+
+[[redirects]]
   from = "/amit-photos/*"
   to = "/:splat"
   status = 301

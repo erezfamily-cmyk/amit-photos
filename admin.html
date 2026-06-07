@@ -1442,7 +1442,7 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
 
           <!-- גריד תמונות -->
           <div id="bd-photo-grid"
-            style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;max-height:420px;overflow-y:auto;border:1px solid var(--border);border-radius:8px;padding:6px;background:var(--bg);scrollbar-width:thin">
+            style="display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:90px;gap:6px;max-height:420px;overflow-y:auto;border:1px solid var(--border);border-radius:8px;padding:6px;background:var(--bg);scrollbar-width:thin">
             <div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--muted);font-size:.85rem">טוען תמונות...</div>
           </div>
 
@@ -6411,10 +6411,10 @@ async function confirmLinkToLocation() {
       const sel   = bdSelectedId === p.id;
       return `<div data-bd-id="${p.id}" title="${(p.title||'').replace(/"/g,'&quot;')}"
         style="position:relative;border-radius:6px;overflow:hidden;cursor:pointer;
-               border:2px solid ${sel ? 'var(--accent)' : 'transparent'};aspect-ratio:1;background:#111">
-        <img src="${thumb}" style="width:100%;height:100%;object-fit:cover;display:block">
-        ${sel ? '<div style="position:absolute;inset:0;background:rgba(200,169,110,.3)"></div><div style="position:absolute;top:.25rem;right:.25rem;background:var(--accent);border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:.7rem;color:#000;font-weight:700">✓</div>' : ''}
-        <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.75));padding:.25rem .3rem;font-size:.6rem;color:#ccc;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.title||p.id}</div>
+               border:2px solid ${sel ? 'var(--accent)' : 'transparent'};background:#111">
+        <img src="${thumb}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block">
+        ${sel ? '<div style="position:absolute;inset:0;background:rgba(200,169,110,.3)"></div><div style="position:absolute;top:.25rem;right:.25rem;background:var(--accent);border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:.7rem;color:#000;font-weight:700;z-index:2">✓</div>' : ''}
+        <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.75));padding:.25rem .3rem;font-size:.6rem;color:#ccc;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;z-index:1">${p.title||p.id}</div>
       </div>`;
     }).join('');
 
@@ -6440,59 +6440,46 @@ async function confirmLinkToLocation() {
     const pwd = sessionStorage.getItem('admin_session') || localStorage.getItem('admin_session') || '';
     if (!pwd) { alert('אין session'); return; }
 
-    const btn = document.getElementById('bd-create-btn');
-    btn.disabled = true;
-    btn.textContent = '⏳ מפעיל...';
-
+    const btn  = document.getElementById('bd-create-btn');
     const box  = document.getElementById('bd-status-box');
     const icon = document.getElementById('bd-status-icon');
     const text = document.getElementById('bd-status-text');
     const sub  = document.getElementById('bd-status-sub');
+
+    btn.disabled      = true;
+    btn.textContent   = '⏳ מפעיל...';
     box.style.display = 'block';
     icon.textContent  = '⏳';
     text.textContent  = 'מפעיל GitHub Actions...';
     sub.textContent   = '';
+    document.getElementById('bd-artifact-link').style.display = 'none';
 
     const photo = bdAllPhotos.find(p => p.id === bdSelectedId);
 
     try {
-      // Trigger GitHub Actions workflow_dispatch
-      const [owner, repo] = await getOwnerRepo(pwd);
-      const r = await fetch(`https://api.github.com/repos/${owner}/${repo}/actions/workflows/photo-breakdown.yml/dispatches`, {
-        method: 'POST',
-        headers: { Authorization: `token ${pwd}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ref: 'main', inputs: { photo_id: bdSelectedId } }),
+      const res = await fetch('/api/breakdown', {
+        method:  'POST',
+        headers: { 'X-Admin-Password': pwd, 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ photo_id: bdSelectedId }),
       });
-
-      if (!r.ok) throw new Error(`GitHub API ${r.status}`);
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || `שגיאה ${res.status}`);
 
       icon.textContent = '🎬';
       text.textContent = `יוצר: "${photo?.title || bdSelectedId}"`;
-      sub.textContent  = 'Breakdown Video יוצר (~10 דקות עם Kling)';
+      sub.textContent  = 'Breakdown Video מיוצר (~10 דקות עם Kling). הסרטון יופיע ברשימה למטה לאחר הסיום.';
 
-      setTimeout(async () => {
-        try {
-          const runRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/actions/runs?event=workflow_dispatch&per_page=5`, {
-            headers: { Authorization: `token ${pwd}` },
-          });
-          const runs = await runRes.json();
-          const run  = (runs.workflow_runs || []).find(r => r.name && r.name.includes('Breakdown'));
-          if (run) {
-            const artLink = document.getElementById('bd-artifact-link');
-            artLink.href         = `https://github.com/${owner}/${repo}/actions/runs/${run.id}`;
-            artLink.style.display = 'inline-block';
-            artLink.textContent  = '📥 פתח GitHub Actions';
-          }
-        } catch(e) {}
-        btn.disabled    = false;
-        btn.textContent = '🎬 צור Breakdown Video';
-      }, 8000);
+      const artLink = document.getElementById('bd-artifact-link');
+      artLink.href         = data.actions || 'https://github.com/erezfamily-cmyk/amit-photos/actions/workflows/photo-breakdown.yml';
+      artLink.style.display = 'inline-block';
+      artLink.textContent  = '🔗 GitHub Actions';
 
     } catch(e) {
       icon.textContent = '❌';
       text.textContent = `שגיאה: ${e.message}`;
-      btn.disabled     = false;
-      btn.textContent  = '🎬 צור Breakdown Video';
+    } finally {
+      btn.disabled    = false;
+      btn.textContent = '🎬 צור Breakdown Video';
     }
   };
 
@@ -6534,15 +6521,6 @@ async function confirmLinkToLocation() {
     }
   };
 
-  async function getOwnerRepo(pwd) {
-    const r   = await fetch('https://api.github.com/user/repos?per_page=100', {
-      headers: { Authorization: `token ${pwd}` },
-    });
-    const repos = await r.json();
-    const repo  = (repos || []).find(r => r.name === 'amit-photos');
-    if (repo) return [repo.owner.login, repo.name];
-    throw new Error('לא נמצא ריפו amit-photos');
-  }
 })();
 </script>
 
