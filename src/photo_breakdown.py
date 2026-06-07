@@ -891,14 +891,14 @@ def assemble(clips_with_durations, out_path):
 
 # ── upload video for sharing ──────────────────────────────────────────────────
 def _upload_video(video_path):
-    """Upload to litterbox (1h) with 0x0.st fallback. Returns public URL."""
+    """Upload to litterbox (72h) with 0x0.st fallback. Returns public URL."""
     import requests
     data = Path(video_path).read_bytes()
     print(f"  Uploading {len(data)/1024/1024:.1f} MB...")
 
     for name, url, extra in [
         ("litterbox", "https://litterbox.catbox.moe/resources/internals/api.php",
-         {"data": {"reqtype": "fileupload", "time": "1h"}, "field": "fileToUpload"}),
+         {"data": {"reqtype": "fileupload", "time": "72h"}, "field": "fileToUpload"}),
         ("0x0.st", "https://0x0.st", {"data": {}, "field": "file"}),
     ]:
         try:
