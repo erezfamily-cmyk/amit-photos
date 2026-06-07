@@ -1425,16 +1425,6 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
 
       <div style="max-width:760px;margin:0 auto">
 
-        <!-- GitHub Token (חד פעמי) -->
-        <div id="bd-token-box" style="background:var(--surface);border:1px solid var(--accent);border-radius:10px;padding:1rem 1.25rem;margin-bottom:1.25rem;display:flex;gap:.75rem;align-items:center">
-          <div style="flex:1">
-            <div style="font-size:.82rem;color:var(--muted);margin-bottom:.35rem">GitHub Personal Access Token <span style="color:var(--accent)">(נדרש פעם אחת — נשמר בדפדפן)</span></div>
-            <input id="bd-gh-token" type="password" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"
-              style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:.5rem .75rem;font-size:.88rem;font-family:monospace;direction:ltr">
-          </div>
-          <button onclick="bdSaveToken()" style="flex-shrink:0;padding:.55rem 1rem;background:var(--accent);color:#000;border:none;border-radius:6px;font-weight:700;font-size:.85rem;cursor:pointer">שמור</button>
-        </div>
-
         <!-- בחירת תמונה -->
         <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1.5rem">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
@@ -6383,29 +6373,9 @@ async function confirmLinkToLocation() {
   document.querySelector('.nav-item[data-section="breakdown"]')?.addEventListener('click', bdInit);
 
   async function bdInit() {
-    // Show/hide token box based on whether token is already saved
-    const saved = localStorage.getItem('bd_gh_token') || '';
-    const tokenBox = document.getElementById('bd-token-box');
-    const tokenInput = document.getElementById('bd-gh-token');
-    if (saved) {
-      tokenInput.value = saved;
-      tokenBox.style.borderColor = 'var(--green)';
-    }
     if (bdAllPhotos.length === 0) await bdLoadPhotos();
     await bdLoadVideos();
   }
-
-  window.bdSaveToken = function() {
-    const val = document.getElementById('bd-gh-token').value.trim();
-    if (!val) return;
-    localStorage.setItem('bd_gh_token', val);
-    const box = document.getElementById('bd-token-box');
-    box.style.borderColor = 'var(--green)';
-    // Brief feedback
-    const btn = box.querySelector('button');
-    btn.textContent = '✅ נשמר';
-    setTimeout(() => { btn.textContent = 'שמור'; }, 1500);
-  };
 
   async function bdLoadPhotos() {
     try {
@@ -6470,14 +6440,15 @@ async function confirmLinkToLocation() {
 
   window.bdCreateVideo = async function() {
     if (!bdSelectedId) { alert('בחר תמונה'); return; }
-    const pwd = sessionStorage.getItem('admin_session') || localStorage.getItem('admin_session') || '';
-    if (!pwd) { alert('אין session'); return; }
+    const session = sessionStorage.getItem('admin_session') || localStorage.getItem('admin_session') || '';
+    if (!session) { alert('אין session'); return; }
 
     const btn   = document.getElementById('bd-create-btn');
     const box   = document.getElementById('bd-status-box');
     const icon  = document.getElementById('bd-status-icon');
     const text2 = document.getElementById('bd-status-text');
     const sub   = document.getElementById('bd-status-sub');
+    const artLink = document.getElementById('bd-artifact-link');
 
     btn.disabled       = true;
     btn.textContent    = '⏳ מפעיל...';
@@ -6485,53 +6456,27 @@ async function confirmLinkToLocation() {
     icon.textContent   = '⏳';
     text2.textContent  = 'מפעיל...';
     sub.textContent    = '';
-    document.getElementById('bd-artifact-link').style.display = 'none';
+    artLink.style.display = 'none';
 
     const photo = bdAllPhotos.find(p => p.id === bdSelectedId);
 
-    const ghToken = localStorage.getItem('bd_gh_token') || '';
-    if (!ghToken) {
-      icon.textContent  = '⚠️';
-      text2.textContent = 'הכנס GitHub Token למעלה ולחץ שמור';
-      sub.textContent   = '';
-      btn.disabled    = false;
-      btn.textContent = '🎬 צור Breakdown Video';
-      return;
-    }
-
-    const artLink = document.getElementById('bd-artifact-link');
-    artLink.style.display = 'none';
-
     try {
-      const res = await fetch(
-        `https://api.github.com/repos/${BD_OWNER}/${BD_REPO}/actions/workflows/photo-breakdown.yml/dispatches`,
-        {
-          method:  'POST',
-          headers: {
-            Authorization:  `Bearer ${ghToken}`,
-            Accept:         'application/vnd.github+json',
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ ref: 'main', inputs: { photo_id: bdSelectedId } }),
-        }
-      );
+      const res = await fetch('/api/breakdown', {
+        method:  'POST',
+        headers: { 'X-Admin-Password': session, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ photo_id: bdSelectedId }),
+      });
 
-      if (res.status === 204) {
-        // Success — GitHub returns 204 No Content for workflow_dispatch
-        icon.textContent  = '🎬';
-        text2.textContent = `יוצר: "${photo?.title || bdSelectedId}"`;
-        sub.textContent   = 'הופעל ב-GitHub Actions. ~10 דקות עם Kling, פחות ללא FAL_KEY.';
-        artLink.href         = `https://github.com/${BD_OWNER}/${BD_REPO}/actions/workflows/photo-breakdown.yml`;
-        artLink.style.display = 'inline-block';
-        artLink.textContent  = '🔗 עקוב ב-GitHub Actions';
-      } else {
-        const body = await res.text();
-        let msg = `שגיאה ${res.status}`;
-        try { msg = JSON.parse(body).message || msg; } catch {}
-        if (res.status === 401) msg = 'Token לא תקין — עדכן ב-GitHub Token למעלה';
-        if (res.status === 403) msg = 'Token חסר הרשאת workflow — צור token עם scope: workflow';
-        throw new Error(msg);
-      }
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok) throw new Error(data.error || `שגיאה ${res.status}`);
+
+      icon.textContent  = '🎬';
+      text2.textContent = `יוצר: "${photo?.title || bdSelectedId}"`;
+      sub.textContent   = 'הופעל ב-GitHub Actions. ~10 דקות עם Kling.';
+      artLink.href         = data.actions || `https://github.com/${BD_OWNER}/${BD_REPO}/actions/workflows/photo-breakdown.yml`;
+      artLink.style.display = 'inline-block';
+      artLink.textContent  = '🔗 עקוב ב-GitHub Actions';
 
     } catch(e) {
       icon.textContent  = '❌';
