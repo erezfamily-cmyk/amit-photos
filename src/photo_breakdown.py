@@ -452,15 +452,15 @@ def _render_frame(base_pil, elements, visible_count, alpha_last):
     img = base_pil.copy().convert("RGBA")
 
     try:
-        f_label = ImageFont.truetype(FONT_REG,  38)
-        f_value = ImageFont.truetype(FONT_BOLD, 58)
-        f_wm    = ImageFont.truetype(FONT_REG,  36)
+        f_label = ImageFont.truetype(FONT_REG,  30)
+        f_value = ImageFont.truetype(FONT_BOLD, 46)
+        f_wm    = ImageFont.truetype(FONT_REG,  30)
     except Exception:
         f_label = f_value = f_wm = ImageFont.load_default()
 
     n_rows    = len(elements)
-    row_h     = 88
-    panel_h   = 60 + n_rows * row_h + 70
+    row_h     = 72
+    panel_h   = 50 + n_rows * row_h + 55
     panel_top = H - panel_h - 20
 
     # Semi-transparent dark panel
@@ -705,9 +705,12 @@ def make_framed_photo_clip(jpeg_bytes, out_path, duration=4.0):
 
     # Pillarbox blurred background fills the full 9:16 frame
     bg_pil = make_pillarbox_base(jpeg_bytes)
+    # Extra blur so the polaroid pops against an even softer background
+    for _ in range(3):
+        bg_pil = bg_pil.filter(ImageFilter.GaussianBlur(radius=8))
 
-    # Scale photo to fit inside the polaroid (max 860px on longer side)
-    max_dim = 860
+    # Scale photo to fit inside the polaroid (max 680px on longer side)
+    max_dim = 680
     scale = min(max_dim / iw, max_dim / ih)
     pw, ph = int(iw * scale), int(ih * scale)
     photo = img.resize((pw, ph), Image.LANCZOS)
@@ -1033,10 +1036,10 @@ def main():
         b_clip = td_path / "02_breakdown.mp4"
         make_breakdown_clip(base, elems, b_clip, duration=breakdown_dur)
 
-        # 3. Framed photo (polaroid reveal, 4s)
+        # 3. Framed photo (polaroid reveal, 6.5s)
         print("\n[3/4] Framed photo reveal...")
         f_clip = td_path / "03_framed.mp4"
-        make_framed_photo_clip(jpeg, f_clip, duration=4.0)
+        make_framed_photo_clip(jpeg, f_clip, duration=6.5)
 
         # 4. Closing slide (2.5s)
         print("\n[4/4] Closing slide...")
@@ -1046,11 +1049,11 @@ def main():
         print("\nAssembling with crossfades...")
         assemble(
             [(m_clip, motion_dur), (b_clip, breakdown_dur),
-             (f_clip, 4.0), (c_clip, 2.5)],
+             (f_clip, 6.5), (c_clip, 2.5)],
             out_path,
         )
 
-    total = motion_dur + breakdown_dur + 4.0 + 2.5
+    total = motion_dur + breakdown_dur + 6.5 + 2.5
     print(f"\nDone! {out_path} ({total:.0f}s)")
 
     # ── Upload + save record ───────────────────────────────────────────────────
