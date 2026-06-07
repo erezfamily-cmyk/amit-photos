@@ -1,5 +1,5 @@
 {
-  "current_category_index": 11,
+  "current_category_index": 12,
   "used_ids_by_category": {
     "אבו דאבי": [
       "6c9e818c-bdd3-402f-b6f5-ee2e668507c9",
@@ -108,7 +108,17 @@
       "1QQVpcji2j_OhEtHI7daFV2QMN5tJHmCT",
       "1F2-F2Z7Se59TH1nSoKuJnD5wYOerpKdn",
       "ae20affa-cfae-4d82-9a55-676860ffdc77"
+    ],
+    "יוון": [
+      "d90bdf5c-80f2-4fdc-ab26-dd49caf382ea",
+      "24bc631f-a80e-4e29-8079-b2d661d27eaa",
+      "e50e779b-e53f-4445-a45c-53b0f0030202",
+      "4690247d-244a-4571-9017-08e363381596",
+      "78f4319f-55a7-4f58-b2e0-dfb72d46bd47",
+      "aae59472-c03c-42b0-b982-f84af68cbc13",
+      "b949b807-07f5-4193-b92f-5384c0fdae75",
+      "bfd3f1b1-efad-4e9f-95c9-37e0d3f5ee9f"
     ]
   },
-  "gear_tool_index": 1
+  "gear_tool_index": 0
 }
