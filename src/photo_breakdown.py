@@ -195,6 +195,42 @@ def list_photos():
     print(f"\nTotal: {len(photos)} photos")
 
 
+# ── pillarbox base ────────────────────────────────────────────────────────────
+def make_pillarbox_base(jpeg_bytes):
+    """
+    Returns 1080×1920 RGB PIL Image:
+      background = photo scaled+cropped to full 9:16, blurred + darkened 65%
+      foreground = original photo scaled to fit width (landscape) or height (portrait), centered
+    """
+    img = Image.open(io.BytesIO(jpeg_bytes)).convert("RGB")
+    iw, ih = img.size
+
+    # Background: cover entire 9:16 frame, blur heavily, darken
+    scale = max(W / iw, H / ih)
+    bw, bh = int(iw * scale), int(ih * scale)
+    bg = img.resize((bw, bh), Image.LANCZOS)
+    bx, by = (bw - W) // 2, (bh - H) // 2
+    bg = bg.crop((bx, by, bx + W, by + H))
+    for _ in range(4):
+        bg = bg.filter(ImageFilter.GaussianBlur(radius=12))
+    black = Image.new("RGB", (W, H), BG)
+    bg = Image.blend(bg, black, 0.65)
+
+    # Foreground: fit to width for landscape, fit to width for portrait
+    is_landscape = iw > ih
+    if is_landscape:
+        fw, fh = W, int(ih * W / iw)
+    else:
+        fh = min(H, int(ih * W / iw))
+        fw = int(iw * fh / ih)
+        fw = min(fw, W)
+
+    fg = img.resize((fw, fh), Image.LANCZOS)
+    bg.paste(fg, ((W - fw) // 2, (H - fh) // 2))
+
+    return bg
+
+
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--list", action="store_true")
