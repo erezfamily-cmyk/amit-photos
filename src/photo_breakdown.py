@@ -295,6 +295,179 @@ def make_title_clip(title, category, out_path, duration=3.0):
         os.unlink(png)
 
 
+# ── icon drawers ──────────────────────────────────────────────────────────────
+def _draw_aperture_icon(draw, cx, cy, r, f_number):
+    """Circular aperture: outer ring + inner opening sized by f-number."""
+    draw.ellipse([(cx-r, cy-r), (cx+r, cy+r)], outline=GOLD, width=3)
+    open_r = int(r * max(0.15, min(0.85, 1.4 / max(f_number, 1.4) * 0.85)))
+    draw.ellipse([(cx-open_r, cy-open_r), (cx+open_r, cy+open_r)], outline=GOLD, width=2)
+    for i in range(6):
+        a  = math.radians(i * 60)
+        a2 = math.radians(i * 60 + 30)
+        x1, y1 = cx + int(r*0.5*math.cos(a)),  cy + int(r*0.5*math.sin(a))
+        x2, y2 = cx + int(r*0.9*math.cos(a2)), cy + int(r*0.9*math.sin(a2))
+        draw.line([(x1, y1), (x2, y2)], fill=GOLD, width=2)
+
+
+def _draw_sun_compass(draw, cx, cy, r, angle_deg):
+    """Compass circle with sun arrow pointing in light direction."""
+    draw.ellipse([(cx-r, cy-r), (cx+r, cy+r)], outline=GOLD, width=2)
+    for d in range(0, 360, 90):
+        a  = math.radians(d - 90)
+        x1 = cx + int((r-8)*math.cos(a)); y1 = cy + int((r-8)*math.sin(a))
+        x2 = cx + int(r*math.cos(a));     y2 = cy + int(r*math.sin(a))
+        draw.line([(x1,y1),(x2,y2)], fill=DIM, width=2)
+    a  = math.radians(angle_deg - 90)
+    ax = cx + int(r*0.65*math.cos(a)); ay = cy + int(r*0.65*math.sin(a))
+    draw.line([(cx, cy), (ax, ay)], fill=GOLD, width=3)
+    draw.ellipse([(ax-5,ay-5),(ax+5,ay+5)], fill=GOLD)
+
+
+# ── overlay element builder ───────────────────────────────────────────────────
+def build_overlay_elements(exif, location_name, light_angle):
+    """Returns ordered list of overlay row dicts for the breakdown panel."""
+    elems = []
+    if exif.get("camera"):
+        elems.append({"label": "Camera",         "value": exif["camera"],   "icon": "dot"})
+    if exif.get("aperture"):
+        elems.append({"label": "Aperture",        "value": exif["aperture"], "icon": "aperture",
+                      "f_number": exif.get("f_number", 5.6)})
+    if exif.get("shutter"):
+        elems.append({"label": "Shutter speed",   "value": exif["shutter"],  "icon": "dot"})
+    if exif.get("iso"):
+        elems.append({"label": "Sensitivity",     "value": exif["iso"],      "icon": "dot"})
+    if exif.get("focal"):
+        elems.append({"label": "Focal length",    "value": exif["focal"],    "icon": "dot"})
+    if location_name:
+        elems.append({"label": "Location",        "value": location_name,    "icon": "dot"})
+    if light_angle is not None:
+        elems.append({"label": "Light direction", "value": "",               "icon": "sun",
+                      "angle": light_angle})
+    return elems
+
+
+# ── single frame compositor ───────────────────────────────────────────────────
+def _render_frame(base_pil, elements, visible_count, alpha_last):
+    """
+    Composites visible_count overlay rows onto base_pil.
+    Row at index visible_count-1 is at opacity alpha_last; all prior rows at 1.0.
+    Elements slide in from left as alpha increases.
+    """
+    img = base_pil.copy().convert("RGBA")
+
+    try:
+        f_label = ImageFont.truetype(FONT_REG,  38)
+        f_value = ImageFont.truetype(FONT_BOLD, 58)
+        f_wm    = ImageFont.truetype(FONT_REG,  36)
+    except Exception:
+        f_label = f_value = f_wm = ImageFont.load_default()
+
+    n_rows    = len(elements)
+    row_h     = 88
+    panel_h   = 60 + n_rows * row_h + 70
+    panel_top = H - panel_h - 20
+
+    # Semi-transparent dark panel
+    panel = Image.new("RGBA", (W, panel_h), (8, 8, 12, 210))
+    img.paste(panel, (0, panel_top), panel)
+
+    # Gold separator line at top of panel
+    sep = Image.new("RGBA", (W - 120, 3), (*GOLD, 255))
+    img.paste(sep, (60, panel_top + 18), sep)
+
+    icon_r  = 18
+    left_x  = 80
+    start_y = panel_top + 40
+
+    for i, elem in enumerate(elements[:visible_count]):
+        is_last = (i == visible_count - 1)
+        alpha   = alpha_last if is_last else 1.0
+        slide   = int((1.0 - alpha) * 70)
+        x       = left_x - slide
+        y       = start_y + i * row_h
+
+        layer = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+        d     = ImageDraw.Draw(layer)
+
+        cx, cy = x + icon_r, y + row_h // 2
+
+        if elem["icon"] == "aperture":
+            _draw_aperture_icon(d, cx, cy, icon_r, elem.get("f_number", 5.6))
+        elif elem["icon"] == "sun" and "angle" in elem:
+            _draw_sun_compass(d, cx, cy, icon_r, elem["angle"])
+        else:
+            d.ellipse([(cx-icon_r, cy-icon_r), (cx+icon_r, cy+icon_r)], outline=GOLD, width=2)
+            d.ellipse([(cx-6, cy-6), (cx+6, cy+6)], fill=GOLD)
+
+        lx = x + icon_r * 2 + 20
+        d.text((lx, y + 8),  elem["label"], font=f_label, fill=(*DIM,   255))
+        if elem.get("value"):
+            d.text((lx, y + 44), elem["value"],  font=f_value, fill=(*WHITE, 255))
+
+        r_ch, g_ch, b_ch, a_ch = layer.split()
+        a_ch = a_ch.point(lambda v: int(v * alpha))
+        layer = Image.merge("RGBA", (r_ch, g_ch, b_ch, a_ch))
+        img = Image.alpha_composite(img, layer)
+
+    # Watermark
+    wm_layer = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    wd = ImageDraw.Draw(wm_layer)
+    wm = "amitphotos.com"
+    bb = wd.textbbox((0, 0), wm, font=f_wm)
+    wd.text(((W - (bb[2]-bb[0])) // 2, H - 55), wm, font=f_wm, fill=(*GOLD, 200))
+    img = Image.alpha_composite(img, wm_layer)
+
+    return img.convert("RGB")
+
+
+# ── breakdown clip ────────────────────────────────────────────────────────────
+def make_breakdown_clip(base_pil, elements, out_path, duration=17.0):
+    """
+    Frame-by-frame animation: each element fades+slides in over 0.5s,
+    1.5s between each element, 3s final hold with all visible.
+    """
+    total_frames  = int(duration * FPS)
+    reveal_frames = 15   # 0.5s fade-in per element
+    gap_frames    = 45   # 1.5s gap between elements
+
+    schedules = []
+    t = FPS  # 1s initial hold
+    for _ in elements:
+        schedules.append(t)
+        t += reveal_frames + gap_frames
+
+    with tempfile.TemporaryDirectory() as td:
+        print(f"  Rendering {total_frames} frames ({duration:.0f}s)...")
+        for f in range(total_frames):
+            visible_count = 0
+            alpha_last    = 1.0
+            for i, start in enumerate(schedules):
+                if f >= start + reveal_frames:
+                    visible_count = i + 1
+                    alpha_last    = 1.0
+                elif f >= start:
+                    visible_count = i + 1
+                    alpha_last    = (f - start) / reveal_frames
+                    break
+
+            frame = _render_frame(base_pil, elements, visible_count, alpha_last)
+            frame.save(f"{td}/f{f:05d}.jpg", quality=88)
+            if f % 60 == 0:
+                print(f"    {f}/{total_frames} frames", end="\r")
+
+        print(f"  Encoding...")
+        r = subprocess.run([
+            FFMPEG, "-y",
+            "-framerate", str(FPS),
+            "-i", f"{td}/f%05d.jpg",
+            "-c:v", "libx264", "-preset", "fast", "-crf", "20",
+            "-r", str(FPS), "-pix_fmt", "yuv420p",
+            str(out_path),
+        ], capture_output=True, text=True)
+        if r.returncode != 0:
+            raise RuntimeError(f"encode failed:\n{r.stderr[-400:]}")
+
+
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--list", action="store_true")
