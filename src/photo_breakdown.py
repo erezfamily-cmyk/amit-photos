@@ -41,6 +41,21 @@ WHITE = (240, 240, 245)
 DIM   = (150, 150, 165)
 BG    = (10,  10,  14)
 
+FAL_KEY = os.environ.get("FAL_KEY", "")
+
+# motion prompts per category (same as reel_post.py)
+MOTION_PROMPTS = {
+    "פרחים וצמחים":        "static camera, gentle breeze sways petals and leaves, warm golden light flickers softly",
+    "בעלי חיים":            "static camera, animal breathes and blinks naturally, fur ripples in breeze, eyes glisten",
+    "מאקרו-צילומי תקריב":  "LOCKED static frame, ZERO camera movement, micro details shimmer, wings or legs move naturally",
+    "חרקים":               "LOCKED static frame, insect legs twitch, antennae wave, wings flutter naturally",
+    "ישראל":               "static camera, warm Mediterranean light shifts slowly, distant elements sway gently",
+    "טבע דומם":            "static camera, soft light gradually shifts, subtle shadows move in place",
+    "שחור-לבן":            "static camera, deep shadows shift slowly, high contrast light pulses",
+    "טנזניה":              "static camera, savanna grass sways in warm breeze, animal breathes naturally",
+    "default":             "static camera locked on subject, dramatic atmospheric light shifts, shallow depth of field",
+}
+
 
 def _find_ffmpeg():
     hit = shutil.which("ffmpeg")
@@ -232,32 +247,51 @@ def make_pillarbox_base(jpeg_bytes):
 
 
 # ── title card ────────────────────────────────────────────────────────────────
+def _fit_text_font(path, text, max_w, start_size=88):
+    """Returns largest ImageFont where text fits within max_w pixels."""
+    size = start_size
+    while size > 28:
+        try:
+            f = ImageFont.truetype(path, size)
+        except Exception:
+            return ImageFont.load_default()
+        tmp_img  = Image.new("RGB", (1, 1))
+        tmp_draw = ImageDraw.Draw(tmp_img)
+        bb = tmp_draw.textbbox((0, 0), text, font=f)
+        if bb[2] - bb[0] <= max_w:
+            return f
+        size -= 4
+    return ImageFont.load_default()
+
+
 def make_title_clip(title, category, out_path, duration=3.0):
-    """Dark card with gold dividers, Hebrew title, category, watermark → MP4."""
+    """Dark card with gold dividers, auto-scaled title, category, watermark → MP4."""
     img  = Image.new("RGB", (W, H), BG)
     draw = ImageDraw.Draw(img)
 
+    max_w   = W - 80
+    # Auto-scale title font to fit the frame
+    f_title = _fit_text_font(FONT_BOLD, title, max_w, start_size=88)
     try:
-        f_title = ImageFont.truetype(FONT_BOLD, 88)
-        f_cat   = ImageFont.truetype(FONT_REG,  50)
-        f_wm    = ImageFont.truetype(FONT_REG,  38)
+        f_cat = ImageFont.truetype(FONT_REG, 48)
+        f_wm  = ImageFont.truetype(FONT_REG, 38)
     except Exception:
-        f_title = f_cat = f_wm = ImageFont.load_default()
+        f_cat = f_wm = ImageFont.load_default()
 
     cy = H // 2 - 60
 
     def center_text(text, font, y, color):
         bb = draw.textbbox((0, 0), text, font=font)
-        draw.text(((W - (bb[2] - bb[0])) // 2, y), text, font=font, fill=color)
+        x  = (W - (bb[2] - bb[0])) // 2
+        draw.text((x, y), text, font=font, fill=color)
 
     # Top gold line
     lw = 360
     draw.rectangle([(W//2 - lw//2, cy - 30), (W//2 + lw//2, cy - 26)], fill=GOLD)
 
-    # Title
-    title_disp = _bidi(title)
-    center_text(title_disp, f_title, cy, WHITE)
-    bb = draw.textbbox((0, 0), title_disp, font=f_title)
+    # Title — no _bidi() so Pillow draws the Hebrew/English as-is
+    center_text(title, f_title, cy, WHITE)
+    bb = draw.textbbox((0, 0), title, font=f_title)
     th = bb[3] - bb[1]
 
     # Bottom gold line
@@ -265,7 +299,7 @@ def make_title_clip(title, category, out_path, duration=3.0):
 
     # Category
     if category:
-        center_text(_bidi(category), f_cat, cy + th + 50, GOLD)
+        center_text(category, f_cat, cy + th + 50, GOLD)
 
     # Watermark
     wm = "amitphotos.com"
@@ -468,6 +502,238 @@ def make_breakdown_clip(base_pil, elements, out_path, duration=17.0):
             raise RuntimeError(f"encode failed:\n{r.stderr[-400:]}")
 
 
+# ── motion clip (Kling / Ken Burns fallback) ──────────────────────────────────
+def _ken_burns_fallback(jpeg_bytes, out_path, duration=5.0):
+    """Ken Burns fallback when Kling is unavailable."""
+    img = Image.open(io.BytesIO(jpeg_bytes)).convert("RGB")
+    iw, ih = img.size
+    is_landscape = (iw / ih) > 1.2
+
+    with tempfile.NamedTemporaryFile(suffix=".jpg", delete=False) as tmp:
+        img.save(tmp.name, quality=92)
+        jpg = tmp.name
+
+    frames = int(duration * FPS)
+    try:
+        if is_landscape:
+            vf = (
+                f"[0:v]scale={W}:{H}:force_original_aspect_ratio=increase,"
+                f"crop={W}:{H},boxblur=40:5,eq=brightness=-0.25[bg];"
+                f"[0:v]scale={W}:-2[fg];"
+                f"[bg][fg]overlay=(W-w)/2:(H-h)/2,setsar=1[out]"
+            )
+            subprocess.run([
+                FFMPEG, "-y", "-loop", "1", "-framerate", str(FPS),
+                "-i", jpg, "-filter_complex", vf, "-map", "[out]",
+                "-t", str(duration), "-c:v", "libx264", "-preset", "fast",
+                "-crf", "21", "-r", str(FPS), "-pix_fmt", "yuv420p",
+                str(out_path),
+            ], capture_output=True, check=True)
+        else:
+            vf = (
+                f"zoompan=z='min(zoom+0.0003,1.08)':d={frames}:"
+                f"x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':"
+                f"s={W}x{H}:fps={FPS},setsar=1"
+            )
+            subprocess.run([
+                FFMPEG, "-y", "-loop", "1", "-framerate", str(FPS),
+                "-i", jpg, "-vf", vf, "-t", str(duration),
+                "-c:v", "libx264", "-preset", "fast", "-crf", "21",
+                "-r", str(FPS), "-pix_fmt", "yuv420p",
+                str(out_path),
+            ], capture_output=True, check=True)
+    except subprocess.CalledProcessError as e:
+        raise RuntimeError(f"Ken Burns failed: {e}")
+    finally:
+        os.unlink(jpg)
+
+
+def make_motion_clip(jpeg_bytes, category, out_path, duration=5):
+    """
+    Generates animated clip with Kling 1.6 (if FAL_KEY set), else Ken Burns.
+    Output is always 9:16 1080x1920.
+    """
+    if not FAL_KEY:
+        print("  No FAL_KEY — using Ken Burns")
+        _ken_burns_fallback(jpeg_bytes, out_path, duration)
+        return
+
+    try:
+        import fal_client, urllib.request as ul
+        os.environ["FAL_KEY"] = FAL_KEY
+
+        img = Image.open(io.BytesIO(jpeg_bytes)).convert("RGB")
+        iw, ih = img.size
+        is_landscape = (iw / ih) > 1.2
+        kling_ratio  = "16:9" if is_landscape else "9:16"
+        prompt = MOTION_PROMPTS.get(category, MOTION_PROMPTS["default"])
+
+        with tempfile.NamedTemporaryFile(suffix=".jpg", delete=False) as tmp:
+            img.save(tmp.name, quality=92)
+            jpg = tmp.name
+        try:
+            img_url = fal_client.upload_file(jpg)
+        finally:
+            os.unlink(jpg)
+
+        print(f"  Kling 1.6 [{kling_ratio}] generating (~4 min)...")
+        for attempt in range(1, 3):
+            try:
+                handler = fal_client.submit(
+                    "fal-ai/kling-video/v1.6/standard/image-to-video",
+                    arguments={"image_url": img_url, "prompt": prompt,
+                               "duration": "5", "aspect_ratio": kling_ratio},
+                )
+                result  = handler.get()
+                video_url = result["video"]["url"]
+                break
+            except Exception as e:
+                print(f"  Kling attempt {attempt}/2 failed: {e}")
+                if attempt == 2:
+                    raise
+
+        req = ul.Request(video_url, headers={"User-Agent": "Mozilla/5.0"})
+        with ul.urlopen(req, timeout=120) as r:
+            raw_data = r.read()
+
+        with tempfile.NamedTemporaryFile(suffix=".mp4", delete=False) as tmp:
+            tmp.write(raw_data)
+            raw = tmp.name
+
+        try:
+            if is_landscape:
+                vf = (
+                    f"[0:v]scale={W}:{H}:force_original_aspect_ratio=increase,"
+                    f"crop={W}:{H},boxblur=40:5,eq=brightness=-0.25[bg];"
+                    f"[0:v]scale={W}:-2[fg];"
+                    f"[bg][fg]overlay=(W-w)/2:(H-h)/2,setsar=1[out]"
+                )
+                subprocess.run([
+                    FFMPEG, "-y", "-i", raw,
+                    "-filter_complex", vf, "-map", "[out]",
+                    "-c:v", "libx264", "-preset", "fast", "-crf", "21",
+                    "-r", str(FPS), "-pix_fmt", "yuv420p", "-an",
+                    str(out_path),
+                ], capture_output=True, check=True)
+            else:
+                subprocess.run([
+                    FFMPEG, "-y", "-i", raw,
+                    "-vf", f"scale={W}:{H}:force_original_aspect_ratio=increase,"
+                           f"crop={W}:{H},setsar=1",
+                    "-c:v", "libx264", "-preset", "fast", "-crf", "21",
+                    "-r", str(FPS), "-pix_fmt", "yuv420p", "-an",
+                    str(out_path),
+                ], capture_output=True, check=True)
+        finally:
+            os.unlink(raw)
+
+    except Exception as e:
+        print(f"  Kling failed ({e}) — Ken Burns fallback")
+        _ken_burns_fallback(jpeg_bytes, out_path, duration)
+
+
+# ── white framed photo (polaroid reveal) ──────────────────────────────────────
+def make_framed_photo_clip(jpeg_bytes, out_path, duration=4.0):
+    """
+    Photo with white polaroid frame tilted -3°, on dark background → MP4.
+    Fades in to feel like a physical print being revealed.
+    """
+    img = Image.open(io.BytesIO(jpeg_bytes)).convert("RGB")
+    iw, ih = img.size
+
+    max_dim = 900
+    scale = min(max_dim / iw, max_dim / ih)
+    pw, ph = int(iw * scale), int(ih * scale)
+    photo = img.resize((pw, ph), Image.LANCZOS)
+
+    # Polaroid: equal border on sides/top, larger at bottom
+    b_side, b_top, b_bot = 28, 28, 85
+    frame = Image.new("RGB", (pw + b_side * 2, ph + b_top + b_bot), (255, 255, 255))
+    frame.paste(photo, (b_side, b_top))
+
+    # Rotate -3° (slight tilt like holding a photo)
+    rotated = frame.convert("RGBA").rotate(-3, expand=True, fillcolor=(0, 0, 0, 0))
+
+    # Drop shadow (slightly offset dark copy behind)
+    shadow = Image.new("RGBA", rotated.size, (0, 0, 0, 0))
+    dark   = Image.new("RGBA", rotated.size, (0, 0, 0, 120))
+    shadow.paste(dark, (8, 8), rotated.split()[3])
+
+    # Compose: dark bg → shadow → rotated frame
+    bg = Image.new("RGBA", (W, H), (*BG, 255))
+    rw, rh = rotated.size
+    px = (W - rw) // 2
+    py = (H - rh) // 2 - 40
+    bg.paste(shadow,  (px, py), shadow)
+    bg.paste(rotated, (px, py), rotated)
+
+    final = bg.convert("RGB")
+
+    with tempfile.NamedTemporaryFile(suffix=".jpg", delete=False) as tmp:
+        final.save(tmp.name, quality=93)
+        jpg = tmp.name
+
+    try:
+        r = subprocess.run([
+            FFMPEG, "-y",
+            "-loop", "1", "-framerate", str(FPS), "-t", str(duration + 0.1),
+            "-i", jpg,
+            "-vf", (f"fade=t=in:st=0:d=0.6,"
+                    f"fade=t=out:st={duration-0.5:.2f}:d=0.5,"
+                    f"setsar=1"),
+            "-t", str(duration),
+            "-c:v", "libx264", "-preset", "fast", "-crf", "20",
+            "-r", str(FPS), "-pix_fmt", "yuv420p",
+            str(out_path),
+        ], capture_output=True, text=True)
+        if r.returncode != 0:
+            raise RuntimeError(f"framed clip failed:\n{r.stderr[-300:]}")
+    finally:
+        os.unlink(jpg)
+
+
+# ── closing slide (like reels) ────────────────────────────────────────────────
+def make_closing_clip(out_path, duration=2.5):
+    """'Visit my website: www.amitphotos.com' — identical style to reels closing."""
+    img  = Image.new("RGB", (W, H), BG)
+    draw = ImageDraw.Draw(img)
+
+    try:
+        f_sub = ImageFont.truetype(FONT_REG, 60)
+        f_url = _fit_text_font(FONT_BOLD, "www.amitphotos.com", W - 80, start_size=120)
+    except Exception:
+        f_sub = f_url = ImageFont.load_default()
+
+    def center(text, font, y, color):
+        bb = draw.textbbox((0, 0), text, font=font)
+        draw.text(((W - (bb[2]-bb[0])) // 2, y), text, font=font, fill=color)
+
+    cy = H // 2 - 110
+    center("Visit my website:", f_sub, cy, (180, 180, 200))
+    draw.line([(W//2 - 200, cy + 88), (W//2 + 200, cy + 88)], fill=GOLD, width=2)
+    center("www.amitphotos.com", f_url, cy + 108, GOLD)
+
+    with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp:
+        img.save(tmp.name)
+        png = tmp.name
+
+    try:
+        r = subprocess.run([
+            FFMPEG, "-y",
+            "-loop", "1", "-framerate", str(FPS), "-t", str(duration + 0.1),
+            "-i", png,
+            "-vf", "fade=t=in:st=0:d=0.5,setsar=1",
+            "-t", str(duration),
+            "-c:v", "libx264", "-preset", "fast", "-crf", "20",
+            "-r", str(FPS), "-pix_fmt", "yuv420p",
+            str(out_path),
+        ], capture_output=True, text=True)
+        if r.returncode != 0:
+            raise RuntimeError(f"closing failed:\n{r.stderr[-300:]}")
+    finally:
+        os.unlink(png)
+
+
 # ── reveal clip ───────────────────────────────────────────────────────────────
 def make_reveal_clip(base_pil, out_path, duration=12.0):
     """Clean pillarbox photo with gentle slow zoom + gold watermark → MP4."""
@@ -599,26 +865,36 @@ def main():
     with tempfile.TemporaryDirectory() as td:
         td_path = Path(td)
 
-        print("\n[1/3] Title card...")
-        t_clip = td_path / "01_title.mp4"
-        make_title_clip(title, category, t_clip, duration=3.0)
+        # 1. Motion clip — Kling or Ken Burns (5s)
+        print("\n[1/4] Motion clip (Kling/Ken Burns)...")
+        m_clip = td_path / "01_motion.mp4"
+        make_motion_clip(jpeg, category, m_clip, duration=5)
+        motion_dur = 5.0
 
+        # 2. EXIF breakdown animation
         breakdown_dur = max(12.0, len(elems) * 2.5 + 6.0)
-        print(f"\n[2/3] Breakdown animation ({breakdown_dur:.0f}s, {len(elems)} elements)...")
+        print(f"\n[2/4] Breakdown animation ({breakdown_dur:.0f}s, {len(elems)} elements)...")
         b_clip = td_path / "02_breakdown.mp4"
         make_breakdown_clip(base, elems, b_clip, duration=breakdown_dur)
 
-        print("\n[3/3] Reveal clip...")
-        r_clip = td_path / "03_reveal.mp4"
-        make_reveal_clip(base, r_clip, duration=12.0)
+        # 3. Framed photo (polaroid reveal, 4s)
+        print("\n[3/4] Framed photo reveal...")
+        f_clip = td_path / "03_framed.mp4"
+        make_framed_photo_clip(jpeg, f_clip, duration=4.0)
+
+        # 4. Closing slide (2.5s)
+        print("\n[4/4] Closing slide...")
+        c_clip = td_path / "04_closing.mp4"
+        make_closing_clip(c_clip, duration=2.5)
 
         print("\nAssembling with crossfades...")
         assemble(
-            [(t_clip, 3.0), (b_clip, breakdown_dur), (r_clip, 12.0)],
+            [(m_clip, motion_dur), (b_clip, breakdown_dur),
+             (f_clip, 4.0), (c_clip, 2.5)],
             out_path,
         )
 
-    total = 3.0 + breakdown_dur + 12.0
+    total = motion_dur + breakdown_dur + 4.0 + 2.5
     print(f"\nDone! {out_path} ({total:.0f}s)")
     print("Upload manually to TikTok")
 
