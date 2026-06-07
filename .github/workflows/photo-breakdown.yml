@@ -30,18 +30,21 @@ jobs:
       - name: התקנת חבילות Python
         run: pip install requests pillow "fal-client<1.0.0" python-bidi google-auth google-auth-oauthlib
 
-      - name: הגדרת Drive credentials (אם קיים)
-        if: ${{ secrets.GOOGLE_DRIVE_TOKEN != '' }}
-        run: |
-          echo '${{ secrets.GOOGLE_DRIVE_TOKEN }}' > token.json
-          echo '${{ secrets.GOOGLE_DRIVE_CREDENTIALS }}' > credentials.json
-
-      - name: יצירת Breakdown Video
+      - name: הגדרת Drive credentials + יצירת Breakdown Video
         env:
           FAL_KEY: ${{ secrets.FAL_KEY }}
+          GDRIVE_TOKEN: ${{ secrets.GOOGLE_DRIVE_TOKEN }}
+          GDRIVE_CREDS: ${{ secrets.GOOGLE_DRIVE_CREDENTIALS }}
           PYTHONUNBUFFERED: "1"
         run: |
           mkdir -p breakdown_output
+          if [ -n "$GDRIVE_TOKEN" ]; then
+            echo "$GDRIVE_TOKEN" > token.json
+            echo "$GDRIVE_CREDS" > credentials.json
+            echo "Drive credentials configured"
+          else
+            echo "No Drive credentials — using URL fallback"
+          fi
           python src/photo_breakdown.py --id "${{ inputs.photo_id }}"
 
       - name: שמור breakdown_videos.json לריפו
