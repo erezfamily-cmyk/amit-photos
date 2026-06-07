@@ -231,6 +231,70 @@ def make_pillarbox_base(jpeg_bytes):
     return bg
 
 
+# ── title card ────────────────────────────────────────────────────────────────
+def make_title_clip(title, category, out_path, duration=3.0):
+    """Dark card with gold dividers, Hebrew title, category, watermark → MP4."""
+    img  = Image.new("RGB", (W, H), BG)
+    draw = ImageDraw.Draw(img)
+
+    try:
+        f_title = ImageFont.truetype(FONT_BOLD, 88)
+        f_cat   = ImageFont.truetype(FONT_REG,  50)
+        f_wm    = ImageFont.truetype(FONT_REG,  38)
+    except Exception:
+        f_title = f_cat = f_wm = ImageFont.load_default()
+
+    cy = H // 2 - 60
+
+    def center_text(text, font, y, color):
+        bb = draw.textbbox((0, 0), text, font=font)
+        draw.text(((W - (bb[2] - bb[0])) // 2, y), text, font=font, fill=color)
+
+    # Top gold line
+    lw = 360
+    draw.rectangle([(W//2 - lw//2, cy - 30), (W//2 + lw//2, cy - 26)], fill=GOLD)
+
+    # Title
+    title_disp = _bidi(title)
+    center_text(title_disp, f_title, cy, WHITE)
+    bb = draw.textbbox((0, 0), title_disp, font=f_title)
+    th = bb[3] - bb[1]
+
+    # Bottom gold line
+    draw.rectangle([(W//2 - lw//2, cy + th + 20), (W//2 + lw//2, cy + th + 24)], fill=GOLD)
+
+    # Category
+    if category:
+        center_text(_bidi(category), f_cat, cy + th + 50, GOLD)
+
+    # Watermark
+    wm = "amitphotos.com"
+    bb3 = draw.textbbox((0, 0), wm, font=f_wm)
+    draw.text(((W - (bb3[2]-bb3[0])) // 2, H - 120), wm, font=f_wm, fill=DIM)
+
+    with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp:
+        img.save(tmp.name)
+        png = tmp.name
+
+    try:
+        r = subprocess.run([
+            FFMPEG, "-y",
+            "-loop", "1", "-framerate", str(FPS), "-t", str(duration + 0.1),
+            "-i", png,
+            "-vf", (f"fade=t=in:st=0:d=0.5,"
+                    f"fade=t=out:st={duration-0.5:.2f}:d=0.5,"
+                    f"setsar=1"),
+            "-t", str(duration),
+            "-c:v", "libx264", "-preset", "fast", "-crf", "20",
+            "-r", str(FPS), "-pix_fmt", "yuv420p",
+            str(out_path),
+        ], capture_output=True, text=True)
+        if r.returncode != 0:
+            raise RuntimeError(f"title clip failed:\n{r.stderr[-300:]}")
+    finally:
+        os.unlink(png)
+
+
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--list", action="store_true")
