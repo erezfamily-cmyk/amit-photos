@@ -468,14 +468,160 @@ def make_breakdown_clip(base_pil, elements, out_path, duration=17.0):
             raise RuntimeError(f"encode failed:\n{r.stderr[-400:]}")
 
 
-if __name__ == "__main__":
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--list", action="store_true")
-    ap.add_argument("--id")
+# ── reveal clip ───────────────────────────────────────────────────────────────
+def make_reveal_clip(base_pil, out_path, duration=12.0):
+    """Clean pillarbox photo with gentle slow zoom + gold watermark → MP4."""
+    img  = base_pil.copy()
+    draw = ImageDraw.Draw(img)
+    try:
+        f_wm = ImageFont.truetype(FONT_REG, 44)
+    except Exception:
+        f_wm = ImageFont.load_default()
+    wm = "amitphotos.com"
+    bb = draw.textbbox((0, 0), wm, font=f_wm)
+    ww = bb[2] - bb[0]
+    draw.text(((W - ww) // 2, H - 90), wm, font=f_wm, fill=(*GOLD, 200))
+
+    with tempfile.NamedTemporaryFile(suffix=".jpg", delete=False) as tmp:
+        img.save(tmp.name, quality=92)
+        jpg = tmp.name
+
+    frames = int(duration * FPS)
+    try:
+        vf = (
+            f"zoompan=z='min(zoom+0.0002,1.05)':d={frames}:"
+            f"x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':"
+            f"s={W}x{H}:fps={FPS},"
+            f"fade=t=in:st=0:d=0.7,"
+            f"fade=t=out:st={duration-0.7:.2f}:d=0.7,"
+            f"setsar=1"
+        )
+        r = subprocess.run([
+            FFMPEG, "-y",
+            "-loop", "1", "-framerate", str(FPS),
+            "-i", jpg,
+            "-vf", vf,
+            "-t", str(duration),
+            "-c:v", "libx264", "-preset", "fast", "-crf", "20",
+            "-r", str(FPS), "-pix_fmt", "yuv420p",
+            str(out_path),
+        ], capture_output=True, text=True)
+        if r.returncode != 0:
+            raise RuntimeError(f"reveal failed:\n{r.stderr[-400:]}")
+    finally:
+        os.unlink(jpg)
+
+
+# ── assembly ──────────────────────────────────────────────────────────────────
+def assemble(clips_with_durations, out_path):
+    """Concatenates list of (path, duration_seconds) with 0.5s crossfade."""
+    if len(clips_with_durations) == 1:
+        shutil.copy2(str(clips_with_durations[0][0]), str(out_path))
+        return
+
+    inputs = []
+    for path, _ in clips_with_durations:
+        inputs += ["-i", str(path)]
+
+    xdur   = 0.5
+    parts  = []
+    offset = clips_with_durations[0][1] - xdur
+    prev   = "0"
+    n      = len(clips_with_durations)
+
+    for i in range(1, n):
+        label = f"v{i:02d}" if i < n - 1 else "vout"
+        parts.append(
+            f"[{prev}][{i}]xfade=transition=fade:duration={xdur}:offset={offset:.3f}[{label}]"
+        )
+        prev = label
+        if i < n - 1:
+            offset += clips_with_durations[i][1] - xdur
+
+    r = subprocess.run([
+        FFMPEG, "-y", *inputs,
+        "-filter_complex", ";".join(parts),
+        "-map", "[vout]",
+        "-c:v", "libx264", "-preset", "fast", "-crf", "20",
+        "-r", str(FPS), "-pix_fmt", "yuv420p",
+        str(out_path),
+    ], capture_output=True, text=True)
+    if r.returncode != 0:
+        raise RuntimeError(f"assemble failed:\n{r.stderr[-600:]}")
+
+
+# ── main ──────────────────────────────────────────────────────────────────────
+def main():
+    ap = argparse.ArgumentParser(description="Photo breakdown TikTok video generator")
+    ap.add_argument("--id",   help="Photo ID from photos.json")
+    ap.add_argument("--list", action="store_true", help="List all available photos")
     args = ap.parse_args()
+
     if args.list:
         list_photos()
-    elif args.id:
-        print("--id processing not yet implemented (coming in Task 5)")
-    else:
+        return
+
+    if not args.id:
         ap.print_help()
+        return
+
+    OUT_DIR.mkdir(exist_ok=True)
+
+    photos = json.loads(DATA_FILE.read_text(encoding="utf-8"))
+    photo  = next((p for p in photos if p["id"] == args.id), None)
+    if not photo:
+        print(f"Photo ID '{args.id}' not found. Use --list to browse.")
+        sys.exit(1)
+
+    title    = photo.get("title", "")
+    category = photo.get("category", "")
+    safe     = "".join(c if c.isalnum() or c in " -_" else "_" for c in title)[:40].strip()
+    out_path = OUT_DIR / f"breakdown_{safe}.mp4"
+
+    print(f"\nPhoto: {title}  [{category}]")
+
+    print("Fetching from Google Drive...")
+    session        = get_drive_session()
+    jpeg, raw_exif = fetch_photo_data(session, args.id)
+    exif           = parse_exif(raw_exif)
+    print(f"  Camera : {exif.get('camera', '-')}")
+    print(f"  {exif.get('aperture','-')}  {exif.get('shutter','-')}  {exif.get('iso','-')}  {exif.get('focal','-')}")
+
+    print("Building pillarbox base...")
+    base = make_pillarbox_base(jpeg)
+
+    loc   = reverse_geocode(exif.get("lat"), exif.get("lon"))
+    angle = estimate_light_angle(exif.get("time_str"), exif.get("lat"))
+    elems = build_overlay_elements(exif, loc, angle)
+    print(f"  Location: {loc or '-'}   Light: {angle or '-'}")
+    print(f"  Overlay elements: {len(elems)}")
+
+    with tempfile.TemporaryDirectory() as td:
+        td_path = Path(td)
+
+        print("\n[1/3] Title card...")
+        t_clip = td_path / "01_title.mp4"
+        make_title_clip(title, category, t_clip, duration=3.0)
+
+        breakdown_dur = max(12.0, len(elems) * 2.5 + 6.0)
+        print(f"\n[2/3] Breakdown animation ({breakdown_dur:.0f}s, {len(elems)} elements)...")
+        b_clip = td_path / "02_breakdown.mp4"
+        make_breakdown_clip(base, elems, b_clip, duration=breakdown_dur)
+
+        print("\n[3/3] Reveal clip...")
+        r_clip = td_path / "03_reveal.mp4"
+        make_reveal_clip(base, r_clip, duration=12.0)
+
+        print("\nAssembling with crossfades...")
+        assemble(
+            [(t_clip, 3.0), (b_clip, breakdown_dur), (r_clip, 12.0)],
+            out_path,
+        )
+
+    total = 3.0 + breakdown_dur + 12.0
+    print(f"\nDone! {out_path} ({total:.0f}s)")
+    print("Upload manually to TikTok")
+
+
+if __name__ == "__main__":
+    main()
