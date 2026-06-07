@@ -645,6 +645,7 @@ def make_album_reel(category, lang=None, dry_run=False, photo_ids=None, custom_p
             _download_photo(photo, src)
 
             clip = tmp / f"clip_{i}.mp4"
+            from PIL import Image as _PILImg
             _im = _PILImg.open(str(src))
             _iw, _ih = _im.size
             is_landscape = (_iw / _ih) > 1.2
