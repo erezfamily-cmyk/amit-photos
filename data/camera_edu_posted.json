@@ -1,13 +1,14 @@
 {
   "posted_keys": [
-    "visual-language",
-    "histogram",
     "filters",
+    "types",
+    "visual-language",
     "lenses",
+    "histogram",
+    "depth-of-field",
     "white-balance",
-    "controls",
     "editing",
-    "macro",
-    "depth-of-field"
+    "controls",
+    "macro"
   ]
 }
