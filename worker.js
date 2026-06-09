@@ -892,6 +892,60 @@ async function handleReels(request, env) {
   }, 200, request);
 }
 
+async function handleAdminVideos(request, env) {
+  if (!await checkAuth(request, env)) return unauth(request);
+  if (!env.GITHUB_TOKEN) return jsonRes({ error: 'GITHUB_TOKEN לא מוגדר' }, 500, request);
+
+  const GH = 'https://api.github.com/repos/erezfamily-cmyk/amit-photos';
+  const ghHeaders = {
+    'Authorization': `Bearer ${env.GITHUB_TOKEN}`,
+    'Accept': 'application/vnd.github+json',
+    'Content-Type': 'application/json',
+    'User-Agent': 'amit-photos-worker',
+    'X-GitHub-Api-Version': '2022-11-28',
+  };
+
+  if (request.method === 'POST') {
+    const { filename } = await request.json().catch(() => ({}));
+    if (!filename) return jsonRes({ error: 'filename חסר' }, 400, request);
+    const res = await fetch(`${GH}/actions/workflows/distribute-video.yml/dispatches`, {
+      method: 'POST',
+      headers: ghHeaders,
+      body: JSON.stringify({ ref: 'main', inputs: { video_filename: filename } }),
+    });
+    if (res.status !== 204) {
+      const err = await res.text();
+      return jsonRes({ error: `GitHub (${res.status}): ${err.slice(0, 200)}` }, 502, request);
+    }
+    return jsonRes({ ok: true }, 200, request);
+  }
+
+  // GET — רשימת קבצים + סטטוס
+  const [contentsRes, postedRes] = await Promise.all([
+    fetch(`${GH}/contents/video`, { headers: ghHeaders }),
+    env.ASSETS.fetch(new Request('https://amitphotos.com/data/distributed_videos.json')).catch(() => null),
+  ]);
+
+  const files = contentsRes.ok ? await contentsRes.json() : [];
+  let posted = [];
+  try { if (postedRes?.ok) posted = await postedRes.json(); } catch {}
+
+  const postedNames = new Set(posted.map(p => p.filename));
+  const videos = Array.isArray(files)
+    ? files
+        .filter(f => f.name.endsWith('.mp4'))
+        .map(f => ({
+          name:     f.name,
+          size:     f.size,
+          posted:   postedNames.has(f.name),
+          platforms: posted.find(p => p.filename === f.name)?.platforms || null,
+          date:     posted.find(p => p.filename === f.name)?.date || null,
+        }))
+    : [];
+
+  return jsonRes({ videos }, 200, request);
+}
+
 async function handleReelsFile(request, env, filename) {
   if (!filename) return new Response('not found', { status: 404 });
   const obj = await env.PHOTOS.get(`reels/${filename}`);
@@ -6475,6 +6529,7 @@ export default {
     if (path === '/api/trigger-workflow')  return handleTriggerWorkflow(request, env);
     if (path === '/api/reels')             return handleReels(request, env);
     if (path.startsWith('/api/reels/file/')) return handleReelsFile(request, env, path.slice('/api/reels/file/'.length));
+    if (path === '/api/admin/videos')      return handleAdminVideos(request, env);
     if (path === '/api/newsletter')        return handleNewsletter(request, env);
     if (path === '/api/unsubscribe')       return handleUnsubscribe(request, env);
     if (path === '/api/reply')             return handleReply(request, env);
