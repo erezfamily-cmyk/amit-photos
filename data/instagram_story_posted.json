@@ -1,5 +1,5 @@
 {
-  "current_category_index": 13,
+  "current_category_index": 14,
   "used_ids_by_category": {
     "אבו דאבי": [
       "6c9e818c-bdd3-402f-b6f5-ee2e668507c9",
@@ -128,6 +128,16 @@
       "889555b3-9e1b-468d-a6ca-0a69402df4e3",
       "01ea9fa2-a9a1-4507-b74d-9d954bc94b8e",
       "3afeac78-230f-4d05-8de2-9badefcc9bb6"
+    ],
+    "מאקרו-צילומי תקריב": [
+      "5202fdf4-f768-46d9-b7e5-ad17bba0f504",
+      "d1275fc6-85f6-40f3-beae-6c7d4272e64d",
+      "7b106303-d57c-4ae8-b4a9-b7ea50a09269",
+      "9b39ad34-faff-4e98-b7f7-f089542323eb",
+      "34cc6e35-57d2-47fa-aea0-51b97809d09d",
+      "6151f4c8-0bd7-43d6-b1dd-f441e7046516",
+      "d7fa26c1-c6f8-4474-80e9-4e2dad985d63",
+      "00f43932-64bb-42e6-8327-be655ef3df55"
     ]
   },
   "gear_tool_index": 0
