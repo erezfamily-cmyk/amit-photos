@@ -1,5 +1,5 @@
 {
-  "current_category_index": 15,
+  "current_category_index": 16,
   "used_ids_by_category": {
     "אבו דאבי": [
       "6c9e818c-bdd3-402f-b6f5-ee2e668507c9",
@@ -148,6 +148,16 @@
       "8a168e55-f58e-4f8f-b373-9fbbfba13538",
       "b3b3e652-b10d-4bb1-8f9b-16c76c9887dd",
       "93abd734-cb3f-4197-aee8-c9f61f10c1a2"
+    ],
+    "סלובקיה": [
+      "749ce210-a5a6-45c3-8c7f-e45a13b925b6",
+      "48977c69-c15e-4e50-9a7b-3c7f0b1fb633",
+      "66e3dc4f-0225-4a83-bb70-e3eab227fa15",
+      "b45992e2-20bc-4569-855b-521f484e53f7",
+      "85cf9c28-bdd3-4922-9aac-261e86dabb8c",
+      "5a2578a3-6798-45b7-bbc4-105227836090",
+      "8f02fc12-6d2b-4434-a312-5a952d81300b",
+      "02afde04-5cc6-4a1e-9554-cc40da27f415"
     ]
   },
   "gear_tool_index": 0
