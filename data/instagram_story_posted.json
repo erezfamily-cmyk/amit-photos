@@ -1,5 +1,5 @@
 {
-  "current_category_index": 16,
+  "current_category_index": 17,
   "used_ids_by_category": {
     "אבו דאבי": [
       "6c9e818c-bdd3-402f-b6f5-ee2e668507c9",
@@ -158,6 +158,16 @@
       "5a2578a3-6798-45b7-bbc4-105227836090",
       "8f02fc12-6d2b-4434-a312-5a952d81300b",
       "02afde04-5cc6-4a1e-9554-cc40da27f415"
+    ],
+    "סן דיאגו - ארה\"ב": [
+      "1c0a2434-3774-406b-b12f-1924a6cbe258",
+      "c165743a-5ffa-4f5c-94cb-636624945fc7",
+      "aa1fb44d-26d0-4ade-96d4-38df994e5a10",
+      "59e563c0-a7ea-46b9-8111-2d44017506d2",
+      "1f594b66-3754-4c2a-9ea7-fff6e3bd8d4b",
+      "943fa86c-3a99-485f-9476-f40ac6113abb",
+      "590f81bb-835e-44df-9a73-e06f494a53fd",
+      "3ee66562-693b-4de6-a62d-c5a36ea0ed73"
     ]
   },
   "gear_tool_index": 0
