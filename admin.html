@@ -2443,6 +2443,7 @@ document.querySelectorAll('.nav-item').forEach(item => {
     if (item.dataset.section === 'learn') { learnDedup().catch(()=>{}); loadLearn(); }
     if (item.dataset.section === 'locations') window._loadLocationsList && window._loadLocationsList();
     if (item.dataset.section === 'pinterest') loadPinterestStatus();
+    if (item.dataset.section === 'videos') window.videosLoad && window.videosLoad();
   });
 });
 
@@ -6574,8 +6575,6 @@ async function confirmLinkToLocation() {
   };
 
   // ===== VIDEO DISTRIBUTION =====
-  document.querySelector('.nav-item[data-section="videos"]')?.addEventListener('click', videosLoad);
-
   window.videosLoad = async function() {
     const list   = document.getElementById('videos-list');
     const status = document.getElementById('videos-status');
