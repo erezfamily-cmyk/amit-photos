@@ -989,7 +989,7 @@ async function handleAdminVideos(request, env) {
 
   // ── GET — list videos from R2 + posted status ─────────────────────────────
   const [r2List, postedRes] = await Promise.all([
-    env.PHOTOS.list({ prefix: 'video/' }),
+    env.PHOTOS.list({ prefix: 'video/', include: ['customMetadata'] }),
     env.ASSETS.fetch(new Request('https://amitphotos.com/data/distributed_videos.json')).catch(() => null),
   ]);
 
