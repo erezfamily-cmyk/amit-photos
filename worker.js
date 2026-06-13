@@ -809,6 +809,39 @@ async function handleTriggerWorkflow(request, env) {
   return jsonRes({ error: `GitHub API: ${err}` }, res.status);
 }
 
+// ===== BREAKDOWN VIDEO — יצירת סרטון breakdown דרך GitHub Actions =====
+async function handleBreakdown(request, env) {
+  if (!await checkAuth(request, env)) return unauth(request);
+  if (request.method !== 'POST') return jsonRes({ error: 'method not allowed' }, 405, request);
+  if (!env.GITHUB_TOKEN) return jsonRes({ error: 'GITHUB_TOKEN לא מוגדר' }, 500, request);
+
+  const body = await request.json().catch(() => ({}));
+  const { photo_id } = body;
+  if (!photo_id) return jsonRes({ error: 'חסר photo_id' }, 400, request);
+
+  const res = await fetch(
+    'https://api.github.com/repos/erezfamily-cmyk/amit-photos/actions/workflows/photo-breakdown.yml/dispatches',
+    {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${env.GITHUB_TOKEN}`,
+        'Accept': 'application/vnd.github+json',
+        'Content-Type': 'application/json',
+        'User-Agent': 'amit-photos-worker',
+        'X-GitHub-Api-Version': '2022-11-28',
+      },
+      body: JSON.stringify({ ref: 'main', inputs: { photo_id } }),
+    }
+  );
+
+  if (res.status === 204) return jsonRes({
+    ok: true,
+    actions: 'https://github.com/erezfamily-cmyk/amit-photos/actions/workflows/photo-breakdown.yml',
+  }, 200, request);
+  const err = await res.text();
+  return jsonRes({ error: `GitHub API: ${err.slice(0, 200)}` }, res.status, request);
+}
+
 // ===== REELS — יצירת רילס דרך GitHub Actions =====
 async function handleReels(request, env) {
   if (!await checkAuth(request, env)) return unauth(request);
@@ -6527,6 +6560,7 @@ export default {
     if (path === '/api/fill-titles')       return handleFillTitles(request, env);
     if (path === '/api/generate-alt')      return handleGenerateAlt(request, env);
     if (path === '/api/trigger-workflow')  return handleTriggerWorkflow(request, env);
+    if (path === '/api/breakdown' && request.method === 'POST') return handleBreakdown(request, env);
     if (path === '/api/reels')             return handleReels(request, env);
     if (path.startsWith('/api/reels/file/')) return handleReelsFile(request, env, path.slice('/api/reels/file/'.length));
     if (path === '/api/admin/videos')      return handleAdminVideos(request, env);
