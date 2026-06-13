@@ -938,13 +938,47 @@ async function handleAdminVideos(request, env) {
     'X-GitHub-Api-Version': '2022-11-28',
   };
 
+  const ct = request.headers.get('Content-Type') || '';
+
+  // ── Upload video to R2 ────────────────────────────────────────────────────
+  if (request.method === 'POST' && ct.includes('multipart/form-data')) {
+    let formData;
+    try { formData = await request.formData(); } catch {
+      return jsonRes({ error: 'שגיאה בקריאת הקובץ' }, 400, request);
+    }
+    const file = formData.get('file');
+    if (!file || typeof file === 'string') return jsonRes({ error: 'קובץ חסר' }, 400, request);
+
+    const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+    const shortId  = crypto.randomUUID().split('-')[0];
+    const key      = `${shortId}-${safeName}`;
+
+    await env.PHOTOS.put(`video/${key}`, file.stream(), {
+      httpMetadata: { contentType: file.type || 'video/mp4' },
+      customMetadata: { originalName: file.name },
+    });
+    return jsonRes({ ok: true, key, filename: file.name }, 200, request);
+  }
+
+  // ── Trigger distribute workflow ───────────────────────────────────────────
   if (request.method === 'POST') {
-    const { filename } = await request.json().catch(() => ({}));
-    if (!filename) return jsonRes({ error: 'filename חסר' }, 400, request);
+    const body = await request.json().catch(() => ({}));
+    const { key, filename } = body;
+
+    let inputs;
+    if (key) {
+      const videoUrl = `https://amitphotos.com/video/${key}`;
+      inputs = { video_url: videoUrl };
+    } else if (filename) {
+      inputs = { video_filename: filename };
+    } else {
+      return jsonRes({ error: 'key או filename חסר' }, 400, request);
+    }
+
     const res = await fetch(`${GH}/actions/workflows/distribute-video.yml/dispatches`, {
       method: 'POST',
       headers: ghHeaders,
-      body: JSON.stringify({ ref: 'main', inputs: { video_filename: filename } }),
+      body: JSON.stringify({ ref: 'main', inputs }),
     });
     if (res.status !== 204) {
       const err = await res.text();
@@ -953,30 +987,67 @@ async function handleAdminVideos(request, env) {
     return jsonRes({ ok: true }, 200, request);
   }
 
-  // GET — רשימת קבצים + סטטוס
-  const [contentsRes, postedRes] = await Promise.all([
-    fetch(`${GH}/contents/video`, { headers: ghHeaders }),
+  // ── GET — list videos from R2 + posted status ─────────────────────────────
+  const [r2List, postedRes] = await Promise.all([
+    env.PHOTOS.list({ prefix: 'video/' }),
     env.ASSETS.fetch(new Request('https://amitphotos.com/data/distributed_videos.json')).catch(() => null),
   ]);
 
-  const files = contentsRes.ok ? await contentsRes.json() : [];
   let posted = [];
   try { if (postedRes?.ok) posted = await postedRes.json(); } catch {}
 
-  const postedNames = new Set(posted.map(p => p.filename));
-  const videos = Array.isArray(files)
-    ? files
-        .filter(f => f.name.endsWith('.mp4'))
-        .map(f => ({
-          name:     f.name,
-          size:     f.size,
-          posted:   postedNames.has(f.name),
-          platforms: posted.find(p => p.filename === f.name)?.platforms || null,
-          date:     posted.find(p => p.filename === f.name)?.date || null,
-        }))
-    : [];
+  const postedMap = {};
+  for (const p of posted) postedMap[p.filename] = p;
+
+  const videos = r2List.objects
+    .map(obj => {
+      const key      = obj.key.replace('video/', '');
+      const postData = postedMap[key] || null;
+      return {
+        key,
+        name:      obj.customMetadata?.originalName || key,
+        size:      obj.size,
+        uploaded:  obj.uploaded,
+        posted:    !!postData,
+        date:      postData?.date || null,
+        platforms: postData?.platforms || null,
+      };
+    })
+    .sort((a, b) => new Date(b.uploaded) - new Date(a.uploaded));
 
   return jsonRes({ videos }, 200, request);
+}
+
+async function handleVideoFile(request, env, key) {
+  const r2Key = `video/${key}`;
+  const rangeHeader = request.headers.get('Range');
+
+  if (rangeHeader) {
+    const object = await env.PHOTOS.get(r2Key, { range: rangeHeader });
+    if (!object) return new Response('Not found', { status: 404 });
+    const { offset = 0, length = object.size } = object.range ?? {};
+    return new Response(object.body, {
+      status: 206,
+      headers: {
+        'Content-Type': object.httpMetadata?.contentType || 'video/mp4',
+        'Content-Range': `bytes ${offset}-${offset + length - 1}/${object.size}`,
+        'Content-Length': String(length),
+        'Accept-Ranges': 'bytes',
+        'Cache-Control': 'public, max-age=86400',
+      },
+    });
+  }
+
+  const object = await env.PHOTOS.get(r2Key);
+  if (!object) return new Response('Not found', { status: 404 });
+  return new Response(object.body, {
+    headers: {
+      'Content-Type': object.httpMetadata?.contentType || 'video/mp4',
+      'Content-Length': String(object.size),
+      'Accept-Ranges': 'bytes',
+      'Cache-Control': 'public, max-age=86400',
+    },
+  });
 }
 
 async function handleReelsFile(request, env, filename) {
@@ -6563,6 +6634,7 @@ export default {
     if (path === '/api/breakdown' && request.method === 'POST') return handleBreakdown(request, env);
     if (path === '/api/reels')             return handleReels(request, env);
     if (path.startsWith('/api/reels/file/')) return handleReelsFile(request, env, path.slice('/api/reels/file/'.length));
+    if (path.startsWith('/video/'))        return handleVideoFile(request, env, path.slice('/video/'.length));
     if (path === '/api/admin/videos')      return handleAdminVideos(request, env);
     if (path === '/api/newsletter')        return handleNewsletter(request, env);
     if (path === '/api/unsubscribe')       return handleUnsubscribe(request, env);
