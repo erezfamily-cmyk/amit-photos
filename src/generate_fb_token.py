@@ -87,19 +87,39 @@ def get_long_lived_token(short_token):
 
 
 def get_page_token(user_token, page_id):
+    # נסיון 1: /me/accounts
     resp = requests.get(f"{GRAPH_API}/me/accounts", params={
         "access_token": user_token,
         "limit": 50,
     }, timeout=30)
-    if not resp.ok:
-        print(f"❌ /me/accounts נכשל: {resp.text}")
-        sys.exit(1)
-    pages = resp.json().get("data", [])
-    for page in pages:
-        if page.get("id") == page_id:
-            print(f"✅ נמצא עמוד: {page.get('name')} (ID: {page_id})")
-            return page.get("access_token")
-    print(f"❌ עמוד {page_id} לא נמצא. עמודים זמינים: {[(p.get('name'), p.get('id')) for p in pages]}")
+    if resp.ok:
+        pages = resp.json().get("data", [])
+        for page in pages:
+            if page.get("id") == page_id:
+                print(f"✅ נמצא עמוד: {page.get('name')} (ID: {page_id})")
+                return page.get("access_token")
+        print(f"⚠️  /me/accounts: עמוד {page_id} לא ברשימה. עמודים: {[(p.get('name'), p.get('id')) for p in pages]}")
+    else:
+        print(f"⚠️  /me/accounts נכשל: {resp.text}")
+
+    # נסיון 2: גישה ישירה לפי Page ID
+    print(f"🔄 מנסה גישה ישירה ל-/{page_id}?fields=access_token...")
+    resp2 = requests.get(f"{GRAPH_API}/{page_id}", params={
+        "fields": "access_token,name",
+        "access_token": user_token,
+    }, timeout=30)
+    if resp2.ok:
+        data = resp2.json()
+        token = data.get("access_token")
+        if token:
+            print(f"✅ Page token התקבל ישירות עבור: {data.get('name', page_id)}")
+            return token
+        print(f"⚠️  גישה ישירה: access_token לא בתגובה: {data}")
+    else:
+        print(f"⚠️  גישה ישירה נכשלה: {resp2.text}")
+
+    print("❌ לא ניתן לקבל Page token. הדף אולי מנוהל דרך חשבון פייסבוק אחר.")
+    print("   פתרון: השתמש ב-Graph API Explorer עם הטוקן ובחר את הדף ידנית.")
     sys.exit(1)
 
 
@@ -148,6 +168,7 @@ def main():
             "redirect_uri":  REDIRECT_URI,
             "scope":         ",".join(SCOPES),
             "response_type": "code",
+            "auth_type":     "rerequest",
         })
     )
 

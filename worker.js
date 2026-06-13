@@ -1,7 +1,7 @@
 // Cloudflare Worker — amit-photos
 // מטפל בנתיבי API ומגיש static assets
 
-const GA_SNIPPET = `<script async src="https://www.googletagmanager.com/gtag/js?id=G-530473246"></script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-530473246');</script>`;
+const GA_SNIPPET = `<script async src="https://www.googletagmanager.com/gtag/js?id=G-XM6T3E8QWN&l=dataLayer"></script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-XM6T3E8QWN',{send_page_view:true});</script>`;
 
 const ALLOWED_ORIGINS = ['https://amitphotos.com', 'https://www.amitphotos.com'];
 const SESSION_TTL_HOURS = 8;
@@ -38,9 +38,11 @@ const SEC_HEADERS = {
     "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com",
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     "font-src 'self' https://fonts.gstatic.com",
-    "img-src 'self' data: https: blob:",
-    "connect-src 'self' https://amitphotos.com https://analytics.google.com https://www.google-analytics.com https://region1.google-analytics.com",
+    "img-src 'self' data: https: blob: https://www.google-analytics.com https://region1.google-analytics.com",
+    "connect-src 'self' https://amitphotos.com https://analytics.google.com https://www.google-analytics.com https://region1.google-analytics.com https://www.googletagmanager.com",
     "frame-src https://www.google.com https://www.paypal.com https://www.openstreetmap.org",
+    "base-uri 'self'",
+    "object-src 'none'",
     "frame-ancestors 'self'",
   ].join('; '),
 };
