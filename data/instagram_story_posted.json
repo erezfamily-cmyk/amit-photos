@@ -1,5 +1,5 @@
 {
-  "current_category_index": 17,
+  "current_category_index": 18,
   "used_ids_by_category": {
     "אבו דאבי": [
       "6c9e818c-bdd3-402f-b6f5-ee2e668507c9",
@@ -168,6 +168,16 @@
       "943fa86c-3a99-485f-9476-f40ac6113abb",
       "590f81bb-835e-44df-9a73-e06f494a53fd",
       "3ee66562-693b-4de6-a62d-c5a36ea0ed73"
+    ],
+    "ספרד ואנדורה": [
+      "a7b44436-2a0e-4077-9a9e-4714d5f5ebea",
+      "9ed37655-f38f-416b-8d4a-2a4f410e6e2a",
+      "08734513-5543-4ebf-811d-25708232dd68",
+      "fd4303c5-cba6-45c6-b581-aef8e6282e30",
+      "23bb24ca-a825-44b1-af11-c40bc5e3ef0b",
+      "09287670-d136-4825-aa44-4ff42da60457",
+      "37e9c4f8-dff7-4dc3-b032-23d1a08b8c11",
+      "a15c8617-4d3d-45ed-8c08-0993d7f9e88e"
     ]
   },
   "gear_tool_index": 0
