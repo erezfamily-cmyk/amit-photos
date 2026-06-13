@@ -3,9 +3,13 @@ name: 📱 הפצת סרטון לפלטפורמות
 on:
   workflow_dispatch:
     inputs:
+      video_url:
+        description: 'URL ציבורי לסרטון (מ-amitphotos.com/video/...)'
+        required: false
+        type: string
       video_filename:
-        description: 'שם הקובץ בתיקיית video/ (למשל: myvideo.mp4)'
-        required: true
+        description: 'שם קובץ בתיקיית video/ בריפו (שימוש ידני בלבד)'
+        required: false
         type: string
 
 env:
@@ -38,7 +42,12 @@ jobs:
           FACEBOOK_PAGE_ID: ${{ secrets.FACEBOOK_PAGE_ID }}
           FACEBOOK_PAGE_TOKEN: ${{ secrets.FACEBOOK_PAGE_TOKEN }}
           YOUTUBE_TOKEN_JSON: ${{ secrets.YOUTUBE_TOKEN_JSON }}
-        run: python src/distribute_video.py --file "video/${{ inputs.video_filename }}"
+        run: |
+          if [ -n "${{ inputs.video_url }}" ]; then
+            python src/distribute_video.py --url "${{ inputs.video_url }}"
+          else
+            python src/distribute_video.py --file "video/${{ inputs.video_filename }}"
+          fi
 
       - name: שמירת נתוני הפצה
         run: |
@@ -49,7 +58,8 @@ jobs:
             echo "אין שינויים"
             exit 0
           fi
-          git commit -m "📱 הפצת סרטון: ${{ inputs.video_filename }}"
+          LABEL="${{ inputs.video_url || inputs.video_filename }}"
+          git commit -m "📱 הפצת סרטון: ${LABEL##*/}"
           for i in 1 2 3; do
             git pull --rebase origin main && git push origin main && break
             echo "push נכשל (ניסיון $i)"

@@ -207,20 +207,46 @@ def publish_youtube(video_path):
     return vid_id
 
 
+def download_to_temp(url: str) -> Path:
+    import tempfile
+    print(f"⬇️  מוריד מ-URL...")
+    r = requests.get(url, timeout=300, stream=True)
+    r.raise_for_status()
+    suffix = Path(url.split("?")[0]).suffix or ".mp4"
+    tmp = Path(tempfile.mktemp(suffix=suffix))
+    with open(tmp, "wb") as f:
+        for chunk in r.iter_content(chunk_size=1024 * 1024):
+            f.write(chunk)
+    print(f"✅ הורד: {tmp} ({tmp.stat().st_size/1024/1024:.1f} MB)")
+    return tmp
+
+
 def main():
     ap = argparse.ArgumentParser(description="מפיץ סרטון לכל הפלטפורמות")
-    ap.add_argument("--file", required=True, help="נתיב הסרטון (למשל video/myvideo.mp4)")
+    ap.add_argument("--file", default=None, help="נתיב הסרטון (למשל video/myvideo.mp4)")
+    ap.add_argument("--url",  default=None, help="URL ציבורי לסרטון (מ-amitphotos.com)")
     args = ap.parse_args()
 
-    video_path = ROOT / args.file
-    if not video_path.exists():
-        print(f"❌ קובץ לא נמצא: {video_path}")
+    if not args.file and not args.url:
+        print("❌ יש לספק --file או --url")
         sys.exit(1)
 
-    filename = Path(args.file).name
-    print(f"\n🎬 מפיץ: {filename}\n{'─'*40}")
+    tmp_path = None
 
-    video_url = upload_video(video_path)
+    if args.url:
+        filename = Path(args.url.split("?")[0]).name
+        print(f"\n🎬 מפיץ מ-URL: {filename}\n{'─'*40}")
+        video_url = args.url
+        tmp_path  = download_to_temp(args.url)
+        video_path = tmp_path
+    else:
+        video_path = ROOT / args.file
+        if not video_path.exists():
+            print(f"❌ קובץ לא נמצא: {video_path}")
+            sys.exit(1)
+        filename  = Path(args.file).name
+        print(f"\n🎬 מפיץ: {filename}\n{'─'*40}")
+        video_url = upload_video(video_path)
 
     results = {
         "filename": filename,
@@ -236,6 +262,9 @@ def main():
 
     yt_id = publish_youtube(video_path)
     results["platforms"]["youtube"] = yt_id
+
+    if tmp_path and tmp_path.exists():
+        tmp_path.unlink(missing_ok=True)
 
     posted = load_posted()
     posted.append(results)

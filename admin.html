@@ -383,6 +383,7 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
 .drag-handle:hover{opacity:1;color:var(--text)}
 .drag-handle:active{cursor:grabbing}
 .photo-card.drag-over{outline:2px solid var(--accent);outline-offset:2px}
+#video-upload-zone.drag-over{border-color:var(--accent);background:rgba(200,169,110,.08)}
 .photo-card.dragging{opacity:.4}
 
 /* ===== BULK ===== */
@@ -1499,8 +1500,26 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
 
       <div style="max-width:720px;margin:0 auto">
 
-        <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;margin-bottom:1.25rem;font-size:.85rem;color:var(--muted);line-height:1.6">
-          הכנס סרטון לתיקיית <code style="background:var(--bg);padding:.1rem .35rem;border-radius:4px;color:var(--accent)">video/</code> ב-repo, בצע commit+push — ואז לחץ <strong>פרסם</strong> כדי לשלוח לאינסטגרם, פייסבוק ו-YouTube Shorts.
+        <!-- Upload zone -->
+        <div id="video-upload-zone"
+          onclick="document.getElementById('video-file-input').click()"
+          ondragover="event.preventDefault();this.classList.add('drag-over')"
+          ondragleave="this.classList.remove('drag-over')"
+          ondrop="event.preventDefault();this.classList.remove('drag-over');videosHandleDrop(event.dataTransfer.files[0])"
+          style="border:2px dashed var(--border);border-radius:10px;padding:2rem;text-align:center;cursor:pointer;margin-bottom:1.25rem;transition:border-color .2s,background .2s">
+          <div style="font-size:2rem;margin-bottom:.5rem">🎬</div>
+          <div style="font-size:.95rem;font-weight:600;color:var(--text);margin-bottom:.25rem">גרור סרטון לכאן</div>
+          <div style="font-size:.8rem;color:var(--muted)">או לחץ לבחירת קובץ · MP4, MOV, עד 500 MB</div>
+          <input type="file" id="video-file-input" accept="video/*" style="display:none" onchange="videosHandleDrop(this.files[0])">
+        </div>
+
+        <!-- Upload progress -->
+        <div id="video-upload-progress" style="display:none;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;margin-bottom:1.25rem;text-align:center">
+          <div id="video-upload-icon" style="font-size:2rem;margin-bottom:.5rem">⬆️</div>
+          <div id="video-upload-text" style="font-size:.9rem;color:var(--text);margin-bottom:.75rem">מעלה...</div>
+          <div style="background:var(--bg);border-radius:4px;height:6px;overflow:hidden">
+            <div id="video-upload-bar" style="height:100%;background:var(--accent);width:0%;transition:width .3s;border-radius:4px"></div>
+          </div>
         </div>
 
         <div id="videos-list">
@@ -6564,13 +6583,12 @@ async function confirmLinkToLocation() {
     status.style.display = 'none';
 
     try {
-      const tok = sessionStorage.getItem('adminToken') || localStorage.getItem('adminToken') || '';
-      const res  = await fetch('/api/admin/videos', { headers: { 'X-Session-Token': tok } });
+      const res = await fetch('/api/admin/videos', { headers: { 'X-Session-Token': SESSION_TOKEN } });
       if (!res.ok) { list.innerHTML = '<div style="text-align:center;padding:2rem;color:#f44">שגיאת טעינה</div>'; return; }
       const { videos } = await res.json();
 
       if (!videos.length) {
-        list.innerHTML = '<div style="text-align:center;padding:3rem;color:var(--muted);font-size:.9rem">אין סרטונים בתיקיית video/ עדיין.</div>';
+        list.innerHTML = '<div style="text-align:center;padding:3rem;color:var(--muted);font-size:.9rem">אין סרטונים עדיין — העלה סרטון מהאזור למעלה.</div>';
         return;
       }
 
@@ -6587,7 +6605,7 @@ async function confirmLinkToLocation() {
           </div>
           ${v.posted
             ? `<span style="font-size:.8rem;color:#4caf50;font-weight:600;flex-shrink:0">פורסם ✓</span>`
-            : `<button onclick="videosPublish('${v.name}', this)"
+            : `<button onclick="videosPublish('${v.key}', '${v.name}', this)"
                 style="flex-shrink:0;padding:.5rem 1rem;background:var(--accent);color:#000;border:none;border-radius:6px;font-weight:700;font-size:.85rem;cursor:pointer">
                 📱 פרסם
               </button>`
@@ -6599,24 +6617,79 @@ async function confirmLinkToLocation() {
     }
   };
 
-  window.videosPublish = async function(filename, btn) {
+  window.videosHandleDrop = async function(file) {
+    if (!file) return;
+    const zone     = document.getElementById('video-upload-zone');
+    const progress = document.getElementById('video-upload-progress');
+    const icon     = document.getElementById('video-upload-icon');
+    const text     = document.getElementById('video-upload-text');
+    const bar      = document.getElementById('video-upload-bar');
+
+    zone.style.display = 'none';
+    progress.style.display = 'block';
+    icon.textContent = '⬆️';
+    text.textContent = `מעלה ${file.name}...`;
+    bar.style.width  = '0%';
+
+    try {
+      const fd = new FormData();
+      fd.append('file', file);
+
+      // XHR for progress
+      const key = await new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', '/api/admin/videos');
+        xhr.setRequestHeader('X-Session-Token', SESSION_TOKEN);
+        xhr.upload.onprogress = e => {
+          if (e.lengthComputable) bar.style.width = Math.round(e.loaded / e.total * 100) + '%';
+        };
+        xhr.onload = () => {
+          if (xhr.status >= 200 && xhr.status < 300) {
+            const data = JSON.parse(xhr.responseText);
+            data.ok ? resolve(data.key) : reject(new Error(data.error));
+          } else {
+            reject(new Error(`שגיאה ${xhr.status}`));
+          }
+        };
+        xhr.onerror = () => reject(new Error('שגיאת רשת'));
+        xhr.send(fd);
+      });
+
+      bar.style.width  = '100%';
+      icon.textContent = '✅';
+      text.textContent = `${file.name} הועלה בהצלחה!`;
+      setTimeout(() => {
+        progress.style.display = 'none';
+        zone.style.display     = 'block';
+        videosLoad();
+      }, 1500);
+    } catch(e) {
+      icon.textContent = '❌';
+      text.textContent = `שגיאה: ${e.message}`;
+      setTimeout(() => {
+        progress.style.display = 'none';
+        zone.style.display     = 'block';
+      }, 3000);
+    }
+  };
+
+  window.videosPublish = async function(key, name, btn) {
     const status = document.getElementById('videos-status');
     btn.disabled = true;
     btn.textContent = '⏳ שולח...';
 
     status.style.display = 'block';
-    status.innerHTML = `⏳ מפרסם <strong>${filename}</strong> לאינסטגרם, פייסבוק ו-YouTube...`;
+    status.innerHTML = `⏳ מפרסם <strong>${name}</strong> לאינסטגרם, פייסבוק ו-YouTube...`;
 
     try {
-      const tok = sessionStorage.getItem('adminToken') || localStorage.getItem('adminToken') || '';
       const res = await fetch('/api/admin/videos', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'X-Session-Token': tok },
-        body: JSON.stringify({ filename }),
+        headers: { 'Content-Type': 'application/json', 'X-Session-Token': SESSION_TOKEN },
+        body: JSON.stringify({ key }),
       });
       const data = await res.json();
       if (data.ok) {
-        status.innerHTML = `✅ <strong>${filename}</strong> — GitHub Actions רץ! הסרטון יפורסם תוך כמה דקות.<br><a href="https://github.com/erezfamily-cmyk/amit-photos/actions/workflows/distribute-video.yml" target="_blank" style="color:var(--accent);font-size:.85rem">↗ צפה בהתקדמות</a>`;
+        status.innerHTML = `✅ <strong>${name}</strong> — GitHub Actions רץ! הסרטון יפורסם תוך כמה דקות.<br><a href="https://github.com/erezfamily-cmyk/amit-photos/actions/workflows/distribute-video.yml" target="_blank" style="color:var(--accent);font-size:.85rem">↗ צפה בהתקדמות</a>`;
         btn.textContent = '⏳ מפרסם...';
       } else {
         status.innerHTML = `❌ שגיאה: ${data.error || 'לא ידוע'}`;
