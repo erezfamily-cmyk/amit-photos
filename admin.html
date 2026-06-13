@@ -3,12 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <script>
-// אם הדף הגיע מ-browser cache — טען מחדש מהשרת
+// אם הדף הגיע מ-cache — נווט ל-URL חדש עם timestamp כדי לעקוף
 (function() {
   var nav = performance.getEntriesByType('navigation')[0];
   if (nav && nav.transferSize === 0 && nav.encodedBodySize > 0) {
-    location.reload(true);
+    var url = new URL(location.href);
+    url.searchParams.set('_v', Date.now().toString());
+    location.replace(url.toString());
   }
 })();
 </script>
@@ -37,6 +42,7 @@ html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--text);font-family:var(--font);direction:rtl;line-height:1.6;overflow-x:hidden;min-height:100vh}
 a{color:inherit;text-decoration:none}
 button{cursor:pointer;font-family:var(--font)}
+button,.btn,.nav-item,.photo-menu-btn,.btn-icon,.btn-logout{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 input,textarea,select{font-family:var(--font);direction:rtl}
 
 /* ===== LOGIN ===== */
@@ -79,6 +85,8 @@ input,textarea,select{font-family:var(--font);direction:rtl}
 /* ===== ADMIN LAYOUT ===== */
 #admin-ui{display:none;min-height:100vh}
 #admin-ui.visible{display:flex}
+.mobile-topbar{display:none}
+.mobile-nav-toggle{display:none}
 
 /* Sidebar */
 .sidebar{
@@ -370,6 +378,7 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
 .dash-row{display:flex;align-items:center;gap:.75rem;padding:.55rem 0;border-bottom:1px solid #161616;font-size:.875rem}
 .dash-row:last-child{border-bottom:none}
 .dash-name{font-weight:500;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.data-table td,.data-table th{vertical-align:top;word-break:break-word}
 
 /* ===== PHOTOS TOOLBAR ===== */
 .photos-toolbar{display:flex;gap:.6rem;margin-bottom:1rem;flex-wrap:wrap;align-items:center}
@@ -419,21 +428,51 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
 .lb-next{right:.8rem}
 
 /* ===== MOBILE ===== */
-@media(max-width:768px){
+@media(max-width:980px){
+  body.sidebar-open{overflow:hidden}
+  body.sidebar-open::before{content:"";position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:98}
+  .mobile-topbar{display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:90;background:rgba(10,10,10,.96);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);padding:.75rem 1rem;margin:-1rem -1rem 1rem}
+  .mobile-nav-toggle{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:999px;background:var(--bg-card);border:1px solid var(--border);color:var(--text);font-size:1.05rem}
+  .mobile-page-title{font-family:var(--font-display);font-size:1rem;font-weight:800;letter-spacing:.02em}
   .sidebar{
-    position:fixed;right:0;left:0;bottom:auto;top:0;
-    width:100%;height:56px;flex-direction:row;align-items:center;
-    padding:0 1rem;border-left:none;border-bottom:1px solid var(--border);
+    position:fixed;top:0;right:0;bottom:0;width:min(88vw,320px);transform:translateX(100%);transition:transform .25s ease;box-shadow:-10px 0 25px rgba(0,0,0,.35);border-left:1px solid var(--border);z-index:99;
   }
-  .sidebar-logo{padding:0;border-bottom:none;font-size:.85rem}
-  .sidebar-logo span{display:none}
-  .sidebar-nav{flex:1;display:flex;padding:0;justify-content:center;gap:.25rem}
-  .nav-item{padding:.5rem .75rem;border-left:none;border-bottom:2px solid transparent;font-size:.8rem}
-  .nav-item.active{border-bottom-color:var(--accent);background:transparent}
-  .sidebar-footer{border-top:none;padding:0}
-  .btn-logout{padding:.4rem .7rem;font-size:.78rem}
-  .main-content{margin-right:0;margin-top:56px;padding:1.25rem 1rem}
+  .sidebar.open{transform:translateX(0)}
+  .sidebar-logo{padding:1rem 1rem 1rem;border-bottom:1px solid var(--border)}
+  .sidebar-header{display:flex;align-items:center;justify-content:space-between;gap:.75rem;padding:0 1rem .75rem;border-bottom:1px solid var(--border)}
+  .sidebar-close{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:999px;background:var(--bg-card);border:1px solid var(--border);color:var(--text);font-size:1rem}
+  .sidebar-nav{overflow-y:auto;padding:.75rem 0}
+  .nav-item{padding:.9rem 1rem;font-size:.92rem;min-height:44px}
+  .sidebar-footer{padding:1rem;border-top:1px solid var(--border)}
+  .btn-logout{min-height:42px}
+  .main-content{margin-right:0;padding:1rem}
+  .section-header{align-items:flex-start;gap:.75rem}
+  .section-title{font-size:1.15rem}
+  .dash-grid{grid-template-columns:1fr 1fr}
+  #analytics-kpi-row,#social-kpi-row,.stats-grid{grid-template-columns:1fr 1fr}
+  .dash-row{align-items:flex-start;flex-wrap:wrap}
+  .dash-name{white-space:normal;overflow-wrap:anywhere}
   .photos-grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}
+  .table-wrap{overflow-x:auto}
+}
+
+@media(max-width:768px){
+  .login-card{padding:1.5rem 1rem;max-width:100%;margin:0 1rem}
+  .main-content{padding:1rem .85rem 2rem}
+  .section-actions{width:100%;justify-content:flex-start}
+  .btn{width:100%;justify-content:center}
+  .btn-sm{width:auto}
+  .stats-bar{gap:.5rem}
+  .stat-chip{font-size:.75rem;padding:.35rem .65rem}
+  .dash-grid,#analytics-kpi-row,#social-kpi-row,.stats-grid{grid-template-columns:1fr}
+  .dash-card,.dash-recent,.photo-card{border-radius:10px}
+  .dash-card{padding:1rem}
+  .dash-recent{padding:1rem}
+  .photo-info{padding:.65rem}
+  .dash-value{font-size:1.6rem}
+  .photos-toolbar{display:grid;grid-template-columns:1fr}
+  .photos-toolbar .btn,.photos-toolbar input,.photos-toolbar select{min-height:44px}
+  .photos-toolbar input,.photos-toolbar select,.photos-toolbar .btn{width:100%}
 }
 
 /* ===== UTILITY ===== */
@@ -645,9 +684,12 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
 <div id="admin-ui">
   <!-- Sidebar -->
   <aside class="sidebar">
-    <div class="sidebar-logo">
-      AMIT PHOTOS
-      <span>ניהול</span>
+    <div class="sidebar-header">
+      <div class="sidebar-logo" style="padding:0;border-bottom:none">
+        AMIT PHOTOS
+        <span>ניהול</span>
+      </div>
+      <button class="sidebar-close" id="sidebar-close-btn" type="button" aria-label="סגור תפריט">✕</button>
     </div>
     <nav class="sidebar-nav">
       <div class="nav-item active" data-section="dashboard">
@@ -719,6 +761,11 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
   </aside>
 
   <!-- Main -->
+  <header class="mobile-topbar">
+    <button class="mobile-nav-toggle" id="mobile-nav-toggle" type="button" aria-label="פתח תפריט">☰</button>
+    <div class="mobile-page-title">AMIT PHOTOS</div>
+    <button class="btn btn-ghost btn-sm" id="mobile-refresh-btn" type="button" onclick="window.location.reload()">רענן</button>
+  </header>
   <main class="main-content">
 
     <!-- DASHBOARD SECTION -->
@@ -2429,13 +2476,60 @@ $('logout-btn').addEventListener('click', async () => {
 });
 
 // ===== NAV =====
+function closeMobileNav() {
+  document.querySelector('.sidebar')?.classList.remove('open');
+  document.body.classList.remove('sidebar-open');
+}
+function openMobileNav() {
+  document.querySelector('.sidebar')?.classList.add('open');
+  document.body.classList.add('sidebar-open');
+}
+
+const mobileNavToggle = document.getElementById('mobile-nav-toggle');
+const sidebarCloseBtn = document.getElementById('sidebar-close-btn');
+function updateMobileNavState() {
+  const side = document.querySelector('.sidebar');
+  const isOpen = side?.classList.contains('open');
+  mobileNavToggle?.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+  document.body.classList.toggle('sidebar-open', Boolean(isOpen));
+}
+mobileNavToggle?.addEventListener('click', () => {
+  const side = document.querySelector('.sidebar');
+  if (!side) return;
+  side.classList.toggle('open');
+  updateMobileNavState();
+});
+sidebarCloseBtn?.addEventListener('click', () => {
+  closeMobileNav();
+  updateMobileNavState();
+});
+
+document.addEventListener('click', (e) => {
+  const side = document.querySelector('.sidebar');
+  if (!side || !side.classList.contains('open')) return;
+  const clickedInside = side.contains(e.target) || mobileNavToggle?.contains(e.target);
+  if (!clickedInside) {
+    closeMobileNav();
+    updateMobileNavState();
+  }
+});
+
+window.addEventListener('resize', () => {
+  if (window.innerWidth > 980) {
+    closeMobileNav();
+    updateMobileNavState();
+  }
+});
+
 document.querySelectorAll('.nav-item').forEach(item => {
   item.addEventListener('click', () => {
-    if (item.dataset.section === 'newsletter') { window.location.href = '/admin/newsletter/'; return; }
+    if (item.dataset.section === 'newsletter') { closeMobileNav(); updateMobileNavState(); window.location.href = '/admin/newsletter/'; return; }
     document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
     document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
     item.classList.add('active');
     $('section-' + item.dataset.section).classList.add('active');
+    closeMobileNav();
+    updateMobileNavState();
     if (item.dataset.section === 'analytics') { Dashboard.loadAnalytics(); loadPhotoAnalytics(); loadGaReports(); }
     if (item.dataset.section === 'print-orders') PrintOrders.load();
     if (item.dataset.section === 'social') SocialSection.load();

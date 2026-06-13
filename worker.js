@@ -4,6 +4,7 @@
 const GA_SNIPPET = `<script async src="https://www.googletagmanager.com/gtag/js?id=G-XM6T3E8QWN&l=dataLayer"></script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-XM6T3E8QWN',{send_page_view:true});</script>`;
 
 const ALLOWED_ORIGINS = ['https://amitphotos.com', 'https://www.amitphotos.com'];
+const ADMIN_VERSION = '20260613';
 const SESSION_TTL_HOURS = 8;
 const MAX_LOGIN_ATTEMPTS = 5;
 const LOCKOUT_MINUTES = 15;
@@ -6839,6 +6840,15 @@ export default {
     if (path === '/learn' || path === '/learn/')   { trackPageView(env, request, 'learn'); return handleLearnIndex(env); }
     if (path === '/sitemap.xml')           return handleSitemap(request, env);
     if (path === '/robots.txt')            return handleRobots(request);
+
+    // admin.html — cache-bust redirect: אם אין ?_v= נפנה לגרסה עם timestamp
+    if (path === '/admin.html') {
+      const adminUrl = new URL(request.url);
+      if (!adminUrl.searchParams.has('_v')) {
+        adminUrl.searchParams.set('_v', ADMIN_VERSION);
+        return Response.redirect(adminUrl.toString(), 302);
+      }
+    }
 
     // Server-side OG injection for location spot pages
     if ((path === '/locations/spot/' || path === '/locations/spot/index.html') && (new URL(request.url).searchParams.get('slug') || new URL(request.url).searchParams.get('id'))) {
