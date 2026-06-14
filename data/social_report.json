@@ -1,95 +1,95 @@
 {
-  "generated_at": "2026-06-07T08:47:16.494439+00:00",
-  "week_ending": "07/06/2026",
+  "generated_at": "2026-06-14T09:21:43.353949+00:00",
+  "week_ending": "14/06/2026",
   "ig": {
-    "followers": 655,
-    "media_count": 1262,
-    "posts_this_week": 15,
-    "total_likes": 32,
-    "total_comments": 0,
-    "avg_likes_per_post": 2.1,
-    "engagement_rate": 0.0033,
+    "followers": 658,
+    "media_count": 1278,
+    "posts_this_week": 16,
+    "total_likes": 51,
+    "total_comments": 4,
+    "avg_likes_per_post": 3.2,
+    "engagement_rate": 0.0052,
     "top_posts": [
       {
-        "caption": "תראו את האיש בכובע שיושב למטה משמאל, על הרצועה הצרה של חוף.  הרבה זמן הייתי בטוח שתמונה כזאת היא עני",
-        "likes": 7,
-        "comments": 0,
-        "date": "2026-06-03"
+        "caption": "#photography #amitphotos #photos #ישראל #ישראל",
+        "likes": 15,
+        "comments": 1,
+        "date": "2026-06-08"
       },
       {
-        "caption": "📸 פסל ושעון  חוק שלישים: הפסל הבארוקי ממוקם בשליש הימני של הפריים בדיוק, בעוד מגדל השעון ממוקם בשליש",
+        "caption": "#amitphotos #photography #צילום #photos #macro",
+        "likes": 11,
+        "comments": 0,
+        "date": "2026-06-09"
+      },
+      {
+        "caption": "",
         "likes": 6,
         "comments": 0,
-        "date": "2026-05-31"
+        "date": "2026-06-08"
       },
       {
-        "caption": "רכנתי כמעט עד האדמה בבוקר ערפילי באנגליה כדי לתפוס את השדה הזה — דייזיז קטנות עם טל שנצמד לעלים הלבנ",
-        "likes": 4,
-        "comments": 0,
-        "date": "2026-06-01"
-      },
-      {
-        "caption": "📸 פרצוף ג'וקר  סימטריה: הצלם בחר במודע למרכז את פניו של הג'וקר בדיוק על ציר הסימטריה האנכי של הפריים",
+        "caption": "#amitphotos #photography #photos #צילום #photograph",
         "likes": 3,
         "comments": 0,
-        "date": "2026-06-05"
+        "date": "2026-06-08"
       },
       {
-        "caption": "Visit my website:",
+        "caption": "#amitphotos #photography #photos #צילום #flowers",
         "likes": 3,
         "comments": 0,
-        "date": "2026-06-04"
+        "date": "2026-06-07"
       }
     ],
     "best_post": {
-      "caption": "תראו את האיש בכובע שיושב למטה משמאל, על הרצועה הצרה של חוף.\n\nהרבה זמן הייתי בטוח שתמונה כזאת היא עניין של מזל — שנכנסת ל",
-      "likes": 7,
-      "date": "2026-06-03"
+      "caption": "#photography #amitphotos #photos #ישראל #ישראל",
+      "likes": 15,
+      "date": "2026-06-08"
     }
   },
   "fb": {
-    "fans": 240,
-    "posts_this_week": 13,
-    "total_likes": 11,
+    "fans": 271,
+    "posts_this_week": 16,
+    "total_likes": 8,
     "total_comments": 0,
-    "avg_likes_per_post": 0.8,
-    "engagement_rate": 0.0035,
+    "avg_likes_per_post": 0.5,
+    "engagement_rate": 0.0018,
     "top_posts": [
       {
-        "message": "",
-        "likes": 4,
+        "message": "#amitphotos #photography #photos #צילום #photograph",
+        "likes": 3,
         "comments": 0,
-        "date": "2026-06-06"
+        "date": "2026-06-08"
+      },
+      {
+        "message": "#amitphotos #photography #צילום #nature",
+        "likes": 2,
+        "comments": 0,
+        "date": "2026-06-08"
       },
       {
         "message": "",
-        "likes": 3,
+        "likes": 1,
         "comments": 0,
-        "date": "2026-06-05"
+        "date": "2026-06-09"
       },
       {
-        "message": "",
-        "likes": 3,
+        "message": "#amitphotos #photography #photos #macro #צילום",
+        "likes": 1,
         "comments": 0,
-        "date": "2026-06-04"
+        "date": "2026-06-09"
       },
       {
         "message": "",
         "likes": 1,
         "comments": 0,
         "date": "2026-06-07"
-      },
-      {
-        "message": "#ישראל #amitphotos #צילום #טבע",
-        "likes": 0,
-        "comments": 0,
-        "date": "2026-06-05"
       }
     ],
     "best_post": {
-      "message": "",
-      "likes": 4,
-      "date": "2026-06-06"
+      "message": "#amitphotos #photography #photos #צילום #photograph",
+      "likes": 3,
+      "date": "2026-06-08"
     }
   },
   "fb_pages": [
@@ -97,63 +97,60 @@
       "label": "amit erez photos",
       "name": "amit erez photos",
       "page_id": "339707206917",
-      "fans": 240,
-      "posts_this_week": 13,
-      "total_likes": 11,
+      "fans": 271,
+      "posts_this_week": 16,
+      "total_likes": 8,
       "total_comments": 0,
-      "avg_likes_per_post": 0.8,
-      "engagement_rate": 0.0035,
+      "avg_likes_per_post": 0.5,
+      "engagement_rate": 0.0018,
       "top_posts": [
         {
-          "message": "",
-          "likes": 4,
+          "message": "#amitphotos #photography #photos #צילום #photograph",
+          "likes": 3,
           "comments": 0,
-          "date": "2026-06-06"
+          "date": "2026-06-08"
+        },
+        {
+          "message": "#amitphotos #photography #צילום #nature",
+          "likes": 2,
+          "comments": 0,
+          "date": "2026-06-08"
         },
         {
           "message": "",
-          "likes": 3,
+          "likes": 1,
           "comments": 0,
-          "date": "2026-06-05"
+          "date": "2026-06-09"
         },
         {
-          "message": "",
-          "likes": 3,
+          "message": "#amitphotos #photography #photos #macro #צילום",
+          "likes": 1,
           "comments": 0,
-          "date": "2026-06-04"
+          "date": "2026-06-09"
         },
         {
           "message": "",
           "likes": 1,
           "comments": 0,
           "date": "2026-06-07"
-        },
-        {
-          "message": "#ישראל #amitphotos #צילום #טבע",
-          "likes": 0,
-          "comments": 0,
-          "date": "2026-06-05"
         }
       ],
       "best_post": {
-        "message": "",
-        "likes": 4,
-        "date": "2026-06-06"
+        "message": "#amitphotos #photography #photos #צילום #photograph",
+        "likes": 3,
+        "date": "2026-06-08"
       }
     }
   ],
   "prev": {
-    "ig_followers": 656,
-    "ig_posts_this_week": 13,
-    "ig_total_likes": 25,
-    "fb_fans": 233,
-    "fb_posts_this_week": 12,
-    "fb_total_likes": 1
+    "ig_followers": 655,
+    "ig_posts_this_week": 15,
+    "ig_total_likes": 32,
+    "fb_fans": 240,
+    "fb_posts_this_week": 13,
+    "fb_total_likes": 11
   },
   "recommendations": [
-    "פרסמת 15 פוסטים באינסטגרם שקיבלו רק 32 לייקים בסך הכל (כ-2 לייקים לפוסט) - הפחת את התדירות ל-4-5 פוסטים איכותיים בשבוע והשקע יותר בכל פוסט במקום בכמות.",
-    "הפוסט המוצלח ביותר שלך היה זה עם הסיפור על האיש בכובע על רצועת החוף (7 לייקים) - שכפל את הפורמט הזה של תמונה בשילוב טקסט אישי ומספר סיפור, שכן זה מה שמייצר הכי הרבה מעורבות אצל הקהל שלך.",
-    "קיבלת 0 תגובות באינסטגרם השבוע - סיים כל כיתוב בשאלה פתוחה לקהל (למשל 'מה התמונה הזאת מזכירה לכם?') כדי לעודד אינטראקציה ולשפר את החשיפה האלגוריתמית.",
-    "דף הפייסבוק (240 עוקבים) מקבל פחות חשיפה מהאינסטגרם (655 עוקבים) - העבר את הפוסט המוביל של השבוע גם לפייסבוק והוסף האשטאגים רלוונטיים בעברית ובאנגלית כדי להגדיל חשיפה לקהל חדש בשתי הפלטפורמות."
+    "לא הצלחתי לייצר המלצות השבוע"
   ]
 }
