@@ -304,6 +304,11 @@ Format: a simple JSON array of 4 strings, no markdown, no explanation outside th
 Example: ["המלצה 1", "המלצה 2", "המלצה 3", "המלצה 4"]"""}],
         )
         text = msg.content[0].text.strip()
+        # חלץ JSON גם אם עטוף ב-markdown ```json ... ```
+        import re
+        m = re.search(r'\[.*?\]', text, re.DOTALL)
+        if m:
+            text = m.group(0)
         return json.loads(text)
     except Exception as e:
         print(f"⚠️  AI recommendations נכשל: {e}")
