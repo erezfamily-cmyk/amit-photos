@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="canonical" href="https://amitphotos.com/videos/" />
+<title data-he="הסרטונים שלי — Amit Photos" data-en="My Videos — Amit Photos">הסרטונים שלי — Amit Photos</title>
+<meta name="description" content="מדריכי צילום, גלריות אלבום וריילס מאת עמית ארז.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #0a0a0a; --surface: #111; --border: #222;
+  --accent: #c8a96e; --text: #f0ede8; --muted: #888;
+}
+body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--text);
+  direction: rtl; min-height: 100vh; padding: 0 0 4rem; }
+
+.page-hero { text-align: center; padding: 2.5rem 1.25rem 1.5rem; }
+.page-hero .badge { display: inline-block; font-size: .72rem;
+  background: rgba(200,169,110,.12); border: 1px solid rgba(200,169,110,.3);
+  color: var(--accent); border-radius: 20px; padding: .3rem .8rem; margin-bottom: .75rem; }
+.page-hero h1 { font-family: 'Syne', sans-serif; font-size: 1.8rem;
+  color: var(--accent); margin-bottom: .5rem; }
+.page-hero p { color: var(--muted); font-size: .9rem; max-width: 420px; margin: 0 auto; }
+
+.tabs { display: flex; gap: .5rem; justify-content: center; padding: 1rem 1.25rem;
+  flex-wrap: wrap; }
+.tab-btn { background: var(--surface); border: 1px solid var(--border);
+  color: var(--muted); font-family: 'Heebo', sans-serif; font-size: .85rem;
+  padding: .5rem 1.2rem; border-radius: 20px; cursor: pointer; transition: all .2s; }
+.tab-btn.active { background: rgba(200,169,110,.15); border-color: var(--accent);
+  color: var(--accent); font-weight: 600; }
+.tab-btn:hover:not(.active) { border-color: #444; color: var(--text); }
+
+.section { max-width: 900px; margin: 0 auto; padding: 1.5rem 1.25rem; }
+.section-title { font-family: 'Syne', sans-serif; font-size: 1.2rem;
+  color: var(--accent); margin-bottom: 1.25rem;
+  border-bottom: 1px solid var(--border); padding-bottom: .5rem; }
+
+/* Tutorial cards — single column */
+.tutorial-card { background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; padding: 1.5rem; margin-bottom: 1.5rem; }
+.tutorial-card .card-title { font-family: 'Syne', sans-serif; font-size: 1.1rem;
+  color: var(--accent); margin-bottom: .5rem; }
+.tutorial-card .card-summary { color: var(--muted); font-size: .88rem;
+  line-height: 1.6; margin-bottom: 1rem; }
+.tutorial-card .yt-embed { position: relative; padding-bottom: 56.25%; height: 0;
+  overflow: hidden; border-radius: 10px; background: #000; margin-bottom: .75rem; }
+.tutorial-card .yt-embed iframe { position: absolute; top: 0; right: 0;
+  width: 100%; height: 100%; border: 0; }
+.card-link { display: inline-block; margin-top: .5rem; background: var(--accent);
+  color: #000; font-weight: 700; font-size: .83rem; padding: .5rem 1.1rem;
+  border-radius: 8px; text-decoration: none; transition: background .15s; }
+.card-link:hover { background: #e0c080; }
+
+/* Gallery + Reel grids — 2 columns */
+.two-col { display: grid; grid-template-columns: 1fr; gap: 1.25rem; }
+@media (min-width: 640px) { .two-col { grid-template-columns: 1fr 1fr; } }
+.media-card { background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; overflow: hidden; }
+.media-card .yt-embed { position: relative; padding-bottom: 56.25%; height: 0; }
+.media-card .yt-embed iframe { position: absolute; top: 0; right: 0;
+  width: 100%; height: 100%; border: 0; }
+.media-card .card-label { padding: .75rem 1rem; font-size: .88rem; color: var(--text); }
+
+/* Instagram reel card */
+.ig-card { background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; padding: 1rem; display: flex; flex-direction: column; gap: .75rem; }
+.ig-card .card-label { font-size: .88rem; color: var(--text); }
+.ig-link { display: inline-block; background: rgba(200,169,110,.15);
+  border: 1px solid var(--accent); color: var(--accent); font-size: .83rem;
+  font-weight: 700; padding: .5rem 1rem; border-radius: 8px;
+  text-decoration: none; transition: background .15s; }
+.ig-link:hover { background: rgba(200,169,110,.3); }
+
+.empty-msg { color: var(--muted); font-size: .9rem; text-align: center;
+  padding: 2rem; }
+.hidden { display: none; }
+</style>
+<script src="/assets/js/nav.js?v=9aff906" defer></script>
+</head>
+<body>
+
+<div class="page-hero">
+  <div class="badge" data-he="סרטונים" data-en="Videos">סרטונים</div>
+  <h1 data-he="הסרטונים שלי" data-en="My Videos">הסרטונים שלי</h1>
+  <p data-he="מדריכי צילום, גלריות אלבום וריילס" data-en="Photography tutorials, album galleries and reels">מדריכי צילום, גלריות אלבום וריילס</p>
+</div>
+
+<div class="tabs">
+  <button class="tab-btn active" data-section="tutorials" data-he="מדריכי צילום" data-en="Tutorials">מדריכי צילום</button>
+  <button class="tab-btn" data-section="galleries" data-he="גלריות אלבום" data-en="Galleries">גלריות אלבום</button>
+  <button class="tab-btn" data-section="reels" data-he="ריילס וקליפים" data-en="Reels">ריילס וקליפים</button>
+</div>
+
+<section id="tutorials" class="section">
+  <div class="section-title" data-he="מדריכי צילום" data-en="Photography Tutorials">מדריכי צילום</div>
+  <div id="tutorials-grid"></div>
+</section>
+
+<section id="galleries" class="section hidden">
+  <div class="section-title" data-he="גלריות אלבום" data-en="Album Galleries">גלריות אלבום</div>
+  <div id="galleries-grid" class="two-col"></div>
+</section>
+
+<section id="reels" class="section hidden">
+  <div class="section-title" data-he="ריילס וקליפים" data-en="Reels & Clips">ריילס וקליפים</div>
+  <div id="reels-grid" class="two-col"></div>
+</section>
+
+<script>
+var LANG = localStorage.getItem('lang') || 'he';
+var ALL_VIDEOS = [];
+
+function t(he, en) { return LANG === 'en' ? en : he; }
+
+function ytEmbed(id) {
+  return '<div class="yt-embed"><iframe src="https://www.youtube.com/embed/' + id +
+    '" loading="lazy" allowfullscreen title="YouTube video"></iframe></div>';
+}
+
+function buildTutorials(videos) {
+  var grid = document.getElementById('tutorials-grid');
+  if (!videos.length) {
+    grid.innerHTML = '<p class="empty-msg">' + t('אין מדריכים עדיין', 'No tutorials yet') + '</p>';
+    return;
+  }
+  grid.innerHTML = videos.map(function(v) {
+    var title   = v['title_'   + LANG] || v.title_he || '';
+    var summary = v['summary_' + LANG] || '';
+    var link    = v.slug
+      ? '<a href="/camera/' + v.slug + '/" class="card-link">' +
+        t('למדריך המלא', 'Full Tutorial') + '</a>'
+      : '';
+    return '<div class="tutorial-card">' +
+      '<div class="card-title">' + title + '</div>' +
+      (summary ? '<p class="card-summary">' + summary + '</p>' : '') +
+      ytEmbed(v.id) + link +
+      '</div>';
+  }).join('');
+}
+
+function buildGalleries(videos) {
+  var grid = document.getElementById('galleries-grid');
+  if (!videos.length) {
+    grid.innerHTML = '<p class="empty-msg">' + t('אין גלריות עדיין', 'No galleries yet') + '</p>';
+    return;
+  }
+  grid.innerHTML = videos.map(function(v) {
+    var title = v['title_' + LANG] || v.title_he || '';
+    return '<div class="media-card">' + ytEmbed(v.id) +
+      '<div class="card-label">' + title + '</div></div>';
+  }).join('');
+}
+
+function buildReels(videos) {
+  var grid = document.getElementById('reels-grid');
+  if (!videos.length) {
+    grid.innerHTML = '<p class="empty-msg">' + t('אין ריילס עדיין', 'No reels yet') + '</p>';
+    return;
+  }
+  grid.innerHTML = videos.map(function(v) {
+    var title = v['title_' + LANG] || v.title_he || '';
+    if (v.platform === 'youtube') {
+      return '<div class="media-card">' + ytEmbed(v.id) +
+        '<div class="card-label">' + title + '</div></div>';
+    }
+    return '<div class="ig-card">' +
+      '<div class="card-label">' + title + '</div>' +
+      '<a href="https://www.instagram.com/p/' + v.id + '/" target="_blank" rel="noopener" class="ig-link">' +
+      t('צפה באינסטגרם', 'Watch on Instagram') + '</a></div>';
+  }).join('');
+}
+
+function applyStaticLang() {
+  document.querySelectorAll('[data-he]').forEach(function(el) {
+    if (!el.closest('#tutorials-grid') && !el.closest('#galleries-grid') && !el.closest('#reels-grid')) {
+      el.textContent = LANG === 'en' ? (el.dataset.en || el.dataset.he) : el.dataset.he;
+    }
+  });
+}
+
+function rebuildAll() {
+  var valid = ALL_VIDEOS.filter(function(v) { return v.id; });
+  buildTutorials(valid.filter(function(v) { return v.type === 'tutorial'; }));
+  buildGalleries(valid.filter(function(v) { return v.type === 'gallery'; }));
+  buildReels(valid.filter(function(v) { return v.type === 'reel'; }));
+  applyStaticLang();
+}
+
+function setLang(lang) {
+  LANG = lang;
+  rebuildAll();
+}
+
+document.querySelectorAll('.tab-btn').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+    btn.classList.add('active');
+    var target = btn.dataset.section;
+    document.querySelectorAll('.section').forEach(function(s) {
+      s.classList.toggle('hidden', s.id !== target);
+    });
+    applyStaticLang();
+  });
+});
+
+fetch('/data/videos.json')
+  .then(function(r) { return r.json(); })
+  .then(function(videos) {
+    ALL_VIDEOS = videos.slice().reverse();
+    rebuildAll();
+  })
+  .catch(function(e) {
+    console.error('videos.json load error', e);
+  });
+</script>
+</body>
+</html>
