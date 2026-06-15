@@ -215,6 +215,7 @@ fetch('/data/videos.json')
   })
   .catch(function(e) {
     console.error('videos.json load error', e);
+    rebuildAll();
   });
 </script>
 </body>
