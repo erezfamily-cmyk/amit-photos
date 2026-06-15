@@ -19,6 +19,7 @@ Usage:
 import os, sys, json, re, random, requests, subprocess, tempfile, shutil, base64, html
 from pathlib import Path
 from collections import defaultdict
+from videos_utils import append_video
 
 SITE_URL  = "https://amitphotos.com"
 ROOT      = Path(__file__).parent.parent
@@ -130,6 +131,23 @@ def extract_english_sections(slug):
         sections.append(text)
 
     return sections
+
+def extract_guide_title_he(slug):
+    """Extract Hebrew <h1> text from guide HTML."""
+    guide_path = ROOT / "camera" / slug / "index.html"
+    if guide_path.exists():
+        content = guide_path.read_text(encoding="utf-8")
+        m = re.search(r'<h1[^>]+data-he="([^"]+)"', content)
+        if m:
+            return html.unescape(m.group(1))
+    return slug.replace("-", " ").title()
+
+
+def extract_summary_en(script, n_sentences=3):
+    """Return first N sentences of narration script as English summary."""
+    sentences = re.split(r'(?<=[.!?])\s+', script.strip())
+    return " ".join(sentences[:n_sentences])
+
 
 def build_narration_script(slug, sections):
     """Build a clean narration script from sections."""
@@ -600,6 +618,21 @@ def main():
             if result:
                 state.setdefault("posted_guides", []).append(slug)
                 save_state(state)
+                # Append to central videos.json
+                if isinstance(result, str):  # result is video_id string on success
+                    sections = extract_english_sections(slug)
+                    script   = build_narration_script(slug, sections) if sections else ""
+                    title_en = slug.replace("-", " ").title()
+                    append_video({
+                        "id":         result,
+                        "platform":   "youtube",
+                        "type":       "tutorial",
+                        "slug":       slug,
+                        "title_he":   extract_guide_title_he(slug),
+                        "title_en":   f"{title_en} — Photography Tutorial",
+                        "summary_he": "",
+                        "summary_en": extract_summary_en(script),
+                    })
 
 
 if __name__ == "__main__":
