@@ -11,6 +11,7 @@
       challenges: 'אתגרים', camera: 'למד לצלם', learn: 'ניתוח תמונות', gear: 'הציוד שלי',
       howToBuy: 'כיצד לרכוש', pricing: 'מחירים', contact: 'צור קשר', locations: 'מקומות לצילום',
       newsletter: 'ניוזלטר',
+      videos: 'סרטונים',
       menu: 'תפריט'
     },
     en: {
@@ -20,6 +21,7 @@
       challenges: 'Challenges', camera: 'Learn Photography', learn: 'Photo School', gear: 'My Gear',
       howToBuy: 'How to Buy', pricing: 'Pricing', contact: 'Contact', locations: 'Locations',
       newsletter: 'Newsletter',
+      videos: 'Videos',
       menu: 'Menu'
     }
   };
@@ -40,7 +42,7 @@
       'nav.gallery': t.gallery, 'nav.new': t.navNew, 'nav.sale': t.navSale,
       'nav.challenges': t.challenges, 'nav.camera': t.camera, 'nav.learn': t.learn, 'nav.gear': t.gear,
       'nav.how-to-buy': t.howToBuy, 'nav.pricing': t.pricing, 'nav.contact': t.contact,
-      'nav.locations': t.locations, 'nav.newsletter': t.newsletter
+      'nav.locations': t.locations, 'nav.newsletter': t.newsletter, 'nav.videos': t.videos
     };
     nav.querySelectorAll('[data-i18n]').forEach(function (el) {
       const key = el.dataset.i18n;
@@ -175,6 +177,7 @@ nav#main-nav .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px)
   <li><a href="/gear/" data-i18n="nav.gear">הציוד שלי</a></li>
   <li><a href="/locations/" data-i18n="nav.locations">מקומות לצילום</a></li>
   <li><a href="/learn/" data-i18n="nav.learn">ניתוח תמונות</a></li>
+  <li><a href="/videos/" data-i18n="nav.videos">סרטונים</a></li>
   <li><a href="${a('#how-to-buy')}" data-i18n="nav.how-to-buy">כיצד לרכוש</a></li>
   <li><a href="${a('#pricing')}" data-i18n="nav.pricing">מחירים</a></li>
   <li><a href="${a('#contact')}" data-i18n="nav.contact">צור קשר</a></li>
