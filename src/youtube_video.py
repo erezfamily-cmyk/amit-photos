@@ -14,6 +14,7 @@ Weekly: one album per video, ~5 min, intro card + location overlay + outro.
 import os, sys, json, random, requests, subprocess, tempfile, shutil, base64, datetime
 from pathlib import Path
 from collections import defaultdict
+from videos_utils import append_video
 
 GRAPH_API  = "https://graph.facebook.com/v21.0"
 SITE_URL   = "https://amitphotos.com"
@@ -29,6 +30,13 @@ INTRO_DUR        = 4.0
 OUTRO_DUR        = 5.0
 MAX_PHOTOS       = 60
 MIN_PHOTOS       = 15   # skip album if fewer photos
+
+ALBUM_EN = {
+    "יוון": "Greece", "גרמניה": "Germany", "טבע דומם": "Still Life",
+    "איטליה": "Italy", "טנזניה": "Tanzania", "ספרד ואנדורה": "Spain & Andorra",
+    "מונטנגרו": "Montenegro", "אנגליה": "England", "אבו דאבי": "Abu Dhabi",
+    "אומנות רחוב": "Street Art",
+}
 
 
 # ── Data ──────────────────────────────────────────────────────────────────────
@@ -743,6 +751,16 @@ def main():
         # Auto-share YouTube link on social media
         if vid_id:
             share_youtube_on_social(vid_id, category, exif_summary)
+            append_video({
+                "id":         vid_id,
+                "platform":   "youtube",
+                "type":       "gallery",
+                "slug":       None,
+                "title_he":   category,
+                "title_en":   ALBUM_EN.get(category, category),
+                "summary_he": "",
+                "summary_en": "",
+            })
 
     # Update state
     state.setdefault("posted_albums", []).append(category)
