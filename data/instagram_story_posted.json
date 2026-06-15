@@ -1,5 +1,5 @@
 {
-  "current_category_index": 19,
+  "current_category_index": 20,
   "used_ids_by_category": {
     "אבו דאבי": [
       "6c9e818c-bdd3-402f-b6f5-ee2e668507c9",
@@ -188,6 +188,16 @@
       "0e1e01a7-2056-49de-889e-a7af3412f4f7",
       "a92600da-bab2-4699-a905-15dee0202d06",
       "b94a0678-18f5-47c4-9eeb-ba47e9ca2377"
+    ],
+    "פרחים וצמחים": [
+      "6ee77552-1756-46b9-8542-8c51fcfd8c1c",
+      "c0692ca4-7d4f-4225-8c24-2bcc65c08c80",
+      "ea25ca1f-3601-4ebf-87e6-b1ceb777e232",
+      "e1768721-60a8-4c3d-bac2-a52ea9b74db8",
+      "eefb7b13-333b-4a5a-96a7-3ceaf96cb20c",
+      "1b4df12c-8a83-4432-a181-29197cedf1a8",
+      "8d21662c-669f-452f-8f72-4539f8d58309",
+      "4a06bd0d-ebf4-47ae-a900-73a01a9818e8"
     ]
   },
   "gear_tool_index": 1
