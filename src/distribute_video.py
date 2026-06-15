@@ -13,6 +13,7 @@ import time
 from pathlib import Path
 
 import requests
+from videos_utils import append_video
 
 GRAPH_API   = "https://graph.facebook.com/v21.0"
 ROOT        = Path(__file__).parent.parent
@@ -269,6 +270,22 @@ def main():
     posted = load_posted()
     posted.append(results)
     save_posted(posted)
+
+    # Append to central videos.json — prefer YouTube ID (better embed)
+    yt_id = results["platforms"].get("youtube")
+    ig_id = results["platforms"].get("instagram")
+    video_name = Path(filename).stem.split("-", 1)[-1].replace("-", " ").title()
+    if yt_id or ig_id:
+        append_video({
+            "id":         yt_id or ig_id,
+            "platform":   "youtube" if yt_id else "instagram",
+            "type":       "reel",
+            "slug":       None,
+            "title_he":   video_name,
+            "title_en":   video_name,
+            "summary_he": "",
+            "summary_en": "",
+        })
 
     print(f"\n{'─'*40}\n📊 סיכום:")
     print(f"  Instagram: {'✅ ' + str(ig_id) if ig_id else '❌ נכשל'}")
