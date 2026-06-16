@@ -1,6 +1,8 @@
 name: פרסום תמונת השבוע לסושיאל
 
 on:
+  schedule:
+    - cron: '0 7 * * 0'  # ראשון 10:00 ישראל
   workflow_dispatch:
 
 env:

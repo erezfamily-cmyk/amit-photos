@@ -53,6 +53,36 @@ jobs:
           [ -n "$REPLACE" ] && ARGS="$ARGS --replace $REPLACE"
           python src/youtube_tutorial.py $ARGS
 
+      - name: שיתוף סרטון ברשתות חברתיות
+        env:
+          INSTAGRAM_USER_ID: ${{ secrets.INSTAGRAM_USER_ID }}
+          INSTAGRAM_PAGE_TOKEN: ${{ secrets.INSTAGRAM_PAGE_TOKEN }}
+          FACEBOOK_PAGE_ID: ${{ secrets.FACEBOOK_PAGE_ID }}
+          PYTHONUNBUFFERED: "1"
+        run: |
+          python3 << 'EOF'
+          import json, subprocess, sys
+          from datetime import datetime, timezone
+          today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+          try:
+              videos = json.load(open("data/videos.json", encoding="utf-8"))
+          except Exception as e:
+              print(f"לא ניתן לקרוא videos.json: {e}")
+              sys.exit(0)
+          tutorials = [v for v in videos if v.get("type") == "tutorial" and v.get("id")]
+          if not tutorials:
+              print("אין מדריכים — מדלג")
+              sys.exit(0)
+          latest = tutorials[-1]
+          if latest.get("date") != today:
+              print(f"הסרטון האחרון ({latest.get('date')}) לא הועלה היום ({today}) — מדלג")
+              sys.exit(0)
+          vid_id = latest["id"]
+          title = latest.get("title_en") or latest.get("title_he") or "Photography Tutorial"
+          print(f"משתף: {vid_id} — {title}")
+          subprocess.run(["python3", "src/share_youtube.py", vid_id, title], check=False)
+          EOF
+
       - name: שמירת היסטוריה
         run: |
           git config user.name "github-actions[bot]"
