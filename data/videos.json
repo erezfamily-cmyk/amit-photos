@@ -6,8 +6,8 @@
     "slug": "depth-of-field",
     "title_he": "עומק שדה",
     "title_en": "Depth Of Field — Photography Tutorial",
-    "summary_he": "",
-    "summary_en": "",
+    "summary_he": "עומק שדה קובע כמה הרקע מטושטש בתמונה. שלושה גורמים שולטים בו: צמצם (f), מרחק מהנושא ואורך מוקד העדשה. f/1.4 יתן בוקה בולט — f/11 ישמור הכל חד.",
+    "summary_en": "Depth of field determines how blurry the background is in your photo. Three factors control it: aperture (f-number), subject distance, and focal length. f/1.4 gives strong bokeh — f/11 keeps everything sharp.",
     "date": "2026-01-01"
   },
   {
@@ -17,8 +17,8 @@
     "slug": "composition",
     "title_he": "קומפוזיציה",
     "title_en": "Composition — Photography Tutorial",
-    "summary_he": "",
-    "summary_en": "",
+    "summary_he": "קומפוזיציה מנחה את עין הצופה בלי שהוא מבחין בזה. חוק השליש, קווים מובילים ומסגור הם הכלים הבסיסיים שהופכים תמונה רגילה למשכנעת.",
+    "summary_en": "Composition guides the viewer's eye without them noticing. Rule of thirds, leading lines, and framing are the essential tools that turn an ordinary photo into a compelling one.",
     "date": "2026-01-01"
   },
   {
@@ -28,8 +28,8 @@
     "slug": "exposure",
     "title_he": "חשיפה",
     "title_en": "Exposure — Photography Tutorial",
-    "summary_he": "",
-    "summary_en": "",
+    "summary_he": "חשיפה נקבעת על ידי שלושה פרמטרים: ISO, צמצם ותריס. לכל אחד יש מחיר — יותר אור אומר יותר רעש, בוקה, או טשטוש תנועה. הבנת המשולש הזה שינתה לי הכל.",
+    "summary_en": "Exposure is controlled by three parameters: ISO, aperture, and shutter speed. Each has a trade-off — more light means more noise, bokeh, or motion blur. Understanding this triangle changed everything for me.",
     "date": "2026-01-01"
   },
   {
