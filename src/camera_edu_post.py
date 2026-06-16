@@ -24,8 +24,6 @@ PINTEREST_API = "https://api.pinterest.com/v5"
 
 PAGE_ID           = os.environ.get("FACEBOOK_PAGE_ID", "")
 FB_TOKEN          = os.environ.get("FACEBOOK_PAGE_TOKEN", "")
-IG_USER_ID        = os.environ.get("INSTAGRAM_USER_ID", "")
-IG_TOKEN          = os.environ.get("INSTAGRAM_PAGE_TOKEN", "")
 THREADS_USER_ID   = os.environ.get("THREADS_USER_ID", "")
 THREADS_TOKEN     = os.environ.get("THREADS_ACCESS_TOKEN", "")
 PINTEREST_TOKEN   = os.environ.get("PINTEREST_ACCESS_TOKEN", "")
@@ -435,44 +433,6 @@ def post_to_facebook(image_url, message):
     return resp.json().get("id")
 
 
-def post_to_instagram(image_url, caption):
-    if not IG_USER_ID or not IG_TOKEN:
-        print("⚠️  Instagram credentials חסרים — דלג")
-        return None
-
-    container_resp = requests.post(f"{GRAPH_API}/{IG_USER_ID}/media", data={
-        "image_url": image_url, "caption": caption, "access_token": IG_TOKEN,
-    }, timeout=30)
-    if not container_resp.ok:
-        print(f"❌ Instagram API: {container_resp.status_code} — {container_resp.text}")
-        return None
-    container_data = container_resp.json()
-    if "id" not in container_data:
-        print(f"❌ שגיאה ביצירת container: {container_data}")
-        return None
-
-    creation_id = container_data["id"]
-    print(f"📦 Container נוצר: {creation_id}")
-
-    for _ in range(10):
-        time.sleep(5)
-        status_resp = requests.get(f"{GRAPH_API}/{creation_id}",
-            params={"fields": "status_code", "access_token": IG_TOKEN}, timeout=30)
-        status = status_resp.json().get("status_code", "")
-        print(f"⏳ סטטוס: {status}")
-        if status == "FINISHED":
-            break
-        if status == "ERROR":
-            print(f"❌ שגיאת container: {status_resp.json()}")
-            return None
-
-    publish_resp = requests.post(f"{GRAPH_API}/{IG_USER_ID}/media_publish", data={
-        "creation_id": creation_id, "access_token": IG_TOKEN,
-    }, timeout=30)
-    if not publish_resp.ok:
-        print(f"❌ Instagram publish: {publish_resp.status_code} — {publish_resp.text}")
-        return None
-    return publish_resp.json().get("id")
 
 
 def post_to_threads(image_url, text):
@@ -606,7 +566,7 @@ def main():
         sys.exit(1)
 
     success = sum(1 for v in results.values() if v)
-    print(f"\n✅ הסתיים — {success}/4 רשתות פורסמו בהצלחה")
+    print(f"\n✅ הסתיים — {success}/3 רשתות פורסמו בהצלחה")
 
 
 if __name__ == "__main__":
