@@ -2,12 +2,21 @@ import json
 import sys
 from pathlib import Path
 
+import pytest
+
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 import videos_utils
 
 
-def test_update_video_id_he_existing_entry(tmp_path):
+@pytest.fixture(autouse=False)
+def restore_videos_file():
+    original = videos_utils.VIDEOS_FILE
+    yield
+    videos_utils.VIDEOS_FILE = original
+
+
+def test_update_video_id_he_existing_entry(tmp_path, restore_videos_file):
     f = tmp_path / "videos.json"
     f.write_text(json.dumps([
         {"id": "abc", "id_he": None, "type": "tutorial", "slug": "exposure", "platform": "youtube",
@@ -21,7 +30,7 @@ def test_update_video_id_he_existing_entry(tmp_path):
     assert result[0]["id_he"] == "xyz789"
 
 
-def test_update_video_id_he_creates_entry_if_missing(tmp_path):
+def test_update_video_id_he_creates_entry_if_missing(tmp_path, restore_videos_file):
     f = tmp_path / "videos.json"
     f.write_text("[]", encoding="utf-8")
     videos_utils.VIDEOS_FILE = f
@@ -35,7 +44,7 @@ def test_update_video_id_he_creates_entry_if_missing(tmp_path):
     assert result[0]["id"] is None
 
 
-def test_update_video_id_he_only_updates_tutorial_type(tmp_path):
+def test_update_video_id_he_only_updates_tutorial_type(tmp_path, restore_videos_file):
     f = tmp_path / "videos.json"
     f.write_text(json.dumps([
         {"id": "gal1", "type": "gallery", "slug": "exposure", "platform": "youtube",
