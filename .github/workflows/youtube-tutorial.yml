@@ -40,7 +40,7 @@ jobs:
       - name: התקנת חבילות
         run: pip install requests google-api-python-client google-auth google-auth-oauthlib
 
-      - name: יצירת סרטון הדרכה ופרסום ל-YouTube
+      - name: יצירת סרטון הדרכה — אנגלית
         env:
           ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
           YOUTUBE_TOKEN_JSON: ${{ secrets.YOUTUBE_TOKEN_JSON }}
@@ -51,7 +51,18 @@ jobs:
           ARGS=""
           [ -n "$GUIDE" ] && ARGS="$GUIDE"
           [ -n "$REPLACE" ] && ARGS="$ARGS --replace $REPLACE"
-          python src/youtube_tutorial.py $ARGS
+          python src/youtube_tutorial.py $ARGS --lang en
+
+      - name: יצירת סרטון הדרכה — עברית
+        env:
+          ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+          YOUTUBE_TOKEN_JSON: ${{ secrets.YOUTUBE_TOKEN_JSON }}
+          PYTHONUNBUFFERED: "1"
+        run: |
+          GUIDE="${{ github.event.inputs.guide }}"
+          ARGS=""
+          [ -n "$GUIDE" ] && ARGS="$GUIDE"
+          python src/youtube_tutorial.py $ARGS --lang he
 
       - name: שיתוף סרטון ברשתות חברתיות
         env:
