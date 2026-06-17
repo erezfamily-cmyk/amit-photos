@@ -7,6 +7,7 @@ import pytest
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 import videos_utils
+import youtube_tutorial
 
 
 @pytest.fixture(autouse=False)
@@ -59,3 +60,53 @@ def test_update_video_id_he_only_updates_tutorial_type(tmp_path, restore_videos_
     assert len(result) == 2
     assert result[1]["type"] == "tutorial"
     assert result[1]["id_he"] == "xyz789"
+
+
+def test_extract_hebrew_sections_returns_list(tmp_path):
+    html = '''<html><body>
+      <p data-he="עומק שדה קובע כמה הרקע מטושטש בתמונה שלך. שלושה גורמים שולטים בו." data-en="Depth of field determines blur."></p>
+      <p data-he="f/1.4 יתן בוקה בולט — f/11 ישמור הכל חד. הבן את הפשרות." data-en="f/1.4 bokeh."></p>
+      <p data-he="←" data-en="←"></p>
+    </body></html>'''
+    guide_dir = tmp_path / "camera" / "depth-of-field"
+    guide_dir.mkdir(parents=True)
+    (guide_dir / "index.html").write_text(html, encoding="utf-8")
+
+    original_root = youtube_tutorial.ROOT
+    youtube_tutorial.ROOT = tmp_path
+    try:
+        sections = youtube_tutorial.extract_hebrew_sections("depth-of-field")
+    finally:
+        youtube_tutorial.ROOT = original_root
+
+    assert len(sections) == 2
+    assert all(len(s) >= 40 for s in sections)
+
+
+def test_extract_hebrew_sections_skips_ui_text(tmp_path):
+    html = '''<html><body>
+      <p data-he="ראה באדוראמה ←" data-en="View at Adorama"></p>
+      <p data-he="קנה לי קפה ותמוך ביצירת תוכן איכותי לצלמים ישראלים" data-en="Buy me coffee"></p>
+      <p data-he="מדריך מלא ומפורט על עומק שדה, בוקה וצמצם בצילום." data-en="Full guide."></p>
+    </body></html>'''
+    guide_dir = tmp_path / "camera" / "focus"
+    guide_dir.mkdir(parents=True)
+    (guide_dir / "index.html").write_text(html, encoding="utf-8")
+
+    original_root = youtube_tutorial.ROOT
+    youtube_tutorial.ROOT = tmp_path
+    try:
+        sections = youtube_tutorial.extract_hebrew_sections("focus")
+    finally:
+        youtube_tutorial.ROOT = original_root
+
+    assert len(sections) == 1
+    assert "מדריך" in sections[0]
+
+
+def test_build_hebrew_narration_script_contains_slug_title():
+    sections = ["עומק שדה קובע כמה הרקע מטושטש.", "f/1.4 נותן בוקה בולט."]
+    script = youtube_tutorial.build_hebrew_narration_script("exposure", sections, "חשיפה")
+    assert "חשיפה" in script
+    assert "עמית" in script
+    assert "amitphotos.com" in script

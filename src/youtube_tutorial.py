@@ -35,6 +35,8 @@ OUTRO_DUR      = 5.0
 
 ELEVENLABS_KEY  = os.environ.get("ELEVENLABS_API_KEY", "")
 ELEVENLABS_VOICE = "pNInz6obpgDQGcFmaJgB"   # Adam — calm, authoritative male
+ELEVENLABS_VOICE_HE = "cgSgspJ2msm6clMCkdW9"  # Liam — multilingual, good Hebrew
+ELEVENLABS_MODEL_HE  = "eleven_multilingual_v2"
 ELEVENLABS_URL  = "https://api.elevenlabs.io/v1/text-to-speech"
 
 # Map guide slug → photo categories that best illustrate the topic
@@ -69,6 +71,14 @@ SKIP_PATTERNS = [
     r"back to photography school", r"photography school",
     r"←", r"→", r"view at adorama", r"buy at skylum",
     r"try flexclip", r"link in bio",
+]
+
+SKIP_PATTERNS_HE = [
+    r"ראה באדוראמה", r"ב-adorama", r"ב-skylum", r"ב-flexclip",
+    r"קנה לי קפה", r"קישור שותף", r"עמלה קטנה",
+    r"חזרה לבית ספר לצילום",
+    r"kofi", r"gumroad", r"awin", r"affiliate",
+    r"←", r"→",
 ]
 
 
@@ -132,6 +142,37 @@ def extract_english_sections(slug):
 
     return sections
 
+def extract_hebrew_sections(slug):
+    """Parse Hebrew content from guide HTML into narration sections."""
+    guide_path = ROOT / "camera" / slug / "index.html"
+    if not guide_path.exists():
+        try:
+            r = requests.get(f"{SITE_URL}/camera/{slug}/", timeout=15)
+            r.raise_for_status()
+            content = r.text
+        except Exception as e:
+            print(f"❌ לא נמצא מדריך: {slug} ({e})")
+            sys.exit(1)
+    else:
+        content = guide_path.read_text(encoding="utf-8")
+
+    raw = re.findall(r'data-he="([^"]{30,})"', content)
+
+    sections = []
+    for text in raw:
+        text = html.unescape(text)
+        text = re.sub(r"<[^>]+>", " ", text)
+        text = re.sub(r"\s+", " ", text).strip()
+        lower = text.lower()
+        if any(re.search(p, lower) for p in SKIP_PATTERNS_HE):
+            continue
+        if len(text) < 40:
+            continue
+        sections.append(text)
+
+    return sections
+
+
 def extract_guide_title_he(slug):
     """Extract Hebrew <h1> text from guide HTML."""
     guide_path = ROOT / "camera" / slug / "index.html"
@@ -167,6 +208,26 @@ def build_narration_script(slug, sections):
     ]
 
     # Join with natural pauses (ElevenLabs respects punctuation)
+    script = " ".join(l if l else "..." for l in lines)
+    script = re.sub(r"\.{3,}", "...", script)
+    return script
+
+
+def build_hebrew_narration_script(slug, sections, guide_title_he):
+    """Build a Hebrew narration script."""
+    lines = [
+        f"ברוכים הבאים לבית ספר לצילום של עמית ארז.",
+        f"במדריך הזה נלמד על {guide_title_he}.",
+        "",
+    ]
+    lines += sections
+    lines += [
+        "",
+        "תודה על הצפייה.",
+        "למדריכים נוספים, היכנסו ל-amitphotos.com.",
+        "אל תשכחו להירשם לתוכן צילום שבועי.",
+    ]
+
     script = " ".join(l if l else "..." for l in lines)
     script = re.sub(r"\.{3,}", "...", script)
     return script
