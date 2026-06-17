@@ -1,6 +1,7 @@
 [
   {
     "id": "2tdd4vksWyE",
+    "id_he": null,
     "platform": "youtube",
     "type": "tutorial",
     "slug": "depth-of-field",
@@ -12,6 +13,7 @@
   },
   {
     "id": "9GCYoJN5MXQ",
+    "id_he": null,
     "platform": "youtube",
     "type": "tutorial",
     "slug": "composition",
@@ -23,6 +25,7 @@
   },
   {
     "id": "fD-RK-0Ijv8",
+    "id_he": null,
     "platform": "youtube",
     "type": "tutorial",
     "slug": "exposure",
@@ -100,6 +103,7 @@
   },
   {
     "id": "f9SxLwxhfxc",
+    "id_he": null,
     "platform": "youtube",
     "type": "tutorial",
     "slug": "light",
