@@ -511,6 +511,9 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
 .social-health-issue{font-size:.82rem;display:flex;align-items:baseline;gap:.5rem;line-height:1.4}
 .social-health-issue .hi-icon{font-size:.9rem;flex-shrink:0}
 .hi-red{color:#e05}.hi-yellow{color:#f5a623}.hi-green{color:#4caf50}
+.social-platform-title--schedule{color:var(--accent);margin-top:0}
+.sched-row-hl{background:rgba(200,169,110,0.06)}
+.act-status-ok{color:#4caf50}.act-status-fail{color:#e05}.act-status-prog{color:#f5a623}.act-status-skip{color:var(--text-muted)}
 
 /* ===== VISUAL ANNOTATION EDITOR ===== */
 #ann-editor-dialog {
@@ -904,7 +907,47 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
         <h1 class="section-title">סושיאל מדיה</h1>
         <button type="button" class="btn btn-ghost btn-sm" id="social-refresh-btn">רענן</button>
       </div>
-      <div id="social-loading" class="social-loading">טוען נתונים...</div>
+
+      <!-- SCHEDULE TABLE -->
+      <h2 class="social-platform-title social-platform-title--schedule">📅 לוח שידורים</h2>
+      <div class="table-wrap" style="margin-bottom:2rem">
+        <table class="data-table">
+          <thead><tr><th>יום</th><th>שעה (IL)</th><th>פלטפורמה</th><th>תוכן</th></tr></thead>
+          <tbody>
+            <tr><td>כל יום</td><td>11:00</td><td>📸 IG Story</td><td>Slideshow תמונות</td></tr>
+            <tr><td>כל יום</td><td>17:00</td><td>📌 Pinterest</td><td>תמונת גלריה</td></tr>
+            <tr class="sched-row-hl"><td>ראשון</td><td>10:00</td><td>📸 IG + 📘 FB</td><td>תמונת השבוע</td></tr>
+            <tr class="sched-row-hl"><td>ראשון</td><td>12:00</td><td>▶️ YouTube</td><td>Slideshow שבועי</td></tr>
+            <tr class="sched-row-hl"><td>ראשון</td><td>20:00</td><td>📸 Instagram</td><td>תמונת גלריה</td></tr>
+            <tr><td>שני</td><td>12:00</td><td>📘 FB + 🧵 Threads + 📌</td><td>מדריך צילום</td></tr>
+            <tr><td>שני</td><td>18:00</td><td>🧵 Threads</td><td>תמונת גלריה</td></tr>
+            <tr><td>שני</td><td>18:00</td><td>📸 IG + 📘 FB</td><td>פרומו פאזל (שבועי)</td></tr>
+            <tr class="sched-row-hl"><td>שלישי</td><td>15:00</td><td>📸 IG + ▶️ YT Shorts</td><td>Reel (דו-שבועי)</td></tr>
+            <tr><td>רביעי</td><td>13:00</td><td>▶️ YouTube + 📸 + 📘 + 🧵</td><td>מדריך צילום + שיתוף</td></tr>
+            <tr><td>רביעי</td><td>18:00</td><td>🧵 Threads</td><td>תמונת גלריה</td></tr>
+            <tr><td>רביעי</td><td>18:00</td><td>📸 IG + 📘 FB</td><td>פרומו קוויז (דו-שבועי)</td></tr>
+            <tr><td>רביעי</td><td>20:00</td><td>📸 Instagram</td><td>תמונת גלריה</td></tr>
+            <tr class="sched-row-hl"><td>חמישי</td><td>18:00</td><td>🧵 Threads</td><td>תמונת גלריה</td></tr>
+            <tr><td>כל ~7 ימים</td><td>20:00</td><td>📸 + 📘 + 🧵 + 📌</td><td>מקום לצילום</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- ACTIVITY LOG -->
+      <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.75rem">
+        <h2 class="social-platform-title social-platform-title--schedule" style="margin-bottom:0">📊 פעילות בפועל — 14 ימים אחרונים</h2>
+        <span id="social-activity-status" style="color:var(--text-muted);font-size:.82rem">טוען...</span>
+      </div>
+      <div class="table-wrap" id="social-activity-wrap" style="margin-bottom:2rem;display:none">
+        <table class="data-table">
+          <thead><tr><th>תאריך</th><th>שעה (IL)</th><th>תוכן</th><th>סטטוס</th></tr></thead>
+          <tbody id="social-activity-tbody"></tbody>
+        </table>
+      </div>
+
+      <hr style="border:none;border-top:1px solid var(--border);margin:1.5rem 0">
+
+      <div id="social-loading" class="social-loading">טוען נתוני ביצועים...</div>
       <div id="social-content" hidden>
         <p id="social-date" class="social-date"></p>
         <div id="social-health"></div>
@@ -4204,8 +4247,46 @@ const SocialSection = (() => {
     }
   }
 
-  $('social-refresh-btn').addEventListener('click', load);
-  document.addEventListener('section:social', load);
+  async function loadActivity() {
+    const session = sessionStorage.getItem('admin_session') || localStorage.getItem('admin_session');
+    const statusEl = $('social-activity-status');
+    const wrapEl   = $('social-activity-wrap');
+    if (statusEl) statusEl.textContent = 'טוען...';
+    try {
+      const r = await fetch('/api/admin/social-activity', {
+        headers: { 'X-Admin-Password': session }
+      });
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      const { runs } = await r.json();
+      if (!runs?.length) {
+        if (statusEl) statusEl.textContent = 'אין נתונים ב-14 הימים האחרונים';
+        return;
+      }
+      const statusHtml = s => {
+        if (s === 'success')     return '<span class="act-status-ok">✅ הצליח</span>';
+        if (s === 'failure')     return '<span class="act-status-fail">❌ נכשל</span>';
+        if (s === 'in_progress') return '<span class="act-status-prog">⏳ רץ</span>';
+        if (s === 'cancelled')   return '<span class="act-status-skip">🚫 בוטל</span>';
+        if (s === 'skipped')     return '<span class="act-status-skip">⏭️ דולג</span>';
+        return `<span class="act-status-skip">${s}</span>`;
+      };
+      $('social-activity-tbody').innerHTML = runs.map(run =>
+        `<tr>
+          <td>${run.date}</td>
+          <td>${run.time}</td>
+          <td><a href="${run.html_url}" target="_blank" style="color:var(--accent);text-decoration:none">${run.icon} ${run.name}</a></td>
+          <td>${statusHtml(run.status)}</td>
+        </tr>`
+      ).join('');
+      if (wrapEl) wrapEl.style.display = 'block';
+      if (statusEl) statusEl.textContent = `${runs.length} ריצות`;
+    } catch (e) {
+      if (statusEl) statusEl.textContent = 'שגיאה: ' + e.message;
+    }
+  }
+
+  $('social-refresh-btn').addEventListener('click', () => { load(); loadActivity(); });
+  document.addEventListener('section:social', () => { load(); loadActivity(); });
 
   return { load };
 })();

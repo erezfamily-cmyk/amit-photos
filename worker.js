@@ -928,6 +928,79 @@ async function handleReels(request, env) {
   }, 200, request);
 }
 
+// ===== SOCIAL ACTIVITY — GitHub Actions runs for posting workflows =====
+const SOCIAL_POSTING_WORKFLOWS = new Set([
+  'instagram-post.yml','instagram-story.yml','threads-post.yml',
+  'pinterest-post.yml','camera-edu-post.yml','location-social-post.yml',
+  'week-photo-social.yml','reels-post.yml','quiz-social-post.yml',
+  'puzzle-social-post.yml','youtube-post.yml','youtube-tutorial.yml',
+  'newsletter-social-post.yml','share-youtube.yml',
+]);
+const SOCIAL_WORKFLOW_META = {
+  'instagram-post.yml':        { name: 'IG גלריה',          icon: '📸' },
+  'instagram-story.yml':       { name: 'IG Story',          icon: '📱' },
+  'threads-post.yml':          { name: 'Threads גלריה',     icon: '🧵' },
+  'pinterest-post.yml':        { name: 'Pinterest גלריה',   icon: '📌' },
+  'camera-edu-post.yml':       { name: 'מדריך צילום',       icon: '📚' },
+  'location-social-post.yml':  { name: 'מקום לצילום',       icon: '📍' },
+  'week-photo-social.yml':     { name: 'תמונת השבוע',       icon: '⭐' },
+  'reels-post.yml':            { name: 'Reel',              icon: '🎬' },
+  'quiz-social-post.yml':      { name: 'קוויז',             icon: '🧩' },
+  'puzzle-social-post.yml':    { name: 'פאזל',              icon: '🧩' },
+  'youtube-post.yml':          { name: 'YouTube Slideshow', icon: '▶️' },
+  'youtube-tutorial.yml':      { name: 'YouTube מדריך',     icon: '🎓' },
+  'newsletter-social-post.yml':{ name: 'ניוזלטר',           icon: '📧' },
+  'share-youtube.yml':         { name: 'שיתוף YouTube',     icon: '🔗' },
+};
+
+async function handleAdminSocialActivity(request, env) {
+  if (!await checkAuth(request, env)) return unauth(request);
+  if (!env.GITHUB_TOKEN) return jsonRes({ error: 'GITHUB_TOKEN לא מוגדר' }, 500, request);
+
+  const ghHeaders = {
+    'Authorization': `Bearer ${env.GITHUB_TOKEN}`,
+    'Accept': 'application/vnd.github+json',
+    'User-Agent': 'amit-photos-worker',
+    'X-GitHub-Api-Version': '2022-11-28',
+  };
+
+  const cutoff = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000);
+  const res = await fetch(
+    'https://api.github.com/repos/erezfamily-cmyk/amit-photos/actions/runs?per_page=100',
+    { headers: ghHeaders }
+  );
+  if (!res.ok) {
+    const err = await res.text();
+    return jsonRes({ error: `GitHub API ${res.status}: ${err.slice(0, 200)}` }, 502, request);
+  }
+
+  const data = await res.json();
+  const runs = (data.workflow_runs || [])
+    .filter(r => {
+      const fn = r.path?.split('/').pop();
+      return SOCIAL_POSTING_WORKFLOWS.has(fn) && new Date(r.created_at) >= cutoff;
+    })
+    .map(r => {
+      const fn   = r.path?.split('/').pop();
+      const meta = SOCIAL_WORKFLOW_META[fn] || { name: fn, icon: '⚙️' };
+      const dt   = new Date(r.created_at);
+      // convert to Israel time (UTC+3)
+      const il   = new Date(dt.getTime() + 3 * 60 * 60 * 1000);
+      return {
+        workflow: fn,
+        name:     meta.name,
+        icon:     meta.icon,
+        status:   r.conclusion || r.status,
+        date:     il.toISOString().slice(0, 10),
+        time:     il.toISOString().slice(11, 16),
+        html_url: r.html_url,
+      };
+    })
+    .sort((a, b) => `${b.date}${b.time}`.localeCompare(`${a.date}${a.time}`));
+
+  return jsonRes({ runs }, 200, request);
+}
+
 async function handleAdminVideos(request, env) {
   if (!await checkAuth(request, env)) return unauth(request);
   if (!env.GITHUB_TOKEN) return jsonRes({ error: 'GITHUB_TOKEN לא מוגדר' }, 500, request);
@@ -6638,6 +6711,7 @@ export default {
     if (path === '/api/reels')             return handleReels(request, env);
     if (path.startsWith('/api/reels/file/')) return handleReelsFile(request, env, path.slice('/api/reels/file/'.length));
     if (path.startsWith('/video/'))        return handleVideoFile(request, env, path.slice('/video/'.length));
+    if (path === '/api/admin/social-activity') return handleAdminSocialActivity(request, env);
     if (path === '/api/admin/videos')      return handleAdminVideos(request, env);
     if (path === '/api/newsletter')        return handleNewsletter(request, env);
     if (path === '/api/unsubscribe')       return handleUnsubscribe(request, env);
