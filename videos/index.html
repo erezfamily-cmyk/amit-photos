@@ -117,6 +117,11 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
 .empty-msg { color: var(--muted); font-size: .9rem; text-align: center;
   padding: 2rem; }
 .hidden { display: none; }
+.vid-lang-toggle { display: flex; gap: .35rem; margin-bottom: .5rem; }
+.vtog { background: var(--surface); border: 1px solid var(--border); color: var(--muted);
+  font-size: .75rem; font-weight: 700; padding: .25rem .65rem; border-radius: 6px;
+  cursor: pointer; transition: all .15s; }
+.vtog.active { border-color: var(--accent); color: var(--accent); background: rgba(200,169,110,.1); }
 </style>
 <script src="/assets/js/nav.js?v=9aff906" defer></script>
 </head>
@@ -231,10 +236,21 @@ function buildTutorials(videos) {
         '<div class="gear-cta">' + t('אדוראמה ←', 'Adorama →') + '</div>' +
         '</a>';
     }
+    var vidEn   = v.id    || null;
+    var vidHe   = v.id_he || null;
+    var activeId = (LANG === 'he' && vidHe) ? vidHe : (vidEn || vidHe);
+    var toggleHtml = '';
+    if (vidEn && vidHe) {
+      toggleHtml = '<div class="vid-lang-toggle">' +
+        '<button class="vtog' + (LANG === 'he' ? ' active' : '') + '" onclick="switchVidLang(this,\'' + vidHe + '\')">HE</button>' +
+        '<button class="vtog' + (LANG === 'en' ? ' active' : '') + '" onclick="switchVidLang(this,\'' + vidEn + '\')">EN</button>' +
+        '</div>';
+    }
+    var embedHtml = activeId ? ytEmbed(activeId) : '';
     var card = '<div class="tutorial-card">' +
       '<div class="card-title">' + title + '</div>' +
       (summary ? '<p class="card-summary">' + summary + '</p>' : '') +
-      ytEmbed(v.id) + link + gear +
+      toggleHtml + embedHtml + link + gear +
       '</div>';
     var banner = ((i + 1) % 3 === 0) ? peltierBanner() : '';
     return card + banner;
@@ -284,7 +300,7 @@ function applyStaticLang() {
 }
 
 function rebuildAll() {
-  var valid = ALL_VIDEOS.filter(function(v) { return v.id; });
+  var valid = ALL_VIDEOS.filter(function(v) { return v.id || v.id_he; });
   buildTutorials(valid.filter(function(v) { return v.type === 'tutorial'; }));
   buildGalleries(valid.filter(function(v) { return v.type === 'gallery'; }));
   buildReels(valid.filter(function(v) { return v.type === 'reel'; }));
@@ -307,6 +323,14 @@ document.querySelectorAll('.tab-btn').forEach(function(btn) {
     applyStaticLang();
   });
 });
+
+function switchVidLang(btn, videoId) {
+  var wrap = btn.closest('.tutorial-card');
+  var iframe = wrap.querySelector('iframe');
+  if (iframe) iframe.src = 'https://www.youtube.com/embed/' + videoId;
+  wrap.querySelectorAll('.vtog').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+}
 
 fetch('/data/videos.json')
   .then(function(r) { return r.json(); })
