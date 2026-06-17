@@ -19,7 +19,7 @@ Usage:
 import os, sys, json, re, random, requests, subprocess, tempfile, shutil, base64, html
 from pathlib import Path
 from collections import defaultdict
-from videos_utils import append_video
+from videos_utils import append_video, update_video_id_he
 
 SITE_URL  = "https://amitphotos.com"
 ROOT      = Path(__file__).parent.parent
@@ -106,20 +106,23 @@ def pick_guide(state, requested=None):
 
 # ── HTML parsing ──────────────────────────────────────────────────────────────
 
+def _load_guide_html(slug):
+    """Load guide HTML from disk or fallback to HTTP fetch."""
+    guide_path = ROOT / "camera" / slug / "index.html"
+    if guide_path.exists():
+        return guide_path.read_text(encoding="utf-8")
+    try:
+        r = requests.get(f"{SITE_URL}/camera/{slug}/", timeout=15)
+        r.raise_for_status()
+        return r.text
+    except Exception as e:
+        print(f"❌ לא נמצא מדריך: {slug} ({e})")
+        sys.exit(1)
+
+
 def extract_english_sections(slug):
     """Parse English content from guide HTML into narration sections."""
-    guide_path = ROOT / "camera" / slug / "index.html"
-    if not guide_path.exists():
-        # Try fetching from site
-        try:
-            r = requests.get(f"{SITE_URL}/camera/{slug}/", timeout=15)
-            r.raise_for_status()
-            content = r.text
-        except Exception as e:
-            print(f"❌ לא נמצא מדריך: {slug} ({e})")
-            sys.exit(1)
-    else:
-        content = guide_path.read_text(encoding="utf-8")
+    content = _load_guide_html(slug)
 
     # Extract data-en values (longer than 30 chars = real content)
     raw = re.findall(r'data-en="([^"]{30,})"', content)
@@ -144,17 +147,7 @@ def extract_english_sections(slug):
 
 def extract_hebrew_sections(slug):
     """Parse Hebrew content from guide HTML into narration sections."""
-    guide_path = ROOT / "camera" / slug / "index.html"
-    if not guide_path.exists():
-        try:
-            r = requests.get(f"{SITE_URL}/camera/{slug}/", timeout=15)
-            r.raise_for_status()
-            content = r.text
-        except Exception as e:
-            print(f"❌ לא נמצא מדריך: {slug} ({e})")
-            sys.exit(1)
-    else:
-        content = guide_path.read_text(encoding="utf-8")
+    content = _load_guide_html(slug)
 
     raw = re.findall(r'data-he="([^"]{30,})"', content)
 
@@ -718,7 +711,6 @@ def main():
                 state.setdefault("posted_guides", []).append(slug)
                 save_state(state)
                 if isinstance(result, str):
-                    from videos_utils import update_video_id_he
                     if lang == "he":
                         update_video_id_he(slug, result)
                     else:
