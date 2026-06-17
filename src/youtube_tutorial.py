@@ -235,7 +235,7 @@ def build_hebrew_narration_script(slug, sections, guide_title_he):
 
 # ── ElevenLabs TTS ────────────────────────────────────────────────────────────
 
-def generate_narration(script, tmp_dir):
+def generate_narration(script, tmp_dir, lang="en"):
     """Send script to ElevenLabs → MP3 file."""
     if not ELEVENLABS_KEY:
         print("⚠️  ELEVENLABS_API_KEY חסר — ממשיך בלי narration")
@@ -248,8 +248,10 @@ def generate_narration(script, tmp_dir):
     audio_parts = []
 
     for i, chunk in enumerate(chunks):
+        voice = ELEVENLABS_VOICE_HE if lang == "he" else ELEVENLABS_VOICE
+        model = ELEVENLABS_MODEL_HE  if lang == "he" else "eleven_turbo_v2_5"
         r = requests.post(
-            f"{ELEVENLABS_URL}/{ELEVENLABS_VOICE}",
+            f"{ELEVENLABS_URL}/{voice}",
             headers={
                 "xi-api-key":   ELEVENLABS_KEY,
                 "Content-Type": "application/json",
@@ -257,7 +259,7 @@ def generate_narration(script, tmp_dir):
             },
             json={
                 "text": chunk,
-                "model_id": "eleven_turbo_v2_5",
+                "model_id": model,
                 "voice_settings": {
                     "stability":        0.55,
                     "similarity_boost": 0.80,
@@ -484,7 +486,7 @@ def add_narration_and_music(video_path, narration_path, tmp_dir):
 
 # ── YouTube upload ─────────────────────────────────────────────────────────────
 
-def upload_to_youtube(video_path, slug, n_photos):
+def upload_to_youtube(video_path, slug, n_photos, lang="en"):
     token_b64 = os.environ.get("YOUTUBE_TOKEN_JSON", "")
     if not token_b64:
         print("⚠️  YOUTUBE_TOKEN_JSON חסר — וידאו נשמר מקומית")
@@ -505,24 +507,43 @@ def upload_to_youtube(video_path, slug, n_photos):
         creds.refresh(Request())
 
     youtube = build("youtube", "v3", credentials=creds, cache_discovery=False)
-    title   = slug.replace("-", " ").title()
+
+    guide_title_he = extract_guide_title_he(slug)
+    title_en_raw   = slug.replace("-", " ").title()
+
+    if lang == "he":
+        yt_title = f"{guide_title_he} — מדריך צילום | עמית ארז"
+        yt_desc  = (
+            f"למד על {guide_title_he} עם דוגמאות אמיתיות מצילום.\n\n"
+            f"עמית ארז — צלם אמנות ישראלי — מדריך אותך עם {n_photos} תמונות אמיתיות.\n\n"
+            f"📷 מדריך מלא:\nhttps://amitphotos.com/camera/{slug}/\n\n"
+            f"🌐 גלריה מלאה:\nhttps://amitphotos.com\n\n"
+            f"#צילום #{guide_title_he.replace(' ','')} #מדריך_צילום #עמיתארז"
+        )
+        yt_tags  = ["צילום", "מדריך", guide_title_he, "עמית ארז", "amitphotos",
+                    "מצלמה", "טיפים לצילום", "צילום ישראלי"]
+        yt_lang  = "iw"
+    else:
+        yt_title = f"{title_en_raw} — Photography Tutorial | Amit Erez"
+        yt_desc  = (
+            f"Learn {title_en_raw} through real photography examples.\n\n"
+            f"In this tutorial, Amit Erez — a fine art photographer based in Israel — "
+            f"walks you through practical techniques with {n_photos} real photos.\n\n"
+            f"📷 Full photography guide:\nhttps://amitphotos.com/camera/{slug}/\n\n"
+            f"🌐 Full gallery:\nhttps://amitphotos.com\n\n"
+            f"#photography #{title_en_raw.replace(' ','')} #photographytutorial #AmitErez"
+        )
+        yt_tags  = ["photography", "tutorial", title_en_raw, "Amit Erez", "amitphotos",
+                    "camera", "photography tips", "Israel photography"]
+        yt_lang  = "en"
 
     body = {
         "snippet": {
-            "title":       f"{title} — Photography Tutorial | Amit Erez",
-            "description": (
-                f"Learn {title} through real photography examples.\n\n"
-                f"In this tutorial, Amit Erez — a fine art photographer based in Israel — "
-                f"walks you through practical techniques with {n_photos} real photos.\n\n"
-                f"📷 Full photography guide:\n"
-                f"https://amitphotos.com/camera/{slug}/\n\n"
-                f"🌐 Full gallery:\n"
-                f"https://amitphotos.com\n\n"
-                f"#photography #{title.replace(' ','')} #photographytutorial #AmitErez"
-            ),
-            "tags": ["photography", "tutorial", title, "Amit Erez", "amitphotos",
-                     "camera", "photography tips", "Israel photography"],
-            "categoryId": "27",  # Education
+            "title":                yt_title,
+            "description":          yt_desc,
+            "tags":                 yt_tags,
+            "categoryId":           "27",
+            "defaultAudioLanguage": yt_lang,
         },
         "status": {"privacyStatus": "public"},
     }
@@ -544,19 +565,28 @@ def upload_to_youtube(video_path, slug, n_photos):
 
 # ── Main ──────────────────────────────────────────────────────────────────────
 
-def process_guide(slug, photos, tmp_dir):
+def process_guide(slug, photos, tmp_dir, lang="en"):
     print(f"\n🎬 מדריך: {slug}")
 
     # 1. Extract & build script
-    sections = extract_english_sections(slug)
-    if not sections:
-        print(f"⚠️  לא נמצא תוכן אנגלית ב-{slug}")
-        return None
-    script = build_narration_script(slug, sections)
-    print(f"📝 Script: {len(script)} תווים, {len(sections)} sections")
+    if lang == "he":
+        title_he  = extract_guide_title_he(slug)
+        sections  = extract_hebrew_sections(slug)
+        if not sections:
+            print(f"⚠️  לא נמצא תוכן עברי ב-{slug}")
+            return None
+        script = build_hebrew_narration_script(slug, sections, title_he)
+        print(f"📝 Script HE: {len(script)} תווים, {len(sections)} sections")
+    else:
+        sections = extract_english_sections(slug)
+        if not sections:
+            print(f"⚠️  לא נמצא תוכן אנגלית ב-{slug}")
+            return None
+        script = build_narration_script(slug, sections)
+        print(f"📝 Script EN: {len(script)} תווים, {len(sections)} sections")
 
     # 2. TTS narration
-    narration = generate_narration(script, tmp_dir)
+    narration = generate_narration(script, tmp_dir, lang=lang)
 
     # 3. Calculate video length from narration (or default)
     if narration and narration.exists():
@@ -611,7 +641,7 @@ def process_guide(slug, photos, tmp_dir):
     print(f"📹 {dur:.0f} שניות | {sz:.0f} MB")
 
     # 7. Upload
-    vid_id = upload_to_youtube(Path(final), slug, len(photo_paths))
+    vid_id = upload_to_youtube(Path(final), slug, len(photo_paths), lang=lang)
 
     if not vid_id:
         dest = ROOT / f"tutorial_{slug}.mp4"
@@ -651,6 +681,14 @@ def main():
             replace_id = args[idx + 1]
             args = [a for a in args if a not in ("--replace", replace_id)]
 
+    # --lang he/en
+    lang = "en"
+    if "--lang" in args:
+        idx = args.index("--lang")
+        if idx + 1 < len(args):
+            lang = args[idx + 1]
+            args = [a for a in args if a not in ("--lang", lang)]
+
     if not ELEVENLABS_KEY:
         print("⚠️  ELEVENLABS_API_KEY לא מוגדר")
 
@@ -675,25 +713,29 @@ def main():
                 _delete_youtube_video(replace_id)
                 replace_id = None
 
-            result = process_guide(slug, photos, Path(tmp))
+            result = process_guide(slug, photos, Path(tmp), lang=lang)
             if result:
                 state.setdefault("posted_guides", []).append(slug)
                 save_state(state)
-                # Append to central videos.json
-                if isinstance(result, str):  # result is video_id string on success
-                    sections = extract_english_sections(slug)
-                    script   = build_narration_script(slug, sections) if sections else ""
-                    title_en = slug.replace("-", " ").title()
-                    append_video({
-                        "id":         result,
-                        "platform":   "youtube",
-                        "type":       "tutorial",
-                        "slug":       slug,
-                        "title_he":   extract_guide_title_he(slug),
-                        "title_en":   f"{title_en} — Photography Tutorial",
-                        "summary_he": "",
-                        "summary_en": extract_summary_en(script),
-                    })
+                if isinstance(result, str):
+                    from videos_utils import update_video_id_he
+                    if lang == "he":
+                        update_video_id_he(slug, result)
+                    else:
+                        sections = extract_english_sections(slug)
+                        script   = build_narration_script(slug, sections) if sections else ""
+                        title_en = slug.replace("-", " ").title()
+                        append_video({
+                            "id":         result,
+                            "id_he":      None,
+                            "platform":   "youtube",
+                            "type":       "tutorial",
+                            "slug":       slug,
+                            "title_he":   extract_guide_title_he(slug),
+                            "title_en":   f"{title_en} — Photography Tutorial",
+                            "summary_he": "",
+                            "summary_en": extract_summary_en(script),
+                        })
 
 
 if __name__ == "__main__":
