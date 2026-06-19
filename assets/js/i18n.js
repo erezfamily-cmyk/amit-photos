@@ -58,6 +58,7 @@ const TRANSLATIONS = {
     'hero.cta':         'עיין בגלריה',
     'hero.cta-ghost':   'כיצד לרכוש?',
     'hero.cta-pdf':     '50 טיפים חינם',
+    'hero.cta-sale':    'מבצע השבוע',
 
     // Gallery section
     'gallery.label':    'לחץ על כל תמונה לרכישה',
@@ -418,6 +419,7 @@ const TRANSLATIONS = {
     'hero.cta':         'Browse Gallery',
     'hero.cta-ghost':   'How to Buy?',
     'hero.cta-pdf':     '50 Free Tips',
+    'hero.cta-sale':    'Weekly Sale',
 
     // Gallery section
     'gallery.label':    'Click any photo to purchase',
