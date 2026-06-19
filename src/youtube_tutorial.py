@@ -342,6 +342,8 @@ def get_dims(path):
     return s["width"], s["height"]
 
 def fit_dims(w, h, max_w=1860, max_h=1020):
+    if not w or not h:
+        return max_w, max_h
     ratio = min(max_w / w, max_h / h)
     return max(int(w * ratio) & ~1, 2), max(int(h * ratio) & ~1, 2)
 
