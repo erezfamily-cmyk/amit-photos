@@ -534,9 +534,9 @@ nav.scrolled { border-bottom-color: rgba(200, 169, 110, 0.3); }
 .filter-btn-best { border-color: rgba(200, 169, 110, 0.35); }
 
 .filter-btn {
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.18);
-  color: #bbb;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.28);
+  color: #ccc;
   padding: 0.45rem 1.1rem;
   border-radius: 2px;
   font-family: var(--font);
