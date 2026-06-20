@@ -11,11 +11,7 @@ on:
         required: false
         default: ''
       replace_id:
-        description: 'YouTube Video ID למחיקה לפני העלאה — אנגלית (למשל: j2VtQzl2_k4)'
-        required: false
-        default: ''
-      replace_id_he:
-        description: 'YouTube Video ID למחיקה לפני העלאה — עברית (למשל: 89f2dVswBts)'
+        description: 'YouTube Video ID למחיקה לפני העלאה (למשל: j2VtQzl2_k4)'
         required: false
         default: ''
 
@@ -44,7 +40,7 @@ jobs:
       - name: התקנת חבילות
         run: pip install requests google-api-python-client google-auth google-auth-oauthlib
 
-      - name: יצירת סרטון הדרכה — אנגלית
+      - name: יצירת סרטון הדרכה ופרסום ל-YouTube
         env:
           ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
           YOUTUBE_TOKEN_JSON: ${{ secrets.YOUTUBE_TOKEN_JSON }}
@@ -55,20 +51,7 @@ jobs:
           ARGS=""
           [ -n "$GUIDE" ] && ARGS="$GUIDE"
           [ -n "$REPLACE" ] && ARGS="$ARGS --replace $REPLACE"
-          python src/youtube_tutorial.py $ARGS --lang en
-
-      - name: יצירת סרטון הדרכה — עברית
-        env:
-          ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
-          YOUTUBE_TOKEN_JSON: ${{ secrets.YOUTUBE_TOKEN_JSON }}
-          PYTHONUNBUFFERED: "1"
-        run: |
-          GUIDE="${{ github.event.inputs.guide }}"
-          REPLACE_HE="${{ github.event.inputs.replace_id_he }}"
-          ARGS=""
-          [ -n "$GUIDE" ] && ARGS="$GUIDE"
-          [ -n "$REPLACE_HE" ] && ARGS="$ARGS --replace $REPLACE_HE"
-          python src/youtube_tutorial.py $ARGS --lang he
+          python src/youtube_tutorial.py $ARGS
 
       - name: שיתוף סרטון ברשתות חברתיות
         env:

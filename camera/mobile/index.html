@@ -172,15 +172,6 @@ img.loaded { opacity: 1; }
 .kofi-bar{text-align:center;padding:1.25rem 1.25rem 1.75rem;max-width:760px;margin:0 auto}
 .kofi-bar a{display:inline-flex;align-items:center;gap:.5rem;background:var(--surface);border:1px solid rgba(200,169,110,.4);color:var(--accent);font-size:.82rem;font-weight:700;padding:.55rem 1.4rem;border-radius:8px;text-decoration:none;transition:background .2s,color .2s}
 .kofi-bar a:hover{background:var(--accent);color:#000}
-
-.video-section{max-width:760px;margin:0 auto 1.5rem;padding:0 1.25rem;display:none}
-.vid-sec-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem}
-.vid-sec-label{font-family:'Syne',sans-serif;color:var(--accent);font-size:.93rem;font-weight:700}
-.vtog-wrap{display:flex;gap:.35rem}
-.vtog{background:var(--surface);border:1px solid var(--border);color:var(--muted);font-size:.78rem;font-weight:700;padding:.3rem .7rem;border-radius:6px;cursor:pointer;transition:all .15s}
-.vtog.active{border-color:var(--accent);color:var(--accent);background:rgba(200,169,110,.1)}
-.yt-embed-wrap{position:relative;padding-bottom:56.25%;height:0;border-radius:12px;overflow:hidden;background:#000}
-.yt-embed-wrap iframe{position:absolute;top:0;right:0;width:100%;height:100%;border:0}
 </style>
 <script src="/assets/js/nav.js?v=9aff906" defer></script>
 <script src="/assets/js/share.js" defer></script>
@@ -891,42 +882,5 @@ renderShutter();
 updateIso();
 applyLang();
 window.addEventListener('storage', function(e) { if (e.key === 'lang') applyLang(); });
-</script>
-<script>
-(function(){
-  var SLUG    = 'mobile';
-  var sec     = document.getElementById('vid-sec');
-  var embed   = document.getElementById('vid-embed');
-  var togHe   = document.getElementById('vtog-he');
-  var togEn   = document.getElementById('vtog-en');
-  var ids     = { en: null, he: null };
-  var curLang = localStorage.getItem('lang') || 'he';
-
-  function setEmbed(lang) {
-    curLang = lang;
-    var id = ids[lang] || ids.en || ids.he;
-    if (!id) return;
-    embed.src = 'https://www.youtube.com/embed/' + id;
-    togHe.classList.toggle('active', lang === 'he');
-    togEn.classList.toggle('active', lang === 'en');
-  }
-
-  window.switchVidSec = function(lang) { setEmbed(lang); };
-
-  fetch('/data/videos.json')
-    .then(function(r){ return r.json(); })
-    .then(function(videos){
-      var v = videos.find(function(x){ return x.slug === SLUG && x.type === 'tutorial'; });
-      if (!v) return;
-      ids.en = v.id   || null;
-      ids.he = v.id_he || null;
-      if (!ids.en && !ids.he) return;
-      if (!ids.he) { togHe.style.display = 'none'; curLang = 'en'; }
-      if (!ids.en) { togEn.style.display = 'none'; curLang = 'he'; }
-      setEmbed(curLang);
-      sec.style.display = '';
-    });
-})();
-</script>
-</body>
+</script></body>
 </html>

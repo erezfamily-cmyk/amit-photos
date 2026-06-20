@@ -1,0 +1,1 @@
+This folder contains the built output assets for the worker "amit-photos" generated at 2026-06-13T15:18:41.043Z.

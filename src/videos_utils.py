@@ -15,29 +15,3 @@ def append_video(record: dict) -> None:
     videos.append(record)
     VIDEOS_FILE.write_text(json.dumps(videos, ensure_ascii=False, indent=2), encoding="utf-8")
     print(f"[OK] videos.json <- {record.get('type')} [{record.get('id')}]")
-
-
-def update_video_id_he(slug: str, video_id: str) -> None:
-    """Set id_he on the existing tutorial entry matching slug. Creates entry if missing."""
-    videos = json.loads(VIDEOS_FILE.read_text(encoding="utf-8")) if VIDEOS_FILE.exists() else []
-    for v in videos:
-        if v.get("slug") == slug and v.get("type") == "tutorial":
-            v["id_he"] = video_id
-            VIDEOS_FILE.write_text(json.dumps(videos, ensure_ascii=False, indent=2), encoding="utf-8")
-            print(f"[OK] videos.json <- id_he [{video_id}] for slug [{slug}]")
-            return
-    # No matching entry — create minimal record
-    videos.append({
-        "id": None,
-        "id_he": video_id,
-        "platform": "youtube",
-        "type": "tutorial",
-        "slug": slug,
-        "title_he": "",
-        "title_en": "",
-        "summary_he": "",
-        "summary_en": "",
-        "date": datetime.date.today().isoformat(),
-    })
-    VIDEOS_FILE.write_text(json.dumps(videos, ensure_ascii=False, indent=2), encoding="utf-8")
-    print(f"[OK] videos.json <- new tutorial id_he [{video_id}] for slug [{slug}]")
