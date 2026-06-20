@@ -11,7 +11,11 @@ on:
         required: false
         default: ''
       replace_id:
-        description: 'YouTube Video ID למחיקה לפני העלאה (למשל: j2VtQzl2_k4)'
+        description: 'YouTube Video ID למחיקה לפני העלאה — אנגלית (למשל: j2VtQzl2_k4)'
+        required: false
+        default: ''
+      replace_id_he:
+        description: 'YouTube Video ID למחיקה לפני העלאה — עברית (למשל: 89f2dVswBts)'
         required: false
         default: ''
 
@@ -60,8 +64,10 @@ jobs:
           PYTHONUNBUFFERED: "1"
         run: |
           GUIDE="${{ github.event.inputs.guide }}"
+          REPLACE_HE="${{ github.event.inputs.replace_id_he }}"
           ARGS=""
           [ -n "$GUIDE" ] && ARGS="$GUIDE"
+          [ -n "$REPLACE_HE" ] && ARGS="$ARGS --replace $REPLACE_HE"
           python src/youtube_tutorial.py $ARGS --lang he
 
       - name: שיתוף סרטון ברשתות חברתיות
