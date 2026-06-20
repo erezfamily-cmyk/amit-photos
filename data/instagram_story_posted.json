@@ -1,5 +1,5 @@
 {
-  "current_category_index": 23,
+  "current_category_index": 0,
   "used_ids_by_category": {
     "אבו דאבי": [
       "6c9e818c-bdd3-402f-b6f5-ee2e668507c9",
@@ -227,6 +227,15 @@
       "b0d84f44-f06c-446b-a22c-bdbad0a9c299",
       "090decdf-ce00-458a-a12a-760e2022440f",
       "08d8b841-1d5c-409c-be5e-4cae2cbe564e"
+    ],
+    "שחור-לבן": [
+      "0f338af3-ccd5-4c6c-8360-47976b610f89",
+      "84e6a470-fc0f-42fb-b5d7-bbf99ae11cc7",
+      "4f0999db-21f3-4cab-beab-1fe05b968374",
+      "06b02fd8-703e-4b5d-8238-b58ed5d58749",
+      "c83582f1-ae9d-4883-b819-0cef2d36d57a",
+      "d3164535-0f0c-4fc0-966f-1df955098831",
+      "512a218b-9d04-4dc5-8046-052c4a695b23"
     ]
   },
   "gear_tool_index": 1
