@@ -35,7 +35,7 @@ OUTRO_DUR      = 5.0
 
 ELEVENLABS_KEY  = os.environ.get("ELEVENLABS_API_KEY", "")
 ELEVENLABS_VOICE = "pNInz6obpgDQGcFmaJgB"   # Adam — calm, authoritative male
-ELEVENLABS_VOICE_HE = "cgSgspJ2msm6clMCkdW9"  # Liam — multilingual, good Hebrew
+ELEVENLABS_VOICE_HE = "pNInz6obpgDQGcFmaJgB"  # Adam — eleven_multilingual_v2 reads Hebrew text natively
 ELEVENLABS_MODEL_HE  = "eleven_multilingual_v2"
 ELEVENLABS_URL  = "https://api.elevenlabs.io/v1/text-to-speech"
 
