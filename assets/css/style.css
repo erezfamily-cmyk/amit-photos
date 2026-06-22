@@ -256,9 +256,10 @@ nav.scrolled { border-bottom-color: rgba(200, 169, 110, 0.3); }
   gap: 0.75rem;
   font-size: 0.75rem;
   letter-spacing: 0.35em;
-  color: var(--accent);
+  color: rgba(200,169,110,0.7);
   text-transform: uppercase;
   margin-bottom: 1.25rem;
+  text-shadow: 0 1px 6px rgba(0,0,0,0.8), 0 0 20px rgba(0,0,0,0.6);
 }
 
 .hero-eyebrow::before,
@@ -277,6 +278,7 @@ nav.scrolled { border-bottom-color: rgba(200, 169, 110, 0.3); }
   letter-spacing: -0.04em;
   line-height: 1.0;
   margin-bottom: 1.25rem;
+  text-shadow: 0 2px 12px rgba(0,0,0,0.7);
 }
 
 .hero-title em {
@@ -347,18 +349,7 @@ nav.scrolled { border-bottom-color: rgba(200, 169, 110, 0.3); }
 }
 
 .hero-scroll {
-  position: absolute;
-  bottom: 2.5rem;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-  color: var(--text-muted);
-  font-size: 0.7rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
+  display: none;
 }
 
 .hero-scroll-line {
