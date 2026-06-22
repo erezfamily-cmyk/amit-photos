@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<title>ניהול ניוזלטר — Amit Photos Admin</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0a0a;--bg-card:#111;--bg-input:#0d0d0d;
+  --accent:#c8a96e;--accent-hover:#e0c080;
+  --text:#f0ede8;--text-muted:#888;--border:#222;
+  --green:#4caf7d;--red:#e05555;
+}
+body{background:var(--bg);color:var(--text);font-family:'Heebo',system-ui,sans-serif;font-size:.95rem;min-height:100vh}
+a{color:var(--accent);text-decoration:none}
+
+/* NAV */
+.top-nav{
+  display:flex;align-items:center;justify-content:space-between;gap:1rem;
+  padding:.75rem 1.5rem;border-bottom:1px solid var(--border);
+  background:rgba(10,10,10,.97);position:sticky;top:0;z-index:10;
+}
+.nav-back{font-size:.82rem;color:var(--text-muted)}
+.nav-back:hover{color:var(--text)}
+.nav-title{font-size:.95rem;font-weight:600;color:var(--accent)}
+
+/* LAYOUT */
+.page{max-width:860px;margin:0 auto;padding:2rem 1.25rem 4rem}
+h1{font-size:1.5rem;margin-bottom:.25rem}
+.subtitle{color:var(--text-muted);font-size:.85rem;margin-bottom:2rem}
+
+/* STATS ROW */
+.stats-row{display:flex;gap:1rem;margin-bottom:2rem;flex-wrap:wrap}
+.stat-card{
+  background:var(--bg-card);border:1px solid var(--border);border-radius:8px;
+  padding:1rem 1.25rem;flex:1;min-width:120px;
+}
+.stat-card .val{font-size:1.8rem;font-weight:700;color:var(--accent)}
+.stat-card .lbl{font-size:.72rem;color:var(--text-muted);margin-top:.2rem}
+
+/* COMPOSE FORM */
+.card{background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:1.5rem;margin-bottom:1.5rem}
+.card h2{font-size:1rem;margin-bottom:1.25rem;color:var(--text)}
+label{display:block;font-size:.8rem;color:var(--text-muted);margin-bottom:.35rem}
+input[type=text],textarea{
+  width:100%;background:var(--bg-input);border:1px solid var(--border);
+  border-radius:6px;color:var(--text);font-size:.92rem;padding:.65rem .9rem;
+  font-family:inherit;direction:rtl;resize:vertical;
+}
+input[type=text]:focus,textarea:focus{outline:none;border-color:var(--accent)}
+textarea{min-height:200px}
+.field{margin-bottom:1.1rem}
+.hint{font-size:.72rem;color:#555;margin-top:.3rem}
+
+/* PREVIEW */
+.preview-box{
+  background:#fff;border-radius:6px;padding:1.5rem;color:#111;
+  font-family:Arial,sans-serif;font-size:14px;line-height:1.7;
+  margin-top:.75rem;direction:rtl;min-height:80px;
+  border:1px solid #ddd;
+}
+.preview-box h3{font-size:16px;margin-bottom:.5rem;color:#0a0a0a}
+.preview-box .preview-footer{font-size:11px;color:#999;margin-top:1rem;border-top:1px solid #eee;padding-top:.75rem}
+
+/* SEND BTN */
+.btn-send{
+  background:var(--accent);color:#111;border:none;border-radius:6px;
+  padding:.75rem 2rem;font-size:1rem;font-weight:700;cursor:pointer;
+  font-family:inherit;transition:background .2s;width:100%;
+}
+.btn-send:hover{background:var(--accent-hover)}
+.btn-send:disabled{opacity:.55;cursor:not-allowed}
+
+/* STATUS */
+#send-status{min-height:1.5rem;margin-top:.75rem;font-size:.9rem;text-align:center}
+#send-status.ok{color:var(--green)}
+#send-status.err{color:var(--red)}
+
+/* SUBSCRIBERS TABLE */
+table{width:100%;border-collapse:collapse;font-size:.82rem}
+th{text-align:right;padding:.5rem .75rem;border-bottom:1px solid var(--border);color:var(--text-muted);font-weight:500}
+td{padding:.5rem .75rem;border-bottom:1px solid #1a1a1a;vertical-align:middle}
+tr:hover td{background:#131313}
+.badge{
+  display:inline-block;font-size:.65rem;padding:.15rem .45rem;border-radius:20px;
+  background:rgba(200,169,110,.12);color:var(--accent);border:1px solid rgba(200,169,110,.2);
+}
+.del-btn{
+  background:none;border:none;color:#444;cursor:pointer;font-size:.85rem;padding:.2rem .4rem;
+  border-radius:3px;transition:color .15s;
+}
+.del-btn:hover{color:var(--red)}
+
+/* LOADING */
+.loading{color:var(--text-muted);font-size:.85rem;padding:1rem 0}
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<nav class="top-nav">
+  <a class="nav-back" href="/admin.html">← חזרה לאדמין</a>
+  <span class="nav-title">📰 ניהול ניוזלטר</span>
+  <span></span>
+</nav>
+
+<div class="page">
+  <h1>שליחת ניוזלטר</h1>
+  <p class="subtitle">כתוב ושלח ניוזלטר לכל המנויים — הודעה מיידית דרך Resend</p>
+
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="val" id="stat-total">—</div>
+      <div class="lbl">סה"כ מנויים</div>
+    </div>
+    <div class="stat-card">
+      <div class="val" id="stat-he">—</div>
+      <div class="lbl">עברית</div>
+    </div>
+    <div class="stat-card">
+      <div class="val" id="stat-en">—</div>
+      <div class="lbl">אנגלית</div>
+    </div>
+    <div class="stat-card">
+      <div class="val" id="stat-today">—</div>
+      <div class="lbl">הצטרפו השבוע</div>
+    </div>
+  </div>
+
+  <!-- COMPOSE -->
+  <div class="card">
+    <h2>✍️ כתיבת הניוזלטר</h2>
+    <div class="field">
+      <label>נושא המייל</label>
+      <input type="text" id="nl-subject" placeholder="לדוג׳: תמונות חדשות + טיפ לצילום שחור-לבן">
+    </div>
+    <div class="field">
+      <label>תוכן (HTML מותר)</label>
+      <textarea id="nl-body" placeholder="שלום {{name}},&#10;&#10;הוספתי 5 תמונות חדשות לגלריה...&#10;&#10;כפתור שימושי: <a href=&quot;https://amitphotos.com&quot;>לאתר ←</a>"></textarea>
+      <p class="hint">ניתן להשתמש ב-HTML. הכתובת <code>{{name}}</code> תוחלף בשם המנוי.</p>
+    </div>
+
+    <div class="field">
+      <label>תצוגה מקדימה</label>
+      <div class="preview-box" id="nl-preview">
+        <em style="color:#999">הקלד תוכן למעלה לתצוגה מקדימה...</em>
+      </div>
+    </div>
+
+    <button class="btn-send" id="btn-send" onclick="sendNewsletter()">
+      שלח לכל המנויים ←
+    </button>
+    <div id="send-status"></div>
+  </div>
+
+  <!-- SUBSCRIBERS LIST -->
+  <div class="card">
+    <h2>👥 רשימת מנויים</h2>
+    <div id="subs-wrap"><p class="loading">טוען...</p></div>
+  </div>
+</div>
+
+<script>
+const API = '/api';
+let token = localStorage.getItem('adminToken') || '';
+
+// ── AUTH ──
+async function checkAuth() {
+  if (!token) {
+    token = prompt('סיסמת אדמין:') || '';
+    localStorage.setItem('adminToken', token);
+  }
+  const r = await fetch(`${API}/admin/prices`, { headers: { Authorization: `Bearer ${token}` } });
+  if (r.status === 401) {
+    localStorage.removeItem('adminToken');
+    token = '';
+    alert('סיסמה שגויה');
+    location.href = '/admin.html';
+  }
+}
+
+// ── LOAD SUBSCRIBERS ──
+async function loadSubs() {
+  await checkAuth();
+  const r = await fetch(`${API}/subscribers`, { headers: { Authorization: `Bearer ${token}` } });
+  if (!r.ok) { document.getElementById('subs-wrap').innerHTML = '<p style="color:#e05555">שגיאה בטעינת מנויים</p>'; return; }
+  const subs = await r.json();
+
+  const now = new Date();
+  const weekAgo = new Date(now - 7 * 864e5);
+  const heCount = subs.filter(s => (s.lang || 'he') !== 'en').length;
+  const enCount = subs.filter(s => s.lang === 'en').length;
+  const newCount = subs.filter(s => new Date(s.created_at) > weekAgo).length;
+
+  document.getElementById('stat-total').textContent = subs.length;
+  document.getElementById('stat-he').textContent = heCount;
+  document.getElementById('stat-en').textContent = enCount;
+  document.getElementById('stat-today').textContent = newCount;
+
+  if (!subs.length) {
+    document.getElementById('subs-wrap').innerHTML = '<p class="loading">אין מנויים עדיין.</p>';
+    return;
+  }
+
+  const rows = subs.map(s => `
+    <tr>
+      <td>${s.email}</td>
+      <td>${s.name || '—'}</td>
+      <td><span class="badge">${s.lang || 'he'}</span></td>
+      <td><span class="badge" style="background:rgba(100,100,100,.15);color:#666;border-color:#333">${s.source || 'website'}</span></td>
+      <td>${new Date(s.created_at).toLocaleDateString('he-IL')}</td>
+      <td><button class="del-btn" onclick="deleteSub('${s.id}', this)" title="הסר מנוי">✕</button></td>
+    </tr>`).join('');
+
+  document.getElementById('subs-wrap').innerHTML = `
+    <table>
+      <thead><tr>
+        <th>מייל</th><th>שם</th><th>שפה</th><th>מקור</th><th>תאריך</th><th></th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+}
+
+// ── DELETE SUBSCRIBER ──
+async function deleteSub(id, btn) {
+  if (!confirm('להסיר מנוי זה?')) return;
+  btn.disabled = true;
+  const r = await fetch(`${API}/subscribers?id=${id}`, {
+    method: 'DELETE',
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  if (r.ok) btn.closest('tr').remove();
+  else { btn.disabled = false; alert('שגיאה בהסרה'); }
+}
+
+// ── LIVE PREVIEW ──
+document.getElementById('nl-body').addEventListener('input', updatePreview);
+function updatePreview() {
+  const body = document.getElementById('nl-body').value;
+  const preview = document.getElementById('nl-preview');
+  if (!body.trim()) {
+    preview.innerHTML = '<em style="color:#999">הקלד תוכן למעלה לתצוגה מקדימה...</em>';
+    return;
+  }
+  const subject = document.getElementById('nl-subject').value || '(ללא נושא)';
+  const filled = body.replace(/\{\{name\}\}/g, 'עמית');
+  preview.innerHTML = `
+    <h3>${subject}</h3>
+    <div>${filled}</div>
+    <div class="preview-footer">
+      <a href="#" style="color:#c8a96e;font-size:11px">הסר אותי מהרשימה</a>
+      · <a href="https://amitphotos.com" style="color:#c8a96e;font-size:11px">amitphotos.com</a>
+    </div>`;
+}
+
+// ── SEND ──
+async function sendNewsletter() {
+  const subject = document.getElementById('nl-subject').value.trim();
+  const body    = document.getElementById('nl-body').value.trim();
+  const status  = document.getElementById('send-status');
+  const btn     = document.getElementById('btn-send');
+
+  if (!subject) { alert('חסר נושא'); return; }
+  if (!body)    { alert('חסר תוכן'); return; }
+
+  const total = parseInt(document.getElementById('stat-total').textContent) || 0;
+  if (!confirm(`לשלח ל-${total} מנויים?\n\nנושא: ${subject}`)) return;
+
+  btn.disabled = true;
+  btn.textContent = 'שולח...';
+  status.className = '';
+  status.textContent = '';
+
+  try {
+    const r = await fetch(`${API}/newsletter`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ subject, body })
+    });
+    const data = await r.json();
+    if (r.ok) {
+      status.className = 'ok';
+      status.textContent = `✓ נשלח ל-${data.sent} מנויים בהצלחה`;
+      btn.textContent = 'נשלח ✓';
+    } else {
+      throw new Error(data.error || `HTTP ${r.status}`);
+    }
+  } catch (err) {
+    status.className = 'err';
+    status.textContent = `שגיאה: ${err.message}`;
+    btn.disabled = false;
+    btn.textContent = 'שלח לכל המנויים ←';
+  }
+}
+
+loadSubs();
+</script>
+</body>
+</html>
