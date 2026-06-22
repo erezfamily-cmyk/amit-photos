@@ -288,12 +288,13 @@ nav.scrolled { border-bottom-color: rgba(200, 169, 110, 0.3); }
 }
 
 .hero-subtitle {
-  font-size: 1rem;
+  font-size: .88rem;
   color: var(--text-muted);
-  max-width: 420px;
+  max-width: 600px;
   margin: 0 auto 2rem;
   line-height: 1.7;
   letter-spacing: 0.02em;
+  white-space: nowrap;
 }
 
 .hero-actions {
