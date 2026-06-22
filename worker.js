@@ -2264,22 +2264,30 @@ async function servePhotoPage(photoId, env) {
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>${title} | עמית ארז צילום</title>
+  <title>${title} | Amit Erez Photography</title>
   <meta name="description" content="${desc}" />
-  <meta property="og:site_name" content="עמית ארז צילום" />
-  <meta property="og:title" content="${title} | עמית ארז" />
-  <meta property="og:description" content="${desc}" />
-  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Amit Erez Photography" />
+  <meta property="og:title" content="${title} | Amit Erez Photography" />
+  <meta property="og:description" content="Fine art digital photography print — instant download after purchase. Nature, macro & Israel landscapes by Amit Erez." />
+  <meta property="og:type" content="og:product" />
   <meta property="og:url" content="${pageUrl}" />
   <meta property="og:image" content="${imageUrl}" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
   <meta property="og:image:alt" content="${title}" />
-  <meta property="og:locale" content="he_IL" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="product:price:amount" content="5.00" />
+  <meta property="product:price:currency" content="USD" />
+  <meta property="product:availability" content="in stock" />
+  <meta property="product:retailer_item_id" content="${photoId}" />
+  <meta property="product:brand" content="Amit Erez Photography" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:site" content="@amite" />
-  <meta name="twitter:title" content="${title} | עמית ארז" />
+  <meta name="twitter:title" content="${title} | Amit Erez Photography" />
   <meta name="twitter:description" content="${desc}" />
   <meta name="twitter:image" content="${imageUrl}" />
   <meta name="twitter:image:alt" content="${title}" />
+  <meta name="pinterest-rich-pin" content="true" />
   <link rel="canonical" href="${pageUrl}" />
   <script type="application/ld+json">${schema}</script>
   ${GA_SNIPPET}
