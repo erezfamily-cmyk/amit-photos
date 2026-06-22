@@ -1306,6 +1306,15 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
           </button>
         </div>
         <div id="pinterest-sync-status" style="margin-top:.75rem;font-size:.85rem"></div>
+        <hr style="border-color:var(--border);margin:1rem 0">
+        <div style="font-size:.82rem;font-weight:700;color:var(--text-muted);margin-bottom:.4rem">🔤 שינוי שם לוחות מעברית לאנגלית</div>
+        <div style="display:flex;gap:.6rem;align-items:center;flex-wrap:wrap">
+          <button onclick="pinterestRenameBoards()" id="pinterest-rename-btn"
+            style="background:#555;color:#fff;border:none;border-radius:7px;padding:.55rem 1rem;font-size:.85rem;font-weight:700;cursor:pointer;font-family:inherit">
+            שנה שם לוחות → English
+          </button>
+        </div>
+        <div id="pinterest-rename-status" style="margin-top:.5rem;font-size:.82rem"></div>
       </div>
     </section>
 
@@ -2136,6 +2145,29 @@ async function loadPinterestStatus() {
     window._pinterestBoards = data.boards || [];
     const syncSection = $('pinterest-sync-section');
     if (syncSection) syncSection.hidden = false;
+  }
+}
+
+async function pinterestRenameBoards() {
+  const btn = $('pinterest-rename-btn');
+  const status = $('pinterest-rename-status');
+  if (btn) { btn.disabled = true; btn.textContent = 'משנה שמות...'; }
+  if (status) { status.textContent = ''; status.style.color = ''; }
+  try {
+    const r = await apiFetch('/api/pinterest/rename-boards', { method: 'POST' });
+    const d = await r.json();
+    if (r.ok) {
+      const msg = d.renamed.length
+        ? `✓ שונו ${d.renamed.length} לוחות: ${d.renamed.map(x => `${x.from} → ${x.to}`).join(', ')}`
+        : '✓ אין לוחות לשינוי שם';
+      if (status) { status.textContent = msg; status.style.color = 'var(--green)'; }
+    } else {
+      if (status) { status.textContent = `שגיאה: ${d.error}`; status.style.color = 'var(--red)'; }
+    }
+  } catch (e) {
+    if (status) { status.textContent = `שגיאת רשת: ${e.message}`; status.style.color = 'var(--red)'; }
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = 'שנה שם לוחות → English'; }
   }
 }
 

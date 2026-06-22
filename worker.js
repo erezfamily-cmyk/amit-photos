@@ -1170,6 +1170,13 @@ const HE_TO_EN_CATEGORY = {
   'ספרד ואנדורה': 'Spain & Andorra Photography',
   'צכיה': 'Czech Republic Photography',
   'אבו דאבי': 'Abu Dhabi Photography',
+  'בולגריה': 'Bulgaria Photography',
+  'שחור-לבן': 'Black & White Photography',
+  'הונגריה': 'Hungary Photography',
+  'רומניה': 'Romania Photography',
+  'ספרד ואנדורה': 'Spain & Andorra Photography',
+  'אומנות רחוב': 'Street Art Photography',
+  'צילום ספורט': 'Sports Photography',
 };
 
 async function translateTitleEn(title, description, category, env) {
@@ -4819,6 +4826,33 @@ async function autoPostPhotoToPinterest(photoId, photo, env) {
   } catch { /* silent */ }
 }
 
+async function handlePinterestRenameBoards(request, env) {
+  if (!await checkAuth(request, env)) return jsonRes({ error: 'unauth' }, 401, request);
+  const token = await getPinterestToken(env);
+  if (!token) return jsonRes({ error: 'Pinterest לא מחובר' }, 400, request);
+
+  const boardsRes = await fetch('https://api.pinterest.com/v5/boards?page_size=100', {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  if (!boardsRes.ok) return jsonRes({ error: 'שגיאה בטעינת לוחות' }, 500, request);
+  const { items: boards } = await boardsRes.json();
+
+  const renamed = [], skipped = [];
+  for (const board of boards) {
+    const englishName = HE_TO_EN_CATEGORY[board.name];
+    if (!englishName) { skipped.push(board.name); continue; }
+    if (board.name === englishName) { skipped.push(board.name); continue; }
+    const patch = await fetch(`https://api.pinterest.com/v5/boards/${board.id}`, {
+      method: 'PATCH',
+      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: englishName })
+    });
+    if (patch.ok) renamed.push({ from: board.name, to: englishName });
+    else skipped.push(`${board.name} (error ${patch.status})`);
+  }
+  return jsonRes({ renamed, skipped, total: boards.length }, 200, request);
+}
+
 async function handlePinterestSyncByCategory(request, env) {
   if (!await checkAuth(request, env)) return jsonRes({ error: 'unauth' }, 401, request);
   const token = await getPinterestToken(env);
@@ -6709,6 +6743,7 @@ export default {
     if (path === '/api/pinterest/post' && request.method === 'POST') return handlePinterestPost(request, env);
     if (path === '/api/pinterest/sync-all' && request.method === 'POST') return handlePinterestSyncAll(request, env);
     if (path === '/api/pinterest/sync-by-category' && request.method === 'POST') return handlePinterestSyncByCategory(request, env);
+    if (path === '/api/pinterest/rename-boards' && request.method === 'POST') return handlePinterestRenameBoards(request, env);
     if (path === '/api/pinterest/update-links' && request.method === 'POST') return handlePinterestUpdateLinks(request, env);
     if (path === '/api/pinterest/sync-en' && request.method === 'POST') return handlePinterestSyncEn(request, env);
     if (path === '/api/admin/photo-analytics') return handleAdminPhotoAnalytics(request, env);
