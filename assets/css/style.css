@@ -222,8 +222,8 @@ nav.scrolled { border-bottom-color: rgba(200, 169, 110, 0.3); }
   position: absolute;
   inset: 0;
   background:
-    url('https://drive.google.com/thumbnail?id=1GjwX2sGR2KDTdK8nFPRoJnpTlVAH9-JK&sz=w2400')
-    center top / cover no-repeat;
+    url('https://amitphotos.com/photos/f4c456db-3cfd-4d3e-978f-56cfbb82b46b.jpg')
+    center center / cover no-repeat;
 }
 
 .hero-bg::after {
