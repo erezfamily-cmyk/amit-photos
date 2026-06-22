@@ -1,5 +1,5 @@
 {
-  "current_category_index": 1,
+  "current_category_index": 2,
   "used_ids_by_category": {
     "אבו דאבי": [
       "6c9e818c-bdd3-402f-b6f5-ee2e668507c9",
@@ -244,6 +244,16 @@
       "c83582f1-ae9d-4883-b819-0cef2d36d57a",
       "d3164535-0f0c-4fc0-966f-1df955098831",
       "512a218b-9d04-4dc5-8046-052c4a695b23"
+    ],
+    "אומנות רחוב": [
+      "49f8c03e-72d7-4ff9-ac7f-f76b74903ce5",
+      "ecf86299-8ca3-482b-83a2-acb6e69a572c",
+      "d4ba890b-1c07-41cc-9329-9fb878806101",
+      "87ce48d3-e01d-4606-80b2-ede3a3a0c161",
+      "79290480-71ea-44c1-a590-ba93267262b5",
+      "b7c0bb4e-a962-449a-95af-9652ccbf07bf",
+      "67e2759f-8a5c-407f-b4d0-15fd524f4d3d",
+      "3e20ab0a-6a30-4f38-860a-a0887af09088"
     ]
   },
   "gear_tool_index": 0
