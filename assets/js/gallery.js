@@ -15,6 +15,13 @@ fetch('/api/new-badge-settings').then(r => r.ok ? r.json() : null).then(d => { i
 let globalPrices = { small: 19, medium: 59, large: 129 };
 fetch('/api/admin/prices').then(r => r.ok ? r.json() : null).then(d => { if (d) globalPrices = d; }).catch(() => {});
 
+const ILS_TO_USD = 3.7;
+function formatPrice(ils) {
+  const isEn = (localStorage.getItem('lang') || 'he') === 'en';
+  if (!isEn) return `₪${ils}`;
+  return `$${Math.round(ils / ILS_TO_USD)}`;
+}
+
 function isOnSale(photo) {
   if (photo.on_sale) return true;
   if (!photo.price_overrides) return false;
@@ -392,7 +399,7 @@ function renderGallery(append = false) {
         <div class="gallery-item-info">
           <h3>${photo.title}</h3>
           <span>${getCategoryLabel(photo.category)}</span>
-          ${canBuy(photo) ? `<span class="gallery-item-price">${t('gallery.price.from')}₪${getEffectivePrice(photo.id, 'small')}</span>` : ''}
+          ${canBuy(photo) ? `<span class="gallery-item-price">${t('gallery.price.from')}${formatPrice(getEffectivePrice(photo.id, 'small'))}</span>` : ''}
         </div>
         <div class="gallery-item-actions">
           ${canBuy(photo) ? `<button class="gallery-cart-btn" data-idx="${idx}" aria-label="${t('gallery.btn.cart')}">${t('gallery.btn.cart')}</button>` : ''}
@@ -1020,7 +1027,7 @@ function openLightbox(idx) {
   const priceHint = document.getElementById('lb-price-hint');
   if (priceHint && canBuy(photo)) {
     const minPrice = getEffectivePrice(photo.id, 'small');
-    priceHint.textContent = `— ${t('gallery.price.from')}₪${minPrice}`;
+    priceHint.textContent = `— ${t('gallery.price.from')}${formatPrice(minPrice)}`;
   } else if (priceHint) {
     priceHint.textContent = '';
   }
@@ -1510,7 +1517,7 @@ function openBuyModal(photo) {
     // sale badge + strikethrough original price
     btn.querySelector('.buy-size-sale-badge')?.remove();
     if (price < globalPrices[size]) {
-      if (priceEl) priceEl.innerHTML = `<s class="buy-size-original-price">₪${globalPrices[size]}</s> <span class="buy-size-sale-price">₪${price}</span>`;
+      if (priceEl) priceEl.innerHTML = `<s class="buy-size-original-price">${formatPrice(globalPrices[size])}</s> <span class="buy-size-sale-price">${formatPrice(price)}</span>`;
       const badge = document.createElement('span');
       badge.className = 'buy-size-sale-badge';
       const isPuzzle = puzzleDiscountPhotoId && String(photo.id) === String(puzzleDiscountPhotoId);
@@ -1523,7 +1530,7 @@ function openBuyModal(photo) {
             : '🏷 מבצע';
       btn.appendChild(badge);
     } else {
-      if (priceEl) priceEl.textContent = `₪${price}`;
+      if (priceEl) priceEl.textContent = formatPrice(price);
     }
 
     const pxEl = btn.querySelector('.buy-size-px');
@@ -1582,7 +1589,7 @@ function showBuyStep2(photo, size) {
   // Price breakdown
   const originalPrice  = globalPrices[size];
   const effectivePrice = getEffectivePrice(photo.id, size);
-  document.getElementById('buy-original-price').textContent = `₪${originalPrice}`;
+  document.getElementById('buy-original-price').textContent = formatPrice(originalPrice);
   const discountRow = document.getElementById('buy-discount-row');
   if (effectivePrice < originalPrice) {
     document.getElementById('buy-discount-label').textContent = photo.is_week_photo
@@ -1592,12 +1599,12 @@ function showBuyStep2(photo, size) {
         : quizDiscountActive
           ? '🌍 הנחת קוויז'
           : '🏷 הנחה';
-    document.getElementById('buy-discount-amount').textContent = `−₪${originalPrice - effectivePrice}`;
+    document.getElementById('buy-discount-amount').textContent = `−${formatPrice(originalPrice - effectivePrice)}`;
     discountRow.classList.add('visible');
   } else {
     discountRow.classList.remove('visible');
   }
-  document.getElementById('buy-total-amount').textContent = `₪${effectivePrice}`;
+  document.getElementById('buy-total-amount').textContent = formatPrice(effectivePrice);
 
   transitionBuyStep('buy-step-1', 'buy-step-2', 'fwd');
 }
