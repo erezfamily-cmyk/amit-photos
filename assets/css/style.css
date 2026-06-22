@@ -349,7 +349,7 @@ nav.scrolled { border-bottom-color: rgba(200, 169, 110, 0.3); }
 }
 
 .hero-scroll {
-  display: none;
+  display: none !important;
 }
 
 .hero-scroll-line {
