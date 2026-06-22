@@ -29,6 +29,14 @@ const CATEGORY_MAP = {
   'סלובקיה': 'Slovakia',
   'סן דיאגו - ארה"ב': 'San Diego, USA',
   'צכיה': 'Czech Republic',
+  'בולגריה': 'Bulgaria',
+  'שחור-לבן': 'Black & White',
+  'איטליה': 'Italy',
+  'וינה': 'Vienna',
+  'טנזניה': 'Tanzania',
+  'הונגריה': 'Hungary',
+  'רומניה': 'Romania',
+  'ספרד ואנדורה': 'Spain & Andorra',
 };
 
 const TRANSLATIONS = {
