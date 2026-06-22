@@ -119,8 +119,8 @@
     <a href="#hero" class="nav-logo"><span data-i18n="nav.logo.name">עמית ארז</span><span class="nav-logo-tagline" data-i18n="nav.logo.tagline"> | עולם של צבעים מבעד לעדשה</span></a>
     <ul class="nav-links">
       <li><a href="#gallery" data-i18n="nav.gallery">גלריה</a></li>
-      <li><a href="#gallery" id="nav-new" onclick="event.preventDefault();document.getElementById('gallery').scrollIntoView({behavior:'smooth'});setTimeout(()=>{const btn=document.querySelector('.filter-btn-new');if(btn)btn.click();},400)" data-i18n="nav.new">חדש באתר</a></li>
-      <li><a href="#gallery" id="nav-sale" data-i18n="nav.sale" onclick="event.preventDefault();document.getElementById('gallery').scrollIntoView({behavior:'smooth'});setTimeout(()=>{const btn=document.querySelector('.filter-btn-sale');if(btn)btn.click();},400)">מבצע</a></li>
+      <li><a href="#gallery" id="nav-new" onclick="event.preventDefault();document.getElementById('filter-bar')?.scrollIntoView({behavior:'smooth'});setTimeout(()=>{const btn=document.querySelector('.filter-btn-new');if(btn)btn.click();},400)" data-i18n="nav.new">חדש באתר</a></li>
+      <li><a href="#gallery" id="nav-sale" data-i18n="nav.sale" onclick="event.preventDefault();document.getElementById('filter-bar')?.scrollIntoView({behavior:'smooth'});setTimeout(()=>{const btn=document.querySelector('.filter-btn-sale');if(btn)btn.click();},400)">מבצע</a></li>
       <li><a href="/games/" data-i18n="nav.challenges">אתגרים</a></li>
       <li><a href="/camera/" data-i18n="nav.camera">למד לצלם</a></li>
       <li><a href="/videos/" data-i18n="nav.videos">סרטונים</a></li>

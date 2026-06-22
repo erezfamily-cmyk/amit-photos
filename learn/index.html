@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="canonical" href="https://amitphotos.com/learn/" />
+<title data-he="בית הספר לצילום — Amit Photos" data-en="Photo School — Amit Photos">בית הספר לצילום — Amit Photos</title>
+<meta name="description" content="ניתוח תמונות וטיפים מקצועיים לצילום מאת עמית ארז.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #0a0a0a; --surface: #111; --border: #222;
+  --accent: #c8a96e; --text: #f0ede8; --muted: #888;
+}
+body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--text);
+  direction: rtl; min-height: 100vh; padding: 0 0 4rem; }
+
+.page-hero { text-align: center; padding: 2.5rem 1.25rem 1.5rem; }
+.page-hero .badge { display: inline-block; font-size: .72rem;
+  background: rgba(200,169,110,.12); border: 1px solid rgba(200,169,110,.3);
+  color: var(--accent); border-radius: 20px; padding: .3rem .8rem; margin-bottom: .75rem; }
+.page-hero h1 { font-family: 'Syne', sans-serif; font-size: 1.8rem;
+  color: var(--accent); margin-bottom: .5rem; }
+.page-hero p { color: var(--muted); font-size: .9rem; max-width: 480px; margin: 0 auto; }
+
+.coming-soon {
+  max-width: 600px; margin: 3rem auto; padding: 3rem 2rem;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 18px; text-align: center;
+}
+.coming-soon .icon { font-size: 3rem; margin-bottom: 1.25rem; }
+.coming-soon h2 { font-family: 'Syne', sans-serif; font-size: 1.4rem;
+  color: var(--accent); margin-bottom: .75rem; }
+.coming-soon p { color: var(--muted); font-size: .9rem; line-height: 1.7; }
+.coming-soon a {
+  display: inline-block; margin-top: 1.5rem; background: var(--accent);
+  color: #000; font-weight: 700; font-size: .85rem; padding: .6rem 1.4rem;
+  border-radius: 8px; text-decoration: none; transition: background .15s;
+}
+.coming-soon a:hover { background: #e0c080; }
+</style>
+</head>
+<body>
+
+<script src="/assets/js/nav.js"></script>
+
+<div class="page-hero">
+  <span class="badge" data-he="ניתוח תמונות" data-en="Photo School">ניתוח תמונות</span>
+  <h1 data-he="בית הספר לצילום" data-en="Photo School">בית הספר לצילום</h1>
+  <p data-he="ניתוח תמונות, טיפים ולמידה מעמיקה מאת עמית ארז"
+     data-en="Photo analysis, tips and in-depth learning by Amit Erez">ניתוח תמונות, טיפים ולמידה מעמיקה מאת עמית ארז</p>
+</div>
+
+<div class="coming-soon">
+  <div class="icon">📸</div>
+  <h2 data-he="בקרוב..." data-en="Coming Soon...">בקרוב...</h2>
+  <p data-he="תוכן מיוחד בדרך — ניתוח תמונות, פירוק טכניקות ולמידה מעמיקה."
+     data-en="Special content on the way — photo analysis, technique breakdowns and in-depth learning.">תוכן מיוחד בדרך — ניתוח תמונות, פירוק טכניקות ולמידה מעמיקה.</p>
+  <a href="/camera/" data-he="בינתיים — מדריכי צילום" data-en="In the meantime — Photography Guides">בינתיים — מדריכי צילום</a>
+</div>
+
+<script>
+(function () {
+  function setLang(lang) {
+    document.documentElement.lang = lang;
+    document.documentElement.dir = lang === 'en' ? 'ltr' : 'rtl';
+    document.body.style.direction = lang === 'en' ? 'ltr' : 'rtl';
+    localStorage.setItem('lang', lang);
+    document.querySelectorAll('[data-he]').forEach(function (el) {
+      el.textContent = lang === 'en' ? (el.dataset.en || el.dataset.he) : el.dataset.he;
+    });
+    if (typeof applyNavLang === 'function') applyNavLang(lang);
+  }
+  window.setLang = setLang;
+  var lang = localStorage.getItem('lang') || 'he';
+  setLang(lang);
+  window.addEventListener('storage', function (e) {
+    if (e.key === 'lang') setLang(e.newValue || 'he');
+  });
+})();
+</script>
+</body>
+</html>
