@@ -1,15 +1,16 @@
 {
   "posted_keys": [
-    "white-balance",
+    "depth-of-field",
     "types",
-    "visual-language",
-    "controls",
-    "editing",
     "lenses",
     "filters",
-    "depth-of-field",
-    "histogram",
+    "dynamic-range",
+    "controls",
     "sports",
-    "macro"
+    "histogram",
+    "editing",
+    "macro",
+    "visual-language",
+    "white-balance"
   ]
 }
