@@ -222,8 +222,8 @@ nav.scrolled { border-bottom-color: rgba(200, 169, 110, 0.3); }
   position: absolute;
   inset: -30% 0 0 0;
   background:
-    linear-gradient(to bottom, rgba(10,10,10,0.45) 0%, rgba(10,10,10,0.82) 100%),
-    url('https://lh3.googleusercontent.com/d/1mkj7yjz3I-Y951ZoHVSH_-6v8FjL66ap=w1400') center/cover no-repeat;
+    linear-gradient(to bottom, rgba(10,10,10,0.55) 0%, rgba(10,10,10,0.75) 100%),
+    #0a0a0a;
   will-change: transform;
 }
 
