@@ -2154,7 +2154,7 @@ async function pinterestRenameBoards() {
   if (btn) { btn.disabled = true; btn.textContent = 'משנה שמות...'; }
   if (status) { status.textContent = ''; status.style.color = ''; }
   try {
-    const r = await apiFetch('/api/pinterest/rename-boards', { method: 'POST' });
+    const r = await fetch('/api/pinterest/rename-boards', { method: 'POST', headers: authHeaders() });
     const d = await r.json();
     if (r.ok) {
       const msg = d.renamed.length
