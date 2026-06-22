@@ -458,6 +458,7 @@ nav.scrolled { border-bottom-color: rgba(200, 169, 110, 0.3); }
 /* wrapper שמעניק את ה-padding הנדרש לביטול negative margins של .filter-bar */
 .home-filter-wrap {
   padding: 0 2.5rem;
+  margin-top: 1.5rem;
   margin-bottom: 2rem;
 }
 
