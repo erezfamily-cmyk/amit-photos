@@ -1051,6 +1051,27 @@
     }
   },
   {
+    "id": "17yL6J7joWBkv0Fra10EzQjYrjT5oPqHC",
+    "title": "שועל בטבע הפרא",
+    "category": "בעלי חיים",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=17yL6J7joWBkv0Fra10EzQjYrjT5oPqHC",
+    "thumbnail": "https://drive.google.com/thumbnail?id=17yL6J7joWBkv0Fra10EzQjYrjT5oPqHC&sz=w600",
+    "description": "שועל אדום עומד בין סלעים וקוצים בביתביתו הטבעי",
+    "filename": "DSC_9191.jpg",
+    "width": 7289,
+    "height": 4859,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 200,
+      "aperture": 9,
+      "iso": 100,
+      "shutter": 0.003125
+    },
+    "added_at": "2026-06-22"
+  },
+  {
     "id": "18RCV1kI-fK-biLnd4dfwuyBnxGULbp1g",
     "title": "שלדג צוחק על הענף",
     "category": "בעלי חיים",
@@ -1069,6 +1090,48 @@
       "iso": 100,
       "shutter": 0.003125
     }
+  },
+  {
+    "id": "1hu86fCGVAxlwRi16wvKUjuQf99YEH7bR",
+    "title": "שועל בחורף",
+    "category": "בעלי חיים",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=1hu86fCGVAxlwRi16wvKUjuQf99YEH7bR",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1hu86fCGVAxlwRi16wvKUjuQf99YEH7bR&sz=w600",
+    "description": "שועל רדוד עם פרווה כתומה וקול צופה לצד שלג",
+    "filename": "DSC_9224.jpg",
+    "width": 8256,
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 180,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.0008
+    },
+    "added_at": "2026-06-22"
+  },
+  {
+    "id": "1CqRd-fEDQ8SX-tKZ8k_eleh__YDBBHBZ",
+    "title": "שועל בעין מحقק",
+    "category": "בעלי חיים",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=1CqRd-fEDQ8SX-tKZ8k_eleh__YDBBHBZ",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1CqRd-fEDQ8SX-tKZ8k_eleh__YDBBHBZ&sz=w600",
+    "description": "שועל אדום מתבונן בצד עם רקע ירוק טבעי",
+    "filename": "DSC_9239.jpg",
+    "width": 8256,
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 200,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.000625
+    },
+    "added_at": "2026-06-22"
   },
   {
     "id": "1r4loPT-Yt7_ETsCVOoGS5XFROs4t3MoZ",
@@ -2246,6 +2309,69 @@
     },
     "alt": "טקסטורות וצבעים מופשטים אמנות",
     "alt_en": "Abstract textures and colors fine art"
+  },
+  {
+    "id": "1Hn6N2_pgXaQHFJAYGxFzl3HW2Wnwp9KS",
+    "title": "הלוגו הידוע של מקדונלדס",
+    "category": "טבע דומם",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=1Hn6N2_pgXaQHFJAYGxFzl3HW2Wnwp9KS",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1Hn6N2_pgXaQHFJAYGxFzl3HW2Wnwp9KS&sz=w600",
+    "description": "שלט חיצוני של מסעדת מקדונלדס עם הלוגו הצהוב המיוני על רקע שמיים כחולים",
+    "filename": "DSC_9355.jpg",
+    "width": 7388,
+    "height": 4833,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 200,
+      "aperture": 3.5,
+      "iso": 100,
+      "shutter": 0.0005
+    },
+    "added_at": "2026-06-22"
+  },
+  {
+    "id": "1v9nKdO6hbgczOowKLgrqNcJeRw-uEbgW",
+    "title": "שלט ווינטג׳ Happy אדום",
+    "category": "טבע דומם",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=1v9nKdO6hbgczOowKLgrqNcJeRw-uEbgW",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1v9nKdO6hbgczOowKLgrqNcJeRw-uEbgW&sz=w600",
+    "description": "שלט נאון אדום וינטג׳ עם כיתוב Happy על רקע שמיים כחולים",
+    "filename": "DSC_9356.jpg",
+    "width": 8256,
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 150,
+      "aperture": 3.5,
+      "iso": 100,
+      "shutter": 0.001
+    },
+    "added_at": "2026-06-22"
+  },
+  {
+    "id": "1AVqKJMR2C8adbaQ8MPqHZjOXr0J0s0sW",
+    "title": "נעילות אהבה על חוט",
+    "category": "טבע דומם",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=1AVqKJMR2C8adbaQ8MPqHZjOXr0J0s0sW",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1AVqKJMR2C8adbaQ8MPqHZjOXr0J0s0sW&sz=w600",
+    "description": "שורת נעילות וצנצנות חלודות תלויות על חוט עם רקע ירוק טבעי",
+    "filename": "DSC_9406.jpg",
+    "width": 8256,
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 200,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.00125
+    },
+    "added_at": "2026-06-22"
   },
   {
     "id": "1PO8ftae1KQLyfWLF58mYeHcBmv4_9fz6",
@@ -9573,6 +9699,174 @@
       "shutter": 0.005
     },
     "added_at": "2026-06-21"
+  },
+  {
+    "id": "1kBSkXnilh-2im38SfYLWgqqexe7_QZVx",
+    "title": "בקתה בהרי בולגריה",
+    "category": "בולגריה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1kBSkXnilh-2im38SfYLWgqqexe7_QZVx",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1kBSkXnilh-2im38SfYLWgqqexe7_QZVx&sz=w600",
+    "description": "בקתה אדומה בודדת בעמק ההרים הירוק של בולגריה",
+    "filename": "DSC_9271.jpg",
+    "width": 7842,
+    "height": 5228,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 200,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.000625
+    },
+    "added_at": "2026-06-22"
+  },
+  {
+    "id": "1wiUMPRf1grjPs89iDVLNcNrn_UAdBybG",
+    "title": "פרחים בהרי בולגריה",
+    "category": "בולגריה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1wiUMPRf1grjPs89iDVLNcNrn_UAdBybG",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1wiUMPRf1grjPs89iDVLNcNrn_UAdBybG&sz=w600",
+    "description": "שדה פרחים לבנים עם הרים מושלגים ביער ירוק בעומק",
+    "filename": "DSC_9316.jpg",
+    "width": 8256,
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 70,
+      "aperture": 10,
+      "iso": 100,
+      "shutter": 0.01
+    },
+    "added_at": "2026-06-22"
+  },
+  {
+    "id": "1tlvrPmkb2NAD4u11I6n0nr_8XRgtNJk3",
+    "title": "הרים בולגריים בעונת הקיץ",
+    "category": "בולגריה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1tlvrPmkb2NAD4u11I6n0nr_8XRgtNJk3",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1tlvrPmkb2NAD4u11I6n0nr_8XRgtNJk3&sz=w600",
+    "description": "נוף הררי עם יערות צפופים והרים מושלגים ברקע בבולגריה",
+    "filename": "DSC_9320.jpg",
+    "width": 8256,
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 120,
+      "aperture": 10,
+      "iso": 100,
+      "shutter": 0.008
+    },
+    "added_at": "2026-06-22"
+  },
+  {
+    "id": "1dLhhi37X0OmS5_ii5C6w0Pc8myW01xfU",
+    "title": "DSC_9329",
+    "category": "בולגריה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1dLhhi37X0OmS5_ii5C6w0Pc8myW01xfU",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1dLhhi37X0OmS5_ii5C6w0Pc8myW01xfU&sz=w600",
+    "description": "",
+    "filename": "DSC_9329.jpg",
+    "width": 8256,
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 135,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.0008
+    },
+    "added_at": "2026-06-22"
+  },
+  {
+    "id": "1ykFrde2XsC6l2b6LPLxASI12E3jK6RUF",
+    "title": "מוכרת בלונים ברחוב",
+    "category": "בולגריה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1ykFrde2XsC6l2b6LPLxASI12E3jK6RUF",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1ykFrde2XsC6l2b6LPLxASI12E3jK6RUF&sz=w600",
+    "description": "אישה מוכרת בלונים צבעוניים בתוך עגלה ברחוב עירוני בבולגריה",
+    "filename": "DSC_9368.jpg",
+    "width": 8256,
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "24-70mm f/2.8G",
+      "focal": 70,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.003125
+    },
+    "added_at": "2026-06-22"
+  },
+  {
+    "id": "1Hx2FLSSFviTklum8DGZHVo0MC6BQQg-9",
+    "title": "מנזר בעמק בולגרי",
+    "category": "בולגריה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1Hx2FLSSFviTklum8DGZHVo0MC6BQQg-9",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1Hx2FLSSFviTklum8DGZHVo0MC6BQQg-9&sz=w600",
+    "description": "כנסייה אורתודוקסית עתיקה בנוף הררי ירוק בבולגריה",
+    "filename": "DSC_9396.jpg",
+    "width": 8256,
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 200,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.0008
+    },
+    "added_at": "2026-06-22"
+  },
+  {
+    "id": "1KUr6bkwYGCFGHAqEjw3soCHc1t9_0VuM",
+    "title": "טירת צ'לרפה בבולגריה",
+    "category": "בולגריה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1KUr6bkwYGCFGHAqEjw3soCHc1t9_0VuM",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1KUr6bkwYGCFGHAqEjw3soCHc1t9_0VuM&sz=w600",
+    "description": "טירה עתיקה עם מגדל כנסייה המשקיפה על יער ירוק",
+    "filename": "DSC_9418-2.jpg",
+    "width": 6192,
+    "height": 4128,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 150,
+      "aperture": 3.2,
+      "iso": 100,
+      "shutter": 0.0004
+    },
+    "added_at": "2026-06-22"
+  },
+  {
+    "id": "1HfA_tae4bZeMD64EvxRXOfW7LtUXVV2J",
+    "title": "טירה עתיקה בבולגריה",
+    "category": "בולגריה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1HfA_tae4bZeMD64EvxRXOfW7LtUXVV2J",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1HfA_tae4bZeMD64EvxRXOfW7LtUXVV2J&sz=w600",
+    "description": "חומות עתיקות של טירה המשתרעות על גבעה ירוקה בבולגריה",
+    "filename": "DSC_9420.jpg",
+    "width": 7596,
+    "height": 5166,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 70,
+      "aperture": 3.2,
+      "iso": 100,
+      "shutter": 0.000625
+    },
+    "added_at": "2026-06-22"
   },
   {
     "id": "1Xy3noVsP6WfDWiqUi8AB9hmLa2y8Iq13",
@@ -18973,6 +19267,27 @@
     }
   },
   {
+    "id": "113JrLqIc5QtdjXw0jVEWWRWrOKaR9v5B",
+    "title": "פרח בגוונים ורודים",
+    "category": "פרחים וצמחים",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=113JrLqIc5QtdjXw0jVEWWRWrOKaR9v5B",
+    "thumbnail": "https://drive.google.com/thumbnail?id=113JrLqIc5QtdjXw0jVEWWRWrOKaR9v5B&sz=w600",
+    "description": "צמח עדין עם פרחים ורודים בוהקים על רקע טבעי מטושטש",
+    "filename": "DSC_9268.jpg",
+    "width": 8256,
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 200,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.000625
+    },
+    "added_at": "2026-06-22"
+  },
+  {
     "id": "1BGts8c4KsNSS4nmBHLmTT7aKUMo0wEAP",
     "title": "עלי חמנייה זהובים",
     "category": "פרחים וצמחים",
@@ -18992,6 +19307,48 @@
       "shutter": 0.0005
     },
     "added_at": "2026-05-20"
+  },
+  {
+    "id": "1UBQIcbn7fBafCZ2BSwVjYJ-wDsJnvCdX",
+    "title": "עץ אורן עם קונוסים",
+    "category": "פרחים וצמחים",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=1UBQIcbn7fBafCZ2BSwVjYJ-wDsJnvCdX",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1UBQIcbn7fBafCZ2BSwVjYJ-wDsJnvCdX&sz=w600",
+    "description": "קונוסים חומים תלויים על ענפי עץ אורן ירוק בתקופת הפירות",
+    "filename": "DSC_9338.jpg",
+    "width": 8256,
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 200,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.0025
+    },
+    "added_at": "2026-06-22"
+  },
+  {
+    "id": "1roSbXP59nQVqzBMEWSYa9AbTJRARAq0h",
+    "title": "עדשות אורן בעונת הסתיו",
+    "category": "פרחים וצמחים",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=1roSbXP59nQVqzBMEWSYa9AbTJRARAq0h",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1roSbXP59nQVqzBMEWSYa9AbTJRARAq0h&sz=w600",
+    "description": "צילום קרוב של ענפי אורן עם מחטים ירוקים וצהובים בעונת המעבר",
+    "filename": "DSC_9343.jpg",
+    "width": 8256,
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 200,
+      "aperture": 3.5,
+      "iso": 640,
+      "shutter": 0.005
+    },
+    "added_at": "2026-06-22"
   },
   {
     "id": "1Oj4LIdYrQU-KR9aPCVLFsTnhBJnPdh8U",
@@ -21084,6 +21441,27 @@
       "shutter": 0.002
     },
     "added_at": "2026-05-29"
+  },
+  {
+    "id": "129hqjrxnGv9Lx1g10YnO68xS5LCO3JL8",
+    "title": "גשר בצללים",
+    "category": "שחור-לבן",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=129hqjrxnGv9Lx1g10YnO68xS5LCO3JL8",
+    "thumbnail": "https://drive.google.com/thumbnail?id=129hqjrxnGv9Lx1g10YnO68xS5LCO3JL8&sz=w600",
+    "description": "גשר עץ משוריין מגשר ביער, בצילום שחור לבן אומנותי",
+    "filename": "DSC_9412.jpg",
+    "width": 6083,
+    "height": 4007,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 105,
+      "aperture": 13,
+      "iso": 250,
+      "shutter": 0.008
+    },
+    "added_at": "2026-06-22"
   },
   {
     "id": "1PztSc2-SR-SeIaltzjojADYfs4f3eBxJ",
