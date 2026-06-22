@@ -52,6 +52,25 @@ img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .reveal-delay-2 { transition-delay: 0.2s; }
 .reveal-delay-3 { transition-delay: 0.3s; }
 
+/* ===== FREE GUIDE BANNER ===== */
+#guide-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .75rem;
+  background: #141410;
+  border-top: 1px solid #2a2a2a;
+  border-bottom: 1px solid #2a2a2a;
+  padding: .75rem 1.5rem;
+  text-decoration: none;
+  color: #f0ede8;
+  font-size: .88rem;
+  transition: background .2s;
+}
+#guide-banner:hover { background: #1a1812; }
+#guide-banner .guide-banner-icon { color: #c8a96e; font-size: 1rem; }
+#guide-banner strong { color: #c8a96e; }
+
 /* ===== BETA BANNER ===== */
 #beta-banner {
   background: #c8a96e;
@@ -2152,6 +2171,10 @@ html[lang="en"] .pricing-usd { display: block; }
   .buy-size-options { grid-template-columns: 1fr; }
   .buy-modal-inner { padding: 2rem 1.25rem; }
   .buy-size-guide { display: none; }
+  .buy-modal-close { padding: 0.75rem; top: 0.5rem; left: 0.5rem; }
+  .buy-size-row { padding: 0.9rem 1rem; }
+  .buy-paypal-btn { padding: 1rem; font-size: 1rem; }
+  .buy-back-btn { padding: 0.75rem 0; }
 }
 
 /* ===== PRINT MODAL ===== */

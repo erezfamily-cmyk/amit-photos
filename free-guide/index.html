@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title data-i18n="page.title">50 טיפים לצילום — מדריך חינמי | עמית ארז</title>
+<meta name="description" content="50 טיפים מעשיים לצלם המתחיל — PDF חינם מעמית ארז, צלם אמנותי ישראלי">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://amitphotos.com/free-guide/">
+
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XM6T3E8QWN"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-XM6T3E8QWN');
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Heebo:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="/assets/js/i18n.js?v=8c5dc4c4"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0a0a;--bg-card:#111;--accent:#c8a96e;--accent-hover:#e0c080;
+  --text:#f0ede8;--text-muted:#999;--border:#2a2a2a;
+}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:'Heebo',sans-serif;font-weight:300;
+  min-height:100vh;
+}
+a{color:var(--accent);text-decoration:none}
+a:hover{color:var(--accent-hover)}
+
+/* NAV */
+.top-nav{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:.9rem 1.5rem;border-bottom:1px solid var(--border);
+  position:sticky;top:0;background:rgba(10,10,10,.95);backdrop-filter:blur(8px);z-index:10;
+}
+.nav-logo{font-family:'Syne',sans-serif;font-size:.95rem;letter-spacing:.08em;color:var(--accent)}
+.nav-back{font-size:.8rem;color:var(--text-muted)}
+.nav-back:hover{color:var(--text)}
+.lang-toggle{display:flex;gap:.3rem}
+.lang-btn{
+  background:none;border:1px solid var(--border);color:var(--text-muted);
+  font-size:.7rem;letter-spacing:.1em;padding:.2rem .5rem;border-radius:3px;cursor:pointer;
+}
+.lang-btn.active,.lang-btn:hover{border-color:var(--accent);color:var(--accent)}
+
+/* HERO */
+.hero{
+  text-align:center;padding:4rem 1.5rem 3rem;
+  background:linear-gradient(160deg,#0f0d08 0%,#0a0a0a 60%);
+  border-bottom:1px solid var(--border);
+}
+.eyebrow{font-size:.7rem;letter-spacing:.2em;color:var(--accent);margin-bottom:.6rem;text-transform:uppercase}
+.hero h1{font-family:'Syne',sans-serif;font-size:clamp(1.8rem,5vw,3rem);font-weight:800;margin-bottom:.8rem;line-height:1.15}
+.hero h1 em{font-style:italic;color:var(--accent)}
+.hero-sub{font-size:1rem;color:var(--text-muted);max-width:480px;margin:0 auto 2rem;line-height:1.6}
+
+/* FORM CARD */
+.form-card{
+  background:#141410;border:1px solid var(--accent);border-radius:12px;
+  padding:2rem;max-width:420px;margin:0 auto 1.5rem;
+}
+.form-card h2{font-family:'Syne',sans-serif;font-size:1.1rem;margin-bottom:.3rem}
+.form-card p{font-size:.85rem;color:var(--text-muted);margin-bottom:1.2rem}
+.form-card input[type="email"]{
+  width:100%;padding:.7rem 1rem;background:#0a0a0a;border:1px solid #333;
+  border-radius:6px;color:var(--text);font-size:.95rem;direction:rtl;
+  font-family:'Heebo',sans-serif;margin-bottom:.6rem;
+}
+.form-card input[type="email"]:focus{outline:none;border-color:var(--accent)}
+.btn-submit{
+  width:100%;padding:.75rem;background:var(--accent);color:#111;
+  border:none;border-radius:6px;font-weight:700;cursor:pointer;font-size:.95rem;
+  font-family:'Heebo',sans-serif;transition:background .2s;
+}
+.btn-submit:hover{background:var(--accent-hover)}
+.btn-submit:disabled{opacity:.6;cursor:default}
+.form-note{font-size:.65rem;color:#555;margin-top:.5rem}
+#form-msg{font-size:.85rem;min-height:1.2em;margin-top:.4rem}
+#form-msg.ok{color:#4caf7d}
+#form-msg.err{color:#e05555}
+
+/* DIVIDER */
+.or-divider{
+  text-align:center;color:#444;font-size:.8rem;margin:1.5rem auto .5rem;
+  max-width:420px;position:relative;
+}
+.or-divider::before,.or-divider::after{
+  content:'';position:absolute;top:50%;width:40%;height:1px;background:#222;
+}
+.or-divider::before{right:0}
+.or-divider::after{left:0}
+
+/* DOWNLOADS */
+.downloads{
+  display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;
+  margin:1rem auto 3rem;max-width:420px;
+}
+.btn-dl{
+  flex:1;min-width:160px;padding:.65rem 1rem;
+  border:1px solid var(--border);border-radius:6px;
+  color:var(--text-muted);font-size:.85rem;text-align:center;
+  transition:border-color .2s,color .2s;display:flex;align-items:center;justify-content:center;gap:.4rem;
+}
+.btn-dl:hover{border-color:var(--accent);color:var(--text)}
+.btn-dl svg{flex-shrink:0}
+
+/* FEATURES */
+.features{
+  max-width:580px;margin:0 auto 4rem;padding:0 1.5rem;
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.2rem;
+}
+.feature{background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:1.2rem}
+.feature-icon{font-size:1.4rem;margin-bottom:.5rem}
+.feature h3{font-size:.9rem;margin-bottom:.3rem;color:var(--text)}
+.feature p{font-size:.8rem;color:var(--text-muted);line-height:1.5}
+
+/* PREVIEW LINK */
+.preview-link{text-align:center;margin-bottom:4rem;font-size:.85rem;color:var(--text-muted)}
+.preview-link a{color:var(--accent)}
+
+/* FOOTER */
+footer{border-top:1px solid var(--border);padding:1.5rem;text-align:center;font-size:.75rem;color:#444}
+footer a{color:#555}
+</style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <a class="nav-logo" href="/">AMIT PHOTOS</a>
+  <div class="lang-toggle">
+    <button type="button" class="lang-btn active" data-lang="he" onclick="setLang('he')">HE</button>
+    <span style="color:#444;font-size:.7rem">|</span>
+    <button type="button" class="lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
+  </div>
+  <a class="nav-back" href="/" data-i18n="nav.back">← חזרה לאתר</a>
+</nav>
+
+<main>
+  <section class="hero">
+    <p class="eyebrow" data-i18n="hero.eyebrow">מתנה חינמית</p>
+    <h1 data-i18n="hero.title">50 טיפים<br><em>לצילום טוב יותר</em></h1>
+    <p class="hero-sub" data-i18n="hero.sub">PDF מעשי שיכול לשנות את הדרך שבה אתה רואה דרך העדשה — ישיר לתיבת הדואר שלך, בחינם לגמרי.</p>
+
+    <div class="form-card">
+      <h2 data-i18n="form.title">שלח לי את המדריך</h2>
+      <p data-i18n="form.sub">הכנס את המייל שלך וקבל הורדה מיידית</p>
+      <form id="guide-form">
+        <input type="email" id="guide-email" placeholder="כתובת המייל שלך" required data-i18n-placeholder="form.placeholder">
+        <button type="submit" class="btn-submit" id="guide-btn" data-i18n="form.btn">שלח לי ←</button>
+        <p class="form-note" data-i18n="form.note">הרשמה לניוזלטר חודשי. ביטול בכל עת.</p>
+        <p id="form-msg"></p>
+      </form>
+    </div>
+  </section>
+
+  <p class="or-divider" data-i18n="or.divider">— או הורד ישירות —</p>
+
+  <div class="downloads">
+    <a href="/50tips-heb.pdf" download class="btn-dl">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="16" height="16"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      <span data-i18n="dl.he">הורד בעברית</span>
+    </a>
+    <a href="/50tips-eng.pdf" download class="btn-dl">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="16" height="16"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      <span data-i18n="dl.en">Download in English</span>
+    </a>
+  </div>
+
+  <div class="features">
+    <div class="feature">
+      <div class="feature-icon">📸</div>
+      <h3 data-i18n="f1.title">חשיפה וטכניקה</h3>
+      <p data-i18n="f1.body">ISO, צמצם, מהירות צמצם — בשפה פשוטה שמיועדת למתחילים</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">🎨</div>
+      <h3 data-i18n="f2.title">קומפוזיציה ואור</h3>
+      <p data-i18n="f2.body">כיצד לפרק תמונה ולהפוך אותה מצילום רגיל לצילום שמושך את העין</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">💻</div>
+      <h3 data-i18n="f3.title">עיבוד ופוסט</h3>
+      <p data-i18n="f3.body">טיפים פשוטים ל-Lightroom ולעריכת תמונות שישדרגו כל צילום</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">🌅</div>
+      <h3 data-i18n="f4.title">שעת הזהב</h3>
+      <p data-i18n="f4.body">מתי לצאת לצלם, איך לנצל אור טבעי ולתכנן יציאות שווה</p>
+    </div>
+  </div>
+
+  <p class="preview-link">
+    <a href="/guides/50-tips-he.html" data-i18n="preview.link">קרא את המדריך ישירות בדפדפן ←</a>
+  </p>
+</main>
+
+<footer>
+  <a href="/">amitphotos.com</a> · <span data-i18n="footer.copy">© עמית ארז. כל הזכויות שמורות.</span>
+</footer>
+
+<script>
+// i18n strings for this page
+if (window.addI18nStrings) {
+  window.addI18nStrings({
+    he: {
+      'page.title': '50 טיפים לצילום — מדריך חינמי | עמית ארז',
+      'nav.back': '← חזרה לאתר',
+      'hero.eyebrow': 'מתנה חינמית',
+      'hero.title': '50 טיפים<br><em>לצילום טוב יותר</em>',
+      'hero.sub': 'PDF מעשי שיכול לשנות את הדרך שבה אתה רואה דרך העדשה — ישיר לתיבת הדואר שלך, בחינם לגמרי.',
+      'form.title': 'שלח לי את המדריך',
+      'form.sub': 'הכנס את המייל שלך וקבל הורדה מיידית',
+      'form.placeholder': 'כתובת המייל שלך',
+      'form.btn': 'שלח לי ←',
+      'form.note': 'הרשמה לניוזלטר חודשי. ביטול בכל עת.',
+      'or.divider': '— או הורד ישירות —',
+      'dl.he': 'הורד בעברית',
+      'dl.en': 'Download in English',
+      'f1.title': 'חשיפה וטכניקה',
+      'f1.body': 'ISO, צמצם, מהירות צמצם — בשפה פשוטה שמיועדת למתחילים',
+      'f2.title': 'קומפוזיציה ואור',
+      'f2.body': 'כיצד לפרק תמונה ולהפוך אותה מצילום רגיל לצילום שמושך את העין',
+      'f3.title': 'עיבוד ופוסט',
+      'f3.body': 'טיפים פשוטים ל-Lightroom ולעריכת תמונות שישדרגו כל צילום',
+      'f4.title': 'שעת הזהב',
+      'f4.body': 'מתי לצאת לצלם, איך לנצל אור טבעי ולתכנן יציאות שווה',
+      'preview.link': 'קרא את המדריך ישירות בדפדפן ←',
+      'footer.copy': '© עמית ארז. כל הזכויות שמורות.',
+    },
+    en: {
+      'page.title': '50 Photography Tips — Free Guide | Amit Erez',
+      'nav.back': '← Back to site',
+      'hero.eyebrow': 'Free Gift',
+      'hero.title': '50 Tips for<br><em>Better Photography</em>',
+      'hero.sub': 'A practical PDF that can change the way you see through your lens — delivered to your inbox, completely free.',
+      'form.title': 'Send Me the Guide',
+      'form.sub': 'Enter your email and get an instant download',
+      'form.placeholder': 'Your email address',
+      'form.btn': 'Send it to me →',
+      'form.note': 'Monthly newsletter signup. Unsubscribe anytime.',
+      'or.divider': '— or download directly —',
+      'dl.he': 'Download in Hebrew',
+      'dl.en': 'Download in English',
+      'f1.title': 'Exposure & Technique',
+      'f1.body': 'ISO, aperture, shutter speed — explained simply for beginners',
+      'f2.title': 'Composition & Light',
+      'f2.body': 'How to read a frame and turn an ordinary shot into one that catches the eye',
+      'f3.title': 'Editing & Post',
+      'f3.body': 'Easy Lightroom tips that will upgrade every photo you take',
+      'f4.title': 'Golden Hour',
+      'f4.body': 'When to shoot, how to use natural light, and how to plan sessions worth having',
+      'preview.link': 'Read the guide directly in your browser →',
+      'footer.copy': '© Amit Erez. All rights reserved.',
+    }
+  });
+}
+
+// Lang toggle sync with main site
+(function(){
+  var lang = localStorage.getItem('lang') || 'he';
+  document.documentElement.lang = lang === 'en' ? 'en' : 'he';
+  document.documentElement.dir = lang === 'en' ? 'ltr' : 'rtl';
+  document.querySelectorAll('.lang-btn').forEach(function(b){
+    b.classList.toggle('active', b.dataset.lang === lang);
+  });
+})();
+
+function setLang(l) {
+  localStorage.setItem('lang', l);
+  location.reload();
+}
+
+// Form submit
+document.getElementById('guide-form').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  var email = document.getElementById('guide-email').value.trim();
+  var btn = document.getElementById('guide-btn');
+  var msg = document.getElementById('form-msg');
+  var lang = localStorage.getItem('lang') || 'he';
+  btn.disabled = true;
+  btn.textContent = '...';
+  try {
+    var r = await fetch('/api/subscribers?source=free-guide', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, lang })
+    });
+    if (r.ok) {
+      msg.className = 'ok';
+      msg.textContent = lang === 'en'
+        ? '✓ Sent! Check your inbox (and spam folder).'
+        : '✓ נשלח! בדוק תיבת הדואר (גם spam).';
+      document.getElementById('guide-email').value = '';
+      btn.textContent = lang === 'en' ? 'Sent ✓' : 'נשלח ✓';
+      // redirect to PDF after 1.5s
+      setTimeout(function(){
+        window.location.href = lang === 'en' ? '/50tips-eng.pdf' : '/50tips-heb.pdf';
+      }, 1500);
+    } else {
+      msg.className = 'err';
+      msg.textContent = lang === 'en' ? 'Error. Please try again.' : 'שגיאה. נסה שוב.';
+      btn.disabled = false;
+      btn.textContent = lang === 'en' ? 'Send it to me →' : 'שלח לי ←';
+    }
+  } catch {
+    msg.className = 'err';
+    msg.textContent = lang === 'en' ? 'Network error.' : 'שגיאת רשת.';
+    btn.disabled = false;
+    btn.textContent = lang === 'en' ? 'Send it to me →' : 'שלח לי ←';
+  }
+});
+</script>
+</body>
+</html>

@@ -59,6 +59,8 @@ const TRANSLATIONS = {
     'hero.cta-ghost':   'כיצד לרכוש?',
     'hero.cta-pdf':     '50 טיפים חינם',
     'hero.cta-sale':    'מבצע השבוע',
+    'banner.guide.strong': '50 טיפים לצילום — חינם',
+    'banner.guide.text':   '| PDF מעשי לצלם המתחיל. קבל עכשיו ←',
 
     // Gallery section
     'gallery.label':    'לחץ על כל תמונה לרכישה',
@@ -420,6 +422,8 @@ const TRANSLATIONS = {
     'hero.cta-ghost':   'How to Buy?',
     'hero.cta-pdf':     '50 Free Tips',
     'hero.cta-sale':    'Weekly Sale',
+    'banner.guide.strong': '50 Photography Tips — Free',
+    'banner.guide.text':   '| A practical PDF for beginner photographers. Get it now →',
 
     // Gallery section
     'gallery.label':    'Click any photo to purchase',
