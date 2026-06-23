@@ -1,0 +1,54 @@
+name: Pinterest — רענון טוקן ומחיקת פינים
+
+on:
+  workflow_dispatch:
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  refresh-and-delete:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: רענן Pinterest Access Token
+        env:
+          APP_ID: "1562228"
+          APP_SECRET: ${{ secrets.PINTEREST_APP_SECRET }}
+          REFRESH_TOKEN: ${{ secrets.PINTEREST_REFRESH_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+        run: |
+          RESPONSE=$(curl -s -X POST "https://api.pinterest.com/v5/oauth/token" \
+            -u "$APP_ID:$APP_SECRET" \
+            -H "Content-Type: application/x-www-form-urlencoded" \
+            -d "grant_type=refresh_token&refresh_token=$REFRESH_TOKEN")
+
+          echo "תגובה: $RESPONSE"
+
+          NEW_TOKEN=$(echo $RESPONSE | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('access_token',''))")
+          NEW_REFRESH=$(echo $RESPONSE | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('refresh_token',''))")
+
+          if [ -z "$NEW_TOKEN" ]; then
+            echo "❌ רענון נכשל"
+            exit 1
+          fi
+
+          echo "NEW_PINTEREST_TOKEN=$NEW_TOKEN" >> $GITHUB_ENV
+          echo "✅ טוקן חודש"
+
+          gh secret set PINTEREST_ACCESS_TOKEN --body "$NEW_TOKEN" --repo erezfamily-cmyk/amit-photos
+          if [ -n "$NEW_REFRESH" ]; then
+            gh secret set PINTEREST_REFRESH_TOKEN --body "$NEW_REFRESH" --repo erezfamily-cmyk/amit-photos
+          fi
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - run: pip install requests
+
+      - name: מחק פינים של מקדונלדס ו-Happy
+        env:
+          PINTEREST_ACCESS_TOKEN: ${{ env.NEW_PINTEREST_TOKEN }}
+        run: python src/pinterest_delete_pins.py
