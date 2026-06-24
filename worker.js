@@ -3549,17 +3549,29 @@ const RULE_LABELS_EN = {
   negative_space: 'Negative Space',
 };
 
-async function handleLearnIndex(env) {
+async function handleLearnIndex(env, request) {
   // Ensure tags_json_en column exists
   try { await env.DB.prepare('ALTER TABLE photo_analyses ADD COLUMN tags_json_en TEXT DEFAULT \'[]\'').run(); } catch (_) {}
+
+  const PAGE_SIZE = 12;
+  const page = Math.max(1, parseInt(new URL(request.url).searchParams.get('page') || '1', 10));
+  const offset = (page - 1) * PAGE_SIZE;
+
+  const { results: [{ total }] } = await env.DB.prepare(
+    `SELECT COUNT(*) as total FROM photo_analyses a`
+  ).all().catch(() => ({ results: [{ total: 0 }] }));
+
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  const currentPage = Math.min(page, totalPages);
 
   const { results: analyses } = await env.DB.prepare(
     `SELECT a.photo_id, a.title, a.title_en, a.composition_rule, a.tags_json, a.tags_json_en, a.published_at,
             p.thumbnail
      FROM photo_analyses a
      LEFT JOIN photos p ON p.id = a.photo_id
-     ORDER BY a.published_at DESC`
-  ).all().catch(() => ({ results: [] }));
+     ORDER BY a.published_at DESC
+     LIMIT ? OFFSET ?`
+  ).bind(PAGE_SIZE, (currentPage - 1) * PAGE_SIZE).all().catch(() => ({ results: [] }));
 
   const cards = (analyses || []).map(a => {
     const thumb = a.thumbnail || '';
@@ -3590,19 +3602,32 @@ async function handleLearnIndex(env) {
     ? '<p style="text-align:center;color:#888;padding:4rem" data-he="הניתוח הראשון יפורסם בקרוב — חזרו מחר!" data-en="First analysis coming soon — check back tomorrow!">הניתוח הראשון יפורסם בקרוב — חזרו מחר!</p>'
     : '';
 
+  const canonicalUrl = currentPage === 1 ? 'https://amitphotos.com/learn/' : `https://amitphotos.com/learn/?page=${currentPage}`;
+  const prevLink = currentPage > 1 ? `<link rel="prev" href="https://amitphotos.com/learn/${currentPage === 2 ? '' : `?page=${currentPage - 1}`}">` : '';
+  const nextLink = currentPage < totalPages ? `<link rel="next" href="https://amitphotos.com/learn/?page=${currentPage + 1}">` : '';
+
+  const pagination = totalPages > 1 ? `
+<nav class="pagination" aria-label="pagination">
+  ${currentPage > 1 ? `<a class="pag-btn" href="/learn/${currentPage === 2 ? '' : `?page=${currentPage - 1}`}" data-he="← הקודם" data-en="← Prev">← הקודם</a>` : '<span class="pag-btn pag-disabled" data-he="← הקודם" data-en="← Prev">← הקודם</span>'}
+  <span class="pag-info" data-he="עמוד ${currentPage} מתוך ${totalPages}" data-en="Page ${currentPage} of ${totalPages}">עמוד ${currentPage} מתוך ${totalPages}</span>
+  ${currentPage < totalPages ? `<a class="pag-btn" href="/learn/?page=${currentPage + 1}" data-he="הבא →" data-en="Next →">הבא →</a>` : '<span class="pag-btn pag-disabled" data-he="הבא →" data-en="Next →">הבא →</span>'}
+</nav>` : '';
+
   const html = `<!DOCTYPE html>
 <html dir="rtl" lang="he">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ניתוח תמונות — Amit Photos</title>
+<title>${currentPage === 1 ? 'ניתוח תמונות' : `ניתוח תמונות — עמוד ${currentPage}`} — Amit Photos</title>
 <meta name="description" content="ניתוח צילומי מעמיק של תמונות אמנות — חוק השליש, בוקה, קומפוזיציה. מדריך לצלמן מתחיל.">
 <meta property="og:title" content="📸 ניתוח תמונות | Amit Photos">
 <meta property="og:description" content="ניתוח צילומי מעמיק — חוקי קומפוזיציה, הגדרות מצלמה, ופירוש כל בחירה של הצלם.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://amitphotos.com/learn/">
 <meta property="og:locale" content="he_IL">
-<link rel="canonical" href="https://amitphotos.com/learn/">
+<link rel="canonical" href="${canonicalUrl}">
+${prevLink}
+${nextLink}
 ${GA_SNIPPET}
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&display=swap" rel="stylesheet">
@@ -3634,6 +3659,11 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direc
 .learn-affiliate-desc{font-size:.78rem;color:var(--muted)}
 .learn-affiliate-btn{flex-shrink:0;background:var(--accent);color:#000;font-weight:700;font-size:.8rem;padding:.5rem 1.1rem;border-radius:8px;text-decoration:none;white-space:nowrap;transition:background .15s}
 .learn-affiliate-btn:hover{background:#e0c080}
+.pagination{display:flex;align-items:center;justify-content:center;gap:1rem;padding:1.5rem 1.25rem}
+.pag-btn{background:var(--surface);border:1px solid var(--border);color:var(--accent);font-size:.85rem;padding:.5rem 1.1rem;border-radius:8px;text-decoration:none;transition:border-color .2s}
+.pag-btn:hover{border-color:var(--accent)}
+.pag-disabled{background:transparent;border:1px solid #1a1a1a;color:#444;cursor:default}
+.pag-info{font-size:.8rem;color:var(--muted)}
 </style>
 <script src="/assets/js/nav.js" defer></script>
 <script src="/assets/js/share.js" defer></script>
@@ -3644,6 +3674,7 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direc
   <p data-he="ניתוח צילומי מעמיק — חוקי קומפוזיציה, הגדרות מצלמה, ומה הצלם חשב" data-en="Deep photographic analysis — composition rules, camera settings, and the photographer's vision">ניתוח צילומי מעמיק — חוקי קומפוזיציה, הגדרות מצלמה, ומה הצלם חשב</p>
 </div>
 <div class="grid">${cards}${empty}</div>
+${pagination}
 <div class="learn-affiliate">
   <div class="learn-affiliate-inner">
     <div class="learn-affiliate-text">
@@ -6954,7 +6985,7 @@ export default {
     }
 
     if (path.startsWith('/learn/') && path.length > '/learn/'.length)  { trackPageView(env, request, 'learn_detail'); return handleLearnAnalysis(env, decodeURIComponent(path.slice('/learn/'.length))); }
-    if (path === '/learn' || path === '/learn/')   { trackPageView(env, request, 'learn'); return handleLearnIndex(env); }
+    if (path === '/learn' || path === '/learn/')   { trackPageView(env, request, 'learn'); return handleLearnIndex(env, request); }
     if (path === '/sitemap.xml')           return handleSitemap(request, env);
     if (path === '/robots.txt')            return handleRobots(request);
 
