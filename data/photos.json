@@ -189,6 +189,48 @@
     "added_at": "2026-05-28"
   },
   {
+    "id": "17E1QGBTDTS_QoFLnDDhY5Tzr1YgxJ9z5",
+    "title": "ברז דג עתיק",
+    "category": "אומנות רחוב",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=17E1QGBTDTS_QoFLnDDhY5Tzr1YgxJ9z5",
+    "thumbnail": "https://drive.google.com/thumbnail?id=17E1QGBTDTS_QoFLnDDhY5Tzr1YgxJ9z5&sz=w600",
+    "description": "פסל ברז בצורת דג משפך מים לקיר צבוע בכחול",
+    "filename": "DSC_7423.jpg",
+    "width": 8256,
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 200,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.005
+    },
+    "added_at": "2026-06-24"
+  },
+  {
+    "id": "1yDWl9f7Dd14f_6OwyBsd7aluA-F24IU0",
+    "title": "זרם מים בפסל עתיק",
+    "category": "אומנות רחוב",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=1yDWl9f7Dd14f_6OwyBsd7aluA-F24IU0",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1yDWl9f7Dd14f_6OwyBsd7aluA-F24IU0&sz=w600",
+    "description": "מים זורמים מפיה של פסל ציפור עתיק בחזית בנין",
+    "filename": "DSC_7432.jpg",
+    "width": 8256,
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 175,
+      "aperture": 2.8,
+      "iso": 250,
+      "shutter": 0.005
+    },
+    "added_at": "2026-06-24"
+  },
+  {
     "id": "1to7-FhYiQPE4OMsTMqzDXpHyIgblTueb",
     "title": "סימטריה גיאומטרית בצהוב",
     "category": "אומנות רחוב",
@@ -9573,6 +9615,384 @@
       "shutter": 0.0008
     },
     "added_at": "2026-06-21"
+  },
+  {
+    "id": "1tBTR75uW5LBNLhO8FqEwMCwIN-wrl3x_",
+    "title": "זרם יער בבולגריה",
+    "category": "בולגריה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1tBTR75uW5LBNLhO8FqEwMCwIN-wrl3x_",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1tBTR75uW5LBNLhO8FqEwMCwIN-wrl3x_&sz=w600",
+    "description": "נחל זורם בין עלווה ירוקה עשירה בעומק היער",
+    "filename": "DSC_7622.jpg",
+    "width": 7830,
+    "height": 3723,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "24-70mm f/2.8G",
+      "focal": 32,
+      "aperture": 3.5,
+      "iso": 100,
+      "shutter": 0.025
+    },
+    "added_at": "2026-06-24"
+  },
+  {
+    "id": "1c5EofCR8MRPNWBsu_Vj5W9Rn0IBgmuZN",
+    "title": "גשר עץ על הנחל",
+    "category": "בולגריה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1c5EofCR8MRPNWBsu_Vj5W9Rn0IBgmuZN",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1c5EofCR8MRPNWBsu_Vj5W9Rn0IBgmuZN&sz=w600",
+    "description": "מסלול עץ חוצה נחל בתוך יער ירוק וצפוף בבולגריה",
+    "filename": "DSC_7691.jpg",
+    "width": 8256,
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "24-70mm f/2.8G",
+      "focal": 24,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.004
+    },
+    "added_at": "2026-06-24"
+  },
+  {
+    "id": "1V4CMqocIngn7spb2gLZn9pa2bHPaeGZf",
+    "title": "ירקות בר ירוקים בבולגריה",
+    "category": "בולגריה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1V4CMqocIngn7spb2gLZn9pa2bHPaeGZf",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1V4CMqocIngn7spb2gLZn9pa2bHPaeGZf&sz=w600",
+    "description": "צמחיית יער צפופה וירוקה בהירה בתנאי תאורה טבעית",
+    "filename": "DSC_7708.jpg",
+    "width": 8256,
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "24-70mm f/2.8G",
+      "focal": 55,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.0125
+    },
+    "added_at": "2026-06-24"
+  },
+  {
+    "id": "1T2Ch_4QOFchu9tTFuWb8WVMytsEMNrUy",
+    "title": "שביל הרים בבולגריה",
+    "category": "בולגריה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1T2Ch_4QOFchu9tTFuWb8WVMytsEMNrUy",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1T2Ch_4QOFchu9tTFuWb8WVMytsEMNrUy&sz=w600",
+    "description": "שביל עתיק בעמקי היער עם אבנים וטחב ירוק",
+    "filename": "DSC_7711.jpg",
+    "width": 8256,
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "24-70mm f/2.8G",
+      "focal": 31,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.025
+    },
+    "added_at": "2026-06-24"
+  },
+  {
+    "id": "1e_4d-xWA3AsaWFdVK9Ng_ABm-ffXGxEY",
+    "title": "סלעים משודרגים במוס",
+    "category": "בולגריה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1e_4d-xWA3AsaWFdVK9Ng_ABm-ffXGxEY",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1e_4d-xWA3AsaWFdVK9Ng_ABm-ffXGxEY&sz=w600",
+    "description": "סלעים מכוסים בשכבות עבות של אזוביום ירוק בחורש בולגרי",
+    "filename": "DSC_7715.jpg",
+    "width": 8256,
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "24-70mm f/2.8G",
+      "focal": 70,
+      "aperture": 9,
+      "iso": 1800,
+      "shutter": 0.0125
+    },
+    "added_at": "2026-06-24"
+  },
+  {
+    "id": "12YjgIDZOqQb7n2h409mM6xyQRNGujwZw",
+    "title": "מפל מים בבולגריה",
+    "category": "בולגריה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=12YjgIDZOqQb7n2h409mM6xyQRNGujwZw",
+    "thumbnail": "https://drive.google.com/thumbnail?id=12YjgIDZOqQb7n2h409mM6xyQRNGujwZw&sz=w600",
+    "description": "מפל מים טבעי זורם בין סלעים ירוקים באחו יער צפוף",
+    "filename": "DSC_7742.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 12,
+      "aperture": 22,
+      "iso": 31,
+      "shutter": 0.4
+    },
+    "added_at": "2026-06-24"
+  },
+  {
+    "id": "1JaQ7JLz_Os5yZqR2Uhzx8kiO1WzEiamm",
+    "title": "פטריית זבוב בבולגריה",
+    "category": "בולגריה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1JaQ7JLz_Os5yZqR2Uhzx8kiO1WzEiamm",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1JaQ7JLz_Os5yZqR2Uhzx8kiO1WzEiamm&sz=w600",
+    "description": "פטריית זבוב אדומה עם נקודות לבנות בעיצוב טבעי יער בולגרי",
+    "filename": "DSC_7813.jpg",
+    "width": 6813,
+    "height": 4550,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 200,
+      "aperture": 5,
+      "iso": 4000,
+      "shutter": 0.005
+    },
+    "added_at": "2026-06-24"
+  },
+  {
+    "id": "1Buqu-s6RjPDZN_FF8UH8T6XcbGVVJLuO",
+    "title": "פטריית זבובים בבולגריה",
+    "category": "בולגריה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1Buqu-s6RjPDZN_FF8UH8T6XcbGVVJLuO",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1Buqu-s6RjPDZN_FF8UH8T6XcbGVVJLuO&sz=w600",
+    "description": "פטריית זבובים אדומה עם נקודות לבנות גדלה על שטיח של אזוביות ירוקות",
+    "filename": "DSC_7819.jpg",
+    "width": 6433,
+    "height": 4354,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 200,
+      "aperture": 2.8,
+      "iso": 2200,
+      "shutter": 0.005
+    },
+    "added_at": "2026-06-24"
+  },
+  {
+    "id": "1EC9xfWnbY7IX2OEdSnGBz_SKgjscV-wZ",
+    "title": "סלעים מכוסי שmoss בבולגריה",
+    "category": "בולגריה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1EC9xfWnbY7IX2OEdSnGBz_SKgjscV-wZ",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1EC9xfWnbY7IX2OEdSnGBz_SKgjscV-wZ&sz=w600",
+    "description": "סלעים עתיקים מכוסים במוס ירוק עז ביער צפוף ולח",
+    "filename": "DSC_7830.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 10,
+      "aperture": 3.5,
+      "iso": 140,
+      "shutter": 0.06666667
+    },
+    "added_at": "2026-06-24"
+  },
+  {
+    "id": "13slnImOjZvhDnZ3iAMwFS1qBmxlC_e1Q",
+    "title": "גשר עץ על הנחל",
+    "category": "בולגריה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=13slnImOjZvhDnZ3iAMwFS1qBmxlC_e1Q",
+    "thumbnail": "https://drive.google.com/thumbnail?id=13slnImOjZvhDnZ3iAMwFS1qBmxlC_e1Q&sz=w600",
+    "description": "מסלול עץ עתיק חוצה זרם במעמקי היער הירוק בבולגריה",
+    "filename": "DSC_7859.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 10,
+      "aperture": 3.5,
+      "iso": 100,
+      "shutter": 0.008
+    },
+    "added_at": "2026-06-24"
+  },
+  {
+    "id": "1SJ509I_TpZK-hxAM-ihp5qhxFmd875j4",
+    "title": "הרים בולגריים במעטפת ערפל",
+    "category": "בולגריה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1SJ509I_TpZK-hxAM-ihp5qhxFmd875j4",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1SJ509I_TpZK-hxAM-ihp5qhxFmd875j4&sz=w600",
+    "description": "שני פסגות הררים מושלגות גוברות מעל יער צפוף בעננות דרמטיות",
+    "filename": "DSC_7987.jpg",
+    "width": 8256,
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 135,
+      "aperture": 13,
+      "iso": 2800,
+      "shutter": 0.00625
+    },
+    "added_at": "2026-06-24"
+  },
+  {
+    "id": "1uO27SVAhW8EXnV3VzIniPpNwgV1leUdT",
+    "title": "חלון בקיר אבן",
+    "category": "בולגריה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1uO27SVAhW8EXnV3VzIniPpNwgV1leUdT",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1uO27SVAhW8EXnV3VzIniPpNwgV1leUdT&sz=w600",
+    "description": "חלון עץ בעיצוב מסורתי בקיר אבן שחור ולבן בבולגריה",
+    "filename": "DSC_7995.jpg",
+    "width": 8256,
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 92,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.001
+    },
+    "added_at": "2026-06-24"
+  },
+  {
+    "id": "1BfVR6-cuc3tyXlk4PZCOSHWKRiEh4CP6",
+    "title": "ארגזי בירה בבולגריה",
+    "category": "בולגריה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1BfVR6-cuc3tyXlk4PZCOSHWKRiEh4CP6",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1BfVR6-cuc3tyXlk4PZCOSHWKRiEh4CP6&sz=w600",
+    "description": "ארגזי משלוח צבעוניים של מותגי בירה שונים מערום לערום",
+    "filename": "DSC_8000.jpg",
+    "width": 8256,
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 200,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.004
+    },
+    "added_at": "2026-06-24"
+  },
+  {
+    "id": "1d9SHU7W2N4EGA725p-BjY41J6PJWwOIg",
+    "title": "פרח עתיק בולגרי",
+    "category": "בולגריה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1d9SHU7W2N4EGA725p-BjY41J6PJWwOIg",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1d9SHU7W2N4EGA725p-BjY41J6PJWwOIg&sz=w600",
+    "description": "דקורציה עץ מגולפת בעיצוב פרחוני סימטרי עם גוונים חמים",
+    "filename": "DSC_8005.jpg",
+    "width": 8256,
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 165,
+      "aperture": 2.8,
+      "iso": 200,
+      "shutter": 0.005
+    },
+    "added_at": "2026-06-24"
+  },
+  {
+    "id": "1G02kKRNJPk0s08dPurab-hgJ1ysiEcBG",
+    "title": "צמח פסטל על עץ",
+    "category": "בולגריה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1G02kKRNJPk0s08dPurab-hgJ1ysiEcBG",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1G02kKRNJPk0s08dPurab-hgJ1ysiEcBG&sz=w600",
+    "description": "צמח עם עלים סגולים וורודים על רקע עץ כהה",
+    "filename": "DSC_8013.jpg",
+    "width": 8256,
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 200,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.002
+    },
+    "added_at": "2026-06-24"
+  },
+  {
+    "id": "1ph5r_HVKeyP_CJd-DXTia-UT1JtGugTl",
+    "title": "חנות פרחים בבולגריה",
+    "category": "בולגריה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1ph5r_HVKeyP_CJd-DXTia-UT1JtGugTl",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1ph5r_HVKeyP_CJd-DXTia-UT1JtGugTl&sz=w600",
+    "description": "ויטרינה עתיקה מלאת ציורי פרחים וקישוטים צבעוניים על קירות עץ",
+    "filename": "DSC_8019.jpg",
+    "width": 7538,
+    "height": 5075,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 100,
+      "aperture": 9,
+      "iso": 100,
+      "shutter": 0.0025
+    },
+    "added_at": "2026-06-24"
+  },
+  {
+    "id": "1GiG65m6c_GgO8a9e_G5B6KLqjsEv2Rmo",
+    "title": "חתלול על גג בבולגריה",
+    "category": "בולגריה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1GiG65m6c_GgO8a9e_G5B6KLqjsEv2Rmo",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1GiG65m6c_GgO8a9e_G5B6KLqjsEv2Rmo&sz=w600",
+    "description": "חתול צעיר על גג אדום מסורתי בוגלריה, מביט לשמיים",
+    "filename": "DSC_8031.jpg",
+    "width": 6600,
+    "height": 4385,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 200,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.00125
+    },
+    "added_at": "2026-06-24"
+  },
+  {
+    "id": "1sScg1Kz7kf8SbOAcgosKwlGETWPmZNda",
+    "title": "חתול בבולגריה",
+    "category": "בולגריה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1sScg1Kz7kf8SbOAcgosKwlGETWPmZNda",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1sScg1Kz7kf8SbOAcgosKwlGETWPmZNda&sz=w600",
+    "description": "חתול פראי צעיר מסתכל ישירות למצלמה ברחוב בולגרי",
+    "filename": "DSC_8032.jpg",
+    "width": 7442,
+    "height": 4961,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 200,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.001
+    },
+    "added_at": "2026-06-24"
   },
   {
     "id": "1Mai4t0FGry9eaBT0xyCxVyuJphMrJKgR",
@@ -21861,6 +22281,27 @@
       "shutter": 0.002
     },
     "added_at": "2026-05-29"
+  },
+  {
+    "id": "1YaCI8Prc2N6rpeP1z0PW4B1bSn9IJ6mZ",
+    "title": "משחק צללים וטקסטורה",
+    "category": "שחור-לבן",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=1YaCI8Prc2N6rpeP1z0PW4B1bSn9IJ6mZ",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1YaCI8Prc2N6rpeP1z0PW4B1bSn9IJ6mZ&sz=w600",
+    "description": "פרטי קרוב של בד או חומר טוויל בצילום שחור לבן, המדגיש צללים ודפוסים גיאומטריים",
+    "filename": "DSC_7234.jpg",
+    "width": 4920,
+    "height": 3012,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 13,
+      "aperture": 3.5,
+      "iso": 100,
+      "shutter": 0.0005
+    },
+    "added_at": "2026-06-24"
   },
   {
     "id": "129hqjrxnGv9Lx1g10YnO68xS5LCO3JL8",
