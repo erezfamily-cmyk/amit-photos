@@ -1270,7 +1270,7 @@
     "width": 1504,
     "height": 1000,
     "exif": null,
-    "added_at": "2026-06-23"
+    "added_at": "2026-06-24"
   },
   {
     "id": "11S40eybbvVMrvc_uceTn6Ge_9NIj0W3Q",
@@ -9573,6 +9573,153 @@
       "shutter": 0.0008
     },
     "added_at": "2026-06-21"
+  },
+  {
+    "id": "1Mai4t0FGry9eaBT0xyCxVyuJphMrJKgR",
+    "title": "חתול בבולגריה",
+    "category": "בולגריה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1Mai4t0FGry9eaBT0xyCxVyuJphMrJKgR",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1Mai4t0FGry9eaBT0xyCxVyuJphMrJKgR&sz=w600",
+    "description": "חתול פראי מסתכל ישירות למצלמה על רקע בית כפרי בולגרי",
+    "filename": "DSC_8033.jpg",
+    "width": 7777,
+    "height": 5185,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 200,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.000625
+    },
+    "added_at": "2026-06-24"
+  },
+  {
+    "id": "1bh9IHt27sj9X_qTUCdjchIw04gAJnza0",
+    "title": "סרטים בגוונים בולגריים",
+    "category": "בולגריה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1bh9IHt27sj9X_qTUCdjchIw04gAJnza0",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1bh9IHt27sj9X_qTUCdjchIw04gAJnza0&sz=w600",
+    "description": "סרטים צבעוניים בגוונים לבן אדום וירוק תלויים בשורה",
+    "filename": "DSC_8162.jpg",
+    "width": 8256,
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "24-70mm f/2.8G",
+      "focal": 62,
+      "aperture": 2.8,
+      "iso": 64,
+      "shutter": 0.005
+    },
+    "added_at": "2026-06-24"
+  },
+  {
+    "id": "1SSGveB0VIOyMWERGLl9n0ZK8e2jSUmgD",
+    "title": "הרי בולגריה המרהיבים",
+    "category": "בולגריה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1SSGveB0VIOyMWERGLl9n0ZK8e2jSUmgD",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1SSGveB0VIOyMWERGLl9n0ZK8e2jSUmgD&sz=w600",
+    "description": "נוף הרי דרמטי עם יער אורן בקדמת התמונה בבולגריה",
+    "filename": "DSC_8287.jpg",
+    "width": 8256,
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 200,
+      "aperture": 9,
+      "iso": 140,
+      "shutter": 0.005
+    },
+    "added_at": "2026-06-24"
+  },
+  {
+    "id": "16EZEXu_ujZVOEdB3-cOHWiEemFnQr2Ey",
+    "title": "אגם הרי בבולגריה",
+    "category": "בולגריה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=16EZEXu_ujZVOEdB3-cOHWiEemFnQr2Ey",
+    "thumbnail": "https://drive.google.com/thumbnail?id=16EZEXu_ujZVOEdB3-cOHWiEemFnQr2Ey&sz=w600",
+    "description": "אגם הרי עמוק מוקף בסלעים תלולים וצמחיה ירוקה בבולגריה",
+    "filename": "DSC_8552.jpg",
+    "width": 8256,
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 150,
+      "aperture": 13,
+      "iso": 500,
+      "shutter": 0.00625
+    },
+    "added_at": "2026-06-24"
+  },
+  {
+    "id": "1MIEBIouX-RGgG0f-juMVIda-DF96RYBX",
+    "title": "הר בודן בבולגריה",
+    "category": "בולגריה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1MIEBIouX-RGgG0f-juMVIda-DF96RYBX",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1MIEBIouX-RGgG0f-juMVIda-DF96RYBX&sz=w600",
+    "description": "נוף הרי עם שדה שחום וסלעים בהרים הבולגריים",
+    "filename": "DSC_8686.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 14,
+      "aperture": 6.3,
+      "iso": 100,
+      "shutter": 0.003125
+    },
+    "added_at": "2026-06-24"
+  },
+  {
+    "id": "1M51WUAwkGW_4aDeh1hR1i4ee3vVfj53O",
+    "title": "פסגה בהרי בולגריה",
+    "category": "בולגריה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1M51WUAwkGW_4aDeh1hR1i4ee3vVfj53O",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1M51WUAwkGW_4aDeh1hR1i4ee3vVfj53O&sz=w600",
+    "description": "נוף הררי עם פסגה סלעית בעלת צורה מיוחדת באזור הר בולגרי",
+    "filename": "DSC_8688.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 10,
+      "aperture": 6.3,
+      "iso": 100,
+      "shutter": 0.004
+    },
+    "added_at": "2026-06-24"
+  },
+  {
+    "id": "1vd3s0yyJ-nRO55GN3KdkzoMNPVxqfqYQ",
+    "title": "אגם הרים בבולגריה",
+    "category": "בולגריה",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1vd3s0yyJ-nRO55GN3KdkzoMNPVxqfqYQ",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1vd3s0yyJ-nRO55GN3KdkzoMNPVxqfqYQ&sz=w600",
+    "description": "נוף הררי עם אגם שקט מוקף בסלעים וצוקים תלולים",
+    "filename": "DSC_8734.jpg",
+    "width": 3600,
+    "height": 5408,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 10,
+      "aperture": 13,
+      "iso": 100,
+      "shutter": 0.02
+    },
+    "added_at": "2026-06-24"
   },
   {
     "id": "1O_seQTbX2puT7J-Ny7j6O3q195Jix7T9",
