@@ -1,5 +1,5 @@
 {
-  "current_category_index": 4,
+  "current_category_index": 5,
   "used_ids_by_category": {
     "אבו דאבי": [
       "6c9e818c-bdd3-402f-b6f5-ee2e668507c9",
@@ -270,6 +270,16 @@
       "b7c0bb4e-a962-449a-95af-9652ccbf07bf",
       "67e2759f-8a5c-407f-b4d0-15fd524f4d3d",
       "3e20ab0a-6a30-4f38-860a-a0887af09088"
+    ],
+    "בולגריה": [
+      "94500c0d-77bf-4833-a907-54f9ceaffee4",
+      "90d8b502-499a-4be2-8f3f-1b865779f50e",
+      "7edbbd4f-fe1d-4527-8d25-2bca67f966fb",
+      "0ff6f355-c009-471a-945e-9630bf6e3a77",
+      "073f118c-7107-4acd-b66d-b587de9fe278",
+      "05c7e4af-44d5-489a-afa8-0b2f5268ba0a",
+      "d7358ba0-4836-427a-ad42-f0ddf2808834",
+      "cb0af7b4-1ff4-442e-a088-c2ac2e05b78f"
     ]
   },
   "gear_tool_index": 0
