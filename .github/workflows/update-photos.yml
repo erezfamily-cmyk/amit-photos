@@ -58,6 +58,14 @@ jobs:
             rm token_refreshed.json
           fi
 
+      - name: ייבוא תמונות חדשות ל-R2 ו-D1 (WebP)
+        env:
+          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
+          WORKER_URL: https://amitphotos.com
+          GOOGLE_CREDENTIALS_JSON: ${{ secrets.GOOGLE_CREDENTIALS }}
+          GOOGLE_TOKEN_JSON: ${{ secrets.GOOGLE_TOKEN }}
+        run: python src/auto_import_new_photos.py
+
       - name: עדכון Sitemap
         run: python src/generate_sitemap.py
 
@@ -107,11 +115,3 @@ jobs:
           curl -s -X POST https://amitphotos.com/api/admin/migrate-photo-dimensions \
             -H "X-Admin-Password: ${ADMIN_PASSWORD}" | python3 -c "import sys,json; r=json.load(sys.stdin); print('DB migration:', r)"
 
-      - name: מיגרציה תמונות חדשות ל-R2
-        if: steps.changes.outputs.changed == 'true' || github.event_name == 'workflow_dispatch'
-        env:
-          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
-          WORKER_URL: https://amitphotos.com
-          GOOGLE_CREDENTIALS_JSON: ${{ secrets.GOOGLE_CREDENTIALS }}
-          GOOGLE_TOKEN_JSON: ${{ secrets.GOOGLE_TOKEN }}
-        run: python src/migrate_to_r2.py
