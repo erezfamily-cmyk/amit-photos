@@ -3,15 +3,23 @@ migrate_to_r2.py
 ----------------
 מעביר תמונות מ-Google Drive ל-Cloudflare R2 + שומר מטא-דאטה ב-D1 דרך Worker API.
 משתמש ב-Google Drive API עם authentication כדי להימנע ממגבלות quota אנונימיות.
+ממיר ל-WebP אוטומטית (חיסכון ~30-40% גודל, ללא פגיעה באיכות מסך).
 
 הרצה:
-  python src/migrate_to_r2.py            # מעביר תמונות חדשות
+  python src/migrate_to_r2.py            # מעביר תמונות חדשות כ-WebP
+  python src/migrate_to_r2.py --no-webp  # מעביר בפורמט מקורי (JPG)
   python src/migrate_to_r2.py --repair   # מתקן קבצים פגומים ב-R2 (HTML במקום תמונה)
   python src/migrate_to_r2.py --dry-run  # רק מציג, לא מעביר
 """
-import json, os, sys, time
+import io, json, os, sys, time
 from pathlib import Path
 import requests
+
+try:
+    from PIL import Image
+    PIL_AVAILABLE = True
+except ImportError:
+    PIL_AVAILABLE = False
 
 ROOT = Path(__file__).parent.parent
 DATA_FILE = ROOT / "data" / "photos.json"
@@ -22,6 +30,27 @@ DRIVE_API = "https://www.googleapis.com/drive/v3"
 
 WORKER_URL = os.environ.get("WORKER_URL", "https://amitphotos.com")
 ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "")
+
+WEBP_QUALITY = 85  # 85 = איכות גבוהה, ~35% קטן יותר מ-JPG
+
+def convert_to_webp(content, quality=WEBP_QUALITY):
+    """ממיר bytes של תמונה ל-WebP. מחזיר (webp_bytes, 'image/webp') או (content, original_ct)."""
+    if not PIL_AVAILABLE:
+        return content, "image/jpeg"
+    try:
+        img = Image.open(io.BytesIO(content))
+        if img.mode == "RGBA":
+            bg = Image.new("RGB", img.size, (255, 255, 255))
+            bg.paste(img, mask=img.split()[3])
+            img = bg
+        elif img.mode != "RGB":
+            img = img.convert("RGB")
+        buf = io.BytesIO()
+        img.save(buf, "WEBP", quality=quality, method=6)
+        return buf.getvalue(), "image/webp"
+    except Exception as e:
+        print(f"  ⚠️  WebP failed ({e}), שומר JPG")
+        return content, "image/jpeg"
 
 def auth_headers():
     return {"X-Admin-Password": ADMIN_PASSWORD}
@@ -93,7 +122,7 @@ def is_r2_photo_valid(url):
     except Exception:
         return False
 
-def migrate_photo(drive_session, photo, dry_run=False):
+def migrate_photo(drive_session, photo, dry_run=False, use_webp=True):
     """הורד מ-Drive (עם auth) והעלה ל-R2 כרשומה חדשה ב-D1."""
     file_id = photo.get("id", "")
     filename = photo.get("filename") or f"{file_id}.jpg"
@@ -103,8 +132,13 @@ def migrate_photo(drive_session, photo, dry_run=False):
         print(f"  ⚠️  לא ניתן להוריד")
         return False
 
+    # המרה ל-WebP
+    if use_webp:
+        content, content_type = convert_to_webp(content)
+        filename = Path(filename).stem + ".webp"
+
     if dry_run:
-        print(f"  [dry-run] היה מעלה {filename} ({len(content)/1024:.0f}KB)")
+        print(f"  [dry-run] היה מעלה {filename} ({len(content)/1024:.0f}KB, {content_type})")
         return True
 
     try:
@@ -158,8 +192,17 @@ def repair_photo(drive_session, file_id, r2_key, dry_run=False):
 
 def main():
     sys.stdout.reconfigure(encoding="utf-8")
-    dry_run = "--dry-run" in sys.argv
-    repair_mode = "--repair" in sys.argv
+    dry_run     = "--dry-run"  in sys.argv
+    repair_mode = "--repair"   in sys.argv
+    use_webp    = "--no-webp"  not in sys.argv
+
+    if use_webp and not PIL_AVAILABLE:
+        print("⚠️  Pillow לא מותקן — הרץ: pip install Pillow")
+        print("   ממשיך בלי המרת WebP (JPG מקורי)")
+        use_webp = False
+
+    if use_webp:
+        print(f"🖼  מצב WebP פעיל (quality={WEBP_QUALITY}) — תמונות יהיו ~35% קטנות יותר")
 
     if not ADMIN_PASSWORD:
         print("❌ חסר ADMIN_PASSWORD כ-environment variable")
@@ -219,7 +262,7 @@ def main():
     for i, photo in enumerate(to_migrate):
         title = photo.get("title") or photo.get("id", "")
         print(f"[{i+1}/{len(to_migrate)}] {title} ({photo.get('category', '')})...", end=" ", flush=True)
-        ok = migrate_photo(drive_session, photo, dry_run=dry_run)
+        ok = migrate_photo(drive_session, photo, dry_run=dry_run, use_webp=use_webp)
         if ok:
             success += 1
             print("✓")
