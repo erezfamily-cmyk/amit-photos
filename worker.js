@@ -80,7 +80,14 @@ async function checkAuth(request, env) {
   }
   // Admin password (לסקריפטים אוטומטיים כמו מיגרציה)
   const pwd = request.headers.get('X-Admin-Password');
-  if (pwd && env.ADMIN_PASSWORD && pwd === env.ADMIN_PASSWORD) return true;
+  if (pwd) {
+    if (env.ADMIN_PASSWORD && pwd === env.ADMIN_PASSWORD) return true;
+    // fallback: בדוק מול D1 (כשהסוד לא מסונכרן)
+    try {
+      const row = await env.DB.prepare("SELECT value FROM settings WHERE key='admin_password'").first();
+      if (row?.value && pwd === row.value) return true;
+    } catch (_) {}
+  }
   return false;
 }
 
