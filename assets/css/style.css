@@ -18,6 +18,21 @@
 
 html { scroll-behavior: smooth; overflow-x: hidden; }
 
+/* ===== SKIP LINK ===== */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  right: 0;
+  background: var(--accent);
+  color: #0a0a0a;
+  padding: 0.5rem 1rem;
+  font-weight: 700;
+  z-index: 9999;
+  border-radius: 0 0 4px 4px;
+  transition: top 0.2s;
+}
+.skip-link:focus { top: 0; }
+
 /* ===== FOCUS INDICATORS ===== */
 :focus { outline: none; }
 :focus-visible {
