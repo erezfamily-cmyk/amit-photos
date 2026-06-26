@@ -642,6 +642,7 @@ async function handlePhotos(request, env) {
   }
 
   if (method === 'DELETE') {
+    if (!await checkAuth(request, env)) return unauth(request);
     const id = new URL(request.url).searchParams.get('id');
     if (!id) return jsonRes({ error: 'id חסר' }, 400);
     const row = await env.DB.prepare('SELECT r2_key FROM photos WHERE id=?').bind(id).first();
