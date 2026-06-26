@@ -335,7 +335,7 @@ function renderGrid() {
       ? `<span style="font-size:.68rem;background:#1a1a1a;border:1px solid #333;border-radius:10px;padding:1px 7px;color:#888">${L.photos(l.photo_count)}</span>`
       : '';
     return `
-    <a class="card" href="/locations/spot/?slug=${escHtml(l.id)}">
+    <a class="card" href="/locations/${escHtml(l.id)}/">
       <img class="card-img" src="${escHtml(l.cover_thumb || l.cover_url || '')}" alt="${escHtml(displayTitle)}" loading="lazy" onerror="this.style.display='none'">
       <div class="card-body">
         <div class="card-title">${escHtml(displayTitle)}</div>
@@ -427,7 +427,7 @@ function initMap(locations) {
     marker.bindPopup(`
       <div class="loc-popup-title">${escHtml(ptitle)}</div>
       <div class="loc-popup-region">${escHtml(pregion)}</div>
-      <a class="loc-popup-link" href="/locations/spot/?slug=${encodeURIComponent(l.id)}">${Lp.viewSpot}</a>
+      <a class="loc-popup-link" href="/locations/${encodeURIComponent(l.id)}/">${Lp.viewSpot}</a>
     `);
   });
 

@@ -2671,9 +2671,10 @@ function escXml(str) {
 }
 
 // ===== LOCATION SPOT PAGE — SERVER-SIDE OG INJECTION =====
-async function handleLocationSpotPage(request, env) {
+async function handleLocationSpotPage(request, env, slugOverride) {
+  // תמיכה ב-URL נקי (/locations/{slug}/) ובURL ישן (?slug=)
   const params = new URL(request.url).searchParams;
-  const slug = params.get('slug') || params.get('id');
+  const slug = slugOverride || params.get('slug') || params.get('id');
 
   // Reject obviously invalid slugs (template literals, empty, too long)
   if (!slug || slug.length > 200 || slug.includes('${') || slug.includes('escHtml') || slug.includes('encodeURI')) {
@@ -2698,7 +2699,7 @@ async function handleLocationSpotPage(request, env) {
 
   const title = escXml(loc.title + ' | מקומות לצילום — עמית ארז');
   const desc = escXml((loc.description || '').slice(0, 160));
-  const canonicalUrl = `https://amitphotos.com/locations/spot/?slug=${encodeURIComponent(loc.id)}`;
+  const canonicalUrl = `https://amitphotos.com/locations/${encodeURIComponent(loc.id)}/`;
   const pageUrl = escXml(canonicalUrl);
 
   // Get cover photo
@@ -2736,6 +2737,7 @@ async function handleLocationSpotPage(request, env) {
 
   html = html
     .replace(/<title>[^<]*<\/title>/, `<title>${title}</title>`)
+    .replace(/<meta\s+name="robots"[^>]*>/gi, '')   // הסר noindex מהתבנית
     .replace('</head>', ogTags + '\n</head>');
 
   return htmlRes(html, 200, 'no-cache, no-store, must-revalidate');
@@ -7037,10 +7039,19 @@ export default {
       }
     }
 
-    // Server-side OG injection for location spot pages
-    if ((path === '/locations/spot/' || path === '/locations/spot/index.html') && (new URL(request.url).searchParams.get('slug') || new URL(request.url).searchParams.get('id'))) {
+    // URL נקי: /locations/{slug}/ → SSR
+    const locSlugMatch = path.match(/^\/locations\/([^\/]+)\/?$/);
+    if (locSlugMatch && locSlugMatch[1] !== 'spot') {
       trackPageView(env, request, 'location');
-      return handleLocationSpotPage(request, env);
+      return handleLocationSpotPage(request, env, locSlugMatch[1]);
+    }
+
+    // URL ישן: /locations/spot/?slug=... → redirect 301 ל-URL נקי
+    if ((path === '/locations/spot/' || path === '/locations/spot/index.html')) {
+      const oldSlug = new URL(request.url).searchParams.get('slug') || new URL(request.url).searchParams.get('id');
+      if (oldSlug) {
+        return Response.redirect(`https://amitphotos.com/locations/${encodeURIComponent(oldSlug)}/`, 301);
+      }
     }
 
     // Static assets — track page views for HTML pages

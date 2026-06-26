@@ -214,7 +214,7 @@ async function loadNextLocation(currentSlug, currentRegion) {
     const next = sameRegion[0];
     const isEn = getLang() === 'en';
     document.getElementById('next-loc-title').textContent = (isEn && next.title_en) ? next.title_en : next.title;
-    document.getElementById('next-loc-link').href = '/locations/spot/?slug=' + encodeURIComponent(next.id);
+    document.getElementById('next-loc-link').href = '/locations/' + encodeURIComponent(next.id) + '/';
     document.getElementById('next-loc-nav').style.display = 'block';
   } catch(e) {}
 }
@@ -374,7 +374,7 @@ function renderNearby(nearby, lang) {
   const heading = isEn ? 'Nearby Spots' : 'מקומות קרובים';
   const kmLabel = isEn ? 'km →' : 'ק"מ →';
   const items = nearby.map(n =>
-    `<a class="nearby-item" href="/locations/spot/?slug=${encodeURIComponent(n.id)}">
+    `<a class="nearby-item" href="/locations/${encodeURIComponent(n.id)}/">`
       <span class="nearby-name">${escHtml((isEn && n.title_en) ? n.title_en : n.title)}</span>
       <span class="nearby-dist">${n.km} ${kmLabel}</span>
     </a>`
