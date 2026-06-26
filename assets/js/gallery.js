@@ -579,7 +579,7 @@ function applyFilters() {
     } else {
       matchCat = p.category === cat && !p.parent_category;
     }
-    const matchSearch = !query || p.title.toLowerCase().includes(query);
+    const matchSearch = !query || (p.title || '').toLowerCase().includes(query);
     return matchCat && matchSearch;
   });
 
