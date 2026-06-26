@@ -597,6 +597,16 @@ async function handlePhotos(request, env) {
       return jsonRes({ ok: true, published: body.published ? 1 : 0 }, 200, request);
     }
 
+    if (body.url !== undefined || body.thumbnail !== undefined) {
+      const fields = [], vals = [];
+      if (body.url       !== undefined) { fields.push('url=?');       vals.push(body.url); }
+      if (body.thumbnail !== undefined) { fields.push('thumbnail=?'); vals.push(body.thumbnail); }
+      if (body.r2_key    !== undefined) { fields.push('r2_key=?');    vals.push(body.r2_key); }
+      vals.push(id);
+      await env.DB.prepare(`UPDATE photos SET ${fields.join(',')} WHERE id=?`).bind(...vals).run();
+      return jsonRes({ ok: true }, 200, request);
+    }
+
     if (body.quiz_eligible !== undefined || body.quiz_description !== undefined) {
       const current = await env.DB.prepare('SELECT quiz_eligible, quiz_description FROM photos WHERE id=?').bind(id).first();
       if (!current) return jsonRes({ error: 'תמונה לא נמצאה' }, 404, request);
