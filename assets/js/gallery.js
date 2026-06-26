@@ -544,9 +544,10 @@ function hashStr(s) {
 function initSearch() {
   const input = document.getElementById('gallery-search');
   if (!input) return;
-
+  let debounceTimer;
   input.addEventListener('input', () => {
-    applyFilters();
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(applyFilters, 200);
   });
 }
 
@@ -691,6 +692,21 @@ function initFilters() {
 
   bar.innerHTML = row1 + row2;
 
+  // הזרקת שדה חיפוש מעל הפילטרים (פעם אחת בלבד)
+  if (!document.getElementById('gallery-search')) {
+    const inp = document.createElement('input');
+    inp.id = 'gallery-search';
+    inp.type = 'search';
+    inp.className = 'gallery-search-input';
+    inp.setAttribute('aria-label', t('gallery.search.aria'));
+    inp.placeholder = t('gallery.search.placeholder');
+    bar.parentElement.insertBefore(inp, bar);
+  } else {
+    const inp = document.getElementById('gallery-search');
+    inp.placeholder = t('gallery.search.placeholder');
+    inp.setAttribute('aria-label', t('gallery.search.aria'));
+  }
+
   // לחיצה על כפתור רגיל
   bar.querySelectorAll('.filter-btn:not(.filter-group-btn)').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -702,9 +718,28 @@ function initFilters() {
       } else {
         history.replaceState(null, '', window.location.pathname);
       }
+      localStorage.setItem('gallery_filter', JSON.stringify({ cat: cat || 'all', parent: btn.dataset.parent || null }));
       applyFilters();
     });
   });
+
+  // שחזור פילטר אחרון מ-localStorage (רק מחוץ לדף הבית; hash מנצח)
+  if (!isHomepage && !window.location.hash.startsWith('#filter-')) {
+    try {
+      const saved = JSON.parse(localStorage.getItem('gallery_filter'));
+      if (saved && saved.cat && saved.cat !== 'all') {
+        const sel = saved.parent
+          ? `.filter-btn[data-cat="${saved.cat}"][data-parent="${saved.parent}"]`
+          : `.filter-btn[data-cat="${saved.cat}"]:not([data-parent])`;
+        const savedBtn = bar.querySelector(sel);
+        if (savedBtn) {
+          bar.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+          savedBtn.classList.add('active');
+          applyFilters();
+        }
+      }
+    } catch (e) { /* localStorage בלתי-זמין */ }
+  }
 
   // לחיצה על כפתור קבוצה — פתח/סגור תפריט
   bar.querySelectorAll('.filter-group-btn').forEach(btn => {

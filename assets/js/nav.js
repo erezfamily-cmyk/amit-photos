@@ -291,8 +291,38 @@ footer#main-footer a:hover { color: #c8a96e; }
       const span = card.querySelector('.nav-rac-title');
       if (span && t) span.textContent = t;
     });
+    var bcLink = document.getElementById('nav-bc-link');
+    if (bcLink) bcLink.textContent = lang === 'en' ? '← All Guides' : '← כל המדריכים';
   };
   window.applyNavLang = applyNavLang;
+
+  // ── Universal back-to-top (injected if page has no #back-to-top) ──────────────
+  document.addEventListener('DOMContentLoaded', function () {
+    if (!document.getElementById('back-to-top')) {
+      var bttStyle = document.createElement('style');
+      bttStyle.textContent = [
+        '.nav-btt{position:fixed;bottom:2rem;left:1.5rem;width:40px;height:40px;border-radius:50%;',
+        'background:rgba(200,169,110,0.9);color:#0a0a0a;border:none;cursor:pointer;',
+        'font-size:1.1rem;opacity:0;transform:translateY(8px);',
+        'transition:opacity .3s,transform .3s;z-index:500;',
+        'display:flex;align-items:center;justify-content:center;font-weight:700;}',
+        '.nav-btt.visible{opacity:1;transform:translateY(0);}'
+      ].join('');
+      document.head.appendChild(bttStyle);
+      var btt = document.createElement('button');
+      btt.id = 'back-to-top';
+      btt.className = 'nav-btt';
+      btt.setAttribute('aria-label', 'חזרה למעלה');
+      btt.textContent = '↑';
+      document.body.appendChild(btt);
+      window.addEventListener('scroll', function () {
+        btt.classList.toggle('visible', window.scrollY > 400);
+      }, { passive: true });
+      btt.addEventListener('click', function () {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }
+  });
 
   // ── Article Schema + "קרא גם" for /camera/ guides ────────────────────────────
   const camPath = window.location.pathname.replace(/\/?$/, '/');
@@ -319,7 +349,22 @@ footer#main-footer a:hover { color: #c8a96e; }
     schemaScript.textContent = JSON.stringify(schema);
     document.head.appendChild(schemaScript);
 
-    // 2. "קרא גם" related guides
+    // 2. Breadcrumb
+    var bcStyle = document.createElement('style');
+    bcStyle.textContent = [
+      '#nav-breadcrumb{max-width:960px;margin:1.5rem auto 0;padding:0 1.25rem;',
+      'font-family:\'Heebo\',sans-serif;font-size:0.85rem;}',
+      '#nav-breadcrumb a{color:#888;text-decoration:none;transition:color .2s;}',
+      '#nav-breadcrumb a:hover{color:#c8a96e;}'
+    ].join('');
+    document.head.appendChild(bcStyle);
+    var bc = document.createElement('div');
+    bc.id = 'nav-breadcrumb';
+    var bcTexts = { he: '← כל המדריכים', en: '← All Guides' };
+    bc.innerHTML = '<a href="/camera/" id="nav-bc-link">' + (bcTexts[lang3] || bcTexts.he) + '</a>';
+    nav.insertAdjacentElement('afterend', bc);
+
+    // 3. "קרא גם" related guides
     const GUIDES = [
       { slug: 'lenses',         he: 'עדשות',             en: 'Lenses' },
       { slug: 'light',          he: 'אור',                en: 'Light' },

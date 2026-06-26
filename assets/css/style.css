@@ -492,6 +492,32 @@ nav.scrolled { border-bottom-color: rgba(200, 169, 110, 0.3); }
   transition: opacity 0.17s ease;
 }
 
+/* ===== GALLERY SEARCH ===== */
+.gallery-search-input {
+  display: block;
+  width: 100%;
+  max-width: 320px;
+  padding: 0.5rem 1rem;
+  margin-bottom: 1rem;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid #333;
+  border-radius: 24px;
+  color: #f0ede8;
+  font-family: 'Heebo', sans-serif;
+  font-size: 0.85rem;
+  outline: none;
+  transition: border-color 0.2s, background 0.2s;
+}
+.gallery-search-input::placeholder { color: #666; }
+.gallery-search-input:focus {
+  border-color: #c8a96e;
+  background: rgba(200,169,110,0.06);
+}
+.gallery-search-input::-webkit-search-cancel-button { cursor: pointer; }
+@media (max-width: 768px) {
+  .gallery-search-input { max-width: 100%; }
+}
+
 /* ===== FILTER TABS ===== */
 .filter-bar {
   display: flex;
