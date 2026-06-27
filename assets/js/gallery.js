@@ -397,7 +397,7 @@ function renderGallery(append = false) {
       <button class="gallery-wish-btn${wished ? ' wished' : ''}" data-id="${photo.id}" aria-label="שמור למועדפים">${wished ? '♥' : '♡'}</button>
       <div class="gallery-item-overlay">
         <div class="gallery-item-info">
-          <h3>${photo.title}</h3>
+          <h3>${getLang() === 'en' && photo.title_en ? photo.title_en : photo.title}</h3>
           <span>${getCategoryLabel(photo.category)}</span>
           ${canBuy(photo) ? `<span class="gallery-item-price">${t('gallery.price.from')}${formatPrice(getEffectivePrice(photo.id, 'small'))}</span>` : ''}
         </div>
@@ -501,9 +501,9 @@ async function initFeatured() {
 
   grid.innerHTML = picks.map((photo, i) => `
     <div class="featured-item" data-id="${photo.id}">
-      <img src="${photo.thumbnail || photo.url}" alt="${photo.title}" loading="lazy" />
+      <img src="${photo.thumbnail || photo.url}" alt="${getLang() === 'en' && photo.title_en ? photo.title_en : photo.title}" loading="lazy" />
       <div class="featured-item-overlay">
-        <span class="featured-item-title">${photo.title}</span>
+        <span class="featured-item-title">${getLang() === 'en' && photo.title_en ? photo.title_en : photo.title}</span>
       </div>
     </div>
   `).join('');
