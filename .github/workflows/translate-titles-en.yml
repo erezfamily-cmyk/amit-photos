@@ -1,0 +1,44 @@
+name: תרגום כותרות תמונות לאנגלית
+
+on:
+  workflow_dispatch:
+    inputs:
+      batches:
+        description: 'כמה batches להריץ (כל batch = 30 תמונות)'
+        required: false
+        default: '50'
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  translate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: תרגום כותרות בbatches
+        env:
+          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
+        run: |
+          BATCHES="${{ github.event.inputs.batches }}"
+          BATCHES=${BATCHES:-50}
+          done_total=0
+
+          for i in $(seq 1 $BATCHES); do
+            response=$(curl -s -X POST "https://amitphotos.com/api/admin/photos/translate-titles" \
+              -H "X-Admin-Password: ${ADMIN_PASSWORD}" \
+              -H "Content-Type: application/json" \
+              -d '{"limit":30}')
+
+            done=$(echo "$response" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('done',0))")
+            remaining=$(echo "$response" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('remaining',0))")
+            done_total=$((done_total + done))
+
+            echo "Batch $i: תורגמו $done | נשארו $remaining"
+
+            if [ "$remaining" -eq 0 ] || [ "$done" -eq 0 ]; then
+              echo "✅ סיום — סה\"כ תורגמו $done_total כותרות"
+              break
+            fi
+
+            sleep 2
+          done
