@@ -424,33 +424,30 @@ nav.scrolled { border-bottom-color: rgba(200, 169, 110, 0.3); }
 .gallery-search {
   width: 100%;
   max-width: 480px;
-  background-color: #111111;
+  background: var(--bg);
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23c8a96e' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 0.9rem center;
   background-size: 15px 15px;
-  border: 1px solid rgba(200,169,110,0.25);
+  border: 1px solid var(--border);
   color: var(--text);
-  padding: 0.8rem 2.6rem 0.8rem 1.1rem;
-  border-radius: 3px;
+  padding: 0.875rem 2.6rem 0.875rem 1rem;
+  border-radius: 2px;
   font-family: var(--font);
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   direction: rtl;
   outline: none;
-  transition: border-color 0.25s, box-shadow 0.25s, background-color 0.25s;
+  transition: border-color 0.2s;
+  -webkit-appearance: none;
+  appearance: none;
 }
-.gallery-search::placeholder {
-  color: #666;
-  font-style: italic;
-}
+.gallery-search::placeholder { color: var(--text-muted); }
 .gallery-search:focus {
-  border-color: rgba(200,169,110,0.6);
-  box-shadow: 0 0 0 3px rgba(200,169,110,0.08);
-  background-color: #141414;
+  border-color: var(--accent);
 }
 .gallery-search:not(:placeholder-shown) {
   background-image: none;
-  padding-right: 1.1rem;
+  padding-right: 1rem;
 }
 .gallery-search::-webkit-search-cancel-button { cursor: pointer; }
 
