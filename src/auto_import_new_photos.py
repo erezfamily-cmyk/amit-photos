@@ -30,8 +30,17 @@ UA             = {"User-Agent": "Mozilla/5.0"}
 def get_drive_session():
     from google.oauth2.credentials import Credentials
     from google.auth.transport.requests import Request
-    token_file = REPO / "token.json"
-    creds = Credentials.from_authorized_user_file(str(token_file), SCOPES)
+
+    token_json = os.environ.get("GOOGLE_TOKEN_JSON")
+    if token_json:
+        tmp = REPO / "token_tmp_auto.json"
+        tmp.write_text(token_json)
+        creds = Credentials.from_authorized_user_file(str(tmp), SCOPES)
+        tmp.unlink(missing_ok=True)
+    else:
+        token_file = REPO / "token.json"
+        creds = Credentials.from_authorized_user_file(str(token_file), SCOPES)
+
     if creds.expired and creds.refresh_token:
         creds.refresh(Request())
     s = requests.Session()
