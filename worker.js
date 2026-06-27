@@ -228,7 +228,8 @@ async function handleFreeGuide(request, env) {
 <meta property="og:description" content="המדריך שהכנתי מהניסיון שלי והאהבה לצלם — 15 עמודים, ישיר למייל.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://amitphotos.com/free-guide/">
-<meta property="og:locale" content="he_IL">${photoUrl ? `\n<meta property="og:image" content="${photoUrl}">\n<meta property="og:image:alt" content="50 טיפים לצילום — עמית ארז">` : ''}
+<meta property="og:locale" content="he_IL">
+<meta property="og:locale:alternate" content="en_US">${photoUrl ? `\n<meta property="og:image" content="${photoUrl}">\n<meta property="og:image:alt" content="50 טיפים לצילום — עמית ארז">` : ''}
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="50 טיפים לצילום טוב יותר — PDF חינם">
 <meta name="twitter:description" content="המדריך שהכנתי מהניסיון שלי והאהבה לצלם — 15 עמודים, ישיר למייל.">${photoUrl ? `\n<meta name="twitter:image" content="${photoUrl}">` : ''}
@@ -3646,6 +3647,7 @@ async function handleLearnIndex(env, request) {
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://amitphotos.com/learn/">
 <meta property="og:locale" content="he_IL">
+<meta property="og:locale:alternate" content="en_US">
 <link rel="canonical" href="${canonicalUrl}">
 ${prevLink}
 ${nextLink}
@@ -4058,6 +4060,7 @@ async function handleLearnAnalysis(env, photoId) {
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://amitphotos.com/learn/${escXml(photoId)}">
 <meta property="og:locale" content="he_IL">
+<meta property="og:locale:alternate" content="en_US">
 <link rel="canonical" href="https://amitphotos.com/learn/${escXml(photoId)}">
 <script type="application/ld+json">${JSON.stringify({
   "@context": "https://schema.org",
