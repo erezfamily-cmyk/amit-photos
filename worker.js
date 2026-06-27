@@ -323,6 +323,7 @@ async function handleSubscribers(request, env) {
   if (method === 'POST') {
     // migration idempotent
     await env.DB.prepare('ALTER TABLE subscribers ADD COLUMN source TEXT DEFAULT \'website\'').run().catch(() => {});
+    await env.DB.prepare('ALTER TABLE subscribers ADD COLUMN lang TEXT DEFAULT \'he\'').run().catch(() => {});
 
     const { name, email, notes, lang } = await request.json().catch(() => ({}));
     if (!email) return jsonRes({ error: 'מייל חסר' }, 400, request);
@@ -375,8 +376,8 @@ async function handleSubscribers(request, env) {
     }
     const id = crypto.randomUUID();
     await env.DB.prepare(
-      'INSERT INTO subscribers (id, name, email, notes, source, created_at) VALUES (?,?,?,?,?,?)'
-    ).bind(id, name || '', email, notes || '', source, new Date().toISOString()).run();
+      'INSERT INTO subscribers (id, name, email, notes, source, lang, created_at) VALUES (?,?,?,?,?,?,?)'
+    ).bind(id, name || '', email, notes || '', source, isEn ? 'en' : 'he', new Date().toISOString()).run();
 
     // שלח מייל אישור לנרשם
     if (env.RESEND_API_KEY) {
@@ -6625,34 +6626,43 @@ async function handleAdminNlRegenTip(request, env, id) {
   return jsonRes({ ok: true }, 200, request);
 }
 
-function nlBuildEmailHtml(issue, issueUrl, unsubscribeUrl, subscriberName) {
+function nlBuildEmailHtml(issue, issueUrl, unsubscribeUrl, subscriberName, lang = 'he') {
+  const isEn = lang === 'en';
   const c = typeof issue.content_json === 'string'
     ? JSON.parse(issue.content_json || '{}')
     : (issue.content_json || {});
   const greeting = subscriberName
-    ? `<p style="margin:0 0 16px;font-size:14px;color:#d0cdc8">שלום ${escXml(subscriberName)},</p>`
+    ? `<p style="margin:0 0 16px;font-size:14px;color:#d0cdc8">${isEn ? 'Hello' : 'שלום'} ${escXml(subscriberName)},</p>`
     : '';
   const heroHtml = c.hero ? `
     <img src="${escXml(c.hero.photo_url)}" alt="${escXml(c.hero.title_he)}" width="560" style="width:100%;max-width:560px;height:auto;display:block;border-radius:8px;margin-bottom:16px">
     <h2 style="margin:0 0 8px;font-size:18px;color:#c8a96e;font-family:Georgia,serif">${escXml(c.hero.title_he)}</h2>
-    <p style="margin:0 0 24px;font-size:14px;line-height:1.7;color:#d0cdc8">${escXml(c.hero.text_he)}</p>` : '';
+    <p style="margin:0 0 24px;font-size:14px;line-height:1.7;color:#d0cdc8">${escXml(isEn ? (c.hero.text_en || c.hero.text_he) : c.hero.text_he)}</p>` : '';
   const guideHtml = c.guide ? `
     <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:20px">
       <tr><td style="background:#1a1a1a;border-radius:8px;padding:14px 16px">
-        <div style="font-size:10px;color:#c8a96e;letter-spacing:.1em;margin-bottom:6px;text-transform:uppercase">מדריך החודש</div>
-        <div style="font-size:14px;font-weight:700;color:#f0ede8;margin-bottom:6px">${escXml(c.guide.title_he)}</div>
-        <p style="margin:0;font-size:13px;color:#999;line-height:1.6">${escXml(c.guide.text_he)}</p>
+        <div style="font-size:10px;color:#c8a96e;letter-spacing:.1em;margin-bottom:6px;text-transform:uppercase">${isEn ? 'GUIDE OF THE MONTH' : 'מדריך החודש'}</div>
+        <div style="font-size:14px;font-weight:700;color:#f0ede8;margin-bottom:6px">${escXml(isEn ? (c.guide.title_en || c.guide.title_he) : c.guide.title_he)}</div>
+        <p style="margin:0;font-size:13px;color:#999;line-height:1.6">${escXml(isEn ? (c.guide.text_en || c.guide.text_he) : c.guide.text_he)}</p>
       </td></tr>
     </table>` : '';
   const tipHtml = c.tip ? `
     <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px">
       <tr><td style="background:#1f1a10;border:1px solid #4a3a1a;border-radius:8px;padding:14px 16px">
-        <div style="font-size:13px;font-weight:700;color:#c8a96e;margin-bottom:6px">${escXml(c.tip.title_he || 'טיפ החודש')}</div>
-        <p style="margin:0;font-size:13px;color:#d0cdc8;line-height:1.6">${escXml(c.tip.text_he)}</p>
+        <div style="font-size:13px;font-weight:700;color:#c8a96e;margin-bottom:6px">${escXml(isEn ? (c.tip.title_en || 'Tip of the Month') : (c.tip.title_he || 'טיפ החודש'))}</div>
+        <p style="margin:0;font-size:13px;color:#d0cdc8;line-height:1.6">${escXml(isEn ? (c.tip.text_en || c.tip.text_he) : c.tip.text_he)}</p>
       </td></tr>
     </table>` : '';
+  const dir = isEn ? 'ltr' : 'rtl';
+  const textAlign = isEn ? 'left' : 'right';
+  const issueTitle = isEn ? (issue.title_en || issue.title_he) : issue.title_he;
+  const readMore = isEn ? 'Read the full issue →' : 'קרא את הגיליון המלא ←';
+  const coffeeLabel = isEn ? '☕ Enjoy the newsletter? Buy me a coffee' : '☕ אהבת את הגיליון? קנה לי קפה';
+  const receivedText = isEn
+    ? `You received this email because you subscribed to <a href="https://amitphotos.com" style="color:#c8a96e;text-decoration:none">amitphotos.com</a>`
+    : `קיבלת מייל זה כי נרשמת ל<a href="https://amitphotos.com" style="color:#c8a96e;text-decoration:none">amitphotos.com</a>`;
   return `<!DOCTYPE html>
-<html lang="he" dir="rtl">
+<html lang="${isEn ? 'en' : 'he'}" dir="${dir}">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
 <body style="margin:0;padding:0;background:#0a0a0a;font-family:Arial,Helvetica,sans-serif">
 <table width="100%" cellpadding="0" cellspacing="0" style="background:#0a0a0a;padding:24px 0">
@@ -6660,21 +6670,21 @@ function nlBuildEmailHtml(issue, issueUrl, unsubscribeUrl, subscriberName) {
     <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#111;border-radius:12px;overflow:hidden">
       <tr><td style="background:#0a0a0a;padding:24px 32px;text-align:center;border-bottom:1px solid #222">
         <div style="color:#c8a96e;font-size:20px;font-weight:700;letter-spacing:.2em;font-family:Georgia,serif">AMIT PHOTOS</div>
-        <div style="color:#888;font-size:11px;margin-top:4px">${escXml(issue.title_he)}</div>
+        <div style="color:#888;font-size:11px;margin-top:4px">${escXml(issueTitle)}</div>
       </td></tr>
-      <tr><td style="padding:28px 32px;direction:rtl;text-align:right">
+      <tr><td style="padding:28px 32px;direction:${dir};text-align:${textAlign}">
         ${greeting}${heroHtml}${guideHtml}${tipHtml}
         <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:8px">
           <tr><td align="center">
-            <a href="${escXml(issueUrl)}" style="display:inline-block;background:#c8a96e;color:#000;font-weight:700;font-size:14px;padding:12px 28px;border-radius:8px;text-decoration:none">קרא את הגיליון המלא ←</a>
+            <a href="${escXml(issueUrl)}" style="display:inline-block;background:#c8a96e;color:#000;font-weight:700;font-size:14px;padding:12px 28px;border-radius:8px;text-decoration:none">${readMore}</a>
           </td></tr>
         </table>
       </td></tr>
       <tr><td style="padding:16px 32px 8px;text-align:center">
-        <a href="https://ko-fi.com/amitphotos" style="display:inline-block;background:#f5f0e8;color:#7c5c2e;font-size:13px;font-weight:700;padding:10px 22px;border-radius:8px;text-decoration:none">&#9749; אהבת את הגיליון? קנה לי קפה</a>
+        <a href="https://ko-fi.com/amitphotos" style="display:inline-block;background:#f5f0e8;color:#7c5c2e;font-size:13px;font-weight:700;padding:10px 22px;border-radius:8px;text-decoration:none">${coffeeLabel}</a>
       </td></tr>
       <tr><td style="padding:8px 32px 24px;text-align:center;border-top:1px solid #222;margin-top:8px">
-        <p style="margin:8px 0 8px;color:#666;font-size:11px">קיבלת מייל זה כי נרשמת ל<a href="https://amitphotos.com" style="color:#c8a96e;text-decoration:none">amitphotos.com</a></p>
+        <p style="margin:8px 0 8px;color:#666;font-size:11px">${receivedText}</p>
         <a href="${escXml(unsubscribeUrl)}" style="color:#888;font-size:12px;text-decoration:underline">Unsubscribe / הסר אותי מהרשימה</a>
       </td></tr>
     </table>
@@ -6730,19 +6740,22 @@ async function handleAdminNlSend(request, env, id) {
   if (!issue) return jsonRes({ error: 'not found' }, 404, request);
   if (issue.status !== 'published') return jsonRes({ error: 'יש לפרסם את הגיליון לפני שליחה' }, 400, request);
 
-  const { results: subscribers } = await env.DB.prepare('SELECT id, email, name FROM subscribers').all();
+  const { results: subscribers } = await env.DB.prepare('SELECT id, email, name, lang FROM subscribers').all();
   if (!subscribers.length) return jsonRes({ error: 'אין נרשמים ברשימה' }, 400, request);
 
   const origin = new URL(request.url).origin;
   const issueUrl = `${origin}/newsletter/${issue.slug}/`;
   const fromEmail = env.FROM_EMAIL || 'amit@amitphotos.com';
 
-  const batch = subscribers.map(sub => ({
-    from: fromEmail,
-    to: sub.email,
-    subject: issue.title_he,
-    html: nlBuildEmailHtml(issue, issueUrl, `${origin}/api/unsubscribe?token=${sub.id}`, sub.name)
-  }));
+  const batch = subscribers.map(sub => {
+    const lang = sub.lang || 'he';
+    return {
+      from: fromEmail,
+      to: sub.email,
+      subject: lang === 'en' ? (issue.title_en || issue.title_he) : issue.title_he,
+      html: nlBuildEmailHtml(issue, issueUrl, `${origin}/api/unsubscribe?token=${sub.id}`, sub.name, lang)
+    };
+  });
 
   const res = await fetch('https://api.resend.com/emails/batch', {
     method: 'POST',
