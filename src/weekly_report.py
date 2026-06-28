@@ -275,6 +275,9 @@ def generate_ai_recommendations(ig_posts, ig_account, fb_pages_data):
     ig_total_likes    = sum(p.get("like_count", 0) for p in ig_posts)
     ig_total_comments = sum(p.get("comments_count", 0) for p in ig_posts)
     ig_best = max(ig_posts, key=lambda p: p.get("like_count", 0), default=None)
+    ig_n = len(ig_posts)
+    ig_followers = ig_account.get("followers_count", 0)
+    ig_avg = round(ig_total_likes / ig_n, 1) if ig_n else 0
 
     fb_summary = ""
     for page in fb_pages_data:
@@ -282,37 +285,81 @@ def generate_ai_recommendations(ig_posts, ig_account, fb_pages_data):
 
     summary = f"""Weekly social media performance for Amit Erez Photography (Israeli photographer):
 
-Instagram:
-- Followers: {ig_account.get('followers_count', '?')}
-- Posts this week: {len(ig_posts)}
+Instagram (@amitphotos.com):
+- Followers: {ig_followers}
+- Posts this week: {ig_n}
 - Total likes: {ig_total_likes}
+- Avg likes/post: {ig_avg}
 - Total comments: {ig_total_comments}
-- Best post: {(ig_best.get('caption') or '')[:100] if ig_best else 'none'} ({ig_best.get('like_count', 0) if ig_best else 0} likes)
+- Best post ({ig_best.get('like_count', 0) if ig_best else 0} likes): {(ig_best.get('caption') or '')[:120] if ig_best else 'none'}
 
 Facebook pages:{fb_summary or ' none configured'}"""
 
     try:
         client = anthropic.Anthropic(api_key=ANTHROPIC_KEY)
         msg = client.messages.create(
-            model="claude-opus-4-8",
-            max_tokens=500,
+            model="claude-haiku-4-5-20251001",
+            max_tokens=600,
             messages=[{"role": "user", "content": f"""{summary}
 
 Based on this data, provide exactly 4 actionable recommendations in Hebrew for next week.
-Each recommendation should be specific, practical, and based on the data.
-Format: a simple JSON array of 4 strings, no markdown, no explanation outside the array.
+Each recommendation should be specific, practical, and based on the actual numbers above.
+Return ONLY a JSON array of 4 strings, with no markdown, no code blocks, no explanation.
+Start your response with [ and end with ]
 Example: ["המלצה 1", "המלצה 2", "המלצה 3", "המלצה 4"]"""}],
         )
         text = msg.content[0].text.strip()
-        # חלץ JSON גם אם עטוף ב-markdown ```json ... ```
         import re
-        m = re.search(r'\[.*?\]', text, re.DOTALL)
+        # greedy match — captures the full outermost array
+        m = re.search(r'\[.*\]', text, re.DOTALL)
         if m:
             text = m.group(0)
-        return json.loads(text)
+        result = json.loads(text)
+        if not isinstance(result, list) or not result:
+            raise ValueError("תוצאה לא תקינה מה-AI")
+        return [str(r) for r in result]
     except Exception as e:
         print(f"⚠️  AI recommendations נכשל: {e}")
-        return ["לא הצלחתי לייצר המלצות השבוע"]
+        return [f"שגיאה בייצור המלצות: {e}"]
+
+
+def _append_to_history(report):
+    """מוסיף שורת סיכום לקובץ ההיסטוריה השבועית."""
+    history_file = ROOT / "data" / "social_history.json"
+    history = []
+    if history_file.exists():
+        try:
+            history = json.loads(history_file.read_text(encoding="utf-8"))
+            if not isinstance(history, list):
+                history = []
+        except Exception:
+            history = []
+
+    week_key = report.get("week_ending", "")
+    # אל תוסיף שורה כפולה לאותו שבוע
+    if any(h.get("week_ending") == week_key for h in history):
+        print(f"ℹ️  היסטוריה: שבוע {week_key} כבר קיים, דולג")
+        return
+
+    ig = report.get("ig", {})
+    first_fb = (report.get("fb_pages") or [{}])[0]
+    row = {
+        "week_ending":    week_key,
+        "generated_at":   report.get("generated_at", ""),
+        "ig_followers":   ig.get("followers"),
+        "ig_posts":       ig.get("posts_this_week"),
+        "ig_likes":       ig.get("total_likes"),
+        "ig_comments":    ig.get("total_comments"),
+        "ig_avg_likes":   ig.get("avg_likes_per_post"),
+        "ig_engagement":  ig.get("engagement_rate"),
+        "fb_fans":        first_fb.get("fans"),
+        "fb_posts":       first_fb.get("posts_this_week"),
+        "fb_likes":       first_fb.get("total_likes"),
+    }
+    history.append(row)
+    # שמור עם הישן קודם (סדר כרונולוגי)
+    history_file.write_text(json.dumps(history, ensure_ascii=False, indent=2), encoding="utf-8")
+    print(f"📈 היסטוריה: נוסף שבוע {week_key} ({len(history)} שבועות סה\"כ)")
 
 
 def save_social_report(ig_posts, ig_account, fb_pages_data, recommendations):
@@ -390,6 +437,9 @@ def save_social_report(ig_posts, ig_account, fb_pages_data, recommendations):
 
     out.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
     print(f"💾 דוח נשמר ל-{out}")
+
+    # צבור היסטוריה שבועית
+    _append_to_history(report)
 
 
 def main():

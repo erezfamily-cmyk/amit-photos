@@ -1,0 +1,28 @@
+[
+  {
+    "week_ending": "21/06/2026",
+    "generated_at": "2026-06-21T09:39:16.847384+00:00",
+    "ig_followers": 660,
+    "ig_posts": 11,
+    "ig_likes": 16,
+    "ig_comments": 0,
+    "ig_avg_likes": 1.5,
+    "ig_engagement": 0.0022,
+    "fb_fans": 272,
+    "fb_posts": 7,
+    "fb_likes": 0
+  },
+  {
+    "week_ending": "28/06/2026",
+    "generated_at": "2026-06-28T11:42:55+00:00",
+    "ig_followers": 660,
+    "ig_posts": 12,
+    "ig_likes": 15,
+    "ig_comments": 0,
+    "ig_avg_likes": 1.2,
+    "ig_engagement": 0.0019,
+    "fb_fans": 273,
+    "fb_posts": 9,
+    "fb_likes": 0
+  }
+]

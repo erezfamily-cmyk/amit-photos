@@ -952,6 +952,12 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
 
         <h2 class="social-platform-title social-platform-title--ai">🤖 המלצות לשבוע הבא</h2>
         <div id="social-recommendations" class="social-recs"></div>
+
+        <hr style="border:none;border-top:1px solid var(--border);margin:2rem 0">
+        <h2 class="social-platform-title" style="margin-bottom:1rem">📈 היסטוריה שבועית</h2>
+        <div id="social-history-wrap">
+          <p style="color:var(--text-muted);font-size:.85rem">טוען היסטוריה...</p>
+        </div>
       </div>
       <div id="social-error" class="social-error" hidden></div>
     </section>
@@ -4043,7 +4049,8 @@ const PrintOrders = (() => {
 
 /* ===== SOCIAL MEDIA ===== */
 const SocialSection = (() => {
-  const REPORT_URL = 'https://raw.githubusercontent.com/erezfamily-cmyk/amit-photos/main/data/social_report.json';
+  const REPORT_URL  = 'https://raw.githubusercontent.com/erezfamily-cmyk/amit-photos/main/data/social_report.json';
+  const HISTORY_URL = 'https://raw.githubusercontent.com/erezfamily-cmyk/amit-photos/main/data/social_history.json';
 
   function trend(current, previous, unit = '') {
     if (previous == null || current == null) return '';
@@ -4264,10 +4271,59 @@ const SocialSection = (() => {
 
       $('social-loading').hidden = true;
       $('social-content').hidden = false;
+
+      loadHistory();
     } catch (e) {
       $('social-loading').hidden = true;
       $('social-error').hidden = false;
       $('social-error').textContent = 'שגיאה בטעינת הדוח — ייתכן שהדוח השבועי טרם רץ. ' + e.message;
+    }
+  }
+
+  async function loadHistory() {
+    const wrap = $('social-history-wrap');
+    if (!wrap) return;
+    try {
+      const r = await fetch(HISTORY_URL + '?t=' + Date.now());
+      if (!r.ok) { wrap.innerHTML = '<p style="color:var(--text-muted);font-size:.85rem">היסטוריה תופיע לאחר הרצת הדוח הראשון.</p>'; return; }
+      const rows = await r.json();
+      if (!Array.isArray(rows) || !rows.length) {
+        wrap.innerHTML = '<p style="color:var(--text-muted);font-size:.85rem">אין היסטוריה עדיין.</p>';
+        return;
+      }
+      // מהחדש לישן
+      const sorted = [...rows].reverse();
+      const trs = sorted.map(h => {
+        const avg = h.ig_avg_likes != null ? h.ig_avg_likes : (h.ig_posts ? (h.ig_likes / h.ig_posts).toFixed(1) : '—');
+        const eng = h.ig_engagement != null ? (h.ig_engagement * 100).toFixed(2) + '%' : '—';
+        return `<tr>
+          <td style="white-space:nowrap">${h.week_ending || ''}</td>
+          <td style="text-align:center">${h.ig_followers ?? '—'}</td>
+          <td style="text-align:center">${h.ig_posts ?? '—'}</td>
+          <td style="text-align:center">${h.ig_likes ?? '—'}</td>
+          <td style="text-align:center">${avg}</td>
+          <td style="text-align:center">${eng}</td>
+          <td style="text-align:center">${h.fb_fans ?? '—'}</td>
+          <td style="text-align:center">${h.fb_likes ?? '—'}</td>
+        </tr>`;
+      }).join('');
+      wrap.innerHTML = `<div style="overflow-x:auto">
+        <table class="data-table" style="font-size:.82rem">
+          <thead><tr>
+            <th>שבוע</th>
+            <th>עוקבי IG</th>
+            <th>פוסטים IG</th>
+            <th>לייקים IG</th>
+            <th>ממוצע</th>
+            <th>מעורבות</th>
+            <th>עוקבי FB</th>
+            <th>לייקים FB</th>
+          </tr></thead>
+          <tbody>${trs}</tbody>
+        </table>
+      </div>`;
+    } catch (e) {
+      wrap.innerHTML = `<p style="color:var(--text-muted);font-size:.85rem">לא ניתן לטעון היסטוריה: ${e.message}</p>`;
     }
   }
 
