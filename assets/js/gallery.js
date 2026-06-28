@@ -225,8 +225,10 @@ async function loadPhotos() {
         const jsonMap = new Map(jsonPhotos.map(p => [p.id, p]));
         allPhotos = apiPhotos.map(p => {
           const j = jsonMap.get(p.id);
-          // API is primary for metadata; JSON wins for thumbnail/url (kept up-to-date)
-          return j ? { ...j, ...p, thumbnail: j.thumbnail || p.thumbnail, url: j.url || p.url } : p;
+          // D1 WebP wins; JSON URL/thumbnail only as fallback when D1 has no WebP
+          const thumb = (p.thumbnail?.endsWith('.webp')) ? p.thumbnail : (j?.thumbnail || p.thumbnail);
+          const url   = (p.url?.endsWith('.webp'))       ? p.url       : (j?.url       || p.url);
+          return j ? { ...j, ...p, thumbnail: thumb, url } : p;
         });
       } else {
         allPhotos = jsonPhotos;
