@@ -6859,18 +6859,18 @@ export default {
       if (!await checkAuth(request, env)) return unauth(request);
       // מייבא תמונה עם ID מוגדר (Drive ID) — לאוטומציה מ-Drive
       const body = await request.json().catch(() => ({}));
-      const { id, title, category, description, url, thumbnail, r2_key, filename, width, height, exif, added_at } = body;
+      const { id, title, category, description, url, thumbnail, r2_key, filename, width, height, added_at } = body;
       if (!id || !url) return jsonRes({ error: 'id ו-url חובה' }, 400, request);
       // בדוק אם כבר קיים
       const existing = await env.DB.prepare('SELECT id FROM photos WHERE id=?').bind(id).first();
       if (existing) return jsonRes({ ok: true, skipped: true, id }, 200, request);
       await env.DB.prepare(
-        `INSERT INTO photos (id, title, category, description, filename, r2_key, url, thumbnail, width, height, exif, added_at, published, created_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?)`
+        `INSERT INTO photos (id, title, category, description, filename, r2_key, url, thumbnail, width, height, added_at, published, created_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?)`
       ).bind(
         id, title||'', category||'', description||'',
         filename||'', r2_key||'', url, thumbnail||url,
-        width||0, height||0, exif ? JSON.stringify(exif) : '{}',
+        width||0, height||0,
         added_at||'', new Date().toISOString()
       ).run();
       return jsonRes({ ok: true, id }, 200, request);
