@@ -133,15 +133,17 @@ def main():
     d1_photos = r.json()
     d1_ids       = {p["id"] for p in d1_photos}
     d1_filenames = {(p.get("filename") or "").strip() for p in d1_photos if p.get("filename")}
-    print(f"   D1: {len(d1_ids)} תמונות, {len(d1_filenames)} עם filename")
+    d1_titles    = {(p.get("title") or "").strip() for p in d1_photos if p.get("title")}
+    print(f"   D1: {len(d1_ids)} תמונות, {len(d1_filenames)} עם filename, {len(d1_titles)} כותרות")
 
-    # מה ב-photos.json — חדש = לא ב-D1 לפי id ולא ב-D1 לפי filename
+    # מה ב-photos.json — חדש = לא ב-D1 לפי id / filename / title
     photos_json = json.loads(PHOTOS_JSON.read_text(encoding="utf-8"))
     new_photos = [
         p for p in photos_json
         if p.get("id")
         and p["id"] not in d1_ids
         and (p.get("filename") or "").strip() not in d1_filenames
+        and (p.get("title") or "").strip() not in d1_titles
         and "drive.google" in (p.get("url") or "")
     ]
     print(f"   חדשות ממש מ-Drive: {len(new_photos)}")
