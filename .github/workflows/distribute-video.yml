@@ -11,6 +11,10 @@ on:
         description: 'שם קובץ בתיקיית video/ בריפו (שימוש ידני בלבד)'
         required: false
         type: string
+      caption:
+        description: 'כיתוב מותאם אישית (ריק = כיתוב אוטומטי שבועי מתחלף)'
+        required: false
+        type: string
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
@@ -43,10 +47,14 @@ jobs:
           FACEBOOK_PAGE_TOKEN: ${{ secrets.FACEBOOK_PAGE_TOKEN }}
           YOUTUBE_TOKEN_JSON: ${{ secrets.YOUTUBE_TOKEN_JSON }}
         run: |
+          CAPTION_ARG=""
+          if [ -n "${{ inputs.caption }}" ]; then
+            CAPTION_ARG="--caption ${{ inputs.caption }}"
+          fi
           if [ -n "${{ inputs.video_url }}" ]; then
-            python src/distribute_video.py --url "${{ inputs.video_url }}"
+            python src/distribute_video.py --url "${{ inputs.video_url }}" $CAPTION_ARG
           else
-            python src/distribute_video.py --file "video/${{ inputs.video_filename }}"
+            python src/distribute_video.py --file "video/${{ inputs.video_filename }}" $CAPTION_ARG
           fi
 
       - name: שמירת נתוני הפצה

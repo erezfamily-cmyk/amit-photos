@@ -26,15 +26,26 @@ FB_PAGE_ID   = os.environ.get("FACEBOOK_PAGE_ID", "")
 FB_TOKEN     = os.environ.get("FACEBOOK_PAGE_TOKEN", "")
 YT_TOKEN_B64 = os.environ.get("YOUTUBE_TOKEN_JSON", "")
 
-CAPTION = """\
-Behind the lens 📷
+TAGS = "#photography #bts #behindthescenes #photographer #photographylife #naturephotography #photooftheday #amitphotos #israeliphotographer"
 
-Capturing moments through the viewfinder.
+# כיתובים מתחלפים — נבחר לפי מספר השבוע כדי לגוון
+CAPTIONS = [
+    f"מאחורי הקלעים 📷\n\nרגע שנולד דרך העינית — הכל קורה בשבריר שנייה.\n\namitphotos.com\n\n{TAGS}",
+    f"Behind the lens 📷\n\nSome moments find you before you find them.\n\namitphotos.com\n\n{TAGS}",
+    f"איך נולדת התמונה הזאת? 🤔\n\nכל צילום מתחיל בהמתנה — לאור הנכון, לרגע הנכון.\n\namitphotos.com\n\n{TAGS}",
+    f"The camera sees what the eye misses 📷\n\nBehind every frame — a moment of decision.\n\namitphotos.com\n\n{TAGS}",
+    f"מה שלא נכנס לפריים נשאר בראש 🎞️\n\nהנה מה שהיה לפני שלחצתי על ההדק.\n\namitphotos.com\n\n{TAGS}",
+    f"Stillness before the shot 📷\n\nPatience is the photographer's best tool.\n\namitphotos.com\n\n{TAGS}",
+    f"בין המחשבה לתמונה — חלקיק שנייה ⚡\n\nזה הרגע שאני הכי אוהב לתפוס.\n\namitphotos.com\n\n{TAGS}",
+    f"Light chasing 🌅\n\nBehind the scenes of a golden hour hunt.\n\namitphotos.com\n\n{TAGS}",
+]
 
-amitphotos.com
 
-#photography #bts #behindthescenes #photographer #photographylife \
-#naturephotography #photooftheday #amitphotos #israeliphotographer"""
+def get_default_caption():
+    from datetime import date
+    week = date.today().isocalendar()[1]
+    return CAPTIONS[week % len(CAPTIONS)]
+
 
 YT_TITLE = "Behind the Lens | amitphotos.com #Shorts"
 YT_DESCRIPTION = """\
@@ -87,7 +98,7 @@ def upload_video(video_path):
     raise RuntimeError("upload נכשל לחלוטין")
 
 
-def publish_ig(video_url):
+def publish_ig(video_url, caption):
     if not IG_USER_ID or not IG_TOKEN:
         print("⚠️  IG credentials חסרים — מדלג")
         return None
@@ -99,7 +110,7 @@ def publish_ig(video_url):
             "video_url":    video_url,
             "media_type":   "REELS",
             "share_to_feed": "true",
-            "caption":      CAPTION,
+            "caption":      caption,
             "access_token": IG_TOKEN,
         },
         timeout=30,
@@ -139,7 +150,7 @@ def publish_ig(video_url):
     return None
 
 
-def publish_fb(video_url):
+def publish_fb(video_url, caption):
     if not FB_PAGE_ID or not FB_TOKEN:
         print("⚠️  FB credentials חסרים — מדלג")
         return None
@@ -149,7 +160,7 @@ def publish_fb(video_url):
         f"{GRAPH_API}/{FB_PAGE_ID}/videos",
         data={
             "file_url":    video_url,
-            "description": CAPTION,
+            "description": caption,
             "access_token": FB_TOKEN,
         },
         timeout=60,
@@ -224,9 +235,13 @@ def download_to_temp(url: str) -> Path:
 
 def main():
     ap = argparse.ArgumentParser(description="מפיץ סרטון לכל הפלטפורמות")
-    ap.add_argument("--file", default=None, help="נתיב הסרטון (למשל video/myvideo.mp4)")
-    ap.add_argument("--url",  default=None, help="URL ציבורי לסרטון (מ-amitphotos.com)")
+    ap.add_argument("--file",    default=None, help="נתיב הסרטון (למשל video/myvideo.mp4)")
+    ap.add_argument("--url",     default=None, help="URL ציבורי לסרטון (מ-amitphotos.com)")
+    ap.add_argument("--caption", default=None, help="כיתוב מותאם אישית (ברירת מחדל: כיתוב אוטומטי שבועי)")
     args = ap.parse_args()
+
+    caption = args.caption or get_default_caption()
+    print(f"📝 כיתוב: {caption[:60]}...")
 
     if not args.file and not args.url:
         print("❌ יש לספק --file או --url")
@@ -255,10 +270,10 @@ def main():
         "platforms": {},
     }
 
-    ig_id = publish_ig(video_url)
+    ig_id = publish_ig(video_url, caption)
     results["platforms"]["instagram"] = ig_id
 
-    fb_id = publish_fb(video_url)
+    fb_id = publish_fb(video_url, caption)
     results["platforms"]["facebook"] = fb_id
 
     yt_id = publish_youtube(video_path)
