@@ -1,5 +1,5 @@
 {
-  "current_category_index": 8,
+  "current_category_index": 9,
   "used_ids_by_category": {
     "אבו דאבי": [
       "6c9e818c-bdd3-402f-b6f5-ee2e668507c9",
@@ -111,13 +111,13 @@
     ],
     "הונגריה": [
       "7b2dc14a-c675-405b-b98a-d095e694fb83",
-      "0884d265-c0b4-4a43-98ad-8c35c8bc0635",
-      "72b29ee8-bcb7-49bb-9c74-30593c7d1e64",
       "c4cb71aa-cd08-4592-924e-f1ae9bef78d5",
-      "7bc2e110-b90d-404b-961c-3a7395fb9eb0",
-      "c9510424-9140-4038-b354-9145a4191d4e",
+      "0884d265-c0b4-4a43-98ad-8c35c8bc0635",
       "3ede5e16-caf7-49b8-8ad2-7404d5acf3c0",
-      "6bd6be8a-9f39-48cc-abc6-35471a18ee96"
+      "822c34cf-3cce-4a77-acf0-bd81f88bc74f",
+      "8bd0f2d6-476d-4535-b9aa-1c9b5288d5f6",
+      "72b29ee8-bcb7-49bb-9c74-30593c7d1e64",
+      "7bc2e110-b90d-404b-961c-3a7395fb9eb0"
     ],
     "וינה": [
       "cedd90e3-5594-43bf-be2c-37442f298ac8",
