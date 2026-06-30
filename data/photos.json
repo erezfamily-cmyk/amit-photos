@@ -231,6 +231,48 @@
     "added_at": "2026-06-24"
   },
   {
+    "id": "1VsaalztTEN45m8prBG4T_RN-kAfByDMZ",
+    "title": "דגלים על הקיר",
+    "category": "אומנות רחוב",
+    "parent_category": null,
+    "url": "/photos/1VsaalztTEN45m8prBG4T_RN-kAfByDMZ.webp",
+    "thumbnail": "/photos/thumb/1VsaalztTEN45m8prBG4T_RN-kAfByDMZ.webp",
+    "description": "אומנות רחוב עם דמויות קווים המחזיקות דגלים של מדינות שונות",
+    "filename": "DSC_7819-2.jpg",
+    "width": 7906,
+    "height": 5271,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 145,
+      "aperture": 2.8,
+      "iso": 200,
+      "shutter": 0.002
+    },
+    "added_at": "2026-06-30"
+  },
+  {
+    "id": "1Dzrx-HH4M5K743_NY6lF_UHLW84-SQVC",
+    "title": "פנים בצבעי נאון",
+    "category": "אומנות רחוב",
+    "parent_category": null,
+    "url": "/photos/1Dzrx-HH4M5K743_NY6lF_UHLW84-SQVC.webp",
+    "thumbnail": "/photos/thumb/1Dzrx-HH4M5K743_NY6lF_UHLW84-SQVC.webp",
+    "description": "פורטרט דיגיטלי עם צבעי נאון זוהרים וצורות גיאומטריות מופשטות",
+    "filename": "DSC_8536 copy.jpg",
+    "width": 8256,
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 102,
+      "aperture": 2.8,
+      "iso": 3200,
+      "shutter": 0.0004
+    },
+    "added_at": "2026-06-30"
+  },
+  {
     "id": "1zTt6-0LettDu0qvauEhq51Q3VF-u-wJV",
     "title": "עיניים פעימות",
     "category": "אומנות רחוב",
@@ -9409,6 +9451,48 @@
     "added_at": "2026-05-16"
   },
   {
+    "id": "16-5H2k9DtEVujMvTExwnMo2fj0YQLI38",
+    "title": "אומנות רחוב בלונדון",
+    "category": "אנגליה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/16-5H2k9DtEVujMvTExwnMo2fj0YQLI38.webp",
+    "thumbnail": "/photos/thumb/16-5H2k9DtEVujMvTExwnMo2fj0YQLI38.webp",
+    "description": "ציור קיר עם דמויות וציורי דגלים לאומיים שונים",
+    "filename": "DSC_7819-2.jpg",
+    "width": 7906,
+    "height": 5271,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 145,
+      "aperture": 2.8,
+      "iso": 200,
+      "shutter": 0.002
+    },
+    "added_at": "2026-06-30"
+  },
+  {
+    "id": "127bJ4h4bzS-cVMO66TEjsJqFcYMcpcZb",
+    "title": "יציאה מהאצטדיון",
+    "category": "אנגליה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/127bJ4h4bzS-cVMO66TEjsJqFcYMcpcZb.webp",
+    "thumbnail": "/photos/thumb/127bJ4h4bzS-cVMO66TEjsJqFcYMcpcZb.webp",
+    "description": "שורות כסאות אדומים עם סימן יציאה צהוב בליברפול",
+    "filename": "DSC_7962.jpg",
+    "width": 5883,
+    "height": 3590,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 190,
+      "aperture": 2.8,
+      "iso": 200,
+      "shutter": 0.00125
+    },
+    "added_at": "2026-06-30"
+  },
+  {
     "id": "1gQIo-qNqKmRbMsEX--MLBpBgT7zXobVE",
     "title": "קיר כבוד בליברפול",
     "category": "אנגליה",
@@ -9489,6 +9573,27 @@
       "iso": 200,
       "shutter": 0.005
     }
+  },
+  {
+    "id": "1mgqCcujLSnKlKeg4bu7XESwQHNlv11up",
+    "title": "אנדרטה בשמיים דרמטיים",
+    "category": "אנגליה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1mgqCcujLSnKlKeg4bu7XESwQHNlv11up.webp",
+    "thumbnail": "/photos/thumb/1mgqCcujLSnKlKeg4bu7XESwQHNlv11up.webp",
+    "description": "פסל זיכרון של שלוש דמויות מול שמיים עוננים באנגליה",
+    "filename": "DSC_8091 copy.jpg",
+    "width": 8256,
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 125,
+      "aperture": 2.8,
+      "iso": 160,
+      "shutter": 0.000125
+    },
+    "added_at": "2026-06-30"
   },
   {
     "id": "1E811mT_4RpRmw_gr474v8zhto1UeQLdS",
@@ -14853,6 +14958,27 @@
     }
   },
   {
+    "id": "11182rCWyZAT_IFNNhE7l2nrg7wJ1J5GY",
+    "title": "חומות עתיקות מעל הגגות",
+    "category": "מונטנגרו",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/11182rCWyZAT_IFNNhE7l2nrg7wJ1J5GY.webp",
+    "thumbnail": "/photos/thumb/11182rCWyZAT_IFNNhE7l2nrg7wJ1J5GY.webp",
+    "description": "חרטום של מצודה עתיקה מתגלגל מעל לעיירה בעלת גגות כתום",
+    "filename": "greece-2025-897.jpg",
+    "width": 8256,
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "24-70mm f/2.8G",
+      "focal": 50,
+      "aperture": 2.8,
+      "iso": 64,
+      "shutter": 0.0015625
+    },
+    "added_at": "2026-06-30"
+  },
+  {
     "id": "18QyNaG4FB0PI4D2Vcrwb1mEfi4oRlMEU",
     "title": "פרחים כחולים בעונת האביב",
     "category": "מונטנגרו",
@@ -14951,6 +15077,48 @@
       "iso": 200,
       "shutter": 0.00625
     }
+  },
+  {
+    "id": "1pE31kR3wPrJrAgNhgwK9FRyWiecl_IHp",
+    "title": "מערה על הים בחוף מונטנגרו",
+    "category": "מונטנגרו",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1pE31kR3wPrJrAgNhgwK9FRyWiecl_IHp.webp",
+    "thumbnail": "/photos/thumb/1pE31kR3wPrJrAgNhgwK9FRyWiecl_IHp.webp",
+    "description": "נוף מרהיב של מערה טבעית המשקיפה לכרך סלעי ומים כחולים",
+    "filename": "greece-2025-953.jpg",
+    "width": 3600,
+    "height": 5408,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 17,
+      "aperture": 3.5,
+      "iso": 64,
+      "shutter": 0.002
+    },
+    "added_at": "2026-06-30"
+  },
+  {
+    "id": "18RcYa8fGbPto1mlWVbPVVXLg7yRikCy-",
+    "title": "חלון לים",
+    "category": "מונטנגרו",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=18RcYa8fGbPto1mlWVbPVVXLg7yRikCy-",
+    "thumbnail": "https://drive.google.com/thumbnail?id=18RcYa8fGbPto1mlWVbPVVXLg7yRikCy-&sz=w600",
+    "description": "נוף ים מדהים דרך כניסת מערה סלעית בחוף מונטנגרו",
+    "filename": "greece-2025-957.jpg",
+    "width": 3600,
+    "height": 5408,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 10,
+      "aperture": 3.5,
+      "iso": 64,
+      "shutter": 0.0004
+    },
+    "added_at": "2026-06-30"
   },
   {
     "id": "1KGonmbsils305yHCKmPFKlg2jg-nwMyI",
@@ -22782,6 +22950,69 @@
     }
   },
   {
+    "id": "1m-UcZQ6_zJ0hGmzkGEmNweDBs2wr492x",
+    "title": "ספירלה של אור",
+    "category": "צילום מופשט",
+    "parent_category": null,
+    "url": "/photos/1m-UcZQ6_zJ0hGmzkGEmNweDBs2wr492x.webp",
+    "thumbnail": "/photos/thumb/1m-UcZQ6_zJ0hGmzkGEmNweDBs2wr492x.webp",
+    "description": "מסדרונות מעוקלים יוצרים ספירלה היפנוטית של אור וצל בשיתוף צבעים",
+    "filename": "DSC_7608.jpg",
+    "width": 7845,
+    "height": 5413,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "24-70mm f/2.8G",
+      "focal": 32,
+      "aperture": 2.8,
+      "iso": 1250,
+      "shutter": 0.033333335
+    },
+    "added_at": "2026-06-30"
+  },
+  {
+    "id": "1IDNLOn0izjDKJuWP_j-fXhShElVv_KON",
+    "title": "מנהרת אור וגיאומטריה",
+    "category": "צילום מופשט",
+    "parent_category": null,
+    "url": "/photos/1IDNLOn0izjDKJuWP_j-fXhShElVv_KON.webp",
+    "thumbnail": "/photos/thumb/1IDNLOn0izjDKJuWP_j-fXhShElVv_KON.webp",
+    "description": "צילום מופשט של מנהרה גיאומטרית עם קווים מתכנסים לעבר אור מרכזי",
+    "filename": "DSC_7614.jpg",
+    "width": 8256,
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "24-70mm f/2.8G",
+      "focal": 70,
+      "aperture": 2.8,
+      "iso": 9000,
+      "shutter": 0.0125
+    },
+    "added_at": "2026-06-30"
+  },
+  {
+    "id": "1pZGRJSzEzC-wLTZgJqf27la6j2vhQb23",
+    "title": "ספירלה של אור וחום",
+    "category": "צילום מופשט",
+    "parent_category": null,
+    "url": "/photos/1pZGRJSzEzC-wLTZgJqf27la6j2vhQb23.webp",
+    "thumbnail": "/photos/thumb/1pZGRJSzEzC-wLTZgJqf27la6j2vhQb23.webp",
+    "description": "מדרגות עץ מעוקלות היוצרות תבנית גיאומטרית מפתיעה",
+    "filename": "DSC_7624.jpg",
+    "width": 8256,
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 70,
+      "aperture": 2.8,
+      "iso": 1400,
+      "shutter": 0.0125
+    },
+    "added_at": "2026-06-30"
+  },
+  {
     "id": "1POBPyXo8c-t1oZWe69z-NH4UDtO-fcwu",
     "title": "גלים של צבע",
     "category": "צילום מופשט",
@@ -22800,6 +23031,69 @@
       "iso": 100,
       "shutter": 0.0015625
     }
+  },
+  {
+    "id": "1BDXrQzpt4I1c_Bj5lAIRR8xw8xGQXAVU",
+    "title": "השתקפויות על המים",
+    "category": "צילום מופשט",
+    "parent_category": null,
+    "url": "/photos/1BDXrQzpt4I1c_Bj5lAIRR8xw8xGQXAVU.webp",
+    "thumbnail": "/photos/thumb/1BDXrQzpt4I1c_Bj5lAIRR8xw8xGQXAVU.webp",
+    "description": "משחק צבעים וערכי אור בהשתקפויות המים המעוותות",
+    "filename": "DSC_7724.jpg",
+    "width": 8256,
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 200,
+      "aperture": 2.8,
+      "iso": 200,
+      "shutter": 0.000625
+    },
+    "added_at": "2026-06-30"
+  },
+  {
+    "id": "1Fvqre4osk61wjvreiCn4G5To4YIlb_L5",
+    "title": "טקסטורה של זרימה",
+    "category": "צילום מופשט",
+    "parent_category": null,
+    "url": "/photos/1Fvqre4osk61wjvreiCn4G5To4YIlb_L5.webp",
+    "thumbnail": "/photos/thumb/1Fvqre4osk61wjvreiCn4G5To4YIlb_L5.webp",
+    "description": "דפוסי שחור לבן של קווים וגלים עמוקים המעניקים עומק ותנועה",
+    "filename": "DSC_7779.jpg",
+    "width": 6541,
+    "height": 4384,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 175,
+      "aperture": 2.8,
+      "iso": 200,
+      "shutter": 0.001
+    },
+    "added_at": "2026-06-30"
+  },
+  {
+    "id": "1nnpR9OyPkEq9V8jjluiiGBMQ3clDU6Ci",
+    "title": "קיר צבעוני מופשט",
+    "category": "צילום מופשט",
+    "parent_category": null,
+    "url": "/photos/1nnpR9OyPkEq9V8jjluiiGBMQ3clDU6Ci.webp",
+    "thumbnail": "/photos/thumb/1nnpR9OyPkEq9V8jjluiiGBMQ3clDU6Ci.webp",
+    "description": "קיר לבנים בצבעים עזים וחיים עם צללים דרמטיים",
+    "filename": "DSC_7793.jpg",
+    "width": 8090,
+    "height": 5393,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 85,
+      "aperture": 9,
+      "iso": 200,
+      "shutter": 0.00125
+    },
+    "added_at": "2026-06-30"
   },
   {
     "id": "1FzHlnK1Mj5awNstDqYFZ6BGjbzmbNA_R",
@@ -22903,6 +23197,90 @@
       "iso": 100,
       "shutter": 0.004
     }
+  },
+  {
+    "id": "1c7_Q_fAwCe__kNr3JFYlErZytzTnruFO",
+    "title": "רשתות סגול של הים",
+    "category": "צילום מופשט",
+    "parent_category": null,
+    "url": "https://drive.google.com/uc?export=view&id=1c7_Q_fAwCe__kNr3JFYlErZytzTnruFO",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1c7_Q_fAwCe__kNr3JFYlErZytzTnruFO&sz=w600",
+    "description": "רשתות דיג בגוונים סגולים עם חבל לבן, צילום מקרוב של טקסטורה",
+    "filename": "greece-2025-161.jpg",
+    "width": 8256,
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "24-70mm f/2.8G",
+      "focal": 70,
+      "aperture": 5.6,
+      "iso": 9000,
+      "shutter": 0.0125
+    },
+    "added_at": "2026-06-30"
+  },
+  {
+    "id": "1BA_kdMsoTqrUvZgexVBdlbfZ6rjXmnX_",
+    "title": "טקסטורות של צבע וחוט",
+    "category": "צילום מופשט",
+    "parent_category": null,
+    "url": "/photos/1BA_kdMsoTqrUvZgexVBdlbfZ6rjXmnX_.webp",
+    "thumbnail": "/photos/thumb/1BA_kdMsoTqrUvZgexVBdlbfZ6rjXmnX_.webp",
+    "description": "טקסטורות עשירות של בדים בגוונים חומים וסגול עם פרטים מפורטים",
+    "filename": "greece-2025-162.jpg",
+    "width": 8256,
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "24-70mm f/2.8G",
+      "focal": 70,
+      "aperture": 5.6,
+      "iso": 4000,
+      "shutter": 0.0125
+    },
+    "added_at": "2026-06-30"
+  },
+  {
+    "id": "1O12r31HB539M9cI-PDj_35ISpLr6ca_Q",
+    "title": "עלים ירוקים בדפוס טבעי",
+    "category": "צילום מופשט",
+    "parent_category": null,
+    "url": "/photos/1O12r31HB539M9cI-PDj_35ISpLr6ca_Q.webp",
+    "thumbnail": "/photos/thumb/1O12r31HB539M9cI-PDj_35ISpLr6ca_Q.webp",
+    "description": "דפוס גיאומטרי של עלי שרך ירוקים צפופים היוצרים רקע טבעי מופשט",
+    "filename": "greece-2025-510.jpg",
+    "width": 8256,
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "24-70mm f/2.8G",
+      "focal": 32,
+      "aperture": 2.8,
+      "iso": 90,
+      "shutter": 0.033333335
+    },
+    "added_at": "2026-06-30"
+  },
+  {
+    "id": "1-sdM1JBY-VKcBEkCUktOcAnRioA2MAlR",
+    "title": "זרימת צבעים טבעית",
+    "category": "צילום מופשט",
+    "parent_category": null,
+    "url": "/photos/1-sdM1JBY-VKcBEkCUktOcAnRioA2MAlR.webp",
+    "thumbnail": "/photos/thumb/1-sdM1JBY-VKcBEkCUktOcAnRioA2MAlR.webp",
+    "description": "תקריב מופשט של צמחייה בתנועה עם משחק צבעים ירוקים וצהובים",
+    "filename": "greece-2025-513.jpg",
+    "width": 8256,
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "24-70mm f/2.8G",
+      "focal": 70,
+      "aperture": 8,
+      "iso": 31,
+      "shutter": 13
+    },
+    "added_at": "2026-06-30"
   },
   {
     "id": "1_nNBWRuQm0QsRVCTRYc2DMPfG5t5ciwk",
@@ -23122,6 +23500,90 @@
       "shutter": 0.0005
     },
     "added_at": "2026-06-24"
+  },
+  {
+    "id": "1EQLLvHX31sYaVramll8MGSFSc3Zwz63X",
+    "title": "מנהרת אור וגיאומטריה",
+    "category": "שחור-לבן",
+    "parent_category": null,
+    "url": "/photos/1EQLLvHX31sYaVramll8MGSFSc3Zwz63X.webp",
+    "thumbnail": "/photos/thumb/1EQLLvHX31sYaVramll8MGSFSc3Zwz63X.webp",
+    "description": "מבנה אדריכלי גיאומטרי בתצילום מינימליסטי שחור לבן הפוגש אור מרכזי",
+    "filename": "DSC_7614.jpg",
+    "width": 8256,
+    "height": 5504,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "24-70mm f/2.8G",
+      "focal": 70,
+      "aperture": 2.8,
+      "iso": 9000,
+      "shutter": 0.0125
+    },
+    "added_at": "2026-06-30"
+  },
+  {
+    "id": "1QFiRVFCIP0ddkVys-rxCHxL4AKQCxKFR",
+    "title": "ספירלה אינסופית",
+    "category": "שחור-לבן",
+    "parent_category": null,
+    "url": "/photos/1QFiRVFCIP0ddkVys-rxCHxL4AKQCxKFR.webp",
+    "thumbnail": "/photos/thumb/1QFiRVFCIP0ddkVys-rxCHxL4AKQCxKFR.webp",
+    "description": "מדרגות ספירליות הפוכות יוצרות דפוס גיאומטרי מעוגן וחוזר",
+    "filename": "DSC_7621.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 10,
+      "aperture": 3.5,
+      "iso": 450,
+      "shutter": 0.06666667
+    },
+    "added_at": "2026-06-30"
+  },
+  {
+    "id": "18DdTd1Hq8bonioLmpOCpOY-fxYAKvLwO",
+    "title": "ראש אריה מעוטר",
+    "category": "שחור-לבן",
+    "parent_category": null,
+    "url": "/photos/18DdTd1Hq8bonioLmpOCpOY-fxYAKvLwO.webp",
+    "thumbnail": "/photos/thumb/18DdTd1Hq8bonioLmpOCpOY-fxYAKvLwO.webp",
+    "description": "פסל ת浮relief של ראש אריה עם עיטורים מפורטים על רקע בטון",
+    "filename": "DSC_7632.jpg",
+    "width": 8005,
+    "height": 5337,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 135,
+      "aperture": 2.8,
+      "iso": 200,
+      "shutter": 0.005
+    },
+    "added_at": "2026-06-30"
+  },
+  {
+    "id": "1HtjFQI-xwOrANJzeSPf-9pDpYYJqw3Hv",
+    "title": "טקסטורה של הטבע",
+    "category": "שחור-לבן",
+    "parent_category": null,
+    "url": "/photos/1HtjFQI-xwOrANJzeSPf-9pDpYYJqw3Hv.webp",
+    "thumbnail": "/photos/thumb/1HtjFQI-xwOrANJzeSPf-9pDpYYJqw3Hv.webp",
+    "description": "תמונה זילוג של זרימת לאבה מתוקתקת בעלת דפוסים גיאומטריים טבעיים",
+    "filename": "DSC_7779.jpg",
+    "width": 6541,
+    "height": 4384,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 175,
+      "aperture": 2.8,
+      "iso": 200,
+      "shutter": 0.001
+    },
+    "added_at": "2026-06-30"
   },
   {
     "id": "1n2mpZGWcLFcXEjXwNwvC-d0a97g3z1MG",
