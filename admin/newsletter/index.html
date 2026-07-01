@@ -172,7 +172,7 @@ async function checkAuth() {
     token = prompt('סיסמת אדמין:') || '';
     localStorage.setItem('adminToken', token);
   }
-  const r = await fetch(`${API}/admin/prices`, { headers: { Authorization: `Bearer ${token}` } });
+  const r = await fetch(`${API}/subscribers`, { headers: { 'X-Admin-Password': token } });
   if (r.status === 401) {
     localStorage.removeItem('adminToken');
     token = '';
@@ -184,7 +184,7 @@ async function checkAuth() {
 // ── LOAD SUBSCRIBERS ──
 async function loadSubs() {
   await checkAuth();
-  const r = await fetch(`${API}/subscribers`, { headers: { Authorization: `Bearer ${token}` } });
+  const r = await fetch(`${API}/subscribers`, { headers: { 'X-Admin-Password': token } });
   if (!r.ok) { document.getElementById('subs-wrap').innerHTML = '<p style="color:#e05555">שגיאה בטעינת מנויים</p>'; return; }
   const subs = await r.json();
 
@@ -229,7 +229,7 @@ async function deleteSub(id, btn) {
   btn.disabled = true;
   const r = await fetch(`${API}/subscribers?id=${id}`, {
     method: 'DELETE',
-    headers: { Authorization: `Bearer ${token}` }
+    headers: { 'X-Admin-Password': token }
   });
   if (r.ok) btn.closest('tr').remove();
   else { btn.disabled = false; alert('שגיאה בהסרה'); }
@@ -276,7 +276,7 @@ async function sendNewsletter() {
   try {
     const r = await fetch(`${API}/newsletter`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      headers: { 'Content-Type': 'application/json', 'X-Admin-Password': token },
       body: JSON.stringify({ subject, body })
     });
     const data = await r.json();
