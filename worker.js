@@ -6165,7 +6165,7 @@ async function sendTestEmail() {
   const msgEl = document.getElementById('test-msg');
   if (!email) { msgEl.style.color='#f44336'; msgEl.textContent='הכנס כתובת מייל'; return; }
   msgEl.style.color='#888'; msgEl.textContent='שולח...';
-  const tok = localStorage.getItem('session_token') || sessionStorage.getItem('session_token') || '';
+  const tok = sessionStorage.getItem('admin_session') || localStorage.getItem('admin_session') || '';
   try {
     const r = await fetch('/api/admin/newsletter/' + _testId + '/send-test', {
       method: 'POST',
@@ -6190,7 +6190,7 @@ async function generate(type) {
   btns.forEach(b => b.disabled = true);
   msg.style.cssText = 'display:block;background:#1a2a1a;color:#c8a96e;border:1px solid #c8a96e33;padding:.75rem 1rem;border-radius:8px;font-size:.95rem;margin-bottom:1rem';
   msg.innerHTML = '<span style="display:inline-block;animation:spin 1s linear infinite;margin-left:.4rem">⏳</span> יוצר טיוטה עם Claude... (עד 30 שניות)';
-  const tok = localStorage.getItem('session_token') || sessionStorage.getItem('session_token') || '';
+  const tok = sessionStorage.getItem('admin_session') || localStorage.getItem('admin_session') || '';
   try {
     const r = await fetch('/api/admin/newsletter/generate', {
       method: 'POST',
@@ -6225,7 +6225,7 @@ async function deleteAndRecreate(id, type) {
   btns.forEach(b => b.disabled = true);
   msg.style.cssText = 'display:block;background:#1a0a0a;color:#f44336;border:1px solid #f4433633;padding:.75rem 1rem;border-radius:8px;font-size:.95rem;margin-bottom:1rem';
   msg.textContent = 'מוחק...';
-  const tok = localStorage.getItem('session_token') || sessionStorage.getItem('session_token') || '';
+  const tok = sessionStorage.getItem('admin_session') || localStorage.getItem('admin_session') || '';
   try {
     const r = await fetch('/api/admin/newsletter/' + id, {
       method: 'DELETE',
@@ -6402,7 +6402,7 @@ ${sendSection}
 <div class="field" style="max-width:180px;margin-top:1rem"><label>מספר גיליון</label><input id="issue-number" type="number" value="${escXml(String(issue.issue_number || ''))}"></div>
 ${heroFields}${guideFields}${guideStepsFields}${locationFields}${tipFields}${saleFields}
 <script>
-const tok = localStorage.getItem('adminToken') || '';
+const tok = sessionStorage.getItem('admin_session') || localStorage.getItem('admin_session') || '';
 ${issue.status === 'published' ? `
 fetch('/api/subscribers', { headers: {'X-Session-Token': tok} })
   .then(r => r.json())
