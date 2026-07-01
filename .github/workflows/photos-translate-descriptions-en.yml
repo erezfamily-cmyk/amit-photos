@@ -1,0 +1,55 @@
+name: תרגום תיאורי תמונות לאנגלית
+
+on:
+  schedule:
+    - cron: '0 12 * * *'  # כל יום 12:00 UTC
+  workflow_dispatch:
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  translate-descriptions:
+    runs-on: ubuntu-latest
+    steps:
+      - name: תרגום תיאורים חסרי אנגלית
+        env:
+          ADMIN_TOKEN: ${{ secrets.ADMIN_PASSWORD }}
+        run: |
+          python3 - <<'PYEOF'
+          import requests, os, time
+
+          BASE = "https://amitphotos.com"
+          TOKEN = os.environ["ADMIN_TOKEN"]
+          headers = {"X-Admin-Password": TOKEN}
+
+          r = requests.get(f"{BASE}/api/photos?admin=1", headers=headers, timeout=30)
+          r.raise_for_status()
+          all_photos = r.json()
+
+          missing = [p for p in all_photos if p.get("description") and not p.get("description_en")]
+          MAX_PER_RUN = 15
+          batch = missing[:MAX_PER_RUN]
+          print(f"סה\"כ תמונות: {len(all_photos)}, חסרות תרגום: {len(missing)}, מעבד: {len(batch)}")
+
+          done = 0
+          for p in batch:
+              pid = p["id"]
+              print(f"מתרגם {pid} ({p.get('title','')})...")
+              try:
+                  resp = requests.post(
+                      f"{BASE}/api/photos/{pid}/generate-description-en",
+                      headers=headers,
+                      timeout=60
+                  )
+                  if resp.ok:
+                      done += 1
+                      print(f"  ✅ {pid}")
+                  else:
+                      print(f"  ❌ {pid}: {resp.status_code} {resp.text[:150]}")
+              except Exception as e:
+                  print(f"  ❌ {pid}: {e}")
+              time.sleep(2)  # throttle
+
+          print(f"\nסיום: תורגמו {done}/{len(missing)} תיאורים")
+          PYEOF

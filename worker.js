@@ -2884,6 +2884,39 @@ async function handleAdminPhotoDimensions(request, env) {
   return jsonRes({ ok: true, updated: updates.length }, 200, request);
 }
 
+async function handlePhotoGenerateDescriptionEn(request, env, photoId) {
+  if (!await checkAuth(request, env)) return unauth(request);
+  if (request.method !== 'POST') return jsonRes({ error: 'POST only' }, 405, request);
+  if (!env.ANTHROPIC_API_KEY) return jsonRes({ error: 'ANTHROPIC_API_KEY חסר' }, 500, request);
+
+  await env.DB.prepare("ALTER TABLE photos ADD COLUMN description_en TEXT DEFAULT ''").run().catch(() => {});
+
+  const photo = await env.DB.prepare('SELECT id, title, description FROM photos WHERE id=?').bind(photoId).first();
+  if (!photo) return jsonRes({ error: 'לא נמצא' }, 404, request);
+  if (!photo.description) return jsonRes({ error: 'אין תיאור לתרגם' }, 400, request);
+
+  const prompt = `You are Amit Erez, an Israeli fine-art photographer. Translate the following Hebrew photo caption to natural, evocative English — first person, personal tone, not literal word-for-word.
+
+Photo title: ${photo.title}
+Hebrew caption: ${photo.description}
+
+Return ONLY the English translation text, no quotes, no markdown, no explanation.`;
+
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'x-api-key': env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
+    body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 500, messages: [{ role: 'user', content: prompt }] })
+  });
+  if (!res.ok) return jsonRes({ error: 'Claude API נכשל', status: res.status }, 502, request);
+
+  const data = await res.json();
+  const descriptionEn = (data.content?.[0]?.text || '').trim();
+  if (!descriptionEn) return jsonRes({ error: 'תרגום ריק' }, 500, request);
+
+  await env.DB.prepare('UPDATE photos SET description_en=? WHERE id=?').bind(descriptionEn, photoId).run();
+  return jsonRes({ ok: true, description_en: descriptionEn }, 200, request);
+}
+
 async function handleAdminReplacePhoto(request, env, photoId) {
   if (!await checkAuth(request, env)) return unauth(request);
   const bytes = await request.arrayBuffer();
@@ -6843,6 +6876,8 @@ export default {
     if (path === '/api/admin/upload-story' && request.method === 'POST') return handleUploadStory(request, env);
     if (path.startsWith('/api/admin/replace-photo/') && request.method === 'POST') return handleAdminReplacePhoto(request, env, path.slice('/api/admin/replace-photo/'.length));
     if (path === '/api/admin/photo-dimensions' && request.method === 'POST') return handleAdminPhotoDimensions(request, env);
+    if (path.startsWith('/api/photos/') && path.endsWith('/generate-description-en') && request.method === 'POST')
+      return handlePhotoGenerateDescriptionEn(request, env, path.slice('/api/photos/'.length).replace('/generate-description-en', ''));
     if (path === '/free-guide' || path === '/free-guide/') return handleFreeGuide(request, env);
     if (path === '/prices') return handlePricesPage(request, env);
     if (path === '/api/admin/migrate-amount' && request.method === 'POST') {

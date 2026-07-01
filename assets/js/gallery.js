@@ -942,8 +942,9 @@ function openLightbox(idx) {
   };
   document.getElementById('lb-counter').textContent = `${idx + 1} / ${filteredPhotos.length}`;
   const descEl = document.getElementById('lb-desc');
-  descEl.textContent = photo.description || '';
-  descEl.style.display = photo.description ? 'block' : 'none';
+  const descText = (getLang() === 'en' && photo.description_en) ? photo.description_en : photo.description;
+  descEl.textContent = descText || '';
+  descEl.style.display = descText ? 'block' : 'none';
 
   // Progress bar
   const progress = document.getElementById('lb-progress');
