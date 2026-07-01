@@ -11,7 +11,6 @@ GRAPH_API     = "https://graph.facebook.com/v21.0"
 THREADS_API   = "https://graph.threads.net/v1.0"
 
 NEWSLETTER_SLUG = os.environ.get("NEWSLETTER_SLUG", "2026-06-full")
-HERO_IMAGE_URL  = os.environ.get("HERO_IMAGE_URL", f"{SITE_URL}/photos/0978111c-bea2-4fd9-b1b0-398ac75d0c36.jpg")
 NEWSLETTER_URL  = f"{SITE_URL}/newsletter/{NEWSLETTER_SLUG}/"
 
 IG_USER_ID        = os.environ.get("INSTAGRAM_USER_ID", "")
@@ -21,21 +20,53 @@ FB_TOKEN          = os.environ.get("FACEBOOK_PAGE_TOKEN", "")
 THREADS_USER_ID   = os.environ.get("THREADS_USER_ID", "")
 THREADS_TOKEN     = os.environ.get("THREADS_ACCESS_TOKEN", "")
 ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "").strip()
+ADMIN_PASSWORD    = os.environ.get("ADMIN_PASSWORD", "").strip()
 
-NEWSLETTER_SUMMARY = """
-גיליון #2 — יוני 2026
+# ברירת מחדל בלבד — משמשת רק אם אין תמונה בגיליון עצמו
+FALLBACK_HERO_IMAGE_URL = f"{SITE_URL}/photos/0978111c-bea2-4fd9-b1b0-398ac75d0c36.jpg"
 
-תמונה מומלצת: "דייזיז בגן אנגליה"
-שדה שלם של דייזיז קטנות בבוקר טחוב — רכנתי קרוב לאדמה לתפוס את הטל שנצמד לעלי הכותרת הלבנים.
 
-מדריך החודש: טווח דינמי
-שלושה שלבים: מדידת נקודות הקצה בסצנה, bracketing, מיזוג ב-Lightroom —
-כדי שהתמונה תיראה כמו שהעין ראתה.
+def fetch_issue(slug):
+    """שולף את תוכן הגיליון האמיתי מה-API — במקום טקסט מקובע"""
+    r = requests.get(
+        f"{SITE_URL}/api/admin/newsletter/{slug}",
+        headers={"X-Admin-Password": ADMIN_PASSWORD},
+        timeout=30,
+    )
+    r.raise_for_status()
+    issue = r.json()
+    content = json.loads(issue.get("content_json") or "{}")
+    return issue, content
 
-מקום לצילום: המצפה התת-ימי אילת
-ממש מתחת לפני הים, מוקף בדגים ואלמוגים בלי להירטב.
-טיפ: הצמד עדשה לזכוכית ועטוף בבד כהה — כאילו צילמת בתוך המים.
-"""
+
+def build_summary(issue, content):
+    hero = content.get("hero") or {}
+    guide = content.get("guide") or {}
+    location = content.get("location") or {}
+    tip = content.get("tip") or {}
+
+    parts = [issue.get("title_he") or ""]
+
+    if hero.get("title_he"):
+        parts.append(f'\nתמונה מומלצת: "{hero["title_he"]}"')
+    if hero.get("text_he"):
+        parts.append(hero["text_he"])
+
+    if guide.get("title_he"):
+        parts.append(f'\nמדריך החודש: {guide["title_he"]}')
+    if guide.get("text_he"):
+        parts.append(guide["text_he"])
+
+    if location.get("title_he"):
+        parts.append(f'\nמקום לצילום: {location["title_he"]}')
+    if location.get("text_he"):
+        parts.append(location["text_he"])
+
+    if not guide.get("title_he") and not location.get("title_he") and tip.get("text_he"):
+        parts.append(f'\nטיפ החודש: {tip.get("title_he", "")}')
+        parts.append(tip["text_he"])
+
+    return "\n".join(p for p in parts if p)
 
 
 def fetch_image_b64(url, max_bytes=3_750_000):
@@ -63,8 +94,23 @@ def fetch_image_b64(url, max_bytes=3_750_000):
     return b64
 
 
-def generate_captions(client, image_b64):
+def generate_captions(client, image_b64, issue, content):
     image_block = [{"type": "image", "source": {"type": "base64", "media_type": "image/jpeg", "data": image_b64}}]
+    summary = build_summary(issue, content)
+
+    hero = content.get("hero") or {}
+    guide = content.get("guide") or {}
+    location = content.get("location") or {}
+    tip = content.get("tip") or {}
+
+    hero_desc_he = hero.get("title_he") or "התמונה המצורפת"
+    hero_desc_en = hero.get("title_he") or "the attached photo"
+    extras_he = " ו".join(t for t in [guide.get("title_he"), location.get("title_he")] if t) \
+        or tip.get("title_he") or ""
+    extras_en = " and ".join(t for t in [guide.get("title_en") or guide.get("title_he"),
+                                          location.get("title_he")] if t) \
+        or tip.get("title_en") or tip.get("title_he") or ""
+    threads_topic_he = " + ".join(t for t in [hero.get("title_he"), guide.get("title_he"), location.get("title_he")] if t)
 
     # ===== עברית — אינסטגרם + פייסבוק =====
     he_msg = client.messages.create(
@@ -75,13 +121,13 @@ def generate_captions(client, image_b64):
         messages=[{"role": "user", "content": image_block + [{"type": "text", "text": f"""כתוב פוסט אינסטגרם בגוף ראשון שמקדם את הגיליון החדש של הניוזלטר.
 
 תוכן הגיליון:
-{NEWSLETTER_SUMMARY}
+{summary}
 
 קישור: {NEWSLETTER_URL}
 
 הנחיות:
-- התחל מהתמונה הזו ספציפית (דייזיז בבוקר טחוב, אנגליה)
-- הזכר בטבעיות שיש גיליון חדש — מדריך טווח דינמי ומקום לצילום באילת
+- התחל מהתמונה הזו ספציפית ({hero_desc_he})
+- הזכר בטבעיות שיש גיליון חדש{' — ' + extras_he if extras_he else ''}
 - אל תפתח עם שאלה
 - 3-5 משפטים
 - סיים עם: הניוזלטר מגיע פעם בחודש ← {NEWSLETTER_URL}
@@ -100,19 +146,19 @@ def generate_captions(client, image_b64):
         messages=[{"role": "user", "content": image_block + [{"type": "text", "text": f"""Write an Instagram post in first person promoting the new newsletter issue.
 
 Newsletter content:
-{NEWSLETTER_SUMMARY}
+{summary}
 
 Link: {NEWSLETTER_URL}
 
 Guidelines:
-- Start from this specific photo (daisies in a dewy morning, England)
-- Naturally mention the new issue — dynamic range tutorial and Eilat location tip
+- Start from this specific photo ({hero_desc_en})
+- Naturally mention the new issue{' — ' + extras_en if extras_en else ''}
 - Don't start with a question
 - 3-5 sentences
 - End with: Monthly newsletter ← {NEWSLETTER_URL}
 - English only, just the post, no title
 
-#photography #newsletter #naturephotography #israel #amitphotos #photographytutorial #dynamicrange"""}]}],
+#photography #newsletter #naturephotography #israel #amitphotos #photographytutorial"""}]}],
     )
     caption_en = en_msg.content[0].text.strip()
     print("✅ כיתוב אנגלית נוצר")
@@ -122,7 +168,7 @@ Guidelines:
         model="claude-opus-4-8",
         max_tokens=250,
         system="אתה עמית ארז. Threads — שיחה קצרה וישירה, לא פרסומת. משפט-שניים.",
-        messages=[{"role": "user", "content": image_block + [{"type": "text", "text": f"""פוסט Threads קצר על גיליון 2 של הניוזלטר: דייזיז + מדריך טווח דינמי + המצפה התת-ימי אילת.
+        messages=[{"role": "user", "content": image_block + [{"type": "text", "text": f"""פוסט Threads קצר על גיליון של הניוזלטר: {threads_topic_he}.
 סיים עם: ← {NEWSLETTER_URL}
 רק הפוסט."""}]}],
     )
@@ -211,17 +257,26 @@ def main():
     if not ANTHROPIC_API_KEY:
         print("❌ חסר ANTHROPIC_API_KEY")
         sys.exit(1)
+    if not ADMIN_PASSWORD:
+        print("❌ חסר ADMIN_PASSWORD")
+        sys.exit(1)
 
     print(f"📰 ניוזלטר: {NEWSLETTER_URL}")
-    print(f"🖼️  תמונה: {HERO_IMAGE_URL}")
+    print("\n⬇️  שולף תוכן גיליון מה-API...")
+    issue, content = fetch_issue(NEWSLETTER_SLUG)
+
+    hero_image_url = os.environ.get("HERO_IMAGE_URL", "").strip() \
+        or (content.get("hero") or {}).get("photo_url") \
+        or FALLBACK_HERO_IMAGE_URL
+    print(f"🖼️  תמונה: {hero_image_url}")
 
     client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
 
     print("\n⬇️  מוריד תמונה לניתוח...")
-    image_b64 = fetch_image_b64(HERO_IMAGE_URL)
+    image_b64 = fetch_image_b64(hero_image_url)
 
     print("\n✍️  כותב כיתובים עם Claude Opus...")
-    caption_he, caption_en, caption_threads = generate_captions(client, image_b64)
+    caption_he, caption_en, caption_threads = generate_captions(client, image_b64, issue, content)
 
     print("\n" + "="*50)
     print("HEBREW CAPTION:\n", caption_he)
@@ -234,17 +289,17 @@ def main():
     results = {}
 
     if IG_USER_ID and IG_TOKEN:
-        results["instagram"] = post_instagram(HERO_IMAGE_URL, caption_he)
+        results["instagram"] = post_instagram(hero_image_url, caption_he)
     else:
         print("⏭️  אינסטגרם — secrets חסרים, מדלג")
 
     if FB_PAGE_ID and FB_TOKEN:
-        results["facebook"] = post_facebook(HERO_IMAGE_URL, caption_he)
+        results["facebook"] = post_facebook(hero_image_url, caption_he)
     else:
         print("⏭️  פייסבוק — secrets חסרים, מדלג")
 
     if THREADS_USER_ID and THREADS_TOKEN:
-        results["threads"] = post_threads(HERO_IMAGE_URL, caption_threads)
+        results["threads"] = post_threads(hero_image_url, caption_threads)
     else:
         print("⏭️  Threads — secrets חסרים, מדלג")
 

@@ -40,4 +40,5 @@ jobs:
           THREADS_USER_ID:      ${{ secrets.THREADS_USER_ID }}
           THREADS_ACCESS_TOKEN: ${{ secrets.THREADS_ACCESS_TOKEN }}
           ANTHROPIC_API_KEY:    ${{ secrets.AMIT_PHOTO_AGENT }}
+          ADMIN_PASSWORD:       ${{ secrets.ADMIN_PASSWORD }}
         run: python src/newsletter_social_post.py
