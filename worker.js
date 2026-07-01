@@ -6743,6 +6743,7 @@ async function handleAdminNlSend(request, env, id) {
   if (!issue) return jsonRes({ error: 'not found' }, 404, request);
   if (issue.status !== 'published') return jsonRes({ error: 'יש לפרסם את הגיליון לפני שליחה' }, 400, request);
 
+  await env.DB.prepare("ALTER TABLE subscribers ADD COLUMN lang TEXT DEFAULT 'he'").run().catch(() => {});
   const { results: subscribers } = await env.DB.prepare('SELECT id, email, name, lang FROM subscribers').all();
   if (!subscribers.length) return jsonRes({ error: 'אין נרשמים ברשימה' }, 400, request);
 
