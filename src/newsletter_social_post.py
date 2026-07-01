@@ -253,6 +253,40 @@ def post_threads(image_url, caption):
     return True
 
 
+def write_step_summary(issue, hero_image_url, caption_he, caption_en, caption_threads, results):
+    """כותב סיכום מעוצב לעמוד ה-run ב-GitHub Actions — כדי שהכיתוב האנגלי (או כל כיתוב)
+    יהיה נגיש להעתקה ידנית (למשל לקבוצות פייסבוק אנגליות) בלי לחפש בלוג הגולמי."""
+    summary_path = os.environ.get("GITHUB_STEP_SUMMARY")
+    if not summary_path:
+        return
+    status_lines = "\n".join(f"- {'✅' if ok else '❌'} {platform}" for platform, ok in results.items()) or "- (לא הופעל אף פרסום אוטומטי — secrets חסרים)"
+    summary = f"""## 📰 {issue.get('title_he', '')}
+
+🔗 {NEWSLETTER_URL}
+🖼️ {hero_image_url}
+
+### עברית (אינסטגרם + פייסבוק)
+```
+{caption_he}
+```
+
+### English (copy for English FB groups)
+```
+{caption_en}
+```
+
+### Threads
+```
+{caption_threads}
+```
+
+### פרסום אוטומטי
+{status_lines}
+"""
+    with open(summary_path, "a", encoding="utf-8") as f:
+        f.write(summary)
+
+
 def main():
     if not ANTHROPIC_API_KEY:
         print("❌ חסר ANTHROPIC_API_KEY")
@@ -306,6 +340,8 @@ def main():
     print("\n📊 סיכום:")
     for platform, ok in results.items():
         print(f"  {'✅' if ok else '❌'} {platform}")
+
+    write_step_summary(issue, hero_image_url, caption_he, caption_en, caption_threads, results)
 
     if any(not ok for ok in results.values()):
         sys.exit(1)
