@@ -74,14 +74,13 @@ grid כמו ב-exposure, כרטיס לכל טכניקה — תיאור + trade-o
 
 ### 5. גלריה — תמונות לילה אמיתיות של עמית
 
-3-4 תמונות מהגלריה (grid פשוט + לינק לגלריה המלאה):
-- מגדל דוד בלילה — `1wE6dcdkaciBGBWTqztbGuQTSdJRr_Mw1`
-- שלווה בלילה הערבי (אבו דאבי) — `1z65uWUxPZhNE29Zr2x3nKZT6wtlg5adj`
-- שערים מוארים באבו דאבי — `1v55SlYVU99eLo8-vd_L82rg3nR1nzAx4`
-- פנס אבו דאבי בלילה — `1aw7oPUP-MtB5eoC4a0xup8hITN-OHBAk`
+4 תמונות מהגלריה (grid פשוט + לינק לגלריה המלאה) — UUID keys מ-D1, **אומתו ב-R2 (HTTP 200)**:
+- מגדל דוד בלילה — `696b2720-7479-4779-89bd-a96844a2d024`
+- מוזיאון שייח זיד בלילה — `b79ecbef-0014-488c-92e6-ac566d9229e4`
+- שערים מוארים באבו דאבי — `aeab9895-342c-46a3-8eb5-6f1d8756676d`
+- פנס אבו דאבי בלילה — `094db758-6ce2-4d17-b231-5589f873f540`
 
-URL: `/photos/{id}.webp` (R2, Drive ID כ-key) עם thumbnail `/photos/thumb/{id}.webp`.
-לפני השילוב לוודא שה-keys קיימים ב-R2 (חלק מתמונות Drive לא הועברו).
+URL: `/photos/{uuid}.webp` עם thumbnail `/photos/thumb/{uuid}.webp`.
 
 ### 6. ציוד מומלץ (affiliate, gear-section)
 
