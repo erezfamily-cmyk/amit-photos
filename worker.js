@@ -2577,6 +2577,7 @@ async function handleSitemap(request, env) {
     { loc: '/camera/black-and-white/', priority: '0.8', changefreq: 'monthly' },
     { loc: '/camera/color-channels/', priority: '0.8', changefreq: 'monthly' },
     { loc: '/camera/mobile/', priority: '0.8', changefreq: 'monthly' },
+    { loc: '/camera/night/', priority: '0.8', changefreq: 'monthly' },
     { loc: '/gear/', priority: '0.7', changefreq: 'monthly' },
     { loc: '/locations/', priority: '0.8', changefreq: 'weekly' },
     { loc: '/newsletter/', priority: '0.6', changefreq: 'weekly' },
