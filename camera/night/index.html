@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="canonical" href="https://amitphotos.com/camera/night/" />
+<link rel="alternate" hreflang="he" href="https://amitphotos.com/camera/night/" />
+<link rel="alternate" hreflang="en" href="https://amitphotos.com/camera/night/" />
+<link rel="alternate" hreflang="x-default" href="https://amitphotos.com/camera/night/" />
+<title>צילום לילה — מסלולי אור, ירח וחשיפה ארוכה | בית ספר לצילום | Amit Photos</title>
+<meta name="description" content="מדריך צילום לילה: מסלולי אור, צילום ירח, Star Trails ו-Light Painting — עם סימולטור חשיפה ארוכה אינטראקטיבי והגדרות מומלצות לכל תרחיש.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #0a0a0a; --surface: #111; --surface2: #181818; --border: #222;
+  --accent: #c8a96e; --text: #f0ede8; --muted: #888;
+  --trail-red: #e05a4a; --trail-warm: #f5d78a; --star-blue: #9db8e8;
+}
+body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--text);
+  direction: rtl; min-height: 100vh; padding-bottom: 5rem; }
+
+.breadcrumb { font-size: .8rem; color: var(--muted); padding: 1.25rem 1.5rem 0;
+  max-width: 780px; margin: 0 auto; }
+.breadcrumb a { color: var(--accent); text-decoration: none; }
+
+.hero { text-align: center; padding: 2.5rem 1.5rem 1.5rem; }
+.hero-badge { display: inline-block; font-size: .72rem;
+  background: rgba(200,169,110,.12); border: 1px solid rgba(200,169,110,.3);
+  color: var(--accent); border-radius: 20px; padding: .3rem .8rem; margin-bottom: .75rem; }
+.hero h1 { font-family: 'Syne', sans-serif; font-size: 2rem; color: var(--accent); margin-bottom: .5rem; }
+.hero p { color: var(--muted); font-size: .95rem; max-width: 520px; margin: 0 auto; line-height: 1.65; }
+
+.article { max-width: 780px; margin: 0 auto; padding: 0 1.25rem; }
+.section { margin-bottom: 3rem; }
+.section-label { font-size: .72rem; color: var(--accent); text-transform: uppercase;
+  letter-spacing: .1em; margin-bottom: .5rem; }
+.section h2 { font-family: 'Syne', sans-serif; font-size: 1.4rem; color: var(--text); margin-bottom: 1rem; }
+.section p { color: var(--muted); line-height: 1.75; margin-bottom: .85rem; font-size: .95rem; }
+.section p strong { color: var(--text); }
+.divider { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+
+/* ===== LIGHT TRAILS SIMULATOR ===== */
+.lab { background: var(--surface); border: 1px solid rgba(200,169,110,.3);
+  border-radius: 18px; padding: 1.5rem; margin: 1.5rem 0; }
+.lab-title { font-family: 'Syne', sans-serif; font-size: 1.05rem; color: var(--accent);
+  text-align: center; margin-bottom: 1.5rem; }
+
+.sim-preview { position: relative; border-radius: 12px; overflow: hidden; background: #000;
+  margin-bottom: 1.5rem; aspect-ratio: 16/9; }
+.sim-canvas { width: 100%; height: 100%; display: block; }
+
+.sim-status { position: absolute; top: .75rem; right: .75rem;
+  background: rgba(0,0,0,.7); border: 1px solid rgba(255,255,255,.15);
+  border-radius: 10px; padding: .5rem .9rem; font-size: .8rem;
+  backdrop-filter: blur(6px); display: flex; gap: .75rem; align-items: center; }
+.sec-badge { font-family: 'Syne', sans-serif; font-size: 1rem; color: var(--accent);
+  border-right: 1px solid rgba(255,255,255,.15); padding-right: .75rem; }
+.sim-note { font-size: .78rem; color: var(--muted); }
+
+.slider-row { display: flex; flex-direction: column; gap: .4rem; }
+.slider-header { display: flex; justify-content: space-between; align-items: center; }
+.slider-name { font-size: .9rem; font-weight: 600; }
+.slider-value { font-family: monospace; font-size: .95rem; color: var(--accent); font-weight: 700; }
+.slider-hint { font-size: .75rem; color: var(--muted); }
+input[type=range] { -webkit-appearance: none; width: 100%; height: 6px; border-radius: 3px;
+  outline: none; cursor: pointer; background: var(--border); }
+input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px;
+  border-radius: 50%; background: var(--accent); border: 2px solid #fff; }
+.scale-labels { display: flex; justify-content: space-between; font-size: .7rem; color: var(--muted); }
+
+/* Technique cards */
+.effect-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: .75rem; margin: 1.5rem 0; }
+@media (max-width: 520px) { .effect-grid { grid-template-columns: 1fr; } }
+.effect-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 1rem; }
+.effect-card-header { display: flex; align-items: center; gap: .5rem; margin-bottom: .5rem; }
+.effect-name { font-family: 'Syne', sans-serif; font-size: .9rem; }
+.effect-desc { font-size: .8rem; color: var(--muted); line-height: 1.55; }
+.effect-tradeoff { font-size: .75rem; color: var(--accent); margin-top: .4rem; }
+
+/* Settings table */
+.infographic-wrap { background: var(--surface); border: 1px solid var(--border);
+  border-radius: 16px; overflow: hidden; margin: 1.5rem 0; padding: 1.25rem; overflow-x: auto; }
+.set-table { width: 100%; border-collapse: collapse; font-size: .82rem; }
+.set-table th { color: var(--accent); font-weight: 600; text-align: right; padding: .5rem .6rem;
+  border-bottom: 1px solid var(--border); font-size: .75rem; }
+.set-table td { padding: .55rem .6rem; border-bottom: 1px solid rgba(255,255,255,.05); color: var(--muted); }
+.set-table td:first-child { color: var(--text); font-weight: 600; }
+.set-table tr:last-child td { border-bottom: none; }
+.set-table .mono { font-family: monospace; color: var(--text); }
+
+/* Gallery */
+.night-gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: .75rem; margin: 1.5rem 0; }
+.night-gallery a { display: block; border-radius: 10px; overflow: hidden;
+  border: 1px solid var(--border); transition: border-color .2s; aspect-ratio: 3/4; }
+.night-gallery a:hover { border-color: rgba(200,169,110,.5); }
+.night-gallery img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.gallery-link { text-align: center; }
+.gallery-link a { color: var(--accent); font-size: .85rem; text-decoration: none; }
+
+.nav-prev { text-align: center; padding: 1.5rem; }
+.nav-prev a { color: var(--accent); font-size: .85rem; text-decoration: none; }
+.gear-section{max-width:760px;margin:0 auto;padding:1.5rem 1.25rem .5rem;border-bottom:1px solid var(--border)}
+.gear-row-label{font-size:.68rem;text-transform:uppercase;letter-spacing:.14em;color:var(--accent);display:flex;align-items:center;gap:.75rem;margin-bottom:1rem}
+.gear-row-label::after{content:'';flex:1;height:1px;background:var(--border)}
+.gear-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:.75rem}
+.gear-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;text-decoration:none;transition:border-color .2s}
+.gear-card:hover{border-color:rgba(200,169,110,.45)}
+.gear-card-ico{aspect-ratio:3/2;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:2.5rem}
+.gear-card-ico svg{width:48px;height:48px;stroke:var(--accent);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.gear-card-body{padding:.85rem;flex:1;display:flex;flex-direction:column}
+.gear-card-name{font-family:'Syne',sans-serif;font-size:.87rem;color:var(--text);margin-bottom:.3rem}
+.gear-card-desc{font-size:.76rem;color:var(--muted);line-height:1.55;flex:1;margin-bottom:.8rem}
+.gear-card-btn{display:block;text-align:center;border:1px solid rgba(200,169,110,.45);color:var(--accent);font-size:.75rem;font-weight:700;padding:.4rem .75rem;border-radius:6px;transition:background .15s,color .15s}
+.gear-card-btn:hover{background:var(--accent);color:#000}
+.gear-disclose{font-size:.67rem;color:#444;text-align:center;padding:.6rem 0 1.5rem}
+
+.kofi-bar{text-align:center;padding:1.25rem 1.25rem 1.75rem;max-width:760px;margin:0 auto}
+.kofi-bar a{display:inline-flex;align-items:center;gap:.5rem;background:var(--surface);border:1px solid rgba(200,169,110,.4);color:var(--accent);font-size:.82rem;font-weight:700;padding:.55rem 1.4rem;border-radius:8px;text-decoration:none;transition:background .2s,color .2s}
+.kofi-bar a:hover{background:var(--accent);color:#000}</style>
+<script src="/assets/js/nav.js?v=9aff906" defer></script>
+<script src="/assets/js/share.js" defer></script>
+
+  <!-- JSON-LD Structured Data -->
+  <script type="application/ld+json">
+  [
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "צילום לילה — מסלולי אור, ירח וחשיפה ארוכה",
+    "description": "מדריך צילום לילה: מסלולי אור, צילום ירח, Star Trails ו-Light Painting — עם סימולטור חשיפה ארוכה אינטראקטיבי.",
+    "url": "https://amitphotos.com/camera/night/",
+    "author": { "@type": "Person", "name": "עמית ארז", "url": "https://amitphotos.com" },
+    "publisher": { "@type": "Organization", "name": "Amit Photos", "url": "https://amitphotos.com" },
+    "isPartOf": { "@type": "Course", "name": "בית ספר לצילום", "url": "https://amitphotos.com/camera/" },
+    "inLanguage": "he",
+    "datePublished": "2026-07-02",
+    "dateModified": "2026-07-02",
+    "educationalLevel": "Beginner",
+    "learningResourceType": "Tutorial",
+    "teaches": "Photography"
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "בית", "item": "https://amitphotos.com/" },
+      { "@type": "ListItem", "position": 2, "name": "למד לצלם", "item": "https://amitphotos.com/camera/" },
+      { "@type": "ListItem", "position": 3, "name": "צילום לילה", "item": "https://amitphotos.com/camera/night/" }
+    ]
+  }
+]
+  </script>
+</head>
+<body>
+<div class="breadcrumb">
+  <a href="/camera/" data-he="למד לצלם" data-en="Photography School">למד לצלם</a>
+  <span data-he=" ← צילום לילה" data-en=" ← Night Photography"> ← צילום לילה</span>
+</div>
+
+<div class="hero">
+  <div class="hero-badge" data-he="🌙 צילום לילה" data-en="🌙 Night Photography">🌙 צילום לילה</div>
+  <h1 data-he="כשהחושך הופך לקנבס" data-en="When Darkness Becomes a Canvas">כשהחושך הופך לקנבס</h1>
+  <p data-he="מסלולי אור, ירח וכוכבים — הכל מתחיל בעיקרון אחד: משך החשיפה קובע כמה זמן האור מצייר על החיישן" data-en="Light trails, moon and stars — it all starts with one principle: exposure time determines how long light draws on the sensor">מסלולי אור, ירח וכוכבים — הכל מתחיל בעיקרון אחד: משך החשיפה קובע כמה זמן האור מצייר על החיישן</p>
+</div>
+
+<div class="article">
+
+  <!-- SIMULATOR -->
+  <div class="section">
+    <div class="lab">
+      <div class="lab-title" data-he="🌃 סימולטור מסלולי אור — גרור ותראה" data-en="🌃 Light Trails Simulator — Drag & See">🌃 סימולטור מסלולי אור — גרור ותראה</div>
+
+      <div class="sim-preview">
+        <canvas class="sim-canvas" id="simCanvas"></canvas>
+        <div class="sim-status">
+          <span class="sec-badge" id="secBadge">1s</span>
+          <span class="sim-note" id="secNote"></span>
+        </div>
+      </div>
+
+      <div class="slider-row">
+        <div class="slider-header">
+          <div class="slider-name" data-he="⏱ משך חשיפה" data-en="⏱ Exposure Duration">⏱ משך חשיפה</div>
+          <span class="slider-value" id="durVal">1s</span>
+        </div>
+        <input type="range" id="durSlider" min="0" max="5" value="0" aria-label="Exposure duration">
+        <div class="scale-labels">
+          <span>1s</span><span>2s</span><span>4s</span><span>8s</span><span>15s</span><span>30s</span>
+        </div>
+        <div class="slider-hint" data-he="ככל שהתריס פתוח יותר זמן — כל מקור אור נע מצייר קו ארוך יותר. המכוניות בכביש הופכות לנהרות אור, והכוכבים מתחילים לצייר קשתות סביב הכוכב הצפוני." data-en="The longer the shutter stays open — every moving light source draws a longer line. Cars become rivers of light, and stars begin drawing arcs around the North Star.">ככל שהתריס פתוח יותר זמן — כל מקור אור נע מצייר קו ארוך יותר. המכוניות בכביש הופכות לנהרות אור, והכוכבים מתחילים לצייר קשתות סביב הכוכב הצפוני.</div>
+      </div>
+    </div>
+    <p data-he="שים לב: אפילו ב-30 שניות, קשתות הכוכבים עדינות מאוד — כדור הארץ מסתובב לאט. Star Trails אמיתיים דורשים עשרות דקות של צילום (או צירוף עשרות חשיפות בעריכה)." data-en="Note: even at 30 seconds, star arcs are very subtle — Earth rotates slowly. Real star trails require tens of minutes of shooting (or stacking dozens of exposures in editing).">שים לב: אפילו ב-30 שניות, קשתות הכוכבים עדינות מאוד — כדור הארץ מסתובב לאט. Star Trails אמיתיים דורשים עשרות דקות של צילום (או צירוף עשרות חשיפות בעריכה).</p>
+  </div>
+
+  <hr class="divider">
+
+  <!-- TECHNIQUES -->
+  <div class="section">
+    <div class="section-label" data-he="ארגז הכלים" data-en="The Toolbox">ארגז הכלים</div>
+    <h2 data-he="ארבע טכניקות לילה" data-en="Four Night Techniques">ארבע טכניקות לילה</h2>
+    <p data-he="כל טכניקות הלילה בנויות על אותו עיקרון — חשיפה ארוכה — אבל כל אחת מנצלת אותו אחרת, ולכל אחת יש מחיר." data-en="All night techniques build on the same principle — long exposure — but each uses it differently, and each has a cost.">כל טכניקות הלילה בנויות על אותו עיקרון — חשיפה ארוכה — אבל כל אחת מנצלת אותו אחרת, ולכל אחת יש מחיר.</p>
+
+    <div class="effect-grid">
+      <div class="effect-card">
+        <div class="effect-card-header"><div class="effect-name" data-he="🚗 מסלולי אור" data-en="🚗 Light Trails">🚗 מסלולי אור</div></div>
+        <div class="effect-desc" data-he="תריס פתוח 8-30 שניות מעל כביש או גשר — פנסי המכוניות הופכים לנהרות אור אדומים ולבנים." data-en="Shutter open 8-30 seconds over a road or bridge — car lights become red and white rivers of light.">תריס פתוח 8-30 שניות מעל כביש או גשר — פנסי המכוניות הופכים לנהרות אור אדומים ולבנים.</div>
+        <div class="effect-tradeoff" data-he="⚠ חצובה חובה. צמצם סגור (f/8-f/11) כדי שהתמונה לא תישרף" data-en="⚠ Tripod required. Closed aperture (f/8-f/11) so the frame doesn't blow out">⚠ חצובה חובה. צמצם סגור (f/8-f/11) כדי שהתמונה לא תישרף</div>
+      </div>
+      <div class="effect-card">
+        <div class="effect-card-header"><div class="effect-name" data-he="🌕 צילום ירח" data-en="🌕 Moon Photography">🌕 צילום ירח</div></div>
+        <div class="effect-desc" data-he='הירח בהיר הרבה יותר משנדמה — הוא מואר בשמש מלאה. כלל "Looney 11": f/11, ISO 100, תריס 1/100.' data-en='The moon is far brighter than it seems — it is lit by full sunlight. The "Looney 11" rule: f/11, ISO 100, shutter 1/100.'>הירח בהיר הרבה יותר משנדמה — הוא מואר בשמש מלאה. כלל "Looney 11": f/11, ISO 100, תריס 1/100.</div>
+        <div class="effect-tradeoff" data-he="⚠ חשיפה ארוכה = ירח לבן שרוף בלי שום פרט" data-en="⚠ Long exposure = blown white moon with zero detail">⚠ חשיפה ארוכה = ירח לבן שרוף בלי שום פרט</div>
+      </div>
+      <div class="effect-card">
+        <div class="effect-card-header"><div class="effect-name" data-he="✨ Star Trails" data-en="✨ Star Trails">✨ Star Trails</div></div>
+        <div class="effect-desc" data-he="עשרות חשיפות של 30 שניות שמצורפות בעריכה — הכוכבים מציירים קשתות סביב הכוכב הצפוני." data-en="Dozens of 30-second exposures stacked in editing — stars draw arcs around the North Star.">עשרות חשיפות של 30 שניות שמצורפות בעריכה — הכוכבים מציירים קשתות סביב הכוכב הצפוני.</div>
+        <div class="effect-tradeoff" data-he="⚠ שעות של צילום, סוללות מלאות, ומקום רחוק מזיהום אור" data-en="⚠ Hours of shooting, full batteries, and a spot far from light pollution">⚠ שעות של צילום, סוללות מלאות, ומקום רחוק מזיהום אור</div>
+      </div>
+      <div class="effect-card">
+        <div class="effect-card-header"><div class="effect-name" data-he="🔦 Light Painting" data-en="🔦 Light Painting">🔦 Light Painting</div></div>
+        <div class="effect-desc" data-he="תריס פתוח במצב Bulb + פנס ביד — מציירים צורות באוויר או מאירים אובייקט בחושך." data-en="Shutter open in Bulb mode + a flashlight — draw shapes in the air or paint light onto a subject in the dark.">תריס פתוח במצב Bulb + פנס ביד — מציירים צורות באוויר או מאירים אובייקט בחושך.</div>
+        <div class="effect-tradeoff" data-he="⚠ דורש חושך מלא והרבה ניסיונות — אבל כל פריים הוא יצירה" data-en="⚠ Requires total darkness and many attempts — but every frame is unique">⚠ דורש חושך מלא והרבה ניסיונות — אבל כל פריים הוא יצירה</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- SETTINGS TABLE -->
+  <div class="section">
+    <div class="section-label" data-he="נקודת פתיחה" data-en="Starting Point">נקודת פתיחה</div>
+    <h2 data-he="הגדרות מומלצות לכל תרחיש" data-en="Recommended Settings per Scenario">הגדרות מומלצות לכל תרחיש</h2>
+    <p data-he="אלו נקודות פתיחה, לא חוקים — צלם, בדוק את המסך וההיסטוגרמה, ותקן." data-en="These are starting points, not rules — shoot, check your screen and histogram, adjust.">אלו נקודות פתיחה, לא חוקים — צלם, בדוק את המסך וההיסטוגרמה, ותקן.</p>
+
+    <div class="infographic-wrap">
+      <table class="set-table">
+        <thead><tr>
+          <th data-he="תרחיש" data-en="Scenario">תרחיש</th>
+          <th>ISO</th>
+          <th data-he="צמצם" data-en="Aperture">צמצם</th>
+          <th data-he="תריס" data-en="Shutter">תריס</th>
+        </tr></thead>
+        <tbody>
+          <tr><td data-he="עיר בלילה (ביד)" data-en="City at night (handheld)">עיר בלילה (ביד)</td><td class="mono">400</td><td class="mono">f/5.6</td><td class="mono">1/30</td></tr>
+          <tr><td data-he="מסלולי אור" data-en="Light trails">מסלולי אור</td><td class="mono">100</td><td class="mono">f/11</td><td class="mono">15s</td></tr>
+          <tr><td data-he="ירח מלא" data-en="Full moon">ירח מלא</td><td class="mono">100</td><td class="mono">f/11</td><td class="mono">1/100</td></tr>
+          <tr><td data-he="שמיים זרועי כוכבים" data-en="Starry sky">שמיים זרועי כוכבים</td><td class="mono">3200</td><td class="mono">f/2.8</td><td class="mono">20s</td></tr>
+          <tr><td>Light Painting</td><td class="mono">100</td><td class="mono">f/8</td><td class="mono">Bulb</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p data-he='<strong>כלל 500 לכוכבים חדים:</strong> חלק 500 במרחק המוקד של העדשה — זה התריס המקסימלי בשניות לפני שהכוכבים "נמרחים". עדשת 20mm? עד 25 שניות (500÷20).' data-en="<strong>Rule of 500 for sharp stars:</strong> divide 500 by your focal length — that's the max shutter in seconds before stars smear. A 20mm lens? Up to 25 seconds (500÷20)."><strong>כלל 500 לכוכבים חדים:</strong> חלק 500 במרחק המוקד של העדשה — זה התריס המקסימלי בשניות לפני שהכוכבים "נמרחים". עדשת 20mm? עד 25 שניות (500÷20).</p>
+    <p data-he='רוצה להעמיק? <a href="/camera/exposure/" style="color:var(--accent)">מדריך החשיפה</a> מסביר את משולש ISO-צמצם-תריס, ו<a href="/camera/light/" style="color:var(--accent)">מדריך האור והצבע</a> מסביר טמפרטורת צבע — קריטי לאורות עיר.' data-en='Want to go deeper? <a href="/camera/exposure/" style="color:var(--accent)">The exposure guide</a> explains the ISO-aperture-shutter triangle, and <a href="/camera/light/" style="color:var(--accent)">the light &amp; color guide</a> covers color temperature — critical for city lights.'>רוצה להעמיק? <a href="/camera/exposure/" style="color:var(--accent)">מדריך החשיפה</a> מסביר את משולש ISO-צמצם-תריס, ו<a href="/camera/light/" style="color:var(--accent)">מדריך האור והצבע</a> מסביר טמפרטורת צבע — קריטי לאורות עיר.</p>
+  </div>
+
+  <hr class="divider">
+
+  <!-- GALLERY -->
+  <div class="section">
+    <div class="section-label" data-he="מהשטח" data-en="From the Field">מהשטח</div>
+    <h2 data-he="לילה בעדשה של עמית" data-en="Night Through Amit's Lens">לילה בעדשה של עמית</h2>
+    <div class="night-gallery">
+      <a href="/gallery.html" aria-label="מגדל דוד בלילה"><img loading="lazy" src="/photos/thumb/696b2720-7479-4779-89bd-a96844a2d024.webp" alt="מגדל דוד בלילה"></a>
+      <a href="/gallery.html" aria-label="מוזיאון שייח זיד בלילה"><img loading="lazy" src="/photos/thumb/b79ecbef-0014-488c-92e6-ac566d9229e4.webp" alt="מוזיאון שייח זיד בלילה"></a>
+      <a href="/gallery.html" aria-label="שערים מוארים באבו דאבי"><img loading="lazy" src="/photos/thumb/aeab9895-342c-46a3-8eb5-6f1d8756676d.webp" alt="שערים מוארים באבו דאבי"></a>
+      <a href="/gallery.html" aria-label="פנס אבו דאבי בלילה"><img loading="lazy" src="/photos/thumb/094db758-6ce2-4d17-b231-5589f873f540.webp" alt="פנס אבו דאבי בלילה"></a>
+    </div>
+    <div class="gallery-link"><a href="/gallery.html" data-he="לגלריה המלאה ←" data-en="Full gallery →">לגלריה המלאה ←</a></div>
+  </div>
+
+</div>
+
+<div class="gear-section">
+  <div class="gear-row-label" data-he="ציוד מומלץ" data-en="Recommended Gear">ציוד מומלץ</div>
+  <div class="gear-cards">
+    <a class="gear-card" href="https://adorama.prf.hn/click/camref:1101l5Km5i/destination:https://www.adorama.com/catalog.tpl?SearchInfo=Manfrotto+MT055CXPRO3+carbon+tripod" target="_blank" rel="noopener sponsored">
+      <div class="gear-card-ico"><svg viewBox="0 0 24 24"><path d="M12 2v6"/><path d="M12 8L5 22"/><path d="M12 8l7 14"/><path d="M12 8v14"/><circle cx="12" cy="5" r="3"/></svg></div>
+      <div class="gear-card-body">
+        <div class="gear-card-name" data-he="חצובה יציבה" data-en="Sturdy Tripod">חצובה יציבה</div>
+        <div class="gear-card-desc" data-he="הכלי החשוב ביותר בצילום לילה. כל חשיפה מעל 1/30 — בלי חצובה אין תמונה חדה." data-en="The single most important night tool. Any exposure over 1/30 — no tripod, no sharp shot.">הכלי החשוב ביותר בצילום לילה. כל חשיפה מעל 1/30 — בלי חצובה אין תמונה חדה.</div>
+        <span class="gear-card-btn" data-he="ראה באדוראמה ←" data-en="View at Adorama →">ראה באדוראמה ←</span>
+      </div>
+    </a>
+    <a class="gear-card" href="https://adorama.prf.hn/click/camref:1101l5Km5i/destination:https://www.adorama.com/catalog.tpl?SearchInfo=intervalometer+remote+shutter" target="_blank" rel="noopener sponsored">
+      <div class="gear-card-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2"/><path d="M9 2h6"/></svg></div>
+      <div class="gear-card-body">
+        <div class="gear-card-name" data-he="אינטרוולומטר" data-en="Intervalometer">אינטרוולומטר</div>
+        <div class="gear-card-desc" data-he="שלט תריס עם טיימר — חיוני ל-Star Trails, Bulb וצילום רצפים בלי לגעת במצלמה." data-en="A shutter remote with a timer — essential for star trails, Bulb mode and sequences without touching the camera.">שלט תריס עם טיימר — חיוני ל-Star Trails, Bulb וצילום רצפים בלי לגעת במצלמה.</div>
+        <span class="gear-card-btn" data-he="ראה באדוראמה ←" data-en="View at Adorama →">ראה באדוראמה ←</span>
+      </div>
+    </a>
+    <a class="gear-card" href="https://adorama.prf.hn/click/camref:1101l5Km5i/destination:https://www.adorama.com/catalog.tpl?SearchInfo=wide+angle+f2.8+lens" target="_blank" rel="noopener sponsored">
+      <div class="gear-card-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg></div>
+      <div class="gear-card-body">
+        <div class="gear-card-name" data-he="עדשה רחבה ומהירה" data-en="Fast Wide Lens">עדשה רחבה ומהירה</div>
+        <div class="gear-card-desc" data-he="f/2.8 ומטה — אוספת פי 4-8 יותר אור מעדשת קיט. ההבדל בין שמיים ריקים לשמיים מלאי כוכבים." data-en="f/2.8 or faster — gathers 4-8× more light than a kit lens. The difference between an empty sky and one full of stars.">f/2.8 ומטה — אוספת פי 4-8 יותר אור מעדשת קיט. ההבדל בין שמיים ריקים לשמיים מלאי כוכבים.</div>
+        <span class="gear-card-btn" data-he="ראה באדוראמה ←" data-en="View at Adorama →">ראה באדוראמה ←</span>
+      </div>
+    </a>
+  </div>
+    <a class="gear-card" href="https://www.awin1.com/cread.php?awinmid=96417&awinaffid=2911221&ued=https%3A%2F%2Fwww.peltierphotocourses.com%2F" target="_blank" rel="noopener sponsored" style="flex-direction:row;align-items:center;gap:.75rem;padding:.85rem;margin-top:.75rem">
+      <div style="font-size:2rem;line-height:1;flex-shrink:0">&#127891;</div>
+      <div class="gear-card-body" style="padding:0">
+        <div class="gear-card-name" data-he="קורסי צילום — מהיסודות ועד מתקדם" data-en="Photography Courses — Beginner to Advanced">קורסי צילום — מהיסודות ועד מתקדם</div>
+        <div class="gear-card-desc" data-he="Peltier Photo Courses — וידאו, קצב עצמי, כיסוי מלא של כל נושאי הצילום." data-en="Peltier Photo Courses — video lessons, self-paced, covering all photography topics.">Peltier Photo Courses — וידאו, קצב עצמי, כיסוי מלא של כל נושאי הצילום.</div>
+        <span class="gear-card-btn" data-he="לקורסים ←" data-en="View Courses →">לקורסים ←</span>
+      </div>
+    </a>
+  <div class="gear-disclose" data-he="קישורי שותף — עמלה קטנה, ללא עלות נוספת לך" data-en="Affiliate links — small commission, no extra cost to you">קישורי שותף — עמלה קטנה, ללא עלות נוספת לך</div>
+</div>
+<div class="kofi-bar">
+  <a href="https://ko-fi.com/amitphotos" target="_blank" rel="noopener">
+    &#9749; <span data-he="אהבת את המדריך? קנה לי קפה" data-en="Found this guide useful? Buy me a coffee">אהבת את המדריך? קנה לי קפה</span>
+  </a>
+</div>
+
+<div class="nav-prev">
+<a href="/camera/" data-he="← חזרה לבית ספר לצילום" data-en="← Back to Photography School">← חזרה לבית ספר לצילום</a>
+</div>
+
+<script>
+function getLang() { return localStorage.getItem('lang') || 'he'; }
+
+const DUR_NOTES = {
+  he: { short: 'חשיפה קצרה — האור קופא', mid: 'האור מתחיל לצייר', long: 'חשיפה ארוכה — האור מצייר נהרות' },
+  en: { short: 'Short exposure — light freezes', mid: 'Light starts drawing', long: 'Long exposure — light draws rivers' }
+};
+const DURATIONS = [1, 2, 4, 8, 15, 30];
+
+// Seeded RNG — יציב בין רינדורים כדי שהסצנה לא "תרצד"
+function mulberry32(a) {
+  return function() {
+    a |= 0; a = a + 0x6D2B79F5 | 0;
+    let t = Math.imul(a ^ a >>> 15, 1 | a);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+
+const canvas = document.getElementById('simCanvas');
+const ctx = canvas.getContext('2d');
+
+function resizeCanvas() {
+  const rect = canvas.parentElement.getBoundingClientRect();
+  canvas.width = rect.width || 640;
+  canvas.height = canvas.width * 9 / 16;
+  redraw();
+}
+
+function drawScene(seconds) {
+  const w = canvas.width, h = canvas.height;
+  if (!w || !h) return;
+  const horizon = h * 0.62;          // קו הבניינים
+  const roadTop = h * 0.78;          // תחילת הכביש
+
+  // --- שמיים ---
+  const sky = ctx.createLinearGradient(0, 0, 0, horizon);
+  sky.addColorStop(0, '#05070f');
+  sky.addColorStop(1, '#0d1524');
+  ctx.fillStyle = sky;
+  ctx.fillRect(0, 0, w, horizon);
+
+  // --- כוכבים + קשתות trail סביב הכוכב הצפוני ---
+  const poleX = w * 0.78, poleY = h * 0.14;
+  const starRnd = mulberry32(42);
+  // תנועת כוכבים אמיתית: ~0.0044 מעלות/שניה. מוגזם פי ~12 לפדגוגיה, עדיין עדין ב-30s
+  const arcAngle = seconds * 0.0009 * 12 * Math.PI / 180 * 60;
+  for (let i = 0; i < 110; i++) {
+    const sx = starRnd() * w, sy = starRnd() * horizon * 0.92;
+    const bright = 0.35 + starRnd() * 0.65;
+    const r = Math.hypot(sx - poleX, sy - poleY);
+    const a0 = Math.atan2(sy - poleY, sx - poleX);
+    ctx.strokeStyle = `rgba(157,184,232,${bright * 0.9})`;
+    ctx.lineWidth = bright < 0.7 ? 0.7 : 1.2;
+    ctx.beginPath();
+    if (arcAngle < 0.004) {
+      ctx.arc(sx, sy, ctx.lineWidth * 0.7, 0, Math.PI * 2);
+      ctx.fillStyle = ctx.strokeStyle;
+      ctx.fill();
+    } else {
+      ctx.arc(poleX, poleY, r, a0, a0 + arcAngle);
+      ctx.stroke();
+    }
+  }
+  // הכוכב הצפוני — נקודה קבועה
+  ctx.fillStyle = 'rgba(220,230,255,.95)';
+  ctx.beginPath(); ctx.arc(poleX, poleY, 1.8, 0, Math.PI * 2); ctx.fill();
+
+  // --- צללית בניינים + חלונות ---
+  const bldRnd = mulberry32(7);
+  ctx.fillStyle = '#080a10';
+  let bx = 0;
+  while (bx < w) {
+    const bw = 30 + bldRnd() * 70;
+    const bh = 40 + bldRnd() * (h * 0.22);
+    ctx.fillRect(bx, horizon - bh, bw, bh + (roadTop - horizon));
+    // חלונות מוארים
+    for (let wy = horizon - bh + 6; wy < horizon - 8; wy += 11) {
+      for (let wx = bx + 4; wx < bx + bw - 6; wx += 9) {
+        if (bldRnd() < 0.28) {
+          ctx.fillStyle = `rgba(245,215,138,${0.4 + bldRnd() * 0.5})`;
+          ctx.fillRect(wx, wy, 3.5, 5);
+          ctx.fillStyle = '#080a10';
+        }
+      }
+    }
+    bx += bw + 2 + bldRnd() * 14;
+  }
+
+  // --- כביש ---
+  const road = ctx.createLinearGradient(0, roadTop, 0, h);
+  road.addColorStop(0, '#0c0e12');
+  road.addColorStop(1, '#131519');
+  ctx.fillStyle = road;
+  ctx.fillRect(0, roadTop, w, h - roadTop);
+
+  // --- מסלולי אור של מכוניות ---
+  // כל מכונית: נתיב, מיקום התחלה, מהירות. אורך המסלול = מהירות × שניות
+  const carRnd = mulberry32(99);
+  const lanes = [
+    { y: roadTop + (h - roadTop) * 0.28, dir: 1,  color: 'rgba(224,90,74,'  },  // פנסים אחוריים — אדום
+    { y: roadTop + (h - roadTop) * 0.48, dir: 1,  color: 'rgba(224,90,74,'  },
+    { y: roadTop + (h - roadTop) * 0.68, dir: -1, color: 'rgba(245,215,138,' },  // פנסים קדמיים — לבן חם
+    { y: roadTop + (h - roadTop) * 0.86, dir: -1, color: 'rgba(245,215,138,' },
+  ];
+  ctx.lineCap = 'round';
+  lanes.forEach(lane => {
+    const cars = 3 + Math.floor(carRnd() * 3);
+    for (let c = 0; c < cars; c++) {
+      const speed = (w * 0.045) * (0.7 + carRnd() * 0.6);   // px לשניה
+      const startX = carRnd() * w;
+      const len = Math.min(speed * seconds, w * 1.5);
+      const endX = startX + len * lane.dir;
+      const wobble = Math.sin(startX * 0.05) * 1.5;
+      const grad = ctx.createLinearGradient(startX, 0, endX, 0);
+      grad.addColorStop(0, lane.color + '0.05)');
+      grad.addColorStop(1, lane.color + '0.9)');
+      ctx.strokeStyle = grad;
+      ctx.lineWidth = 2.4;
+      ctx.beginPath();
+      ctx.moveTo(startX, lane.y + wobble);
+      ctx.lineTo(endX, lane.y - wobble);
+      ctx.stroke();
+      // הילה סביב קצה המסלול
+      ctx.fillStyle = lane.color + '0.85)';
+      ctx.beginPath(); ctx.arc(endX, lane.y - wobble, 2.6, 0, Math.PI * 2); ctx.fill();
+    }
+  });
+
+  // --- הבהרה כללית עם משך החשיפה (יותר אור נאסף) ---
+  const glow = Math.min(0.16, seconds / 30 * 0.16);
+  ctx.fillStyle = `rgba(200,169,110,${glow * 0.4})`;
+  ctx.fillRect(0, 0, w, h);
+}
+
+function redraw() {
+  const idx = parseInt(document.getElementById('durSlider').value);
+  const seconds = DURATIONS[idx];
+  drawScene(seconds);
+  document.getElementById('durVal').textContent = seconds + 's';
+  document.getElementById('secBadge').textContent = seconds + 's';
+  const lang = getLang();
+  const n = DUR_NOTES[lang] || DUR_NOTES.he;
+  const note = document.getElementById('secNote');
+  if (seconds <= 2) note.textContent = n.short;
+  else if (seconds <= 8) note.textContent = n.mid;
+  else note.textContent = n.long;
+}
+
+document.getElementById('durSlider').addEventListener('input', redraw);
+
+function applyLang() {
+  const lang = getLang();
+  const isEn = lang === 'en';
+  document.documentElement.dir = isEn ? 'ltr' : 'rtl';
+  document.documentElement.lang = lang;
+  document.body.style.direction = isEn ? 'ltr' : 'rtl';
+  document.title = isEn
+    ? 'Night Photography — Light Trails, Moon & Long Exposure | Photography School | Amit Photos'
+    : 'צילום לילה — מסלולי אור, ירח וחשיפה ארוכה | בית ספר לצילום | Amit Photos';
+  document.querySelectorAll('[data-he]').forEach(el => {
+    const val = isEn ? (el.dataset.en || el.dataset.he) : el.dataset.he;
+    if (val.includes('<')) el.innerHTML = val; else el.textContent = val;
+  });
+  redraw();
+}
+
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+applyLang();
+window.addEventListener('storage', e => { if (e.key === 'lang') applyLang(); });
+</script></body>
+</html>
