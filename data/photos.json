@@ -23397,6 +23397,153 @@
     }
   },
   {
+    "id": "1TCAfgJ9pl3T0G8RRtIAa5_0FOoxXrjso",
+    "title": "ריקוד של אש בלילה",
+    "category": "צילומי לילה",
+    "parent_category": null,
+    "url": "/photos/1TCAfgJ9pl3T0G8RRtIAa5_0FOoxXrjso.webp",
+    "thumbnail": "/photos/thumb/1TCAfgJ9pl3T0G8RRtIAa5_0FOoxXrjso.webp",
+    "description": "ספינינג של צמר פלדה יוצר גלגל אור זהוב על רקע שחור",
+    "filename": "MJH_2106.jpg",
+    "width": 7360,
+    "height": 4912,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "24.0-70.0 mm f/2.8",
+      "focal": 70,
+      "aperture": 7.1,
+      "iso": 400,
+      "shutter": 30
+    },
+    "added_at": "2026-07-02"
+  },
+  {
+    "id": "1toLLUZrvlD_zP5qosJLEabgyh1WOEWZc",
+    "title": "מטריית אש",
+    "category": "צילומי לילה",
+    "parent_category": null,
+    "url": "/photos/1toLLUZrvlD_zP5qosJLEabgyh1WOEWZc.webp",
+    "thumbnail": "/photos/thumb/1toLLUZrvlD_zP5qosJLEabgyh1WOEWZc.webp",
+    "description": "ספינינג אש ברזל לוהט בחושך, יוצר קשת זוהרת מרהיבה",
+    "filename": "MJH_2110.jpg",
+    "width": 7088,
+    "height": 2996,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "24.0-70.0 mm f/2.8",
+      "focal": 24,
+      "aperture": 8,
+      "iso": 400,
+      "shutter": 5
+    },
+    "added_at": "2026-07-02"
+  },
+  {
+    "id": "1znLwkEkxfNM54UGTgd-6ZwfJFo8keMa5",
+    "title": "רקص האש בלילה",
+    "category": "צילומי לילה",
+    "parent_category": null,
+    "url": "/photos/1znLwkEkxfNM54UGTgd-6ZwfJFo8keMa5.webp",
+    "thumbnail": "/photos/thumb/1znLwkEkxfNM54UGTgd-6ZwfJFo8keMa5.webp",
+    "description": "ביצוע אמנותי של פיצוץ נימים מתכתיים בוהקים בחושך",
+    "filename": "MJH_2115.jpg",
+    "width": 5620,
+    "height": 3363,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "24.0-70.0 mm f/2.8",
+      "focal": 24,
+      "aperture": 8,
+      "iso": 400,
+      "shutter": 5
+    },
+    "added_at": "2026-07-02"
+  },
+  {
+    "id": "1G_dn5hHrv_1cZ-VVGfECEYzi9J6pDGhI",
+    "title": "ריקוד אור בערבה",
+    "category": "צילומי לילה",
+    "parent_category": null,
+    "url": "/photos/1G_dn5hHrv_1cZ-VVGfECEYzi9J6pDGhI.webp",
+    "thumbnail": "/photos/thumb/1G_dn5hHrv_1cZ-VVGfECEYzi9J6pDGhI.webp",
+    "description": "שתי דמויות רוקדות בתוך כדור אור ורוד בלילה בערבה",
+    "filename": "MJH_2127.jpg",
+    "width": 6943,
+    "height": 4634,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "24.0-70.0 mm f/2.8",
+      "focal": 24,
+      "aperture": 2.8,
+      "iso": 800,
+      "shutter": 8
+    },
+    "added_at": "2026-07-02"
+  },
+  {
+    "id": "1Dtx-JpBUgntpzvI7KOs9UGBnovCaG5xr",
+    "title": "יוגה תחת הכוכבים",
+    "category": "צילומי לילה",
+    "parent_category": null,
+    "url": "/photos/1Dtx-JpBUgntpzvI7KOs9UGBnovCaG5xr.webp",
+    "thumbnail": "/photos/thumb/1Dtx-JpBUgntpzvI7KOs9UGBnovCaG5xr.webp",
+    "description": "דמות בתנוחת יוגה מואירה בכחול מול סלע ענק בלילה",
+    "filename": "MJH_2130.jpg",
+    "width": 7360,
+    "height": 4912,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "24.0-70.0 mm f/2.8",
+      "focal": 24,
+      "aperture": 2.8,
+      "iso": 800,
+      "shutter": 8
+    },
+    "added_at": "2026-07-02"
+  },
+  {
+    "id": "1sxR_ktonUCP-gfmMWU6tCQYU2Rhe-0e9",
+    "title": "אור כחול בלילה",
+    "category": "צילומי לילה",
+    "parent_category": null,
+    "url": "/photos/1sxR_ktonUCP-gfmMWU6tCQYU2Rhe-0e9.webp",
+    "thumbnail": "/photos/thumb/1sxR_ktonUCP-gfmMWU6tCQYU2Rhe-0e9.webp",
+    "description": "דמות בודדה בתוך הילה כחולה זוהרת מול סלע ענק תחת כוכבים",
+    "filename": "MJH_2132.jpg",
+    "width": 6993,
+    "height": 4763,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "24.0-70.0 mm f/2.8",
+      "focal": 24,
+      "aperture": 2.8,
+      "iso": 800,
+      "shutter": 8
+    },
+    "added_at": "2026-07-02"
+  },
+  {
+    "id": "1xXiWFageaUy0iYqgk-OKPuNPSOVPIjPk",
+    "title": "ציור אור בלילה",
+    "category": "צילומי לילה",
+    "parent_category": null,
+    "url": "/photos/1xXiWFageaUy0iYqgk-OKPuNPSOVPIjPk.webp",
+    "thumbnail": "/photos/thumb/1xXiWFageaUy0iYqgk-OKPuNPSOVPIjPk.webp",
+    "description": "דמות מצייירת עיגול זוהר צבעוני על רקע הרים בחושך",
+    "filename": "MJH_2134.jpg",
+    "width": 6816,
+    "height": 4531,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "24.0-70.0 mm f/2.8",
+      "focal": 24,
+      "aperture": 2.8,
+      "iso": 500,
+      "shutter": 10
+    },
+    "added_at": "2026-07-02"
+  },
+  {
     "id": "1IzruPrdqd565ULkgupQZYRdilzsGDUCI",
     "title": "קשתות אבן עתיקות",
     "category": "שחור-לבן",
