@@ -175,3 +175,21 @@ async function checkAuth(request, env) {
 - Article JSON-LD: כל 24 דפי /camera/ עם datePublished
 - canonical: כל עמוד
 - robots.txt: חוסם admin/api, מפנה לsitemap
+
+---
+
+## בית ספר לצילום — /camera/ (עדכון 2.7.2026)
+
+24 מדריכים אינטראקטיביים תחת `/camera/`, כל אחד קובץ HTML עצמאי (ללא תלויות חיצוניות מעבר לפונטים/nav.js/share.js), בדוגמת `camera/exposure/index.html`.
+
+**חדש:** `/camera/night/` — צילום לילה (מסלולי אור, ירח, Star Trails, Light Painting). סימולטור canvas עם סליידר משך חשיפה (1-30s) שמצייר מסלולי אור מכוניות + קשתות star-trail — סצנה וקטורית procedural (seeded RNG, ללא תמונות).
+
+**כשמוסיפים מדריך /camera/ חדש — 3 מקומות רישום:**
+
+| קובץ | מה מוסיפים |
+|------|------------|
+| `camera/index.html` | כרטיס hub (card-icon/title/desc/cta) |
+| `worker.js` — `staticPages` array | שורת sitemap (`loc`/`priority`/`changefreq`) — דורש `npx wrangler deploy` |
+| `src/camera_edu_post.py` — `EDUCATION_PAGES` | ערך לרוטציית פרסום אוטומטי לרשתות (key/url/title/emoji/best_categories/angle/hook) |
+
+**TODO:** ברשומות ישנות ב-`EDUCATION_PAGES`, חלק מערכי `best_categories` (למשל "עירוני", "טבע", "פורטרט") לא קיימים כקטגוריות אמיתיות ב-`photos.json` (הקטגוריות האמיתיות הן שמות מקומות/מדינות). יש fallback לכל מאגר התמונות כשאין התאמה — עובד, אבל בלי טירגוט. שווה ניקוי מרוכז.
