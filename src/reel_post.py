@@ -828,6 +828,31 @@ def _publish_ig(video_url, caption):
     return None
 
 
+def publish_existing_reel():
+    """מפרסם ל-IG את reels_output/latest_reel.mp4 שכבר נוצר, לפי המטה-דאטה ב-data/latest_reel.json."""
+    meta_path = DATA_DIR / "latest_reel.json"
+    video_path = ALBUM_OUTPUT / "latest_reel.mp4"
+
+    if not meta_path.exists() or not video_path.exists():
+        print("❌ אין רילס קיים לפרסום (data/latest_reel.json / reels_output/latest_reel.mp4 חסרים)")
+        sys.exit(1)
+
+    if not IG_USER_ID or not ACCESS_TOKEN:
+        print("❌ אין IG credentials (INSTAGRAM_USER_ID / INSTAGRAM_PAGE_TOKEN)")
+        sys.exit(1)
+
+    meta     = json.loads(meta_path.read_text(encoding="utf-8"))
+    category = meta.get("category", "")
+    lang     = meta.get("lang", "he")
+    cta_line = "בקר באתר שלי" if lang == "he" else "Visit my website"
+    caption  = f"{cta_line}: amitphotos.com\n\n{get_hashtags(category)}"
+
+    video_url = _upload_video(video_path)
+    reel_id   = _publish_ig(video_url, caption)
+    if not reel_id:
+        sys.exit(1)
+
+
 # ── Main ─────────────────────────────────────────────────────────────────────
 
 def main():
@@ -841,7 +866,13 @@ def main():
                     help="רק מדפיס מה יבחר, לא מייצר וידאו")
     ap.add_argument("--list", action="store_true", help="הצג קטגוריות זמינות")
     ap.add_argument("--prompts", help="JSON: [{\"id\":\"...\",\"prompt\":\"...\"},...] פרומפטים מותאמים")
+    ap.add_argument("--publish-existing", action="store_true",
+                    help="פרסם ל-IG את reels_output/latest_reel.mp4 הקיים, בלי ליצור רילס חדש")
     args = ap.parse_args()
+
+    if args.publish_existing:
+        publish_existing_reel()
+        return
 
     if args.list:
         photos = load_photos()

@@ -4,8 +4,9 @@ on:
   workflow_dispatch:
     inputs:
       category:
-        description: 'קטגוריה (למשל: בעלי חיים / ישראל / פרחים וצמחים)'
-        required: true
+        description: 'קטגוריה (למשל: בעלי חיים / ישראל / פרחים וצמחים) — לא נדרש אם publish_existing=true'
+        required: false
+        default: ''
         type: string
       lang:
         description: 'שפת שקופית הסיום'
@@ -31,6 +32,11 @@ on:
         required: false
         default: ''
         type: string
+      publish_existing:
+        description: 'פרסם ל-Instagram את הרילס הקיים (reels_output/latest_reel.mp4) בלי ליצור חדש'
+        required: false
+        default: false
+        type: boolean
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
@@ -66,11 +72,15 @@ jobs:
           PYTHONUNBUFFERED: "1"
           REEL_PROMPTS: ${{ inputs.prompts }}
         run: |
+          if [ "${{ inputs.publish_existing }}" == "true" ]; then
+            python src/reel_post.py --publish-existing
+            exit $?
+          fi
+
           LANG_ARG=""
           if [ "${{ inputs.lang }}" != "auto" ]; then
             LANG_ARG="--lang ${{ inputs.lang }}"
           fi
-          POST_ARG=""
           # אם לא נבחר לפרסם — מסיר credentials כדי למנוע פרסום אוטומטי
           if [ "${{ inputs.post_to_instagram }}" != "true" ]; then
             export INSTAGRAM_USER_ID=""
@@ -83,6 +93,7 @@ jobs:
           python src/reel_post.py --category "${{ inputs.category }}" $LANG_ARG $PHOTOS_ARG
 
       - name: שמור latest_reel לריפו
+        if: inputs.publish_existing != true
         run: |
           git config user.name "Reels Agent"
           git config user.email "agent@amitphotos.com"

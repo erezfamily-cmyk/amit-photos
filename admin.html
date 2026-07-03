@@ -1499,6 +1499,11 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
             </button>
           </div>
 
+          <label style="display:flex;align-items:center;gap:.5rem;margin-bottom:.75rem;font-size:.85rem;color:var(--text);cursor:pointer">
+            <input type="checkbox" id="reel-post-ig">
+            📸 פרסם אוטומטית לאינסטגרם אחרי היצירה
+          </label>
+
           <button id="reel-create-btn" onclick="createReel()"
             style="width:100%;padding:.75rem;background:var(--accent);color:#000;border:none;border-radius:8px;font-size:1rem;font-weight:700;cursor:pointer">
             🎬 צור רילס עכשיו
@@ -1514,6 +1519,16 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
             style="display:none;margin-top:1rem;padding:.6rem 1.2rem;background:var(--accent);color:#000;border-radius:6px;font-weight:700;text-decoration:none;font-size:.9rem">
             📥 הורד סרטון מ-GitHub
           </a>
+        </div>
+
+        <div style="max-width:700px;margin:1.5rem auto 0;padding-top:1.25rem;border-top:1px solid var(--border)">
+          <p style="font-size:.82rem;color:var(--muted);margin-bottom:.6rem">
+            כבר יצרת רילס ולא פרסמת אותו? פרסם את הרילס האחרון שנוצר (reels_output/latest_reel.mp4) לאינסטגרם בלי ליצור חדש:
+          </p>
+          <button id="reel-publish-existing-btn" onclick="publishExistingReel()"
+            style="width:100%;padding:.7rem;background:var(--surface);border:1px solid var(--accent);border-radius:8px;color:var(--accent);font-size:.9rem;font-weight:700;cursor:pointer">
+            📤 פרסם את הרילס האחרון לאינסטגרם
+          </button>
         </div>
 
       </div>
@@ -6556,10 +6571,12 @@ async function confirmLinkToLocation() {
       });
       const promptsJson = promptsArr.length > 0 ? JSON.stringify(promptsArr) : '';
 
+      const postToInstagram = document.getElementById('reel-post-ig')?.checked || false;
+
       const res  = await fetch('/api/reels', {
         method: 'POST',
         headers: { 'X-Admin-Password': pwd, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ category, lang, photos, prompts: promptsJson }),
+        body: JSON.stringify({ category, lang, photos, prompts: promptsJson, post_to_instagram: postToInstagram }),
       });
       const text = await res.text();
       let data;
@@ -6591,13 +6608,60 @@ async function confirmLinkToLocation() {
     }
   };
 
-  function pollStatus(runId, pwd) {
+  window.publishExistingReel = async function() {
+    const btn = document.getElementById('reel-publish-existing-btn');
+    btn.disabled = true;
+    btn.textContent = 'מפעיל...';
+
+    setStatus('⏳', 'מפעיל GitHub Actions...', '');
+    document.getElementById('reel-status-box').style.display = 'block';
+    document.getElementById('reel-download-link').style.display = 'none';
+
+    const pwd = sessionStorage.getItem('admin_session') || localStorage.getItem('admin_session') || '';
+
+    try {
+      const res  = await fetch('/api/reels', {
+        method: 'POST',
+        headers: { 'X-Admin-Password': pwd, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ publish_existing: true }),
+      });
+      const text = await res.text();
+      let data;
+      try { data = JSON.parse(text); } catch { throw new Error(`תגובה לא תקינה: ${text.slice(0,100)}`); }
+      if (!res.ok) throw new Error(data.error || `שגיאה ${res.status}`);
+
+      setStatus('🔄', 'מפרסם לאינסטגרם...', 'ממתין לתחילת הריצה...');
+
+      setTimeout(async () => {
+        try {
+          const r2 = await fetch('/api/reels?latest=1', { headers: { 'X-Admin-Password': pwd } });
+          const d2 = await r2.json();
+          if (d2.run_id) {
+            setStatus('🔄', 'מפרסם לאינסטגרם...', 'מעלה ומפרסם רילס...');
+            pollStatus(d2.run_id, pwd, { btnEl: btn, idleLabel: '📤 פרסם את הרילס האחרון לאינסטגרם', successText: 'פורסם לאינסטגרם!', showDownload: false });
+          } else {
+            setStatus('⚠️', 'הריצה הופעלה', 'לא נמצא run_id — בדוק GitHub Actions ידנית');
+          }
+        } catch(e) {
+          setStatus('⚠️', 'הריצה הופעלה', 'בדוק GitHub Actions ידנית');
+        }
+      }, 5000);
+
+    } catch(e) {
+      setStatus('❌', `שגיאה: ${e.message}`, '');
+      btn.disabled = false;
+      btn.textContent = '📤 פרסם את הרילס האחרון לאינסטגרם';
+    }
+  };
+
+  function pollStatus(runId, pwd, opts) {
     if (reelPollInterval) clearInterval(reelPollInterval);
-    reelPollInterval = setInterval(() => checkStatus(runId, pwd), 15000);
-    checkStatus(runId, pwd);
+    reelPollInterval = setInterval(() => checkStatus(runId, pwd, opts), 15000);
+    checkStatus(runId, pwd, opts);
   }
 
-  async function checkStatus(runId, pwd) {
+  async function checkStatus(runId, pwd, opts) {
+    opts = opts || { btnEl: document.getElementById('reel-create-btn'), idleLabel: 'צור רילס עכשיו', successText: 'הרילס מוכן!', showDownload: true };
     pwd = pwd || sessionStorage.getItem('admin_session') || localStorage.getItem('admin_session') || '';
     try {
       const res  = await fetch(`/api/reels?run_id=${runId}`, { headers: { 'X-Admin-Password': pwd } });
@@ -6605,17 +6669,19 @@ async function confirmLinkToLocation() {
 
       if (data.status === 'completed') {
         clearInterval(reelPollInterval);
-        const btn = document.getElementById('reel-create-btn');
+        const btn = opts.btnEl;
         btn.disabled = false;
-        btn.textContent = 'צור רילס עכשיו';
+        btn.textContent = opts.idleLabel;
 
         if (data.conclusion === 'success') {
           const dlUrl = data.download_url || data.artifact_url;
-          setStatus('✅', 'הרילס מוכן!', dlUrl ? '' : 'בדוק GitHub Actions');
-          const link = document.getElementById('reel-download-link');
-          link.href = dlUrl || '#';
-          link.textContent = '📥 הורד סרטון';
-          link.style.display = 'inline-block';
+          setStatus('✅', opts.successText, (opts.showDownload && dlUrl) ? '' : 'בדוק GitHub Actions');
+          if (opts.showDownload) {
+            const link = document.getElementById('reel-download-link');
+            link.href = dlUrl || '#';
+            link.textContent = '📥 הורד סרטון';
+            link.style.display = 'inline-block';
+          }
         } else {
           setStatus('❌', 'ריצה נכשלה', `סטטוס: ${data.conclusion}`);
           const link = document.getElementById('reel-download-link');
