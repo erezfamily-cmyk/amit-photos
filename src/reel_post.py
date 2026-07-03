@@ -807,16 +807,17 @@ def _publish_ig(video_url, caption):
     print(f"📦 {cid}")
     for attempt in range(24):
         time.sleep(5)
-        status = requests.get(
+        info = requests.get(
             f"{GRAPH_API}/{cid}",
-            params={"fields": "status_code", "access_token": ACCESS_TOKEN},
+            params={"fields": "status_code,status", "access_token": ACCESS_TOKEN},
             timeout=30,
-        ).json().get("status_code", "")
-        print(f"  ⏳ [{attempt+1}] {status}")
+        ).json()
+        status = info.get("status_code", "")
+        print(f"  ⏳ [{attempt+1}] {status}  {info.get('status', '')}")
         if status == "FINISHED":
             break
         if status == "ERROR":
-            print("❌ שגיאת עיבוד")
+            print(f"❌ שגיאת עיבוד: {info.get('status', '')}")
             return None
     pub = requests.post(f"{GRAPH_API}/{IG_USER_ID}/media_publish", data={
         "creation_id": cid, "access_token": ACCESS_TOKEN,
