@@ -240,8 +240,8 @@ const TRANSLATIONS = {
     'contact.success.p':'אחזור אליך בהקדם.',
 
     // Newsletter
-    'newsletter.title': 'הישארו מעודכנים',
-    'newsletter.p':     'תמונות חדשות, מבצעים בלעדיים ותוכן מאחורי הקלעים — ישירות למייל.',
+    'newsletter.title': 'קבלו מתנה: 50 טיפים לצילום 🎁',
+    'newsletter.p':     'PDF חינם לצלם המתחיל + ניוזלטר חודשי עם תמונות חדשות, מבצעים ותוכן מאחורי הקלעים. ביטול בכל עת.',
     'newsletter.placeholder': 'כתובת המייל שלך',
     'newsletter.btn':   'הרשמה',
     'newsletter.ok':    'תודה! נרשמת בהצלחה.',
@@ -603,8 +603,8 @@ const TRANSLATIONS = {
     'contact.success.p':'I\'ll get back to you soon.',
 
     // Newsletter
-    'newsletter.title': 'Stay Updated',
-    'newsletter.p':     'New photos, exclusive offers and behind-the-scenes content — straight to your inbox.',
+    'newsletter.title': 'Free Gift: 50 Photography Tips 🎁',
+    'newsletter.p':     'Free PDF for beginner photographers + monthly newsletter with new photos, offers and behind-the-scenes content. Unsubscribe anytime.',
     'newsletter.placeholder': 'Your email address',
     'newsletter.btn':   'Subscribe',
     'newsletter.ok':    'Thank you! You\'ve subscribed.',

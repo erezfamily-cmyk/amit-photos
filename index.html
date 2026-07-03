@@ -728,10 +728,10 @@
             btn.disabled = true;
             btn.textContent = '...';
             try {
-              const r = await fetch('/api/subscribers', {
+              const r = await fetch('/api/subscribers?source=homepage_section', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email })
+                body: JSON.stringify({ email, lang: localStorage.getItem('lang') || 'he', source: 'homepage_section' })
               });
               if (r.ok) {
                 msg.style.color = '#4caf7d';

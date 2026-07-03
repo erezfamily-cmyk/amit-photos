@@ -338,7 +338,7 @@ async function handleSubscribers(request, env) {
       ? 'https://amitphotos.com/50tips-eng.pdf'
       : 'https://amitphotos.com/50tips-heb.pdf';
     const existing = await env.DB.prepare('SELECT id FROM subscribers WHERE email = ?').bind(email).first();
-    const isLeadMagnetSource = source === 'lead_magnet' || source === 'popup';
+    const isLeadMagnetSource = ['lead_magnet', 'popup', 'subpage_strip', 'homepage_section'].includes(source);
     if (existing) {
       // אם נרשם קיים מבקש PDF — שלח שוב
       if (isLeadMagnetSource && env.RESEND_API_KEY) {
@@ -383,7 +383,7 @@ async function handleSubscribers(request, env) {
     // שלח מייל אישור לנרשם
     if (env.RESEND_API_KEY) {
       const fromEmail = env.FROM_EMAIL || 'Amit Photos <amit@amitphotos.com>';
-      const isLeadMagnet = source === 'lead_magnet' || source === 'popup';
+      const isLeadMagnet = ['lead_magnet', 'popup', 'subpage_strip', 'homepage_section'].includes(source);
       const subject = isLeadMagnet
         ? (isEn ? 'Your PDF — 50 Photography Tips' : 'הנה ה-PDF שלך — 50 טיפים לצילום')
         : (isEn ? 'Welcome to Amit Photos newsletter!' : 'ברוך הבא לניוזלטר של עמית פוטוס!');

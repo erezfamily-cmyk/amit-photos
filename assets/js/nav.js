@@ -252,6 +252,108 @@ nav#main-nav .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px)
   // Expose so external code (e.g. i18n.js setLang) can re-translate the nav
   window.applyNavLang = applyNavLang;
 
+  // ── Newsletter strip (lead magnet) — subpages only ──────────────────────────
+  // דף הבית כבר מכיל באנר + פופאפ + סקציית ניוזלטר; עמוד שמכיל טופס משלו מדולג
+  const NL_T = {
+    he: {
+      eyebrow: 'מתנה חינמית 🎁',
+      title: '50 טיפים לצילום — PDF חינם',
+      sub: 'המדריך המעשי לצלם המתחיל, ישירות למייל + ניוזלטר חודשי. ביטול בכל עת.',
+      placeholder: 'כתובת המייל שלך',
+      btn: 'שלחו לי ←',
+      ok: 'תודה! המדריך בדרך למייל שלך 📬',
+      err: 'משהו השתבש — נסו שוב',
+      more: 'לדף ההורדה המלא ←'
+    },
+    en: {
+      eyebrow: 'Free Gift 🎁',
+      title: '50 Photography Tips — Free PDF',
+      sub: 'The practical beginner\'s guide, straight to your inbox + monthly newsletter. Unsubscribe anytime.',
+      placeholder: 'Your email address',
+      btn: 'Send it →',
+      ok: 'Thanks! The guide is on its way 📬',
+      err: 'Something went wrong — try again',
+      more: 'Full download page →'
+    }
+  };
+
+  function injectNewsletterStrip() {
+    if (isHome) return;
+    if (document.getElementById('newsletter-form') || document.getElementById('guide-email')) return;
+    const p = window.location.pathname;
+    if (p.startsWith('/admin') || p.startsWith('/newsletter') || p.startsWith('/free-guide')) return;
+
+    const nlStyle = document.createElement('style');
+    nlStyle.textContent = `
+#nav-nl-strip { max-width: 760px; margin: 2.5rem auto 0; padding: 1.5rem 1.25rem;
+  background: #111; border: 1px solid rgba(200,169,110,.35); border-radius: 14px;
+  font-family: 'Heebo', sans-serif; text-align: center; }
+#nav-nl-strip .nl-eyebrow { font-size: .68rem; letter-spacing: .14em; color: #c8a96e; margin-bottom: .3rem; }
+#nav-nl-strip h3 { font-size: 1.15rem; color: #f0ede8; margin: 0 0 .3rem; font-weight: 700; }
+#nav-nl-strip .nl-sub { font-size: .82rem; color: #999; margin-bottom: 1rem; line-height: 1.55; }
+#nav-nl-strip form { display: flex; gap: .5rem; max-width: 420px; margin: 0 auto; flex-wrap: wrap; justify-content: center; }
+#nav-nl-strip input[type=email] { flex: 1 1 220px; padding: .6rem 1rem; background: #0a0a0a;
+  border: 1px solid #333; border-radius: 6px; color: #f0ede8; font-size: .9rem; font-family: 'Heebo', sans-serif; }
+#nav-nl-strip input[type=email]:focus { outline: none; border-color: #c8a96e; }
+#nav-nl-strip button { padding: .6rem 1.4rem; background: #c8a96e; color: #111; border: none;
+  border-radius: 6px; font-weight: 700; font-size: .9rem; cursor: pointer; font-family: 'Heebo', sans-serif; }
+#nav-nl-strip button:disabled { opacity: .6; cursor: default; }
+#nav-nl-strip .nl-msg { font-size: .8rem; margin-top: .5rem; min-height: 1.1em; }
+#nav-nl-strip .nl-more { font-size: .72rem; color: #777; text-decoration: none; display: inline-block; margin-top: .4rem; }
+#nav-nl-strip .nl-more:hover { color: #c8a96e; }`;
+    document.head.appendChild(nlStyle);
+
+    const strip = document.createElement('div');
+    strip.id = 'nav-nl-strip';
+    strip.innerHTML = `
+      <div class="nl-eyebrow" id="nl-eyebrow"></div>
+      <h3 id="nl-title"></h3>
+      <div class="nl-sub" id="nl-sub"></div>
+      <form id="nav-nl-form">
+        <input type="email" id="nav-nl-email" required>
+        <button type="submit" id="nav-nl-btn"></button>
+      </form>
+      <div class="nl-msg" id="nav-nl-msg"></div>
+      <a class="nl-more" id="nl-more" href="/free-guide/"></a>`;
+    document.body.appendChild(strip);
+
+    function applyStripLang(lang) {
+      const t = NL_T[lang] || NL_T.he;
+      document.getElementById('nl-eyebrow').textContent = t.eyebrow;
+      document.getElementById('nl-title').textContent = t.title;
+      document.getElementById('nl-sub').textContent = t.sub;
+      document.getElementById('nav-nl-email').placeholder = t.placeholder;
+      document.getElementById('nav-nl-btn').textContent = t.btn;
+      document.getElementById('nl-more').textContent = t.more;
+    }
+    applyStripLang(currentLang);
+    window._applyNlStripLang = applyStripLang;
+
+    document.getElementById('nav-nl-form').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const t = NL_T[currentLang] || NL_T.he;
+      const btn = document.getElementById('nav-nl-btn');
+      const msg = document.getElementById('nav-nl-msg');
+      const email = document.getElementById('nav-nl-email').value.trim();
+      btn.disabled = true;
+      try {
+        const r = await fetch('/api/subscribers?source=subpage_strip', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, lang: currentLang, source: 'subpage_strip' })
+        });
+        msg.style.color = r.ok ? '#4caf7d' : '#e05555';
+        msg.textContent = r.ok ? t.ok : t.err;
+        if (r.ok) document.getElementById('nav-nl-email').value = '';
+      } catch {
+        msg.style.color = '#e05555';
+        msg.textContent = t.err;
+      }
+      btn.disabled = false;
+    });
+  }
+  injectNewsletterStrip();
+
   // ── Footer ────────────────────────────────────────────────────────────────────
   const footerStyle = document.createElement('style');
   footerStyle.textContent = `
@@ -293,6 +395,7 @@ footer#main-footer a:hover { color: #c8a96e; }
     });
     var bcLink = document.getElementById('nav-bc-link');
     if (bcLink) bcLink.textContent = lang === 'en' ? '← All Guides' : '← כל המדריכים';
+    if (typeof window._applyNlStripLang === 'function') window._applyNlStripLang(lang);
   };
   window.applyNavLang = applyNavLang;
 
