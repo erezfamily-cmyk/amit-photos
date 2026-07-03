@@ -2089,7 +2089,7 @@
     "width": 1504,
     "height": 1000,
     "exif": null,
-    "added_at": "2026-07-02"
+    "added_at": "2026-07-03"
   },
   {
     "id": "11S40eybbvVMrvc_uceTn6Ge_9NIj0W3Q",
@@ -23542,6 +23542,132 @@
       "shutter": 10
     },
     "added_at": "2026-07-02"
+  },
+  {
+    "id": "1FuLmEDMlnwTVFImQYv4sA40hRsxhs5Vl",
+    "title": "צללית בתאורה זהובה",
+    "category": "צילומי לילה",
+    "parent_category": null,
+    "url": "/photos/1FuLmEDMlnwTVFImQYv4sA40hRsxhs5Vl.webp",
+    "thumbnail": "/photos/thumb/1FuLmEDMlnwTVFImQYv4sA40hRsxhs5Vl.webp",
+    "description": "דמות בצללית מול מבנה עגול מוארבמשהו זהוב בלילה",
+    "filename": "MJH_2139.jpg",
+    "width": 4696,
+    "height": 3131,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "24.0-70.0 mm f/2.8",
+      "focal": 24,
+      "aperture": 2.8,
+      "iso": 500,
+      "shutter": 8
+    },
+    "added_at": "2026-07-03"
+  },
+  {
+    "id": "1qs9QySZm5Bk-qKDOly953CjGlTevOwic",
+    "title": "רקص האור בלילה",
+    "category": "צילומי לילה",
+    "parent_category": null,
+    "url": "/photos/1qs9QySZm5Bk-qKDOly953CjGlTevOwic.webp",
+    "thumbnail": "/photos/thumb/1qs9QySZm5Bk-qKDOly953CjGlTevOwic.webp",
+    "description": "ילד בסילואט רוקד מול מעגל אור צהוב בחושך",
+    "filename": "MJH_2140.jpg",
+    "width": 6410,
+    "height": 4273,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "24.0-70.0 mm f/2.8",
+      "focal": 24,
+      "aperture": 2.8,
+      "iso": 500,
+      "shutter": 8
+    },
+    "added_at": "2026-07-03"
+  },
+  {
+    "id": "10DjcZPt6eAjs4C5gke5cCSe9T-ob76OO",
+    "title": "זוג בחושך האור",
+    "category": "צילומי לילה",
+    "parent_category": null,
+    "url": "/photos/10DjcZPt6eAjs4C5gke5cCSe9T-ob76OO.webp",
+    "thumbnail": "/photos/thumb/10DjcZPt6eAjs4C5gke5cCSe9T-ob76OO.webp",
+    "description": "שני אנשים יושבים מאחורי מנורה צהובה בלילה עמוק",
+    "filename": "MJH_2143.jpg",
+    "width": 6777,
+    "height": 4518,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "24.0-70.0 mm f/2.8",
+      "focal": 24,
+      "aperture": 2.8,
+      "iso": 500,
+      "shutter": 8
+    },
+    "added_at": "2026-07-03"
+  },
+  {
+    "id": "1YsIg7p5rLNOahDSVqUZnxkAmbXvvgXsi",
+    "title": "ריקוד אור בלילה",
+    "category": "צילומי לילה",
+    "parent_category": null,
+    "url": "/photos/1YsIg7p5rLNOahDSVqUZnxkAmbXvvgXsi.webp",
+    "thumbnail": "/photos/thumb/1YsIg7p5rLNOahDSVqUZnxkAmbXvvgXsi.webp",
+    "description": "שתי דמויות רוקדות בתוך אור ורוד זוהר בחושך המלא",
+    "filename": "MJH_2144.jpg",
+    "width": 5941,
+    "height": 3961,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "24.0-70.0 mm f/2.8",
+      "focal": 24,
+      "aperture": 2.8,
+      "iso": 500,
+      "shutter": 13
+    },
+    "added_at": "2026-07-03"
+  },
+  {
+    "id": "1V3y3FF5PCEuQvCOXCaF2fT5eWMDiZEWH",
+    "title": "אור בחושך",
+    "category": "צילומי לילה",
+    "parent_category": null,
+    "url": "/photos/1V3y3FF5PCEuQvCOXCaF2fT5eWMDiZEWH.webp",
+    "thumbnail": "/photos/thumb/1V3y3FF5PCEuQvCOXCaF2fT5eWMDiZEWH.webp",
+    "description": "ספירלת אור ניאון בכחול וורוד על רקע שמיים כוכבים",
+    "filename": "MJH_2152.jpg",
+    "width": 6968,
+    "height": 4668,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "24.0-70.0 mm f/2.8",
+      "focal": 24,
+      "aperture": 8,
+      "iso": 320,
+      "shutter": 20
+    },
+    "added_at": "2026-07-03"
+  },
+  {
+    "id": "1DYbjGEVEnIwQnrBJtdZhLKmPjUqgw7an",
+    "title": "מלאך האור בלילה",
+    "category": "צילומי לילה",
+    "parent_category": null,
+    "url": "/photos/1DYbjGEVEnIwQnrBJtdZhLKmPjUqgw7an.webp",
+    "thumbnail": "/photos/thumb/1DYbjGEVEnIwQnrBJtdZhLKmPjUqgw7an.webp",
+    "description": "דמות עם מטריה מוארת יוצרת הילה של אור זהוב בחושך",
+    "filename": "MJH_2154.jpg",
+    "width": 4705,
+    "height": 3121,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON D800",
+      "lens": "24.0-70.0 mm f/2.8",
+      "focal": 24,
+      "aperture": 8,
+      "iso": 320,
+      "shutter": 18
+    },
+    "added_at": "2026-07-03"
   },
   {
     "id": "1IzruPrdqd565ULkgupQZYRdilzsGDUCI",
