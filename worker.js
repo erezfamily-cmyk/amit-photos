@@ -7142,8 +7142,110 @@ export default {
   async scheduled(event, env, ctx) {
     ctx.waitUntil(runPinterestCronSync(env));
     ctx.waitUntil(runNewsletterCron(env));
+    ctx.waitUntil(runWelcomeSequenceCron(env));
   },
 };
+
+// ── רצף Welcome למנויי ניוזלטר חדשים ─────────────────────────────────────────
+// מייל 1 (PDF) נשלח מיידית ב-handleSubscribers. הרצף כאן ממשיך:
+// שלב 2 — יומיים אחרי הרשמה: 3 מדריכים מובילים
+// שלב 3 — 5 ימים אחרי הרשמה: היכרות + הזמנה לעקוב ברשתות
+const WELCOME_LAUNCH_DATE = '2026-07-03'; // מנויים שנרשמו לפני — לא נכנסים לרצף
+
+function welcomeEmailShell(inner, unsubToken, en) {
+  return `<div dir="${en ? 'ltr' : 'rtl'}" style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:2rem;background:#111;color:#f0ede8">
+    <h2 style="color:#c8a96e;margin-bottom:1rem">AMIT PHOTOS</h2>
+    ${inner}
+    <hr style="border-color:#333;margin-top:2rem">
+    <p style="color:#666;font-size:.8rem">${en ? 'Unsubscribe' : 'לביטול הרשמה'}: <a href="https://amitphotos.com/api/unsubscribe?token=${unsubToken}" style="color:#888">${en ? 'click here' : 'לחץ כאן'}</a></p>
+  </div>`;
+}
+
+function welcomeEmail2(sub, en) {
+  const guides = [
+    { url: 'https://amitphotos.com/camera/exposure/', he: 'משולש החשיפה — ISO, צמצם ותריס', en: 'The Exposure Triangle — ISO, Aperture & Shutter' },
+    { url: 'https://amitphotos.com/camera/composition/', he: 'קומפוזיציה — לגרום לעין להישאר בתמונה', en: 'Composition — Making the Eye Stay in the Frame' },
+    { url: 'https://amitphotos.com/camera/night/', he: 'צילום לילה — מסלולי אור וחשיפה ארוכה', en: 'Night Photography — Light Trails & Long Exposure' },
+  ];
+  const items = guides.map(g =>
+    `<li style="margin-bottom:.8rem"><a href="${g.url}" style="color:#c8a96e;text-decoration:none;font-weight:700">${en ? g.en : g.he}</a></li>`
+  ).join('');
+  const inner = en
+    ? `<h3>Did the 50 tips help? Here's the next level</h3>
+       <p style="color:#ccc">Hi${sub.name ? ' ' + sub.name : ''}, these are the 3 most-loved interactive guides on the site — each one takes ~5 minutes and includes a hands-on simulator:</p>
+       <ul style="color:#ccc;line-height:1.7;padding-${en ? 'left' : 'right'}:1.2rem">${items}</ul>
+       <p style="color:#aaa;font-size:.9rem">Got a photography question? Just reply to this email — I read everything.</p>`
+    : `<h3>ה-50 טיפים עזרו? הנה השלב הבא</h3>
+       <p style="color:#ccc">היי${sub.name ? ' ' + sub.name : ''}, אלה 3 המדריכים האינטראקטיביים הכי אהובים באתר — כל אחד לוקח בערך 5 דקות וכולל סימולטור לתרגול:</p>
+       <ul style="color:#ccc;line-height:1.7;padding-right:1.2rem">${items}</ul>
+       <p style="color:#aaa;font-size:.9rem">יש לך שאלה על צילום? פשוט השב למייל הזה — אני קורא הכל.</p>`;
+  return {
+    subject: en ? '3 guides that will level up your photography 📷' : '3 מדריכים שיקפיצו לך את הצילום 📷',
+    html: welcomeEmailShell(inner, sub.id, en),
+  };
+}
+
+function welcomeEmail3(sub, en) {
+  const socials = `<div style="text-align:center;margin:1.2rem 0">
+    <a href="https://www.instagram.com/amite" style="color:#c8a96e;text-decoration:none;margin:0 .6rem;font-weight:700">Instagram</a> ·
+    <a href="https://www.threads.com/@amite" style="color:#c8a96e;text-decoration:none;margin:0 .6rem;font-weight:700">Threads</a> ·
+    <a href="https://www.pinterest.com/amitphotos" style="color:#c8a96e;text-decoration:none;margin:0 .6rem;font-weight:700">Pinterest</a>
+  </div>`;
+  const inner = en
+    ? `<h3>Behind the lens 👋</h3>
+       <p style="color:#ccc">Hi${sub.name ? ' ' + sub.name : ''}, I'm Amit — an Israeli photographer. Everything on the site, from Tanzania to night skies, was shot on real trips with a lot of patience (and a lot of deleted frames).</p>
+       <p style="color:#ccc">Between newsletters, I share new photos, locations and behind-the-scenes on social — that's where things happen first:</p>
+       ${socials}
+       <p style="color:#aaa;font-size:.9rem">And if a photo ever catches your eye — every piece in the <a href="https://amitphotos.com" style="color:#c8a96e">gallery</a> is available as a print, shipped from a local printer near you.</p>`
+    : `<h3>מאחורי העדשה 👋</h3>
+       <p style="color:#ccc">היי${sub.name ? ' ' + sub.name : ''}, אני עמית — צלם ישראלי. כל מה שבאתר, מטנזניה ועד שמי הלילה, צולם בטיולים אמיתיים עם המון סבלנות (והמון פריימים שנמחקו).</p>
+       <p style="color:#ccc">בין ניוזלטר לניוזלטר אני משתף תמונות חדשות, מקומות לצילום ומאחורי הקלעים ברשתות — שם הדברים קורים קודם:</p>
+       ${socials}
+       <p style="color:#aaa;font-size:.9rem">ואם תמונה תופסת לך את העין — כל תמונה ב<a href="https://amitphotos.com" style="color:#c8a96e">גלריה</a> זמינה כהדפס איכותי עם משלוח.</p>`;
+  return {
+    subject: en ? 'Behind the lens — let\'s stay in touch 👋' : 'מאחורי העדשה — בוא נישאר בקשר 👋',
+    html: welcomeEmailShell(inner, sub.id, en),
+  };
+}
+
+async function runWelcomeSequenceCron(env) {
+  if (!env.RESEND_API_KEY) return;
+  try {
+    await env.DB.prepare("ALTER TABLE subscribers ADD COLUMN welcome_stage INTEGER DEFAULT 0").run().catch(() => {});
+    const { results } = await env.DB.prepare(
+      `SELECT id, email, name, lang, created_at, COALESCE(welcome_stage, 0) AS ws
+       FROM subscribers
+       WHERE created_at >= ? AND COALESCE(welcome_stage, 0) < 3
+       LIMIT 50`
+    ).bind(WELCOME_LAUNCH_DATE).all();
+
+    const fromEmail = env.FROM_EMAIL || 'Amit Photos <amit@amitphotos.com>';
+    const now = Date.now();
+
+    for (const sub of results || []) {
+      const ageDays = (now - Date.parse(sub.created_at)) / 86400000;
+      if (Number.isNaN(ageDays)) continue;
+      let nextStage = null;
+      if (sub.ws < 2 && ageDays >= 2) nextStage = 2;
+      else if (sub.ws === 2 && ageDays >= 5) nextStage = 3;
+      if (!nextStage) continue;
+
+      const en = sub.lang === 'en';
+      const { subject, html } = nextStage === 2 ? welcomeEmail2(sub, en) : welcomeEmail3(sub, en);
+      const res = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ from: fromEmail, to: sub.email, subject, html }),
+      }).catch(() => null);
+      if (res && res.ok) {
+        await env.DB.prepare('UPDATE subscribers SET welcome_stage=? WHERE id=?').bind(nextStage, sub.id).run();
+      }
+      await new Promise(r => setTimeout(r, 400));
+    }
+  } catch (e) {
+    console.error('[welcome cron] error:', e.message);
+  }
+}
 
 async function runPinterestCronSync(env) {
   try {
