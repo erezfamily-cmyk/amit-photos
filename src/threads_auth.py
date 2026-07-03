@@ -12,7 +12,7 @@ import sys
 import webbrowser
 import requests
 
-APP_ID     = "1497426498458643"  # Threads app ID (מה-Threads section ב-App Settings)
+APP_ID     = "1497426498458643"  # Threads app ID
 APP_SECRET = input("Threads app secret (לחץ Show ליד 'Threads app secret'): ").strip()
 
 REDIRECT_URI = "https://localhost"

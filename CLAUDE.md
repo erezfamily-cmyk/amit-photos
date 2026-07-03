@@ -23,9 +23,11 @@ URL: `https://amitphotos.com`
 הגלריה (`assets/js/gallery.js`) קוראת משני מקורות **במקביל**:
 
 ```js
-fetch('data/photos.json')   // סטטי, GitHub Pages, 1,151 רשומות
-fetch('/api/photos')        // D1 דרך Worker, 1,230 רשומות
+fetch('data/photos.json')   // סטטי, ~1,226 רשומות (מתעדכן יומית מ-Drive)
+fetch('/api/photos')        // D1 דרך Worker, ~1,225 רשומות published
 ```
+
+(המספרים נכונים ל-3.7.2026 — נעים עם הזמן, הפער ביניהם הוא תמונות Drive חדשות שטרם נכנסו ל-D1)
 
 ### כלל מיזוג (חשוב!)
 
@@ -102,7 +104,7 @@ async function checkAuth(request, env) {
 | `assets/js/gallery.js` | גלריה, פילטרים, לייטבוקס, מיזוג D1+JSON |
 | `assets/js/i18n.js` | תרגום HE/EN, שפה ב-`_lang` (לא `currentLang`) |
 | `assets/js/nav.js` | ניווט משותף לכל תת-עמוד |
-| `data/photos.json` | 1,151 תמונות (מגיע מDrive, מתעדכן יומי) |
+| `data/photos.json` | ~1,226 תמונות (מגיע מDrive, מתעדכן יומי) |
 | `wrangler.toml` | Cloudflare config — D1, R2, routes |
 
 ---
@@ -168,10 +170,11 @@ async function checkAuth(request, env) {
 
 ---
 
-## SEO (26.6.2026)
+## SEO (עדכון 3.7.2026)
 
-- sitemap.xml: 36 דפים
+- sitemap: **דינמי מה-worker** (`handleSitemap`, ~1,100 URLs כולל דפי תמונות). הקובץ `sitemap.xml` המקומי הוא stub לא בשימוש — ה-worker תופס את הנתיב לפניו (`run_worker_first`)
 - hreflang: he/en/x-default
+- og:locale: he_IL + en_US alternate
 - Article JSON-LD: כל 24 דפי /camera/ עם datePublished
 - canonical: כל עמוד
 - robots.txt: חוסם admin/api, מפנה לsitemap

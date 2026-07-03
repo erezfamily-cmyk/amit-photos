@@ -17,3 +17,7 @@ SETUP.md
 !.dev.vars.example
 !.env.example
 .superpowers/
+
+# progress files של סקריפטים מקומיים
+data/.gallery_r2_progress.json
+data/.jpg2webp_progress.json
