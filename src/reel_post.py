@@ -363,6 +363,53 @@ def _concat(clip_paths, out_path, clip_durations=None, xfade_dur=0.5):
         raise RuntimeError(f"xfade concat נכשל:\n{r.stderr[-600:]}")
 
 
+# ── Audio: ambient track (סינתטי, בלי קבצי מוזיקה חיצוניים) ──────────────────
+
+AMBIENT_ROOTS = [110.00, 123.47, 130.81, 146.83, 164.81]  # A2, B2, C3, D3, E3
+
+
+def _generate_ambient_audio(duration, out_path):
+    """דרון סינתטי (שני טונים + רעש חום עדין) עם fade-in/out — נוצר לחלוטין ב-FFmpeg."""
+    root  = random.choice(AMBIENT_ROOTS)
+    fifth = root * 1.5
+    fade  = min(2.5, duration / 4)
+    fade_out_start = max(duration - fade, 0)
+
+    filter_complex = (
+        f"sine=frequency={root:.2f}:duration={duration}[a1];"
+        f"sine=frequency={fifth:.2f}:duration={duration}[a2];"
+        f"anoisesrc=color=brown:duration={duration}:amplitude=0.06[n1];"
+        f"[a1][a2][n1]amix=inputs=3:duration=longest:weights='0.5 0.3 0.35'[amix];"
+        f"[amix]tremolo=f=0.12:d=0.25,"
+        f"afade=t=in:st=0:d={fade:.2f},"
+        f"afade=t=out:st={fade_out_start:.2f}:d={fade:.2f},"
+        f"volume=0.3[aout]"
+    )
+    r = subprocess.run([
+        FFMPEG, "-y",
+        "-filter_complex", filter_complex,
+        "-map", "[aout]",
+        "-t", str(duration),
+        "-c:a", "aac", "-b:a", "128k",
+        str(out_path),
+    ], capture_output=True, text=True)
+    if r.returncode != 0:
+        raise RuntimeError(f"יצירת סאונד אמביינט נכשלה:\n{r.stderr[-400:]}")
+
+
+def _mux_audio(video_path, audio_path, out_path):
+    """משלב את פס הקול לתוך הוידאו (וידאו ללא re-encode)."""
+    r = subprocess.run([
+        FFMPEG, "-y",
+        "-i", str(video_path), "-i", str(audio_path),
+        "-map", "0:v", "-map", "1:a",
+        "-c:v", "copy", "-c:a", "aac", "-shortest",
+        str(out_path),
+    ], capture_output=True, text=True)
+    if r.returncode != 0:
+        raise RuntimeError(f"שילוב סאונד נכשל:\n{r.stderr[-400:]}")
+
+
 # ── Video: Seedance 2.0 clip ──────────────────────────────────────────────────
 
 def _smart_motion_prompt(photo_path, photo_meta):
@@ -686,6 +733,14 @@ def make_album_reel(category, lang=None, dry_run=False, photo_ids=None, custom_p
 
     total = n_photos * photo_secs + CLOSING_SECS
     print(f"\n✅ {out_path}  ({total:.0f} שניות)")
+
+    print("🎧 מוסיף סאונד אמביינט...")
+    with tempfile.TemporaryDirectory() as td2:
+        audio_path = Path(td2) / "ambient.m4a"
+        muxed_path = Path(td2) / "muxed.mp4"
+        _generate_ambient_audio(total, audio_path)
+        _mux_audio(out_path, audio_path, muxed_path)
+        shutil.move(str(muxed_path), str(out_path))
 
     # העלה לאחסון ציבורי → שמור URL ל-latest_reel.json
     dl_url = _publish_reel(out_path, category, lang)
