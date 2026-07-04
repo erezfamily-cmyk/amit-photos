@@ -2544,11 +2544,11 @@ async function servePhotoPage(photoId, env) {
     .rb-section{max-width:900px;width:100%;margin-top:3rem;border-top:1px solid rgba(255,255,255,.1);padding-top:2rem}
     .rb-section h2{font-size:1.1rem;margin-bottom:.4rem;opacity:.9}
     .rb-section .rb-sub{font-size:.85rem;opacity:.6;margin-bottom:1.25rem}
-    .rb-grid{display:grid;grid-template-columns:repeat(auto-fill,110px);gap:12px}
-    .rb-item{display:block;width:110px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;overflow:hidden;transition:.15s;text-decoration:none !important}
+    .rb-grid{display:grid;grid-template-columns:repeat(auto-fill,150px);gap:14px}
+    .rb-item{display:block;width:150px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;overflow:hidden;transition:.15s;text-decoration:none !important}
     .rb-item:hover{border-color:#c9a96e;transform:translateY(-2px)}
     .rb-item img{width:100%;aspect-ratio:1/1;object-fit:cover;display:block;background:#fff}
-    .rb-item .rb-label{font-size:.8rem;color:#f0f0f0;padding:.6rem .5rem .7rem;text-align:center}
+    .rb-item .rb-label{font-size:.78rem;color:#f0f0f0;padding:.6rem .6rem .7rem;text-align:center;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;text-overflow:ellipsis;line-height:1.3}
     .rb-cta{display:inline-block;margin-top:1.25rem;font-size:.85rem;color:#c9a96e}
   </style>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -2569,6 +2569,11 @@ async function servePhotoPage(photoId, env) {
     let products = [];
     try { products = photo?.redbubble_products ? JSON.parse(photo.redbubble_products) : []; } catch (_) {}
     if (!products.length) return '';
+    // design ID משותף לכל וריאנטים של אותו עיצוב: .../{title-slug}/{designId}/{variant}
+    const designId = products[0].url.match(/\/(\d+)\/[^/]+\/?$/)?.[1];
+    const indexUrl = designId
+      ? `https://www.redbubble.com/shop/ap/${designId}`
+      : 'https://www.redbubble.com/people/erezphoto/shop';
     return `
   <div class="rb-section">
     <h2>🛍️ עוד דרכים לקחת את התמונה הזו הביתה</h2>
@@ -2579,7 +2584,7 @@ async function servePhotoPage(photoId, env) {
         <div class="rb-label">${p.name || ''}</div>
       </a>`).join('')}
     </div>
-    <a class="rb-cta" href="https://www.redbubble.com/people/erezphoto/shop" target="_blank" rel="noopener sponsored">כל המוצרים בחנות Redbubble ←</a>
+    <a class="rb-cta" href="${indexUrl}" target="_blank" rel="noopener sponsored">כל המוצרים של התמונה הזו ←</a>
   </div>`;
   })()}
   ${relatedPhotos.length ? `
