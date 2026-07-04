@@ -744,6 +744,10 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
         <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="18" height="18" rx="2" stroke-width="1.5"/><path d="M3 9h18M9 9v12" stroke-width="1.5"/><circle cx="6" cy="6" r="1" fill="currentColor"/></svg>
         Breakdown
       </div>
+      <div class="nav-item" data-section="redbubble">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10" stroke-width="1.5"/><path d="M9 8h3.5a2.25 2.25 0 010 4.5H9V8zM9 12.5h2.5L14 17" stroke-width="1.5"/></svg>
+        Redbubble
+      </div>
       <div class="nav-item" data-section="videos">
         <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M15 10l4.553-2.276A1 1 0 0121 8.723v6.554a1 1 0 01-1.447.894L15 14M3 8a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z" stroke-width="1.5"/></svg>
         סרטונים
@@ -1432,6 +1436,57 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
     </section>
 
     <!-- REELS SECTION -->
+    <section class="section" id="section-redbubble">
+      <div class="section-header">
+        <h1 class="section-title">🛍️ ייצוא ל-Redbubble</h1>
+      </div>
+
+      <div style="max-width:700px;margin:0 auto">
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1.5rem">
+
+          <div style="margin-bottom:1rem">
+            <label style="display:block;font-size:.85rem;color:var(--muted);margin-bottom:.4rem">קטגוריה</label>
+            <select id="rb-category" onchange="rbLoadPhotos()" style="width:100%;padding:.6rem .8rem;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:.95rem">
+              <option value="">טוען קטגוריות...</option>
+            </select>
+          </div>
+
+          <div id="rb-photo-picker" style="display:none;margin-bottom:1rem">
+            <label style="display:block;font-size:.85rem;color:var(--muted);margin-bottom:.5rem">בחר תמונה</label>
+            <div id="rb-photo-grid" style="display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:100px;gap:8px;max-height:420px;overflow-y:scroll;border:1px solid var(--border);border-radius:8px;padding:8px;background:var(--bg);scrollbar-width:thin;direction:ltr"></div>
+          </div>
+
+          <div id="rb-result" style="display:none;border-top:1px solid var(--border);padding-top:1.25rem;margin-top:.5rem">
+            <div style="display:flex;gap:1rem;margin-bottom:1rem">
+              <img id="rb-preview-img" style="width:120px;height:120px;object-fit:cover;border-radius:8px;border:1px solid var(--border)">
+              <div style="flex:1;font-size:.8rem;color:var(--muted)">
+                <div id="rb-preview-title" style="font-size:1rem;color:var(--text);font-weight:600;margin-bottom:.3rem"></div>
+                <div id="rb-preview-dims"></div>
+                <div id="rb-preview-source" style="margin-top:.3rem"></div>
+              </div>
+            </div>
+
+            <label style="display:block;font-size:.8rem;color:var(--muted);margin-bottom:.3rem">Title</label>
+            <input id="rb-out-title" readonly style="width:100%;margin-bottom:.7rem;padding:.5rem .7rem;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:.9rem;direction:ltr" onclick="this.select()">
+
+            <label style="display:block;font-size:.8rem;color:var(--muted);margin-bottom:.3rem">Tags (comma-separated)</label>
+            <input id="rb-out-tags" readonly style="width:100%;margin-bottom:.7rem;padding:.5rem .7rem;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:.9rem;direction:ltr" onclick="this.select()">
+
+            <label style="display:block;font-size:.8rem;color:var(--muted);margin-bottom:.3rem">Description</label>
+            <textarea id="rb-out-desc" readonly rows="3" style="width:100%;margin-bottom:1rem;padding:.5rem .7rem;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:.9rem;direction:ltr;resize:vertical" onclick="this.select()"></textarea>
+
+            <div style="display:flex;gap:.6rem;flex-wrap:wrap">
+              <a id="rb-download-btn" download style="flex:1;min-width:180px;text-align:center;padding:.7rem;background:var(--accent);border-radius:8px;color:#1a1a1a;font-size:.9rem;font-weight:700;text-decoration:none;cursor:pointer">⬇ הורד JPG (רזולוציה מלאה)</a>
+              <a href="https://www.redbubble.com/portfolio/images/new" target="_blank" rel="noopener" style="flex:1;min-width:180px;text-align:center;padding:.7rem;background:var(--surface);border:1px solid var(--accent);border-radius:8px;color:var(--accent);font-size:.9rem;font-weight:600;text-decoration:none">🛍️ פתח Redbubble Dashboard</a>
+            </div>
+          </div>
+
+          <div id="rb-loading" style="display:none;text-align:center;padding:1.5rem;color:var(--muted);font-size:.9rem">מכין נתונים...</div>
+          <div id="rb-error" style="display:none;text-align:center;padding:1rem;color:#e74c3c;font-size:.85rem"></div>
+        </div>
+      </div>
+    </section>
+
     <section class="section" id="section-reels">
       <div class="section-header">
         <h1 class="section-title">🎬 יצירת רילס</h1>
@@ -2626,6 +2681,7 @@ document.querySelectorAll('.nav-item').forEach(item => {
     if (item.dataset.section === 'locations') window._loadLocationsList && window._loadLocationsList();
     if (item.dataset.section === 'pinterest') loadPinterestStatus();
     if (item.dataset.section === 'videos') window.videosLoad && window.videosLoad();
+    if (item.dataset.section === 'redbubble') rbLoadCategories();
   });
 });
 
@@ -6367,6 +6423,95 @@ async function confirmLinkToLocation() {
 
   // Wire the open button (called after renderPhotosPanel)
   window.openPhotoPicker = openPhotoPicker;
+})();
+</script>
+
+<script>
+// ── Redbubble Export Section ───────────────────────────────────────────────────
+(function() {
+  let rbCategoriesLoaded = false;
+  let rbPhotos = [];
+
+  document.querySelector('.nav-item[data-section="redbubble"]')?.addEventListener('click', rbLoadCategories);
+
+  window.rbLoadCategories = rbLoadCategories;
+  async function rbLoadCategories() {
+    const sel = document.getElementById('rb-category');
+    if (rbCategoriesLoaded) return;
+    sel.innerHTML = '<option value="">טוען...</option>';
+    try {
+      const res = await fetch('/api/photos?admin=1&slim=1&categories_only=1', { headers: { 'X-Session-Token': SESSION_TOKEN } });
+      const cats = await res.json();
+      rbCategoriesLoaded = true;
+      sel.innerHTML = '<option value="">— בחר קטגוריה —</option>' +
+        cats.map(c => `<option value="${c}">${c}</option>`).join('');
+    } catch(e) {
+      sel.innerHTML = '<option value="">שגיאה בטעינה</option>';
+      console.error('rbLoadCategories error:', e);
+    }
+  }
+
+  window.rbLoadPhotos = async function() {
+    const cat = document.getElementById('rb-category').value;
+    const picker = document.getElementById('rb-photo-picker');
+    const grid = document.getElementById('rb-photo-grid');
+    document.getElementById('rb-result').style.display = 'none';
+    document.getElementById('rb-error').style.display = 'none';
+    if (!cat) { picker.style.display = 'none'; return; }
+
+    rbPhotos = [];
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--muted);font-size:.85rem">טוען תמונות...</div>';
+    picker.style.display = 'block';
+
+    try {
+      const res = await fetch(`/api/photos?admin=1&slim=1&category=${encodeURIComponent(cat)}`, { headers: { 'X-Session-Token': SESSION_TOKEN } });
+      rbPhotos = await res.json();
+    } catch(e) {
+      grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:2rem;color:red;font-size:.85rem">שגיאה בטעינה</div>';
+      return;
+    }
+
+    grid.innerHTML = rbPhotos.map(p => {
+      const thumb = (p.thumbnail || '').replace(/[?&]sz=w\d+/, '') + (p.thumbnail?.includes('?') ? '&sz=w150' : '?sz=w150');
+      return `<div class="rb-thumb" data-id="${p.id}" onclick="rbSelectPhoto('${p.id}')"
+        style="position:relative;cursor:pointer;border-radius:5px;overflow:hidden;border:2px solid transparent;transition:.15s">
+        <img src="${thumb}" style="width:100%;height:100%;object-fit:cover;display:block">
+      </div>`;
+    }).join('');
+  };
+
+  window.rbSelectPhoto = async function(id) {
+    document.querySelectorAll('.rb-thumb').forEach(el => el.style.borderColor = el.dataset.id === id ? 'var(--accent)' : 'transparent');
+    const resultEl = document.getElementById('rb-result');
+    const loadingEl = document.getElementById('rb-loading');
+    const errorEl = document.getElementById('rb-error');
+    resultEl.style.display = 'none';
+    errorEl.style.display = 'none';
+    loadingEl.style.display = 'block';
+
+    try {
+      const res = await fetch(`/api/admin/redbubble-export/meta?id=${encodeURIComponent(id)}`, { headers: { 'X-Session-Token': SESSION_TOKEN } });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'שגיאה');
+
+      const photo = rbPhotos.find(p => p.id === id);
+      document.getElementById('rb-preview-img').src = photo?.thumbnail || '';
+      document.getElementById('rb-preview-title').textContent = photo?.title || '';
+      document.getElementById('rb-preview-dims').textContent = data.width && data.height ? `${data.width} × ${data.height}px` : '';
+      document.getElementById('rb-preview-source').textContent = data.source === 'drive' ? '📁 מקור: Google Drive (רזולוציה מקורית)' : '📦 מקור: R2 (WebP → JPG)';
+      document.getElementById('rb-out-title').value = data.title || '';
+      document.getElementById('rb-out-tags').value = (data.tags || []).join(', ');
+      document.getElementById('rb-out-desc').value = data.description || '';
+      document.getElementById('rb-download-btn').href = data.downloadUrl;
+
+      loadingEl.style.display = 'none';
+      resultEl.style.display = 'block';
+    } catch (e) {
+      loadingEl.style.display = 'none';
+      errorEl.textContent = e.message || 'שגיאה בהכנת הנתונים';
+      errorEl.style.display = 'block';
+    }
+  };
 })();
 </script>
 

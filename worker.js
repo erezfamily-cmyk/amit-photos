@@ -1230,6 +1230,152 @@ Return ONLY the English title, nothing else.`;
   } catch { return null; }
 }
 
+// ===== REDBUBBLE EXPORT =====
+const DRIVE_FILE_ID_RE = /^[A-Za-z0-9_-]{25,}$/;
+function isDriveId(id) {
+  // Drive file IDs are long alphanumeric strings; our own UUIDs always contain hyphens in the 8-4-4-4-12 pattern
+  return DRIVE_FILE_ID_RE.test(id) && !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+}
+
+async function getGoogleAccessToken(env) {
+  const creds = JSON.parse(env.GOOGLE_CREDENTIALS);
+  const token = JSON.parse(env.GOOGLE_TOKEN);
+  const res = await fetch('https://oauth2.googleapis.com/token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({
+      client_id: creds.installed?.client_id || creds.client_id,
+      client_secret: creds.installed?.client_secret || creds.client_secret,
+      refresh_token: token.refresh_token,
+      grant_type: 'refresh_token',
+    }),
+  });
+  if (!res.ok) throw new Error(`Google OAuth refresh failed: ${res.status}`);
+  const data = await res.json();
+  return data.access_token;
+}
+
+async function generateRedbubbleMetadata(photo, env) {
+  const titleEn = photo.title_en || await translateTitleEn(photo.title, photo.description, photo.category, env) || photo.title;
+  const categoryEn = HE_TO_EN_CATEGORY[photo.category] || photo.category;
+
+  if (!env.ANTHROPIC_API_KEY) {
+    return {
+      title: titleEn,
+      tags: [categoryEn.replace(' Photography', '').toLowerCase(), 'fine art', 'photography', 'wall art', 'nature'],
+      description: photo.description_en || `Fine art photography print. ${categoryEn}.`,
+    };
+  }
+  try {
+    const prompt = `Generate a Redbubble product listing for this fine art photo.
+Hebrew title: "${photo.title}"
+Category: "${categoryEn}"
+${photo.description ? `Description (Hebrew): "${photo.description}"` : ''}
+
+Return ONLY valid JSON, no markdown, in this exact shape:
+{"title":"4-8 word English title","mainTag":"one word/phrase","tags":["tag1","tag2","tag3","tag4","tag5"],"description":"1-2 sentence English description for a print listing"}`;
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'x-api-key': env.ANTHROPIC_API_KEY,
+        'anthropic-version': '2023-06-01',
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 300,
+        messages: [{ role: 'user', content: prompt }],
+      }),
+    });
+    if (!res.ok) throw new Error('Claude API error');
+    const data = await res.json();
+    const text = data.content?.[0]?.text?.trim().replace(/^```json\s*|```$/g, '') || '{}';
+    const parsed = JSON.parse(text);
+    return {
+      title: parsed.title || titleEn,
+      tags: [parsed.mainTag, ...(parsed.tags || [])].filter(Boolean),
+      description: parsed.description || photo.description_en || '',
+    };
+  } catch {
+    return {
+      title: titleEn,
+      tags: [categoryEn.replace(' Photography', '').toLowerCase(), 'fine art', 'photography', 'wall art'],
+      description: photo.description_en || '',
+    };
+  }
+}
+
+async function handleRedbubbleExportMeta(request, env) {
+  if (!await checkAuth(request, env)) return jsonRes({ error: 'Unauthorized' }, 401, request);
+  const id = new URL(request.url).searchParams.get('id');
+  if (!id) return jsonRes({ error: 'id חסר' }, 400, request);
+
+  const photo = await env.DB.prepare('SELECT * FROM photos WHERE id = ?').bind(id).first();
+  if (!photo) return jsonRes({ error: 'תמונה לא נמצאה' }, 404, request);
+
+  const meta = await generateRedbubbleMetadata(photo, env);
+  return jsonRes({
+    id: photo.id,
+    source: isDriveId(photo.id) ? 'drive' : 'r2',
+    width: photo.width,
+    height: photo.height,
+    ...meta,
+    downloadUrl: `/api/admin/redbubble-export/download?id=${encodeURIComponent(photo.id)}`,
+  }, 200, request);
+}
+
+async function handleRedbubbleExportDownload(request, env) {
+  if (!await checkAuth(request, env)) return jsonRes({ error: 'Unauthorized' }, 401, request);
+  const id = new URL(request.url).searchParams.get('id');
+  if (!id) return jsonRes({ error: 'id חסר' }, 400, request);
+
+  const photo = await env.DB.prepare('SELECT * FROM photos WHERE id = ?').bind(id).first();
+  if (!photo) return jsonRes({ error: 'תמונה לא נמצאה' }, 404, request);
+
+  const filename = (photo.title || 'photo').replace(/[^\w֐-׿ .-]/g, '_') + '.jpg';
+
+  if (isDriveId(photo.id)) {
+    // מקור מלא מ-Google Drive (רזולוציה מקורית, לפני כל דחיסה שנעשתה ל-R2/WebP)
+    try {
+      const accessToken = await getGoogleAccessToken(env);
+      const driveRes = await fetch(`https://www.googleapis.com/drive/v3/files/${photo.id}?alt=media`, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+      if (!driveRes.ok) throw new Error(`Drive fetch failed: ${driveRes.status}`);
+      // Drive מגיש JPG מקורי כמעט תמיד; אם זה פורמט אחר (heic/png) הדפדפן עדיין יוריד את הקובץ כמו שהוא
+      return new Response(driveRes.body, {
+        headers: {
+          'Content-Type': driveRes.headers.get('Content-Type') || 'image/jpeg',
+          'Content-Disposition': `attachment; filename*=UTF-8''${encodeURIComponent(filename)}`,
+          'Cache-Control': 'no-store',
+        },
+      });
+    } catch (err) {
+      return jsonRes({ error: `שגיאת Drive: ${err.message}` }, 502, request);
+    }
+  }
+
+  // Fallback: R2 WebP → המרה ל-JPEG באיכות מלאה דרך Cloudflare Image Resizing
+  if (!photo.r2_key) return jsonRes({ error: 'אין r2_key לתמונה זו' }, 404, request);
+  try {
+    const origin = new URL(request.url).origin;
+    const resized = await fetch(`${origin}/photos/${photo.r2_key}`, {
+      cf: { image: { format: 'jpeg', quality: 95 } },
+      headers: { 'x-no-resize': '1' },
+    });
+    if (!resized.ok) throw new Error(`resize failed: ${resized.status}`);
+    return new Response(resized.body, {
+      headers: {
+        'Content-Type': 'image/jpeg',
+        'Content-Disposition': `attachment; filename*=UTF-8''${encodeURIComponent(filename)}`,
+        'Cache-Control': 'no-store',
+      },
+    });
+  } catch (err) {
+    return jsonRes({ error: `שגיאת המרה: ${err.message}` }, 502, request);
+  }
+}
+
 async function findOrCreateBoardEn(categoryName, env, token) {
   const cacheKey = `pinterest_board_en_${categoryName}`;
   const cached = await env.DB.prepare(`SELECT value FROM settings WHERE key=?`).bind(cacheKey).first();
@@ -7020,6 +7166,8 @@ export default {
     if (path === '/api/print/webhook')        return handlePrintWebhook(request, env);
     if (path === '/api/print/refresh-status') return handlePrintRefreshStatus(request, env);
     if (path === '/api/print/orders')         return handlePrintOrders(request, env);
+    if (path === '/api/admin/redbubble-export/meta')     return handleRedbubbleExportMeta(request, env);
+    if (path === '/api/admin/redbubble-export/download') return handleRedbubbleExportDownload(request, env);
     if (path === '/api/proxy-image')          return handleImageProxy(request, env);
     if (path === '/api/analytics')         return handleAnalytics(request, env);
     if (path.startsWith('/photos/'))       return servePhoto(path.slice('/photos/'.length), env, request);
