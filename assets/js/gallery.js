@@ -975,12 +975,18 @@ function openLightbox(idx) {
     let rbProducts = [];
     try { rbProducts = photo.redbubble_products ? JSON.parse(photo.redbubble_products) : []; } catch (_) {}
     if (rbProducts.length) {
-      rbTrack.innerHTML = rbProducts.map(p =>
-        `<a class="lb-rb-item" href="${p.url}" target="_blank" rel="noopener sponsored">
-          <img src="${p.image}" alt="${p.name || ''}" loading="lazy" />
-          <span>${p.name || ''}</span>
-        </a>`
-      ).join('');
+      const rbTypeFromUrl = (url) => {
+        const m = url.match(/\/i\/([a-z0-9-]+)\//);
+        if (!m) return '';
+        return m[1].split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+      };
+      rbTrack.innerHTML = rbProducts.map(p => {
+        const label = rbTypeFromUrl(p.url) || p.name || '';
+        return `<a class="lb-rb-item" href="${p.url}" target="_blank" rel="noopener sponsored">
+          <img src="${p.image}" alt="${p.name || label}" loading="lazy" />
+          <span>${label}</span>
+        </a>`;
+      }).join('');
       rbEl.classList.remove('hidden');
     } else {
       rbEl.classList.add('hidden');
