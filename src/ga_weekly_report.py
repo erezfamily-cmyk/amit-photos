@@ -132,6 +132,18 @@ def fetch_ga4_data(token):
         "dateRanges": [{"startDate": prev_start, "endDate": prev_end}],
         "metrics": [{"name": "sessions"}, {"name": "activeUsers"}, {"name": "screenPageViews"}],
     })
+    events_raw = run_report(token, {
+        "dateRanges": dr,
+        "dimensions": [{"name": "eventName"}],
+        "metrics": [{"name": "eventCount"}],
+        "dimensionFilter": {
+            "filter": {
+                "fieldName": "eventName",
+                "inListFilter": {"values": ["purchase_intent", "view_item", "add_size", "purchase", "generate_lead"]},
+            }
+        },
+        "orderBys": [{"metric": {"metricName": "eventCount"}, "desc": True}],
+    })
 
     sr = summary_raw.get("rows", []) if summary_raw else []
     pr = prev_raw.get("rows", []) if prev_raw else []
@@ -141,6 +153,9 @@ def fetch_ga4_data(token):
     sources = parse_rows(sources_raw, ["sessions"], "מקור")
     for r in sources:
         r["מקור"] = HEBREW_CHANNELS.get(r["מקור"], r["מקור"])
+
+    events = parse_rows(events_raw, ["count"], "event")
+    events_by_name = {r["event"]: r["count"] for r in events}
 
     return {
         "period": f"{start} → {end}",
@@ -154,6 +169,7 @@ def fetch_ga4_data(token):
         "sources":   sources,
         "devices":   parse_rows(devices_raw, ["sessions"], "מכשיר"),
         "countries": parse_rows(countries_raw, ["sessions"], "ארץ"),
+        "funnel_events": events_by_name,
     }
 
 
@@ -187,6 +203,12 @@ def build_data_summary(data):
     lines += ["", "--- ארצות ---"]
     for r in data["countries"]:
         lines.append(f"  {r['ארץ']}: {r['sessions']} סשנים")
+    lines += ["", "--- משפך מכירה (הזמנת הדפסה) ---"]
+    fe = data["funnel_events"]
+    lines.append(f"  צפיות בתמונה (view_item):        {fe.get('view_item', '0')}")
+    lines.append(f"  פתיחת מודל קנייה (purchase_intent): {fe.get('purchase_intent', '0')}")
+    lines.append(f"  בחירת גודל/מוצר (add_size):        {fe.get('add_size', '0')}")
+    lines.append(f"  רכישה שהושלמה (purchase):          {fe.get('purchase', '0')}")
     return "\n".join(lines)
 
 
@@ -200,6 +222,8 @@ def generate_analysis(data_summary):
 הקהל: אנשים שאוהבים אמנות צילומית, מעצבי פנים, קונים רגשיים — לא מחפשים צלם לאירועים.
 הכנסות מגיעות מ: מכירות דיגיטל (PayPal), הדפסות (Gelato), affiliate (Adorama/Skylum).
 אתה מנתח נתוני Google Analytics שבועיים ומציע המלצות ספציפיות ומעשיות לגלריית fine art.
+שים לב במיוחד למשפך המכירה של הדפסות (view_item → purchase_intent → add_size → purchase) —
+אתר לא הצליח לסגור אף הזמנת הדפסה מעולם, אז ירידה חדה בין שלבים היא הממצא הכי חשוב לדווח עליו.
 כותב בעברית, ישיר, ללא כותרות מפוצצות. נותן 3-5 המלצות מה לעשות השבוע.""",
         messages=[{"role": "user", "content": f"""נתוני אנליטיקס שבועיים של amitphotos.com:
 
@@ -266,6 +290,15 @@ def build_html_email(data, analysis):
     <h2 style="color:#2c3e50;margin:0 0 10px;font-size:1em">ניתוח והמלצות — Claude</h2>
     <div style="background:#f8f9fa;border-right:4px solid #3498db;padding:14px 16px;border-radius:0 8px 8px 0;line-height:1.7;color:#333;font-size:.92em">
       {analysis.replace(chr(10), "<br>")}
+    </div>
+  </div>
+  <div style="padding:0 24px 20px">
+    <h2 style="color:#2c3e50;margin:0 0 8px;font-size:1em">משפך מכירה — הזמנת הדפסה</h2>
+    <div style="background:#f8f9fa;border-radius:8px;padding:12px 16px;display:flex;gap:10px;flex-wrap:wrap">
+      {card("צפיות בתמונה", data['funnel_events'].get('view_item', '0'))}
+      {card("פתיחת מודל קנייה", data['funnel_events'].get('purchase_intent', '0'))}
+      {card("בחירת גודל", data['funnel_events'].get('add_size', '0'))}
+      {card("רכישה הושלמה", data['funnel_events'].get('purchase', '0'))}
     </div>
   </div>
   <div style="padding:0 24px 20px;display:flex;gap:20px;flex-wrap:wrap">
@@ -338,6 +371,7 @@ def save_report(data, analysis):
         },
         "top_pages": data["top_pages"][:5],
         "sources":   data["sources"][:5],
+        "funnel_events": data["funnel_events"],
         "analysis":  analysis,
     })
 
