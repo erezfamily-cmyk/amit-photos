@@ -1316,6 +1316,19 @@ Return ONLY valid JSON, no markdown, in this exact shape:
   }
 }
 
+async function handleRedbubbleProductsList(request, env) {
+  if (!await checkAuth(request, env)) return jsonRes({ error: 'Unauthorized' }, 401, request);
+  const { results } = await env.DB.prepare(
+    "SELECT id, title, category, thumbnail, redbubble_products FROM photos WHERE redbubble_products IS NOT NULL AND redbubble_products != '' AND redbubble_products != '[]' ORDER BY title"
+  ).all();
+  const photos = results.map(p => {
+    let products = [];
+    try { products = JSON.parse(p.redbubble_products) || []; } catch (_) {}
+    return { id: p.id, title: p.title, category: p.category, thumbnail: p.thumbnail, products };
+  }).filter(p => p.products.length);
+  return jsonRes({ photos, count: photos.length }, 200, request);
+}
+
 async function handleRedbubbleProductScrape(request, env) {
   if (!await checkAuth(request, env)) return jsonRes({ error: 'Unauthorized' }, 401, request);
   const url = new URL(request.url).searchParams.get('url');
@@ -2529,8 +2542,8 @@ async function servePhotoPage(photoId, env) {
     .rb-section{max-width:900px;width:100%;margin-top:3rem;border-top:1px solid rgba(255,255,255,.1);padding-top:2rem}
     .rb-section h2{font-size:1.1rem;margin-bottom:.4rem;opacity:.9}
     .rb-section .rb-sub{font-size:.85rem;opacity:.6;margin-bottom:1.25rem}
-    .rb-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px}
-    .rb-item{display:block;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;overflow:hidden;transition:.15s;text-decoration:none !important}
+    .rb-grid{display:grid;grid-template-columns:repeat(auto-fill,110px);gap:12px}
+    .rb-item{display:block;width:110px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;overflow:hidden;transition:.15s;text-decoration:none !important}
     .rb-item:hover{border-color:#c9a96e;transform:translateY(-2px)}
     .rb-item img{width:100%;aspect-ratio:1/1;object-fit:cover;display:block;background:#fff}
     .rb-item .rb-label{font-size:.8rem;color:#f0f0f0;padding:.6rem .5rem .7rem;text-align:center}
@@ -7231,6 +7244,7 @@ export default {
     if (path === '/api/admin/redbubble-export/meta')     return handleRedbubbleExportMeta(request, env);
     if (path === '/api/admin/redbubble-export/download') return handleRedbubbleExportDownload(request, env);
     if (path === '/api/admin/redbubble-product-scrape')  return handleRedbubbleProductScrape(request, env);
+    if (path === '/api/admin/redbubble-products-list')   return handleRedbubbleProductsList(request, env);
     if (path === '/api/proxy-image')          return handleImageProxy(request, env);
     if (path === '/api/analytics')         return handleAnalytics(request, env);
     if (path.startsWith('/photos/'))       return servePhoto(path.slice('/photos/'.length), env, request);

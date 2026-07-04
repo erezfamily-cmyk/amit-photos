@@ -1443,6 +1443,16 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
 
       <div style="max-width:700px;margin:0 auto">
         <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1.5rem">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem">
+            <h2 style="font-size:.95rem;margin:0">📋 תמונות עם מוצרים ב-Redbubble</h2>
+            <span id="rb-list-count" style="font-size:.8rem;color:var(--muted)"></span>
+          </div>
+          <div id="rb-existing-list" style="display:flex;flex-direction:column;gap:.5rem;max-height:280px;overflow-y:auto;margin-bottom:.5rem">
+            <div style="font-size:.8rem;color:var(--muted);text-align:center;padding:1rem">טוען...</div>
+          </div>
+        </div>
+
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1.5rem">
 
           <div style="margin-bottom:1rem">
             <label style="display:block;font-size:.85rem;color:var(--muted);margin-bottom:.4rem">קטגוריה</label>
@@ -6455,7 +6465,43 @@ async function confirmLinkToLocation() {
   let rbCategoriesLoaded = false;
   let rbPhotos = [];
 
-  document.querySelector('.nav-item[data-section="redbubble"]')?.addEventListener('click', rbLoadCategories);
+  document.querySelector('.nav-item[data-section="redbubble"]')?.addEventListener('click', () => {
+    rbLoadCategories();
+    rbLoadExistingProducts();
+  });
+
+  async function rbLoadExistingProducts() {
+    const listEl = document.getElementById('rb-existing-list');
+    const countEl = document.getElementById('rb-list-count');
+    listEl.innerHTML = '<div style="font-size:.8rem;color:var(--muted);text-align:center;padding:1rem">טוען...</div>';
+    try {
+      const res = await fetch('/api/admin/redbubble-products-list', { headers: { 'X-Session-Token': SESSION_TOKEN } });
+      const data = await res.json();
+      countEl.textContent = data.count ? `${data.count} תמונות` : '';
+      if (!data.photos?.length) {
+        listEl.innerHTML = '<div style="font-size:.8rem;color:var(--muted);text-align:center;padding:1rem">עדיין אין תמונות עם מוצרי Redbubble שמורים</div>';
+        return;
+      }
+      listEl.innerHTML = data.photos.map(p => `
+        <div onclick="rbJumpToPhoto('${p.id}','${(p.category||'').replace(/'/g,"\\'")}')"
+          style="display:flex;align-items:center;gap:.6rem;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.4rem .6rem;cursor:pointer">
+          <img src="${p.thumbnail || ''}" style="width:36px;height:36px;object-fit:cover;border-radius:5px">
+          <div style="flex:1;min-width:0;font-size:.82rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.title || ''}</div>
+          <span style="font-size:.72rem;color:var(--accent);white-space:nowrap">${p.products.length} מוצרים</span>
+        </div>`).join('');
+    } catch (e) {
+      listEl.innerHTML = '<div style="font-size:.8rem;color:red;text-align:center;padding:1rem">שגיאה בטעינה</div>';
+    }
+  }
+
+  window.rbJumpToPhoto = async function(id, category) {
+    if (category) {
+      document.getElementById('rb-category').value = category;
+      await rbLoadPhotos();
+    }
+    rbSelectPhoto(id);
+    document.getElementById('rb-result')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
 
   window.rbLoadCategories = rbLoadCategories;
   async function rbLoadCategories() {
