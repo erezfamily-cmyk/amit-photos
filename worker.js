@@ -2722,6 +2722,18 @@ const BLOCKED_PHOTO_IDS = new Set([
   '1Dzrx-HH4M5K743_NY6lF_UHLW84-SQVC',
   '1QD4S-1KYrb3yTRflZnTlFvwNSapGKtzS', '720030fa-77e4-4a1e-81ff-c3df5a898a24',
   '49f8c03e-72d7-4ff9-ac7f-f76b74903ce5',
+  // קטגוריית "אנגליה" — 4.7.2026: מיוריל ספורטאי מזוהה (Ian Rush), לוגו TfL Underground,
+  // מוזאיקת דיוקנאות פוליטיקאים מזוהים, לוגו Standard Chartered, ומיורילים שלמים נוספים
+  'cabde850-adf5-40c7-a781-78c1f75fac21', 'e378d086-84ae-42f9-9c50-24dae4718136',
+  'a3c12c4b-8d79-407b-b7ec-ee229c6899bf', '378362e9-9935-4cd9-8283-13770ae75d9b',
+  '66b254e9-2bc5-4b15-acb9-ded6908cc401', 'c66bc1f1-6c60-49be-80b5-2732819cd70b',
+  'bd590fcf-1298-43c5-972f-6f206f103382', '62564953-4bf6-446e-b95d-1a581171475e',
+  '8ea8b789-daff-4b5b-8b6a-47fb73e1b6fb', '5bb39966-c573-44c6-9679-2734588ea522',
+  '3cc24f4e-91b6-4555-b564-6d097e2cdce3', '0a6068b9-f2e5-4550-9023-32fd0be447ef',
+  'b24d7b53-f5be-44f9-964e-645fbb37aa84', 'd432b311-38db-4b36-a88f-0487e845ce7a',
+  '27e0c832-667c-44cb-8887-07e9dab159e3', '215820bc-841c-42e4-aa8b-02cbb052b23e',
+  '16-5H2k9DtEVujMvTExwnMo2fj0YQLI38', '127bJ4h4bzS-cVMO66TEjsJqFcYMcpcZb',
+  '1mgqCcujLSnKlKeg4bu7XESwQHNlv11up',
 ]);
 
 async function servePhoto(key, env, request) {
