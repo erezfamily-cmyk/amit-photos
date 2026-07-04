@@ -1404,15 +1404,17 @@ async function handleRedbubbleExportDownload(request, env) {
     }
   }
 
-  // Fallback: R2 WebP → המרה ל-JPEG באיכות מלאה דרך Cloudflare Image Resizing
+  // Fallback: R2 WebP → המרה ל-JPEG באיכות מלאה דרך Cloudflare Image Resizing (servePhoto מבצע את ה-transform בפועל)
   if (!photo.r2_key) return jsonRes({ error: 'אין r2_key לתמונה זו' }, 404, request);
   try {
     const origin = new URL(request.url).origin;
-    const resized = await fetch(`${origin}/photos/${photo.r2_key}`, {
-      cf: { image: { format: 'jpeg', quality: 95 } },
-      headers: { 'x-no-resize': '1' },
-    });
+    const targetWidth = Math.max(photo.width || 0, photo.height || 0) || 4000;
+    const resized = await fetch(`${origin}/photos/${photo.r2_key}?w=${targetWidth}&format=jpeg`);
     if (!resized.ok) throw new Error(`resize failed: ${resized.status}`);
+    const contentType = resized.headers.get('Content-Type') || '';
+    if (!contentType.includes('jpeg') && !contentType.includes('jpg')) {
+      throw new Error(`Cloudflare Image Resizing לא הפעיל בחשבון — קיבלנו ${contentType} במקום jpeg`);
+    }
     return new Response(resized.body, {
       headers: {
         'Content-Type': 'image/jpeg',
@@ -2438,13 +2440,13 @@ async function servePhotoPage(photoId, env) {
   let photo = null;
   try {
     const row = await env.DB.prepare(
-      'SELECT id, title, description, thumbnail, url, category, redbubble_url, redbubble_products FROM photos WHERE id = ?'
+      'SELECT id, title, description, thumbnail, url, category, redbubble_url, redbubble_products FROM photos WHERE id = ? AND published = 1'
     ).bind(photoId).first();
     if (row) photo = row;
   } catch (_) {}
 
-  // אם לא נמצא ב-D1 — שלוף מ-photos.json
-  if (!photo) {
+  // אם לא נמצא ב-D1 (או חסום) — שלוף מ-photos.json, חוץ מתמונות חסומות
+  if (!photo && !BLOCKED_PHOTO_IDS.has(photoId)) {
     try {
       const jsonRes = await env.ASSETS.fetch(new Request('https://amitphotos.com/data/photos.json'));
       const photos = await jsonRes.json();
@@ -2697,16 +2699,45 @@ async function handleCategoryPage(category, env) {
   return htmlRes(html, 200, 'no-cache, no-store, must-revalidate');
 }
 
+// חסימת קבצים — הוסרו 4.7.2026 בשל חשש להפרת זכויות יוצרים על אמנות רחוב (מוטיב אמנותי שלם/דמות חתומה,
+// כולל סגנון OBEY/Banksy ולוגו Jack Daniel's). חסימה ברמת ה-R2 עצמה, לא רק published=0 ב-D1 —
+// כדי שהקובץ לא יוגש גם אם מסונכרן מחדש מ-Drive או נגיש בקישור ישיר/cache ישן.
+const BLOCKED_PHOTO_IDS = new Set([
+  'f207830f-74e5-4f51-9dfb-3d0e648cddab', '4cff716d-0292-4963-85a4-524f8f051855',
+  '15dcWf75qLBeeYQOHLw8q9SoYxvJiM-yJ', '1b8VjVnJmSqr5ND4JIPTGrJjIoM4as42I',
+  '1MKQfhUuYBbjtM0gVvNFBDT8B8duGwQsL', '1cIOg80ARIDTH2mTGq0YABLPL1ECVSV8P',
+  '1f2p8iDcaJR_LV4w_Vg_bNQ4hIHEqiQac', '1ZU1P_DTM5938hC18_Py9OZZqRob4VUTr',
+  '1i-YCIhCY5-e1mleESaJtmaEScx6x5GYX', '1xp0-lpaiDPMZOacy3SqKJ34jaPZ_B4Ua',
+  '1-iJPFoC4apVKsGeFa7XxpNBsJanLpn6P', '1BYeD4UV2TOwpbPjV0kmv-Gl-OQT8-ox-',
+  '1aeoAauj2Exj0l-7YWujRM53fJix9SpxP', '1tIWrT18_7Wdgywd-AclcIQcYIh3bhuiR',
+  '1p2zkOHA94h8rultRemwsyPMXbmxdXFvP', '174zyBopiImSouYyOt1WjpJcoSGY5-f0v',
+  '1AfUVDF8p6VyVLa5GbMr0w7wX4_bzv0X2', '1xJ1JIqiGzIBZAYvU4US-EXW7Wv8IEpe7',
+  '1kAf2fQlfyNxGcXB1HypjFP_zplffcAdt', '1zTt6-0LettDu0qvauEhq51Q3VF-u-wJV',
+  '1OddP-ucH3-6YMj3Jq5h8yn42DTDpKWg6', '1SOUVqUKaOMGvlozKkxzQMq0r6dPuumSX',
+  '1w8PifW8LEJAVXGlsGzljvF61b_G4LazJ', '1Ry-vg0OUxMC8ixGN3bzBJ2fxPMetWl_o',
+  '1Rk7DVtZoe7fjlzVs6RIutNGYhzDsXyKQ', '1ADfJKqOIF1pA2DxEeWRtz3KkFuaT6Ks5',
+  '1w4L8pgyd-7gbqX6ITIUn5_FmaL5nUSPp', '1vqHsXWU4S65naalXFddobDsgWnjT7Ex1',
+  '1nXqUjgg5KOrU1m5yyYxbHW_JTT5ylLuN', '1VsaalztTEN45m8prBG4T_RN-kAfByDMZ',
+  '1Dzrx-HH4M5K743_NY6lF_UHLW84-SQVC',
+]);
+
 async function servePhoto(key, env, request) {
+  const baseId = key.replace(/^thumb\//, '').replace(/\.[a-zA-Z0-9]+$/, '');
+  if (BLOCKED_PHOTO_IDS.has(baseId)) {
+    return new Response('Not found', { status: 404 });
+  }
+
   const url = new URL(request.url);
   const w = parseInt(url.searchParams.get('w')) || 0;
+  const fmt = url.searchParams.get('format') === 'jpeg' ? 'jpeg' : 'webp';
+  const quality = fmt === 'jpeg' ? 95 : 75;
 
   // Cloudflare Image Resizing — gracefully degrades if not enabled on the account
   if (w && !request.headers.get('x-no-resize')) {
     try {
       const origin = url.origin;
       const resized = await fetch(`${origin}/photos/${key}`, {
-        cf: { image: { width: w, quality: 75, format: 'webp' } },
+        cf: { image: { width: w, quality, format: fmt } },
         headers: { 'x-no-resize': '1' },
       });
       if (resized.ok) {
