@@ -168,7 +168,7 @@ def analyze_with_claude(image_bytes, filename, category, anthropic_key):
 
     b64 = base64.standard_b64encode(image_bytes).decode("utf-8")
 
-    prompt = f"""אתה עוזר לצלם מקצועי ישראלי לתייג תמונות.
+    prompt = f"""אתה עוזר לצלם מקצועי ישראלי לתייג תמונות ולבדוק סיכוני זכויות יוצרים לפני מכירה כהדפס מסחרי.
 
 הקטגוריה של התמונה: {category}
 שם הקובץ המקורי: {filename}
@@ -176,9 +176,13 @@ def analyze_with_claude(image_bytes, filename, category, anthropic_key):
 תן לתמונה:
 1. כותרת קצרה ויפה בעברית (2-5 מילים, ללא סימני פיסוק)
 2. תיאור קצר בעברית (משפט אחד, עד 15 מילים)
+3. בדיקת זכויות יוצרים — copyright_risk=true רק אם:
+   - מוצגת יצירת אמנות רחוב/גרפיטי **שלמה וניתנת לזיהוי** כיצירה מכוונת של אמן ספציפי (דיוקן, דמות, מוטיב חתום) הממלאת חלק משמעותי מהפריים — לא תגיות לא קריאות, לא דפוסים מופשטים, לא רקע משני
+   - או שמופיע לוגו/סימן מסחרי בולט של מותג (כמו Coca-Cola, Nike, Ferrari וכו')
+   אם copyright_risk=true, נמק ב-copyright_reason במשפט קצר מה בדיוק מהווה סיכון.
 
 ענה בפורמט JSON בלבד:
-{{"title": "כותרת כאן", "description": "תיאור כאן"}}"""
+{{"title": "כותרת כאן", "description": "תיאור כאן", "copyright_risk": false, "copyright_reason": ""}}"""
 
     headers = {
         "x-api-key": anthropic_key,
@@ -219,14 +223,15 @@ def analyze_with_claude(image_bytes, filename, category, anthropic_key):
             if "```" in content:
                 content = content.split("```")[1].replace("json", "").strip()
             data = json.loads(content)
-            return data.get("title", ""), data.get("description", "")
+            return (data.get("title", ""), data.get("description", ""),
+                    bool(data.get("copyright_risk", False)), data.get("copyright_reason", ""))
         except Exception as e:
             if attempt < 2:
                 time.sleep(3)
                 continue
             print(f"⚠️  שגיאה בניתוח Claude: {e}")
-            return Path(filename).stem, ""
-    return Path(filename).stem, ""
+            return Path(filename).stem, "", False, ""
+    return Path(filename).stem, "", False, ""
 
 
 def load_existing_photos():
@@ -326,8 +331,17 @@ def main():
     existing = load_existing_photos()
     print(f"📋 תמונות קיימות ב-JSON: {len(existing)}")
 
+    flagged_file = ROOT / "data" / "copyright_flagged.json"
+    already_flagged_ids = set()
+    if flagged_file.exists():
+        try:
+            already_flagged_ids = {p["id"] for p in json.loads(flagged_file.read_text(encoding="utf-8"))}
+        except Exception:
+            already_flagged_ids = set()
+
     all_photos = []
     new_count = 0
+    flagged_photos = []
 
     for cat in categories:
         files = cat["files"]
@@ -337,6 +351,11 @@ def main():
         for f in files:
             file_id = f["id"]
             meta = f.get("imageMediaMetadata", {})
+
+            # כבר נחסם בעבר בגלל חשש זכויות יוצרים — לא מנתחים שוב, לא נכנס ל-photos.json
+            if file_id in already_flagged_ids:
+                print(f"   🚫 {f['name']} (חסום מראש — זכויות יוצרים)")
+                continue
 
             # אם התמונה כבר קיימת עם שם אמיתי — שמור כמות שהיא
             if file_id in existing:
@@ -354,13 +373,24 @@ def main():
 
             try:
                 img_bytes = download_thumbnail(session, file_id)
-                title, description = analyze_with_claude(
+                title, description, copyright_risk, copyright_reason = analyze_with_claude(
                     img_bytes, f["name"], cat["name"], anthropic_key
                 )
             except Exception as e:
                 print(f"שגיאה: {e}")
                 title = Path(f["name"]).stem
                 description = ""
+                copyright_risk, copyright_reason = False, ""
+
+            if copyright_risk:
+                print(f"🚫 נחסם — חשש לזכויות יוצרים: {copyright_reason}")
+                flagged_photos.append({
+                    "id": file_id, "filename": f["name"], "category": cat["name"],
+                    "reason": copyright_reason,
+                    "flagged_at": __import__('datetime').date.today().isoformat(),
+                })
+                time.sleep(0.5)
+                continue
 
             # חלק את הקטגוריה ל-parent ו-sub אם יש "/"
             cat_parts = cat["name"].split(" / ", 1)
@@ -400,6 +430,10 @@ def main():
 
     print(f"\n{'=' * 40}")
     print(f"✅ סה\"כ: {len(all_photos)} תמונות ({new_count} חדשות)")
+    if flagged_photos:
+        print(f"🚫 נחסמו {len(flagged_photos)} תמונות בחשש לזכויות יוצרים — לא נכנסו ל-{DATA_FILE.name}:")
+        for fp in flagged_photos:
+            print(f"   • {fp['filename']} ({fp['category']}) — {fp['reason']}")
 
     if DRY_RUN:
         print("🔍 Dry run — לא שומר")
@@ -411,6 +445,25 @@ def main():
         encoding="utf-8"
     )
     print(f"💾 נשמר ל-{DATA_FILE}")
+
+    if flagged_photos:
+        flagged_file = ROOT / "data" / "copyright_flagged.json"
+        existing_flagged = []
+        if flagged_file.exists():
+            try:
+                existing_flagged = json.loads(flagged_file.read_text(encoding="utf-8"))
+            except Exception:
+                existing_flagged = []
+        existing_ids = {p["id"] for p in existing_flagged}
+        for fp in flagged_photos:
+            if fp["id"] not in existing_ids:
+                existing_flagged.append(fp)
+        flagged_file.write_text(
+            json.dumps(existing_flagged, ensure_ascii=False, indent=2),
+            encoding="utf-8"
+        )
+        print(f"📋 יומן חסימות עודכן: {flagged_file}")
+
     save_last_scan_time(now_iso)
     print(f"🕐 זמן סריקה נשמר: {now_iso}")
 
