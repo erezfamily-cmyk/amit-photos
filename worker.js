@@ -1404,18 +1404,13 @@ async function handleRedbubbleExportDownload(request, env) {
     }
   }
 
-  // Fallback: R2 WebP → המרה ל-JPEG באיכות מלאה דרך Cloudflare Image Resizing (servePhoto מבצע את ה-transform בפועל)
+  // Fallback: R2 WebP → המרה ל-JPEG באיכות מלאה דרך Images Binding (עובד ישירות על bytes, בלי subrequest שבור)
   if (!photo.r2_key) return jsonRes({ error: 'אין r2_key לתמונה זו' }, 404, request);
   try {
-    const origin = new URL(request.url).origin;
-    const targetWidth = Math.max(photo.width || 0, photo.height || 0) || 4000;
-    const resized = await fetch(`${origin}/photos/${photo.r2_key}?w=${targetWidth}&format=jpeg`);
-    if (!resized.ok) throw new Error(`resize failed: ${resized.status}`);
-    const contentType = resized.headers.get('Content-Type') || '';
-    if (!contentType.includes('jpeg') && !contentType.includes('jpg')) {
-      throw new Error(`Cloudflare Image Resizing לא הפעיל בחשבון — קיבלנו ${contentType} במקום jpeg`);
-    }
-    return new Response(resized.body, {
+    const object = await env.PHOTOS.get(photo.r2_key);
+    if (!object) throw new Error('הקובץ לא נמצא ב-R2');
+    const result = await env.IMAGES.input(object.body).output({ format: 'image/jpeg', quality: 95 });
+    return new Response((await result.response()).body, {
       headers: {
         'Content-Type': 'image/jpeg',
         'Content-Disposition': `attachment; filename*=UTF-8''${encodeURIComponent(filename)}`,
@@ -2737,15 +2732,13 @@ async function servePhoto(key, env, request) {
 
   const url = new URL(request.url);
   const w = parseInt(url.searchParams.get('w')) || 0;
-  const fmt = url.searchParams.get('format') === 'jpeg' ? 'jpeg' : 'webp';
-  const quality = fmt === 'jpeg' ? 95 : 75;
 
   // Cloudflare Image Resizing — gracefully degrades if not enabled on the account
   if (w && !request.headers.get('x-no-resize')) {
     try {
       const origin = url.origin;
       const resized = await fetch(`${origin}/photos/${key}`, {
-        cf: { image: { width: w, quality, format: fmt } },
+        cf: { image: { width: w, quality: 75, format: 'webp' } },
         headers: { 'x-no-resize': '1' },
       });
       if (resized.ok) {

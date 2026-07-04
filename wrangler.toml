@@ -17,6 +17,9 @@ database_id = "802379c7-97cf-4262-93b8-da81c5c3c07d"
 binding = "PHOTOS"
 bucket_name = "amit-photos-images"
 
+[images]
+binding = "IMAGES"
+
 [[routes]]
 pattern = "www.amitphotos.com/*"
 zone_name = "amitphotos.com"
