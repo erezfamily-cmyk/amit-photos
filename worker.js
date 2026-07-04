@@ -2700,7 +2700,8 @@ async function handleCategoryPage(category, env) {
 }
 
 // חסימת קבצים — הוסרו 4.7.2026 בשל חשש להפרת זכויות יוצרים על אמנות רחוב (מוטיב אמנותי שלם/דמות חתומה,
-// כולל סגנון OBEY/Banksy ולוגו Jack Daniel's). חסימה ברמת ה-R2 עצמה, לא רק published=0 ב-D1 —
+// כולל סגנון OBEY/Banksy) וכן לוגואים מסחריים בולטים (Jack Daniel's, Coca-Cola, Ferrari, Carlsberg).
+// חסימה ברמת ה-R2 עצמה, לא רק published=0 ב-D1 —
 // כדי שהקובץ לא יוגש גם אם מסונכרן מחדש מ-Drive או נגיש בקישור ישיר/cache ישן.
 const BLOCKED_PHOTO_IDS = new Set([
   'f207830f-74e5-4f51-9dfb-3d0e648cddab', '4cff716d-0292-4963-85a4-524f8f051855',
@@ -2719,6 +2720,8 @@ const BLOCKED_PHOTO_IDS = new Set([
   '1w4L8pgyd-7gbqX6ITIUn5_FmaL5nUSPp', '1vqHsXWU4S65naalXFddobDsgWnjT7Ex1',
   '1nXqUjgg5KOrU1m5yyYxbHW_JTT5ylLuN', '1VsaalztTEN45m8prBG4T_RN-kAfByDMZ',
   '1Dzrx-HH4M5K743_NY6lF_UHLW84-SQVC',
+  '1QD4S-1KYrb3yTRflZnTlFvwNSapGKtzS', '720030fa-77e4-4a1e-81ff-c3df5a898a24',
+  '49f8c03e-72d7-4ff9-ac7f-f76b74903ce5',
 ]);
 
 async function servePhoto(key, env, request) {
