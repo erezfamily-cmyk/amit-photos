@@ -6484,11 +6484,16 @@ async function confirmLinkToLocation() {
         return;
       }
       listEl.innerHTML = data.photos.map(p => `
-        <div onclick="rbJumpToPhoto('${p.id}','${(p.category||'').replace(/'/g,"\\'")}')"
-          style="display:flex;align-items:center;gap:.6rem;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.4rem .6rem;cursor:pointer">
-          <img src="${p.thumbnail || ''}" style="width:36px;height:36px;object-fit:cover;border-radius:5px">
-          <div style="flex:1;min-width:0;font-size:.82rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.title || ''}</div>
-          <span style="font-size:.72rem;color:var(--accent);white-space:nowrap">${p.products.length} מוצרים</span>
+        <div style="display:flex;align-items:center;gap:.6rem;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.4rem .6rem">
+          <div onclick="rbJumpToPhoto('${p.id}','${(p.category||'').replace(/'/g,"\\'")}')" style="display:flex;align-items:center;gap:.6rem;flex:1;min-width:0;cursor:pointer">
+            <img src="${p.thumbnail || ''}" style="width:36px;height:36px;object-fit:cover;border-radius:5px">
+            <div style="flex:1;min-width:0;font-size:.82rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.title || ''}</div>
+            <span style="font-size:.72rem;color:var(--accent);white-space:nowrap">${p.products.length} מוצרים</span>
+          </div>
+          <a href="https://amitphotos.com/photo/${p.id}" target="_blank" rel="noopener" onclick="event.stopPropagation()"
+            title="צפה בעמוד באתר" style="display:flex;align-items:center;justify-content:center;width:28px;height:28px;flex-shrink:0;color:var(--muted);text-decoration:none;border-radius:5px">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><path d="M15 3h6v6"/><path d="M10 14L21 3"/></svg>
+          </a>
         </div>`).join('');
     } catch (e) {
       listEl.innerHTML = '<div style="font-size:.8rem;color:red;text-align:center;padding:1rem">שגיאה בטעינה</div>';
