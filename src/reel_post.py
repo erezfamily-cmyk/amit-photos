@@ -154,6 +154,55 @@ def get_hashtags(category):
     return HASHTAG_POOLS.get(category, HASHTAG_POOLS["default"])
 
 
+def generate_reel_caption(category, lang, titles=None):
+    """
+    מייצר כיתוב ייחודי לרילס לפי הקטגוריה והתמונות שנבחרו, במקום שורת CTA קבועה.
+    בלי ANTHROPIC_API_KEY או בכל כשל — נופל לשורת "בקר באתר שלי" הישנה.
+    """
+    cta_line = "בקר באתר שלי" if lang == "he" else "Visit my website"
+    fallback = f"{cta_line}: amitphotos.com\n\n{get_hashtags(category)}"
+    if not ANTHROPIC_API_KEY:
+        return fallback
+
+    try:
+        import anthropic
+        client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
+        titles_line = ", ".join(titles) if titles else category
+        if lang == "he":
+            system_prompt = (
+                "אתה עמית, צלם ישראלי, כותב בגוף ראשון כיתוב קצר לרילס באינסטגרם. "
+                "סגנון אישי ואותנטי, לא שיווקי. משפט אחד או שניים בלבד."
+            )
+            prompt = (
+                f"קטגוריה: {category}\nתמונות ברילס: {titles_line}\n\n"
+                "כתוב כיתוב קצר (עד 2 משפטים) בגוף ראשון על הרגע/הנושא שברילס. "
+                "רצוי לסיים בשאלה קצרה לעוקבים. בלי hashtags, בלי קישור — אלה יתווספו בנפרד. "
+                "כתוב רק את הטקסט."
+            )
+        else:
+            system_prompt = (
+                "You are Amit, an Israeli photographer, writing a short first-person Instagram Reel caption. "
+                "Authentic, personal, not salesy. One or two sentences max."
+            )
+            prompt = (
+                f"Category: {category}\nPhotos in this reel: {titles_line}\n\n"
+                "Write a short caption (max 2 sentences) in first person about the moment/subject in this reel. "
+                "Ideally end with a short question to followers. No hashtags, no link — those are added separately. "
+                "Write only the text."
+            )
+        msg = client.messages.create(
+            model="claude-opus-4-8",
+            max_tokens=120,
+            system=system_prompt,
+            messages=[{"role": "user", "content": prompt}],
+        )
+        body = msg.content[0].text.strip()
+        return f"{body}\n\n{cta_line}: amitphotos.com\n\n{get_hashtags(category)}"
+    except Exception as e:
+        print(f"⚠️  יצירת כיתוב Claude נכשלה ({e}) — נופל לברירת מחדל")
+        return fallback
+
+
 # ── שפת CTA (חלופי) ──────────────────────────────────────────────────────────
 
 def _next_cta_lang(forced=None):
@@ -802,11 +851,14 @@ def _publish_reel(video_path, category, lang):
         print(f"📎 fallback → GitHub raw: {url}")
 
     # שמור ב-data/latest_reel.json
+    titles = [p["title"] for p in selected]
     record = {
         "url":        url,
         "category":   category,
         "lang":       lang,
         "filename":   video_path.name,
+        "titles":     titles,
+        "caption":    generate_reel_caption(category, lang, titles),
         "created_at": datetime.datetime.utcnow().isoformat(),
     }
     out = ROOT / "data" / "latest_reel.json"
@@ -900,8 +952,7 @@ def publish_existing_reel():
     meta     = json.loads(meta_path.read_text(encoding="utf-8"))
     category = meta.get("category", "")
     lang     = meta.get("lang", "he")
-    cta_line = "בקר באתר שלי" if lang == "he" else "Visit my website"
-    caption  = f"{cta_line}: amitphotos.com\n\n{get_hashtags(category)}"
+    caption  = meta.get("caption") or generate_reel_caption(category, lang, meta.get("titles"))
 
     video_url = _upload_video(video_path)
     reel_id   = _publish_ig(video_url, caption)
@@ -963,8 +1014,8 @@ def main():
         return
 
     lang_used = args.lang or ("he" if "he" in out else "en")
-    cta_line  = "בקר באתר שלי" if lang_used == "he" else "Visit my website"
-    caption   = f"{cta_line}: amitphotos.com\n\n{get_hashtags(args.category)}"
+    meta      = json.loads((ROOT / "data" / "latest_reel.json").read_text(encoding="utf-8"))
+    caption   = meta.get("caption") or generate_reel_caption(args.category, lang_used, meta.get("titles"))
 
     video_url = _upload_video(Path(out))
     _publish_ig(video_url, caption)
