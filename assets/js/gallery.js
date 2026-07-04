@@ -43,7 +43,7 @@ function isNew(photo) {
 }
 
 // ===== STATE =====
-const PURCHASES_ENABLED = true;      // ← השבת רכישות עד שה-PayPal מאומת
+const PURCHASES_ENABLED = true;
 const TEST_PHOTO_ID = '1jmBaBvk8rKoV5rvARPayvd010U_CW_gp'; // תמונת בדיקה בלבד
 function canBuy(photo) { return PURCHASES_ENABLED || photo?.id === TEST_PHOTO_ID; }
 let allPhotos = [];
