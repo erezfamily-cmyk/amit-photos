@@ -1711,6 +1711,7 @@ const PrintShop = (() => {
   }
 
   async function open(photo) {
+    trackEvent('print_intent', photo);
     currentPhoto = photo;
     selectedType = null; selectedSku = null; selectedPrice = null;
     document.getElementById('print-modal-img').src = photo.thumbnail || photo.url;
@@ -1787,6 +1788,7 @@ const PrintShop = (() => {
   }
 
   function selectType(type) {
+    if (currentPhoto) trackEvent('print_type_selected', currentPhoto);
     selectedType = type;
     selectedSku = null; selectedPrice = null;
     const entry = catalog[type];
@@ -2071,6 +2073,7 @@ const PrintShop = (() => {
       return;
     }
 
+    if (currentPhoto) trackEvent('print_checkout', currentPhoto);
     const payBtn = document.getElementById('print-pay-btn');
     const origHtml = payBtn.innerHTML;
     payBtn.disabled = true;

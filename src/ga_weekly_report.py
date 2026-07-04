@@ -139,7 +139,10 @@ def fetch_ga4_data(token):
         "dimensionFilter": {
             "filter": {
                 "fieldName": "eventName",
-                "inListFilter": {"values": ["purchase_intent", "view_item", "add_size", "purchase", "generate_lead"]},
+                "inListFilter": {"values": [
+                    "purchase_intent", "view_item", "add_size", "purchase", "generate_lead",
+                    "print_intent", "print_type_selected", "print_checkout",
+                ]},
             }
         },
         "orderBys": [{"metric": {"metricName": "eventCount"}, "desc": True}],
@@ -203,12 +206,16 @@ def build_data_summary(data):
     lines += ["", "--- ארצות ---"]
     for r in data["countries"]:
         lines.append(f"  {r['ארץ']}: {r['sessions']} סשנים")
-    lines += ["", "--- משפך מכירה (הזמנת הדפסה) ---"]
+    lines += ["", "--- משפך מכירה דיגיטלית (buy modal) ---"]
     fe = data["funnel_events"]
     lines.append(f"  צפיות בתמונה (view_item):        {fe.get('view_item', '0')}")
     lines.append(f"  פתיחת מודל קנייה (purchase_intent): {fe.get('purchase_intent', '0')}")
     lines.append(f"  בחירת גודל/מוצר (add_size):        {fe.get('add_size', '0')}")
     lines.append(f"  רכישה שהושלמה (purchase):          {fe.get('purchase', '0')}")
+    lines += ["", "--- משפך הזמנת הדפסה (print modal / Gelato) ---"]
+    lines.append(f"  פתיחת מודל הדפסה (print_intent):        {fe.get('print_intent', '0')}")
+    lines.append(f"  בחירת סוג הדפסה (print_type_selected):  {fe.get('print_type_selected', '0')}")
+    lines.append(f"  מעבר לתשלום (print_checkout):           {fe.get('print_checkout', '0')}")
     return "\n".join(lines)
 
 
@@ -222,8 +229,10 @@ def generate_analysis(data_summary):
 הקהל: אנשים שאוהבים אמנות צילומית, מעצבי פנים, קונים רגשיים — לא מחפשים צלם לאירועים.
 הכנסות מגיעות מ: מכירות דיגיטל (PayPal), הדפסות (Gelato), affiliate (Adorama/Skylum).
 אתה מנתח נתוני Google Analytics שבועיים ומציע המלצות ספציפיות ומעשיות לגלריית fine art.
-שים לב במיוחד למשפך המכירה של הדפסות (view_item → purchase_intent → add_size → purchase) —
-אתר לא הצליח לסגור אף הזמנת הדפסה מעולם, אז ירידה חדה בין שלבים היא הממצא הכי חשוב לדווח עליו.
+שים לב לשני משפכים נפרדים: מכירה דיגיטלית (view_item → purchase_intent → add_size → purchase)
+ומכירת הדפסה פיזית דרך Gelato (print_intent → print_type_selected → print_checkout → הזמנה
+מושלמת ב-print_orders). אתר לא הצליח לסגור אף הזמנת הדפסה מעולם, אז ירידה חדה בין שלבים
+באחד המשפכים היא הממצא הכי חשוב לדווח עליו.
 כותב בעברית, ישיר, ללא כותרות מפוצצות. נותן 3-5 המלצות מה לעשות השבוע.""",
         messages=[{"role": "user", "content": f"""נתוני אנליטיקס שבועיים של amitphotos.com:
 
@@ -293,12 +302,20 @@ def build_html_email(data, analysis):
     </div>
   </div>
   <div style="padding:0 24px 20px">
-    <h2 style="color:#2c3e50;margin:0 0 8px;font-size:1em">משפך מכירה — הזמנת הדפסה</h2>
+    <h2 style="color:#2c3e50;margin:0 0 8px;font-size:1em">משפך מכירה דיגיטלית (buy modal)</h2>
     <div style="background:#f8f9fa;border-radius:8px;padding:12px 16px;display:flex;gap:10px;flex-wrap:wrap">
       {card("צפיות בתמונה", data['funnel_events'].get('view_item', '0'))}
       {card("פתיחת מודל קנייה", data['funnel_events'].get('purchase_intent', '0'))}
       {card("בחירת גודל", data['funnel_events'].get('add_size', '0'))}
       {card("רכישה הושלמה", data['funnel_events'].get('purchase', '0'))}
+    </div>
+  </div>
+  <div style="padding:0 24px 20px">
+    <h2 style="color:#2c3e50;margin:0 0 8px;font-size:1em">משפך הזמנת הדפסה (print modal / Gelato)</h2>
+    <div style="background:#f8f9fa;border-radius:8px;padding:12px 16px;display:flex;gap:10px;flex-wrap:wrap">
+      {card("פתיחת מודל הדפסה", data['funnel_events'].get('print_intent', '0'))}
+      {card("בחירת סוג הדפסה", data['funnel_events'].get('print_type_selected', '0'))}
+      {card("מעבר לתשלום", data['funnel_events'].get('print_checkout', '0'))}
     </div>
   </div>
   <div style="padding:0 24px 20px;display:flex;gap:20px;flex-wrap:wrap">
