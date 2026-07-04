@@ -1467,6 +1467,7 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
           </div>
 
           <div id="rb-result" style="display:none;border-top:1px solid var(--border);padding-top:1.25rem;margin-top:.5rem">
+            <button onclick="rbBackToList()" style="margin-bottom:1rem;padding:.4rem .8rem;background:var(--surface);border:1px solid var(--border);border-radius:6px;color:var(--muted);font-size:.82rem;cursor:pointer">↑ חזרה לרשימת תמונות עם מוצרים</button>
             <div style="display:flex;gap:1rem;margin-bottom:1rem">
               <img id="rb-preview-img" style="width:120px;height:120px;object-fit:cover;border-radius:8px;border:1px solid var(--border)">
               <div style="flex:1;font-size:.8rem;color:var(--muted)">
@@ -6501,6 +6502,11 @@ async function confirmLinkToLocation() {
     }
     rbSelectPhoto(id);
     document.getElementById('rb-result')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  window.rbBackToList = function() {
+    rbLoadExistingProducts();
+    document.getElementById('rb-existing-list')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
   window.rbLoadCategories = rbLoadCategories;
