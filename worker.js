@@ -535,8 +535,8 @@ async function handlePhotos(request, env) {
         return jsonRes(catRows.map(r => r.category), 200, request);
       }
       const sql = catFilter
-        ? 'SELECT id, title, category, thumbnail FROM photos WHERE category=? ORDER BY CASE WHEN sort_order IS NULL THEN 1 ELSE 0 END, sort_order ASC, created_at DESC'
-        : 'SELECT id, title, category, thumbnail FROM photos ORDER BY CASE WHEN sort_order IS NULL THEN 1 ELSE 0 END, sort_order ASC, created_at DESC';
+        ? 'SELECT id, title, category, thumbnail, redbubble_url FROM photos WHERE category=? ORDER BY CASE WHEN sort_order IS NULL THEN 1 ELSE 0 END, sort_order ASC, created_at DESC'
+        : 'SELECT id, title, category, thumbnail, redbubble_url FROM photos ORDER BY CASE WHEN sort_order IS NULL THEN 1 ELSE 0 END, sort_order ASC, created_at DESC';
       const { results: slimResults } = catFilter
         ? await env.DB.prepare(sql).bind(catFilter).all()
         : await env.DB.prepare(sql).all();
@@ -607,6 +607,11 @@ async function handlePhotos(request, env) {
       vals.push(id);
       await env.DB.prepare(`UPDATE photos SET ${fields.join(',')} WHERE id=?`).bind(...vals).run();
       return jsonRes({ ok: true }, 200, request);
+    }
+
+    if (body.redbubble_url !== undefined) {
+      await env.DB.prepare('UPDATE photos SET redbubble_url=? WHERE id=?').bind(body.redbubble_url || null, id).run();
+      return jsonRes({ ok: true, redbubble_url: body.redbubble_url || null }, 200, request);
     }
 
     if (body.quiz_eligible !== undefined || body.quiz_description !== undefined) {
@@ -2389,7 +2394,7 @@ async function servePhotoPage(photoId, env) {
   let photo = null;
   try {
     const row = await env.DB.prepare(
-      'SELECT id, title, description, thumbnail, url, category FROM photos WHERE id = ?'
+      'SELECT id, title, description, thumbnail, url, category, redbubble_url FROM photos WHERE id = ?'
     ).bind(photoId).first();
     if (row) photo = row;
   } catch (_) {}
@@ -2490,6 +2495,15 @@ async function servePhotoPage(photoId, env) {
     .rel-grid a img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:4px;display:block;transition:opacity .2s}
     .rel-grid a img:hover{opacity:.8}
     .credit{margin-top:3rem;font-size:.8rem;opacity:.4}
+    .rb-section{max-width:900px;width:100%;margin-top:3rem;border-top:1px solid rgba(255,255,255,.1);padding-top:2rem}
+    .rb-section h2{font-size:1.1rem;margin-bottom:.4rem;opacity:.9}
+    .rb-section .rb-sub{font-size:.85rem;opacity:.6;margin-bottom:1.25rem}
+    .rb-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px}
+    .rb-item{display:flex;flex-direction:column;align-items:center;gap:.5rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:1rem .5rem;transition:.15s;text-decoration:none !important}
+    .rb-item:hover{background:rgba(201,169,110,.12);border-color:#c9a96e}
+    .rb-item .rb-icon{font-size:1.6rem}
+    .rb-item .rb-label{font-size:.78rem;color:#f0f0f0;opacity:.85;text-align:center}
+    .rb-cta{display:inline-block;margin-top:1.25rem;font-size:.85rem;color:#c9a96e}
   </style>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600&display=swap" rel="stylesheet">
@@ -2505,6 +2519,20 @@ async function servePhotoPage(photoId, env) {
     ${desc ? `<p class="desc">${desc}</p>` : ''}
     <a class="buy" href="https://amitphotos.com/#photo-${photoId}">לרכישת התמונה</a>
   </div>
+  ${photo?.redbubble_url ? `
+  <div class="rb-section">
+    <h2>🛍️ עוד דרכים לקחת את התמונה הזו הביתה</h2>
+    <p class="rb-sub">אותה תמונה — על כריות, מגנטים, פאזלים, מדבקות ועוד, דרך Redbubble</p>
+    <div class="rb-grid">
+      <a class="rb-item" href="${photo.redbubble_url}" target="_blank" rel="noopener sponsored"><span class="rb-icon">🧩</span><span class="rb-label">פאזל</span></a>
+      <a class="rb-item" href="${photo.redbubble_url}" target="_blank" rel="noopener sponsored"><span class="rb-icon">🛋️</span><span class="rb-label">כרית נוי</span></a>
+      <a class="rb-item" href="${photo.redbubble_url}" target="_blank" rel="noopener sponsored"><span class="rb-icon">🧲</span><span class="rb-label">מגנט</span></a>
+      <a class="rb-item" href="${photo.redbubble_url}" target="_blank" rel="noopener sponsored"><span class="rb-icon">🏷️</span><span class="rb-label">מדבקה</span></a>
+      <a class="rb-item" href="${photo.redbubble_url}" target="_blank" rel="noopener sponsored"><span class="rb-icon">☕</span><span class="rb-label">כוס</span></a>
+      <a class="rb-item" href="${photo.redbubble_url}" target="_blank" rel="noopener sponsored"><span class="rb-icon">👕</span><span class="rb-label">חולצה</span></a>
+    </div>
+    <a class="rb-cta" href="${photo.redbubble_url}" target="_blank" rel="noopener sponsored">כל המוצרים בחנות Redbubble ←</a>
+  </div>` : ''}
   ${relatedPhotos.length ? `
   <div class="related">
     <h2>תמונות נוספות מ${category}</h2>

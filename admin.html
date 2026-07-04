@@ -1475,9 +1475,19 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
             <label style="display:block;font-size:.8rem;color:var(--muted);margin-bottom:.3rem">Description</label>
             <textarea id="rb-out-desc" readonly rows="3" style="width:100%;margin-bottom:1rem;padding:.5rem .7rem;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:.9rem;direction:ltr;resize:vertical" onclick="this.select()"></textarea>
 
-            <div style="display:flex;gap:.6rem;flex-wrap:wrap">
+            <div style="display:flex;gap:.6rem;flex-wrap:wrap;margin-bottom:1.25rem">
               <a id="rb-download-btn" download style="flex:1;min-width:180px;text-align:center;padding:.7rem;background:var(--accent);border-radius:8px;color:#1a1a1a;font-size:.9rem;font-weight:700;text-decoration:none;cursor:pointer">⬇ הורד JPG (רזולוציה מלאה)</a>
               <a href="https://www.redbubble.com/portfolio/images/new" target="_blank" rel="noopener" style="flex:1;min-width:180px;text-align:center;padding:.7rem;background:var(--surface);border:1px solid var(--accent);border-radius:8px;color:var(--accent);font-size:.9rem;font-weight:600;text-decoration:none">🛍️ פתח Redbubble Dashboard</a>
+            </div>
+
+            <div style="border-top:1px solid var(--border);padding-top:1rem">
+              <label style="display:block;font-size:.8rem;color:var(--muted);margin-bottom:.3rem">קישור לעמוד המוצר ב-Redbubble (אחרי שהעלית ופרסמת שם)</label>
+              <div style="display:flex;gap:.5rem">
+                <input id="rb-product-url" type="url" placeholder="https://www.redbubble.com/shop/ap/..." style="flex:1;padding:.5rem .7rem;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:.85rem;direction:ltr">
+                <button onclick="rbSaveProductUrl()" style="padding:.5rem 1rem;background:var(--surface);border:1px solid var(--accent);border-radius:6px;color:var(--accent);font-size:.85rem;font-weight:600;cursor:pointer;white-space:nowrap">שמור</button>
+              </div>
+              <div id="rb-save-status" style="font-size:.78rem;margin-top:.4rem"></div>
+              <p style="font-size:.75rem;color:var(--muted);margin-top:.4rem">כשיש קישור שמור, יופיע בעמוד /photo/{id} של התמונה סקשן "עוד דרכים לקחת את התמונה הביתה" עם קישור למוצרים הנוספים ב-Redbubble (כריות, פאזלים, מגנטים וכו').</p>
             </div>
           </div>
 
@@ -6480,14 +6490,18 @@ async function confirmLinkToLocation() {
     }).join('');
   };
 
+  let rbCurrentId = null;
+
   window.rbSelectPhoto = async function(id) {
     document.querySelectorAll('.rb-thumb').forEach(el => el.style.borderColor = el.dataset.id === id ? 'var(--accent)' : 'transparent');
+    rbCurrentId = id;
     const resultEl = document.getElementById('rb-result');
     const loadingEl = document.getElementById('rb-loading');
     const errorEl = document.getElementById('rb-error');
     resultEl.style.display = 'none';
     errorEl.style.display = 'none';
     loadingEl.style.display = 'block';
+    document.getElementById('rb-save-status').textContent = '';
 
     try {
       const res = await fetch(`/api/admin/redbubble-export/meta?id=${encodeURIComponent(id)}`, { headers: { 'X-Session-Token': SESSION_TOKEN } });
@@ -6503,6 +6517,7 @@ async function confirmLinkToLocation() {
       document.getElementById('rb-out-tags').value = (data.tags || []).join(', ');
       document.getElementById('rb-out-desc').value = data.description || '';
       document.getElementById('rb-download-btn').href = data.downloadUrl;
+      document.getElementById('rb-product-url').value = photo?.redbubble_url || '';
 
       loadingEl.style.display = 'none';
       resultEl.style.display = 'block';
@@ -6510,6 +6525,30 @@ async function confirmLinkToLocation() {
       loadingEl.style.display = 'none';
       errorEl.textContent = e.message || 'שגיאה בהכנת הנתונים';
       errorEl.style.display = 'block';
+    }
+  };
+
+  window.rbSaveProductUrl = async function() {
+    if (!rbCurrentId) return;
+    const statusEl = document.getElementById('rb-save-status');
+    const url = document.getElementById('rb-product-url').value.trim();
+    statusEl.style.color = 'var(--muted)';
+    statusEl.textContent = 'שומר...';
+    try {
+      const res = await fetch('/api/photos', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', 'X-Session-Token': SESSION_TOKEN },
+        body: JSON.stringify({ id: rbCurrentId, redbubble_url: url }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'שגיאה');
+      const photo = rbPhotos.find(p => p.id === rbCurrentId);
+      if (photo) photo.redbubble_url = url;
+      statusEl.style.color = '#2ecc71';
+      statusEl.textContent = url ? '✓ נשמר — יופיע בעמוד התמונה' : '✓ הוסר';
+    } catch (e) {
+      statusEl.style.color = '#e74c3c';
+      statusEl.textContent = e.message || 'שגיאה בשמירה';
     }
   };
 })();
