@@ -1562,6 +1562,48 @@ nav.scrolled { border-bottom-color: rgba(200, 169, 110, 0.3); }
 .lb-related-thumb.active { border-color: var(--accent); opacity: 1; }
 .lb-related-thumb img { width: 100%; height: 100%; object-fit: cover; }
 
+.lb-rb-products {
+  flex-shrink: 0;
+  padding: 0 2rem 0.5rem;
+  text-align: center;
+}
+.lb-rb-track {
+  display: flex;
+  gap: 0.6rem;
+  justify-content: center;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.lb-rb-track::-webkit-scrollbar { display: none; }
+.lb-rb-item {
+  flex-shrink: 0;
+  width: 72px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  text-decoration: none !important;
+  opacity: 0.85;
+  transition: opacity 0.2s;
+}
+.lb-rb-item:hover { opacity: 1; }
+.lb-rb-item img {
+  width: 72px;
+  height: 72px;
+  object-fit: cover;
+  border-radius: 6px;
+  background: #fff;
+  border: 1px solid rgba(255,255,255,.1);
+}
+.lb-rb-item span {
+  font-size: 0.62rem;
+  color: var(--text-muted);
+  max-width: 72px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 /* ===== LIGHTBOX ACTIONS ===== */
 .lb-actions {
   display: flex;

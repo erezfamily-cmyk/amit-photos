@@ -252,6 +252,7 @@ const TRANSLATIONS = {
     'footer.copy':      '© 2026 עמית — כל הזכויות שמורות',
 
     // Lightbox
+    'lb.rb-products':   'עוד דרכים לקחת את התמונה הביתה',
     'lb.related':       'עוד מהקטגוריה',
     'lb.slideshow.start':'▶ מצגת',
     'lb.slideshow.stop': '⏸ עצור',
@@ -615,6 +616,7 @@ const TRANSLATIONS = {
     'footer.copy':      '© 2026 Amit — All rights reserved',
 
     // Lightbox
+    'lb.rb-products':   'More ways to take this photo home',
     'lb.related':       'More from this category',
     'lb.slideshow.start':'▶ Slideshow',
     'lb.slideshow.stop': '⏸ Stop',

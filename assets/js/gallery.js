@@ -968,6 +968,25 @@ function openLightbox(idx) {
     }
   }
 
+  // Redbubble products for this specific photo
+  const rbEl = document.getElementById('lb-rb-products');
+  const rbTrack = document.getElementById('lb-rb-track');
+  if (rbEl && rbTrack) {
+    let rbProducts = [];
+    try { rbProducts = photo.redbubble_products ? JSON.parse(photo.redbubble_products) : []; } catch (_) {}
+    if (rbProducts.length) {
+      rbTrack.innerHTML = rbProducts.map(p =>
+        `<a class="lb-rb-item" href="${p.url}" target="_blank" rel="noopener sponsored">
+          <img src="${p.image}" alt="${p.name || ''}" loading="lazy" />
+          <span>${p.name || ''}</span>
+        </a>`
+      ).join('');
+      rbEl.classList.remove('hidden');
+    } else {
+      rbEl.classList.add('hidden');
+    }
+  }
+
   // Related photos from same category
   const relatedEl = document.getElementById('lb-related');
   const relatedTrack = document.getElementById('lb-related-track');
