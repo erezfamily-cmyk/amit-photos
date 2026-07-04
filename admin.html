@@ -1511,7 +1511,13 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
                 <button onclick="rbAddProduct()" style="margin-top:.6rem;width:100%;padding:.5rem;background:var(--accent);border:none;border-radius:6px;color:#1a1a1a;font-size:.85rem;font-weight:700;cursor:pointer">+ הוסף מוצר לתמונה</button>
               </div>
               <div id="rb-save-status" style="font-size:.78rem;margin-top:.5rem"></div>
-              <p style="font-size:.75rem;color:var(--muted);margin-top:.5rem">Redbubble לרוב חוסם שליפה אוטומטית של תמונת המוצר (bot detection) — אם "נסה אוטומטי" לא מצליח, פתח את קישור המוצר בעצמך, לחץ ימני על התמונה הראשית ובחר "העתק כתובת תמונה", והדבק כאן.</p>
+              <div style="font-size:.75rem;color:var(--muted);margin-top:.75rem;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.75rem">
+                <strong style="color:var(--text)">⚠️ "נסה אוטומטי" כמעט תמיד נכשל</strong> — Redbubble חוסם שליפה אוטומטית (bot detection) גם מה-Worker וגם מכלים חיצוניים.
+                <br><br>
+                <strong style="color:var(--text)">הדרך שעובדת בפועל:</strong> אחרי שהעלית ופרסמת עיצוב חדש ל-Redbubble, שלח בשיחה עם Claude את קישור עמוד "Studio Promote" (או סתם את ה-Design ID/כל קישור מוצר אחד של אותו עיצוב). Claude ינווט לעמוד המוצרים, יחלץ 10 מוצרים מגוונים עם תמונות mockup אמיתיות, וישמור אותם כאן ישירות — אין צורך למלא את הטופס הזה ידנית.
+                <br><br>
+                מילוי ידני (למטה) שימושי רק כפתרון חד-פעמי למוצר בודד.
+              </div>
             </div>
           </div>
 
