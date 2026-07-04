@@ -1481,13 +1481,26 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
             </div>
 
             <div style="border-top:1px solid var(--border);padding-top:1rem">
-              <label style="display:block;font-size:.8rem;color:var(--muted);margin-bottom:.3rem">קישור לעמוד המוצר ב-Redbubble (אחרי שהעלית ופרסמת שם)</label>
-              <div style="display:flex;gap:.5rem">
-                <input id="rb-product-url" type="url" placeholder="https://www.redbubble.com/shop/ap/..." style="flex:1;padding:.5rem .7rem;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:.85rem;direction:ltr">
-                <button onclick="rbSaveProductUrl()" style="padding:.5rem 1rem;background:var(--surface);border:1px solid var(--accent);border-radius:6px;color:var(--accent);font-size:.85rem;font-weight:600;cursor:pointer;white-space:nowrap">שמור</button>
+              <label style="display:block;font-size:.8rem;color:var(--muted);margin-bottom:.5rem;font-weight:600">מוצרים ב-Redbubble לתמונה זו</label>
+              <div id="rb-products-list" style="display:flex;flex-direction:column;gap:.6rem;margin-bottom:.75rem"></div>
+
+              <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.75rem">
+                <label style="display:block;font-size:.78rem;color:var(--muted);margin-bottom:.3rem">קישור לעמוד המוצר (למשל https://www.redbubble.com/i/tote-bag/.../181993952/xd4m)</label>
+                <div style="display:flex;gap:.5rem;margin-bottom:.5rem">
+                  <input id="rb-new-url" type="url" placeholder="https://www.redbubble.com/i/..." style="flex:1;padding:.5rem .7rem;background:var(--surface);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:.85rem;direction:ltr">
+                  <button onclick="rbTryAutoFetch()" style="padding:.5rem .8rem;background:var(--surface);border:1px solid var(--accent);border-radius:6px;color:var(--accent);font-size:.82rem;font-weight:600;cursor:pointer;white-space:nowrap">🔍 נסה אוטומטי</button>
+                </div>
+                <div id="rb-auto-status" style="font-size:.76rem;margin-bottom:.5rem"></div>
+                <div id="rb-manual-fields" style="display:none">
+                  <label style="display:block;font-size:.78rem;color:var(--muted);margin-bottom:.3rem">שם המוצר (למשל Tote Bag)</label>
+                  <input id="rb-new-name" placeholder="Tote Bag" style="width:100%;margin-bottom:.5rem;padding:.5rem .7rem;background:var(--surface);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:.85rem;direction:ltr">
+                  <label style="display:block;font-size:.78rem;color:var(--muted);margin-bottom:.3rem">קישור לתמונת המוצר (לחיצה ימנית על התמונה בעמוד → "העתק כתובת תמונה")</label>
+                  <input id="rb-new-image" placeholder="https://ih1.redbubble.net/image..." style="width:100%;padding:.5rem .7rem;background:var(--surface);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:.85rem;direction:ltr">
+                </div>
+                <button onclick="rbAddProduct()" style="margin-top:.6rem;width:100%;padding:.5rem;background:var(--accent);border:none;border-radius:6px;color:#1a1a1a;font-size:.85rem;font-weight:700;cursor:pointer">+ הוסף מוצר לתמונה</button>
               </div>
-              <div id="rb-save-status" style="font-size:.78rem;margin-top:.4rem"></div>
-              <p style="font-size:.75rem;color:var(--muted);margin-top:.4rem">כשיש קישור שמור, יופיע בעמוד /photo/{id} של התמונה סקשן "עוד דרכים לקחת את התמונה הביתה" עם קישור למוצרים הנוספים ב-Redbubble (כריות, פאזלים, מגנטים וכו').</p>
+              <div id="rb-save-status" style="font-size:.78rem;margin-top:.5rem"></div>
+              <p style="font-size:.75rem;color:var(--muted);margin-top:.5rem">Redbubble לרוב חוסם שליפה אוטומטית של תמונת המוצר (bot detection) — אם "נסה אוטומטי" לא מצליח, פתח את קישור המוצר בעצמך, לחץ ימני על התמונה הראשית ובחר "העתק כתובת תמונה", והדבק כאן.</p>
             </div>
           </div>
 
@@ -6491,6 +6504,25 @@ async function confirmLinkToLocation() {
   };
 
   let rbCurrentId = null;
+  let rbCurrentProducts = [];
+  let rbPendingProduct = null; // { name, image } after successful auto-fetch, awaiting "add"
+
+  function rbRenderProductsList() {
+    const listEl = document.getElementById('rb-products-list');
+    if (!rbCurrentProducts.length) {
+      listEl.innerHTML = '<div style="font-size:.8rem;color:var(--muted)">אין עדיין מוצרים שמורים לתמונה זו</div>';
+      return;
+    }
+    listEl.innerHTML = rbCurrentProducts.map((p, i) => `
+      <div style="display:flex;align-items:center;gap:.7rem;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.5rem">
+        <img src="${p.image}" style="width:48px;height:48px;object-fit:cover;border-radius:6px;background:#fff">
+        <div style="flex:1;min-width:0">
+          <div style="font-size:.85rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.name || 'מוצר'}</div>
+          <a href="${p.url}" target="_blank" style="font-size:.72rem;color:var(--muted);word-break:break-all">${p.url}</a>
+        </div>
+        <button onclick="rbRemoveProduct(${i})" style="padding:.3rem .6rem;background:none;border:1px solid #e74c3c;border-radius:6px;color:#e74c3c;font-size:.78rem;cursor:pointer">הסר</button>
+      </div>`).join('');
+  }
 
   window.rbSelectPhoto = async function(id) {
     document.querySelectorAll('.rb-thumb').forEach(el => el.style.borderColor = el.dataset.id === id ? 'var(--accent)' : 'transparent');
@@ -6502,6 +6534,12 @@ async function confirmLinkToLocation() {
     errorEl.style.display = 'none';
     loadingEl.style.display = 'block';
     document.getElementById('rb-save-status').textContent = '';
+    document.getElementById('rb-new-url').value = '';
+    document.getElementById('rb-new-name').value = '';
+    document.getElementById('rb-new-image').value = '';
+    document.getElementById('rb-manual-fields').style.display = 'none';
+    document.getElementById('rb-auto-status').textContent = '';
+    rbPendingProduct = null;
 
     try {
       const res = await fetch(`/api/admin/redbubble-export/meta?id=${encodeURIComponent(id)}`, { headers: { 'X-Session-Token': SESSION_TOKEN } });
@@ -6517,7 +6555,10 @@ async function confirmLinkToLocation() {
       document.getElementById('rb-out-tags').value = (data.tags || []).join(', ');
       document.getElementById('rb-out-desc').value = data.description || '';
       document.getElementById('rb-download-btn').href = data.downloadUrl;
-      document.getElementById('rb-product-url').value = photo?.redbubble_url || '';
+
+      try { rbCurrentProducts = photo?.redbubble_products ? JSON.parse(photo.redbubble_products) : []; }
+      catch { rbCurrentProducts = []; }
+      rbRenderProductsList();
 
       loadingEl.style.display = 'none';
       resultEl.style.display = 'block';
@@ -6528,29 +6569,84 @@ async function confirmLinkToLocation() {
     }
   };
 
-  window.rbSaveProductUrl = async function() {
+  window.rbTryAutoFetch = async function() {
+    const url = document.getElementById('rb-new-url').value.trim();
+    const statusEl = document.getElementById('rb-auto-status');
+    const manualEl = document.getElementById('rb-manual-fields');
+    rbPendingProduct = null;
+    if (!url) { statusEl.style.color = '#e74c3c'; statusEl.textContent = 'הדבק קודם קישור למוצר'; return; }
+    statusEl.style.color = 'var(--muted)';
+    statusEl.textContent = 'מנסה לשלוף אוטומטית...';
+    manualEl.style.display = 'none';
+    try {
+      const res = await fetch(`/api/admin/redbubble-product-scrape?url=${encodeURIComponent(url)}`, { headers: { 'X-Session-Token': SESSION_TOKEN } });
+      const data = await res.json();
+      if (data.blocked || !data.image) {
+        statusEl.style.color = '#e0a030';
+        statusEl.textContent = '⚠️ Redbubble חסם שליפה אוטומטית — מלא ידנית למטה';
+        manualEl.style.display = 'block';
+        document.getElementById('rb-new-name').value = data.name || '';
+        return;
+      }
+      statusEl.style.color = '#2ecc71';
+      statusEl.textContent = '✓ נשלף אוטומטית: ' + (data.name || '');
+      rbPendingProduct = { name: data.name || '', image: data.image };
+      document.getElementById('rb-new-name').value = data.name || '';
+      document.getElementById('rb-new-image').value = data.image;
+      manualEl.style.display = 'block';
+    } catch (e) {
+      statusEl.style.color = '#e0a030';
+      statusEl.textContent = '⚠️ שגיאה בשליפה אוטומטית — מלא ידנית למטה';
+      manualEl.style.display = 'block';
+    }
+  };
+
+  window.rbAddProduct = async function() {
     if (!rbCurrentId) return;
+    const url = document.getElementById('rb-new-url').value.trim();
+    const name = document.getElementById('rb-new-name').value.trim();
+    const image = document.getElementById('rb-new-image').value.trim();
     const statusEl = document.getElementById('rb-save-status');
-    const url = document.getElementById('rb-product-url').value.trim();
+    if (!url || !image) {
+      statusEl.style.color = '#e74c3c';
+      statusEl.textContent = 'צריך גם קישור למוצר וגם קישור לתמונה';
+      return;
+    }
+    rbCurrentProducts.push({ url, name, image });
+    await rbPersistProducts(statusEl);
+    document.getElementById('rb-new-url').value = '';
+    document.getElementById('rb-new-name').value = '';
+    document.getElementById('rb-new-image').value = '';
+    document.getElementById('rb-manual-fields').style.display = 'none';
+    document.getElementById('rb-auto-status').textContent = '';
+  };
+
+  window.rbRemoveProduct = async function(index) {
+    rbCurrentProducts.splice(index, 1);
+    await rbPersistProducts(document.getElementById('rb-save-status'));
+  };
+
+  async function rbPersistProducts(statusEl) {
     statusEl.style.color = 'var(--muted)';
     statusEl.textContent = 'שומר...';
     try {
       const res = await fetch('/api/photos', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json', 'X-Session-Token': SESSION_TOKEN },
-        body: JSON.stringify({ id: rbCurrentId, redbubble_url: url }),
+        body: JSON.stringify({ id: rbCurrentId, redbubble_products: rbCurrentProducts }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'שגיאה');
       const photo = rbPhotos.find(p => p.id === rbCurrentId);
-      if (photo) photo.redbubble_url = url;
+      if (photo) photo.redbubble_products = JSON.stringify(rbCurrentProducts);
+      rbRenderProductsList();
       statusEl.style.color = '#2ecc71';
-      statusEl.textContent = url ? '✓ נשמר — יופיע בעמוד התמונה' : '✓ הוסר';
+      statusEl.textContent = '✓ נשמר — יופיע בעמוד התמונה';
     } catch (e) {
       statusEl.style.color = '#e74c3c';
       statusEl.textContent = e.message || 'שגיאה בשמירה';
     }
-  };
+  }
 })();
 </script>
 

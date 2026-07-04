@@ -535,8 +535,8 @@ async function handlePhotos(request, env) {
         return jsonRes(catRows.map(r => r.category), 200, request);
       }
       const sql = catFilter
-        ? 'SELECT id, title, category, thumbnail, redbubble_url FROM photos WHERE category=? ORDER BY CASE WHEN sort_order IS NULL THEN 1 ELSE 0 END, sort_order ASC, created_at DESC'
-        : 'SELECT id, title, category, thumbnail, redbubble_url FROM photos ORDER BY CASE WHEN sort_order IS NULL THEN 1 ELSE 0 END, sort_order ASC, created_at DESC';
+        ? 'SELECT id, title, category, thumbnail, redbubble_url, redbubble_products FROM photos WHERE category=? ORDER BY CASE WHEN sort_order IS NULL THEN 1 ELSE 0 END, sort_order ASC, created_at DESC'
+        : 'SELECT id, title, category, thumbnail, redbubble_url, redbubble_products FROM photos ORDER BY CASE WHEN sort_order IS NULL THEN 1 ELSE 0 END, sort_order ASC, created_at DESC';
       const { results: slimResults } = catFilter
         ? await env.DB.prepare(sql).bind(catFilter).all()
         : await env.DB.prepare(sql).all();
@@ -612,6 +612,12 @@ async function handlePhotos(request, env) {
     if (body.redbubble_url !== undefined) {
       await env.DB.prepare('UPDATE photos SET redbubble_url=? WHERE id=?').bind(body.redbubble_url || null, id).run();
       return jsonRes({ ok: true, redbubble_url: body.redbubble_url || null }, 200, request);
+    }
+
+    if (body.redbubble_products !== undefined) {
+      const val = Array.isArray(body.redbubble_products) ? JSON.stringify(body.redbubble_products) : null;
+      await env.DB.prepare('UPDATE photos SET redbubble_products=? WHERE id=?').bind(val, id).run();
+      return jsonRes({ ok: true, redbubble_products: body.redbubble_products }, 200, request);
     }
 
     if (body.quiz_eligible !== undefined || body.quiz_description !== undefined) {
@@ -1307,6 +1313,31 @@ Return ONLY valid JSON, no markdown, in this exact shape:
       tags: [categoryEn.replace(' Photography', '').toLowerCase(), 'fine art', 'photography', 'wall art'],
       description: photo.description_en || '',
     };
+  }
+}
+
+async function handleRedbubbleProductScrape(request, env) {
+  if (!await checkAuth(request, env)) return jsonRes({ error: 'Unauthorized' }, 401, request);
+  const url = new URL(request.url).searchParams.get('url');
+  if (!url || !url.startsWith('https://www.redbubble.com/')) return jsonRes({ error: 'קישור Redbubble לא תקין' }, 400, request);
+
+  try {
+    const res = await fetch(url, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+      },
+    });
+    const html = await res.text();
+    const ogImage = html.match(/property="og:image"\s*content="([^"]+)"/)?.[1];
+    const ogTitle = html.match(/property="og:title"\s*content="([^"]+)"/)?.[1];
+    if (!res.ok || !ogImage || ogImage.includes('og-image.jpeg')) {
+      // Redbubble חוסם fetch אוטומטי לרוב (bot detection) — נדרש מילוי ידני
+      return jsonRes({ blocked: true, error: 'Redbubble חסם את הבקשה האוטומטית — יש להעתיק את קישור התמונה ידנית' }, 200, request);
+    }
+    return jsonRes({ blocked: false, image: ogImage, name: ogTitle?.replace(/\s*for Sale by.*$/i, '').replace(/^"|"$/g, '') || '' }, 200, request);
+  } catch (err) {
+    return jsonRes({ blocked: true, error: err.message }, 200, request);
   }
 }
 
@@ -2394,7 +2425,7 @@ async function servePhotoPage(photoId, env) {
   let photo = null;
   try {
     const row = await env.DB.prepare(
-      'SELECT id, title, description, thumbnail, url, category, redbubble_url FROM photos WHERE id = ?'
+      'SELECT id, title, description, thumbnail, url, category, redbubble_url, redbubble_products FROM photos WHERE id = ?'
     ).bind(photoId).first();
     if (row) photo = row;
   } catch (_) {}
@@ -2498,11 +2529,11 @@ async function servePhotoPage(photoId, env) {
     .rb-section{max-width:900px;width:100%;margin-top:3rem;border-top:1px solid rgba(255,255,255,.1);padding-top:2rem}
     .rb-section h2{font-size:1.1rem;margin-bottom:.4rem;opacity:.9}
     .rb-section .rb-sub{font-size:.85rem;opacity:.6;margin-bottom:1.25rem}
-    .rb-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px}
-    .rb-item{display:flex;flex-direction:column;align-items:center;gap:.5rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:1rem .5rem;transition:.15s;text-decoration:none !important}
-    .rb-item:hover{background:rgba(201,169,110,.12);border-color:#c9a96e}
-    .rb-item .rb-icon{font-size:1.6rem}
-    .rb-item .rb-label{font-size:.78rem;color:#f0f0f0;opacity:.85;text-align:center}
+    .rb-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px}
+    .rb-item{display:block;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;overflow:hidden;transition:.15s;text-decoration:none !important}
+    .rb-item:hover{border-color:#c9a96e;transform:translateY(-2px)}
+    .rb-item img{width:100%;aspect-ratio:1/1;object-fit:cover;display:block;background:#fff}
+    .rb-item .rb-label{font-size:.8rem;color:#f0f0f0;padding:.6rem .5rem .7rem;text-align:center}
     .rb-cta{display:inline-block;margin-top:1.25rem;font-size:.85rem;color:#c9a96e}
   </style>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -2519,20 +2550,23 @@ async function servePhotoPage(photoId, env) {
     ${desc ? `<p class="desc">${desc}</p>` : ''}
     <a class="buy" href="https://amitphotos.com/#photo-${photoId}">לרכישת התמונה</a>
   </div>
-  ${photo?.redbubble_url ? `
+  ${(() => {
+    let products = [];
+    try { products = photo?.redbubble_products ? JSON.parse(photo.redbubble_products) : []; } catch (_) {}
+    if (!products.length) return '';
+    return `
   <div class="rb-section">
     <h2>🛍️ עוד דרכים לקחת את התמונה הזו הביתה</h2>
-    <p class="rb-sub">אותה תמונה — על כריות, מגנטים, פאזלים, מדבקות ועוד, דרך Redbubble</p>
+    <p class="rb-sub">אותה תמונה — על מוצרים נוספים דרך Redbubble</p>
     <div class="rb-grid">
-      <a class="rb-item" href="${photo.redbubble_url}" target="_blank" rel="noopener sponsored"><span class="rb-icon">🧩</span><span class="rb-label">פאזל</span></a>
-      <a class="rb-item" href="${photo.redbubble_url}" target="_blank" rel="noopener sponsored"><span class="rb-icon">🛋️</span><span class="rb-label">כרית נוי</span></a>
-      <a class="rb-item" href="${photo.redbubble_url}" target="_blank" rel="noopener sponsored"><span class="rb-icon">🧲</span><span class="rb-label">מגנט</span></a>
-      <a class="rb-item" href="${photo.redbubble_url}" target="_blank" rel="noopener sponsored"><span class="rb-icon">🏷️</span><span class="rb-label">מדבקה</span></a>
-      <a class="rb-item" href="${photo.redbubble_url}" target="_blank" rel="noopener sponsored"><span class="rb-icon">☕</span><span class="rb-label">כוס</span></a>
-      <a class="rb-item" href="${photo.redbubble_url}" target="_blank" rel="noopener sponsored"><span class="rb-icon">👕</span><span class="rb-label">חולצה</span></a>
+      ${products.map(p => `<a class="rb-item" href="${p.url}" target="_blank" rel="noopener sponsored">
+        <img src="${p.image}" alt="${p.name || ''}" loading="lazy">
+        <div class="rb-label">${p.name || ''}</div>
+      </a>`).join('')}
     </div>
-    <a class="rb-cta" href="${photo.redbubble_url}" target="_blank" rel="noopener sponsored">כל המוצרים בחנות Redbubble ←</a>
-  </div>` : ''}
+    <a class="rb-cta" href="https://www.redbubble.com/people/erezphoto/shop" target="_blank" rel="noopener sponsored">כל המוצרים בחנות Redbubble ←</a>
+  </div>`;
+  })()}
   ${relatedPhotos.length ? `
   <div class="related">
     <h2>תמונות נוספות מ${category}</h2>
@@ -7196,6 +7230,7 @@ export default {
     if (path === '/api/print/orders')         return handlePrintOrders(request, env);
     if (path === '/api/admin/redbubble-export/meta')     return handleRedbubbleExportMeta(request, env);
     if (path === '/api/admin/redbubble-export/download') return handleRedbubbleExportDownload(request, env);
+    if (path === '/api/admin/redbubble-product-scrape')  return handleRedbubbleProductScrape(request, env);
     if (path === '/api/proxy-image')          return handleImageProxy(request, env);
     if (path === '/api/analytics')         return handleAnalytics(request, env);
     if (path.startsWith('/photos/'))       return servePhoto(path.slice('/photos/'.length), env, request);
