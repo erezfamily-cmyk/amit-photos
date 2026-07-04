@@ -992,8 +992,18 @@ def main():
         return
 
     if not args.category:
-        ap.print_help()
-        return
+        # ריצה ללא --category (cron אוטומטי) — בוחר קטגוריה אקראית עם מספיק תמונות
+        n_photos = NUM_PHOTOS_SD if FAL_KEY else NUM_PHOTOS_KB
+        photos = load_photos()
+        cats = {}
+        for p in photos:
+            cats[p.get("category", "?")] = cats.get(p.get("category", "?"), 0) + 1
+        eligible = [c for c, n in cats.items() if n >= n_photos]
+        if not eligible:
+            print("❌ אין קטגוריה עם מספיק תמונות לרילס")
+            return
+        args.category = random.choice(eligible)
+        print(f"🎲 לא נבחרה קטגוריה — נבחר אקראית: {args.category}")
 
     ids = set(args.photos.split(",")) if args.photos else None
     custom_prompts = {}

@@ -2,7 +2,7 @@ name: Reels + YouTube Shorts אוטומטי
 
 on:
   schedule:
-    - cron: '0 12 * * 2'  # שלישי 15:00 ישראל — דו-שבועי (שבועות אי-זוגיים)
+    - cron: '0 12 * * 2'  # שלישי 15:00 ישראל — שבועי
   workflow_dispatch:
 
 env:
@@ -20,37 +20,20 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: בדיקה דו-שבועית
-        id: check
-        run: |
-          python3 << 'EOF'
-          import datetime, os
-          week = datetime.datetime.utcnow().isocalendar()[1]
-          run = 'true' if week % 2 == 1 else 'false'
-          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
-              f.write(f'run={run}\n')
-          label = 'אי-זוגי, מפרסמים' if week % 2 == 1 else 'זוגי, מדלגים'
-          print(f'שבוע {week} — שבוע {label}')
-          EOF
-
       - name: Python setup
-        if: steps.check.outputs.run == 'true'
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
       - name: התקנת ffmpeg
-        if: steps.check.outputs.run == 'true'
         run: |
           sudo apt-get update -y
           sudo apt-get install -y ffmpeg
 
       - name: התקנת חבילות Python
-        if: steps.check.outputs.run == 'true'
         run: pip install requests anthropic pillow google-api-python-client google-auth google-auth-oauthlib
 
       - name: פרסום Reel + Short
-        if: steps.check.outputs.run == 'true'
         env:
           INSTAGRAM_USER_ID: ${{ secrets.INSTAGRAM_USER_ID }}
           INSTAGRAM_PAGE_TOKEN: ${{ secrets.INSTAGRAM_PAGE_TOKEN }}
@@ -70,7 +53,6 @@ jobs:
           done
 
       - name: עדכון מעקב פרסומים
-        if: steps.check.outputs.run == 'true'
         run: |
           git config user.name "Reels Agent"
           git config user.email "agent@amitphotos.com"
