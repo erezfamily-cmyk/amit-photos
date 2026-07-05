@@ -2607,7 +2607,7 @@ async function servePhotoPage(photoId, env) {
         <div class="rb-label">${p.name || ''}</div>
       </a>`).join('')}
     </div>
-    <a class="rb-cta" href="${indexUrl}" target="_blank" rel="noopener sponsored">כל המוצרים של התמונה הזו ←</a>
+    <a class="rb-cta" href="${indexUrl}" target="_blank" rel="noopener sponsored"><img src="https://www.redbubble.com/favicon.ico" alt="" width="16" height="16" style="vertical-align:middle;margin-inline-end:.4em;border-radius:3px">כל המוצרים של התמונה הזו ←</a>
   </div>`;
   })()}
   ${(() => {
@@ -2624,7 +2624,7 @@ async function servePhotoPage(photoId, env) {
         <div class="zz-label">${p.name || ''}</div>
       </a>`).join('')}
     </div>
-    <a class="zz-cta" href="https://www.zazzle.com/amitphotos" target="_blank" rel="noopener sponsored">כל המוצרים בחנות Zazzle ←</a>
+    <a class="zz-cta" href="https://www.zazzle.com/amitphotos" target="_blank" rel="noopener sponsored"><img src="https://www.zazzle.com/favicon.ico" alt="" width="16" height="16" style="vertical-align:middle;margin-inline-end:.4em;border-radius:3px">כל המוצרים בחנות Zazzle ←</a>
   </div>`;
   })()}
   ${relatedPhotos.length ? `
