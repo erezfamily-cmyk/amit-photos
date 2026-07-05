@@ -271,3 +271,106 @@ def post_to_threads(photo, caption, product):
         return None
     print(f"✅ Posted to Threads! ID: {post_id}")
     return post_id
+
+
+# ── Pinterest — one pin per product ──────────────────────────────────────────
+
+ZAZZLE_BOARD_NAME = "Zazzle Prints"
+
+
+def _pinterest_get(token, endpoint, params=None):
+    res = requests.get(f"{PINTEREST_API}/{endpoint}",
+                        headers={"Authorization": f"Bearer {token}"}, params=params, timeout=15)
+    res.raise_for_status()
+    return res.json()
+
+
+def _pinterest_post(token, endpoint, body):
+    res = requests.post(f"{PINTEREST_API}/{endpoint}",
+                         headers={"Authorization": f"Bearer {token}", "Content-Type": "application/json"},
+                         json=body, timeout=15)
+    if not res.ok:
+        print(f"⚠️  Pinterest {res.status_code}: {res.text}")
+    res.raise_for_status()
+    return res.json()
+
+
+def get_or_create_zazzle_board(token):
+    if DRY_RUN:
+        print(f"[dry-run] would look up/create board: {ZAZZLE_BOARD_NAME}")
+        return "dry-run-board"
+
+    data = _pinterest_get(token, "boards", {"page_size": 250})
+    for board in data.get("items", []):
+        if board["name"] == ZAZZLE_BOARD_NAME:
+            print(f"📋 Existing board: {ZAZZLE_BOARD_NAME} ({board['id']})")
+            return board["id"]
+
+    board = _pinterest_post(token, "boards", {
+        "name": ZAZZLE_BOARD_NAME,
+        "description": f"Photography prints and products by Amit Erez | {SITE_URL}",
+        "privacy": "PUBLIC",
+    })
+    print(f"✅ New board created: {ZAZZLE_BOARD_NAME} ({board['id']})")
+    time.sleep(1)
+    return board["id"]
+
+
+def generate_pin_description(photo, product):
+    import anthropic
+    title        = photo.get("title", "")
+    category     = photo.get("category", "")
+    product_name = product.get("name", "print")
+
+    if not ANTHROPIC_API_KEY:
+        return f"\"{title}\" now available as a {product_name}. Available for purchase at {product.get('url', SITE_URL)}"
+
+    client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
+    prompt = f"""Write a Pinterest pin description in English, first person, as Amit — the Israeli photographer who took this photo —
+promoting it as a {product_name}.
+
+Photo: {title}{f' | Category: {category}' if category else ''}
+
+Requirements:
+- 2-3 sentences, first person ("I photographed", "I chose", "I waited for")
+- Mention the {product_name} specifically
+- End with: "Available for purchase at the link"
+- Include 5-8 relevant keywords naturally (not as hashtags)
+- No questions at the end
+
+Output only the description text."""
+
+    try:
+        msg = client.messages.create(model="claude-opus-4-8", max_tokens=300,
+                                      messages=[{"role": "user", "content": prompt}])
+        return msg.content[0].text.strip()
+    except Exception as e:
+        print(f"⚠️  Claude pin description failed ({e}) — using fallback")
+        return f"\"{title}\" now available as a {product_name}. Available for purchase at {product.get('url', SITE_URL)}"
+
+
+def publish_zazzle_pin(token, board_id, photo, product):
+    title       = photo.get("title", "")
+    image_url   = product.get("image") or _image_url(photo)
+    description = generate_pin_description(photo, product)
+
+    body = {
+        "board_id": board_id,
+        "title": f"{title} — {product.get('name', 'Print')}",
+        "description": description,
+        "link": product.get("url", SITE_URL),
+        "media_source": {"source_type": "image_url", "url": image_url},
+    }
+
+    if DRY_RUN:
+        print(f"[dry-run] would pin: {body['title']} → board {board_id}\n  {description[:80]}...")
+        return "dry-run-pin"
+
+    try:
+        result = _pinterest_post(token, "pins", body)
+        pin_id = result.get("id")
+        print(f"✅ Pinned! {title} — {product.get('name')} → {pin_id}")
+        return pin_id
+    except Exception as e:
+        print(f"❌ Pin failed for {product.get('name')}: {e}")
+        return None
