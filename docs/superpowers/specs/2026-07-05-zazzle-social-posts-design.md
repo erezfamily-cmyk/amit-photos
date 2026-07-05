@@ -24,12 +24,13 @@ Automatically promote photos that have Zazzle print-on-demand products configure
 1. Fetch photos from `/api/photos`, filter to `zazzle_products` non-empty.
 2. Pick the next photo in rotation: track posted IDs in `zazzle_social_posted.json` (same `used_ids` pattern as `instagram_story.py`); when the pool is exhausted, reset and start over. This means with only 3 photos today, the same 3 photos cycle repeatedly (weekly) until Amit adds more — acceptable per Amit's plan to grow the catalog first.
 3. Pick one specific product at random from that photo's `zazzle_products` list to feature in the copy (not "all 5" — a concrete product makes for a stronger, more specific post per the existing caption-quality principles).
-4. Generate one English caption per platform via Claude (`opus-4-8`), first-person voice, specific to the photo + the chosen product, ending with the Zazzle store link. Style follows [[feedback_caption_style]] principles (specific over generic, no formulaic question-opener) translated to English — not a direct Hebrew→English translation of existing Hebrew copy logic, a fresh English generation.
-5. Post to each platform independently:
+4. **IG/Facebook/Threads** (single-product feed posts): generate one English caption per platform via Claude (`opus-4-8`), first-person voice, specific to the photo + one randomly chosen product from that photo's list, ending with the Zazzle store link. Style follows [[feedback_caption_style]] principles (specific over generic, no formulaic question-opener) translated to English — not a direct Hebrew→English translation of existing Hebrew copy logic, a fresh English generation.
+5. **Pinterest** (all products get pushed): unlike the feed platforms, Pinterest gets **one pin per product** in that week's photo's `zazzle_products` list — e.g. 5 products → 5 pins, each with its own Claude-generated English description naming that specific product (mug, poster, canvas, etc.) and linking to that product's own Zazzle URL. All of that week's pins go out together, once a week (not spread across the week).
+6. Post to each platform independently:
    - Instagram + Facebook: Graph API, same pattern as `week_photo_social.py`
    - Threads: same pattern as `threads_post.py` / `threads-post.yml` (`THREADS_USER_ID`, `THREADS_ACCESS_TOKEN`)
-   - Pinterest: reuse `pinterest_post.py`'s pin-creation logic, posting to a single dedicated "Zazzle Prints" board (created once, reused every week) — kept separate from the existing per-category photography boards so commercial product pins don't mix into them
-6. Record what was posted (photo id, product, platforms succeeded) in `zazzle_social_posted.json`.
+   - Pinterest: reuse `pinterest_post.py`'s pin-creation logic, posting all of the week's product pins to a single dedicated "Zazzle Prints" board (created once, reused every week) — kept separate from the existing per-category photography boards so commercial product pins don't mix into them
+7. Record what was posted (photo id, which products got Pinterest pins, feed-post product choice, platforms succeeded) in `zazzle_social_posted.json`.
 
 **Redbubble extensibility (not built now):** the "product source" (`zazzle_products` column name + store link template) will be a named constant/config at the top of the script, not hardcoded inline — so adding Redbubble later means adding a second named source and a switch, not rewriting the photo-selection/caption/posting logic.
 
