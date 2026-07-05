@@ -87,3 +87,45 @@ def pick_photo(photos, posted_ids):
 
 def pick_product(products):
     return random.choice(products)
+
+
+# ── Caption generation ────────────────────────────────────────────────────────
+
+def generate_feed_caption(photo, product):
+    """English, first-person caption for IG/FB/Threads mentioning one specific product."""
+    import anthropic
+    title       = photo.get("title", "")
+    category    = photo.get("category", "")
+    description = photo.get("description", "")
+    product_name = product.get("name", "print")
+
+    meta = f"Photo: {title}" + (f" | Category: {category}" if category else "") + (f" | {description}" if description else "")
+
+    if not ANTHROPIC_API_KEY:
+        return f"Now available as a {product_name}: \"{title}\". Get yours at the link below."
+
+    client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
+    prompt = f"""Write a short social media caption in English, first person, as Amit — an Israeli photographer —
+promoting this photo of mine as a {product_name} available for purchase.
+
+{meta}
+
+Requirements:
+- 2-3 sentences, first person ("I photographed", "I chose", "I waited for")
+- Mention what makes the photo/moment special
+- Naturally mention it's now available as a {product_name}
+- No hashtags, no link (added separately after this text)
+- No question at the end
+
+Output only the caption text."""
+
+    try:
+        msg = client.messages.create(
+            model="claude-opus-4-8",
+            max_tokens=250,
+            messages=[{"role": "user", "content": prompt}],
+        )
+        return msg.content[0].text.strip()
+    except Exception as e:
+        print(f"⚠️  Claude caption failed ({e}) — using fallback")
+        return f"Now available as a {product_name}: \"{title}\". Get yours at the link below."
