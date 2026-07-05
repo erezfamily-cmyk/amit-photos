@@ -129,3 +129,116 @@ Output only the caption text."""
     except Exception as e:
         print(f"⚠️  Claude caption failed ({e}) — using fallback")
         return f"Now available as a {product_name}: \"{title}\". Get yours at the link below."
+
+
+# ── Feed platform publishing ──────────────────────────────────────────────────
+
+def _image_url(photo):
+    url = photo.get("thumbnail") or photo.get("url", "")
+    return f"{SITE_URL}{url}" if url.startswith("/") else url
+
+
+def post_to_instagram(photo, caption, product):
+    if not IG_USER_ID or not IG_TOKEN:
+        print("⚠️  Missing INSTAGRAM_USER_ID / INSTAGRAM_PAGE_TOKEN — skipping Instagram")
+        return None
+
+    full_caption = f"{caption}\n\n🛍️ {product.get('name', 'Print')}: {product.get('url', SITE_URL)}"
+    if DRY_RUN:
+        print(f"[dry-run] would post to Instagram:\n{full_caption}\nimage: {_image_url(photo)}")
+        return "dry-run-ig"
+
+    container = requests.post(f"{GRAPH_API}/{IG_USER_ID}/media", data={
+        "image_url": _image_url(photo), "caption": full_caption, "access_token": IG_TOKEN,
+    }, timeout=30)
+    if not container.ok:
+        print(f"❌ IG container failed: {container.status_code} — {container.text}")
+        return None
+    container_id = container.json().get("id")
+
+    publish = requests.post(f"{GRAPH_API}/{IG_USER_ID}/media_publish", data={
+        "creation_id": container_id, "access_token": IG_TOKEN,
+    }, timeout=30)
+    if not publish.ok:
+        print(f"❌ IG publish failed: {publish.status_code} — {publish.text}")
+        return None
+    post_id = publish.json().get("id")
+    print(f"✅ Posted to Instagram! ID: {post_id}")
+    return post_id
+
+
+def post_to_facebook(photo, caption, product):
+    if not FB_PAGE_ID or not FB_TOKEN:
+        print("⚠️  Missing FACEBOOK_PAGE_ID / FACEBOOK_PAGE_TOKEN — skipping Facebook")
+        return None
+
+    full_caption = f"{caption}\n\n🛍️ {product.get('name', 'Print')}: {product.get('url', SITE_URL)}"
+    if DRY_RUN:
+        print(f"[dry-run] would post to Facebook:\n{full_caption}\nimage: {_image_url(photo)}")
+        return "dry-run-fb"
+
+    resp = requests.post(f"{GRAPH_API}/{FB_PAGE_ID}/photos", data={
+        "url": _image_url(photo), "message": full_caption, "access_token": FB_TOKEN,
+    }, timeout=30)
+    if not resp.ok:
+        print(f"❌ FB post failed: {resp.status_code} — {resp.text}")
+        return None
+    post_id = resp.json().get("id")
+    print(f"✅ Posted to Facebook! ID: {post_id}")
+    return post_id
+
+
+def post_to_threads(photo, caption, product):
+    if not THREADS_USER_ID or not THREADS_TOKEN:
+        print("⚠️  Missing THREADS_USER_ID / THREADS_ACCESS_TOKEN — skipping Threads")
+        return None
+
+    full_caption = f"{caption}\n\n🛍️ {product.get('name', 'Print')}: {product.get('url', SITE_URL)}"
+    if DRY_RUN:
+        print(f"[dry-run] would post to Threads:\n{full_caption}\nimage: {_image_url(photo)}")
+        return "dry-run-threads"
+
+    container_resp = requests.post(
+        f"{THREADS_API}/{THREADS_USER_ID}/threads",
+        params={"access_token": THREADS_TOKEN},
+        json={"media_type": "IMAGE", "image_url": _image_url(photo), "text": full_caption},
+        timeout=30,
+    )
+    if not container_resp.ok:
+        print(f"❌ Threads container failed: {container_resp.status_code} — {container_resp.text}")
+        return None
+    container_id = container_resp.json().get("id")
+    if not container_id:
+        print(f"❌ Missing Threads container id: {container_resp.json()}")
+        return None
+
+    for _ in range(10):
+        time.sleep(5)
+        status_resp = requests.get(
+            f"{THREADS_API}/{container_id}",
+            params={"fields": "status,error_message", "access_token": THREADS_TOKEN},
+            timeout=30,
+        )
+        status = status_resp.json().get("status", "")
+        print(f"⏳ Threads status: {status}")
+        if status == "FINISHED":
+            break
+        if status == "ERROR":
+            print(f"❌ Threads processing error: {status_resp.json().get('error_message', '')}")
+            return None
+    else:
+        print("❌ Threads container did not finish in time")
+        return None
+
+    publish_resp = requests.post(
+        f"{THREADS_API}/{THREADS_USER_ID}/threads_publish",
+        params={"access_token": THREADS_TOKEN},
+        json={"creation_id": container_id},
+        timeout=30,
+    )
+    if not publish_resp.ok:
+        print(f"❌ Threads publish failed: {publish_resp.status_code} — {publish_resp.text}")
+        return None
+    post_id = publish_resp.json().get("id")
+    print(f"✅ Posted to Threads! ID: {post_id}")
+    return post_id
