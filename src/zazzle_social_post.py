@@ -154,7 +154,11 @@ def post_to_instagram(photo, caption, product):
     if not container.ok:
         print(f"❌ IG container failed: {container.status_code} — {container.text}")
         return None
-    container_id = container.json().get("id")
+    try:
+        container_id = container.json().get("id")
+    except json.JSONDecodeError:
+        print("⚠️  IG container response JSON unparseable — skipping")
+        return None
 
     publish = requests.post(f"{GRAPH_API}/{IG_USER_ID}/media_publish", data={
         "creation_id": container_id, "access_token": IG_TOKEN,
@@ -162,7 +166,11 @@ def post_to_instagram(photo, caption, product):
     if not publish.ok:
         print(f"❌ IG publish failed: {publish.status_code} — {publish.text}")
         return None
-    post_id = publish.json().get("id")
+    try:
+        post_id = publish.json().get("id")
+    except json.JSONDecodeError:
+        print("⚠️  IG publish response JSON unparseable — skipping")
+        return None
     print(f"✅ Posted to Instagram! ID: {post_id}")
     return post_id
 
@@ -183,7 +191,11 @@ def post_to_facebook(photo, caption, product):
     if not resp.ok:
         print(f"❌ FB post failed: {resp.status_code} — {resp.text}")
         return None
-    post_id = resp.json().get("id")
+    try:
+        post_id = resp.json().get("id")
+    except json.JSONDecodeError:
+        print("⚠️  FB response JSON unparseable — skipping")
+        return None
     print(f"✅ Posted to Facebook! ID: {post_id}")
     return post_id
 
@@ -207,9 +219,14 @@ def post_to_threads(photo, caption, product):
     if not container_resp.ok:
         print(f"❌ Threads container failed: {container_resp.status_code} — {container_resp.text}")
         return None
-    container_id = container_resp.json().get("id")
+    try:
+        container_data = container_resp.json()
+    except json.JSONDecodeError:
+        print("⚠️  Threads container response JSON unparseable — skipping")
+        return None
+    container_id = container_data.get("id")
     if not container_id:
-        print(f"❌ Missing Threads container id: {container_resp.json()}")
+        print(f"❌ Missing Threads container id: {container_data}")
         return None
 
     for _ in range(10):
@@ -219,12 +236,20 @@ def post_to_threads(photo, caption, product):
             params={"fields": "status,error_message", "access_token": THREADS_TOKEN},
             timeout=30,
         )
-        status = status_resp.json().get("status", "")
+        if not status_resp.ok:
+            print(f"⚠️  Threads status poll failed: {status_resp.status_code} — skipping")
+            return None
+        try:
+            status_data = status_resp.json()
+        except json.JSONDecodeError:
+            print("⚠️  Threads status response JSON unparseable — skipping")
+            return None
+        status = status_data.get("status", "")
         print(f"⏳ Threads status: {status}")
         if status == "FINISHED":
             break
         if status == "ERROR":
-            print(f"❌ Threads processing error: {status_resp.json().get('error_message', '')}")
+            print(f"❌ Threads processing error: {status_data.get('error_message', '')}")
             return None
     else:
         print("❌ Threads container did not finish in time")
@@ -239,6 +264,10 @@ def post_to_threads(photo, caption, product):
     if not publish_resp.ok:
         print(f"❌ Threads publish failed: {publish_resp.status_code} — {publish_resp.text}")
         return None
-    post_id = publish_resp.json().get("id")
+    try:
+        post_id = publish_resp.json().get("id")
+    except json.JSONDecodeError:
+        print("⚠️  Threads publish response JSON unparseable — skipping")
+        return None
     print(f"✅ Posted to Threads! ID: {post_id}")
     return post_id
