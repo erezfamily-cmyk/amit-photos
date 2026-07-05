@@ -748,6 +748,10 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
         <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10" stroke-width="1.5"/><path d="M9 8h3.5a2.25 2.25 0 010 4.5H9V8zM9 12.5h2.5L14 17" stroke-width="1.5"/></svg>
         Redbubble
       </div>
+      <div class="nav-item" data-section="zazzle">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10" stroke-width="1.5"/><path d="M8 8h8M8 8l8 8M8 16h8" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Zazzle
+      </div>
       <div class="nav-item" data-section="videos">
         <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M15 10l4.553-2.276A1 1 0 0121 8.723v6.554a1 1 0 01-1.447.894L15 14M3 8a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z" stroke-width="1.5"/></svg>
         סרטונים
@@ -1523,6 +1527,89 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
 
           <div id="rb-loading" style="display:none;text-align:center;padding:1.5rem;color:var(--muted);font-size:.9rem">מכין נתונים...</div>
           <div id="rb-error" style="display:none;text-align:center;padding:1rem;color:#e74c3c;font-size:.85rem"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="section-zazzle">
+      <div class="section-header">
+        <h1 class="section-title">🎨 ייצוא ל-Zazzle</h1>
+      </div>
+
+      <div style="max-width:700px;margin:0 auto">
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1.5rem">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem">
+            <h2 style="font-size:.95rem;margin:0">📋 תמונות עם מוצרים ב-Zazzle</h2>
+            <span id="zz-list-count" style="font-size:.8rem;color:var(--muted)"></span>
+          </div>
+          <div id="zz-existing-list" style="display:flex;flex-direction:column;gap:.5rem;max-height:280px;overflow-y:auto;margin-bottom:.5rem">
+            <div style="font-size:.8rem;color:var(--muted);text-align:center;padding:1rem">טוען...</div>
+          </div>
+        </div>
+
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1.5rem">
+
+          <div style="margin-bottom:1rem">
+            <label style="display:block;font-size:.85rem;color:var(--muted);margin-bottom:.4rem">קטגוריה</label>
+            <select id="zz-category" onchange="zzLoadPhotos()" style="width:100%;padding:.6rem .8rem;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:.95rem">
+              <option value="">טוען קטגוריות...</option>
+            </select>
+          </div>
+
+          <div id="zz-photo-picker" style="display:none;margin-bottom:1rem">
+            <label style="display:block;font-size:.85rem;color:var(--muted);margin-bottom:.5rem">בחר תמונה</label>
+            <div id="zz-photo-grid" style="display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:100px;gap:8px;max-height:420px;overflow-y:scroll;border:1px solid var(--border);border-radius:8px;padding:8px;background:var(--bg);scrollbar-width:thin;direction:ltr"></div>
+          </div>
+
+          <div id="zz-result" style="display:none;border-top:1px solid var(--border);padding-top:1.25rem;margin-top:.5rem">
+            <button onclick="zzBackToList()" style="margin-bottom:1rem;padding:.4rem .8rem;background:var(--surface);border:1px solid var(--border);border-radius:6px;color:var(--muted);font-size:.82rem;cursor:pointer">↑ חזרה לרשימת תמונות עם מוצרים</button>
+            <div style="display:flex;gap:1rem;margin-bottom:1rem">
+              <img id="zz-preview-img" style="width:120px;height:120px;object-fit:cover;border-radius:8px;border:1px solid var(--border)">
+              <div style="flex:1;font-size:.8rem;color:var(--muted)">
+                <div id="zz-preview-title" style="font-size:1rem;color:var(--text);font-weight:600;margin-bottom:.3rem"></div>
+                <div id="zz-preview-dims"></div>
+                <div id="zz-preview-source" style="margin-top:.3rem"></div>
+              </div>
+            </div>
+
+            <label style="display:block;font-size:.8rem;color:var(--muted);margin-bottom:.3rem">Title</label>
+            <input id="zz-out-title" readonly style="width:100%;margin-bottom:.7rem;padding:.5rem .7rem;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:.9rem;direction:ltr" onclick="this.select()">
+
+            <label style="display:block;font-size:.8rem;color:var(--muted);margin-bottom:.3rem">Tags (comma-separated)</label>
+            <input id="zz-out-tags" readonly style="width:100%;margin-bottom:.7rem;padding:.5rem .7rem;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:.9rem;direction:ltr" onclick="this.select()">
+
+            <label style="display:block;font-size:.8rem;color:var(--muted);margin-bottom:.3rem">Description</label>
+            <textarea id="zz-out-desc" readonly rows="3" style="width:100%;margin-bottom:1rem;padding:.5rem .7rem;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:.9rem;direction:ltr;resize:vertical" onclick="this.select()"></textarea>
+
+            <div style="display:flex;gap:.6rem;flex-wrap:wrap;margin-bottom:1.25rem">
+              <a id="zz-download-btn" download style="flex:1;min-width:180px;text-align:center;padding:.7rem;background:var(--accent);border-radius:8px;color:#1a1a1a;font-size:.9rem;font-weight:700;text-decoration:none;cursor:pointer">⬇ הורד JPG (רזולוציה מלאה)</a>
+              <a href="https://www.zazzle.com/my/store/create" target="_blank" rel="noopener" style="flex:1;min-width:180px;text-align:center;padding:.7rem;background:var(--surface);border:1px solid var(--accent);border-radius:8px;color:var(--accent);font-size:.9rem;font-weight:600;text-decoration:none">🎨 פתח Zazzle Dashboard</a>
+            </div>
+
+            <div style="border-top:1px solid var(--border);padding-top:1rem">
+              <label style="display:block;font-size:.8rem;color:var(--muted);margin-bottom:.5rem;font-weight:600">מוצרים ב-Zazzle לתמונה זו</label>
+              <div id="zz-products-list" style="display:flex;flex-direction:column;gap:.6rem;margin-bottom:.75rem"></div>
+
+              <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.75rem">
+                <label style="display:block;font-size:.78rem;color:var(--muted);margin-bottom:.3rem">קישור לעמוד המוצר ב-Zazzle (לאחר פרסום)</label>
+                <div style="display:flex;gap:.5rem;margin-bottom:.5rem">
+                  <input id="zz-new-url" type="url" placeholder="https://www.zazzle.com/..." style="flex:1;padding:.5rem .7rem;background:var(--surface);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:.85rem;direction:ltr">
+                  <input id="zz-new-name" placeholder="שם (Poster, Canvas Print...)" style="width:150px;padding:.5rem .7rem;background:var(--surface);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:.85rem;direction:ltr">
+                </div>
+                <input id="zz-new-image" placeholder="קישור לתמונת mockup (og:image של עמוד המוצר)" style="width:100%;margin-bottom:.5rem;padding:.5rem .7rem;background:var(--surface);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:.85rem;direction:ltr">
+                <button onclick="zzAddProduct()" style="width:100%;padding:.5rem;background:var(--accent);border:none;border-radius:6px;color:#1a1a1a;font-size:.85rem;font-weight:700;cursor:pointer">+ הוסף מוצר לתמונה</button>
+              </div>
+              <div id="zz-save-status" style="font-size:.78rem;margin-top:.5rem"></div>
+              <div style="font-size:.75rem;color:var(--muted);margin-top:.75rem;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.75rem">
+                <strong style="color:var(--text)">שיטת העבודה:</strong> אחרי שמעלים ופרסמים עיצוב חדש ב-Zazzle, שלח בשיחה עם Claude את קישור המוצר הראשון. Claude ימצא בעמוד את סקשן "Transfer design to a product" (מכיל את ה-design ID המשותף לכל וריאנטים), ינווט לכל וריאנט, יחלץ תמונת mockup אמיתית (og:image — Zazzle לא חוסם את זה) וישמור כאן ישירות.
+                <br><br>
+                <strong style="color:var(--text)">שים לב:</strong> בשונה מ-Redbubble, בזאזל כל מוצר חדש עדיין דורש פרסום ידני נפרד (בחירת גודל סטנדרטי, לא Custom — גדלים גדולים מדי גורמים לאזהרת "Blurry image").
+              </div>
+            </div>
+          </div>
+
+          <div id="zz-loading" style="display:none;text-align:center;padding:1.5rem;color:var(--muted);font-size:.9rem">מכין נתונים...</div>
+          <div id="zz-error" style="display:none;text-align:center;padding:1rem;color:#e74c3c;font-size:.85rem"></div>
         </div>
       </div>
     </section>
@@ -2722,6 +2809,7 @@ document.querySelectorAll('.nav-item').forEach(item => {
     if (item.dataset.section === 'pinterest') loadPinterestStatus();
     if (item.dataset.section === 'videos') window.videosLoad && window.videosLoad();
     if (item.dataset.section === 'redbubble') rbLoadCategories();
+    if (item.dataset.section === 'zazzle') zzLoadCategories();
   });
 });
 
@@ -6703,6 +6791,215 @@ async function confirmLinkToLocation() {
       const photo = rbPhotos.find(p => p.id === rbCurrentId);
       if (photo) photo.redbubble_products = JSON.stringify(rbCurrentProducts);
       rbRenderProductsList();
+      statusEl.style.color = '#2ecc71';
+      statusEl.textContent = '✓ נשמר — יופיע בעמוד התמונה';
+    } catch (e) {
+      statusEl.style.color = '#e74c3c';
+      statusEl.textContent = e.message || 'שגיאה בשמירה';
+    }
+  }
+})();
+</script>
+
+<script>
+// ── Zazzle Export Section ───────────────────────────────────────────────────────
+(function() {
+  let zzCategoriesLoaded = false;
+  let zzPhotos = [];
+
+  document.querySelector('.nav-item[data-section="zazzle"]')?.addEventListener('click', () => {
+    zzLoadCategories();
+    zzLoadExistingProducts();
+  });
+
+  async function zzLoadExistingProducts() {
+    const listEl = document.getElementById('zz-existing-list');
+    const countEl = document.getElementById('zz-list-count');
+    listEl.innerHTML = '<div style="font-size:.8rem;color:var(--muted);text-align:center;padding:1rem">טוען...</div>';
+    try {
+      const res = await fetch('/api/admin/zazzle-products-list', { headers: { 'X-Session-Token': SESSION_TOKEN } });
+      const data = await res.json();
+      countEl.textContent = data.count ? `${data.count} תמונות` : '';
+      if (!data.photos?.length) {
+        listEl.innerHTML = '<div style="font-size:.8rem;color:var(--muted);text-align:center;padding:1rem">עדיין אין תמונות עם מוצרי Zazzle שמורים</div>';
+        return;
+      }
+      listEl.innerHTML = data.photos.map(p => `
+        <div style="display:flex;align-items:center;gap:.6rem;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.4rem .6rem">
+          <div onclick="zzJumpToPhoto('${p.id}','${(p.category||'').replace(/'/g,"\\'")}')" style="display:flex;align-items:center;gap:.6rem;flex:1;min-width:0;cursor:pointer">
+            <img src="${p.thumbnail || ''}" style="width:36px;height:36px;object-fit:cover;border-radius:5px">
+            <div style="flex:1;min-width:0;font-size:.82rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.title || ''}</div>
+            <span style="font-size:.72rem;color:var(--accent);white-space:nowrap">${p.products.length} מוצרים</span>
+          </div>
+          <a href="https://amitphotos.com/photo/${p.id}" target="_blank" rel="noopener" onclick="event.stopPropagation()"
+            title="צפה בעמוד באתר" style="display:flex;align-items:center;justify-content:center;width:28px;height:28px;flex-shrink:0;color:var(--muted);text-decoration:none;border-radius:5px">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><path d="M15 3h6v6"/><path d="M10 14L21 3"/></svg>
+          </a>
+        </div>`).join('');
+    } catch (e) {
+      listEl.innerHTML = '<div style="font-size:.8rem;color:red;text-align:center;padding:1rem">שגיאה בטעינה</div>';
+    }
+  }
+
+  window.zzJumpToPhoto = async function(id, category) {
+    if (category) {
+      document.getElementById('zz-category').value = category;
+      await zzLoadPhotos();
+    }
+    zzSelectPhoto(id);
+    document.getElementById('zz-result')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  window.zzBackToList = function() {
+    zzLoadExistingProducts();
+    document.getElementById('zz-existing-list')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  window.zzLoadCategories = zzLoadCategories;
+  async function zzLoadCategories() {
+    const sel = document.getElementById('zz-category');
+    if (zzCategoriesLoaded) return;
+    sel.innerHTML = '<option value="">טוען...</option>';
+    try {
+      const res = await fetch('/api/photos?admin=1&slim=1&categories_only=1', { headers: { 'X-Session-Token': SESSION_TOKEN } });
+      const cats = await res.json();
+      zzCategoriesLoaded = true;
+      sel.innerHTML = '<option value="">— בחר קטגוריה —</option>' +
+        cats.map(c => `<option value="${c}">${c}</option>`).join('');
+    } catch(e) {
+      sel.innerHTML = '<option value="">שגיאה בטעינה</option>';
+      console.error('zzLoadCategories error:', e);
+    }
+  }
+
+  window.zzLoadPhotos = async function() {
+    const cat = document.getElementById('zz-category').value;
+    const picker = document.getElementById('zz-photo-picker');
+    const grid = document.getElementById('zz-photo-grid');
+    document.getElementById('zz-result').style.display = 'none';
+    document.getElementById('zz-error').style.display = 'none';
+    if (!cat) { picker.style.display = 'none'; return; }
+
+    zzPhotos = [];
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--muted);font-size:.85rem">טוען תמונות...</div>';
+    picker.style.display = 'block';
+
+    try {
+      const res = await fetch(`/api/photos?admin=1&slim=1&category=${encodeURIComponent(cat)}`, { headers: { 'X-Session-Token': SESSION_TOKEN } });
+      zzPhotos = await res.json();
+    } catch(e) {
+      grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:2rem;color:red;font-size:.85rem">שגיאה בטעינה</div>';
+      return;
+    }
+
+    grid.innerHTML = zzPhotos.map(p => {
+      const thumb = (p.thumbnail || '').replace(/[?&]sz=w\d+/, '') + (p.thumbnail?.includes('?') ? '&sz=w150' : '?sz=w150');
+      return `<div class="zz-thumb" data-id="${p.id}" onclick="zzSelectPhoto('${p.id}')"
+        style="position:relative;cursor:pointer;border-radius:5px;overflow:hidden;border:2px solid transparent;transition:.15s">
+        <img src="${thumb}" style="width:100%;height:100%;object-fit:cover;display:block">
+      </div>`;
+    }).join('');
+  };
+
+  let zzCurrentId = null;
+  let zzCurrentProducts = [];
+
+  function zzRenderProductsList() {
+    const listEl = document.getElementById('zz-products-list');
+    if (!zzCurrentProducts.length) {
+      listEl.innerHTML = '<div style="font-size:.8rem;color:var(--muted)">אין עדיין מוצרים שמורים לתמונה זו</div>';
+      return;
+    }
+    listEl.innerHTML = zzCurrentProducts.map((p, i) => `
+      <div style="display:flex;align-items:center;gap:.7rem;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.5rem">
+        <img src="${p.image}" style="width:48px;height:48px;object-fit:cover;border-radius:6px;background:#fff">
+        <div style="flex:1;min-width:0">
+          <div style="font-size:.85rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.name || 'מוצר'}</div>
+          <a href="${p.url}" target="_blank" style="font-size:.72rem;color:var(--muted);word-break:break-all">${p.url}</a>
+        </div>
+        <button onclick="zzRemoveProduct(${i})" style="padding:.3rem .6rem;background:none;border:1px solid #e74c3c;border-radius:6px;color:#e74c3c;font-size:.78rem;cursor:pointer">הסר</button>
+      </div>`).join('');
+  }
+
+  window.zzSelectPhoto = async function(id) {
+    document.querySelectorAll('.zz-thumb').forEach(el => el.style.borderColor = el.dataset.id === id ? 'var(--accent)' : 'transparent');
+    zzCurrentId = id;
+    const resultEl = document.getElementById('zz-result');
+    const loadingEl = document.getElementById('zz-loading');
+    const errorEl = document.getElementById('zz-error');
+    resultEl.style.display = 'none';
+    errorEl.style.display = 'none';
+    loadingEl.style.display = 'block';
+    document.getElementById('zz-save-status').textContent = '';
+    document.getElementById('zz-new-url').value = '';
+    document.getElementById('zz-new-name').value = '';
+    document.getElementById('zz-new-image').value = '';
+
+    try {
+      const res = await fetch(`/api/admin/redbubble-export/meta?id=${encodeURIComponent(id)}`, { headers: { 'X-Session-Token': SESSION_TOKEN } });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'שגיאה');
+
+      const photo = zzPhotos.find(p => p.id === id);
+      document.getElementById('zz-preview-img').src = photo?.thumbnail || '';
+      document.getElementById('zz-preview-title').textContent = photo?.title || '';
+      document.getElementById('zz-preview-dims').textContent = data.width && data.height ? `${data.width} × ${data.height}px` : '';
+      document.getElementById('zz-preview-source').textContent = data.source === 'drive' ? '📁 מקור: Google Drive (רזולוציה מקורית)' : '📦 מקור: R2 (WebP → JPG)';
+      document.getElementById('zz-out-title').value = data.title || '';
+      document.getElementById('zz-out-tags').value = (data.tags || []).join(', ');
+      document.getElementById('zz-out-desc').value = data.description || '';
+      document.getElementById('zz-download-btn').href = data.downloadUrl;
+
+      try { zzCurrentProducts = photo?.zazzle_products ? JSON.parse(photo.zazzle_products) : []; }
+      catch { zzCurrentProducts = []; }
+      zzRenderProductsList();
+
+      loadingEl.style.display = 'none';
+      resultEl.style.display = 'block';
+    } catch (e) {
+      loadingEl.style.display = 'none';
+      errorEl.textContent = e.message || 'שגיאה בהכנת הנתונים';
+      errorEl.style.display = 'block';
+    }
+  };
+
+  window.zzAddProduct = async function() {
+    if (!zzCurrentId) return;
+    const url = document.getElementById('zz-new-url').value.trim();
+    const name = document.getElementById('zz-new-name').value.trim();
+    const image = document.getElementById('zz-new-image').value.trim();
+    const statusEl = document.getElementById('zz-save-status');
+    if (!url || !image) {
+      statusEl.style.color = '#e74c3c';
+      statusEl.textContent = 'צריך גם קישור למוצר וגם קישור לתמונה';
+      return;
+    }
+    zzCurrentProducts.push({ url, name, image });
+    await zzPersistProducts(statusEl);
+    document.getElementById('zz-new-url').value = '';
+    document.getElementById('zz-new-name').value = '';
+    document.getElementById('zz-new-image').value = '';
+  };
+
+  window.zzRemoveProduct = async function(index) {
+    zzCurrentProducts.splice(index, 1);
+    await zzPersistProducts(document.getElementById('zz-save-status'));
+  };
+
+  async function zzPersistProducts(statusEl) {
+    statusEl.style.color = 'var(--muted)';
+    statusEl.textContent = 'שומר...';
+    try {
+      const res = await fetch('/api/photos', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', 'X-Session-Token': SESSION_TOKEN },
+        body: JSON.stringify({ id: zzCurrentId, zazzle_products: zzCurrentProducts }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'שגיאה');
+      const photo = zzPhotos.find(p => p.id === zzCurrentId);
+      if (photo) photo.zazzle_products = JSON.stringify(zzCurrentProducts);
+      zzRenderProductsList();
       statusEl.style.color = '#2ecc71';
       statusEl.textContent = '✓ נשמר — יופיע בעמוד התמונה';
     } catch (e) {

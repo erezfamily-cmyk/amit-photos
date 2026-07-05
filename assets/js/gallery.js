@@ -993,6 +993,25 @@ function openLightbox(idx) {
     }
   }
 
+  // Zazzle products for this specific photo
+  const zzEl = document.getElementById('lb-zz-products');
+  const zzTrack = document.getElementById('lb-zz-track');
+  if (zzEl && zzTrack) {
+    let zzProducts = [];
+    try { zzProducts = photo.zazzle_products ? JSON.parse(photo.zazzle_products) : []; } catch (_) {}
+    if (zzProducts.length) {
+      zzTrack.innerHTML = zzProducts.map(p =>
+        `<a class="lb-zz-item" href="${p.url}" target="_blank" rel="noopener sponsored">
+          <img src="${p.image}" alt="${p.name || ''}" loading="lazy" />
+          <span>${p.name || ''}</span>
+        </a>`
+      ).join('');
+      zzEl.classList.remove('hidden');
+    } else {
+      zzEl.classList.add('hidden');
+    }
+  }
+
   // Related photos from same category
   const relatedEl = document.getElementById('lb-related');
   const relatedTrack = document.getElementById('lb-related-track');

@@ -253,6 +253,7 @@ const TRANSLATIONS = {
 
     // Lightbox
     'lb.rb-products':   'עוד דרכים לקחת את התמונה הביתה',
+    'lb.zz-products':   'עוד דרכים לקחת את התמונה הביתה — Zazzle',
     'lb.related':       'עוד מהקטגוריה',
     'lb.slideshow.start':'▶ מצגת',
     'lb.slideshow.stop': '⏸ עצור',
@@ -617,6 +618,7 @@ const TRANSLATIONS = {
 
     // Lightbox
     'lb.rb-products':   'More ways to take this photo home',
+    'lb.zz-products':   'More ways to take this photo home — Zazzle',
     'lb.related':       'More from this category',
     'lb.slideshow.start':'▶ Slideshow',
     'lb.slideshow.stop': '⏸ Stop',

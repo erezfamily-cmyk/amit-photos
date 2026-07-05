@@ -535,8 +535,8 @@ async function handlePhotos(request, env) {
         return jsonRes(catRows.map(r => r.category), 200, request);
       }
       const sql = catFilter
-        ? 'SELECT id, title, category, thumbnail, redbubble_url, redbubble_products FROM photos WHERE category=? ORDER BY CASE WHEN sort_order IS NULL THEN 1 ELSE 0 END, sort_order ASC, created_at DESC'
-        : 'SELECT id, title, category, thumbnail, redbubble_url, redbubble_products FROM photos ORDER BY CASE WHEN sort_order IS NULL THEN 1 ELSE 0 END, sort_order ASC, created_at DESC';
+        ? 'SELECT id, title, category, thumbnail, redbubble_url, redbubble_products, zazzle_products FROM photos WHERE category=? ORDER BY CASE WHEN sort_order IS NULL THEN 1 ELSE 0 END, sort_order ASC, created_at DESC'
+        : 'SELECT id, title, category, thumbnail, redbubble_url, redbubble_products, zazzle_products FROM photos ORDER BY CASE WHEN sort_order IS NULL THEN 1 ELSE 0 END, sort_order ASC, created_at DESC';
       const { results: slimResults } = catFilter
         ? await env.DB.prepare(sql).bind(catFilter).all()
         : await env.DB.prepare(sql).all();
@@ -618,6 +618,12 @@ async function handlePhotos(request, env) {
       const val = Array.isArray(body.redbubble_products) ? JSON.stringify(body.redbubble_products) : null;
       await env.DB.prepare('UPDATE photos SET redbubble_products=? WHERE id=?').bind(val, id).run();
       return jsonRes({ ok: true, redbubble_products: body.redbubble_products }, 200, request);
+    }
+
+    if (body.zazzle_products !== undefined) {
+      const val = Array.isArray(body.zazzle_products) ? JSON.stringify(body.zazzle_products) : null;
+      await env.DB.prepare('UPDATE photos SET zazzle_products=? WHERE id=?').bind(val, id).run();
+      return jsonRes({ ok: true, zazzle_products: body.zazzle_products }, 200, request);
     }
 
     if (body.quiz_eligible !== undefined || body.quiz_description !== undefined) {
@@ -1324,6 +1330,19 @@ async function handleRedbubbleProductsList(request, env) {
   const photos = results.map(p => {
     let products = [];
     try { products = JSON.parse(p.redbubble_products) || []; } catch (_) {}
+    return { id: p.id, title: p.title, category: p.category, thumbnail: p.thumbnail, products };
+  }).filter(p => p.products.length);
+  return jsonRes({ photos, count: photos.length }, 200, request);
+}
+
+async function handleZazzleProductsList(request, env) {
+  if (!await checkAuth(request, env)) return jsonRes({ error: 'Unauthorized' }, 401, request);
+  const { results } = await env.DB.prepare(
+    "SELECT id, title, category, thumbnail, zazzle_products FROM photos WHERE zazzle_products IS NOT NULL AND zazzle_products != '' AND zazzle_products != '[]' ORDER BY title"
+  ).all();
+  const photos = results.map(p => {
+    let products = [];
+    try { products = JSON.parse(p.zazzle_products) || []; } catch (_) {}
     return { id: p.id, title: p.title, category: p.category, thumbnail: p.thumbnail, products };
   }).filter(p => p.products.length);
   return jsonRes({ photos, count: photos.length }, 200, request);
@@ -2435,7 +2454,7 @@ async function servePhotoPage(photoId, env) {
   let photo = null;
   try {
     const row = await env.DB.prepare(
-      'SELECT id, title, description, thumbnail, url, category, redbubble_url, redbubble_products FROM photos WHERE id = ? AND published = 1'
+      'SELECT id, title, description, thumbnail, url, category, redbubble_url, redbubble_products, zazzle_products FROM photos WHERE id = ? AND published = 1'
     ).bind(photoId).first();
     if (row) photo = row;
   } catch (_) {}
@@ -2545,6 +2564,15 @@ async function servePhotoPage(photoId, env) {
     .rb-item img{width:100%;aspect-ratio:1/1;object-fit:cover;display:block;background:#fff}
     .rb-item .rb-label{font-size:.78rem;color:#f0f0f0;padding:.6rem .6rem .7rem;text-align:center;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;text-overflow:ellipsis;line-height:1.3}
     .rb-cta{display:inline-block;margin-top:1.25rem;font-size:.85rem;color:#c9a96e}
+    .zz-section{max-width:900px;width:100%;margin-top:3rem;border-top:1px solid rgba(255,255,255,.1);padding-top:2rem}
+    .zz-section h2{font-size:1.1rem;margin-bottom:.4rem;opacity:.9}
+    .zz-section .zz-sub{font-size:.85rem;opacity:.6;margin-bottom:1.25rem}
+    .zz-grid{display:grid;grid-template-columns:repeat(auto-fill,150px);gap:14px}
+    .zz-item{display:block;width:150px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;overflow:hidden;transition:.15s;text-decoration:none !important}
+    .zz-item:hover{border-color:#4a6cf7;transform:translateY(-2px)}
+    .zz-item img{width:100%;aspect-ratio:1/1;object-fit:cover;display:block;background:#fff}
+    .zz-item .zz-label{font-size:.78rem;color:#f0f0f0;padding:.6rem .6rem .7rem;text-align:center;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;text-overflow:ellipsis;line-height:1.3}
+    .zz-cta{display:inline-block;margin-top:1.25rem;font-size:.85rem;color:#4a6cf7}
   </style>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600&display=swap" rel="stylesheet">
@@ -2580,6 +2608,23 @@ async function servePhotoPage(photoId, env) {
       </a>`).join('')}
     </div>
     <a class="rb-cta" href="${indexUrl}" target="_blank" rel="noopener sponsored">כל המוצרים של התמונה הזו ←</a>
+  </div>`;
+  })()}
+  ${(() => {
+    let products = [];
+    try { products = photo?.zazzle_products ? JSON.parse(photo.zazzle_products) : []; } catch (_) {}
+    if (!products.length) return '';
+    return `
+  <div class="zz-section">
+    <h2>🎨 עוד דרכים לקחת את התמונה הזו הביתה</h2>
+    <p class="zz-sub">אותה תמונה — על מוצרים נוספים דרך Zazzle</p>
+    <div class="zz-grid">
+      ${products.map(p => `<a class="zz-item" href="${p.url}" target="_blank" rel="noopener sponsored">
+        <img src="${p.image}" alt="${p.name || ''}" loading="lazy">
+        <div class="zz-label">${p.name || ''}</div>
+      </a>`).join('')}
+    </div>
+    <a class="zz-cta" href="https://www.zazzle.com/amitphotos" target="_blank" rel="noopener sponsored">כל המוצרים בחנות Zazzle ←</a>
   </div>`;
   })()}
   ${relatedPhotos.length ? `
@@ -7289,6 +7334,7 @@ export default {
     if (path === '/api/admin/redbubble-export/download') return handleRedbubbleExportDownload(request, env);
     if (path === '/api/admin/redbubble-product-scrape')  return handleRedbubbleProductScrape(request, env);
     if (path === '/api/admin/redbubble-products-list')   return handleRedbubbleProductsList(request, env);
+    if (path === '/api/admin/zazzle-products-list')       return handleZazzleProductsList(request, env);
     if (path === '/api/proxy-image')          return handleImageProxy(request, env);
     if (path === '/api/analytics')         return handleAnalytics(request, env);
     if (path.startsWith('/photos/'))       return servePhoto(path.slice('/photos/'.length), env, request);

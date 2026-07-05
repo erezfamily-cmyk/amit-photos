@@ -1609,6 +1609,53 @@ nav.scrolled { border-bottom-color: rgba(200, 169, 110, 0.3); }
   pointer-events: none;
 }
 
+.lb-zz-products {
+  flex-shrink: 0;
+  padding: 0 2rem 0.5rem;
+  text-align: center;
+}
+.lb-zz-track {
+  display: flex;
+  gap: 0.6rem;
+  justify-content: center;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.lb-zz-track::-webkit-scrollbar { display: none; }
+.lb-zz-item {
+  flex-shrink: 0;
+  width: 110px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  text-decoration: none !important;
+  opacity: 0.9;
+  transition: opacity 0.2s, transform 0.2s;
+  cursor: pointer;
+  position: relative;
+  z-index: 1;
+}
+.lb-zz-item:hover { opacity: 1; transform: translateY(-2px); }
+.lb-zz-item img {
+  width: 110px;
+  height: 110px;
+  object-fit: cover;
+  border-radius: 8px;
+  background: #fff;
+  border: 1px solid rgba(255,255,255,.15);
+  pointer-events: none;
+}
+.lb-zz-item span {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  max-width: 110px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
 /* ===== LIGHTBOX ACTIONS ===== */
 .lb-actions {
   display: flex;
