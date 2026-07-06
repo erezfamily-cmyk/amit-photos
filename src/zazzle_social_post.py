@@ -374,3 +374,73 @@ def publish_zazzle_pin(token, board_id, photo, product):
     except Exception as e:
         print(f"❌ Pin failed for {product.get('name')}: {e}")
         return None
+
+
+# ── Orchestration ─────────────────────────────────────────────────────────────
+
+def main():
+    print("📦 Loading photos with Zazzle products...")
+    photos = load_zazzle_photos()
+    if not photos:
+        print("❌ No photos with zazzle_products found — nothing to post")
+        return
+
+    posted_data = load_posted()
+    posted_ids  = set(posted_data.get("posted_ids", []))
+    print(f"📋 {len(photos)} Zazzle-enabled photos, {len(posted_ids)} already featured")
+
+    photo    = pick_photo(photos, posted_ids)
+    products = get_products(photo)
+    print(f"\n🖼️  Featured this week: {photo.get('title', photo['id'])} ({len(products)} products)")
+
+    # Feed platforms — one random product each
+    feed_product = pick_product(products)
+    print(f"🎯 Feed platforms will feature: {feed_product.get('name')}")
+    caption = generate_feed_caption(photo, feed_product)
+    print(f"✍️  Caption: {caption[:100]}...")
+
+    results = {"instagram": None, "facebook": None, "threads": None, "pinterest_pins": []}
+
+    try:
+        results["instagram"] = post_to_instagram(photo, caption, feed_product)
+    except Exception as e:
+        print(f"❌ Instagram step crashed: {e}")
+
+    try:
+        results["facebook"] = post_to_facebook(photo, caption, feed_product)
+    except Exception as e:
+        print(f"❌ Facebook step crashed: {e}")
+
+    try:
+        results["threads"] = post_to_threads(photo, caption, feed_product)
+    except Exception as e:
+        print(f"❌ Threads step crashed: {e}")
+
+    # Pinterest — one pin per product
+    if not PINTEREST_TOKEN:
+        print("⚠️  Missing PINTEREST_ACCESS_TOKEN — skipping Pinterest")
+    else:
+        try:
+            board_id = get_or_create_zazzle_board(PINTEREST_TOKEN)
+            for product in products:
+                pin_id = publish_zazzle_pin(PINTEREST_TOKEN, board_id, photo, product)
+                results["pinterest_pins"].append(pin_id)
+                if not DRY_RUN:
+                    time.sleep(2)
+        except Exception as e:
+            print(f"❌ Pinterest step crashed: {e}")
+
+    if not DRY_RUN:
+        posted_ids.add(photo["id"])
+        save_posted({"posted_ids": sorted(posted_ids)})
+        print(f"\n💾 Saved rotation state ({len(posted_ids)} photos featured so far)")
+
+    print(f"\n{'=' * 40}")
+    print(f"✅ Instagram: {'ok' if results['instagram'] else 'skipped/failed'}")
+    print(f"✅ Facebook: {'ok' if results['facebook'] else 'skipped/failed'}")
+    print(f"✅ Threads: {'ok' if results['threads'] else 'skipped/failed'}")
+    print(f"✅ Pinterest pins: {sum(1 for p in results['pinterest_pins'] if p)}/{len(products)}")
+
+
+if __name__ == "__main__":
+    main()
