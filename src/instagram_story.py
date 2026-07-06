@@ -377,6 +377,7 @@ def add_audio(video_path, category, tmp_dir):
 # ── Upload ────────────────────────────────────────────────────────────────────
 
 def upload_video(video_path):
+    import time
     data  = video_path.read_bytes()
     mb    = len(data) / 1024 / 1024
     print(f"📤 גודל וידאו: {mb:.1f} MB")
@@ -387,17 +388,20 @@ def upload_video(video_path):
         ("0x0.st", "https://0x0.st",
          {"file_field": "file"}),
     ]:
-        try:
-            files = {extra["file_field"]: ("story.mp4", data, "video/mp4")}
-            post_data = extra.get("data", {})
-            r = requests.post(url, data=post_data, files=files, timeout=180)
-            r.raise_for_status()
-            public_url = r.text.strip()
-            if public_url.startswith("http"):
-                print(f"⬆️  הועלה ({name}): {public_url}")
-                return public_url
-        except Exception as e:
-            print(f"⚠️  {name} נכשל: {e}")
+        for attempt in range(1, 3):
+            try:
+                files = {extra["file_field"]: ("story.mp4", data, "video/mp4")}
+                post_data = extra.get("data", {})
+                r = requests.post(url, data=post_data, files=files, timeout=180)
+                r.raise_for_status()
+                public_url = r.text.strip()
+                if public_url.startswith("http"):
+                    print(f"⬆️  הועלה ({name}): {public_url}")
+                    return public_url
+            except Exception as e:
+                print(f"⚠️  {name} ניסיון {attempt}/2 נכשל: {e}")
+                if attempt < 2:
+                    time.sleep(10)
 
     raise RuntimeError("כל שירותי ה-upload נכשלו")
 
