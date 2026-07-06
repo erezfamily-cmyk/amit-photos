@@ -1611,8 +1611,13 @@ nav.scrolled { border-bottom-color: rgba(200, 169, 110, 0.3); }
 
 .lb-zz-products {
   flex-shrink: 0;
-  padding: 0 2rem 0.5rem;
+  padding: .5rem 2rem 0.5rem;
   text-align: center;
+}
+/* קו הפרדה עדין רק כשגם Redbubble וגם Zazzle מוצגים יחד */
+.lb-rb-products:not(.hidden) + .lb-zz-products:not(.hidden) {
+  border-top: 1px solid rgba(255,255,255,.08);
+  margin-top: .25rem;
 }
 .lb-zz-track {
   display: flex;
@@ -1655,6 +1660,27 @@ nav.scrolled { border-bottom-color: rgba(200, 169, 110, 0.3); }
   white-space: nowrap;
   pointer-events: none;
 }
+
+/* פריט "כל המוצרים" בסוף הרצועה — קישור לחנות המלאה, לא תמונת מוצר */
+.lb-shop-all {
+  justify-content: center;
+}
+.lb-shop-all-label {
+  width: 110px;
+  height: 110px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  border-radius: 8px;
+  border: 1px dashed rgba(255,255,255,.25);
+  color: var(--accent);
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: normal;
+  padding: 0 .5rem;
+}
+.lb-shop-all:hover .lb-shop-all-label { border-color: var(--accent); background: rgba(255,255,255,.04); }
 
 /* ===== LIGHTBOX ACTIONS ===== */
 .lb-actions {

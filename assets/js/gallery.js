@@ -980,13 +980,21 @@ function openLightbox(idx) {
         if (!m) return '';
         return m[1].split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
       };
+      const rbDesignId = rbProducts[0].url.match(/\/(\d+)\/[^/]+\/?$/)?.[1];
+      const rbIndexUrl = rbDesignId
+        ? `https://www.redbubble.com/shop/ap/${rbDesignId}`
+        : 'https://www.redbubble.com/people/erezphoto/shop';
+      const rbIsEn = (localStorage.getItem('lang') || 'he') === 'en';
+      const rbAllLabel = rbIsEn ? 'See all →' : 'כל המוצרים ←';
       rbTrack.innerHTML = rbProducts.map(p => {
         const label = rbTypeFromUrl(p.url) || p.name || '';
         return `<a class="lb-rb-item" href="${p.url}" target="_blank" rel="noopener sponsored">
           <img src="${p.image}" alt="${p.name || label}" loading="lazy" />
           <span>${label}</span>
         </a>`;
-      }).join('');
+      }).join('') + `<a class="lb-rb-item lb-shop-all" href="${rbIndexUrl}" target="_blank" rel="noopener sponsored">
+          <span class="lb-shop-all-label">${rbAllLabel}</span>
+        </a>`;
       rbEl.classList.remove('hidden');
     } else {
       rbEl.classList.add('hidden');
@@ -1000,12 +1008,16 @@ function openLightbox(idx) {
     let zzProducts = [];
     try { zzProducts = photo.zazzle_products ? JSON.parse(photo.zazzle_products) : []; } catch (_) {}
     if (zzProducts.length) {
+      const zzIsEn = (localStorage.getItem('lang') || 'he') === 'en';
+      const zzAllLabel = zzIsEn ? 'See all →' : 'כל המוצרים ←';
       zzTrack.innerHTML = zzProducts.map(p =>
         `<a class="lb-zz-item" href="${p.url}" target="_blank" rel="noopener sponsored">
           <img src="${p.image}" alt="${p.name || ''}" loading="lazy" />
           <span>${p.name || ''}</span>
         </a>`
-      ).join('');
+      ).join('') + `<a class="lb-zz-item lb-shop-all" href="https://www.zazzle.com/amitphotos" target="_blank" rel="noopener sponsored">
+          <span class="lb-shop-all-label">${zzAllLabel}</span>
+        </a>`;
       zzEl.classList.remove('hidden');
     } else {
       zzEl.classList.add('hidden');

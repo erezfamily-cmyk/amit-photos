@@ -252,7 +252,7 @@ const TRANSLATIONS = {
     'footer.copy':      '© 2026 עמית — כל הזכויות שמורות',
 
     // Lightbox
-    'lb.rb-products':   'עוד דרכים לקחת את התמונה הביתה',
+    'lb.rb-products':   'עוד דרכים לקחת את התמונה הביתה — Redbubble',
     'lb.zz-products':   'עוד דרכים לקחת את התמונה הביתה — Zazzle',
     'lb.related':       'עוד מהקטגוריה',
     'lb.slideshow.start':'▶ מצגת',
@@ -617,7 +617,7 @@ const TRANSLATIONS = {
     'footer.copy':      '© 2026 Amit — All rights reserved',
 
     // Lightbox
-    'lb.rb-products':   'More ways to take this photo home',
+    'lb.rb-products':   'More ways to take this photo home — Redbubble',
     'lb.zz-products':   'More ways to take this photo home — Zazzle',
     'lb.related':       'More from this category',
     'lb.slideshow.start':'▶ Slideshow',
