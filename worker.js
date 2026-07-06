@@ -2556,24 +2556,20 @@ async function servePhotoPage(photoId, env) {
     .rel-grid a img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:4px;display:block;transition:opacity .2s}
     .rel-grid a img:hover{opacity:.8}
     .credit{margin-top:3rem;font-size:.8rem;opacity:.4}
-    .rb-section{max-width:900px;width:100%;margin-top:3rem;border-top:1px solid rgba(255,255,255,.1);padding-top:2rem}
-    .rb-section h2{font-size:1.1rem;margin-bottom:.4rem;opacity:.9}
-    .rb-section .rb-sub{font-size:.85rem;opacity:.6;margin-bottom:1.25rem}
-    .rb-grid{display:grid;grid-template-columns:repeat(auto-fill,150px);gap:14px}
-    .rb-item{display:block;width:150px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;overflow:hidden;transition:.15s;text-decoration:none !important}
+    .shop-section{max-width:900px;width:100%;margin-top:3rem;border-top:1px solid rgba(255,255,255,.1);padding-top:2rem}
+    .shop-section h2{font-size:1.1rem;margin-bottom:1.25rem;opacity:.9}
+    .shop-store{margin-bottom:1.75rem}
+    .shop-store:last-child{margin-bottom:0}
+    .shop-store-label{display:flex;align-items:center;gap:.5rem;font-size:.85rem;font-weight:600;opacity:.75;margin-bottom:.9rem}
+    .shop-store-label img{border-radius:3px}
+    .rb-grid,.zz-grid{display:grid;grid-template-columns:repeat(auto-fill,150px);gap:14px}
+    .rb-item,.zz-item{display:block;width:150px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;overflow:hidden;transition:.15s;text-decoration:none !important}
     .rb-item:hover{border-color:#c9a96e;transform:translateY(-2px)}
-    .rb-item img{width:100%;aspect-ratio:1/1;object-fit:cover;display:block;background:#fff}
-    .rb-item .rb-label{font-size:.78rem;color:#f0f0f0;padding:.6rem .6rem .7rem;text-align:center;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;text-overflow:ellipsis;line-height:1.3}
-    .rb-cta{display:inline-block;margin-top:1.25rem;font-size:.85rem;color:#c9a96e}
-    .zz-section{max-width:900px;width:100%;margin-top:3rem;border-top:1px solid rgba(255,255,255,.1);padding-top:2rem}
-    .zz-section h2{font-size:1.1rem;margin-bottom:.4rem;opacity:.9}
-    .zz-section .zz-sub{font-size:.85rem;opacity:.6;margin-bottom:1.25rem}
-    .zz-grid{display:grid;grid-template-columns:repeat(auto-fill,150px);gap:14px}
-    .zz-item{display:block;width:150px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;overflow:hidden;transition:.15s;text-decoration:none !important}
     .zz-item:hover{border-color:#4a6cf7;transform:translateY(-2px)}
-    .zz-item img{width:100%;aspect-ratio:1/1;object-fit:cover;display:block;background:#fff}
-    .zz-item .zz-label{font-size:.78rem;color:#f0f0f0;padding:.6rem .6rem .7rem;text-align:center;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;text-overflow:ellipsis;line-height:1.3}
-    .zz-cta{display:inline-block;margin-top:1.25rem;font-size:.85rem;color:#4a6cf7}
+    .rb-item img,.zz-item img{width:100%;aspect-ratio:1/1;object-fit:cover;display:block;background:#fff}
+    .rb-item .rb-label,.zz-item .zz-label{font-size:.78rem;color:#f0f0f0;padding:.6rem .6rem .7rem;text-align:center;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;text-overflow:ellipsis;line-height:1.3}
+    .rb-cta{display:inline-block;margin-top:1rem;font-size:.82rem;color:#c9a96e}
+    .zz-cta{display:inline-block;margin-top:1rem;font-size:.82rem;color:#4a6cf7}
   </style>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600&display=swap" rel="stylesheet">
@@ -2590,42 +2586,46 @@ async function servePhotoPage(photoId, env) {
     <a class="buy" href="https://amitphotos.com/#photo-${photoId}">לרכישת התמונה</a>
   </div>
   ${(() => {
-    let products = [];
-    try { products = photo?.redbubble_products ? JSON.parse(photo.redbubble_products) : []; } catch (_) {}
-    if (!products.length) return '';
-    // design ID משותף לכל וריאנטים של אותו עיצוב: .../{title-slug}/{designId}/{variant}
-    const designId = products[0].url.match(/\/(\d+)\/[^/]+\/?$/)?.[1];
-    const indexUrl = designId
+    let rbProducts = [], zzProducts = [];
+    try { rbProducts = photo?.redbubble_products ? JSON.parse(photo.redbubble_products) : []; } catch (_) {}
+    try { zzProducts = photo?.zazzle_products ? JSON.parse(photo.zazzle_products) : []; } catch (_) {}
+    if (!rbProducts.length && !zzProducts.length) return '';
+
+    // design ID משותף לכל וריאנטים של אותו עיצוב ב-Redbubble: .../{title-slug}/{designId}/{variant}
+    const designId = rbProducts[0]?.url.match(/\/(\d+)\/[^/]+\/?$/)?.[1];
+    const rbIndexUrl = designId
       ? `https://www.redbubble.com/shop/ap/${designId}`
       : 'https://www.redbubble.com/people/erezphoto/shop';
+
+    const rbBlock = rbProducts.length ? `
+    <div class="shop-store">
+      <div class="shop-store-label"><img src="https://www.redbubble.com/favicon.ico" alt="" width="16" height="16">Redbubble</div>
+      <div class="rb-grid">
+        ${rbProducts.map(p => `<a class="rb-item" href="${p.url}" target="_blank" rel="noopener sponsored">
+          <img src="${p.image}" alt="${p.name || ''}" loading="lazy">
+          <div class="rb-label">${p.name || ''}</div>
+        </a>`).join('')}
+      </div>
+      <a class="rb-cta" href="${rbIndexUrl}" target="_blank" rel="noopener sponsored">כל המוצרים של התמונה הזו ב-Redbubble ←</a>
+    </div>` : '';
+
+    const zzBlock = zzProducts.length ? `
+    <div class="shop-store">
+      <div class="shop-store-label"><img src="https://www.zazzle.com/favicon.ico" alt="" width="16" height="16">Zazzle</div>
+      <div class="zz-grid">
+        ${zzProducts.map(p => `<a class="zz-item" href="${p.url}" target="_blank" rel="noopener sponsored">
+          <img src="${p.image}" alt="${p.name || ''}" loading="lazy">
+          <div class="zz-label">${p.name || ''}</div>
+        </a>`).join('')}
+      </div>
+      <a class="zz-cta" href="https://www.zazzle.com/amitphotos" target="_blank" rel="noopener sponsored">כל המוצרים בחנות Zazzle ←</a>
+    </div>` : '';
+
     return `
-  <div class="rb-section">
+  <div class="shop-section">
     <h2>🛍️ עוד דרכים לקחת את התמונה הזו הביתה</h2>
-    <p class="rb-sub">אותה תמונה — על מוצרים נוספים דרך Redbubble</p>
-    <div class="rb-grid">
-      ${products.map(p => `<a class="rb-item" href="${p.url}" target="_blank" rel="noopener sponsored">
-        <img src="${p.image}" alt="${p.name || ''}" loading="lazy">
-        <div class="rb-label">${p.name || ''}</div>
-      </a>`).join('')}
-    </div>
-    <a class="rb-cta" href="${indexUrl}" target="_blank" rel="noopener sponsored"><img src="https://www.redbubble.com/favicon.ico" alt="" width="16" height="16" style="vertical-align:middle;margin-inline-end:.4em;border-radius:3px">כל המוצרים של התמונה הזו ←</a>
-  </div>`;
-  })()}
-  ${(() => {
-    let products = [];
-    try { products = photo?.zazzle_products ? JSON.parse(photo.zazzle_products) : []; } catch (_) {}
-    if (!products.length) return '';
-    return `
-  <div class="zz-section">
-    <h2>🎨 עוד דרכים לקחת את התמונה הזו הביתה</h2>
-    <p class="zz-sub">אותה תמונה — על מוצרים נוספים דרך Zazzle</p>
-    <div class="zz-grid">
-      ${products.map(p => `<a class="zz-item" href="${p.url}" target="_blank" rel="noopener sponsored">
-        <img src="${p.image}" alt="${p.name || ''}" loading="lazy">
-        <div class="zz-label">${p.name || ''}</div>
-      </a>`).join('')}
-    </div>
-    <a class="zz-cta" href="https://www.zazzle.com/amitphotos" target="_blank" rel="noopener sponsored"><img src="https://www.zazzle.com/favicon.ico" alt="" width="16" height="16" style="vertical-align:middle;margin-inline-end:.4em;border-radius:3px">כל המוצרים בחנות Zazzle ←</a>
+    ${rbBlock}
+    ${zzBlock}
   </div>`;
   })()}
   ${relatedPhotos.length ? `
