@@ -975,7 +975,7 @@ const SOCIAL_POSTING_WORKFLOWS = new Set([
   'pinterest-post.yml','camera-edu-post.yml','location-social-post.yml',
   'week-photo-social.yml','reels-post.yml','quiz-social-post.yml',
   'puzzle-social-post.yml','youtube-post.yml','youtube-tutorial.yml',
-  'newsletter-social-post.yml','share-youtube.yml',
+  'newsletter-social-post.yml','share-youtube.yml','zazzle-social-post.yml',
 ]);
 const SOCIAL_WORKFLOW_META = {
   'instagram-post.yml':        { name: 'IG גלריה',          icon: '📸' },
@@ -992,6 +992,7 @@ const SOCIAL_WORKFLOW_META = {
   'youtube-tutorial.yml':      { name: 'YouTube מדריך',     icon: '🎓' },
   'newsletter-social-post.yml':{ name: 'ניוזלטר',           icon: '📧' },
   'share-youtube.yml':         { name: 'שיתוף YouTube',     icon: '🔗' },
+  'zazzle-social-post.yml':    { name: 'מוצרי Zazzle',      icon: '🛍️' },
 };
 
 async function handleAdminSocialActivity(request, env) {
