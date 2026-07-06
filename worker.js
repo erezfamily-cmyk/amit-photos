@@ -2618,7 +2618,7 @@ async function servePhotoPage(photoId, env) {
           <div class="zz-label">${p.name || ''}</div>
         </a>`).join('')}
       </div>
-      <a class="zz-cta" href="https://www.zazzle.com/amitphotos" target="_blank" rel="noopener sponsored">כל המוצרים בחנות Zazzle ←</a>
+      <a class="zz-cta" href="https://www.zazzle.com/store/amitphotos/products" target="_blank" rel="noopener sponsored">כל המוצרים בחנות Zazzle ←</a>
     </div>` : '';
 
     return `

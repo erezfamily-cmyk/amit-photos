@@ -1015,7 +1015,7 @@ function openLightbox(idx) {
           <img src="${p.image}" alt="${p.name || ''}" loading="lazy" />
           <span>${p.name || ''}</span>
         </a>`
-      ).join('') + `<a class="lb-zz-item lb-shop-all" href="https://www.zazzle.com/amitphotos" target="_blank" rel="noopener sponsored">
+      ).join('') + `<a class="lb-zz-item lb-shop-all" href="https://www.zazzle.com/store/amitphotos/products" target="_blank" rel="noopener sponsored">
           <span class="lb-shop-all-label">${zzAllLabel}</span>
         </a>`;
       zzEl.classList.remove('hidden');
