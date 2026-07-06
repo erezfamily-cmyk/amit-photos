@@ -1,0 +1,49 @@
+name: פרסום מוצרי Redbubble לרשתות
+
+on:
+  # כל יום ראשון ב-12:00 UTC = 15:00 ישראל
+  schedule:
+    - cron: '0 12 * * 0'
+  workflow_dispatch:
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  redbubble-social-post:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Python setup
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: התקנת חבילות
+        run: pip install requests anthropic
+
+      - name: פרסום מוצרי Redbubble
+        env:
+          INSTAGRAM_USER_ID: ${{ secrets.INSTAGRAM_USER_ID }}
+          INSTAGRAM_PAGE_TOKEN: ${{ secrets.INSTAGRAM_PAGE_TOKEN }}
+          FACEBOOK_PAGE_ID: ${{ secrets.FACEBOOK_PAGE_ID }}
+          FACEBOOK_PAGE_TOKEN: ${{ secrets.FACEBOOK_PAGE_TOKEN }}
+          THREADS_USER_ID: ${{ secrets.THREADS_USER_ID }}
+          THREADS_ACCESS_TOKEN: ${{ secrets.THREADS_ACCESS_TOKEN }}
+          PINTEREST_ACCESS_TOKEN: ${{ secrets.PINTEREST_ACCESS_TOKEN }}
+          ANTHROPIC_API_KEY: ${{ secrets.AMIT_PHOTO_AGENT }}
+        run: python src/redbubble_social_post.py
+
+      - name: עדכון מעקב פרסומים
+        run: |
+          git config user.name "Redbubble Social Agent"
+          git config user.email "agent@amitphotos.com"
+          git add data/redbubble_social_posted.json
+          git diff --staged --quiet || git commit -m "🤖 עדכון redbubble_social_posted.json"
+          git pull --rebase --autostash origin main
+          git push

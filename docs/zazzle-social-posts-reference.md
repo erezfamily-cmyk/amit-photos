@@ -40,9 +40,9 @@
 | `docs/superpowers/specs/2026-07-05-zazzle-social-posts-design.md` | מסמך העיצוב המלא |
 | `docs/superpowers/plans/2026-07-05-zazzle-social-posts.md` | תוכנית המימוש המפורטת (6 משימות) |
 
-## מה עוד לא הופעל (בכוונה)
+## Redbubble — הופעל (6.7.2026)
 
-**Redbubble** — יש כבר 7 תמונות עם מוצרי Redbubble מוכנים ב-D1, והקוד בנוי כך שקל להוסיף אותו כמקור שני (קבוע `PRODUCT_FIELD` בקובץ, לא hardcoded). **לא הופעל** — עמית ביקש לחכות עד שהקישורים מהאתר ל-Redbubble יהיו פעילים ומאומתים.
+לאחר שאומת שדף החנות `redbubble.com/people/erezphoto/shop` עובד גם לגולשים אנונימיים, הופעלה אותה אוטומציה בדיוק גם למוצרי Redbubble — ראו [`docs/redbubble-social-posts-reference.md`](redbubble-social-posts-reference.md). מריץ ביום **ראשון** (כדי לא להתנגש עם רביעי של Zazzle).
 
 ## מה קרה בבדיקה הראשונה (6.7.2026)
 
