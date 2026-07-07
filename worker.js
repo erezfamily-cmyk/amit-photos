@@ -1642,18 +1642,19 @@ async function handleDownload(request, env, token) {
 }
 
 // ===== PURCHASE NOTIFICATIONS =====
-async function sendPurchaseEmail(env, { titles, size, amount, txnId, tokens, origin }) {
+async function sendPurchaseEmail(env, { titles, size, amount, currency, txnId, tokens, origin }) {
   if (!env.RESEND_API_KEY) return;
   const adminEmail = env.ADMIN_EMAIL || 'contact@amitphotos.com';
   const fromEmail = 'Amit Photos <onboarding@resend.dev>';
   const sizeLabel = { small: 'קובץ רשת', medium: 'קובץ הדפסה', large: 'קובץ מלא' }[size] || size;
+  const symbol = currency === 'USD' ? '$' : '₪';
   const tokenLinks = tokens.map(t => `<a href="${origin}/api/download/${t}">${origin}/api/download/${t}</a>`).join('<br>');
   const html = `
     <div dir="rtl" style="font-family:Arial,sans-serif;padding:24px">
       <h2>📸 רכישה חדשה ב-Amit Photos!</h2>
       <p><strong>תמונות:</strong> ${titles.join(', ')}</p>
       <p><strong>גודל:</strong> ${sizeLabel}</p>
-      <p><strong>סכום:</strong> ₪${amount}</p>
+      <p><strong>סכום:</strong> ${symbol}${amount}</p>
       <p><strong>Transaction:</strong> ${txnId}</p>
       <p><strong>קישורי הורדה:</strong><br>${tokenLinks}</p>
     </div>`;
@@ -1664,10 +1665,11 @@ async function sendPurchaseEmail(env, { titles, size, amount, txnId, tokens, ori
   }).catch(() => {});
 }
 
-async function sendPurchaseTelegram(env, { titles, size, amount, txnId }) {
+async function sendPurchaseTelegram(env, { titles, size, amount, currency, txnId }) {
   if (!env.CALLMEBOT_TELEGRAM_USER) return;
   const sizeLabel = { small: 'רשת', medium: 'הדפסה', large: 'מלא' }[size] || size;
-  const msg = `רכישה חדשה! 📸 ${titles.join(', ')} | ${sizeLabel} | ₪${amount} | ${txnId}`;
+  const symbol = currency === 'USD' ? '$' : '₪';
+  const msg = `רכישה חדשה! 📸 ${titles.join(', ')} | ${sizeLabel} | ${symbol}${amount} | ${txnId}`;
   const url = `https://api.callmebot.com/text.php?user=@${env.CALLMEBOT_TELEGRAM_USER}&text=${encodeURIComponent(msg)}`;
   await fetch(url).catch(() => {});
 }
@@ -1692,7 +1694,7 @@ async function handleVerifyPayment(request, env, ctx) {
 
   if (paymentStatus !== 'Completed')     return jsonRes({ error: `סטטוס תשלום: ${paymentStatus || 'חסר'}` }, 402, request);
   if (receiverId !== PAYPAL_RECEIVER_ID) return jsonRes({ error: 'חשבון PayPal לא תואם' }, 402, request);
-  if (mcCurrency !== 'ILS')             return jsonRes({ error: 'מטבע לא תואם' }, 402, request);
+  if (mcCurrency !== 'ILS' && mcCurrency !== 'USD') return jsonRes({ error: 'מטבע לא תואם' }, 402, request);
 
   // פענוח item_number
   let photoIds, size;
@@ -1730,10 +1732,13 @@ async function handleVerifyPayment(request, env, ctx) {
   }
   const subtotal = photoIds.length * unitPrice;
   const discount = photoIds.length >= BUNDLE_MIN ? Math.round(subtotal * BUNDLE_DISCOUNT) : 0;
-  const expectedPrice = subtotal - discount;
+  const expectedPriceILS = subtotal - discount;
+  // EN visitors pay in USD (gallery.js payPalAmount) — convert the ILS-based catalog price the same way
+  const ILS_TO_USD = 3.7;
+  const expectedPrice = mcCurrency === 'USD' ? Math.round(expectedPriceILS / ILS_TO_USD) : expectedPriceILS;
 
   if (mcGross < expectedPrice) {
-    return jsonRes({ error: `סכום ששולם (${mcGross}₪) נמוך מהמחיר (${expectedPrice}₪)` }, 402, request);
+    return jsonRes({ error: `סכום ששולם (${mcGross}${mcCurrency === 'USD' ? '$' : '₪'}) נמוך מהמחיר (${expectedPrice}${mcCurrency === 'USD' ? '$' : '₪'})` }, 402, request);
   }
 
   if (!txnId) return jsonRes({ error: 'txn_id חסר' }, 402, request);
@@ -1760,8 +1765,8 @@ async function handleVerifyPayment(request, env, ctx) {
     return r?.title || id;
   }));
   const origin = new URL(request.url).origin;
-  ctx.waitUntil(sendPurchaseEmail(env, { titles: notifTitles, size, amount: mcGross, txnId, tokens, origin }));
-  ctx.waitUntil(sendPurchaseTelegram(env, { titles: notifTitles, size, amount: mcGross, txnId }));
+  ctx.waitUntil(sendPurchaseEmail(env, { titles: notifTitles, size, amount: mcGross, currency: mcCurrency, txnId, tokens, origin }));
+  ctx.waitUntil(sendPurchaseTelegram(env, { titles: notifTitles, size, amount: mcGross, currency: mcCurrency, txnId }));
 
   if (tokens.length === 1) {
     return jsonRes({ url: `/api/download/${tokens[0]}`, title: notifTitles[0] }, 200, request);

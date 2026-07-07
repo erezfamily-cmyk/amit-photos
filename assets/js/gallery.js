@@ -21,6 +21,11 @@ function formatPrice(ils) {
   if (!isEn) return `₪${ils}`;
   return `$${Math.round(ils / ILS_TO_USD)}`;
 }
+// PayPal charges USD (not just displays it) for EN visitors, matching the print-shop flow
+function payPalAmount(ils) {
+  const isEn = (localStorage.getItem('lang') || 'he') === 'en';
+  return isEn ? { amount: Math.round(ils / ILS_TO_USD), currency: 'USD' } : { amount: ils, currency: 'ILS' };
+}
 
 function isOnSale(photo) {
   if (photo.on_sale) return true;
@@ -1465,10 +1470,10 @@ function renderCartSummary() {
   const discount = hasDiscount ? Math.round(total * BUNDLE_DISCOUNT) : 0;
   const final = total - discount;
 
-  document.getElementById('cart-total-original').textContent = `₪${total}`;
+  document.getElementById('cart-total-original').textContent = formatPrice(total);
   document.getElementById('cart-discount-row').style.display = hasDiscount ? 'flex' : 'none';
-  document.getElementById('cart-discount-amount').textContent = `-₪${discount}`;
-  document.getElementById('cart-total-final').textContent = `₪${final}`;
+  document.getElementById('cart-discount-amount').textContent = `-${formatPrice(discount)}`;
+  document.getElementById('cart-total-final').textContent = formatPrice(final);
 }
 
 function cartCheckout() {
@@ -1485,13 +1490,14 @@ function cartCheckout() {
 
   localStorage.setItem('pending_item_number', itemNumber);
 
+  const { amount, currency } = payPalAmount(finalPrice);
   const params = new URLSearchParams({
     cmd: '_xclick',
     business: PAYPAL_EMAIL,
     item_name: `חבילת תמונות (${cart.length}) — ${cartSize}`,
     item_number: itemNumber,
-    amount: finalPrice,
-    currency_code: 'ILS',
+    amount: amount,
+    currency_code: currency,
     no_shipping: '1',
     return: `${SITE_URL}/download.html`,
     cancel_return: `${SITE_URL}/`,
@@ -1717,13 +1723,14 @@ function redirectToPayPal(photo, size) {
   localStorage.setItem('pending_item_number', itemNumber);
   if (email) localStorage.setItem('pending_buyer_email', email);
 
+  const { amount, currency } = payPalAmount(getEffectivePrice(photo.id, size));
   const params = new URLSearchParams({
     cmd: '_xclick',
     business: PAYPAL_EMAIL,
     item_name: `${photo.title} — ${s.label}`,
     item_number: itemNumber,
-    amount: getEffectivePrice(photo.id, size),
-    currency_code: 'ILS',
+    amount: amount,
+    currency_code: currency,
     no_shipping: '1',
     return: `${SITE_URL}/download.html`,
     cancel_return: `${SITE_URL}/`,
