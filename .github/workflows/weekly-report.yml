@@ -43,5 +43,5 @@ jobs:
         run: |
           git config user.name "Weekly Report Agent"
           git config user.email "agent@amitphotos.com"
-          git add data/social_report.json
+          git add data/social_report.json data/social_history.json
           git diff --staged --quiet || (git commit -m "📊 עדכון דוח שבועי סושיאל מדיה" && git pull --rebase origin main && git push origin main)
