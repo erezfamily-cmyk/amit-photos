@@ -792,7 +792,7 @@ def make_album_reel(category, lang=None, dry_run=False, photo_ids=None, custom_p
         shutil.move(str(muxed_path), str(out_path))
 
     # העלה לאחסון ציבורי → שמור URL ל-latest_reel.json
-    dl_url = _publish_reel(out_path, category, lang)
+    dl_url = _publish_reel(out_path, category, lang, selected)
     if dl_url:
         print(f"🔗 הורדה: {dl_url}")
 
@@ -804,7 +804,7 @@ def make_album_reel(category, lang=None, dry_run=False, photo_ids=None, custom_p
 GITHUB_RAW = "https://raw.githubusercontent.com/erezfamily-cmyk/amit-photos/main/reels_output/latest_reel.mp4"
 
 
-def _publish_reel(video_path, category, lang):
+def _publish_reel(video_path, category, lang, photos):
     """
     1. מעתיק ל-reels_output/latest_reel.mp4 (ימשוך לריפו ע"י workflow)
     2. מנסה להעלות ל-0x0.st (3 ניסיונות) לקישור מהיר יותר
@@ -851,7 +851,7 @@ def _publish_reel(video_path, category, lang):
         print(f"📎 fallback → GitHub raw: {url}")
 
     # שמור ב-data/latest_reel.json
-    titles = [p["title"] for p in selected]
+    titles = [p["title"] for p in photos]
     record = {
         "url":        url,
         "category":   category,
