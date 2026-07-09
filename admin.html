@@ -7454,7 +7454,7 @@ async function confirmLinkToLocation() {
 
   async function bdLoadPhotos() {
     try {
-      const res = await fetch('/data/photos.json');
+      const res = await fetch('/api/photos?admin=1&slim=1', { headers: { 'X-Session-Token': SESSION_TOKEN } });
       bdAllPhotos = await res.json();
 
       // Populate category filter
