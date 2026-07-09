@@ -3564,7 +3564,11 @@ const Photos = (() => {
       headers: authHeaders(),
       body: JSON.stringify({ id, published })
     });
-    if (!r.ok) { toast('שגיאה בפרסום', 'error'); return; }
+    if (!r.ok) {
+      const data = await r.json().catch(() => ({}));
+      toast(data.error || 'שגיאה בפרסום', 'error');
+      return;
+    }
     const idx = data.findIndex(p => p.id === id);
     if (idx >= 0) data[idx].published = published ? 1 : 0;
     $('publish-photo-btn').classList.toggle('btn-hidden', published);

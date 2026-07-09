@@ -594,6 +594,11 @@ async function handlePhotos(request, env) {
     const { id } = body;
     if (!id) return jsonRes({ error: 'id חסר' }, 400, request);
 
+    const sellOrPublishFields = ['published', 'redbubble_url', 'redbubble_products', 'zazzle_products'];
+    if (BLOCKED_PHOTO_IDS.has(id) && sellOrPublishFields.some(f => body[f] !== undefined)) {
+      return jsonRes({ error: 'אסור לי להעלות את התמונה הזאת בגלל הפרה של זכויות יוצרים.' }, 403, request);
+    }
+
     if (body.published !== undefined) {
       await env.DB.prepare('UPDATE photos SET published=? WHERE id=?').bind(body.published ? 1 : 0, id).run();
       return jsonRes({ ok: true, published: body.published ? 1 : 0 }, 200, request);
