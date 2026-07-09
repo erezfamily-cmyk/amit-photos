@@ -1002,6 +1002,8 @@ def main():
         if not photo_url:
             print("No photo URL available. Provide --url or ensure photos.json has 'url' field.")
             sys.exit(1)
+        if photo_url.startswith("/"):
+            photo_url = "https://amitphotos.com" + photo_url
         print(f"Downloading from URL...")
         import requests as req_lib
         r = req_lib.get(photo_url, timeout=60)
