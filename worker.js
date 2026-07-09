@@ -535,8 +535,8 @@ async function handlePhotos(request, env) {
         return jsonRes(catRows.map(r => r.category), 200, request);
       }
       const sql = catFilter
-        ? 'SELECT id, title, category, thumbnail, redbubble_url, redbubble_products, zazzle_products FROM photos WHERE category=? ORDER BY CASE WHEN sort_order IS NULL THEN 1 ELSE 0 END, sort_order ASC, created_at DESC'
-        : 'SELECT id, title, category, thumbnail, redbubble_url, redbubble_products, zazzle_products FROM photos ORDER BY CASE WHEN sort_order IS NULL THEN 1 ELSE 0 END, sort_order ASC, created_at DESC';
+        ? 'SELECT id, title, category, thumbnail, redbubble_url, redbubble_products, zazzle_products FROM photos WHERE category=? AND published=1 ORDER BY CASE WHEN sort_order IS NULL THEN 1 ELSE 0 END, sort_order ASC, created_at DESC'
+        : 'SELECT id, title, category, thumbnail, redbubble_url, redbubble_products, zazzle_products FROM photos WHERE published=1 ORDER BY CASE WHEN sort_order IS NULL THEN 1 ELSE 0 END, sort_order ASC, created_at DESC';
       const { results: slimResults } = catFilter
         ? await env.DB.prepare(sql).bind(catFilter).all()
         : await env.DB.prepare(sql).all();
