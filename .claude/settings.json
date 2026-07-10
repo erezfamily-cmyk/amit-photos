@@ -95,7 +95,17 @@
       "Bash(chmod +x /tmp/create_locations_v2.sh)",
       "Bash(/tmp/create_locations_v2.sh)",
       "Bash(curl -s -H \"X-Admin-Password: Hadas2409\" \"https://amitphotos.com/api/admin/locations\")",
-      "Bash(grep -E \"\\\\.\\(js|ts\\)$\")"
+      "Bash(grep -E \"\\\\.\\(js|ts\\)$\")",
+      "Bash(tasklist *)",
+      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__take_snapshot",
+      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__navigate_page",
+      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__take_screenshot",
+      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__list_pages",
+      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__select_page",
+      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__new_page",
+      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__wait_for",
+      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__list_console_messages",
+      "mcp__claude_ai_Gmail__search_threads"
     ],
     "additionalDirectories": [
       "c:\\temp"

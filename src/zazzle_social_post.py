@@ -200,12 +200,18 @@ def post_to_facebook(photo, caption, product):
     return post_id
 
 
+THREADS_LIMIT = 500
+
+
 def post_to_threads(photo, caption, product):
     if not THREADS_USER_ID or not THREADS_TOKEN:
         print("⚠️  Missing THREADS_USER_ID / THREADS_ACCESS_TOKEN — skipping Threads")
         return None
 
-    full_caption = f"{caption}\n\n🛍️ {product.get('name', 'Print')}: {product.get('url', SITE_URL)}"
+    suffix = f"\n\n🛍️ {product.get('name', 'Print')}: {product.get('url', SITE_URL)}"
+    room = THREADS_LIMIT - len(suffix)
+    trimmed_caption = caption if len(caption) <= room else caption[:max(room - 1, 0)].rstrip() + "…"
+    full_caption = f"{trimmed_caption}{suffix}"
     if DRY_RUN:
         print(f"[dry-run] would post to Threads:\n{full_caption}\nimage: {_image_url(photo)}")
         return "dry-run-threads"
