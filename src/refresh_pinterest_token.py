@@ -7,7 +7,7 @@ refresh_pinterest_token.py
 (PINTEREST_ACCESS_TOKEN לא עודכן מ-7.5.2026 וכל הפרסום ל-Pinterest נכשל עם 401 בלי שאף אחד שם לב).
 
 דורש משתני סביבה:
-  PINTEREST_APP_ID       — מ-Pinterest Developer Console (קבוע: 1562228)
+  PINTEREST_APP_ID       — מ-Pinterest Developer Console (קבוע: 1569138, "Amit Photos Auto Post")
   PINTEREST_APP_SECRET   — Pinterest app secret
   PINTEREST_REFRESH_TOKEN — הrefresh token הנוכחי
   GH_PAT                 — GitHub Personal Access Token עם repo scope
@@ -23,7 +23,7 @@ PINTEREST_API = "https://api.pinterest.com/v5"
 GITHUB_API = "https://api.github.com"
 REPO = "erezfamily-cmyk/amit-photos"
 
-PINTEREST_APP_ID = os.environ.get("PINTEREST_APP_ID", "1562228")
+PINTEREST_APP_ID = os.environ.get("PINTEREST_APP_ID", "1569138")
 PINTEREST_APP_SECRET = os.environ.get("PINTEREST_APP_SECRET", "")
 PINTEREST_REFRESH_TOKEN = os.environ.get("PINTEREST_REFRESH_TOKEN", "")
 GH_PAT = os.environ.get("GH_PAT", "")

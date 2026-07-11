@@ -16,14 +16,14 @@ jobs:
     steps:
       - name: החלף code ב-token ושמור כ-secret
         env:
-          APP_ID: "1562228"
+          APP_ID: "1569138"
           APP_SECRET: ${{ secrets.PINTEREST_APP_SECRET }}
           GH_TOKEN: ${{ secrets.GH_PAT }}
         run: |
           RESPONSE=$(curl -s -X POST "https://api.pinterest.com/v5/oauth/token" \
             -u "$APP_ID:$APP_SECRET" \
             -H "Content-Type: application/x-www-form-urlencoded" \
-            -d "grant_type=authorization_code&code=${{ github.event.inputs.code }}&redirect_uri=https://localhost")
+            -d "grant_type=authorization_code&code=${{ github.event.inputs.code }}&redirect_uri=https://amitphotos.com/api/pinterest/callback")
 
           echo "תגובה מ-Pinterest: $RESPONSE"
 
