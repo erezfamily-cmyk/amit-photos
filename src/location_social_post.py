@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """
 Location Social Post Agent
-מפרסם דף מקום לצילום לכל 4 רשתות חברתיות, round-robin, כל 3 ימים.
+מפרסם דף מקום לצילום ל-Threads+Pinterest, round-robin, כל 7 ימים.
+IG/FB הוסרו (2026-07-12) — engagement אפס, ראה project_instagram_performance_insights.
 """
 
 import json
@@ -15,14 +16,9 @@ from pathlib import Path
 ROOT          = Path(__file__).parent.parent
 POSTED_FILE   = ROOT / "data" / "location_social_posted.json"
 SITE_URL      = "https://amitphotos.com"
-GRAPH_API     = "https://graph.facebook.com/v21.0"
 THREADS_API   = "https://graph.threads.net/v1.0"
 PINTEREST_API = "https://api.pinterest.com/v5"
 
-IG_USER_ID        = os.environ.get("INSTAGRAM_USER_ID", "")
-IG_TOKEN          = os.environ.get("INSTAGRAM_PAGE_TOKEN", "")
-FB_PAGE_ID        = os.environ.get("FACEBOOK_PAGE_ID", "")
-FB_TOKEN          = os.environ.get("FACEBOOK_PAGE_TOKEN", "")
 PINTEREST_TOKEN   = os.environ.get("PINTEREST_ACCESS_TOKEN", "")
 THREADS_USER_ID   = os.environ.get("THREADS_USER_ID", "")
 THREADS_TOKEN     = os.environ.get("THREADS_ACCESS_TOKEN", "")
@@ -99,36 +95,7 @@ Best seasons: {seasons or 'year-round'}
 Photographer's tip: {tip}
 Page URL: {page_url}"""
 
-    if platform == "instagram":
-        system = (
-            "אתה עמית, צלם ישראלי, כותב בגוף ראשון על מקומות שצילמת בהם. "
-            "סגנון: אישי, מעניין, נגיש — כאילו אתה ממליץ לחבר על מקום שגילית. "
-            "כשיש מונח טכני — מסביר אותו בסוגריים. כתוב בעברית בלבד."
-        )
-        prompt = f"""{context}
-
-כתוב כיתוב אינסטגרם בגוף ראשון (2-3 משפטים). ספר איפה הייתי, מה מיוחד במקום לצילום ומתי כדאי לבוא.
-סיים ב-📍 {page_url}
-ואז שורת hashtags:
-#צילום_נוף #landscape #israel #travelphotography #photospot #amitphotos #ישראל #טבע #ig_israel
-
-פלט רק את הכיתוב."""
-
-    elif platform == "facebook":
-        system = (
-            "אתה עמית, צלם ישראלי, כותב בגוף ראשון על מקומות שצילמת בהם לפייסבוק. "
-            "סגנון: חם, אישי, חינוכי — כאילו אתה מסביר לחבר למה המקום שווה ביקור. "
-            "כשיש מונח טכני — מסביר אותו בסוגריים. כתוב בעברית בלבד."
-        )
-        prompt = f"""{context}
-
-כתוב פוסט פייסבוק בגוף ראשון (2-3 משפטים). ספר מה מיוחד במקום מבחינה צילומית, מתי כדאי להגיע ומה טיפ אחד שלמדתי שם.
-כלול את הקישור: {page_url}
-סיים עם: #צילום #ישראל #photography #nature
-
-פלט רק את הפוסט."""
-
-    elif platform == "threads":
+    if platform == "threads":
         system = (
             "אתה עמית, צלם ישראלי, כותב בגוף ראשון על מקומות שצילמת בהם ל-Threads. "
             "קצר מאוד — משפט-שניים. ישיר ותכליתי. כתוב בעברית בלבד."
@@ -227,57 +194,6 @@ def _try_catbox(img_bytes):
 
 
 # ===== Platform posting =====
-
-def post_to_instagram(image_url, caption):
-    if not IG_USER_ID or not IG_TOKEN:
-        print("⚠️  Instagram credentials חסרים — דלג")
-        return None
-
-    container = requests.post(f"{GRAPH_API}/{IG_USER_ID}/media", data={
-        "image_url": image_url, "caption": caption, "access_token": IG_TOKEN,
-    }, timeout=30)
-    if not container.ok:
-        print(f"❌ Instagram container: {container.status_code} — {container.text}")
-        return None
-    creation_id = container.json().get("id")
-    if not creation_id:
-        print(f"❌ חסר creation_id: {container.json()}")
-        return None
-
-    for _ in range(12):
-        time.sleep(5)
-        status = requests.get(f"{GRAPH_API}/{creation_id}",
-            params={"fields": "status_code", "access_token": IG_TOKEN},
-            timeout=30).json().get("status_code", "")
-        print(f"⏳ Instagram: {status}")
-        if status == "FINISHED":
-            break
-        if status == "ERROR":
-            print("❌ Instagram processing error")
-            return None
-
-    publish = requests.post(f"{GRAPH_API}/{IG_USER_ID}/media_publish", data={
-        "creation_id": creation_id, "access_token": IG_TOKEN,
-    }, timeout=30)
-    if not publish.ok:
-        print(f"❌ Instagram publish: {publish.status_code} — {publish.text}")
-        return None
-    return publish.json().get("id")
-
-
-def post_to_facebook(image_url, caption):
-    if not FB_PAGE_ID or not FB_TOKEN:
-        print("⚠️  Facebook credentials חסרים — דלג")
-        return None
-
-    resp = requests.post(f"{GRAPH_API}/{FB_PAGE_ID}/photos", data={
-        "url": image_url, "caption": caption, "access_token": FB_TOKEN,
-    }, timeout=30)
-    if not resp.ok:
-        print(f"❌ Facebook: {resp.status_code} — {resp.text}")
-        return None
-    return resp.json().get("id")
-
 
 def _get_or_create_pinterest_board(token, board_name):
     data = requests.get(f"{PINTEREST_API}/boards",
@@ -403,21 +319,11 @@ def main():
     image_url = ensure_public_url(cover_url)
 
     print("\n✍️  מייצר כיתובים...")
-    ig_caption        = generate_caption(loc_detail, "instagram")
-    fb_caption        = generate_caption(loc_detail, "facebook")
     threads_caption   = generate_caption(loc_detail, "threads")
     pinterest_caption = generate_caption(loc_detail, "pinterest")
-    print(f"Instagram preview: {ig_caption[:120]}...")
+    print(f"Threads preview: {threads_caption[:120]}...")
 
     results = {}
-
-    print("\n📤 מפרסם לאינסטגרם...")
-    results["instagram"] = post_to_instagram(image_url, ig_caption)
-    print(f"{'✅' if results['instagram'] else '❌'} Instagram: {results['instagram']}")
-
-    print("\n📤 מפרסם לפייסבוק...")
-    results["facebook"] = post_to_facebook(image_url, fb_caption)
-    print(f"{'✅' if results['facebook'] else '❌'} Facebook: {results['facebook']}")
 
     print("\n📤 מפרסם ל-Pinterest...")
     results["pinterest"] = post_to_pinterest(image_url, pinterest_caption, loc_detail)
@@ -436,7 +342,7 @@ def main():
     print(f"\n💾 עודכן {POSTED_FILE.name} — אינדקס הבא: {next_index}")
 
     success_count = sum(1 for v in results.values() if v)
-    print(f"\n✅ הסתיים — {success_count}/4 רשתות פורסמו בהצלחה")
+    print(f"\n✅ הסתיים — {success_count}/2 רשתות פורסמו בהצלחה")
     if success_count == 0:
         sys.exit(1)
 
