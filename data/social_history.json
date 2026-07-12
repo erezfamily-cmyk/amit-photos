@@ -37,5 +37,18 @@
     "fb_fans": 276,
     "fb_posts": 10,
     "fb_likes": 0
+  },
+  {
+    "week_ending": "12/07/2026",
+    "generated_at": "2026-07-12T08:03:40.002999+00:00",
+    "ig_followers": 660,
+    "ig_posts": 14,
+    "ig_likes": 16,
+    "ig_comments": 0,
+    "ig_avg_likes": 1.1,
+    "ig_engagement": 0.0017,
+    "fb_fans": 276,
+    "fb_posts": 14,
+    "fb_likes": 0
   }
 ]
