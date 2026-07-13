@@ -505,12 +505,12 @@ Expected: `nearby: 2-5 | when_to_visit: False` (עדיין ריק עד re-enrich
 הרץ את הפקודות הבאות אחת אחרי השנייה (כל אחת לוקחת ~5 שניות):
 
 ```bash
-curl -s -X POST "https://amitphotos.com/api/admin/shmvrt-htba-hchvlh/enrich" -H "X-Admin-Password: Hadas2409" | python3 -c "import json,sys; d=json.load(sys.stdin); print('חולה:', bool(d.get('when_to_visit')))"
-curl -s -X POST "https://amitphotos.com/api/admin/park-avtvpyh/enrich" -H "X-Admin-Password: Hadas2409" | python3 -c "import json,sys; d=json.load(sys.stdin); print('אוטופיה:', bool(d.get('when_to_visit')))"
-curl -s -X POST "https://amitphotos.com/api/admin/marvt-byt-gvbryn/enrich" -H "X-Admin-Password: Hadas2409" | python3 -c "import json,sys; d=json.load(sys.stdin); print('בית גוברין:', bool(d.get('when_to_visit')))"
-curl -s -X POST "https://amitphotos.com/api/admin/ym-hmlch/enrich" -H "X-Admin-Password: Hadas2409" | python3 -c "import json,sys; d=json.load(sys.stdin); print('ים המלח:', bool(d.get('when_to_visit')))"
-curl -s -X POST "https://amitphotos.com/api/admin/hayr-hatykh-byrvshlym/enrich" -H "X-Admin-Password: Hadas2409" | python3 -c "import json,sys; d=json.load(sys.stdin); print('ירושלים:', bool(d.get('when_to_visit')))"
-curl -s -X POST "https://amitphotos.com/api/admin/mtzdh/enrich" -H "X-Admin-Password: Hadas2409" | python3 -c "import json,sys; d=json.load(sys.stdin); print('מצדה:', bool(d.get('when_to_visit')))"
+curl -s -X POST "https://amitphotos.com/api/admin/shmvrt-htba-hchvlh/enrich" -H "X-Admin-Password: <ADMIN_PASSWORD>" | python3 -c "import json,sys; d=json.load(sys.stdin); print('חולה:', bool(d.get('when_to_visit')))"
+curl -s -X POST "https://amitphotos.com/api/admin/park-avtvpyh/enrich" -H "X-Admin-Password: <ADMIN_PASSWORD>" | python3 -c "import json,sys; d=json.load(sys.stdin); print('אוטופיה:', bool(d.get('when_to_visit')))"
+curl -s -X POST "https://amitphotos.com/api/admin/marvt-byt-gvbryn/enrich" -H "X-Admin-Password: <ADMIN_PASSWORD>" | python3 -c "import json,sys; d=json.load(sys.stdin); print('בית גוברין:', bool(d.get('when_to_visit')))"
+curl -s -X POST "https://amitphotos.com/api/admin/ym-hmlch/enrich" -H "X-Admin-Password: <ADMIN_PASSWORD>" | python3 -c "import json,sys; d=json.load(sys.stdin); print('ים המלח:', bool(d.get('when_to_visit')))"
+curl -s -X POST "https://amitphotos.com/api/admin/hayr-hatykh-byrvshlym/enrich" -H "X-Admin-Password: <ADMIN_PASSWORD>" | python3 -c "import json,sys; d=json.load(sys.stdin); print('ירושלים:', bool(d.get('when_to_visit')))"
+curl -s -X POST "https://amitphotos.com/api/admin/mtzdh/enrich" -H "X-Admin-Password: <ADMIN_PASSWORD>" | python3 -c "import json,sys; d=json.load(sys.stdin); print('מצדה:', bool(d.get('when_to_visit')))"
 ```
 
 Expected: כל שורה מדפיסה `True`.
@@ -548,7 +548,7 @@ git commit -m "feat: deploy locations expansion phase 1 — 3 new sections on sp
 import requests, json, time
 
 BASE = "https://amitphotos.com"
-HEADERS = {"X-Admin-Password": "Hadas2409", "Content-Type": "application/json"}
+HEADERS = {"X-Admin-Password": "<ADMIN_PASSWORD>", "Content-Type": "application/json"}
 
 LOCATIONS = [
     {"title": "מסגד שייח זאיד, אבו דאבי", "region": "חו\"ל — אמירויות"},
@@ -632,7 +632,7 @@ Expected: רשימת IDs ראשונים לכל קטגוריה.
 import json, requests, time
 
 BASE = "https://amitphotos.com"
-HEADERS = {"X-Admin-Password": "Hadas2409", "Content-Type": "application/json"}
+HEADERS = {"X-Admin-Password": "<ADMIN_PASSWORD>", "Content-Type": "application/json"}
 
 photos = json.load(open("data/photos.json"))
 
@@ -697,7 +697,7 @@ Expected: כל מקום מקבל לפחות 3-4 תמונות. אם מקום מו
 python3 -c "
 import requests, time
 BASE = 'https://amitphotos.com'
-H = {'X-Admin-Password': 'Hadas2409', 'Content-Type': 'application/json'}
+H = {'X-Admin-Password': '<ADMIN_PASSWORD>', 'Content-Type': 'application/json'}
 # עדכן slugs:
 slugs = [
   'msgd-shykh-zayd-abv-daby',

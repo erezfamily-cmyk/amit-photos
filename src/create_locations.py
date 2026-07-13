@@ -2,10 +2,10 @@
 יוצר 7 מקומות חדשים דרך admin API.
 הרצה: python src/create_locations.py
 """
-import urllib.request, urllib.parse, json, time
+import os, urllib.request, urllib.parse, json, time
 
 BASE = "https://amitphotos.com"
-HEADERS = {"X-Admin-Password": "Hadas2409", "Content-Type": "application/json"}
+HEADERS = {"X-Admin-Password": os.environ.get("ADMIN_PASSWORD", ""), "Content-Type": "application/json"}
 
 LOCATIONS = [
     {"title": "מסגד שייח זאיד, אבו דאבי", "region": "חו\"ל — אמירויות"},
