@@ -7,17 +7,6 @@ URL: `https://amitphotos.com`
 
 ---
 
-## טכנולוגיה
-
-- HTML5 / CSS3 / Vanilla JS — ללא frameworks
-- Google Fonts: Syne (כותרות) + Heebo (עברית)
-- **Cloudflare Worker** (`worker.js`) — API, auth, הגשת R2
-- **Cloudflare D1** (`amit-photos-db`) — מסד נתונים תמונות + settings + sessions
-- **Cloudflare R2** (`amit-photos-images`) — אחסון תמונות WebP
-- **GitHub Pages** — static assets (HTML/CSS/JS/photos.json)
-
----
-
 ## ארכיטקטורת גלריה — מקורות נתונים
 
 הגלריה (`assets/js/gallery.js`) קוראת משני מקורות **במקביל**:
@@ -82,19 +71,6 @@ async function checkAuth(request, env) {
 
 ---
 
-## Endpoints מרכזיים (Worker)
-
-| method | path | מה עושה |
-|--------|------|---------|
-| GET | `/api/photos` | כל תמונות D1 published |
-| POST | `/api/upload` | מעלה קובץ ל-R2 + מוסיף ל-D1 עם UUID חדש |
-| PATCH | `/api/photos` | מעדכן שדות ב-D1 (title/category/url/thumbnail/r2_key/published) |
-| DELETE | `/api/photos?id=` | מוחק מ-D1 + R2 |
-| POST | `/api/repair-r2` | מעלה קובץ ל-R2 עם key מוגדר — **לא** נוגע ב-D1 |
-| GET | `/photos/{key}` | מגיש תמונה מ-R2 (תומך בresize `?w=N`) |
-
----
-
 ## קבצים מרכזיים
 
 | קובץ | תפקיד |
@@ -118,27 +94,6 @@ async function checkAuth(request, env) {
 | `fix_drive_in_d1.py` | מתקן Drive URLs ב-D1 → R2 WebP (שמר Drive ID כ-key) |
 | `convert_r2_jpg_to_webp.py` | ממיר JPG ב-R2 ל-WebP, מעדכן D1 (89% חיסכון) |
 | `migrate_gallery_to_r2.py` | מעדכן photos.json URLs ל-R2 (פחות רלוונטי כשD1 ראשי) |
-
----
-
-## מבנה data/photos.json
-
-```json
-{
-  "id": "drive-file-id או uuid",
-  "title": "כותרת",
-  "category": "טבע | פורטרט | עירוני | אירועים | טנזניה | ...",
-  "parent_category": "קטגוריה-אב",
-  "url": "/photos/{key}.webp",
-  "thumbnail": "/photos/thumb/{key}.webp",
-  "description": "תיאור",
-  "filename": "שם קובץ מקורי",
-  "width": 4580,
-  "height": 3053,
-  "exif": {},
-  "added_at": "2026-01-01"
-}
-```
 
 ---
 
@@ -187,12 +142,4 @@ async function checkAuth(request, env) {
 
 **חדש:** `/camera/night/` — צילום לילה (מסלולי אור, ירח, Star Trails, Light Painting). סימולטור canvas עם סליידר משך חשיפה (1-30s) שמצייר מסלולי אור מכוניות + קשתות star-trail — סצנה וקטורית procedural (seeded RNG, ללא תמונות).
 
-**כשמוסיפים מדריך /camera/ חדש — 3 מקומות רישום:**
-
-| קובץ | מה מוסיפים |
-|------|------------|
-| `camera/index.html` | כרטיס hub (card-icon/title/desc/cta) |
-| `worker.js` — `staticPages` array | שורת sitemap (`loc`/`priority`/`changefreq`) — דורש `npx wrangler deploy` |
-| `src/camera_edu_post.py` — `EDUCATION_PAGES` | ערך לרוטציית פרסום אוטומטי לרשתות (key/url/title/emoji/best_categories/angle/hook) |
-
-**TODO:** ברשומות ישנות ב-`EDUCATION_PAGES`, חלק מערכי `best_categories` (למשל "עירוני", "טבע", "פורטרט") לא קיימים כקטגוריות אמיתיות ב-`photos.json` (הקטגוריות האמיתיות הן שמות מקומות/מדינות). יש fallback לכל מאגר התמונות כשאין התאמה — עובד, אבל בלי טירגוט. שווה ניקוי מרוכז.
+**כשמוסיפים מדריך /camera/ חדש** — ראה סקיל `add-camera-guide` (3 מקומות רישום + TODO ידוע).

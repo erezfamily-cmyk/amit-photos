@@ -41,5 +41,8 @@
       "Bash(curl -s \"https://amitphotos.com/api/photos?limit=50\")",
       "Bash(curl -s \"https://amitphotos.com/api/photos?limit=831\")"
     ]
+  },
+  "enabledPlugins": {
+    "playground@claude-plugins-official": false
   }
 }
