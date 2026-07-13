@@ -1669,6 +1669,7 @@ function transitionBuyStep(fromId, toId, direction) {
 function showBuyStep2(photo, size) {
   const modal = document.getElementById('buy-modal');
   modal._selectedSize = size;
+  trackEvent('add_size', photo);
 
   // Thumbnail
   const confirmImg = document.getElementById('buy-confirm-img');
