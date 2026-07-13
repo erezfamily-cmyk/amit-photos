@@ -140,7 +140,7 @@ def fetch_ga4_data(token):
             "filter": {
                 "fieldName": "eventName",
                 "inListFilter": {"values": [
-                    "purchase_intent", "view_item", "add_size", "purchase", "generate_lead",
+                    "purchase_intent", "photo_view", "add_size", "purchase", "generate_lead",
                     "print_intent", "print_type_selected", "print_checkout",
                 ]},
             }
@@ -208,7 +208,7 @@ def build_data_summary(data):
         lines.append(f"  {r['ארץ']}: {r['sessions']} סשנים")
     lines += ["", "--- משפך מכירה דיגיטלית (buy modal) ---"]
     fe = data["funnel_events"]
-    lines.append(f"  צפיות בתמונה (view_item):        {fe.get('view_item', '0')}")
+    lines.append(f"  צפיות בתמונה (photo_view):        {fe.get('photo_view', '0')}")
     lines.append(f"  פתיחת מודל קנייה (purchase_intent): {fe.get('purchase_intent', '0')}")
     lines.append(f"  בחירת גודל/מוצר (add_size):        {fe.get('add_size', '0')}")
     lines.append(f"  רכישה שהושלמה (purchase):          {fe.get('purchase', '0')}")
@@ -229,7 +229,7 @@ def generate_analysis(data_summary):
 הקהל: אנשים שאוהבים אמנות צילומית, מעצבי פנים, קונים רגשיים — לא מחפשים צלם לאירועים.
 הכנסות מגיעות מ: מכירות דיגיטל (PayPal), הדפסות (Gelato), affiliate (Adorama/Skylum).
 אתה מנתח נתוני Google Analytics שבועיים ומציע המלצות ספציפיות ומעשיות לגלריית fine art.
-שים לב לשני משפכים נפרדים: מכירה דיגיטלית (view_item → purchase_intent → add_size → purchase)
+שים לב לשני משפכים נפרדים: מכירה דיגיטלית (photo_view → purchase_intent → add_size → purchase)
 ומכירת הדפסה פיזית דרך Gelato (print_intent → print_type_selected → print_checkout → הזמנה
 מושלמת ב-print_orders). אתר לא הצליח לסגור אף הזמנת הדפסה מעולם, אז ירידה חדה בין שלבים
 באחד המשפכים היא הממצא הכי חשוב לדווח עליו.
@@ -304,7 +304,7 @@ def build_html_email(data, analysis):
   <div style="padding:0 24px 20px">
     <h2 style="color:#2c3e50;margin:0 0 8px;font-size:1em">משפך מכירה דיגיטלית (buy modal)</h2>
     <div style="background:#f8f9fa;border-radius:8px;padding:12px 16px;display:flex;gap:10px;flex-wrap:wrap">
-      {card("צפיות בתמונה", data['funnel_events'].get('view_item', '0'))}
+      {card("צפיות בתמונה", data['funnel_events'].get('photo_view', '0'))}
       {card("פתיחת מודל קנייה", data['funnel_events'].get('purchase_intent', '0'))}
       {card("בחירת גודל", data['funnel_events'].get('add_size', '0'))}
       {card("רכישה הושלמה", data['funnel_events'].get('purchase', '0'))}
