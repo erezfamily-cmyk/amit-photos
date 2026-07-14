@@ -97,7 +97,7 @@ async function handleAdminNlSend(request, env, id) {
 
   const origin = new URL(request.url).origin;
   const issueUrl = `${origin}/newsletter/${issue.slug}/`;
-  const fromEmail = env.FROM_EMAIL || 'amit@amitphotos.com';
+  const fromEmail = env.FROM_EMAIL || 'contact@amitphotos.com';
 
   const batch = subscribers.map(sub => ({
     from: fromEmail,

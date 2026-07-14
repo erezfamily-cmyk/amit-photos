@@ -36,7 +36,7 @@ jobs:
           RESEND_API_KEY:   ${{ secrets.RESEND_API_KEY }}
           ANTHROPIC_API_KEY: ${{ secrets.AMIT_PHOTO_AGENT }}
           REPORT_EMAIL:     erez.family@gmail.com
-          FROM_EMAIL:       "Amit Photos <amit@amitphotos.com>"
+          FROM_EMAIL:       "Amit Photos <contact@amitphotos.com>"
         run: python src/ga_weekly_report.py
 
       - name: שמירת דוח ל-git

@@ -17,7 +17,7 @@ GA_CLIENT_SECRET = os.environ.get("GA_CLIENT_SECRET", "")
 RESEND_KEY       = os.environ.get("RESEND_API_KEY", "")
 ANTHROPIC_KEY    = os.environ.get("ANTHROPIC_API_KEY", "").strip()
 REPORT_EMAIL     = os.environ.get("REPORT_EMAIL", "erez.family@gmail.com")
-FROM_EMAIL       = os.environ.get("FROM_EMAIL", "Amit Photos <amit@amitphotos.com>")
+FROM_EMAIL       = os.environ.get("FROM_EMAIL", "Amit Photos <contact@amitphotos.com>")
 
 GA4_API_BASE = "https://analyticsdata.googleapis.com/v1beta"
 

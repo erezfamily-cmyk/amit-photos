@@ -93,7 +93,7 @@ if (method === 'POST') {
 ```js
     // שלח מייל אישור לנרשם
     if (env.RESEND_API_KEY) {
-      const fromEmail = env.FROM_EMAIL || 'amit@amitphotos.com';
+      const fromEmail = env.FROM_EMAIL || 'contact@amitphotos.com';
       const confirmHtml = `<div dir="rtl" style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:2rem;color:#111">
         <h2 style="color:#c8a96e;font-family:sans-serif">AMIT PHOTOS</h2>
         <p>שלום${name ? ' ' + name : ''},</p>
@@ -114,7 +114,7 @@ if (method === 'POST') {
 ```js
     // שלח מייל אישור לנרשם
     if (env.RESEND_API_KEY) {
-      const fromEmail = env.FROM_EMAIL || 'amit@amitphotos.com';
+      const fromEmail = env.FROM_EMAIL || 'contact@amitphotos.com';
       const isLeadMagnet = source === 'lead_magnet' || source === 'popup';
       const subject = isLeadMagnet
         ? 'הנה ה-PDF שלך — 50 טיפים לצילום'

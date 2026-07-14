@@ -354,7 +354,7 @@ async function handleSubscribers(request, env) {
     if (existing) {
       // אם נרשם קיים מבקש PDF — שלח שוב
       if (isLeadMagnetSource && env.RESEND_API_KEY) {
-        const fromEmail = env.FROM_EMAIL || 'Amit Photos <amit@amitphotos.com>';
+        const fromEmail = env.FROM_EMAIL || 'Amit Photos <contact@amitphotos.com>';
         await fetch('https://api.resend.com/emails', {
           method: 'POST',
           headers: { 'Authorization': `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
@@ -395,7 +395,7 @@ async function handleSubscribers(request, env) {
 
     // שלח מייל אישור לנרשם
     if (env.RESEND_API_KEY) {
-      const fromEmail = env.FROM_EMAIL || 'Amit Photos <amit@amitphotos.com>';
+      const fromEmail = env.FROM_EMAIL || 'Amit Photos <contact@amitphotos.com>';
       const isLeadMagnet = ['lead_magnet', 'popup', 'subpage_strip', 'homepage_section'].includes(source);
       const subject = isLeadMagnet
         ? (isEn ? 'Your PDF — 50 Photography Tips' : 'הנה ה-PDF שלך — 50 טיפים לצילום')
@@ -1993,7 +1993,7 @@ async function handlePrintOrderComplete(request, env) {
 
   // Send confirmation email with cancel link
   if (address.email && env.RESEND_API_KEY) {
-    const fromEmail = env.FROM_EMAIL || 'amit@amitphotos.com';
+    const fromEmail = env.FROM_EMAIL || 'contact@amitphotos.com';
     const cancelUrl = `${origin}/api/print/cancel?token=${orderId}`;
     const confirmHtml = `<!DOCTYPE html>
 <html lang="he" dir="rtl">
@@ -2199,7 +2199,7 @@ async function handlePrintWebhook(request, env) {
       'SELECT * FROM print_orders WHERE prodigi_order_id=?'
     ).bind(gelatoOrderId).first();
     if (order?.customer_email) {
-      const fromEmail = env.FROM_EMAIL || 'amit@amitphotos.com';
+      const fromEmail = env.FROM_EMAIL || 'contact@amitphotos.com';
       const fulfillments = payload.items?.[0]?.fulfillments || [];
       const tracking = fulfillments[0]?.trackingCode || '';
       const html = `<!DOCTYPE html>
@@ -2317,7 +2317,7 @@ async function handleNewsletter(request, env) {
   const { results: subscribers } = await env.DB.prepare('SELECT id, email, name FROM subscribers').all();
   if (!subscribers.length) return jsonRes({ error: 'אין נרשמים ברשימה' }, 400, request);
 
-  const fromEmail = env.FROM_EMAIL || 'amit@amitphotos.com';
+  const fromEmail = env.FROM_EMAIL || 'contact@amitphotos.com';
   const origin = new URL(request.url).origin;
 
   const batch = subscribers.map(sub => ({
@@ -2353,7 +2353,7 @@ async function handleReply(request, env) {
   const { to, subject, body } = await request.json().catch(() => ({}));
   if (!to || !subject || !body) return jsonRes({ error: 'חסרים שדות' }, 400, request);
 
-  const fromEmail = env.FROM_EMAIL || 'amit@amitphotos.com';
+  const fromEmail = env.FROM_EMAIL || 'contact@amitphotos.com';
   const safeBody = body.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   const html = `<!DOCTYPE html>
 <html lang="he" dir="rtl">
@@ -7092,7 +7092,7 @@ async function handleAdminNlSendTest(request, env, id) {
   if (!issue) return jsonRes({ error: 'not found' }, 404, request);
   const origin = new URL(request.url).origin;
   const issueUrl = `${origin}/newsletter/${issue.slug}/`;
-  const fromEmail = env.FROM_EMAIL || 'amit@amitphotos.com';
+  const fromEmail = env.FROM_EMAIL || 'contact@amitphotos.com';
   const res = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: { 'Authorization': `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
@@ -7125,7 +7125,7 @@ async function handleAdminNlSend(request, env, id) {
 
   const origin = new URL(request.url).origin;
   const issueUrl = `${origin}/newsletter/${issue.slug}/`;
-  const fromEmail = env.FROM_EMAIL || 'amit@amitphotos.com';
+  const fromEmail = env.FROM_EMAIL || 'contact@amitphotos.com';
 
   const batch = subscribers.map(sub => {
     const lang = sub.lang || 'he';
@@ -7562,7 +7562,7 @@ async function runWelcomeSequenceCron(env) {
        LIMIT 50`
     ).bind(WELCOME_LAUNCH_DATE).all();
 
-    const fromEmail = env.FROM_EMAIL || 'Amit Photos <amit@amitphotos.com>';
+    const fromEmail = env.FROM_EMAIL || 'Amit Photos <contact@amitphotos.com>';
     const now = Date.now();
 
     for (const sub of results || []) {
