@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>הצהרת נגישות — Amit Photos</title>
+<meta name="description" content="הצהרת הנגישות של אתר Amit Photos — amitphotos.com">
+<link rel="canonical" href="https://amitphotos.com/accessibility/" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #0a0a0a; --surface: #111; --border: #222;
+  --accent: #c8a96e; --text: #f0ede8; --muted: #888;
+}
+body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--text);
+  direction: rtl; min-height: 100vh; padding: 0 0 4rem; }
+.site-header { display: flex; align-items: center; justify-content: space-between;
+  padding: 1rem 1.25rem; border-bottom: 1px solid var(--border); }
+.site-title { font-family: 'Syne', sans-serif; font-size: 1.1rem;
+  color: var(--accent); text-decoration: none; }
+.content { max-width: 800px; margin: 0 auto; padding: 2.5rem 1.25rem; }
+.lang-toggle { text-align: left; margin-bottom: 2rem; }
+.lang-toggle button { background: none; border: 1px solid var(--border); color: var(--muted);
+  padding: .35rem .9rem; border-radius: 20px; cursor: pointer; font-size: .85rem;
+  font-family: 'Heebo', sans-serif; transition: border-color .2s, color .2s; }
+.lang-toggle button:hover, .lang-toggle button.active { border-color: var(--accent); color: var(--accent); }
+h1 { font-family: 'Syne', sans-serif; font-size: 2rem; color: var(--accent); margin-bottom: .5rem; }
+.updated { color: var(--muted); font-size: .85rem; margin-bottom: 2rem; }
+h2 { font-family: 'Syne', sans-serif; font-size: 1.2rem; color: var(--accent);
+  margin: 2rem 0 .75rem; }
+p { color: var(--muted); line-height: 1.75; margin-bottom: 1rem; }
+ul { color: var(--muted); line-height: 1.75; margin: 0 1.5rem 1rem; }
+ul li { margin-bottom: .4rem; }
+a { color: var(--accent); }
+.contact-box { background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+  padding: 1.25rem; margin: 1rem 0; }
+.section-en { display: none; direction: ltr; text-align: left; }
+.section-he { display: block; }
+.header-privacy-link { color: var(--muted); font-size: .85rem; text-decoration: none; }
+</style>
+</head>
+<body>
+<div class="site-header">
+  <a class="site-title" href="/">Amit Photos</a>
+  <a href="/privacy/" class="header-privacy-link">מדיניות פרטיות</a>
+</div>
+
+<div class="content">
+  <div class="lang-toggle">
+    <button class="active" onclick="setLang('he')" id="btn-he">עברית</button>
+    <button onclick="setLang('en')" id="btn-en">English</button>
+  </div>
+
+  <!-- HEBREW -->
+  <div class="section-he" id="section-he">
+    <h1>הצהרת נגישות</h1>
+    <p class="updated">עודכן לאחרונה: 14 ביולי 2026</p>
+
+    <h2>1. מחויבות לנגישות</h2>
+    <p>אתר Amit Photos (amitphotos.com) שואף לאפשר גישה נוחה ושוויונית לכלל המשתמשים, כולל אנשים עם מוגבלות, בהתאם לתקן הישראלי (ת"י) 5568 ברמת AA ולחוק שוויון זכויות לאנשים עם מוגבלות.</p>
+
+    <h2>2. מה נעשה באתר</h2>
+    <ul>
+      <li>טקסט חלופי (alt) לתמונות בגלריה, כך שקוראי מסך יכולים לתאר את תוכן התמונה.</li>
+      <li>ניגודיות צבעים העומדת בדרישות התקן (יחס של 4.5:1 לפחות לטקסט רגיל).</li>
+      <li>ניווט מלא במקלדת — כולל קישור דילוג לתוכן הראשי ואינדיקציית פוקוס ברורה.</li>
+      <li>רכיב נגישות (בפינת המסך) המאפשר הגדלת/הקטנת טקסט, מצב ניגודיות גבוהה, ועצירת אנימציות.</li>
+    </ul>
+
+    <h2>3. מגבלות ידועות</h2>
+    <p>אנו ממשיכים לעבוד על שיפור הנגישות באתר. אם נתקלת ברכיב שאינו נגיש, נשמח שתדווח/י לנו כדי שנוכל לתקן.</p>
+
+    <h2>4. רכז/ת נגישות</h2>
+    <div class="contact-box">
+      <p style="margin-bottom:0"><strong>שם:</strong> [ממתין לפרטים]<br>
+      <strong>טלפון/מייל:</strong> [ממתין לפרטים]</p>
+    </div>
+    <p>לכל פנייה בנושא נגישות, כולל דיווח על בעיה או בקשה לסיוע בגישה לתוכן — ניתן לפנות ישירות לרכז/ת הנגישות שלעיל, או במייל <a href="mailto:amit@amitphotos.com">amit@amitphotos.com</a>.</p>
+  </div>
+
+  <!-- ENGLISH -->
+  <div class="section-en" id="section-en">
+    <h1>Accessibility Statement</h1>
+    <p class="updated">Last updated: July 14, 2026</p>
+
+    <h2>1. Our Commitment to Accessibility</h2>
+    <p>Amit Photos (amitphotos.com) strives to provide convenient and equal access to all users, including people with disabilities, in accordance with Israeli Standard (IS) 5568 (WCAG 2.0 Level AA) and the Equal Rights for Persons with Disabilities Law.</p>
+
+    <h2>2. What We've Done</h2>
+    <ul>
+      <li>Alt text on gallery images, so screen readers can describe image content.</li>
+      <li>Color contrast meeting the standard's requirements (at least 4.5:1 for normal text).</li>
+      <li>Full keyboard navigation — including a skip-to-content link and a clear focus indicator.</li>
+      <li>An accessibility widget (corner of the screen) for increasing/decreasing text size, high-contrast mode, and stopping animations.</li>
+    </ul>
+
+    <h2>3. Known Limitations</h2>
+    <p>We are continuing to improve the site's accessibility. If you encounter an inaccessible element, we'd appreciate you letting us know so we can fix it.</p>
+
+    <h2>4. Accessibility Coordinator</h2>
+    <div class="contact-box">
+      <p style="margin-bottom:0"><strong>Name:</strong> [pending]<br>
+      <strong>Phone/Email:</strong> [pending]</p>
+    </div>
+    <p>For any accessibility-related inquiry, including reporting an issue or requesting help accessing content — please contact the accessibility coordinator above, or email <a href="mailto:amit@amitphotos.com">amit@amitphotos.com</a>.</p>
+  </div>
+</div>
+
+<script>
+function setLang(lang) {
+  document.getElementById('section-he').style.display = lang === 'he' ? 'block' : 'none';
+  document.getElementById('section-en').style.display = lang === 'en' ? 'block' : 'none';
+  document.getElementById('btn-he').classList.toggle('active', lang === 'he');
+  document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+  document.documentElement.setAttribute('dir', lang === 'he' ? 'rtl' : 'ltr');
+  document.documentElement.setAttribute('lang', lang);
+}
+</script>
+<script src="/assets/js/accessibility-widget.js"></script>
+</body>
+</html>

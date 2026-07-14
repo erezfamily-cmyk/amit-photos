@@ -81,6 +81,12 @@ a:hover{color:var(--accent-hover)}
 }
 .btn-submit:hover{background:var(--accent-hover)}
 .btn-submit:disabled{opacity:.6;cursor:default}
+.form-consent-row{
+  display:flex;align-items:flex-start;gap:.5rem;font-size:.72rem;color:var(--text-muted);
+  margin-bottom:.5rem;cursor:pointer;text-align:start;
+}
+.form-consent-row input[type="checkbox"]{margin-top:.15rem;flex-shrink:0;cursor:pointer}
+.form-consent-row a{color:var(--accent)}
 .form-note{font-size:.65rem;color:#555;margin-top:.5rem}
 #form-msg{font-size:.85rem;min-height:1.2em;margin-top:.4rem}
 #form-msg.ok{color:#4caf7d}
@@ -153,6 +159,14 @@ footer a{color:#555}
       <p data-i18n="form.sub">הכנס את המייל שלך וקבל הורדה מיידית</p>
       <form id="guide-form">
         <input type="email" id="guide-email" placeholder="כתובת המייל שלך" required data-i18n-placeholder="form.placeholder">
+        <label class="form-consent-row">
+          <input type="checkbox" id="guide-consent-privacy" required />
+          <span data-i18n="form.consent.privacy" data-i18n-html>קראתי ואני מאשר/ת את <a href="/privacy/" target="_blank" rel="noopener">מדיניות הפרטיות</a></span>
+        </label>
+        <label class="form-consent-row">
+          <input type="checkbox" id="guide-consent-marketing" required />
+          <span data-i18n="form.consent.marketing">מעוניין/ת לקבל עדכונים ותוכן שיווקי במייל</span>
+        </label>
         <button type="submit" class="btn-submit" id="guide-btn" data-i18n="form.btn">שלח לי ←</button>
         <p class="form-note" data-i18n="form.note">הרשמה לניוזלטר חודשי. ביטול בכל עת.</p>
         <p id="form-msg"></p>
@@ -220,6 +234,8 @@ if (window.addI18nStrings) {
       'form.placeholder': 'כתובת המייל שלך',
       'form.btn': 'שלח לי ←',
       'form.note': 'הרשמה לניוזלטר חודשי. ביטול בכל עת.',
+      'form.consent.privacy': 'קראתי ואני מאשר/ת את <a href="/privacy/" target="_blank" rel="noopener">מדיניות הפרטיות</a>',
+      'form.consent.marketing': 'מעוניין/ת לקבל עדכונים ותוכן שיווקי במייל',
       'or.divider': '— או הורד ישירות —',
       'dl.he': 'הורד בעברית',
       'dl.en': 'Download in English',
@@ -245,6 +261,8 @@ if (window.addI18nStrings) {
       'form.placeholder': 'Your email address',
       'form.btn': 'Send it to me →',
       'form.note': 'Monthly newsletter signup. Unsubscribe anytime.',
+      'form.consent.privacy': 'I have read and agree to the <a href="/privacy/" target="_blank" rel="noopener">Privacy Policy</a>',
+      'form.consent.marketing': 'I want to receive updates and marketing content by email',
       'or.divider': '— or download directly —',
       'dl.he': 'Download in Hebrew',
       'dl.en': 'Download in English',
@@ -290,7 +308,11 @@ document.getElementById('guide-form').addEventListener('submit', async function(
     var r = await fetch('/api/subscribers?source=free-guide', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, lang })
+      body: JSON.stringify({
+        email, lang,
+        consent_privacy: document.getElementById('guide-consent-privacy').checked,
+        consent_marketing: document.getElementById('guide-consent-marketing').checked
+      })
     });
     if (r.ok) {
       msg.className = 'ok';

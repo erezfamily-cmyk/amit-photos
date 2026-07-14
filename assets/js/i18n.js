@@ -236,6 +236,7 @@ const TRANSLATIONS = {
     'contact.f.message':'הודעה',
     'contact.f.message.placeholder': 'על איזו תמונה מדובר? מה השימוש המיועד?',
     'contact.f.submit': 'שלח הודעה ←',
+    'contact.consent.privacy': 'קראתי ואני מאשר/ת את <a href="/privacy/" target="_blank" rel="noopener">מדיניות הפרטיות</a>',
     'contact.success':  'ההודעה נשלחה!',
     'contact.success.p':'אחזור אליך בהקדם.',
 
@@ -247,9 +248,13 @@ const TRANSLATIONS = {
     'newsletter.ok':    'תודה! נרשמת בהצלחה.',
     'newsletter.err':   'שגיאה בהרשמה. נסה שוב.',
     'newsletter.err.net':'שגיאת חיבור. נסה שוב.',
+    'newsletter.consent.privacy':   'קראתי ואני מאשר/ת את <a href="/privacy/" target="_blank" rel="noopener">מדיניות הפרטיות</a>',
+    'newsletter.consent.marketing': 'מעוניין/ת לקבל עדכונים ותוכן שיווקי במייל',
 
     // Footer
     'footer.copy':      '© 2026 עמית — כל הזכויות שמורות',
+    'footer.privacy':      'מדיניות פרטיות',
+    'footer.accessibility': 'הצהרת נגישות',
 
     // Lightbox
     'lb.rb-products':   'עוד דרכים לקחת את התמונה הביתה — Redbubble',
@@ -601,6 +606,7 @@ const TRANSLATIONS = {
     'contact.f.message':'Message',
     'contact.f.message.placeholder': 'Which photo are you asking about? What is the intended use?',
     'contact.f.submit': 'Send Message →',
+    'contact.consent.privacy': 'I have read and agree to the <a href="/privacy/" target="_blank" rel="noopener">Privacy Policy</a>',
     'contact.success':  'Message Sent!',
     'contact.success.p':'I\'ll get back to you soon.',
 
@@ -612,9 +618,13 @@ const TRANSLATIONS = {
     'newsletter.ok':    'Thank you! You\'ve subscribed.',
     'newsletter.err':   'Subscription error. Please try again.',
     'newsletter.err.net':'Connection error. Please try again.',
+    'newsletter.consent.privacy':   'I have read and agree to the <a href="/privacy/" target="_blank" rel="noopener">Privacy Policy</a>',
+    'newsletter.consent.marketing': 'I want to receive updates and marketing content by email',
 
     // Footer
     'footer.copy':      '© 2026 Amit — All rights reserved',
+    'footer.privacy':      'Privacy Policy',
+    'footer.accessibility': 'Accessibility Statement',
 
     // Lightbox
     'lb.rb-products':   'More ways to take this photo home — Redbubble',

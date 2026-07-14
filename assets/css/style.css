@@ -2936,6 +2936,22 @@ html[lang="en"] .pricing-usd { display: block; }
   line-height: 1.6;
 }
 
+.contact-consent-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+  cursor: pointer;
+}
+.contact-consent-row input[type="checkbox"] {
+  margin-top: 0.2rem;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+.contact-consent-row a { color: var(--accent); }
+
 .form-submit {
   width: 100%;
   background: var(--accent);
@@ -3007,11 +3023,30 @@ html[lang="en"] .pricing-usd { display: block; }
 }
 .newsletter-form {
   display: flex;
-  gap: 0.75rem;
+  flex-direction: column;
+  gap: 0.6rem;
   flex: 1;
   min-width: 260px;
   position: relative;
 }
+.newsletter-form-row {
+  display: flex;
+  gap: 0.75rem;
+}
+.newsletter-consent-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--text-muted, #888);
+  cursor: pointer;
+}
+.newsletter-consent-row input[type="checkbox"] {
+  margin-top: 0.2rem;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+.newsletter-consent-row a { color: inherit; text-decoration: underline; }
 .newsletter-input {
   flex: 1;
   padding: 0.75rem 1rem;

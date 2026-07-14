@@ -263,7 +263,9 @@ nav#main-nav .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px)
       btn: 'שלחו לי ←',
       ok: 'תודה! המדריך בדרך למייל שלך 📬',
       err: 'משהו השתבש — נסו שוב',
-      more: 'לדף ההורדה המלא ←'
+      more: 'לדף ההורדה המלא ←',
+      consentPrivacy: 'קראתי ואני מאשר/ת את <a href="/privacy/" target="_blank" rel="noopener">מדיניות הפרטיות</a>',
+      consentMarketing: 'מעוניין/ת לקבל עדכונים ותוכן שיווקי במייל'
     },
     en: {
       eyebrow: 'Free Gift 🎁',
@@ -273,7 +275,9 @@ nav#main-nav .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px)
       btn: 'Send it →',
       ok: 'Thanks! The guide is on its way 📬',
       err: 'Something went wrong — try again',
-      more: 'Full download page →'
+      more: 'Full download page →',
+      consentPrivacy: 'I have read and agree to the <a href="/privacy/" target="_blank" rel="noopener">Privacy Policy</a>',
+      consentMarketing: 'I want to receive updates and marketing content by email'
     }
   };
 
@@ -300,7 +304,11 @@ nav#main-nav .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px)
 #nav-nl-strip button:disabled { opacity: .6; cursor: default; }
 #nav-nl-strip .nl-msg { font-size: .8rem; margin-top: .5rem; min-height: 1.1em; }
 #nav-nl-strip .nl-more { font-size: .72rem; color: #777; text-decoration: none; display: inline-block; margin-top: .4rem; }
-#nav-nl-strip .nl-more:hover { color: #c8a96e; }`;
+#nav-nl-strip .nl-more:hover { color: #c8a96e; }
+#nav-nl-strip .nl-consent-row { display: flex; align-items: flex-start; gap: .4rem; font-size: .72rem;
+  color: #999; max-width: 420px; margin: .4rem auto 0; text-align: start; cursor: pointer; }
+#nav-nl-strip .nl-consent-row input[type=checkbox] { margin-top: .15rem; flex-shrink: 0; cursor: pointer; }
+#nav-nl-strip .nl-consent-row a { color: #c8a96e; }`;
     document.head.appendChild(nlStyle);
 
     const strip = document.createElement('div');
@@ -313,6 +321,8 @@ nav#main-nav .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px)
         <input type="email" id="nav-nl-email" required>
         <button type="submit" id="nav-nl-btn"></button>
       </form>
+      <label class="nl-consent-row"><input type="checkbox" id="nav-nl-consent-privacy" required><span id="nl-consent-privacy"></span></label>
+      <label class="nl-consent-row"><input type="checkbox" id="nav-nl-consent-marketing" required><span id="nl-consent-marketing"></span></label>
       <div class="nl-msg" id="nav-nl-msg"></div>
       <a class="nl-more" id="nl-more" href="/free-guide/"></a>`;
     document.body.appendChild(strip);
@@ -325,6 +335,8 @@ nav#main-nav .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px)
       document.getElementById('nav-nl-email').placeholder = t.placeholder;
       document.getElementById('nav-nl-btn').textContent = t.btn;
       document.getElementById('nl-more').textContent = t.more;
+      document.getElementById('nl-consent-privacy').innerHTML = t.consentPrivacy;
+      document.getElementById('nl-consent-marketing').textContent = t.consentMarketing;
     }
     applyStripLang(currentLang);
     window._applyNlStripLang = applyStripLang;
@@ -340,7 +352,11 @@ nav#main-nav .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px)
         const r = await fetch('/api/subscribers?source=subpage_strip', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, lang: currentLang, source: 'subpage_strip' })
+          body: JSON.stringify({
+            email, lang: currentLang, source: 'subpage_strip',
+            consent_privacy: document.getElementById('nav-nl-consent-privacy').checked,
+            consent_marketing: document.getElementById('nav-nl-consent-marketing').checked
+          })
         });
         msg.style.color = r.ok ? '#4caf7d' : '#e05555';
         msg.textContent = r.ok ? t.ok : t.err;
@@ -371,8 +387,22 @@ footer#main-footer a:hover { color: #c8a96e; }
   footer.id = 'main-footer';
   const privacyHe = 'מדיניות פרטיות';
   const privacyEn = 'Privacy Policy';
-  footer.innerHTML = `<a href="/privacy/" id="footer-privacy">${currentLang === 'en' ? privacyEn : privacyHe}</a>`;
+  const a11yHe = 'הצהרת נגישות';
+  const a11yEn = 'Accessibility Statement';
+  footer.innerHTML = `<a href="/privacy/" id="footer-privacy">${currentLang === 'en' ? privacyEn : privacyHe}</a> · <a href="/accessibility/" id="footer-a11y">${currentLang === 'en' ? a11yEn : a11yHe}</a>`;
   document.body.appendChild(footer);
+
+  // ── Accessibility widget + cookie notice (site-wide) ────────────────────────
+  if (!document.querySelector('script[src*="accessibility-widget.js"]')) {
+    const a11yScript = document.createElement('script');
+    a11yScript.src = '/assets/js/accessibility-widget.js';
+    document.body.appendChild(a11yScript);
+  }
+  if (!document.querySelector('script[src*="cookie-notice.js"]')) {
+    const cookieScript = document.createElement('script');
+    cookieScript.src = '/assets/js/cookie-notice.js';
+    document.body.appendChild(cookieScript);
+  }
 
   const origApplyNavLang = applyNavLang;
   applyNavLang = function(lang) {
@@ -384,6 +414,8 @@ footer#main-footer a:hover { color: #c8a96e; }
     document.body.style.direction = isEn ? 'ltr' : 'rtl';
     const fp = document.getElementById('footer-privacy');
     if (fp) fp.textContent = lang === 'en' ? privacyEn : privacyHe;
+    const fa = document.getElementById('footer-a11y');
+    if (fa) fa.textContent = lang === 'en' ? a11yEn : a11yHe;
     // update "read also" section language
     const raTitle = document.getElementById('nav-read-also-title');
     const raTitleText = { he: 'קרא גם', en: 'Read Also' };

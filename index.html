@@ -695,6 +695,10 @@
             <label for="contact-message" data-i18n="contact.f.message">הודעה</label>
             <textarea id="contact-message" name="message" data-i18n-placeholder="contact.f.message.placeholder" placeholder="על איזו תמונה מדובר? מה השימוש המיועד?" required></textarea>
           </div>
+          <label class="contact-consent-row">
+            <input type="checkbox" id="contact-consent-privacy" required />
+            <span data-i18n="contact.consent.privacy" data-i18n-html>קראתי ואני מאשר/ת את <a href="/privacy/" target="_blank" rel="noopener">מדיניות הפרטיות</a></span>
+          </label>
           <button type="submit" class="form-submit" data-i18n="contact.f.submit">שלח הודעה ←</button>
         </form>
         <div class="form-success" id="form-success">
@@ -715,8 +719,18 @@
           <p data-i18n="newsletter.p">תמונות חדשות, מבצעים בלעדיים ותוכן מאחורי הקלעים — ישירות למייל.</p>
         </div>
         <form class="newsletter-form" id="newsletter-form">
-          <input type="email" id="newsletter-email" data-i18n-placeholder="newsletter.placeholder" placeholder="כתובת המייל שלך" required class="newsletter-input" />
-          <button type="submit" class="newsletter-btn" id="newsletter-btn" data-i18n="newsletter.btn">הרשמה</button>
+          <div class="newsletter-form-row">
+            <input type="email" id="newsletter-email" data-i18n-placeholder="newsletter.placeholder" placeholder="כתובת המייל שלך" required class="newsletter-input" />
+            <button type="submit" class="newsletter-btn" id="newsletter-btn" data-i18n="newsletter.btn">הרשמה</button>
+          </div>
+          <label class="newsletter-consent-row">
+            <input type="checkbox" id="newsletter-consent-privacy" required />
+            <span data-i18n="newsletter.consent.privacy" data-i18n-html>קראתי ואני מאשר/ת את <a href="/privacy/" target="_blank" rel="noopener">מדיניות הפרטיות</a></span>
+          </label>
+          <label class="newsletter-consent-row">
+            <input type="checkbox" id="newsletter-consent-marketing" required />
+            <span data-i18n="newsletter.consent.marketing">מעוניין/ת לקבל עדכונים ותוכן שיווקי במייל</span>
+          </label>
         </form>
         <p id="newsletter-msg" style="margin-top:.75rem;font-size:.9rem;min-height:1.2em"></p>
         <script>
@@ -731,7 +745,11 @@
               const r = await fetch('/api/subscribers?source=homepage_section', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, lang: localStorage.getItem('lang') || 'he', source: 'homepage_section' })
+                body: JSON.stringify({
+                  email, lang: localStorage.getItem('lang') || 'he', source: 'homepage_section',
+                  consent_privacy: document.getElementById('newsletter-consent-privacy').checked,
+                  consent_marketing: document.getElementById('newsletter-consent-marketing').checked
+                })
               });
               if (r.ok) {
                 msg.style.color = '#4caf7d';
@@ -781,8 +799,15 @@
         </a>
       </div>
       <p class="footer-copy" data-i18n="footer.copy">© 2026 עמית — כל הזכויות שמורות</p>
+      <p class="footer-legal" style="margin-top:.5rem;font-size:.78rem">
+        <a href="/privacy/" data-i18n="footer.privacy">מדיניות פרטיות</a>
+        <span> · </span>
+        <a href="/accessibility/" data-i18n="footer.accessibility">הצהרת נגישות</a>
+      </p>
     </div>
   </footer>
+  <script src="/assets/js/accessibility-widget.js"></script>
+  <script src="/assets/js/cookie-notice.js"></script>
 
   <!-- ===== LIGHTBOX ===== -->
   <div class="lightbox" id="lightbox">
@@ -1175,6 +1200,14 @@
       <form id="popup-form">
         <input type="email" id="popup-email" placeholder="כתובת המייל שלך" required
           style="width:100%;padding:.65rem 1rem;background:#111;border:1px solid #444;border-radius:4px;color:#f0ede8;font-size:.95rem;margin-bottom:.6rem;direction:rtl">
+        <label style="display:flex;align-items:flex-start;gap:.4rem;font-size:.7rem;color:#999;margin-bottom:.4rem;cursor:pointer">
+          <input type="checkbox" id="popup-consent-privacy" required style="margin-top:.15rem;flex-shrink:0;cursor:pointer">
+          <span>קראתי ואני מאשר/ת את <a href="/privacy/" target="_blank" rel="noopener" style="color:#c8a96e">מדיניות הפרטיות</a></span>
+        </label>
+        <label style="display:flex;align-items:flex-start;gap:.4rem;font-size:.7rem;color:#999;margin-bottom:.6rem;cursor:pointer">
+          <input type="checkbox" id="popup-consent-marketing" required style="margin-top:.15rem;flex-shrink:0;cursor:pointer">
+          <span>מעוניין/ת לקבל עדכונים ותוכן שיווקי במייל</span>
+        </label>
         <button type="submit" id="popup-btn"
           style="width:100%;padding:.7rem;background:#c8a96e;color:#111;border:none;border-radius:4px;font-weight:700;cursor:pointer;font-size:.95rem">
           שלח לי &#x2190;
@@ -1219,7 +1252,11 @@
       var r = await fetch('/api/subscribers?source=popup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, lang })
+        body: JSON.stringify({
+          email, lang,
+          consent_privacy: document.getElementById('popup-consent-privacy').checked,
+          consent_marketing: document.getElementById('popup-consent-marketing').checked
+        })
       });
       if (r.ok) {
         msg.style.color = '#4caf7d';

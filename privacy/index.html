@@ -36,11 +36,13 @@ ul li { margin-bottom: .4rem; }
 a { color: var(--accent); }
 .section-en { display: none; direction: ltr; text-align: left; }
 .section-he { display: block; }
+.header-a11y-link { color: var(--muted); font-size: .85rem; text-decoration: none; }
 </style>
 </head>
 <body>
 <div class="site-header">
   <a class="site-title" href="/">Amit Photos</a>
+  <a href="/accessibility/" class="header-a11y-link">הצהרת נגישות</a>
 </div>
 
 <div class="content">
@@ -52,7 +54,7 @@ a { color: var(--accent); }
   <!-- HEBREW -->
   <div class="section-he" id="section-he">
     <h1>מדיניות פרטיות</h1>
-    <p class="updated">עודכן לאחרונה: 9 במאי 2026</p>
+    <p class="updated">עודכן לאחרונה: 14 ביולי 2026</p>
 
     <h2>1. מי אנחנו</h2>
     <p>Amit Photos (amitphotos.com) הוא אתר פורטפוליו צילום המציג תמונות לרכישה ומאפשר פרסום אוטומטי לרשתות חברתיות. האתר מופעל על-ידי עמית ארז.</p>
@@ -61,12 +63,15 @@ a { color: var(--accent); }
     <p>האתר אוסף את הנתונים הבאים בלבד:</p>
     <ul>
       <li><strong>פרטי הזמנה</strong> — שם, כתובת אימייל, כתובת למשלוח, בעת רכישת הדפסה.</li>
-      <li><strong>כתובת אימייל</strong> — אם המשתמש בחר להירשם לרשימת תפוצה.</li>
-      <li><strong>נתוני שימוש אנונימיים</strong> — מספר ביקורים ועמודים שנצפו, ללא זיהוי אישי.</li>
+      <li><strong>כתובת אימייל</strong> — אם המשתמש בחר להירשם לרשימת תפוצה (בהסכמה מפורשת בטופס ההרשמה).</li>
+      <li><strong>נתוני שימוש אנונימיים</strong> — מספר ביקורים ועמודים שנצפו, דרך Google Analytics (ר' סעיף 3), ללא זיהוי אישי.</li>
     </ul>
     <p>אין איסוף עוגיות שיווקיות, אין מעקב אחר מיקום, ואין שמירת נתוני תשלום (עסקאות מתבצעות דרך PayPal בלבד).</p>
 
-    <h2>3. שימוש ב-Pinterest API</h2>
+    <h2>3. עוגיות ו-Google Analytics</h2>
+    <p>האתר משתמש ב-Google Analytics כדי להבין כיצד האתר בשימוש (מספר ביקורים, עמודים נצפים) — באמצעות עוגיות אנליטיות אנונימיות. מידע זה אינו מזהה אותך אישית ואינו משמש לשיווק ממוקד. ניתן לחסום עוגיות אלו דרך הגדרות הדפדפן שלך.</p>
+
+    <h2>4. שימוש ב-Pinterest API</h2>
     <p>האתר משתמש ב-Pinterest API לצורך פרסום תמונות מהגלריה ל-Pinterest אוטומטית. בהקשר זה:</p>
     <ul>
       <li>אנו מפרסמים תמונות ותיאורים מהאתר בלבד — לא נתוני משתמשים.</li>
@@ -76,32 +81,36 @@ a { color: var(--accent); }
       <li>האפליקציה אינה קשורה ל-Pinterest בשום צורה רשמית.</li>
     </ul>
 
-    <h2>4. שימוש ב-Instagram ו-Facebook API</h2>
+    <h2>5. שימוש ב-Instagram ו-Facebook API</h2>
     <p>האתר משתמש ב-Meta APIs לפרסום אוטומטי של תמונות. אין איסוף נתוני משתמשים דרך ממשקי API אלו. כל הנתונים שנשלחים הם תוכן שנוצר על-ידי עמית ארז בלבד.</p>
 
-    <h2>5. שיתוף עם צדדים שלישיים</h2>
+    <h2>6. שיתוף עם צדדים שלישיים</h2>
     <p>אנו לא מוכרים, מחכירים או משתפים מידע אישי עם גורמים חיצוניים, למעט:</p>
     <ul>
       <li><strong>Gelato</strong> — לצורך הדפסה ומשלוח של הזמנות.</li>
       <li><strong>PayPal</strong> — לעיבוד תשלומים.</li>
       <li><strong>Cloudflare</strong> — לאחסון ו-CDN.</li>
+      <li><strong>Google Analytics</strong> — לניתוח שימוש אנונימי באתר.</li>
     </ul>
-    <p>שיתוף זה מוגבל למידע הנדרש לביצוע ההזמנה בלבד.</p>
+    <p>שיתוף זה מוגבל למידע הנדרש לביצוע ההזמנה או לתפעול האתר בלבד.</p>
 
-    <h2>6. שמירת נתונים</h2>
+    <h2>7. אבטחת מידע</h2>
+    <p>אנו נוקטים באמצעים סבירים כדי להגן על המידע שנאסף: האתר פועל כולו על גבי HTTPS, הגישה למערכות הניהול מוגנת בסיסמה, ומידע רגיש (כגון סיסמאות) אינו נשמר בטקסט גלוי. עם זאת, אין אפשרות להבטיח אבטחה מוחלטת ב-100% בכל מערכת מקוונת.</p>
+
+    <h2>8. שמירת נתונים</h2>
     <p>פרטי הזמנות נשמרים למשך שנה אחת לצרכי שירות לקוחות. כתובות אימייל ברשימת תפוצה נשמרות עד לביטול ההרשמה.</p>
 
-    <h2>7. זכויות המשתמש</h2>
+    <h2>9. זכויות המשתמש</h2>
     <p>בכל עת ניתן לפנות אלינו כדי לקבל, לתקן או למחוק מידע אישי ששמרנו. לביטול הרשמה מרשימת תפוצה — יש ללחוץ על הקישור "בטל הרשמה" בכל מייל.</p>
 
-    <h2>8. יצירת קשר</h2>
+    <h2>10. יצירת קשר</h2>
     <p>לכל שאלה בנושא פרטיות: <a href="mailto:amit@amitphotos.com">amit@amitphotos.com</a></p>
   </div>
 
   <!-- ENGLISH -->
   <div class="section-en" id="section-en">
     <h1>Privacy Policy</h1>
-    <p class="updated">Last updated: May 9, 2026</p>
+    <p class="updated">Last updated: July 14, 2026</p>
 
     <h2>1. Who We Are</h2>
     <p>Amit Photos (amitphotos.com) is a photography portfolio website that displays photos for purchase and enables automated social media publishing. The site is operated by Amit Erez.</p>
@@ -110,12 +119,15 @@ a { color: var(--accent); }
     <p>We collect only the following data:</p>
     <ul>
       <li><strong>Order details</strong> — name, email address, shipping address, when purchasing a print.</li>
-      <li><strong>Email address</strong> — if the user opts in to our mailing list.</li>
-      <li><strong>Anonymous usage data</strong> — number of visits and pages viewed, without personal identification.</li>
+      <li><strong>Email address</strong> — if the user opts in to our mailing list (with explicit consent given in the signup form).</li>
+      <li><strong>Anonymous usage data</strong> — number of visits and pages viewed, via Google Analytics (see section 3), without personal identification.</li>
     </ul>
     <p>We do not collect marketing cookies, location data, or payment information (transactions are handled exclusively by PayPal).</p>
 
-    <h2>3. Use of the Pinterest API</h2>
+    <h2>3. Cookies and Google Analytics</h2>
+    <p>This site uses Google Analytics to understand how the site is used (number of visits, pages viewed) via anonymous analytics cookies. This information does not personally identify you and is not used for targeted advertising. You can block these cookies through your browser settings.</p>
+
+    <h2>4. Use of the Pinterest API</h2>
     <p>This site uses the Pinterest API to automatically publish photos from our gallery to Pinterest. In this context:</p>
     <ul>
       <li>We publish only our own photos and descriptions — no user data.</li>
@@ -125,25 +137,29 @@ a { color: var(--accent); }
       <li>This application is not affiliated with or endorsed by Pinterest.</li>
     </ul>
 
-    <h2>4. Use of Instagram and Facebook APIs</h2>
+    <h2>5. Use of Instagram and Facebook APIs</h2>
     <p>The site uses Meta APIs for automated photo publishing. No user data is collected through these APIs. All data sent consists solely of content created by Amit Erez.</p>
 
-    <h2>5. Sharing with Third Parties</h2>
+    <h2>6. Sharing with Third Parties</h2>
     <p>We do not sell, rent, or share personal information with external parties, except:</p>
     <ul>
       <li><strong>Gelato</strong> — for printing and shipping orders.</li>
       <li><strong>PayPal</strong> — for payment processing.</li>
       <li><strong>Cloudflare</strong> — for hosting and CDN.</li>
+      <li><strong>Google Analytics</strong> — for anonymous usage analysis.</li>
     </ul>
-    <p>Such sharing is limited to the information necessary to fulfill the order.</p>
+    <p>Such sharing is limited to the information necessary to fulfill the order or operate the site.</p>
 
-    <h2>6. Data Retention</h2>
+    <h2>7. Data Security</h2>
+    <p>We take reasonable measures to protect the data we collect: the site runs entirely over HTTPS, access to admin systems is password-protected, and sensitive information (such as passwords) is not stored in plain text. That said, no online system can guarantee 100% absolute security.</p>
+
+    <h2>8. Data Retention</h2>
     <p>Order details are retained for one year for customer service purposes. Mailing list email addresses are retained until unsubscription.</p>
 
-    <h2>7. User Rights</h2>
+    <h2>9. User Rights</h2>
     <p>At any time, you may contact us to access, correct, or delete personal information we hold about you. To unsubscribe from the mailing list, click the "Unsubscribe" link in any email.</p>
 
-    <h2>8. Contact</h2>
+    <h2>10. Contact</h2>
     <p>For any privacy-related questions: <a href="mailto:amit@amitphotos.com">amit@amitphotos.com</a></p>
   </div>
 </div>
@@ -158,5 +174,6 @@ function setLang(lang) {
   document.documentElement.setAttribute('lang', lang);
 }
 </script>
+<script src="/assets/js/accessibility-widget.js"></script>
 </body>
 </html>

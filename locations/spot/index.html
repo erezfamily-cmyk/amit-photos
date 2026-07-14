@@ -670,6 +670,14 @@ applySpotModalLang();
       <form id="popup-form">
         <input type="email" id="popup-email" placeholder="כתובת המייל שלך" required
           style="width:100%;padding:.65rem 1rem;background:#111;border:1px solid #444;border-radius:4px;color:#f0ede8;font-size:.95rem;margin-bottom:.6rem;direction:rtl">
+        <label style="display:flex;align-items:flex-start;gap:.4rem;font-size:.7rem;color:#999;margin-bottom:.4rem;cursor:pointer">
+          <input type="checkbox" id="popup-consent-privacy" required style="margin-top:.15rem;flex-shrink:0;cursor:pointer">
+          <span>קראתי ואני מאשר/ת את <a href="/privacy/" target="_blank" rel="noopener" style="color:#c8a96e">מדיניות הפרטיות</a></span>
+        </label>
+        <label style="display:flex;align-items:flex-start;gap:.4rem;font-size:.7rem;color:#999;margin-bottom:.6rem;cursor:pointer">
+          <input type="checkbox" id="popup-consent-marketing" required style="margin-top:.15rem;flex-shrink:0;cursor:pointer">
+          <span>מעוניין/ת לקבל עדכונים ותוכן שיווקי במייל</span>
+        </label>
         <button type="submit" id="popup-btn"
           style="width:100%;padding:.7rem;background:#c8a96e;color:#111;border:none;border-radius:4px;font-weight:700;cursor:pointer;font-size:.95rem">
           שלח לי &#x2190;
@@ -713,7 +721,11 @@ applySpotModalLang();
       var r = await fetch('/api/subscribers?source=popup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email })
+        body: JSON.stringify({
+          email,
+          consent_privacy: document.getElementById('popup-consent-privacy').checked,
+          consent_marketing: document.getElementById('popup-consent-marketing').checked
+        })
       });
       if (r.ok) {
         msg.style.color = '#4caf7d';

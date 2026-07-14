@@ -248,6 +248,9 @@ input[type=email]{width:100%;padding:.75rem 1rem;background:#1e1e1e;border:1px s
 input[type=email]::placeholder{color:#666}
 button{width:100%;padding:.8rem 1rem;background:#c8a96e;color:#111;border:none;border-radius:4px;font-size:1rem;font-weight:700;cursor:pointer}
 button:hover{background:#d4b87a}
+.fg-consent{display:flex;align-items:flex-start;gap:.4rem;font-size:.72rem;color:#999;margin-bottom:.5rem;cursor:pointer}
+.fg-consent input{margin-top:.15rem;flex-shrink:0;cursor:pointer;width:auto}
+.fg-consent a{color:#c8a96e}
 .legal{font-size:.7rem;color:#f0ede8;font-weight:700;margin-top:.6rem;line-height:1.5}
 .msg{margin-top:.75rem;min-height:1.2em;font-size:.9rem}
 .msg.ok{color:#4caf7d}
@@ -270,6 +273,8 @@ button:hover{background:#d4b87a}
     <p class="pdf-meta">PDF · 15 עמ&#39; · ישיר למייל</p>
     <form id="fg-form">
       <input type="email" id="fg-email" placeholder="כתובת המייל שלך" required autocomplete="email">
+      <label class="fg-consent"><input type="checkbox" id="fg-consent-privacy" required> קראתי ואני מאשר/ת את <a href="https://amitphotos.com/privacy/" target="_blank" rel="noopener">מדיניות הפרטיות</a></label>
+      <label class="fg-consent"><input type="checkbox" id="fg-consent-marketing" required> מעוניין/ת לקבל עדכונים ותוכן שיווקי במייל</label>
       <button type="submit" id="fg-btn">שלח לי את ה-PDF &#x2190;</button>
       <p class="legal">קבלת ה-PDF + הרשמה לניוזלטר החודשי של עמית ארז. ניתן לבטל בכל עת.</p>
       <p class="msg" id="fg-msg"></p>
@@ -289,7 +294,11 @@ document.getElementById('fg-form').addEventListener('submit', async function(e) 
     const r = await fetch('/api/subscribers?source=lead_magnet', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, lang: 'he' })
+      body: JSON.stringify({
+        email, lang: 'he',
+        consent_privacy: document.getElementById('fg-consent-privacy').checked,
+        consent_marketing: document.getElementById('fg-consent-marketing').checked
+      })
     });
     if (r.ok) {
       msg.className = 'msg ok';
@@ -325,13 +334,16 @@ async function handleSubscribers(request, env) {
     // migration idempotent
     await env.DB.prepare('ALTER TABLE subscribers ADD COLUMN source TEXT DEFAULT \'website\'').run().catch(() => {});
     await env.DB.prepare('ALTER TABLE subscribers ADD COLUMN lang TEXT DEFAULT \'he\'').run().catch(() => {});
+    await env.DB.prepare('ALTER TABLE subscribers ADD COLUMN consent_given_at TEXT').run().catch(() => {});
 
-    const { name, email, notes, lang } = await request.json().catch(() => ({}));
+    const { name, email, notes, lang, consent_privacy, consent_marketing } = await request.json().catch(() => ({}));
     if (!email) return jsonRes({ error: 'מייל חסר' }, 400, request);
     if (typeof email !== 'string' || email.length > 254 || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email))
       return jsonRes({ error: 'מייל לא תקין' }, 400, request);
     if (name && (typeof name !== 'string' || name.length > 120))
       return jsonRes({ error: 'שם ארוך מדי' }, 400, request);
+    if (!consent_privacy || !consent_marketing)
+      return jsonRes({ error: 'יש לאשר את מדיניות הפרטיות ואת קבלת הדיוור' }, 400, request);
     const source = new URL(request.url).searchParams.get('source') || 'website';
     const isEn = lang === 'en';
     const pdfUrl = isEn
@@ -376,9 +388,10 @@ async function handleSubscribers(request, env) {
       return jsonRes({ ok: true, already: true }, 200, request);
     }
     const id = crypto.randomUUID();
+    const now = new Date().toISOString();
     await env.DB.prepare(
-      'INSERT INTO subscribers (id, name, email, notes, source, lang, created_at) VALUES (?,?,?,?,?,?,?)'
-    ).bind(id, name || '', email, notes || '', source, isEn ? 'en' : 'he', new Date().toISOString()).run();
+      'INSERT INTO subscribers (id, name, email, notes, source, lang, created_at, consent_given_at) VALUES (?,?,?,?,?,?,?,?)'
+    ).bind(id, name || '', email, notes || '', source, isEn ? 'en' : 'he', now, now).run();
 
     // שלח מייל אישור לנרשם
     if (env.RESEND_API_KEY) {
@@ -2296,8 +2309,10 @@ async function handleNewsletter(request, env) {
   if (request.method !== 'POST') return jsonRes({ error: 'method not allowed' }, 405, request);
   if (!env.RESEND_API_KEY) return jsonRes({ error: 'RESEND_API_KEY לא מוגדר ב-Cloudflare' }, 500, request);
 
-  const { subject, body } = await request.json().catch(() => ({}));
-  if (!subject || !body) return jsonRes({ error: 'נושא ותוכן הם שדות חובה' }, 400, request);
+  const { subject: rawSubject, body } = await request.json().catch(() => ({}));
+  if (!rawSubject || !body) return jsonRes({ error: 'נושא ותוכן הם שדות חובה' }, 400, request);
+  // חוק הספאם (תיקון 40) — כל דיוור שיווקי חייב סימון "פרסומת" בשורת הנושא
+  const subject = /^\s*(פרסומת|advertisement)\s*[:\-]/i.test(rawSubject) ? rawSubject : `פרסומת: ${rawSubject}`;
 
   const { results: subscribers } = await env.DB.prepare('SELECT id, email, name FROM subscribers').all();
   if (!subscribers.length) return jsonRes({ error: 'אין נרשמים ברשימה' }, 400, request);
