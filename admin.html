@@ -229,7 +229,7 @@ input,textarea,select{font-family:var(--font);direction:rtl}
 .sale-badge{margin-right:.4rem;font-size:.68rem;font-weight:700;color:#34d399;background:rgba(52,211,153,.12);border:1px solid rgba(52,211,153,.35);padding:.1rem .4rem;border-radius:10px;vertical-align:middle}
 .admin-badge{margin-right:.4rem;font-size:.68rem;font-weight:600;padding:.1rem .4rem;border-radius:10px;vertical-align:middle;cursor:pointer}
 .admin-badge-sale{background:rgba(239,68,68,0.15);color:#ef4444;border:1px solid rgba(239,68,68,0.3)}
-.admin-badge-sale-off{background:#1a1a1a;color:#555;border:1px solid #333;font-size:.65rem}
+.admin-badge-sale-off{background:#1a1a1a;color:#888;border:1px solid #333;font-size:.65rem}
 .admin-badge-sale-off:hover{color:#ef4444;border-color:rgba(239,68,68,0.3)}
 .btn-icon.quiz-active { color: #34d399; }
 .res-badge{margin-right:.3rem;font-size:.62rem;font-weight:600;padding:.1rem .35rem;border-radius:8px;vertical-align:middle}
@@ -532,7 +532,7 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
 }
 .ann-ed-sidebar-title {
   font-size: 9px; text-transform: uppercase; letter-spacing: .1em;
-  color: #555; margin-bottom: 2px;
+  color: #888; margin-bottom: 2px;
 }
 .ann-ed-rule-select {
   width: 100%; background: #222; border: 1px solid #333; border-radius: 4px;
@@ -2307,7 +2307,7 @@ function addExtraLink() {
   div.innerHTML = `
     <input placeholder="תווית (למשל: אתר הפארק)" style="flex:1;background:#0a0a0a;border:1px solid #222;color:#f0ede8;padding:.4rem .6rem;border-radius:4px;font-family:'Heebo',sans-serif;font-size:.82rem" class="extra-link-label">
     <input placeholder="https://..." style="flex:2;background:#0a0a0a;border:1px solid #222;color:#f0ede8;padding:.4rem .6rem;border-radius:4px;font-family:'Heebo',sans-serif;font-size:.82rem;direction:ltr" class="extra-link-url">
-    <button type="button" onclick="this.closest('[data-link-idx]').remove()" style="background:none;border:none;color:#555;cursor:pointer;font-size:1rem;padding:0 .25rem">✕</button>`;
+    <button type="button" onclick="this.closest('[data-link-idx]').remove()" style="background:none;border:none;color:#888;cursor:pointer;font-size:1rem;padding:0 .25rem">✕</button>`;
   container.appendChild(div);
   div.querySelector('.extra-link-label').focus();
 }
@@ -5011,7 +5011,7 @@ function annEnRender() {
     const div = document.createElement('div');
     div.style.cssText = 'display:flex;gap:.5rem;align-items:center';
     div.innerHTML = `
-      <span style="font-size:.75rem;color:#555;min-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${escHtml(ann.label)}">${escHtml((ann.label||'').split('\n')[0])}</span>
+      <span style="font-size:.75rem;color:#888;min-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${escHtml(ann.label)}">${escHtml((ann.label||'').split('\n')[0])}</span>
       <input type="text" value="${escHtml(ann.label_en||'')}" placeholder="English label..."
         style="flex:1;background:#1a1a1a;border:1px solid #2a2a2a;color:#f0ede8;padding:.28rem .5rem;border-radius:4px;font-size:.8rem;font-family:inherit"
         oninput="annUpdateEn(${absIdx}, this.value)">`;
@@ -5801,7 +5801,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div style="display:flex;gap:.5rem;align-items:center" data-link-idx="${i}">
               <input placeholder="תווית (למשל: אתר הפארק)" value="${escHtml(lnk.label||'')}" style="flex:1;background:#0a0a0a;border:1px solid #222;color:#f0ede8;padding:.4rem .6rem;border-radius:4px;font-family:'Heebo',sans-serif;font-size:.82rem" class="extra-link-label">
               <input placeholder="https://..." value="${escHtml(lnk.url||'')}" style="flex:2;background:#0a0a0a;border:1px solid #222;color:#f0ede8;padding:.4rem .6rem;border-radius:4px;font-family:'Heebo',sans-serif;font-size:.82rem;direction:ltr" class="extra-link-url">
-              <button type="button" onclick="this.closest('[data-link-idx]').remove()" style="background:none;border:none;color:#555;cursor:pointer;font-size:1rem;padding:0 .25rem">✕</button>
+              <button type="button" onclick="this.closest('[data-link-idx]').remove()" style="background:none;border:none;color:#888;cursor:pointer;font-size:1rem;padding:0 .25rem">✕</button>
             </div>`).join('')}
         </div>
       </div>

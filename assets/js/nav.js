@@ -117,13 +117,16 @@ nav#main-nav .nav-links a.active::after { width: 100%; }
 nav#main-nav .nav-links a:hover,
 nav#main-nav .nav-links a.active { color: var(--text, #f0ede8); }
 nav#main-nav .lang-toggle {
-  display: flex; align-items: center; gap: 0.2rem;
+  display: flex; align-items: center; gap: 0.3rem;
   font-size: 0.7rem; color: var(--text-muted-nav, #888);
   margin-inline-start: 0.5rem;
 }
 nav#main-nav .lang-btn {
   background: none; border: none; color: var(--text-muted-nav, #888);
-  cursor: pointer; font-size: 0.7rem; padding: 0.15rem 0.25rem;
+  cursor: pointer; font-size: 0.7rem;
+  min-width: 36px; min-height: 44px;
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 0.25rem 0.4rem;
   font-family: inherit; letter-spacing: 0.05em; transition: color 0.2s;
 }
 nav#main-nav .lang-btn.active { color: var(--accent, #c8a96e); font-weight: 700; }
