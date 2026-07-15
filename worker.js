@@ -243,7 +243,7 @@ body{font-family:'Heebo',sans-serif;background:#111;color:#f0ede8;min-height:100
 .badge{font-size:.7rem;letter-spacing:.15em;color:#c8a96e;text-transform:uppercase;margin-bottom:.6rem}
 h1{font-size:1.9rem;line-height:1.25;margin-bottom:.5rem;color:#f0ede8}
 .sub{font-size:.95rem;color:#aaa;margin-bottom:.4rem}
-.pdf-meta{font-size:.75rem;color:#666;margin-bottom:1.8rem}
+.pdf-meta{font-size:.75rem;color:#888;margin-bottom:1.8rem}
 input[type=email]{width:100%;padding:.75rem 1rem;background:#1e1e1e;border:1px solid #444;border-radius:4px;color:#f0ede8;font-size:1rem;margin-bottom:.75rem;direction:rtl}
 input[type=email]::placeholder{color:#666}
 button{width:100%;padding:.8rem 1rem;background:#c8a96e;color:#111;border:none;border-radius:4px;font-size:1rem;font-weight:700;cursor:pointer}
@@ -255,7 +255,7 @@ button:hover{background:#d4b87a}
 .msg{margin-top:.75rem;min-height:1.2em;font-size:.9rem}
 .msg.ok{color:#4caf7d}
 .msg.err{color:#e05555}
-.back{font-size:.75rem;color:#666;margin-top:1.5rem}
+.back{font-size:.75rem;color:#888;margin-top:1.5rem}
 .back a{color:#888;text-decoration:none}
 .back a:hover{color:#c8a96e}
 @media(max-width:600px){.wrap{flex-direction:column}.left{min-height:220px}.right{padding:2rem 1.5rem}}
@@ -272,7 +272,7 @@ button:hover{background:#d4b87a}
     <p class="sub">המדריך שהכנתי מהניסיון שלי והאהבה לצלם</p>
     <p class="pdf-meta">PDF · 15 עמ&#39; · ישיר למייל</p>
     <form id="fg-form">
-      <input type="email" id="fg-email" placeholder="כתובת המייל שלך" required autocomplete="email">
+      <input type="email" id="fg-email" placeholder="כתובת המייל שלך" aria-label="כתובת המייל שלך" required autocomplete="email">
       <label class="fg-consent"><input type="checkbox" id="fg-consent-privacy" required> קראתי ואני מאשר/ת את <a href="https://amitphotos.com/privacy/" target="_blank" rel="noopener">מדיניות הפרטיות</a></label>
       <label class="fg-consent"><input type="checkbox" id="fg-consent-marketing" required> מעוניין/ת לקבל עדכונים ותוכן שיווקי במייל</label>
       <button type="submit" id="fg-btn">שלח לי את ה-PDF &#x2190;</button>
@@ -370,7 +370,7 @@ async function handleSubscribers(request, env) {
                   </div>
                   <p style="color:#aaa;font-size:.9rem">You'll also receive the monthly newsletter — photos, locations and guides.</p>
                   <hr style="border-color:#333;margin-top:2rem">
-                  <p style="color:#666;font-size:.8rem">Unsubscribe: <a href="https://amitphotos.com/api/unsubscribe?token=${existing.id}" style="color:#888">click here</a></p>
+                  <p style="color:#888;font-size:.8rem">Unsubscribe: <a href="https://amitphotos.com/api/unsubscribe?token=${existing.id}" style="color:#888">click here</a></p>
                 </div>`
               : `<div dir="rtl" style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:2rem;background:#111;color:#f0ede8">
                   <h2 style="color:#c8a96e">AMIT PHOTOS</h2>
@@ -380,7 +380,7 @@ async function handleSubscribers(request, env) {
                   </div>
                   <p style="color:#aaa;font-size:.9rem">תקבל גם את הניוזלטר החודשי — תמונות, מקומות ומדריכים.</p>
                   <hr style="border-color:#333;margin-top:2rem">
-                  <p style="color:#666;font-size:.8rem">לביטול הרשמה: <a href="https://amitphotos.com/api/unsubscribe?token=${existing.id}" style="color:#888">לחץ כאן</a></p>
+                  <p style="color:#888;font-size:.8rem">לביטול הרשמה: <a href="https://amitphotos.com/api/unsubscribe?token=${existing.id}" style="color:#888">לחץ כאן</a></p>
                 </div>`
           })
         }).catch(() => {});
@@ -412,7 +412,7 @@ async function handleSubscribers(request, env) {
               </div>
               <p style="color:#aaa;font-size:.9rem">You'll also receive my monthly newsletter — new photos, shooting locations and guides.</p>
               <hr style="margin-top:2rem;border-color:#333">
-              <p style="color:#666;font-size:.8rem">Unsubscribe: <a href="https://amitphotos.com/api/unsubscribe?token=${id}" style="color:#888">click here</a></p>
+              <p style="color:#888;font-size:.8rem">Unsubscribe: <a href="https://amitphotos.com/api/unsubscribe?token=${id}" style="color:#888">click here</a></p>
             </div>`
           : `<div dir="rtl" style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:2rem;background:#111;color:#f0ede8">
               <h2 style="color:#c8a96e;font-family:sans-serif;margin-bottom:.5rem">AMIT PHOTOS</h2>
@@ -424,7 +424,7 @@ async function handleSubscribers(request, env) {
               </div>
               <p style="color:#aaa;font-size:.9rem">בנוסף, תקבל את הניוזלטר החודשי שלי — תמונות חדשות, מקומות צילום ומדריכים.</p>
               <hr style="margin-top:2rem;border-color:#333">
-              <p style="color:#666;font-size:.8rem">לביטול הרשמה: <a href="https://amitphotos.com/api/unsubscribe?token=${id}" style="color:#888">לחץ כאן</a></p>
+              <p style="color:#888;font-size:.8rem">לביטול הרשמה: <a href="https://amitphotos.com/api/unsubscribe?token=${id}" style="color:#888">לחץ כאן</a></p>
             </div>`)
         : (isEn
           ? `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:2rem;color:#111">
@@ -3320,10 +3320,10 @@ h1{font-family:'Syne',sans-serif;font-size:2rem;color:#c8a96e;margin-bottom:.5re
 .card:hover{border-color:#c8a96e}
 .card-label{font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:#888;margin-bottom:.75rem}
 .card-size{font-family:'Syne',sans-serif;font-size:1.6rem;color:#fff;margin-bottom:.25rem}
-.card-dims{font-size:.75rem;color:#666;margin-bottom:1.25rem}
+.card-dims{font-size:.75rem;color:#888;margin-bottom:1.25rem}
 .card-price{font-size:2rem;font-weight:700;color:#c8a96e}
-.card-mp{font-size:.72rem;color:#666;margin-top:.3rem}
-.note{margin-top:2.5rem;color:#555;font-size:.8rem;text-align:center;max-width:480px;line-height:1.6}
+.card-mp{font-size:.72rem;color:#888;margin-top:.3rem}
+.note{margin-top:2.5rem;color:#888;font-size:.8rem;text-align:center;max-width:480px;line-height:1.6}
 a.back{display:inline-flex;align-items:center;gap:.4rem;margin-top:2rem;color:#888;font-size:.85rem;text-decoration:none;transition:color .2s}
 a.back:hover{color:#c8a96e}
 </style>
@@ -4048,7 +4048,7 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direc
 .learn-card-title{font-family:'Syne',sans-serif;font-size:.95rem;color:var(--text);margin-bottom:.4rem}
 .learn-card-tags{display:flex;flex-wrap:wrap;gap:3px;margin-bottom:.3rem}
 .tag{font-size:.65rem;color:var(--muted);background:#1a1a1a;border:1px solid var(--border);border-radius:4px;padding:1px 5px}
-.learn-card-date{font-size:.65rem;color:#555}
+.learn-card-date{font-size:.65rem;color:#888}
 .back-link{text-align:center;padding:1rem}
 .back-link a{color:var(--accent);font-size:.85rem;text-decoration:none}
 .learn-affiliate{max-width:900px;margin:1rem auto;padding:0 1.25rem}
@@ -4509,7 +4509,7 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direc
 .analysis-affiliate-inner{background:linear-gradient(135deg,rgba(200,169,110,.08),rgba(200,169,110,.03));border:1px solid rgba(200,169,110,.3);border-radius:14px;padding:1.1rem 1.4rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
 .analysis-affiliate-title{font-family:'Syne',sans-serif;font-size:.9rem;color:var(--accent);margin-bottom:.25rem}
 .analysis-affiliate-desc{font-size:.78rem;color:var(--muted)}
-.analysis-affiliate-disclose{font-size:.63rem;color:#444;margin-top:.2rem}
+.analysis-affiliate-disclose{font-size:.63rem;color:#888;margin-top:.2rem}
 .analysis-affiliate-btn{flex-shrink:0;background:var(--accent);color:#000;font-weight:700;font-size:.8rem;padding:.5rem 1.1rem;border-radius:8px;text-decoration:none;white-space:nowrap;transition:background .15s}
 .analysis-affiliate-btn:hover{background:#e0c080}
 </style>
@@ -6375,7 +6375,7 @@ ${contactOutreachSection}
     <h3 data-he="רוצה לקבל את הניוזלטר?" data-en="Want to receive the newsletter?">רוצה לקבל את הניוזלטר?</h3>
     <p data-he="גיליונות חודשיים — תמונות, מדריכים ומקומות צילום ישירות למייל." data-en="Monthly issues — photos, guides and shooting locations delivered to your inbox.">גיליונות חודשיים — תמונות, מדריכים ומקומות צילום ישירות למייל.</p>
     <form class="nl-sub-form" onsubmit="nlSubscribe(event)">
-      <input type="email" id="nl-email" placeholder="כתובת המייל שלך" required>
+      <input type="email" id="nl-email" placeholder="כתובת המייל שלך" aria-label="כתובת המייל שלך" required>
       <button type="submit" data-he="הרשמה" data-en="Subscribe">הרשמה</button>
     </form>
     <p id="nl-sub-msg"></p>
@@ -6384,7 +6384,7 @@ ${contactOutreachSection}
     </div>
     <div id="nl-unsub-form" style="display:none;margin-top:.5rem">
       <form class="nl-sub-form" onsubmit="nlUnsubscribe(event)">
-        <input type="email" id="nl-unsub-email" placeholder="כתובת המייל שלך" required>
+        <input type="email" id="nl-unsub-email" placeholder="כתובת המייל שלך" aria-label="כתובת המייל שלך" required>
         <button type="submit" style="background:#444;color:#fff" data-he="הסר" data-en="Remove">הסר</button>
       </form>
       <p id="nl-unsub-msg"></p>
@@ -6473,9 +6473,9 @@ a:hover{text-decoration:underline}
 .sub-header:hover{background:#181818}
 .sub-table{width:100%;border-collapse:collapse;font-size:.82rem}
 .sub-table th,.sub-table td{padding:.5rem .75rem;border-bottom:1px solid #1a1a1a;text-align:right}
-.sub-table th{color:#666;font-weight:600}
+.sub-table th{color:#888;font-weight:600}
 .sub-table tr:last-child td{border-bottom:none}
-.btn-del{background:none;border:none;color:#666;cursor:pointer;font-size:.9rem;padding:.2rem .5rem;border-radius:4px}
+.btn-del{background:none;border:none;color:#888;cursor:pointer;font-size:.9rem;padding:.2rem .5rem;border-radius:4px}
 .btn-del:hover{color:#f44336;background:#2a0a0a}
 </style>
 </head>
@@ -7063,7 +7063,7 @@ function nlBuildEmailHtml(issue, issueUrl, unsubscribeUrl, subscriberName, lang 
         <a href="https://ko-fi.com/amitphotos" style="display:inline-block;background:#f5f0e8;color:#7c5c2e;font-size:13px;font-weight:700;padding:10px 22px;border-radius:8px;text-decoration:none">${coffeeLabel}</a>
       </td></tr>
       <tr><td style="padding:8px 32px 24px;text-align:center;border-top:1px solid #222;margin-top:8px">
-        <p style="margin:8px 0 8px;color:#666;font-size:11px">${receivedText}</p>
+        <p style="margin:8px 0 8px;color:#888;font-size:11px">${receivedText}</p>
         <a href="${escXml(unsubscribeUrl)}" style="color:#888;font-size:12px;text-decoration:underline">Unsubscribe / הסר אותי מהרשימה</a>
       </td></tr>
     </table>
@@ -7500,7 +7500,7 @@ function welcomeEmailShell(inner, unsubToken, en) {
     <h2 style="color:#c8a96e;margin-bottom:1rem">AMIT PHOTOS</h2>
     ${inner}
     <hr style="border-color:#333;margin-top:2rem">
-    <p style="color:#666;font-size:.8rem">${en ? 'Unsubscribe' : 'לביטול הרשמה'}: <a href="https://amitphotos.com/api/unsubscribe?token=${unsubToken}" style="color:#888">${en ? 'click here' : 'לחץ כאן'}</a></p>
+    <p style="color:#888;font-size:.8rem">${en ? 'Unsubscribe' : 'לביטול הרשמה'}: <a href="https://amitphotos.com/api/unsubscribe?token=${unsubToken}" style="color:#888">${en ? 'click here' : 'לחץ כאן'}</a></p>
   </div>`;
 }
 
