@@ -2948,7 +2948,7 @@ async function handleSitemap(request, env) {
   let photoUrls = [];
   try {
     const { results } = await env.DB.prepare(
-      'SELECT id, title, thumbnail, category, created_at FROM photos WHERE published=1 ORDER BY created_at DESC LIMIT 1000'
+      'SELECT id, title, thumbnail, category, created_at FROM photos WHERE published=1 ORDER BY created_at DESC'
     ).all();
 
     photoUrls = results.map(p => {
