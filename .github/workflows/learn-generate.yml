@@ -2,7 +2,7 @@ name: ניתוח צילום חדש — ניתוח תמונות
 
 on:
   schedule:
-    - cron: '0 10 */2 * *'  # כל יומיים 10:00 UTC
+    - cron: '0 10 * * 4'  # שבועי — יום ה' 10:00 UTC (צומצם מ"כל יומיים" ב-19.7.2026, ראה feedback_instagram_performance)
   workflow_dispatch:
 
 env:
