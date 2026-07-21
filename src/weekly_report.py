@@ -53,11 +53,11 @@ def get_fb_pages():
 # ===== Instagram =====
 
 def fetch_ig_insights():
-    """שולף נתוני אינסטגרם — פוסטים מ-7 ימים אחרונים."""
+    """שולף נתוני אינסטגרם — פוסטים מ-7 ימים אחרונים (כולל media_type/media_product_type לזיהוי Reels)."""
     since = int((datetime.now(timezone.utc) - timedelta(days=7)).timestamp())
     try:
         resp = requests.get(f"{GRAPH_API}/{IG_USER_ID}/media", params={
-            "fields": "id,caption,like_count,comments_count,timestamp,media_url",
+            "fields": "id,caption,like_count,comments_count,timestamp,media_url,media_type,media_product_type",
             "since":  since,
             "limit":  20,
             "access_token": IG_TOKEN,
@@ -67,6 +67,74 @@ def fetch_ig_insights():
     except Exception as e:
         print(f"⚠️  Instagram insights נכשל: {e}")
         return []
+
+
+# מדדים ספציפיים ל-Reels (Graph API v21.0). אם מטא משנה שמות מדדים בגרסה עתידית — הפונקציה
+# נכשלת בשקט ומחזירה {} (כמו שאר קריאות ה-API בקובץ), לא קורסת את הדוח כולו.
+REEL_METRICS = "plays,reach,saved,shares,total_interactions,ig_reels_avg_watch_time"
+
+
+def is_reel(post):
+    return post.get("media_product_type") == "REELS" or post.get("media_type") == "VIDEO"
+
+
+def fetch_reel_insights(media_id):
+    """שולף מדדי Reels (צפיות, זמן צפייה ממוצע, שיתופים, שמירות) למדיה בודדת."""
+    try:
+        resp = requests.get(f"{GRAPH_API}/{media_id}/insights", params={
+            "metric": REEL_METRICS,
+            "access_token": IG_TOKEN,
+        }, timeout=15)
+        resp.raise_for_status()
+        out = {}
+        for item in resp.json().get("data", []):
+            values = item.get("values", [])
+            out[item.get("name")] = values[0].get("value", 0) if values else 0
+        return out
+    except Exception as e:
+        print(f"⚠️  Reel insights ({media_id}) נכשל: {e}")
+        return {}
+
+
+def build_reel_summary(ig_posts):
+    """מרכז מדדי Reels לשבוע: סה\"כ צפיות/שיתופים/שמירות + הרילס המוביל."""
+    reels = [p for p in ig_posts if is_reel(p)]
+    for p in reels:
+        p["reel_metrics"] = fetch_reel_insights(p["id"])
+
+    n = len(reels)
+    total_plays   = sum(p["reel_metrics"].get("plays", 0) for p in reels)
+    total_reach   = sum(p["reel_metrics"].get("reach", 0) for p in reels)
+    total_shares  = sum(p["reel_metrics"].get("shares", 0) for p in reels)
+    total_saved   = sum(p["reel_metrics"].get("saved", 0) for p in reels)
+    watch_times   = [p["reel_metrics"].get("ig_reels_avg_watch_time", 0) for p in reels if p["reel_metrics"].get("ig_reels_avg_watch_time")]
+    avg_watch     = round(sum(watch_times) / len(watch_times), 1) if watch_times else 0
+    best = max(reels, key=lambda p: p["reel_metrics"].get("plays", 0), default=None)
+
+    return {
+        "reels_this_week": n,
+        "total_plays":     total_plays,
+        "total_reach":     total_reach,
+        "total_shares":    total_shares,
+        "total_saved":     total_saved,
+        "avg_watch_time":  avg_watch,
+        "top_reels": [
+            {
+                "caption": (p.get("caption") or "")[:100].replace("\n", " "),
+                "plays":   p["reel_metrics"].get("plays", 0),
+                "reach":   p["reel_metrics"].get("reach", 0),
+                "shares":  p["reel_metrics"].get("shares", 0),
+                "saved":   p["reel_metrics"].get("saved", 0),
+                "date":    (p.get("timestamp") or "")[:10],
+            }
+            for p in sorted(reels, key=lambda p: p["reel_metrics"].get("plays", 0), reverse=True)[:5]
+        ],
+        "best_reel": {
+            "caption": (best.get("caption") or "")[:120] if best else "",
+            "plays":   best["reel_metrics"].get("plays", 0) if best else 0,
+            "date":    (best.get("timestamp") or "")[:10] if best else "",
+        },
+    }
 
 
 def fetch_ig_account_insights():
@@ -181,7 +249,7 @@ def build_fb_page_block(label, page_id):
 
 # ===== Report builder =====
 
-def build_html_report(ig_posts, ig_account, fb_pages_data):
+def build_html_report(ig_posts, ig_account, fb_pages_data, reel_summary):
     week_str = datetime.now().strftime("%d/%m/%Y")
 
     ig_total_likes    = sum(p.get("like_count", 0) for p in ig_posts)
@@ -224,6 +292,36 @@ def build_html_report(ig_posts, ig_account, fb_pages_data):
     fb_sections = "".join(fb_page_html(p) for p in fb_pages_data) if fb_pages_data else "<p style='color:#888'>לא הוגדרו עמודי פייסבוק</p>"
     ig_best_text = f"<p>⭐ <strong>הפוסט הטוב ביותר:</strong> {(ig_best.get('caption') or '')[:80]}… ({ig_best.get('like_count', 0)} לייקים)</p>" if ig_best else ""
 
+    def reel_rows():
+        rows = ""
+        for r in reel_summary.get("top_reels", []):
+            rows += f"""<tr>
+                <td style="padding:6px 12px;border-bottom:1px solid #333">{r['date']}</td>
+                <td style="padding:6px 12px;border-bottom:1px solid #333;color:#aaa">{r['caption']}…</td>
+                <td style="padding:6px 12px;border-bottom:1px solid #333;text-align:center">▶️ {r['plays']}</td>
+                <td style="padding:6px 12px;border-bottom:1px solid #333;text-align:center">🔁 {r['shares']}</td>
+                <td style="padding:6px 12px;border-bottom:1px solid #333;text-align:center">🔖 {r['saved']}</td>
+            </tr>"""
+        return rows or "<tr><td colspan='5' style='padding:12px;color:#666;text-align:center'>אין Reels השבוע</td></tr>"
+
+    reels_section = ""
+    if reel_summary.get("reels_this_week"):
+        reels_section = f"""
+  <h2 style="color:#f77737;margin-top:32px">🎬 Reels</h2>
+  <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:16px">
+    {''.join(f'<div style="background:#1a1a1a;padding:14px 20px;border-radius:8px;text-align:center;min-width:80px"><div style="font-size:24px;font-weight:bold;color:#c8a96e">{v}</div><div style="color:#888;font-size:12px">{lbl}</div></div>' for v,lbl in [(reel_summary['reels_this_week'],'Reels'),(reel_summary['total_plays'],'צפיות'),(reel_summary['avg_watch_time'],'שנ׳ צפייה ממוצע'),(reel_summary['total_shares'],'שיתופים'),(reel_summary['total_saved'],'שמירות')])}
+  </div>
+  <table style="width:100%;border-collapse:collapse;background:#111;border-radius:8px;overflow:hidden">
+    <thead><tr style="background:#1a1a1a;color:#c8a96e">
+      <th style="padding:10px 12px;text-align:right">תאריך</th>
+      <th style="padding:10px 12px;text-align:right">כיתוב</th>
+      <th style="padding:10px 12px">צפיות</th>
+      <th style="padding:10px 12px">שיתופים</th>
+      <th style="padding:10px 12px">שמירות</th>
+    </tr></thead>
+    <tbody>{reel_rows()}</tbody>
+  </table>"""
+
     return f"""<!DOCTYPE html>
 <html dir="rtl" lang="he">
 <head><meta charset="UTF-8"><title>דוח שבועי — עמית ארז</title></head>
@@ -246,6 +344,8 @@ def build_html_report(ig_posts, ig_account, fb_pages_data):
     <tbody>{post_rows_ig(ig_posts)}</tbody>
   </table>
 
+  {reels_section}
+
   {fb_sections}
 
   <p style="color:#444;font-size:12px;margin-top:40px;text-align:center">דוח אוטומטי — amitphotos.com</p>
@@ -267,7 +367,7 @@ def send_email(subject, html):
     return resp.json()
 
 
-def generate_ai_recommendations(ig_posts, ig_account, fb_pages_data):
+def generate_ai_recommendations(ig_posts, ig_account, fb_pages_data, reel_summary):
     """יוצר המלצות AI מבוססות על ביצועי השבוע."""
     if not ANTHROPIC_KEY:
         return ["אין ANTHROPIC_API_KEY — המלצות לא זמינות"]
@@ -283,6 +383,16 @@ def generate_ai_recommendations(ig_posts, ig_account, fb_pages_data):
     for page in fb_pages_data:
         fb_summary += f"\n  {page['name']}: {page['fans']} עוקבים, {page['posts_this_week']} פוסטים, {page['total_likes']} לייקים"
 
+    reels_summary_text = "none this week"
+    if reel_summary.get("reels_this_week"):
+        best_reel = reel_summary.get("best_reel", {})
+        reels_summary_text = (
+            f"{reel_summary['reels_this_week']} reels, {reel_summary['total_plays']} total plays, "
+            f"avg watch time {reel_summary['avg_watch_time']}s, {reel_summary['total_shares']} shares, "
+            f"{reel_summary['total_saved']} saves. Best reel ({best_reel.get('plays', 0)} plays): "
+            f"{best_reel.get('caption', '')[:120] or 'none'}"
+        )
+
     summary = f"""Weekly social media performance for Amit Erez Photography (Israeli photographer):
 
 Instagram (@amitphotos.com):
@@ -292,6 +402,8 @@ Instagram (@amitphotos.com):
 - Avg likes/post: {ig_avg}
 - Total comments: {ig_total_comments}
 - Best post ({ig_best.get('like_count', 0) if ig_best else 0} likes): {(ig_best.get('caption') or '')[:120] if ig_best else 'none'}
+
+Instagram Reels this week: {reels_summary_text}
 
 Facebook pages:{fb_summary or ' none configured'}"""
 
@@ -304,6 +416,7 @@ Facebook pages:{fb_summary or ' none configured'}"""
 
 Based on this data, provide exactly 4 actionable recommendations in Hebrew for next week.
 Each recommendation should be specific, practical, and based on the actual numbers above.
+At least one recommendation must address Instagram Reels/video performance specifically (watch time, plays, shares/saves vs. static posts) when reel data is present above.
 Return ONLY a JSON array of 4 strings, with no markdown, no code blocks, no explanation.
 Start your response with [ and end with ]
 Example: ["המלצה 1", "המלצה 2", "המלצה 3", "המלצה 4"]"""}],
@@ -343,6 +456,7 @@ def _append_to_history(report):
 
     ig = report.get("ig", {})
     first_fb = (report.get("fb_pages") or [{}])[0]
+    reels = report.get("reels", {})
     row = {
         "week_ending":    week_key,
         "generated_at":   report.get("generated_at", ""),
@@ -355,6 +469,11 @@ def _append_to_history(report):
         "fb_fans":        first_fb.get("fans"),
         "fb_posts":       first_fb.get("posts_this_week"),
         "fb_likes":       first_fb.get("total_likes"),
+        "reels_count":    reels.get("reels_this_week"),
+        "reels_plays":    reels.get("total_plays"),
+        "reels_avg_watch_time": reels.get("avg_watch_time"),
+        "reels_shares":   reels.get("total_shares"),
+        "reels_saved":    reels.get("total_saved"),
     }
     history.append(row)
     # שמור עם הישן קודם (סדר כרונולוגי)
@@ -362,7 +481,7 @@ def _append_to_history(report):
     print(f"📈 היסטוריה: נוסף שבוע {week_key} ({len(history)} שבועות סה\"כ)")
 
 
-def save_social_report(ig_posts, ig_account, fb_pages_data, recommendations):
+def save_social_report(ig_posts, ig_account, fb_pages_data, recommendations, reel_summary):
     """שומר דוח JSON לשימוש האדמין."""
     out = ROOT / "data" / "social_report.json"
 
@@ -431,6 +550,7 @@ def save_social_report(ig_posts, ig_account, fb_pages_data, recommendations):
         },
         # all FB pages as array (new)
         "fb_pages": fb_pages_data,
+        "reels":          reel_summary,
         "prev":           prev,
         "recommendations": recommendations,
     }
@@ -451,6 +571,10 @@ def main():
     ig_posts   = fetch_ig_insights()
     ig_account = fetch_ig_account_insights()
 
+    print("🎬 אוסף נתוני Reels...")
+    reel_summary = build_reel_summary(ig_posts)
+    print(f"   {reel_summary['reels_this_week']} reels, {reel_summary['total_plays']} צפיות סה\"כ")
+
     print("📘 אוסף נתוני Facebook...")
     pages = get_fb_pages()
     if not pages:
@@ -458,15 +582,15 @@ def main():
     fb_pages_data = [build_fb_page_block(label, pid) for label, pid in pages]
 
     print("🤖 מייצר המלצות AI...")
-    recommendations = generate_ai_recommendations(ig_posts, ig_account, fb_pages_data)
+    recommendations = generate_ai_recommendations(ig_posts, ig_account, fb_pages_data, reel_summary)
     for i, r in enumerate(recommendations, 1):
         print(f"   {i}. {r}")
 
     print("💾 שומר דוח JSON...")
-    save_social_report(ig_posts, ig_account, fb_pages_data, recommendations)
+    save_social_report(ig_posts, ig_account, fb_pages_data, recommendations, reel_summary)
 
     print("✉️  בונה דוח...")
-    html = build_html_report(ig_posts, ig_account, fb_pages_data)
+    html = build_html_report(ig_posts, ig_account, fb_pages_data, reel_summary)
 
     week_str = datetime.now().strftime("%d/%m/%Y")
     subject  = f"📊 דוח שבועי סושיאל — {week_str}"
