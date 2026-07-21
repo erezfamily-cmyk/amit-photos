@@ -3267,7 +3267,7 @@ async function handleAdminReplacePhoto(request, env, photoId) {
   const url = new URL(request.url);
   const width  = parseInt(url.searchParams.get('width')  || '0');
   const height = parseInt(url.searchParams.get('height') || '0');
-  await env.BUCKET.put(`${photoId}.jpg`, bytes, { httpMetadata: { contentType: 'image/jpeg' } });
+  await env.PHOTOS.put(`${photoId}.jpg`, bytes, { httpMetadata: { contentType: 'image/jpeg' } });
   if (width && height) {
     await env.DB.prepare('UPDATE photos SET width=?, height=? WHERE id=?').bind(width, height, photoId).run();
   }
@@ -3278,8 +3278,11 @@ async function handleUploadStory(request, env) {
   if (!await checkAuth(request, env)) return unauth(request);
   const bytes = await request.arrayBuffer();
   if (!bytes.byteLength) return jsonRes({ error: 'empty body' }, 400, request);
-  await env.BUCKET.put('story/latest.jpg', bytes, { httpMetadata: { contentType: 'image/jpeg' } });
-  const url = `${new URL(request.url).origin}/photos/story/latest.jpg`;
+  const isVideo = (request.headers.get('Content-Type') || '').startsWith('video/');
+  const key = isVideo ? 'story/latest.mp4' : 'story/latest.jpg';
+  const contentType = isVideo ? 'video/mp4' : 'image/jpeg';
+  await env.PHOTOS.put(key, bytes, { httpMetadata: { contentType } });
+  const url = `${new URL(request.url).origin}/photos/${key}`;
   return jsonRes({ url }, 200, request);
 }
 

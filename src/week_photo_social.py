@@ -236,7 +236,7 @@ def upload_bytes_to_public_host(img_bytes, filename="image.jpg"):
             r = requests.post(
                 f"{SITE_URL}/api/admin/upload-story",
                 data=img_bytes,
-                headers={"Authorization": f"Bearer {ADMIN_TOKEN}", "Content-Type": "image/jpeg"},
+                headers={"X-Admin-Password": ADMIN_TOKEN, "Content-Type": "image/jpeg"},
                 timeout=60,
             )
             if r.ok:

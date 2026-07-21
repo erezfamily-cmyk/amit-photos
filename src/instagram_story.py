@@ -19,6 +19,7 @@ STORY_FILE = DATA_DIR / "instagram_story_posted.json"
 IG_USER_ID   = os.environ.get("INSTAGRAM_USER_ID", "")
 ACCESS_TOKEN = os.environ.get("INSTAGRAM_PAGE_TOKEN", "")
 FB_PAGE_ID   = os.environ.get("FACEBOOK_PAGE_ID", "")
+ADMIN_TOKEN  = os.environ.get("ADMIN_TOKEN", "")
 
 PHOTOS_PER_STORY = 8
 SLIDE_DURATION   = 3.5   # seconds
@@ -376,11 +377,33 @@ def add_audio(video_path, category, tmp_dir):
 
 # ── Upload ────────────────────────────────────────────────────────────────────
 
+def _try_r2(data):
+    if not ADMIN_TOKEN:
+        return None
+    r = requests.post(
+        f"{SITE_URL}/api/admin/upload-story",
+        data=data,
+        headers={"X-Admin-Password": ADMIN_TOKEN, "Content-Type": "video/mp4"},
+        timeout=120,
+    )
+    r.raise_for_status()
+    url = r.json().get("url", "")
+    return url if url.startswith("http") else None
+
+
 def upload_video(video_path):
     import time
     data  = video_path.read_bytes()
     mb    = len(data) / 1024 / 1024
     print(f"📤 גודל וידאו: {mb:.1f} MB")
+
+    try:
+        r2_url = _try_r2(data)
+        if r2_url:
+            print(f"⬆️  הועלה (R2): {r2_url}")
+            return r2_url
+    except Exception as e:
+        print(f"⚠️  R2 נכשל, עובר לגיבוי: {e}")
 
     for name, url, extra in [
         ("litterbox", "https://litterbox.catbox.moe/resources/internals/api.php",

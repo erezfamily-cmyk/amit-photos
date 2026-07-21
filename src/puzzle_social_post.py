@@ -123,7 +123,7 @@ def get_image_url_for_post(photo):
             r = requests.post(
                 f"{SITE_URL}/api/admin/upload-story",
                 data=img_bytes,
-                headers={"Authorization": f"Bearer {ADMIN_TOKEN}", "Content-Type": "image/jpeg"},
+                headers={"X-Admin-Password": ADMIN_TOKEN, "Content-Type": "image/jpeg"},
                 timeout=60,
             )
             if r.ok:

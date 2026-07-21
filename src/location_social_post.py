@@ -168,7 +168,7 @@ def _try_r2(img_bytes):
         return None
     r = requests.post(f"{SITE_URL}/api/admin/upload-story",
         data=img_bytes,
-        headers={"Authorization": f"Bearer {ADMIN_TOKEN}", "Content-Type": "image/jpeg"},
+        headers={"X-Admin-Password": ADMIN_TOKEN, "Content-Type": "image/jpeg"},
         timeout=60)
     r.raise_for_status()
     url = r.json().get("url", "")
