@@ -3,6 +3,7 @@
 node_modules
 src
 docs
+video
 *.pdf
 # lead magnet — חייב להיות זמין להורדה (המיילים מקשרים אליו)
 !50tips-heb.pdf
