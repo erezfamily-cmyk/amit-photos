@@ -1810,6 +1810,17 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
 
       <div style="max-width:720px;margin:0 auto">
 
+        <!-- Monthly automated build — pending review -->
+        <div style="margin-bottom:1.5rem">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem">
+            <h3 style="font-size:1rem;font-weight:600">🤖 אוטומציה חודשית — ממתינים לבדיקה</h3>
+            <button onclick="promoAutoLoad()" style="background:none;border:none;color:var(--accent);cursor:pointer;font-size:.85rem">רענן</button>
+          </div>
+          <div id="promo-auto-list">
+            <div style="text-align:center;padding:1.5rem;color:var(--muted);font-size:.85rem">טוען...</div>
+          </div>
+        </div>
+
         <!-- Upload zone -->
         <div id="video-upload-zone"
           onclick="document.getElementById('video-file-input').click()"
@@ -7605,12 +7616,42 @@ async function confirmLinkToLocation() {
     }
   };
 
+  // ===== MONTHLY PROMO AUTOMATION — pending review =====
+  window.promoAutoLoad = async function() {
+    const list = document.getElementById('promo-auto-list');
+    if (!list) return;
+    list.innerHTML = '<div style="text-align:center;padding:1.5rem;color:var(--muted);font-size:.85rem">טוען...</div>';
+    try {
+      const res = await fetch('/api/admin/promo-automation', { headers: { 'X-Session-Token': SESSION_TOKEN } });
+      if (!res.ok) { list.innerHTML = '<div style="text-align:center;padding:1rem;color:#f44;font-size:.85rem">שגיאת טעינה</div>'; return; }
+      const { pending, error } = await res.json();
+      if (error) { list.innerHTML = `<div style="text-align:center;padding:1rem;color:#f44;font-size:.85rem">${error}</div>`; return; }
+      if (!pending || !pending.length) {
+        list.innerHTML = '<div style="text-align:center;padding:1.5rem;color:var(--muted);font-size:.85rem">אין סרטונים ממתינים כרגע — הריצה החודשית הבאה: 1 לחודש.</div>';
+        return;
+      }
+      list.innerHTML = pending.map(p => `
+        <div style="display:flex;gap:1rem;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.75rem 1rem;margin-bottom:.5rem">
+          <div style="width:44px;height:44px;background:var(--bg);border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.4rem">🎬</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:.9rem;font-weight:600;margin-bottom:.15rem">${p.category || 'ללא קטגוריה'}</div>
+            <div style="font-size:.75rem;color:var(--muted)">${p.date || ''} ${p.duration_s ? '· ' + p.duration_s + 's' : ''} ${p.status ? '· ' + p.status : ''}</div>
+          </div>
+          <a href="https://github.com/erezfamily-cmyk/amit-photos-promo-videos" target="_blank" style="flex-shrink:0;padding:.5rem .9rem;background:var(--accent);color:#000;border-radius:6px;font-weight:700;font-size:.82rem;text-decoration:none">📂 לריפו</a>
+        </div>
+      `).join('');
+    } catch(e) {
+      list.innerHTML = '<div style="text-align:center;padding:1rem;color:var(--muted);font-size:.85rem">לא ניתן לטעון רשימה</div>';
+    }
+  };
+
   // ===== VIDEO DISTRIBUTION =====
   window.videosLoad = async function() {
     const list   = document.getElementById('videos-list');
     const status = document.getElementById('videos-status');
     list.innerHTML = '<div style="text-align:center;padding:3rem;color:var(--muted);font-size:.9rem">טוען...</div>';
     status.style.display = 'none';
+    promoAutoLoad();
 
     try {
       const res = await fetch('/api/admin/videos', { headers: { 'X-Session-Token': SESSION_TOKEN } });

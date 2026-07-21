@@ -1063,6 +1063,49 @@ async function handleAdminSocialActivity(request, env) {
   return jsonRes({ runs }, 200, request);
 }
 
+async function handleAdminPromoAutomation(request, env) {
+  if (!await checkAuth(request, env)) return unauth(request);
+  if (!env.GITHUB_TOKEN) return jsonRes({ error: 'GITHUB_TOKEN לא מוגדר' }, 500, request);
+
+  const ghHeaders = {
+    'Authorization': `Bearer ${env.GITHUB_TOKEN}`,
+    'Accept': 'application/vnd.github+json',
+    'User-Agent': 'amit-photos-worker',
+    'X-GitHub-Api-Version': '2022-11-28',
+  };
+
+  // pending-review.json lives in the separate, private amit-photos-promo-videos repo
+  // (the monthly HyperFrames automation's own repo — kept apart from this site's repo
+  // so its build churn/renders never touch amit-photos' git history).
+  const res = await fetch(
+    'https://api.github.com/repos/erezfamily-cmyk/amit-photos-promo-videos/contents/pending-review.json',
+    { headers: ghHeaders }
+  );
+
+  if (res.status === 404) {
+    // No pending-review.json yet — the monthly routine hasn't run/committed one yet.
+    return jsonRes({ pending: [] }, 200, request);
+  }
+  if (!res.ok) {
+    const err = await res.text();
+    return jsonRes({ error: `GitHub API ${res.status}: ${err.slice(0, 200)}` }, 502, request);
+  }
+
+  const meta = await res.json();
+  let pending = [];
+  try {
+    const decoded = atob(meta.content.replace(/\n/g, ''));
+    pending = JSON.parse(decoded);
+  } catch (e) {
+    return jsonRes({ error: `pending-review.json parse error: ${e.message}` }, 502, request);
+  }
+  if (!Array.isArray(pending)) pending = [];
+
+  pending.sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')));
+
+  return jsonRes({ pending }, 200, request);
+}
+
 async function handleAdminVideos(request, env) {
   if (!await checkAuth(request, env)) return unauth(request);
   if (!env.GITHUB_TOKEN) return jsonRes({ error: 'GITHUB_TOKEN לא מוגדר' }, 500, request);
@@ -7203,6 +7246,7 @@ export default {
     if (path.startsWith('/video/'))        return handleVideoFile(request, env, path.slice('/video/'.length));
     if (path === '/api/admin/social-activity') return handleAdminSocialActivity(request, env);
     if (path === '/api/admin/videos')      return handleAdminVideos(request, env);
+    if (path === '/api/admin/promo-automation') return handleAdminPromoAutomation(request, env);
     if (path === '/api/newsletter')        return handleNewsletter(request, env);
     if (path === '/api/unsubscribe')       return handleUnsubscribe(request, env);
     if (path === '/api/reply')             return handleReply(request, env);
