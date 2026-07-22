@@ -12,6 +12,7 @@
     "focus",
     "landscape",
     "portrait",
-    "macro"
+    "macro",
+    "histogram"
   ]
 }
