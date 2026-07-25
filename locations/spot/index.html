@@ -458,19 +458,19 @@ function renderSpot(loc, lang) {
       </ul>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin:1rem 0">
         <div id="sun-widget" style="display:none;background:#111;border:1px solid #222;border-radius:8px;padding:1rem 1.25rem">
-          <div style="font-size:.75rem;color:#666;margin-bottom:.6rem">${sunLabel}</div>
+          <div style="font-size:.75rem;color:#999;margin-bottom:.6rem">${sunLabel}</div>
           <div style="display:flex;gap:1.5rem;flex-wrap:wrap">
-            <div><span style="font-size:1.1rem">🌅</span><span style="font-size:.85rem;color:#c8a96e;font-weight:700" id="sun-rise">--:--</span><div style="font-size:.7rem;color:#666">${riseLabel}</div></div>
-            <div><span style="font-size:1.1rem">🌇</span><span style="font-size:.85rem;color:#c8a96e;font-weight:700" id="sun-set">--:--</span><div style="font-size:.7rem;color:#666">${setLabel2}</div></div>
-            <div><span style="font-size:1.1rem">✨</span><span style="font-size:.85rem;color:#c8a96e;font-weight:700" id="golden-hour">--:--</span><div style="font-size:.7rem;color:#666">${goldLabel}</div></div>
+            <div><span style="font-size:1.1rem">🌅</span><span style="font-size:.85rem;color:#c8a96e;font-weight:700" id="sun-rise">--:--</span><div style="font-size:.7rem;color:#999">${riseLabel}</div></div>
+            <div><span style="font-size:1.1rem">🌇</span><span style="font-size:.85rem;color:#c8a96e;font-weight:700" id="sun-set">--:--</span><div style="font-size:.7rem;color:#999">${setLabel2}</div></div>
+            <div><span style="font-size:1.1rem">✨</span><span style="font-size:.85rem;color:#c8a96e;font-weight:700" id="golden-hour">--:--</span><div style="font-size:.7rem;color:#999">${goldLabel}</div></div>
           </div>
         </div>
         <div id="weather-widget" style="display:none;background:#111;border:1px solid #222;border-radius:8px;padding:1rem 1.25rem">
-          <div style="font-size:.75rem;color:#666;margin-bottom:.6rem">${wxLabel}</div>
+          <div style="font-size:.75rem;color:#999;margin-bottom:.6rem">${wxLabel}</div>
           <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap">
             <div style="font-size:2rem" id="weather-icon">—</div>
             <div><div style="font-size:1.4rem;font-weight:700;color:#f0ede8" id="weather-temp">--°</div><div style="font-size:.75rem;color:#888" id="weather-desc">--</div></div>
-            <div style="font-size:.8rem;color:#666" id="weather-wind"></div>
+            <div style="font-size:.8rem;color:#999" id="weather-wind"></div>
           </div>
         </div>
       </div>
@@ -667,7 +667,7 @@ applySpotModalLang();
   <!-- ===== PDF LEAD MAGNET POPUP ===== -->
   <div id="pdf-popup" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:9999;align-items:center;justify-content:center;padding:1rem">
     <div style="background:#1a1a1a;border:1px solid #c8a96e;border-radius:8px;padding:2rem;max-width:400px;width:100%;direction:rtl;position:relative">
-      <button onclick="closePdfPopup()" style="position:absolute;top:.75rem;left:.75rem;background:none;border:none;color:#666;font-size:1.2rem;cursor:pointer;line-height:1">&#x2715;</button>
+      <button onclick="closePdfPopup()" style="position:absolute;top:.75rem;left:.75rem;background:none;border:none;color:#999;font-size:1.2rem;cursor:pointer;line-height:1">&#x2715;</button>
       <div style="font-size:.7rem;letter-spacing:.12em;color:#c8a96e;margin-bottom:.4rem">מתנה חינמית</div>
       <h3 style="font-size:1.2rem;color:#f0ede8;margin-bottom:.3rem">50 טיפים לצילום</h3>
       <p style="font-size:.85rem;color:#aaa;margin-bottom:1.2rem">PDF חינם — ישיר למייל שלך</p>
