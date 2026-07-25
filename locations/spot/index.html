@@ -64,13 +64,13 @@ h1{font-family:'Syne',sans-serif;font-size:2rem;color:var(--accent);margin-botto
 .share-row { display:flex; gap:.6rem; flex-wrap:wrap; margin:1rem 0 1.5rem; }
 .share-btn { display:flex; align-items:center; gap:.4rem; padding:.45rem .9rem; border-radius:20px; border:none; cursor:pointer; font-size:.8rem; font-family:'Heebo',sans-serif; font-weight:600; transition:opacity .2s; }
 .share-btn:hover { opacity:.85; }
-.share-wa { background:#25D366; color:#fff; }
-.share-fb { background:#1877F2; color:#fff; }
+.share-wa { background:#0e7a3a; color:#fff; }
+.share-fb { background:#1461cc; color:#fff; }
 .share-copy { background:#222; color:#ccc; border:1px solid #444; }
 #waze-wrap { display:none; margin:.75rem 1.25rem; }
 #waze-link { display:inline-flex; align-items:center; gap:.5rem; background:#1a1a1a; border:1px solid #333; border-radius:6px; padding:.55rem 1rem; color:#c8a96e; text-decoration:none; font-size:.85rem; font-weight:600; }
 #next-loc-nav { display:none; margin:2.5rem 1.25rem; padding:1.25rem 1.5rem; background:#111; border:1px solid #222; border-radius:8px; text-align:center; }
-#next-loc-label { font-size:.78rem; color:#666; margin-bottom:.4rem; }
+#next-loc-label { font-size:.78rem; color:#999; margin-bottom:.4rem; }
 #next-loc-link { color:#c8a96e; text-decoration:none; font-size:1rem; font-weight:700; }
 @media print {
   nav#main-nav, footer#main-footer, .share-row, #correction-modal, #correction-trigger { display:none !important; }
@@ -417,7 +417,7 @@ function renderSpot(loc, lang) {
     const [lat, lng] = parts;
     document.getElementById('map-section').innerHTML = `
       <div class="map-wrap">
-        <iframe src="https://www.openstreetmap.org/export/embed.html?bbox=${parseFloat(lng)-0.02},${parseFloat(lat)-0.02},${parseFloat(lng)+0.02},${parseFloat(lat)+0.02}&layer=mapnik&marker=${lat},${lng}" loading="lazy" allowfullscreen></iframe>
+        <iframe src="https://www.openstreetmap.org/export/embed.html?bbox=${parseFloat(lng)-0.02},${parseFloat(lat)-0.02},${parseFloat(lng)+0.02},${parseFloat(lat)+0.02}&layer=mapnik&marker=${lat},${lng}" title="${escHtml((isEn ? 'Map — ' : 'מפה — ') + title)}" loading="lazy" allowfullscreen></iframe>
       </div>
     `;
     if (parts.length === 2) {

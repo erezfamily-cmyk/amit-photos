@@ -40,7 +40,7 @@ const SEC_HEADERS = {
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     "font-src 'self' https://fonts.gstatic.com",
     "img-src 'self' data: https: blob: https://www.google-analytics.com https://region1.google-analytics.com",
-    "connect-src 'self' https://amitphotos.com https://analytics.google.com https://www.google-analytics.com https://region1.google-analytics.com https://www.googletagmanager.com https://cloudflareinsights.com",
+    "connect-src 'self' https://amitphotos.com https://analytics.google.com https://www.google-analytics.com https://region1.google-analytics.com https://www.googletagmanager.com https://cloudflareinsights.com https://api.open-meteo.com https://api.sunrise-sunset.org",
     "frame-src https://www.google.com https://www.paypal.com https://www.openstreetmap.org",
     "base-uri 'self'",
     "object-src 'none'",
