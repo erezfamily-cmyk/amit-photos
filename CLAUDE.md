@@ -24,9 +24,10 @@ fetch('/api/photos')        // D1 דרך Worker, ~1,225 רשומות published
 // אם D1 יש נתונים — D1 primary, photos.json מעשיר
 allPhotos = apiPhotos.map(p => {
   const j = jsonMap.get(p.id);  // מחפש לפי id
-  return j
-    ? { ...j, ...p, thumbnail: j.thumbnail || p.thumbnail, url: j.url || p.url }
-    : p;
+  // D1 WebP מנצח; photos.json הוא fallback רק אם ל-D1 אין WebP
+  const thumb = p.thumbnail?.endsWith('.webp') ? p.thumbnail : (j?.thumbnail || p.thumbnail);
+  const url   = p.url?.endsWith('.webp')       ? p.url       : (j?.url       || p.url);
+  return j ? { ...j, ...p, thumbnail: thumb, url } : p;
 });
 // אם D1 ריק — photos.json בלבד
 ```
@@ -35,7 +36,7 @@ allPhotos = apiPhotos.map(p => {
 
 - כשD1 יש נתונים — רק תמונות שב-D1 מוצגות
 - תמונה שרק בphotos.json ולא ב-D1 — **לא מוצגת**
-- `thumbnail`/`url` — **photos.json מנצח** על D1 (אם קיים ב-JSON)
+- `thumbnail`/`url` — **D1 מנצח אם הוא WebP**; photos.json הוא fallback רק כשל-D1 אין WebP (ראה [docs/gallery-merge-architecture.md](docs/gallery-merge-architecture.md))
 - D1 מנצח על שאר השדות (title, category וכו')
 
 ---
