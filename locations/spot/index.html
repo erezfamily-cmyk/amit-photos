@@ -242,7 +242,11 @@ const GUIDE_LABELS = {
 };
 
 const params = new URLSearchParams(location.search);
-const slug = params.get('slug');
+let slug = params.get('slug');
+if (!slug) {
+  const pathMatch = location.pathname.match(/^\/locations\/([^/]+)\/?$/);
+  if (pathMatch && pathMatch[1] !== 'spot') slug = pathMatch[1];
+}
 
 if (!slug) { location.href = '/locations/'; }
 
