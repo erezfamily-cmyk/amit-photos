@@ -374,7 +374,7 @@ function renderNearby(nearby, lang) {
   const heading = isEn ? 'Nearby Spots' : 'מקומות קרובים';
   const kmLabel = isEn ? 'km →' : 'ק"מ →';
   const items = nearby.map(n =>
-    `<a class="nearby-item" href="/locations/${encodeURIComponent(n.id)}/">`
+    `<a class="nearby-item" href="/locations/${encodeURIComponent(n.id)}/">
       <span class="nearby-name">${escHtml((isEn && n.title_en) ? n.title_en : n.title)}</span>
       <span class="nearby-dist">${n.km} ${kmLabel}</span>
     </a>`

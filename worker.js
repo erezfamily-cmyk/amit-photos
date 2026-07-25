@@ -36,11 +36,11 @@ const SEC_HEADERS = {
   'Referrer-Policy': 'strict-origin-when-cross-origin',
   'Content-Security-Policy': [
     "default-src 'self' https://amitphotos.com",
-    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com",
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://static.cloudflareinsights.com",
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     "font-src 'self' https://fonts.gstatic.com",
     "img-src 'self' data: https: blob: https://www.google-analytics.com https://region1.google-analytics.com",
-    "connect-src 'self' https://amitphotos.com https://analytics.google.com https://www.google-analytics.com https://region1.google-analytics.com https://www.googletagmanager.com",
+    "connect-src 'self' https://amitphotos.com https://analytics.google.com https://www.google-analytics.com https://region1.google-analytics.com https://www.googletagmanager.com https://cloudflareinsights.com",
     "frame-src https://www.google.com https://www.paypal.com https://www.openstreetmap.org",
     "base-uri 'self'",
     "object-src 'none'",
@@ -3126,6 +3126,7 @@ async function handleLocationSpotPage(request, env, slugOverride) {
   html = html
     .replace(/<title>[^<]*<\/title>/, `<title>${title}</title>`)
     .replace(/<meta\s+name="robots"[^>]*>/gi, '')   // הסר noindex מהתבנית
+    .replace(/<link\s+rel="canonical"[^>]*>/i, '')  // הסר canonical הגנרי מהתבנית הסטטית
     .replace('</head>', ogTags + '\n</head>');
 
   return htmlRes(html, 200, 'no-cache, no-store, must-revalidate');
@@ -4107,7 +4108,7 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direc
 .pagination{display:flex;align-items:center;justify-content:center;gap:1rem;padding:1.5rem 1.25rem}
 .pag-btn{background:var(--surface);border:1px solid var(--border);color:var(--accent);font-size:.85rem;padding:.5rem 1.1rem;border-radius:8px;text-decoration:none;transition:border-color .2s}
 .pag-btn:hover{border-color:var(--accent)}
-.pag-disabled{background:transparent;border:1px solid #1a1a1a;color:#444;cursor:default}
+.pag-disabled{background:transparent;border:1px solid #1a1a1a;color:#888;cursor:default}
 .pag-info{font-size:.8rem;color:var(--muted)}
 </style>
 <script src="/assets/js/nav.js" defer></script>
