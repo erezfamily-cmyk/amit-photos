@@ -1,0 +1,78 @@
+// Markdown Preview Enhanced — תבנית עמית פוטוס
+// RTL + עברית + צבעי המותג של amitphotos.com
+// לרענון אחרי עריכה: כפתור ה-refresh בפינת ה-preview
+
+.markdown-preview.markdown-preview {
+  direction: rtl;
+  text-align: right;
+  font-family: 'Heebo', 'Segoe UI', sans-serif;
+  background: #0a0a0a;
+  color: #f0ede8;
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 2em;
+  line-height: 1.7;
+
+  h1, h2, h3, h4, h5, h6 {
+    text-align: right;
+    color: #f0ede8;
+    border-bottom: 1px solid #222;
+    padding-bottom: 0.3em;
+  }
+
+  h1 { color: #c8a96e; }
+
+  a { color: #c8a96e; }
+  a:hover { color: #e0c080; }
+
+  code {
+    background: #111111;
+    color: #e0c080;
+    direction: ltr;
+    display: inline-block;
+  }
+
+  pre {
+    background: #111111;
+    border: 1px solid #222;
+    direction: ltr;
+    text-align: left;
+  }
+
+  blockquote {
+    border-right: 4px solid #c8a96e;
+    border-left: none;
+    background: #111111;
+    padding: 0.5em 1em;
+    margin: 1em 0;
+    color: #888;
+  }
+
+  table {
+    direction: rtl;
+  }
+  th {
+    background: #111111;
+    color: #c8a96e;
+    border: 1px solid #222;
+  }
+  td {
+    border: 1px solid #222;
+  }
+
+  hr { border-color: #222; }
+
+  // ===== מצב הדפסה/PDF — רקע בהיר לחיסכון בדיו וקריאות מודפסת =====
+  &.print, @media print {
+    background: #ffffff;
+    color: #1a1a1a;
+
+    h1, h2, h3, h4, h5, h6 { color: #1a1a1a; }
+    h1 { color: #8a6d3b; }
+    a { color: #8a6d3b; }
+    code { background: #f2f2f2; color: #6b4f22; }
+    pre { background: #f2f2f2; border-color: #ddd; }
+    blockquote { background: #f9f7f2; border-right-color: #c8a96e; color: #555; }
+    th { background: #f2f2f2; color: #8a6d3b; }
+  }
+}
