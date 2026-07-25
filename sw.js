@@ -1,4 +1,4 @@
-const CACHE = 'amit-photos-v3';
+const CACHE = 'amit-photos-v4';
 const STATIC = [
   '/',
   '/index.html',
@@ -32,8 +32,8 @@ self.addEventListener('fetch', e => {
   // Skip non-GET and cross-origin (Google Drive images)
   if (e.request.method !== 'GET' || !url.origin.includes(self.location.origin)) return;
 
-  // Network-first for photos.json (always fresh)
-  if (url.pathname.includes('photos.json')) {
+  // Network-first for photos.json ו-HTML navigations (תמיד עדכני, נופל לקאש רק אם הרשת נכשלת)
+  if (url.pathname.includes('photos.json') || e.request.mode === 'navigate') {
     e.respondWith(
       fetch(e.request).then(res => {
         const clone = res.clone();
@@ -44,7 +44,7 @@ self.addEventListener('fetch', e => {
     return;
   }
 
-  // Cache-first for everything else
+  // Cache-first for everything else (JS/CSS/images סטטיים)
   e.respondWith(
     caches.match(e.request).then(cached => cached || fetch(e.request).then(res => {
       if (res.ok) {
