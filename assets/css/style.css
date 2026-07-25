@@ -191,6 +191,11 @@ nav.scrolled { border-bottom-color: rgba(200, 169, 110, 0.3); }
   cursor: pointer;
   font-size: 0.7rem;
   padding: 0.15rem 0.25rem;
+  min-width: 36px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   font-family: inherit;
   letter-spacing: 0.05em;
   transition: color 0.2s;

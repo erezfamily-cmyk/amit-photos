@@ -35,11 +35,11 @@
 }
 .share-btn:hover { opacity: .85; transform: translateY(-1px); }
 .share-btn svg { width: 14px; height: 14px; flex-shrink: 0; }
-.share-btn-wa   { background: #25d366; color: #fff; }
-.share-btn-fb   { background: #1877f2; color: #fff; }
+.share-btn-wa   { background: #0e7a3a; color: #fff; }
+.share-btn-fb   { background: #1461cc; color: #fff; }
 .share-btn-tw   { background: #000;    color: #fff; }
 .share-btn-copy { background: #c8a96e; color: #000; }
-.share-btn-copy.copied { background: #4caf50; color: #fff; }
+.share-btn-copy.copied { background: #0e7a3a; color: #fff; }
 `;
 
   function inject() {

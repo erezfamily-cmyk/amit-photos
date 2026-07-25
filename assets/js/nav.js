@@ -2,6 +2,16 @@
 (function () {
   const isHome = window.location.pathname === '/' || window.location.pathname === '/index.html';
 
+  // ── Wrap existing page content in <main> (a11y landmark) ─────────────────────
+  // חייב לרוץ לפני הזרקת ה-nav/footer/strip כדי שהם יישארו מחוץ ל-main
+  (function wrapMain() {
+    const existing = Array.from(document.body.children);
+    const main = document.createElement('main');
+    main.id = 'page-main';
+    existing.forEach(function (el) { main.appendChild(el); });
+    document.body.appendChild(main);
+  })();
+
   // ── Nav translations (standalone, no dependency on i18n.js) ──────────────────
   const NAV_T = {
     he: {
@@ -132,9 +142,12 @@ nav#main-nav .lang-btn {
 nav#main-nav .lang-btn.active { color: var(--accent, #c8a96e); font-weight: 700; }
 nav#main-nav .lang-btn:hover { color: var(--accent, #c8a96e); }
 nav#main-nav .lang-sep { color: #333; }
-nav#main-nav .nav-yt-btn { color: #888; transition: color .2s; display: flex; align-items: center; margin-inline-end: .5rem; }
+nav#main-nav .nav-yt-btn, nav#main-nav .nav-tt-btn {
+  color: #888; transition: color .2s; display: flex; align-items: center; justify-content: center;
+  padding: 9px; margin-inline-end: -1px;
+  min-width: 24px; min-height: 24px;
+}
 nav#main-nav .nav-yt-btn:hover { color: #ff0000; }
-nav#main-nav .nav-tt-btn { color: #888; transition: color .2s; display: flex; align-items: center; margin-inline-end: .5rem; }
 nav#main-nav .nav-tt-btn:hover { color: #000; }
 nav#main-nav .nav-hamburger {
   display: none; flex-direction: column; gap: 5px;
@@ -193,9 +206,9 @@ nav#main-nav .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px)
   <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34v-7.1a8.16 8.16 0 0 0 4.77 1.52V6.27a4.85 4.85 0 0 1-1-.58z"/></svg>
 </a>
 <div class="lang-toggle">
-  <button type="button" class="lang-btn active" data-lang="he" aria-label="עברית">HE</button>
+  <button type="button" class="lang-btn active" data-lang="he" aria-label="HE — עברית">HE</button>
   <span class="lang-sep">|</span>
-  <button type="button" class="lang-btn" data-lang="en" aria-label="English">EN</button>
+  <button type="button" class="lang-btn" data-lang="en" aria-label="EN — English">EN</button>
 </div>
 <button class="nav-hamburger" aria-label="תפריט">
   <span></span><span></span><span></span>
@@ -296,7 +309,7 @@ nav#main-nav .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px)
   background: #111; border: 1px solid rgba(200,169,110,.35); border-radius: 14px;
   font-family: 'Heebo', sans-serif; text-align: center; }
 #nav-nl-strip .nl-eyebrow { font-size: .68rem; letter-spacing: .14em; color: #c8a96e; margin-bottom: .3rem; }
-#nav-nl-strip h3 { font-size: 1.15rem; color: #f0ede8; margin: 0 0 .3rem; font-weight: 700; }
+#nav-nl-strip h2 { font-size: 1.15rem; color: #f0ede8; margin: 0 0 .3rem; font-weight: 700; }
 #nav-nl-strip .nl-sub { font-size: .82rem; color: #999; margin-bottom: 1rem; line-height: 1.55; }
 #nav-nl-strip form { display: flex; gap: .5rem; max-width: 420px; margin: 0 auto; flex-wrap: wrap; justify-content: center; }
 #nav-nl-strip input[type=email] { flex: 1 1 220px; padding: .6rem 1rem; background: #0a0a0a;
@@ -310,7 +323,7 @@ nav#main-nav .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px)
 #nav-nl-strip .nl-more:hover { color: #c8a96e; }
 #nav-nl-strip .nl-consent-row { display: flex; align-items: flex-start; gap: .4rem; font-size: .72rem;
   color: #999; max-width: 420px; margin: .4rem auto 0; text-align: start; cursor: pointer; }
-#nav-nl-strip .nl-consent-row input[type=checkbox] { margin-top: .15rem; flex-shrink: 0; cursor: pointer; }
+#nav-nl-strip .nl-consent-row input[type=checkbox] { width: 24px; height: 24px; margin-top: 0; flex-shrink: 0; cursor: pointer; }
 #nav-nl-strip .nl-consent-row a { color: #c8a96e; }`;
     document.head.appendChild(nlStyle);
 
@@ -318,10 +331,10 @@ nav#main-nav .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px)
     strip.id = 'nav-nl-strip';
     strip.innerHTML = `
       <div class="nl-eyebrow" id="nl-eyebrow"></div>
-      <h3 id="nl-title"></h3>
+      <h2 id="nl-title"></h2>
       <div class="nl-sub" id="nl-sub"></div>
       <form id="nav-nl-form">
-        <input type="email" id="nav-nl-email" required>
+        <input type="email" id="nav-nl-email" autocomplete="email" required>
         <button type="submit" id="nav-nl-btn"></button>
       </form>
       <label class="nl-consent-row"><input type="checkbox" id="nav-nl-consent-privacy" required><span id="nl-consent-privacy"></span></label>
@@ -499,7 +512,7 @@ footer#main-footer a:hover { color: #c8a96e; }
     var bc = document.createElement('div');
     bc.id = 'nav-breadcrumb';
     var bcTexts = { he: '← כל המדריכים', en: '← All Guides' };
-    bc.innerHTML = '<a href="/camera/" id="nav-bc-link">' + (bcTexts[lang3] || bcTexts.he) + '</a>';
+    bc.innerHTML = '<a href="/camera/" id="nav-bc-link">' + (bcTexts[currentLang] || bcTexts.he) + '</a>';
     nav.insertAdjacentElement('afterend', bc);
 
     // 3. "קרא גם" related guides
@@ -537,7 +550,6 @@ footer#main-footer a:hover { color: #c8a96e; }
     for (var i = 0; i < others.length && related.length < 3; i++) {
       if (!related.includes(others[i])) related.push(others[i]);
     }
-    const lang3 = currentLang || 'he';
     const raTitleText = { he: 'קרא גם', en: 'Read Also' };
     const raStyle = document.createElement('style');
     raStyle.textContent = `
@@ -568,7 +580,7 @@ footer#main-footer a:hover { color: #c8a96e; }
     document.head.appendChild(raStyle);
     const raSection = document.createElement('section');
     raSection.id = 'nav-read-also';
-    raSection.innerHTML = '<span id="nav-read-also-title">' + (raTitleText[lang3] || raTitleText.he) + '</span><div id="nav-read-also-cards"></div>';
+    raSection.innerHTML = '<span id="nav-read-also-title">' + (raTitleText[currentLang] || raTitleText.he) + '</span><div id="nav-read-also-cards"></div>';
     const cardsDiv = raSection.querySelector('#nav-read-also-cards');
     related.slice(0, 3).forEach(function(g) {
       const card = document.createElement('a');
@@ -576,7 +588,7 @@ footer#main-footer a:hover { color: #c8a96e; }
       card.className = 'nav-read-also-card';
       card.dataset.he = g.he;
       card.dataset.en = g.en;
-      card.innerHTML = '<span class="nav-rac-arrow">&#8592;</span><span class="nav-rac-title">' + (g[lang3] || g.he) + '</span>';
+      card.innerHTML = '<span class="nav-rac-arrow">&#8592;</span><span class="nav-rac-title">' + (g[currentLang] || g.he) + '</span>';
       cardsDiv.appendChild(card);
     });
     // insert before footer
