@@ -492,7 +492,7 @@ nav.scrolled { border-bottom-color: rgba(200, 169, 110, 0.3); }
   font-size: 0.7rem;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: rgba(200, 169, 110, 0.6);
+  color: rgba(200, 169, 110, 0.85);
   margin: 0 0 1.25rem;
   min-height: 1em;
   transition: opacity 0.2s;
@@ -555,6 +555,21 @@ nav.scrolled { border-bottom-color: rgba(200, 169, 110, 0.3); }
   opacity: 1;
 }
 
+/* שמירת מקום ל-filter-bar לפני שה-JS ממלא אותו (מונע קפיצת CLS) */
+#filter-bar { min-height: 130px; }
+@media (max-width: 768px) {
+  #filter-bar { min-height: 180px; }
+}
+@media (max-width: 480px) {
+  #filter-bar { min-height: 300px; }
+}
+@media (max-width: 400px) {
+  #filter-bar { min-height: 400px; }
+}
+@media (max-width: 340px) {
+  #filter-bar { min-height: 460px; }
+}
+
 /* ===== FEATURED CTA ===== */
 .featured-cta-wrap {
   display: flex;
@@ -601,7 +616,7 @@ nav.scrolled { border-bottom-color: rgba(200, 169, 110, 0.3); }
 
 .filter-count {
   font-size: 0.7em;
-  opacity: 0.6;
+  opacity: 0.85;
   margin-left: 4px;
 }
 
