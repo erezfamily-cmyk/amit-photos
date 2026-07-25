@@ -147,6 +147,27 @@ async function handleForgotPassword(request, env) {
   if (request.method !== 'POST') return jsonRes({ error: 'method not allowed' }, 405, request);
   if (!env.RESEND_API_KEY) return jsonRes({ error: 'RESEND_API_KEY לא מוגדר' }, 500, request);
 
+  // הגנת rate-limit — נקודת קצה פתוחה לציבור לחלוטין, בלי זה אפשר לספאם מיילים/API ללא הגבלה
+  await env.DB.prepare(
+    'CREATE TABLE IF NOT EXISTS reset_attempts (ip TEXT PRIMARY KEY, count INTEGER, last_attempt TEXT)'
+  ).run().catch(() => {});
+  const ip = request.headers.get('CF-Connecting-IP') || 'unknown';
+  const now = new Date();
+  const attempt = await env.DB.prepare('SELECT count, last_attempt FROM reset_attempts WHERE ip=?').bind(ip).first();
+  if (attempt) {
+    const minutesPassed = (now - new Date(attempt.last_attempt)) / 1000 / 60;
+    if (minutesPassed < LOCKOUT_MINUTES && attempt.count >= 3) {
+      return jsonRes({ error: 'יותר מדי בקשות. נסה שוב מאוחר יותר.' }, 429, request);
+    }
+    if (minutesPassed >= LOCKOUT_MINUTES) {
+      await env.DB.prepare('DELETE FROM reset_attempts WHERE ip=?').bind(ip).run();
+    }
+  }
+  await env.DB.prepare(
+    `INSERT INTO reset_attempts (ip, count, last_attempt) VALUES (?,1,?)
+     ON CONFLICT(ip) DO UPDATE SET count=count+1, last_attempt=excluded.last_attempt`
+  ).bind(ip, now.toISOString()).run();
+
   const token = crypto.randomUUID();
   const expires = new Date(Date.now() + 30 * 60 * 1000).toISOString(); // 30 דקות
   await env.DB.prepare(
@@ -396,6 +417,7 @@ async function handleSubscribers(request, env) {
     // שלח מייל אישור לנרשם
     if (env.RESEND_API_KEY) {
       const fromEmail = env.FROM_EMAIL || 'Amit Photos <contact@amitphotos.com>';
+      const safeName = name ? escXml(name) : '';
       const isLeadMagnet = ['lead_magnet', 'popup', 'subpage_strip', 'homepage_section'].includes(source);
       const subject = isLeadMagnet
         ? (isEn ? 'Your PDF — 50 Photography Tips' : 'הנה ה-PDF שלך — 50 טיפים לצילום')
@@ -405,7 +427,7 @@ async function handleSubscribers(request, env) {
           ? `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:2rem;background:#111;color:#f0ede8">
               <h2 style="color:#c8a96e;font-family:sans-serif;margin-bottom:.5rem">AMIT PHOTOS</h2>
               <h3 style="margin-top:0">50 Photography Tips — Your PDF is ready!</h3>
-              <p style="color:#ccc">Hello${name ? ' ' + name : ''},</p>
+              <p style="color:#ccc">Hello${safeName ? ' ' + safeName : ''},</p>
               <p style="color:#ccc">Thank you! Here is your download link:</p>
               <div style="text-align:center;margin:1.5rem 0">
                 <a href="${pdfUrl}" style="background:#c8a96e;color:#111;padding:.8rem 2rem;border-radius:4px;text-decoration:none;font-weight:700;font-size:1rem">Download PDF →</a>
@@ -417,7 +439,7 @@ async function handleSubscribers(request, env) {
           : `<div dir="rtl" style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:2rem;background:#111;color:#f0ede8">
               <h2 style="color:#c8a96e;font-family:sans-serif;margin-bottom:.5rem">AMIT PHOTOS</h2>
               <h3 style="margin-top:0">50 טיפים לצילום טוב יותר — הPDF שלך מוכן!</h3>
-              <p style="color:#ccc">שלום${name ? ' ' + name : ''},</p>
+              <p style="color:#ccc">שלום${safeName ? ' ' + safeName : ''},</p>
               <p style="color:#ccc">תודה! הנה הקישור להורדה:</p>
               <div style="text-align:center;margin:1.5rem 0">
                 <a href="${pdfUrl}" style="background:#c8a96e;color:#111;padding:.8rem 2rem;border-radius:4px;text-decoration:none;font-weight:700;font-size:1rem">הורד את ה-PDF ←</a>
@@ -429,7 +451,7 @@ async function handleSubscribers(request, env) {
         : (isEn
           ? `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:2rem;color:#111">
               <h2 style="color:#c8a96e;font-family:sans-serif">AMIT PHOTOS</h2>
-              <p>Hello${name ? ' ' + name : ''},</p>
+              <p>Hello${safeName ? ' ' + safeName : ''},</p>
               <p>Thank you for subscribing to the Amit Photos newsletter! 🎉</p>
               <p>You'll receive updates about new photos, exclusive deals and behind-the-scenes content — straight to your inbox.</p>
               <hr style="margin-top:2rem;border-color:#ddd">
@@ -437,7 +459,7 @@ async function handleSubscribers(request, env) {
             </div>`
           : `<div dir="rtl" style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:2rem;color:#111">
               <h2 style="color:#c8a96e;font-family:sans-serif">AMIT PHOTOS</h2>
-              <p>שלום${name ? ' ' + name : ''},</p>
+              <p>שלום${safeName ? ' ' + safeName : ''},</p>
               <p>תודה שנרשמת לניוזלטר של עמית פוטוס! 🎉</p>
               <p>תקבל עדכונים על תמונות חדשות, מבצעים בלעדיים ותוכן מאחורי הקלעים — ישירות למייל.</p>
               <hr style="margin-top:2rem;border-color:#ddd">
@@ -2038,6 +2060,15 @@ async function handlePrintOrderComplete(request, env) {
   if (address.email && env.RESEND_API_KEY) {
     const fromEmail = env.FROM_EMAIL || 'contact@amitphotos.com';
     const cancelUrl = `${origin}/api/print/cancel?token=${orderId}`;
+    // ea = escaped address — address מגיע מ-custom field שהלקוח שולט בו, לא לסמוך על התוכן ב-HTML
+    const ea = {
+      name: escXml(address.name || ''),
+      phone: escXml(address.phone || ''),
+      email: escXml(address.email || ''),
+      line1: escXml(address.line1 || ''),
+      city: escXml(address.city || ''),
+      zip: escXml(address.zip || ''),
+    };
     const confirmHtml = `<!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head><meta charset="UTF-8"></head>
@@ -2049,9 +2080,9 @@ async function handlePrintOrderComplete(request, env) {
           <div style="color:#c8a96e;font-size:20px;font-weight:700;letter-spacing:.25em;font-family:Georgia,serif">AMIT PHOTOS</div>
         </td></tr>
         <tr><td style="padding:32px 40px;color:#222;font-size:15px;line-height:1.85;direction:rtl;text-align:right">
-          <h2 style="margin:0 0 1rem;font-size:18px">שלום ${address.name}, ההזמנה התקבלה!</h2>
+          <h2 style="margin:0 0 1rem;font-size:18px">שלום ${ea.name}, ההזמנה התקבלה!</h2>
           <p><strong>מוצר:</strong> ${productLabel}</p>
-          <p><strong>כתובת:</strong> ${address.line1}, ${address.city} ${address.zip}</p>
+          <p><strong>כתובת:</strong> ${ea.line1}, ${ea.city} ${ea.zip}</p>
           <p><strong>מחיר ששולם:</strong> $${sellPrice}</p>
           <p style="color:#888;font-size:.9rem">זמן משלוח משוער: 7–10 ימי עסקים.</p>
           <hr style="border:none;border-top:1px solid #eee;margin:1.5rem 0">
@@ -2080,10 +2111,10 @@ async function handlePrintOrderComplete(request, env) {
   <div style="max-width:500px;margin:0 auto;background:#fff;border-radius:8px;padding:2rem;border:1px solid #ddd">
     <div style="color:#c8a96e;font-size:1rem;font-weight:700;letter-spacing:.2em;margin-bottom:1.5rem">AMIT PHOTOS — הזמנה חדשה 🖨️</div>
     <table style="width:100%;border-collapse:collapse;font-size:.92rem;direction:rtl">
-      <tr><td style="padding:.4rem 0;color:#888;width:35%">לקוח</td><td><strong>${address.name}</strong></td></tr>
-      <tr><td style="padding:.4rem 0;color:#888">טלפון</td><td><a href="tel:${address.phone}" style="color:#c8a96e">${address.phone||'—'}</a></td></tr>
-      <tr><td style="padding:.4rem 0;color:#888">מייל</td><td><a href="mailto:${address.email}" style="color:#c8a96e">${address.email}</a></td></tr>
-      <tr><td style="padding:.4rem 0;color:#888">כתובת</td><td>${address.line1}, ${address.city} ${address.zip}</td></tr>
+      <tr><td style="padding:.4rem 0;color:#888;width:35%">לקוח</td><td><strong>${ea.name}</strong></td></tr>
+      <tr><td style="padding:.4rem 0;color:#888">טלפון</td><td><a href="tel:${ea.phone}" style="color:#c8a96e">${ea.phone||'—'}</a></td></tr>
+      <tr><td style="padding:.4rem 0;color:#888">מייל</td><td><a href="mailto:${ea.email}" style="color:#c8a96e">${ea.email}</a></td></tr>
+      <tr><td style="padding:.4rem 0;color:#888">כתובת</td><td>${ea.line1}, ${ea.city} ${ea.zip}</td></tr>
       <tr><td style="padding:.4rem 0;color:#888">מוצר</td><td>${productLabel}</td></tr>
       <tr><td style="padding:.4rem 0;color:#888">מחיר</td><td><strong>$${sellPrice}</strong></td></tr>
       <tr><td style="padding:.4rem 0;color:#888">Gelato ID</td><td style="font-size:.82rem;color:#aaa">${gelatoOrderId||'—'}</td></tr>
@@ -2093,7 +2124,7 @@ async function handlePrintOrderComplete(request, env) {
     await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: { 'Authorization': `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ from: fromEmail, to: adminEmail, subject: `הזמנת הדפסה חדשה — ${address.name} ($${sellPrice})`, html: adminHtml })
+      body: JSON.stringify({ from: fromEmail, to: adminEmail, subject: `הזמנת הדפסה חדשה — ${ea.name} ($${sellPrice})`, html: adminHtml })
     });
   }
 
@@ -2896,7 +2927,9 @@ async function handleImageProxy(request, env) {
   try { urlObj = new URL(urlParam); } catch { return new Response('invalid url', { status: 400 }); }
   const allowedHosts = ['drive.google.com', 'lh3.googleusercontent.com', 'googleusercontent.com'];
   const host = urlObj.hostname;
-  const sameOrigin = urlParam.startsWith(new URL(request.url).origin);
+  // בדיקת origin באמצעות פירוק URL אמיתי — לא string.startsWith, שניתן לעקוף עם
+  // דומיין כמו amitphotos.com.evil.com שמתחיל באותם תווים
+  const sameOrigin = urlObj.origin === new URL(request.url).origin;
   if (!sameOrigin && !allowedHosts.some(h => host === h || host.endsWith('.' + h))) {
     return new Response('domain not allowed', { status: 403 });
   }
@@ -4749,16 +4782,23 @@ async function handleLocationsSuggest(request, env) {
   if (!message || !message.trim()) return jsonRes({ error: 'הודעה ריקה' }, 400, request);
 
   const isNew = type === 'new';
+  // subject = כותרת המייל (plain text, לא HTML) — sender_name/location_slug גולמיים כאן זה בסדר
   const subject = isNew
     ? `הצעת מקום חדש${sender_name ? ` מ-${sender_name}` : ''}`
     : `תיקון למקום: ${location_slug}${sender_name ? ` מ-${sender_name}` : ''}`;
 
+  // כל תוכן שמגיע מהמשתמש חייב escaping לפני הכנסה ל-HTML של המייל
+  const safeSubject = escXml(subject);
+  const safeSenderName = sender_name ? escXml(sender_name) : '';
+  const safeLocationSlug = escXml(location_slug || '');
+  const safeMessage = escXml(message);
+
   const html = `<div dir="rtl" style="font-family:Arial,sans-serif;max-width:520px;margin:auto">
-    <h2 style="color:#c8a96e">${subject}</h2>
-    ${sender_name ? `<p><strong>שם:</strong> ${sender_name}</p>` : ''}
-    ${!isNew ? `<p><strong>מקום:</strong> ${location_slug}</p>` : ''}
+    <h2 style="color:#c8a96e">${safeSubject}</h2>
+    ${safeSenderName ? `<p><strong>שם:</strong> ${safeSenderName}</p>` : ''}
+    ${!isNew ? `<p><strong>מקום:</strong> ${safeLocationSlug}</p>` : ''}
     <p><strong>הודעה:</strong></p>
-    <p style="background:#111;padding:1rem;border-radius:4px;white-space:pre-wrap">${message}</p>
+    <p style="background:#111;padding:1rem;border-radius:4px;white-space:pre-wrap">${safeMessage}</p>
   </div>`;
 
   const emailRes = await fetch('https://api.resend.com/emails', {
