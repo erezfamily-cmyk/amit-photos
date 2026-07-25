@@ -23,7 +23,7 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
 
 .breadcrumb { font-size: .8rem; color: var(--muted); padding: 1.25rem 1.5rem 0;
   max-width: 780px; margin: 0 auto; }
-.breadcrumb a { color: var(--accent); text-decoration: none; }
+.breadcrumb a { color: var(--accent); text-decoration: underline; }
 
 .hero { text-align: center; padding: 2.5rem 1.5rem 1.5rem; }
 .hero-badge { display: inline-block; font-size: .72rem;
@@ -138,6 +138,7 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
 .gear-card-desc{font-size:.76rem;color:var(--muted);line-height:1.55;flex:1;margin-bottom:.8rem}
 .gear-card-btn{display:block;text-align:center;border:1px solid rgba(200,169,110,.45);color:var(--accent);font-size:.75rem;font-weight:700;padding:.4rem .75rem;border-radius:6px;transition:background .15s,color .15s}
 .gear-card-btn:hover{background:var(--accent);color:#000}
+.gear-card-brand{font-size:.68rem;text-transform:uppercase;letter-spacing:.06em;color:var(--accent);margin-bottom:.2rem}
 .gear-disclose{font-size:.67rem;color:#888;text-align:center;padding:.6rem 0 1.5rem}
 
 .kofi-bar{text-align:center;padding:1.25rem 1.25rem 1.75rem;max-width:760px;margin:0 auto}
@@ -320,17 +321,17 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
       <div class="mixer-controls">
         <div class="mixer-row">
           <span class="mixer-label r">R</span>
-          <input class="mixer-slider r" type="range" id="slider-r" min="0" max="200" value="100">
+          <input class="mixer-slider r" type="range" id="slider-r" min="0" max="200" value="100" aria-label="R">
           <span class="mixer-val" id="val-r">100</span>
         </div>
         <div class="mixer-row">
           <span class="mixer-label g">G</span>
-          <input class="mixer-slider g" type="range" id="slider-g" min="0" max="200" value="100">
+          <input class="mixer-slider g" type="range" id="slider-g" min="0" max="200" value="100" aria-label="G">
           <span class="mixer-val" id="val-g">100</span>
         </div>
         <div class="mixer-row">
           <span class="mixer-label b">B</span>
-          <input class="mixer-slider b" type="range" id="slider-b" min="0" max="200" value="100">
+          <input class="mixer-slider b" type="range" id="slider-b" min="0" max="200" value="100" aria-label="B">
           <span class="mixer-val" id="val-b">100</span>
         </div>
       </div>

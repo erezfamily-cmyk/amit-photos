@@ -127,7 +127,7 @@ input[type=range]#exp-slider:active::-webkit-slider-thumb { cursor: grabbing; }
 .info-card { background: var(--surface); border: 1px solid var(--border);
   border-radius: 12px; padding: 1.1rem 1rem; }
 .info-card .ic-icon { font-size: 1.4rem; margin-bottom: .5rem; }
-.info-card h3 { font-family: 'Syne', sans-serif; font-size: .95rem;
+.info-card h2 { font-family: 'Syne', sans-serif; font-size: .95rem;
   color: var(--accent); margin-bottom: .4rem; }
 .info-card p { font-size: .8rem; color: var(--muted); line-height: 1.55; }
 
@@ -146,6 +146,7 @@ input[type=range]#exp-slider:active::-webkit-slider-thumb { cursor: grabbing; }
 .gear-card-desc{font-size:.76rem;color:var(--muted);line-height:1.55;flex:1;margin-bottom:.8rem}
 .gear-card-btn{display:block;text-align:center;border:1px solid rgba(200,169,110,.45);color:var(--accent);font-size:.75rem;font-weight:700;padding:.4rem .75rem;border-radius:6px;transition:background .15s,color .15s}
 .gear-card-btn:hover{background:var(--accent);color:#000}
+.gear-card-brand{font-size:.68rem;text-transform:uppercase;letter-spacing:.06em;color:var(--accent);margin-bottom:.2rem}
 .gear-disclose{font-size:.67rem;color:#888;text-align:center;padding:.6rem 0 1.5rem}
 .kofi-bar{text-align:center;padding:1.25rem 1.25rem 1.75rem;max-width:760px;margin:0 auto}
 .kofi-bar a{display:inline-flex;align-items:center;gap:.5rem;background:var(--surface);border:1px solid rgba(200,169,110,.4);color:var(--accent);font-size:.82rem;font-weight:700;padding:.55rem 1.4rem;border-radius:8px;text-decoration:none;transition:background .2s,color .2s}
@@ -216,7 +217,7 @@ input[type=range]#exp-slider:active::-webkit-slider-thumb { cursor: grabbing; }
 <div class="page-hero">
   <div class="badge" data-he="📷 בית ספר לצילום" data-en="📷 Photography School">📷 בית ספר לצילום</div>  </div>
   <div class="yt-embed-wrap">
-    <iframe id="vid-embed" loading="lazy" allowfullscreen></iframe>
+    <iframe id="vid-embed" title="סרטון הדרכה — היסטוגרמה" loading="lazy" allowfullscreen></iframe>
   </div>
 </div>
   <h1 data-he="היסטוגרם — לקרוא את האור" data-en="Histogram — Reading the Light">היסטוגרם — לקרוא את האור</h1>
@@ -292,22 +293,22 @@ input[type=range]#exp-slider:active::-webkit-slider-thumb { cursor: grabbing; }
   <div class="info-grid">
     <div class="info-card">
       <div class="ic-icon">⬛</div>
-      <h3 data-he="קצה שמאל — צללים" data-en="Left edge — Shadows">קצה שמאל — צללים</h3>
+      <h2 data-he="קצה שמאל — צללים" data-en="Left edge — Shadows">קצה שמאל — צללים</h2>
       <p data-he='ערכים 0–30. כשהגרף "נשפך" משמאל — הפרטים בצל נעלמים לחלוטין (underexposed).' data-en='Values 0–30. When the graph "spills" on the left — shadow details disappear completely (underexposed).'>ערכים 0–30. כשהגרף "נשפך" משמאל — הפרטים בצל נעלמים לחלוטין (underexposed).</p>
     </div>
     <div class="info-card">
       <div class="ic-icon">🎯</div>
-      <h3 data-he="אמצע — אפורים בינוניים" data-en="Middle — Midtones">אמצע — אפורים בינוניים</h3>
+      <h2 data-he="אמצע — אפורים בינוניים" data-en="Middle — Midtones">אמצע — אפורים בינוניים</h2>
       <p data-he='ערכים 100–150. רוב הפרטים החשובים נמצאים כאן. היסטוגרם "הגון" נמצא סביב האמצע.' data-en='Values 100–150. Most important details live here. A "decent" histogram sits around the middle.'>ערכים 100–150. רוב הפרטים החשובים נמצאים כאן. היסטוגרם "הגון" נמצא סביב האמצע.</p>
     </div>
     <div class="info-card">
       <div class="ic-icon">⬜</div>
-      <h3 data-he="קצה ימין — הבהרות" data-en="Right edge — Highlights">קצה ימין — הבהרות</h3>
+      <h2 data-he="קצה ימין — הבהרות" data-en="Right edge — Highlights">קצה ימין — הבהרות</h2>
       <p data-he='ערכים 225–255. כשהגרף "נשפך" מימין — פרטי אור נשרפים ללבן טהור (overexposed).' data-en='Values 225–255. When the graph "spills" on the right — highlight details burn to pure white (overexposed).'>ערכים 225–255. כשהגרף "נשפך" מימין — פרטי אור נשרפים ללבן טהור (overexposed).</p>
     </div>
     <div class="info-card">
       <div class="ic-icon">📐</div>
-      <h3 data-he='אין היסטוגרם "נכון"' data-en='No "correct" histogram'>אין היסטוגרם "נכון"</h3>
+      <h2 data-he='אין היסטוגרם "נכון"' data-en='No "correct" histogram'>אין היסטוגרם "נכון"</h2>
       <p data-he="תמונה כהה במכוון תהיה שמאלית. High-key תהיה ימינית. המטרה: לא לאבד פרטים שרצית לשמר." data-en="An intentionally dark image will be left-heavy. High-key will be right-heavy. The goal: don't lose details you wanted to keep.">תמונה כהה במכוון תהיה שמאלית. High-key תהיה ימינית. המטרה: לא לאבד פרטים שרצית לשמר.</p>
     </div>
   </div>

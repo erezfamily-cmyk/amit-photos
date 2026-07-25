@@ -23,7 +23,7 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
 
 .breadcrumb { font-size: .8rem; color: var(--muted); padding: 1.25rem 1.5rem 0;
   max-width: 780px; margin: 0 auto; }
-.breadcrumb a { color: var(--accent); text-decoration: none; }
+.breadcrumb a { color: var(--accent); text-decoration: underline; }
 
 .hero { text-align: center; padding: 2.5rem 1.5rem 1.5rem; }
 .hero-badge { display: inline-block; font-size: .72rem;
@@ -210,6 +210,7 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
 .gear-card-desc{font-size:.76rem;color:var(--muted);line-height:1.55;flex:1;margin-bottom:.8rem}
 .gear-card-btn{display:block;text-align:center;border:1px solid rgba(200,169,110,.45);color:var(--accent);font-size:.75rem;font-weight:700;padding:.4rem .75rem;border-radius:6px;transition:background .15s,color .15s}
 .gear-card-btn:hover{background:var(--accent);color:#000}
+.gear-card-brand{font-size:.68rem;text-transform:uppercase;letter-spacing:.06em;color:var(--accent);margin-bottom:.2rem}
 .gear-disclose{font-size:.67rem;color:#888;text-align:center;padding:.6rem 0 1.5rem}
 .kofi-bar{text-align:center;padding:1.25rem 1.25rem 1.75rem;max-width:760px;margin:0 auto}
 .kofi-bar a{display:inline-flex;align-items:center;gap:.5rem;background:var(--surface);border:1px solid rgba(200,169,110,.4);color:var(--accent);font-size:.82rem;font-weight:700;padding:.55rem 1.4rem;border-radius:8px;text-decoration:none;transition:background .2s,color .2s}
@@ -366,7 +367,7 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
     <div class="focal-calc">
       <h3 data-he="🧮 מחשבון מרחק מוקד" data-en="🧮 Focal Length Calculator">🧮 מחשבון מרחק מוקד</h3>
       <div class="focal-input-row">
-        <label data-he="עדשה שלך:" data-en="Your lens:">עדשה שלך:</label>
+        <label for="focal-input" data-he="עדשה שלך:" data-en="Your lens:">עדשה שלך:</label>
         <input type="number" id="focal-input" value="50" min="1" max="2000">
         <span>mm</span>
       </div>

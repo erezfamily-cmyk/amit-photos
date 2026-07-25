@@ -319,7 +319,7 @@ nav#main-nav .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px)
   border-radius: 6px; font-weight: 700; font-size: .9rem; cursor: pointer; font-family: 'Heebo', sans-serif; }
 #nav-nl-strip button:disabled { opacity: .6; cursor: default; }
 #nav-nl-strip .nl-msg { font-size: .8rem; margin-top: .5rem; min-height: 1.1em; }
-#nav-nl-strip .nl-more { font-size: .72rem; color: #777; text-decoration: none; display: inline-block; margin-top: .4rem; }
+#nav-nl-strip .nl-more { font-size: .72rem; color: #888; text-decoration: none; display: inline-block; margin-top: .4rem; }
 #nav-nl-strip .nl-more:hover { color: #c8a96e; }
 #nav-nl-strip .nl-consent-row { display: flex; align-items: flex-start; gap: .4rem; font-size: .72rem;
   color: #999; max-width: 420px; margin: .4rem auto 0; text-align: start; cursor: pointer; }

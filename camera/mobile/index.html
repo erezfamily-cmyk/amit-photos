@@ -22,7 +22,7 @@ html { scroll-behavior: smooth; }
 
 /* Breadcrumb */
 .breadcrumb { font-size: .8rem; color: var(--muted); padding: 1.25rem 1.5rem 0; max-width: 900px; margin: 0 auto; }
-.breadcrumb a { color: var(--accent); text-decoration: none; }
+.breadcrumb a { color: var(--accent); text-decoration: underline; }
 
 /* Hero */
 .ls-hero { position: relative; height: 70vh; min-height: 420px; max-height: 600px; display: flex; align-items: center; justify-content: center; text-align: center; overflow: hidden; margin-bottom: 3rem; }
@@ -168,6 +168,7 @@ img.loaded { opacity: 1; }
 .gear-card-desc{font-size:.76rem;color:var(--muted);line-height:1.55;flex:1;margin-bottom:.8rem}
 .gear-card-btn{display:block;text-align:center;border:1px solid rgba(200,169,110,.45);color:var(--accent);font-size:.75rem;font-weight:700;padding:.4rem .75rem;border-radius:6px;transition:background .15s,color .15s}
 .gear-card-btn:hover{background:var(--accent);color:#000}
+.gear-card-brand{font-size:.68rem;text-transform:uppercase;letter-spacing:.06em;color:var(--accent);margin-bottom:.2rem}
 .gear-disclose{font-size:.67rem;color:#888;text-align:center;padding:.6rem 0 1.5rem}
 .kofi-bar{text-align:center;padding:1.25rem 1.25rem 1.75rem;max-width:760px;margin:0 auto}
 .kofi-bar a{display:inline-flex;align-items:center;gap:.5rem;background:var(--surface);border:1px solid rgba(200,169,110,.4);color:var(--accent);font-size:.82rem;font-weight:700;padding:.55rem 1.4rem;border-radius:8px;text-decoration:none;transition:background .2s,color .2s}
@@ -444,7 +445,7 @@ img.loaded { opacity: 1; }
               <span class="iso-row-label" data-he="רגישות ISO" data-en="ISO Sensitivity">רגישות ISO</span>
               <span class="iso-row-val" id="isoVal">ISO 400</span>
             </div>
-            <input type="range" class="iso-slider" id="isoSlider" min="0" max="5" value="2" oninput="updateIso()">
+            <input type="range" class="iso-slider" id="isoSlider" min="0" max="5" value="2" oninput="updateIso()" aria-label="רגישות ISO">
           </div>
         </div>
         <div class="iso-result" id="isoResult"></div>
