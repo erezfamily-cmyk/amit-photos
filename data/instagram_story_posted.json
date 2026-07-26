@@ -1,5 +1,5 @@
 {
-  "current_category_index": 5,
+  "current_category_index": 6,
   "used_ids_by_category": {
     "אבו דאבי": [
       "6c9e818c-bdd3-402f-b6f5-ee2e668507c9",
@@ -103,7 +103,15 @@
       "4c240c44-d8f0-4c45-97f1-3b9ce9c152c2",
       "647263ce-f11b-4c0a-881b-a261b7a52ad6",
       "e3fe43d4-4b6b-486a-8e82-8c887b2b36e1",
-      "e3be153c-316f-41e8-a7b5-c1fcaf3abdd7"
+      "e3be153c-316f-41e8-a7b5-c1fcaf3abdd7",
+      "bb4741e8-f515-4ca6-927c-78ba2dbf3e58",
+      "13bad067-c57f-42a5-9375-19b679bc3430",
+      "25f2f560-9b24-4243-a92a-706c32de7646",
+      "d61a21e6-163b-4333-8c8a-9c010c4e4a39",
+      "460b5238-5b2c-4b95-9f42-17bdf4759cfa",
+      "abd11b9e-30bd-41dd-94d6-a4ff1e1d3a51",
+      "39a4ebb5-68cf-4cb5-9d85-21c8b7c4c7d1",
+      "633e16c5-d907-4d4a-b61b-67a45735bd0a"
     ],
     "גרמניה": [
       "c9eef546-6874-4d94-9410-85dc6794ddb9",
@@ -452,5 +460,5 @@
       "1V3y3FF5PCEuQvCOXCaF2fT5eWMDiZEWH"
     ]
   },
-  "gear_tool_index": 1
+  "gear_tool_index": 0
 }
