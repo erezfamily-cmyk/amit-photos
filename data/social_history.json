@@ -63,5 +63,23 @@
     "fb_fans": 276,
     "fb_posts": 9,
     "fb_likes": 3
+  },
+  {
+    "week_ending": "26/07/2026",
+    "generated_at": "2026-07-26T08:12:06.251245+00:00",
+    "ig_followers": 660,
+    "ig_posts": 6,
+    "ig_likes": 11,
+    "ig_comments": 1,
+    "ig_avg_likes": 1.8,
+    "ig_engagement": 0.003,
+    "fb_fans": 276,
+    "fb_posts": 7,
+    "fb_likes": 0,
+    "reels_count": 2,
+    "reels_plays": 0,
+    "reels_avg_watch_time": 0,
+    "reels_shares": 0,
+    "reels_saved": 0
   }
 ]
