@@ -4410,7 +4410,7 @@ async function handleLearnAnalysis(env, photoId) {
   ).bind(photoId).first().catch(() => null);
 
   const photo = await env.DB.prepare(
-    'SELECT id, title, thumbnail, url FROM photos WHERE id = ?'
+    'SELECT id, title, thumbnail, url, category FROM photos WHERE id = ?'
   ).bind(photoId).first().catch(() => null);
 
   if (!row || !photo) {
@@ -4486,6 +4486,8 @@ async function handleLearnAnalysis(env, photoId) {
   const titleEn = row.title_en || row.title;
   const imgUrl = (photo.url || photo.thumbnail || '') + '?w=900';
   const buyUrl = `https://amitphotos.com/?photo=${encodeURIComponent(photoId)}`;
+  const catLabelEn = HE_TO_EN_CATEGORY[photo.category] || photo.category || '';
+  const shopUrl = `https://amitphotos.com/#filter-${photo.category || ''}`;
 
   const labelsHe = { aperture: 'צמצם', shutter: 'מהירות תריס', iso: 'ISO', focal: 'מרחק מוקד' };
   const labelsEn = { aperture: 'Aperture', shutter: 'Shutter Speed', iso: 'ISO', focal: 'Focal Length' };
@@ -4592,6 +4594,12 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direc
 .analysis-affiliate-disclose{font-size:.63rem;color:#888;margin-top:.2rem}
 .analysis-affiliate-btn{flex-shrink:0;background:var(--accent);color:#000;font-weight:700;font-size:.8rem;padding:.5rem 1.1rem;border-radius:8px;text-decoration:none;white-space:nowrap;transition:background .15s}
 .analysis-affiliate-btn:hover{background:#e0c080}
+.shop-cta{max-width:900px;margin:1.5rem auto;padding:0 .75rem}
+.shop-cta-inner{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.1rem 1.4rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.shop-cta-title{font-family:'Syne',sans-serif;font-size:.95rem;color:var(--text);margin-bottom:.25rem}
+.shop-cta-desc{font-size:.78rem;color:var(--muted)}
+.shop-cta-btn{flex-shrink:0;background:transparent;color:var(--accent);font-weight:700;font-size:.82rem;padding:.5rem 1.1rem;border:1px solid var(--accent);border-radius:8px;text-decoration:none;white-space:nowrap;transition:background .15s}
+.shop-cta-btn:hover{background:rgba(200,169,110,.1)}
 </style>
 <script src="/assets/js/nav.js" defer></script>
 <script src="/assets/js/share.js" defer></script>
@@ -4658,6 +4666,16 @@ ${moreAnalyses.length > 0 ? `
 </div>` : ''}
 
 ${buildAnalysisAffiliate(camera)}
+
+${photo.category ? `<div class="shop-cta">
+  <div class="shop-cta-inner">
+    <div>
+      <div class="shop-cta-title" data-he="אהבת את הסגנון?" data-en="Love this style?">אהבת את הסגנון?</div>
+      <div class="shop-cta-desc" data-he="גלה עוד תמונות מקטגוריית &quot;${escXml(photo.category)}&quot; הזמינות לרכישה" data-en="Discover more ${escXml(catLabelEn)} photos available for purchase">גלה עוד תמונות מקטגוריית &quot;${escXml(photo.category)}&quot; הזמינות לרכישה</div>
+    </div>
+    <a class="shop-cta-btn" href="${escXml(shopUrl)}" data-he="לתמונות נוספות ←" data-en="Browse More →">לתמונות נוספות ←</a>
+  </div>
+</div>` : ''}
 
 <div class="nav-row nav-prev">
   <a href="/learn/" data-he="← כל הניתוחים" data-en="← All Analyses">← כל הניתוחים</a>
