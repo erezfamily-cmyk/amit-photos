@@ -1241,8 +1241,9 @@ function handleInitialHash() {
   }
   const hash = window.location.hash;
   if (hash.startsWith('#filter-')) {
-    const cat = hash.replace('#filter-', '');
-    const btn = document.querySelector(`.filter-btn[data-cat="${cat}"]`);
+    let cat = hash.replace('#filter-', '');
+    try { cat = decodeURIComponent(cat); } catch (_) { /* already decoded */ }
+    const btn = document.querySelector(`.filter-btn[data-cat="${CSS.escape(cat)}"]`);
     if (btn) {
       document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
