@@ -223,7 +223,7 @@ def generate_analysis(data_summary):
     client = anthropic.Anthropic(api_key=ANTHROPIC_KEY)
     msg = client.messages.create(
         model="claude-opus-4-8",
-        max_tokens=1000,
+        max_tokens=2000,
         system="""אתה יועץ SEO ושיווק דיגיטלי לאתר amitphotos.com — גלריית fine art photography של עמית ארז.
 האתר מוכר הדפסות אמנות ותמונות דיגיטליות להורדה, ומציע מדריכי צילום חינוכיים.
 הקהל: אנשים שאוהבים אמנות צילומית, מעצבי פנים, קונים רגשיים — לא מחפשים צלם לאירועים.

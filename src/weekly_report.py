@@ -91,6 +91,11 @@ def fetch_reel_insights(media_id):
             values = item.get("values", [])
             out[item.get("name")] = values[0].get("value", 0) if values else 0
         return out
+    except requests.exceptions.HTTPError as e:
+        # מטא משנה שמות מדדים בין גרסאות API — הדפס את גוף התשובה כדי לדעת איזה metric נכשל בפועל
+        detail = e.response.text if e.response is not None else str(e)
+        print(f"⚠️  Reel insights ({media_id}) נכשל: {detail}")
+        return {}
     except Exception as e:
         print(f"⚠️  Reel insights ({media_id}) נכשל: {e}")
         return {}
@@ -411,26 +416,20 @@ Facebook pages:{fb_summary or ' none configured'}"""
         client = anthropic.Anthropic(api_key=ANTHROPIC_KEY)
         msg = client.messages.create(
             model="claude-haiku-4-5-20251001",
-            max_tokens=600,
+            max_tokens=800,
             messages=[{"role": "user", "content": f"""{summary}
 
 Based on this data, provide exactly 4 actionable recommendations in Hebrew for next week.
 Each recommendation should be specific, practical, and based on the actual numbers above.
 At least one recommendation must address Instagram Reels/video performance specifically (watch time, plays, shares/saves vs. static posts) when reel data is present above.
-Return ONLY a JSON array of 4 strings, with no markdown, no code blocks, no explanation.
-Start your response with [ and end with ]
-Example: ["המלצה 1", "המלצה 2", "המלצה 3", "המלצה 4"]"""}],
+Return ONLY the 4 recommendations, each on its own line, separated by a line containing exactly "|||" and nothing else.
+No numbering, no markdown, no explanation before or after — just the 4 lines with the separator between them."""}],
         )
         text = msg.content[0].text.strip()
-        import re
-        # greedy match — captures the full outermost array
-        m = re.search(r'\[.*\]', text, re.DOTALL)
-        if m:
-            text = m.group(0)
-        result = json.loads(text)
-        if not isinstance(result, list) or not result:
+        result = [part.strip() for part in text.split("|||") if part.strip()]
+        if not result:
             raise ValueError("תוצאה לא תקינה מה-AI")
-        return [str(r) for r in result]
+        return result
     except Exception as e:
         print(f"⚠️  AI recommendations נכשל: {e}")
         return [f"שגיאה בייצור המלצות: {e}"]

@@ -2247,11 +2247,25 @@ window.onLangChange = function() {
     popup.classList.add('open');
   }
 
+  // אל תקפוץ באמצע רכישה/הדפסה בתהליך — נסה שוב בעוד קצת, אל תפריע למשתמש שכבר בתוך ה-funnel
+  function anyPurchaseModalOpen() {
+    return !!document.querySelector('.buy-modal.open, #cart-modal.open');
+  }
+
+  function showWhenFree(weekPhoto, retriesLeft) {
+    if (dismissed()) return;
+    if (anyPurchaseModalOpen()) {
+      if (retriesLeft > 0) setTimeout(() => showWhenFree(weekPhoto, retriesLeft - 1), 5000);
+      return;
+    }
+    show(weekPhoto);
+  }
+
   window.addEventListener('photos-ready', () => {
     if (dismissed()) return;
     const weekPhoto = allPhotos.find(p => p.is_week_photo);
     if (!weekPhoto) return;
-    setTimeout(() => { if (!dismissed()) show(weekPhoto); }, DELAY_MS);
+    setTimeout(() => showWhenFree(weekPhoto, 6), DELAY_MS);
   });
 })();
 
