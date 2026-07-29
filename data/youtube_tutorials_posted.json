@@ -13,6 +13,7 @@
     "landscape",
     "portrait",
     "macro",
-    "histogram"
+    "histogram",
+    "white-balance"
   ]
 }
