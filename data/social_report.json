@@ -1,95 +1,95 @@
 {
-  "generated_at": "2026-07-26T08:12:06.251245+00:00",
-  "week_ending": "26/07/2026",
+  "generated_at": "2026-08-02T08:09:02.922335+00:00",
+  "week_ending": "02/08/2026",
   "ig": {
     "followers": 660,
-    "media_count": 1342,
-    "posts_this_week": 6,
-    "total_likes": 11,
-    "total_comments": 1,
-    "avg_likes_per_post": 1.8,
+    "media_count": 1347,
+    "posts_this_week": 5,
+    "total_likes": 10,
+    "total_comments": 0,
+    "avg_likes_per_post": 2.0,
     "engagement_rate": 0.003,
     "top_posts": [
       {
-        "caption": "כמה כיפות אתם מצליחים לספור מהמרפסת הזו? 🔍  טיפסתי לנקודת התצפית הזו בדיוק כשהאור הצהריים שטח את הגג",
+        "caption": "📸 הנפת הדגל על הגבעה  מרחב שלילי: התמונה מדגימה שימוש מאסטרי במרחב שלילי — כשני שלישים מהפריים תפוסי",
         "likes": 3,
         "comments": 0,
-        "date": "2026-07-22"
+        "date": "2026-07-30"
       },
       {
-        "caption": "עומד מול הקירות האלה שראו מאות שנים, ומרגיש כמה קטן הרגע שלי מולם. אתם גם מתחברים למקומות עתיקים, או",
-        "likes": 3,
+        "caption": "I photographed the bark of an ancient olive tree, drawn to the way centuries of time carved these de",
+        "likes": 2,
         "comments": 0,
-        "date": "2026-07-21"
+        "date": "2026-07-29"
       },
       {
-        "caption": "📸 מזרקת אור  סימטריה בפעולה: התמונה בנויה על סימטריה כפולה — אופקית ואנכית. — סימטריה  #צילום  #amit",
-        "likes": 3,
+        "caption": "נכנסתי כל כך קרוב עד שהפרח הפסיק להיות פרח והפך למבנה גיאומטרי טהור. הספירלה של הפרחונים הקטנים במרכ",
+        "likes": 2,
         "comments": 0,
-        "date": "2026-07-19"
+        "date": "2026-07-26"
       },
       {
-        "caption": "📸 כיפה זהובה של כנסייה  סימטריה כחוק מנחה: התמונה בנויה על סימטריה מרכזית מושלמת כמעט — הכיפה הזהובה",
+        "caption": "I waited for that perfect golden light to wash over these ancient rocks, where distant mountains mee",
+        "likes": 2,
+        "comments": 0,
+        "date": "2026-07-26"
+      },
+      {
+        "caption": "עמדתי מעל הפסיפס הזה במאדבא, מפת הארץ העתיקה ביותר, וניסיתי לצלם אותה כמו שצילמתי הכל בהתחלה — מלמעל",
         "likes": 1,
         "comments": 0,
-        "date": "2026-07-23"
-      },
-      {
-        "caption": "המדבר בלילה חשוך לגמרי, בלי ירח, בלי אורות עיר. זה בדיוק מה שחיפשתי — שחור מוחלט שיהפוך למגרש משחקים",
-        "likes": 1,
-        "comments": 0,
-        "date": "2026-07-19"
+        "date": "2026-07-29"
       }
     ],
     "best_post": {
-      "caption": "כמה כיפות אתם מצליחים לספור מהמרפסת הזו? 🔍\n\nטיפסתי לנקודת התצפית הזו בדיוק כשהאור הצהריים שטח את הגגות בכתום אחיד — עיר ",
+      "caption": "📸 הנפת הדגל על הגבעה\n\nמרחב שלילי: התמונה מדגימה שימוש מאסטרי במרחב שלילי — כשני שלישים מהפריים תפוסים על ידי שמיים כחולי",
       "likes": 3,
-      "date": "2026-07-22"
+      "date": "2026-07-30"
     }
   },
   "fb": {
-    "fans": 276,
+    "fans": 277,
     "posts_this_week": 7,
-    "total_likes": 0,
+    "total_likes": 1,
     "total_comments": 0,
-    "avg_likes_per_post": 0.0,
-    "engagement_rate": 0.0,
+    "avg_likes_per_post": 0.1,
+    "engagement_rate": 0.0005,
     "top_posts": [
+      {
+        "message": "",
+        "likes": 1,
+        "comments": 0,
+        "date": "2026-07-26"
+      },
+      {
+        "message": "📸 הנפת הדגל על הגבעה  מרחב שלילי: התמונה מדגימה שימוש מאסטרי במרחב שלילי — כשני שלישים מהפריים תפוסי",
+        "likes": 0,
+        "comments": 0,
+        "date": "2026-07-30"
+      },
+      {
+        "message": "I photographed the bark of an ancient olive tree, drawn to the way centuries of time carved these de",
+        "likes": 0,
+        "comments": 0,
+        "date": "2026-07-29"
+      },
       {
         "message": "",
         "likes": 0,
         "comments": 0,
-        "date": "2026-07-25"
+        "date": "2026-07-27"
       },
       {
-        "message": "📸 כיפה זהובה של כנסייה  סימטריה כחוק מנחה: התמונה בנויה על סימטריה מרכזית מושלמת כמעט — הכיפה הזהובה",
+        "message": "",
         "likes": 0,
         "comments": 0,
-        "date": "2026-07-23"
-      },
-      {
-        "message": "I photographed these curving corridors until the light and shadow spiraled into something almost hyp",
-        "likes": 0,
-        "comments": 0,
-        "date": "2026-07-22"
-      },
-      {
-        "message": "20+ מדינות, 1,193 תמונות, ותשוקה אחת לצבע 🎨  זה לא עוד וידאו טיולים — זו גלריה. כל תמונה כאן נבחרה ו",
-        "likes": 0,
-        "comments": 0,
-        "date": "2026-07-21"
-      },
-      {
-        "message": "את התמונה הזאת צילמתי בדובאי — פנס רחוב פשוט על רקע שמיים דרמטיים. אבל תראו רגע את הצללית הזאת, את ה",
-        "likes": 0,
-        "comments": 0,
-        "date": "2026-07-20"
+        "date": "2026-07-27"
       }
     ],
     "best_post": {
       "message": "",
-      "likes": 0,
-      "date": "2026-07-25"
+      "likes": 1,
+      "date": "2026-07-26"
     }
   },
   "fb_pages": [
@@ -97,91 +97,77 @@
       "label": "amit erez photos",
       "name": "amit erez photos",
       "page_id": "339707206917",
-      "fans": 276,
+      "fans": 277,
       "posts_this_week": 7,
-      "total_likes": 0,
+      "total_likes": 1,
       "total_comments": 0,
-      "avg_likes_per_post": 0.0,
-      "engagement_rate": 0.0,
+      "avg_likes_per_post": 0.1,
+      "engagement_rate": 0.0005,
       "top_posts": [
+        {
+          "message": "",
+          "likes": 1,
+          "comments": 0,
+          "date": "2026-07-26"
+        },
+        {
+          "message": "📸 הנפת הדגל על הגבעה  מרחב שלילי: התמונה מדגימה שימוש מאסטרי במרחב שלילי — כשני שלישים מהפריים תפוסי",
+          "likes": 0,
+          "comments": 0,
+          "date": "2026-07-30"
+        },
+        {
+          "message": "I photographed the bark of an ancient olive tree, drawn to the way centuries of time carved these de",
+          "likes": 0,
+          "comments": 0,
+          "date": "2026-07-29"
+        },
         {
           "message": "",
           "likes": 0,
           "comments": 0,
-          "date": "2026-07-25"
+          "date": "2026-07-27"
         },
         {
-          "message": "📸 כיפה זהובה של כנסייה  סימטריה כחוק מנחה: התמונה בנויה על סימטריה מרכזית מושלמת כמעט — הכיפה הזהובה",
+          "message": "",
           "likes": 0,
           "comments": 0,
-          "date": "2026-07-23"
-        },
-        {
-          "message": "I photographed these curving corridors until the light and shadow spiraled into something almost hyp",
-          "likes": 0,
-          "comments": 0,
-          "date": "2026-07-22"
-        },
-        {
-          "message": "20+ מדינות, 1,193 תמונות, ותשוקה אחת לצבע 🎨  זה לא עוד וידאו טיולים — זו גלריה. כל תמונה כאן נבחרה ו",
-          "likes": 0,
-          "comments": 0,
-          "date": "2026-07-21"
-        },
-        {
-          "message": "את התמונה הזאת צילמתי בדובאי — פנס רחוב פשוט על רקע שמיים דרמטיים. אבל תראו רגע את הצללית הזאת, את ה",
-          "likes": 0,
-          "comments": 0,
-          "date": "2026-07-20"
+          "date": "2026-07-27"
         }
       ],
       "best_post": {
         "message": "",
-        "likes": 0,
-        "date": "2026-07-25"
+        "likes": 1,
+        "date": "2026-07-26"
       }
     }
   ],
   "reels": {
-    "reels_this_week": 2,
+    "reels_this_week": 0,
     "total_plays": 0,
     "total_reach": 0,
     "total_shares": 0,
     "total_saved": 0,
     "avg_watch_time": 0,
-    "top_reels": [
-      {
-        "caption": "20+ מדינות, 1,193 תמונות, ותשוקה אחת לצבע 🎨  זה לא עוד וידאו טיולים — זו גלריה. כל תמונה כאן נבחרה ו",
-        "plays": 0,
-        "reach": 0,
-        "shares": 0,
-        "saved": 0,
-        "date": "2026-07-21"
-      },
-      {
-        "caption": "עומד מול הקירות האלה שראו מאות שנים, ומרגיש כמה קטן הרגע שלי מולם. אתם גם מתחברים למקומות עתיקים, או",
-        "plays": 0,
-        "reach": 0,
-        "shares": 0,
-        "saved": 0,
-        "date": "2026-07-21"
-      }
-    ],
+    "top_reels": [],
     "best_reel": {
-      "caption": "20+ מדינות, 1,193 תמונות, ותשוקה אחת לצבע 🎨\n\nזה לא עוד וידאו טיולים — זו גלריה. כל תמונה כאן נבחרה ונאצרה בקפידה, מהמאקר",
+      "caption": "",
       "plays": 0,
-      "date": "2026-07-21"
+      "date": ""
     }
   },
   "prev": {
     "ig_followers": 660,
-    "ig_posts_this_week": 8,
-    "ig_total_likes": 7,
+    "ig_posts_this_week": 6,
+    "ig_total_likes": 11,
     "fb_fans": 276,
-    "fb_posts_this_week": 9,
-    "fb_total_likes": 3
+    "fb_posts_this_week": 7,
+    "fb_total_likes": 0
   },
   "recommendations": [
-    "שגיאה בייצור המלצות: Expecting ',' delimiter: line 1 column 24 (char 23)"
+    "פרסם לפחות 2-3 Reels בשבוע הקادם במקום תמונות סטטיות בלבד, כיוון שReels מקבלים reach גבוה יותר מאינסטגרם וזה יכול להגביר את מספר הלייקים והתגובות שכרגע נמוכים מאוד (ממוצע 2 לייקים לפוסט)",
+    "העלה תוכן פחות תדיר אך בעל איכות גבוהה יותר - במקום 5 פוסטים בשבוע עם 10 לייקים בסך הכל, עדיף 2-3 פוסטים מעולים שיעוררו יותר אינטראקציה, מכיוון שהאנגেჯמנט הנוכחי כמעט שאינו קיים",
+    "העתק את הפוסטים הטובים ביותר שלך מאינסטגרם (כמו הנפת הדגל שקיבלה 3 לייקים) גם לפייסבוק, שכן ה-277 עוקבים שלך שם לא מקבלים תוכן קבוע ויוכלו להגביר את הלייקים על עמוד זה",
+    "הוסף CTA (קריאה לפעולה) בכל פוסט בתיאור - שאל שאלות על ההרכב או הטכניקה הפוטוגרפית כדי להעודד תגובות, כיוון שכרגע יש לך אפס תגובות על כל הפוסטים"
   ]
 }
