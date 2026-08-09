@@ -1,95 +1,95 @@
 {
-  "generated_at": "2026-08-02T08:09:02.922335+00:00",
-  "week_ending": "02/08/2026",
+  "generated_at": "2026-08-09T06:41:18.717413+00:00",
+  "week_ending": "09/08/2026",
   "ig": {
-    "followers": 660,
-    "media_count": 1347,
-    "posts_this_week": 5,
-    "total_likes": 10,
+    "followers": 657,
+    "media_count": 1353,
+    "posts_this_week": 6,
+    "total_likes": 6,
     "total_comments": 0,
-    "avg_likes_per_post": 2.0,
-    "engagement_rate": 0.003,
+    "avg_likes_per_post": 1.0,
+    "engagement_rate": 0.0015,
     "top_posts": [
       {
-        "caption": "📸 הנפת הדגל על הגבעה  מרחב שלילי: התמונה מדגימה שימוש מאסטרי במרחב שלילי — כשני שלישים מהפריים תפוסי",
+        "caption": "מה אתם חושבים שמסתתר מתחת לכל השכבות האלה? 🎣  הצילום צולם ממש מקרוב, כמעט נוגע ברשת — הכל כאן מרקם, ",
         "likes": 3,
         "comments": 0,
-        "date": "2026-07-30"
+        "date": "2026-08-02"
       },
       {
-        "caption": "I photographed the bark of an ancient olive tree, drawn to the way centuries of time carved these de",
-        "likes": 2,
-        "comments": 0,
-        "date": "2026-07-29"
-      },
-      {
-        "caption": "נכנסתי כל כך קרוב עד שהפרח הפסיק להיות פרח והפך למבנה גיאומטרי טהור. הספירלה של הפרחונים הקטנים במרכ",
-        "likes": 2,
-        "comments": 0,
-        "date": "2026-07-26"
-      },
-      {
-        "caption": "I waited for that perfect golden light to wash over these ancient rocks, where distant mountains mee",
-        "likes": 2,
-        "comments": 0,
-        "date": "2026-07-26"
-      },
-      {
-        "caption": "עמדתי מעל הפסיפס הזה במאדבא, מפת הארץ העתיקה ביותר, וניסיתי לצלם אותה כמו שצילמתי הכל בהתחלה — מלמעל",
+        "caption": "",
         "likes": 1,
         "comments": 0,
-        "date": "2026-07-29"
+        "date": "2026-08-06"
+      },
+      {
+        "caption": "השחף הזה עמד על הסלע בסן דייגו בדיוק כמו שאתם רואים אותו. לא זז, לא התרגש ממני. אבל שימו לב לרקע — ה",
+        "likes": 1,
+        "comments": 0,
+        "date": "2026-08-05"
+      },
+      {
+        "caption": "I waited patiently for that perfect moment when the sky turned deep red over the rocky shore, with t",
+        "likes": 1,
+        "comments": 0,
+        "date": "2026-08-02"
+      },
+      {
+        "caption": "📸 מטבעות שוקולד  קווים מובילים: שורות הערימות הנמשכות מהחזית אל עומק הפריים יוצרות קווים אנכיים מקבי",
+        "likes": 0,
+        "comments": 0,
+        "date": "2026-08-06"
       }
     ],
     "best_post": {
-      "caption": "📸 הנפת הדגל על הגבעה\n\nמרחב שלילי: התמונה מדגימה שימוש מאסטרי במרחב שלילי — כשני שלישים מהפריים תפוסים על ידי שמיים כחולי",
+      "caption": "מה אתם חושבים שמסתתר מתחת לכל השכבות האלה? 🎣\n\nהצילום צולם ממש מקרוב, כמעט נוגע ברשת — הכל כאן מרקם, קפלים אפורים-ירקרקים",
       "likes": 3,
-      "date": "2026-07-30"
+      "date": "2026-08-02"
     }
   },
   "fb": {
     "fans": 277,
-    "posts_this_week": 7,
-    "total_likes": 1,
+    "posts_this_week": 8,
+    "total_likes": 4,
     "total_comments": 0,
-    "avg_likes_per_post": 0.1,
-    "engagement_rate": 0.0005,
+    "avg_likes_per_post": 0.5,
+    "engagement_rate": 0.0018,
     "top_posts": [
       {
-        "message": "",
+        "message": "הולנד 2026",
+        "likes": 2,
+        "comments": 0,
+        "date": "2026-08-08"
+      },
+      {
+        "message": "https://amitphotos.com/newsletter/2026-08-full/",
         "likes": 1,
         "comments": 0,
-        "date": "2026-07-26"
+        "date": "2026-08-02"
       },
       {
-        "message": "📸 הנפת הדגל על הגבעה  מרחב שלילי: התמונה מדגימה שימוש מאסטרי במרחב שלילי — כשני שלישים מהפריים תפוסי",
-        "likes": 0,
+        "message": "I waited patiently for that perfect moment when the sky turned deep red over the rocky shore, with t",
+        "likes": 1,
         "comments": 0,
-        "date": "2026-07-30"
+        "date": "2026-08-02"
       },
       {
-        "message": "I photographed the bark of an ancient olive tree, drawn to the way centuries of time carved these de",
+        "message": "📸 מטבעות שוקולד  קווים מובילים: שורות הערימות הנמשכות מהחזית אל עומק הפריים יוצרות קווים אנכיים מקבי",
         "likes": 0,
         "comments": 0,
-        "date": "2026-07-29"
+        "date": "2026-08-06"
       },
       {
-        "message": "",
+        "message": "I photographed these curved wooden stairs from a single point where the whole structure collapsed in",
         "likes": 0,
         "comments": 0,
-        "date": "2026-07-27"
-      },
-      {
-        "message": "",
-        "likes": 0,
-        "comments": 0,
-        "date": "2026-07-27"
+        "date": "2026-08-05"
       }
     ],
     "best_post": {
-      "message": "",
-      "likes": 1,
-      "date": "2026-07-26"
+      "message": "הולנד 2026",
+      "likes": 2,
+      "date": "2026-08-08"
     }
   },
   "fb_pages": [
@@ -98,76 +98,85 @@
       "name": "amit erez photos",
       "page_id": "339707206917",
       "fans": 277,
-      "posts_this_week": 7,
-      "total_likes": 1,
+      "posts_this_week": 8,
+      "total_likes": 4,
       "total_comments": 0,
-      "avg_likes_per_post": 0.1,
-      "engagement_rate": 0.0005,
+      "avg_likes_per_post": 0.5,
+      "engagement_rate": 0.0018,
       "top_posts": [
         {
-          "message": "",
+          "message": "הולנד 2026",
+          "likes": 2,
+          "comments": 0,
+          "date": "2026-08-08"
+        },
+        {
+          "message": "https://amitphotos.com/newsletter/2026-08-full/",
           "likes": 1,
           "comments": 0,
-          "date": "2026-07-26"
+          "date": "2026-08-02"
         },
         {
-          "message": "📸 הנפת הדגל על הגבעה  מרחב שלילי: התמונה מדגימה שימוש מאסטרי במרחב שלילי — כשני שלישים מהפריים תפוסי",
-          "likes": 0,
+          "message": "I waited patiently for that perfect moment when the sky turned deep red over the rocky shore, with t",
+          "likes": 1,
           "comments": 0,
-          "date": "2026-07-30"
+          "date": "2026-08-02"
         },
         {
-          "message": "I photographed the bark of an ancient olive tree, drawn to the way centuries of time carved these de",
+          "message": "📸 מטבעות שוקולד  קווים מובילים: שורות הערימות הנמשכות מהחזית אל עומק הפריים יוצרות קווים אנכיים מקבי",
           "likes": 0,
           "comments": 0,
-          "date": "2026-07-29"
+          "date": "2026-08-06"
         },
         {
-          "message": "",
+          "message": "I photographed these curved wooden stairs from a single point where the whole structure collapsed in",
           "likes": 0,
           "comments": 0,
-          "date": "2026-07-27"
-        },
-        {
-          "message": "",
-          "likes": 0,
-          "comments": 0,
-          "date": "2026-07-27"
+          "date": "2026-08-05"
         }
       ],
       "best_post": {
-        "message": "",
-        "likes": 1,
-        "date": "2026-07-26"
+        "message": "הולנד 2026",
+        "likes": 2,
+        "date": "2026-08-08"
       }
     }
   ],
   "reels": {
-    "reels_this_week": 0,
+    "reels_this_week": 1,
     "total_plays": 0,
     "total_reach": 0,
     "total_shares": 0,
     "total_saved": 0,
     "avg_watch_time": 0,
-    "top_reels": [],
+    "top_reels": [
+      {
+        "caption": "",
+        "plays": 0,
+        "reach": 0,
+        "shares": 0,
+        "saved": 0,
+        "date": "2026-08-06"
+      }
+    ],
     "best_reel": {
       "caption": "",
       "plays": 0,
-      "date": ""
+      "date": "2026-08-06"
     }
   },
   "prev": {
     "ig_followers": 660,
-    "ig_posts_this_week": 6,
-    "ig_total_likes": 11,
-    "fb_fans": 276,
+    "ig_posts_this_week": 5,
+    "ig_total_likes": 10,
+    "fb_fans": 277,
     "fb_posts_this_week": 7,
-    "fb_total_likes": 0
+    "fb_total_likes": 1
   },
   "recommendations": [
-    "פרסם לפחות 2-3 Reels בשבוע הקادם במקום תמונות סטטיות בלבד, כיוון שReels מקבלים reach גבוה יותר מאינסטגרם וזה יכול להגביר את מספר הלייקים והתגובות שכרגע נמוכים מאוד (ממוצע 2 לייקים לפוסט)",
-    "העלה תוכן פחות תדיר אך בעל איכות גבוהה יותר - במקום 5 פוסטים בשבוע עם 10 לייקים בסך הכל, עדיף 2-3 פוסטים מעולים שיעוררו יותר אינטראקציה, מכיוון שהאנגেჯמנט הנוכחי כמעט שאינו קיים",
-    "העתק את הפוסטים הטובים ביותר שלך מאינסטגרם (כמו הנפת הדגל שקיבלה 3 לייקים) גם לפייסבוק, שכן ה-277 עוקבים שלך שם לא מקבלים תוכן קבוע ויוכלו להגביר את הלייקים על עמוד זה",
-    "הוסף CTA (קריאה לפעולה) בכל פוסט בתיאור - שאל שאלות על ההרכב או הטכניקה הפוטוגרפית כדי להעודד תגובות, כיוון שכרגע יש לך אפס תגובות על כל הפוסטים"
+    "הגביל את מספר הפוסטים ל-3 פוסטים בשבוע במקום 6, כדי להגביר את הממוצע לייקים ולעודד התקשרות של קהל קטן יותר אך מעורב יותר",
+    "שנה את אסטרטגיית ה-Reels: צור Reels קצרים בטיול שמציגים תהליך צילום או reveal של התמונה, כדי להגביר את זמן הצפייה (כיום 0 שניות)",
+    "הוסף קול או מוזיקה ל-Reels הבאים שלך כדי להגביר את ההנגשה ואת סבירות ההפצה, מכיוון שה-Reel הנוכחי לא קיבל שום צפיות",
+    "העתק את התוכן המצליח ביותר מ-Instagram (הפוסט עם 3 לייקים על הצילום המקרוב) ל-Facebook, כדי להגביר את המעורבות ב-277 העוקבים שם"
   ]
 }
