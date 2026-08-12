@@ -15,6 +15,7 @@
     "macro",
     "histogram",
     "white-balance",
-    "filters"
+    "filters",
+    "editing"
   ]
 }
