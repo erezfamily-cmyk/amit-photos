@@ -1,5 +1,5 @@
 {
-  "current_category_index": 0,
+  "current_category_index": 1,
   "used_ids_by_category": {
     "אבו דאבי": [
       "6c9e818c-bdd3-402f-b6f5-ee2e668507c9",
@@ -25,7 +25,15 @@
       "84ec9e65-322f-466b-b20f-17965ef03f62",
       "98544f14-b95a-4288-9eb6-cc9433c1d464",
       "5d02de08-04ba-42ea-99bc-74c0ae63e2a3",
-      "256f0281-b872-4a44-8db0-ca075fca7ba7"
+      "256f0281-b872-4a44-8db0-ca075fca7ba7",
+      "40816bc4-cec3-46e6-9e54-8ca371de3383",
+      "ad10327b-25c5-4db0-a4dd-771bc982a83c",
+      "11cd4e6d-3884-405e-96ed-cceef3422188",
+      "3f96a471-35d1-4c12-955d-ac697b0ba34f",
+      "df2e7ba8-9532-41e1-aa63-cfd9e5c81a0c",
+      "4cc5f7f4-42c3-41ee-9c45-29f36a76b67f",
+      "f336d9a3-2b36-4dc4-ae0e-86b3f0155a67",
+      "3c724b58-01ae-4531-95b5-76ef4eb20764"
     ],
     "איטליה": [
       "ecad69a5-e43c-4773-b139-1f1b4f1f328f",
@@ -557,5 +565,5 @@
       "1G_dn5hHrv_1cZ-VVGfECEYzi9J6pDGhI"
     ]
   },
-  "gear_tool_index": 0
+  "gear_tool_index": 1
 }
