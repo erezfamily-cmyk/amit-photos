@@ -1,95 +1,95 @@
 {
-  "generated_at": "2026-08-09T06:41:18.717413+00:00",
-  "week_ending": "09/08/2026",
+  "generated_at": "2026-08-16T06:25:48.412446+00:00",
+  "week_ending": "16/08/2026",
   "ig": {
     "followers": 657,
-    "media_count": 1353,
-    "posts_this_week": 6,
-    "total_likes": 6,
+    "media_count": 1360,
+    "posts_this_week": 7,
+    "total_likes": 18,
     "total_comments": 0,
-    "avg_likes_per_post": 1.0,
-    "engagement_rate": 0.0015,
+    "avg_likes_per_post": 2.6,
+    "engagement_rate": 0.0039,
     "top_posts": [
       {
-        "caption": "מה אתם חושבים שמסתתר מתחת לכל השכבות האלה? 🎣  הצילום צולם ממש מקרוב, כמעט נוגע ברשת — הכל כאן מרקם, ",
-        "likes": 3,
+        "caption": "#amitphotos",
+        "likes": 8,
         "comments": 0,
-        "date": "2026-08-02"
+        "date": "2026-08-10"
+      },
+      {
+        "caption": "I waited patiently for the perfect light to reveal the heart of this purple anemone — a tiny univers",
+        "likes": 4,
+        "comments": 0,
+        "date": "2026-08-12"
       },
       {
         "caption": "",
-        "likes": 1,
+        "likes": 2,
         "comments": 0,
-        "date": "2026-08-06"
+        "date": "2026-08-14"
       },
       {
-        "caption": "השחף הזה עמד על הסלע בסן דייגו בדיוק כמו שאתם רואים אותו. לא זז, לא התרגש ממני. אבל שימו לב לרקע — ה",
+        "caption": "📸 פרפר לבן על מרגנית  מרחב שלילי: התמונה מדגימה בצורה מושלמת את חוק המרחב השלילי — הרקע המטושטש הכחו",
         "likes": 1,
         "comments": 0,
-        "date": "2026-08-05"
+        "date": "2026-08-13"
       },
       {
-        "caption": "I waited patiently for that perfect moment when the sky turned deep red over the rocky shore, with t",
+        "caption": "הקפיץ הקטן הזה של הצמח - שכולם עוברים לידו בלי לראות - זה מה שעצר אותי באמצע השביל.  צילמתי אותו על ",
         "likes": 1,
         "comments": 0,
-        "date": "2026-08-02"
-      },
-      {
-        "caption": "📸 מטבעות שוקולד  קווים מובילים: שורות הערימות הנמשכות מהחזית אל עומק הפריים יוצרות קווים אנכיים מקבי",
-        "likes": 0,
-        "comments": 0,
-        "date": "2026-08-06"
+        "date": "2026-08-12"
       }
     ],
     "best_post": {
-      "caption": "מה אתם חושבים שמסתתר מתחת לכל השכבות האלה? 🎣\n\nהצילום צולם ממש מקרוב, כמעט נוגע ברשת — הכל כאן מרקם, קפלים אפורים-ירקרקים",
-      "likes": 3,
-      "date": "2026-08-02"
+      "caption": "#amitphotos",
+      "likes": 8,
+      "date": "2026-08-10"
     }
   },
   "fb": {
     "fans": 277,
     "posts_this_week": 8,
-    "total_likes": 4,
+    "total_likes": 3,
     "total_comments": 0,
-    "avg_likes_per_post": 0.5,
-    "engagement_rate": 0.0018,
+    "avg_likes_per_post": 0.4,
+    "engagement_rate": 0.0014,
     "top_posts": [
       {
-        "message": "הולנד 2026",
-        "likes": 2,
+        "message": "#amitphotos",
+        "likes": 3,
         "comments": 0,
-        "date": "2026-08-08"
+        "date": "2026-08-10"
       },
       {
-        "message": "https://amitphotos.com/newsletter/2026-08-full/",
-        "likes": 1,
-        "comments": 0,
-        "date": "2026-08-02"
-      },
-      {
-        "message": "I waited patiently for that perfect moment when the sky turned deep red over the rocky shore, with t",
-        "likes": 1,
-        "comments": 0,
-        "date": "2026-08-02"
-      },
-      {
-        "message": "📸 מטבעות שוקולד  קווים מובילים: שורות הערימות הנמשכות מהחזית אל עומק הפריים יוצרות קווים אנכיים מקבי",
+        "message": "",
         "likes": 0,
         "comments": 0,
-        "date": "2026-08-06"
+        "date": "2026-08-14"
       },
       {
-        "message": "I photographed these curved wooden stairs from a single point where the whole structure collapsed in",
+        "message": "📸 פרפר לבן על מרגנית  מרחב שלילי: התמונה מדגימה בצורה מושלמת את חוק המרחב השלילי — הרקע המטושטש הכחו",
         "likes": 0,
         "comments": 0,
-        "date": "2026-08-05"
+        "date": "2026-08-13"
+      },
+      {
+        "message": "I waited patiently for the perfect light to reveal the heart of this purple anemone — a tiny univers",
+        "likes": 0,
+        "comments": 0,
+        "date": "2026-08-12"
+      },
+      {
+        "message": "",
+        "likes": 0,
+        "comments": 0,
+        "date": "2026-08-11"
       }
     ],
     "best_post": {
-      "message": "הולנד 2026",
-      "likes": 2,
-      "date": "2026-08-08"
+      "message": "#amitphotos",
+      "likes": 3,
+      "date": "2026-08-10"
     }
   },
   "fb_pages": [
@@ -99,51 +99,51 @@
       "page_id": "339707206917",
       "fans": 277,
       "posts_this_week": 8,
-      "total_likes": 4,
+      "total_likes": 3,
       "total_comments": 0,
-      "avg_likes_per_post": 0.5,
-      "engagement_rate": 0.0018,
+      "avg_likes_per_post": 0.4,
+      "engagement_rate": 0.0014,
       "top_posts": [
         {
-          "message": "הולנד 2026",
-          "likes": 2,
+          "message": "#amitphotos",
+          "likes": 3,
           "comments": 0,
-          "date": "2026-08-08"
+          "date": "2026-08-10"
         },
         {
-          "message": "https://amitphotos.com/newsletter/2026-08-full/",
-          "likes": 1,
-          "comments": 0,
-          "date": "2026-08-02"
-        },
-        {
-          "message": "I waited patiently for that perfect moment when the sky turned deep red over the rocky shore, with t",
-          "likes": 1,
-          "comments": 0,
-          "date": "2026-08-02"
-        },
-        {
-          "message": "📸 מטבעות שוקולד  קווים מובילים: שורות הערימות הנמשכות מהחזית אל עומק הפריים יוצרות קווים אנכיים מקבי",
+          "message": "",
           "likes": 0,
           "comments": 0,
-          "date": "2026-08-06"
+          "date": "2026-08-14"
         },
         {
-          "message": "I photographed these curved wooden stairs from a single point where the whole structure collapsed in",
+          "message": "📸 פרפר לבן על מרגנית  מרחב שלילי: התמונה מדגימה בצורה מושלמת את חוק המרחב השלילי — הרקע המטושטש הכחו",
           "likes": 0,
           "comments": 0,
-          "date": "2026-08-05"
+          "date": "2026-08-13"
+        },
+        {
+          "message": "I waited patiently for the perfect light to reveal the heart of this purple anemone — a tiny univers",
+          "likes": 0,
+          "comments": 0,
+          "date": "2026-08-12"
+        },
+        {
+          "message": "",
+          "likes": 0,
+          "comments": 0,
+          "date": "2026-08-11"
         }
       ],
       "best_post": {
-        "message": "הולנד 2026",
-        "likes": 2,
-        "date": "2026-08-08"
+        "message": "#amitphotos",
+        "likes": 3,
+        "date": "2026-08-10"
       }
     }
   ],
   "reels": {
-    "reels_this_week": 1,
+    "reels_this_week": 2,
     "total_plays": 0,
     "total_reach": 0,
     "total_shares": 0,
@@ -156,27 +156,35 @@
         "reach": 0,
         "shares": 0,
         "saved": 0,
-        "date": "2026-08-06"
+        "date": "2026-08-14"
+      },
+      {
+        "caption": "#amitphotos",
+        "plays": 0,
+        "reach": 0,
+        "shares": 0,
+        "saved": 0,
+        "date": "2026-08-10"
       }
     ],
     "best_reel": {
       "caption": "",
       "plays": 0,
-      "date": "2026-08-06"
+      "date": "2026-08-14"
     }
   },
   "prev": {
-    "ig_followers": 660,
-    "ig_posts_this_week": 5,
-    "ig_total_likes": 10,
+    "ig_followers": 657,
+    "ig_posts_this_week": 6,
+    "ig_total_likes": 6,
     "fb_fans": 277,
-    "fb_posts_this_week": 7,
-    "fb_total_likes": 1
+    "fb_posts_this_week": 8,
+    "fb_total_likes": 4
   },
   "recommendations": [
-    "הגביל את מספר הפוסטים ל-3 פוסטים בשבוע במקום 6, כדי להגביר את הממוצע לייקים ולעודד התקשרות של קהל קטן יותר אך מעורב יותר",
-    "שנה את אסטרטגיית ה-Reels: צור Reels קצרים בטיול שמציגים תהליך צילום או reveal של התמונה, כדי להגביר את זמן הצפייה (כיום 0 שניות)",
-    "הוסף קול או מוזיקה ל-Reels הבאים שלך כדי להגביר את ההנגשה ואת סבירות ההפצה, מכיוון שה-Reel הנוכחי לא קיבל שום צפיות",
-    "העתק את התוכן המצליח ביותר מ-Instagram (הפוסט עם 3 לייקים על הצילום המקרוב) ל-Facebook, כדי להגביר את המעורבות ב-277 העוקבים שם"
+    "פרסום תוכן ווידיאו בפורמט Reels עם טקסט על-המסך, מוזיקה עתירת מעורבות וCTA ברור, כיוון שהReels הנוכחיים קיבלו 0 צפיות - הוסיפו מוזיקה פופולרית, סטוריה מעניינת או Before/After כדי להגביר אנגেজמנט",
+    "קבעו קונסיסטנציה בהפוסטים - במקום 7 פוסטים בשבוע בנפרצות לא קבועות, פרסמו 3-4 פוסטים ביום קבוע (למשל שלוש שלום ושישי) כדי להשיג עקביות ולגדול בעדיפות האלגוריתם של אינסטגרם",
+    "הגביר אינטראקציה על ידי תגובה לתגובות של עוקבים, הוספת שאלות בכל פוסט והשתמשו בHashtags רלוונטיים (כמו #PhotographyIsrael #IsraeliPhotographer) - הממוצע של 2.6 לייקים לפוסט נמוך ודורש עידוד אינטראקציה מקומית",
+    "העברת תוכן מיוצא דופן מפייסבוק לאינסטגרם - לאינסטגרם יש 657 עוקבים מול 277 בפייסבוק, ולכן סדרו עדיפות לאינסטגרם עם קונטנט ייחודי וחזקה, וגידול בעוקבים יביא להגברת האנגעמנט"
   ]
 }
