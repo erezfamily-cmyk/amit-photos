@@ -69,9 +69,9 @@ def fetch_ig_insights():
         return []
 
 
-# מדדים ספציפיים ל-Reels (Graph API v21.0). אם מטא משנה שמות מדדים בגרסה עתידית — הפונקציה
-# נכשלת בשקט ומחזירה {} (כמו שאר קריאות ה-API בקובץ), לא קורסת את הדוח כולו.
-REEL_METRICS = "plays,reach,saved,shares,total_interactions,ig_reels_avg_watch_time"
+# מדדים ספציפיים ל-Reels (Graph API v21.0). מטא שינתה את "plays" ל-"views" — הפונקציה
+# נכשלת בשקט ומחזירה {} אם מדד לא תקין (כמו שאר קריאות ה-API בקובץ), לא קורסת את הדוח כולו.
+REEL_METRICS = "views,reach,saved,shares,total_interactions,ig_reels_avg_watch_time"
 
 
 def is_reel(post):
@@ -108,13 +108,13 @@ def build_reel_summary(ig_posts):
         p["reel_metrics"] = fetch_reel_insights(p["id"])
 
     n = len(reels)
-    total_plays   = sum(p["reel_metrics"].get("plays", 0) for p in reels)
+    total_plays   = sum(p["reel_metrics"].get("views", 0) for p in reels)
     total_reach   = sum(p["reel_metrics"].get("reach", 0) for p in reels)
     total_shares  = sum(p["reel_metrics"].get("shares", 0) for p in reels)
     total_saved   = sum(p["reel_metrics"].get("saved", 0) for p in reels)
     watch_times   = [p["reel_metrics"].get("ig_reels_avg_watch_time", 0) for p in reels if p["reel_metrics"].get("ig_reels_avg_watch_time")]
     avg_watch     = round(sum(watch_times) / len(watch_times), 1) if watch_times else 0
-    best = max(reels, key=lambda p: p["reel_metrics"].get("plays", 0), default=None)
+    best = max(reels, key=lambda p: p["reel_metrics"].get("views", 0), default=None)
 
     return {
         "reels_this_week": n,
@@ -126,17 +126,17 @@ def build_reel_summary(ig_posts):
         "top_reels": [
             {
                 "caption": (p.get("caption") or "")[:100].replace("\n", " "),
-                "plays":   p["reel_metrics"].get("plays", 0),
+                "plays":   p["reel_metrics"].get("views", 0),
                 "reach":   p["reel_metrics"].get("reach", 0),
                 "shares":  p["reel_metrics"].get("shares", 0),
                 "saved":   p["reel_metrics"].get("saved", 0),
                 "date":    (p.get("timestamp") or "")[:10],
             }
-            for p in sorted(reels, key=lambda p: p["reel_metrics"].get("plays", 0), reverse=True)[:5]
+            for p in sorted(reels, key=lambda p: p["reel_metrics"].get("views", 0), reverse=True)[:5]
         ],
         "best_reel": {
             "caption": (best.get("caption") or "")[:120] if best else "",
-            "plays":   best["reel_metrics"].get("plays", 0) if best else 0,
+            "plays":   best["reel_metrics"].get("views", 0) if best else 0,
             "date":    (best.get("timestamp") or "")[:10] if best else "",
         },
     }
