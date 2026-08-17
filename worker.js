@@ -2350,7 +2350,7 @@ function buildNewsletterHtml(subject, body, unsubscribeUrl, name) {
 async function handleTrackEvent(request, env) {
   try {
     const { event_type, photo_id, photo_title, category } = await request.json();
-    if (!['photo_view', 'purchase_intent'].includes(event_type) || !photo_id) return jsonRes({ ok: false });
+    if (!['photo_view', 'purchase_intent', 'print_intent'].includes(event_type) || !photo_id) return jsonRes({ ok: false });
     await env.DB.prepare(
       'INSERT INTO photo_events (event_type, photo_id, photo_title, category, created_at) VALUES (?, ?, ?, ?, ?)'
     ).bind(event_type, String(photo_id), photo_title || '', category || '', new Date().toISOString()).run();
@@ -2603,6 +2603,10 @@ async function servePhotoPage(photoId, env) {
     ...(category ? { "about": category } : {}),
   });
 
+  // photo_view לעמוד עצמאי (servePhotoPage אין לו gallery.js/openLightbox בכלל) —
+  // בלי זה, כניסה ישירה מחיפוש/סושיאל לעולם לא נספרת במשפך, רק כניסה דרך הגלריה ב-SPA.
+  const photoViewEvent = JSON.stringify({ photo_id: photoId, photo_title: title, category }).replace(/</g, '\\u003c');
+
   const html = `<!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
@@ -2635,6 +2639,7 @@ async function servePhotoPage(photoId, env) {
   <link rel="canonical" href="${pageUrl}" />
   <script type="application/ld+json">${schema}</script>
   ${GA_SNIPPET}
+  <script>gtag('event','photo_view',${photoViewEvent});</script>
   <style>
     *{margin:0;padding:0;box-sizing:border-box}
     body{background:#0a0a0a;color:#f0f0f0;font-family:'Heebo',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:2rem 1rem}
