@@ -39,6 +39,8 @@ SCOPES = [
     "pages_show_list",
     "pages_read_user_content",
     "public_profile",
+    "instagram_basic",
+    "instagram_manage_insights",
 ]
 
 META_APP_ID     = os.environ.get("META_APP_ID", "")
