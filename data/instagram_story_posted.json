@@ -1,5 +1,5 @@
 {
-  "current_category_index": 6,
+  "current_category_index": 7,
   "used_ids_by_category": {
     "אבו דאבי": [
       "6c9e818c-bdd3-402f-b6f5-ee2e668507c9",
@@ -169,7 +169,15 @@
       "21a44e72-dea5-4ba0-a8eb-a1cab350e19e",
       "d0f411cb-4b1d-4f02-8e26-391461ecc02f",
       "27eb10b0-a444-4edd-8f10-737d1aa4d621",
-      "55bc2933-6f34-4b51-a17e-f38c70188290"
+      "55bc2933-6f34-4b51-a17e-f38c70188290",
+      "6446f579-c108-491b-b50e-1fe41af2d137",
+      "7eb754d2-50bc-4889-bc50-20d5d76b5934",
+      "5516dd92-8cf3-4dd6-90e4-46528e0bce0d",
+      "1092c2c1-3dd2-4ff9-85f0-a0ad371c6804",
+      "2f611edf-0ab4-4e23-bec8-048d3e13ae01",
+      "dda1b2cf-432e-490e-abd4-57d32e213632",
+      "39ccce9b-75d6-4804-b430-5183e3b8bdfb",
+      "3e2f7bc5-89a3-473c-839b-76dacfd9807a"
     ],
     "הולנד": [
       "86b2c290-56c7-4575-8d69-865d414c251b",
@@ -605,5 +613,5 @@
       "1G_dn5hHrv_1cZ-VVGfECEYzi9J6pDGhI"
     ]
   },
-  "gear_tool_index": 1
+  "gear_tool_index": 0
 }
