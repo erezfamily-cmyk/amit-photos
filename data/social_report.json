@@ -1,71 +1,77 @@
 {
-  "generated_at": "2026-08-17T17:54:06.644820+00:00",
-  "week_ending": "17/08/2026",
+  "generated_at": "2026-08-23T06:30:45.155978+00:00",
+  "week_ending": "23/08/2026",
   "ig": {
-    "followers": 657,
-    "media_count": 1362,
-    "posts_this_week": 7,
+    "followers": 658,
+    "media_count": 1365,
+    "posts_this_week": 5,
     "total_likes": 17,
     "total_comments": 0,
-    "avg_likes_per_post": 2.4,
-    "engagement_rate": 0.0037,
+    "avg_likes_per_post": 3.4,
+    "engagement_rate": 0.0052,
     "top_posts": [
       {
-        "caption": "#amitphotos",
+        "caption": "",
         "likes": 8,
         "comments": 0,
-        "date": "2026-08-10"
-      },
-      {
-        "caption": "I waited patiently for the perfect light to reveal the heart of this purple anemone — a tiny univers",
-        "likes": 4,
-        "comments": 0,
-        "date": "2026-08-12"
+        "date": "2026-08-21"
       },
       {
         "caption": "",
-        "likes": 2,
+        "likes": 5,
         "comments": 0,
-        "date": "2026-08-14"
+        "date": "2026-08-19"
       },
       {
         "caption": "הסלע הלבן הזה בחזית עצר אותי. ישבתי כמעט על הקרקע, כמעט צמוד לאדמה, כדי לתת לו את כל הנוכחות שמגיעה ",
-        "likes": 1,
+        "likes": 2,
         "comments": 0,
         "date": "2026-08-16"
       },
       {
-        "caption": "📸 פרפר לבן על מרגנית  מרחב שלילי: התמונה מדגימה בצורה מושלמת את חוק המרחב השלילי — הרקע המטושטש הכחו",
+        "caption": "מתי ביום צולמה התמונה הזו — ולמה שכבתי על הקרקע כדי לתפוס אותה? 🌌  הענפים העירומים נראים כמו רשת שחו",
         "likes": 1,
         "comments": 0,
-        "date": "2026-08-13"
+        "date": "2026-08-19"
+      },
+      {
+        "caption": "I waited for that perfect moment when the child became pure silhouette against the golden glowing ci",
+        "likes": 1,
+        "comments": 0,
+        "date": "2026-08-16"
       }
     ],
     "best_post": {
-      "caption": "#amitphotos",
+      "caption": "",
       "likes": 8,
-      "date": "2026-08-10"
+      "date": "2026-08-21"
     }
   },
   "fb": {
-    "fans": 277,
-    "posts_this_week": 11,
-    "total_likes": 4,
+    "fans": 278,
+    "posts_this_week": 7,
+    "total_likes": 1,
     "total_comments": 0,
-    "avg_likes_per_post": 0.4,
-    "engagement_rate": 0.0013,
+    "avg_likes_per_post": 0.1,
+    "engagement_rate": 0.0005,
     "top_posts": [
-      {
-        "message": "#amitphotos",
-        "likes": 3,
-        "comments": 0,
-        "date": "2026-08-10"
-      },
       {
         "message": "Holand in photos",
         "likes": 1,
         "comments": 0,
         "date": "2026-08-16"
+      },
+      {
+        "message": "📸 עיר בתוך המים  סימטריה ושיבושה: התמונה בנויה על עיקרון הסימטריה — המגדל הצהוב במרכז, הבניינים הצבע",
+        "likes": 0,
+        "comments": 0,
+        "date": "2026-08-20"
+      },
+      {
+        "message": "I photographed these old colored fabrics up close, drawn to the way their rich textures and layered ",
+        "likes": 0,
+        "comments": 0,
+        "date": "2026-08-19"
       },
       {
         "message": "את הצילום הזה של הנשר הדרום-אפריקאי צילמתי בתנאי תאורה קשים — והוא לימד אותי לקח חשוב לגמרי מהצילום ",
@@ -78,18 +84,12 @@
         "likes": 0,
         "comments": 0,
         "date": "2026-08-16"
-      },
-      {
-        "message": "הולנד 2026",
-        "likes": 0,
-        "comments": 0,
-        "date": "2026-08-16"
       }
     ],
     "best_post": {
-      "message": "#amitphotos",
-      "likes": 3,
-      "date": "2026-08-10"
+      "message": "Holand in photos",
+      "likes": 1,
+      "date": "2026-08-16"
     }
   },
   "fb_pages": [
@@ -97,24 +97,30 @@
       "label": "amit erez photos",
       "name": "amit erez photos",
       "page_id": "339707206917",
-      "fans": 277,
-      "posts_this_week": 11,
-      "total_likes": 4,
+      "fans": 278,
+      "posts_this_week": 7,
+      "total_likes": 1,
       "total_comments": 0,
-      "avg_likes_per_post": 0.4,
-      "engagement_rate": 0.0013,
+      "avg_likes_per_post": 0.1,
+      "engagement_rate": 0.0005,
       "top_posts": [
-        {
-          "message": "#amitphotos",
-          "likes": 3,
-          "comments": 0,
-          "date": "2026-08-10"
-        },
         {
           "message": "Holand in photos",
           "likes": 1,
           "comments": 0,
           "date": "2026-08-16"
+        },
+        {
+          "message": "📸 עיר בתוך המים  סימטריה ושיבושה: התמונה בנויה על עיקרון הסימטריה — המגדל הצהוב במרכז, הבניינים הצבע",
+          "likes": 0,
+          "comments": 0,
+          "date": "2026-08-20"
+        },
+        {
+          "message": "I photographed these old colored fabrics up close, drawn to the way their rich textures and layered ",
+          "likes": 0,
+          "comments": 0,
+          "date": "2026-08-19"
         },
         {
           "message": "את הצילום הזה של הנשר הדרום-אפריקאי צילמתי בתנאי תאורה קשים — והוא לימד אותי לקח חשוב לגמרי מהצילום ",
@@ -127,50 +133,44 @@
           "likes": 0,
           "comments": 0,
           "date": "2026-08-16"
-        },
-        {
-          "message": "הולנד 2026",
-          "likes": 0,
-          "comments": 0,
-          "date": "2026-08-16"
         }
       ],
       "best_post": {
-        "message": "#amitphotos",
-        "likes": 3,
-        "date": "2026-08-10"
+        "message": "Holand in photos",
+        "likes": 1,
+        "date": "2026-08-16"
       }
     }
   ],
   "reels": {
     "reels_this_week": 2,
-    "total_plays": 418,
-    "total_reach": 327,
-    "total_shares": 0,
+    "total_plays": 556,
+    "total_reach": 346,
+    "total_shares": 1,
     "total_saved": 0,
-    "avg_watch_time": 1998.5,
+    "avg_watch_time": 5585.5,
     "top_reels": [
       {
-        "caption": "#amitphotos",
-        "plays": 222,
-        "reach": 167,
-        "shares": 0,
+        "caption": "",
+        "plays": 390,
+        "reach": 210,
+        "shares": 1,
         "saved": 0,
-        "date": "2026-08-10"
+        "date": "2026-08-21"
       },
       {
         "caption": "",
-        "plays": 196,
-        "reach": 160,
+        "plays": 166,
+        "reach": 136,
         "shares": 0,
         "saved": 0,
-        "date": "2026-08-14"
+        "date": "2026-08-19"
       }
     ],
     "best_reel": {
-      "caption": "#amitphotos",
-      "plays": 222,
-      "date": "2026-08-10"
+      "caption": "",
+      "plays": 390,
+      "date": "2026-08-21"
     }
   },
   "prev": {
@@ -182,9 +182,9 @@
     "fb_total_likes": 4
   },
   "recommendations": [
-    "התמקד בתוכן וידאו - הרילס שלך מקבלים צפיות ממוצעות של 209 בתצוגה (418 צפיות ב-2 רילס) בעוד שהפוסטים הסטטיים מקבלים בממוצע 2.4 לייקים בלבד, לכן הגדל את כמות הרילס ל-4-5 בשבוע הקרוב.",
-    "עבור לאסטרטגיית engagement - יש לך 0 תגובות בפוסטים ו-0 שיירים ברילס, לכן הוסף קול זה שאלות ישירות בתיאור הפוסט (למשל \"איזה סגנון צילום אתם הכי אוהבים?\") כדי לעודד שיחה.",
-    "הפעל קמפיין שיתוף ברילס - הרילס שלך מקבלים צפיות רבות (418 בשבוע) אך 0 שיירים, לכן הוסף CTA מוקדי (\"שיירו עם חברים שלכם\") ותגים רלוונטיים יותר כדי להגביר אורגנית.",
-    "העבר משאבים מ-Facebook ל-Instagram - ה-Facebook שלך קולט רק 4 לייקים ב-11 פוסטים בעוד Instagram מתפקד טוב יותר, לכן הפחת פוסטים בפייסבוק ל-2-3 בשבוע והעתק את המאמץ להנשאת רילס בInstagram."
+    "התמקד בתוכן ווידאו - הריילס שלך מקבלים 556 צפיות עם זמן צפייה גבוה (5585.5 שניות), בעוד הפוסטים הסטטיים מקבלים רק 3.4 לייקים בממוצע. הגבר את כמות הריילס לשלושה ריילס בשבוע ובדוק איזה סוגי וידאו (תהליך צילום, עריכה מהירה, סיפורי לקוחות) מייצרים יותר שיתופים וצפיות.",
+    "עלייה משמעותית בהשתתפות בקהילה - אתה מקבל אפס תגובות על פוסטים עם 658 עוקבים. הוסף שאלות ישירות בכיתוביות שלך (למשל \"איפה צילמתם את תמונות החתונה האהובה עליכם?\") וענה לכל תגובה בתוך שעה כדי לעודד דיון.",
+    "העבר קהל מפייסבוק לאינסטגרם - בפייסבוק יש לך 278 עוקבים עם 1 לייק בלבד מ-7 פוסטים. פרסם קישור לפרופיל האינסטגרם שלך בביו של פייסבוק ופרסם שם ראשוני רק אינסטגרם-בלעדי כדי להגדיל את הקהל המאוחד.",
+    "השתמש בתיקיות סיפור מעבר ופוסטים בכתובית אינטראקטיביים - לריילס שלך יש זמן צפייה ממוצע גבוה אך רק שיתוף אחד ו-0 שמירות. צור ריילס עם קול, מוזיקה ותמליל שעוזר לצופים להבין את התהליך שלך וכיצד הם יכולים ליצור קשר."
   ]
 }
