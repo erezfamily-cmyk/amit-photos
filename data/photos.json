@@ -609,6 +609,48 @@
     "added_at": "2026-05-28"
   },
   {
+    "id": "1NmCLTIcIAIf7CEsak3J21NxRLMI28QIP",
+    "title": "ברווז בטבע",
+    "category": "בעלי חיים",
+    "parent_category": null,
+    "url": "/photos/1NmCLTIcIAIf7CEsak3J21NxRLMI28QIP.webp",
+    "thumbnail": "/photos/thumb/1NmCLTIcIAIf7CEsak3J21NxRLMI28QIP.webp",
+    "description": "ברווז זכר בעל נוצות חומות ופסים כחולים הולך על דשא ירוק.",
+    "filename": "54A1B40B-957A-4E0F-83CC-D17B16211DA9.JPG",
+    "width": 3719,
+    "height": 2480,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 200,
+      "aperture": 2.8,
+      "iso": 500,
+      "shutter": 0.005
+    },
+    "added_at": "2026-08-27"
+  },
+  {
+    "id": "1x9zNoOicogKjnr5YctK3GMCsUmQvHI15",
+    "title": "ברווז בריכה",
+    "category": "בעלי חיים",
+    "parent_category": null,
+    "url": "/photos/1x9zNoOicogKjnr5YctK3GMCsUmQvHI15.webp",
+    "thumbnail": "/photos/thumb/1x9zNoOicogKjnr5YctK3GMCsUmQvHI15.webp",
+    "description": "ברווז חום עם ראש אפור שוחה בשקט במים כחולים",
+    "filename": "A03B9BDA-682A-401B-B9D9-63F65BF88F10.JPG",
+    "width": 4192,
+    "height": 2795,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 200,
+      "aperture": 2.8,
+      "iso": 64,
+      "shutter": 0.003125
+    },
+    "added_at": "2026-08-27"
+  },
+  {
     "id": "1F5h4R4wzlMQ_DRq6LrnVXk-O7S9NvADw",
     "title": "ברווז בתעופה",
     "category": "בעלי חיים",
@@ -901,6 +943,66 @@
     }
   },
   {
+    "id": "1pVQQzOHVpLroFBaW0z8AY0ua8taqnE2u",
+    "title": "אנפת כחולה בנמל",
+    "category": "בעלי חיים",
+    "parent_category": null,
+    "url": "/photos/1pVQQzOHVpLroFBaW0z8AY0ua8taqnE2u.webp",
+    "thumbnail": "/photos/thumb/1pVQQzOHVpLroFBaW0z8AY0ua8taqnE2u.webp",
+    "description": "ציפור אנפה גדולה עומדת בחופשיות לעומת רקע של סירות דיג וצופים",
+    "filename": "DSC_6235 Copy.JPG",
+    "width": 4192,
+    "height": 2795,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "focal": 200,
+      "aperture": 2.8,
+      "iso": 2500,
+      "shutter": 0.005
+    },
+    "added_at": "2026-08-27"
+  },
+  {
+    "id": "1hWWZMnkX0_5s1BkVEaZk1r1gLiz9zSE3",
+    "title": "שקנאי על גג",
+    "category": "בעלי חיים",
+    "parent_category": null,
+    "url": "/photos/1hWWZMnkX0_5s1BkVEaZk1r1gLiz9zSE3.webp",
+    "thumbnail": "/photos/thumb/1hWWZMnkX0_5s1BkVEaZk1r1gLiz9zSE3.webp",
+    "description": "שקנאי לבן וחום עומד על גג ברקע עיר מטושטשת",
+    "filename": "DSC_6246 Copy.JPG",
+    "width": 4192,
+    "height": 2795,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "focal": 150,
+      "aperture": 2.8,
+      "iso": 900,
+      "shutter": 0.00625
+    },
+    "added_at": "2026-08-27"
+  },
+  {
+    "id": "1dmmXg4jQd0yHFzrHL3KRiWMxxWfzn5uI",
+    "title": "אנגוז על הגדר",
+    "category": "בעלי חיים",
+    "parent_category": null,
+    "url": "/photos/1dmmXg4jQd0yHFzrHL3KRiWMxxWfzn5uI.webp",
+    "thumbnail": "/photos/thumb/1dmmXg4jQd0yHFzrHL3KRiWMxxWfzn5uI.webp",
+    "description": "אנגוז אפור עומד על גדר עם פרחים כתום בטשטוש ברקע",
+    "filename": "DSC_6252 Copy.JPG",
+    "width": 4192,
+    "height": 2795,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "focal": 170,
+      "aperture": 2.8,
+      "iso": 1250,
+      "shutter": 0.005
+    },
+    "added_at": "2026-08-27"
+  },
+  {
     "id": "1DPQ8ZNDZ0W0Cki7BMrzmHo8LqxysZYGO",
     "title": "שמיר על הגג",
     "category": "בעלי חיים",
@@ -959,6 +1061,40 @@
       "iso": 200,
       "shutter": 0.005
     }
+  },
+  {
+    "id": "1GzDMTGpGF_kShIoB0fPLaVuLT41JP06b",
+    "title": "ברווז בעלייה",
+    "category": "בעלי חיים",
+    "parent_category": null,
+    "url": "/photos/1GzDMTGpGF_kShIoB0fPLaVuLT41JP06b.webp",
+    "thumbnail": "/photos/thumb/1GzDMTGpGF_kShIoB0fPLaVuLT41JP06b.webp",
+    "description": "ברווז קנוט עומד בדשא ירוק עם טיפות מים על מקורו",
+    "filename": "DSC_6601.JPG",
+    "width": 1620,
+    "height": 1080,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "focal": 200,
+      "aperture": 2.8,
+      "iso": 110,
+      "shutter": 0.005
+    },
+    "added_at": "2026-08-27"
+  },
+  {
+    "id": "1ZR2loLNXfSXqdYEorvD8ng535BBa6opy",
+    "title": "ברווז בריכה",
+    "category": "בעלי חיים",
+    "parent_category": null,
+    "url": "/photos/1ZR2loLNXfSXqdYEorvD8ng535BBa6opy.webp",
+    "thumbnail": "/photos/thumb/1ZR2loLNXfSXqdYEorvD8ng535BBa6opy.webp",
+    "description": "ברווז חום עם סימני כחול לבן על הכנפיים, עומד בעשב ליד מים.",
+    "filename": "DSC_6611.JPG",
+    "width": 8256,
+    "height": 5504,
+    "exif": null,
+    "added_at": "2026-08-27"
   },
   {
     "id": "1eTzH4c2Tc65jY0buh5sLW0V2K6QOGOob",
@@ -1024,6 +1160,26 @@
     "added_at": "2026-05-16"
   },
   {
+    "id": "1NlvajXLoP81aKwLY2dAvUsBjbpCXUehf",
+    "title": "ברווז בר בשדה",
+    "category": "בעלי חיים",
+    "parent_category": null,
+    "url": "/photos/1NlvajXLoP81aKwLY2dAvUsBjbpCXUehf.webp",
+    "thumbnail": "/photos/thumb/1NlvajXLoP81aKwLY2dAvUsBjbpCXUehf.webp",
+    "description": "ברווז בשריטת טבע, עם נוצות חומות והפרות שחורות.",
+    "filename": "DSC_6785 Copy.JPG",
+    "width": 4192,
+    "height": 2795,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "focal": 155,
+      "aperture": 2.8,
+      "iso": 64,
+      "shutter": 0.0025
+    },
+    "added_at": "2026-08-27"
+  },
+  {
     "id": "1SKAexUhbEmJuhbvVwDyvC2UllzihL7yv",
     "title": "טווס בעיסתון",
     "category": "בעלי חיים",
@@ -1061,6 +1217,47 @@
       "iso": 200,
       "shutter": 0.00625
     }
+  },
+  {
+    "id": "1q3nporrwIb5UYLxKDAyx_izr6OVmb_sb",
+    "title": "ברווזים על המים",
+    "category": "בעלי חיים",
+    "parent_category": null,
+    "url": "/photos/1q3nporrwIb5UYLxKDAyx_izr6OVmb_sb.webp",
+    "thumbnail": "/photos/thumb/1q3nporrwIb5UYLxKDAyx_izr6OVmb_sb.webp",
+    "description": "שני ברווזים שוחים בנרמות על פני המים בשעת הזהב",
+    "filename": "DSC_7167.JPG",
+    "width": 2048,
+    "height": 1365,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 180,
+      "aperture": 2.8,
+      "iso": 64,
+      "shutter": 0.0015625
+    },
+    "added_at": "2026-08-27"
+  },
+  {
+    "id": "1j-sRDIB0G7cLlRHg2D0zQ2YS-p1NtqmP",
+    "title": "ברווזים בשקיעה",
+    "category": "בעלי חיים",
+    "parent_category": null,
+    "url": "/photos/1j-sRDIB0G7cLlRHg2D0zQ2YS-p1NtqmP.webp",
+    "thumbnail": "/photos/thumb/1j-sRDIB0G7cLlRHg2D0zQ2YS-p1NtqmP.webp",
+    "description": "ברווזים שחורים בצללה בשפת המים עם זהב השקיעה",
+    "filename": "DSC_7170 Copy.JPG",
+    "width": 4192,
+    "height": 2795,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "focal": 200,
+      "aperture": 2.8,
+      "iso": 64,
+      "shutter": 0.0015625
+    },
+    "added_at": "2026-08-27"
   },
   {
     "id": "1tZpFhWo_vw74IXqHHnzBcH8D63odsRAp",
@@ -1123,6 +1320,61 @@
     "added_at": "2026-04-24"
   },
   {
+    "id": "11-eVJ9SFNXAAAekp6uhfJT1f9NMzEyW3",
+    "title": "שונית לבנה על הרציף",
+    "category": "בעלי חיים",
+    "parent_category": null,
+    "url": "/photos/11-eVJ9SFNXAAAekp6uhfJT1f9NMzEyW3.webp",
+    "thumbnail": "/photos/thumb/11-eVJ9SFNXAAAekp6uhfJT1f9NMzEyW3.webp",
+    "description": "שונית לבנה וגרועה עומדת על רציף עץ ברקע עירוני מטושטש",
+    "filename": "DSC_7646.JPG",
+    "width": 8256,
+    "height": 5504,
+    "exif": null,
+    "added_at": "2026-08-27"
+  },
+  {
+    "id": "1v6SBh2G0ZF-i7p4Ve7SJpS1wckPHsSpc",
+    "title": "שונית לבנה על הגדה",
+    "category": "בעלי חיים",
+    "parent_category": null,
+    "url": "/photos/1v6SBh2G0ZF-i7p4Ve7SJpS1wckPHsSpc.webp",
+    "thumbnail": "/photos/thumb/1v6SBh2G0ZF-i7p4Ve7SJpS1wckPHsSpc.webp",
+    "description": "שונית ימית לבנה עם כנפיים אפורות עומדת על משטח מישור.",
+    "filename": "DSC_7649.JPG",
+    "width": 1620,
+    "height": 1080,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "focal": 140,
+      "aperture": 2.8,
+      "iso": 64,
+      "shutter": 0.0003125
+    },
+    "added_at": "2026-08-27"
+  },
+  {
+    "id": "1WsyM-mrDmWQUYfpBAze_R-X6QC5Em23F",
+    "title": "סוסה לבנה ברעיה",
+    "category": "בעלי חיים",
+    "parent_category": null,
+    "url": "/photos/1WsyM-mrDmWQUYfpBAze_R-X6QC5Em23F.webp",
+    "thumbnail": "/photos/thumb/1WsyM-mrDmWQUYfpBAze_R-X6QC5Em23F.webp",
+    "description": "סוסה לבנה ותמימה רועה בשדה ירוק עם עדר ברקע",
+    "filename": "DSC_7839.JPG",
+    "width": 1620,
+    "height": 1080,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 155,
+      "aperture": 2.8,
+      "iso": 64,
+      "shutter": 0.0008
+    },
+    "added_at": "2026-08-27"
+  },
+  {
     "id": "1bd4lgr48MXcockwUCOWFiT7gHE9MyYjY",
     "title": "זוג ג'ירפות בסוואנה",
     "category": "בעלי חיים",
@@ -1141,6 +1393,55 @@
       "iso": 100,
       "shutter": 0.008
     }
+  },
+  {
+    "id": "1uBmNcr5E1-n049jZE6Dxl8MLFdp-zUOD",
+    "title": "ברבור לבן על המים",
+    "category": "בעלי חיים",
+    "parent_category": null,
+    "url": "/photos/1uBmNcr5E1-n049jZE6Dxl8MLFdp-zUOD.webp",
+    "thumbnail": "/photos/thumb/1uBmNcr5E1-n049jZE6Dxl8MLFdp-zUOD.webp",
+    "description": "ברבור לבן שוחה על מים שחורים עם השתקפות עדינות",
+    "filename": "DSC_8091.JPG",
+    "width": 8256,
+    "height": 5504,
+    "exif": null,
+    "added_at": "2026-08-27"
+  },
+  {
+    "id": "1RkJxnL9FGdHjgUdlckfvMQr7zJTDy4aK",
+    "title": "ברבור לבן בימים",
+    "category": "בעלי חיים",
+    "parent_category": null,
+    "url": "/photos/1RkJxnL9FGdHjgUdlckfvMQr7zJTDy4aK.webp",
+    "thumbnail": "/photos/thumb/1RkJxnL9FGdHjgUdlckfvMQr7zJTDy4aK.webp",
+    "description": "ברבור לבן שוחה בעדינות בים כחול עם עוד ברבורים בפריים",
+    "filename": "DSC_8127.JPG",
+    "width": 1620,
+    "height": 1080,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 200,
+      "aperture": 2.8,
+      "iso": 64,
+      "shutter": 0.00015625
+    },
+    "added_at": "2026-08-27"
+  },
+  {
+    "id": "1xufTMVvZsvUZmmKDSEEJ_VJq9QSDRLgn",
+    "title": "ברבור לבן על המים",
+    "category": "בעלי חיים",
+    "parent_category": null,
+    "url": "/photos/1xufTMVvZsvUZmmKDSEEJ_VJq9QSDRLgn.webp",
+    "thumbnail": "/photos/thumb/1xufTMVvZsvUZmmKDSEEJ_VJq9QSDRLgn.webp",
+    "description": "ברבור לבן שוחה בנחת בבריכה כחולה עם עופות נוספים ברקע.",
+    "filename": "DSC_8128.JPG",
+    "width": 8256,
+    "height": 5504,
+    "exif": null,
+    "added_at": "2026-08-27"
   },
   {
     "id": "15KL0atFHVvE87zq3Z-Ni67UCAXxKvZfZ",
@@ -1198,6 +1499,80 @@
       "shutter": 0.004
     },
     "added_at": "2026-04-24"
+  },
+  {
+    "id": "1uYlxrxI3waKszgHOTdeUCiEkrG0EgKHc",
+    "title": "זוג ברווזים בטבע",
+    "category": "בעלי חיים",
+    "parent_category": null,
+    "url": "/photos/1uYlxrxI3waKszgHOTdeUCiEkrG0EgKHc.webp",
+    "thumbnail": "/photos/thumb/1uYlxrxI3waKszgHOTdeUCiEkrG0EgKHc.webp",
+    "description": "זוג ברווזים עם נוצות מעוטרות על דשא ירוק בטבע",
+    "filename": "DSC_8366.JPG",
+    "width": 1620,
+    "height": 1080,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "focal": 165,
+      "aperture": 4,
+      "iso": 3200,
+      "shutter": 0.005
+    },
+    "added_at": "2026-08-27"
+  },
+  {
+    "id": "1W9hTv0HvSfKKSJWxELvsa6EHix4Jp7Y-",
+    "title": "ברווז על הדשא",
+    "category": "בעלי חיים",
+    "parent_category": null,
+    "url": "/photos/1W9hTv0HvSfKKSJWxELvsa6EHix4Jp7Y-.webp",
+    "thumbnail": "/photos/thumb/1W9hTv0HvSfKKSJWxELvsa6EHix4Jp7Y-.webp",
+    "description": "ברווז צבעוני יושב על דשא ירוק עם רקע טבעי מטושטש",
+    "filename": "DSC_8367.JPG",
+    "width": 8256,
+    "height": 5504,
+    "exif": null,
+    "added_at": "2026-08-27"
+  },
+  {
+    "id": "128fUdmmeDNzpV9wFRfB_HSnWUBF-7WsR",
+    "title": "עוף מים שחור",
+    "category": "בעלי חיים",
+    "parent_category": null,
+    "url": "/photos/128fUdmmeDNzpV9wFRfB_HSnWUBF-7WsR.webp",
+    "thumbnail": "/photos/thumb/128fUdmmeDNzpV9wFRfB_HSnWUBF-7WsR.webp",
+    "description": "עוף מימי בעל נוצות שחורות וסימן לבן אופייני על הראש",
+    "filename": "DSC_8369.JPG",
+    "width": 1620,
+    "height": 1080,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "focal": 200,
+      "aperture": 4,
+      "iso": 2200,
+      "shutter": 0.005
+    },
+    "added_at": "2026-08-27"
+  },
+  {
+    "id": "1jWsRJnBJ4GoZciat-rZu6_NHNawaL6GQ",
+    "title": "ברווזים בבריכה ירוקה",
+    "category": "בעלי חיים",
+    "parent_category": null,
+    "url": "/photos/1jWsRJnBJ4GoZciat-rZu6_NHNawaL6GQ.webp",
+    "thumbnail": "/photos/thumb/1jWsRJnBJ4GoZciat-rZu6_NHNawaL6GQ.webp",
+    "description": "קבוצת ברווזים צפים בשקט בבריכה מכוסת אצות ירוקות",
+    "filename": "DSC_8624.JPG",
+    "width": 1620,
+    "height": 1080,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "focal": 200,
+      "aperture": 22,
+      "iso": 10000,
+      "shutter": 0.008
+    },
+    "added_at": "2026-08-27"
   },
   {
     "id": "1BP2J4zxj8zIBcRzYNSQVEVrKWjzbqhcW",
@@ -1459,7 +1834,26 @@
     "width": 1504,
     "height": 1000,
     "exif": null,
-    "added_at": "2026-08-26"
+    "added_at": "2026-08-27"
+  },
+  {
+    "id": "1LuoH9OWwTFPRnDvZihmDE5hyBz3Kt815",
+    "title": "ברווזים בשקיעה",
+    "category": "בעלי חיים",
+    "parent_category": null,
+    "url": "/photos/1LuoH9OWwTFPRnDvZihmDE5hyBz3Kt815.webp",
+    "thumbnail": "/photos/thumb/1LuoH9OWwTFPRnDvZihmDE5hyBz3Kt815.webp",
+    "description": "ברווזים שחורים בצללית על מים זהובים בשעת שקיעה",
+    "filename": "ld-export-9c2705b4-08212026.JPG",
+    "width": 4192,
+    "height": 2795,
+    "exif": {
+      "focal": 200,
+      "aperture": 2.8,
+      "iso": 64,
+      "shutter": 0.0015625
+    },
+    "added_at": "2026-08-27"
   },
   {
     "id": "11S40eybbvVMrvc_uceTn6Ge_9NIj0W3Q",
@@ -11787,6 +12181,132 @@
     "added_at": "2026-04-22"
   },
   {
+    "id": "1TyejCiXjbqw6KUeq_akc_zWo_21nqAkP",
+    "title": "טחנת רוח הולנדית",
+    "category": "הולנד",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1TyejCiXjbqw6KUeq_akc_zWo_21nqAkP",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1TyejCiXjbqw6KUeq_akc_zWo_21nqAkP&sz=w600",
+    "description": "טחנת רוח קלאסית המשתקפת במי תעלה שקטים עם שרך ירוק",
+    "filename": "610EB0F6-0F38-4983-899F-F07654222CAF.JPG",
+    "width": 2791,
+    "height": 4192,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 10,
+      "aperture": 22,
+      "iso": 160,
+      "shutter": 0.06666667
+    },
+    "added_at": "2026-08-27"
+  },
+  {
+    "id": "1EyCDa5NEg6KZLAbiCl1LxaFDpXSl49-d",
+    "title": "טחנת רוח הולנדית",
+    "category": "הולנד",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1EyCDa5NEg6KZLAbiCl1LxaFDpXSl49-d",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1EyCDa5NEg6KZLAbiCl1LxaFDpXSl49-d&sz=w600",
+    "description": "טחנת רוח קלאסית משתקפת במי אגם שקט עם חרציות ירוקות",
+    "filename": "680ABA85-0C1A-4664-9A14-81FD810934FF.JPG",
+    "width": 4192,
+    "height": 2791,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 10,
+      "aperture": 22,
+      "iso": 140,
+      "shutter": 0.06666667
+    },
+    "added_at": "2026-08-27"
+  },
+  {
+    "id": "1PSo_2h6SfVF2S4d9SrXgjclbtjeJJLXP",
+    "title": "טחנת רוח הולנדית",
+    "category": "הולנד",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1PSo_2h6SfVF2S4d9SrXgjclbtjeJJLXP",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1PSo_2h6SfVF2S4d9SrXgjclbtjeJJLXP&sz=w600",
+    "description": "טחנת רוח קלסית על גדת תעלה בנוף הולנדי עם קנים ירוקים בקדמת הפריים",
+    "filename": "76CB75F0-1E23-4F22-8433-29C415E2A609.JPG",
+    "width": 4192,
+    "height": 2791,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 19,
+      "aperture": 8,
+      "iso": 64,
+      "shutter": 0.008
+    },
+    "added_at": "2026-08-27"
+  },
+  {
+    "id": "1gVGqkTqQcFPOmXHORMa5QjLfrbNekB_Q",
+    "title": "מנהור לתעלה הולנדית",
+    "category": "הולנד",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1gVGqkTqQcFPOmXHORMa5QjLfrbNekB_Q.webp",
+    "thumbnail": "/photos/thumb/1gVGqkTqQcFPOmXHORMa5QjLfrbNekB_Q.webp",
+    "description": "מבט דרך קשת אבן לתעלה מימית עם בנייה לבנה בהולנד",
+    "filename": "7B6E218B-7F6C-4B51-A667-9BC9F5A46657.JPG",
+    "width": 2100,
+    "height": 3149,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "24-70mm f/2.8G",
+      "focal": 70,
+      "aperture": 8,
+      "iso": 250,
+      "shutter": 0.0125
+    },
+    "added_at": "2026-08-27"
+  },
+  {
+    "id": "1wsGZcL72EtxvhGkUqrMTt1jBe2bwL_JW",
+    "title": "סירה הולנדית עתיקה",
+    "category": "הולנד",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1wsGZcL72EtxvhGkUqrMTt1jBe2bwL_JW.webp",
+    "thumbnail": "/photos/thumb/1wsGZcL72EtxvhGkUqrMTt1jBe2bwL_JW.webp",
+    "description": "פרט מקרוב של גוף סירה עץ צבוע בכחול וחום עם מספר הרישום WR54.",
+    "filename": "D3F39C2D-575A-4271-B861-48D92784E905.JPG",
+    "width": 4192,
+    "height": 2795,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 200,
+      "aperture": 2.8,
+      "iso": 100,
+      "shutter": 0.005
+    },
+    "added_at": "2026-08-27"
+  },
+  {
+    "id": "1U_GDd9gogYqqmMGEbqHOx8VJ1sfRyTEq",
+    "title": "טחנות רוח הולנדיות",
+    "category": "הולנד",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1U_GDd9gogYqqmMGEbqHOx8VJ1sfRyTEq.webp",
+    "thumbnail": "/photos/thumb/1U_GDd9gogYqqmMGEbqHOx8VJ1sfRyTEq.webp",
+    "description": "שלוש טחנות רוח קלאסיות בנוף הולנדי ירוק תחת שמיים עננים.",
+    "filename": "D7189A5B-4BDC-49E3-BC00-86F76D0ABE60.JPG",
+    "width": 4192,
+    "height": 2795,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 200,
+      "aperture": 2.8,
+      "iso": 64,
+      "shutter": 0.001
+    },
+    "added_at": "2026-08-27"
+  },
+  {
     "id": "14rG5W3jwcADiqLxUREUXAqKPjGbGxulA",
     "title": "שקיעה ים תיכונית בחוף יוון",
     "category": "הולנד",
@@ -11953,6 +12473,346 @@
     }
   },
   {
+    "id": "1LC2I4g8gLCI27c7X_2M2mqcg7nezS2Eo",
+    "title": "טחנות הרוח ההולנדיות",
+    "category": "הולנד",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1LC2I4g8gLCI27c7X_2M2mqcg7nezS2Eo",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1LC2I4g8gLCI27c7X_2M2mqcg7nezS2Eo&sz=w600",
+    "description": "טחנות רוח בצללים על רקע מים שקטים בהולנד",
+    "filename": "DSC_7255 Copy.JPG",
+    "width": 4192,
+    "height": 2795,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "focal": 200,
+      "aperture": 3.2,
+      "iso": 64,
+      "shutter": 0.0005
+    },
+    "added_at": "2026-08-27"
+  },
+  {
+    "id": "17IqNHHh0Jv1OVM0jZ-exuGADg2QkpBSm",
+    "title": "טחנות הרוח ההולנדיות",
+    "category": "הולנד",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=17IqNHHh0Jv1OVM0jZ-exuGADg2QkpBSm",
+    "thumbnail": "https://drive.google.com/thumbnail?id=17IqNHHh0Jv1OVM0jZ-exuGADg2QkpBSm&sz=w600",
+    "description": "שלוש טחנות רוח עתיקות משתקפות במימי התעלה השקטות בהולנד.",
+    "filename": "DSC_7257.JPG",
+    "width": 8256,
+    "height": 5504,
+    "exif": null,
+    "added_at": "2026-08-27"
+  },
+  {
+    "id": "1VxhyONq6hiPptGKR_1DrgoLTnqfhMueA",
+    "title": "טחנות רוח הולנדיות",
+    "category": "הולנד",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1VxhyONq6hiPptGKR_1DrgoLTnqfhMueA.webp",
+    "thumbnail": "/photos/thumb/1VxhyONq6hiPptGKR_1DrgoLTnqfhMueA.webp",
+    "description": "שלוש טחנות רוח מסורתיות בצללית על רקע שמיים עננים",
+    "filename": "DSC_7262 Copy.JPG",
+    "width": 4192,
+    "height": 2795,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "focal": 200,
+      "aperture": 2.8,
+      "iso": 64,
+      "shutter": 0.001
+    },
+    "added_at": "2026-08-27"
+  },
+  {
+    "id": "19jMcavXS88Mw6SxEUI8-u5hCan4tNrXG",
+    "title": "טחנת רוח הולנדית",
+    "category": "הולנד",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=19jMcavXS88Mw6SxEUI8-u5hCan4tNrXG",
+    "thumbnail": "https://drive.google.com/thumbnail?id=19jMcavXS88Mw6SxEUI8-u5hCan4tNrXG&sz=w600",
+    "description": "טחנת רוח עתיקה על גדת תעלה בנוף הולנדי שקט תחת שמיים עבים.",
+    "filename": "DSC_7300.JPG",
+    "width": 1620,
+    "height": 1080,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "focal": 10,
+      "aperture": 22,
+      "iso": 90,
+      "shutter": 0.06666667
+    },
+    "added_at": "2026-08-27"
+  },
+  {
+    "id": "1TG_4VHV5e5vhmCrrhBWV8JcYeO90vbYK",
+    "title": "טחנות רוח הולנדיות",
+    "category": "הולנד",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1TG_4VHV5e5vhmCrrhBWV8JcYeO90vbYK.webp",
+    "thumbnail": "/photos/thumb/1TG_4VHV5e5vhmCrrhBWV8JcYeO90vbYK.webp",
+    "description": "שורת טחנות רוח עתיקות משתקפות במים שקטים של תעלה הולנדית.",
+    "filename": "DSC_7355.JPG",
+    "width": 1620,
+    "height": 1080,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "24-70mm f/2.8G",
+      "focal": 40,
+      "aperture": 22,
+      "iso": 180,
+      "shutter": 0.025
+    },
+    "added_at": "2026-08-27"
+  },
+  {
+    "id": "1V0sgKklojM4bdTRGzg0vLK9LgC1y99wk",
+    "title": "סלים ורודים בהולנד",
+    "category": "הולנד",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1V0sgKklojM4bdTRGzg0vLK9LgC1y99wk.webp",
+    "thumbnail": "/photos/thumb/1V0sgKklojM4bdTRGzg0vLK9LgC1y99wk.webp",
+    "description": "סל פרחים ורודים תלוי על עמוד עם טחנות רוח בנ景ב הולנדי",
+    "filename": "DSC_7538.JPG",
+    "width": 1620,
+    "height": 1080,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 70-200mm f/2.8G",
+      "focal": 130,
+      "aperture": 22,
+      "iso": 450,
+      "shutter": 0.00625
+    },
+    "added_at": "2026-08-27"
+  },
+  {
+    "id": "1PEY8wtXGIDdPe-6Xo4Nbz3YN34jTW9nS",
+    "title": "אופניים ורודים בהולנד",
+    "category": "הולנד",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1PEY8wtXGIDdPe-6Xo4Nbz3YN34jTW9nS.webp",
+    "thumbnail": "/photos/thumb/1PEY8wtXGIDdPe-6Xo4Nbz3YN34jTW9nS.webp",
+    "description": "אופני עיר ורודים חנויים מול קיר שחור בהולנד",
+    "filename": "DSC_8543.JPG",
+    "width": 8101,
+    "height": 5401,
+    "exif": null,
+    "added_at": "2026-08-27"
+  },
+  {
+    "id": "1vXtKJwiZ0--mIpu1Pb6FpnnbHvkldIpL",
+    "title": "סירות צבעוניות תחת הקשת",
+    "category": "הולנד",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1vXtKJwiZ0--mIpu1Pb6FpnnbHvkldIpL.webp",
+    "thumbnail": "/photos/thumb/1vXtKJwiZ0--mIpu1Pb6FpnnbHvkldIpL.webp",
+    "description": "סירות קיאק צבעוניות בערוץ מימי הולנדי תחת גשר לבנים עתיק",
+    "filename": "DSC_8557 Copy.JPG",
+    "width": 2724,
+    "height": 4091,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "focal": 24,
+      "aperture": 4,
+      "iso": 64,
+      "shutter": 0.01
+    },
+    "added_at": "2026-08-27"
+  },
+  {
+    "id": "1UCKHYLc6Fb8M9YEQE9Ymr66GiIaST8xV",
+    "title": "תעלה בהולנד",
+    "category": "הולנד",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1UCKHYLc6Fb8M9YEQE9Ymr66GiIaST8xV.webp",
+    "thumbnail": "/photos/thumb/1UCKHYLc6Fb8M9YEQE9Ymr66GiIaST8xV.webp",
+    "description": "נוף עתיק של תעלה הולנדית עם בתים צהובים ואנשים על הגדה",
+    "filename": "DSC_8563 Copy.JPG",
+    "width": 4192,
+    "height": 2795,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "focal": 155,
+      "aperture": 4,
+      "iso": 72,
+      "shutter": 0.00625
+    },
+    "added_at": "2026-08-27"
+  },
+  {
+    "id": "1--S5BY-183LZ9zWkcwmbcpyeql35GXsO",
+    "title": "ברווזים בבריכה ירוקה",
+    "category": "הולנד",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1--S5BY-183LZ9zWkcwmbcpyeql35GXsO.webp",
+    "thumbnail": "/photos/thumb/1--S5BY-183LZ9zWkcwmbcpyeql35GXsO.webp",
+    "description": "קבוצת ברווזים צפים בבריכה מכוסת אצות ירוקות",
+    "filename": "DSC_8624.JPG",
+    "width": 8256,
+    "height": 5504,
+    "exif": null,
+    "added_at": "2026-08-27"
+  },
+  {
+    "id": "1Vs051MNfy8KaDOMG3lFPfjLdq9Iu7KQ2",
+    "title": "ברווזים בבריכה ירוקה",
+    "category": "הולנד",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1Vs051MNfy8KaDOMG3lFPfjLdq9Iu7KQ2.webp",
+    "thumbnail": "/photos/thumb/1Vs051MNfy8KaDOMG3lFPfjLdq9Iu7KQ2.webp",
+    "description": "קבוצת ברווזים צפים בבריכה מכוסה באצות ירוקות בהולנד",
+    "filename": "DSC_8624.JPG",
+    "width": 1620,
+    "height": 1080,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "focal": 200,
+      "aperture": 22,
+      "iso": 10000,
+      "shutter": 0.008
+    },
+    "added_at": "2026-08-27"
+  },
+  {
+    "id": "1V5tllCphmz2ACV9OMcB10Lzavn9Hgx2q",
+    "title": "נמל דיג הולנדי",
+    "category": "הולנד",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1V5tllCphmz2ACV9OMcB10Lzavn9Hgx2q.webp",
+    "thumbnail": "/photos/thumb/1V5tllCphmz2ACV9OMcB10Lzavn9Hgx2q.webp",
+    "description": "בתים מסורתיים הולנדיים לצד סירות דיג צבעוניות בנמל שקט",
+    "filename": "DSC_8682.JPG",
+    "width": 5408,
+    "height": 3600,
+    "exif": null,
+    "added_at": "2026-08-27"
+  },
+  {
+    "id": "16omsJIBLx-Il8L6QU599esq0s7Eqn1bI",
+    "title": "תרנים של סירה הולנדית",
+    "category": "הולנד",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/16omsJIBLx-Il8L6QU599esq0s7Eqn1bI.webp",
+    "thumbnail": "/photos/thumb/16omsJIBLx-Il8L6QU599esq0s7Eqn1bI.webp",
+    "description": "תרנים וחבלים של סירה מסורתית על רקע שמיים כחולים.",
+    "filename": "DSC_8700 Copy.jpg",
+    "width": 4192,
+    "height": 2795,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "focal": 200,
+      "aperture": 2.8,
+      "iso": 64,
+      "shutter": 0.0003125
+    },
+    "added_at": "2026-08-27"
+  },
+  {
+    "id": "1Ie7m1hdz_1RmmSPFP1aLsBe0RHl3rye3",
+    "title": "השתקפויות בנהר הולנדי",
+    "category": "הולנד",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1Ie7m1hdz_1RmmSPFP1aLsBe0RHl3rye3.webp",
+    "thumbnail": "/photos/thumb/1Ie7m1hdz_1RmmSPFP1aLsBe0RHl3rye3.webp",
+    "description": "השתקפות צבעונית של בניין ותאורה בחלקו העליון של הנהר.",
+    "filename": "DSC_8712 Copy.JPG",
+    "width": 4192,
+    "height": 2795,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "focal": 70,
+      "aperture": 2.8,
+      "iso": 64,
+      "shutter": 0.002
+    },
+    "added_at": "2026-08-27"
+  },
+  {
+    "id": "1hLsA8J8CYN3TkMG7FW1I6ZN5OsqpZhcH",
+    "title": "נמל דייגים הולנדי",
+    "category": "הולנד",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1hLsA8J8CYN3TkMG7FW1I6ZN5OsqpZhcH.webp",
+    "thumbnail": "/photos/thumb/1hLsA8J8CYN3TkMG7FW1I6ZN5OsqpZhcH.webp",
+    "description": "סירה צהובה עתיקה בנמל עם בתים צבעוניים וכביסה תלויה.",
+    "filename": "DSC_8813 Copy.JPG",
+    "width": 4192,
+    "height": 2791,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "focal": 10,
+      "aperture": 10,
+      "iso": 64,
+      "shutter": 0.003125
+    },
+    "added_at": "2026-08-27"
+  },
+  {
+    "id": "1f3wohgRSMlNmGw2XmQxc_-Hp-iybWz-g",
+    "title": "נמל סירות הולנדי שקט",
+    "category": "הולנד",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1f3wohgRSMlNmGw2XmQxc_-Hp-iybWz-g.webp",
+    "thumbnail": "/photos/thumb/1f3wohgRSMlNmGw2XmQxc_-Hp-iybWz-g.webp",
+    "description": "סירות מסורתיות עם תרנים בנמל הולנדי שקט ליד בתים אדומים.",
+    "filename": "DSC_8838 Copy.jpg",
+    "width": 4192,
+    "height": 2791,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "focal": 10,
+      "aperture": 3.5,
+      "iso": 64,
+      "shutter": 0.0008
+    },
+    "added_at": "2026-08-27"
+  },
+  {
+    "id": "1-3dIWLtlGSp2qT3vAhIs1hECtJSPslyo",
+    "title": "השתקפות בתעלה",
+    "category": "הולנד",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1-3dIWLtlGSp2qT3vAhIs1hECtJSPslyo.webp",
+    "thumbnail": "/photos/thumb/1-3dIWLtlGSp2qT3vAhIs1hECtJSPslyo.webp",
+    "description": "השתקפות צבעונית של בתים בים בתעלת הולנדית",
+    "filename": "DSC_8860.JPG",
+    "width": 8256,
+    "height": 5504,
+    "exif": null,
+    "added_at": "2026-08-27"
+  },
+  {
+    "id": "1l7t8YKADG9rGhUCVTL745Hy9u2Ux24zh",
+    "title": "רוכבת בשכונה הולנדית",
+    "category": "הולנד",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1l7t8YKADG9rGhUCVTL745Hy9u2Ux24zh.webp",
+    "thumbnail": "/photos/thumb/1l7t8YKADG9rGhUCVTL745Hy9u2Ux24zh.webp",
+    "description": "אישה רוכבת על אופניים ברחוב צר בעיר הולנדית עם בניינים קלאסיים.",
+    "filename": "DSC_8907.JPG",
+    "width": 5504,
+    "height": 8256,
+    "exif": null,
+    "added_at": "2026-08-27"
+  },
+  {
+    "id": "1GiwptZ1nLl_nOT-D_ZXaIPonXLDsnBsD",
+    "title": "אופניים פורחות בהולנד",
+    "category": "הולנד",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1GiwptZ1nLl_nOT-D_ZXaIPonXLDsnBsD.webp",
+    "thumbnail": "/photos/thumb/1GiwptZ1nLl_nOT-D_ZXaIPonXLDsnBsD.webp",
+    "description": "אופניים צבעוני מעוטר בפרחים בחזית חנות בעיר הולנדית",
+    "filename": "DSC_8924.JPG",
+    "width": 8256,
+    "height": 5504,
+    "exif": null,
+    "added_at": "2026-08-27"
+  },
+  {
     "id": "1eV1m_7ednH16DOdthfISdMi-qhaeAguw",
     "title": "טחנות הרוח ההולנדיות",
     "category": "הולנד",
@@ -12091,6 +12951,253 @@
       "iso": 100,
       "shutter": 0.00625
     }
+  },
+  {
+    "id": "1Z43VFgUKNgaFDtCD8LOyF8kQdoS0WpTy",
+    "title": "טחנת רוח הולנדית",
+    "category": "הולנד",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1Z43VFgUKNgaFDtCD8LOyF8kQdoS0WpTy",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1Z43VFgUKNgaFDtCD8LOyF8kQdoS0WpTy&sz=w600",
+    "description": "טחנת רוח עתיקה עם כנפיים על ערוץ מימי בנוף הולנדי ירוק",
+    "filename": "E8E1C849-03BB-483D-9009-59FF91073ED5.JPG",
+    "width": 4192,
+    "height": 2791,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 20,
+      "aperture": 8,
+      "iso": 64,
+      "shutter": 0.01
+    },
+    "added_at": "2026-08-27"
+  },
+  {
+    "id": "1yjkV0x6qCV3ktYpJUm-K7_enAu5ZqS-A",
+    "title": "ברווז בעל קווים",
+    "category": "הולנד",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1yjkV0x6qCV3ktYpJUm-K7_enAu5ZqS-A.webp",
+    "thumbnail": "/photos/thumb/1yjkV0x6qCV3ktYpJUm-K7_enAu5ZqS-A.webp",
+    "description": "ברווז צעיר על קרקע חלוקה עם דשא יבש בהולנד",
+    "filename": "IMG_8504.JPG",
+    "width": 1620,
+    "height": 1080,
+    "exif": null,
+    "added_at": "2026-08-27"
+  },
+  {
+    "id": "1Te7-mtm1JgMQyOQMdJp_I07pXaic2R4l",
+    "title": "קיאק תחת הגשר",
+    "category": "הולנד",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1Te7-mtm1JgMQyOQMdJp_I07pXaic2R4l.webp",
+    "thumbnail": "/photos/thumb/1Te7-mtm1JgMQyOQMdJp_I07pXaic2R4l.webp",
+    "description": "משוטת בקיאק עוברת מתחת לגשר אבן בתעלה בהולנד",
+    "filename": "IMG_8505.JPG",
+    "width": 1620,
+    "height": 1080,
+    "exif": null,
+    "added_at": "2026-08-27"
+  },
+  {
+    "id": "1XXyrdADitymHTEiI2SKwQFudCv6SSXrc",
+    "title": "ברווזות בטבע",
+    "category": "הולנד",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1XXyrdADitymHTEiI2SKwQFudCv6SSXrc.webp",
+    "thumbnail": "/photos/thumb/1XXyrdADitymHTEiI2SKwQFudCv6SSXrc.webp",
+    "description": "שתי ברווזות צפויות על דשא ירוק בסביבה טבעית.",
+    "filename": "IMG_8508.JPG",
+    "width": 1620,
+    "height": 1080,
+    "exif": null,
+    "added_at": "2026-08-27"
+  },
+  {
+    "id": "11ZJyoHYBMlLiJy0LNxFlvTmsduEs94wb",
+    "title": "רחוב קשת בענן",
+    "category": "הולנד",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/11ZJyoHYBMlLiJy0LNxFlvTmsduEs94wb.webp",
+    "thumbnail": "/photos/thumb/11ZJyoHYBMlLiJy0LNxFlvTmsduEs94wb.webp",
+    "description": "רחוב עירוני עם פסי צבע קשת רחב על המדרכה בעיר אמסטרדם",
+    "filename": "ld-export-15e5ab4a-08222026.JPG",
+    "width": 4644,
+    "height": 8256,
+    "exif": null,
+    "added_at": "2026-08-27"
+  },
+  {
+    "id": "1f2FPcFJbcHKlpZ9UOplBSYc3QdXEByxT",
+    "title": "המגדלור האדום ההולנדי",
+    "category": "הולנד",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1f2FPcFJbcHKlpZ9UOplBSYc3QdXEByxT.webp",
+    "thumbnail": "/photos/thumb/1f2FPcFJbcHKlpZ9UOplBSYc3QdXEByxT.webp",
+    "description": "מגדלור אדום וקוני עם ראש לבן על רקע שמיים כחולים",
+    "filename": "ld-export-2a212561-08222026.JPG",
+    "width": 3938,
+    "height": 2625,
+    "exif": {
+      "focal": 70,
+      "aperture": 2.8,
+      "iso": 64,
+      "shutter": 0.0004
+    },
+    "added_at": "2026-08-27"
+  },
+  {
+    "id": "1XitHizRzhX-KAtGANLX0I8bylN2kOkbI",
+    "title": "מרינה בהולנד",
+    "category": "הולנד",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1XitHizRzhX-KAtGANLX0I8bylN2kOkbI.webp",
+    "thumbnail": "/photos/thumb/1XitHizRzhX-KAtGANLX0I8bylN2kOkbI.webp",
+    "description": "שורות של יאכטות עם תורנים בנמל שקט בעלות צילום במבט מקרוב",
+    "filename": "ld-export-40e6cfbe-08212026.JPG",
+    "width": 8256,
+    "height": 5504,
+    "exif": null,
+    "added_at": "2026-08-27"
+  },
+  {
+    "id": "1ZpnrKA9BuksspSmt0YP7Xqi1m5L9rWMb",
+    "title": "טחנות רוח בהולנד",
+    "category": "הולנד",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1ZpnrKA9BuksspSmt0YP7Xqi1m5L9rWMb.webp",
+    "thumbnail": "/photos/thumb/1ZpnrKA9BuksspSmt0YP7Xqi1m5L9rWMb.webp",
+    "description": "שורת טחנות רוח מודרניות על רקע שמיים עתוני בהולנד.",
+    "filename": "ld-export-68e5ebc9-08222026.JPG",
+    "width": 4192,
+    "height": 2795,
+    "exif": {
+      "focal": 34,
+      "aperture": 4,
+      "iso": 64,
+      "shutter": 0.0005
+    },
+    "added_at": "2026-08-27"
+  },
+  {
+    "id": "1-GxBGPiTl04bz1LDaYgMiy--7B3n_jI3",
+    "title": "ברווזים בשקיעה",
+    "category": "הולנד",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1-GxBGPiTl04bz1LDaYgMiy--7B3n_jI3.webp",
+    "thumbnail": "/photos/thumb/1-GxBGPiTl04bz1LDaYgMiy--7B3n_jI3.webp",
+    "description": "ברווזים בצללית על פני המים בשעת הזהב",
+    "filename": "ld-export-9c2705b4-08212026.JPG",
+    "width": 4192,
+    "height": 2795,
+    "exif": {
+      "focal": 200,
+      "aperture": 2.8,
+      "iso": 64,
+      "shutter": 0.0015625
+    },
+    "added_at": "2026-08-27"
+  },
+  {
+    "id": "1c3R2amVGCTu96iG2tOR0z5-nmo60DxiD",
+    "title": "טחנות רוח הולנדיות",
+    "category": "הולנד",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1c3R2amVGCTu96iG2tOR0z5-nmo60DxiD.webp",
+    "thumbnail": "/photos/thumb/1c3R2amVGCTu96iG2tOR0z5-nmo60DxiD.webp",
+    "description": "שלוש טחנות רוח עתיקות בצללית מול שמיים מעוננים וחוף מימי שקט",
+    "filename": "ld-export-a8e651c6-08212026.JPG",
+    "width": 8256,
+    "height": 5504,
+    "exif": null,
+    "added_at": "2026-08-27"
+  },
+  {
+    "id": "1PDjW_96JmjqJI7G0JJKWN-xXxIRy3b0s",
+    "title": "סירה אדומה בהולנד",
+    "category": "הולנד",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1PDjW_96JmjqJI7G0JJKWN-xXxIRy3b0s.webp",
+    "thumbnail": "/photos/thumb/1PDjW_96JmjqJI7G0JJKWN-xXxIRy3b0s.webp",
+    "description": "סירה אדומה עתיקה ליד בניין אדום בעל משקופים לבנים על הברך",
+    "filename": "ld-export-abc817f2-08242026.JPG",
+    "width": 2795,
+    "height": 4192,
+    "exif": {
+      "focal": 125,
+      "aperture": 3.5,
+      "iso": 64,
+      "shutter": 0.0008
+    },
+    "added_at": "2026-08-27"
+  },
+  {
+    "id": "1HYw1e7arI__9SMPz_vjKTBgsqlzB0uiZ",
+    "title": "אופניים שחורים בהולנד",
+    "category": "הולנד",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1HYw1e7arI__9SMPz_vjKTBgsqlzB0uiZ.webp",
+    "thumbnail": "/photos/thumb/1HYw1e7arI__9SMPz_vjKTBgsqlzB0uiZ.webp",
+    "description": "אופניים שחורים עם כיסא חום עומדים ליד קיר לבן וכחול",
+    "filename": "ld-export-afe5b8a0-08212026.JPG",
+    "width": 3977,
+    "height": 2652,
+    "exif": {
+      "focal": 28,
+      "aperture": 2.8,
+      "iso": 64,
+      "shutter": 0.02
+    },
+    "added_at": "2026-08-27"
+  },
+  {
+    "id": "1j04LFZt_N6eK6L4i6nYlHuSATtUQNIjz",
+    "title": "סירה כתומה בהולנד",
+    "category": "הולנד",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1j04LFZt_N6eK6L4i6nYlHuSATtUQNIjz.webp",
+    "thumbnail": "/photos/thumb/1j04LFZt_N6eK6L4i6nYlHuSATtUQNIjz.webp",
+    "description": "סירת דיג כתומה עתיקה על חוף בחוף הולנדי שקט ליד עצי עץ.",
+    "filename": "ld-export-d9d924eb-08242026.JPG",
+    "width": 4192,
+    "height": 2795,
+    "exif": {
+      "focal": 200,
+      "aperture": 3.5,
+      "iso": 64,
+      "shutter": 0.00125
+    },
+    "added_at": "2026-08-27"
+  },
+  {
+    "id": "1aiY_ERw8YSUSNJQLrOYTtCUgsPMu-NJ-",
+    "title": "אופניים ורודים בהולנד",
+    "category": "הולנד",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1aiY_ERw8YSUSNJQLrOYTtCUgsPMu-NJ-.webp",
+    "thumbnail": "/photos/thumb/1aiY_ERw8YSUSNJQLrOYTtCUgsPMu-NJ-.webp",
+    "description": "אופניים ורודים עומדים על מדרכה כנגד קיר שחור בלילה",
+    "filename": "ld-export-dd3fb9fe-08232026.JPG",
+    "width": 8101,
+    "height": 5401,
+    "exif": null,
+    "added_at": "2026-08-27"
+  },
+  {
+    "id": "1QjYeXklbjrVooJztq30ioS2E-pgEECj1",
+    "title": "סירה עתיקה בנמל",
+    "category": "הולנד",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1QjYeXklbjrVooJztq30ioS2E-pgEECj1.webp",
+    "thumbnail": "/photos/thumb/1QjYeXklbjrVooJztq30ioS2E-pgEECj1.webp",
+    "description": "סירת דיג עתיקה בעלת גוף עץ חום מוצמדת לרציף ירוק בנמל הולנדי שקט.",
+    "filename": "ld-export-ea47d845-08142026.JPG",
+    "width": 8256,
+    "height": 5504,
+    "exif": null,
+    "added_at": "2026-08-27"
   },
   {
     "id": "1AG6bcsoKB6Qwkn4VJRhYiEp3CyFdjxyh",
