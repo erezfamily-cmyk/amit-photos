@@ -1,5 +1,5 @@
 {
-  "current_category_index": 13,
+  "current_category_index": 14,
   "used_ids_by_category": {
     "אבו דאבי": [
       "6c9e818c-bdd3-402f-b6f5-ee2e668507c9",
@@ -311,7 +311,15 @@
       "23005e10-b5c5-4d1d-baa0-cfb67e78974c",
       "1a5e805c-f4c1-43a8-9228-eb8064423c9f",
       "0d1b89b0-3092-4209-bea6-9f083ec6b6ae",
-      "84af3991-40f4-41b3-af79-aeaeb16d66b2"
+      "84af3991-40f4-41b3-af79-aeaeb16d66b2",
+      "846f4f3d-0185-4fa9-bf97-55bb0f235989",
+      "ab109cc9-d0ca-41bc-ae85-012a37dd07b1",
+      "56d66572-8dd3-41b6-9c58-61958179c3a1",
+      "b2a639f1-f8b7-4512-b602-b50352f65694",
+      "ea70ca15-01d9-405c-bb48-2bf8dbe4c265",
+      "504fad75-1a48-441e-817d-92962554da57",
+      "da0b11f5-607c-4087-a690-597fc46c0c3e",
+      "0f54e7a6-828d-48c4-99a5-cbd4a1105790"
     ],
     "מאקרו-צילומי תקריב": [
       "5202fdf4-f768-46d9-b7e5-ad17bba0f504",
@@ -613,5 +621,5 @@
       "1G_dn5hHrv_1cZ-VVGfECEYzi9J6pDGhI"
     ]
   },
-  "gear_tool_index": 0
+  "gear_tool_index": 1
 }
