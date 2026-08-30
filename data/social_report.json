@@ -1,95 +1,95 @@
 {
-  "generated_at": "2026-08-23T06:30:45.155978+00:00",
-  "week_ending": "23/08/2026",
+  "generated_at": "2026-08-30T11:03:17.977745+00:00",
+  "week_ending": "30/08/2026",
   "ig": {
     "followers": 658,
-    "media_count": 1365,
+    "media_count": 1370,
     "posts_this_week": 5,
-    "total_likes": 17,
+    "total_likes": 10,
     "total_comments": 0,
-    "avg_likes_per_post": 3.4,
-    "engagement_rate": 0.0052,
+    "avg_likes_per_post": 2.0,
+    "engagement_rate": 0.003,
     "top_posts": [
       {
-        "caption": "",
-        "likes": 8,
-        "comments": 0,
-        "date": "2026-08-21"
-      },
-      {
-        "caption": "",
+        "caption": "www.amitphotos.com Photo from 🇳🇱",
         "likes": 5,
         "comments": 0,
-        "date": "2026-08-19"
+        "date": "2026-08-26"
       },
       {
-        "caption": "הסלע הלבן הזה בחזית עצר אותי. ישבתי כמעט על הקרקע, כמעט צמוד לאדמה, כדי לתת לו את כל הנוכחות שמגיעה ",
-        "likes": 2,
+        "caption": "I waited patiently for this tiny red beetle to settle on the white daisy, capturing the perfect cont",
+        "likes": 3,
         "comments": 0,
-        "date": "2026-08-16"
+        "date": "2026-08-26"
       },
       {
-        "caption": "מתי ביום צולמה התמונה הזו — ולמה שכבתי על הקרקע כדי לתפוס אותה? 🌌  הענפים העירומים נראים כמו רשת שחו",
+        "caption": "האנתוריום הזה הוא אתגר מסובך לצלם — המשטח שלו כל כך מבריק ושעווני שהוא כמו מראה קטנה, וכל טעות באור ",
         "likes": 1,
         "comments": 0,
-        "date": "2026-08-19"
+        "date": "2026-08-26"
       },
       {
-        "caption": "I waited for that perfect moment when the child became pure silhouette against the golden glowing ci",
+        "caption": "כמה זריקות צריך צלם עד שהתוכי הזה מסתובב בדיוק לזווית הנכונה? 🦜  הרקע השחור לא נבחר במקרה — הוא נועד",
         "likes": 1,
         "comments": 0,
-        "date": "2026-08-16"
+        "date": "2026-08-23"
+      },
+      {
+        "caption": "📸 ברווזות בטבע  חוק השליש בפעולה: הברווז הקדמי ממוקם על קו השליש האנכי השמאלי, כאשר עינו נופלת ממש ע",
+        "likes": 0,
+        "comments": 0,
+        "date": "2026-08-27"
       }
     ],
     "best_post": {
-      "caption": "",
-      "likes": 8,
-      "date": "2026-08-21"
+      "caption": "www.amitphotos.com\nPhoto from 🇳🇱",
+      "likes": 5,
+      "date": "2026-08-26"
     }
   },
   "fb": {
     "fans": 278,
-    "posts_this_week": 7,
+    "posts_this_week": 6,
     "total_likes": 1,
     "total_comments": 0,
-    "avg_likes_per_post": 0.1,
-    "engagement_rate": 0.0005,
+    "avg_likes_per_post": 0.2,
+    "engagement_rate": 0.0006,
     "top_posts": [
       {
-        "message": "Holand in photos",
+        "message": "",
         "likes": 1,
         "comments": 0,
-        "date": "2026-08-16"
+        "date": "2026-08-26"
       },
       {
-        "message": "📸 עיר בתוך המים  סימטריה ושיבושה: התמונה בנויה על עיקרון הסימטריה — המגדל הצהוב במרכז, הבניינים הצבע",
+        "message": "היה טיול כיפי!!. הולנד 🇳🇱 אוגוסט 2026",
         "likes": 0,
         "comments": 0,
-        "date": "2026-08-20"
+        "date": "2026-08-29"
       },
       {
-        "message": "I photographed these old colored fabrics up close, drawn to the way their rich textures and layered ",
+        "message": "📸 ברווזות בטבע  חוק השליש בפעולה: הברווז הקדמי ממוקם על קו השליש האנכי השמאלי, כאשר עינו נופלת ממש ע",
         "likes": 0,
         "comments": 0,
-        "date": "2026-08-19"
+        "date": "2026-08-27"
       },
       {
-        "message": "את הצילום הזה של הנשר הדרום-אפריקאי צילמתי בתנאי תאורה קשים — והוא לימד אותי לקח חשוב לגמרי מהצילום ",
+        "message": "I waited patiently for this tiny red beetle to settle on the white daisy, capturing the perfect cont",
         "likes": 0,
         "comments": 0,
-        "date": "2026-08-17"
+        "date": "2026-08-26"
       },
       {
-        "message": "",
+        "message": "כשצילמתי את סלסלת הפרי הזאת, מה שמשך אותי לא היה כל הסלסלה — אלא הקוצים הקטנטנים של הערמונים והטיפות",
         "likes": 0,
         "comments": 0,
-        "date": "2026-08-16"
+        "date": "2026-08-24"
       }
     ],
     "best_post": {
-      "message": "Holand in photos",
+      "message": "",
       "likes": 1,
-      "date": "2026-08-16"
+      "date": "2026-08-26"
     }
   },
   "fb_pages": [
@@ -98,93 +98,85 @@
       "name": "amit erez photos",
       "page_id": "339707206917",
       "fans": 278,
-      "posts_this_week": 7,
+      "posts_this_week": 6,
       "total_likes": 1,
       "total_comments": 0,
-      "avg_likes_per_post": 0.1,
-      "engagement_rate": 0.0005,
+      "avg_likes_per_post": 0.2,
+      "engagement_rate": 0.0006,
       "top_posts": [
         {
-          "message": "Holand in photos",
+          "message": "",
           "likes": 1,
           "comments": 0,
-          "date": "2026-08-16"
+          "date": "2026-08-26"
         },
         {
-          "message": "📸 עיר בתוך המים  סימטריה ושיבושה: התמונה בנויה על עיקרון הסימטריה — המגדל הצהוב במרכז, הבניינים הצבע",
+          "message": "היה טיול כיפי!!. הולנד 🇳🇱 אוגוסט 2026",
           "likes": 0,
           "comments": 0,
-          "date": "2026-08-20"
+          "date": "2026-08-29"
         },
         {
-          "message": "I photographed these old colored fabrics up close, drawn to the way their rich textures and layered ",
+          "message": "📸 ברווזות בטבע  חוק השליש בפעולה: הברווז הקדמי ממוקם על קו השליש האנכי השמאלי, כאשר עינו נופלת ממש ע",
           "likes": 0,
           "comments": 0,
-          "date": "2026-08-19"
+          "date": "2026-08-27"
         },
         {
-          "message": "את הצילום הזה של הנשר הדרום-אפריקאי צילמתי בתנאי תאורה קשים — והוא לימד אותי לקח חשוב לגמרי מהצילום ",
+          "message": "I waited patiently for this tiny red beetle to settle on the white daisy, capturing the perfect cont",
           "likes": 0,
           "comments": 0,
-          "date": "2026-08-17"
+          "date": "2026-08-26"
         },
         {
-          "message": "",
+          "message": "כשצילמתי את סלסלת הפרי הזאת, מה שמשך אותי לא היה כל הסלסלה — אלא הקוצים הקטנטנים של הערמונים והטיפות",
           "likes": 0,
           "comments": 0,
-          "date": "2026-08-16"
+          "date": "2026-08-24"
         }
       ],
       "best_post": {
-        "message": "Holand in photos",
+        "message": "",
         "likes": 1,
-        "date": "2026-08-16"
+        "date": "2026-08-26"
       }
     }
   ],
   "reels": {
-    "reels_this_week": 2,
-    "total_plays": 556,
-    "total_reach": 346,
-    "total_shares": 1,
+    "reels_this_week": 1,
+    "total_plays": 179,
+    "total_reach": 147,
+    "total_shares": 0,
     "total_saved": 0,
-    "avg_watch_time": 5585.5,
+    "avg_watch_time": 3215.0,
     "top_reels": [
       {
-        "caption": "",
-        "plays": 390,
-        "reach": 210,
-        "shares": 1,
-        "saved": 0,
-        "date": "2026-08-21"
-      },
-      {
-        "caption": "",
-        "plays": 166,
-        "reach": 136,
+        "caption": "www.amitphotos.com Photo from 🇳🇱",
+        "plays": 179,
+        "reach": 147,
         "shares": 0,
         "saved": 0,
-        "date": "2026-08-19"
+        "date": "2026-08-26"
       }
     ],
     "best_reel": {
-      "caption": "",
-      "plays": 390,
-      "date": "2026-08-21"
+      "caption": "www.amitphotos.com\nPhoto from 🇳🇱",
+      "plays": 179,
+      "date": "2026-08-26"
     }
   },
   "prev": {
-    "ig_followers": 657,
-    "ig_posts_this_week": 7,
+    "ig_followers": 658,
+    "ig_posts_this_week": 5,
     "ig_total_likes": 17,
-    "fb_fans": 277,
-    "fb_posts_this_week": 11,
-    "fb_total_likes": 4
+    "fb_fans": 278,
+    "fb_posts_this_week": 7,
+    "fb_total_likes": 1
   },
   "recommendations": [
-    "התמקד בתוכן ווידאו - הריילס שלך מקבלים 556 צפיות עם זמן צפייה גבוה (5585.5 שניות), בעוד הפוסטים הסטטיים מקבלים רק 3.4 לייקים בממוצע. הגבר את כמות הריילס לשלושה ריילס בשבוע ובדוק איזה סוגי וידאו (תהליך צילום, עריכה מהירה, סיפורי לקוחות) מייצרים יותר שיתופים וצפיות.",
-    "עלייה משמעותית בהשתתפות בקהילה - אתה מקבל אפס תגובות על פוסטים עם 658 עוקבים. הוסף שאלות ישירות בכיתוביות שלך (למשל \"איפה צילמתם את תמונות החתונה האהובה עליכם?\") וענה לכל תגובה בתוך שעה כדי לעודד דיון.",
-    "העבר קהל מפייסבוק לאינסטגרם - בפייסבוק יש לך 278 עוקבים עם 1 לייק בלבד מ-7 פוסטים. פרסם קישור לפרופיל האינסטגרם שלך בביו של פייסבוק ופרסם שם ראשוני רק אינסטגרם-בלעדי כדי להגדיל את הקהל המאוחד.",
-    "השתמש בתיקיות סיפור מעבר ופוסטים בכתובית אינטראקטיביים - לריילס שלך יש זמן צפייה ממוצע גבוה אך רק שיתוף אחד ו-0 שמירות. צור ריילס עם קול, מוזיקה ותמליל שעוזר לצופים להבין את התהליך שלך וכיצד הם יכולים ליצור קשר."
+    "פרסם בין 3-4 פוסטים בשבוע במקום 5, כדי להגביר את האנגেজמנט הממוצע לפוסט מ-2 לייקים לפחות 4-5 לייקים",
+    "התמקד ביצירת Reels נוספים מכיוון שה-Reel אחד שלך קיבל 179 צפיות עם זמן צפייה ממוצע של 53 דקות, בניגוד ל-0 תגובות בפוסטים הסטטיים",
+    "העתק את התוכן של הפוסט המצליח מהולנד לפוסטים נוספים בשבוע הבא, מכיוון שקיבל 5 לייקים - חצי מכל ה-engagement השבועי",
+    "פעל בפייסבוק על ידי שיתוף חוזר של הרילים שלך לפייסבוק (אם אפשרי), כדי להגביר את ה-1 לייק בלבד שקיבלת ב-6 פוסטים"
   ]
 }
