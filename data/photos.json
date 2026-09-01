@@ -1834,7 +1834,7 @@
     "width": 1504,
     "height": 1000,
     "exif": null,
-    "added_at": "2026-08-31"
+    "added_at": "2026-09-01"
   },
   {
     "id": "1LuoH9OWwTFPRnDvZihmDE5hyBz3Kt815",
@@ -12179,6 +12179,27 @@
       "shutter": 0.05
     },
     "added_at": "2026-04-22"
+  },
+  {
+    "id": "1lmkyOoG7fn9JaRJwqJ9X2dQuafB5QlSr",
+    "title": "נמל דייגים הולנדי",
+    "category": "הולנד",
+    "parent_category": "מקומות בעולם",
+    "url": "https://drive.google.com/uc?export=view&id=1lmkyOoG7fn9JaRJwqJ9X2dQuafB5QlSr",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1lmkyOoG7fn9JaRJwqJ9X2dQuafB5QlSr&sz=w600",
+    "description": "סירת דייג כתומה בנמל עתיק עם בתים צבעוניים ובד כביסה לייבוש",
+    "filename": "4BE65003-1F91-445A-8367-76C2C14A4283.JPG",
+    "width": 4192,
+    "height": 2791,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 10,
+      "aperture": 10,
+      "iso": 64,
+      "shutter": 0.003125
+    },
+    "added_at": "2026-09-01"
   },
   {
     "id": "1TyejCiXjbqw6KUeq_akc_zWo_21nqAkP",
