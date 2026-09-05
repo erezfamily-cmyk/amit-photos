@@ -18,12 +18,14 @@ from base64 import b64encode
 from nacl import encoding, public
 
 GRAPH_API = "https://graph.facebook.com/v21.0"
+THREADS_API = "https://graph.threads.net"
 GITHUB_API = "https://api.github.com"
 REPO = "erezfamily-cmyk/amit-photos"
 
 META_APP_ID = os.environ.get("META_APP_ID", "")
 META_APP_SECRET = os.environ.get("META_APP_SECRET", "")
 INSTAGRAM_PAGE_TOKEN = os.environ.get("INSTAGRAM_PAGE_TOKEN", "")
+THREADS_ACCESS_TOKEN = os.environ.get("THREADS_ACCESS_TOKEN", "")
 GH_PAT = os.environ.get("GH_PAT", "")
 
 
@@ -48,6 +50,29 @@ def refresh_user_token(current_token):
         sys.exit(1)
     return data["access_token"]
 
+
+
+def refresh_threads_token(current_token):
+    """מרענן Threads long-lived token. טוקן שפג דורש חיבור ידני חד-פעמי."""
+    resp = requests.get(
+        f"{THREADS_API}/refresh_access_token",
+        params={
+            "grant_type": "th_refresh_token",
+            "access_token": current_token,
+        },
+        timeout=30,
+    )
+    if not resp.ok:
+        print(f"⚠️  חידוש Threads נכשל: {resp.status_code} — {resp.text}")
+        return None
+    data = resp.json()
+    token = data.get("access_token")
+    if not token:
+        print(f"⚠️  תשובת Threads לא הכילה access_token: {data}")
+        return None
+    expires_in = data.get("expires_in")
+    print(f"✅ Threads token חודש{f' ({expires_in} שניות)' if expires_in else ''}")
+    return token
 
 def get_repo_public_key():
     """מקבל את המפתח הציבורי של ה-repo להצפנת secrets."""
@@ -143,6 +168,16 @@ def main():
 
     print("💾 מעדכן GitHub Secret: INSTAGRAM_PAGE_TOKEN...")
     update_github_secret("INSTAGRAM_PAGE_TOKEN", new_user_token, key_id, public_key)
+
+    if THREADS_ACCESS_TOKEN:
+        print("🔄 מחדש Threads token...")
+        new_threads_token = refresh_threads_token(THREADS_ACCESS_TOKEN)
+        if new_threads_token:
+            update_github_secret("THREADS_ACCESS_TOKEN", new_threads_token, key_id, public_key)
+        else:
+            print("⚠️  THREADS_ACCESS_TOKEN לא עודכן — אם פג תוקף, נדרש חיבור ידני חד-פעמי")
+    else:
+        print("ℹ️  THREADS_ACCESS_TOKEN לא מוגדר — מדלג על Threads")
 
     if FACEBOOK_PAGE_ID:
         print("🔄 שולף Facebook Page token מ-/me/accounts...")
