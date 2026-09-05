@@ -547,6 +547,17 @@ async function handleCustomers(request, env) {
 }
 
 // ===== PHOTOS =====
+// The public gallery is read far more often than it changes. Cache the canonical
+// response at Cloudflare's edge so normal page views do not scan the full D1 table.
+function publicPhotosCacheKey(request) {
+  const url = new URL(request.url);
+  return new Request(`${url.origin}/api/photos`, { method: 'GET' });
+}
+
+async function invalidatePublicPhotosCache(request) {
+  await caches.default.delete(publicPhotosCacheKey(request));
+}
+
 async function handlePhotos(request, env) {
   const method = request.method;
 
@@ -558,6 +569,16 @@ async function handlePhotos(request, env) {
     const limitParam = parseInt(url.searchParams.get('limit')) || 0;
     // ?admin=1 מחייב auth; גישה ציבורית — רק published
     if (adminAll && !await checkAuth(request, env)) return unauth(request);
+
+    // Cache only the canonical public gallery. Admin, search and filtered
+    // requests must always read fresh data and can never populate this cache.
+    const usePublicCache = !adminAll && !slim && !q && !url.searchParams.has('limit');
+    const cache = usePublicCache ? caches.default : null;
+    const cacheKey = cache ? publicPhotosCacheKey(request) : null;
+    if (cache) {
+      const cached = await cache.match(cacheKey);
+      if (cached) return cached;
+    }
 
     // slim mode — רק שדות לגריד, ללא week photo overhead
     if (slim && adminAll) {
@@ -606,7 +627,13 @@ async function handlePhotos(request, env) {
       week_photo_caption: (weekPhotoId && p.id === weekPhotoId) ? weekCaption : '',
       week_photo_caption_en: (weekPhotoId && p.id === weekPhotoId) ? weekCaptionEn : '',
     }));
-    return jsonRes(photos);
+    if (cache) {
+      const response = jsonRes(photos, 200, request);
+      response.headers.set('Cache-Control', 'public, max-age=60, s-maxage=3600, stale-while-revalidate=86400');
+      await cache.put(cacheKey, response.clone());
+      return response;
+    }
+    return jsonRes(photos, 200, request);
   }
 
   if (!await checkAuth(request, env)) return unauth(request);
@@ -620,6 +647,7 @@ async function handlePhotos(request, env) {
       `INSERT INTO photos (id,title,category,description,filename,r2_key,url,thumbnail,created_at) VALUES (?,?,?,?,?,?,?,?,?)
        ON CONFLICT(id) DO UPDATE SET title=excluded.title, category=excluded.category, description=excluded.description, url=excluded.url, thumbnail=excluded.thumbnail`
     ).bind(photoId, title||'', category||'', description||'', filename||'', r2_key||'', url, thumbnail||url, new Date().toISOString()).run();
+    await invalidatePublicPhotosCache(request);
     return jsonRes({ ok: true, id: photoId }, 200, request);
   }
 
@@ -636,6 +664,7 @@ async function handlePhotos(request, env) {
 
     if (body.published !== undefined) {
       await env.DB.prepare('UPDATE photos SET published=? WHERE id=?').bind(body.published ? 1 : 0, id).run();
+      await invalidatePublicPhotosCache(request);
       return jsonRes({ ok: true, published: body.published ? 1 : 0 }, 200, request);
     }
 
@@ -646,23 +675,27 @@ async function handlePhotos(request, env) {
       if (body.r2_key    !== undefined) { fields.push('r2_key=?');    vals.push(body.r2_key); }
       vals.push(id);
       await env.DB.prepare(`UPDATE photos SET ${fields.join(',')} WHERE id=?`).bind(...vals).run();
+      await invalidatePublicPhotosCache(request);
       return jsonRes({ ok: true }, 200, request);
     }
 
     if (body.redbubble_url !== undefined) {
       await env.DB.prepare('UPDATE photos SET redbubble_url=? WHERE id=?').bind(body.redbubble_url || null, id).run();
+      await invalidatePublicPhotosCache(request);
       return jsonRes({ ok: true, redbubble_url: body.redbubble_url || null }, 200, request);
     }
 
     if (body.redbubble_products !== undefined) {
       const val = Array.isArray(body.redbubble_products) ? JSON.stringify(body.redbubble_products) : null;
       await env.DB.prepare('UPDATE photos SET redbubble_products=? WHERE id=?').bind(val, id).run();
+      await invalidatePublicPhotosCache(request);
       return jsonRes({ ok: true, redbubble_products: body.redbubble_products }, 200, request);
     }
 
     if (body.zazzle_products !== undefined) {
       const val = Array.isArray(body.zazzle_products) ? JSON.stringify(body.zazzle_products) : null;
       await env.DB.prepare('UPDATE photos SET zazzle_products=? WHERE id=?').bind(val, id).run();
+      await invalidatePublicPhotosCache(request);
       return jsonRes({ ok: true, zazzle_products: body.zazzle_products }, 200, request);
     }
 
@@ -672,6 +705,7 @@ async function handlePhotos(request, env) {
       const newEligible = body.quiz_eligible !== undefined ? (body.quiz_eligible ? 1 : 0) : current.quiz_eligible;
       const newDesc     = body.quiz_description !== undefined ? body.quiz_description : current.quiz_description;
       await env.DB.prepare('UPDATE photos SET quiz_eligible=?, quiz_description=? WHERE id=?').bind(newEligible, newDesc, id).run();
+      await invalidatePublicPhotosCache(request);
       return jsonRes({ ok: true, quiz_eligible: newEligible, quiz_description: newDesc }, 200, request);
     }
 
@@ -681,6 +715,7 @@ async function handlePhotos(request, env) {
       await env.DB.prepare(
         'UPDATE photos SET on_sale=?, sale_started_at=? WHERE id=?'
       ).bind(newOnSale, startedAt, id).run();
+      await invalidatePublicPhotosCache(request);
       return jsonRes({ ok: true, on_sale: newOnSale }, 200, request);
     }
 
@@ -697,6 +732,7 @@ async function handlePhotos(request, env) {
     await env.DB.prepare(
       'UPDATE photos SET title=?,category=?,description=? WHERE id=?'
     ).bind(finalTitle, body.category || '', body.description || '', id).run();
+    await invalidatePublicPhotosCache(request);
     return jsonRes({ ok: true, title: finalTitle }, 200, request);
   }
 
@@ -707,6 +743,7 @@ async function handlePhotos(request, env) {
     const row = await env.DB.prepare('SELECT r2_key FROM photos WHERE id=?').bind(id).first();
     if (row?.r2_key) await env.PHOTOS.delete(row.r2_key);
     await env.DB.prepare('DELETE FROM photos WHERE id=?').bind(id).run();
+    await invalidatePublicPhotosCache(request);
     return jsonRes({ ok: true });
   }
 
