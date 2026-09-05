@@ -83,6 +83,7 @@ ACCESS_TOKEN      = os.environ.get("INSTAGRAM_PAGE_TOKEN", "")
 FAL_KEY           = os.environ.get("FAL_KEY", "")
 ANTHROPIC_API_KEY = (os.environ.get("ANTHROPIC_API_KEY") or
                      os.environ.get("AMIT_PHOTO_AGENT") or "").strip()
+ADMIN_TOKEN       = os.environ.get("ADMIN_TOKEN", "")
 
 # פרומפטים לתנועה לפי קטגוריה — static camera, only in-scene elements move
 MOTION_PROMPTS = {
@@ -870,32 +871,29 @@ def _publish_reel(video_path, category, lang, photos):
 # ── Instagram ─────────────────────────────────────────────────────────────────
 
 def _upload_video(video_path):
-    """מעלה ל-litterbox (1h) עם fallback ל-0x0.st."""
+    """מעלה את הסרטון ל-R2 שבשליטתנו ומחזיר URL ציבורי ל-Meta."""
     import requests
     data = Path(video_path).read_bytes()
-    print(f"📤 {len(data)/1024/1024:.1f} MB")
+    print(f"📤 מעלה ל-R2 ({len(data)/1024/1024:.1f} MB)")
 
-    for name, url, extra in [
-        ("litterbox", "https://litterbox.catbox.moe/resources/internals/api.php",
-         {"data": {"reqtype": "fileupload", "time": "1h"}, "field": "fileToUpload"}),
-        ("0x0.st", "https://0x0.st", {"data": {}, "field": "file"}),
-    ]:
-        try:
-            r = requests.post(
-                url,
-                data=extra["data"],
-                files={extra["field"]: ("reel.mp4", data, "video/mp4")},
-                timeout=180,
-            )
-            r.raise_for_status()
-            pub = r.text.strip()
-            if pub.startswith("http"):
-                print(f"⬆️  {name}: {pub}")
-                return pub
-        except Exception as e:
-            print(f"⚠️  {name} נכשל: {e}")
-    raise RuntimeError("upload נכשל לחלוטין")
+    if not ADMIN_TOKEN:
+        raise RuntimeError("ADMIN_TOKEN חסר — אי אפשר להעלות את הסרטון ל-R2")
 
+    r = requests.post(
+        f"{SITE_URL}/api/admin/upload-story",
+        data=data,
+        headers={
+            "X-Admin-Password": ADMIN_TOKEN,
+            "Content-Type": "video/mp4",
+        },
+        timeout=180,
+    )
+    r.raise_for_status()
+    pub = r.json().get("url", "")
+    if not pub.startswith("http"):
+        raise RuntimeError(f"תשובת R2 לא תקינה: {r.text[:200]}")
+    print(f"⬆️  R2: {pub}")
+    return pub
 
 def _publish_ig(video_url, caption):
     import requests
