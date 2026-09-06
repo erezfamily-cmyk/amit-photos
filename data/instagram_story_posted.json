@@ -1,5 +1,5 @@
 {
-  "current_category_index": 20,
+  "current_category_index": 21,
   "used_ids_by_category": {
     "אבו דאבי": [
       "6c9e818c-bdd3-402f-b6f5-ee2e668507c9",
@@ -477,7 +477,15 @@
       "3847fc79-a6a9-499c-97b5-f5d8161a4490",
       "06a9ce7f-36de-4d45-9d3a-a019a9bb5b6c",
       "03d7325a-c159-4282-9794-fd2053182461",
-      "8f48ea48-90f1-43b6-a202-255e3b7e21b9"
+      "8f48ea48-90f1-43b6-a202-255e3b7e21b9",
+      "16105d8f-0e12-4c4d-b140-52f935cd16b6",
+      "bbd03590-20af-4821-9e3f-67528c0e96f2",
+      "08134ecc-09e2-4d11-baa2-895624153e10",
+      "7a4061e4-ec45-4600-9cdc-eb7375127d64",
+      "9b86b094-df4a-469e-b03c-92900b257e78",
+      "e9102a98-c969-4edf-8c9f-13a975b21859",
+      "ec26c8f8-bcdb-4bea-b8de-8a0f0bc0df78",
+      "e07a53de-395d-42eb-bf1d-08f907af1799"
     ],
     "צילום מופשט": [
       "e5949a96-1c67-4394-b929-c6eca351e2a5",
@@ -613,5 +621,5 @@
       "1G_dn5hHrv_1cZ-VVGfECEYzi9J6pDGhI"
     ]
   },
-  "gear_tool_index": 1
+  "gear_tool_index": 0
 }
