@@ -1,95 +1,83 @@
 {
-  "generated_at": "2026-08-30T11:03:17.977745+00:00",
-  "week_ending": "30/08/2026",
+  "generated_at": "2026-09-06T10:05:55.525906+00:00",
+  "week_ending": "06/09/2026",
   "ig": {
     "followers": 658,
-    "media_count": 1370,
-    "posts_this_week": 5,
-    "total_likes": 10,
+    "media_count": 1374,
+    "posts_this_week": 4,
+    "total_likes": 7,
     "total_comments": 0,
-    "avg_likes_per_post": 2.0,
-    "engagement_rate": 0.003,
+    "avg_likes_per_post": 1.8,
+    "engagement_rate": 0.0027,
     "top_posts": [
       {
-        "caption": "www.amitphotos.com Photo from 🇳🇱",
-        "likes": 5,
-        "comments": 0,
-        "date": "2026-08-26"
-      },
-      {
-        "caption": "I waited patiently for this tiny red beetle to settle on the white daisy, capturing the perfect cont",
+        "caption": "📸 ברווזים בבריכה ירוקה  מרחב שלילי: כל שטח האצות הירוקות שמסביב לברווזים הוא מרחב שלילי קלאסי — הרקע",
         "likes": 3,
         "comments": 0,
-        "date": "2026-08-26"
+        "date": "2026-09-03"
       },
       {
-        "caption": "האנתוריום הזה הוא אתגר מסובך לצלם — המשטח שלו כל כך מבריק ושעווני שהוא כמו מראה קטנה, וכל טעות באור ",
+        "caption": "הרגע הזה של פרישת הכנפיים נמשך חצי שנייה, אולי פחות. ברווזה עומדת במים, מנערת מים מהגוף ואז — הכנפיי",
+        "likes": 2,
+        "comments": 0,
+        "date": "2026-08-30"
+      },
+      {
+        "caption": "מה עושה פרפר צהוב ענק תלוי על קיר זכוכית של גורד שחקים? 🦋  צילמתי את זה בזווית רחבה כדי לתפוס את הרש",
         "likes": 1,
         "comments": 0,
-        "date": "2026-08-26"
+        "date": "2026-09-02"
       },
       {
-        "caption": "כמה זריקות צריך צלם עד שהתוכי הזה מסתובב בדיוק לזווית הנכונה? 🦜  הרקע השחור לא נבחר במקרה — הוא נועד",
+        "caption": "I photographed these rich textures of fabric and thread up close, drawn to the way browns and purple",
         "likes": 1,
         "comments": 0,
-        "date": "2026-08-23"
-      },
-      {
-        "caption": "📸 ברווזות בטבע  חוק השליש בפעולה: הברווז הקדמי ממוקם על קו השליש האנכי השמאלי, כאשר עינו נופלת ממש ע",
-        "likes": 0,
-        "comments": 0,
-        "date": "2026-08-27"
+        "date": "2026-09-02"
       }
     ],
     "best_post": {
-      "caption": "www.amitphotos.com\nPhoto from 🇳🇱",
-      "likes": 5,
-      "date": "2026-08-26"
+      "caption": "📸 ברווזים בבריכה ירוקה\n\nמרחב שלילי: כל שטח האצות הירוקות שמסביב לברווזים הוא מרחב שלילי קלאסי — הרקע האחיד, הרווי והחד-ג",
+      "likes": 3,
+      "date": "2026-09-03"
     }
   },
   "fb": {
     "fans": 278,
-    "posts_this_week": 6,
+    "posts_this_week": 4,
     "total_likes": 1,
     "total_comments": 0,
     "avg_likes_per_post": 0.2,
-    "engagement_rate": 0.0006,
+    "engagement_rate": 0.0009,
     "top_posts": [
       {
-        "message": "",
+        "message": "I photographed these rich textures of fabric and thread up close, drawn to the way browns and purple",
         "likes": 1,
         "comments": 0,
-        "date": "2026-08-26"
+        "date": "2026-09-02"
       },
       {
-        "message": "היה טיול כיפי!!. הולנד 🇳🇱 אוגוסט 2026",
+        "message": "📸 ברווזים בבריכה ירוקה  מרחב שלילי: כל שטח האצות הירוקות שמסביב לברווזים הוא מרחב שלילי קלאסי — הרקע",
         "likes": 0,
         "comments": 0,
-        "date": "2026-08-29"
+        "date": "2026-09-03"
       },
       {
-        "message": "📸 ברווזות בטבע  חוק השליש בפעולה: הברווז הקדמי ממוקם על קו השליש האנכי השמאלי, כאשר עינו נופלת ממש ע",
+        "message": "תראו את השדה הזה — קיר של ירוק עמוק ושטיח של פרחים אדומים בוערים. הצבעים כל כך חזקים, וזה בדיוק הרגע",
         "likes": 0,
         "comments": 0,
-        "date": "2026-08-27"
+        "date": "2026-08-31"
       },
       {
-        "message": "I waited patiently for this tiny red beetle to settle on the white daisy, capturing the perfect cont",
+        "message": "I photographed this piece by layering colorful materials and intricate textures until they formed a ",
         "likes": 0,
         "comments": 0,
-        "date": "2026-08-26"
-      },
-      {
-        "message": "כשצילמתי את סלסלת הפרי הזאת, מה שמשך אותי לא היה כל הסלסלה — אלא הקוצים הקטנטנים של הערמונים והטיפות",
-        "likes": 0,
-        "comments": 0,
-        "date": "2026-08-24"
+        "date": "2026-08-30"
       }
     ],
     "best_post": {
-      "message": "",
+      "message": "I photographed these rich textures of fabric and thread up close, drawn to the way browns and purple weave together into",
       "likes": 1,
-      "date": "2026-08-26"
+      "date": "2026-09-02"
     }
   },
   "fb_pages": [
@@ -98,85 +86,70 @@
       "name": "amit erez photos",
       "page_id": "339707206917",
       "fans": 278,
-      "posts_this_week": 6,
+      "posts_this_week": 4,
       "total_likes": 1,
       "total_comments": 0,
       "avg_likes_per_post": 0.2,
-      "engagement_rate": 0.0006,
+      "engagement_rate": 0.0009,
       "top_posts": [
         {
-          "message": "",
+          "message": "I photographed these rich textures of fabric and thread up close, drawn to the way browns and purple",
           "likes": 1,
           "comments": 0,
-          "date": "2026-08-26"
+          "date": "2026-09-02"
         },
         {
-          "message": "היה טיול כיפי!!. הולנד 🇳🇱 אוגוסט 2026",
+          "message": "📸 ברווזים בבריכה ירוקה  מרחב שלילי: כל שטח האצות הירוקות שמסביב לברווזים הוא מרחב שלילי קלאסי — הרקע",
           "likes": 0,
           "comments": 0,
-          "date": "2026-08-29"
+          "date": "2026-09-03"
         },
         {
-          "message": "📸 ברווזות בטבע  חוק השליש בפעולה: הברווז הקדמי ממוקם על קו השליש האנכי השמאלי, כאשר עינו נופלת ממש ע",
+          "message": "תראו את השדה הזה — קיר של ירוק עמוק ושטיח של פרחים אדומים בוערים. הצבעים כל כך חזקים, וזה בדיוק הרגע",
           "likes": 0,
           "comments": 0,
-          "date": "2026-08-27"
+          "date": "2026-08-31"
         },
         {
-          "message": "I waited patiently for this tiny red beetle to settle on the white daisy, capturing the perfect cont",
+          "message": "I photographed this piece by layering colorful materials and intricate textures until they formed a ",
           "likes": 0,
           "comments": 0,
-          "date": "2026-08-26"
-        },
-        {
-          "message": "כשצילמתי את סלסלת הפרי הזאת, מה שמשך אותי לא היה כל הסלסלה — אלא הקוצים הקטנטנים של הערמונים והטיפות",
-          "likes": 0,
-          "comments": 0,
-          "date": "2026-08-24"
+          "date": "2026-08-30"
         }
       ],
       "best_post": {
-        "message": "",
+        "message": "I photographed these rich textures of fabric and thread up close, drawn to the way browns and purple weave together into",
         "likes": 1,
-        "date": "2026-08-26"
+        "date": "2026-09-02"
       }
     }
   ],
   "reels": {
-    "reels_this_week": 1,
-    "total_plays": 179,
-    "total_reach": 147,
+    "reels_this_week": 0,
+    "total_plays": 0,
+    "total_reach": 0,
     "total_shares": 0,
     "total_saved": 0,
-    "avg_watch_time": 3215.0,
-    "top_reels": [
-      {
-        "caption": "www.amitphotos.com Photo from 🇳🇱",
-        "plays": 179,
-        "reach": 147,
-        "shares": 0,
-        "saved": 0,
-        "date": "2026-08-26"
-      }
-    ],
+    "avg_watch_time": 0,
+    "top_reels": [],
     "best_reel": {
-      "caption": "www.amitphotos.com\nPhoto from 🇳🇱",
-      "plays": 179,
-      "date": "2026-08-26"
+      "caption": "",
+      "plays": 0,
+      "date": ""
     }
   },
   "prev": {
     "ig_followers": 658,
     "ig_posts_this_week": 5,
-    "ig_total_likes": 17,
+    "ig_total_likes": 10,
     "fb_fans": 278,
-    "fb_posts_this_week": 7,
+    "fb_posts_this_week": 6,
     "fb_total_likes": 1
   },
   "recommendations": [
-    "פרסם בין 3-4 פוסטים בשבוע במקום 5, כדי להגביר את האנגেজמנט הממוצע לפוסט מ-2 לייקים לפחות 4-5 לייקים",
-    "התמקד ביצירת Reels נוספים מכיוון שה-Reel אחד שלך קיבל 179 צפיות עם זמן צפייה ממוצע של 53 דקות, בניגוד ל-0 תגובות בפוסטים הסטטיים",
-    "העתק את התוכן של הפוסט המצליח מהולנד לפוסטים נוספים בשבוע הבא, מכיוון שקיבל 5 לייקים - חצי מכל ה-engagement השבועי",
-    "פעל בפייסבוק על ידי שיתוף חוזר של הרילים שלך לפייסבוק (אם אפשרי), כדי להגביר את ה-1 לייק בלבד שקיבלת ב-6 פוסטים"
+    "פרסם לפחות 2 Reels בשבוע הבא במקום פוסטים סטטיים, כי Reels מקבלים יותר reach וengagement מתוך ממוצע של 1.8 לייקים לפוסט",
+    "הגבר את האינטראקציה על ידי שאלות ישירות בכותרות הפוסט - הפוסט הטוב ביותר עם 3 לייקים היה עדיין ללא תגובות, אז שאל את הקהל שאלות על הטבע או הפוטוגרפיה",
+    "פרסם באותו זמן קבוע מדי יום כדי להגיע למקסימום חשיפה, ואם אתה מפרסם 4 פוסטים בשבוע, פזר אותם ליום אחד כדי שלא תהיה התנגשות בfeed",
+    "העתק את הפוסטים הטובים מInstagram ל-Facebook מיד אחרי הפרסום, כי ל-Facebook יש 278 עוקבים בלבד והוא יכול להיות ערוץ גדול לגדול אם תחזור על התוכן שמצליח"
   ]
 }
