@@ -18,6 +18,7 @@
     "filters",
     "editing",
     "lenses",
-    "controls"
+    "controls",
+    "dynamic-range"
   ]
 }
