@@ -2313,6 +2313,15 @@ async function handlePrintWebhook(request, env) {
       const fromEmail = env.FROM_EMAIL || 'contact@amitphotos.com';
       const fulfillments = payload.items?.[0]?.fulfillments || [];
       const tracking = fulfillments[0]?.trackingCode || '';
+      // order.* מגיע מ-print_orders — מקורו בשדות שהלקוח שלט בהם ב-handlePrintOrderComplete (custom field), לא לסמוך על התוכן ב-HTML
+      const eo = {
+        name: escXml(order.customer_name || ''),
+        product: escXml(order.product_label || ''),
+        line1: escXml(order.address_line1 || ''),
+        city: escXml(order.address_city || ''),
+        zip: escXml(order.address_zip || ''),
+        tracking: escXml(tracking),
+      };
       const html = `<!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head><meta charset="UTF-8"></head>
@@ -2324,10 +2333,10 @@ async function handlePrintWebhook(request, env) {
           <div style="color:#c8a96e;font-size:20px;font-weight:700;letter-spacing:.25em;font-family:Georgia,serif">AMIT PHOTOS</div>
         </td></tr>
         <tr><td style="padding:32px 40px;color:#222;font-size:15px;line-height:1.85;direction:rtl;text-align:right">
-          <h2 style="margin:0 0 1rem">שלום ${order.customer_name}, ההדפסה שלך בדרך! 📦</h2>
-          <p><strong>מוצר:</strong> ${order.product_label}</p>
-          <p><strong>כתובת:</strong> ${order.address_line1}, ${order.address_city} ${order.address_zip}</p>
-          ${tracking ? `<p><strong>מספר מעקב:</strong> ${tracking}</p>` : ''}
+          <h2 style="margin:0 0 1rem">שלום ${eo.name}, ההדפסה שלך בדרך! 📦</h2>
+          <p><strong>מוצר:</strong> ${eo.product}</p>
+          <p><strong>כתובת:</strong> ${eo.line1}, ${eo.city} ${eo.zip}</p>
+          ${eo.tracking ? `<p><strong>מספר מעקב:</strong> ${eo.tracking}</p>` : ''}
           <p style="color:#888;font-size:.9rem">זמן הגעה משוער: 7–10 ימי עסקים.</p>
         </td></tr>
       </table>
