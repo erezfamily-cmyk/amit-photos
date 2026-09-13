@@ -207,5 +207,23 @@
     "reels_avg_watch_time": 0,
     "reels_shares": 0,
     "reels_saved": 0
+  },
+  {
+    "week_ending": "13/09/2026",
+    "generated_at": "2026-09-13T10:56:17.146160+00:00",
+    "ig_followers": 659,
+    "ig_posts": 5,
+    "ig_likes": 5,
+    "ig_comments": 0,
+    "ig_avg_likes": 1.0,
+    "ig_engagement": 0.0015,
+    "fb_fans": 278,
+    "fb_posts": 4,
+    "fb_likes": 0,
+    "reels_count": 1,
+    "reels_plays": 37,
+    "reels_avg_watch_time": 5352.0,
+    "reels_shares": 0,
+    "reels_saved": 0
   }
 ]

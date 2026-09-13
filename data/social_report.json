@@ -1,83 +1,89 @@
 {
-  "generated_at": "2026-09-06T10:05:55.525906+00:00",
-  "week_ending": "06/09/2026",
+  "generated_at": "2026-09-13T10:56:17.146160+00:00",
+  "week_ending": "13/09/2026",
   "ig": {
-    "followers": 658,
-    "media_count": 1374,
-    "posts_this_week": 4,
-    "total_likes": 7,
+    "followers": 659,
+    "media_count": 1379,
+    "posts_this_week": 5,
+    "total_likes": 5,
     "total_comments": 0,
-    "avg_likes_per_post": 1.8,
-    "engagement_rate": 0.0027,
+    "avg_likes_per_post": 1.0,
+    "engagement_rate": 0.0015,
     "top_posts": [
       {
-        "caption": "📸 ברווזים בבריכה ירוקה  מרחב שלילי: כל שטח האצות הירוקות שמסביב לברווזים הוא מרחב שלילי קלאסי — הרקע",
-        "likes": 3,
-        "comments": 0,
-        "date": "2026-09-03"
-      },
-      {
-        "caption": "הרגע הזה של פרישת הכנפיים נמשך חצי שנייה, אולי פחות. ברווזה עומדת במים, מנערת מים מהגוף ואז — הכנפיי",
+        "caption": "נשכבתי כמעט על הכביש בכיכר העיר העתיקה בפראג כדי לתפוס את הזווית הזו. הבניינים הבארוקיים האלה עומדים",
         "likes": 2,
         "comments": 0,
-        "date": "2026-08-30"
+        "date": "2026-09-06"
       },
       {
-        "caption": "מה עושה פרפר צהוב ענק תלוי על קיר זכוכית של גורד שחקים? 🦋  צילמתי את זה בזווית רחבה כדי לתפוס את הרש",
+        "caption": "📸 ברבור לבן בימים  חוק השלישים: הברבור הראשי ממוקם במדויק לאורך קו השליש הימני של הפריים, כאשר ראשו ",
         "likes": 1,
         "comments": 0,
-        "date": "2026-09-02"
+        "date": "2026-09-10"
       },
       {
-        "caption": "I photographed these rich textures of fabric and thread up close, drawn to the way browns and purple",
+        "caption": "כמה שניות של חשיפה יש כאן — ומה בעצם מסתובב באוויר? 🔥  רמז: זו לא זיקוקים ולא אש רגילה. משהו קטן ובו",
         "likes": 1,
         "comments": 0,
-        "date": "2026-09-02"
+        "date": "2026-09-09"
+      },
+      {
+        "caption": "I photographed this curved thread spiraling against a minimalist blue backdrop, chasing the quiet te",
+        "likes": 1,
+        "comments": 0,
+        "date": "2026-09-06"
+      },
+      {
+        "caption": "לפעמים אני לא מצלם עצם, אני מצלם תחושה — זרימה שהופכת לצבע, אור שמסתובב על עצמו. מה אתם רואים כשאתם ",
+        "likes": 0,
+        "comments": 0,
+        "date": "2026-09-08"
       }
     ],
     "best_post": {
-      "caption": "📸 ברווזים בבריכה ירוקה\n\nמרחב שלילי: כל שטח האצות הירוקות שמסביב לברווזים הוא מרחב שלילי קלאסי — הרקע האחיד, הרווי והחד-ג",
-      "likes": 3,
-      "date": "2026-09-03"
+      "caption": "נשכבתי כמעט על הכביש בכיכר העיר העתיקה בפראג כדי לתפוס את הזווית הזו. הבניינים הבארוקיים האלה עומדים שם צפופים אחד ליד ה",
+      "likes": 2,
+      "date": "2026-09-06"
     }
   },
   "fb": {
     "fans": 278,
     "posts_this_week": 4,
-    "total_likes": 1,
+    "total_likes": 0,
     "total_comments": 0,
-    "avg_likes_per_post": 0.2,
-    "engagement_rate": 0.0009,
+    "avg_likes_per_post": 0.0,
+    "engagement_rate": 0.0,
     "top_posts": [
       {
-        "message": "I photographed these rich textures of fabric and thread up close, drawn to the way browns and purple",
-        "likes": 1,
-        "comments": 0,
-        "date": "2026-09-02"
-      },
-      {
-        "message": "📸 ברווזים בבריכה ירוקה  מרחב שלילי: כל שטח האצות הירוקות שמסביב לברווזים הוא מרחב שלילי קלאסי — הרקע",
+        "message": "📸 ברבור לבן בימים  חוק השלישים: הברבור הראשי ממוקם במדויק לאורך קו השליש הימני של הפריים, כאשר ראשו ",
         "likes": 0,
         "comments": 0,
-        "date": "2026-09-03"
+        "date": "2026-09-10"
       },
       {
-        "message": "תראו את השדה הזה — קיר של ירוק עמוק ושטיח של פרחים אדומים בוערים. הצבעים כל כך חזקים, וזה בדיוק הרגע",
+        "message": "I photographed these dense green fern leaves up close, drawn to the perfect geometric pattern nature",
         "likes": 0,
         "comments": 0,
-        "date": "2026-08-31"
+        "date": "2026-09-09"
       },
       {
-        "message": "I photographed this piece by layering colorful materials and intricate textures until they formed a ",
+        "message": "את התמונה הזאת צילמתי בשוק חג המולד — סנטה על גב דוב מגולף, כולו עיטורים זהובים, ומאחוריו ים של אורו",
         "likes": 0,
         "comments": 0,
-        "date": "2026-08-30"
+        "date": "2026-09-07"
+      },
+      {
+        "message": "I photographed this curved thread spiraling against a minimalist blue backdrop, chasing the quiet te",
+        "likes": 0,
+        "comments": 0,
+        "date": "2026-09-06"
       }
     ],
     "best_post": {
-      "message": "I photographed these rich textures of fabric and thread up close, drawn to the way browns and purple weave together into",
-      "likes": 1,
-      "date": "2026-09-02"
+      "message": "📸 ברבור לבן בימים\n\nחוק השלישים: הברבור הראשי ממוקם במדויק לאורך קו השליש הימני של הפריים, כאשר ראשו ומקורו הכתום נמצאים ",
+      "likes": 0,
+      "date": "2026-09-10"
     }
   },
   "fb_pages": [
@@ -87,69 +93,78 @@
       "page_id": "339707206917",
       "fans": 278,
       "posts_this_week": 4,
-      "total_likes": 1,
+      "total_likes": 0,
       "total_comments": 0,
-      "avg_likes_per_post": 0.2,
-      "engagement_rate": 0.0009,
+      "avg_likes_per_post": 0.0,
+      "engagement_rate": 0.0,
       "top_posts": [
         {
-          "message": "I photographed these rich textures of fabric and thread up close, drawn to the way browns and purple",
-          "likes": 1,
-          "comments": 0,
-          "date": "2026-09-02"
-        },
-        {
-          "message": "📸 ברווזים בבריכה ירוקה  מרחב שלילי: כל שטח האצות הירוקות שמסביב לברווזים הוא מרחב שלילי קלאסי — הרקע",
+          "message": "📸 ברבור לבן בימים  חוק השלישים: הברבור הראשי ממוקם במדויק לאורך קו השליש הימני של הפריים, כאשר ראשו ",
           "likes": 0,
           "comments": 0,
-          "date": "2026-09-03"
+          "date": "2026-09-10"
         },
         {
-          "message": "תראו את השדה הזה — קיר של ירוק עמוק ושטיח של פרחים אדומים בוערים. הצבעים כל כך חזקים, וזה בדיוק הרגע",
+          "message": "I photographed these dense green fern leaves up close, drawn to the perfect geometric pattern nature",
           "likes": 0,
           "comments": 0,
-          "date": "2026-08-31"
+          "date": "2026-09-09"
         },
         {
-          "message": "I photographed this piece by layering colorful materials and intricate textures until they formed a ",
+          "message": "את התמונה הזאת צילמתי בשוק חג המולד — סנטה על גב דוב מגולף, כולו עיטורים זהובים, ומאחוריו ים של אורו",
           "likes": 0,
           "comments": 0,
-          "date": "2026-08-30"
+          "date": "2026-09-07"
+        },
+        {
+          "message": "I photographed this curved thread spiraling against a minimalist blue backdrop, chasing the quiet te",
+          "likes": 0,
+          "comments": 0,
+          "date": "2026-09-06"
         }
       ],
       "best_post": {
-        "message": "I photographed these rich textures of fabric and thread up close, drawn to the way browns and purple weave together into",
-        "likes": 1,
-        "date": "2026-09-02"
+        "message": "📸 ברבור לבן בימים\n\nחוק השלישים: הברבור הראשי ממוקם במדויק לאורך קו השליש הימני של הפריים, כאשר ראשו ומקורו הכתום נמצאים ",
+        "likes": 0,
+        "date": "2026-09-10"
       }
     }
   ],
   "reels": {
-    "reels_this_week": 0,
-    "total_plays": 0,
-    "total_reach": 0,
+    "reels_this_week": 1,
+    "total_plays": 37,
+    "total_reach": 23,
     "total_shares": 0,
     "total_saved": 0,
-    "avg_watch_time": 0,
-    "top_reels": [],
+    "avg_watch_time": 5352.0,
+    "top_reels": [
+      {
+        "caption": "לפעמים אני לא מצלם עצם, אני מצלם תחושה — זרימה שהופכת לצבע, אור שמסתובב על עצמו. מה אתם רואים כשאתם ",
+        "plays": 37,
+        "reach": 23,
+        "shares": 0,
+        "saved": 0,
+        "date": "2026-09-08"
+      }
+    ],
     "best_reel": {
-      "caption": "",
-      "plays": 0,
-      "date": ""
+      "caption": "לפעמים אני לא מצלם עצם, אני מצלם תחושה — זרימה שהופכת לצבע, אור שמסתובב על עצמו. מה אתם רואים כשאתם מסתכלים על זה?\n\nבקר ",
+      "plays": 37,
+      "date": "2026-09-08"
     }
   },
   "prev": {
     "ig_followers": 658,
-    "ig_posts_this_week": 5,
-    "ig_total_likes": 10,
+    "ig_posts_this_week": 4,
+    "ig_total_likes": 7,
     "fb_fans": 278,
-    "fb_posts_this_week": 6,
+    "fb_posts_this_week": 4,
     "fb_total_likes": 1
   },
   "recommendations": [
-    "פרסם לפחות 2 Reels בשבוע הבא במקום פוסטים סטטיים, כי Reels מקבלים יותר reach וengagement מתוך ממוצע של 1.8 לייקים לפוסט",
-    "הגבר את האינטראקציה על ידי שאלות ישירות בכותרות הפוסט - הפוסט הטוב ביותר עם 3 לייקים היה עדיין ללא תגובות, אז שאל את הקהל שאלות על הטבע או הפוטוגרפיה",
-    "פרסם באותו זמן קבוע מדי יום כדי להגיע למקסימום חשיפה, ואם אתה מפרסם 4 פוסטים בשבוע, פזר אותם ליום אחד כדי שלא תהיה התנגשות בfeed",
-    "העתק את הפוסטים הטובים מInstagram ל-Facebook מיד אחרי הפרסום, כי ל-Facebook יש 278 עוקבים בלבד והוא יכול להיות ערוץ גדול לגדול אם תחזור על התוכן שמצליח"
+    "פרסם יותר תוכן וידאו בפורמט Reels - הם מקבלים הרבה יותר עיסוק (37 צפיות בReels אחד לעומת 1 לייק בממוצע לפוסט סטטי), וכדאי לתמקד בתוכן שמספר סיפור רגשי כמו ה-Reel הטוב ביותר שלך.",
+    "עדכן את Facebook page שלך בפוסטים קבועים - כרגע אין שום אנגייג'מנט על Facebook, וזו הזדמנות להשתמש בערוץ הזה כדי למשוך חוקרים וצופים פוטנציאליים עם תוכן מקצועי.",
+    "צור יותר אינטראקציה על ידי שאלות בכותרות התמונות - בנוסף ל-0 תגובות עד כה, התחיל כל פוסט עם שאלה פתוחה שמעודדת משוב מהקהל, בדומה לשאלה המצליחה בReel הטוב ביותר שלך.",
+    "הפרסם לפחות 3-4 פוסטים באופן עקבי בשבוע שלך עם כיתוביות חזקות בעברית - עם 659 עוקבים אתה צריך להיות יותר דומיננטי בפיד כדי להגביר חשיפה, והכיתוביות הסיפוריות שלך מתבררות כנושא מתקדם."
   ]
 }
