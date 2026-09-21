@@ -2098,6 +2098,8 @@ async function handlePrintOrderComplete(request, env) {
     const fromEmail = env.FROM_EMAIL || 'contact@amitphotos.com';
     const cancelUrl = `${origin}/api/print/cancel?token=${orderId}`;
     // ea = escaped address — address מגיע מ-custom field שהלקוח שולט בו, לא לסמוך על התוכן ב-HTML
+    // productLabel יכול ליפול חזרה ל-sku הגולמי (מ-itemNumber שהלקוח שולט בו) אם אין התאמה בקטלוג
+    const safeProductLabel = escXml(productLabel);
     const ea = {
       name: escXml(address.name || ''),
       phone: escXml(address.phone || ''),
@@ -2118,7 +2120,7 @@ async function handlePrintOrderComplete(request, env) {
         </td></tr>
         <tr><td style="padding:32px 40px;color:#222;font-size:15px;line-height:1.85;direction:rtl;text-align:right">
           <h2 style="margin:0 0 1rem;font-size:18px">שלום ${ea.name}, ההזמנה התקבלה!</h2>
-          <p><strong>מוצר:</strong> ${productLabel}</p>
+          <p><strong>מוצר:</strong> ${safeProductLabel}</p>
           <p><strong>כתובת:</strong> ${ea.line1}, ${ea.city} ${ea.zip}</p>
           <p><strong>מחיר ששולם:</strong> $${sellPrice}</p>
           <p style="color:#888;font-size:.9rem">זמן משלוח משוער: 7–10 ימי עסקים.</p>
@@ -2152,7 +2154,7 @@ async function handlePrintOrderComplete(request, env) {
       <tr><td style="padding:.4rem 0;color:#888">טלפון</td><td><a href="tel:${ea.phone}" style="color:#c8a96e">${ea.phone||'—'}</a></td></tr>
       <tr><td style="padding:.4rem 0;color:#888">מייל</td><td><a href="mailto:${ea.email}" style="color:#c8a96e">${ea.email}</a></td></tr>
       <tr><td style="padding:.4rem 0;color:#888">כתובת</td><td>${ea.line1}, ${ea.city} ${ea.zip}</td></tr>
-      <tr><td style="padding:.4rem 0;color:#888">מוצר</td><td>${productLabel}</td></tr>
+      <tr><td style="padding:.4rem 0;color:#888">מוצר</td><td>${safeProductLabel}</td></tr>
       <tr><td style="padding:.4rem 0;color:#888">מחיר</td><td><strong>$${sellPrice}</strong></td></tr>
       <tr><td style="padding:.4rem 0;color:#888">Gelato ID</td><td style="font-size:.82rem;color:#aaa">${gelatoOrderId||'—'}</td></tr>
     </table>
@@ -2312,7 +2314,15 @@ async function handlePrintWebhook(request, env) {
     if (order?.customer_email) {
       const fromEmail = env.FROM_EMAIL || 'contact@amitphotos.com';
       const fulfillments = payload.items?.[0]?.fulfillments || [];
-      const tracking = fulfillments[0]?.trackingCode || '';
+      const tracking = escXml(fulfillments[0]?.trackingCode || '');
+      // order.* מגיע מ-DB אבל מקורו בקלט לקוח (address מ-handlePrintOrderComplete) — escape לפני הכנסה ל-HTML
+      const oe = {
+        name: escXml(order.customer_name || ''),
+        productLabel: escXml(order.product_label || ''),
+        line1: escXml(order.address_line1 || ''),
+        city: escXml(order.address_city || ''),
+        zip: escXml(order.address_zip || ''),
+      };
       const html = `<!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head><meta charset="UTF-8"></head>
@@ -2324,9 +2334,9 @@ async function handlePrintWebhook(request, env) {
           <div style="color:#c8a96e;font-size:20px;font-weight:700;letter-spacing:.25em;font-family:Georgia,serif">AMIT PHOTOS</div>
         </td></tr>
         <tr><td style="padding:32px 40px;color:#222;font-size:15px;line-height:1.85;direction:rtl;text-align:right">
-          <h2 style="margin:0 0 1rem">שלום ${order.customer_name}, ההדפסה שלך בדרך! 📦</h2>
-          <p><strong>מוצר:</strong> ${order.product_label}</p>
-          <p><strong>כתובת:</strong> ${order.address_line1}, ${order.address_city} ${order.address_zip}</p>
+          <h2 style="margin:0 0 1rem">שלום ${oe.name}, ההדפסה שלך בדרך! 📦</h2>
+          <p><strong>מוצר:</strong> ${oe.productLabel}</p>
+          <p><strong>כתובת:</strong> ${oe.line1}, ${oe.city} ${oe.zip}</p>
           ${tracking ? `<p><strong>מספר מעקב:</strong> ${tracking}</p>` : ''}
           <p style="color:#888;font-size:.9rem">זמן הגעה משוער: 7–10 ימי עסקים.</p>
         </td></tr>
