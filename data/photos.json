@@ -1834,7 +1834,7 @@
     "width": 1504,
     "height": 1000,
     "exif": null,
-    "added_at": "2026-09-22"
+    "added_at": "2026-09-23"
   },
   {
     "id": "1LuoH9OWwTFPRnDvZihmDE5hyBz3Kt815",
@@ -11312,6 +11312,90 @@
       "shutter": 0.0125
     },
     "added_at": "2026-06-21"
+  },
+  {
+    "id": "1toFUd2s_cxvcYm1HaoGaCLZaGzkRqU9D",
+    "title": "פרות בגאורגיה",
+    "category": "גאורגיה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1toFUd2s_cxvcYm1HaoGaCLZaGzkRqU9D.webp",
+    "thumbnail": "/photos/thumb/1toFUd2s_cxvcYm1HaoGaCLZaGzkRqU9D.webp",
+    "description": "שתי פרות עומדות בחצר ביישוב ישן בגאורגיה עם בניין אבן ברקע.",
+    "filename": "DSC_9224.JPG",
+    "width": 1620,
+    "height": 1080,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 24,
+      "aperture": 11,
+      "iso": 900,
+      "shutter": 0.025
+    },
+    "added_at": "2026-09-23"
+  },
+  {
+    "id": "1DbMo5Ntvvm2Az_fi5u-idXMPJXgvJ5Lp",
+    "title": "עץ בודד בשדה",
+    "category": "גאורגיה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1DbMo5Ntvvm2Az_fi5u-idXMPJXgvJ5Lp.webp",
+    "thumbnail": "/photos/thumb/1DbMo5Ntvvm2Az_fi5u-idXMPJXgvJ5Lp.webp",
+    "description": "עץ ירוק בודד על רקע שדה דל עשב וצמחיה דלילה בגיאורגיה",
+    "filename": "DSC_9370.JPG",
+    "width": 1620,
+    "height": 1080,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 200,
+      "aperture": 5.6,
+      "iso": 125,
+      "shutter": 0.003125
+    },
+    "added_at": "2026-09-23"
+  },
+  {
+    "id": "1huc6BEI7VEMKqhHg5QeqITvMCFjRHyPy",
+    "title": "הרים בענן ובחרל",
+    "category": "גאורגיה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1huc6BEI7VEMKqhHg5QeqITvMCFjRHyPy.webp",
+    "thumbnail": "/photos/thumb/1huc6BEI7VEMKqhHg5QeqITvMCFjRHyPy.webp",
+    "description": "נוף הרי שלג וערפל בחרל מי בגיאורגיה",
+    "filename": "DSC_9395.JPG",
+    "width": 1620,
+    "height": 1080,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 82,
+      "aperture": 5,
+      "iso": 64,
+      "shutter": 0.003125
+    },
+    "added_at": "2026-09-23"
+  },
+  {
+    "id": "1WJkds0mck_4E1fqKRZpSg-uSENNQNKl7",
+    "title": "דגל גיאורגיה בעננים",
+    "category": "גאורגיה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1WJkds0mck_4E1fqKRZpSg-uSENNQNKl7.webp",
+    "thumbnail": "/photos/thumb/1WJkds0mck_4E1fqKRZpSg-uSENNQNKl7.webp",
+    "description": "דגל גיאורגיה מתנופף על רקע שמיים כחולים עם עננים לבנים.",
+    "filename": "DSC_9547.jpg",
+    "width": 1620,
+    "height": 1080,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10.0-20.0 mm f/3.5",
+      "focal": 18,
+      "aperture": 14,
+      "iso": 64,
+      "shutter": 0.003125
+    },
+    "added_at": "2026-09-23"
   },
   {
     "id": "1pUZutF_UrqSqVu3sLLePsw2SciJYERJf",
