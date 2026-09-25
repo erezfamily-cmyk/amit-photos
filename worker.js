@@ -323,7 +323,7 @@ button:hover{background:#d4b87a}
     <form id="fg-form">
       <input type="email" id="fg-email" placeholder="כתובת המייל שלך" aria-label="כתובת המייל שלך" required autocomplete="email">
       <label class="fg-consent"><input type="checkbox" id="fg-consent-privacy" required> קראתי ואני מאשר/ת את <a href="https://amitphotos.com/privacy/" target="_blank" rel="noopener">מדיניות הפרטיות</a></label>
-      <label class="fg-consent"><input type="checkbox" id="fg-consent-marketing" required> מעוניין/ת לקבל עדכונים ותוכן שיווקי במייל</label>
+      <label class="fg-consent"><input type="checkbox" id="fg-consent-marketing"> מעוניין/ת לקבל עדכונים ותוכן שיווקי במייל</label>
       <button type="submit" id="fg-btn">שלח לי את ה-PDF &#x2190;</button>
       <p class="legal">קבלת ה-PDF + הרשמה לניוזלטר החודשי של עמית ארז. ניתן לבטל בכל עת.</p>
       <p class="msg" id="fg-msg"></p>
@@ -6191,7 +6191,7 @@ applyLang();window.setLang=applyLang;window.addEventListener('storage',e=>{if(e.
 </body></html>`, 200, 'no-cache');
 }
 
-async function handleNlIssue(env, slug, isPreview) {
+export async function handleNlIssue(env, slug, isPreview) {
   const issue = await env.DB.prepare(
     `SELECT * FROM newsletter_issues WHERE slug=?${isPreview ? '' : " AND status='published'"}`
   ).bind(slug).first();
@@ -6581,6 +6581,9 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direc
 .nl-sub-form{display:flex;gap:.5rem;flex-wrap:wrap}
 .nl-sub-form input{flex:1;min-width:180px;background:var(--surface);border:1px solid var(--border);color:var(--text);padding:.45rem .75rem;border-radius:8px;font-family:inherit;font-size:.85rem}
 .nl-sub-form button{background:var(--accent);color:#000;border:none;padding:.45rem 1.2rem;border-radius:8px;cursor:pointer;font-weight:700;font-size:.85rem}
+.nl-consent-row{flex-basis:100%;display:flex;align-items:flex-start;gap:.4rem;font-size:.72rem;color:var(--muted);cursor:pointer}
+.nl-consent-row input{flex:none;margin-top:.15rem;cursor:pointer}
+.nl-consent-row a{color:var(--accent)}
 #nl-sub-msg{font-size:.8rem;margin-top:.5rem;min-height:1.2em}
 @media print{
   body{background:#fff;color:#111}
@@ -6634,6 +6637,14 @@ ${contactOutreachSection}
     <p data-he="גיליונות חודשיים — תמונות, מדריכים ומקומות צילום ישירות למייל." data-en="Monthly issues — photos, guides and shooting locations delivered to your inbox.">גיליונות חודשיים — תמונות, מדריכים ומקומות צילום ישירות למייל.</p>
     <form class="nl-sub-form" onsubmit="nlSubscribe(event)">
       <input type="email" id="nl-email" placeholder="כתובת המייל שלך" aria-label="כתובת המייל שלך" required>
+      <label class="nl-consent-row">
+        <input type="checkbox" id="nl-consent-privacy" required>
+        <span data-he='קראתי ואני מאשר/ת את <a href="/privacy/" target="_blank" rel="noopener">מדיניות הפרטיות</a>' data-en='I have read and agree to the <a href="/privacy/" target="_blank" rel="noopener">privacy policy</a>'>קראתי ואני מאשר/ת את <a href="/privacy/" target="_blank" rel="noopener">מדיניות הפרטיות</a></span>
+      </label>
+      <label class="nl-consent-row">
+        <input type="checkbox" id="nl-consent-marketing" required>
+        <span data-he="מעוניין/ת לקבל את הניוזלטר החודשי במייל" data-en="I want to receive the monthly newsletter by email">מעוניין/ת לקבל את הניוזלטר החודשי במייל</span>
+      </label>
       <button type="submit" data-he="הרשמה" data-en="Subscribe">הרשמה</button>
     </form>
     <p id="nl-sub-msg"></p>
@@ -6656,7 +6667,7 @@ function toggleLang(){applyLang(getLang()==='he'?'en':'he')}
 applyLang();window.setLang=applyLang;window.addEventListener('storage',e=>{if(e.key==='lang')applyLang()})
 function showStep(n){document.querySelectorAll('.nl-step-content').forEach((el,i)=>{el.style.display=(i+1===n)?'':'none'});document.querySelectorAll('.nl-step-pill').forEach((el,i)=>{el.classList.toggle('nl-step-active',i+1===n)})}
 function copyLink(){navigator.clipboard.writeText(location.href).then(()=>{const el=document.getElementById('copy-label');const orig=el.innerHTML;el.textContent='✓ הועתק!';setTimeout(()=>{el.innerHTML=orig;applyLang()},2000)}).catch(()=>{})}
-async function nlSubscribe(e){e.preventDefault();const email=document.getElementById('nl-email').value.trim();const msg=document.getElementById('nl-sub-msg');const btn=e.target.querySelector('button[type="submit"]');btn.disabled=true;try{const r=await fetch('/api/subscribers',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email})});const d=await r.json();if(d.already){msg.style.color='#c8a96e';msg.textContent='כבר רשום/ה — תקבל את הגיליון הבא!'}else if(d.ok){msg.style.color='#4caf50';msg.textContent='נרשמת! תקבל את הגיליון הבא ישירות למייל 🎉';document.getElementById('nl-email').value=''}else{msg.style.color='#f44336';msg.textContent=d.error||'שגיאה'}}catch{msg.style.color='#f44336';msg.textContent='שגיאת רשת'}btn.disabled=false}
+async function nlSubscribe(e){e.preventDefault();const email=document.getElementById('nl-email').value.trim();const consentPrivacy=document.getElementById('nl-consent-privacy').checked;const consentMarketing=document.getElementById('nl-consent-marketing').checked;const msg=document.getElementById('nl-sub-msg');const btn=e.target.querySelector('button[type="submit"]');if(!consentPrivacy||!consentMarketing){msg.style.color='#f44336';msg.textContent=getLang()==='en'?'Please check both boxes to subscribe.':'יש לאשר את שתי התיבות כדי להירשם.';return}btn.disabled=true;try{const r=await fetch('/api/subscribers?source=newsletter_issue',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,lang:getLang(),consent_privacy:consentPrivacy,consent_marketing:consentMarketing})});const d=await r.json();if(d.already){msg.style.color='#c8a96e';msg.textContent='כבר רשום/ה — תקבל את הגיליון הבא!'}else if(d.ok){msg.style.color='#4caf50';msg.textContent='נרשמת! תקבל את הגיליון הבא ישירות למייל 🎉';document.getElementById('nl-email').value='';document.getElementById('nl-consent-privacy').checked=false;document.getElementById('nl-consent-marketing').checked=false}else{msg.style.color='#f44336';msg.textContent=d.error||'שגיאה'}}catch{msg.style.color='#f44336';msg.textContent='שגיאת רשת'}btn.disabled=false}
 function nlShowUnsub(){document.getElementById('nl-unsub-form').style.display='';document.getElementById('nl-unsub-wrap').style.display='none'}
 async function nlUnsubscribe(e){e.preventDefault();const email=document.getElementById('nl-unsub-email').value.trim();const msg=document.getElementById('nl-unsub-msg');const btn=e.target.querySelector('button[type="submit"]');btn.disabled=true;try{const r=await fetch('/api/unsubscribe',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email})});const d=await r.json();if(d.ok&&d.notFound){msg.style.color='#c8a96e';msg.textContent='כתובת זו אינה ברשימה'}else if(d.ok){msg.style.color='#4caf50';msg.textContent='הוסרת מהרשימה בהצלחה'}else{msg.style.color='#f44336';msg.textContent=d.error||'שגיאה'}}catch{msg.style.color='#f44336';msg.textContent='שגיאת רשת'}btn.disabled=false}
 </script>

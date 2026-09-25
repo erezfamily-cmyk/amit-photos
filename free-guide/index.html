@@ -164,7 +164,7 @@ footer a{color:#888}
           <span data-i18n="form.consent.privacy" data-i18n-html>קראתי ואני מאשר/ת את <a href="/privacy/" target="_blank" rel="noopener">מדיניות הפרטיות</a></span>
         </label>
         <label class="form-consent-row">
-          <input type="checkbox" id="guide-consent-marketing" required />
+          <input type="checkbox" id="guide-consent-marketing" />
           <span data-i18n="form.consent.marketing">מעוניין/ת לקבל עדכונים ותוכן שיווקי במייל</span>
         </label>
         <button type="submit" class="btn-submit" id="guide-btn" data-i18n="form.btn">שלח לי ←</button>
@@ -305,7 +305,7 @@ document.getElementById('guide-form').addEventListener('submit', async function(
   btn.disabled = true;
   btn.textContent = '...';
   try {
-    var r = await fetch('/api/subscribers?source=free-guide', {
+    var r = await fetch('/api/subscribers?source=lead_magnet', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
