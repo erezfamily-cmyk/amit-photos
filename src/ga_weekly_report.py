@@ -190,6 +190,32 @@ def format_duration(seconds):
     return f"{hours}:{mins:02d} שעות"
 
 
+def funnel_rate(numerator, denominator):
+    """אחוז מעבר בין שני שלבי משפך. None אם הנתונים חסרים/לא-מספריים או שהמכנה 0
+    (ולא 0% מטעה)."""
+    try:
+        num, den = float(numerator), float(denominator)
+    except (TypeError, ValueError):
+        return None
+    if den <= 0:
+        return None
+    return round(num / den * 100, 1)
+
+
+MIN_SAMPLE_SIZE = 20
+
+
+def sample_size_note(count):
+    """מחזיר אזהרה אם שלב-המוצא של המשפך קטן מדי לביסוס מסקנה, אחרת None."""
+    try:
+        n = float(count)
+    except (TypeError, ValueError):
+        n = 0
+    if n < MIN_SAMPLE_SIZE:
+        return f"⚠️ מדגם קטן מדי ({int(n)}) להסקת מסקנות אמינות"
+    return None
+
+
 def build_data_summary(data):
     s, p = data["summary"], data["prev_week"]
     def delta(c, pv):
@@ -220,17 +246,25 @@ def build_data_summary(data):
     lines += ["", "--- ארצות ---"]
     for r in data["countries"]:
         lines.append(f"  {r['ארץ']}: {r['sessions']} סשנים")
-    lines += ["", "--- משפך מכירה דיגיטלית (buy modal) ---"]
     fe = data["funnel_events"]
-    lines.append(f"  צפיות בתמונה (photo_view):        {fe.get('photo_view', '0')}")
-    lines.append(f"  פתיחת מודל קנייה (purchase_intent): {fe.get('purchase_intent', '0')}")
-    lines.append(f"  בחירת גודל/מוצר (add_size):        {fe.get('add_size', '0')}")
-    lines.append(f"  רכישה שהושלמה (purchase):          {fe.get('purchase', '0')}")
-    lines += ["", "--- משפך הזמנת הדפסה (print modal / Gelato) ---"]
-    lines.append(f"  פתיחת מודל הדפסה (print_intent):        {fe.get('print_intent', '0')}")
-    lines.append(f"  בחירת סוג הדפסה (print_type_selected):  {fe.get('print_type_selected', '0')}")
-    lines.append(f"  מעבר לתשלום (print_checkout):           {fe.get('print_checkout', '0')}")
+    lines += ["", "--- משפך מכירה דיגיטלית (buy modal) ---"] + funnel_text_lines(fe, DIGITAL_FUNNEL)
+    lines += ["", "--- משפך הזמנת הדפסה (print modal / Gelato) ---"] + funnel_text_lines(fe, PRINT_FUNNEL)
     return "\n".join(lines)
+
+
+def funnel_text_lines(fe, stages):
+    counts = [fe.get(key, "0") for key, _ in stages]
+    lines = []
+    for i, (key, label) in enumerate(stages):
+        line = f"  {label} ({key}): {fe.get(key, '0')}"
+        if i > 0:
+            rate = funnel_rate(counts[i], counts[i - 1])
+            line += f"  ← {rate}%" if rate is not None else "  ← n/a"
+        lines.append(line)
+    note = sample_size_note(counts[0])
+    if note:
+        lines.append(f"  {note}")
+    return lines
 
 
 def generate_analysis(data_summary):
@@ -262,6 +296,19 @@ def generate_analysis(data_summary):
     return msg.content[0].text.strip()
 
 
+DIGITAL_FUNNEL = [
+    ("photo_view", "צפיות בתמונה"),
+    ("purchase_intent", "פתיחת מודל קנייה"),
+    ("add_size", "בחירת גודל"),
+    ("purchase", "רכישה הושלמה"),
+]
+PRINT_FUNNEL = [
+    ("print_intent", "פתיחת מודל הדפסה"),
+    ("print_type_selected", "בחירת סוג הדפסה"),
+    ("print_checkout", "מעבר לתשלום"),
+]
+
+
 def build_html_email(data, analysis):
     s, p = data["summary"], data["prev_week"]
 
@@ -278,6 +325,23 @@ def build_html_email(data, analysis):
                 f'display:inline-block;min-width:140px;text-align:center">'
                 f'<div style="font-size:1.6em;font-weight:700;color:#2c3e50">{value}{badge}</div>'
                 f'<div style="font-size:.78em;color:#888;margin-top:4px">{label}</div></div>')
+
+    def funnel_html(stages):
+        fe = data["funnel_events"]
+        counts = [fe.get(key, "0") for key, _ in stages]
+        cards = ""
+        for i, (key, label) in enumerate(stages):
+            rate_html = ""
+            if i > 0:
+                rate = funnel_rate(counts[i], counts[i - 1])
+                rate_html = f'<div style="color:#3498db;font-size:.75em;margin-top:-4px;text-align:center">← {rate}%</div>' if rate is not None else ""
+            cards += f'<div style="display:inline-block">{card(label, fe.get(key, "0"))}{rate_html}</div>'
+        note = sample_size_note(counts[0])
+        note_html = f'<div style="color:#e67e22;font-size:.82em;margin-top:8px;width:100%">{note}</div>' if note else ""
+        return cards, note_html
+
+    digital_funnel_cards, digital_funnel_note = funnel_html(DIGITAL_FUNNEL)
+    print_funnel_cards, print_funnel_note = funnel_html(PRINT_FUNNEL)
 
     pages_rows = "".join(
         f'<tr><td style="padding:5px 8px;color:#555">{r["עמוד"]}</td>'
@@ -318,19 +382,16 @@ def build_html_email(data, analysis):
   <div style="padding:0 24px 20px">
     <h2 style="color:#2c3e50;margin:0 0 8px;font-size:1em">משפך מכירה דיגיטלית (buy modal)</h2>
     <div style="background:#f8f9fa;border-radius:8px;padding:12px 16px;display:flex;gap:10px;flex-wrap:wrap">
-      {card("צפיות בתמונה", data['funnel_events'].get('photo_view', '0'))}
-      {card("פתיחת מודל קנייה", data['funnel_events'].get('purchase_intent', '0'))}
-      {card("בחירת גודל", data['funnel_events'].get('add_size', '0'))}
-      {card("רכישה הושלמה", data['funnel_events'].get('purchase', '0'))}
+      {digital_funnel_cards}
     </div>
+    {digital_funnel_note}
   </div>
   <div style="padding:0 24px 20px">
     <h2 style="color:#2c3e50;margin:0 0 8px;font-size:1em">משפך הזמנת הדפסה (print modal / Gelato)</h2>
     <div style="background:#f8f9fa;border-radius:8px;padding:12px 16px;display:flex;gap:10px;flex-wrap:wrap">
-      {card("פתיחת מודל הדפסה", data['funnel_events'].get('print_intent', '0'))}
-      {card("בחירת סוג הדפסה", data['funnel_events'].get('print_type_selected', '0'))}
-      {card("מעבר לתשלום", data['funnel_events'].get('print_checkout', '0'))}
+      {print_funnel_cards}
     </div>
+    {print_funnel_note}
   </div>
   <div style="padding:0 24px 20px;display:flex;gap:20px;flex-wrap:wrap">
     <div style="flex:1;min-width:220px">

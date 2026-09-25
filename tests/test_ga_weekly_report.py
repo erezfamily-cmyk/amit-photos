@@ -37,3 +37,36 @@ def test_accepts_string_input_like_ga4_api_returns():
 
 def test_zero():
     assert ga.format_duration(0) == "0 שניות"
+
+
+def test_funnel_rate_normal_case():
+    assert ga.funnel_rate(25, 100) == 25.0
+
+
+def test_funnel_rate_rounds_to_one_decimal():
+    assert ga.funnel_rate(1, 3) == 33.3
+
+
+def test_funnel_rate_zero_denominator_returns_none():
+    assert ga.funnel_rate(5, 0) is None
+
+
+def test_funnel_rate_missing_values_return_none():
+    assert ga.funnel_rate(None, 10) is None
+    assert ga.funnel_rate("5", None) is None
+
+
+def test_funnel_rate_non_numeric_string_returns_none():
+    assert ga.funnel_rate("abc", "10") is None
+
+
+def test_sample_size_note_below_threshold():
+    assert ga.sample_size_note(5) == "⚠️ מדגם קטן מדי (5) להסקת מסקנות אמינות"
+
+
+def test_sample_size_note_above_threshold_is_none():
+    assert ga.sample_size_note(50) is None
+
+
+def test_sample_size_note_handles_non_numeric():
+    assert ga.sample_size_note("0") == "⚠️ מדגם קטן מדי (0) להסקת מסקנות אמינות"
