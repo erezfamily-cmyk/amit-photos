@@ -30,6 +30,25 @@ function jsonRes(data, status = 200, request = null) {
 }
 function unauth(request) { return jsonRes({ error: 'לא מורשה' }, 401, request); }
 
+// ===== CACHE INVALIDATION =====
+// caches.default (Workers Cache API) אינו בשימוש היום בשום מקום בקוד הזה עבור /api/photos או
+// /data/photos.json — שניהם כבר נשלחים עם Cache-Control: no-store, ונכסים סטטיים דרך env.ASSETS.fetch
+// מנוהלים ע"י Cloudflare פנימית per-deploy (לא נגישים דרך caches.default). הפונקציה הזו היא hook
+// למקרה שזה ישתנה בעתיד — כרגע ה-delete הם no-op בפועל. הבאג האמיתי של "תמונה חדשה לא מופיעה" היה
+// בצד הלקוח (sw.js היה cache-first על /api/photos) ותוקן שם. purge כלל-zone נשאר רק ב-
+// .github/workflows/update-photos.yml (עם CLOUDFLARE_API_TOKEN/ZONE_ID כ-GitHub secrets) — במפורש
+// לא הוספנו את הסודות האלה ל-Worker ולא מבצעים purge_everything מתוך request חי.
+async function invalidatePublicPhotosCache(origin = 'https://amitphotos.com') {
+  try {
+    const cache = caches.default;
+    await cache.delete(new Request(`${origin}/api/photos`));
+    await cache.delete(new Request(`${origin}/data/photos.json`));
+  } catch {
+    // caches.default לא זמין בסביבה הזו (למשל טסט מקומי) — no-op בטוח
+  }
+}
+export { invalidatePublicPhotosCache };
+
 const SEC_HEADERS = {
   'X-Frame-Options': 'SAMEORIGIN',
   'X-Content-Type-Options': 'nosniff',
@@ -636,6 +655,7 @@ async function handlePhotos(request, env) {
 
     if (body.published !== undefined) {
       await env.DB.prepare('UPDATE photos SET published=? WHERE id=?').bind(body.published ? 1 : 0, id).run();
+      await invalidatePublicPhotosCache(new URL(request.url).origin);
       return jsonRes({ ok: true, published: body.published ? 1 : 0 }, 200, request);
     }
 
@@ -646,6 +666,7 @@ async function handlePhotos(request, env) {
       if (body.r2_key    !== undefined) { fields.push('r2_key=?');    vals.push(body.r2_key); }
       vals.push(id);
       await env.DB.prepare(`UPDATE photos SET ${fields.join(',')} WHERE id=?`).bind(...vals).run();
+      await invalidatePublicPhotosCache(new URL(request.url).origin);
       return jsonRes({ ok: true }, 200, request);
     }
 
@@ -7363,6 +7384,7 @@ export default {
         width||0, height||0,
         added_at||'', new Date().toISOString()
       ).run();
+      await invalidatePublicPhotosCache(new URL(request.url).origin);
       return jsonRes({ ok: true, id }, 200, request);
     }
 
@@ -7383,6 +7405,7 @@ export default {
         const results = await env.DB.batch(batch);
         updated += results.reduce((s, r) => s + (r.meta?.changes || 0), 0);
       }
+      if (updated > 0) await invalidatePublicPhotosCache(new URL(request.url).origin);
       return jsonRes({ ok: true, updated }, 200, request);
     }
     if (path === '/api/admin/photos/translate-titles' && request.method === 'POST') {
