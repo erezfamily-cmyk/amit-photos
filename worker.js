@@ -266,34 +266,97 @@ async function handleFreeGuide(request, env) {
   const photoUrl = photo?.r2_key ? `https://amitphotos.com/photos/${photo.r2_key}` : '';
   const photoTitle = (photo?.title || '').replace(/"/g, '&quot;');
 
+  // רק ?lang=en נקבע בצד השרת (כדי שהרינדור הראשוני יהיה נכון בלי הבהוב) — localStorage לא
+  // נגיש בשרת, אז מבקר חוזר עם 'en' שמור אבל בלי ?lang= עדיין יקבל רינדור עברי ראשוני ו-JS
+  // יתקן מיד אחרי טעינה (applyLang, אותו דפוס בדיוק כמו בדפי הגיליון/מדריכי המצלמה).
+  const initialLang = new URL(request.url).searchParams.get('lang') === 'en' ? 'en' : 'he';
+  const isEn = initialLang === 'en';
+
+  const T = {
+    he: {
+      title: `50 טיפים לצילום טוב יותר — PDF חינם | Amit Photos`,
+      desc: `50 טיפים לצילום שישפרו את התמונות שלך — PDF חינמי ב-15 עמ', ישיר למייל.`,
+      ogTitle: `50 טיפים לצילום טוב יותר — PDF חינם`,
+      ogDesc: `המדריך שהכנתי מהניסיון שלי והאהבה לצלם — 15 עמודים, ישיר למייל.`,
+      ogLocale: 'he_IL', ogLocaleAlt: 'en_US',
+      badge: 'מתנה חינמית',
+      h1: '50 טיפים לצילום טוב יותר',
+      sub: 'המדריך שהכנתי מהניסיון שלי והאהבה לצלם',
+      pdfMeta: `PDF · 15 עמ' · ישיר למייל`,
+      emailPlaceholder: 'כתובת המייל שלך',
+      consentPrivacyHtml: 'קראתי ואני מאשר/ת את <a href="https://amitphotos.com/privacy/" target="_blank" rel="noopener">מדיניות הפרטיות</a>',
+      consentMarketing: 'מעוניין/ת לקבל עדכונים ותוכן שיווקי במייל',
+      submit: 'שלח לי את ה-PDF ←',
+      sending: '...',
+      legal: 'קבלת ה-PDF + הרשמה לניוזלטר החודשי של עמית ארז. ניתן לבטל בכל עת.',
+      back: '← חזור לאתר',
+      langBtn: 'EN',
+      successHtml: '✓ נשלח! בדוק את תיבת הדואר שלך (גם spam).',
+      sentBtn: 'נשלח ✓',
+      shareText: 'קיבלתי PDF חינמי עם 50 טיפים לצילום 📸 amitphotos.com/free-guide',
+      shareBtn: 'שתף עם חבר צלם ב-WhatsApp',
+      err: 'שגיאה. נסה שוב.',
+      errNet: 'שגיאת רשת. נסה שוב.',
+    },
+    en: {
+      title: `50 Tips for Better Photography — Free PDF | Amit Photos`,
+      desc: `50 photography tips that will improve your photos — free 15-page PDF, straight to your inbox.`,
+      ogTitle: `50 Tips for Better Photography — Free PDF`,
+      ogDesc: `The guide I put together from my own experience and love of photography — 15 pages, straight to your inbox.`,
+      ogLocale: 'en_US', ogLocaleAlt: 'he_IL',
+      badge: 'Free Gift',
+      h1: '50 Tips for Better Photography',
+      sub: 'The guide I put together from my own experience and love of photography',
+      pdfMeta: 'PDF · 15 pages · straight to your inbox',
+      emailPlaceholder: 'Your email address',
+      consentPrivacyHtml: 'I have read and agree to the <a href="https://amitphotos.com/privacy/" target="_blank" rel="noopener">privacy policy</a>',
+      consentMarketing: 'I want to receive updates and marketing content by email',
+      submit: 'Send me the PDF →',
+      sending: '...',
+      legal: `Getting the PDF also subscribes you to Amit Photos' monthly newsletter. Unsubscribe anytime.`,
+      back: '→ Back to site',
+      langBtn: 'HE',
+      successHtml: '✓ Sent! Check your inbox (including spam).',
+      sentBtn: 'Sent ✓',
+      shareText: 'I just got a free PDF with 50 photography tips 📸 amitphotos.com/free-guide',
+      shareBtn: 'Share with a photographer friend on WhatsApp',
+      err: 'Error. Please try again.',
+      errNet: 'Network error. Please try again.',
+    },
+  };
+  const t = T[initialLang];
+  const dir = isEn ? 'ltr' : 'rtl';
+
   const html = `<!DOCTYPE html>
-<html lang="he" dir="rtl">
+<html lang="${initialLang}" dir="${dir}">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>50 טיפים לצילום טוב יותר — PDF חינם | Amit Photos</title>
-<meta name="description" content="50 טיפים לצילום שישפרו את התמונות שלך — PDF חינמי ב-15 עמ', ישיר למייל.">
-<meta property="og:title" content="50 טיפים לצילום טוב יותר — PDF חינם">
-<meta property="og:description" content="המדריך שהכנתי מהניסיון שלי והאהבה לצלם — 15 עמודים, ישיר למייל.">
+<title>${t.title}</title>
+<meta name="description" content="${t.desc}">
+<meta property="og:title" content="${t.ogTitle}">
+<meta property="og:description" content="${t.ogDesc}">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://amitphotos.com/free-guide/">
-<meta property="og:locale" content="he_IL">
-<meta property="og:locale:alternate" content="en_US">${photoUrl ? `\n<meta property="og:image" content="${photoUrl}">\n<meta property="og:image:alt" content="50 טיפים לצילום — עמית ארז">` : ''}
+<meta property="og:locale" content="${t.ogLocale}">
+<meta property="og:locale:alternate" content="${t.ogLocaleAlt}">${photoUrl ? `\n<meta property="og:image" content="${photoUrl}">\n<meta property="og:image:alt" content="${isEn ? '50 photography tips — Amit Erez' : '50 טיפים לצילום — עמית ארז'}">` : ''}
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="50 טיפים לצילום טוב יותר — PDF חינם">
-<meta name="twitter:description" content="המדריך שהכנתי מהניסיון שלי והאהבה לצלם — 15 עמודים, ישיר למייל.">${photoUrl ? `\n<meta name="twitter:image" content="${photoUrl}">` : ''}
+<meta name="twitter:title" content="${t.ogTitle}">
+<meta name="twitter:description" content="${t.ogDesc}">${photoUrl ? `\n<meta name="twitter:image" content="${photoUrl}">` : ''}
 ${GA_SNIPPET}
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Heebo',sans-serif;background:#111;color:#f0ede8;min-height:100vh;display:flex;align-items:center;justify-content:center}
 .wrap{display:flex;max-width:860px;width:100%;min-height:100vh}
-.left{flex:1;background:${photoUrl ? `url('${photoUrl}') center/cover no-repeat` : 'linear-gradient(135deg,#1a1a2e,#0f3460)'};min-height:300px}
-.right{flex:1;padding:3rem 2.5rem;display:flex;flex-direction:column;justify-content:center;direction:rtl}
+.left{flex:1;background:${photoUrl ? `url('${photoUrl}') center/cover no-repeat` : 'linear-gradient(135deg,#1a1a2e,#0f3460)'};min-height:300px;position:relative}
+.lang-toggle{position:absolute;top:1rem;inset-inline-end:1rem;width:auto;background:rgba(0,0,0,.5);color:#f0ede8;border:1px solid rgba(255,255,255,.3);border-radius:4px;padding:.3rem .7rem;font-size:.75rem;font-weight:700;cursor:pointer;font-family:'Heebo',sans-serif}
+.lang-toggle:hover{background:rgba(0,0,0,.7)}
+.right{flex:1;padding:3rem 2.5rem;display:flex;flex-direction:column;justify-content:center}
 .badge{font-size:.7rem;letter-spacing:.15em;color:#c8a96e;text-transform:uppercase;margin-bottom:.6rem}
 h1{font-size:1.9rem;line-height:1.25;margin-bottom:.5rem;color:#f0ede8}
 .sub{font-size:.95rem;color:#aaa;margin-bottom:.4rem}
 .pdf-meta{font-size:.75rem;color:#888;margin-bottom:1.8rem}
-input[type=email]{width:100%;padding:.75rem 1rem;background:#1e1e1e;border:1px solid #444;border-radius:4px;color:#f0ede8;font-size:1rem;margin-bottom:.75rem;direction:rtl}
+input[type=email]{width:100%;padding:.75rem 1rem;background:#1e1e1e;border:1px solid #444;border-radius:4px;color:#f0ede8;font-size:1rem;margin-bottom:.75rem}
 input[type=email]::placeholder{color:#666}
 button{width:100%;padding:.8rem 1rem;background:#c8a96e;color:#111;border:none;border-radius:4px;font-size:1rem;font-weight:700;cursor:pointer}
 button:hover{background:#d4b87a}
@@ -314,57 +377,87 @@ button:hover{background:#d4b87a}
 </head>
 <body>
 <div class="wrap">
-  <div class="left" title="${photoTitle}"></div>
+  <div class="left" title="${photoTitle}">
+    <button type="button" class="lang-toggle" id="fg-lang-btn" aria-label="Switch language / החלף שפה" onclick="toggleLang()">${t.langBtn}</button>
+  </div>
   <div class="right">
-    <div class="badge">מתנה חינמית</div>
-    <h1>50 טיפים לצילום טוב יותר</h1>
-    <p class="sub">המדריך שהכנתי מהניסיון שלי והאהבה לצלם</p>
-    <p class="pdf-meta">PDF · 15 עמ&#39; · ישיר למייל</p>
+    <div class="badge" data-he="${T.he.badge}" data-en="${T.en.badge}">${t.badge}</div>
+    <h1 data-he="${T.he.h1}" data-en="${T.en.h1}">${t.h1}</h1>
+    <p class="sub" data-he="${T.he.sub}" data-en="${T.en.sub}">${t.sub}</p>
+    <p class="pdf-meta" data-he="${T.he.pdfMeta}" data-en="${T.en.pdfMeta}">${t.pdfMeta}</p>
     <form id="fg-form">
-      <input type="email" id="fg-email" placeholder="כתובת המייל שלך" aria-label="כתובת המייל שלך" required autocomplete="email">
-      <label class="fg-consent"><input type="checkbox" id="fg-consent-privacy" required> קראתי ואני מאשר/ת את <a href="https://amitphotos.com/privacy/" target="_blank" rel="noopener">מדיניות הפרטיות</a></label>
-      <label class="fg-consent"><input type="checkbox" id="fg-consent-marketing"> מעוניין/ת לקבל עדכונים ותוכן שיווקי במייל</label>
-      <button type="submit" id="fg-btn">שלח לי את ה-PDF &#x2190;</button>
-      <p class="legal">קבלת ה-PDF + הרשמה לניוזלטר החודשי של עמית ארז. ניתן לבטל בכל עת.</p>
+      <input type="email" id="fg-email" placeholder="${t.emailPlaceholder}" aria-label="${t.emailPlaceholder}" data-he-placeholder="${T.he.emailPlaceholder}" data-en-placeholder="${T.en.emailPlaceholder}" required autocomplete="email">
+      <label class="fg-consent"><input type="checkbox" id="fg-consent-privacy" required> <span data-he-html="${escXml(T.he.consentPrivacyHtml)}" data-en-html="${escXml(T.en.consentPrivacyHtml)}">${t.consentPrivacyHtml}</span></label>
+      <label class="fg-consent"><input type="checkbox" id="fg-consent-marketing"> <span data-he="${T.he.consentMarketing}" data-en="${T.en.consentMarketing}">${t.consentMarketing}</span></label>
+      <button type="submit" id="fg-btn" data-he="${T.he.submit}" data-en="${T.en.submit}">${t.submit}</button>
+      <p class="legal" data-he="${T.he.legal}" data-en="${T.en.legal}">${t.legal}</p>
       <p class="msg" id="fg-msg"></p>
     </form>
-    <div class="back"><a href="https://amitphotos.com">&#x2190; חזור לאתר</a></div>
+    <div class="back"><a href="https://amitphotos.com" data-he="${T.he.back}" data-en="${T.en.back}">${t.back}</a></div>
   </div>
 </div>
 <script>
+var FG_T = ${JSON.stringify(T)};
+function getLang(){
+  var qp = new URLSearchParams(location.search).get('lang');
+  if (qp === 'en' || qp === 'he') { try { localStorage.setItem('lang', qp); } catch(e){} return qp; }
+  try { return localStorage.getItem('lang') || '${initialLang}'; } catch(e) { return '${initialLang}'; }
+}
+function applyLang(forceLang){
+  var lang = forceLang || getLang();
+  if (forceLang) { try { localStorage.setItem('lang', forceLang); } catch(e){} }
+  var isEn = lang === 'en';
+  document.documentElement.lang = lang;
+  document.documentElement.dir = isEn ? 'ltr' : 'rtl';
+  document.title = FG_T[lang].title;
+  document.querySelectorAll('[data-he]').forEach(function(el){ el.textContent = isEn ? el.dataset.en : el.dataset.he; });
+  document.querySelectorAll('[data-he-html]').forEach(function(el){ el.innerHTML = isEn ? el.dataset.enHtml : el.dataset.heHtml; });
+  document.querySelectorAll('[data-he-placeholder]').forEach(function(el){
+    var ph = isEn ? el.dataset.enPlaceholder : el.dataset.hePlaceholder;
+    el.placeholder = ph; el.setAttribute('aria-label', ph);
+  });
+  var langBtn = document.getElementById('fg-lang-btn');
+  if (langBtn) langBtn.textContent = isEn ? 'HE' : 'EN';
+}
+function toggleLang(){ applyLang(getLang() === 'he' ? 'en' : 'he'); }
+applyLang();
+window.addEventListener('storage', function(e){ if (e.key === 'lang') applyLang(); });
+
 document.getElementById('fg-form').addEventListener('submit', async function(e) {
   e.preventDefault();
+  var lang = getLang();
+  var t = FG_T[lang];
   const email = document.getElementById('fg-email').value.trim();
   const btn = document.getElementById('fg-btn');
   const msg = document.getElementById('fg-msg');
   btn.disabled = true;
-  btn.textContent = '...';
+  btn.textContent = t.sending;
   try {
     const r = await fetch('/api/subscribers?source=lead_magnet', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        email, lang: 'he',
+        email, lang: lang,
         consent_privacy: document.getElementById('fg-consent-privacy').checked,
         consent_marketing: document.getElementById('fg-consent-marketing').checked
       })
     });
     if (r.ok) {
       msg.className = 'msg ok';
-      msg.innerHTML = '✓ נשלח! בדוק את תיבת הדואר שלך (גם spam).<br><a href="https://api.whatsapp.com/send?text=' + encodeURIComponent('קיבלתי PDF חינמי עם 50 טיפים לצילום 📸 amitphotos.com/free-guide') + '" target="_blank" rel="noopener" style="display:inline-block;margin-top:.6rem;background:#25D366;color:#fff;padding:.4rem 1rem;border-radius:4px;text-decoration:none;font-size:.85rem">שתף עם חבר צלם ב-WhatsApp</a>';
+      msg.innerHTML = t.successHtml + '<br><a href="https://api.whatsapp.com/send?text=' + encodeURIComponent(t.shareText) + '" target="_blank" rel="noopener" style="display:inline-block;margin-top:.6rem;background:#25D366;color:#fff;padding:.4rem 1rem;border-radius:4px;text-decoration:none;font-size:.85rem">' + t.shareBtn + '</a>';
       document.getElementById('fg-email').value = '';
-      btn.textContent = 'נשלח ✓';
+      btn.textContent = t.sentBtn;
     } else {
       msg.className = 'msg err';
-      msg.textContent = 'שגיאה. נסה שוב.';
+      msg.textContent = t.err;
       btn.disabled = false;
-      btn.textContent = 'שלח לי את ה-PDF ←';
+      btn.textContent = t.submit;
     }
   } catch {
     msg.className = 'msg err';
-    msg.textContent = 'שגיאת רשת. נסה שוב.';
+    msg.textContent = t.errNet;
     btn.disabled = false;
-    btn.textContent = 'שלח לי את ה-PDF ←';
+    btn.textContent = t.submit;
   }
 });
 </script>
@@ -373,6 +466,7 @@ document.getElementById('fg-form').addEventListener('submit', async function(e) 
 
   return htmlRes(html);
 }
+export { handleFreeGuide };
 
 // ===== SUBSCRIBERS =====
 // מקורות הרשמה מוכרים בלבד — כל source אחר נדחה. "מדריך" (GUIDE) = הסכמה שיווקית אופציונלית,
