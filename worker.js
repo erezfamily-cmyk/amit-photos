@@ -375,6 +375,14 @@ document.getElementById('fg-form').addEventListener('submit', async function(e) 
 }
 
 // ===== SUBSCRIBERS =====
+// מקורות הרשמה מוכרים בלבד — כל source אחר נדחה. "מדריך" (GUIDE) = הסכמה שיווקית אופציונלית,
+// המדריך/PDF נמסר בכל מקרה. "ניוזלטר" (NEWSLETTER) = ההרשמה עצמה היא בקשת דיוור, שתיהן חובה.
+const GUIDE_SOURCES = ['popup', 'lead_magnet', 'subpage_strip'];
+const NEWSLETTER_SOURCES = ['homepage_section', 'newsletter_issue'];
+const KNOWN_SUBSCRIBER_SOURCES = [...GUIDE_SOURCES, ...NEWSLETTER_SOURCES];
+// גרסת נוסח ההסכמה/מדיניות הפרטיות בתוקף — לעדכן ידנית בכל שינוי מהותי בניסוח הצ'קבוקס או במדיניות.
+const CONSENT_POLICY_VERSION = '2026-09-25';
+
 async function handleSubscribers(request, env) {
   const method = request.method;
 
@@ -384,23 +392,45 @@ async function handleSubscribers(request, env) {
     await env.DB.prepare('ALTER TABLE subscribers ADD COLUMN source TEXT DEFAULT \'website\'').run().catch(() => {});
     await env.DB.prepare('ALTER TABLE subscribers ADD COLUMN lang TEXT DEFAULT \'he\'').run().catch(() => {});
     await env.DB.prepare('ALTER TABLE subscribers ADD COLUMN consent_given_at TEXT').run().catch(() => {});
+    await env.DB.prepare('ALTER TABLE subscribers ADD COLUMN consent_marketing INTEGER DEFAULT NULL').run().catch(() => {});
+    await env.DB.prepare('ALTER TABLE subscribers ADD COLUMN consent_marketing_at TEXT DEFAULT NULL').run().catch(() => {});
+    await env.DB.prepare('ALTER TABLE subscribers ADD COLUMN consent_marketing_source TEXT DEFAULT NULL').run().catch(() => {});
+    await env.DB.prepare('ALTER TABLE subscribers ADD COLUMN consent_policy_version TEXT DEFAULT NULL').run().catch(() => {});
 
+    // לא קוראים שדות כמו consent_marketing_at/consent_policy_version/mode מהגוף בכלל — הזמן,
+    // הגרסה והמקור נקבעים אך ורק בשרת, אף פעם לא סומכים על מה שהלקוח שולח.
     const { name, email, notes, lang, consent_privacy, consent_marketing } = await request.json().catch(() => ({}));
     if (!email) return jsonRes({ error: 'מייל חסר' }, 400, request);
     if (typeof email !== 'string' || email.length > 254 || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email))
       return jsonRes({ error: 'מייל לא תקין' }, 400, request);
     if (name && (typeof name !== 'string' || name.length > 120))
       return jsonRes({ error: 'שם ארוך מדי' }, 400, request);
-    if (!consent_privacy || !consent_marketing)
-      return jsonRes({ error: 'יש לאשר את מדיניות הפרטיות ואת קבלת הדיוור' }, 400, request);
-    const source = new URL(request.url).searchParams.get('source') || 'website';
+
+    const source = new URL(request.url).searchParams.get('source') || '';
+    if (!KNOWN_SUBSCRIBER_SOURCES.includes(source))
+      return jsonRes({ error: 'source לא מוכר' }, 400, request);
+
+    if (!consent_privacy) return jsonRes({ error: 'יש לאשר את מדיניות הפרטיות' }, 400, request);
+    if (NEWSLETTER_SOURCES.includes(source) && !consent_marketing)
+      return jsonRes({ error: 'יש לאשר את קבלת הדיוור כדי להירשם לניוזלטר' }, 400, request);
+
+    const marketingConsentGiven = !!consent_marketing;
+    const now = new Date().toISOString();
     const isEn = lang === 'en';
     const pdfUrl = isEn
       ? 'https://amitphotos.com/50tips-eng.pdf'
       : 'https://amitphotos.com/50tips-heb.pdf';
-    const existing = await env.DB.prepare('SELECT id FROM subscribers WHERE email = ?').bind(email).first();
+    const existing = await env.DB.prepare('SELECT id, consent_marketing FROM subscribers WHERE email = ?').bind(email).first();
     const isLeadMagnetSource = ['lead_magnet', 'popup', 'subpage_strip', 'homepage_section'].includes(source);
     if (existing) {
+      // הסכמה שיווקית יכולה רק להצטרף (NULL/0 → 1), לעולם לא לרדת (1 → 0) על סמך הרשמה חוזרת
+      // בלי הסכמה — "לא" בטופס לא מוחק "כן" שכבר ניתן. שדרוג מרענן timestamp/source/version לערכי
+      // הבקשה הנוכחית; אם כבר 1, אין צורך ב-UPDATE כפול.
+      if (marketingConsentGiven && existing.consent_marketing !== 1) {
+        await env.DB.prepare(
+          'UPDATE subscribers SET consent_marketing=1, consent_marketing_at=?, consent_marketing_source=?, consent_policy_version=? WHERE id=?'
+        ).bind(now, source, CONSENT_POLICY_VERSION, existing.id).run();
+      }
       // אם נרשם קיים מבקש PDF — שלח שוב
       if (isLeadMagnetSource && env.RESEND_API_KEY) {
         const fromEmail = env.FROM_EMAIL || 'Amit Photos <contact@amitphotos.com>';
@@ -437,10 +467,18 @@ async function handleSubscribers(request, env) {
       return jsonRes({ ok: true, already: true }, 200, request);
     }
     const id = crypto.randomUUID();
-    const now = new Date().toISOString();
     await env.DB.prepare(
-      'INSERT INTO subscribers (id, name, email, notes, source, lang, created_at, consent_given_at) VALUES (?,?,?,?,?,?,?,?)'
-    ).bind(id, name || '', email, notes || '', source, isEn ? 'en' : 'he', now, now).run();
+      `INSERT INTO subscribers
+       (id, name, email, notes, source, lang, created_at, consent_given_at,
+        consent_marketing, consent_marketing_at, consent_marketing_source, consent_policy_version)
+       VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`
+    ).bind(
+      id, name || '', email, notes || '', source, isEn ? 'en' : 'he', now, now,
+      marketingConsentGiven ? 1 : 0,
+      marketingConsentGiven ? now : null,
+      marketingConsentGiven ? source : null,
+      marketingConsentGiven ? CONSENT_POLICY_VERSION : null
+    ).run();
 
     // שלח מייל אישור לנרשם
     if (env.RESEND_API_KEY) {
@@ -525,6 +563,49 @@ async function handleSubscribers(request, env) {
 
   return jsonRes({ error: 'method not allowed' }, 405);
 }
+export { handleSubscribers, GUIDE_SOURCES, NEWSLETTER_SOURCES, CONSENT_POLICY_VERSION };
+
+// ===== CONSENT BACKFILL DIAGNOSTICS (internal helper — NOT an HTTP route) =====
+// בכוונה לא route/endpoint: אין path בניתוב הראשי שמפעיל את זה, ואין checkAuth כי אין דרך
+// חיצונית להגיע לכאן בכלל. הדרך היחידה להריץ את זה בפועל היא ידנית — CLI/script שמייבא את
+// הפונקציה או שאילתת SQL read-only דרך `wrangler d1 execute --remote`, לא HTTP.
+//
+// דוח אבחוני בלבד — לא קובע "מועמדים" ולא מציע תאריך חיתוך אוטומטי. בדקנו את היסטוריית ה-CI
+// (gh run list על deploy.yml ו-update-photos.yml) בניסיון לאתר מתי הקוד שאוכף consent_marketing
+// (commit 6bd17a27, נכתב 14.7.2026) הגיע בפועל ל-production — לא נמצאה הרצת deploy תואמת לא
+// ל-commit הזה ולא לשלושת ה-commits שאחריו בטווח ההרצות הזמין. כלומר: אין הוכחה אמינה למועד
+// הפריסה בפועל, ולכן שום שורה לא מסומנת כאן כ"בטוחה" ל-backfill — זו החלטה של בן אדם עם מידע
+// שאין לנו (למשל: לוג/זיכרון ישיר של הפריסה, או Cloudflare deployment history).
+// מחזיר רק פילוח גולמי לכל source: כמה שורות עם consent_marketing IS NULL, וטווח created_at —
+// בלי אימיילים, בלי שום PII. ⚠️ אין UPDATE כאן, ולא אמור להיות אחד.
+async function getConsentBackfillDiagnostics(env) {
+  const { results } = await env.DB.prepare(
+    `SELECT source,
+            COUNT(*) as count,
+            MIN(created_at) as earliest_created_at,
+            MAX(created_at) as latest_created_at
+     FROM subscribers
+     WHERE consent_marketing IS NULL
+     GROUP BY source
+     ORDER BY count DESC`
+  ).all();
+
+  const knownSources = [...GUIDE_SOURCES, ...NEWSLETTER_SOURCES];
+  const rows = (results || []).map(r => ({
+    ...r,
+    is_known_source: knownSources.includes(r.source),
+  }));
+
+  return {
+    generated_at: new Date().toISOString(),
+    note: 'דוח אבחוני בלבד. אין כאן קביעת "מועמדים" ל-backfill — לא נמצאה הוכחה אמינה למועד הפריסה ' +
+          'בפועל של אכיפת consent_marketing (ראה הערת קוד). כל שורה עם consent_marketing IS NULL ' +
+          'נשארת NULL (לא נכללת בדיוור) עד להחלטה ידנית מפורשת, נתמכת במידע שאין לכלי הזה.',
+    candidates_for_backfill: [],
+    null_consent_by_source: rows,
+  };
+}
+export { getConsentBackfillDiagnostics };
 
 // ===== CUSTOMERS =====
 async function handleCustomers(request, env) {
