@@ -1,9 +1,51 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import vm from 'node:vm';
 import { handleFreeGuide } from '../worker.js';
 
 function fakeEnv(photo = { id: 'p1', r2_key: 'p1.webp', title: 'Test Photo' }) {
   return { DB: { prepare: () => ({ first: async () => photo }) } };
+}
+
+function runClientScript(html, search = '') {
+  const scripts = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)];
+  const script = scripts.at(-1)?.[1];
+  assert.ok(script, 'free-guide client script not found');
+
+  const listeners = {};
+  const fetchBodies = [];
+  const elements = {
+    'fg-lang-btn': { textContent: '' },
+    'fg-email': { value: 'reader@example.com', placeholder: '', setAttribute() {} },
+    'fg-consent-privacy': { checked: true },
+    'fg-consent-marketing': { checked: false },
+    'fg-btn': { disabled: false, textContent: '' },
+    'fg-msg': { className: '', innerHTML: '', textContent: '' },
+    'fg-form': { addEventListener(type, fn) { listeners[type] = fn; } },
+  };
+  const storage = new Map();
+  const context = {
+    URLSearchParams,
+    encodeURIComponent,
+    location: { search },
+    localStorage: {
+      getItem(key) { return storage.get(key) ?? null; },
+      setItem(key, value) { storage.set(key, value); },
+    },
+    document: {
+      title: '',
+      documentElement: { lang: '', dir: '' },
+      querySelectorAll() { return []; },
+      getElementById(id) { return elements[id]; },
+    },
+    window: { addEventListener() {} },
+    fetch: async (_url, init) => {
+      fetchBodies.push(JSON.parse(init.body));
+      return { ok: true };
+    },
+  };
+  vm.runInNewContext(script, context);
+  return { context, elements, listeners, fetchBodies };
 }
 
 test('default (no ?lang=) renders Hebrew, dir=rtl', async () => {
@@ -43,12 +85,12 @@ test('all key strings are translated in English mode: sub, pdf-meta, live placeh
   assert.match(html, />I have read and agree to the/);
 });
 
-test('Hebrew mode is unaffected (regression) — original strings still present', async () => {
+test('Hebrew mode retains its translated form content and corrected consent copy', async () => {
   const res = await handleFreeGuide(new Request('https://amitphotos.com/free-guide/'), fakeEnv());
   const html = await res.text();
   assert.match(html, /id="fg-email"[^>]*\splaceholder="כתובת המייל שלך"/);
   assert.match(html, />שלח לי את ה-PDF/);
-  assert.match(html, />קבלת ה-PDF/);
+  assert.match(html, />ה-PDF יישלח גם ללא הרשמה לדיוור/);
 });
 
 test('consent logic unchanged: privacy required, marketing not required, both languages', async () => {
@@ -58,6 +100,36 @@ test('consent logic unchanged: privacy required, marketing not required, both la
     assert.match(html, /id="fg-consent-privacy" required/);
     assert.doesNotMatch(html, /id="fg-consent-marketing" required/);
   }
+});
+
+test('legal copy says PDF delivery is independent from optional marketing consent, both languages', async () => {
+  const he = await (await handleFreeGuide(new Request('https://amitphotos.com/free-guide/'), fakeEnv())).text();
+  const en = await (await handleFreeGuide(new Request('https://amitphotos.com/free-guide/?lang=en'), fakeEnv())).text();
+  assert.match(he, /ה-PDF יישלח גם ללא הרשמה לדיוור/);
+  assert.match(en, /The PDF is sent even without marketing signup/);
+  assert.doesNotMatch(he, /קבלת ה-PDF \+ הרשמה לניוזלטר/);
+  assert.doesNotMatch(en, /Getting the PDF also subscribes you/);
+});
+
+test('?lang=en can toggle EN → HE → EN and submit using the currently visible language', async () => {
+  const html = await (await handleFreeGuide(new Request('https://amitphotos.com/free-guide/?lang=en'), fakeEnv())).text();
+  const harness = runClientScript(html, '?lang=en');
+
+  assert.equal(harness.context.getLang(), 'en');
+  assert.equal(harness.elements['fg-lang-btn'].textContent, 'HE');
+
+  harness.context.toggleLang();
+  assert.equal(harness.context.getLang(), 'he');
+  assert.equal(harness.elements['fg-lang-btn'].textContent, 'EN');
+  await harness.listeners.submit({ preventDefault() {} });
+  assert.equal(harness.fetchBodies.at(-1).lang, 'he');
+
+  harness.context.toggleLang();
+  assert.equal(harness.context.getLang(), 'en');
+  assert.equal(harness.elements['fg-lang-btn'].textContent, 'HE');
+  harness.elements['fg-email'].value = 'reader@example.com';
+  await harness.listeners.submit({ preventDefault() {} });
+  assert.equal(harness.fetchBodies.at(-1).lang, 'en');
 });
 
 test('still posts source=lead_magnet, both languages', async () => {

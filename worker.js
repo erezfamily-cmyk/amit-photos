@@ -288,7 +288,7 @@ async function handleFreeGuide(request, env) {
       consentMarketing: 'מעוניין/ת לקבל עדכונים ותוכן שיווקי במייל',
       submit: 'שלח לי את ה-PDF ←',
       sending: '...',
-      legal: 'קבלת ה-PDF + הרשמה לניוזלטר החודשי של עמית ארז. ניתן לבטל בכל עת.',
+      legal: 'ה-PDF יישלח גם ללא הרשמה לדיוור. סימון תיבת העדכונים מצרף לניוזלטר; ניתן לבטל בכל עת.',
       back: '← חזור לאתר',
       langBtn: 'EN',
       successHtml: '✓ נשלח! בדוק את תיבת הדואר שלך (גם spam).',
@@ -313,7 +313,7 @@ async function handleFreeGuide(request, env) {
       consentMarketing: 'I want to receive updates and marketing content by email',
       submit: 'Send me the PDF →',
       sending: '...',
-      legal: `Getting the PDF also subscribes you to Amit Photos' monthly newsletter. Unsubscribe anytime.`,
+      legal: 'The PDF is sent even without marketing signup. Selecting the updates box subscribes you to the newsletter; unsubscribe anytime.',
       back: '→ Back to site',
       langBtn: 'HE',
       successHtml: '✓ Sent! Check your inbox (including spam).',
@@ -398,13 +398,19 @@ button:hover{background:#d4b87a}
 </div>
 <script>
 var FG_T = ${JSON.stringify(T)};
-function getLang(){
+function resolveInitialLang(){
   var qp = new URLSearchParams(location.search).get('lang');
   if (qp === 'en' || qp === 'he') { try { localStorage.setItem('lang', qp); } catch(e){} return qp; }
-  try { return localStorage.getItem('lang') || '${initialLang}'; } catch(e) { return '${initialLang}'; }
+  try {
+    var stored = localStorage.getItem('lang');
+    return stored === 'en' || stored === 'he' ? stored : '${initialLang}';
+  } catch(e) { return '${initialLang}'; }
 }
+var currentLang = resolveInitialLang();
+function getLang(){ return currentLang; }
 function applyLang(forceLang){
-  var lang = forceLang || getLang();
+  var lang = forceLang || currentLang;
+  currentLang = lang;
   if (forceLang) { try { localStorage.setItem('lang', forceLang); } catch(e){} }
   var isEn = lang === 'en';
   document.documentElement.lang = lang;
@@ -419,9 +425,11 @@ function applyLang(forceLang){
   var langBtn = document.getElementById('fg-lang-btn');
   if (langBtn) langBtn.textContent = isEn ? 'HE' : 'EN';
 }
-function toggleLang(){ applyLang(getLang() === 'he' ? 'en' : 'he'); }
-applyLang();
-window.addEventListener('storage', function(e){ if (e.key === 'lang') applyLang(); });
+function toggleLang(){ applyLang(currentLang === 'he' ? 'en' : 'he'); }
+applyLang(currentLang);
+window.addEventListener('storage', function(e){
+  if (e.key === 'lang' && (e.newValue === 'he' || e.newValue === 'en')) applyLang(e.newValue);
+});
 
 document.getElementById('fg-form').addEventListener('submit', async function(e) {
   e.preventDefault();
