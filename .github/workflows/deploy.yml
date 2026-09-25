@@ -12,6 +12,8 @@ on:
       - 'camera/**'
       - 'locations/**'
       - 'data/**'
+      - 'privacy/**'
+      - '.github/workflows/deploy.yml'
   workflow_dispatch:
 
 env:
