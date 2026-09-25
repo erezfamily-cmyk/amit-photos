@@ -294,6 +294,7 @@ const TRANSLATIONS = {
     'cart.to-pay':      'לתשלום',
     'cart.checkout':    'תשלום דרך PayPal →',
     'cart.note':        'מ-5 תמונות ומעלה — הנחה של 20% אוטומטית',
+    'payments.disabled': 'אפשרות הרכישה נמצאת בשדרוג אבטחה ותחזור בקרוב',
 
     // Buy modal
     'buy.label':        'רכישת תמונה',
@@ -664,6 +665,7 @@ const TRANSLATIONS = {
     'cart.to-pay':      'To Pay',
     'cart.checkout':    'Pay via PayPal →',
     'cart.note':        '5+ photos — 20% discount applied automatically',
+    'payments.disabled': 'Purchasing is temporarily unavailable while we upgrade payment security.',
 
     // Buy modal
     'buy.label':        'Purchase Photo',

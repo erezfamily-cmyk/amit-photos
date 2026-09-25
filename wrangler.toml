@@ -3,6 +3,11 @@ main = "worker.js"
 compatibility_date = "2026-05-28"
 compatibility_flags = ["nodejs_compat"]
 
+[vars]
+# Temporary payments lockdown while migrating PayPal to Orders API v2.
+# Flip to "true" once the new integration is verified end-to-end.
+PAYMENTS_ENABLED = "false"
+
 [assets]
 directory = "."
 binding = "ASSETS"
