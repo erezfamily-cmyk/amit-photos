@@ -90,30 +90,35 @@ async function checkAuth(request, env) {
 
 | script | מה עושה |
 |--------|---------|
-| `fetch_photos.py` | סנכרון Drive → photos.json (יומי דרך GitHub Actions) |
+| `agent_photos.py` | **זה שרץ בפועל כל יום** ב-`update-photos.yml` ("הרצת Agent") — סורק Drive, מנתח תמונות עם Claude Vision, מייצר כותרות/קטגוריות עברית, מעדכן `data/photos.json` |
+| `fetch_photos.py` | גרסה מקבילה/ישנה יותר עם לוגיקה כמעט זהה (כולל `find_folder`) — **לא רצה בשום workflow**, נשארה לריצה ידנית/`--list` |
+| `auto_import_new_photos.py` | מזהה תמונות ב-`photos.json` שלא ב-D1 (לפי Drive ID), ממיר ל-WebP, מעלה ל-R2 ומכניס ל-D1 — **רץ אוטומטית כל יום** אחרי `agent_photos.py` (ראה למטה) |
 | `migrate_to_r2.py` | העברת photos.json → D1 דרך `/api/upload` (יוצר UUID) |
 | `fix_drive_in_d1.py` | מתקן Drive URLs ב-D1 → R2 WebP (שמר Drive ID כ-key) |
 | `convert_r2_jpg_to_webp.py` | ממיר JPG ב-R2 ל-WebP, מעדכן D1 (89% חיסכון) |
 | `migrate_gallery_to_r2.py` | מעדכן photos.json URLs ל-R2 (פחות רלוונטי כשD1 ראשי) |
 
+שני הסקריפטים שסורקים את תיקיית `Portfolio` ב-Drive תומכים ב-`PORTFOLIO_FOLDER_ID` (env var) — עוקף לגמרי חיפוש לפי שם ומונע בחירה שרירותית אם יש כמה תיקיות באותו שם.
+
 ---
 
 ## GitHub Actions — עדכון תמונות
 
-`update-photos.yml` רץ כל יום 06:00 UTC:
+`update-photos.yml` רץ כל יום 06:00 UTC, כולל **ייבוא אוטומטי מלא ל-D1+R2**:
 
-1. `fetch_photos.py` — מסנכרן Drive → photos.json
-2. commit + push אם יש שינויים
+1. `agent_photos.py` — סורק Drive, מעדכן `data/photos.json`
+2. `auto_import_new_photos.py` — כל תמונה חדשה ב-photos.json (Drive ID שלא ב-D1) מומרת ל-WebP, מועלית ל-R2 ומוכנסת ל-D1 (מייצא exit code שגיאה אם ייבוא כלשהו נכשל)
+3. `generate_sitemap.py`, `bump_versions.py`
+4. commit + push, deploy ל-Cloudflare, cache purge
 
-**בעיה ידועה:** תמונות חדשות מ-Drive נכנסות לphotos.json אבל לא ל-D1 — לא יוצגו בגלריה.
-**TODO:** להוסיף שלב שמכניס תמונות חדשות ל-D1 + R2 כ-WebP.
+**הערה:** תיעוד קודם כאן תיאר את שלב 2 כ-TODO פתוח — זה כבר לא נכון, השלב רץ בפועל מזה זמן.
 
 ---
 
 ## הוספת תמונות (כרגע)
 
 **דרך Admin (`/admin`):** Upload → R2 + D1 עם UUID → מוצג מיד
-**דרך Drive:** Drive → photos.json (יומי) → לא נכנס ל-D1 → לא מוצג
+**דרך Drive:** נכנס ל-D1+R2 אוטומטית תוך יום (ה-workflow היומי) — לא מיידי כמו Admin
 
 ---
 
