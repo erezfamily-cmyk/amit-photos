@@ -2536,7 +2536,8 @@ async function handleNewsletter(request, env) {
   // חוק הספאם (תיקון 40) — כל דיוור שיווקי חייב סימון "פרסומת" בשורת הנושא
   const subject = /^\s*(פרסומת|advertisement)\s*[:\-]/i.test(rawSubject) ? rawSubject : `פרסומת: ${rawSubject}`;
 
-  const { results: subscribers } = await env.DB.prepare('SELECT id, email, name FROM subscribers').all();
+  // רק מי שהסכים במפורש לדיוור שיווקי — זה בדיוק מה שהמייל הזה הוא, לפי הסימון "פרסומת:" למעלה
+  const { results: subscribers } = await env.DB.prepare('SELECT id, email, name FROM subscribers WHERE consent_marketing = 1').all();
   if (!subscribers.length) return jsonRes({ error: 'אין נרשמים ברשימה' }, 400, request);
 
   const fromEmail = env.FROM_EMAIL || 'contact@amitphotos.com';
@@ -2565,6 +2566,7 @@ async function handleNewsletter(request, env) {
   const sent = Array.isArray(data.data) ? data.data.length : subscribers.length;
   return jsonRes({ ok: true, sent, total: subscribers.length }, 200, request);
 }
+export { handleNewsletter };
 
 // ===== REPLY =====
 async function handleReply(request, env) {
@@ -2650,6 +2652,7 @@ async function handleUnsubscribe(request, env) {
 
   return msgHtml('קישור לא תקין', 'הקישור להסרה אינו תקין.', '❌');
 }
+export { handleUnsubscribe };
 
 // ===== ANALYTICS =====
 async function trackPageView(env, request, page) {
@@ -7389,7 +7392,8 @@ async function handleAdminNlSend(request, env, id) {
   if (issue.status !== 'published') return jsonRes({ error: 'יש לפרסם את הגיליון לפני שליחה' }, 400, request);
 
   await env.DB.prepare("ALTER TABLE subscribers ADD COLUMN lang TEXT DEFAULT 'he'").run().catch(() => {});
-  const { results: subscribers } = await env.DB.prepare('SELECT id, email, name, lang FROM subscribers').all();
+  // רק מי שהסכים במפורש לדיוור שיווקי
+  const { results: subscribers } = await env.DB.prepare('SELECT id, email, name, lang FROM subscribers WHERE consent_marketing = 1').all();
   if (!subscribers.length) return jsonRes({ error: 'אין נרשמים ברשימה' }, 400, request);
 
   const origin = new URL(request.url).origin;
@@ -7421,6 +7425,7 @@ async function handleAdminNlSend(request, env, id) {
   const sent = Array.isArray(data.data) ? data.data.length : subscribers.length;
   return jsonRes({ ok: true, sent }, 200, request);
 }
+export { handleAdminNlSend };
 
 // ===== MAIN ROUTER =====
 export default {
@@ -7826,10 +7831,12 @@ async function runWelcomeSequenceCron(env) {
   if (!env.RESEND_API_KEY) return;
   try {
     await env.DB.prepare("ALTER TABLE subscribers ADD COLUMN welcome_stage INTEGER DEFAULT 0").run().catch(() => {});
+    // רק מי שהסכים במפורש לדיוור שיווקי — מיילים 2/3 הם המשך רצף שיווקי-קידומי, לא מסירה
+    // חד-פעמית של המדריך (מייל 1, שנשלח מ-handleSubscribers ונחשב transactional)
     const { results } = await env.DB.prepare(
       `SELECT id, email, name, lang, created_at, COALESCE(welcome_stage, 0) AS ws
        FROM subscribers
-       WHERE created_at >= ? AND COALESCE(welcome_stage, 0) < 3
+       WHERE created_at >= ? AND COALESCE(welcome_stage, 0) < 3 AND consent_marketing = 1
        LIMIT 50`
     ).bind(WELCOME_LAUNCH_DATE).all();
 
@@ -7860,6 +7867,7 @@ async function runWelcomeSequenceCron(env) {
     console.error('[welcome cron] error:', e.message);
   }
 }
+export { runWelcomeSequenceCron };
 
 async function runPinterestCronSync(env) {
   try {
