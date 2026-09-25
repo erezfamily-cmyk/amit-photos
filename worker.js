@@ -30,6 +30,26 @@ function jsonRes(data, status = 200, request = null) {
 }
 function unauth(request) { return jsonRes({ error: 'לא מורשה' }, 401, request); }
 
+// ===== PAYMENTS KILL SWITCH =====
+// Temporary lockdown while migrating PayPal to Orders API v2. Fail-closed: missing/unrecognized
+// values are treated as disabled, so a misconfigured or unset var never accidentally re-enables
+// payments. Toggle via the PAYMENTS_ENABLED var in wrangler.toml (or the dashboard).
+function paymentsEnabled(env) {
+  return env.PAYMENTS_ENABLED === 'true';
+}
+function paymentsDisabledResponse(request) {
+  return jsonRes({
+    error: 'PAYMENTS_TEMPORARILY_DISABLED',
+    message: {
+      he: 'אפשרות הרכישה נמצאת בשדרוג אבטחה ותחזור בקרוב',
+      en: 'Purchasing is temporarily unavailable while we upgrade payment security.',
+    },
+  }, 503, request);
+}
+async function handlePaymentsStatus(request, env) {
+  return jsonRes({ enabled: paymentsEnabled(env) }, 200, request);
+}
+
 // ===== CACHE INVALIDATION =====
 // caches.default (Workers Cache API) אינו בשימוש היום בשום מקום בקוד הזה עבור /api/photos או
 // /data/photos.json — שניהם כבר נשלחים עם Cache-Control: no-store, ונכסים סטטיים דרך env.ASSETS.fetch
@@ -47,7 +67,15 @@ async function invalidatePublicPhotosCache(origin = 'https://amitphotos.com') {
     // caches.default לא זמין בסביבה הזו (למשל טסט מקומי) — no-op בטוח
   }
 }
-export { invalidatePublicPhotosCache };
+export {
+  invalidatePublicPhotosCache,
+  paymentsEnabled,
+  paymentsDisabledResponse,
+  handlePaymentsStatus,
+  handleVerifyPayment,
+  handlePrintOrderComplete,
+  handleDownload,
+};
 
 const SEC_HEADERS = {
   'X-Frame-Options': 'SAMEORIGIN',
@@ -1780,6 +1808,7 @@ async function sendPurchaseTelegram(env, { titles, size, amount, currency, txnId
 
 // ===== VERIFY PAYPAL PAYMENT (PDT — server-to-server) =====
 async function handleVerifyPayment(request, env, ctx) {
+  if (!paymentsEnabled(env)) return paymentsDisabledResponse(request);
   if (request.method !== 'GET') return jsonRes({ error: 'method not allowed' }, 405, request);
   const url = new URL(request.url);
   const params = url.searchParams;
@@ -1976,6 +2005,7 @@ async function handlePrintQuote(request, env) {
 }
 
 async function handlePrintOrderComplete(request, env) {
+  if (!paymentsEnabled(env)) return paymentsDisabledResponse(request);
   if (request.method !== 'POST') return jsonRes({ error: 'method not allowed' }, 405, request);
   const { tx, itemNumber, allParams } = await request.json().catch(() => ({}));
   if (!tx || !itemNumber) return jsonRes({ error: 'חסרים פרמטרים' }, 400, request);
@@ -7336,6 +7366,7 @@ export default {
     if (path === '/api/unsubscribe')       return handleUnsubscribe(request, env);
     if (path === '/api/reply')             return handleReply(request, env);
     if (path === '/api/verify-payment')    return handleVerifyPayment(request, env, ctx);
+    if (path === '/api/payments-status')   return handlePaymentsStatus(request, env);
     if (path === '/api/admin/purchases')   return handleAdminPurchases(request, env);
     if (path === '/api/admin/create-token' && request.method === 'POST') return handleAdminCreateToken(request, env);
     if (path === '/api/new-badge-settings') return handleNewBadgeSettings(request, env);

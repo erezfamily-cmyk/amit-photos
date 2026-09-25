@@ -48,9 +48,11 @@ function isNew(photo) {
 }
 
 // ===== STATE =====
-const PURCHASES_ENABLED = true;
-const TEST_PHOTO_ID = '1jmBaBvk8rKoV5rvARPayvd010U_CW_gp'; // תמונת בדיקה בלבד
-function canBuy(photo) { return PURCHASES_ENABLED || photo?.id === TEST_PHOTO_ID; }
+// Fail-closed: starts disabled, flips on only if the server confirms PAYMENTS_ENABLED=true
+// (see loadPhotos()). No per-photo bypass — a real PayPal charge with no server-side
+// fulfillment would leave a customer paid and empty-handed.
+let PURCHASES_ENABLED = false;
+function canBuy(photo) { return PURCHASES_ENABLED; }
 let allPhotos = [];
 let filteredPhotos = [];
 let featuredIds = [];
@@ -218,10 +220,15 @@ async function loadPhotos() {
   showSkeletons(grid);
 
   try {
-    const [jsonRes, apiRes] = await Promise.all([
+    const [jsonRes, apiRes, paymentsRes] = await Promise.all([
       fetch('data/photos.json'),
-      fetch('/api/photos').catch(() => null)
+      fetch('/api/photos').catch(() => null),
+      fetch('/api/payments-status').catch(() => null)
     ]);
+    if (paymentsRes?.ok) {
+      const status = await paymentsRes.json().catch(() => null);
+      PURCHASES_ENABLED = status?.enabled === true;
+    }
     const jsonPhotos = jsonRes.ok ? await jsonRes.json().catch(() => []) : [];
     if (apiRes?.ok) {
       const apiPhotos = await apiRes.json().catch(() => []);
@@ -1478,6 +1485,7 @@ function renderCartSummary() {
 }
 
 function cartCheckout() {
+  if (!PURCHASES_ENABLED) { alert(t('payments.disabled')); return; }
   if (cart.length === 0) return;
   const price = getCartPrices()[cartSize] || 39;
   const total = cart.length * price;
@@ -1586,6 +1594,7 @@ function initBuyModal() {
 
 function openBuyModal(photo) {
   if (!photo) return;
+  if (!PURCHASES_ENABLED) { alert(t('payments.disabled')); return; }
   trackEvent('purchase_intent', photo);
   const modal = document.getElementById('buy-modal');
   modal._photo = photo;
@@ -1776,6 +1785,7 @@ const PrintShop = (() => {
   }
 
   async function open(photo) {
+    if (!PURCHASES_ENABLED) { alert(t('payments.disabled')); return; }
     trackEvent('print_intent', photo);
     currentPhoto = photo;
     selectedType = null; selectedSku = null; selectedPrice = null;
@@ -2126,6 +2136,7 @@ const PrintShop = (() => {
   }
 
   async function pay() {
+    if (!PURCHASES_ENABLED) { alert(t('payments.disabled')); return; }
     const name = document.getElementById('print-name').value.trim();
     const phone = document.getElementById('print-phone').value.trim();
     const email = document.getElementById('print-email').value.trim();
