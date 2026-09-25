@@ -507,12 +507,10 @@ const aperEV = [5,4,3,2,1,0,-1];
 const canvas = document.getElementById('simCanvas');
 const ctx = canvas.getContext('2d');
 
+// אין עדיין תמונת בסיס אמיתית — הסצנה הפרוצדורלית (drawFallback) היא ברירת המחדל בפועל,
+// לא נפילה-לאחור. קודם ניסינו לטעון assets/img/camera/sample-landscape.jpg בכל טעינת עמוד,
+// אבל הקובץ מעולם לא הועלה — 404+שגיאת console מיותרים בכל ביקור.
 let baseImg = null;
-const img = new Image();
-img.crossOrigin = 'anonymous';
-img.src = '/assets/img/camera/sample-landscape.jpg';
-img.onerror = () => { baseImg = null; drawFallback(); };
-img.onload = () => { baseImg = img; redraw(); };
 
 function drawFallback() {
   const w = canvas.width, h = canvas.height;
