@@ -176,6 +176,20 @@ def fetch_ga4_data(token):
     }
 
 
+def format_duration(seconds):
+    """מפורמט זמן קריא לבני אדם: מתחת לדקה → שניות, מעל דקה → mm:ss דקות, מעל שעה → h:mm שעות.
+    לפני התיקון הוצג המספר הגולמי בשניות עם הסיומת 'ש׳' (=שעות בעברית), כך ש-3071 שניות
+    נראה כמו 3071 שעות."""
+    total = int(round(float(seconds)))
+    if total < 60:
+        return f"{total} שניות"
+    minutes, secs = divmod(total, 60)
+    if minutes < 60:
+        return f"{minutes}:{secs:02d} דקות"
+    hours, mins = divmod(minutes, 60)
+    return f"{hours}:{mins:02d} שעות"
+
+
 def build_data_summary(data):
     s, p = data["summary"], data["prev_week"]
     def delta(c, pv):
@@ -191,7 +205,7 @@ def build_data_summary(data):
         f"משתמשים פעילים:  {s['activeUsers']}  {delta(s['activeUsers'], p['activeUsers'])}",
         f"צפיות עמוד:      {s['pageViews']}  {delta(s['pageViews'], p['pageViews'])}",
         f"Bounce rate:     {s['bounceRate']}",
-        f"זמן ממוצע בסשן: {s['avgSessionSec']} שניות",
+        f"זמן ממוצע בסשן: {format_duration(s['avgSessionSec'])}",
         f"משתמשים חדשים:   {s['newUsers']}",
         "", "--- עמודים הכי פופולריים ---",
     ]
@@ -293,7 +307,7 @@ def build_html_email(data, analysis):
     {card("צפיות", s['pageViews'], p['pageViews'])}
     {card("משתמשים חדשים", s['newUsers'])}
     {card("Bounce rate", s['bounceRate'])}
-    {card("זמן ממוצע", s['avgSessionSec'] + "ש׳")}
+    {card("זמן ממוצע", format_duration(s['avgSessionSec']))}
   </div>
   <div style="padding:0 24px 20px">
     <h2 style="color:#2c3e50;margin:0 0 10px;font-size:1em">ניתוח והמלצות — Claude</h2>
