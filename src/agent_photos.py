@@ -32,6 +32,8 @@ CREDENTIALS_FILE = ROOT / "credentials.json"
 TOKEN_FILE = ROOT / "token.json"
 
 # ===== CONFIG =====
+# PORTFOLIO_FOLDER_ID (מזהה Drive מפורש) עוקף לגמרי חיפוש לפי שם — ראה find_folder/resolve_portfolio_folder.
+PORTFOLIO_FOLDER_ID = os.environ.get("PORTFOLIO_FOLDER_ID", "")
 PORTFOLIO_FOLDER = "Portfolio"
 SCOPES = ["https://www.googleapis.com/auth/drive.readonly"]
 DRIVE_API = "https://www.googleapis.com/drive/v3"
@@ -100,7 +102,24 @@ def find_folder(session, name, parent_id="root"):
     q = f"name='{name}' and mimeType='application/vnd.google-apps.folder' and '{parent_id}' in parents and trashed=false"
     data = drive_get(session, "files", {"q": q, "fields": "files(id,name)"})
     files = data.get("files", [])
+    if len(files) > 1:
+        ids = ", ".join(f["id"] for f in files)
+        raise RuntimeError(
+            f"נמצאו {len(files)} תיקיות בשם '{name}' — לא בוחר אחת מהן שרירותית. "
+            f"הגדר PORTFOLIO_FOLDER_ID מפורש (אחד מ: {ids})."
+        )
     return files[0] if files else None
+
+
+def get_folder_by_id(session, folder_id):
+    return drive_get(session, f"files/{folder_id}", {"fields": "id,name"})
+
+
+def resolve_portfolio_folder(session):
+    """PORTFOLIO_FOLDER_ID (אם מוגדר) עוקף לגמרי חיפוש לפי שם."""
+    if PORTFOLIO_FOLDER_ID:
+        return get_folder_by_id(session, PORTFOLIO_FOLDER_ID)
+    return find_folder(session, PORTFOLIO_FOLDER)
 
 
 def list_subfolders(session, parent_id):
@@ -296,11 +315,15 @@ def main():
             save_last_scan_time(now_iso)
             return
 
-    print(f"📂 מחפש תיקייה '{PORTFOLIO_FOLDER}'...")
-    portfolio = find_folder(session, PORTFOLIO_FOLDER)
+    if PORTFOLIO_FOLDER_ID:
+        print(f"📂 מאתר תיקיית Portfolio לפי PORTFOLIO_FOLDER_ID={PORTFOLIO_FOLDER_ID}...")
+    else:
+        print(f"📂 PORTFOLIO_FOLDER_ID לא מוגדר — מחפש תיקייה בשם '{PORTFOLIO_FOLDER}'...")
+    portfolio = resolve_portfolio_folder(session)
     if not portfolio:
         print(f"❌ לא נמצאה תיקייה '{PORTFOLIO_FOLDER}' ב-Drive")
         sys.exit(1)
+    print(f"   ✓ נבחרה: '{portfolio.get('name', '?')}' (id={portfolio['id']})")
 
     # סריקה רקורסיבית — קטגוריה = תיקייה שיש בה תמונות (לא משנה כמה רמות עמוק)
     def collect_folders(parent_id, parent_name=None):
