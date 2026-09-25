@@ -338,7 +338,7 @@ nav#main-nav .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px)
         <button type="submit" id="nav-nl-btn"></button>
       </form>
       <label class="nl-consent-row"><input type="checkbox" id="nav-nl-consent-privacy" required><span id="nl-consent-privacy"></span></label>
-      <label class="nl-consent-row"><input type="checkbox" id="nav-nl-consent-marketing" required><span id="nl-consent-marketing"></span></label>
+      <label class="nl-consent-row"><input type="checkbox" id="nav-nl-consent-marketing"><span id="nl-consent-marketing"></span></label>
       <div class="nl-msg" id="nav-nl-msg"></div>
       <a class="nl-more" id="nl-more" href="/free-guide/"></a>`;
     document.body.appendChild(strip);
