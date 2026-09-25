@@ -1834,7 +1834,7 @@
     "width": 1504,
     "height": 1000,
     "exif": null,
-    "added_at": "2026-09-24"
+    "added_at": "2026-09-25"
   },
   {
     "id": "1LuoH9OWwTFPRnDvZihmDE5hyBz3Kt815",
@@ -11314,6 +11314,48 @@
     "added_at": "2026-06-21"
   },
   {
+    "id": "1Hf6F1nz_5dwRh-sY3TM3StAnU0nqOGK9",
+    "title": "הרים בעננים גיאורגיים",
+    "category": "גאורגיה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1Hf6F1nz_5dwRh-sY3TM3StAnU0nqOGK9.webp",
+    "thumbnail": "/photos/thumb/1Hf6F1nz_5dwRh-sY3TM3StAnU0nqOGK9.webp",
+    "description": "פסגות הרים תלולות מוקפות בעננים זהובים בשקיעה בגיאורגיה",
+    "filename": "DSC_9206-2.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 200,
+      "aperture": 5.6,
+      "iso": 140,
+      "shutter": 0.003125
+    },
+    "added_at": "2026-09-25"
+  },
+  {
+    "id": "1bSc5sE07AziH05B301GVV-ix6hBLpB7H",
+    "title": "מדפי חמוצים גיאורגיים",
+    "category": "גאורגיה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1bSc5sE07AziH05B301GVV-ix6hBLpB7H.webp",
+    "thumbnail": "/photos/thumb/1bSc5sE07AziH05B301GVV-ix6hBLpB7H.webp",
+    "description": "תצוגת חמוצים מסורתיים בגיאורגיה בצנצנות זכוכית עם מכסים צהובים",
+    "filename": "DSC_9214.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 44,
+      "aperture": 11,
+      "iso": 3600,
+      "shutter": 0.016666668
+    },
+    "added_at": "2026-09-25"
+  },
+  {
     "id": "1toFUd2s_cxvcYm1HaoGaCLZaGzkRqU9D",
     "title": "פרות בגאורגיה",
     "category": "גאורגיה",
@@ -11333,6 +11375,321 @@
       "shutter": 0.025
     },
     "added_at": "2026-09-23"
+  },
+  {
+    "id": "1aU-eK-g5a_NaXUjjy9Bg2tZ56fe48SEG",
+    "title": "הר מכוסה ערפל",
+    "category": "גאורגיה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1aU-eK-g5a_NaXUjjy9Bg2tZ56fe48SEG.webp",
+    "thumbnail": "/photos/thumb/1aU-eK-g5a_NaXUjjy9Bg2tZ56fe48SEG.webp",
+    "description": "הר מיוער בגאורגיה הצף בעננים לבנים וצפופים",
+    "filename": "DSC_9254.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 82,
+      "aperture": 5.6,
+      "iso": 64,
+      "shutter": 0.004
+    },
+    "added_at": "2026-09-25"
+  },
+  {
+    "id": "1zaWISr14KVt1cIEJXKMBbwAnkUMeiOBI",
+    "title": "עדר סוסים בשדה ירוק",
+    "category": "גאורגיה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1zaWISr14KVt1cIEJXKMBbwAnkUMeiOBI.webp",
+    "thumbnail": "/photos/thumb/1zaWISr14KVt1cIEJXKMBbwAnkUMeiOBI.webp",
+    "description": "סוסים רועים בשדה ירוק בגבעה עם יער צפוף בחלק האחורי בגיאורגיה.",
+    "filename": "DSC_9259.jpg",
+    "width": 10816,
+    "height": 7200,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 200,
+      "aperture": 5.6,
+      "iso": 125,
+      "shutter": 0.003125
+    },
+    "added_at": "2026-09-25"
+  },
+  {
+    "id": "1Uueu7LeUnN8QsigBP5LtFCHM9Hmxmmfz",
+    "title": "מגדלי שומGuards בגאורגיה",
+    "category": "גאורגיה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1Uueu7LeUnN8QsigBP5LtFCHM9Hmxmmfz.webp",
+    "thumbnail": "/photos/thumb/1Uueu7LeUnN8QsigBP5LtFCHM9Hmxmmfz.webp",
+    "description": "שני מגדלים עתיקים שמורים בעדי יער צפוף בהרי קווקסוס.",
+    "filename": "DSC_9261.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 200,
+      "aperture": 5.6,
+      "iso": 100,
+      "shutter": 0.003125
+    },
+    "added_at": "2026-09-25"
+  },
+  {
+    "id": "1scZrmrMwbYcdlTcnHMmLcgBIXBr6xVi7",
+    "title": "יער בערפל הרים",
+    "category": "גאורגיה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1scZrmrMwbYcdlTcnHMmLcgBIXBr6xVi7.webp",
+    "thumbnail": "/photos/thumb/1scZrmrMwbYcdlTcnHMmLcgBIXBr6xVi7.webp",
+    "description": "נוף הררי עטוף בערפל כבד עם עצים אורנים בדומיננטיות",
+    "filename": "DSC_9264.jpg",
+    "width": 4677,
+    "height": 3208,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 200,
+      "aperture": 5.6,
+      "iso": 64,
+      "shutter": 0.0015625
+    },
+    "added_at": "2026-09-25"
+  },
+  {
+    "id": "1QjVUEg6tqbQuipiSfVmFOhhGn8pqLRRz",
+    "title": "הר מושלج בגאורגיה",
+    "category": "גאורגיה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1QjVUEg6tqbQuipiSfVmFOhhGn8pqLRRz.webp",
+    "thumbnail": "/photos/thumb/1QjVUEg6tqbQuipiSfVmFOhhGn8pqLRRz.webp",
+    "description": "פסגה מושלגת של הר גבוה עם מדרונות סלעיים וקרחון לבן בתוך נוף הרי עתיר ירק",
+    "filename": "DSC_9273.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 112,
+      "aperture": 5.6,
+      "iso": 64,
+      "shutter": 0.0015625
+    },
+    "added_at": "2026-09-25"
+  },
+  {
+    "id": "1VOICki6RkdzwXB8xp2H4HsaKpZb0bRu_",
+    "title": "הרים בעננים",
+    "category": "גאורגיה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1VOICki6RkdzwXB8xp2H4HsaKpZb0bRu_.webp",
+    "thumbnail": "/photos/thumb/1VOICki6RkdzwXB8xp2H4HsaKpZb0bRu_.webp",
+    "description": "שרשרת הרים גבוהים עטופה בעננים צפופים מעל יער אורן ירוק",
+    "filename": "DSC_9283.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 105,
+      "aperture": 5.6,
+      "iso": 64,
+      "shutter": 0.003125
+    },
+    "added_at": "2026-09-25"
+  },
+  {
+    "id": "1guMyf0Kh9pREh4tvlHUSicCyvM9uUZ1Y",
+    "title": "שביל בהרי גיאורגיה",
+    "category": "גאורגיה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1guMyf0Kh9pREh4tvlHUSicCyvM9uUZ1Y.webp",
+    "thumbnail": "/photos/thumb/1guMyf0Kh9pREh4tvlHUSicCyvM9uUZ1Y.webp",
+    "description": "שביל עפר בין יערות אורנים עם הרים שלגיים ברקע בגיאורגיה",
+    "filename": "DSC_9291.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 31,
+      "aperture": 5.6,
+      "iso": 64,
+      "shutter": 0.00625
+    },
+    "added_at": "2026-09-25"
+  },
+  {
+    "id": "1Hrc00mfUMGSA9nFlaxjcj-G7yEk0ectE",
+    "title": "פרחים סגולים בין שרכים",
+    "category": "גאורגיה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1Hrc00mfUMGSA9nFlaxjcj-G7yEk0ectE.webp",
+    "thumbnail": "/photos/thumb/1Hrc00mfUMGSA9nFlaxjcj-G7yEk0ectE.webp",
+    "description": "צמחי פרחים סגולים מצמיחים בין שרכים ירוקים בעיר בגיאורגיה",
+    "filename": "DSC_9294.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 34,
+      "aperture": 4.2,
+      "iso": 64,
+      "shutter": 0.0125
+    },
+    "added_at": "2026-09-25"
+  },
+  {
+    "id": "1ltSPcKOpWe5b7CSMgeJr53Zf-W6Xr86i",
+    "title": "עצים עתיקים בגאורגיה",
+    "category": "גאורגיה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1ltSPcKOpWe5b7CSMgeJr53Zf-W6Xr86i.webp",
+    "thumbnail": "/photos/thumb/1ltSPcKOpWe5b7CSMgeJr53Zf-W6Xr86i.webp",
+    "description": "גזעי עצים שרופים בעטיפת אזובה ירוקה בערך הטבע.",
+    "filename": "DSC_9323.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 95,
+      "aperture": 22,
+      "iso": 10000,
+      "shutter": 0.00625
+    },
+    "added_at": "2026-09-25"
+  },
+  {
+    "id": "1wjLT-hutHz9TWXvXiS_Q9ynAzLIx3xCY",
+    "title": "כפר בהרי גיאורגיה",
+    "category": "גאורגיה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1wjLT-hutHz9TWXvXiS_Q9ynAzLIx3xCY.webp",
+    "thumbnail": "/photos/thumb/1wjLT-hutHz9TWXvXiS_Q9ynAzLIx3xCY.webp",
+    "description": "חממה כפרית עתיקה ב טבע הררי עם הרים מושלגים ביער צפוף",
+    "filename": "DSC_9327.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 22,
+      "aperture": 5,
+      "iso": 64,
+      "shutter": 0.00625
+    },
+    "added_at": "2026-09-25"
+  },
+  {
+    "id": "1jwpEcQH3NSLM3EdDrHrPdoLC4zEezev2",
+    "title": "הר שלג בגאורגיה",
+    "category": "גאורגיה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1jwpEcQH3NSLM3EdDrHrPdoLC4zEezev2.webp",
+    "thumbnail": "/photos/thumb/1jwpEcQH3NSLM3EdDrHrPdoLC4zEezev2.webp",
+    "description": "פסגה מושלגת של הר גבוה בטבע הרי של גאורגיה בצילום שחור לבן",
+    "filename": "DSC_9344.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 150,
+      "aperture": 5.6,
+      "iso": 125,
+      "shutter": 0.004
+    },
+    "added_at": "2026-09-25"
+  },
+  {
+    "id": "15ajueRBNI5HP68qir7ri5hFT8e0Ll-9N",
+    "title": "פרחים סגולים על גדר",
+    "category": "גאורגיה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/15ajueRBNI5HP68qir7ri5hFT8e0Ll-9N.webp",
+    "thumbnail": "/photos/thumb/15ajueRBNI5HP68qir7ri5hFT8e0Ll-9N.webp",
+    "description": "צמח פורח עם פרחים סגולים מפוקפקים על רקע גדר עץ ישנה ודשא ירוק.",
+    "filename": "DSC_9347.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 95,
+      "aperture": 5.3,
+      "iso": 720,
+      "shutter": 0.00625
+    },
+    "added_at": "2026-09-25"
+  },
+  {
+    "id": "1iISOEw1HE0XlyWjdNEC4LTU8X9F9lR-w",
+    "title": "גדר עתיקה בגאורגיה",
+    "category": "גאורגיה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1iISOEw1HE0XlyWjdNEC4LTU8X9F9lR-w.webp",
+    "thumbnail": "/photos/thumb/1iISOEw1HE0XlyWjdNEC4LTU8X9F9lR-w.webp",
+    "description": "גדר עץ מעוקלת בשדה ירוק עם הרים מיוערים ברקע",
+    "filename": "DSC_9351.jpg",
+    "width": 10816,
+    "height": 7200,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 18,
+      "aperture": 5,
+      "iso": 64,
+      "shutter": 0.025
+    },
+    "added_at": "2026-09-25"
+  },
+  {
+    "id": "1BXrVWzH8hu9JuqMdjvboqDF5J7mtf7Oi",
+    "title": "עמק ההרים בגיאורגיה",
+    "category": "גאורגיה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1BXrVWzH8hu9JuqMdjvboqDF5J7mtf7Oi.webp",
+    "thumbnail": "/photos/thumb/1BXrVWzH8hu9JuqMdjvboqDF5J7mtf7Oi.webp",
+    "description": "נוף רעיוני של עמק ירוק עם הרים מעוננים בגיאורגיה",
+    "filename": "DSC_9357.jpg",
+    "width": 10816,
+    "height": 7200,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 12,
+      "aperture": 5,
+      "iso": 64,
+      "shutter": 0.0025
+    },
+    "added_at": "2026-09-25"
+  },
+  {
+    "id": "1IY3Qa2NQIvhchDjAGUdlY7NPfegOirPo",
+    "title": "הרים בערפל בגאורגיה",
+    "category": "גאורגיה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1IY3Qa2NQIvhchDjAGUdlY7NPfegOirPo.webp",
+    "thumbnail": "/photos/thumb/1IY3Qa2NQIvhchDjAGUdlY7NPfegOirPo.webp",
+    "description": "נוף הררי עם עננים נמוכים וערפל המכסה את ההר העליון",
+    "filename": "DSC_9361.jpg",
+    "width": 10816,
+    "height": 7200,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 20,
+      "aperture": 5,
+      "iso": 64,
+      "shutter": 0.0025
+    },
+    "added_at": "2026-09-25"
   },
   {
     "id": "1DbMo5Ntvvm2Az_fi5u-idXMPJXgvJ5Lp",
