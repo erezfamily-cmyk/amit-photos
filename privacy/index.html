@@ -1,11 +1,31 @@
 <!DOCTYPE html>
-<html lang="he" dir="rtl">
+<html lang="he" dir="rtl" data-lang="he">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Privacy Policy — Amit Photos</title>
+<title>מדיניות פרטיות | Amit Photos</title>
 <meta name="description" content="מדיניות הפרטיות של Amit Photos — amitphotos.com">
+<script>
+(function () {
+  var queryLang = new URLSearchParams(location.search).get('lang');
+  var storedLang = null;
+  try { storedLang = localStorage.getItem('lang'); } catch (e) {}
+  var lang = queryLang === 'en' || queryLang === 'he'
+    ? queryLang
+    : (storedLang === 'en' || storedLang === 'he' ? storedLang : 'he');
+  if (queryLang === 'en' || queryLang === 'he') {
+    try { localStorage.setItem('lang', lang); } catch (e) {}
+  }
+  window.__privacyInitialLang = lang;
+  document.documentElement.lang = lang;
+  document.documentElement.dir = lang === 'en' ? 'ltr' : 'rtl';
+  document.documentElement.dataset.lang = lang;
+})();
+</script>
 <link rel="canonical" href="https://amitphotos.com/privacy/" />
+<link rel="alternate" hreflang="he" href="https://amitphotos.com/privacy/?lang=he" />
+<link rel="alternate" hreflang="en" href="https://amitphotos.com/privacy/?lang=en" />
+<link rel="alternate" hreflang="x-default" href="https://amitphotos.com/privacy/" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&display=swap" rel="stylesheet">
 <style>
@@ -15,13 +35,13 @@
   --accent: #c8a96e; --text: #f0ede8; --muted: #888;
 }
 body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--text);
-  direction: rtl; min-height: 100vh; padding: 0 0 4rem; }
+  direction: inherit; min-height: 100vh; padding: 0 0 4rem; }
 .site-header { display: flex; align-items: center; justify-content: space-between;
   padding: 1rem 1.25rem; border-bottom: 1px solid var(--border); }
 .site-title { font-family: 'Syne', sans-serif; font-size: 1.1rem;
   color: var(--accent); text-decoration: none; }
 .content { max-width: 800px; margin: 0 auto; padding: 2.5rem 1.25rem; }
-.lang-toggle { text-align: left; margin-bottom: 2rem; }
+.lang-toggle { text-align: end; margin-bottom: 2rem; }
 .lang-toggle button { background: none; border: 1px solid var(--border); color: var(--muted);
   padding: .35rem .9rem; border-radius: 20px; cursor: pointer; font-size: .85rem;
   font-family: 'Heebo', sans-serif; transition: border-color .2s, color .2s; }
@@ -34,21 +54,24 @@ p { color: var(--muted); line-height: 1.75; margin-bottom: 1rem; }
 ul { color: var(--muted); line-height: 1.75; margin: 0 1.5rem 1rem; }
 ul li { margin-bottom: .4rem; }
 a { color: var(--accent); }
-.section-en { display: none; direction: ltr; text-align: left; }
-.section-he { display: block; }
+.section-en, .section-he { display: none; }
+.section-en { direction: ltr; text-align: left; }
+.section-he { direction: rtl; text-align: right; }
+html[data-lang="he"] .section-he { display: block; }
+html[data-lang="en"] .section-en { display: block; }
 .header-a11y-link { color: var(--muted); font-size: .85rem; text-decoration: none; }
 </style>
 </head>
 <body>
 <div class="site-header">
   <a class="site-title" href="/">Amit Photos</a>
-  <a href="/accessibility/" class="header-a11y-link">הצהרת נגישות</a>
+  <a href="/accessibility/" class="header-a11y-link" id="privacy-a11y-link" data-he="הצהרת נגישות" data-en="Accessibility Statement">הצהרת נגישות</a>
 </div>
 
 <div class="content">
   <div class="lang-toggle">
-    <button class="active" onclick="setLang('he')" id="btn-he">עברית</button>
-    <button onclick="setLang('en')" id="btn-en">English</button>
+    <button type="button" class="active" onclick="setLang('he')" id="btn-he" aria-pressed="true" aria-controls="section-he">עברית</button>
+    <button type="button" onclick="setLang('en')" id="btn-en" aria-pressed="false" aria-controls="section-en">English</button>
   </div>
 
   <!-- HEBREW -->
@@ -165,14 +188,47 @@ a { color: var(--accent); }
 </div>
 
 <script>
-function setLang(lang) {
+var PRIVACY_META = {
+  he: {
+    title: 'מדיניות פרטיות | Amit Photos',
+    description: 'מדיניות הפרטיות של Amit Photos — amitphotos.com',
+    accessibility: 'הצהרת נגישות'
+  },
+  en: {
+    title: 'Privacy Policy | Amit Photos',
+    description: 'Privacy policy for Amit Photos — amitphotos.com',
+    accessibility: 'Accessibility Statement'
+  }
+};
+var privacyCurrentLang = window.__privacyInitialLang === 'en' ? 'en' : 'he';
+
+function setLang(lang, persist) {
+  if (lang !== 'he' && lang !== 'en') lang = 'he';
+  privacyCurrentLang = lang;
+  if (persist !== false) {
+    try { localStorage.setItem('lang', lang); } catch (e) {}
+  }
   document.getElementById('section-he').style.display = lang === 'he' ? 'block' : 'none';
   document.getElementById('section-en').style.display = lang === 'en' ? 'block' : 'none';
   document.getElementById('btn-he').classList.toggle('active', lang === 'he');
   document.getElementById('btn-en').classList.toggle('active', lang === 'en');
-  document.documentElement.setAttribute('dir', lang === 'he' ? 'rtl' : 'ltr');
-  document.documentElement.setAttribute('lang', lang);
+  document.getElementById('btn-he').setAttribute('aria-pressed', String(lang === 'he'));
+  document.getElementById('btn-en').setAttribute('aria-pressed', String(lang === 'en'));
+  document.documentElement.dir = lang === 'he' ? 'rtl' : 'ltr';
+  document.documentElement.lang = lang;
+  document.documentElement.dataset.lang = lang;
+  document.title = PRIVACY_META[lang].title;
+  var metaDescription = document.querySelector('meta[name="description"]');
+  if (metaDescription) metaDescription.content = PRIVACY_META[lang].description;
+  document.getElementById('privacy-a11y-link').textContent = PRIVACY_META[lang].accessibility;
 }
+
+setLang(privacyCurrentLang, false);
+window.addEventListener('storage', function (event) {
+  if (event.key === 'lang' && (event.newValue === 'he' || event.newValue === 'en')) {
+    setLang(event.newValue, false);
+  }
+});
 </script>
 <script src="/assets/js/accessibility-widget.js"></script>
 </body>
