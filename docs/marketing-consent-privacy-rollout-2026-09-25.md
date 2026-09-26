@@ -55,21 +55,35 @@ Merge SHA: `f1917c80747d354fcbd30fcf7bb85d40c5f40743`
 - נוספו `aria-pressed` ו-`aria-controls` לכפתורי השפה.
 - 72/72 בדיקות JavaScript עברו.
 
-## בעיית פריסה פתוחה
+## בעיית פריסה — נפתרה (PR #8)
 
-PR #6 נמצא ב-main, אך עדיין לא נפרס ל-Production.
+**PR #8 מוזג ונפרס בהצלחה.**
+Merge SHA: `98a74ab7eabaefa661b9c56846c3d49856b20777`
 
-**הסיבה:** `.github/workflows/deploy.yml` אינו כולל `privacy/**` ברשימת ה-paths, ולכן המיזוג לא הפעיל את workflow הפריסה.
+`.github/workflows/deploy.yml` עודכן להכיל גם `privacy/**` וגם `.github/workflows/deploy.yml` עצמו ברשימת ה-paths, כך שמיזוגים עתידיים לתיקיית `privacy/` (כולל PR #6 שכבר היה ב-main) מפעילים את workflow הפריסה. אומת שה-deploy שהופעל על ידי מיזוג זה הצליח.
 
-**המשך מומלץ:**
+## PR #9 — תיקון הודעות ההסכמה במיילי האישור למנויים
 
-1. לפתוח PR נפרד שמוסיף `privacy/**` ל-`deploy.yml`.
-2. לשקול להוסיף גם `.github/workflows/deploy.yml` לרשימת הנתיבים.
-3. לא למזג ולא לפרוס ללא אישור מפורש.
-4. לאחר הפריסה לבדוק ב-Production:
-   - `/privacy/?lang=en`
-   - מעבר EN→HE→EN
-   - `lang` ו-`dir`
-   - כותרת ותיאור העמוד
-   - קישור הצהרת הנגישות
-5. לוודא שוב ש-`PAYMENTS_ENABLED="false"`.
+**PR #9 מוזג ונפרס בהצלחה.**
+Merge SHA: `28464c7f5726d33143ee8669b676b68c2dfeca62`
+Deploy run: הצליח (conclusion: success) עבור אותו SHA.
+
+השינויים כללו:
+
+- סיווג `homepage_section` כהרשמה לניוזלטר, כך שהיא מקבלת מייל ברוכים-הבאים לניוזלטר במקום מייל ה-PDF החינמי.
+- ריכוז לוגיקת רינדור מיילי אישור המנוי למקום אחד, להתנהגות עקבית בין מנוי חדש לקיים.
+- שמירה על עצמאות שליחת המדריך מהסכמה שיווקית, והסרת הבטחת "תקבל עדכונים" מטעה כשלא סומנה הסכמה שיווקית.
+- שליחת מייל ברוכים-הבאים למנוי קיים רק כאשר ההרשמה לניוזלטר בפועל משדרגת את ההסכמה השיווקית (הרשמה כפולה של מי שכבר הסכים לא שולחת שוב).
+- הוספת קישורי הסרה מרשימת התפוצה (unsubscribe) למיילי ברוכים-הבאים לניוזלטר.
+
+קבצים: `worker.js` (83+/75-), `tests/subscriber-confirmation-email.test.mjs` (חדש, 137 שורות).
+בדיקות לפני מיזוג: 45/45 (קבוצת קבצים ממוקדת) ו-78/78 (`tests/*.test.mjs`) עברו; `git diff --check` עבר.
+
+**אומת לאחר הפריסה (קריאה בלבד, ללא כתיבה):**
+
+- `git merge-base --is-ancestor 28464c7f5726d33143ee8669b676b68c2dfeca62 origin/main` — כן.
+- `gh run list --workflow=deploy.yml` עבור אותו SHA — `conclusion: success`.
+- `GET /api/payments-status` בפרודקשן — `{"enabled":false}`.
+- לא בוצע backfill, לא נשלח מייל אמיתי, לא בוצע שינוי סכימה.
+
+**הערה:** לא נמצא ב-repo workflow בשם "GitHub Pages" — הפריסה בפרודקשן מתבצעת דרך `Deploy Worker` (Cloudflare Workers), לא GitHub Pages. אם התכוונת למנגנון אחר יש לבדוק מולי לפני שמתעדים זאת כעובדה.
