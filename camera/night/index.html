@@ -174,7 +174,7 @@ input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 20px;
       <div class="lab-title" data-he="🌃 סימולטור מסלולי אור — גרור ותראה" data-en="🌃 Light Trails Simulator — Drag & See">🌃 סימולטור מסלולי אור — גרור ותראה</div>
 
       <div class="sim-preview">
-        <canvas class="sim-canvas" id="simCanvas"></canvas>
+        <canvas class="sim-canvas" id="simCanvas" width="640" height="360"></canvas>
         <div class="sim-status">
           <span class="sec-badge" id="secBadge">1s</span>
           <span class="sim-note" id="secNote"></span>
@@ -346,9 +346,8 @@ function mulberry32(a) {
 const canvas = document.getElementById('simCanvas');
 const ctx = canvas.getContext('2d');
 
-function resizeCanvas() {
-  const rect = canvas.parentElement.getBoundingClientRect();
-  canvas.width = rect.width || 640;
+function resizeCanvas(width) {
+  canvas.width = width || 640;
   canvas.height = canvas.width * 9 / 16;
   redraw();
 }
@@ -491,8 +490,9 @@ function applyLang() {
   redraw();
 }
 
-window.addEventListener('resize', resizeCanvas);
-resizeCanvas();
+new ResizeObserver(entries => {
+  for (const entry of entries) resizeCanvas(entry.contentRect.width);
+}).observe(canvas.parentElement);
 applyLang();
 window.addEventListener('storage', e => { if (e.key === 'lang') applyLang(); });
 </script></body>
