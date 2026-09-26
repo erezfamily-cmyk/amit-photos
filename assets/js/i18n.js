@@ -760,8 +760,8 @@ const TRANSLATIONS = {
     'buy.auto.download':  'File downloads automatically after payment',
     'buy.back':           '← Back',
     'buy.note':         'After payment the file downloads automatically. Secure payment via PayPal.',
-    'buy.alt.prefix':   'Also available via Bit / Paybox — call us:',
-    'buy.alt.suffix':   '',
+    'buy.alt.prefix':   'Also available via ',
+    'buy.alt.suffix':   ' — call us:',
 
     // Print modal
     'print.label':      'Print Order',
