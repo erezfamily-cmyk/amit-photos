@@ -577,7 +577,7 @@ async function initFeatured() {
 
   grid.innerHTML = picks.map((photo, i) => `
     <div class="featured-item" data-id="${photo.id}">
-      <img src="${photo.thumbnail || photo.url}" alt="${getLang() === 'en' && photo.title_en ? photo.title_en : photo.title}" loading="lazy" />
+      <img src="${photo.thumbnail || photo.url}" alt="${getLang() === 'en' && photo.title_en ? photo.title_en : photo.title}" width="${photo.width || 800}" height="${photo.height || 600}" loading="lazy" />
       <div class="featured-item-overlay">
         <span class="featured-item-title">${getLang() === 'en' && photo.title_en ? photo.title_en : photo.title}</span>
       </div>
@@ -1111,7 +1111,7 @@ function openLightbox(idx) {
         const src = p.thumbnail || p.url;
         const thumbSrc = src?.startsWith('/photos/') ? src + '?w=150' : src;
         return `<div class="lb-related-thumb" data-id="${p.id}" data-idx="${relIdx}">
-          <img src="${thumbSrc}" alt="${p.title}" loading="lazy" />
+          <img src="${thumbSrc}" alt="${p.title}" width="${p.width || 800}" height="${p.height || 600}" loading="lazy" />
         </div>`;
       }).join('');
       relatedTrack.querySelectorAll('.lb-related-thumb').forEach(t => {
