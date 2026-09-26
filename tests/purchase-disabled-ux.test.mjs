@@ -23,6 +23,12 @@ test('homepage starts in a fail-closed purchase state before JavaScript or API r
   assert.match(css, /body\[data-payments-state="enabled"\][^{]*\.payments-disabled-only\s*\{[^}]*display:\s*none\s*!important/);
 });
 
+test('homepage cache-busts every asset that implements the purchase-state UI', () => {
+  assert.match(html, /assets\/css\/style\.css\?v=12a50793/);
+  assert.match(html, /assets\/js\/i18n\.js\?v=aa4eb8de/);
+  assert.match(html, /assets\/js\/gallery\.js\?v=6d45f43b/);
+});
+
 test('disabled-purchase notice offers a real contact route in Hebrew and English', () => {
   assert.match(html, /class="[^"]*payments-disabled-only[^"]*"/);
   assert.match(html, /href="tel:0503333227"/);
