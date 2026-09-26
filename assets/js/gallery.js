@@ -52,6 +52,12 @@ function isNew(photo) {
 // (see loadPhotos()). No per-photo bypass — a real PayPal charge with no server-side
 // fulfillment would leave a customer paid and empty-handed.
 let PURCHASES_ENABLED = false;
+function applyPaymentsAvailability(enabled) {
+  PURCHASES_ENABLED = enabled === true;
+  if (document.body) {
+    document.body.dataset.paymentsState = PURCHASES_ENABLED ? 'enabled' : 'disabled';
+  }
+}
 function canBuy(photo) { return PURCHASES_ENABLED; }
 let allPhotos = [];
 let filteredPhotos = [];
@@ -227,8 +233,8 @@ async function loadPhotos() {
     ]);
     if (paymentsRes?.ok) {
       const status = await paymentsRes.json().catch(() => null);
-      PURCHASES_ENABLED = status?.enabled === true;
-    }
+      applyPaymentsAvailability(status?.enabled);
+    } else applyPaymentsAvailability(false);
     const jsonPhotos = jsonRes.ok ? await jsonRes.json().catch(() => []) : [];
     if (apiRes?.ok) {
       const apiPhotos = await apiRes.json().catch(() => []);

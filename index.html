@@ -109,7 +109,7 @@
   <meta name="theme-color" content="#0a0a0a" />
   <script src="assets/js/i18n.js?v=8c5dc4c4"></script>
 </head>
-<body>
+<body data-payments-state="disabled">
 
   <a href="#hero" class="skip-link" data-i18n="skip.link">דלג לתוכן</a>
 
@@ -157,10 +157,11 @@
         <span data-i18n="hero.title.main">תמונות שמדברות</span>
         <em data-i18n="hero.title.em">אליך</em>
       </h1>
-      <p class="hero-subtitle" data-i18n="hero.subtitle">תמונות אמנותיות דיגיטליות לרכישה — הורדה מיידית לאחר תשלום</p>
+      <p class="hero-subtitle payments-enabled-only" data-i18n="hero.subtitle">תמונות אמנותיות דיגיטליות לרכישה — הורדה מיידית לאחר תשלום</p>
+      <p class="hero-subtitle payments-disabled-only" data-i18n="payments.disabled.hero">הגלריה פתוחה לעיון. לרכישה ניתן ליצור קשר ישירות עם עמית.</p>
       <div class="hero-actions">
         <a href="#gallery" class="hero-cta" data-i18n="hero.cta">עיין בגלריה</a>
-        <a href="/sale/" class="hero-cta-ghost" data-i18n="hero.cta-sale">מבצע השבוע</a>
+        <a href="/sale/" class="hero-cta-ghost payments-enabled-only" data-i18n="hero.cta-sale">מבצע השבוע</a>
         <a href="#how-to-buy" class="hero-cta-ghost" data-i18n="hero.cta-ghost">כיצד לרכוש?</a>
         <button type="button" class="hero-cta-ghost" onclick="document.getElementById('pdf-popup').style.display='flex';event.preventDefault();" data-i18n="hero.cta-pdf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="15" height="15" aria-hidden="true" style="vertical-align:-2px;margin-left:0.3em"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> 50 טיפים חינם</button>
       </div>
@@ -392,7 +393,12 @@
       <p class="section-label" data-i18n="htb.label">פשוט ומהיר</p>
       <h2 class="section-title" data-i18n="htb.title">כיצד לרכוש?</h2>
     </div>
-    <div class="process-grid">
+    <div class="purchase-disabled-notice payments-disabled-only" role="status">
+      <h3 data-i18n="payments.disabled.title">הרכישה המקוונת נמצאת בשדרוג אבטחה</h3>
+      <p data-i18n="payments.disabled.text">בינתיים ניתן לבחור תמונה בגלריה ולתאם רכישה ישירות עם עמית. התשלום יתבצע ידנית באמצעות Bit או PayBox.</p>
+      <a href="tel:0503333227" class="purchase-disabled-contact" data-i18n="payments.disabled.call">התקשרו לעמית — 050-3333227</a>
+    </div>
+    <div class="process-grid payments-enabled-only">
       <div class="process-step reveal">
         <div class="process-num">01</div>
         <h3 class="process-step-title" data-i18n="htb.s1.title">עיין בגלריה</h3>
@@ -545,7 +551,8 @@
           <li data-i18n="pricing.net.f3">WhatsApp ופרופיל</li>
           <li data-i18n="pricing.net.f4">שימוש אישי</li>
         </ul>
-        <a href="#gallery" class="pricing-cta pricing-cta-outline" data-i18n="pricing.cta">עיין בגלריה</a>
+        <a href="#gallery" class="pricing-cta pricing-cta-outline payments-enabled-only" data-i18n="pricing.cta">עיין בגלריה</a>
+        <a href="tel:0503333227" class="pricing-cta pricing-cta-outline payments-disabled-only" data-i18n="pricing.contact">יצירת קשר לרכישה</a>
       </div>
       <div class="pricing-card featured reveal reveal-delay-1">
         <div class="pricing-badge" data-i18n="pricing.popular">פופולרי</div>
@@ -559,7 +566,8 @@
           <li data-i18n="pricing.print.f3">קישוט הבית</li>
           <li data-i18n="pricing.print.f4">שימוש אישי מלא</li>
         </ul>
-        <a href="#gallery" class="pricing-cta pricing-cta-filled" data-i18n="pricing.cta">עיין בגלריה</a>
+        <a href="#gallery" class="pricing-cta pricing-cta-filled payments-enabled-only" data-i18n="pricing.cta">עיין בגלריה</a>
+        <a href="tel:0503333227" class="pricing-cta pricing-cta-filled payments-disabled-only" data-i18n="pricing.contact">יצירת קשר לרכישה</a>
       </div>
       <div class="pricing-card reveal reveal-delay-2">
         <p class="pricing-name" data-i18n="pricing.full.name">קובץ מלא</p>
@@ -572,13 +580,14 @@
           <li data-i18n="pricing.full.f3">שימוש מסחרי</li>
           <li data-i18n="pricing.full.f4">כל הזכויות כלולות</li>
         </ul>
-        <a href="#gallery" class="pricing-cta pricing-cta-outline" data-i18n="pricing.cta">עיין בגלריה</a>
+        <a href="#gallery" class="pricing-cta pricing-cta-outline payments-enabled-only" data-i18n="pricing.cta">עיין בגלריה</a>
+        <a href="tel:0503333227" class="pricing-cta pricing-cta-outline payments-disabled-only" data-i18n="pricing.contact">יצירת קשר לרכישה</a>
       </div>
     </div>
   </section>
 
   <!-- ===== PRINT FAQ ===== -->
-  <section class="section" id="print-faq" data-section="print-faq">
+  <section id="print-faq" class="section payments-enabled-only" data-section="print-faq">
     <div class="section-header reveal">
       <p class="section-label" data-i18n="faq.label">הדפסות בדואר</p>
       <h2 class="section-title" data-i18n="faq.title">שאלות נפוצות</h2>
