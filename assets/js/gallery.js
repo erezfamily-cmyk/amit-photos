@@ -440,6 +440,9 @@ function renderGallery(append = false) {
     const item = document.createElement('div');
     item.className = 'gallery-item';
     item.dataset.idx = idx;
+    item.tabIndex = 0;
+    item.setAttribute('role', 'button');
+    item.setAttribute('aria-label', `${photo.title || ''} — ${t('gallery.item.aria')}`);
     const wished = wishlist.has(photo.id);
     item.innerHTML = `
       <img
@@ -479,6 +482,17 @@ function renderGallery(append = false) {
       } else if (e.target.closest('.gallery-buy-btn')) {
         openBuyModal(photo);
       } else {
+        openLightbox(idx);
+      }
+    });
+    // keyboard equivalent of the click-to-open behavior above. Guarded to the card itself
+    // (not its descendants) because the wish/cart/buy buttons are real <button> elements that
+    // already handle their own Enter/Space natively and dispatch their own click — reacting here
+    // too would double-fire their actions.
+    item.addEventListener('keydown', e => {
+      if (e.target !== item) return;
+      if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+        e.preventDefault();
         openLightbox(idx);
       }
     });
