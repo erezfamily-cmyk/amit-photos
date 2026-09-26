@@ -17,9 +17,9 @@
     he: {
       logoName: 'עמית ארז',
       logoTagline: ' | עולם של צבעים מבעד לעדשה',
-      gallery: 'גלריה', navNew: 'חדש באתר', navSale: 'מבצע',
+      gallery: 'גלריה', navSale: 'מבצע',
       challenges: 'אתגרים', camera: 'למד לצלם', learn: 'ניתוח תמונות', gear: 'הציוד שלי',
-      howToBuy: 'כיצד לרכוש', pricing: 'מחירים', contact: 'צור קשר', locations: 'מקומות לצילום',
+      howToBuy: 'רכישה', more: 'עוד', contact: 'צור קשר', locations: 'מקומות לצילום',
       newsletter: 'ניוזלטר',
       videos: 'סרטונים',
       menu: 'תפריט'
@@ -27,9 +27,9 @@
     en: {
       logoName: 'Amit Erez',
       logoTagline: ' | A World of Colors Through the Lens',
-      gallery: 'Gallery', navNew: 'New', navSale: 'Sale',
+      gallery: 'Gallery', navSale: 'Sale',
       challenges: 'Challenges', camera: 'Learn Photography', learn: 'Photo School', gear: 'My Gear',
-      howToBuy: 'How to Buy', pricing: 'Pricing', contact: 'Contact', locations: 'Locations',
+      howToBuy: 'Purchase', more: 'More', contact: 'Contact', locations: 'Locations',
       newsletter: 'Newsletter',
       videos: 'Videos',
       menu: 'Menu'
@@ -49,9 +49,9 @@
     if (logoName) logoName.textContent = t.logoName;
     if (logoTag)  logoTag.textContent  = t.logoTagline;
     const map = {
-      'nav.gallery': t.gallery, 'nav.new': t.navNew, 'nav.sale': t.navSale,
+      'nav.gallery': t.gallery, 'nav.sale': t.navSale,
       'nav.challenges': t.challenges, 'nav.camera': t.camera, 'nav.learn': t.learn, 'nav.gear': t.gear,
-      'nav.how-to-buy': t.howToBuy, 'nav.pricing': t.pricing, 'nav.contact': t.contact,
+      'nav.how-to-buy': t.howToBuy, 'nav.more': t.more, 'nav.contact': t.contact,
       'nav.locations': t.locations, 'nav.newsletter': t.newsletter, 'nav.videos': t.videos
     };
     nav.querySelectorAll('[data-i18n]').forEach(function (el) {
@@ -115,7 +115,6 @@ nav#main-nav .nav-links a {
   transition: color 0.2s; letter-spacing: 0.05em;
   position: relative; text-decoration: none;
 }
-nav#main-nav .nav-links a#nav-new { color: #c8a96e !important; font-weight: 600; }
 nav#main-nav .nav-links a#nav-sale { color: #34d399 !important; font-weight: 600; }
 nav#main-nav .nav-links a::after {
   content: ''; position: absolute; bottom: -3px; right: 0;
@@ -126,6 +125,29 @@ nav#main-nav .nav-links a:hover::after,
 nav#main-nav .nav-links a.active::after { width: 100%; }
 nav#main-nav .nav-links a:hover,
 nav#main-nav .nav-links a.active { color: var(--text, #f0ede8); }
+nav#main-nav .nav-more { position: relative; }
+nav#main-nav .nav-more summary {
+  font-size: 0.85rem; color: var(--text-muted-nav, #888);
+  cursor: pointer; letter-spacing: 0.05em; list-style: none;
+  transition: color 0.2s;
+}
+nav#main-nav .nav-more summary::-webkit-details-marker { display: none; }
+nav#main-nav .nav-more summary::after { content: ' ▾'; font-size: 0.7em; }
+nav#main-nav .nav-more summary:hover,
+nav#main-nav .nav-more[open] summary { color: var(--text, #f0ede8); }
+nav#main-nav .nav-more-menu {
+  position: absolute; top: calc(100% + 0.75rem); right: 0;
+  min-width: 160px; margin: 0; padding: 0.5rem;
+  list-style: none; background: var(--bg-nav, rgba(10,10,10,0.95));
+  border: 1px solid var(--border, #222); border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  display: flex; flex-direction: column; gap: 0.25rem;
+}
+nav#main-nav .nav-more-menu a {
+  display: block; padding: 0.5rem 0.75rem; font-size: 0.85rem;
+  color: var(--text-muted-nav, #888); text-decoration: none; white-space: nowrap;
+}
+nav#main-nav .nav-more-menu a:hover { color: var(--text, #f0ede8); }
 nav#main-nav .lang-toggle {
   display: flex; align-items: center; gap: 0.3rem;
   font-size: 0.7rem; color: var(--text-muted-nav, #888);
@@ -173,6 +195,10 @@ nav#main-nav .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px)
   }
   nav#main-nav .nav-links.open { display: flex; }
   nav#main-nav .nav-hamburger { display: flex; }
+  nav#main-nav .nav-more-menu {
+    position: static; margin-top: 0.75rem; padding: 0; border: none;
+    background: none; box-shadow: none; padding-inline-start: 1rem;
+  }
 }
 `;
   document.head.appendChild(style);
@@ -186,18 +212,23 @@ nav#main-nav .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px)
 </a>
 <ul class="nav-links">
   <li><a href="${a('#gallery')}" data-i18n="nav.gallery">גלריה</a></li>
-  <li><a href="${a('#gallery')}" id="nav-new" data-i18n="nav.new">חדש באתר</a></li>
   <li><a href="${a('#gallery')}" id="nav-sale" data-i18n="nav.sale">מבצע</a></li>
-  <li><a href="/games/" data-i18n="nav.challenges">אתגרים</a></li>
   <li><a href="/camera/" data-i18n="nav.camera">למד לצלם</a></li>
-  <li><a href="/gear/" data-i18n="nav.gear">הציוד שלי</a></li>
   <li><a href="/locations/" data-i18n="nav.locations">מקומות לצילום</a></li>
-  <li><a href="/learn/" data-i18n="nav.learn">ניתוח תמונות</a></li>
-  <li><a href="/videos/" data-i18n="nav.videos">סרטונים</a></li>
-  <li><a href="${a('#how-to-buy')}" data-i18n="nav.how-to-buy">כיצד לרכוש</a></li>
-  <li><a href="${a('#pricing')}" data-i18n="nav.pricing">מחירים</a></li>
-  <li><a href="${a('#contact')}" data-i18n="nav.contact">צור קשר</a></li>
+  <li><a href="${a('#how-to-buy')}" data-i18n="nav.how-to-buy">רכישה</a></li>
   <li><a href="/newsletter/" data-i18n="nav.newsletter">ניוזלטר</a></li>
+  <li><a href="${a('#contact')}" data-i18n="nav.contact">צור קשר</a></li>
+  <li class="nav-more">
+    <details>
+      <summary data-i18n="nav.more">עוד</summary>
+      <ul class="nav-more-menu">
+        <li><a href="/games/" data-i18n="nav.challenges">אתגרים</a></li>
+        <li><a href="/videos/" data-i18n="nav.videos">סרטונים</a></li>
+        <li><a href="/learn/" data-i18n="nav.learn">ניתוח תמונות</a></li>
+        <li><a href="/gear/" data-i18n="nav.gear">הציוד שלי</a></li>
+      </ul>
+    </details>
+  </li>
 </ul>
 <a href="https://www.youtube.com/@amiterez3747" target="_blank" rel="noopener" class="nav-yt-btn" aria-label="YouTube">
   <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8zm-13.9 9.4V8.4l6.3 3.6-6.3 3.6z"/></svg>
@@ -231,6 +262,20 @@ nav#main-nav .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px)
       links.classList.remove('open');
     }
   });
+
+  // ── "עוד" dropdown ───────────────────────────────────────────────────────────
+  const moreDetails = nav.querySelector('.nav-more details');
+  if (moreDetails) {
+    moreDetails.addEventListener('click', function (e) {
+      if (e.target.tagName === 'A') moreDetails.removeAttribute('open');
+    });
+    document.addEventListener('click', function (e) {
+      if (moreDetails.open && !moreDetails.contains(e.target)) moreDetails.removeAttribute('open');
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && moreDetails.open) moreDetails.removeAttribute('open');
+    });
+  }
 
   // ── Scroll border ──────────────────────────────────────────────────────────────
   window.addEventListener('scroll', function () {

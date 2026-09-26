@@ -206,6 +206,17 @@ function initNav() {
     });
   });
 
+  // "עוד" dropdown
+  const moreDetails = navLinks.querySelector('.nav-more details');
+  if (moreDetails) {
+    document.addEventListener('click', (e) => {
+      if (moreDetails.open && !moreDetails.contains(e.target)) moreDetails.removeAttribute('open');
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && moreDetails.open) moreDetails.removeAttribute('open');
+    });
+  }
+
   // Active link on scroll
   const sections = document.querySelectorAll('[data-section]');
   const io = new IntersectionObserver(entries => {
@@ -551,6 +562,7 @@ function refreshWishlistFilter() {
 }
 
 // ===== FEATURED =====
+const MAX_FEATURED = 8; // keep the homepage's featured strip short regardless of how many the admin curates
 async function initFeatured() {
   if (allPhotos.length === 0) return;
 
@@ -575,6 +587,7 @@ async function initFeatured() {
     picks = [...allPhotos].sort(seededSort).slice(0, 5);
   }
 
+  picks = picks.slice(0, MAX_FEATURED);
   featuredIds = picks.map(p => p.id);
 
   const grid = document.getElementById('featured-grid');

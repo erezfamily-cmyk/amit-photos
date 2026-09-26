@@ -16,11 +16,12 @@ test('analytics helper loads before scripts that emit UX events', () => {
 });
 
 test('primary homepage journeys expose declarative analytics events', () => {
+  // 2026-09-26 homepage-hierarchy redesign dropped the redundant "how to buy?" hero ghost
+  // button and the duplicate free-guide banner right below it (same offer as the kept
+  // "50 free tips" hero CTA) — hero_purchase_info_click / guide_banner_click no longer exist.
   for (const event of [
     'hero_gallery_click',
-    'hero_purchase_info_click',
     'hero_guide_click',
-    'guide_banner_click',
     'nav_click',
     'contact_intent',
   ]) {

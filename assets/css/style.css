@@ -68,23 +68,6 @@ img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .reveal-delay-3 { transition-delay: 0.3s; }
 
 /* ===== FREE GUIDE BANNER ===== */
-#guide-banner {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: .75rem;
-  background: #141410;
-  border-top: 1px solid #2a2a2a;
-  border-bottom: 1px solid #2a2a2a;
-  padding: .75rem 1.5rem;
-  text-decoration: none;
-  color: #f0ede8;
-  font-size: .88rem;
-  transition: background .2s;
-}
-#guide-banner:hover { background: #1a1812; }
-#guide-banner .guide-banner-icon { color: #c8a96e; font-size: 1rem; }
-#guide-banner strong { color: #c8a96e; }
 
 /* ===== BETA BANNER ===== */
 #beta-banner {
@@ -158,14 +141,34 @@ body[data-payments-state="enabled"] .payments-disabled-only {
   position: relative;
 }
 
-#nav-new {
-  color: #c8a96e !important;
-  font-weight: 600;
-}
 #nav-sale {
   color: #34d399 !important;
   font-weight: 600;
 }
+
+.nav-more { position: relative; }
+.nav-more summary {
+  font-size: 0.85rem; color: var(--text-muted);
+  cursor: pointer; letter-spacing: 0.05em; list-style: none;
+  transition: color 0.2s;
+}
+.nav-more summary::-webkit-details-marker { display: none; }
+.nav-more summary::after { content: ' ▾'; font-size: 0.7em; }
+.nav-more summary:hover,
+.nav-more[open] summary { color: var(--text); }
+.nav-more-menu {
+  position: absolute; top: calc(100% + 0.75rem); right: 0;
+  min-width: 160px; margin: 0; padding: 0.5rem;
+  list-style: none; background: var(--bg-nav);
+  border: 1px solid var(--border); border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  display: flex; flex-direction: column; gap: 0.25rem;
+}
+.nav-more-menu a {
+  display: block; padding: 0.5rem 0.75rem; font-size: 0.85rem;
+  color: var(--text-muted); text-decoration: none; white-space: nowrap;
+}
+.nav-more-menu a:hover { color: var(--text); }
 
 .nav-links a::after {
   content: '';
@@ -3263,6 +3266,10 @@ footer {
   }
   .nav-links.open { display: flex; }
   .nav-hamburger { display: flex; }
+  .nav-more-menu {
+    position: static; margin-top: 0.75rem; padding: 0; border: none;
+    background: none; box-shadow: none; padding-inline-start: 1rem;
+  }
   .gallery-grid { columns: 1; }
   .about-stats { gap: 1.5rem; }
   .section { padding: 5rem 1.25rem; }
@@ -3651,81 +3658,6 @@ footer {
 }
 
 /* ===== TESTIMONIALS ===== */
-.testimonials-section { background: linear-gradient(to bottom, var(--bg), #0d0c0a, var(--bg)); }
-.testimonials-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 2rem;
-  margin-top: 3rem;
-}
-.testimonial-card {
-  padding: 2rem;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background: var(--bg-card);
-  transition: border-color 0.3s;
-}
-.testimonial-card:hover { border-color: var(--accent); }
-.testimonial-stars {
-  color: var(--accent);
-  font-size: 0.85rem;
-  letter-spacing: 3px;
-  margin-bottom: 1rem;
-}
-.testimonial-text {
-  font-size: 0.95rem;
-  color: var(--text-muted);
-  line-height: 1.85;
-  margin-bottom: 1.5rem;
-  font-style: italic;
-}
-.testimonial-name {
-  font-weight: 700;
-  font-size: 0.9rem;
-  color: var(--text);
-  display: block;
-}
-.testimonial-event {
-  font-size: 0.72rem;
-  color: var(--accent);
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  margin-top: 0.2rem;
-  display: block;
-}
-.testimonial-author {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-.testimonial-avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #2a2010, #1a1208);
-  border: 1px solid var(--accent);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--accent);
-  flex-shrink: 0;
-}
-.testimonial-author-info {
-  display: flex;
-  flex-direction: column;
-}
-.testimonial-date {
-  font-size: 0.68rem;
-  color: var(--text-muted);
-  display: block;
-  margin-top: 0.15rem;
-}
-@media (max-width: 768px) {
-  .testimonials-grid { grid-template-columns: 1fr; }
-}
-
 /* ===== PRICING ===== */
 .pricing-grid {
   display: grid;
