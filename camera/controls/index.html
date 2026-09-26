@@ -183,7 +183,7 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
 
       <div class="dial-wrap">
         <div class="dial-canvas-wrap">
-          <canvas class="dial-canvas" id="dialCanvas" height="200"></canvas>
+          <canvas class="dial-canvas" id="dialCanvas" width="360" height="200"></canvas>
         </div>
 
         <div class="dial-info" id="dialInfo">
@@ -464,10 +464,9 @@ const canvas = document.getElementById('dialCanvas');
 const ctx = canvas.getContext('2d');
 let selectedMode = 0;
 
-function resizeDial() {
-  const w = canvas.parentElement.getBoundingClientRect().width || 360;
-  canvas.width = w;
-  canvas.height = w * 0.56;
+function resizeDial(width) {
+  canvas.width = width || 360;
+  canvas.height = canvas.width * 0.56;
   drawDial();
 }
 
@@ -574,8 +573,10 @@ canvas.addEventListener('click', (e) => {
   }
 });
 
-window.addEventListener('resize', resizeDial);
 resizeDial();
+new ResizeObserver(entries => {
+  for (const entry of entries) resizeDial(entry.contentRect.width);
+}).observe(canvas.parentElement);
 updateInfo();
 
 function applyLang() {

@@ -189,7 +189,7 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
       </div>
 
       <div class="rule-canvas-wrap">
-        <canvas class="rule-canvas" id="ruleCanvas"></canvas>
+        <canvas class="rule-canvas" id="ruleCanvas" width="600" height="450"></canvas>
       </div>
 
       <div class="rule-desc" id="ruleDesc">
@@ -210,7 +210,7 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
     <div class="compare-grid">
       <div class="compare-card">
         <div class="compare-canvas-wrap">
-          <canvas class="compare-canvas" id="compareCenter"></canvas>
+          <canvas class="compare-canvas" id="compareCenter" width="280" height="210"></canvas>
         </div>
         <div class="compare-label">
           <div class="compare-label-title compare-label-bad" data-he="✗ נושא באמצע" data-en="✗ Subject Centered">✗ נושא באמצע</div>
@@ -219,7 +219,7 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
       </div>
       <div class="compare-card">
         <div class="compare-canvas-wrap">
-          <canvas class="compare-canvas" id="compareThirds"></canvas>
+          <canvas class="compare-canvas" id="compareThirds" width="280" height="210"></canvas>
         </div>
         <div class="compare-label">
           <div class="compare-label-title compare-label-good" data-he="✓ חוק השליש" data-en="✓ Rule of Thirds">✓ חוק השליש</div>
@@ -335,10 +335,9 @@ function getLang() { return localStorage.getItem('lang') || 'he'; }
 const canvas = document.getElementById('ruleCanvas');
 const ctx = canvas.getContext('2d');
 
-function resizeCanvas(c) {
-  const rect = c.parentElement.getBoundingClientRect();
-  c.width = rect.width || 600;
-  c.height = c.width * 0.75;
+function resizeCanvas(width) {
+  canvas.width = width || 600;
+  canvas.height = canvas.width * 0.75;
 }
 
 const RULE_DESCS = {
@@ -585,27 +584,36 @@ function drawCompareThirds(c) {
   }
 }
 
-function initCompare() {
+function initCompare(width) {
+  const w = width || 280;
   ['compareCenter','compareThirds'].forEach(id => {
     const c = document.getElementById(id);
-    const rect = c.parentElement.getBoundingClientRect();
-    c.width = rect.width || 280; c.height = c.width * 0.75;
+    c.width = w; c.height = w * 0.75;
   });
   drawCompareCenter(document.getElementById('compareCenter'));
   drawCompareThirds(document.getElementById('compareThirds'));
 }
 
 function init() {
-  resizeCanvas(canvas);
   drawRule(currentRule);
   initCompare();
 }
 
-window.addEventListener('resize', () => {
-  resizeCanvas(canvas);
-  drawRule(currentRule);
-  initCompare();
+// one ResizeObserver covering both regions (the compare pair always shares one width — see
+// .compare-grid, always 1fr 1fr or a single stacked column, never uneven) — contentRect avoids
+// the forced-synchronous-layout read the old resize-listener version had.
+const compositionRO = new ResizeObserver(entries => {
+  for (const entry of entries) {
+    if (entry.target === canvas.parentElement) {
+      resizeCanvas(entry.contentRect.width);
+      drawRule(currentRule);
+    } else {
+      initCompare(entry.contentRect.width);
+    }
+  }
 });
+compositionRO.observe(canvas.parentElement);
+compositionRO.observe(document.getElementById('compareCenter').parentElement);
 
 init();
 
