@@ -87,6 +87,18 @@ def parse_rows(data, metric_keys, dim_key=None):
     return rows
 
 
+def format_duration(seconds):
+    """Human-readable GA duration; input is seconds, never minutes."""
+    try:
+        total = max(0, int(round(float(seconds))))
+    except (TypeError, ValueError):
+        return "0 שניות"
+    minutes, secs = divmod(total, 60)
+    if minutes:
+        return f"{minutes}:{secs:02d} דקות"
+    return f"{secs} שניות"
+
+
 def fetch_ga4_data(token):
     today  = date.today()
     start  = (today - timedelta(days=7)).strftime("%Y-%m-%d")
@@ -99,6 +111,7 @@ def fetch_ga4_data(token):
             {"name": "sessions"}, {"name": "activeUsers"},
             {"name": "screenPageViews"}, {"name": "bounceRate"},
             {"name": "averageSessionDuration"}, {"name": "newUsers"},
+            {"name": "engagementRate"}, {"name": "engagedSessions"},
         ],
     })
     pages_raw = run_report(token, {
@@ -114,6 +127,13 @@ def fetch_ga4_data(token):
         "metrics": [{"name": "sessions"}],
         "orderBys": [{"metric": {"metricName": "sessions"}, "desc": True}],
         "limit": 8,
+    })
+    landing_pages_raw = run_report(token, {
+        "dateRanges": dr,
+        "dimensions": [{"name": "landingPagePlusQueryString"}],
+        "metrics": [{"name": "sessions"}, {"name": "activeUsers"}],
+        "orderBys": [{"metric": {"metricName": "sessions"}, "desc": True}],
+        "limit": 10,
     })
     devices_raw = run_report(token, {
         "dateRanges": dr,
@@ -144,6 +164,10 @@ def fetch_ga4_data(token):
                 "inListFilter": {"values": [
                     "purchase_intent", "photo_view", "add_size", "purchase", "generate_lead",
                     "print_intent", "print_type_selected", "print_checkout",
+                    "hero_gallery_click", "hero_sale_click", "hero_purchase_info_click",
+                    "hero_guide_click", "guide_banner_click", "nav_click", "gallery_filter",
+                    "scroll_25", "scroll_50", "scroll_75", "scroll_90",
+                    "contact_intent", "contact_form_success", "language_change",
                 ]},
             }
         },
@@ -168,9 +192,12 @@ def fetch_ga4_data(token):
             "sessions": s(0), "activeUsers": s(1), "pageViews": s(2),
             "bounceRate": f"{float(s(3)) * 100:.1f}%",
             "avgSessionSec": f"{float(s(4)):.0f}", "newUsers": s(5),
+            "engagementRate": f"{float(s(6)) * 100:.1f}%",
+            "engagedSessions": s(7),
         },
         "prev_week": {"sessions": p(0), "activeUsers": p(1), "pageViews": p(2)},
         "top_pages": parse_rows(pages_raw, ["צפיות", "sessions"], "עמוד"),
+        "landing_pages": parse_rows(landing_pages_raw, ["sessions", "activeUsers"], "עמוד נחיתה"),
         "sources":   sources,
         "devices":   parse_rows(devices_raw, ["sessions"], "מכשיר"),
         "countries": parse_rows(countries_raw, ["sessions"], "ארץ"),
@@ -215,12 +242,17 @@ def build_data_summary(data):
         f"משתמשים פעילים:  {s['activeUsers']}  {delta(s['activeUsers'], p['activeUsers'])}",
         f"צפיות עמוד:      {s['pageViews']}  {delta(s['pageViews'], p['pageViews'])}",
         f"Bounce rate:     {s['bounceRate']}",
-        f"זמן ממוצע בסשן: {s['avgSessionSec']} שניות",
+        f"Engagement rate: {s.get('engagementRate', 'לא זמין')}",
+        f"סשנים מעורבים:   {s.get('engagedSessions', 'לא זמין')}",
+        f"זמן ממוצע בסשן: {format_duration(s['avgSessionSec'])}",
         f"משתמשים חדשים:   {s['newUsers']}",
         "", "--- עמודים הכי פופולריים ---",
     ]
     for i, r in enumerate(data["top_pages"][:8], 1):
         lines.append(f"  {i}. {r['עמוד']}  — {r['צפיות']} צפיות")
+    lines += ["", "--- עמודי נחיתה ---"]
+    for i, r in enumerate(data.get("landing_pages", [])[:8], 1):
+        lines.append(f"  {i}. {r['עמוד נחיתה']} — {r['sessions']} סשנים")
     lines += ["", "--- מקורות תנועה ---"]
     for r in data["sources"]:
         lines.append(f"  {r['מקור']}: {r['sessions']} סשנים")
@@ -240,6 +272,21 @@ def build_data_summary(data):
     lines.append(f"  פתיחת מודל הדפסה (print_intent):        {fe.get('print_intent', '0')}")
     lines.append(f"  בחירת סוג הדפסה (print_type_selected):  {fe.get('print_type_selected', '0')}")
     lines.append(f"  מעבר לתשלום (print_checkout):           {fe.get('print_checkout', '0')}")
+    lines += ["", "--- התנהגות וחוויית משתמש ---"]
+    for event, label in [
+        ("hero_gallery_click", "CTA גלריה ב-Hero"),
+        ("hero_guide_click", "CTA מדריך ב-Hero"),
+        ("guide_banner_click", "באנר המדריך"),
+        ("nav_click", "לחיצות ניווט"),
+        ("gallery_filter", "שימוש בפילטר גלריה"),
+        ("scroll_25", "גלילה 25%"), ("scroll_50", "גלילה 50%"),
+        ("scroll_75", "גלילה 75%"), ("scroll_90", "גלילה 90%"),
+        ("generate_lead", "לידים מוצלחים"),
+        ("contact_intent", "כוונת יצירת קשר"),
+        ("contact_form_success", "טופסי קשר שנשלחו"),
+        ("language_change", "החלפת שפה"),
+    ]:
+        lines.append(f"  {label}: {fe.get(event, '0')}")
 
     rev = data.get("revenue")
     lines += ["", "--- אימות הכנסות מול D1 (לא רק ספירת events מ-GA) ---"]
@@ -352,12 +399,27 @@ def build_html_email(data, analysis):
     {card("צפיות", s['pageViews'], p['pageViews'])}
     {card("משתמשים חדשים", s['newUsers'])}
     {card("Bounce rate", s['bounceRate'])}
-    {card("זמן ממוצע", s['avgSessionSec'] + "ש׳")}
+    {card("Engagement rate", s.get('engagementRate', 'לא זמין'))}
+    {card("סשנים מעורבים", s.get('engagedSessions', 'לא זמין'))}
+    {card("זמן ממוצע", format_duration(s['avgSessionSec']))}
   </div>
   <div style="padding:0 24px 20px">
     <h2 style="color:#2c3e50;margin:0 0 10px;font-size:1em">ניתוח והמלצות — Claude</h2>
     <div style="background:#f8f9fa;border-right:4px solid #3498db;padding:14px 16px;border-radius:0 8px 8px 0;line-height:1.7;color:#333;font-size:.92em">
       {analysis.replace(chr(10), "<br>")}
+    </div>
+  </div>
+  <div style="padding:0 24px 20px">
+    <h2 style="color:#2c3e50;margin:0 0 8px;font-size:1em">התנהגות וחוויית משתמש</h2>
+    <div style="background:#f8f9fa;border-radius:8px;padding:12px 16px;display:flex;gap:10px;flex-wrap:wrap">
+      {card("CTA גלריה", data['funnel_events'].get('hero_gallery_click', '0'))}
+      {card("CTA מדריך", data['funnel_events'].get('hero_guide_click', '0'))}
+      {card("לחיצות ניווט", data['funnel_events'].get('nav_click', '0'))}
+      {card("פילטרים", data['funnel_events'].get('gallery_filter', '0'))}
+      {card("גלילה 50%", data['funnel_events'].get('scroll_50', '0'))}
+      {card("גלילה 90%", data['funnel_events'].get('scroll_90', '0'))}
+      {card("לידים", data['funnel_events'].get('generate_lead', '0'))}
+      {card("יצירת קשר", data['funnel_events'].get('contact_intent', '0'))}
     </div>
   </div>
   <div style="padding:0 24px 20px">
@@ -414,10 +476,10 @@ def send_email(subject, html_body):
     print(f"✅ מייל נשלח: {resp.json().get('id')}")
 
 
-def save_report(data, analysis):
+def save_report(data, analysis, reports_file=None):
     """שומר את הדוח ל-data/ga_reports.json לתצוגה באדמין."""
     from pathlib import Path
-    reports_file = Path(__file__).parent.parent / "data" / "ga_reports.json"
+    reports_file = Path(reports_file) if reports_file else Path(__file__).parent.parent / "data" / "ga_reports.json"
     reports = []
     if reports_file.exists():
         try:
@@ -442,12 +504,18 @@ def save_report(data, analysis):
             "pageViews":      s["pageViews"],
             "bounceRate":     s["bounceRate"],
             "avgSessionSec":  s["avgSessionSec"],
+            "newUsers":       s.get("newUsers", "0"),
+            "engagementRate": s.get("engagementRate"),
+            "engagedSessions": s.get("engagedSessions"),
             "delta_sessions": delta(s["sessions"], p["sessions"]),
             "delta_users":    delta(s["activeUsers"], p["activeUsers"]),
             "delta_views":    delta(s["pageViews"], p["pageViews"]),
         },
         "top_pages": data["top_pages"][:5],
+        "landing_pages": data.get("landing_pages", [])[:5],
         "sources":   data["sources"][:5],
+        "devices":   data.get("devices", []),
+        "countries": data.get("countries", [])[:5],
         "funnel_events": data["funnel_events"],
         "revenue":   data.get("revenue"),
         "analysis":  analysis,

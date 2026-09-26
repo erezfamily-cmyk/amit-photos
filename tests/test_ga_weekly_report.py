@@ -1,4 +1,5 @@
 import sys
+import json
 from pathlib import Path
 from unittest.mock import patch, MagicMock
 
@@ -7,13 +8,20 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 import ga_weekly_report as gwr
 
 
+def test_format_duration_uses_minutes_and_seconds():
+    assert gwr.format_duration("3071") == "51:11 דקות"
+    assert gwr.format_duration("45") == "45 שניות"
+
+
 def fake_data(revenue=None):
     return {
         "period": "2026-09-19 → 2026-09-26",
         "summary": {"sessions": "100", "activeUsers": "80", "pageViews": "300",
                     "bounceRate": "40.0%", "avgSessionSec": "90", "newUsers": "50"},
         "prev_week": {"sessions": "90", "activeUsers": "70", "pageViews": "280"},
-        "top_pages": [], "sources": [], "devices": [], "countries": [],
+        "top_pages": [], "landing_pages": [{"עמוד נחיתה": "/", "sessions": "70"}],
+        "sources": [], "devices": [{"מכשיר": "mobile", "sessions": "60"}],
+        "countries": [{"ארץ": "Israel", "sessions": "75"}],
         "funnel_events": {"photo_view": "10", "purchase_intent": "2", "add_size": "1", "purchase": "0",
                            "print_intent": "0", "print_type_selected": "0", "print_checkout": "0"},
         "revenue": revenue,
@@ -92,3 +100,49 @@ def test_generate_analysis_prompt_no_longer_hardcodes_the_stale_never_closed_a_p
     source = inspect.getsource(gwr.generate_analysis)
     assert "מעולם" not in source
     assert "PAYMENTS_ENABLED" in source
+
+
+def test_fetch_ga4_data_requests_landing_pages_engagement_and_ux_events():
+    calls = []
+
+    def fake_run_report(_token, body):
+        calls.append(body)
+        return {"rows": []}
+
+    with patch.object(gwr, "run_report", side_effect=fake_run_report):
+        result = gwr.fetch_ga4_data("token")
+
+    assert "landing_pages" in result
+    assert any(
+        body.get("dimensions") == [{"name": "landingPagePlusQueryString"}]
+        for body in calls
+    )
+    summary_metrics = {
+        metric["name"]
+        for body in calls if not body.get("dimensions")
+        for metric in body.get("metrics", [])
+    }
+    assert {"engagementRate", "engagedSessions"} <= summary_metrics
+
+    event_values = {
+        value
+        for body in calls
+        for value in body.get("dimensionFilter", {}).get("filter", {}).get("inListFilter", {}).get("values", [])
+    }
+    assert {
+        "hero_gallery_click", "hero_guide_click", "nav_click", "gallery_filter",
+        "scroll_25", "scroll_50", "scroll_75", "scroll_90",
+        "generate_lead", "contact_intent", "contact_form_success",
+        "language_change",
+    } <= event_values
+
+
+def test_save_report_persists_ux_dimensions_for_future_comparisons(tmp_path):
+    reports_file = tmp_path / "ga_reports.json"
+    gwr.save_report(fake_data(revenue=None), "analysis", reports_file=reports_file)
+
+    report = json.loads(reports_file.read_text(encoding="utf-8"))[-1]
+    assert report["devices"] == [{"מכשיר": "mobile", "sessions": "60"}]
+    assert report["countries"] == [{"ארץ": "Israel", "sessions": "75"}]
+    assert report["landing_pages"] == [{"עמוד נחיתה": "/", "sessions": "70"}]
+    assert report["summary"]["newUsers"] == "50"

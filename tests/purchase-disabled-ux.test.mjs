@@ -20,6 +20,7 @@ function assetVersion(buf) {
 const cssBuf = readFileSync(new URL('../assets/css/style.css', import.meta.url));
 const galleryBuf = readFileSync(new URL('../assets/js/gallery.js', import.meta.url));
 const i18nBuf = readFileSync(new URL('../assets/js/i18n.js', import.meta.url));
+const analyticsBuf = readFileSync(new URL('../assets/js/analytics.js', import.meta.url));
 
 test('trial banner precedes a sticky nav, so it is visible before the nav sticks', () => {
   assert.ok(html.indexOf('id="beta-banner"') < html.indexOf('id="main-nav"'));
@@ -37,6 +38,7 @@ test('homepage starts in a fail-closed purchase state before JavaScript or API r
 
 test('homepage cache-busts every asset that implements the purchase-state UI', () => {
   assert.match(html, new RegExp(`assets/css/style\\.css\\?v=${assetVersion(cssBuf)}`));
+  assert.match(html, new RegExp(`assets/js/analytics\\.js\\?v=${assetVersion(analyticsBuf)}`));
   assert.match(html, new RegExp(`assets/js/i18n\\.js\\?v=${assetVersion(i18nBuf)}`));
   assert.match(html, new RegExp(`assets/js/gallery\\.js\\?v=${assetVersion(galleryBuf)}`));
 });
