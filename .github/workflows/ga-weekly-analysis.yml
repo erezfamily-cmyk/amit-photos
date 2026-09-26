@@ -37,6 +37,8 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.AMIT_PHOTO_AGENT }}
           REPORT_EMAIL:     erez.family@gmail.com
           FROM_EMAIL:       "Amit Photos <contact@amitphotos.com>"
+          WORKER_URL:       https://amitphotos.com
+          ADMIN_PASSWORD:   ${{ secrets.ADMIN_PASSWORD }}
         run: python src/ga_weekly_report.py
 
       - name: שמירת דוח ל-git
