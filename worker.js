@@ -55,6 +55,7 @@ export {
   handlePaymentsStatus,
   handleVerifyPayment,
   handlePrintOrderComplete,
+  handlePrintWebhook,
   handleDownload,
 };
 
@@ -2302,6 +2303,7 @@ async function handlePrintOrderComplete(request, env) {
 
   // Human-readable product label
   const productLabel = typeEntry && sizeEntry ? `${typeEntry.label} — ${sizeEntry.label}` : sku;
+  const safeProductLabel = escXml(productLabel);
   const sellPrice = parseFloat(urlParams.get('mc_gross') || 0);
 
   await env.DB.prepare(
@@ -2339,7 +2341,7 @@ async function handlePrintOrderComplete(request, env) {
         </td></tr>
         <tr><td style="padding:32px 40px;color:#222;font-size:15px;line-height:1.85;direction:rtl;text-align:right">
           <h2 style="margin:0 0 1rem;font-size:18px">שלום ${ea.name}, ההזמנה התקבלה!</h2>
-          <p><strong>מוצר:</strong> ${productLabel}</p>
+          <p><strong>מוצר:</strong> ${safeProductLabel}</p>
           <p><strong>כתובת:</strong> ${ea.line1}, ${ea.city} ${ea.zip}</p>
           <p><strong>מחיר ששולם:</strong> $${sellPrice}</p>
           <p style="color:#888;font-size:.9rem">זמן משלוח משוער: 7–10 ימי עסקים.</p>
@@ -2373,7 +2375,7 @@ async function handlePrintOrderComplete(request, env) {
       <tr><td style="padding:.4rem 0;color:#888">טלפון</td><td><a href="tel:${ea.phone}" style="color:#c8a96e">${ea.phone||'—'}</a></td></tr>
       <tr><td style="padding:.4rem 0;color:#888">מייל</td><td><a href="mailto:${ea.email}" style="color:#c8a96e">${ea.email}</a></td></tr>
       <tr><td style="padding:.4rem 0;color:#888">כתובת</td><td>${ea.line1}, ${ea.city} ${ea.zip}</td></tr>
-      <tr><td style="padding:.4rem 0;color:#888">מוצר</td><td>${productLabel}</td></tr>
+      <tr><td style="padding:.4rem 0;color:#888">מוצר</td><td>${safeProductLabel}</td></tr>
       <tr><td style="padding:.4rem 0;color:#888">מחיר</td><td><strong>$${sellPrice}</strong></td></tr>
       <tr><td style="padding:.4rem 0;color:#888">Gelato ID</td><td style="font-size:.82rem;color:#aaa">${gelatoOrderId||'—'}</td></tr>
     </table>
@@ -2500,12 +2502,16 @@ async function handlePrintRefreshStatus(request, env) {
 async function handlePrintWebhook(request, env) {
   if (request.method !== 'POST') return new Response('ok', { status: 200 });
   const payload = await request.json().catch(() => null);
-  if (!payload) return new Response('ok', { status: 200 });
+  const invalidPayload = () => jsonRes({ error: 'invalid webhook payload' }, 400, request);
+  if (!payload || typeof payload !== 'object' || Array.isArray(payload)) return invalidPayload();
 
   // Gelato webhook format: { event, orderId, orderReferenceId, fulfillmentStatus, items: [{fulfillments: [{trackingCode, trackingUrl}]}] }
-  const gelatoOrderId = payload.orderId || payload.orderReferenceId;
-  const status = payload.fulfillmentStatus;
-  if (!gelatoOrderId || !status) return new Response('ok', { status: 200 });
+  const rawOrderId = payload.orderId ?? payload.orderReferenceId;
+  const rawStatus = payload.fulfillmentStatus;
+  if (typeof rawOrderId !== 'string' || typeof rawStatus !== 'string') return invalidPayload();
+  const gelatoOrderId = rawOrderId.trim();
+  const status = rawStatus.trim().toLowerCase();
+  if (!gelatoOrderId || gelatoOrderId.length > 200 || !status || status.length > 50) return invalidPayload();
 
   // Map Gelato status to our status
   const STATUS_MAP = {
@@ -2518,22 +2524,46 @@ async function handlePrintWebhook(request, env) {
     'cancelled':     'cancelled',
     'failed':        'cancelled',
   };
-  const newStatus = STATUS_MAP[status.toLowerCase()];
-  if (!newStatus) return new Response('ok', { status: 200 });
+  const newStatus = STATUS_MAP[status];
+  if (!newStatus) return invalidPayload();
 
-  await env.DB.prepare(
-    'UPDATE print_orders SET status=? WHERE prodigi_order_id=? AND status != ?'
-  ).bind(newStatus, gelatoOrderId, 'cancelled').run();
+  let tracking = '';
+  if (payload.items !== undefined) {
+    if (!Array.isArray(payload.items)) return invalidPayload();
+    const fulfillments = payload.items[0]?.fulfillments;
+    if (fulfillments !== undefined && !Array.isArray(fulfillments)) return invalidPayload();
+    const rawTracking = fulfillments?.[0]?.trackingCode;
+    if (rawTracking !== undefined && rawTracking !== null) {
+      if (typeof rawTracking !== 'string' || rawTracking.length > 500) return invalidPayload();
+      tracking = rawTracking;
+    }
+  }
 
-  // Send shipping notification to customer when shipped
-  if (newStatus === 'shipped' && env.RESEND_API_KEY) {
-    const order = await env.DB.prepare(
-      'SELECT * FROM print_orders WHERE prodigi_order_id=?'
-    ).bind(gelatoOrderId).first();
-    if (order?.customer_email) {
+  // Ignore events for orders we did not create. This gate deliberately precedes all writes.
+  const order = await env.DB.prepare(
+    'SELECT * FROM print_orders WHERE prodigi_order_id=?'
+  ).bind(gelatoOrderId).first();
+  if (!order || order.status === 'cancelled' || order.status === newStatus) {
+    return new Response('ok', { status: 200 });
+  }
+
+  // Include the previous status in the predicate so concurrent duplicate webhooks cannot both win.
+  const updateResult = await env.DB.prepare(
+    'UPDATE print_orders SET status=? WHERE prodigi_order_id=? AND status=?'
+  ).bind(newStatus, gelatoOrderId, order.status).run();
+  const changed = Number(updateResult?.meta?.changes || 0) > 0;
+
+  // Send only for the winning transition into shipped; retries and races stay silent.
+  if (changed && newStatus === 'shipped' && env.RESEND_API_KEY && order.customer_email) {
       const fromEmail = env.FROM_EMAIL || 'contact@amitphotos.com';
-      const fulfillments = payload.items?.[0]?.fulfillments || [];
-      const tracking = fulfillments[0]?.trackingCode || '';
+      const safeOrder = {
+        customerName: escXml(order.customer_name || ''),
+        productLabel: escXml(order.product_label || ''),
+        addressLine1: escXml(order.address_line1 || ''),
+        addressCity: escXml(order.address_city || ''),
+        addressZip: escXml(order.address_zip || ''),
+        tracking: escXml(tracking),
+      };
       const html = `<!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head><meta charset="UTF-8"></head>
@@ -2545,10 +2575,10 @@ async function handlePrintWebhook(request, env) {
           <div style="color:#c8a96e;font-size:20px;font-weight:700;letter-spacing:.25em;font-family:Georgia,serif">AMIT PHOTOS</div>
         </td></tr>
         <tr><td style="padding:32px 40px;color:#222;font-size:15px;line-height:1.85;direction:rtl;text-align:right">
-          <h2 style="margin:0 0 1rem">שלום ${order.customer_name}, ההדפסה שלך בדרך! 📦</h2>
-          <p><strong>מוצר:</strong> ${order.product_label}</p>
-          <p><strong>כתובת:</strong> ${order.address_line1}, ${order.address_city} ${order.address_zip}</p>
-          ${tracking ? `<p><strong>מספר מעקב:</strong> ${tracking}</p>` : ''}
+          <h2 style="margin:0 0 1rem">שלום ${safeOrder.customerName}, ההדפסה שלך בדרך! 📦</h2>
+          <p><strong>מוצר:</strong> ${safeOrder.productLabel}</p>
+          <p><strong>כתובת:</strong> ${safeOrder.addressLine1}, ${safeOrder.addressCity} ${safeOrder.addressZip}</p>
+          ${tracking ? `<p><strong>מספר מעקב:</strong> ${safeOrder.tracking}</p>` : ''}
           <p style="color:#888;font-size:.9rem">זמן הגעה משוער: 7–10 ימי עסקים.</p>
         </td></tr>
       </table>
@@ -2560,7 +2590,6 @@ async function handlePrintWebhook(request, env) {
         headers: { 'Authorization': `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({ from: fromEmail, to: order.customer_email, subject: 'ההדפסה שלך נשלחה! — Amit Photos', html })
       });
-    }
   }
 
   return new Response('ok', { status: 200 });
