@@ -421,6 +421,7 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
 
 /* ===== MOBILE ===== */
 @media(max-width:980px){
+  #admin-ui.visible{flex-direction:column}
   body.sidebar-open{overflow:hidden}
   body.sidebar-open::before{content:"";position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:98}
   .mobile-topbar{display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:90;background:rgba(10,10,10,.96);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);padding:.75rem 1rem;margin:-1rem -1rem 1rem}
@@ -454,8 +455,8 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
   .section-actions{width:100%;justify-content:flex-start}
   .btn{width:100%;justify-content:center}
   .btn-sm{width:auto}
-  .stats-bar{gap:.5rem}
-  .stat-chip{font-size:.75rem;padding:.35rem .65rem}
+  .stats-bar{gap:.5rem;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:.4rem;margin-inline:-.85rem;padding-inline:.85rem}
+  .stat-chip{font-size:.75rem;padding:.35rem .65rem;flex-shrink:0;white-space:nowrap}
   .dash-grid,#analytics-kpi-row,#social-kpi-row,.stats-grid{grid-template-columns:1fr}
   .dash-card,.dash-recent,.photo-card{border-radius:10px}
   .dash-card{padding:1rem}
