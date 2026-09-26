@@ -217,6 +217,7 @@ function applyLang() {
   document.documentElement.dir = isEn ? 'ltr' : 'rtl';
   document.documentElement.lang = lang;
   document.body.style.direction = isEn ? 'ltr' : 'rtl';
+  document.title = isEn ? 'Photography Locations — Amit Photos' : 'מקומות לצילום — Amit Photos';
 
   const badge = document.querySelector('.badge');
   if (badge) badge.textContent = L.badge;

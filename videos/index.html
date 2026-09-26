@@ -276,9 +276,13 @@ function buildReels(videos) {
 }
 
 function applyStaticLang() {
+  var isEn = LANG === 'en';
+  document.documentElement.lang = LANG;
+  document.documentElement.dir = isEn ? 'ltr' : 'rtl';
+  document.body.style.direction = isEn ? 'ltr' : 'rtl';
   document.querySelectorAll('[data-he]').forEach(function(el) {
     if (!el.closest('#tutorials-grid') && !el.closest('#galleries-grid') && !el.closest('#reels-grid')) {
-      el.textContent = LANG === 'en' ? (el.dataset.en || el.dataset.he) : el.dataset.he;
+      el.textContent = isEn ? (el.dataset.en || el.dataset.he) : el.dataset.he;
     }
   });
 }
