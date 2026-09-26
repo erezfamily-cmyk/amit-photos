@@ -165,7 +165,7 @@ def fetch_ga4_data(token):
                     "purchase_intent", "photo_view", "add_size", "purchase", "generate_lead",
                     "print_intent", "print_type_selected", "print_checkout",
                     "hero_gallery_click", "hero_sale_click", "hero_purchase_info_click",
-                    "hero_guide_click", "guide_banner_click", "nav_click", "gallery_filter",
+                    "hero_guide_click", "guide_banner_click", "journey_click", "nav_click", "gallery_filter",
                     "scroll_25", "scroll_50", "scroll_75", "scroll_90",
                     "contact_intent", "contact_form_success", "language_change",
                 ]},
@@ -276,6 +276,7 @@ def build_data_summary(data):
     for event, label in [
         ("hero_gallery_click", "CTA גלריה ב-Hero"),
         ("hero_guide_click", "CTA מדריך ב-Hero"),
+        ("journey_click", "בחירת מסלול בדף הבית"),
         ("guide_banner_click", "באנר המדריך"),
         ("nav_click", "לחיצות ניווט"),
         ("gallery_filter", "שימוש בפילטר גלריה"),
@@ -414,6 +415,7 @@ def build_html_email(data, analysis):
     <div style="background:#f8f9fa;border-radius:8px;padding:12px 16px;display:flex;gap:10px;flex-wrap:wrap">
       {card("CTA גלריה", data['funnel_events'].get('hero_gallery_click', '0'))}
       {card("CTA מדריך", data['funnel_events'].get('hero_guide_click', '0'))}
+      {card("בחירת מסלול", data['funnel_events'].get('journey_click', '0'))}
       {card("לחיצות ניווט", data['funnel_events'].get('nav_click', '0'))}
       {card("פילטרים", data['funnel_events'].get('gallery_filter', '0'))}
       {card("גלילה 50%", data['funnel_events'].get('scroll_50', '0'))}

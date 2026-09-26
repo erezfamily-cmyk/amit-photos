@@ -18,9 +18,8 @@ test('analytics helper loads before scripts that emit UX events', () => {
 test('primary homepage journeys expose declarative analytics events', () => {
   for (const event of [
     'hero_gallery_click',
-    'hero_purchase_info_click',
     'hero_guide_click',
-    'guide_banner_click',
+    'journey_click',
     'nav_click',
     'contact_intent',
   ]) {

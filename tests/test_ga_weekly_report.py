@@ -130,7 +130,7 @@ def test_fetch_ga4_data_requests_landing_pages_engagement_and_ux_events():
         for value in body.get("dimensionFilter", {}).get("filter", {}).get("inListFilter", {}).get("values", [])
     }
     assert {
-        "hero_gallery_click", "hero_guide_click", "nav_click", "gallery_filter",
+        "hero_gallery_click", "hero_guide_click", "journey_click", "nav_click", "gallery_filter",
         "scroll_25", "scroll_50", "scroll_75", "scroll_90",
         "generate_lead", "contact_intent", "contact_form_success",
         "language_change",

@@ -309,6 +309,11 @@ async function loadPhotos() {
       : p
   );
 
+  const photoCountStat = document.getElementById('photo-count-stat');
+  if (photoCountStat) {
+    photoCountStat.textContent = allPhotos.length.toLocaleString(getLang() === 'en' ? 'en-US' : 'he-IL');
+  }
+
   isHomePreview = true;
   filteredPhotos = buildHomePreview();
   displayedCount = filteredPhotos.length;
@@ -569,6 +574,10 @@ async function initFeatured() {
     };
     picks = [...allPhotos].sort(seededSort).slice(0, 5);
   }
+
+  // The admin can maintain a longer shortlist, but the homepage intentionally
+  // stays a concise preview. The full collection remains available via filters.
+  picks = picks.slice(0, 5);
 
   featuredIds = picks.map(p => p.id);
 
