@@ -55,7 +55,10 @@ function runPrivacyScripts(search = '', storedLang = null) {
 }
 
 test('English policy contains the complete ten-section translation', () => {
-  const english = html.match(/<div class="section-en"[\s\S]*?<\/div>\s*<\/div>/)?.[0] || '';
+  // the closing wrapper is <main class="content"> (added for a landmark fix after this test was
+  // written), not <div class="content"> — accept either so this keeps testing section-en's
+  // content regardless of what its parent element is.
+  const english = html.match(/<div class="section-en"[\s\S]*?<\/div>\s*<\/(?:div|main)>/)?.[0] || '';
   assert.match(english, /<h1>Privacy Policy<\/h1>/);
   assert.equal((english.match(/<h2>/g) || []).length, 10);
   assert.match(english, /For any privacy-related questions/);
