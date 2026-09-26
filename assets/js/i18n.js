@@ -41,6 +41,7 @@ const CATEGORY_MAP = {
 
 const TRANSLATIONS = {
   he: {
+    'skip.link':        'דלג לתוכן',
     // Nav
     'nav.logo.name':    'עמית ארז',
     'nav.logo.tagline': ' | עולם של צבעים מבעד לעדשה',
@@ -445,6 +446,7 @@ const TRANSLATIONS = {
   },
 
   en: {
+    'skip.link':        'Skip to content',
     // Nav
     'nav.logo.name':    'Amit Erez',
     'nav.logo.tagline': ' | A World of Colors Through the Lens',
