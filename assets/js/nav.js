@@ -322,7 +322,8 @@ nav#main-nav .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px)
 #nav-nl-strip .nl-more { font-size: .72rem; color: #888; text-decoration: none; display: inline-block; margin-top: .4rem; }
 #nav-nl-strip .nl-more:hover { color: #c8a96e; }
 #nav-nl-strip .nl-consent-row { display: flex; align-items: flex-start; gap: .4rem; font-size: .72rem;
-  color: #999; max-width: 420px; margin: .4rem auto 0; text-align: start; cursor: pointer; }
+  color: #999; max-width: 420px; margin: .4rem auto 0; text-align: start; cursor: pointer;
+  flex-basis: 100%; }
 #nav-nl-strip .nl-consent-row input[type=checkbox] { width: 24px; height: 24px; margin-top: 0; flex-shrink: 0; cursor: pointer; }
 #nav-nl-strip .nl-consent-row a { color: #c8a96e; }`;
     document.head.appendChild(nlStyle);
@@ -336,9 +337,9 @@ nav#main-nav .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px)
       <form id="nav-nl-form">
         <input type="email" id="nav-nl-email" autocomplete="email" required>
         <button type="submit" id="nav-nl-btn"></button>
+        <label class="nl-consent-row"><input type="checkbox" id="nav-nl-consent-privacy" required><span id="nl-consent-privacy"></span></label>
+        <label class="nl-consent-row"><input type="checkbox" id="nav-nl-consent-marketing"><span id="nl-consent-marketing"></span></label>
       </form>
-      <label class="nl-consent-row"><input type="checkbox" id="nav-nl-consent-privacy" required><span id="nl-consent-privacy"></span></label>
-      <label class="nl-consent-row"><input type="checkbox" id="nav-nl-consent-marketing"><span id="nl-consent-marketing"></span></label>
       <div class="nl-msg" id="nav-nl-msg"></div>
       <a class="nl-more" id="nl-more" href="/free-guide/"></a>`;
     document.body.appendChild(strip);
