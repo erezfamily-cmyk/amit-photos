@@ -823,10 +823,10 @@
   <script src="/assets/js/cookie-notice.js"></script>
 
   <!-- ===== LIGHTBOX ===== -->
-  <div class="lightbox" id="lightbox">
-    <button class="lightbox-close" id="lb-close">✕</button>
-    <button class="lightbox-nav lightbox-prev" id="lb-prev">›</button>
-    <button class="lightbox-nav lightbox-next" id="lb-next">‹</button>
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" data-i18n-aria="lightbox.aria" aria-label="תצוגת תמונה מוגדלת">
+    <button class="lightbox-close" id="lb-close" data-i18n-aria="close" aria-label="סגור">✕</button>
+    <button class="lightbox-nav lightbox-prev" id="lb-prev" data-i18n-aria="lightbox.prev" aria-label="התמונה הקודמת">›</button>
+    <button class="lightbox-nav lightbox-next" id="lb-next" data-i18n-aria="lightbox.next" aria-label="התמונה הבאה">‹</button>
     <div class="lightbox-counter" id="lb-counter"></div>
     <div class="lightbox-inner">
       <div class="lb-spinner" id="lb-spinner"></div>

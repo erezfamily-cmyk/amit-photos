@@ -1,3 +1,43 @@
+// ===== MODAL A11Y — focus trap + restore on close =====
+// חל על כל דיאלוג מודאלי (lightbox, wall/cart/buy/print-modal): מעביר פוקוס פנימה בפתיחה,
+// לוכד Tab/Shift+Tab בתוך הדיאלוג (לא בורח לתוכן שמאחור), ומחזיר פוקוס לאלמנט שהיה ממוקד
+// לפני הפתיחה בסגירה — כולל מודאלים מקוננים (wall-modal נפתח מתוך lb-wall בתוך ה-lightbox).
+const MODAL_FOCUSABLE_SELECTOR = 'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])';
+
+function getModalFocusableElements(container) {
+  // offsetParent is null for position:fixed elements even when fully visible (lb-close/lb-prev/lb-next
+  // all are) — getClientRects().length catches display:none/detached without that false negative.
+  return Array.from(container.querySelectorAll(MODAL_FOCUSABLE_SELECTOR))
+    .filter(el => el.getClientRects().length > 0 && getComputedStyle(el).visibility !== 'hidden');
+}
+
+function openModalA11y(modalEl, focusSelector) {
+  modalEl._a11yPrevFocus = document.activeElement;
+  const focusTarget = (focusSelector && modalEl.querySelector(focusSelector)) || getModalFocusableElements(modalEl)[0];
+  requestAnimationFrame(() => { if (focusTarget) focusTarget.focus(); });
+
+  function onKeydown(e) {
+    if (e.key !== 'Tab') return;
+    const focusable = getModalFocusableElements(modalEl);
+    if (!focusable.length) return;
+    const first = focusable[0], last = focusable[focusable.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  }
+  modalEl.addEventListener('keydown', onKeydown);
+  modalEl._a11yKeydownHandler = onKeydown;
+}
+
+function closeModalA11y(modalEl) {
+  if (modalEl._a11yKeydownHandler) {
+    modalEl.removeEventListener('keydown', modalEl._a11yKeydownHandler);
+    modalEl._a11yKeydownHandler = null;
+  }
+  const prevFocus = modalEl._a11yPrevFocus;
+  modalEl._a11yPrevFocus = null;
+  if (prevFocus && document.body.contains(prevFocus)) prevFocus.focus();
+}
+
 function trackEvent(type, photo) {
   if (typeof gtag === 'function') {
     gtag('event', type, { photo_id: photo.id, photo_title: photo.title, category: photo.category });
@@ -827,10 +867,12 @@ function initLightbox() {
     wallLabel.textContent = photo.title || '';
     wallModal.classList.add('open');
     document.body.style.overflow = 'hidden';
+    openModalA11y(wallModal, '#wall-modal-close');
   }
   function closeWallMockup() {
     wallModal.classList.remove('open');
     document.body.style.overflow = '';
+    closeModalA11y(wallModal);
   }
 
   document.getElementById('lb-wall').addEventListener('click', () => {
@@ -1144,8 +1186,10 @@ function openLightbox(idx) {
     priceHint.textContent = '';
   }
 
-  document.getElementById('lightbox').classList.add('open');
+  const lightboxEl = document.getElementById('lightbox');
+  lightboxEl.classList.add('open');
   document.body.style.overflow = 'hidden';
+  openModalA11y(lightboxEl, '#lb-close');
   trackEvent('photo_view', photo);
 }
 
@@ -1154,8 +1198,10 @@ function closeLightbox() {
   isZoomed = false;
   const img = document.getElementById('lb-img');
   if (img) img.classList.remove('zoomed');
-  document.getElementById('lightbox').classList.remove('open');
+  const lightboxEl = document.getElementById('lightbox');
+  lightboxEl.classList.remove('open');
   document.body.style.overflow = '';
+  closeModalA11y(lightboxEl);
   history.replaceState(null, '', window.location.pathname + window.location.search);
 }
 
@@ -1437,13 +1483,17 @@ function updateCartBadge() {
 function openCartModal() {
   renderCartItems();
   renderCartSummary();
-  document.getElementById('cart-modal').classList.add('open');
+  const cartModalEl = document.getElementById('cart-modal');
+  cartModalEl.classList.add('open');
   document.body.style.overflow = 'hidden';
+  openModalA11y(cartModalEl, '#cart-modal-close');
 }
 
 function closeCartModal() {
-  document.getElementById('cart-modal').classList.remove('open');
+  const cartModalEl = document.getElementById('cart-modal');
+  cartModalEl.classList.remove('open');
   document.body.style.overflow = '';
+  closeModalA11y(cartModalEl);
 }
 
 function renderCartItems() {
@@ -1665,6 +1715,7 @@ function openBuyModal(photo) {
 
   modal.classList.add('open');
   document.body.style.overflow = 'hidden';
+  openModalA11y(modal, '#buy-modal-close');
 }
 
 function transitionBuyStep(fromId, toId, direction) {
@@ -1730,6 +1781,7 @@ function closeBuyModal() {
   const modal = document.getElementById('buy-modal');
   modal.classList.remove('open');
   document.body.style.overflow = '';
+  closeModalA11y(modal);
 }
 
 function redirectToPayPal(photo, size) {
@@ -1807,8 +1859,10 @@ const PrintShop = (() => {
     currentCropImageUrl = '';
     cropOffsetX = 0; cropOffsetY = 0;
     showStep(1);
-    document.getElementById('print-modal').classList.add('open');
+    const printModalEl = document.getElementById('print-modal');
+    printModalEl.classList.add('open');
     document.body.style.overflow = 'hidden';
+    openModalA11y(printModalEl, '#print-modal-close');
 
     if (!catalog) {
       try {
@@ -2137,8 +2191,10 @@ const PrintShop = (() => {
   }
 
   function close() {
-    document.getElementById('print-modal').classList.remove('open');
+    const printModalEl = document.getElementById('print-modal');
+    printModalEl.classList.remove('open');
     document.body.style.overflow = '';
+    closeModalA11y(printModalEl);
   }
 
   async function pay() {

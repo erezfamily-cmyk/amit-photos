@@ -285,6 +285,9 @@ const TRANSLATIONS = {
     'close':            'סגור',
     'buy.modal.aria':   'רכישת תמונה',
     'print.modal.aria': 'הזמנת הדפסה',
+    'lightbox.aria':    'תצוגת תמונה מוגדלת',
+    'lightbox.prev':    'התמונה הקודמת',
+    'lightbox.next':    'התמונה הבאה',
 
     // Cart modal
     'cart.open.aria':   'פתח סל קניות',
@@ -661,6 +664,9 @@ const TRANSLATIONS = {
     'close':            'Close',
     'buy.modal.aria':   'Purchase Photo',
     'print.modal.aria': 'Print Order',
+    'lightbox.aria':    'Enlarged photo view',
+    'lightbox.prev':    'Previous photo',
+    'lightbox.next':    'Next photo',
 
     // Cart modal
     'cart.open.aria':   'Open cart',
