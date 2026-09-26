@@ -117,6 +117,23 @@ def import_to_d1(photo, url, thumbnail, r2_key, dry_run):
         return "skipped"
     return "inserted"
 
+def filter_new_photos(photos_json, d1_ids, d1_filenames):
+    """תמונה נחשבת חדשה רק לפי Drive ID (photo['id']) — זהו המזהה היחיד שקובע.
+    filename תואם ל-D1 יכול לייצר אזהרה בלבד (כותרות AI חוזרות בין תמונות שונות
+    לא אמורות לחסום ייבוא של Drive ID אמיתי וחדש)."""
+    new_photos = []
+    for p in photos_json:
+        if not p.get("id") or p["id"] in d1_ids:
+            continue
+        if "drive.google" not in (p.get("url") or ""):
+            continue
+        fname = (p.get("filename") or "").strip()
+        if fname and fname in d1_filenames:
+            print(f"⚠️  {p['id'][:20]}: filename '{fname}' תואם תמונה קיימת ב-D1 (Drive ID שונה) — מיובא בכל זאת")
+        new_photos.append(p)
+    return new_photos
+
+
 def main():
     sys.stdout.reconfigure(encoding="utf-8")
     parser = argparse.ArgumentParser()
@@ -127,25 +144,17 @@ def main():
         print("❌ חסר ADMIN_PASSWORD")
         sys.exit(1)
 
-    # מי כבר ב-D1 — לפי id ולפי filename (לזיהוי תמונות שעלו ב-UUID)
+    # מי כבר ב-D1 — Drive ID הוא המזהה הקובע; filename משמש רק לאזהרה (ראה filter_new_photos)
     print("🔍 מביא רשימת D1...")
     r = requests.get(f"{WORKER_URL}/api/photos", timeout=30)
     d1_photos = r.json()
     d1_ids       = {p["id"] for p in d1_photos}
     d1_filenames = {(p.get("filename") or "").strip() for p in d1_photos if p.get("filename")}
-    d1_titles    = {(p.get("title") or "").strip() for p in d1_photos if p.get("title")}
-    print(f"   D1: {len(d1_ids)} תמונות, {len(d1_filenames)} עם filename, {len(d1_titles)} כותרות")
+    print(f"   D1: {len(d1_ids)} תמונות, {len(d1_filenames)} עם filename")
 
-    # מה ב-photos.json — חדש = לא ב-D1 לפי id / filename / title
+    # מה ב-photos.json — חדש = Drive ID לא קיים ב-D1
     photos_json = json.loads(PHOTOS_JSON.read_text(encoding="utf-8"))
-    new_photos = [
-        p for p in photos_json
-        if p.get("id")
-        and p["id"] not in d1_ids
-        and (p.get("filename") or "").strip() not in d1_filenames
-        and (p.get("title") or "").strip() not in d1_titles
-        and "drive.google" in (p.get("url") or "")
-    ]
+    new_photos = filter_new_photos(photos_json, d1_ids, d1_filenames)
     print(f"   חדשות ממש מ-Drive: {len(new_photos)}")
 
     if not new_photos:
@@ -205,6 +214,11 @@ def main():
         print(f"\n✅ photos.json עודכן")
 
     print(f"\nסיים: ✓ {done} יובאו | ⏭ {skipped} קיימים | ✗ {errors} שגיאות")
+
+    # תוצאות מוצלחות כבר נשמרו למעלה (photos.json + D1) — אבל אם היו שגיאות, ה-workflow
+    # (CI) חייב לדעת ולהתריע, לא לסיים success בשקט.
+    if errors > 0:
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()

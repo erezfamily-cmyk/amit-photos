@@ -35,6 +35,9 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.AMIT_PHOTO_AGENT }}
           GOOGLE_CREDENTIALS_JSON: ${{ secrets.GOOGLE_CREDENTIALS }}
           GOOGLE_TOKEN_JSON: ${{ secrets.GOOGLE_TOKEN }}
+          # ריק כברירת מחדל = נופל לחיפוש לפי שם "Portfolio" (כמו היום). להגדיר ל-ID
+          # האמיתי של תיקיית Portfolio ב-Drive כדי לעקוף את החיפוש לגמרי.
+          PORTFOLIO_FOLDER_ID: ${{ secrets.PORTFOLIO_FOLDER_ID }}
         run: |
           for attempt in 1 2 3; do
             python src/agent_photos.py && break
