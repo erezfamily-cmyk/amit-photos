@@ -731,7 +731,7 @@
         </div>
         <form class="newsletter-form" id="newsletter-form">
           <div class="newsletter-form-row">
-            <input type="email" id="newsletter-email" data-i18n-placeholder="newsletter.placeholder" data-i18n-aria="newsletter.placeholder" placeholder="כתובת המייל שלך" autocomplete="email" required class="newsletter-input" />
+            <input type="email" id="newsletter-email" data-i18n-placeholder="newsletter.placeholder" data-i18n-aria="newsletter.placeholder" placeholder="כתובת המייל שלך" aria-label="כתובת המייל שלך" autocomplete="email" required class="newsletter-input" />
             <button type="submit" class="newsletter-btn" id="newsletter-btn" data-i18n="newsletter.btn">הרשמה</button>
           </div>
           <label class="newsletter-consent-row">
@@ -1071,7 +1071,7 @@
         </div>
 
         <div class="buy-email-row">
-          <input type="email" id="buy-email" class="buy-email-input" data-i18n-placeholder="buy.email.placeholder" data-i18n-aria="buy.email.placeholder" placeholder="מייל לקבלת הקישור גם במייל (אופציונלי)" autocomplete="email" />
+          <input type="email" id="buy-email" class="buy-email-input" data-i18n-placeholder="buy.email.placeholder" data-i18n-aria="buy.email.placeholder" placeholder="מייל לקבלת הקישור גם במייל (אופציונלי)" aria-label="מייל לקבלת הקישור גם במייל (אופציונלי)" autocomplete="email" />
         </div>
 
         <button type="button" class="buy-paypal-btn" id="buy-paypal-btn">
@@ -1155,13 +1155,13 @@
         <button type="button" class="print-back-btn" id="print-back-2" data-i18n="print.back">← חזור</button>
         <p class="buy-modal-subtitle" data-i18n="print.s3.subtitle">פרטי משלוח</p>
         <div class="print-fields">
-          <input id="print-name" class="print-input" type="text" data-i18n-placeholder="print.name.ph" data-i18n-aria="print.name.ph" placeholder="שם מלא *" autocomplete="name">
-          <input id="print-phone" class="print-input" type="tel" data-i18n-placeholder="print.phone.ph" data-i18n-aria="print.phone.ph" placeholder="טלפון *" autocomplete="tel">
-          <input id="print-email" class="print-input" type="email" data-i18n-placeholder="print.email.ph" data-i18n-aria="print.email.ph" placeholder="מייל (לאישור הזמנה)" autocomplete="email">
-          <input id="print-line1" class="print-input" type="text" data-i18n-placeholder="print.addr.ph" data-i18n-aria="print.addr.ph" placeholder="כתובת (רחוב ומספר) *" autocomplete="address-line1">
+          <input id="print-name" class="print-input" type="text" data-i18n-placeholder="print.name.ph" data-i18n-aria="print.name.ph" placeholder="שם מלא *" aria-label="שם מלא" autocomplete="name">
+          <input id="print-phone" class="print-input" type="tel" data-i18n-placeholder="print.phone.ph" data-i18n-aria="print.phone.ph" placeholder="טלפון *" aria-label="טלפון" autocomplete="tel">
+          <input id="print-email" class="print-input" type="email" data-i18n-placeholder="print.email.ph" data-i18n-aria="print.email.ph" placeholder="מייל (לאישור הזמנה)" aria-label="מייל" autocomplete="email">
+          <input id="print-line1" class="print-input" type="text" data-i18n-placeholder="print.addr.ph" data-i18n-aria="print.addr.ph" placeholder="כתובת (רחוב ומספר) *" aria-label="כתובת" autocomplete="address-line1">
           <div class="print-field-row">
-            <input id="print-city" class="print-input print-input-city" type="text" data-i18n-placeholder="print.city.ph" data-i18n-aria="print.city.ph" placeholder="עיר *" autocomplete="address-level2">
-            <input id="print-zip" class="print-input print-input-zip" type="text" data-i18n-placeholder="print.zip.ph" data-i18n-aria="print.zip.ph" placeholder="מיקוד *" autocomplete="postal-code">
+            <input id="print-city" class="print-input print-input-city" type="text" data-i18n-placeholder="print.city.ph" data-i18n-aria="print.city.ph" placeholder="עיר *" aria-label="עיר" autocomplete="address-level2">
+            <input id="print-zip" class="print-input print-input-zip" type="text" data-i18n-placeholder="print.zip.ph" data-i18n-aria="print.zip.ph" placeholder="מיקוד *" aria-label="מיקוד" autocomplete="postal-code">
           </div>
         </div>
         <p class="print-error" id="print-error"></p>
