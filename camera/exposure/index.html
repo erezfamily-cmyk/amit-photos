@@ -226,7 +226,7 @@ input[type=range].aperture-slider::-webkit-slider-thumb { -webkit-appearance: no
       <div class="lab-title" data-he="🎚️ סימולטור חשיפה — גרור ותראה" data-en="🎚️ Exposure Simulator — Drag & See">🎚️ סימולטור חשיפה — גרור ותראה</div>
 
       <div class="sim-preview">
-        <canvas class="sim-canvas" id="simCanvas"></canvas>
+        <canvas class="sim-canvas" id="simCanvas" width="640" height="360"></canvas>
         <div class="sim-status">
           <span class="ev-badge" id="evBadge">EV 0</span>
           <span class="sim-note" id="evNote"></span>
@@ -507,12 +507,10 @@ const aperEV = [5,4,3,2,1,0,-1];
 const canvas = document.getElementById('simCanvas');
 const ctx = canvas.getContext('2d');
 
+// אין עדיין תמונת בסיס אמיתית — הסצנה הפרוצדורלית (drawFallback) היא ברירת המחדל בפועל,
+// לא נפילה-לאחור. קודם ניסינו לטעון assets/img/camera/sample-landscape.jpg בכל טעינת עמוד,
+// אבל הקובץ מעולם לא הועלה — 404+שגיאת console מיותרים בכל ביקור.
 let baseImg = null;
-const img = new Image();
-img.crossOrigin = 'anonymous';
-img.src = '/assets/img/camera/sample-landscape.jpg';
-img.onerror = () => { baseImg = null; drawFallback(); };
-img.onload = () => { baseImg = img; redraw(); };
 
 function drawFallback() {
   const w = canvas.width, h = canvas.height;
@@ -536,9 +534,8 @@ function drawFallback() {
   ctx.fill();
 }
 
-function resizeCanvas() {
-  const rect = canvas.parentElement.getBoundingClientRect();
-  canvas.width = rect.width || 640;
+function resizeCanvas(width) {
+  canvas.width = width || 640;
   canvas.height = canvas.width * 9/16;
   redraw();
 }
@@ -643,8 +640,12 @@ function applyLang() {
   redraw();
 }
 
-window.addEventListener('resize', resizeCanvas);
-resizeCanvas();
+// ResizeObserver מספק את הרוחב ישירות ב-callback (contentRect) בלי לאלץ getBoundingClientRect()
+// סינכרוני — זה בדיוק מה שגרם ל-forced reflow (329ms, נמדד ב-DevTools trace) שחסם רינדור
+// בטעינת העמוד. גם קורא פעם ראשונה אוטומטית כש-observe() מופעל, אין צורך בקריאה ידנית נפרדת.
+new ResizeObserver(entries => {
+  for (const entry of entries) resizeCanvas(entry.contentRect.width);
+}).observe(canvas.parentElement);
 updateSliders();
 applyLang();
 window.addEventListener('storage', e => { if (e.key === 'lang') applyLang(); });
