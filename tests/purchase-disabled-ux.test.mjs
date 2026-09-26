@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 import { handleNlIssue } from '../worker.js';
 
 const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
@@ -8,6 +9,17 @@ const css = readFileSync(new URL('../assets/css/style.css', import.meta.url), 'u
 const gallery = readFileSync(new URL('../assets/js/gallery.js', import.meta.url), 'utf8');
 const i18n = readFileSync(new URL('../assets/js/i18n.js', import.meta.url), 'utf8');
 const worker = readFileSync(new URL('../worker.js', import.meta.url), 'utf8');
+
+// same hash scripts/bump_versions.py computes — read live rather than hardcoding a specific
+// value, since that value is expected to change every time one of these files' content does
+// (this exact test previously hardcoded a stale hash after an unrelated edit to i18n.js/
+// gallery.js/style.css and had to be fixed, which is precisely what this avoids going forward).
+function assetVersion(buf) {
+  return createHash('md5').update(buf).digest('hex').slice(0, 8);
+}
+const cssBuf = readFileSync(new URL('../assets/css/style.css', import.meta.url));
+const galleryBuf = readFileSync(new URL('../assets/js/gallery.js', import.meta.url));
+const i18nBuf = readFileSync(new URL('../assets/js/i18n.js', import.meta.url));
 
 test('trial banner precedes a sticky nav, so it is visible before the nav sticks', () => {
   assert.ok(html.indexOf('id="beta-banner"') < html.indexOf('id="main-nav"'));
@@ -24,9 +36,9 @@ test('homepage starts in a fail-closed purchase state before JavaScript or API r
 });
 
 test('homepage cache-busts every asset that implements the purchase-state UI', () => {
-  assert.match(html, /assets\/css\/style\.css\?v=12a50793/);
-  assert.match(html, /assets\/js\/i18n\.js\?v=aa4eb8de/);
-  assert.match(html, /assets\/js\/gallery\.js\?v=6d45f43b/);
+  assert.match(html, new RegExp(`assets/css/style\\.css\\?v=${assetVersion(cssBuf)}`));
+  assert.match(html, new RegExp(`assets/js/i18n\\.js\\?v=${assetVersion(i18nBuf)}`));
+  assert.match(html, new RegExp(`assets/js/gallery\\.js\\?v=${assetVersion(galleryBuf)}`));
 });
 
 test('disabled-purchase notice offers a real contact route in Hebrew and English', () => {
