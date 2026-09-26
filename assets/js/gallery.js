@@ -309,6 +309,11 @@ async function loadPhotos() {
       : p
   );
 
+  // "About" section stat used to hardcode "500+", which drifted out of sync with the real count
+  // shown elsewhere on the same page (the "all" filter badge already uses allPhotos.length).
+  const aboutPhotoCount = document.getElementById('about-photo-count');
+  if (aboutPhotoCount && allPhotos.length) aboutPhotoCount.textContent = allPhotos.length.toLocaleString();
+
   isHomePreview = true;
   filteredPhotos = buildHomePreview();
   displayedCount = filteredPhotos.length;
