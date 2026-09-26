@@ -18,6 +18,8 @@ RESEND_KEY       = os.environ.get("RESEND_API_KEY", "")
 ANTHROPIC_KEY    = os.environ.get("ANTHROPIC_API_KEY", "").strip()
 REPORT_EMAIL     = os.environ.get("REPORT_EMAIL", "erez.family@gmail.com")
 FROM_EMAIL       = os.environ.get("FROM_EMAIL", "Amit Photos <contact@amitphotos.com>")
+WORKER_URL       = os.environ.get("WORKER_URL", "https://amitphotos.com")
+ADMIN_PASSWORD   = os.environ.get("ADMIN_PASSWORD", "")
 
 GA4_API_BASE = "https://analyticsdata.googleapis.com/v1beta"
 
@@ -176,6 +178,28 @@ def fetch_ga4_data(token):
     }
 
 
+def fetch_revenue_summary(days=7):
+    """מושך הכנסות אמיתיות מאומתות מ-D1 (/api/admin/revenue-summary) — לא ספירת events מ-GA
+    (שיורים בצד לקוח בלי קשר אם התשלום בפועל הצליח בשרת). כשל כאן לא אמור לעצור את הדוח כולו —
+    שאר הדוח (GA, ניתוח) עדיין בעל ערך גם בלי זה."""
+    if not ADMIN_PASSWORD:
+        print("⚠️ ADMIN_PASSWORD חסר — מדלג על אימות הכנסות מול D1")
+        return None
+    try:
+        resp = requests.get(
+            f"{WORKER_URL}/api/admin/revenue-summary",
+            params={"days": days},
+            headers={"X-Admin-Password": ADMIN_PASSWORD},
+            timeout=15,
+        )
+        if resp.ok:
+            return resp.json()
+        print(f"⚠️ revenue-summary החזיר {resp.status_code}: {resp.text[:200]}")
+    except Exception as e:
+        print(f"⚠️ revenue-summary נכשל: {e}")
+    return None
+
+
 def build_data_summary(data):
     s, p = data["summary"], data["prev_week"]
     def delta(c, pv):
@@ -216,6 +240,17 @@ def build_data_summary(data):
     lines.append(f"  פתיחת מודל הדפסה (print_intent):        {fe.get('print_intent', '0')}")
     lines.append(f"  בחירת סוג הדפסה (print_type_selected):  {fe.get('print_type_selected', '0')}")
     lines.append(f"  מעבר לתשלום (print_checkout):           {fe.get('print_checkout', '0')}")
+
+    rev = data.get("revenue")
+    lines += ["", "--- אימות הכנסות מול D1 (לא רק ספירת events מ-GA) ---"]
+    if rev is None:
+        lines.append("  לא זמין (ADMIN_PASSWORD חסר או שגיאת חיבור — ראה אזהרה למעלה)")
+    else:
+        lines.append(f"  מצב תשלומים באתר: {'פעיל' if rev['payments_enabled'] else 'כבוי (PAYMENTS_ENABLED=false)'}")
+        lines.append(f"  רכישות דיגיטליות מאומתות בשרת: {rev['digital']['count']}  |  הכנסה: ₪{rev['digital']['revenue_ils']}")
+        lines.append(f"  הזמנות הדפסה מאומתות בשרת:     {rev['print']['total_count']}  |  הכנסה: ₪{rev['print']['total_revenue_ils']}")
+        for row in rev["print"]["by_status"]:
+            lines.append(f"    - {row['status']}: {row['count']} הזמנות, ₪{row.get('revenue') or 0}")
     return "\n".join(lines)
 
 
@@ -231,8 +266,12 @@ def generate_analysis(data_summary):
 אתה מנתח נתוני Google Analytics שבועיים ומציע המלצות ספציפיות ומעשיות לגלריית fine art.
 שים לב לשני משפכים נפרדים: מכירה דיגיטלית (photo_view → purchase_intent → add_size → purchase)
 ומכירת הדפסה פיזית דרך Gelato (print_intent → print_type_selected → print_checkout → הזמנה
-מושלמת ב-print_orders). אתר לא הצליח לסגור אף הזמנת הדפסה מעולם, אז ירידה חדה בין שלבים
-באחד המשפכים היא הממצא הכי חשוב לדווח עליו.
+מושלמת ב-print_orders).
+בנתונים מופיע גם סעיף "אימות הכנסות מול D1" — אלו מספרים אמיתיים מהשרת (לא רק events בצד
+לקוח שיכולים להירשם גם אם התשלום בפועל נכשל). שים לב במיוחד למצב מתג התשלומים: אם כתוב
+"כבוי (PAYMENTS_ENABLED=false)" — אל תפרש רכישות=0 כבעיית שיווק או כשל במשפך, זו מדיניות
+מכוונת של בעל האתר ולא משהו לתקן. אם התשלומים פעילים ויש פער משמעותי בין ספירת ה-events
+ב-GA (purchase_intent/purchase) לבין המספרים המאומתים מ-D1 — זה ממצא אמיתי וחשוב לציין.
 כותב בעברית, ישיר, ללא כותרות מפוצצות. נותן 3-5 המלצות מה לעשות השבוע.""",
         messages=[{"role": "user", "content": f"""נתוני אנליטיקס שבועיים של amitphotos.com:
 
@@ -246,6 +285,26 @@ def generate_analysis(data_summary):
 כתוב בעברית, ישיר."""}],
     )
     return msg.content[0].text.strip()
+
+
+def build_revenue_html(rev, card):
+    """סעיף אימות הכנסות אמיתי מ-D1 בגוף המייל — לא זמין בעדינות (לא שובר את שאר המייל) אם
+    revenue-summary נכשל."""
+    if rev is None:
+        return ('<div style="padding:0 24px 20px"><h2 style="color:#2c3e50;margin:0 0 8px;font-size:1em">'
+                'אימות הכנסות מול D1</h2><div style="color:#999;font-size:.85em">לא זמין השבוע '
+                '(ADMIN_PASSWORD חסר או שגיאת חיבור)</div></div>')
+    status_label = "🟢 פעיל" if rev["payments_enabled"] else "🔴 כבוי (PAYMENTS_ENABLED=false)"
+    return f"""
+  <div style="padding:0 24px 20px">
+    <h2 style="color:#2c3e50;margin:0 0 8px;font-size:1em">אימות הכנסות מול D1 — מצב תשלומים: {status_label}</h2>
+    <div style="background:#f8f9fa;border-radius:8px;padding:12px 16px;display:flex;gap:10px;flex-wrap:wrap">
+      {card("רכישות דיגיטליות מאומתות", rev['digital']['count'])}
+      {card("הכנסה דיגיטלית", f"₪{rev['digital']['revenue_ils']}")}
+      {card("הזמנות הדפסה מאומתות", rev['print']['total_count'])}
+      {card("הכנסת הדפסה", f"₪{rev['print']['total_revenue_ils']}")}
+    </div>
+  </div>"""
 
 
 def build_html_email(data, analysis):
@@ -318,6 +377,7 @@ def build_html_email(data, analysis):
       {card("מעבר לתשלום", data['funnel_events'].get('print_checkout', '0'))}
     </div>
   </div>
+  {build_revenue_html(data.get('revenue'), card)}
   <div style="padding:0 24px 20px;display:flex;gap:20px;flex-wrap:wrap">
     <div style="flex:1;min-width:220px">
       <h2 style="color:#2c3e50;margin:0 0 8px;font-size:1em">עמודים פופולריים</h2>
@@ -389,6 +449,7 @@ def save_report(data, analysis):
         "top_pages": data["top_pages"][:5],
         "sources":   data["sources"][:5],
         "funnel_events": data["funnel_events"],
+        "revenue":   data.get("revenue"),
         "analysis":  analysis,
     })
 
@@ -411,6 +472,10 @@ def main():
 
     print("📊 שולף נתונים מ-GA4...")
     data = fetch_ga4_data(token)
+
+    print("💰 מאמת הכנסות מול D1...")
+    data["revenue"] = fetch_revenue_summary()
+
     print(build_data_summary(data))
 
     print("\n🤖 Claude מנתח נתונים...")

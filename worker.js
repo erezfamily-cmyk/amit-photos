@@ -2666,6 +2666,51 @@ async function handleAdminPhotoAnalytics(request, env) {
   return jsonRes({ views: views.results, intents: intents.results, purchases: purchases.results });
 }
 
+// Read-only revenue verification for the weekly GA report — cross-checks GA's client-fired
+// "purchase"/print_* event counts (which fire regardless of whether the server actually
+// recorded a paid order) against what D1 actually has: download_tokens rows only ever get
+// created after handleVerifyPayment's server-side checks pass, and print_orders rows only
+// after handlePrintOrderComplete's. Deliberately does not touch payment-flow code — no new
+// writes, no failure-attempt logging (that would mean adding INSERTs inside the payment
+// handlers themselves, out of scope while PAYMENTS_ENABLED stays false).
+async function handleAdminRevenueSummary(request, env) {
+  if (!await checkAuth(request, env)) return jsonRes({ error: 'Unauthorized' }, 401, request);
+  const url = new URL(request.url);
+  const rawDays = parseInt(url.searchParams.get('days'));
+  const days = Math.max(1, Math.min(90, Number.isNaN(rawDays) ? 7 : rawDays));
+  const sinceIso = new Date(Date.now() - days * 86400000).toISOString();
+  const sinceUnix = Math.floor(Date.now() / 1000) - days * 86400;
+
+  const [digitalRow, printResult] = await Promise.all([
+    env.DB.prepare(
+      `SELECT COUNT(*) as count, ROUND(SUM(amount),2) as revenue FROM download_tokens WHERE created_at >= ?`
+    ).bind(sinceUnix).first(),
+    env.DB.prepare(
+      `SELECT status, COUNT(*) as count, ROUND(SUM(sell_price),0) as revenue FROM print_orders
+       WHERE created_at >= ? GROUP BY status`
+    ).bind(sinceIso).all(),
+  ]);
+
+  const byStatus = printResult.results || [];
+  const totalCount = byStatus.reduce((sum, r) => sum + (r.count || 0), 0);
+  const totalRevenue = byStatus.reduce((sum, r) => sum + (r.revenue || 0), 0);
+
+  return jsonRes({
+    period_days: days,
+    payments_enabled: paymentsEnabled(env),
+    digital: {
+      count: digitalRow?.count || 0,
+      revenue_ils: digitalRow?.revenue || 0,
+    },
+    print: {
+      by_status: byStatus,
+      total_count: totalCount,
+      total_revenue_ils: totalRevenue,
+    },
+  }, 200, request);
+}
+export { handleAdminRevenueSummary };
+
 async function handleNewsletter(request, env) {
   if (!await checkAuth(request, env)) return unauth(request);
   if (request.method !== 'POST') return jsonRes({ error: 'method not allowed' }, 405, request);
@@ -7618,6 +7663,7 @@ export default {
     if (path === '/api/pinterest/update-links' && request.method === 'POST') return handlePinterestUpdateLinks(request, env);
     if (path === '/api/pinterest/sync-en' && request.method === 'POST') return handlePinterestSyncEn(request, env);
     if (path === '/api/admin/photo-analytics') return handleAdminPhotoAnalytics(request, env);
+    if (path === '/api/admin/revenue-summary') return handleAdminRevenueSummary(request, env);
     if (path === '/api/fill-titles')       return handleFillTitles(request, env);
     if (path === '/api/generate-alt')      return handleGenerateAlt(request, env);
     if (path === '/api/trigger-workflow')  return handleTriggerWorkflow(request, env);
