@@ -89,6 +89,20 @@ test('each gallery card is keyboard-focusable with an accessible name', () => {
   assert.match(card.getAttribute('aria-label'), /נוף הרים/);
 });
 
+test('regression: card image has explicit width/height so the lazy-loaded photo does not shift layout on load', () => {
+  const { grid } = buildSandbox({ photos: [{ id: 'p1', title: 'נוף הרים', thumbnail: '/t.webp', width: 4000, height: 3000 }] });
+  const card = grid.children[0];
+  assert.match(card.innerHTML, /<img[^>]*width="4000"/);
+  assert.match(card.innerHTML, /<img[^>]*height="3000"/);
+});
+
+test('card image falls back to a sensible default width/height when the photo record has none', () => {
+  const { grid } = buildSandbox({ photos: [{ id: 'p1', title: 'A' }] });
+  const card = grid.children[0];
+  assert.match(card.innerHTML, /<img[^>]*width="\d+"/);
+  assert.match(card.innerHTML, /<img[^>]*height="\d+"/);
+});
+
 test('pressing Enter on the card itself opens the lightbox at the right index', () => {
   const { grid, calls } = buildSandbox({
     photos: [{ id: 'p1', title: 'A' }, { id: 'p2', title: 'B' }],

@@ -448,6 +448,8 @@ function renderGallery(append = false) {
       <img
         src="${getGalleryThumbUrl(photo.thumbnail || photo.url)}"
         alt="${photo.alt || photo.title}"
+        width="${photo.width || 800}"
+        height="${photo.height || 600}"
         ${idx < 3 ? 'loading="eager" fetchpriority="high"' : 'loading="lazy"'}
         onerror="this.closest('.gallery-item').style.display='none'"
         draggable="false"
