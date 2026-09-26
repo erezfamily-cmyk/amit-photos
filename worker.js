@@ -485,6 +485,74 @@ const KNOWN_SUBSCRIBER_SOURCES = [...GUIDE_SOURCES, ...NEWSLETTER_SOURCES];
 // גרסת נוסח ההסכמה/מדיניות הפרטיות בתוקף — לעדכן ידנית בכל שינוי מהותי בניסוח הצ'קבוקס או במדיניות.
 const CONSENT_POLICY_VERSION = '2026-09-25';
 
+function buildSubscriberConfirmationEmail({ source, isEn, safeName, pdfUrl, subscriberId, marketingConsentGiven }) {
+  const unsubscribeUrl = `https://amitphotos.com/api/unsubscribe?token=${subscriberId}`;
+  const unsubscribe = isEn
+    ? `<p style="color:#888;font-size:.8rem">Unsubscribe: <a href="${unsubscribeUrl}" style="color:#888">click here</a></p>`
+    : `<p style="color:#888;font-size:.8rem">לביטול הרשמה: <a href="${unsubscribeUrl}" style="color:#888">לחץ כאן</a></p>`;
+
+  if (GUIDE_SOURCES.includes(source)) {
+    const marketingNote = marketingConsentGiven
+      ? (isEn
+        ? `<p style="color:#aaa;font-size:.9rem">You'll also receive my monthly newsletter — new photos, shooting locations and guides.</p>`
+        : `<p style="color:#aaa;font-size:.9rem">בנוסף, תקבל את הניוזלטר החודשי שלי — תמונות חדשות, מקומות צילום ומדריכים.</p>`)
+      : (isEn
+        ? `<p style="color:#aaa;font-size:.9rem">The guide was sent without changing your marketing email preferences.</p>`
+        : `<p style="color:#aaa;font-size:.9rem">המדריך נשלח בלי לשנות את העדפות הדיוור השיווקי שלך.</p>`);
+    return {
+      subject: isEn ? 'Your PDF — 50 Photography Tips' : 'הנה ה-PDF שלך — 50 טיפים לצילום',
+      html: isEn
+        ? `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:2rem;background:#111;color:#f0ede8">
+            <h2 style="color:#c8a96e;font-family:sans-serif;margin-bottom:.5rem">AMIT PHOTOS</h2>
+            <h3 style="margin-top:0">50 Photography Tips — Your PDF is ready!</h3>
+            <p style="color:#ccc">Hello${safeName ? ' ' + safeName : ''},</p>
+            <p style="color:#ccc">Thank you! Here is your download link:</p>
+            <div style="text-align:center;margin:1.5rem 0">
+              <a href="${pdfUrl}" style="background:#c8a96e;color:#111;padding:.8rem 2rem;border-radius:4px;text-decoration:none;font-weight:700;font-size:1rem">Download PDF →</a>
+            </div>
+            ${marketingNote}
+            <hr style="margin-top:2rem;border-color:#333">
+            ${marketingConsentGiven ? unsubscribe : ''}
+          </div>`
+        : `<div dir="rtl" style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:2rem;background:#111;color:#f0ede8">
+            <h2 style="color:#c8a96e;font-family:sans-serif;margin-bottom:.5rem">AMIT PHOTOS</h2>
+            <h3 style="margin-top:0">50 טיפים לצילום טוב יותר — הPDF שלך מוכן!</h3>
+            <p style="color:#ccc">שלום${safeName ? ' ' + safeName : ''},</p>
+            <p style="color:#ccc">תודה! הנה הקישור להורדה:</p>
+            <div style="text-align:center;margin:1.5rem 0">
+              <a href="${pdfUrl}" style="background:#c8a96e;color:#111;padding:.8rem 2rem;border-radius:4px;text-decoration:none;font-weight:700;font-size:1rem">הורד את ה-PDF ←</a>
+            </div>
+            ${marketingNote}
+            <hr style="margin-top:2rem;border-color:#333">
+            ${marketingConsentGiven ? unsubscribe : ''}
+          </div>`,
+    };
+  }
+
+  return {
+    subject: isEn ? 'Welcome to Amit Photos newsletter!' : 'ברוך הבא לניוזלטר של עמית פוטוס!',
+    html: isEn
+      ? `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:2rem;color:#111">
+          <h2 style="color:#c8a96e;font-family:sans-serif">AMIT PHOTOS</h2>
+          <p>Hello${safeName ? ' ' + safeName : ''},</p>
+          <p>Thank you for subscribing to the Amit Photos newsletter! 🎉</p>
+          <p>You'll receive updates about new photos, exclusive deals and behind-the-scenes content — straight to your inbox.</p>
+          <hr style="margin-top:2rem;border-color:#ddd">
+          <p style="color:#999;font-size:.8rem">You received this email because you subscribed at <a href="https://amitphotos.com">amitphotos.com</a>.</p>
+          ${unsubscribe}
+        </div>`
+      : `<div dir="rtl" style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:2rem;color:#111">
+          <h2 style="color:#c8a96e;font-family:sans-serif">AMIT PHOTOS</h2>
+          <p>שלום${safeName ? ' ' + safeName : ''},</p>
+          <p>תודה שנרשמת לניוזלטר של עמית פוטוס! 🎉</p>
+          <p>תקבל עדכונים על תמונות חדשות, מבצעים בלעדיים ותוכן מאחורי הקלעים — ישירות למייל.</p>
+          <hr style="margin-top:2rem;border-color:#ddd">
+          <p style="color:#999;font-size:.8rem">קיבלת מייל זה כי נרשמת לניוזלטר של <a href="https://amitphotos.com">amitphotos.com</a>.</p>
+          ${unsubscribe}
+        </div>`,
+  };
+}
+
 async function handleSubscribers(request, env) {
   const method = request.method;
 
@@ -523,46 +591,30 @@ async function handleSubscribers(request, env) {
       ? 'https://amitphotos.com/50tips-eng.pdf'
       : 'https://amitphotos.com/50tips-heb.pdf';
     const existing = await env.DB.prepare('SELECT id, consent_marketing FROM subscribers WHERE email = ?').bind(email).first();
-    const isLeadMagnetSource = ['lead_magnet', 'popup', 'subpage_strip', 'homepage_section'].includes(source);
     if (existing) {
       // הסכמה שיווקית יכולה רק להצטרף (NULL/0 → 1), לעולם לא לרדת (1 → 0) על סמך הרשמה חוזרת
       // בלי הסכמה — "לא" בטופס לא מוחק "כן" שכבר ניתן. שדרוג מרענן timestamp/source/version לערכי
       // הבקשה הנוכחית; אם כבר 1, אין צורך ב-UPDATE כפול.
-      if (marketingConsentGiven && existing.consent_marketing !== 1) {
+      const upgradedMarketingConsent = marketingConsentGiven && existing.consent_marketing !== 1;
+      if (upgradedMarketingConsent) {
         await env.DB.prepare(
           'UPDATE subscribers SET consent_marketing=1, consent_marketing_at=?, consent_marketing_source=?, consent_policy_version=? WHERE id=?'
         ).bind(now, source, CONSENT_POLICY_VERSION, existing.id).run();
       }
-      // אם נרשם קיים מבקש PDF — שלח שוב
-      if (isLeadMagnetSource && env.RESEND_API_KEY) {
+      // בקשת מדריך קיימת מקבלת שוב את ה-PDF. הרשמת ניוזלטר קיימת מקבלת מייל ברוכים הבאים
+      // רק כשהבקשה שדרגה עכשיו את ההסכמה, כדי לא לשלוח אישור כפול בכל submit חוזר.
+      const shouldSendConfirmation = GUIDE_SOURCES.includes(source)
+        || (NEWSLETTER_SOURCES.includes(source) && upgradedMarketingConsent);
+      if (shouldSendConfirmation && env.RESEND_API_KEY) {
         const fromEmail = env.FROM_EMAIL || 'Amit Photos <contact@amitphotos.com>';
+        const confirmation = buildSubscriberConfirmationEmail({
+          source, isEn, safeName: '', pdfUrl, subscriberId: existing.id, marketingConsentGiven,
+        });
         await fetch('https://api.resend.com/emails', {
           method: 'POST',
           headers: { 'Authorization': `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            from: fromEmail, to: email,
-            subject: isEn ? 'Your PDF — 50 Photography Tips' : 'הנה ה-PDF שלך — 50 טיפים לצילום',
-            html: isEn
-              ? `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:2rem;background:#111;color:#f0ede8">
-                  <h2 style="color:#c8a96e">AMIT PHOTOS</h2>
-                  <h3>50 Photography Tips — Your PDF is ready!</h3>
-                  <div style="text-align:center;margin:1.5rem 0">
-                    <a href="${pdfUrl}" style="background:#c8a96e;color:#111;padding:.8rem 2rem;border-radius:4px;text-decoration:none;font-weight:700;font-size:1rem">Download PDF →</a>
-                  </div>
-                  <p style="color:#aaa;font-size:.9rem">You'll also receive the monthly newsletter — photos, locations and guides.</p>
-                  <hr style="border-color:#333;margin-top:2rem">
-                  <p style="color:#888;font-size:.8rem">Unsubscribe: <a href="https://amitphotos.com/api/unsubscribe?token=${existing.id}" style="color:#888">click here</a></p>
-                </div>`
-              : `<div dir="rtl" style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:2rem;background:#111;color:#f0ede8">
-                  <h2 style="color:#c8a96e">AMIT PHOTOS</h2>
-                  <h3>50 טיפים לצילום טוב יותר — הPDF שלך מוכן!</h3>
-                  <div style="text-align:center;margin:1.5rem 0">
-                    <a href="${pdfUrl}" style="background:#c8a96e;color:#111;padding:.8rem 2rem;border-radius:4px;text-decoration:none;font-weight:700;font-size:1rem">הורד את ה-PDF ←</a>
-                  </div>
-                  <p style="color:#aaa;font-size:.9rem">תקבל גם את הניוזלטר החודשי — תמונות, מקומות ומדריכים.</p>
-                  <hr style="border-color:#333;margin-top:2rem">
-                  <p style="color:#888;font-size:.8rem">לביטול הרשמה: <a href="https://amitphotos.com/api/unsubscribe?token=${existing.id}" style="color:#888">לחץ כאן</a></p>
-                </div>`
+            from: fromEmail, to: email, subject: confirmation.subject, html: confirmation.html,
           })
         }).catch(() => {});
       }
@@ -586,57 +638,13 @@ async function handleSubscribers(request, env) {
     if (env.RESEND_API_KEY) {
       const fromEmail = env.FROM_EMAIL || 'Amit Photos <contact@amitphotos.com>';
       const safeName = name ? escXml(name) : '';
-      const isLeadMagnet = ['lead_magnet', 'popup', 'subpage_strip', 'homepage_section'].includes(source);
-      const subject = isLeadMagnet
-        ? (isEn ? 'Your PDF — 50 Photography Tips' : 'הנה ה-PDF שלך — 50 טיפים לצילום')
-        : (isEn ? 'Welcome to Amit Photos newsletter!' : 'ברוך הבא לניוזלטר של עמית פוטוס!');
-      const confirmHtml = isLeadMagnet
-        ? (isEn
-          ? `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:2rem;background:#111;color:#f0ede8">
-              <h2 style="color:#c8a96e;font-family:sans-serif;margin-bottom:.5rem">AMIT PHOTOS</h2>
-              <h3 style="margin-top:0">50 Photography Tips — Your PDF is ready!</h3>
-              <p style="color:#ccc">Hello${safeName ? ' ' + safeName : ''},</p>
-              <p style="color:#ccc">Thank you! Here is your download link:</p>
-              <div style="text-align:center;margin:1.5rem 0">
-                <a href="${pdfUrl}" style="background:#c8a96e;color:#111;padding:.8rem 2rem;border-radius:4px;text-decoration:none;font-weight:700;font-size:1rem">Download PDF →</a>
-              </div>
-              <p style="color:#aaa;font-size:.9rem">You'll also receive my monthly newsletter — new photos, shooting locations and guides.</p>
-              <hr style="margin-top:2rem;border-color:#333">
-              <p style="color:#888;font-size:.8rem">Unsubscribe: <a href="https://amitphotos.com/api/unsubscribe?token=${id}" style="color:#888">click here</a></p>
-            </div>`
-          : `<div dir="rtl" style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:2rem;background:#111;color:#f0ede8">
-              <h2 style="color:#c8a96e;font-family:sans-serif;margin-bottom:.5rem">AMIT PHOTOS</h2>
-              <h3 style="margin-top:0">50 טיפים לצילום טוב יותר — הPDF שלך מוכן!</h3>
-              <p style="color:#ccc">שלום${safeName ? ' ' + safeName : ''},</p>
-              <p style="color:#ccc">תודה! הנה הקישור להורדה:</p>
-              <div style="text-align:center;margin:1.5rem 0">
-                <a href="${pdfUrl}" style="background:#c8a96e;color:#111;padding:.8rem 2rem;border-radius:4px;text-decoration:none;font-weight:700;font-size:1rem">הורד את ה-PDF ←</a>
-              </div>
-              <p style="color:#aaa;font-size:.9rem">בנוסף, תקבל את הניוזלטר החודשי שלי — תמונות חדשות, מקומות צילום ומדריכים.</p>
-              <hr style="margin-top:2rem;border-color:#333">
-              <p style="color:#888;font-size:.8rem">לביטול הרשמה: <a href="https://amitphotos.com/api/unsubscribe?token=${id}" style="color:#888">לחץ כאן</a></p>
-            </div>`)
-        : (isEn
-          ? `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:2rem;color:#111">
-              <h2 style="color:#c8a96e;font-family:sans-serif">AMIT PHOTOS</h2>
-              <p>Hello${safeName ? ' ' + safeName : ''},</p>
-              <p>Thank you for subscribing to the Amit Photos newsletter! 🎉</p>
-              <p>You'll receive updates about new photos, exclusive deals and behind-the-scenes content — straight to your inbox.</p>
-              <hr style="margin-top:2rem;border-color:#ddd">
-              <p style="color:#999;font-size:.8rem">You received this email because you subscribed at <a href="https://amitphotos.com">amitphotos.com</a>.</p>
-            </div>`
-          : `<div dir="rtl" style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:2rem;color:#111">
-              <h2 style="color:#c8a96e;font-family:sans-serif">AMIT PHOTOS</h2>
-              <p>שלום${safeName ? ' ' + safeName : ''},</p>
-              <p>תודה שנרשמת לניוזלטר של עמית פוטוס! 🎉</p>
-              <p>תקבל עדכונים על תמונות חדשות, מבצעים בלעדיים ותוכן מאחורי הקלעים — ישירות למייל.</p>
-              <hr style="margin-top:2rem;border-color:#ddd">
-              <p style="color:#999;font-size:.8rem">קיבלת מייל זה כי נרשמת לניוזלטר של <a href="https://amitphotos.com">amitphotos.com</a>.</p>
-            </div>`);
+      const confirmation = buildSubscriberConfirmationEmail({
+        source, isEn, safeName, pdfUrl, subscriberId: id, marketingConsentGiven,
+      });
       const resendRes = await fetch('https://api.resend.com/emails', {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ from: fromEmail, to: email, subject, html: confirmHtml })
+        body: JSON.stringify({ from: fromEmail, to: email, subject: confirmation.subject, html: confirmation.html })
       });
       if (!resendRes.ok) {
         console.error('Resend error (new subscriber):', resendRes.status, await resendRes.text());
