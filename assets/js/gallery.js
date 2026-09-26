@@ -791,13 +791,16 @@ function initFilters() {
 
   // הזרקת שדה חיפוש מעל הפילטרים (פעם אחת בלבד)
   if (!document.getElementById('gallery-search')) {
+    const wrap = document.createElement('div');
+    wrap.className = 'gallery-search-wrap';
     const inp = document.createElement('input');
     inp.id = 'gallery-search';
     inp.type = 'search';
-    inp.className = 'gallery-search-input';
+    inp.className = 'gallery-search';
     inp.setAttribute('aria-label', t('gallery.search.aria'));
     inp.placeholder = t('gallery.search.placeholder');
-    bar.parentElement.insertBefore(inp, bar);
+    wrap.appendChild(inp);
+    bar.parentElement.insertBefore(wrap, bar);
   } else {
     const inp = document.getElementById('gallery-search');
     inp.placeholder = t('gallery.search.placeholder');
