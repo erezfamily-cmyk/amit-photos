@@ -4,7 +4,11 @@
     if (localStorage.getItem(STORAGE_KEY) === '1') return;
   } catch (e) {}
 
-  var isEn = (document.documentElement.lang || '').toLowerCase().indexOf('en') === 0;
+  // document.documentElement.lang is only updated by i18n.js's applyTranslations(), which runs
+  // on DOMContentLoaded — this script runs earlier (synchronous <script> near end of body), so
+  // that attribute still reflects the hardcoded <html lang="he">, not the user's saved preference.
+  // localStorage is the actual source of truth i18n.js itself reads on load.
+  var isEn = localStorage.getItem('lang') === 'en';
   function t(he, en) { return isEn ? en : he; }
 
   var style = document.createElement('style');

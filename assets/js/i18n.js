@@ -288,6 +288,30 @@ const TRANSLATIONS = {
     'lightbox.aria':    'תצוגת תמונה מוגדלת',
     'lightbox.prev':    'התמונה הקודמת',
     'lightbox.next':    'התמונה הבאה',
+    'wall.color.picker':'שנה צבע קיר',
+    'buy.alt.brand':    'ביט / Paybox',
+
+    // Beta banner
+    'beta.banner.html': 'האתר נמצא בשלבי הרצה. לרכישת תמונות ניתן לפנות טלפונית ולשלם דרך <strong>ביט</strong> או <strong>PayBox</strong> — <a href="tel:050-3333227" class="beta-banner-tel">050-3333227</a>',
+
+    // GuruShots section
+    'gurushots.label':            'הכרה בינלאומית',
+    'gurushots.title':            'הישגים ב-GuruShots',
+    'gurushots.sub':              'GuruShots היא פלטפורמת תחרויות הצילום הגדולה בעולם עם מיליוני צלמים. השגתי את הדרגה הגבוהה ביותר — <strong>GURU</strong>.',
+    'gurushots.points.suffix':    'נקודות GS',
+    'gurushots.stat.pick':        'תמונות שנבחרו ע"י גורו',
+    'gurushots.stat.top10':       'דירוג עשרת הראשונים',
+    'gurushots.stat.top100':      'דירוג מאה הראשונים',
+    'gurushots.stat.exhibition':  'פורסמתי בתערוכות',
+    'gurushots.stat.magazine':    'פורסמתי במגזין',
+    'gurushots.stat.photos.label':'תמונות',
+    'gurushots.stat.submitted':   'הוגשו לתחרויות',
+    'gurushots.link':             'לפרופיל המלא ב-GuruShots ↗',
+
+    // Testimonial dates
+    'testimonial.date.1': 'מרץ 2025',
+    'testimonial.date.2': 'ינואר 2025',
+    'testimonial.date.3': 'נובמבר 2024',
 
     // Cart modal
     'cart.open.aria':   'פתח סל קניות',
@@ -667,6 +691,30 @@ const TRANSLATIONS = {
     'lightbox.aria':    'Enlarged photo view',
     'lightbox.prev':    'Previous photo',
     'lightbox.next':    'Next photo',
+    'wall.color.picker':'Change wall color',
+    'buy.alt.brand':    'Bit / Paybox',
+
+    // Beta banner
+    'beta.banner.html': 'The site is currently in a trial phase. To purchase photos, please call and pay via <strong>Bit</strong> or <strong>PayBox</strong> — <a href="tel:050-3333227" class="beta-banner-tel">050-3333227</a>',
+
+    // GuruShots section
+    'gurushots.label':            'International Recognition',
+    'gurushots.title':            'Achievements on GuruShots',
+    'gurushots.sub':              'GuruShots is the world\'s largest photography competition platform with millions of photographers. I achieved the highest rank — <strong>GURU</strong>.',
+    'gurushots.points.suffix':    'GS points',
+    'gurushots.stat.pick':        'Photos picked by Guru',
+    'gurushots.stat.top10':       'Top 10 ranking',
+    'gurushots.stat.top100':      'Top 100 ranking',
+    'gurushots.stat.exhibition':  'Featured in exhibitions',
+    'gurushots.stat.magazine':    'Featured in a magazine',
+    'gurushots.stat.photos.label':'Photos',
+    'gurushots.stat.submitted':   'Submitted to competitions',
+    'gurushots.link':             'Full profile on GuruShots ↗',
+
+    // Testimonial dates
+    'testimonial.date.1': 'March 2025',
+    'testimonial.date.2': 'January 2025',
+    'testimonial.date.3': 'November 2024',
 
     // Cart modal
     'cart.open.aria':   'Open cart',
@@ -712,8 +760,8 @@ const TRANSLATIONS = {
     'buy.auto.download':  'File downloads automatically after payment',
     'buy.back':           '← Back',
     'buy.note':         'After payment the file downloads automatically. Secure payment via PayPal.',
-    'buy.alt.prefix':   'Also available via Bit / Paybox — call us:',
-    'buy.alt.suffix':   '',
+    'buy.alt.prefix':   'Also available via ',
+    'buy.alt.suffix':   ' — call us:',
 
     // Print modal
     'print.label':      'Print Order',
