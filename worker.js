@@ -6310,17 +6310,21 @@ export async function handleNlIssue(env, slug, isPreview) {
   ).bind(slug).first();
   if (!issue) return new Response('Not found', { status: 404 });
 
+  const purchasesEnabled = paymentsEnabled(env);
   const c = JSON.parse(issue.content_json || '{}');
   const isFull = issue.type === 'full';
   const dateStr = issue.published_at ? issue.published_at.slice(0, 10) : new Date().toISOString().slice(0, 10);
   const pageUrl = `https://amitphotos.com/newsletter/${slug}/`;
   const waHref = escXml(`https://wa.me/?text=${encodeURIComponent(issue.title_he + ' — ' + pageUrl)}`);
 
-  const heroPriceHtml = c.sale?.sale_price ? `
+  const heroPriceHtml = purchasesEnabled && c.sale?.sale_price ? `
       <div class="nl-hero-price">
         <span class="nl-hero-price-orig">${escXml(c.sale.original_price || '')}</span>
         <span class="nl-hero-price-sale">${escXml(c.sale.sale_price)}</span>
       </div>` : '';
+  const heroOrderHtml = purchasesEnabled
+    ? `<a class="nl-btn-secondary nl-hero-order" href="/?photo=${escXml(c.hero?.photo_id || '')}" data-he="רכוש קובץ ב-PayPal ←" data-en="Buy with PayPal →">רכוש קובץ ב-PayPal ←</a>`
+    : `<a class="nl-btn-secondary nl-hero-order" href="tel:+972503333227" data-he="יצירת קשר לרכישה ←" data-en="Contact to Purchase →">יצירת קשר לרכישה ←</a>`;
   const heroSection = c.hero ? `
     <section class="nl-section nl-hero-section">
       <a href="/?photo=${escXml(c.hero.photo_id)}" style="display:block;text-decoration:none">
@@ -6328,7 +6332,7 @@ export async function handleNlIssue(env, slug, isPreview) {
       </a>
       <h2 class="nl-photo-title" data-he="${escXml(c.hero.title_he)}" data-en="${escXml(c.hero.title_he)}">${escXml(c.hero.title_he)}</h2>
       <p class="nl-body-text" data-he="${escXml(c.hero.text_he)}" data-en="${escXml(c.hero.text_en || c.hero.text_he)}">${escXml(c.hero.text_he)}</p>
-      <div class="nl-hero-footer">${heroPriceHtml}<a class="nl-btn-secondary nl-hero-order" href="/?photo=${escXml(c.hero.photo_id)}" data-he="רכוש קובץ ←" data-en="Buy File →">רכוש קובץ ←</a></div>
+      <div class="nl-hero-footer">${heroPriceHtml}${heroOrderHtml}</div>
     </section>` : '';
 
   const guideSection = isFull && c.guide ? (() => {
@@ -6480,7 +6484,7 @@ export async function handleNlIssue(env, slug, isPreview) {
       </div>
     </section>` : '';
 
-  const saleBannerSection = isFull && c.sale?.title_he ? `
+  const saleBannerSection = purchasesEnabled && isFull && c.sale?.title_he ? `
     <section class="nl-section nl-sale-section">
       <div class="nl-sale-banner">
         <div class="nl-sale-header">
@@ -6528,6 +6532,9 @@ export async function handleNlIssue(env, slug, isPreview) {
       { ico: _icoHome,   label: 'קובץ לסלון',             href: _heroPhotoHref }
     ]
   };
+  const paymentAvailabilityNote = purchasesEnabled
+    ? `<p class="nl-contact-note" data-he="ניתן לשלם: ביט · פייבוקס · PayPal" data-en="Payment: Bit · Paybox · PayPal">ניתן לשלם: ביט · פייבוקס · PayPal</p>`
+    : `<p class="nl-contact-note" data-he="הרכישה המקוונת נמצאת בשדרוג אבטחה — לתיאום רכישה פנו אליי ישירות" data-en="Online purchasing is undergoing a security upgrade — contact me directly to arrange a purchase">הרכישה המקוונת נמצאת בשדרוג אבטחה — לתיאום רכישה פנו אליי ישירות</p>`;
   const contactOutreachSection = `
     <section class="nl-section nl-contact-section">
       <div class="nl-contact-card">
@@ -6541,7 +6548,7 @@ export async function handleNlIssue(env, slug, isPreview) {
           <a class="nl-contact-btn" href="tel:+972503333227">${_svgPhone} 050-3333227</a>
         </div>
         <p class="nl-contact-quote" data-he="רוצה לבחור תמונה לבית? לקנות קובץ, או סתם לשאול? אני כאן." data-en="Want to choose a photo for your home? Buy a file, or just ask? I'm here.">רוצה לבחור תמונה לבית? לקנות קובץ, או סתם לשאול? אני כאן.</p>
-        <p class="nl-contact-note" data-he="ניתן לשלם: ביט · פייבוקס · פייפל" data-en="Payment: Bit · Paybox · PayPal">ניתן לשלם: ביט · פייבוקס · פייפל</p>
+        ${paymentAvailabilityNote}
       </div>
     </section>`;
 
