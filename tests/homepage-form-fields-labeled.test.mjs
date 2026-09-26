@@ -17,3 +17,13 @@ test('every input with data-i18n-aria also has a static aria-label (labeled befo
   const unlabeled = inputTags.filter(tag => !/\baria-label=/.test(tag));
   assert.deepEqual(unlabeled, [], `these inputs have data-i18n-aria but no static aria-label: ${unlabeled.join('\n')}`);
 });
+
+test('the web3forms honeypot field is hidden from assistive tech and keyboard tabbing, not just visually', () => {
+  // it's intentionally unlabeled (a real label would tip off screen-reader users to the trap,
+  // defeating its purpose) — the fix is removing it from the accessibility tree and tab order
+  // entirely, which is also what silences Chrome's "no label associated" audit for it.
+  const match = html.match(/<input name="botcheck"[^>]*>/);
+  assert.ok(match, 'botcheck honeypot field not found');
+  assert.match(match[0], /aria-hidden="true"/);
+  assert.match(match[0], /tabindex="-1"/);
+});
