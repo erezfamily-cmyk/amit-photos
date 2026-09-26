@@ -59,6 +59,24 @@ test('regression: the ~20 strings found leaking Hebrew into English mode are now
   }
 });
 
+test('regression: every data-i18n* key actually used in HTML exists in the dictionary (he) — catches keys missing from BOTH languages, which the he/en parity check above cannot', () => {
+  // this is exactly the skip.link bug: data-i18n="skip.link" was on the page but the key was
+  // never added to TRANSLATIONS at all (not just missing from one language), so applyTranslations()
+  // fell through to t()'s final fallback and displayed the literal key name "skip.link" as
+  // visible text — found live in production.
+  const consumers = ['404.html', 'download.html', 'index.html', 'print-complete.html'];
+  const attrPattern = /data-i18n(?:-html|-aria|-placeholder|-title)?="([^"]+)"/g;
+  const missing = [];
+  for (const file of consumers) {
+    const pageSrc = readFileSync(fileURLToPath(new URL(`../${file}`, import.meta.url)), 'utf8');
+    for (const m of pageSrc.matchAll(attrPattern)) {
+      const key = m[1];
+      if (!(key in TRANSLATIONS.he)) missing.push(`${file}: ${key}`);
+    }
+  }
+  assert.deepEqual(missing, [], `these data-i18n keys are used in HTML but missing from TRANSLATIONS entirely:\n${missing.join('\n')}`);
+});
+
 test('regression: cookie-notice.js and accessibility-widget.js read localStorage, not the (stale-at-load-time) documentElement.lang', () => {
   for (const file of ['../assets/js/cookie-notice.js', '../assets/js/accessibility-widget.js']) {
     const scriptSrc = readFileSync(fileURLToPath(new URL(file, import.meta.url)), 'utf8');
