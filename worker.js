@@ -377,7 +377,7 @@ button:hover{background:#d4b87a}
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-<div class="wrap">
+<main class="wrap">
   <div class="left" title="${photoTitle}">
     <button type="button" class="lang-toggle" id="fg-lang-btn" aria-label="Switch language / החלף שפה" onclick="toggleLang()">${t.langBtn}</button>
   </div>
@@ -396,7 +396,7 @@ button:hover{background:#d4b87a}
     </form>
     <div class="back"><a href="https://amitphotos.com" data-he="${T.he.back}" data-en="${T.en.back}">${t.back}</a></div>
   </div>
-</div>
+</main>
 <script>
 var FG_T = ${JSON.stringify(T)};
 function resolveInitialLang(){
@@ -2972,6 +2972,7 @@ async function servePhotoPage(photoId, env) {
 </head>
 <body>
   <a class="back" href="https://amitphotos.com">← חזרה לגלריה</a>
+  <main>
   <div class="photo-wrap">
     <img src="${imageUrl}" alt="${title}" loading="lazy" />
   </div>
@@ -3035,11 +3036,13 @@ async function servePhotoPage(photoId, env) {
     </div>
   </div>` : ''}
   <p class="credit">© עמית ארז — amitphotos.com</p>
+  </main>
 </body>
 </html>`;
 
   return htmlRes(html, 200, 'no-cache, no-store, must-revalidate');
 }
+export { servePhotoPage };
 
 // ===== CATEGORY PAGE =====
 async function handleCategoryPage(category, env) {
