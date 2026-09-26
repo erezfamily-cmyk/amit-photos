@@ -164,8 +164,8 @@ def fetch_ga4_data(token):
                 "inListFilter": {"values": [
                     "purchase_intent", "photo_view", "add_size", "purchase", "generate_lead",
                     "print_intent", "print_type_selected", "print_checkout",
-                    "hero_gallery_click", "hero_sale_click", "hero_purchase_info_click",
-                    "hero_guide_click", "guide_banner_click", "nav_click", "gallery_filter",
+                    "hero_gallery_click", "hero_sale_click",
+                    "hero_guide_click", "nav_click", "gallery_filter",
                     "scroll_25", "scroll_50", "scroll_75", "scroll_90",
                     "contact_intent", "contact_form_success", "language_change",
                 ]},
@@ -276,7 +276,6 @@ def build_data_summary(data):
     for event, label in [
         ("hero_gallery_click", "CTA גלריה ב-Hero"),
         ("hero_guide_click", "CTA מדריך ב-Hero"),
-        ("guide_banner_click", "באנר המדריך"),
         ("nav_click", "לחיצות ניווט"),
         ("gallery_filter", "שימוש בפילטר גלריה"),
         ("scroll_25", "גלילה 25%"), ("scroll_50", "גלילה 50%"),

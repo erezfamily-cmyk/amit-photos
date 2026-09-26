@@ -46,7 +46,6 @@ const TRANSLATIONS = {
     'nav.logo.name':    'עמית ארז',
     'nav.logo.tagline': ' | עולם של צבעים מבעד לעדשה',
     'nav.gallery':      'גלריה',
-    'nav.new':          'חדש באתר',
     'nav.sale':         'מבצע',
     'nav.challenges':   'אתגרים',
     'nav.camera':       'למד לצלם',
@@ -54,8 +53,8 @@ const TRANSLATIONS = {
     'nav.locations':    'מקומות לצילום',
     'nav.learn':        'ניתוח תמונות',
     'nav.gear':         'הציוד שלי',
-    'nav.how-to-buy':   'כיצד לרכוש',
-    'nav.pricing':      'מחירים',
+    'nav.how-to-buy':   'רכישה',
+    'nav.more':         'עוד',
     'nav.contact':      'צור קשר',
     'nav.menu':         'תפריט',
 
@@ -69,11 +68,8 @@ const TRANSLATIONS = {
     'payments.disabled.call':  'התקשרו לעמית — 050-3333227',
     'hero.scroll':      'גלול',
     'hero.cta':         'עיין בגלריה',
-    'hero.cta-ghost':   'כיצד לרכוש?',
     'hero.cta-pdf':     '50 טיפים חינם',
     'hero.cta-sale':    'מבצע השבוע',
-    'banner.guide.strong': '50 טיפים לצילום — חינם',
-    'banner.guide.text':   '| PDF מעשי לצלם המתחיל. קבל עכשיו ←',
 
     // Gallery section
     'gallery.label':    'לחץ על כל תמונה לרכישה',
@@ -154,17 +150,6 @@ const TRANSLATIONS = {
     'gear.cta':         'לעמוד הציוד המלא ←',
 
     // Testimonials
-    'test.label':       'מה אומרים עליי',
-    'test.title':       'לקוחות ממליצים',
-    'test.1.text':      '"עמית תפס רגעים שאפילו לא הבחנו בהם. כל תמונה היא סיפור שלם בפני עצמו — פשוט מרהיב."',
-    'test.1.name':      'שירה כ.',
-    'test.1.event':     'חתונה',
-    'test.2.text':      '"מקצועי, קשוב ומדויק. התוצאות עלו על כל הציפיות שלנו. ממליץ בחום לכל אחד!"',
-    'test.2.name':      'דני מ.',
-    'test.2.event':     'פורטרט מסחרי',
-    'test.3.text':      '"הבן שלנו יזכור את היום הזה לנצח, הודות לתמונות הנפלאות. תודה עמית!"',
-    'test.3.name':      'נועה ל.',
-    'test.3.event':     'בר מצווה',
 
     // Explore section (promo for camera/learn/locations)
     'explore.label':              'מה עוד תמצא כאן',
@@ -311,9 +296,6 @@ const TRANSLATIONS = {
     'gurushots.link':             'לפרופיל המלא ב-GuruShots ↗',
 
     // Testimonial dates
-    'testimonial.date.1': 'מרץ 2025',
-    'testimonial.date.2': 'ינואר 2025',
-    'testimonial.date.3': 'נובמבר 2024',
 
     // Cart modal
     'cart.open.aria':   'פתח סל קניות',
@@ -451,7 +433,6 @@ const TRANSLATIONS = {
     'nav.logo.name':    'Amit Erez',
     'nav.logo.tagline': ' | A World of Colors Through the Lens',
     'nav.gallery':      'Gallery',
-    'nav.new':          'New',
     'nav.sale':         'Sale',
     'nav.challenges':   'Challenges',
     'nav.camera':       'Learn Photography',
@@ -459,8 +440,8 @@ const TRANSLATIONS = {
     'nav.locations':    'Locations',
     'nav.learn':        'Photo School',
     'nav.gear':         'My Gear',
-    'nav.how-to-buy':   'How to Buy',
-    'nav.pricing':      'Pricing',
+    'nav.how-to-buy':   'Purchase',
+    'nav.more':         'More',
     'nav.contact':      'Contact',
     'nav.menu':         'Menu',
 
@@ -474,11 +455,8 @@ const TRANSLATIONS = {
     'payments.disabled.call':  'Call Amit — 050-3333227',
     'hero.scroll':      'Scroll',
     'hero.cta':         'Browse Gallery',
-    'hero.cta-ghost':   'How to Buy?',
     'hero.cta-pdf':     '50 Free Tips',
     'hero.cta-sale':    'Weekly Sale',
-    'banner.guide.strong': '50 Photography Tips — Free',
-    'banner.guide.text':   '| A practical PDF for beginner photographers. Get it now →',
 
     // Gallery section
     'gallery.label':    'Click any photo to purchase',
@@ -559,17 +537,6 @@ const TRANSLATIONS = {
     'gear.cta':         'View Full Gear Page →',
 
     // Testimonials
-    'test.label':       'What People Say',
-    'test.title':       'Customer Reviews',
-    'test.1.text':      '"Amit captured moments we didn\'t even notice. Every photo is a complete story — simply breathtaking."',
-    'test.1.name':      'Shira K.',
-    'test.1.event':     'Wedding',
-    'test.2.text':      '"Professional, attentive, and precise. The results exceeded all our expectations. Highly recommended!"',
-    'test.2.name':      'Danny M.',
-    'test.2.event':     'Commercial Portrait',
-    'test.3.text':      '"Our son will remember this day forever, thanks to the wonderful photos. Thank you Amit!"',
-    'test.3.name':      'Noa L.',
-    'test.3.event':     'Bar Mitzvah',
 
     // Explore section (promo for camera/learn/locations)
     'explore.label':              'Discover More',
@@ -716,9 +683,6 @@ const TRANSLATIONS = {
     'gurushots.link':             'Full profile on GuruShots ↗',
 
     // Testimonial dates
-    'testimonial.date.1': 'March 2025',
-    'testimonial.date.2': 'January 2025',
-    'testimonial.date.3': 'November 2024',
 
     // Cart modal
     'cart.open.aria':   'Open cart',

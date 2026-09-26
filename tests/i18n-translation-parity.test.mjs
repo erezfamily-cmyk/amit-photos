@@ -44,12 +44,13 @@ test('no translation value is an empty string', () => {
 });
 
 test('regression: the ~20 strings found leaking Hebrew into English mode are now translated', () => {
+  // testimonial.date.1/2/3 were dropped along with the whole testimonials section in the
+  // 2026-09-26 homepage-hierarchy redesign — the keys and their UI no longer exist.
   const mustExist = [
     'beta.banner.html', 'gurushots.label', 'gurushots.title', 'gurushots.sub',
     'gurushots.points.suffix', 'gurushots.stat.pick', 'gurushots.stat.top10',
     'gurushots.stat.top100', 'gurushots.stat.exhibition', 'gurushots.stat.magazine',
     'gurushots.stat.photos.label', 'gurushots.stat.submitted', 'gurushots.link',
-    'testimonial.date.1', 'testimonial.date.2', 'testimonial.date.3',
     'contact.address', 'wall.color.picker', 'buy.alt.brand',
   ];
   for (const key of mustExist) {
