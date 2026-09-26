@@ -3129,17 +3129,20 @@ async function handleCategoryPage(category, env) {
 </head>
 <body>
   <a class="back" href="${base}">← עמית ארז | גלריה</a>
-  <h1>צילומי ${escXml(category)}</h1>
-  <p class="sub">${photos.length} תמונות · צלם: עמית ארז</p>
-  <div class="grid">${cards}</div>
-  <div class="footer">
-    <a class="btn" href="${base}">לכל הגלריה</a>
-  </div>
+  <main>
+    <h1>צילומי ${escXml(category)}</h1>
+    <p class="sub">${photos.length} תמונות · צלם: עמית ארז</p>
+    <div class="grid">${cards}</div>
+    <div class="footer">
+      <a class="btn" href="${base}">לכל הגלריה</a>
+    </div>
+  </main>
 </body>
 </html>`;
 
   return htmlRes(html, 200, 'no-cache, no-store, must-revalidate');
 }
+export { handleCategoryPage };
 
 // חסימת קבצים — הוסרו 4.7.2026 בשל חשש להפרת זכויות יוצרים על אמנות רחוב (מוטיב אמנותי שלם/דמות חתומה,
 // כולל סגנון OBEY/Banksy) וכן לוגואים מסחריים בולטים (Jack Daniel's, Coca-Cola, Ferrari, Carlsberg).
