@@ -104,7 +104,7 @@
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Heebo:wght@300;400;500;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'" />
   <noscript><link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Heebo:wght@300;400;500;700&display=swap" rel="stylesheet" /></noscript>
 
-  <link rel="stylesheet" href="assets/css/style.css?v=477a3226" />
+  <link rel="stylesheet" href="assets/css/style.css?v=cadffb0f" />
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#0a0a0a" />
   <script src="assets/js/analytics.js?v=a4fcab69"></script>
@@ -125,7 +125,7 @@
     <a href="#hero" class="nav-logo"><span data-i18n="nav.logo.name">עמית ארז</span><span class="nav-logo-tagline" data-i18n="nav.logo.tagline"> | עולם של צבעים מבעד לעדשה</span></a>
     <ul class="nav-links">
       <li><a href="#gallery" data-i18n="nav.gallery" data-analytics-event="nav_click" data-analytics-label="gallery">גלריה</a></li>
-      <li><a href="/sale/" id="nav-sale" class="payments-enabled-only" data-i18n="nav.sale" data-analytics-event="nav_click" data-analytics-label="sale">מבצע</a></li>
+      <li><a href="#gallery" id="nav-sale" data-i18n="nav.sale" data-analytics-event="nav_click" data-analytics-label="sale" onclick="event.preventDefault();document.getElementById('filter-bar')?.scrollIntoView({behavior:'smooth'});setTimeout(()=>{const btn=document.querySelector('.filter-btn-sale');if(btn)btn.click();},400)">מבצע</a></li>
       <li><a href="/camera/" data-i18n="nav.camera" data-analytics-event="nav_click" data-analytics-label="camera">למד לצלם</a></li>
       <li><a href="/locations/" data-i18n="nav.locations" data-analytics-event="nav_click" data-analytics-label="locations">מקומות לצילום</a></li>
       <li><a href="#how-to-buy" data-i18n="nav.how-to-buy" data-analytics-event="nav_click" data-analytics-label="purchase_info">רכישה</a></li>
@@ -1143,7 +1143,7 @@
     </div>
   </div>
 
-  <script src="assets/js/gallery.js?v=e3bc0634"></script>
+  <script src="assets/js/gallery.js?v=20f2de73"></script>
   <script>
     // טוען נתוני Instagram מהדוח השבועי ומעדכן את כרטיס הפלטפורמות
     fetch('https://raw.githubusercontent.com/erezfamily-cmyk/amit-photos/main/data/social_report.json')

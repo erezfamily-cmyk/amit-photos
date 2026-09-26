@@ -209,6 +209,9 @@ function initNav() {
   // "עוד" dropdown
   const moreDetails = navLinks.querySelector('.nav-more details');
   if (moreDetails) {
+    moreDetails.addEventListener('click', (e) => {
+      if (e.target.tagName === 'A') moreDetails.removeAttribute('open');
+    });
     document.addEventListener('click', (e) => {
       if (moreDetails.open && !moreDetails.contains(e.target)) moreDetails.removeAttribute('open');
     });
