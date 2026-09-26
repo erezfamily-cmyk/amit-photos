@@ -12,6 +12,7 @@ PAYMENTS_ENABLED = "false"
 directory = "."
 binding = "ASSETS"
 run_worker_first = true
+not_found_handling = "404-page"
 
 [[d1_databases]]
 binding = "DB"
