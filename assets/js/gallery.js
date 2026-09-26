@@ -789,6 +789,7 @@ function initFilters() {
       bar.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       const cat = btn.dataset.cat;
+      window.trackUxEvent?.('gallery_filter', { filter: cat || 'all' });
       if (cat && cat !== 'all') {
         history.replaceState(null, '', '#filter-' + cat);
       } else {
@@ -1442,6 +1443,7 @@ function initContactForm() {
 
     form.style.display = 'none';
     document.getElementById('form-success').style.display = 'block';
+    window.trackUxEvent?.('contact_form_success', { source: 'homepage' });
   });
 }
 

@@ -104,10 +104,11 @@
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Heebo:wght@300;400;500;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'" />
   <noscript><link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Heebo:wght@300;400;500;700&display=swap" rel="stylesheet" /></noscript>
 
-  <link rel="stylesheet" href="assets/css/style.css?v=da448c18" />
+  <link rel="stylesheet" href="assets/css/style.css?v=370ae232" />
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#0a0a0a" />
-  <script src="assets/js/i18n.js?v=b8c2943e"></script>
+  <script src="assets/js/analytics.js?v=bfdeb1a0"></script>
+  <script src="assets/js/i18n.js?v=03adfdd3"></script>
 </head>
 <body data-payments-state="disabled">
 
@@ -123,18 +124,18 @@
   <nav id="main-nav">
     <a href="#hero" class="nav-logo"><span data-i18n="nav.logo.name">עמית ארז</span><span class="nav-logo-tagline" data-i18n="nav.logo.tagline"> | עולם של צבעים מבעד לעדשה</span></a>
     <ul class="nav-links">
-      <li><a href="#gallery" data-i18n="nav.gallery">גלריה</a></li>
-      <li><a href="#gallery" id="nav-new" onclick="event.preventDefault();document.getElementById('filter-bar')?.scrollIntoView({behavior:'smooth'});setTimeout(()=>{const btn=document.querySelector('.filter-btn-new');if(btn)btn.click();},400)" data-i18n="nav.new">חדש באתר</a></li>
-      <li><a href="#gallery" id="nav-sale" data-i18n="nav.sale" onclick="event.preventDefault();document.getElementById('filter-bar')?.scrollIntoView({behavior:'smooth'});setTimeout(()=>{const btn=document.querySelector('.filter-btn-sale');if(btn)btn.click();},400)">מבצע</a></li>
-      <li><a href="/games/" data-i18n="nav.challenges">אתגרים</a></li>
-      <li><a href="/camera/" data-i18n="nav.camera">למד לצלם</a></li>
-      <li><a href="/videos/" data-i18n="nav.videos">סרטונים</a></li>
-      <li><a href="/locations/" data-i18n="nav.locations">מקומות לצילום</a></li>
-      <li><a href="/learn/" data-i18n="nav.learn">ניתוח תמונות</a></li>
-      <li><a href="/gear/" data-i18n="nav.gear">הציוד שלי</a></li>
-      <li><a href="#how-to-buy" data-i18n="nav.how-to-buy">כיצד לרכוש</a></li>
-      <li><a href="#pricing" data-i18n="nav.pricing">מחירים</a></li>
-      <li><a href="#contact" data-i18n="nav.contact">צור קשר</a></li>
+      <li><a href="#gallery" data-i18n="nav.gallery" data-analytics-event="nav_click" data-analytics-label="gallery">גלריה</a></li>
+      <li><a href="#gallery" id="nav-new" onclick="event.preventDefault();document.getElementById('filter-bar')?.scrollIntoView({behavior:'smooth'});setTimeout(()=>{const btn=document.querySelector('.filter-btn-new');if(btn)btn.click();},400)" data-i18n="nav.new" data-analytics-event="nav_click" data-analytics-label="new">חדש באתר</a></li>
+      <li><a href="#gallery" id="nav-sale" data-i18n="nav.sale" data-analytics-event="nav_click" data-analytics-label="sale" onclick="event.preventDefault();document.getElementById('filter-bar')?.scrollIntoView({behavior:'smooth'});setTimeout(()=>{const btn=document.querySelector('.filter-btn-sale');if(btn)btn.click();},400)">מבצע</a></li>
+      <li><a href="/games/" data-i18n="nav.challenges" data-analytics-event="nav_click" data-analytics-label="games">אתגרים</a></li>
+      <li><a href="/camera/" data-i18n="nav.camera" data-analytics-event="nav_click" data-analytics-label="camera">למד לצלם</a></li>
+      <li><a href="/videos/" data-i18n="nav.videos" data-analytics-event="nav_click" data-analytics-label="videos">סרטונים</a></li>
+      <li><a href="/locations/" data-i18n="nav.locations" data-analytics-event="nav_click" data-analytics-label="locations">מקומות לצילום</a></li>
+      <li><a href="/learn/" data-i18n="nav.learn" data-analytics-event="nav_click" data-analytics-label="learn">ניתוח תמונות</a></li>
+      <li><a href="/gear/" data-i18n="nav.gear" data-analytics-event="nav_click" data-analytics-label="gear">הציוד שלי</a></li>
+      <li><a href="#how-to-buy" data-i18n="nav.how-to-buy" data-analytics-event="nav_click" data-analytics-label="purchase_info">כיצד לרכוש</a></li>
+      <li><a href="#pricing" data-i18n="nav.pricing" data-analytics-event="nav_click" data-analytics-label="pricing">מחירים</a></li>
+      <li><a href="#contact" data-i18n="nav.contact" data-analytics-event="nav_click" data-analytics-label="contact">צור קשר</a></li>
     </ul>
     <div class="lang-toggle">
       <button type="button" class="lang-btn active" data-lang="he" onclick="setLang('he')">HE</button>
@@ -160,10 +161,10 @@
       <p class="hero-subtitle payments-enabled-only" data-i18n="hero.subtitle">תמונות אמנותיות דיגיטליות לרכישה — הורדה מיידית לאחר תשלום</p>
       <p class="hero-subtitle payments-disabled-only" data-i18n="payments.disabled.hero">הגלריה פתוחה לעיון. לרכישה ניתן ליצור קשר ישירות עם עמית.</p>
       <div class="hero-actions">
-        <a href="#gallery" class="hero-cta" data-i18n="hero.cta">עיין בגלריה</a>
-        <a href="/sale/" class="hero-cta-ghost payments-enabled-only" data-i18n="hero.cta-sale">מבצע השבוע</a>
-        <a href="#how-to-buy" class="hero-cta-ghost" data-i18n="hero.cta-ghost">כיצד לרכוש?</a>
-        <button type="button" class="hero-cta-ghost" onclick="document.getElementById('pdf-popup').style.display='flex';event.preventDefault();" data-i18n="hero.cta-pdf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="15" height="15" aria-hidden="true" style="vertical-align:-2px;margin-left:0.3em"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> 50 טיפים חינם</button>
+        <a href="#gallery" class="hero-cta" data-i18n="hero.cta" data-analytics-event="hero_gallery_click">עיין בגלריה</a>
+        <a href="/sale/" class="hero-cta-ghost payments-enabled-only" data-i18n="hero.cta-sale" data-analytics-event="hero_sale_click">מבצע השבוע</a>
+        <a href="#how-to-buy" class="hero-cta-ghost" data-i18n="hero.cta-ghost" data-analytics-event="hero_purchase_info_click">כיצד לרכוש?</a>
+        <button type="button" class="hero-cta-ghost" onclick="document.getElementById('pdf-popup').style.display='flex';event.preventDefault();" data-i18n="hero.cta-pdf" data-analytics-event="hero_guide_click"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="15" height="15" aria-hidden="true" style="vertical-align:-2px;margin-left:0.3em"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> 50 טיפים חינם</button>
       </div>
     </div>
     <div class="hero-scroll">
@@ -173,7 +174,7 @@
   </section>
 
   <!-- ===== FREE GUIDE BANNER ===== -->
-  <a href="/free-guide/" id="guide-banner">
+  <a href="/free-guide/" id="guide-banner" data-analytics-event="guide_banner_click">
     <span class="guide-banner-icon">📥</span>
     <span><strong data-i18n="banner.guide.strong">50 טיפים לצילום — חינם</strong> <span data-i18n="banner.guide.text">| PDF מעשי לצלם המתחיל. קבל עכשיו ←</span></span>
   </a>
@@ -658,13 +659,13 @@
           <div class="contact-detail-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/></svg>
           </div>
-          <a href="mailto:contact@amitphotos.com">contact@amitphotos.com</a>
+          <a href="mailto:contact@amitphotos.com" data-analytics-event="contact_intent" data-analytics-method="email">contact@amitphotos.com</a>
         </div>
         <div class="contact-detail">
           <div class="contact-detail-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M6.6 10.8a15.2 15.2 0 006.6 6.6l2.2-2.2a1 1 0 011.1-.2 11.5 11.5 0 003.6 1.2 1 1 0 01.9 1V21a1 1 0 01-1 1A17 17 0 013 5a1 1 0 011-.9h3.6a1 1 0 011 .9 11.5 11.5 0 001.2 3.6 1 1 0 01-.2 1.1z"/></svg>
           </div>
-          <a href="tel:050-3333227">050-3333227</a>
+          <a href="tel:050-3333227" data-analytics-event="contact_intent" data-analytics-method="phone">050-3333227</a>
         </div>
         <div class="contact-detail">
           <div class="contact-detail-icon">
@@ -763,6 +764,7 @@
                 })
               });
               if (r.ok) {
+                if (typeof trackUxEvent === 'function') trackUxEvent('generate_lead', { source: 'homepage_section' });
                 msg.style.color = '#4caf7d';
                 msg.textContent = t('newsletter.ok');
                 document.getElementById('newsletter-email').value = '';
@@ -1189,7 +1191,7 @@
     </div>
   </div>
 
-  <script src="assets/js/gallery.js?v=3a4df6f5"></script>
+  <script src="assets/js/gallery.js?v=cd8b4ed6"></script>
   <script>
     // טוען נתוני Instagram מהדוח השבועי ומעדכן את כרטיס הפלטפורמות
     fetch('https://raw.githubusercontent.com/erezfamily-cmyk/amit-photos/main/data/social_report.json')
@@ -1272,6 +1274,7 @@
         })
       });
       if (r.ok) {
+        if (typeof trackUxEvent === 'function') trackUxEvent('generate_lead', { source: 'popup' });
         msg.style.color = '#4caf7d';
         msg.textContent = '&#x2713; נשלח! בדוק תיבת הדואר (גם spam).';
         document.getElementById('popup-email').value = '';

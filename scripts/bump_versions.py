@@ -19,6 +19,7 @@ ROOT = Path(__file__).parent.parent
 
 INDEX_ASSETS = [
     ROOT / "assets/css/style.css",
+    ROOT / "assets/js/analytics.js",
     ROOT / "assets/js/gallery.js",
     ROOT / "assets/js/i18n.js",
 ]

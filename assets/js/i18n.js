@@ -902,6 +902,7 @@ function applyTranslations() {
 }
 
 function setLang(lang) {
+  const previousLang = _lang;
   _lang = lang;
   localStorage.setItem('lang', lang);
   applyTranslations();
@@ -913,6 +914,9 @@ function setLang(lang) {
   if (typeof window.onLangChange === 'function') window.onLangChange();
   // Sync injected nav (nav.js) if present
   if (typeof window.applyNavLang === 'function' && !window.__navLangApplying) window.applyNavLang(lang);
+  if (previousLang !== lang) {
+    window.trackUxEvent?.('language_change', { from_language: previousLang, to_language: lang });
+  }
 }
 
 // Apply on load
