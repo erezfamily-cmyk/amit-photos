@@ -111,7 +111,7 @@ const LABELS = {
     empty: 'המבצע יתחיל בקרוב — חזרו מחר!',
     error: 'שגיאה בטעינה. נסו שוב מאוחר יותר.',
     ended: 'המבצע הסתיים',
-    from: 'החל מ ₪',
+    from: 'החל מ ',
     badge: '20% הנחה',
     back: '← לגלריה המלאה'
   },
@@ -124,7 +124,7 @@ const LABELS = {
     empty: 'Sale coming soon — check back tomorrow!',
     error: 'Error loading. Please try again later.',
     ended: 'Sale has ended',
-    from: 'from ₪',
+    from: 'from ',
     badge: '20% off',
     back: '← Back to Gallery'
   }
@@ -162,6 +162,11 @@ window.addEventListener('storage', e => {
 const SITE_URL = 'https://amitphotos.com';
 const SALE_DISCOUNT = 0.20;
 const BASE_PRICES = { small: 19, medium: 59, large: 129 };
+// same conversion used by the main gallery (assets/js/gallery.js) — keep in sync.
+const ILS_TO_USD = 3.7;
+function formatPrice(ils) {
+  return getLang() === 'en' ? `$${Math.round(ils / ILS_TO_USD)}` : `₪${ils}`;
+}
 
 async function loadPrices() {
   try {
@@ -199,15 +204,16 @@ function esc(s) {
 
 function renderGrid(photos) {
   const L = LABELS[getLang()] || LABELS.he;
+  const isEn = getLang() === 'en';
   const grid = document.getElementById('photo-grid');
   grid.innerHTML = photos.map(photo => `
     <div class="photo-card" data-id="${esc(photo.id)}">
-      <img src="${esc(photo.thumbnail || photo.url)}?w=400" alt="${esc(photo.title)}" loading="lazy">
+      <img src="${esc(photo.thumbnail || photo.url)}?w=400" alt="${esc(isEn && photo.title_en ? photo.title_en : photo.title)}" loading="lazy">
       <div class="card-info">
         <div class="card-cat">${esc(photo.category)}</div>
         <div class="card-prices">
-          <span class="price-original">₪${BASE_PRICES.small}</span>
-          <span class="price-sale">${L.from}${salePrice('small')}</span>
+          <span class="price-original">${formatPrice(BASE_PRICES.small)}</span>
+          <span class="price-sale">${L.from}${formatPrice(salePrice('small'))}</span>
           <span class="sale-badge">${L.badge}</span>
         </div>
       </div>

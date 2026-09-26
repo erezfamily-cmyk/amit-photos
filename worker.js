@@ -984,10 +984,11 @@ async function handleQuizPhotos(request, env) {
 
 async function handleSalePhotos(request, env) {
   const { results } = await env.DB.prepare(
-    'SELECT id, title, category, thumbnail, url, sale_started_at FROM photos WHERE published=1 AND on_sale=1 ORDER BY RANDOM()'
+    'SELECT id, title, title_en, category, thumbnail, url, sale_started_at FROM photos WHERE published=1 AND on_sale=1 ORDER BY RANDOM()'
   ).all();
   return jsonRes(results, 200, request);
 }
+export { handleSalePhotos };
 
 async function handleSaleRotate(request, env) {
   if (!await checkAuth(request, env)) return unauth(request);
