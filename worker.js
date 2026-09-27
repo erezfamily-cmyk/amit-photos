@@ -6891,18 +6891,21 @@ async function handleAdminNlList(request, env) {
       : `<span style="color:#ff9800">טיוטה</span>`;
     const date = issue.created_at ? issue.created_at.slice(0, 10) : '';
     const previewUrl = `/admin/newsletter/${escXml(issue.id)}/preview/`;
-    return `<tr>
-      <td>${escXml(String(issue.issue_number))}</td>
-      <td>${statusBadge}</td>
-      <td>${escXml(issue.type === 'full' ? 'מלא' : 'הבזק')}</td>
-      <td>${escXml(issue.title_he)}</td>
-      <td>${escXml(date)}</td>
-      <td>
-        <a href="/admin/newsletter/${escXml(issue.id)}/">ערוך</a> |
-        <a href="${previewUrl}" target="_blank">תצוגה מקדימה</a> |
-        <a href="#" onclick="showTestModal('${escXml(issue.id)}','${escXml(issue.slug)}');return false">שלח לבדיקה</a> |
-        <a href="#" onclick="deleteAndRecreate('${escXml(issue.id)}','${escXml(issue.type)}');return false" style="color:#f44336">מחק ויצור מחדש</a>
-        ${issue.status === 'published' ? ` | <a href="/newsletter/${escXml(issue.slug)}/" target="_blank">צפה</a>` : ''}
+    const issueTitle = escXml(issue.title_he || 'גיליון');
+    return `<tr class="issue-row">
+      <td data-label="מספר">${escXml(String(issue.issue_number))}</td>
+      <td data-label="סטטוס">${statusBadge}</td>
+      <td data-label="סוג">${escXml(issue.type === 'full' ? 'מלא' : 'הבזק')}</td>
+      <td data-label="כותרת" class="issue-title">${issueTitle}</td>
+      <td data-label="תאריך">${escXml(date)}</td>
+      <td data-label="פעולות">
+        <div class="row-actions">
+          <a class="action-link primary" href="/admin/newsletter/${escXml(issue.id)}/">ערוך</a>
+          <a class="action-link" href="${previewUrl}" target="_blank" rel="noopener">תצוגה מקדימה</a>
+          <a class="action-link" href="#" onclick="showTestModal('${escXml(issue.id)}','${escXml(issue.slug)}');return false">שלח לבדיקה</a>
+          ${issue.status === 'published' ? `<a class="action-link" href="/newsletter/${escXml(issue.slug)}/" target="_blank" rel="noopener">צפה</a>` : ''}
+          <a class="action-link danger" aria-label="מחק ויצור מחדש: ${issueTitle}" href="#" onclick="deleteAndRecreate('${escXml(issue.id)}','${escXml(issue.type)}');return false">מחק ויצור מחדש</a>
+        </div>
       </td>
     </tr>`;
   }).join('');
@@ -6914,19 +6917,26 @@ async function handleAdminNlList(request, env) {
 <title>ניהול ניוזלטר | Admin</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Heebo',Arial,sans-serif;background:#0a0a0a;color:#f0ede8;padding:1.5rem;direction:rtl}
+body{font-family:'Heebo',Arial,sans-serif;background:#0a0a0a;color:#f0ede8;padding:1.5rem;direction:rtl;min-height:100vh}
+.page-shell{width:min(100%,1180px);margin:0 auto}
 h1{font-size:1.4rem;color:#c8a96e;margin-bottom:1.25rem}
 .actions{display:flex;gap:.75rem;margin-bottom:1.5rem;flex-wrap:wrap;align-items:center}
-button{background:#c8a96e;color:#000;border:none;padding:.5rem 1.1rem;border-radius:8px;cursor:pointer;font-size:.85rem;font-weight:700}
+button,.btn,.action-link{min-height:44px;display:inline-flex;align-items:center;justify-content:center;background:#c8a96e;color:#000;border:1px solid transparent;padding:.55rem 1rem;border-radius:8px;cursor:pointer;font:700 .88rem 'Heebo',Arial,sans-serif;text-decoration:none;touch-action:manipulation}
 button:disabled{opacity:.5;cursor:default}
 .btn-back{background:transparent;color:#c8a96e;border:1px solid #c8a96e55;font-weight:600}
 .btn-back:hover{border-color:#c8a96e}
 #msg{font-size:.85rem;padding:.5rem;border-radius:6px;margin-bottom:1rem;display:none}
+.table-wrap{overflow-x:auto;border:1px solid #222;border-radius:10px}
 table{width:100%;border-collapse:collapse;font-size:.85rem}
 th,td{padding:.6rem .75rem;border-bottom:1px solid #222;text-align:right}
 th{color:#888;font-weight:600}
 a{color:#c8a96e;text-decoration:none}
 a:hover{text-decoration:underline}
+.row-actions{display:flex;align-items:center;gap:.45rem;flex-wrap:wrap}
+.action-link{min-height:38px;background:#181818;border-color:#333;color:#ddd;padding:.35rem .7rem;font-size:.8rem}
+.action-link.primary{background:#c8a96e;color:#000;border-color:#c8a96e}
+.action-link.danger{color:#ff7676;border-color:#5d2929;background:#241111}
+button:focus-visible,.btn:focus-visible,.action-link:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #c8a96e;outline-offset:3px}
 .modal-overlay{display:none;position:fixed;inset:0;background:#000a;z-index:100;align-items:center;justify-content:center}
 .modal-overlay.open{display:flex}
 .modal{background:#111;border:1px solid #333;border-radius:12px;padding:1.5rem;width:min(420px,90vw);direction:rtl}
@@ -6939,58 +6949,89 @@ a:hover{text-decoration:underline}
 .btn-cancel{background:transparent;color:#888;border:1px solid #333}
 #test-msg{font-size:.82rem;margin-top:.75rem;min-height:1.2em}
 .sub-card{background:#111;border:1px solid #222;border-radius:10px;margin-bottom:1.5rem;overflow:hidden}
-.sub-header{display:flex;justify-content:space-between;align-items:center;padding:.75rem 1rem;cursor:pointer;user-select:none;color:#c8a96e;font-weight:700;font-size:.95rem}
+.sub-header{display:flex;width:100%;justify-content:space-between;align-items:center;padding:.75rem 1rem;cursor:pointer;user-select:none;color:#c8a96e;font-weight:700;font-size:.95rem;background:transparent;border:0;border-radius:0}
 .sub-header:hover{background:#181818}
 .sub-table{width:100%;border-collapse:collapse;font-size:.82rem}
 .sub-table th,.sub-table td{padding:.5rem .75rem;border-bottom:1px solid #1a1a1a;text-align:right}
 .sub-table th{color:#888;font-weight:600}
 .sub-table tr:last-child td{border-bottom:none}
-.btn-del{background:none;border:none;color:#888;cursor:pointer;font-size:.9rem;padding:.2rem .5rem;border-radius:4px}
+.btn-del{background:none;border:none;color:#aaa;cursor:pointer;font-size:.9rem;padding:.2rem .5rem;border-radius:4px;min-width:44px;min-height:44px}
 .btn-del:hover{color:#f44336;background:#2a0a0a}
+@media(max-width:700px){
+  body{padding:1rem max(1rem,env(safe-area-inset-right)) calc(1rem + env(safe-area-inset-bottom)) max(1rem,env(safe-area-inset-left))}
+  h1{font-size:1.25rem;margin-bottom:1rem}
+  .top-actions{display:grid;grid-template-columns:1fr;gap:.65rem}
+  .top-actions .btn,.top-actions button{width:100%}
+  .table-wrap{overflow:visible;border:0}
+  .responsive-table,.responsive-table tbody,.responsive-table tr,.responsive-table td{display:block;width:100%}
+  .responsive-table thead{display:none}
+  .responsive-table tr{background:#111;border:1px solid #2b2b2b;border-radius:12px;margin-bottom:.85rem;padding:.4rem .8rem}
+  .responsive-table td{display:grid;grid-template-columns:minmax(76px,32%) minmax(0,1fr);gap:.75rem;padding:.55rem 0;border-bottom:1px solid #222;overflow-wrap:anywhere}
+  .responsive-table td:last-child{border-bottom:0}
+  .responsive-table td::before{content:attr(data-label);color:#aaa;font-size:.78rem;font-weight:600}
+  .responsive-table td[data-label="פעולות"]{display:block;padding-top:.8rem}
+  .responsive-table td[data-label="פעולות"]::before{display:none}
+  .responsive-table .empty-cell{display:block;text-align:center!important;padding:1.25rem}
+  .responsive-table .empty-cell::before{display:none}
+  .issue-title{font-weight:700;color:#fff}
+  .row-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.55rem}
+  .row-actions .action-link{min-height:44px;text-align:center}
+  .row-actions .danger{grid-column:1/-1;margin-top:.15rem}
+  .sub-card{overflow:visible}
+  .sub-card .sub-header{border-radius:10px}
+  .modal{width:calc(100vw - 2rem);max-height:calc(100vh - 2rem);overflow-y:auto;padding:1.1rem}
+  .modal-actions{display:grid;grid-template-columns:1fr}
+  .modal-actions button{width:100%}
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 </style>
 </head>
 <body>
+<main class="page-shell">
 <h1>ניהול ניוזלטר</h1>
-<div class="actions">
-  <a href="/admin/"><button type="button" class="btn-back">← חזרה לאדמין</button></a>
+<div class="actions top-actions">
+  <a href="/admin.html" class="btn btn-back">← חזרה לאדמין</a>
   <button onclick="generate('full')">📰 צור גיליון מלא</button>
   <button onclick="generate('flash')">⚡ צור הבזק</button>
 </div>
-<div id="msg"></div>
+<div id="msg" role="status" aria-live="polite"></div>
 
 <div class="sub-card">
-  <div class="sub-header" onclick="toggleSubs()">
+  <button type="button" class="sub-header" onclick="toggleSubs()" aria-expanded="false" aria-controls="sub-body">
     <span>👥 מנויים: <span id="sub-count">...</span></span>
     <span id="sub-toggle-icon">▼</span>
-  </div>
+  </button>
   <div id="sub-body" style="display:none">
     <div style="padding:0 .5rem .5rem">
-    <table class="sub-table">
+    <table class="sub-table responsive-table">
       <thead><tr><th>שם</th><th>אימייל</th><th>תאריך</th><th></th></tr></thead>
-      <tbody id="sub-rows"><tr><td colspan="4" style="text-align:center;color:#888;padding:1rem">טוען...</td></tr></tbody>
+      <tbody id="sub-rows"><tr><td class="empty-cell" colspan="4" style="text-align:center;color:#aaa;padding:1rem">טוען...</td></tr></tbody>
     </table>
     </div>
   </div>
 </div>
 
-<table>
-  <thead><tr><th>#</th><th>סטטוס</th><th>סוג</th><th>כותרת</th><th>תאריך</th><th>פעולות</th></tr></thead>
-  <tbody>${rows || '<tr><td colspan="6" style="text-align:center;color:#888;padding:2rem">אין גיליונות עדיין</td></tr>'}</tbody>
-</table>
+<div class="table-wrap">
+  <table class="responsive-table issues-table">
+    <thead><tr><th>#</th><th>סטטוס</th><th>סוג</th><th>כותרת</th><th>תאריך</th><th>פעולות</th></tr></thead>
+    <tbody>${rows || '<tr><td class="empty-cell" colspan="6" style="text-align:center;color:#aaa;padding:2rem">אין גיליונות עדיין</td></tr>'}</tbody>
+  </table>
+</div>
 
 <div class="modal-overlay" id="test-modal">
   <div class="modal">
     <h2>שלח לבדיקה</h2>
-    <label>שלח למייל</label>
-    <input type="email" id="test-email" placeholder="email@example.com">
+    <label for="test-email">שלח למייל</label>
+    <input type="email" id="test-email" autocomplete="email" placeholder="email@example.com">
     <div class="modal-actions">
       <button onclick="sendTestEmail()">📧 שלח מייל</button>
       <button class="btn-wa" onclick="shareWhatsApp()">💬 שתף בווטסאפ</button>
       <button class="btn-cancel" onclick="closeTestModal()">ביטול</button>
     </div>
-    <div id="test-msg"></div>
+    <div id="test-msg" role="status" aria-live="polite"></div>
   </div>
 </div>
+</main>
 
 <script>
 let _testId = '', _testSlug = '';
@@ -7098,11 +7139,11 @@ function _escH(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt
 function renderSubRows() {
   var tbody = document.getElementById('sub-rows');
   if (!Array.isArray(_subs) || !_subs.length) {
-    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#888;padding:1rem">אין מנויים עדיין</td></tr>';
+    tbody.innerHTML = '<tr><td class="empty-cell" colspan="4" style="text-align:center;color:#aaa;padding:1rem">אין מנויים עדיין</td></tr>';
     return;
   }
   tbody.innerHTML = _subs.map(function(s) {
-    return '<tr><td>' + _escH(s.name) + '</td><td><a href="mailto:' + _escH(s.email) + '">' + _escH(s.email) + '</a></td><td>' + (s.created_at ? s.created_at.slice(0,10) : '') + '</td><td><button class="btn-del" onclick="deleteSub(\\'' + _escH(s.id) + '\\')">✕</button></td></tr>';
+    return '<tr><td data-label="שם">' + _escH(s.name) + '</td><td data-label="אימייל"><a href="mailto:' + _escH(s.email) + '">' + _escH(s.email) + '</a></td><td data-label="תאריך">' + (s.created_at ? s.created_at.slice(0,10) : '') + '</td><td data-label="פעולות"><button class="btn-del" aria-label="מחק מנוי" onclick="deleteSub(\\'' + _escH(s.id) + '\\')">✕</button></td></tr>';
   }).join('');
 }
 
@@ -7119,9 +7160,11 @@ async function deleteSub(id) {
 function toggleSubs() {
   var body = document.getElementById('sub-body');
   var icon = document.getElementById('sub-toggle-icon');
+  var trigger = document.querySelector('.sub-header');
   var open = body.style.display !== 'none';
   body.style.display = open ? 'none' : 'block';
   icon.textContent = open ? '▼' : '▲';
+  trigger.setAttribute('aria-expanded', String(!open));
   if (!open && !_subsLoaded) loadSubsFull();
 }
 
@@ -7152,21 +7195,23 @@ async function handleAdminNlEditor(request, env, id) {
   if (!issue) return new Response('Not found', { status: 404 });
   const c = JSON.parse(issue.content_json || '{}');
 
-  const field = (label, key, subkey, val) =>
-    `<div class="field">
-      <label>${escXml(label)}</label>
-      <textarea name="${escXml(key + '.' + subkey)}" rows="3">${escXml(val || '')}</textarea>
+  const field = (label, key, subkey, val) => {
+    const fieldId = `nl-${key}-${subkey}`;
+    return `<div class="field">
+      <label for="${escXml(fieldId)}">${escXml(label)}</label>
+      <textarea id="${escXml(fieldId)}" name="${escXml(key + '.' + subkey)}" rows="3">${escXml(val || '')}</textarea>
     </div>`;
+  };
 
   const heroFields = c.hero ? `
     <h2 style="display:flex;justify-content:space-between;align-items:center"><span>תמונה ראשית</span><button type="button" class="btn-secondary" onclick="swapPhoto()" style="font-size:.75rem;padding:.3rem .7rem">🔄 החלף תמונה</button></h2>
-    <div class="field"><label>Photo ID</label><input name="hero.photo_id" value="${escXml(c.hero.photo_id||'')}"></div>
+    <div class="field"><label for="hero-photo-id">Photo ID</label><input id="hero-photo-id" name="hero.photo_id" value="${escXml(c.hero.photo_id||'')}"></div>
     ${field('טקסט עברית','hero','text_he',c.hero.text_he)}
     ${field('טקסט אנגלית','hero','text_en',c.hero.text_en)}` : '';
 
   const guideFields = c.guide ? `
     <h2>מדריך החודש</h2>
-    <div class="field"><label>Slug</label><input name="guide.slug" value="${escXml(c.guide.slug||'')}"></div>
+    <div class="field"><label for="guide-slug">Slug</label><input id="guide-slug" name="guide.slug" value="${escXml(c.guide.slug||'')}"></div>
     ${field('טקסט עברית','guide','text_he',c.guide.text_he)}
     ${field('טקסט אנגלית','guide','text_en',c.guide.text_en)}` : '';
 
@@ -7194,10 +7239,10 @@ async function handleAdminNlEditor(request, env, id) {
   <h2>שלבי המדריך</h2>
   ${[0, 1, 2].map(i => {
     const step = c.guide?.steps?.[i] || {};
-    return `<div class="field"><label>שלב ${i+1} — כותרת</label>
-      <input name="guide.steps.${i}.title_he" value="${escXml(step.title_he || '')}"></div>
-    <div class="field"><label>שלב ${i+1} — טקסט</label>
-      <textarea name="guide.steps.${i}.text_he" rows="3">${escXml(step.text_he || '')}</textarea></div>`;
+    return `<div class="field"><label for="guide-step-${i}-title">שלב ${i+1} — כותרת</label>
+      <input id="guide-step-${i}-title" name="guide.steps.${i}.title_he" value="${escXml(step.title_he || '')}"></div>
+    <div class="field"><label for="guide-step-${i}-text">שלב ${i+1} — טקסט</label>
+      <textarea id="guide-step-${i}-text" name="guide.steps.${i}.text_he" rows="3">${escXml(step.text_he || '')}</textarea></div>`;
   }).join('')}` : '';
 
   const publishBtn = issue.status === 'draft'
@@ -7207,13 +7252,13 @@ async function handleAdminNlEditor(request, env, id) {
   const issuePublicUrl = `https://amitphotos.com/newsletter/${escXml(issue.slug)}/`;
   const fbShareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent('https://amitphotos.com/newsletter/' + issue.slug + '/')}`;
   const sendSection = issue.status === 'published' ? `
-<div style="margin-top:1.5rem;padding-top:1rem;border-top:1px solid #222;display:flex;align-items:center;gap:1rem;flex-wrap:wrap">
+<div class="send-actions">
   <button type="button" id="send-btn" onclick="sendToSubs()">📧 שלח לנרשמים (<span id="sub-count">...</span>)</button>
-  <a href="${fbShareUrl}" target="_blank" rel="noopener" style="background:#1877f2;color:#fff;border:none;padding:.5rem 1.1rem;border-radius:8px;cursor:pointer;font-size:.85rem;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;gap:.4rem">
+  <a class="btn fb-share" href="${fbShareUrl}" target="_blank" rel="noopener">
     <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.413c0-3.026 1.791-4.697 4.533-4.697 1.313 0 2.686.236 2.686.236v2.97h-1.513c-1.491 0-1.956.93-1.956 1.886v2.267h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>
     שתף בפייסבוק
   </a>
-  <span id="send-msg" style="font-size:.85rem;display:none"></span>
+  <span id="send-msg" role="status" aria-live="polite" style="font-size:.85rem;display:none"></span>
 </div>` : '';
 
   return htmlRes(`<!DOCTYPE html>
@@ -7223,30 +7268,48 @@ async function handleAdminNlEditor(request, env, id) {
 <title>עורך ניוזלטר | Admin</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Heebo',Arial,sans-serif;background:#0a0a0a;color:#f0ede8;padding:1.5rem;direction:rtl;max-width:800px}
+body{font-family:'Heebo',Arial,sans-serif;background:#0a0a0a;color:#f0ede8;padding:1.5rem;direction:rtl;min-height:100vh}
+.editor-shell{width:min(100%,800px);margin:0 auto}
 h1{font-size:1.3rem;color:#c8a96e;margin-bottom:1rem}
 h2{font-size:1rem;color:#c8a96e;margin:1.5rem 0 .75rem;border-bottom:1px solid #222;padding-bottom:.4rem}
 .field{margin-bottom:1rem}
-label{display:block;font-size:.8rem;color:#888;margin-bottom:.3rem}
-input,textarea{width:100%;background:#111;border:1px solid #333;color:#f0ede8;padding:.5rem .75rem;border-radius:8px;font-family:inherit;font-size:.85rem;resize:vertical}
+label{display:block;font-size:.85rem;color:#aaa;margin-bottom:.35rem}
+input,textarea{width:100%;background:#111;border:1px solid #3d3d3d;color:#f0ede8;padding:.65rem .75rem;border-radius:8px;font-family:inherit;font-size:.9rem;resize:vertical}
 .actions{display:flex;gap:.75rem;margin:1.5rem 0;flex-wrap:wrap;align-items:center}
-button{background:#c8a96e;color:#000;border:none;padding:.5rem 1.1rem;border-radius:8px;cursor:pointer;font-size:.85rem;font-weight:700}
+button,.btn{min-height:44px;display:inline-flex;align-items:center;justify-content:center;background:#c8a96e;color:#000;border:1px solid transparent;padding:.55rem 1rem;border-radius:8px;cursor:pointer;font:700 .88rem 'Heebo',Arial,sans-serif;text-decoration:none;touch-action:manipulation}
 .btn-secondary{background:#222;color:#f0ede8}
+.send-actions{margin-top:1.5rem;padding-top:1rem;border-top:1px solid #222;display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
+.fb-share{background:#1877f2;color:#fff;gap:.4rem}
 #msg{font-size:.85rem;padding:.5rem;border-radius:6px;margin-top:.5rem;display:none}
+button:focus-visible,.btn:focus-visible,input:focus-visible,textarea:focus-visible,a:focus-visible{outline:3px solid #c8a96e;outline-offset:3px}
+@media(max-width:700px){
+  body{padding:1rem max(1rem,env(safe-area-inset-right)) calc(10rem + env(safe-area-inset-bottom)) max(1rem,env(safe-area-inset-left))}
+  h1{font-size:1.15rem;line-height:1.45}
+  h2{display:flex;gap:.65rem;align-items:center;flex-wrap:wrap;line-height:1.45}
+  input,textarea{font-size:1rem}
+  .editor-actions{position:fixed;right:0;bottom:0;left:0;z-index:50;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.55rem;margin:0;padding:.75rem max(.85rem,env(safe-area-inset-right)) calc(.75rem + env(safe-area-inset-bottom)) max(.85rem,env(safe-area-inset-left));background:rgba(10,10,10,.97);border-top:1px solid #333;box-shadow:0 -10px 24px #0008}
+  .editor-actions button,.editor-actions .btn{width:100%;min-height:44px;padding:.5rem;font-size:.82rem;text-align:center}
+  .editor-actions span{grid-column:1/-1;text-align:center}
+  .send-actions{display:grid;grid-template-columns:1fr;gap:.65rem}
+  .send-actions button,.send-actions .btn{width:100%}
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 </style>
 </head>
 <body>
+<main class="editor-shell">
 <h1>${escXml(issue.title_he)}</h1>
-<div class="actions">
+<div class="actions editor-actions">
   <button onclick="save()">💾 שמור טיוטה</button>
-  <a href="/admin/newsletter/${escXml(id)}/preview/" target="_blank"><button type="button" class="btn-secondary">👁 תצוגה מקדימה</button></a>
+  <a class="btn btn-secondary" href="/admin/newsletter/${escXml(id)}/preview/" target="_blank" rel="noopener">👁 תצוגה מקדימה</a>
   ${publishBtn}
-  <a href="/admin/newsletter/"><button type="button" class="btn-secondary">← חזרה לרשימה</button></a>
+  <a class="btn btn-secondary" href="/admin/newsletter/">← חזרה לרשימה</a>
 </div>
-<div id="msg"></div>
+<div id="msg" role="status" aria-live="polite"></div>
 ${sendSection}
-<div class="field" style="max-width:180px;margin-top:1rem"><label>מספר גיליון</label><input id="issue-number" type="number" value="${escXml(String(issue.issue_number || ''))}"></div>
+<div class="field" style="max-width:180px;margin-top:1rem"><label for="issue-number">מספר גיליון</label><input id="issue-number" type="number" inputmode="numeric" value="${escXml(String(issue.issue_number || ''))}"></div>
 ${heroFields}${guideFields}${guideStepsFields}${locationFields}${tipFields}${saleFields}
+</main>
 <script>
 const tok = sessionStorage.getItem('admin_session') || localStorage.getItem('admin_session') || '';
 ${issue.status === 'published' ? `
