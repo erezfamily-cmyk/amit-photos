@@ -496,6 +496,10 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
   .mobile-card-table td::before{content:attr(data-label);color:var(--text-muted);font-size:.72rem;font-weight:600;letter-spacing:.04em}
   .mobile-card-table td[colspan]{display:block;text-align:center!important}
   .mobile-card-table td[colspan]::before{display:none}
+  .social-schedule-table td:nth-child(1)::before{content:"יום"}
+  .social-schedule-table td:nth-child(2)::before{content:"שעה"}
+  .social-schedule-table td:nth-child(3)::before{content:"פלטפורמה"}
+  .social-schedule-table td:nth-child(4)::before{content:"תוכן"}
   .mobile-card-table .status-select{min-height:44px;width:100%;padding:.5rem .7rem}
   .mobile-row-actions{display:flex;gap:.5rem;flex-wrap:wrap;min-height:44px}
   .mobile-row-actions .btn,.mobile-row-actions .btn-reply,.mobile-row-action{display:inline-flex;align-items:center;justify-content:center;min-height:44px;width:100%;flex:1 1 120px}
@@ -949,8 +953,8 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
 
       <!-- SCHEDULE TABLE -->
       <h2 class="social-platform-title social-platform-title--schedule">📅 לוח שידורים</h2>
-      <div class="table-wrap" style="margin-bottom:2rem">
-        <table class="data-table">
+      <div class="table-wrap mobile-card-wrap" style="margin-bottom:2rem">
+        <table class="data-table mobile-card-table social-schedule-table" id="social-schedule-table">
           <thead><tr><th>יום</th><th>שעה (IL)</th><th>פלטפורמה</th><th>תוכן</th></tr></thead>
           <tbody>
             <tr><td>כל יום</td><td>11:00</td><td>📸 IG Story</td><td>Slideshow תמונות</td></tr>
@@ -977,8 +981,8 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
         <h2 class="social-platform-title social-platform-title--schedule" style="margin-bottom:0">📊 פעילות בפועל — 14 ימים אחרונים</h2>
         <span id="social-activity-status" style="color:var(--text-muted);font-size:.82rem">טוען...</span>
       </div>
-      <div class="table-wrap" id="social-activity-wrap" style="margin-bottom:2rem;display:none">
-        <table class="data-table">
+      <div class="table-wrap mobile-card-wrap" id="social-activity-wrap" style="margin-bottom:2rem;display:none">
+        <table class="data-table mobile-card-table" id="social-activity-table">
           <thead><tr><th>תאריך</th><th>שעה (IL)</th><th>תוכן</th><th>סטטוס</th></tr></thead>
           <tbody id="social-activity-tbody"></tbody>
         </table>
@@ -4444,13 +4448,13 @@ const SocialSection = (() => {
   function topPostsTable(posts, captionKey) {
     if (!posts?.length) return '<p style="color:var(--text-muted);padding:.5rem 0">אין פוסטים השבוע</p>';
     const rows = posts.map(p => `<tr>
-      <td style="white-space:nowrap;color:var(--text-muted)">${p.date || ''}</td>
-      <td style="max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${(p[captionKey] || '').replace(/\n/g,' ')}</td>
-      <td style="text-align:center">❤️ ${p.likes ?? 0}</td>
-      <td style="text-align:center">💬 ${p.comments ?? 0}</td>
+      <td data-label="תאריך" style="white-space:nowrap;color:var(--text-muted)">${p.date || ''}</td>
+      <td data-label="כיתוב" style="max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${(p[captionKey] || '').replace(/\n/g,' ')}</td>
+      <td data-label="לייקים" style="text-align:center">❤️ ${p.likes ?? 0}</td>
+      <td data-label="תגובות" style="text-align:center">💬 ${p.comments ?? 0}</td>
     </tr>`).join('');
-    return `<div style="overflow-x:auto;margin-bottom:1.5rem">
-      <table class="data-table" style="font-size:.82rem">
+    return `<div class="table-wrap mobile-card-wrap social-posts-table-wrap" style="margin-bottom:1.5rem">
+      <table class="data-table mobile-card-table social-posts-table" style="font-size:.82rem">
         <thead><tr><th>תאריך</th><th>כיתוב</th><th>לייקים</th><th>תגובות</th></tr></thead>
         <tbody>${rows}</tbody>
       </table>
@@ -4672,18 +4676,18 @@ const SocialSection = (() => {
         const avg = h.ig_avg_likes != null ? h.ig_avg_likes : (h.ig_posts ? (h.ig_likes / h.ig_posts).toFixed(1) : '—');
         const eng = h.ig_engagement != null ? (h.ig_engagement * 100).toFixed(2) + '%' : '—';
         return `<tr>
-          <td style="white-space:nowrap">${h.week_ending || ''}</td>
-          <td style="text-align:center">${h.ig_followers ?? '—'}</td>
-          <td style="text-align:center">${h.ig_posts ?? '—'}</td>
-          <td style="text-align:center">${h.ig_likes ?? '—'}</td>
-          <td style="text-align:center">${avg}</td>
-          <td style="text-align:center">${eng}</td>
-          <td style="text-align:center">${h.fb_fans ?? '—'}</td>
-          <td style="text-align:center">${h.fb_likes ?? '—'}</td>
+          <td data-label="שבוע" style="white-space:nowrap">${h.week_ending || ''}</td>
+          <td data-label="עוקבי IG" style="text-align:center">${h.ig_followers ?? '—'}</td>
+          <td data-label="פוסטים IG" style="text-align:center">${h.ig_posts ?? '—'}</td>
+          <td data-label="לייקים IG" style="text-align:center">${h.ig_likes ?? '—'}</td>
+          <td data-label="ממוצע" style="text-align:center">${avg}</td>
+          <td data-label="מעורבות" style="text-align:center">${eng}</td>
+          <td data-label="עוקבי FB" style="text-align:center">${h.fb_fans ?? '—'}</td>
+          <td data-label="לייקים FB" style="text-align:center">${h.fb_likes ?? '—'}</td>
         </tr>`;
       }).join('');
-      wrap.innerHTML = `<div style="overflow-x:auto">
-        <table class="data-table" style="font-size:.82rem">
+      wrap.innerHTML = `<div class="table-wrap mobile-card-wrap social-history-table-wrap">
+        <table class="data-table mobile-card-table social-history-table" style="font-size:.82rem">
           <thead><tr>
             <th>שבוע</th>
             <th>עוקבי IG</th>
@@ -4727,10 +4731,10 @@ const SocialSection = (() => {
       };
       $('social-activity-tbody').innerHTML = runs.map(run =>
         `<tr>
-          <td>${run.date}</td>
-          <td>${run.time}</td>
-          <td><a href="${run.html_url}" target="_blank" style="color:var(--accent);text-decoration:none">${run.icon} ${run.name}</a></td>
-          <td>${statusHtml(run.status)}</td>
+          <td data-label="תאריך">${run.date}</td>
+          <td data-label="שעה">${run.time}</td>
+          <td data-label="תוכן"><a href="${escHtml(run.html_url||'#')}" target="_blank" rel="noopener" aria-label="פתח ריצת ${escHtml(run.name||'סושיאל')}" style="color:var(--accent);text-decoration:none">${run.icon} ${run.name}</a></td>
+          <td data-label="סטטוס">${statusHtml(run.status)}</td>
         </tr>`
       ).join('');
       if (wrapEl) wrapEl.style.display = 'block';
