@@ -485,6 +485,21 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
   .photos-toolbar{display:grid;grid-template-columns:1fr}
   .photos-toolbar .btn,.photos-toolbar input,.photos-toolbar select{min-height:44px}
   .photos-toolbar input,.photos-toolbar select,.photos-toolbar .btn{width:100%}
+  .mobile-card-wrap{overflow:visible;border:0;border-radius:0;background:transparent}
+  .mobile-card-table,.mobile-card-table tbody{display:block;width:100%}
+  .mobile-card-table thead{display:none}
+  .mobile-card-table tbody{display:grid;gap:.75rem}
+  .mobile-card-table tr{display:block;width:100%;background:var(--bg-card);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+  .mobile-card-table tr:hover td{background:transparent}
+  .mobile-card-table td{display:grid;grid-template-columns:minmax(78px,30%) minmax(0,1fr);gap:.75rem;align-items:start;width:100%;max-width:none!important;padding:.65rem .8rem;border-bottom:1px solid var(--border);white-space:normal!important;overflow:visible!important;text-overflow:clip!important;overflow-wrap:anywhere;text-align:right!important}
+  .mobile-card-table td:last-child{border-bottom:0}
+  .mobile-card-table td::before{content:attr(data-label);color:var(--text-muted);font-size:.72rem;font-weight:600;letter-spacing:.04em}
+  .mobile-card-table td[colspan]{display:block;text-align:center!important}
+  .mobile-card-table td[colspan]::before{display:none}
+  .mobile-card-table .status-select{min-height:44px;width:100%;padding:.5rem .7rem}
+  .mobile-row-actions{display:flex;gap:.5rem;flex-wrap:wrap;min-height:44px}
+  .mobile-row-actions .btn,.mobile-row-actions .btn-reply,.mobile-row-action{display:inline-flex;align-items:center;justify-content:center;min-height:44px;width:100%;flex:1 1 120px}
+  .mobile-card-table .refresh-status-btn{min-width:44px;min-height:44px;margin:.5rem 0 0!important;padding:.5rem!important}
 }
 
 /* ===== UTILITY ===== */
@@ -895,8 +910,8 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
         <div class="dash-recent-title" style="margin-bottom:1.25rem">פאנל המרה — תמונות (30 יום)</div>
         <div id="photo-analytics-loading" style="color:var(--text-muted);font-size:.85rem">טוען...</div>
         <div id="photo-analytics-content" hidden>
-          <div style="overflow-x:auto">
-            <table class="data-table" id="funnel-table">
+          <div class="table-wrap mobile-card-wrap">
+            <table class="data-table mobile-card-table" id="funnel-table">
               <thead><tr>
                 <th>תמונה</th>
                 <th>קטגוריה</th>
@@ -1000,8 +1015,8 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
         <h1 class="section-title">הזמנות הדפסה</h1>
         <button type="button" class="btn btn-ghost btn-sm" id="print-orders-refresh-btn">רענן</button>
       </div>
-      <div class="table-wrap">
-        <table class="data-table">
+      <div class="table-wrap mobile-card-wrap">
+        <table class="data-table mobile-card-table" id="print-orders-table">
           <thead><tr>
             <th>תאריך</th>
             <th>שם לקוח</th>
@@ -1258,8 +1273,8 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
         </select>
       </div>
 
-      <div class="table-wrap">
-        <table>
+      <div class="table-wrap mobile-card-wrap">
+        <table class="data-table mobile-card-table" id="customers-table">
           <thead><tr>
             <th>שם</th><th>מייל</th><th>טלפון</th><th>תאריך</th>
             <th>סוג</th><th>נושא/תמונה</th><th>סטטוס</th><th>הערות</th><th>פעולות</th>
@@ -1473,8 +1488,8 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
       </div>
 
       <!-- Table -->
-      <div class="table-wrap">
-        <table class="data-table">
+      <div class="table-wrap mobile-card-wrap">
+        <table class="data-table mobile-card-table" id="purchases-table">
           <thead><tr>
             <th>תמונה</th><th>גודל</th><th>סכום</th><th>תאריך</th><th>סטטוס</th><th>txn</th><th>קישור</th>
           </tr></thead>
@@ -2613,7 +2628,7 @@ async function loadPhotoAnalytics() {
     const tbody = document.getElementById('funnel-tbody');
     if (tbody) {
       if (!views || !views.length) {
-        tbody.innerHTML = '<tr><td colspan="8" style="color:var(--text-muted);text-align:center;padding:1rem">אין נתונים עדיין — נאספים מרגע הפעלת המעקב</td></tr>';
+        tbody.innerHTML = '<tr><td data-label="" colspan="8" style="color:var(--text-muted);text-align:center;padding:1rem">אין נתונים עדיין — נאספים מרגע הפעלת המעקב</td></tr>';
       } else {
         tbody.innerHTML = views.map(v => {
           const intent = intentMap[v.photo_id] || 0;
@@ -2623,14 +2638,14 @@ async function loadPhotoAnalytics() {
           const intentColor = parseFloat(intentPct) >= 10 ? '#34d399' : parseFloat(intentPct) >= 3 ? '#c8a96e' : 'var(--text-muted)';
           const convColor = parseFloat(conv) >= 5 ? '#34d399' : parseFloat(conv) >= 1 ? '#c8a96e' : 'var(--text-muted)';
           return `<tr>
-            <td style="font-weight:500;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${v.photo_title}">${v.photo_title || v.photo_id}</td>
-            <td style="color:var(--text-muted);font-size:.8rem">${v.category || '—'}</td>
-            <td style="text-align:center">${v.count}</td>
-            <td style="text-align:center">${intent}</td>
-            <td style="text-align:center;color:${intentColor};font-weight:600">${intentPct}%</td>
-            <td style="text-align:center">${p.count}</td>
-            <td style="text-align:center">${p.revenue ? '₪' + p.revenue : '—'}</td>
-            <td style="text-align:center;color:${convColor};font-weight:600">${conv}%</td>
+            <td data-label="תמונה" style="font-weight:500;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${v.photo_title}">${v.photo_title || v.photo_id}</td>
+            <td data-label="קטגוריה" style="color:var(--text-muted);font-size:.8rem">${v.category || '—'}</td>
+            <td data-label="צפיות" style="text-align:center">${v.count}</td>
+            <td data-label="כוונה" style="text-align:center">${intent}</td>
+            <td data-label="% כוונה" style="text-align:center;color:${intentColor};font-weight:600">${intentPct}%</td>
+            <td data-label="רכישות" style="text-align:center">${p.count}</td>
+            <td data-label="הכנסה" style="text-align:center">${p.revenue ? '₪' + p.revenue : '—'}</td>
+            <td data-label="המרה" style="text-align:center;color:${convColor};font-weight:600">${conv}%</td>
           </tr>`;
         }).join('');
       }
@@ -4139,23 +4154,25 @@ const Customers = (() => {
     $('cust-empty').style.display = 'none';
     tbody.innerHTML = rows.map(c => `
       <tr class="clickable" onclick="Customers.openView('${escHtml(c.id)}')">
-        <td><strong>${escHtml(c.name||'—')}</strong></td>
-        <td><a href="mailto:${escHtml(c.email)}" style="color:var(--accent)" onclick="event.stopPropagation()">${escHtml(c.email||'—')}</a></td>
-        <td style="color:var(--text-muted)">${escHtml(c.phone||'—')}</td>
-        <td style="color:var(--text-muted);font-size:.82rem">${fmtDate(c.date)}</td>
-        <td><span class="type-badge ${typeClass(c.type)}">${escHtml(c.type||'—')}</span></td>
-        <td style="font-size:.85rem;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHtml(c.subject||'—')}</td>
-        <td onclick="event.stopPropagation()">
-          <select class="status-select ${statusClass(c.status)}" onchange="Customers.quickStatus('${escHtml(c.id)}', this)">
+        <td data-label="שם"><strong>${escHtml(c.name||'—')}</strong></td>
+        <td data-label="מייל"><a href="mailto:${escHtml(c.email)}" style="color:var(--accent)" onclick="event.stopPropagation()">${escHtml(c.email||'—')}</a></td>
+        <td data-label="טלפון" style="color:var(--text-muted)">${escHtml(c.phone||'—')}</td>
+        <td data-label="תאריך" style="color:var(--text-muted);font-size:.82rem">${fmtDate(c.date)}</td>
+        <td data-label="סוג"><span class="type-badge ${typeClass(c.type)}">${escHtml(c.type||'—')}</span></td>
+        <td data-label="נושא" style="font-size:.85rem;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHtml(c.subject||'—')}</td>
+        <td data-label="סטטוס" onclick="event.stopPropagation()">
+          <select class="status-select ${statusClass(c.status)}" aria-label="סטטוס עבור ${escHtml(c.name||'לקוח')}" onchange="Customers.quickStatus('${escHtml(c.id)}', this)">
             <option ${c.status==='ממתין'?'selected':''}>ממתין</option>
             <option ${c.status==='טופל'?'selected':''}>טופל</option>
             <option ${c.status==='סגור'?'selected':''}>סגור</option>
           </select>
         </td>
-        <td style="color:var(--text-muted);font-size:.82rem;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHtml(c.notes||'—')}</td>
-        <td onclick="event.stopPropagation()" style="white-space:nowrap;display:flex;gap:.4rem;align-items:center">
-          ${c.email ? `<a class="btn-reply" href="mailto:${escHtml(c.email)}?subject=${encodeURIComponent('Re: '+(c.subject||'פנייה מהאתר'))}&body=${encodeURIComponent('שלום '+(c.name||'')+',\n\n')}" target="_blank">השב</a>` : ''}
-          <button class="btn btn-danger btn-sm" onclick="Customers.remove('${escHtml(c.id)}')">מחק</button>
+        <td data-label="הערות" style="color:var(--text-muted);font-size:.82rem;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHtml(c.notes||'—')}</td>
+        <td data-label="פעולות" onclick="event.stopPropagation()">
+          <div class="mobile-row-actions">
+            ${c.email ? `<a class="btn-reply" href="mailto:${escHtml(c.email)}?subject=${encodeURIComponent('Re: '+(c.subject||'פנייה מהאתר'))}&body=${encodeURIComponent('שלום '+(c.name||'')+',\n\n')}" target="_blank" aria-label="השב ל${escHtml(c.name||'לקוח')}">השב</a>` : ''}
+            <button class="btn btn-danger btn-sm" aria-label="מחק את ${escHtml(c.name||'הלקוח')}" onclick="Customers.remove('${escHtml(c.id)}')">מחק</button>
+          </div>
         </td>
       </tr>
     `).join('');
@@ -4336,26 +4353,30 @@ const PrintOrders = (() => {
         : 'https://www.paypal.com/activity/';
       return `
       <tr style="${cancelled ? 'opacity:.5' : ''}">
-        <td style="white-space:nowrap;font-size:.82rem;color:var(--text-muted)">${fmtDate(o.created_at)}</td>
-        <td><strong>${o.customer_name||'—'}</strong></td>
-        <td><a href="tel:${o.customer_phone||''}" style="color:var(--accent)">${o.customer_phone||'—'}</a></td>
-        <td><a href="mailto:${o.customer_email||''}" style="color:var(--accent)">${o.customer_email||'—'}</a></td>
-        <td style="font-size:.85rem">${o.address_line1||'—'}, ${o.address_city||''} ${o.address_zip||''}</td>
-        <td style="font-size:.85rem">${o.product_label||o.sku||'—'}</td>
-        <td style="color:var(--accent)">$${o.sell_price||'—'}</td>
-        <td style="font-size:.78rem;color:var(--text-muted)">${o.prodigi_order_id||'—'}</td>
-        <td>
-          <span class="badge-status" id="status-badge-${o.id}">${o.status||'—'}</span>
-          ${o.status === 'in_production'
-            ? `<button type="button" class="btn btn-ghost btn-sm refresh-status-btn"
-                 data-order-id="${o.id}" style="margin-right:.4rem;padding:.1rem .4rem;font-size:.75rem"
-                 title="רענן סטטוס מ-Gelato">🔄</button>`
-            : ''}
+        <td data-label="תאריך" style="white-space:nowrap;font-size:.82rem;color:var(--text-muted)">${fmtDate(o.created_at)}</td>
+        <td data-label="שם לקוח"><strong>${o.customer_name||'—'}</strong></td>
+        <td data-label="טלפון"><a href="tel:${o.customer_phone||''}" style="color:var(--accent)">${o.customer_phone||'—'}</a></td>
+        <td data-label="מייל"><a href="mailto:${o.customer_email||''}" style="color:var(--accent)">${o.customer_email||'—'}</a></td>
+        <td data-label="כתובת" style="font-size:.85rem">${o.address_line1||'—'}, ${o.address_city||''} ${o.address_zip||''}</td>
+        <td data-label="מוצר" style="font-size:.85rem">${o.product_label||o.sku||'—'}</td>
+        <td data-label="מחיר" style="color:var(--accent)">$${o.sell_price||'—'}</td>
+        <td data-label="מספר הזמנה" style="font-size:.78rem;color:var(--text-muted)">${o.prodigi_order_id||'—'}</td>
+        <td data-label="סטטוס">
+          <div>
+            <span class="badge-status" id="status-badge-${o.id}">${o.status||'—'}</span>
+            ${o.status === 'in_production'
+              ? `<button type="button" class="btn btn-ghost btn-sm refresh-status-btn"
+                   data-order-id="${o.id}" style="margin-right:.4rem;padding:.1rem .4rem;font-size:.75rem"
+                   title="רענן סטטוס מ-Gelato" aria-label="רענן סטטוס הזמנה ${escHtml(o.prodigi_order_id||o.id||'')}">🔄</button>`
+              : ''}
+          </div>
         </td>
-        <td>
-          ${cancelled
-            ? `<a href="${paypalLink}" target="_blank" class="btn btn-danger btn-sm">החזר ב-PayPal</a>`
-            : '—'}
+        <td data-label="החזר">
+          <div class="mobile-row-actions">
+            ${cancelled
+              ? `<a href="${paypalLink}" target="_blank" rel="noopener" class="btn btn-danger btn-sm" aria-label="פתח החזר ב-PayPal עבור הזמנה ${escHtml(o.prodigi_order_id||o.id||'')}">החזר ב-PayPal</a>`
+              : '—'}
+          </div>
         </td>
       </tr>`;
     }).join('');
@@ -4770,15 +4791,17 @@ const Purchases = (() => {
     tbody.innerHTML = '';
     (data.tokens || []).forEach(t => {
       const sizeLabel = { small: 'רשת', medium: 'הדפסה', large: 'מלא' }[t.size] || t.size;
+      const displayTitle = escHtml(t.title || t.photo_ids || 'תמונה');
+      const downloadUrl = `${window.location.origin}/api/download/${encodeURIComponent(t.token || '')}`;
       const tr = document.createElement('tr');
       tr.innerHTML = `
-        <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.title || t.photo_ids}</td>
-        <td>${sizeLabel}</td>
-        <td>${t.amount ? `₪${t.amount}` : '—'}</td>
-        <td>${formatDate(t.created_at)}</td>
-        <td>${statusBadge(t)}</td>
-        <td style="font-size:.7rem;color:var(--text-muted)">${(t.tx||'').slice(0,12)}…</td>
-        <td><button type="button" class="btn-sm" onclick="navigator.clipboard.writeText('${window.location.origin}/api/download/${t.token}')">העתק</button></td>
+        <td data-label="תמונה" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${displayTitle}</td>
+        <td data-label="גודל">${escHtml(sizeLabel)}</td>
+        <td data-label="סכום">${t.amount ? `₪${t.amount}` : '—'}</td>
+        <td data-label="תאריך">${formatDate(t.created_at)}</td>
+        <td data-label="סטטוס">${statusBadge(t)}</td>
+        <td data-label="txn" style="font-size:.7rem;color:var(--text-muted)">${escHtml((t.tx||'').slice(0,12))}…</td>
+        <td data-label="קישור"><button type="button" class="btn btn-ghost btn-sm mobile-row-action" aria-label="העתק קישור הורדה עבור ${displayTitle}" onclick="navigator.clipboard.writeText('${downloadUrl}')">העתק</button></td>
       `;
       tbody.appendChild(tr);
     });
