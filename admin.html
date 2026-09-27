@@ -36,6 +36,7 @@ a{color:inherit;text-decoration:none}
 button{cursor:pointer;font-family:var(--font)}
 button,.btn,.nav-item,.photo-menu-btn,.btn-icon,.btn-logout{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 input,textarea,select{font-family:var(--font);direction:rtl}
+.sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
 
 /* ===== LOGIN ===== */
 #login-screen{
@@ -101,6 +102,7 @@ input,textarea,select{font-family:var(--font);direction:rtl}
   position:relative;border-left:2px solid transparent;
 }
 .nav-item:hover{color:var(--text);background:rgba(255,255,255,.03)}
+.nav-item:focus-visible,.upload-zone:focus-visible,.mobile-nav-toggle:focus-visible,.sidebar-close:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .nav-item.active{color:var(--accent);border-left-color:var(--accent);background:var(--accent-dim)}
 .nav-item .nav-dot{
   position:absolute;left:1rem;top:.6rem;
@@ -650,11 +652,12 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
     <div class="login-logo">AMIT PHOTOS</div>
     <div class="login-sub">ממשק ניהול</div>
     <div class="pwd-wrap" style="position:relative;width:100%">
-      <input type="password" id="password-input" placeholder="סיסמה" autocomplete="off" style="width:100%;padding-left:2.5rem">
-      <button type="button" id="pwd-toggle" style="position:absolute;left:.15rem;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:1.1rem;padding:.5rem;line-height:1">&#128065;</button>
+      <label class="sr-only" for="password-input">סיסמה</label>
+      <input type="password" id="password-input" placeholder="סיסמה" autocomplete="current-password" style="width:100%;padding-left:2.5rem">
+      <button type="button" id="pwd-toggle" aria-label="הצג סיסמה" aria-pressed="false" style="position:absolute;left:.15rem;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:1.1rem;padding:.5rem;line-height:1">&#128065;</button>
     </div>
     <button class="btn-login" id="login-btn" onclick="(window.doLogin||function(){var p=document.getElementById('password-input').value;if(!p)return;fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:p})}).then(function(r){return r.json().then(function(d){if(!r.ok){document.getElementById('login-error').textContent=d.error||'סיסמה שגויה';return;}sessionStorage.setItem('admin_session',d.token);localStorage.setItem('admin_session',d.token);document.getElementById('login-screen').style.display='none';document.getElementById('admin-ui').classList.add('visible');});}).catch(function(){document.getElementById('login-error').textContent='שגיאת חיבור';});})()">כניסה</button>
-    <div class="login-error" id="login-error"></div>
+    <div class="login-error" id="login-error" role="alert"></div>
     <button class="login-forgot" id="forgot-btn">שכחת סיסמה?</button>
   </div>
 
@@ -664,8 +667,8 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
     <div class="login-sub">שכחת סיסמה</div>
     <p class="forgot-desc">נשלח קישור לאיפוס לכתובת erez.family@gmail.com</p>
     <button class="btn-login" id="send-reset-btn">שלח קישור לאיפוס</button>
-    <div class="login-error" id="forgot-error"></div>
-    <div class="login-success" id="forgot-success"></div>
+    <div class="login-error" id="forgot-error" role="alert"></div>
+    <div class="login-success" id="forgot-success" role="status" aria-live="polite"></div>
     <button class="login-forgot" id="back-to-login-btn">חזרה לכניסה</button>
   </div>
 
@@ -673,18 +676,20 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
   <div class="login-card" id="reset-card" style="display:none">
     <div class="login-logo">AMIT PHOTOS</div>
     <div class="login-sub">סיסמה חדשה</div>
+    <label class="sr-only" for="reset-new-pwd">סיסמה חדשה</label>
     <input type="password" id="reset-new-pwd" placeholder="סיסמה חדשה" autocomplete="new-password">
+    <label class="sr-only" for="reset-confirm-pwd">אישור סיסמה חדשה</label>
     <input type="password" id="reset-confirm-pwd" placeholder="אשר סיסמה" autocomplete="new-password">
     <button class="btn-login" id="reset-btn">שמור סיסמה</button>
-    <div class="login-error" id="reset-error"></div>
-    <div class="login-success" id="reset-success"></div>
+    <div class="login-error" id="reset-error" role="alert"></div>
+    <div class="login-success" id="reset-success" role="status" aria-live="polite"></div>
   </div>
 </div>
 
 <!-- ADMIN UI -->
 <div id="admin-ui">
   <!-- Sidebar -->
-  <aside class="sidebar">
+  <aside class="sidebar" id="admin-sidebar" aria-label="ניווט מנהל">
     <div class="sidebar-header">
       <div class="sidebar-logo" style="padding:0;border-bottom:none">
         AMIT PHOTOS
@@ -776,7 +781,7 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
 
   <!-- Main -->
   <header class="mobile-topbar">
-    <button class="mobile-nav-toggle" id="mobile-nav-toggle" type="button" aria-label="פתח תפריט">☰</button>
+    <button class="mobile-nav-toggle" id="mobile-nav-toggle" type="button" aria-label="פתח תפריט" aria-controls="admin-sidebar" aria-expanded="false">☰</button>
     <div class="mobile-page-title">AMIT PHOTOS</div>
     <button class="btn btn-ghost btn-sm" id="mobile-refresh-btn" type="button" onclick="window.location.reload()">רענן</button>
   </header>
@@ -1083,7 +1088,7 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
       </div>
 
       <!-- Upload zone -->
-      <div class="upload-zone" id="upload-zone">
+      <div class="upload-zone" id="upload-zone" role="button" tabindex="0" aria-label="הוסף תמונות">
         <div class="upload-icon">📷</div>
         <strong>גרור תמונות לכאן</strong>
         <p>או לחץ לבחירת קבצים (JPG, PNG, WEBP)</p>
@@ -2654,6 +2659,8 @@ function authHeaders() {
       const showing = inp.type === 'text';
       inp.type = showing ? 'password' : 'text';
       pwdToggle.textContent = showing ? String.fromCodePoint(0x1F441) : String.fromCodePoint(0x1F648);
+      pwdToggle.setAttribute('aria-pressed', showing ? 'false' : 'true');
+      pwdToggle.setAttribute('aria-label', showing ? 'הצג סיסמה' : 'הסתר סיסמה');
     });
   }
 
@@ -2790,13 +2797,15 @@ $('logout-btn').addEventListener('click', async () => {
 });
 
 // ===== NAV =====
-function closeMobileNav() {
+function closeMobileNav(restoreFocus = false) {
   document.querySelector('.sidebar')?.classList.remove('open');
   document.body.classList.remove('sidebar-open');
+  if (restoreFocus) mobileNavToggle?.focus();
 }
 function openMobileNav() {
   document.querySelector('.sidebar')?.classList.add('open');
   document.body.classList.add('sidebar-open');
+  sidebarCloseBtn?.focus();
 }
 
 const mobileNavToggle = document.getElementById('mobile-nav-toggle');
@@ -2810,12 +2819,36 @@ function updateMobileNavState() {
 mobileNavToggle?.addEventListener('click', () => {
   const side = document.querySelector('.sidebar');
   if (!side) return;
-  side.classList.toggle('open');
+  if (side.classList.contains('open')) closeMobileNav(true);
+  else openMobileNav();
   updateMobileNavState();
 });
 sidebarCloseBtn?.addEventListener('click', () => {
-  closeMobileNav();
+  closeMobileNav(true);
   updateMobileNavState();
+});
+
+document.addEventListener('keydown', (e) => {
+  const side = document.querySelector('.sidebar');
+  if (e.key === 'Escape' && side?.classList.contains('open')) {
+    closeMobileNav(true);
+    updateMobileNavState();
+    return;
+  }
+  if (e.key === 'Tab' && side?.classList.contains('open')) {
+    const focusable = [...side.querySelectorAll('button:not([disabled]),a[href],[tabindex="0"]')]
+      .filter(el => el.getClientRects().length && getComputedStyle(el).visibility !== 'hidden');
+    if (!focusable.length) return;
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
+  }
 });
 
 document.addEventListener('click', (e) => {
@@ -2836,11 +2869,24 @@ window.addEventListener('resize', () => {
 });
 
 document.querySelectorAll('.nav-item').forEach(item => {
+  item.setAttribute('role', 'button');
+  item.setAttribute('tabindex', '0');
+  if (item.classList.contains('active')) item.setAttribute('aria-current', 'page');
+  item.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      item.click();
+    }
+  });
   item.addEventListener('click', () => {
     if (item.dataset.section === 'newsletter') { closeMobileNav(); updateMobileNavState(); window.location.href = '/admin/newsletter/'; return; }
-    document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => {
+      n.classList.remove('active');
+      n.removeAttribute('aria-current');
+    });
     document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
     item.classList.add('active');
+    item.setAttribute('aria-current', 'page');
     $('section-' + item.dataset.section).classList.add('active');
     closeMobileNav();
     updateMobileNavState();
@@ -3214,6 +3260,12 @@ const Photos = (() => {
     const input = $('upload-file-input');
 
     zone.addEventListener('click', () => input.click());
+    zone.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        input.click();
+      }
+    });
     zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag'); });
     zone.addEventListener('dragleave', () => zone.classList.remove('drag'));
     zone.addEventListener('drop', e => {
