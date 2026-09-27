@@ -1898,10 +1898,10 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
 <div id="toast-container"></div>
 
 <!-- EDIT PHOTO DIALOG -->
-<dialog id="photo-dialog">
+<dialog id="photo-dialog" aria-labelledby="photo-dialog-title">
   <div class="dialog-header">
     <span class="dialog-title" id="photo-dialog-title">עריכת תמונה</span>
-    <button class="dialog-close" onclick="document.getElementById('photo-dialog').close()">✕</button>
+    <button type="button" class="dialog-close" aria-label="סגור" onclick="document.getElementById('photo-dialog').close()">✕</button>
   </div>
   <div class="dialog-body">
     <input type="hidden" id="edit-photo-id">
@@ -1926,10 +1926,10 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
 </dialog>
 
 <!-- CUSTOMER VIEW DIALOG -->
-<dialog id="cust-view-dialog">
+<dialog id="cust-view-dialog" aria-labelledby="cust-view-name">
   <div class="dialog-header">
     <span class="dialog-title" id="cust-view-name"></span>
-    <button class="dialog-close" onclick="document.getElementById('cust-view-dialog').close()">✕</button>
+    <button type="button" class="dialog-close" aria-label="סגור" onclick="document.getElementById('cust-view-dialog').close()">✕</button>
   </div>
   <div class="dialog-body">
     <div class="cust-view-meta">
@@ -1967,10 +1967,10 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
 </dialog>
 
 <!-- Reply dialog -->
-<dialog id="reply-dialog" class="dialog">
+<dialog id="reply-dialog" class="dialog" aria-labelledby="reply-dialog-title">
   <div class="dialog-header">
-    <div class="dialog-title">השב ל־<span id="reply-to-name"></span></div>
-    <button class="dialog-close" onclick="document.getElementById('reply-dialog').close()">✕</button>
+    <div class="dialog-title" id="reply-dialog-title">השב ל־<span id="reply-to-name"></span></div>
+    <button type="button" class="dialog-close" aria-label="סגור" onclick="document.getElementById('reply-dialog').close()">✕</button>
   </div>
   <div class="dialog-body">
     <div class="form-field">
@@ -1994,10 +1994,10 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
 </dialog>
 
 <!-- CUSTOMER DIALOG -->
-<dialog id="cust-dialog">
+<dialog id="cust-dialog" aria-labelledby="cust-dialog-title">
   <div class="dialog-header">
     <span class="dialog-title" id="cust-dialog-title">הוספת לקוח</span>
-    <button class="dialog-close" onclick="document.getElementById('cust-dialog').close()">✕</button>
+    <button type="button" class="dialog-close" aria-label="סגור" onclick="document.getElementById('cust-dialog').close()">✕</button>
   </div>
   <div class="dialog-body">
     <input type="hidden" id="cust-edit-id">
@@ -2037,10 +2037,10 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
 </dialog>
 
 <!-- LEARN EDIT DIALOG -->
-<dialog id="learn-edit-dialog" class="learn-edit-dialog">
+<dialog id="learn-edit-dialog" class="learn-edit-dialog" aria-labelledby="learn-edit-dialog-title">
   <div class="dialog-header">
-    <span class="dialog-title">עריכת ניתוח צילום</span>
-    <button class="dialog-close" onclick="closeLearnModal()">✕</button>
+    <span class="dialog-title" id="learn-edit-dialog-title">עריכת ניתוח צילום</span>
+    <button type="button" class="dialog-close" aria-label="סגור" onclick="closeLearnModal()">✕</button>
   </div>
   <div class="learn-edit-split">
     <!-- Right: form -->
@@ -2169,14 +2169,14 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
 </dialog>
 
 <!-- LIGHTBOX -->
-<dialog id="lb-dialog">
+<dialog id="lb-dialog" aria-labelledby="lb-caption">
   <div class="lb-inner">
     <img class="lb-img" id="lb-img" src="" alt="">
     <div class="lb-caption" id="lb-caption"></div>
   </div>
-  <button class="lb-close" id="lb-close">✕</button>
-  <button class="lb-nav lb-prev" id="lb-prev">‹</button>
-  <button class="lb-nav lb-next" id="lb-next">›</button>
+  <button type="button" class="lb-close" id="lb-close" aria-label="סגור">✕</button>
+  <button type="button" class="lb-nav lb-prev" id="lb-prev" aria-label="תמונה קודמת">‹</button>
+  <button type="button" class="lb-nav lb-next" id="lb-next" aria-label="תמונה הבאה">›</button>
 </dialog>
 
 <script>
@@ -5704,10 +5704,10 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 
 <!-- Visual Annotation Editor -->
-<dialog id="ann-editor-dialog">
+<dialog id="ann-editor-dialog" aria-labelledby="ann-ed-title-label">
   <div class="ann-ed-header">
     <span class="ann-ed-title" id="ann-ed-title-label">עורך ויזואלי</span>
-    <button class="dialog-close" onclick="annEdClose()">✕</button>
+    <button type="button" class="dialog-close" aria-label="סגור" onclick="annEdClose()">✕</button>
   </div>
   <div class="ann-ed-body">
     <div class="ann-ed-sidebar">
@@ -7530,13 +7530,13 @@ async function confirmLinkToLocation() {
 </script>
 
 <!-- Pinterest Pin Modal -->
-<dialog id="pin-modal" style="background:#111;border:1px solid #333;border-radius:12px;padding:1.5rem;width:100%;max-width:420px;color:#f0f0f0">
+<dialog id="pin-modal" aria-labelledby="pin-modal-title" style="background:#111;border:1px solid #333;border-radius:12px;padding:1.5rem;width:100%;max-width:420px;color:#f0f0f0">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem">
     <div style="display:flex;align-items:center;gap:.6rem">
       <div style="width:32px;height:32px;background:#E60023;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;font-size:.9rem">P</div>
-      <h3 style="margin:0;font-family:'Syne',sans-serif;color:#c8a96e">פרסם לפינטרסט</h3>
+      <h3 id="pin-modal-title" style="margin:0;font-family:'Syne',sans-serif;color:#c8a96e">פרסם לפינטרסט</h3>
     </div>
-    <button onclick="document.getElementById('pin-modal').close()" style="background:none;border:none;color:#888;font-size:1.25rem;cursor:pointer;line-height:1">✕</button>
+    <button type="button" class="dialog-close" aria-label="סגור" onclick="document.getElementById('pin-modal').close()" style="background:none;border:none;color:#888;font-size:1.25rem;cursor:pointer;line-height:1">✕</button>
   </div>
   <div style="margin-bottom:1rem">
     <label style="font-size:.82rem;color:#888;display:block;margin-bottom:.4rem">לוח</label>
@@ -7547,7 +7547,7 @@ async function confirmLinkToLocation() {
     <textarea id="pin-description" rows="3" placeholder="תיאור הפין — ריק = ברירת מחדל" style="width:100%;box-sizing:border-box;background:#1a1a1a;border:1px solid #333;border-radius:6px;padding:.6rem .75rem;color:#f0f0f0;font-size:.88rem;font-family:inherit;resize:vertical"></textarea>
   </div>
   <div style="display:flex;align-items:center;justify-content:space-between;gap:.75rem">
-    <div id="pin-modal-status" style="font-size:.85rem;flex:1"></div>
+    <div id="pin-modal-status" role="status" aria-live="polite" style="font-size:.85rem;flex:1"></div>
     <button id="pin-modal-submit" onclick="submitPin()" style="background:#E60023;color:#fff;border:none;border-radius:7px;padding:.65rem 1.4rem;font-size:.9rem;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap">פרסם</button>
   </div>
 </dialog>
