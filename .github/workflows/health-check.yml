@@ -1,0 +1,97 @@
+name: בדיקת בריאות אתר
+
+on:
+  schedule:
+    # כל יום ב-07:00 UTC = 10:00 ישראל
+    - cron: '0 7 * * *'
+  workflow_dispatch:
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  health-check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: בדיקת דף הבית
+        id: homepage
+        run: |
+          CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 15 https://amitphotos.com)
+          echo "code=$CODE" >> $GITHUB_OUTPUT
+          if [ "$CODE" = "200" ]; then
+            echo "✅ דף הבית: OK ($CODE)"
+          else
+            echo "❌ דף הבית: FAIL ($CODE)"
+            echo "failed=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: בדיקת API תמונות
+        id: api
+        run: |
+          RESPONSE=$(curl -s --max-time 15 https://amitphotos.com/api/photos)
+          COUNT=$(echo "$RESPONSE" | jq 'length' 2>/dev/null || echo "0")
+          THUMB=$(echo "$RESPONSE" | jq -r '.[0].thumbnail // empty' 2>/dev/null || echo "")
+          echo "count=$COUNT" >> $GITHUB_OUTPUT
+          echo "thumb=$THUMB" >> $GITHUB_OUTPUT
+          if [ "$COUNT" -gt "0" ] 2>/dev/null; then
+            echo "✅ API /api/photos: OK ($COUNT תמונות)"
+          else
+            echo "❌ API /api/photos: FAIL (תגובה לא תקינה)"
+            echo "failed=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: בדיקת Sitemap
+        id: sitemap
+        run: |
+          CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 15 https://amitphotos.com/sitemap.xml)
+          echo "code=$CODE" >> $GITHUB_OUTPUT
+          if [ "$CODE" = "200" ]; then
+            echo "✅ Sitemap: OK ($CODE)"
+          else
+            echo "❌ Sitemap: FAIL ($CODE)"
+            echo "failed=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: בדיקת תמונת דוגמה
+        id: thumbnail
+        run: |
+          THUMB="${{ steps.api.outputs.thumb }}"
+          if [ -z "$THUMB" ]; then
+            echo "⚠️  Thumbnail: דולג (ה-API לא החזיר תמונה)"
+            echo "skipped=true" >> $GITHUB_OUTPUT
+          else
+            CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 15 "$THUMB")
+            echo "code=$CODE" >> $GITHUB_OUTPUT
+            if [ "$CODE" = "200" ]; then
+              echo "✅ Thumbnail: OK ($CODE) — $THUMB"
+            else
+              echo "❌ Thumbnail: FAIL ($CODE) — $THUMB"
+              echo "failed=true" >> $GITHUB_OUTPUT
+            fi
+          fi
+
+      - name: סיכום
+        run: |
+          PASS=0
+          FAIL=0
+
+          [ "${{ steps.homepage.outputs.failed }}" = "true" ] && FAIL=$((FAIL+1)) || PASS=$((PASS+1))
+          [ "${{ steps.api.outputs.failed }}" = "true" ] && FAIL=$((FAIL+1)) || PASS=$((PASS+1))
+          [ "${{ steps.sitemap.outputs.failed }}" = "true" ] && FAIL=$((FAIL+1)) || PASS=$((PASS+1))
+          if [ "${{ steps.thumbnail.outputs.skipped }}" = "true" ]; then
+            echo "HEALTH CHECK: $PASS/3 עברו (בדיקת thumbnail דולגה)"
+          elif [ "${{ steps.thumbnail.outputs.failed }}" = "true" ]; then
+            FAIL=$((FAIL+1))
+            echo "HEALTH CHECK: $PASS/4 עברו"
+          else
+            PASS=$((PASS+1))
+            echo "HEALTH CHECK: $PASS/4 עברו"
+          fi
+
+          if [ "$FAIL" -gt "0" ]; then
+            echo "❌ ACTION REQUIRED — $FAIL בדיקות נכשלו"
+            exit 1
+          else
+            echo "✅ הכל תקין"
+          fi
