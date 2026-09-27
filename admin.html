@@ -200,6 +200,8 @@ input,textarea,select{font-family:var(--font);direction:rtl}
 .photos-grid{
   display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1rem;
 }
+.photos-results-summary{color:var(--text-muted);font-size:.8rem;margin:.25rem 0 .75rem}
+.photos-load-more{display:flex;margin:1.25rem auto 0;width:min(100%,320px);justify-content:center}
 .photo-card{
   background:var(--bg-card);border:1px solid var(--border);border-radius:6px;
   transition:border-color .2s,transform .2s;position:relative;
@@ -1044,7 +1046,9 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
       <div class="stats-bar" id="photos-stats"></div>
 
       <div class="photos-toolbar">
+        <label class="sr-only" for="photos-search">חיפוש תמונות</label>
         <input type="text" id="photos-search" placeholder="חיפוש לפי כותרת או קטגוריה...">
+        <label class="sr-only" for="photos-sort">מיון תמונות</label>
         <select id="photos-sort">
           <option value="newest">חדש ראשון</option>
           <option value="oldest">ישן ראשון</option>
@@ -1099,7 +1103,9 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
         <div class="progress-bar-wrap"><div class="progress-bar" id="progress-bar"></div></div>
       </div>
 
+      <div class="photos-results-summary" id="photos-results-summary" aria-live="polite"></div>
       <div class="photos-grid" id="photos-grid"></div>
+      <button type="button" class="btn btn-ghost photos-load-more" id="photos-load-more" hidden>הצג עוד</button>
 
       <!-- Photo defaults & extras — global settings, not part of adding/managing a specific
            photo, so they live below the main flow instead of blocking it -->
@@ -3035,12 +3041,18 @@ const Newsletter = (() => {
 
 // ===== PHOTOS =====
 const Photos = (() => {
+  const PHOTO_PAGE_SIZE = 60;
   let data = [];
   let featuredIds = new Set();
   let searchQ = '', sortBy = 'newest';
   let selected = new Set(), selectMode = false;
   let lbList = [], lbIdx = 0;
   let dragSrcId = null;
+  let visibleCount = PHOTO_PAGE_SIZE;
+
+  function resetPhotoPagination() {
+    visibleCount = PHOTO_PAGE_SIZE;
+  }
 
   function getDisplayData() {
     let d = data.filter(p => {
@@ -3083,6 +3095,7 @@ const Photos = (() => {
   function filterByChip(q) {
     searchQ = q;
     $('photos-search').value = q;
+    resetPhotoPagination();
     render();
     $('photos-grid').scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
@@ -3113,8 +3126,14 @@ const Photos = (() => {
   }
 
   function renderGrid() {
-    const disp = getDisplayData();
+    const all = getDisplayData();
+    const disp = all.slice(0, visibleCount);
     const grid = $('photos-grid');
+    const summary = $('photos-results-summary');
+    const loadMore = $('photos-load-more');
+    summary.textContent = all.length ? `מוצגות ${disp.length} מתוך ${all.length} תמונות` : 'לא נמצאו תמונות';
+    loadMore.hidden = disp.length >= all.length;
+    if (!loadMore.hidden) loadMore.textContent = `הצג עוד (${Math.min(PHOTO_PAGE_SIZE, all.length - disp.length)})`;
     if (!disp.length) {
       grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">🖼️</div><p>אין תמונות</p></div>';
       return;
@@ -3415,8 +3434,12 @@ const Photos = (() => {
     if (e.key === 'ArrowRight') { lbIdx = (lbIdx + 1) % lbList.length; showLbPhoto(); }
   });
 
-  $('photos-search').addEventListener('input', e => { searchQ = e.target.value.trim(); renderGrid(); });
-  $('photos-sort').addEventListener('change', e => { sortBy = e.target.value; renderGrid(); });
+  $('photos-search').addEventListener('input', e => { searchQ = e.target.value.trim(); resetPhotoPagination(); renderGrid(); });
+  $('photos-sort').addEventListener('change', e => { sortBy = e.target.value; resetPhotoPagination(); renderGrid(); });
+  $('photos-load-more').addEventListener('click', () => {
+    visibleCount += PHOTO_PAGE_SIZE;
+    renderGrid();
+  });
 
   // Drag & drop reorder
   const photosGrid = $('photos-grid');
