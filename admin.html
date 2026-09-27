@@ -504,6 +504,23 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
   .mobile-row-actions{display:flex;gap:.5rem;flex-wrap:wrap;min-height:44px}
   .mobile-row-actions .btn,.mobile-row-actions .btn-reply,.mobile-row-action{display:inline-flex;align-items:center;justify-content:center;min-height:44px;width:100%;flex:1 1 120px}
   .mobile-card-table .refresh-status-btn{min-width:44px;min-height:44px;margin:.5rem 0 0!important;padding:.5rem!important}
+  .form-row{display:grid;grid-template-columns:1fr;width:100%}
+  .filter-bar{display:grid;grid-template-columns:1fr;width:100%}
+  .form-field{min-width:0;width:100%}
+  .form-field input,.form-field textarea,.form-field select,.filter-bar input,.filter-bar select{width:100%;min-height:44px}
+  .add-form{padding:1rem}
+  .form-field--end .btn{width:100%;min-height:44px}
+  #section-learn .section-actions{display:grid;grid-template-columns:1fr 1fr}
+  #section-learn .section-actions .btn{width:100%;min-height:44px;white-space:normal}
+  .mobile-dialog{width:calc(100vw - 1rem);max-width:540px;max-height:calc(100dvh - 1rem);margin:auto}
+  .mobile-dialog[open]{display:flex;flex-direction:column}
+  .mobile-dialog .dialog-header{padding:1rem;flex-shrink:0}
+  .mobile-dialog .dialog-body{padding:1rem;overflow-y:auto;min-height:0}
+  .mobile-dialog .dialog-footer{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));padding:.75rem 1rem;flex-shrink:0;background:var(--bg-card)}
+  .mobile-dialog .dialog-footer .btn{width:100%;min-height:44px;white-space:normal}
+  .learn-edit-dialog.mobile-dialog{width:100vw;max-width:100vw;max-height:100dvh}
+  .learn-edit-dialog.mobile-dialog .dialog-footer{display:flex;flex-direction:column;align-items:stretch!important}
+  .learn-edit-dialog.mobile-dialog .dialog-footer>div{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:.5rem!important;width:100%}
 }
 
 /* ===== UTILITY ===== */
@@ -1223,8 +1240,8 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
         <label class="sr-only" for="sub-search">חיפוש נרשמים</label>
         <input type="text" id="sub-search" placeholder="חיפוש לפי שם או מייל...">
       </div>
-      <div class="table-wrap">
-        <table>
+      <div class="table-wrap mobile-card-wrap">
+        <table class="data-table mobile-card-table" id="subscribers-table">
           <thead><tr>
             <th>שם</th><th>מייל</th><th>תאריך הצטרפות</th><th>הערות</th><th>פעולות</th>
           </tr></thead>
@@ -1303,8 +1320,8 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
           <button type="button" class="btn btn-primary btn-sm" id="learn-generate-btn" onclick="learnGenerate()">ייצר ניתוח חדש עכשיו</button>
         </div>
       </div>
-      <div class="table-wrap">
-        <table>
+      <div class="table-wrap mobile-card-wrap">
+        <table class="data-table mobile-card-table" id="learn-table">
           <thead><tr>
             <th>תמונה</th>
             <th>כלל קומפוזיציה</th>
@@ -1922,7 +1939,7 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
 <div id="toast-container"></div>
 
 <!-- EDIT PHOTO DIALOG -->
-<dialog id="photo-dialog" aria-labelledby="photo-dialog-title">
+<dialog id="photo-dialog" class="mobile-dialog" aria-labelledby="photo-dialog-title">
   <div class="dialog-header">
     <span class="dialog-title" id="photo-dialog-title">עריכת תמונה</span>
     <button type="button" class="dialog-close" aria-label="סגור" onclick="document.getElementById('photo-dialog').close()">✕</button>
@@ -1951,7 +1968,7 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
 </dialog>
 
 <!-- CUSTOMER VIEW DIALOG -->
-<dialog id="cust-view-dialog" aria-labelledby="cust-view-name">
+<dialog id="cust-view-dialog" class="mobile-dialog" aria-labelledby="cust-view-name">
   <div class="dialog-header">
     <span class="dialog-title" id="cust-view-name"></span>
     <button type="button" class="dialog-close" aria-label="סגור" onclick="document.getElementById('cust-view-dialog').close()">✕</button>
@@ -1992,7 +2009,7 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
 </dialog>
 
 <!-- Reply dialog -->
-<dialog id="reply-dialog" class="dialog" aria-labelledby="reply-dialog-title">
+<dialog id="reply-dialog" class="dialog mobile-dialog" aria-labelledby="reply-dialog-title">
   <div class="dialog-header">
     <div class="dialog-title" id="reply-dialog-title">השב ל־<span id="reply-to-name"></span></div>
     <button type="button" class="dialog-close" aria-label="סגור" onclick="document.getElementById('reply-dialog').close()">✕</button>
@@ -2019,7 +2036,7 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
 </dialog>
 
 <!-- CUSTOMER DIALOG -->
-<dialog id="cust-dialog" aria-labelledby="cust-dialog-title">
+<dialog id="cust-dialog" class="mobile-dialog" aria-labelledby="cust-dialog-title">
   <div class="dialog-header">
     <span class="dialog-title" id="cust-dialog-title">הוספת לקוח</span>
     <button type="button" class="dialog-close" aria-label="סגור" onclick="document.getElementById('cust-dialog').close()">✕</button>
@@ -2062,7 +2079,7 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
 </dialog>
 
 <!-- LEARN EDIT DIALOG -->
-<dialog id="learn-edit-dialog" class="learn-edit-dialog" aria-labelledby="learn-edit-dialog-title">
+<dialog id="learn-edit-dialog" class="learn-edit-dialog mobile-dialog" aria-labelledby="learn-edit-dialog-title">
   <div class="dialog-header">
     <span class="dialog-title" id="learn-edit-dialog-title">עריכת ניתוח צילום</span>
     <button type="button" class="dialog-close" aria-label="סגור" onclick="closeLearnModal()">✕</button>
@@ -4022,11 +4039,11 @@ const Subscribers = (() => {
     $('subs-empty').style.display = 'none';
     tbody.innerHTML = rows.map(s => `
       <tr>
-        <td>${escHtml(s.name||'—')}</td>
-        <td><a href="mailto:${escHtml(s.email)}" style="color:var(--accent)">${escHtml(s.email)}</a></td>
-        <td>${fmtDate(s.created_at)}</td>
-        <td style="color:var(--text-muted);font-size:.82rem">${escHtml(s.notes||'—')}</td>
-        <td><button class="btn btn-danger btn-sm" onclick="Subscribers.remove('${escHtml(s.id)}')">מחק</button></td>
+        <td data-label="שם">${escHtml(s.name||'—')}</td>
+        <td data-label="מייל"><a href="mailto:${escHtml(s.email)}" style="color:var(--accent)">${escHtml(s.email)}</a></td>
+        <td data-label="תאריך הצטרפות">${fmtDate(s.created_at)}</td>
+        <td data-label="הערות" style="color:var(--text-muted);font-size:.82rem">${escHtml(s.notes||'—')}</td>
+        <td data-label="פעולות"><div class="mobile-row-actions"><button class="btn btn-danger btn-sm" aria-label="מחק את ${escHtml(s.name||s.email||'הנרשם')}" onclick="Subscribers.remove('${escHtml(s.id)}')">מחק</button></div></td>
       </tr>
     `).join('');
   }
@@ -4883,20 +4900,24 @@ async function loadLearn() {
     data.forEach(a => {
       const ruleLabel = RULE_LABELS[a.composition_rule] || a.composition_rule || '—';
       const published = a.published_at ? new Date(a.published_at).toLocaleDateString('he-IL') : '—';
-      const thumb = a.thumbnail ? `<img src="${a.thumbnail}" style="width:48px;height:36px;object-fit:cover;border-radius:3px;border:1px solid var(--border);vertical-align:middle;margin-left:.5rem" alt="">` : '';
       const title = a.title || a.photo_id;
+      const safeTitle = escHtml(title);
+      const safePhotoId = escHtml(a.photo_id);
+      const thumb = a.thumbnail ? `<img src="${escHtml(a.thumbnail)}" style="width:48px;height:36px;object-fit:cover;border-radius:3px;border:1px solid var(--border);vertical-align:middle;margin-left:.5rem" alt="">` : '';
       const hasEn = !!a.title_en;
       const tr = document.createElement('tr');
       tr.innerHTML = `
-        <td>${thumb}<span style="vertical-align:middle">${title}</span>${hasEn ? ' <span style="font-size:.65rem;color:#6dbf67;font-weight:600;margin-right:.3rem">EN✓</span>' : ''}</td>
-        <td><span class="cat-badge">${ruleLabel}</span></td>
-        <td style="color:var(--text-muted);font-size:.85rem">${published}</td>
-        <td style="display:flex;gap:.4rem;align-items:center;flex-wrap:wrap">
-          <button class="btn btn-ghost btn-sm" onclick="learnEdit('${a.photo_id}')">עריכה</button>
-          <button class="btn btn-primary btn-sm" onclick="learnPublish('${a.photo_id}')">פרסם</button>
-          <button class="btn btn-ghost btn-sm" onclick="learnGenerateEn('${a.photo_id}', this)" title="ייצר/עדכן תרגום אנגלי" style="font-size:.9rem">🌍</button>
-          ${a.published_at ? `<a href="/learn/${a.photo_id}" target="_blank" class="btn btn-ghost btn-sm" title="פתח דף ניתוח" style="text-decoration:none;display:inline-flex;align-items:center;gap:.25rem"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>צפה</a>` : ''}
-          <button class="btn btn-danger btn-sm" onclick="learnDelete('${a.photo_id}', this)" title="מחק ניתוח">🗑</button>
+        <td data-label="תמונה">${thumb}<span style="vertical-align:middle">${safeTitle}</span>${hasEn ? ' <span style="font-size:.65rem;color:#6dbf67;font-weight:600;margin-right:.3rem">EN✓</span>' : ''}</td>
+        <td data-label="כלל קומפוזיציה"><span class="cat-badge">${escHtml(ruleLabel)}</span></td>
+        <td data-label="פורסם" style="color:var(--text-muted);font-size:.85rem">${published}</td>
+        <td data-label="פעולות">
+          <div class="mobile-row-actions">
+            <button class="btn btn-ghost btn-sm" aria-label="ערוך ניתוח עבור ${safeTitle}" onclick="learnEdit('${safePhotoId}')">עריכה</button>
+            <button class="btn btn-primary btn-sm" aria-label="פרסם ניתוח עבור ${safeTitle}" onclick="learnPublish('${safePhotoId}')">פרסם</button>
+            <button class="btn btn-ghost btn-sm" aria-label="ייצר תרגום אנגלי עבור ${safeTitle}" onclick="learnGenerateEn('${safePhotoId}', this)" title="ייצר/עדכן תרגום אנגלי" style="font-size:.9rem">🌍</button>
+            ${a.published_at ? `<a href="/learn/${encodeURIComponent(a.photo_id)}" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" aria-label="צפה בניתוח עבור ${safeTitle}" title="פתח דף ניתוח" style="text-decoration:none;display:inline-flex;align-items:center;gap:.25rem"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>צפה</a>` : ''}
+            <button class="btn btn-danger btn-sm" aria-label="מחק ניתוח עבור ${safeTitle}" onclick="learnDelete('${safePhotoId}', this)" title="מחק ניתוח">🗑</button>
+          </div>
         </td>
       `;
       tbody.appendChild(tr);
