@@ -1910,6 +1910,7 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
   </div>
   <div class="dialog-body">
     <input type="hidden" id="edit-photo-id">
+    <img id="photo-dialog-preview" alt="" style="display:none;width:100%;max-height:260px;object-fit:contain;border-radius:6px;background:var(--bg);margin-bottom:1rem">
     <div class="form-field"><label for="edit-photo-title">כותרת</label><input type="text" id="edit-photo-title"></div>
     <div class="form-field">
       <label for="edit-photo-category">קטגוריה</label>
@@ -3238,6 +3239,10 @@ const Photos = (() => {
     $('edit-photo-category').value = p.category||'';
     $('edit-photo-desc').value = p.description||'';
     $('edit-photo-drive-wrap').style.display = 'none';
+    const previewImg = $('photo-dialog-preview');
+    const previewSrc = p.thumbnail || p.url;
+    if (previewSrc) { previewImg.src = previewSrc; previewImg.style.display = 'block'; }
+    else previewImg.style.display = 'none';
 
     // כפתורי פרסום — רק לתמונות R2
     const isR2 = p._source === 'r2';
@@ -3328,7 +3333,7 @@ const Photos = (() => {
       bar.style.width = `${(i / images.length) * 100}%`;
 
       // פתח דיאלוג מטא-דאטה לפני העלאה
-      const meta = await promptPhotoMeta(file.name);
+      const meta = await promptPhotoMeta(file);
       if (meta === null) continue; // דילג
 
       // צור thumbnail 800px בדפדפן וקבל מידות מקוריות
@@ -3376,14 +3381,22 @@ const Photos = (() => {
     });
   }
 
-  function promptPhotoMeta(filename) {
+  function promptPhotoMeta(file) {
     return new Promise(resolve => {
+      const filename = file.name;
       $('edit-photo-id').value = '';
       $('edit-photo-title').value = filename.replace(/\.[^.]+$/, '');
       $('edit-photo-category').value = '';
       $('edit-photo-desc').value = '';
       $('edit-photo-drive-wrap').style.display = 'none';
       $('photo-dialog-title').textContent = `פרטי תמונה: ${filename}`;
+
+      // תצוגה מקדימה — כדי לתייג נכון צריך לראות מה מעלים, לא רק את שם הקובץ
+      const previewImg = $('photo-dialog-preview');
+      const previewUrl = URL.createObjectURL(file);
+      previewImg.src = previewUrl;
+      previewImg.style.display = 'block';
+
       $('photo-dialog').showModal();
 
       const saveBtn = $('save-photo-btn');
@@ -3399,6 +3412,9 @@ const Photos = (() => {
       saveBtn.addEventListener('click', onSave);
       $('photo-dialog').addEventListener('close', () => {
         saveBtn.removeEventListener('click', onSave);
+        URL.revokeObjectURL(previewUrl);
+        previewImg.style.display = 'none';
+        previewImg.src = '';
         resolve(null);
       }, { once: true });
     });
