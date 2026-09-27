@@ -535,7 +535,25 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
   .pinterest-action-grid button{min-height:44px;width:100%}
   .mobile-primary-action{width:100%;min-height:44px;justify-content:center}
   #section-pinterest .dash-recent{max-width:none!important}
-  #section-reels input,#section-reels select,#section-redbubble input,#section-redbubble select,#section-redbubble textarea,#section-breakdown select{min-height:44px}
+  #section-reels input,#section-reels select,#section-redbubble input,#section-redbubble select,#section-redbubble textarea,#section-zazzle input,#section-zazzle select,#section-zazzle textarea,#section-breakdown select{min-height:44px}
+  .zazzle-product-form-row{display:grid!important;grid-template-columns:1fr;gap:.5rem!important}
+  .zazzle-product-form-row>*{width:100%!important;min-width:0!important}
+  .zazzle-product-item{flex-wrap:wrap;gap:.65rem!important}
+  .zazzle-product-item>div{flex-basis:calc(100% - 64px)}
+  .zazzle-product-action{width:100%;min-height:44px}
+  .zazzle-existing-item{min-height:52px}
+  #pin-modal{width:calc(100vw - 1rem)!important;max-width:420px;max-height:calc(100dvh - 1rem);padding:1rem!important;overflow-y:auto}
+  .pin-modal-actions{flex-direction:column;align-items:stretch!important}
+  #pin-modal-submit{width:100%;min-height:44px}
+  .ann-ed-body{flex-direction:column}
+  .ann-ed-sidebar{width:100%;max-height:46dvh;border-right:0;border-bottom:1px solid #222}
+  .ann-ed-tools{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+  .ann-ed-tool-btn,.ann-ed-save-btn{min-height:44px;font-size:.8rem}
+  .ann-ed-elem-list{max-height:88px;min-height:52px}
+  .ann-ed-canvas-outer{min-height:44dvh}
+  .ann-ed-popup{max-width:calc(100vw - 1rem);flex-wrap:wrap}
+  .ann-ed-popup input{width:min(180px,100%)}
+  #price-popup{width:calc(100vw - 1.5rem)!important;min-width:0!important;max-width:320px;max-height:calc(100dvh - 1rem);overflow-y:auto}
   #video-upload-zone{min-height:132px;display:flex;flex-direction:column;justify-content:center;padding:1.25rem!important}
 }
 
@@ -1640,8 +1658,8 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
         <h1 class="section-title">🎨 ייצוא ל-Zazzle</h1>
       </div>
 
-      <div style="max-width:700px;margin:0 auto">
-        <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1.5rem">
+      <div class="admin-tool-shell" style="max-width:700px;margin:0 auto">
+        <div class="admin-tool-card" style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1.5rem">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem">
             <h2 style="font-size:.95rem;margin:0">📋 תמונות עם מוצרים ב-Zazzle</h2>
             <span id="zz-list-count" style="font-size:.8rem;color:var(--muted)"></span>
@@ -1651,7 +1669,7 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
           </div>
         </div>
 
-        <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1.5rem">
+        <div class="admin-tool-card" style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1.5rem">
 
           <div style="margin-bottom:1rem">
             <label style="display:block;font-size:.85rem;color:var(--muted);margin-bottom:.4rem">קטגוריה</label>
@@ -1670,12 +1688,12 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
             </div>
             <input id="zz-grid-search" type="text" placeholder="חיפוש לפי כותרת..." oninput="zzRenderGrid()"
               style="width:100%;margin-bottom:.6rem;padding:.5rem .7rem;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:.85rem">
-            <div id="zz-photo-grid" style="display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:100px;gap:8px;max-height:420px;overflow-y:scroll;border:1px solid var(--border);border-radius:8px;padding:8px;background:var(--bg);scrollbar-width:thin;direction:ltr"></div>
+            <div id="zz-photo-grid" class="mobile-photo-grid" style="display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:100px;gap:8px;max-height:420px;overflow-y:scroll;border:1px solid var(--border);border-radius:8px;padding:8px;background:var(--bg);scrollbar-width:thin;direction:ltr"></div>
           </div>
 
           <div id="zz-result" style="display:none;border-top:1px solid var(--border);padding-top:1.25rem;margin-top:.5rem">
             <button onclick="zzBackToList()" style="margin-bottom:1rem;padding:.4rem .8rem;background:var(--surface);border:1px solid var(--border);border-radius:6px;color:var(--muted);font-size:.82rem;cursor:pointer">↑ חזרה לרשימת תמונות עם מוצרים</button>
-            <div style="display:flex;gap:1rem;margin-bottom:1rem">
+            <div class="marketplace-preview" style="display:flex;gap:1rem;margin-bottom:1rem">
               <img id="zz-preview-img" style="width:120px;height:120px;object-fit:cover;border-radius:8px;border:1px solid var(--border)">
               <div style="flex:1;font-size:.8rem;color:var(--muted)">
                 <div id="zz-preview-title" style="font-size:1rem;color:var(--text);font-weight:600;margin-bottom:.3rem"></div>
@@ -1693,7 +1711,7 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
             <label style="display:block;font-size:.8rem;color:var(--muted);margin-bottom:.3rem">Description</label>
             <textarea id="zz-out-desc" readonly rows="3" style="width:100%;margin-bottom:1rem;padding:.5rem .7rem;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:.9rem;direction:ltr;resize:vertical" onclick="this.select()"></textarea>
 
-            <div style="display:flex;gap:.6rem;flex-wrap:wrap;margin-bottom:1.25rem">
+            <div class="mobile-tool-actions" style="display:flex;gap:.6rem;flex-wrap:wrap;margin-bottom:1.25rem">
               <a id="zz-download-btn" download style="flex:1;min-width:180px;text-align:center;padding:.7rem;background:var(--accent);border-radius:8px;color:#1a1a1a;font-size:.9rem;font-weight:700;text-decoration:none;cursor:pointer">⬇ הורד JPG (רזולוציה מלאה)</a>
               <a href="https://www.zazzle.com/my/store/create" target="_blank" rel="noopener" style="flex:1;min-width:180px;text-align:center;padding:.7rem;background:var(--surface);border:1px solid var(--accent);border-radius:8px;color:var(--accent);font-size:.9rem;font-weight:600;text-decoration:none">🎨 פתח Zazzle Dashboard</a>
             </div>
@@ -1704,7 +1722,7 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
 
               <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.75rem">
                 <label style="display:block;font-size:.78rem;color:var(--muted);margin-bottom:.3rem">קישור לעמוד המוצר ב-Zazzle (לאחר פרסום)</label>
-                <div style="display:flex;gap:.5rem;margin-bottom:.5rem">
+                <div class="zazzle-product-form-row" style="display:flex;gap:.5rem;margin-bottom:.5rem">
                   <input id="zz-new-url" type="url" placeholder="https://www.zazzle.com/..." style="flex:1;padding:.5rem .7rem;background:var(--surface);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:.85rem;direction:ltr">
                   <input id="zz-new-name" placeholder="שם (Poster, Canvas Print...)" style="width:150px;padding:.5rem .7rem;background:var(--surface);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:.85rem;direction:ltr">
                 </div>
@@ -3829,7 +3847,12 @@ const Photos = (() => {
     let left = rect.left - popupW + rect.width;
     if (left < 8) left = 8;
     popup.style.left = left + 'px';
-    popup.style.top = (rect.bottom + 6) + 'px';
+    const popupH = popup.offsetHeight;
+    let top = rect.bottom + 6;
+    if (top + popupH > window.innerHeight - 8) {
+      top = Math.max(8, rect.top - popupH - 6);
+    }
+    popup.style.top = top + 'px';
     document.getElementById('popup-save-btn').onclick = async () => {
       const small = parseFloat($('popup-price-small').value);
       const medium = parseFloat($('popup-price-medium').value);
@@ -7070,7 +7093,7 @@ async function confirmLinkToLocation() {
         return;
       }
       listEl.innerHTML = data.photos.map(p => `
-        <div style="display:flex;align-items:center;gap:.6rem;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.4rem .6rem">
+        <div class="zazzle-existing-item" style="display:flex;align-items:center;gap:.6rem;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.4rem .6rem">
           <div onclick="zzJumpToPhoto('${p.id}','${(p.category||'').replace(/'/g,"\\'")}')" style="display:flex;align-items:center;gap:.6rem;flex:1;min-width:0;cursor:pointer">
             <img src="${p.thumbnail || ''}" style="width:36px;height:36px;object-fit:cover;border-radius:5px">
             <div style="flex:1;min-width:0;font-size:.82rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.title || ''}</div>
@@ -7181,13 +7204,13 @@ async function confirmLinkToLocation() {
       return;
     }
     listEl.innerHTML = zzCurrentProducts.map((p, i) => `
-      <div style="display:flex;align-items:center;gap:.7rem;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.5rem">
+      <div class="zazzle-product-item" style="display:flex;align-items:center;gap:.7rem;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.5rem">
         <img src="${p.image}" style="width:48px;height:48px;object-fit:cover;border-radius:6px;background:#fff">
         <div style="flex:1;min-width:0">
           <div style="font-size:.85rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.name || 'מוצר'}</div>
-          <a href="${p.url}" target="_blank" style="font-size:.72rem;color:var(--muted);word-break:break-all">${p.url}</a>
+          <a href="${p.url}" target="_blank" rel="noopener" class="zazzle-product-link" style="font-size:.72rem;color:var(--muted);word-break:break-all">${p.url}</a>
         </div>
-        <button onclick="zzRemoveProduct(${i})" style="padding:.3rem .6rem;background:none;border:1px solid #e74c3c;border-radius:6px;color:#e74c3c;font-size:.78rem;cursor:pointer">הסר</button>
+        <button class="zazzle-product-action" onclick="zzRemoveProduct(${i})" style="padding:.3rem .6rem;background:none;border:1px solid #e74c3c;border-radius:6px;color:#e74c3c;font-size:.78rem;cursor:pointer">הסר</button>
       </div>`).join('');
   }
 
@@ -7616,7 +7639,7 @@ async function confirmLinkToLocation() {
 </script>
 
 <!-- Pinterest Pin Modal -->
-<dialog id="pin-modal" aria-labelledby="pin-modal-title" style="background:#111;border:1px solid #333;border-radius:12px;padding:1.5rem;width:100%;max-width:420px;color:#f0f0f0">
+<dialog id="pin-modal" class="mobile-dialog" aria-labelledby="pin-modal-title" style="background:#111;border:1px solid #333;border-radius:12px;padding:1.5rem;width:100%;max-width:420px;color:#f0f0f0">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem">
     <div style="display:flex;align-items:center;gap:.6rem">
       <div style="width:32px;height:32px;background:#E60023;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;font-size:.9rem">P</div>
@@ -7632,7 +7655,7 @@ async function confirmLinkToLocation() {
     <label for="pin-description" style="font-size:.82rem;color:#888;display:block;margin-bottom:.4rem">תיאור (אופציונלי)</label>
     <textarea id="pin-description" rows="3" placeholder="תיאור הפין — ריק = ברירת מחדל" style="width:100%;box-sizing:border-box;background:#1a1a1a;border:1px solid #333;border-radius:6px;padding:.6rem .75rem;color:#f0f0f0;font-size:.88rem;font-family:inherit;resize:vertical"></textarea>
   </div>
-  <div style="display:flex;align-items:center;justify-content:space-between;gap:.75rem">
+  <div class="pin-modal-actions" style="display:flex;align-items:center;justify-content:space-between;gap:.75rem">
     <div id="pin-modal-status" role="status" aria-live="polite" style="font-size:.85rem;flex:1"></div>
     <button id="pin-modal-submit" onclick="submitPin()" style="background:#E60023;color:#fff;border:none;border-radius:7px;padding:.65rem 1.4rem;font-size:.9rem;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap">פרסם</button>
   </div>
