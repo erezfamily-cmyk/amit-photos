@@ -145,6 +145,11 @@ input,textarea,select{font-family:var(--font);direction:rtl}
 }
 .section-title{font-family:var(--font-display);font-size:1.4rem;font-weight:800}
 .section-actions{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap}
+.admin-actions-menu{position:relative}
+.admin-actions-menu>summary{list-style:none}
+.admin-actions-menu>summary::-webkit-details-marker{display:none}
+.admin-actions-panel{position:absolute;inset-inline-end:0;top:calc(100% + .5rem);z-index:120;display:flex;flex-direction:column;gap:.4rem;width:230px;padding:.6rem;background:var(--bg-card);border:1px solid var(--border);border-radius:8px;box-shadow:0 12px 28px rgba(0,0,0,.4)}
+.admin-actions-panel .btn{width:100%;justify-content:flex-start}
 
 /* Buttons */
 .btn{
@@ -462,6 +467,11 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
   .login-card{padding:1.5rem 1rem;max-width:100%;margin:0 1rem}
   .main-content{padding:1rem .85rem 2rem}
   .section-actions{width:100%;justify-content:flex-start}
+  #section-photos .section-actions{display:grid;grid-template-columns:1fr}
+  #add-photo-btn{width:100%;min-height:44px}
+  .admin-actions-menu{width:100%}
+  .admin-actions-menu>summary{width:100%;justify-content:center;min-height:44px}
+  .admin-actions-panel{position:static;width:100%;margin-top:.5rem;box-shadow:none}
   .btn{width:100%;justify-content:center}
   .btn-sm{width:auto}
   .stats-bar{gap:.5rem;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:.4rem;margin-inline:-.85rem;padding-inline:.85rem}
@@ -808,15 +818,11 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
         <span id="nl-sub-count" class="nl-sub-count"></span>
       </div>
       <div style="display:flex;gap:1rem;flex-wrap:wrap;align-items:center">
-        <a href="/admin/newsletter/" style="display:inline-block">
-          <button class="btn btn-primary" style="font-size:1rem;padding:.75rem 1.5rem">
-            📰 פתח ניהול ניוזלטר
-          </button>
+        <a href="/admin/newsletter/" class="btn btn-primary" style="font-size:1rem;padding:.75rem 1.5rem">
+          📰 פתח ניהול ניוזלטר
         </a>
-        <a href="/free-guide/" target="_blank" style="display:inline-block">
-          <button class="btn btn-ghost" style="font-size:1rem;padding:.75rem 1.5rem">
-            🎁 דף לידים — PDF חינמי
-          </button>
+        <a href="/free-guide/" target="_blank" rel="noopener" class="btn btn-ghost" style="font-size:1rem;padding:.75rem 1.5rem">
+          🎁 דף לידים — PDF חינמי
         </a>
       </div>
     </section>
@@ -1019,28 +1025,33 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
       <div class="section-header">
         <h1 class="section-title">תמונות</h1>
         <div class="section-actions">
-          <button class="btn btn-ghost btn-sm" id="import-photos-btn">
-            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke-width="2"/><polyline points="17 8 12 3 7 8" stroke-width="2"/><line x1="12" y1="3" x2="12" y2="15" stroke-width="2"/></svg>
-            ייבוא JSON
-          </button>
-          <input type="file" id="import-photos-file" accept=".json" style="display:none">
-          <button class="btn btn-ghost btn-sm" id="export-photos-btn">
-            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke-width="2"/><polyline points="7 10 12 15 17 10" stroke-width="2"/><line x1="12" y1="15" x2="12" y2="3" stroke-width="2"/></svg>
-            ייצוא JSON
-          </button>
-          <button class="btn btn-ghost btn-sm" id="fill-titles-btn">
-            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z" stroke-width="1.5"/><path d="M12 6v6l4 2" stroke-width="1.5" stroke-linecap="round"/></svg>
-            כותרות AI — R2
-          </button>
-          <button class="btn btn-ghost btn-sm" id="trigger-workflow-btn">
-            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" stroke-width="1.5" stroke-linecap="round"/></svg>
-            כותרות AI — Drive
-          </button>
-          <button class="btn btn-ghost btn-sm" onclick="rotateSale()" title="בחר 50 תמונות רנדומליות למבצע השבוע">🔄 רוטציה ידנית</button>
           <button class="btn btn-primary btn-sm" id="add-photo-btn">
             <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><line x1="12" y1="5" x2="12" y2="19" stroke-width="2"/><line x1="5" y1="12" x2="19" y2="12" stroke-width="2"/></svg>
             הוסף תמונה
           </button>
+          <details class="admin-actions-menu">
+            <summary class="btn btn-ghost btn-sm">פעולות תחזוקה</summary>
+            <div class="admin-actions-panel">
+              <button class="btn btn-ghost btn-sm" id="import-photos-btn">
+                <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke-width="2"/><polyline points="17 8 12 3 7 8" stroke-width="2"/><line x1="12" y1="3" x2="12" y2="15" stroke-width="2"/></svg>
+                ייבוא JSON
+              </button>
+              <input type="file" id="import-photos-file" accept=".json" style="display:none">
+              <button class="btn btn-ghost btn-sm" id="export-photos-btn">
+                <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke-width="2"/><polyline points="7 10 12 15 17 10" stroke-width="2"/><line x1="12" y1="15" x2="12" y2="3" stroke-width="2"/></svg>
+                ייצוא JSON
+              </button>
+              <button class="btn btn-ghost btn-sm" id="fill-titles-btn">
+                <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z" stroke-width="1.5"/><path d="M12 6v6l4 2" stroke-width="1.5" stroke-linecap="round"/></svg>
+                כותרות AI — R2
+              </button>
+              <button class="btn btn-ghost btn-sm" id="trigger-workflow-btn">
+                <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" stroke-width="1.5" stroke-linecap="round"/></svg>
+                כותרות AI — Drive
+              </button>
+              <button class="btn btn-ghost btn-sm" data-action="rotate-sale" onclick="rotateSale()" title="בחר 50 תמונות רנדומליות למבצע השבוע">🔄 רוטציה ידנית</button>
+            </div>
+          </details>
         </div>
       </div>
       <div class="stats-bar" id="photos-stats"></div>
