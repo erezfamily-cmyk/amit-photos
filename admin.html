@@ -1079,6 +1079,7 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
 
       <!-- Bulk category panel -->
       <div id="bulk-cat-panel" style="display:none;background:var(--bg-card);border:1px solid var(--border);border-radius:6px;padding:.75rem;margin-bottom:.75rem;align-items:center;gap:.75rem">
+        <label class="sr-only" for="bulk-cat-select">קטגוריה לתמונות שנבחרו</label>
         <select id="bulk-cat-select" class="input-sm">
           <option value="">-- בחר קטגוריה --</option>
           <option value="טבע">טבע</option>
@@ -1136,7 +1137,7 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
 
       <!-- New badge settings -->
       <div style="display:flex;align-items:center;gap:.75rem;padding:.65rem .85rem;background:var(--bg-card);border:1px solid var(--border);border-radius:6px;margin-bottom:1rem;font-size:.85rem">
-        <span>תג "חדש" — הצג על תמונות שנוספו ב-</span>
+        <label for="new-badge-days-select">תג "חדש" — הצג על תמונות שנוספו ב-</label>
         <select id="new-badge-days-select" class="input-sm" style="width:auto">
           <option value="7">7 ימים</option>
           <option value="14">14 ימים</option>
@@ -1190,9 +1191,9 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
       <div class="add-form">
         <div class="add-form-title">הוסף נרשם</div>
         <div class="form-row">
-          <div class="form-field"><label>שם</label><input type="text" id="sub-name" placeholder="ישראל ישראלי"></div>
-          <div class="form-field"><label>מייל</label><input type="email" id="sub-email" placeholder="mail@example.com"></div>
-          <div class="form-field"><label>הערות</label><input type="text" id="sub-notes" placeholder="הערה כלשהי..."></div>
+          <div class="form-field"><label for="sub-name">שם</label><input type="text" id="sub-name" placeholder="ישראל ישראלי"></div>
+          <div class="form-field"><label for="sub-email">מייל</label><input type="email" id="sub-email" placeholder="mail@example.com"></div>
+          <div class="form-field"><label for="sub-notes">הערות</label><input type="text" id="sub-notes" placeholder="הערה כלשהי..."></div>
           <div class="form-field form-field--end">
             <button class="btn btn-primary" id="add-sub-btn">הוסף</button>
           </div>
@@ -1200,6 +1201,7 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
       </div>
 
       <div class="filter-bar">
+        <label class="sr-only" for="sub-search">חיפוש נרשמים</label>
         <input type="text" id="sub-search" placeholder="חיפוש לפי שם או מייל...">
       </div>
       <div class="table-wrap">
@@ -1238,13 +1240,16 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
       </div>
 
       <div class="filter-bar">
+        <label class="sr-only" for="cust-search">חיפוש לקוחות ופניות</label>
         <input type="text" id="cust-search" placeholder="חיפוש לפי שם, מייל...">
+        <label class="sr-only" for="cust-filter-type">סינון לפי סוג</label>
         <select id="cust-filter-type">
           <option value="">כל הסוגים</option>
           <option value="רכישה">רכישה</option>
           <option value="פנייה">פנייה</option>
           <option value="אחר">אחר</option>
         </select>
+        <label class="sr-only" for="cust-filter-status">סינון לפי סטטוס</label>
         <select id="cust-filter-status">
           <option value="">כל הסטטוסים</option>
           <option value="ממתין">ממתין</option>
@@ -1905,15 +1910,15 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
   </div>
   <div class="dialog-body">
     <input type="hidden" id="edit-photo-id">
-    <div class="form-field"><label>כותרת</label><input type="text" id="edit-photo-title"></div>
+    <div class="form-field"><label for="edit-photo-title">כותרת</label><input type="text" id="edit-photo-title"></div>
     <div class="form-field">
-      <label>קטגוריה</label>
+      <label for="edit-photo-category">קטגוריה</label>
       <input type="text" id="edit-photo-category" list="categories-list">
       <datalist id="categories-list"></datalist>
     </div>
-    <div class="form-field"><label>תיאור</label><textarea id="edit-photo-desc" rows="3"></textarea></div>
+    <div class="form-field"><label for="edit-photo-desc">תיאור</label><textarea id="edit-photo-desc" rows="3"></textarea></div>
     <div class="form-field" id="edit-photo-drive-wrap" style="display:none">
-      <label>Google Drive File ID</label>
+      <label for="edit-photo-drive-id">Google Drive File ID</label>
       <input type="text" id="edit-photo-drive-id" placeholder="1aBcDeFgHiJkLmNoPqRsT">
     </div>
   </div>
@@ -1974,18 +1979,18 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
   </div>
   <div class="dialog-body">
     <div class="form-field">
-      <label>אל</label>
+      <label for="reply-to-email">אל</label>
       <input type="text" id="reply-to-email" class="reply-to-readonly" readonly>
     </div>
     <div class="form-field">
-      <label>נושא</label>
+      <label for="reply-subject">נושא</label>
       <input type="text" id="reply-subject">
     </div>
     <div class="form-field">
-      <label>תוכן</label>
+      <label for="reply-body">תוכן</label>
       <textarea id="reply-body" class="reply-body" rows="7"></textarea>
     </div>
-    <div id="reply-status" class="reply-status"></div>
+    <div id="reply-status" class="reply-status" role="status" aria-live="polite"></div>
   </div>
   <div class="dialog-footer">
     <button type="button" class="btn btn-primary" id="reply-send-btn">שלח</button>
@@ -2002,16 +2007,16 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
   <div class="dialog-body">
     <input type="hidden" id="cust-edit-id">
     <div class="form-row">
-      <div class="form-field"><label>שם *</label><input type="text" id="cust-name" placeholder="שם מלא"></div>
-      <div class="form-field"><label>מייל</label><input type="email" id="cust-email" placeholder="mail@example.com"></div>
+      <div class="form-field"><label for="cust-name">שם *</label><input type="text" id="cust-name" placeholder="שם מלא"></div>
+      <div class="form-field"><label for="cust-email">מייל</label><input type="email" id="cust-email" placeholder="mail@example.com"></div>
     </div>
     <div class="form-row">
-      <div class="form-field"><label>טלפון</label><input type="tel" id="cust-phone" placeholder="05X-XXXXXXX"></div>
-      <div class="form-field"><label>תאריך</label><input type="date" id="cust-date"></div>
+      <div class="form-field"><label for="cust-phone">טלפון</label><input type="tel" id="cust-phone" placeholder="05X-XXXXXXX"></div>
+      <div class="form-field"><label for="cust-date">תאריך</label><input type="date" id="cust-date"></div>
     </div>
     <div class="form-row">
       <div class="form-field">
-        <label>סוג</label>
+        <label for="cust-type">סוג</label>
         <select id="cust-type">
           <option value="רכישה">רכישה</option>
           <option value="פנייה">פנייה</option>
@@ -2019,7 +2024,7 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
         </select>
       </div>
       <div class="form-field">
-        <label>סטטוס</label>
+        <label for="cust-status">סטטוס</label>
         <select id="cust-status">
           <option value="ממתין">ממתין</option>
           <option value="טופל">טופל</option>
@@ -2027,8 +2032,8 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
         </select>
       </div>
     </div>
-    <div class="form-field"><label>נושא / תמונה שנרכשה</label><input type="text" id="cust-subject" placeholder="שם התמונה או נושא הפנייה"></div>
-    <div class="form-field"><label>הערות</label><textarea id="cust-notes" rows="3" placeholder="פרטים נוספים..."></textarea></div>
+    <div class="form-field"><label for="cust-subject">נושא / תמונה שנרכשה</label><input type="text" id="cust-subject" placeholder="שם התמונה או נושא הפנייה"></div>
+    <div class="form-field"><label for="cust-notes">הערות</label><textarea id="cust-notes" rows="3" placeholder="פרטים נוספים..."></textarea></div>
   </div>
   <div class="dialog-footer">
     <button class="btn btn-primary" id="save-cust-btn">שמור</button>
@@ -7539,11 +7544,11 @@ async function confirmLinkToLocation() {
     <button type="button" class="dialog-close" aria-label="סגור" onclick="document.getElementById('pin-modal').close()" style="background:none;border:none;color:#888;font-size:1.25rem;cursor:pointer;line-height:1">✕</button>
   </div>
   <div style="margin-bottom:1rem">
-    <label style="font-size:.82rem;color:#888;display:block;margin-bottom:.4rem">לוח</label>
+    <label for="pin-board-select" style="font-size:.82rem;color:#888;display:block;margin-bottom:.4rem">לוח</label>
     <select id="pin-board-select" style="width:100%;background:#1a1a1a;border:1px solid #333;border-radius:6px;padding:.6rem .75rem;color:#f0f0f0;font-size:.9rem;font-family:inherit"></select>
   </div>
   <div style="margin-bottom:1.25rem">
-    <label style="font-size:.82rem;color:#888;display:block;margin-bottom:.4rem">תיאור (אופציונלי)</label>
+    <label for="pin-description" style="font-size:.82rem;color:#888;display:block;margin-bottom:.4rem">תיאור (אופציונלי)</label>
     <textarea id="pin-description" rows="3" placeholder="תיאור הפין — ריק = ברירת מחדל" style="width:100%;box-sizing:border-box;background:#1a1a1a;border:1px solid #333;border-radius:6px;padding:.6rem .75rem;color:#f0f0f0;font-size:.88rem;font-family:inherit;resize:vertical"></textarea>
   </div>
   <div style="display:flex;align-items:center;justify-content:space-between;gap:.75rem">
