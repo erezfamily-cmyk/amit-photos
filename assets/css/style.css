@@ -1355,6 +1355,9 @@ body[data-payments-state="enabled"] .payments-disabled-only {
   background: rgba(0, 0, 0, 0.97);
   display: none;
   flex-direction: column;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
 }
 
 .lightbox.open { display: flex; }
@@ -1765,6 +1768,18 @@ body[data-payments-state="enabled"] .payments-disabled-only {
   color: #0a0a0a;
 }
 
+.lb-contact-btn {
+  background: #25d366;
+  border-color: #25d366;
+  color: #07160c;
+  font-weight: 700;
+}
+.lb-contact-btn:hover {
+  background: #3be078;
+  border-color: #3be078;
+  color: #07160c;
+}
+
 /* כפתור הדפסה — נתיב רכישה שני, שלא יטבע בין כפתורי utility (מצגת/תצוגת קיר) */
 .lb-print-btn {
   border-color: rgba(200, 169, 110, 0.6);
@@ -1797,6 +1812,14 @@ body[data-payments-state="enabled"] .payments-disabled-only {
     justify-content: center;
     padding: 0.65rem 1rem;
     font-size: 0.9rem;
+  }
+  .lb-contact-btn {
+    order: -3;
+    width: 100%;
+    justify-content: center;
+    min-height: 48px;
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
   }
 }
 

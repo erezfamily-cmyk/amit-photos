@@ -1184,6 +1184,15 @@ function openLightbox(idx) {
   const waBtn = document.getElementById('lb-share-wa');
   if (waBtn) waBtn.href = `https://api.whatsapp.com/send?text=${encodeURIComponent(photo.title + ' — ' + shareUrl)}`;
 
+  const contactBtn = document.getElementById('lb-contact');
+  if (contactBtn) {
+    const contactMessage = getLang() === 'en'
+      ? `Hi Amit, I'm interested in purchasing the photo "${photo.title_en || photo.title}": ${shareUrl}`
+      : `היי עמית, אני מתעניין/ת ברכישת התמונה "${photo.title}": ${shareUrl}`;
+    contactBtn.href = `https://wa.me/972503333227?text=${encodeURIComponent(contactMessage)}`;
+    contactBtn.dataset.analyticsPhotoId = String(photo.id || '');
+  }
+
   const fbBtn = document.getElementById('lb-share-fb');
   if (fbBtn) fbBtn.href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`;
 

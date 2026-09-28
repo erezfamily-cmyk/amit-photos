@@ -22,6 +22,7 @@ def fake_data(revenue=None):
         "top_pages": [], "landing_pages": [{"עמוד נחיתה": "/", "sessions": "70"}],
         "sources": [], "devices": [{"מכשיר": "mobile", "sessions": "60"}],
         "countries": [{"ארץ": "Israel", "sessions": "75"}],
+        "ux_by_page": [{"event": "contact_intent", "עמוד": "/learn/", "count": "3"}],
         "funnel_events": {"photo_view": "10", "purchase_intent": "2", "add_size": "1", "purchase": "0",
                            "print_intent": "0", "print_type_selected": "0", "print_checkout": "0"},
         "revenue": revenue,
@@ -132,9 +133,13 @@ def test_fetch_ga4_data_requests_landing_pages_engagement_and_ux_events():
     assert {
         "hero_gallery_click", "hero_guide_click", "nav_click", "gallery_filter",
         "scroll_25", "scroll_50", "scroll_75", "scroll_90",
-        "generate_lead", "contact_intent", "contact_form_success",
-        "language_change",
+        "generate_lead", "contact_intent", "photo_contact_click", "contact_form_success",
+        "language_change", "content_link_click", "nav_gallery_click", "nav_contact_click",
     } <= event_values
+    assert any(
+        body.get("dimensions") == [{"name": "eventName"}, {"name": "pagePath"}]
+        for body in calls
+    )
 
 
 def test_save_report_persists_ux_dimensions_for_future_comparisons(tmp_path):
@@ -146,3 +151,11 @@ def test_save_report_persists_ux_dimensions_for_future_comparisons(tmp_path):
     assert report["countries"] == [{"ארץ": "Israel", "sessions": "75"}]
     assert report["landing_pages"] == [{"עמוד נחיתה": "/", "sessions": "70"}]
     assert report["summary"]["newUsers"] == "50"
+    assert report["ux_by_page"] == [{"event": "contact_intent", "עמוד": "/learn/", "count": "3"}]
+
+
+def test_build_data_summary_exposes_ux_events_by_page():
+    summary = gwr.build_data_summary(fake_data(revenue=None))
+    assert "התנהגות לפי עמוד" in summary
+    assert "/learn/" in summary
+    assert "contact_intent" in summary

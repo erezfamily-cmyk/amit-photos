@@ -7,6 +7,7 @@ const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
 const analytics = readFileSync(new URL('../assets/js/analytics.js', import.meta.url), 'utf8');
 const gallery = readFileSync(new URL('../assets/js/gallery.js', import.meta.url), 'utf8');
 const i18n = readFileSync(new URL('../assets/js/i18n.js', import.meta.url), 'utf8');
+const nav = readFileSync(new URL('../assets/js/nav.js', import.meta.url), 'utf8');
 
 test('analytics helper loads before scripts that emit UX events', () => {
   const analyticsPos = html.indexOf('assets/js/analytics.js');
@@ -84,4 +85,21 @@ test('scroll measurement uses stable one-time milestones', () => {
   assert.match(analytics, /\[25, 50, 75, 90\]/);
   assert.match(analytics, /sentScrollDepths\.has/);
   assert.match(analytics, /trackUxEvent\(`scroll_\$\{milestone\}`/);
+});
+
+test('shared subpage navigation loads the same GA and UX measurement layer', () => {
+  assert.match(analytics, /G-XM6T3E8QWN/);
+  assert.match(analytics, /googletagmanager\.com\/gtag\/js/);
+  assert.match(nav, /assets\/js\/analytics\.js\?v=/);
+  assert.match(nav, /data-analytics-event="nav_click"/);
+});
+
+test('subpage navigation measures language changes and successful guide leads', () => {
+  assert.match(nav, /trackUxEvent\?\.\('language_change'/);
+  assert.match(nav, /trackUxEvent\?\.\('generate_lead', \{ source: 'subpage_strip' \}\)/);
+});
+
+test('navigation choices and internal content links are distinguishable in reports', () => {
+  assert.match(analytics, /trackUxEvent\(`nav_\$\{navLabel\}_click`/);
+  assert.match(analytics, /trackUxEvent\('content_link_click'/);
 });

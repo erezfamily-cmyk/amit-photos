@@ -2,6 +2,15 @@
 (function () {
   const isHome = window.location.pathname === '/' || window.location.pathname === '/index.html';
 
+  // Sub-pages share the same privacy-safe UX measurement as the homepage.
+  if (!window.trackUxEvent && !document.querySelector('script[data-site-analytics]')) {
+    const analyticsScript = document.createElement('script');
+    analyticsScript.src = '/assets/js/analytics.js?v=5b30dc6e';
+    analyticsScript.defer = true;
+    analyticsScript.dataset.siteAnalytics = '';
+    document.head.appendChild(analyticsScript);
+  }
+
   // ── Wrap existing page content in <main> (a11y landmark) ─────────────────────
   // חייב לרוץ לפני הזרקת ה-nav/footer/strip כדי שהם יישארו מחוץ ל-main
   (function wrapMain() {
@@ -207,25 +216,25 @@ nav#main-nav .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px)
   const nav = document.createElement('nav');
   nav.id = 'main-nav';
   nav.innerHTML = `
-<a href="${isHome ? '#hero' : '/'}" class="nav-logo">
+<a href="${isHome ? '#hero' : '/'}" class="nav-logo" data-analytics-event="nav_click" data-analytics-label="home">
   <span data-nav="logo.name" data-i18n="nav.logo.name">עמית ארז</span><span class="nav-logo-tagline" data-nav="logo.tagline" data-i18n="nav.logo.tagline"> | עולם של צבעים מבעד לעדשה</span>
 </a>
 <ul class="nav-links">
-  <li><a href="${a('#gallery')}" data-i18n="nav.gallery">גלריה</a></li>
-  <li><a href="${a('#gallery')}" id="nav-sale" data-i18n="nav.sale">מבצע</a></li>
-  <li><a href="/camera/" data-i18n="nav.camera">למד לצלם</a></li>
-  <li><a href="/locations/" data-i18n="nav.locations">מקומות לצילום</a></li>
-  <li><a href="${a('#how-to-buy')}" data-i18n="nav.how-to-buy">רכישה</a></li>
-  <li><a href="/newsletter/" data-i18n="nav.newsletter">ניוזלטר</a></li>
-  <li><a href="${a('#contact')}" data-i18n="nav.contact">צור קשר</a></li>
+  <li><a href="${a('#gallery')}" data-i18n="nav.gallery" data-analytics-event="nav_click" data-analytics-label="gallery">גלריה</a></li>
+  <li><a href="${a('#gallery')}" id="nav-sale" data-i18n="nav.sale" data-analytics-event="nav_click" data-analytics-label="sale">מבצע</a></li>
+  <li><a href="/camera/" data-i18n="nav.camera" data-analytics-event="nav_click" data-analytics-label="camera">למד לצלם</a></li>
+  <li><a href="/locations/" data-i18n="nav.locations" data-analytics-event="nav_click" data-analytics-label="locations">מקומות לצילום</a></li>
+  <li><a href="${a('#how-to-buy')}" data-i18n="nav.how-to-buy" data-analytics-event="nav_click" data-analytics-label="purchase_info">רכישה</a></li>
+  <li><a href="/newsletter/" data-i18n="nav.newsletter" data-analytics-event="nav_click" data-analytics-label="newsletter">ניוזלטר</a></li>
+  <li><a href="${a('#contact')}" data-i18n="nav.contact" data-analytics-event="nav_click" data-analytics-label="contact">צור קשר</a></li>
   <li class="nav-more">
     <details>
-      <summary data-i18n="nav.more">עוד</summary>
+      <summary data-i18n="nav.more" data-analytics-event="nav_click" data-analytics-label="more">עוד</summary>
       <ul class="nav-more-menu">
-        <li><a href="/games/" data-i18n="nav.challenges">אתגרים</a></li>
-        <li><a href="/videos/" data-i18n="nav.videos">סרטונים</a></li>
-        <li><a href="/learn/" data-i18n="nav.learn">ניתוח תמונות</a></li>
-        <li><a href="/gear/" data-i18n="nav.gear">הציוד שלי</a></li>
+        <li><a href="/games/" data-i18n="nav.challenges" data-analytics-event="nav_click" data-analytics-label="games">אתגרים</a></li>
+        <li><a href="/videos/" data-i18n="nav.videos" data-analytics-event="nav_click" data-analytics-label="videos">סרטונים</a></li>
+        <li><a href="/learn/" data-i18n="nav.learn" data-analytics-event="nav_click" data-analytics-label="learn">ניתוח תמונות</a></li>
+        <li><a href="/gear/" data-i18n="nav.gear" data-analytics-event="nav_click" data-analytics-label="gear">הציוד שלי</a></li>
       </ul>
     </details>
   </li>
@@ -296,10 +305,15 @@ nav#main-nav .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px)
   nav.querySelectorAll('.lang-btn').forEach(function (btn) {
     btn.addEventListener('click', function () {
       const lang = this.dataset.lang;
+      const previousLang = currentLang;
+      const sharedI18nTracksLanguage = typeof applyTranslations === 'function';
       applyNavLang(lang);
       if (typeof setLang !== 'function') {
         localStorage.setItem('lang', lang);
         window.dispatchEvent(new StorageEvent('storage', { key: 'lang', newValue: lang, storageArea: localStorage }));
+      }
+      if (!sharedI18nTracksLanguage && previousLang !== lang) {
+        window.trackUxEvent?.('language_change', { from_language: previousLang, to_language: lang });
       }
     });
   });
@@ -422,7 +436,10 @@ nav#main-nav .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px)
         });
         msg.style.color = r.ok ? '#4caf7d' : '#e05555';
         msg.textContent = r.ok ? t.ok : t.err;
-        if (r.ok) document.getElementById('nav-nl-email').value = '';
+        if (r.ok) {
+          document.getElementById('nav-nl-email').value = '';
+          window.trackUxEvent?.('generate_lead', { source: 'subpage_strip' });
+        }
       } catch {
         msg.style.color = '#e05555';
         msg.textContent = t.err;
