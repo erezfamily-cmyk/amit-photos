@@ -104,7 +104,7 @@
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Heebo:wght@300;400;500;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'" />
   <noscript><link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Heebo:wght@300;400;500;700&display=swap" rel="stylesheet" /></noscript>
 
-  <link rel="stylesheet" href="assets/css/style.css?v=4f05ce4b" />
+  <link rel="stylesheet" href="assets/css/style.css?v=7f433aea" />
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#0a0a0a" />
   <script src="assets/js/analytics.js?v=5b30dc6e"></script>
@@ -178,7 +178,7 @@
   </section>
 
   <!-- ===== FILTER BAR ===== -->
-  <div class="home-filter-wrap">
+  <div class="home-filter-wrap" id="gallery">
     <div id="filter-bar"></div>
   </div>
 
@@ -1129,7 +1129,7 @@
   </div>
 
   <!-- Week photo discount popup -->
-  <div id="week-popup" class="week-popup" role="dialog" aria-modal="true" aria-label="מבצע תמונת השבוע">
+  <div id="week-popup" class="week-popup payments-enabled-only" role="dialog" aria-modal="true" aria-label="מבצע תמונת השבוע">
     <div class="week-popup-inner">
       <button type="button" id="week-popup-close" class="week-popup-close" aria-label="סגור">✕</button>
       <div class="week-popup-img-wrap">
@@ -1144,7 +1144,7 @@
     </div>
   </div>
 
-  <script src="assets/js/gallery.js?v=0fd8606e"></script>
+  <script src="assets/js/gallery.js?v=d2f3afd7"></script>
   <script>
     // טוען נתוני Instagram מהדוח השבועי ומעדכן את כרטיס הפלטפורמות
     fetch('https://raw.githubusercontent.com/erezfamily-cmyk/amit-photos/main/data/social_report.json')

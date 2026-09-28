@@ -69,6 +69,13 @@ test('locations/index.html: exactly one <main>, wraps hero/filters/grid, exclude
   assert.doesNotMatch(mainContent, /id="suggest-modal"/);
 });
 
+test('shared navigation waits for parsed page landmarks before wrapping content', () => {
+  for (const page of ['../gear/index.html', '../locations/index.html', '../locations/spot/index.html']) {
+    const html = readFileSync(fileURLToPath(new URL(page, import.meta.url)), 'utf8');
+    assert.match(html, /<script src="\/assets\/js\/nav\.js\?v=[^"]+" defer><\/script>/, `${page} must defer nav.js`);
+  }
+});
+
 test('privacy/index.html: exactly one <main>, wraps both language sections', () => {
   const html = readFileSync(fileURLToPath(new URL('../privacy/index.html', import.meta.url)), 'utf8');
   assertExactlyOneMain(html, 'privacy/index.html');

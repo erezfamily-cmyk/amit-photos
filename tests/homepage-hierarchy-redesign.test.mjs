@@ -26,6 +26,13 @@ test('hero keeps exactly one primary CTA and one always-visible secondary CTA', 
   assert.match(hero, /hero_guide_click/);
 });
 
+test('gallery links land on a real, sticky-header-safe target', () => {
+  assert.match(html, /class="home-filter-wrap" id="gallery"/);
+  const start = css.indexOf('.home-filter-wrap');
+  const block = css.slice(start, css.indexOf('}', start) + 1);
+  assert.match(block, /scroll-margin-top:\s*7rem/);
+});
+
 test('the duplicate free-guide banner right below the hero is gone', () => {
   assert.doesNotMatch(html, /id="guide-banner"/);
 });
@@ -84,6 +91,18 @@ test('initFeatured caps the homepage featured strip at 8 regardless of how many 
   const block = gallerySrc.slice(start, end);
   assert.match(block, /MAX_FEATURED/);
   assert.match(block, /picks = picks\.slice\(0, MAX_FEATURED\)/);
+});
+
+test('featured photos are keyboard-operable buttons with accessible names', () => {
+  const start = gallerySrc.indexOf("grid.querySelectorAll('.featured-item')");
+  const end = gallerySrc.indexOf('const bestCount', start);
+  const block = gallerySrc.slice(start, end);
+  assert.match(block, /item\.tabIndex = 0/);
+  assert.match(block, /item\.setAttribute\('role', 'button'\)/);
+  assert.match(block, /item\.setAttribute\('aria-label'/);
+  assert.match(block, /e\.key !== 'Enter'/);
+  assert.match(block, /e\.key !== ' '/);
+  assert.match(block, /e\.preventDefault\(\)/);
 });
 
 test('.featured-grid mosaic has grid-auto-rows at every breakpoint, so the 6th-8th item (raised by MAX_FEATURED) get a defined cell height instead of collapsing to auto/intrinsic size', () => {

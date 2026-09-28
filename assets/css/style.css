@@ -498,6 +498,7 @@ body[data-payments-state="enabled"] .payments-disabled-only {
   padding: 0 2.5rem;
   margin-top: 1.5rem;
   margin-bottom: 2rem;
+  scroll-margin-top: 7rem;
 }
 
 /* כותרת קטגוריה פעילה מעל הגריד */

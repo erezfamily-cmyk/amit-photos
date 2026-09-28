@@ -57,6 +57,12 @@ test('PayPal checkout instructions and print-order FAQ are shown only when payme
   assert.match(html, /class="[^"]*pricing-cta[^"]*payments-enabled-only/);
 });
 
+test('the timed week-photo purchase popup stays hidden while payments are disabled', () => {
+  assert.match(html, /id="week-popup" class="week-popup payments-enabled-only"/);
+  assert.match(gallery, /function show\(photo\) \{\s*if \(!PURCHASES_ENABLED\) return;/);
+  assert.match(gallery, /window\.addEventListener\('photos-ready',[\s\S]*if \(!PURCHASES_ENABLED \|\| dismissed\(\)\) return;/);
+});
+
 test('payment state flips to enabled only after an exact enabled:true server response', () => {
   assert.match(gallery, /function applyPaymentsAvailability\(enabled\)/);
   assert.match(gallery, /PURCHASES_ENABLED\s*=\s*enabled\s*===\s*true/);
