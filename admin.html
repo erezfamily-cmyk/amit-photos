@@ -457,6 +457,7 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
   .section-title{font-size:1.15rem}
   .dash-grid{grid-template-columns:1fr 1fr}
   #analytics-kpi-row,#social-kpi-row,.stats-grid{grid-template-columns:1fr 1fr}
+  .ux-kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
   .dash-row{align-items:flex-start;flex-wrap:wrap}
   .dash-name{white-space:normal;overflow-wrap:anywhere}
   .photos-grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}
@@ -477,6 +478,9 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
   .stats-bar{gap:.5rem;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:.4rem;margin-inline:-.85rem;padding-inline:.85rem}
   .stat-chip{font-size:.75rem;padding:.35rem .65rem;flex-shrink:0;white-space:nowrap}
   .dash-grid,#analytics-kpi-row,#social-kpi-row,.stats-grid{grid-template-columns:1fr}
+  .ux-decision-header{flex-direction:column}
+  .ux-freshness{white-space:normal}
+  .ux-kpi-grid,.ux-segments{grid-template-columns:1fr}
   .dash-card,.dash-recent,.photo-card{border-radius:10px}
   .dash-card{padding:1rem}
   .dash-recent{padding:1rem}
@@ -565,6 +569,24 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
 .analytics-chart{display:flex;align-items:flex-end;gap:4px;height:120px;margin-bottom:1.25rem}
 .analytics-countries-label{margin-bottom:.5rem;font-size:.8rem;color:var(--text-muted);font-weight:500}
 .analytics-countries{display:flex;flex-wrap:wrap;gap:.5rem 1rem;font-size:.85rem;color:var(--text-muted)}
+.ux-decision-header{display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;margin-bottom:1rem}
+.ux-decision-title{font-family:var(--font-display);font-size:1rem;font-weight:700}
+.ux-freshness{display:inline-flex;align-items:center;border:1px solid var(--border);border-radius:999px;padding:.3rem .65rem;font-size:.72rem;color:var(--text-muted);white-space:nowrap}
+.ux-freshness.fresh{color:#34d399;border-color:rgba(52,211,153,.35)}
+.ux-freshness.collecting{color:var(--accent);border-color:rgba(200,169,110,.4)}
+.ux-freshness.stale{color:#f87171;border-color:rgba(248,113,113,.35)}
+.ux-kpi-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.75rem}
+.ux-kpi-card{background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:.85rem;min-width:0}
+.ux-kpi-value{font-family:var(--font-display);font-size:1.35rem;font-weight:700;color:var(--accent)}
+.ux-kpi-label{font-size:.75rem;color:var(--text-muted);margin-top:.2rem}
+.ux-kpi-raw{font-size:.68rem;color:#777;margin-top:.25rem}
+.ux-next-action{margin-top:1rem;padding:.9rem 1rem;border-right:3px solid var(--accent);border-radius:0 6px 6px 0;background:rgba(200,169,110,.08);font-size:.84rem;line-height:1.6}
+.ux-next-action strong{color:var(--accent)}
+.ux-segments{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.75rem;margin-top:1rem}
+.ux-segment{border-top:1px solid var(--border);padding-top:.75rem;min-width:0}
+.ux-segment-title{font-size:.72rem;color:var(--text-muted);margin-bottom:.4rem}
+.ux-segment-value{font-size:.84rem;overflow-wrap:anywhere}
+.ux-measurement-note{margin-top:.85rem;color:var(--text-muted);font-size:.72rem;line-height:1.55}
 .form-field--end{justify-content:flex-end}
 .form-field--end .btn{align-self:flex-end}
 /* Social section */
@@ -919,6 +941,20 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
           <div id="kpi-top-page" style="font-size:1.1rem;font-weight:700;color:var(--accent)">—</div>
           <div style="color:var(--text-muted);font-size:.78rem;margin-top:.2rem">דף פופולרי ביותר</div>
         </div>
+      </div>
+
+      <!-- Analytics-to-design decision layer -->
+      <div class="dash-recent" id="ux-decision-box" style="margin-bottom:1.5rem">
+        <div class="ux-decision-header">
+          <div>
+            <div class="ux-decision-title">מדדי UX לקבלת החלטות עיצוב</div>
+            <div class="ux-measurement-note">המדידה החדשה החלה ב־26.09.2026. החלטת עיצוב מבוססת תתקבל אחרי לפחות 14 ימים.</div>
+          </div>
+          <span id="ux-report-freshness" class="ux-freshness" role="status">ממתין לדוח GA</span>
+        </div>
+        <div id="ux-kpi-grid" class="ux-kpi-grid" aria-live="polite"></div>
+        <div id="ux-next-action" class="ux-next-action" hidden></div>
+        <div id="ux-segments" class="ux-segments"></div>
       </div>
 
       <!-- Social + Newsletter snapshot -->
@@ -2633,6 +2669,94 @@ async function submitPin() {
   }
 }
 
+function gaNumber(value) {
+  const number = Number(String(value ?? '0').replace(/,/g, ''));
+  return Number.isFinite(number) ? number : 0;
+}
+
+function gaRate(count, sessions) {
+  return sessions > 0 ? Math.round((count / sessions) * 100) : 0;
+}
+
+function gaReportAgeDays(report) {
+  const periodEnd = String(report?.period || '').split('→').pop().trim();
+  const timestamp = Date.parse(`${periodEnd}T00:00:00Z`);
+  return Number.isFinite(timestamp) ? Math.max(0, Math.floor((Date.now() - timestamp) / 86400000)) : null;
+}
+
+function renderUxDecisionPanel(reports) {
+  const latest = reports.at(-1);
+  const grid = document.getElementById('ux-kpi-grid');
+  const freshness = document.getElementById('ux-report-freshness');
+  const next = document.getElementById('ux-next-action');
+  const segments = document.getElementById('ux-segments');
+  if (!latest || !grid || !freshness || !next || !segments) return;
+
+  const sessions = gaNumber(latest.summary?.sessions);
+  const events = latest.funnel_events || {};
+  const hero = gaNumber(events.hero_gallery_click);
+  const photoViews = gaNumber(events.photo_view);
+  const deepScrolls = gaNumber(events.scroll_50);
+  const contactActions = ['contact_intent', 'photo_contact_click', 'contact_form_success', 'generate_lead']
+    .reduce((sum, eventName) => sum + gaNumber(events[eventName]), 0);
+  const metrics = [
+    ['CTA לגלריה', hero, gaRate(hero, sessions)],
+    ['פתיחת תמונות', photoViews, gaRate(photoViews, sessions)],
+    ['גלילה ל־50%', deepScrolls, gaRate(deepScrolls, sessions)],
+    ['פנייה או ליד', contactActions, gaRate(contactActions, sessions)],
+  ];
+  grid.innerHTML = metrics.map(([label, count, rate]) => `<div class="ux-kpi-card">
+    <div class="ux-kpi-value">${rate}%</div>
+    <div class="ux-kpi-label">${label} / סשנים</div>
+    <div class="ux-kpi-raw">${count.toLocaleString()} אירועים מתוך ${sessions.toLocaleString()} סשנים</div>
+  </div>`).join('');
+
+  const age = gaReportAgeDays(latest);
+  const measurementStart = Date.parse('2026-09-26T00:00:00Z');
+  const reportEnd = Date.parse(`${String(latest.period || '').split('→').pop().trim()}T00:00:00Z`);
+  const measurementDays = Math.max(0, Math.floor((Date.now() - measurementStart) / 86400000));
+  const readyForDecision = measurementDays >= 14;
+  freshness.className = 'ux-freshness';
+  if (Number.isFinite(reportEnd) && reportEnd < measurementStart) {
+    freshness.classList.add('stale');
+    freshness.textContent = 'הדוח האחרון קדם למדידת ה־UX החדשה';
+  } else if (age == null || age > 8) {
+    freshness.classList.add('stale');
+    freshness.textContent = 'הדוח אינו עדכני — יש לבדוק את האוטומציה';
+  } else if (!readyForDecision) {
+    freshness.classList.add('collecting');
+    freshness.textContent = `איסוף נתונים: יום ${Math.min(measurementDays, 14)} מתוך 14`;
+  } else {
+    freshness.classList.add('fresh');
+    freshness.textContent = `דוח מעודכן מלפני ${age} ימים`;
+  }
+
+  let recommendation;
+  if (!readyForDecision || sessions < 30) {
+    recommendation = 'להמשיך לאסוף נתונים. המדגם עדיין קטן מדי לשינוי עיצוב נוסף; בינתיים לא משנים את היררכיית דף הבית.';
+  } else if (gaRate(hero, sessions) < 12) {
+    recommendation = 'המיקוד הבא: המסך הראשון. שיעור המעבר מה־Hero לגלריה נמוך, ולכן יש לחדד את המסר וה־CTA הראשי.';
+  } else if (gaRate(photoViews, sessions) < 25) {
+    recommendation = 'המיקוד הבא: כרטיסי הגלריה. משתמשים מגיעים לגלריה אך מעט מהם פותחים תמונה.';
+  } else if (photoViews > 0 && Math.round((contactActions / photoViews) * 100) < 5) {
+    recommendation = 'המיקוד הבא: מסלול הפנייה מתוך תמונה. יש צפייה בעבודות, אך מעט פעולות יצירת קשר.';
+  } else {
+    recommendation = 'המשפך הראשי נראה בריא. יש לשמר את ההיררכיה ולבחון שיפור בעמוד התוכן או מקור התנועה המוביל.';
+  }
+  next.hidden = false;
+  next.innerHTML = `<strong>המלצה נוכחית:</strong> ${recommendation}`;
+
+  const deviceNames = { mobile: 'מובייל', desktop: 'מחשב', tablet: 'טאבלט' };
+  const devices = (latest.devices || []).map(item => `${deviceNames[item['מכשיר']] || item['מכשיר']}: ${gaNumber(item.sessions)}`).join(' · ');
+  const topSource = latest.sources?.[0];
+  const topLanding = latest.landing_pages?.[0];
+  segments.innerHTML = [
+    ['חלוקת מכשירים', devices || 'יופיע בדוח השבועי הבא'],
+    ['מקור מוביל', topSource ? `${topSource['מקור']}: ${gaNumber(topSource.sessions)} סשנים` : 'אין עדיין נתון'],
+    ['עמוד נחיתה מוביל', topLanding ? `${topLanding['עמוד נחיתה']}: ${gaNumber(topLanding.sessions)} סשנים` : 'יופיע בדוח השבועי הבא'],
+  ].map(([label, value]) => `<div class="ux-segment"><div class="ux-segment-title">${label}</div><div class="ux-segment-value">${escHtml(value)}</div></div>`).join('');
+}
+
 async function loadGaReports() {
   const loading = document.getElementById('ga-reports-loading');
   const list    = document.getElementById('ga-reports-list');
@@ -2642,6 +2766,7 @@ async function loadGaReports() {
     if (!r.ok) { if (loading) loading.textContent = 'אין דוחות עדיין'; return; }
     const reports = await r.json();
     if (!reports.length) { if (loading) loading.textContent = 'אין דוחות עדיין'; return; }
+    renderUxDecisionPanel(reports);
     if (loading) loading.hidden = true;
     list.hidden = false;
     list.innerHTML = reports.slice().reverse().map(rep => {
