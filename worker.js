@@ -5665,12 +5665,24 @@ function toAbsolutePhotoUrl(url) {
   return `https://amitphotos.com${s.startsWith('/') ? '' : '/'}${s}`;
 }
 
+function pinterestCampaignLink(photoId) {
+  const params = new URLSearchParams({
+    photo: String(photoId),
+    buy: '1',
+    utm_source: 'pinterest',
+    utm_medium: 'organic_social',
+    utm_campaign: 'gallery_pins',
+    utm_content: String(photoId),
+  });
+  return `https://amitphotos.com/?${params}`;
+}
+
 async function autoPostPhotoToPinterest(photoId, photo, env) {
   try {
     const token = await getPinterestToken(env);
     if (!token || !photo.category) return;
     const photoUrl = toAbsolutePhotoUrl(photo.url);
-    const link = `https://amitphotos.com/?photo=${photoId}&buy=1`;
+    const link = pinterestCampaignLink(photoId);
     const [boardId, boardIdEn, titleEn] = await Promise.all([
       findOrCreateBoard(photo.category, env, token),
       findOrCreateBoardEn(photo.category, env, token),
@@ -5762,7 +5774,7 @@ async function handlePinterestSyncByCategory(request, env) {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          link: `https://amitphotos.com/?photo=${photo.id}&buy=1`,
+          link: pinterestCampaignLink(photo.id),
           title: photo.title || '',
           description: (photo.description || '') + '\n\nעמית ארז צילום | amitphotos.com',
           board_id: boardId,
@@ -5805,7 +5817,7 @@ async function handlePinterestSyncAll(request, env) {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          link: `https://amitphotos.com/?photo=${photo.id}&buy=1`,
+          link: pinterestCampaignLink(photo.id),
           title: photo.title || '',
           description: (photo.description || '') + '\n\nעמית ארז צילום | amitphotos.com',
           board_id: boardId,
@@ -5852,7 +5864,7 @@ async function handlePinterestSyncEn(request, env) {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          link: `https://amitphotos.com/?photo=${photo.id}&buy=1`,
+          link: pinterestCampaignLink(photo.id),
           title: titleEn || `${englishCategory} | Amit Erez`,
           description: `Fine art photography by Israeli photographer Amit Erez.\n${englishCategory}. Available as high-quality prints at amitphotos.com.\n#photography #${englishCategory.replace(/ /g, '').toLowerCase()} #fineartphotography #israeliphotographer #amiterezphotography`,
           board_id: boardIdEn,
@@ -5891,7 +5903,7 @@ async function handlePinterestUpdateLinks(request, env) {
       const res = await fetch(`https://api.pinterest.com/v5/pins/${photo.pinterest_pin_id}`, {
         method: 'PATCH',
         headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ link: `https://amitphotos.com/?photo=${photo.id}&buy=1` }),
+        body: JSON.stringify({ link: pinterestCampaignLink(photo.id) }),
       });
       if (res.ok) { updated++; }
       else {
@@ -5970,7 +5982,7 @@ async function handlePinterestPost(request, env) {
     method: 'POST',
     headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      link: `https://amitphotos.com/?photo=${photo_id}`,
+      link: pinterestCampaignLink(photo_id),
       title: photo.title || '',
       description: description || ((photo.description || '') + ' | עמית ארז צילום'),
       board_id,
@@ -8157,7 +8169,7 @@ async function runPinterestCronSync(env) {
           method: 'POST',
           headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            link: `https://amitphotos.com/?photo=${photo.id}&buy=1`,
+            link: pinterestCampaignLink(photo.id),
             title: photo.title || '',
             description: (photo.description || '') + '\n\nעמית ארז צילום | amitphotos.com',
             board_id: boardId,
@@ -8190,7 +8202,7 @@ async function runPinterestCronSync(env) {
           method: 'POST',
           headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            link: `https://amitphotos.com/?photo=${photo.id}&buy=1`,
+            link: pinterestCampaignLink(photo.id),
             title: titleEn || `${englishCategory} | Amit Erez`,
             description: `Fine art photography by Israeli photographer Amit Erez.\n${englishCategory}. Available as high-quality prints at amitphotos.com.\n#photography #fineartphotography #israeliphotographer #amiterezphotography`,
             board_id: boardIdEn,
