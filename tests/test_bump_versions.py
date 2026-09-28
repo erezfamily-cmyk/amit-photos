@@ -54,3 +54,10 @@ def test_every_html_file_currently_referencing_nav_js_uses_the_same_version_quer
         if "assets/js/nav.js?v=" in text and expected_v not in text:
             stale_files.append(str(html_file.relative_to(root)))
     assert stale_files == [], f"these files reference an outdated nav.js version: {stale_files}"
+
+
+def test_nav_loader_references_the_current_analytics_hash():
+    root = bump_versions.ROOT
+    analytics = root / "assets/js/analytics.js"
+    nav_text = (root / "assets/js/nav.js").read_text(encoding="utf-8")
+    assert f"analytics.js?v={bump_versions.file_hash(analytics)}" in nav_text

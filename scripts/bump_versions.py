@@ -28,6 +28,12 @@ SITEWIDE_ASSETS = [
     ROOT / "assets/js/nav.js",
 ]
 
+# nav.js dynamically loads the analytics helper on standalone sub-pages. Bump that embedded
+# URL first, then hash nav.js itself so both cache layers change together.
+EMBEDDED_ASSETS = {
+    ROOT / "assets/js/nav.js": [ROOT / "assets/js/analytics.js"],
+}
+
 def file_hash(path):
     return hashlib.md5(path.read_bytes()).hexdigest()[:8]
 
@@ -41,6 +47,12 @@ def bump_in_text(text, asset):
     ), h
 
 def main():
+    for host, assets in EMBEDDED_ASSETS.items():
+        content = host.read_text(encoding="utf-8")
+        for asset in assets:
+            content, _ = bump_in_text(content, asset)
+        host.write_text(content, encoding="utf-8")
+
     index = ROOT / "index.html"
     content = index.read_text(encoding="utf-8")
     for asset in INDEX_ASSETS:

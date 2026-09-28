@@ -154,6 +154,17 @@ def fetch_ga4_data(token):
         "dateRanges": [{"startDate": prev_start, "endDate": prev_end}],
         "metrics": [{"name": "sessions"}, {"name": "activeUsers"}, {"name": "screenPageViews"}],
     })
+    ux_event_names = [
+        "purchase_intent", "photo_view", "add_size", "purchase", "generate_lead",
+        "print_intent", "print_type_selected", "print_checkout",
+        "hero_gallery_click", "hero_sale_click", "hero_guide_click", "nav_click",
+        "gallery_filter", "scroll_25", "scroll_50", "scroll_75", "scroll_90",
+        "contact_intent", "photo_contact_click", "contact_form_success", "language_change", "content_link_click",
+        "nav_home_click", "nav_gallery_click", "nav_sale_click", "nav_camera_click",
+        "nav_locations_click", "nav_purchase_info_click", "nav_newsletter_click",
+        "nav_contact_click", "nav_more_click", "nav_games_click", "nav_videos_click",
+        "nav_learn_click", "nav_gear_click",
+    ]
     events_raw = run_report(token, {
         "dateRanges": dr,
         "dimensions": [{"name": "eventName"}],
@@ -161,17 +172,23 @@ def fetch_ga4_data(token):
         "dimensionFilter": {
             "filter": {
                 "fieldName": "eventName",
-                "inListFilter": {"values": [
-                    "purchase_intent", "photo_view", "add_size", "purchase", "generate_lead",
-                    "print_intent", "print_type_selected", "print_checkout",
-                    "hero_gallery_click", "hero_sale_click",
-                    "hero_guide_click", "nav_click", "gallery_filter",
-                    "scroll_25", "scroll_50", "scroll_75", "scroll_90",
-                    "contact_intent", "contact_form_success", "language_change",
-                ]},
+                "inListFilter": {"values": ux_event_names},
             }
         },
         "orderBys": [{"metric": {"metricName": "eventCount"}, "desc": True}],
+    })
+    ux_by_page_raw = run_report(token, {
+        "dateRanges": dr,
+        "dimensions": [{"name": "eventName"}, {"name": "pagePath"}],
+        "metrics": [{"name": "eventCount"}],
+        "dimensionFilter": {
+            "filter": {
+                "fieldName": "eventName",
+                "inListFilter": {"values": ux_event_names},
+            }
+        },
+        "orderBys": [{"metric": {"metricName": "eventCount"}, "desc": True}],
+        "limit": 50,
     })
 
     sr = summary_raw.get("rows", []) if summary_raw else []
@@ -185,6 +202,15 @@ def fetch_ga4_data(token):
 
     events = parse_rows(events_raw, ["count"], "event")
     events_by_name = {r["event"]: r["count"] for r in events}
+    ux_by_page = []
+    for row in (ux_by_page_raw or {}).get("rows", []):
+        dims = row.get("dimensionValues", [])
+        metrics = row.get("metricValues", [])
+        ux_by_page.append({
+            "event": dims[0]["value"] if len(dims) > 0 else "",
+            "עמוד": dims[1]["value"] if len(dims) > 1 else "",
+            "count": metrics[0]["value"] if metrics else "0",
+        })
 
     return {
         "period": f"{start} → {end}",
@@ -202,6 +228,7 @@ def fetch_ga4_data(token):
         "devices":   parse_rows(devices_raw, ["sessions"], "מכשיר"),
         "countries": parse_rows(countries_raw, ["sessions"], "ארץ"),
         "funnel_events": events_by_name,
+        "ux_by_page": ux_by_page,
     }
 
 
@@ -282,10 +309,19 @@ def build_data_summary(data):
         ("scroll_75", "גלילה 75%"), ("scroll_90", "גלילה 90%"),
         ("generate_lead", "לידים מוצלחים"),
         ("contact_intent", "כוונת יצירת קשר"),
+        ("photo_contact_click", "פנייה מתוך תמונה"),
         ("contact_form_success", "טופסי קשר שנשלחו"),
         ("language_change", "החלפת שפה"),
     ]:
         lines.append(f"  {label}: {fe.get(event, '0')}")
+
+    lines += ["", "--- התנהגות לפי עמוד ---"]
+    ux_by_page = data.get("ux_by_page", [])
+    if ux_by_page:
+        for row in ux_by_page[:20]:
+            lines.append(f"  {row['עמוד'] or '/'} — {row['event']}: {row['count']}")
+    else:
+        lines.append("  אין עדיין אירועי UX לפי עמוד")
 
     rev = data.get("revenue")
     lines += ["", "--- אימות הכנסות מול D1 (לא רק ספירת events מ-GA) ---"]
@@ -516,6 +552,7 @@ def save_report(data, analysis, reports_file=None):
         "devices":   data.get("devices", []),
         "countries": data.get("countries", [])[:5],
         "funnel_events": data["funnel_events"],
+        "ux_by_page": data.get("ux_by_page", [])[:50],
         "revenue":   data.get("revenue"),
         "analysis":  analysis,
     })
