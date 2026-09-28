@@ -12,6 +12,7 @@ import random
 import requests
 import anthropic
 from pathlib import Path
+from campaign_urls import build_campaign_url
 
 ROOT        = Path(__file__).parent.parent
 POSTED_FILE = ROOT / "data" / "pinterest_posted.json"
@@ -157,6 +158,10 @@ def publish_pin(token, board_id, photo, anthropic_key):
         "board_id":    board_id,
         "title":       f"{title} — {category}" if title else category,
         "description": description,
+        "link": build_campaign_url(
+            "/", source="pinterest", campaign="gallery_pins", content=photo["id"],
+            params={"photo": photo["id"], "buy": "1"},
+        ),
         "media_source": {"source_type": "image_url", "url": image_url},
     }
 

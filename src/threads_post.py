@@ -14,6 +14,7 @@ import time
 import requests
 import anthropic
 from pathlib import Path
+from campaign_urls import build_campaign_url
 
 # ===== הגדרות =====
 POSTED_FILE = Path(__file__).parent.parent / "data" / "threads_posted.json"
@@ -114,7 +115,9 @@ def generate_caption(photo):
     description = photo.get("description", "")
     exif        = photo.get("exif") or {}
     photo_id    = photo["id"]
-    buy_link    = f"{SITE_URL}/photo/{photo_id}"
+    buy_link    = build_campaign_url(
+        f"/photo/{photo_id}", source="threads", campaign="photo_posts", content=photo_id,
+    )
 
     thumbnail_url = photo.get("thumbnail") or photo.get("url")
     if thumbnail_url and thumbnail_url.startswith("/"):
