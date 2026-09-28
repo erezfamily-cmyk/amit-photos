@@ -7694,8 +7694,12 @@ export default {
     const url = new URL(request.url);
     const path = url.pathname;
 
-    if (url.hostname === 'www.amitphotos.com') {
-      return Response.redirect('https://amitphotos.com' + url.pathname + url.search, 301);
+    // Keep one canonical homepage URL so GA, SEO, and shared links do not split
+    // the same visit between `/` and `/index.html`. Normalize www in the same
+    // hop and preserve campaign query parameters.
+    if (url.hostname === 'www.amitphotos.com' || path === '/index.html') {
+      const canonicalPath = path === '/index.html' ? '/' : path;
+      return Response.redirect('https://amitphotos.com' + canonicalPath + url.search, 301);
     }
 
     if (request.method === 'OPTIONS') {
