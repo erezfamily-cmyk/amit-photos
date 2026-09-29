@@ -1834,7 +1834,7 @@
     "width": 1504,
     "height": 1000,
     "exif": null,
-    "added_at": "2026-09-28"
+    "added_at": "2026-09-29"
   },
   {
     "id": "1LuoH9OWwTFPRnDvZihmDE5hyBz3Kt815",
@@ -11856,6 +11856,111 @@
     "height": 3600,
     "exif": null,
     "added_at": "2026-09-28"
+  },
+  {
+    "id": "19DzrKOar7Ao5fFzh7jwfHwaWlwToPYhS",
+    "title": "גדר עתיקה על הגבעה",
+    "category": "גאורגיה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/19DzrKOar7Ao5fFzh7jwfHwaWlwToPYhS.webp",
+    "thumbnail": "/photos/thumb/19DzrKOar7Ao5fFzh7jwfHwaWlwToPYhS.webp",
+    "description": "גדר עץ מעוקלת עם חרטומים חדים הנמתחת על שדה ירוק בגאורגיה",
+    "filename": "DSC_9633.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 95,
+      "aperture": 5.3,
+      "iso": 64,
+      "shutter": 0.002
+    },
+    "added_at": "2026-09-29"
+  },
+  {
+    "id": "1MV85lSItoM4-X0pqeG2eCmExhzYrI47_",
+    "title": "הרים שלובים בשלג",
+    "category": "גאורגיה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1MV85lSItoM4-X0pqeG2eCmExhzYrI47_.webp",
+    "thumbnail": "/photos/thumb/1MV85lSItoM4-X0pqeG2eCmExhzYrI47_.webp",
+    "description": "שרשרת הרים מושלגת בגיאורגיה תחת שמיים סוערים וכהים",
+    "filename": "DSC_9692.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 200,
+      "aperture": 5.6,
+      "iso": 64,
+      "shutter": 0.00125
+    },
+    "added_at": "2026-09-29"
+  },
+  {
+    "id": "1NyZRreF67UYL814PL7M1FfdJr7vkh6Pr",
+    "title": "השתקפות בעמק הרים",
+    "category": "גאורגיה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1NyZRreF67UYL814PL7M1FfdJr7vkh6Pr.webp",
+    "thumbnail": "/photos/thumb/1NyZRreF67UYL814PL7M1FfdJr7vkh6Pr.webp",
+    "description": "אגם שקט משקף הרים מושלגים וענני שמיים בגאורגיה",
+    "filename": "DSC_9810.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 18,
+      "aperture": 3.5,
+      "iso": 64,
+      "shutter": 0.001
+    },
+    "added_at": "2026-09-29"
+  },
+  {
+    "id": "1IHPECQpXVn7R8uT_GiEt85J_W41UX41u",
+    "title": "מגדל עתיק בגאורגיה",
+    "category": "גאורגיה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1IHPECQpXVn7R8uT_GiEt85J_W41UX41u.webp",
+    "thumbnail": "/photos/thumb/1IHPECQpXVn7R8uT_GiEt85J_W41UX41u.webp",
+    "description": "מגדל אבן היסטורי מבודד בין יערות צפופים בהרי הקווקזוס",
+    "filename": "DSC_9823.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 105,
+      "aperture": 5.3,
+      "iso": 125,
+      "shutter": 0.00625
+    },
+    "added_at": "2026-09-29"
+  },
+  {
+    "id": "1aJym31TlUMRkiwZUS1auzD1tzMj-U4HM",
+    "title": "גדר עתיקה בהרים",
+    "category": "גאורגיה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1aJym31TlUMRkiwZUS1auzD1tzMj-U4HM.webp",
+    "thumbnail": "/photos/thumb/1aJym31TlUMRkiwZUS1auzD1tzMj-U4HM.webp",
+    "description": "גדר עץ עתיקה על רקע הרים מושלגים בגיאורגיה",
+    "filename": "DSC_9883.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 105,
+      "aperture": 32,
+      "iso": 560,
+      "shutter": 0.00625
+    },
+    "added_at": "2026-09-29"
   },
   {
     "id": "19cEes2b6xHZZbWqHg6NIx5uanhHtBJSP",
