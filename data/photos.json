@@ -105,6 +105,111 @@
     "added_at": "2026-05-28"
   },
   {
+    "id": "1jnL57zUC1oyN3b9sNQKXBmm68lAkt2Nk",
+    "title": "חלון בעיר הישנה",
+    "category": "אומנות רחוב",
+    "parent_category": null,
+    "url": "/photos/1jnL57zUC1oyN3b9sNQKXBmm68lAkt2Nk.webp",
+    "thumbnail": "/photos/thumb/1jnL57zUC1oyN3b9sNQKXBmm68lAkt2Nk.webp",
+    "description": "חלון לבן ישן בקיר אבן מוציק של בניין עתיק",
+    "filename": "DSC_1761.jpg",
+    "width": 4876,
+    "height": 3246,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 75,
+      "aperture": 32,
+      "iso": 1600,
+      "shutter": 0.008
+    },
+    "added_at": "2026-09-29"
+  },
+  {
+    "id": "1cf9DnwDlqLBGmtDxZBpOy14GtZTL0ohW",
+    "title": "חלונות אדריכליים גיאומטריים",
+    "category": "אומנות רחוב",
+    "parent_category": null,
+    "url": "/photos/1cf9DnwDlqLBGmtDxZBpOy14GtZTL0ohW.webp",
+    "thumbnail": "/photos/thumb/1cf9DnwDlqLBGmtDxZBpOy14GtZTL0ohW.webp",
+    "description": "פסדים אדריכליים עם חלונות אובליים וקווים מנוימים בבניין קלאסי",
+    "filename": "DSC_2822.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 26,
+      "aperture": 4,
+      "iso": 64,
+      "shutter": 0.01
+    },
+    "added_at": "2026-09-29"
+  },
+  {
+    "id": "1zEdHG86F9U1v-GScZtNsGiqo_V-bbYze",
+    "title": "ציפור על הכיבשן",
+    "category": "אומנות רחוב",
+    "parent_category": null,
+    "url": "/photos/1zEdHG86F9U1v-GScZtNsGiqo_V-bbYze.webp",
+    "thumbnail": "/photos/thumb/1zEdHG86F9U1v-GScZtNsGiqo_V-bbYze.webp",
+    "description": "ציפור קטנה יושבת על גג לבנים עתיק עם כיבשן מדורג וחלון מעוטר.",
+    "filename": "DSC_2869.jpg",
+    "width": 3279,
+    "height": 4783,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 200,
+      "aperture": 5.6,
+      "iso": 280,
+      "shutter": 0.003125
+    },
+    "added_at": "2026-09-29"
+  },
+  {
+    "id": "140zg5TnrRmGkr2SIZUhZ5QqSKvqvs7GL",
+    "title": "מבנה ברזל גיאומטרי",
+    "category": "אומנות רחוב",
+    "parent_category": null,
+    "url": "/photos/140zg5TnrRmGkr2SIZUhZ5QqSKvqvs7GL.webp",
+    "thumbnail": "/photos/thumb/140zg5TnrRmGkr2SIZUhZ5QqSKvqvs7GL.webp",
+    "description": "מבנה אדריכלי עם שלד ברזל וחלונות טרפזיים על רקע שמיים עבים",
+    "filename": "DSC_2909.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 10,
+      "aperture": 4,
+      "iso": 64,
+      "shutter": 0.00125
+    },
+    "added_at": "2026-09-29"
+  },
+  {
+    "id": "13K67RzsX0PKDayi4QOtNYQtF8GqfEq_H",
+    "title": "בניין ישן בריסום",
+    "category": "אומנות רחוב",
+    "parent_category": null,
+    "url": "/photos/13K67RzsX0PKDayi4QOtNYQtF8GqfEq_H.webp",
+    "thumbnail": "/photos/thumb/13K67RzsX0PKDayi4QOtNYQtF8GqfEq_H.webp",
+    "description": "בניין תושחת עם קירות צהובים וחלונות כהים בעיר ישנה",
+    "filename": "DSC_2937.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 18,
+      "aperture": 4,
+      "iso": 64,
+      "shutter": 0.00625
+    },
+    "added_at": "2026-09-29"
+  },
+  {
     "id": "1v2lSC6IvqfbdE9Nv0KPFrazMzMsweizH",
     "title": "בית הצבעים של הונדה",
     "category": "אומנות רחוב",
@@ -124,6 +229,27 @@
       "shutter": 0.0125
     },
     "added_at": "2026-05-28"
+  },
+  {
+    "id": "1cA47qQXxooZ4r0uJICOCf8VtJO9_1kI7",
+    "title": "קיר צבעוני בגרפיטי",
+    "category": "אומנות רחוב",
+    "parent_category": null,
+    "url": "/photos/1cA47qQXxooZ4r0uJICOCf8VtJO9_1kI7.webp",
+    "thumbnail": "/photos/thumb/1cA47qQXxooZ4r0uJICOCf8VtJO9_1kI7.webp",
+    "description": "קיר אומנות רחוב מלא בצבעים, דפוסים וציורים אבסטרקטיים שונים",
+    "filename": "DSC_2952.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 32,
+      "aperture": 4,
+      "iso": 200,
+      "shutter": 0.02
+    },
+    "added_at": "2026-09-29"
   },
   {
     "id": "1PQW6onDb_33gPgaWfeyLQVrzj1KBqDaW",
@@ -902,6 +1028,69 @@
     "added_at": "2026-04-22"
   },
   {
+    "id": "1joL5ENdO3635zucaqaQ8W1FeJBSTmTMi",
+    "title": "סוס לבן עם רעיון שחור",
+    "category": "בעלי חיים",
+    "parent_category": null,
+    "url": "/photos/1joL5ENdO3635zucaqaQ8W1FeJBSTmTMi.webp",
+    "thumbnail": "/photos/thumb/1joL5ENdO3635zucaqaQ8W1FeJBSTmTMi.webp",
+    "description": "סוס לבן עם חייץ שחור בחוות, סביבו סוסים נוספים.",
+    "filename": "DSC_1939.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 150,
+      "aperture": 5.6,
+      "iso": 320,
+      "shutter": 0.004
+    },
+    "added_at": "2026-09-29"
+  },
+  {
+    "id": "18qvmPoN3_wbOmbf9j7erzBgyoH5o4P8j",
+    "title": "שלושה סוסים ליד אסם",
+    "category": "בעלי חיים",
+    "parent_category": null,
+    "url": "/photos/18qvmPoN3_wbOmbf9j7erzBgyoH5o4P8j.webp",
+    "thumbnail": "/photos/thumb/18qvmPoN3_wbOmbf9j7erzBgyoH5o4P8j.webp",
+    "description": "שלושה סוסים בצבעים שונים עומדים ליד בניין מתכת כחול.",
+    "filename": "DSC_1942.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 112,
+      "aperture": 5.3,
+      "iso": 450,
+      "shutter": 0.005
+    },
+    "added_at": "2026-09-29"
+  },
+  {
+    "id": "1epY1Gnc3YqR6VMTtr3ZErP7SBof8YlwI",
+    "title": "חזירים בכרם",
+    "category": "בעלי חיים",
+    "parent_category": null,
+    "url": "/photos/1epY1Gnc3YqR6VMTtr3ZErP7SBof8YlwI.webp",
+    "thumbnail": "/photos/thumb/1epY1Gnc3YqR6VMTtr3ZErP7SBof8YlwI.webp",
+    "description": "שני חזירים צעירים רועים בתוך שדה ירוק עם צמחייה.",
+    "filename": "DSC_2010.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 112,
+      "aperture": 5.3,
+      "iso": 450,
+      "shutter": 0.005
+    },
+    "added_at": "2026-09-29"
+  },
+  {
     "id": "1RS7CNmOqlgKzVp6TEsqT2At4zO4eODS_",
     "title": "תינשוף בור על הסלע",
     "category": "בעלי חיים",
@@ -921,6 +1110,237 @@
       "shutter": 0.00125
     },
     "added_at": "2026-04-28"
+  },
+  {
+    "id": "1RApFAQJRu46H0YtGJc6Mh5YMOZ_7q2dO",
+    "title": "חתול לבן בעיניים ירוקות",
+    "category": "בעלי חיים",
+    "parent_category": null,
+    "url": "/photos/1RApFAQJRu46H0YtGJc6Mh5YMOZ_7q2dO.webp",
+    "thumbnail": "/photos/thumb/1RApFAQJRu46H0YtGJc6Mh5YMOZ_7q2dO.webp",
+    "description": "חתול לבן עם עיניים ירוקות בהירות עומד על רקע שחור",
+    "filename": "DSC_2558.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 135,
+      "aperture": 5.6,
+      "iso": 360,
+      "shutter": 0.004
+    },
+    "added_at": "2026-09-29"
+  },
+  {
+    "id": "1QpjJ79Ewvjs12KgN0QuApaFx8mbuEYEA",
+    "title": "חתול לבן עיניים ירוקות",
+    "category": "בעלי חיים",
+    "parent_category": null,
+    "url": "/photos/1QpjJ79Ewvjs12KgN0QuApaFx8mbuEYEA.webp",
+    "thumbnail": "/photos/thumb/1QpjJ79Ewvjs12KgN0QuApaFx8mbuEYEA.webp",
+    "description": "חתול לבן טהור יושב בעמידה ישירה לעדשה עם עיניים ירוקות בוהקות.",
+    "filename": "DSC_2569.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 170,
+      "aperture": 5.6,
+      "iso": 80,
+      "shutter": 0.004
+    },
+    "added_at": "2026-09-29"
+  },
+  {
+    "id": "1KS26pOaKch83IseMZUrYIeYRpxilPRV-",
+    "title": "חתול לבן בשמש",
+    "category": "בעלי חיים",
+    "parent_category": null,
+    "url": "/photos/1KS26pOaKch83IseMZUrYIeYRpxilPRV-.webp",
+    "thumbnail": "/photos/thumb/1KS26pOaKch83IseMZUrYIeYRpxilPRV-.webp",
+    "description": "חתול לבן עם עיניים ירוקות יושב על עץ בצל ובאור",
+    "filename": "DSC_2601.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 200,
+      "aperture": 5.6,
+      "iso": 2500,
+      "shutter": 0.003125
+    },
+    "added_at": "2026-09-29"
+  },
+  {
+    "id": "1of45m4cMJ3Pr1pR1RBnyGxqxx0iMXoc3",
+    "title": "כלב לבן בגשם",
+    "category": "בעלי חיים",
+    "parent_category": null,
+    "url": "/photos/1of45m4cMJ3Pr1pR1RBnyGxqxx0iMXoc3.webp",
+    "thumbnail": "/photos/thumb/1of45m4cMJ3Pr1pR1RBnyGxqxx0iMXoc3.webp",
+    "description": "כלב לבן יושב בודד על רחוב רטוב בימי גשם.",
+    "filename": "DSC_2703.jpg",
+    "width": 5107,
+    "height": 3336,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 200,
+      "aperture": 5.6,
+      "iso": 180,
+      "shutter": 0.003125
+    },
+    "added_at": "2026-09-29"
+  },
+  {
+    "id": "1f8ozQequUZuiogqW1Y3d4plYOqUsjLB4",
+    "title": "כלב לבן יושב",
+    "category": "בעלי חיים",
+    "parent_category": null,
+    "url": "/photos/1f8ozQequUZuiogqW1Y3d4plYOqUsjLB4.webp",
+    "thumbnail": "/photos/thumb/1f8ozQequUZuiogqW1Y3d4plYOqUsjLB4.webp",
+    "description": "כלב לברדור לבן יושב על אדן בטון ליד קיר.",
+    "filename": "DSC_2714.jpg",
+    "width": 4824,
+    "height": 3228,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 112,
+      "aperture": 5.3,
+      "iso": 220,
+      "shutter": 0.005
+    },
+    "added_at": "2026-09-29"
+  },
+  {
+    "id": "1MOnSZc5RNkrrDRbfRWcivO76JXAMraTW",
+    "title": "כלב לבן בחצר",
+    "category": "בעלי חיים",
+    "parent_category": null,
+    "url": "/photos/1MOnSZc5RNkrrDRbfRWcivO76JXAMraTW.webp",
+    "thumbnail": "/photos/thumb/1MOnSZc5RNkrrDRbfRWcivO76JXAMraTW.webp",
+    "description": "כלב לברדור לבן יושב בחצר מול קיר בטון עם כלוב בחקלאות.",
+    "filename": "DSC_2715.jpg",
+    "width": 4824,
+    "height": 3228,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 112,
+      "aperture": 5.3,
+      "iso": 200,
+      "shutter": 0.005
+    },
+    "added_at": "2026-09-29"
+  },
+  {
+    "id": "1B0fyXbaUpq2I7404Sn6VYN-0RgOMX9Ne",
+    "title": "בול דוג בשמש",
+    "category": "בעלי חיים",
+    "parent_category": null,
+    "url": "/photos/1B0fyXbaUpq2I7404Sn6VYN-0RgOMX9Ne.webp",
+    "thumbnail": "/photos/thumb/1B0fyXbaUpq2I7404Sn6VYN-0RgOMX9Ne.webp",
+    "description": "כלב בול דוג מונח על רצפה בצל הקיר, לבוש רתם שחור.",
+    "filename": "DSC_2785.jpg",
+    "width": 5231,
+    "height": 3482,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 75,
+      "aperture": 5,
+      "iso": 64,
+      "shutter": 0.002
+    },
+    "added_at": "2026-09-29"
+  },
+  {
+    "id": "1tt8ZJbHT7QUWHyJQ8DQP214beIaR3JKM",
+    "title": "חתול עיניים ירוקות",
+    "category": "בעלי חיים",
+    "parent_category": null,
+    "url": "/photos/1tt8ZJbHT7QUWHyJQ8DQP214beIaR3JKM.webp",
+    "thumbnail": "/photos/thumb/1tt8ZJbHT7QUWHyJQ8DQP214beIaR3JKM.webp",
+    "description": "חתול אפור ולבן בעיניים ירוקות בהירות בחזית דלת כחולה עתיקה",
+    "filename": "DSC_2975.jpg",
+    "width": 3257,
+    "height": 4794,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 90,
+      "aperture": 5.3,
+      "iso": 1250,
+      "shutter": 0.00625
+    },
+    "added_at": "2026-09-29"
+  },
+  {
+    "id": "1x3E_KSyT9YLaY8YxOfUvGGbzj3uG3doY",
+    "title": "חתול ברחוב עתיק",
+    "category": "בעלי חיים",
+    "parent_category": null,
+    "url": "/photos/1x3E_KSyT9YLaY8YxOfUvGGbzj3uG3doY.webp",
+    "thumbnail": "/photos/thumb/1x3E_KSyT9YLaY8YxOfUvGGbzj3uG3doY.webp",
+    "description": "חתול אפור ולבן יושב ליד דלת כחולה שחוקה בעיר עתיקה",
+    "filename": "DSC_2980.jpg",
+    "width": 4993,
+    "height": 3386,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 65,
+      "aperture": 5,
+      "iso": 1400,
+      "shutter": 0.01
+    },
+    "added_at": "2026-09-29"
+  },
+  {
+    "id": "1PrIcVi7Xaw63hPjapjCrI45Je_iWu2vb",
+    "title": "חתול בחצר עתיקה",
+    "category": "בעלי חיים",
+    "parent_category": null,
+    "url": "/photos/1PrIcVi7Xaw63hPjapjCrI45Je_iWu2vb.webp",
+    "thumbnail": "/photos/thumb/1PrIcVi7Xaw63hPjapjCrI45Je_iWu2vb.webp",
+    "description": "חתול אפור ולבן יושב ליד דלת כחולה שחוקה",
+    "filename": "DSC_2987.jpg",
+    "width": 4993,
+    "height": 3386,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 95,
+      "aperture": 5.3,
+      "iso": 2200,
+      "shutter": 0.00625
+    },
+    "added_at": "2026-09-29"
+  },
+  {
+    "id": "1b43wskLoSwTyyA0AFixzFfPEdU121QW7",
+    "title": "חתול ליד דלת כחולה",
+    "category": "בעלי חיים",
+    "parent_category": null,
+    "url": "/photos/1b43wskLoSwTyyA0AFixzFfPEdU121QW7.webp",
+    "thumbnail": "/photos/thumb/1b43wskLoSwTyyA0AFixzFfPEdU121QW7.webp",
+    "description": "חתול אפור לבן יושב ליד דלת עתיקה כחולה עם עיטורים מתכת",
+    "filename": "DSC_2993.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 55,
+      "aperture": 4.8,
+      "iso": 1100,
+      "shutter": 0.01
+    },
+    "added_at": "2026-09-29"
   },
   {
     "id": "1RX80WFftcp_QV6T5DAlF-2p4N3o1sbKl",
@@ -1736,6 +2156,27 @@
     }
   },
   {
+    "id": "1r8wqTKYHeH7LDf33_i84Ki2SV6pCxMbq",
+    "title": "פרות בהרים",
+    "category": "בעלי חיים",
+    "parent_category": null,
+    "url": "/photos/1r8wqTKYHeH7LDf33_i84Ki2SV6pCxMbq.webp",
+    "thumbnail": "/photos/thumb/1r8wqTKYHeH7LDf33_i84Ki2SV6pCxMbq.webp",
+    "description": "שתי פרות נושמות קרניים בנוף הררי עם יער צפוף ברקע",
+    "filename": "DSC_9709.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 150,
+      "aperture": 14,
+      "iso": 640,
+      "shutter": 0.004
+    },
+    "added_at": "2026-09-29"
+  },
+  {
     "id": "18UptvZiupB6Zb1i0wcdf58Nu0NDLF_LC",
     "title": "למור אי במקום שלו",
     "category": "בעלי חיים",
@@ -2510,6 +2951,48 @@
       "iso": 250,
       "shutter": 0.01
     }
+  },
+  {
+    "id": "1lNRlbA6Pd3g8hr5kq9rDCGQnIEEIfEva",
+    "title": "אדריכלות מודרנית",
+    "category": "טבע דומם",
+    "parent_category": null,
+    "url": "/photos/1lNRlbA6Pd3g8hr5kq9rDCGQnIEEIfEva.webp",
+    "thumbnail": "/photos/thumb/1lNRlbA6Pd3g8hr5kq9rDCGQnIEEIfEva.webp",
+    "description": "בניין עם חזית עגולה של חלונות כחולים ומשקפים",
+    "filename": "DSC_3051.jpg",
+    "width": 5017,
+    "height": 3250,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 170,
+      "aperture": 5.6,
+      "iso": 1000,
+      "shutter": 0.004
+    },
+    "added_at": "2026-09-29"
+  },
+  {
+    "id": "13OKj6vN_gUBtEvh_eserwNtNw2IHVEAh",
+    "title": "מנורות בשקיעה",
+    "category": "טבע דומם",
+    "parent_category": null,
+    "url": "/photos/13OKj6vN_gUBtEvh_eserwNtNw2IHVEAh.webp",
+    "thumbnail": "/photos/thumb/13OKj6vN_gUBtEvh_eserwNtNw2IHVEAh.webp",
+    "description": "צללית של מנורות רחוב דקורטיביות על רקע שמיים בשקיעה",
+    "filename": "DSC_3053.jpg",
+    "width": 3600,
+    "height": 5408,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 120,
+      "aperture": 5.3,
+      "iso": 125,
+      "shutter": 0.005
+    },
+    "added_at": "2026-09-29"
   },
   {
     "id": "1x6D2pb3ta2q-JVr0LHb7tS-qvFhJtFLr",
@@ -11352,6 +11835,531 @@
       "shutter": 0.003125
     },
     "added_at": "2026-09-28"
+  },
+  {
+    "id": "1tYv5TO1Rl8aqQElE2p4SuP-8uTxWdoQr",
+    "title": "חזירים בטבע",
+    "category": "גאורגיה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1tYv5TO1Rl8aqQElE2p4SuP-8uTxWdoQr.webp",
+    "thumbnail": "/photos/thumb/1tYv5TO1Rl8aqQElE2p4SuP-8uTxWdoQr.webp",
+    "description": "שני חזירים רועים בשדה עשב ירוק מוקף בצמחייה עבה",
+    "filename": "DSC_1705.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 150,
+      "aperture": 5.6,
+      "iso": 560,
+      "shutter": 0.004
+    },
+    "added_at": "2026-09-29"
+  },
+  {
+    "id": "1EvBBcwMGAsoG0NQxR93lkZcKUqcVQ2Zp",
+    "title": "חלון בעיר העתיקה",
+    "category": "גאורגיה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1EvBBcwMGAsoG0NQxR93lkZcKUqcVQ2Zp.webp",
+    "thumbnail": "/photos/thumb/1EvBBcwMGAsoG0NQxR93lkZcKUqcVQ2Zp.webp",
+    "description": "חלון לבן עתיק בקיר אבן שחוק בגיאורגיה",
+    "filename": "DSC_1761.jpg",
+    "width": 4876,
+    "height": 3246,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 75,
+      "aperture": 32,
+      "iso": 1600,
+      "shutter": 0.008
+    },
+    "added_at": "2026-09-29"
+  },
+  {
+    "id": "1KH8tu950rjp8ysM-ldLOAoKfyJFUwbMI",
+    "title": "סוס רועה בשדה",
+    "category": "גאורגיה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1KH8tu950rjp8ysM-ldLOAoKfyJFUwbMI.webp",
+    "thumbnail": "/photos/thumb/1KH8tu950rjp8ysM-ldLOAoKfyJFUwbMI.webp",
+    "description": "צילום סילואט של סוס אוכל עשב בנוף פתוח תחת שמיים עדינים.",
+    "filename": "DSC_1822.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 95,
+      "aperture": 36,
+      "iso": 900,
+      "shutter": 0.00625
+    },
+    "added_at": "2026-09-29"
+  },
+  {
+    "id": "1Gu7trJ3hsTOHQGZM33CIzOb-JhyUPJN_",
+    "title": "עץ בודד בערפל",
+    "category": "גאורגיה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1Gu7trJ3hsTOHQGZM33CIzOb-JhyUPJN_.webp",
+    "thumbnail": "/photos/thumb/1Gu7trJ3hsTOHQGZM33CIzOb-JhyUPJN_.webp",
+    "description": "עץ בודד על שיפוע ירוק בהרי גאורגיה בערפל קל",
+    "filename": "DSC_1840.jpg",
+    "width": 4923,
+    "height": 3280,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 200,
+      "aperture": 5.6,
+      "iso": 140,
+      "shutter": 0.003125
+    },
+    "added_at": "2026-09-29"
+  },
+  {
+    "id": "107usyh8kmoP8krjBd2I8rztWg9gghkuE",
+    "title": "הרים בעננים בגיאורגיה",
+    "category": "גאורגיה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/107usyh8kmoP8krjBd2I8rztWg9gghkuE.webp",
+    "thumbnail": "/photos/thumb/107usyh8kmoP8krjBd2I8rztWg9gghkuE.webp",
+    "description": "נוף הררי עם שיפועים ירוקים מכוסים בעננים דקים.",
+    "filename": "DSC_1853.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 150,
+      "aperture": 5.6,
+      "iso": 125,
+      "shutter": 0.004
+    },
+    "added_at": "2026-09-29"
+  },
+  {
+    "id": "1VJ21Bdc_JBvQWVffK__YCWlTr7m6MYWh",
+    "title": "נהר בעמק הרים",
+    "category": "גאורגיה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1VJ21Bdc_JBvQWVffK__YCWlTr7m6MYWh.webp",
+    "thumbnail": "/photos/thumb/1VJ21Bdc_JBvQWVffK__YCWlTr7m6MYWh.webp",
+    "description": "נהר מתפתל בעמק ירוק הרים בגאורגיה, עם ענני הרים ברקע.",
+    "filename": "DSC_1860.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 32,
+      "aperture": 4.5,
+      "iso": 64,
+      "shutter": 0.005
+    },
+    "added_at": "2026-09-29"
+  },
+  {
+    "id": "1PqB5gbJsyXHoq98db6Ur2SDC6Ukhn6YD",
+    "title": "סוס לבן בגאורגיה",
+    "category": "גאורגיה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1PqB5gbJsyXHoq98db6Ur2SDC6Ukhn6YD.webp",
+    "thumbnail": "/photos/thumb/1PqB5gbJsyXHoq98db6Ur2SDC6Ukhn6YD.webp",
+    "description": "סוס לבן עם רעיון שחור בחוות בנוף ירוק",
+    "filename": "DSC_1939.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 150,
+      "aperture": 5.6,
+      "iso": 320,
+      "shutter": 0.004
+    },
+    "added_at": "2026-09-29"
+  },
+  {
+    "id": "1bgs_BpRFP3XInqzg5PX8PChqB-8Hy87V",
+    "title": "שלוש סוסים בחצר",
+    "category": "גאורגיה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1bgs_BpRFP3XInqzg5PX8PChqB-8Hy87V.webp",
+    "thumbnail": "/photos/thumb/1bgs_BpRFP3XInqzg5PX8PChqB-8Hy87V.webp",
+    "description": "שלוש סוסים בצבעים שונים עומדים ליד בניין מתכת כחול בגיאורגיה.",
+    "filename": "DSC_1942.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 112,
+      "aperture": 5.3,
+      "iso": 450,
+      "shutter": 0.005
+    },
+    "added_at": "2026-09-29"
+  },
+  {
+    "id": "1KtLs71p5otGKvwB-H_eBOY595Sc6Qadi",
+    "title": "כפר בעמק הרים",
+    "category": "גאורגיה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1KtLs71p5otGKvwB-H_eBOY595Sc6Qadi.webp",
+    "thumbnail": "/photos/thumb/1KtLs71p5otGKvwB-H_eBOY595Sc6Qadi.webp",
+    "description": "נוף כפרי בגאורגיה עם בית, עדר סוסים וצריח עתיק בהרים.",
+    "filename": "DSC_1999.jpg",
+    "width": 5196,
+    "height": 3459,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 200,
+      "aperture": 5.6,
+      "iso": 1100,
+      "shutter": 0.003125
+    },
+    "added_at": "2026-09-29"
+  },
+  {
+    "id": "1OOy9cKk7l-hnqolL5njg9cEXLGGAeDEa",
+    "title": "חזירים רועים בגאורגיה",
+    "category": "גאורגיה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1OOy9cKk7l-hnqolL5njg9cEXLGGAeDEa.webp",
+    "thumbnail": "/photos/thumb/1OOy9cKk7l-hnqolL5njg9cEXLGGAeDEa.webp",
+    "description": "שני חזירים צעירים רועים בשדה ירוק בגאורגיה.",
+    "filename": "DSC_2010.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 112,
+      "aperture": 5.3,
+      "iso": 450,
+      "shutter": 0.005
+    },
+    "added_at": "2026-09-29"
+  },
+  {
+    "id": "1VCp64ORpWMr1N5Zn12J_DLAB1j9LK9EW",
+    "title": "דלת עתיקה בגיאורגיה",
+    "category": "גאורגיה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1VCp64ORpWMr1N5Zn12J_DLAB1j9LK9EW.webp",
+    "thumbnail": "/photos/thumb/1VCp64ORpWMr1N5Zn12J_DLAB1j9LK9EW.webp",
+    "description": "דלת עץ מעוטרת עם ברזלים דקורטיביים וסגנון מסורתי קלאסי.",
+    "filename": "DSC_2015.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 27,
+      "aperture": 4.5,
+      "iso": 180,
+      "shutter": 0.025
+    },
+    "added_at": "2026-09-29"
+  },
+  {
+    "id": "1yvdKoxK75STqLLQ1rjuca5GnXz3-j64-",
+    "title": "מגדל עתיק בגאורגיה",
+    "category": "גאורגיה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1yvdKoxK75STqLLQ1rjuca5GnXz3-j64-.webp",
+    "thumbnail": "/photos/thumb/1yvdKoxK75STqLLQ1rjuca5GnXz3-j64-.webp",
+    "description": "מגדל אבן עתיק עם בתים מסורתיים מפני הרים ירוקים בגאורגיה",
+    "filename": "DSC_2039.jpg",
+    "width": 5314,
+    "height": 3537,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 35,
+      "aperture": 4.2,
+      "iso": 125,
+      "shutter": 0.016666668
+    },
+    "added_at": "2026-09-29"
+  },
+  {
+    "id": "1BEFdStBzHev5Y78z5nxZXY9WVEkvAl57",
+    "title": "דלת עתיקה בגאורגיה",
+    "category": "גאורגיה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1BEFdStBzHev5Y78z5nxZXY9WVEkvAl57.webp",
+    "thumbnail": "/photos/thumb/1BEFdStBzHev5Y78z5nxZXY9WVEkvAl57.webp",
+    "description": "דלת עץ מרופדת בזקן על קיר אבן עתיק עם עשבייה ירוקה",
+    "filename": "DSC_2044.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 24,
+      "aperture": 4.5,
+      "iso": 125,
+      "shutter": 0.025
+    },
+    "added_at": "2026-09-29"
+  },
+  {
+    "id": "1BYi-On_wGQVZAXnMqtF31doZYO04G0nQ",
+    "title": "מגדל בהרי גאורגיה",
+    "category": "גאורגיה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1BYi-On_wGQVZAXnMqtF31doZYO04G0nQ.webp",
+    "thumbnail": "/photos/thumb/1BYi-On_wGQVZAXnMqtF31doZYO04G0nQ.webp",
+    "description": "מגדל עתיק בעמק הרים שלגיים בגאורגיה, עם רועי צאן בשדה הירוק",
+    "filename": "DSC_2203.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 150,
+      "aperture": 5.6,
+      "iso": 280,
+      "shutter": 0.004
+    },
+    "added_at": "2026-09-29"
+  },
+  {
+    "id": "1GluvvcDGA6fUR_pDRMjOLgy80T7E02oK",
+    "title": "בית בודד בגבעות גיאורגיה",
+    "category": "גאורגיה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1GluvvcDGA6fUR_pDRMjOLgy80T7E02oK.webp",
+    "thumbnail": "/photos/thumb/1GluvvcDGA6fUR_pDRMjOLgy80T7E02oK.webp",
+    "description": "בית עץ מבודד על גבעה ירוקה עם גדרות וסלעים בגאורגיה",
+    "filename": "DSC_2211.jpg",
+    "width": 5085,
+    "height": 3385,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 200,
+      "aperture": 5.6,
+      "iso": 80,
+      "shutter": 0.003125
+    },
+    "added_at": "2026-09-29"
+  },
+  {
+    "id": "1s6YJXIKsVF4M9h5lVKJjtQabLx2tg4V7",
+    "title": "מגדלים עתיקים בגאורגיה",
+    "category": "גאורגיה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1s6YJXIKsVF4M9h5lVKJjtQabLx2tg4V7.webp",
+    "thumbnail": "/photos/thumb/1s6YJXIKsVF4M9h5lVKJjtQabLx2tg4V7.webp",
+    "description": "מבנים היסטוריים עם מגדלים אבן בנוף הררי ירוק",
+    "filename": "DSC_2214.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 130,
+      "aperture": 5.6,
+      "iso": 64,
+      "shutter": 0.004
+    },
+    "added_at": "2026-09-29"
+  },
+  {
+    "id": "1Ko3QD0Pk7swZ_H2PRWE1A4PSh_iAPQ-I",
+    "title": "שיאים מושלגים בגיאורגיה",
+    "category": "גאורגיה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1Ko3QD0Pk7swZ_H2PRWE1A4PSh_iAPQ-I.webp",
+    "thumbnail": "/photos/thumb/1Ko3QD0Pk7swZ_H2PRWE1A4PSh_iAPQ-I.webp",
+    "description": "פסגות הרים גבוהות מכוסות שלג עם עננים בתמונה אווירית",
+    "filename": "DSC_2216.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 200,
+      "aperture": 5.6,
+      "iso": 64,
+      "shutter": 0.00125
+    },
+    "added_at": "2026-09-29"
+  },
+  {
+    "id": "1ZjILr_TQWnjBy0nlf7jZ6nGcmwkGb-_m",
+    "title": "כפר ג'ורג'י בהרים",
+    "category": "גאורגיה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1ZjILr_TQWnjBy0nlf7jZ6nGcmwkGb-_m.webp",
+    "thumbnail": "/photos/thumb/1ZjILr_TQWnjBy0nlf7jZ6nGcmwkGb-_m.webp",
+    "description": "בית עתיק בעמק הרי בגאורגיה מול שלג הרים גבוהים",
+    "filename": "DSC_2219.jpg",
+    "width": 5299,
+    "height": 3527,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 26,
+      "aperture": 4.5,
+      "iso": 64,
+      "shutter": 0.0025
+    },
+    "added_at": "2026-09-29"
+  },
+  {
+    "id": "1d6Xe1s8w9Z_hSKuA7CQJubZg1q8h9TCU",
+    "title": "הרים מושלגים בגיאורגיה",
+    "category": "גאורגיה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1d6Xe1s8w9Z_hSKuA7CQJubZg1q8h9TCU.webp",
+    "thumbnail": "/photos/thumb/1d6Xe1s8w9Z_hSKuA7CQJubZg1q8h9TCU.webp",
+    "description": "נוף הררי עם שיפועים ירוקים והשקפה לפסגות מושלגות בעמק ההרים",
+    "filename": "DSC_2227.jpg",
+    "width": 5299,
+    "height": 3527,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 46,
+      "aperture": 4.5,
+      "iso": 64,
+      "shutter": 0.000625
+    },
+    "added_at": "2026-09-29"
+  },
+  {
+    "id": "1Yz6nolBF5nHJrEHeGCGskRo8tAtl6vdJ",
+    "title": "הר שלוג בגאורגיה",
+    "category": "גאורגיה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1Yz6nolBF5nHJrEHeGCGskRo8tAtl6vdJ.webp",
+    "thumbnail": "/photos/thumb/1Yz6nolBF5nHJrEHeGCGskRo8tAtl6vdJ.webp",
+    "description": "פסגה הרוסה בשלג המופיעה בין עלווה ירוקה על רקע שמיים כחולים",
+    "filename": "DSC_2245.jpg",
+    "width": 5299,
+    "height": 3527,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 70,
+      "aperture": 29,
+      "iso": 200,
+      "shutter": 0.008
+    },
+    "added_at": "2026-09-29"
+  },
+  {
+    "id": "1pItho2DtcXuvXXgVHsKBybLxdT4GCUzw",
+    "title": "פסל מים בהרים",
+    "category": "גאורגיה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1pItho2DtcXuvXXgVHsKBybLxdT4GCUzw.webp",
+    "thumbnail": "/photos/thumb/1pItho2DtcXuvXXgVHsKBybLxdT4GCUzw.webp",
+    "description": "מפל קטן בעמק הררי עם שלג על הפסגות ברקע בגיאורגיה",
+    "filename": "DSC_2275.jpg",
+    "width": 5299,
+    "height": 3527,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 17,
+      "aperture": 3.5,
+      "iso": 64,
+      "shutter": 0.000625
+    },
+    "added_at": "2026-09-29"
+  },
+  {
+    "id": "1RQ7UTemGHsDZoiPh13uGqyTODtHHLugd",
+    "title": "כלב בהרי גאורגיה",
+    "category": "גאורגיה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1RQ7UTemGHsDZoiPh13uGqyTODtHHLugd.webp",
+    "thumbnail": "/photos/thumb/1RQ7UTemGHsDZoiPh13uGqyTODtHHLugd.webp",
+    "description": "כלב נח על רקע הרים מושלגים ועמק קרחוני בגאורגיה",
+    "filename": "DSC_2295.jpg",
+    "width": 5299,
+    "height": 3527,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 18,
+      "aperture": 8,
+      "iso": 64,
+      "shutter": 0.003125
+    },
+    "added_at": "2026-09-29"
+  },
+  {
+    "id": "1nPIqnMAk-xo797Iud4WbPf3IEg18V7IY",
+    "title": "הרי הקווקז המושלגים",
+    "category": "גאורגיה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1nPIqnMAk-xo797Iud4WbPf3IEg18V7IY.webp",
+    "thumbnail": "/photos/thumb/1nPIqnMAk-xo797Iud4WbPf3IEg18V7IY.webp",
+    "description": "נוף הרים מעוטר בשלג עם קרחון ועמק ירוק ממטע בגיאורגיה",
+    "filename": "DSC_2437.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 26,
+      "aperture": 4,
+      "iso": 64,
+      "shutter": 0.0005
+    },
+    "added_at": "2026-09-29"
+  },
+  {
+    "id": "1xJBQ5TiTDqzt1V-GOt5p3yguKwxyIcTW",
+    "title": "הרים בעננים",
+    "category": "גאורגיה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1xJBQ5TiTDqzt1V-GOt5p3yguKwxyIcTW.webp",
+    "thumbnail": "/photos/thumb/1xJBQ5TiTDqzt1V-GOt5p3yguKwxyIcTW.webp",
+    "description": "פסגות שלוג מכוסות בעננים עבים בגאורגיה",
+    "filename": "DSC_2448.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 200,
+      "aperture": 5.6,
+      "iso": 64,
+      "shutter": 0.0005
+    },
+    "added_at": "2026-09-29"
+  },
+  {
+    "id": "1Og_-MlbDpjeZknH-ocGUlJ86WuhWx27t",
+    "title": "הרים בעננים שלג",
+    "category": "גאורגיה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1Og_-MlbDpjeZknH-ocGUlJ86WuhWx27t.webp",
+    "thumbnail": "/photos/thumb/1Og_-MlbDpjeZknH-ocGUlJ86WuhWx27t.webp",
+    "description": "פסגות שלגיות גבוהות בגיאורגיה מוקפות בעננים כבדים וערפל",
+    "filename": "DSC_2451.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 200,
+      "aperture": 5.6,
+      "iso": 64,
+      "shutter": 0.000625
+    },
+    "added_at": "2026-09-29"
   },
   {
     "id": "1GW1Rj6K0h-It7euUxKk57PM3mKIao-f5",
@@ -20909,6 +21917,111 @@
     }
   },
   {
+    "id": "1_F3LPZOOT-cPQDJ4bR2NXl2IGvak9s-r",
+    "title": "כוכבית ורודה בשדה",
+    "category": "פרחים וצמחים",
+    "parent_category": null,
+    "url": "/photos/1_F3LPZOOT-cPQDJ4bR2NXl2IGvak9s-r.webp",
+    "thumbnail": "/photos/thumb/1_F3LPZOOT-cPQDJ4bR2NXl2IGvak9s-r.webp",
+    "description": "פרח כוכבית ורוד עם עלבלבים דקים ושיבוץ צהוב במרכז.",
+    "filename": "DSC_2546.jpg",
+    "width": 5061,
+    "height": 3369,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 200,
+      "aperture": 5.6,
+      "iso": 72,
+      "shutter": 0.003125
+    },
+    "added_at": "2026-09-29"
+  },
+  {
+    "id": "1oJDWrzIP9Ejh6gtX5I9on9qp9w8FNF5z",
+    "title": "ורדים ורוד עם תינורית כחולה",
+    "category": "פרחים וצמחים",
+    "parent_category": null,
+    "url": "/photos/1oJDWrzIP9Ejh6gtX5I9on9qp9w8FNF5z.webp",
+    "thumbnail": "/photos/thumb/1oJDWrzIP9Ejh6gtX5I9on9qp9w8FNF5z.webp",
+    "description": "זר פרחים עשיר בורדים ורודים וסגולים עם תינורית כחולה דקה",
+    "filename": "DSC_3079.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 200,
+      "aperture": 5.6,
+      "iso": 2500,
+      "shutter": 0.003125
+    },
+    "added_at": "2026-09-29"
+  },
+  {
+    "id": "1tMl7Kw-hyPgFneiZiU5ayX9K1fzlL2jx",
+    "title": "ורדים אדומים עוצמתיים",
+    "category": "פרחים וצמחים",
+    "parent_category": null,
+    "url": "/photos/1tMl7Kw-hyPgFneiZiU5ayX9K1fzlL2jx.webp",
+    "thumbnail": "/photos/thumb/1tMl7Kw-hyPgFneiZiU5ayX9K1fzlL2jx.webp",
+    "description": "זר עשיר של ורדים אדומים רטובים בעלי עלי כותרת מלאים",
+    "filename": "DSC_3080.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 112,
+      "aperture": 5.3,
+      "iso": 5600,
+      "shutter": 0.005
+    },
+    "added_at": "2026-09-29"
+  },
+  {
+    "id": "1P5SGjvBtPPj1h3nmrN9tnVr69UVbyZP2",
+    "title": "פרחים וורודים בשיא הפריחה",
+    "category": "פרחים וצמחים",
+    "parent_category": null,
+    "url": "/photos/1P5SGjvBtPPj1h3nmrN9tnVr69UVbyZP2.webp",
+    "thumbnail": "/photos/thumb/1P5SGjvBtPPj1h3nmrN9tnVr69UVbyZP2.webp",
+    "description": "אוסף פרחים צבעוניים בגוונים של ורוד, אדום וצהוב בפריחה שופעת.",
+    "filename": "DSC_3082.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 135,
+      "aperture": 5.6,
+      "iso": 1600,
+      "shutter": 0.004
+    },
+    "added_at": "2026-09-29"
+  },
+  {
+    "id": "1rXtw7_uK0Am7xojkESpgz6Uv3_w7asKX",
+    "title": "פרחים צבעוניים בעלוות",
+    "category": "פרחים וצמחים",
+    "parent_category": null,
+    "url": "/photos/1rXtw7_uK0Am7xojkESpgz6Uv3_w7asKX.webp",
+    "thumbnail": "/photos/thumb/1rXtw7_uK0Am7xojkESpgz6Uv3_w7asKX.webp",
+    "description": "זר פרחים עשיר בצבעים עם דייזיות כחולות, כתומות וסגולות",
+    "filename": "DSC_3084.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 95,
+      "aperture": 5.3,
+      "iso": 800,
+      "shutter": 0.00625
+    },
+    "added_at": "2026-09-29"
+  },
+  {
     "id": "1r_VnEdgHtk5mswJRNcQFXX6q8ulb8GbB",
     "title": "חמנייה בתפרחת מלאה",
     "category": "פרחים וצמחים",
@@ -23737,6 +24850,27 @@
     }
   },
   {
+    "id": "1lToS8A5ijX-KvjGEXwGuU8TApouv0vYv",
+    "title": "דלת לבנה בדעיכה",
+    "category": "צילום מופשט",
+    "parent_category": null,
+    "url": "/photos/1lToS8A5ijX-KvjGEXwGuU8TApouv0vYv.webp",
+    "thumbnail": "/photos/thumb/1lToS8A5ijX-KvjGEXwGuU8TApouv0vYv.webp",
+    "description": "דלת לבנה כסופה על קיר אבן עתיק ומתורוח",
+    "filename": "DSC_1761.jpg",
+    "width": 4876,
+    "height": 3246,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 75,
+      "aperture": 32,
+      "iso": 1600,
+      "shutter": 0.008
+    },
+    "added_at": "2026-09-29"
+  },
+  {
     "id": "1nCBHHTe1uLLHJK5U6swTl5FLRmyapQob",
     "title": "פלטת צבעים זהובה",
     "category": "צילום מופשט",
@@ -23775,6 +24909,69 @@
       "iso": 100,
       "shutter": 0.00625
     }
+  },
+  {
+    "id": "1i7RDADTMIv__YqxBFvALsWI4cMDfezSe",
+    "title": "ארכיטקטורה מעבר לזמן",
+    "category": "צילום מופשט",
+    "parent_category": null,
+    "url": "/photos/1i7RDADTMIv__YqxBFvALsWI4cMDfezSe.webp",
+    "thumbnail": "/photos/thumb/1i7RDADTMIv__YqxBFvALsWI4cMDfezSe.webp",
+    "description": "ערמת לבנים עתיקה עם ציפור על גגה וחלון מסורתי.",
+    "filename": "DSC_2869.jpg",
+    "width": 3279,
+    "height": 4783,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 200,
+      "aperture": 5.6,
+      "iso": 280,
+      "shutter": 0.003125
+    },
+    "added_at": "2026-09-29"
+  },
+  {
+    "id": "17LfNqkxvr-DMxGxEWOULtsLRDl1Dc7I7",
+    "title": "מבנה גיאומטרי בשמיים",
+    "category": "צילום מופשט",
+    "parent_category": null,
+    "url": "/photos/17LfNqkxvr-DMxGxEWOULtsLRDl1Dc7I7.webp",
+    "thumbnail": "/photos/thumb/17LfNqkxvr-DMxGxEWOULtsLRDl1Dc7I7.webp",
+    "description": "צילום מופשט של מבנה ממתכת עם קווים וצורות גיאומטריות על רקע שמיים עגומים.",
+    "filename": "DSC_2909.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 10,
+      "aperture": 4,
+      "iso": 64,
+      "shutter": 0.00125
+    },
+    "added_at": "2026-09-29"
+  },
+  {
+    "id": "1p91cyWLtNmuHFeQByOZJ9fI0DkjZTcF-",
+    "title": "בניין ישן בריסוק",
+    "category": "צילום מופשט",
+    "parent_category": null,
+    "url": "/photos/1p91cyWLtNmuHFeQByOZJ9fI0DkjZTcF-.webp",
+    "thumbnail": "/photos/thumb/1p91cyWLtNmuHFeQByOZJ9fI0DkjZTcF-.webp",
+    "description": "חזית בנייה עתיקה עם צבע צהוב בלוי וקירות לבנים חשופים.",
+    "filename": "DSC_2937.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 18,
+      "aperture": 4,
+      "iso": 64,
+      "shutter": 0.00625
+    },
+    "added_at": "2026-09-29"
   },
   {
     "id": "1jov8nfOezxvf0nz-Uq3aFTR6lCmk62S6",
@@ -24932,6 +26129,27 @@
       "shutter": 0.0025
     },
     "added_at": "2026-06-21"
+  },
+  {
+    "id": "10aUyAfLPuNVNhv18TT31DC_Jc5a_GhXz",
+    "title": "שיא הר בערפל",
+    "category": "שחור-לבן",
+    "parent_category": null,
+    "url": "/photos/10aUyAfLPuNVNhv18TT31DC_Jc5a_GhXz.webp",
+    "thumbnail": "/photos/thumb/10aUyAfLPuNVNhv18TT31DC_Jc5a_GhXz.webp",
+    "description": "פסגה סלעית מושלגת צצה דרך ערפל צפוף ושלג",
+    "filename": "DSC_2451.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 200,
+      "aperture": 5.6,
+      "iso": 64,
+      "shutter": 0.000625
+    },
+    "added_at": "2026-09-29"
   },
   {
     "id": "1qG7AiiT_--8pSoj6QjvDXYOj7hJX91ly",
