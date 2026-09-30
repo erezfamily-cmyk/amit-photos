@@ -2914,6 +2914,153 @@
     }
   },
   {
+    "id": "1oTZ-5VBwfvjEKNSbPQQEzDh1mWvlAhY6",
+    "title": "ערימת עצים חתוכים",
+    "category": "טבע דומם",
+    "parent_category": null,
+    "url": "/photos/1oTZ-5VBwfvjEKNSbPQQEzDh1mWvlAhY6.webp",
+    "thumbnail": "/photos/thumb/1oTZ-5VBwfvjEKNSbPQQEzDh1mWvlAhY6.webp",
+    "description": "ערימה גדולה של עצים חתוכים ליד בניין ישן עם דלתות וחלונות",
+    "filename": "DSC_0249.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 20,
+      "aperture": 5.6,
+      "iso": 64,
+      "shutter": 0.003125
+    },
+    "added_at": "2026-09-30"
+  },
+  {
+    "id": "1iA9LUyvMMlrQZbt5OYRxAblPbMlscJiJ",
+    "title": "ערימת עצים מחוזרת",
+    "category": "טבע דומם",
+    "parent_category": null,
+    "url": "/photos/1iA9LUyvMMlrQZbt5OYRxAblPbMlscJiJ.webp",
+    "thumbnail": "/photos/thumb/1iA9LUyvMMlrQZbt5OYRxAblPbMlscJiJ.webp",
+    "description": "ערימה גדולה של גזם עץ חתוך ליד בית ישן בעיר",
+    "filename": "DSC_0249.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 20,
+      "aperture": 5.6,
+      "iso": 64,
+      "shutter": 0.003125
+    },
+    "added_at": "2026-09-30"
+  },
+  {
+    "id": "1U4d5j0XBD1-8OLYoynF-N84YICoL-VTE",
+    "title": "אודים צבעוניים על חוט",
+    "category": "טבע דומם",
+    "parent_category": null,
+    "url": "/photos/1U4d5j0XBD1-8OLYoynF-N84YICoL-VTE.webp",
+    "thumbnail": "/photos/thumb/1U4d5j0XBD1-8OLYoynF-N84YICoL-VTE.webp",
+    "description": "חמישה אודים צבעוניים תלויים על חוט שחור על רקע שמיים כחולים.",
+    "filename": "DSC_0284.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 90,
+      "aperture": 5.6,
+      "iso": 64,
+      "shutter": 0.002
+    },
+    "added_at": "2026-09-30"
+  },
+  {
+    "id": "1FA6axFALdw41wmQJGhI4PnciTeuoK_4F",
+    "title": "אוכפים צבעוניים על חוט",
+    "category": "טבע דומם",
+    "parent_category": null,
+    "url": "/photos/1FA6axFALdw41wmQJGhI4PnciTeuoK_4F.webp",
+    "thumbnail": "/photos/thumb/1FA6axFALdw41wmQJGhI4PnciTeuoK_4F.webp",
+    "description": "חמישה אוכפים צבעוניים תלויים על חוט כביסה על רקע שמיים כחולים.",
+    "filename": "DSC_0284.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 90,
+      "aperture": 5.6,
+      "iso": 64,
+      "shutter": 0.002
+    },
+    "added_at": "2026-09-30"
+  },
+  {
+    "id": "1-VaBBMuvfDs-2hvQdzLjINZmDpZO0Yfo",
+    "title": "חלון בקיר אבן",
+    "category": "טבע דומם",
+    "parent_category": null,
+    "url": "/photos/1-VaBBMuvfDs-2hvQdzLjINZmDpZO0Yfo.webp",
+    "thumbnail": "/photos/thumb/1-VaBBMuvfDs-2hvQdzLjINZmDpZO0Yfo.webp",
+    "description": "חלון עתיק עם מסגרת עץ בקיר אבן מסדוק",
+    "filename": "DSC_0853.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 120,
+      "aperture": 5.3,
+      "iso": 360,
+      "shutter": 0.005
+    },
+    "added_at": "2026-09-30"
+  },
+  {
+    "id": "1LueVNqOP-CEniZQfGRI5dp34S6EhkQMb",
+    "title": "חלון בחורבה",
+    "category": "טבע דומם",
+    "parent_category": null,
+    "url": "/photos/1LueVNqOP-CEniZQfGRI5dp34S6EhkQMb.webp",
+    "thumbnail": "/photos/thumb/1LueVNqOP-CEniZQfGRI5dp34S6EhkQMb.webp",
+    "description": "חלון עתיק בקיר אבן מחוספס עם שרידי עץ בחזית",
+    "filename": "DSC_1684.jpg",
+    "width": 5137,
+    "height": 3420,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 31,
+      "aperture": 4.5,
+      "iso": 64,
+      "shutter": 0.016666668
+    },
+    "added_at": "2026-09-30"
+  },
+  {
+    "id": "1JtssfD2Axw_C1TAANA5pPzRSzr-ol61p",
+    "title": "חלון בעתיקות",
+    "category": "טבע דומם",
+    "parent_category": null,
+    "url": "/photos/1JtssfD2Axw_C1TAANA5pPzRSzr-ol61p.webp",
+    "thumbnail": "/photos/thumb/1JtssfD2Axw_C1TAANA5pPzRSzr-ol61p.webp",
+    "description": "חלון לבן עתיק בקיר אבן משובש עם זכוכית שבורה",
+    "filename": "DSC_1761.jpg",
+    "width": 4876,
+    "height": 3246,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 75,
+      "aperture": 32,
+      "iso": 1600,
+      "shutter": 0.008
+    },
+    "added_at": "2026-09-30"
+  },
+  {
     "id": "19Cuung06aARpZ2f1dbxnGgXe2VwjcesV",
     "title": "שער אבן עתיק",
     "category": "טבע דומם",
@@ -2951,6 +3098,69 @@
       "iso": 250,
       "shutter": 0.01
     }
+  },
+  {
+    "id": "1u4hQu56qxvNZSMuwL7Z53epu1LxsyLGa",
+    "title": "עץ שרוף ומכוסה אבק",
+    "category": "טבע דומם",
+    "parent_category": null,
+    "url": "/photos/1u4hQu56qxvNZSMuwL7Z53epu1LxsyLGa.webp",
+    "thumbnail": "/photos/thumb/1u4hQu56qxvNZSMuwL7Z53epu1LxsyLGa.webp",
+    "description": "שרידי עץ פחום וכגון מכוסה באבק לבן, המציג טקסטורות טבעיות.",
+    "filename": "DSC_2027.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 120,
+      "aperture": 5.3,
+      "iso": 2000,
+      "shutter": 0.005
+    },
+    "added_at": "2026-09-30"
+  },
+  {
+    "id": "1J_WHfLQdHuS1mqQs9FH2QluaeKcnp8sg",
+    "title": "אבנים עם חזזית צהובה",
+    "category": "טבע דומם",
+    "parent_category": null,
+    "url": "/photos/1J_WHfLQdHuS1mqQs9FH2QluaeKcnp8sg.webp",
+    "thumbnail": "/photos/thumb/1J_WHfLQdHuS1mqQs9FH2QluaeKcnp8sg.webp",
+    "description": "קיר אבן שחורה מכוסה בחזזית צהובה וירוקה",
+    "filename": "DSC_2031.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 75,
+      "aperture": 5,
+      "iso": 1800,
+      "shutter": 0.008
+    },
+    "added_at": "2026-09-30"
+  },
+  {
+    "id": "1n4vmdftqtB9mcYskVzuzOwDtMevPcx6I",
+    "title": "דלת לבנה על קיר ורוד",
+    "category": "טבע דומם",
+    "parent_category": null,
+    "url": "/photos/1n4vmdftqtB9mcYskVzuzOwDtMevPcx6I.webp",
+    "thumbnail": "/photos/thumb/1n4vmdftqtB9mcYskVzuzOwDtMevPcx6I.webp",
+    "description": "דלת עתיקה לבנה בקיר ורוד מתפורר עם חשיפת לבנים בעיר עתיקה",
+    "filename": "DSC_2735.jpg",
+    "width": 5197,
+    "height": 3329,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 26,
+      "aperture": 4,
+      "iso": 64,
+      "shutter": 0.008
+    },
+    "added_at": "2026-09-30"
   },
   {
     "id": "1lNRlbA6Pd3g8hr5kq9rDCGQnIEEIfEva",
@@ -6354,6 +6564,27 @@
     "width": 2848,
     "height": 4288,
     "alt": "שפיריות מזדווגות בנוף"
+  },
+  {
+    "id": "1CXbZJsASVcR5m4PxT3If4J8W_t5cyuSU",
+    "title": "עלה תאורה",
+    "category": "מאקרו-צילומי תקריב",
+    "parent_category": null,
+    "url": "/photos/1CXbZJsASVcR5m4PxT3If4J8W_t5cyuSU.webp",
+    "thumbnail": "/photos/thumb/1CXbZJsASVcR5m4PxT3If4J8W_t5cyuSU.webp",
+    "description": "תמונת מאקרו של עלה ירוק עם תאורה צדדית המדגישה את הורידים והמבנה התאי",
+    "filename": "DSC_0620.jpg",
+    "width": 5116,
+    "height": 3427,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 200,
+      "aperture": 8,
+      "iso": 180,
+      "shutter": 0.003125
+    },
+    "added_at": "2026-09-30"
   },
   {
     "id": "1sFRvwHnpOODK4KEkEaJCsHNZGl35oBrA",
@@ -11835,6 +12066,468 @@
       "shutter": 0.003125
     },
     "added_at": "2026-09-28"
+  },
+  {
+    "id": "1z_OKuttSBnZOehYvPVa774CillJuylnh",
+    "title": "מגדל עתיק בעמק ירוק",
+    "category": "גאורגיה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1z_OKuttSBnZOehYvPVa774CillJuylnh.webp",
+    "thumbnail": "/photos/thumb/1z_OKuttSBnZOehYvPVa774CillJuylnh.webp",
+    "description": "מגדל אבן עתיק בודד העומד בתוך יער צפוף על מדרון הר בגאורגיה.",
+    "filename": "DSC_0170.jpg",
+    "width": 5040,
+    "height": 3427,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 200,
+      "aperture": 5.6,
+      "iso": 90,
+      "shutter": 0.003125
+    },
+    "added_at": "2026-09-30"
+  },
+  {
+    "id": "1It7jfQcxdeO24JC7wf2kPVcgRJ2J4fVJ",
+    "title": "עץ עתיק בעמק הרים",
+    "category": "גאורגיה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1It7jfQcxdeO24JC7wf2kPVcgRJ2J4fVJ.webp",
+    "thumbnail": "/photos/thumb/1It7jfQcxdeO24JC7wf2kPVcgRJ2J4fVJ.webp",
+    "description": "עץ ירוק ענק עם גדר לבנה על רקע הרים מכוסי יער בגאורגיה",
+    "filename": "DSC_0191.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 55,
+      "aperture": 5.6,
+      "iso": 64,
+      "shutter": 0.008
+    },
+    "added_at": "2026-09-30"
+  },
+  {
+    "id": "1UZ9ItscQZGSICiQ4tK7uNrEcnfRpXiQ2",
+    "title": "גדר עתיקה בהרי גאורגיה",
+    "category": "גאורגיה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1UZ9ItscQZGSICiQ4tK7uNrEcnfRpXiQ2.webp",
+    "thumbnail": "/photos/thumb/1UZ9ItscQZGSICiQ4tK7uNrEcnfRpXiQ2.webp",
+    "description": "גדר עץ מסורתית בנוף הררי ירוק עם פסגות הרים ברקע",
+    "filename": "DSC_0197.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 20,
+      "aperture": 5.6,
+      "iso": 64,
+      "shutter": 0.004
+    },
+    "added_at": "2026-09-30"
+  },
+  {
+    "id": "1NhmdvJXZRnW-F_YHfe7QqvK6BQbVq4kf",
+    "title": "עמק הרים בגאורגיה",
+    "category": "גאורגיה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1NhmdvJXZRnW-F_YHfe7QqvK6BQbVq4kf.webp",
+    "thumbnail": "/photos/thumb/1NhmdvJXZRnW-F_YHfe7QqvK6BQbVq4kf.webp",
+    "description": "נוף ירוק של עמק הררי עם גדר עץ וטבע בכר",
+    "filename": "DSC_0206-2.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 13,
+      "aperture": 5.6,
+      "iso": 64,
+      "shutter": 0.00625
+    },
+    "added_at": "2026-09-30"
+  },
+  {
+    "id": "1xY59COP5FAbZfe8ve1jdxODwL7tq9lE7",
+    "title": "עצים וסלעים בגיאורגיה",
+    "category": "גאורגיה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1xY59COP5FAbZfe8ve1jdxODwL7tq9lE7.webp",
+    "thumbnail": "/photos/thumb/1xY59COP5FAbZfe8ve1jdxODwL7tq9lE7.webp",
+    "description": "שדה ירוק עם ערימת עצים וחוות ההרים בגיאורגיה",
+    "filename": "DSC_0246.jpg",
+    "width": 4704,
+    "height": 3167,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 20,
+      "aperture": 5.6,
+      "iso": 64,
+      "shutter": 0.00625
+    },
+    "added_at": "2026-09-30"
+  },
+  {
+    "id": "1zqnqGt6ZvMU8ooDVUGSe0_WNr4ozCLri",
+    "title": "מגדל עתיק בגיאורגיה",
+    "category": "גאורגיה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1zqnqGt6ZvMU8ooDVUGSe0_WNr4ozCLri.webp",
+    "thumbnail": "/photos/thumb/1zqnqGt6ZvMU8ooDVUGSe0_WNr4ozCLri.webp",
+    "description": "מגדל אבן עתיק בעמק הרים ירוק עם בתים קטנים בברקע",
+    "filename": "DSC_0262.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 13,
+      "aperture": 5.6,
+      "iso": 64,
+      "shutter": 0.00625
+    },
+    "added_at": "2026-09-30"
+  },
+  {
+    "id": "1-hdyWmKa_IhZuQjPiPVIT0lYg1S-clgM",
+    "title": "מגדל עתיק בגאורגיה",
+    "category": "גאורגיה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1-hdyWmKa_IhZuQjPiPVIT0lYg1S-clgM.webp",
+    "thumbnail": "/photos/thumb/1-hdyWmKa_IhZuQjPiPVIT0lYg1S-clgM.webp",
+    "description": "מגדל אבן עתיק ברקע הרים יוקרתיים ושדות ירוקים בעמק גיאורגי",
+    "filename": "DSC_0265.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 13,
+      "aperture": 5.6,
+      "iso": 64,
+      "shutter": 0.00625
+    },
+    "added_at": "2026-09-30"
+  },
+  {
+    "id": "1Mt5p9-oCMtwHjLMscdqZK7ErK_AQem43",
+    "title": "מגדל עתיק בהרים",
+    "category": "גאורגיה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1Mt5p9-oCMtwHjLMscdqZK7ErK_AQem43.webp",
+    "thumbnail": "/photos/thumb/1Mt5p9-oCMtwHjLMscdqZK7ErK_AQem43.webp",
+    "description": "מגדל אבן עתיק בנוף הררי ירוק של גיאורגיה עם עצים וערמונים",
+    "filename": "DSC_0285.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 18,
+      "aperture": 5.6,
+      "iso": 64,
+      "shutter": 0.0025
+    },
+    "added_at": "2026-09-30"
+  },
+  {
+    "id": "1qq-CZ08weoElerxSeaYhaKsgZpsSvdEb",
+    "title": "עץ סתיו בגאורגיה",
+    "category": "גאורגיה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1qq-CZ08weoElerxSeaYhaKsgZpsSvdEb.webp",
+    "thumbnail": "/photos/thumb/1qq-CZ08weoElerxSeaYhaKsgZpsSvdEb.webp",
+    "description": "עץ פורח בצבעי זהב בנוף כפרי ירוק עם בתים מרוחקים",
+    "filename": "DSC_0317.jpg",
+    "width": 5072,
+    "height": 3307,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 80,
+      "aperture": 5.6,
+      "iso": 64,
+      "shutter": 0.004
+    },
+    "added_at": "2026-09-30"
+  },
+  {
+    "id": "1Ed-TRJxvx3GLJsfktYdR-ZSZZWmt3Eso",
+    "title": "רעיית צאן בגאורגיה",
+    "category": "גאורגיה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1Ed-TRJxvx3GLJsfktYdR-ZSZZWmt3Eso.webp",
+    "thumbnail": "/photos/thumb/1Ed-TRJxvx3GLJsfktYdR-ZSZZWmt3Eso.webp",
+    "description": "שלוש כבשות ברעיה על שדה ירוק בהר גאורגיה",
+    "filename": "DSC_0318.jpg",
+    "width": 5072,
+    "height": 3307,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 130,
+      "aperture": 5.6,
+      "iso": 80,
+      "shutter": 0.005
+    },
+    "added_at": "2026-09-30"
+  },
+  {
+    "id": "1Lz7u0lwDWM1V4SJelJf06a38Qycu67nQ",
+    "title": "בית עץ בהרים",
+    "category": "גאורגיה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1Lz7u0lwDWM1V4SJelJf06a38Qycu67nQ.webp",
+    "thumbnail": "/photos/thumb/1Lz7u0lwDWM1V4SJelJf06a38Qycu67nQ.webp",
+    "description": "בית עץ מסורתי עם גג מתכת על גבעה מוקפת בצמחיה בגיאורגיה.",
+    "filename": "DSC_0470.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 27,
+      "aperture": 8,
+      "iso": 64,
+      "shutter": 0.002
+    },
+    "added_at": "2026-09-30"
+  },
+  {
+    "id": "1nIx_QiMk7U0Rgj9n7wqIawU6Y5YcESzc",
+    "title": "עמק הרים בגאורגיה",
+    "category": "גאורגיה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1nIx_QiMk7U0Rgj9n7wqIawU6Y5YcESzc.webp",
+    "thumbnail": "/photos/thumb/1nIx_QiMk7U0Rgj9n7wqIawU6Y5YcESzc.webp",
+    "description": "נוף הררי עם שדה זהוב בעמק ערפילי בגאורגיה",
+    "filename": "DSC_0773.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 95,
+      "aperture": 6.3,
+      "iso": 140,
+      "shutter": 0.00625
+    },
+    "added_at": "2026-09-30"
+  },
+  {
+    "id": "1yGhUmWZ3PX2SvD7eLcELCJH_eoFvXSDt",
+    "title": "מבצר עתיק בגאורגיה",
+    "category": "גאורגיה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1yGhUmWZ3PX2SvD7eLcELCJH_eoFvXSDt.webp",
+    "thumbnail": "/photos/thumb/1yGhUmWZ3PX2SvD7eLcELCJH_eoFvXSDt.webp",
+    "description": "הריסות מבצר עתיק עם בתים מודרניים ופחות צבעוניים בסביבה.",
+    "filename": "DSC_0816.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 62,
+      "aperture": 6.3,
+      "iso": 640,
+      "shutter": 0.01
+    },
+    "added_at": "2026-09-30"
+  },
+  {
+    "id": "1AONJnHrAabFvMeDreqlKeLVp-DMYbuQ9",
+    "title": "מגדל עתיק בעמק גאורגי",
+    "category": "גאורגיה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1AONJnHrAabFvMeDreqlKeLVp-DMYbuQ9.webp",
+    "thumbnail": "/photos/thumb/1AONJnHrAabFvMeDreqlKeLVp-DMYbuQ9.webp",
+    "description": "שרידי מגדל היסטורי בנוף הררי של גאורגיה בשקיעה",
+    "filename": "DSC_0832-2.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 35,
+      "aperture": 6.3,
+      "iso": 64,
+      "shutter": 0.0015625
+    },
+    "added_at": "2026-09-30"
+  },
+  {
+    "id": "1lGHh-VuTdCC6FKbN7XNKHxbjbxtaxgrv",
+    "title": "בית אבן עתיק בהרים",
+    "category": "גאורגיה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1lGHh-VuTdCC6FKbN7XNKHxbjbxtaxgrv.webp",
+    "thumbnail": "/photos/thumb/1lGHh-VuTdCC6FKbN7XNKHxbjbxtaxgrv.webp",
+    "description": "בניין אבן מנופץ בעלייה הררית עם חלונות פתוחים ונוף יער ירוק",
+    "filename": "DSC_0847.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 40,
+      "aperture": 5.6,
+      "iso": 64,
+      "shutter": 0.01
+    },
+    "added_at": "2026-09-30"
+  },
+  {
+    "id": "1aHpDuh6b3OS0ZQl6yjzsfJ5SHYXajTfn",
+    "title": "כפר ההרים בגאורגיה",
+    "category": "גאורגיה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1aHpDuh6b3OS0ZQl6yjzsfJ5SHYXajTfn.webp",
+    "thumbnail": "/photos/thumb/1aHpDuh6b3OS0ZQl6yjzsfJ5SHYXajTfn.webp",
+    "description": "כפר קדום בעמק הרים עם מגדלים אבן ובתים מסורתיים צבעוניים",
+    "filename": "DSC_0866.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 31,
+      "aperture": 5,
+      "iso": 64,
+      "shutter": 0.01
+    },
+    "added_at": "2026-09-30"
+  },
+  {
+    "id": "1SiEeGnroISRfvcs8Cb1i-f0OjseImXYh",
+    "title": "שיא שלג בגיאורגיה",
+    "category": "גאורגיה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1SiEeGnroISRfvcs8Cb1i-f0OjseImXYh.webp",
+    "thumbnail": "/photos/thumb/1SiEeGnroISRfvcs8Cb1i-f0OjseImXYh.webp",
+    "description": "פסגות מושלגות בהרי הקווקזוס עם עננים לבנים על רקע שמיים כחולים.",
+    "filename": "DSC_0984.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 170,
+      "aperture": 5.6,
+      "iso": 64,
+      "shutter": 0.0005
+    },
+    "added_at": "2026-09-30"
+  },
+  {
+    "id": "1-V09C-pLe2SRlApbGNS63DaPnDrXRpt3",
+    "title": "נהר וליקויים בסתיו",
+    "category": "גאורגיה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1-V09C-pLe2SRlApbGNS63DaPnDrXRpt3.webp",
+    "thumbnail": "/photos/thumb/1-V09C-pLe2SRlApbGNS63DaPnDrXRpt3.webp",
+    "description": "נוף אווירי של נהר מתפתל בעמק מוקף ביער סתווי צבעוני בגיאורגיה",
+    "filename": "DSC_1272.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 200,
+      "aperture": 22,
+      "iso": 2200,
+      "shutter": 0.003125
+    },
+    "added_at": "2026-09-30"
+  },
+  {
+    "id": "1kmVzrIovDkPUVwNv-noAF7QUtzq6Nf3M",
+    "title": "גן פרחים הררי בגיאורגיה",
+    "category": "גאורגיה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1kmVzrIovDkPUVwNv-noAF7QUtzq6Nf3M.webp",
+    "thumbnail": "/photos/thumb/1kmVzrIovDkPUVwNv-noAF7QUtzq6Nf3M.webp",
+    "description": "שדה פרחים אדומים וורודים על רקע נהר ויערות ירוקים בגבעות גיאורגיה",
+    "filename": "DSC_1292.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 18,
+      "aperture": 5.6,
+      "iso": 64,
+      "shutter": 0.008
+    },
+    "added_at": "2026-09-30"
+  },
+  {
+    "id": "1GadsyGKoFSx-F5AxHE8ZXVJC8-RyldjN",
+    "title": "עמק ההרים בגאורגיה",
+    "category": "גאורגיה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1GadsyGKoFSx-F5AxHE8ZXVJC8-RyldjN.webp",
+    "thumbnail": "/photos/thumb/1GadsyGKoFSx-F5AxHE8ZXVJC8-RyldjN.webp",
+    "description": "נוף הררי עם עץ בעלים אדומים וירידה לנהר בעמק ירוק.",
+    "filename": "DSC_1322.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 18,
+      "aperture": 5.6,
+      "iso": 64,
+      "shutter": 0.008
+    },
+    "added_at": "2026-09-30"
+  },
+  {
+    "id": "1Q0qrLPllZDMdfjVCWCJHIdxo140hqPlo",
+    "title": "אגם בעמק הנהר",
+    "category": "גאורגיה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1Q0qrLPllZDMdfjVCWCJHIdxo140hqPlo.webp",
+    "thumbnail": "/photos/thumb/1Q0qrLPllZDMdfjVCWCJHIdxo140hqPlo.webp",
+    "description": "נוף אווירי של אגם טבעי מוקף ביער צפוף וכרך של נהר זורם",
+    "filename": "DSC_1345.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 200,
+      "aperture": 5.6,
+      "iso": 280,
+      "shutter": 0.003125
+    },
+    "added_at": "2026-09-30"
+  },
+  {
+    "id": "1a7aLmByFUNhm20mtfd7BPMa_RTqQqz_j",
+    "title": "שדה פרחים בגאורגיה",
+    "category": "גאורגיה",
+    "parent_category": "מקומות בעולם",
+    "url": "/photos/1a7aLmByFUNhm20mtfd7BPMa_RTqQqz_j.webp",
+    "thumbnail": "/photos/thumb/1a7aLmByFUNhm20mtfd7BPMa_RTqQqz_j.webp",
+    "description": "שדה פרחים צהובים בעמק הררי עם נהר זורם בעומק הנוף",
+    "filename": "DSC_1381.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "10-20mm f/3.5G",
+      "focal": 20,
+      "aperture": 5,
+      "iso": 64,
+      "shutter": 0.0125
+    },
+    "added_at": "2026-09-30"
   },
   {
     "id": "1tYv5TO1Rl8aqQElE2p4SuP-8uTxWdoQr",
@@ -21610,6 +22303,27 @@
     }
   },
   {
+    "id": "1_0nkGOst-KRyolbPOD0NJ5gRvNdSEYpd",
+    "title": "פרחים כחולים בעדינות",
+    "category": "פרחים וצמחים",
+    "parent_category": null,
+    "url": "/photos/1_0nkGOst-KRyolbPOD0NJ5gRvNdSEYpd.webp",
+    "thumbnail": "/photos/thumb/1_0nkGOst-KRyolbPOD0NJ5gRvNdSEYpd.webp",
+    "description": "אשכול של פרחים קטנים בגוון כחול-סגול עם גבעולים ירוקים על רקע אפל.",
+    "filename": "DSC_0603.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 135,
+      "aperture": 8,
+      "iso": 250,
+      "shutter": 0.004
+    },
+    "added_at": "2026-09-30"
+  },
+  {
     "id": "1UHAnI17wVt8l6w6tNGjcxBPKoMGFchos",
     "title": "עלים ירוקים בתאורת שמש",
     "category": "פרחים וצמחים",
@@ -21628,6 +22342,27 @@
       "iso": 200,
       "shutter": 0.02
     }
+  },
+  {
+    "id": "1IpsHnqjsxMIR0ezRzHpF2PO18nCZFOsT",
+    "title": "פטריית זבובים אדומה",
+    "category": "פרחים וצמחים",
+    "parent_category": null,
+    "url": "/photos/1IpsHnqjsxMIR0ezRzHpF2PO18nCZFOsT.webp",
+    "thumbnail": "/photos/thumb/1IpsHnqjsxMIR0ezRzHpF2PO18nCZFOsT.webp",
+    "description": "פטריית זבובים בעלת כיפה אדומה עם נקודות לבנות בצמא ירוקה",
+    "filename": "DSC_0668.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 95,
+      "aperture": 8,
+      "iso": 640,
+      "shutter": 0.00625
+    },
+    "added_at": "2026-09-30"
   },
   {
     "id": "1SH9OiRA76XZRdLZOtWw_cK2COUan0q-r",
@@ -21776,6 +22511,27 @@
     }
   },
   {
+    "id": "1nIuCtbbsKr5GUu-qQ5T-7cO3iFYJSnsV",
+    "title": "תרנגול דורסלי בשלג",
+    "category": "פרחים וצמחים",
+    "parent_category": null,
+    "url": "/photos/1nIuCtbbsKr5GUu-qQ5T-7cO3iFYJSnsV.webp",
+    "thumbnail": "/photos/thumb/1nIuCtbbsKr5GUu-qQ5T-7cO3iFYJSnsV.webp",
+    "description": "פרח דורסלי קפוא בשלג לבן עם גבעול ירוק נקי",
+    "filename": "DSC_0857.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 170,
+      "aperture": 5.6,
+      "iso": 450,
+      "shutter": 0.004
+    },
+    "added_at": "2026-09-30"
+  },
+  {
     "id": "1heVuuhd-zNbofmd1jqmB_mkJmdxEY_pf",
     "title": "פרחים סגולים עדינים",
     "category": "פרחים וצמחים",
@@ -21814,6 +22570,27 @@
       "iso": 200,
       "shutter": 0.003125
     }
+  },
+  {
+    "id": "15R0HM4L3OW67L2oTYHyNh56S0vg0ASwW",
+    "title": "שיזוף סתווי בגן",
+    "category": "פרחים וצמחים",
+    "parent_category": null,
+    "url": "/photos/15R0HM4L3OW67L2oTYHyNh56S0vg0ASwW.webp",
+    "thumbnail": "/photos/thumb/15R0HM4L3OW67L2oTYHyNh56S0vg0ASwW.webp",
+    "description": "שיזוף ירוק עם עלים אדומים בשיא הצבע הסתווי",
+    "filename": "DSC_1216.jpg",
+    "width": 5408,
+    "height": 3600,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 55,
+      "aperture": 22,
+      "iso": 1250,
+      "shutter": 0.01
+    },
+    "added_at": "2026-09-30"
   },
   {
     "id": "1tN0Xf_r9T9ggMxSDF6iw5VHbtBlBOLgU",
@@ -21856,6 +22633,27 @@
       "shutter": 0.000625
     },
     "added_at": "2026-05-18"
+  },
+  {
+    "id": "1mILk0amJJ5oC-1suGBXvz9bnpzofNfa-",
+    "title": "פרחים סגולים בשדה",
+    "category": "פרחים וצמחים",
+    "parent_category": null,
+    "url": "/photos/1mILk0amJJ5oC-1suGBXvz9bnpzofNfa-.webp",
+    "thumbnail": "/photos/thumb/1mILk0amJJ5oC-1suGBXvz9bnpzofNfa-.webp",
+    "description": "שדה של פרחים סגולים עם עלים וגבעולים בגוונים חמים של כתום וחום",
+    "filename": "DSC_1290.jpg",
+    "width": 3600,
+    "height": 5408,
+    "exif": {
+      "camera": "NIKON CORPORATION NIKON Z 7_2",
+      "lens": "VR 18-200mm f/3.5-5.6G",
+      "focal": 150,
+      "aperture": 5.6,
+      "iso": 110,
+      "shutter": 0.004
+    },
+    "added_at": "2026-09-30"
   },
   {
     "id": "1hz0djJ0vvaJn81qutGPOsos4LTs1Ysx8",
