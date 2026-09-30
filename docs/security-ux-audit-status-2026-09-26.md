@@ -1,5 +1,16 @@
 # סטטוס אמיתי של ביקורת האבטחה/UX — 26.9.2026
 
+> **עדכון 30.9.2026 — כל 8 הפריטים ב"מה עדיין חסר" למטה נבדקו שוב מול `main` הנוכחי ונמצאו
+> **פתורים כולם**, דרך עבודה עצמאית מאוחרת יותר (לא cherry-pick מהענף הישן — הענף הישן לא נגע
+> בכלל). אומת בקריאת קוד ישירה, לא מזיכרון: HSTS+CSP קיימים ב-`_headers`, `sample-landscape.jpg`
+> כבר לא נטען (רק הערה שמסבירה למה הוסר), `ResizeObserver` קיים ב-`camera/exposure`,
+> `openModalA11y`/`closeModalA11y` קיימים ב-`gallery.js`, `<main>` קיים ב-`handleCategoryPage`,
+> `cookie-notice.js`/`accessibility-widget.js` כבר קוראים `localStorage.getItem('lang')` לא
+> `document.documentElement.lang`, ההערה על `agent_photos.py` כבר ב-`CLAUDE.md`, ו-
+> `PORTFOLIO_FOLDER_ID` + dedup-by-Drive-ID + `sys.exit(1)` על שגיאות קיימים ב-
+> `agent_photos.py`/`auto_import_new_photos.py`. **אין יותר צורך ב-cherry-pick מהענף הישן
+> `fix/security-analytics-ux-audit` — אל תבזבזו זמן על זה.**
+
 ## הממצא המרכזי
 
 הענף `fix/security-analytics-ux-audit` (קיים ב-`origin`, לא אבד) מכיל **19 קומיטים** עם תיקונים
