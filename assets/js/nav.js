@@ -5,7 +5,7 @@
   // Sub-pages share the same privacy-safe UX measurement as the homepage.
   if (!window.trackUxEvent && !document.querySelector('script[data-site-analytics]')) {
     const analyticsScript = document.createElement('script');
-    analyticsScript.src = '/assets/js/analytics.js?v=5b30dc6e';
+    analyticsScript.src = '/assets/js/analytics.js?v=f571a0c4';
     analyticsScript.defer = true;
     analyticsScript.dataset.siteAnalytics = '';
     document.head.appendChild(analyticsScript);
