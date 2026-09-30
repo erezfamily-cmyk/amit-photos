@@ -181,6 +181,19 @@ def download_thumbnail(session, file_id, max_size=800):
     return raw
 
 
+# כותרת/תיאור תקינים מכילים רק עברית, רווחים וסימני פיסוק נפוצים — לא אותיות לטיניות,
+# סיניות, קוריאניות, ערביות או קיריליות. תואם את הבדיקה הקיימת ב-generateHebrewTitle
+# (worker.js), שם נמצא שדגם ה-Vision לפעמים "מדביק" שארית תעתיק לועזי לתוך מילה עברית
+# (למשל "שומGuards" במקום "שומרים", או "קactus" במקום "קקטוס") — ראה
+# docs/corrupted-photo-titles-2026-09-26.md.
+INVALID_HEBREW_CHARS_RE = re.compile(r"[^א-תװ-״ ,.\-–—'\"״׳]")
+
+
+def is_clean_hebrew_text(s):
+    """True אם s (אם לא ריק) מכיל רק עברית/רווחים/פיסוק נפוץ — ללא תערובת סקריפטים."""
+    return bool(s) and not INVALID_HEBREW_CHARS_RE.search(s)
+
+
 def analyze_with_claude(image_bytes, filename, category, anthropic_key):
     """מנתח תמונה עם Claude Vision ומחזיר כותרת ותיאור בעברית."""
     import requests
@@ -242,7 +255,18 @@ def analyze_with_claude(image_bytes, filename, category, anthropic_key):
             if "```" in content:
                 content = content.split("```")[1].replace("json", "").strip()
             data = json.loads(content)
-            return (data.get("title", ""), data.get("description", ""),
+            title = data.get("title", "")
+            description = data.get("description", "")
+            # דחה תערובת סקריפטים (ראה INVALID_HEBREW_CHARS_RE למעלה) ונסה שוב במקום
+            # לשמור טקסט פגום ל-photos.json
+            if not is_clean_hebrew_text(title) or (description and not is_clean_hebrew_text(description)):
+                if attempt < 2:
+                    print(f"⚠️  פלט לא-עברי תקין ({title!r} / {description!r}), מנסה שוב...", end=" ", flush=True)
+                    time.sleep(2)
+                    continue
+                print(f"⚠️  עדיין לא תקין אחרי 3 ניסיונות — נופל לשם הקובץ")
+                return Path(filename).stem, "", False, ""
+            return (title, description,
                     bool(data.get("copyright_risk", False)), data.get("copyright_reason", ""))
         except Exception as e:
             if attempt < 2:
