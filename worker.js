@@ -2608,7 +2608,9 @@ async function handlePrintOrders(request, env) {
 function buildNewsletterHtml(subject, body, unsubscribeUrl, name) {
   const safeBody = body.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   const safeSubject = subject.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  const greeting = name ? `שלום ${name.replace(/&/g,'&amp;')},<br><br>` : '';
+  // name מגיע מ-subscribers.name — נשלט ע"י הנרשם דרך /api/subscribers הציבורי,
+  // חייב escXml() מלא (לא רק & כמו קודם) כמו כל שאר השדות מבוקרי-משתמש במיילים
+  const greeting = name ? `שלום ${escXml(name)},<br><br>` : '';
   return `<!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
