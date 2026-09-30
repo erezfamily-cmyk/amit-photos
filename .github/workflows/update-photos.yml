@@ -78,14 +78,14 @@ jobs:
       - name: בדוק אם יש שינויים
         id: changes
         run: |
-          git diff --quiet data/photos.json || echo "changed=true" >> $GITHUB_OUTPUT
+          git diff --quiet data/photos.json data/copyright_flagged.json || echo "changed=true" >> $GITHUB_OUTPUT
 
       - name: Commit ו-push אם יש תמונות חדשות
         if: steps.changes.outputs.changed == 'true'
         run: |
           git config user.name "Photos Agent"
           git config user.email "agent@amitphotos.com"
-          git add data/photos.json sitemap.xml
+          git add data/photos.json sitemap.xml data/copyright_flagged.json
           git commit -m "🤖 עדכון אוטומטי: תמונות חדשות מ-Google Drive"
           git pull --rebase --autostash origin main
           git push origin main
