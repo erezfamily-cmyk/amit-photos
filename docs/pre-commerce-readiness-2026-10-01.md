@@ -47,10 +47,10 @@
 - [x] **S4 — rate limiting:** לפני public go-live להוסיף rate limit ל-create-order ול-capture-order.
 - [x] **S5 — create idempotency:** להוסיף idempotency key יציב מה-client/session כדי retry של create-order לא ייצור orders מיותרים.
 - [ ] **S6 — Sandbox isolation:** לא לבצע E2E מול production D1; להקים staging/preview D1 נפרד.
-- [ ] **S7 — legacy payment removal:** לפני `PAYMENTS_ENABLED=true`, להסיר/לנתק את `handleVerifyPayment` ו-`handlePrintOrderComplete` מה-public router.
+- [x] **S7 — legacy payment removal:** לפני `PAYMENTS_ENABLED=true`, להסיר/לנתק את `handleVerifyPayment` ו-`handlePrintOrderComplete` מה-public router.
 - [ ] **S8 — webhook:** להוסיף אימות חתימה מול PayPal + dedup לפי `event_id`.
-- [ ] **S9 — logging:** לוודא שאין access token, Client Secret, buyer data או full PayPal payload רגיש בלוגים.
-- [ ] **S10 — CORS/CSRF:** לבצע בדיקות negative בפועל למסלולי admin וה-public checkout.
+- [x] **S9 — logging:** לוודא שאין access token, Client Secret, buyer data או full PayPal payload רגיש בלוגים.
+- [x] **S10 — CORS/CSRF:** לבצע בדיקות negative בפועל למסלולי admin וה-public checkout.
 
 ### Audit checkpoint — 1.10.2026
 
@@ -66,6 +66,14 @@
 - נוספה migration נפרדת `0002_paypal_security_hardening.sql` — עדיין לא הורצה בפרודקשן.
 - Full Node suite: **323/323 pass, 0 fail**.
 - השלב הבא: S6 staging isolation. אין לבצע Sandbox E2E מול production D1.
+
+### Audit checkpoint 3 — 1.10.2026
+
+- שני legacy public payment endpoints מחזירים כעת 410 תמיד; הם אינם תלויים יותר ב-`PAYMENTS_ENABLED`.
+- סריקת diff: אין PayPal Live API, אין literal secret, ואין logging של access token/order payload.
+- CORS אינו משקף origin זר; `Idempotency-Key` נוסף ל-allow headers ונוסף regression test.
+- Full Node suite: **325/325 pass, 0 fail**.
+- פתוחים לפני E2E/merge: S6 staging isolation ו-S8 webhook verified-signature.
 
 ## Phase 2 — Staging מבודד
 
