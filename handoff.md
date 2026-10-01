@@ -279,3 +279,15 @@ PAYMENTS_ENABLED = "false"   ב-wrangler.toml (production)
 - This proves the new second secret is valid; the previous secret was the source of `invalid_client`.
 - The OAuth response displayed a temporary access token in the local terminal/screenshot. Treat that token as exposed and do not reuse or store it; it is ephemeral and not needed for the Worker.
 - Next: update only `PAYPAL_CLIENT_SECRET` in Cloudflare staging Worker to the verified second secret, redeploy, rerun `/api/admin/paypal/sandbox-status`, then resume E2E with a new order.
+
+
+### PayPal Sandbox OAuth restored — 1.10.2026
+
+- Cloudflare staging Worker was updated to the verified second Sandbox secret.
+- Authenticated `/api/admin/paypal/sandbox-status` now returns:
+  - `ok=true`
+  - `environment=sandbox`
+  - `paymentsEnabled=true`
+  - `credentialsConfigured=true`
+- This confirms the staging Worker can authenticate server-to-server with PayPal Sandbox again after secret rotation.
+- Next: create a fresh Sandbox order with a new Idempotency-Key using the fixed approval flow, approve it with the Personal Sandbox buyer, then capture and verify D1 + download token state.
