@@ -320,3 +320,15 @@ PAYMENTS_ENABLED = "false"   ב-wrangler.toml (production)
   - Python Data Tests: success.
 - Capture validation now still requires exact PayPal order ID, COMPLETED status, exact currency and exact amount; `custom_id` is enforced when PayPal returns it, but its omission no longer causes a false identity mismatch.
 - Next: retry capture on the same already-approved Sandbox order. The existing `ORDER_ALREADY_CAPTURED` recovery path must complete fulfillment without a second charge.
+
+
+### Digital Sandbox capture E2E passed — 1.10.2026
+
+- Retry capture on the approved Sandbox order succeeded after the custom_id compatibility fix.
+- Worker returned a digital fulfillment response with a `/api/download/<token>` URL and title `PayPal Sandbox Test Photo`.
+- This confirms the end-to-end path reached successful fulfillment:
+  PayPal Sandbox approval -> capture -> server-side validation -> local fulfillment claim -> download token creation -> fulfillment response.
+- The recovery path handled the previously captured/partially-processed order without creating a second charge.
+- Remaining verification before marking digital E2E complete:
+  1. repeat capture callback must return the stored fulfillment idempotently;
+  2. D1 must show one COMPLETED order and exactly one download token for that order.
