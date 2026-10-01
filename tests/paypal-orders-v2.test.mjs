@@ -1394,3 +1394,18 @@ test('create-order accepts payer-action links from PayPal', async () => {
     globalThis.fetch = originalFetch;
   }
 });
+
+
+test('PayPal return routes render without worker exceptions', async () => {
+  for (const path of ['/api/paypal/approved', '/api/paypal/cancelled']) {
+    const response = await worker.fetch(
+      new Request('https://amitphotos.com' + path),
+      {},
+      { waitUntil() {} }
+    );
+    assert.equal(response.status, 200, path);
+    assert.match(response.headers.get('Content-Type') || '', /text\/html/);
+    const html = await response.text();
+    assert.match(html, /PayPal Sandbox/);
+  }
+});
