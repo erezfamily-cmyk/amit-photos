@@ -270,3 +270,12 @@ PAYMENTS_ENABLED = "false"   ב-wrangler.toml (production)
 - This reproduces the failure outside Cloudflare, so the current blocker is the PayPal Sandbox credential pair itself, not Worker bindings, D1, R2, routing, or Cloudflare secret access.
 - Do not continue create/capture testing until direct OAuth succeeds.
 - Next recovery step: create a second Sandbox secret for the same app, copy Client ID and the new secret using PayPal's copy controls, test them directly against OAuth, then update Cloudflare only after the direct test passes. Keep production untouched.
+
+
+### PayPal Sandbox second-key verification — 1.10.2026
+
+- A second Sandbox secret was created for the existing PayPal Sandbox app.
+- Direct PowerShell OAuth against `https://api-m.sandbox.paypal.com/v1/oauth2/token` succeeded with the existing Client ID + new second secret.
+- This proves the new second secret is valid; the previous secret was the source of `invalid_client`.
+- The OAuth response displayed a temporary access token in the local terminal/screenshot. Treat that token as exposed and do not reuse or store it; it is ephemeral and not needed for the Worker.
+- Next: update only `PAYPAL_CLIENT_SECRET` in Cloudflare staging Worker to the verified second secret, redeploy, rerun `/api/admin/paypal/sandbox-status`, then resume E2E with a new order.
