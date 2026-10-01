@@ -1467,3 +1467,94 @@ test('capture-order accepts a completed capture when PayPal omits optional custo
     globalThis.fetch = originalFetch;
   }
 });
+
+
+test('capture-order rejects malformed and unknown order IDs without calling PayPal', async () => {
+  const db = makeDb();
+  const env = {
+    PAYMENTS_ENABLED: 'true',
+    PAYPAL_CLIENT_ID: 'sandbox-client',
+    PAYPAL_CLIENT_SECRET: 'sandbox-secret',
+    DB: db,
+  };
+
+  const originalFetch = globalThis.fetch;
+  let fetchCalls = 0;
+  globalThis.fetch = async () => {
+    fetchCalls += 1;
+    throw new Error('PayPal must not be called');
+  };
+
+  try {
+    const malformed = await handlePayPalCaptureOrder(
+      post('/api/paypal/capture-order', { paypalOrderId: 'bad' }),
+      env
+    );
+    assert.equal(malformed.status, 400);
+
+    const unknown = await handlePayPalCaptureOrder(
+      post('/api/paypal/capture-order', { paypalOrderId: 'UNKNOWNORDER123' }),
+      env
+    );
+    assert.equal(unknown.status, 404);
+
+    assert.equal(fetchCalls, 0);
+    assert.equal(db.state.tokenInserts, 0);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test('capture-order leaves an unapproved PayPal order untouched', async () => {
+  const db = makeDb({
+    order: {
+      id: 'local-unapproved',
+      paypal_order_id: 'PAYPALUNAPPROVED123',
+      order_type: 'digital',
+      photo_id: 'photo-1',
+      sku: 'small',
+      amount_expected: 1900,
+      currency: 'ILS',
+      status: 'CREATED',
+      fulfillment_json: null,
+      fulfillment_token: null,
+      paypal_capture_id: null,
+    },
+  });
+  const env = {
+    PAYMENTS_ENABLED: 'true',
+    PAYPAL_CLIENT_ID: 'sandbox-client',
+    PAYPAL_CLIENT_SECRET: 'sandbox-secret',
+    DB: db,
+  };
+
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async (url) => {
+    const target = String(url);
+    if (target.endsWith('/v1/oauth2/token')) {
+      return Response.json({ access_token: 'access-token' });
+    }
+    if (target.endsWith('/capture')) {
+      return Response.json({
+        name: 'UNPROCESSABLE_ENTITY',
+        details: [{ issue: 'ORDER_NOT_APPROVED' }],
+      }, { status: 422 });
+    }
+    throw new Error('unexpected fetch ' + target);
+  };
+
+  try {
+    const response = await handlePayPalCaptureOrder(
+      post('/api/paypal/capture-order', { paypalOrderId: 'PAYPALUNAPPROVED123' }),
+      env
+    );
+    assert.equal(response.status, 502);
+    assert.equal((await response.json()).error, 'PayPal capture failed');
+    assert.equal(db.state.order.status, 'CREATED');
+    assert.equal(db.state.order.paypal_capture_id, null);
+    assert.equal(db.state.order.fulfillment_token, null);
+    assert.equal(db.state.tokenInserts, 0);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
