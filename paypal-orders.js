@@ -328,9 +328,22 @@ export async function handlePayPalWebhook(request, env) {
     return jsonRes({ ok: true, duplicate: true }, 200, request);
   }
 
-  await env.DB.prepare(
+  const insertEvent = await env.DB.prepare(
     'INSERT OR IGNORE INTO paypal_webhook_events (event_id, event_type, received_at, processed) VALUES (?, ?, ?, 0)'
   ).bind(event.id, event.event_type, new Date().toISOString()).run();
+
+  // If another delivery already inserted this event, do not run the same
+  // reconciliation concurrently. The existing delivery owns processing.
+  if ((insertEvent.meta?.changes || 0) === 0) {
+    const raced = await env.DB.prepare(
+      'SELECT processed FROM paypal_webhook_events WHERE event_id=?'
+    ).bind(event.id).first();
+    return jsonRes({
+      ok: true,
+      duplicate: true,
+      processing: raced?.processed !== 1,
+    }, 200, request);
+  }
 
   if (event.event_type !== 'PAYMENT.CAPTURE.COMPLETED') {
     await markWebhookProcessed(env, event.id);
