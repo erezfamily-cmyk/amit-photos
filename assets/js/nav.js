@@ -440,7 +440,7 @@ nav#main-nav .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px)
         if (r.ok) {
           document.getElementById('nav-nl-email').value = '';
           window.trackUxEvent?.('guide_request_success', { source: 'subpage_strip' });
-          if (!data.already || data.marketing_upgraded) {
+          if (data.lead_created) {
             window.trackUxEvent?.('generate_lead', { source: 'subpage_strip' });
           }
         }
