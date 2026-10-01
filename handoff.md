@@ -115,3 +115,24 @@ PAYMENTS_ENABLED = "false"   ב-wrangler.toml (production)
 ---
 
 *אם אתה סוכן AI שנכנס לפרויקט הזה: קרא את `CLAUDE.md` ואת המסמך הזה קודם, ואז תסתכל אם יש `docs/*-2026-*.md` חדש יותר מהתאריך שרשום כאן — אם כן, זה כנראה מעודכן יותר ממה שכתוב פה.*
+
+
+### B2B Art & Licensing MVP — 1.10.2026
+
+המשך התוכנית העסקית פתח ניסוי B2B מינימלי:
+- מסמך: `docs/b2b-art-mvp-2026-10-01.md`
+- עמוד דו-לשוני: `/business/`
+- שלוש הצעות בלבד:
+  1. Digital Display License
+  2. Wall Art Selection
+  3. Custom Collection
+- אין מחירון B2B קשיח בשלב הזה; משתמשים ב-tailored quote כדי ללמוד מהשוק.
+- אין CRM, אין checkout עסקי אוטומטי, אין Gelato commitment.
+- אירועי analytics לא-PII:
+  - `b2b_intent`
+  - `b2b_package_select`
+  - `b2b_contact_start`
+- ה-CTA מפנה לטופס הקשר הקיים באתר, שבו כבר קיימת אפשרות "רישיון מסחרי".
+- לא נוסף קישור לניווט הראשי לפני review.
+- `PAYMENTS_ENABLED=false` נשאר ללא שינוי.
+
