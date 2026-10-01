@@ -207,3 +207,18 @@ PAYMENTS_ENABLED = "false"   ב-wrangler.toml (production)
 - However, the Deployments page still shows active version `78ddcde1`, the prior dashboard-created version.
 - Do **not** start PayPal OAuth/E2E until build details confirm the wrangler deploy step actually published the branch code and the active deployment is updated.
 - Production remains untouched and `PAYMENTS_ENABLED=false`.
+
+
+### PayPal staging deploy verified — 1.10.2026
+
+- Cloudflare build log confirms branch deploy completed successfully for `amit-photos-paypal-sandbox`.
+- Deployed URL: `https://amit-photos-paypal-sandbox.erez-family.workers.dev`.
+- Bound resources in deploy log:
+  - D1 `DB -> amit-photos-paypal-sandbox-db` (staging ID).
+  - R2 `PHOTOS -> amit-photos-paypal-sandbox-images`.
+  - Images binding `IMAGES`.
+  - `PAYMENTS_ENABLED="true"` in staging only.
+- Wrangler reported a new staging Worker version and `Success: Deploy command completed`.
+- A non-fatal duplicate-key warning around an existing Hebrew category key in `worker.js` appeared during build; it did not block deployment and should be cleaned separately.
+- Production remains untouched and `PAYMENTS_ENABLED=false`.
+- Next: external smoke test of staging, then Sandbox OAuth test.
