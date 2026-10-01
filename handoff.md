@@ -133,3 +133,25 @@ PAYMENTS_ENABLED = "false"   ב-wrangler.toml (production)
 ---
 
 *אם אתה סוכן AI שנכנס לפרויקט הזה: קרא את `CLAUDE.md` ואת המסמך הזה קודם, ואז תסתכל אם יש `docs/*-2026-*.md` חדש יותר מהתאריך שרשום כאן — אם כן, זה כנראה מעודכן יותר ממה שכתוב פה.*
+
+
+### Lead source attribution audit — 1.10.2026
+
+נבדקו כל מקורות ההרשמה הפעילים בקוד:
+- `lead_magnet` — עמוד `/free-guide/`
+- `popup` — popup בדף הבית
+- `subpage_strip` — strip שמוזרק לעמודי משנה דרך `assets/js/nav.js`
+- `homepage_section` — טופס newsletter בדף הבית
+- `newsletter_issue` — הרשמה מתוך גיליון newsletter
+
+פער נוסף שנמצא:
+- `popup` ו-`subpage_strip` שלחו בעבר `generate_lead` גם כשאותו email כבר היה קיים.
+- `newsletter_issue` לא שלח `generate_lead` בכלל.
+- לכן source attribution של leads לא היה עקבי בין כל 5 המקורות.
+
+תיקון נוסף באותו Draft PR:
+- כל חמשת המקורות משתמשים באותה הגדרה של lead חדש/שדרוג הסכמה.
+- בקשות guide נשמרות בנפרד מ-lead marketing אמיתי.
+- אין PII ב-GA.
+- אין שינוי ב-payment flow.
+
