@@ -405,6 +405,11 @@ def build_data_summary(data):
                 f"no-marketing={row.get('marketing_opt_out',0)}, "
                 f"unknown={row.get('marketing_unknown',0)}"
             )
+        opt_in_rows = sub.get("period_marketing_opt_ins_by_source", [])
+        if opt_in_rows:
+            lines.append("  opt-ins/upgrades בתקופה לפי מקור:")
+            for row in opt_in_rows:
+                lines.append(f"    {row.get('source','unknown')}: {row.get('count',0)}")
 
     rev = data.get("revenue")
     lines += ["", "--- אימות הכנסות מול D1 (לא רק ספירת events מ-GA) ---"]
@@ -453,6 +458,10 @@ def build_business_review(data):
     source_rows = subscriber_summary.get("period_new_by_source", []) or []
     new_subscribers = sum(_safe_int(r.get("total")) for r in source_rows)
     marketing_opt_ins = sum(_safe_int(r.get("marketing_opt_in")) for r in source_rows)
+    period_marketing_opt_ins = sum(
+        _safe_int(r.get("count"))
+        for r in subscriber_summary.get("period_marketing_opt_ins_by_source", []) or []
+    )
 
     review = {
         "sample": {
@@ -469,7 +478,8 @@ def build_business_review(data):
             "direct_share_pct": _rate_pct(direct_sessions, sessions),
             "lead_rate_pct": _rate_pct(leads, sessions),
             "guide_request_rate_pct": _rate_pct(guide_requests, sessions),
-            "marketing_opt_in_pct": _rate_pct(marketing_opt_ins, new_subscribers),
+            "new_subscriber_marketing_opt_in_pct": _rate_pct(marketing_opt_ins, new_subscribers),
+            "period_marketing_opt_ins": period_marketing_opt_ins,
             "digital_intent_pct": _rate_pct(purchase_intent, photo_views),
             "digital_selection_pct": _rate_pct(add_size, purchase_intent),
             "print_intent_pct": _rate_pct(print_intent, photo_views),
@@ -568,7 +578,9 @@ def build_business_review_html(review):
       <span style="color:#666">{review.get('reason','')}</span>
       <div style="margin-top:10px;color:#777;font-size:.84em">
         Direct: {fmt(k.get('direct_share_pct'))} · Lead rate: {fmt(k.get('lead_rate_pct'))} ·
-        Guide request rate: {fmt(k.get('guide_request_rate_pct'))} · Marketing opt-in: {fmt(k.get('marketing_opt_in_pct'))} ·
+        Guide request rate: {fmt(k.get('guide_request_rate_pct'))} ·
+        New-subscriber marketing opt-in: {fmt(k.get('new_subscriber_marketing_opt_in_pct'))} ·
+        Weekly marketing opt-ins/upgrades: {k.get('period_marketing_opt_ins', 0)} ·
         Digital intent: {fmt(k.get('digital_intent_pct'))} ·
         Print intent: {fmt(k.get('print_intent_pct'))}<br>
         Sample: {sample.get('sessions',0)} sessions / {sample.get('new_subscribers',0)} new subscribers.
