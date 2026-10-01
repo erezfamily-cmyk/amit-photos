@@ -191,3 +191,11 @@ PAYMENTS_ENABLED = "false"   ב-wrangler.toml (production)
 - The staging Worker remains workers.dev-only.
 - This documentation commit intentionally triggers the first staging build after Git connection.
 - Production site remains untouched and production `PAYMENTS_ENABLED=false`.
+
+
+### First Cloudflare staging build — 1.10.2026
+
+- After Git connection, commit `7334f8088c381a3b3bd4103157101007aa305f36` triggered the first build for `amit-photos-paypal-sandbox`.
+- Cloudflare Deployments currently shows the branch build as **In progress**.
+- The currently active version is still the prior dashboard-created Worker version; do not run PayPal OAuth/E2E until the branch build finishes successfully and becomes active.
+- No production deployment or payment enablement occurred.
