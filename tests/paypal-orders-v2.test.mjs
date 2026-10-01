@@ -1409,3 +1409,61 @@ test('PayPal return routes render without worker exceptions', async () => {
     assert.match(html, /PayPal Sandbox/);
   }
 });
+
+
+test('capture-order accepts a completed capture when PayPal omits optional custom_id', async () => {
+  const db = makeDb({
+    order: {
+      id: 'local-1',
+      paypal_order_id: 'PAYPALORDER123',
+      order_type: 'digital',
+      photo_id: 'photo-1',
+      sku: 'small',
+      amount_expected: 1900,
+      currency: 'ILS',
+      status: 'CREATED',
+      fulfillment_json: null,
+      fulfillment_token: null,
+      paypal_capture_id: null,
+    },
+  });
+  const env = {
+    PAYMENTS_ENABLED: 'true',
+    PAYPAL_CLIENT_ID: 'sandbox-client',
+    PAYPAL_CLIENT_SECRET: 'sandbox-secret',
+    DB: db,
+  };
+
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async (url) => {
+    const target = String(url);
+    if (target.endsWith('/v1/oauth2/token')) {
+      return Response.json({ access_token: 'access-token' });
+    }
+    return Response.json({
+      id: 'PAYPALORDER123',
+      status: 'COMPLETED',
+      purchase_units: [{
+        payments: {
+          captures: [{
+            id: 'CAPTURE-NO-CUSTOM-ID',
+            status: 'COMPLETED',
+            amount: { currency_code: 'ILS', value: '19.00' },
+          }],
+        },
+      }],
+    }, { status: 201 });
+  };
+
+  try {
+    const response = await handlePayPalCaptureOrder(
+      post('/api/paypal/capture-order', { paypalOrderId: 'PAYPALORDER123' }),
+      env
+    );
+    assert.equal(response.status, 200);
+    assert.match((await response.json()).url, /^\/api\/download\//);
+    assert.equal(db.state.order.status, 'COMPLETED');
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
