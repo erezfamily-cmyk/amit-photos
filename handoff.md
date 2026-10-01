@@ -175,3 +175,30 @@ PAYMENTS_ENABLED = "false"   ב-wrangler.toml (production)
 4. רק אחרי שהמדידה חיה: להתחיל Acquisition Experiment 01 ל-7 ימים.
 5. לא להתחיל paid ads, לא להפעיל PayPal production ולא להעמיק Gelato לפני שיש signal אמיתי מהנתונים.
 
+
+
+### PR #82 QA pass — 1.10.2026
+
+בוצע סבב QA על Admin UTM campaign link builder.
+
+שינויים שבוצעו:
+- הוצא logic של בניית URL למודול testable:
+  - `assets/js/admin-campaign-links.mjs`
+- נוספו guardrails:
+  - destination/source/medium allowlists.
+  - normalization ל-campaign/content.
+  - חסימה בסיסית של email/phone בתוך UTM לפני normalization.
+  - כפתור "פתח לבדיקה" נשאר disabled עד שנוצר URL חוקי.
+  - שדות campaign/content מוגדרים ללא autocomplete/autocapitalize כדי לצמצם טעויות במובייל.
+- נוספו tests:
+  - בניית UTM תקין.
+  - שמירת `#gallery`.
+  - חסימת destination/source/medium לא חוקיים.
+  - חסימת PII ברור.
+  - דרישת campaign לא-ריק.
+- נוסף CI ממוקד:
+  - `.github/workflows/admin-campaign-links-ci.yml`
+  - מריץ `node --test tests/admin-campaign-links.test.mjs`.
+
+עדיין אין merge/deploy. יש להמתין ל-CI לפני מעבר PR #82 ל-Ready.
+
