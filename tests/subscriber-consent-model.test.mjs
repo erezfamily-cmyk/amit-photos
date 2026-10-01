@@ -227,3 +227,52 @@ test('report never includes email addresses or any other PII field — only sour
 test('source code of the diagnostics helper contains no UPDATE statement', () => {
   assert.doesNotMatch(getConsentBackfillDiagnostics.toString(), /UPDATE\s+subscribers/i);
 });
+
+
+test('new subscriber response exposes created=true without PII', async () => {
+  const env = fakeEnv({ existingRow: null });
+  const res = await handleSubscribers(req('lead_magnet', {
+    email: 'new@b.com',
+    consent_privacy: true,
+    consent_marketing: false,
+  }), env);
+  assert.equal(res.status, 200);
+  const body = await res.json();
+  assert.equal(body.ok, true);
+  assert.equal(body.already, false);
+  assert.equal(body.created, true);
+  assert.equal(body.marketing_upgraded, false);
+  assert.equal(typeof body.id, 'string');
+  assert.equal('email' in body, false);
+});
+
+test('existing subscriber response does not look like a new lead', async () => {
+  const env = fakeEnv({ existingRow: { id: 'sub1', consent_marketing: 1 } });
+  const res = await handleSubscribers(req('lead_magnet', {
+    email: 'a@b.com',
+    consent_privacy: true,
+    consent_marketing: false,
+  }), env);
+  assert.equal(res.status, 200);
+  const body = await res.json();
+  assert.deepEqual(body, {
+    ok: true,
+    already: true,
+    created: false,
+    marketing_upgraded: false,
+  });
+});
+
+test('existing subscriber response marks a real marketing-consent upgrade', async () => {
+  const env = fakeEnv({ existingRow: { id: 'sub1', consent_marketing: 0 } });
+  const res = await handleSubscribers(req('lead_magnet', {
+    email: 'a@b.com',
+    consent_privacy: true,
+    consent_marketing: true,
+  }), env);
+  assert.equal(res.status, 200);
+  const body = await res.json();
+  assert.equal(body.already, true);
+  assert.equal(body.created, false);
+  assert.equal(body.marketing_upgraded, true);
+});
