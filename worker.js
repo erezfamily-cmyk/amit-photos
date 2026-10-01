@@ -7929,7 +7929,9 @@ export default {
     if (path === '/api/print/catalog')        return handlePrintCatalog(request, env);
     if (path === '/api/print/quote')          return handlePrintQuote(request, env);
     if (path === '/api/print/upload-crop')    return handlePrintUploadCrop(request, env);
-    if (path === '/api/print/order-complete') return handlePrintOrderComplete(request, env);
+    if (path === '/api/print/order-complete') {
+      return jsonRes({ error: 'LEGACY_PAYMENT_ENDPOINT_REMOVED' }, 410, request);
+    }
     if (path === '/api/print/cancel')         return handlePrintCancel(request, env);
     if (path === '/api/print/webhook')        return handlePrintWebhook(request, env);
     if (path === '/api/print/refresh-status') return handlePrintRefreshStatus(request, env);
