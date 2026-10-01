@@ -957,6 +957,70 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
         <div id="ux-segments" class="ux-segments"></div>
       </div>
 
+      <!-- Acquisition campaign link builder -->
+      <div class="dash-recent" id="campaign-link-builder" style="margin-bottom:1.5rem">
+        <div class="dash-recent-title" style="margin-bottom:.9rem">🔗 בונה קישורי קמפיין (UTM)</div>
+        <div style="color:var(--text-muted);font-size:.82rem;line-height:1.6;margin-bottom:1rem">
+          כלי פנימי ליצירת deep links מדידים תחת amitphotos.com. <strong>אין להזין שמות, אימיילים, טלפונים או מידע אישי בשדות UTM.</strong>
+        </div>
+        <div class="form-row">
+          <div class="form-field">
+            <label for="campaign-destination">יעד</label>
+            <select id="campaign-destination">
+              <option value="/free-guide/">מדריך חינמי</option>
+              <option value="/licensing/">רישוי דיגיטלי</option>
+              <option value="/business/">עסקים / B2B</option>
+              <option value="/#gallery">גלריה</option>
+              <option value="/camera/">למד לצלם</option>
+              <option value="/locations/">מקומות צילום</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label for="campaign-source">Source</label>
+            <select id="campaign-source">
+              <option value="instagram">Instagram</option>
+              <option value="facebook">Facebook</option>
+              <option value="threads">Threads</option>
+              <option value="tiktok">TikTok</option>
+              <option value="youtube">YouTube</option>
+              <option value="newsletter">Newsletter</option>
+              <option value="whatsapp">WhatsApp</option>
+              <option value="partner">Partner</option>
+              <option value="linkedin">LinkedIn</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label for="campaign-medium">Medium</label>
+            <select id="campaign-medium">
+              <option value="social">social</option>
+              <option value="email">email</option>
+              <option value="message">message</option>
+              <option value="referral">referral</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row" style="margin-top:.75rem">
+          <div class="form-field">
+            <label for="campaign-name">Campaign</label>
+            <input id="campaign-name" type="text" inputmode="text" maxlength="80" autocapitalize="none" autocomplete="off" spellcheck="false" placeholder="202610_freeguide_photo_tips">
+          </div>
+          <div class="form-field">
+            <label for="campaign-content">Content</label>
+            <input id="campaign-content" type="text" inputmode="text" maxlength="80" autocapitalize="none" autocomplete="off" spellcheck="false" placeholder="story_1">
+          </div>
+        </div>
+        <div style="margin-top:1rem">
+          <label for="campaign-result" style="display:block;color:var(--text-muted);font-size:.78rem;margin-bottom:.35rem">קישור מוכן</label>
+          <textarea id="campaign-result" readonly rows="3" style="width:100%;background:#0d0d0d;border:1px solid var(--border);color:var(--text);padding:.65rem .75rem;border-radius:var(--radius);font-size:.84rem;direction:ltr;resize:vertical"></textarea>
+        </div>
+        <div class="mobile-tool-actions" style="display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.75rem">
+          <button type="button" class="btn btn-primary" id="campaign-build-btn">צור קישור</button>
+          <button type="button" class="btn btn-ghost" id="campaign-copy-btn">העתק</button>
+          <button type="button" class="btn btn-ghost" id="campaign-open-btn" disabled>פתח לבדיקה</button>
+        </div>
+        <div id="campaign-link-status" role="status" aria-live="polite" style="margin-top:.6rem;color:var(--text-muted);font-size:.78rem;min-height:1.2em"></div>
+      </div>
+
       <!-- Social + Newsletter snapshot -->
       <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.5rem" id="social-kpi-row">
         <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:6px;padding:1.1rem;text-align:center">
@@ -8113,6 +8177,8 @@ async function confirmLinkToLocation() {
 
 })();
 </script>
+
+<script type="module" src="/assets/js/admin-campaign-links.mjs?v=20261001"></script>
 
 </body>
 </html>
