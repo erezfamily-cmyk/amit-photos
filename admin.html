@@ -2396,6 +2396,50 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
 // ===== UTILS =====
 const $ = id => document.getElementById(id);
 
+// Critical navigation bootstrap: bind sidebar navigation before any feature module
+// can fail at runtime. This keeps Admin navigation usable even if a later
+// non-navigation module throws during startup.
+(function bootstrapAdminNav() {
+  const activate = item => {
+    if (!item?.dataset?.section) return;
+    if (item.dataset.section === 'newsletter') {
+      window.location.href = '/admin/newsletter/';
+      return;
+    }
+    document.querySelectorAll('.nav-item').forEach(n => {
+      n.classList.remove('active');
+      n.removeAttribute('aria-current');
+    });
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    item.classList.add('active');
+    item.setAttribute('aria-current', 'page');
+    const section = document.getElementById('section-' + item.dataset.section);
+    if (section) section.classList.add('active');
+    document.querySelector('.sidebar')?.classList.remove('open');
+    document.body.classList.remove('sidebar-open');
+  };
+
+  document.querySelectorAll('.nav-item').forEach(item => {
+    if (item.dataset.navBootstrapBound === '1') return;
+    item.dataset.navBootstrapBound = '1';
+    item.setAttribute('role', 'button');
+    item.setAttribute('tabindex', '0');
+    if (item.classList.contains('active')) item.setAttribute('aria-current', 'page');
+    item.addEventListener('click', () => activate(item));
+    item.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        activate(item);
+      }
+    });
+  });
+
+  window.addEventListener('error', e => {
+    const msg = String(e?.message || 'unknown JavaScript error');
+    document.title = 'AMIT PHOTOS — ניהול ⚠ ' + msg.slice(0, 80);
+  });
+})();
+
 function parseCSV(text) {
   const lines = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n').filter(l => l.trim());
   if (lines.length < 2) return [];
@@ -3188,6 +3232,7 @@ window.addEventListener('resize', () => {
 });
 
 document.querySelectorAll('.nav-item').forEach(item => {
+  if (item.dataset.navBootstrapBound === '1') return;
   item.setAttribute('role', 'button');
   item.setAttribute('tabindex', '0');
   if (item.classList.contains('active')) item.setAttribute('aria-current', 'page');
