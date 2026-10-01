@@ -345,6 +345,7 @@ async function handleFreeGuide(request, env) {
 <meta name="twitter:title" content="${t.ogTitle}">
 <meta name="twitter:description" content="${t.ogDesc}">${photoUrl ? `\n<meta name="twitter:image" content="${photoUrl}">` : ''}
 ${GA_SNIPPET}
+<script src="/assets/js/analytics.js?v=f571a0c4"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Heebo',sans-serif;background:#111;color:#f0ede8;min-height:100vh;display:flex;align-items:center;justify-content:center}
@@ -451,7 +452,19 @@ document.getElementById('fg-form').addEventListener('submit', async function(e) 
         consent_marketing: document.getElementById('fg-consent-marketing').checked
       })
     });
+    const data = await r.json().catch(() => ({}));
     if (r.ok) {
+      if (typeof window.trackUxEvent === 'function') {
+        window.trackUxEvent('guide_request_success', { source: 'lead_magnet' });
+        if (!data.already || data.marketing_upgraded) {
+          window.trackUxEvent('generate_lead', { source: 'lead_magnet' });
+        }
+      } else if (typeof gtag === 'function') {
+        gtag('event', 'guide_request_success', { source: 'lead_magnet' });
+        if (!data.already || data.marketing_upgraded) {
+          gtag('event', 'generate_lead', { source: 'lead_magnet' });
+        }
+      }
       msg.className = 'msg ok';
       msg.innerHTML = t.successHtml + '<br><a href="https://api.whatsapp.com/send?text=' + encodeURIComponent(t.shareText) + '" target="_blank" rel="noopener" style="display:inline-block;margin-top:.6rem;background:#25D366;color:#fff;padding:.4rem 1rem;border-radius:4px;text-decoration:none;font-size:.85rem">' + t.shareBtn + '</a>';
       document.getElementById('fg-email').value = '';
@@ -619,7 +632,12 @@ async function handleSubscribers(request, env) {
           })
         }).catch(() => {});
       }
-      return jsonRes({ ok: true, already: true }, 200, request);
+      return jsonRes({
+        ok: true,
+        already: true,
+        created: false,
+        marketing_upgraded: upgradedMarketingConsent,
+      }, 200, request);
     }
     const id = crypto.randomUUID();
     await env.DB.prepare(
@@ -652,7 +670,13 @@ async function handleSubscribers(request, env) {
       }
     }
 
-    return jsonRes({ ok: true, id }, 200, request);
+    return jsonRes({
+      ok: true,
+      id,
+      already: false,
+      created: true,
+      marketing_upgraded: false,
+    }, 200, request);
   }
 
   // GET ו-DELETE דורשים auth
