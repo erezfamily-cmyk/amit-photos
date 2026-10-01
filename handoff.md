@@ -427,3 +427,15 @@ Next manual negative-path test: buyer cancel in PayPal Sandbox.
 - PayPal returned successfully to the staging `cancel_url`.
 - The Worker rendered `PayPal Sandbox checkout cancelled` and stated that no capture was attempted.
 - Next verification: inspect staging D1 and confirm the cancelled order remains uncaptured and no new download token was created.
+
+
+### Buyer cancel D1 verification passed — 1.10.2026 evening
+
+Cloudflare D1 staging verification after PayPal Sandbox buyer cancel confirmed:
+- newest cancelled test order remains `CREATED`;
+- `paypal_capture_id` is NULL;
+- `fulfillment_token` is NULL;
+- no additional `download_tokens` row was created;
+- the only download token present still belongs to the prior successfully completed Sandbox purchase.
+
+Conclusion: buyer cancel path is verified end-to-end and does not create a charge entitlement or download fulfillment.
