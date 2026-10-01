@@ -118,6 +118,7 @@ CREATE TABLE IF NOT EXISTS paypal_orders (
   status TEXT NOT NULL DEFAULT 'CREATED',
   print_address_json TEXT,
   fulfillment_json TEXT,
+  fulfillment_token TEXT UNIQUE,
   paypal_capture_id TEXT,
   created_at TEXT NOT NULL,
   completed_at TEXT
