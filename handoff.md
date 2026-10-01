@@ -612,3 +612,32 @@ Guardrail חשוב:
 - smoke checks ל-/licensing/ ול-/business/.
 - בדיקת Admin UTM builder.
 - בדיקה אוטומטית ש-/api/payments-status מחזיר enabled=false.
+
+
+### Live acquisition smoke verification passed — 1.10.2026
+
+GitHub Actions `Business Live Verification` עבר בהצלחה מול האתר החי.
+
+אומת בפועל:
+- `/licensing/` נטען ומכיל:
+  - `licensing_personal_interest`
+  - מקור המחירים `/api/admin/prices`
+  - GA measurement marker
+- `/business/` נטען ומכיל:
+  - `b2b_contact_start`
+  - `amit_b2b_context`
+  - analytics helper
+- `/admin.html` לאחר cache-busting redirect מכיל את UTM builder.
+- `/api/payments-status` מחזיר `enabled=false`.
+- thumbnail ציבורי לדוגמה נטען בהצלחה אחרי תיקון URL יחסי.
+
+תוקנו תוך כדי שני false negatives ב-health verification:
+1. Admin מחזיר redirect עם `_v`, ולכן הבדיקה צריכה `curl -L`.
+2. `set -o pipefail` + `grep -q` יצר Broken Pipe אחרי match; הוחלף ב-here-string.
+
+מה עדיין לא מסומן כמאומת:
+- receipt בפועל של אירועי licensing/B2B בתוך GA/weekly report.
+- לכן Acquisition Experiment 01 עדיין לא מתחיל עד אימות analytics receipt.
+
+PayPal נשאר כבוי.
+Gelato נשאר מחוץ לתוכנית.
