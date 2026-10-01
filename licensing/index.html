@@ -79,7 +79,7 @@ h1{font-family:'Syne',sans-serif;font-size:clamp(2rem,7vw,3.6rem);line-height:1.
          data-en="Up to 1500px on the long edge. Suitable for screens, personal wallpaper and personal posts.">
          עד 1500px בצלע הארוכה. מתאים למסכים, רקע אישי ופוסטים אישיים.
       </p>
-      <div class="price">₪19</div>
+      <div class="price" data-price-size="small">₪19</div>
     </article>
     <article class="card">
       <h3 data-he="קובץ הדפסה" data-en="Print-ready file">קובץ הדפסה</h3>
@@ -87,7 +87,7 @@ h1{font-family:'Syne',sans-serif;font-size:clamp(2rem,7vw,3.6rem);line-height:1.
          data-en="Up to 3000px on the long edge. Suitable for high-quality personal use and a one-off home print.">
          עד 3000px בצלע הארוכה. מתאים לשימוש אישי באיכות גבוהה ולהדפסה ביתית חד-פעמית.
       </p>
-      <div class="price">₪59</div>
+      <div class="price" data-price-size="medium">₪59</div>
     </article>
     <article class="card">
       <h3 data-he="קובץ מלא" data-en="Full-size file">קובץ מלא</h3>
@@ -95,7 +95,7 @@ h1{font-family:'Syne',sans-serif;font-size:clamp(2rem,7vw,3.6rem);line-height:1.
          data-en="The largest available file for the image. Suitable for maximum-resolution personal use.">
          הקובץ הגדול הזמין לפי התמונה. מתאים לשימוש אישי ברזולוציה המרבית.
       </p>
-      <div class="price">₪129</div>
+      <div class="price" data-price-size="large">₪129</div>
     </article>
   </div>
 
@@ -141,14 +141,86 @@ h1{font-family:'Syne',sans-serif;font-size:clamp(2rem,7vw,3.6rem);line-height:1.
   </div>
 
   <p class="small"
-    data-he="המחירים המוצגים הם מחירי הניסוי הקיימים של הקבצים הדיגיטליים ואינם התחייבות למחיר עתידי. אין להעביר, למכור מחדש, להפיץ את הקובץ, להעניק רישיון משנה או להשתמש בו בפרסום/עסק ללא רישיון מסחרי מתאים."
-    data-en="Shown prices are the current test prices for digital files and are not a commitment to future pricing. The file may not be transferred, resold, redistributed, sublicensed or used for advertising/business without an appropriate commercial license.">
-    המחירים המוצגים הם מחירי הניסוי הקיימים של הקבצים הדיגיטליים ואינם התחייבות למחיר עתידי. אין להעביר, למכור מחדש, להפיץ את הקובץ, להעניק רישיון משנה או להשתמש בו בפרסום/עסק ללא רישיון מסחרי מתאים.
+    data-he="המחירים נטענים מאותה הגדרת מחירים שמשמשת את ההורדות באתר. לתמונה מסוימת עשויה להיות התאמת מחיר או מבצע; המחיר הקובע מוצג במסלול הרכישה של אותה תמונה. אין להעביר, למכור מחדש, להפיץ את הקובץ, להעניק רישיון משנה או להשתמש בו בפרסום/עסק ללא רישיון מסחרי מתאים."
+    data-en="Prices are loaded from the same price settings used by the site's digital downloads. A specific image may have a price override or promotion; the authoritative price is shown in that image's purchase flow. The file may not be transferred, resold, redistributed, sublicensed or used for advertising/business without an appropriate commercial license.">
+    המחירים נטענים מאותה הגדרת מחירים שמשמשת את ההורדות באתר. לתמונה מסוימת עשויה להיות התאמת מחיר או מבצע; המחיר הקובע מוצג במסלול הרכישה של אותה תמונה. אין להעביר, למכור מחדש, להפיץ את הקובץ, להעניק רישיון משנה או להשתמש בו בפרסום/עסק ללא רישיון מסחרי מתאים.
   </p>
 </main>
 
 <script>
 (function () {
+  const ILS_TO_USD = 3.7;
+  let currentLang = 'he';
+  let currentPrices = { small: 19, medium: 59, large: 129 };
+
+  function formatPrice(ils) {
+    const value = Number(ils);
+    if (!Number.isFinite(value)) return '';
+    return currentLang === 'en' ? '
+    he: { title: 'רישוי תמונות דיגיטלי — Amit Photos', description: 'רישוי תמונות דיגיטלי של Amit Photos — שימוש אישי והצעת מחיר לשימוש מסחרי.' },
+    en: { title: 'Digital Image Licensing — Amit Photos', description: 'Digital image licensing from Amit Photos — personal use and tailored commercial licensing.' }
+  };
+
+  window.setLicensingLang = function (lang) {
+    if (lang !== 'he' && lang !== 'en') lang = 'he';
+    currentLang = lang;
+    try { localStorage.setItem('lang', lang); } catch (e) {}
+    document.documentElement.lang = lang;
+    document.documentElement.dir = lang === 'he' ? 'rtl' : 'ltr';
+    document.title = T[lang].title;
+    const meta = document.querySelector('meta[name="description"]');
+    if (meta) meta.content = T[lang].description;
+    document.querySelectorAll('[data-he]').forEach(function (el) {
+      el.textContent = lang === 'en' ? el.dataset.en : el.dataset.he;
+    });
+    document.getElementById('lang-he').classList.toggle('active', lang === 'he');
+    document.getElementById('lang-en').classList.toggle('active', lang === 'en');
+    renderPrices();
+  };
+
+  let initial = 'he';
+  const qp = new URLSearchParams(location.search).get('lang');
+  if (qp === 'he' || qp === 'en') initial = qp;
+  else {
+    try {
+      const stored = localStorage.getItem('lang');
+      if (stored === 'he' || stored === 'en') initial = stored;
+    } catch (e) {}
+  }
+  setLicensingLang(initial);
+  loadCurrentPrices();
+})();
+</script>
+</body>
+</html>
+ + Math.round(value / ILS_TO_USD) : '₪' + value;
+  }
+
+  function renderPrices() {
+    document.querySelectorAll('[data-price-size]').forEach(function (el) {
+      const size = el.dataset.priceSize;
+      if (currentPrices[size] != null) el.textContent = formatPrice(currentPrices[size]);
+    });
+  }
+
+  async function loadCurrentPrices() {
+    try {
+      const response = await fetch('/api/admin/prices', { headers: { 'Accept': 'application/json' } });
+      if (!response.ok) return;
+      const data = await response.json();
+      if (['small', 'medium', 'large'].every(function (size) { return Number.isFinite(Number(data[size])); })) {
+        currentPrices = {
+          small: Number(data.small),
+          medium: Number(data.medium),
+          large: Number(data.large)
+        };
+        renderPrices();
+      }
+    } catch (e) {
+      // Keep fail-safe display defaults; checkout remains authoritative.
+    }
+  }
+
   const T = {
     he: { title: 'רישוי תמונות דיגיטלי — Amit Photos', description: 'רישוי תמונות דיגיטלי של Amit Photos — שימוש אישי והצעת מחיר לשימוש מסחרי.' },
     en: { title: 'Digital Image Licensing — Amit Photos', description: 'Digital image licensing from Amit Photos — personal use and tailored commercial licensing.' }
