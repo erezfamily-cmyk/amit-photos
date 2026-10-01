@@ -50,6 +50,7 @@ function makeDb(options = {}) {
                   status: 'CREATED',
                   created_at: args[6],
                   fulfillment_json: null,
+                  fulfillment_token: null,
                   paypal_capture_id: null,
                 };
                 return { success: true, meta: { changes: 1 } };
@@ -60,9 +61,10 @@ function makeDb(options = {}) {
                 }
                 state.order.status = 'FULFILLING';
                 state.order.paypal_capture_id = args[0];
+                state.order.fulfillment_token = args[1];
                 return { success: true, meta: { changes: 1 } };
               }
-              if (sql.includes('INSERT INTO download_tokens')) {
+              if (sql.includes('INSERT OR IGNORE INTO download_tokens')) {
                 state.tokenInserts += 1;
                 state.token = { token: args[0] };
                 return { success: true, meta: { changes: 1 } };
@@ -208,6 +210,7 @@ test('capture-order rejects a completed PayPal capture when the amount does not 
       currency: 'ILS',
       status: 'CREATED',
       fulfillment_json: null,
+      fulfillment_token: null,
       paypal_capture_id: null,
     },
   });
@@ -265,6 +268,7 @@ test('successful capture creates one download token and a duplicate callback reu
       currency: 'ILS',
       status: 'CREATED',
       fulfillment_json: null,
+      fulfillment_token: null,
       paypal_capture_id: null,
     },
   });
@@ -318,6 +322,52 @@ test('successful capture creates one download token and a duplicate callback reu
     assert.deepEqual(secondBody, firstBody);
     assert.equal(db.state.tokenInserts, 1);
     assert.equal(fetchCalls, callsAfterFirst, 'duplicate callback must not contact PayPal again');
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+
+test('resume from FULFILLING reuses the locked fulfillment token without calling PayPal', async () => {
+  const db = makeDb({
+    order: {
+      id: 'local-2',
+      paypal_order_id: 'PAYPALORDER456',
+      order_type: 'digital',
+      photo_id: 'photo-1',
+      sku: 'small',
+      amount_expected: 1900,
+      currency: 'ILS',
+      status: 'FULFILLING',
+      fulfillment_json: null,
+      fulfillment_token: 'locked-token-123',
+      paypal_capture_id: 'CAPTURE2',
+    },
+  });
+  const env = {
+    PAYMENTS_ENABLED: 'true',
+    PAYPAL_CLIENT_ID: 'sandbox-client',
+    PAYPAL_CLIENT_SECRET: 'sandbox-secret',
+    DB: db,
+  };
+
+  const originalFetch = globalThis.fetch;
+  let fetchCalls = 0;
+  globalThis.fetch = async () => {
+    fetchCalls += 1;
+    throw new Error('must not call PayPal while resuming local fulfillment');
+  };
+
+  try {
+    const response = await handlePayPalCaptureOrder(
+      post('/api/paypal/capture-order', { paypalOrderId: 'PAYPALORDER456' }),
+      env
+    );
+    assert.equal(response.status, 200);
+    const body = await response.json();
+    assert.equal(body.url, '/api/download/locked-token-123');
+    assert.equal(db.state.tokenInserts, 1);
+    assert.equal(fetchCalls, 0);
   } finally {
     globalThis.fetch = originalFetch;
   }
