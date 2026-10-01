@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import worker, { handlePayPalCreateOrder, handlePayPalCaptureOrder, handlePayPalSandboxStatus, handlePayPalWebhook } from '../worker.js';
+import worker, { handlePayPalCreateOrder, handlePayPalCaptureOrder, handlePayPalSandboxStatus, handlePayPalWebhook, handlePayPalSandboxCleanup } from '../worker.js';
 
 function makeDb(options = {}) {
   const state = {
@@ -1557,4 +1557,92 @@ test('capture-order leaves an unapproved PayPal order untouched', async () => {
   } finally {
     globalThis.fetch = originalFetch;
   }
+});
+
+
+test('sandbox cleanup is disabled unless explicitly enabled', async () => {
+  const response = await handlePayPalSandboxCleanup(
+    post('/api/admin/paypal/cleanup', { apply: false }),
+    { PAYPAL_SANDBOX_CLEANUP_ENABLED: 'false' }
+  );
+  assert.equal(response.status, 403);
+  assert.equal((await response.json()).error, 'PAYPAL_SANDBOX_CLEANUP_DISABLED');
+});
+
+test('sandbox cleanup dry-run reports candidates and performs no deletes', async () => {
+  const seenSql = [];
+  const db = {
+    prepare(sql) {
+      seenSql.push(sql);
+      return {
+        bind() {
+          return {
+            async first() {
+              if (sql.includes('FROM paypal_orders')) return { count: 3 };
+              if (sql.includes('FROM paypal_webhook_events')) return { count: 7 };
+              return null;
+            },
+            async run() {
+              throw new Error('dry-run must not delete');
+            },
+          };
+        },
+      };
+    },
+  };
+
+  const response = await handlePayPalSandboxCleanup(
+    post('/api/admin/paypal/cleanup', { apply: false }),
+    { PAYPAL_SANDBOX_CLEANUP_ENABLED: 'true', DB: db }
+  );
+  assert.equal(response.status, 200);
+  const body = await response.json();
+  assert.equal(body.dryRun, true);
+  assert.deepEqual(body.candidates, { abandonedOrders: 3, processedWebhookEvents: 7 });
+  assert.equal(body.retentionDays.abandonedOrders, 7);
+  assert.equal(body.retentionDays.processedWebhookEvents, 90);
+  assert.equal(seenSql.some(sql => sql.startsWith('DELETE')), false);
+});
+
+test('sandbox cleanup apply deletes only safe abandoned orders and processed webhooks', async () => {
+  const deleteSql = [];
+  const db = {
+    prepare(sql) {
+      return {
+        bind() {
+          return {
+            async first() {
+              if (sql.includes('FROM paypal_orders')) return { count: 2 };
+              if (sql.includes('FROM paypal_webhook_events')) return { count: 4 };
+              return null;
+            },
+            async run() {
+              deleteSql.push(sql);
+              return { success: true, meta: { changes: sql.includes('paypal_orders') ? 2 : 4 } };
+            },
+          };
+        },
+      };
+    },
+  };
+
+  const response = await handlePayPalSandboxCleanup(
+    post('/api/admin/paypal/cleanup', { apply: true }),
+    { PAYPAL_SANDBOX_CLEANUP_ENABLED: 'true', DB: db }
+  );
+  assert.equal(response.status, 200);
+  const body = await response.json();
+  assert.equal(body.dryRun, false);
+  assert.deepEqual(body.deleted, { abandonedOrders: 2, processedWebhookEvents: 4 });
+
+  assert.equal(deleteSql.length, 2);
+  assert.match(deleteSql[0], /DELETE FROM paypal_orders/);
+  assert.match(deleteSql[0], /status='CREATED'/);
+  assert.match(deleteSql[0], /paypal_capture_id IS NULL/);
+  assert.match(deleteSql[0], /fulfillment_token IS NULL/);
+  assert.match(deleteSql[0], /completed_at IS NULL/);
+  assert.doesNotMatch(deleteSql[0], /COMPLETED|FULFILLING/);
+  assert.match(deleteSql[1], /DELETE FROM paypal_webhook_events/);
+  assert.match(deleteSql[1], /processed=1/);
+  assert.equal(deleteSql.some(sql => /download_tokens/.test(sql)), false);
 });
