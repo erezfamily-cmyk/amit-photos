@@ -61,15 +61,49 @@ jobs:
             echo "⚠️  Thumbnail: דולג (ה-API לא החזיר תמונה)"
             echo "skipped=true" >> $GITHUB_OUTPUT
           else
-            CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 15 "$THUMB")
+            case "$THUMB" in
+              http://*|https://*) THUMB_URL="$THUMB" ;;
+              /*) THUMB_URL="https://amitphotos.com$THUMB" ;;
+              *) THUMB_URL="https://amitphotos.com/$THUMB" ;;
+            esac
+            CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 15 "$THUMB_URL")
             echo "code=$CODE" >> $GITHUB_OUTPUT
             if [ "$CODE" = "200" ]; then
-              echo "✅ Thumbnail: OK ($CODE) — $THUMB"
+              echo "✅ Thumbnail: OK ($CODE) — $THUMB_URL"
             else
-              echo "❌ Thumbnail: FAIL ($CODE) — $THUMB"
+              echo "❌ Thumbnail: FAIL ($CODE) — $THUMB_URL"
               echo "failed=true" >> $GITHUB_OUTPUT
             fi
           fi
+
+      - name: בדיקת מסלולי הניסוי העסקי
+        run: |
+          set -euo pipefail
+
+          LIC=$(curl -fsS --max-time 20 https://amitphotos.com/licensing/)
+          echo "$LIC" | grep -q 'licensing_personal_interest'
+          echo "$LIC" | grep -q '/api/admin/prices'
+          echo "$LIC" | grep -q 'G-XM6T3E8QWN'
+          echo "✅ /licensing/: page + pricing source + analytics marker"
+
+          BIZ=$(curl -fsS --max-time 20 https://amitphotos.com/business/)
+          echo "$BIZ" | grep -q 'b2b_contact_start'
+          echo "$BIZ" | grep -q 'amit_b2b_context'
+          echo "$BIZ" | grep -q '/assets/js/analytics.js'
+          echo "✅ /business/: funnel + context + analytics marker"
+
+          ADMIN=$(curl -fsS --max-time 20 https://amitphotos.com/admin.html)
+          echo "$ADMIN" | grep -q 'campaign-destination'
+          echo "$ADMIN" | grep -q 'admin-campaign-links.mjs'
+          echo "✅ Admin UTM builder is present"
+
+          STATUS=$(curl -fsS --max-time 20 https://amitphotos.com/api/payments-status)
+          ENABLED=$(echo "$STATUS" | jq -r '.enabled')
+          if [ "$ENABLED" != "false" ]; then
+            echo "❌ Payments guardrail breached: enabled=$ENABLED"
+            exit 1
+          fi
+          echo "✅ PAYMENTS_ENABLED remains false"
 
       - name: סיכום
         run: |
