@@ -291,3 +291,11 @@ PAYMENTS_ENABLED = "false"   ב-wrangler.toml (production)
   - `credentialsConfigured=true`
 - This confirms the staging Worker can authenticate server-to-server with PayPal Sandbox again after secret rotation.
 - Next: create a fresh Sandbox order with a new Idempotency-Key using the fixed approval flow, approve it with the Personal Sandbox buyer, then capture and verify D1 + download token state.
+
+
+### PayPal Sandbox approval-link E2E — 1.10.2026
+
+- Fresh Sandbox order created successfully with Idempotency-Key `sandbox-e2e-20261001-004`.
+- PayPal returned a non-empty checkout URL after the payer-action compatibility fix.
+- This confirms the Worker now handles both `approve` and `payer-action` link relations correctly.
+- Next: open the Sandbox checkout URL, sign in with the Personal Sandbox buyer, approve, verify return to `/api/paypal/approved`, then run capture and verify D1 + download token state.
