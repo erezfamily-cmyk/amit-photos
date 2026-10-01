@@ -18,3 +18,8 @@ CREATE TABLE IF NOT EXISTS paypal_rate_limits (
 
 CREATE INDEX IF NOT EXISTS idx_paypal_rate_limits_window
   ON paypal_rate_limits(window_start);
+
+
+-- Webhook processing lease: processed 0=pending, 1=done, 2=processing.
+ALTER TABLE paypal_webhook_events ADD COLUMN processing_started_at TEXT;
+ALTER TABLE paypal_webhook_events ADD COLUMN attempts INTEGER NOT NULL DEFAULT 0;
