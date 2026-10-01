@@ -248,3 +248,15 @@ Verified manually in Cloudflare D1 staging after real PayPal Sandbox approval + 
 Conclusion: digital Orders v2 Sandbox path is verified end-to-end.
 
 Production is still disabled. Do not merge/enable live payments yet.
+
+
+## Buyer cancel negative-path E2E — passed (1.10.2026)
+
+Verified in PayPal Sandbox + Cloudflare D1 staging:
+- buyer selected cancel and returned through the configured cancel URL;
+- cancelled order stayed `CREATED`;
+- no PayPal capture ID was stored;
+- no fulfillment token was stored;
+- no new download entitlement was created.
+
+This negative path is considered verified.
