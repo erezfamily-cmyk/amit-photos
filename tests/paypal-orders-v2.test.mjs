@@ -31,6 +31,12 @@ function makeDb(options = {}) {
               if (sql.includes('FROM download_tokens WHERE tx = ?')) {
                 return state.token;
               }
+              if (sql.includes('FROM download_tokens WHERE token = ? AND tx = ?')) {
+                return state.token;
+              }
+              if (sql.includes('SELECT status, fulfillment_json FROM paypal_orders')) {
+                return state.order ? { status: state.order.status, fulfillment_json: state.order.fulfillment_json } : null;
+              }
               if (sql.includes('SELECT title FROM photos')) {
                 return { title: state.photo.title };
               }
@@ -66,10 +72,11 @@ function makeDb(options = {}) {
               }
               if (sql.includes('INSERT OR IGNORE INTO download_tokens')) {
                 state.tokenInserts += 1;
-                state.token = { token: args[0] };
-                return { success: true, meta: { changes: 1 } };
+                if (!options.failTokenPersist) state.token = { token: args[0], tx: args[3] };
+                return { success: true, meta: { changes: options.failTokenPersist ? 0 : 1 } };
               }
               if (sql.includes("SET status='COMPLETED'")) {
+                if (options.failCompletePersist) return { success: true, meta: { changes: 0 } };
                 state.order.status = 'COMPLETED';
                 state.order.fulfillment_json = args[0];
                 state.order.completed_at = args[1];
@@ -230,6 +237,7 @@ test('capture-order rejects a completed PayPal capture when the amount does not 
       id: 'PAYPALORDER123',
       status: 'COMPLETED',
       purchase_units: [{
+        custom_id: 'local-1',
         payments: {
           captures: [{
             id: 'CAPTURE1',
@@ -290,6 +298,7 @@ test('successful capture creates one download token and a duplicate callback reu
       id: 'PAYPALORDER123',
       status: 'COMPLETED',
       purchase_units: [{
+        custom_id: 'local-1',
         payments: {
           captures: [{
             id: 'CAPTURE1',
@@ -373,6 +382,193 @@ test('resume from FULFILLING reuses the locked fulfillment token without calling
   }
 });
 
+
+
+test('capture-order rejects a PayPal response that is not bound to the local order identity', async () => {
+  const db = makeDb({
+    order: {
+      id: 'local-1',
+      paypal_order_id: 'PAYPALORDER123',
+      order_type: 'digital',
+      photo_id: 'photo-1',
+      sku: 'small',
+      amount_expected: 1900,
+      currency: 'ILS',
+      status: 'CREATED',
+      fulfillment_json: null,
+      fulfillment_token: null,
+      paypal_capture_id: null,
+    },
+  });
+  const env = {
+    PAYMENTS_ENABLED: 'true',
+    PAYPAL_CLIENT_ID: 'sandbox-client',
+    PAYPAL_CLIENT_SECRET: 'sandbox-secret',
+    DB: db,
+  };
+
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async (url) => {
+    if (String(url).endsWith('/v1/oauth2/token')) {
+      return Response.json({ access_token: 'access-token' });
+    }
+    return Response.json({
+      id: 'PAYPALORDER123',
+      status: 'COMPLETED',
+      purchase_units: [{
+        custom_id: 'different-local-order',
+        payments: {
+          captures: [{
+            id: 'CAPTURE-ID-MISMATCH',
+            status: 'COMPLETED',
+            amount: { currency_code: 'ILS', value: '19.00' },
+          }],
+        },
+      }],
+    }, { status: 201 });
+  };
+
+  try {
+    const response = await handlePayPalCaptureOrder(
+      post('/api/paypal/capture-order', { paypalOrderId: 'PAYPALORDER123' }),
+      env
+    );
+    assert.equal(response.status, 502);
+    assert.equal((await response.json()).error, 'PayPal capture identity mismatch');
+    assert.equal(db.state.tokenInserts, 0);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test('capture-order does not mark the order completed if the download entitlement was not persisted', async () => {
+  const db = makeDb({
+    failTokenPersist: true,
+    order: {
+      id: 'local-1',
+      paypal_order_id: 'PAYPALORDER123',
+      order_type: 'digital',
+      photo_id: 'photo-1',
+      sku: 'small',
+      amount_expected: 1900,
+      currency: 'ILS',
+      status: 'CREATED',
+      fulfillment_json: null,
+      fulfillment_token: null,
+      paypal_capture_id: null,
+    },
+  });
+  const env = {
+    PAYMENTS_ENABLED: 'true',
+    PAYPAL_CLIENT_ID: 'sandbox-client',
+    PAYPAL_CLIENT_SECRET: 'sandbox-secret',
+    DB: db,
+  };
+
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async (url) => {
+    if (String(url).endsWith('/v1/oauth2/token')) {
+      return Response.json({ access_token: 'access-token' });
+    }
+    return Response.json({
+      id: 'PAYPALORDER123',
+      status: 'COMPLETED',
+      purchase_units: [{
+        custom_id: 'local-1',
+        payments: {
+          captures: [{
+            id: 'CAPTURE-PERSIST-FAIL',
+            status: 'COMPLETED',
+            amount: { currency_code: 'ILS', value: '19.00' },
+          }],
+        },
+      }],
+    }, { status: 201 });
+  };
+
+  try {
+    const response = await handlePayPalCaptureOrder(
+      post('/api/paypal/capture-order', { paypalOrderId: 'PAYPALORDER123' }),
+      env
+    );
+    assert.equal(response.status, 500);
+    assert.equal((await response.json()).error, 'Digital fulfillment persistence failed');
+    assert.equal(db.state.order.status, 'FULFILLING');
+    assert.equal(db.state.order.fulfillment_json, null);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test('capture-order recovers from ORDER_ALREADY_CAPTURED by reading the authoritative PayPal order', async () => {
+  const db = makeDb({
+    order: {
+      id: 'local-1',
+      paypal_order_id: 'PAYPALORDER123',
+      order_type: 'digital',
+      photo_id: 'photo-1',
+      sku: 'small',
+      amount_expected: 1900,
+      currency: 'ILS',
+      status: 'CREATED',
+      fulfillment_json: null,
+      fulfillment_token: null,
+      paypal_capture_id: null,
+    },
+  });
+  const env = {
+    PAYMENTS_ENABLED: 'true',
+    PAYPAL_CLIENT_ID: 'sandbox-client',
+    PAYPAL_CLIENT_SECRET: 'sandbox-secret',
+    DB: db,
+  };
+
+  const originalFetch = globalThis.fetch;
+  let orderGets = 0;
+  globalThis.fetch = async (url, options = {}) => {
+    const target = String(url);
+    if (target.endsWith('/v1/oauth2/token')) {
+      return Response.json({ access_token: 'access-token' });
+    }
+    if (target.endsWith('/capture')) {
+      return Response.json({
+        name: 'UNPROCESSABLE_ENTITY',
+        details: [{ issue: 'ORDER_ALREADY_CAPTURED' }],
+      }, { status: 422 });
+    }
+    if (target.endsWith('/v2/checkout/orders/PAYPALORDER123') && options.method === 'GET') {
+      orderGets += 1;
+      return Response.json({
+        id: 'PAYPALORDER123',
+        status: 'COMPLETED',
+        purchase_units: [{
+          custom_id: 'local-1',
+          payments: {
+            captures: [{
+              id: 'CAPTURE-RECOVERED',
+              status: 'COMPLETED',
+              amount: { currency_code: 'ILS', value: '19.00' },
+            }],
+          },
+        }],
+      });
+    }
+    throw new Error('unexpected fetch ' + target);
+  };
+
+  try {
+    const response = await handlePayPalCaptureOrder(
+      post('/api/paypal/capture-order', { paypalOrderId: 'PAYPALORDER123' }),
+      env
+    );
+    assert.equal(response.status, 200);
+    assert.match((await response.json()).url, /^\/api\/download\//);
+    assert.equal(orderGets, 1);
+    assert.equal(db.state.order.status, 'COMPLETED');
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
 
 test('sandbox status authenticates against PayPal while payments stay disabled', async () => {
   const env = {
