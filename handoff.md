@@ -115,3 +115,20 @@ PAYMENTS_ENABLED = "false"   ב-wrangler.toml (production)
 ---
 
 *אם אתה סוכן AI שנכנס לפרויקט הזה: קרא את `CLAUDE.md` ואת המסמך הזה קודם, ואז תסתכל אם יש `docs/*-2026-*.md` חדש יותר מהתאריך שרשום כאן — אם כן, זה כנראה מעודכן יותר ממה שכתוב פה.*
+
+
+### Digital Licensing MVP — 1.10.2026
+
+נפתח כיוון MVP מסחרי ראשון, בלי להפעיל תשלומים:
+- מסמך מוצר: `docs/digital-licensing-mvp-2026-10-01.md`
+- עמוד ציבורי דו-לשוני: `/licensing/`
+- שימוש אישי נשען על ה-SKU הקיימים `small / medium / large` והמחירים הקיימים כ-test prices.
+- שימוש מסחרי נשאר inquiry/quote בלבד בשלב הראשון — לא נבנה עדיין checkout מסחרי אוטומטי.
+- אין שינוי ב-PayPal backend ואין שינוי ב-`PAYMENTS_ENABLED`.
+- לא נוסף קישור לניווט הראשי עדיין; קודם review של copy/UX.
+- נוספו אירועי analytics לא-PII:
+  - `licensing_personal_interest`
+  - `licensing_commercial_contact`
+- `.github/workflows/deploy.yml` עודכן כך ששינויים תחת `licensing/**` יפעילו deploy אחרי merge עתידי.
+- Gelato לא חלק מ-MVP הרישוי הדיגיטלי.
+
