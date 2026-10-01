@@ -398,3 +398,23 @@ Production remains `PAYMENTS_ENABLED=false`.
 4. print/Gelato Orders v2.
 5. security review סופי לפני החלטת merge.
 6. רק לאחר מכן לשקול merge; production נשאר disabled עד אישור נפרד.
+
+
+### Negative-path automated tests checkpoint — 1.10.2026 evening
+
+Added regression coverage for:
+- malformed PayPal order ID -> 400, no PayPal call, no token;
+- unknown PayPal order ID -> 404, no PayPal call, no token;
+- PayPal order not approved -> capture failure, local order remains `CREATED`, no capture ID, no fulfillment token, no download token.
+
+Existing coverage already includes:
+- capture amount mismatch;
+- PayPal/local identity mismatch;
+- duplicate capture callback/idempotency;
+- webhook invalid signature/dedup/retry.
+
+CI for head `e8ecbb08725612bfeca5be87ec65628588d09ec8`:
+- Node Tests: success.
+- Python Data Tests: success.
+
+Next manual negative-path test: buyer cancel in PayPal Sandbox.
