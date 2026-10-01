@@ -532,3 +532,169 @@ MVP:
 - לא בונים paid course.
 - לא משנים את סדר הגלריה לפי photo-strength לפני שיש mapped data.
 - לא מוסיפים הרבה CTAs מתחרים לדף הבית.
+
+
+---
+
+# Business KPI Scorecard v1
+
+מטרת ה-scorecard היא להכריע בין מודלים עסקיים בלי לתת לנתון יחיד או למדגם קטן להוביל את ההחלטה.
+
+## Acquisition
+
+| KPI | נוסחה / מקור | למה חשוב |
+|---|---|---|
+| Identified traffic share | sessions עם source/medium מזוהה / sessions | בודק אם אנחנו עדיין "עיוורים" בגלל Direct |
+| Organic Social share | organic social sessions / sessions | מודד אם תוכן חברתי מביא קהל אמיתי |
+| Organic Search share | organic search sessions / sessions | מודד בסיס SEO ולא רק שיתופים |
+| Deep-link share | sessions שנוחתים על photo/content/free-guide ולא רק home / sessions | בודק איכות distribution |
+| UTM coverage | קמפיינים עם UTM / קמפיינים ששיתפנו | תנאי למדידה אמינה |
+
+## Audience / Lead
+
+| KPI | נוסחה | פירוש |
+|---|---|---|
+| Guide request rate | guide_request_success / free-guide sessions | כמה מבקרים באמת מבקשים את המדריך |
+| Lead rate | generate_lead / sessions | כמה מהתנועה הופכת לקהל שאפשר לחזור אליו |
+| Marketing opt-in rate | marketing opt-in / new subscribers | איכות lead מבחינת owned audience |
+| Source contribution | new subscribers לפי source | איזה placement מייצר volume |
+| Source quality | marketing opt-in לפי source / new subscribers לפי source | איזה placement מייצר audience איכותי |
+| Repeat/upgrade rate | marketing_upgraded / existing successful submissions | האם נכסים חינמיים משדרגים קשר קיים |
+
+### כלל פרשנות
+- `guide_request_success` אינו שווה ל-`generate_lead`.
+- בקשת PDF בלי marketing consent היא הצלחת lead magnet, אבל לא הרשמה שיווקית.
+- `generate_lead` צריך לשקף רק subscriber חדש או upgrade אמיתי להסכמה.
+
+## Digital commerce
+
+| KPI | נוסחה |
+|---|---|
+| Digital intent rate | purchase_intent / photo_view |
+| Product-selection rate | add_size / purchase_intent |
+| Checkout completion | verified digital purchases / checkout starts — רק כשהתשלומים יופעלו |
+| Revenue per qualified visit | verified digital revenue / photo-detail or product sessions |
+| License mix | purchases לפי Personal / Commercial tier |
+
+## Print commerce
+
+| KPI | נוסחה |
+|---|---|
+| Print intent rate | print_intent / photo_view |
+| Print selection rate | print_type_selected / print_intent |
+| Print checkout rate | print_checkout / print_type_selected |
+| Reservation rate | print_reservation_intent / curated collection sessions |
+| Gross margin | sell price - production - shipping - fees - support/refund allowance |
+| Supplier failure rate | failed/cancelled/delayed orders / orders |
+
+## B2B
+
+| KPI | מדידה |
+|---|---|
+| B2B landing interest | b2b_intent / B2B page sessions |
+| Qualified lead rate | qualified B2B inquiries / inquiries |
+| Reply rate | replies / targeted outreach |
+| Proposal rate | proposals / qualified leads |
+| Close rate | won deals / proposals |
+| Average deal value | revenue / won B2B deals |
+
+## Education
+
+| KPI | מדידה |
+|---|---|
+| Content engagement | engaged sessions בעמודי camera/learn |
+| Free-guide assist | sessions שקראו תוכן ואז הגיעו ל-free-guide |
+| Education intent | click/interest event למוצר לימודי עתידי |
+| Email-assisted return | חוזרים דרך newsletter לתוכן לימודי |
+
+---
+
+# Guardrails נגד החלטות מוקדמות
+
+לא להכריז על "ערוץ מנצח" רק כי יש לו 1–5 המרות.
+
+לפני השוואת conversion בין מקורות:
+- להמתין לפחות 14 יום מהמדידה התקינה.
+- לדרוש denominator ברור.
+- עדיף לפחות 20 successful submissions לכל source לפני השוואה כמותית; מתחת לזה לסמן directional בלבד.
+- אם אין מספיק volume גם אחרי 28 יום — ההחלטה היא קודם להגדיל acquisition, לא לבצע אופטימיזציה זעירה של conversion.
+- לא להשתמש ב-0 purchases כל עוד `PAYMENTS_ENABLED=false`.
+- לא להסיק מסקנות על Gelato מ-`print_intent` בלבד; יש להוסיף margin + quality + delivery test.
+
+---
+
+# Decision table — checkpoint 14 יום
+
+## אם free-guide מייצר הרבה guide requests אבל מעט marketing opt-in
+פעולה:
+- לא להסיר את המדריך.
+- לשפר את הערך/נוסח של opt-in השיווקי.
+- לבדוק follow-up לא שיווקי סביב delivery בלבד.
+- לא לסמן את ה-lead magnet ככישלון.
+
+## אם homepage newsletter מייצר opt-in גבוה יותר מה-free-guide
+פעולה:
+- להשאיר newsletter CTA ברור.
+- לבחון האם ה-free guide צריך לשמש acquisition ולא subscription.
+- להשוות quality לאורך זמן, לא רק signup count.
+
+## אם popup מייצר מעט leads או opt-in נמוך
+פעולה:
+- לשקול להקטין/להסיר popup כדי לא לפגוע UX.
+- לא לבצע זאת לפני denominator מספיק.
+
+## אם subpage strip עובד טוב
+פעולה:
+- להרחיב placement בסוף תוכן איכותי.
+- לחבר topic/context ל-CTA במקום נוסח כללי.
+
+## אם newsletter_issue מייצר leads
+פעולה:
+- להפוך כל גיליון גם לנכס acquisition ציבורי.
+- למדוד שיתוף → issue view → generate_lead.
+
+---
+
+# Decision table — מודל הכנסה
+
+### Signal חזק יותר לדיגיטל
+אם לאורך תקופה מספקת:
+- `purchase_intent / photo_view` גבוה מ-`print_intent / photo_view`
+- ויש המשך ל-`add_size`
+→ להכין Digital/License MVP ראשון.
+
+### Signal חזק יותר להדפס
+אם:
+- `print_intent` גדל
+- יש interest חוזר במספר מצומצם של תמונות
+- curated reservation test מקבל תגובה
+→ להשלים Print Orders v2 + supplier validation.
+
+### Signal חזק יותר ל-B2B
+אם:
+- contact intent / direct inquiries גדלים
+- outreach test מקבל replies/qualified leads
+→ להשקיע בדף B2B וחבילות, לפני storefront מורכב.
+
+### Signal חזק יותר ל-Education
+אם:
+- camera/learn traffic גדל
+- free-guide assist חזק
+- newsletter clicks חוזרים לתוכן לימודי
+→ לבנות paid micro-product לפני קורס גדול.
+
+---
+
+# מה צריך להיות בדוח העסקי השבועי
+
+1. Acquisition לפי source/medium.
+2. Landing pages.
+3. `guide_request_success` ו-`generate_lead`.
+4. D1 aggregate: new subscribers + marketing opt-in לפי source.
+5. Digital intent funnel.
+6. Print intent funnel.
+7. Contact/B2B signals.
+8. verified revenue בלבד, בנפרד מאירועי GA.
+9. הערת sample size מפורשת.
+10. החלטה אחת בלבד לשבוע הבא — לא רשימת שינויים גדולה.
+
