@@ -496,6 +496,7 @@ def main():
     print("📤 מפרסם לאינסטגרם...")
     post_id = post_to_instagram(photo, caption)
     print(f"✅ פורסם בהצלחה! Instagram post ID: {post_id}")
+    save_social_photo_mapping("instagram", post_id, photo["id"])
 
 
 if __name__ == "__main__":
