@@ -1294,3 +1294,55 @@ test('admin create-order can use Sandbox while the public payment flag remains f
     globalThis.fetch = originalFetch;
   }
 });
+
+
+test('create-order sends a complete PayPal approval experience', async () => {
+  const db = makeDb();
+  const env = {
+    PAYMENTS_ENABLED: 'true',
+    PAYPAL_CLIENT_ID: 'sandbox-client',
+    PAYPAL_CLIENT_SECRET: 'sandbox-secret',
+    DB: db,
+  };
+
+  const originalFetch = globalThis.fetch;
+  let createPayload = null;
+  globalThis.fetch = async (url, options = {}) => {
+    const target = String(url);
+    if (target.endsWith('/v1/oauth2/token')) {
+      return Response.json({ access_token: 'access-token' });
+    }
+    createPayload = JSON.parse(options.body);
+    return Response.json({
+      id: 'PAYPALAPPROVE123',
+      status: 'CREATED',
+      links: [{ rel: 'approve', href: 'https://www.sandbox.paypal.com/checkoutnow?token=PAYPALAPPROVE123' }],
+    }, { status: 201 });
+  };
+
+  try {
+    const response = await handlePayPalCreateOrder(
+      post('/api/admin/paypal/create-order', {
+        type: 'digital',
+        photoId: 'photo-1',
+        sku: 'small',
+        currency: 'ILS',
+      }),
+      env,
+      { allowWhenPaymentsDisabled: true, includeApproveUrl: true, skipRateLimit: true }
+    );
+    assert.equal(response.status, 201);
+    assert.equal(createPayload.payment_source.paypal.experience_context.shipping_preference, 'NO_SHIPPING');
+    assert.equal(createPayload.payment_source.paypal.experience_context.user_action, 'PAY_NOW');
+    assert.equal(
+      createPayload.payment_source.paypal.experience_context.return_url,
+      'https://amitphotos.com/api/paypal/approved'
+    );
+    assert.equal(
+      createPayload.payment_source.paypal.experience_context.cancel_url,
+      'https://amitphotos.com/api/paypal/cancelled'
+    );
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
