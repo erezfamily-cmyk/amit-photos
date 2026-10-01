@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'worker.js'
+      - 'paypal-orders.js'
       - 'wrangler.toml'
       - 'admin.html'
       - 'index.html'
