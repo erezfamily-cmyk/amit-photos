@@ -299,3 +299,14 @@ PAYMENTS_ENABLED = "false"   ב-wrangler.toml (production)
 - PayPal returned a non-empty checkout URL after the payer-action compatibility fix.
 - This confirms the Worker now handles both `approve` and `payer-action` link relations correctly.
 - Next: open the Sandbox checkout URL, sign in with the Personal Sandbox buyer, approve, verify return to `/api/paypal/approved`, then run capture and verify D1 + download token state.
+
+
+### PayPal checkout return handler deploy verified — 1.10.2026
+
+- Cloudflare staging deployment containing the missing `handlePayPalCheckoutReturn` import completed.
+- GitHub CI for head `8fa10bb55349d9ac8720fbbe4ec0194603b3a93a` is green:
+  - Node Tests: success.
+  - Python Data Tests: success.
+- Regression tests now cover both `/api/paypal/approved` and `/api/paypal/cancelled`.
+- The previous Error 1101 root cause was the missing import; code fix is deployed to the isolated staging Worker.
+- Next: attempt capture of the last Sandbox order that reached the return URL. If PayPal reports it was not approved, create a fresh order and repeat approval.
