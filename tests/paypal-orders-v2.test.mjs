@@ -682,6 +682,20 @@ test('capture-order recovers from ORDER_ALREADY_CAPTURED by reading the authorit
   }
 });
 
+
+test('legacy PayPal public endpoints stay permanently retired even if PAYMENTS_ENABLED is true', async () => {
+  const env = { PAYMENTS_ENABLED: 'true' };
+  for (const path of ['/api/verify-payment', '/api/print/order-complete']) {
+    const response = await worker.fetch(
+      new Request('https://amitphotos.com' + path, { method: 'POST' }),
+      env,
+      { waitUntil() {} }
+    );
+    assert.equal(response.status, 410, path);
+    assert.equal((await response.json()).error, 'LEGACY_PAYMENT_ENDPOINT_REMOVED');
+  }
+});
+
 test('sandbox status authenticates against PayPal while payments stay disabled', async () => {
   const env = {
     PAYMENTS_ENABLED: 'false',
