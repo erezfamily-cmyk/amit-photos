@@ -130,3 +130,48 @@ PAYMENTS_ENABLED = "false"   ב-wrangler.toml (production)
 - לא שולח קישורים החוצה ולא מפרסם אוטומטית; זה רק generator פנימי.
 
 מטרת הכלי: לאפשר discipline עקבי ב-UTM בלי להקליד ידנית בטלפון, כדי שהדוח השבועי החדש יוכל לזהות קמפיינים במקום שכולם ייראו כ-Direct.
+
+
+### Business-model work status — 1.10.2026
+
+מצב העבודה המתועד להמשך:
+
+- **PR #79 — Lead funnel measurement**
+  - עבר סבב QA ממוקד.
+  - Lead Funnel CI עבר בהצלחה: Node subscriber/consent tests + Python syntax check.
+  - `generate_lead` מוגדר כעת רק ל-marketing lead אמיתי דרך `lead_created`; בקשת Free Guide בלי marketing consent נשארת `guide_request_success` בלבד.
+  - subscriber summary מפריד בין new subscribers, opt-ins/upgrades בתקופה, ו-current marketing audience.
+  - Source / Medium / Campaign נשמרים גם בהיסטוריית `data/ga_reports.json`.
+  - PR #79 הועבר מ-Draft ל-**Ready for Review**.
+  - עדיין **לא מוזג ולא נפרס**.
+
+- **PR #82 — Admin UTM campaign link builder**
+  - עדיין Draft.
+  - מוסיף כלי פנימי ב-Admin > Analytics ליצירת deep links עם UTM.
+  - אין PII, אין פרסום אוטומטי, אין הרשאות חיצוניות ואין שינוי בתשלומים.
+  - זהו הכלי הבא שמיועד ל-QA לפני הפעלת ניסוי acquisition.
+
+- **PR #80 — Digital Licensing MVP**
+  - עדיין Draft, ללא deploy.
+  - מחירי הבסיס נטענים מאותה תשתית מחירים קיימת של ההורדות; checkout הסופי נשאר server-authoritative.
+  - אין הפעלת תשלומים.
+
+- **PR #81 — B2B Art & Licensing MVP**
+  - עדיין Draft, ללא deploy.
+  - כולל attribution מחבילת B2B עד `contact_form_success`, ללא PII.
+
+- **PR #78 — Business-model TODO/scorecard**
+  - עדיין Draft.
+  - מכיל KPI scorecard, acquisition playbook ו-Acquisition Experiment 01.
+
+- **PR #76 — PayPal Orders v2**
+  - נשאר Draft; אינו חוסם את ניסויי המודל העסקי.
+  - `PAYMENTS_ENABLED=false` נשאר כלל מחייב.
+
+### סדר עבודה מוסכם להמשך
+1. QA וסגירה של PR #82.
+2. review/merge מבוקר של PR #79 לפני התחלת חלון מדידה נקי.
+3. QA של PR #80 ו-PR #81.
+4. רק אחרי שהמדידה חיה: להתחיל Acquisition Experiment 01 ל-7 ימים.
+5. לא להתחיל paid ads, לא להפעיל PayPal production ולא להעמיק Gelato לפני שיש signal אמיתי מהנתונים.
+
