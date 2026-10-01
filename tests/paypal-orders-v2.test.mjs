@@ -845,6 +845,64 @@ test('webhook deduplicates an already processed PayPal event', async () => {
   }
 });
 
+
+test('concurrent duplicate webhook delivery does not process an in-flight event twice', async () => {
+  const db = makeDb();
+  db.state.webhookEvents.set('WH-EVENT-RACE', {
+    event_type: 'PAYMENT.CAPTURE.COMPLETED',
+    received_at: new Date().toISOString(),
+    processed: 0,
+  });
+
+  const env = {
+    PAYPAL_CLIENT_ID: 'sandbox-client',
+    PAYPAL_CLIENT_SECRET: 'sandbox-secret',
+    PAYPAL_WEBHOOK_ID: 'WH-TEST',
+    DB: db,
+  };
+
+  const event = {
+    id: 'WH-EVENT-RACE',
+    event_type: 'PAYMENT.CAPTURE.COMPLETED',
+    resource: {
+      id: 'CAPTURE-RACE',
+      status: 'COMPLETED',
+      amount: { currency_code: 'ILS', value: '19.00' },
+      supplementary_data: {
+        related_ids: { order_id: 'PAYPAL-RACE-ORDER' },
+      },
+    },
+  };
+
+  const originalFetch = globalThis.fetch;
+  let orderLookups = 0;
+  globalThis.fetch = async (url) => {
+    const target = String(url);
+    if (target.endsWith('/v1/oauth2/token')) {
+      return Response.json({ access_token: 'access-token' });
+    }
+    if (target.endsWith('/v1/notifications/verify-webhook-signature')) {
+      return Response.json({ verification_status: 'SUCCESS' });
+    }
+    if (target.includes('/v2/checkout/orders/')) orderLookups += 1;
+    throw new Error('unexpected fetch ' + target);
+  };
+
+  try {
+    const response = await handlePayPalWebhook(paypalWebhookRequest(event), env);
+    assert.equal(response.status, 200);
+    assert.deepEqual(await response.json(), {
+      ok: true,
+      duplicate: true,
+      processing: true,
+    });
+    assert.equal(orderLookups, 0);
+    assert.equal(db.state.tokenInserts, 0);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
 test('verified completed-capture webhook recovers a local digital order and fulfills exactly once', async () => {
   const db = makeDb({
     order: {
