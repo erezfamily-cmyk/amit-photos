@@ -17,6 +17,7 @@ import requests
 import anthropic
 from pathlib import Path
 from datetime import datetime, timedelta, timezone
+from social_photo_map import build_post_lookup
 
 ROOT = Path(__file__).parent.parent
 
@@ -125,6 +126,8 @@ def build_reel_summary(ig_posts):
         "avg_watch_time":  avg_watch,
         "top_reels": [
             {
+                "post_id": p.get("id", ""),
+                "photo_id": post_lookup.get(("instagram", str(p.get("id", ""))), ""),
                 "caption": (p.get("caption") or "")[:100].replace("\n", " "),
                 "plays":   p["reel_metrics"].get("views", 0),
                 "reach":   p["reel_metrics"].get("reach", 0),
@@ -135,6 +138,8 @@ def build_reel_summary(ig_posts):
             for p in sorted(reels, key=lambda p: p["reel_metrics"].get("views", 0), reverse=True)[:5]
         ],
         "best_reel": {
+            "post_id": best.get("id", "") if best else "",
+            "photo_id": post_lookup.get(("instagram", str(best.get("id", ""))), "") if best else "",
             "caption": (best.get("caption") or "")[:120] if best else "",
             "plays":   best["reel_metrics"].get("views", 0) if best else 0,
             "date":    (best.get("timestamp") or "")[:10] if best else "",
@@ -210,6 +215,7 @@ def fetch_fb_page_info(page_id):
 
 def build_fb_page_block(label, page_id):
     """מחזיר dict מלא לעמוד פייסבוק אחד."""
+    post_lookup = build_post_lookup()
     print(f"  📘 שולף עמוד: {label} ({page_id})")
     posts    = fetch_fb_page_posts(page_id)
     info     = fetch_fb_page_info(page_id)
@@ -237,6 +243,8 @@ def build_fb_page_block(label, page_id):
         "engagement_rate":    round((total_likes + total_comments) / (n * max(fans, 1)), 4) if n else 0,
         "top_posts": [
             {
+                "post_id":  p.get("id", ""),
+                "photo_id": post_lookup.get(("facebook", str(p.get("id", ""))), ""),
                 "message":  (p.get("message") or "")[:100].replace("\n", " "),
                 "likes":    p.get("reactions", {}).get("summary", {}).get("total_count", 0),
                 "comments": p.get("comments",  {}).get("summary", {}).get("total_count", 0),
@@ -244,7 +252,20 @@ def build_fb_page_block(label, page_id):
             }
             for p in top5
         ],
+        "photo_performance": [
+            {
+                "post_id": p.get("id", ""),
+                "photo_id": post_lookup.get(("facebook", str(p.get("id", ""))), ""),
+                "likes": p.get("reactions", {}).get("summary", {}).get("total_count", 0),
+                "comments": p.get("comments", {}).get("summary", {}).get("total_count", 0),
+                "date": (p.get("created_time") or "")[:10],
+            }
+            for p in posts
+            if post_lookup.get(("facebook", str(p.get("id", ""))), "")
+        ],
         "best_post": {
+            "post_id": best.get("id", "") if best else "",
+            "photo_id": post_lookup.get(("facebook", str(best.get("id", ""))), "") if best else "",
             "message": (best.get("message") or "")[:120] if best else "",
             "likes":   best.get("reactions", {}).get("summary", {}).get("total_count", 0) if best else 0,
             "date":    (best.get("created_time") or "")[:10] if best else "",
@@ -482,6 +503,7 @@ def _append_to_history(report):
 
 def save_social_report(ig_posts, ig_account, fb_pages_data, recommendations, reel_summary):
     """שומר דוח JSON לשימוש האדמין."""
+    post_lookup = build_post_lookup()
     out = ROOT / "data" / "social_report.json"
 
     # שמור נתוני שבוע קודם להשוואה
@@ -523,6 +545,8 @@ def save_social_report(ig_posts, ig_account, fb_pages_data, recommendations, ree
             "engagement_rate":    round((ig_total_likes + ig_total_comments) / (ig_n * max(ig_followers, 1)), 4) if ig_n else 0,
             "top_posts": [
                 {
+                    "post_id":  p.get("id", ""),
+                    "photo_id": post_lookup.get(("instagram", str(p.get("id", ""))), ""),
                     "caption":  (p.get("caption") or "")[:100].replace("\n", " "),
                     "likes":    p.get("like_count", 0),
                     "comments": p.get("comments_count", 0),
@@ -530,7 +554,20 @@ def save_social_report(ig_posts, ig_account, fb_pages_data, recommendations, ree
                 }
                 for p in ig_sorted
             ],
+            "photo_performance": [
+                {
+                    "post_id": p.get("id", ""),
+                    "photo_id": post_lookup.get(("instagram", str(p.get("id", ""))), ""),
+                    "likes": p.get("like_count", 0),
+                    "comments": p.get("comments_count", 0),
+                    "date": (p.get("timestamp") or "")[:10],
+                }
+                for p in ig_posts
+                if post_lookup.get(("instagram", str(p.get("id", ""))), "")
+            ],
             "best_post": {
+                "post_id": ig_best.get("id", "") if ig_best else "",
+                "photo_id": post_lookup.get(("instagram", str(ig_best.get("id", ""))), "") if ig_best else "",
                 "caption": (ig_best.get("caption") or "")[:120] if ig_best else "",
                 "likes":   ig_best.get("like_count", 0) if ig_best else 0,
                 "date":    (ig_best.get("timestamp") or "")[:10] if ig_best else "",
