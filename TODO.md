@@ -15,7 +15,7 @@
 - [x] PR #84 — Digital Licensing MVP — מוזג ל-`main`.
 - [x] PR #85 — B2B Art & Licensing MVP — מוזג ל-`main`.
 - [x] PR #80/#81/#82 הישנים נסגרו והוחלפו ב-#84/#85/#83.
-- [ ] Live verification של `/licensing/`, `/business/`, Admin UTM builder ואירועי GA.
+- [x] Live smoke verification של `/licensing/`, `/business/`, Admin UTM builder ו-payment guardrail עבר ב-GitHub Actions. [ ] עדיין נדרש לאמת receipt של אירועי GA בדוח/GA.
 - [ ] לאחר live verification: להתחיל Acquisition Experiment 01 למשך 7 ימים.
 - [ ] בסוף 7 ימים: לבחור follow-up עסקי אחד בלבד לפי הנתונים.
 - [ ] checkpoint רחב יותר סביב 10.10, ואז 24.10 אם עדיין אין sample מספיק.
@@ -767,7 +767,7 @@ MVP:
 - [x] Digital Licensing מוזג דרך PR #84.
 - [x] B2B מוזג דרך PR #85.
 - [x] UTM builder מוזג דרך PR #83.
-- [ ] לאמת live שה-deploy והאירועים עובדים לפני התחלת חלון ה-7 ימים.
+- [x] live page/route smoke verification עבר. [ ] יש לאמת שהאירועים עצמם נקלטים ב-GA/weekly report לפני פתיחת חלון ה-7 ימים.
 
 ## כלל
 במהלך 7 ימי הניסוי לא משנים pricing, hero, checkout או offer. בסוף בוחרים follow-up אחד בלבד.
@@ -778,7 +778,7 @@ MVP:
 ### החלטה
 - [x] לא להפעיל PayPal Production בזמן Acquisition Experiment 01.
 - [x] Gelato מחוץ לתוכנית הנוכחית.
-- [ ] לבצע live smoke verification של /licensing/, /business/, Admin UTM ו-/api/payments-status.
+- [x] live smoke verification עבר עבור /licensing/, /business/, Admin UTM, thumbnail ו-/api/payments-status.
 - [ ] להריץ 7 ימים מלאים של Acquisition Experiment 01 עם UTM נקי.
 - [ ] checkpoint ראשון סביב 10.10.2026.
 
