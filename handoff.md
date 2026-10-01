@@ -36,6 +36,24 @@ PAYMENTS_ENABLED = "false"   ב-wrangler.toml (production)
 
 ---
 
+
+## 📈 Lead funnel measurement audit — 1.10.2026
+
+נמצא פער מדידה חשוב בזמן בניית המודל העסקי:
+- טופס ה-newsletter בדף הבית שלח `generate_lead` על כל submit מוצלח, גם אם האימייל כבר היה קיים.
+- עמוד `/free-guide/` לא שלח `generate_lead` בכלל.
+- לכן `generate_lead` לא היה KPI אמין להשוואת free-guide מול newsletter.
+
+תיקון מוצע ב-Draft PR נפרד:
+- ה-API של subscribers מחזיר metadata לא-רגיש בלבד: `created`, `already`, `marketing_upgraded`.
+- `generate_lead` נשלח רק כשנוצר subscriber חדש או כשיש upgrade אמיתי להסכמה שיווקית.
+- `guide_request_success` מודד בקשת מדריך מוצלחת גם כשהמשתמש בוחר לא להצטרף לשיווק.
+- הדוח השבועי מפריד בין בקשות מדריך לבין לידים חדשים/משודרגים.
+- לא נשלח email/PII ל-GA.
+- אין שינוי ב-`PAYMENTS_ENABLED` ואין שינוי במסלול התשלומים.
+
+המשמעות העסקית: רק אחרי שהתיקון נפרס ומצטברים נתונים אפשר להשוות באופן הוגן `free-guide -> guide_request_success -> generate_lead`.
+
 ## 🗓️ מה קרה לאחרונה (מהחשוב לפחות חשוב)
 
 ### השבוע האחרון (25–30.9.2026)
@@ -117,6 +135,110 @@ PAYMENTS_ENABLED = "false"   ב-wrangler.toml (production)
 *אם אתה סוכן AI שנכנס לפרויקט הזה: קרא את `CLAUDE.md` ואת המסמך הזה קודם, ואז תסתכל אם יש `docs/*-2026-*.md` חדש יותר מהתאריך שרשום כאן — אם כן, זה כנראה מעודכן יותר ממה שכתוב פה.*
 
 
+### Lead source attribution audit — 1.10.2026
+
+נבדקו כל מקורות ההרשמה הפעילים בקוד:
+- `lead_magnet` — עמוד `/free-guide/`
+- `popup` — popup בדף הבית
+- `subpage_strip` — strip שמוזרק לעמודי משנה דרך `assets/js/nav.js`
+- `homepage_section` — טופס newsletter בדף הבית
+- `newsletter_issue` — הרשמה מתוך גיליון newsletter
+
+פער נוסף שנמצא:
+- `popup` ו-`subpage_strip` שלחו בעבר `generate_lead` גם כשאותו email כבר היה קיים.
+- `newsletter_issue` לא שלח `generate_lead` בכלל.
+- לכן source attribution של leads לא היה עקבי בין כל 5 המקורות.
+
+תיקון נוסף באותו Draft PR:
+- כל חמשת המקורות משתמשים באותה הגדרה של lead חדש/שדרוג הסכמה.
+- בקשות guide נשמרות בנפרד מ-lead marketing אמיתי.
+- אין PII ב-GA.
+- אין שינוי ב-payment flow.
+
+
+
+### Weekly Business Review automation — 1.10.2026
+
+נמצא שכבר קיימת אוטומציה שבועית ב-`.github/workflows/ga-weekly-analysis.yml`:
+- רצה בכל יום שני ב-07:00 UTC.
+- מפעילה `src/ga_weekly_report.py`.
+- שולחת דוח במייל ושומרת את `data/ga_reports.json`.
+
+לכן **לא נוספה אוטומציה מקבילה**. במקום זאת, Draft PR #79 מרחיב את הדוח השבועי הקיים:
+- מוסיף D1 subscriber summary לפי source, ללא PII.
+- מוסיף KPI עסקיים דטרמיניסטיים: Direct share, lead rate, marketing opt-in, digital intent, print intent.
+- מוסיף sample-size guardrail.
+- מפיק **next_action אחד בלבד** לשבוע הבא + reason.
+- שומר את `business_review` בתוך `data/ga_reports.json`.
+- מציג את ההחלטה גם במייל השבועי לפני ניתוח ה-AI.
+
+החלטת ה-next_action אינה מבוססת רק על Claude: היא מחושבת בקוד לפי כללים שקופים, ורק אחר כך Claude מוסיף ניתוח טקסטואלי. כך נמנעת החלפת אסטרטגיה בגלל ניסוח משתנה של מודל AI.
+
+אין שינוי ב-schedule, אין workflow חדש, אין payment enablement ואין deploy במסגרת ה-Draft.
+
+
+
+### Acquisition attribution — 1.10.2026
+
+המשך התוכנית העסקית זיהה ש-Direct הוא עדיין צוואר בקבוק מרכזי למדידה. Draft PR #79 הורחב:
+- GA weekly report מושך כעת גם `sessionSource`, `sessionMedium`, `sessionCampaignName`.
+- Source / Medium / Campaign מופיעים בדוח הטקסט ובמייל השבועי.
+- נוספו מראש אירועי העסק החדשים לרשימת הדוח:
+  - `licensing_personal_interest`
+  - `licensing_commercial_contact`
+  - `b2b_intent`
+  - `b2b_package_select`
+  - `b2b_contact_start`
+- אין PII.
+- אין שינוי בתשלומים.
+
+Business docs מגדירים UTM convention וניסוי attribution של 7 ימים. אין להתחיל paid ads לפני שיש attribution יציב ויכולת לזהות איזה קמפיין מביא פעולות עסקיות.
+
+
+
+### PR #79 QA pass — 1.10.2026
+
+בוצע סבב QA ממוקד על lead measurement / weekly business review.
+
+ממצאים ותיקונים:
+- נמצא שהדוח השבועי משך Source/Medium/Campaign אבל לא שמר אותם ב-`data/ga_reports.json`; תוקן כדי לשמור היסטוריית campaign.
+- הוסר KPI מטעה `guide_to_lead_pct` שחילק את כלל ה-`generate_lead` (מכל המקורות) רק בבקשות מדריך; הוחלף ב-`guide_request_rate_pct` עקבי.
+- אומת ש-`nav.js` כבר טוען את `assets/js/analytics.js` בעמודי משנה שחסרה בהם טעינת GA ישירה, ולכן אין צורך להוסיף סקריפט כפול.
+- אומת שה-endpoint החדש `/api/admin/subscriber-summary` מוגן ב-`checkAuth`.
+- אומת שה-summary מחזיר aggregates בלבד ולא email/PII.
+
+נוסף workflow ממוקד:
+- `.github/workflows/lead-funnel-ci.yml`
+- מריץ `node --test tests/subscriber-consent-model.test.mjs`
+- מריץ `python3 -m py_compile src/ga_weekly_report.py`
+- read-only permissions בלבד.
+
+הערה: סביבת העבודה של ChatGPT לא הצליחה לבצע clone ישיר מ-GitHub בגלל חסימת DNS, ולכן האימות המקומי לא נחשב. ה-CI ב-GitHub הוא מקור האימות הבא לפני Ready/Merge.
+
+
+
+### PR #79 final QA — 1.10.2026
+
+סבב QA נוסף מצא ותיקן שני פערי סמנטיקה במדידה:
+- `generate_lead` נשלח בעבר גם עבור subscriber חדש שביקש Free Guide אך **לא** נתן marketing consent. זה היה מערבב lead magnet delivery עם owned marketing audience.
+- נוסף flag שרת לא-רגיש `lead_created`, והוא true רק כאשר:
+  - subscriber חדש נתן marketing consent, או
+  - subscriber קיים שודרג כעת מ-0/NULL ל-1.
+- כל מקורות ההרשמה משתמשים כעת ב-`lead_created` במקום להסיק lead מ-`already`.
+
+בנוסף:
+- subscriber summary מפריד כעת בין:
+  - new subscribers בתקופה לפי source,
+  - marketing opt-ins/upgrades בתקופה לפי `consent_marketing_at`,
+  - current marketing audience.
+- ה-KPI בדוח נקרא במפורש `new_subscriber_marketing_opt_in_pct`, ובנפרד נשמר `period_marketing_opt_ins`.
+- נוספו tests שמכסים guide-only ללא marketing consent לעומת guide+marketing.
+- Lead Funnel CI עבר בהצלחה: Node tests + Python syntax check.
+
+PR #79 יכול לעבור ל-Ready for Review. אין merge/deploy אוטומטי במסגרת הסבב הזה.
+
+
+
 ### Admin UTM campaign link builder — 1.10.2026
 
 נוסף כלי פנימי ב-Admin תחת אזור Analytics:
@@ -168,14 +290,6 @@ PAYMENTS_ENABLED = "false"   ב-wrangler.toml (production)
   - נשאר Draft; אינו חוסם את ניסויי המודל העסקי.
   - `PAYMENTS_ENABLED=false` נשאר כלל מחייב.
 
-### סדר עבודה מוסכם להמשך
-1. QA וסגירה של PR #82.
-2. review/merge מבוקר של PR #79 לפני התחלת חלון מדידה נקי.
-3. QA של PR #80 ו-PR #81.
-4. רק אחרי שהמדידה חיה: להתחיל Acquisition Experiment 01 ל-7 ימים.
-5. לא להתחיל paid ads, לא להפעיל PayPal production ולא להעמיק Gelato לפני שיש signal אמיתי מהנתונים.
-
-
 
 ### PR #82 QA pass — 1.10.2026
 
@@ -201,4 +315,3 @@ PAYMENTS_ENABLED = "false"   ב-wrangler.toml (production)
   - מריץ `node --test tests/admin-campaign-links.test.mjs`.
 
 עדיין אין merge/deploy. יש להמתין ל-CI לפני מעבר PR #82 ל-Ready.
-
