@@ -132,3 +132,12 @@ PAYMENTS_ENABLED = "false"   ב-wrangler.toml (production)
 - `.github/workflows/deploy.yml` עודכן כך ששינויים תחת `licensing/**` יפעילו deploy אחרי merge עתידי.
 - Gelato לא חלק מ-MVP הרישוי הדיגיטלי.
 
+
+### Licensing acquisition readiness — 1.10.2026
+
+עמוד `/licensing/` קיבל metadata מלא לשיתוף ומדידה:
+- canonical + hreflang כבר קיימים.
+- נוספו Open Graph ו-Twitter Card.
+- social preview משתמש כרגע בתמונת המותג הקיימת של האתר.
+- המטרה היא לאפשר בדיקת קישורי UTM ב-social/newsletter עם preview תקין.
+- אין שינוי בתשלומים ואין checkout activation.
