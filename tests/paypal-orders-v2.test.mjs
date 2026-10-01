@@ -40,7 +40,7 @@ function makeDb(options = {}) {
                 const key = args.join('|');
                 return { count: state.rateLimits.get(key) || 0 };
               }
-              if (sql.includes('SELECT processed FROM paypal_webhook_events')) {
+              if (sql.includes('SELECT processed') && sql.includes('FROM paypal_webhook_events')) {
                 const row = state.webhookEvents.get(args[0]);
                 return row ? {
                   processed: row.processed,
@@ -1044,7 +1044,9 @@ test('concurrent duplicate webhook delivery does not process an in-flight event 
   db.state.webhookEvents.set('WH-EVENT-RACE', {
     event_type: 'PAYMENT.CAPTURE.COMPLETED',
     received_at: new Date().toISOString(),
-    processed: 0,
+    processed: 2,
+    processing_started_at: new Date().toISOString(),
+    attempts: 1,
   });
 
   const env = {
