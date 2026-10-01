@@ -237,3 +237,81 @@ Business docs מגדירים UTM convention וניסוי attribution של 7 ימ
 
 PR #79 יכול לעבור ל-Ready for Review. אין merge/deploy אוטומטי במסגרת הסבב הזה.
 
+
+
+### Admin UTM campaign link builder — 1.10.2026
+
+נוסף כלי פנימי ב-Admin תחת אזור Analytics:
+- יוצר deep links ליעדים העסקיים: `/free-guide/`, `/licensing/`, `/business/`, `/#gallery`, `/camera/`, `/locations/`.
+- משתמש ב-`utm_source`, `utm_medium`, `utm_campaign`, `utm_content`.
+- source/medium/destination מוגבלים לרשימות בטוחות.
+- campaign/content עוברים normalization ל-`a-z0-9_-`.
+- אין PII.
+- כולל copy/open לבדיקה.
+- mobile-friendly.
+- לא שולח קישורים החוצה ולא מפרסם אוטומטית; זה רק generator פנימי.
+
+מטרת הכלי: לאפשר discipline עקבי ב-UTM בלי להקליד ידנית בטלפון, כדי שהדוח השבועי החדש יוכל לזהות קמפיינים במקום שכולם ייראו כ-Direct.
+
+
+### Business-model work status — 1.10.2026
+
+מצב העבודה המתועד להמשך:
+
+- **PR #79 — Lead funnel measurement**
+  - עבר סבב QA ממוקד.
+  - Lead Funnel CI עבר בהצלחה: Node subscriber/consent tests + Python syntax check.
+  - `generate_lead` מוגדר כעת רק ל-marketing lead אמיתי דרך `lead_created`; בקשת Free Guide בלי marketing consent נשארת `guide_request_success` בלבד.
+  - subscriber summary מפריד בין new subscribers, opt-ins/upgrades בתקופה, ו-current marketing audience.
+  - Source / Medium / Campaign נשמרים גם בהיסטוריית `data/ga_reports.json`.
+  - PR #79 הועבר מ-Draft ל-**Ready for Review**.
+  - עדיין **לא מוזג ולא נפרס**.
+
+- **PR #82 — Admin UTM campaign link builder**
+  - עדיין Draft.
+  - מוסיף כלי פנימי ב-Admin > Analytics ליצירת deep links עם UTM.
+  - אין PII, אין פרסום אוטומטי, אין הרשאות חיצוניות ואין שינוי בתשלומים.
+  - זהו הכלי הבא שמיועד ל-QA לפני הפעלת ניסוי acquisition.
+
+- **PR #80 — Digital Licensing MVP**
+  - עדיין Draft, ללא deploy.
+  - מחירי הבסיס נטענים מאותה תשתית מחירים קיימת של ההורדות; checkout הסופי נשאר server-authoritative.
+  - אין הפעלת תשלומים.
+
+- **PR #81 — B2B Art & Licensing MVP**
+  - עדיין Draft, ללא deploy.
+  - כולל attribution מחבילת B2B עד `contact_form_success`, ללא PII.
+
+- **PR #78 — Business-model TODO/scorecard**
+  - עדיין Draft.
+  - מכיל KPI scorecard, acquisition playbook ו-Acquisition Experiment 01.
+
+- **PR #76 — PayPal Orders v2**
+  - נשאר Draft; אינו חוסם את ניסויי המודל העסקי.
+  - `PAYMENTS_ENABLED=false` נשאר כלל מחייב.
+
+
+### PR #82 QA pass — 1.10.2026
+
+בוצע סבב QA על Admin UTM campaign link builder.
+
+שינויים שבוצעו:
+- הוצא logic של בניית URL למודול testable:
+  - `assets/js/admin-campaign-links.mjs`
+- נוספו guardrails:
+  - destination/source/medium allowlists.
+  - normalization ל-campaign/content.
+  - חסימה בסיסית של email/phone בתוך UTM לפני normalization.
+  - כפתור "פתח לבדיקה" נשאר disabled עד שנוצר URL חוקי.
+  - שדות campaign/content מוגדרים ללא autocomplete/autocapitalize כדי לצמצם טעויות במובייל.
+- נוספו tests:
+  - בניית UTM תקין.
+  - שמירת `#gallery`.
+  - חסימת destination/source/medium לא חוקיים.
+  - חסימת PII ברור.
+  - דרישת campaign לא-ריק.
+- נוסף CI ממוקד:
+  - `.github/workflows/admin-campaign-links-ci.yml`
+  - מריץ `node --test tests/admin-campaign-links.test.mjs`.
+
+עדיין אין merge/deploy. יש להמתין ל-CI לפני מעבר PR #82 ל-Ready.
