@@ -451,6 +451,86 @@ async function resolveDigitalPayPalPrice(env, photoId, size, currency) {
   return { amountExpected, currency };
 }
 
+
+const SANDBOX_ABANDONED_ORDER_RETENTION_DAYS = 7;
+const SANDBOX_PROCESSED_WEBHOOK_RETENTION_DAYS = 90;
+
+function isoDaysAgo(days) {
+  return new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
+}
+
+export async function handlePayPalSandboxCleanup(request, env) {
+  if (request.method !== 'POST') return jsonRes({ error: 'method not allowed' }, 405, request);
+  if (env.PAYPAL_SANDBOX_CLEANUP_ENABLED !== 'true') {
+    return jsonRes({ error: 'PAYPAL_SANDBOX_CLEANUP_DISABLED' }, 403, request);
+  }
+
+  const body = await request.json().catch(() => ({}));
+  const apply = body.apply === true;
+  const orderCutoff = isoDaysAgo(SANDBOX_ABANDONED_ORDER_RETENTION_DAYS);
+  const webhookCutoff = isoDaysAgo(SANDBOX_PROCESSED_WEBHOOK_RETENTION_DAYS);
+
+  const abandoned = await env.DB.prepare(
+    `SELECT COUNT(*) AS count
+     FROM paypal_orders
+     WHERE status='CREATED'
+       AND paypal_capture_id IS NULL
+       AND fulfillment_token IS NULL
+       AND completed_at IS NULL
+       AND created_at < ?`
+  ).bind(orderCutoff).first();
+
+  const processedWebhooks = await env.DB.prepare(
+    `SELECT COUNT(*) AS count
+     FROM paypal_webhook_events
+     WHERE processed=1
+       AND received_at < ?`
+  ).bind(webhookCutoff).first();
+
+  const candidates = {
+    abandonedOrders: Number(abandoned?.count || 0),
+    processedWebhookEvents: Number(processedWebhooks?.count || 0),
+  };
+
+  if (!apply) {
+    return jsonRes({
+      ok: true,
+      dryRun: true,
+      retentionDays: {
+        abandonedOrders: SANDBOX_ABANDONED_ORDER_RETENTION_DAYS,
+        processedWebhookEvents: SANDBOX_PROCESSED_WEBHOOK_RETENTION_DAYS,
+      },
+      cutoffs: { orderCutoff, webhookCutoff },
+      candidates,
+    }, 200, request);
+  }
+
+  const orderDelete = await env.DB.prepare(
+    `DELETE FROM paypal_orders
+     WHERE status='CREATED'
+       AND paypal_capture_id IS NULL
+       AND fulfillment_token IS NULL
+       AND completed_at IS NULL
+       AND created_at < ?`
+  ).bind(orderCutoff).run();
+
+  const webhookDelete = await env.DB.prepare(
+    `DELETE FROM paypal_webhook_events
+     WHERE processed=1
+       AND received_at < ?`
+  ).bind(webhookCutoff).run();
+
+  return jsonRes({
+    ok: true,
+    dryRun: false,
+    deleted: {
+      abandonedOrders: Number(orderDelete?.meta?.changes || 0),
+      processedWebhookEvents: Number(webhookDelete?.meta?.changes || 0),
+    },
+    candidates,
+  }, 200, request);
+}
+
 export async function handlePayPalCreateOrder(request, env, options = {}) {
   if (!options.allowWhenPaymentsDisabled && env.PAYMENTS_ENABLED !== 'true') return paymentsDisabledResponse(request);
   if (request.method !== 'POST') return jsonRes({ error: 'method not allowed' }, 405, request);
