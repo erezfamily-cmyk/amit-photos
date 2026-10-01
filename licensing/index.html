@@ -16,6 +16,10 @@
 :root{--bg:#0a0a0a;--surface:#111;--border:#262626;--accent:#c8a96e;--text:#f0ede8;--muted:#a0a0a0}
 html,body{margin:0;background:var(--bg);color:var(--text);font-family:'Heebo',sans-serif}
 body{min-height:100vh;padding-bottom:4rem}
+.site-head{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1rem 1.25rem;border-bottom:1px solid var(--border)}
+.site-brand{font-family:'Syne',sans-serif;color:var(--accent);text-decoration:none;font-weight:700}
+.head-links{display:flex;align-items:center;gap:.8rem}
+.head-links a{color:var(--muted);text-decoration:none;font-size:.85rem}
 .wrap{width:min(100%,980px);margin:0 auto;padding:1.25rem}
 .hero{padding:3rem 0 1.75rem}
 .eyebrow{color:var(--accent);font-size:.78rem;font-weight:700;letter-spacing:.08em}
@@ -41,9 +45,15 @@ h1{font-family:'Syne',sans-serif;font-size:clamp(2rem,7vw,3.6rem);line-height:1.
 :focus-visible{outline:3px solid var(--accent);outline-offset:3px}
 </style>
 <script src="/assets/js/analytics.js?v=f571a0c4" defer></script>
-<script src="/assets/js/nav.js?v=dd63b478" defer></script>
 </head>
 <body>
+<header class="site-head">
+  <a class="site-brand" href="/">Amit Photos</a>
+  <div class="head-links">
+    <a href="/#gallery" data-he="גלריה" data-en="Gallery">גלריה</a>
+    <a href="/privacy/" data-he="פרטיות" data-en="Privacy">פרטיות</a>
+  </div>
+</header>
 <main class="wrap" id="page-main">
   <div class="lang" aria-label="Language">
     <button type="button" id="lang-he" class="active" onclick="setLicensingLang('he')">עברית</button>
@@ -146,6 +156,13 @@ h1{font-family:'Syne',sans-serif;font-size:clamp(2rem,7vw,3.6rem);line-height:1.
     המחירים נטענים מאותה הגדרת מחירים שמשמשת את ההורדות באתר. לתמונה מסוימת עשויה להיות התאמת מחיר או מבצע; המחיר הקובע מוצג במסלול הרכישה של אותה תמונה. אין להעביר, למכור מחדש, להפיץ את הקובץ, להעניק רישיון משנה או להשתמש בו בפרסום/עסק ללא רישיון מסחרי מתאים.
   </p>
 </main>
+<footer style="text-align:center;padding:1.5rem 1.25rem;border-top:1px solid #222;color:#666;font-size:.8rem">
+  <a href="/privacy/" style="color:#888" data-he="מדיניות פרטיות" data-en="Privacy Policy">מדיניות פרטיות</a>
+  <span> · </span>
+  <a href="/accessibility/" style="color:#888" data-he="הצהרת נגישות" data-en="Accessibility Statement">הצהרת נגישות</a>
+</footer>
+<script src="/assets/js/accessibility-widget.js"></script>
+<script src="/assets/js/cookie-notice.js"></script>
 
 <script>
 (function () {
