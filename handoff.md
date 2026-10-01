@@ -148,7 +148,7 @@ PAYMENTS_ENABLED = "false"   ב-wrangler.toml (production)
 
 **ידוע כפתוח / ממתין:**
 
-- **מעבר בפועל ל-PayPal Orders API v2** — עיצוב מוכן (`docs/paypal-orders-v2-migration-2026-09-30.md`), ממתין ל-(1) סקירת עמית למסמך עצמו, (2) חשבון Sandbox + Client ID/Secret + חשבון קונה-בדיקה מעמית (חד-פעמי, developer.paypal.com), (3) סיום חלון ה-baseline לפני הפעלה בפועל — אבל הבנייה עצמה לא צריכה לחכות לתנאי #3.
+- **מעבר ל-PayPal Orders API v2** — Phase 1 מיושם ב-Draft PR #76. Sandbox App + buyer account הוכנו, `PAYPAL_CLIENT_ID`/`PAYPAL_CLIENT_SECRET` נשמרו ב-Cloudflare כ-Secrets, migration הוחל ואומת ב-D1, וה-backend הדיגיטלי עבר full Node suite של 318/318. עדיין לא הושלמו: security review מלא, Sandbox E2E אמיתי בסביבה מבודדת, webhook מאומת-חתימה, print flow ב-Orders v2, client SDK/UI, והסרה/חסימה קבועה של legacy PayPal endpoints לפני כל הפעלה. לפי החלטת בעל הפרויקט: לא למזג ולא לאפשר רכישה אמיתית כרגע.
 - `DSC_9287.jpg` (גאורגיה) — הסיבה כבר ידועה (ראה #10 למעלה: סימון זכויות-יוצרים שנמחק בשקט בגלל באג CI, עכשיו מתוקן ב-PR #74). לבדוק שהיא נכנסת בפועל בריצה היומית הבאה; אם לא, לבדוק את `data/copyright_flagged.json` (עכשיו נשמר בפועל) לראות אם היא שם ולמה.
 - להמשיך לעקוב אחרי metrics אחרי כל שינוי UX גדול לפני שממשיכים הלאה.
 
