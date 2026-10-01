@@ -271,3 +271,23 @@ Verified with a real PayPal Sandbox transaction:
 - D1 shows `processed=1`, `attempts=1`, and no stuck processing lease.
 
 Conclusion: the real PayPal Sandbox webhook path, including signature verification with `PAYPAL_WEBHOOK_ID`, is verified end-to-end.
+
+
+## Sandbox cleanup policy — implemented, not applied (1.10.2026)
+
+A guarded cleanup endpoint is now available only in PayPal Sandbox staging.
+
+Policy:
+- dry-run by default;
+- explicit `apply=true` required for deletion;
+- only abandoned `CREATED` orders older than 7 days with no capture/fulfillment are eligible;
+- only processed webhook events older than 90 days are eligible;
+- `COMPLETED`, `FULFILLING`, and `download_tokens` are never deleted.
+
+Both Node and Python test workflows pass.
+
+No destructive cleanup has been run.
+
+## Print/Gelato schema gap
+
+The approved PayPal migration plan says to reuse the existing `print_orders` table without a schema change. Runtime code uses that table, but the repository's `schema.sql` and migrations do not define it. The actual D1 schema must be inspected before implementing print Orders v2 fulfillment.
