@@ -10,6 +10,7 @@ function makeDb(options = {}) {
     token: options.token || null,
     tokenInserts: 0,
     orderInserts: 0,
+    rateLimits: new Map(),
   };
 
   return {
@@ -25,8 +26,18 @@ function makeDb(options = {}) {
               if (sql.includes('FROM photos WHERE id = ?') && sql.includes('price_overrides')) {
                 return state.photo;
               }
+              if (sql.includes('SELECT paypal_order_id FROM paypal_orders WHERE client_idempotency_key')) {
+                if (state.order?.client_idempotency_key === args[0]) {
+                  return { paypal_order_id: state.order.paypal_order_id };
+                }
+                return null;
+              }
               if (sql.includes('SELECT * FROM paypal_orders')) {
                 return state.order;
+              }
+              if (sql.includes('SELECT count FROM paypal_rate_limits')) {
+                const key = args.join('|');
+                return { count: state.rateLimits.get(key) || 0 };
               }
               if (sql.includes('FROM download_tokens WHERE tx = ?')) {
                 return state.token;
@@ -55,6 +66,7 @@ function makeDb(options = {}) {
                   currency: args[5],
                   status: 'CREATED',
                   created_at: args[6],
+                  client_idempotency_key: args[7],
                   fulfillment_json: null,
                   fulfillment_token: null,
                   paypal_capture_id: null,
@@ -82,6 +94,14 @@ function makeDb(options = {}) {
                 state.order.completed_at = args[1];
                 return { success: true, meta: { changes: 1 } };
               }
+              if (sql.includes('INSERT INTO paypal_rate_limits')) {
+                const key = args.join('|');
+                state.rateLimits.set(key, (state.rateLimits.get(key) || 0) + 1);
+                return { success: true, meta: { changes: 1 } };
+              }
+              if (sql.includes('DELETE FROM paypal_rate_limits')) {
+                return { success: true, meta: { changes: 0 } };
+              }
               return { success: true, meta: { changes: 1 } };
             },
           };
@@ -97,10 +117,15 @@ function makeDb(options = {}) {
   };
 }
 
-function post(path, body) {
+function post(path, body, extraHeaders = {}) {
   return new Request('https://amitphotos.com' + path, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      'Idempotency-Key': 'test-idempotency-0001',
+      'CF-Connecting-IP': '203.0.113.10',
+      ...extraHeaders,
+    },
     body: JSON.stringify(body),
   });
 }
@@ -200,6 +225,93 @@ test('create-order preserves the existing rounded USD conversion rule', async ()
     assert.equal(response.status, 201);
     assert.equal(createBody.purchase_units[0].amount.value, '5.00');
     assert.equal(db.state.order.amount_expected, 500);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+
+test('create-order reuses an existing order for the same Idempotency-Key without creating another PayPal order', async () => {
+  const db = makeDb({
+    order: {
+      id: 'local-existing',
+      paypal_order_id: 'PAYPALEXISTING123',
+      order_type: 'digital',
+      photo_id: 'photo-1',
+      sku: 'small',
+      amount_expected: 1900,
+      currency: 'ILS',
+      status: 'CREATED',
+      created_at: new Date().toISOString(),
+      client_idempotency_key: 'test-idempotency-0001',
+      fulfillment_json: null,
+      fulfillment_token: null,
+      paypal_capture_id: null,
+    },
+  });
+  const env = {
+    PAYMENTS_ENABLED: 'true',
+    PAYPAL_CLIENT_ID: 'sandbox-client',
+    PAYPAL_CLIENT_SECRET: 'sandbox-secret',
+    DB: db,
+  };
+
+  const originalFetch = globalThis.fetch;
+  let createCalls = 0;
+  globalThis.fetch = async () => {
+    createCalls += 1;
+    throw new Error('PayPal must not be called for an existing idempotency key');
+  };
+  try {
+    const response = await handlePayPalCreateOrder(
+      post('/api/paypal/create-order', { type: 'digital', photoId: 'photo-1', sku: 'small' }),
+      env
+    );
+    assert.equal(response.status, 200);
+    assert.deepEqual(await response.json(), {
+      paypalOrderId: 'PAYPALEXISTING123',
+      reused: true,
+    });
+    assert.equal(createCalls, 0);
+    assert.equal(db.state.orderInserts, 0);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test('create-order rate limits repeated public attempts by hashed IP', async () => {
+  const db = makeDb();
+  const env = {
+    PAYMENTS_ENABLED: 'true',
+    PAYPAL_CLIENT_ID: 'sandbox-client',
+    PAYPAL_CLIENT_SECRET: 'sandbox-secret',
+    DB: db,
+  };
+
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async (url) => {
+    if (String(url).endsWith('/v1/oauth2/token')) {
+      return Response.json({ access_token: 'access-token' });
+    }
+    return Response.json({ id: 'PAYPALRATE123', status: 'CREATED' }, { status: 201 });
+  };
+
+  try {
+    // Pre-load the current create-order bucket above the configured limit.
+    const now = Math.floor(Date.now() / 1000);
+    const windowStart = Math.floor(now / 60) * 60;
+    const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode('203.0.113.10'));
+    const rateKey = Array.from(new Uint8Array(digest), b => b.toString(16).padStart(2, '0')).join('');
+    db.state.rateLimits.set([rateKey, 'create-order', windowStart].join('|'), 8);
+
+    const response = await handlePayPalCreateOrder(
+      post('/api/paypal/create-order', { type: 'digital', photoId: 'photo-1', sku: 'small' }),
+      env
+    );
+    assert.equal(response.status, 429);
+    assert.equal((await response.json()).error, 'RATE_LIMITED');
+    assert.equal(db.state.orderInserts, 0);
+    assert.equal([...db.state.rateLimits.keys()].some(key => key.includes('203.0.113.10')), false);
   } finally {
     globalThis.fetch = originalFetch;
   }
