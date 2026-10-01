@@ -696,6 +696,38 @@ test('legacy PayPal public endpoints stay permanently retired even if PAYMENTS_E
   }
 });
 
+
+test('PayPal responses never reflect an untrusted Origin and CORS allows the idempotency header', async () => {
+  const response = await handlePayPalCreateOrder(
+    post(
+      '/api/paypal/create-order',
+      { type: 'digital', photoId: 'photo-1', sku: 'small' },
+      { Origin: 'https://evil.example' }
+    ),
+    { PAYMENTS_ENABLED: 'false' }
+  );
+  assert.equal(response.status, 503);
+  assert.notEqual(response.headers.get('Access-Control-Allow-Origin'), 'https://evil.example');
+  assert.equal(response.headers.get('Access-Control-Allow-Origin'), 'https://amitphotos.com');
+  assert.match(response.headers.get('Access-Control-Allow-Headers') || '', /Idempotency-Key/);
+
+  const preflight = await worker.fetch(
+    new Request('https://amitphotos.com/api/paypal/create-order', {
+      method: 'OPTIONS',
+      headers: {
+        Origin: 'https://evil.example',
+        'Access-Control-Request-Method': 'POST',
+        'Access-Control-Request-Headers': 'content-type,idempotency-key',
+      },
+    }),
+    {},
+    { waitUntil() {} }
+  );
+  assert.equal(preflight.status, 204);
+  assert.notEqual(preflight.headers.get('Access-Control-Allow-Origin'), 'https://evil.example');
+  assert.match(preflight.headers.get('Access-Control-Allow-Headers') || '', /Idempotency-Key/);
+});
+
 test('sandbox status authenticates against PayPal while payments stay disabled', async () => {
   const env = {
     PAYMENTS_ENABLED: 'false',
