@@ -232,6 +232,26 @@ def fetch_ga4_data(token):
     }
 
 
+def fetch_subscriber_summary(days=7):
+    """מושך סיכום מצרפי בלבד לפי source — ללא אימיילים/PII."""
+    if not ADMIN_PASSWORD:
+        print("⚠️ ADMIN_PASSWORD חסר — מדלג על subscriber source summary")
+        return None
+    try:
+        resp = requests.get(
+            f"{WORKER_URL}/api/admin/subscriber-summary",
+            params={"days": days},
+            headers={"X-Admin-Password": ADMIN_PASSWORD},
+            timeout=15,
+        )
+        if resp.ok:
+            return resp.json()
+        print(f"⚠️ subscriber-summary החזיר {resp.status_code}: {resp.text[:200]}")
+    except Exception as e:
+        print(f"⚠️ subscriber-summary נכשל: {e}")
+    return None
+
+
 def fetch_revenue_summary(days=7):
     """מושך הכנסות אמיתיות מאומתות מ-D1 (/api/admin/revenue-summary) — לא ספירת events מ-GA
     (שיורים בצד לקוח בלי קשר אם התשלום בפועל הצליח בשרת). כשל כאן לא אמור לעצור את הדוח כולו —
@@ -323,6 +343,26 @@ def build_data_summary(data):
             lines.append(f"  {row['עמוד'] or '/'} — {row['event']}: {row['count']}")
     else:
         lines.append("  אין עדיין אירועי UX לפי עמוד")
+
+    sub = data.get("subscriber_summary")
+    lines += ["", "--- לידים לפי מקור (D1 aggregate, ללא PII) ---"]
+    if sub is None:
+        lines.append("  לא זמין")
+    else:
+        totals = sub.get("totals", {})
+        lines.append(
+            f"  סה\"כ subscribers: {totals.get('total_subscribers', 0)} | "
+            f"marketing opt-in: {totals.get('marketing_subscribers', 0)} | "
+            f"opt-out: {totals.get('non_marketing_subscribers', 0)} | "
+            f"unknown legacy: {totals.get('unknown_marketing_consent', 0)}"
+        )
+        for row in sub.get("period_new_by_source", []):
+            lines.append(
+                f"  {row.get('source','unknown')}: total={row.get('total',0)}, "
+                f"marketing={row.get('marketing_opt_in',0)}, "
+                f"no-marketing={row.get('marketing_opt_out',0)}, "
+                f"unknown={row.get('marketing_unknown',0)}"
+            )
 
     rev = data.get("revenue")
     lines += ["", "--- אימות הכנסות מול D1 (לא רק ספירת events מ-GA) ---"]
@@ -554,6 +594,7 @@ def save_report(data, analysis, reports_file=None):
         "countries": data.get("countries", [])[:5],
         "funnel_events": data["funnel_events"],
         "ux_by_page": data.get("ux_by_page", [])[:50],
+        "subscriber_summary": data.get("subscriber_summary"),
         "revenue":   data.get("revenue"),
         "analysis":  analysis,
     })
@@ -577,6 +618,9 @@ def main():
 
     print("📊 שולף נתונים מ-GA4...")
     data = fetch_ga4_data(token)
+
+    print("👥 מושך לידים לפי מקור מ-D1...")
+    data["subscriber_summary"] = fetch_subscriber_summary()
 
     print("💰 מאמת הכנסות מול D1...")
     data["revenue"] = fetch_revenue_summary()
