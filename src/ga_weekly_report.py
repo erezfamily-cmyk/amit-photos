@@ -128,6 +128,17 @@ def fetch_ga4_data(token):
         "orderBys": [{"metric": {"metricName": "sessions"}, "desc": True}],
         "limit": 8,
     })
+    campaigns_raw = run_report(token, {
+        "dateRanges": dr,
+        "dimensions": [
+            {"name": "sessionSource"},
+            {"name": "sessionMedium"},
+            {"name": "sessionCampaignName"},
+        ],
+        "metrics": [{"name": "sessions"}, {"name": "activeUsers"}],
+        "orderBys": [{"metric": {"metricName": "sessions"}, "desc": True}],
+        "limit": 20,
+    })
     landing_pages_raw = run_report(token, {
         "dateRanges": dr,
         "dimensions": [{"name": "landingPagePlusQueryString"}],
@@ -160,6 +171,8 @@ def fetch_ga4_data(token):
         "hero_gallery_click", "hero_sale_click", "hero_guide_click", "nav_click",
         "gallery_filter", "scroll_25", "scroll_50", "scroll_75", "scroll_90",
         "contact_intent", "photo_contact_click", "contact_form_success", "language_change", "content_link_click",
+        "licensing_personal_interest", "licensing_commercial_contact",
+        "b2b_intent", "b2b_package_select", "b2b_contact_start",
         "nav_home_click", "nav_gallery_click", "nav_sale_click", "nav_camera_click",
         "nav_locations_click", "nav_purchase_info_click", "nav_newsletter_click",
         "nav_contact_click", "nav_more_click", "nav_games_click", "nav_videos_click",
@@ -200,6 +213,18 @@ def fetch_ga4_data(token):
     for r in sources:
         r["מקור"] = HEBREW_CHANNELS.get(r["מקור"], r["מקור"])
 
+    campaigns = []
+    for row in (campaigns_raw or {}).get("rows", []):
+        dims = row.get("dimensionValues", [])
+        metrics = row.get("metricValues", [])
+        campaigns.append({
+            "source": dims[0]["value"] if len(dims) > 0 else "",
+            "medium": dims[1]["value"] if len(dims) > 1 else "",
+            "campaign": dims[2]["value"] if len(dims) > 2 else "",
+            "sessions": metrics[0]["value"] if len(metrics) > 0 else "0",
+            "activeUsers": metrics[1]["value"] if len(metrics) > 1 else "0",
+        })
+
     events = parse_rows(events_raw, ["count"], "event")
     events_by_name = {r["event"]: r["count"] for r in events}
     ux_by_page = []
@@ -225,6 +250,7 @@ def fetch_ga4_data(token):
         "top_pages": parse_rows(pages_raw, ["צפיות", "sessions"], "עמוד"),
         "landing_pages": parse_rows(landing_pages_raw, ["sessions", "activeUsers"], "עמוד נחיתה"),
         "sources":   sources,
+        "campaigns": campaigns,
         "devices":   parse_rows(devices_raw, ["sessions"], "מכשיר"),
         "countries": parse_rows(countries_raw, ["sessions"], "ארץ"),
         "funnel_events": events_by_name,
@@ -303,6 +329,17 @@ def build_data_summary(data):
     lines += ["", "--- מקורות תנועה ---"]
     for r in data["sources"]:
         lines.append(f"  {r['מקור']}: {r['sessions']} סשנים")
+    lines += ["", "--- Source / Medium / Campaign ---"]
+    campaigns = data.get("campaigns", [])
+    if campaigns:
+        for r in campaigns[:12]:
+            campaign = r.get("campaign") or "(not set)"
+            lines.append(
+                f"  {r.get('source','(direct)')} / {r.get('medium','(none)')} / {campaign}: "
+                f"{r.get('sessions','0')} סשנים"
+            )
+    else:
+        lines.append("  אין נתוני campaign")
     lines += ["", "--- מכשירים ---"]
     for r in data["devices"]:
         lines.append(f"  {r['מכשיר']}: {r['sessions']} סשנים")
@@ -332,6 +369,11 @@ def build_data_summary(data):
         ("contact_intent", "כוונת יצירת קשר"),
         ("photo_contact_click", "פנייה מתוך תמונה"),
         ("contact_form_success", "טופסי קשר שנשלחו"),
+        ("licensing_personal_interest", "עניין ברישוי אישי"),
+        ("licensing_commercial_contact", "פניות רישוי מסחרי"),
+        ("b2b_intent", "עניין B2B"),
+        ("b2b_package_select", "בחירת חבילת B2B"),
+        ("b2b_contact_start", "תחילת פנייה B2B"),
         ("language_change", "החלפת שפה"),
     ]:
         lines.append(f"  {label}: {fe.get(event, '0')}")
@@ -582,6 +624,12 @@ def build_html_email(data, analysis):
         f'<td style="padding:5px 8px;text-align:right;font-weight:600">{r["sessions"]}</td></tr>'
         for r in data["sources"]
     )
+    campaign_rows = "".join(
+        f'<tr><td style="padding:5px 8px;color:#555">{r.get("source","")} / {r.get("medium","")}</td>'
+        f'<td style="padding:5px 8px;color:#555">{r.get("campaign") or "(not set)"}</td>'
+        f'<td style="padding:5px 8px;text-align:right;font-weight:600">{r.get("sessions","0")}</td></tr>'
+        for r in data.get("campaigns", [])[:10]
+    )
 
     return f"""<!DOCTYPE html>
 <html dir="rtl" lang="he">
@@ -622,6 +670,10 @@ def build_html_email(data, analysis):
       {card("גלילה 90%", data['funnel_events'].get('scroll_90', '0'))}
       {card("לידים", data['funnel_events'].get('generate_lead', '0'))}
       {card("יצירת קשר", data['funnel_events'].get('contact_intent', '0'))}
+      {card("עניין ברישוי אישי", data['funnel_events'].get('licensing_personal_interest', '0'))}
+      {card("פניות רישוי מסחרי", data['funnel_events'].get('licensing_commercial_contact', '0'))}
+      {card("עניין B2B", data['funnel_events'].get('b2b_intent', '0'))}
+      {card("פניות B2B", data['funnel_events'].get('b2b_contact_start', '0'))}
     </div>
   </div>
   <div style="padding:0 24px 20px">
@@ -657,6 +709,17 @@ def build_html_email(data, analysis):
         {sources_rows}
       </table>
     </div>
+  </div>
+  <div style="padding:0 24px 20px">
+    <h2 style="color:#2c3e50;margin:0 0 8px;font-size:1em">Campaign attribution</h2>
+    <table style="width:100%;border-collapse:collapse;font-size:.86em">
+      <tr style="background:#f0f2f5">
+        <th style="padding:6px 8px;text-align:right;color:#555">Source / Medium</th>
+        <th style="padding:6px 8px;text-align:right;color:#555">Campaign</th>
+        <th style="padding:6px 8px;text-align:right;color:#555">Sessions</th>
+      </tr>
+      {campaign_rows or '<tr><td colspan="3" style="padding:8px;color:#999">אין עדיין נתוני campaign</td></tr>'}
+    </table>
   </div>
   <div style="background:#f8f9fa;padding:14px 24px;text-align:center;color:#aaa;font-size:.78em">
     נשלח אוטומטית מ-amitphotos.com • <a href="https://amitphotos.com" style="color:#3498db">amitphotos.com</a>
