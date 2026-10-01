@@ -1,0 +1,28 @@
+name: Digital Licensing CI
+
+on:
+  push:
+    branches:
+      - feature/digital-licensing-mvp-clean-2026-10-01
+  pull_request:
+    paths:
+      - 'licensing/**'
+      - 'docs/digital-licensing-mvp-2026-10-01.md'
+      - 'tests/digital-licensing-page.test.mjs'
+      - '.github/workflows/digital-licensing-ci.yml'
+      - '.github/workflows/deploy.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  licensing:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Licensing page tests
+        run: node --test tests/digital-licensing-page.test.mjs

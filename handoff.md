@@ -315,3 +315,45 @@ PR #79 יכול לעבור ל-Ready for Review. אין merge/deploy אוטומט
   - מריץ `node --test tests/admin-campaign-links.test.mjs`.
 
 עדיין אין merge/deploy. יש להמתין ל-CI לפני מעבר PR #82 ל-Ready.
+
+
+### Digital Licensing MVP — 1.10.2026
+
+נפתח כיוון MVP מסחרי ראשון, בלי להפעיל תשלומים:
+- מסמך מוצר: `docs/digital-licensing-mvp-2026-10-01.md`
+- עמוד ציבורי דו-לשוני: `/licensing/`
+- שימוש אישי נשען על ה-SKU הקיימים `small / medium / large` והמחירים הקיימים כ-test prices.
+- שימוש מסחרי נשאר inquiry/quote בלבד בשלב הראשון — לא נבנה עדיין checkout מסחרי אוטומטי.
+- אין שינוי ב-PayPal backend ואין שינוי ב-`PAYMENTS_ENABLED`.
+- לא נוסף קישור לניווט הראשי עדיין; קודם review של copy/UX.
+- נוספו אירועי analytics לא-PII:
+  - `licensing_personal_interest`
+  - `licensing_commercial_contact`
+- `.github/workflows/deploy.yml` עודכן כך ששינויים תחת `licensing/**` יפעילו deploy אחרי merge עתידי.
+- Gelato לא חלק מ-MVP הרישוי הדיגיטלי.
+
+
+### Licensing acquisition readiness — 1.10.2026
+
+עמוד `/licensing/` קיבל metadata מלא לשיתוף ומדידה:
+- canonical + hreflang כבר קיימים.
+- נוספו Open Graph ו-Twitter Card.
+- social preview משתמש כרגע בתמונת המותג הקיימת של האתר.
+- המטרה היא לאפשר בדיקת קישורי UTM ב-social/newsletter עם preview תקין.
+- אין שינוי בתשלומים ואין checkout activation.
+
+
+### PR #80 replacement QA — 1.10.2026
+
+Digital Licensing MVP נבנה מחדש מענף נקי מ-main לאחר מיזוגי #79/#83.
+
+ממצא QA חשוב:
+- העמוד הסטטי `/licensing/` כלל `analytics.js` אך לא את bootstrap של GA/gtag.
+- המשמעות: אירועי `licensing_personal_interest` / `licensing_commercial_contact` לא היו נשלחים בעמוד הזה.
+- תוקן על ידי טעינת gtag עם Measurement ID הקיים של האתר לפני `analytics.js`.
+
+בנוסף:
+- מקור המחירים נשאר `GET /api/admin/prices`; אין price table נפרד.
+- fallback מוצג רק אם API המחירים לא זמין; checkout עתידי נשאר server-authoritative.
+- `PAYMENTS_ENABLED=false` ללא שינוי.
+- אין PayPal/Gelato activation.
