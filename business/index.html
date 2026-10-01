@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://amitphotos.com/business/">
+<title>אמנות וצילום לעסקים — Amit Photos</title>
+<meta name="description" content="פתרונות צילום ואמנות לעסקים, משרדים, קליניקות, מסעדות, מלונות ומעצבי פנים — רישוי דיגיטלי, בחירת תמונות וחבילות מותאמות.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+:root{--bg:#0a0a0a;--surface:#111;--border:#262626;--accent:#c8a96e;--text:#f0ede8;--muted:#999}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:'Heebo',sans-serif}
+body{min-height:100vh}
+main{width:min(100%,1040px);margin:0 auto;padding:1.25rem 1.25rem 4rem}
+.hero{padding:3.5rem 0 2rem}
+.eyebrow{color:var(--accent);font-size:.78rem;font-weight:700;letter-spacing:.08em}
+h1{font-family:'Syne',sans-serif;font-size:clamp(2rem,7vw,3.7rem);line-height:1.05;margin:.5rem 0 1rem}
+.lead{color:var(--muted);line-height:1.8;font-size:1.05rem;max-width:760px}
+.grid{display:grid;grid-template-columns:1fr;gap:1rem;margin:1.5rem 0 2rem}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.3rem}
+.card h2{color:var(--accent);margin:.1rem 0 .6rem}
+.card p{color:var(--muted);line-height:1.7}
+.card button{margin-top:.8rem}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:46px;padding:.75rem 1rem;border-radius:9px;border:1px solid var(--accent);font-weight:700;cursor:pointer;text-decoration:none}
+.btn-primary{background:var(--accent);color:#111}
+.btn-secondary{background:transparent;color:var(--accent)}
+.cta{margin-top:2rem;padding:1.3rem;border:1px solid rgba(200,169,110,.35);background:rgba(200,169,110,.07);border-radius:14px}
+.small{font-size:.82rem;color:#777;line-height:1.6}
+.lang{display:flex;justify-content:flex-end;gap:.4rem}
+.lang button{background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:999px;padding:.35rem .75rem}
+.lang button.active{border-color:var(--accent);color:var(--accent)}
+@media(min-width:760px){.grid{grid-template-columns:repeat(3,1fr)}}
+:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+</style>
+<script src="/assets/js/analytics.js?v=f571a0c4" defer></script>
+</head>
+<body>
+<main>
+  <div class="lang" aria-label="Language">
+    <button id="he" class="active" type="button" onclick="setLang('he')">עברית</button>
+    <button id="en" type="button" onclick="setLang('en')">English</button>
+  </div>
+
+  <section class="hero">
+    <div class="eyebrow" data-he="אמנות וצילום לעסקים" data-en="Art & Photography for Business">אמנות וצילום לעסקים</div>
+    <h1 data-he="תמונות שמייצרות אופי לחלל" data-en="Photography that gives a space character">תמונות שמייצרות אופי לחלל</h1>
+    <p class="lead"
+       data-he="לעסקים, משרדים, קליניקות, מסעדות, מלונות ומעצבי פנים — רישוי דיגיטלי, בחירת תמונות לקירות וקולקציות מותאמות לפרויקט."
+       data-en="For businesses, offices, clinics, restaurants, hotels and interior designers — digital licensing, wall-art selection and tailored collections.">
+       לעסקים, משרדים, קליניקות, מסעדות, מלונות ומעצבי פנים — רישוי דיגיטלי, בחירת תמונות לקירות וקולקציות מותאמות לפרויקט.
+    </p>
+  </section>
+
+  <section class="grid" aria-label="Business packages">
+    <article class="card">
+      <h2 data-he="רישוי דיגיטלי" data-en="Digital Display License">רישוי דיגיטלי</h2>
+      <p data-he="לתצוגות, אתר, מסכים פנימיים או שימוש עסקי דיגיטלי — עם רישיון שמתאים להיקף השימוש."
+         data-en="For websites, internal displays or other business digital use — with a license tailored to the scope.">
+         לתצוגות, אתר, מסכים פנימיים או שימוש עסקי דיגיטלי — עם רישיון שמתאים להיקף השימוש.
+      </p>
+      <button class="btn btn-secondary" data-package="digital_display"
+              data-he="אני מתעניין" data-en="I'm interested">אני מתעניין</button>
+    </article>
+
+    <article class="card">
+      <h2 data-he="אמנות לקירות" data-en="Wall Art Selection">אמנות לקירות</h2>
+      <p data-he="בחירה ואוצרות של 3–10 תמונות לחלל אחד או יותר, לפי אופי המקום והאווירה הרצויה."
+         data-en="A curated selection of 3–10 images for one or more spaces, matched to the atmosphere you want.">
+         בחירה ואוצרות של 3–10 תמונות לחלל אחד או יותר, לפי אופי המקום והאווירה הרצויה.
+      </p>
+      <button class="btn btn-secondary" data-package="wall_art"
+              data-he="אני מתעניין" data-en="I'm interested">אני מתעניין</button>
+    </article>
+
+    <article class="card">
+      <h2 data-he="קולקציה מותאמת" data-en="Custom Collection">קולקציה מותאמת</h2>
+      <p data-he="למעצבי פנים, מלונות ופרויקטים רחבים — סט תמונות מותאם לפי נושא, צבעוניות, מקום או סיפור."
+         data-en="For interior designers, hospitality and larger projects — a tailored set by theme, palette, location or story.">
+         למעצבי פנים, מלונות ופרויקטים רחבים — סט תמונות מותאם לפי נושא, צבעוניות, מקום או סיפור.
+      </p>
+      <button class="btn btn-secondary" data-package="custom_collection"
+              data-he="אני מתעניין" data-en="I'm interested">אני מתעניין</button>
+    </article>
+  </section>
+
+  <section class="cta">
+    <h2 data-he="ספר לי על הפרויקט" data-en="Tell me about your project">ספר לי על הפרויקט</h2>
+    <p class="lead"
+       data-he="שלח כמה מילים על החלל, סוג השימוש וכמה תמונות אתה מחפש. אחזור אליך עם כיוון והצעה מותאמת."
+       data-en="Tell me about the space, intended use and roughly how many images you need. I’ll come back with a direction and tailored quote.">
+       שלח כמה מילים על החלל, סוג השימוש וכמה תמונות אתה מחפש. אחזור אליך עם כיוון והצעה מותאמת.
+    </p>
+    <a class="btn btn-primary"
+       href="/#contact"
+       data-analytics-event="b2b_contact_start"
+       data-analytics-label="business_quote"
+       data-he="בקשת הצעה לעסק" data-en="Request a business quote">בקשת הצעה לעסק</a>
+  </section>
+
+  <p class="small"
+     data-he="בשלב זה המחירים לעסקים מותאמים לפי היקף השימוש והפרויקט. אין עדיין תמחור אוטומטי או התחייבות לספק הדפסה מסוים."
+     data-en="Business pricing is currently tailored to the scope and project. There is no automated B2B pricing or commitment to a specific print supplier yet.">
+     בשלב זה המחירים לעסקים מותאמים לפי היקף השימוש והפרויקט. אין עדיין תמחור אוטומטי או התחייבות לספק הדפסה מסוים.
+  </p>
+</main>
+
+<script>
+(function(){
+  let lang='he';
+  const copy={
+    he:{title:'אמנות וצילום לעסקים — Amit Photos',desc:'פתרונות צילום ואמנות לעסקים, משרדים, קליניקות, מסעדות, מלונות ומעצבי פנים.'},
+    en:{title:'Art & Photography for Business — Amit Photos',desc:'Photography and art solutions for businesses, offices, clinics, restaurants, hotels and interior designers.'}
+  };
+  window.setLang=function(next){
+    lang=next==='en'?'en':'he';
+    try{localStorage.setItem('lang',lang)}catch(e){}
+    document.documentElement.lang=lang;
+    document.documentElement.dir=lang==='he'?'rtl':'ltr';
+    document.title=copy[lang].title;
+    const meta=document.querySelector('meta[name="description"]');
+    if(meta)meta.content=copy[lang].desc;
+    document.querySelectorAll('[data-he]').forEach(function(el){
+      el.textContent=lang==='en'?el.dataset.en:el.dataset.he;
+    });
+    document.getElementById('he').classList.toggle('active',lang==='he');
+    document.getElementById('en').classList.toggle('active',lang==='en');
+  };
+
+  document.querySelectorAll('[data-package]').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      const label=btn.dataset.package;
+      if(typeof window.trackUxEvent==='function'){
+        window.trackUxEvent('b2b_package_select',{label:label});
+        window.trackUxEvent('b2b_intent',{label:label});
+      }
+      window.location.href='/#contact';
+    });
+  });
+
+  let initial='he';
+  try{
+    const stored=localStorage.getItem('lang');
+    if(stored==='en'||stored==='he')initial=stored;
+  }catch(e){}
+  setLang(initial);
+})();
+</script>
+</body>
+</html>
