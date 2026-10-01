@@ -542,3 +542,29 @@ Clean replacement fixes both and keeps the pipeline advisory-only:
 
 No payment, checkout, Gelato or gallery-order behavior is changed.
 
+
+
+### Photo-strength pipeline merged — 1.10.2026
+
+- PR #88 merged to `main` after both relevant checks passed:
+  - Python Data Tests ✅
+  - Lead Funnel CI ✅
+- Merge commit: `d9295bcebc2726caaa385229fd2a5d2359b36493`.
+
+What is now in `main`:
+- persistent social post → photo mapping for Instagram/Facebook;
+- per-photo website analytics stored in weekly GA history;
+- conservative `data/photo_strength_report.json`;
+- confidence penalties for low-sample photos;
+- `featured_review_shortlist` for editorial review;
+- no automatic public-gallery reorder;
+- compile + unit tests for the pipeline wiring.
+
+Important:
+- this pipeline is advisory only.
+- do not use a low-sample score as a merchandising decision.
+- `PAYMENTS_ENABLED=false` remains unchanged.
+- no PayPal/Gelato behavior changed.
+
+Next business gate remains live verification of the already-merged acquisition stack before launching Acquisition Experiment 01.
+
