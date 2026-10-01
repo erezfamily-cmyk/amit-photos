@@ -48,7 +48,7 @@
 - [x] **S5 — create idempotency:** להוסיף idempotency key יציב מה-client/session כדי retry של create-order לא ייצור orders מיותרים.
 - [ ] **S6 — Sandbox isolation:** לא לבצע E2E מול production D1; להקים staging/preview D1 נפרד.
 - [x] **S7 — legacy payment removal:** לפני `PAYMENTS_ENABLED=true`, להסיר/לנתק את `handleVerifyPayment` ו-`handlePrintOrderComplete` מה-public router.
-- [ ] **S8 — webhook:** להוסיף אימות חתימה מול PayPal + dedup לפי `event_id`.
+- [x] **S8 — webhook:** להוסיף אימות חתימה מול PayPal + dedup לפי `event_id`.
 - [x] **S9 — logging:** לוודא שאין access token, Client Secret, buyer data או full PayPal payload רגיש בלוגים.
 - [x] **S10 — CORS/CSRF:** לבצע בדיקות negative בפועל למסלולי admin וה-public checkout.
 
@@ -74,6 +74,16 @@
 - CORS אינו משקף origin זר; `Idempotency-Key` נוסף ל-allow headers ונוסף regression test.
 - Full Node suite: **325/325 pass, 0 fail**.
 - פתוחים לפני E2E/merge: S6 staging isolation ו-S8 webhook verified-signature.
+
+### Audit checkpoint 4 — 1.10.2026
+
+- S8 webhook implemented with PayPal postback signature verification against Sandbox.
+- `PAYMENT.CAPTURE.COMPLETED` is cross-checked against the authoritative PayPal order, local `custom_id`, amount and currency before fulfillment.
+- `event_id` dedup + concurrent-delivery serialization added.
+- Unknown/foreign PayPal orders are acknowledged but never fulfilled.
+- Full Node suite: **329/329 pass, 0 fail**.
+- Code-level security audit S1–S5, S7–S10 is now closed. Remaining pre-E2E blocker is S6 staging isolation.
+- Go-Live webhook gate remains open until real Sandbox webhook delivery is verified in isolated staging.
 
 ## Phase 2 — Staging מבודד
 
