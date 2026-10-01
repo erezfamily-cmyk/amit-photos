@@ -3,7 +3,7 @@ name: Admin Campaign Links CI
 on:
   push:
     branches:
-      - feature/admin-campaign-link-builder-2026-10-01
+      - feature/admin-campaign-link-builder-clean-2026-10-01
   pull_request:
     paths:
       - 'admin.html'
