@@ -498,6 +498,7 @@ export async function handlePayPalCreateOrder(request, env, options = {}) {
   }
 
   const localId = crypto.randomUUID();
+  const origin = new URL(request.url).origin;
   const paypalResponse = await fetch(paypalApiBase() + '/v2/checkout/orders', {
     method: 'POST',
     headers: {
@@ -508,6 +509,16 @@ export async function handlePayPalCreateOrder(request, env, options = {}) {
     },
     body: JSON.stringify({
       intent: 'CAPTURE',
+      payment_source: {
+        paypal: {
+          experience_context: {
+            shipping_preference: 'NO_SHIPPING',
+            user_action: 'PAY_NOW',
+            return_url: origin + '/api/paypal/approved',
+            cancel_url: origin + '/api/paypal/cancelled',
+          },
+        },
+      },
       purchase_units: [{
         custom_id: localId,
         description: 'Amit Photos digital license (' + sku + ')',
@@ -721,4 +732,24 @@ export async function handlePayPalCaptureOrder(request, env, options = {}) {
     return jsonRes({ error: 'Print fulfillment is not enabled in this phase' }, 409, request);
   }
   return finalizeDigitalPayPalOrder(request, env, order);
+}
+
+export function handlePayPalCheckoutReturn(request, approved) {
+  const title = approved ? 'PayPal Sandbox approval complete' : 'PayPal Sandbox checkout cancelled';
+  const message = approved
+    ? 'Approval completed. You can return to the test terminal and run capture.'
+    : 'Checkout was cancelled. No capture was attempted.';
+  return new Response(
+    '<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">' +
+    '<title>' + title + '</title>' +
+    '<main style="font-family:system-ui;max-width:640px;margin:12vh auto;padding:24px">' +
+    '<h1>' + title + '</h1><p>' + message + '</p></main>',
+    {
+      status: 200,
+      headers: {
+        'Content-Type': 'text/html;charset=UTF-8',
+        'Cache-Control': 'no-store',
+      },
+    }
+  );
 }
