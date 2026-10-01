@@ -252,3 +252,11 @@ PAYMENTS_ENABLED = "false"   ב-wrangler.toml (production)
 - PayPal Sandbox returned a real `paypalOrderId` and `approveUrl`.
 - This confirms staging can create an Orders v2 order server-to-server and persist the local order path far enough to return approval.
 - No real payment occurred; next step is approval using the PayPal Sandbox Personal buyer account, then capture and D1/token verification.
+
+
+### PayPal Sandbox credentials refresh — 1.10.2026
+
+- After OAuth began failing following secret rotation, the active Sandbox app credentials were copied again from PayPal Developer and re-saved in Cloudflare Worker `amit-photos-paypal-sandbox`.
+- Both `PAYPAL_CLIENT_ID` and `PAYPAL_CLIENT_SECRET` were refreshed together from the same Sandbox app.
+- Next action: rerun authenticated `/api/admin/paypal/sandbox-status` and require `ok=true` before creating another order.
+- Production remains untouched and `PAYMENTS_ENABLED=false`.
