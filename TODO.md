@@ -816,6 +816,9 @@ PayPal חוזר רק כמסלול **Digital-only canary**, ורק אם:
 - [x] לסמן המלצות בתוך Admin ללא שינוי published.
 - [x] להוסיף פילטרים ל-flagged / high priority / duplicate / technical.
 - [x] להוסיף דוח פרטני לכל תמונה.
+- [x] להוסיף שמירת final owner decision נפרדת מה-recommendation.
+- [x] להוסיף פעולות ידניות KEEP / KEEP_SECONDARY / HIDE / DELETE / CHANGE_CATEGORY.
+- [x] להוסיף export של דוח מלא עם published status ו-final owner decision.
 - [ ] לבצע visual review בפועל על המועמדות בעדיפות גבוהה.
 - [ ] לאחר visual review: להחליט ידנית KEEP / HIDE / DELETE / RE-CATEGORY.
 - [ ] למדוד אם תהליך הפיילוט ברור ונוח לפני הרחבה לקטגוריה נוספת.

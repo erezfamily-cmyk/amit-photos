@@ -778,3 +778,38 @@ Guardrails:
 
 הפיילוט נועד לבדוק את UX ואת איכות ההמלצות לפני הרחבה לקטגוריות נוספות.
 
+
+
+### Flower curation owner-decision workflow — 1.10.2026
+
+PR #93 (Draft) הורחב כך שהפיילוט אינו רק advisory אלא מאפשר החלטת בעלים ידנית ומתועדת.
+
+נוסף:
+- endpoint פנימי ומוגן auth: `/api/admin/curation-decisions`.
+- persistence פיילוטי ב-`settings` תחת `flower_curation_decisions_v1` — ללא migration חדש ל-D1.
+- החלטות נתמכות: `KEEP`, `KEEP_SECONDARY`, `HIDE`, `DELETE`, `CHANGE_CATEGORY`.
+- recommendation נשאר נפרד מהחלטת הבעלים; שום recommendation לא מבצע פעולה אוטומטית.
+- `HIDE` משתמש ב-`published=0` ולכן הפיך.
+- `DELETE` נשאר פעולה נפרדת עם confirmation מפורש למחיקה לצמיתות.
+- `CHANGE_CATEGORY` נשמר כהחלטה רק אחרי ששינוי קטגוריה אמיתי נשמר דרך מסך העריכה.
+- נוסף מעבר ישיר ל-Lightbox מהדוח לפני החלטה.
+- נוספו פילטרים `טרם הוחלט` / `הוחלט`.
+- נוסף export של `flower-curation-owner-review.json` לכל 162 תמונות עם:
+  - `photo_id`
+  - `title`
+  - `thumbnail`
+  - `recommendation`
+  - `reasons`
+  - `resolution`
+  - `current_published_status`
+  - `final_owner_decision`
+  - `final_category`
+  - timestamp של ההחלטה.
+
+Guardrails נשארו:
+- אין hide/delete/change-category אוטומטי.
+- אין שינוי אוטומטי בסדר הגלריה.
+- visual review נדרש לפני החלטה אמנותית.
+- PayPal/Gelato לא שונו.
+- `PAYMENTS_ENABLED=false` נשאר ללא שינוי.
+- PR #93 נשאר Draft עד QA.

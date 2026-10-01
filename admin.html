@@ -2111,13 +2111,29 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
   <div class="dialog-body">
     <img id="curation-dialog-preview" alt="" style="width:100%;max-height:300px;object-fit:contain;border-radius:6px;background:var(--bg);margin-bottom:1rem">
     <div id="curation-dialog-summary" style="display:grid;gap:.7rem"></div>
+
+    <div style="margin-top:1rem;padding:.85rem;border:1px solid var(--border);border-radius:8px;background:var(--panel)">
+      <strong style="display:block;margin-bottom:.45rem">החלטת בעל האתר</strong>
+      <div id="curation-owner-decision" style="margin-bottom:.7rem;color:var(--text-muted)">טרם הוחלט</div>
+      <div id="curation-decision-actions" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:.5rem">
+        <button type="button" class="btn btn-success" onclick="Photos.applyCurationDecision('KEEP')">KEEP</button>
+        <button type="button" class="btn btn-ghost" onclick="Photos.applyCurationDecision('KEEP_SECONDARY')">KEEP_SECONDARY</button>
+        <button type="button" class="btn btn-ghost" onclick="Photos.applyCurationDecision('HIDE')">HIDE</button>
+        <button type="button" class="btn btn-ghost" onclick="Photos.applyCurationDecision('CHANGE_CATEGORY')">CHANGE_CATEGORY</button>
+        <button type="button" class="btn btn-danger" onclick="Photos.applyCurationDecision('DELETE')">DELETE</button>
+      </div>
+      <p id="curation-decision-status" style="margin:.6rem 0 0;color:var(--text-muted);font-size:.8rem;line-height:1.5"></p>
+    </div>
+
     <div style="margin-top:1rem;padding:.8rem;border:1px solid var(--border);border-radius:8px;background:var(--bg)">
       <strong style="display:block;margin-bottom:.5rem">הערה</strong>
       <p style="margin:0;color:var(--text-muted);font-size:.85rem;line-height:1.6">ההמלצה היא כלי עזר בלבד. אין הסתרה או מחיקה אוטומטית. לפני פעולה סופית יש לבצע בדיקה ויזואלית.</p>
     </div>
   </div>
-  <div class="dialog-footer">
-    <button type="button" class="btn btn-primary" id="curation-open-edit-btn">פתח לעריכה</button>
+  <div class="dialog-footer" style="display:flex;flex-wrap:wrap;gap:.5rem">
+    <button type="button" class="btn btn-primary" id="curation-open-lightbox-btn">פתח ב-Lightbox</button>
+    <button type="button" class="btn btn-ghost" id="curation-open-edit-btn">פתח לעריכה</button>
+    <button type="button" class="btn btn-ghost" onclick="Photos.exportCurationReport()">ייצא דוח מלא</button>
     <button type="button" class="btn btn-ghost" onclick="document.getElementById('curation-dialog').close()">סגור</button>
   </div>
 </dialog>
@@ -3343,6 +3359,9 @@ const Photos = (() => {
   let featuredIds = new Set();
   let curationReport = null;
   let curationById = new Map();
+  let curationDecisions = new Map();
+  let activeCurationId = null;
+  let pendingCurationCategoryDecisionId = null;
   let searchQ = '', sortBy = 'newest';
   let selected = new Set(), selectMode = false;
   let lbList = [], lbIdx = 0;
@@ -3363,6 +3382,8 @@ const Photos = (() => {
       if (searchQ === '_curation:high') return curationById.get(p.id)?.priority === 'high';
       if (searchQ === '_curation:duplicate') return curationById.get(p.id)?.recommendation === 'REVIEW_DUPLICATE';
       if (searchQ === '_curation:technical') return curationById.get(p.id)?.recommendation === 'REVIEW_TECHNICAL';
+      if (searchQ === '_curation:pending') return !!curationById.get(p.id) && !curationDecisions.has(p.id);
+      if (searchQ === '_curation:decided') return !!curationById.get(p.id) && curationDecisions.has(p.id);
       const q = searchQ.toLowerCase();
       return (p.title||'').toLowerCase().includes(q) || (p.category||'').toLowerCase().includes(q);
     });
@@ -3375,15 +3396,17 @@ const Photos = (() => {
 
   async function init() {
     // טען תמונות מ-D1 + photos.json במקביל
-    const [d1Photos, jsonPhotos, featuredRes, curationRes] = await Promise.all([
+    const [d1Photos, jsonPhotos, featuredRes, curationRes, curationDecisionRes] = await Promise.all([
       fetch('/api/photos?admin=1', { headers: authHeaders() }).then(r => r.ok ? r.json() : []).catch(() => []),
       fetch('data/photos.json').then(r => r.ok ? r.json() : []).catch(() => []),
       fetch('/api/admin/featured', { headers: authHeaders() }).then(r => r.ok ? r.json() : {}).catch(() => ({})),
-      fetch('/data/flower-curation-pilot.json').then(r => r.ok ? r.json() : null).catch(() => null)
+      fetch('/data/flower-curation-pilot.json').then(r => r.ok ? r.json() : null).catch(() => null),
+      fetch('/api/admin/curation-decisions', { headers: authHeaders() }).then(r => r.ok ? r.json() : {}).catch(() => ({}))
     ]);
     featuredIds = new Set(featuredRes.ids || []);
     curationReport = curationRes;
     curationById = new Map((curationRes?.items || []).map(item => [item.photo_id, item]));
+    curationDecisions = new Map(Object.entries(curationDecisionRes.decisions || {}));
     // שלב: D1 קודם, אחר כך Google Drive (ללא כפילויות לפי ID ו-filename)
     const d1Ids = new Set(d1Photos.map(p => p.id));
     const d1Filenames = new Set(d1Photos.map(p => p.filename).filter(Boolean));
@@ -3416,11 +3439,13 @@ const Photos = (() => {
       chip(`${data.filter(p=>p._source==='r2').length} ב-R2`, '_source:r2'),
       chip(`${data.filter(p=>p._source==='drive').length} ב-Drive`, '_source:drive'),
       ...(curationReport ? [
-        chip(`🌸 פיילוט פרחים ${curationReport.summary?.total || 0}`, '_curation:flowers'),
+        chip(`🌸 פיילוט קיורציה — פרחים וצמחים ${curationReport.summary?.total || 0}`, '_curation:flowers'),
         chip(`⚑ לבדיקה ${curationReport.summary?.flagged || 0}`, '_curation:flagged'),
         chip(`🔴 עדיפות גבוהה ${curationReport.summary?.high_priority || 0}`, '_curation:high'),
         chip('כפילויות לבדיקה', '_curation:duplicate'),
-        chip('רזולוציה לבדיקה', '_curation:technical')
+        chip('רזולוציה לבדיקה', '_curation:technical'),
+        chip(`טרם הוחלט ${Math.max(0, (curationReport.summary?.total || 0) - curationDecisions.size)}`, '_curation:pending'),
+        chip(`הוחלט ${curationDecisions.size}`, '_curation:decided')
       ] : []),
       ...Object.entries(cats).sort((a,b)=>b[1]-a[1]).map(([c,n])=>chip(`${n} ${c}`, c))
     ].join('');
@@ -3443,38 +3468,183 @@ const Photos = (() => {
     const item = curationById.get(p.id);
     if (!item) return '';
     const meta = {
-      REVIEW_DUPLICATE: ['בדיקת כפילות', '#f59e0b'],
-      REVIEW_TECHNICAL: ['בדיקה טכנית', '#f87171'],
-      REVIEW_METADATA: ['מטא-דאטה', '#60a5fa'],
-      VISUAL_REVIEW: ['בדיקה ויזואלית', '#a78bfa']
-    }[item.recommendation] || ['בדיקה', '#a78bfa'];
-    return `<button type="button" onclick="event.stopPropagation();Photos.openCuration('${p.id}')" title="פתח דוח קיורציה" style="margin-inline-start:.35rem;border:1px solid ${meta[1]}55;background:${meta[1]}18;color:${meta[1]};border-radius:999px;padding:.15rem .45rem;font-size:.66rem;cursor:pointer">${meta[0]}</button>`;
+      REVIEW_DUPLICATE: ['#f59e0b', 'בדיקת כפילות'],
+      REVIEW_TECHNICAL: ['#f87171', 'בדיקה טכנית'],
+      REVIEW_METADATA: ['#60a5fa', 'בדיקת מטא-דאטה'],
+      VISUAL_REVIEW: ['#a78bfa', 'בדיקה ויזואלית']
+    }[item.recommendation] || ['#a78bfa', 'בדיקה'];
+    return '<button type="button" onclick="event.stopPropagation();Photos.openCuration(\'' + p.id + '\')" title="' + meta[1] + ' — פתח דוח קיורציה" style="margin-inline-start:.35rem;border:1px solid ' + meta[0] + '55;background:' + meta[0] + '18;color:' + meta[0] + ';border-radius:999px;padding:.15rem .45rem;font-size:.62rem;cursor:pointer">' + (item.recommendation || 'REVIEW') + '</button>';
+  }
+
+  function curationDecisionBadge(p) {
+    const decision = curationDecisions.get(p.id);
+    if (!decision?.decision) return '';
+    const dangerous = decision.decision === 'DELETE' || decision.decision === 'HIDE';
+    const color = dangerous ? '#f87171' : '#4ade80';
+    return '<span title="החלטת בעל האתר" style="margin-inline-start:.3rem;border:1px solid ' + color + '55;background:' + color + '18;color:' + color + ';border-radius:999px;padding:.15rem .42rem;font-size:.62rem">' + decision.decision + '</span>';
+  }
+
+  function renderCurationDecision(id) {
+    const decision = curationDecisions.get(id);
+    const box = $('curation-owner-decision');
+    const status = $('curation-decision-status');
+    if (!decision?.decision) {
+      box.textContent = 'טרם הוחלט';
+      status.textContent = 'בחר החלטה רק אחרי בדיקה ויזואלית של התמונה.';
+      return;
+    }
+    box.textContent = decision.decision + (decision.category ? ' → ' + decision.category : '');
+    const when = decision.updated_at ? new Date(decision.updated_at).toLocaleString('he-IL') : '';
+    status.textContent = when ? 'נשמר: ' + when : 'ההחלטה נשמרה.';
+  }
+
+  async function saveCurationDecision(id, decision, extra = {}) {
+    const res = await fetch('/api/admin/curation-decisions', {
+      method: 'POST',
+      headers: authHeaders(),
+      body: JSON.stringify({ photo_id: id, decision, ...extra })
+    });
+    const payload = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(payload.error || 'שמירת החלטת הקיורציה נכשלה');
+    if (payload.decision) curationDecisions.set(id, payload.decision);
+    else curationDecisions.delete(id);
+    return payload.decision || null;
+  }
+
+  async function applyCurationDecision(decision) {
+    const id = activeCurationId;
+    const photo = data.find(p => p.id === id);
+    if (!id || !curationById.has(id)) return;
+
+    try {
+      if (decision === 'KEEP' || decision === 'KEEP_SECONDARY') {
+        await saveCurationDecision(id, decision);
+        renderCurationDecision(id);
+        render();
+        toast('החלטת הקיורציה נשמרה');
+        return;
+      }
+
+      if (decision === 'HIDE') {
+        if (!photo || photo._source !== 'r2') {
+          toast('אפשר להסתיר רק תמונה שקיימת ב-D1/R2', 'error');
+          return;
+        }
+        if (!confirm('להסתיר את התמונה מהאתר? הפעולה הפיכה ותשמור published=0.')) return;
+        const res = await fetch('/api/photos', {
+          method: 'PATCH',
+          headers: authHeaders(),
+          body: JSON.stringify({ id, published: false })
+        });
+        const payload = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(payload.error || 'הסתרת התמונה נכשלה');
+        photo.published = 0;
+        await saveCurationDecision(id, 'HIDE');
+        renderCurationDecision(id);
+        openCuration(id);
+        render();
+        toast('התמונה הוסתרה — ניתן לפרסם אותה מחדש');
+        return;
+      }
+
+      if (decision === 'DELETE') {
+        if (!photo || photo._source !== 'r2') {
+          toast('אפשר למחוק לצמיתות רק תמונה שקיימת ב-D1/R2', 'error');
+          return;
+        }
+        if (!confirm('מחיקה לצמיתות: התמונה תימחק מ-D1 ומ-R2 ולא ניתן לבטל את הפעולה. למחוק?')) return;
+        const res = await fetch('/api/photos?id=' + encodeURIComponent(id), { method: 'DELETE', headers: authHeaders() });
+        const payload = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(payload.error || 'מחיקת התמונה נכשלה');
+        await saveCurationDecision(id, 'DELETE');
+        data = data.filter(p => p.id !== id);
+        $('curation-dialog').close();
+        render();
+        toast('התמונה נמחקה לצמיתות');
+        return;
+      }
+
+      if (decision === 'CHANGE_CATEGORY') {
+        if (!photo) return;
+        pendingCurationCategoryDecisionId = id;
+        $('curation-dialog').close();
+        openEditById(id);
+      }
+    } catch (err) {
+      toast(err.message || 'שגיאה בעדכון החלטת הקיורציה', 'error');
+    }
+  }
+
+  function exportCurationReport() {
+    if (!curationReport?.items) {
+      toast('דוח הקיורציה עדיין לא נטען', 'error');
+      return;
+    }
+    const rows = curationReport.items.map(item => {
+      const photo = data.find(p => p.id === item.photo_id);
+      const owner = curationDecisions.get(item.photo_id) || null;
+      const deleted = owner?.decision === 'DELETE' && !photo;
+      return {
+        photo_id: item.photo_id,
+        title: photo?.title || item.title || '',
+        thumbnail: photo?.thumbnail || item.thumbnail || '',
+        recommendation: item.recommendation || null,
+        reasons: item.reasons || [],
+        resolution: { width: item.width || null, height: item.height || null },
+        current_published_status: deleted ? 'DELETED' : (photo ? (photo.published === 0 ? 'HIDDEN' : 'PUBLISHED') : 'NOT_FOUND'),
+        current_published: deleted || !photo ? null : (photo.published === 0 ? 0 : 1),
+        final_owner_decision: owner?.decision || null,
+        final_category: owner?.category || photo?.category || null,
+        final_owner_decision_at: owner?.updated_at || null
+      };
+    });
+    const payload = {
+      generated_at: new Date().toISOString(),
+      pilot: curationReport.category || 'פרחים וצמחים',
+      total: rows.length,
+      decided: rows.filter(row => row.final_owner_decision).length,
+      items: rows
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'flower-curation-owner-review.json';
+    link.click();
+    setTimeout(() => URL.revokeObjectURL(link.href), 0);
+    toast('דוח הקיורציה יוצא');
   }
 
   function openCuration(id) {
     const item = curationById.get(id);
     const photo = data.find(p => p.id === id);
     if (!item || !photo) { toast('אין דוח קיורציה לתמונה זו', 'error'); return; }
+    activeCurationId = id;
     const labels = { REVIEW_DUPLICATE:'בדיקת כפילות', REVIEW_TECHNICAL:'בדיקה טכנית', REVIEW_METADATA:'בדיקת מטא-דאטה', VISUAL_REVIEW:'בדיקה ויזואלית' };
     const priority = { high:'גבוהה', medium:'בינונית', normal:'רגילה', low:'נמוכה' }[item.priority] || item.priority;
     const esc = value => String(value ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
     const reasons = (item.reasons || []).length
       ? '<ul style="margin:.25rem 0 0;padding-right:1.2rem">' + item.reasons.map(r => '<li style="margin:.3rem 0">' + esc(r) + '</li>').join('') + '</ul>'
       : '<span style="color:var(--text-muted)">לא זוהתה בעיית מטא-דאטה; נדרשת בדיקה ויזואלית מקצועית.</span>';
+    const publishedStatus = photo.published === 0 ? 'מוסתר — published=0' : 'מפורסם — published=1';
     $('curation-dialog-preview').src = photo.thumbnail || photo.url || '';
-    $('curation-dialog-summary').innerHTML = `
-      <div><strong>תמונה:</strong> ${esc(photo.title || 'ללא כותרת')}</div>
-      <div><strong>המלצה:</strong> ${esc(labels[item.recommendation] || item.recommendation)}</div>
-      <div><strong>עדיפות:</strong> ${esc(priority)}</div>
-      <div><strong>רזולוציה:</strong> ${esc(item.width || '?')}×${esc(item.height || '?')}</div>
-      <div><strong>קובץ:</strong> ${esc(item.filename || '')}</div>
-      <div><strong>סיבות לסימון:</strong>${reasons}</div>
-      <div><strong>פעולה מומלצת כרגע:</strong> לא להסתיר/למחוק לפני בדיקה ויזואלית. אם הבעיה מאומתת, השתמש בעריכת התמונה כדי להסתיר; מחיקה נשארת פעולה נפרדת עם אישור.</div>
-    `;
+    $('curation-dialog-preview').alt = photo.title || 'תמונת פיילוט קיורציה';
+    $('curation-dialog-summary').innerHTML =
+      '<div><strong>photo_id:</strong> ' + esc(item.photo_id) + '</div>' +
+      '<div><strong>תמונה:</strong> ' + esc(photo.title || 'ללא כותרת') + '</div>' +
+      '<div><strong>recommendation:</strong> ' + esc(item.recommendation || '') + ' — ' + esc(labels[item.recommendation] || '') + '</div>' +
+      '<div><strong>עדיפות:</strong> ' + esc(priority) + '</div>' +
+      '<div><strong>רזולוציה:</strong> ' + esc(item.width || '?') + '×' + esc(item.height || '?') + '</div>' +
+      '<div><strong>סטטוס פרסום נוכחי:</strong> ' + esc(publishedStatus) + '</div>' +
+      '<div><strong>קובץ:</strong> ' + esc(item.filename || '') + '</div>' +
+      '<div><strong>סיבות לסימון:</strong>' + reasons + '</div>' +
+      '<div><strong>כלל:</strong> אם יש ספק, משאירים REVIEW. לא מסתירים או מוחקים לפני בדיקה ויזואלית.</div>';
+    renderCurationDecision(id);
+    $('curation-open-lightbox-btn').onclick = () => { $('curation-dialog').close(); openLightbox(id); };
     $('curation-open-edit-btn').onclick = () => { $('curation-dialog').close(); openEditById(id); };
     $('curation-dialog').showModal();
   }
-  function renderGrid() {
+
+  function renderGrid() {  function renderGrid() {
     const all = getDisplayData();
     const disp = all.slice(0, visibleCount);
     const grid = $('photos-grid');
@@ -3497,7 +3667,7 @@ const Photos = (() => {
             onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%2275%22%3E%3Crect fill=%22%23111%22 width=%22100%25%22 height=%22100%25%22/%3E%3C/svg%3E'">
         </div>
         <div class="photo-info">
-          <div class="photo-title">${p.title||'ללא כותרת'}${curationBadge(p)}${p.published===0?'<span class="draft-badge">טיוטה</span>':''}${isOnSale(p)?'<span class="sale-badge">🏷 מבצע</span>':''}${p.is_week_photo?'<span class="sale-badge" style="color:#f59e0b;background:rgba(245,158,11,.12);border-color:rgba(245,158,11,.35)">⭐ שבוע</span>':''}${p.quiz_eligible?'<span class="sale-badge" style="color:#34d399;background:rgba(52,211,153,.1);border-color:rgba(52,211,153,.3)">🌍 קוויז</span>':''}${p.on_sale?`<span class="admin-badge admin-badge-sale" onclick="toggleSale('${p.id}',false,event)" title="הסר ממבצע">מבצע</span>`:`<span class="admin-badge admin-badge-sale-off" onclick="toggleSale('${p.id}',true,event)" title="הוסף למבצע">+מבצע</span>`}</div>
+          <div class="photo-title">${p.title||'ללא כותרת'}${curationBadge(p)}${curationDecisionBadge(p)}${p.published===0?'<span class="draft-badge">טיוטה</span>':''}${isOnSale(p)?'<span class="sale-badge">🏷 מבצע</span>':''}${p.is_week_photo?'<span class="sale-badge" style="color:#f59e0b;background:rgba(245,158,11,.12);border-color:rgba(245,158,11,.35)">⭐ שבוע</span>':''}${p.quiz_eligible?'<span class="sale-badge" style="color:#34d399;background:rgba(52,211,153,.1);border-color:rgba(52,211,153,.3)">🌍 קוויז</span>':''}${p.on_sale?`<span class="admin-badge admin-badge-sale" onclick="toggleSale('${p.id}',false,event)" title="הסר ממבצע">מבצע</span>`:`<span class="admin-badge admin-badge-sale-off" onclick="toggleSale('${p.id}',true,event)" title="הוסף למבצע">+מבצע</span>`}</div>
           <span class="cat-badge">${p.category||'ללא קטגוריה'}</span>${(()=>{if(!p.width||!p.height)return'';const mx=Math.max(p.width,p.height);const cls=mx<2000?'res-badge res-low':mx<5000?'res-badge res-mid':'res-badge res-ok';return`<span class="${cls}">${p.width}×${p.height}</span>`;})()}
           <div class="photo-actions">
             <span class="drag-handle" onclick="event.stopPropagation()" title="גרור לסדר">⠿</span>
@@ -3592,6 +3762,7 @@ const Photos = (() => {
     const category = $('edit-photo-category').value.trim();
     const description = $('edit-photo-desc').value.trim();
     const photo = data.find(p => p.id === id);
+    const originalCategory = photo?.category || '';
     let finalTitle = title;
     if (photo?._source === 'r2') {
       const res = await fetch('/api/photos', {
@@ -3600,26 +3771,51 @@ const Photos = (() => {
         body: JSON.stringify({ id, title, category, description })
       });
       const resData = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        toast(resData.error || 'שמירת התמונה נכשלה', 'error');
+        return;
+      }
       if (resData.title) finalTitle = resData.title;
     } else if (photo?._source === 'drive') {
       const { _source, ...photoData } = photo;
-      await fetch('/api/photos', {
+      const res = await fetch('/api/photos', {
         method: 'POST',
         headers: authHeaders(),
         body: JSON.stringify({ ...photoData, title, category, description })
       });
+      const resData = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        toast(resData.error || 'שמירת התמונה נכשלה', 'error');
+        return;
+      }
       const idx2 = data.findIndex(p => p.id === id);
       if (idx2 >= 0) data[idx2] = { ...data[idx2], _source: 'r2' };
     }
-    // עדכון מקומי
+
     const idx = data.findIndex(p => p.id === id);
     if (idx >= 0) data[idx] = { ...data[idx], title: finalTitle, category, description };
-    toast('שינויים נשמרו');
+
+    if (pendingCurationCategoryDecisionId === id) {
+      pendingCurationCategoryDecisionId = null;
+      if (category && category !== originalCategory) {
+        try {
+          await saveCurationDecision(id, 'CHANGE_CATEGORY', { category });
+          toast('שינוי הקטגוריה והחלטת הקיורציה נשמרו');
+        } catch (err) {
+          toast(err.message || 'הקטגוריה נשמרה אך החלטת הקיורציה לא נשמרה', 'error');
+        }
+      } else {
+        toast('הקטגוריה לא השתנתה; החלטת CHANGE_CATEGORY לא נשמרה', 'error');
+      }
+    } else {
+      toast('שינויים נשמרו');
+    }
+
     $('photo-dialog').close();
     render();
   }
 
-  async function confirmDelete(id) {
+  async function confirmDelete(id) {  async function confirmDelete(id) {
     const photo = data.find(p => p.id === id);
     if (!confirm(`למחוק את "${photo?.title||'תמונה זו'}"?`)) return;
     await fetch(`/api/photos?id=${id}`, { method: 'DELETE', headers: authHeaders() });
@@ -4024,6 +4220,10 @@ const Photos = (() => {
     e.target.value = '';
   });
   $('save-photo-btn').addEventListener('click', savePhoto);
+  $('photo-dialog').addEventListener('close', () => {
+    const id = $('edit-photo-id').value;
+    if (pendingCurationCategoryDecisionId === id) pendingCurationCategoryDecisionId = null;
+  });
 
   async function setPublished(published) {
     const id = $('edit-photo-id').value;
@@ -4169,7 +4369,7 @@ const Photos = (() => {
     }
   });
 
-  return { init: async () => { await init(); loadNewBadgeSettings(); loadPriceSettings(); }, openEdit, openEditById, confirmDelete, cardClick, toggleSelect, toggleNew, toggleFeatured, setPhotoPrice, filterByChip, openCuration, getData: () => data, render, get list() { return data; } };
+  return { init: async () => { await init(); loadNewBadgeSettings(); loadPriceSettings(); }, openEdit, openEditById, confirmDelete, cardClick, toggleSelect, toggleNew, toggleFeatured, setPhotoPrice, filterByChip, openCuration, applyCurationDecision, exportCurationReport, getData: () => data, render, get list() { return data; } };
 })();
 
 function closeAllPhotoMenus() {

@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 
 const admin = fs.readFileSync('admin.html', 'utf8');
+const worker = fs.readFileSync('worker.js', 'utf8');
 const report = JSON.parse(fs.readFileSync('data/flower-curation-pilot.json', 'utf8'));
 
 test('flower pilot is non-destructive by policy', () => {
@@ -33,4 +34,31 @@ test('pilot covers only the flower category snapshot', () => {
   assert.equal(report.summary.total, 162);
   assert.equal(report.items.length, 162);
   assert.ok(report.items.every(item => item.photo_id));
+});
+
+
+test('owner decisions are persisted separately from recommendation data', () => {
+  assert.match(worker, /flower_curation_decisions_v1/);
+  assert.match(worker, /KEEP_SECONDARY/);
+  assert.match(worker, /CHANGE_CATEGORY/);
+  assert.match(worker, /\/api\/admin\/curation-decisions/);
+  assert.match(admin, /curationDecisions/);
+  assert.match(admin, /final_owner_decision/);
+});
+
+test('admin exposes all manual owner decisions and full report export', () => {
+  for (const decision of ['KEEP', 'KEEP_SECONDARY', 'HIDE', 'DELETE', 'CHANGE_CATEGORY']) {
+    assert.match(admin, new RegExp("applyCurationDecision\\('" + decision + "'\\)"));
+  }
+  assert.match(admin, /פיילוט קיורציה — פרחים וצמחים/);
+  assert.match(admin, /פתח ב-Lightbox/);
+  assert.match(admin, /flower-curation-owner-review\.json/);
+  assert.match(admin, /current_published_status/);
+});
+
+test('hide is reversible and delete stays explicitly destructive', () => {
+  assert.match(admin, /published: false/);
+  assert.match(admin, /הפעולה הפיכה ותשמור published=0/);
+  assert.match(admin, /מחיקה לצמיתות/);
+  assert.match(admin, /לא ניתן לבטל/);
 });
