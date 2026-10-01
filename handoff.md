@@ -36,6 +36,16 @@ PAYMENTS_ENABLED = "false"   ב-wrangler.toml (production)
 
 ---
 
+## 🚧 עבודה פעילה — 1.10.2026
+
+- **PayPal Orders API v2 Phase 1** נמצא ב-Draft PR #76 על הענף `prep/paypal-orders-v2-2026-10-01`.
+- הושלמו: D1 schema/migration, OAuth ל-PayPal Sandbox, `create-order` ו-`capture-order` לרכישות דיגיטליות, בדיקת סכום+מטבע מול capture, ו-idempotent fulfillment עם token נעול.
+- טסטים ממוקדים חדשים: **6/6 עוברים**. נוסף גם workflow חדש להרצת כל `tests/*.test.mjs` על PRs; בזמן כתיבת השורה הזו הוא עדיין לא רץ אוטומטית על ה-PR הראשון.
+- **לא בוצע merge**, לא שונה UI, לא נוצר PayPal webhook, ולא הופעלו תשלומים.
+- Cloudflare Production כבר מכיל `PAYPAL_CLIENT_ID` ו-`PAYPAL_CLIENT_SECRET` של Sandbox כ-Secrets מוצפנים. הערכים עצמם אינם בקוד/ב-Git.
+- `PAYMENTS_ENABLED = "false"` מאומת ונשאר כך.
+- השלב הבא: להריץ/לאמת full Node suite, להחיל את `migrations/0001_paypal_orders_v2.sql` ב-D1 (additive, כשהתשלומים כבויים), ואז להכין מסלול Sandbox E2E לפני UI/webhook.
+
 ## 🗓️ מה קרה לאחרונה (מהחשוב לפחות חשוב)
 
 ### השבוע האחרון (25–30.9.2026)
