@@ -155,7 +155,7 @@ def fetch_ga4_data(token):
         "metrics": [{"name": "sessions"}, {"name": "activeUsers"}, {"name": "screenPageViews"}],
     })
     ux_event_names = [
-        "purchase_intent", "photo_view", "add_size", "purchase", "generate_lead",
+        "purchase_intent", "photo_view", "add_size", "purchase", "generate_lead", "guide_request_success",
         "print_intent", "print_type_selected", "print_checkout",
         "hero_gallery_click", "hero_sale_click", "hero_guide_click", "nav_click",
         "gallery_filter", "scroll_25", "scroll_50", "scroll_75", "scroll_90",
@@ -307,7 +307,8 @@ def build_data_summary(data):
         ("gallery_filter", "שימוש בפילטר גלריה"),
         ("scroll_25", "גלילה 25%"), ("scroll_50", "גלילה 50%"),
         ("scroll_75", "גלילה 75%"), ("scroll_90", "גלילה 90%"),
-        ("generate_lead", "לידים מוצלחים"),
+        ("guide_request_success", "בקשות מדריך מוצלחות"),
+        ("generate_lead", "לידים חדשים/משודרגים"),
         ("contact_intent", "כוונת יצירת קשר"),
         ("photo_contact_click", "פנייה מתוך תמונה"),
         ("contact_form_success", "טופסי קשר שנשלחו"),
