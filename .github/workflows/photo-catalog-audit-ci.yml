@@ -1,0 +1,46 @@
+name: Photo Catalog Audit CI
+
+on:
+  push:
+    branches:
+      - strategy/photo-curation-audit-2026-10-01
+  pull_request:
+    paths:
+      - 'src/photo_catalog_audit.py'
+      - 'tests/test_photo_catalog_audit.py'
+      - 'docs/photo-curation-review-2026-10-01.md'
+      - 'data/photo_catalog_audit.json'
+      - '.github/workflows/photo-catalog-audit-ci.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  photo-catalog-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Compile
+        run: python -m py_compile src/photo_catalog_audit.py
+      - name: Tests
+        run: python tests/test_photo_catalog_audit.py
+      - name: Generate audit
+        run: python src/photo_catalog_audit.py
+      - name: Show audit summary
+        run: |
+          python - <<'PY'
+          import json
+          r=json.load(open('data/photo_catalog_audit.json', encoding='utf-8'))
+          print({
+              'total_photos': r['catalog']['total_photos'],
+              'category_count': r['catalog']['category_count'],
+              'missing_description_count': r['issues']['missing_description_count'],
+              'low_resolution_count': r['issues']['low_resolution_count'],
+              'duplicate_title_group_count': r['issues']['duplicate_title_group_count'],
+          })
+          PY
