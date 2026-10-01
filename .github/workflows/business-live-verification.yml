@@ -37,7 +37,7 @@ jobs:
           echo "$BIZ" | grep -q '/assets/js/analytics.js'
           echo "business=ok"
 
-          ADMIN=$(curl -fsS --max-time 20 https://amitphotos.com/admin.html)
+          ADMIN=$(curl -fsSL --max-time 20 https://amitphotos.com/admin.html)
           echo "$ADMIN" | grep -q 'campaign-destination'
           echo "$ADMIN" | grep -q 'admin-campaign-links.mjs'
           echo "utm_builder=ok"
