@@ -310,3 +310,13 @@ PAYMENTS_ENABLED = "false"   ב-wrangler.toml (production)
 - Regression tests now cover both `/api/paypal/approved` and `/api/paypal/cancelled`.
 - The previous Error 1101 root cause was the missing import; code fix is deployed to the isolated staging Worker.
 - Next: attempt capture of the last Sandbox order that reached the return URL. If PayPal reports it was not approved, create a fresh order and repeat approval.
+
+
+### PayPal capture custom_id compatibility deploy verified — 1.10.2026
+
+- Staging deployment containing the optional-custom_id capture fix completed.
+- GitHub CI for head `bdc5cb994c6c339465cc6e084c7690b15fe579b1` is green:
+  - Node Tests: success.
+  - Python Data Tests: success.
+- Capture validation now still requires exact PayPal order ID, COMPLETED status, exact currency and exact amount; `custom_id` is enforced when PayPal returns it, but its omission no longer causes a false identity mismatch.
+- Next: retry capture on the same already-approved Sandbox order. The existing `ORDER_ALREADY_CAPTURED` recovery path must complete fulfillment without a second charge.
