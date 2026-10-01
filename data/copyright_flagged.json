@@ -1,55 +1,387 @@
 [
-  {"id": "f207830f-74e5-4f51-9dfb-3d0e648cddab", "filename": "עיניים במהומת צבעים", "category": "אומנות רחוב", "reason": "מיוריל שלם עם עיניים ענקיות ודמויות — יצירת אמן ניתנת לזיהוי", "flagged_at": "2026-07-04"},
-  {"id": "4cff716d-0292-4963-85a4-524f8f051855", "filename": "פנים צבעוני בקיר", "category": "אומנות רחוב", "reason": "דמות מפלצת/פנים שלמה ומכוונת", "flagged_at": "2026-07-04"},
-  {"id": "15dcWf75qLBeeYQOHLw8q9SoYxvJiM-yJ", "filename": "אומנות רחוב צבעונית", "category": "אומנות רחוב", "reason": "קולאז' סטיקרים של אמנים שונים כנושא מרכזי", "flagged_at": "2026-07-04"},
-  {"id": "1b8VjVnJmSqr5ND4JIPTGrJjIoM4as42I", "filename": "אומנות קיר צבעונית", "category": "אומנות רחוב", "reason": "יצירת אותיות חתומה עם מוטיב סמיילי ייחודי", "flagged_at": "2026-07-04"},
-  {"id": "1MKQfhUuYBbjtM0gVvNFBDT8B8duGwQsL", "filename": "חתול צבעוני רחוב", "category": "אומנות רחוב", "reason": "דמות חתול שלמה עם תג אמן גלוי", "flagged_at": "2026-07-04"},
-  {"id": "1cIOg80ARIDTH2mTGq0YABLPL1ECVSV8P", "filename": "פנים גיאומטריות בצבע", "category": "אומנות רחוב", "reason": "פורטרט כפול-סימטרי מלא פריים, יצירה מכוונת", "flagged_at": "2026-07-04"},
-  {"id": "1f2p8iDcaJR_LV4w_Vg_bNQ4hIHEqiQac", "filename": "עיניים צוהלות בצבעים", "category": "אומנות רחוב", "reason": "דמויות חתומות חוזרות בסגנון אחיד", "flagged_at": "2026-07-04"},
-  {"id": "1ZU1P_DTM5938hC18_Py9OZZqRob4VUTr", "filename": "קולאז' אומנות רחוב צבעוני", "category": "אומנות רחוב", "reason": "קולאז' יצירות שלמות כולל עבודה חתומה של Cartrain", "flagged_at": "2026-07-04"},
-  {"id": "1i-YCIhCY5-e1mleESaJtmaEScx6x5GYX", "filename": "דו-קוטביות של צבע", "category": "אומנות רחוב", "reason": "דמות סטנסיל שלמה וייחודית", "flagged_at": "2026-07-04"},
-  {"id": "1xp0-lpaiDPMZOacy3SqKJ34jaPZ_B4Ua", "filename": "גולגולת צבעונית", "category": "אומנות רחוב", "reason": "יצירת גולגולת מפורטת בסגנון ייחודי", "flagged_at": "2026-07-04"},
-  {"id": "1-iJPFoC4apVKsGeFa7XxpNBsJanLpn6P", "filename": "פנים בצבעים חמים", "category": "אומנות רחוב", "reason": "יצירה בסגנון OBEY/Shepard Fairey עם הכיתוב OBEY", "flagged_at": "2026-07-04"},
-  {"id": "1BYeD4UV2TOwpbPjV0kmv-Gl-OQT8-ox-", "filename": "קולאז׳ אומנות רחוב צבעוני", "category": "אומנות רחוב", "reason": "קולאז' צפוף של יצירות paste-up שלמות ונפרדות", "flagged_at": "2026-07-04"},
-  {"id": "1aeoAauj2Exj0l-7YWujRM53fJix9SpxP", "filename": "ילדה עם פרח ירוק", "category": "אומנות רחוב", "reason": "סטנסיל בסגנון Banksy, נושא בודד וממורכז של הפריים", "flagged_at": "2026-07-04"},
-  {"id": "1tIWrT18_7Wdgywd-AclcIQcYIh3bhuiR", "filename": "דמויות צבעוניות על קיר", "category": "אומנות רחוב", "reason": "שלוש דמויות חתומות ממלאות את הפריים", "flagged_at": "2026-07-04"},
-  {"id": "1p2zkOHA94h8rultRemwsyPMXbmxdXFvP", "filename": "פוזיה אסיאתית בחומה", "category": "אומנות רחוב", "reason": "פורטרט גיישה מפורט עם תג אמן", "flagged_at": "2026-07-04"},
-  {"id": "174zyBopiImSouYyOt1WjpJcoSGY5-f0v", "filename": "נשים בצבעים עזים", "category": "אומנות רחוב", "reason": "אותו מיוריל גיישה (השתקפות), פורטרט שלם", "flagged_at": "2026-07-04"},
-  {"id": "1AfUVDF8p6VyVLa5GbMr0w7wX4_bzv0X2", "filename": "צבעים בריקוד", "category": "אומנות רחוב", "reason": "פורטרט פנים מסוגנן ממלא פריים", "flagged_at": "2026-07-04"},
-  {"id": "1xJ1JIqiGzIBZAYvU4US-EXW7Wv8IEpe7", "filename": "פנים זוהר בנאון", "category": "אומנות רחוב", "reason": "דמות מתוארת בקו מובהק הממלאת את הפריים", "flagged_at": "2026-07-04"},
-  {"id": "1kAf2fQlfyNxGcXB1HypjFP_zplffcAdt", "filename": "פנים בצבעי אש", "category": "אומנות רחוב", "reason": "פורטרט נשי מפורט ושלם", "flagged_at": "2026-07-04"},
-  {"id": "1zTt6-0LettDu0qvauEhq51Q3VF-u-wJV", "filename": "עיניים פעימות", "category": "אומנות רחוב", "reason": "מיוריל סוריאליסטי שלם עם תג אמן גלוי", "flagged_at": "2026-07-04"},
-  {"id": "1OddP-ucH3-6YMj3Jq5h8yn42DTDpKWg6", "filename": "אומנות קיר מונוכרום", "category": "אומנות רחוב", "reason": "יצירת קווים מפורטת ומיומנת, שלמה", "flagged_at": "2026-07-04"},
-  {"id": "1SOUVqUKaOMGvlozKkxzQMq0r6dPuumSX", "filename": "מלאך האור", "category": "אומנות רחוב", "reason": "מיוריל יונה מפורט עם לוגו חתימה משולש", "flagged_at": "2026-07-04"},
-  {"id": "1w8PifW8LEJAVXGlsGzljvF61b_G4LazJ", "filename": "פופ ארט צבעוני", "category": "אומנות רחוב", "reason": "מיוריל פופ-ארט עם מספר פורטרטים שלמים", "flagged_at": "2026-07-04"},
-  {"id": "1Ry-vg0OUxMC8ixGN3bzBJ2fxPMetWl_o", "filename": "פנים צבעוניות בגרפיטי", "category": "אומנות רחוב", "reason": "אותו קיר/אמן כמו הפופ ארט, פנים ממלאות פריים", "flagged_at": "2026-07-04"},
-  {"id": "1Rk7DVtZoe7fjlzVs6RIutNGYhzDsXyKQ", "filename": "ג'ק צריך מוזיקה", "category": "אומנות רחוב", "reason": "שכפול ישיר של לוגו/תווית Jack Daniel's — גם בעיית סימן מסחרי", "flagged_at": "2026-07-04"},
-  {"id": "1ADfJKqOIF1pA2DxEeWRtz3KkFuaT6Ks5", "filename": "עיניים צבעוניות", "category": "אומנות רחוב", "reason": "אותו קיר/אמן כמו פופ ארט #46", "flagged_at": "2026-07-04"},
-  {"id": "1w4L8pgyd-7gbqX6ITIUn5_FmaL5nUSPp", "filename": "דמות צבעונית על הקיר", "category": "אומנות רחוב", "reason": "דמות רובוט/דמות שלמה ומיוחדת", "flagged_at": "2026-07-04"},
-  {"id": "1vqHsXWU4S65naalXFddobDsgWnjT7Ex1", "filename": "דמות צהובה בגרפיטי", "category": "אומנות רחוב", "reason": "דמות שלמה בתוך יצירת wildstyle מורכבת", "flagged_at": "2026-07-04"},
-  {"id": "1nXqUjgg5KOrU1m5yyYxbHW_JTT5ylLuN", "filename": "פנים צבעוניות בחושך", "category": "אומנות רחוב", "reason": "אותו סגנון/אמן כמו #42, פורטרט שלם", "flagged_at": "2026-07-04"},
-  {"id": "1VsaalztTEN45m8prBG4T_RN-kAfByDMZ", "filename": "דגלים על הקיר", "category": "אומנות רחוב", "reason": "סדרת דמויות חתומות בסגנון ייחודי", "flagged_at": "2026-07-04"},
-  {"id": "1Dzrx-HH4M5K743_NY6lF_UHLW84-SQVC", "filename": "פנים בצבעי נאון", "category": "אומנות רחוב", "reason": "פורטרט ניאון מפורט עם תג אמן גלוי", "flagged_at": "2026-07-04"},
-  {"id": "1QD4S-1KYrb3yTRflZnTlFvwNSapGKtzS", "filename": "קוקה קולה מיתולוגיה", "category": "אומנות רחוב", "reason": "לוגו Coca-Cola בתקריב מלא — סימן מסחרי", "flagged_at": "2026-07-04"},
-  {"id": "720030fa-77e4-4a1e-81ff-c3df5a898a24", "filename": "סוס נוצץ על אדום", "category": "אומנות רחוב", "reason": "סמל Ferrari — סימן מסחרי", "flagged_at": "2026-07-04"},
-  {"id": "49f8c03e-72d7-4ff9-ac7f-f76b74903ce5", "filename": "שכבות של זמן", "category": "אומנות רחוב", "reason": "לוגו Carlsberg על שלט — סימן מסחרי", "flagged_at": "2026-07-04"},
-  {"id": "cabde850-adf5-40c7-a781-78c1f75fac21", "filename": "קיר כבוד בליברפול", "category": "אנגליה", "reason": "מיוריל שלם של איאן ראש (Ian Rush) עם תג אמן — ספורטאי מזוהה + זכויות אמן", "flagged_at": "2026-07-04"},
-  {"id": "e378d086-84ae-42f9-9c50-24dae4718136", "filename": "רחוב בכפר אנגלי בתי אבן", "category": "אנגליה", "reason": "מיוריל שלם עם דמויות פנטסטיות ממלא פריים", "flagged_at": "2026-07-04"},
-  {"id": "a3c12c4b-8d79-407b-b7ec-ee229c6899bf", "filename": "אמנות רחוב עם דבורים", "category": "אנגליה", "reason": "מיוריל שלם, דבורים על יד כחולה", "flagged_at": "2026-07-04"},
-  {"id": "378362e9-9935-4cd9-8283-13770ae75d9b", "filename": "אמנות רחוב צבעונית באנגליה", "category": "אנגליה", "reason": "מיוריל דמויות קרטוניות שלם", "flagged_at": "2026-07-04"},
-  {"id": "66b254e9-2bc5-4b15-acb9-ded6908cc401", "filename": "אמנות קיר צבעונית באנגליה", "category": "אנגליה", "reason": "מיוריל דמויות מופשטות שלם", "flagged_at": "2026-07-04"},
-  {"id": "c66bc1f1-6c60-49be-80b5-2732819cd70b", "filename": "פיל צבעוני בלונדון", "category": "אנגליה", "reason": "פסל/מיצב פיל מפורט ושלם (Brick Lane)", "flagged_at": "2026-07-04"},
-  {"id": "bd590fcf-1298-43c5-972f-6f206f103382", "filename": "אדריכלות מנזר באת' אנגליה", "category": "אנגליה", "reason": "לוגו Underground של TfL בתקריב מלא — סימן מסחרי רשום", "flagged_at": "2026-07-04"},
-  {"id": "62564953-4bf6-446e-b95d-1a581171475e", "filename": "אמנות רחוב בלונדון", "category": "אנגליה", "reason": "מיוריל סוריאליסטי שלם עם תג אמן", "flagged_at": "2026-07-04"},
-  {"id": "8ea8b789-daff-4b5b-8b6a-47fb73e1b6fb", "filename": "אמנות קיר בלונדון", "category": "אנגליה", "reason": "מיוריל מונוכרום שלם (פרצוף בעל חיים)", "flagged_at": "2026-07-04"},
-  {"id": "5bb39966-c573-44c6-9679-2734588ea522", "filename": "גשר אבן בקוטסוולדס אנגליה", "category": "אנגליה", "reason": "מיוריל פורטרט אישה עם שיער אפרו, שלם", "flagged_at": "2026-07-04"},
-  {"id": "3cc24f4e-91b6-4555-b564-6d097e2cdce3", "filename": "אומנות רחוב רובוטית", "category": "אנגליה", "reason": "מיוריל דמות רובוט שלם", "flagged_at": "2026-07-04"},
-  {"id": "0a6068b9-f2e5-4550-9023-32fd0be447ef", "filename": "אמנות קיר באנגליה", "category": "אנגליה", "reason": "מיוריל אישה עם פרחים, סגנון קלאסי, שלם", "flagged_at": "2026-07-04"},
-  {"id": "b24d7b53-f5be-44f9-964e-645fbb37aa84", "filename": "אמנות רחוב פוליטית בלונדון", "category": "אנגליה", "reason": "מוזאיקת פוסטרים עם דמויות פוליטיות מזוהות (זלנסקי, פוטין, טאקר קרלסון, אסד, סונאק, שי) + זכויות אמן", "flagged_at": "2026-07-04"},
-  {"id": "d432b311-38db-4b36-a88f-0487e845ce7a", "filename": "הצוקים הלבנים של דובר אנגליה", "category": "אנגליה", "reason": "מיצב פסלי ברוקולי שלם ומפורט", "flagged_at": "2026-07-04"},
-  {"id": "27e0c832-667c-44cb-8887-07e9dab159e3", "filename": "אדריכלות קתדרלה היסטורית אנגליה", "category": "אנגליה", "reason": "מיוריל אישה עם פטריות ענק, שלם", "flagged_at": "2026-07-04"},
-  {"id": "215820bc-841c-42e4-aa8b-02cbb052b23e", "filename": "אוניברסיטת קיימברידג' ונהר הקאם", "category": "אנגליה", "reason": "אותו מיוריל פטריות מזווית אחרת", "flagged_at": "2026-07-04"},
-  {"id": "16-5H2k9DtEVujMvTExwnMo2fj0YQLI38", "filename": "אומנות רחוב בלונדון", "category": "אנגליה", "reason": "מיוריל חלון עם דמויות ודגלים, שלם", "flagged_at": "2026-07-04"},
-  {"id": "127bJ4h4bzS-cVMO66TEjsJqFcYMcpcZb", "filename": "יציאה מהאצטדיון", "category": "אנגליה", "reason": "לוגו Standard Chartered גלוי על שלט יציאה באצטדיון אנפילד", "flagged_at": "2026-07-04"},
-  {"id": "1mgqCcujLSnKlKeg4bu7XESwQHNlv11up", "filename": "אנדרטה בשמיים דרמטיים", "category": "אנגליה", "reason": "פסל אנדרטה של שלושה כדורגלנים מזוהים", "flagged_at": "2026-07-04"}
+  {
+    "id": "f207830f-74e5-4f51-9dfb-3d0e648cddab",
+    "filename": "עיניים במהומת צבעים",
+    "category": "אומנות רחוב",
+    "reason": "מיוריל שלם עם עיניים ענקיות ודמויות — יצירת אמן ניתנת לזיהוי",
+    "flagged_at": "2026-07-04"
+  },
+  {
+    "id": "4cff716d-0292-4963-85a4-524f8f051855",
+    "filename": "פנים צבעוני בקיר",
+    "category": "אומנות רחוב",
+    "reason": "דמות מפלצת/פנים שלמה ומכוונת",
+    "flagged_at": "2026-07-04"
+  },
+  {
+    "id": "15dcWf75qLBeeYQOHLw8q9SoYxvJiM-yJ",
+    "filename": "אומנות רחוב צבעונית",
+    "category": "אומנות רחוב",
+    "reason": "קולאז' סטיקרים של אמנים שונים כנושא מרכזי",
+    "flagged_at": "2026-07-04"
+  },
+  {
+    "id": "1b8VjVnJmSqr5ND4JIPTGrJjIoM4as42I",
+    "filename": "אומנות קיר צבעונית",
+    "category": "אומנות רחוב",
+    "reason": "יצירת אותיות חתומה עם מוטיב סמיילי ייחודי",
+    "flagged_at": "2026-07-04"
+  },
+  {
+    "id": "1MKQfhUuYBbjtM0gVvNFBDT8B8duGwQsL",
+    "filename": "חתול צבעוני רחוב",
+    "category": "אומנות רחוב",
+    "reason": "דמות חתול שלמה עם תג אמן גלוי",
+    "flagged_at": "2026-07-04"
+  },
+  {
+    "id": "1cIOg80ARIDTH2mTGq0YABLPL1ECVSV8P",
+    "filename": "פנים גיאומטריות בצבע",
+    "category": "אומנות רחוב",
+    "reason": "פורטרט כפול-סימטרי מלא פריים, יצירה מכוונת",
+    "flagged_at": "2026-07-04"
+  },
+  {
+    "id": "1f2p8iDcaJR_LV4w_Vg_bNQ4hIHEqiQac",
+    "filename": "עיניים צוהלות בצבעים",
+    "category": "אומנות רחוב",
+    "reason": "דמויות חתומות חוזרות בסגנון אחיד",
+    "flagged_at": "2026-07-04"
+  },
+  {
+    "id": "1ZU1P_DTM5938hC18_Py9OZZqRob4VUTr",
+    "filename": "קולאז' אומנות רחוב צבעוני",
+    "category": "אומנות רחוב",
+    "reason": "קולאז' יצירות שלמות כולל עבודה חתומה של Cartrain",
+    "flagged_at": "2026-07-04"
+  },
+  {
+    "id": "1i-YCIhCY5-e1mleESaJtmaEScx6x5GYX",
+    "filename": "דו-קוטביות של צבע",
+    "category": "אומנות רחוב",
+    "reason": "דמות סטנסיל שלמה וייחודית",
+    "flagged_at": "2026-07-04"
+  },
+  {
+    "id": "1xp0-lpaiDPMZOacy3SqKJ34jaPZ_B4Ua",
+    "filename": "גולגולת צבעונית",
+    "category": "אומנות רחוב",
+    "reason": "יצירת גולגולת מפורטת בסגנון ייחודי",
+    "flagged_at": "2026-07-04"
+  },
+  {
+    "id": "1-iJPFoC4apVKsGeFa7XxpNBsJanLpn6P",
+    "filename": "פנים בצבעים חמים",
+    "category": "אומנות רחוב",
+    "reason": "יצירה בסגנון OBEY/Shepard Fairey עם הכיתוב OBEY",
+    "flagged_at": "2026-07-04"
+  },
+  {
+    "id": "1BYeD4UV2TOwpbPjV0kmv-Gl-OQT8-ox-",
+    "filename": "קולאז׳ אומנות רחוב צבעוני",
+    "category": "אומנות רחוב",
+    "reason": "קולאז' צפוף של יצירות paste-up שלמות ונפרדות",
+    "flagged_at": "2026-07-04"
+  },
+  {
+    "id": "1aeoAauj2Exj0l-7YWujRM53fJix9SpxP",
+    "filename": "ילדה עם פרח ירוק",
+    "category": "אומנות רחוב",
+    "reason": "סטנסיל בסגנון Banksy, נושא בודד וממורכז של הפריים",
+    "flagged_at": "2026-07-04"
+  },
+  {
+    "id": "1tIWrT18_7Wdgywd-AclcIQcYIh3bhuiR",
+    "filename": "דמויות צבעוניות על קיר",
+    "category": "אומנות רחוב",
+    "reason": "שלוש דמויות חתומות ממלאות את הפריים",
+    "flagged_at": "2026-07-04"
+  },
+  {
+    "id": "1p2zkOHA94h8rultRemwsyPMXbmxdXFvP",
+    "filename": "פוזיה אסיאתית בחומה",
+    "category": "אומנות רחוב",
+    "reason": "פורטרט גיישה מפורט עם תג אמן",
+    "flagged_at": "2026-07-04"
+  },
+  {
+    "id": "174zyBopiImSouYyOt1WjpJcoSGY5-f0v",
+    "filename": "נשים בצבעים עזים",
+    "category": "אומנות רחוב",
+    "reason": "אותו מיוריל גיישה (השתקפות), פורטרט שלם",
+    "flagged_at": "2026-07-04"
+  },
+  {
+    "id": "1AfUVDF8p6VyVLa5GbMr0w7wX4_bzv0X2",
+    "filename": "צבעים בריקוד",
+    "category": "אומנות רחוב",
+    "reason": "פורטרט פנים מסוגנן ממלא פריים",
+    "flagged_at": "2026-07-04"
+  },
+  {
+    "id": "1xJ1JIqiGzIBZAYvU4US-EXW7Wv8IEpe7",
+    "filename": "פנים זוהר בנאון",
+    "category": "אומנות רחוב",
+    "reason": "דמות מתוארת בקו מובהק הממלאת את הפריים",
+    "flagged_at": "2026-07-04"
+  },
+  {
+    "id": "1kAf2fQlfyNxGcXB1HypjFP_zplffcAdt",
+    "filename": "פנים בצבעי אש",
+    "category": "אומנות רחוב",
+    "reason": "פורטרט נשי מפורט ושלם",
+    "flagged_at": "2026-07-04"
+  },
+  {
+    "id": "1zTt6-0LettDu0qvauEhq51Q3VF-u-wJV",
+    "filename": "עיניים פעימות",
+    "category": "אומנות רחוב",
+    "reason": "מיוריל סוריאליסטי שלם עם תג אמן גלוי",
+    "flagged_at": "2026-07-04"
+  },
+  {
+    "id": "1OddP-ucH3-6YMj3Jq5h8yn42DTDpKWg6",
+    "filename": "אומנות קיר מונוכרום",
+    "category": "אומנות רחוב",
+    "reason": "יצירת קווים מפורטת ומיומנת, שלמה",
+    "flagged_at": "2026-07-04"
+  },
+  {
+    "id": "1SOUVqUKaOMGvlozKkxzQMq0r6dPuumSX",
+    "filename": "מלאך האור",
+    "category": "אומנות רחוב",
+    "reason": "מיוריל יונה מפורט עם לוגו חתימה משולש",
+    "flagged_at": "2026-07-04"
+  },
+  {
+    "id": "1w8PifW8LEJAVXGlsGzljvF61b_G4LazJ",
+    "filename": "פופ ארט צבעוני",
+    "category": "אומנות רחוב",
+    "reason": "מיוריל פופ-ארט עם מספר פורטרטים שלמים",
+    "flagged_at": "2026-07-04"
+  },
+  {
+    "id": "1Ry-vg0OUxMC8ixGN3bzBJ2fxPMetWl_o",
+    "filename": "פנים צבעוניות בגרפיטי",
+    "category": "אומנות רחוב",
+    "reason": "אותו קיר/אמן כמו הפופ ארט, פנים ממלאות פריים",
+    "flagged_at": "2026-07-04"
+  },
+  {
+    "id": "1Rk7DVtZoe7fjlzVs6RIutNGYhzDsXyKQ",
+    "filename": "ג'ק צריך מוזיקה",
+    "category": "אומנות רחוב",
+    "reason": "שכפול ישיר של לוגו/תווית Jack Daniel's — גם בעיית סימן מסחרי",
+    "flagged_at": "2026-07-04"
+  },
+  {
+    "id": "1ADfJKqOIF1pA2DxEeWRtz3KkFuaT6Ks5",
+    "filename": "עיניים צבעוניות",
+    "category": "אומנות רחוב",
+    "reason": "אותו קיר/אמן כמו פופ ארט #46",
+    "flagged_at": "2026-07-04"
+  },
+  {
+    "id": "1w4L8pgyd-7gbqX6ITIUn5_FmaL5nUSPp",
+    "filename": "דמות צבעונית על הקיר",
+    "category": "אומנות רחוב",
+    "reason": "דמות רובוט/דמות שלמה ומיוחדת",
+    "flagged_at": "2026-07-04"
+  },
+  {
+    "id": "1vqHsXWU4S65naalXFddobDsgWnjT7Ex1",
+    "filename": "דמות צהובה בגרפיטי",
+    "category": "אומנות רחוב",
+    "reason": "דמות שלמה בתוך יצירת wildstyle מורכבת",
+    "flagged_at": "2026-07-04"
+  },
+  {
+    "id": "1nXqUjgg5KOrU1m5yyYxbHW_JTT5ylLuN",
+    "filename": "פנים צבעוניות בחושך",
+    "category": "אומנות רחוב",
+    "reason": "אותו סגנון/אמן כמו #42, פורטרט שלם",
+    "flagged_at": "2026-07-04"
+  },
+  {
+    "id": "1VsaalztTEN45m8prBG4T_RN-kAfByDMZ",
+    "filename": "דגלים על הקיר",
+    "category": "אומנות רחוב",
+    "reason": "סדרת דמויות חתומות בסגנון ייחודי",
+    "flagged_at": "2026-07-04"
+  },
+  {
+    "id": "1Dzrx-HH4M5K743_NY6lF_UHLW84-SQVC",
+    "filename": "פנים בצבעי נאון",
+    "category": "אומנות רחוב",
+    "reason": "פורטרט ניאון מפורט עם תג אמן גלוי",
+    "flagged_at": "2026-07-04"
+  },
+  {
+    "id": "1QD4S-1KYrb3yTRflZnTlFvwNSapGKtzS",
+    "filename": "קוקה קולה מיתולוגיה",
+    "category": "אומנות רחוב",
+    "reason": "לוגו Coca-Cola בתקריב מלא — סימן מסחרי",
+    "flagged_at": "2026-07-04"
+  },
+  {
+    "id": "720030fa-77e4-4a1e-81ff-c3df5a898a24",
+    "filename": "סוס נוצץ על אדום",
+    "category": "אומנות רחוב",
+    "reason": "סמל Ferrari — סימן מסחרי",
+    "flagged_at": "2026-07-04"
+  },
+  {
+    "id": "49f8c03e-72d7-4ff9-ac7f-f76b74903ce5",
+    "filename": "שכבות של זמן",
+    "category": "אומנות רחוב",
+    "reason": "לוגו Carlsberg על שלט — סימן מסחרי",
+    "flagged_at": "2026-07-04"
+  },
+  {
+    "id": "cabde850-adf5-40c7-a781-78c1f75fac21",
+    "filename": "קיר כבוד בליברפול",
+    "category": "אנגליה",
+    "reason": "מיוריל שלם של איאן ראש (Ian Rush) עם תג אמן — ספורטאי מזוהה + זכויות אמן",
+    "flagged_at": "2026-07-04"
+  },
+  {
+    "id": "e378d086-84ae-42f9-9c50-24dae4718136",
+    "filename": "רחוב בכפר אנגלי בתי אבן",
+    "category": "אנגליה",
+    "reason": "מיוריל שלם עם דמויות פנטסטיות ממלא פריים",
+    "flagged_at": "2026-07-04"
+  },
+  {
+    "id": "a3c12c4b-8d79-407b-b7ec-ee229c6899bf",
+    "filename": "אמנות רחוב עם דבורים",
+    "category": "אנגליה",
+    "reason": "מיוריל שלם, דבורים על יד כחולה",
+    "flagged_at": "2026-07-04"
+  },
+  {
+    "id": "378362e9-9935-4cd9-8283-13770ae75d9b",
+    "filename": "אמנות רחוב צבעונית באנגליה",
+    "category": "אנגליה",
+    "reason": "מיוריל דמויות קרטוניות שלם",
+    "flagged_at": "2026-07-04"
+  },
+  {
+    "id": "66b254e9-2bc5-4b15-acb9-ded6908cc401",
+    "filename": "אמנות קיר צבעונית באנגליה",
+    "category": "אנגליה",
+    "reason": "מיוריל דמויות מופשטות שלם",
+    "flagged_at": "2026-07-04"
+  },
+  {
+    "id": "c66bc1f1-6c60-49be-80b5-2732819cd70b",
+    "filename": "פיל צבעוני בלונדון",
+    "category": "אנגליה",
+    "reason": "פסל/מיצב פיל מפורט ושלם (Brick Lane)",
+    "flagged_at": "2026-07-04"
+  },
+  {
+    "id": "bd590fcf-1298-43c5-972f-6f206f103382",
+    "filename": "אדריכלות מנזר באת' אנגליה",
+    "category": "אנגליה",
+    "reason": "לוגו Underground של TfL בתקריב מלא — סימן מסחרי רשום",
+    "flagged_at": "2026-07-04"
+  },
+  {
+    "id": "62564953-4bf6-446e-b95d-1a581171475e",
+    "filename": "אמנות רחוב בלונדון",
+    "category": "אנגליה",
+    "reason": "מיוריל סוריאליסטי שלם עם תג אמן",
+    "flagged_at": "2026-07-04"
+  },
+  {
+    "id": "8ea8b789-daff-4b5b-8b6a-47fb73e1b6fb",
+    "filename": "אמנות קיר בלונדון",
+    "category": "אנגליה",
+    "reason": "מיוריל מונוכרום שלם (פרצוף בעל חיים)",
+    "flagged_at": "2026-07-04"
+  },
+  {
+    "id": "5bb39966-c573-44c6-9679-2734588ea522",
+    "filename": "גשר אבן בקוטסוולדס אנגליה",
+    "category": "אנגליה",
+    "reason": "מיוריל פורטרט אישה עם שיער אפרו, שלם",
+    "flagged_at": "2026-07-04"
+  },
+  {
+    "id": "3cc24f4e-91b6-4555-b564-6d097e2cdce3",
+    "filename": "אומנות רחוב רובוטית",
+    "category": "אנגליה",
+    "reason": "מיוריל דמות רובוט שלם",
+    "flagged_at": "2026-07-04"
+  },
+  {
+    "id": "0a6068b9-f2e5-4550-9023-32fd0be447ef",
+    "filename": "אמנות קיר באנגליה",
+    "category": "אנגליה",
+    "reason": "מיוריל אישה עם פרחים, סגנון קלאסי, שלם",
+    "flagged_at": "2026-07-04"
+  },
+  {
+    "id": "b24d7b53-f5be-44f9-964e-645fbb37aa84",
+    "filename": "אמנות רחוב פוליטית בלונדון",
+    "category": "אנגליה",
+    "reason": "מוזאיקת פוסטרים עם דמויות פוליטיות מזוהות (זלנסקי, פוטין, טאקר קרלסון, אסד, סונאק, שי) + זכויות אמן",
+    "flagged_at": "2026-07-04"
+  },
+  {
+    "id": "d432b311-38db-4b36-a88f-0487e845ce7a",
+    "filename": "הצוקים הלבנים של דובר אנגליה",
+    "category": "אנגליה",
+    "reason": "מיצב פסלי ברוקולי שלם ומפורט",
+    "flagged_at": "2026-07-04"
+  },
+  {
+    "id": "27e0c832-667c-44cb-8887-07e9dab159e3",
+    "filename": "אדריכלות קתדרלה היסטורית אנגליה",
+    "category": "אנגליה",
+    "reason": "מיוריל אישה עם פטריות ענק, שלם",
+    "flagged_at": "2026-07-04"
+  },
+  {
+    "id": "215820bc-841c-42e4-aa8b-02cbb052b23e",
+    "filename": "אוניברסיטת קיימברידג' ונהר הקאם",
+    "category": "אנגליה",
+    "reason": "אותו מיוריל פטריות מזווית אחרת",
+    "flagged_at": "2026-07-04"
+  },
+  {
+    "id": "16-5H2k9DtEVujMvTExwnMo2fj0YQLI38",
+    "filename": "אומנות רחוב בלונדון",
+    "category": "אנגליה",
+    "reason": "מיוריל חלון עם דמויות ודגלים, שלם",
+    "flagged_at": "2026-07-04"
+  },
+  {
+    "id": "127bJ4h4bzS-cVMO66TEjsJqFcYMcpcZb",
+    "filename": "יציאה מהאצטדיון",
+    "category": "אנגליה",
+    "reason": "לוגו Standard Chartered גלוי על שלט יציאה באצטדיון אנפילד",
+    "flagged_at": "2026-07-04"
+  },
+  {
+    "id": "1mgqCcujLSnKlKeg4bu7XESwQHNlv11up",
+    "filename": "אנדרטה בשמיים דרמטיים",
+    "category": "אנגליה",
+    "reason": "פסל אנדרטה של שלושה כדורגלנים מזוהים",
+    "flagged_at": "2026-07-04"
+  },
+  {
+    "id": "1G8OQ0PqpVRX4_AkDb4_pmVStkzlLgYCY",
+    "filename": "DSC_2924.jpg",
+    "category": "טבע דומם",
+    "reason": "גרפיטי שלם וניתן לזיהוי של דמות מכוונת של אמן ספציפי, הממלא חלק משמעותי מהפריים עם סגנון חתום וברור",
+    "flagged_at": "2026-10-01"
+  },
+  {
+    "id": "1hUhxca4LX5rRHe20EauMLdV6kjMua07u",
+    "filename": "DSC_9287.jpg",
+    "category": "מקומות בעולם / גאורגיה",
+    "reason": "לוגו Jack Daniel's בולט וניתן לזיהוי על הבקבוק משמאל, המהווה סימן מסחרי רשום של מותג ידוע",
+    "flagged_at": "2026-10-01"
+  }
 ]
