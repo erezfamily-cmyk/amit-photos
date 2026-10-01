@@ -188,10 +188,62 @@ async function verifyPayPalWebhook(request, env, rawBody) {
   return { ok: true, event: webhookEvent, accessToken };
 }
 
+const PAYPAL_WEBHOOK_LEASE_SECONDS = 120;
+
 async function markWebhookProcessed(env, eventId) {
   await env.DB.prepare(
-    'UPDATE paypal_webhook_events SET processed=1 WHERE event_id=?'
+    "UPDATE paypal_webhook_events SET processed=1, processing_started_at=NULL WHERE event_id=?"
   ).bind(eventId).run();
+}
+
+async function releaseWebhookLease(env, eventId) {
+  await env.DB.prepare(
+    "UPDATE paypal_webhook_events SET processed=0, processing_started_at=NULL WHERE event_id=? AND processed=2"
+  ).bind(eventId).run();
+}
+
+async function acquireWebhookLease(env, eventId, eventType) {
+  const now = new Date();
+  const nowIso = now.toISOString();
+  const cutoffIso = new Date(now.getTime() - PAYPAL_WEBHOOK_LEASE_SECONDS * 1000).toISOString();
+
+  await env.DB.prepare(
+    'INSERT OR IGNORE INTO paypal_webhook_events (event_id, event_type, received_at, processed, processing_started_at, attempts) VALUES (?, ?, ?, 0, NULL, 0)'
+  ).bind(eventId, eventType, nowIso).run();
+
+  const existing = await env.DB.prepare(
+    'SELECT processed, processing_started_at, attempts FROM paypal_webhook_events WHERE event_id=?'
+  ).bind(eventId).first();
+
+  if (existing?.processed === 1) {
+    return { acquired: false, done: true, busy: false };
+  }
+
+  const claim = await env.DB.prepare(
+    `UPDATE paypal_webhook_events
+     SET processed=2, processing_started_at=?, attempts=attempts+1
+     WHERE event_id=?
+       AND (
+         processed=0
+         OR (
+           processed=2
+           AND (processing_started_at IS NULL OR processing_started_at < ?)
+         )
+       )`
+  ).bind(nowIso, eventId, cutoffIso).run();
+
+  if ((claim.meta?.changes || 0) > 0) {
+    return { acquired: true, done: false, busy: false };
+  }
+
+  const raced = await env.DB.prepare(
+    'SELECT processed, processing_started_at, attempts FROM paypal_webhook_events WHERE event_id=?'
+  ).bind(eventId).first();
+  return {
+    acquired: false,
+    done: raced?.processed === 1,
+    busy: raced?.processed === 2,
+  };
 }
 
 async function processCompletedCaptureWebhook(request, env, event, accessToken) {
@@ -321,52 +373,46 @@ export async function handlePayPalWebhook(request, env) {
     return jsonRes({ error: 'PAYPAL_WEBHOOK_EVENT_INVALID' }, 400, request);
   }
 
-  const existing = await env.DB.prepare(
-    'SELECT processed FROM paypal_webhook_events WHERE event_id=?'
-  ).bind(event.id).first();
-  if (existing?.processed === 1) {
+  const lease = await acquireWebhookLease(env, event.id, event.event_type);
+  if (lease.done) {
     return jsonRes({ ok: true, duplicate: true }, 200, request);
   }
+  if (!lease.acquired) {
+    // Do not acknowledge an in-flight duplicate with 2xx: if the active worker
+    // dies, PayPal must retry later so the stale lease can be reclaimed.
+    return jsonRes({ error: 'PAYPAL_WEBHOOK_PROCESSING' }, 409, request);
+  }
 
-  const insertEvent = await env.DB.prepare(
-    'INSERT OR IGNORE INTO paypal_webhook_events (event_id, event_type, received_at, processed) VALUES (?, ?, ?, 0)'
-  ).bind(event.id, event.event_type, new Date().toISOString()).run();
+  try {
+    if (event.event_type !== 'PAYMENT.CAPTURE.COMPLETED') {
+      await markWebhookProcessed(env, event.id);
+      return jsonRes({ ok: true, ignored: true }, 200, request);
+    }
 
-  // If another delivery already inserted this event, do not run the same
-  // reconciliation concurrently. The existing delivery owns processing.
-  if ((insertEvent.meta?.changes || 0) === 0) {
-    const raced = await env.DB.prepare(
-      'SELECT processed FROM paypal_webhook_events WHERE event_id=?'
-    ).bind(event.id).first();
+    const processed = await processCompletedCaptureWebhook(
+      request,
+      env,
+      event,
+      verified.accessToken
+    );
+    if (!processed.ok) {
+      await releaseWebhookLease(env, event.id);
+      return jsonRes({ error: processed.error }, processed.status || 500, request);
+    }
+
+    await markWebhookProcessed(env, event.id);
     return jsonRes({
       ok: true,
-      duplicate: true,
-      processing: raced?.processed !== 1,
+      duplicate: false,
+      ignored: !!processed.ignored,
+      alreadyCompleted: !!processed.alreadyCompleted,
     }, 200, request);
+  } catch {
+    // Recoverable errors return the event to pending. A hard runtime crash that
+    // prevents this line from running is covered by the stale-lease timeout.
+    await releaseWebhookLease(env, event.id).catch(() => {});
+    return jsonRes({ error: 'PAYPAL_WEBHOOK_PROCESSING_FAILED' }, 500, request);
   }
-
-  if (event.event_type !== 'PAYMENT.CAPTURE.COMPLETED') {
-    await markWebhookProcessed(env, event.id);
-    return jsonRes({ ok: true, ignored: true }, 200, request);
-  }
-
-  const processed = await processCompletedCaptureWebhook(
-    request,
-    env,
-    event,
-    verified.accessToken
-  );
-  if (!processed.ok) {
-    return jsonRes({ error: processed.error }, processed.status || 500, request);
-  }
-
-  await markWebhookProcessed(env, event.id);
-  return jsonRes({
-    ok: true,
-    duplicate: false,
-    ignored: !!processed.ignored,
-    alreadyCompleted: !!processed.alreadyCompleted,
-  }, 200, request);
 }
 
 async function resolveDigitalPayPalPrice(env, photoId, size, currency) {
