@@ -1,0 +1,30 @@
+name: Admin Flower Curation Pilot CI
+
+on:
+  push:
+    branches:
+      - feature/admin-flower-curation-pilot-2026-10-01
+  pull_request:
+    paths:
+      - 'admin.html'
+      - 'data/flower-curation-pilot.json'
+      - 'tests/admin-flower-curation-pilot.test.mjs'
+      - '.github/workflows/admin-flower-curation-pilot-ci.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  flower-curation-pilot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Validate pilot data
+        run: node -e "const r=require('./data/flower-curation-pilot.json'); if(!r.pilot || r.category!=='פרחים וצמחים' || r.policy.automatic_delete || r.policy.automatic_hide) process.exit(1); console.log(r.summary)"
+      - name: Run tests
+        run: node --test tests/admin-flower-curation-pilot.test.mjs
