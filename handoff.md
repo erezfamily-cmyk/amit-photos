@@ -79,7 +79,8 @@ PAYMENTS_ENABLED = "false"   ב-wrangler.toml (production)
 מיזוג PR #76 ל-`main` יפרוס את קוד ה-Sandbox החדש ל-Cloudflare, אבל כשלעצמו **לא אמור לפתוח רכישות לציבור** כי `PAYMENTS_ENABLED=false` נשאר kill switch. למרות זאת, לפי החלטת בעל הפרויקט מ-1.10.2026, **לא לבצע את המיזוג כרגע**.
 
 ### השלב הבא
-- S1–S5 וגם S7/S9/S10 נסגרו. פתוחים: S6 staging isolation ו-S8 webhook verified-signature; אין לבצע Sandbox E2E מול production D1.
+- מקור עבודה מחייב נוסף: `docs/pre-commerce-readiness-2026-10-01.md`; staging plan: `docs/paypal-sandbox-staging-2026-10-01.md`.
+- Security audit ברמת קוד: S1–S5 ו-S7–S10 נסגרו. webhook עם signature verification + dedup + authoritative order cross-check נוסף; הסוויטה כעת **329/329 pass, 0 fail**. פתוח לפני E2E: S6 staging isolation. webhook עדיין דורש E2E אמיתי מול Sandbox staging לפני Go-Live.
 לא לבצע merge, deploy, Webhook, UI checkout או Live PayPal עד אישור מפורש חדש של בעל הפרויקט.
 אפשר להמשיך בעתיד בבדיקות Sandbox בלבד, ורצוי בסביבה מבודדת/מוגנת, בלי לשנות `PAYMENTS_ENABLED`.
 
