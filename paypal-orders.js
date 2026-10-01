@@ -11,7 +11,7 @@ function corsHeaders(request) {
     'Content-Type': 'application/json',
     'Access-Control-Allow-Origin': allowed,
     'Access-Control-Allow-Methods': 'POST,OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Headers': 'Content-Type,Idempotency-Key',
     'Vary': 'Origin',
     'Cache-Control': 'no-store',
   };
