@@ -1346,3 +1346,51 @@ test('create-order sends a complete PayPal approval experience', async () => {
     globalThis.fetch = originalFetch;
   }
 });
+
+
+test('create-order accepts payer-action links from PayPal', async () => {
+  const db = makeDb();
+  const env = {
+    PAYMENTS_ENABLED: 'true',
+    PAYPAL_CLIENT_ID: 'sandbox-client',
+    PAYPAL_CLIENT_SECRET: 'sandbox-secret',
+    DB: db,
+  };
+
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async (url, options = {}) => {
+    const target = String(url);
+    if (target.endsWith('/v1/oauth2/token')) {
+      return Response.json({ access_token: 'access-token' });
+    }
+    return Response.json({
+      id: 'PAYPALPAYERACTION123',
+      status: 'PAYER_ACTION_REQUIRED',
+      links: [{
+        rel: 'payer-action',
+        href: 'https://www.sandbox.paypal.com/checkoutnow?token=PAYPALPAYERACTION123',
+      }],
+    }, { status: 201 });
+  };
+
+  try {
+    const response = await handlePayPalCreateOrder(
+      post('/api/admin/paypal/create-order', {
+        type: 'digital',
+        photoId: 'photo-1',
+        sku: 'small',
+        currency: 'ILS',
+      }),
+      env,
+      { allowWhenPaymentsDisabled: true, includeApproveUrl: true, skipRateLimit: true }
+    );
+    assert.equal(response.status, 201);
+    const body = await response.json();
+    assert.equal(
+      body.approveUrl,
+      'https://www.sandbox.paypal.com/checkoutnow?token=PAYPALPAYERACTION123'
+    );
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
