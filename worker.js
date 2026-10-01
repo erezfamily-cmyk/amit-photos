@@ -2737,6 +2737,61 @@ async function handleAdminRevenueSummary(request, env) {
 }
 export { handleAdminRevenueSummary };
 
+async function getSubscriberSourceSummary(env, days = 7) {
+  const safeDays = Math.max(1, Math.min(90, Number.isFinite(Number(days)) ? Number(days) : 7));
+  const sinceIso = new Date(Date.now() - safeDays * 86400000).toISOString();
+
+  const [periodResult, activeMarketingResult, totalsRow] = await Promise.all([
+    env.DB.prepare(
+      `SELECT COALESCE(NULLIF(source,''), 'unknown') as source,
+              COUNT(*) as total,
+              SUM(CASE WHEN consent_marketing = 1 THEN 1 ELSE 0 END) as marketing_opt_in,
+              SUM(CASE WHEN consent_marketing = 0 THEN 1 ELSE 0 END) as marketing_opt_out,
+              SUM(CASE WHEN consent_marketing IS NULL THEN 1 ELSE 0 END) as marketing_unknown
+       FROM subscribers
+       WHERE created_at >= ?
+       GROUP BY COALESCE(NULLIF(source,''), 'unknown')
+       ORDER BY total DESC`
+    ).bind(sinceIso).all(),
+    env.DB.prepare(
+      `SELECT COALESCE(NULLIF(consent_marketing_source,''), NULLIF(source,''), 'unknown') as source,
+              COUNT(*) as count
+       FROM subscribers
+       WHERE consent_marketing = 1
+       GROUP BY COALESCE(NULLIF(consent_marketing_source,''), NULLIF(source,''), 'unknown')
+       ORDER BY count DESC`
+    ).all(),
+    env.DB.prepare(
+      `SELECT COUNT(*) as total_subscribers,
+              SUM(CASE WHEN consent_marketing = 1 THEN 1 ELSE 0 END) as marketing_subscribers,
+              SUM(CASE WHEN consent_marketing = 0 THEN 1 ELSE 0 END) as non_marketing_subscribers,
+              SUM(CASE WHEN consent_marketing IS NULL THEN 1 ELSE 0 END) as unknown_marketing_consent
+       FROM subscribers`
+    ).first(),
+  ]);
+
+  return {
+    period_days: safeDays,
+    period_new_by_source: periodResult.results || [],
+    current_marketing_by_source: activeMarketingResult.results || [],
+    totals: {
+      total_subscribers: totalsRow?.total_subscribers || 0,
+      marketing_subscribers: totalsRow?.marketing_subscribers || 0,
+      non_marketing_subscribers: totalsRow?.non_marketing_subscribers || 0,
+      unknown_marketing_consent: totalsRow?.unknown_marketing_consent || 0,
+    },
+  };
+}
+
+async function handleAdminSubscriberSummary(request, env) {
+  if (!await checkAuth(request, env)) return jsonRes({ error: 'Unauthorized' }, 401, request);
+  const rawDays = parseInt(new URL(request.url).searchParams.get('days'));
+  const days = Math.max(1, Math.min(90, Number.isNaN(rawDays) ? 7 : rawDays));
+  const summary = await getSubscriberSourceSummary(env, days);
+  return jsonRes(summary, 200, request);
+}
+export { getSubscriberSourceSummary, handleAdminSubscriberSummary };
+
 async function handleNewsletter(request, env) {
   if (!await checkAuth(request, env)) return unauth(request);
   if (request.method !== 'POST') return jsonRes({ error: 'method not allowed' }, 405, request);
@@ -7769,6 +7824,7 @@ export default {
     if (path === '/api/pinterest/sync-en' && request.method === 'POST') return handlePinterestSyncEn(request, env);
     if (path === '/api/admin/photo-analytics') return handleAdminPhotoAnalytics(request, env);
     if (path === '/api/admin/revenue-summary') return handleAdminRevenueSummary(request, env);
+    if (path === '/api/admin/subscriber-summary') return handleAdminSubscriberSummary(request, env);
     if (path === '/api/fill-titles')       return handleFillTitles(request, env);
     if (path === '/api/generate-alt')      return handleGenerateAlt(request, env);
     if (path === '/api/trigger-workflow')  return handleTriggerWorkflow(request, env);
