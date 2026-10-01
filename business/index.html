@@ -146,6 +146,23 @@ h1{font-family:'Syne',sans-serif;font-size:clamp(2rem,7vw,3.7rem);line-height:1.
     document.getElementById('en').classList.toggle('active',lang==='en');
   };
 
+  const ALLOWED_PACKAGES=new Set(['digital_display','wall_art','custom_collection']);
+
+  function goToBusinessContact(packageKey){
+    const safePackage=ALLOWED_PACKAGES.has(packageKey)?packageKey:'business_quote';
+    try{
+      sessionStorage.setItem('amit_b2b_context',JSON.stringify({
+        source:'business',
+        package:safePackage,
+        createdAt:Date.now()
+      }));
+    }catch(e){}
+    if(typeof window.trackUxEvent==='function'){
+      window.trackUxEvent('b2b_contact_start',{label:safePackage});
+    }
+    window.location.href='/#contact';
+  }
+
   document.querySelectorAll('[data-package]').forEach(function(btn){
     btn.addEventListener('click',function(){
       const label=btn.dataset.package;
@@ -153,9 +170,17 @@ h1{font-family:'Syne',sans-serif;font-size:clamp(2rem,7vw,3.7rem);line-height:1.
         window.trackUxEvent('b2b_package_select',{label:label});
         window.trackUxEvent('b2b_intent',{label:label});
       }
-      window.location.href='/#contact';
+      goToBusinessContact(label);
     });
   });
+
+  const primaryCta=document.querySelector('[data-analytics-label="business_quote"]');
+  if(primaryCta){
+    primaryCta.addEventListener('click',function(e){
+      e.preventDefault();
+      goToBusinessContact('business_quote');
+    });
+  }
 
   let initial='he';
   try{
