@@ -72,14 +72,14 @@ PAYMENTS_ENABLED = "false"   ב-wrangler.toml (production)
 - נוספו admin-only Sandbox test hooks, המוגנים ב-admin session, כדי לאפשר בעתיד בדיקות Sandbox בלי לפתוח קנייה לציבור.
 - נוסף GitHub Actions workflow להרצת כל `tests/*.test.mjs` על PRs.
 - full Node suite: **318/318 pass, 0 fail**.
-- security audit checkpoint: תוקנו persistence verification, capture identity binding ו-recovery אחרי `ORDER_ALREADY_CAPTURED`; לאחר מכן נוספו rate limiting ו-create-order idempotency. הסוויטה כעת **323/323 pass, 0 fail**. migration `0002_paypal_security_hardening.sql` מוכנה אך לא הורצה בפרודקשן.
+- security audit checkpoint: תוקנו persistence verification, capture identity binding ו-recovery אחרי `ORDER_ALREADY_CAPTURED`; לאחר מכן נוספו rate limiting ו-create-order idempotency. הסוויטה כעת **323/323 pass, 0 fail**. migration `0002_paypal_security_hardening.sql` מוכנה אך לא הורצה בפרודקשן. שני legacy payment routes נותקו ומחזירים 410 תמיד; CORS/idempotency headers הוקשחו; בדיקת diff לא מצאה secret literal או PayPal Live endpoint. הסוויטה כעת **325/325 pass, 0 fail**.
 - במהלך ה-CI נמצא ותוקן baseline bug ישן ב-cache-busting של `index.html`; הוא לא נגרם משינויי PayPal.
 
 ### משמעות המיזוג בעתיד
 מיזוג PR #76 ל-`main` יפרוס את קוד ה-Sandbox החדש ל-Cloudflare, אבל כשלעצמו **לא אמור לפתוח רכישות לציבור** כי `PAYMENTS_ENABLED=false` נשאר kill switch. למרות זאת, לפי החלטת בעל הפרויקט מ-1.10.2026, **לא לבצע את המיזוג כרגע**.
 
 ### השלב הבא
-- S1–S5 נסגרו. השלב הבא: staging isolation (Worker + D1 נפרדים) לפני כל Sandbox E2E; לאחר מכן S7–S10.
+- S1–S5 וגם S7/S9/S10 נסגרו. פתוחים: S6 staging isolation ו-S8 webhook verified-signature; אין לבצע Sandbox E2E מול production D1.
 לא לבצע merge, deploy, Webhook, UI checkout או Live PayPal עד אישור מפורש חדש של בעל הפרויקט.
 אפשר להמשיך בעתיד בבדיקות Sandbox בלבד, ורצוי בסביבה מבודדת/מוגנת, בלי לשנות `PAYMENTS_ENABLED`.
 
