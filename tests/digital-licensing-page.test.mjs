@@ -35,3 +35,11 @@ test('licensing page is bilingual and has canonical social metadata', () => {
   assert.match(html, /data-he=/);
   assert.match(html, /data-en=/);
 });
+
+
+test('licensing page inline script remains syntactically intact', () => {
+  assert.match(html, /return currentLang === 'en'[\s\S]*\? '\$' \+ Math\.round\(value \/ ILS_TO_USD\)[\s\S]*: '₪' \+ value;/);
+  assert.equal((html.match(/const T = \{/g) || []).length, 1);
+  assert.equal((html.match(/<\/body>/g) || []).length, 1);
+  assert.equal((html.match(/<\/html>/g) || []).length, 1);
+});
