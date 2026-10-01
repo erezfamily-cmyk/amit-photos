@@ -377,6 +377,107 @@ def build_data_summary(data):
     return "\n".join(lines)
 
 
+def _safe_int(value):
+    try:
+        return int(float(value))
+    except (TypeError, ValueError):
+        return 0
+
+
+def _rate_pct(numerator, denominator):
+    if not denominator:
+        return None
+    return round((numerator / denominator) * 100, 1)
+
+
+def build_business_review(data):
+    """Deterministic weekly scorecard: one next experiment, with sample-size guardrails."""
+    sessions = _safe_int(data.get("summary", {}).get("sessions"))
+    funnel = data.get("funnel_events", {}) or {}
+    photo_views = _safe_int(funnel.get("photo_view"))
+    purchase_intent = _safe_int(funnel.get("purchase_intent"))
+    print_intent = _safe_int(funnel.get("print_intent"))
+    add_size = _safe_int(funnel.get("add_size"))
+    guide_requests = _safe_int(funnel.get("guide_request_success"))
+    leads = _safe_int(funnel.get("generate_lead"))
+
+    direct_sessions = 0
+    for row in data.get("sources", []) or []:
+        label = str(row.get("מקור", "")).strip().lower()
+        if label in {"כניסה ישירה", "direct", "direct traffic"}:
+            direct_sessions += _safe_int(row.get("sessions"))
+
+    subscriber_summary = data.get("subscriber_summary") or {}
+    source_rows = subscriber_summary.get("period_new_by_source", []) or []
+    new_subscribers = sum(_safe_int(r.get("total")) for r in source_rows)
+    marketing_opt_ins = sum(_safe_int(r.get("marketing_opt_in")) for r in source_rows)
+
+    review = {
+        "sample": {
+            "sessions": sessions,
+            "new_subscribers": new_subscribers,
+            "directional_only": new_subscribers < 20,
+            "note": (
+                "Directional only — fewer than 20 new subscribers in the measured period."
+                if new_subscribers < 20
+                else "Enough subscriber volume for a first source-level comparison; continue validating over 28 days."
+            ),
+        },
+        "kpis": {
+            "direct_share_pct": _rate_pct(direct_sessions, sessions),
+            "lead_rate_pct": _rate_pct(leads, sessions),
+            "guide_to_lead_pct": _rate_pct(leads, guide_requests),
+            "marketing_opt_in_pct": _rate_pct(marketing_opt_ins, new_subscribers),
+            "digital_intent_pct": _rate_pct(purchase_intent, photo_views),
+            "digital_selection_pct": _rate_pct(add_size, purchase_intent),
+            "print_intent_pct": _rate_pct(print_intent, photo_views),
+        },
+        "next_action": "",
+        "reason": "",
+    }
+
+    direct_share = review["kpis"]["direct_share_pct"]
+    if direct_share is not None and direct_share > 70 and sessions >= 20:
+        review["next_action"] = (
+            "Run one attribution experiment this week: every new social/newsletter share should use a deep link "
+            "to a specific photo, collection or free guide with UTM tags; avoid homepage links by default."
+        )
+        review["reason"] = (
+            f"Direct traffic is {direct_share}% of sessions, so acquisition attribution is still the largest "
+            "measurement constraint before choosing a monetization channel."
+        )
+    elif guide_requests >= 5 and leads < guide_requests:
+        review["next_action"] = (
+            "Test one clearer marketing opt-in value proposition on the free-guide flow, without changing "
+            "privacy consent or making marketing consent mandatory."
+        )
+        review["reason"] = (
+            "Guide requests are converting into fewer marketing leads; the lead magnet is working, but owned-audience "
+            "conversion needs a focused copy/value test."
+        )
+    elif photo_views >= 20 and purchase_intent > print_intent:
+        review["next_action"] = (
+            "Prepare the smallest digital licensing MVP definition: 2–3 license tiers, deliverables and test prices; "
+            "do not enable production payments yet."
+        )
+        review["reason"] = (
+            f"Digital purchase intent ({purchase_intent}) is currently above print intent ({print_intent}) "
+            "with enough photo-view activity for a directional product hypothesis."
+        )
+    elif print_intent >= 3 and print_intent >= purchase_intent:
+        review["next_action"] = (
+            "Design a curated print reservation test for 3–5 photos before investing further in full Gelato checkout."
+        )
+        review["reason"] = "Print intent is recurring enough to justify a demand-validation experiment, not a full store build."
+    else:
+        review["next_action"] = (
+            "Keep measurement stable for another week and focus on increasing qualified traffic rather than adding a new commerce feature."
+        )
+        review["reason"] = "Current conversion counts are still too small for a reliable channel decision."
+
+    return review
+
+
 def generate_analysis(data_summary):
     client = anthropic.Anthropic(api_key=ANTHROPIC_KEY)
     msg = client.messages.create(
@@ -408,6 +509,30 @@ def generate_analysis(data_summary):
 כתוב בעברית, ישיר."""}],
     )
     return msg.content[0].text.strip()
+
+
+def build_business_review_html(review):
+    if not review:
+        return ""
+    k = review.get("kpis", {})
+    sample = review.get("sample", {})
+    def fmt(v):
+        return "—" if v is None else f"{v}%"
+    return f"""
+  <div style="padding:0 24px 20px">
+    <h2 style="color:#2c3e50;margin:0 0 8px;font-size:1em">Business Review — החלטה אחת לשבוע הבא</h2>
+    <div style="background:#fff8e8;border-right:4px solid #c8a96e;padding:14px 16px;border-radius:0 8px 8px 0;line-height:1.65;color:#333;font-size:.92em">
+      <strong>{review.get('next_action','')}</strong><br>
+      <span style="color:#666">{review.get('reason','')}</span>
+      <div style="margin-top:10px;color:#777;font-size:.84em">
+        Direct: {fmt(k.get('direct_share_pct'))} · Lead rate: {fmt(k.get('lead_rate_pct'))} ·
+        Marketing opt-in: {fmt(k.get('marketing_opt_in_pct'))} · Digital intent: {fmt(k.get('digital_intent_pct'))} ·
+        Print intent: {fmt(k.get('print_intent_pct'))}<br>
+        Sample: {sample.get('sessions',0)} sessions / {sample.get('new_subscribers',0)} new subscribers.
+        {sample.get('note','')}
+      </div>
+    </div>
+  </div>"""
 
 
 def build_revenue_html(rev, card):
@@ -479,6 +604,7 @@ def build_html_email(data, analysis):
     {card("סשנים מעורבים", s.get('engagedSessions', 'לא זמין'))}
     {card("זמן ממוצע", format_duration(s['avgSessionSec']))}
   </div>
+  {build_business_review_html(data.get('business_review'))}
   <div style="padding:0 24px 20px">
     <h2 style="color:#2c3e50;margin:0 0 10px;font-size:1em">ניתוח והמלצות — Claude</h2>
     <div style="background:#f8f9fa;border-right:4px solid #3498db;padding:14px 16px;border-radius:0 8px 8px 0;line-height:1.7;color:#333;font-size:.92em">
@@ -595,6 +721,7 @@ def save_report(data, analysis, reports_file=None):
         "funnel_events": data["funnel_events"],
         "ux_by_page": data.get("ux_by_page", [])[:50],
         "subscriber_summary": data.get("subscriber_summary"),
+        "business_review": data.get("business_review"),
         "revenue":   data.get("revenue"),
         "analysis":  analysis,
     })
@@ -625,7 +752,11 @@ def main():
     print("💰 מאמת הכנסות מול D1...")
     data["revenue"] = fetch_revenue_summary()
 
+    data["business_review"] = build_business_review(data)
     print(build_data_summary(data))
+    print("\n📌 החלטה עסקית לשבוע הבא:")
+    print("  " + data["business_review"]["next_action"])
+    print("  סיבה: " + data["business_review"]["reason"])
 
     print("\n🤖 Claude מנתח נתונים...")
     analysis = generate_analysis(build_data_summary(data))
