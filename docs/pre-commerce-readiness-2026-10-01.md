@@ -44,8 +44,8 @@
 - [x] **S1 — fulfillment persistence:** אחרי `INSERT OR IGNORE` ל-`download_tokens`, לאמת שה-token קיים לפני סימון order כ-COMPLETED.
 - [x] **S2 — capture identity binding:** לאמת שגם `capturedOrder.id === paypalOrderId` וש-`purchase_units[0].custom_id === order.id`.
 - [x] **S3 — failure recovery:** לכסות מקרה PayPal capture הצליח אבל כתיבת D1 נכשלה; retry חייב להתאושש בלי חיוב כפול.
-- [ ] **S4 — rate limiting:** לפני public go-live להוסיף rate limit ל-create-order ול-capture-order.
-- [ ] **S5 — create idempotency:** להוסיף idempotency key יציב מה-client/session כדי retry של create-order לא ייצור orders מיותרים.
+- [x] **S4 — rate limiting:** לפני public go-live להוסיף rate limit ל-create-order ול-capture-order.
+- [x] **S5 — create idempotency:** להוסיף idempotency key יציב מה-client/session כדי retry של create-order לא ייצור orders מיותרים.
 - [ ] **S6 — Sandbox isolation:** לא לבצע E2E מול production D1; להקים staging/preview D1 נפרד.
 - [ ] **S7 — legacy payment removal:** לפני `PAYMENTS_ENABLED=true`, להסיר/לנתק את `handleVerifyPayment` ו-`handlePrintOrderComplete` מה-public router.
 - [ ] **S8 — webhook:** להוסיף אימות חתימה מול PayPal + dedup לפי `event_id`.
@@ -58,6 +58,14 @@
 - Full Node suite אחרי התיקונים: **321/321 pass, 0 fail**.
 - PayPal recovery מתייחס מפורשות ל-`ORDER_ALREADY_CAPTURED` וקורא את מצב ה-order מ-PayPal במקום לבצע חיוב נוסף.
 - עדיין לא לבצע merge: S4/S5/S6–S10 פתוחים.
+
+### Audit checkpoint 2 — 1.10.2026
+
+- S4 rate limiting הוסף בצד שרת לפי SHA-256 של IP (ללא שמירת IP גולמי).
+- S5 create-order idempotency הוסף עם `Idempotency-Key` + `PayPal-Request-Id` יציב.
+- נוספה migration נפרדת `0002_paypal_security_hardening.sql` — עדיין לא הורצה בפרודקשן.
+- Full Node suite: **323/323 pass, 0 fail**.
+- השלב הבא: S6 staging isolation. אין לבצע Sandbox E2E מול production D1.
 
 ## Phase 2 — Staging מבודד
 
