@@ -1,3 +1,4 @@
+import { handlePayPalCreateOrder, handlePayPalCaptureOrder } from './paypal-orders.js';
 // Cloudflare Worker — amit-photos
 // מטפל בנתיבי API ומגיש static assets
 
@@ -53,6 +54,8 @@ export {
   paymentsEnabled,
   paymentsDisabledResponse,
   handlePaymentsStatus,
+  handlePayPalCreateOrder,
+  handlePayPalCaptureOrder,
   handleVerifyPayment,
   handlePrintOrderComplete,
   handlePrintWebhook,
@@ -7758,6 +7761,8 @@ export default {
     if (path === '/api/newsletter')        return handleNewsletter(request, env);
     if (path === '/api/unsubscribe')       return handleUnsubscribe(request, env);
     if (path === '/api/reply')             return handleReply(request, env);
+    if (path === '/api/paypal/create-order')  return handlePayPalCreateOrder(request, env);
+    if (path === '/api/paypal/capture-order') return handlePayPalCaptureOrder(request, env);
     if (path === '/api/verify-payment')    return handleVerifyPayment(request, env, ctx);
     if (path === '/api/payments-status')   return handlePaymentsStatus(request, env);
     if (path === '/api/admin/purchases')   return handleAdminPurchases(request, env);
