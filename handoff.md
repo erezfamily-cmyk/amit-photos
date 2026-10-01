@@ -363,3 +363,38 @@ Next recommended work before any merge/go-live:
 4. print/Gelato Orders v2 flow;
 5. final security review and only then merge consideration.
 Production remains `PAYMENTS_ENABLED=false`.
+
+
+### Pause point — 1.10.2026 afternoon
+
+העבודה נעצרה בצורה מסודרת לאחר השלמת Digital PayPal Sandbox E2E.
+
+מצב מאומת:
+- Worker staging: `amit-photos-paypal-sandbox`.
+- D1 staging: `amit-photos-paypal-sandbox-db`.
+- R2 staging: `amit-photos-paypal-sandbox-images`.
+- Sandbox OAuth תקין.
+- create-order תקין.
+- approval flow תקין.
+- capture תקין.
+- fulfillment/download token נוצר ונשמר.
+- duplicate capture מחזיר את אותו fulfillment באופן idempotent.
+- D1 אימת latest order במצב `COMPLETED`, עם capture ID ו-token תואמים.
+- PR #76 נשאר Draft ולא מוזג.
+- production נשאר `PAYMENTS_ENABLED=false`; אין רכישות אמיתיות פעילות.
+
+ממצאים/שיפורים שבוצעו במהלך E2E:
+- secret rotation ואימות OAuth ישיר מול PayPal Sandbox.
+- support גם ל-`payer-action` וגם `approve`.
+- `return_url` / `cancel_url`, `PAY_NOW`, `NO_SHIPPING`.
+- תיקון import ל-`handlePayPalCheckoutReturn`.
+- capture identity validation הוקשח בלי ליפול על `custom_id` אופציונלי.
+- regression tests נוספו לכל התקלות שנמצאו.
+
+להמשך בערב, לפי הסדר:
+1. negative-path E2E: buyer cancel, invalid/expired order, amount mismatch, duplicate callback.
+2. PayPal Sandbox webhook אמיתי עם Webhook ID ואימות signature.
+3. cleanup policy ל-orders ישנים/נטושים ב-Sandbox.
+4. print/Gelato Orders v2.
+5. security review סופי לפני החלטת merge.
+6. רק לאחר מכן לשקול merge; production נשאר disabled עד אישור נפרד.
