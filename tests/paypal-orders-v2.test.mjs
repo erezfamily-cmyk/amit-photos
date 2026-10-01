@@ -42,7 +42,11 @@ function makeDb(options = {}) {
               }
               if (sql.includes('SELECT processed FROM paypal_webhook_events')) {
                 const row = state.webhookEvents.get(args[0]);
-                return row ? { processed: row.processed } : null;
+                return row ? {
+                  processed: row.processed,
+                  processing_started_at: row.processing_started_at || null,
+                  attempts: row.attempts || 0,
+                } : null;
               }
               if (sql.includes('FROM download_tokens WHERE tx = ?')) {
                 return state.token;
@@ -109,15 +113,46 @@ function makeDb(options = {}) {
               }
               if (sql.includes('INSERT OR IGNORE INTO paypal_webhook_events')) {
                 if (!state.webhookEvents.has(args[0])) {
-                  state.webhookEvents.set(args[0], { event_type: args[1], received_at: args[2], processed: 0 });
+                  state.webhookEvents.set(args[0], {
+                    event_type: args[1],
+                    received_at: args[2],
+                    processed: 0,
+                    processing_started_at: null,
+                    attempts: 0,
+                  });
                   return { success: true, meta: { changes: 1 } };
                 }
                 return { success: true, meta: { changes: 0 } };
               }
-              if (sql.includes('UPDATE paypal_webhook_events SET processed=1')) {
+              if (sql.includes("SET processed=2")) {
+                const row = state.webhookEvents.get(args[1]);
+                if (!row) return { success: true, meta: { changes: 0 } };
+                const cutoff = args[2];
+                const stale = row.processed === 2 && (!row.processing_started_at || row.processing_started_at < cutoff);
+                if (row.processed === 0 || stale) {
+                  row.processed = 2;
+                  row.processing_started_at = args[0];
+                  row.attempts = (row.attempts || 0) + 1;
+                  return { success: true, meta: { changes: 1 } };
+                }
+                return { success: true, meta: { changes: 0 } };
+              }
+              if (sql.includes("SET processed=1")) {
                 const row = state.webhookEvents.get(args[0]);
-                if (row) row.processed = 1;
+                if (row) {
+                  row.processed = 1;
+                  row.processing_started_at = null;
+                }
                 return { success: true, meta: { changes: row ? 1 : 0 } };
+              }
+              if (sql.includes("SET processed=0")) {
+                const row = state.webhookEvents.get(args[0]);
+                if (row && row.processed === 2) {
+                  row.processed = 0;
+                  row.processing_started_at = null;
+                  return { success: true, meta: { changes: 1 } };
+                }
+                return { success: true, meta: { changes: 0 } };
               }
               return { success: true, meta: { changes: 1 } };
             },
@@ -846,6 +881,164 @@ test('webhook deduplicates an already processed PayPal event', async () => {
 });
 
 
+
+test('stale webhook processing lease is reclaimed and processed on PayPal retry', async () => {
+  const db = makeDb({
+    order: {
+      id: 'local-1',
+      paypal_order_id: 'PAYPALORDER123',
+      order_type: 'digital',
+      photo_id: 'photo-1',
+      sku: 'small',
+      amount_expected: 1900,
+      currency: 'ILS',
+      status: 'CREATED',
+      fulfillment_json: null,
+      fulfillment_token: null,
+      paypal_capture_id: null,
+    },
+  });
+  db.state.webhookEvents.set('WH-STALE', {
+    event_type: 'PAYMENT.CAPTURE.COMPLETED',
+    received_at: new Date(Date.now() - 300000).toISOString(),
+    processed: 2,
+    processing_started_at: new Date(Date.now() - 300000).toISOString(),
+    attempts: 1,
+  });
+
+  const env = {
+    PAYPAL_CLIENT_ID: 'sandbox-client',
+    PAYPAL_CLIENT_SECRET: 'sandbox-secret',
+    PAYPAL_WEBHOOK_ID: 'WH-TEST',
+    DB: db,
+  };
+
+  const event = {
+    id: 'WH-STALE',
+    event_type: 'PAYMENT.CAPTURE.COMPLETED',
+    resource: {
+      id: 'CAPTURE-STALE',
+      status: 'COMPLETED',
+      amount: { currency_code: 'ILS', value: '19.00' },
+      supplementary_data: { related_ids: { order_id: 'PAYPALORDER123' } },
+    },
+  };
+
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async (url) => {
+    const target = String(url);
+    if (target.endsWith('/v1/oauth2/token')) return Response.json({ access_token: 'access-token' });
+    if (target.endsWith('/v1/notifications/verify-webhook-signature')) {
+      return Response.json({ verification_status: 'SUCCESS' });
+    }
+    if (target.endsWith('/v2/checkout/orders/PAYPALORDER123')) {
+      return Response.json({
+        id: 'PAYPALORDER123',
+        status: 'COMPLETED',
+        purchase_units: [{
+          custom_id: 'local-1',
+          payments: {
+            captures: [{
+              id: 'CAPTURE-STALE',
+              status: 'COMPLETED',
+              amount: { currency_code: 'ILS', value: '19.00' },
+            }],
+          },
+        }],
+      });
+    }
+    throw new Error('unexpected fetch ' + target);
+  };
+
+  try {
+    const response = await handlePayPalWebhook(paypalWebhookRequest(event), env);
+    assert.equal(response.status, 200);
+    assert.equal(db.state.webhookEvents.get('WH-STALE').processed, 1);
+    assert.equal(db.state.webhookEvents.get('WH-STALE').attempts, 2);
+    assert.equal(db.state.order.status, 'COMPLETED');
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test('webhook processing failure releases the lease so a later PayPal retry can recover', async () => {
+  const db = makeDb({
+    order: {
+      id: 'local-1',
+      paypal_order_id: 'PAYPALORDER123',
+      order_type: 'digital',
+      photo_id: 'photo-1',
+      sku: 'small',
+      amount_expected: 1900,
+      currency: 'ILS',
+      status: 'CREATED',
+      fulfillment_json: null,
+      fulfillment_token: null,
+      paypal_capture_id: null,
+    },
+  });
+
+  const env = {
+    PAYPAL_CLIENT_ID: 'sandbox-client',
+    PAYPAL_CLIENT_SECRET: 'sandbox-secret',
+    PAYPAL_WEBHOOK_ID: 'WH-TEST',
+    DB: db,
+  };
+
+  const event = {
+    id: 'WH-FAIL-RETRY',
+    event_type: 'PAYMENT.CAPTURE.COMPLETED',
+    resource: {
+      id: 'CAPTURE-FAIL',
+      status: 'COMPLETED',
+      amount: { currency_code: 'ILS', value: '19.00' },
+      supplementary_data: { related_ids: { order_id: 'PAYPALORDER123' } },
+    },
+  };
+
+  const originalFetch = globalThis.fetch;
+  let orderLookupCalls = 0;
+  globalThis.fetch = async (url) => {
+    const target = String(url);
+    if (target.endsWith('/v1/oauth2/token')) return Response.json({ access_token: 'access-token' });
+    if (target.endsWith('/v1/notifications/verify-webhook-signature')) {
+      return Response.json({ verification_status: 'SUCCESS' });
+    }
+    if (target.endsWith('/v2/checkout/orders/PAYPALORDER123')) {
+      orderLookupCalls += 1;
+      if (orderLookupCalls === 1) return Response.json({ error: 'temporary' }, { status: 503 });
+      return Response.json({
+        id: 'PAYPALORDER123',
+        status: 'COMPLETED',
+        purchase_units: [{
+          custom_id: 'local-1',
+          payments: {
+            captures: [{
+              id: 'CAPTURE-FAIL',
+              status: 'COMPLETED',
+              amount: { currency_code: 'ILS', value: '19.00' },
+            }],
+          },
+        }],
+      });
+    }
+    throw new Error('unexpected fetch ' + target);
+  };
+
+  try {
+    const first = await handlePayPalWebhook(paypalWebhookRequest(event), env);
+    assert.equal(first.status, 502);
+    assert.equal(db.state.webhookEvents.get('WH-FAIL-RETRY').processed, 0);
+
+    const second = await handlePayPalWebhook(paypalWebhookRequest(event), env);
+    assert.equal(second.status, 200);
+    assert.equal(db.state.webhookEvents.get('WH-FAIL-RETRY').processed, 1);
+    assert.equal(db.state.webhookEvents.get('WH-FAIL-RETRY').attempts, 2);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
 test('concurrent duplicate webhook delivery does not process an in-flight event twice', async () => {
   const db = makeDb();
   db.state.webhookEvents.set('WH-EVENT-RACE', {
@@ -890,11 +1083,9 @@ test('concurrent duplicate webhook delivery does not process an in-flight event 
 
   try {
     const response = await handlePayPalWebhook(paypalWebhookRequest(event), env);
-    assert.equal(response.status, 200);
+    assert.equal(response.status, 409);
     assert.deepEqual(await response.json(), {
-      ok: true,
-      duplicate: true,
-      processing: true,
+      error: 'PAYPAL_WEBHOOK_PROCESSING',
     });
     assert.equal(orderLookups, 0);
     assert.equal(db.state.tokenInserts, 0);
