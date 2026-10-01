@@ -582,3 +582,62 @@ Next business gate remains live verification of the already-merged acquisition s
 - Print יכול להישאר כרעיון/מדד ביקוש בלבד, ללא התחייבות לספק fulfillment.
 - `PAYMENTS_ENABLED=false` נשאר ללא שינוי.
 
+
+
+### PayPal reactivation plan — 1.10.2026
+
+החלטת עבודה:
+- PayPal Production **לא חוזר עכשיו**.
+- Acquisition Experiment 01 רץ קודם עם payments off כדי למדוד demand נקי.
+- checkpoint ראשון להחלטה: סביב 10.10.2026, אחרי 7 ימים מלאים של תנועה עם UTM.
+- זו נקודת החלטה בלבד, לא תאריך הפעלה אוטומטי.
+
+קריטריונים ראשוניים ל-Digital-only canary:
+- לפחות 20 qualified sessions ב-/licensing/;
+- לפחות 3 digital purchase-intent actions או intent rate של 10%+;
+- attribution ו-GA events עובדים;
+- PR #76 נבנה מחדש מ-main הנוכחי ועובר שוב Sandbox E2E/security.
+
+Guardrail חשוב:
+- לא הופכים את PAYMENTS_ENABLED הגלובלי ל-true, כי הוא פותח גם legacy print paths.
+- לפני Production צריך flag נפרד כגון DIGITAL_PAYPAL_ENABLED.
+- legacy print/Gelato נשארים כבויים.
+- Gelato מחוץ לתוכנית הנוכחית.
+
+נוסף מסמך:
+- `docs/paypal-reactivation-gate-2026-10-01.md`
+
+נוסף גם שדרוג ל-health-check:
+- תיקון thumbnail URL יחסי.
+- smoke checks ל-/licensing/ ול-/business/.
+- בדיקת Admin UTM builder.
+- בדיקה אוטומטית ש-/api/payments-status מחזיר enabled=false.
+
+
+### Live acquisition smoke verification passed — 1.10.2026
+
+GitHub Actions `Business Live Verification` עבר בהצלחה מול האתר החי.
+
+אומת בפועל:
+- `/licensing/` נטען ומכיל:
+  - `licensing_personal_interest`
+  - מקור המחירים `/api/admin/prices`
+  - GA measurement marker
+- `/business/` נטען ומכיל:
+  - `b2b_contact_start`
+  - `amit_b2b_context`
+  - analytics helper
+- `/admin.html` לאחר cache-busting redirect מכיל את UTM builder.
+- `/api/payments-status` מחזיר `enabled=false`.
+- thumbnail ציבורי לדוגמה נטען בהצלחה אחרי תיקון URL יחסי.
+
+תוקנו תוך כדי שני false negatives ב-health verification:
+1. Admin מחזיר redirect עם `_v`, ולכן הבדיקה צריכה `curl -L`.
+2. `set -o pipefail` + `grep -q` יצר Broken Pipe אחרי match; הוחלף ב-here-string.
+
+מה עדיין לא מסומן כמאומת:
+- receipt בפועל של אירועי licensing/B2B בתוך GA/weekly report.
+- לכן Acquisition Experiment 01 עדיין לא מתחיל עד אימות analytics receipt.
+
+PayPal נשאר כבוי.
+Gelato נשאר מחוץ לתוכנית.

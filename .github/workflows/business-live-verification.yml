@@ -1,0 +1,58 @@
+name: Business Live Verification
+
+on:
+  push:
+    branches:
+      - fix/live-verification-paypal-gates-2026-10-01
+  pull_request:
+    paths:
+      - '.github/workflows/health-check.yml'
+      - '.github/workflows/business-live-verification.yml'
+      - 'docs/paypal-reactivation-gate-2026-10-01.md'
+      - 'TODO.md'
+      - 'handoff.md'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify-live:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Verify acquisition pages and payment guardrail
+        run: |
+          set -euo pipefail
+
+          LIC=$(curl -fsS --max-time 20 https://amitphotos.com/licensing/)
+          grep -q 'licensing_personal_interest' <<<"$LIC"
+          grep -q '/api/admin/prices' <<<"$LIC"
+          grep -q 'G-XM6T3E8QWN' <<<"$LIC"
+          echo "licensing=ok"
+
+          BIZ=$(curl -fsS --max-time 20 https://amitphotos.com/business/)
+          grep -q 'b2b_contact_start' <<<"$BIZ"
+          grep -q 'amit_b2b_context' <<<"$BIZ"
+          grep -q '/assets/js/analytics.js' <<<"$BIZ"
+          echo "business=ok"
+
+          ADMIN=$(curl -fsSL --max-time 20 https://amitphotos.com/admin.html)
+          grep -q 'campaign-destination' <<<"$ADMIN"
+          grep -q 'admin-campaign-links.mjs' <<<"$ADMIN"
+          echo "utm_builder=ok"
+
+          STATUS=$(curl -fsS --max-time 20 https://amitphotos.com/api/payments-status)
+          test "$(echo "$STATUS" | jq -r '.enabled')" = "false"
+          echo "payments_disabled=ok"
+
+          PHOTOS=$(curl -fsS --max-time 20 https://amitphotos.com/api/photos)
+          THUMB=$(echo "$PHOTOS" | jq -r '.[0].thumbnail // empty')
+          test -n "$THUMB"
+          case "$THUMB" in
+            http://*|https://*) THUMB_URL="$THUMB" ;;
+            /*) THUMB_URL="https://amitphotos.com$THUMB" ;;
+            *) THUMB_URL="https://amitphotos.com/$THUMB" ;;
+          esac
+          curl -fsS -o /dev/null --max-time 20 "$THUMB_URL"
+          echo "thumbnail=ok"
