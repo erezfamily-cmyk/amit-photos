@@ -332,3 +332,11 @@ PAYMENTS_ENABLED = "false"   ב-wrangler.toml (production)
 - Remaining verification before marking digital E2E complete:
   1. repeat capture callback must return the stored fulfillment idempotently;
   2. D1 must show one COMPLETED order and exactly one download token for that order.
+
+
+### Duplicate capture idempotency verified — 1.10.2026
+
+- A second capture request was sent for the same already-completed Sandbox order.
+- The Worker returned the same stored fulfillment/download URL instead of attempting a new charge or creating a new fulfillment response.
+- This verifies the completed-order idempotency path in live Sandbox E2E.
+- Remaining final check for digital E2E: verify in staging D1 that the latest PayPal order is `COMPLETED` and exactly one `download_tokens` row matches its `paypal_capture_id`.
