@@ -1,0 +1,32 @@
+name: Python Data Tests
+
+on:
+  push:
+    branches:
+      - feature/photo-strength-data-clean-2026-10-01
+  pull_request:
+    paths:
+      - 'src/**/*.py'
+      - 'tests/test_photo_strength_report.py'
+      - 'data/social_photo_map.json'
+      - 'data/photo_strength_report.json'
+      - '.github/workflows/python-data-tests.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  python-data-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Compile touched Python
+        run: |
+          python -m py_compile             src/social_photo_map.py             src/photo_strength_report.py             src/instagram_post.py             src/facebook_post.py             src/weekly_report.py             src/ga_weekly_report.py
+      - name: Run photo data pipeline tests
+        run: python tests/test_photo_strength_report.py
