@@ -434,11 +434,15 @@ nav#main-nav .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px)
             consent_marketing: document.getElementById('nav-nl-consent-marketing').checked
           })
         });
+        const data = await r.json().catch(() => ({}));
         msg.style.color = r.ok ? '#4caf7d' : '#e05555';
         msg.textContent = r.ok ? t.ok : t.err;
         if (r.ok) {
           document.getElementById('nav-nl-email').value = '';
-          window.trackUxEvent?.('generate_lead', { source: 'subpage_strip' });
+          window.trackUxEvent?.('guide_request_success', { source: 'subpage_strip' });
+          if (!data.already || data.marketing_upgraded) {
+            window.trackUxEvent?.('generate_lead', { source: 'subpage_strip' });
+          }
         }
       } catch {
         msg.style.color = '#e05555';
