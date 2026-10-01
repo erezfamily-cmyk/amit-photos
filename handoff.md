@@ -467,3 +467,19 @@ Conclusion: buyer cancel path is verified end-to-end and does not create a charg
 - A fresh Sandbox order was approved successfully and returned through `/api/paypal/approved`.
 - Capture then succeeded and returned a digital fulfillment URL for `PayPal Sandbox Test Photo`.
 - Next verification: inspect `paypal_webhook_events` in staging D1 for a real `PAYMENT.CAPTURE.COMPLETED` event and confirm `processed=1`, `attempts>=1`, and no stuck processing lease.
+
+
+### Real PayPal Sandbox webhook signature E2E passed — 1.10.2026 evening
+
+Cloudflare D1 staging verification after a fresh real Sandbox approval + capture confirmed:
+- real `CHECKOUT.ORDER.APPROVED` event received;
+- real `PAYMENT.CAPTURE.COMPLETED` event received;
+- both rows have `processed=1`;
+- both rows have `attempts=1`;
+- `processing_started_at=NULL` after processing;
+- therefore no webhook lease remained stuck.
+
+Because the handler only inserts/processes events after PayPal `verify-webhook-signature` returns `SUCCESS`, this is end-to-end evidence that the real Sandbox webhook signature verification path is working with the configured `PAYPAL_WEBHOOK_ID`.
+
+Status: real PayPal Sandbox webhook E2E is verified.
+Next: cleanup policy for abandoned Sandbox/test orders, then print/Gelato Orders v2, then final security review. Production remains `PAYMENTS_ENABLED=false`.
