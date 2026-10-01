@@ -568,3 +568,17 @@ Important:
 
 Next business gate remains live verification of the already-merged acquisition stack before launching Acquisition Experiment 01.
 
+
+
+### Fulfillment guardrail — 1.10.2026
+
+החלטה מפורשת: **לא מקדמים Gelato בשלב הנוכחי**.
+
+עד להחלטה חדשה:
+- אין אינטגרציית Gelato חדשה.
+- אין checkout להדפסות שמסתמך על Gelato.
+- אין בחירת ספק fulfillment או אוטומציית הזמנות הדפסה.
+- ניסויי המודל העסקי מתמקדים ב-Free Guide, Digital Licensing ו-B2B.
+- Print יכול להישאר כרעיון/מדד ביקוש בלבד, ללא התחייבות לספק fulfillment.
+- `PAYMENTS_ENABLED=false` נשאר ללא שינוי.
+
