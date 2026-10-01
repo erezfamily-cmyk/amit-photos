@@ -193,44 +193,9 @@ gtag('config','G-XM6T3E8QWN',{send_page_view:true});
   function formatPrice(ils) {
     const value = Number(ils);
     if (!Number.isFinite(value)) return '';
-    return currentLang === 'en' ? '
-    he: { title: 'רישוי תמונות דיגיטלי — Amit Photos', description: 'רישוי תמונות דיגיטלי של Amit Photos — שימוש אישי והצעת מחיר לשימוש מסחרי.' },
-    en: { title: 'Digital Image Licensing — Amit Photos', description: 'Digital image licensing from Amit Photos — personal use and tailored commercial licensing.' }
-  };
-
-  window.setLicensingLang = function (lang) {
-    if (lang !== 'he' && lang !== 'en') lang = 'he';
-    currentLang = lang;
-    try { localStorage.setItem('lang', lang); } catch (e) {}
-    document.documentElement.lang = lang;
-    document.documentElement.dir = lang === 'he' ? 'rtl' : 'ltr';
-    document.title = T[lang].title;
-    const meta = document.querySelector('meta[name="description"]');
-    if (meta) meta.content = T[lang].description;
-    document.querySelectorAll('[data-he]').forEach(function (el) {
-      el.textContent = lang === 'en' ? el.dataset.en : el.dataset.he;
-    });
-    document.getElementById('lang-he').classList.toggle('active', lang === 'he');
-    document.getElementById('lang-en').classList.toggle('active', lang === 'en');
-    renderPrices();
-  };
-
-  let initial = 'he';
-  const qp = new URLSearchParams(location.search).get('lang');
-  if (qp === 'he' || qp === 'en') initial = qp;
-  else {
-    try {
-      const stored = localStorage.getItem('lang');
-      if (stored === 'he' || stored === 'en') initial = stored;
-    } catch (e) {}
-  }
-  setLicensingLang(initial);
-  loadCurrentPrices();
-})();
-</script>
-</body>
-</html>
- + Math.round(value / ILS_TO_USD) : '₪' + value;
+    return currentLang === 'en'
+      ? '$' + Math.round(value / ILS_TO_USD)
+      : '₪' + value;
   }
 
   function renderPrices() {
@@ -242,10 +207,14 @@ gtag('config','G-XM6T3E8QWN',{send_page_view:true});
 
   async function loadCurrentPrices() {
     try {
-      const response = await fetch('/api/admin/prices', { headers: { 'Accept': 'application/json' } });
+      const response = await fetch('/api/admin/prices', {
+        headers: { 'Accept': 'application/json' }
+      });
       if (!response.ok) return;
       const data = await response.json();
-      if (['small', 'medium', 'large'].every(function (size) { return Number.isFinite(Number(data[size])); })) {
+      if (['small', 'medium', 'large'].every(function (size) {
+        return Number.isFinite(Number(data[size]));
+      })) {
         currentPrices = {
           small: Number(data.small),
           medium: Number(data.medium),
@@ -254,40 +223,54 @@ gtag('config','G-XM6T3E8QWN',{send_page_view:true});
         renderPrices();
       }
     } catch (e) {
-      // Keep fail-safe display defaults; checkout remains authoritative.
+      // Fail safe: keep display defaults. A future checkout remains server-authoritative.
     }
   }
 
   const T = {
-    he: { title: 'רישוי תמונות דיגיטלי — Amit Photos', description: 'רישוי תמונות דיגיטלי של Amit Photos — שימוש אישי והצעת מחיר לשימוש מסחרי.' },
-    en: { title: 'Digital Image Licensing — Amit Photos', description: 'Digital image licensing from Amit Photos — personal use and tailored commercial licensing.' }
+    he: {
+      title: 'רישוי תמונות דיגיטלי — Amit Photos',
+      description: 'רישוי תמונות דיגיטלי של Amit Photos — שימוש אישי והצעת מחיר לשימוש מסחרי.'
+    },
+    en: {
+      title: 'Digital Image Licensing — Amit Photos',
+      description: 'Digital image licensing from Amit Photos — personal use and tailored commercial licensing.'
+    }
   };
 
   window.setLicensingLang = function (lang) {
     if (lang !== 'he' && lang !== 'en') lang = 'he';
+    currentLang = lang;
     try { localStorage.setItem('lang', lang); } catch (e) {}
     document.documentElement.lang = lang;
     document.documentElement.dir = lang === 'he' ? 'rtl' : 'ltr';
     document.title = T[lang].title;
+
     const meta = document.querySelector('meta[name="description"]');
     if (meta) meta.content = T[lang].description;
+
     document.querySelectorAll('[data-he]').forEach(function (el) {
       el.textContent = lang === 'en' ? el.dataset.en : el.dataset.he;
     });
-    document.getElementById('lang-he').classList.toggle('active', lang === 'he');
-    document.getElementById('lang-en').classList.toggle('active', lang === 'en');
+
+    document.getElementById('lang-he')?.classList.toggle('active', lang === 'he');
+    document.getElementById('lang-en')?.classList.toggle('active', lang === 'en');
+    renderPrices();
   };
 
   let initial = 'he';
   const qp = new URLSearchParams(location.search).get('lang');
-  if (qp === 'he' || qp === 'en') initial = qp;
-  else {
+  if (qp === 'he' || qp === 'en') {
+    initial = qp;
+  } else {
     try {
       const stored = localStorage.getItem('lang');
       if (stored === 'he' || stored === 'en') initial = stored;
     } catch (e) {}
   }
+
   setLicensingLang(initial);
+  loadCurrentPrices();
 })();
 </script>
 </body>
