@@ -47,6 +47,50 @@ function minorUnitsToPayPalValue(minor) {
   return (minor / 100).toFixed(2);
 }
 
+function validIdempotencyKey(value) {
+  return typeof value === 'string'
+    && value.length >= 16
+    && value.length <= 64
+    && /^[A-Za-z0-9._:-]+$/.test(value);
+}
+
+async function sha256Hex(value) {
+  const bytes = new TextEncoder().encode(value);
+  const digest = await crypto.subtle.digest('SHA-256', bytes);
+  return Array.from(new Uint8Array(digest), b => b.toString(16).padStart(2, '0')).join('');
+}
+
+async function enforcePayPalRateLimit(request, env, action, limit, windowSeconds = 60) {
+  // Admin-only sandbox hooks are already authenticated and are not public
+  // commerce traffic, so they can opt out at the call site.
+  const ip = request.headers.get('CF-Connecting-IP') || 'unknown';
+  const rateKey = await sha256Hex(ip);
+  const now = Math.floor(Date.now() / 1000);
+  const windowStart = Math.floor(now / windowSeconds) * windowSeconds;
+
+  await env.DB.prepare(
+    `INSERT INTO paypal_rate_limits (rate_key, action, window_start, count)
+     VALUES (?, ?, ?, 1)
+     ON CONFLICT(rate_key, action, window_start)
+     DO UPDATE SET count = count + 1`
+  ).bind(rateKey, action, windowStart).run();
+
+  const row = await env.DB.prepare(
+    'SELECT count FROM paypal_rate_limits WHERE rate_key=? AND action=? AND window_start=?'
+  ).bind(rateKey, action, windowStart).first();
+
+  if ((row?.count || 0) > limit) {
+    return jsonRes({ error: 'RATE_LIMITED' }, 429, request);
+  }
+
+  // Lazy bounded cleanup. Failure must never make checkout unavailable.
+  env.DB.prepare(
+    'DELETE FROM paypal_rate_limits WHERE window_start < ?'
+  ).bind(now - 3600).run().catch(() => {});
+
+  return null;
+}
+
 async function getGlobalPrices(env) {
   const row = await env.DB.prepare("SELECT value FROM settings WHERE key='prices'").first();
   if (row?.value) {
@@ -129,6 +173,37 @@ export async function handlePayPalCreateOrder(request, env, options = {}) {
   if (!options.allowWhenPaymentsDisabled && env.PAYMENTS_ENABLED !== 'true') return paymentsDisabledResponse(request);
   if (request.method !== 'POST') return jsonRes({ error: 'method not allowed' }, 405, request);
 
+  if (!options.skipRateLimit) {
+    const limited = await enforcePayPalRateLimit(request, env, 'create-order', 8, 60);
+    if (limited) return limited;
+  }
+
+  const idempotencyKey = request.headers.get('Idempotency-Key');
+  if (!validIdempotencyKey(idempotencyKey)) {
+    return jsonRes({ error: 'Idempotency-Key לא תקין' }, 400, request);
+  }
+
+  const existing = await env.DB.prepare(
+    'SELECT paypal_order_id FROM paypal_orders WHERE client_idempotency_key = ? LIMIT 1'
+  ).bind(idempotencyKey).first();
+  if (existing?.paypal_order_id) {
+    const result = { paypalOrderId: existing.paypal_order_id, reused: true };
+    if (options.includeApproveUrl) {
+      try {
+        const token = await getPayPalAccessToken(env);
+        const response = await fetch(
+          paypalApiBase() + '/v2/checkout/orders/' + encodeURIComponent(existing.paypal_order_id),
+          { headers: { 'Authorization': 'Bearer ' + token, 'Accept': 'application/json' } }
+        );
+        const order = await response.json().catch(() => ({}));
+        if (response.ok) {
+          result.approveUrl = Array.isArray(order.links) ? order.links.find(link => link.rel === 'approve')?.href || null : null;
+        }
+      } catch {}
+    }
+    return jsonRes(result, 200, request);
+  }
+
   const body = await request.json().catch(() => ({}));
   if (body.type !== 'digital') {
     return jsonRes({ error: 'בשלב זה Orders v2 מופעל רק לרכישה דיגיטלית' }, 400, request);
@@ -154,7 +229,7 @@ export async function handlePayPalCreateOrder(request, env, options = {}) {
       'Authorization': 'Bearer ' + accessToken,
       'Content-Type': 'application/json',
       'Accept': 'application/json',
-      'PayPal-Request-Id': 'amit-create-' + localId,
+      'PayPal-Request-Id': 'amit-create-' + idempotencyKey,
     },
     body: JSON.stringify({
       intent: 'CAPTURE',
@@ -176,7 +251,7 @@ export async function handlePayPalCreateOrder(request, env, options = {}) {
 
   try {
     await env.DB.prepare(
-      "INSERT INTO paypal_orders (id, paypal_order_id, order_type, photo_id, sku, amount_expected, currency, status, created_at) VALUES (?, ?, 'digital', ?, ?, ?, ?, 'CREATED', ?)"
+      "INSERT INTO paypal_orders (id, paypal_order_id, order_type, photo_id, sku, amount_expected, currency, status, created_at, client_idempotency_key) VALUES (?, ?, 'digital', ?, ?, ?, ?, 'CREATED', ?, ?)"
     ).bind(
       localId,
       paypalOrder.id,
@@ -184,7 +259,8 @@ export async function handlePayPalCreateOrder(request, env, options = {}) {
       sku,
       pricing.amountExpected,
       pricing.currency,
-      new Date().toISOString()
+      new Date().toISOString(),
+      idempotencyKey
     ).run();
   } catch {
     return jsonRes({ error: 'Could not persist PayPal order' }, 500, request);
@@ -249,6 +325,11 @@ async function finalizeDigitalPayPalOrder(request, env, order) {
 export async function handlePayPalCaptureOrder(request, env, options = {}) {
   if (!options.allowWhenPaymentsDisabled && env.PAYMENTS_ENABLED !== 'true') return paymentsDisabledResponse(request);
   if (request.method !== 'POST') return jsonRes({ error: 'method not allowed' }, 405, request);
+
+  if (!options.skipRateLimit) {
+    const limited = await enforcePayPalRateLimit(request, env, 'capture-order', 12, 60);
+    if (limited) return limited;
+  }
 
   const body = await request.json().catch(() => ({}));
   const paypalOrderId = body.paypalOrderId;
