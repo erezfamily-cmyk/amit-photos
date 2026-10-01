@@ -217,6 +217,15 @@ async function finalizeDigitalPayPalOrder(request, env, order) {
     order.amount_expected / 100
   ).run();
 
+  // Do not report success until the entitlement actually exists. This protects
+  // against schema/constraint/DB failures after PayPal has already captured.
+  const persistedToken = await env.DB.prepare(
+    'SELECT token FROM download_tokens WHERE token = ? AND tx = ? LIMIT 1'
+  ).bind(fulfillmentToken, captureId).first();
+  if (!persistedToken?.token) {
+    return jsonRes({ error: 'Digital fulfillment persistence failed' }, 500, request);
+  }
+
   const photo = await env.DB.prepare('SELECT title FROM photos WHERE id = ?').bind(order.photo_id).first();
   const fulfillment = {
     url: '/api/download/' + fulfillmentToken,
@@ -224,8 +233,15 @@ async function finalizeDigitalPayPalOrder(request, env, order) {
   };
 
   await env.DB.prepare(
-    "UPDATE paypal_orders SET status='COMPLETED', fulfillment_json=?, completed_at=? WHERE paypal_order_id=?"
+    "UPDATE paypal_orders SET status='COMPLETED', fulfillment_json=?, completed_at=? WHERE paypal_order_id=? AND status='FULFILLING'"
   ).bind(JSON.stringify(fulfillment), new Date().toISOString(), order.paypal_order_id).run();
+
+  const completed = await env.DB.prepare(
+    'SELECT status, fulfillment_json FROM paypal_orders WHERE paypal_order_id = ?'
+  ).bind(order.paypal_order_id).first();
+  if (completed?.status !== 'COMPLETED' || !completed.fulfillment_json) {
+    return jsonRes({ error: 'Digital fulfillment completion failed' }, 500, request);
+  }
 
   return jsonRes(fulfillment, 200, request);
 }
@@ -263,28 +279,55 @@ export async function handlePayPalCaptureOrder(request, env, options = {}) {
     return jsonRes({ error: 'PayPal authentication failed' }, 502, request);
   }
 
-  const paypalResponse = await fetch(
-    paypalApiBase() + '/v2/checkout/orders/' + encodeURIComponent(paypalOrderId) + '/capture',
-    {
-      method: 'POST',
-      headers: {
-        'Authorization': 'Bearer ' + accessToken,
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'PayPal-Request-Id': 'amit-capture-' + order.id,
-      },
-      body: '{}',
-    }
-  );
+  const captureUrl = paypalApiBase() + '/v2/checkout/orders/' + encodeURIComponent(paypalOrderId) + '/capture';
+  const paypalResponse = await fetch(captureUrl, {
+    method: 'POST',
+    headers: {
+      'Authorization': 'Bearer ' + accessToken,
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'PayPal-Request-Id': 'amit-capture-' + order.id,
+    },
+    body: '{}',
+  });
 
-  const capturedOrder = await paypalResponse.json().catch(() => ({}));
-  if (!paypalResponse.ok || capturedOrder.status !== 'COMPLETED') {
+  let capturedOrder = await paypalResponse.json().catch(() => ({}));
+
+  // PayPal can report ORDER_ALREADY_CAPTURED when the first capture succeeded
+  // but our server missed the response. Recover by reading the authoritative
+  // order state rather than charging again or failing fulfillment permanently.
+  const issue = capturedOrder?.details?.[0]?.issue;
+  if (!paypalResponse.ok && issue === 'ORDER_ALREADY_CAPTURED') {
+    const getResponse = await fetch(
+      paypalApiBase() + '/v2/checkout/orders/' + encodeURIComponent(paypalOrderId),
+      {
+        method: 'GET',
+        headers: {
+          'Authorization': 'Bearer ' + accessToken,
+          'Accept': 'application/json',
+        },
+      }
+    );
+    capturedOrder = await getResponse.json().catch(() => ({}));
+    if (!getResponse.ok) {
+      return jsonRes({ error: 'PayPal capture recovery failed' }, 502, request);
+    }
+  } else if (!paypalResponse.ok) {
     return jsonRes({ error: 'PayPal capture failed' }, 502, request);
+  }
+
+  if (
+    capturedOrder.id !== paypalOrderId ||
+    capturedOrder.status !== 'COMPLETED' ||
+    capturedOrder.purchase_units?.[0]?.custom_id !== order.id
+  ) {
+    return jsonRes({ error: 'PayPal capture identity mismatch' }, 502, request);
   }
 
   const capture = capturedOrder.purchase_units?.[0]?.payments?.captures?.[0];
   const captureMinor = moneyToMinorUnits(capture?.amount?.value);
   if (
+    !capture?.id ||
     capture?.status !== 'COMPLETED' ||
     capture?.amount?.currency_code !== order.currency ||
     captureMinor !== order.amount_expected
