@@ -51,12 +51,12 @@ jobs:
         run: |
           git config user.name "Instagram Agent"
           git config user.email "agent@amitphotos.com"
-          git add data/instagram_posted.json
+          git add data/instagram_posted.json data/social_photo_map.json
           if git diff --staged --quiet; then
-            echo "אין שינויים ל-instagram_posted.json"
+            echo "אין שינויים ל-instagram_posted.json או social_photo_map.json"
             exit 0
           fi
-          git commit -m "🤖 עדכון instagram_posted.json"
+          git commit -m "🤖 עדכון instagram_posted.json + social mapping"
           for i in 1 2 3; do
             git pull --rebase origin main && git push origin main && break
             echo "push נכשל (ניסיון $i) — ממתין 10 שניות..."
