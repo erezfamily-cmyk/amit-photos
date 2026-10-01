@@ -1,7 +1,7 @@
 # Handoff — amit-photos
 
 > מסמך כניסה לכל מי (אדם או סוכן AI) שנכנס לפרויקט הזה בפעם הראשונה, או חוזר אחרי הפסקה.
-> עודכן: **30.9.2026**. זה מסמך חי — לעדכן אותו כשקורה משהו מהותי, לא לתת לו להתיישן.
+> עודכן: **1.10.2026**. זה מסמך חי — לעדכן אותו כשקורה משהו מהותי, לא לתת לו להתיישן.
 > לא מחליף את `CLAUDE.md` (כללי ארכיטקטורה מחייבים) — משלים אותו עם "מה המצב עכשיו ולמה".
 
 ---
@@ -38,13 +38,48 @@ PAYMENTS_ENABLED = "false"   ב-wrangler.toml (production)
 
 ## 🚧 עבודה פעילה — 1.10.2026
 
-- **PayPal Orders API v2 Phase 1** נמצא ב-Draft PR #76 על הענף `prep/paypal-orders-v2-2026-10-01`.
-- הושלמו: D1 schema/migration, OAuth ל-PayPal Sandbox, `create-order` ו-`capture-order` לרכישות דיגיטליות, בדיקת סכום+מטבע מול capture, ו-idempotent fulfillment עם token נעול.
-- טסטים ממוקדים חדשים: **6/6 עוברים**. נוסף גם workflow חדש להרצת כל `tests/*.test.mjs` על PRs; בזמן כתיבת השורה הזו הוא עדיין לא רץ אוטומטית על ה-PR הראשון.
-- **לא בוצע merge**, לא שונה UI, לא נוצר PayPal webhook, ולא הופעלו תשלומים.
-- Cloudflare Production כבר מכיל `PAYPAL_CLIENT_ID` ו-`PAYPAL_CLIENT_SECRET` של Sandbox כ-Secrets מוצפנים. הערכים עצמם אינם בקוד/ב-Git.
-- `PAYMENTS_ENABLED = "false"` מאומת ונשאר כך.
-- השלב הבא: להריץ/לאמת full Node suite, להחיל את `migrations/0001_paypal_orders_v2.sql` ב-D1 (additive, כשהתשלומים כבויים), ואז להכין מסלול Sandbox E2E לפני UI/webhook.
+### PayPal Orders API v2 — Phase 1
+
+**החלטת בעל הפרויקט כרגע: לא לאפשר רכישה אמיתית, לא למזג את PR #76, ולא להפעיל PayPal Live.**
+
+מצב נוכחי:
+- PR #76 נשאר **Draft ולא ממוזג**.
+- `PAYMENTS_ENABLED = "false"` נשאר ללא שינוי.
+- אין רכישות ציבוריות פעילות.
+- אין PayPal Live credentials.
+- אין Webhook פעיל.
+- אין UI רכישה חדש.
+- המסלולים הציבוריים החדשים של PayPal, גם אם ייפרסו בעתיד, בנויים Fail-closed כל עוד `PAYMENTS_ENABLED != "true"`.
+
+מה כן הושלם כהכנה:
+- PayPal Developer Sandbox הוכן: Business test account, Personal buyer test account ו-Sandbox App.
+- ב-Cloudflare Production נשמרו כ-Secrets מוצפנים:
+  - `PAYPAL_CLIENT_ID`
+  - `PAYPAL_CLIENT_SECRET`
+  אלו credentials של Sandbox בלבד; הערכים עצמם אינם ב-Git.
+- D1 migration הוחל על `amit-photos-db` אחרי יצירת Time Travel bookmark:
+  - `paypal_orders`
+  - `paypal_webhook_events`
+  - `idx_paypal_orders_status`
+- מבנה שתי הטבלאות אומת ידנית ב-D1 Console.
+- נוסף backend חדש ב-`paypal-orders.js`:
+  - OAuth מול PayPal Sandbox בלבד
+  - `create-order`
+  - `capture-order`
+  - חישוב מחיר בצד השרת
+  - בדיקת amount + currency מול PayPal
+  - idempotent digital fulfillment
+- נוספו admin-only Sandbox test hooks, המוגנים ב-admin session, כדי לאפשר בעתיד בדיקות Sandbox בלי לפתוח קנייה לציבור.
+- נוסף GitHub Actions workflow להרצת כל `tests/*.test.mjs` על PRs.
+- full Node suite: **318/318 pass, 0 fail**.
+- במהלך ה-CI נמצא ותוקן baseline bug ישן ב-cache-busting של `index.html`; הוא לא נגרם משינויי PayPal.
+
+### משמעות המיזוג בעתיד
+מיזוג PR #76 ל-`main` יפרוס את קוד ה-Sandbox החדש ל-Cloudflare, אבל כשלעצמו **לא אמור לפתוח רכישות לציבור** כי `PAYMENTS_ENABLED=false` נשאר kill switch. למרות זאת, לפי החלטת בעל הפרויקט מ-1.10.2026, **לא לבצע את המיזוג כרגע**.
+
+### השלב הבא
+לא לבצע merge, deploy, Webhook, UI checkout או Live PayPal עד אישור מפורש חדש של בעל הפרויקט.
+אפשר להמשיך בעתיד בבדיקות Sandbox בלבד, ורצוי בסביבה מבודדת/מוגנת, בלי לשנות `PAYMENTS_ENABLED`.
 
 ## 🗓️ מה קרה לאחרונה (מהחשוב לפחות חשוב)
 
