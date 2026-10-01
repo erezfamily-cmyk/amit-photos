@@ -36,6 +36,24 @@ PAYMENTS_ENABLED = "false"   ב-wrangler.toml (production)
 
 ---
 
+
+## 📈 Lead funnel measurement audit — 1.10.2026
+
+נמצא פער מדידה חשוב בזמן בניית המודל העסקי:
+- טופס ה-newsletter בדף הבית שלח `generate_lead` על כל submit מוצלח, גם אם האימייל כבר היה קיים.
+- עמוד `/free-guide/` לא שלח `generate_lead` בכלל.
+- לכן `generate_lead` לא היה KPI אמין להשוואת free-guide מול newsletter.
+
+תיקון מוצע ב-Draft PR נפרד:
+- ה-API של subscribers מחזיר metadata לא-רגיש בלבד: `created`, `already`, `marketing_upgraded`.
+- `generate_lead` נשלח רק כשנוצר subscriber חדש או כשיש upgrade אמיתי להסכמה שיווקית.
+- `guide_request_success` מודד בקשת מדריך מוצלחת גם כשהמשתמש בוחר לא להצטרף לשיווק.
+- הדוח השבועי מפריד בין בקשות מדריך לבין לידים חדשים/משודרגים.
+- לא נשלח email/PII ל-GA.
+- אין שינוי ב-`PAYMENTS_ENABLED` ואין שינוי במסלול התשלומים.
+
+המשמעות העסקית: רק אחרי שהתיקון נפרס ומצטברים נתונים אפשר להשוות באופן הוגן `free-guide -> guide_request_success -> generate_lead`.
+
 ## 🗓️ מה קרה לאחרונה (מהחשוב לפחות חשוב)
 
 ### השבוע האחרון (25–30.9.2026)
