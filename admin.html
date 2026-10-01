@@ -961,7 +961,7 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
       <div class="dash-recent" id="campaign-link-builder" style="margin-bottom:1.5rem">
         <div class="dash-recent-title" style="margin-bottom:.9rem">🔗 בונה קישורי קמפיין (UTM)</div>
         <div style="color:var(--text-muted);font-size:.82rem;line-height:1.6;margin-bottom:1rem">
-          כלי פנימי ליצירת deep links מדידים. הקישור תמיד נשאר תחת amitphotos.com ולא כולל מידע אישי.
+          כלי פנימי ליצירת deep links מדידים תחת amitphotos.com. <strong>אין להזין שמות, אימיילים, טלפונים או מידע אישי בשדות UTM.</strong>
         </div>
         <div class="form-row">
           <div class="form-field">
@@ -1002,11 +1002,11 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
         <div class="form-row" style="margin-top:.75rem">
           <div class="form-field">
             <label for="campaign-name">Campaign</label>
-            <input id="campaign-name" type="text" inputmode="text" maxlength="80" placeholder="202610_freeguide_photo_tips">
+            <input id="campaign-name" type="text" inputmode="text" maxlength="80" autocapitalize="none" autocomplete="off" spellcheck="false" placeholder="202610_freeguide_photo_tips">
           </div>
           <div class="form-field">
             <label for="campaign-content">Content</label>
-            <input id="campaign-content" type="text" inputmode="text" maxlength="80" placeholder="story_1">
+            <input id="campaign-content" type="text" inputmode="text" maxlength="80" autocapitalize="none" autocomplete="off" spellcheck="false" placeholder="story_1">
           </div>
         </div>
         <div style="margin-top:1rem">
@@ -1016,7 +1016,7 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
         <div class="mobile-tool-actions" style="display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.75rem">
           <button type="button" class="btn btn-primary" id="campaign-build-btn">צור קישור</button>
           <button type="button" class="btn btn-ghost" id="campaign-copy-btn">העתק</button>
-          <a class="btn btn-ghost" id="campaign-open-btn" href="#" target="_blank" rel="noopener">פתח לבדיקה</a>
+          <button type="button" class="btn btn-ghost" id="campaign-open-btn" disabled>פתח לבדיקה</button>
         </div>
         <div id="campaign-link-status" role="status" aria-live="polite" style="margin-top:.6rem;color:var(--text-muted);font-size:.78rem;min-height:1.2em"></div>
       </div>
@@ -8178,73 +8178,7 @@ async function confirmLinkToLocation() {
 })();
 </script>
 
-<script>
-(function(){
-  const DESTINATIONS = new Set(['/free-guide/','/licensing/','/business/','/#gallery','/camera/','/locations/']);
-  const SOURCES = new Set(['instagram','facebook','threads','tiktok','youtube','newsletter','whatsapp','partner','linkedin']);
-  const MEDIUMS = new Set(['social','email','message','referral']);
-
-  function cleanToken(value, maxLen) {
-    return String(value || '')
-      .trim()
-      .toLowerCase()
-      .replace(/[^a-z0-9_-]+/g, '_')
-      .replace(/^_+|_+$/g, '')
-      .slice(0, maxLen || 80);
-  }
-
-  function buildCampaignLink() {
-    const destination = document.getElementById('campaign-destination')?.value || '/';
-    const source = document.getElementById('campaign-source')?.value || '';
-    const medium = document.getElementById('campaign-medium')?.value || '';
-    const campaign = cleanToken(document.getElementById('campaign-name')?.value, 80);
-    const content = cleanToken(document.getElementById('campaign-content')?.value, 80);
-    const status = document.getElementById('campaign-link-status');
-    const output = document.getElementById('campaign-result');
-    const open = document.getElementById('campaign-open-btn');
-
-    if (!DESTINATIONS.has(destination) || !SOURCES.has(source) || !MEDIUMS.has(medium)) {
-      if (status) status.textContent = 'ערך לא חוקי — הקישור לא נוצר.';
-      return '';
-    }
-    if (!campaign) {
-      if (status) status.textContent = 'יש להזין שם campaign.';
-      return '';
-    }
-
-    const url = new URL(destination, 'https://amitphotos.com');
-    url.searchParams.set('utm_source', source);
-    url.searchParams.set('utm_medium', medium);
-    url.searchParams.set('utm_campaign', campaign);
-    if (content) url.searchParams.set('utm_content', content);
-
-    const result = url.toString();
-    if (output) output.value = result;
-    if (open) open.href = result;
-    if (status) status.textContent = 'הקישור מוכן. אין מידע אישי ב-UTM.';
-    return result;
-  }
-
-  document.getElementById('campaign-build-btn')?.addEventListener('click', buildCampaignLink);
-  document.getElementById('campaign-copy-btn')?.addEventListener('click', async function(){
-    const value = document.getElementById('campaign-result')?.value || buildCampaignLink();
-    const status = document.getElementById('campaign-link-status');
-    if (!value) return;
-    try {
-      await navigator.clipboard.writeText(value);
-      if (status) status.textContent = 'הקישור הועתק.';
-    } catch {
-      const out = document.getElementById('campaign-result');
-      out?.focus();
-      out?.select();
-      if (status) status.textContent = 'סמן והעתק את הקישור ידנית.';
-    }
-  });
-  ['campaign-destination','campaign-source','campaign-medium','campaign-name','campaign-content'].forEach(function(id){
-    document.getElementById(id)?.addEventListener('change', buildCampaignLink);
-  });
-})();
-</script>
+<script type="module" src="/assets/js/admin-campaign-links.mjs?v=20261001"></script>
 
 </body>
 </html>
