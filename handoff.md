@@ -737,3 +737,44 @@ Guardrails:
 - מחיקה נשארת destructive action נפרדת עם confirmation.
 
 המטרה: להשתמש בפיילוט הפרחים כדי לכייל את תהליך הסימון, הדוח והחלטות הקיורציה לפני הרחבה לקטגוריות נוספות.
+
+
+### Flower curation pilot in Admin — 1.10.2026
+
+הוחלט שקטגוריית **פרחים וצמחים** תהיה פיילוט ראשון לתהליך קיורציה מקצועי באדמין.
+
+מטרת הפיילוט:
+- לסמן באדמין תמונות שמומלץ לבדוק;
+- להציג סיבה מפורטת לכל סימון;
+- להבדיל בין recommendation לבין החלטה סופית;
+- לקבל החלטה ידנית אם KEEP / KEEP_SECONDARY / HIDE / DELETE / שינוי קטגוריה.
+
+נוצר דוח פיילוט:
+- `data/flower-curation-pilot.json`
+- 162 תמונות בקטגוריה.
+- 43 תמונות עם לפחות flag אחד.
+- 12 high-priority review candidates.
+- 17 מועמדות בגלל duplicate title.
+- 6 מועמדות בגלל probable file duplicate / copy variant.
+- 8 מועמדות בגלל low resolution ל-Licensing.
+- 18 ללא description.
+- 23 ללא EXIF.
+
+Guardrails:
+- אין מחיקה אוטומטית.
+- אין hide אוטומטי.
+- אין שינוי published אוטומטי.
+- אין שינוי קטגוריה אוטומטי.
+- כל recommendation הוא review-only עד החלטה ידנית.
+- מחיקה פיזית מ-R2/D1 מתבצעת רק לאחר אישור מפורש.
+- הסתרה צריכה להיות reversible דרך `published=0` לפני ששוקלים מחיקה.
+
+הכוונה ב-Admin:
+- להוסיף מצב/פילטר "פיילוט קיורציה — פרחים וצמחים".
+- להציג badge לפי recommendation כגון REVIEW_DUPLICATE / REVIEW_TECHNICAL / REVIEW_METADATA.
+- להציג reasons פרטניים לכל תמונה.
+- לאפשר מעבר מהיר ל-lightbox/עריכה לפני החלטה.
+- לייצר דוח פרטני שמרכז recommendation + reason + החלטת בעל האתר.
+
+הפיילוט נועד לבדוק את UX ואת איכות ההמלצות לפני הרחבה לקטגוריות נוספות.
+
