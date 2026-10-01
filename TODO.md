@@ -21,7 +21,7 @@
 - [ ] checkpoint רחב יותר סביב 10.10, ואז 24.10 אם עדיין אין sample מספיק.
 - [ ] PR #76 PayPal Orders v2 נשאר נפרד; אין להפעיל Production payments במסגרת הניסוי.
 - [x] `PAYMENTS_ENABLED=false` נשאר guardrail מחייב.
-- [ ] Gelato נשאר בהמתנה עד שיש print-demand signal + בדיקת margin/quality.
+- [x] Gelato מוקפא במפורש בשלב הנוכחי; לא חלק מהניסוי ולא חלק מחזרת PayPal.
 
 ---
 
@@ -771,3 +771,39 @@ MVP:
 
 ## כלל
 במהלך 7 ימי הניסוי לא משנים pricing, hero, checkout או offer. בסוף בוחרים follow-up אחד בלבד.
+
+
+## PayPal reactivation gate — 1.10.2026
+
+### החלטה
+- [x] לא להפעיל PayPal Production בזמן Acquisition Experiment 01.
+- [x] Gelato מחוץ לתוכנית הנוכחית.
+- [ ] לבצע live smoke verification של /licensing/, /business/, Admin UTM ו-/api/payments-status.
+- [ ] להריץ 7 ימים מלאים של Acquisition Experiment 01 עם UTM נקי.
+- [ ] checkpoint ראשון סביב 10.10.2026.
+
+### מתי כן שוקלים חיבור PayPal מחדש
+PayPal חוזר רק כמסלול **Digital-only canary**, ורק אם:
+- /licensing/ קיבל לפחות 20 sessions איכותיים בחלון הניסוי; וגם
+- יש לפחות 3 פעולות digital purchase intent אמיתיות, או intent rate של לפחות 10%; וגם
+- attribution עובד ואירועי licensing נראים בדוח; וגם
+- PR #76 נבנה מחדש מ-main הנוכחי ועובר Sandbox E2E/security מחדש.
+
+### למה לא עכשיו
+- אנחנו עדיין מודדים demand ולא רוצים לשנות funnel באמצע הניסוי.
+- המדגם עדיין קטן.
+- ה-flag הגלובלי PAYMENTS_ENABLED פותח גם legacy print flows ולכן אסור פשוט להפוך אותו ל-true.
+- צריך digital-only flag נפרד לפני Production.
+
+### לפני activation
+- [ ] להוסיף DIGITAL_PAYPAL_ENABLED=false.
+- [ ] להשאיר PAYMENTS_ENABLED=false ל-legacy/print.
+- [ ] create → approve → capture → download ב-Sandbox.
+- [ ] cancel path.
+- [ ] webhook verify/dedup.
+- [ ] price authority server-side.
+- [ ] idempotency / duplicate capture protection.
+- [ ] rollback/kill-switch test.
+- [ ] deploy עם digital flag כבוי, verify fail-closed, ורק אז canary.
+
+פירוט מלא: `docs/paypal-reactivation-gate-2026-10-01.md`.
