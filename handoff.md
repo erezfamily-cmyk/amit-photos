@@ -199,3 +199,11 @@ PAYMENTS_ENABLED = "false"   ב-wrangler.toml (production)
 - Cloudflare Deployments currently shows the branch build as **In progress**.
 - The currently active version is still the prior dashboard-created Worker version; do not run PayPal OAuth/E2E until the branch build finishes successfully and becomes active.
 - No production deployment or payment enablement occurred.
+
+
+### Cloudflare staging build result — 1.10.2026
+
+- Cloudflare Recent builds for branch `prep/paypal-orders-v2-2026-10-01` are green/success.
+- However, the Deployments page still shows active version `78ddcde1`, the prior dashboard-created version.
+- Do **not** start PayPal OAuth/E2E until build details confirm the wrangler deploy step actually published the branch code and the active deployment is updated.
+- Production remains untouched and `PAYMENTS_ENABLED=false`.
