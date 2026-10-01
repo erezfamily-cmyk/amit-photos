@@ -1,4 +1,4 @@
-import { handlePayPalCreateOrder, handlePayPalCaptureOrder } from './paypal-orders.js';
+import { handlePayPalCreateOrder, handlePayPalCaptureOrder, handlePayPalSandboxStatus } from './paypal-orders.js';
 // Cloudflare Worker — amit-photos
 // מטפל בנתיבי API ומגיש static assets
 
@@ -56,6 +56,7 @@ export {
   handlePaymentsStatus,
   handlePayPalCreateOrder,
   handlePayPalCaptureOrder,
+  handlePayPalSandboxStatus,
   handleVerifyPayment,
   handlePrintOrderComplete,
   handlePrintWebhook,
@@ -7761,6 +7762,18 @@ export default {
     if (path === '/api/newsletter')        return handleNewsletter(request, env);
     if (path === '/api/unsubscribe')       return handleUnsubscribe(request, env);
     if (path === '/api/reply')             return handleReply(request, env);
+    if (path === '/api/admin/paypal/sandbox-status') {
+      if (!await checkAuth(request, env)) return unauth(request);
+      return handlePayPalSandboxStatus(request, env);
+    }
+    if (path === '/api/admin/paypal/create-order') {
+      if (!await checkAuth(request, env)) return unauth(request);
+      return handlePayPalCreateOrder(request, env, { allowWhenPaymentsDisabled: true, includeApproveUrl: true });
+    }
+    if (path === '/api/admin/paypal/capture-order') {
+      if (!await checkAuth(request, env)) return unauth(request);
+      return handlePayPalCaptureOrder(request, env, { allowWhenPaymentsDisabled: true });
+    }
     if (path === '/api/paypal/create-order')  return handlePayPalCreateOrder(request, env);
     if (path === '/api/paypal/capture-order') return handlePayPalCaptureOrder(request, env);
     if (path === '/api/verify-payment')    return handleVerifyPayment(request, env, ctx);
