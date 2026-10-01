@@ -460,3 +460,10 @@ Conclusion: buyer cancel path is verified end-to-end and does not create a charg
 - Cloudflare Worker `amit-photos-paypal-sandbox` now has `PAYPAL_WEBHOOK_ID` stored as an encrypted Secret.
 - Code verification confirmed the webhook handler calls PayPal `/v1/notifications/verify-webhook-signature` with the configured webhook ID and rejects events unless verification status is `SUCCESS`.
 - Next: run a fresh Sandbox order/approval/capture and verify a real `PAYMENT.CAPTURE.COMPLETED` event appears in staging D1 with `processed=1`.
+
+
+### Fresh webhook E2E capture completed — 1.10.2026 evening
+
+- A fresh Sandbox order was approved successfully and returned through `/api/paypal/approved`.
+- Capture then succeeded and returned a digital fulfillment URL for `PayPal Sandbox Test Photo`.
+- Next verification: inspect `paypal_webhook_events` in staging D1 for a real `PAYMENT.CAPTURE.COMPLETED` event and confirm `processed=1`, `attempts>=1`, and no stuck processing lease.
