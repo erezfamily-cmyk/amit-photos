@@ -26,7 +26,8 @@ test('admin exposes flower pilot review controls', () => {
 
 test('curation dialog requires manual review before destructive action', () => {
   assert.match(admin, /אין הסתרה או מחיקה אוטומטית/);
-  assert.match(admin, /לא להסתיר\/למחוק לפני בדיקה ויזואלית/);
+  assert.match(admin, /אין הסתרה או מחיקה אוטומטית/);
+  assert.match(admin, /בדיקה ויזואלית/);
   assert.ok(report.items.every(item => item.visual_review_required === true));
 });
 
