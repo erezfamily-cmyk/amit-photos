@@ -439,3 +439,16 @@ Cloudflare D1 staging verification after PayPal Sandbox buyer cancel confirmed:
 - the only download token present still belongs to the prior successfully completed Sandbox purchase.
 
 Conclusion: buyer cancel path is verified end-to-end and does not create a charge entitlement or download fulfillment.
+
+
+### PayPal Sandbox webhook created — 1.10.2026 evening
+
+- A Sandbox webhook was created in PayPal Developer for:
+  `https://amit-photos-paypal-sandbox.erez-family.workers.dev/api/paypal/webhook`
+- Current tracked-event list shown in PayPal includes:
+  - Checkout order approved
+  - Payment capture completed
+  - Payment capture declined
+  - Payment capture pending
+- Before signature E2E, adjust the event list to use PayPal's recommended `PAYMENT.CAPTURE.DENIED` event (not capture-declined wording) and add `CHECKOUT.PAYMENT-APPROVAL.REVERSED` if available.
+- Next: copy the webhook ID into Cloudflare staging Worker as secret `PAYPAL_WEBHOOK_ID`, then run signature-verification E2E.
