@@ -1,6 +1,9 @@
 name: Lead Funnel CI
 
 on:
+  push:
+    branches:
+      - fix/lead-funnel-measurement-2026-10-01
   pull_request:
     paths:
       - 'worker.js'
