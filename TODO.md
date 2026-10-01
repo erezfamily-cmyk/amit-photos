@@ -371,3 +371,164 @@ Skill שמכיל רק Markdown instructions הוא בסיכון נמוך יחס�
 
 לא בונים feature מסחרי גדול רק כי הוא אפשרי טכנית. קודם:
 **measure → hypothesis → smallest test → compare → decide → build.**
+
+
+---
+
+# Business Model Review #1 — 1.10.2026
+
+## נתונים ששימשו
+
+מקורות:
+- `data/ga_reports.json` — דוח 21–28.9.2026.
+- `docs/analytics-driven-ux-plan-2026-09-26.md`.
+- `docs/pre-commerce-readiness-2026-10-01.md`.
+- `data/photo_strength_report.json` מענף PR #77 — כרגע `waiting_for_mapped_data`, ולכן אין עדיין דירוג תמונות אמין.
+
+### תמונת מצב מספרית
+- 51 sessions
+- 27 active users
+- 134 page views
+- 60.8% engagement rate
+- 53 photo views
+- 4 digital purchase intents
+- 1 size selection
+- 1 print intent
+- 2 photo contact clicks
+- 10 page views ל-`/free-guide/`
+- 6 page views ל-`/learn/`
+- 46/51 sessions מסווגים Direct
+- 45 sessions מישראל
+- 30 desktop / 22 mobile
+- verified revenue = 0, כאשר payments disabled
+
+## מה כן אפשר להסיק
+
+### 1. יש product interest, אבל עדיין אין הוכחת willingness-to-pay
+`purchase_intent=4` ו-`print_intent=1` מוכיחים שיש לפחות מעט משתמשים שחיפשו מסלול רכישה. זה מספיק כדי להצדיק ניסויים, לא מספיק כדי לבנות חנות פיזית מלאה.
+
+### 2. הבעיה העסקית הראשונה היא לא fulfillment אלא acquisition + conversion
+רוב התנועה היא Direct, ורק 3 sessions סווגו Organic Social. לפני השקעה עמוקה ב-Gelato צריך לדעת להביא יותר משתמשים מזוהים ולשמר אותם.
+
+### 3. ל-free guide יש signal חיובי
+10 page views בשבוע שבו היו 134 page views בסך הכול הופכים אותו לנכס שראוי לחבר למסלול lead capture מסודר.
+
+### 4. content/education קיים, אבל אין עדיין מספיק signal למוצר לימודי בתשלום
+`/learn/` קיבל 6 צפיות. זה מעניין, אבל לא מצדיק כרגע בניית קורס או membership.
+
+### 5. photo-strength עדיין לא מוכן להחלטות merchandising
+PR #77 מחזיר כרגע `waiting_for_mapped_data`; לכן אסור לבחור “best sellers” אוטומטית או לשנות סדר גלריה לפי score שעדיין לא קיים.
+
+---
+
+## סדר עדיפות עסקי ראשון
+
+### Priority 1 — Owned audience / lead capture
+זה אינו revenue model בפני עצמו, אבל הוא התשתית לכל המודלים האחרים.
+
+למה ראשון:
+- acquisition עדיין חלש ולא מזוהה.
+- free guide כבר מקבל תנועה.
+- payments עדיין כבויים.
+- מאפשר לא לאבד מבקרים בתקופת ההמתנה.
+
+### Priority 2 — Digital downloads + licensing
+זה המוצר העסקי הראשון שכדאי להכין לניסוי אמיתי.
+
+למה:
+- כבר יש 4 `purchase_intent` לעומת 1 `print_intent`.
+- אין fulfillment פיזי.
+- margin גבוה יותר.
+- PayPal Orders v2 digital Sandbox כבר עבר E2E.
+- קל יותר לבדוק pricing ו-license tiers לפני שמוסיפים מורכבות תפעולית.
+
+החלטה:
+- לא לפתוח production עדיין.
+- כן להכין product definition, licensing, pricing experiment ו-copy.
+
+### Priority 3 — Curated print drop / pre-order
+לא לבנות עדיין “חנות Gelato מלאה”.
+
+ניסוי מומלץ:
+- 3–5 תמונות.
+- edition / collection מוגדרת.
+- intent או reservation לפני production.
+- בדיקת price sensitivity.
+- רק אם יש signal: להשלים Gelato Print Orders v2.
+
+### Priority 4 — B2B outbound test
+לא צריך לבנות מערכת חדשה כדי לבדוק את ההיפותזה.
+
+MVP:
+- דף/one-pager פשוט או PDF/landing בעתיד.
+- 10–20 פניות ממוקדות למעצבי פנים / קליניקות / משרדים / hospitality.
+- למדוד replies ו-qualified leads.
+
+### Hold — education paid product
+להמשיך למדוד את התוכן הקיים; לא לבנות קורס עדיין.
+
+---
+
+# Sprint 1 — לפני checkpoint של 14 יום
+
+## A. Lead funnel audit
+- [ ] לאמת ש-`generate_lead` נורה אחרי הרשמה מוצלחת ב-free guide וב-newsletter.
+- [ ] למדוד `free_guide_view -> generate_lead`.
+- [ ] לבדוק כמה subscribers חדשים נוספו מאז 26.9 ללא חשיפת PII.
+- [ ] לוודא source/UTM על קישורי social.
+- [ ] להוסיף attribution בסיסי ל-newsletter signups אם חסר.
+
+## B. Digital product definition
+- [ ] להחליט 2–3 license tiers בלבד ל-MVP.
+- [ ] להגדיר מה מקבלים בכל tier.
+- [ ] להגדיר מחיר test, לא מחיר “סופי”.
+- [ ] לנסח HE/EN קצר וברור.
+- [ ] לבדוק legal copy מול התנאים הקיימים.
+- [ ] לא לשנות `PAYMENTS_ENABLED`.
+
+## C. Print demand validation
+- [ ] לא להשלים עדיין full Gelato checkout.
+- [ ] להגדיר 3–5 candidate prints.
+- [ ] לחכות ל-photo-strength data או לבצע editorial shortlist ידני + לתעד שהוא ידני.
+- [ ] לתכנן event ל-`print_reservation_intent` או waitlist, בלי חיוב.
+- [ ] לא לבחור supplier סופי לפני margin/quality test.
+
+## D. Acquisition
+- [ ] כל פוסט social חדש יוביל ל-photo/collection/free-guide URL ספציפי עם UTM.
+- [ ] לא להפנות כברירת מחדל לדף הבית.
+- [ ] למדוד sessions לפי campaign.
+- [ ] לבדוק אם Direct יורד כש-attribution משתפר.
+
+---
+
+## Decision rules ל-10.10.2026
+
+לא להחליט לפי מספר מוחלט בודד. לבדוק מגמה + denominator.
+
+### Digital
+אם `purchase_intent / photo_view` נשאר משמעותית גבוה מ-`print_intent / photo_view` ויש יותר מקרים אמיתיים לאורך התקופה:
+→ להמשיך להכנת digital/licensing launch.
+
+### Print
+אם `print_intent` גדל ויש repeat interest בכמה תמונות:
+→ לבצע curated print reservation test, ורק אחריו להעמיק Gelato.
+
+### Lead
+אם free-guide signup rate טוב:
+→ newsletter הופך לערוץ owned מרכזי ומקבל השקעה לפני paid commerce.
+
+### Acquisition
+אם Direct עדיין >70% גם אחרי UTM discipline:
+→ priority עובר ל-distribution/SEO/social deep links לפני פיתוח commerce נוסף.
+
+---
+
+## מה לא עושים בספרינט הזה
+
+- לא מפעילים production payments.
+- לא ממזגים אוטומטית PR #76.
+- לא בונים full Gelato store.
+- לא בונים cart מורכב.
+- לא בונים paid course.
+- לא משנים את סדר הגלריה לפי photo-strength לפני שיש mapped data.
+- לא מוסיפים הרבה CTAs מתחרים לדף הבית.
