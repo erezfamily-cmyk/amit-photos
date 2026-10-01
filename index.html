@@ -717,7 +717,7 @@
               });
               const data = await r.json().catch(() => ({}));
               if (r.ok) {
-                if (typeof trackUxEvent === 'function' && (!data.already || data.marketing_upgraded)) {
+                if (typeof trackUxEvent === 'function' && data.lead_created) {
                   trackUxEvent('generate_lead', { source: 'homepage_section' });
                 }
                 msg.style.color = '#4caf7d';
@@ -1233,7 +1233,7 @@
       if (r.ok) {
         if (typeof trackUxEvent === 'function') {
           trackUxEvent('guide_request_success', { source: 'popup' });
-          if (!data.already || data.marketing_upgraded) trackUxEvent('generate_lead', { source: 'popup' });
+          if data.lead_created trackUxEvent('generate_lead', { source: 'popup' });
         }
         msg.style.color = '#4caf7d';
         msg.textContent = '&#x2713; נשלח! בדוק תיבת הדואר (גם spam).';
