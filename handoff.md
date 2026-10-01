@@ -513,3 +513,32 @@ B2B MVP נבנה מחדש מענף נקי מ-main לאחר מיזוגי #79/#83/
 PR #78 הישן מבוסס על base מיושן והוא מוחלף בענף:
 `strategy/business-model-todo-clean-2026-10-01`.
 
+
+
+### Business-model docs merged + live verification status — 1.10.2026
+
+- PR #87 (business-model TODO / acquisition playbook / Experiment 01) merged to `main`.
+- `TODO.md` is now the current business-model execution source of truth.
+- Acquisition Experiment 01 remains **not launched** until live verification is complete.
+- Attempts to verify `https://amitphotos.com/licensing/`, `/business/` and `/admin.html` from the current ChatGPT environment were blocked by network/DNS access.
+- Opera Browser Connector was available as a capability but the browser was not connected (`Allow AI connection` disabled/not connected), so no claim of live verification is made.
+- This does **not** roll back or change the merged code; it only means the launch gate remains open.
+
+### PR #77 photo-strength QA replacement — 1.10.2026
+
+PR #77 was based on an older `main` and is being replaced by a clean branch from current `main`.
+
+QA found two concrete bugs in the old draft:
+- `src/instagram_post.py` called `save_social_photo_mapping(...)` without importing it — runtime `NameError` after a successful Instagram publish.
+- `src/weekly_report.py::build_reel_summary()` used `post_lookup` without defining it — runtime `NameError` when building reel summaries.
+
+Clean replacement fixes both and keeps the pipeline advisory-only:
+- persists Instagram/Facebook post → photo mapping;
+- stores per-photo website analytics in GA report history;
+- builds `data/photo_strength_report.json` conservatively;
+- does **not** auto-reorder the public gallery;
+- low-sample photos stay low confidence;
+- adds compile checks + unit tests for the wiring.
+
+No payment, checkout, Gelato or gallery-order behavior is changed.
+
