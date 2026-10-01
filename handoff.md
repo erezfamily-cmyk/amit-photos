@@ -452,3 +452,11 @@ Conclusion: buyer cancel path is verified end-to-end and does not create a charg
   - Payment capture pending
 - Before signature E2E, adjust the event list to use PayPal's recommended `PAYMENT.CAPTURE.DENIED` event (not capture-declined wording) and add `CHECKOUT.PAYMENT-APPROVAL.REVERSED` if available.
 - Next: copy the webhook ID into Cloudflare staging Worker as secret `PAYPAL_WEBHOOK_ID`, then run signature-verification E2E.
+
+
+### PayPal Sandbox webhook ID configured — 1.10.2026 evening
+
+- PayPal Sandbox webhook was created for the staging endpoint.
+- Cloudflare Worker `amit-photos-paypal-sandbox` now has `PAYPAL_WEBHOOK_ID` stored as an encrypted Secret.
+- Code verification confirmed the webhook handler calls PayPal `/v1/notifications/verify-webhook-signature` with the configured webhook ID and rejects events unless verification status is `SUCCESS`.
+- Next: run a fresh Sandbox order/approval/capture and verify a real `PAYMENT.CAPTURE.COMPLETED` event appears in staging D1 with `processed=1`.
