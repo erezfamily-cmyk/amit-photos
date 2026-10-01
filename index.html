@@ -715,8 +715,11 @@
                   consent_marketing: document.getElementById('newsletter-consent-marketing').checked
                 })
               });
+              const data = await r.json().catch(() => ({}));
               if (r.ok) {
-                if (typeof trackUxEvent === 'function') trackUxEvent('generate_lead', { source: 'homepage_section' });
+                if (typeof trackUxEvent === 'function' && (!data.already || data.marketing_upgraded)) {
+                  trackUxEvent('generate_lead', { source: 'homepage_section' });
+                }
                 msg.style.color = '#4caf7d';
                 msg.textContent = t('newsletter.ok');
                 document.getElementById('newsletter-email').value = '';
