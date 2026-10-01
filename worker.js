@@ -7776,6 +7776,8 @@ export default {
       return handlePayPalCaptureOrder(request, env, { allowWhenPaymentsDisabled: true });
     }
     if (path === '/api/paypal/webhook') return handlePayPalWebhook(request, env);
+    if (path === '/api/paypal/approved') return handlePayPalCheckoutReturn(request, true);
+    if (path === '/api/paypal/cancelled') return handlePayPalCheckoutReturn(request, false);
     if (path === '/api/paypal/create-order')  return handlePayPalCreateOrder(request, env);
     if (path === '/api/paypal/capture-order') return handlePayPalCaptureOrder(request, env);
     if (path === '/api/verify-payment') {
