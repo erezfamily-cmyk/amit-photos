@@ -691,3 +691,185 @@ Snapshot נוכחי:
 
 הבדיקה הזו לא תלויה ב-PayPal או Gelato ולא משנה public gallery ordering אוטומטית.
 
+
+
+### Admin flower-curation pilot — 1.10.2026
+
+הוחלט שקטגוריית `פרחים וצמחים` היא הפיילוט הראשוני לתהליך הקיורציה.
+
+בענף:
+`feature/admin-flower-curation-pilot-2026-10-01`
+
+נוסף:
+- `data/flower-curation-pilot.json` — דוח פרטני ל-162 תמונות.
+- סימוני Admin לכל תמונת פיילוט.
+- פילטרים:
+  - פיילוט פרחים
+  - לבדיקה
+  - עדיפות גבוהה
+  - כפילויות לבדיקה
+  - רזולוציה לבדיקה
+- badge על כרטיסי התמונות.
+- דוח פרטני מתוך תפריט התמונה עם:
+  - recommendation
+  - priority
+  - resolution
+  - filename
+  - reasons
+  - הנחיית פעולה.
+- פתיחה מהדוח למסך עריכת התמונה.
+
+Snapshot:
+- 162 תמונות בפיילוט.
+- 43 מסומנות עם לפחות flag אחד.
+- 12 בעדיפות גבוהה.
+- 17 מועמדות עקב כותרת כפולה.
+- 6 מועמדות כ-probable file duplicate.
+- 8 מועמדות לבדיקת רזולוציה.
+- 18 ללא description.
+- 23 ללא EXIF.
+
+Guardrails:
+- אין hide אוטומטי.
+- אין delete אוטומטי.
+- כל המלצה דורשת visual review.
+- הסתרה תתבצע רק בהחלטה ידנית דרך published=0.
+- מחיקה נשארת destructive action נפרדת עם confirmation.
+
+המטרה: להשתמש בפיילוט הפרחים כדי לכייל את תהליך הסימון, הדוח והחלטות הקיורציה לפני הרחבה לקטגוריות נוספות.
+
+
+### Flower curation pilot in Admin — 1.10.2026
+
+הוחלט שקטגוריית **פרחים וצמחים** תהיה פיילוט ראשון לתהליך קיורציה מקצועי באדמין.
+
+מטרת הפיילוט:
+- לסמן באדמין תמונות שמומלץ לבדוק;
+- להציג סיבה מפורטת לכל סימון;
+- להבדיל בין recommendation לבין החלטה סופית;
+- לקבל החלטה ידנית אם KEEP / KEEP_SECONDARY / HIDE / DELETE / שינוי קטגוריה.
+
+נוצר דוח פיילוט:
+- `data/flower-curation-pilot.json`
+- 162 תמונות בקטגוריה.
+- 43 תמונות עם לפחות flag אחד.
+- 12 high-priority review candidates.
+- 17 מועמדות בגלל duplicate title.
+- 6 מועמדות בגלל probable file duplicate / copy variant.
+- 8 מועמדות בגלל low resolution ל-Licensing.
+- 18 ללא description.
+- 23 ללא EXIF.
+
+Guardrails:
+- אין מחיקה אוטומטית.
+- אין hide אוטומטי.
+- אין שינוי published אוטומטי.
+- אין שינוי קטגוריה אוטומטי.
+- כל recommendation הוא review-only עד החלטה ידנית.
+- מחיקה פיזית מ-R2/D1 מתבצעת רק לאחר אישור מפורש.
+- הסתרה צריכה להיות reversible דרך `published=0` לפני ששוקלים מחיקה.
+
+הכוונה ב-Admin:
+- להוסיף מצב/פילטר "פיילוט קיורציה — פרחים וצמחים".
+- להציג badge לפי recommendation כגון REVIEW_DUPLICATE / REVIEW_TECHNICAL / REVIEW_METADATA.
+- להציג reasons פרטניים לכל תמונה.
+- לאפשר מעבר מהיר ל-lightbox/עריכה לפני החלטה.
+- לייצר דוח פרטני שמרכז recommendation + reason + החלטת בעל האתר.
+
+הפיילוט נועד לבדוק את UX ואת איכות ההמלצות לפני הרחבה לקטגוריות נוספות.
+
+
+
+### Flower curation owner-decision workflow — 1.10.2026
+
+PR #93 (Draft) הורחב כך שהפיילוט אינו רק advisory אלא מאפשר החלטת בעלים ידנית ומתועדת.
+
+נוסף:
+- endpoint פנימי ומוגן auth: `/api/admin/curation-decisions`.
+- persistence פיילוטי ב-`settings` תחת `flower_curation_decisions_v1` — ללא migration חדש ל-D1.
+- החלטות נתמכות: `KEEP`, `KEEP_SECONDARY`, `HIDE`, `DELETE`, `CHANGE_CATEGORY`.
+- recommendation נשאר נפרד מהחלטת הבעלים; שום recommendation לא מבצע פעולה אוטומטית.
+- `HIDE` משתמש ב-`published=0` ולכן הפיך.
+- `DELETE` נשאר פעולה נפרדת עם confirmation מפורש למחיקה לצמיתות.
+- `CHANGE_CATEGORY` נשמר כהחלטה רק אחרי ששינוי קטגוריה אמיתי נשמר דרך מסך העריכה.
+- נוסף מעבר ישיר ל-Lightbox מהדוח לפני החלטה.
+- נוספו פילטרים `טרם הוחלט` / `הוחלט`.
+- נוסף export של `flower-curation-owner-review.json` לכל 162 תמונות עם:
+  - `photo_id`
+  - `title`
+  - `thumbnail`
+  - `recommendation`
+  - `reasons`
+  - `resolution`
+  - `current_published_status`
+  - `final_owner_decision`
+  - `final_category`
+  - timestamp של ההחלטה.
+
+Guardrails נשארו:
+- אין hide/delete/change-category אוטומטי.
+- אין שינוי אוטומטי בסדר הגלריה.
+- visual review נדרש לפני החלטה אמנותית.
+- PayPal/Gelato לא שונו.
+- `PAYMENTS_ENABLED=false` נשאר ללא שינוי.
+- PR #93 נשאר Draft עד QA.
+
+
+### End-of-day handoff — Flower curation pilot — 1.10.2026
+
+- PR #93 נשאר **Draft** ולא מוזג ל-`main`.
+- כל ארבעת ה-checks האחרונים עברו:
+  - Admin Flower Curation Pilot CI ✅
+  - Admin Campaign Links CI ✅
+  - Lead Funnel CI ✅
+  - Business Live Verification ✅
+- תוקן טסט ישן שהיה תלוי בניסוח מדויק של guardrail; לא הייתה רגרסיה התנהגותית.
+- ה-Admin כולל כעת:
+  - פילטר `פיילוט קיורציה — פרחים וצמחים`;
+  - פילטר `עדיפות גבוהה`;
+  - recommendation + reasons + resolution + published status;
+  - פתיחה ל-Lightbox ולעריכה;
+  - החלטות ידניות `KEEP / KEEP_SECONDARY / HIDE / DELETE / CHANGE_CATEGORY`;
+  - persistence של final owner decision;
+  - export מלא של דוח הפיילוט.
+- לא בוצע שום `HIDE` או `DELETE` בפועל.
+- אין שינוי אוטומטי בקטגוריה או בסדר הגלריה.
+- `PAYMENTS_ENABLED=false` נשאר ללא שינוי.
+- PayPal PR #76 נשאר נפרד ולא למזג.
+- Gelato מחוץ לתוכנית.
+
+### נקודת המשך למחר
+
+1. להיכנס ל-Admin → תמונות.
+2. לבחור `פיילוט קיורציה — פרחים וצמחים` ואז `עדיפות גבוהה`.
+3. לבצע visual review ידני ל-12 התמונות בעדיפות גבוהה.
+4. לכל תמונה לבחור רק אחרי צפייה: `KEEP`, `KEEP_SECONDARY`, `HIDE`, `DELETE` או `CHANGE_CATEGORY`.
+5. אם יש ספק — להשאיר REVIEW ולא להסתיר/למחוק.
+6. אחרי סיום 12 התמונות: לייצא `flower-curation-owner-review.json` ולעבור על התוצאות לפני הרחבה לקטגוריה נוספת.
+
+מצב branch בסיום היום: `feature/admin-flower-curation-pilot-2026-10-01`; PR #93 Draft; head `3d3982b18f8ab3dbd7375ae02c3497d5353aca77`.
+
+
+### Drive sync preservation guard — Flower curation — 2.10.2026
+
+נבדקה שרשרת Google Drive → `data/photos.json` → D1/R2 כדי לוודא שהחלטות ידניות באדמין נשמרות.
+
+ממצאים:
+- `title` / `description` / `category` שנערכים באדמין נשמרים ב-D1, שהוא המקור הראשי בגלריה, ולכן סריקת Drive לא דורסת אותם.
+- `HIDE` נשמר כ-`published=0` ב-D1.
+- נמצא פער: `auto_import_new_photos.py` קרא בעבר את `/api/photos` הציבורי ולכן לא ראה hidden photos; בנוסף, תמונה שנמחקה מ-D1 אך עדיין נשארה ב-Drive הייתה יכולה להיחשב חדשה ולהיות מיובאת מחדש.
+
+תיקון:
+- importer קורא מעכשיו `/api/photos?admin=1` עם auth, ולכן רואה גם `published=0` ולא מעלה hidden photos מחדש.
+- importer קורא גם `/api/admin/curation-decisions` ומייצר tombstone לכל `DELETE`.
+- Drive ID שסומן `DELETE` לא ייובא מחדש כל עוד החלטת הקיורציה נשמרת, גם אם הקובץ עדיין קיים ב-Google Drive.
+- קריאת tombstones היא fail-closed: אם אי אפשר לקרוא את החלטות הקיורציה, הייבוא נעצר במקום להסתכן בהחזרת תמונה שנמחקה.
+- ב-Admin נשמר `DELETE` tombstone לפני המחיקה מ-D1/R2; אם המחיקה נכשלת, ההחלטה הקודמת משוחזרת.
+
+משמעות לעבודה הידנית:
+- `KEEP` / `KEEP_SECONDARY`: נשמרים כהחלטת בעלים.
+- `HIDE`: נשאר hidden גם אחרי הסריקה היומית.
+- `CHANGE_CATEGORY`: הקטגוריה ב-D1 נשמרת ואינה נדרסת על ידי Drive.
+- `DELETE`: לא חוזר לפרודקשן בריצה היומית, גם אם המקור נשאר ב-Drive.
+
+אין שינוי ב-PayPal/Gelato, אין שינוי אוטומטי בסדר הגלריה.
