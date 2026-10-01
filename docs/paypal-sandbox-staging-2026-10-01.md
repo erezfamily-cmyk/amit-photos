@@ -69,3 +69,33 @@
 - אין כתיבה ל-production D1.
 - אין Critical/High פתוח ב-security audit.
 - production `PAYMENTS_ENABLED=false` מאומת שוב.
+
+
+## מה כבר מוכן בריפו
+
+- `wrangler.paypal-sandbox.example.toml` — config מבודד ללא custom routes וללא cron.
+- `staging/paypal-sandbox-bootstrap.sql` — schema מינימלי + fixture test בלבד.
+- `tests/paypal-staging-isolation.test.mjs` — guard שמונע שימוש ב-production D1/R2/domain ושומר production `PAYMENTS_ENABLED=false`.
+- `.github/workflows/paypal-sandbox-staging.yml` — workflow ידני בלבד. הוא דורש:
+  - staging D1 database ID.
+  - הקלדה מפורשת של `DEPLOY_PAYPAL_SANDBOX_STAGING`.
+  - הוא מסרב להמשיך אם ה-ID שווה ל-production D1 ID.
+
+Full Node suite לאחר staging guard: **334/334 pass, 0 fail**.
+
+## מה עדיין דורש פעולה ב-Cloudflare
+
+1. ליצור D1 בשם `amit-photos-paypal-sandbox-db`.
+2. ליצור R2 בשם `amit-photos-paypal-sandbox-images`.
+3. להריץ על ה-D1 החדש בלבד את `staging/paypal-sandbox-bootstrap.sql`.
+4. להריץ את workflow `Deploy PayPal Sandbox Staging` עם ה-D1 ID החדש.
+5. ב-Worker staging להגדיר Sandbox secrets:
+   - `PAYPAL_CLIENT_ID`
+   - `PAYPAL_CLIENT_SECRET`
+   - `ADMIN_PASSWORD` נפרד מ-production.
+6. אחרי שיש URL workers.dev, ליצור ב-PayPal Sandbox webhook ל:
+   `/api/paypal/webhook`
+   ולשמור את ה-`PAYPAL_WEBHOOK_ID` כ-Secret ב-Worker staging.
+7. רק אז להריץ Sandbox E2E.
+
+לא להעתיק נתוני משתמשים או orders מ-production ל-staging.
