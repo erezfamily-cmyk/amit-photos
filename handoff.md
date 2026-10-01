@@ -215,3 +215,25 @@ Business docs מגדירים UTM convention וניסוי attribution של 7 ימ
 
 הערה: סביבת העבודה של ChatGPT לא הצליחה לבצע clone ישיר מ-GitHub בגלל חסימת DNS, ולכן האימות המקומי לא נחשב. ה-CI ב-GitHub הוא מקור האימות הבא לפני Ready/Merge.
 
+
+
+### PR #79 final QA — 1.10.2026
+
+סבב QA נוסף מצא ותיקן שני פערי סמנטיקה במדידה:
+- `generate_lead` נשלח בעבר גם עבור subscriber חדש שביקש Free Guide אך **לא** נתן marketing consent. זה היה מערבב lead magnet delivery עם owned marketing audience.
+- נוסף flag שרת לא-רגיש `lead_created`, והוא true רק כאשר:
+  - subscriber חדש נתן marketing consent, או
+  - subscriber קיים שודרג כעת מ-0/NULL ל-1.
+- כל מקורות ההרשמה משתמשים כעת ב-`lead_created` במקום להסיק lead מ-`already`.
+
+בנוסף:
+- subscriber summary מפריד כעת בין:
+  - new subscribers בתקופה לפי source,
+  - marketing opt-ins/upgrades בתקופה לפי `consent_marketing_at`,
+  - current marketing audience.
+- ה-KPI בדוח נקרא במפורש `new_subscriber_marketing_opt_in_pct`, ובנפרד נשמר `period_marketing_opt_ins`.
+- נוספו tests שמכסים guide-only ללא marketing consent לעומת guide+marketing.
+- Lead Funnel CI עבר בהצלחה: Node tests + Python syntax check.
+
+PR #79 יכול לעבור ל-Ready for Review. אין merge/deploy אוטומטי במסגרת הסבב הזה.
+
