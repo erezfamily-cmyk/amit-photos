@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { handlePayPalCreateOrder, handlePayPalCaptureOrder } from '../paypal-orders.js';
+import worker, { handlePayPalCreateOrder, handlePayPalCaptureOrder, handlePayPalSandboxStatus } from '../worker.js';
 
 function makeDb(options = {}) {
   const state = {
@@ -368,6 +368,115 @@ test('resume from FULFILLING reuses the locked fulfillment token without calling
     assert.equal(body.url, '/api/download/locked-token-123');
     assert.equal(db.state.tokenInserts, 1);
     assert.equal(fetchCalls, 0);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+
+test('sandbox status authenticates against PayPal while payments stay disabled', async () => {
+  const env = {
+    PAYMENTS_ENABLED: 'false',
+    PAYPAL_CLIENT_ID: 'sandbox-client',
+    PAYPAL_CLIENT_SECRET: 'sandbox-secret',
+  };
+  const originalFetch = globalThis.fetch;
+  let calls = 0;
+  globalThis.fetch = async (url) => {
+    calls += 1;
+    assert.match(String(url), /api-m\.sandbox\.paypal\.com\/v1\/oauth2\/token$/);
+    return Response.json({ access_token: 'access-token' });
+  };
+  try {
+    const response = await handlePayPalSandboxStatus(
+      new Request('https://amitphotos.com/api/admin/paypal/sandbox-status'),
+      env
+    );
+    assert.equal(response.status, 200);
+    assert.deepEqual(await response.json(), {
+      ok: true,
+      environment: 'sandbox',
+      paymentsEnabled: false,
+      credentialsConfigured: true,
+    });
+    assert.equal(calls, 1);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test('admin sandbox route rejects unauthenticated callers before contacting PayPal', async () => {
+  const env = {
+    PAYMENTS_ENABLED: 'false',
+    PAYPAL_CLIENT_ID: 'sandbox-client',
+    PAYPAL_CLIENT_SECRET: 'sandbox-secret',
+    DB: {
+      prepare() {
+        return {
+          bind() {
+            return { first: async () => null };
+          },
+        };
+      },
+    },
+  };
+
+  const originalFetch = globalThis.fetch;
+  let calls = 0;
+  globalThis.fetch = async () => {
+    calls += 1;
+    throw new Error('must not contact PayPal');
+  };
+  try {
+    const response = await worker.fetch(
+      new Request('https://amitphotos.com/api/admin/paypal/sandbox-status'),
+      env,
+      { waitUntil() {} }
+    );
+    assert.equal(response.status, 401);
+    assert.equal(calls, 0);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test('admin create-order can use Sandbox while the public payment flag remains false', async () => {
+  const db = makeDb();
+  const env = {
+    PAYMENTS_ENABLED: 'false',
+    PAYPAL_CLIENT_ID: 'sandbox-client',
+    PAYPAL_CLIENT_SECRET: 'sandbox-secret',
+    DB: db,
+  };
+
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async (url) => {
+    if (String(url).endsWith('/v1/oauth2/token')) {
+      return Response.json({ access_token: 'access-token' });
+    }
+    return Response.json({
+      id: 'PAYPALADMIN123',
+      status: 'CREATED',
+      links: [{ rel: 'approve', href: 'https://www.sandbox.paypal.com/checkoutnow?token=PAYPALADMIN123' }],
+    }, { status: 201 });
+  };
+
+  try {
+    const publicResponse = await handlePayPalCreateOrder(
+      post('/api/paypal/create-order', { type: 'digital', photoId: 'photo-1', sku: 'small' }),
+      env
+    );
+    assert.equal(publicResponse.status, 503);
+
+    const adminResponse = await handlePayPalCreateOrder(
+      post('/api/admin/paypal/create-order', { type: 'digital', photoId: 'photo-1', sku: 'small' }),
+      env,
+      { allowWhenPaymentsDisabled: true, includeApproveUrl: true }
+    );
+    assert.equal(adminResponse.status, 201);
+    const body = await adminResponse.json();
+    assert.equal(body.paypalOrderId, 'PAYPALADMIN123');
+    assert.match(body.approveUrl, /^https:\/\/www\.sandbox\.paypal\.com\//);
   } finally {
     globalThis.fetch = originalFetch;
   }
