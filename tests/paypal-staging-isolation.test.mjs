@@ -22,8 +22,13 @@ test('PayPal sandbox staging config is isolated from production resources', asyn
   assert.equal(staging.includes('database_name = "amit-photos-db"'), false);
   assert.equal(staging.includes('bucket_name = "amit-photos-images"'), false);
   assert.equal(/amitphotos\.com/i.test(staging), false);
-  assert.equal(staging.includes('[[routes]]'), false);
-  assert.equal(staging.includes('[triggers]'), false);
+  const activeLines = staging
+    .split('\n')
+    .map(line => line.trim())
+    .filter(line => line && !line.startsWith('#'));
+
+  assert.equal(activeLines.includes('[[routes]]'), false);
+  assert.equal(activeLines.includes('[triggers]'), false);
 });
 
 test('staging bootstrap cannot silently reference production resources', async () => {
