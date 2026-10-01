@@ -10,6 +10,7 @@ keep_vars = true
 
 [vars]
 PAYMENTS_ENABLED = "true"
+PAYPAL_SANDBOX_CLEANUP_ENABLED = "true"
 
 [assets]
 directory = "."
