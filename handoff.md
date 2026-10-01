@@ -813,3 +813,38 @@ Guardrails נשארו:
 - PayPal/Gelato לא שונו.
 - `PAYMENTS_ENABLED=false` נשאר ללא שינוי.
 - PR #93 נשאר Draft עד QA.
+
+
+### End-of-day handoff — Flower curation pilot — 1.10.2026
+
+- PR #93 נשאר **Draft** ולא מוזג ל-`main`.
+- כל ארבעת ה-checks האחרונים עברו:
+  - Admin Flower Curation Pilot CI ✅
+  - Admin Campaign Links CI ✅
+  - Lead Funnel CI ✅
+  - Business Live Verification ✅
+- תוקן טסט ישן שהיה תלוי בניסוח מדויק של guardrail; לא הייתה רגרסיה התנהגותית.
+- ה-Admin כולל כעת:
+  - פילטר `פיילוט קיורציה — פרחים וצמחים`;
+  - פילטר `עדיפות גבוהה`;
+  - recommendation + reasons + resolution + published status;
+  - פתיחה ל-Lightbox ולעריכה;
+  - החלטות ידניות `KEEP / KEEP_SECONDARY / HIDE / DELETE / CHANGE_CATEGORY`;
+  - persistence של final owner decision;
+  - export מלא של דוח הפיילוט.
+- לא בוצע שום `HIDE` או `DELETE` בפועל.
+- אין שינוי אוטומטי בקטגוריה או בסדר הגלריה.
+- `PAYMENTS_ENABLED=false` נשאר ללא שינוי.
+- PayPal PR #76 נשאר נפרד ולא למזג.
+- Gelato מחוץ לתוכנית.
+
+### נקודת המשך למחר
+
+1. להיכנס ל-Admin → תמונות.
+2. לבחור `פיילוט קיורציה — פרחים וצמחים` ואז `עדיפות גבוהה`.
+3. לבצע visual review ידני ל-12 התמונות בעדיפות גבוהה.
+4. לכל תמונה לבחור רק אחרי צפייה: `KEEP`, `KEEP_SECONDARY`, `HIDE`, `DELETE` או `CHANGE_CATEGORY`.
+5. אם יש ספק — להשאיר REVIEW ולא להסתיר/למחוק.
+6. אחרי סיום 12 התמונות: לייצא `flower-curation-owner-review.json` ולעבור על התוצאות לפני הרחבה לקטגוריה נוספת.
+
+מצב branch בסיום היום: `feature/admin-flower-curation-pilot-2026-10-01`; PR #93 Draft; head `3d3982b18f8ab3dbd7375ae02c3497d5353aca77`.
