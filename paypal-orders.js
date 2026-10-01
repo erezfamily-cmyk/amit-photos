@@ -140,6 +140,222 @@ export async function handlePayPalSandboxStatus(request, env) {
   }
 }
 
+function paypalWebhookHeaders(request) {
+  return {
+    auth_algo: request.headers.get('PAYPAL-AUTH-ALGO'),
+    cert_url: request.headers.get('PAYPAL-CERT-URL'),
+    transmission_id: request.headers.get('PAYPAL-TRANSMISSION-ID'),
+    transmission_sig: request.headers.get('PAYPAL-TRANSMISSION-SIG'),
+    transmission_time: request.headers.get('PAYPAL-TRANSMISSION-TIME'),
+  };
+}
+
+function validWebhookHeaders(headers) {
+  return Object.values(headers).every(value => typeof value === 'string' && value.length > 0);
+}
+
+async function verifyPayPalWebhook(request, env, rawBody) {
+  if (!env.PAYPAL_WEBHOOK_ID) return { ok: false, error: 'PAYPAL_WEBHOOK_ID_MISSING' };
+
+  const headers = paypalWebhookHeaders(request);
+  if (!validWebhookHeaders(headers)) return { ok: false, error: 'PAYPAL_WEBHOOK_HEADERS_MISSING' };
+
+  let webhookEvent;
+  try {
+    webhookEvent = JSON.parse(rawBody);
+  } catch {
+    return { ok: false, error: 'PAYPAL_WEBHOOK_INVALID_JSON' };
+  }
+
+  const accessToken = await getPayPalAccessToken(env);
+  const response = await fetch(paypalApiBase() + '/v1/notifications/verify-webhook-signature', {
+    method: 'POST',
+    headers: {
+      'Authorization': 'Bearer ' + accessToken,
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    },
+    body: JSON.stringify({
+      ...headers,
+      webhook_id: env.PAYPAL_WEBHOOK_ID,
+      webhook_event: webhookEvent,
+    }),
+  });
+  const verification = await response.json().catch(() => ({}));
+  if (!response.ok || verification.verification_status !== 'SUCCESS') {
+    return { ok: false, error: 'PAYPAL_WEBHOOK_SIGNATURE_INVALID' };
+  }
+  return { ok: true, event: webhookEvent, accessToken };
+}
+
+async function markWebhookProcessed(env, eventId) {
+  await env.DB.prepare(
+    'UPDATE paypal_webhook_events SET processed=1 WHERE event_id=?'
+  ).bind(eventId).run();
+}
+
+async function processCompletedCaptureWebhook(request, env, event, accessToken) {
+  const resource = event.resource || {};
+  const paypalOrderId = resource.supplementary_data?.related_ids?.order_id;
+  const captureId = resource.id;
+  const captureMinor = moneyToMinorUnits(resource.amount?.value);
+
+  if (
+    typeof paypalOrderId !== 'string' ||
+    !paypalOrderId ||
+    typeof captureId !== 'string' ||
+    !captureId ||
+    resource.status !== 'COMPLETED'
+  ) {
+    return { ok: false, status: 400, error: 'PAYPAL_WEBHOOK_CAPTURE_INVALID' };
+  }
+
+  let order = await env.DB.prepare(
+    'SELECT * FROM paypal_orders WHERE paypal_order_id=?'
+  ).bind(paypalOrderId).first();
+
+  // Unknown orders are acknowledged but not fulfilled. This endpoint must not
+  // create entitlements for transactions that did not originate locally.
+  if (!order) return { ok: true, ignored: true };
+
+  if (
+    resource.amount?.currency_code !== order.currency ||
+    captureMinor !== order.amount_expected
+  ) {
+    return { ok: false, status: 409, error: 'PAYPAL_WEBHOOK_AMOUNT_MISMATCH' };
+  }
+
+  const orderResponse = await fetch(
+    paypalApiBase() + '/v2/checkout/orders/' + encodeURIComponent(paypalOrderId),
+    {
+      method: 'GET',
+      headers: {
+        'Authorization': 'Bearer ' + accessToken,
+        'Accept': 'application/json',
+      },
+    }
+  );
+  const authoritative = await orderResponse.json().catch(() => ({}));
+  if (!orderResponse.ok) {
+    return { ok: false, status: 502, error: 'PAYPAL_WEBHOOK_ORDER_LOOKUP_FAILED' };
+  }
+
+  const authoritativeCapture = authoritative.purchase_units?.[0]?.payments?.captures?.find(
+    item => item?.id === captureId
+  );
+  if (
+    authoritative.id !== paypalOrderId ||
+    authoritative.status !== 'COMPLETED' ||
+    authoritative.purchase_units?.[0]?.custom_id !== order.id ||
+    authoritativeCapture?.status !== 'COMPLETED' ||
+    authoritativeCapture?.amount?.currency_code !== order.currency ||
+    moneyToMinorUnits(authoritativeCapture?.amount?.value) !== order.amount_expected
+  ) {
+    return { ok: false, status: 409, error: 'PAYPAL_WEBHOOK_IDENTITY_MISMATCH' };
+  }
+
+  if (order.status === 'COMPLETED' && order.fulfillment_json) {
+    return { ok: true, alreadyCompleted: true };
+  }
+
+  if (order.order_type !== 'digital') {
+    return { ok: true, ignored: true };
+  }
+
+  if (order.status !== 'FULFILLING' || !order.paypal_capture_id || !order.fulfillment_token) {
+    const fulfillmentToken = crypto.randomUUID();
+    const claim = await env.DB.prepare(
+      "UPDATE paypal_orders SET status='FULFILLING', paypal_capture_id=?, fulfillment_token=? WHERE paypal_order_id=? AND status NOT IN ('FULFILLING','COMPLETED')"
+    ).bind(captureId, fulfillmentToken, paypalOrderId).run();
+
+    if ((claim.meta?.changes || 0) > 0) {
+      order = { ...order, status: 'FULFILLING', paypal_capture_id: captureId, fulfillment_token: fulfillmentToken };
+    } else {
+      order = await env.DB.prepare(
+        'SELECT * FROM paypal_orders WHERE paypal_order_id=?'
+      ).bind(paypalOrderId).first();
+    }
+  }
+
+  if (order?.status === 'COMPLETED' && order.fulfillment_json) {
+    return { ok: true, alreadyCompleted: true };
+  }
+
+  if (
+    order?.status !== 'FULFILLING' ||
+    order.paypal_capture_id !== captureId ||
+    !order.fulfillment_token
+  ) {
+    return { ok: false, status: 409, error: 'PAYPAL_WEBHOOK_FULFILLMENT_STATE_MISMATCH' };
+  }
+
+  const fulfillmentResponse = await finalizeDigitalPayPalOrder(request, env, order);
+  if (!fulfillmentResponse.ok) {
+    return { ok: false, status: fulfillmentResponse.status, error: 'PAYPAL_WEBHOOK_FULFILLMENT_FAILED' };
+  }
+  return { ok: true };
+}
+
+export async function handlePayPalWebhook(request, env) {
+  if (request.method !== 'POST') return jsonRes({ error: 'method not allowed' }, 405, request);
+
+  const rawBody = await request.text();
+  let verified;
+  try {
+    verified = await verifyPayPalWebhook(request, env, rawBody);
+  } catch {
+    return jsonRes({ error: 'PayPal webhook verification failed' }, 502, request);
+  }
+  if (!verified.ok) {
+    const status = verified.error === 'PAYPAL_WEBHOOK_SIGNATURE_INVALID' ? 401 : 400;
+    return jsonRes({ error: verified.error }, status, request);
+  }
+
+  const event = verified.event;
+  if (
+    typeof event?.id !== 'string' ||
+    !event.id ||
+    typeof event?.event_type !== 'string' ||
+    !event.event_type
+  ) {
+    return jsonRes({ error: 'PAYPAL_WEBHOOK_EVENT_INVALID' }, 400, request);
+  }
+
+  const existing = await env.DB.prepare(
+    'SELECT processed FROM paypal_webhook_events WHERE event_id=?'
+  ).bind(event.id).first();
+  if (existing?.processed === 1) {
+    return jsonRes({ ok: true, duplicate: true }, 200, request);
+  }
+
+  await env.DB.prepare(
+    'INSERT OR IGNORE INTO paypal_webhook_events (event_id, event_type, received_at, processed) VALUES (?, ?, ?, 0)'
+  ).bind(event.id, event.event_type, new Date().toISOString()).run();
+
+  if (event.event_type !== 'PAYMENT.CAPTURE.COMPLETED') {
+    await markWebhookProcessed(env, event.id);
+    return jsonRes({ ok: true, ignored: true }, 200, request);
+  }
+
+  const processed = await processCompletedCaptureWebhook(
+    request,
+    env,
+    event,
+    verified.accessToken
+  );
+  if (!processed.ok) {
+    return jsonRes({ error: processed.error }, processed.status || 500, request);
+  }
+
+  await markWebhookProcessed(env, event.id);
+  return jsonRes({
+    ok: true,
+    duplicate: false,
+    ignored: !!processed.ignored,
+    alreadyCompleted: !!processed.alreadyCompleted,
+  }, 200, request);
+}
+
 async function resolveDigitalPayPalPrice(env, photoId, size, currency) {
   if (!photoId || typeof photoId !== 'string' || photoId.length > 200) return { error: 'photoId לא תקין', status: 400 };
   if (!DIGITAL_SIZES.has(size)) return { error: 'גודל לא תקין', status: 400 };
