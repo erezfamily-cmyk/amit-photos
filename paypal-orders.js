@@ -36,6 +36,13 @@ function paypalApiBase() {
   return PAYPAL_SANDBOX_API;
 }
 
+function payerApprovalUrl(order) {
+  if (!Array.isArray(order?.links)) return null;
+  return order.links.find(link => link.rel === 'approve')?.href
+    || order.links.find(link => link.rel === 'payer-action')?.href
+    || null;
+}
+
 function moneyToMinorUnits(value) {
   const text = String(value ?? '');
   if (!/^\d+(?:\.\d{1,2})?$/.test(text)) return null;
@@ -472,7 +479,7 @@ export async function handlePayPalCreateOrder(request, env, options = {}) {
         );
         const order = await response.json().catch(() => ({}));
         if (response.ok) {
-          result.approveUrl = Array.isArray(order.links) ? order.links.find(link => link.rel === 'approve')?.href || null : null;
+          result.approveUrl = payerApprovalUrl(order);
         }
       } catch {}
     }
@@ -561,7 +568,7 @@ export async function handlePayPalCreateOrder(request, env, options = {}) {
     return jsonRes({ error: 'Could not persist PayPal order' }, 500, request);
   }
 
-  const approveUrl = Array.isArray(paypalOrder.links) ? paypalOrder.links.find(link => link.rel === 'approve')?.href || null : null;
+  const approveUrl = payerApprovalUrl(paypalOrder);
   const result = { paypalOrderId: paypalOrder.id };
   if (options.includeApproveUrl) result.approveUrl = approveUrl;
   return jsonRes(result, 201, request);
