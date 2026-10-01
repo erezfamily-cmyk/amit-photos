@@ -848,3 +848,28 @@ Guardrails נשארו:
 6. אחרי סיום 12 התמונות: לייצא `flower-curation-owner-review.json` ולעבור על התוצאות לפני הרחבה לקטגוריה נוספת.
 
 מצב branch בסיום היום: `feature/admin-flower-curation-pilot-2026-10-01`; PR #93 Draft; head `3d3982b18f8ab3dbd7375ae02c3497d5353aca77`.
+
+
+### Drive sync preservation guard — Flower curation — 2.10.2026
+
+נבדקה שרשרת Google Drive → `data/photos.json` → D1/R2 כדי לוודא שהחלטות ידניות באדמין נשמרות.
+
+ממצאים:
+- `title` / `description` / `category` שנערכים באדמין נשמרים ב-D1, שהוא המקור הראשי בגלריה, ולכן סריקת Drive לא דורסת אותם.
+- `HIDE` נשמר כ-`published=0` ב-D1.
+- נמצא פער: `auto_import_new_photos.py` קרא בעבר את `/api/photos` הציבורי ולכן לא ראה hidden photos; בנוסף, תמונה שנמחקה מ-D1 אך עדיין נשארה ב-Drive הייתה יכולה להיחשב חדשה ולהיות מיובאת מחדש.
+
+תיקון:
+- importer קורא מעכשיו `/api/photos?admin=1` עם auth, ולכן רואה גם `published=0` ולא מעלה hidden photos מחדש.
+- importer קורא גם `/api/admin/curation-decisions` ומייצר tombstone לכל `DELETE`.
+- Drive ID שסומן `DELETE` לא ייובא מחדש כל עוד החלטת הקיורציה נשמרת, גם אם הקובץ עדיין קיים ב-Google Drive.
+- קריאת tombstones היא fail-closed: אם אי אפשר לקרוא את החלטות הקיורציה, הייבוא נעצר במקום להסתכן בהחזרת תמונה שנמחקה.
+- ב-Admin נשמר `DELETE` tombstone לפני המחיקה מ-D1/R2; אם המחיקה נכשלת, ההחלטה הקודמת משוחזרת.
+
+משמעות לעבודה הידנית:
+- `KEEP` / `KEEP_SECONDARY`: נשמרים כהחלטת בעלים.
+- `HIDE`: נשאר hidden גם אחרי הסריקה היומית.
+- `CHANGE_CATEGORY`: הקטגוריה ב-D1 נשמרת ואינה נדרסת על ידי Drive.
+- `DELETE`: לא חוזר לפרודקשן בריצה היומית, גם אם המקור נשאר ב-Drive.
+
+אין שינוי ב-PayPal/Gelato, אין שינוי אוטומטי בסדר הגלריה.

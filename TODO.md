@@ -819,6 +819,7 @@ PayPal חוזר רק כמסלול **Digital-only canary**, ורק אם:
 - [x] להוסיף שמירת final owner decision נפרדת מה-recommendation.
 - [x] להוסיף פעולות ידניות KEEP / KEEP_SECONDARY / HIDE / DELETE / CHANGE_CATEGORY.
 - [x] להוסיף export של דוח מלא עם published status ו-final owner decision.
+- [x] להגן על HIDE/DELETE מפני דריסה או re-import בסריקת Google Drive היומית.
 - [ ] לבצע visual review בפועל על המועמדות בעדיפות גבוהה.
 - [ ] לאחר visual review: להחליט ידנית KEEP / HIDE / DELETE / RE-CATEGORY.
 - [ ] למדוד אם תהליך הפיילוט ברור ונוח לפני הרחבה לקטגוריה נוספת.

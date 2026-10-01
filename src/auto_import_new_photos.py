@@ -117,19 +117,58 @@ def import_to_d1(photo, url, thumbnail, r2_key, dry_run):
         return "skipped"
     return "inserted"
 
-def filter_new_photos(photos_json, d1_ids, d1_filenames):
+def fetch_curation_delete_ids():
+    """מחזיר Drive IDs שסומנו DELETE בקיורציה.
+
+    Fail-closed: אם אי אפשר לקרוא את החלטות הקיורציה, לא ממשיכים בייבוא.
+    כך תמונה שנמחקה ידנית לא יכולה לחזור לפרודקשן בגלל תקלה זמנית.
+    """
+    headers = {"X-Admin-Password": ADMIN_PASSWORD}
+    last_error = None
+    for attempt in range(3):
+        try:
+            r = requests.get(
+                f"{WORKER_URL}/api/admin/curation-decisions",
+                headers=headers,
+                timeout=30,
+            )
+            if not r.ok:
+                raise RuntimeError(f"curation decisions {r.status_code}: {r.text[:100]}")
+            decisions = r.json().get("decisions", {})
+            return {
+                photo_id
+                for photo_id, payload in decisions.items()
+                if isinstance(payload, dict) and payload.get("decision") == "DELETE"
+            }
+        except Exception as exc:
+            last_error = exc
+            if attempt < 2:
+                time.sleep(2 ** attempt)
+    raise RuntimeError(f"לא ניתן לקרוא החלטות קיורציה; הייבוא נעצר כדי למנוע re-import: {last_error}")
+
+
+def filter_new_photos(photos_json, d1_ids, d1_filenames, deleted_curation_ids=None):
     """תמונה נחשבת חדשה רק לפי Drive ID (photo['id']) — זהו המזהה היחיד שקובע.
-    filename תואם ל-D1 יכול לייצר אזהרה בלבד (כותרות AI חוזרות בין תמונות שונות
-    לא אמורות לחסום ייבוא של Drive ID אמיתי וחדש)."""
+
+    hidden photos כבר קיימות ב-D1 ולכן אינן חדשות.
+    תמונה שסומנה DELETE בקיורציה היא tombstone: כל עוד הקובץ נשאר ב-Drive
+    אסור לייבא אותה מחדש.
+    filename תואם ל-D1 יכול לייצר אזהרה בלבד.
+    """
+    deleted_curation_ids = deleted_curation_ids or set()
     new_photos = []
     for p in photos_json:
-        if not p.get("id") or p["id"] in d1_ids:
+        photo_id = p.get("id")
+        if not photo_id or photo_id in d1_ids:
+            continue
+        if photo_id in deleted_curation_ids:
+            print(f"🛑 {photo_id[:20]}: סומן DELETE בקיורציה — לא מיובא מחדש מ-Drive")
             continue
         if "drive.google" not in (p.get("url") or ""):
             continue
         fname = (p.get("filename") or "").strip()
         if fname and fname in d1_filenames:
-            print(f"⚠️  {p['id'][:20]}: filename '{fname}' תואם תמונה קיימת ב-D1 (Drive ID שונה) — מיובא בכל זאת")
+            print(f"⚠️  {photo_id[:20]}: filename '{fname}' תואם תמונה קיימת ב-D1 (Drive ID שונה) — מיובא בכל זאת")
         new_photos.append(p)
     return new_photos
 
@@ -144,17 +183,32 @@ def main():
         print("❌ חסר ADMIN_PASSWORD")
         sys.exit(1)
 
-    # מי כבר ב-D1 — Drive ID הוא המזהה הקובע; filename משמש רק לאזהרה (ראה filter_new_photos)
-    print("🔍 מביא רשימת D1...")
-    r = requests.get(f"{WORKER_URL}/api/photos", timeout=30)
+    # מי כבר ב-D1 — כולל hidden/draft. חשוב להשתמש ב-admin=1 כדי ש-published=0
+    # לא ייראה בטעות כ"תמונה חדשה" ויגרום להעלאה חוזרת מ-Drive.
+    print("🔍 מביא רשימת D1 מלאה (כולל hidden)...")
+    admin_headers = {"X-Admin-Password": ADMIN_PASSWORD}
+    r = requests.get(
+        f"{WORKER_URL}/api/photos?admin=1",
+        headers=admin_headers,
+        timeout=30,
+    )
+    r.raise_for_status()
     d1_photos = r.json()
     d1_ids       = {p["id"] for p in d1_photos}
     d1_filenames = {(p.get("filename") or "").strip() for p in d1_photos if p.get("filename")}
     print(f"   D1: {len(d1_ids)} תמונות, {len(d1_filenames)} עם filename")
 
-    # מה ב-photos.json — חדש = Drive ID לא קיים ב-D1
+    deleted_curation_ids = fetch_curation_delete_ids()
+    print(f"   Curation DELETE tombstones: {len(deleted_curation_ids)}")
+
+    # מה ב-photos.json — חדש = Drive ID לא קיים ב-D1 ולא סומן DELETE בקיורציה.
     photos_json = json.loads(PHOTOS_JSON.read_text(encoding="utf-8"))
-    new_photos = filter_new_photos(photos_json, d1_ids, d1_filenames)
+    new_photos = filter_new_photos(
+        photos_json,
+        d1_ids,
+        d1_filenames,
+        deleted_curation_ids,
+    )
     print(f"   חדשות ממש מ-Drive: {len(new_photos)}")
 
     if not new_photos:

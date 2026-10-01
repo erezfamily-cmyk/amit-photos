@@ -3553,14 +3553,31 @@ const Photos = (() => {
           return;
         }
         if (!confirm('מחיקה לצמיתות: התמונה תימחק מ-D1 ומ-R2 ולא ניתן לבטל את הפעולה. למחוק?')) return;
+
+        // שומרים קודם tombstone של DELETE. כך גם אם הקובץ עדיין נמצא ב-Google Drive,
+        // הריצה היומית לא תוכל לייבא אותו מחדש אחרי המחיקה.
+        const previousDecision = curationDecisions.get(id) || null;
+        await saveCurationDecision(id, 'DELETE');
+
         const res = await fetch('/api/photos?id=' + encodeURIComponent(id), { method: 'DELETE', headers: authHeaders() });
         const payload = await res.json().catch(() => ({}));
-        if (!res.ok) throw new Error(payload.error || 'מחיקת התמונה נכשלה');
-        await saveCurationDecision(id, 'DELETE');
+        if (!res.ok) {
+          // אם המחיקה עצמה נכשלה, החזר את החלטת הקיורציה הקודמת כדי שה-UI יישאר עקבי.
+          if (previousDecision?.decision) {
+            await saveCurationDecision(id, previousDecision.decision, {
+              category: previousDecision.category || '',
+              note: previousDecision.note || ''
+            });
+          } else {
+            await saveCurationDecision(id, '');
+          }
+          throw new Error(payload.error || 'מחיקת התמונה נכשלה');
+        }
+
         data = data.filter(p => p.id !== id);
         $('curation-dialog').close();
         render();
-        toast('התמונה נמחקה לצמיתות');
+        toast('התמונה נמחקה לצמיתות ולא תיובא מחדש מ-Drive');
         return;
       }
 

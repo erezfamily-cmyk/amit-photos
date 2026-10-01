@@ -63,3 +63,15 @@ test('hide is reversible and delete stays explicitly destructive', () => {
   assert.match(admin, /מחיקה לצמיתות/);
   assert.match(admin, /לא ניתן לבטל/);
 });
+
+
+test('Drive sync preserves hidden photos and DELETE curation decisions', () => {
+  const importer = fs.readFileSync('src/auto_import_new_photos.py', 'utf8');
+  assert.match(importer, /\/api\/photos\?admin=1/);
+  assert.match(importer, /X-Admin-Password/);
+  assert.match(importer, /fetch_curation_delete_ids/);
+  assert.match(importer, /Curation DELETE tombstones/);
+  assert.match(importer, /סומן DELETE בקיורציה/);
+  assert.match(admin, /שומרים קודם tombstone של DELETE/);
+  assert.match(admin, /לא תיובא מחדש מ-Drive/);
+});
