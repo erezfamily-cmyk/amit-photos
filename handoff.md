@@ -243,3 +243,12 @@ PAYMENTS_ENABLED = "false"   ב-wrangler.toml (production)
 - This verifies the staging Worker can authenticate server-to-server with PayPal Sandbox using the rotated Sandbox secret stored in Cloudflare.
 - Production remains `PAYMENTS_ENABLED=false`.
 - Next: create a real PayPal Sandbox order for fixture `paypal-sandbox-test-photo`, approve with Sandbox buyer, then capture and verify D1/token state.
+
+
+### PayPal Sandbox create-order E2E — 1.10.2026
+
+- Authenticated POST to `/api/admin/paypal/create-order` succeeded against the isolated staging Worker.
+- Fixture: `paypal-sandbox-test-photo`, SKU `small`, currency `ILS`.
+- PayPal Sandbox returned a real `paypalOrderId` and `approveUrl`.
+- This confirms staging can create an Orders v2 order server-to-server and persist the local order path far enough to return approval.
+- No real payment occurred; next step is approval using the PayPal Sandbox Personal buyer account, then capture and D1/token verification.
