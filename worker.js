@@ -7776,7 +7776,9 @@ export default {
     }
     if (path === '/api/paypal/create-order')  return handlePayPalCreateOrder(request, env);
     if (path === '/api/paypal/capture-order') return handlePayPalCaptureOrder(request, env);
-    if (path === '/api/verify-payment')    return handleVerifyPayment(request, env, ctx);
+    if (path === '/api/verify-payment') {
+      return jsonRes({ error: 'LEGACY_PAYMENT_ENDPOINT_REMOVED' }, 410, request);
+    }
     if (path === '/api/payments-status')   return handlePaymentsStatus(request, env);
     if (path === '/api/admin/purchases')   return handleAdminPurchases(request, env);
     if (path === '/api/admin/create-token' && request.method === 'POST') return handleAdminCreateToken(request, env);
