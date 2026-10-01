@@ -163,3 +163,19 @@ PAYMENTS_ENABLED = "false"   ב-wrangler.toml (production)
 ---
 
 *אם אתה סוכן AI שנכנס לפרויקט הזה: קרא את `CLAUDE.md` ואת המסמך הזה קודם, ואז תסתכל אם יש `docs/*-2026-*.md` חדש יותר מהתאריך שרשום כאן — אם כן, זה כנראה מעודכן יותר ממה שכתוב פה.*
+
+
+### PayPal staging deployment decision — 1.10.2026
+
+- GitHub `workflow_dispatch` for `.github/workflows/paypal-sandbox-staging.yml` cannot be relied on before that workflow exists on the default branch.
+- Because PR #76 must remain Draft and unmerged, the chosen path is **direct branch deployment to the separate Cloudflare Worker**.
+- Added `wrangler.paypal-sandbox.toml` pinned to:
+  - Worker `amit-photos-paypal-sandbox`
+  - D1 `amit-photos-paypal-sandbox-db` / ID `7b027b93-c548-4ceb-bbe9-42c45264fc23`
+  - R2 `amit-photos-paypal-sandbox-images`
+  - workers.dev only
+  - no routes
+  - no cron
+  - `keep_vars=true` so dashboard-managed Sandbox secrets are preserved.
+- Production remains untouched and `PAYMENTS_ENABLED=false`.
+- Next action: connect/deploy the staging Worker from branch `prep/paypal-orders-v2-2026-10-01`, then verify Sandbox OAuth and E2E.
