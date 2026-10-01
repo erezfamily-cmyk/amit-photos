@@ -1,7 +1,7 @@
 # Handoff — amit-photos
 
 > מסמך כניסה לכל מי (אדם או סוכן AI) שנכנס לפרויקט הזה בפעם הראשונה, או חוזר אחרי הפסקה.
-> עודכן: **30.9.2026**. זה מסמך חי — לעדכן אותו כשקורה משהו מהותי, לא לתת לו להתיישן.
+> עודכן: **1.10.2026**. זה מסמך חי — לעדכן אותו כשקורה משהו מהותי, לא לתת לו להתיישן.
 > לא מחליף את `CLAUDE.md` (כללי ארכיטקטורה מחייבים) — משלים אותו עם "מה המצב עכשיו ולמה".
 
 ---
@@ -35,6 +35,92 @@ PAYMENTS_ENABLED = "false"   ב-wrangler.toml (production)
 לארכיטקטורה מלאה (מיזוג גלריה D1+JSON, מבנה keys ב-R2, auth, קבצים מרכזיים, סקריפטי מיגרציה) — **`CLAUDE.md`** הוא המקור המחייב, לא כפול כאן.
 
 ---
+
+## 🚧 עבודה פעילה — 1.10.2026
+
+### PayPal Orders API v2 — Phase 1
+
+**החלטת בעל הפרויקט כרגע: לא לאפשר רכישה אמיתית, לא למזג את PR #76, ולא להפעיל PayPal Live.**
+
+מצב נוכחי:
+- PR #76 נשאר **Draft ולא ממוזג**.
+- `PAYMENTS_ENABLED = "false"` נשאר ללא שינוי.
+- אין רכישות ציבוריות פעילות.
+- אין PayPal Live credentials.
+- אין Webhook פעיל.
+- אין UI רכישה חדש.
+- המסלולים הציבוריים החדשים של PayPal, גם אם ייפרסו בעתיד, בנויים Fail-closed כל עוד `PAYMENTS_ENABLED != "true"`.
+
+מה כן הושלם כהכנה:
+- PayPal Developer Sandbox הוכן: Business test account, Personal buyer test account ו-Sandbox App.
+- ב-Cloudflare Production נשמרו כ-Secrets מוצפנים:
+  - `PAYPAL_CLIENT_ID`
+  - `PAYPAL_CLIENT_SECRET`
+  אלו credentials של Sandbox בלבד; הערכים עצמם אינם ב-Git.
+- D1 migration הוחל על `amit-photos-db` אחרי יצירת Time Travel bookmark:
+  - `paypal_orders`
+  - `paypal_webhook_events`
+  - `idx_paypal_orders_status`
+- מבנה שתי הטבלאות אומת ידנית ב-D1 Console.
+- נוסף backend חדש ב-`paypal-orders.js`:
+  - OAuth מול PayPal Sandbox בלבד
+  - `create-order`
+  - `capture-order`
+  - חישוב מחיר בצד השרת
+  - בדיקת amount + currency מול PayPal
+  - idempotent digital fulfillment
+- נוספו admin-only Sandbox test hooks, המוגנים ב-admin session, כדי לאפשר בעתיד בדיקות Sandbox בלי לפתוח קנייה לציבור.
+- נוסף GitHub Actions workflow להרצת כל `tests/*.test.mjs` על PRs.
+- full Node suite: **318/318 pass, 0 fail**.
+- security audit checkpoint: תוקנו persistence verification, capture identity binding ו-recovery אחרי `ORDER_ALREADY_CAPTURED`; לאחר מכן נוספו rate limiting ו-create-order idempotency. הסוויטה כעת **323/323 pass, 0 fail**. migration `0002_paypal_security_hardening.sql` מוכנה אך לא הורצה בפרודקשן. שני legacy payment routes נותקו ומחזירים 410 תמיד; CORS/idempotency headers הוקשחו; בדיקת diff לא מצאה secret literal או PayPal Live endpoint. הסוויטה כעת **325/325 pass, 0 fail**. לאחר מכן ה-webhook הוקשח עם signature verification, dedup, authoritative reconciliation ו-processing lease recoverable; regression tests ל-crash/retry נוספו והסוויטה כעת **331/331 pass, 0 fail**. לאחר מכן נוסף staging D1 bootstrap מינימלי + CI isolation guard שמונע הפניה ל-production D1/R2/domain ושומר production `PAYMENTS_ENABLED=false`; הסוויטה כעת **334/334 pass, 0 fail**.
+- במהלך ה-CI נמצא ותוקן baseline bug ישן ב-cache-busting של `index.html`; הוא לא נגרם משינויי PayPal.
+
+### משמעות המיזוג בעתיד
+מיזוג PR #76 ל-`main` יפרוס את קוד ה-Sandbox החדש ל-Cloudflare, אבל כשלעצמו **לא אמור לפתוח רכישות לציבור** כי `PAYMENTS_ENABLED=false` נשאר kill switch. למרות זאת, לפי החלטת בעל הפרויקט מ-1.10.2026, **לא לבצע את המיזוג כרגע**.
+
+### השלב הבא
+- מקור עבודה מחייב נוסף: `docs/pre-commerce-readiness-2026-10-01.md`; staging plan: `docs/paypal-sandbox-staging-2026-10-01.md`.
+- Security audit ברמת קוד: S1–S5 ו-S7–S10 נסגרו. webhook עם signature verification + dedup + authoritative order cross-check נוסף; הסוויטה כעת **329/329 pass, 0 fail**. פתוח לפני E2E: S6 staging isolation. webhook עדיין דורש E2E אמיתי מול Sandbox staging לפני Go-Live.
+לא לבצע merge, deploy, Webhook, UI checkout או Live PayPal עד אישור מפורש חדש של בעל הפרויקט.
+אפשר להמשיך בעתיד בבדיקות Sandbox בלבד, ורצוי בסביבה מבודדת/מוגנת, בלי לשנות `PAYMENTS_ENABLED`.
+
+
+## 💼 Business model + VS Code / Claude Code skills — 1.10.2026
+
+### כיוון עסקי
+נפתחה עבודה ייעודית על מודל עסקי מבוסס-נתונים לפני השקעה עמוקה יותר ב-Gelato או בכל ערוץ מכירה יחיד.
+
+מסמך העבודה: `TODO.md`.
+
+עקרון העבודה:
+- Gelato נבחן כספק fulfillment, לא כמודל העסקי עצמו.
+- אין להסיק מ-0 רכישות שאין ביקוש — התשלומים עדיין כבויים בכוונה.
+- החלטות monetization יתבססו על GA4 + D1 funnel + photo-strength + social mapping.
+- checkpoint ראשון סביב 10.10.2026 (14 יום מה-26.9).
+- checkpoint מועדף סביב 24.10.2026 (28 יום).
+- עד אז בודקים במקביל prints, digital licensing, curated drops/pre-orders, B2B, education, services ו-newsletter/collector funnel — בלי לבנות הכול מראש.
+
+### Skills ב-VS Code / Claude Code — מדיניות בטוחה
+כבר קיים repo-local skill:
+- `.claude/skills/add-camera-guide/SKILL.md`
+
+נבדק שאין כרגע צורך להתקין חבילת third-party skills אקראית. בריפו הזה עדיף **project-local skills** שנשמרים ב-Git ועוברים review.
+
+Skills שכדאי ליצור בהמשך:
+1. `paypal-sandbox-safety` — staging-only, kill switch, no live credentials, stop-before-merge/enable.
+2. `d1-migration-guard` — אימות DB יעד, bookmark/backup, migration additive, schema verify, no destructive SQL בלי אישור.
+3. `business-model-review` — קריאת GA/D1/photo-strength והפקת decision memo בלי להסיק מסקנות ממדגם קטן.
+4. `safe-release-check` — scope, tests, security, flags, deploy/rollback checklist.
+
+כללי אבטחה להתקנת Skill:
+- Skill שמכיל Markdown בלבד = סיכון נמוך יחסית.
+- אם יש scripts/hooks/MCP/commands: לקרוא את כל הקוד לפני שימוש.
+- לבדוק permissions והרשאות filesystem/network.
+- לא לאפשר secret exfiltration.
+- לא לתת auto-approve ל-Bash/write/deploy.
+- להעדיף project-local על global.
+- לא להתקין "security skill" חיצוני רק בשביל review; להשתמש בכלי security review המובנה של סביבת הפיתוח כשאפשר.
+
 
 ## 🗓️ מה קרה לאחרונה (מהחשוב לפחות חשוב)
 
@@ -103,7 +189,7 @@ PAYMENTS_ENABLED = "false"   ב-wrangler.toml (production)
 
 **ידוע כפתוח / ממתין:**
 
-- **מעבר בפועל ל-PayPal Orders API v2** — עיצוב מוכן (`docs/paypal-orders-v2-migration-2026-09-30.md`), ממתין ל-(1) סקירת עמית למסמך עצמו, (2) חשבון Sandbox + Client ID/Secret + חשבון קונה-בדיקה מעמית (חד-פעמי, developer.paypal.com), (3) סיום חלון ה-baseline לפני הפעלה בפועל — אבל הבנייה עצמה לא צריכה לחכות לתנאי #3.
+- **מעבר ל-PayPal Orders API v2** — Phase 1 מיושם ב-Draft PR #76. Sandbox App + buyer account הוכנו, `PAYPAL_CLIENT_ID`/`PAYPAL_CLIENT_SECRET` נשמרו ב-Cloudflare כ-Secrets, migration הוחל ואומת ב-D1, וה-backend הדיגיטלי עבר full Node suite של 318/318. עדיין לא הושלמו: security review מלא, Sandbox E2E אמיתי בסביבה מבודדת, webhook מאומת-חתימה, print flow ב-Orders v2, client SDK/UI, והסרה/חסימה קבועה של legacy PayPal endpoints לפני כל הפעלה. לפי החלטת בעל הפרויקט: לא למזג ולא לאפשר רכישה אמיתית כרגע.
 - `DSC_9287.jpg` (גאורגיה) — הסיבה כבר ידועה (ראה #10 למעלה: סימון זכויות-יוצרים שנמחק בשקט בגלל באג CI, עכשיו מתוקן ב-PR #74). לבדוק שהיא נכנסת בפועל בריצה היומית הבאה; אם לא, לבדוק את `data/copyright_flagged.json` (עכשיו נשמר בפועל) לראות אם היא שם ולמה.
 - להמשיך לעקוב אחרי metrics אחרי כל שינוי UX גדול לפני שממשיכים הלאה.
 
@@ -115,3 +201,356 @@ PAYMENTS_ENABLED = "false"   ב-wrangler.toml (production)
 ---
 
 *אם אתה סוכן AI שנכנס לפרויקט הזה: קרא את `CLAUDE.md` ואת המסמך הזה קודם, ואז תסתכל אם יש `docs/*-2026-*.md` חדש יותר מהתאריך שרשום כאן — אם כן, זה כנראה מעודכן יותר ממה שכתוב פה.*
+
+
+### PayPal staging deployment decision — 1.10.2026
+
+- GitHub `workflow_dispatch` for `.github/workflows/paypal-sandbox-staging.yml` cannot be relied on before that workflow exists on the default branch.
+- Because PR #76 must remain Draft and unmerged, the chosen path is **direct branch deployment to the separate Cloudflare Worker**.
+- Added `wrangler.paypal-sandbox.toml` pinned to:
+  - Worker `amit-photos-paypal-sandbox`
+  - D1 `amit-photos-paypal-sandbox-db` / ID `7b027b93-c548-4ceb-bbe9-42c45264fc23`
+  - R2 `amit-photos-paypal-sandbox-images`
+  - workers.dev only
+  - no routes
+  - no cron
+  - `keep_vars=true` so dashboard-managed Sandbox secrets are preserved.
+- Production remains untouched and `PAYMENTS_ENABLED=false`.
+- Next action: connect/deploy the staging Worker from branch `prep/paypal-orders-v2-2026-10-01`, then verify Sandbox OAuth and E2E.
+
+
+### Cloudflare Git staging connection — 1.10.2026
+
+- Worker `amit-photos-paypal-sandbox` connected to GitHub repo `erezfamily-cmyk/amit-photos`.
+- Production branch for this staging Worker is explicitly `prep/paypal-orders-v2-2026-10-01` — not `main`.
+- Build command: none.
+- Deploy command: `npx wrangler@4.4.0 deploy --config wrangler.paypal-sandbox.toml`.
+- Root directory: `/`.
+- The staging Worker remains workers.dev-only.
+- This documentation commit intentionally triggers the first staging build after Git connection.
+- Production site remains untouched and production `PAYMENTS_ENABLED=false`.
+
+
+### First Cloudflare staging build — 1.10.2026
+
+- After Git connection, commit `7334f8088c381a3b3bd4103157101007aa305f36` triggered the first build for `amit-photos-paypal-sandbox`.
+- Cloudflare Deployments currently shows the branch build as **In progress**.
+- The currently active version is still the prior dashboard-created Worker version; do not run PayPal OAuth/E2E until the branch build finishes successfully and becomes active.
+- No production deployment or payment enablement occurred.
+
+
+### Cloudflare staging build result — 1.10.2026
+
+- Cloudflare Recent builds for branch `prep/paypal-orders-v2-2026-10-01` are green/success.
+- However, the Deployments page still shows active version `78ddcde1`, the prior dashboard-created version.
+- Do **not** start PayPal OAuth/E2E until build details confirm the wrangler deploy step actually published the branch code and the active deployment is updated.
+- Production remains untouched and `PAYMENTS_ENABLED=false`.
+
+
+### PayPal staging deploy verified — 1.10.2026
+
+- Cloudflare build log confirms branch deploy completed successfully for `amit-photos-paypal-sandbox`.
+- Deployed URL: `https://amit-photos-paypal-sandbox.erez-family.workers.dev`.
+- Bound resources in deploy log:
+  - D1 `DB -> amit-photos-paypal-sandbox-db` (staging ID).
+  - R2 `PHOTOS -> amit-photos-paypal-sandbox-images`.
+  - Images binding `IMAGES`.
+  - `PAYMENTS_ENABLED="true"` in staging only.
+- Wrangler reported a new staging Worker version and `Success: Deploy command completed`.
+- A non-fatal duplicate-key warning around an existing Hebrew category key in `worker.js` appeared during build; it did not block deployment and should be cleaned separately.
+- Production remains untouched and `PAYMENTS_ENABLED=false`.
+- Next: external smoke test of staging, then Sandbox OAuth test.
+
+
+### PayPal staging smoke test — 1.10.2026
+
+- Browser smoke test on `https://amit-photos-paypal-sandbox.erez-family.workers.dev/api/payments-status` returned `{"enabled":true}`.
+- This confirms the branch code is active on the isolated Sandbox Worker and the staging-only payment flag is effective.
+- Production remains `PAYMENTS_ENABLED=false`.
+- Next: authenticated admin Sandbox OAuth test.
+
+
+### PayPal Sandbox OAuth smoke test — 1.10.2026
+
+- Authenticated request to `/api/admin/paypal/sandbox-status` succeeded from PowerShell using the staging-only `ADMIN_PASSWORD` header.
+- Response confirmed:
+  - `ok=true`
+  - `environment=sandbox`
+  - `paymentsEnabled=true`
+  - `credentialsConfigured=true`
+- This verifies the staging Worker can authenticate server-to-server with PayPal Sandbox using the rotated Sandbox secret stored in Cloudflare.
+- Production remains `PAYMENTS_ENABLED=false`.
+- Next: create a real PayPal Sandbox order for fixture `paypal-sandbox-test-photo`, approve with Sandbox buyer, then capture and verify D1/token state.
+
+
+### PayPal Sandbox create-order E2E — 1.10.2026
+
+- Authenticated POST to `/api/admin/paypal/create-order` succeeded against the isolated staging Worker.
+- Fixture: `paypal-sandbox-test-photo`, SKU `small`, currency `ILS`.
+- PayPal Sandbox returned a real `paypalOrderId` and `approveUrl`.
+- This confirms staging can create an Orders v2 order server-to-server and persist the local order path far enough to return approval.
+- No real payment occurred; next step is approval using the PayPal Sandbox Personal buyer account, then capture and D1/token verification.
+
+
+### PayPal Sandbox credentials refresh — 1.10.2026
+
+- After OAuth began failing following secret rotation, the active Sandbox app credentials were copied again from PayPal Developer and re-saved in Cloudflare Worker `amit-photos-paypal-sandbox`.
+- Both `PAYPAL_CLIENT_ID` and `PAYPAL_CLIENT_SECRET` were refreshed together from the same Sandbox app.
+- Next action: rerun authenticated `/api/admin/paypal/sandbox-status` and require `ok=true` before creating another order.
+- Production remains untouched and `PAYMENTS_ENABLED=false`.
+
+
+### PayPal Sandbox direct OAuth diagnosis — 1.10.2026
+
+- Direct PowerShell POST to `https://api-m.sandbox.paypal.com/v1/oauth2/token` using the Sandbox Client ID + Secret returned:
+  - `error=invalid_client`
+  - `error_description=Client Authentication failed`
+- This reproduces the failure outside Cloudflare, so the current blocker is the PayPal Sandbox credential pair itself, not Worker bindings, D1, R2, routing, or Cloudflare secret access.
+- Do not continue create/capture testing until direct OAuth succeeds.
+- Next recovery step: create a second Sandbox secret for the same app, copy Client ID and the new secret using PayPal's copy controls, test them directly against OAuth, then update Cloudflare only after the direct test passes. Keep production untouched.
+
+
+### PayPal Sandbox second-key verification — 1.10.2026
+
+- A second Sandbox secret was created for the existing PayPal Sandbox app.
+- Direct PowerShell OAuth against `https://api-m.sandbox.paypal.com/v1/oauth2/token` succeeded with the existing Client ID + new second secret.
+- This proves the new second secret is valid; the previous secret was the source of `invalid_client`.
+- The OAuth response displayed a temporary access token in the local terminal/screenshot. Treat that token as exposed and do not reuse or store it; it is ephemeral and not needed for the Worker.
+- Next: update only `PAYPAL_CLIENT_SECRET` in Cloudflare staging Worker to the verified second secret, redeploy, rerun `/api/admin/paypal/sandbox-status`, then resume E2E with a new order.
+
+
+### PayPal Sandbox OAuth restored — 1.10.2026
+
+- Cloudflare staging Worker was updated to the verified second Sandbox secret.
+- Authenticated `/api/admin/paypal/sandbox-status` now returns:
+  - `ok=true`
+  - `environment=sandbox`
+  - `paymentsEnabled=true`
+  - `credentialsConfigured=true`
+- This confirms the staging Worker can authenticate server-to-server with PayPal Sandbox again after secret rotation.
+- Next: create a fresh Sandbox order with a new Idempotency-Key using the fixed approval flow, approve it with the Personal Sandbox buyer, then capture and verify D1 + download token state.
+
+
+### PayPal Sandbox approval-link E2E — 1.10.2026
+
+- Fresh Sandbox order created successfully with Idempotency-Key `sandbox-e2e-20261001-004`.
+- PayPal returned a non-empty checkout URL after the payer-action compatibility fix.
+- This confirms the Worker now handles both `approve` and `payer-action` link relations correctly.
+- Next: open the Sandbox checkout URL, sign in with the Personal Sandbox buyer, approve, verify return to `/api/paypal/approved`, then run capture and verify D1 + download token state.
+
+
+### PayPal checkout return handler deploy verified — 1.10.2026
+
+- Cloudflare staging deployment containing the missing `handlePayPalCheckoutReturn` import completed.
+- GitHub CI for head `8fa10bb55349d9ac8720fbbe4ec0194603b3a93a` is green:
+  - Node Tests: success.
+  - Python Data Tests: success.
+- Regression tests now cover both `/api/paypal/approved` and `/api/paypal/cancelled`.
+- The previous Error 1101 root cause was the missing import; code fix is deployed to the isolated staging Worker.
+- Next: attempt capture of the last Sandbox order that reached the return URL. If PayPal reports it was not approved, create a fresh order and repeat approval.
+
+
+### PayPal capture custom_id compatibility deploy verified — 1.10.2026
+
+- Staging deployment containing the optional-custom_id capture fix completed.
+- GitHub CI for head `bdc5cb994c6c339465cc6e084c7690b15fe579b1` is green:
+  - Node Tests: success.
+  - Python Data Tests: success.
+- Capture validation now still requires exact PayPal order ID, COMPLETED status, exact currency and exact amount; `custom_id` is enforced when PayPal returns it, but its omission no longer causes a false identity mismatch.
+- Next: retry capture on the same already-approved Sandbox order. The existing `ORDER_ALREADY_CAPTURED` recovery path must complete fulfillment without a second charge.
+
+
+### Digital Sandbox capture E2E passed — 1.10.2026
+
+- Retry capture on the approved Sandbox order succeeded after the custom_id compatibility fix.
+- Worker returned a digital fulfillment response with a `/api/download/<token>` URL and title `PayPal Sandbox Test Photo`.
+- This confirms the end-to-end path reached successful fulfillment:
+  PayPal Sandbox approval -> capture -> server-side validation -> local fulfillment claim -> download token creation -> fulfillment response.
+- The recovery path handled the previously captured/partially-processed order without creating a second charge.
+- Remaining verification before marking digital E2E complete:
+  1. repeat capture callback must return the stored fulfillment idempotently;
+  2. D1 must show one COMPLETED order and exactly one download token for that order.
+
+
+### Duplicate capture idempotency verified — 1.10.2026
+
+- A second capture request was sent for the same already-completed Sandbox order.
+- The Worker returned the same stored fulfillment/download URL instead of attempting a new charge or creating a new fulfillment response.
+- This verifies the completed-order idempotency path in live Sandbox E2E.
+- Remaining final check for digital E2E: verify in staging D1 that the latest PayPal order is `COMPLETED` and exactly one `download_tokens` row matches its `paypal_capture_id`.
+
+
+### Digital Sandbox E2E complete — 1.10.2026
+
+Cloudflare D1 staging verification after successful capture confirmed:
+- Latest PayPal order is `COMPLETED`.
+- It has a non-null `paypal_capture_id`.
+- Its `fulfillment_token` matches the token stored in `download_tokens`.
+- The `download_tokens.tx` value matches the PayPal capture ID.
+- `amount=1` for the Sandbox test purchase.
+- `used=0` before download consumption.
+- Duplicate capture already returned the same stored fulfillment URL, confirming idempotency.
+- Two older Sandbox test rows remain in `CREATED` state from earlier failed/abandoned E2E attempts; they are test leftovers only.
+
+Status: **digital PayPal Sandbox E2E is complete and verified end-to-end.**
+
+Next recommended work before any merge/go-live:
+1. negative-path E2E (buyer cancel, invalid/expired order, amount mismatch, duplicate callback);
+2. webhook Sandbox E2E with a real PayPal webhook ID;
+3. cleanup policy for abandoned Sandbox/test orders;
+4. print/Gelato Orders v2 flow;
+5. final security review and only then merge consideration.
+Production remains `PAYMENTS_ENABLED=false`.
+
+
+### Pause point — 1.10.2026 afternoon
+
+העבודה נעצרה בצורה מסודרת לאחר השלמת Digital PayPal Sandbox E2E.
+
+מצב מאומת:
+- Worker staging: `amit-photos-paypal-sandbox`.
+- D1 staging: `amit-photos-paypal-sandbox-db`.
+- R2 staging: `amit-photos-paypal-sandbox-images`.
+- Sandbox OAuth תקין.
+- create-order תקין.
+- approval flow תקין.
+- capture תקין.
+- fulfillment/download token נוצר ונשמר.
+- duplicate capture מחזיר את אותו fulfillment באופן idempotent.
+- D1 אימת latest order במצב `COMPLETED`, עם capture ID ו-token תואמים.
+- PR #76 נשאר Draft ולא מוזג.
+- production נשאר `PAYMENTS_ENABLED=false`; אין רכישות אמיתיות פעילות.
+
+ממצאים/שיפורים שבוצעו במהלך E2E:
+- secret rotation ואימות OAuth ישיר מול PayPal Sandbox.
+- support גם ל-`payer-action` וגם `approve`.
+- `return_url` / `cancel_url`, `PAY_NOW`, `NO_SHIPPING`.
+- תיקון import ל-`handlePayPalCheckoutReturn`.
+- capture identity validation הוקשח בלי ליפול על `custom_id` אופציונלי.
+- regression tests נוספו לכל התקלות שנמצאו.
+
+להמשך בערב, לפי הסדר:
+1. negative-path E2E: buyer cancel, invalid/expired order, amount mismatch, duplicate callback.
+2. PayPal Sandbox webhook אמיתי עם Webhook ID ואימות signature.
+3. cleanup policy ל-orders ישנים/נטושים ב-Sandbox.
+4. print/Gelato Orders v2.
+5. security review סופי לפני החלטת merge.
+6. רק לאחר מכן לשקול merge; production נשאר disabled עד אישור נפרד.
+
+
+### Negative-path automated tests checkpoint — 1.10.2026 evening
+
+Added regression coverage for:
+- malformed PayPal order ID -> 400, no PayPal call, no token;
+- unknown PayPal order ID -> 404, no PayPal call, no token;
+- PayPal order not approved -> capture failure, local order remains `CREATED`, no capture ID, no fulfillment token, no download token.
+
+Existing coverage already includes:
+- capture amount mismatch;
+- PayPal/local identity mismatch;
+- duplicate capture callback/idempotency;
+- webhook invalid signature/dedup/retry.
+
+CI for head `e8ecbb08725612bfeca5be87ec65628588d09ec8`:
+- Node Tests: success.
+- Python Data Tests: success.
+
+Next manual negative-path test: buyer cancel in PayPal Sandbox.
+
+
+### Buyer cancel E2E passed — 1.10.2026 evening
+
+- A fresh Sandbox order was opened with the Personal Sandbox buyer.
+- The buyer selected “cancel and return to Test Store”.
+- PayPal returned successfully to the staging `cancel_url`.
+- The Worker rendered `PayPal Sandbox checkout cancelled` and stated that no capture was attempted.
+- Next verification: inspect staging D1 and confirm the cancelled order remains uncaptured and no new download token was created.
+
+
+### Buyer cancel D1 verification passed — 1.10.2026 evening
+
+Cloudflare D1 staging verification after PayPal Sandbox buyer cancel confirmed:
+- newest cancelled test order remains `CREATED`;
+- `paypal_capture_id` is NULL;
+- `fulfillment_token` is NULL;
+- no additional `download_tokens` row was created;
+- the only download token present still belongs to the prior successfully completed Sandbox purchase.
+
+Conclusion: buyer cancel path is verified end-to-end and does not create a charge entitlement or download fulfillment.
+
+
+### PayPal Sandbox webhook created — 1.10.2026 evening
+
+- A Sandbox webhook was created in PayPal Developer for:
+  `https://amit-photos-paypal-sandbox.erez-family.workers.dev/api/paypal/webhook`
+- Current tracked-event list shown in PayPal includes:
+  - Checkout order approved
+  - Payment capture completed
+  - Payment capture declined
+  - Payment capture pending
+- Before signature E2E, adjust the event list to use PayPal's recommended `PAYMENT.CAPTURE.DENIED` event (not capture-declined wording) and add `CHECKOUT.PAYMENT-APPROVAL.REVERSED` if available.
+- Next: copy the webhook ID into Cloudflare staging Worker as secret `PAYPAL_WEBHOOK_ID`, then run signature-verification E2E.
+
+
+### PayPal Sandbox webhook ID configured — 1.10.2026 evening
+
+- PayPal Sandbox webhook was created for the staging endpoint.
+- Cloudflare Worker `amit-photos-paypal-sandbox` now has `PAYPAL_WEBHOOK_ID` stored as an encrypted Secret.
+- Code verification confirmed the webhook handler calls PayPal `/v1/notifications/verify-webhook-signature` with the configured webhook ID and rejects events unless verification status is `SUCCESS`.
+- Next: run a fresh Sandbox order/approval/capture and verify a real `PAYMENT.CAPTURE.COMPLETED` event appears in staging D1 with `processed=1`.
+
+
+### Fresh webhook E2E capture completed — 1.10.2026 evening
+
+- A fresh Sandbox order was approved successfully and returned through `/api/paypal/approved`.
+- Capture then succeeded and returned a digital fulfillment URL for `PayPal Sandbox Test Photo`.
+- Next verification: inspect `paypal_webhook_events` in staging D1 for a real `PAYMENT.CAPTURE.COMPLETED` event and confirm `processed=1`, `attempts>=1`, and no stuck processing lease.
+
+
+### Real PayPal Sandbox webhook signature E2E passed — 1.10.2026 evening
+
+Cloudflare D1 staging verification after a fresh real Sandbox approval + capture confirmed:
+- real `CHECKOUT.ORDER.APPROVED` event received;
+- real `PAYMENT.CAPTURE.COMPLETED` event received;
+- both rows have `processed=1`;
+- both rows have `attempts=1`;
+- `processing_started_at=NULL` after processing;
+- therefore no webhook lease remained stuck.
+
+Because the handler only inserts/processes events after PayPal `verify-webhook-signature` returns `SUCCESS`, this is end-to-end evidence that the real Sandbox webhook signature verification path is working with the configured `PAYPAL_WEBHOOK_ID`.
+
+Status: real PayPal Sandbox webhook E2E is verified.
+Next: cleanup policy for abandoned Sandbox/test orders, then print/Gelato Orders v2, then final security review. Production remains `PAYMENTS_ENABLED=false`.
+
+
+### Sandbox cleanup policy implemented — 1.10.2026 evening
+
+Implemented an admin-only, staging-only PayPal cleanup endpoint:
+- endpoint: `POST /api/admin/paypal/cleanup`;
+- protected by existing admin auth;
+- additionally requires `PAYPAL_SANDBOX_CLEANUP_ENABLED=true`;
+- that flag exists only in `wrangler.paypal-sandbox.toml`;
+- default behavior is dry-run (`apply` must be explicitly `true` to delete).
+
+Retention policy:
+- abandoned PayPal orders: only `CREATED`, no capture ID, no fulfillment token, no completed_at, older than 7 days;
+- processed webhook events: only `processed=1`, older than 90 days;
+- never deletes `COMPLETED` or `FULFILLING` orders;
+- never touches `download_tokens`.
+
+CI after cleanup implementation:
+- Node Tests: success;
+- Python Data Tests: success.
+
+No cleanup deletion has been executed yet. First staging use should be dry-run only and reviewed before any `apply=true`.
+
+### Print/Gelato migration discovery
+
+The migration design explicitly says `print_orders` should remain structurally unchanged and existing Gelato logic should be reused behind server-verified PayPal capture.
+
+Repository audit found a schema-documentation gap:
+- runtime code actively reads/writes `print_orders`;
+- `schema.sql` and current migrations do not define `print_orders`;
+- therefore the actual D1 table shape must be verified before implementing print Orders v2 fulfillment.
+
+Do not guess the production/staging print schema. Next safe action: inspect `PRAGMA table_info(print_orders)` in D1 (or recover the original schema source) before coding print fulfillment.
