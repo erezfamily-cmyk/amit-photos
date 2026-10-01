@@ -115,3 +115,18 @@ PAYMENTS_ENABLED = "false"   ב-wrangler.toml (production)
 ---
 
 *אם אתה סוכן AI שנכנס לפרויקט הזה: קרא את `CLAUDE.md` ואת המסמך הזה קודם, ואז תסתכל אם יש `docs/*-2026-*.md` חדש יותר מהתאריך שרשום כאן — אם כן, זה כנראה מעודכן יותר ממה שכתוב פה.*
+
+
+### Admin UTM campaign link builder — 1.10.2026
+
+נוסף כלי פנימי ב-Admin תחת אזור Analytics:
+- יוצר deep links ליעדים העסקיים: `/free-guide/`, `/licensing/`, `/business/`, `/#gallery`, `/camera/`, `/locations/`.
+- משתמש ב-`utm_source`, `utm_medium`, `utm_campaign`, `utm_content`.
+- source/medium/destination מוגבלים לרשימות בטוחות.
+- campaign/content עוברים normalization ל-`a-z0-9_-`.
+- אין PII.
+- כולל copy/open לבדיקה.
+- mobile-friendly.
+- לא שולח קישורים החוצה ולא מפרסם אוטומטית; זה רק generator פנימי.
+
+מטרת הכלי: לאפשר discipline עקבי ב-UTM בלי להקליד ידנית בטלפון, כדי שהדוח השבועי החדש יוכל לזהות קמפיינים במקום שכולם ייראו כ-Direct.
