@@ -222,3 +222,11 @@ PAYMENTS_ENABLED = "false"   ב-wrangler.toml (production)
 - A non-fatal duplicate-key warning around an existing Hebrew category key in `worker.js` appeared during build; it did not block deployment and should be cleaned separately.
 - Production remains untouched and `PAYMENTS_ENABLED=false`.
 - Next: external smoke test of staging, then Sandbox OAuth test.
+
+
+### PayPal staging smoke test — 1.10.2026
+
+- Browser smoke test on `https://amit-photos-paypal-sandbox.erez-family.workers.dev/api/payments-status` returned `{"enabled":true}`.
+- This confirms the branch code is active on the isolated Sandbox Worker and the staging-only payment flag is effective.
+- Production remains `PAYMENTS_ENABLED=false`.
+- Next: authenticated admin Sandbox OAuth test.
