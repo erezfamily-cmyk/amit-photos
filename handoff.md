@@ -340,3 +340,26 @@ PAYMENTS_ENABLED = "false"   ב-wrangler.toml (production)
 - The Worker returned the same stored fulfillment/download URL instead of attempting a new charge or creating a new fulfillment response.
 - This verifies the completed-order idempotency path in live Sandbox E2E.
 - Remaining final check for digital E2E: verify in staging D1 that the latest PayPal order is `COMPLETED` and exactly one `download_tokens` row matches its `paypal_capture_id`.
+
+
+### Digital Sandbox E2E complete — 1.10.2026
+
+Cloudflare D1 staging verification after successful capture confirmed:
+- Latest PayPal order is `COMPLETED`.
+- It has a non-null `paypal_capture_id`.
+- Its `fulfillment_token` matches the token stored in `download_tokens`.
+- The `download_tokens.tx` value matches the PayPal capture ID.
+- `amount=1` for the Sandbox test purchase.
+- `used=0` before download consumption.
+- Duplicate capture already returned the same stored fulfillment URL, confirming idempotency.
+- Two older Sandbox test rows remain in `CREATED` state from earlier failed/abandoned E2E attempts; they are test leftovers only.
+
+Status: **digital PayPal Sandbox E2E is complete and verified end-to-end.**
+
+Next recommended work before any merge/go-live:
+1. negative-path E2E (buyer cancel, invalid/expired order, amount mismatch, duplicate callback);
+2. webhook Sandbox E2E with a real PayPal webhook ID;
+3. cleanup policy for abandoned Sandbox/test orders;
+4. print/Gelato Orders v2 flow;
+5. final security review and only then merge consideration.
+Production remains `PAYMENTS_ENABLED=false`.
