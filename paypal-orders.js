@@ -75,6 +75,27 @@ async function getPayPalAccessToken(env) {
   return data.access_token;
 }
 
+export async function handlePayPalSandboxStatus(request, env) {
+  if (request.method !== 'GET') return jsonRes({ error: 'method not allowed' }, 405, request);
+  try {
+    await getPayPalAccessToken(env);
+    return jsonRes({
+      ok: true,
+      environment: 'sandbox',
+      paymentsEnabled: env.PAYMENTS_ENABLED === 'true',
+      credentialsConfigured: true,
+    }, 200, request);
+  } catch {
+    return jsonRes({
+      ok: false,
+      environment: 'sandbox',
+      paymentsEnabled: env.PAYMENTS_ENABLED === 'true',
+      credentialsConfigured: !!(env.PAYPAL_CLIENT_ID && env.PAYPAL_CLIENT_SECRET),
+      error: 'PayPal Sandbox authentication failed',
+    }, 502, request);
+  }
+}
+
 async function resolveDigitalPayPalPrice(env, photoId, size, currency) {
   if (!photoId || typeof photoId !== 'string' || photoId.length > 200) return { error: 'photoId לא תקין', status: 400 };
   if (!DIGITAL_SIZES.has(size)) return { error: 'גודל לא תקין', status: 400 };
@@ -104,8 +125,8 @@ async function resolveDigitalPayPalPrice(env, photoId, size, currency) {
   return { amountExpected, currency };
 }
 
-export async function handlePayPalCreateOrder(request, env) {
-  if (env.PAYMENTS_ENABLED !== 'true') return paymentsDisabledResponse(request);
+export async function handlePayPalCreateOrder(request, env, options = {}) {
+  if (!options.allowWhenPaymentsDisabled && env.PAYMENTS_ENABLED !== 'true') return paymentsDisabledResponse(request);
   if (request.method !== 'POST') return jsonRes({ error: 'method not allowed' }, 405, request);
 
   const body = await request.json().catch(() => ({}));
@@ -169,7 +190,10 @@ export async function handlePayPalCreateOrder(request, env) {
     return jsonRes({ error: 'Could not persist PayPal order' }, 500, request);
   }
 
-  return jsonRes({ paypalOrderId: paypalOrder.id }, 201, request);
+  const approveUrl = Array.isArray(paypalOrder.links) ? paypalOrder.links.find(link => link.rel === 'approve')?.href || null : null;
+  const result = { paypalOrderId: paypalOrder.id };
+  if (options.includeApproveUrl) result.approveUrl = approveUrl;
+  return jsonRes(result, 201, request);
 }
 
 async function finalizeDigitalPayPalOrder(request, env, order) {
@@ -206,8 +230,8 @@ async function finalizeDigitalPayPalOrder(request, env, order) {
   return jsonRes(fulfillment, 200, request);
 }
 
-export async function handlePayPalCaptureOrder(request, env) {
-  if (env.PAYMENTS_ENABLED !== 'true') return paymentsDisabledResponse(request);
+export async function handlePayPalCaptureOrder(request, env, options = {}) {
+  if (!options.allowWhenPaymentsDisabled && env.PAYMENTS_ENABLED !== 'true') return paymentsDisabledResponse(request);
   if (request.method !== 'POST') return jsonRes({ error: 'method not allowed' }, 405, request);
 
   const body = await request.json().catch(() => ({}));
