@@ -87,3 +87,15 @@ test('admin inline scripts have valid JavaScript syntax', () => {
     );
   });
 });
+
+
+test('critical admin navigation is bootstrapped before feature modules', () => {
+  const utilsPos = admin.indexOf('const $ = id => document.getElementById(id);');
+  const bootstrapPos = admin.indexOf('bootstrapAdminNav');
+  const photosPos = admin.indexOf('const Photos = (() =>');
+  assert.ok(utilsPos >= 0);
+  assert.ok(bootstrapPos > utilsPos);
+  assert.ok(photosPos > bootstrapPos);
+  assert.match(admin, /navBootstrapBound/);
+  assert.match(admin, /document\.title = 'AMIT PHOTOS — ניהול ⚠ '/);
+});
