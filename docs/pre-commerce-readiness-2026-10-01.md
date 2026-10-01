@@ -232,3 +232,19 @@ Collections ראשיות:
 - [ ] Checkout QA ב-mobile + desktop + HE/EN.
 - [ ] Analytics checkpoint נבדק.
 - [ ] אישור מפורש של בעל הפרויקט לפתיחת רכישות אמיתיות.
+
+
+## Digital Sandbox E2E — complete (1.10.2026)
+
+Verified manually in Cloudflare D1 staging after real PayPal Sandbox approval + capture:
+- latest order status = `COMPLETED`;
+- `paypal_capture_id` is present;
+- `fulfillment_token` matches the download token row;
+- `download_tokens.tx` matches the PayPal capture ID;
+- Sandbox amount = 1;
+- token starts unused (`used=0`);
+- repeated capture returns the same stored fulfillment URL.
+
+Conclusion: digital Orders v2 Sandbox path is verified end-to-end.
+
+Production is still disabled. Do not merge/enable live payments yet.
