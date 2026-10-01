@@ -58,6 +58,7 @@ export {
   handlePayPalCaptureOrder,
   handlePayPalSandboxStatus,
   handlePayPalWebhook,
+  handlePayPalSandboxCleanup,
   handleVerifyPayment,
   handlePrintOrderComplete,
   handlePrintWebhook,
