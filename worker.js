@@ -1,4 +1,4 @@
-import { handlePayPalCreateOrder, handlePayPalCaptureOrder, handlePayPalSandboxStatus } from './paypal-orders.js';
+import { handlePayPalCreateOrder, handlePayPalCaptureOrder, handlePayPalSandboxStatus, handlePayPalWebhook } from './paypal-orders.js';
 // Cloudflare Worker — amit-photos
 // מטפל בנתיבי API ומגיש static assets
 
@@ -57,6 +57,7 @@ export {
   handlePayPalCreateOrder,
   handlePayPalCaptureOrder,
   handlePayPalSandboxStatus,
+  handlePayPalWebhook,
   handleVerifyPayment,
   handlePrintOrderComplete,
   handlePrintWebhook,
@@ -7774,6 +7775,7 @@ export default {
       if (!await checkAuth(request, env)) return unauth(request);
       return handlePayPalCaptureOrder(request, env, { allowWhenPaymentsDisabled: true });
     }
+    if (path === '/api/paypal/webhook') return handlePayPalWebhook(request, env);
     if (path === '/api/paypal/create-order')  return handlePayPalCreateOrder(request, env);
     if (path === '/api/paypal/capture-order') return handlePayPalCaptureOrder(request, env);
     if (path === '/api/verify-payment') {
