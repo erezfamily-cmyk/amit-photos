@@ -345,6 +345,7 @@ async function handleFreeGuide(request, env) {
 <meta name="twitter:title" content="${t.ogTitle}">
 <meta name="twitter:description" content="${t.ogDesc}">${photoUrl ? `\n<meta name="twitter:image" content="${photoUrl}">` : ''}
 ${GA_SNIPPET}
+<script src="/assets/js/analytics.js?v=f571a0c4"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Heebo',sans-serif;background:#111;color:#f0ede8;min-height:100vh;display:flex;align-items:center;justify-content:center}
@@ -451,7 +452,19 @@ document.getElementById('fg-form').addEventListener('submit', async function(e) 
         consent_marketing: document.getElementById('fg-consent-marketing').checked
       })
     });
+    const data = await r.json().catch(() => ({}));
     if (r.ok) {
+      if (typeof window.trackUxEvent === 'function') {
+        window.trackUxEvent('guide_request_success', { source: 'lead_magnet' });
+        if (data.lead_created) {
+          window.trackUxEvent('generate_lead', { source: 'lead_magnet' });
+        }
+      } else if (typeof gtag === 'function') {
+        gtag('event', 'guide_request_success', { source: 'lead_magnet' });
+        if (data.lead_created) {
+          gtag('event', 'generate_lead', { source: 'lead_magnet' });
+        }
+      }
       msg.className = 'msg ok';
       msg.innerHTML = t.successHtml + '<br><a href="https://api.whatsapp.com/send?text=' + encodeURIComponent(t.shareText) + '" target="_blank" rel="noopener" style="display:inline-block;margin-top:.6rem;background:#25D366;color:#fff;padding:.4rem 1rem;border-radius:4px;text-decoration:none;font-size:.85rem">' + t.shareBtn + '</a>';
       document.getElementById('fg-email').value = '';
@@ -619,7 +632,13 @@ async function handleSubscribers(request, env) {
           })
         }).catch(() => {});
       }
-      return jsonRes({ ok: true, already: true }, 200, request);
+      return jsonRes({
+        ok: true,
+        already: true,
+        created: false,
+        marketing_upgraded: upgradedMarketingConsent,
+        lead_created: upgradedMarketingConsent,
+      }, 200, request);
     }
     const id = crypto.randomUUID();
     await env.DB.prepare(
@@ -652,7 +671,14 @@ async function handleSubscribers(request, env) {
       }
     }
 
-    return jsonRes({ ok: true, id }, 200, request);
+    return jsonRes({
+      ok: true,
+      id,
+      already: false,
+      created: true,
+      marketing_upgraded: false,
+      lead_created: marketingConsentGiven,
+    }, 200, request);
   }
 
   // GET ו-DELETE דורשים auth
@@ -2712,6 +2738,70 @@ async function handleAdminRevenueSummary(request, env) {
   }, 200, request);
 }
 export { handleAdminRevenueSummary };
+
+async function getSubscriberSourceSummary(env, days = 7) {
+  const safeDays = Math.max(1, Math.min(90, Number.isFinite(Number(days)) ? Number(days) : 7));
+  const sinceIso = new Date(Date.now() - safeDays * 86400000).toISOString();
+
+  const [periodResult, periodMarketingResult, activeMarketingResult, totalsRow] = await Promise.all([
+    env.DB.prepare(
+      `SELECT COALESCE(NULLIF(source,''), 'unknown') as source,
+              COUNT(*) as total,
+              SUM(CASE WHEN consent_marketing = 1 THEN 1 ELSE 0 END) as marketing_opt_in,
+              SUM(CASE WHEN consent_marketing = 0 THEN 1 ELSE 0 END) as marketing_opt_out,
+              SUM(CASE WHEN consent_marketing IS NULL THEN 1 ELSE 0 END) as marketing_unknown
+       FROM subscribers
+       WHERE created_at >= ?
+       GROUP BY COALESCE(NULLIF(source,''), 'unknown')
+       ORDER BY total DESC`
+    ).bind(sinceIso).all(),
+    env.DB.prepare(
+      `SELECT COALESCE(NULLIF(consent_marketing_source,''), NULLIF(source,''), 'unknown') as source,
+              COUNT(*) as count
+       FROM subscribers
+       WHERE consent_marketing = 1 AND consent_marketing_at >= ?
+       GROUP BY COALESCE(NULLIF(consent_marketing_source,''), NULLIF(source,''), 'unknown')
+       ORDER BY count DESC`
+    ).bind(sinceIso).all(),
+    env.DB.prepare(
+      `SELECT COALESCE(NULLIF(consent_marketing_source,''), NULLIF(source,''), 'unknown') as source,
+              COUNT(*) as count
+       FROM subscribers
+       WHERE consent_marketing = 1
+       GROUP BY COALESCE(NULLIF(consent_marketing_source,''), NULLIF(source,''), 'unknown')
+       ORDER BY count DESC`
+    ).all(),
+    env.DB.prepare(
+      `SELECT COUNT(*) as total_subscribers,
+              SUM(CASE WHEN consent_marketing = 1 THEN 1 ELSE 0 END) as marketing_subscribers,
+              SUM(CASE WHEN consent_marketing = 0 THEN 1 ELSE 0 END) as non_marketing_subscribers,
+              SUM(CASE WHEN consent_marketing IS NULL THEN 1 ELSE 0 END) as unknown_marketing_consent
+       FROM subscribers`
+    ).first(),
+  ]);
+
+  return {
+    period_days: safeDays,
+    period_new_by_source: periodResult.results || [],
+    period_marketing_opt_ins_by_source: periodMarketingResult.results || [],
+    current_marketing_by_source: activeMarketingResult.results || [],
+    totals: {
+      total_subscribers: totalsRow?.total_subscribers || 0,
+      marketing_subscribers: totalsRow?.marketing_subscribers || 0,
+      non_marketing_subscribers: totalsRow?.non_marketing_subscribers || 0,
+      unknown_marketing_consent: totalsRow?.unknown_marketing_consent || 0,
+    },
+  };
+}
+
+async function handleAdminSubscriberSummary(request, env) {
+  if (!await checkAuth(request, env)) return jsonRes({ error: 'Unauthorized' }, 401, request);
+  const rawDays = parseInt(new URL(request.url).searchParams.get('days'));
+  const days = Math.max(1, Math.min(90, Number.isNaN(rawDays) ? 7 : rawDays));
+  const summary = await getSubscriberSourceSummary(env, days);
+  return jsonRes(summary, 200, request);
+}
+export { getSubscriberSourceSummary, handleAdminSubscriberSummary };
 
 async function handleNewsletter(request, env) {
   if (!await checkAuth(request, env)) return unauth(request);
@@ -6882,7 +6972,7 @@ function toggleLang(){applyLang(getLang()==='he'?'en':'he')}
 applyLang();window.setLang=applyLang;window.addEventListener('storage',e=>{if(e.key==='lang')applyLang()})
 function showStep(n){document.querySelectorAll('.nl-step-content').forEach((el,i)=>{el.style.display=(i+1===n)?'':'none'});document.querySelectorAll('.nl-step-pill').forEach((el,i)=>{el.classList.toggle('nl-step-active',i+1===n)})}
 function copyLink(){navigator.clipboard.writeText(location.href).then(()=>{const el=document.getElementById('copy-label');const orig=el.innerHTML;el.textContent='✓ הועתק!';setTimeout(()=>{el.innerHTML=orig;applyLang()},2000)}).catch(()=>{})}
-async function nlSubscribe(e){e.preventDefault();const email=document.getElementById('nl-email').value.trim();const consentPrivacy=document.getElementById('nl-consent-privacy').checked;const consentMarketing=document.getElementById('nl-consent-marketing').checked;const msg=document.getElementById('nl-sub-msg');const btn=e.target.querySelector('button[type="submit"]');if(!consentPrivacy||!consentMarketing){msg.style.color='#f44336';msg.textContent=getLang()==='en'?'Please check both boxes to subscribe.':'יש לאשר את שתי התיבות כדי להירשם.';return}btn.disabled=true;try{const r=await fetch('/api/subscribers?source=newsletter_issue',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,lang:getLang(),consent_privacy:consentPrivacy,consent_marketing:consentMarketing})});const d=await r.json();if(d.already){msg.style.color='#c8a96e';msg.textContent='כבר רשום/ה — תקבל את הגיליון הבא!'}else if(d.ok){msg.style.color='#4caf50';msg.textContent='נרשמת! תקבל את הגיליון הבא ישירות למייל 🎉';document.getElementById('nl-email').value='';document.getElementById('nl-consent-privacy').checked=false;document.getElementById('nl-consent-marketing').checked=false}else{msg.style.color='#f44336';msg.textContent=d.error||'שגיאה'}}catch{msg.style.color='#f44336';msg.textContent='שגיאת רשת'}btn.disabled=false}
+async function nlSubscribe(e){e.preventDefault();const email=document.getElementById('nl-email').value.trim();const consentPrivacy=document.getElementById('nl-consent-privacy').checked;const consentMarketing=document.getElementById('nl-consent-marketing').checked;const msg=document.getElementById('nl-sub-msg');const btn=e.target.querySelector('button[type="submit"]');if(!consentPrivacy||!consentMarketing){msg.style.color='#f44336';msg.textContent=getLang()==='en'?'Please check both boxes to subscribe.':'יש לאשר את שתי התיבות כדי להירשם.';return}btn.disabled=true;try{const r=await fetch('/api/subscribers?source=newsletter_issue',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,lang:getLang(),consent_privacy:consentPrivacy,consent_marketing:consentMarketing})});const d=await r.json();if(r.ok&&d.ok&&d.lead_created){if(typeof window.trackUxEvent==='function')window.trackUxEvent('generate_lead',{source:'newsletter_issue'});else if(typeof gtag==='function')gtag('event','generate_lead',{source:'newsletter_issue'})}if(d.already){msg.style.color='#c8a96e';msg.textContent='כבר רשום/ה — תקבל את הגיליון הבא!'}else if(d.ok){msg.style.color='#4caf50';msg.textContent='נרשמת! תקבל את הגיליון הבא ישירות למייל 🎉';document.getElementById('nl-email').value='';document.getElementById('nl-consent-privacy').checked=false;document.getElementById('nl-consent-marketing').checked=false}else{msg.style.color='#f44336';msg.textContent=d.error||'שגיאה'}}catch{msg.style.color='#f44336';msg.textContent='שגיאת רשת'}btn.disabled=false}
 function nlShowUnsub(){document.getElementById('nl-unsub-form').style.display='';document.getElementById('nl-unsub-wrap').style.display='none'}
 async function nlUnsubscribe(e){e.preventDefault();const email=document.getElementById('nl-unsub-email').value.trim();const msg=document.getElementById('nl-unsub-msg');const btn=e.target.querySelector('button[type="submit"]');btn.disabled=true;try{const r=await fetch('/api/unsubscribe',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email})});const d=await r.json();if(d.ok&&d.notFound){msg.style.color='#c8a96e';msg.textContent='כתובת זו אינה ברשימה'}else if(d.ok){msg.style.color='#4caf50';msg.textContent='הוסרת מהרשימה בהצלחה'}else{msg.style.color='#f44336';msg.textContent=d.error||'שגיאה'}}catch{msg.style.color='#f44336';msg.textContent='שגיאת רשת'}btn.disabled=false}
 </script>
@@ -7745,6 +7835,7 @@ export default {
     if (path === '/api/pinterest/sync-en' && request.method === 'POST') return handlePinterestSyncEn(request, env);
     if (path === '/api/admin/photo-analytics') return handleAdminPhotoAnalytics(request, env);
     if (path === '/api/admin/revenue-summary') return handleAdminRevenueSummary(request, env);
+    if (path === '/api/admin/subscriber-summary') return handleAdminSubscriberSummary(request, env);
     if (path === '/api/fill-titles')       return handleFillTitles(request, env);
     if (path === '/api/generate-alt')      return handleGenerateAlt(request, env);
     if (path === '/api/trigger-workflow')  return handleTriggerWorkflow(request, env);

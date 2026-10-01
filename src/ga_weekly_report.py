@@ -128,6 +128,17 @@ def fetch_ga4_data(token):
         "orderBys": [{"metric": {"metricName": "sessions"}, "desc": True}],
         "limit": 8,
     })
+    campaigns_raw = run_report(token, {
+        "dateRanges": dr,
+        "dimensions": [
+            {"name": "sessionSource"},
+            {"name": "sessionMedium"},
+            {"name": "sessionCampaignName"},
+        ],
+        "metrics": [{"name": "sessions"}, {"name": "activeUsers"}],
+        "orderBys": [{"metric": {"metricName": "sessions"}, "desc": True}],
+        "limit": 20,
+    })
     landing_pages_raw = run_report(token, {
         "dateRanges": dr,
         "dimensions": [{"name": "landingPagePlusQueryString"}],
@@ -155,11 +166,13 @@ def fetch_ga4_data(token):
         "metrics": [{"name": "sessions"}, {"name": "activeUsers"}, {"name": "screenPageViews"}],
     })
     ux_event_names = [
-        "purchase_intent", "photo_view", "add_size", "purchase", "generate_lead",
+        "purchase_intent", "photo_view", "add_size", "purchase", "generate_lead", "guide_request_success",
         "print_intent", "print_type_selected", "print_checkout",
         "hero_gallery_click", "hero_sale_click", "hero_guide_click", "nav_click",
         "gallery_filter", "scroll_25", "scroll_50", "scroll_75", "scroll_90",
         "contact_intent", "photo_contact_click", "contact_form_success", "language_change", "content_link_click",
+        "licensing_personal_interest", "licensing_commercial_contact",
+        "b2b_intent", "b2b_package_select", "b2b_contact_start",
         "nav_home_click", "nav_gallery_click", "nav_sale_click", "nav_camera_click",
         "nav_locations_click", "nav_purchase_info_click", "nav_newsletter_click",
         "nav_contact_click", "nav_more_click", "nav_games_click", "nav_videos_click",
@@ -200,6 +213,18 @@ def fetch_ga4_data(token):
     for r in sources:
         r["מקור"] = HEBREW_CHANNELS.get(r["מקור"], r["מקור"])
 
+    campaigns = []
+    for row in (campaigns_raw or {}).get("rows", []):
+        dims = row.get("dimensionValues", [])
+        metrics = row.get("metricValues", [])
+        campaigns.append({
+            "source": dims[0]["value"] if len(dims) > 0 else "",
+            "medium": dims[1]["value"] if len(dims) > 1 else "",
+            "campaign": dims[2]["value"] if len(dims) > 2 else "",
+            "sessions": metrics[0]["value"] if len(metrics) > 0 else "0",
+            "activeUsers": metrics[1]["value"] if len(metrics) > 1 else "0",
+        })
+
     events = parse_rows(events_raw, ["count"], "event")
     events_by_name = {r["event"]: r["count"] for r in events}
     ux_by_page = []
@@ -225,11 +250,32 @@ def fetch_ga4_data(token):
         "top_pages": parse_rows(pages_raw, ["צפיות", "sessions"], "עמוד"),
         "landing_pages": parse_rows(landing_pages_raw, ["sessions", "activeUsers"], "עמוד נחיתה"),
         "sources":   sources,
+        "campaigns": campaigns,
         "devices":   parse_rows(devices_raw, ["sessions"], "מכשיר"),
         "countries": parse_rows(countries_raw, ["sessions"], "ארץ"),
         "funnel_events": events_by_name,
         "ux_by_page": ux_by_page,
     }
+
+
+def fetch_subscriber_summary(days=7):
+    """מושך סיכום מצרפי בלבד לפי source — ללא אימיילים/PII."""
+    if not ADMIN_PASSWORD:
+        print("⚠️ ADMIN_PASSWORD חסר — מדלג על subscriber source summary")
+        return None
+    try:
+        resp = requests.get(
+            f"{WORKER_URL}/api/admin/subscriber-summary",
+            params={"days": days},
+            headers={"X-Admin-Password": ADMIN_PASSWORD},
+            timeout=15,
+        )
+        if resp.ok:
+            return resp.json()
+        print(f"⚠️ subscriber-summary החזיר {resp.status_code}: {resp.text[:200]}")
+    except Exception as e:
+        print(f"⚠️ subscriber-summary נכשל: {e}")
+    return None
 
 
 def fetch_revenue_summary(days=7):
@@ -283,6 +329,17 @@ def build_data_summary(data):
     lines += ["", "--- מקורות תנועה ---"]
     for r in data["sources"]:
         lines.append(f"  {r['מקור']}: {r['sessions']} סשנים")
+    lines += ["", "--- Source / Medium / Campaign ---"]
+    campaigns = data.get("campaigns", [])
+    if campaigns:
+        for r in campaigns[:12]:
+            campaign = r.get("campaign") or "(not set)"
+            lines.append(
+                f"  {r.get('source','(direct)')} / {r.get('medium','(none)')} / {campaign}: "
+                f"{r.get('sessions','0')} סשנים"
+            )
+    else:
+        lines.append("  אין נתוני campaign")
     lines += ["", "--- מכשירים ---"]
     for r in data["devices"]:
         lines.append(f"  {r['מכשיר']}: {r['sessions']} סשנים")
@@ -307,10 +364,16 @@ def build_data_summary(data):
         ("gallery_filter", "שימוש בפילטר גלריה"),
         ("scroll_25", "גלילה 25%"), ("scroll_50", "גלילה 50%"),
         ("scroll_75", "גלילה 75%"), ("scroll_90", "גלילה 90%"),
-        ("generate_lead", "לידים מוצלחים"),
+        ("guide_request_success", "בקשות מדריך מוצלחות"),
+        ("generate_lead", "לידים חדשים/משודרגים"),
         ("contact_intent", "כוונת יצירת קשר"),
         ("photo_contact_click", "פנייה מתוך תמונה"),
         ("contact_form_success", "טופסי קשר שנשלחו"),
+        ("licensing_personal_interest", "עניין ברישוי אישי"),
+        ("licensing_commercial_contact", "פניות רישוי מסחרי"),
+        ("b2b_intent", "עניין B2B"),
+        ("b2b_package_select", "בחירת חבילת B2B"),
+        ("b2b_contact_start", "תחילת פנייה B2B"),
         ("language_change", "החלפת שפה"),
     ]:
         lines.append(f"  {label}: {fe.get(event, '0')}")
@@ -323,6 +386,31 @@ def build_data_summary(data):
     else:
         lines.append("  אין עדיין אירועי UX לפי עמוד")
 
+    sub = data.get("subscriber_summary")
+    lines += ["", "--- לידים לפי מקור (D1 aggregate, ללא PII) ---"]
+    if sub is None:
+        lines.append("  לא זמין")
+    else:
+        totals = sub.get("totals", {})
+        lines.append(
+            f"  סה\"כ subscribers: {totals.get('total_subscribers', 0)} | "
+            f"marketing opt-in: {totals.get('marketing_subscribers', 0)} | "
+            f"opt-out: {totals.get('non_marketing_subscribers', 0)} | "
+            f"unknown legacy: {totals.get('unknown_marketing_consent', 0)}"
+        )
+        for row in sub.get("period_new_by_source", []):
+            lines.append(
+                f"  {row.get('source','unknown')}: total={row.get('total',0)}, "
+                f"marketing={row.get('marketing_opt_in',0)}, "
+                f"no-marketing={row.get('marketing_opt_out',0)}, "
+                f"unknown={row.get('marketing_unknown',0)}"
+            )
+        opt_in_rows = sub.get("period_marketing_opt_ins_by_source", [])
+        if opt_in_rows:
+            lines.append("  opt-ins/upgrades בתקופה לפי מקור:")
+            for row in opt_in_rows:
+                lines.append(f"    {row.get('source','unknown')}: {row.get('count',0)}")
+
     rev = data.get("revenue")
     lines += ["", "--- אימות הכנסות מול D1 (לא רק ספירת events מ-GA) ---"]
     if rev is None:
@@ -334,6 +422,112 @@ def build_data_summary(data):
         for row in rev["print"]["by_status"]:
             lines.append(f"    - {row['status']}: {row['count']} הזמנות, ₪{row.get('revenue') or 0}")
     return "\n".join(lines)
+
+
+def _safe_int(value):
+    try:
+        return int(float(value))
+    except (TypeError, ValueError):
+        return 0
+
+
+def _rate_pct(numerator, denominator):
+    if not denominator:
+        return None
+    return round((numerator / denominator) * 100, 1)
+
+
+def build_business_review(data):
+    """Deterministic weekly scorecard: one next experiment, with sample-size guardrails."""
+    sessions = _safe_int(data.get("summary", {}).get("sessions"))
+    funnel = data.get("funnel_events", {}) or {}
+    photo_views = _safe_int(funnel.get("photo_view"))
+    purchase_intent = _safe_int(funnel.get("purchase_intent"))
+    print_intent = _safe_int(funnel.get("print_intent"))
+    add_size = _safe_int(funnel.get("add_size"))
+    guide_requests = _safe_int(funnel.get("guide_request_success"))
+    leads = _safe_int(funnel.get("generate_lead"))
+
+    direct_sessions = 0
+    for row in data.get("sources", []) or []:
+        label = str(row.get("מקור", "")).strip().lower()
+        if label in {"כניסה ישירה", "direct", "direct traffic"}:
+            direct_sessions += _safe_int(row.get("sessions"))
+
+    subscriber_summary = data.get("subscriber_summary") or {}
+    source_rows = subscriber_summary.get("period_new_by_source", []) or []
+    new_subscribers = sum(_safe_int(r.get("total")) for r in source_rows)
+    marketing_opt_ins = sum(_safe_int(r.get("marketing_opt_in")) for r in source_rows)
+    period_marketing_opt_ins = sum(
+        _safe_int(r.get("count"))
+        for r in subscriber_summary.get("period_marketing_opt_ins_by_source", []) or []
+    )
+
+    review = {
+        "sample": {
+            "sessions": sessions,
+            "new_subscribers": new_subscribers,
+            "directional_only": new_subscribers < 20,
+            "note": (
+                "Directional only — fewer than 20 new subscribers in the measured period."
+                if new_subscribers < 20
+                else "Enough subscriber volume for a first source-level comparison; continue validating over 28 days."
+            ),
+        },
+        "kpis": {
+            "direct_share_pct": _rate_pct(direct_sessions, sessions),
+            "lead_rate_pct": _rate_pct(leads, sessions),
+            "guide_request_rate_pct": _rate_pct(guide_requests, sessions),
+            "new_subscriber_marketing_opt_in_pct": _rate_pct(marketing_opt_ins, new_subscribers),
+            "period_marketing_opt_ins": period_marketing_opt_ins,
+            "digital_intent_pct": _rate_pct(purchase_intent, photo_views),
+            "digital_selection_pct": _rate_pct(add_size, purchase_intent),
+            "print_intent_pct": _rate_pct(print_intent, photo_views),
+        },
+        "next_action": "",
+        "reason": "",
+    }
+
+    direct_share = review["kpis"]["direct_share_pct"]
+    if direct_share is not None and direct_share > 70 and sessions >= 20:
+        review["next_action"] = (
+            "Run one attribution experiment this week: every new social/newsletter share should use a deep link "
+            "to a specific photo, collection or free guide with UTM tags; avoid homepage links by default."
+        )
+        review["reason"] = (
+            f"Direct traffic is {direct_share}% of sessions, so acquisition attribution is still the largest "
+            "measurement constraint before choosing a monetization channel."
+        )
+    elif guide_requests >= 5 and leads < guide_requests:
+        review["next_action"] = (
+            "Test one clearer marketing opt-in value proposition on the free-guide flow, without changing "
+            "privacy consent or making marketing consent mandatory."
+        )
+        review["reason"] = (
+            "Guide requests are converting into fewer marketing leads; the lead magnet is working, but owned-audience "
+            "conversion needs a focused copy/value test."
+        )
+    elif photo_views >= 20 and purchase_intent > print_intent:
+        review["next_action"] = (
+            "Prepare the smallest digital licensing MVP definition: 2–3 license tiers, deliverables and test prices; "
+            "do not enable production payments yet."
+        )
+        review["reason"] = (
+            f"Digital purchase intent ({purchase_intent}) is currently above print intent ({print_intent}) "
+            "with enough photo-view activity for a directional product hypothesis."
+        )
+    elif print_intent >= 3 and print_intent >= purchase_intent:
+        review["next_action"] = (
+            "Design a curated print reservation test for 3–5 photos before investing further in full Gelato checkout."
+        )
+        review["reason"] = "Print intent is recurring enough to justify a demand-validation experiment, not a full store build."
+    else:
+        review["next_action"] = (
+            "Keep measurement stable for another week and focus on increasing qualified traffic rather than adding a new commerce feature."
+        )
+        review["reason"] = "Current conversion counts are still too small for a reliable channel decision."
+
+    return review
 
 
 def generate_analysis(data_summary):
@@ -367,6 +561,33 @@ def generate_analysis(data_summary):
 כתוב בעברית, ישיר."""}],
     )
     return msg.content[0].text.strip()
+
+
+def build_business_review_html(review):
+    if not review:
+        return ""
+    k = review.get("kpis", {})
+    sample = review.get("sample", {})
+    def fmt(v):
+        return "—" if v is None else f"{v}%"
+    return f"""
+  <div style="padding:0 24px 20px">
+    <h2 style="color:#2c3e50;margin:0 0 8px;font-size:1em">Business Review — החלטה אחת לשבוע הבא</h2>
+    <div style="background:#fff8e8;border-right:4px solid #c8a96e;padding:14px 16px;border-radius:0 8px 8px 0;line-height:1.65;color:#333;font-size:.92em">
+      <strong>{review.get('next_action','')}</strong><br>
+      <span style="color:#666">{review.get('reason','')}</span>
+      <div style="margin-top:10px;color:#777;font-size:.84em">
+        Direct: {fmt(k.get('direct_share_pct'))} · Lead rate: {fmt(k.get('lead_rate_pct'))} ·
+        Guide request rate: {fmt(k.get('guide_request_rate_pct'))} ·
+        New-subscriber marketing opt-in: {fmt(k.get('new_subscriber_marketing_opt_in_pct'))} ·
+        Weekly marketing opt-ins/upgrades: {k.get('period_marketing_opt_ins', 0)} ·
+        Digital intent: {fmt(k.get('digital_intent_pct'))} ·
+        Print intent: {fmt(k.get('print_intent_pct'))}<br>
+        Sample: {sample.get('sessions',0)} sessions / {sample.get('new_subscribers',0)} new subscribers.
+        {sample.get('note','')}
+      </div>
+    </div>
+  </div>"""
 
 
 def build_revenue_html(rev, card):
@@ -416,6 +637,12 @@ def build_html_email(data, analysis):
         f'<td style="padding:5px 8px;text-align:right;font-weight:600">{r["sessions"]}</td></tr>'
         for r in data["sources"]
     )
+    campaign_rows = "".join(
+        f'<tr><td style="padding:5px 8px;color:#555">{r.get("source","")} / {r.get("medium","")}</td>'
+        f'<td style="padding:5px 8px;color:#555">{r.get("campaign") or "(not set)"}</td>'
+        f'<td style="padding:5px 8px;text-align:right;font-weight:600">{r.get("sessions","0")}</td></tr>'
+        for r in data.get("campaigns", [])[:10]
+    )
 
     return f"""<!DOCTYPE html>
 <html dir="rtl" lang="he">
@@ -438,6 +665,7 @@ def build_html_email(data, analysis):
     {card("סשנים מעורבים", s.get('engagedSessions', 'לא זמין'))}
     {card("זמן ממוצע", format_duration(s['avgSessionSec']))}
   </div>
+  {build_business_review_html(data.get('business_review'))}
   <div style="padding:0 24px 20px">
     <h2 style="color:#2c3e50;margin:0 0 10px;font-size:1em">ניתוח והמלצות — Claude</h2>
     <div style="background:#f8f9fa;border-right:4px solid #3498db;padding:14px 16px;border-radius:0 8px 8px 0;line-height:1.7;color:#333;font-size:.92em">
@@ -455,6 +683,10 @@ def build_html_email(data, analysis):
       {card("גלילה 90%", data['funnel_events'].get('scroll_90', '0'))}
       {card("לידים", data['funnel_events'].get('generate_lead', '0'))}
       {card("יצירת קשר", data['funnel_events'].get('contact_intent', '0'))}
+      {card("עניין ברישוי אישי", data['funnel_events'].get('licensing_personal_interest', '0'))}
+      {card("פניות רישוי מסחרי", data['funnel_events'].get('licensing_commercial_contact', '0'))}
+      {card("עניין B2B", data['funnel_events'].get('b2b_intent', '0'))}
+      {card("פניות B2B", data['funnel_events'].get('b2b_contact_start', '0'))}
     </div>
   </div>
   <div style="padding:0 24px 20px">
@@ -490,6 +722,17 @@ def build_html_email(data, analysis):
         {sources_rows}
       </table>
     </div>
+  </div>
+  <div style="padding:0 24px 20px">
+    <h2 style="color:#2c3e50;margin:0 0 8px;font-size:1em">Campaign attribution</h2>
+    <table style="width:100%;border-collapse:collapse;font-size:.86em">
+      <tr style="background:#f0f2f5">
+        <th style="padding:6px 8px;text-align:right;color:#555">Source / Medium</th>
+        <th style="padding:6px 8px;text-align:right;color:#555">Campaign</th>
+        <th style="padding:6px 8px;text-align:right;color:#555">Sessions</th>
+      </tr>
+      {campaign_rows or '<tr><td colspan="3" style="padding:8px;color:#999">אין עדיין נתוני campaign</td></tr>'}
+    </table>
   </div>
   <div style="background:#f8f9fa;padding:14px 24px;text-align:center;color:#aaa;font-size:.78em">
     נשלח אוטומטית מ-amitphotos.com • <a href="https://amitphotos.com" style="color:#3498db">amitphotos.com</a>
@@ -549,10 +792,13 @@ def save_report(data, analysis, reports_file=None):
         "top_pages": data["top_pages"][:5],
         "landing_pages": data.get("landing_pages", [])[:5],
         "sources":   data["sources"][:5],
+        "campaigns": data.get("campaigns", [])[:20],
         "devices":   data.get("devices", []),
         "countries": data.get("countries", [])[:5],
         "funnel_events": data["funnel_events"],
         "ux_by_page": data.get("ux_by_page", [])[:50],
+        "subscriber_summary": data.get("subscriber_summary"),
+        "business_review": data.get("business_review"),
         "revenue":   data.get("revenue"),
         "analysis":  analysis,
     })
@@ -577,10 +823,17 @@ def main():
     print("📊 שולף נתונים מ-GA4...")
     data = fetch_ga4_data(token)
 
+    print("👥 מושך לידים לפי מקור מ-D1...")
+    data["subscriber_summary"] = fetch_subscriber_summary()
+
     print("💰 מאמת הכנסות מול D1...")
     data["revenue"] = fetch_revenue_summary()
 
+    data["business_review"] = build_business_review(data)
     print(build_data_summary(data))
+    print("\n📌 החלטה עסקית לשבוע הבא:")
+    print("  " + data["business_review"]["next_action"])
+    print("  סיבה: " + data["business_review"]["reason"])
 
     print("\n🤖 Claude מנתח נתונים...")
     analysis = generate_analysis(build_data_summary(data))

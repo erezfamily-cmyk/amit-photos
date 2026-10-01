@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { handleSubscribers, getConsentBackfillDiagnostics, GUIDE_SOURCES, NEWSLETTER_SOURCES, CONSENT_POLICY_VERSION } from '../worker.js';
+import { handleSubscribers, getConsentBackfillDiagnostics, getSubscriberSourceSummary, GUIDE_SOURCES, NEWSLETTER_SOURCES, CONSENT_POLICY_VERSION } from '../worker.js';
 
 function fakeEnv({ existingRow = null, adminOk = true } = {}) {
   const inserts = [];
@@ -226,4 +226,142 @@ test('report never includes email addresses or any other PII field — only sour
 
 test('source code of the diagnostics helper contains no UPDATE statement', () => {
   assert.doesNotMatch(getConsentBackfillDiagnostics.toString(), /UPDATE\s+subscribers/i);
+});
+
+
+test('new subscriber response exposes created=true without PII', async () => {
+  const env = fakeEnv({ existingRow: null });
+  const res = await handleSubscribers(req('lead_magnet', {
+    email: 'new@b.com',
+    consent_privacy: true,
+    consent_marketing: false,
+  }), env);
+  assert.equal(res.status, 200);
+  const body = await res.json();
+  assert.equal(body.ok, true);
+  assert.equal(body.already, false);
+  assert.equal(body.created, true);
+  assert.equal(body.marketing_upgraded, false);
+  assert.equal(body.lead_created, false);
+  assert.equal(typeof body.id, 'string');
+  assert.equal('email' in body, false);
+});
+
+test('existing subscriber response does not look like a new lead', async () => {
+  const env = fakeEnv({ existingRow: { id: 'sub1', consent_marketing: 1 } });
+  const res = await handleSubscribers(req('lead_magnet', {
+    email: 'a@b.com',
+    consent_privacy: true,
+    consent_marketing: false,
+  }), env);
+  assert.equal(res.status, 200);
+  const body = await res.json();
+  assert.deepEqual(body, {
+    ok: true,
+    already: true,
+    created: false,
+    marketing_upgraded: false,
+    lead_created: false,
+  });
+});
+
+test('existing subscriber response marks a real marketing-consent upgrade', async () => {
+  const env = fakeEnv({ existingRow: { id: 'sub1', consent_marketing: 0 } });
+  const res = await handleSubscribers(req('lead_magnet', {
+    email: 'a@b.com',
+    consent_privacy: true,
+    consent_marketing: true,
+  }), env);
+  assert.equal(res.status, 200);
+  const body = await res.json();
+  assert.equal(body.already, true);
+  assert.equal(body.created, false);
+  assert.equal(body.marketing_upgraded, true);
+  assert.equal(body.lead_created, true);
+});
+
+test('new guide subscriber without marketing consent is not counted as a marketing lead', async () => {
+  const env = fakeEnv({ existingRow: null });
+  const res = await handleSubscribers(req('lead_magnet', {
+    email: 'guide-only@b.com',
+    consent_privacy: true,
+    consent_marketing: false,
+  }), env);
+  const body = await res.json();
+  assert.equal(body.created, true);
+  assert.equal(body.lead_created, false);
+});
+
+test('new guide subscriber with marketing consent is counted as a marketing lead', async () => {
+  const env = fakeEnv({ existingRow: null });
+  const res = await handleSubscribers(req('lead_magnet', {
+    email: 'guide-and-marketing@b.com',
+    consent_privacy: true,
+    consent_marketing: true,
+  }), env);
+  const body = await res.json();
+  assert.equal(body.created, true);
+  assert.equal(body.lead_created, true);
+});
+
+
+test('subscriber source summary returns aggregates only and no PII', async () => {
+  const queries = [];
+  const env = {
+    DB: {
+      prepare(sql) {
+        queries.push(sql);
+        if (sql.includes('WHERE created_at >= ?')) {
+          return { bind: () => ({ all: async () => ({ results: [
+            { source: 'lead_magnet', total: 4, marketing_opt_in: 2, marketing_opt_out: 2, marketing_unknown: 0 },
+          ] }) }) };
+        }
+        if (sql.includes('consent_marketing = 1') && sql.includes('consent_marketing_at >= ?')) {
+          return { bind: () => ({ all: async () => ({ results: [
+            { source: 'lead_magnet', count: 2 },
+          ] }) }) };
+        }
+        if (sql.includes('consent_marketing = 1') && sql.includes('GROUP BY')) {
+          return { all: async () => ({ results: [
+            { source: 'lead_magnet', count: 3 },
+            { source: 'homepage_section', count: 2 },
+          ] }) };
+        }
+        return { first: async () => ({
+          total_subscribers: 8,
+          marketing_subscribers: 5,
+          non_marketing_subscribers: 2,
+          unknown_marketing_consent: 1,
+        }) };
+      }
+    }
+  };
+
+  const summary = await getSubscriberSourceSummary(env, 7);
+  assert.equal(summary.period_days, 7);
+  assert.equal(summary.period_new_by_source[0].source, 'lead_magnet');
+  assert.equal(summary.totals.marketing_subscribers, 5);
+  assert.equal(summary.period_marketing_opt_ins_by_source[0].source, 'lead_magnet');
+  assert.equal(summary.period_marketing_opt_ins_by_source[0].count, 2);
+  const json = JSON.stringify(summary);
+  assert.doesNotMatch(json, /@/);
+  assert.doesNotMatch(json, /email/i);
+  assert.ok(queries.every(q => !/SELECT\s+.*email/i.test(q)));
+});
+
+test('subscriber source summary clamps day range to 1..90', async () => {
+  const env = {
+    DB: {
+      prepare(sql) {
+        if (sql.includes('WHERE created_at >= ?')) {
+          return { bind: () => ({ all: async () => ({ results: [] }) }) };
+        }
+        if (sql.includes('consent_marketing_at >= ?')) return { bind: () => ({ all: async () => ({ results: [] }) }) };
+        if (sql.includes('GROUP BY')) return { all: async () => ({ results: [] }) };
+        return { first: async () => ({}) };
+      }
+    }
+  };
+  assert.equal((await getSubscriberSourceSummary(env, 0)).period_days, 1);
+  assert.equal((await getSubscriberSourceSummary(env, 999)).period_days, 90);
 });

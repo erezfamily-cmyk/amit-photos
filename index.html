@@ -715,8 +715,11 @@
                   consent_marketing: document.getElementById('newsletter-consent-marketing').checked
                 })
               });
+              const data = await r.json().catch(() => ({}));
               if (r.ok) {
-                if (typeof trackUxEvent === 'function') trackUxEvent('generate_lead', { source: 'homepage_section' });
+                if (typeof trackUxEvent === 'function' && data.lead_created) {
+                  trackUxEvent('generate_lead', { source: 'homepage_section' });
+                }
                 msg.style.color = '#4caf7d';
                 msg.textContent = t('newsletter.ok');
                 document.getElementById('newsletter-email').value = '';
@@ -1226,8 +1229,12 @@
           consent_marketing: document.getElementById('popup-consent-marketing').checked
         })
       });
+      var data = await r.json().catch(function(){ return {}; });
       if (r.ok) {
-        if (typeof trackUxEvent === 'function') trackUxEvent('generate_lead', { source: 'popup' });
+        if (typeof trackUxEvent === 'function') {
+          trackUxEvent('guide_request_success', { source: 'popup' });
+          if data.lead_created trackUxEvent('generate_lead', { source: 'popup' });
+        }
         msg.style.color = '#4caf7d';
         msg.textContent = '&#x2713; נשלח! בדוק תיבת הדואר (גם spam).';
         document.getElementById('popup-email').value = '';

@@ -1,0 +1,35 @@
+name: Lead Funnel CI
+
+on:
+  push:
+    branches:
+      - fix/lead-funnel-measurement-2026-10-01
+  pull_request:
+    paths:
+      - 'worker.js'
+      - 'index.html'
+      - 'assets/js/nav.js'
+      - 'src/ga_weekly_report.py'
+      - 'tests/subscriber-consent-model.test.mjs'
+      - '.github/workflows/lead-funnel-ci.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  lead-funnel:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Node version
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Subscriber consent and lead tests
+        run: node --test tests/subscriber-consent-model.test.mjs
+
+      - name: Python syntax check
+        run: python3 -m py_compile src/ga_weekly_report.py
