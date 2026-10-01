@@ -698,3 +698,27 @@ MVP:
 9. הערת sample size מפורשת.
 10. החלטה אחת בלבד לשבוע הבא — לא רשימת שינויים גדולה.
 
+
+
+---
+
+# Acquisition Sprint — 1.10.2026
+
+מסמך עבודה: `docs/acquisition-playbook-2026-10-01.md`
+
+## הושלם
+- [x] הוגדר UTM standard קבוע ל-source / medium / campaign / content.
+- [x] הוגדר כלל deep-link: לא שולחים homepage כשיש יעד מדויק יותר.
+- [x] הוגדר ניסוי attribution ראשון ל-7 ימים.
+- [x] הוגדרו ניסויי follow-up ל-free guide, licensing ו-B2B.
+- [x] הדוח השבועי ב-PR #79 הורחב ל-source / medium / campaign.
+- [x] הדוח השבועי מכיר גם אירועי licensing ו-B2B החדשים.
+
+## ממתין ל-merge/review
+- [ ] למזג את PR #79 רק לאחר review/tests.
+- [ ] למזג את עמודי licensing/B2B רק לאחר UX review מתאים.
+- [ ] להתחיל 7 ימים של UTM discipline רק כשהמדידה החדשה זמינה בפועל.
+- [ ] בסוף 7 ימים לבדוק האם Direct share יורד והאם campaign מזוהה מביא פעולה עסקית.
+
+## כלל
+לא מתחילים paid ads בשלב הזה. קודם מוכיחים attribution ו-organic distribution.
