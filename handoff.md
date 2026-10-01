@@ -155,3 +155,24 @@ PAYMENTS_ENABLED = "false"   ב-wrangler.toml (production)
 - אין PII ב-GA.
 - אין שינוי ב-payment flow.
 
+
+
+### Weekly Business Review automation — 1.10.2026
+
+נמצא שכבר קיימת אוטומציה שבועית ב-`.github/workflows/ga-weekly-analysis.yml`:
+- רצה בכל יום שני ב-07:00 UTC.
+- מפעילה `src/ga_weekly_report.py`.
+- שולחת דוח במייל ושומרת את `data/ga_reports.json`.
+
+לכן **לא נוספה אוטומציה מקבילה**. במקום זאת, Draft PR #79 מרחיב את הדוח השבועי הקיים:
+- מוסיף D1 subscriber summary לפי source, ללא PII.
+- מוסיף KPI עסקיים דטרמיניסטיים: Direct share, lead rate, marketing opt-in, digital intent, print intent.
+- מוסיף sample-size guardrail.
+- מפיק **next_action אחד בלבד** לשבוע הבא + reason.
+- שומר את `business_review` בתוך `data/ga_reports.json`.
+- מציג את ההחלטה גם במייל השבועי לפני ניתוח ה-AI.
+
+החלטת ה-next_action אינה מבוססת רק על Claude: היא מחושבת בקוד לפי כללים שקופים, ורק אחר כך Claude מוסיף ניתוח טקסטואלי. כך נמנעת החלפת אסטרטגיה בגלל ניסוח משתנה של מודל AI.
+
+אין שינוי ב-schedule, אין workflow חדש, אין payment enablement ואין deploy במסגרת ה-Draft.
+
