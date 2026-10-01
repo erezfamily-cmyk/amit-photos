@@ -278,6 +278,31 @@ def fetch_subscriber_summary(days=7):
     return None
 
 
+def fetch_photo_analytics():
+    """מושך ביצועי תמונות אמיתיים מ-D1 ל-30 יום, לפי photo_id."""
+    if not ADMIN_PASSWORD:
+        print("⚠️ ADMIN_PASSWORD חסר — מדלג על photo analytics מול D1")
+        return None
+    try:
+        resp = requests.get(
+            f"{WORKER_URL}/api/admin/photo-analytics",
+            headers={"X-Admin-Password": ADMIN_PASSWORD},
+            timeout=15,
+        )
+        if resp.ok:
+            data = resp.json()
+            return {
+                "window_days": 30,
+                "views": data.get("views", []),
+                "intents": data.get("intents", []),
+                "purchases": data.get("purchases", []),
+            }
+        print(f"⚠️ photo-analytics החזיר {resp.status_code}: {resp.text[:200]}")
+    except Exception as e:
+        print(f"⚠️ photo-analytics נכשל: {e}")
+    return None
+
+
 def fetch_revenue_summary(days=7):
     """מושך הכנסות אמיתיות מאומתות מ-D1 (/api/admin/revenue-summary) — לא ספירת events מ-GA
     (שיורים בצד לקוח בלי קשר אם התשלום בפועל הצליח בשרת). כשל כאן לא אמור לעצור את הדוח כולו —
@@ -800,6 +825,7 @@ def save_report(data, analysis, reports_file=None):
         "subscriber_summary": data.get("subscriber_summary"),
         "business_review": data.get("business_review"),
         "revenue":   data.get("revenue"),
+        "photo_analytics": data.get("photo_analytics"),
         "analysis":  analysis,
     })
 
@@ -828,6 +854,9 @@ def main():
 
     print("💰 מאמת הכנסות מול D1...")
     data["revenue"] = fetch_revenue_summary()
+
+    print("🖼️ מושך ביצועי תמונות מ-D1...")
+    data["photo_analytics"] = fetch_photo_analytics()
 
     data["business_review"] = build_business_review(data)
     print(build_data_summary(data))
