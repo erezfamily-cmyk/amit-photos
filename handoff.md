@@ -554,3 +554,21 @@ Repository audit found a schema-documentation gap:
 - therefore the actual D1 table shape must be verified before implementing print Orders v2 fulfillment.
 
 Do not guess the production/staging print schema. Next safe action: inspect `PRAGMA table_info(print_orders)` in D1 (or recover the original schema source) before coding print fulfillment.
+
+
+### Acquisition Experiment 01 — 1.10.2026
+
+הוכן ניסוי ההפצה הראשון, אך הוא עדיין **לא הופעל**:
+- מסמך: `docs/acquisition-experiment-01-2026-10-01.md`
+- 3 מסלולים בלבד:
+  1. Free Guide
+  2. Personal Digital Licensing
+  3. B2B Wall Art
+- לכל מסלול יש UTM מדויק, copy מוצע, KPI ראשי ומשני.
+- חלון המדידה: 7 ימים.
+- אין paid ads ואין mass outreach.
+- לא משנים pricing/hero/checkout בזמן הניסוי.
+- Licensing ו-B2B יופצו רק אחרי review/merge/deploy של PR #80/#81.
+- למדידה נקייה עדיף להתחיל את חלון ה-7 ימים אחרי PR #79.
+- PR #82 הוא כלי נוחות בלבד ואינו launch dependency.
+
