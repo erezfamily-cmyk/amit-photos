@@ -260,3 +260,13 @@ PAYMENTS_ENABLED = "false"   ב-wrangler.toml (production)
 - Both `PAYPAL_CLIENT_ID` and `PAYPAL_CLIENT_SECRET` were refreshed together from the same Sandbox app.
 - Next action: rerun authenticated `/api/admin/paypal/sandbox-status` and require `ok=true` before creating another order.
 - Production remains untouched and `PAYMENTS_ENABLED=false`.
+
+
+### PayPal Sandbox direct OAuth diagnosis — 1.10.2026
+
+- Direct PowerShell POST to `https://api-m.sandbox.paypal.com/v1/oauth2/token` using the Sandbox Client ID + Secret returned:
+  - `error=invalid_client`
+  - `error_description=Client Authentication failed`
+- This reproduces the failure outside Cloudflare, so the current blocker is the PayPal Sandbox credential pair itself, not Worker bindings, D1, R2, routing, or Cloudflare secret access.
+- Do not continue create/capture testing until direct OAuth succeeds.
+- Next recovery step: create a second Sandbox secret for the same app, copy Client ID and the new secret using PayPal's copy controls, test them directly against OAuth, then update Cloudflare only after the direct test passes. Keep production untouched.
