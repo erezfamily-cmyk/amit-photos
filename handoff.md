@@ -155,3 +155,12 @@ PAYMENTS_ENABLED = "false"   ב-wrangler.toml (production)
 
 כך אפשר למדוד איזה offer עסקי מביא פניות אמיתיות בלי לבנות CRM חדש ובלי לשכפל טפסים.
 
+
+### B2B acquisition readiness — 1.10.2026
+
+עמוד `/business/` הוכן להפצה מבוקרת:
+- נוספו canonical + hreflang.
+- נוספו Open Graph ו-Twitter Card.
+- social preview משתמש כרגע בתמונת המותג הקיימת של האתר.
+- העמוד מוכן לניסוי deep-link/UTM לאחר review ו-merge.
+- אין paid ads, אין checkout עסקי ואין Gelato commitment.
