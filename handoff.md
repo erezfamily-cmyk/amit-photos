@@ -176,3 +176,21 @@ PAYMENTS_ENABLED = "false"   ב-wrangler.toml (production)
 
 אין שינוי ב-schedule, אין workflow חדש, אין payment enablement ואין deploy במסגרת ה-Draft.
 
+
+
+### Acquisition attribution — 1.10.2026
+
+המשך התוכנית העסקית זיהה ש-Direct הוא עדיין צוואר בקבוק מרכזי למדידה. Draft PR #79 הורחב:
+- GA weekly report מושך כעת גם `sessionSource`, `sessionMedium`, `sessionCampaignName`.
+- Source / Medium / Campaign מופיעים בדוח הטקסט ובמייל השבועי.
+- נוספו מראש אירועי העסק החדשים לרשימת הדוח:
+  - `licensing_personal_interest`
+  - `licensing_commercial_contact`
+  - `b2b_intent`
+  - `b2b_package_select`
+  - `b2b_contact_start`
+- אין PII.
+- אין שינוי בתשלומים.
+
+Business docs מגדירים UTM convention וניסוי attribution של 7 ימים. אין להתחיל paid ads לפני שיש attribution יציב ויכולת לזהות איזה קמפיין מביא פעולות עסקיות.
+
