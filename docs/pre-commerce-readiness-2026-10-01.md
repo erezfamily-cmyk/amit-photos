@@ -260,3 +260,14 @@ Verified in PayPal Sandbox + Cloudflare D1 staging:
 - no new download entitlement was created.
 
 This negative path is considered verified.
+
+
+## Real Sandbox webhook E2E — passed (1.10.2026)
+
+Verified with a real PayPal Sandbox transaction:
+- `CHECKOUT.ORDER.APPROVED` was delivered to the staging webhook;
+- `PAYMENT.CAPTURE.COMPLETED` was delivered to the staging webhook;
+- both events were signature-verified by the Worker before processing;
+- D1 shows `processed=1`, `attempts=1`, and no stuck processing lease.
+
+Conclusion: the real PayPal Sandbox webhook path, including signature verification with `PAYPAL_WEBHOOK_ID`, is verified end-to-end.
