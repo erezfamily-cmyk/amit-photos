@@ -119,6 +119,7 @@ CREATE TABLE IF NOT EXISTS paypal_orders (
   print_address_json TEXT,
   fulfillment_json TEXT,
   fulfillment_token TEXT UNIQUE,
+  client_idempotency_key TEXT,
   paypal_capture_id TEXT,
   created_at TEXT NOT NULL,
   completed_at TEXT
@@ -133,3 +134,20 @@ CREATE TABLE IF NOT EXISTS paypal_webhook_events (
   received_at TEXT NOT NULL,
   processed INTEGER NOT NULL DEFAULT 0
 );
+
+
+-- PayPal Orders API v2 hardening (migration: migrations/0002_paypal_security_hardening.sql)
+CREATE UNIQUE INDEX IF NOT EXISTS idx_paypal_orders_client_idempotency
+  ON paypal_orders(client_idempotency_key)
+  WHERE client_idempotency_key IS NOT NULL;
+
+CREATE TABLE IF NOT EXISTS paypal_rate_limits (
+  rate_key TEXT NOT NULL,
+  action TEXT NOT NULL,
+  window_start INTEGER NOT NULL,
+  count INTEGER NOT NULL DEFAULT 0,
+  PRIMARY KEY (rate_key, action, window_start)
+);
+
+CREATE INDEX IF NOT EXISTS idx_paypal_rate_limits_window
+  ON paypal_rate_limits(window_start);
