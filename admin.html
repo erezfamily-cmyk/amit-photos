@@ -3661,7 +3661,7 @@ const Photos = (() => {
     $('curation-dialog').showModal();
   }
 
-  function renderGrid() {  function renderGrid() {
+  function renderGrid() {
     const all = getDisplayData();
     const disp = all.slice(0, visibleCount);
     const grid = $('photos-grid');
@@ -3832,7 +3832,7 @@ const Photos = (() => {
     render();
   }
 
-  async function confirmDelete(id) {  async function confirmDelete(id) {
+  async function confirmDelete(id) {
     const photo = data.find(p => p.id === id);
     if (!confirm(`למחוק את "${photo?.title||'תמונה זו'}"?`)) return;
     await fetch(`/api/photos?id=${id}`, { method: 'DELETE', headers: authHeaders() });

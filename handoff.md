@@ -873,3 +873,19 @@ Guardrails נשארו:
 - `DELETE`: לא חוזר לפרודקשן בריצה היומית, גם אם המקור נשאר ב-Drive.
 
 אין שינוי ב-PayPal/Gelato, אין שינוי אוטומטי בסדר הגלריה.
+
+
+### Admin navigation hotfix — 2.10.2026
+
+לאחר מיזוג PR #93 התגלה שה-sidebar באדמין מוצג אך רוב הפריטים אינם מגיבים ללחיצה.
+
+Root cause:
+- ב-`admin.html` נכנסו בטעות שתי הצהרות פונקציה כפולות:
+  - `function renderGrid() { function renderGrid() {`
+  - `async function confirmDelete(id) { async function confirmDelete(id) {`
+- השגיאה יצרה `SyntaxError: Unexpected token ')'` והפילה את כל סקריפט ה-JavaScript הראשי, ולכן listeners של `.nav-item` לא נרשמו.
+
+Fix:
+- הוסרו שתי הכפילויות בלבד.
+- נוספה בדיקת Node שמוודאת שכל inline scripts של `admin.html` עוברים parsing לפני merge.
+- אין שינוי בנתוני התמונות, בהחלטות הקיורציה, ב-PayPal או ב-Gelato.

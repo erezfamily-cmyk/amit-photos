@@ -75,3 +75,15 @@ test('Drive sync preserves hidden photos and DELETE curation decisions', () => {
   assert.match(admin, /שומרים קודם tombstone של DELETE/);
   assert.match(admin, /לא תיובא מחדש מ-Drive/);
 });
+
+
+test('admin inline scripts have valid JavaScript syntax', () => {
+  const scripts = [...admin.matchAll(/<script[^>]*>([\s\S]*?)<\/script>/gi)].map(match => match[1]);
+  assert.ok(scripts.length > 0);
+  scripts.forEach((script, index) => {
+    assert.doesNotThrow(
+      () => new Function(script),
+      `inline admin script ${index} must parse`
+    );
+  });
+});
