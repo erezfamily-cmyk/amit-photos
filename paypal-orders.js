@@ -174,33 +174,28 @@ export async function handlePayPalCreateOrder(request, env) {
 
 async function finalizeDigitalPayPalOrder(request, env, order) {
   const captureId = order.paypal_capture_id;
-  if (!captureId) return jsonRes({ error: 'PayPal capture is missing' }, 500, request);
-
-  let tokenRow = await env.DB.prepare(
-    'SELECT token FROM download_tokens WHERE tx = ? LIMIT 1'
-  ).bind(captureId).first();
-
-  if (!tokenRow) {
-    const token = crypto.randomUUID();
-    const now = Math.floor(Date.now() / 1000);
-    const expires = now + 86400;
-    await env.DB.prepare(
-      'INSERT INTO download_tokens (token, photo_ids, size, tx, used, expires_at, created_at, amount) VALUES (?, ?, ?, ?, 0, ?, ?, ?)'
-    ).bind(
-      token,
-      JSON.stringify([order.photo_id]),
-      order.sku,
-      captureId,
-      expires,
-      now,
-      order.amount_expected / 100
-    ).run();
-    tokenRow = { token };
+  const fulfillmentToken = order.fulfillment_token;
+  if (!captureId || !fulfillmentToken) {
+    return jsonRes({ error: 'PayPal fulfillment state is incomplete' }, 500, request);
   }
+
+  const now = Math.floor(Date.now() / 1000);
+  const expires = now + 86400;
+  await env.DB.prepare(
+    'INSERT OR IGNORE INTO download_tokens (token, photo_ids, size, tx, used, expires_at, created_at, amount) VALUES (?, ?, ?, ?, 0, ?, ?, ?)'
+  ).bind(
+    fulfillmentToken,
+    JSON.stringify([order.photo_id]),
+    order.sku,
+    captureId,
+    expires,
+    now,
+    order.amount_expected / 100
+  ).run();
 
   const photo = await env.DB.prepare('SELECT title FROM photos WHERE id = ?').bind(order.photo_id).first();
   const fulfillment = {
-    url: '/api/download/' + tokenRow.token,
+    url: '/api/download/' + fulfillmentToken,
     title: photo?.title || order.photo_id,
   };
 
@@ -233,7 +228,7 @@ export async function handlePayPalCaptureOrder(request, env) {
 
   // A prior request may have captured successfully but been interrupted during
   // local fulfillment. Resume locally without charging again.
-  if (order.status === 'FULFILLING' && order.paypal_capture_id && order.order_type === 'digital') {
+  if (order.status === 'FULFILLING' && order.paypal_capture_id && order.fulfillment_token && order.order_type === 'digital') {
     return finalizeDigitalPayPalOrder(request, env, order);
   }
 
@@ -273,22 +268,23 @@ export async function handlePayPalCaptureOrder(request, env) {
     return jsonRes({ error: 'PayPal capture amount mismatch' }, 502, request);
   }
 
+  const fulfillmentToken = crypto.randomUUID();
   const claim = await env.DB.prepare(
-    "UPDATE paypal_orders SET status='FULFILLING', paypal_capture_id=? WHERE paypal_order_id=? AND status NOT IN ('FULFILLING','COMPLETED')"
-  ).bind(capture.id, paypalOrderId).run();
+    "UPDATE paypal_orders SET status='FULFILLING', paypal_capture_id=?, fulfillment_token=? WHERE paypal_order_id=? AND status NOT IN ('FULFILLING','COMPLETED')"
+  ).bind(capture.id, fulfillmentToken, paypalOrderId).run();
 
   if ((claim.meta?.changes || 0) === 0) {
     order = await env.DB.prepare('SELECT * FROM paypal_orders WHERE paypal_order_id = ?').bind(paypalOrderId).first();
     if (order?.status === 'COMPLETED' && order.fulfillment_json) {
       return jsonRes(JSON.parse(order.fulfillment_json), 200, request);
     }
-    if (order?.status === 'FULFILLING' && order.paypal_capture_id && order.order_type === 'digital') {
+    if (order?.status === 'FULFILLING' && order.paypal_capture_id && order.fulfillment_token && order.order_type === 'digital') {
       return finalizeDigitalPayPalOrder(request, env, order);
     }
     return jsonRes({ error: 'Order is already being processed' }, 409, request);
   }
 
-  order = { ...order, status: 'FULFILLING', paypal_capture_id: capture.id };
+  order = { ...order, status: 'FULFILLING', paypal_capture_id: capture.id, fulfillment_token: fulfillmentToken };
   if (order.order_type !== 'digital') {
     return jsonRes({ error: 'Print fulfillment is not enabled in this phase' }, 409, request);
   }
