@@ -179,3 +179,15 @@ PAYMENTS_ENABLED = "false"   ב-wrangler.toml (production)
   - `keep_vars=true` so dashboard-managed Sandbox secrets are preserved.
 - Production remains untouched and `PAYMENTS_ENABLED=false`.
 - Next action: connect/deploy the staging Worker from branch `prep/paypal-orders-v2-2026-10-01`, then verify Sandbox OAuth and E2E.
+
+
+### Cloudflare Git staging connection — 1.10.2026
+
+- Worker `amit-photos-paypal-sandbox` connected to GitHub repo `erezfamily-cmyk/amit-photos`.
+- Production branch for this staging Worker is explicitly `prep/paypal-orders-v2-2026-10-01` — not `main`.
+- Build command: none.
+- Deploy command: `npx wrangler@4.4.0 deploy --config wrangler.paypal-sandbox.toml`.
+- Root directory: `/`.
+- The staging Worker remains workers.dev-only.
+- This documentation commit intentionally triggers the first staging build after Git connection.
+- Production site remains untouched and production `PAYMENTS_ENABLED=false`.
