@@ -582,3 +582,33 @@ Next business gate remains live verification of the already-merged acquisition s
 - Print יכול להישאר כרעיון/מדד ביקוש בלבד, ללא התחייבות לספק fulfillment.
 - `PAYMENTS_ENABLED=false` נשאר ללא שינוי.
 
+
+
+### PayPal reactivation plan — 1.10.2026
+
+החלטת עבודה:
+- PayPal Production **לא חוזר עכשיו**.
+- Acquisition Experiment 01 רץ קודם עם payments off כדי למדוד demand נקי.
+- checkpoint ראשון להחלטה: סביב 10.10.2026, אחרי 7 ימים מלאים של תנועה עם UTM.
+- זו נקודת החלטה בלבד, לא תאריך הפעלה אוטומטי.
+
+קריטריונים ראשוניים ל-Digital-only canary:
+- לפחות 20 qualified sessions ב-/licensing/;
+- לפחות 3 digital purchase-intent actions או intent rate של 10%+;
+- attribution ו-GA events עובדים;
+- PR #76 נבנה מחדש מ-main הנוכחי ועובר שוב Sandbox E2E/security.
+
+Guardrail חשוב:
+- לא הופכים את PAYMENTS_ENABLED הגלובלי ל-true, כי הוא פותח גם legacy print paths.
+- לפני Production צריך flag נפרד כגון DIGITAL_PAYPAL_ENABLED.
+- legacy print/Gelato נשארים כבויים.
+- Gelato מחוץ לתוכנית הנוכחית.
+
+נוסף מסמך:
+- `docs/paypal-reactivation-gate-2026-10-01.md`
+
+נוסף גם שדרוג ל-health-check:
+- תיקון thumbnail URL יחסי.
+- smoke checks ל-/licensing/ ול-/business/.
+- בדיקת Admin UTM builder.
+- בדיקה אוטומטית ש-/api/payments-status מחזיר enabled=false.
