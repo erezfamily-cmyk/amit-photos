@@ -1,0 +1,29 @@
+name: Admin Campaign Links CI
+
+on:
+  push:
+    branches:
+      - feature/admin-campaign-link-builder-2026-10-01
+  pull_request:
+    paths:
+      - 'admin.html'
+      - 'assets/js/admin-campaign-links.mjs'
+      - 'tests/admin-campaign-links.test.mjs'
+      - '.github/workflows/admin-campaign-links-ci.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  campaign-links:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: UTM builder tests
+        run: node --test tests/admin-campaign-links.test.mjs
