@@ -194,3 +194,24 @@ PAYMENTS_ENABLED = "false"   ב-wrangler.toml (production)
 
 Business docs מגדירים UTM convention וניסוי attribution של 7 ימים. אין להתחיל paid ads לפני שיש attribution יציב ויכולת לזהות איזה קמפיין מביא פעולות עסקיות.
 
+
+
+### PR #79 QA pass — 1.10.2026
+
+בוצע סבב QA ממוקד על lead measurement / weekly business review.
+
+ממצאים ותיקונים:
+- נמצא שהדוח השבועי משך Source/Medium/Campaign אבל לא שמר אותם ב-`data/ga_reports.json`; תוקן כדי לשמור היסטוריית campaign.
+- הוסר KPI מטעה `guide_to_lead_pct` שחילק את כלל ה-`generate_lead` (מכל המקורות) רק בבקשות מדריך; הוחלף ב-`guide_request_rate_pct` עקבי.
+- אומת ש-`nav.js` כבר טוען את `assets/js/analytics.js` בעמודי משנה שחסרה בהם טעינת GA ישירה, ולכן אין צורך להוסיף סקריפט כפול.
+- אומת שה-endpoint החדש `/api/admin/subscriber-summary` מוגן ב-`checkAuth`.
+- אומת שה-summary מחזיר aggregates בלבד ולא email/PII.
+
+נוסף workflow ממוקד:
+- `.github/workflows/lead-funnel-ci.yml`
+- מריץ `node --test tests/subscriber-consent-model.test.mjs`
+- מריץ `python3 -m py_compile src/ga_weekly_report.py`
+- read-only permissions בלבד.
+
+הערה: סביבת העבודה של ChatGPT לא הצליחה לבצע clone ישיר מ-GitHub בגלל חסימת DNS, ולכן האימות המקומי לא נחשב. ה-CI ב-GitHub הוא מקור האימות הבא לפני Ready/Merge.
+
