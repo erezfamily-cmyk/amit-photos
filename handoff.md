@@ -483,3 +483,36 @@ Because the handler only inserts/processes events after PayPal `verify-webhook-s
 
 Status: real PayPal Sandbox webhook E2E is verified.
 Next: cleanup policy for abandoned Sandbox/test orders, then print/Gelato Orders v2, then final security review. Production remains `PAYMENTS_ENABLED=false`.
+
+
+### Sandbox cleanup policy implemented — 1.10.2026 evening
+
+Implemented an admin-only, staging-only PayPal cleanup endpoint:
+- endpoint: `POST /api/admin/paypal/cleanup`;
+- protected by existing admin auth;
+- additionally requires `PAYPAL_SANDBOX_CLEANUP_ENABLED=true`;
+- that flag exists only in `wrangler.paypal-sandbox.toml`;
+- default behavior is dry-run (`apply` must be explicitly `true` to delete).
+
+Retention policy:
+- abandoned PayPal orders: only `CREATED`, no capture ID, no fulfillment token, no completed_at, older than 7 days;
+- processed webhook events: only `processed=1`, older than 90 days;
+- never deletes `COMPLETED` or `FULFILLING` orders;
+- never touches `download_tokens`.
+
+CI after cleanup implementation:
+- Node Tests: success;
+- Python Data Tests: success.
+
+No cleanup deletion has been executed yet. First staging use should be dry-run only and reviewed before any `apply=true`.
+
+### Print/Gelato migration discovery
+
+The migration design explicitly says `print_orders` should remain structurally unchanged and existing Gelato logic should be reused behind server-verified PayPal capture.
+
+Repository audit found a schema-documentation gap:
+- runtime code actively reads/writes `print_orders`;
+- `schema.sql` and current migrations do not define `print_orders`;
+- therefore the actual D1 table shape must be verified before implementing print Orders v2 fulfillment.
+
+Do not guess the production/staging print schema. Next safe action: inspect `PRAGMA table_info(print_orders)` in D1 (or recover the original schema source) before coding print fulfillment.
