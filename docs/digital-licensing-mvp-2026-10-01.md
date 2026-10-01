@@ -204,3 +204,26 @@ Before enabling paid licensing:
 - No Gelato work.
 - No exclusivity automation.
 - No legal conclusion that the draft terms are sufficient in every jurisdiction.
+
+
+## Existing price-source integration
+
+The licensing page must not own a separate hard-coded price table.
+
+Existing authoritative flow:
+
+1. Global digital prices are stored in D1 `settings` under key `prices`.
+2. Public `GET /api/admin/prices` returns `{ small, medium, large }`.
+3. Admin can update those global values through `handleAdminPrices`.
+4. A specific photo may override those values through `photos.price_overrides`.
+5. The existing gallery applies per-photo overrides and promotions in `getEffectivePrice(photoId, size)`.
+6. PayPal Orders v2 in PR #76 independently re-reads D1 global prices + `price_overrides` server-side before creating the order, so client values are never authoritative.
+
+The `/licensing/` explainer now loads the current global values from `/api/admin/prices` and formats them using the same current EN rounded-USD display rule.
+
+Important limitation:
+- the explainer shows the global/base price only because no specific photo has been selected there;
+- the final price for a selected image remains the price shown by that image's purchase flow, including any photo override or active promotion;
+- after PayPal Orders v2 is activated, the server remains authoritative even if browser-displayed values are stale or manipulated.
+
+This keeps one pricing source of truth rather than creating a licensing-only price configuration.
