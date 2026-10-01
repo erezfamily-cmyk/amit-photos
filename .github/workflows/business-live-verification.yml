@@ -26,20 +26,20 @@ jobs:
           set -euo pipefail
 
           LIC=$(curl -fsS --max-time 20 https://amitphotos.com/licensing/)
-          echo "$LIC" | grep -q 'licensing_personal_interest'
-          echo "$LIC" | grep -q '/api/admin/prices'
-          echo "$LIC" | grep -q 'G-XM6T3E8QWN'
+          grep -q 'licensing_personal_interest' <<<"$LIC"
+          grep -q '/api/admin/prices' <<<"$LIC"
+          grep -q 'G-XM6T3E8QWN' <<<"$LIC"
           echo "licensing=ok"
 
           BIZ=$(curl -fsS --max-time 20 https://amitphotos.com/business/)
-          echo "$BIZ" | grep -q 'b2b_contact_start'
-          echo "$BIZ" | grep -q 'amit_b2b_context'
-          echo "$BIZ" | grep -q '/assets/js/analytics.js'
+          grep -q 'b2b_contact_start' <<<"$BIZ"
+          grep -q 'amit_b2b_context' <<<"$BIZ"
+          grep -q '/assets/js/analytics.js' <<<"$BIZ"
           echo "business=ok"
 
           ADMIN=$(curl -fsSL --max-time 20 https://amitphotos.com/admin.html)
-          echo "$ADMIN" | grep -q 'campaign-destination'
-          echo "$ADMIN" | grep -q 'admin-campaign-links.mjs'
+          grep -q 'campaign-destination' <<<"$ADMIN"
+          grep -q 'admin-campaign-links.mjs' <<<"$ADMIN"
           echo "utm_builder=ok"
 
           STATUS=$(curl -fsS --max-time 20 https://amitphotos.com/api/payments-status)
