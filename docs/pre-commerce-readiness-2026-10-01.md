@@ -85,6 +85,15 @@
 - Code-level security audit S1–S5, S7–S10 is now closed. Remaining pre-E2E blocker is S6 staging isolation.
 - Go-Live webhook gate remains open until real Sandbox webhook delivery is verified in isolated staging.
 
+### Audit checkpoint 4 — 1.10.2026
+
+- S8 webhook הושלם ברמת קוד עם verify-webhook-signature מול PayPal Sandbox.
+- נוספו event dedup, identity/amount reconciliation מול Orders API, ו-processing lease עם stale recovery.
+- delivery מקביל בזמן processing מחזיר non-2xx כדי ש-PayPal תנסה שוב; lease תקוע ניתן לתפיסה מחדש אחרי timeout.
+- כשל processing מחזיר את האירוע ל-pending; hard crash מכוסה ע"י stale lease recovery.
+- Full Node suite: **331/331 pass, 0 fail**.
+- כל S1–S10 סגורים ברמת קוד למעט S6 staging isolation בפועל.
+
 ## Phase 2 — Staging מבודד
 
 - [ ] Worker/preview נפרד.
