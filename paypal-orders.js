@@ -699,15 +699,18 @@ export async function handlePayPalCaptureOrder(request, env, options = {}) {
     return jsonRes({ error: 'PayPal capture failed' }, 502, request);
   }
 
+  const purchaseUnit = capturedOrder.purchase_units?.[0];
+  const capture = purchaseUnit?.payments?.captures?.[0];
+  const returnedCustomId = purchaseUnit?.custom_id || capture?.custom_id || null;
+
   if (
     capturedOrder.id !== paypalOrderId ||
     capturedOrder.status !== 'COMPLETED' ||
-    capturedOrder.purchase_units?.[0]?.custom_id !== order.id
+    (returnedCustomId !== null && returnedCustomId !== order.id)
   ) {
     return jsonRes({ error: 'PayPal capture identity mismatch' }, 502, request);
   }
 
-  const capture = capturedOrder.purchase_units?.[0]?.payments?.captures?.[0];
   const captureMinor = moneyToMinorUnits(capture?.amount?.value);
   if (
     !capture?.id ||
