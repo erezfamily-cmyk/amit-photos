@@ -722,3 +722,27 @@ MVP:
 
 ## כלל
 לא מתחילים paid ads בשלב הזה. קודם מוכיחים attribution ו-organic distribution.
+
+
+---
+
+# Acquisition Experiment 01 — prepared
+
+מסמך: `docs/acquisition-experiment-01-2026-10-01.md`
+
+## שלושת המסלולים הראשונים
+- [x] Free Guide — Instagram/social.
+- [x] Personal Digital Licensing — Threads/social.
+- [x] B2B Wall Art — targeted LinkedIn/WhatsApp outreach.
+- [x] לכל מסלול הוגדרו URL עם UTM, copy, KPI ראשי ומשני.
+- [x] הוגדר חלון ניסוי של 7 ימים.
+- [x] הוגדרו כללי פירוש כדי לא להסיק מסקנות שגויות בזמן שהתשלומים כבויים.
+
+## Launch gates
+- [ ] PR #79 live לפני חלון מדידה נקי.
+- [ ] PR #80 live לפני הפצת licensing.
+- [ ] PR #81 live לפני הפצת B2B.
+- [ ] PR #82 אופציונלי לנוחות יצירת קישורים.
+
+## כלל
+במהלך 7 ימי הניסוי לא משנים pricing, hero, checkout או offer. בסוף בוחרים follow-up אחד בלבד.
