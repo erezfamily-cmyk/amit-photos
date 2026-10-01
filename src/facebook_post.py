@@ -13,6 +13,7 @@ import requests
 import anthropic
 from pathlib import Path
 from campaign_urls import build_campaign_url
+from social_photo_map import save_social_photo_mapping
 
 # ===== הגדרות =====
 POSTED_FILE = Path(__file__).parent.parent / "data" / "facebook_posted.json"
@@ -314,6 +315,7 @@ def main():
     print("📤 מפרסם לפייסבוק...")
     post_id = post_to_facebook(photo, caption)
     print(f"✅ פורסם בהצלחה! Facebook post ID: {post_id}")
+    save_social_photo_mapping("facebook", post_id, photo["id"])
 
     posted_data["posted_ids"] = list(posted_ids | {photo["id"]})
     save_posted(posted_data)
