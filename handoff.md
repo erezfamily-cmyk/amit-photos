@@ -136,3 +136,22 @@ PAYMENTS_ENABLED = "false"   ב-wrangler.toml (production)
 - לא נוסף קישור לניווט הראשי לפני review.
 - `PAYMENTS_ENABLED=false` נשאר ללא שינוי.
 
+
+
+### B2B contact funnel refinement — 1.10.2026
+
+נוסף חיבור בין `/business/` לטופס הקשר הקיים:
+- בחירת חבילה בעמוד העסקי נשמרת זמנית ב-`sessionStorage` רק כ-context לא רגיש:
+  - `digital_display`
+  - `wall_art`
+  - `custom_collection`
+  - `business_quote`
+- המעבר לטופס הקשר בוחר מראש "רישיון מסחרי".
+- subject פנימי מקבל את סוג החבילה, בלי PII.
+- placeholder מותאם להקשר העסקי שנבחר.
+- `contact_form_success` מקבל attribution `source=business` + package label בטוח.
+- אין שם/אימייל/טקסט חופשי שנשלחים ל-GA.
+- ה-context פג אחרי 30 דקות ונמחק אחרי שליחה מוצלחת.
+
+כך אפשר למדוד איזה offer עסקי מביא פניות אמיתיות בלי לבנות CRM חדש ובלי לשכפל טפסים.
+
