@@ -13,6 +13,10 @@
 :root{--bg:#0a0a0a;--surface:#111;--border:#262626;--accent:#c8a96e;--text:#f0ede8;--muted:#999}
 html,body{margin:0;background:var(--bg);color:var(--text);font-family:'Heebo',sans-serif}
 body{min-height:100vh}
+.site-head{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1rem 1.25rem;border-bottom:1px solid var(--border)}
+.site-brand{font-family:'Syne',sans-serif;color:var(--accent);text-decoration:none;font-weight:700}
+.head-links{display:flex;align-items:center;gap:.8rem}
+.head-links a{color:var(--muted);text-decoration:none;font-size:.85rem}
 main{width:min(100%,1040px);margin:0 auto;padding:1.25rem 1.25rem 4rem}
 .hero{padding:3.5rem 0 2rem}
 .eyebrow{color:var(--accent);font-size:.78rem;font-weight:700;letter-spacing:.08em}
@@ -37,6 +41,13 @@ h1{font-family:'Syne',sans-serif;font-size:clamp(2rem,7vw,3.7rem);line-height:1.
 <script src="/assets/js/analytics.js?v=f571a0c4" defer></script>
 </head>
 <body>
+<header class="site-head">
+  <a class="site-brand" href="/">Amit Photos</a>
+  <div class="head-links">
+    <a href="/#gallery" data-he="גלריה" data-en="Gallery">גלריה</a>
+    <a href="/privacy/" data-he="פרטיות" data-en="Privacy">פרטיות</a>
+  </div>
+</header>
 <main>
   <div class="lang" aria-label="Language">
     <button id="he" class="active" type="button" onclick="setLang('he')">עברית</button>
@@ -105,6 +116,13 @@ h1{font-family:'Syne',sans-serif;font-size:clamp(2rem,7vw,3.7rem);line-height:1.
      בשלב זה המחירים לעסקים מותאמים לפי היקף השימוש והפרויקט. אין עדיין תמחור אוטומטי או התחייבות לספק הדפסה מסוים.
   </p>
 </main>
+<footer style="text-align:center;padding:1.5rem 1.25rem;border-top:1px solid #222;color:#666;font-size:.8rem">
+  <a href="/privacy/" style="color:#888" data-he="מדיניות פרטיות" data-en="Privacy Policy">מדיניות פרטיות</a>
+  <span> · </span>
+  <a href="/accessibility/" style="color:#888" data-he="הצהרת נגישות" data-en="Accessibility Statement">הצהרת נגישות</a>
+</footer>
+<script src="/assets/js/accessibility-widget.js"></script>
+<script src="/assets/js/cookie-notice.js"></script>
 
 <script>
 (function(){
