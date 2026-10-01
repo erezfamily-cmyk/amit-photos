@@ -263,6 +263,15 @@ export async function handlePayPalCreateOrder(request, env, options = {}) {
       idempotencyKey
     ).run();
   } catch {
+    // A concurrent request with the same Idempotency-Key may have persisted the
+    // same PayPal order first. Return that canonical local row instead of a
+    // spurious 500; any other persistence failure remains fail-closed.
+    const raced = await env.DB.prepare(
+      'SELECT paypal_order_id FROM paypal_orders WHERE client_idempotency_key = ? LIMIT 1'
+    ).bind(idempotencyKey).first().catch(() => null);
+    if (raced?.paypal_order_id) {
+      return jsonRes({ paypalOrderId: raced.paypal_order_id, reused: true }, 200, request);
+    }
     return jsonRes({ error: 'Could not persist PayPal order' }, 500, request);
   }
 
