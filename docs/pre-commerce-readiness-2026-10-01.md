@@ -1,0 +1,180 @@
+# Pre-Commerce Readiness Plan — Amit Photos
+
+עודכן: 1.10.2026  
+מצב תשלומים: `PAYMENTS_ENABLED=false` — אין לפתוח רכישות אמיתיות בלי החלטה מפורשת נפרדת.
+
+## מטרה
+
+להגיע למצב שבו פתיחת רכישות היא החלטת Go/No-Go מבוססת:
+1. אבטחת PayPal ו-fulfillment.
+2. Sandbox E2E מבודד.
+3. Webhook מאומת חתימה.
+4. Orders v2 גם לדיגיטלי וגם להדפסות.
+5. UX/רישוי/תנאי רכישה ברורים.
+6. ארגון גלריה המבוסס על נתוני אמת ולא על ניחוש.
+7. baseline אנליטי של לפחות 14 יום משינויי 26.9.2026.
+
+## Gate 0 — מצב בטוח נוכחי
+
+- [x] `PAYMENTS_ENABLED=false`.
+- [x] PR #76 Draft ולא ממוזג.
+- [x] PayPal credentials הם Sandbox בלבד.
+- [x] D1 migration ל-`paypal_orders` ול-`paypal_webhook_events` הוחל ואומת.
+- [x] Full Node suite: 318/318.
+- [x] אין PayPal Live.
+- [x] אין Webhook פעיל.
+- [x] אין checkout ציבורי חדש.
+
+## Phase 1 — Security Audit ל-PR #76
+
+### כבר תקין
+- [x] מחיר דיגיטלי מחושב בשרת מ-D1/settings; client amount נזרק.
+- [x] SKU מוגבל ל-small/medium/large.
+- [x] currency מוגבל ל-ILS/USD.
+- [x] capture מתבצע server-to-server.
+- [x] capture חייב להיות COMPLETED.
+- [x] amount ו-currency חייבים להתאים בדיוק ל-`amount_expected`.
+- [x] `PayPal-Request-Id` יציב ל-capture.
+- [x] duplicate callback אחרי COMPLETED מחזיר fulfillment קיים.
+- [x] public endpoints fail-closed כש-`PAYMENTS_ENABLED=false`.
+- [x] admin Sandbox endpoints דורשים admin session.
+- [x] secrets אינם ב-Git.
+
+### ממצאים לתיקון לפני merge
+- [ ] **S1 — fulfillment persistence:** אחרי `INSERT OR IGNORE` ל-`download_tokens`, לאמת שה-token קיים לפני סימון order כ-COMPLETED.
+- [ ] **S2 — capture identity binding:** לאמת שגם `capturedOrder.id === paypalOrderId` וש-`purchase_units[0].custom_id === order.id`.
+- [ ] **S3 — failure recovery:** לכסות מקרה PayPal capture הצליח אבל כתיבת D1 נכשלה; retry חייב להתאושש בלי חיוב כפול.
+- [ ] **S4 — rate limiting:** לפני public go-live להוסיף rate limit ל-create-order ול-capture-order.
+- [ ] **S5 — create idempotency:** להוסיף idempotency key יציב מה-client/session כדי retry של create-order לא ייצור orders מיותרים.
+- [ ] **S6 — Sandbox isolation:** לא לבצע E2E מול production D1; להקים staging/preview D1 נפרד.
+- [ ] **S7 — legacy payment removal:** לפני `PAYMENTS_ENABLED=true`, להסיר/לנתק את `handleVerifyPayment` ו-`handlePrintOrderComplete` מה-public router.
+- [ ] **S8 — webhook:** להוסיף אימות חתימה מול PayPal + dedup לפי `event_id`.
+- [ ] **S9 — logging:** לוודא שאין access token, Client Secret, buyer data או full PayPal payload רגיש בלוגים.
+- [ ] **S10 — CORS/CSRF:** לבצע בדיקות negative בפועל למסלולי admin וה-public checkout.
+
+## Phase 2 — Staging מבודד
+
+- [ ] Worker/preview נפרד.
+- [ ] D1 test DB נפרד עם schema זהה.
+- [ ] Sandbox secrets בלבד.
+- [ ] `PAYMENTS_ENABLED=false` בפרודקשן נשאר ללא שינוי.
+- [ ] נתוני test מסומנים ולא נכנסים לדוחות revenue/production.
+
+## Phase 3 — Sandbox E2E דיגיטלי
+
+- [ ] create → approve → capture → download.
+- [ ] buyer cancel.
+- [ ] decline / negative testing.
+- [ ] refresh/back/retry.
+- [ ] duplicate capture.
+- [ ] שתי קריאות capture מקבילות.
+- [ ] timeout אחרי PayPal capture ולפני fulfillment.
+- [ ] DB failure simulation.
+- [ ] download token קיים, חד-פעמי ובתוקף.
+- [ ] סכום/מטבע/תמונה/גודל תואמים לרשומה המקומית.
+
+## Phase 4 — Webhook
+
+- [ ] `PAYMENT.CAPTURE.COMPLETED`.
+- [ ] verify-webhook-signature מול PayPal.
+- [ ] event_id dedup.
+- [ ] reconciliation ל-order שכבר COMPLETED.
+- [ ] recovery כש-browser נסגר אחרי תשלום.
+- [ ] payload לא מהימן לא יוצר fulfillment לפני verification.
+
+## Phase 5 — Print / Gelato
+
+- [ ] price מקור אמין בצד שרת.
+- [ ] address נשמר בזמן create-order.
+- [ ] capture מאומת לפני Gelato.
+- [ ] idempotency להזמנת Gelato.
+- [ ] webhook Gelato + escaping.
+- [ ] כשל Gelato אחרי חיוב: מצב recoverable + התראה למנהל.
+- [ ] Sandbox/Mock E2E למסלולי success/failure.
+
+## Phase 6 — Checkout / Legal / License
+
+- [ ] להפריד בין גודל קובץ לבין סוג רישיון.
+- [ ] להחליט Personal / Commercial policy.
+- [ ] להסיר סתירה קיימת בין “שימוש מסחרי/כל הזכויות” לבין טקסטים שמפנים לרישיון מסחרי נפרד.
+- [ ] תנאי רכישה.
+- [ ] מדיניות ביטולים/החזרים.
+- [ ] תנאי הדפסות ומשלוח.
+- [ ] מה בדיוק מקבלים בכל מוצר דיגיטלי.
+- [ ] HE/EN מלאים.
+
+## Phase 7 — Gallery & Commerce UX
+
+לא מוחקים את קטלוג התמונות. משנים את שכבת ה-discovery.
+
+### מבנה מוצע
+Collections ראשיות:
+- טבע ונוף
+- בעלי חיים
+- מאקרו ופרחים
+- מסעות בעולם
+- ישראל
+- אורבני ואמנות רחוב
+- שחור-לבן
+- מופשט וטבע דומם
+
+מדינות הופכות לתת-collections תחת “מסעות בעולם”, במקום להתחרות כולן ברמת הניווט הראשית.
+
+### בתוך Collection
+- 24–36 תמונות חזקות תחילה.
+- “בחירת הצלם”.
+- “חדשות”.
+- “הצג עוד”.
+- בהמשך “פופולריות” ו-“מבוקשות” על בסיס data.
+
+## Phase 8 — Data-Driven Photo Ranking
+
+אין לבחור “תמונות חזקות” רק לפי טעם חזותי.
+
+מקורות נתונים:
+- GA4: `photo_view`, landing page, engagement, contact/purchase intent.
+- D1 funnel events: views/intents/purchases לפי `photo_id`.
+- Facebook/Instagram/social reports: clicks, reactions/engagement אם קיימים לפי post/photo.
+- Pinterest/Redbubble/Zazzle כאשר יש mapping אמין לתמונה.
+
+### Score ראשוני מוצע
+לא להפעיל אוטומטית לפני שיש מספיק data:
+- 35% photo views normalized.
+- 25% high-intent actions: contact/purchase/print intent.
+- 20% social click-through/engagement.
+- 10% repeat interest / direct landing.
+- 10% recency correction כדי לא לקבור תמונות חדשות.
+
+כל score חייב לשמור גם sample size. תמונה עם 2 צפיות ו-click אחד לא תדורג מעל תמונה עם 200 צפיות ו-30 פעולות רק בגלל conversion rate.
+
+## Phase 9 — Analytics Decision Window
+
+המדידה החדשה עלתה ב-26.9.2026.
+
+- checkpoint ראשון: סביב 10.10.2026 (14 יום).
+- checkpoint מועדף: סביב 24.10.2026 (28 יום).
+
+להשוות:
+- `hero_gallery_click / sessions`
+- `photo_view / sessions`
+- `gallery_filter / sessions`
+- `scroll_50`, `scroll_90`
+- `photo_contact_click`
+- `contact_form_success`
+- mobile vs desktop
+- landing pages
+- source/medium
+- strongest photos/collections
+
+## Go-Live Gate
+
+לא לשנות `PAYMENTS_ENABLED=true` עד שכל אלה מתקיימים:
+- [ ] Security audit ללא Critical/High פתוח.
+- [ ] Digital Sandbox E2E מלא.
+- [ ] Webhook verified.
+- [ ] Print E2E מלא או print נשאר מושבת במפורש.
+- [ ] Legacy insecure endpoints אינם public.
+- [ ] Legal/license copy סגור.
+- [ ] Checkout QA ב-mobile + desktop + HE/EN.
+- [ ] Analytics checkpoint נבדק.
+- [ ] אישור מפורש של בעל הפרויקט לפתיחת רכישות אמיתיות.
