@@ -94,6 +94,18 @@
 - Full Node suite: **331/331 pass, 0 fail**.
 - כל S1–S10 סגורים ברמת קוד למעט S6 staging isolation בפועל.
 
+### Staging isolation checkpoint — 1.10.2026
+
+- נוסף `staging/paypal-sandbox-bootstrap.sql` עם schema מינימלי ונתוני test בלבד.
+- נוסף `tests/paypal-staging-isolation.test.mjs` שמוודא אוטומטית:
+  - production נשאר `PAYMENTS_ENABLED=false`.
+  - staging לא כולל production D1 ID/name.
+  - staging לא כולל production R2 bucket.
+  - staging לא כולל `amitphotos.com` custom route.
+  - staging לא כולל cron triggers.
+- Full Node suite לאחר guard: **334/334 pass, 0 fail**.
+- S6 סגור ברמת קוד/קונפיגורציה; נשאר ליצור בפועל Worker + D1 + R2 staging ב-Cloudflare ולהריץ E2E שם בלבד.
+
 ## Phase 2 — Staging מבודד
 
 - [ ] Worker/preview נפרד.
