@@ -99,3 +99,16 @@ Full Node suite לאחר staging guard: **334/334 pass, 0 fail**.
 7. רק אז להריץ Sandbox E2E.
 
 לא להעתיק נתוני משתמשים או orders מ-production ל-staging.
+
+
+## D1 staging verification complete — 1.10.2026
+
+אומת ידנית ב-Cloudflare D1 Console:
+- 6 tables + 4 indexes קיימים.
+- fixture `paypal-sandbox-test-photo` קיים ו-`published=1`.
+- prices: `{"small":1,"medium":2,"large":3}`.
+- `paypal_orders` row count = 0.
+- `download_tokens` row count = 0.
+- `paypal_webhook_events` row count = 0.
+
+סטטוס: D1 staging מוכן ל-Worker staging ו-Sandbox E2E.
