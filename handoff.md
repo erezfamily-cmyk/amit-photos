@@ -418,3 +418,12 @@ CI for head `e8ecbb08725612bfeca5be87ec65628588d09ec8`:
 - Python Data Tests: success.
 
 Next manual negative-path test: buyer cancel in PayPal Sandbox.
+
+
+### Buyer cancel E2E passed — 1.10.2026 evening
+
+- A fresh Sandbox order was opened with the Personal Sandbox buyer.
+- The buyer selected “cancel and return to Test Store”.
+- PayPal returned successfully to the staging `cancel_url`.
+- The Worker rendered `PayPal Sandbox checkout cancelled` and stated that no capture was attempted.
+- Next verification: inspect staging D1 and confirm the cancelled order remains uncaptured and no new download token was created.
