@@ -468,7 +468,7 @@ def build_business_review(data):
         "kpis": {
             "direct_share_pct": _rate_pct(direct_sessions, sessions),
             "lead_rate_pct": _rate_pct(leads, sessions),
-            "guide_to_lead_pct": _rate_pct(leads, guide_requests),
+            "guide_request_rate_pct": _rate_pct(guide_requests, sessions),
             "marketing_opt_in_pct": _rate_pct(marketing_opt_ins, new_subscribers),
             "digital_intent_pct": _rate_pct(purchase_intent, photo_views),
             "digital_selection_pct": _rate_pct(add_size, purchase_intent),
@@ -568,7 +568,8 @@ def build_business_review_html(review):
       <span style="color:#666">{review.get('reason','')}</span>
       <div style="margin-top:10px;color:#777;font-size:.84em">
         Direct: {fmt(k.get('direct_share_pct'))} · Lead rate: {fmt(k.get('lead_rate_pct'))} ·
-        Marketing opt-in: {fmt(k.get('marketing_opt_in_pct'))} · Digital intent: {fmt(k.get('digital_intent_pct'))} ·
+        Guide request rate: {fmt(k.get('guide_request_rate_pct'))} · Marketing opt-in: {fmt(k.get('marketing_opt_in_pct'))} ·
+        Digital intent: {fmt(k.get('digital_intent_pct'))} ·
         Print intent: {fmt(k.get('print_intent_pct'))}<br>
         Sample: {sample.get('sessions',0)} sessions / {sample.get('new_subscribers',0)} new subscribers.
         {sample.get('note','')}
@@ -779,6 +780,7 @@ def save_report(data, analysis, reports_file=None):
         "top_pages": data["top_pages"][:5],
         "landing_pages": data.get("landing_pages", [])[:5],
         "sources":   data["sources"][:5],
+        "campaigns": data.get("campaigns", [])[:20],
         "devices":   data.get("devices", []),
         "countries": data.get("countries", [])[:5],
         "funnel_events": data["funnel_events"],
