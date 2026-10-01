@@ -2741,7 +2741,7 @@ async function getSubscriberSourceSummary(env, days = 7) {
   const safeDays = Math.max(1, Math.min(90, Number.isFinite(Number(days)) ? Number(days) : 7));
   const sinceIso = new Date(Date.now() - safeDays * 86400000).toISOString();
 
-  const [periodResult, activeMarketingResult, totalsRow] = await Promise.all([
+  const [periodResult, periodMarketingResult, activeMarketingResult, totalsRow] = await Promise.all([
     env.DB.prepare(
       `SELECT COALESCE(NULLIF(source,''), 'unknown') as source,
               COUNT(*) as total,
@@ -2752,6 +2752,14 @@ async function getSubscriberSourceSummary(env, days = 7) {
        WHERE created_at >= ?
        GROUP BY COALESCE(NULLIF(source,''), 'unknown')
        ORDER BY total DESC`
+    ).bind(sinceIso).all(),
+    env.DB.prepare(
+      `SELECT COALESCE(NULLIF(consent_marketing_source,''), NULLIF(source,''), 'unknown') as source,
+              COUNT(*) as count
+       FROM subscribers
+       WHERE consent_marketing = 1 AND consent_marketing_at >= ?
+       GROUP BY COALESCE(NULLIF(consent_marketing_source,''), NULLIF(source,''), 'unknown')
+       ORDER BY count DESC`
     ).bind(sinceIso).all(),
     env.DB.prepare(
       `SELECT COALESCE(NULLIF(consent_marketing_source,''), NULLIF(source,''), 'unknown') as source,
@@ -2773,6 +2781,7 @@ async function getSubscriberSourceSummary(env, days = 7) {
   return {
     period_days: safeDays,
     period_new_by_source: periodResult.results || [],
+    period_marketing_opt_ins_by_source: periodMarketingResult.results || [],
     current_marketing_by_source: activeMarketingResult.results || [],
     totals: {
       total_subscribers: totalsRow?.total_subscribers || 0,
