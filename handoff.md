@@ -230,3 +230,16 @@ PAYMENTS_ENABLED = "false"   ב-wrangler.toml (production)
 - This confirms the branch code is active on the isolated Sandbox Worker and the staging-only payment flag is effective.
 - Production remains `PAYMENTS_ENABLED=false`.
 - Next: authenticated admin Sandbox OAuth test.
+
+
+### PayPal Sandbox OAuth smoke test — 1.10.2026
+
+- Authenticated request to `/api/admin/paypal/sandbox-status` succeeded from PowerShell using the staging-only `ADMIN_PASSWORD` header.
+- Response confirmed:
+  - `ok=true`
+  - `environment=sandbox`
+  - `paymentsEnabled=true`
+  - `credentialsConfigured=true`
+- This verifies the staging Worker can authenticate server-to-server with PayPal Sandbox using the rotated Sandbox secret stored in Cloudflare.
+- Production remains `PAYMENTS_ENABLED=false`.
+- Next: create a real PayPal Sandbox order for fixture `paypal-sandbox-test-photo`, approve with Sandbox buyer, then capture and verify D1/token state.
