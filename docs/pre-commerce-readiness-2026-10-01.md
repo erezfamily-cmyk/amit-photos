@@ -41,9 +41,9 @@
 - [x] secrets אינם ב-Git.
 
 ### ממצאים לתיקון לפני merge
-- [ ] **S1 — fulfillment persistence:** אחרי `INSERT OR IGNORE` ל-`download_tokens`, לאמת שה-token קיים לפני סימון order כ-COMPLETED.
-- [ ] **S2 — capture identity binding:** לאמת שגם `capturedOrder.id === paypalOrderId` וש-`purchase_units[0].custom_id === order.id`.
-- [ ] **S3 — failure recovery:** לכסות מקרה PayPal capture הצליח אבל כתיבת D1 נכשלה; retry חייב להתאושש בלי חיוב כפול.
+- [x] **S1 — fulfillment persistence:** אחרי `INSERT OR IGNORE` ל-`download_tokens`, לאמת שה-token קיים לפני סימון order כ-COMPLETED.
+- [x] **S2 — capture identity binding:** לאמת שגם `capturedOrder.id === paypalOrderId` וש-`purchase_units[0].custom_id === order.id`.
+- [x] **S3 — failure recovery:** לכסות מקרה PayPal capture הצליח אבל כתיבת D1 נכשלה; retry חייב להתאושש בלי חיוב כפול.
 - [ ] **S4 — rate limiting:** לפני public go-live להוסיף rate limit ל-create-order ול-capture-order.
 - [ ] **S5 — create idempotency:** להוסיף idempotency key יציב מה-client/session כדי retry של create-order לא ייצור orders מיותרים.
 - [ ] **S6 — Sandbox isolation:** לא לבצע E2E מול production D1; להקים staging/preview D1 נפרד.
@@ -51,6 +51,13 @@
 - [ ] **S8 — webhook:** להוסיף אימות חתימה מול PayPal + dedup לפי `event_id`.
 - [ ] **S9 — logging:** לוודא שאין access token, Client Secret, buyer data או full PayPal payload רגיש בלוגים.
 - [ ] **S10 — CORS/CSRF:** לבצע בדיקות negative בפועל למסלולי admin וה-public checkout.
+
+### Audit checkpoint — 1.10.2026
+
+- S1/S2/S3 תוקנו בקוד ונוספו להם regression tests.
+- Full Node suite אחרי התיקונים: **321/321 pass, 0 fail**.
+- PayPal recovery מתייחס מפורשות ל-`ORDER_ALREADY_CAPTURED` וקורא את מצב ה-order מ-PayPal במקום לבצע חיוב נוסף.
+- עדיין לא לבצע merge: S4/S5/S6–S10 פתוחים.
 
 ## Phase 2 — Staging מבודד
 
