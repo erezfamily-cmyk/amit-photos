@@ -1446,9 +1446,66 @@ function showFieldError(input, text) {
   }, { once: true });
 }
 
+function getBusinessContactContext() {
+  const allowed = new Set(['digital_display', 'wall_art', 'custom_collection', 'business_quote']);
+  try {
+    const raw = sessionStorage.getItem('amit_b2b_context');
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (parsed?.source !== 'business' || !allowed.has(parsed?.package)) {
+      sessionStorage.removeItem('amit_b2b_context');
+      return null;
+    }
+    if (!Number.isFinite(parsed.createdAt) || Date.now() - parsed.createdAt > 30 * 60 * 1000) {
+      sessionStorage.removeItem('amit_b2b_context');
+      return null;
+    }
+    return { source: 'business', package: parsed.package };
+  } catch {
+    try { sessionStorage.removeItem('amit_b2b_context'); } catch {}
+    return null;
+  }
+}
+
+function applyBusinessContactContext(form) {
+  const context = getBusinessContactContext();
+  if (!context) return null;
+
+  const topic = form.querySelector('#topic');
+  const commercialOption = topic?.querySelector('option[data-i18n="contact.f.t2"]');
+  if (topic && commercialOption) topic.value = commercialOption.value;
+
+  const subject = form.querySelector('[name="subject"]');
+  if (subject) subject.value = 'Amit Photos B2B inquiry — ' + context.package;
+
+  const message = form.querySelector('[name="message"]');
+  if (message) {
+    const isEn = getLang() === 'en';
+    const hints = {
+      digital_display: isEn
+        ? 'Tell me where the image will be used (website, displays, campaign) and roughly how many images you need.'
+        : 'ספר לי היכן התמונה תשמש (אתר, מסכים, קמפיין) וכמה תמונות בערך נדרשות.',
+      wall_art: isEn
+        ? 'Tell me about the space, approximate wall count/size and the atmosphere you want.'
+        : 'ספר לי על החלל, מספר/גודל הקירות בקירוב והאווירה שאתה מחפש.',
+      custom_collection: isEn
+        ? 'Tell me about the project, number of spaces/locations and the visual direction you need.'
+        : 'ספר לי על הפרויקט, מספר החללים/המיקומים והכיוון החזותי שאתה מחפש.',
+      business_quote: isEn
+        ? 'Tell me about the business, intended use and roughly how many images you need.'
+        : 'ספר לי על העסק, השימוש המיועד וכמה תמונות בערך אתה מחפש.',
+    };
+    message.placeholder = hints[context.package];
+  }
+
+  return context;
+}
+
 function initContactForm() {
   const form = document.getElementById('contact-form');
   if (!form) return;
+
+  const businessContext = applyBusinessContactContext(form);
 
   form.addEventListener('submit', async e => {
     e.preventDefault();
@@ -1489,7 +1546,12 @@ function initContactForm() {
 
     form.style.display = 'none';
     document.getElementById('form-success').style.display = 'block';
-    window.trackUxEvent?.('contact_form_success', { source: 'homepage' });
+    window.trackUxEvent?.('contact_form_success', businessContext
+      ? { source: 'business', label: businessContext.package }
+      : { source: 'homepage' });
+    if (businessContext) {
+      try { sessionStorage.removeItem('amit_b2b_context'); } catch {}
+    }
   });
 }
 
