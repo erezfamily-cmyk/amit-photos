@@ -641,3 +641,53 @@ GitHub Actions `Business Live Verification` עבר בהצלחה מול האתר 
 
 PayPal נשאר כבוי.
 Gelato נשאר מחוץ לתוכנית.
+
+
+### Professional photo curation review added — 1.10.2026
+
+נוסף מסלול ביקורת מקצועי לתמונות, בנפרד מ-photo-strength analytics.
+
+מטרת הבדיקה:
+- לאתר תמונות חלשות טכנית או קומפוזיציונית;
+- לאתר near-duplicates / סצנות חוזרות;
+- לבדוק האם קטגוריות גדולות מדי או לא עקביות;
+- להפריד בין קטגוריית נושא לבין location collection ו-style tags;
+- לזהות תמונות עם resolution נמוך, metadata חסר או התאמה חלשה ל-licensing/B2B;
+- להמליץ KEEP / KEEP_SECONDARY / REVIEW_DUPLICATE / REVIEW_CATEGORY / REVIEW_TECHNICAL / ARCHIVE_CANDIDATE / HIDE_CANDIDATE / LEGAL_REVIEW.
+
+Guardrail:
+- אין מחיקה אוטומטית.
+- אין hide אוטומטי.
+- החלטה להסיר תמונה מהפורטפוליו הציבורי דורשת visual review בפועל.
+
+Snapshot נוכחי:
+- 1,390 תמונות.
+- 27 קטגוריות.
+- 120 ללא description.
+- 142 rows בתוך קבוצות title חוזרות.
+- 650 ללא parent_category.
+- 78 תמונות עם long edge < 2000px או short edge < 1200px — מועמדות לבדיקה, לא להסרה אוטומטית.
+- 164 ללא EXIF.
+- photo-strength עדיין waiting_for_mapped_data ולכן לא משתמשים בו כרגע לדירוג מלא.
+
+ממצא taxonomy:
+המערכת מערבבת באותה רמה subject/genre (למשל בעלי חיים, צילום מופשט) עם geography (ישראל, גאורגיה, איטליה וכו') ו-style (שחור-לבן). הכיוון המומלץ הוא:
+- primary visual category
+- collection/location נפרד
+- style tags
+
+קטגוריות ראשונות ל-review:
+1. פרחים וצמחים
+2. בעלי חיים
+3. ישראל
+4. צילום מופשט
+5. מאקרו-צילומי תקריב
+
+נוספו:
+- `docs/photo-curation-review-2026-10-01.md`
+- `src/photo_catalog_audit.py`
+- `tests/test_photo_catalog_audit.py`
+- `.github/workflows/photo-catalog-audit-ci.yml`
+
+הבדיקה הזו לא תלויה ב-PayPal או Gelato ולא משנה public gallery ordering אוטומטית.
+
