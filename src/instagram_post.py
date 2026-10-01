@@ -12,6 +12,7 @@ import base64
 import requests
 import anthropic
 from pathlib import Path
+from social_photo_map import save_social_photo_mapping
 
 # ===== הגדרות =====
 POSTED_FILE = Path(__file__).parent.parent / "data" / "instagram_posted.json"
@@ -496,6 +497,7 @@ def main():
     print("📤 מפרסם לאינסטגרם...")
     post_id = post_to_instagram(photo, caption)
     print(f"✅ פורסם בהצלחה! Instagram post ID: {post_id}")
+    save_social_photo_mapping("instagram", post_id, photo["id"])
 
 
 if __name__ == "__main__":
