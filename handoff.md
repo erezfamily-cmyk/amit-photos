@@ -492,3 +492,24 @@ B2B MVP נבנה מחדש מענף נקי מ-main לאחר מיזוגי #79/#83/
 הענף `strategy/business-model-todo-clean-2026-10-01` נפתח מחדש מ-`main` הנוכחי כדי להחליף את PR #78 הישן והמסוכסך.
 המטרה: להכניס ל-`main` מקור אמת אחד ל-`TODO.md`, acquisition playbook ו-Acquisition Experiment 01, לאחר יישור הסטטוסים למה שכבר מוזג.
 
+
+
+### Business-model strategy source of truth — 1.10.2026
+
+המסמכים הבאים יושרו לסטטוס בפועל לאחר מיזוגי #79/#83/#84/#85:
+- `TODO.md`
+- `docs/acquisition-playbook-2026-10-01.md`
+- `docs/acquisition-experiment-01-2026-10-01.md`
+
+הסטטוס העדכני:
+- measurement, UTM builder, Digital Licensing ו-B2B כבר מוזגו ל-`main`.
+- ניסוי Acquisition Experiment 01 עדיין **לא התחיל**.
+- launch gate שנותר: live verification של העמודים/אירועים לאחר deploy.
+- לאחר האימות מתחיל חלון 7 ימים ללא שינויי pricing/hero/checkout.
+- בסוף 7 ימים בוחרים follow-up אחד בלבד לפי הנתונים.
+- `PAYMENTS_ENABLED=false` נשאר.
+- PayPal PR #76 ו-Gelato אינם חלק מהפעלת הניסוי.
+
+PR #78 הישן מבוסס על base מיושן והוא מוחלף בענף:
+`strategy/business-model-todo-clean-2026-10-01`.
+
