@@ -252,6 +252,17 @@ def build_fb_page_block(label, page_id):
             }
             for p in top5
         ],
+        "photo_performance": [
+            {
+                "post_id": p.get("id", ""),
+                "photo_id": post_lookup.get(("facebook", str(p.get("id", ""))), ""),
+                "likes": p.get("reactions", {}).get("summary", {}).get("total_count", 0),
+                "comments": p.get("comments", {}).get("summary", {}).get("total_count", 0),
+                "date": (p.get("created_time") or "")[:10],
+            }
+            for p in posts
+            if post_lookup.get(("facebook", str(p.get("id", ""))), "")
+        ],
         "best_post": {
             "post_id": best.get("id", "") if best else "",
             "photo_id": post_lookup.get(("facebook", str(best.get("id", ""))), "") if best else "",
@@ -542,6 +553,17 @@ def save_social_report(ig_posts, ig_account, fb_pages_data, recommendations, ree
                     "date":     (p.get("timestamp") or "")[:10],
                 }
                 for p in ig_sorted
+            ],
+            "photo_performance": [
+                {
+                    "post_id": p.get("id", ""),
+                    "photo_id": post_lookup.get(("instagram", str(p.get("id", ""))), ""),
+                    "likes": p.get("like_count", 0),
+                    "comments": p.get("comments_count", 0),
+                    "date": (p.get("timestamp") or "")[:10],
+                }
+                for p in ig_posts
+                if post_lookup.get(("instagram", str(p.get("id", ""))), "")
             ],
             "best_post": {
                 "post_id": ig_best.get("id", "") if ig_best else "",
