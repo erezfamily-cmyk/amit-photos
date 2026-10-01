@@ -357,3 +357,65 @@ Digital Licensing MVP נבנה מחדש מענף נקי מ-main לאחר מיז�
 - fallback מוצג רק אם API המחירים לא זמין; checkout עתידי נשאר server-authoritative.
 - `PAYMENTS_ENABLED=false` ללא שינוי.
 - אין PayPal/Gelato activation.
+
+
+### B2B Art & Licensing MVP — 1.10.2026
+
+המשך התוכנית העסקית פתח ניסוי B2B מינימלי:
+- מסמך: `docs/b2b-art-mvp-2026-10-01.md`
+- עמוד דו-לשוני: `/business/`
+- שלוש הצעות בלבד:
+  1. Digital Display License
+  2. Wall Art Selection
+  3. Custom Collection
+- אין מחירון B2B קשיח בשלב הזה; משתמשים ב-tailored quote כדי ללמוד מהשוק.
+- אין CRM, אין checkout עסקי אוטומטי, אין Gelato commitment.
+- אירועי analytics לא-PII:
+  - `b2b_intent`
+  - `b2b_package_select`
+  - `b2b_contact_start`
+- ה-CTA מפנה לטופס הקשר הקיים באתר, שבו כבר קיימת אפשרות "רישיון מסחרי".
+- לא נוסף קישור לניווט הראשי לפני review.
+- `PAYMENTS_ENABLED=false` נשאר ללא שינוי.
+
+
+### B2B contact funnel refinement — 1.10.2026
+
+נוסף חיבור בין `/business/` לטופס הקשר הקיים:
+- בחירת חבילה בעמוד העסקי נשמרת זמנית ב-`sessionStorage` רק כ-context לא רגיש:
+  - `digital_display`
+  - `wall_art`
+  - `custom_collection`
+  - `business_quote`
+- המעבר לטופס הקשר בוחר מראש "רישיון מסחרי".
+- subject פנימי מקבל את סוג החבילה, בלי PII.
+- placeholder מותאם להקשר העסקי שנבחר.
+- `contact_form_success` מקבל attribution `source=business` + package label בטוח.
+- אין שם/אימייל/טקסט חופשי שנשלחים ל-GA.
+- ה-context פג אחרי 30 דקות ונמחק אחרי שליחה מוצלחת.
+
+כך אפשר למדוד איזה offer עסקי מביא פניות אמיתיות בלי לבנות CRM חדש ובלי לשכפל טפסים.
+
+
+### B2B acquisition readiness — 1.10.2026
+
+עמוד `/business/` הוכן להפצה מבוקרת:
+- נוספו canonical + hreflang.
+- נוספו Open Graph ו-Twitter Card.
+- social preview משתמש כרגע בתמונת המותג הקיימת של האתר.
+- העמוד מוכן לניסוי deep-link/UTM לאחר review ו-merge.
+- אין paid ads, אין checkout עסקי ואין Gelato commitment.
+
+
+### PR #81 replacement QA — 1.10.2026
+
+B2B MVP נבנה מחדש מענף נקי מ-main לאחר מיזוגי #79/#83/#84.
+
+ממצאי QA ותיקונים:
+- הוסר canonical כפול מ-`/business/`.
+- נמנעה ספירה כפולה של `b2b_contact_start` ב-CTA הראשי: האירוע נשלח פעם אחת בלבד דרך funnel logic.
+- בחירת "רישיון מסחרי" בטופס אינה תלויה עוד ב-`selectedIndex=2`; היא מאתרת את option לפי `data-i18n="contact.f.t2"`.
+- context לא חוקי/ישן ב-`sessionStorage` נמחק; TTL נשאר 30 דקות.
+- `contact_form_success` ממשיך לקבל רק `source=business` + package label בטוח, ללא PII.
+- `analytics.js` כבר מבצע GA bootstrap בעצמו, לכן אין צורך ב-gtag script כפול בעמוד B2B.
+- `PAYMENTS_ENABLED=false` ללא שינוי; אין checkout עסקי ואין Gelato activation.

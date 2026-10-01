@@ -1,0 +1,29 @@
+name: B2B Funnel CI
+
+on:
+  push:
+    branches:
+      - feature/b2b-art-mvp-clean-2026-10-01
+  pull_request:
+    paths:
+      - 'business/**'
+      - 'docs/b2b-art-mvp-2026-10-01.md'
+      - 'assets/js/gallery.js'
+      - 'tests/b2b-funnel.test.mjs'
+      - '.github/workflows/b2b-funnel-ci.yml'
+      - '.github/workflows/deploy.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  b2b:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: B2B funnel tests
+        run: node --test tests/b2b-funnel.test.mjs
