@@ -2102,6 +2102,26 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
   </div>
 </dialog>
 
+<!-- PHOTO CURATION PILOT DIALOG -->
+<dialog id="curation-dialog" class="mobile-dialog" aria-labelledby="curation-dialog-title">
+  <div class="dialog-header">
+    <span class="dialog-title" id="curation-dialog-title">דוח קיורציה — פיילוט פרחים</span>
+    <button type="button" class="dialog-close" aria-label="סגור" onclick="document.getElementById('curation-dialog').close()">✕</button>
+  </div>
+  <div class="dialog-body">
+    <img id="curation-dialog-preview" alt="" style="width:100%;max-height:300px;object-fit:contain;border-radius:6px;background:var(--bg);margin-bottom:1rem">
+    <div id="curation-dialog-summary" style="display:grid;gap:.7rem"></div>
+    <div style="margin-top:1rem;padding:.8rem;border:1px solid var(--border);border-radius:8px;background:var(--bg)">
+      <strong style="display:block;margin-bottom:.5rem">הערה</strong>
+      <p style="margin:0;color:var(--text-muted);font-size:.85rem;line-height:1.6">ההמלצה היא כלי עזר בלבד. אין הסתרה או מחיקה אוטומטית. לפני פעולה סופית יש לבצע בדיקה ויזואלית.</p>
+    </div>
+  </div>
+  <div class="dialog-footer">
+    <button type="button" class="btn btn-primary" id="curation-open-edit-btn">פתח לעריכה</button>
+    <button type="button" class="btn btn-ghost" onclick="document.getElementById('curation-dialog').close()">סגור</button>
+  </div>
+</dialog>
+
 <!-- CUSTOMER VIEW DIALOG -->
 <dialog id="cust-view-dialog" class="mobile-dialog" aria-labelledby="cust-view-name">
   <div class="dialog-header">
@@ -3321,6 +3341,8 @@ const Photos = (() => {
   const PHOTO_PAGE_SIZE = 60;
   let data = [];
   let featuredIds = new Set();
+  let curationReport = null;
+  let curationById = new Map();
   let searchQ = '', sortBy = 'newest';
   let selected = new Set(), selectMode = false;
   let lbList = [], lbIdx = 0;
@@ -3336,6 +3358,11 @@ const Photos = (() => {
       if (!searchQ) return true;
       if (searchQ === '_source:r2') return p._source === 'r2';
       if (searchQ === '_source:drive') return p._source === 'drive';
+      if (searchQ === '_curation:flowers') return !!curationById.get(p.id);
+      if (searchQ === '_curation:flagged') return !!curationById.get(p.id)?.flags?.length;
+      if (searchQ === '_curation:high') return curationById.get(p.id)?.priority === 'high';
+      if (searchQ === '_curation:duplicate') return curationById.get(p.id)?.recommendation === 'REVIEW_DUPLICATE';
+      if (searchQ === '_curation:technical') return curationById.get(p.id)?.recommendation === 'REVIEW_TECHNICAL';
       const q = searchQ.toLowerCase();
       return (p.title||'').toLowerCase().includes(q) || (p.category||'').toLowerCase().includes(q);
     });
@@ -3348,12 +3375,15 @@ const Photos = (() => {
 
   async function init() {
     // טען תמונות מ-D1 + photos.json במקביל
-    const [d1Photos, jsonPhotos, featuredRes] = await Promise.all([
+    const [d1Photos, jsonPhotos, featuredRes, curationRes] = await Promise.all([
       fetch('/api/photos?admin=1', { headers: authHeaders() }).then(r => r.ok ? r.json() : []).catch(() => []),
       fetch('data/photos.json').then(r => r.ok ? r.json() : []).catch(() => []),
-      fetch('/api/admin/featured', { headers: authHeaders() }).then(r => r.ok ? r.json() : {}).catch(() => ({}))
+      fetch('/api/admin/featured', { headers: authHeaders() }).then(r => r.ok ? r.json() : {}).catch(() => ({})),
+      fetch('/data/flower-curation-pilot.json').then(r => r.ok ? r.json() : null).catch(() => null)
     ]);
     featuredIds = new Set(featuredRes.ids || []);
+    curationReport = curationRes;
+    curationById = new Map((curationRes?.items || []).map(item => [item.photo_id, item]));
     // שלב: D1 קודם, אחר כך Google Drive (ללא כפילויות לפי ID ו-filename)
     const d1Ids = new Set(d1Photos.map(p => p.id));
     const d1Filenames = new Set(d1Photos.map(p => p.filename).filter(Boolean));
@@ -3385,6 +3415,13 @@ const Photos = (() => {
       chip(`${data.length} תמונות סה"כ`, ''),
       chip(`${data.filter(p=>p._source==='r2').length} ב-R2`, '_source:r2'),
       chip(`${data.filter(p=>p._source==='drive').length} ב-Drive`, '_source:drive'),
+      ...(curationReport ? [
+        chip(`🌸 פיילוט פרחים ${curationReport.summary?.total || 0}`, '_curation:flowers'),
+        chip(`⚑ לבדיקה ${curationReport.summary?.flagged || 0}`, '_curation:flagged'),
+        chip(`🔴 עדיפות גבוהה ${curationReport.summary?.high_priority || 0}`, '_curation:high'),
+        chip('כפילויות לבדיקה', '_curation:duplicate'),
+        chip('רזולוציה לבדיקה', '_curation:technical')
+      ] : []),
       ...Object.entries(cats).sort((a,b)=>b[1]-a[1]).map(([c,n])=>chip(`${n} ${c}`, c))
     ].join('');
     $('photos-stats').innerHTML = html;
@@ -3402,6 +3439,41 @@ const Photos = (() => {
     } catch { return false; }
   }
 
+  function curationBadge(p) {
+    const item = curationById.get(p.id);
+    if (!item) return '';
+    const meta = {
+      REVIEW_DUPLICATE: ['בדיקת כפילות', '#f59e0b'],
+      REVIEW_TECHNICAL: ['בדיקה טכנית', '#f87171'],
+      REVIEW_METADATA: ['מטא-דאטה', '#60a5fa'],
+      VISUAL_REVIEW: ['בדיקה ויזואלית', '#a78bfa']
+    }[item.recommendation] || ['בדיקה', '#a78bfa'];
+    return `<button type="button" onclick="event.stopPropagation();Photos.openCuration('${p.id}')" title="פתח דוח קיורציה" style="margin-inline-start:.35rem;border:1px solid ${meta[1]}55;background:${meta[1]}18;color:${meta[1]};border-radius:999px;padding:.15rem .45rem;font-size:.66rem;cursor:pointer">${meta[0]}</button>`;
+  }
+
+  function openCuration(id) {
+    const item = curationById.get(id);
+    const photo = data.find(p => p.id === id);
+    if (!item || !photo) { toast('אין דוח קיורציה לתמונה זו', 'error'); return; }
+    const labels = { REVIEW_DUPLICATE:'בדיקת כפילות', REVIEW_TECHNICAL:'בדיקה טכנית', REVIEW_METADATA:'בדיקת מטא-דאטה', VISUAL_REVIEW:'בדיקה ויזואלית' };
+    const priority = { high:'גבוהה', medium:'בינונית', normal:'רגילה', low:'נמוכה' }[item.priority] || item.priority;
+    const esc = value => String(value ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    const reasons = (item.reasons || []).length
+      ? '<ul style="margin:.25rem 0 0;padding-right:1.2rem">' + item.reasons.map(r => '<li style="margin:.3rem 0">' + esc(r) + '</li>').join('') + '</ul>'
+      : '<span style="color:var(--text-muted)">לא זוהתה בעיית מטא-דאטה; נדרשת בדיקה ויזואלית מקצועית.</span>';
+    $('curation-dialog-preview').src = photo.thumbnail || photo.url || '';
+    $('curation-dialog-summary').innerHTML = `
+      <div><strong>תמונה:</strong> ${esc(photo.title || 'ללא כותרת')}</div>
+      <div><strong>המלצה:</strong> ${esc(labels[item.recommendation] || item.recommendation)}</div>
+      <div><strong>עדיפות:</strong> ${esc(priority)}</div>
+      <div><strong>רזולוציה:</strong> ${esc(item.width || '?')}×${esc(item.height || '?')}</div>
+      <div><strong>קובץ:</strong> ${esc(item.filename || '')}</div>
+      <div><strong>סיבות לסימון:</strong>${reasons}</div>
+      <div><strong>פעולה מומלצת כרגע:</strong> לא להסתיר/למחוק לפני בדיקה ויזואלית. אם הבעיה מאומתת, השתמש בעריכת התמונה כדי להסתיר; מחיקה נשארת פעולה נפרדת עם אישור.</div>
+    `;
+    $('curation-open-edit-btn').onclick = () => { $('curation-dialog').close(); openEditById(id); };
+    $('curation-dialog').showModal();
+  }
   function renderGrid() {
     const all = getDisplayData();
     const disp = all.slice(0, visibleCount);
@@ -3425,7 +3497,7 @@ const Photos = (() => {
             onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%2275%22%3E%3Crect fill=%22%23111%22 width=%22100%25%22 height=%22100%25%22/%3E%3C/svg%3E'">
         </div>
         <div class="photo-info">
-          <div class="photo-title">${p.title||'ללא כותרת'}${p.published===0?'<span class="draft-badge">טיוטה</span>':''}${isOnSale(p)?'<span class="sale-badge">🏷 מבצע</span>':''}${p.is_week_photo?'<span class="sale-badge" style="color:#f59e0b;background:rgba(245,158,11,.12);border-color:rgba(245,158,11,.35)">⭐ שבוע</span>':''}${p.quiz_eligible?'<span class="sale-badge" style="color:#34d399;background:rgba(52,211,153,.1);border-color:rgba(52,211,153,.3)">🌍 קוויז</span>':''}${p.on_sale?`<span class="admin-badge admin-badge-sale" onclick="toggleSale('${p.id}',false,event)" title="הסר ממבצע">מבצע</span>`:`<span class="admin-badge admin-badge-sale-off" onclick="toggleSale('${p.id}',true,event)" title="הוסף למבצע">+מבצע</span>`}</div>
+          <div class="photo-title">${p.title||'ללא כותרת'}${curationBadge(p)}${p.published===0?'<span class="draft-badge">טיוטה</span>':''}${isOnSale(p)?'<span class="sale-badge">🏷 מבצע</span>':''}${p.is_week_photo?'<span class="sale-badge" style="color:#f59e0b;background:rgba(245,158,11,.12);border-color:rgba(245,158,11,.35)">⭐ שבוע</span>':''}${p.quiz_eligible?'<span class="sale-badge" style="color:#34d399;background:rgba(52,211,153,.1);border-color:rgba(52,211,153,.3)">🌍 קוויז</span>':''}${p.on_sale?`<span class="admin-badge admin-badge-sale" onclick="toggleSale('${p.id}',false,event)" title="הסר ממבצע">מבצע</span>`:`<span class="admin-badge admin-badge-sale-off" onclick="toggleSale('${p.id}',true,event)" title="הוסף למבצע">+מבצע</span>`}</div>
           <span class="cat-badge">${p.category||'ללא קטגוריה'}</span>${(()=>{if(!p.width||!p.height)return'';const mx=Math.max(p.width,p.height);const cls=mx<2000?'res-badge res-low':mx<5000?'res-badge res-mid':'res-badge res-ok';return`<span class="${cls}">${p.width}×${p.height}</span>`;})()}
           <div class="photo-actions">
             <span class="drag-handle" onclick="event.stopPropagation()" title="גרור לסדר">⠿</span>
@@ -3438,6 +3510,7 @@ const Photos = (() => {
               <button class="photo-menu-item" onclick="closeAllPhotoMenus();analyzePhoto('${p.id}',this)">
                 🔬 ייצר ניתוח
               </button>
+              ${curationById.has(p.id) ? `<button class="photo-menu-item" onclick="closeAllPhotoMenus();Photos.openCuration('${p.id}')">🌸 דוח קיורציה</button>` : ''}
               <div class="photo-menu-sep"></div>
               <button class="photo-menu-item${p.is_new ? ' active-item' : ''}" id="new-btn-${p.id}" onclick="closeAllPhotoMenus();Photos.toggleNew('${p.id}')">
                 <svg width="14" height="14" fill="${p.is_new ? 'currentColor' : 'none'}" viewBox="0 0 24 24" stroke="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" stroke-width="2"/></svg>
@@ -4096,7 +4169,7 @@ const Photos = (() => {
     }
   });
 
-  return { init: async () => { await init(); loadNewBadgeSettings(); loadPriceSettings(); }, openEdit, openEditById, confirmDelete, cardClick, toggleSelect, toggleNew, toggleFeatured, setPhotoPrice, filterByChip, getData: () => data, render, get list() { return data; } };
+  return { init: async () => { await init(); loadNewBadgeSettings(); loadPriceSettings(); }, openEdit, openEditById, confirmDelete, cardClick, toggleSelect, toggleNew, toggleFeatured, setPhotoPrice, filterByChip, openCuration, getData: () => data, render, get list() { return data; } };
 })();
 
 function closeAllPhotoMenus() {
