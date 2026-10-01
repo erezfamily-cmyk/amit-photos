@@ -419,3 +419,76 @@ B2B MVP נבנה מחדש מענף נקי מ-main לאחר מיזוגי #79/#83/
 - `contact_form_success` ממשיך לקבל רק `source=business` + package label בטוח, ללא PII.
 - `analytics.js` כבר מבצע GA bootstrap בעצמו, לכן אין צורך ב-gtag script כפול בעמוד B2B.
 - `PAYMENTS_ENABLED=false` ללא שינוי; אין checkout עסקי ואין Gelato activation.
+
+
+### Business model execution — current status 1.10.2026
+
+מצב עדכני מאומת מול GitHub:
+
+#### כבר מוזג ל-`main`
+- **PR #79 — Lead funnel measurement**
+  - מדידת `guide_request_success` נפרדת מ-`generate_lead`.
+  - `generate_lead` מייצג marketing lead אמיתי בלבד.
+  - subscriber summary אגרגטיבי ללא PII.
+  - Source / Medium / Campaign בדוח השבועי.
+  - Business Review דטרמיניסטי + next action אחד.
+
+- **PR #83 — Admin UTM Campaign Link Builder**
+  - כלי mobile-friendly תחת Admin > Analytics.
+  - allowlists + normalization + PII guardrails.
+  - ללא פרסום אוטומטי וללא הרשאות חיצוניות.
+
+- **PR #84 — Digital Licensing MVP**
+  - עמוד `/licensing/` דו-לשוני.
+  - מחירי בסיס מגיעים מ-`/api/admin/prices`.
+  - GA/analytics תקינים.
+  - Personal-use digital licensing + commercial inquiry.
+  - אין checkout activation.
+
+- **PR #85 — B2B Art & Licensing MVP**
+  - עמוד `/business/`.
+  - Digital Display / Wall Art / Custom Collection.
+  - package context קצר-חיים עובר לטופס הקשר הקיים.
+  - attribution עד `contact_form_success`, ללא PII.
+  - אין checkout עסקי ואין Gelato commitment.
+
+#### PRs ישנים שהוחלפו
+- #80 נסגר והוחלף ב-#84.
+- #81 נסגר והוחלף ב-#85.
+- #82 נסגר והוחלף ב-#83.
+
+#### Deploy verification
+המיזוגים ל-`main` בוצעו, אבל דרך GitHub connector לא הופיעו workflow runs על merge commits #84/#85 בזמן הבדיקה. לכן אין לתעד כרגע “live verified” רק על בסיס merge.
+לפני פתיחת חלון הניסוי יש לבצע אימות חי של:
+- `/licensing/`
+- `/business/`
+- Admin UTM builder
+- GA events הרלוונטיים
+- טופס B2B end-to-end ללא שליחת PII ל-GA
+
+#### Business-model experiment
+היעד הבא הוא **Acquisition Experiment 01**:
+1. Free Guide
+2. Personal Digital Licensing
+3. B2B Wall Art
+
+חלון המדידה המתוכנן: 7 ימים, ורק לאחר live verification של התשתית שמוזגה.
+
+במהלך חלון הניסוי:
+- לא משנים pricing.
+- לא משנים hero.
+- לא משנים checkout.
+- לא מתחילים paid ads.
+- לא מעמיקים Gelato.
+- משתמשים ב-UTM בכל הפצה יזומה.
+- בסוף השבוע בוחרים follow-up אחד בלבד.
+
+#### Payment / Gelato guardrails
+- `PAYMENTS_ENABLED=false` נשאר מחייב.
+- PR #76 PayPal Orders v2 נשאר נפרד ואינו חוסם את הניסוי העסקי.
+- Gelato נשאר אפשרות fulfillment בלבד; לא מקדמים אינטגרציה עמוקה לפני signal של print demand + margin/quality validation.
+
+#### Strategy documentation
+הענף `strategy/business-model-todo-clean-2026-10-01` נפתח מחדש מ-`main` הנוכחי כדי להחליף את PR #78 הישן והמסוכסך.
+המטרה: להכניס ל-`main` מקור אמת אחד ל-`TODO.md`, acquisition playbook ו-Acquisition Experiment 01, לאחר יישור הסטטוסים למה שכבר מוזג.
+
