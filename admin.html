@@ -2142,7 +2142,7 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
     <div id="curation-dialog-summary" style="display:grid;gap:.7rem"></div>
     <div id="curation-review-actions" class="curation-review-actions">
       <button type="button" class="btn btn-success" onclick="Photos.applyCurationDecision('KEEP')">✅ KEEP</button>
-      <button type="button" class="btn btn-ghost" onclick="Photos.applyCurationDecision('KEEP_SECONDARY')">🟡 SECONDARY</button>
+      <button type="button" class="btn btn-ghost" onclick="Photos.applyCurationDecision('KEEP_SECONDARY')" title="נשאר באתר ומופיע אחרי תמונות KEEP/רגילות בגלריה">🟡 SECONDARY · סוף</button>
       <button type="button" class="btn btn-ghost" onclick="Photos.applyCurationDecision('HIDE')">👁 HIDE</button>
       <button type="button" class="btn btn-ghost" onclick="Photos.applyCurationDecision('CHANGE_CATEGORY')">🔄 קטגוריה אחרת</button>
     </div>
@@ -2152,7 +2152,7 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
       <div id="curation-owner-decision" style="margin-bottom:.7rem;color:var(--text-muted)">טרם הוחלט</div>
       <div id="curation-decision-actions" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:.5rem">
         <button type="button" class="btn btn-success" onclick="Photos.applyCurationDecision('KEEP')">KEEP</button>
-        <button type="button" class="btn btn-ghost" onclick="Photos.applyCurationDecision('KEEP_SECONDARY')">KEEP_SECONDARY</button>
+        <button type="button" class="btn btn-ghost" onclick="Photos.applyCurationDecision('KEEP_SECONDARY')" title="נשאר באתר ומופיע אחרי תמונות KEEP/רגילות בגלריה">KEEP_SECONDARY · סוף הגלריה</button>
         <button type="button" class="btn btn-ghost" onclick="Photos.applyCurationDecision('HIDE')">HIDE</button>
         <button type="button" class="btn btn-ghost" onclick="Photos.applyCurationDecision('CHANGE_CATEGORY')">CHANGE_CATEGORY</button>
         <button type="button" class="btn btn-danger" onclick="Photos.applyCurationDecision('DELETE')">DELETE</button>
