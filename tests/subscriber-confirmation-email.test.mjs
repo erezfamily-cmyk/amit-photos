@@ -135,3 +135,56 @@ test('already-consented newsletter subscriber is not sent another welcome email 
   assert.equal(env._updates.length, 0);
   assert.equal(emails.length, 0);
 });
+
+test('existing guide request reports email_sent=false when Resend rejects the message', async () => {
+  const env = makeEnv({ id: 'sub-1', consent_marketing: 0 });
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async (url) => {
+    if (String(url).includes('api.resend.com/emails')) {
+      return new Response(JSON.stringify({ message: 'rejected' }), { status: 403 });
+    }
+    throw new Error(`unexpected fetch: ${url}`);
+  };
+  try {
+    const response = await handleSubscribers(
+      signupRequest('lead_magnet', { lang: 'he', marketing: false }),
+      env,
+    );
+    const body = await response.json();
+    assert.equal(response.status, 200);
+    assert.equal(body.ok, true);
+    assert.equal(body.already, true);
+    assert.equal(body.email_sent, false);
+    assert.equal(body.email_delivery_attempted, true);
+    assert.equal(body.download_url, 'https://amitphotos.com/50tips-heb.pdf');
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test('new guide request reports email_sent=false and still returns direct download on Resend failure', async () => {
+  const env = makeEnv();
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async (url) => {
+    if (String(url).includes('api.resend.com/emails')) {
+      return new Response(JSON.stringify({ message: 'rejected' }), { status: 422 });
+    }
+    throw new Error(`unexpected fetch: ${url}`);
+  };
+  try {
+    const response = await handleSubscribers(
+      signupRequest('lead_magnet', { lang: 'en', marketing: false }),
+      env,
+    );
+    const body = await response.json();
+    assert.equal(response.status, 200);
+    assert.equal(body.ok, true);
+    assert.equal(body.created, true);
+    assert.equal(body.email_sent, false);
+    assert.equal(body.email_delivery_attempted, true);
+    assert.equal(body.download_url, 'https://amitphotos.com/50tips-eng.pdf');
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+

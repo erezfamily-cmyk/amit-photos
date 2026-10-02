@@ -300,6 +300,8 @@ async function handleFreeGuide(request, env) {
       langBtn: 'EN',
       successHtml: '✓ נשלח! בדוק את תיבת הדואר שלך (גם spam).',
       sentBtn: 'נשלח ✓',
+      deliveryFallback: 'ההרשמה נשמרה, אבל שליחת המייל נכשלה. אפשר להוריד את ה-PDF ישירות כאן.',
+      downloadNow: 'הורד את ה-PDF עכשיו',
       shareText: 'קיבלתי PDF חינמי עם 50 טיפים לצילום 📸 amitphotos.com/free-guide',
       shareBtn: 'שתף עם חבר צלם ב-WhatsApp',
       err: 'שגיאה. נסה שוב.',
@@ -325,6 +327,8 @@ async function handleFreeGuide(request, env) {
       langBtn: 'HE',
       successHtml: '✓ Sent! Check your inbox (including spam).',
       sentBtn: 'Sent ✓',
+      deliveryFallback: 'Your signup was saved, but the email could not be delivered. You can download the PDF directly here.',
+      downloadNow: 'Download the PDF now',
       shareText: 'I just got a free PDF with 50 photography tips 📸 amitphotos.com/free-guide',
       shareBtn: 'Share with a photographer friend on WhatsApp',
       err: 'Error. Please try again.',
@@ -471,10 +475,20 @@ document.getElementById('fg-form').addEventListener('submit', async function(e) 
           gtag('event', 'generate_lead', { source: 'lead_magnet' });
         }
       }
-      msg.className = 'msg ok';
-      msg.innerHTML = t.successHtml + '<br><a href="https://api.whatsapp.com/send?text=' + encodeURIComponent(t.shareText) + '" target="_blank" rel="noopener" style="display:inline-block;margin-top:.6rem;background:#25D366;color:#fff;padding:.4rem 1rem;border-radius:4px;text-decoration:none;font-size:.85rem">' + t.shareBtn + '</a>';
-      document.getElementById('fg-email').value = '';
-      btn.textContent = t.sentBtn;
+      if (data.email_sent === true) {
+        msg.className = 'msg ok';
+        msg.innerHTML = t.successHtml + '<br><a href="https://api.whatsapp.com/send?text=' + encodeURIComponent(t.shareText) + '" target="_blank" rel="noopener" style="display:inline-block;margin-top:.6rem;background:#25D366;color:#fff;padding:.4rem 1rem;border-radius:4px;text-decoration:none;font-size:.85rem">' + t.shareBtn + '</a>';
+        document.getElementById('fg-email').value = '';
+        btn.textContent = t.sentBtn;
+      } else {
+        var downloadUrl = data.download_url || (lang === 'en'
+          ? 'https://amitphotos.com/50tips-eng.pdf'
+          : 'https://amitphotos.com/50tips-heb.pdf');
+        msg.className = 'msg err';
+        msg.innerHTML = t.deliveryFallback + '<br><a href="' + downloadUrl + '" style="display:inline-block;margin-top:.6rem;color:#c8a96e;font-weight:700">' + t.downloadNow + '</a>';
+        btn.disabled = false;
+        btn.textContent = t.submit;
+      }
     } else {
       msg.className = 'msg err';
       msg.textContent = t.err;
@@ -573,6 +587,35 @@ function buildSubscriberConfirmationEmail({ source, isEn, safeName, pdfUrl, subs
   };
 }
 
+async function sendSubscriberConfirmationEmail({ env, email, source, isEn, safeName, pdfUrl, subscriberId, marketingConsentGiven, context }) {
+  if (!env.RESEND_API_KEY) {
+    console.error(`Resend unavailable (${context}): RESEND_API_KEY is missing`);
+    return { sent: false, attempted: false, error: 'missing_resend_api_key' };
+  }
+
+  const fromEmail = env.FROM_EMAIL || 'Amit Photos <contact@amitphotos.com>';
+  const confirmation = buildSubscriberConfirmationEmail({
+    source, isEn, safeName, pdfUrl, subscriberId, marketingConsentGiven,
+  });
+
+  try {
+    const resendRes = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ from: fromEmail, to: email, subject: confirmation.subject, html: confirmation.html }),
+    });
+    if (!resendRes.ok) {
+      const detail = await resendRes.text().catch(() => '');
+      console.error(`Resend rejected (${context}):`, resendRes.status, detail);
+      return { sent: false, attempted: true, status: resendRes.status, error: 'resend_rejected' };
+    }
+    return { sent: true, attempted: true, status: resendRes.status };
+  } catch (error) {
+    console.error(`Resend network error (${context}):`, error);
+    return { sent: false, attempted: true, error: 'resend_network_error' };
+  }
+}
+
 async function handleSubscribers(request, env) {
   const method = request.method;
 
@@ -625,18 +668,12 @@ async function handleSubscribers(request, env) {
       // רק כשהבקשה שדרגה עכשיו את ההסכמה, כדי לא לשלוח אישור כפול בכל submit חוזר.
       const shouldSendConfirmation = GUIDE_SOURCES.includes(source)
         || (NEWSLETTER_SOURCES.includes(source) && upgradedMarketingConsent);
-      if (shouldSendConfirmation && env.RESEND_API_KEY) {
-        const fromEmail = env.FROM_EMAIL || 'Amit Photos <contact@amitphotos.com>';
-        const confirmation = buildSubscriberConfirmationEmail({
-          source, isEn, safeName: '', pdfUrl, subscriberId: existing.id, marketingConsentGiven,
+      let emailDelivery = { sent: false, attempted: false };
+      if (shouldSendConfirmation) {
+        emailDelivery = await sendSubscriberConfirmationEmail({
+          env, email, source, isEn, safeName: '', pdfUrl,
+          subscriberId: existing.id, marketingConsentGiven, context: 'existing subscriber',
         });
-        await fetch('https://api.resend.com/emails', {
-          method: 'POST',
-          headers: { 'Authorization': `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            from: fromEmail, to: email, subject: confirmation.subject, html: confirmation.html,
-          })
-        }).catch(() => {});
       }
       return jsonRes({
         ok: true,
@@ -644,6 +681,9 @@ async function handleSubscribers(request, env) {
         created: false,
         marketing_upgraded: upgradedMarketingConsent,
         lead_created: upgradedMarketingConsent,
+        email_sent: emailDelivery.sent,
+        email_delivery_attempted: emailDelivery.attempted,
+        download_url: GUIDE_SOURCES.includes(source) ? pdfUrl : null,
       }, 200, request);
     }
     const id = crypto.randomUUID();
@@ -660,22 +700,12 @@ async function handleSubscribers(request, env) {
       marketingConsentGiven ? CONSENT_POLICY_VERSION : null
     ).run();
 
-    // שלח מייל אישור לנרשם
-    if (env.RESEND_API_KEY) {
-      const fromEmail = env.FROM_EMAIL || 'Amit Photos <contact@amitphotos.com>';
-      const safeName = name ? escXml(name) : '';
-      const confirmation = buildSubscriberConfirmationEmail({
-        source, isEn, safeName, pdfUrl, subscriberId: id, marketingConsentGiven,
-      });
-      const resendRes = await fetch('https://api.resend.com/emails', {
-        method: 'POST',
-        headers: { 'Authorization': `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ from: fromEmail, to: email, subject: confirmation.subject, html: confirmation.html })
-      });
-      if (!resendRes.ok) {
-        console.error('Resend error (new subscriber):', resendRes.status, await resendRes.text());
-      }
-    }
+    // שלח מייל אישור לנרשם, אך אל תציג הצלחת משלוח אם Resend דחה/נכשל.
+    const safeName = name ? escXml(name) : '';
+    const emailDelivery = await sendSubscriberConfirmationEmail({
+      env, email, source, isEn, safeName, pdfUrl,
+      subscriberId: id, marketingConsentGiven, context: 'new subscriber',
+    });
 
     return jsonRes({
       ok: true,
@@ -684,6 +714,9 @@ async function handleSubscribers(request, env) {
       created: true,
       marketing_upgraded: false,
       lead_created: marketingConsentGiven,
+      email_sent: emailDelivery.sent,
+      email_delivery_attempted: emailDelivery.attempted,
+      download_url: GUIDE_SOURCES.includes(source) ? pdfUrl : null,
     }, 200, request);
   }
 
