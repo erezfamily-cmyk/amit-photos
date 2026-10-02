@@ -99,3 +99,25 @@ test('critical admin navigation is bootstrapped before feature modules', () => {
   assert.match(admin, /navBootstrapBound/);
   assert.match(admin, /document\.title = 'AMIT PHOTOS — ניהול ⚠ '/);
 });
+
+
+test('all flower photos receive a bounded pilot score', () => {
+  const scores = JSON.parse(fs.readFileSync('data/flower-curation-scores.json', 'utf8'));
+  assert.equal(scores.category, 'פרחים וצמחים');
+  assert.equal(scores.total, 162);
+  assert.equal(scores.items.length, 162);
+  assert.equal(scores.summary.visual_complete, 12);
+  assert.equal(scores.summary.technical_provisional, 150);
+  assert.ok(scores.items.every(x => Number.isFinite(x.pilot_score) && x.pilot_score >= 0 && x.pilot_score <= 100));
+  assert.ok(scores.items.every(x => ['visual_complete','technical_provisional'].includes(x.score_kind)));
+});
+
+test('production curation action plan is reversible HIDE only', () => {
+  const actions = JSON.parse(fs.readFileSync('data/flower-curation-actions-v1.json', 'utf8'));
+  assert.equal(actions.actions.length, 4);
+  assert.ok(actions.actions.every(x => x.action === 'HIDE'));
+  assert.ok(actions.actions.every(x => !/DELETE/.test(x.action)));
+  assert.match(admin, /flower-curation-scores\.json/);
+  assert.match(admin, /curationScoreBadge/);
+  assert.match(admin, /ציון פיילוט/);
+});
