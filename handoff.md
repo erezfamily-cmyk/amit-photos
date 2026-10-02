@@ -1013,3 +1013,20 @@ Curation direction:
 - KEEP_SECONDARY remains public but at gallery tail;
 - HIDE remains reversible;
 - no automatic Drive deletion.
+
+
+### All-gallery visual scoring policy — 2.10.2026
+
+Owner approved expanding the successful flower-pilot curation model to the rest of the portfolio.
+
+Scoring policy:
+- preserve existing owner-reviewed decisions; do not overwrite photos the owner already reviewed;
+- all remaining photos must receive actual visual review for sharpness, composition, and light/color before those components are scored;
+- missing visual review must display `טרם נבדק`, never misleading `0/100`;
+- full weighted score is authoritative only after visual components are populated;
+- owner Review queue contains only score <=85 or materially problematic photos;
+- score >85 does not require owner confirmation;
+- low-resolution below the approved threshold may be auto-HIDE (reversible) but never auto-DELETE;
+- Google Drive remains the untouched master archive.
+
+This policy supersedes the earlier technical-provisional-only display as the target rollout model.
