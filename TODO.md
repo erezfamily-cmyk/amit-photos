@@ -6,7 +6,7 @@
 ---
 
 
-## סטטוס ביצוע עדכני — 1.10.2026
+## סטטוס ביצוע עדכני — 2.10.2026
 
 זהו מקור האמת להמשך העבודה. הסעיפים ההיסטוריים בהמשך המסמך נשמרים כהקשר, אבל במקרה של סתירה הסטטוס כאן גובר.
 
@@ -17,11 +17,14 @@
 - [x] PR #80/#81/#82 הישנים נסגרו והוחלפו ב-#84/#85/#83.
 - [x] Live smoke verification של `/free-guide/`, `/licensing/`, `/business/`, Admin UTM builder ו-payment guardrail מעוגן ב-Business Live Verification.
 - [x] Acquisition Experiment 01 מוכן טכנית להפעלה; חלון 7 הימים מתחיל רק בפרסום/שליחה הראשונה בפועל.
-- [ ] לבצע את שלוש פעולות ההפצה הראשונות: Free Guide / Licensing / B2B outreach.
-- [ ] לאחר ההפצה הראשונה: למדוד 7 ימים ללא שינוי offer/copy/campaign.
+- [x] Free Guide / Instagram Story פורסם ב-2.10.2026 15:03:19 (Asia/Jerusalem) — Day 1 של Acquisition Experiment 01.
+- [x] Personal Licensing / Threads פורסם ב-2.10.2026 15:17:23 (Asia/Jerusalem).
+- [ ] B2B outreach — עדיין לא בוצע; LinkedIn אינו מחובר כרגע ולא מוסיפים ערוץ חדש בזמן החלון הפעיל.
+- [ ] חלון המדידה בן 7 הימים פעיל: לשמור offer/copy/campaign/UTM/primary KPI קפואים עד סיום החלון.
 - [ ] בסוף 7 ימים: לבחור follow-up עסקי אחד בלבד לפי הנתונים.
 - [ ] checkpoint רחב יותר סביב 10.10, ואז 24.10 אם עדיין אין sample מספיק.
-- [x] PR #110 — clean PayPal Orders v2 Sandbox foundation — מוזג ל-`main`; Production נשאר כבוי עם `PAYMENTS_ENABLED=false`. PR #76 הישן נחשב superseded ולא מיועד למיזוג.
+- [x] PR #110 — clean PayPal Orders v2 Sandbox foundation — מוזג ל-`main`; Production נשאר כבוי עם `PAYMENTS_ENABLED=false`.
+- [x] PR #76 הישן (superseded) נסגר ב-2.10.2026 ללא מיזוג.
 - [x] `PAYMENTS_ENABLED=false` נשאר guardrail מחייב.
 - [x] Gelato מוקפא במפורש בשלב הנוכחי; לא חלק מהניסוי ולא חלק מחזרת PayPal.
 
