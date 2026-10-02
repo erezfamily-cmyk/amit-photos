@@ -1,3 +1,4 @@
+// Sandbox-only until the explicit production go-live gate is approved.
 const PAYPAL_SANDBOX_API = 'https://api-m.sandbox.paypal.com';
 const DIGITAL_SIZES = new Set(['small', 'medium', 'large']);
 const DIGITAL_CURRENCIES = new Set(['ILS', 'USD']);
