@@ -198,6 +198,30 @@ GUIDES = {
     "black-and-white": "/camera/black-and-white/",
 }
 
+HE_IMAGE_LESSONS = {
+    "composition": "למה זה עובד: החזרה הגיאומטרית והסימטריה יוצרות סדר ומובילות את העין.",
+    "light": "למה זה עובד: האור האחיד חושף פרטים עדינים בלי לאבד את הזהב והכחול.",
+    "focus": "למה זה עובד: מרכז הפרח חד והרקע נמס, כך שהעין יודעת בדיוק איפה לעצור.",
+    "macro": "למה זה עובד: עומק שדה רדוד מפריד בין שכבות עלי הכותרת לרקע.",
+    "motion": "למה זה עובד: הנושא חד והרקע רך - שילוב שמדגיש גם תנועה וגם הקשר.",
+    "landscape": "למה זה עובד: קווים אדריכליים וקנה מידה מובילים אל מרכז הפריים.",
+    "story": "למה זה עובד: שכבות של פרטים יוצרות גם מרקם וגם סיפור אנושי.",
+    "night": "למה זה עובד: האור הכחול נשמר, בזמן שהאזורים הלבנים עדיין שומרים על פרטים.",
+    "editing": "למה זה עובד: צבע, קצב וצורות הם הנושא - העריכה צריכה לחזק אותם, לא להחליף אותם.",
+}
+
+EN_IMAGE_LESSONS = {
+    "composition": "Why it works: repeated geometry and near-symmetry create order and guide the eye.",
+    "light": "Why it works: even light reveals fine detail while preserving the blue-and-gold palette.",
+    "focus": "Why it works: the flower center is crisp while the background melts away.",
+    "macro": "Why it works: shallow depth separates the petal layers from the background.",
+    "motion": "Why it works: a sharp subject against a softer background preserves both action and context.",
+    "landscape": "Why it works: architectural lines and scale lead the eye toward the center of the frame.",
+    "story": "Why it works: layered details create both texture and a human story.",
+    "night": "Why it works: the blue atmosphere remains intact while bright architectural detail is preserved.",
+    "editing": "Why it works: color, rhythm and shape are the subject - editing should strengthen them, not replace them.",
+}
+
 def tracked(path: str, lang: str, content: str) -> str:
     if path.startswith("http"):
         base = path
@@ -265,15 +289,19 @@ def css() -> str:
     .cover p { max-width:150mm; font-size:14pt; line-height:1.45; color:#f0eee8; }
     .goldline { width:34mm; height:1.2mm; background:#d4aa55; margin:5mm 0; }
     .brand { position:absolute; z-index:2; top:14mm; left:16mm; font-size:11pt; letter-spacing:.06em; }
-    .section-photo { width:100%; height:68mm; object-fit:cover; border-radius:5mm; display:block; margin-bottom:7mm; }
+    .photo-frame { position:relative; width:100%; margin-bottom:7mm; }
+    .section-photo { width:100%; object-fit:cover; border-radius:5mm; display:block; }
+    .photo-lesson { position:absolute; left:4mm; right:4mm; bottom:4mm; max-width:145mm; background:rgba(8,15,18,.86); color:white; border-radius:3mm; padding:2.8mm 3.5mm; font-size:8.2pt; line-height:1.35; backdrop-filter:blur(3px); }
+    [dir=rtl] .photo-lesson { margin-left:auto; text-align:right; }
+    [dir=ltr] .photo-lesson { margin-right:auto; text-align:left; }
     .section-head { display:flex; align-items:flex-end; justify-content:space-between; gap:8mm; margin-bottom:5mm; }
     h2 { font-size:24pt; margin:0; line-height:1.08; }
     .sub { font-size:10.5pt; color:#6a6257; margin-top:2mm; }
     .num { font-size:32pt; color:#d4aa55; font-weight:800; line-height:1; }
     .tips { display:grid; grid-template-columns:1fr 1fr; gap:3.1mm; }
-    .tip { background:white; border-radius:3.2mm; padding:3.6mm 4mm; min-height:25mm; border:0.35mm solid #e7e0d4; }
-    .tip b { color:#b4832f; margin-inline-end:2mm; font-size:10.5pt; }
-    .tip span { font-size:9.7pt; line-height:1.42; }
+    .tip { background:white; border-radius:3.2mm; padding:3.6mm 4mm; min-height:25mm; border:0.35mm solid #e7e0d4; display:flex; gap:2.8mm; align-items:flex-start; }
+    .tip b { color:#b4832f; font-size:10.5pt; flex:0 0 auto; direction:ltr; unicode-bidi:isolate; line-height:1.42; }
+    .tip span { font-size:9.7pt; line-height:1.42; flex:1 1 auto; }
     .guide-row { margin-top:5mm; display:flex; align-items:center; justify-content:space-between; gap:5mm; }
     .guide-link { display:inline-block; background:#111; color:white !important; text-decoration:none; border-radius:999px; padding:3mm 5mm; font-size:9.5pt; font-weight:700; }
     .caption { color:#756d62; font-size:7.8pt; }
@@ -285,23 +313,26 @@ def css() -> str:
     .intro-card h3 { margin:0 0 3mm; font-size:15pt; }
     .intro-card p, .intro-card li { font-size:10pt; line-height:1.55; }
     .mini-photo { width:100%; height:92mm; object-fit:cover; border-radius:5mm; }
-    .link-grid { display:grid; grid-template-columns:1fr 1fr; gap:4mm; margin-top:8mm; }
-    .resource { background:white; border:0.35mm solid #e5ddd0; border-radius:4mm; padding:5mm; text-decoration:none; color:#181818 !important; }
-    .resource strong { display:block; font-size:12pt; margin-bottom:1.5mm; }
-    .resource small { color:#766e64; font-size:8.5pt; line-height:1.35; }
+    .intro-gallery { display:grid; grid-template-columns:1fr 1fr 1fr; gap:3mm; margin-top:10mm; }
+    .intro-gallery img { width:100%; height:48mm; object-fit:cover; border-radius:4mm; }
+    .link-grid { display:grid; grid-template-columns:1fr 1fr; gap:3mm; margin-top:5mm; }
+    .resource { background:white; border:0.35mm solid #e5ddd0; border-radius:4mm; padding:3.6mm 4mm; text-decoration:none; color:#181818 !important; min-height:21mm; }
+    .resource:last-child { grid-column:1 / -1; }
+    .resource strong { display:block; font-size:10.5pt; margin-bottom:1mm; }
+    .resource small { color:#766e64; font-size:7.9pt; line-height:1.3; }
     .path { margin-top:6mm; }
     .path-row { display:grid; grid-template-columns:13mm 1fr 36mm; gap:4mm; align-items:center; background:white; border-radius:4mm; margin-bottom:3mm; padding:4mm; }
     .path-row .step { width:10mm; height:10mm; border-radius:50%; background:#d4aa55; display:flex; align-items:center; justify-content:center; font-weight:800; }
     .path-row strong { font-size:11pt; }
     .path-row small { display:block; color:#746b61; margin-top:1mm; }
     .path-row a { text-align:center; font-size:8.5pt; font-weight:700; color:#111; }
-    .collage { display:grid; grid-template-columns:1.2fr .8fr; grid-template-rows:66mm 66mm; gap:3mm; margin-top:7mm; }
+    .collage { display:grid; grid-template-columns:1.2fr .8fr; grid-template-rows:46mm 46mm; gap:3mm; margin-top:5mm; }
     .collage img { width:100%; height:100%; object-fit:cover; border-radius:3mm; }
     .collage img:first-child { grid-row:1/3; }
-    .footer-cta { margin-top:8mm; background:#111; color:white; border-radius:5mm; padding:7mm; }
-    .footer-cta h3 { margin:0 0 2mm; font-size:18pt; }
-    .footer-cta p { margin:0 0 4mm; color:#d7d2c9; font-size:10pt; line-height:1.5; }
-    .footer-cta a { display:inline-block; background:#d4aa55; color:#111 !important; font-weight:800; text-decoration:none; padding:3mm 5mm; border-radius:999px; }
+    .footer-cta { margin-top:5mm; background:#111; color:white; border-radius:5mm; padding:5mm 6mm; }
+    .footer-cta h3 { margin:0 0 1.5mm; font-size:15pt; }
+    .footer-cta p { margin:0 0 3mm; color:#d7d2c9; font-size:8.8pt; line-height:1.4; }
+    .footer-cta a { display:inline-block; background:#d4aa55; color:#111 !important; font-weight:800; text-decoration:none; padding:2.5mm 4.5mm; border-radius:999px; font-size:8.8pt; }
     .rtl { direction:rtl; text-align:right; }
     .ltr { direction:ltr; text-align:left; }
     """
@@ -358,6 +389,11 @@ def intro(lang: str, imgs: dict[str, Path], pageno: int) -> str:
         </div>
         <img class="mini-photo" src="{img_uri(imgs['extra1'])}">
       </div>
+      <div class="intro-gallery">
+        <img src="{img_uri(imgs['composition'])}">
+        <img src="{img_uri(imgs['macro'])}">
+        <img src="{img_uri(imgs['night'])}">
+      </div>
       <div class="page-no">{pageno}</div>
     </div>"""
 
@@ -369,8 +405,10 @@ def section_page(lang: str, title: str, subtitle: str, photo_key: str, guide_key
     guide_text = "למדריך המלא" if lang == "he" else "Read the full guide"
     cap = "צילום מתוך הפורטפוליו של עמית ארז" if lang == "he" else "Photo from Amit Erez's portfolio"
     href = tracked(GUIDES[guide_key], lang, guide_key)
+    lesson = (HE_IMAGE_LESSONS if lang == "he" else EN_IMAGE_LESSONS).get(photo_key, "")
+    photo_h = "112mm" if len(tips) <= 3 else ("92mm" if len(tips) <= 5 else "68mm")
     return f"""<div class="page {direction}" dir="{direction}">
-      <img class="section-photo" src="{img_uri(imgs[photo_key])}">
+      <div class="photo-frame"><img class="section-photo" style="height:{photo_h}" src="{img_uri(imgs[photo_key])}"><div class="photo-lesson">{esc(lesson)}</div></div>
       <div class="section-head">
         <div><h2>{esc(title)}</h2><div class="sub">{esc(subtitle)}</div></div>
         <div class="num">{start_num:02d}</div>
@@ -449,7 +487,7 @@ def resources_page(lang: str, imgs: dict[str, Path], pageno: int) -> str:
     return f"""<div class="page {direction}" dir="{direction}">
       <div class="eyebrow">EXPLORE · AMITPHOTOS.COM</div>
       <h2 style="margin-top:3mm">{esc(title)}</h2>
-      <p style="font-size:11pt;line-height:1.55;max-width:165mm">{esc(sub)}</p>
+      <p style="font-size:10.2pt;line-height:1.45;max-width:165mm;margin:2.5mm 0 0">{esc(sub)}</p>
       <div class="collage">
         <img src="{img_uri(imgs['composition'])}">
         <img src="{img_uri(imgs['macro'])}">
