@@ -1,0 +1,62 @@
+name: Portfolio Visual Curation CI
+
+on:
+  pull_request:
+    paths:
+      - 'src/portfolio_visual_curation.py'
+      - 'data/portfolio-curation-scores.json'
+      - 'admin.html'
+      - 'tests/test_portfolio_visual_curation.py'
+      - 'tests/admin-flower-curation-pilot.test.mjs'
+      - '.github/workflows/portfolio-visual-curation.yml'
+      - '.github/workflows/portfolio-visual-curation-ci.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Install Python runtime
+        run: pip install requests
+
+      - name: Compile Python
+        run: python -m py_compile src/portfolio_visual_curation.py
+
+      - name: Run Python policy tests
+        run: python tests/test_portfolio_visual_curation.py
+
+      - name: Run Admin curation tests
+        run: node --test tests/admin-flower-curation-pilot.test.mjs
+
+      - name: Validate initialized score state
+        run: |
+          python src/portfolio_visual_curation.py --init-only
+          python - <<'PY'
+          import json
+          r=json.load(open('data/portfolio-curation-scores.json',encoding='utf-8'))
+          assert r['summary']['total'] == len(r['items'])
+          assert r['policy']['owner_review_max_score'] == 85
+          assert r['policy']['automatic_delete'] is False
+          assert r['policy']['automatic_hide_by_this_pipeline'] is False
+          for item in r['items']:
+              if item['score_kind'] != 'visual_complete':
+                  assert item['score'] is None
+                  assert item['components']['sharpness'] is None
+                  assert item['components']['composition'] is None
+                  assert item['components']['light_color'] is None
+          print(r['summary'])
+          PY
