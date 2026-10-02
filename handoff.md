@@ -900,3 +900,27 @@ Fix:
 - נמנעת קשירה כפולה של handlers בהמשך הסקריפט.
 - אם מתרחשת שגיאת JavaScript לא מטופלת, כותרת הטאב מסומנת ב-⚠ ובטקסט השגיאה לצורך אבחון מיידי.
 - אין שינוי בנתוני תמונות, החלטות קיורציה, תשלומים או Gelato.
+
+
+### Flower curation scoring + reversible production hide — 2.10.2026
+
+Owner approved moving clearly problematic flower images out of production and assigning scores across the full pilot.
+
+Scoring:
+- Added `data/flower-curation-scores.json` for all 162 flower photos.
+- 12 photos already inspected visually receive a full 0–100 visual score.
+- Remaining 150 receive a clearly labeled `technical_provisional` score only.
+- Provisional technical formula: 55% resolution, 30% uniqueness/duplicate risk, 15% metadata completeness.
+- Visual formula: 25% sharpness, 20% composition, 15% light/color, 15% resolution, 10% uniqueness, 10% category fit, 5% metadata.
+- Admin now shows score badges: `V` = full visual review, `T` = technical provisional.
+- Added filters for score <60 and visual-review-complete, plus score fields in the curation dialog/export.
+
+Approved production HIDE actions (reversible; no DELETE):
+- חמניות צהובות — `15h8IlkqnlorfEseEFBHjNikOSgMvsCQ_`
+- זרעים של דנדליון — `1Tpaw2ooFcWip-poF5_tXOxN1K-PQHpWA` (weaker duplicate)
+- עלים ירוקים בשמש — `1yu2k9PJbstdauHCz0dVbM9QMNSiPR-lI` (duplicate variant)
+- פרח דליל סגול — `1PcDKeeJvmjYmuSALPGTVgclA0mmup8z7` (duplicate variant)
+
+A dedicated GitHub Action applies only HIDE, records owner decision HIDE, and verifies the four IDs are `published=0` and absent from the public gallery. It contains no DELETE action.
+
+Important: technical provisional scores are not artistic verdicts. Continue visual review before additional HIDE/DELETE/category actions.

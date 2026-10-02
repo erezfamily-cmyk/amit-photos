@@ -1,0 +1,76 @@
+name: Apply Flower Curation HIDE Actions
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'data/flower-curation-actions-v1.json'
+      - '.github/workflows/apply-flower-curation-actions.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  apply-hide:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate reversible actions only
+        run: |
+          python - <<'PY'
+          import json
+          p=json.load(open('data/flower-curation-actions-v1.json',encoding='utf-8'))
+          actions=p.get('actions',[])
+          assert actions and len(actions)==4, actions
+          assert all(a.get('action')=='HIDE' for a in actions), actions
+          assert len({a['photo_id'] for a in actions})==len(actions)
+          print('validated', len(actions), 'HIDE actions')
+          PY
+
+      - name: Apply HIDE to production and persist owner decisions
+        env:
+          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
+        run: |
+          python - <<'PY'
+          import json, os, urllib.request
+          base='https://amitphotos.com'
+          password=os.environ.get('ADMIN_PASSWORD','')
+          if not password:
+              raise SystemExit('ADMIN_PASSWORD secret is missing')
+          actions=json.load(open('data/flower-curation-actions-v1.json',encoding='utf-8'))['actions']
+          headers={'Content-Type':'application/json','X-Admin-Password':password}
+
+          def call(path, method='GET', payload=None):
+              data=None if payload is None else json.dumps(payload).encode()
+              req=urllib.request.Request(base+path,data=data,headers=headers,method=method)
+              with urllib.request.urlopen(req,timeout=30) as r:
+                  body=r.read().decode()
+                  if r.status < 200 or r.status >= 300:
+                      raise RuntimeError(f'{method} {path}: {r.status} {body[:200]}')
+                  return json.loads(body) if body else {}
+
+          for action in actions:
+              pid=action['photo_id']
+              call('/api/photos','PATCH',{'id':pid,'published':False})
+              call('/api/admin/curation-decisions','POST',{
+                  'photo_id':pid,'decision':'HIDE',
+                  'note':'Applied by flower-curation pilot v1 after visual review; reversible.'
+              })
+              print('HIDDEN', pid, action.get('title',''))
+
+          admin=call('/api/photos?admin=1')
+          by_id={p['id']:p for p in admin}
+          for action in actions:
+              row=by_id.get(action['photo_id'])
+              assert row is not None, action['photo_id']
+              assert int(row.get('published',1))==0, (action['photo_id'],row.get('published'))
+
+          public=call('/api/photos')
+          public_ids={p['id'] for p in public}
+          leaked=[a['photo_id'] for a in actions if a['photo_id'] in public_ids]
+          assert not leaked, f'HIDDEN photos still public: {leaked}'
+          print('verified: all 4 are hidden from public production')
+          PY
