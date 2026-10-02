@@ -1,0 +1,146 @@
+{
+  "generated_at": "2026-10-02",
+  "total_photos": 1390,
+  "strategy": "business-curated-navigation-v1",
+  "public_navigation": {
+    "primary_destinations": 8,
+    "subject_galleries": [
+      {
+        "category": "פרחים וצמחים",
+        "count": 162,
+        "role": "primary_gallery"
+      },
+      {
+        "category": "בעלי חיים",
+        "count": 102,
+        "role": "primary_gallery"
+      },
+      {
+        "category": "צילום מופשט",
+        "count": 69,
+        "role": "primary_gallery"
+      },
+      {
+        "category": "טבע דומם",
+        "count": 60,
+        "role": "primary_gallery"
+      },
+      {
+        "category": "מאקרו-צילומי תקריב",
+        "count": 54,
+        "role": "primary_gallery"
+      },
+      {
+        "category": "אומנות רחוב",
+        "count": 35,
+        "role": "primary_gallery"
+      },
+      {
+        "category": "פורטרטים",
+        "count": 12,
+        "role": "primary_gallery"
+      }
+    ],
+    "locations_collection": {
+      "label": "מקומות בעולם",
+      "role": "location_collection",
+      "total": 863,
+      "children": [
+        {
+          "category": "אבו דאבי",
+          "count": 53
+        },
+        {
+          "category": "איטליה",
+          "count": 79
+        },
+        {
+          "category": "אנגליה",
+          "count": 43
+        },
+        {
+          "category": "גרמניה",
+          "count": 48
+        },
+        {
+          "category": "הולנד",
+          "count": 57
+        },
+        {
+          "category": "גאורגיה",
+          "count": 85
+        },
+        {
+          "category": "וינה",
+          "count": 10
+        },
+        {
+          "category": "טנזניה",
+          "count": 28
+        },
+        {
+          "category": "יוון",
+          "count": 38
+        },
+        {
+          "category": "הונגריה",
+          "count": 12
+        },
+        {
+          "category": "רומניה",
+          "count": 7
+        },
+        {
+          "category": "מונטנגרו",
+          "count": 28
+        },
+        {
+          "category": "סלובקיה",
+          "count": 76
+        },
+        {
+          "category": "סן דיאגו - ארה\"ב",
+          "count": 24
+        },
+        {
+          "category": "ספרד ואנדורה",
+          "count": 60
+        },
+        {
+          "category": "צכיה",
+          "count": 33
+        },
+        {
+          "category": "בולגריה",
+          "count": 59
+        },
+        {
+          "category": "ישראל",
+          "count": 123
+        }
+      ]
+    },
+    "style_filters": [
+      {
+        "category": "שחור-לבן",
+        "count": 20,
+        "role": "style_filter"
+      },
+      {
+        "category": "צילומי לילה",
+        "count": 13,
+        "role": "style_filter"
+      }
+    ]
+  },
+  "policy": {
+    "drive": "archive_master_unchanged",
+    "delete_from_drive_automatically": false,
+    "move_drive_files_automatically": false,
+    "public_hide_is_reversible": true,
+    "keep_secondary_moves_to_gallery_tail": true,
+    "locations_are_not_top_level_subject_galleries": true,
+    "styles_are_filters_not_top_level_galleries": true
+  },
+  "covered_category_count": 27
+}
