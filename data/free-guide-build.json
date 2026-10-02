@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-02T15:07:33.051327+00:00",
+  "generated_at": "2026-10-02T15:17:18.024366+00:00",
   "campaign": "202610_freeguide_photo_tips",
   "selection_policy": "visual_complete && score > 85 && !owner_review_required && !material_problem",
   "photo_ids": {
@@ -19,15 +19,15 @@
   "outputs": {
     "he": {
       "file": "50tips-heb.pdf",
-      "size": 5357434,
+      "size": 5383303,
       "pages": 13,
-      "links": 18
+      "links": 19
     },
     "en": {
       "file": "50tips-eng.pdf",
-      "size": 5339565,
+      "size": 5362194,
       "pages": 13,
-      "links": 18
+      "links": 19
     }
   }
 }
