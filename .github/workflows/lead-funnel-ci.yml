@@ -28,8 +28,8 @@ jobs:
         with:
           node-version: '22'
 
-      - name: Subscriber consent and lead tests
-        run: node --test tests/subscriber-consent-model.test.mjs
+      - name: Subscriber consent, lead, and confirmation-email tests
+        run: node --test tests/subscriber-consent-model.test.mjs tests/subscriber-confirmation-email.test.mjs
 
       - name: Python syntax check
         run: python3 -m py_compile src/ga_weekly_report.py
