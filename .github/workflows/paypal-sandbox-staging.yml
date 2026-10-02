@@ -1,0 +1,69 @@
+name: Deploy PayPal Sandbox Staging
+
+on:
+  workflow_dispatch:
+    inputs:
+      staging_d1_database_id:
+        description: 'Cloudflare D1 ID for amit-photos-paypal-sandbox-db'
+        required: true
+        type: string
+      confirm:
+        description: 'Type DEPLOY_PAYPAL_SANDBOX_STAGING'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  deploy-staging:
+    if: ${{ github.event.inputs.confirm == 'DEPLOY_PAYPAL_SANDBOX_STAGING' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      PROD_D1_ID: 802379c7-97cf-4262-93b8-da81c5c3c07d
+      STAGING_D1_ID: ${{ github.event.inputs.staging_d1_database_id }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Guard against production resources
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$STAGING_D1_ID"
+          if [ "$STAGING_D1_ID" = "$PROD_D1_ID" ]; then
+            echo "Refusing to deploy staging against production D1."
+            exit 1
+          fi
+          grep -q 'PAYMENTS_ENABLED = "false"' wrangler.toml
+          grep -q 'database_name = "amit-photos-paypal-sandbox-db"' wrangler.paypal-sandbox.example.toml
+          grep -q 'bucket_name = "amit-photos-paypal-sandbox-images"' wrangler.paypal-sandbox.example.toml
+          if grep -q 'amitphotos.com' wrangler.paypal-sandbox.example.toml; then
+            echo "Staging config must not contain production custom domain."
+            exit 1
+          fi
+
+      - name: Build ephemeral staging config
+        shell: bash
+        run: |
+          set -euo pipefail
+          cp wrangler.paypal-sandbox.example.toml /tmp/wrangler.paypal-sandbox.toml
+          sed -i "s/__STAGING_D1_DATABASE_ID__/${STAGING_D1_ID}/g" /tmp/wrangler.paypal-sandbox.toml
+          grep -q "$STAGING_D1_ID" /tmp/wrangler.paypal-sandbox.toml
+          if grep -q "$PROD_D1_ID" /tmp/wrangler.paypal-sandbox.toml; then
+            echo "Production D1 ID detected in staging config."
+            exit 1
+          fi
+
+      - name: Run isolation tests
+        run: node --test tests/paypal-staging-isolation.test.mjs tests/paypal-orders-v2.test.mjs
+
+      - name: Deploy workers.dev-only staging Worker
+        run: npx wrangler@4.4.0 deploy --config /tmp/wrangler.paypal-sandbox.toml
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

@@ -1,0 +1,32 @@
+# TEMPLATE ONLY — do not use for production.
+# Copy to a temporary staging config and replace __STAGING_D1_DATABASE_ID__.
+
+name = "amit-photos-paypal-sandbox"
+main = "worker.js"
+compatibility_date = "2026-05-28"
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+# Safe only because this Worker uses PayPal Sandbox and an isolated D1.
+PAYMENTS_ENABLED = "true"
+
+[assets]
+directory = "."
+binding = "ASSETS"
+run_worker_first = true
+not_found_handling = "404-page"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "amit-photos-paypal-sandbox-db"
+database_id = "__STAGING_D1_DATABASE_ID__"
+
+[[r2_buckets]]
+binding = "PHOTOS"
+bucket_name = "amit-photos-paypal-sandbox-images"
+
+[images]
+binding = "IMAGES"
+
+# Intentionally no [[routes]] and no [triggers].
+# Staging must remain workers.dev-only with no cron jobs.
