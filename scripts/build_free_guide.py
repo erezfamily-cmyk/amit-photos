@@ -45,10 +45,10 @@ PHOTOS = {
 HE_SECTIONS = [
     ("קומפוזיציה", "לפני הגדרות — בנו תמונה", "composition", "composition", [
         "החליטו מה הנושא המרכזי לפני שאתם נוגעים בהגדרות.",
-        "נקו את שולי הפריים — הרבה תמונות נחלשות בגלל פרט קטן בקצה.",
+        "בדקו גם את שולי הפריים. חפץ קטן או כתם בהיר בקצה יכולים למשוך תשומת לב מהנושא.",
         "שנו מיקום לפני שאתם עושים זום; חצי מטר ימינה יכול לשנות הכול.",
-        "חוק השלישים הוא נקודת פתיחה, לא חוק. השתמשו בו כשזה משרת את הסיפור.",
-        "חפשו קדמה, אמצע ורקע כדי לייצר עומק.",
+        "חוק השלישים הוא כלי פשוט לסידור הפריים, לא חובה. השתמשו בו רק כשהוא מחזק את התמונה.",
+        "חפשו מה נמצא קרוב, באמצע וברקע. שלוש שכבות כאלה עוזרות לתמונה להרגיש עמוקה יותר.",
         "סימטריה עובדת מצוין כשהיא מדויקת ומכוונת.",
         "השאירו מרחב שלילי כשהוא מדגיש את הנושא ולא רק ממלא מקום.",
         "השתמשו בקווים, מסגרות וחזרות כדי להוביל את העין בתוך התמונה.",
@@ -57,33 +57,33 @@ HE_SECTIONS = [
         "בדקו קודם מאיזה כיוון מגיע האור ורק אחר כך בחרו חשיפה.",
         "בשעת הזהב חפשו אור צדדי ולא רק שמש מול המצלמה.",
         "אור צדדי מדגיש מרקם, נפח וקווי מתאר.",
-        "שמרו על האזורים הבהירים; פרטים בצל לרוב קלים יותר לשחזור.",
-        "השתמשו בפיצוי חשיפה כשמצלמה בהירה או מחשיכה את הסצנה יותר מדי.",
-        "היסטוגרמה היא כלי עבודה — במיוחד כשמסך המצלמה מטעה בשמש.",
-        "ISO הוא כלי, לא אויב. עדיף תמונה חדה עם מעט רעש מתמונה מטושטשת.",
-        "פתח צמצם ומהירות תריס צריכים לשרת כוונה, לא מספר 'נכון'.",
+        "שמרו במיוחד על האזורים הבהירים כדי שלא יהפכו ללבן חסר פרטים. בדרך כלל קל יותר להבהיר מעט את הצללים בעריכה.",
+        "אם המצלמה מציגה תמונה בהירה או כהה מדי, השתמשו בפיצוי חשיפה כדי לתקן זאת במהירות.",
+        "היסטוגרמה היא גרף שמראה כמה מהתמונה כהה וכמה בהירה. היא שימושית במיוחד כשקשה לשפוט את המסך בשמש.",
+        "ISO קובע עד כמה המצלמה רגישה לאור. אל תפחדו להעלות אותו: עדיף מעט רעש דיגיטלי מתמונה מטושטשת.",
+        "הצמצם ומהירות התריס אינם מספרים שצריך 'לנצח'. בחרו אותם לפי מה שחשוב לכם: עומק שדה, חדות או תנועה.",
     ]),
     ("פוקוס וחדות", "חדות במקום הנכון חשובה יותר מחדות בכל מקום", "focus", "focus", [
         "מקמו את נקודת הפוקוס על הפרט הקריטי: עין, מרקם או קצה חשוב.",
         "לנושא סטטי העדיפו נקודת פוקוס מדויקת במקום בחירה אוטומטית רחבה.",
-        "לנושא בתנועה עברו לפוקוס רציף ועקבו לפני הלחיצה.",
-        "בצילום ידני, העלו מהירות תריס כשאורך המוקד גדל.",
+        "כשמצלמים נושא נע, עברו לפוקוס רציף: המצלמה ממשיכה לעדכן את הפוקוס בזמן שאתם עוקבים אחריו.",
+        "ככל שמצלמים בעדשה מקרבת יותר, רעד היד מורגש יותר. לכן כדאי להשתמש במהירות תריס גבוהה יותר.",
         "הצמידו מרפקים לגוף והשתמשו בקיר, מעקה או תיק כתמיכה.",
-        "צלמו צרור קצר כשיש תנועה — לא רצף אינסופי.",
+        "בתנועה, צלמו רצף קצר של כמה תמונות. כך תגדילו את הסיכוי לתפוס את הרגע בלי למלא את הכרטיס בעשרות קבצים כמעט זהים.",
         "אל תנסו 'לתקן' חדות מוגזמת בעריכה; חידוד טוב מתחיל בפוקוס טוב.",
     ]),
     ("עומק שדה ומאקרו", "להחליט מה חד — ומה לא", "macro", "depth-of-field", [
-        "עומק שדה רדוד הוא כלי להפרדה, לא מטרה בפני עצמה.",
+        "עומק שדה רדוד פירושו שרק חלק קטן מהתמונה חד. השתמשו בו כדי להפריד את הנושא מהרקע, לא רק כדי ליצור טשטוש.",
         "הרחיקו את הרקע מהנושא כדי לקבל טשטוש נקי יותר.",
-        "במאקרו, זוזו מילימטרים קדימה ואחורה במקום לסמוך רק על מנוע הפוקוס.",
+        "בצילום מאקרו (תקריב), עומק השדה קטן מאוד. לפעמים קל יותר להזיז מעט את המצלמה קדימה או אחורה מאשר לחכות לפוקוס האוטומטי.",
         "נסו להיות מקבילים לפרט שחשוב לכם להשאיר חד.",
-        "סגירת צמצם מוסיפה עומק שדה, אבל צמצם סגור מדי עלול לרכך את התמונה.",
+        "צמצם סגור יותר מגדיל את האזור החד בתמונה. אבל אם סוגרים אותו יותר מדי, התמונה עלולה לאבד מעט חדות.",
         "חפשו אור רך במאקרו; ענן או צל פתוח יכולים להיות מפזר אור מצוין.",
         "בדקו את הרקע לפני הלחיצה — כתם בהיר קטן יכול לגנוב את כל תשומת הלב.",
     ]),
     ("תנועה ותזמון", "לא רק מהירות תריס — גם ציפייה", "motion", "focus", [
         "להקפאת תנועה העלו מהירות תריס עד שהפרט החשוב נשאר חד.",
-        "ב־panning עקבו בצורה חלקה גם אחרי הלחיצה.",
+        "ב־panning (מעקב בתנועה), הזיזו את המצלמה יחד עם הנושא והמשיכו את התנועה גם אחרי הלחיצה.",
         "התחילו לעקוב אחרי נושא נע לפני שהוא נכנס לנקודה הטובה בפריים.",
         "חכו לשיא הפעולה: כנף פתוחה, מבט, צעד או התזה.",
         "אחרי שהרגע 'נגמר', הישארו עוד שנייה — לעיתים התמונה הטובה מגיעה מיד אחריו.",
@@ -92,7 +92,7 @@ HE_SECTIONS = [
         "בנוף חפשו שלוש שכבות: קדמה, מרכז ורקע.",
         "חזרו לאותו מקום באור אחר; מזג האוויר הוא חלק מהנושא.",
         "הכניסו אלמנט שממחיש קנה מידה כשאין לצופה דרך להבין את הגודל.",
-        "באדריכלות החליטו אם הקווים האנכיים ישרים או מתכנסים — אל תשאירו זאת במקרה.",
+        "בצילום מבנים, שימו לב לקווים האנכיים. החליטו אם אתם רוצים אותם ישרים או מתכנסים בכוונה.",
         "בדקו את ארבע פינות הפריים לפני צילום מבנים; שם מסתתרות רוב ההפרעות.",
     ]),
     ("פורטרט וסיפור", "תמונה טובה מספרת משהו על האדם או המקום", "story", "portrait", [
@@ -103,13 +103,13 @@ HE_SECTIONS = [
     ]),
     ("לילה וצבע", "לשמור על האווירה בלי לאבד פרטים", "night", "night", [
         "בלילה השתמשו בחצובה כשאפשר, אבל בדקו גם אם תנועה קלה מוסיפה אווירה.",
-        "בחשיפה ארוכה בדקו במיוחד שלטים, פנסים ואזורים בהירים שנשרפים מהר.",
-        "בחרו איזון לבן בכוונה; אל תמהרו לנטרל כל גוון חם או קר.",
+        "בחשיפה ארוכה התריס נשאר פתוח יותר זמן. בדקו שפנסים, שלטים ואזורים בהירים לא הופכים לכתמים לבנים בלי פרטים.",
+        "איזון לבן קובע אם הצבעים ייראו חמים או קרים. בחרו אותו לפי האווירה שאתם רוצים, לא רק לפי מה שנראה 'נייטרלי'.",
     ]),
     ("שחור־לבן ועריכה", "עריכה טובה מחזקת החלטה שכבר הייתה בצילום", "editing", "editing", [
         "עברו לשחור־לבן כשהאור, הצורה והמרקם חזקים יותר מהצבע עצמו.",
-        "בעריכה העדיפו תיקונים מקומיים ועדינים על פני קונטרסט גלובלי אגרסיבי.",
-        "חתכו רק בסוף ושאלו: האם החיתוך מחדד את הסיפור או רק מסתיר בעיה?",
+        "בעריכה, העדיפו תיקונים קטנים באזור שצריך אותם במקום להעלות קונטרסט חזק בכל התמונה.",
+        "בצעו חיתוך (Crop) בסוף. שאלו אם הוא באמת מחזק את הסיפור, או רק מסתיר משהו שהיה אפשר לפתור כבר בזמן הצילום.",
     ]),
 ]
 
@@ -313,8 +313,14 @@ def css() -> str:
     .intro-card h3 { margin:0 0 3mm; font-size:15pt; }
     .intro-card p, .intro-card li { font-size:10pt; line-height:1.55; }
     .mini-photo { width:100%; height:92mm; object-fit:cover; border-radius:5mm; }
-    .intro-gallery { display:grid; grid-template-columns:1fr 1fr 1fr; gap:3mm; margin-top:10mm; }
-    .intro-gallery img { width:100%; height:48mm; object-fit:cover; border-radius:4mm; }
+    .intro-gallery { display:grid; grid-template-columns:1fr 1fr 1fr; gap:3mm; margin-top:7mm; }
+    .intro-gallery img { width:100%; height:34mm; object-fit:cover; border-radius:4mm; }
+    .glossary { margin-top:6mm; background:#111; color:white; border-radius:5mm; padding:5mm; }
+    .glossary h3 { margin:0 0 3mm; color:#d4aa55; font-size:13pt; }
+    .glossary-grid { display:grid; grid-template-columns:1fr 1fr; gap:2.5mm 5mm; }
+    .glossary-item { font-size:8.3pt; line-height:1.35; }
+    .glossary-item strong { display:block; color:#d4aa55; margin-bottom:.6mm; }
+    .glossary-item span { color:#f0eee8; }
     .link-grid { display:grid; grid-template-columns:1fr 1fr; gap:3mm; margin-top:5mm; }
     .resource { background:white; border:0.35mm solid #e5ddd0; border-radius:4mm; padding:3.6mm 4mm; text-decoration:none; color:#181818 !important; min-height:21mm; }
     .resource:last-child { grid-column:1 / -1; }
@@ -343,12 +349,12 @@ def img_uri(path: Path) -> str:
 def cover(lang: str, imgs: dict[str, Path]) -> str:
     if lang == "he":
         title = "50 טיפים לצילום טוב יותר"
-        desc = "מדריך מעשי שמחבר בין טכניקה, אור, קומפוזיציה וראייה צילומית — עם דוגמאות מהפורטפוליו של עמית ארז וקישורים להעמקה."
+        desc = "מדריך מעשי וברור לצלמים בתחילת הדרך: קומפוזיציה, אור והגדרות מצלמה — עם דוגמאות מהפורטפוליו של עמית ארז וקישורים להעמקה."
         brand = "עמית ארז | צילום"
         direction = "rtl"
     else:
         title = "50 tips for better photography"
-        desc = "A practical guide connecting technique, light, composition and visual intent — with examples from Amit Erez's portfolio and links for deeper learning."
+        desc = "A practical beginner-friendly guide to composition, light and camera settings — with examples from Amit Erez's portfolio and links for deeper learning."
         brand = "Amit Erez | Photography"
         direction = "ltr"
     return f"""<div class="page dark cover {direction}" dir="{direction}">
@@ -369,7 +375,7 @@ def intro(lang: str, imgs: dict[str, Path], pageno: int) -> str:
         h1 = "העיקרון החשוב"
         t1 = "הגדרות הן אמצעי. לפני צמצם, ISO או מהירות תריס — שאלו מה אתם רוצים שהצופה יראה, ירגיש ויזכור."
         h2 = "הפכו את זה לתרגול"
-        bullets = ["צלמו אותה סצנה משלושה מיקומים.", "השוו חשיפות ולא רק תמונות.", "בדקו מה קורה בשולי הפריים.", "חזרו לצילום אחרי עריכה ושאלו מה הייתם עושים אחרת."]
+        bullets = ["צלמו אותה סצנה משלושה מיקומים.", "השוו שתי חשיפות שונות ובדקו מה השתנה.", "בדקו מה קורה בשולי הפריים.", "חזרו לצילום אחרי עריכה ושאלו מה הייתם עושים אחרת."]
     else:
         title = "How to use this guide"
         p1 = "You do not need to memorize 50 rules. Pick two or three tips for each shoot, practice them deliberately, then add more."
@@ -378,6 +384,25 @@ def intro(lang: str, imgs: dict[str, Path], pageno: int) -> str:
         h2 = "Turn it into practice"
         bullets = ["Shoot the same scene from three positions.", "Compare exposures, not only final images.", "Inspect the edges of every frame.", "Revisit the shot after editing and ask what you would do differently."]
     lis = "".join(f"<li>{esc(x)}</li>" for x in bullets)
+    if rtl:
+        glossary = [
+            ("צמצם", "גודל הפתח בעדשה. הוא משפיע על כמות האור ועל עומק השדה."),
+            ("מהירות תריס", "כמה זמן החיישן נחשף לאור. מהירות גבוהה מקפיאה תנועה; איטית יכולה לטשטש אותה."),
+            ("ISO", "רגישות המצלמה לאור. ערך גבוה עוזר בחושך אך עלול להוסיף רעש דיגיטלי."),
+            ("עומק שדה", "כמה מהאזור שלפני ומאחורי נקודת הפוקוס נראה חד."),
+            ("panning", "מעקב עם המצלמה אחרי נושא נע כדי לשמור עליו חד יחסית והרקע ייראה בתנועה."),
+        ]
+        glossary_title = "מילון קצר למתחילים"
+    else:
+        glossary = [
+            ("Aperture", "The opening inside the lens. It affects light and depth of field."),
+            ("Shutter speed", "How long the sensor is exposed to light. Fast speeds freeze motion; slow speeds can blur it."),
+            ("ISO", "The camera's sensitivity setting. Higher ISO helps in low light but can add digital noise."),
+            ("Depth of field", "How much of the area in front of and behind the focus point appears sharp."),
+            ("Panning", "Following a moving subject with the camera so the subject stays relatively sharp while the background shows motion."),
+        ]
+        glossary_title = "Quick beginner glossary"
+    glossary_html = "".join(f'<div class="glossary-item"><strong>{esc(k)}</strong><span>{esc(v)}</span></div>' for k,v in glossary)
     return f"""<div class="page intro {direction}" dir="{direction}">
       <div class="eyebrow">50 TIPS · AMITPHOTOS.COM</div>
       <h2>{esc(title)}</h2>
@@ -394,6 +419,7 @@ def intro(lang: str, imgs: dict[str, Path], pageno: int) -> str:
         <img src="{img_uri(imgs['macro'])}">
         <img src="{img_uri(imgs['night'])}">
       </div>
+      <div class="glossary"><h3>{esc(glossary_title)}</h3><div class="glossary-grid">{glossary_html}</div></div>
       <div class="page-no">{pageno}</div>
     </div>"""
 
