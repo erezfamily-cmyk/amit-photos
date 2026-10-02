@@ -947,3 +947,14 @@ Added a non-destructive Admin cue for the 29 flower photos currently scored belo
 - each scored photo below 90 shows a separate `⚠ לבחינה` badge next to its V/T score;
 - wording is intentionally review-oriented, not an automatic quality verdict;
 - no photo is hidden, deleted, recategorized, or reordered by this change.
+
+
+### Flower review overlay in Admin — 2.10.2026
+
+Improved the 0–89 review cue in the photo grid:
+- every flower photo scored below 90 now shows a visible overlay directly on the image: `⚠ לבחינה <score>`;
+- overlay sits at the top-left of the thumbnail, avoiding the selection checkbox at top-right and Pinterest badge at bottom-left;
+- V/T numeric score remains in the title area for detail;
+- the separate text `⚠ לבחינה` badge was removed from the title area to avoid duplication;
+- the `⚠ לבחינה 0–89 (29)` filter remains unchanged;
+- no photo state, category, ordering, HIDE, or DELETE action is changed.

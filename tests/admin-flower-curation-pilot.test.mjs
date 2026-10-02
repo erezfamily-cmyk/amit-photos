@@ -130,3 +130,12 @@ test('photos scored 0-89 are visibly reviewable in admin', () => {
   assert.match(admin, /⚠ לבחינה 0–89/);
   assert.match(admin, /⚠ לבחינה/);
 });
+
+
+test('under-90 review cue is rendered as an image overlay', () => {
+  assert.match(admin, /function curationReviewOverlay\(p\)/);
+  assert.match(admin, /class="curation-review-overlay"/);
+  assert.match(admin, /⚠ לבחינה <strong>/);
+  assert.match(admin, /\$\{curationReviewOverlay\(p\)\}/);
+  assert.match(admin, /\.curation-review-overlay\{position:absolute;top:\.45rem;left:\.45rem/);
+});

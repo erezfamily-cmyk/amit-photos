@@ -217,6 +217,8 @@ input,textarea,select{font-family:var(--font);direction:rtl}
   aspect-ratio:4/3;overflow:hidden;background:#111;position:relative;border-radius:6px 6px 0 0;
 }
 .pin-badge{position:absolute;bottom:.4rem;left:.4rem;width:20px;height:20px;background:#E60023;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:900;color:#fff;z-index:2;opacity:.9}
+.curation-review-overlay{position:absolute;top:.45rem;left:.45rem;z-index:3;display:inline-flex;align-items:center;gap:.28rem;padding:.28rem .48rem;border:1px solid rgba(245,158,11,.7);border-radius:999px;background:rgba(15,15,15,.88);color:#fbbf24;font-size:.68rem;font-weight:800;line-height:1;box-shadow:0 2px 8px rgba(0,0,0,.45);backdrop-filter:blur(3px);pointer-events:none}
+.curation-review-overlay strong{color:#fff;font-size:.67rem}
 .photo-thumb img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .4s}
 .photo-card:hover .photo-thumb img{transform:scale(1.04)}
 .photo-info{padding:.75rem}
@@ -3541,8 +3543,16 @@ const Photos = (() => {
     const title = score.score_kind === 'visual_complete'
       ? 'ציון ויזואלי מלא'
       : 'ציון טכני זמני — טרם הושלמה בדיקה ויזואלית';
-    const review = value < 90 ? '<span title="מומלץ לעבור על התמונה ידנית" style="margin-inline-start:.3rem;border:1px solid #f59e0b55;background:#f59e0b18;color:#f59e0b;border-radius:999px;padding:.15rem .42rem;font-size:.62rem;font-weight:700">⚠ לבחינה</span>' : '';
-    return '<span title="' + title + '" style="margin-inline-start:.3rem;border:1px solid ' + color + '55;background:' + color + '18;color:' + color + ';border-radius:999px;padding:.15rem .42rem;font-size:.62rem;font-weight:700">' + kind + ' ' + value + '</span>' + review;
+    return '<span title="' + title + '" style="margin-inline-start:.3rem;border:1px solid ' + color + '55;background:' + color + '18;color:' + color + ';border-radius:999px;padding:.15rem .42rem;font-size:.62rem;font-weight:700">' + kind + ' ' + value + '</span>';
+  }
+
+  function curationReviewOverlay(p) {
+    const score = curationScores.get(p.id);
+    if (!score) return '';
+    const value = Number(score.pilot_score || 0);
+    if (value >= 90) return '';
+    const kindTitle = score.score_kind === 'visual_complete' ? 'ציון ויזואלי מלא' : 'ציון טכני זמני';
+    return '<div class="curation-review-overlay" title="' + kindTitle + ' — מומלץ לעבור על התמונה ידנית">⚠ לבחינה <strong>' + value + '</strong></div>';
   }
 
   function curationDecisionBadge(p) {
@@ -3756,6 +3766,7 @@ const Photos = (() => {
         <div class="photo-thumb">
           <div class="cb-wrap"><input type="checkbox" ${selected.has(p.id)?'checked':''} onclick="event.stopPropagation();Photos.toggleSelect('${p.id}')"></div>
           ${(p.pinterest_pin_id || p.pinterest_pin_id_en) ? `<div class="pin-badge" title="${p.pinterest_pin_id && p.pinterest_pin_id_en ? 'מפורסם בפינטרסט (עברית + אנגלית)' : p.pinterest_pin_id ? 'מפורסם בפינטרסט (עברית)' : 'מפורסם בפינטרסט (אנגלית)'}" style="${p.pinterest_pin_id && p.pinterest_pin_id_en ? '' : 'opacity:.5'}">P</div>` : ''}
+          ${curationReviewOverlay(p)}
           <img loading="lazy" src="${p.thumbnail||p.url}" alt="${p.title||''}"
             onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%2275%22%3E%3Crect fill=%22%23111%22 width=%22100%25%22 height=%22100%25%22/%3E%3C/svg%3E'">
         </div>
