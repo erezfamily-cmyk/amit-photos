@@ -1275,3 +1275,21 @@ Open maintenance PR:
 - surviving value is identical, so no behavior change is intended;
 - no acquisition variables, payments, D1/R2 data, or Google Drive content are changed;
 - CI was started and must be green before merge.
+
+
+### Maintenance PR #113 merged — 2.10.2026
+
+PR #113 `chore: remove duplicate Spain and Andorra category key` was squash-merged to `main` as:
+`a798cc10a77f42eae01ae09bec4157ac5888f42b`.
+
+Pre-merge CI:
+- Lead Funnel CI ✅
+- PayPal Orders v2 CI ✅
+
+Change:
+- removed the duplicate `ספרד ואנדורה` key in `worker.js`;
+- surviving mapping value is unchanged;
+- intended behavior change: none;
+- removes the Wrangler duplicate-object-key warning source.
+
+No acquisition experiment variables, production payment state, D1/R2 data, or Google Drive content were changed.
