@@ -6,6 +6,13 @@ on:
     paths:
       - 'src/portfolio_visual_curation.py'
       - '.github/workflows/portfolio-visual-curation.yml'
+  pull_request:
+    paths:
+      - 'src/portfolio_visual_curation.py'
+      - 'tests/test_portfolio_visual_curation.py'
+      - 'data/portfolio-curation-scores.json'
+      - 'admin.html'
+      - '.github/workflows/portfolio-visual-curation.yml'
   schedule:
     - cron: '15 7 * * *'
   workflow_dispatch:
@@ -27,7 +34,46 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install test runtime
+        run: pip install requests
+      - name: Compile
+        run: python -m py_compile src/portfolio_visual_curation.py
+      - name: Policy tests
+        run: python tests/test_portfolio_visual_curation.py
+      - name: Validate checked-in state
+        run: |
+          python - <<'PY'
+          import json
+          r=json.load(open('data/portfolio-curation-scores.json',encoding='utf-8'))
+          assert r['scope']=='all_galleries'
+          assert r['policy']['automatic_delete'] is False
+          assert r['policy']['automatic_hide_by_this_pipeline'] is False
+          assert r['policy']['owner_review_max_score']==85
+          assert len(r['items'])==1390
+          assert all(
+              x['score_kind']=='visual_complete'
+              or (
+                  x['score'] is None
+                  and x['components']['sharpness'] is None
+                  and x['components']['composition'] is None
+                  and x['components']['light_color'] is None
+              )
+              for x in r['items']
+          )
+          print(r['summary'])
+          PY
+
   score:
+    if: github.event_name != 'pull_request'
+    needs: tests
     runs-on: ubuntu-latest
     timeout-minutes: 120
     steps:
