@@ -139,3 +139,21 @@ test('under-90 review cue is rendered as an image overlay', () => {
   assert.match(admin, /\$\{curationReviewOverlay\(p\)\}/);
   assert.match(admin, /\.curation-review-overlay\{position:absolute;top:\.45rem;left:\.45rem/);
 });
+
+
+test('flower Review Mode guides the 0-89 queue', () => {
+  assert.match(admin, /function getReviewCandidateIds\(\)/);
+  assert.match(admin, /function startCurationReview\(startId = null\)/);
+  assert.match(admin, /function advanceReviewAfterDecision\(currentId\)/);
+  assert.match(admin, /function skipCurationReview\(\)/);
+  assert.match(admin, /▶ מצב Review/);
+  assert.match(admin, /נבדקו \$\{progress\.reviewed\} מתוך \$\{progress\.total\}/);
+  assert.match(admin, /✅ נבדק <strong>/);
+  assert.match(admin, /scoreComponentsHtml\(score\)/);
+});
+
+test('Review Mode keeps destructive actions explicit', () => {
+  assert.match(admin, /if \(!confirm\('להסתיר את התמונה מהאתר\?/);
+  assert.match(admin, /if \(!confirm\('מחיקה לצמיתות:/);
+  assert.doesNotMatch(admin, /startCurationReview[\s\S]{0,800}published:\s*false/);
+});

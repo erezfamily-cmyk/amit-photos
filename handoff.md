@@ -958,3 +958,24 @@ Improved the 0–89 review cue in the photo grid:
 - the separate text `⚠ לבחינה` badge was removed from the title area to avoid duplication;
 - the `⚠ לבחינה 0–89 (29)` filter remains unchanged;
 - no photo state, category, ordering, HIDE, or DELETE action is changed.
+
+
+### Flower Review Mode MVP — 2.10.2026
+
+Added a guided manual review workflow for the 29 flower photos scored 0–89.
+
+Admin behavior:
+- new `▶ מצב Review reviewed/total` control;
+- review queue is sorted lowest score first;
+- dialog shows progress `נבדקו X מתוך 29` with a progress bar;
+- full score-component breakdown is shown when available;
+- large action buttons: KEEP / SECONDARY / HIDE / CHANGE_CATEGORY;
+- after a successful decision, Review Mode advances automatically to the next undecided image;
+- `דלג לתמונה הבאה` leaves the current photo undecided and moves on;
+- reviewed thumbnails change from `⚠ לבחינה` to `✅ נבדק`;
+- completion closes Review Mode and reports that all candidates were reviewed.
+
+Safety:
+- HIDE still requires the existing explicit confirmation and remains reversible via `published=0`;
+- DELETE remains outside the large Review Mode action row and still requires its destructive confirmation;
+- scores do not auto-hide, auto-delete, auto-recategorize or auto-reorder photos.

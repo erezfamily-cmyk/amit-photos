@@ -219,6 +219,26 @@ input,textarea,select{font-family:var(--font);direction:rtl}
 .pin-badge{position:absolute;bottom:.4rem;left:.4rem;width:20px;height:20px;background:#E60023;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:900;color:#fff;z-index:2;opacity:.9}
 .curation-review-overlay{position:absolute;top:.45rem;left:.45rem;z-index:3;display:inline-flex;align-items:center;gap:.28rem;padding:.28rem .48rem;border:1px solid rgba(245,158,11,.7);border-radius:999px;background:rgba(15,15,15,.88);color:#fbbf24;font-size:.68rem;font-weight:800;line-height:1;box-shadow:0 2px 8px rgba(0,0,0,.45);backdrop-filter:blur(3px);pointer-events:none}
 .curation-review-overlay strong{color:#fff;font-size:.67rem}
+.curation-reviewed-overlay{border-color:rgba(74,222,128,.72);color:#86efac;background:rgba(8,32,22,.9)}
+.curation-review-progress{display:none;margin-bottom:.85rem;padding:.8rem .9rem;border:1px solid rgba(245,158,11,.35);border-radius:10px;background:rgba(245,158,11,.06)}
+.curation-review-progress.show{display:block}
+.curation-review-progress-row{display:flex;align-items:center;justify-content:space-between;gap:.75rem;font-size:.82rem}
+.curation-review-progress-track{height:7px;background:rgba(255,255,255,.08);border-radius:999px;overflow:hidden;margin-top:.55rem}
+.curation-review-progress-fill{height:100%;width:0;background:var(--accent);transition:width .2s ease}
+.curation-score-components{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:.45rem;margin-top:.65rem}
+.curation-score-component{padding:.48rem .55rem;border:1px solid var(--border);border-radius:7px;background:rgba(255,255,255,.025);font-size:.75rem}
+.curation-score-component span{display:block;color:var(--text-muted);font-size:.68rem;margin-bottom:.12rem}
+.curation-score-component strong{font-size:.9rem}
+#curation-dialog.curation-review-mode{width:min(920px,calc(100vw - 2rem));max-width:920px}
+#curation-dialog.curation-review-mode #curation-dialog-preview{max-height:48vh!important}
+.curation-review-actions{display:none;grid-template-columns:repeat(4,minmax(0,1fr));gap:.55rem;margin-top:.2rem}
+.curation-review-actions.show{display:grid}
+.curation-review-actions .btn{min-height:46px;font-weight:700}
+@media(max-width:700px){
+  .curation-review-actions{grid-template-columns:repeat(2,minmax(0,1fr))}
+  #curation-dialog.curation-review-mode{width:calc(100vw - 1rem);max-width:none}
+  #curation-dialog.curation-review-mode #curation-dialog-preview{max-height:38vh!important}
+}
 .photo-thumb img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .4s}
 .photo-card:hover .photo-thumb img{transform:scale(1.04)}
 .photo-info{padding:.75rem}
@@ -2111,8 +2131,21 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
     <button type="button" class="dialog-close" aria-label="סגור" onclick="document.getElementById('curation-dialog').close()">✕</button>
   </div>
   <div class="dialog-body">
+    <div id="curation-review-progress" class="curation-review-progress">
+      <div class="curation-review-progress-row">
+        <strong id="curation-review-progress-text">נבדקו 0 מתוך 29</strong>
+        <button type="button" class="btn btn-ghost" style="padding:.3rem .6rem;min-height:auto" onclick="Photos.skipCurationReview()">דלג לתמונה הבאה</button>
+      </div>
+      <div class="curation-review-progress-track" aria-hidden="true"><div id="curation-review-progress-fill" class="curation-review-progress-fill"></div></div>
+    </div>
     <img id="curation-dialog-preview" alt="" style="width:100%;max-height:300px;object-fit:contain;border-radius:6px;background:var(--bg);margin-bottom:1rem">
     <div id="curation-dialog-summary" style="display:grid;gap:.7rem"></div>
+    <div id="curation-review-actions" class="curation-review-actions">
+      <button type="button" class="btn btn-success" onclick="Photos.applyCurationDecision('KEEP')">✅ KEEP</button>
+      <button type="button" class="btn btn-ghost" onclick="Photos.applyCurationDecision('KEEP_SECONDARY')">🟡 SECONDARY</button>
+      <button type="button" class="btn btn-ghost" onclick="Photos.applyCurationDecision('HIDE')">👁 HIDE</button>
+      <button type="button" class="btn btn-ghost" onclick="Photos.applyCurationDecision('CHANGE_CATEGORY')">🔄 קטגוריה אחרת</button>
+    </div>
 
     <div style="margin-top:1rem;padding:.85rem;border:1px solid var(--border);border-radius:8px;background:var(--panel)">
       <strong style="display:block;margin-bottom:.45rem">החלטת בעל האתר</strong>
@@ -3411,6 +3444,7 @@ const Photos = (() => {
   let curationScoreSummary = null;
   let activeCurationId = null;
   let pendingCurationCategoryDecisionId = null;
+  let reviewModeActive = false;
   let searchQ = '', sortBy = 'newest';
   let selected = new Set(), selectMode = false;
   let lbList = [], lbIdx = 0;
@@ -3485,6 +3519,110 @@ const Photos = (() => {
     $('photos-grid').scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
+  function getReviewCandidateIds() {
+    return [...curationScores.entries()]
+      .filter(([id, score]) => Number(score?.pilot_score ?? 101) < 90 && data.some(p => p.id === id))
+      .sort((a, b) => Number(a[1]?.pilot_score ?? 101) - Number(b[1]?.pilot_score ?? 101))
+      .map(([id]) => id);
+  }
+
+  function getReviewProgress() {
+    const ids = getReviewCandidateIds();
+    const reviewed = ids.filter(id => curationDecisions.has(id)).length;
+    return { ids, reviewed, total: ids.length, pending: ids.filter(id => !curationDecisions.has(id)) };
+  }
+
+  function updateReviewProgressUi() {
+    const box = $('curation-review-progress');
+    const actions = $('curation-review-actions');
+    const dialog = $('curation-dialog');
+    if (!box || !actions || !dialog) return;
+    box.classList.toggle('show', reviewModeActive);
+    actions.classList.toggle('show', reviewModeActive);
+    dialog.classList.toggle('curation-review-mode', reviewModeActive);
+    if (!reviewModeActive) return;
+    const progress = getReviewProgress();
+    $('curation-review-progress-text').textContent = `נבדקו ${progress.reviewed} מתוך ${progress.total}`;
+    const pct = progress.total ? Math.round(progress.reviewed / progress.total * 100) : 0;
+    $('curation-review-progress-fill').style.width = pct + '%';
+  }
+
+  function nextPendingReviewId(currentId) {
+    const { ids } = getReviewProgress();
+    if (!ids.length) return null;
+    const start = Math.max(-1, ids.indexOf(currentId));
+    for (let step = 1; step <= ids.length; step++) {
+      const id = ids[(start + step) % ids.length];
+      if (id !== currentId && !curationDecisions.has(id)) return id;
+    }
+    return null;
+  }
+
+  function startCurationReview(startId = null) {
+    const progress = getReviewProgress();
+    if (!progress.total) {
+      toast('אין תמונות בטווח 0–89', 'error');
+      return;
+    }
+    reviewModeActive = true;
+    searchQ = '_curation:score-review';
+    $('photos-search').value = searchQ;
+    resetPhotoPagination();
+    render();
+    const id = startId && progress.ids.includes(startId)
+      ? startId
+      : (progress.pending[0] || progress.ids[0]);
+    openCuration(id);
+  }
+
+  function stopCurationReview() {
+    reviewModeActive = false;
+    updateReviewProgressUi();
+  }
+
+  function advanceReviewAfterDecision(currentId) {
+    if (!reviewModeActive) return;
+    render();
+    updateReviewProgressUi();
+    const progress = getReviewProgress();
+    if (progress.reviewed >= progress.total) {
+      $('curation-dialog').close();
+      stopCurationReview();
+      toast(`✅ הושלמה בדיקת ${progress.total} התמונות`);
+      return;
+    }
+    const nextId = nextPendingReviewId(currentId) || progress.pending[0];
+    if (nextId) openCuration(nextId);
+  }
+
+  function skipCurationReview() {
+    if (!reviewModeActive || !activeCurationId) return;
+    const nextId = nextPendingReviewId(activeCurationId);
+    if (!nextId) {
+      toast('זו התמונה היחידה שעדיין לא הוחלט לגביה');
+      return;
+    }
+    openCuration(nextId);
+  }
+
+  function scoreComponentsHtml(score) {
+    if (!score?.components) return '';
+    const labels = {
+      sharpness: 'חדות',
+      composition: 'קומפוזיציה',
+      light_color: 'אור וצבע',
+      resolution: 'רזולוציה',
+      uniqueness: 'ייחודיות',
+      category_fit: 'התאמת קטגוריה',
+      metadata: 'מטא־דאטה',
+      technical_readiness: 'מוכנות טכנית'
+    };
+    const parts = Object.entries(labels)
+      .filter(([key]) => Number.isFinite(Number(score.components[key])))
+      .map(([key, label]) => '<div class="curation-score-component"><span>' + label + '</span><strong>' + Number(score.components[key]) + '/100</strong></div>');
+    return parts.length ? '<div><strong>פירוט ציון</strong><div class="curation-score-components">' + parts.join('') + '</div></div>' : '';
+  }
+
   function renderStats() {
     const cats = {};
     data.forEach(p => { cats[p.category] = (cats[p.category]||0)+1; });
@@ -3503,6 +3641,7 @@ const Photos = (() => {
         chip(`הוחלט ${curationDecisions.size}`, '_curation:decided'),
         chip(`🎯 ציון מתחת ל-60 ${[...curationScores.values()].filter(x => x.pilot_score < 60).length}`, '_curation:score-low'),
         chip(`⚠ לבחינה 0–89 ${[...curationScores.values()].filter(x => x.pilot_score < 90).length}`, '_curation:score-review'),
+        `<div class="stat-chip stat-chip-link" onclick="Photos.startCurationReview()"><strong>▶ מצב Review ${getReviewProgress().reviewed}/${getReviewProgress().total}</strong></div>`,
         chip(`👁 נבדקו ויזואלית ${curationScoreSummary?.visual_complete || 0}/${curationReport.summary?.total || 0}`, '_curation:visual-complete')
       ] : []),
       ...Object.entries(cats).sort((a,b)=>b[1]-a[1]).map(([c,n])=>chip(`${n} ${c}`, c))
@@ -3552,6 +3691,10 @@ const Photos = (() => {
     const value = Number(score.pilot_score || 0);
     if (value >= 90) return '';
     const kindTitle = score.score_kind === 'visual_complete' ? 'ציון ויזואלי מלא' : 'ציון טכני זמני';
+    const reviewed = !!curationDecisions.get(p.id)?.decision;
+    if (reviewed) {
+      return '<div class="curation-review-overlay curation-reviewed-overlay" title="נבדק — ' + kindTitle + '">✅ נבדק <strong>' + value + '</strong></div>';
+    }
     return '<div class="curation-review-overlay" title="' + kindTitle + ' — מומלץ לעבור על התמונה ידנית">⚠ לבחינה <strong>' + value + '</strong></div>';
   }
 
@@ -3601,6 +3744,7 @@ const Photos = (() => {
         renderCurationDecision(id);
         render();
         toast('החלטת הקיורציה נשמרה');
+        advanceReviewAfterDecision(id);
         return;
       }
 
@@ -3620,9 +3764,10 @@ const Photos = (() => {
         photo.published = 0;
         await saveCurationDecision(id, 'HIDE');
         renderCurationDecision(id);
-        openCuration(id);
         render();
         toast('התמונה הוסתרה — ניתן לפרסם אותה מחדש');
+        if (reviewModeActive) advanceReviewAfterDecision(id);
+        else openCuration(id);
         return;
       }
 
@@ -3657,6 +3802,7 @@ const Photos = (() => {
         $('curation-dialog').close();
         render();
         toast('התמונה נמחקה לצמיתות ולא תיובא מחדש מ-Drive');
+        advanceReviewAfterDecision(id);
         return;
       }
 
@@ -3737,14 +3883,16 @@ const Photos = (() => {
       '<div><strong>רזולוציה:</strong> ' + esc(item.width || '?') + '×' + esc(item.height || '?') + '</div>' +
       (score ? '<div><strong>ציון פיילוט:</strong> ' + esc(score.pilot_score) + '/100 — ' + esc(scoreKind) + '</div>' : '') +
       (score ? '<div><strong>ציון טכני:</strong> ' + esc(score.technical_score) + '/100</div>' : '') +
+      (score ? scoreComponentsHtml(score) : '') +
       '<div><strong>סטטוס פרסום נוכחי:</strong> ' + esc(publishedStatus) + '</div>' +
       '<div><strong>קובץ:</strong> ' + esc(item.filename || '') + '</div>' +
       '<div><strong>סיבות לסימון:</strong>' + reasons + '</div>' +
       '<div><strong>כלל:</strong> אם יש ספק, משאירים REVIEW. לא מסתירים או מוחקים לפני בדיקה ויזואלית.</div>';
     renderCurationDecision(id);
+    updateReviewProgressUi();
     $('curation-open-lightbox-btn').onclick = () => { $('curation-dialog').close(); openLightbox(id); };
     $('curation-open-edit-btn').onclick = () => { $('curation-dialog').close(); openEditById(id); };
-    $('curation-dialog').showModal();
+    if (!$('curation-dialog').open) $('curation-dialog').showModal();
   }
 
   function renderGrid() {
@@ -3899,11 +4047,13 @@ const Photos = (() => {
     const idx = data.findIndex(p => p.id === id);
     if (idx >= 0) data[idx] = { ...data[idx], title: finalTitle, category, description };
 
+    let categoryReviewCompleted = false;
     if (pendingCurationCategoryDecisionId === id) {
       pendingCurationCategoryDecisionId = null;
       if (category && category !== originalCategory) {
         try {
           await saveCurationDecision(id, 'CHANGE_CATEGORY', { category });
+          categoryReviewCompleted = true;
           toast('שינוי הקטגוריה והחלטת הקיורציה נשמרו');
         } catch (err) {
           toast(err.message || 'הקטגוריה נשמרה אך החלטת הקיורציה לא נשמרה', 'error');
@@ -3917,6 +4067,7 @@ const Photos = (() => {
 
     $('photo-dialog').close();
     render();
+    if (categoryReviewCompleted) advanceReviewAfterDecision(id);
   }
 
   async function confirmDelete(id) {
@@ -4324,6 +4475,12 @@ const Photos = (() => {
     e.target.value = '';
   });
   $('save-photo-btn').addEventListener('click', savePhoto);
+  $('curation-dialog').addEventListener('close', () => {
+    if (reviewModeActive && !pendingCurationCategoryDecisionId && !$('photo-dialog').open) {
+      stopCurationReview();
+      render();
+    }
+  });
   $('photo-dialog').addEventListener('close', () => {
     const id = $('edit-photo-id').value;
     if (pendingCurationCategoryDecisionId === id) pendingCurationCategoryDecisionId = null;
@@ -4473,7 +4630,7 @@ const Photos = (() => {
     }
   });
 
-  return { init: async () => { await init(); loadNewBadgeSettings(); loadPriceSettings(); }, openEdit, openEditById, confirmDelete, cardClick, toggleSelect, toggleNew, toggleFeatured, setPhotoPrice, filterByChip, openCuration, applyCurationDecision, exportCurationReport, getData: () => data, render, get list() { return data; } };
+  return { init: async () => { await init(); loadNewBadgeSettings(); loadPriceSettings(); }, openEdit, openEditById, confirmDelete, cardClick, toggleSelect, toggleNew, toggleFeatured, setPhotoPrice, filterByChip, openCuration, applyCurationDecision, exportCurationReport, startCurationReview, skipCurationReview, stopCurationReview, getData: () => data, render, get list() { return data; } };
 })();
 
 function closeAllPhotoMenus() {
