@@ -1,0 +1,24 @@
+name: Free Guide Live Email Smoke
+
+on:
+  push:
+    branches:
+      - test-free-guide-live-email
+    paths:
+      - '.github/workflows/free-guide-live-email-smoke.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify production Free Guide email delivery
+        env:
+          REPORT_EMAIL: erez.family@gmail.com
+        run: |
+          echo "::add-mask::$REPORT_EMAIL"
+          BODY=$(curl -fsS -X POST 'https://amitphotos.com/api/subscribers?source=lead_magnet'             -H 'Content-Type: application/json'             --data "{"email":"$REPORT_EMAIL","lang":"he","consent_privacy":true,"consent_marketing":false}")
+          echo "$BODY" | jq -e '.ok == true and .email_sent == true and .email_delivery_attempted == true' >/dev/null
+          echo "free_guide_email=accepted"
