@@ -1423,3 +1423,45 @@ Important:
 - this does not re-enable payments; `PAYMENTS_ENABLED=false` remains unchanged;
 - the Free Guide delivery reliability fixes from PRs #114-#116 remain in place;
 - the design/copy/link changes are limited to the PDF asset and its build tooling.
+
+
+### Free Guide redesign experiment — official restart — 2.10.2026
+
+The redesigned Free Guide is now live in production and the measurement window has been explicitly restarted by user instruction.
+
+Production release:
+- PR #117 merged to `main` as `8ad3fee0a58a0f3f3c76cdd5859f290bec7f7a19`;
+- Deploy Worker run `37028858995` completed successfully;
+- GitHub Pages run `37028857612` completed successfully at 2026-10-02 18:45:13 Asia/Jerusalem;
+- live assets remain at the same public filenames:
+  - `50tips-heb.pdf`
+  - `50tips-eng.pdf`
+
+Official experiment restart:
+- start timestamp: **2026-10-02 18:55:27 Asia/Jerusalem**;
+- ISO timestamp: **2026-10-02T18:55:27+03:00**;
+- this is the new Day 1 baseline for the redesigned Free Guide;
+- planned 7-day measurement window: through **2026-10-09 18:55:27 Asia/Jerusalem**.
+
+Measurement for the Free Guide path:
+- campaign: `202610_freeguide_photo_tips`;
+- primary KPI: `guide_request_success`;
+- secondary KPI: `generate_lead`;
+- PDF downstream engagement is additionally attributable through:
+  - `utm_source=free_guide`
+  - `utm_medium=pdf`
+  - `utm_campaign=202610_freeguide_photo_tips`
+  - per-link `utm_content`.
+
+Freeze for this 7-day Free Guide measurement window:
+- do not change the PDF asset;
+- do not change the Free Guide destination page or core offer;
+- do not change campaign naming / UTM schema;
+- do not change the primary KPI definition;
+- do not change consent wording specifically for the experiment;
+- do not add paid traffic to this Free Guide experiment;
+- keep production payments disabled with `PAYMENTS_ENABLED=false`.
+
+Interpretation note:
+- the earlier Acquisition Experiment 01 timestamps remain historical records for the previous asset/distribution phase;
+- for evaluating the redesigned Free Guide itself, use **2026-10-02 18:55:27 Asia/Jerusalem** as the new baseline and do not mix pre-relaunch Free Guide performance into the 7-day redesigned-guide result.
