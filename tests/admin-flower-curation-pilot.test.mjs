@@ -179,3 +179,15 @@ test('curation decision changes invalidate the cached public gallery ordering', 
   const invalidatePos = worker.indexOf("invalidatePublicPhotosCache(request)", savePos);
   assert.ok(savePos >= 0 && invalidatePos > savePos);
 });
+
+
+test('null visual components are shown as not reviewed instead of zero', () => {
+  const scores = JSON.parse(fs.readFileSync('data/flower-curation-scores.json', 'utf8'));
+  const provisional = scores.items.find(x => x.score_kind === 'technical_provisional');
+  assert.equal(provisional.components.sharpness, null);
+  assert.equal(provisional.components.composition, null);
+  assert.equal(provisional.components.light_color, null);
+  assert.match(admin, /raw !== null && raw !== undefined/);
+  assert.match(admin, /טרם נבדק/);
+  assert.doesNotMatch(admin, /Number\.isFinite\(Number\(score\.components\[key\]\)\)\)/);
+});
