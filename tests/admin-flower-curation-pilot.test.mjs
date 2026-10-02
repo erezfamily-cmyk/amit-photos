@@ -52,7 +52,7 @@ test('admin exposes all manual owner decisions and full report export', () => {
   for (const decision of ['KEEP', 'KEEP_SECONDARY', 'HIDE', 'DELETE', 'CHANGE_CATEGORY']) {
     assert.match(admin, new RegExp("applyCurationDecision\\('" + decision + "'\\)"));
   }
-  assert.match(admin, /פיילוט קיורציה — פרחים וצמחים/);
+  assert.match(admin, /פיילוט פרחים/);
   assert.match(admin, /פתח ב-Lightbox/);
   assert.match(admin, /flower-curation-owner-review\.json/);
   assert.match(admin, /current_published_status/);
