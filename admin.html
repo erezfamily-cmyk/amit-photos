@@ -3482,7 +3482,7 @@ const Photos = (() => {
       }
       if (searchQ === '_bulk:score-under-80') {
         const score = curationScores.get(p.id);
-        return score?.score_kind === 'visual_complete' && Number(score.score) < 80;
+        return p._source === 'r2' && score?.score_kind === 'visual_complete' && Number(score.score) < 80;
       }
       const q = searchQ.toLowerCase();
       return (p.title||'').toLowerCase().includes(q) || (p.category||'').toLowerCase().includes(q);
@@ -3684,7 +3684,7 @@ const Photos = (() => {
         `<div class="stat-chip stat-chip-link" onclick="Photos.startCurationReview()"><strong>▶ מצב Review ${getReviewProgress().reviewed}/${getReviewProgress().total}</strong></div>`,
         chip(`👁 נבדקו ויזואלית ${curationScoreSummary?.visual_complete || 0}/${curationScoreSummary?.total || data.length}`, '_curation:visual-complete'),
         chip(`🗑 צד קצר <1000px ${[...curationScores.values()].filter(x => Number(x.width || 0) > 0 && Number(x.height || 0) > 0 && Math.min(Number(x.width), Number(x.height)) < 1000).length}`, '_bulk:under-1000'),
-        chip(`🙈 ציון ויזואלי <80 ${[...curationScores.values()].filter(x => x.score_kind === 'visual_complete' && Number(x.score) < 80).length}`, '_bulk:score-under-80')
+        chip(`🙈 ציון ויזואלי <80 ${data.filter(p => p._source === 'r2' && curationScores.get(p.id)?.score_kind === 'visual_complete' && Number(curationScores.get(p.id)?.score) < 80).length}`, '_bulk:score-under-80')
       ] : []),
       ...Object.entries(cats).sort((a,b)=>b[1]-a[1]).map(([c,n])=>chip(`${n} ${c}`, c))
     ].join('');
@@ -4403,7 +4403,7 @@ const Photos = (() => {
     resetPhotoPagination();
     selectAllMatching(p => {
       const score = curationScores.get(p.id);
-      return score?.score_kind === 'visual_complete' && Number(score.score) < 80;
+      return p._source === 'r2' && score?.score_kind === 'visual_complete' && Number(score.score) < 80;
     }, 'ציון ויזואלי מתחת ל-80');
   });
 
@@ -4424,17 +4424,31 @@ const Photos = (() => {
     for (const id of ids) {
       const photo = data.find(p => p.id === id);
       if (!photo || photo._source !== 'r2') { failed++; continue; }
-      const res = await fetch('/api/photos', {
-        method: 'PATCH',
-        headers: authHeaders(),
-        body: JSON.stringify({ id, published: false })
-      });
-      if (!res.ok) { failed++; continue; }
-      photo.published = 0;
+      const wasPublished = photo.published !== 0;
       try {
+        if (wasPublished) {
+          const res = await fetch('/api/photos', {
+            method: 'PATCH',
+            headers: authHeaders(),
+            body: JSON.stringify({ id, published: false })
+          });
+          if (!res.ok) throw new Error('HIDE publication update failed');
+          photo.published = 0;
+        }
         await saveCurationDecision(id, 'HIDE', { note: 'Bulk owner HIDE from Admin selection.' });
-      } catch (_) {}
-      hidden++;
+        hidden++;
+      } catch (err) {
+        console.error('bulk hide failed', id, err);
+        if (wasPublished && photo.published === 0) {
+          const rollback = await fetch('/api/photos', {
+            method: 'PATCH',
+            headers: authHeaders(),
+            body: JSON.stringify({ id, published: true })
+          }).catch(() => null);
+          if (rollback?.ok) photo.published = 1;
+        }
+        failed++;
+      }
     }
     selected.clear(); selectMode = false;
     $('select-mode-btn').textContent = 'בחר';
