@@ -15,8 +15,10 @@
 - [x] PR #84 — Digital Licensing MVP — מוזג ל-`main`.
 - [x] PR #85 — B2B Art & Licensing MVP — מוזג ל-`main`.
 - [x] PR #80/#81/#82 הישנים נסגרו והוחלפו ב-#84/#85/#83.
-- [x] Live smoke verification של `/licensing/`, `/business/`, Admin UTM builder ו-payment guardrail עבר ב-GitHub Actions. [ ] עדיין נדרש לאמת receipt של אירועי GA בדוח/GA.
-- [ ] לאחר live verification: להתחיל Acquisition Experiment 01 למשך 7 ימים.
+- [x] Live smoke verification של `/free-guide/`, `/licensing/`, `/business/`, Admin UTM builder ו-payment guardrail מעוגן ב-Business Live Verification.
+- [x] Acquisition Experiment 01 מוכן טכנית להפעלה; חלון 7 הימים מתחיל רק בפרסום/שליחה הראשונה בפועל.
+- [ ] לבצע את שלוש פעולות ההפצה הראשונות: Free Guide / Licensing / B2B outreach.
+- [ ] לאחר ההפצה הראשונה: למדוד 7 ימים ללא שינוי offer/copy/campaign.
 - [ ] בסוף 7 ימים: לבחור follow-up עסקי אחד בלבד לפי הנתונים.
 - [ ] checkpoint רחב יותר סביב 10.10, ואז 24.10 אם עדיין אין sample מספיק.
 - [ ] PR #76 PayPal Orders v2 נשאר נפרד; אין להפעיל Production payments במסגרת הניסוי.

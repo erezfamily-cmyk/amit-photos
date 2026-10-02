@@ -1108,3 +1108,23 @@ Safety behavior:
 - no file is removed from R2 or Google Drive.
 
 The visual-scoring workflow from PR #105 is independent of this resolution action and continues filling real visual scores incrementally.
+
+
+### Business + PayPal progression — 2.10.2026
+
+Acquisition Experiment 01:
+- PR #109 merged to `main` as `73061ad1c2710fd6dd1f14d954b6fa93b1d737f3`.
+- Business Live Verification now includes `/free-guide/` in addition to `/licensing/`, `/business/`, Admin UTM builder and payments-disabled guardrail.
+- Technical launch gate is complete.
+- The experiment is **launch-ready**, but the 7-day clock has NOT started yet because no first distribution action has been published/sent.
+- No paid traffic, no automatic social publishing, no mass outreach.
+
+PayPal Orders v2:
+- Old PR #76 remains unmerged and should be treated as superseded for implementation purposes because it accumulated unrelated historical changes and is no longer suitable to merge onto current `main`.
+- Clean replacement Draft PR #110 was created from current `main`.
+- It preserves the previously validated PayPal security architecture: server-side Orders v2 create/capture, authoritative amount/currency/order identity checks, idempotency, rate limiting, duplicate capture recovery, verified webhook signature + dedup/recovery, isolated Sandbox staging, and permanent 410 for the legacy insecure completion endpoints.
+- `PAYMENTS_ENABLED=false` remains unchanged.
+- No checkout UI, PayPal Live, print activation or Gelato activation is included.
+- PR #110 latest focused checks are all green: PayPal Orders v2 CI, Lead Funnel CI, Digital Licensing CI and B2B Funnel CI.
+- The earlier unrelated full Node-suite failures were stale Admin dialog-count and homepage cache-busting expectations, not PayPal security failures.
+- PR #110 remains Draft; do not merge or enable production payments until the deliberate next gate.

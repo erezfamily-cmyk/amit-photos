@@ -1,6 +1,6 @@
 # Acquisition Experiment 01 — 1.10.2026
 
-> Status: code merged; live verification pending; experiment not launched.  
+> Status: code merged; live verification technically passed; distribution not launched yet.  
 > Goal: get a clean first signal with only three distribution paths and without paid traffic.
 
 ## Launch gates
@@ -11,10 +11,15 @@ Code status:
 - PR #84 Digital Licensing is merged to `main`.
 - PR #85 B2B is merged to `main`.
 
-Remaining launch gate:
-- verify the deployed/live versions of `/licensing/`, `/business/`, the Admin UTM builder and the relevant GA events.
+Launch gate status:
+- `/free-guide/` live markup includes `guide_request_success`, `generate_lead` and GA bootstrap.
+- `/licensing/` live markup includes `licensing_personal_interest`, live prices API and GA bootstrap.
+- `/business/` live markup includes `b2b_contact_start`, B2B context and analytics loader.
+- Admin UTM builder is present in the live Admin.
+- `/api/payments-status` is still `enabled=false`.
+- Business Live Verification is the automated receipt for these gates.
 
-Do not start the 7-day measurement window until that live verification is complete.
+The experiment is now **launch-ready technically**. The 7-day measurement window starts only when the first three distribution actions are actually published/sent.
 
 ---
 
@@ -154,3 +159,29 @@ Choose only one follow-up:
 - **No clear signal:** improve distribution/traffic before building more commerce.
 
 Do not start a fourth monetization feature during this experiment.
+
+
+## Launch receipt — 2.10.2026
+
+Technical launch gate verified before distribution:
+- Free Guide live ✅
+- Digital Licensing live ✅
+- B2B page live ✅
+- Admin UTM builder live ✅
+- Production payments still disabled ✅
+
+Distribution remains intentionally manual:
+- no paid traffic;
+- no automatic social publishing;
+- no mass outreach;
+- start date is the timestamp of the first actual distribution action, not the code merge date.
+
+Frozen campaign links for the first 7-day window:
+- Free Guide / Instagram:
+  `https://amitphotos.com/free-guide/?utm_source=instagram&utm_medium=social&utm_campaign=202610_freeguide_photo_tips&utm_content=guide_50tips`
+- Personal Licensing / Threads:
+  `https://amitphotos.com/licensing/?utm_source=threads&utm_medium=social&utm_campaign=202610_licensing_personal&utm_content=personal_file`
+- B2B / LinkedIn:
+  `https://amitphotos.com/business/?utm_source=linkedin&utm_medium=social&utm_campaign=202610_b2b_outreach&utm_content=business_wall_art`
+
+Do not change destination, offer, campaign name or primary KPI during the 7-day window.
