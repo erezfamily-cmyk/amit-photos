@@ -1221,3 +1221,18 @@ Freeze rules remain in force during the window:
 - do not add paid traffic or production PayPal.
 
 Production payments remain disabled.
+
+
+### Personal Licensing distribution — 2.10.2026
+
+Second Acquisition Experiment 01 path published and verified on Threads:
+- account: `Amit Erez (amite)`
+- post id: `17906411154574588`
+- permalink: `https://www.threads.com/@amite/post/Dd_dv6lDZUX`
+- published at: `2026-10-02T12:17:23Z`
+- local Israel time: `2026-10-02 15:17:23 Asia/Jerusalem`
+- campaign: `202610_licensing_personal`
+- UTM source/medium: `threads / social`
+
+This is the second live distribution action.
+The experiment's Day 1 clock remains anchored to the earlier Free Guide Instagram Story at 15:03:19 Israel time.
