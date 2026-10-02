@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import { orderPublicPhotosByCuration } from '../worker.js';
 
 const admin = fs.readFileSync('admin.html', 'utf8');
 const worker = fs.readFileSync('worker.js', 'utf8');
@@ -156,4 +157,25 @@ test('Review Mode keeps destructive actions explicit', () => {
   assert.match(admin, /if \(!confirm\('להסתיר את התמונה מהאתר\?/);
   assert.match(admin, /if \(!confirm\('מחיקה לצמיתות:/);
   assert.doesNotMatch(admin, /startCurationReview[\s\S]{0,800}published:\s*false/);
+});
+
+
+test('KEEP_SECONDARY moves to the public gallery tail without disturbing order inside tiers', () => {
+  const photos = [{id:'a'}, {id:'b'}, {id:'c'}, {id:'d'}, {id:'e'}];
+  const decisions = {
+    a: { decision: 'KEEP' },
+    b: { decision: 'KEEP_SECONDARY' },
+    d: { decision: 'KEEP_SECONDARY' },
+  };
+  const ordered = orderPublicPhotosByCuration(photos, decisions);
+  assert.deepEqual(ordered.map(p => p.id), ['a','c','e','b','d']);
+  assert.deepEqual(photos.map(p => p.id), ['a','b','c','d','e']);
+});
+
+test('curation decision changes invalidate the cached public gallery ordering', () => {
+  assert.match(worker, /flower_curation_decisions_v1/);
+  assert.match(worker, /orderPublicPhotosByCuration\(photos, curationDecisions\)/);
+  const savePos = worker.indexOf("INSERT OR REPLACE INTO settings (key, value)");
+  const invalidatePos = worker.indexOf("invalidatePublicPhotosCache(request)", savePos);
+  assert.ok(savePos >= 0 && invalidatePos > savePos);
 });
