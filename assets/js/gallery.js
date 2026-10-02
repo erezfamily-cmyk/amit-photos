@@ -751,14 +751,6 @@ function initFilters() {
   const bar = document.getElementById('filter-bar');
   if (!bar) return;
 
-  // בנה מבנה היררכי: { null: ['טבע','ישראל',...], 'מקומות בעולם': ['צכיה','פולין',...] }
-  const hierarchy = {};
-  allPhotos.forEach(p => {
-    const parent = p.parent_category || null;
-    if (!hierarchy[parent]) hierarchy[parent] = new Set();
-    hierarchy[parent].add(p.category);
-  });
-
   const newCount = allPhotos.filter(isNew).length;
   const saleCount = allPhotos.filter(isOnSale).length;
   const bestCount = allPhotos.filter(p => featuredIds.includes(p.id)).length;
@@ -775,32 +767,49 @@ function initFilters() {
 
   const esc = s => s.replace(/"/g, '&quot;');
 
-  // שורה 2: קטגוריות
-  let row2 = '<div class="filter-row filter-row-cats">';
+  // שורה 2: גלריות ראשיות + קבוצה אחת של מקומות בעולם
+  const primaryCats = PRIMARY_GALLERY_ORDER.filter(cat => allPhotos.some(p => p.category === cat));
+  const locationCats = [...LOCATION_CATEGORIES]
+    .filter(cat => allPhotos.some(p => p.category === cat))
+    .sort((a, b) => getCategoryLabel(a).localeCompare(getCategoryLabel(b), getLang() === 'he' ? 'he' : 'en'));
+  const styleCats = STYLE_FILTER_ORDER.filter(cat => allPhotos.some(p => p.category === cat));
 
-  // קטגוריות ראשיות (ללא parent)
-  (hierarchy[null] || new Set()).forEach(cat => {
-    const count = allPhotos.filter(p => p.category === cat && !p.parent_category).length;
+  let row2 = '<div class="filter-row filter-row-cats">';
+  row2 += `<span class="filter-taxonomy-label">${t('gallery.filter.galleries')}</span>`;
+  primaryCats.forEach(cat => {
+    const count = allPhotos.filter(p => p.category === cat).length;
     row2 += `<button class="filter-btn" data-cat="${esc(cat)}">${getCategoryLabel(cat)} <span class="filter-count">${count}</span></button>`;
   });
 
-  // קבוצות עם parent
-  Object.keys(hierarchy).filter(k => k !== 'null' && k !== null).forEach(parent => {
-    const totalCount = allPhotos.filter(p => p.parent_category === parent).length;
+  const locationCount = allPhotos.filter(p => LOCATION_CATEGORIES.has(p.category)).length;
+  if (locationCats.length) {
+    const parent = 'מקומות בעולם';
     row2 += `<div class="filter-group">
       <button class="filter-btn filter-group-btn" data-parent="${esc(parent)}">
-        ${getCategoryLabel(parent)} <span class="filter-count">${totalCount}</span> <span class="filter-arrow">▾</span>
+        ${getCategoryLabel(parent)} <span class="filter-count">${locationCount}</span> <span class="filter-arrow">▾</span>
       </button>
       <div class="filter-group-sub" style="display:none">`;
-    hierarchy[parent].forEach(sub => {
-      const count = allPhotos.filter(p => p.category === sub && p.parent_category === parent).length;
+    locationCats.forEach(sub => {
+      const count = allPhotos.filter(p => p.category === sub).length;
       row2 += `<button class="filter-btn filter-sub-btn" data-cat="${esc(sub)}" data-parent="${esc(parent)}">${getCategoryLabel(sub)} <span class="filter-count">${count}</span></button>`;
     });
-    row2 += `</div></div>`;
-  });
+    row2 += '</div></div>';
+  }
   row2 += '</div>';
 
-  bar.innerHTML = row1 + row2;
+  // שורה 3: style filters — these remain searchable collections, not top-level galleries.
+  let row3 = '';
+  if (styleCats.length) {
+    row3 = '<div class="filter-row filter-row-styles">';
+    row3 += `<span class="filter-taxonomy-label">${t('gallery.filter.styles')}</span>`;
+    styleCats.forEach(cat => {
+      const count = allPhotos.filter(p => p.category === cat).length;
+      row3 += `<button class="filter-btn filter-btn-style" data-cat="${esc(cat)}">${getCategoryLabel(cat)} <span class="filter-count">${count}</span></button>`;
+    });
+    row3 += '</div>';
+  }
+
+  bar.innerHTML = row1 + row2 + row3;
 
   // הזרקת שדה חיפוש מעל הפילטרים (פעם אחת בלבד)
   if (!document.getElementById('gallery-search')) {
@@ -1704,11 +1713,27 @@ const SITE_URL = 'https://amitphotos.com';
 
 // קטגוריות מיקום — יקובצו אוטומטית תחת "מקומות בעולם"
 const LOCATION_CATEGORIES = new Set([
-  'אבו דאבי','איטליה','אנגליה','גרמניה','הולנד',
+  'אבו דאבי','איטליה','אנגליה','גרמניה','הולנד','גאורגיה',
   'וינה','טנזניה','יוון','הונגריה','רומניה','מונטנגרו','סלובקיה',
   'סן דיאגו - ארה"ב','ספרד ואנדורה','צכיה',
   'בולגריה','ישראל',
 ]);
+
+// Business taxonomy: keep the top-level gallery choice intentionally small.
+// Locations stay discoverable under one collection, while style-only categories
+// are exposed as filters rather than competing with subject galleries.
+const PRIMARY_GALLERY_ORDER = [
+  'פרחים וצמחים',
+  'בעלי חיים',
+  'צילום מופשט',
+  'טבע דומם',
+  'מאקרו-צילומי תקריב',
+  'אומנות רחוב',
+  'פורטרטים',
+];
+const PRIMARY_GALLERY_CATEGORIES = new Set(PRIMARY_GALLERY_ORDER);
+const STYLE_FILTER_ORDER = ['שחור-לבן', 'צילומי לילה'];
+const STYLE_FILTER_CATEGORIES = new Set(STYLE_FILTER_ORDER);
 
 const SIZES = {
   small:  { label: 'קובץ רשת (1500px)',   sz: 'w1500' },
