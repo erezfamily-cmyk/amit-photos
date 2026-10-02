@@ -1465,3 +1465,24 @@ Freeze for this 7-day Free Guide measurement window:
 Interpretation note:
 - the earlier Acquisition Experiment 01 timestamps remain historical records for the previous asset/distribution phase;
 - for evaluating the redesigned Free Guide itself, use **2026-10-02 18:55:27 Asia/Jerusalem** as the new baseline and do not mix pre-relaunch Free Guide performance into the 7-day redesigned-guide result.
+
+
+### Admin curation decision reload hardening — 2.10.2026
+
+User reported that manual photo-review decisions appeared to disappear after logout/login.
+
+Investigation:
+- owner decisions are persisted server-side in D1 `settings` under `flower_curation_decisions_v1`;
+- production curation automation had already observed existing owner decisions, so logout itself does not delete them;
+- Admin startup silently converted any failed `/api/admin/curation-decisions` request into `{}`, then replaced the in-memory decision map with an empty map;
+- therefore a transient auth/network/load failure after login could make persisted work look lost;
+- the login button also had both inline login execution and an event listener, causing duplicate login/init calls.
+
+Fix branch: `fix/curation-decision-reload-2026-10-02`
+- curation decisions now load with up to 3 retries and `cache: no-store`;
+- non-2xx / invalid payload is treated as a load error, never as an empty decision set;
+- on failure Review Mode is stopped and Admin shows an explicit warning that saved decisions were not reset;
+- removed the duplicate inline login execution; login is handled once by the existing event listener;
+- added regression checks for both persistence reload behavior and single login invocation.
+
+No curation decision, photo publish state, category, gallery order, PayPal, Gelato, or payment flag is changed by this fix.
