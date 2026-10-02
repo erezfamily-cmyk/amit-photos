@@ -1128,3 +1128,26 @@ PayPal Orders v2:
 - PR #110 latest focused checks are all green: PayPal Orders v2 CI, Lead Funnel CI, Digital Licensing CI and B2B Funnel CI.
 - The earlier unrelated full Node-suite failures were stale Admin dialog-count and homepage cache-busting expectations, not PayPal security failures.
 - PR #110 remains Draft; do not merge or enable production payments until the deliberate next gate.
+
+
+### PayPal Orders v2 merged safely — 2.10.2026
+
+PR #110 merged to `main` as `f4f1f4438f1c4bd33e69f357ac2e7f21fe2c7e7f`.
+
+Post-merge verification:
+- Deploy Worker ✅
+- Pages build/deployment ✅
+- PayPal Orders v2 CI ✅
+- Cloudflare deploy log explicitly shows `PAYMENTS_ENABLED: "false"` ✅
+- Production D1 binding remains `amit-photos-db`.
+- Production R2 binding remains `amit-photos-images`.
+- Cache purge succeeded.
+- Public PayPal create/capture routes remain fail-closed because the production flag is false.
+- Legacy insecure payment completion endpoints remain permanently retired with HTTP 410.
+- No PayPal Live activation and no Gelato activation occurred.
+
+Acquisition Experiment 01:
+- launch package merged in PR #111.
+- Technical setup is complete.
+- The 7-day window has not started because no real distribution action has been published/sent yet.
+- First recommended distribution path remains Free Guide / Instagram.
