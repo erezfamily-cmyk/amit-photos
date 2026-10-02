@@ -1495,3 +1495,15 @@ Fix:
 - existing importer protection already honors the same `DELETE` tombstones, so deleted photos remain excluded on later Drive sync runs.
 
 No Google Drive source file is deleted. PayPal/Gelato/payment configuration unchanged.
+
+
+### Bulk HIDE <80 hardening — 2.10.2026
+
+Before merging the DELETE tombstone hotfix, the bulk HIDE path was re-verified and hardened:
+- `בחר ציון <80` now selects only photos that are actually in D1/R2 (production-managed), excluding Drive-only cards.
+- It still requires `score_kind=visual_complete`; pending/provisional scores never qualify.
+- Bulk HIDE sets `published=0` and then persists owner decision `HIDE`.
+- If saving the HIDE decision fails after publication was changed, Admin attempts to roll the photo back to `published=1`.
+- Already-hidden photos can still receive/refresh their owner `HIDE` decision without unnecessary publication writes.
+
+This keeps bulk HIDE reversible and prevents silent partial state.
