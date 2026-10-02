@@ -1330,3 +1330,34 @@ Important limitation:
 - this fixes false-success reporting and guarantees a direct-download fallback, but the underlying Resend provider rejection/secret/domain cause is not yet independently confirmed from provider logs in this session.
 - PAYMENTS_ENABLED remains false.
 - Acquisition Experiment 01 offer/copy/UTM/primary KPI remain unchanged.
+
+
+### Free Guide email root cause fixed and production-verified — 2.10.2026
+
+Root cause confirmed:
+- `RESEND_API_KEY` existed in GitHub Actions, but the production Cloudflare Worker had no `RESEND_API_KEY` binding;
+- deploy logs before the fix listed DB, PHOTOS and PAYMENTS_ENABLED only;
+- Resend showed no `POST /emails` calls from the Free Guide flow on the failure day;
+- `amitphotos.com` is verified in Resend with sending enabled;
+- the recipient address used for verification was not suppressed.
+
+Fixes:
+- PR #115 added secure sync of the existing GitHub Actions `RESEND_API_KEY` into the Worker using `wrangler secret put`;
+- the first ordering attempt failed because Cloudflare requires the latest Worker version to be deployed before modifying secrets;
+- PR #116 reordered deploy to: Worker deploy -> Resend secret sync -> cache purge;
+- merge SHA for #116: `71583be0e839b9e8feac9f8cfc4ab6faa9c321fb`;
+- Deploy Worker run #463 / run id `37018703520` completed successfully, including:
+  - Deploy with Wrangler ✅
+  - Sync Resend secret to Worker ✅
+  - Cloudflare cache purge ✅
+
+Live production smoke:
+- a real `lead_magnet` signup was submitted with privacy consent and `consent_marketing=false`;
+- smoke run `37019025883` passed and verified `email_sent=true` plus `email_delivery_attempted=true`;
+- Resend recorded subject `הנה ה-PDF שלך — 50 טיפים לצילום` with status `delivered`;
+- Gmail independently showed the same message in INBOX;
+- no marketing consent was added by the test.
+
+The temporary smoke workflow was removed after verification.
+Production payments remain disabled with `PAYMENTS_ENABLED=false`.
+Acquisition Experiment 01 offer/copy/UTM/primary KPI remain unchanged.
