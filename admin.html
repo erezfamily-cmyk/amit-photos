@@ -3460,7 +3460,7 @@ const Photos = (() => {
       if (!searchQ) return true;
       if (searchQ === '_source:r2') return p._source === 'r2';
       if (searchQ === '_source:drive') return p._source === 'drive';
-      if (searchQ === '_curation:flowers') return !!curationById.get(p.id);
+      if (searchQ === '_curation:flowers') return p.category === 'פרחים וצמחים';
       if (searchQ === '_curation:flagged') return !!curationById.get(p.id)?.flags?.length;
       if (searchQ === '_curation:high') return curationById.get(p.id)?.priority === 'high';
       if (searchQ === '_curation:duplicate') return curationById.get(p.id)?.recommendation === 'REVIEW_DUPLICATE';
@@ -3657,11 +3657,11 @@ const Photos = (() => {
         chip(`⏳ טרם נבדקו ויזואלית ${curationScoreSummary.pending_visual || 0}`, '_curation:pending-visual'),
         chip(`✅ מעל 85 ללא צורך באישור ${curationScoreSummary.auto_clear_above_85 || 0}`, '_curation:visual-complete'),
         ...(curationReport ? [chip(`🌸 פיילוט פרחים ${curationReport.summary?.total || 0}`, '_curation:flowers')] : []),
-        chip(`⚑ לבדיקה ${curationReport.summary?.flagged || 0}`, '_curation:flagged'),
-        chip(`🔴 עדיפות גבוהה ${curationReport.summary?.high_priority || 0}`, '_curation:high'),
-        chip('כפילויות לבדיקה', '_curation:duplicate'),
-        chip('רזולוציה לבדיקה', '_curation:technical'),
-        chip(`טרם הוחלט ${Math.max(0, (curationReport.summary?.total || 0) - curationDecisions.size)}`, '_curation:pending'),
+        ...(curationReport ? [chip(`⚑ פיילוט: לבדיקה ${curationReport.summary?.flagged || 0}`, '_curation:flagged')] : []),
+        ...(curationReport ? [chip(`🔴 פיילוט: עדיפות גבוהה ${curationReport.summary?.high_priority || 0}`, '_curation:high')] : []),
+        ...(curationReport ? [chip('פיילוט: כפילויות לבדיקה', '_curation:duplicate')] : []),
+        ...(curationReport ? [chip('פיילוט: רזולוציה לבדיקה', '_curation:technical')] : []),
+        chip(`טרם הוחלט ${Math.max(0, (curationScoreSummary.total || data.length) - curationDecisions.size)}`, '_curation:pending'),
         chip(`הוחלט ${curationDecisions.size}`, '_curation:decided'),
         chip(`🎯 ציון מתחת ל-60 ${[...curationScores.values()].filter(x => Number(x.score ?? x.pilot_score ?? 101) < 60).length}`, '_curation:score-low'),
         chip(`⚠ דורש בדיקה ≤85 / בעיה ${[...curationScores.values()].filter(x => x.owner_review_required).length}`, '_curation:score-review'),
@@ -3687,7 +3687,9 @@ const Photos = (() => {
 
   function curationBadge(p) {
     const item = curationById.get(p.id);
+    const score = curationScores.get(p.id);
     if (!item) return '';
+    if (score && score.score_kind !== 'visual_complete' && !curationReport?.items?.some(x => x.photo_id === p.id)) return '';
     const meta = {
       REVIEW_DUPLICATE: ['#f59e0b', 'בדיקת כפילות'],
       REVIEW_TECHNICAL: ['#f87171', 'בדיקה טכנית'],
@@ -3700,13 +3702,12 @@ const Photos = (() => {
   function curationScoreBadge(p) {
     const score = curationScores.get(p.id);
     if (!score) return '';
+    if (score.score_kind !== 'visual_complete') {
+      return '<span title="בדיקה ויזואלית טרם בוצעה" style="margin-inline-start:.3rem;border:1px solid #64748b55;background:#64748b18;color:#94a3b8;border-radius:999px;padding:.15rem .42rem;font-size:.62rem;font-weight:700">טרם נבדק</span>';
+    }
     const value = Number(score.score ?? score.pilot_score ?? 0);
-    const kind = score.score_kind === 'visual_complete' ? 'V' : 'T';
-    const color = value < 60 ? '#f87171' : value < 75 ? '#f59e0b' : value < 90 ? '#60a5fa' : '#4ade80';
-    const title = score.score_kind === 'visual_complete'
-      ? 'ציון ויזואלי מלא'
-      : 'ציון טכני זמני — טרם הושלמה בדיקה ויזואלית';
-    return '<span title="' + title + '" style="margin-inline-start:.3rem;border:1px solid ' + color + '55;background:' + color + '18;color:' + color + ';border-radius:999px;padding:.15rem .42rem;font-size:.62rem;font-weight:700">' + kind + ' ' + value + '</span>';
+    const color = value < 60 ? '#f87171' : value < 75 ? '#f59e0b' : value <= 85 ? '#60a5fa' : '#4ade80';
+    return '<span title="ציון ויזואלי מלא" style="margin-inline-start:.3rem;border:1px solid ' + color + '55;background:' + color + '18;color:' + color + ';border-radius:999px;padding:.15rem .42rem;font-size:.62rem;font-weight:700">V ' + value + '</span>';
   }
 
   function curationReviewOverlay(p) {
@@ -3842,35 +3843,40 @@ const Photos = (() => {
   }
 
   function exportCurationReport() {
-    if (!curationReport?.items) {
+    if (!curationScores.size) {
       toast('דוח הקיורציה עדיין לא נטען', 'error');
       return;
     }
-    const rows = curationReport.items.map(item => {
-      const photo = data.find(p => p.id === item.photo_id);
-      const owner = curationDecisions.get(item.photo_id) || null;
+    const rows = [...curationScores.values()].map(score => {
+      const item = curationById.get(score.photo_id) || {};
+      const photo = data.find(p => p.id === score.photo_id);
+      const owner = curationDecisions.get(score.photo_id) || null;
       const deleted = owner?.decision === 'DELETE' && !photo;
       return {
-        photo_id: item.photo_id,
-        title: photo?.title || item.title || '',
-        thumbnail: photo?.thumbnail || item.thumbnail || '',
-        recommendation: item.recommendation || null,
-        reasons: item.reasons || [],
-        resolution: { width: item.width || null, height: item.height || null },
+        photo_id: score.photo_id,
+        title: photo?.title || score.title || item.title || '',
+        category: photo?.category || score.category || '',
+        thumbnail: photo?.thumbnail || score.thumbnail || item.thumbnail || '',
+        recommendation: score.recommended_action || item.recommendation || null,
+        reasons: [...(score.flags || []), ...(score.visual_flags || []), ...(score.visual_note ? [score.visual_note] : [])],
+        resolution: { width: score.width || item.width || null, height: score.height || item.height || null },
         current_published_status: deleted ? 'DELETED' : (photo ? (photo.published === 0 ? 'HIDDEN' : 'PUBLISHED') : 'NOT_FOUND'),
         current_published: deleted || !photo ? null : (photo.published === 0 ? 0 : 1),
         final_owner_decision: owner?.decision || null,
-        final_category: owner?.category || photo?.category || null,
+        final_category: owner?.category || photo?.category || score.category || null,
         final_owner_decision_at: owner?.updated_at || null,
-        pilot_score: curationScores.get(item.photo_id)?.score ?? curationScores.get(item.photo_id)?.pilot_score ?? null,
-        score_kind: curationScores.get(item.photo_id)?.score_kind ?? null,
-        score_components: curationScores.get(item.photo_id)?.components ?? null
+        score: score.score ?? score.pilot_score ?? null,
+        score_kind: score.score_kind || null,
+        owner_review_required: !!score.owner_review_required,
+        score_components: score.components || null
       };
     });
     const payload = {
       generated_at: new Date().toISOString(),
-      pilot: curationReport.category || 'פרחים וצמחים',
+      scope: 'all_galleries',
       total: rows.length,
+      visual_complete: rows.filter(row => row.score_kind === 'visual_complete').length,
+      owner_review_required: rows.filter(row => row.owner_review_required).length,
       decided: rows.filter(row => row.final_owner_decision).length,
       items: rows
     };
@@ -3880,7 +3886,7 @@ const Photos = (() => {
     link.download = 'portfolio-curation-owner-review.json';
     link.click();
     setTimeout(() => URL.revokeObjectURL(link.href), 0);
-    toast('דוח הקיורציה יוצא');
+    toast('דוח הקיורציה המלא יוצא');
   }
 
   function openCuration(id) {
