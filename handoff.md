@@ -1197,3 +1197,27 @@ Validation before merge:
 
 Experiment state is still **not started** until the first real external distribution action is actually published/sent.
 Production payments remain disabled.
+
+
+### Acquisition Experiment 01 launched — 2.10.2026
+
+The first real distribution action is now verified live on Instagram.
+
+Verified directly from the connected Instagram account `amite`:
+- story id: `17882329722524331`
+- published at: `2026-10-02T12:03:19Z`
+- local Israel time: `2026-10-02 15:03:19 Asia/Jerusalem`
+- channel/path: Free Guide / Instagram Story
+- campaign: `202610_freeguide_photo_tips`
+
+This timestamp is the official Day 1 start of Acquisition Experiment 01.
+The 7-day measurement window is now active.
+
+Freeze rules remain in force during the window:
+- do not change destination pages;
+- do not change campaign names;
+- do not change primary KPI;
+- do not change the core offer, licensing prices, consent wording, or Free Guide asset;
+- do not add paid traffic or production PayPal.
+
+Production payments remain disabled.
