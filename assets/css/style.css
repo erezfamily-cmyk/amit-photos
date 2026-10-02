@@ -559,6 +559,28 @@ body[data-payments-state="enabled"] .payments-disabled-only {
 .filter-row-cats {
   padding-top: 0.45rem;
 }
+.filter-row-styles {
+  padding-top: 0.4rem;
+  margin-top: 0.35rem;
+  border-top: 1px solid rgba(255,255,255,0.05);
+}
+.filter-taxonomy-label {
+  align-self: center;
+  color: rgba(240,237,232,0.55);
+  font-size: 0.64rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding-inline: 0.25rem;
+}
+.filter-row-styles .filter-btn {
+  font-size: 0.69rem;
+  padding: 0.32rem 0.8rem;
+  opacity: 0.72;
+}
+.filter-row-styles .filter-btn:hover,
+.filter-row-styles .filter-btn.active {
+  opacity: 1;
+}
 /* כפתורי קטגוריות — קצת יותר קטנים מהמיוחדים */
 .filter-row-cats .filter-btn {
   font-size: 0.72rem;
@@ -571,9 +593,9 @@ body[data-payments-state="enabled"] .payments-disabled-only {
 }
 
 /* שמירת מקום ל-filter-bar לפני שה-JS ממלא אותו (מונע קפיצת CLS) */
-#filter-bar { min-height: 130px; }
+#filter-bar { min-height: 165px; }
 @media (max-width: 768px) {
-  #filter-bar { min-height: 180px; }
+  #filter-bar { min-height: 220px; }
 }
 @media (max-width: 480px) {
   #filter-bar { min-height: 300px; }
