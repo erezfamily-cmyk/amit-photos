@@ -1,0 +1,68 @@
+name: Build Free Guide PDFs
+
+on:
+  push:
+    branches:
+      - feature/free-guide-redesign-2026-10-02
+    paths:
+      - scripts/build_free_guide.py
+      - .github/workflows/build-free-guide.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+          fetch-depth: 1
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install PDF runtime
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y fonts-noto-core poppler-utils
+          pip install requests Pillow pypdf
+
+      - name: Build Hebrew and English guides
+        run: python scripts/build_free_guide.py
+
+      - name: Verify generated PDFs
+        run: |
+          pdfinfo 50tips-heb.pdf | grep -E '^Pages:[[:space:]]+13$'
+          pdfinfo 50tips-eng.pdf | grep -E '^Pages:[[:space:]]+13$'
+          test -s data/free-guide-build.json
+          ls -lh 50tips-heb.pdf 50tips-eng.pdf
+
+      - name: Upload visual QA artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: free-guide-pdf-qa
+          path: |
+            50tips-heb.pdf
+            50tips-eng.pdf
+            build/free-guide/previews/*.jpg
+            data/free-guide-build.json
+          retention-days: 7
+
+      - name: Commit generated guides
+        run: |
+          if git diff --quiet -- 50tips-heb.pdf 50tips-eng.pdf data/free-guide-build.json; then
+            echo "No generated changes"
+            exit 0
+          fi
+          git config user.name "Free Guide Builder"
+          git config user.email "agent@amitphotos.com"
+          git add 50tips-heb.pdf 50tips-eng.pdf data/free-guide-build.json
+          git commit -m "feat: redesign bilingual photography free guide"
+          git pull --rebase --autostash origin "${{ github.ref_name }}"
+          git push origin HEAD:"${{ github.ref_name }}"
