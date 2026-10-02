@@ -15,11 +15,13 @@ import os
 import re
 import time
 from collections import Counter
+from io import BytesIO
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
 import requests
+from PIL import Image
 
 ROOT = Path(__file__).resolve().parents[1]
 PHOTOS_FILE = ROOT / "data" / "photos.json"
@@ -139,7 +141,9 @@ def technical_flags(photo: dict, title_counts: Counter, filename_counts: Counter
 
 
 def image_url(photo: dict) -> str:
-    src = str(photo.get("thumbnail") or photo.get("url") or "").strip()
+    # Use the full portfolio image for visual quality review. Thumbnails can hide
+    # blur, focus misses, clipping and fine composition details.
+    src = str(photo.get("url") or photo.get("thumbnail") or "").strip()
     if not src:
         return ""
     if src.startswith("http://") or src.startswith("https://"):
@@ -156,9 +160,14 @@ def fetch_image(photo: dict) -> tuple[bytes, str]:
     content_type = (res.headers.get("Content-Type") or "image/webp").split(";")[0].strip()
     if not content_type.startswith("image/"):
         raise RuntimeError(f"unexpected content type: {content_type}")
-    if len(res.content) > 5 * 1024 * 1024:
-        raise RuntimeError("image exceeds 5MB vision input limit")
-    return res.content, content_type
+
+    # Normalize from the full source to a high-quality review image. 1800px is
+    # large enough to judge focus/sharpness while keeping Vision requests stable.
+    img = Image.open(BytesIO(res.content)).convert("RGB")
+    img.thumbnail((1800, 1800), Image.Resampling.LANCZOS)
+    out = BytesIO()
+    img.save(out, format="JPEG", quality=92, optimize=True)
+    return out.getvalue(), "image/jpeg"
 
 
 def parse_json_text(text: str) -> dict:
