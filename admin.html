@@ -782,7 +782,7 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
       <input type="password" id="password-input" placeholder="סיסמה" autocomplete="current-password" style="width:100%;padding-left:2.5rem">
       <button type="button" id="pwd-toggle" aria-label="הצג סיסמה" aria-pressed="false" style="position:absolute;left:.15rem;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:1.1rem;padding:.5rem;line-height:1">&#128065;</button>
     </div>
-    <button class="btn-login" id="login-btn" onclick="(window.doLogin||function(){var p=document.getElementById('password-input').value;if(!p)return;fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:p})}).then(function(r){return r.json().then(function(d){if(!r.ok){document.getElementById('login-error').textContent=d.error||'סיסמה שגויה';return;}sessionStorage.setItem('admin_session',d.token);localStorage.setItem('admin_session',d.token);document.getElementById('login-screen').style.display='none';document.getElementById('admin-ui').classList.add('visible');});}).catch(function(){document.getElementById('login-error').textContent='שגיאת חיבור';});})()">כניסה</button>
+    <button class="btn-login" id="login-btn">כניסה</button>
     <div class="login-error" id="login-error" role="alert"></div>
     <button class="login-forgot" id="forgot-btn">שכחת סיסמה?</button>
   </div>
@@ -3481,20 +3481,52 @@ const Photos = (() => {
     return d;
   }
 
+  async function loadCurationDecisionsWithRetry() {
+    let lastError = null;
+    for (let attempt = 0; attempt < 3; attempt++) {
+      try {
+        const res = await fetch('/api/admin/curation-decisions', {
+          headers: authHeaders(),
+          cache: 'no-store'
+        });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const payload = await res.json();
+        if (!payload || typeof payload.decisions !== 'object' || Array.isArray(payload.decisions)) {
+          throw new Error('invalid decisions payload');
+        }
+        return payload;
+      } catch (err) {
+        lastError = err;
+        if (attempt < 2) await new Promise(resolve => setTimeout(resolve, 150 * (attempt + 1)));
+      }
+    }
+    throw lastError || new Error('curation decisions unavailable');
+  }
+
   async function init() {
-    // טען תמונות מ-D1 + photos.json במקביל
-    const [d1Photos, jsonPhotos, featuredRes, curationRes, curationDecisionRes, curationScoresRes] = await Promise.all([
+    // טען תמונות מ-D1 + photos.json במקביל.
+    // החלטות קיורציה הן נתוני בעלים: כשל טעינה לעולם לא מתפרש כרשימה ריקה.
+    const [d1Photos, jsonPhotos, featuredRes, curationRes, curationDecisionResult, curationScoresRes] = await Promise.all([
       fetch('/api/photos?admin=1', { headers: authHeaders() }).then(r => r.ok ? r.json() : []).catch(() => []),
       fetch('data/photos.json').then(r => r.ok ? r.json() : []).catch(() => []),
       fetch('/api/admin/featured', { headers: authHeaders() }).then(r => r.ok ? r.json() : {}).catch(() => ({})),
       fetch('/data/flower-curation-pilot.json').then(r => r.ok ? r.json() : null).catch(() => null),
-      fetch('/api/admin/curation-decisions', { headers: authHeaders() }).then(r => r.ok ? r.json() : {}).catch(() => ({})),
+      loadCurationDecisionsWithRetry().then(
+        value => ({ ok: true, value }),
+        error => ({ ok: false, error })
+      ),
       fetch('/data/portfolio-curation-scores.json').then(r => r.ok ? r.json() : null).catch(() => null)
     ]);
     featuredIds = new Set(featuredRes.ids || []);
     curationReport = curationRes;
     curationById = new Map((curationRes?.items || []).map(item => [item.photo_id, item]));
-    curationDecisions = new Map(Object.entries(curationDecisionRes.decisions || {}));
+    if (curationDecisionResult.ok) {
+      curationDecisions = new Map(Object.entries(curationDecisionResult.value.decisions || {}));
+    } else {
+      reviewModeActive = false;
+      console.error('Failed to reload persisted curation decisions', curationDecisionResult.error);
+      toast('לא ניתן לטעון את החלטות הקיורציה השמורות. הן לא אופסו — רענן או התחבר מחדש לפני המשך Review.', 'error');
+    }
     curationScores = new Map((curationScoresRes?.items || []).map(item => [item.photo_id, item]));
     curationScoreSummary = curationScoresRes?.summary || null;
     for (const [id, score] of curationScores) {
