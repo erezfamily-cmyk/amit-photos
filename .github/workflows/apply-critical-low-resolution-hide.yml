@@ -38,12 +38,21 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Read current owner decisions from production D1
+      - name: Install API runtime
+        run: pip install requests
+
+      - name: Read current owner decisions through Admin API
         env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
         run: |
-          npx wrangler d1 execute amit-photos-db --remote --command "SELECT value FROM settings WHERE key='flower_curation_decisions_v1'" --json > /tmp/decisions.json
+          curl -fsS "https://amitphotos.com/api/admin/curation-decisions" \
+            -H "X-Admin-Password: ${ADMIN_PASSWORD}" > /tmp/decisions.json
+          python - <<'PY'
+          import json
+          r=json.load(open('/tmp/decisions.json'))
+          assert isinstance(r.get('decisions'), dict), r
+          print('owner decisions:', len(r['decisions']))
+          PY
 
       - name: Build guarded reversible HIDE plan
         id: plan
@@ -53,12 +62,45 @@ jobs:
           ELIGIBLE=$(python -c "import json; print(json.load(open('/tmp/critical-low-resolution-plan.json'))['eligible_count'])")
           echo "eligible=$ELIGIBLE" >> "$GITHUB_OUTPUT"
 
-      - name: Apply guarded HIDE plan
+      - name: Apply guarded HIDE plan through Admin API
         if: steps.plan.outputs.eligible != '0'
         env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        run: npx wrangler d1 execute amit-photos-db --remote --file /tmp/critical-low-resolution-hide.sql
+          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
+        run: |
+          python - <<'PY'
+          import json, os, requests
+          base='https://amitphotos.com'
+          password=os.environ['ADMIN_PASSWORD']
+          headers={'X-Admin-Password': password, 'Content-Type': 'application/json'}
+          plan=json.load(open('/tmp/critical-low-resolution-plan.json'))
+          applied=[]
+          protected_late=[]
+          for row in plan['eligible']:
+              photo_id=row['photo_id']
+              # Re-check owner decisions immediately before each mutation.
+              cur=requests.get(base+'/api/admin/curation-decisions', headers={'X-Admin-Password': password}, timeout=20)
+              cur.raise_for_status()
+              decisions=cur.json().get('decisions', {})
+              if (decisions.get(photo_id) or {}).get('decision'):
+                  protected_late.append(photo_id)
+                  continue
+
+              patch=requests.patch(base+'/api/photos', headers=headers, json={'id': photo_id, 'published': False}, timeout=20)
+              patch.raise_for_status()
+              save=requests.post(base+'/api/admin/curation-decisions', headers=headers, json={
+                  'photo_id': photo_id,
+                  'decision': 'HIDE',
+                  'note': 'Automatic critical low-resolution HIDE; reversible; Google Drive untouched.'
+              }, timeout=20)
+              if not save.ok:
+                  # Roll back publication state because this photo had no prior owner decision.
+                  rollback=requests.patch(base+'/api/photos', headers=headers, json={'id': photo_id, 'published': True}, timeout=20)
+                  raise RuntimeError(f'decision save failed for {photo_id}: {save.status_code}; rollback={rollback.status_code}')
+              applied.append(photo_id)
+
+          json.dump({'applied': applied, 'protected_late': protected_late}, open('/tmp/applied.json','w'))
+          print('applied', len(applied), 'late-protected', len(protected_late))
+          PY
 
       - name: Purge public cache
         if: steps.plan.outputs.eligible != '0'
@@ -81,10 +123,11 @@ jobs:
           python - <<'PY'
           import json
           plan=json.load(open('/tmp/critical-low-resolution-plan.json'))
+          applied=json.load(open('/tmp/applied.json')) if __import__('os').path.exists('/tmp/applied.json') else {'applied': []}
           public=json.load(open('/tmp/public.json'))
           public_ids={str(p['id']) for p in public}
-          leaked=[x['photo_id'] for x in plan['eligible'] if x['photo_id'] in public_ids]
-          assert not leaked, f'eligible critical-resolution photos still public: {leaked}'
-          print('verified public removal for', plan['eligible_count'], 'eligible photos')
-          print('protected owner decisions:', plan['protected_count'])
+          leaked=[photo_id for photo_id in applied['applied'] if photo_id in public_ids]
+          assert not leaked, f'applied critical-resolution photos still public: {leaked}'
+          print('verified public removal for', len(applied['applied']), 'photos')
+          print('protected owner decisions:', plan['protected_count'] + len(applied.get('protected_late', [])))
           PY
