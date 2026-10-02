@@ -120,6 +120,11 @@ def build_sql(plan: dict[str, Any]) -> str:
 
 
 def parse_wrangler_decisions(payload: Any) -> dict[str, Any]:
+    # Direct Admin API shape.
+    if isinstance(payload, dict) and isinstance(payload.get("decisions"), dict):
+        return payload["decisions"]
+
+    # Wrangler D1 JSON shape kept for backwards compatibility/tests.
     rows = []
     if isinstance(payload, list):
         for block in payload:
