@@ -2127,7 +2127,7 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
 <!-- PHOTO CURATION PILOT DIALOG -->
 <dialog id="curation-dialog" class="mobile-dialog" aria-labelledby="curation-dialog-title">
   <div class="dialog-header">
-    <span class="dialog-title" id="curation-dialog-title">דוח קיורציה — פיילוט פרחים</span>
+    <span class="dialog-title" id="curation-dialog-title">דוח קיורציה מקצועי</span>
     <button type="button" class="dialog-close" aria-label="סגור" onclick="document.getElementById('curation-dialog').close()">✕</button>
   </div>
   <div class="dialog-body">
@@ -3460,16 +3460,17 @@ const Photos = (() => {
       if (!searchQ) return true;
       if (searchQ === '_source:r2') return p._source === 'r2';
       if (searchQ === '_source:drive') return p._source === 'drive';
-      if (searchQ === '_curation:flowers') return !!curationById.get(p.id);
+      if (searchQ === '_curation:flowers') return p.category === 'פרחים וצמחים';
       if (searchQ === '_curation:flagged') return !!curationById.get(p.id)?.flags?.length;
       if (searchQ === '_curation:high') return curationById.get(p.id)?.priority === 'high';
       if (searchQ === '_curation:duplicate') return curationById.get(p.id)?.recommendation === 'REVIEW_DUPLICATE';
       if (searchQ === '_curation:technical') return curationById.get(p.id)?.recommendation === 'REVIEW_TECHNICAL';
       if (searchQ === '_curation:pending') return !!curationById.get(p.id) && !curationDecisions.has(p.id);
       if (searchQ === '_curation:decided') return !!curationById.get(p.id) && curationDecisions.has(p.id);
-      if (searchQ === '_curation:score-low') return (curationScores.get(p.id)?.pilot_score ?? 101) < 60;
-      if (searchQ === '_curation:score-review') return (curationScores.get(p.id)?.pilot_score ?? 101) < 90;
+      if (searchQ === '_curation:score-low') return Number(curationScores.get(p.id)?.score ?? curationScores.get(p.id)?.pilot_score ?? 101) < 60;
+      if (searchQ === '_curation:score-review') return !!curationScores.get(p.id)?.owner_review_required;
       if (searchQ === '_curation:visual-complete') return curationScores.get(p.id)?.score_kind === 'visual_complete';
+      if (searchQ === '_curation:pending-visual') return curationScores.get(p.id)?.score_kind !== 'visual_complete';
       const q = searchQ.toLowerCase();
       return (p.title||'').toLowerCase().includes(q) || (p.category||'').toLowerCase().includes(q);
     });
@@ -3488,7 +3489,7 @@ const Photos = (() => {
       fetch('/api/admin/featured', { headers: authHeaders() }).then(r => r.ok ? r.json() : {}).catch(() => ({})),
       fetch('/data/flower-curation-pilot.json').then(r => r.ok ? r.json() : null).catch(() => null),
       fetch('/api/admin/curation-decisions', { headers: authHeaders() }).then(r => r.ok ? r.json() : {}).catch(() => ({})),
-      fetch('/data/flower-curation-scores.json').then(r => r.ok ? r.json() : null).catch(() => null)
+      fetch('/data/portfolio-curation-scores.json').then(r => r.ok ? r.json() : null).catch(() => null)
     ]);
     featuredIds = new Set(featuredRes.ids || []);
     curationReport = curationRes;
@@ -3496,6 +3497,22 @@ const Photos = (() => {
     curationDecisions = new Map(Object.entries(curationDecisionRes.decisions || {}));
     curationScores = new Map((curationScoresRes?.items || []).map(item => [item.photo_id, item]));
     curationScoreSummary = curationScoresRes?.summary || null;
+    for (const [id, score] of curationScores) {
+      if (!curationById.has(id)) {
+        curationById.set(id, {
+          photo_id: id,
+          title: score.title || '',
+          thumbnail: score.thumbnail || '',
+          filename: score.filename || '',
+          width: score.width || null,
+          height: score.height || null,
+          recommendation: score.recommended_action || 'VISUAL_REVIEW',
+          priority: score.owner_review_required ? 'high' : 'normal',
+          flags: [...(score.flags || []), ...(score.visual_flags || [])],
+          reasons: score.visual_note ? [score.visual_note] : []
+        });
+      }
+    }
     // שלב: D1 קודם, אחר כך Google Drive (ללא כפילויות לפי ID ו-filename)
     const d1Ids = new Set(d1Photos.map(p => p.id));
     const d1Filenames = new Set(d1Photos.map(p => p.filename).filter(Boolean));
@@ -3521,8 +3538,8 @@ const Photos = (() => {
 
   function getReviewCandidateIds() {
     return [...curationScores.entries()]
-      .filter(([id, score]) => Number(score?.pilot_score ?? 101) < 90 && data.some(p => p.id === id))
-      .sort((a, b) => Number(a[1]?.pilot_score ?? 101) - Number(b[1]?.pilot_score ?? 101))
+      .filter(([id, score]) => !!score?.owner_review_required && data.some(p => p.id === id))
+      .sort((a, b) => Number(a[1]?.score ?? a[1]?.pilot_score ?? 101) - Number(b[1]?.score ?? b[1]?.pilot_score ?? 101))
       .map(([id]) => id);
   }
 
@@ -3561,7 +3578,7 @@ const Photos = (() => {
   function startCurationReview(startId = null) {
     const progress = getReviewProgress();
     if (!progress.total) {
-      toast('אין תמונות בטווח 0–89', 'error');
+      toast('אין תמונות שדורשות בדיקת בעלים', 'error');
       return;
     }
     reviewModeActive = true;
@@ -3635,18 +3652,21 @@ const Photos = (() => {
       chip(`${data.length} תמונות סה"כ`, ''),
       chip(`${data.filter(p=>p._source==='r2').length} ב-R2`, '_source:r2'),
       chip(`${data.filter(p=>p._source==='drive').length} ב-Drive`, '_source:drive'),
-      ...(curationReport ? [
-        chip(`🌸 פיילוט קיורציה — פרחים וצמחים ${curationReport.summary?.total || 0}`, '_curation:flowers'),
-        chip(`⚑ לבדיקה ${curationReport.summary?.flagged || 0}`, '_curation:flagged'),
-        chip(`🔴 עדיפות גבוהה ${curationReport.summary?.high_priority || 0}`, '_curation:high'),
-        chip('כפילויות לבדיקה', '_curation:duplicate'),
-        chip('רזולוציה לבדיקה', '_curation:technical'),
-        chip(`טרם הוחלט ${Math.max(0, (curationReport.summary?.total || 0) - curationDecisions.size)}`, '_curation:pending'),
+      ...(curationScoreSummary ? [
+        chip(`🖼 קיורציה — כל הפורטפוליו ${curationScoreSummary.total || data.length}`, ''),
+        chip(`⏳ טרם נבדקו ויזואלית ${curationScoreSummary.pending_visual || 0}`, '_curation:pending-visual'),
+        chip(`✅ מעל 85 ללא צורך באישור ${curationScoreSummary.auto_clear_above_85 || 0}`, '_curation:visual-complete'),
+        ...(curationReport ? [chip(`🌸 פיילוט פרחים ${curationReport.summary?.total || 0}`, '_curation:flowers')] : []),
+        ...(curationReport ? [chip(`⚑ פיילוט: לבדיקה ${curationReport.summary?.flagged || 0}`, '_curation:flagged')] : []),
+        ...(curationReport ? [chip(`🔴 פיילוט: עדיפות גבוהה ${curationReport.summary?.high_priority || 0}`, '_curation:high')] : []),
+        ...(curationReport ? [chip('פיילוט: כפילויות לבדיקה', '_curation:duplicate')] : []),
+        ...(curationReport ? [chip('פיילוט: רזולוציה לבדיקה', '_curation:technical')] : []),
+        chip(`טרם הוחלט ${Math.max(0, (curationScoreSummary.total || data.length) - curationDecisions.size)}`, '_curation:pending'),
         chip(`הוחלט ${curationDecisions.size}`, '_curation:decided'),
-        chip(`🎯 ציון מתחת ל-60 ${[...curationScores.values()].filter(x => x.pilot_score < 60).length}`, '_curation:score-low'),
-        chip(`⚠ לבחינה 0–89 ${[...curationScores.values()].filter(x => x.pilot_score < 90).length}`, '_curation:score-review'),
+        chip(`🎯 ציון מתחת ל-60 ${[...curationScores.values()].filter(x => Number(x.score ?? x.pilot_score ?? 101) < 60).length}`, '_curation:score-low'),
+        chip(`⚠ דורש בדיקה ≤85 / בעיה ${[...curationScores.values()].filter(x => x.owner_review_required).length}`, '_curation:score-review'),
         `<div class="stat-chip stat-chip-link" onclick="Photos.startCurationReview()"><strong>▶ מצב Review ${getReviewProgress().reviewed}/${getReviewProgress().total}</strong></div>`,
-        chip(`👁 נבדקו ויזואלית ${curationScoreSummary?.visual_complete || 0}/${curationReport.summary?.total || 0}`, '_curation:visual-complete')
+        chip(`👁 נבדקו ויזואלית ${curationScoreSummary?.visual_complete || 0}/${curationScoreSummary?.total || data.length}`, '_curation:visual-complete')
       ] : []),
       ...Object.entries(cats).sort((a,b)=>b[1]-a[1]).map(([c,n])=>chip(`${n} ${c}`, c))
     ].join('');
@@ -3667,7 +3687,9 @@ const Photos = (() => {
 
   function curationBadge(p) {
     const item = curationById.get(p.id);
+    const score = curationScores.get(p.id);
     if (!item) return '';
+    if (score && score.score_kind !== 'visual_complete' && !curationReport?.items?.some(x => x.photo_id === p.id)) return '';
     const meta = {
       REVIEW_DUPLICATE: ['#f59e0b', 'בדיקת כפילות'],
       REVIEW_TECHNICAL: ['#f87171', 'בדיקה טכנית'],
@@ -3680,20 +3702,19 @@ const Photos = (() => {
   function curationScoreBadge(p) {
     const score = curationScores.get(p.id);
     if (!score) return '';
-    const value = Number(score.pilot_score || 0);
-    const kind = score.score_kind === 'visual_complete' ? 'V' : 'T';
-    const color = value < 60 ? '#f87171' : value < 75 ? '#f59e0b' : value < 90 ? '#60a5fa' : '#4ade80';
-    const title = score.score_kind === 'visual_complete'
-      ? 'ציון ויזואלי מלא'
-      : 'ציון טכני זמני — טרם הושלמה בדיקה ויזואלית';
-    return '<span title="' + title + '" style="margin-inline-start:.3rem;border:1px solid ' + color + '55;background:' + color + '18;color:' + color + ';border-radius:999px;padding:.15rem .42rem;font-size:.62rem;font-weight:700">' + kind + ' ' + value + '</span>';
+    if (score.score_kind !== 'visual_complete') {
+      return '<span title="בדיקה ויזואלית טרם בוצעה" style="margin-inline-start:.3rem;border:1px solid #64748b55;background:#64748b18;color:#94a3b8;border-radius:999px;padding:.15rem .42rem;font-size:.62rem;font-weight:700">טרם נבדק</span>';
+    }
+    const value = Number(score.score ?? score.pilot_score ?? 0);
+    const color = value < 60 ? '#f87171' : value < 75 ? '#f59e0b' : value <= 85 ? '#60a5fa' : '#4ade80';
+    return '<span title="ציון ויזואלי מלא" style="margin-inline-start:.3rem;border:1px solid ' + color + '55;background:' + color + '18;color:' + color + ';border-radius:999px;padding:.15rem .42rem;font-size:.62rem;font-weight:700">V ' + value + '</span>';
   }
 
   function curationReviewOverlay(p) {
     const score = curationScores.get(p.id);
     if (!score) return '';
-    const value = Number(score.pilot_score || 0);
-    if (value >= 90) return '';
+    const value = Number(score.score ?? score.pilot_score ?? 0);
+    if (!score.owner_review_required) return '';
     const kindTitle = score.score_kind === 'visual_complete' ? 'ציון ויזואלי מלא' : 'ציון טכני זמני';
     const reviewed = !!curationDecisions.get(p.id)?.decision;
     if (reviewed) {
@@ -3822,45 +3843,50 @@ const Photos = (() => {
   }
 
   function exportCurationReport() {
-    if (!curationReport?.items) {
+    if (!curationScores.size) {
       toast('דוח הקיורציה עדיין לא נטען', 'error');
       return;
     }
-    const rows = curationReport.items.map(item => {
-      const photo = data.find(p => p.id === item.photo_id);
-      const owner = curationDecisions.get(item.photo_id) || null;
+    const rows = [...curationScores.values()].map(score => {
+      const item = curationById.get(score.photo_id) || {};
+      const photo = data.find(p => p.id === score.photo_id);
+      const owner = curationDecisions.get(score.photo_id) || null;
       const deleted = owner?.decision === 'DELETE' && !photo;
       return {
-        photo_id: item.photo_id,
-        title: photo?.title || item.title || '',
-        thumbnail: photo?.thumbnail || item.thumbnail || '',
-        recommendation: item.recommendation || null,
-        reasons: item.reasons || [],
-        resolution: { width: item.width || null, height: item.height || null },
+        photo_id: score.photo_id,
+        title: photo?.title || score.title || item.title || '',
+        category: photo?.category || score.category || '',
+        thumbnail: photo?.thumbnail || score.thumbnail || item.thumbnail || '',
+        recommendation: score.recommended_action || item.recommendation || null,
+        reasons: [...(score.flags || []), ...(score.visual_flags || []), ...(score.visual_note ? [score.visual_note] : [])],
+        resolution: { width: score.width || item.width || null, height: score.height || item.height || null },
         current_published_status: deleted ? 'DELETED' : (photo ? (photo.published === 0 ? 'HIDDEN' : 'PUBLISHED') : 'NOT_FOUND'),
         current_published: deleted || !photo ? null : (photo.published === 0 ? 0 : 1),
         final_owner_decision: owner?.decision || null,
-        final_category: owner?.category || photo?.category || null,
+        final_category: owner?.category || photo?.category || score.category || null,
         final_owner_decision_at: owner?.updated_at || null,
-        pilot_score: curationScores.get(item.photo_id)?.pilot_score ?? null,
-        score_kind: curationScores.get(item.photo_id)?.score_kind ?? null,
-        score_components: curationScores.get(item.photo_id)?.components ?? null
+        score: score.score ?? score.pilot_score ?? null,
+        score_kind: score.score_kind || null,
+        owner_review_required: !!score.owner_review_required,
+        score_components: score.components || null
       };
     });
     const payload = {
       generated_at: new Date().toISOString(),
-      pilot: curationReport.category || 'פרחים וצמחים',
+      scope: 'all_galleries',
       total: rows.length,
+      visual_complete: rows.filter(row => row.score_kind === 'visual_complete').length,
+      owner_review_required: rows.filter(row => row.owner_review_required).length,
       decided: rows.filter(row => row.final_owner_decision).length,
       items: rows
     };
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = 'flower-curation-owner-review.json';
+    link.download = 'portfolio-curation-owner-review.json';
     link.click();
     setTimeout(() => URL.revokeObjectURL(link.href), 0);
-    toast('דוח הקיורציה יוצא');
+    toast('דוח הקיורציה המלא יוצא');
   }
 
   function openCuration(id) {
@@ -3876,7 +3902,7 @@ const Photos = (() => {
       : '<span style="color:var(--text-muted)">לא זוהתה בעיית מטא-דאטה; נדרשת בדיקה ויזואלית מקצועית.</span>';
     const publishedStatus = photo.published === 0 ? 'מוסתר — published=0' : 'מפורסם — published=1';
     const score = curationScores.get(id) || null;
-    const scoreKind = score?.score_kind === 'visual_complete' ? 'ויזואלי מלא' : (score ? 'טכני זמני' : 'ללא ציון');
+    const scoreKind = score?.score_kind === 'visual_complete' ? 'ויזואלי מלא' : (score ? 'ממתין לבדיקה ויזואלית' : 'ללא ציון');
     $('curation-dialog-preview').src = photo.thumbnail || photo.url || '';
     $('curation-dialog-preview').alt = photo.title || 'תמונת פיילוט קיורציה';
     $('curation-dialog-summary').innerHTML =
@@ -3885,7 +3911,7 @@ const Photos = (() => {
       '<div><strong>recommendation:</strong> ' + esc(item.recommendation || '') + ' — ' + esc(labels[item.recommendation] || '') + '</div>' +
       '<div><strong>עדיפות:</strong> ' + esc(priority) + '</div>' +
       '<div><strong>רזולוציה:</strong> ' + esc(item.width || '?') + '×' + esc(item.height || '?') + '</div>' +
-      (score ? '<div><strong>ציון פיילוט:</strong> ' + esc(score.pilot_score) + '/100 — ' + esc(scoreKind) + '</div>' : '') +
+      (score ? '<div><strong>ציון משוכלל:</strong> ' + esc(score.score ?? score.pilot_score ?? 'טרם חושב') + (score.score_kind === 'visual_complete' ? '/100' : '') + ' — ' + esc(scoreKind) + '</div>' : '') +
       (score ? '<div><strong>ציון טכני:</strong> ' + esc(score.technical_score) + '/100</div>' : '') +
       (score ? scoreComponentsHtml(score) : '') +
       '<div><strong>סטטוס פרסום נוכחי:</strong> ' + esc(publishedStatus) + '</div>' +

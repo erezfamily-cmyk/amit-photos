@@ -1,0 +1,134 @@
+name: Portfolio Visual Curation
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/portfolio_visual_curation.py'
+      - '.github/workflows/portfolio-visual-curation.yml'
+  pull_request:
+    paths:
+      - 'src/portfolio_visual_curation.py'
+      - 'tests/test_portfolio_visual_curation.py'
+      - 'data/portfolio-curation-scores.json'
+      - 'admin.html'
+      - '.github/workflows/portfolio-visual-curation.yml'
+  schedule:
+    - cron: '15 7 * * *'
+  workflow_dispatch:
+    inputs:
+      batch_size:
+        description: 'How many still-unreviewed photos to score in this run'
+        required: false
+        default: '200'
+      category:
+        description: 'Optional exact category name; empty means all categories'
+        required: false
+        default: ''
+
+permissions:
+  contents: write
+
+concurrency:
+  group: portfolio-visual-curation
+  cancel-in-progress: false
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install test runtime
+        run: pip install requests
+      - name: Compile
+        run: python -m py_compile src/portfolio_visual_curation.py
+      - name: Policy tests
+        run: python tests/test_portfolio_visual_curation.py
+      - name: Validate checked-in state
+        run: |
+          python - <<'PY'
+          import json
+          r=json.load(open('data/portfolio-curation-scores.json',encoding='utf-8'))
+          assert r['scope']=='all_galleries'
+          assert r['policy']['automatic_delete'] is False
+          assert r['policy']['automatic_hide_by_this_pipeline'] is False
+          assert r['policy']['owner_review_max_score']==85
+          assert len(r['items'])==1390
+          assert all(
+              x['score_kind']=='visual_complete'
+              or (
+                  x['score'] is None
+                  and x['components']['sharpness'] is None
+                  and x['components']['composition'] is None
+                  and x['components']['light_color'] is None
+              )
+              for x in r['items']
+          )
+          print(r['summary'])
+          PY
+
+  score:
+    if: github.event_name != 'pull_request'
+    needs: tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install runtime
+        run: pip install requests
+
+      - name: Run incremental visual review
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.AMIT_PHOTO_AGENT }}
+          BATCH_SIZE: ${{ github.event.inputs.batch_size || '200' }}
+          CATEGORY: ${{ github.event.inputs.category || '' }}
+        run: |
+          args=(--batch-size "$BATCH_SIZE")
+          if [ -n "$CATEGORY" ]; then
+            args+=(--category "$CATEGORY")
+          fi
+          python src/portfolio_visual_curation.py "${args[@]}"
+
+      - name: Validate output
+        run: |
+          python - <<'PY'
+          import json
+          r=json.load(open('data/portfolio-curation-scores.json',encoding='utf-8'))
+          assert r['scope']=='all_galleries'
+          assert r['policy']['automatic_delete'] is False
+          assert r['policy']['automatic_hide_by_this_pipeline'] is False
+          assert len(r['items'])==r['summary']['total']
+          for x in r['items']:
+              if x['score_kind']=='visual_complete':
+                  assert x['score'] is not None
+                  assert all(x['components'][k] is not None for k in ('sharpness','composition','light_color','category_fit'))
+              else:
+                  assert x['score'] is None
+                  assert all(x['components'][k] is None for k in ('sharpness','composition','light_color','category_fit'))
+          print(r['summary'])
+          PY
+
+      - name: Commit score progress
+        run: |
+          if git diff --quiet -- data/portfolio-curation-scores.json; then
+            echo "No score changes"
+            exit 0
+          fi
+          git config user.name "Portfolio Curation Agent"
+          git config user.email "agent@amitphotos.com"
+          git add data/portfolio-curation-scores.json
+          git commit -m "chore: advance portfolio visual curation"
+          git pull --rebase --autostash origin main
+          git push origin main
