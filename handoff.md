@@ -1361,3 +1361,65 @@ Live production smoke:
 The temporary smoke workflow was removed after verification.
 Production payments remain disabled with `PAYMENTS_ENABLED=false`.
 Acquisition Experiment 01 offer/copy/UTM/primary KPI remain unchanged.
+
+
+### Free Guide redesign — bilingual visual edition — 2.10.2026
+
+Goal:
+- replace the old `50tips-heb.pdf` and `50tips-eng.pdf` assets with a significantly more visual, beginner-friendly edition;
+- preserve the existing file names/URLs so current signup/download flows continue to work;
+- use the replacement moment as the new measurement baseline for the Free Guide asset;
+- drive measurable return traffic from the PDF into relevant educational and portfolio pages.
+
+Implementation branch:
+- `feature/free-guide-redesign-2026-10-02`
+- PR #117: `feat: redesign bilingual photography free guide`
+
+What changed:
+- both Hebrew and English guides rebuilt as 13-page photography-magazine style PDFs;
+- 50 tips organized into visual chapters: composition, light/exposure, focus/sharpness, depth-of-field/macro, motion/timing, landscape/architecture, portrait/storytelling, night/color, black-and-white/editing;
+- cover, chapter photography, practice page, and resource/end page use Amit's own portfolio images;
+- image selection restricted to photos already marked:
+  - `visual_complete`
+  - score > 85
+  - `owner_review_required=false`
+  - `material_problem=false`
+- contextual “why this works” explanations were added on chapter images;
+- language was rewritten for beginner photographers, with shorter explanations and reduced unexplained jargon;
+- a short beginner glossary was added;
+- supported technical terms inside the PDF are themselves clickable, linking to the matching guide on amitphotos.com;
+- examples include ISO/aperture/shutter speed/exposure, histogram, focus/continuous focus, depth of field, macro, white balance, panning, portrait, black-and-white, crop/editing;
+- chapter-level “read the full guide” links remain available in addition to term-level links;
+- end page links to:
+  - galleries: `/#gallery`
+  - all photography guides: `/camera/`
+  - photo analysis/learning: `/learn/`
+  - photography locations in Israel: `/locations/`
+  - photography videos: `/videos/`
+
+Measurement:
+- PDF outbound links use:
+  - `utm_source=free_guide`
+  - `utm_medium=pdf`
+  - `utm_campaign=202610_freeguide_photo_tips`
+  - per-link `utm_content` values;
+- final successful build contained:
+  - Hebrew: 13 pages, 70 clickable links;
+  - English: 13 pages, 71 clickable links;
+- replacement of the live PDFs should be treated as the new Day 1 / baseline for evaluating the redesigned guide's downstream site engagement.
+
+Build + QA:
+- repeatable builder: `scripts/build_free_guide.py`
+- build workflow: `.github/workflows/build-free-guide.yml`
+- build metadata: `data/free-guide-build.json`
+- final successful workflow run: `37026971570`
+- generated PDF sizes are ~5.4 MB each;
+- both PDFs rendered page-by-page after generation and were visually reviewed as full montages;
+- no visible clipping, overlap, broken glyphs, or RTL layout failures were found in the final render;
+- final guide build was also verified by `pdfinfo` as A4 / 13 pages for each language.
+
+Important:
+- the old guide content is being replaced in place at the same filenames rather than archived as a second public download;
+- this does not re-enable payments; `PAYMENTS_ENABLED=false` remains unchanged;
+- the Free Guide delivery reliability fixes from PRs #114-#116 remain in place;
+- the design/copy/link changes are limited to the PDF asset and its build tooling.

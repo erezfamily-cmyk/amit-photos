@@ -1,0 +1,33 @@
+{
+  "generated_at": "2026-10-02T15:27:15.835702+00:00",
+  "campaign": "202610_freeguide_photo_tips",
+  "selection_policy": "visual_complete && score > 85 && !owner_review_required && !material_problem",
+  "photo_ids": {
+    "cover": "1z65uWUxPZhNE29Zr2x3nKZT6wtlg5adj",
+    "composition": "1to7-FhYiQPE4OMsTMqzDXpHyIgblTueb",
+    "light": "1PD7M4RiX41DQGMl_1VnBJE_3cO-xIZBi",
+    "focus": "1ZgvZFQ5APlGXKzwrLMe4g7xAA-qPTZ5z",
+    "macro": "1JK0T5D9bSH3ZJJ0_HMWAWVa6bUi-BoaG",
+    "motion": "161Eix_UKWee55fjpQq4gGuiaSjtNIQFw",
+    "landscape": "17Mi83JaiUca3PrKf4BTMG14oIsFlgMjb",
+    "story": "1PeF5YhwImK9XCDNVH0rJvyuf6As_3X7a",
+    "night": "1FcgYpVjgppXtq1eVZUfRSNFMMR-fmlIB",
+    "editing": "1fQMiyv96P6JhiQL9jsPrd65Xt_mghWHO",
+    "extra1": "1-iqxlYN773fYnouAo4H6C4MSrWGWRFZc",
+    "extra2": "1-XeHZVRXouPbQVrsbIMbhWy18f33V6BK"
+  },
+  "outputs": {
+    "he": {
+      "file": "50tips-heb.pdf",
+      "size": 5430565,
+      "pages": 13,
+      "links": 70
+    },
+    "en": {
+      "file": "50tips-eng.pdf",
+      "size": 5403771,
+      "pages": 13,
+      "links": 71
+    }
+  }
+}
