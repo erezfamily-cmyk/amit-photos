@@ -1465,3 +1465,16 @@ Freeze for this 7-day Free Guide measurement window:
 Interpretation note:
 - the earlier Acquisition Experiment 01 timestamps remain historical records for the previous asset/distribution phase;
 - for evaluating the redesigned Free Guide itself, use **2026-10-02 18:55:27 Asia/Jerusalem** as the new baseline and do not mix pre-relaunch Free Guide performance into the 7-day redesigned-guide result.
+
+
+### Admin bulk curation actions — 2.10.2026
+
+Added owner-controlled bulk review helpers in Admin Photos:
+- `בחר <1000px` selects every photo whose **short edge** is below 1000px.
+- `בחר ציון <80` selects only photos with a **completed visual score** below 80; pending/provisional scores are excluded.
+- Added matching stat/filter chips with live counts.
+- Added `HIDE מהפרודקשיין` to the bulk action bar. It sets `published=0` and records owner decision `HIDE`.
+- Existing bulk DELETE stays a separate destructive action with confirmation.
+- No automatic delete/hide runs from these controls; the owner must select and confirm.
+- Mobile-first toolbar behavior is preserved by the existing responsive Admin layout.
+- PayPal/Gelato/payment configuration is unchanged.

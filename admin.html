@@ -1260,11 +1260,14 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
           <option value="category">קטגוריה</option>
         </select>
         <button class="btn btn-ghost btn-sm" id="select-mode-btn">בחר</button>
+        <button class="btn btn-ghost btn-sm" id="select-under-1000-btn" title="בחר את כל התמונות שבהן הצד הקצר קטן מ-1000px">בחר &lt;1000px</button>
+        <button class="btn btn-ghost btn-sm" id="select-score-under-80-btn" title="בחר רק תמונות עם ציון ויזואלי מלא מתחת ל-80">בחר ציון &lt;80</button>
       </div>
       <div class="bulk-bar" id="bulk-bar">
         <span class="bulk-count" id="bulk-count">0 נבחרו</span>
         <button type="button" class="btn btn-sm" style="background:var(--accent-dim);color:var(--accent);border:1px solid var(--accent)" id="bulk-cat-btn">קטגוריה</button>
         <button type="button" class="btn btn-sm" style="background:var(--accent-dim);color:var(--accent);border:1px solid var(--accent)" id="bulk-price-btn">מחיר</button>
+        <button type="button" class="btn btn-sm" style="background:rgba(224,184,85,.12);color:var(--yellow);border:1px solid rgba(224,184,85,.5)" id="bulk-hide-btn">HIDE מהפרודקשיין</button>
         <button type="button" class="btn btn-danger btn-sm" id="bulk-delete-btn">מחק</button>
         <button type="button" class="btn btn-ghost btn-sm" id="bulk-cancel-btn">ביטול</button>
       </div>
@@ -3471,6 +3474,16 @@ const Photos = (() => {
       if (searchQ === '_curation:score-review') return !!curationScores.get(p.id)?.owner_review_required;
       if (searchQ === '_curation:visual-complete') return curationScores.get(p.id)?.score_kind === 'visual_complete';
       if (searchQ === '_curation:pending-visual') return curationScores.get(p.id)?.score_kind !== 'visual_complete';
+      if (searchQ === '_bulk:under-1000') {
+        const score = curationScores.get(p.id);
+        const w = Number(score?.width ?? p.width ?? 0);
+        const h = Number(score?.height ?? p.height ?? 0);
+        return w > 0 && h > 0 && Math.min(w, h) < 1000;
+      }
+      if (searchQ === '_bulk:score-under-80') {
+        const score = curationScores.get(p.id);
+        return score?.score_kind === 'visual_complete' && Number(score.score) < 80;
+      }
       const q = searchQ.toLowerCase();
       return (p.title||'').toLowerCase().includes(q) || (p.category||'').toLowerCase().includes(q);
     });
@@ -3666,7 +3679,9 @@ const Photos = (() => {
         chip(`🎯 ציון מתחת ל-60 ${[...curationScores.values()].filter(x => Number(x.score ?? x.pilot_score ?? 101) < 60).length}`, '_curation:score-low'),
         chip(`⚠ דורש בדיקה ≤85 / בעיה ${[...curationScores.values()].filter(x => x.owner_review_required).length}`, '_curation:score-review'),
         `<div class="stat-chip stat-chip-link" onclick="Photos.startCurationReview()"><strong>▶ מצב Review ${getReviewProgress().reviewed}/${getReviewProgress().total}</strong></div>`,
-        chip(`👁 נבדקו ויזואלית ${curationScoreSummary?.visual_complete || 0}/${curationScoreSummary?.total || data.length}`, '_curation:visual-complete')
+        chip(`👁 נבדקו ויזואלית ${curationScoreSummary?.visual_complete || 0}/${curationScoreSummary?.total || data.length}`, '_curation:visual-complete'),
+        chip(`🗑 צד קצר <1000px ${[...curationScores.values()].filter(x => Number(x.width || 0) > 0 && Number(x.height || 0) > 0 && Math.min(Number(x.width), Number(x.height)) < 1000).length}`, '_bulk:under-1000'),
+        chip(`🙈 ציון ויזואלי <80 ${[...curationScores.values()].filter(x => x.score_kind === 'visual_complete' && Number(x.score) < 80).length}`, '_bulk:score-under-80')
       ] : []),
       ...Object.entries(cats).sort((a,b)=>b[1]-a[1]).map(([c,n])=>chip(`${n} ${c}`, c))
     ].join('');
@@ -4338,6 +4353,39 @@ const Photos = (() => {
     renderGrid();
   });
 
+  function selectAllMatching(predicate, label) {
+    const ids = data.filter(predicate).map(p => p.id);
+    selected = new Set(ids);
+    selectMode = true;
+    $('select-mode-btn').textContent = 'ביטול בחירה';
+    $('bulk-count').textContent = `${selected.size} נבחרו`;
+    $('bulk-bar').classList.toggle('show', selected.size > 0);
+    renderGrid();
+    toast(selected.size ? `${label}: נבחרו ${selected.size} תמונות` : `${label}: לא נמצאו תמונות`);
+  }
+
+  $('select-under-1000-btn').addEventListener('click', () => {
+    searchQ = '_bulk:under-1000';
+    $('photos-search').value = searchQ;
+    resetPhotoPagination();
+    selectAllMatching(p => {
+      const score = curationScores.get(p.id);
+      const w = Number(score?.width ?? p.width ?? 0);
+      const h = Number(score?.height ?? p.height ?? 0);
+      return w > 0 && h > 0 && Math.min(w, h) < 1000;
+    }, 'צד קצר מתחת ל-1000px');
+  });
+
+  $('select-score-under-80-btn').addEventListener('click', () => {
+    searchQ = '_bulk:score-under-80';
+    $('photos-search').value = searchQ;
+    resetPhotoPagination();
+    selectAllMatching(p => {
+      const score = curationScores.get(p.id);
+      return score?.score_kind === 'visual_complete' && Number(score.score) < 80;
+    }, 'ציון ויזואלי מתחת ל-80');
+  });
+
   $('bulk-cancel-btn').addEventListener('click', () => {
     selectMode = false; selected.clear();
     $('select-mode-btn').textContent = 'בחר';
@@ -4345,6 +4393,34 @@ const Photos = (() => {
     renderGrid();
   });
 
+
+  $('bulk-hide-btn').addEventListener('click', async () => {
+    if (!selected.size) return;
+    const ids = [...selected];
+    if (!confirm(`להסתיר ${ids.length} תמונות מהפרודקשיין? הפעולה הפיכה (published=0).`)) return;
+    let hidden = 0;
+    let failed = 0;
+    for (const id of ids) {
+      const photo = data.find(p => p.id === id);
+      if (!photo || photo._source !== 'r2') { failed++; continue; }
+      const res = await fetch('/api/photos', {
+        method: 'PATCH',
+        headers: authHeaders(),
+        body: JSON.stringify({ id, published: false })
+      });
+      if (!res.ok) { failed++; continue; }
+      photo.published = 0;
+      try {
+        await saveCurationDecision(id, 'HIDE', { note: 'Bulk owner HIDE from Admin selection.' });
+      } catch (_) {}
+      hidden++;
+    }
+    selected.clear(); selectMode = false;
+    $('select-mode-btn').textContent = 'בחר';
+    $('bulk-bar').classList.remove('show');
+    render();
+    toast(failed ? `הוסתרו ${hidden}; ${failed} לא עודכנו` : `הוסתרו ${hidden} תמונות מהפרודקשיין`, failed ? 'error' : 'success');
+  });
   $('bulk-delete-btn').addEventListener('click', async () => {
     if (!selected.size) return;
     const count = selected.size;

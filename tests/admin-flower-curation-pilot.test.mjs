@@ -193,3 +193,25 @@ test('pending visual components are shown as not reviewed instead of zero', () =
   assert.match(admin, /טרם נבדק/);
   assert.doesNotMatch(admin, /Number\.isFinite\(Number\(score\.components\[key\]\)\)\)/);
 });
+
+
+test('admin bulk curation selectors expose under-1000 and visual-score-under-80 queues', () => {
+  assert.match(admin, /select-under-1000-btn/);
+  assert.match(admin, /select-score-under-80-btn/);
+  assert.match(admin, /Math\.min\(w, h\) < 1000/);
+  assert.match(admin, /score\?\.score_kind === 'visual_complete' && Number\(score\.score\) < 80/);
+  assert.match(admin, /_bulk:under-1000/);
+  assert.match(admin, /_bulk:score-under-80/);
+});
+
+test('bulk HIDE is reversible and records an owner decision', () => {
+  assert.match(admin, /bulk-hide-btn/);
+  assert.match(admin, /published: false/);
+  assert.match(admin, /הפעולה הפיכה \(published=0\)/);
+  assert.match(admin, /saveCurationDecision\(id, 'HIDE'/);
+});
+
+test('bulk delete remains explicit and separate from HIDE', () => {
+  assert.match(admin, /bulk-delete-btn/);
+  assert.match(admin, /למחוק \$\{count\} תמונות\?/);
+});
