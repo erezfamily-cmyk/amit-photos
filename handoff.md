@@ -1478,3 +1478,20 @@ Added owner-controlled bulk review helpers in Admin Photos:
 - No automatic delete/hide runs from these controls; the owner must select and confirm.
 - Mobile-first toolbar behavior is preserved by the existing responsive Admin layout.
 - PayPal/Gelato/payment configuration is unchanged.
+
+
+### Bulk DELETE tombstone hotfix — 2.10.2026
+
+User reported that photos deleted via the new bulk selector reappeared after refresh.
+
+Root cause:
+- bulk DELETE removed rows from D1/R2 but did not first persist a curation `DELETE` tombstone;
+- Admin reload merges D1 with Drive-backed `data/photos.json`, so a deleted D1 row could immediately reappear as a Drive-only card after refresh, even before the scheduled importer ran.
+
+Fix:
+- bulk DELETE now writes the `DELETE` owner decision before destructive deletion, with rollback of the decision if deletion fails;
+- regular photo-menu DELETE now uses the same tombstone-first behavior;
+- Admin Drive merge excludes any Drive photo whose owner decision is `DELETE`;
+- existing importer protection already honors the same `DELETE` tombstones, so deleted photos remain excluded on later Drive sync runs.
+
+No Google Drive source file is deleted. PayPal/Gelato/payment configuration unchanged.
