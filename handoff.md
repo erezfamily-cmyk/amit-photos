@@ -1030,3 +1030,12 @@ Scoring policy:
 - Google Drive remains the untouched master archive.
 
 This policy supersedes the earlier technical-provisional-only display as the target rollout model.
+
+
+### Admin null visual-score display fix — 2.10.2026
+
+- technical provisional visual components are intentionally null until actual visual review;
+- Admin no longer converts null to misleading 0/100;
+- null visual components now display `טרם נבדק`;
+- real numeric components continue to display their actual score;
+- no underlying score data was changed.

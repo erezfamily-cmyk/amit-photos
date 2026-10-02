@@ -3617,9 +3617,13 @@ const Photos = (() => {
       metadata: 'מטא־דאטה',
       technical_readiness: 'מוכנות טכנית'
     };
-    const parts = Object.entries(labels)
-      .filter(([key]) => Number.isFinite(Number(score.components[key])))
-      .map(([key, label]) => '<div class="curation-score-component"><span>' + label + '</span><strong>' + Number(score.components[key]) + '/100</strong></div>');
+    const parts = Object.entries(labels).map(([key, label]) => {
+      const raw = score.components[key];
+      const hasValue = raw !== null && raw !== undefined && raw !== '' && Number.isFinite(Number(raw));
+      const value = hasValue ? Number(raw) + '/100' : 'טרם נבדק';
+      const muted = hasValue ? '' : ' style="color:var(--text-muted);font-weight:500"';
+      return '<div class="curation-score-component"><span>' + label + '</span><strong' + muted + '>' + value + '</strong></div>';
+    });
     return parts.length ? '<div><strong>פירוט ציון</strong><div class="curation-score-components">' + parts.join('') + '</div></div>' : '';
   }
 
