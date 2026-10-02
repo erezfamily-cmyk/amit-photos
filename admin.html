@@ -3529,7 +3529,10 @@ const Photos = (() => {
     // שלב: D1 קודם, אחר כך Google Drive (ללא כפילויות לפי ID ו-filename)
     const d1Ids = new Set(d1Photos.map(p => p.id));
     const d1Filenames = new Set(d1Photos.map(p => p.filename).filter(Boolean));
-    const drivePhotos = jsonPhotos.filter(p => !d1Ids.has(p.id) && !d1Filenames.has(p.filename)).map(p => ({ ...p, _source: 'drive' }));
+    const drivePhotos = jsonPhotos
+      .filter(p => !d1Ids.has(p.id) && !d1Filenames.has(p.filename))
+      .filter(p => curationDecisions.get(p.id)?.decision !== 'DELETE')
+      .map(p => ({ ...p, _source: 'drive' }));
     data = [...d1Photos.map(p => ({ ...p, _source: 'r2' })), ...drivePhotos];
     render();
     initUpload();
@@ -4117,11 +4120,29 @@ const Photos = (() => {
 
   async function confirmDelete(id) {
     const photo = data.find(p => p.id === id);
-    if (!confirm(`למחוק את "${photo?.title||'תמונה זו'}"?`)) return;
-    await fetch(`/api/photos?id=${id}`, { method: 'DELETE', headers: authHeaders() });
-    data = data.filter(p => p.id !== id);
-    render();
-    toast('תמונה נמחקה');
+    if (!confirm(`למחוק את "${photo?.title||'תמונה זו'}"? המחיקה תישמר גם מול Google Drive.`)) return;
+    const previousDecision = curationDecisions.get(id) || null;
+    try {
+      await saveCurationDecision(id, 'DELETE', { note: 'Owner DELETE from Admin photo menu.' });
+      const res = await fetch(`/api/photos?id=${encodeURIComponent(id)}`, { method: 'DELETE', headers: authHeaders() });
+      if (!res.ok) {
+        const payload = await res.json().catch(() => ({}));
+        if (previousDecision?.decision) {
+          await saveCurationDecision(id, previousDecision.decision, {
+            category: previousDecision.category || '',
+            note: previousDecision.note || ''
+          });
+        } else {
+          await saveCurationDecision(id, '');
+        }
+        throw new Error(payload.error || 'מחיקת התמונה נכשלה');
+      }
+      data = data.filter(p => p.id !== id);
+      render();
+      toast('תמונה נמחקה ולא תחזור מ-Drive');
+    } catch (err) {
+      toast(err.message || 'מחיקת התמונה נכשלה', 'error');
+    }
   }
 
   function initUpload() {
@@ -4423,17 +4444,42 @@ const Photos = (() => {
   });
   $('bulk-delete-btn').addEventListener('click', async () => {
     if (!selected.size) return;
-    const count = selected.size;
-    if (!confirm(`למחוק ${count} תמונות?`)) return;
-    for (const id of [...selected]) {
-      await fetch(`/api/photos?id=${id}`, { method: 'DELETE', headers: authHeaders() });
-      data = data.filter(p => p.id !== id);
+    const ids = [...selected];
+    const count = ids.length;
+    if (!confirm(`למחוק ${count} תמונות? המחיקה תישמר גם מול Google Drive ולא ניתן לבטל אותה מהאתר.`)) return;
+    let deleted = 0;
+    let failed = 0;
+    for (const id of ids) {
+      const photo = data.find(p => p.id === id);
+      if (!photo || photo._source !== 'r2') { failed++; continue; }
+      const previousDecision = curationDecisions.get(id) || null;
+      try {
+        await saveCurationDecision(id, 'DELETE', { note: 'Bulk owner DELETE from Admin selection.' });
+        const res = await fetch(`/api/photos?id=${encodeURIComponent(id)}`, { method: 'DELETE', headers: authHeaders() });
+        if (!res.ok) {
+          const payload = await res.json().catch(() => ({}));
+          if (previousDecision?.decision) {
+            await saveCurationDecision(id, previousDecision.decision, {
+              category: previousDecision.category || '',
+              note: previousDecision.note || ''
+            });
+          } else {
+            await saveCurationDecision(id, '');
+          }
+          throw new Error(payload.error || 'מחיקת התמונה נכשלה');
+        }
+        data = data.filter(p => p.id !== id);
+        deleted++;
+      } catch (err) {
+        console.error('bulk delete failed', id, err);
+        failed++;
+      }
     }
     selected.clear(); selectMode = false;
     $('select-mode-btn').textContent = 'בחר';
     $('bulk-bar').classList.remove('show');
     render();
-    toast(`נמחקו ${count} תמונות`);
+    toast(failed ? `נמחקו ${deleted}; ${failed} נכשלו` : `נמחקו ${deleted} תמונות ולא יחזרו מ-Drive`, failed ? 'error' : 'success');
   });
 
   // Bulk category
