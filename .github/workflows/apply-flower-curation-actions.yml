@@ -30,47 +30,74 @@ jobs:
           print('validated', len(actions), 'HIDE actions')
           PY
 
-      - name: Apply HIDE to production and persist owner decisions
-        env:
-          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
+      - name: Build D1 SQL
         run: |
           python - <<'PY'
-          import json, os, urllib.request
-          base='https://amitphotos.com'
-          password=os.environ.get('ADMIN_PASSWORD','')
-          if not password:
-              raise SystemExit('ADMIN_PASSWORD secret is missing')
+          import json
           actions=json.load(open('data/flower-curation-actions-v1.json',encoding='utf-8'))['actions']
-          headers={'Content-Type':'application/json','X-Admin-Password':password}
+          ids=[a['photo_id'] for a in actions]
+          q=lambda s: "'" + s.replace("'","''") + "'"
+          in_list=",".join(q(x) for x in ids)
+          pairs=[]
+          for x in ids:
+              path='$."' + x.replace('"','\"') + '"'
+              pairs.append(q(path))
+              pairs.append("json_object('decision','HIDE','note','Applied by flower-curation pilot v1 after visual review; reversible.','updated_at',strftime('%Y-%m-%dT%H:%M:%fZ','now'))")
+          sql=f"""UPDATE photos SET published=0 WHERE id IN ({in_list});
+          INSERT INTO settings(key,value) VALUES('flower_curation_decisions_v1','{{}}')
+          ON CONFLICT(key) DO NOTHING;
+          UPDATE settings SET value=json_set(CASE WHEN json_valid(value) THEN value ELSE '{{}}' END,{','.join(pairs)})
+          WHERE key='flower_curation_decisions_v1';
+          """
+          open('/tmp/flower-hide.sql','w',encoding='utf-8').write(sql)
+          print(sql)
+          PY
 
-          def call(path, method='GET', payload=None):
-              data=None if payload is None else json.dumps(payload).encode()
-              req=urllib.request.Request(base+path,data=data,headers=headers,method=method)
-              with urllib.request.urlopen(req,timeout=30) as r:
-                  body=r.read().decode()
-                  if r.status < 200 or r.status >= 300:
-                      raise RuntimeError(f'{method} {path}: {r.status} {body[:200]}')
-                  return json.loads(body) if body else {}
+      - name: Apply HIDE directly to production D1
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: npx wrangler d1 execute amit-photos-db --remote --file /tmp/flower-hide.sql
 
-          for action in actions:
-              pid=action['photo_id']
-              call('/api/photos','PATCH',{'id':pid,'published':False})
-              call('/api/admin/curation-decisions','POST',{
-                  'photo_id':pid,'decision':'HIDE',
-                  'note':'Applied by flower-curation pilot v1 after visual review; reversible.'
-              })
-              print('HIDDEN', pid, action.get('title',''))
+      - name: Purge public cache
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ZONE_ID: ${{ secrets.CLOUDFLARE_ZONE_ID }}
+        run: |
+          curl -fsS -X POST "https://api.cloudflare.com/client/v4/zones/${CLOUDFLARE_ZONE_ID}/purge_cache"             -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}"             -H "Content-Type: application/json"             --data '{"purge_everything":true}' > /tmp/purge.json
+          python - <<'PY'
+          import json
+          r=json.load(open('/tmp/purge.json'))
+          assert r.get('success') is True, r
+          print('cache purge verified')
+          PY
 
-          admin=call('/api/photos?admin=1')
-          by_id={p['id']:p for p in admin}
-          for action in actions:
-              row=by_id.get(action['photo_id'])
-              assert row is not None, action['photo_id']
-              assert int(row.get('published',1))==0, (action['photo_id'],row.get('published'))
-
-          public=call('/api/photos')
+      - name: Verify D1 and public gallery
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          IDS="'15h8IlkqnlorfEseEFBHjNikOSgMvsCQ_','1Tpaw2ooFcWip-poF5_tXOxN1K-PQHpWA','1yu2k9PJbstdauHCz0dVbM9QMNSiPR-lI','1PcDKeeJvmjYmuSALPGTVgclA0mmup8z7'"
+          npx wrangler d1 execute amit-photos-db --remote --command "SELECT id,published FROM photos WHERE id IN (${IDS}) ORDER BY id" --json > /tmp/d1.json
+          curl -fsS "https://amitphotos.com/api/photos?_curation_verify=$(date +%s)" > /tmp/public.json
+          python - <<'PY'
+          import json
+          target={
+            '15h8IlkqnlorfEseEFBHjNikOSgMvsCQ_',
+            '1Tpaw2ooFcWip-poF5_tXOxN1K-PQHpWA',
+            '1yu2k9PJbstdauHCz0dVbM9QMNSiPR-lI',
+            '1PcDKeeJvmjYmuSALPGTVgclA0mmup8z7',
+          }
+          d1=json.load(open('/tmp/d1.json'))
+          rows=[]
+          for block in d1:
+              rows.extend(block.get('results',[]))
+          by_id={r['id']:int(r['published']) for r in rows}
+          assert target == set(by_id), (target, by_id)
+          assert all(by_id[x] == 0 for x in target), by_id
+          public=json.load(open('/tmp/public.json'))
           public_ids={p['id'] for p in public}
-          leaked=[a['photo_id'] for a in actions if a['photo_id'] in public_ids]
-          assert not leaked, f'HIDDEN photos still public: {leaked}'
-          print('verified: all 4 are hidden from public production')
+          leaked=target & public_ids
+          assert not leaked, f'HIDDEN photos still public: {sorted(leaked)}'
+          print('verified: all 4 are published=0 and absent from public production')
           PY
