@@ -1,0 +1,42 @@
+name: PayPal Orders v2 CI
+
+on:
+  pull_request:
+    paths:
+      - 'paypal-orders.js'
+      - 'worker.js'
+      - 'migrations/0001_paypal_orders_v2.sql'
+      - 'migrations/0002_paypal_security_hardening.sql'
+      - 'wrangler.paypal-sandbox.example.toml'
+      - 'staging/paypal-sandbox-bootstrap.sql'
+      - 'tests/paypal-orders-v2.test.mjs'
+      - 'tests/paypal-staging-isolation.test.mjs'
+      - '.github/workflows/node-tests.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'paypal-orders.js'
+      - 'worker.js'
+      - 'migrations/0001_paypal_orders_v2.sql'
+      - 'migrations/0002_paypal_security_hardening.sql'
+      - 'wrangler.paypal-sandbox.example.toml'
+      - 'staging/paypal-sandbox-bootstrap.sql'
+      - 'tests/paypal-orders-v2.test.mjs'
+      - 'tests/paypal-staging-isolation.test.mjs'
+      - '.github/workflows/node-tests.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  paypal-orders-v2:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Run PayPal Orders v2 security and isolation suite
+        run: node --test tests/paypal-orders-v2.test.mjs tests/paypal-staging-isolation.test.mjs

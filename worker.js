@@ -1,3 +1,4 @@
+import { handlePayPalCreateOrder, handlePayPalCaptureOrder, handlePayPalSandboxStatus, handlePayPalWebhook, handlePayPalCheckoutReturn, handlePayPalSandboxCleanup } from './paypal-orders.js';
 // Cloudflare Worker — amit-photos
 // מטפל בנתיבי API ומגיש static assets
 
@@ -16,7 +17,7 @@ function corsHeaders(request) {
     'Content-Type': 'application/json',
     'Access-Control-Allow-Origin': allowed,
     'Access-Control-Allow-Methods': 'GET,POST,DELETE,PATCH,OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type,X-Session-Token',
+    'Access-Control-Allow-Headers': 'Content-Type,X-Session-Token,Idempotency-Key',
     'Vary': 'Origin',
     'Cache-Control': 'no-store',
   };
@@ -53,6 +54,11 @@ export {
   paymentsEnabled,
   paymentsDisabledResponse,
   handlePaymentsStatus,
+  handlePayPalCreateOrder,
+  handlePayPalCaptureOrder,
+  handlePayPalSandboxStatus,
+  handlePayPalWebhook,
+  handlePayPalSandboxCleanup,
   handleVerifyPayment,
   handlePrintOrderComplete,
   handlePrintWebhook,
@@ -7936,8 +7942,29 @@ export default {
     if (path === '/api/newsletter')        return handleNewsletter(request, env);
     if (path === '/api/unsubscribe')       return handleUnsubscribe(request, env);
     if (path === '/api/reply')             return handleReply(request, env);
-    if (path === '/api/verify-payment')    return handleVerifyPayment(request, env, ctx);
-    if (path === '/api/payments-status')   return handlePaymentsStatus(request, env);
+    if (path === '/api/admin/paypal/sandbox-status') {
+      if (!await checkAuth(request, env)) return unauth(request);
+      return handlePayPalSandboxStatus(request, env);
+    }
+    if (path === '/api/admin/paypal/create-order') {
+      if (!await checkAuth(request, env)) return unauth(request);
+      return handlePayPalCreateOrder(request, env, { allowWhenPaymentsDisabled: true, includeApproveUrl: true });
+    }
+    if (path === '/api/admin/paypal/capture-order') {
+      if (!await checkAuth(request, env)) return unauth(request);
+      return handlePayPalCaptureOrder(request, env, { allowWhenPaymentsDisabled: true });
+    }
+    if (path === '/api/admin/paypal/cleanup') {
+      if (!await checkAuth(request, env)) return unauth(request);
+      return handlePayPalSandboxCleanup(request, env);
+    }
+    if (path === '/api/paypal/webhook') return handlePayPalWebhook(request, env);
+    if (path === '/api/paypal/approved') return handlePayPalCheckoutReturn(request, true);
+    if (path === '/api/paypal/cancelled') return handlePayPalCheckoutReturn(request, false);
+    if (path === '/api/paypal/create-order') return handlePayPalCreateOrder(request, env);
+    if (path === '/api/paypal/capture-order') return handlePayPalCaptureOrder(request, env);
+    if (path === '/api/verify-payment') return jsonRes({ error: 'LEGACY_PAYMENT_ENDPOINT_REMOVED' }, 410, request);
+    if (path === '/api/payments-status') return handlePaymentsStatus(request, env);
     if (path === '/api/admin/purchases')   return handleAdminPurchases(request, env);
     if (path === '/api/admin/create-token' && request.method === 'POST') return handleAdminCreateToken(request, env);
     if (path === '/api/new-badge-settings') return handleNewBadgeSettings(request, env);
@@ -8087,7 +8114,7 @@ export default {
     if (path === '/api/print/catalog')        return handlePrintCatalog(request, env);
     if (path === '/api/print/quote')          return handlePrintQuote(request, env);
     if (path === '/api/print/upload-crop')    return handlePrintUploadCrop(request, env);
-    if (path === '/api/print/order-complete') return handlePrintOrderComplete(request, env);
+    if (path === '/api/print/order-complete') return jsonRes({ error: 'LEGACY_PAYMENT_ENDPOINT_REMOVED' }, 410, request);
     if (path === '/api/print/cancel')         return handlePrintCancel(request, env);
     if (path === '/api/print/webhook')        return handlePrintWebhook(request, env);
     if (path === '/api/print/refresh-status') return handlePrintRefreshStatus(request, env);
