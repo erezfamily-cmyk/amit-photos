@@ -103,6 +103,36 @@ class PortfolioVisualCurationTests(unittest.TestCase):
         self.assertFalse(item["owner_review_required"])
         self.assertEqual(item["recommended_action"], "KEEP_CANDIDATE")
 
+    def test_visual_review_prefers_full_image_over_thumbnail(self):
+        photo = {
+            "url": "/photos/full.webp",
+            "thumbnail": "/photos/thumb/full.webp",
+        }
+        self.assertEqual(mod.image_url(photo), "https://amitphotos.com/photos/full.webp")
+
+    def test_gallery_rollout_stays_on_first_incomplete_gallery(self):
+        state = {
+            "items": [
+                {"category": "פרחים וצמחים", "score_kind": "visual_complete", "owner_review_required": False},
+                {"category": "בעלי חיים", "score_kind": "pending_visual", "owner_review_required": False},
+                {"category": "ישראל", "score_kind": "pending_visual", "owner_review_required": False},
+            ]
+        }
+        self.assertEqual(mod.next_incomplete_category(state), "בעלי חיים")
+        progress = mod.category_progress(state["items"])
+        self.assertTrue(progress["פרחים וצמחים"]["completed"])
+        self.assertFalse(progress["בעלי חיים"]["completed"])
+
+    def test_gallery_rollout_moves_forward_only_after_completion(self):
+        state = {
+            "items": [
+                {"category": "פרחים וצמחים", "score_kind": "visual_complete", "owner_review_required": False},
+                {"category": "בעלי חיים", "score_kind": "visual_complete", "owner_review_required": True},
+                {"category": "ישראל", "score_kind": "pending_visual", "owner_review_required": False},
+            ]
+        }
+        self.assertEqual(mod.next_incomplete_category(state), "ישראל")
+
     def test_pipeline_is_advisory_only(self):
         source = (ROOT / "src" / "portfolio_visual_curation.py").read_text(encoding="utf-8")
         self.assertNotIn("/api/photos", source)
