@@ -836,3 +836,14 @@ PayPal חוזר רק כמסלול **Digital-only canary**, ורק אם:
 - [x] להשאיר את Google Drive כ-master archive ללא מחיקות/העברות אוטומטיות.
 - [ ] להרחיב את מנגנון הקיורציה מהפיילוט לכל גלריה בהדרגה, בלי לדרוס owner decisions קיימות.
 - [ ] למדוד לאחר rollout האם click-through מגלריה לתמונה משתפר.
+
+
+## Visual scoring rollout — all galleries
+- [ ] לשמר ללא שינוי תמונות שכבר קיבלו owner decision.
+- [ ] לבצע visual review אמיתי לכל שאר התמונות: חדות, קומפוזיציה, אור/צבע.
+- [ ] לא להציג 0/100 עבור שדה שלא נבדק; להציג `טרם נבדק`.
+- [ ] לחשב score משוקלל מלא רק אחרי השלמת visual components.
+- [ ] להציג לבעל האתר רק תמונות עם score <=85 או issue מהותי.
+- [ ] תמונות מעל 85 יישארו ללא owner-review queue.
+- [ ] low-resolution מתחת לסף המאושר יעבור ל-HIDE אוטומטי בלבד, ללא DELETE וללא שינוי ב-Drive.
+- [ ] להרחיב את אותה שיטת scoring/Review Mode לכל הגלריות.
