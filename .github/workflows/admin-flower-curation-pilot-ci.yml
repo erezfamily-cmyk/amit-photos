@@ -8,6 +8,9 @@ on:
     paths:
       - 'admin.html'
       - 'data/flower-curation-pilot.json'
+      - 'data/flower-curation-scores.json'
+      - 'data/flower-curation-actions-v1.json'
+      - '.github/workflows/apply-flower-curation-actions.yml'
       - 'tests/admin-flower-curation-pilot.test.mjs'
       - '.github/workflows/admin-flower-curation-pilot-ci.yml'
   workflow_dispatch:
