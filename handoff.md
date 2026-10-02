@@ -1078,3 +1078,33 @@ Safety / next step:
 - Automatic low-resolution HIDE has NOT yet been connected in PR #105. Keep it as a separate reversible production action so it can explicitly protect any existing KEEP / KEEP_SECONDARY owner decisions.
 - Google Drive remains the untouched master archive.
 - PAYMENTS_ENABLED remains false; PayPal PR #76 and Gelato remain separate/out of scope.
+
+
+### Critical low-resolution auto-HIDE — 2.10.2026
+
+PR #106 added the reversible auto-HIDE policy for critically low-resolution photos.
+Its first production run stopped before changing any photo because the Cloudflare deployment token could not read D1 directly.
+
+Hotfix PR #108 then moved the production action to the existing authenticated Admin API and merged as:
+`22b8a5d969057bcb86893d153e43f7b59a47714e`.
+
+Final production result:
+- critical candidates under threshold (long edge <1200px OR short edge <800px): 42
+- existing owner decisions found overall: 30
+- critical candidates protected because they already had an owner decision: 6
+- eligible critical candidates: 36
+- actually HIDDEN: 36
+- late protected during per-photo recheck: 0
+- public-gallery verification: all 36 applied IDs are absent ✅
+- DELETE operations: 0
+- Google Drive changes: 0
+- public cache purge: success
+
+Safety behavior:
+- any existing owner decision protects a photo from the resolution automation;
+- HIDE is applied only through `published=false` and a stored HIDE curation decision;
+- owner decisions are re-checked immediately before every individual mutation;
+- if saving the HIDE decision fails after publication is changed, the workflow attempts to roll `published` back to true;
+- no file is removed from R2 or Google Drive.
+
+The visual-scoring workflow from PR #105 is independent of this resolution action and continues filling real visual scores incrementally.
