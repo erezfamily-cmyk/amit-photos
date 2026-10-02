@@ -1,0 +1,33 @@
+name: Gallery Taxonomy CI
+
+on:
+  pull_request:
+    paths:
+      - 'assets/js/gallery.js'
+      - 'assets/js/i18n.js'
+      - 'assets/css/style.css'
+      - 'data/gallery-taxonomy.json'
+      - 'tests/gallery-taxonomy.test.mjs'
+      - '.github/workflows/gallery-taxonomy-ci.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'assets/js/gallery.js'
+      - 'assets/js/i18n.js'
+      - 'assets/css/style.css'
+      - 'data/gallery-taxonomy.json'
+      - 'tests/gallery-taxonomy.test.mjs'
+
+permissions:
+  contents: read
+
+jobs:
+  taxonomy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --test tests/gallery-taxonomy.test.mjs

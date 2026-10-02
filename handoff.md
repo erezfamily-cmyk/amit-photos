@@ -994,3 +994,39 @@ Safety:
 - Drive scan behavior is unchanged: KEEP_SECONDARY remains an owner decision and the Drive source file is untouched.
 
 No HIDE, DELETE, category change, or payment behavior is triggered by KEEP_SECONDARY.
+
+
+### Gallery taxonomy consolidation — 2.10.2026
+
+Business decision implemented at the public-navigation layer:
+- 7 subject galleries remain top-level.
+- `מקומות בעולם` is the 8th primary destination and contains all 18 geographic categories.
+- Added missing `גאורגיה` to the location grouping.
+- `שחור-לבן` and `צילומי לילה` are shown in a separate Style row instead of as primary galleries.
+- All 1,390 photos remain available; this is a discovery/navigation change, not content deletion.
+- Google Drive remains the master archive. No file was deleted, moved or renamed in Drive.
+- Added `data/gallery-taxonomy.json` and `docs/gallery-taxonomy-business-2026-10-02.md` as the canonical taxonomy snapshot.
+
+Curation direction:
+- flower-pilot workflow is the template for rollout to other galleries;
+- owner decisions are preserved;
+- KEEP_SECONDARY remains public but at gallery tail;
+- HIDE remains reversible;
+- no automatic Drive deletion.
+
+
+### All-gallery visual scoring policy — 2.10.2026
+
+Owner approved expanding the successful flower-pilot curation model to the rest of the portfolio.
+
+Scoring policy:
+- preserve existing owner-reviewed decisions; do not overwrite photos the owner already reviewed;
+- all remaining photos must receive actual visual review for sharpness, composition, and light/color before those components are scored;
+- missing visual review must display `טרם נבדק`, never misleading `0/100`;
+- full weighted score is authoritative only after visual components are populated;
+- owner Review queue contains only score <=85 or materially problematic photos;
+- score >85 does not require owner confirmation;
+- low-resolution below the approved threshold may be auto-HIDE (reversible) but never auto-DELETE;
+- Google Drive remains the untouched master archive.
+
+This policy supersedes the earlier technical-provisional-only display as the target rollout model.
