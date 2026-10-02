@@ -75,10 +75,10 @@ Before first distribution:
 - [x] UTM builder live
 - [x] Business Live Verification green
 - [x] `PAYMENTS_ENABLED=false`
-- [ ] First distribution action published/sent
-- [ ] Record exact launch timestamp below
+- [x] First distribution action published/sent — Free Guide Instagram Story
+- [x] Record exact launch timestamp below
 
-Launch timestamp: **not started**
+Launch timestamp: **2026-10-02 15:03:19 Asia/Jerusalem**
 
 ## Freeze rules for the 7-day window
 
@@ -112,3 +112,16 @@ Record for each path:
 Decision after 7 days:
 - choose one strongest follow-up only;
 - if no clear signal, improve distribution before building more commerce.
+
+
+## Instagram verification
+
+First live distribution:
+- channel: Instagram Story
+- account: `amite`
+- story id: `17882329722524331`
+- published: `2026-10-02T12:03:19Z` / `2026-10-02 15:03:19 Asia/Jerusalem`
+- experiment status: **Day 1 / measuring**
+- Free Guide campaign: `202610_freeguide_photo_tips`
+
+The 7-day measurement window starts from this publication timestamp.
