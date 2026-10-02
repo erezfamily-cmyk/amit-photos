@@ -256,13 +256,14 @@ test('existing subscriber response does not look like a new lead', async () => {
   }), env);
   assert.equal(res.status, 200);
   const body = await res.json();
-  assert.deepEqual(body, {
-    ok: true,
-    already: true,
-    created: false,
-    marketing_upgraded: false,
-    lead_created: false,
-  });
+  assert.equal(body.ok, true);
+  assert.equal(body.already, true);
+  assert.equal(body.created, false);
+  assert.equal(body.marketing_upgraded, false);
+  assert.equal(body.lead_created, false);
+  assert.equal(body.email_sent, false);
+  assert.equal(body.email_delivery_attempted, false);
+  assert.equal(body.download_url, 'https://amitphotos.com/50tips-heb.pdf');
 });
 
 test('existing subscriber response marks a real marketing-consent upgrade', async () => {
