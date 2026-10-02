@@ -118,22 +118,23 @@ test('production curation action plan is reversible HIDE only', () => {
   assert.equal(actions.actions.length, 4);
   assert.ok(actions.actions.every(x => x.action === 'HIDE'));
   assert.ok(actions.actions.every(x => !/DELETE/.test(x.action)));
-  assert.match(admin, /flower-curation-scores\.json/);
+  assert.match(admin, /portfolio-curation-scores\.json/);
   assert.match(admin, /curationScoreBadge/);
   assert.match(admin, /ציון פיילוט/);
 });
 
 
-test('photos scored 0-89 are visibly reviewable in admin', () => {
-  const scores = JSON.parse(fs.readFileSync('data/flower-curation-scores.json', 'utf8'));
-  assert.equal(scores.items.filter(x => x.pilot_score < 90).length, 29);
+test('owner review queue follows the approved <=85 or material-problem policy', () => {
+  const scores = JSON.parse(fs.readFileSync('data/portfolio-curation-scores.json', 'utf8'));
+  assert.equal(scores.policy.owner_review_max_score, 85);
+  assert.equal(scores.policy.score_above_threshold_requires_owner_review, false);
   assert.match(admin, /_curation:score-review/);
-  assert.match(admin, /⚠ לבחינה 0–89/);
-  assert.match(admin, /⚠ לבחינה/);
+  assert.match(admin, /דורש בדיקה ≤85 \/ בעיה/);
+  assert.match(admin, /owner_review_required/);
 });
 
 
-test('under-90 review cue is rendered as an image overlay', () => {
+test('owner-review cue is rendered as an image overlay', () => {
   assert.match(admin, /function curationReviewOverlay\(p\)/);
   assert.match(admin, /class="curation-review-overlay"/);
   assert.match(admin, /⚠ לבחינה <strong>/);
@@ -142,7 +143,7 @@ test('under-90 review cue is rendered as an image overlay', () => {
 });
 
 
-test('flower Review Mode guides the 0-89 queue', () => {
+test('Review Mode guides only the owner-review queue', () => {
   assert.match(admin, /function getReviewCandidateIds\(\)/);
   assert.match(admin, /function startCurationReview\(startId = null\)/);
   assert.match(admin, /function advanceReviewAfterDecision\(currentId\)/);
@@ -181,12 +182,13 @@ test('curation decision changes invalidate the cached public gallery ordering', 
 });
 
 
-test('null visual components are shown as not reviewed instead of zero', () => {
-  const scores = JSON.parse(fs.readFileSync('data/flower-curation-scores.json', 'utf8'));
-  const provisional = scores.items.find(x => x.score_kind === 'technical_provisional');
-  assert.equal(provisional.components.sharpness, null);
-  assert.equal(provisional.components.composition, null);
-  assert.equal(provisional.components.light_color, null);
+test('pending visual components are shown as not reviewed instead of zero', () => {
+  const scores = JSON.parse(fs.readFileSync('data/portfolio-curation-scores.json', 'utf8'));
+  const pending = scores.items.find(x => x.score_kind === 'pending_visual');
+  assert.equal(pending.score, null);
+  assert.equal(pending.components.sharpness, null);
+  assert.equal(pending.components.composition, null);
+  assert.equal(pending.components.light_color, null);
   assert.match(admin, /raw !== null && raw !== undefined/);
   assert.match(admin, /טרם נבדק/);
   assert.doesNotMatch(admin, /Number\.isFinite\(Number\(score\.components\[key\]\)\)\)/);
