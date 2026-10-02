@@ -979,3 +979,18 @@ Safety:
 - HIDE still requires the existing explicit confirmation and remains reversible via `published=0`;
 - DELETE remains outside the large Review Mode action row and still requires its destructive confirmation;
 - scores do not auto-hide, auto-delete, auto-recategorize or auto-reorder photos.
+
+
+### KEEP_SECONDARY public-gallery behavior — 2.10.2026
+
+`KEEP_SECONDARY` now has a concrete public-site meaning:
+- the photo stays published and remains in its current category;
+- it is moved behind regular / KEEP photos in the public gallery;
+- existing manual / newest ordering is preserved inside the primary tier and inside the secondary tier (stable partition);
+- category filtering inherits the same behavior because the public API ordering is preserved by the gallery client;
+- Featured ordering is intentionally unchanged for now;
+- Admin ordering is unchanged;
+- changing a curation decision invalidates the cached public photo response so the new ordering can appear immediately;
+- Drive scan behavior is unchanged: KEEP_SECONDARY remains an owner decision and the Drive source file is untouched.
+
+No HIDE, DELETE, category change, or payment behavior is triggered by KEEP_SECONDARY.

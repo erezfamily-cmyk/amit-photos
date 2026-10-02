@@ -824,5 +824,6 @@ PayPal חוזר רק כמסלול **Digital-only canary**, ורק אם:
 - [ ] לאחר visual review: להחליט ידנית KEEP / HIDE / DELETE / RE-CATEGORY.
 - [ ] למדוד אם תהליך הפיילוט ברור ונוח לפני הרחבה לקטגוריה נוספת.
 - [x] להוסיף Review Mode ל-29 התמונות בציון 0–89: progress, lowest-score-first, auto-next ו-✅ נבדק.
+- [x] לתת ל-KEEP_SECONDARY משמעות ציבורית: להעביר לסוף הגלריה תוך שמירת הסדר הפנימי.
 
 כלל: לא מסתירים ולא מוחקים אוטומטית על בסיס metadata בלבד.
