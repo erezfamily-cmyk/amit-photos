@@ -3432,6 +3432,7 @@ const Photos = (() => {
       if (searchQ === '_curation:pending') return !!curationById.get(p.id) && !curationDecisions.has(p.id);
       if (searchQ === '_curation:decided') return !!curationById.get(p.id) && curationDecisions.has(p.id);
       if (searchQ === '_curation:score-low') return (curationScores.get(p.id)?.pilot_score ?? 101) < 60;
+      if (searchQ === '_curation:score-review') return (curationScores.get(p.id)?.pilot_score ?? 101) < 90;
       if (searchQ === '_curation:visual-complete') return curationScores.get(p.id)?.score_kind === 'visual_complete';
       const q = searchQ.toLowerCase();
       return (p.title||'').toLowerCase().includes(q) || (p.category||'').toLowerCase().includes(q);
@@ -3499,6 +3500,7 @@ const Photos = (() => {
         chip(`טרם הוחלט ${Math.max(0, (curationReport.summary?.total || 0) - curationDecisions.size)}`, '_curation:pending'),
         chip(`הוחלט ${curationDecisions.size}`, '_curation:decided'),
         chip(`🎯 ציון מתחת ל-60 ${[...curationScores.values()].filter(x => x.pilot_score < 60).length}`, '_curation:score-low'),
+        chip(`⚠ לבחינה 0–89 ${[...curationScores.values()].filter(x => x.pilot_score < 90).length}`, '_curation:score-review'),
         chip(`👁 נבדקו ויזואלית ${curationScoreSummary?.visual_complete || 0}/${curationReport.summary?.total || 0}`, '_curation:visual-complete')
       ] : []),
       ...Object.entries(cats).sort((a,b)=>b[1]-a[1]).map(([c,n])=>chip(`${n} ${c}`, c))
@@ -3539,7 +3541,8 @@ const Photos = (() => {
     const title = score.score_kind === 'visual_complete'
       ? 'ציון ויזואלי מלא'
       : 'ציון טכני זמני — טרם הושלמה בדיקה ויזואלית';
-    return '<span title="' + title + '" style="margin-inline-start:.3rem;border:1px solid ' + color + '55;background:' + color + '18;color:' + color + ';border-radius:999px;padding:.15rem .42rem;font-size:.62rem;font-weight:700">' + kind + ' ' + value + '</span>';
+    const review = value < 90 ? '<span title="מומלץ לעבור על התמונה ידנית" style="margin-inline-start:.3rem;border:1px solid #f59e0b55;background:#f59e0b18;color:#f59e0b;border-radius:999px;padding:.15rem .42rem;font-size:.62rem;font-weight:700">⚠ לבחינה</span>' : '';
+    return '<span title="' + title + '" style="margin-inline-start:.3rem;border:1px solid ' + color + '55;background:' + color + '18;color:' + color + ';border-radius:999px;padding:.15rem .42rem;font-size:.62rem;font-weight:700">' + kind + ' ' + value + '</span>' + review;
   }
 
   function curationDecisionBadge(p) {

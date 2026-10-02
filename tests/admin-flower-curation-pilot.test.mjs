@@ -121,3 +121,12 @@ test('production curation action plan is reversible HIDE only', () => {
   assert.match(admin, /curationScoreBadge/);
   assert.match(admin, /ציון פיילוט/);
 });
+
+
+test('photos scored 0-89 are visibly reviewable in admin', () => {
+  const scores = JSON.parse(fs.readFileSync('data/flower-curation-scores.json', 'utf8'));
+  assert.equal(scores.items.filter(x => x.pilot_score < 90).length, 29);
+  assert.match(admin, /_curation:score-review/);
+  assert.match(admin, /⚠ לבחינה 0–89/);
+  assert.match(admin, /⚠ לבחינה/);
+});
