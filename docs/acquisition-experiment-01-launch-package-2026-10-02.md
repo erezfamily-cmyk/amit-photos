@@ -125,3 +125,17 @@ First live distribution:
 - Free Guide campaign: `202610_freeguide_photo_tips`
 
 The 7-day measurement window starts from this publication timestamp.
+
+
+## Threads verification
+
+Second live distribution:
+- channel: Threads
+- account: `Amit Erez (amite)`
+- post id: `17906411154574588`
+- permalink: `https://www.threads.com/@amite/post/Dd_dv6lDZUX`
+- published: `2026-10-02T12:17:23Z` / `2026-10-02 15:17:23 Asia/Jerusalem`
+- path: Personal Digital Licensing
+- campaign: `202610_licensing_personal`
+
+Acquisition Experiment 01 remains in its active 7-day measurement window.
