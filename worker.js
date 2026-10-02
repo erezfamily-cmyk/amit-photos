@@ -1616,8 +1616,7 @@ const HE_TO_EN_CATEGORY = {
   'שחור-לבן': 'Black & White Photography',
   'הונגריה': 'Hungary Photography',
   'רומניה': 'Romania Photography',
-  'ספרד ואנדורה': 'Spain & Andorra Photography',
-  'אומנות רחוב': 'Street Art Photography',
+    'אומנות רחוב': 'Street Art Photography',
   'צילום ספורט': 'Sports Photography',
 };
 
