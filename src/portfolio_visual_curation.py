@@ -48,6 +48,38 @@ VISUAL_WEIGHTS = {
     "metadata": 0.05,
 }
 
+# Gradual rollout order. Finish one gallery before advancing to the next.
+# The first five preserve the business-review priorities already approved.
+GALLERY_REVIEW_ORDER = [
+    "פרחים וצמחים",
+    "בעלי חיים",
+    "ישראל",
+    "צילום מופשט",
+    "מאקרו-צילומי תקריב",
+    "טבע דומם",
+    "אומנות רחוב",
+    "פורטרטים",
+    "גאורגיה",
+    "איטליה",
+    "סלובקיה",
+    "ספרד ואנדורה",
+    "בולגריה",
+    "הולנד",
+    "אבו דאבי",
+    "גרמניה",
+    "אנגליה",
+    "יוון",
+    "צכיה",
+    "טנזניה",
+    "מונטנגרו",
+    'סן דיאגו - ארה"ב',
+    "הונגריה",
+    "וינה",
+    "רומניה",
+    "שחור-לבן",
+    "צילומי לילה",
+]
+
 
 def load_json(path: Path, default: Any):
     try:
@@ -378,12 +410,56 @@ def build_state(photos: list[dict], existing: dict | None = None, flower_scores:
     return state
 
 
+def category_progress(items: list[dict]) -> dict[str, dict]:
+    result: dict[str, dict] = {}
+    categories = [*GALLERY_REVIEW_ORDER]
+    seen = set(categories)
+    for item in items:
+        category = str(item.get("category") or "")
+        if category and category not in seen:
+            categories.append(category)
+            seen.add(category)
+
+    for category in categories:
+        rows = [x for x in items if x.get("category") == category]
+        if not rows:
+            continue
+        visual = [x for x in rows if x.get("score_kind") == "visual_complete"]
+        owner_review = [x for x in visual if x.get("owner_review_required")]
+        result[category] = {
+            "total": len(rows),
+            "visual_complete": len(visual),
+            "pending_visual": len(rows) - len(visual),
+            "owner_review_required": len(owner_review),
+            "completed": len(visual) == len(rows),
+        }
+    return result
+
+
+def next_incomplete_category(state: dict) -> str | None:
+    progress = category_progress(state.get("items", []))
+    for category in GALLERY_REVIEW_ORDER:
+        row = progress.get(category)
+        if row and row["pending_visual"] > 0:
+            return category
+    for category, row in progress.items():
+        if row["pending_visual"] > 0:
+            return category
+    return None
+
+
 def refresh_summary(state: dict) -> None:
     items = state.get("items", [])
     visual = [x for x in items if x.get("score_kind") == "visual_complete"]
     pending = [x for x in items if x.get("score_kind") != "visual_complete"]
     owner_review = [x for x in visual if x.get("owner_review_required")]
     clear = [x for x in visual if not x.get("owner_review_required")]
+    by_category = category_progress(items)
+    current_category = next(
+        (category for category in GALLERY_REVIEW_ORDER
+         if by_category.get(category, {}).get("pending_visual", 0) > 0),
+        next((category for category, row in by_category.items() if row["pending_visual"] > 0), None),
+    )
     state["summary"] = {
         "total": len(items),
         "visual_complete": len(visual),
@@ -391,6 +467,10 @@ def refresh_summary(state: dict) -> None:
         "owner_review_required": len(owner_review),
         "auto_clear_above_85": len(clear),
         "critical_low_resolution": sum("critical_low_resolution" in (x.get("flags") or []) for x in items),
+        "current_gallery": current_category,
+        "completed_galleries": sum(1 for row in by_category.values() if row["completed"]),
+        "gallery_count": len(by_category),
+        "by_category": by_category,
     }
     state["generated_at"] = datetime.now(timezone.utc).isoformat()
 
@@ -420,7 +500,8 @@ def apply_visual_result(item: dict, result: dict) -> None:
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--batch-size", type=int, default=200)
-    parser.add_argument("--category", default="")
+    parser.add_argument("--category", default="", help="Exact gallery/category override")
+    parser.add_argument("--all-categories", action="store_true", help="Explicitly allow cross-gallery processing")
     parser.add_argument("--init-only", action="store_true")
     args = parser.parse_args()
 
@@ -442,10 +523,22 @@ def main() -> int:
         raise SystemExit("missing ANTHROPIC_API_KEY / AMIT_PHOTO_AGENT")
 
     photo_by_id = {str(p.get("id")): p for p in photos if p.get("id")}
+    selected_category = args.category.strip()
+    if not selected_category and not args.all_categories:
+        selected_category = next_incomplete_category(state) or ""
+
+    if selected_category:
+        print("gallery rollout:", selected_category, flush=True)
+    elif not args.all_categories:
+        print("gallery rollout: all galleries are complete", flush=True)
+
     pending = [
         item for item in state["items"]
         if item.get("score_kind") != "visual_complete"
-        and (not args.category or item.get("category") == args.category)
+        and (
+            args.all_categories
+            or (selected_category and item.get("category") == selected_category)
+        )
     ]
     pending.sort(key=lambda x: (
         0 if x.get("material_problem") else 1,
@@ -476,6 +569,7 @@ def main() -> int:
     print("portfolio visual curation:", {
         "completed_this_run": completed,
         "failures": failures,
+        "gallery": selected_category or ("all" if args.all_categories else None),
         **state["summary"],
     })
     return 0 if completed or not pending else 1
