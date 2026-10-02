@@ -198,6 +198,52 @@ GUIDES = {
     "black-and-white": "/camera/black-and-white/",
 }
 
+TERM_LINKS = {
+    "he": [
+        ("פיצוי חשיפה", "/camera/exposure/", "exposure_compensation"),
+        ("מהירות תריס", "/camera/exposure/", "shutter_speed"),
+        ("חשיפה ארוכה", "/camera/night/", "long_exposure"),
+        ("עומק שדה", "/camera/depth-of-field/", "depth_of_field"),
+        ("פוקוס רציף", "/camera/focus/", "continuous_focus"),
+        ("איזון לבן", "/camera/white-balance/", "white_balance"),
+        ("חוק השלישים", "/camera/composition/", "rule_of_thirds"),
+        ("שחור־לבן", "/camera/black-and-white/", "black_and_white"),
+        ("היסטוגרמה", "/camera/histogram/", "histogram"),
+        ("קומפוזיציה", "/camera/composition/", "composition"),
+        ("מאקרו", "/camera/macro/", "macro"),
+        ("panning", "/camera/sports/", "panning"),
+        ("פורטרט", "/camera/portrait/", "portrait"),
+        ("פוקוס", "/camera/focus/", "focus"),
+        ("צמצם", "/camera/exposure/", "aperture"),
+        ("חשיפה", "/camera/exposure/", "exposure"),
+        ("ISO", "/camera/exposure/", "iso"),
+        ("Crop", "/camera/editing/", "crop"),
+        ("עריכה", "/camera/editing/", "editing"),
+    ],
+    "en": [
+        ("exposure compensation", "/camera/exposure/", "exposure_compensation"),
+        ("shutter speed", "/camera/exposure/", "shutter_speed"),
+        ("long exposure", "/camera/night/", "long_exposure"),
+        ("depth of field", "/camera/depth-of-field/", "depth_of_field"),
+        ("continuous autofocus", "/camera/focus/", "continuous_focus"),
+        ("white balance", "/camera/white-balance/", "white_balance"),
+        ("rule of thirds", "/camera/composition/", "rule_of_thirds"),
+        ("black and white", "/camera/black-and-white/", "black_and_white"),
+        ("histogram", "/camera/histogram/", "histogram"),
+        ("composition", "/camera/composition/", "composition"),
+        ("macro", "/camera/macro/", "macro"),
+        ("panning", "/camera/sports/", "panning"),
+        ("portrait", "/camera/portrait/", "portrait"),
+        ("autofocus", "/camera/focus/", "autofocus"),
+        ("focus", "/camera/focus/", "focus"),
+        ("aperture", "/camera/exposure/", "aperture"),
+        ("exposure", "/camera/exposure/", "exposure"),
+        ("ISO", "/camera/exposure/", "iso"),
+        ("crop", "/camera/editing/", "crop"),
+        ("editing", "/camera/editing/", "editing"),
+    ],
+}
+
 HE_IMAGE_LESSONS = {
     "composition": "למה זה עובד: החזרה הגיאומטרית והסימטריה יוצרות סדר ומובילות את העין.",
     "light": "למה זה עובד: האור האחיד חושף פרטים עדינים בלי לאבד את הזהב והכחול.",
@@ -239,6 +285,22 @@ def tracked(path: str, lang: str, content: str) -> str:
 
 def esc(s: str) -> str:
     return html.escape(s, quote=True)
+
+def linked_text(s: str, lang: str) -> str:
+    """Escape text and turn supported photography terms into tracked links."""
+    terms = TERM_LINKS[lang]
+    by_term = {term.lower(): (path, key) for term, path, key in terms}
+    pattern = re.compile("|".join(re.escape(term) for term, _, _ in sorted(terms, key=lambda x: len(x[0]), reverse=True)), re.IGNORECASE)
+    out = []
+    last = 0
+    for match in pattern.finditer(s):
+        out.append(esc(s[last:match.start()]))
+        shown = match.group(0)
+        path, key = by_term[shown.lower()]
+        out.append(f'<a class="term-link" href="{tracked(path, lang, "term_"+key)}">{esc(shown)}</a>')
+        last = match.end()
+    out.append(esc(s[last:]))
+    return "".join(out)
 
 def download_images() -> dict[str, Path]:
     ASSETS.mkdir(parents=True, exist_ok=True)
@@ -302,6 +364,7 @@ def css() -> str:
     .tip { background:white; border-radius:3.2mm; padding:3.6mm 4mm; min-height:25mm; border:0.35mm solid #e7e0d4; display:flex; gap:2.8mm; align-items:flex-start; }
     .tip b { color:#b4832f; font-size:10.5pt; flex:0 0 auto; direction:ltr; unicode-bidi:isolate; line-height:1.42; }
     .tip span { font-size:9.7pt; line-height:1.42; flex:1 1 auto; }
+    .term-link { color:inherit !important; text-decoration:underline; text-decoration-color:#d4aa55; text-decoration-thickness:.65px; text-underline-offset:1.4px; }
     .guide-row { margin-top:5mm; display:flex; align-items:center; justify-content:space-between; gap:5mm; }
     .guide-link { display:inline-block; background:#111; color:white !important; text-decoration:none; border-radius:999px; padding:3mm 5mm; font-size:9.5pt; font-weight:700; }
     .caption { color:#756d62; font-size:7.8pt; }
@@ -383,7 +446,7 @@ def intro(lang: str, imgs: dict[str, Path], pageno: int) -> str:
         t1 = "Settings are tools. Before aperture, ISO or shutter speed, ask what you want the viewer to notice, feel and remember."
         h2 = "Turn it into practice"
         bullets = ["Shoot the same scene from three positions.", "Compare exposures, not only final images.", "Inspect the edges of every frame.", "Revisit the shot after editing and ask what you would do differently."]
-    lis = "".join(f"<li>{esc(x)}</li>" for x in bullets)
+    lis = "".join(f"<li>{linked_text(x, lang)}</li>" for x in bullets)
     if rtl:
         glossary = [
             ("צמצם", "גודל הפתח בעדשה. הוא משפיע על כמות האור ועל עומק השדה."),
@@ -402,15 +465,15 @@ def intro(lang: str, imgs: dict[str, Path], pageno: int) -> str:
             ("Panning", "Following a moving subject with the camera so the subject stays relatively sharp while the background shows motion."),
         ]
         glossary_title = "Quick beginner glossary"
-    glossary_html = "".join(f'<div class="glossary-item"><strong>{esc(k)}</strong><span>{esc(v)}</span></div>' for k,v in glossary)
+    glossary_html = "".join(f'<div class="glossary-item"><strong>{linked_text(k, lang)}</strong><span>{linked_text(v, lang)}</span></div>' for k,v in glossary)
     return f"""<div class="page intro {direction}" dir="{direction}">
       <div class="eyebrow">50 TIPS · AMITPHOTOS.COM</div>
       <h2>{esc(title)}</h2>
       <div class="intro-grid">
         <div>
-          <div class="intro-card"><h3>{esc(h1)}</h3><p>{esc(t1)}</p></div>
+          <div class="intro-card"><h3>{esc(h1)}</h3><p>{linked_text(t1, lang)}</p></div>
           <div class="intro-card" style="margin-top:5mm"><h3>{esc(h2)}</h3><ul>{lis}</ul></div>
-          <p style="font-size:10pt;line-height:1.55;margin-top:6mm">{esc(p1)}</p>
+          <p style="font-size:10pt;line-height:1.55;margin-top:6mm">{linked_text(p1, lang)}</p>
         </div>
         <img class="mini-photo" src="{img_uri(imgs['extra1'])}">
       </div>
@@ -427,16 +490,16 @@ def section_page(lang: str, title: str, subtitle: str, photo_key: str, guide_key
     direction = "rtl" if lang == "he" else "ltr"
     rows = []
     for i, tip in enumerate(tips, start=start_num):
-        rows.append(f'<div class="tip"><b>{i:02d}</b><span>{esc(tip)}</span></div>')
+        rows.append(f'<div class="tip"><b>{i:02d}</b><span>{linked_text(tip, lang)}</span></div>')
     guide_text = "למדריך המלא" if lang == "he" else "Read the full guide"
     cap = "צילום מתוך הפורטפוליו של עמית ארז" if lang == "he" else "Photo from Amit Erez's portfolio"
     href = tracked(GUIDES[guide_key], lang, guide_key)
     lesson = (HE_IMAGE_LESSONS if lang == "he" else EN_IMAGE_LESSONS).get(photo_key, "")
     photo_h = "112mm" if len(tips) <= 3 else ("92mm" if len(tips) <= 5 else "68mm")
     return f"""<div class="page {direction}" dir="{direction}">
-      <div class="photo-frame"><img class="section-photo" style="height:{photo_h}" src="{img_uri(imgs[photo_key])}"><div class="photo-lesson">{esc(lesson)}</div></div>
+      <div class="photo-frame"><img class="section-photo" style="height:{photo_h}" src="{img_uri(imgs[photo_key])}"><div class="photo-lesson">{linked_text(lesson, lang)}</div></div>
       <div class="section-head">
-        <div><h2>{esc(title)}</h2><div class="sub">{esc(subtitle)}</div></div>
+        <div><h2>{linked_text(title, lang)}</h2><div class="sub">{linked_text(subtitle, lang)}</div></div>
         <div class="num">{start_num:02d}</div>
       </div>
       <div class="tips">{''.join(rows)}</div>
