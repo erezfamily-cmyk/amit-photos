@@ -804,6 +804,17 @@ async function invalidatePublicPhotosCache(request) {
   await caches.default.delete(publicPhotosCacheKey(request));
 }
 
+function orderPublicPhotosByCuration(photos, decisions = {}) {
+  const primary = [];
+  const secondary = [];
+  for (const photo of photos || []) {
+    const decision = decisions?.[photo.id]?.decision;
+    if (decision === 'KEEP_SECONDARY') secondary.push(photo);
+    else primary.push(photo);
+  }
+  return [...primary, ...secondary];
+}
+
 async function handlePhotos(request, env) {
   const method = request.method;
 
@@ -859,20 +870,34 @@ async function handlePhotos(request, env) {
       : 'SELECT * FROM photos WHERE published=1 ORDER BY CASE WHEN sort_order IS NULL THEN 1 ELSE 0 END, sort_order ASC, created_at DESC';
     const { results } = await env.DB.prepare(sql).all();
     const { results: settingsRows } = await env.DB.prepare(
-      "SELECT key, value FROM settings WHERE key IN ('photo_of_week_id','photo_of_week_discount','photo_of_week_caption','photo_of_week_caption_en')"
+      "SELECT key, value FROM settings WHERE key IN ('photo_of_week_id','photo_of_week_discount','photo_of_week_caption','photo_of_week_caption_en','flower_curation_decisions_v1')"
     ).all();
     const settings = Object.fromEntries(settingsRows.map(r => [r.key, r.value]));
     const weekPhotoId   = settings['photo_of_week_id'] || '';
     const weekDiscount  = parseFloat(settings['photo_of_week_discount'] || '0.25');
     const weekCaption   = settings['photo_of_week_caption'] || '';
     const weekCaptionEn = settings['photo_of_week_caption_en'] || '';
-    const photos = results.map(p => ({
+    let photos = results.map(p => ({
       ...p,
       is_week_photo: !!(weekPhotoId && p.id === weekPhotoId),
       week_photo_discount: (weekPhotoId && p.id === weekPhotoId) ? weekDiscount : 0,
       week_photo_caption: (weekPhotoId && p.id === weekPhotoId) ? weekCaption : '',
       week_photo_caption_en: (weekPhotoId && p.id === weekPhotoId) ? weekCaptionEn : '',
     }));
+
+    if (!adminAll) {
+      let curationDecisions = {};
+      const rawDecisions = settings['flower_curation_decisions_v1'];
+      if (rawDecisions) {
+        try {
+          const parsed = JSON.parse(rawDecisions);
+          if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) curationDecisions = parsed;
+        } catch {}
+      }
+      // Stable partition: preserve the existing manual/newest order inside each tier,
+      // but move KEEP_SECONDARY photos behind the regular/KEEP portfolio.
+      photos = orderPublicPhotosByCuration(photos, curationDecisions);
+    }
     if (cache) {
       const response = jsonRes(photos, 200, request);
       response.headers.set('Cache-Control', 'public, max-age=60, s-maxage=3600, stale-while-revalidate=86400');
@@ -7844,13 +7869,14 @@ async function handleAdminCurationDecisions(request, env) {
 
     await env.DB.prepare('INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)')
       .bind(FLOWER_CURATION_DECISIONS_KEY, JSON.stringify(decisions)).run();
+    await invalidatePublicPhotosCache(request);
 
     return jsonRes({ ok: true, decision: decisions[photoId] || null }, 200, request);
   }
 
   return jsonRes({ error: 'method not allowed' }, 405, request);
 }
-export { handleAdminCurationDecisions, FLOWER_CURATION_ALLOWED_DECISIONS };
+export { handleAdminCurationDecisions, FLOWER_CURATION_ALLOWED_DECISIONS, orderPublicPhotosByCuration };
 
 // ===== MAIN ROUTER =====
 export default {
