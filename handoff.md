@@ -994,3 +994,13 @@ Safety:
 - Drive scan behavior is unchanged: KEEP_SECONDARY remains an owner decision and the Drive source file is untouched.
 
 No HIDE, DELETE, category change, or payment behavior is triggered by KEEP_SECONDARY.
+
+
+### Admin null visual-score display fix — 2.10.2026
+
+Found and fixed a presentation bug in Flower Review Mode:
+- technical provisional scores intentionally store visual-only components (`sharpness`, `composition`, `light_color`) as `null`;
+- Admin previously converted `null` through `Number(null)`, displaying misleading `0/100`;
+- null / undefined visual components now display `טרם נבדק`;
+- numeric components continue to display their real `N/100` values;
+- underlying score data was not corrupted and no score recalculation was needed.
