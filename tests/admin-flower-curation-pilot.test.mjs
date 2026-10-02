@@ -48,6 +48,21 @@ test('owner decisions are persisted separately from recommendation data', () => 
   assert.match(admin, /final_owner_decision/);
 });
 
+test('curation decisions survive logout/relogin UI reload failures without being treated as empty', () => {
+  assert.match(admin, /loadCurationDecisionsWithRetry/);
+  assert.match(admin, /cache: 'no-store'/);
+  assert.match(admin, /if \(!res\.ok\) throw new Error\('HTTP ' \+ res\.status\)/);
+  assert.match(admin, /curationDecisionResult\.ok/);
+  assert.match(admin, /הן לא אופסו/);
+  assert.doesNotMatch(admin, /curation-decisions'[^\n]*r\.ok \? r\.json\(\) : \{\}/);
+});
+
+test('admin login button does not invoke login twice', () => {
+  assert.match(admin, /<button class="btn-login" id="login-btn">כניסה<\/button>/);
+  assert.match(admin, /\$\('login-btn'\)\.addEventListener\('click', doLogin\)/);
+  assert.doesNotMatch(admin, /id="login-btn" onclick=/);
+});
+
 test('admin exposes all manual owner decisions and full report export', () => {
   for (const decision of ['KEEP', 'KEEP_SECONDARY', 'HIDE', 'DELETE', 'CHANGE_CATEGORY']) {
     assert.match(admin, new RegExp("applyCurationDecision\\('" + decision + "'\\)"));
