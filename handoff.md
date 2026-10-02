@@ -1259,3 +1259,19 @@ Post-merge workflow:
 
 Production payments remain disabled with `PAYMENTS_ENABLED=false`.
 Acquisition Experiment 01 remains in its active 7-day measurement window and its frozen variables must not be changed.
+
+
+### Maintenance cleanup — 2.10.2026
+
+Completed:
+- legacy PR #76 was closed without merge; PR #110 remains the canonical PayPal Orders v2 implementation;
+- `TODO.md` was synced to the real acquisition state: Instagram Free Guide + Threads Personal Licensing live, B2B pending, 7-day freeze active;
+- production payments remain disabled with `PAYMENTS_ENABLED=false`.
+
+Open maintenance PR:
+- PR #113 `chore: remove duplicate Spain and Andorra category key`;
+- scope: one-file cleanup in `worker.js`;
+- removes the duplicate `ספרד ואנדורה` key from `HE_TO_EN_CATEGORY`;
+- surviving value is identical, so no behavior change is intended;
+- no acquisition variables, payments, D1/R2 data, or Google Drive content are changed;
+- CI was started and must be green before merge.
