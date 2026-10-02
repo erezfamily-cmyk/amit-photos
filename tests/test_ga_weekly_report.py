@@ -26,6 +26,8 @@ def fake_data(revenue=None):
         "funnel_events": {"photo_view": "10", "purchase_intent": "2", "add_size": "1", "purchase": "0",
                            "print_intent": "0", "print_type_selected": "0", "print_checkout": "0"},
         "revenue": revenue,
+        "campaigns": [],
+        "experiment_events": [],
     }
 
 
@@ -159,3 +161,54 @@ def test_build_data_summary_exposes_ux_events_by_page():
     assert "התנהגות לפי עמוד" in summary
     assert "/learn/" in summary
     assert "contact_intent" in summary
+
+
+def test_fetch_ga4_data_requests_acquisition_campaign_event_attribution():
+    calls = []
+
+    def fake_run_report(_token, body):
+        calls.append(body)
+        return {"rows": []}
+
+    with patch.object(gwr, "run_report", side_effect=fake_run_report):
+        result = gwr.fetch_ga4_data("token")
+
+    assert "experiment_events" in result
+    matching = [
+        body for body in calls
+        if body.get("dimensions") == [{"name": "eventName"}, {"name": "sessionCampaignName"}]
+    ]
+    assert len(matching) == 1
+    campaign_values = matching[0]["dimensionFilter"]["andGroup"]["expressions"][1]["filter"]["inListFilter"]["values"]
+    assert set(campaign_values) == set(gwr.ACQUISITION_EXPERIMENT_CAMPAIGNS)
+
+
+def test_acquisition_experiment_scorecard_attributes_primary_and_secondary_events():
+    data = fake_data(revenue=None)
+    data["campaigns"] = [
+        {"source": "instagram", "medium": "social", "campaign": "202610_freeguide_photo_tips", "sessions": "10", "activeUsers": "8"},
+        {"source": "threads", "medium": "social", "campaign": "202610_licensing_personal", "sessions": "5", "activeUsers": "4"},
+    ]
+    data["experiment_events"] = [
+        {"campaign": "202610_freeguide_photo_tips", "event": "guide_request_success", "count": "4"},
+        {"campaign": "202610_freeguide_photo_tips", "event": "generate_lead", "count": "2"},
+        {"campaign": "202610_licensing_personal", "event": "licensing_personal_interest", "count": "1"},
+    ]
+
+    scorecard = gwr.build_acquisition_experiment_scorecard(data)
+    by_campaign = {p["campaign"]: p for p in scorecard["paths"]}
+    assert scorecard["window_status"] == "measuring"
+    assert by_campaign["202610_freeguide_photo_tips"]["primary_count"] == 4
+    assert by_campaign["202610_freeguide_photo_tips"]["primary_rate_pct"] == 40.0
+    assert by_campaign["202610_freeguide_photo_tips"]["secondary_count"] == 2
+    assert by_campaign["202610_b2b_outreach"]["status"] == "not_started"
+
+
+def test_save_report_persists_acquisition_experiment_scorecard(tmp_path):
+    reports_file = tmp_path / "ga_reports.json"
+    data = fake_data(revenue=None)
+    data["acquisition_experiment"] = gwr.build_acquisition_experiment_scorecard(data)
+    gwr.save_report(data, "analysis", reports_file=reports_file)
+    report = json.loads(reports_file.read_text(encoding="utf-8"))[-1]
+    assert report["acquisition_experiment"]["experiment"] == "Acquisition Experiment 01"
+    assert len(report["acquisition_experiment"]["paths"]) == 3
