@@ -23,6 +23,18 @@ ADMIN_PASSWORD   = os.environ.get("ADMIN_PASSWORD", "")
 
 GA4_API_BASE = "https://analyticsdata.googleapis.com/v1beta"
 
+ACQUISITION_EXPERIMENT_CAMPAIGNS = {
+    "202610_freeguide_photo_tips": {
+        "label": "Free Guide", "primary_event": "guide_request_success", "secondary_event": "generate_lead"
+    },
+    "202610_licensing_personal": {
+        "label": "Personal Licensing", "primary_event": "licensing_personal_interest", "secondary_event": "purchase_intent"
+    },
+    "202610_b2b_outreach": {
+        "label": "B2B Wall Art", "primary_event": "b2b_contact_start", "secondary_event": "contact_form_success"
+    },
+}
+
 HEBREW_CHANNELS = {
     "Organic Search": "חיפוש אורגני",
     "Direct":         "כניסה ישירה",
@@ -203,6 +215,21 @@ def fetch_ga4_data(token):
         "orderBys": [{"metric": {"metricName": "eventCount"}, "desc": True}],
         "limit": 50,
     })
+    experiment_events_raw = run_report(token, {
+        "dateRanges": dr,
+        "dimensions": [{"name": "eventName"}, {"name": "sessionCampaignName"}],
+        "metrics": [{"name": "eventCount"}],
+        "dimensionFilter": {
+            "andGroup": {
+                "expressions": [
+                    {"filter": {"fieldName": "eventName", "inListFilter": {"values": ux_event_names}}},
+                    {"filter": {"fieldName": "sessionCampaignName", "inListFilter": {"values": list(ACQUISITION_EXPERIMENT_CAMPAIGNS)}}},
+                ]
+            }
+        },
+        "orderBys": [{"metric": {"metricName": "eventCount"}, "desc": True}],
+        "limit": 100,
+    })
 
     sr = summary_raw.get("rows", []) if summary_raw else []
     pr = prev_raw.get("rows", []) if prev_raw else []
@@ -237,6 +264,16 @@ def fetch_ga4_data(token):
             "count": metrics[0]["value"] if metrics else "0",
         })
 
+    experiment_events = []
+    for row in (experiment_events_raw or {}).get("rows", []):
+        dims = row.get("dimensionValues", [])
+        metrics = row.get("metricValues", [])
+        experiment_events.append({
+            "event": dims[0]["value"] if len(dims) > 0 else "",
+            "campaign": dims[1]["value"] if len(dims) > 1 else "",
+            "count": metrics[0]["value"] if metrics else "0",
+        })
+
     return {
         "period": f"{start} → {end}",
         "summary": {
@@ -255,6 +292,7 @@ def fetch_ga4_data(token):
         "countries": parse_rows(countries_raw, ["sessions"], "ארץ"),
         "funnel_events": events_by_name,
         "ux_by_page": ux_by_page,
+        "experiment_events": experiment_events,
     }
 
 
@@ -325,6 +363,40 @@ def fetch_revenue_summary(days=7):
     return None
 
 
+def build_acquisition_experiment_scorecard(data):
+    """Build a deterministic scorecard for the three frozen Acquisition Experiment 01 campaigns."""
+    campaign_rows = {row.get("campaign"): row for row in data.get("campaigns", []) or []}
+    event_counts = {}
+    for row in data.get("experiment_events", []) or []:
+        key = (row.get("campaign", ""), row.get("event", ""))
+        event_counts[key] = event_counts.get(key, 0) + _safe_int(row.get("count"))
+
+    paths = []
+    for campaign, cfg in ACQUISITION_EXPERIMENT_CAMPAIGNS.items():
+        campaign_row = campaign_rows.get(campaign, {})
+        sessions = _safe_int(campaign_row.get("sessions"))
+        primary = event_counts.get((campaign, cfg["primary_event"]), 0)
+        secondary = event_counts.get((campaign, cfg["secondary_event"]), 0)
+        paths.append({
+            "campaign": campaign,
+            "label": cfg["label"],
+            "sessions": sessions,
+            "active_users": _safe_int(campaign_row.get("activeUsers")),
+            "primary_event": cfg["primary_event"],
+            "primary_count": primary,
+            "primary_rate_pct": _rate_pct(primary, sessions),
+            "secondary_event": cfg["secondary_event"],
+            "secondary_count": secondary,
+            "status": "not_started" if sessions == 0 else "measuring",
+        })
+
+    return {
+        "experiment": "Acquisition Experiment 01",
+        "window_status": "not_started" if all(p["sessions"] == 0 for p in paths) else "measuring",
+        "paths": paths,
+    }
+
+
 def build_data_summary(data):
     s, p = data["summary"], data["prev_week"]
     def delta(c, pv):
@@ -365,6 +437,17 @@ def build_data_summary(data):
             )
     else:
         lines.append("  אין נתוני campaign")
+    scorecard = data.get("acquisition_experiment") or build_acquisition_experiment_scorecard(data)
+    lines += ["", "--- Acquisition Experiment 01 ---"]
+    lines.append(f"  status: {scorecard.get('window_status', 'not_started')}")
+    for path in scorecard.get("paths", []):
+        rate = path.get("primary_rate_pct")
+        rate_text = "—" if rate is None else f"{rate}%"
+        lines.append(
+            f"  {path['label']}: sessions={path['sessions']}, {path['primary_event']}={path['primary_count']} "
+            f"({rate_text}), {path['secondary_event']}={path['secondary_count']}"
+        )
+
     lines += ["", "--- מכשירים ---"]
     for r in data["devices"]:
         lines.append(f"  {r['מכשיר']}: {r['sessions']} סשנים")
@@ -615,6 +698,29 @@ def build_business_review_html(review):
   </div>"""
 
 
+def build_acquisition_experiment_html(scorecard):
+    if not scorecard:
+        return ""
+    rows = ""
+    for path in scorecard.get("paths", []):
+        rate = path.get("primary_rate_pct")
+        rate_text = "—" if rate is None else f"{rate}%"
+        rows += (
+            f'<tr><td style="padding:6px 8px">{path["label"]}</td>'
+            f'<td style="padding:6px 8px;text-align:right">{path["sessions"]}</td>'
+            f'<td style="padding:6px 8px;text-align:right">{path["primary_event"]}: {path["primary_count"]} ({rate_text})</td>'
+            f'<td style="padding:6px 8px;text-align:right">{path["secondary_event"]}: {path["secondary_count"]}</td></tr>'
+        )
+    return f"""
+  <div style="padding:0 24px 20px">
+    <h2 style="color:#2c3e50;margin:0 0 8px;font-size:1em">Acquisition Experiment 01 — {scorecard.get('window_status','not_started')}</h2>
+    <table style="width:100%;border-collapse:collapse;font-size:.86em">
+      <tr style="background:#f0f2f5"><th style="padding:6px 8px;text-align:right">Path</th><th>Sessions</th><th>Primary</th><th>Secondary</th></tr>
+      {rows}
+    </table>
+  </div>"""
+
+
 def build_revenue_html(rev, card):
     """סעיף אימות הכנסות אמיתי מ-D1 בגוף המייל — לא זמין בעדינות (לא שובר את שאר המייל) אם
     revenue-summary נכשל."""
@@ -691,6 +797,7 @@ def build_html_email(data, analysis):
     {card("זמן ממוצע", format_duration(s['avgSessionSec']))}
   </div>
   {build_business_review_html(data.get('business_review'))}
+  {build_acquisition_experiment_html(data.get('acquisition_experiment'))}
   <div style="padding:0 24px 20px">
     <h2 style="color:#2c3e50;margin:0 0 10px;font-size:1em">ניתוח והמלצות — Claude</h2>
     <div style="background:#f8f9fa;border-right:4px solid #3498db;padding:14px 16px;border-radius:0 8px 8px 0;line-height:1.7;color:#333;font-size:.92em">
@@ -824,6 +931,8 @@ def save_report(data, analysis, reports_file=None):
         "ux_by_page": data.get("ux_by_page", [])[:50],
         "subscriber_summary": data.get("subscriber_summary"),
         "business_review": data.get("business_review"),
+        "acquisition_experiment": data.get("acquisition_experiment"),
+        "experiment_events": data.get("experiment_events", []),
         "revenue":   data.get("revenue"),
         "photo_analytics": data.get("photo_analytics"),
         "analysis":  analysis,
@@ -859,6 +968,7 @@ def main():
     data["photo_analytics"] = fetch_photo_analytics()
 
     data["business_review"] = build_business_review(data)
+    data["acquisition_experiment"] = build_acquisition_experiment_scorecard(data)
     print(build_data_summary(data))
     print("\n📌 החלטה עסקית לשבוע הבא:")
     print("  " + data["business_review"]["next_action"])
