@@ -103,6 +103,13 @@ class PortfolioVisualCurationTests(unittest.TestCase):
         self.assertFalse(item["owner_review_required"])
         self.assertEqual(item["recommended_action"], "KEEP_CANDIDATE")
 
+    def test_visual_review_prefers_full_image_over_thumbnail(self):
+        photo = {
+            "url": "/photos/full.webp",
+            "thumbnail": "/photos/thumb/full.webp",
+        }
+        self.assertEqual(mod.image_url(photo), "https://amitphotos.com/photos/full.webp")
+
     def test_pipeline_is_advisory_only(self):
         source = (ROOT / "src" / "portfolio_visual_curation.py").read_text(encoding="utf-8")
         self.assertNotIn("/api/photos", source)
