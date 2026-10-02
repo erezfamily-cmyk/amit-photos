@@ -215,3 +215,20 @@ test('bulk delete remains explicit and separate from HIDE', () => {
   assert.match(admin, /bulk-delete-btn/);
   assert.match(admin, /למחוק \$\{count\} תמונות\?/);
 });
+
+
+test('bulk and single delete persist tombstones and refresh excludes deleted Drive photos', () => {
+  assert.match(admin, /saveCurationDecision\(id, 'DELETE'/);
+  assert.match(admin, /curationDecisions\.get\(p\.id\)\?\.decision !== 'DELETE'/);
+  assert.match(admin, /לא יחזרו מ-Drive/);
+  assert.match(admin, /מחיקה תישמר גם מול Google Drive/);
+});
+
+
+test('bulk score-under-80 selection targets only production R2 photos and HIDE is transactional', () => {
+  assert.match(admin, /p\._source === 'r2' && score\?\.score_kind === 'visual_complete' && Number\(score\.score\) < 80/);
+  assert.match(admin, /const wasPublished = photo\.published !== 0/);
+  assert.match(admin, /saveCurationDecision\(id, 'HIDE'/);
+  assert.match(admin, /body: JSON\.stringify\(\{ id, published: true \}\)/);
+  assert.match(admin, /bulk hide failed/);
+});
