@@ -938,3 +938,12 @@ The HIDE workflow was changed to use the existing Cloudflare deployment credenti
 - verifies none of the four IDs appears in the public `/api/photos` response.
 
 No DELETE or R2 removal is performed.
+
+
+### Admin review cue for flower scores 0–89 — 2.10.2026
+
+Added a non-destructive Admin cue for the 29 flower photos currently scored below 90:
+- new filter chip: `⚠ לבחינה 0–89 (29)`;
+- each scored photo below 90 shows a separate `⚠ לבחינה` badge next to its V/T score;
+- wording is intentionally review-oriented, not an automatic quality verdict;
+- no photo is hidden, deleted, recategorized, or reordered by this change.
