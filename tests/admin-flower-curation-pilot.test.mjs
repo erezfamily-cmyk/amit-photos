@@ -215,3 +215,11 @@ test('bulk delete remains explicit and separate from HIDE', () => {
   assert.match(admin, /bulk-delete-btn/);
   assert.match(admin, /למחוק \$\{count\} תמונות\?/);
 });
+
+
+test('bulk and single delete persist tombstones and refresh excludes deleted Drive photos', () => {
+  assert.match(admin, /saveCurationDecision\(id, 'DELETE'/);
+  assert.match(admin, /curationDecisions\.get\(p\.id\)\?\.decision !== 'DELETE'/);
+  assert.match(admin, /לא יחזרו מ-Drive/);
+  assert.match(admin, /מחיקה תישמר גם מול Google Drive/);
+});
