@@ -1507,3 +1507,42 @@ Before merging the DELETE tombstone hotfix, the bulk HIDE path was re-verified a
 - Already-hidden photos can still receive/refresh their owner `HIDE` decision without unnecessary publication writes.
 
 This keeps bulk HIDE reversible and prevents silent partial state.
+
+
+### Admin curation persistence + bulk actions — status after PR #120
+
+Current merged state:
+- PR #119 merged to `main`: owner-controlled bulk curation actions.
+- PR #120 merged to `main` at merge SHA `c1b9c0bc7727a8635e1b72d08adbe4853ce5f03c`.
+- CI for PR #120 passed 5/5 before merge.
+- Production deploy for the PR #120 merge SHA has not yet been independently verified in GitHub Actions at the time of this handoff update.
+
+Admin bulk curation capabilities now intended in `main`:
+- `בחר <1000px` selects photos whose short edge is below 1000px.
+- `בחר ציון <80` selects only D1/R2 photos with `score_kind=visual_complete` and visual score below 80.
+- Bulk `HIDE מהפרודקשיין` sets `published=0` and persists owner decision `HIDE`.
+- Bulk HIDE is transactional: if persisting the HIDE decision fails after publication was changed, Admin attempts rollback to `published=1`.
+- Bulk DELETE now persists a `DELETE` tombstone before deleting the photo from D1/R2.
+- Single-photo DELETE now uses the same tombstone-first behavior.
+- Admin Drive merge excludes photos whose owner decision is `DELETE`, so deleted photos should not reappear after refresh.
+- Existing Drive importer already respects DELETE tombstones and blocks re-import from Google Drive.
+- Google Drive source files are not deleted by these Admin actions.
+
+Incident that triggered PR #120:
+- User bulk-deleted the <1000px group.
+- Photos reappeared after refresh because the initial bulk DELETE path removed D1/R2 rows but did not write DELETE tombstones.
+- Root cause fixed in PR #120.
+- Photos deleted before the hotfix may need to be selected and deleted one more time after the corrected Production deploy is verified.
+
+Next required verification:
+1. Verify Deploy Worker / Production is running merge SHA `c1b9c0bc7727a8635e1b72d08adbe4853ce5f03c`.
+2. In Admin, select `<1000px`, delete a small sample, refresh, and confirm they do not return.
+3. Select `ציון <80`, run bulk HIDE, refresh, and confirm all selected photos remain `published=0` and retain owner decision `HIDE`.
+4. After both pass, user can safely process the full batches.
+5. Recount how many owner-review photos remain.
+
+Operational constraints unchanged:
+- `PAYMENTS_ENABLED=false`.
+- Do not enable PayPal Production.
+- Gelato remains out of scope.
+- PR #76 PayPal remains separate and must not be merged as part of curation work.
