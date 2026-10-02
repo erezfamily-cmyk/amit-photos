@@ -1151,3 +1151,26 @@ Acquisition Experiment 01:
 - Technical setup is complete.
 - The 7-day window has not started because no real distribution action has been published/sent yet.
 - First recommended distribution path remains Free Guide / Instagram.
+
+
+### Continuation checkpoint — 2.10.2026
+
+Current `main`: `44b958e94ee5c59c7cc215df263d0eb026aa5329`.
+
+Verified after the PayPal merge and subsequent automation:
+- latest Pages build/deployment on current main: success ✅
+- scheduled automatic photo update run `37001467768`: success ✅
+- PayPal Orders v2 remains merged and production payments remain disabled;
+- Acquisition Experiment 01 remains technically launch-ready;
+- the 7-day acquisition measurement window has **not** started because no real distribution action has been published/sent yet.
+
+Documentation correction:
+- PR #110 is now the canonical PayPal Orders v2 implementation merged to main.
+- old PR #76 is superseded and must not be treated as the active implementation path.
+
+Next execution order:
+1. Keep production PayPal disabled.
+2. Start Acquisition Experiment 01 with the Free Guide as the first distribution path when an actual external post/share is made.
+3. Record the exact first-distribution timestamp as Day 1.
+4. Keep campaign URL, offer, consent text, Free Guide asset and primary KPI frozen for the 7-day window.
+5. Continue portfolio visual curation and owner review independently; do not let curation work alter the acquisition experiment variables.
