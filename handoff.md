@@ -1039,3 +1039,42 @@ This policy supersedes the earlier technical-provisional-only display as the tar
 - null visual components now display `טרם נבדק`;
 - real numeric components continue to display their actual score;
 - no underlying score data was changed.
+
+
+### Full-portfolio visual curation rollout — 2.10.2026
+
+PR #105 merged to `main` (squash merge `6feb0e658ce1e59646cac495292bbc619218ab96`).
+
+What changed:
+- The flower-pilot scoring model is now generalized to all 1,390 photos through `data/portfolio-curation-scores.json`.
+- Existing completed flower visual reviews are preserved; owner decisions are not overwritten.
+- Remaining photos start with `score_kind=pending_visual`.
+- Sharpness, composition, light/color and category-fit stay `null` until an actual Claude Vision review is completed. Admin shows `טרם נבדק`, never a misleading 0/100.
+- Full score formula remains:
+  - 25% sharpness
+  - 20% composition
+  - 15% light/color
+  - 15% resolution
+  - 10% uniqueness
+  - 10% category fit
+  - 5% metadata
+- Owner Review queue now follows the approved rule: only completed visual scores <=85 or a material problem enter Review.
+- Scores >85 do not require owner confirmation.
+- Admin export is now full-portfolio: `portfolio-curation-owner-review.json`.
+- New incremental workflow: `.github/workflows/portfolio-visual-curation.yml`, default batch 200 still-unreviewed photos per run, with completed reviews preserved between runs.
+- CI: Portfolio Visual Curation, Portfolio Visual Curation CI, Admin Flower Curation Pilot CI, Admin Campaign Links CI and Python Data Tests were green before merge.
+
+Initial portfolio snapshot at merge:
+- total: 1,390
+- visual_complete preserved from flower pilot: 12
+- pending_visual: 1,378
+- initial owner-review-required among preserved completed scores: 11
+- initial completed score >85 and clear: 1
+- critical low-resolution candidates under the conservative threshold (long edge <1200 or short edge <800): 42
+
+Safety / next step:
+- The scoring pipeline itself is advisory and does not change D1/R2, category, published state or Google Drive.
+- It performs no automatic DELETE.
+- Automatic low-resolution HIDE has NOT yet been connected in PR #105. Keep it as a separate reversible production action so it can explicitly protect any existing KEEP / KEEP_SECONDARY owner decisions.
+- Google Drive remains the untouched master archive.
+- PAYMENTS_ENABLED remains false; PayPal PR #76 and Gelato remain separate/out of scope.
