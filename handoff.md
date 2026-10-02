@@ -994,3 +994,22 @@ Safety:
 - Drive scan behavior is unchanged: KEEP_SECONDARY remains an owner decision and the Drive source file is untouched.
 
 No HIDE, DELETE, category change, or payment behavior is triggered by KEEP_SECONDARY.
+
+
+### Gallery taxonomy consolidation — 2.10.2026
+
+Business decision implemented at the public-navigation layer:
+- 7 subject galleries remain top-level.
+- `מקומות בעולם` is the 8th primary destination and contains all 18 geographic categories.
+- Added missing `גאורגיה` to the location grouping.
+- `שחור-לבן` and `צילומי לילה` are shown in a separate Style row instead of as primary galleries.
+- All 1,390 photos remain available; this is a discovery/navigation change, not content deletion.
+- Google Drive remains the master archive. No file was deleted, moved or renamed in Drive.
+- Added `data/gallery-taxonomy.json` and `docs/gallery-taxonomy-business-2026-10-02.md` as the canonical taxonomy snapshot.
+
+Curation direction:
+- flower-pilot workflow is the template for rollout to other galleries;
+- owner decisions are preserved;
+- KEEP_SECONDARY remains public but at gallery tail;
+- HIDE remains reversible;
+- no automatic Drive deletion.
