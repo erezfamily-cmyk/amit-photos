@@ -1174,3 +1174,26 @@ Next execution order:
 3. Record the exact first-distribution timestamp as Day 1.
 4. Keep campaign URL, offer, consent text, Free Guide asset and primary KPI frozen for the 7-day window.
 5. Continue portfolio visual curation and owner review independently; do not let curation work alter the acquisition experiment variables.
+
+
+### Acquisition Experiment 01 scorecard — 2.10.2026
+
+PR #112 merged to `main` as `41a92befbf84def7dc2fa05c525fc78fbf8e2d26`.
+
+What was added to the existing weekly GA report:
+- campaign-level event attribution using `eventName + sessionCampaignName`;
+- only the three frozen Acquisition Experiment 01 campaigns are included;
+- deterministic scorecard for:
+  - Free Guide — primary `guide_request_success`, secondary `generate_lead`;
+  - Personal Licensing — primary `licensing_personal_interest`, secondary `purchase_intent`;
+  - B2B Wall Art — primary `b2b_contact_start`, secondary `contact_form_success`;
+- sessions, active users, primary-event count/rate and secondary-event count are persisted in `data/ga_reports.json`;
+- the scorecard is included in the weekly email;
+- no new workflow was added; the existing weekly GA workflow remains the single reporting path.
+
+Validation before merge:
+- Python Data Tests ✅
+- Lead Funnel CI ✅
+
+Experiment state is still **not started** until the first real external distribution action is actually published/sent.
+Production payments remain disabled.
