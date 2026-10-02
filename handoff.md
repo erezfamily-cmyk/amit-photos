@@ -1293,3 +1293,40 @@ Change:
 - removes the Wrangler duplicate-object-key warning source.
 
 No acquisition experiment variables, production payment state, D1/R2 data, or Google Drive content were changed.
+
+
+### Free Guide email-delivery reliability fix — 2.10.2026
+
+User reported that the Free Guide signup appeared successful but no automatic email arrived.
+
+Verified:
+- Gmail contained no recent automatic Free Guide PDF message to the connected account;
+- other Amit Photos emails from contact@amitphotos.com do arrive, so the symptom is specific to the Free Guide delivery path;
+- the live /free-guide/ page is rendered by handleFreeGuide() in worker.js;
+- existing-subscriber delivery previously swallowed Resend failures and still returned HTTP 200 / UI “Sent”.
+
+PR #114 `fix: surface free-guide email delivery failures` was merged to main as:
+`7fec9abd7c7eafa1877ff933b195a08f83c96845`.
+
+Fix now live:
+- Resend success/failure is checked for both new and existing subscribers;
+- API returns `email_sent`, `email_delivery_attempted`, and a direct `download_url` for guide requests;
+- Free Guide UI shows “Sent” only when the provider accepted the email;
+- on delivery failure, signup still remains saved and the user gets a direct PDF download fallback;
+- Lead Funnel CI now runs subscriber confirmation-email regression tests;
+- explicit Resend 4xx regression tests cover both new and existing subscribers.
+
+Pre-merge CI:
+- Lead Funnel CI ✅
+- PayPal Orders v2 CI ✅
+- confirmation-email regression suite ✅
+
+Production deploy:
+- Deploy Worker run #461 / run id 37017099130 ✅
+- Wrangler deploy ✅
+- Cloudflare cache purge ✅
+
+Important limitation:
+- this fixes false-success reporting and guarantees a direct-download fallback, but the underlying Resend provider rejection/secret/domain cause is not yet independently confirmed from provider logs in this session.
+- PAYMENTS_ENABLED remains false.
+- Acquisition Experiment 01 offer/copy/UTM/primary KPI remain unchanged.
