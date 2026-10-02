@@ -120,7 +120,7 @@ test('production curation action plan is reversible HIDE only', () => {
   assert.ok(actions.actions.every(x => !/DELETE/.test(x.action)));
   assert.match(admin, /portfolio-curation-scores\.json/);
   assert.match(admin, /curationScoreBadge/);
-  assert.match(admin, /ציון פיילוט/);
+  assert.match(admin, /ציון משוכלל/);
 });
 
 
