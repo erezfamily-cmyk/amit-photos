@@ -19,6 +19,9 @@ jobs:
           REPORT_EMAIL: erez.family@gmail.com
         run: |
           echo "::add-mask::$REPORT_EMAIL"
-          BODY=$(curl -fsS -X POST 'https://amitphotos.com/api/subscribers?source=lead_magnet'             -H 'Content-Type: application/json'             --data "{"email":"$REPORT_EMAIL","lang":"he","consent_privacy":true,"consent_marketing":false}")
+          PAYLOAD=$(jq -nc --arg email "$REPORT_EMAIL" '{email:$email,lang:"he",consent_privacy:true,consent_marketing:false}')
+          BODY=$(curl -fsS -X POST 'https://amitphotos.com/api/subscribers?source=lead_magnet' \
+            -H 'Content-Type: application/json' \
+            --data "$PAYLOAD")
           echo "$BODY" | jq -e '.ok == true and .email_sent == true and .email_delivery_attempted == true' >/dev/null
           echo "free_guide_email=accepted"
