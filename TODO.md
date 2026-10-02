@@ -21,7 +21,7 @@
 - [ ] לאחר ההפצה הראשונה: למדוד 7 ימים ללא שינוי offer/copy/campaign.
 - [ ] בסוף 7 ימים: לבחור follow-up עסקי אחד בלבד לפי הנתונים.
 - [ ] checkpoint רחב יותר סביב 10.10, ואז 24.10 אם עדיין אין sample מספיק.
-- [ ] PR #76 PayPal Orders v2 נשאר נפרד; אין להפעיל Production payments במסגרת הניסוי.
+- [x] PR #110 — clean PayPal Orders v2 Sandbox foundation — מוזג ל-`main`; Production נשאר כבוי עם `PAYMENTS_ENABLED=false`. PR #76 הישן נחשב superseded ולא מיועד למיזוג.
 - [x] `PAYMENTS_ENABLED=false` נשאר guardrail מחייב.
 - [x] Gelato מוקפא במפורש בשלב הנוכחי; לא חלק מהניסוי ולא חלק מחזרת PayPal.
 
@@ -31,7 +31,7 @@
 
 - Production payments נשארים כבויים: `PAYMENTS_ENABLED=false`.
 - PayPal Orders API v2 מיושר ברמת תשתית/אבטחה הרבה יותר מבעבר, אבל עדיין לא "סגור לפרודקשן":
-  - PR #76 עדיין Draft.
+  - PR #110 מוזג ל-`main` כבסיס Orders v2 המאובטח; PR #76 הישן superseded.
   - Digital Sandbox E2E עבר.
   - Buyer cancel path עבר.
   - Real Sandbox webhook E2E עבר.
