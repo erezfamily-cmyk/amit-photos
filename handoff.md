@@ -1236,3 +1236,26 @@ Second Acquisition Experiment 01 path published and verified on Threads:
 
 This is the second live distribution action.
 The experiment's Day 1 clock remains anchored to the earlier Free Guide Instagram Story at 15:03:19 Israel time.
+
+
+### Full-image visual curation merged — 2.10.2026
+
+PR #107 `fix: use full images for visual curation scoring` was squash-merged to `main` as:
+`e93dc43f5d71364375ae8eb8f0666939f6ba5052`.
+
+What is now active:
+- visual scoring starts from the full portfolio image, not the thumbnail;
+- full images are normalized to a high-quality 1800px JPEG for Vision review;
+- sharpness, composition, light/color and category-fit therefore use a materially better review source;
+- rollout proceeds gallery-by-gallery;
+- owner-review threshold remains <=85 or material problem;
+- no automatic DELETE, category mutation, Google Drive mutation, or publication change is introduced by this scoring pipeline.
+
+Post-merge workflow:
+- Portfolio Visual Curation run `37008370236`;
+- tests job: success ✅;
+- score job: started automatically and is currently processing the next gallery batch;
+- Pages deployment also started from the same merge commit.
+
+Production payments remain disabled with `PAYMENTS_ENABLED=false`.
+Acquisition Experiment 01 remains in its active 7-day measurement window and its frozen variables must not be changed.
