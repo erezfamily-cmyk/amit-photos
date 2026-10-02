@@ -25,6 +25,12 @@ jobs:
         run: |
           set -euo pipefail
 
+          GUIDE=$(curl -fsS --max-time 20 https://amitphotos.com/free-guide/)
+          grep -q 'guide_request_success' <<<"$GUIDE"
+          grep -q 'generate_lead' <<<"$GUIDE"
+          grep -q 'G-XM6T3E8QWN' <<<"$GUIDE"
+          echo "free_guide=ok"
+
           LIC=$(curl -fsS --max-time 20 https://amitphotos.com/licensing/)
           grep -q 'licensing_personal_interest' <<<"$LIC"
           grep -q '/api/admin/prices' <<<"$LIC"
