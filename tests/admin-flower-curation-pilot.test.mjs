@@ -54,7 +54,7 @@ test('admin exposes all manual owner decisions and full report export', () => {
   }
   assert.match(admin, /פיילוט פרחים/);
   assert.match(admin, /פתח ב-Lightbox/);
-  assert.match(admin, /flower-curation-owner-review\.json/);
+  assert.match(admin, /portfolio-curation-owner-review\.json/);
   assert.match(admin, /current_published_status/);
 });
 
