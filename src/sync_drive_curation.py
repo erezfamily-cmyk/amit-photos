@@ -26,7 +26,7 @@ Optional env:
 import json
 import os
 import sys
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from pathlib import Path
 
 import requests
@@ -71,6 +71,22 @@ def save_state(state):
     )
 
 
+def token_scopes(token):
+    if not token:
+        return set()
+    try:
+        res = requests.get(
+            "https://oauth2.googleapis.com/tokeninfo",
+            params={"access_token": token},
+            timeout=15,
+        )
+        if not res.ok:
+            return set()
+        return set(str(res.json().get("scope") or "").split())
+    except Exception:
+        return set()
+
+
 def refresh_access_token(info):
     refresh_token = str(info.get("refresh_token") or "").strip()
     token_uri = str(info.get("token_uri") or "https://oauth2.googleapis.com/token").strip()
@@ -79,9 +95,9 @@ def refresh_access_token(info):
     if not all((refresh_token, token_uri, client_id, client_secret)):
         raise RuntimeError("Google OAuth refresh metadata is incomplete")
 
-    # Do not send scope during a refresh-token grant. The refresh token is
-    # already bound to the scope approved by the owner; re-sending scope caused
-    # Google's invalid_scope response after the access token expired.
+    # Never send scope during a refresh-token grant. The refresh token already
+    # represents the owner's approved grant; re-sending a narrower scope caused
+    # invalid_scope and previously downgraded the stored token metadata.
     res = requests.post(
         token_uri,
         data={
@@ -101,16 +117,17 @@ def refresh_access_token(info):
     info["token"] = token
     if payload.get("expires_in"):
         info["expiry"] = (
-            datetime.now(timezone.utc)
-            + __import__("datetime").timedelta(seconds=int(payload["expires_in"]))
+            datetime.now(timezone.utc) + timedelta(seconds=int(payload["expires_in"]))
         ).isoformat()
-    # Preserve the original refresh token and approved scopes in the stored
-    # authorized-user JSON so future runs remain stable.
+    scopes = token_scopes(token)
+    if scopes:
+        info["scopes"] = sorted(scopes)
+
     (ROOT / "token_refreshed.json").write_text(
         json.dumps(info, ensure_ascii=False),
         encoding="utf-8",
     )
-    return token
+    return token, scopes
 
 
 def get_drive_session():
@@ -119,19 +136,31 @@ def get_drive_session():
         raise RuntimeError("GOOGLE_TOKEN_JSON is missing")
 
     info = json.loads(raw)
-    scopes = set(info.get("scopes") or [])
+    token = str(info.get("token") or "").strip()
+    scopes = token_scopes(token)
+
+    # Recover from the historical readonly metadata overwrite by refreshing
+    # without a scope parameter and asking Google what the actual grant is.
+    if DRIVE_SCOPE not in scopes and info.get("refresh_token"):
+        token, scopes = refresh_access_token(info)
+    elif not scopes:
+        scopes = set(info.get("scopes") or [])
+
     if DRIVE_SCOPE not in scopes:
         return None, scopes
 
-    creds = Credentials.from_authorized_user_info(info)
-    token = creds.token
-    if creds.expired or not token:
-        token = refresh_access_token(info)
+    # Persist repaired scope metadata even when the current access token was
+    # still valid, so the workflow can repair GOOGLE_TOKEN for later jobs.
+    if set(info.get("scopes") or []) != scopes:
+        info["scopes"] = sorted(scopes)
+        (ROOT / "token_refreshed.json").write_text(
+            json.dumps(info, ensure_ascii=False),
+            encoding="utf-8",
+        )
 
     session = requests.Session()
     session.headers.update({"Authorization": f"Bearer {token}"})
     return session, scopes
-
 
 def api_get(session, path, params=None):
     res = session.get(f"{DRIVE_API}/{path}", params=params, timeout=30)

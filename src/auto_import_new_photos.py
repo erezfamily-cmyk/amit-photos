@@ -20,31 +20,54 @@ REPO           = Path(__file__).parent.parent
 PHOTOS_JSON    = REPO / "data" / "photos.json"
 WORKER_URL     = os.environ.get("WORKER_URL", "https://amitphotos.com")
 ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "")
-SCOPES         = ["https://www.googleapis.com/auth/drive.readonly"]
+SCOPES         = ["https://www.googleapis.com/auth/drive"]
 DRIVE_API      = "https://www.googleapis.com/drive/v3"
 FULL_QUALITY   = 85
 THUMB_QUALITY  = 75
 THUMB_MAX_PX   = 800
 UA             = {"User-Agent": "Mozilla/5.0"}
 
+def refresh_access_token(info):
+    refresh_token = str(info.get("refresh_token") or "").strip()
+    token_uri = str(info.get("token_uri") or "https://oauth2.googleapis.com/token").strip()
+    client_id = str(info.get("client_id") or "").strip()
+    client_secret = str(info.get("client_secret") or "").strip()
+    if not all((refresh_token, token_uri, client_id, client_secret)):
+        raise RuntimeError("Google OAuth refresh metadata is incomplete")
+    res = requests.post(
+        token_uri,
+        data={
+            "client_id": client_id,
+            "client_secret": client_secret,
+            "refresh_token": refresh_token,
+            "grant_type": "refresh_token",
+        },
+        timeout=30,
+    )
+    res.raise_for_status()
+    token = str(res.json().get("access_token") or "").strip()
+    if not token:
+        raise RuntimeError("Google OAuth refresh returned no access_token")
+    return token
+
+
 def get_drive_session():
     from google.oauth2.credentials import Credentials
-    from google.auth.transport.requests import Request
 
     token_json = os.environ.get("GOOGLE_TOKEN_JSON")
     if token_json:
-        tmp = REPO / "token_tmp_auto.json"
-        tmp.write_text(token_json)
-        creds = Credentials.from_authorized_user_file(str(tmp), SCOPES)
-        tmp.unlink(missing_ok=True)
+        info = json.loads(token_json)
     else:
         token_file = REPO / "token.json"
-        creds = Credentials.from_authorized_user_file(str(token_file), SCOPES)
+        info = json.loads(token_file.read_text(encoding="utf-8"))
 
-    if creds.expired and creds.refresh_token:
-        creds.refresh(Request())
+    creds = Credentials.from_authorized_user_info(info)
+    token = creds.token
+    if creds.expired or not token:
+        token = refresh_access_token(info)
+
     s = requests.Session()
-    s.headers.update({"Authorization": f"Bearer {creds.token}", **UA})
+    s.headers.update({"Authorization": f"Bearer {token}", **UA})
     return s
 
 def download(session, drive_id):

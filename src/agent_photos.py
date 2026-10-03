@@ -35,7 +35,7 @@ TOKEN_FILE = ROOT / "token.json"
 # PORTFOLIO_FOLDER_ID (מזהה Drive מפורש) עוקף לגמרי חיפוש לפי שם — ראה find_folder/resolve_portfolio_folder.
 PORTFOLIO_FOLDER_ID = os.environ.get("PORTFOLIO_FOLDER_ID", "")
 PORTFOLIO_FOLDER = "Portfolio"
-SCOPES = ["https://www.googleapis.com/auth/drive.readonly"]
+SCOPES = ["https://www.googleapis.com/auth/drive"]
 DRIVE_API = "https://www.googleapis.com/drive/v3"
 ANTHROPIC_API = "https://api.anthropic.com/v1/messages"
 ANTHROPIC_MODEL = "claude-haiku-4-5-20251001"  # מהיר וזול לניתוח תמונות
@@ -43,11 +43,36 @@ ANTHROPIC_MODEL = "claude-haiku-4-5-20251001"  # מהיר וזול לניתוח 
 DRY_RUN = "--dry-run" in sys.argv
 
 
+def refresh_access_token(info):
+    import requests
+
+    refresh_token = str(info.get("refresh_token") or "").strip()
+    token_uri = str(info.get("token_uri") or "https://oauth2.googleapis.com/token").strip()
+    client_id = str(info.get("client_id") or "").strip()
+    client_secret = str(info.get("client_secret") or "").strip()
+    if not all((refresh_token, token_uri, client_id, client_secret)):
+        raise RuntimeError("Google OAuth refresh metadata is incomplete")
+    res = requests.post(
+        token_uri,
+        data={
+            "client_id": client_id,
+            "client_secret": client_secret,
+            "refresh_token": refresh_token,
+            "grant_type": "refresh_token",
+        },
+        timeout=30,
+    )
+    res.raise_for_status()
+    token = str(res.json().get("access_token") or "").strip()
+    if not token:
+        raise RuntimeError("Google OAuth refresh returned no access_token")
+    return token
+
+
 def get_drive_session():
-    """מחזיר requests.Session מאומת מול Google Drive."""
+    """מחזיר requests.Session מאומת מול Google Drive בלי לצמצם scope קיים."""
     try:
         from google.oauth2.credentials import Credentials
-        from google.auth.transport.requests import Request
         from google_auth_oauthlib.flow import InstalledAppFlow
     except ImportError:
         print("❌ חסרות חבילות. הרץ: pip install -r requirements.txt")
@@ -55,41 +80,33 @@ def get_drive_session():
 
     import requests
 
-    creds = None
-
-    # תמיכה ב-GitHub Actions: קריאה ממשתני סביבה
     creds_json = os.environ.get("GOOGLE_CREDENTIALS_JSON")
     token_json = os.environ.get("GOOGLE_TOKEN_JSON")
 
-    if creds_json and token_json:
-        # כתוב לקבצים זמניים
-        tmp_creds = ROOT / "credentials_tmp.json"
-        tmp_token = ROOT / "token_tmp.json"
-        tmp_creds.write_text(creds_json)
-        tmp_token.write_text(token_json)
-        creds = Credentials.from_authorized_user_file(str(tmp_token), SCOPES)
-        if creds.expired and creds.refresh_token:
-            creds.refresh(Request())
-        tmp_creds.unlink(missing_ok=True)
-        tmp_token.unlink(missing_ok=True)
-        (ROOT / "token_refreshed.json").write_text(creds.to_json())
+    if token_json:
+        info = json.loads(token_json)
+        creds = Credentials.from_authorized_user_info(info)
+        token = creds.token
+        if creds.expired or not token:
+            token = refresh_access_token(info)
     elif TOKEN_FILE.exists():
-        creds = Credentials.from_authorized_user_file(str(TOKEN_FILE), SCOPES)
-        if creds.expired and creds.refresh_token:
-            creds.refresh(Request())
+        info = json.loads(TOKEN_FILE.read_text(encoding="utf-8"))
+        creds = Credentials.from_authorized_user_info(info)
+        token = creds.token
+        if creds.expired or not token:
+            token = refresh_access_token(info)
     else:
         if not CREDENTIALS_FILE.exists():
             print("❌ לא נמצא credentials.json")
             sys.exit(1)
         flow = InstalledAppFlow.from_client_secrets_file(str(CREDENTIALS_FILE), SCOPES)
         creds = flow.run_local_server(port=0)
-        with open(TOKEN_FILE, "w") as f:
-            f.write(creds.to_json())
+        TOKEN_FILE.write_text(creds.to_json(), encoding="utf-8")
+        token = creds.token
 
     session = requests.Session()
-    session.headers.update({"Authorization": f"Bearer {creds.token}"})
+    session.headers.update({"Authorization": f"Bearer {token}"})
     return session
-
 
 def drive_get(session, endpoint, params=None):
     import requests
