@@ -12,12 +12,6 @@
       "hidden_folder_id": "1LxJF0lQecSZ5EFxTHu0Njr616CEaOmf5",
       "source_parent_id": "1RG16d9j5YQD_t7W2b9684EZ9lhXBg0DH"
     },
-    "1CishrXKue-hFYL275vH4EQBbD-WsVWks": {
-      "filename": "DSC_8266.JPG",
-      "hidden_at": "2026-10-03T13:29:51.067782+00:00",
-      "hidden_folder_id": "1LxJF0lQecSZ5EFxTHu0Njr616CEaOmf5",
-      "source_parent_id": "1bTahC57r7wmDgzNXzm7t8U9RoF8vCVDO"
-    },
     "1EgGTTkpZozR98a_hCPDvgRSUbPk1SUsE": {
       "filename": "Z72_3629.jpg",
       "hidden_at": "2026-10-03T13:58:19.041679+00:00",
@@ -158,10 +152,10 @@
     }
   },
   "last_summary": {
-    "moved_to_hidden": 8,
-    "restored": 0,
+    "moved_to_hidden": 0,
+    "restored": 1,
     "skipped": 0
   },
-  "last_sync_at": "2026-10-03T13:58:23.235436+00:00",
+  "last_sync_at": "2026-10-03T15:25:56.132707+00:00",
   "version": 1
 }
