@@ -248,3 +248,19 @@ test('processed bulk curation items are excluded after relogin', () => {
   assert.match(admin, /curationDecisions\.get\(p\.id\)\?\.decision !== 'DELETE'/);
   assert.match(admin, /d !== 'HIDE' && d !== 'DELETE'/);
 });
+
+
+test('Drive HIDE sync is reversible, external to Portfolio, and forces a rescan', () => {
+  const sync = fs.readFileSync('src/sync_drive_curation.py', 'utf8');
+  const workflow = fs.readFileSync('.github/workflows/update-photos.yml', 'utf8');
+  assert.match(sync, /DRIVE_HIDDEN_FOLDER_ID/);
+  assert.match(sync, /source_parent_id/);
+  assert.match(sync, /decision.*HIDE/);
+  assert.match(sync, /add_parent=HIDDEN_FOLDER_ID/);
+  assert.match(sync, /add_parent=source_parent/);
+  assert.match(sync, /LAST_SCAN_FILE\.unlink\(missing_ok=True\)/);
+  assert.match(sync, /Google Drive write scope is not authorized/);
+  assert.match(workflow, /python src\/sync_drive_curation\.py/);
+  assert.match(workflow, /DRIVE_HIDDEN_FOLDER_ID: 1LxJF0lQecSZ5EFxTHu0Njr616CEaOmf5/);
+  assert.match(workflow, /data\/drive-curation-state\.json/);
+});
