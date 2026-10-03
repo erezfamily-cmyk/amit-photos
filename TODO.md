@@ -1,3 +1,18 @@
+
+
+## Current execution queue — 3.10.2026
+
+Closed today:
+- [x] Google Drive OAuth write scope regenerated and accepted by Actions.
+- [x] Portfolio ID empty-secret fallback fixed in PR #125.
+- [x] Duplicate update-photo runs serialized with workflow concurrency in PR #126.
+- [x] Admin curation decisions hardened across logout/login in PR #127; stale PR #118 closed as superseded.
+
+Still active:
+- [ ] Run `update-photos.yml` once from home after PR #125 and verify the existing 18 HIDE decisions move to `Amit Photos Hidden` with no unexpected skips.
+- [ ] Continue actual visual scoring/review for remaining photos whose visual components are still pending.
+- [ ] Finish the redesigned Free Guide 7-day measurement window through 9.10 before changing offer/PDF/UTM/KPI.
+- [ ] Keep `PAYMENTS_ENABLED=false`; PayPal Orders v2 remains Sandbox-only work and Gelato remains out of scope.
 # TODO — Amit Photos business model
 
 > נוצר: 1.10.2026  
@@ -259,7 +274,7 @@
 
 - [ ] לשמור `PAYMENTS_ENABLED=false`.
 - [ ] להמשיך למדוד post-redesign baseline.
-- [ ] להשלים photo-strength pipeline PR #77 רק לאחר review; לא לבצע auto-ranking.
+- [x] photo-strength pipeline הושלם דרך replacement PR #88; נשאר advisory בלבד וללא auto-ranking.
 - [ ] לשפר mapping בין social post ל-photo_id.
 - [ ] לבדוק free-guide → subscriber funnel.
 - [ ] למדוד direct-to-photo traffic.
@@ -827,7 +842,7 @@ PayPal חוזר רק כמסלול **Digital-only canary**, ורק אם:
 - [x] להגן על HIDE/DELETE מפני דריסה או re-import בסריקת Google Drive היומית.
 - [ ] לבצע visual review בפועל על המועמדות בעדיפות גבוהה.
 - [ ] לאחר visual review: להחליט ידנית KEEP / HIDE / DELETE / RE-CATEGORY.
-- [ ] למדוד אם תהליך הפיילוט ברור ונוח לפני הרחבה לקטגוריה נוספת.
+- [x] הפיילוט הוגדר כמוצלח והורחב לכל הפורטפוליו דרך PR #105.
 - [x] להוסיף Review Mode ל-29 התמונות בציון 0–89: progress, lowest-score-first, auto-next ו-✅ נבדק.
 - [x] לתת ל-KEEP_SECONDARY משמעות ציבורית: להעביר לסוף הגלריה תוך שמירת הסדר הפנימי.
 
@@ -839,16 +854,16 @@ PayPal חוזר רק כמסלול **Digital-only canary**, ורק אם:
 - [x] לקבץ 18 קטגוריות מיקום תחת `מקומות בעולם`.
 - [x] להעביר `שחור-לבן` ו-`צילומי לילה` לשורת Style נפרדת.
 - [x] להשאיר את Google Drive כ-master archive ללא מחיקות/העברות אוטומטיות.
-- [ ] להרחיב את מנגנון הקיורציה מהפיילוט לכל גלריה בהדרגה, בלי לדרוס owner decisions קיימות.
+- [x] מנגנון הקיורציה הורחב לכל הפורטפוליו דרך PR #105, תוך שמירת owner decisions.
 - [ ] למדוד לאחר rollout האם click-through מגלריה לתמונה משתפר.
 
 
 ## Visual scoring rollout — all galleries
-- [ ] לשמר ללא שינוי תמונות שכבר קיבלו owner decision.
+- [x] owner decisions נשמרות ומוגנות גם אחרי relogin; PR #127 הקשיח טעינה מחדש.
 - [ ] לבצע visual review אמיתי לכל שאר התמונות: חדות, קומפוזיציה, אור/צבע.
-- [ ] לא להציג 0/100 עבור שדה שלא נבדק; להציג `טרם נבדק`.
+- [x] שדות visual שלא נבדקו מוצגים כ-`טרם נבדק` (PR #104; מאומת גם ב-main הנוכחי).
 - [ ] לחשב score משוקלל מלא רק אחרי השלמת visual components.
-- [ ] להציג לבעל האתר רק תמונות עם score <=85 או issue מהותי.
-- [ ] תמונות מעל 85 יישארו ללא owner-review queue.
+- [x] תור Review משתמש ב-`owner_review_required` ומציג `≤85 / בעיה` באדמין.
+- [x] תמונות מעל 85 מוגדרות `auto_clear_above_85` ואינן נכנסות לתור Review.
 - [ ] low-resolution מתחת לסף המאושר יעבור ל-HIDE אוטומטי בלבד, ללא DELETE וללא שינוי ב-Drive.
-- [ ] להרחיב את אותה שיטת scoring/Review Mode לכל הגלריות.
+- [x] Review Mode עובד מול `portfolio-curation-scores.json` לכל הפורטפוליו, לא רק פרחים.
