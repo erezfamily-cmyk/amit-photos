@@ -1546,3 +1546,21 @@ Operational constraints unchanged:
 - Do not enable PayPal Production.
 - Gelato remains out of scope.
 - PR #76 PayPal remains separate and must not be merged as part of curation work.
+
+
+### Drive-only bulk DELETE fix — 3.10.2026
+
+After PR #120 reached Production, owner reported that bulk DELETE still appeared to do nothing after selection + confirmation.
+
+Root cause:
+- photos deleted before the tombstone hotfix had already lost their D1/R2 rows;
+- after refresh they appeared as Drive-only cards from `data/photos.json`;
+- the new bulk DELETE handler intentionally skipped non-R2 cards, so confirming DELETE on those returned cards incremented failures and left them visible.
+
+Fix branch: `fix/bulk-delete-drive-only-2026-10-03`
+- Drive-only cards are now deletable from the site by persisting owner decision `DELETE` only;
+- no D1/R2 DELETE call is attempted when no D1/R2 row exists;
+- after the tombstone is saved, the Drive-only card is removed from the Admin UI immediately;
+- the existing Admin merge and Drive importer both honor the tombstone, so it stays gone after refresh and future sync;
+- Google Drive source file remains untouched;
+- R2-backed photos still use tombstone-first + real D1/R2 deletion with rollback on failure.
