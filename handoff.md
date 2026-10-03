@@ -1590,4 +1590,6 @@ Fix:
 - The sync never permanently deletes Drive files. DELETE remains a separate tombstone/archive policy.
 - Parent moves force removal of `data/last_scan.json` so the next agent run performs a full Portfolio rescan; Drive parent changes do not reliably change file modifiedTime.
 - The daily `update-photos.yml` runs the HIDE sync before `agent_photos.py` and tracks the sync state file in commits.
+- Admin HIDE now dispatches `update-photos.yml` best-effort immediately; bulk HIDE dispatches once after the batch. A dispatch failure never rolls back the website HIDE.
+- `KEEP` / `KEEP_SECONDARY` now detects a previous curation HIDE, restores `published=1`, saves the new owner decision, and dispatches the Drive workflow so the original file can return to its recorded Portfolio parent.
 - Safety fallback: production Google credentials are currently historically configured with Drive read-only scope. If the token lacks `https://www.googleapis.com/auth/drive`, the sync exits successfully with a PENDING message; website HIDE remains intact and the daily photo workflow is not broken. One-time Google reauthorization with Drive write scope is still required before automatic moves can execute from GitHub Actions.
