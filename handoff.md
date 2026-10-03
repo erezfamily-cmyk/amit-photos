@@ -1673,3 +1673,16 @@ Fix:
 - Local verification: 14 targeted tests, including real local bare-repository push rejection/rebase/conflict/exhaustion cases. Drive Sync CI added for the PR.
 - Still pending at preparation: merge/check live reconciliation run, confirm state and actual Drive parents agree, and verify deploy/cache purge. Do not claim 24/24 until live readback.
 - Payments stay disabled; no PayPal Production or Gelato changes.
+
+
+## 2026-10-03 — Drive persistence fix CLOSED after live verification
+
+- PR #132 merged as `20ba24a92ba3485b390af68bbc9daae5684955f6`; all three PR checks passed. Local targeted suite: 14/14.
+- Automatic reconciliation run #293 (`37137012698`) completed successfully end-to-end: https://github.com/erezfamily-cmyk/amit-photos/actions/runs/37137012698
+- Verified log: `RESTORE reconciled 1V2x1O-7f6CMhpmNghfzq3ce5r9yI-HKB: already in original parent 1bTahC57r7wmDgzNXzm7t8U9RoF8vCVDO`.
+- Summary: `moved=0, restored=0, reconciled=1, skipped=0, tracked_hidden=24`. No second physical move was needed. Main readback confirmed 24 Hidden entries and the stale entry absent, correcting the 25-entry mismatch reported after #292. The exact photo parent was queried in Drive during #293; this is not a separate full Hidden-folder inventory count.
+- State checkpoint pushed as `6049a57`; catalog/scan update pushed as `9ba49524bf390a9c51ec1bd55937354814efc9df`. Both persistence steps passed. Deployment, Worker secret sync, cache purge and DB migration all passed.
+- Production Worker version reported by this run: `f4eb3e00-738a-47f6-8dc9-0b1bd2dbb0b9`.
+- This supersedes the pending verification statements in the preparation entry above. Root cause was a stale queued checkout, not a failed RESTORE or missing Google write scope.
+- Keep the existing workflow lock (`cancel-in-progress: false`) and `ref: main`; retries protect against unrelated remote commits but deliberately stop on same-file conflicts. GitHub concurrency may replace older pending runs; curation state is read afresh rather than treating dispatches as an ordered event journal.
+- No owner terminal action needed for this fix. Next existing queue: continue remaining visual reviews; preserve the current acquisition experiment window and payment guardrails.
