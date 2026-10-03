@@ -1659,3 +1659,17 @@ Fix:
 - `data/drive-curation-state.json` now tracks 18 hidden items, each with the original `source_parent_id`, so KEEP/KEEP_SECONDARY restoration remains reversible.
 - The rest of run #284 also passed: Agent, token update, R2/D1 import, sitemap/assets, commit/push, Cloudflare deploy, Worker secret sync, cache purge, and DB migration.
 - Next Drive-specific verification is only the reverse path: choose one hidden photo in Admin, set KEEP or KEEP_SECONDARY, then verify it returns to its exact recorded original Drive parent and is removed from Hidden.
+
+
+## 2026-10-03 — RESTORE verified; queued checkout and push recovery fix
+
+- Run #289 succeeded; Run #292 (37133231482) restored photo `1V2x1O-7f6CMhpmNghfzq3ce5r9yI-HKB` to original parent `1bTahC57r7wmDgzNXzm7t8U9RoF8vCVDO`. Its Drive summary was `moved=0, restored=1, skipped=0, tracked_hidden=24`.
+- Run #292 then failed rebasing `data/drive-curation-state.json`, `data/last_scan.json`, and `data/photos.json`. Main still tracks 25 Hidden entries. Do not repeat the physical move or manually guess state from counts.
+- Root cause: concurrency already serializes update-photo runs, but queued dispatches retain their original event SHA. Both #289 and #292 started at `47307afa658459f7f379b66ddf53208f35501229`; the default checkout let #292 process stale state after #289 had pushed.
+- Fix prepared: checkout current `main` after acquiring the existing non-cancelling workflow lock; checkpoint Drive state and scan invalidation immediately, before agent/import/deploy; retry non-fast-forward pushes up to five times with rebase; fail on conflicts without force-push or automatic data replacement.
+- Drive sync checkpoints each successful operation. An already-restored photo is removed from state only after verifying its exact original parent, and forces a catalog rescan. Partial failures preserve the completed operations; a failure artifact retains state for diagnosis.
+- Asset version rewriting now happens after Git persistence, before deployment, so unrelated HTML changes cannot interfere with rebase.
+- A narrow push trigger on the sync implementation/workflow/helper starts a fresh reconciliation after the fix merges, without requiring another manual dispatch.
+- Local verification: 14 targeted tests, including real local bare-repository push rejection/rebase/conflict/exhaustion cases. Drive Sync CI added for the PR.
+- Still pending at preparation: merge/check live reconciliation run, confirm state and actual Drive parents agree, and verify deploy/cache purge. Do not claim 24/24 until live readback.
+- Payments stay disabled; no PayPal Production or Gelato changes.
