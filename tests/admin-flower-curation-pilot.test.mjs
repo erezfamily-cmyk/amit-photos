@@ -232,3 +232,11 @@ test('bulk score-under-80 selection targets only production R2 photos and HIDE i
   assert.match(admin, /body: JSON\.stringify\(\{ id, published: true \}\)/);
   assert.match(admin, /bulk hide failed/);
 });
+
+
+test('bulk delete can remove Drive-only cards by tombstone without requiring an R2 row', () => {
+  assert.match(admin, /photo\._source === 'drive'/);
+  assert.match(admin, /DELETE tombstone for Drive-only photo/);
+  assert.match(admin, /if \(photo\._source === 'r2'\)/);
+  assert.match(admin, /block re-import/);
+});
