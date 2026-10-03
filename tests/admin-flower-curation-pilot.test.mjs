@@ -302,3 +302,15 @@ test('admin login button does not invoke login twice', () => {
   assert.match(admin, /\$\('login-btn'\)\.addEventListener\('click', doLogin\)/);
   assert.doesNotMatch(admin, /id="login-btn" onclick=/);
 });
+
+
+test('bulk KEEP restores hidden photos and dispatches one Drive sync', () => {
+  assert.match(admin, /bulk-keep-btn/);
+  assert.match(admin, /bulk-secondary-btn/);
+  assert.match(admin, /applyBulkKeepDecision\('KEEP'\)/);
+  assert.match(admin, /applyBulkKeepDecision\('KEEP_SECONDARY'\)/);
+  assert.match(admin, /previousDecision === 'HIDE'/);
+  assert.match(admin, /published: true/);
+  assert.match(admin, /restoreRequested > 0/);
+  assert.match(admin, /One workflow dispatch after all decisions are persisted/);
+});
