@@ -1580,3 +1580,14 @@ Fix:
 - quick-select buttons apply the same exclusion rules.
 - live counters apply the same exclusion rules.
 - after login/reload, persisted curation decisions should therefore keep already-treated photos out of the actionable queues.
+
+
+## 2026-10-03 — Reversible Google Drive HIDE archive
+- Connected Google Drive account verified and root Portfolio folder identified as `1LpmT9PNKjCq5kb_GReuavkJPPbeMawMW`.
+- Created external root folder `Amit Photos Hidden` (Drive id `1LxJF0lQecSZ5EFxTHu0Njr616CEaOmf5`). It is outside Portfolio, so the recursive Portfolio scanner will not index it.
+- Added `src/sync_drive_curation.py` on branch `feature/drive-hide-archive-2026-10-03`.
+- Intended behavior: owner decision `HIDE` moves the original Drive image out of Portfolio into the Hidden folder and records the exact original parent in `data/drive-curation-state.json`; changing the owner decision away from HIDE restores the image to that exact parent.
+- The sync never permanently deletes Drive files. DELETE remains a separate tombstone/archive policy.
+- Parent moves force removal of `data/last_scan.json` so the next agent run performs a full Portfolio rescan; Drive parent changes do not reliably change file modifiedTime.
+- The daily `update-photos.yml` runs the HIDE sync before `agent_photos.py` and tracks the sync state file in commits.
+- Safety fallback: production Google credentials are currently historically configured with Drive read-only scope. If the token lacks `https://www.googleapis.com/auth/drive`, the sync exits successfully with a PENDING message; website HIDE remains intact and the daily photo workflow is not broken. One-time Google reauthorization with Drive write scope is still required before automatic moves can execute from GitHub Actions.
