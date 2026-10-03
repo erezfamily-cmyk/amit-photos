@@ -35,6 +35,7 @@ from google.auth.transport.requests import Request
 
 ROOT = Path(__file__).parent.parent
 STATE_FILE = ROOT / "data" / "drive-curation-state.json"
+LAST_SCAN_FILE = ROOT / "data" / "last_scan.json"
 
 WORKER_URL = os.environ.get("WORKER_URL", "https://amitphotos.com").rstrip("/")
 ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "")
@@ -285,6 +286,12 @@ def main():
     }
     if changed or not STATE_FILE.exists():
         save_state(state)
+
+    # Parent moves do not reliably advance Drive modifiedTime. Force the next
+    # portfolio agent run to rescan so photos.json immediately reflects both
+    # HIDE removals and restored KEEP decisions.
+    if moved or restored:
+        LAST_SCAN_FILE.unlink(missing_ok=True)
 
     print(
         f"Drive curation sync complete: moved={moved}, restored={restored}, "
