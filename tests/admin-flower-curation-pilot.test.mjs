@@ -281,10 +281,17 @@ test('single and bulk HIDE dispatch Drive curation sync without blocking website
 });
 
 
-test('Drive curation state seed is valid JSON', () => {
+test('Drive curation state is valid JSON with reversible hidden records', () => {
   const state = JSON.parse(fs.readFileSync('data/drive-curation-state.json', 'utf8'));
   assert.equal(state.version, 1);
-  assert.deepEqual(state.hidden, {});
+  assert.ok(state.hidden && typeof state.hidden === 'object' && !Array.isArray(state.hidden));
+  for (const [photoId, record] of Object.entries(state.hidden)) {
+    assert.ok(photoId);
+    assert.ok(record && typeof record === 'object');
+    assert.ok(record.source_parent_id);
+    assert.ok(record.hidden_folder_id);
+    assert.ok(record.hidden_at);
+  }
 });
 
 
