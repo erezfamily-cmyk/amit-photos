@@ -30,6 +30,15 @@ jobs:
       - name: התקנת חבילות
         run: pip install requests google-auth google-auth-oauthlib google-auth-httplib2 anthropic Pillow
 
+      - name: סנכרון HIDE הפיך מול Google Drive
+        env:
+          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
+          WORKER_URL: https://amitphotos.com
+          GOOGLE_TOKEN_JSON: ${{ secrets.GOOGLE_TOKEN }}
+          PORTFOLIO_FOLDER_ID: ${{ secrets.PORTFOLIO_FOLDER_ID }}
+          DRIVE_HIDDEN_FOLDER_ID: 1LxJF0lQecSZ5EFxTHu0Njr616CEaOmf5
+        run: python src/sync_drive_curation.py
+
       - name: הרצת Agent
         env:
           ANTHROPIC_API_KEY: ${{ secrets.AMIT_PHOTO_AGENT }}
@@ -78,14 +87,14 @@ jobs:
       - name: בדוק אם יש שינויים
         id: changes
         run: |
-          git diff --quiet data/photos.json data/copyright_flagged.json || echo "changed=true" >> $GITHUB_OUTPUT
+          git diff --quiet data/photos.json data/copyright_flagged.json data/drive-curation-state.json data/last_scan.json || echo "changed=true" >> $GITHUB_OUTPUT
 
       - name: Commit ו-push אם יש תמונות חדשות
         if: steps.changes.outputs.changed == 'true'
         run: |
           git config user.name "Photos Agent"
           git config user.email "agent@amitphotos.com"
-          git add data/photos.json sitemap.xml data/copyright_flagged.json
+          git add data/photos.json sitemap.xml data/copyright_flagged.json data/drive-curation-state.json data/last_scan.json
           git commit -m "🤖 עדכון אוטומטי: תמונות חדשות מ-Google Drive"
           git pull --rebase --autostash origin main
           git push origin main
