@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-03T17:25:36.099546+00:00",
+  "generated_at": "2026-10-03T17:48:05.677761+00:00",
   "version": "portfolio-v1",
   "scope": "all_galleries",
   "policy": {
@@ -3605,17 +3605,17 @@
       "thumbnail": "https://drive.google.com/thumbnail?id=1ORLslGMx-67u5nAHv-bDlGYjv2CAB5rV&sz=w600",
       "width": 1504,
       "height": 1000,
-      "score": null,
-      "score_kind": "pending_visual",
-      "confidence": "pending",
+      "score": 77,
+      "score_kind": "visual_complete",
+      "confidence": "high",
       "technical_score": 59,
       "components": {
-        "sharpness": null,
-        "composition": null,
-        "light_color": null,
+        "sharpness": 82,
+        "composition": 84,
+        "light_color": 83,
         "resolution": 47,
         "uniqueness": 100,
-        "category_fit": null,
+        "category_fit": 95,
         "metadata": 20
       },
       "flags": [
@@ -3623,13 +3623,15 @@
         "missing_description",
         "missing_exif"
       ],
-      "visual_flags": [],
-      "visual_note": "",
+      "visual_flags": [
+        "slight_background_blur_variation",
+        "minor_dust_particles_visible"
+      ],
+      "visual_note": "Well-executed wildlife portrait of a mountain goat with strong subject isolation and natural lighting, though some background softness inconsistency and minor atmospheric artifacts are present.",
       "material_problem": false,
-      "owner_review_required": false,
-      "recommended_action": "PENDING_VISUAL_REVIEW",
-      "visual_reviewed_at": null,
-      "last_visual_error": "public image fetch failed (unexpected content type: application/octet-stream); Drive fallback failed (google-auth is required for Drive fallback)"
+      "owner_review_required": true,
+      "recommended_action": "OWNER_REVIEW",
+      "visual_reviewed_at": "2026-10-03T17:47:59.414319+00:00"
     },
     {
       "photo_id": "1LuoH9OWwTFPRnDvZihmDE5hyBz3Kt815",
@@ -22257,27 +22259,30 @@
       "thumbnail": "/photos/thumb/1lPSCsuVyVsiJzATZChaHEM3Wsw8FspSf.webp",
       "width": 4288,
       "height": 2848,
-      "score": null,
-      "score_kind": "pending_visual",
-      "confidence": "pending",
+      "score": 85,
+      "score_kind": "visual_complete",
+      "confidence": "high",
       "technical_score": 96,
       "components": {
-        "sharpness": null,
-        "composition": null,
-        "light_color": null,
+        "sharpness": 82,
+        "composition": 88,
+        "light_color": 89,
         "resolution": 92,
         "uniqueness": 100,
-        "category_fit": null,
+        "category_fit": 45,
         "metadata": 100
       },
       "flags": [],
-      "visual_flags": [],
-      "visual_note": "",
+      "visual_flags": [
+        "category_mismatch_title_suggests_wheat_fields",
+        "landscape_appears_central_european_not_german",
+        "power_lines_visible_horizon"
+      ],
+      "visual_note": "Technically strong rural landscape with excellent golden-hour light and leading-line composition, but categorization as Germany conflicts with Hebrew title referencing wheat fields and visual characteristics suggesting different region.",
       "material_problem": false,
-      "owner_review_required": false,
-      "recommended_action": "PENDING_VISUAL_REVIEW",
-      "visual_reviewed_at": null,
-      "last_visual_error": "public image fetch failed (HTTPSConnectionPool(host='amitphotos.com', port=443): Read timed out. (read timeout=30)); Drive fallback failed (google-auth is required for Drive fallback)"
+      "owner_review_required": true,
+      "recommended_action": "OWNER_REVIEW",
+      "visual_reviewed_at": "2026-10-03T17:48:02.459941+00:00"
     },
     {
       "photo_id": "10VMFKwnUiWvcsl_39DTJQeKvW67g8E7u",
@@ -34498,27 +34503,29 @@
       "thumbnail": "/photos/thumb/1tC16MXZeeuqGfO9yZUJeq0jazQbXIf_z.webp",
       "width": 7360,
       "height": 4912,
-      "score": null,
-      "score_kind": "pending_visual",
-      "confidence": "pending",
+      "score": 89,
+      "score_kind": "visual_complete",
+      "confidence": "high",
       "technical_score": 100,
       "components": {
-        "sharpness": null,
-        "composition": null,
-        "light_color": null,
+        "sharpness": 78,
+        "composition": 82,
+        "light_color": 88,
         "resolution": 100,
         "uniqueness": 100,
-        "category_fit": null,
+        "category_fit": 95,
         "metadata": 100
       },
       "flags": [],
-      "visual_flags": [],
-      "visual_note": "",
+      "visual_flags": [
+        "slight_haze_atmospheric",
+        "silhouette_detail_loss"
+      ],
+      "visual_note": "Well-executed Prague skyline silhouette with excellent golden-hour lighting and strong compositional balance, though atmospheric haze slightly softens overall sharpness.",
       "material_problem": false,
       "owner_review_required": false,
-      "recommended_action": "PENDING_VISUAL_REVIEW",
-      "visual_reviewed_at": null,
-      "last_visual_error": "public image fetch failed (404 Client Error: Not Found for url: https://amitphotos.com/photos/1tC16MXZeeuqGfO9yZUJeq0jazQbXIf_z.webp); Drive fallback failed (google-auth is required for Drive fallback)"
+      "recommended_action": "KEEP_CANDIDATE",
+      "visual_reviewed_at": "2026-10-03T17:48:05.675484+00:00"
     },
     {
       "photo_id": "10zv-m89F2jz_1SZAIOOU5Nes6uHeLtGH",
@@ -35432,29 +35439,31 @@
       "thumbnail": "/photos/thumb/11-TX9S2XFZXspF3BQqbP81COUhwauXNP.webp",
       "width": 4288,
       "height": 2848,
-      "score": null,
-      "score_kind": "pending_visual",
-      "confidence": "pending",
+      "score": 77,
+      "score_kind": "visual_complete",
+      "confidence": "high",
       "technical_score": 88,
       "components": {
-        "sharpness": null,
-        "composition": null,
-        "light_color": null,
+        "sharpness": 62,
+        "composition": 72,
+        "light_color": 78,
         "resolution": 92,
         "uniqueness": 75,
-        "category_fit": null,
+        "category_fit": 95,
         "metadata": 100
       },
       "flags": [
         "duplicate_title"
       ],
-      "visual_flags": [],
-      "visual_note": "",
+      "visual_flags": [
+        "shallow_depth_of_field_obscures_subject",
+        "foreground_blur_reduces_clarity"
+      ],
+      "visual_note": "Spring blossoms are well-exposed with pleasing pink tones, but excessive foreground blur significantly compromises subject visibility and sharpness.",
       "material_problem": false,
-      "owner_review_required": false,
-      "recommended_action": "PENDING_VISUAL_REVIEW",
-      "visual_reviewed_at": null,
-      "last_visual_error": "public image fetch failed (404 Client Error: Not Found for url: https://amitphotos.com/photos/11-TX9S2XFZXspF3BQqbP81COUhwauXNP.webp); Drive fallback failed (google-auth is required for Drive fallback)"
+      "owner_review_required": true,
+      "recommended_action": "OWNER_REVIEW",
+      "visual_reviewed_at": "2026-10-03T17:47:38.887889+00:00"
     },
     {
       "photo_id": "1Yjmr3Jzv9ovFqBPAm2-2VEXvM9SwUYpU",
@@ -36758,30 +36767,32 @@
       "thumbnail": "/photos/thumb/1kWZO1rkQHY_NGlT68-exrPm2UCBDlerd.webp",
       "width": 4288,
       "height": 2848,
-      "score": null,
-      "score_kind": "pending_visual",
-      "confidence": "pending",
+      "score": 83,
+      "score_kind": "visual_complete",
+      "confidence": "high",
       "technical_score": 85,
       "components": {
-        "sharpness": null,
-        "composition": null,
-        "light_color": null,
+        "sharpness": 78,
+        "composition": 82,
+        "light_color": 85,
         "resolution": 92,
         "uniqueness": 100,
-        "category_fit": null,
+        "category_fit": 95,
         "metadata": 30
       },
       "flags": [
         "missing_description",
         "missing_exif"
       ],
-      "visual_flags": [],
-      "visual_note": "",
+      "visual_flags": [
+        "shallow_dof_selective_focus",
+        "background_blur_appropriate"
+      ],
+      "visual_note": "Well-executed orchid study with excellent color rendering and selective focus, though some flowers lack critical sharpness due to shallow depth of field.",
       "material_problem": false,
-      "owner_review_required": false,
-      "recommended_action": "PENDING_VISUAL_REVIEW",
-      "visual_reviewed_at": null,
-      "last_visual_error": "public image fetch failed (404 Client Error: Not Found for url: https://amitphotos.com/photos/1kWZO1rkQHY_NGlT68-exrPm2UCBDlerd.webp); Drive fallback failed (google-auth is required for Drive fallback)"
+      "owner_review_required": true,
+      "recommended_action": "OWNER_REVIEW",
+      "visual_reviewed_at": "2026-10-03T17:47:51.297159+00:00"
     },
     {
       "photo_id": "1HzQTuShfHFp4kc_CX88gH0u_RbWyPoem",
@@ -36791,30 +36802,32 @@
       "thumbnail": "/photos/thumb/1HzQTuShfHFp4kc_CX88gH0u_RbWyPoem.webp",
       "width": 4288,
       "height": 2848,
-      "score": null,
-      "score_kind": "pending_visual",
-      "confidence": "pending",
+      "score": 88,
+      "score_kind": "visual_complete",
+      "confidence": "high",
       "technical_score": 85,
       "components": {
-        "sharpness": null,
-        "composition": null,
-        "light_color": null,
+        "sharpness": 88,
+        "composition": 87,
+        "light_color": 89,
         "resolution": 92,
         "uniqueness": 100,
-        "category_fit": null,
+        "category_fit": 98,
         "metadata": 30
       },
       "flags": [
         "missing_description",
         "missing_exif"
       ],
-      "visual_flags": [],
-      "visual_note": "",
+      "visual_flags": [
+        "minor_stem_blur",
+        "slight_right_edge_crop"
+      ],
+      "visual_note": "Well-executed orchid portrait with excellent color rendering and selective focus; minor compositional tightness on the right edge.",
       "material_problem": false,
       "owner_review_required": false,
-      "recommended_action": "PENDING_VISUAL_REVIEW",
-      "visual_reviewed_at": null,
-      "last_visual_error": "public image fetch failed (404 Client Error: Not Found for url: https://amitphotos.com/photos/1HzQTuShfHFp4kc_CX88gH0u_RbWyPoem.webp); Drive fallback failed (google-auth is required for Drive fallback)"
+      "recommended_action": "KEEP_CANDIDATE",
+      "visual_reviewed_at": "2026-10-03T17:47:44.659164+00:00"
     },
     {
       "photo_id": "1IKN9iMton4KCv6Hd95P6Jzat_UJ8enwP",
@@ -38002,27 +38015,29 @@
       "thumbnail": "/photos/thumb/1W8-F5AawLNWCzmCszaZX_YDp0A2oyn34.webp",
       "width": 8256,
       "height": 5504,
-      "score": null,
-      "score_kind": "pending_visual",
-      "confidence": "pending",
+      "score": 90,
+      "score_kind": "visual_complete",
+      "confidence": "high",
       "technical_score": 100,
       "components": {
-        "sharpness": null,
-        "composition": null,
-        "light_color": null,
+        "sharpness": 82,
+        "composition": 85,
+        "light_color": 88,
         "resolution": 100,
         "uniqueness": 100,
-        "category_fit": null,
+        "category_fit": 95,
         "metadata": 100
       },
       "flags": [],
-      "visual_flags": [],
-      "visual_note": "",
+      "visual_flags": [
+        "shallow_dof_intentional",
+        "minor_background_distraction"
+      ],
+      "visual_note": "Well-executed macro floral study with excellent color rendering and selective focus; minor background softness could be tighter framing.",
       "material_problem": false,
       "owner_review_required": false,
-      "recommended_action": "PENDING_VISUAL_REVIEW",
-      "visual_reviewed_at": null,
-      "last_visual_error": "public image fetch failed (404 Client Error: Not Found for url: https://amitphotos.com/photos/1W8-F5AawLNWCzmCszaZX_YDp0A2oyn34.webp); Drive fallback failed (google-auth is required for Drive fallback)"
+      "recommended_action": "KEEP_CANDIDATE",
+      "visual_reviewed_at": "2026-10-03T17:47:48.318913+00:00"
     },
     {
       "photo_id": "1dx0yoxb2yzeJ_GAeIG4wjB9v__QFAPdk",
@@ -38096,27 +38111,29 @@
       "thumbnail": "/photos/thumb/118RM_kkpXjvAFKP51Wf4VrBMre5vOki4.webp",
       "width": 8256,
       "height": 5504,
-      "score": null,
-      "score_kind": "pending_visual",
-      "confidence": "pending",
+      "score": 90,
+      "score_kind": "visual_complete",
+      "confidence": "high",
       "technical_score": 100,
       "components": {
-        "sharpness": null,
-        "composition": null,
-        "light_color": null,
+        "sharpness": 82,
+        "composition": 85,
+        "light_color": 88,
         "resolution": 100,
         "uniqueness": 100,
-        "category_fit": null,
+        "category_fit": 95,
         "metadata": 100
       },
       "flags": [],
-      "visual_flags": [],
-      "visual_note": "",
+      "visual_flags": [
+        "shallow_dof_background_blur",
+        "minor_focus_gradient"
+      ],
+      "visual_note": "Well-executed orchid macro with excellent color rendering and subject isolation; shallow depth of field is intentional but slightly softens background buds.",
       "material_problem": false,
       "owner_review_required": false,
-      "recommended_action": "PENDING_VISUAL_REVIEW",
-      "visual_reviewed_at": null,
-      "last_visual_error": "public image fetch failed (404 Client Error: Not Found for url: https://amitphotos.com/photos/118RM_kkpXjvAFKP51Wf4VrBMre5vOki4.webp); Drive fallback failed (google-auth is required for Drive fallback)"
+      "recommended_action": "KEEP_CANDIDATE",
+      "visual_reviewed_at": "2026-10-03T17:47:42.267525+00:00"
     },
     {
       "photo_id": "1CVwfgUt1Isa6EpFrQUvxNIqSLjE101mp",
@@ -38192,27 +38209,29 @@
       "thumbnail": "/photos/thumb/1zOwofy1H65KuCYXlDMJEDRVgKlwVycAZ.webp",
       "width": 8256,
       "height": 5504,
-      "score": null,
-      "score_kind": "pending_visual",
-      "confidence": "pending",
+      "score": 90,
+      "score_kind": "visual_complete",
+      "confidence": "high",
       "technical_score": 100,
       "components": {
-        "sharpness": null,
-        "composition": null,
-        "light_color": null,
+        "sharpness": 82,
+        "composition": 85,
+        "light_color": 88,
         "resolution": 100,
         "uniqueness": 100,
-        "category_fit": null,
+        "category_fit": 95,
         "metadata": 100
       },
       "flags": [],
-      "visual_flags": [],
-      "visual_note": "",
+      "visual_flags": [
+        "soft_background_blur_appropriate",
+        "minor_edge_softness"
+      ],
+      "visual_note": "Well-executed macro floral study with excellent color saturation, strong subject isolation, and appropriate depth of field; minor softness at image periphery is compositionally intentional.",
       "material_problem": false,
       "owner_review_required": false,
-      "recommended_action": "PENDING_VISUAL_REVIEW",
-      "visual_reviewed_at": null,
-      "last_visual_error": "public image fetch failed (404 Client Error: Not Found for url: https://amitphotos.com/photos/1zOwofy1H65KuCYXlDMJEDRVgKlwVycAZ.webp); Drive fallback failed (google-auth is required for Drive fallback)"
+      "recommended_action": "KEEP_CANDIDATE",
+      "visual_reviewed_at": "2026-10-03T17:47:55.767860+00:00"
     },
     {
       "photo_id": "1jiAGq5cA9xBVXvHy2XmoiHKrE60GJAmA",
@@ -43659,28 +43678,28 @@
   ],
   "summary": {
     "total": 1322,
-    "visual_complete": 1313,
-    "pending_visual": 9,
-    "owner_review_required": 565,
-    "auto_clear_above_85": 748,
+    "visual_complete": 1322,
+    "pending_visual": 0,
+    "owner_review_required": 569,
+    "auto_clear_above_85": 753,
     "critical_low_resolution": 0,
-    "current_gallery": "פרחים וצמחים",
-    "completed_galleries": 23,
+    "current_gallery": null,
+    "completed_galleries": 27,
     "gallery_count": 27,
     "by_category": {
       "פרחים וצמחים": {
         "total": 150,
-        "visual_complete": 144,
-        "pending_visual": 6,
-        "owner_review_required": 34,
-        "completed": false
+        "visual_complete": 150,
+        "pending_visual": 0,
+        "owner_review_required": 36,
+        "completed": true
       },
       "בעלי חיים": {
         "total": 99,
-        "visual_complete": 98,
-        "pending_visual": 1,
-        "owner_review_required": 23,
-        "completed": false
+        "visual_complete": 99,
+        "pending_visual": 0,
+        "owner_review_required": 24,
+        "completed": true
       },
       "ישראל": {
         "total": 113,
@@ -43775,10 +43794,10 @@
       },
       "גרמניה": {
         "total": 48,
-        "visual_complete": 47,
-        "pending_visual": 1,
-        "owner_review_required": 21,
-        "completed": false
+        "visual_complete": 48,
+        "pending_visual": 0,
+        "owner_review_required": 22,
+        "completed": true
       },
       "אנגליה": {
         "total": 43,
@@ -43796,10 +43815,10 @@
       },
       "צכיה": {
         "total": 18,
-        "visual_complete": 17,
-        "pending_visual": 1,
+        "visual_complete": 18,
+        "pending_visual": 0,
         "owner_review_required": 3,
-        "completed": false
+        "completed": true
       },
       "טנזניה": {
         "total": 28,
