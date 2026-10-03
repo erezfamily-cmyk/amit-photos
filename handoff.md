@@ -1649,3 +1649,13 @@ Fix:
   - the curation workflow receives `GOOGLE_TOKEN_JSON`, installs `google-auth`, and normalizes score state before validation instead of relying on a stale hard-coded portfolio count.
 - Next verification required: dispatch `update-photos.yml` once more from current `main` and inspect the HIDE step logs. Success criteria: no `invalid_scope`, no `PENDING`, and actual `HIDE moved ...` lines for eligible decisions (or an explicit justified skip count).
 - After that, the scheduled Portfolio Visual Curation workflow should be able to continue beyond the six previously-blocking flower images.
+
+
+## 2026-10-03 — Drive HIDE end-to-end verification complete
+- Manual `update-photos.yml` run #284 (`37126343871`) completed **successfully** on `dd5823362268f8800323d46f167904e0c5675b08`.
+- Drive HIDE sync result: `moved=18, restored=0, skipped=0, tracked_hidden=18`.
+- No `PENDING` or `invalid_scope` remained in the successful run.
+- Google Drive readback of `Amit Photos Hidden` confirmed exactly 18 files present, matching the 18 moved IDs from the Actions log.
+- `data/drive-curation-state.json` now tracks 18 hidden items, each with the original `source_parent_id`, so KEEP/KEEP_SECONDARY restoration remains reversible.
+- The rest of run #284 also passed: Agent, token update, R2/D1 import, sitemap/assets, commit/push, Cloudflare deploy, Worker secret sync, cache purge, and DB migration.
+- Next Drive-specific verification is only the reverse path: choose one hidden photo in Admin, set KEEP or KEEP_SECONDARY, then verify it returns to its exact recorded original Drive parent and is removed from Hidden.
