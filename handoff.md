@@ -1615,3 +1615,13 @@ Fix:
 - In #279, Cloudflare secret sync still succeeded for both `GOOGLE_CREDENTIALS` and `GOOGLE_TOKEN` after the git conflict.
 - Follow-up hardening recommended: add workflow-level `concurrency` for `update-photos.yml` (single in-flight run, ideally `cancel-in-progress: false`) or otherwise serialize the commit/push stage so two update-photo runs cannot race on `data/last_scan.json`.
 - Current operational meaning: reversible Drive HIDE/RESTORE is authorized and functioning at the workflow level. Do not start duplicate manual update-photo runs in parallel until concurrency hardening is merged.
+
+
+## 2026-10-03 — Final OAuth write-scope verification (run #281)
+- The local OAuth refresh flow was fixed by fully rewriting `src/refresh_token.py`; owner successfully generated a new `token.json`, updated GitHub Actions secret `GOOGLE_TOKEN`, and manually dispatched `update-photos.yml`.
+- Run #281 (`37119359650`, SHA `9d8b49840735b216a2f544d4968958b300aea0cf`) completed successfully end-to-end.
+- Crucially, the Drive curation step no longer logged `PENDING: Google Drive write scope is not authorized`. This confirms the new OAuth token has the required Google Drive write scope and the previous `drive.readonly` blocker is resolved.
+- Drive curation summary from run #281: `moved=0, restored=0, skipped=18, tracked_hidden=0`.
+- The 18 skipped HIDE decisions were skipped with `no verified Portfolio parent`. This is now the remaining functional issue: authorization is fixed, but those existing HIDE decision file IDs are not currently being verified as descendants of the configured Portfolio folder, so no Drive files were moved during #281.
+- Operational status: website HIDE remains applied; OAuth write authorization is healthy; Drive move/restore still needs parent-mapping/Portfolio-parent diagnosis for the 18 existing skipped decisions before claiming end-to-end HIDE movement is complete.
+- Do not reintroduce a read-only token. Keep using the regenerated OAuth token with `https://www.googleapis.com/auth/drive` scope.
