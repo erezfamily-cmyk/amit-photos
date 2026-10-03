@@ -1634,3 +1634,18 @@ Fix:
 - Replacement PR #127 merged as `d033bea373df586af7075f783740eead7bbd0e42`: Admin now retries persisted curation-decision loading, never interprets a failed load as an empty owner-decision map, and no longer invokes login twice.
 - `TODO.md` was reconciled with current code/merged PRs: full-portfolio curation rollout, pending-score display, <=85 review routing, >85 auto-clear routing, photo-strength pipeline, and relogin persistence are marked complete where verified.
 - Operational constraints unchanged: `PAYMENTS_ENABLED=false`; PayPal Production remains disabled; Gelato remains out of scope; redesigned Free Guide experiment remains frozen through the 7-day measurement window.
+
+
+## 2026-10-03 — update-photos run #282 follow-up + visual curation unblock
+- Manual `update-photos.yml` run #282 (`37124947838`) failed before HIDE processing because the Google access token had expired and google-auth attempted a refresh that re-sent scopes; Google returned `invalid_scope`.
+- The same run also hit a separate Wrangler failure while syncing Worker secrets before deployment: current Wrangler refuses `secret put` when the latest Worker version is not yet deployed.
+- PR #129 merged as `32bf611f2bc6a5114893ce19fe14cfe4f8d2bc07`:
+  - Drive OAuth refresh now uses a direct refresh-token grant without re-sending scope.
+  - refreshed authorized-user JSON preserves refresh token/scopes and writes `token_refreshed.json` so the existing GitHub secret update step can persist it.
+  - Cloudflare Google secret sync now runs after deploy and only on runs that actually deploy.
+- PR #128 merged as `70f550677ff8f64faa3efd72c6276db575ff3fd8`:
+  - visual curation falls back to the original Google Drive image when the public/R2 full-image URL is missing (the six remaining flower items were returning 404).
+  - one batch can now continue into the next gallery instead of wasting unused batch capacity.
+  - the curation workflow receives `GOOGLE_TOKEN_JSON`, installs `google-auth`, and normalizes score state before validation instead of relying on a stale hard-coded portfolio count.
+- Next verification required: dispatch `update-photos.yml` once more from current `main` and inspect the HIDE step logs. Success criteria: no `invalid_scope`, no `PENDING`, and actual `HIDE moved ...` lines for eligible decisions (or an explicit justified skip count).
+- After that, the scheduled Portfolio Visual Curation workflow should be able to continue beyond the six previously-blocking flower images.
