@@ -28,7 +28,7 @@ def test_change_detection_also_considers_copyright_flagged_json():
     # run is a newly-flagged photo, the "did anything change" check must still trigger the commit/
     # deploy steps, or the fix above never actually fires.
     text = WORKFLOW.read_text(encoding="utf-8")
-    diff_lines = [line for line in text.splitlines() if "git diff --quiet" in line]
+    diff_lines = [line for line in text.splitlines() if "git diff --staged --quiet" in line]
     assert diff_lines, "no 'git diff --quiet' change-detection line found — has it moved?"
     assert any("copyright_flagged.json" in line for line in diff_lines), (
         "the changed-detection step must also watch data/copyright_flagged.json, or a run where "

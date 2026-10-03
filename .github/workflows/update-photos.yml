@@ -108,7 +108,9 @@ jobs:
       - name: בדוק אם יש שינויים
         id: changes
         run: |
-          git diff --quiet data/photos.json data/copyright_flagged.json data/drive-curation-state.json data/last_scan.json || echo "changed=true" >> $GITHUB_OUTPUT
+          # last_scan can be newly recreated after the Drive checkpoint deleted it.
+          git add -- data/photos.json data/copyright_flagged.json data/drive-curation-state.json data/last_scan.json
+          git diff --staged --quiet data/photos.json data/copyright_flagged.json data/drive-curation-state.json data/last_scan.json || echo "changed=true" >> $GITHUB_OUTPUT
 
       - name: Commit ו-push אם יש תמונות חדשות
         if: steps.changes.outputs.changed == 'true'
