@@ -1625,3 +1625,12 @@ Fix:
 - The 18 skipped HIDE decisions were skipped with `no verified Portfolio parent`. This is now the remaining functional issue: authorization is fixed, but those existing HIDE decision file IDs are not currently being verified as descendants of the configured Portfolio folder, so no Drive files were moved during #281.
 - Operational status: website HIDE remains applied; OAuth write authorization is healthy; Drive move/restore still needs parent-mapping/Portfolio-parent diagnosis for the 18 existing skipped decisions before claiming end-to-end HIDE movement is complete.
 - Do not reintroduce a read-only token. Keep using the regenerated OAuth token with `https://www.googleapis.com/auth/drive` scope.
+
+
+## 2026-10-03 — Task closure pass
+- PR #125 merged: empty `PORTFOLIO_FOLDER_ID` no longer disables the known Portfolio root fallback. One manual `update-photos.yml` run is still needed when owner is back at the terminal to verify the 18 existing HIDE decisions physically move to the external Hidden folder.
+- PR #126 merged as `8ab9ef0ac881d62bedc1459127645d735d8dcdf3`: `update-photos.yml` now has workflow-level concurrency (`cancel-in-progress: false`), preventing duplicate runs from racing on `data/last_scan.json`.
+- Old draft PR #118 was confirmed still conceptually needed but stale against current Admin code, so it was closed without merge.
+- Replacement PR #127 merged as `d033bea373df586af7075f783740eead7bbd0e42`: Admin now retries persisted curation-decision loading, never interprets a failed load as an empty owner-decision map, and no longer invokes login twice.
+- `TODO.md` was reconciled with current code/merged PRs: full-portfolio curation rollout, pending-score display, <=85 review routing, >85 auto-clear routing, photo-strength pipeline, and relogin persistence are marked complete where verified.
+- Operational constraints unchanged: `PAYMENTS_ENABLED=false`; PayPal Production remains disabled; Gelato remains out of scope; redesigned Free Guide experiment remains frozen through the 7-day measurement window.
