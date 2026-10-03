@@ -31,7 +31,6 @@ from pathlib import Path
 
 import requests
 from google.oauth2.credentials import Credentials
-from google.auth.transport.requests import Request
 
 ROOT = Path(__file__).parent.parent
 STATE_FILE = ROOT / "data" / "drive-curation-state.json"
@@ -72,25 +71,66 @@ def save_state(state):
     )
 
 
+def refresh_access_token(info):
+    refresh_token = str(info.get("refresh_token") or "").strip()
+    token_uri = str(info.get("token_uri") or "https://oauth2.googleapis.com/token").strip()
+    client_id = str(info.get("client_id") or "").strip()
+    client_secret = str(info.get("client_secret") or "").strip()
+    if not all((refresh_token, token_uri, client_id, client_secret)):
+        raise RuntimeError("Google OAuth refresh metadata is incomplete")
+
+    # Do not send scope during a refresh-token grant. The refresh token is
+    # already bound to the scope approved by the owner; re-sending scope caused
+    # Google's invalid_scope response after the access token expired.
+    res = requests.post(
+        token_uri,
+        data={
+            "client_id": client_id,
+            "client_secret": client_secret,
+            "refresh_token": refresh_token,
+            "grant_type": "refresh_token",
+        },
+        timeout=30,
+    )
+    res.raise_for_status()
+    payload = res.json()
+    token = str(payload.get("access_token") or "").strip()
+    if not token:
+        raise RuntimeError("Google OAuth refresh returned no access_token")
+
+    info["token"] = token
+    if payload.get("expires_in"):
+        info["expiry"] = (
+            datetime.now(timezone.utc)
+            + __import__("datetime").timedelta(seconds=int(payload["expires_in"]))
+        ).isoformat()
+    # Preserve the original refresh token and approved scopes in the stored
+    # authorized-user JSON so future runs remain stable.
+    (ROOT / "token_refreshed.json").write_text(
+        json.dumps(info, ensure_ascii=False),
+        encoding="utf-8",
+    )
+    return token
+
+
 def get_drive_session():
     raw = os.environ.get("GOOGLE_TOKEN_JSON", "").strip()
     if not raw:
         raise RuntimeError("GOOGLE_TOKEN_JSON is missing")
 
     info = json.loads(raw)
-    creds = Credentials.from_authorized_user_info(info)
-    if creds.expired and creds.refresh_token:
-        creds.refresh(Request())
-
-    # Existing production credentials were historically read-only. Do not
-    # break the daily photo workflow while waiting for one-time re-authorization.
-    if not creds.has_scopes([DRIVE_SCOPE]):
-        scopes = set(creds.scopes or info.get("scopes") or [])
+    scopes = set(info.get("scopes") or [])
+    if DRIVE_SCOPE not in scopes:
         return None, scopes
 
+    creds = Credentials.from_authorized_user_info(info)
+    token = creds.token
+    if creds.expired or not token:
+        token = refresh_access_token(info)
+
     session = requests.Session()
-    session.headers.update({"Authorization": f"Bearer {creds.token}"})
-    return session, set(creds.scopes or [])
+    session.headers.update({"Authorization": f"Bearer {token}"})
+    return session, scopes
 
 
 def api_get(session, path, params=None):

@@ -41,3 +41,12 @@ def test_update_photos_workflow_is_serialized():
     assert "concurrency:" in text
     assert "group: update-photos-${{ github.ref }}" in text
     assert "cancel-in-progress: false" in text
+
+
+def test_worker_google_secrets_sync_happens_after_deploy():
+    text = WORKFLOW.read_text(encoding="utf-8")
+    deploy = text.index("Deploy ל-Cloudflare")
+    secret_sync = text.index("סנכרון GOOGLE_CREDENTIALS/GOOGLE_TOKEN ל-Cloudflare Worker secrets")
+    assert deploy < secret_sync
+    block = text[secret_sync:]
+    assert "if: steps.changes.outputs.changed == 'true' || github.event_name == 'workflow_dispatch'" in block
