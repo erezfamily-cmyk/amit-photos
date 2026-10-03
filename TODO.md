@@ -9,8 +9,8 @@ Closed today:
 - [x] Admin curation decisions hardened across logout/login in PR #127; stale PR #118 closed as superseded.
 
 Still active:
-- [ ] Run `update-photos.yml` once from home after PR #125 and verify the existing 18 HIDE decisions move to `Amit Photos Hidden` with no unexpected skips.
-- [ ] Continue actual visual scoring/review for remaining photos whose visual components are still pending.
+- [ ] Run `update-photos.yml` once more after PR #129 and verify the existing HIDE decisions move to `Amit Photos Hidden` with no `invalid_scope`/unexpected skips.
+- [ ] Continue actual visual scoring/review for remaining photos whose visual components are still pending. PR #128 removed the 404 blocker and enables Drive fallback/cross-gallery batches.
 - [ ] Finish the redesigned Free Guide 7-day measurement window through 9.10 before changing offer/PDF/UTM/KPI.
 - [ ] Keep `PAYMENTS_ENABLED=false`; PayPal Orders v2 remains Sandbox-only work and Gelato remains out of scope.
 # TODO — Amit Photos business model
