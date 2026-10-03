@@ -4123,19 +4123,25 @@ const Photos = (() => {
     if (!confirm(`למחוק את "${photo?.title||'תמונה זו'}"? המחיקה תישמר גם מול Google Drive.`)) return;
     const previousDecision = curationDecisions.get(id) || null;
     try {
-      await saveCurationDecision(id, 'DELETE', { note: 'Owner DELETE from Admin photo menu.' });
-      const res = await fetch(`/api/photos?id=${encodeURIComponent(id)}`, { method: 'DELETE', headers: authHeaders() });
-      if (!res.ok) {
-        const payload = await res.json().catch(() => ({}));
-        if (previousDecision?.decision) {
-          await saveCurationDecision(id, previousDecision.decision, {
-            category: previousDecision.category || '',
-            note: previousDecision.note || ''
-          });
-        } else {
-          await saveCurationDecision(id, '');
+      await saveCurationDecision(id, 'DELETE', {
+        note: photo?._source === 'drive'
+          ? 'Owner DELETE tombstone for Drive-only photo; source archive untouched.'
+          : 'Owner DELETE from Admin photo menu.'
+      });
+      if (photo?._source === 'r2') {
+        const res = await fetch(`/api/photos?id=${encodeURIComponent(id)}`, { method: 'DELETE', headers: authHeaders() });
+        if (!res.ok) {
+          const payload = await res.json().catch(() => ({}));
+          if (previousDecision?.decision) {
+            await saveCurationDecision(id, previousDecision.decision, {
+              category: previousDecision.category || '',
+              note: previousDecision.note || ''
+            });
+          } else {
+            await saveCurationDecision(id, '');
+          }
+          throw new Error(payload.error || 'מחיקת התמונה נכשלה');
         }
-        throw new Error(payload.error || 'מחיקת התמונה נכשלה');
       }
       data = data.filter(p => p.id !== id);
       render();
@@ -4465,23 +4471,33 @@ const Photos = (() => {
     let failed = 0;
     for (const id of ids) {
       const photo = data.find(p => p.id === id);
-      if (!photo || photo._source !== 'r2') { failed++; continue; }
+      if (!photo) { failed++; continue; }
       const previousDecision = curationDecisions.get(id) || null;
       try {
-        await saveCurationDecision(id, 'DELETE', { note: 'Bulk owner DELETE from Admin selection.' });
-        const res = await fetch(`/api/photos?id=${encodeURIComponent(id)}`, { method: 'DELETE', headers: authHeaders() });
-        if (!res.ok) {
-          const payload = await res.json().catch(() => ({}));
-          if (previousDecision?.decision) {
-            await saveCurationDecision(id, previousDecision.decision, {
-              category: previousDecision.category || '',
-              note: previousDecision.note || ''
-            });
-          } else {
-            await saveCurationDecision(id, '');
+        await saveCurationDecision(id, 'DELETE', {
+          note: photo._source === 'drive'
+            ? 'Bulk owner DELETE tombstone for Drive-only photo; source archive untouched.'
+            : 'Bulk owner DELETE from Admin selection.'
+        });
+
+        if (photo._source === 'r2') {
+          const res = await fetch(`/api/photos?id=${encodeURIComponent(id)}`, { method: 'DELETE', headers: authHeaders() });
+          if (!res.ok) {
+            const payload = await res.json().catch(() => ({}));
+            if (previousDecision?.decision) {
+              await saveCurationDecision(id, previousDecision.decision, {
+                category: previousDecision.category || '',
+                note: previousDecision.note || ''
+              });
+            } else {
+              await saveCurationDecision(id, '');
+            }
+            throw new Error(payload.error || 'מחיקת התמונה נכשלה');
           }
-          throw new Error(payload.error || 'מחיקת התמונה נכשלה');
         }
+
+        // Drive-only photos have no D1/R2 row to delete. The DELETE tombstone is
+        // the destructive site decision: remove the card now and block re-import.
         data = data.filter(p => p.id !== id);
         deleted++;
       } catch (err) {
