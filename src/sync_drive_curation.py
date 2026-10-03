@@ -39,7 +39,8 @@ LAST_SCAN_FILE = ROOT / "data" / "last_scan.json"
 
 WORKER_URL = os.environ.get("WORKER_URL", "https://amitphotos.com").rstrip("/")
 ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "")
-PORTFOLIO_FOLDER_ID = os.environ.get("PORTFOLIO_FOLDER_ID", "1LpmT9PNKjCq5kb_GReuavkJPPbeMawMW")
+DEFAULT_PORTFOLIO_FOLDER_ID = "1LpmT9PNKjCq5kb_GReuavkJPPbeMawMW"
+PORTFOLIO_FOLDER_ID = (os.environ.get("PORTFOLIO_FOLDER_ID") or DEFAULT_PORTFOLIO_FOLDER_ID).strip()
 HIDDEN_FOLDER_ID = os.environ.get("DRIVE_HIDDEN_FOLDER_ID", "1LxJF0lQecSZ5EFxTHu0Njr616CEaOmf5")
 
 DRIVE_SCOPE = "https://www.googleapis.com/auth/drive"
