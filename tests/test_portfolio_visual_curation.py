@@ -140,10 +140,6 @@ class PortfolioVisualCurationTests(unittest.TestCase):
         self.assertNotIn("DELETE FROM photos", source)
 
 
-if __name__ == "__main__":
-    unittest.main()
-
-
     def test_pending_selection_uses_full_batch_across_galleries(self):
         state = {"items": [
             {"photo_id": "f1", "category": "פרחים וצמחים", "score_kind": "pending_visual", "material_problem": False},
@@ -166,3 +162,7 @@ if __name__ == "__main__":
         self.assertIn("def fetch_drive_image", source)
         self.assertIn("GOOGLE_TOKEN_JSON", source)
         self.assertIn('params={"alt": "media", "supportsAllDrives": "true"}', source)
+
+
+if __name__ == "__main__":
+    unittest.main()
