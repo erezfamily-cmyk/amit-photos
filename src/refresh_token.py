@@ -46,7 +46,7 @@ def main():
     print("=" * 50)
     print("עדכן את ה-secret ב-GitHub:")
     print()
-    print("  gh secret set GOOGLE_TOKEN < token.json")
+    print("  Get-Content -Raw token.json | gh secret set GOOGLE_TOKEN")
     print()
     print("ואז הרץ מחדש את ה-workflow:")
     print()
