@@ -1604,3 +1604,14 @@ Fix:
   3. Update GitHub Actions secret with `gh secret set GOOGLE_TOKEN < token.json`.
   4. Run `gh workflow run update-photos.yml` and verify the sync step no longer reports PENDING.
 - Do not paste `token.json` into chat or commit it to Git.
+
+
+## 2026-10-03 — Drive HIDE/RESTORE live verification after write-scope reauth
+- Owner regenerated the Google OAuth token locally and successfully updated GitHub Actions secret `GOOGLE_TOKEN`.
+- PR #124 (`fix: Drive HIDE sync state and write-scope reauth`) merged to `main` at `62c926b6f67660978d4b6a2a040f8bffbcb94252`.
+- Root cause of earlier runs #276/#277: `data/drive-curation-state.json` had literal escaped newlines and was invalid JSON; fixed in PR #124 and covered by a regression test.
+- Workflow run #278 (`update-photos.yml`, manual dispatch) completed successfully end-to-end. Critically, step `סנכרון HIDE הפיך מול Google Drive` passed, followed by Agent, R2/D1 import, token refresh, Cloudflare secret sync, deploy, cache purge and DB migration — all green. This confirms the new GitHub token is accepted by the Drive HIDE/RESTORE sync path.
+- A second manual run #279 was started almost simultaneously. Its Drive HIDE sync, Agent and import steps also passed. It later failed only at `Commit ו-push אם יש תמונות חדשות` because run #278 had already pushed changes to `main`, producing a rebase conflict in `data/last_scan.json`. This is a workflow concurrency/race issue, not a Drive permission failure.
+- In #279, Cloudflare secret sync still succeeded for both `GOOGLE_CREDENTIALS` and `GOOGLE_TOKEN` after the git conflict.
+- Follow-up hardening recommended: add workflow-level `concurrency` for `update-photos.yml` (single in-flight run, ideally `cancel-in-progress: false`) or otherwise serialize the commit/push stage so two update-photo runs cannot race on `data/last_scan.json`.
+- Current operational meaning: reversible Drive HIDE/RESTORE is authorized and functioning at the workflow level. Do not start duplicate manual update-photo runs in parallel until concurrency hardening is merged.
