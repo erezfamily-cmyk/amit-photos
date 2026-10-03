@@ -7871,17 +7871,16 @@ const FLOWER_CURATION_ALLOWED_DECISIONS = new Set([
 async function handleAdminCurationDecisions(request, env) {
   if (!await checkAuth(request, env)) return unauth(request);
 
-  const row = await env.DB.prepare('SELECT value FROM settings WHERE key=?')
-    .bind(FLOWER_CURATION_DECISIONS_KEY).first();
-  let decisions = {};
-  if (row?.value) {
-    try {
-      const parsed = JSON.parse(row.value);
-      if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) decisions = parsed;
-    } catch {}
-  }
-
   if (request.method === 'GET') {
+    const row = await env.DB.prepare('SELECT value FROM settings WHERE key=?')
+      .bind(FLOWER_CURATION_DECISIONS_KEY).first();
+    let decisions = {};
+    if (row?.value) {
+      try {
+        const parsed = JSON.parse(row.value);
+        if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) decisions = parsed;
+      } catch {}
+    }
     return jsonRes({ decisions }, 200, request);
   }
 
@@ -7891,25 +7890,27 @@ async function handleAdminCurationDecisions(request, env) {
     if (!photoId) return jsonRes({ error: 'photo_id required' }, 400, request);
 
     const decision = body.decision == null ? '' : String(body.decision).trim();
-    if (!decision) {
-      delete decisions[photoId];
-    } else {
-      if (!FLOWER_CURATION_ALLOWED_DECISIONS.has(decision)) {
-        return jsonRes({ error: 'invalid curation decision' }, 400, request);
-      }
-      decisions[photoId] = {
-        decision,
-        category: body.category == null ? '' : String(body.category).trim(),
-        note: body.note == null ? '' : String(body.note).trim().slice(0, 500),
-        updated_at: new Date().toISOString(),
-      };
+    if (decision && !FLOWER_CURATION_ALLOWED_DECISIONS.has(decision)) {
+      return jsonRes({ error: 'invalid curation decision' }, 400, request);
     }
+    const record = decision ? {
+      decision,
+      category: body.category == null ? '' : String(body.category).trim(),
+      note: body.note == null ? '' : String(body.note).trim().slice(0, 500),
+      updated_at: new Date().toISOString(),
+    } : null;
 
-    await env.DB.prepare('INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)')
-      .bind(FLOWER_CURATION_DECISIONS_KEY, JSON.stringify(decisions)).run();
+    // A single SQLite upsert patches only this photo's key. Reading the whole
+    // document then replacing it lost decisions when two Admin saves overlapped.
+    // JSON Merge Patch removes the key for a null value (decision reset).
+    const patch = JSON.stringify({ [photoId]: record });
+    await env.DB.prepare(`
+      INSERT INTO settings (key, value) VALUES (?, json_patch('{}', json(?)))
+      ON CONFLICT(key) DO UPDATE SET value=json_patch(COALESCE(settings.value, '{}'), json(?))
+    `).bind(FLOWER_CURATION_DECISIONS_KEY, patch, patch).run();
     await invalidatePublicPhotosCache(request);
 
-    return jsonRes({ ok: true, decision: decisions[photoId] || null }, 200, request);
+    return jsonRes({ ok: true, decision: record }, 200, request);
   }
 
   return jsonRes({ error: 'method not allowed' }, 405, request);
