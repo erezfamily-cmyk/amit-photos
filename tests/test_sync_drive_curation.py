@@ -14,3 +14,19 @@ def test_refresh_grant_does_not_resend_scope():
     assert '"grant_type": "refresh_token"' in text
     assert '"scope":' not in text
     assert "token_refreshed.json" in text
+
+
+def test_drive_clients_do_not_downgrade_scope():
+    root = SCRIPT.parent.parent
+    for rel in ("src/agent_photos.py", "src/auto_import_new_photos.py"):
+        text = (root / rel).read_text(encoding="utf-8")
+        assert "drive.readonly" not in text
+        assert 'https://www.googleapis.com/auth/drive' in text
+        assert "creds.refresh(Request())" not in text
+        assert '"grant_type": "refresh_token"' in text
+
+
+def test_photo_agent_never_overwrites_refreshed_token_metadata():
+    root = SCRIPT.parent.parent
+    text = (root / "src/agent_photos.py").read_text(encoding="utf-8")
+    assert "token_refreshed.json" not in text
