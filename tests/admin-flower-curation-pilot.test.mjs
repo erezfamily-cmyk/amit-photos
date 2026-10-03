@@ -240,3 +240,11 @@ test('bulk delete can remove Drive-only cards by tombstone without requiring an 
   assert.match(admin, /if \(photo\._source === 'r2'\)/);
   assert.match(admin, /block re-import/);
 });
+
+
+test('processed bulk curation items are excluded after relogin', () => {
+  assert.match(admin, /if \(decision === 'DELETE'\) return false/);
+  assert.match(admin, /if \(decision === 'HIDE' \|\| decision === 'DELETE'\) return false/);
+  assert.match(admin, /curationDecisions\.get\(p\.id\)\?\.decision !== 'DELETE'/);
+  assert.match(admin, /d !== 'HIDE' && d !== 'DELETE'/);
+});

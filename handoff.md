@@ -1564,3 +1564,19 @@ Fix branch: `fix/bulk-delete-drive-only-2026-10-03`
 - the existing Admin merge and Drive importer both honor the tombstone, so it stays gone after refresh and future sync;
 - Google Drive source file remains untouched;
 - R2-backed photos still use tombstone-first + real D1/R2 deletion with rollback on failure.
+
+
+### Processed curation items hidden from action queues — 3.10.2026
+
+Owner reported that after completing DELETE/HIDE work, logging out and back into Admin still showed already-treated photos in the bulk action queues.
+
+Root cause:
+- `<1000px` and `<80` filters/counts were derived only from dimensions/scores.
+- persisted owner decisions were not used to exclude already-processed items.
+
+Fix:
+- `<1000px` queue excludes photos with owner decision `DELETE`.
+- `<80` queue excludes photos with owner decision `HIDE` or `DELETE`.
+- quick-select buttons apply the same exclusion rules.
+- live counters apply the same exclusion rules.
+- after login/reload, persisted curation decisions should therefore keep already-treated photos out of the actionable queues.
