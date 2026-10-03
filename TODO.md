@@ -12,7 +12,8 @@ Still active:
 - [x] Run `update-photos.yml` after OAuth fixes and verify existing HIDE decisions move to `Amit Photos Hidden` — run #284: moved=18, skipped=0, tracked_hidden=18.
 - [x] Verify live RESTORE movement: runs #289 and #292 each restored one image to its recorded original parent.
 - [x] PR #132 merged; run #293 reconciled the stale RESTORE entry and persisted 24 Hidden records. All steps, deploy and cache purge passed.
-- [ ] Continue actual visual scoring/review for remaining photos whose visual components are still pending. PR #128 removed the 404 blocker and enables Drive fallback/cross-gallery batches.
+- [x] Complete actual visual scoring for the current portfolio — PR #134 + run #23 scored 832; PR #135 + run #25 scored the final 9 via Drive fallback. Final: 1,322/1,322 complete, 0 pending, 27/27 galleries.
+- [ ] Continue owner review in Admin for unresolved score-based candidates (569 at completion before existing owner-decision filtering); scores above 85 remain out of the review queue.
 - [ ] Finish the redesigned Free Guide 7-day measurement window through 9.10 before changing offer/PDF/UTM/KPI.
 - [ ] Keep `PAYMENTS_ENABLED=false`; PayPal Orders v2 remains Sandbox-only work and Gelato remains out of scope.
 # TODO — Amit Photos business model
