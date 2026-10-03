@@ -1,15 +1,15 @@
 """
 refresh_token.py
 ----------------
-מחדש את ה-Google OAuth token ומדפיס פקודה לעדכון ה-secret ב-GitHub.
+Refreshes the Google OAuth token and writes token.json for GitHub Actions.
 
-הרצה:
+Run:
   python src/refresh_token.py
 
-נדרש: credentials.json בתיקיית הפרויקט (מוריד מ-Google Cloud Console)
+Requires:
+  credentials.json in the repository root.
 """
 
-import json
 import sys
 from pathlib import Path
 
@@ -23,35 +23,29 @@ def main():
     sys.stdout.reconfigure(encoding="utf-8")
 
     if not CREDENTIALS_FILE.exists():
-        print("❌ חסר credentials.json בתיקיית הפרויקט.")
+        print("Missing credentials.json in the repository root.")
         sys.exit(1)
 
     try:
         from google_auth_oauthlib.flow import InstalledAppFlow
     except ImportError:
-        print("❌ חסרות חבילות. הרץ:")
-        print("   pip install google-auth google-auth-oauthlib google-auth-httplib2")
+        print("Missing packages. Run:")
+        print("pip install google-auth google-auth-oauthlib google-auth-httplib2")
         sys.exit(1)
 
-    print("🔐 מאמת Google — יפתח דפדפן...")\n    print("   תתבקש הרשאת Google Drive מלאה כדי לאפשר HIDE/RESTORE אוטומטי.")
-    print("   אחרי שתאשר בדפדפן, הטרמינל יסיים אוטומטית.")
+    print("Opening Google authorization in your browser...")
+    print("Approve full Google Drive access for automatic HIDE/RESTORE.")
     print()
 
     flow = InstalledAppFlow.from_client_secrets_file(str(CREDENTIALS_FILE), SCOPES)
     creds = flow.run_local_server(port=8765, open_browser=True, timeout_seconds=120)
 
     TOKEN_FILE.write_text(creds.to_json(), encoding="utf-8")
-    print(f"✅ Token נשמר ל: {TOKEN_FILE}")
+    print(f"Token saved to: {TOKEN_FILE}")
     print()
-    print("=" * 50)
-    print("עדכן את ה-secret ב-GitHub:")
-    print()
-    print("  Get-Content -Raw token.json | gh secret set GOOGLE_TOKEN")
-    print()
-    print("ואז הרץ מחדש את ה-workflow:")
-    print()
-    print("  gh workflow run update-photos.yml")
-    print("=" * 50)
+    print("PowerShell:")
+    print("Get-Content -Raw token.json | gh secret set GOOGLE_TOKEN")
+    print("gh workflow run update-photos.yml")
 
 
 if __name__ == "__main__":
