@@ -3787,10 +3787,31 @@ const Photos = (() => {
 
     try {
       if (decision === 'KEEP' || decision === 'KEEP_SECONDARY') {
+        const previousDecision = curationDecisions.get(id)?.decision || '';
+        // HIDE is fully reversible: if this photo was hidden by curation,
+        // restore public publication immediately. The Drive workflow restores
+        // the original source file to its recorded Portfolio parent.
+        if (previousDecision === 'HIDE' && photo?._source === 'r2' && photo.published === 0) {
+          const res = await fetch('/api/photos', {
+            method: 'PATCH',
+            headers: authHeaders(),
+            body: JSON.stringify({ id, published: true })
+          });
+          const payload = await res.json().catch(() => ({}));
+          if (!res.ok) throw new Error(payload.error || 'החזרת התמונה לפרסום נכשלה');
+          photo.published = 1;
+        }
         await saveCurationDecision(id, decision);
+        // Best-effort immediate Drive sync. Website publication/curation state
+        // remains authoritative even if the GitHub workflow dispatch is unavailable.
+        fetch('/api/trigger-workflow', {
+          method: 'POST',
+          headers: authHeaders(),
+          body: JSON.stringify({ workflow: 'update-photos.yml' })
+        }).catch(() => {});
         renderCurationDecision(id);
         render();
-        toast('החלטת הקיורציה נשמרה');
+        toast(previousDecision === 'HIDE' ? 'התמונה הוחזרה לפרסום; שחזור Drive הופעל' : 'החלטת הקיורציה נשמרה');
         advanceReviewAfterDecision(id);
         return;
       }
@@ -3810,6 +3831,13 @@ const Photos = (() => {
         if (!res.ok) throw new Error(payload.error || 'הסתרת התמונה נכשלה');
         photo.published = 0;
         await saveCurationDecision(id, 'HIDE');
+        // Trigger the existing photo workflow so the source is moved out of
+        // Portfolio promptly. Failure to dispatch does not undo website HIDE.
+        fetch('/api/trigger-workflow', {
+          method: 'POST',
+          headers: authHeaders(),
+          body: JSON.stringify({ workflow: 'update-photos.yml' })
+        }).catch(() => {});
         renderCurationDecision(id);
         render();
         toast('התמונה הוסתרה — ניתן לפרסם אותה מחדש');
@@ -4462,6 +4490,13 @@ const Photos = (() => {
         }
         failed++;
       }
+    }
+    if (hidden > 0) {
+      fetch('/api/trigger-workflow', {
+        method: 'POST',
+        headers: authHeaders(),
+        body: JSON.stringify({ workflow: 'update-photos.yml' })
+      }).catch(() => {});
     }
     selected.clear(); selectMode = false;
     $('select-mode-btn').textContent = 'בחר';
