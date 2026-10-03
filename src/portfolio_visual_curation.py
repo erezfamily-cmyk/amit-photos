@@ -31,6 +31,7 @@ OUT_FILE = ROOT / "data" / "portfolio-curation-scores.json"
 ANTHROPIC_API = "https://api.anthropic.com/v1/messages"
 ANTHROPIC_MODEL = "claude-haiku-4-5-20251001"
 SITE_BASE = "https://amitphotos.com"
+DRIVE_API = "https://www.googleapis.com/drive/v3"
 
 LOW_LONG_EDGE = 2000
 LOW_SHORT_EDGE = 1200
@@ -183,25 +184,73 @@ def image_url(photo: dict) -> str:
     return SITE_BASE + (src if src.startswith("/") else "/" + src)
 
 
-def fetch_image(photo: dict) -> tuple[bytes, str]:
-    url = image_url(photo)
-    if not url:
-        raise RuntimeError("photo has no image URL")
-    res = requests.get(url, timeout=30)
-    res.raise_for_status()
-    content_type = (res.headers.get("Content-Type") or "image/webp").split(";")[0].strip()
-    if not content_type.startswith("image/"):
-        raise RuntimeError(f"unexpected content type: {content_type}")
-
-    # Normalize from the full source to a high-quality review image. 1800px
-    # retains enough fine detail for focus/sharpness judgments while keeping
-    # Vision requests stable and bounded.
-    img = Image.open(BytesIO(res.content)).convert("RGB")
+def normalize_review_image(raw_bytes: bytes) -> tuple[bytes, str]:
+    img = Image.open(BytesIO(raw_bytes)).convert("RGB")
     img.thumbnail((1800, 1800), Image.Resampling.LANCZOS)
     out = BytesIO()
     img.save(out, format="JPEG", quality=92, optimize=True)
     return out.getvalue(), "image/jpeg"
 
+
+def fetch_drive_image(photo: dict) -> tuple[bytes, str]:
+    file_id = str(photo.get("id") or "").strip()
+    if not file_id:
+        raise RuntimeError("photo has no Drive file id")
+
+    raw_token = os.environ.get("GOOGLE_TOKEN_JSON", "").strip()
+    if not raw_token:
+        raise RuntimeError("GOOGLE_TOKEN_JSON is missing for Drive fallback")
+
+    try:
+        from google.oauth2.credentials import Credentials
+        from google.auth.transport.requests import Request as GoogleAuthRequest
+    except ImportError as exc:
+        raise RuntimeError("google-auth is required for Drive fallback") from exc
+
+    info = json.loads(raw_token)
+    creds = Credentials.from_authorized_user_info(info)
+    if creds.expired and creds.refresh_token:
+        creds.refresh(GoogleAuthRequest())
+    if not creds.token:
+        raise RuntimeError("Google Drive token is unavailable")
+
+    session = requests.Session()
+    session.headers.update({"Authorization": f"Bearer {creds.token}"})
+    res = session.get(
+        f"{DRIVE_API}/files/{file_id}",
+        params={"alt": "media", "supportsAllDrives": "true"},
+        timeout=45,
+    )
+    res.raise_for_status()
+    return normalize_review_image(res.content)
+
+
+def fetch_image(photo: dict) -> tuple[bytes, str]:
+    url = image_url(photo)
+    site_error = None
+
+    if url:
+        try:
+            res = requests.get(url, timeout=30)
+            res.raise_for_status()
+            content_type = (res.headers.get("Content-Type") or "").split(";")[0].strip()
+            if content_type and not content_type.startswith("image/"):
+                raise RuntimeError(f"unexpected content type: {content_type}")
+            return normalize_review_image(res.content)
+        except Exception as exc:
+            site_error = exc
+
+    # Some Drive-backed catalog entries do not have an R2/public full-size
+    # object yet. Fall back to the original Google Drive file so one stale
+    # public URL cannot block curation of the entire portfolio.
+    try:
+        return fetch_drive_image(photo)
+    except Exception as drive_exc:
+        if site_error is not None:
+            raise RuntimeError(
+                f"public image fetch failed ({site_error}); Drive fallback failed ({drive_exc})"
+            ) from drive_exc
+        raise RuntimeError(f"Drive image fetch failed ({drive_exc})") from drive_exc
 
 def parse_json_text(text: str) -> dict:
     text = text.strip()
@@ -448,6 +497,30 @@ def next_incomplete_category(state: dict) -> str | None:
     return None
 
 
+def gallery_rank(category: str) -> int:
+    try:
+        return GALLERY_REVIEW_ORDER.index(str(category or ""))
+    except ValueError:
+        return len(GALLERY_REVIEW_ORDER)
+
+
+def select_pending_items(state: dict, selected_category: str = "", batch_size: int = 0) -> list[dict]:
+    pending = [
+        item for item in state.get("items", [])
+        if item.get("score_kind") != "visual_complete"
+        and (not selected_category or item.get("category") == selected_category)
+    ]
+    pending.sort(key=lambda x: (
+        gallery_rank(str(x.get("category") or "")),
+        0 if x.get("material_problem") else 1,
+        str(x.get("category") or ""),
+        str(x.get("photo_id") or ""),
+    ))
+    if batch_size > 0:
+        pending = pending[:batch_size]
+    return pending
+
+
 def refresh_summary(state: dict) -> None:
     items = state.get("items", [])
     visual = [x for x in items if x.get("score_kind") == "visual_complete"]
@@ -524,29 +597,16 @@ def main() -> int:
 
     photo_by_id = {str(p.get("id")): p for p in photos if p.get("id")}
     selected_category = args.category.strip()
-    if not selected_category and not args.all_categories:
-        selected_category = next_incomplete_category(state) or ""
 
     if selected_category:
-        print("gallery rollout:", selected_category, flush=True)
-    elif not args.all_categories:
-        print("gallery rollout: all galleries are complete", flush=True)
+        print("gallery rollout override:", selected_category, flush=True)
+    else:
+        print("gallery rollout: ordered across galleries", flush=True)
 
-    pending = [
-        item for item in state["items"]
-        if item.get("score_kind") != "visual_complete"
-        and (
-            args.all_categories
-            or (selected_category and item.get("category") == selected_category)
-        )
-    ]
-    pending.sort(key=lambda x: (
-        0 if x.get("material_problem") else 1,
-        str(x.get("category") or ""),
-        str(x.get("photo_id") or ""),
-    ))
-    if args.batch_size > 0:
-        pending = pending[:args.batch_size]
+    # Use the whole batch without increasing API volume: exhaust an earlier
+    # gallery first, then continue into the next approved gallery in the same
+    # run. --category still provides an exact single-gallery override.
+    pending = select_pending_items(state, selected_category, args.batch_size)
 
     completed = 0
     failures = 0
