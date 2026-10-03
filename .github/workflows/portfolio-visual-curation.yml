@@ -90,7 +90,7 @@ jobs:
           python-version: '3.11'
 
       - name: Install runtime
-        run: pip install requests Pillow
+        run: pip install requests Pillow google-auth
 
       - name: Run incremental visual review
         env:
