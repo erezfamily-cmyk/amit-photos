@@ -43,7 +43,7 @@ jobs:
         with:
           python-version: '3.11'
       - name: Install test runtime
-        run: pip install requests Pillow
+        run: pip install requests Pillow google-auth
       - name: Compile
         run: python -m py_compile src/portfolio_visual_curation.py
       - name: Policy tests
@@ -57,7 +57,8 @@ jobs:
           assert r['policy']['automatic_delete'] is False
           assert r['policy']['automatic_hide_by_this_pipeline'] is False
           assert r['policy']['owner_review_max_score']==85
-          assert len(r['items'])==1390
+          photos=json.load(open('data/photos.json',encoding='utf-8'))
+          assert len(r['items'])==len(photos)
           assert all(
               x['score_kind']=='visual_complete'
               or (
@@ -92,6 +93,7 @@ jobs:
       - name: Run incremental visual review
         env:
           ANTHROPIC_API_KEY: ${{ secrets.AMIT_PHOTO_AGENT }}
+          GOOGLE_TOKEN_JSON: ${{ secrets.GOOGLE_TOKEN }}
           BATCH_SIZE: ${{ github.event.inputs.batch_size || '200' }}
           CATEGORY: ${{ github.event.inputs.category || '' }}
         run: |
