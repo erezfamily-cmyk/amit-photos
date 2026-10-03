@@ -20,7 +20,7 @@ on:
       batch_size:
         description: 'How many still-unreviewed photos to score in this run'
         required: false
-        default: '200'
+        default: '1000'
       category:
         description: 'Optional exact category name; empty means all categories'
         required: false
@@ -83,6 +83,7 @@ jobs:
         with:
           ref: main
           token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
 
       - uses: actions/setup-python@v5
         with:
@@ -95,7 +96,7 @@ jobs:
         env:
           ANTHROPIC_API_KEY: ${{ secrets.AMIT_PHOTO_AGENT }}
           GOOGLE_TOKEN_JSON: ${{ secrets.GOOGLE_TOKEN }}
-          BATCH_SIZE: ${{ github.event.inputs.batch_size || '200' }}
+          BATCH_SIZE: ${{ github.event.inputs.batch_size || '1000' }}
           CATEGORY: ${{ github.event.inputs.category || '' }}
         run: |
           args=(--batch-size "$BATCH_SIZE")
@@ -133,5 +134,4 @@ jobs:
           git config user.email "agent@amitphotos.com"
           git add data/portfolio-curation-scores.json
           git commit -m "chore: advance portfolio visual curation"
-          git pull --rebase --autostash origin main
-          git push origin main
+          bash scripts/push_generated_changes.sh
