@@ -34,3 +34,10 @@ def test_change_detection_also_considers_copyright_flagged_json():
         "the changed-detection step must also watch data/copyright_flagged.json, or a run where "
         "only a new copyright flag was written will report changed=false and skip the commit"
     )
+
+
+def test_update_photos_workflow_is_serialized():
+    text = WORKFLOW.read_text(encoding="utf-8")
+    assert "concurrency:" in text
+    assert "group: update-photos-${{ github.ref }}" in text
+    assert "cancel-in-progress: false" in text
