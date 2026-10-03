@@ -16,7 +16,7 @@ from pathlib import Path
 ROOT = Path(__file__).parent.parent
 CREDENTIALS_FILE = ROOT / "credentials.json"
 TOKEN_FILE = ROOT / "token.json"
-SCOPES = ["https://www.googleapis.com/auth/drive.readonly"]
+SCOPES = ["https://www.googleapis.com/auth/drive"]
 
 
 def main():
@@ -33,7 +33,7 @@ def main():
         print("   pip install google-auth google-auth-oauthlib google-auth-httplib2")
         sys.exit(1)
 
-    print("🔐 מאמת Google — יפתח דפדפן...")
+    print("🔐 מאמת Google — יפתח דפדפן...")\n    print("   תתבקש הרשאת Google Drive מלאה כדי לאפשר HIDE/RESTORE אוטומטי.")
     print("   אחרי שתאשר בדפדפן, הטרמינל יסיים אוטומטית.")
     print()
 
