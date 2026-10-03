@@ -42,18 +42,6 @@
       "hidden_folder_id": "1LxJF0lQecSZ5EFxTHu0Njr616CEaOmf5",
       "source_parent_id": "1RG16d9j5YQD_t7W2b9684EZ9lhXBg0DH"
     },
-    "1SjSzrMp_yDPlg5zQB6T2v2qucq30xC6s": {
-      "filename": "Z72_2463 copy.jpg",
-      "hidden_at": "2026-10-03T13:29:39.370883+00:00",
-      "hidden_folder_id": "1LxJF0lQecSZ5EFxTHu0Njr616CEaOmf5",
-      "source_parent_id": "1vAwQMic35N873BdspuyfcUE1lv7ur-Xh"
-    },
-    "1Tn-a5p6UuESo_MR6qD8zMuvdIxEjyMkt": {
-      "filename": "DSC_2787.JPG",
-      "hidden_at": "2026-10-03T13:30:06.388383+00:00",
-      "hidden_folder_id": "1LxJF0lQecSZ5EFxTHu0Njr616CEaOmf5",
-      "source_parent_id": "1bTahC57r7wmDgzNXzm7t8U9RoF8vCVDO"
-    },
     "1WGAqqt2l4Lh0BjWHouWPY4jXQQhLFRZN": {
       "filename": "DSC_0840.jpg",
       "hidden_at": "2026-10-03T13:29:47.979942+00:00",
@@ -65,12 +53,6 @@
       "hidden_at": "2026-10-03T13:58:22.691269+00:00",
       "hidden_folder_id": "1LxJF0lQecSZ5EFxTHu0Njr616CEaOmf5",
       "source_parent_id": "18bQJ14zp3M5Jgcc0AD5_cfMtHuMMHu6P"
-    },
-    "1ZJotfpUOSjFHaBkjTJnEO2XltNs4Gs1G": {
-      "filename": "DSC_4175.JPG",
-      "hidden_at": "2026-10-03T13:30:02.912938+00:00",
-      "hidden_folder_id": "1LxJF0lQecSZ5EFxTHu0Njr616CEaOmf5",
-      "source_parent_id": "1bTahC57r7wmDgzNXzm7t8U9RoF8vCVDO"
     },
     "1_yukDA2LGBvd5PMe9-InhvByeijla5FE": {
       "filename": "DSC_8000 copy.jpg",
@@ -84,12 +66,6 @@
       "hidden_folder_id": "1LxJF0lQecSZ5EFxTHu0Njr616CEaOmf5",
       "source_parent_id": "1RG16d9j5YQD_t7W2b9684EZ9lhXBg0DH"
     },
-    "1caAXpctdX8dqyi66FyKXU9V3ogXZ9Lq3": {
-      "filename": "Z72_0550 copy.jpg",
-      "hidden_at": "2026-10-03T13:30:07.947962+00:00",
-      "hidden_folder_id": "1LxJF0lQecSZ5EFxTHu0Njr616CEaOmf5",
-      "source_parent_id": "1vAwQMic35N873BdspuyfcUE1lv7ur-Xh"
-    },
     "1fRjnuGzJW0uBfc9ese3fD3U0onBlslQn": {
       "filename": "DSC_5865.JPG",
       "hidden_at": "2026-10-03T13:29:58.686634+00:00",
@@ -99,12 +75,6 @@
     "1glcm3u0LLLWC4sw-r8GgsnIyMYgGT3L_": {
       "filename": "DSC_0318.jpg",
       "hidden_at": "2026-10-03T13:29:49.452824+00:00",
-      "hidden_folder_id": "1LxJF0lQecSZ5EFxTHu0Njr616CEaOmf5",
-      "source_parent_id": "12yMtktMV0Uanv7aXHx6eOIQzk4sODMpo"
-    },
-    "1hsdrGoRp-cnxnkhV0t5JyBxKZpvxxJ5B": {
-      "filename": "MJH_1806.JPG",
-      "hidden_at": "2026-10-03T13:29:45.243279+00:00",
       "hidden_folder_id": "1LxJF0lQecSZ5EFxTHu0Njr616CEaOmf5",
       "source_parent_id": "12yMtktMV0Uanv7aXHx6eOIQzk4sODMpo"
     },
@@ -147,10 +117,10 @@
   },
   "last_summary": {
     "moved_to_hidden": 0,
-    "reconciled": 1,
-    "restored": 0,
+    "reconciled": 0,
+    "restored": 5,
     "skipped": 0
   },
-  "last_sync_at": "2026-10-03T16:29:18.179202+00:00",
+  "last_sync_at": "2026-10-03T18:38:19.725906+00:00",
   "version": 1
 }
