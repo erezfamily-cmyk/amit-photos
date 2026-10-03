@@ -50,6 +50,7 @@ jobs:
         run: python tests/test_portfolio_visual_curation.py
       - name: Validate checked-in state
         run: |
+          python src/portfolio_visual_curation.py --init-only
           python - <<'PY'
           import json
           r=json.load(open('data/portfolio-curation-scores.json',encoding='utf-8'))
