@@ -1686,3 +1686,14 @@ Fix:
 - This supersedes the pending verification statements in the preparation entry above. Root cause was a stale queued checkout, not a failed RESTORE or missing Google write scope.
 - Keep the existing workflow lock (`cancel-in-progress: false`) and `ref: main`; retries protect against unrelated remote commits but deliberately stop on same-file conflicts. GitHub concurrency may replace older pending runs; curation state is read afresh rather than treating dispatches as an ordered event journal.
 - No owner terminal action needed for this fix. Next existing queue: continue remaining visual reviews; preserve the current acquisition experiment window and payment guardrails.
+
+
+## 2026-10-03 — Full portfolio visual scoring COMPLETE
+
+- PR #134 merged as `39f5d5c14c7d35e497744775b6afce103077275d`, expanding the scoring batch to the remaining portfolio and using the safe generated-data push helper.
+- Run #23 (`37137970332`) passed and scored 832 photos. Nine items remained because public image retrieval failed and the score job lacked `google-auth`, so its authorized Drive fallback could not initialize.
+- PR #135 merged as `b4362f76ae1c23cf20ca64a97b9f0cd20f076ca3`, adding `google-auth` to the score runtime. The follow-up run #25 (`37141784579`) scored the remaining 9 with `failures=0`.
+- Final state committed to `main` as `9ee8a17f480c9cdc6099e23afaa55fc4cf72ceb0`: `total=1322`, `visual_complete=1322`, `pending_visual=0`, `completed_galleries=27/27`, `owner_review_required=569`, `auto_clear_above_85=753`, `critical_low_resolution=0`.
+- The total is the current published catalog after Drive HIDE/RESTORE cleanup; the earlier pre-cleanup snapshot contained 1,346 items. All 1,322 items currently in the scoring state have complete visual components.
+- `owner_review_required=569` is the score-based candidate count (score <=85 or a material problem) before Admin removes photos with an existing owner decision. Admin should continue showing only unresolved candidates, with problematic scores first. No image was automatically hidden or deleted by this scoring pipeline.
+- Payments remain disabled (`PAYMENTS_ENABLED=false`); PayPal Production and Gelato were not changed.
