@@ -2275,7 +2275,7 @@
     "width": 1504,
     "height": 1000,
     "exif": null,
-    "added_at": "2026-10-02"
+    "added_at": "2026-10-03"
   },
   {
     "id": "1LuoH9OWwTFPRnDvZihmDE5hyBz3Kt815",
@@ -3809,90 +3809,6 @@
     "added_at": "2026-04-22"
   },
   {
-    "id": "1cqtkYy8vr20KSAuajsQ1Ppirv7YBchPv",
-    "title": "סוכריות ורודות",
-    "category": "טבע דומם",
-    "url": "/photos/1cqtkYy8vr20KSAuajsQ1Ppirv7YBchPv.webp",
-    "thumbnail": "/photos/thumb/1cqtkYy8vr20KSAuajsQ1Ppirv7YBchPv.webp",
-    "description": "",
-    "filename": "MJH_0802.jpg",
-    "width": 950,
-    "height": 634,
-    "alt": "סוכריות ורודות"
-  },
-  {
-    "id": "1Vp_xpnwXpsi_ocqwMEshnoPIza5FpRZ5",
-    "title": "פנינים זהב וכסף",
-    "category": "טבע דומם",
-    "url": "/photos/1Vp_xpnwXpsi_ocqwMEshnoPIza5FpRZ5.webp",
-    "thumbnail": "/photos/thumb/1Vp_xpnwXpsi_ocqwMEshnoPIza5FpRZ5.webp",
-    "description": "",
-    "filename": "MJH_0803.jpg",
-    "width": 950,
-    "height": 634,
-    "alt": "פנינים זהב וכסף"
-  },
-  {
-    "id": "1DhDoQ_nfrWXjGVeXaUDQRym9w52kN77w",
-    "title": "תולעי סוכר צבעוניות",
-    "category": "טבע דומם",
-    "url": "/photos/1DhDoQ_nfrWXjGVeXaUDQRym9w52kN77w.webp",
-    "thumbnail": "/photos/thumb/1DhDoQ_nfrWXjGVeXaUDQRym9w52kN77w.webp",
-    "description": "",
-    "filename": "MJH_0806.jpg",
-    "width": 950,
-    "height": 634,
-    "alt": "תולעי סוכר צבעוניות"
-  },
-  {
-    "id": "1oukcNbPlg4Y9dXqgxGkP7zMXE4roZAyj",
-    "title": "סחלבים אדומים",
-    "category": "טבע דומם",
-    "url": "/photos/1oukcNbPlg4Y9dXqgxGkP7zMXE4roZAyj.webp",
-    "thumbnail": "/photos/thumb/1oukcNbPlg4Y9dXqgxGkP7zMXE4roZAyj.webp",
-    "description": "",
-    "filename": "MJH_0808.jpg",
-    "width": 441,
-    "height": 295,
-    "alt": "סחלבים אדומים"
-  },
-  {
-    "id": "1GOdKAxmW8Xev5kcjZR3pCF4_GW7owLxU",
-    "title": "גלגלי צבע",
-    "category": "טבע דומם",
-    "url": "/photos/1GOdKAxmW8Xev5kcjZR3pCF4_GW7owLxU.webp",
-    "thumbnail": "/photos/thumb/1GOdKAxmW8Xev5kcjZR3pCF4_GW7owLxU.webp",
-    "description": "",
-    "filename": "MJH_0824.jpg",
-    "width": 950,
-    "height": 617,
-    "alt": "גלגלי צבע"
-  },
-  {
-    "id": "1EZ-2jnCDVgVLuykryr3OjWlw2aPt4GuG",
-    "title": "מטבעות שוקולד",
-    "category": "טבע דומם",
-    "url": "/photos/1EZ-2jnCDVgVLuykryr3OjWlw2aPt4GuG.webp",
-    "thumbnail": "/photos/thumb/1EZ-2jnCDVgVLuykryr3OjWlw2aPt4GuG.webp",
-    "description": "",
-    "filename": "MJH_0825.jpg",
-    "width": 950,
-    "height": 634,
-    "alt": "מטבעות שוקולד"
-  },
-  {
-    "id": "1DQKZ5yTcOFnXw8nqpPz1RMQ8u0DZ-pG5",
-    "title": "קיר האהבה",
-    "category": "טבע דומם",
-    "url": "/photos/1DQKZ5yTcOFnXw8nqpPz1RMQ8u0DZ-pG5.webp",
-    "thumbnail": "/photos/thumb/1DQKZ5yTcOFnXw8nqpPz1RMQ8u0DZ-pG5.webp",
-    "description": "",
-    "filename": "MJH_0981.jpg",
-    "width": 950,
-    "height": 634,
-    "alt": "קיר האהבה"
-  },
-  {
     "id": "1odf0q4vwcXoKT5eNy-dRn2JBG4xMldTs",
     "title": "פסיפס רומי עתיק",
     "category": "טבע דומם",
@@ -4122,18 +4038,6 @@
     "width": 4288,
     "height": 2848,
     "alt": "אור בוקר"
-  },
-  {
-    "id": "15DHem8sAK2c9pkuXzPd03rP34-UnHe3M",
-    "title": "שקט בשדה לבנדר",
-    "category": "ישראל",
-    "url": "/photos/15DHem8sAK2c9pkuXzPd03rP34-UnHe3M.webp",
-    "thumbnail": "/photos/thumb/15DHem8sAK2c9pkuXzPd03rP34-UnHe3M.webp",
-    "description": "",
-    "filename": "AMI_8896 copy.jpg",
-    "width": 950,
-    "height": 631,
-    "alt": "שקט בשדה לבנדר"
   },
   {
     "id": "1ShiRcz-EvlJu6CG55sxIKZiCoLHgTSnx",
@@ -4415,18 +4319,6 @@
     }
   },
   {
-    "id": "1CUMXBEV1qLilGxw0eMMi_G5S3XuUrUeB",
-    "title": "בית נטוש בשדה",
-    "category": "ישראל",
-    "url": "/photos/1CUMXBEV1qLilGxw0eMMi_G5S3XuUrUeB.webp",
-    "thumbnail": "/photos/thumb/1CUMXBEV1qLilGxw0eMMi_G5S3XuUrUeB.webp",
-    "description": "",
-    "filename": "DSC_2826.jpg",
-    "width": 950,
-    "height": 631,
-    "alt": "בית נטוש בשדה"
-  },
-  {
     "id": "1NCoqFmABY4DaK3XLZrAyP6cVR4e6Ijvq",
     "title": "חמניות תחת שמיים סוערים",
     "category": "ישראל",
@@ -4528,28 +4420,6 @@
     }
   },
   {
-    "id": "1UEHatC39tA67plADlcepZ4giuxRKRcfk",
-    "title": "נוף טבע בישראל מבט פנורמי",
-    "category": "ישראל",
-    "parent_category": null,
-    "url": "/photos/1UEHatC39tA67plADlcepZ4giuxRKRcfk.webp",
-    "thumbnail": "/photos/thumb/1UEHatC39tA67plADlcepZ4giuxRKRcfk.webp",
-    "description": "",
-    "filename": "DSC_3888.jpg",
-    "width": 1100,
-    "height": 702,
-    "exif": {
-      "camera": "NIKON CORPORATION NIKON D300",
-      "lens": "10.0-20.0 mm f/4.0-5.6",
-      "focal": 10,
-      "aperture": 5.6,
-      "iso": 100,
-      "shutter": 0.016666668
-    },
-    "alt": "נוף טבע בישראל מבט פנורמי",
-    "alt_en": "Israel nature landscape scenic view"
-  },
-  {
     "id": "1IBAfg_OCYwqil4w957gA-b0ferLS1_5G",
     "title": "שדה תירס בעמק הישראלי",
     "category": "ישראל",
@@ -4568,18 +4438,6 @@
       "iso": 100,
       "shutter": 0.01
     }
-  },
-  {
-    "id": "1G6p9VgAqYn0G48z3vOQsMl_nPib5HyF8",
-    "title": "פרדס בחורף",
-    "category": "ישראל",
-    "url": "/photos/1G6p9VgAqYn0G48z3vOQsMl_nPib5HyF8.webp",
-    "thumbnail": "/photos/thumb/1G6p9VgAqYn0G48z3vOQsMl_nPib5HyF8.webp",
-    "description": "",
-    "filename": "DSC_3944.jpg",
-    "width": 456,
-    "height": 283,
-    "alt": "פרדס בחורף"
   },
   {
     "id": "1k4LOA2xLBmYw70cLpGmHZYaAWD9H5Um1",
@@ -4985,18 +4843,6 @@
       "shutter": 0.02
     },
     "added_at": "2026-04-24"
-  },
-  {
-    "id": "1nLh9i-XaerEFjja5UUD3KfZgg1jRPv5J",
-    "title": "שחפים בערפל",
-    "category": "ישראל",
-    "url": "/photos/1nLh9i-XaerEFjja5UUD3KfZgg1jRPv5J.webp",
-    "thumbnail": "/photos/thumb/1nLh9i-XaerEFjja5UUD3KfZgg1jRPv5J.webp",
-    "description": "",
-    "filename": "DSC_8140.jpg",
-    "width": 950,
-    "height": 631,
-    "alt": "שחפים בערפל"
   },
   {
     "id": "1faq_DVrfSiQiczGp3_CAiPEjy4plh3Pb",
@@ -6957,18 +6803,6 @@
     "width": 3200,
     "height": 2104,
     "alt": "עכביש על קורה"
-  },
-  {
-    "id": "1zGIjUE5iH16qUupQ5xGXZBC0Qn9eYlAq",
-    "title": "פרפר לבן על מרגנית",
-    "category": "מאקרו-צילומי תקריב",
-    "url": "/photos/1zGIjUE5iH16qUupQ5xGXZBC0Qn9eYlAq.webp",
-    "thumbnail": "/photos/thumb/1zGIjUE5iH16qUupQ5xGXZBC0Qn9eYlAq.webp",
-    "description": "",
-    "filename": "DSC_5237.jpg",
-    "width": 1100,
-    "height": 731,
-    "alt": "פרפר לבן על מרגנית"
   },
   {
     "id": "12j16hqpKwFflypGVYZrvXhFDCH0YgeCT",
@@ -21175,45 +21009,6 @@
     "added_at": "2026-04-22"
   },
   {
-    "id": "1QmWH16e2CsXg9vCf8AGlOQynd2OUY01A",
-    "title": "חזיתות פראג",
-    "category": "צכיה",
-    "url": "/photos/1QmWH16e2CsXg9vCf8AGlOQynd2OUY01A.webp",
-    "thumbnail": "/photos/thumb/1QmWH16e2CsXg9vCf8AGlOQynd2OUY01A.webp",
-    "description": "",
-    "filename": "MJH_0156.jpg",
-    "width": 950,
-    "height": 633,
-    "parent_category": "מקומות בעולם",
-    "alt": "חזיתות פראג"
-  },
-  {
-    "id": "1ZA_dDv5o1IIU3HCsjn-z5uTl9pMP_loB",
-    "title": "פסל ושעון",
-    "category": "צכיה",
-    "url": "/photos/1ZA_dDv5o1IIU3HCsjn-z5uTl9pMP_loB.webp",
-    "thumbnail": "/photos/thumb/1ZA_dDv5o1IIU3HCsjn-z5uTl9pMP_loB.webp",
-    "description": "",
-    "filename": "MJH_0206.jpg",
-    "width": 950,
-    "height": 621,
-    "parent_category": "מקומות בעולם",
-    "alt": "פסל ושעון"
-  },
-  {
-    "id": "1RZovqk9ivjEcC0x-TDDL7fyoKzPbYCBD",
-    "title": "שחר על גשר קארלוב",
-    "category": "צכיה",
-    "url": "/photos/1RZovqk9ivjEcC0x-TDDL7fyoKzPbYCBD.webp",
-    "thumbnail": "/photos/thumb/1RZovqk9ivjEcC0x-TDDL7fyoKzPbYCBD.webp",
-    "description": "",
-    "filename": "MJH_0235.jpg",
-    "width": 950,
-    "height": 634,
-    "parent_category": "מקומות בעולם",
-    "alt": "שחר על גשר קארלוב"
-  },
-  {
     "id": "1tC16MXZeeuqGfO9yZUJeq0jazQbXIf_z",
     "title": "סילhouette של פראג בשקיעה",
     "category": "צכיה",
@@ -21233,45 +21028,6 @@
       "shutter": 0.0004
     },
     "added_at": "2026-05-28"
-  },
-  {
-    "id": "1eOIDRz1hUQa8ZU2jTlmroTIgtg1twdh6",
-    "title": "צלליות שקיעה",
-    "category": "צכיה",
-    "url": "/photos/1eOIDRz1hUQa8ZU2jTlmroTIgtg1twdh6.webp",
-    "thumbnail": "/photos/thumb/1eOIDRz1hUQa8ZU2jTlmroTIgtg1twdh6.webp",
-    "description": "",
-    "filename": "MJH_0266.jpg",
-    "width": 950,
-    "height": 634,
-    "parent_category": "מקומות בעולם",
-    "alt": "צלליות שקיעה"
-  },
-  {
-    "id": "13e4_-dZYmpJ6IzKA-LYSKyC1GW2xUMlw",
-    "title": "אור בקצה המנהרה",
-    "category": "צכיה",
-    "url": "/photos/13e4_-dZYmpJ6IzKA-LYSKyC1GW2xUMlw.webp",
-    "thumbnail": "/photos/thumb/13e4_-dZYmpJ6IzKA-LYSKyC1GW2xUMlw.webp",
-    "description": "",
-    "filename": "MJH_0332.jpg",
-    "width": 631,
-    "height": 946,
-    "parent_category": "מקומות בעולם",
-    "alt": "אור בקצה המנהרה"
-  },
-  {
-    "id": "1yyoxGxrH43m_n1Zs-4vY5SjpyhUcWkth",
-    "title": "דייג בודד",
-    "category": "צכיה",
-    "url": "/photos/1yyoxGxrH43m_n1Zs-4vY5SjpyhUcWkth.webp",
-    "thumbnail": "/photos/thumb/1yyoxGxrH43m_n1Zs-4vY5SjpyhUcWkth.webp",
-    "description": "",
-    "filename": "MJH_0366.jpg",
-    "width": 950,
-    "height": 636,
-    "parent_category": "מקומות בעולם",
-    "alt": "דייג בודד"
   },
   {
     "id": "10zv-m89F2jz_1SZAIOOU5Nes6uHeLtGH",
@@ -21505,32 +21261,6 @@
     "added_at": "2026-05-28"
   },
   {
-    "id": "1Isx2nOOojjOZ8WFnG8l94a3ZiSykyJ5-",
-    "title": "מזרקת העיר",
-    "category": "צכיה",
-    "url": "/photos/1Isx2nOOojjOZ8WFnG8l94a3ZiSykyJ5-.webp",
-    "thumbnail": "/photos/thumb/1Isx2nOOojjOZ8WFnG8l94a3ZiSykyJ5-.webp",
-    "description": "",
-    "filename": "MJH_8644.jpg",
-    "width": 950,
-    "height": 633,
-    "parent_category": "מקומות בעולם",
-    "alt": "מזרקת העיר"
-  },
-  {
-    "id": "1BMopuR06xvtl85U0SUFS3I_hJtt0sRFj",
-    "title": "סמטה צבעונית",
-    "category": "צכיה",
-    "url": "/photos/1BMopuR06xvtl85U0SUFS3I_hJtt0sRFj.webp",
-    "thumbnail": "/photos/thumb/1BMopuR06xvtl85U0SUFS3I_hJtt0sRFj.webp",
-    "description": "",
-    "filename": "MJH_8702.jpg",
-    "width": 950,
-    "height": 633,
-    "parent_category": "מקומות בעולם",
-    "alt": "סמטה צבעונית"
-  },
-  {
     "id": "1aEg61W6JW-YfulRtLFjqUB5AdeYKMlls",
     "title": "יער צפוף בצכיה",
     "category": "צכיה",
@@ -21594,19 +21324,6 @@
     "added_at": "2026-05-28"
   },
   {
-    "id": "1qgcuYmnA3LEYpCHoY1FnpykPbOgMMgDJ",
-    "title": "גלגל תבן",
-    "category": "צכיה",
-    "url": "/photos/1qgcuYmnA3LEYpCHoY1FnpykPbOgMMgDJ.webp",
-    "thumbnail": "/photos/thumb/1qgcuYmnA3LEYpCHoY1FnpykPbOgMMgDJ.webp",
-    "description": "",
-    "filename": "MJH_9161.jpg",
-    "width": 441,
-    "height": 294,
-    "parent_category": "מקומות בעולם",
-    "alt": "גלגל תבן"
-  },
-  {
     "id": "1SgeMeD3QIxL04jyGDTCDqoAY5XqkcgGz",
     "title": "חלון בקיר עתיק",
     "category": "צכיה",
@@ -21626,84 +21343,6 @@
       "shutter": 0.033333335
     },
     "added_at": "2026-05-28"
-  },
-  {
-    "id": "1cjNhaJ1rr2rbnbsHJBVw8Rr7nxnEJhV9",
-    "title": "מגדל בשקיעה",
-    "category": "צכיה",
-    "url": "/photos/1cjNhaJ1rr2rbnbsHJBVw8Rr7nxnEJhV9.webp",
-    "thumbnail": "/photos/thumb/1cjNhaJ1rr2rbnbsHJBVw8Rr7nxnEJhV9.webp",
-    "description": "",
-    "filename": "MJH_9202.jpg",
-    "width": 950,
-    "height": 634,
-    "parent_category": "מקומות בעולם",
-    "alt": "מגדל בשקיעה"
-  },
-  {
-    "id": "15t5id-f_ULlYV3YQA6iAf5YShDMJcMyz",
-    "title": "עיר בתוך המים",
-    "category": "צכיה",
-    "url": "/photos/15t5id-f_ULlYV3YQA6iAf5YShDMJcMyz.webp",
-    "thumbnail": "/photos/thumb/15t5id-f_ULlYV3YQA6iAf5YShDMJcMyz.webp",
-    "description": "",
-    "filename": "MJH_9229.jpg",
-    "width": 950,
-    "height": 484,
-    "parent_category": "מקומות בעולם",
-    "alt": "עיר בתוך המים"
-  },
-  {
-    "id": "1QfirjVJnizNRTYdxqEqLTxiVN8uirsXJ",
-    "title": "עגינה לפני הסערה",
-    "category": "צכיה",
-    "url": "/photos/1QfirjVJnizNRTYdxqEqLTxiVN8uirsXJ.webp",
-    "thumbnail": "/photos/thumb/1QfirjVJnizNRTYdxqEqLTxiVN8uirsXJ.webp",
-    "description": "",
-    "filename": "MJH_9722.jpg",
-    "width": 441,
-    "height": 294,
-    "parent_category": "מקומות בעולם",
-    "alt": "עגינה לפני הסערה"
-  },
-  {
-    "id": "1TO9Zqce6xzSvFCThwTOxKo-CBA-lizu7",
-    "title": "שער הטירה",
-    "category": "צכיה",
-    "url": "/photos/1TO9Zqce6xzSvFCThwTOxKo-CBA-lizu7.webp",
-    "thumbnail": "/photos/thumb/1TO9Zqce6xzSvFCThwTOxKo-CBA-lizu7.webp",
-    "description": "",
-    "filename": "MJH_9775.jpg",
-    "width": 950,
-    "height": 633,
-    "parent_category": "מקומות בעולם",
-    "alt": "שער הטירה"
-  },
-  {
-    "id": "1lRbbVKKtIb2ZB-3UCDu3g0Idk1xaavs_",
-    "title": "חצר הטירה",
-    "category": "צכיה",
-    "url": "/photos/1lRbbVKKtIb2ZB-3UCDu3g0Idk1xaavs_.webp",
-    "thumbnail": "/photos/thumb/1lRbbVKKtIb2ZB-3UCDu3g0Idk1xaavs_.webp",
-    "description": "",
-    "filename": "MJH_9791.jpg",
-    "width": 465,
-    "height": 310,
-    "parent_category": "מקומות בעולם",
-    "alt": "חצר הטירה"
-  },
-  {
-    "id": "1dEnlhyIGafN2XRJsX15pTYIOplyEnbmW",
-    "title": "שמים מבעד לחלון",
-    "category": "צכיה",
-    "url": "/photos/1dEnlhyIGafN2XRJsX15pTYIOplyEnbmW.webp",
-    "thumbnail": "/photos/thumb/1dEnlhyIGafN2XRJsX15pTYIOplyEnbmW.webp",
-    "description": "",
-    "filename": "MJH_9798.jpg",
-    "width": 950,
-    "height": 633,
-    "parent_category": "מקומות בעולם",
-    "alt": "שמים מבעד לחלון"
   },
   {
     "id": "16fKkiE0rd-StcdLJKGxrCeAv-oLLO4AD",
@@ -21895,18 +21534,6 @@
     "added_at": "2026-05-28"
   },
   {
-    "id": "1y6iG3IiFk0GlsCUsBZsepI4Np7JEFH0O",
-    "title": "לוחם קרנבל",
-    "category": "פורטרטים",
-    "url": "/photos/1y6iG3IiFk0GlsCUsBZsepI4Np7JEFH0O.webp",
-    "thumbnail": "/photos/thumb/1y6iG3IiFk0GlsCUsBZsepI4Np7JEFH0O.webp",
-    "description": "",
-    "filename": "AMI_8757 copy.jpg",
-    "width": 950,
-    "height": 631,
-    "alt": "לוחם קרנבל"
-  },
-  {
     "id": "1RjFGWvrl1yWW_lEUTViC-UBe3tN8KLSI",
     "title": "אישה בתלבושת מסורתית",
     "category": "פורטרטים",
@@ -21970,90 +21597,6 @@
     "added_at": "2026-04-22"
   },
   {
-    "id": "1zRydz-feBGM0nA4GVqS2xlblOyfmEYT0",
-    "title": "ליצנית חייכנית",
-    "category": "פורטרטים",
-    "url": "/photos/1zRydz-feBGM0nA4GVqS2xlblOyfmEYT0.webp",
-    "thumbnail": "/photos/thumb/1zRydz-feBGM0nA4GVqS2xlblOyfmEYT0.webp",
-    "description": "",
-    "filename": "MJH_3301 copy.jpg",
-    "width": 950,
-    "height": 634,
-    "alt": "ליצנית חייכנית"
-  },
-  {
-    "id": "1qS2yrWz66Xt2XQtmxjLbi30BBFrqGXB1",
-    "title": "מבט דרך זכוכית מגדלת",
-    "category": "פורטרטים",
-    "url": "/photos/1qS2yrWz66Xt2XQtmxjLbi30BBFrqGXB1.webp",
-    "thumbnail": "/photos/thumb/1qS2yrWz66Xt2XQtmxjLbi30BBFrqGXB1.webp",
-    "description": "",
-    "filename": "MJH_3625 copy.jpg",
-    "width": 950,
-    "height": 634,
-    "alt": "מבט דרך זכוכית מגדלת"
-  },
-  {
-    "id": "15vSnXub3qWplVF87Yw7YGpEXrOh5KHj_",
-    "title": "נקודות צהוב שחור",
-    "category": "פורטרטים",
-    "url": "/photos/15vSnXub3qWplVF87Yw7YGpEXrOh5KHj_.webp",
-    "thumbnail": "/photos/thumb/15vSnXub3qWplVF87Yw7YGpEXrOh5KHj_.webp",
-    "description": "",
-    "filename": "MJH_3845 copy.jpg",
-    "width": 950,
-    "height": 634,
-    "alt": "נקודות צהוב שחור"
-  },
-  {
-    "id": "1jStHSSDQG3tC32p6zLS94bT7fi7j2BrA",
-    "title": "פרצוף ג'וקר",
-    "category": "פורטרטים",
-    "url": "/photos/1jStHSSDQG3tC32p6zLS94bT7fi7j2BrA.webp",
-    "thumbnail": "/photos/thumb/1jStHSSDQG3tC32p6zLS94bT7fi7j2BrA.webp",
-    "description": "",
-    "filename": "MJH_3993 copy.jpg",
-    "width": 950,
-    "height": 634,
-    "alt": "פרצוף ג'וקר"
-  },
-  {
-    "id": "100AYpaK0jeKjH_qzGfF6jNPd7katXEZR",
-    "title": "ציור חי",
-    "category": "פורטרטים",
-    "url": "/photos/100AYpaK0jeKjH_qzGfF6jNPd7katXEZR.webp",
-    "thumbnail": "/photos/thumb/100AYpaK0jeKjH_qzGfF6jNPd7katXEZR.webp",
-    "description": "",
-    "filename": "MJH_4091 copy.jpg",
-    "width": 950,
-    "height": 634,
-    "alt": "ציור חי"
-  },
-  {
-    "id": "1JFmSumQcXYhX4flmCGZbWXeO5bgIUU8-",
-    "title": "זקן הקסמים",
-    "category": "פורטרטים",
-    "url": "/photos/1JFmSumQcXYhX4flmCGZbWXeO5bgIUU8-.webp",
-    "thumbnail": "/photos/thumb/1JFmSumQcXYhX4flmCGZbWXeO5bgIUU8-.webp",
-    "description": "",
-    "filename": "MJH_4202 copy.jpg",
-    "width": 950,
-    "height": 634,
-    "alt": "זקן הקסמים"
-  },
-  {
-    "id": "1O6AzQfr_Av8rOsdRffwNBvumKBGugOQF",
-    "title": "שמחת פורים",
-    "category": "פורטרטים",
-    "url": "/photos/1O6AzQfr_Av8rOsdRffwNBvumKBGugOQF.webp",
-    "thumbnail": "/photos/thumb/1O6AzQfr_Av8rOsdRffwNBvumKBGugOQF.webp",
-    "description": "",
-    "filename": "MJH_4266 copy.jpg",
-    "width": 441,
-    "height": 294,
-    "alt": "שמחת פורים"
-  },
-  {
     "id": "1a106WxbbnFsP2vaBmmLBDBY1MMTjx8Gs",
     "title": "דיוקן טורקיז עם טלית",
     "category": "פורטרטים",
@@ -22075,34 +21618,6 @@
     "added_at": "2026-04-22"
   },
   {
-    "id": "1Tpaw2ooFcWip-poF5_tXOxN1K-PQHpWA",
-    "title": "זרעים של דנדליון",
-    "category": "פרחים וצמחים",
-    "parent_category": null,
-    "url": "/photos/1Tpaw2ooFcWip-poF5_tXOxN1K-PQHpWA.webp",
-    "thumbnail": "/photos/thumb/1Tpaw2ooFcWip-poF5_tXOxN1K-PQHpWA.webp",
-    "description": "תקריב מקרוב של פרחי דנדליון בשלב הזריעה עם זרעים דקיקים",
-    "filename": "9AC9283E-796E-422B-8739-16A6F69C55F1 (1).jpeg",
-    "width": 1440,
-    "height": 956,
-    "exif": null,
-    "added_at": "2026-04-28"
-  },
-  {
-    "id": "1MV-K3AcIojWbUaVx9G0RunFftrENkRUs",
-    "title": "זרעי הדנדליון הרקומים",
-    "category": "פרחים וצמחים",
-    "parent_category": null,
-    "url": "/photos/1MV-K3AcIojWbUaVx9G0RunFftrENkRUs.webp",
-    "thumbnail": "/photos/thumb/1MV-K3AcIojWbUaVx9G0RunFftrENkRUs.webp",
-    "description": "מקרוב של זרעי דנדליון שקופים בתאורה חמה וזהובה",
-    "filename": "9AC9283E-796E-422B-8739-16A6F69C55F1 copy.jpg",
-    "width": 1440,
-    "height": 956,
-    "exif": null,
-    "added_at": "2026-04-28"
-  },
-  {
     "id": "11-TX9S2XFZXspF3BQqbP81COUhwauXNP",
     "title": "פריחת אביב ורודה",
     "category": "פרחים וצמחים",
@@ -22121,42 +21636,6 @@
       "iso": 200,
       "shutter": 0.016666668
     }
-  },
-  {
-    "id": "15h8IlkqnlorfEseEFBHjNikOSgMvsCQ_",
-    "title": "חמניות צהובות",
-    "category": "פרחים וצמחים",
-    "url": "/photos/15h8IlkqnlorfEseEFBHjNikOSgMvsCQ_.webp",
-    "thumbnail": "/photos/thumb/15h8IlkqnlorfEseEFBHjNikOSgMvsCQ_.webp",
-    "description": "",
-    "filename": "AMI_7556 copy.jpg",
-    "width": 433,
-    "height": 301,
-    "alt": "חמניות צהובות"
-  },
-  {
-    "id": "14dXkH2hZxQMYqIh6v5i91YmbM3Xf9b5l",
-    "title": "עלים ירוקים בחושך",
-    "category": "פרחים וצמחים",
-    "url": "/photos/14dXkH2hZxQMYqIh6v5i91YmbM3Xf9b5l.webp",
-    "thumbnail": "/photos/thumb/14dXkH2hZxQMYqIh6v5i91YmbM3Xf9b5l.webp",
-    "description": "",
-    "filename": "AMI_9511 copy.jpg",
-    "width": 950,
-    "height": 631,
-    "alt": "עלים ירוקים בחושך"
-  },
-  {
-    "id": "1R3Lv_smqPJSptwBwlDNsnn59fijMhPW4",
-    "title": "פרח לבן עדין",
-    "category": "פרחים וצמחים",
-    "url": "/photos/1R3Lv_smqPJSptwBwlDNsnn59fijMhPW4.webp",
-    "thumbnail": "/photos/thumb/1R3Lv_smqPJSptwBwlDNsnn59fijMhPW4.webp",
-    "description": "",
-    "filename": "AMI_9529 copy.jpg",
-    "width": 950,
-    "height": 665,
-    "alt": "פרח לבן עדין"
   },
   {
     "id": "1Yjmr3Jzv9ovFqBPAm2-2VEXvM9SwUYpU",
@@ -24309,20 +23788,6 @@
     }
   },
   {
-    "id": "1Qi9cxp1ak50Xnz1X1tOjPZByASAyAvKM",
-    "title": "אדומים בעלטות אור",
-    "category": "פרחים וצמחים",
-    "parent_category": null,
-    "url": "/photos/1Qi9cxp1ak50Xnz1X1tOjPZByASAyAvKM.webp",
-    "thumbnail": "/photos/thumb/1Qi9cxp1ak50Xnz1X1tOjPZByASAyAvKM.webp",
-    "description": "פרחים אדומים עדינים בתאורה חממה עם רקע טשטוש מטושטש",
-    "filename": "February 09, 20132013-184.jpg",
-    "width": 1000,
-    "height": 667,
-    "exif": null,
-    "added_at": "2026-04-24"
-  },
-  {
     "id": "1GPL8l_2hgjZMfVh9xgkPnbeSQmWx7o4Q",
     "title": "פריחה הדרגתית בירוק ואדום",
     "category": "פרחים וצמחים",
@@ -24546,30 +24011,6 @@
       "shutter": 0.005
     },
     "added_at": "2026-04-22"
-  },
-  {
-    "id": "1SJeu7flTIkmy_3fxFAsujh1eC5FPr2yq",
-    "title": "אשכולות אדומים",
-    "category": "פרחים וצמחים",
-    "url": "/photos/1SJeu7flTIkmy_3fxFAsujh1eC5FPr2yq.webp",
-    "thumbnail": "/photos/thumb/1SJeu7flTIkmy_3fxFAsujh1eC5FPr2yq.webp",
-    "description": "",
-    "filename": "MJH_4720 copy.jpg",
-    "width": 950,
-    "height": 634,
-    "alt": "אשכולות אדומים"
-  },
-  {
-    "id": "1ZZcSp_kHfqhkoJS4or3hKEssAhuwg49d",
-    "title": "ניצן סגול",
-    "category": "פרחים וצמחים",
-    "url": "/photos/1ZZcSp_kHfqhkoJS4or3hKEssAhuwg49d.webp",
-    "thumbnail": "/photos/thumb/1ZZcSp_kHfqhkoJS4or3hKEssAhuwg49d.webp",
-    "description": "",
-    "filename": "MJH_4725 copy.jpg",
-    "width": 950,
-    "height": 634,
-    "alt": "ניצן סגול"
   },
   {
     "id": "18tgkGuyqXodFQzduVFXj30svyw9yT55e",
