@@ -279,3 +279,10 @@ test('single and bulk HIDE dispatch Drive curation sync without blocking website
   assert.match(admin, /Failure to dispatch does not undo website HIDE/);
   assert.match(admin, /if \(hidden > 0\)/);
 });
+
+
+test('Drive curation state seed is valid JSON', () => {
+  const state = JSON.parse(fs.readFileSync('data/drive-curation-state.json', 'utf8'));
+  assert.equal(state.version, 1);
+  assert.deepEqual(state.hidden, {});
+});

@@ -1593,3 +1593,14 @@ Fix:
 - Admin HIDE now dispatches `update-photos.yml` best-effort immediately; bulk HIDE dispatches once after the batch. A dispatch failure never rolls back the website HIDE.
 - `KEEP` / `KEEP_SECONDARY` now detects a previous curation HIDE, restores `published=1`, saves the new owner decision, and dispatches the Drive workflow so the original file can return to its recorded Portfolio parent.
 - Safety fallback: production Google credentials are currently historically configured with Drive read-only scope. If the token lacks `https://www.googleapis.com/auth/drive`, the sync exits successfully with a PENDING message; website HIDE remains intact and the daily photo workflow is not broken. One-time Google reauthorization with Drive write scope is still required before automatic moves can execute from GitHub Actions.
+
+
+## 2026-10-03 — Google Drive write re-authorization
+- `src/refresh_token.py` now requests `https://www.googleapis.com/auth/drive` instead of `drive.readonly`.
+- This is required for the reversible HIDE/RESTORE workflow to move files between `Portfolio` and `Amit Photos Hidden`.
+- One-time owner action on a trusted local machine:
+  1. Ensure `credentials.json` exists in the repo root.
+  2. Run `python src/refresh_token.py` and approve the Google Drive permission in the browser.
+  3. Update GitHub Actions secret with `gh secret set GOOGLE_TOKEN < token.json`.
+  4. Run `gh workflow run update-photos.yml` and verify the sync step no longer reports PENDING.
+- Do not paste `token.json` into chat or commit it to Git.
