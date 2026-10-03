@@ -1,0 +1,29 @@
+name: Drive Sync CI
+
+on:
+  pull_request:
+    paths:
+      - 'src/sync_drive_curation.py'
+      - 'scripts/push_generated_changes.sh'
+      - 'tests/test_sync_drive_curation.py'
+      - 'tests/test_update_photos_workflow.py'
+      - 'tests/test_generated_push.py'
+      - '.github/workflows/update-photos.yml'
+      - '.github/workflows/drive-sync-ci.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install requests google-auth pytest
+      - run: bash -n scripts/push_generated_changes.sh
+      - run: python -m pytest tests/test_sync_drive_curation.py tests/test_update_photos_workflow.py tests/test_generated_push.py -q

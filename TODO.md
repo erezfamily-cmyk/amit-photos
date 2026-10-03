@@ -10,7 +10,8 @@ Closed today:
 
 Still active:
 - [x] Run `update-photos.yml` after OAuth fixes and verify existing HIDE decisions move to `Amit Photos Hidden` — run #284: moved=18, skipped=0, tracked_hidden=18.
-- [ ] Verify KEEP/KEEP_SECONDARY restore path on one hidden photo: exact original Drive parent restored, Hidden parent removed, state entry cleared.
+- [x] Verify live RESTORE movement: runs #289 and #292 each restored one image to its recorded original parent.
+- [ ] Merge queued-checkout/push recovery fix and verify reconciliation of the remaining stale state entry (#292 moved successfully but failed Git persistence).
 - [ ] Continue actual visual scoring/review for remaining photos whose visual components are still pending. PR #128 removed the 404 blocker and enables Drive fallback/cross-gallery batches.
 - [ ] Finish the redesigned Free Guide 7-day measurement window through 9.10 before changing offer/PDF/UTM/KPI.
 - [ ] Keep `PAYMENTS_ENABLED=false`; PayPal Orders v2 remains Sandbox-only work and Gelato remains out of scope.

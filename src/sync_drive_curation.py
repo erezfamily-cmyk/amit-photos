@@ -69,6 +69,9 @@ def save_state(state):
         json.dumps(state, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
         encoding="utf-8",
     )
+    # Persist rescan invalidation with each successful move/reconciliation,
+    # including partial runs that later fail before the photo agent starts.
+    LAST_SCAN_FILE.unlink(missing_ok=True)
 
 
 def token_scopes(token):
@@ -246,7 +249,7 @@ def main():
 
     hidden = state["hidden"]
     changed = False
-    moved = restored = skipped = 0
+    moved = restored = reconciled = skipped = 0
 
     # Apply new HIDE decisions.
     for photo_id, payload in decisions.items():
@@ -303,6 +306,7 @@ def main():
         }
         changed = True
         moved += 1
+        save_state(state)
         print(f"HIDE moved {photo_id}: {hidden[photo_id]['filename']}")
 
     # Restore anything that is no longer HIDE.
@@ -332,6 +336,9 @@ def main():
             if source_parent in parents:
                 del hidden[photo_id]
                 changed = True
+                reconciled += 1
+                save_state(state)
+                print(f"RESTORE reconciled {photo_id}: already in original parent {source_parent}")
             else:
                 print(f"WARN {photo_id}: neither Hidden nor original parent; leaving state untouched")
                 skipped += 1
@@ -346,12 +353,14 @@ def main():
         del hidden[photo_id]
         changed = True
         restored += 1
+        save_state(state)
         print(f"RESTORE moved {photo_id} back to {source_parent}")
 
     state["last_sync_at"] = now_iso()
     state["last_summary"] = {
         "moved_to_hidden": moved,
         "restored": restored,
+        "reconciled": reconciled,
         "skipped": skipped,
     }
     if changed or not STATE_FILE.exists():
@@ -360,12 +369,12 @@ def main():
     # Parent moves do not reliably advance Drive modifiedTime. Force the next
     # portfolio agent run to rescan so photos.json immediately reflects both
     # HIDE removals and restored KEEP decisions.
-    if moved or restored:
+    if moved or restored or reconciled:
         LAST_SCAN_FILE.unlink(missing_ok=True)
 
     print(
         f"Drive curation sync complete: moved={moved}, restored={restored}, "
-        f"skipped={skipped}, tracked_hidden={len(hidden)}"
+        f"reconciled={reconciled}, skipped={skipped}, tracked_hidden={len(hidden)}"
     )
     return 0
 
