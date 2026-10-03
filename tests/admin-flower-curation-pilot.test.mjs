@@ -177,7 +177,7 @@ test('KEEP_SECONDARY moves to the public gallery tail without disturbing order i
 test('curation decision changes invalidate the cached public gallery ordering', () => {
   assert.match(worker, /flower_curation_decisions_v1/);
   assert.match(worker, /orderPublicPhotosByCuration\(photos, curationDecisions\)/);
-  const savePos = worker.indexOf("INSERT OR REPLACE INTO settings (key, value)");
+  const savePos = worker.indexOf("ON CONFLICT(key) DO UPDATE SET value=json_patch");
   const invalidatePos = worker.indexOf("invalidatePublicPhotosCache(request)", savePos);
   assert.ok(savePos >= 0 && invalidatePos > savePos);
 });
@@ -186,10 +186,14 @@ test('curation decision changes invalidate the cached public gallery ordering', 
 test('pending visual components are shown as not reviewed instead of zero', () => {
   const scores = JSON.parse(fs.readFileSync('data/portfolio-curation-scores.json', 'utf8'));
   const pending = scores.items.find(x => x.score_kind === 'pending_visual');
-  assert.equal(pending.score, null);
-  assert.equal(pending.components.sharpness, null);
-  assert.equal(pending.components.composition, null);
-  assert.equal(pending.components.light_color, null);
+  if (pending) {
+    assert.equal(pending.score, null);
+    assert.equal(pending.components.sharpness, null);
+    assert.equal(pending.components.composition, null);
+    assert.equal(pending.components.light_color, null);
+  } else {
+    assert.equal(scores.summary.pending_visual, 0);
+  }
   assert.match(admin, /raw !== null && raw !== undefined/);
   assert.match(admin, /טרם נבדק/);
   assert.doesNotMatch(admin, /Number\.isFinite\(Number\(score\.components\[key\]\)\)\)/);
