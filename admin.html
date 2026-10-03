@@ -3475,12 +3475,16 @@ const Photos = (() => {
       if (searchQ === '_curation:visual-complete') return curationScores.get(p.id)?.score_kind === 'visual_complete';
       if (searchQ === '_curation:pending-visual') return curationScores.get(p.id)?.score_kind !== 'visual_complete';
       if (searchQ === '_bulk:under-1000') {
+        const decision = curationDecisions.get(p.id)?.decision || '';
+        if (decision === 'DELETE') return false;
         const score = curationScores.get(p.id);
         const w = Number(score?.width ?? p.width ?? 0);
         const h = Number(score?.height ?? p.height ?? 0);
         return w > 0 && h > 0 && Math.min(w, h) < 1000;
       }
       if (searchQ === '_bulk:score-under-80') {
+        const decision = curationDecisions.get(p.id)?.decision || '';
+        if (decision === 'HIDE' || decision === 'DELETE') return false;
         const score = curationScores.get(p.id);
         return p._source === 'r2' && score?.score_kind === 'visual_complete' && Number(score.score) < 80;
       }
@@ -3683,8 +3687,8 @@ const Photos = (() => {
         chip(`⚠ דורש בדיקה ≤85 / בעיה ${[...curationScores.values()].filter(x => x.owner_review_required).length}`, '_curation:score-review'),
         `<div class="stat-chip stat-chip-link" onclick="Photos.startCurationReview()"><strong>▶ מצב Review ${getReviewProgress().reviewed}/${getReviewProgress().total}</strong></div>`,
         chip(`👁 נבדקו ויזואלית ${curationScoreSummary?.visual_complete || 0}/${curationScoreSummary?.total || data.length}`, '_curation:visual-complete'),
-        chip(`🗑 צד קצר <1000px ${[...curationScores.values()].filter(x => Number(x.width || 0) > 0 && Number(x.height || 0) > 0 && Math.min(Number(x.width), Number(x.height)) < 1000).length}`, '_bulk:under-1000'),
-        chip(`🙈 ציון ויזואלי <80 ${data.filter(p => p._source === 'r2' && curationScores.get(p.id)?.score_kind === 'visual_complete' && Number(curationScores.get(p.id)?.score) < 80).length}`, '_bulk:score-under-80')
+        chip(`🗑 צד קצר <1000px ${data.filter(p => curationDecisions.get(p.id)?.decision !== 'DELETE').filter(p => { const x = curationScores.get(p.id); const w = Number(x?.width ?? p.width ?? 0); const h = Number(x?.height ?? p.height ?? 0); return w > 0 && h > 0 && Math.min(w, h) < 1000; }).length}`, '_bulk:under-1000'),
+        chip(`🙈 ציון ויזואלי <80 ${data.filter(p => { const d = curationDecisions.get(p.id)?.decision || ''; return d !== 'HIDE' && d !== 'DELETE' && p._source === 'r2' && curationScores.get(p.id)?.score_kind === 'visual_complete' && Number(curationScores.get(p.id)?.score) < 80; }).length}`, '_bulk:score-under-80')
       ] : []),
       ...Object.entries(cats).sort((a,b)=>b[1]-a[1]).map(([c,n])=>chip(`${n} ${c}`, c))
     ].join('');
@@ -4396,6 +4400,7 @@ const Photos = (() => {
     $('photos-search').value = searchQ;
     resetPhotoPagination();
     selectAllMatching(p => {
+      if (curationDecisions.get(p.id)?.decision === 'DELETE') return false;
       const score = curationScores.get(p.id);
       const w = Number(score?.width ?? p.width ?? 0);
       const h = Number(score?.height ?? p.height ?? 0);
@@ -4408,6 +4413,8 @@ const Photos = (() => {
     $('photos-search').value = searchQ;
     resetPhotoPagination();
     selectAllMatching(p => {
+      const decision = curationDecisions.get(p.id)?.decision || '';
+      if (decision === 'HIDE' || decision === 'DELETE') return false;
       const score = curationScores.get(p.id);
       return p._source === 'r2' && score?.score_kind === 'visual_complete' && Number(score.score) < 80;
     }, 'ציון ויזואלי מתחת ל-80');
