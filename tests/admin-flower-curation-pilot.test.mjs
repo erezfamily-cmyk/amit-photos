@@ -264,3 +264,18 @@ test('Drive HIDE sync is reversible, external to Portfolio, and forces a rescan'
   assert.match(workflow, /DRIVE_HIDDEN_FOLDER_ID: 1LxJF0lQecSZ5EFxTHu0Njr616CEaOmf5/);
   assert.match(workflow, /data\/drive-curation-state\.json/);
 });
+
+
+test('KEEP reverses a curation HIDE and triggers Drive restoration sync', () => {
+  assert.match(admin, /previousDecision === 'HIDE'/);
+  assert.match(admin, /body: JSON\.stringify\(\{ id, published: true \}\)/);
+  assert.match(admin, /שחזור Drive הופעל/);
+  assert.match(admin, /workflow: 'update-photos\.yml'/);
+});
+
+test('single and bulk HIDE dispatch Drive curation sync without blocking website HIDE', () => {
+  const dispatches = admin.match(/workflow: 'update-photos\.yml'/g) || [];
+  assert.ok(dispatches.length >= 3);
+  assert.match(admin, /Failure to dispatch does not undo website HIDE/);
+  assert.match(admin, /if \(hidden > 0\)/);
+});
