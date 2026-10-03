@@ -142,3 +142,27 @@ class PortfolioVisualCurationTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+    def test_pending_selection_uses_full_batch_across_galleries(self):
+        state = {"items": [
+            {"photo_id": "f1", "category": "פרחים וצמחים", "score_kind": "pending_visual", "material_problem": False},
+            {"photo_id": "a1", "category": "בעלי חיים", "score_kind": "pending_visual", "material_problem": False},
+            {"photo_id": "i1", "category": "ישראל", "score_kind": "pending_visual", "material_problem": False},
+        ]}
+        selected = mod.select_pending_items(state, "", 2)
+        self.assertEqual([x["photo_id"] for x in selected], ["f1", "a1"])
+
+    def test_pending_selection_respects_exact_category_override(self):
+        state = {"items": [
+            {"photo_id": "f1", "category": "פרחים וצמחים", "score_kind": "pending_visual", "material_problem": False},
+            {"photo_id": "a1", "category": "בעלי חיים", "score_kind": "pending_visual", "material_problem": False},
+        ]}
+        selected = mod.select_pending_items(state, "בעלי חיים", 200)
+        self.assertEqual([x["photo_id"] for x in selected], ["a1"])
+
+    def test_drive_fallback_is_available_for_missing_public_assets(self):
+        source = (ROOT / "src" / "portfolio_visual_curation.py").read_text(encoding="utf-8")
+        self.assertIn("def fetch_drive_image", source)
+        self.assertIn("GOOGLE_TOKEN_JSON", source)
+        self.assertIn('params={"alt": "media", "supportsAllDrives": "true"}', source)
