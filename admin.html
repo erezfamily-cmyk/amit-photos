@@ -1267,6 +1267,8 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
         <span class="bulk-count" id="bulk-count">0 נבחרו</span>
         <button type="button" class="btn btn-sm" style="background:var(--accent-dim);color:var(--accent);border:1px solid var(--accent)" id="bulk-cat-btn">קטגוריה</button>
         <button type="button" class="btn btn-sm" style="background:var(--accent-dim);color:var(--accent);border:1px solid var(--accent)" id="bulk-price-btn">מחיר</button>
+        <button type="button" class="btn btn-success btn-sm" id="bulk-keep-btn">KEEP / החזר לפרודקשיין</button>
+        <button type="button" class="btn btn-ghost btn-sm" id="bulk-secondary-btn" title="החזר לפרודקשיין והעבר לסוף הגלריה">KEEP_SECONDARY</button>
         <button type="button" class="btn btn-sm" style="background:rgba(224,184,85,.12);color:var(--yellow);border:1px solid rgba(224,184,85,.5)" id="bulk-hide-btn">HIDE מהפרודקשיין</button>
         <button type="button" class="btn btn-danger btn-sm" id="bulk-delete-btn">מחק</button>
         <button type="button" class="btn btn-ghost btn-sm" id="bulk-cancel-btn">ביטול</button>
@@ -4486,6 +4488,84 @@ const Photos = (() => {
     renderGrid();
   });
 
+
+  async function applyBulkKeepDecision(decision) {
+    if (!selected.size) return;
+    const ids = [...selected];
+    const label = decision === 'KEEP_SECONDARY' ? 'KEEP_SECONDARY' : 'KEEP';
+    if (!confirm(`להחיל ${label} על ${ids.length} תמונות? תמונות שהוסתרו יוחזרו לפרודקשיין ולתיקיית המקור ב-Drive.`)) return;
+
+    let updated = 0;
+    let restoreRequested = 0;
+    let failed = 0;
+
+    for (const id of ids) {
+      const photo = data.find(p => p.id === id);
+      if (!photo) { failed++; continue; }
+
+      const previousDecision = curationDecisions.get(id)?.decision || '';
+      const wasHiddenDecision = previousDecision === 'HIDE';
+      const wasPublished = photo.published !== 0;
+
+      try {
+        if (wasHiddenDecision && photo._source === 'r2' && !wasPublished) {
+          const res = await fetch('/api/photos', {
+            method: 'PATCH',
+            headers: authHeaders(),
+            body: JSON.stringify({ id, published: true })
+          });
+          const payload = await res.json().catch(() => ({}));
+          if (!res.ok) throw new Error(payload.error || 'החזרת התמונה לפרסום נכשלה');
+          photo.published = 1;
+        }
+
+        await saveCurationDecision(id, decision, {
+          note: `Bulk owner ${label} from Admin selection.`
+        });
+
+        if (wasHiddenDecision) restoreRequested++;
+        updated++;
+      } catch (err) {
+        console.error('bulk keep restore failed', id, err);
+        if (wasHiddenDecision && !wasPublished && photo._source === 'r2' && photo.published === 1) {
+          const rollback = await fetch('/api/photos', {
+            method: 'PATCH',
+            headers: authHeaders(),
+            body: JSON.stringify({ id, published: false })
+          }).catch(() => null);
+          if (rollback?.ok) photo.published = 0;
+        }
+        failed++;
+      }
+    }
+
+    // One workflow dispatch after all decisions are persisted avoids racing
+    // several Drive restore jobs for the same bulk action.
+    if (restoreRequested > 0) {
+      fetch('/api/trigger-workflow', {
+        method: 'POST',
+        headers: authHeaders(),
+        body: JSON.stringify({ workflow: 'update-photos.yml' })
+      }).catch(() => {});
+    }
+
+    selected.clear();
+    selectMode = false;
+    $('select-mode-btn').textContent = 'בחר';
+    $('bulk-bar').classList.remove('show');
+    render();
+
+    const restoredText = restoreRequested ? `; ${restoreRequested} נשלחו לשחזור Drive` : '';
+    toast(
+      failed
+        ? `${label}: עודכנו ${updated}${restoredText}; ${failed} נכשלו`
+        : `${label}: עודכנו ${updated} תמונות${restoredText}`,
+      failed ? 'error' : 'success'
+    );
+  }
+
+  $('bulk-keep-btn').addEventListener('click', () => applyBulkKeepDecision('KEEP'));
+  $('bulk-secondary-btn').addEventListener('click', () => applyBulkKeepDecision('KEEP_SECONDARY'));
 
   $('bulk-hide-btn').addEventListener('click', async () => {
     if (!selected.size) return;

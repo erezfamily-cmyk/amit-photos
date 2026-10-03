@@ -281,10 +281,17 @@ test('single and bulk HIDE dispatch Drive curation sync without blocking website
 });
 
 
-test('Drive curation state seed is valid JSON', () => {
+test('Drive curation state is valid JSON with reversible hidden records', () => {
   const state = JSON.parse(fs.readFileSync('data/drive-curation-state.json', 'utf8'));
   assert.equal(state.version, 1);
-  assert.deepEqual(state.hidden, {});
+  assert.ok(state.hidden && typeof state.hidden === 'object' && !Array.isArray(state.hidden));
+  for (const [photoId, record] of Object.entries(state.hidden)) {
+    assert.ok(photoId);
+    assert.ok(record && typeof record === 'object');
+    assert.ok(record.source_parent_id);
+    assert.ok(record.hidden_folder_id);
+    assert.ok(record.hidden_at);
+  }
 });
 
 
@@ -301,4 +308,16 @@ test('admin login button does not invoke login twice', () => {
   assert.match(admin, /<button class="btn-login" id="login-btn">כניסה<\/button>/);
   assert.match(admin, /\$\('login-btn'\)\.addEventListener\('click', doLogin\)/);
   assert.doesNotMatch(admin, /id="login-btn" onclick=/);
+});
+
+
+test('bulk KEEP restores hidden photos and dispatches one Drive sync', () => {
+  assert.match(admin, /bulk-keep-btn/);
+  assert.match(admin, /bulk-secondary-btn/);
+  assert.match(admin, /applyBulkKeepDecision\('KEEP'\)/);
+  assert.match(admin, /applyBulkKeepDecision\('KEEP_SECONDARY'\)/);
+  assert.match(admin, /previousDecision === 'HIDE'/);
+  assert.match(admin, /published: true/);
+  assert.match(admin, /restoreRequested > 0/);
+  assert.match(admin, /One workflow dispatch after all decisions are persisted/);
 });
