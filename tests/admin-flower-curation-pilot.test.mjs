@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import './curation-decisions-atomic.test.mjs';
 import { orderPublicPhotosByCuration } from '../worker.js';
 
 const admin = fs.readFileSync('admin.html', 'utf8');
