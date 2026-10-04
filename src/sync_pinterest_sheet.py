@@ -20,6 +20,7 @@ SPREADSHEET_ID = "1qo4DFRzL1lnp3reqDHNADpMj6C67IVSRz1uIYz9CnRc"
 SHEET_NAME = "pinterest_queue.csv"
 SHEETS_API = f"https://sheets.googleapis.com/v4/spreadsheets/{SPREADSHEET_ID}"
 CHECK_ONLY = "--check" in sys.argv
+PROBE_WRITE = "--probe-write" in sys.argv
 
 
 def plan_updates(sheet_values, queue_rows, posted_ids):
@@ -65,6 +66,14 @@ def main():
           f"posted IDs={len(posted_ids)}; missing TRUE updates={len(updates)}")
     if CHECK_ONLY:
         return
+    if PROBE_WRITE and not updates:
+        # Verify write access by writing an existing TRUE value back to itself.
+        for row_number, row in enumerate(values[1:], start=2):
+            if row and row[0] in posted_ids and len(row) >= 7 and str(row[6]).upper() == "TRUE":
+                updates = [{"range": f"'{SHEET_NAME}'!G{row_number}", "values": [["TRUE"]]}]
+                break
+        if not updates:
+            raise RuntimeError("No already-posted TRUE cell available for write probe")
     if not updates:
         return
     response = session.post(
@@ -75,7 +84,8 @@ def main():
     response.raise_for_status()
     if response.json().get("totalUpdatedCells") != len(updates):
         raise RuntimeError("Google Sheets updated an unexpected number of cells")
-    print(f"Updated {len(updates)} posted flags in Google Sheet")
+    print(f"Verified same-value write of {len(updates)} posted cell" if PROBE_WRITE else
+          f"Updated {len(updates)} posted flags in Google Sheet")
 
 
 if __name__ == "__main__":
