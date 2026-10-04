@@ -9,7 +9,7 @@ from unittest.mock import Mock, patch
 
 
 SPEC = importlib.util.spec_from_file_location(
-    "pinterest_post", Path(__file__).resolve().parent / "pinterest_post.py"
+    "pinterest_post", Path(__file__).resolve().parent.parent / "src" / "pinterest_post.py"
 )
 module = importlib.util.module_from_spec(SPEC)
 try:
@@ -31,6 +31,14 @@ def item(photo_id, category="Flowers", posted="FALSE"):
 
 
 class PinterestQueueTests(unittest.TestCase):
+    def test_repository_queue_is_complete_and_reconciled(self):
+        rows, fields = module.load_queue()
+        posted = module.load_posted()
+        self.assertEqual(len(rows), 447)
+        self.assertEqual(len({row["id"] for row in rows}), 447)
+        self.assertTrue(all(row["description"] for row in rows))
+        self.assertTrue(all(row["id"] in posted for row in rows if row["posted"] == "TRUE"))
+
     def test_selection_excludes_prior_posts_and_unpublished_photos(self):
         rows = [item("old"), item("hidden"), item("new"), item("another", "Landscape")]
         live = {"old": {}, "new": {}, "another": {}}
