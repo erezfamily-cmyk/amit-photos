@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - '.github/workflows/pinterest-sheet-sync.yml'
+      - 'src/sync_pinterest_sheet.py'
   workflow_dispatch:
     inputs:
       check_only:
@@ -32,7 +33,9 @@ jobs:
           GOOGLE_TOKEN_JSON: ${{ secrets.GOOGLE_TOKEN }}
           CHECK_ONLY: ${{ inputs.check_only }}
         run: |
-          if [ "$CHECK_ONLY" != "false" ]; then
+          if [ "$GITHUB_EVENT_NAME" = "push" ]; then
+            python src/sync_pinterest_sheet.py --probe-write
+          elif [ "$CHECK_ONLY" != "false" ]; then
             python src/sync_pinterest_sheet.py --check
           else
             python src/sync_pinterest_sheet.py
