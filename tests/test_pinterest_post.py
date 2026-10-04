@@ -54,7 +54,7 @@ class PinterestQueueTests(unittest.TestCase):
         rows = [item("old"), item("hidden"), item("new"), item("another", "Landscape")]
         live = {"old": {}, "new": {}, "another": {}}
         with patch.object(module.random, "shuffle"):
-            result = module.select_rows(rows, live, {"old"})
+            result = module.select_rows(rows, live, {"old"}, count=3)
         self.assertEqual([row["id"] for row in result], ["new", "another"])
 
     def test_invalid_or_duplicate_queue_stops_before_any_post(self):
