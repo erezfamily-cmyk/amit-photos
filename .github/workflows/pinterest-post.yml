@@ -10,6 +10,7 @@ on:
       - 'src/sync_pinterest_sheet.py'
       - 'tests/test_pinterest_sheet_sync.py'
       - '.github/workflows/pinterest-post.yml'
+      - '.github/workflows/pinterest-daily.yml'
   workflow_dispatch:
 
 permissions:

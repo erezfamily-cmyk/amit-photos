@@ -1,0 +1,66 @@
+name: Pinterest daily publishing
+
+on:
+  # Existing cadence: 14:00 UTC daily (17:00 Israel summer, 16:00 winter).
+  schedule:
+    - cron: '0 14 * * *'
+  workflow_dispatch:
+  # One limited launch run when this workflow first lands on main.
+  push:
+    paths:
+      - '.github/workflows/pinterest-daily.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: pinterest-publication
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      PINTEREST_POST_LIMIT: ${{ github.event_name == 'push' && '1' || '3' }}
+    steps:
+      - name: Checkout latest queue after acquiring publication lock
+        id: checkout
+        uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install requests google-auth
+      - name: Validate queue and reconcile prior Sheet flags
+        env:
+          GOOGLE_TOKEN_JSON: ${{ secrets.GOOGLE_TOKEN }}
+        run: |
+          python -m unittest discover -s tests -p 'test_pinterest_post.py'
+          python -m unittest discover -s tests -p 'test_pinterest_sheet_sync.py'
+          python src/pinterest_post.py --dry-run
+          python src/sync_pinterest_sheet.py
+      - name: Publish live queue photos
+        id: publish
+        env:
+          PINTEREST_ACCESS_TOKEN: ${{ secrets.PINTEREST_ACCESS_TOKEN }}
+        run: python src/pinterest_post.py
+      - name: Persist every successful Pin, including partial runs
+        id: persist
+        if: ${{ always() && steps.checkout.outcome == 'success' }}
+        run: |
+          git config user.name "Pinterest Agent"
+          git config user.email "agent@amitphotos.com"
+          git add data/pinterest_queue.csv data/pinterest_posted.json
+          if ! git diff --staged --quiet; then
+            git commit -m "Record published Pinterest Pins"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
+      - name: Sync new posted flags to editorial Sheet
+        if: ${{ always() && steps.persist.outcome == 'success' && (steps.publish.outcome == 'success' || steps.publish.outcome == 'failure') }}
+        env:
+          GOOGLE_TOKEN_JSON: ${{ secrets.GOOGLE_TOKEN }}
+        run: python src/sync_pinterest_sheet.py
