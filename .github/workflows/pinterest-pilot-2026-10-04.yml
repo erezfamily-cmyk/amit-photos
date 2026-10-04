@@ -1,0 +1,49 @@
+name: Pinterest one-Pin pilot (2026-10-04)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'data/pinterest-pilot-request-2026-10-04.txt'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: pinterest-one-pin-pilot-2026-10-04
+  cancel-in-progress: false
+
+jobs:
+  publish-one:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      PINTEREST_POST_LIMIT: '1'
+      PINTEREST_PILOT_PHOTO_ID: '1A8y2S1s8pDnIzK0lbW6NpxJS5plJcYzJ'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install requests
+      - name: Validate queue and inspect the single candidate
+        run: |
+          python -m unittest discover -s tests -p 'test_pinterest_post.py'
+          python src/pinterest_post.py --dry-run
+      - name: Publish exactly one Pin
+        env:
+          PINTEREST_ACCESS_TOKEN: ${{ secrets.PINTEREST_ACCESS_TOKEN }}
+        run: python src/pinterest_post.py
+      - name: Persist posted state even if a later step fails
+        if: success() || failure()
+        run: |
+          git config user.name "Pinterest Pilot"
+          git config user.email "agent@amitphotos.com"
+          git add data/pinterest_queue.csv data/pinterest_posted.json
+          if ! git diff --staged --quiet; then
+            git commit -m "Record Pinterest pilot Pin"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi

@@ -17,7 +17,8 @@ QUEUE_FILE = ROOT / "data" / "pinterest_queue.csv"
 POSTED_FILE = ROOT / "data" / "pinterest_posted.json"
 SITE_URL = "https://amitphotos.com"
 PINTEREST_API = "https://api.pinterest.com/v5"
-PINS_PER_DAY = 3
+PINS_PER_DAY = int(os.getenv("PINTEREST_POST_LIMIT", "3"))
+PILOT_PHOTO_ID = os.getenv("PINTEREST_PILOT_PHOTO_ID", "").strip()
 DRY_RUN = "--dry-run" in sys.argv
 
 
@@ -138,9 +139,17 @@ def main():
     rows, fields = load_queue()
     posted = load_posted()
     live = load_live_photos()
-    selected = select_rows(rows, live, posted)
+    if PILOT_PHOTO_ID:
+        selected = [row for row in rows if row["id"] == PILOT_PHOTO_ID and row["id"] in live
+                    and row["id"] not in posted and row["posted"].upper() != "TRUE"]
+        if len(selected) != 1:
+            raise ValueError(f"Pilot photo unavailable or already posted: {PILOT_PHOTO_ID}")
+    else:
+        selected = select_rows(rows, live, posted)
     print(f"Queue={len(rows)}, live matches={sum(row['id'] in live for row in rows)}, "
           f"already posted={sum(row['id'] in posted for row in rows)}, selected={len(selected)}")
+    if PINS_PER_DAY < 1 or (PILOT_PHOTO_ID and PINS_PER_DAY != 1):
+        raise ValueError("Pilot requires exactly one Pin")
     if DRY_RUN:
         for row in selected:
             print(f"DRY RUN: {row['id']} | {row['title']} | {row['link']}")
