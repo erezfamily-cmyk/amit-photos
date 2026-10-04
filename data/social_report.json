@@ -1,89 +1,120 @@
 {
-  "generated_at": "2026-09-27T11:12:14.069765+00:00",
-  "week_ending": "27/09/2026",
+  "generated_at": "2026-10-04T11:39:46.292615+00:00",
+  "week_ending": "04/10/2026",
   "ig": {
-    "followers": 659,
-    "media_count": 1391,
-    "posts_this_week": 6,
-    "total_likes": 6,
+    "followers": 660,
+    "media_count": 1397,
+    "posts_this_week": 5,
+    "total_likes": 7,
     "total_comments": 0,
-    "avg_likes_per_post": 1.0,
-    "engagement_rate": 0.0015,
+    "avg_likes_per_post": 1.4,
+    "engagement_rate": 0.0021,
     "top_posts": [
       {
-        "caption": "📸 ברווז בעלייה  חוק השלישים בפעולה: הברווז ממוקם בצד שמאל של הפריים כך שראשו נמצא בדיוק בצומת השלישי",
+        "post_id": "18121058464926380",
+        "photo_id": "",
+        "caption": "I waited for that perfect moment of stillness when the sea met the mountains on the horizon, and two",
         "likes": 3,
         "comments": 0,
-        "date": "2026-09-24"
+        "date": "2026-09-27"
       },
       {
-        "caption": "I photographed this single curved wire spiraling against a minimalist blue backdrop, chasing the qui",
-        "likes": 1,
+        "post_id": "18132842245672591",
+        "photo_id": "",
+        "caption": "צילמתי את זה מלמעלה, מגשר שחלף מעל המים. הזווית הזו נתנה לי בדיוק את מה שחיפשתי — שטח מים אינסופי שב",
+        "likes": 2,
         "comments": 0,
-        "date": "2026-09-23"
+        "date": "2026-09-30"
       },
       {
-        "caption": "הבוקר בסן דיאגו התחיל מול הים, בין פסל דגים ענק לשקנאי ושחף שממש הרגישו כמו בבית על הסלעים. מי עוד מ",
-        "likes": 1,
+        "post_id": "17929569327163977",
+        "photo_id": "",
+        "caption": "הבחור הקטן הזה ישב לי על המעקה של איזה שאלה בהרים, וכמעט פספסתי אותו.  הראש שלו בפינה הימנית של הקדר",
+        "likes": 2,
         "comments": 0,
-        "date": "2026-09-22"
+        "date": "2026-09-27"
       },
       {
-        "caption": "את מגדל דוד צילמתי בדיוק ברגע שאני מחכה לו — כשהשמש כבר נעלמה מאחורי הגבעות אבל עוד לא ויתרה. האור ה",
-        "likes": 1,
-        "comments": 0,
-        "date": "2026-09-20"
-      },
-      {
-        "caption": "הלכתי בשוק העתיק במונטנגרו כשראיתי אותו יושב על אבני הרחוף, בדיוק במרכז אלומת אור עדינה שנשפכה בין ה",
+        "post_id": "18119042575954001",
+        "photo_id": "",
+        "caption": "I photographed these rows of crystal glasses at just the right angle, waiting for the light to catch",
         "likes": 0,
         "comments": 0,
-        "date": "2026-09-23"
+        "date": "2026-09-30"
+      },
+      {
+        "post_id": "18130178389701884",
+        "photo_id": "",
+        "caption": "עצרתי הבוקר בין הוורדים והדרדר הבודד, ופתאום הבנתי שגם מה שדוקר יכול להיות יפה. איזה מהשלושה היה גונ",
+        "likes": 0,
+        "comments": 0,
+        "date": "2026-09-29"
       }
     ],
+    "photo_performance": [],
     "best_post": {
-      "caption": "📸 ברווז בעלייה\n\nחוק השלישים בפעולה: הברווז ממוקם בצד שמאל של הפריים כך שראשו נמצא בדיוק בצומת השלישים העליון-שמאלי — אחת",
+      "post_id": "18121058464926380",
+      "photo_id": "",
+      "caption": "I waited for that perfect moment of stillness when the sea met the mountains on the horizon, and two simple white chairs",
       "likes": 3,
-      "date": "2026-09-24"
+      "date": "2026-09-27"
     }
   },
   "fb": {
     "fans": 278,
-    "posts_this_week": 4,
-    "total_likes": 0,
+    "posts_this_week": 7,
+    "total_likes": 1,
     "total_comments": 0,
-    "avg_likes_per_post": 0.0,
-    "engagement_rate": 0.0,
+    "avg_likes_per_post": 0.1,
+    "engagement_rate": 0.0005,
     "top_posts": [
       {
-        "message": "📸 ברווז בעלייה  חוק השלישים בפעולה: הברווז ממוקם בצד שמאל של הפריים כך שראשו נמצא בדיוק בצומת השלישי",
-        "likes": 0,
+        "post_id": "339707206917_1405991528353685",
+        "photo_id": "",
+        "message": "צילמתי את קיר המנעולים הזה, ומה שמשך אותי לא היה דווקא המנעולים — אלא כל הצבעים שמאחוריהם. הגרפיטי ה",
+        "likes": 1,
         "comments": 0,
-        "date": "2026-09-24"
+        "date": "2026-09-28"
       },
       {
-        "message": "I photographed this single curved wire spiraling against a minimalist blue backdrop, chasing the qui",
+        "post_id": "339707206917_1408875384731966",
+        "photo_id": "",
+        "message": "📸 שמים מבעד לחלון  מסגרת בתוך מסגרת: התמונה מדגימה את חוק ה-Framing בצורה מושלמת — הצלם עמד בתחתית ח",
         "likes": 0,
         "comments": 0,
-        "date": "2026-09-23"
+        "date": "2026-10-01"
       },
       {
-        "message": "צילמתי את התמונה הזאת — רשת דיג צהובה מסובכת עם מצוף אדום לכוד בתוכה — וכשחזרתי הביתה הבנתי שהיא בדי",
+        "post_id": "339707206917_1408542908098547",
+        "photo_id": "",
+        "message": "https://www.facebook.com/share/p/1Bd52fNcxs/",
         "likes": 0,
         "comments": 0,
-        "date": "2026-09-21"
+        "date": "2026-10-01"
       },
       {
-        "message": "I waited patiently for the perfect moment to capture this golden-orange macaw, letting every vivid f",
+        "post_id": "339707206917_1407919708160867",
+        "photo_id": "",
+        "message": "I photographed these rows of crystal glasses at just the right angle, waiting for the light to catch",
         "likes": 0,
         "comments": 0,
-        "date": "2026-09-20"
+        "date": "2026-09-30"
+      },
+      {
+        "post_id": "339707206917_1407496851536486",
+        "photo_id": "",
+        "message": "https://www.facebook.com/share/p/19dPkfd5G2/",
+        "likes": 0,
+        "comments": 0,
+        "date": "2026-09-30"
       }
     ],
     "best_post": {
-      "message": "📸 ברווז בעלייה\n\nחוק השלישים בפעולה: הברווז ממוקם בצד שמאל של הפריים כך שראשו נמצא בדיוק בצומת השלישים העליון-שמאלי — אחת",
-      "likes": 0,
-      "date": "2026-09-24"
+      "post_id": "339707206917_1405991528353685",
+      "photo_id": "",
+      "message": "צילמתי את קיר המנעולים הזה, ומה שמשך אותי לא היה דווקא המנעולים — אלא כל הצבעים שמאחוריהם. הגרפיטי הצהוב, הוורוד, התכלת.",
+      "likes": 1,
+      "date": "2026-09-28"
     }
   },
   "fb_pages": [
@@ -92,79 +123,102 @@
       "name": "amit erez photos",
       "page_id": "339707206917",
       "fans": 278,
-      "posts_this_week": 4,
-      "total_likes": 0,
+      "posts_this_week": 7,
+      "total_likes": 1,
       "total_comments": 0,
-      "avg_likes_per_post": 0.0,
-      "engagement_rate": 0.0,
+      "avg_likes_per_post": 0.1,
+      "engagement_rate": 0.0005,
       "top_posts": [
         {
-          "message": "📸 ברווז בעלייה  חוק השלישים בפעולה: הברווז ממוקם בצד שמאל של הפריים כך שראשו נמצא בדיוק בצומת השלישי",
-          "likes": 0,
+          "post_id": "339707206917_1405991528353685",
+          "photo_id": "",
+          "message": "צילמתי את קיר המנעולים הזה, ומה שמשך אותי לא היה דווקא המנעולים — אלא כל הצבעים שמאחוריהם. הגרפיטי ה",
+          "likes": 1,
           "comments": 0,
-          "date": "2026-09-24"
+          "date": "2026-09-28"
         },
         {
-          "message": "I photographed this single curved wire spiraling against a minimalist blue backdrop, chasing the qui",
+          "post_id": "339707206917_1408875384731966",
+          "photo_id": "",
+          "message": "📸 שמים מבעד לחלון  מסגרת בתוך מסגרת: התמונה מדגימה את חוק ה-Framing בצורה מושלמת — הצלם עמד בתחתית ח",
           "likes": 0,
           "comments": 0,
-          "date": "2026-09-23"
+          "date": "2026-10-01"
         },
         {
-          "message": "צילמתי את התמונה הזאת — רשת דיג צהובה מסובכת עם מצוף אדום לכוד בתוכה — וכשחזרתי הביתה הבנתי שהיא בדי",
+          "post_id": "339707206917_1408542908098547",
+          "photo_id": "",
+          "message": "https://www.facebook.com/share/p/1Bd52fNcxs/",
           "likes": 0,
           "comments": 0,
-          "date": "2026-09-21"
+          "date": "2026-10-01"
         },
         {
-          "message": "I waited patiently for the perfect moment to capture this golden-orange macaw, letting every vivid f",
+          "post_id": "339707206917_1407919708160867",
+          "photo_id": "",
+          "message": "I photographed these rows of crystal glasses at just the right angle, waiting for the light to catch",
           "likes": 0,
           "comments": 0,
-          "date": "2026-09-20"
+          "date": "2026-09-30"
+        },
+        {
+          "post_id": "339707206917_1407496851536486",
+          "photo_id": "",
+          "message": "https://www.facebook.com/share/p/19dPkfd5G2/",
+          "likes": 0,
+          "comments": 0,
+          "date": "2026-09-30"
         }
       ],
+      "photo_performance": [],
       "best_post": {
-        "message": "📸 ברווז בעלייה\n\nחוק השלישים בפעולה: הברווז ממוקם בצד שמאל של הפריים כך שראשו נמצא בדיוק בצומת השלישים העליון-שמאלי — אחת",
-        "likes": 0,
-        "date": "2026-09-24"
+        "post_id": "339707206917_1405991528353685",
+        "photo_id": "",
+        "message": "צילמתי את קיר המנעולים הזה, ומה שמשך אותי לא היה דווקא המנעולים — אלא כל הצבעים שמאחוריהם. הגרפיטי הצהוב, הוורוד, התכלת.",
+        "likes": 1,
+        "date": "2026-09-28"
       }
     }
   ],
   "reels": {
     "reels_this_week": 1,
-    "total_plays": 41,
-    "total_reach": 26,
+    "total_plays": 34,
+    "total_reach": 24,
     "total_shares": 0,
     "total_saved": 0,
-    "avg_watch_time": 4268.0,
+    "avg_watch_time": 3553.0,
     "top_reels": [
       {
-        "caption": "הבוקר בסן דיאגו התחיל מול הים, בין פסל דגים ענק לשקנאי ושחף שממש הרגישו כמו בבית על הסלעים. מי עוד מ",
-        "plays": 41,
-        "reach": 26,
+        "post_id": "18130178389701884",
+        "photo_id": "",
+        "caption": "עצרתי הבוקר בין הוורדים והדרדר הבודד, ופתאום הבנתי שגם מה שדוקר יכול להיות יפה. איזה מהשלושה היה גונ",
+        "plays": 34,
+        "reach": 24,
         "shares": 0,
         "saved": 0,
-        "date": "2026-09-22"
+        "date": "2026-09-29"
       }
     ],
     "best_reel": {
-      "caption": "הבוקר בסן דיאגו התחיל מול הים, בין פסל דגים ענק לשקנאי ושחף שממש הרגישו כמו בבית על הסלעים. מי עוד מתאהב בפינות הקטנות ו",
-      "plays": 41,
-      "date": "2026-09-22"
+      "post_id": "18130178389701884",
+      "photo_id": "",
+      "caption": "עצרתי הבוקר בין הוורדים והדרדר הבודד, ופתאום הבנתי שגם מה שדוקר יכול להיות יפה. איזה מהשלושה היה גונב לכם את המבט?\n\nבקר ",
+      "plays": 34,
+      "date": "2026-09-29"
     }
   },
   "prev": {
     "ig_followers": 659,
     "ig_posts_this_week": 6,
-    "ig_total_likes": 9,
+    "ig_total_likes": 6,
     "fb_fans": 278,
     "fb_posts_this_week": 4,
     "fb_total_likes": 0
   },
   "recommendations": [
-    "תרכזו על תוכן וידאו: הרילס שלכם קיבל 41 צפיות עם זמן צפייה ממוצע של 4268 שניות, בעוד שהפוסטים הסטטיים קיבלו רק 6 לייקים בסך הכל — פרסמו לפחות 3 רילס בשבוע הבא במקום פוסטים סטטיים.",
-    "הגבירו אינטראקציה דרך קול וטקסט: בפוסט הברווז שלכם בן 3 הלייקים השתמשתם בהסבר טכני מעניין על חוק השלישים — כתבו תיאורים דומים שמסבירים את הסיפור וההקשר של כל תמונה כדי להעלות הערות.",
-    "העלו את תכני סן דיאגו: הרילס שלכם מ\"הבוקר בסן דיאגו\" הראה את הביצועים הטובים ביותר — המשיכו לפרסם סדרה של תמונות ווידאו מהנסיעה זו בשבוע הבא כשם שהנושא מתרחש היטב.",
-    "העבירו קהל מ-Facebook לאינסטגרם: ל-Facebook 278 עוקבים בעוד לאינסטגרם 659 — פרסמו קישור ישיר בפוסטי Facebook המחזירים לאינסטגרם שלכם כדי למרכז את הקהל ולהעלות הערכות על הפלטפורמה הפעילה יותר."
+    "העלו את תדירות הרילס - הרייל היחיד שלכם קיבל 34 צפיות בזמן שחמשת הפוסטים הסטטיים קיבלו רק 7 לייקים, מה שמראה שתוכן וידאו מושך הרבה יותר עניין מהקהל שלכם.",
+    "התחילו לעודד אינטראקציה בתרשומים - לכתוב שאלות ישירות בתיאור הפוסט (כמו בריל הוורדים שלכם), כדי להגביר את שיעור ההערות שכרגע הוא אפס.",
+    "העלו את הפעילות בפייסבוק - עם רק לייק אחד מ-278 עוקבים בשבוע, שלחו את התוכן החזק שלכם (כמו הרילס והפוסט של הכיסאות הלבנים) גם לעמוד הפייסבוק לכדי הרחבת ההגעה.",
+    "טגנו מקומות וחשבונות רלוונטיים בתוכן השלכם - הפוסט הטוב ביותר שלכם על הנוף והכיסאות יכול להגיע ליותר צופים אם תטגנו מקום או עמודים של תיירות בישראל שיכולים להשתף אותו."
   ]
 }
