@@ -1,8 +1,19 @@
 # Handoff — amit-photos
 
 > מסמך כניסה לכל מי (אדם או סוכן AI) שנכנס לפרויקט הזה בפעם הראשונה, או חוזר אחרי הפסקה.
-> עודכן: **30.9.2026**. זה מסמך חי — לעדכן אותו כשקורה משהו מהותי, לא לתת לו להתיישן.
+> עודכן: **4.10.2026**. זה מסמך חי — לעדכן אותו כשקורה משהו מהותי, לא לתת לו להתיישן.
 > לא מחליף את `CLAUDE.md` (כללי ארכיטקטורה מחייבים) — משלים אותו עם "מה המצב עכשיו ולמה".
+
+---
+
+## Pinterest queue audit — 4.10.2026
+
+- The connected Google Sheet `pinterest_queue` (tab `pinterest_queue.csv`) currently contains 447 data rows; all 447 descriptions are populated and include hashtags, and all 447 `posted` values are `FALSE`. The sheet is a separate copy of `data/pinterest_queue.csv` on `main`: the repository CSV still has empty descriptions (including the previously reported 120 blanks). Do not claim the repository queue was updated.
+- The live publishing path is `.github/workflows/pinterest-post.yml` (daily 14:00 UTC, plus manual dispatch) → `src/pinterest_post.py`. It reads `/api/photos` (fallback `data/photos.json`), randomly selects up to three categories/photos a day, generates fresh English descriptions via Anthropic (basic fallback), and records posted photo IDs in `data/pinterest_posted.json`. It neither reads the Sheet nor `data/pinterest_queue.csv`, and never changes the Sheet's `posted` column. Sheet descriptions and their hashtags will not appear on Pins through this path.
+- The workflow passes `PINTEREST_ACCESS_TOKEN` and `AMIT_PHOTO_AGENT` (mapped to `ANTHROPIC_API_KEY`). The code does not read `PINTEREST_REFRESH_TOKEN` or refresh tokens automatically. Verify the access token and Pinterest app/board permissions in a controlled run; adding a refresh-token secret alone does nothing. Do not put token values in the repository.
+- All 447 Sheet links currently point to the homepage. The live script instead builds a per-photo campaign URL via `build_campaign_url`. Some Sheet copy needs editorial review (e.g. `קactus`, `מטפורה נזלת`, `עלי הכלנית` in a sunflower caption). The `temp_sheet` tab contains duplicated signature/hashtag text and is not a publishing source.
+- **Decision required before treating the 447-row queue as operational:** either intentionally connect the publisher to an authoritative queue with stable IDs, publication state, image URLs, per-photo links and deduplication, or keep the current API-based publisher and treat the Sheet as an editorial draft. Reconcile the GitHub CSV and the Sheet only after selecting a source of truth. Test one real Pin and verify its destination, copy, board, and persisted state before scaling publication.
+- The current script catches individual Pinterest failures and can finish successfully with zero Pins; `posted` in the Sheet is not a health signal. Check the published Pin and `data/pinterest_posted.json` after a controlled run. No Pinterest publication or token change was performed in this audit.
 
 ---
 
