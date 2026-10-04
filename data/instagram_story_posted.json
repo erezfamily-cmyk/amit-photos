@@ -1,5 +1,5 @@
 {
-  "current_category_index": 22,
+  "current_category_index": 23,
   "used_ids_by_category": {
     "אבו דאבי": [
       "6c9e818c-bdd3-402f-b6f5-ee2e668507c9",
@@ -623,7 +623,15 @@
       "4e282fc5-31d5-463b-b675-0974a5926eea",
       "717dbf9e-e180-4f26-9a14-131f0fd1376a",
       "aa552f60-80de-4f7d-9563-e9b2bc387083",
-      "71286d0a-7a50-4356-a9ec-3ff40ce32cd1"
+      "71286d0a-7a50-4356-a9ec-3ff40ce32cd1",
+      "1p91cyWLtNmuHFeQByOZJ9fI0DkjZTcF-",
+      "1iCWLjcS_uBoMPkO3J2LSRpY1Fi192T6A",
+      "b53c1466-5718-4ec9-a529-b5dbdc1a17b0",
+      "1xFGsDWS_bHu18KgoPYUeSjabzV9KUcqx",
+      "1_nNBWRuQm0QsRVCTRYc2DMPfG5t5ciwk",
+      "1jov8nfOezxvf0nz-Uq3aFTR6lCmk62S6",
+      "09e4f541-3650-4484-990d-855d08ec371e",
+      "db0cc816-47d9-4400-a001-d70bce1bd6fe"
     ],
     "צכיה": [
       "5e285244-ddc5-44d6-99ff-06d855afd82b",
@@ -717,5 +725,5 @@
       "1xXiWFageaUy0iYqgk-OKPuNPSOVPIjPk"
     ]
   },
-  "gear_tool_index": 1
+  "gear_tool_index": 0
 }
