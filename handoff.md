@@ -6,6 +6,17 @@
 
 ---
 
+## Production health-check runner — 4.10.2026
+
+- GitHub Actions `.github/workflows/health-check.yml` was already scheduled daily at 07:00 UTC (10:00 Israel summer / 09:00 winter). It is the authoritative production health-check runner; do not create a duplicate AI scheduled check.
+- Hardened the existing workflow: bounded retries, read-only permissions, job timeout, serialized runs, non-empty array validation for photos, thumbnail passed via environment rather than shell interpolation, and an always-running summary that detects failed/skipped steps. A missing thumbnail now fails instead of reducing the denominator.
+- Homepage, photo API, sitemap and sample image remain the four core checks. Existing licensing/business/admin markers and `PAYMENTS_ENABLED=false` guardrail remain checked. Workflow changes also trigger a live run on push.
+- Local verification: YAML parsed; all six shell blocks passed `bash -n`; five summary scenarios and four API-validation cases passed.
+- The reported Claude `403 policy denial` is a runner/proxy access failure, not evidence of a production outage. Inspect the GitHub run before concluding the site is down.
+- Live verification passed on 4.10.2026 at 09:17 Israel: [health run #7](https://github.com/erezfamily-cmyk/amit-photos/actions/runs/37182347635), all four core checks + business/admin/payment guardrail; API returned 2,310 photos. PR Business Live Verification run 37182354449 also passed.
+- **Pending external step:** disable the old Claude Code scheduled health-check task in the Claude environment where it was created. It is not present in connected ChatGPT automations and no Claude task-management API is available in this session. The repository's `.claude/scheduled_tasks.lock` is only a local lock, not the schedule; deleting it would not disable the task.
+
+
 ## ⚡ הדבר הכי חשוב לדעת עכשיו
 
 **תשלומים כבויים באתר החי, בכוונה, ולא באג.**
