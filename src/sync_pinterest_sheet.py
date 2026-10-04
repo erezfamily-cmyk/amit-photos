@@ -55,7 +55,10 @@ def main():
         params={"ranges": f"'{SHEET_NAME}'!A1:G500"},
         timeout=30,
     )
-    response.raise_for_status()
+    if not response.ok:
+        error = response.json().get("error", {})
+        raise RuntimeError(f"Google Sheets read failed ({response.status_code}): "
+                           f"{error.get('status')}: {error.get('message')}")
     values = response.json()["valueRanges"][0].get("values", [])
     updates = plan_updates(values, queue_rows, posted_ids)
     print(f"Sheet rows={len(values)-1}; repo rows={len(queue_rows)}; "
