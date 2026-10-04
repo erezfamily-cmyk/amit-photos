@@ -6,6 +6,9 @@ on:
       - 'src/pinterest_post.py'
       - 'data/pinterest_queue.csv'
       - 'tests/test_pinterest_post.py'
+      - 'src/audit_pinterest_queue.py'
+      - 'src/sync_pinterest_sheet.py'
+      - 'tests/test_pinterest_sheet_sync.py'
       - '.github/workflows/pinterest-post.yml'
   workflow_dispatch:
 
@@ -23,5 +26,7 @@ jobs:
           python-version: '3.11'
       - run: pip install requests
       - run: python -m unittest discover -s tests -p 'test_pinterest_post.py'
-      - run: python -m py_compile src/pinterest_post.py
+      - run: python -m unittest discover -s tests -p 'test_pinterest_sheet_sync.py'
+      - run: python -m py_compile src/pinterest_post.py src/audit_pinterest_queue.py src/sync_pinterest_sheet.py
       - run: python src/pinterest_post.py --dry-run
+      - run: python src/audit_pinterest_queue.py

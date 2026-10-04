@@ -1,0 +1,36 @@
+name: Pinterest Sheet status sync
+
+on:
+  workflow_dispatch:
+    inputs:
+      check_only:
+        description: 'Inspect Sheet alignment without writing'
+        required: true
+        default: true
+        type: boolean
+
+permissions:
+  contents: read
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install requests google-auth
+      - name: Reconcile posted flags by photo ID
+        env:
+          GOOGLE_TOKEN_JSON: ${{ secrets.GOOGLE_TOKEN }}
+          CHECK_ONLY: ${{ inputs.check_only }}
+        run: |
+          if [ "$CHECK_ONLY" = "true" ]; then
+            python src/sync_pinterest_sheet.py --check
+          else
+            python src/sync_pinterest_sheet.py
+          fi
