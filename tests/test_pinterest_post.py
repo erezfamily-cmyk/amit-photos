@@ -39,6 +39,17 @@ class PinterestQueueTests(unittest.TestCase):
         self.assertTrue(all(row["description"] for row in rows))
         self.assertTrue(all(row["id"] in posted for row in rows if row["posted"] == "TRUE"))
 
+    def test_pilot_refuses_an_already_posted_photo(self):
+        row = item("pilot", posted="TRUE")
+        with patch.object(module, "PILOT_PHOTO_ID", "pilot"), \
+             patch.object(module, "PINS_PER_DAY", 1), \
+             patch.object(module, "DRY_RUN", True), \
+             patch.object(module, "load_queue", return_value=([row], list(row))), \
+             patch.object(module, "load_posted", return_value={"pilot"}), \
+             patch.object(module, "load_live_photos", return_value={"pilot": {}}):
+            with self.assertRaisesRegex(ValueError, "unavailable or already posted"):
+                module.main()
+
     def test_selection_excludes_prior_posts_and_unpublished_photos(self):
         rows = [item("old"), item("hidden"), item("new"), item("another", "Landscape")]
         live = {"old": {}, "new": {}, "another": {}}
