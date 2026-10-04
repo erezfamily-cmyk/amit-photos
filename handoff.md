@@ -16,11 +16,14 @@
 
 ---
 
-### פיילוט Pin יחיד — 4.10.2026
-- עמית אישר במפורש פרסום Pin ניסיון אחד. PR #140 מוזג כ-`d695ee63eab9cd5fcd9085c1a6f0c17d6daaff96` לאחר בדיקות CI ירוקות. המועמד הקבוע: `1A8y2S1s8pDnIzK0lbW6NpxJS5plJcYzJ` ("פרח אדום בשמש"); `PINTEREST_POST_LIMIT=1`, ללא cron.
-- טריגר push של workflow חדש לא יצר Run לאחר המיזוג ואף לא לאחר עדכון קובץ הבקשה. לא נצפה Pin חדש או שינוי ב-`posted`. ה-workflow `.github/workflows/pinterest-pilot-2026-10-04.yml` הועבר ל-`workflow_dispatch` בלבד. נדרשת הפעלה ידנית של Run workflow ב-GitHub כדי לבצע את הפיילוט המאושר.
-- כלי GitHub המחובר בשיחה אינו חושף פעולת dispatch. לפי כללי fallback לדפדפן נדרש אישור נוסף לשימוש בדפדפן המחובר, או שהבעלים יפעיל את ה-workflow בעצמו. לאחר Run: לבדוק מזהה Pin, התמונה, התיאור, הלוח וה-URL; לוודא CSV/JSON, ואז לסנכרן `posted` בגיליון. אין להחזיר cron לפני אימות זה.
-- תזכורת למחר בבוקר כבר נוצרה, אך יש לעדכן/לבטל אותה אם הפיילוט יושלם קודם.
+### פיילוט Pin יחיד — 4.10.2026: הושלם
+
+- עמית אישר במפורש פרסום פין ניסיון אחד. PR #140 מוזג כ-`d695ee63eab9cd5fcd9085c1a6f0c17d6daaff96`; המועמד הקבוע היה `1A8y2S1s8pDnIzK0lbW6NpxJS5plJcYzJ` ("פרח אדום בשמש"), עם `PINTEREST_POST_LIMIT=1` וללא cron.
+- שתי הריצות הראשונות (#1/#2) נכשלו **לפני פרסום**: בדיקת יחידה הניחה בחירה של יותר מתמונה אחת למרות הגבלת הפיילוט ל-1. הבדיקה תוקנה ב-`39f50d3`. ריצה חוזרת של #2 (run `37195647061`) עברה; dry-run אישר את המועמד והפרסום החזיר Pinterest Pin ID `512636370109452329`.
+- הפין הציבורי נצפה ב-`https://www.pinterest.com/pin/512636370109452329/`: כותרת "פרח אדום בשמש", תיאור הגיליון והתגיות, חשבון `erezphoto`, לוח "פרחים וצמחים". הקישור `https://amitphotos.com/?photo=1A8y2S1s8pDnIzK0lbW6NpxJS5plJcYzJ&utm_source=pinterest&utm_medium=organic_social&utm_campaign=gallery_pins&utm_content=1A8y2S1s8pDnIzK0lbW6NpxJS5plJcYzJ` נבדק ישירות באתר ופתח את lightbox של אותה תמונה. Pinterest דרש התחברות כדי ללחוץ על כפתור Visit, לכן לא אושר click-through מתוך Pinterest עצמו; היעד שנשלח בקוד והעמוד המקבל אומתו בנפרד.
+- `data/pinterest_queue.csv` ו-`data/pinterest_posted.json` נשמרו ב-`main` לאחר הפרסום; שורה 347 בלשונית הגיליון עודכנה ל-`posted=TRUE` ונקראה חזרה. התזכורת למחר הושהתה, כי הפיילוט הושלם.
+- dry-run דיווח `live matches=381` מתוך 447 רשומות תור; 66 מזהים אינם מופיעים ב-`/api/photos` כרגע. **אין להפעיל פרסום יומי** לפני ביקורת של הרשומות החסרות וסנכרון מצב הפרסום מהמאגר לגיליון לאחר כל פין. workflow הפיילוט נשאר `workflow_dispatch` ללא cron; הרצה חוזרת עם אותו ID תיעצר כ-"already posted". אין צורך כרגע ב-`PINTEREST_REFRESH_TOKEN`.
+- `PAYMENTS_ENABLED=false` נשאר ללא שינוי.
 
 ## Production health-check runner — 4.10.2026
 
