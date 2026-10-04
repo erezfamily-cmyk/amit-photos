@@ -16,6 +16,12 @@
 
 ---
 
+### פיילוט Pin יחיד — 4.10.2026
+- עמית אישר במפורש פרסום Pin ניסיון אחד. PR #140 מוזג כ-`d695ee63eab9cd5fcd9085c1a6f0c17d6daaff96` לאחר בדיקות CI ירוקות. המועמד הקבוע: `1A8y2S1s8pDnIzK0lbW6NpxJS5plJcYzJ` ("פרח אדום בשמש"); `PINTEREST_POST_LIMIT=1`, ללא cron.
+- טריגר push של workflow חדש לא יצר Run לאחר המיזוג ואף לא לאחר עדכון קובץ הבקשה. לא נצפה Pin חדש או שינוי ב-`posted`. ה-workflow `.github/workflows/pinterest-pilot-2026-10-04.yml` הועבר ל-`workflow_dispatch` בלבד. נדרשת הפעלה ידנית של Run workflow ב-GitHub כדי לבצע את הפיילוט המאושר.
+- כלי GitHub המחובר בשיחה אינו חושף פעולת dispatch. לפי כללי fallback לדפדפן נדרש אישור נוסף לשימוש בדפדפן המחובר, או שהבעלים יפעיל את ה-workflow בעצמו. לאחר Run: לבדוק מזהה Pin, התמונה, התיאור, הלוח וה-URL; לוודא CSV/JSON, ואז לסנכרן `posted` בגיליון. אין להחזיר cron לפני אימות זה.
+- תזכורת למחר בבוקר כבר נוצרה, אך יש לעדכן/לבטל אותה אם הפיילוט יושלם קודם.
+
 ## Production health-check runner — 4.10.2026
 
 - GitHub Actions `.github/workflows/health-check.yml` was already scheduled daily at 07:00 UTC (10:00 Israel summer / 09:00 winter). It is the authoritative production health-check runner; do not create a duplicate AI scheduled check.
