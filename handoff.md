@@ -25,7 +25,7 @@
 - Local verification: YAML parsed; all six shell blocks passed `bash -n`; five summary scenarios and four API-validation cases passed.
 - The reported Claude `403 policy denial` is a runner/proxy access failure, not evidence of a production outage. Inspect the GitHub run before concluding the site is down.
 - Live verification passed on 4.10.2026 at 09:17 Israel: [health run #7](https://github.com/erezfamily-cmyk/amit-photos/actions/runs/37182347635), all four core checks + business/admin/payment guardrail; API returned 2,310 photos. PR Business Live Verification run 37182354449 also passed.
-- **Pending external step:** disable the old Claude Code scheduled health-check task in the Claude environment where it was created. It is not present in connected ChatGPT automations and no Claude task-management API is available in this session. The repository's `.claude/scheduled_tasks.lock` is only a local lock, not the schedule; deleting it would not disable the task.
+- **Closed external step (4.10.2026):** the owner paused the weekly Claude Code routine “בדיקת בריאות שבועית — amitphotos.com” in Claude Routines; the screenshot showed `Paused` and the toggle off. Keep the daily GitHub Actions check as the sole active health-check schedule. PR #138 was merged and its post-merge run passed 4/4: https://github.com/erezfamily-cmyk/amit-photos/actions/runs/37182427171.
 
 
 ## ⚡ הדבר הכי חשוב לדעת עכשיו
