@@ -42,6 +42,12 @@
 - טריגר `push` הזמני שגרם לריצה אחת הוסר ב-`f5ea8487d11036dcba0582ef9c22f1e0ef8d9a26`. נותרו `schedule` ו-`workflow_dispatch` בלבד. ה-job מוגבל ל-`main`, רץ תחת נעילת `pinterest-publication` ללא ביטול ריצה קודמת, קורא את `main` העדכני, בודק את הגיליון לפני פרסום, שומר גם פרסום חלקי, ואז מסנכרן את הגיליון. מזהים שאינם ב-`/api/photos` לא ייבחרו.
 - מבחן מעשי של הריצה הראשונה עבר; הריצה המתוזמנת הבאה עדיין לא אומתה. יש לבדוק את `Pinterest daily publishing` ב-GitHub Actions לאחר 14:00 UTC ולוודא שכל השלבים ירוקים ושמספר TRUE עולה בהתאם. אם API, Git push או Sheet sync נכשלים, אין להניח שסימון FALSE משקף אי-פרסום; יש לבדוק את JSON והלוגים לפני ריצה חוזרת. אין שינוי לתשלומים (`PAYMENTS_ENABLED=false`).
 
+### בדיקת הריצה המתוזמנת הראשונה — 4.10.2026, 18:03 שעון ישראל
+
+- ה-workflow ב-`main` עדיין מוגדר ל-`schedule: 0 14 * * *`, עם `workflow_dispatch`, עד 3 פינים לריצה ונעילת `pinterest-publication`. ענף ברירת המחדל הוא `main`. בבדיקת רשימת GitHub Actions עד 15:03 UTC **לא הופיעה כלל ריצת `schedule` של `Pinterest daily publishing`**. לכן אין תוצאת פרסום מתוזמן שאפשר לאמת, ואין לייחס לריצה המתוזמנת את הצלחת ריצת ההשקה `37199838411` (אירוע `push`).
+- קריאה חוזרת אישרה 447 מזהים בתור GitHub ובלשונית `pinterest_queue.csv`, 14 דגלי `posted=TRUE` זהים בשניהם, ו-249 מזהים ייחודיים ב-`data/pinterest_posted.json`. שני קובצי המצב ב-`main` לא השתנו מאז ההשקה; כל 14 הדגלים מסומנים גם בהיסטוריית מניעת הכפילויות. לא נצפה פרסום חדש או פער סנכרון. `PAYMENTS_ENABLED = "false"` נשאר ב-`wrangler.toml`.
+- לא בוצעה הפעלה ידנית או ניסיון פרסום חוזר: אלה לא היו מאמתים את טריגר התזמון ועלולים לפרסם פינים נוספים. יש לבדוק את ריצת `schedule` הבאה לפני הכרזה על תקינות התזמון; אם תופיע ריצה באיחור, להשוות את מזהי ה-Pins החדשים ללוג, לקטלוג החי, ל-CSV, ל-JSON ולגיליון לפני כל retry.
+
 ## Production health-check runner — 4.10.2026
 
 - GitHub Actions `.github/workflows/health-check.yml` was already scheduled daily at 07:00 UTC (10:00 Israel summer / 09:00 winter). It is the authoritative production health-check runner; do not create a duplicate AI scheduled check.
