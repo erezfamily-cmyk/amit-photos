@@ -66,7 +66,9 @@ def main():
           f"posted IDs={len(posted_ids)}; missing TRUE updates={len(updates)}")
     if CHECK_ONLY:
         return
-    if PROBE_WRITE and not updates:
+    if PROBE_WRITE:
+        if updates:
+            raise RuntimeError("Sheet has missing TRUE flags; refusing probe write until reconciled")
         # Verify write access by writing an existing TRUE value back to itself.
         for row_number, row in enumerate(values[1:], start=2):
             if row and row[0] in posted_ids and len(row) >= 7 and str(row[6]).upper() == "TRUE":
