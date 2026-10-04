@@ -1,3 +1,8 @@
+## Health-check runner — 4.10.2026
+
+- [x] Use the existing daily GitHub Actions health-check and harden failure reporting; no duplicate AI schedule.
+- [ ] Disable the old Claude Code health-check task in its original environment; not accessible through connected ChatGPT automations.
+
 
 
 ## Current execution queue — 3.10.2026

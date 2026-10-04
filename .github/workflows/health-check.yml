@@ -2,9 +2,19 @@ name: בדיקת בריאות אתר
 
 on:
   schedule:
-    # כל יום ב-07:00 UTC = 10:00 ישראל
+    # Daily at 07:00 UTC: 10:00 Israel summer / 09:00 winter
     - cron: '0 7 * * *'
   workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/health-check.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: production-health-check
+  cancel-in-progress: false
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
@@ -12,12 +22,15 @@ env:
 jobs:
   health-check:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     steps:
       - name: בדיקת דף הבית
         id: homepage
+        if: ${{ !cancelled() }}
+        continue-on-error: true
         run: |
-          CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 15 https://amitphotos.com)
+          CODE=$(curl -fsSL --retry 2 --retry-delay 2 --connect-timeout 10 -o /dev/null -w "%{http_code}" --max-time 15 https://amitphotos.com)
           echo "code=$CODE" >> $GITHUB_OUTPUT
           if [ "$CODE" = "200" ]; then
             echo "✅ דף הבית: OK ($CODE)"
@@ -28,9 +41,11 @@ jobs:
 
       - name: בדיקת API תמונות
         id: api
+        if: ${{ !cancelled() }}
+        continue-on-error: true
         run: |
-          RESPONSE=$(curl -s --max-time 15 https://amitphotos.com/api/photos)
-          COUNT=$(echo "$RESPONSE" | jq 'length' 2>/dev/null || echo "0")
+          RESPONSE=$(curl -fsSL --retry 2 --retry-delay 2 --connect-timeout 10 --max-time 15 https://amitphotos.com/api/photos)
+          COUNT=$(echo "$RESPONSE" | jq -er 'if type == "array" and length > 0 then length else error("Expected non-empty photo array") end')
           THUMB=$(echo "$RESPONSE" | jq -r '.[0].thumbnail // empty' 2>/dev/null || echo "")
           echo "count=$COUNT" >> $GITHUB_OUTPUT
           echo "thumb=$THUMB" >> $GITHUB_OUTPUT
@@ -43,8 +58,10 @@ jobs:
 
       - name: בדיקת Sitemap
         id: sitemap
+        if: ${{ !cancelled() }}
+        continue-on-error: true
         run: |
-          CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 15 https://amitphotos.com/sitemap.xml)
+          CODE=$(curl -fsSL --retry 2 --retry-delay 2 --connect-timeout 10 -o /dev/null -w "%{http_code}" --max-time 15 https://amitphotos.com/sitemap.xml)
           echo "code=$CODE" >> $GITHUB_OUTPUT
           if [ "$CODE" = "200" ]; then
             echo "✅ Sitemap: OK ($CODE)"
@@ -55,18 +72,21 @@ jobs:
 
       - name: בדיקת תמונת דוגמה
         id: thumbnail
+        env:
+          THUMB: ${{ steps.api.outputs.thumb }}
+        if: ${{ !cancelled() }}
+        continue-on-error: true
         run: |
-          THUMB="${{ steps.api.outputs.thumb }}"
           if [ -z "$THUMB" ]; then
-            echo "⚠️  Thumbnail: דולג (ה-API לא החזיר תמונה)"
-            echo "skipped=true" >> $GITHUB_OUTPUT
+            echo "❌ Thumbnail: FAIL (ה-API לא החזיר תמונה)"
+            echo "failed=true" >> $GITHUB_OUTPUT
           else
             case "$THUMB" in
               http://*|https://*) THUMB_URL="$THUMB" ;;
               /*) THUMB_URL="https://amitphotos.com$THUMB" ;;
               *) THUMB_URL="https://amitphotos.com/$THUMB" ;;
             esac
-            CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 15 "$THUMB_URL")
+            CODE=$(curl -fsSL --retry 2 --retry-delay 2 --connect-timeout 10 -o /dev/null -w "%{http_code}" --max-time 15 "$THUMB_URL")
             echo "code=$CODE" >> $GITHUB_OUTPUT
             if [ "$CODE" = "200" ]; then
               echo "✅ Thumbnail: OK ($CODE) — $THUMB_URL"
@@ -77,27 +97,30 @@ jobs:
           fi
 
       - name: בדיקת מסלולי הניסוי העסקי
+        id: business
+        if: ${{ !cancelled() }}
+        continue-on-error: true
         run: |
           set -euo pipefail
 
-          LIC=$(curl -fsS --max-time 20 https://amitphotos.com/licensing/)
+          LIC=$(curl -fsSL --retry 2 --retry-delay 2 --connect-timeout 10 --max-time 20 https://amitphotos.com/licensing/)
           grep -q 'licensing_personal_interest' <<<"$LIC"
           grep -q '/api/admin/prices' <<<"$LIC"
           grep -q 'G-XM6T3E8QWN' <<<"$LIC"
           echo "✅ /licensing/: page + pricing source + analytics marker"
 
-          BIZ=$(curl -fsS --max-time 20 https://amitphotos.com/business/)
+          BIZ=$(curl -fsSL --retry 2 --retry-delay 2 --connect-timeout 10 --max-time 20 https://amitphotos.com/business/)
           grep -q 'b2b_contact_start' <<<"$BIZ"
           grep -q 'amit_b2b_context' <<<"$BIZ"
           grep -q '/assets/js/analytics.js' <<<"$BIZ"
           echo "✅ /business/: funnel + context + analytics marker"
 
-          ADMIN=$(curl -fsSL --max-time 20 https://amitphotos.com/admin.html)
+          ADMIN=$(curl -fsSL --retry 2 --retry-delay 2 --connect-timeout 10 --max-time 20 https://amitphotos.com/admin.html)
           grep -q 'campaign-destination' <<<"$ADMIN"
           grep -q 'admin-campaign-links.mjs' <<<"$ADMIN"
           echo "✅ Admin UTM builder is present"
 
-          STATUS=$(curl -fsS --max-time 20 https://amitphotos.com/api/payments-status)
+          STATUS=$(curl -fsSL --retry 2 --retry-delay 2 --connect-timeout 10 --max-time 20 https://amitphotos.com/api/payments-status)
           ENABLED=$(echo "$STATUS" | jq -r '.enabled')
           if [ "$ENABLED" != "false" ]; then
             echo "❌ Payments guardrail breached: enabled=$ENABLED"
@@ -106,26 +129,40 @@ jobs:
           echo "✅ PAYMENTS_ENABLED remains false"
 
       - name: סיכום
+        if: ${{ always() }}
+        env:
+          HOMEPAGE_OUTCOME: ${{ steps.homepage.outcome }}
+          HOMEPAGE_FAILED: ${{ steps.homepage.outputs.failed }}
+          API_OUTCOME: ${{ steps.api.outcome }}
+          API_FAILED: ${{ steps.api.outputs.failed }}
+          SITEMAP_OUTCOME: ${{ steps.sitemap.outcome }}
+          SITEMAP_FAILED: ${{ steps.sitemap.outputs.failed }}
+          THUMBNAIL_OUTCOME: ${{ steps.thumbnail.outcome }}
+          THUMBNAIL_FAILED: ${{ steps.thumbnail.outputs.failed }}
+          BUSINESS_OUTCOME: ${{ steps.business.outcome }}
         run: |
           PASS=0
           FAIL=0
-
-          [ "${{ steps.homepage.outputs.failed }}" = "true" ] && FAIL=$((FAIL+1)) || PASS=$((PASS+1))
-          [ "${{ steps.api.outputs.failed }}" = "true" ] && FAIL=$((FAIL+1)) || PASS=$((PASS+1))
-          [ "${{ steps.sitemap.outputs.failed }}" = "true" ] && FAIL=$((FAIL+1)) || PASS=$((PASS+1))
-          if [ "${{ steps.thumbnail.outputs.skipped }}" = "true" ]; then
-            echo "HEALTH CHECK: $PASS/3 עברו (בדיקת thumbnail דולגה)"
-          elif [ "${{ steps.thumbnail.outputs.failed }}" = "true" ]; then
+          echo "## Production health check" >> "$GITHUB_STEP_SUMMARY"
+          for CHECK in HOMEPAGE API SITEMAP THUMBNAIL; do
+            OUTCOME_VAR="${CHECK}_OUTCOME"
+            FAILED_VAR="${CHECK}_FAILED"
+            if [ "${!OUTCOME_VAR}" = "success" ] && [ "${!FAILED_VAR}" != "true" ]; then
+              PASS=$((PASS+1))
+              echo "- ✅ $CHECK" >> "$GITHUB_STEP_SUMMARY"
+            else
+              FAIL=$((FAIL+1))
+              echo "- ❌ $CHECK (step: ${!OUTCOME_VAR})" >> "$GITHUB_STEP_SUMMARY"
+            fi
+          done
+          echo "HEALTH CHECK: $PASS/4 passed" | tee -a "$GITHUB_STEP_SUMMARY"
+          if [ "$BUSINESS_OUTCOME" != "success" ]; then
             FAIL=$((FAIL+1))
-            echo "HEALTH CHECK: $PASS/4 עברו"
+            echo "- ❌ Business routes / payments guardrail" >> "$GITHUB_STEP_SUMMARY"
           else
-            PASS=$((PASS+1))
-            echo "HEALTH CHECK: $PASS/4 עברו"
+            echo "- ✅ Business routes / PAYMENTS_ENABLED=false" >> "$GITHUB_STEP_SUMMARY"
           fi
-
-          if [ "$FAIL" -gt "0" ]; then
-            echo "❌ ACTION REQUIRED — $FAIL בדיקות נכשלו"
+          if [ "$FAIL" -gt 0 ]; then
+            echo "ACTION REQUIRED — $FAIL checks failed. Inspect step logs: runner/proxy errors alone do not establish a site outage." | tee -a "$GITHUB_STEP_SUMMARY"
             exit 1
-          else
-            echo "✅ הכל תקין"
           fi
