@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-03T17:48:05.677761+00:00",
+  "generated_at": "2026-10-04T13:11:09.418675+00:00",
   "version": "portfolio-v1",
   "scope": "all_galleries",
   "policy": {
@@ -11943,6 +11943,38 @@
       "visual_reviewed_at": "2026-10-03T16:50:47.882683+00:00"
     },
     {
+      "photo_id": "1caAXpctdX8dqyi66FyKXU9V3ogXZ9Lq3",
+      "title": "שקיעה באבו דאבי",
+      "category": "אבו דאבי",
+      "filename": "Z72_0550 copy.jpg",
+      "thumbnail": "https://drive.google.com/thumbnail?id=1caAXpctdX8dqyi66FyKXU9V3ogXZ9Lq3&sz=w600",
+      "width": 8256,
+      "height": 5504,
+      "score": 86,
+      "score_kind": "visual_complete",
+      "confidence": "high",
+      "technical_score": 100,
+      "components": {
+        "sharpness": 72,
+        "composition": 78,
+        "light_color": 88,
+        "resolution": 100,
+        "uniqueness": 100,
+        "category_fit": 95,
+        "metadata": 100
+      },
+      "flags": [],
+      "visual_flags": [
+        "atmospheric_haze_reduces_detail",
+        "silhouette_limits_tonal_range"
+      ],
+      "visual_note": "Strong atmospheric sunset with excellent golden-hour color and iconic skyline silhouette, though heavy haze softens architectural detail and limits tonal separation.",
+      "material_problem": false,
+      "owner_review_required": false,
+      "recommended_action": "KEEP_CANDIDATE",
+      "visual_reviewed_at": "2026-10-04T13:11:09.415863+00:00"
+    },
+    {
       "photo_id": "1GNE_KfvZrhA7Xx8VxyzL1iB2Q-zolMhD",
       "title": "דפוסי קרח בים",
       "category": "אבו דאבי",
@@ -13221,6 +13253,39 @@
       "visual_reviewed_at": "2026-10-02T09:17:28.520530+00:00"
     },
     {
+      "photo_id": "1SjSzrMp_yDPlg5zQB6T2v2qucq30xC6s",
+      "title": "מנגנון פסנתר בדיוק",
+      "category": "אבו דאבי",
+      "filename": "Z72_2463 copy.jpg",
+      "thumbnail": "https://drive.google.com/thumbnail?id=1SjSzrMp_yDPlg5zQB6T2v2qucq30xC6s&sz=w600",
+      "width": 3000,
+      "height": 1997,
+      "score": 77,
+      "score_kind": "visual_complete",
+      "confidence": "high",
+      "technical_score": 85,
+      "components": {
+        "sharpness": 82,
+        "composition": 79,
+        "light_color": 85,
+        "resolution": 72,
+        "uniqueness": 100,
+        "category_fit": 25,
+        "metadata": 100
+      },
+      "flags": [],
+      "visual_flags": [
+        "category_mismatch",
+        "motion_blur_on_strings",
+        "cluttered_framing"
+      ],
+      "visual_note": "Well-lit technical macro of piano mechanism with good color separation, but motion blur on strings and severe category misalignment (Abu Dhabi location tag inappropriate for instrument detail shot) limit portfolio suitability.",
+      "material_problem": false,
+      "owner_review_required": true,
+      "recommended_action": "OWNER_REVIEW",
+      "visual_reviewed_at": "2026-10-04T13:11:04.720498+00:00"
+    },
+    {
       "photo_id": "1DtOuAfxbJEn5jeUqxk1i-iQKzEBfZhZI",
       "title": "אור וגיאומטריה",
       "category": "אבו דאבי",
@@ -14029,6 +14094,73 @@
       "visual_reviewed_at": "2026-10-02T09:22:19.594027+00:00"
     },
     {
+      "photo_id": "1Tn-a5p6UuESo_MR6qD8zMuvdIxEjyMkt",
+      "title": "נעלות אהבה בברידג'",
+      "category": "איטליה",
+      "filename": "DSC_2787.JPG",
+      "thumbnail": "https://drive.google.com/thumbnail?id=1Tn-a5p6UuESo_MR6qD8zMuvdIxEjyMkt&sz=w600",
+      "width": 4288,
+      "height": 2848,
+      "score": 79,
+      "score_kind": "visual_complete",
+      "confidence": "high",
+      "technical_score": 96,
+      "components": {
+        "sharpness": 72,
+        "composition": 78,
+        "light_color": 82,
+        "resolution": 92,
+        "uniqueness": 100,
+        "category_fit": 45,
+        "metadata": 100
+      },
+      "flags": [],
+      "visual_flags": [
+        "shallow_depth_of_field_extreme",
+        "category_mismatch",
+        "subject_ambiguity"
+      ],
+      "visual_note": "Love locks photograph with strong selective focus and warm lighting, but extreme shallow DOF limits visual clarity and the subject doesn't align with the Italy category designation.",
+      "material_problem": false,
+      "owner_review_required": true,
+      "recommended_action": "OWNER_REVIEW",
+      "visual_reviewed_at": "2026-10-04T13:10:37.954552+00:00"
+    },
+    {
+      "photo_id": "1-G47Eq3eLQ6y11uHySJfv1EI0XHQSxA2",
+      "title": "רציף עם עמודים מפוספסים",
+      "category": "איטליה",
+      "filename": "DSC_2869.JPG",
+      "thumbnail": "https://drive.google.com/thumbnail?id=1-G47Eq3eLQ6y11uHySJfv1EI0XHQSxA2&sz=w600",
+      "width": 4288,
+      "height": 2848,
+      "score": 79,
+      "score_kind": "visual_complete",
+      "confidence": "high",
+      "technical_score": 81,
+      "components": {
+        "sharpness": 88,
+        "composition": 87,
+        "light_color": 90,
+        "resolution": 92,
+        "uniqueness": 50,
+        "category_fit": 25,
+        "metadata": 100
+      },
+      "flags": [
+        "duplicate_filename"
+      ],
+      "visual_flags": [
+        "category_mismatch",
+        "minor_weathering_on_posts"
+      ],
+      "visual_note": "Technically strong beach pier image with excellent light and composition, but the Hebrew title and Italian category designation create significant metadata inconsistency suggesting possible filing error.",
+      "material_problem": false,
+      "owner_review_required": true,
+      "recommended_action": "OWNER_REVIEW",
+      "visual_reviewed_at": "2026-10-04T13:10:30.194807+00:00"
+    },
+    {
       "photo_id": "1Qt69tACle3_iNROBY-zUUdcl7d2wuZLJ",
       "title": "סימן דרך באיטליה",
       "category": "איטליה",
@@ -14289,6 +14421,40 @@
       "visual_reviewed_at": "2026-10-02T09:21:03.801799+00:00"
     },
     {
+      "photo_id": "1ZJotfpUOSjFHaBkjTJnEO2XltNs4Gs1G",
+      "title": "אור בתוך המנהרה",
+      "category": "איטליה",
+      "filename": "DSC_4175.JPG",
+      "thumbnail": "https://drive.google.com/thumbnail?id=1ZJotfpUOSjFHaBkjTJnEO2XltNs4Gs1G&sz=w600",
+      "width": 2848,
+      "height": 4288,
+      "score": 73,
+      "score_kind": "visual_complete",
+      "confidence": "high",
+      "technical_score": 96,
+      "components": {
+        "sharpness": 45,
+        "composition": 72,
+        "light_color": 78,
+        "resolution": 92,
+        "uniqueness": 100,
+        "category_fit": 65,
+        "metadata": 100
+      },
+      "flags": [],
+      "visual_flags": [
+        "significant_motion_blur",
+        "extreme_zoom_effect",
+        "overexposed_center",
+        "category_mismatch_uncertainty"
+      ],
+      "visual_note": "Intentional motion blur dominates the image; while compositionally bold with strong radial symmetry and dramatic lighting, the extreme blur and unclear subject location weaken technical execution and category relevance.",
+      "material_problem": false,
+      "owner_review_required": true,
+      "recommended_action": "OWNER_REVIEW",
+      "visual_reviewed_at": "2026-10-04T13:10:42.177129+00:00"
+    },
+    {
       "photo_id": "1edGoDWUmmGB7K-bnFnzFSOb6Gayus6vq",
       "title": "קפה בשמש איטלקית",
       "category": "איטליה",
@@ -14320,6 +14486,71 @@
       "owner_review_required": false,
       "recommended_action": "KEEP_CANDIDATE",
       "visual_reviewed_at": "2026-10-02T09:21:48.226700+00:00"
+    },
+    {
+      "photo_id": "1EjebolomtAsuGq74PQc8Pxkf5LotVBv-",
+      "title": "סירות בזריחה",
+      "category": "איטליה",
+      "filename": "DSC_4613.jpg",
+      "thumbnail": "https://drive.google.com/thumbnail?id=1EjebolomtAsuGq74PQc8Pxkf5LotVBv-&sz=w600",
+      "width": 4165,
+      "height": 2738,
+      "score": 80,
+      "score_kind": "visual_complete",
+      "confidence": "high",
+      "technical_score": 92,
+      "components": {
+        "sharpness": 72,
+        "composition": 78,
+        "light_color": 82,
+        "resolution": 85,
+        "uniqueness": 100,
+        "category_fit": 65,
+        "metadata": 100
+      },
+      "flags": [],
+      "visual_flags": [
+        "atmospheric_haze_reduces_detail",
+        "silhouettes_limit_subject_definition",
+        "category_mismatch_likely_lake_como_not_italy_general"
+      ],
+      "visual_note": "Atmospheric dawn scene with strong golden light and balanced composition, but haze softens detail and silhouetting obscures subject clarity; location appears to be Lake Como rather than broader Italy category.",
+      "material_problem": false,
+      "owner_review_required": true,
+      "recommended_action": "OWNER_REVIEW",
+      "visual_reviewed_at": "2026-10-04T13:10:34.268586+00:00"
+    },
+    {
+      "photo_id": "1kdVLlS65NmJqr112XAjizNoSeYbINCLL",
+      "title": "אלפקה עם רתם ורוד",
+      "category": "איטליה",
+      "filename": "DSC_4791.jpg",
+      "thumbnail": "https://drive.google.com/thumbnail?id=1kdVLlS65NmJqr112XAjizNoSeYbINCLL&sz=w600",
+      "width": 4288,
+      "height": 2848,
+      "score": 83,
+      "score_kind": "visual_complete",
+      "confidence": "high",
+      "technical_score": 96,
+      "components": {
+        "sharpness": 88,
+        "composition": 85,
+        "light_color": 87,
+        "resolution": 92,
+        "uniqueness": 100,
+        "category_fit": 25,
+        "metadata": 100
+      },
+      "flags": [],
+      "visual_flags": [
+        "category_mismatch",
+        "minor_background_blur_unevenness"
+      ],
+      "visual_note": "Well-executed alpaca portrait with strong technical qualities, but the Italian category designation appears incorrect for this subject.",
+      "material_problem": false,
+      "owner_review_required": true,
+      "recommended_action": "OWNER_REVIEW",
+      "visual_reviewed_at": "2026-10-04T13:10:57.011203+00:00"
     },
     {
       "photo_id": "1mo-KaL5oz61Fhi5m9etIKiSsyR1TYWIC",
@@ -14520,6 +14751,105 @@
       "visual_reviewed_at": "2026-10-03T16:59:31.789056+00:00"
     },
     {
+      "photo_id": "1fRjnuGzJW0uBfc9ese3fD3U0onBlslQn",
+      "title": "ברבור בזהב",
+      "category": "איטליה",
+      "filename": "DSC_5865.JPG",
+      "thumbnail": "https://drive.google.com/thumbnail?id=1fRjnuGzJW0uBfc9ese3fD3U0onBlslQn&sz=w600",
+      "width": 4288,
+      "height": 2848,
+      "score": 79,
+      "score_kind": "visual_complete",
+      "confidence": "high",
+      "technical_score": 96,
+      "components": {
+        "sharpness": 72,
+        "composition": 78,
+        "light_color": 88,
+        "resolution": 92,
+        "uniqueness": 100,
+        "category_fit": 35,
+        "metadata": 100
+      },
+      "flags": [],
+      "visual_flags": [
+        "category_mismatch",
+        "soft_focus_throughout",
+        "subject_silhouetted"
+      ],
+      "visual_note": "Golden-hour swan portrait with excellent warm lighting and atmospheric water reflections, but soft focus and silhouetting limit technical sharpness; category lists Italy yet no Italian context is evident.",
+      "material_problem": false,
+      "owner_review_required": true,
+      "recommended_action": "OWNER_REVIEW",
+      "visual_reviewed_at": "2026-10-04T13:10:49.472147+00:00"
+    },
+    {
+      "photo_id": "1t5XFhAn3AZa13cWd1cQjCpFWGspfWCA2",
+      "title": "שקיעה על הרציף",
+      "category": "איטליה",
+      "filename": "DSC_5955.JPG",
+      "thumbnail": "https://drive.google.com/thumbnail?id=1t5XFhAn3AZa13cWd1cQjCpFWGspfWCA2&sz=w600",
+      "width": 4288,
+      "height": 2848,
+      "score": 80,
+      "score_kind": "visual_complete",
+      "confidence": "high",
+      "technical_score": 96,
+      "components": {
+        "sharpness": 72,
+        "composition": 78,
+        "light_color": 88,
+        "resolution": 92,
+        "uniqueness": 100,
+        "category_fit": 45,
+        "metadata": 100
+      },
+      "flags": [],
+      "visual_flags": [
+        "category_mismatch_likely",
+        "soft_focus_throughout",
+        "figure_silhouette_unclear"
+      ],
+      "visual_note": "Atmospheric sunset pier scene with excellent warm color palette, but soft focus and Mediterranean/Northern European setting conflict with stated Italian category.",
+      "material_problem": false,
+      "owner_review_required": true,
+      "recommended_action": "OWNER_REVIEW",
+      "visual_reviewed_at": "2026-10-04T13:11:00.335621+00:00"
+    },
+    {
+      "photo_id": "1iOR60uSBp61uVqLaV3kdFMhTaVqgUU-H",
+      "title": "עמוד בשקיעה",
+      "category": "איטליה",
+      "filename": "DSC_5959a.jpg",
+      "thumbnail": "https://drive.google.com/thumbnail?id=1iOR60uSBp61uVqLaV3kdFMhTaVqgUU-H&sz=w600",
+      "width": 4000,
+      "height": 2657,
+      "score": 78,
+      "score_kind": "visual_complete",
+      "confidence": "high",
+      "technical_score": 92,
+      "components": {
+        "sharpness": 72,
+        "composition": 82,
+        "light_color": 88,
+        "resolution": 85,
+        "uniqueness": 100,
+        "category_fit": 25,
+        "metadata": 100
+      },
+      "flags": [],
+      "visual_flags": [
+        "category_mismatch",
+        "motion_blur_in_foreground",
+        "soft_focus_throughout"
+      ],
+      "visual_note": "Beautifully lit sunset seascape with strong color harmony, but the image appears to be from a coastal location (possibly Mediterranean or similar), not Italy as categorized, and exhibits intentional motion blur in the water/figures that reduces overall sharpness.",
+      "material_problem": false,
+      "owner_review_required": true,
+      "recommended_action": "OWNER_REVIEW",
+      "visual_reviewed_at": "2026-10-04T13:10:53.316571+00:00"
+    },
+    {
       "photo_id": "1fO0SCGXyCGCJv4zWl8GbihPxYtg-TP-J",
       "title": "אגם טורקיז בדולומיטים",
       "category": "איטליה",
@@ -14616,6 +14946,43 @@
       "owner_review_required": false,
       "recommended_action": "KEEP_CANDIDATE",
       "visual_reviewed_at": "2026-10-02T09:21:17.389703+00:00"
+    },
+    {
+      "photo_id": "1_yukDA2LGBvd5PMe9-InhvByeijla5FE",
+      "title": "מזרקה אור בלילה",
+      "category": "איטליה",
+      "filename": "DSC_8000 copy.jpg",
+      "thumbnail": "https://drive.google.com/thumbnail?id=1_yukDA2LGBvd5PMe9-InhvByeijla5FE&sz=w600",
+      "width": 1535,
+      "height": 1000,
+      "score": 67,
+      "score_kind": "visual_complete",
+      "confidence": "high",
+      "technical_score": 65,
+      "components": {
+        "sharpness": 65,
+        "composition": 72,
+        "light_color": 88,
+        "resolution": 47,
+        "uniqueness": 100,
+        "category_fit": 35,
+        "metadata": 60
+      },
+      "flags": [
+        "low_resolution",
+        "missing_exif"
+      ],
+      "visual_flags": [
+        "motion_blur_throughout",
+        "category_mismatch_italy",
+        "generic_stock_aesthetic",
+        "silhouette_obscures_subject"
+      ],
+      "visual_note": "Vibrant neon fountain display with strong chromatic control, but heavy motion blur reduces technical sharpness and category placement suggests Italy when image appears generic/location-agnostic.",
+      "material_problem": false,
+      "owner_review_required": true,
+      "recommended_action": "OWNER_REVIEW",
+      "visual_reviewed_at": "2026-10-04T13:10:45.612202+00:00"
     },
     {
       "photo_id": "1V2x1O-7f6CMhpmNghfzq3ce5r9yI-HKB",
@@ -35919,6 +36286,38 @@
       "visual_reviewed_at": "2026-10-02T12:45:21.674902+00:00"
     },
     {
+      "photo_id": "1WGAqqt2l4Lh0BjWHouWPY4jXQQhLFRZN",
+      "title": "קוצים ירוקים של צמח",
+      "category": "פרחים וצמחים",
+      "filename": "DSC_0840.jpg",
+      "thumbnail": "https://drive.google.com/thumbnail?id=1WGAqqt2l4Lh0BjWHouWPY4jXQQhLFRZN&sz=w600",
+      "width": 6192,
+      "height": 4128,
+      "score": 80,
+      "score_kind": "visual_complete",
+      "confidence": "high",
+      "technical_score": 100,
+      "components": {
+        "sharpness": 62,
+        "composition": 72,
+        "light_color": 78,
+        "resolution": 100,
+        "uniqueness": 100,
+        "category_fit": 88,
+        "metadata": 100
+      },
+      "flags": [],
+      "visual_flags": [
+        "shallow_depth_of_field_limits_detail",
+        "subject_somewhat_ambiguous_at_macro_scale"
+      ],
+      "visual_note": "Macro botanical study with pleasant green tonality and selective focus, but shallow DOF and unclear subject identity warrant owner review.",
+      "material_problem": false,
+      "owner_review_required": true,
+      "recommended_action": "OWNER_REVIEW",
+      "visual_reviewed_at": "2026-10-04T13:10:22.158962+00:00"
+    },
+    {
       "photo_id": "1Z-qtX5WfnR8N7tWtgSLLx4uBWQUIm_wf",
       "title": "פרחים ורודים עדינים",
       "category": "פרחים וצמחים",
@@ -37236,6 +37635,39 @@
       "owner_review_required": false,
       "recommended_action": "KEEP_CANDIDATE",
       "visual_reviewed_at": "2026-10-02T12:47:50.536204+00:00"
+    },
+    {
+      "photo_id": "1LjG0BlIz52uvjeXZVVWg8ww4lQgifpAI",
+      "title": "פרח ורוד בפוקוס",
+      "category": "פרחים וצמחים",
+      "filename": "DSC_5159.jpg",
+      "thumbnail": "https://drive.google.com/thumbnail?id=1LjG0BlIz52uvjeXZVVWg8ww4lQgifpAI&sz=w600",
+      "width": 4288,
+      "height": 2848,
+      "score": 84,
+      "score_kind": "visual_complete",
+      "confidence": "high",
+      "technical_score": 96,
+      "components": {
+        "sharpness": 72,
+        "composition": 78,
+        "light_color": 82,
+        "resolution": 92,
+        "uniqueness": 100,
+        "category_fit": 95,
+        "metadata": 100
+      },
+      "flags": [],
+      "visual_flags": [
+        "shallow_dof_intentional",
+        "background_blur_dominates",
+        "subject_positioning_left"
+      ],
+      "visual_note": "Intentional shallow focus isolates the magenta flower head effectively, with pleasing soft background and color harmony, though the extreme blur reduces visual context and the composition relies heavily on depth-of-field technique.",
+      "material_problem": false,
+      "owner_review_required": true,
+      "recommended_action": "OWNER_REVIEW",
+      "visual_reviewed_at": "2026-10-04T13:10:18.198000+00:00"
     },
     {
       "photo_id": "1yWJqBqlMSiE7F5oee354pYsvUgYX2HOk",
@@ -39083,6 +39515,38 @@
       "owner_review_required": false,
       "recommended_action": "KEEP_CANDIDATE",
       "visual_reviewed_at": "2026-10-02T12:44:56.495692+00:00"
+    },
+    {
+      "photo_id": "1hsdrGoRp-cnxnkhV0t5JyBxKZpvxxJ5B",
+      "title": "פרי ליצ'י ורוד",
+      "category": "פרחים וצמחים",
+      "filename": "MJH_1806.JPG",
+      "thumbnail": "https://drive.google.com/thumbnail?id=1hsdrGoRp-cnxnkhV0t5JyBxKZpvxxJ5B&sz=w600",
+      "width": 7360,
+      "height": 4912,
+      "score": 79,
+      "score_kind": "visual_complete",
+      "confidence": "high",
+      "technical_score": 90,
+      "components": {
+        "sharpness": 72,
+        "composition": 78,
+        "light_color": 82,
+        "resolution": 100,
+        "uniqueness": 100,
+        "category_fit": 65,
+        "metadata": 30
+      },
+      "flags": [],
+      "visual_flags": [
+        "shallow_dof_limits_detail",
+        "category_mismatch_fruit_not_flower"
+      ],
+      "visual_note": "Well-lit lychee fruit with pleasing color, but shallow depth of field softens much of the subject and categorization as 'flowers and plants' is inaccurate for a fruit.",
+      "material_problem": false,
+      "owner_review_required": true,
+      "recommended_action": "OWNER_REVIEW",
+      "visual_reviewed_at": "2026-10-04T13:10:26.438492+00:00"
     },
     {
       "photo_id": "1U1akU7rASbOzdUnM3Kg9ARmv6FsG2uDC",
@@ -43677,21 +44141,21 @@
     }
   ],
   "summary": {
-    "total": 1322,
-    "visual_complete": 1322,
+    "total": 1336,
+    "visual_complete": 1336,
     "pending_visual": 0,
-    "owner_review_required": 569,
-    "auto_clear_above_85": 753,
+    "owner_review_required": 582,
+    "auto_clear_above_85": 754,
     "critical_low_resolution": 0,
     "current_gallery": null,
     "completed_galleries": 27,
     "gallery_count": 27,
     "by_category": {
       "פרחים וצמחים": {
-        "total": 150,
-        "visual_complete": 150,
+        "total": 153,
+        "visual_complete": 153,
         "pending_visual": 0,
-        "owner_review_required": 36,
+        "owner_review_required": 39,
         "completed": true
       },
       "בעלי חיים": {
@@ -43751,10 +44215,10 @@
         "completed": true
       },
       "איטליה": {
-        "total": 70,
-        "visual_complete": 70,
+        "total": 79,
+        "visual_complete": 79,
         "pending_visual": 0,
-        "owner_review_required": 21,
+        "owner_review_required": 30,
         "completed": true
       },
       "סלובקיה": {
@@ -43786,10 +44250,10 @@
         "completed": true
       },
       "אבו דאבי": {
-        "total": 50,
-        "visual_complete": 50,
+        "total": 52,
+        "visual_complete": 52,
         "pending_visual": 0,
-        "owner_review_required": 21,
+        "owner_review_required": 22,
         "completed": true
       },
       "גרמניה": {
