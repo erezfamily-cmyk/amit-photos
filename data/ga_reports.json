@@ -1,70 +1,5 @@
 [
   {
-    "date": "13.07.2026",
-    "period": "2026-07-06 → 2026-07-13",
-    "summary": {
-      "sessions": "60",
-      "activeUsers": "41",
-      "pageViews": "85",
-      "bounceRate": "56.7%",
-      "avgSessionSec": "1110",
-      "delta_sessions": "↓61%",
-      "delta_users": "↓64%",
-      "delta_views": "↓86%"
-    },
-    "top_pages": [
-      {
-        "עמוד": "/",
-        "צפיות": "57",
-        "sessions": "42"
-      },
-      {
-        "עמוד": "/learn/9b0b85e4-10ad-42f0-af8a-172306d74988",
-        "צפיות": "7",
-        "sessions": "6"
-      },
-      {
-        "עמוד": "/learn/cad0fcf2-eee3-4039-97f7-ad88c238a73f",
-        "צפיות": "7",
-        "sessions": "7"
-      },
-      {
-        "עמוד": "/amit-photos/",
-        "צפיות": "5",
-        "sessions": "1"
-      },
-      {
-        "עמוד": "/free-guide/",
-        "צפיות": "2",
-        "sessions": "2"
-      }
-    ],
-    "sources": [
-      {
-        "מקור": "כניסה ישירה",
-        "sessions": "26"
-      },
-      {
-        "מקור": "סושיאל אורגני",
-        "sessions": "24"
-      },
-      {
-        "מקור": "חיפוש אורגני",
-        "sessions": "7"
-      },
-      {
-        "מקור": "לא מוגדר",
-        "sessions": "3"
-      },
-      {
-        "מקור": "הפניות",
-        "sessions": "1"
-      }
-    ],
-    "funnel_events": {},
-    "analysis": "**מה קרה השבוע**\n\nהשבוע היה חלש מאוד: התנועה צנחה ב-61% בסשנים וב-86% בצפיות עמוד, מה שאומר שלא רק שהגיעו פחות אנשים — אלה שהגיעו בקושי גללו מעבר לעמוד הבית. הדבר הכי מדאיג הוא ששני משפכי המכירה על אפס מוחלט — אף אחד לא צפה בתמונה בודדת ולא נכנס למודל קנייה או הדפסה.\n\n**המלצות לשבוע הבא**\n\n1. **תבדוק דחוף אם אירוע `view_item` בכלל נורה.** 85 צפיות עמוד אבל 0 צפיות בתמונה זה חשוד — או שאף אחד לא נכנס לעמוד תמונה (בעיית תוכן), או שהטראקינג שבור (בעיה טכנית). פתח עמוד תמונה בעצמך, בדוק ב-DebugView של GA4 שהאירוע נשלח. עד שזה לא מאומת, כל שאר הנתונים על המשפכים חסרי משמעות.\n\n2. **תדחוף תנועה לתוך עמודי התמונות, לא לעמוד הבית.** רק צפייה אחת בכל עמוד `/photo/` השבוע. הקהל מגיע (57 צפיות בבית) אבל לא ממשיך פנימה. הוסף בעמוד הבית ובעמודי ה-learn קישורים ויזואליים בולטים ל-3-4 תמונות מובילות עם CTA ברור (\"צפה ביצירה\", \"הזמן הדפסה\").\n\n3. **נצל את הסושיאל האורגני — 24 סשנים זה הערוץ הכי חזק שלך יחסית.** תפרסם השבוע 2-3 פוסטים שמובילים ישירות לעמוד תמונה ספציפי (deep link), לא לעמוד הבית. אנשים שמגיעים מסושיאל צריכים לנחות על היצירה עצמה.\n\n4. **תמנף את זמן השהייה הגבוה (1110 שניות = 18 דקות).** מי שנשאר, נשאר הרבה — כנראה בעמודי ה-learn. תוסיף בסוף כל מדריך צילום קישור טבעי לגלריה (\"צילמת שחור-לבן? ראה איך אני עובד עם זה בהדפסות שלי\"). הפוך קוראים לצופים בתמונות.\n\n5. **בדוק את מודל ההדפסה של Gelato מקצה לקצה בעצמך.** האתר מעולם לא סגר הזמנת הדפסה. גם אם התנועה תשתפר, אם המודל שבור לא תדע. עשה הזמנת בדיקה מלאה עד שלב התשלום.\n\n**א"
-  },
-  {
     "date": "20.07.2026",
     "period": "2026-07-13 → 2026-07-20",
     "summary": {
@@ -881,5 +816,661 @@
       }
     },
     "analysis": "## מה קרה השבוע\n\nהיה שבוע של קפיצה משמעותית בתנועה — 51 סשנים (עלייה של 240%) עם 22 משתמשים חדשים, כמעט כולם מישראל ורובם דרך כניסה ישירה. המעורבות טובה (60.8% engagement, bounce נמוך), אבל המשפך מתכווץ בחדות: מ-53 צפיות בתמונה ל-4 פתיחות מודל קנייה ולבחירת גודל אחת בלבד.\n\n## המלצות לשבוע הבא\n\n**1. תקן את הפער בין photo_view לבין purchase_intent.**\n53 צפיות בתמונה מול 4 פתיחות מודל — זה שיעור המרה של ~7.5%. הצעד הראשון במסע (מצפייה לרצון לקנות) הוא הבעיה. הוסף קריאה לפעולה ברורה יותר על התמונה עצמה (\"קנה הדפסה\" / \"הורדה דיגיטלית\") שבולטת ויזואלית, ובדוק שהיא נראית גם במובייל.\n\n**2. נצל את הכניסה הישירה החזקה עם מקור תנועה יזום.**\n46 מתוך 51 סשנים הם direct — כלומר אתה תלוי לגמרי במי שכבר מכיר אותך. סושיאל אורגני נתן רק 3 סשנים. השבוע פרסם 2-3 פוסטים ממוקדים (למשל מקטגוריית \"בעלי חיים\" שכבר מושכת) עם קישור ישיר לתמונה ספציפית, כדי לגוון את מקורות התנועה.\n\n**3. חזק את הזרימה לגלריה מה-Hero.**\nCTA הגלריה נלחץ 3 פעמים, ה-CTA למדריך 0 פעמים. אם המדריך החינמי הוא כלי לבניית רשימת תפוצה — הפוך אותו לבולט יותר, כי /free-guide/ כבר במקום 3 בעמודים הפופולריים אבל אף אחד לא מגיע אליו דרך ה-Hero.\n\n**4. תפוס את הלידים שאתה מפספס.**\nהיו 2 לחיצות \"פנייה מתוך תמונה\" ו-0 טפסים שנשלחו. משהו שובר את שרשרת הפנייה — בדוק שהטופס עובד, קצר וטעון מהר. גם ליד אחד שנתפס שווה כאן.\n\n**5. השקע בגלילה העמוקה.**\nמ-8 שהגיעו ל-25% רק אחד הגיע ל-90%. שקול להעלות תמונות חזקות יותר לחלק העליון של העמוד, או לקצר את העמוד הראשי כדי שהתוכן המניב יופיע מוקדם יותר.\n\n## אזהרה אחת\n\n**מצב התשלומים כבוי (PAYMENTS_ENABLED=false) — זו לא בעיה, זו מדיניות.** 0 רכישות זה תוצאה מכוונת ולא כשל שיווקי. אבל שים לב: כל עוד התשלומים כבויים, אתה מבזבז תנועה איכותית — 22 משתמשים חדשים שנחשפו לתמונות ולא יכולים לקנות. אם המתג עדיין כבוי בכוונה, לפחות ודא שמסלול איסוף הלידים והרשמה לניוזלטר עובד חלק, כדי לא לאבד את האנשים האלה לגמרי. ברגע שתדליק תשלומים — עקוב אחרי הפער בין events ב-GA לבין המספרים המאומתים ב-D1."
+  },
+  {
+    "date": "05.10.2026",
+    "period": "2026-09-28 → 2026-10-05",
+    "summary": {
+      "sessions": "97",
+      "activeUsers": "86",
+      "pageViews": "110",
+      "bounceRate": "78.4%",
+      "avgSessionSec": "21",
+      "newUsers": "79",
+      "engagementRate": "21.6%",
+      "engagedSessions": "21",
+      "delta_sessions": "↑102%",
+      "delta_users": "↑244%",
+      "delta_views": "↓15%"
+    },
+    "top_pages": [
+      {
+        "עמוד": "/",
+        "צפיות": "85",
+        "sessions": "84"
+      },
+      {
+        "עמוד": "/free-guide/",
+        "צפיות": "6",
+        "sessions": "5"
+      },
+      {
+        "עמוד": "/camera/",
+        "צפיות": "3",
+        "sessions": "3"
+      },
+      {
+        "עמוד": "/learn/1dEnlhyIGafN2XRJsX15pTYIOplyEnbmW",
+        "צפיות": "3",
+        "sessions": "3"
+      },
+      {
+        "עמוד": "/camera/lenses/",
+        "צפיות": "2",
+        "sessions": "2"
+      }
+    ],
+    "landing_pages": [
+      {
+        "עמוד נחיתה": "/",
+        "sessions": "76",
+        "activeUsers": "66"
+      },
+      {
+        "עמוד נחיתה": "(not set)",
+        "sessions": "5",
+        "activeUsers": "4"
+      },
+      {
+        "עמוד נחיתה": "/free-guide/",
+        "sessions": "3",
+        "activeUsers": "3"
+      },
+      {
+        "עמוד נחיתה": "",
+        "sessions": "1",
+        "activeUsers": "0"
+      },
+      {
+        "עמוד נחיתה": "/?fbclid=IwZXh0bgNhZW0CMTEAcGRvZgRzcnRjBmFwcF9pZAwyNTYyODEwNDA1NTgAAR4viyZL5MN2DaM5E2wUHs_tYMVOx8WysRxBb37Gg1O-ThKJll5mvaTTtqC7ZA_aem_jsa6NNRA2wbGjdNVYcV8Ag",
+        "sessions": "1",
+        "activeUsers": "1"
+      }
+    ],
+    "sources": [
+      {
+        "מקור": "כניסה ישירה",
+        "sessions": "78"
+      },
+      {
+        "מקור": "סושיאל אורגני",
+        "sessions": "15"
+      },
+      {
+        "מקור": "הפניות",
+        "sessions": "2"
+      },
+      {
+        "מקור": "לא מוגדר",
+        "sessions": "2"
+      },
+      {
+        "מקור": "חיפוש אורגני",
+        "sessions": "1"
+      }
+    ],
+    "campaigns": [
+      {
+        "source": "(direct)",
+        "medium": "(none)",
+        "campaign": "(direct)",
+        "sessions": "78",
+        "activeUsers": "67"
+      },
+      {
+        "source": "m.facebook.com",
+        "medium": "referral",
+        "campaign": "(referral)",
+        "sessions": "5",
+        "activeUsers": "5"
+      },
+      {
+        "source": "instagram",
+        "medium": "social",
+        "campaign": "202610_freeguide_photo_tips",
+        "sessions": "4",
+        "activeUsers": "4"
+      },
+      {
+        "source": "facebook.com",
+        "medium": "referral",
+        "campaign": "(referral)",
+        "sessions": "3",
+        "activeUsers": "3"
+      },
+      {
+        "source": "(not set)",
+        "medium": "(not set)",
+        "campaign": "(not set)",
+        "sessions": "2",
+        "activeUsers": "1"
+      },
+      {
+        "source": "google",
+        "medium": "organic",
+        "campaign": "(organic)",
+        "sessions": "1",
+        "activeUsers": "1"
+      },
+      {
+        "source": "ig",
+        "medium": "social",
+        "campaign": "(referral)",
+        "sessions": "1",
+        "activeUsers": "1"
+      },
+      {
+        "source": "pinterest",
+        "medium": "organic_social",
+        "campaign": "gallery_pins",
+        "sessions": "1",
+        "activeUsers": "1"
+      },
+      {
+        "source": "scriblihelp.com",
+        "medium": "referral",
+        "campaign": "(referral)",
+        "sessions": "1",
+        "activeUsers": "1"
+      },
+      {
+        "source": "threads",
+        "medium": "social",
+        "campaign": "202610_licensing_personal",
+        "sessions": "1",
+        "activeUsers": "1"
+      },
+      {
+        "source": "ui.awin.com",
+        "medium": "referral",
+        "campaign": "(referral)",
+        "sessions": "1",
+        "activeUsers": "1"
+      }
+    ],
+    "devices": [
+      {
+        "מכשיר": "desktop",
+        "sessions": "55"
+      },
+      {
+        "מכשיר": "mobile",
+        "sessions": "42"
+      }
+    ],
+    "countries": [
+      {
+        "ארץ": "Israel",
+        "sessions": "47"
+      },
+      {
+        "ארץ": "United States",
+        "sessions": "41"
+      },
+      {
+        "ארץ": "Germany",
+        "sessions": "2"
+      },
+      {
+        "ארץ": "",
+        "sessions": "1"
+      },
+      {
+        "ארץ": "(not set)",
+        "sessions": "1"
+      }
+    ],
+    "funnel_events": {
+      "photo_view": "37",
+      "scroll_25": "19",
+      "scroll_50": "14",
+      "gallery_filter": "13",
+      "scroll_75": "7",
+      "content_link_click": "6",
+      "scroll_90": "6",
+      "nav_click": "4",
+      "hero_gallery_click": "2",
+      "nav_more_click": "2",
+      "guide_request_success": "1",
+      "hero_guide_click": "1",
+      "nav_newsletter_click": "1",
+      "nav_videos_click": "1",
+      "photo_contact_click": "1"
+    },
+    "ux_by_page": [
+      {
+        "event": "photo_view",
+        "עמוד": "/",
+        "count": "36"
+      },
+      {
+        "event": "gallery_filter",
+        "עמוד": "/",
+        "count": "13"
+      },
+      {
+        "event": "scroll_25",
+        "עמוד": "/",
+        "count": "10"
+      },
+      {
+        "event": "scroll_50",
+        "עמוד": "/",
+        "count": "7"
+      },
+      {
+        "event": "scroll_25",
+        "עמוד": "/free-guide/",
+        "count": "4"
+      },
+      {
+        "event": "scroll_50",
+        "עמוד": "/free-guide/",
+        "count": "4"
+      },
+      {
+        "event": "scroll_75",
+        "עמוד": "/free-guide/",
+        "count": "4"
+      },
+      {
+        "event": "scroll_90",
+        "עמוד": "/free-guide/",
+        "count": "4"
+      },
+      {
+        "event": "content_link_click",
+        "עמוד": "/camera/",
+        "count": "2"
+      },
+      {
+        "event": "hero_gallery_click",
+        "עמוד": "/",
+        "count": "2"
+      },
+      {
+        "event": "nav_click",
+        "עמוד": "/",
+        "count": "2"
+      },
+      {
+        "event": "nav_click",
+        "עמוד": "/videos/",
+        "count": "2"
+      },
+      {
+        "event": "scroll_25",
+        "עמוד": "/camera/lenses/",
+        "count": "2"
+      },
+      {
+        "event": "scroll_50",
+        "עמוד": "/camera/lenses/",
+        "count": "2"
+      },
+      {
+        "event": "scroll_75",
+        "עמוד": "/",
+        "count": "2"
+      },
+      {
+        "event": "content_link_click",
+        "עמוד": "/",
+        "count": "1"
+      },
+      {
+        "event": "content_link_click",
+        "עמוד": "/camera/sports/",
+        "count": "1"
+      },
+      {
+        "event": "content_link_click",
+        "עמוד": "/newsletter/",
+        "count": "1"
+      },
+      {
+        "event": "content_link_click",
+        "עמוד": "/newsletter/2026-09-full/",
+        "count": "1"
+      },
+      {
+        "event": "guide_request_success",
+        "עמוד": "/free-guide/",
+        "count": "1"
+      },
+      {
+        "event": "hero_guide_click",
+        "עמוד": "/",
+        "count": "1"
+      },
+      {
+        "event": "nav_more_click",
+        "עמוד": "/",
+        "count": "1"
+      },
+      {
+        "event": "nav_more_click",
+        "עמוד": "/videos/",
+        "count": "1"
+      },
+      {
+        "event": "nav_newsletter_click",
+        "עמוד": "/videos/",
+        "count": "1"
+      },
+      {
+        "event": "nav_videos_click",
+        "עמוד": "/",
+        "count": "1"
+      },
+      {
+        "event": "photo_contact_click",
+        "עמוד": "/",
+        "count": "1"
+      },
+      {
+        "event": "photo_view",
+        "עמוד": "/photo/12eyfynKrz_S0MYb7iib3kPJIWiyJq9h4",
+        "count": "1"
+      },
+      {
+        "event": "scroll_25",
+        "עמוד": "/camera/sports/",
+        "count": "1"
+      },
+      {
+        "event": "scroll_25",
+        "עמוד": "/newsletter/2026-09-full/",
+        "count": "1"
+      },
+      {
+        "event": "scroll_25",
+        "עמוד": "/videos/",
+        "count": "1"
+      },
+      {
+        "event": "scroll_50",
+        "עמוד": "/newsletter/2026-09-full/",
+        "count": "1"
+      },
+      {
+        "event": "scroll_75",
+        "עמוד": "/camera/lenses/",
+        "count": "1"
+      },
+      {
+        "event": "scroll_90",
+        "עמוד": "/",
+        "count": "1"
+      },
+      {
+        "event": "scroll_90",
+        "עמוד": "/camera/lenses/",
+        "count": "1"
+      }
+    ],
+    "subscriber_summary": {
+      "period_days": 7,
+      "period_new_by_source": [
+        {
+          "source": "lead_magnet",
+          "total": 1,
+          "marketing_opt_in": 0,
+          "marketing_opt_out": 1,
+          "marketing_unknown": 0
+        }
+      ],
+      "period_marketing_opt_ins_by_source": [],
+      "current_marketing_by_source": [],
+      "totals": {
+        "total_subscribers": 10,
+        "marketing_subscribers": 0,
+        "non_marketing_subscribers": 1,
+        "unknown_marketing_consent": 9
+      }
+    },
+    "business_review": {
+      "sample": {
+        "sessions": 97,
+        "new_subscribers": 1,
+        "directional_only": true,
+        "note": "Directional only — fewer than 20 new subscribers in the measured period."
+      },
+      "kpis": {
+        "direct_share_pct": 80.4,
+        "lead_rate_pct": 0.0,
+        "guide_request_rate_pct": 1.0,
+        "new_subscriber_marketing_opt_in_pct": 0.0,
+        "period_marketing_opt_ins": 0,
+        "digital_intent_pct": 0.0,
+        "digital_selection_pct": null,
+        "print_intent_pct": 0.0
+      },
+      "next_action": "Run one attribution experiment this week: every new social/newsletter share should use a deep link to a specific photo, collection or free guide with UTM tags; avoid homepage links by default.",
+      "reason": "Direct traffic is 80.4% of sessions, so acquisition attribution is still the largest measurement constraint before choosing a monetization channel."
+    },
+    "acquisition_experiment": {
+      "experiment": "Acquisition Experiment 01",
+      "window_status": "measuring",
+      "paths": [
+        {
+          "campaign": "202610_freeguide_photo_tips",
+          "label": "Free Guide",
+          "sessions": 4,
+          "active_users": 4,
+          "primary_event": "guide_request_success",
+          "primary_count": 1,
+          "primary_rate_pct": 25.0,
+          "secondary_event": "generate_lead",
+          "secondary_count": 0,
+          "status": "measuring"
+        },
+        {
+          "campaign": "202610_licensing_personal",
+          "label": "Personal Licensing",
+          "sessions": 1,
+          "active_users": 1,
+          "primary_event": "licensing_personal_interest",
+          "primary_count": 0,
+          "primary_rate_pct": 0.0,
+          "secondary_event": "purchase_intent",
+          "secondary_count": 0,
+          "status": "measuring"
+        },
+        {
+          "campaign": "202610_b2b_outreach",
+          "label": "B2B Wall Art",
+          "sessions": 0,
+          "active_users": 0,
+          "primary_event": "b2b_contact_start",
+          "primary_count": 0,
+          "primary_rate_pct": null,
+          "secondary_event": "contact_form_success",
+          "secondary_count": 0,
+          "status": "not_started"
+        }
+      ]
+    },
+    "experiment_events": [
+      {
+        "event": "scroll_25",
+        "campaign": "202610_freeguide_photo_tips",
+        "count": "4"
+      },
+      {
+        "event": "scroll_50",
+        "campaign": "202610_freeguide_photo_tips",
+        "count": "4"
+      },
+      {
+        "event": "scroll_75",
+        "campaign": "202610_freeguide_photo_tips",
+        "count": "4"
+      },
+      {
+        "event": "scroll_90",
+        "campaign": "202610_freeguide_photo_tips",
+        "count": "4"
+      },
+      {
+        "event": "guide_request_success",
+        "campaign": "202610_freeguide_photo_tips",
+        "count": "1"
+      }
+    ],
+    "revenue": {
+      "period_days": 7,
+      "payments_enabled": false,
+      "digital": {
+        "count": 0,
+        "revenue_ils": 0
+      },
+      "print": {
+        "by_status": [],
+        "total_count": 0,
+        "total_revenue_ils": 0
+      }
+    },
+    "photo_analytics": {
+      "window_days": 30,
+      "views": [
+        {
+          "photo_id": "88674fc6-1801-4ce4-8f1d-483e496c9a4a",
+          "photo_title": "דבורה מוכסת אבקה על חמניה",
+          "category": "מאקרו-צילומי תקריב",
+          "count": 21
+        },
+        {
+          "photo_id": "1wjLT-hutHz9TWXvXiS_Q9ynAzLIx3xCY",
+          "photo_title": "כפר בהרי גיאורגיה",
+          "category": "גאורגיה",
+          "count": 4
+        },
+        {
+          "photo_id": "1Hf6F1nz_5dwRh-sY3TM3StAnU0nqOGK9",
+          "photo_title": "הרים בעננים גיאורגיים",
+          "category": "גאורגיה",
+          "count": 4
+        },
+        {
+          "photo_id": "1toFUd2s_cxvcYm1HaoGaCLZaGzkRqU9D",
+          "photo_title": "פרות בגאורגיה",
+          "category": "גאורגיה",
+          "count": 3
+        },
+        {
+          "photo_id": "1i-XAY9X2H0MlGDep-TKkzT6990IduzuE",
+          "photo_title": "שדה ירוק בגאורגיה",
+          "category": "גאורגיה",
+          "count": 3
+        },
+        {
+          "photo_id": "7f8946b4-6871-430c-b1d9-729be53b3ee6",
+          "photo_title": "פרפר שועל על קוץ",
+          "category": "מאקרו-צילומי תקריב",
+          "count": 2
+        },
+        {
+          "photo_id": "6831fae6-c904-4e91-b0a9-3eba4b7f3b73",
+          "photo_title": "ורד ורוד עדין",
+          "category": "מאקרו-צילומי תקריב",
+          "count": 2
+        },
+        {
+          "photo_id": "4cf149dc-4e7c-4698-897b-97dfc2475366",
+          "photo_title": "תבנית גיאומטרית בעיצוב ברזל",
+          "category": "ישראל",
+          "count": 2
+        },
+        {
+          "photo_id": "1ltSPcKOpWe5b7CSMgeJr53Zf-W6Xr86i",
+          "photo_title": "עצים עתיקים בגאורגיה",
+          "category": "גאורגיה",
+          "count": 2
+        },
+        {
+          "photo_id": "1Uueu7LeUnN8QsigBP5LtFCHM9Hmxmmfz",
+          "photo_title": "מגדלי שומGuards בגאורגיה",
+          "category": "גאורגיה",
+          "count": 2
+        },
+        {
+          "photo_id": "1QjVUEg6tqbQuipiSfVmFOhhGn8pqLRRz",
+          "photo_title": "הר מושלג בגאורגיה",
+          "category": "גאורגיה",
+          "count": 2
+        },
+        {
+          "photo_id": "1IY3Qa2NQIvhchDjAGUdlY7NPfegOirPo",
+          "photo_title": "הרים בערפל בגאורגיה",
+          "category": "גאורגיה",
+          "count": 2
+        },
+        {
+          "photo_id": "15ajueRBNI5HP68qir7ri5hFT8e0Ll-9N",
+          "photo_title": "פרחים סגולים על גדר",
+          "category": "גאורגיה",
+          "count": 2
+        },
+        {
+          "photo_id": "f7e18780-1f2d-4d85-bbcb-d584c4216812",
+          "photo_title": "טווס בתהילה",
+          "category": "בעלי חיים",
+          "count": 1
+        },
+        {
+          "photo_id": "e7674030-e41a-46b6-8d3b-6c089e473d2f",
+          "photo_title": "נשר אמריקאי מתבוננן",
+          "category": "בעלי חיים",
+          "count": 1
+        },
+        {
+          "photo_id": "e0627506-a29f-4756-ad4f-207bc3228be9",
+          "photo_title": "לוחם קרנבל",
+          "category": "פורטרטים",
+          "count": 1
+        },
+        {
+          "photo_id": "a92600da-bab2-4699-a905-15dee0202d06",
+          "photo_title": "מבט דרך זכוכית מגדלת",
+          "category": "פורטרטים",
+          "count": 1
+        },
+        {
+          "photo_id": "83b8c6d7-0d73-4920-81cd-a948da2112b9",
+          "photo_title": "כיסא בודד על המים",
+          "category": "ישראל",
+          "count": 1
+        },
+        {
+          "photo_id": "405035f8-5fe1-46fd-acde-92f8ad0c622a",
+          "photo_title": "ספירלות ירוקות של טבע",
+          "category": "צילום מופשט",
+          "count": 1
+        },
+        {
+          "photo_id": "1zaWISr14KVt1cIEJXKMBbwAnkUMeiOBI",
+          "photo_title": "עדר סוסים בשדה ירוק",
+          "category": "גאורגיה",
+          "count": 1
+        }
+      ],
+      "intents": [
+        {
+          "photo_id": "4cf149dc-4e7c-4698-897b-97dfc2475366",
+          "count": 2
+        },
+        {
+          "photo_id": "406b9bbe-fde6-4580-ad3a-556ce3e2cd5c",
+          "count": 1
+        },
+        {
+          "photo_id": "08d8b841-1d5c-409c-be5e-4cae2cbe564e",
+          "count": 1
+        }
+      ],
+      "purchases": []
+    },
+    "analysis": "## מה קרה השבוע\n\nהתנועה כמעט הכפילה את עצמה (97 סשנים, +102%) עם זינוק יפה במשתמשים חדשים — בעיקר מישראל וארה\"ב בחלוקה כמעט שווה, ובזכות פעילות סושיאל (פייסבוק/אינסטגרם/פינטרסט/threads). הצד הפחות טוב: זמן ממוצע של 21 שניות ו-engagement של 21.6% אומרים שרוב התנועה נכנסה, הסתכלה שנייה ועזבה — יש תנועה אבל אין עומק.\n\n## המלצות לשבוע הבא\n\n1. **הפוך את ה-photo_view ל-purchase_intent.** היו 37 צפיות בתמונות ו-0 פתיחות מודל קנייה. גם אם התשלומים כבויים, המעבר הזה שבור או לא מזמין מספיק. בדוק שה-CTA בתמונה בולט וברור (\"רכוש הדפסה / הורד\"), כי כרגע אנשים מסתכלים ולא עושים צעד הבא.\n\n2. **נצל את /free-guide/ — זה העמוד הכי מרתק באתר.** זה העמוד היחיד עם גלילה מלאה (4 משתמשים הגיעו ל-90%) ו-25% conversion להרשמה. הזרם אליו יותר תנועה מהסושיאל, והוסף בתוכו קישור טבעי לגלריה או להדפסה כדי להפוך קוראי מדריך לקונים פוטנציאליים.\n\n3. **טפל ב-UTM ובתיוג הקמפיינים.** 78 מתוך 97 סשנים נרשמים כ-\"direct\" — חלק גדול מזה כנראה תנועת סושיאל שאיבדה ייחוס (fbclid גולמי, \"not set\"). תייג כל קישור בסושיאל ב-UTM מסודר כדי שתוכל באמת לדעת מה עובד, אחרת אתה עובד בעיוור.\n\n4. **חזק את ה-engagement בעמוד הבית.** רק 6 מ-19 שהתחילו לגלול הגיעו ל-90%, ו-13 השתמשו בפילטר הגלריה (סימן טוב!). שים את התמונות החזקות ביותר גבוה יותר, ושקול \"hook\" ויזואלי מיד מתחת ל-hero כדי להחזיק את מי שנכנס.\n\n5. **אם אתה שוקל להדליק תשלומים — עכשיו זה הזמן לבדוק טכנית.** יש לך תנועה אמיתית. ודא שהמשפך הדיגיטלי וה-Gelato עובדים end-to-end במצב בדיקה, כדי שברגע שתדליק PAYMENTS_ENABLED לא תגלה באגים על תנועה חיה.\n\n## אזהרה אחת\n\n**רכישות=0 זה לא כשל שיווקי — התשלומים כבויים במכוון** (PAYMENTS_ENABLED=false), וה-D1 מאשר 0 הכנסה בשני המשפכים. זו מדיניות שלך, לא בעיה לתקן. **אבל** שים לב לדבר אחר: 37 photo_view מול 0 purchase_intent זה פער שלא תלוי בתשלומים כלל — פתיחת מודל הקנייה אמורה לעבוד גם כשהתשלום כבוי. כדאי לוודא שהמודל בכלל נפתח וש-event ה-purchase_intent נורה כמו שצריך, כי ייתכן שיש כאן תקלה בטראקינג או ב-CTA עצמו שתסתיר ממך נתונים חשובים כשתדליק תשלומים."
   }
 ]
