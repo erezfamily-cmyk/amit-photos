@@ -8307,13 +8307,15 @@ function welcomeEmail2(sub, en) {
   const items = guides.map(g =>
     `<li style="margin-bottom:.8rem"><a href="${g.url}" style="color:#c8a96e;text-decoration:none;font-weight:700">${en ? g.en : g.he}</a></li>`
   ).join('');
+  // sub.name מגיע מ-subscribers.name — נשלט ע"י הנרשם דרך /api/subscribers הציבורי, חייב escXml()
+  const safeName = sub.name ? escXml(sub.name) : '';
   const inner = en
     ? `<h3>Did the 50 tips help? Here's the next level</h3>
-       <p style="color:#ccc">Hi${sub.name ? ' ' + sub.name : ''}, these are the 3 most-loved interactive guides on the site — each one takes ~5 minutes and includes a hands-on simulator:</p>
+       <p style="color:#ccc">Hi${safeName ? ' ' + safeName : ''}, these are the 3 most-loved interactive guides on the site — each one takes ~5 minutes and includes a hands-on simulator:</p>
        <ul style="color:#ccc;line-height:1.7;padding-${en ? 'left' : 'right'}:1.2rem">${items}</ul>
        <p style="color:#aaa;font-size:.9rem">Got a photography question? Just reply to this email — I read everything.</p>`
     : `<h3>ה-50 טיפים עזרו? הנה השלב הבא</h3>
-       <p style="color:#ccc">היי${sub.name ? ' ' + sub.name : ''}, אלה 3 המדריכים האינטראקטיביים הכי אהובים באתר — כל אחד לוקח בערך 5 דקות וכולל סימולטור לתרגול:</p>
+       <p style="color:#ccc">היי${safeName ? ' ' + safeName : ''}, אלה 3 המדריכים האינטראקטיביים הכי אהובים באתר — כל אחד לוקח בערך 5 דקות וכולל סימולטור לתרגול:</p>
        <ul style="color:#ccc;line-height:1.7;padding-right:1.2rem">${items}</ul>
        <p style="color:#aaa;font-size:.9rem">יש לך שאלה על צילום? פשוט השב למייל הזה — אני קורא הכל.</p>`;
   return {
@@ -8328,14 +8330,16 @@ function welcomeEmail3(sub, en) {
     <a href="https://www.threads.com/@amite" style="color:#c8a96e;text-decoration:none;margin:0 .6rem;font-weight:700">Threads</a> ·
     <a href="https://www.pinterest.com/amitphotos" style="color:#c8a96e;text-decoration:none;margin:0 .6rem;font-weight:700">Pinterest</a>
   </div>`;
+  // sub.name מגיע מ-subscribers.name — נשלט ע"י הנרשם דרך /api/subscribers הציבורי, חייב escXml()
+  const safeName = sub.name ? escXml(sub.name) : '';
   const inner = en
     ? `<h3>Behind the lens 👋</h3>
-       <p style="color:#ccc">Hi${sub.name ? ' ' + sub.name : ''}, I'm Amit — an Israeli photographer. Everything on the site, from Tanzania to night skies, was shot on real trips with a lot of patience (and a lot of deleted frames).</p>
+       <p style="color:#ccc">Hi${safeName ? ' ' + safeName : ''}, I'm Amit — an Israeli photographer. Everything on the site, from Tanzania to night skies, was shot on real trips with a lot of patience (and a lot of deleted frames).</p>
        <p style="color:#ccc">Between newsletters, I share new photos, locations and behind-the-scenes on social — that's where things happen first:</p>
        ${socials}
        <p style="color:#aaa;font-size:.9rem">And if a photo ever catches your eye — every piece in the <a href="https://amitphotos.com" style="color:#c8a96e">gallery</a> is available as a print, shipped from a local printer near you.</p>`
     : `<h3>מאחורי העדשה 👋</h3>
-       <p style="color:#ccc">היי${sub.name ? ' ' + sub.name : ''}, אני עמית — צלם ישראלי. כל מה שבאתר, מטנזניה ועד שמי הלילה, צולם בטיולים אמיתיים עם המון סבלנות (והמון פריימים שנמחקו).</p>
+       <p style="color:#ccc">היי${safeName ? ' ' + safeName : ''}, אני עמית — צלם ישראלי. כל מה שבאתר, מטנזניה ועד שמי הלילה, צולם בטיולים אמיתיים עם המון סבלנות (והמון פריימים שנמחקו).</p>
        <p style="color:#ccc">בין ניוזלטר לניוזלטר אני משתף תמונות חדשות, מקומות לצילום ומאחורי הקלעים ברשתות — שם הדברים קורים קודם:</p>
        ${socials}
        <p style="color:#aaa;font-size:.9rem">ואם תמונה תופסת לך את העין — כל תמונה ב<a href="https://amitphotos.com" style="color:#c8a96e">גלריה</a> זמינה כהדפס איכותי עם משלוח.</p>`;
