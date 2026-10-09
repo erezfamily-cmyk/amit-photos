@@ -1,4 +1,5 @@
 name: פוסט B2B חד-פעמי לאינסטגרם (Experiment 01)
+# הפעלה ידנית בלבד — dry-run כברירת מחדל
 
 on:
   workflow_dispatch:
