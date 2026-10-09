@@ -1,0 +1,40 @@
+name: פוסט B2B חד-פעמי לאינסטגרם (Experiment 01)
+
+on:
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: 'yes = פרסום אמיתי; ריק = dry-run'
+        required: false
+        default: ''
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  b2b-post:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install requests anthropic pillow
+      - name: פוסט B2B
+        env:
+          INSTAGRAM_USER_ID: ${{ secrets.INSTAGRAM_USER_ID }}
+          INSTAGRAM_PAGE_TOKEN: ${{ secrets.INSTAGRAM_PAGE_TOKEN }}
+          CONFIRM_PUBLISH: ${{ github.event.inputs.publish }}
+        run: python src/instagram_b2b_post.py
+      - name: שמירת מיפוי
+        run: |
+          git config user.name "Instagram Agent"
+          git config user.email "agent@amitphotos.com"
+          git add data/social_photo_map.json
+          git diff --staged --quiet && exit 0
+          git commit -m "🤖 מיפוי פוסט B2B אינסטגרם"
+          git pull --rebase origin main && git push origin HEAD:main
