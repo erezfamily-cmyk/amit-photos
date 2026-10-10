@@ -1,0 +1,31 @@
+name: Amit Photos character ad brief
+on:
+  workflow_dispatch:
+    inputs:
+      concept:
+        description: Optional concept ID from plan.json
+        required: false
+        type: string
+  schedule:
+    - cron: '15 8 * * 1'
+permissions:
+  contents: read
+jobs:
+  brief:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Generate weekly storyboard and publishing link
+        env:
+          CONCEPT: ${{ inputs.concept }}
+        run: |
+          mkdir -p campaign-output
+          if [ -n "$CONCEPT" ]; then
+            python3 src/campaign_ads.py plan --concept "$CONCEPT" --output campaign-output/brief.md
+          else
+            python3 src/campaign_ads.py plan --output campaign-output/brief.md
+          fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: amit-character-brief
+          path: campaign-output/brief.md
