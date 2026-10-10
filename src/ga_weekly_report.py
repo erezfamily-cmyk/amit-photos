@@ -656,6 +656,10 @@ def generate_analysis(data_summary):
 "כבוי (PAYMENTS_ENABLED=false)" — אל תפרש רכישות=0 כבעיית שיווק או כשל במשפך, זו מדיניות
 מכוונת של בעל האתר ולא משהו לתקן. אם התשלומים פעילים ויש פער משמעותי בין ספירת ה-events
 ב-GA (purchase_intent/purchase) לבין המספרים המאומתים מ-D1 — זה ממצא אמיתי וחשוב לציין.
+כשהתשלומים כבויים, כפתורי הקנייה/עגלה מוסתרים באתר בכוונה — לכן purchase_intent ו-print_intent
+הם 0 מבנית, לא באג מעקב ולא בעיית CTA. אל תמליץ להוסיף כפתור רכישה/הדפסה בולט ואל תכתוב
+שה-events "לא נורים". אות הביקוש האמיתי בזמן הזה: photo_contact_click, licensing_personal_interest,
+b2b_contact_start ו-guide_request_success.
 כותב בעברית, ישיר, ללא כותרות מפוצצות. נותן 3-5 המלצות מה לעשות השבוע.""",
         messages=[{"role": "user", "content": f"""נתוני אנליטיקס שבועיים של amitphotos.com:
 
