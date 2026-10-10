@@ -22,11 +22,10 @@ on:
         required: false
         default: ''
         type: string
-      post_to_instagram:
-        description: 'פרסם ל-Instagram אחרי יצירה?'
+      approved_sha256:
+        description: 'לפרסום רילס קיים בלבד: SHA-256 של קובץ ה-MP4 שנצפה ואושר'
         required: false
-        default: false
-        type: boolean
+        type: string
       prompts:
         description: 'JSON של פרומפטים מותאמים: [{"id":"...","prompt":"..."},...]'
         required: false
@@ -46,6 +45,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: אישור זהות וקובץ לפני פרסום
+        env:
+          PUBLISH_EXISTING: ${{ inputs.publish_existing }}
+          APPROVED_SHA256: ${{ inputs.approved_sha256 }}
+        run: |
+          if [ "$PUBLISH_EXISTING" = "true" ]; then
+            test "$GITHUB_ACTOR" = "erezfamily-cmyk" || { echo "Only Amit can approve publication"; exit 1; }
+            [[ "$APPROVED_SHA256" =~ ^[a-fA-F0-9]{64}$ ]] || { echo "Provide the reviewed video's SHA-256"; exit 1; }
+          fi
+
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -60,12 +69,22 @@ jobs:
       - name: התקנת חבילות Python
         run: pip install requests pillow python-bidi "fal-client<1.0.0" boto3
 
+      - name: בדיקת זהות הסרטון המאושר
+        if: inputs.publish_existing == true
+        env:
+          APPROVED_SHA256: ${{ inputs.approved_sha256 }}
+        run: |
+          echo "$APPROVED_SHA256  reels_output/latest_reel.mp4" | sha256sum --check --status || {
+            echo "The existing reel differs from the reviewed video"; exit 1;
+          }
+
       - name: יצירת הרילס
         env:
           FAL_KEY: ${{ secrets.FAL_KEY }}
           AMIT_PHOTO_AGENT: ${{ secrets.AMIT_PHOTO_AGENT }}
           INSTAGRAM_USER_ID: ${{ secrets.INSTAGRAM_USER_ID }}
           INSTAGRAM_PAGE_TOKEN: ${{ secrets.INSTAGRAM_PAGE_TOKEN }}
+          ADMIN_TOKEN: ${{ secrets.ADMIN_PASSWORD }}
           CF_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
@@ -81,11 +100,9 @@ jobs:
           if [ "${{ inputs.lang }}" != "auto" ]; then
             LANG_ARG="--lang ${{ inputs.lang }}"
           fi
-          # אם לא נבחר לפרסם — מסיר credentials כדי למנוע פרסום אוטומטי
-          if [ "${{ inputs.post_to_instagram }}" != "true" ]; then
-            export INSTAGRAM_USER_ID=""
-            export INSTAGRAM_PAGE_TOKEN=""
-          fi
+          # יצירה תמיד טיוטה; פרסום רק בהרצה נפרדת עם SHA מאושר
+          export INSTAGRAM_USER_ID=""
+          export INSTAGRAM_PAGE_TOKEN=""
           PHOTOS_ARG=""
           if [ -n "${{ inputs.photos }}" ]; then
             PHOTOS_ARG="--photos ${{ inputs.photos }}"
@@ -109,10 +126,19 @@ jobs:
             done
           fi
 
+      - name: מזהה קובץ הטיוטה לבדיקה
+        if: inputs.publish_existing != true
+        run: |
+          if [ -f reels_output/latest_reel.mp4 ]; then
+            sha256sum reels_output/latest_reel.mp4 | tee reels_output/latest_reel.sha256
+          fi
+
       - name: העלאת הסרטון כ-Artifact (גיבוי)
         uses: actions/upload-artifact@v4
         with:
           name: reel-${{ inputs.category }}
-          path: reels_output/*.mp4
+          path: |
+            reels_output/*.mp4
+            reels_output/latest_reel.sha256
           retention-days: 7
           if-no-files-found: warn
