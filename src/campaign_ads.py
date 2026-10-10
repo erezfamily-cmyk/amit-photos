@@ -5,6 +5,7 @@ an approved 15-second source clip and five Hebrew voice MP3 files.
 """
 import argparse
 import datetime as dt
+import hashlib
 import json
 import subprocess
 import tempfile
@@ -173,6 +174,8 @@ def main():
         render(plan, selected, args.source, args.audio_dir, args.output, month)
         output = args.output
     print(output)
+    if args.command == 'render':
+        print('SHA-256:', hashlib.sha256(output.read_bytes()).hexdigest())
 
 if __name__ == '__main__':
     main()
