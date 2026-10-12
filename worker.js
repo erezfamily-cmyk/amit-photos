@@ -2040,18 +2040,34 @@ async function handleDownload(request, env, token) {
   if (row.used) return jsonRes({ error: 'קישור זה כבר שומש' }, 410, request);
   if (Math.floor(Date.now() / 1000) > row.expires_at) return jsonRes({ error: 'פג תוקף הקישור' }, 410, request);
 
-  // Mark as used before serving (prevents reuse even if fetch fails)
-  await env.DB.prepare('UPDATE download_tokens SET used = 1 WHERE token = ?').bind(token).run();
-
-  // Get photo from D1
+  // Look up the file first: a missing object or an R2 read failure must not
+  // consume a paid, one-time token (the buyer can retry once it is fixed).
   const photoIds = JSON.parse(row.photo_ids);
   const photoId = photoIds[0];
   const photo = await env.DB.prepare('SELECT r2_key, title FROM photos WHERE id = ?').bind(photoId).first();
 
+  // Atomic claim: only the request whose UPDATE changes the row may serve the
+  // file, so two parallel downloads can never both succeed.
+  const claimToken = async () => {
+    const claim = await env.DB.prepare(
+      'UPDATE download_tokens SET used = 1 WHERE token = ? AND used = 0'
+    ).bind(token).run();
+    return Number(claim?.meta?.changes) > 0;
+  };
+
   // R2 photo
   if (photo?.r2_key) {
-    const object = await env.PHOTOS.get(photo.r2_key);
+    let object;
+    try {
+      object = await env.PHOTOS.get(photo.r2_key);
+    } catch {
+      return jsonRes({ error: 'שגיאה זמנית בקריאת הקובץ, נסו שוב' }, 503, request);
+    }
     if (!object) return jsonRes({ error: 'קובץ לא נמצא ב-R2' }, 404, request);
+    if (!await claimToken()) {
+      try { await object.body?.cancel?.(); } catch {}
+      return jsonRes({ error: 'קישור זה כבר שומש' }, 410, request);
+    }
     const filename = (photo.title || 'photo').replace(/[^\w\u0590-\u05ff .-]/g, '_') + '.jpg';
     return new Response(object.body, {
       headers: {
@@ -2063,6 +2079,7 @@ async function handleDownload(request, env, token) {
   }
 
   // Google Drive fallback — photo not in R2 yet
+  if (!await claimToken()) return jsonRes({ error: 'קישור זה כבר שומש' }, 410, request);
   const SZ_MAP = { small: 'w1500', medium: 'w3000', large: null };
   const sz = SZ_MAP[row.size];
   const driveUrl = sz

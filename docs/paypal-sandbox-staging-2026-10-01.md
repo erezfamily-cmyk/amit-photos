@@ -14,7 +14,7 @@
 - אין custom domain ואין route ל-`amitphotos.com`; משתמשים רק ב-workers.dev.
 - אין cron triggers.
 - PayPal API נשאר hard-coded ל-Sandbox.
-- `PAYMENTS_ENABLED=true` מותר **רק** ב-Worker של staging כדי לבדוק את ה-flow המזויף; production נשאר `false`.
+- ברירת המחדל ב-config של staging היא `PAYMENTS_ENABLED=false` (מ-12.10.2026): בדיקות Sandbox E2E רצות דרך `/api/admin/paypal/*` (מוגן ב-`checkAuth`, פועל גם כשהדגל כבוי), בלי לפתוח צ'קאאוט ציבורי. `PAYMENTS_ENABLED=true` ב-staging הוא החלטה מפורשת ונפרדת בדשבורד של ה-Worker של staging בלבד (נדרש רק לבדוק את נתיבי `/api/paypal/*` הציבוריים); production נשאר `false`.
 - Sandbox Client ID/Secret נשמרים כ-Secrets רק ב-Worker staging.
 - אין שימוש ב-PayPal Live credentials בשום שלב.
 
@@ -114,6 +114,18 @@ Full Node suite לאחר staging guard: **334/334 pass, 0 fail**.
 סטטוס: D1 staging מוכן ל-Worker staging ו-Sandbox E2E.
 
 ## Temporary config path fix — 12.10.2026
+
+### Native Preview configuration
+
+The original unpinned `wrangler preview` failed because the configuration had no `previews` block. The attempted `wrangler@4.4.0 versions upload` replacement passed local dry-run but failed remotely at the Worker identity check. A similar CI-tag issue is reported at https://github.com/cloudflare/workers-sdk/issues/15682; that report is a possible explanation, not proof of the account's cause. Do not unset `WRANGLER_CI_MATCH_TAG` to bypass the identity check.
+
+Generate a native Preview config with `--preview` and use Wrangler 4.149.0's Preview command:
+
+```bash
+python3 src/build_paypal_sandbox_config.py --database-id 7b027b93-c548-4ceb-bbe9-42c45264fc23 --preview --output /tmp/wrangler.paypal-sandbox-preview.json && npx --yes wrangler@4.149.0 preview --worker-name amit-photos-paypal-sandbox --config /tmp/wrangler.paypal-sandbox-preview.json
+```
+
+Set this only for the Sandbox Worker Preview command, and only on branches containing the updated helper. The Preview block explicitly uses Sandbox D1, R2 and Images; its public payment flag is false. Assets remain at the top level. Existing manual staging behavior is unchanged. Shared Preview secrets must be configured on Sandbox Previews Base separately before PayPal E2E. Local validation: 38/38 security/isolation tests and Wrangler 4.149.0 deploy dry-run passed. Native Preview creation cannot be tested locally without account access; remote verification is still pending.
 
 - Reproduced the manual deployment failure with Wrangler 4.4.0: copying the TOML to `/tmp` left `main = "worker.js"` relative to `/tmp`, producing `The entry-point file at "worker.js" was not found.` Assets also resolved to `/tmp` instead of the repository.
 - `src/build_paypal_sandbox_config.py` now generates a temporary JSON config with absolute repository paths. It validates the D1 UUID and rejects the production UUID before writing. The manual workflow consumes this generated config from `RUNNER_TEMP`.

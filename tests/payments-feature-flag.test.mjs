@@ -142,7 +142,7 @@ test('handleDownload still serves an already-issued valid token when payments ar
               }
               return null;
             },
-            run: async () => ({ success: true }),
+            run: async () => ({ success: true, meta: { changes: 1 } }),
           }),
         };
       },

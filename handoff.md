@@ -8,6 +8,225 @@
 
 ## Acquisition and caption quality review — 12.10.2026
 
+### Missing `CHECKOUT.ORDER.APPROVED` for order `8S923706NG623915A` — investigation (12.10.2026, ~20:25Z)
+
+**What D1 shows:** `paypal_webhook_events` has `CHECKOUT.ORDER.APPROVED` at 19:51:03Z (order 2), 19:55:16Z (order 3), 20:15:34Z (one order), and `PAYMENT.CAPTURE.COMPLETED` at 19:52:26Z, 20:16:56Z, 20:22:06Z. There is no approval event for `8S923706NG623915A` (PayPal API says it IS approved: `approveUrl:null`; capture succeeded). D1 only keeps events that were received, signature-verified and leased, so a failed or never-delivered event leaves no row.
+
+**What Cloudflare analytics shows (GraphQL `workersInvocationsAdaptive`, per-second, status + subrequest counts; no paths/bodies):** a webhook delivery looks like a request with 2–3 subrequests (PayPal token, verify, order GET).
+- Main Sandbox Worker (versions `82f58ffb` dash-flag deploy and `ebc08272` prep deploy): webhook-shaped requests at 20:15:33 (2 sub), 20:16:55 (3 sub) and 20:22:06 (3 sub) only, exactly matching the three stored events. Nothing after 20:22:06 up to 20:25:46Z. Around 20:19:02–20:19:42 (right after the 20:18:57 deploy) there was a burst of ~30 requests, almost all with 0 subrequests (page/asset loads, not webhooks) and one `scriptThrewException` at 20:19:06; the path is not visible, so it is undiagnosed.
+- Preview (versions `30688eb9`, `ffae6a83`, `fa4c2fc7`): between 20:19 and 20:22 only my own calls (2-subrequest lookup 20:21:23, lost-response capture 20:21:41, zero-subrequest retries 20:22:12/13). No webhook-shaped request.
+- Conclusion: **no webhook-shaped delivery for 8S92's approval reached either Worker**, and no retry arrived in the ~4 minutes after. The Workers never saw it, so the gap is on the delivery side (PayPal not sent/delayed/failed before reaching Cloudflare) or the destination configured at that moment. Neither a response code nor PayPal's retry schedule can be read from Cloudflare; PayPal's webhook event log is required.
+- Uncorrelated Worker exceptions (not payment calls: 0 subrequests, inside page-load bursts): Preview 19:52:13Z and 19:54:23Z, main 20:19:06Z. Not diagnosed; observability is disabled on both.
+
+**Webhook destination / `PAYPAL_WEBHOOK_ID` match (inferred, not read):** secrets cannot be read. Events delivered 20:15:33, 20:16:55 and 20:22:06 reached the main Sandbox Worker and were verified (verification only succeeds with the matching webhook id) and stored as processed, so the main Worker's `PAYPAL_WEBHOOK_ID` matches the webhook that currently delivers there and the current destination is the main Worker URL. The Preview verified events at 19:51:03, 19:52:26 and 19:55:15 while the webhook pointed at it, so its id matched the same subscription then. Both Workers hold a `PAYPAL_WEBHOOK_ID`; the Preview copy is now unused. To confirm the configured URL and id, read them in the PayPal dashboard (owner).
+
+**Which tests ran where:**
+- Preview (Sandbox, fixed code, fed by branch builds): everything E2E: status, create-order/idempotency/parallel/timeouts, capture (normal, duplicate, before approval, abort-before-completion + 5 parallel retries, lost-response after completion), real download + one-time token, cleanup dry-run/apply, forged-webhook rejection, webhook receipt for the first two approvals/captures while the URL pointed at it.
+- Main Sandbox Worker (1.10 `prep/...` code, no download-token fix): no E2E with credentials. Only unauthenticated `GET /api/payments-status` → `{"enabled":false}`, admin route 401, and it processed three real webhooks (approval 20:15:33, captures 20:16:55 and 20:22:06) with signature verification. The only changes made to it: dashboard flag edit (version `82f58ffb`) and commit `e69131f` build (version `ebc08272`).
+
+**Owner steps (PayPal Sandbox):** open https://developer.paypal.com/dashboard (switch to Sandbox) → left menu **Event Logs** → **Webhooks Events**; if the direct link https://developer.paypal.com/dashboard/webhooksEvents does not open, use the menu. Filter by event type `CHECKOUT.ORDER.APPROVED` and time around 20:15–20:25 UTC (23:15–23:25 Israel). Find the event whose resource id is `8S923706NG623915A`, open it and note: delivery status, number of delivery attempts, target URL(s), and each attempt's HTTP status/response. If no such event exists, note that. Also open Apps & Credentials → Default Application → **Webhooks** and note the webhook URL and the webhook id. If the event exists but failed, use **Resend** (safe: the handler ignores approval events and dedupes by event id) and tell Claude, who will confirm receipt in D1.
+
+### Item 11, scenario 2 — response lost AFTER the server completed: PASS (live, client-side simulation) — 12.10.2026 (night)
+
+Order `8S923706NG623915A`, approved by the owner (PayPal-side lookup `approveUrl:null`). Baseline before the test: order `CREATED`, no capture/token, `download_tokens`=5, `COMPLETED` orders=5, `PAYMENT.CAPTURE.COMPLETED` events=4.
+
+**How:** `lostresp.mjs` (kept outside the repo) opens a TLS connection to the Preview, sends one `capture-order` request, keeps the connection open for 12 s with no data handler (the response is never consumed by the client) and then closes the socket. Unlike the 0.3 s abort, the connection stays up, so the Worker is not cancelled and can finish normally.
+
+**Server state verified BEFORE any retry** (D1 read 20:22:01Z; request sent 20:21:41Z, socket closed 20:21:53Z):
+- order `COMPLETED`, `completed_at` 20:21:45Z (4 s after the request), capture id `4DK469867W176694H`, `fulfillment_token` `19a7f2c1…`, fulfillment JSON present;
+- `download_tokens` row `19a7f2c1…` for that capture (size small, `used=0`); tokens 5→6, completed orders 5→6.
+
+**Retries (client now reads the response):** two `capture-order` calls on the same order → both HTTP 200 with the same URL `/api/download/19a7f2c1-e473-41fe-9dee-1cdf68eda548`.
+
+**After the retries (D1 read 20:22:28Z):** order unchanged (`completed_at` still 20:21:45Z, same capture id); exactly 1 token for capture `4DK469867W176694H`; tokens total still 6; completed orders still 6; exactly 1 order carries that capture id; exactly **one** new `PAYMENT.CAPTURE.COMPLETED` event (20:22:06Z, processed, attempts 1) → one PayPal capture, one fulfillment, one token. No second capture or fulfillment was created.
+
+**Limits of this evidence:**
+- The "lost response" is simulated at the client (response left unread, connection then dropped); it is not real network packet loss or an edge failure. `bytesRead` reported 947, which is TLS/TCP-level buffering inside Node, not an application read; the application never processed the response.
+- Only one run, one order. The earlier 0.3 s abort (scenario 1, disconnect before completion) and this scenario together cover both orderings, each with live evidence.
+- The `CHECKOUT.ORDER.APPROVED` webhook for this order is NOT in D1 (the last approval event stored is 20:15:34Z for the previous order); the order is nonetheless approved per PayPal's API. Unexplained — possibly delivery during the 20:18:57Z redeploy or not retried yet; it does not affect this test, but it is a webhook-delivery gap to check in PayPal's webhook event log.
+
+**Remaining gaps (conditions to review before Live):** buyer-side decline not run; public `/api/paypal/*` checkout not exercised live; webhook receipt by the Preview is circumstantial and one approval webhook did not arrive; a transfer that fails mid-stream after the atomic claim still spends the token; main's own Sandbox Preview still has the stale command (fix after merge); main Sandbox Worker runs 1.10 code without the download-token fix; not Live-ready per `docs/paypal-reactivation-gate-2026-10-01.md`. PR #149 not merged; no real purchases.
+
+### Item 11 capture timeout/retry/parallel + gap 6 closed on `prep/...` — 12.10.2026 (night)
+
+**Order `5CE517938N245005R`** (approved by the owner; PayPal-side lookup `approveUrl:null`; webhook `CHECKOUT.ORDER.APPROVED` 20:15:34Z). Baseline: order `CREATED`, no capture/token, `download_tokens`=4.
+
+Two different failure modes, kept apart:
+1. **Client disconnect BEFORE the server completes — PASS (live evidence).** `curl --max-time 0.3` on `capture-order`: no response received (http 000, exit 28). Three D1 snapshots over ~15 s: order still `CREATED`, no capture id, no fulfillment token, tokens still 4, so the Worker did not complete the operation and left no partial state. Then 5 parallel retries of the same capture: all 5 returned HTTP 200 with the **same** download URL; D1 shows exactly **one** new `download_tokens` row (4→5, `909be6b8…`, tx = capture id `6M5954660W557714D`), exactly one capture id, order `COMPLETED` (20:16:44Z), and exactly **one** new `PAYMENT.CAPTURE.COMPLETED` webhook event (20:16:56Z, processed, attempts 1) — i.e. one PayPal capture, one fulfillment, one token.
+2. **Response lost AFTER the server completed — NOT proven live.** The 0.3 s abort did not reach completion, so it exercised case 1 only. Evidence for case 2 is limited to unit tests that simulate it (`capture-order recovers from ORDER_ALREADY_CAPTURED by reading the authoritative PayPal order`, `resume from FULFILLING reuses the locked fulfillment token`, `verified completed-capture webhook recovers a local digital order`, plus the earlier live repeat-capture-after-success returning the same token). A live proof needs a client that sends the request, lets the server finish, and discards the response (not an abort, because the Worker is cancelled on disconnect), against another approved order. Candidate: order `8S923706NG623915A` (created, not yet approved).
+
+Earlier live retry evidence (create-order) is unchanged: client abort at 0.25 s → request not completed → retry created 1 order; 5 parallel create-orders with one key → 1 order, 1 D1 row.
+
+**Gap 6 closed on the Sandbox Worker's Production branch (owner-approved):**
+- Commit `e69131f` on `prep/paypal-orders-v2-2026-10-01` changed only `wrangler.paypal-sandbox.toml` line 12: `PAYMENTS_ENABLED = "true"` → `"false"` (diff = 1 line; `keep_vars`, cleanup flag, bindings untouched).
+- It triggered Sandbox build `787462a9-79d7-45a3-aff4-7d49e4aec6c7` (`wrangler@4.4.0 deploy --config wrangler.paypal-sandbox.toml`): success, version `ebc08272-0fdc-4b04-a04b-6634fec46743`, deployed 20:18:57Z. Log lists `PAYMENTS_ENABLED: "false"`, `PAYPAL_SANDBOX_CLEANUP_ENABLED: "true"`.
+- After deploy: all four secrets and D1/R2/Images bindings intact; `https://amit-photos-paypal-sandbox.erez-family.workers.dev/api/payments-status` → `{"enabled":false}`; its admin route still 401 without a password; Preview and production also `false`.
+- Side checks: the commit also ran the `Workers Builds: amit-photos` check (success; a non-production-branch build of the production Worker's trigger); the production `amit-photos` Worker's latest deployment is still 2026-10-12 18:42:04Z (before this change), so production was not redeployed. PR #149 not merged; no real purchases.
+- Note: the main Sandbox Worker still runs the 1.10 `prep/...` code (no download-token fix) — only the flag changed.
+
+### Gap 6 (payment-flag default) and item 11 (timeout/retry) — 12.10.2026 (night)
+
+**Gap 6, partially closed.**
+- `wrangler.paypal-sandbox.example.toml` now ships `PAYMENTS_ENABLED = "false"` (E2E uses the admin routes, which work with the flag off); docs updated. Because the generator copies this TOML, the manual workflow output and Preview config now keep public checkout closed at top level too.
+- Manual workflow `.github/workflows/paypal-sandbox-staging.yml` audited: no `--var`, no `--define`, no env or step that sets `PAYMENTS_ENABLED`; its only mention is the guard that production `wrangler.toml` stays `"false"`; it deploys only the generated ephemeral config.
+- Regression tests (`tests/paypal-staging-isolation.test.mjs`): template has exactly one flag line equal to `"false"` (fails on the old TOML, verified); both generator modes emit top-level `vars.PAYMENTS_ENABLED === 'false'`; the workflow has no override and only deploys the generated config. `.github/workflows/node-tests.yml` now also runs `download-token-consumption` and `payments-feature-flag`, which were previously not in any PR CI.
+- **Still open — not changed on purpose:** the main Sandbox Worker's own Production build deploys `npx wrangler@4.4.0 deploy --config wrangler.paypal-sandbox.toml` from branch `prep/paypal-orders-v2-2026-10-01`. That file (not in this PR) still has `PAYMENTS_ENABLED = "true"` with `keep_vars = true`; `keep_vars` only stops deletion of dashboard-only vars, a var defined in the TOML is re-applied on deploy. So a push to `prep/...` re-opens public Sandbox checkout (the dashboard `false` is overwritten). Fix needs a one-line commit to `prep/...` (which would also trigger a Sandbox production build) — requires explicit approval; not done.
+
+**Item 11 (timeout/retry) — status and evidence**
+- Existing unit tests (CI green): create-order reuse for the same Idempotency-Key; resume from `FULFILLING` reuses the locked token; capture recovery from `ORDER_ALREADY_CAPTURED`; webhook stale-lease reclaim; lease release on processing failure; concurrent duplicate webhook.
+- Live on the Preview (Sandbox):
+  - Client timeout on create-order: `curl --max-time 0.25` aborted (exit 28, no response); retry with the same key → 201 `5CE517938N245005R`; third call → 200 `reused:true`; D1 has exactly 1 row for the key. Note: the abort cancelled the request before the Worker finished, so this proves safe retry after a cancelled request, not "server finished but client lost the response".
+  - Concurrent retries: 5 simultaneous create-orders with one key → one 201 and four 200 `reused:true`, a single PayPal order `8S923706NG623915A`, 1 D1 row.
+  - Capture retry after success (round 1 and 2): second capture returned the same token, token count unchanged.
+- **Not yet proven live:** capture with a client-side timeout followed by retry/parallel captures. Prepared: unapproved order `5CE517938N245005R` (owner approves via `https://www.sandbox.paypal.com/checkoutnow?token=5CE517938N245005R`; do NOT use order 3). Then Claude aborts a capture at ~0.25s, retries, and fires 5 parallel captures; pass = one fulfillment, one new `download_tokens` row, order `COMPLETED`.
+
+**Local test note:** 412 tests ran on this Windows machine with 4 failures (`admin-dialog-accessibility` ×2, `purchase-disabled-ux`, `social-attribution-links`); the same 4 fail on a clean `origin/main` checkout here (Windows/CRLF), and CI is green on Linux. `paypal-staging-isolation` needs `python3`, which is only a Store stub here, so it is verified by CI.
+
+### FINAL REPORT — PR #149 Sandbox Preview + PayPal Sandbox E2E (12.10.2026) — not merged
+
+**Verified (with evidence in the entries below):**
+- Root cause of the old Sandbox build command: each Worker Preview keeps its own copy of the base command taken when the Preview was created; this branch's Preview kept `wrangler@4.4.0 versions upload`. Fixed by updating only that Preview's command; build `3b7255d1…` then `230e0195…` ran `wrangler 4.149.0 preview --worker-name amit-photos-paypal-sandbox` and succeeded.
+- Native Preview isolation: Sandbox D1 `7b027b93-…`, R2 `amit-photos-paypal-sandbox-images`, Images, `PAYMENTS_ENABLED=false`; production D1 rejected by the generator. Worker is on Worker Previews; Production branch `prep/paypal-orders-v2-2026-10-01` and its production command were never changed.
+- PayPal Sandbox E2E through the admin-only routes with public payments off: sandbox-status, create-order (+ Idempotency-Key reuse, bad key), buyer approval, capture, order/token rows, **real file delivery** (6095-byte JPEG, byte-identical), one-time token (second GET 410), duplicate capture, capture before approval (502, order untouched), malformed/unknown ids (400/404), buyer cancel (no capture, no token, no approval event), webhook `CHECKOUT.ORDER.APPROVED` + `PAYMENT.CAPTURE.COMPLETED` received and processed (`processed=1`, attempts 1), forged webhook rejected (400/401), cleanup (dry-run, then exactly 3 abandoned 1.10 test orders deleted; completed orders/tokens/events untouched).
+- Code fix: `handleDownload` no longer burns the one-time token on a missing R2 object (404) or R2 read error (503) and claims it atomically (`UPDATE … WHERE used = 0`); the old code also let parallel requests both succeed. 7 new tests (6 fail on the old code). CI on `4b60b14`: all six checks green.
+- Payments flags at report time: main Sandbox Worker, the Preview and production `/api/payments-status` all `{"enabled":false}`. No production Worker/config/D1 data/route/cron change; no PayPal Live, no Gelato, no real purchase.
+
+**Remaining gaps (open):**
+1. **Buyer-side decline/negative card (item 10c) not run** (needs a Sandbox negative-testing buyer or card).
+2. **Webhook attribution is circumstantial.** D1 is shared and event rows hold no worker id; "received by the Preview" rests on the owner pointing the only webhook at the Preview plus timing. Not captured: PayPal's delivery log (200 from the Preview URL) and a live "Resend" showing `duplicate:true`. The webhook was restored to the main Sandbox Worker (owner-confirmed; not independently verifiable by Claude until the next event arrives).
+3. **Public checkout path not exercised live.** E2E used `/api/admin/paypal/*` with `PAYMENTS_ENABLED=false`. The public `/api/paypal/create-order|capture-order` routes (rate limit, CORS, payments gate) are covered only by unit tests; a live check would need the flag on, which was deliberately avoided.
+4. **Order `6WS827844D284583C` was approved by mistake and never captured** (inferred from webhook + `approveUrl:null`); it will expire; it stays `CREATED` in D1 until Sandbox cleanup removes it after 7 days.
+5. **Stale per-Preview commands.** Main's own Sandbox Preview (`0563e156…`) still runs `npx wrangler preview` and fails ("missing a previews block"), so `Workers Builds: amit-photos-paypal-sandbox` is red on `main`; fix after this PR merges (the helper on main lacks `--preview`). ~90 other Previews hold old snapshots; new Previews use Previews Base, which has no secrets, so each needs `wrangler preview secret put` before E2E.
+6. (Partially closed by commit 841acbf; the prep-branch TOML still has `"true"`, see the entry above.) **Main Sandbox Worker runs 1.10 code** (no download-token fix, last code deploy from `prep/...`). Its `PAYMENTS_ENABLED=false` was set in the dashboard, so **any redeploy from `prep/...` or the manual workflow re-applies `PAYMENTS_ENABLED="true"` from the TOML** (`wrangler.paypal-sandbox.example.toml` still has `"true"`). Decide whether to change the TOML default or only deploy with care.
+7. **Residual download risk:** if a transfer fails mid-stream after the atomic claim, the token is spent (rare; no replacement flow).
+8. **Preview `PAYPAL_WEBHOOK_ID` secret is now unused** (webhook points back to the main Sandbox Worker) and can be deleted with `wrangler preview secret delete` if desired. Local `python3` on the owner's PC is a broken Store stub, so Python-based tests only run in CI.
+9. **Not Live-ready.** Real-money activation still depends on `docs/paypal-reactivation-gate-2026-10-01.md` (digital-only flag separation, checkout UX, Live credentials/webhook, security gate). Nothing here changes that.
+
+**Next precise step for the owner:** review PR #149 and decide on merge (all checks green, mergeable). Then ask Claude to fix main's Sandbox Preview command. Optional before merge: screenshot PayPal's webhook delivery log, and run the decline test.
+
+### Item 9 (buyer cancel) — PASS on retest, order `7AT61812JF3543355` — 12.10.2026
+
+Owner opened the checkout for the new order and clicked Cancel without approving (the click itself is owner-attested: the cancel page is static and logs nothing). Server-side verification afterwards:
+- D1: order `7AT61812JF3543355` `CREATED`, `paypal_capture_id`/`fulfillment_token`/`fulfillment_json`/`completed_at` all empty; `download_tokens` count still 4.
+- Webhooks: no event received after 19:55:16Z (last is the earlier `CHECKOUT.ORDER.APPROVED`), so no approval or capture event for this order; PayPal sends none on cancel.
+- PayPal-side (read-only same-key lookup, no create/capture): `approveUrl` is still present, i.e. the order was never approved. **Contrast with order 3** (`6WS827844D284583C`), whose lookup returns `approveUrl:null`, which supports the earlier conclusion that order 3 was approved by mistake (still uncaptured, left to expire/cleanup).
+- `/api/paypal/cancelled` renders (200); production `/api/payments-status` still `{"enabled":false}`.
+- Item 9 therefore passes: cancel leaves no capture and no download token. Remaining: item 10c buyer-side decline (needs a Sandbox negative-testing card), restoring the PayPal Sandbox webhook URL to the main Sandbox Worker, PR #149 review/merge decision, and the final summary report.
+
+### Item 9 (buyer cancel) — first attempt inconclusive; order 3 was approved by mistake — 12.10.2026
+
+Owner opened the checkout for order `6WS827844D284583C` (created 19:53:01Z for the cancel test) and saw "PayPal Sandbox checkout cancelled — No capture was attempted", but may also have approved an order before cancelling. Read-only findings:
+- **Webhook events since 19:50Z:** `CHECKOUT.ORDER.APPROVED` 19:51:03Z (order `656160943N702021D`, the intended approval), `PAYMENT.CAPTURE.COMPLETED` 19:52:26Z (that same order), and a **second** `CHECKOUT.ORDER.APPROVED` at **19:55:16Z** (`WH-09230807HB7685528-…`, processed, attempts 1), i.e. an approval that happened after order 3 was created. PayPal sends no webhook for a cancel. D1 stores no order id per event, so the event itself does not name the order.
+- **D1:** order 3 `6WS827844D284583C` is `CREATED`, `paypal_capture_id` NULL, `fulfillment_token` NULL, `fulfillment_json` NULL, `completed_at` NULL; `download_tokens` count still 4 (no new token); the three other orders unchanged.
+- **PayPal-side status (read-only same-Idempotency-Key lookup, `reused:true`, no create/capture):** orders 1 (`51U86380482741620`), 2 (`656160943N702021D`) and 3 (`6WS827844D284583C`) all return `approveUrl:null`, meaning PayPal no longer offers a payer approval link. For a merely cancelled/unapproved order the link would still be present. Order 3 therefore behaves like an **approved** order; combined with the 19:55:16Z approval event and the fact that order 3 is the only order created after 19:51 that could still be approved (the 1.10 orders are expired), the best-supported conclusion is that **order 3 was approved, not cancelled**. Caveat: PayPal's order JSON was not read directly (no credentials for Claude); this is inferred.
+- The "cancelled" page is static (`handlePayPalCheckoutReturn` renders text only, touches no DB, carries no order id), so it proves nothing about which order was cancelled.
+- **Action taken:** no capture was attempted on order 3 (instructed not to). It stays approved-and-uncaptured and will expire; it can be ignored or removed by the Sandbox cleanup after 7 days (status `CREATED`, no capture).
+- **Retest:** new order `7AT61812JF3543355` created (key in `~/.sbx-e2e-key4`) for a clean cancel test: owner opens `https://www.sandbox.paypal.com/checkoutnow?token=7AT61812JF3543355` and clicks Cancel **without approving**. Pass criteria: no new `CHECKOUT.ORDER.APPROVED` event, order stays `CREATED` with no capture/token, `approveUrl` still present on a same-key lookup, token count still 4.
+
+### PayPal Sandbox E2E round 2 results — 12.10.2026 (evening, Preview on fixed code `4b60b14`)
+
+Preview: `https://docs-sandbox-preview-build-verificat-amit-photos-paypal-sandbox.erez-family.workers.dev`. Preview env: Sandbox D1/R2/Images, `PAYMENTS_ENABLED=false`, `PAYPAL_SANDBOX_CLEANUP_ENABLED=true`, secrets `ADMIN_PASSWORD`, `PAYPAL_CLIENT_ID`, `PAYPAL_CLIENT_SECRET`, `PAYPAL_WEBHOOK_ID` (names verified via API; the PayPal Sandbox webhook was re-pointed to the Preview by the owner). Order `656160943N702021D` (1 ILS = 100 agorot), approved by the owner.
+
+| # | Item | Result | Evidence |
+|---|------|--------|----------|
+| 4 | capture | PASS | 200 `{url:/api/download/b8867b6d-…}`; order `COMPLETED`, capture id set, `completed_at` 19:52:07Z |
+| 6 | token row | PASS | `download_tokens` +1 (total 4), size small, amount 1 |
+| 7 | real file delivery + one-time | **PASS** | 1st GET 200, `image/jpeg`, 6095 bytes, `Cache-Control: no-store`, attachment filename, byte-identical to the uploaded fixture; 2nd GET 410 "already used"; unknown token 404. Missing-file/R2-error/parallel behaviour covered by 7 unit tests (6/7 failed on the old code). |
+| 8 | duplicate capture | PASS | repeat capture → 200 same token; token count unchanged |
+| 10a | capture before buyer approval (order `6WS827844D284583C`) | PASS | 502 `PayPal capture failed`; order stays `CREATED`, no capture id, no fulfillment token |
+| 10b | malformed / unknown order id | PASS | 400 `paypalOrderId לא תקין`; 404 `הזמנה לא נמצאה` |
+| 11 | retry | PASS | same Idempotency-Key → `reused:true` (round 1); repeat capture idempotent (item 8) |
+| 12 | webhook in the Preview | PASS (see caveat) | After re-pointing the webhook, D1 shows `CHECKOUT.ORDER.APPROVED` (19:51:03Z) and `PAYMENT.CAPTURE.COMPLETED` (19:52:26Z, `WH-8GU83919VA6577722-3CK946710C332394Y`), both `processed=1`, `attempts=1`, received after the Preview deployment that added `PAYPAL_WEBHOOK_ID` (19:50:05Z). Live negative checks on the Preview: no PayPal headers → 400 `PAYPAL_WEBHOOK_HEADERS_MISSING`; forged headers → 401 `PAYPAL_WEBHOOK_SIGNATURE_INVALID` (the Preview called PayPal's verify endpoint with its own webhook id and was rejected). Unit tests also cover invalid signature, dedupe, stale lease, concurrent duplicate, recovery. **Caveat:** D1 is shared and rows carry no worker id; "received by the Preview" rests on the owner having switched the only webhook URL to the Preview plus the timing above. Optional stronger proof: PayPal dashboard → Webhooks events → the CAPTURE.COMPLETED event → delivery log (200 from the Preview URL); "Resend" should return `{"ok":true,"duplicate":true}`. |
+| 13 | cleanup | PASS | GET → 405; unauthenticated → 401; dry-run candidates `abandonedOrders:3, processedWebhookEvents:0`. A read-only D1 query showed those 3 were exactly the `CREATED` orders from 1.10 with no capture/token/`completed_at`, all for `paypal-sandbox-test-photo` (no order for any other photo exists in this D1). Apply deleted exactly 3 (`4BK91476MF489891N`, `3F137366PY9968258`, `6AR27897JN366411W`); completed orders (4), tokens (4) and webhook events (6) unchanged; second dry-run → 0 candidates. |
+| 14 | production unaffected | PASS (limited) | `https://amitphotos.com/api/payments-status` → `{"enabled":false}`; main Sandbox Worker and Preview also `false`. Production D1 `802379c7-…` was only read for table-name metadata (no data read or written by Claude); no production config, route, cron or payment change. |
+
+**Not yet done:**
+- Item 9 buyer cancel: order `6WS827844D284583C` is created and unapproved, ready for the owner to open `https://www.sandbox.paypal.com/checkoutnow?token=6WS827844D284583C` and click Cancel; then confirm `/api/paypal/cancelled` renders and the order stays `CREATED`.
+- Item 10c buyer-side decline: needs a Sandbox negative-testing buyer/card (owner action).
+- **Restore the PayPal Sandbox webhook URL to the main Sandbox Worker** (`https://amit-photos-paypal-sandbox.erez-family.workers.dev/api/paypal/webhook`) when testing is finished. Until then the main Sandbox Worker receives no events.
+- PR #149 still open and unmerged; CI on commit `4b60b14`: all six checks green (Sandbox and `amit-photos` Cloudflare builds, `paypal-orders-v2`, `lead-funnel`, `verify-live`, `python-data-tests`); final summary report pending.
+- After merge: fix main's own Sandbox Preview (`0563e156…`).
+
+### Round 2 (12.10.2026, late): download-token fix, R2 fixture, Preview redeploy — in progress
+
+- **Amount correction:** order amounts are stored in minor units; `amount_expected=100` means 100 agorot = **1 ILS** (not 100 ILS).
+- **Main Sandbox Worker:** owner set `PAYMENTS_ENABLED=false`; verified `/api/payments-status` → `{"enabled":false}`, admin route still 401 without password, all secrets/bindings intact. Preview and production also `false`.
+- **Code fix (commit `4b60b14`, PR #149):** `handleDownload` no longer consumes the token on a missing R2 object (404) or an R2 read error (503); it reads the object first, then claims the token with `UPDATE … WHERE used = 0` and requires `changes > 0`, so parallel requests cannot both succeed (losers get 410 and cancel their stream). Previously the mark-used step ran first and was non-atomic. New `tests/download-token-consumption.test.mjs` (7 tests: missing file, R2 failure, retry after restore, transient failure then retry, 5 parallel requests → exactly one 200 + four 410, used token short-circuit, Drive fallback). 7/7 pass on the fix; against the old code 6/7 fail (including the parallel case, so the race was real). `payments-feature-flag` (11) and `paypal-orders-v2` (31) pass locally; `paypal-staging-isolation` needs `python3` (broken Store stub on this PC), left to CI.
+- Sandbox-only Preview config now also sets `PAYPAL_SANDBOX_CLEANUP_ENABLED=true` (admin-authenticated, dry-run by default).
+- **R2 fixture uploaded** to `amit-photos-paypal-sandbox-images/paypal-sandbox-test.jpg` (6095 bytes, Sandbox bucket only).
+- **Preview rebuilt:** build `230e0195-987b-456a-90cc-aaa59c2c905a` on `4b60b14`, success, same `wrangler 4.149.0 preview` command; the three Preview secrets persisted across the redeploy; `PAYPAL_SANDBOX_CLEANUP_ENABLED=true`, `PAYMENTS_ENABLED=false` in the Preview env.
+- New order `656160943N702021D` created for the retest; awaiting buyer approval and the Preview webhook setup (see below). Results of items 7 (file delivery), 9–14 follow in the next entry.
+
+### PayPal Sandbox E2E items 1–8 on the PR Preview — 12.10.2026 (night)
+
+Target: Preview of this branch (`https://docs-sandbox-preview-build-verificat-amit-photos-paypal-sandbox.erez-family.workers.dev`), admin routes only, `PAYMENTS_ENABLED=false`, shared Sandbox D1 `7b027b93-…`. Preview secrets `ADMIN_PASSWORD`, `PAYPAL_CLIENT_ID`, `PAYPAL_CLIENT_SECRET` were added by the owner with `wrangler preview secret put --name <branch> --worker-name amit-photos-paypal-sandbox` (verified by name only via API). First credential entry failed PayPal auth (value problem); re-entered with trimming and passed. Order used: `51U86380482741620` (1 ILS test photo), approved by the owner with a Sandbox buyer.
+
+| # | Item | Result | Evidence |
+|---|------|--------|----------|
+| 1 | sandbox-status | PASS | `ok:true, environment:sandbox, paymentsEnabled:false, credentialsConfigured:true` (200); without password 401 |
+| 2 | create-order + Idempotency-Key | PASS | 201 `51U86380482741620` + approveUrl; same key → 200 `reused:true`, same id; invalid key → 400 |
+| 3 | buyer approval | PASS (manual) | Owner saw "PayPal Sandbox approval complete"; webhook `CHECKOUT.ORDER.APPROVED` stored `processed=1` at 16:25:44 |
+| 4 | capture | PASS | 200 `{url:/api/download/<token>, title}` |
+| 5 | `paypal_orders` | PASS | row `COMPLETED`, amount_expected=100 minor units (100 agorot = 1 ILS), capture id and fulfillment token present, `completed_at` set |
+| 6 | `download_tokens` | PASS | one new row (size small, amount 1, ~24h expiry, `used=0` before download); total 2→3 |
+| 7 | one-time download | PARTIAL | 1st GET → 404 `קובץ לא נמצא ב-R2`; 2nd GET → 410 `כבר שומש`; unknown token → 404. One-time semantics proven; **file delivery NOT proven** |
+| 8 | duplicate capture | PASS | 2nd capture → 200 same url/token; token count stayed 3, order still `COMPLETED` |
+
+**Blocker/finding for item 7:** the Sandbox R2 bucket `amit-photos-paypal-sandbox-images` is empty. The fixture photo row points to `r2_key=paypal-sandbox-test.jpg`, which does not exist. `handleDownload` (`worker.js`) marks the token `used` *before* reading R2 ("prevents reuse even if fetch fails"), so a missing file burns the buyer's token. This is the current design, not changed here. Product risk to consider before real payments: a transient R2 miss permanently consumes a paid download link. Consider marking used only after the object is found, or issuing a replacement.
+
+**Observed side facts:** the Sandbox D1 is shared by the Sandbox Worker and every Preview, and also holds earlier 1.10 test orders (2 other `COMPLETED`). The 16:25 webhook was received by a Worker holding `PAYPAL_WEBHOOK_ID` (only the main Sandbox Worker has it; the Preview does not) and was signature-verified and processed, so item 12 is partially evidenced against the main Sandbox Worker, not against the Preview. No `PAYMENT.CAPTURE.COMPLETED` event for the new capture had arrived at last check.
+
+**Still open:**
+- Items 9–14 not run. 9–10 need buyer-side cancel/decline actions by the owner; 11 timeout/retry design; 12 needs `PAYPAL_WEBHOOK_ID` on the Preview plus a Sandbox webhook pointing at it; 13 needs `PAYPAL_SANDBOX_CLEANUP_ENABLED=true` on the Preview; 14 final check below.
+- Upload a small test JPEG to R2 key `paypal-sandbox-test.jpg` in the Sandbox bucket (owner approval pending), then repeat create → approve → capture → download to prove file delivery and the full item 7.
+- Main Sandbox Worker `PAYMENTS_ENABLED` is still `true` (owner to set `false` in the dashboard, Production variables). Not done yet.
+- PR #149 stays open; main's Sandbox Preview fix deferred until after merge. No production change; production `/api/payments-status` was `{"enabled":false}`.
+
+### Sandbox Preview build root cause (corrected) and PayPal E2E readiness — 12.10.2026 (night)
+
+Supersedes the earlier "root cause found" entry, whose Production-branch concern was wrong.
+
+**Proven via Cloudflare API (read-only unless stated):**
+- The real Worker `amit-photos-paypal-sandbox` has script tag `cd58f34c813d48689b3f6b51223e511f`. It is already on Worker Previews (`previews_enabled=true`). Its Production branch is `prep/paypal-orders-v2-2026-10-01` with deploy command `npx wrangler@4.4.0 deploy --config wrangler.paypal-sandbox.toml`. **Both unchanged; there is no Production-branch discrepancy.** Last production deploy was 1.10 16:42 UTC.
+- Its **Previews Base** `deploy_command` is the intended 4.149.0 `--preview --worker-name` command (matches what the user saw in the dashboard).
+- Each Preview stores its own copy (`settings`) of the base command, captured when the Preview is created. The PR branch's Preview (`preview_id` `c3077f23a7fc47779eaaa1c86ebed24a`, created 12:26:26 UTC at the first push) kept the old `wrangler@4.4.0 versions upload` copy, so editing Previews Base did not affect it. That is why builds `0e7e335f`, `7eea2123` etc. ran the old command.
+- The Builds API presents a Preview's settings under that preview id as `external_script_id` / `production_settings`, which made it look like a Worker's production config. It is not. Earlier "production_settings changed / Production branch is the PR branch" statements were a misreading and are retracted.
+- **Change made:** PATCHed only that Preview's `deploy_command` to the 4.149.0 `--preview` command, then ran one manual build `3b7255d1-5a53-4868-8038-34b123970970` on `49e0629`: success, Preview URL `https://docs-sandbox-preview-build-verificat-amit-photos-paypal-sandbox.erez-family.workers.dev`, `/api/payments-status` = `{"enabled":false}`. Push-triggered build `4b07f3c5` on this docs commit was skipped (`[skip ci]`).
+- **Side finding:** the Preview for `main` (`0563e156…`) still has the stale `npx wrangler preview`; build `064d3438` fails with "missing a previews block", which is why `Workers Builds: amit-photos-paypal-sandbox` is red on main. The helper on main has no `--preview` option yet, so patch main's Preview only after PR #149 merges (needs explicit approval). 90+ other Previews hold old snapshots; they are only relevant if rebuilt.
+
+**PayPal Sandbox E2E readiness (plan: `docs/paypal-sandbox-staging-2026-10-01.md`; code: `paypal-orders.js`, `worker.js` ~L7978):**
+- Safe path exists: `/api/admin/paypal/{sandbox-status,create-order,capture-order,cleanup}` are behind `checkAuth` (session or `X-Admin-Password`) and run with `allowWhenPaymentsDisabled`. E2E therefore needs NO public enablement; keep `PAYMENTS_ENABLED=false`. Create-order returns an approve URL for the Sandbox buyer.
+- The Sandbox Worker itself (`amit-photos-paypal-sandbox.erez-family.workers.dev`) has all four secrets (`ADMIN_PASSWORD`, `PAYPAL_CLIENT_ID`, `PAYPAL_CLIENT_SECRET`, `PAYPAL_WEBHOOK_ID`) and `PAYPAL_SANDBOX_CLEANUP_ENABLED=true`, but ALSO `PAYMENTS_ENABLED=true`: `/api/payments-status` returns `{"enabled":true}` publicly (Sandbox PayPal only, fake money, running 1.10 prep-branch code). Not changed; owner should decide whether to close it.
+- The PR Preview has D1/R2/Images and `PAYMENTS_ENABLED=false` only. **No secrets**, so its admin routes and PayPal calls cannot work there until `ADMIN_PASSWORD` and the Sandbox `PAYPAL_CLIENT_ID`/`PAYPAL_CLIENT_SECRET` (and later `PAYPAL_WEBHOOK_ID`, `PAYPAL_SANDBOX_CLEANUP_ENABLED`) are added as Preview settings. Secret values are not available to Claude; the user must enter them.
+- Unauthenticated checks done: `/api/admin/paypal/sandbox-status` → 401 on both Sandbox hosts; production `/api/payments-status` → `{"enabled":false}`. Authenticated sandbox-status not run (no admin password).
+- Local Node tests did not complete on this machine (hang); CI and Codex verified tests on `49e0629`.
+
+**E2E checklist (run only against Sandbox, via admin routes):** 1 sandbox-status ok · 2 create-order with Idempotency-Key, same key again → `reused:true` · 3 approve with Sandbox buyer · 4 capture · 5 `paypal_orders` row captured · 6 `download_tokens` row · 7 one-time download works, second fails · 8 duplicate capture idempotent · 9 buyer cancel (`/api/paypal/cancelled`) · 10 decline/negative buyer · 11 timeout/retry · 12 webhook delivery + signature verification + replay dedupe (needs `PAYPAL_WEBHOOK_ID` for the URL under test) · 13 cleanup endpoint dry-run · 14 confirm prod D1 untouched and production `/api/payments-status` still false.
+
+**Exact next step for the owner:** decide target. Recommended: Preview of this branch. Add Preview secrets (`ADMIN_PASSWORD`, `PAYPAL_CLIENT_ID`, `PAYPAL_CLIENT_SECRET`; plus a Sandbox buyer account) in Cloudflare > Worker `amit-photos-paypal-sandbox` > Settings > Previews. Then Claude runs checklist items 1–8 through the admin routes. Not done and not authorized here: merge, `migrate_to_previews` (not needed — already migrated), any production change.
+
+### Cloudflare Sandbox Preview failure confirmed — 12.10.2026
+
+- Build `0e7e335f-a591-4f15-b52a-1fe8753e3b22` on head `75cfdd1` failed. The supplied full log proves it still executed Wrangler 4.4.0 `versions upload` without generator `--preview`, then failed the Worker name/identity check. It did NOT test the native Preview command. At 16:30–16:31 Asia/Jerusalem the user supplied the complete intended command after being asked to refresh, and confirmed the settings URL is `/workers/services/view/amit-photos-paypal-sandbox/production/settings#builds`. The screenshot shows the Sandbox name and no configured cron triggers. This documentation push checks the next build after that confirmation. If the old command persists, investigate the actual Builds trigger configuration rather than repeatedly editing code or assuming the user selected the wrong Worker. Native remote upload remains unverified; PR #149 is not ready to merge.
+
+- At 16:18 Asia/Jerusalem, the user supplied the complete native Preview command and a screenshot explicitly showing the Sandbox Previews Base / Preview command field. The previously failed build #22557f17 still executed Wrangler 4.4.0 versions upload, so it did NOT test the native Preview command. This push initiates a fresh verification after the field confirmation. Remote outcome pending.
+
+- At 16:06 Asia/Jerusalem on 12.10, the user confirmed saving the Sandbox native Preview command using generator `--preview`, Wrangler 4.149.0 and explicit `--worker-name amit-photos-paypal-sandbox`. This follow-up push on PR #149 verifies the newly saved settings with code containing the preview option. Remote outcome pending; no production configuration was changed.
+
+- Fresh verification commit `46f6028` failed both Cloudflare Preview checks; Business Live Verification passed. The supplied remote log confirms the replacement command executed but Wrangler 4.4.0 failed the Worker identity check. The user supplied a Sandbox deployments page URL; the supplied text log itself contains no Worker/build header. The initially suspected wrong-target explanation is not proven. A similar CI-tag failure is reported in Cloudflare workers-sdk issue #15682, also not account-specific proof.
+- PR #149 is expanded to implement native Preview configuration: generator `--preview` emits explicit Sandbox D1/R2/Images bindings and `PAYMENTS_ENABLED=false` under `previews`. Ordinary manual staging config remains unchanged. Use the documented Wrangler 4.149.0 native Preview command only for the Sandbox Worker and branches with the updated helper. Keep identity validation enabled. 38/38 security/isolation tests and current Wrangler deploy dry-run passed; authenticated native Preview upload remains unverified. No Live payments or production resource changes were performed.
+
+- User-provided Cloudflare build logs establish the actual failure: main build #88aa579d executed unpinned `npx wrangler preview`, installed Wrangler 4.149.0, and failed with a missing `previews` configuration block. Initialization, checkout and dependency installation completed; the earlier inference that failure happened before any build work was incorrect.
+- Cloudflare Settings screenshots show the Sandbox production branch remains `prep/paypal-orders-v2-2026-10-01`, using `npx wrangler@4.4.0 deploy --config wrangler.paypal-sandbox.toml`. That TOML exists on the prep branch and selects isolated Sandbox D1/R2. It does not exist on main. Production-branch settings were not changed.
+- Sandbox Preview builds were enabled with `npx wrangler preview`, no build command, and root `/`. The user saved and supplied the complete replacement Preview command:
+
+```bash
+python3 src/build_paypal_sandbox_config.py --database-id 7b027b93-c548-4ceb-bbe9-42c45264fc23 --output /tmp/wrangler.paypal-sandbox-preview.json && npx --yes wrangler@4.4.0 versions upload --config /tmp/wrangler.paypal-sandbox-preview.json
+```
+
+- The exact generated Sandbox configuration passed Wrangler 4.4.0 `versions upload --dry-run` locally. It selects D1 `7b027b93-c548-4ceb-bbe9-42c45264fc23` and R2 `amit-photos-paypal-sandbox-images`; no remote upload or payment occurred during this local check. `PAYMENTS_ENABLED=true` in that config is restricted to the Sandbox Worker; production remains false.
+- Retry build #0d36ad0c still executed the old `npx wrangler preview` command. Therefore the retry did not validate the replacement settings. A fresh branch push is now being used to verify the saved Preview command. Outcome pending; do not mark the remote failure resolved before successful remote logs/checks.
+
 ### Sandbox deployment investigation — 12.10.2026
 
 - Production build and deployment of main `1f53356` completed successfully after PR #147; the separate Cloudflare Sandbox build still fails.
