@@ -8,27 +8,29 @@
 
 ## Acquisition and caption quality review — 12.10.2026
 
-### RESUME HERE (written 12.10.2026 night; continue next day)
+### PayPal Sandbox E2E round 2 results — 12.10.2026 (evening, Preview on fixed code `4b60b14`)
 
-**State at stop:** PR #149 open, not merged, head includes download-token fix `4b60b14`. Preview `docs/sandbox-preview-build-verification-2026-10-12` is live on the fixed code with Sandbox D1/R2, `PAYMENTS_ENABLED=false`, secrets `ADMIN_PASSWORD`/`PAYPAL_CLIENT_ID`/`PAYPAL_CLIENT_SECRET`, and `PAYPAL_SANDBOX_CLEANUP_ENABLED=true`. R2 fixture `paypal-sandbox-test.jpg` is uploaded. All public payment flags are false (main Sandbox Worker, Preview, production).
+Preview: `https://docs-sandbox-preview-build-verificat-amit-photos-paypal-sandbox.erez-family.workers.dev`. Preview env: Sandbox D1/R2/Images, `PAYMENTS_ENABLED=false`, `PAYPAL_SANDBOX_CLEANUP_ENABLED=true`, secrets `ADMIN_PASSWORD`, `PAYPAL_CLIENT_ID`, `PAYPAL_CLIENT_SECRET`, `PAYPAL_WEBHOOK_ID` (names verified via API; the PayPal Sandbox webhook was re-pointed to the Preview by the owner). Order `656160943N702021D` (1 ILS = 100 agorot), approved by the owner.
 
-**Owner actions still pending (Claude cannot do these):**
-1. PayPal Sandbox dashboard → app → Webhooks: the existing webhook still points at the main Sandbox Worker. For the Preview webhook proof, edit its URL to `https://docs-sandbox-preview-build-verificat-amit-photos-paypal-sandbox.erez-family.workers.dev/api/paypal/webhook` (events: order approved, capture completed), so only the Preview receives events (the D1 is shared; two receivers would make it impossible to tell who processed an event). Copy the Webhook ID.
-2. `wrangler preview secret put PAYPAL_WEBHOOK_ID --name "docs/sandbox-preview-build-verification-2026-10-12" --worker-name amit-photos-paypal-sandbox` from the empty `~/sbx` folder (hidden input, trimmed).
-3. Approve the buyer checkout for a fresh order (order `656160943N702021D` was created 12.10 and may have expired; create a new one with a new Idempotency-Key if capture says not approved/expired).
-4. **After testing, restore the webhook URL** to `https://amit-photos-paypal-sandbox.erez-family.workers.dev/api/paypal/webhook` (otherwise the main Sandbox Worker stops receiving events).
+| # | Item | Result | Evidence |
+|---|------|--------|----------|
+| 4 | capture | PASS | 200 `{url:/api/download/b8867b6d-…}`; order `COMPLETED`, capture id set, `completed_at` 19:52:07Z |
+| 6 | token row | PASS | `download_tokens` +1 (total 4), size small, amount 1 |
+| 7 | real file delivery + one-time | **PASS** | 1st GET 200, `image/jpeg`, 6095 bytes, `Cache-Control: no-store`, attachment filename, byte-identical to the uploaded fixture; 2nd GET 410 "already used"; unknown token 404. Missing-file/R2-error/parallel behaviour covered by 7 unit tests (6/7 failed on the old code). |
+| 8 | duplicate capture | PASS | repeat capture → 200 same token; token count unchanged |
+| 10a | capture before buyer approval (order `6WS827844D284583C`) | PASS | 502 `PayPal capture failed`; order stays `CREATED`, no capture id, no fulfillment token |
+| 10b | malformed / unknown order id | PASS | 400 `paypalOrderId לא תקין`; 404 `הזמנה לא נמצאה` |
+| 11 | retry | PASS | same Idempotency-Key → `reused:true` (round 1); repeat capture idempotent (item 8) |
+| 12 | webhook in the Preview | PASS (see caveat) | After re-pointing the webhook, D1 shows `CHECKOUT.ORDER.APPROVED` (19:51:03Z) and `PAYMENT.CAPTURE.COMPLETED` (19:52:26Z, `WH-8GU83919VA6577722-3CK946710C332394Y`), both `processed=1`, `attempts=1`, received after the Preview deployment that added `PAYPAL_WEBHOOK_ID` (19:50:05Z). Live negative checks on the Preview: no PayPal headers → 400 `PAYPAL_WEBHOOK_HEADERS_MISSING`; forged headers → 401 `PAYPAL_WEBHOOK_SIGNATURE_INVALID` (the Preview called PayPal's verify endpoint with its own webhook id and was rejected). Unit tests also cover invalid signature, dedupe, stale lease, concurrent duplicate, recovery. **Caveat:** D1 is shared and rows carry no worker id; "received by the Preview" rests on the owner having switched the only webhook URL to the Preview plus the timing above. Optional stronger proof: PayPal dashboard → Webhooks events → the CAPTURE.COMPLETED event → delivery log (200 from the Preview URL); "Resend" should return `{"ok":true,"duplicate":true}`. |
+| 13 | cleanup | PASS | GET → 405; unauthenticated → 401; dry-run candidates `abandonedOrders:3, processedWebhookEvents:0`. A read-only D1 query showed those 3 were exactly the `CREATED` orders from 1.10 with no capture/token/`completed_at`, all for `paypal-sandbox-test-photo` (no order for any other photo exists in this D1). Apply deleted exactly 3 (`4BK91476MF489891N`, `3F137366PY9968258`, `6AR27897JN366411W`); completed orders (4), tokens (4) and webhook events (6) unchanged; second dry-run → 0 candidates. |
+| 14 | production unaffected | PASS (limited) | `https://amitphotos.com/api/payments-status` → `{"enabled":false}`; main Sandbox Worker and Preview also `false`. Production D1 `802379c7-…` was only read for table-name metadata (no data read or written by Claude); no production config, route, cron or payment change. |
 
-**Claude's next steps once 1–3 are done:**
-- Capture via `POST /api/admin/paypal/capture-order` and download `/api/download/<token>`: expect a real JPEG (200, `image/jpeg`), second GET 410. Also prove: a request for a token whose R2 object is missing leaves `used=0` (covered by unit tests; optionally repeat live by temporarily using another photo row).
-- Item 12: confirm a verified `PAYMENT.CAPTURE.COMPLETED` row in `paypal_webhook_events` (`processed=1`) received by the Preview, plus PayPal's webhook delivery log (200). Replay from PayPal's dashboard should return `duplicate:true`. Local unit tests already cover invalid signature, dedupe, stale lease, concurrent duplicate and recovery.
-- Items 9–10: owner cancels once and uses a declining Sandbox buyer; 11: retry/timeout by re-sending the same Idempotency-Key and capture.
-- Item 13 cleanup: it deletes only `paypal_orders` with `status='CREATED'`, no capture, no fulfillment token, no `completed_at`, older than 7 days, and `paypal_webhook_events` with `processed=1` older than 90 days. It never touches `download_tokens` or completed orders. Run `POST /api/admin/paypal/cleanup` with `{}` (dry-run), compare candidates with a read-only D1 query (all must be Sandbox test-photo orders), and only then `{"apply":true}`.
-- Item 14: production `/api/payments-status` still `false`; production D1 `802379c7-…` untouched.
-- Then write the summary report and update this handoff.
-
-**Local helpers (this PC, not in the repo):** `~/.sbx-admin-pw` (Preview admin password; never print it), `~/.sbx-e2e-key`, `~/.sbx-e2e-key2` (idempotency keys), `~/sbx/paypal-sandbox-test.jpg`. Wrangler is logged in as `erez.family@gmail.com`. Local `python3` is a broken Store stub (hangs), so Python-dependent tests run only in CI.
-
-**Deferred / not authorized:** merge of PR #149; fixing main's own Sandbox Preview (`0563e156…`, stale `npx wrangler preview`) after merge; any production change; PayPal Live; Gelato; `migrate_to_previews` (not needed). Open product notes: the download-token tradeoff is now resolved in code (token consumed only after the file is found and the claim succeeds); a stream that fails mid-transfer after the claim still spends the token.
+**Not yet done:**
+- Item 9 buyer cancel: order `6WS827844D284583C` is created and unapproved, ready for the owner to open `https://www.sandbox.paypal.com/checkoutnow?token=6WS827844D284583C` and click Cancel; then confirm `/api/paypal/cancelled` renders and the order stays `CREATED`.
+- Item 10c buyer-side decline: needs a Sandbox negative-testing buyer/card (owner action).
+- **Restore the PayPal Sandbox webhook URL to the main Sandbox Worker** (`https://amit-photos-paypal-sandbox.erez-family.workers.dev/api/paypal/webhook`) when testing is finished. Until then the main Sandbox Worker receives no events.
+- PR #149 still open and unmerged; CI result for commit `4b60b14` (incl. `paypal-staging-isolation`, which needs Python) not yet reviewed here; final summary report pending.
+- After merge: fix main's own Sandbox Preview (`0563e156…`).
 
 ### Round 2 (12.10.2026, late): download-token fix, R2 fixture, Preview redeploy — in progress
 
