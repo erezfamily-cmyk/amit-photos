@@ -8,6 +8,16 @@
 
 ## Acquisition and caption quality review — 12.10.2026
 
+### Item 9 (buyer cancel) — first attempt inconclusive; order 3 was approved by mistake — 12.10.2026
+
+Owner opened the checkout for order `6WS827844D284583C` (created 19:53:01Z for the cancel test) and saw "PayPal Sandbox checkout cancelled — No capture was attempted", but may also have approved an order before cancelling. Read-only findings:
+- **Webhook events since 19:50Z:** `CHECKOUT.ORDER.APPROVED` 19:51:03Z (order `656160943N702021D`, the intended approval), `PAYMENT.CAPTURE.COMPLETED` 19:52:26Z (that same order), and a **second** `CHECKOUT.ORDER.APPROVED` at **19:55:16Z** (`WH-09230807HB7685528-…`, processed, attempts 1), i.e. an approval that happened after order 3 was created. PayPal sends no webhook for a cancel. D1 stores no order id per event, so the event itself does not name the order.
+- **D1:** order 3 `6WS827844D284583C` is `CREATED`, `paypal_capture_id` NULL, `fulfillment_token` NULL, `fulfillment_json` NULL, `completed_at` NULL; `download_tokens` count still 4 (no new token); the three other orders unchanged.
+- **PayPal-side status (read-only same-Idempotency-Key lookup, `reused:true`, no create/capture):** orders 1 (`51U86380482741620`), 2 (`656160943N702021D`) and 3 (`6WS827844D284583C`) all return `approveUrl:null`, meaning PayPal no longer offers a payer approval link. For a merely cancelled/unapproved order the link would still be present. Order 3 therefore behaves like an **approved** order; combined with the 19:55:16Z approval event and the fact that order 3 is the only order created after 19:51 that could still be approved (the 1.10 orders are expired), the best-supported conclusion is that **order 3 was approved, not cancelled**. Caveat: PayPal's order JSON was not read directly (no credentials for Claude); this is inferred.
+- The "cancelled" page is static (`handlePayPalCheckoutReturn` renders text only, touches no DB, carries no order id), so it proves nothing about which order was cancelled.
+- **Action taken:** no capture was attempted on order 3 (instructed not to). It stays approved-and-uncaptured and will expire; it can be ignored or removed by the Sandbox cleanup after 7 days (status `CREATED`, no capture).
+- **Retest:** new order `7AT61812JF3543355` created (key in `~/.sbx-e2e-key4`) for a clean cancel test: owner opens `https://www.sandbox.paypal.com/checkoutnow?token=7AT61812JF3543355` and clicks Cancel **without approving**. Pass criteria: no new `CHECKOUT.ORDER.APPROVED` event, order stays `CREATED` with no capture/token, `approveUrl` still present on a same-key lookup, token count still 4.
+
 ### PayPal Sandbox E2E round 2 results — 12.10.2026 (evening, Preview on fixed code `4b60b14`)
 
 Preview: `https://docs-sandbox-preview-build-verificat-amit-photos-paypal-sandbox.erez-family.workers.dev`. Preview env: Sandbox D1/R2/Images, `PAYMENTS_ENABLED=false`, `PAYPAL_SANDBOX_CLEANUP_ENABLED=true`, secrets `ADMIN_PASSWORD`, `PAYPAL_CLIENT_ID`, `PAYPAL_CLIENT_SECRET`, `PAYPAL_WEBHOOK_ID` (names verified via API; the PayPal Sandbox webhook was re-pointed to the Preview by the owner). Order `656160943N702021D` (1 ILS = 100 agorot), approved by the owner.
