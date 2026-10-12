@@ -10,6 +10,8 @@
 
 ### Cloudflare Sandbox Preview failure confirmed — 12.10.2026
 
+- At 16:06 Asia/Jerusalem on 12.10, the user confirmed saving the Sandbox native Preview command using generator `--preview`, Wrangler 4.149.0 and explicit `--worker-name amit-photos-paypal-sandbox`. This follow-up push on PR #149 verifies the newly saved settings with code containing the preview option. Remote outcome pending; no production configuration was changed.
+
 - Fresh verification commit `46f6028` failed both Cloudflare Preview checks; Business Live Verification passed. The supplied remote log confirms the replacement command executed but Wrangler 4.4.0 failed the Worker identity check. The user supplied a Sandbox deployments page URL; the supplied text log itself contains no Worker/build header. The initially suspected wrong-target explanation is not proven. A similar CI-tag failure is reported in Cloudflare workers-sdk issue #15682, also not account-specific proof.
 - PR #149 is expanded to implement native Preview configuration: generator `--preview` emits explicit Sandbox D1/R2/Images bindings and `PAYMENTS_ENABLED=false` under `previews`. Ordinary manual staging config remains unchanged. Use the documented Wrangler 4.149.0 native Preview command only for the Sandbox Worker and branches with the updated helper. Keep identity validation enabled. 38/38 security/isolation tests and current Wrangler deploy dry-run passed; authenticated native Preview upload remains unverified. No Live payments or production resource changes were performed.
 
