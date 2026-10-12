@@ -10,6 +10,8 @@
 
 ### Cloudflare Sandbox Preview failure confirmed — 12.10.2026
 
+- At 16:18 Asia/Jerusalem, the user supplied the complete native Preview command and a screenshot explicitly showing the Sandbox Previews Base / Preview command field. The previously failed build #22557f17 still executed Wrangler 4.4.0 versions upload, so it did NOT test the native Preview command. This push initiates a fresh verification after the field confirmation. Remote outcome pending.
+
 - At 16:06 Asia/Jerusalem on 12.10, the user confirmed saving the Sandbox native Preview command using generator `--preview`, Wrangler 4.149.0 and explicit `--worker-name amit-photos-paypal-sandbox`. This follow-up push on PR #149 verifies the newly saved settings with code containing the preview option. Remote outcome pending; no production configuration was changed.
 
 - Fresh verification commit `46f6028` failed both Cloudflare Preview checks; Business Live Verification passed. The supplied remote log confirms the replacement command executed but Wrangler 4.4.0 failed the Worker identity check. The user supplied a Sandbox deployments page URL; the supplied text log itself contains no Worker/build header. The initially suspected wrong-target explanation is not proven. A similar CI-tag failure is reported in Cloudflare workers-sdk issue #15682, also not account-specific proof.
