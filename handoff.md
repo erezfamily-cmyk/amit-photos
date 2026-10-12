@@ -29,7 +29,7 @@ Preview: `https://docs-sandbox-preview-build-verificat-amit-photos-paypal-sandbo
 - Item 9 buyer cancel: order `6WS827844D284583C` is created and unapproved, ready for the owner to open `https://www.sandbox.paypal.com/checkoutnow?token=6WS827844D284583C` and click Cancel; then confirm `/api/paypal/cancelled` renders and the order stays `CREATED`.
 - Item 10c buyer-side decline: needs a Sandbox negative-testing buyer/card (owner action).
 - **Restore the PayPal Sandbox webhook URL to the main Sandbox Worker** (`https://amit-photos-paypal-sandbox.erez-family.workers.dev/api/paypal/webhook`) when testing is finished. Until then the main Sandbox Worker receives no events.
-- PR #149 still open and unmerged; CI result for commit `4b60b14` (incl. `paypal-staging-isolation`, which needs Python) not yet reviewed here; final summary report pending.
+- PR #149 still open and unmerged; CI on commit `4b60b14`: all six checks green (Sandbox and `amit-photos` Cloudflare builds, `paypal-orders-v2`, `lead-funnel`, `verify-live`, `python-data-tests`); final summary report pending.
 - After merge: fix main's own Sandbox Preview (`0563e156…`).
 
 ### Round 2 (12.10.2026, late): download-token fix, R2 fixture, Preview redeploy — in progress
