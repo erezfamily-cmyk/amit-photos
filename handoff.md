@@ -10,6 +10,8 @@
 
 ### Cloudflare Sandbox Preview failure confirmed — 12.10.2026
 
+- Build `0e7e335f-a591-4f15-b52a-1fe8753e3b22` on head `75cfdd1` failed. The supplied full log proves it still executed Wrangler 4.4.0 `versions upload` without generator `--preview`, then failed the Worker name/identity check. It did NOT test the native Preview command. At 16:30–16:31 Asia/Jerusalem the user supplied the complete intended command after being asked to refresh, and confirmed the settings URL is `/workers/services/view/amit-photos-paypal-sandbox/production/settings#builds`. The screenshot shows the Sandbox name and no configured cron triggers. This documentation push checks the next build after that confirmation. If the old command persists, investigate the actual Builds trigger configuration rather than repeatedly editing code or assuming the user selected the wrong Worker. Native remote upload remains unverified; PR #149 is not ready to merge.
+
 - At 16:18 Asia/Jerusalem, the user supplied the complete native Preview command and a screenshot explicitly showing the Sandbox Previews Base / Preview command field. The previously failed build #22557f17 still executed Wrangler 4.4.0 versions upload, so it did NOT test the native Preview command. This push initiates a fresh verification after the field confirmation. Remote outcome pending.
 
 - At 16:06 Asia/Jerusalem on 12.10, the user confirmed saving the Sandbox native Preview command using generator `--preview`, Wrangler 4.149.0 and explicit `--worker-name amit-photos-paypal-sandbox`. This follow-up push on PR #149 verifies the newly saved settings with code containing the preview option. Remote outcome pending; no production configuration was changed.
