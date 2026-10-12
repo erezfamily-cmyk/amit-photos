@@ -19,7 +19,10 @@ test('native Previews explicitly bind Sandbox storage and disable public payment
     assert.equal(result.status, 0, result.stderr);
     const config = JSON.parse(await readFile(output, 'utf8'));
     assert.equal(config.name, 'amit-photos-paypal-sandbox');
-    assert.deepEqual(config.previews.vars, { PAYMENTS_ENABLED: 'false' });
+    assert.deepEqual(config.previews.vars, {
+      PAYMENTS_ENABLED: 'false',
+      PAYPAL_SANDBOX_CLEANUP_ENABLED: 'true',
+    });
     assert.deepEqual(config.previews.d1_databases, config.d1_databases);
     assert.deepEqual(config.previews.r2_buckets, config.r2_buckets);
     assert.deepEqual(config.previews.images, config.images);

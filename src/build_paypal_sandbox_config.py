@@ -23,7 +23,9 @@ def build_config(database_id, preview=False):
         # Native Previews do not inherit storage bindings or vars.
         # Retain test resources explicitly and keep public checkout closed.
         config["previews"] = {
-            "vars": {"PAYMENTS_ENABLED": "false"},
+            # Cleanup stays admin-authenticated and dry-run by default; it only
+            # exists in this Sandbox-only helper, never in the production config.
+            "vars": {"PAYMENTS_ENABLED": "false", "PAYPAL_SANDBOX_CLEANUP_ENABLED": "true"},
             "d1_databases": deepcopy(config["d1_databases"]),
             "r2_buckets": deepcopy(config["r2_buckets"]),
             "images": deepcopy(config["images"]),
