@@ -8,6 +8,31 @@
 
 ## Acquisition and caption quality review — 12.10.2026
 
+### PayPal Sandbox E2E items 1–8 on the PR Preview — 12.10.2026 (night)
+
+Target: Preview of this branch (`https://docs-sandbox-preview-build-verificat-amit-photos-paypal-sandbox.erez-family.workers.dev`), admin routes only, `PAYMENTS_ENABLED=false`, shared Sandbox D1 `7b027b93-…`. Preview secrets `ADMIN_PASSWORD`, `PAYPAL_CLIENT_ID`, `PAYPAL_CLIENT_SECRET` were added by the owner with `wrangler preview secret put --name <branch> --worker-name amit-photos-paypal-sandbox` (verified by name only via API). First credential entry failed PayPal auth (value problem); re-entered with trimming and passed. Order used: `51U86380482741620` (1 ILS test photo), approved by the owner with a Sandbox buyer.
+
+| # | Item | Result | Evidence |
+|---|------|--------|----------|
+| 1 | sandbox-status | PASS | `ok:true, environment:sandbox, paymentsEnabled:false, credentialsConfigured:true` (200); without password 401 |
+| 2 | create-order + Idempotency-Key | PASS | 201 `51U86380482741620` + approveUrl; same key → 200 `reused:true`, same id; invalid key → 400 |
+| 3 | buyer approval | PASS (manual) | Owner saw "PayPal Sandbox approval complete"; webhook `CHECKOUT.ORDER.APPROVED` stored `processed=1` at 16:25:44 |
+| 4 | capture | PASS | 200 `{url:/api/download/<token>, title}` |
+| 5 | `paypal_orders` | PASS | row `COMPLETED`, amount 100 ILS, capture id and fulfillment token present, `completed_at` set |
+| 6 | `download_tokens` | PASS | one new row (size small, amount 1, ~24h expiry, `used=0` before download); total 2→3 |
+| 7 | one-time download | PARTIAL | 1st GET → 404 `קובץ לא נמצא ב-R2`; 2nd GET → 410 `כבר שומש`; unknown token → 404. One-time semantics proven; **file delivery NOT proven** |
+| 8 | duplicate capture | PASS | 2nd capture → 200 same url/token; token count stayed 3, order still `COMPLETED` |
+
+**Blocker/finding for item 7:** the Sandbox R2 bucket `amit-photos-paypal-sandbox-images` is empty. The fixture photo row points to `r2_key=paypal-sandbox-test.jpg`, which does not exist. `handleDownload` (`worker.js`) marks the token `used` *before* reading R2 ("prevents reuse even if fetch fails"), so a missing file burns the buyer's token. This is the current design, not changed here. Product risk to consider before real payments: a transient R2 miss permanently consumes a paid download link. Consider marking used only after the object is found, or issuing a replacement.
+
+**Observed side facts:** the Sandbox D1 is shared by the Sandbox Worker and every Preview, and also holds earlier 1.10 test orders (2 other `COMPLETED`). The 16:25 webhook was received by a Worker holding `PAYPAL_WEBHOOK_ID` (only the main Sandbox Worker has it; the Preview does not) and was signature-verified and processed, so item 12 is partially evidenced against the main Sandbox Worker, not against the Preview. No `PAYMENT.CAPTURE.COMPLETED` event for the new capture had arrived at last check.
+
+**Still open:**
+- Items 9–14 not run. 9–10 need buyer-side cancel/decline actions by the owner; 11 timeout/retry design; 12 needs `PAYPAL_WEBHOOK_ID` on the Preview plus a Sandbox webhook pointing at it; 13 needs `PAYPAL_SANDBOX_CLEANUP_ENABLED=true` on the Preview; 14 final check below.
+- Upload a small test JPEG to R2 key `paypal-sandbox-test.jpg` in the Sandbox bucket (owner approval pending), then repeat create → approve → capture → download to prove file delivery and the full item 7.
+- Main Sandbox Worker `PAYMENTS_ENABLED` is still `true` (owner to set `false` in the dashboard, Production variables). Not done yet.
+- PR #149 stays open; main's Sandbox Preview fix deferred until after merge. No production change; production `/api/payments-status` was `{"enabled":false}`.
+
 ### Sandbox Preview build root cause (corrected) and PayPal E2E readiness — 12.10.2026 (night)
 
 Supersedes the earlier "root cause found" entry, whose Production-branch concern was wrong.
