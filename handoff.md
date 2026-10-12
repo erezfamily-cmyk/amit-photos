@@ -8,6 +8,24 @@
 
 ## Acquisition and caption quality review — 12.10.2026
 
+### Gap 6 (payment-flag default) and item 11 (timeout/retry) — 12.10.2026 (night)
+
+**Gap 6, partially closed.**
+- `wrangler.paypal-sandbox.example.toml` now ships `PAYMENTS_ENABLED = "false"` (E2E uses the admin routes, which work with the flag off); docs updated. Because the generator copies this TOML, the manual workflow output and Preview config now keep public checkout closed at top level too.
+- Manual workflow `.github/workflows/paypal-sandbox-staging.yml` audited: no `--var`, no `--define`, no env or step that sets `PAYMENTS_ENABLED`; its only mention is the guard that production `wrangler.toml` stays `"false"`; it deploys only the generated ephemeral config.
+- Regression tests (`tests/paypal-staging-isolation.test.mjs`): template has exactly one flag line equal to `"false"` (fails on the old TOML, verified); both generator modes emit top-level `vars.PAYMENTS_ENABLED === 'false'`; the workflow has no override and only deploys the generated config. `.github/workflows/node-tests.yml` now also runs `download-token-consumption` and `payments-feature-flag`, which were previously not in any PR CI.
+- **Still open — not changed on purpose:** the main Sandbox Worker's own Production build deploys `npx wrangler@4.4.0 deploy --config wrangler.paypal-sandbox.toml` from branch `prep/paypal-orders-v2-2026-10-01`. That file (not in this PR) still has `PAYMENTS_ENABLED = "true"` with `keep_vars = true`; `keep_vars` only stops deletion of dashboard-only vars, a var defined in the TOML is re-applied on deploy. So a push to `prep/...` re-opens public Sandbox checkout (the dashboard `false` is overwritten). Fix needs a one-line commit to `prep/...` (which would also trigger a Sandbox production build) — requires explicit approval; not done.
+
+**Item 11 (timeout/retry) — status and evidence**
+- Existing unit tests (CI green): create-order reuse for the same Idempotency-Key; resume from `FULFILLING` reuses the locked token; capture recovery from `ORDER_ALREADY_CAPTURED`; webhook stale-lease reclaim; lease release on processing failure; concurrent duplicate webhook.
+- Live on the Preview (Sandbox):
+  - Client timeout on create-order: `curl --max-time 0.25` aborted (exit 28, no response); retry with the same key → 201 `5CE517938N245005R`; third call → 200 `reused:true`; D1 has exactly 1 row for the key. Note: the abort cancelled the request before the Worker finished, so this proves safe retry after a cancelled request, not "server finished but client lost the response".
+  - Concurrent retries: 5 simultaneous create-orders with one key → one 201 and four 200 `reused:true`, a single PayPal order `8S923706NG623915A`, 1 D1 row.
+  - Capture retry after success (round 1 and 2): second capture returned the same token, token count unchanged.
+- **Not yet proven live:** capture with a client-side timeout followed by retry/parallel captures. Prepared: unapproved order `5CE517938N245005R` (owner approves via `https://www.sandbox.paypal.com/checkoutnow?token=5CE517938N245005R`; do NOT use order 3). Then Claude aborts a capture at ~0.25s, retries, and fires 5 parallel captures; pass = one fulfillment, one new `download_tokens` row, order `COMPLETED`.
+
+**Local test note:** 412 tests ran on this Windows machine with 4 failures (`admin-dialog-accessibility` ×2, `purchase-disabled-ux`, `social-attribution-links`); the same 4 fail on a clean `origin/main` checkout here (Windows/CRLF), and CI is green on Linux. `paypal-staging-isolation` needs `python3`, which is only a Store stub here, so it is verified by CI.
+
 ### FINAL REPORT — PR #149 Sandbox Preview + PayPal Sandbox E2E (12.10.2026) — not merged
 
 **Verified (with evidence in the entries below):**
@@ -23,7 +41,7 @@
 3. **Public checkout path not exercised live.** E2E used `/api/admin/paypal/*` with `PAYMENTS_ENABLED=false`. The public `/api/paypal/create-order|capture-order` routes (rate limit, CORS, payments gate) are covered only by unit tests; a live check would need the flag on, which was deliberately avoided.
 4. **Order `6WS827844D284583C` was approved by mistake and never captured** (inferred from webhook + `approveUrl:null`); it will expire; it stays `CREATED` in D1 until Sandbox cleanup removes it after 7 days.
 5. **Stale per-Preview commands.** Main's own Sandbox Preview (`0563e156…`) still runs `npx wrangler preview` and fails ("missing a previews block"), so `Workers Builds: amit-photos-paypal-sandbox` is red on `main`; fix after this PR merges (the helper on main lacks `--preview`). ~90 other Previews hold old snapshots; new Previews use Previews Base, which has no secrets, so each needs `wrangler preview secret put` before E2E.
-6. **Main Sandbox Worker runs 1.10 code** (no download-token fix, last code deploy from `prep/...`). Its `PAYMENTS_ENABLED=false` was set in the dashboard, so **any redeploy from `prep/...` or the manual workflow re-applies `PAYMENTS_ENABLED="true"` from the TOML** (`wrangler.paypal-sandbox.example.toml` still has `"true"`). Decide whether to change the TOML default or only deploy with care.
+6. (Partially closed by commit 841acbf; the prep-branch TOML still has `"true"`, see the entry above.) **Main Sandbox Worker runs 1.10 code** (no download-token fix, last code deploy from `prep/...`). Its `PAYMENTS_ENABLED=false` was set in the dashboard, so **any redeploy from `prep/...` or the manual workflow re-applies `PAYMENTS_ENABLED="true"` from the TOML** (`wrangler.paypal-sandbox.example.toml` still has `"true"`). Decide whether to change the TOML default or only deploy with care.
 7. **Residual download risk:** if a transfer fails mid-stream after the atomic claim, the token is spent (rare; no replacement flow).
 8. **Preview `PAYPAL_WEBHOOK_ID` secret is now unused** (webhook points back to the main Sandbox Worker) and can be deleted with `wrangler preview secret delete` if desired. Local `python3` on the owner's PC is a broken Store stub, so Python-based tests only run in CI.
 9. **Not Live-ready.** Real-money activation still depends on `docs/paypal-reactivation-gate-2026-10-01.md` (digital-only flag separation, checkout UX, Live credentials/webhook, security gate). Nothing here changes that.

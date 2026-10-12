@@ -11,6 +11,8 @@ on:
       - 'staging/paypal-sandbox-bootstrap.sql'
       - 'tests/paypal-orders-v2.test.mjs'
       - 'tests/paypal-staging-isolation.test.mjs'
+      - 'tests/download-token-consumption.test.mjs'
+      - 'tests/payments-feature-flag.test.mjs'
       - 'src/build_paypal_sandbox_config.py'
       - '.github/workflows/paypal-sandbox-staging.yml'
       - '.github/workflows/node-tests.yml'
@@ -25,6 +27,8 @@ on:
       - 'staging/paypal-sandbox-bootstrap.sql'
       - 'tests/paypal-orders-v2.test.mjs'
       - 'tests/paypal-staging-isolation.test.mjs'
+      - 'tests/download-token-consumption.test.mjs'
+      - 'tests/payments-feature-flag.test.mjs'
       - 'src/build_paypal_sandbox_config.py'
       - '.github/workflows/paypal-sandbox-staging.yml'
       - '.github/workflows/node-tests.yml'
@@ -46,4 +50,4 @@ jobs:
         with:
           python-version: '3.12'
       - name: Run PayPal Orders v2 security and isolation suite
-        run: node --test tests/paypal-orders-v2.test.mjs tests/paypal-staging-isolation.test.mjs
+        run: node --test tests/paypal-orders-v2.test.mjs tests/paypal-staging-isolation.test.mjs tests/download-token-consumption.test.mjs tests/payments-feature-flag.test.mjs
