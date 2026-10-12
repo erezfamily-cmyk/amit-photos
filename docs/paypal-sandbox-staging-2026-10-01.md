@@ -112,3 +112,11 @@ Full Node suite לאחר staging guard: **334/334 pass, 0 fail**.
 - `paypal_webhook_events` row count = 0.
 
 סטטוס: D1 staging מוכן ל-Worker staging ו-Sandbox E2E.
+
+## Temporary config path fix — 12.10.2026
+
+- Reproduced the manual deployment failure with Wrangler 4.4.0: copying the TOML to `/tmp` left `main = "worker.js"` relative to `/tmp`, producing `The entry-point file at "worker.js" was not found.` Assets also resolved to `/tmp` instead of the repository.
+- `src/build_paypal_sandbox_config.py` now generates a temporary JSON config with absolute repository paths. It validates the D1 UUID and rejects the production UUID before writing. The manual workflow consumes this generated config from `RUNNER_TEMP`.
+- A Wrangler 4.4.0 `deploy --dry-run` passed with a dummy D1 UUID; no remote resources or payments were touched. Security and isolation tests: 37/37 passed.
+- The separate Cloudflare Workers Builds check still fails on main. Its authenticated logs and deploy-command settings remain unavailable following a Cloudflare sign-in error. The manual workflow path bug is confirmed; it is **not yet proven** to explain that separate check.
+- Check the Sandbox project's build/deploy command before enabling automatic deployment: the root `wrangler.toml` targets production `amit-photos`, while Sandbox requires its own generated config and isolated D1 ID. Do not rename the production config or copy production bindings into Sandbox.

@@ -11,6 +11,8 @@ on:
       - 'staging/paypal-sandbox-bootstrap.sql'
       - 'tests/paypal-orders-v2.test.mjs'
       - 'tests/paypal-staging-isolation.test.mjs'
+      - 'src/build_paypal_sandbox_config.py'
+      - '.github/workflows/paypal-sandbox-staging.yml'
       - '.github/workflows/node-tests.yml'
   push:
     branches: [main]
@@ -23,6 +25,8 @@ on:
       - 'staging/paypal-sandbox-bootstrap.sql'
       - 'tests/paypal-orders-v2.test.mjs'
       - 'tests/paypal-staging-isolation.test.mjs'
+      - 'src/build_paypal_sandbox_config.py'
+      - '.github/workflows/paypal-sandbox-staging.yml'
       - '.github/workflows/node-tests.yml'
   workflow_dispatch:
 
@@ -38,5 +42,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
       - name: Run PayPal Orders v2 security and isolation suite
         run: node --test tests/paypal-orders-v2.test.mjs tests/paypal-staging-isolation.test.mjs
