@@ -8,6 +8,19 @@
 
 ## Acquisition and caption quality review — 12.10.2026
 
+### Cloudflare Sandbox Preview failure confirmed — 12.10.2026
+
+- User-provided Cloudflare build logs establish the actual failure: main build #88aa579d executed unpinned `npx wrangler preview`, installed Wrangler 4.149.0, and failed with a missing `previews` configuration block. Initialization, checkout and dependency installation completed; the earlier inference that failure happened before any build work was incorrect.
+- Cloudflare Settings screenshots show the Sandbox production branch remains `prep/paypal-orders-v2-2026-10-01`, using `npx wrangler@4.4.0 deploy --config wrangler.paypal-sandbox.toml`. That TOML exists on the prep branch and selects isolated Sandbox D1/R2. It does not exist on main. Production-branch settings were not changed.
+- Sandbox Preview builds were enabled with `npx wrangler preview`, no build command, and root `/`. The user saved and supplied the complete replacement Preview command:
+
+```bash
+python3 src/build_paypal_sandbox_config.py --database-id 7b027b93-c548-4ceb-bbe9-42c45264fc23 --output /tmp/wrangler.paypal-sandbox-preview.json && npx --yes wrangler@4.4.0 versions upload --config /tmp/wrangler.paypal-sandbox-preview.json
+```
+
+- The exact generated Sandbox configuration passed Wrangler 4.4.0 `versions upload --dry-run` locally. It selects D1 `7b027b93-c548-4ceb-bbe9-42c45264fc23` and R2 `amit-photos-paypal-sandbox-images`; no remote upload or payment occurred during this local check. `PAYMENTS_ENABLED=true` in that config is restricted to the Sandbox Worker; production remains false.
+- Retry build #0d36ad0c still executed the old `npx wrangler preview` command. Therefore the retry did not validate the replacement settings. A fresh branch push is now being used to verify the saved Preview command. Outcome pending; do not mark the remote failure resolved before successful remote logs/checks.
+
 ### Sandbox deployment investigation — 12.10.2026
 
 - Production build and deployment of main `1f53356` completed successfully after PR #147; the separate Cloudflare Sandbox build still fails.
