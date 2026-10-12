@@ -8,6 +8,16 @@
 
 ## Acquisition and caption quality review — 12.10.2026
 
+### Round 2 (12.10.2026, late): download-token fix, R2 fixture, Preview redeploy — in progress
+
+- **Amount correction:** order amounts are stored in minor units; `amount_expected=100` means 100 agorot = **1 ILS** (not 100 ILS).
+- **Main Sandbox Worker:** owner set `PAYMENTS_ENABLED=false`; verified `/api/payments-status` → `{"enabled":false}`, admin route still 401 without password, all secrets/bindings intact. Preview and production also `false`.
+- **Code fix (commit `4b60b14`, PR #149):** `handleDownload` no longer consumes the token on a missing R2 object (404) or an R2 read error (503); it reads the object first, then claims the token with `UPDATE … WHERE used = 0` and requires `changes > 0`, so parallel requests cannot both succeed (losers get 410 and cancel their stream). Previously the mark-used step ran first and was non-atomic. New `tests/download-token-consumption.test.mjs` (7 tests: missing file, R2 failure, retry after restore, transient failure then retry, 5 parallel requests → exactly one 200 + four 410, used token short-circuit, Drive fallback). 7/7 pass on the fix; against the old code 6/7 fail (including the parallel case, so the race was real). `payments-feature-flag` (11) and `paypal-orders-v2` (31) pass locally; `paypal-staging-isolation` needs `python3` (broken Store stub on this PC), left to CI.
+- Sandbox-only Preview config now also sets `PAYPAL_SANDBOX_CLEANUP_ENABLED=true` (admin-authenticated, dry-run by default).
+- **R2 fixture uploaded** to `amit-photos-paypal-sandbox-images/paypal-sandbox-test.jpg` (6095 bytes, Sandbox bucket only).
+- **Preview rebuilt:** build `230e0195-987b-456a-90cc-aaa59c2c905a` on `4b60b14`, success, same `wrangler 4.149.0 preview` command; the three Preview secrets persisted across the redeploy; `PAYPAL_SANDBOX_CLEANUP_ENABLED=true`, `PAYMENTS_ENABLED=false` in the Preview env.
+- New order `656160943N702021D` created for the retest; awaiting buyer approval and the Preview webhook setup (see below). Results of items 7 (file delivery), 9–14 follow in the next entry.
+
 ### PayPal Sandbox E2E items 1–8 on the PR Preview — 12.10.2026 (night)
 
 Target: Preview of this branch (`https://docs-sandbox-preview-build-verificat-amit-photos-paypal-sandbox.erez-family.workers.dev`), admin routes only, `PAYMENTS_ENABLED=false`, shared Sandbox D1 `7b027b93-…`. Preview secrets `ADMIN_PASSWORD`, `PAYPAL_CLIENT_ID`, `PAYPAL_CLIENT_SECRET` were added by the owner with `wrangler preview secret put --name <branch> --worker-name amit-photos-paypal-sandbox` (verified by name only via API). First credential entry failed PayPal auth (value problem); re-entered with trimming and passed. Order used: `51U86380482741620` (1 ILS test photo), approved by the owner with a Sandbox buyer.
@@ -18,7 +28,7 @@ Target: Preview of this branch (`https://docs-sandbox-preview-build-verificat-am
 | 2 | create-order + Idempotency-Key | PASS | 201 `51U86380482741620` + approveUrl; same key → 200 `reused:true`, same id; invalid key → 400 |
 | 3 | buyer approval | PASS (manual) | Owner saw "PayPal Sandbox approval complete"; webhook `CHECKOUT.ORDER.APPROVED` stored `processed=1` at 16:25:44 |
 | 4 | capture | PASS | 200 `{url:/api/download/<token>, title}` |
-| 5 | `paypal_orders` | PASS | row `COMPLETED`, amount 100 ILS, capture id and fulfillment token present, `completed_at` set |
+| 5 | `paypal_orders` | PASS | row `COMPLETED`, amount_expected=100 minor units (100 agorot = 1 ILS), capture id and fulfillment token present, `completed_at` set |
 | 6 | `download_tokens` | PASS | one new row (size small, amount 1, ~24h expiry, `used=0` before download); total 2→3 |
 | 7 | one-time download | PARTIAL | 1st GET → 404 `קובץ לא נמצא ב-R2`; 2nd GET → 410 `כבר שומש`; unknown token → 404. One-time semantics proven; **file delivery NOT proven** |
 | 8 | duplicate capture | PASS | 2nd capture → 200 same url/token; token count stayed 3, order still `COMPLETED` |
