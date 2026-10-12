@@ -7,8 +7,11 @@ compatibility_date = "2026-05-28"
 compatibility_flags = ["nodejs_compat"]
 
 [vars]
-# Safe only because this Worker uses PayPal Sandbox and an isolated D1.
-PAYMENTS_ENABLED = "true"
+# Public checkout stays closed by default, even on Sandbox. Sandbox E2E runs
+# through the admin-authenticated /api/admin/paypal/* routes, which work while
+# this flag is "false". Do not set it to "true" here; enabling public Sandbox
+# checkout is a deliberate, separate dashboard decision for this Worker only.
+PAYMENTS_ENABLED = "false"
 
 [assets]
 directory = "."

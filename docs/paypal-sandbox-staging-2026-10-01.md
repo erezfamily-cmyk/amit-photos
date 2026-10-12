@@ -14,7 +14,7 @@
 - אין custom domain ואין route ל-`amitphotos.com`; משתמשים רק ב-workers.dev.
 - אין cron triggers.
 - PayPal API נשאר hard-coded ל-Sandbox.
-- `PAYMENTS_ENABLED=true` מותר **רק** ב-Worker של staging כדי לבדוק את ה-flow המזויף; production נשאר `false`.
+- ברירת המחדל ב-config של staging היא `PAYMENTS_ENABLED=false` (מ-12.10.2026): בדיקות Sandbox E2E רצות דרך `/api/admin/paypal/*` (מוגן ב-`checkAuth`, פועל גם כשהדגל כבוי), בלי לפתוח צ'קאאוט ציבורי. `PAYMENTS_ENABLED=true` ב-staging הוא החלטה מפורשת ונפרדת בדשבורד של ה-Worker של staging בלבד (נדרש רק לבדוק את נתיבי `/api/paypal/*` הציבוריים); production נשאר `false`.
 - Sandbox Client ID/Secret נשמרים כ-Secrets רק ב-Worker staging.
 - אין שימוש ב-PayPal Live credentials בשום שלב.
 
