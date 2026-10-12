@@ -1,21 +1,21 @@
 {
   "posted_keys": [
     "lenses",
-    "depth-of-field",
-    "visual-language",
-    "light",
-    "editing",
-    "dynamic-range",
-    "controls",
     "white-balance",
-    "software",
-    "sports",
+    "visual-language",
     "filters",
-    "exposure",
-    "composition",
-    "histogram",
-    "night",
+    "software",
+    "types",
     "macro",
-    "types"
+    "exposure",
+    "controls",
+    "depth-of-field",
+    "dynamic-range",
+    "histogram",
+    "editing",
+    "night",
+    "light",
+    "sports",
+    "composition"
   ]
 }
