@@ -9,6 +9,29 @@ import { fileURLToPath } from 'node:url';
 const PROD_D1_ID = '802379c7-97cf-4262-93b8-da81c5c3c07d';
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 
+test('native Previews explicitly bind Sandbox storage and disable public payments', async () => {
+  const temp = await mkdtemp(join(tmpdir(), 'paypal-preview-'));
+  try {
+    const output = join(temp, 'wrangler.json');
+    const result = spawnSync('python3', [join(ROOT, 'src/build_paypal_sandbox_config.py'),
+      '--database-id', '11111111-1111-4111-8111-111111111111', '--preview', '--output', output],
+      { cwd: temp, encoding: 'utf8' });
+    assert.equal(result.status, 0, result.stderr);
+    const config = JSON.parse(await readFile(output, 'utf8'));
+    assert.equal(config.name, 'amit-photos-paypal-sandbox');
+    assert.deepEqual(config.previews.vars, { PAYMENTS_ENABLED: 'false' });
+    assert.deepEqual(config.previews.d1_databases, config.d1_databases);
+    assert.deepEqual(config.previews.r2_buckets, config.r2_buckets);
+    assert.deepEqual(config.previews.images, config.images);
+    assert.equal(config.previews.assets, undefined);
+    assert.equal(config.previews.routes, undefined);
+    assert.equal(config.previews.triggers, undefined);
+    assert.equal(config.assets.directory, ROOT);
+  } finally {
+    await rm(temp, { recursive: true, force: true });
+  }
+});
+
 test('temporary Sandbox config resolves code and assets to the repository', async () => {
   const temp = await mkdtemp(join(tmpdir(), 'paypal-config-'));
   try {
@@ -26,6 +49,7 @@ test('temporary Sandbox config resolves code and assets to the repository', asyn
     assert.equal(config.r2_buckets[0].bucket_name, 'amit-photos-paypal-sandbox-images');
     assert.equal(config.routes, undefined);
     assert.equal(config.triggers, undefined);
+    assert.equal(config.previews, undefined);
   } finally {
     await rm(temp, { recursive: true, force: true });
   }
