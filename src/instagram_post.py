@@ -13,6 +13,8 @@ import requests
 import anthropic
 from pathlib import Path
 from social_photo_map import save_social_photo_mapping
+from campaign_urls import build_campaign_url
+from social_caption_quality import (compose_caption, generated_body, photo_fallback, require_caption)
 
 # ===== הגדרות =====
 POSTED_FILE = Path(__file__).parent.parent / "data" / "instagram_posted.json"
@@ -175,20 +177,21 @@ def generate_pdf_promo_caption(photo, client, image_content, vision_description)
 
 הפוסט צריך להרגיש אמיתי — לא פרסומת.
 תתחיל ממשהו ספציפי בתמונה הזו, ואז תגיד דבר אחד שלמדת שצלמים מתחילים בדרך כלל לא יודעים.
-תסיים בטבעיות עם: "ריכזתי את הדברים האלה ועוד — PDF חינמי ב-link in bio."
+כתוב עד 80 מילים במשפטים שלמים. בלי קישורים או hashtags — הם יתווספו בנפרד.
 
 אל תשתמש ב"שיתוף" / "הנה" / "חשוב לי לספר". פשוט תכתוב.
 עברית בלבד. רק הפוסט."""
 
     msg = client.messages.create(
         model="claude-opus-4-8",
-        max_tokens=450,
+        max_tokens=700,
         system=system_prompt,
         messages=[{"role": "user", "content": image_content + [{"type": "text", "text": prompt}]}],
     )
-    text = msg.content[0].text.strip()
-    hashtags = get_hashtags(category)
-    return f"{text}\n\n{hashtags}"
+    fallback = photo_fallback(photo)
+    text = generated_body(msg, fallback)
+    link = build_campaign_url("/free-guide/", source="instagram", campaign="202610_freeguide_photo_tips", content=photo["id"])
+    return compose_caption(text, f"🎁 PDF חינם — 50 טיפים לצילום:\n{link}", get_hashtags(category), fallback)
 
 
 def generate_caption(photo):
@@ -269,7 +272,7 @@ def generate_caption(photo):
 2. רמז קטן שמגרה — משפט אחד שמוסיף מידע אבל לא מגלה הכל
 3. הזמנה לנחש בתגובות — "נחשו 👇" / "תכתבו בתגובות"
 
-סיים עם שורה ריקה ואז: 🛍️ זמין לרכישה — amitphotos.com (link in bio)
+כתוב עד 80 מילים במשפטים שלמים. בלי קישורים, hashtags או הבטחת רכישה; הם אינם חלק מהטקסט.
 
 עברית תקנית וברורה. רק הכיתוב."""
     else:
@@ -286,7 +289,7 @@ def generate_caption(photo):
 - ההגדרות: למה f/X עם ISO Y — מה זה נתן לך בפועל
 - הרגע: כמה המתנת, מה גרם לך ללחוץ דווקא אז
 
-סיים עם שורה ריקה ואז: 🛍️ זמין לרכישה — amitphotos.com (link in bio)
+כתוב עד 80 מילים במשפטים שלמים. בלי קישורים, hashtags או הבטחת רכישה; הם אינם חלק מהטקסט.
 
 עברית תקנית וברורה. רק הכיתוב."""
 
@@ -294,20 +297,22 @@ def generate_caption(photo):
 
     msg = client.messages.create(
         model="claude-opus-4-8",
-        max_tokens=500,
+        max_tokens=700,
         system=system_prompt,
         messages=[{"role": "user", "content": user_content}],
     )
 
-    caption_text = msg.content[0].text.strip()
+    fallback = photo_fallback(photo)
+    caption_text = generated_body(msg, fallback)
 
     # 1 מתוך 4 פוסטים — פרומו אישי ל-PDF במקום footer רגיל
     if random.random() < 0.25:
         print("🎁 פוסט פרומו PDF (1/4)")
         return generate_pdf_promo_caption(photo, client, image_content, vision_description)
 
-    PDF_FOOTER = "\n\n🎁 PDF חינם — 50 טיפים לצילום:\namitphotos.com/free-guide"
-    return f"{caption_text}{PDF_FOOTER}\n\n{hashtags}"
+    link = build_campaign_url(f"/photo/{photo['id']}", source="instagram", campaign="photo_posts", content=photo["id"])
+    footer = f"התמונה בגלריה:\n{link}\nהקישור לאתר בביו."
+    return compose_caption(caption_text, footer, hashtags, fallback)
 
 
 def _try_r2(img_bytes):
@@ -414,6 +419,7 @@ def _try_0x0(img_bytes):
 
 
 def post_to_instagram(photo, caption):
+    require_caption(caption)
     # Prefer full-res R2 URL; Instagram requires a publicly accessible CDN URL
     source_url = photo.get("url") or photo.get("thumbnail")
     if source_url and source_url.startswith("/"):

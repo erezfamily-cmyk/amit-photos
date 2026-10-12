@@ -212,3 +212,57 @@ def test_save_report_persists_acquisition_experiment_scorecard(tmp_path):
     report = json.loads(reports_file.read_text(encoding="utf-8"))[-1]
     assert report["acquisition_experiment"]["experiment"] == "Acquisition Experiment 01"
     assert len(report["acquisition_experiment"]["paths"]) == 3
+
+
+def test_scorecard_aggregates_campaign_sources_without_double_counting_users():
+    data = fake_data()
+    campaign = "202610_freeguide_photo_tips"
+    data["campaigns"] = [
+        {"source": "instagram", "campaign": campaign, "sessions": "4", "activeUsers": "4"},
+        {"source": "free_guide", "campaign": campaign, "sessions": "1", "activeUsers": "1"},
+    ]
+    data["experiment_events"] = [{"campaign": campaign, "event": "guide_request_success", "count": "1"}]
+    scorecard = gwr.build_acquisition_experiment_scorecard(data)
+    guide = scorecard["paths"][0]
+    assert guide["sessions"] == 5
+    assert guide["primary_rate_pct"] == 20
+    assert guide["active_users"] is None
+
+
+def test_scorecard_uses_complete_campaign_totals_beyond_top_source_rows():
+    data = fake_data()
+    data["experiment_campaigns"] = [
+        {"campaign": "202610_freeguide_photo_tips", "sessions": "5", "activeUsers": "4"},
+        {"campaign": "202610_licensing_personal", "sessions": "2", "activeUsers": "1"},
+    ]
+    scorecard = gwr.build_acquisition_experiment_scorecard(data)
+    assert scorecard["paths"][0]["sessions"] == 5
+    assert scorecard["paths"][0]["active_users"] == 4
+    assert scorecard["paths"][1]["sessions"] == 2
+    assert scorecard["campaign_metrics_source"] == "campaign_totals"
+
+
+def test_campaign_totals_query_and_persistence(tmp_path):
+    campaign = "202610_freeguide_photo_tips"
+    def fake_report(_token, body):
+        if body.get("dimensions") == [{"name": "sessionCampaignName"}]:
+            assert body["dimensionFilter"]["filter"]["inListFilter"]["values"] == list(gwr.ACQUISITION_EXPERIMENT_CAMPAIGNS)
+            return {"rows": [{"dimensionValues": [{"value": campaign}], "metricValues": [{"value": "5"}, {"value": "4"}]}]}
+        return {"rows": []}
+    with patch.object(gwr, "run_report", side_effect=fake_report):
+        data = gwr.fetch_ga4_data("token")
+    target = tmp_path / "reports.json"
+    gwr.save_report(data, "analysis", reports_file=target)
+    report = json.loads(target.read_text())[-1]
+    assert report["experiment_campaigns"][0]["activeUsers"] == "4"
+
+
+def test_campaign_query_failure_falls_back_to_all_available_sources():
+    def fake_report(_token, body):
+        if body.get("dimensions") == [{"name": "sessionCampaignName"}]:
+            return None
+        return {"rows": []}
+    with patch.object(gwr, "run_report", side_effect=fake_report):
+        data = gwr.fetch_ga4_data("token")
+    assert data["experiment_campaigns"] is None
+    assert gwr.build_acquisition_experiment_scorecard(data)["campaign_metrics_source"] == "source_rows_fallback"

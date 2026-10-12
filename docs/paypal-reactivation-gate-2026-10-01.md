@@ -13,7 +13,7 @@ Gelato is explicitly out of scope.
 1. The current sample is still small. Turning checkout on now would change the funnel while we are trying to measure which offer creates demand.
 2. Digital Licensing and B2B were only just deployed; we first need a clean measurement window.
 3. The existing global `PAYMENTS_ENABLED` switch also protects legacy print/Gelato payment handlers. Simply flipping it to `true` would be too broad for a digital-only launch.
-4. PayPal PR #76 is based on an older main branch and must be rebuilt/reviewed before any production activation.
+4. PayPal PR #76 was superseded by PR #110, merged on 2.10. The current backend is Sandbox-only; public checkout UI and digital-only flag separation are still required before activation.
 5. A production payment launch should test willingness-to-pay only after we have evidence that qualified users are reaching the licensing offer.
 
 ## Earliest decision point
@@ -44,7 +44,7 @@ These are canary-launch thresholds, not proof that digital licensing is the fina
 - the 7-day experiment is not being changed mid-window.
 
 ### Technical/security
-- PR #76 is replaced/rebased from current `main`.
+- [x] PR #76 was replaced by PR #110 and merged to `main` on 2.10; revalidate current-code compatibility before activation.
 - PayPal Orders v2 remains digital-only.
 - Sandbox create → approve → capture → download is re-run successfully on the current code.
 - cancel path is verified.
@@ -80,7 +80,7 @@ Only after the digital canary is stable should we consider simplifying the flags
 1. Keep all production payments off during the acquisition experiment.
 2. Review data around 10.10.
 3. If demand criteria are not met: keep PayPal off and continue acquisition/offer work.
-4. If demand criteria are met: rebuild PR #76 from current main and complete the digital-only flag separation.
+4. If demand criteria are met: complete public checkout UX and digital-only flag separation on the canonical Orders v2 implementation from PR #110.
 5. Run Sandbox E2E/security checks again.
 6. Deploy code with `DIGITAL_PAYPAL_ENABLED=false`.
 7. Verify production routes fail closed.
@@ -91,3 +91,11 @@ Only after the digital canary is stable should we consider simplifying the flags
 ## Gelato
 
 No Gelato integration, print checkout, supplier selection or fulfillment automation is part of this PayPal reactivation plan.
+
+## Review on 12.10.2026 — no-go for production payments
+
+- The first experiment distribution was 2.10 at 12:03:19Z; the initial seven-day window ended on 9.10.
+- Latest saved GA period: 2–9.10. Only 1 session from the personal-licensing campaign, 2 sessions on `/licensing/`, and 0 `licensing_personal_interest` events. Demand gate is not met.
+- Live `/api/payments-status` on 12.10 returned `{"enabled":false}`; current backend still uses only Sandbox.
+- The guide campaign scorecard had a last-source-row overwrite: 4 Instagram + 1 PDF sessions were shown as 1. The focused acquisition/caption PR corrects future reporting; available source rows imply 5 sessions / 1 guide request, not a 100% conversion claim. Historical reports remain untouched.
+- Keep production payments disabled. Public digital checkout, a separate digital flag, Live configuration and current-code Sandbox E2E remain pending. This review does not authorize real transactions or Gelato.

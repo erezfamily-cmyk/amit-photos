@@ -14,6 +14,7 @@ import anthropic
 from pathlib import Path
 from campaign_urls import build_campaign_url
 from social_photo_map import save_social_photo_mapping
+from social_caption_quality import (compose_caption, generated_body, photo_fallback, require_caption)
 
 # ===== הגדרות =====
 POSTED_FILE = Path(__file__).parent.parent / "data" / "facebook_posted.json"
@@ -130,18 +131,20 @@ def generate_pdf_promo_caption(photo, client, image_content):
 
 הפוסט צריך להרגיש אמיתי — לא פרסומת.
 תתחיל ממשהו ספציפי בתמונה, תגיד דבר אחד שלמדת שצלמים מתחילים בדרך כלל לא יודעים.
-תסיים בטבעיות עם הקישור: amitphotos.com/free-guide
+כתוב עד 80 מילים במשפטים שלמים. בלי קישורים או hashtags — הם יתווספו בנפרד.
 
 אל תשתמש ב"שיתוף" / "הנה" / "חשוב לי לספר". פשוט תכתוב.
 עברית בלבד. רק הפוסט."""
 
     msg = client.messages.create(
         model="claude-opus-4-8",
-        max_tokens=450,
+        max_tokens=700,
         system=system_prompt,
         messages=[{"role": "user", "content": image_content + [{"type": "text", "text": prompt}]}],
     )
-    return f"{msg.content[0].text.strip()}\n\n{hashtags}"
+    fallback = photo_fallback(photo)
+    link = build_campaign_url("/free-guide/", source="facebook", campaign="202610_freeguide_photo_tips", content=photo["id"])
+    return compose_caption(generated_body(msg, fallback), f"🎁 PDF חינם — 50 טיפים לצילום:\n{link}", hashtags, fallback)
 
 
 def generate_caption(photo):
@@ -218,27 +221,27 @@ def generate_caption(photo):
 - ההגדרות: למה f/X עם ISO Y — מה זה נתן לך
 - הרגע: כמה המתנת, מה גרם ללחוץ דווקא אז
 
-סיים עם שורה ריקה ואז: 🛍️ לרכישת התמונה: {buy_link}
+כתוב עד 80 מילים במשפטים שלמים. בלי קישורים, hashtags או הבטחת רכישה; הם אינם חלק מהטקסט.
 
 עברית תקנית וברורה. רק הפוסט.
 """}]
 
     msg = client.messages.create(
         model="claude-opus-4-8",
-        max_tokens=500,
+        max_tokens=700,
         system=system_prompt,
         messages=[{"role": "user", "content": user_content}],
     )
 
-    post_text = msg.content[0].text.strip()
+    fallback = photo_fallback(photo)
+    post_text = generated_body(msg, fallback)
 
     # 1 מתוך 4 פוסטים — פרומו אישי ל-PDF במקום footer רגיל
     if random.random() < 0.25:
         print("🎁 פוסט פרומו PDF (1/4)")
         return generate_pdf_promo_caption(photo, client, image_content)
 
-    PDF_FOOTER = "\n\n🎁 PDF חינם — 50 טיפים לצילום:\namitphotos.com/free-guide"
-    return f"{post_text}{PDF_FOOTER}\n\n{hashtags}"
+    return compose_caption(post_text, f"התמונה בגלריה:\n{buy_link}", hashtags, fallback)
 
 
 def upload_to_public_host(source_url):
@@ -273,6 +276,7 @@ def upload_to_public_host(source_url):
 
 
 def post_to_facebook(photo, message):
+    require_caption(message)
     source_url = photo.get("thumbnail") or photo.get("url")
     if source_url and source_url.startswith("/"):
         source_url = f"{SITE_URL}{source_url}"

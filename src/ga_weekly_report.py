@@ -151,6 +151,18 @@ def fetch_ga4_data(token):
         "orderBys": [{"metric": {"metricName": "sessions"}, "desc": True}],
         "limit": 20,
     })
+    # Query these campaigns separately: source/medium rows can repeat a
+    # campaign, and activeUsers cannot be summed without double-counting.
+    experiment_campaigns_raw = run_report(token, {
+        "dateRanges": dr,
+        "dimensions": [{"name": "sessionCampaignName"}],
+        "metrics": [{"name": "sessions"}, {"name": "activeUsers"}],
+        "dimensionFilter": {"filter": {
+            "fieldName": "sessionCampaignName",
+            "inListFilter": {"values": list(ACQUISITION_EXPERIMENT_CAMPAIGNS), "caseSensitive": True},
+        }},
+        "limit": len(ACQUISITION_EXPERIMENT_CAMPAIGNS),
+    })
     landing_pages_raw = run_report(token, {
         "dateRanges": dr,
         "dimensions": [{"name": "landingPagePlusQueryString"}],
@@ -288,6 +300,10 @@ def fetch_ga4_data(token):
         "landing_pages": parse_rows(landing_pages_raw, ["sessions", "activeUsers"], "עמוד נחיתה"),
         "sources":   sources,
         "campaigns": campaigns,
+        "experiment_campaigns": (
+            parse_rows(experiment_campaigns_raw, ["sessions", "activeUsers"], "campaign")
+            if experiment_campaigns_raw is not None else None
+        ),
         "devices":   parse_rows(devices_raw, ["sessions"], "מכשיר"),
         "countries": parse_rows(countries_raw, ["sessions"], "ארץ"),
         "funnel_events": events_by_name,
@@ -365,7 +381,23 @@ def fetch_revenue_summary(days=7):
 
 def build_acquisition_experiment_scorecard(data):
     """Build a deterministic scorecard for the three frozen Acquisition Experiment 01 campaigns."""
-    campaign_rows = {row.get("campaign"): row for row in data.get("campaigns", []) or []}
+    campaign_rows = {}
+    dedicated = data.get("experiment_campaigns")
+    if dedicated is not None:
+        campaign_rows = {row.get("campaign"): row for row in dedicated}
+    else:
+        # Compatibility with old saved reports. Preserve all source rows;
+        # unique users are unknown when more than one row contributes.
+        for row in data.get("campaigns", []) or []:
+            key = row.get("campaign")
+            if key in campaign_rows:
+                campaign_rows[key]["sessions"] += _safe_int(row.get("sessions"))
+                campaign_rows[key]["activeUsers"] = None
+            else:
+                campaign_rows[key] = {
+                    "sessions": _safe_int(row.get("sessions")),
+                    "activeUsers": _safe_int(row.get("activeUsers")),
+                }
     event_counts = {}
     for row in data.get("experiment_events", []) or []:
         key = (row.get("campaign", ""), row.get("event", ""))
@@ -381,7 +413,8 @@ def build_acquisition_experiment_scorecard(data):
             "campaign": campaign,
             "label": cfg["label"],
             "sessions": sessions,
-            "active_users": _safe_int(campaign_row.get("activeUsers")),
+            "active_users": (None if campaign_row.get("activeUsers") is None and campaign_row
+                             else _safe_int(campaign_row.get("activeUsers"))),
             "primary_event": cfg["primary_event"],
             "primary_count": primary,
             "primary_rate_pct": _rate_pct(primary, sessions),
@@ -393,6 +426,7 @@ def build_acquisition_experiment_scorecard(data):
     return {
         "experiment": "Acquisition Experiment 01",
         "window_status": "not_started" if all(p["sessions"] == 0 for p in paths) else "measuring",
+        "campaign_metrics_source": "campaign_totals" if dedicated is not None else "source_rows_fallback",
         "paths": paths,
     }
 
@@ -929,6 +963,7 @@ def save_report(data, analysis, reports_file=None):
         "landing_pages": data.get("landing_pages", [])[:5],
         "sources":   data["sources"][:5],
         "campaigns": data.get("campaigns", [])[:20],
+        "experiment_campaigns": data.get("experiment_campaigns"),
         "devices":   data.get("devices", []),
         "countries": data.get("countries", [])[:5],
         "funnel_events": data["funnel_events"],

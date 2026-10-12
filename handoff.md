@@ -1,8 +1,24 @@
 # Handoff — amit-photos
 
 > מסמך כניסה לכל מי (אדם או סוכן AI) שנכנס לפרויקט הזה בפעם הראשונה, או חוזר אחרי הפסקה.
-> עודכן: **4.10.2026**. זה מסמך חי — לעדכן אותו כשקורה משהו מהותי, לא לתת לו להתיישן.
+> עודכן: **12.10.2026**. זה מסמך חי — לעדכן אותו כשקורה משהו מהותי, לא לתת לו להתיישן.
 > לא מחליף את `CLAUDE.md` (כללי ארכיטקטורה מחייבים) — משלים אותו עם "מה המצב עכשיו ולמה".
+
+---
+
+## Acquisition and caption quality review — 12.10.2026
+
+Status: [PR #147](https://github.com/erezfamily-cmyk/amit-photos/pull/147) is open and **not merged**. On 12.10, head `ee0b594cfcb952517a01ea7c9633febf0ff657ca` passed all four GitHub workflows and Cloudflare `Workers Builds: amit-photos`. The separate `Workers Builds: amit-photos-paypal-sandbox` failed; the same named check also failed on unchanged base main `f5b45b2c9d36f75175a944208df4bd9804818515`, while its production build passed. This confirms the failed Sandbox check predates this PR; its underlying cause is still unknown because authenticated Cloudflare logs are unavailable through the connector. No payment code or resource configuration changed. Do not bypass the failed check or alter payment configuration to make it green. Automatic approval review rejected the attempted squash merge because the user said only to continue and did not directly approve this exact merge. No merge occurred; explicit PR #147 merge approval is required. Read-only live verification again returned `{"enabled":false}`. No real payment or publication was executed.
+
+- Read-only live check on 12.10 confirmed `/api/payments-status` returns `{"enabled":false}`. The canonical Sandbox backend is **merged PR #110**; PR #76 is closed without merge. Older statements below claiming no implementation exists are superseded.
+- Current `paypal-orders.js` still uses only `api-m.sandbox.paypal.com`. Public checkout UI, a separate digital-only enablement flag, explicit Live configuration, and current-code Sandbox E2E remain required before any production activation. Do not flip the global payment flag. Gelato stays out of scope.
+- Latest saved GA report covers 2–9.10: 65 sessions, 26.2% engagement, 69.2% Direct, 5 free-guide page sessions / 1 successful guide request, 2 licensing page sessions, and no licensing-interest events. The experiment began 2.10 at 12:03:19Z; its initial 7-day window ended 9.10. Demand thresholds for digital PayPal are not met.
+- Found and fixed scorecard last-row overwrite: Instagram 4 + PDF 1 sessions for the same guide campaign were reported as 1 session / 100% request rate. The available source rows support **5 sessions / 20% event-to-session rate**. Historical reports have not been rewritten. Future reports use a dedicated campaign-level GA query, independent of the top-20 source table; unique active users come from GA totals rather than summed source rows. On query failure, fallback sums available sessions and marks multi-source unique users unavailable.
+- Live Instagram data through 11.10: weekly content views 957 vs 954; no saves/shares. Sample remains small. Several captions were empty, hashtag-only, or truncated. Do not infer that higher posting volume is the answer.
+- Shared caption quality helper now rejects token-truncated or textless AI responses, supplies a short factual fallback, preserves complete CTA links, and trims overlong prose only at complete sentence boundaries. Instagram, Facebook and Reel publication entrypoints reject empty/hashtag-only/overlong captions before network calls. Existing video approval and MP4-hash requirements are preserved; captions approved for existing videos are validated, never silently rewritten.
+- Generated photo captions no longer promise purchases while checkout is disabled. Photo and guide destinations use the existing UTM builder. No existing public post, video, queue, subscriber record or historical report was edited; no AI generation or publication was executed during validation.
+- Validation: **31/31** mocked caption/GA tests, **4/4** photo-strength pipeline tests, Python compilation and `git diff --check` passed. `tests/social-attribution-links.test.mjs`: **1/2 passed**; identical baseline failure on untouched main `f5b45b2` expects the old Pinterest helper implementation, superseded by the curated queue publisher. This unrelated test has not been rewritten in this PR.
+- Next: review/merge this focused PR, then verify the next ordinary GA report and scheduled photo captions. Prioritize qualified traffic to the guide/licensing offers. Keep production PayPal off until demand, digital-only flag separation, checkout UX and Sandbox/security gates are satisfied. Paid campaigns and video publication require their own explicit authorization.
 
 ---
 
