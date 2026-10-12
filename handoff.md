@@ -8,6 +8,23 @@
 
 ## Acquisition and caption quality review — 12.10.2026
 
+### Item 11 capture timeout/retry/parallel + gap 6 closed on `prep/...` — 12.10.2026 (night)
+
+**Order `5CE517938N245005R`** (approved by the owner; PayPal-side lookup `approveUrl:null`; webhook `CHECKOUT.ORDER.APPROVED` 20:15:34Z). Baseline: order `CREATED`, no capture/token, `download_tokens`=4.
+
+Two different failure modes, kept apart:
+1. **Client disconnect BEFORE the server completes — PASS (live evidence).** `curl --max-time 0.3` on `capture-order`: no response received (http 000, exit 28). Three D1 snapshots over ~15 s: order still `CREATED`, no capture id, no fulfillment token, tokens still 4, so the Worker did not complete the operation and left no partial state. Then 5 parallel retries of the same capture: all 5 returned HTTP 200 with the **same** download URL; D1 shows exactly **one** new `download_tokens` row (4→5, `909be6b8…`, tx = capture id `6M5954660W557714D`), exactly one capture id, order `COMPLETED` (20:16:44Z), and exactly **one** new `PAYMENT.CAPTURE.COMPLETED` webhook event (20:16:56Z, processed, attempts 1) — i.e. one PayPal capture, one fulfillment, one token.
+2. **Response lost AFTER the server completed — NOT proven live.** The 0.3 s abort did not reach completion, so it exercised case 1 only. Evidence for case 2 is limited to unit tests that simulate it (`capture-order recovers from ORDER_ALREADY_CAPTURED by reading the authoritative PayPal order`, `resume from FULFILLING reuses the locked fulfillment token`, `verified completed-capture webhook recovers a local digital order`, plus the earlier live repeat-capture-after-success returning the same token). A live proof needs a client that sends the request, lets the server finish, and discards the response (not an abort, because the Worker is cancelled on disconnect), against another approved order. Candidate: order `8S923706NG623915A` (created, not yet approved).
+
+Earlier live retry evidence (create-order) is unchanged: client abort at 0.25 s → request not completed → retry created 1 order; 5 parallel create-orders with one key → 1 order, 1 D1 row.
+
+**Gap 6 closed on the Sandbox Worker's Production branch (owner-approved):**
+- Commit `e69131f` on `prep/paypal-orders-v2-2026-10-01` changed only `wrangler.paypal-sandbox.toml` line 12: `PAYMENTS_ENABLED = "true"` → `"false"` (diff = 1 line; `keep_vars`, cleanup flag, bindings untouched).
+- It triggered Sandbox build `787462a9-79d7-45a3-aff4-7d49e4aec6c7` (`wrangler@4.4.0 deploy --config wrangler.paypal-sandbox.toml`): success, version `ebc08272-0fdc-4b04-a04b-6634fec46743`, deployed 20:18:57Z. Log lists `PAYMENTS_ENABLED: "false"`, `PAYPAL_SANDBOX_CLEANUP_ENABLED: "true"`.
+- After deploy: all four secrets and D1/R2/Images bindings intact; `https://amit-photos-paypal-sandbox.erez-family.workers.dev/api/payments-status` → `{"enabled":false}`; its admin route still 401 without a password; Preview and production also `false`.
+- Side checks: the commit also ran the `Workers Builds: amit-photos` check (success; a non-production-branch build of the production Worker's trigger); the production `amit-photos` Worker's latest deployment is still 2026-10-12 18:42:04Z (before this change), so production was not redeployed. PR #149 not merged; no real purchases.
+- Note: the main Sandbox Worker still runs the 1.10 `prep/...` code (no download-token fix) — only the flag changed.
+
 ### Gap 6 (payment-flag default) and item 11 (timeout/retry) — 12.10.2026 (night)
 
 **Gap 6, partially closed.**
