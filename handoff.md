@@ -8,6 +8,28 @@
 
 ## Acquisition and caption quality review — 12.10.2026
 
+### RESUME HERE (written 12.10.2026 night; continue next day)
+
+**State at stop:** PR #149 open, not merged, head includes download-token fix `4b60b14`. Preview `docs/sandbox-preview-build-verification-2026-10-12` is live on the fixed code with Sandbox D1/R2, `PAYMENTS_ENABLED=false`, secrets `ADMIN_PASSWORD`/`PAYPAL_CLIENT_ID`/`PAYPAL_CLIENT_SECRET`, and `PAYPAL_SANDBOX_CLEANUP_ENABLED=true`. R2 fixture `paypal-sandbox-test.jpg` is uploaded. All public payment flags are false (main Sandbox Worker, Preview, production).
+
+**Owner actions still pending (Claude cannot do these):**
+1. PayPal Sandbox dashboard → app → Webhooks: the existing webhook still points at the main Sandbox Worker. For the Preview webhook proof, edit its URL to `https://docs-sandbox-preview-build-verificat-amit-photos-paypal-sandbox.erez-family.workers.dev/api/paypal/webhook` (events: order approved, capture completed), so only the Preview receives events (the D1 is shared; two receivers would make it impossible to tell who processed an event). Copy the Webhook ID.
+2. `wrangler preview secret put PAYPAL_WEBHOOK_ID --name "docs/sandbox-preview-build-verification-2026-10-12" --worker-name amit-photos-paypal-sandbox` from the empty `~/sbx` folder (hidden input, trimmed).
+3. Approve the buyer checkout for a fresh order (order `656160943N702021D` was created 12.10 and may have expired; create a new one with a new Idempotency-Key if capture says not approved/expired).
+4. **After testing, restore the webhook URL** to `https://amit-photos-paypal-sandbox.erez-family.workers.dev/api/paypal/webhook` (otherwise the main Sandbox Worker stops receiving events).
+
+**Claude's next steps once 1–3 are done:**
+- Capture via `POST /api/admin/paypal/capture-order` and download `/api/download/<token>`: expect a real JPEG (200, `image/jpeg`), second GET 410. Also prove: a request for a token whose R2 object is missing leaves `used=0` (covered by unit tests; optionally repeat live by temporarily using another photo row).
+- Item 12: confirm a verified `PAYMENT.CAPTURE.COMPLETED` row in `paypal_webhook_events` (`processed=1`) received by the Preview, plus PayPal's webhook delivery log (200). Replay from PayPal's dashboard should return `duplicate:true`. Local unit tests already cover invalid signature, dedupe, stale lease, concurrent duplicate and recovery.
+- Items 9–10: owner cancels once and uses a declining Sandbox buyer; 11: retry/timeout by re-sending the same Idempotency-Key and capture.
+- Item 13 cleanup: it deletes only `paypal_orders` with `status='CREATED'`, no capture, no fulfillment token, no `completed_at`, older than 7 days, and `paypal_webhook_events` with `processed=1` older than 90 days. It never touches `download_tokens` or completed orders. Run `POST /api/admin/paypal/cleanup` with `{}` (dry-run), compare candidates with a read-only D1 query (all must be Sandbox test-photo orders), and only then `{"apply":true}`.
+- Item 14: production `/api/payments-status` still `false`; production D1 `802379c7-…` untouched.
+- Then write the summary report and update this handoff.
+
+**Local helpers (this PC, not in the repo):** `~/.sbx-admin-pw` (Preview admin password; never print it), `~/.sbx-e2e-key`, `~/.sbx-e2e-key2` (idempotency keys), `~/sbx/paypal-sandbox-test.jpg`. Wrangler is logged in as `erez.family@gmail.com`. Local `python3` is a broken Store stub (hangs), so Python-dependent tests run only in CI.
+
+**Deferred / not authorized:** merge of PR #149; fixing main's own Sandbox Preview (`0563e156…`, stale `npx wrangler preview`) after merge; any production change; PayPal Live; Gelato; `migrate_to_previews` (not needed). Open product notes: the download-token tradeoff is now resolved in code (token consumed only after the file is found and the claim succeeds); a stream that fails mid-transfer after the claim still spends the token.
+
 ### Round 2 (12.10.2026, late): download-token fix, R2 fixture, Preview redeploy — in progress
 
 - **Amount correction:** order amounts are stored in minor units; `amount_expected=100` means 100 agorot = **1 ILS** (not 100 ILS).
