@@ -8,6 +8,27 @@
 
 ## Acquisition and caption quality review — 12.10.2026
 
+### Item 11, scenario 2 — response lost AFTER the server completed: PASS (live, client-side simulation) — 12.10.2026 (night)
+
+Order `8S923706NG623915A`, approved by the owner (PayPal-side lookup `approveUrl:null`). Baseline before the test: order `CREATED`, no capture/token, `download_tokens`=5, `COMPLETED` orders=5, `PAYMENT.CAPTURE.COMPLETED` events=4.
+
+**How:** `lostresp.mjs` (kept outside the repo) opens a TLS connection to the Preview, sends one `capture-order` request, keeps the connection open for 12 s with no data handler (the response is never consumed by the client) and then closes the socket. Unlike the 0.3 s abort, the connection stays up, so the Worker is not cancelled and can finish normally.
+
+**Server state verified BEFORE any retry** (D1 read 20:22:01Z; request sent 20:21:41Z, socket closed 20:21:53Z):
+- order `COMPLETED`, `completed_at` 20:21:45Z (4 s after the request), capture id `4DK469867W176694H`, `fulfillment_token` `19a7f2c1…`, fulfillment JSON present;
+- `download_tokens` row `19a7f2c1…` for that capture (size small, `used=0`); tokens 5→6, completed orders 5→6.
+
+**Retries (client now reads the response):** two `capture-order` calls on the same order → both HTTP 200 with the same URL `/api/download/19a7f2c1-e473-41fe-9dee-1cdf68eda548`.
+
+**After the retries (D1 read 20:22:28Z):** order unchanged (`completed_at` still 20:21:45Z, same capture id); exactly 1 token for capture `4DK469867W176694H`; tokens total still 6; completed orders still 6; exactly 1 order carries that capture id; exactly **one** new `PAYMENT.CAPTURE.COMPLETED` event (20:22:06Z, processed, attempts 1) → one PayPal capture, one fulfillment, one token. No second capture or fulfillment was created.
+
+**Limits of this evidence:**
+- The "lost response" is simulated at the client (response left unread, connection then dropped); it is not real network packet loss or an edge failure. `bytesRead` reported 947, which is TLS/TCP-level buffering inside Node, not an application read; the application never processed the response.
+- Only one run, one order. The earlier 0.3 s abort (scenario 1, disconnect before completion) and this scenario together cover both orderings, each with live evidence.
+- The `CHECKOUT.ORDER.APPROVED` webhook for this order is NOT in D1 (the last approval event stored is 20:15:34Z for the previous order); the order is nonetheless approved per PayPal's API. Unexplained — possibly delivery during the 20:18:57Z redeploy or not retried yet; it does not affect this test, but it is a webhook-delivery gap to check in PayPal's webhook event log.
+
+**Remaining gaps (conditions to review before Live):** buyer-side decline not run; public `/api/paypal/*` checkout not exercised live; webhook receipt by the Preview is circumstantial and one approval webhook did not arrive; a transfer that fails mid-stream after the atomic claim still spends the token; main's own Sandbox Preview still has the stale command (fix after merge); main Sandbox Worker runs 1.10 code without the download-token fix; not Live-ready per `docs/paypal-reactivation-gate-2026-10-01.md`. PR #149 not merged; no real purchases.
+
 ### Item 11 capture timeout/retry/parallel + gap 6 closed on `prep/...` — 12.10.2026 (night)
 
 **Order `5CE517938N245005R`** (approved by the owner; PayPal-side lookup `approveUrl:null`; webhook `CHECKOUT.ORDER.APPROVED` 20:15:34Z). Baseline: order `CREATED`, no capture/token, `download_tokens`=4.
