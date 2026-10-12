@@ -8,6 +8,24 @@
 
 ## Acquisition and caption quality review — 12.10.2026
 
+### STATUS AT A GLANCE (end of 12.10.2026) and RESUME POINT FOR 13.10.2026
+
+**State now (all verified live on 12.10 night):**
+- **PR #149 is merged** (squash `3ff8922`). Includes the native Sandbox Preview config, the safe one-time download-token fix, the Sandbox template default `PAYMENTS_ENABLED="false"` with regression tests, and the E2E documentation.
+- **Production (`amit-photos`) is healthy and deployed** from `3ff8922`: `https://amitphotos.com/api/payments-status` → `{"enabled":false}`.
+- **Main's Sandbox Preview is fixed and healthy:** build `c155ee4a` succeeded; `https://main-amit-photos-paypal-sandbox.erez-family.workers.dev/api/payments-status` → `{"enabled":false}`; the `Workers Builds: amit-photos-paypal-sandbox` check on `main` is green.
+- **The main Sandbox Worker (`amit-photos-paypal-sandbox`) still runs the 1.10 code** from `prep/paypal-orders-v2-2026-10-01` (no download-token fix). Only its payment flag was changed (`e69131f`), and it returns `{"enabled":false}`. `main` was deliberately NOT merged into `prep/...`.
+- **No real purchases, no PayPal Live, no Gelato.** Every payment flag (production, main Sandbox Worker, both Previews) is `false`.
+
+**All Live gaps remain OPEN** (merge did not close them): missing `CHECKOUT.ORDER.APPROVED` webhook for order `8S923706NG623915A` (needs PayPal's webhook event log); buyer-side decline not run; public `/api/paypal/*` checkout not exercised live; token is still spent if a transfer fails mid-stream after the atomic claim; unexplained Worker exceptions (19:52:13Z, 19:54:23Z, 20:19:06Z); the conditions in `docs/paypal-reactivation-gate-2026-10-01.md`.
+
+**Resume tomorrow, in this order:**
+1. Owner: read PayPal Sandbox → Event Logs → Webhooks Events for `8S923706NG623915A` (steps in the "Missing CHECKOUT.ORDER.APPROVED" entry) and report status, attempts, target URL(s), responses; optionally Resend. Claude then confirms receipt in D1 and closes or narrows gap 1.
+2. Decide whether to bring `main` into `prep/...` (would redeploy the Sandbox Worker with the fix; its `wrangler.paypal-sandbox.toml` already has the flag set to `"false"`).
+3. Decide whether to run the decline test (needs a Sandbox negative-testing buyer/card) and whether to run a live public-checkout check on a Sandbox-only Worker.
+4. Optionally enable Worker observability temporarily to diagnose the three exceptions, and clean up stale Previews.
+5. Do not enable payments or touch PayPal Live until the reactivation-gate document is satisfied.
+
 ### PR #149 MERGED — post-merge verification and main Preview fix — 12.10.2026 (night)
 
 - **Merge:** squash-merged on 2026-10-12 20:29:44Z as `3ff89228262b2d1bf2b4516dcf4503d0c2fb6776` (head was `ee64376`; between the last code head `a20b844` and `ee64376` only `handoff.md` changed). Before merging, all four GitHub workflows ran green on the final head (`PayPal Orders v2 CI`, `Python Data Tests`, `Lead Funnel CI`, `Business Live Verification`, triggered via workflow_dispatch); the Cloudflare builds on that docs-only head were `skipped` (`[skip ci]`) and had been green on the identical code at `a20b844`. `main` has no branch protection / required checks. The PR branch was not deleted.
