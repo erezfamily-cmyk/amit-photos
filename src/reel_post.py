@@ -20,6 +20,7 @@ import tempfile
 import time
 import urllib.request as ul
 from pathlib import Path
+from social_caption_quality import compose_caption, generated_body, photo_fallback, require_caption
 
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 sys.stderr.reconfigure(encoding="utf-8", errors="replace")
@@ -161,7 +162,9 @@ def generate_reel_caption(category, lang, titles=None):
     בלי ANTHROPIC_API_KEY או בכל כשל — נופל לשורת "בקר באתר שלי" הישנה.
     """
     cta_line = "בקר באתר שלי" if lang == "he" else "Visit my website"
-    fallback = f"{cta_line}: amitphotos.com\n\n{get_hashtags(category)}"
+    fallback_body = photo_fallback({"category": category}, lang)
+    footer = f"{cta_line}: https://amitphotos.com/"
+    fallback = compose_caption(fallback_body, footer, get_hashtags(category), fallback_body)
     if not ANTHROPIC_API_KEY:
         return fallback
 
@@ -193,12 +196,12 @@ def generate_reel_caption(category, lang, titles=None):
             )
         msg = client.messages.create(
             model="claude-opus-4-8",
-            max_tokens=120,
+            max_tokens=300,
             system=system_prompt,
             messages=[{"role": "user", "content": prompt}],
         )
-        body = msg.content[0].text.strip()
-        return f"{body}\n\n{cta_line}: amitphotos.com\n\n{get_hashtags(category)}"
+        body = generated_body(msg, fallback_body)
+        return compose_caption(body, footer, get_hashtags(category), fallback_body)
     except Exception as e:
         print(f"⚠️  יצירת כיתוב Claude נכשלה ({e}) — נופל לברירת מחדל")
         return fallback
@@ -896,6 +899,7 @@ def _upload_video(video_path):
     return pub
 
 def _publish_ig(video_url, caption):
+    require_caption(caption)
     import requests
     print("📸 מפרסם IG Reel...")
     r = requests.post(f"{GRAPH_API}/{IG_USER_ID}/media", data={
