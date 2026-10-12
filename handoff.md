@@ -8,6 +8,22 @@
 
 ## Acquisition and caption quality review — 12.10.2026
 
+### PR #149 MERGED — post-merge verification and main Preview fix — 12.10.2026 (night)
+
+- **Merge:** squash-merged on 2026-10-12 20:29:44Z as `3ff89228262b2d1bf2b4516dcf4503d0c2fb6776` (head was `ee64376`; between the last code head `a20b844` and `ee64376` only `handoff.md` changed). Before merging, all four GitHub workflows ran green on the final head (`PayPal Orders v2 CI`, `Python Data Tests`, `Lead Funnel CI`, `Business Live Verification`, triggered via workflow_dispatch); the Cloudflare builds on that docs-only head were `skipped` (`[skip ci]`) and had been green on the identical code at `a20b844`. `main` has no branch protection / required checks. The PR branch was not deleted.
+- **Production deploy (`amit-photos`):** `Workers Builds: amit-photos` success (build `203bb28a` on `3ff8922`), `Deploy Worker`, `build`/`deploy`, `PayPal Orders v2 CI` and Pages build all success; new Worker deployments 20:30:28Z and 20:30:33Z. Post-deploy: `https://amitphotos.com/api/payments-status` → `{"enabled":false}`, home 200, `/api/download/<bogus>` → 404. Production now contains the `handleDownload` fix.
+- **Main's Sandbox Preview fixed (owner-approved; scope: this one Preview only):** Preview `0563e1568f294258addab3e1339cd379` (branch `main`) had `npx wrangler preview` (build `9949ff1e` on the merge commit failed with "missing a previews block"). PATCHed its `settings.deploy_command` to the same `--preview … wrangler@4.149.0 preview --worker-name amit-photos-paypal-sandbox` command as Previews Base and re-read it (matches base; the PR-branch Preview untouched). One verification build was started: `08fdc90d…` stayed in "initializing" for ~5.5 min and was `terminated` by the platform before running any command, so it proved nothing; one retry `c155ee4a-d703-4d00-aaa9-9e2db380dcf4` on `3ff8922` ran the correct command and **succeeded** (`Preview: main (updated)`, `https://main-amit-photos-paypal-sandbox.erez-family.workers.dev`).
+- **Verified after that build:** the main Preview `/api/payments-status` → `{"enabled":false}`; its deployment env has Sandbox D1 `7b027b93-…`, R2 `amit-photos-paypal-sandbox-images`, Images, `PAYMENTS_ENABLED=false`, `PAYPAL_SANDBOX_CLEANUP_ENABLED=true`, **no secrets** (not needed for the build; its admin route is 401). The GitHub check `Workers Builds: amit-photos-paypal-sandbox` on `3ff8922` turned green (20:38:38Z). Main Sandbox Worker, PR-branch Preview and production all `{"enabled":false}`.
+- **Not done on purpose:** `main` was NOT merged into `prep/paypal-orders-v2-2026-10-01`, so the main Sandbox Worker still runs the 1.10 code (without the download-token fix); only its payment flag was fixed earlier (`e69131f`, build `787462a9`). No real purchases, no PayPal Live.
+
+**Remaining gaps / open items:**
+1. Missing `CHECKOUT.ORDER.APPROVED` webhook for order `8S923706NG623915A`: neither Worker saw a webhook-shaped request (investigation entry below); needs PayPal's webhook event log (owner), optionally Resend. Also compare the configured webhook URL and id in PayPal.
+2. Buyer-side decline not run; public `/api/paypal/*` checkout not exercised live; a transfer that fails mid-stream after the atomic claim still spends the token; unexplained Worker exceptions (Preview 19:52:13Z/19:54:23Z, main Sandbox Worker 20:19:06Z; observability off).
+3. Main Sandbox Worker on 1.10 code; decide separately whether to bring `main` into `prep/...`.
+4. The PR-branch Preview (`c3077f23…`, with its secrets and old order data) auto-deletes when its branch is deleted; ~90 other Previews hold stale command snapshots (only matter if rebuilt); new Previews inherit Previews Base, which has no secrets.
+5. Live remains gated by `docs/paypal-reactivation-gate-2026-10-01.md`: digital-only flag separation, checkout UX, Live credentials/webhook, security review.
+6. Local Windows PC: `python3` is a broken Store stub; 4 unrelated tests fail locally (CRLF) and pass in CI.
+
 ### Missing `CHECKOUT.ORDER.APPROVED` for order `8S923706NG623915A` — investigation (12.10.2026, ~20:25Z)
 
 **What D1 shows:** `paypal_webhook_events` has `CHECKOUT.ORDER.APPROVED` at 19:51:03Z (order 2), 19:55:16Z (order 3), 20:15:34Z (one order), and `PAYMENT.CAPTURE.COMPLETED` at 19:52:26Z, 20:16:56Z, 20:22:06Z. There is no approval event for `8S923706NG623915A` (PayPal API says it IS approved: `approveUrl:null`; capture succeeded). D1 only keeps events that were received, signature-verified and leased, so a failed or never-delivered event leaves no row.
