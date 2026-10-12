@@ -8,6 +8,15 @@
 
 ## Acquisition and caption quality review — 12.10.2026
 
+### Item 9 (buyer cancel) — PASS on retest, order `7AT61812JF3543355` — 12.10.2026
+
+Owner opened the checkout for the new order and clicked Cancel without approving (the click itself is owner-attested: the cancel page is static and logs nothing). Server-side verification afterwards:
+- D1: order `7AT61812JF3543355` `CREATED`, `paypal_capture_id`/`fulfillment_token`/`fulfillment_json`/`completed_at` all empty; `download_tokens` count still 4.
+- Webhooks: no event received after 19:55:16Z (last is the earlier `CHECKOUT.ORDER.APPROVED`), so no approval or capture event for this order; PayPal sends none on cancel.
+- PayPal-side (read-only same-key lookup, no create/capture): `approveUrl` is still present, i.e. the order was never approved. **Contrast with order 3** (`6WS827844D284583C`), whose lookup returns `approveUrl:null`, which supports the earlier conclusion that order 3 was approved by mistake (still uncaptured, left to expire/cleanup).
+- `/api/paypal/cancelled` renders (200); production `/api/payments-status` still `{"enabled":false}`.
+- Item 9 therefore passes: cancel leaves no capture and no download token. Remaining: item 10c buyer-side decline (needs a Sandbox negative-testing card), restoring the PayPal Sandbox webhook URL to the main Sandbox Worker, PR #149 review/merge decision, and the final summary report.
+
 ### Item 9 (buyer cancel) — first attempt inconclusive; order 3 was approved by mistake — 12.10.2026
 
 Owner opened the checkout for order `6WS827844D284583C` (created 19:53:01Z for the cancel test) and saw "PayPal Sandbox checkout cancelled — No capture was attempted", but may also have approved an order before cancelling. Read-only findings:
