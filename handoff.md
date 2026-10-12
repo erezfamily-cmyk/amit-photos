@@ -8,7 +8,7 @@
 
 ## Acquisition and caption quality review — 12.10.2026
 
-Status: prepared on `fix/acquisition-caption-quality-2026-10-12`; not merged or deployed.
+Status: [PR #147](https://github.com/erezfamily-cmyk/amit-photos/pull/147) is open and **not merged**. GitHub regression, Python Data, Lead Funnel and Business Live checks passed for code commit `de81253`. Cloudflare `Workers Builds: amit-photos` also passed. The separate `Workers Builds: amit-photos-paypal-sandbox` check failed (build `2cc0390c-9451-4196-8acc-0fcea34e8e97`); the connector exposes the build link but not its authenticated Cloudflare logs, so the cause is **not yet established**. Do not bypass the failed check or change payment/resource configuration to make it green. Resume by reading the Sandbox build logs, correcting the verified cause, then verifying all checks before merge. No real payment or publication was executed.
 
 - Read-only live check on 12.10 confirmed `/api/payments-status` returns `{"enabled":false}`. The canonical Sandbox backend is **merged PR #110**; PR #76 is closed without merge. Older statements below claiming no implementation exists are superseded.
 - Current `paypal-orders.js` still uses only `api-m.sandbox.paypal.com`. Public checkout UI, a separate digital-only enablement flag, explicit Live configuration, and current-code Sandbox E2E remain required before any production activation. Do not flip the global payment flag. Gelato stays out of scope.
