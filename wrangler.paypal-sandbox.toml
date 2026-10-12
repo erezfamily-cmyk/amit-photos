@@ -9,7 +9,7 @@ workers_dev = true
 keep_vars = true
 
 [vars]
-PAYMENTS_ENABLED = "true"
+PAYMENTS_ENABLED = "false"
 PAYPAL_SANDBOX_CLEANUP_ENABLED = "true"
 
 [assets]
