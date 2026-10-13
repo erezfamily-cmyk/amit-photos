@@ -8,6 +8,16 @@
 
 ## Acquisition and caption quality review — 12.10.2026
 
+### Connected-session review of PR #155 and Sandbox live-test plan (13.10.2026) — NO flag changed
+
+- **Verified:** PR #155 is a draft; head `908a5a3`; all 9 checks green on it (incl. `digital-checkout-browser`). The branch Preview `feature/digital-checkout-preparation-2026-10-13` of the Sandbox Worker runs build `af55c4e2` on that head (served `digital-checkout.mjs`, `gallery.js`, `checkout/index.html` are sha256-identical to the branch files) and is bound to Sandbox D1 `7b027b93-…`, Sandbox R2 and the Sandbox-only PayPal API base. Flags on the Preview: `PAYMENTS_ENABLED=false`, `DIGITAL_PAYPAL_ENABLED=false`. **It has no secrets yet**, so no PayPal call is possible. Production `/checkout/` is 404 and production `payments-status` is unchanged; `prep/...` untouched; main Sandbox Worker untouched.
+- **Blocked-state API checks on the Preview:** `payments-status` `{"enabled":false,"digitalEnabled":false}`; quote for `paypal-sandbox-test-photo` 3.00 ILS (`enabled:false`); unknown photo 404; public create/capture 503; admin route 401.
+- **Browser check (cloud Chrome via DevTools, blocked state):** gallery → lightbox → "personal license details" → `/checkout/`, in HE (RTL) and EN, at 390x844 and 360x640 and 1280x800: no horizontal overflow, no console errors, only same-origin requests, Continue-to-PayPal and the consent box disabled, "online payment is temporarily unavailable" shown, 3.00 ILS shown, license link to `/licensing/`. Real-pointer reach of the lightbox license button OK at 390 and 360 wide.
+- **Finding:** at 1280x800 on a first visit the cookie banner (`z-index` 99997, y 726–800) covers about 60% of the lightbox license button (y 716–768); only its top strip is clickable until the banner is dismissed. Suggest raising the lightbox action row above the banner or reserving space.
+- **Finding:** no dedicated decline handling or test (any non-OK capture other than `ORDER_ALREADY_CAPTURED` returns a generic 502).
+- **Plan:** `docs/digital-checkout-sandbox-live-test-plan-2026-10-13.md` (environment, exact flags and mechanism, owner inputs, test matrix T0–T8, sequence, stop rules). Flags are switched only on this Preview via a JSON merge patch of its latest deployment, only after the owner's explicit approval, and restored to `false` and verified (public create/capture 503) at the end; a push to the branch also resets them.
+- **Status:** waiting for the owner's approval and inputs (Preview secrets, webhook target, Sandbox buyer(s), phone). The historical missing `CHECKOUT.ORDER.APPROVED` check stays separate and open. Not merged; no production, `prep/...`, migration or PayPal Live change.
+
 ### RESUME POINT — digital checkout code preparation (13.10.2026, supersedes code deferral below)
 
 The owner authorized starting digital-checkout implementation and saving code/documentation in GitHub. This authorizes a separate draft PR, **not paid activation**. The earlier demand no-go remains historical evidence; no new demand analysis was performed.
