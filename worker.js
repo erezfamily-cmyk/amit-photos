@@ -1,4 +1,4 @@
-import { handlePayPalCreateOrder, handlePayPalCaptureOrder, handlePayPalSandboxStatus, handlePayPalWebhook, handlePayPalCheckoutReturn, handlePayPalSandboxCleanup, digitalPaymentsEnabled, handleDigitalCheckoutQuote } from './paypal-orders.js';
+import { handlePayPalCreateOrder, handlePayPalCaptureOrder, handlePayPalSandboxStatus, handlePayPalWebhook, handlePayPalCheckoutReturn, handlePayPalSandboxCleanup, handlePayPalReissueDownload, handlePayPalAfterSaleReview, handlePayPalOrderSupportView, digitalPaymentsEnabled, handleDigitalCheckoutQuote } from './paypal-orders.js';
 // Cloudflare Worker — amit-photos
 // מטפל בנתיבי API ומגיש static assets
 
@@ -2047,6 +2047,7 @@ async function handleDownload(request, env, token) {
   ).bind(token).first();
 
   if (!row) return jsonRes({ error: 'קישור לא תקין' }, 404, request);
+  if (row.used === 2 || row.revoked_at) return jsonRes({ error: 'קישור זה בוטל', code: 'LINK_REVOKED' }, 410, request);
   if (row.used) return jsonRes({ error: 'קישור זה כבר שומש' }, 410, request);
   if (Math.floor(Date.now() / 1000) > row.expires_at) return jsonRes({ error: 'פג תוקף הקישור' }, 410, request);
 
@@ -8026,6 +8027,18 @@ export default {
     if (path === '/api/admin/paypal/cleanup') {
       if (!await checkAuth(request, env)) return unauth(request);
       return handlePayPalSandboxCleanup(request, env);
+    }
+    if (path === '/api/admin/paypal/reissue') {
+      if (!await checkAuth(request, env)) return unauth(request);
+      return handlePayPalReissueDownload(request, env);
+    }
+    if (path === '/api/admin/paypal/after-sale-review') {
+      if (!await checkAuth(request, env)) return unauth(request);
+      return handlePayPalAfterSaleReview(request, env);
+    }
+    if (path === '/api/admin/paypal/order') {
+      if (!await checkAuth(request, env)) return unauth(request);
+      return handlePayPalOrderSupportView(request, env);
     }
     if (path === '/api/paypal/webhook') return handlePayPalWebhook(request, env);
     if (path === '/api/paypal/approved') return handlePayPalCheckoutReturn(request, true);

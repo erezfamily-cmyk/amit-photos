@@ -353,6 +353,10 @@ async function processCompletedCaptureWebhook(request, env, event, accessToken) 
   // create entitlements for transactions that did not originate locally.
   if (!order) return { ok: true, ignored: true };
 
+  // A refund or reversal that arrived first wins: never mint a link for it afterwards.
+  // Checked before PayPal is asked, because a refunded capture no longer reads COMPLETED.
+  if (isTerminalAfterSale(order)) return { ok: true, ignored: true };
+
   if (
     resource.amount?.currency_code !== order.currency ||
     captureMinor !== order.amount_expected
@@ -431,6 +435,377 @@ async function processCompletedCaptureWebhook(request, env, event, accessToken) 
   return { ok: true };
 }
 
+// ---------------------------------------------------------------------------
+// After-sale handling (migration 0003): refunds, reversals, disputes and the
+// admin-only re-issue of a download link for an order that was already paid.
+// Nothing here creates an order or a capture, and nothing here refunds money.
+// ---------------------------------------------------------------------------
+const MAX_REISSUES = 2;
+const REISSUE_TTL_SECONDS = 86400;
+const REISSUE_IN_PROGRESS_WINDOW_MS = 10 * 60 * 1000;
+const AFTER_SALE_RANK = { NONE: 0, REVIEW_REQUIRED: 1, REFUNDED: 2, REVOKED_MANUAL: 2, REVERSED: 3 };
+const TERMINAL_AFTER_SALE = new Set(['REFUNDED', 'REVERSED', 'REVOKED_MANUAL']);
+const AFTER_SALE_RANK_SQL =
+  "CASE after_sale_state WHEN 'REVERSED' THEN 3 WHEN 'REFUNDED' THEN 2 WHEN 'REVOKED_MANUAL' THEN 2 WHEN 'REVIEW_REQUIRED' THEN 1 ELSE 0 END";
+const AFTER_SALE_EVENT_TYPES = new Set([
+  'PAYMENT.CAPTURE.REFUNDED', 'PAYMENT.CAPTURE.REVERSED',
+  'CUSTOMER.DISPUTE.CREATED', 'CUSTOMER.DISPUTE.UPDATED', 'CUSTOMER.DISPUTE.RESOLVED',
+]);
+const ACTION_ID = /^[A-Za-z0-9_-]{8,64}$/;
+
+// Rows from before migration 0003 have no after_sale_state: that means NONE.
+function afterSaleStateOf(order) {
+  return order?.after_sale_state || 'NONE';
+}
+
+export function isTerminalAfterSale(order) {
+  return TERMINAL_AFTER_SALE.has(afterSaleStateOf(order));
+}
+
+async function raiseAfterSaleState(env, orderRef, state, nowIso) {
+  // Monotonic: a late or repeated event can raise the state, never lower it.
+  const result = await env.DB.prepare(
+    'UPDATE paypal_orders SET after_sale_state = ?, after_sale_updated_at = ? WHERE id = ? AND (' + AFTER_SALE_RANK_SQL + ') < ?'
+  ).bind(state, nowIso, orderRef, AFTER_SALE_RANK[state]).run();
+  return Number(result?.meta?.changes) > 0;
+}
+
+// Unused links only: a link that was already claimed cannot be taken back.
+async function revokeUnusedTokens(env, order, captureId, reason, exceptToken = null) {
+  const result = await env.DB.prepare(
+    'UPDATE download_tokens SET used = 2, revoked_at = ?, revoke_reason = ? WHERE used = 0 AND token != ? AND (paypal_order_ref = ? OR tx = ?)'
+  ).bind(Math.floor(Date.now() / 1000), reason, exceptToken || '', order.id, captureId || order.paypal_capture_id || '').run();
+  return Number(result?.meta?.changes) || 0;
+}
+
+function captureIdFromResource(resource, fallbackToId) {
+  const up = Array.isArray(resource?.links) ? resource.links.find(link => link?.rel === 'up')?.href : null;
+  const match = typeof up === 'string' && up.match(/\/v2\/payments\/captures\/([A-Za-z0-9_-]+)(?:[/?#]|$)/);
+  if (match) return match[1];
+  return fallbackToId && typeof resource?.id === 'string' ? resource.id : null;
+}
+
+async function fetchAuthoritativeCapture(env, accessToken, captureId) {
+  const response = await fetch(
+    paypalApiBase(env) + '/v2/payments/captures/' + encodeURIComponent(captureId),
+    { method: 'GET', headers: { 'Authorization': 'Bearer ' + accessToken, 'Accept': 'application/json' } }
+  );
+  if (!response.ok) return null;
+  return response.json().catch(() => null);
+}
+
+function captureMatchesOrder(capture, captureId, order) {
+  return !!capture && capture.id === captureId && capture.custom_id === order.id &&
+    capture.amount?.currency_code === order.currency &&
+    moneyToMinorUnits(capture.amount?.value) === order.amount_expected;
+}
+
+async function findOrderForAfterSale(env, captureId, orderIdHint) {
+  let order = captureId
+    ? await env.DB.prepare('SELECT * FROM paypal_orders WHERE paypal_capture_id = ?').bind(captureId).first()
+    : null;
+  if (!order && typeof orderIdHint === 'string' && orderIdHint) {
+    order = await env.DB.prepare('SELECT * FROM paypal_orders WHERE paypal_order_id = ?').bind(orderIdHint).first();
+  }
+  return order || null;
+}
+
+async function recordAfterSaleEvent(env, order, event, signal, amountMinor) {
+  const result = await env.DB.prepare(
+    "INSERT OR IGNORE INTO paypal_order_actions (order_ref, paypal_order_id, action, request_id, status, actor, reason, amount_minor, created_at, completed_at) VALUES (?, ?, 'AFTER_SALE_EVENT', ?, ?, 'paypal-webhook', ?, ?, ?, ?)"
+  ).bind(order.id, order.paypal_order_id, event.id, signal, event.event_type, amountMinor, new Date().toISOString(), new Date().toISOString()).run();
+  return Number(result?.meta?.changes) > 0;
+}
+
+// Refund / reversal / dispute events. The signature was verified by the caller;
+// here the event is tied to a local order AND capture, the capture is re-read from
+// PayPal, and state only ever moves forward, so duplicates and out-of-order
+// delivery are harmless. Partial refunds and disputes only flag manual review.
+async function processAfterSaleWebhook(request, env, event, accessToken) {
+  const type = event.event_type;
+  const resource = event.resource || {};
+  const nowIso = new Date().toISOString();
+  let order;
+  let signal;
+  let amountMinor = null;
+  let captureId = null;
+
+  if (type.startsWith('CUSTOMER.DISPUTE.')) {
+    const ids = (Array.isArray(resource.disputed_transactions) ? resource.disputed_transactions : [])
+      .map(item => item?.seller_transaction_id).filter(id => typeof id === 'string' && id);
+    for (const id of ids) {
+      order = await findOrderForAfterSale(env, id, null);
+      if (order) { captureId = id; break; }
+    }
+    if (!order) return { ok: true, ignored: true };
+    signal = type === 'CUSTOMER.DISPUTE.RESOLVED' || resource.status === 'RESOLVED' ? 'DISPUTE_RESOLVED' : 'DISPUTE_OPEN';
+  } else {
+    captureId = captureIdFromResource(resource, type === 'PAYMENT.CAPTURE.REVERSED');
+    const orderIdHint = resource.supplementary_data?.related_ids?.order_id;
+    if (!captureId) return { ok: false, status: 400, error: 'PAYPAL_WEBHOOK_AFTER_SALE_INVALID' };
+    order = await findOrderForAfterSale(env, captureId, orderIdHint);
+    // Not one of ours: acknowledge without acting.
+    if (!order) return { ok: true, ignored: true };
+    if (order.paypal_capture_id && order.paypal_capture_id !== captureId) {
+      return { ok: false, status: 409, error: 'PAYPAL_WEBHOOK_IDENTITY_MISMATCH' };
+    }
+    const capture = await fetchAuthoritativeCapture(env, accessToken, captureId);
+    if (!capture) return { ok: false, status: 502, error: 'PAYPAL_WEBHOOK_CAPTURE_LOOKUP_FAILED' };
+    if (!captureMatchesOrder(capture, captureId, order)) {
+      return { ok: false, status: 409, error: 'PAYPAL_WEBHOOK_IDENTITY_MISMATCH' };
+    }
+    if (type === 'PAYMENT.CAPTURE.REVERSED') {
+      signal = 'REVERSAL';
+    } else {
+      signal = 'REFUND';
+      const refundMinor = resource.status === 'COMPLETED' && resource.amount?.currency_code === order.currency
+        ? moneyToMinorUnits(resource.amount?.value) : null;
+      amountMinor = refundMinor;
+      order = { ...order, _capturePaypalStatus: capture.status };
+    }
+  }
+
+  await recordAfterSaleEvent(env, order, event, signal, amountMinor);
+  let state;
+  if (signal === 'REVERSAL') {
+    state = 'REVERSED';
+  } else if (signal === 'REFUND') {
+    const sum = await env.DB.prepare(
+      "SELECT COALESCE(SUM(amount_minor), 0) AS total FROM paypal_order_actions WHERE order_ref = ? AND action = 'AFTER_SALE_EVENT' AND status = 'REFUND'"
+    ).bind(order.id).first();
+    const refunded = Number(sum?.total) || 0;
+    await env.DB.prepare('UPDATE paypal_orders SET refunded_minor = ? WHERE id = ?').bind(refunded, order.id).run();
+    // Full only on PayPal's own word or when the recorded refunds cover the price.
+    state = order._capturePaypalStatus === 'REFUNDED' || refunded >= order.amount_expected ? 'REFUNDED' : 'REVIEW_REQUIRED';
+  } else {
+    state = 'REVIEW_REQUIRED';
+    // Order dispute events by their own timestamp so a late "created" cannot reopen a resolved dispute.
+    const at = resource.update_time || event.create_time || null;
+    const open = signal === 'DISPUTE_OPEN' ? 1 : 0;
+    if (open || at) {
+      await env.DB.prepare(
+        'UPDATE paypal_orders SET dispute_open = ?, dispute_updated_at = COALESCE(?, dispute_updated_at) WHERE id = ? AND (? IS NULL OR dispute_updated_at IS NULL OR dispute_updated_at <= ?)'
+      ).bind(open, at, order.id, at, at).run();
+    }
+  }
+  await raiseAfterSaleState(env, order.id, state, nowIso);
+  if (TERMINAL_AFTER_SALE.has(state)) {
+    await revokeUnusedTokens(env, order, captureId, state);
+  }
+  return { ok: true, afterSale: state };
+}
+
+function adminActionInput(request, body) {
+  const key = request.headers.get('Idempotency-Key') || '';
+  const reason = typeof body?.reason === 'string' ? body.reason.replace(/[\u0000-\u001f\u007f]/g, ' ').trim().slice(0, 200) : '';
+  const paypalOrderId = typeof body?.paypalOrderId === 'string' ? body.paypalOrderId : '';
+  if (!ACTION_ID.test(key)) return { error: 'IDEMPOTENCY_KEY_REQUIRED' };
+  if (!/^[A-Za-z0-9_-]{8,64}$/.test(paypalOrderId)) return { error: 'PAYPAL_ORDER_ID_INVALID' };
+  if (!reason) return { error: 'REASON_REQUIRED' };
+  return { key, reason, paypalOrderId };
+}
+
+function adminConfigBlocked(request, env) {
+  const config = resolvePayPalConfig(env, request);
+  if (config.ok) return null;
+  return jsonRes({ error: 'PAYPAL_CONFIGURATION_INVALID', reason: config.reason }, 503, request);
+}
+
+// Support tool: gives a paid customer a fresh one-time link for the SAME order and
+// capture. Runs for the authenticated admin only (the route enforces checkAuth),
+// works even while public checkout is closed, never creates an order or a charge.
+export async function handlePayPalReissueDownload(request, env) {
+  if (request.method !== 'POST') return jsonRes({ error: 'method not allowed' }, 405, request);
+  const blocked = adminConfigBlocked(request, env);
+  if (blocked) return blocked;
+  const input = adminActionInput(request, await request.json().catch(() => ({})));
+  if (input.error) return jsonRes({ error: input.error }, 400, request);
+
+  const order = await env.DB.prepare('SELECT * FROM paypal_orders WHERE paypal_order_id = ?').bind(input.paypalOrderId).first();
+  if (!order) return jsonRes({ error: 'ORDER_NOT_FOUND' }, 404, request);
+  if (order.order_type !== 'digital' || order.status !== 'COMPLETED' || !order.paypal_capture_id) {
+    return jsonRes({ error: 'ORDER_NOT_ELIGIBLE' }, 409, request);
+  }
+  if (afterSaleStateOf(order) !== 'NONE' || Number(order.dispute_open) === 1) {
+    return jsonRes({ error: 'ORDER_NOT_ELIGIBLE', reason: 'AFTER_SALE_OPEN' }, 409, request);
+  }
+
+  const existing = await env.DB.prepare(
+    "SELECT * FROM paypal_order_actions WHERE order_ref = ? AND action = 'REISSUE' AND request_id = ?"
+  ).bind(order.id, input.key).first();
+  if (existing && existing.status !== 'STARTED') {
+    if (existing.status !== 'DONE') return jsonRes({ error: 'REISSUE_NOT_COMPLETED', status: existing.status }, 409, request);
+    return reissueReplay(request, env, order, existing);
+  }
+
+  // Re-verify the payment with PayPal before spending a re-issue.
+  let capture;
+  try {
+    const accessToken = await getPayPalAccessToken(env);
+    const orderResponse = await fetch(
+      paypalApiBase(env) + '/v2/checkout/orders/' + encodeURIComponent(order.paypal_order_id),
+      { method: 'GET', headers: { 'Authorization': 'Bearer ' + accessToken, 'Accept': 'application/json' } }
+    );
+    const authoritative = await orderResponse.json().catch(() => ({}));
+    if (!orderResponse.ok) return jsonRes({ error: 'PAYPAL_LOOKUP_FAILED' }, 502, request);
+    capture = authoritative.purchase_units?.[0]?.payments?.captures?.find(item => item?.id === order.paypal_capture_id);
+    if (authoritative.id !== order.paypal_order_id || authoritative.status !== 'COMPLETED' ||
+        authoritative.purchase_units?.[0]?.custom_id !== order.id || !captureMatchesOrder(
+          capture && { ...capture, custom_id: order.id }, order.paypal_capture_id, order)) {
+      return jsonRes({ error: 'PAYPAL_PAYMENT_NOT_VERIFIED' }, 409, request);
+    }
+    if (capture.status !== 'COMPLETED') {
+      return jsonRes({ error: 'PAYPAL_PAYMENT_NOT_VERIFIED', paypalCaptureStatus: String(capture.status || '') }, 409, request);
+    }
+  } catch {
+    return jsonRes({ error: 'PAYPAL_LOOKUP_FAILED' }, 502, request);
+  }
+
+  let action = existing;
+  if (!action) {
+    const newToken = crypto.randomUUID();
+    const nowIso = new Date().toISOString();
+    const recent = new Date(Date.now() - REISSUE_IN_PROGRESS_WINDOW_MS).toISOString();
+    let inserted = false;
+    try {
+      // One statement: the limit, the "nothing in progress" rule and the order state
+      // are checked and the slot is taken together, so parallel requests cannot exceed it.
+      const result = await env.DB.prepare(
+        `INSERT INTO paypal_order_actions (order_ref, paypal_order_id, action, request_id, status, actor, reason, new_token, created_at)
+         SELECT ?, ?, 'REISSUE', ?, 'STARTED', 'admin', ?, ?, ?
+         WHERE (SELECT COUNT(*) FROM paypal_order_actions WHERE order_ref = ? AND action = 'REISSUE' AND status IN ('STARTED', 'DONE')) < ?
+           AND NOT EXISTS (SELECT 1 FROM paypal_order_actions WHERE order_ref = ? AND action = 'REISSUE' AND status = 'STARTED' AND created_at > ?)
+           AND EXISTS (SELECT 1 FROM paypal_orders WHERE id = ? AND status = 'COMPLETED' AND after_sale_state = 'NONE' AND dispute_open = 0)`
+      ).bind(order.id, order.paypal_order_id, input.key, input.reason, newToken, nowIso, order.id, MAX_REISSUES, order.id, recent, order.id).run();
+      inserted = Number(result?.meta?.changes) > 0;
+    } catch {
+      // Same request id raced in parallel: fall through to the replay lookup below.
+    }
+    action = await env.DB.prepare(
+      "SELECT * FROM paypal_order_actions WHERE order_ref = ? AND action = 'REISSUE' AND request_id = ?"
+    ).bind(order.id, input.key).first();
+    if (!action) {
+      const used = await env.DB.prepare(
+        "SELECT COUNT(*) AS n FROM paypal_order_actions WHERE order_ref = ? AND action = 'REISSUE' AND status IN ('STARTED', 'DONE')"
+      ).bind(order.id).first();
+      const reasonCode = Number(used?.n) >= MAX_REISSUES ? 'REISSUE_LIMIT_REACHED' : 'REISSUE_IN_PROGRESS_OR_NOT_ELIGIBLE';
+      return jsonRes({ error: reasonCode }, 409, request);
+    }
+    if (!inserted && action.status === 'DONE') return reissueReplay(request, env, order, action);
+  }
+
+  return completeReissue(request, env, order, action);
+}
+
+async function reissueReplay(request, env, order, action) {
+  const row = action.new_token
+    ? await env.DB.prepare('SELECT used, expires_at FROM download_tokens WHERE token = ?').bind(action.new_token).first()
+    : null;
+  if (!row || row.used !== 0 || Math.floor(Date.now() / 1000) > row.expires_at) {
+    return jsonRes({ error: 'REISSUE_LINK_NO_LONGER_USABLE' }, 409, request);
+  }
+  return reissueSuccess(request, env, order, action, row.expires_at, true);
+}
+
+async function reissueSuccess(request, env, order, action, expiresAt, replayed) {
+  const used = await env.DB.prepare(
+    "SELECT COUNT(*) AS n FROM paypal_order_actions WHERE order_ref = ? AND action = 'REISSUE' AND status IN ('STARTED', 'DONE')"
+  ).bind(order.id).first();
+  return jsonRes({
+    ok: true, replayed,
+    url: '/api/download/' + action.new_token,
+    expiresAt: new Date(expiresAt * 1000).toISOString(),
+    reissuesUsed: Number(used?.n) || 0,
+    reissuesRemaining: Math.max(0, MAX_REISSUES - (Number(used?.n) || 0)),
+  }, 200, request);
+}
+
+async function completeReissue(request, env, order, action) {
+  const now = Math.floor(Date.now() / 1000);
+  const captureId = order.paypal_capture_id;
+  // Previous links that were never used stop working before the new one exists.
+  await revokeUnusedTokens(env, order, captureId, 'REISSUED', action.new_token);
+  await env.DB.prepare(
+    'INSERT OR IGNORE INTO download_tokens (token, photo_ids, size, tx, used, expires_at, created_at, amount, paypal_order_ref) VALUES (?, ?, ?, ?, 0, ?, ?, ?, ?)'
+  ).bind(
+    action.new_token, JSON.stringify([order.photo_id]), order.sku, captureId + ':R' + action.id,
+    now + REISSUE_TTL_SECONDS, now, order.amount_expected / 100, order.id
+  ).run();
+  const row = await env.DB.prepare('SELECT used, expires_at FROM download_tokens WHERE token = ?').bind(action.new_token).first();
+  if (!row) return jsonRes({ error: 'REISSUE_PERSISTENCE_FAILED' }, 500, request);
+
+  // A refund or dispute may have landed while this ran: never leave a live link behind.
+  const current = await env.DB.prepare('SELECT * FROM paypal_orders WHERE id = ?').bind(order.id).first();
+  if (afterSaleStateOf(current) !== 'NONE' || Number(current?.dispute_open) === 1) {
+    await revokeUnusedTokens(env, order, captureId, 'AFTER_SALE_DURING_REISSUE');
+    await env.DB.prepare("UPDATE paypal_order_actions SET status = 'REVOKED', completed_at = ? WHERE id = ?")
+      .bind(new Date().toISOString(), action.id).run();
+    return jsonRes({ error: 'ORDER_NOT_ELIGIBLE', reason: 'AFTER_SALE_OPEN' }, 409, request);
+  }
+  await env.DB.prepare("UPDATE paypal_order_actions SET status = 'DONE', completed_at = ? WHERE id = ? AND status = 'STARTED'")
+    .bind(new Date().toISOString(), action.id).run();
+  return reissueSuccess(request, env, order, action, row.expires_at, false);
+}
+
+// Manual decision for an order flagged REVIEW_REQUIRED (partial refund or dispute).
+// 'release' clears the flag; 'revoke' treats the order as refunded-by-decision.
+// The system never decides entitlement or money on its own.
+export async function handlePayPalAfterSaleReview(request, env) {
+  if (request.method !== 'POST') return jsonRes({ error: 'method not allowed' }, 405, request);
+  const blocked = adminConfigBlocked(request, env);
+  if (blocked) return blocked;
+  const body = await request.json().catch(() => ({}));
+  const input = adminActionInput(request, body);
+  if (input.error) return jsonRes({ error: input.error }, 400, request);
+  if (body.decision !== 'release' && body.decision !== 'revoke') return jsonRes({ error: 'DECISION_INVALID' }, 400, request);
+
+  const order = await env.DB.prepare('SELECT * FROM paypal_orders WHERE paypal_order_id = ?').bind(input.paypalOrderId).first();
+  if (!order) return jsonRes({ error: 'ORDER_NOT_FOUND' }, 404, request);
+
+  const nowIso = new Date().toISOString();
+  const audit = await env.DB.prepare(
+    "INSERT OR IGNORE INTO paypal_order_actions (order_ref, paypal_order_id, action, request_id, status, actor, reason, created_at, completed_at) VALUES (?, ?, 'AFTER_SALE_REVIEW', ?, ?, 'admin', ?, ?, ?)"
+  ).bind(order.id, order.paypal_order_id, input.key, body.decision, input.reason, nowIso, nowIso).run();
+  if (!(Number(audit?.meta?.changes) > 0)) {
+    return jsonRes({ ok: true, replayed: true, state: afterSaleStateOf(order) }, 200, request);
+  }
+
+  if (body.decision === 'release') {
+    const result = await env.DB.prepare(
+      "UPDATE paypal_orders SET after_sale_state = 'NONE', after_sale_updated_at = ? WHERE id = ? AND after_sale_state = 'REVIEW_REQUIRED' AND dispute_open = 0"
+    ).bind(nowIso, order.id).run();
+    if (!(Number(result?.meta?.changes) > 0)) {
+      await env.DB.prepare("UPDATE paypal_order_actions SET status = 'REFUSED' WHERE order_ref = ? AND action = 'AFTER_SALE_REVIEW' AND request_id = ?")
+        .bind(order.id, input.key).run();
+      return jsonRes({ error: 'RELEASE_NOT_ALLOWED' }, 409, request);
+    }
+    return jsonRes({ ok: true, state: 'NONE' }, 200, request);
+  }
+  await raiseAfterSaleState(env, order.id, 'REVOKED_MANUAL', nowIso);
+  const revoked = await revokeUnusedTokens(env, order, order.paypal_capture_id, 'REVOKED_MANUAL');
+  return jsonRes({ ok: true, state: 'REVOKED_MANUAL', revokedLinks: revoked }, 200, request);
+}
+
+// Read-only support view. Never returns link tokens or PayPal secrets.
+export async function handlePayPalOrderSupportView(request, env) {
+  if (request.method !== 'GET') return jsonRes({ error: 'method not allowed' }, 405, request);
+  const blocked = adminConfigBlocked(request, env);
+  if (blocked) return blocked;
+  const paypalOrderId = new URL(request.url).searchParams.get('paypalOrderId') || '';
+  if (!/^[A-Za-z0-9_-]{8,64}$/.test(paypalOrderId)) return jsonRes({ error: 'PAYPAL_ORDER_ID_INVALID' }, 400, request);
+  const order = await env.DB.prepare('SELECT * FROM paypal_orders WHERE paypal_order_id = ?').bind(paypalOrderId).first();
+  if (!order) return jsonRes({ error: 'ORDER_NOT_FOUND' }, 404, request);
+  const actions = await env.DB.prepare(
+    'SELECT action, request_id, status, actor, reason, amount_minor, created_at, completed_at FROM paypal_order_actions WHERE order_ref = ? ORDER BY id'
+  ).bind(order.id).all();
+  return jsonRes({
+    paypalOrderId, status: order.status, afterSaleState: afterSaleStateOf(order),
+    disputeOpen: Number(order.dispute_open) === 1, refundedMinor: Number(order.refunded_minor) || 0,
+    currency: order.currency, amountMinor: order.amount_expected,
+    actions: actions?.results || [],
+  }, 200, request);
+}
+
 export async function handlePayPalWebhook(request, env) {
   if (request.method !== 'POST') return jsonRes({ error: 'method not allowed' }, 405, request);
 
@@ -473,6 +848,15 @@ export async function handlePayPalWebhook(request, env) {
   }
 
   try {
+    if (AFTER_SALE_EVENT_TYPES.has(event.event_type)) {
+      const handled = await processAfterSaleWebhook(request, env, event, verified.accessToken);
+      if (!handled.ok) {
+        await releaseWebhookLease(env, event.id);
+        return jsonRes({ error: handled.error }, handled.status || 500, request);
+      }
+      await markWebhookProcessed(env, event.id);
+      return jsonRes({ ok: true, duplicate: false, ignored: !!handled.ignored, afterSale: handled.afterSale || null }, 200, request);
+    }
     if (event.event_type !== 'PAYMENT.CAPTURE.COMPLETED') {
       await markWebhookProcessed(env, event.id);
       return jsonRes({ ok: true, ignored: true }, 200, request);
@@ -789,6 +1173,9 @@ async function finalizeDigitalPayPalOrder(request, env, order) {
     return jsonRes({ error: 'PayPal fulfillment state is incomplete' }, 500, request);
   }
 
+  const beforeMint = await env.DB.prepare('SELECT * FROM paypal_orders WHERE id = ?').bind(order.id).first();
+  if (isTerminalAfterSale(beforeMint)) return jsonRes({ error: 'ORDER_REFUNDED' }, 409, request);
+
   const now = Math.floor(Date.now() / 1000);
   const expires = now + 86400;
   await env.DB.prepare(
@@ -810,6 +1197,13 @@ async function finalizeDigitalPayPalOrder(request, env, order) {
   ).bind(fulfillmentToken, captureId).first();
   if (!persistedToken?.token) {
     return jsonRes({ error: 'Digital fulfillment persistence failed' }, 500, request);
+  }
+
+  // A refund may have landed between the check above and the insert: undo the link.
+  const afterMint = await env.DB.prepare('SELECT * FROM paypal_orders WHERE id = ?').bind(order.id).first();
+  if (isTerminalAfterSale(afterMint)) {
+    await revokeUnusedTokens(env, order, captureId, afterSaleStateOf(afterMint));
+    return jsonRes({ error: 'ORDER_REFUNDED' }, 409, request);
   }
 
   const photo = await env.DB.prepare('SELECT title FROM photos WHERE id = ?').bind(order.photo_id).first();
