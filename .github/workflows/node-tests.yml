@@ -12,6 +12,12 @@ on:
       - 'tests/paypal-orders-v2.test.mjs'
       - 'tests/digital-checkout.test.mjs'
       - 'assets/js/digital-checkout.mjs'
+      - 'assets/js/gallery.js'
+      - 'assets/js/i18n.js'
+      - 'index.html'
+      - 'tests/gallery-card-keyboard-a11y.test.mjs'
+      - 'tests/i18n-translation-parity.test.mjs'
+      - 'tests/purchase-disabled-ux.test.mjs'
       - 'checkout/index.html'
       - 'tests/paypal-staging-isolation.test.mjs'
       - 'tests/download-token-consumption.test.mjs'
@@ -34,6 +40,12 @@ on:
       - 'tests/paypal-orders-v2.test.mjs'
       - 'tests/digital-checkout.test.mjs'
       - 'assets/js/digital-checkout.mjs'
+      - 'assets/js/gallery.js'
+      - 'assets/js/i18n.js'
+      - 'index.html'
+      - 'tests/gallery-card-keyboard-a11y.test.mjs'
+      - 'tests/i18n-translation-parity.test.mjs'
+      - 'tests/purchase-disabled-ux.test.mjs'
       - 'checkout/index.html'
       - 'tests/paypal-staging-isolation.test.mjs'
       - 'tests/download-token-consumption.test.mjs'
@@ -62,5 +74,5 @@ jobs:
         with:
           python-version: '3.12'
       - name: Run PayPal Orders v2 security and isolation suite
-        run: node --test tests/digital-checkout.test.mjs tests/paypal-orders-v2.test.mjs tests/paypal-staging-isolation.test.mjs tests/download-token-consumption.test.mjs tests/payments-feature-flag.test.mjs tests/paypal-sandbox-bootstrap-schema.test.mjs tests/paypal-migration-0002-rehearsal.test.mjs
+        run: node --test tests/gallery-card-keyboard-a11y.test.mjs tests/i18n-translation-parity.test.mjs tests/purchase-disabled-ux.test.mjs tests/digital-checkout.test.mjs tests/paypal-orders-v2.test.mjs tests/paypal-staging-isolation.test.mjs tests/download-token-consumption.test.mjs tests/payments-feature-flag.test.mjs tests/paypal-sandbox-bootstrap-schema.test.mjs tests/paypal-migration-0002-rehearsal.test.mjs
 

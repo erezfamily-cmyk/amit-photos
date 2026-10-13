@@ -1,6 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { DatabaseSync } from 'node:sqlite';
+import vm from 'node:vm';
+import { readFileSync } from 'node:fs';
 import { createCheckoutClient } from '../assets/js/digital-checkout.mjs';
 import { digitalPaymentsEnabled, handleDigitalCheckoutQuote, handlePayPalCreateOrder, handlePayPalCaptureOrder } from '../paypal-orders.js';
 
@@ -154,4 +156,35 @@ test('capture retries the same order and keeps bearer download tokens out of sto
   assert.equal((await client.capture(orderId)).url, '/api/download/bearer-token');
   assert.deepEqual(bodies, [{ paypalOrderId: orderId }, { paypalOrderId: orderId }]);
   assert.doesNotMatch(saved.getItem('amit-digital-checkout-v1'), /bearer-token/);
+});
+
+test('gallery personal-license entry opens Orders v2 preview even while payments are closed', () => {
+  const source = readFileSync(new URL('../assets/js/gallery.js', import.meta.url), 'utf8');
+  const start = source.indexOf('function openBuyModal(photo) {');
+  const end = source.indexOf('function transitionBuyStep(', start);
+  for (const lang of ['he', 'en']) {
+    let target;
+    const events = [];
+    const context = { URLSearchParams, PURCHASES_ENABLED: false, getLang: () => lang,
+      trackEvent: type => events.push(type), window: { location: { assign: url => { target = url; } } } };
+    vm.runInNewContext(source.slice(start, end) + "\nopenBuyModal({ id: 'photo & 1' });", context);
+    const url = new URL(target, 'https://amitphotos.com');
+    assert.equal(url.pathname, '/checkout/');
+    assert.equal(url.searchParams.get('photoId'), 'photo & 1');
+    assert.equal(url.searchParams.get('lang'), lang);
+    assert.deepEqual(events, ['licensing_personal_interest']);
+  }
+  assert.doesNotMatch(source.slice(start, end), /cgi-bin|pending_item_number|amount:/);
+});
+
+test('legacy cart and print cannot charge when the global payment flag is true', () => {
+  const source = readFileSync(new URL('../assets/js/gallery.js', import.meta.url), 'utf8');
+  const gate = source.slice(source.indexOf('const LEGACY_CHECKOUT_ENABLED'), source.indexOf('let allPhotos'));
+  const cart = source.match(/function cartCheckout\(\) \{[\s\S]*?\n\}/)[0];
+  let alerts = 0;
+  const context = { PURCHASES_ENABLED: true, alert: () => { alerts++; }, t: value => value };
+  vm.runInNewContext(gate + cart + "\nif (canBuy({})) throw Error('legacy visible'); cartCheckout();", context);
+  assert.equal(alerts, 1);
+  assert.match(source, /async function open\(photo\) \{\s*if \(!PURCHASES_ENABLED \|\| !LEGACY_CHECKOUT_ENABLED\)/);
+  assert.match(source, /async function pay\(\) \{\s*if \(!PURCHASES_ENABLED \|\| !LEGACY_CHECKOUT_ENABLED\)/);
 });

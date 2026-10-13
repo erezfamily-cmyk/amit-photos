@@ -91,6 +91,7 @@ const TRANSLATIONS = {
     'gallery.empty':    'אין תמונות בקטגוריה זו.',
     'gallery.btn.print':'הדפסה ←',
     'gallery.btn.buy':  'רכישה ←',
+    'gallery.btn.license': 'רישיון אישי ←',
     'gallery.btn.cart': '+ סל',
     'week.label':    '⭐ תמונת השבוע',
     'week.discount': '25% הנחה השבוע על כל גדלי הרכישה',
@@ -258,6 +259,7 @@ const TRANSLATIONS = {
     'lb.wall':          '🖼 על הקיר',
     'lb.print':         '🖨️ הדפסה ←',
     'lb.buy':           'רכישה ←',
+    'lb.license':       'פרטי רישיון אישי ←',
     'lb.contact':       'רכישה ישירות בוואטסאפ',
     'lb.whatsapp':      'וואטסאפ',
     'lb.facebook':      'פייסבוק',
@@ -481,6 +483,7 @@ const TRANSLATIONS = {
     'gallery.empty':    'No photos in this category.',
     'gallery.btn.print':'Print →',
     'gallery.btn.buy':  'Purchase →',
+    'gallery.btn.license': 'Personal license →',
     'gallery.btn.cart': '+ Cart',
     'week.label':    '⭐ Photo of the Week',
     'week.discount': '25% off this week — all sizes',
@@ -648,6 +651,7 @@ const TRANSLATIONS = {
     'lb.wall':          '🖼 On the Wall',
     'lb.print':         '🖨️ Print →',
     'lb.buy':           'Purchase →',
+    'lb.license':       'Personal license details →',
     'lb.contact':       'Ask about this photo on WhatsApp',
     'lb.whatsapp':      'WhatsApp',
     'lb.facebook':      'Facebook',
@@ -893,3 +897,4 @@ function setLang(lang) {
 
 // Apply on load
 document.addEventListener('DOMContentLoaded', applyTranslations);
+

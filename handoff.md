@@ -12,13 +12,13 @@
 
 The owner authorized starting digital-checkout implementation and saving code/documentation in GitHub. This authorizes a separate draft PR, **not paid activation**. The earlier demand no-go remains historical evidence; no new demand analysis was performed.
 
-- New bilingual `/checkout/?photoId=...`: personal-use license, largest available file, ILS; read-only server quote and disabled payment by default. Standalone photo pages link to the preview.
+- New bilingual `/checkout/?photoId=...`: personal-use license, largest available file, ILS; read-only server quote and disabled payment by default. Standalone photo pages, gallery cards and lightbox link to the preview even when payments are closed. Single-image legacy redirect is replaced; old cart/print are hard-blocked in the browser.
 - New `DIGITAL_PAYPAL_ENABLED` flag: public Orders v2 create/capture require it AND `PAYMENTS_ENABLED`, both exact `true`. Both repository configs retain `false`. No dashboard flags changed. Admin Sandbox hooks remain unchanged.
 - Orders v2 redirect/return/capture/download flow is prepared; client persists an idempotent attempt before sending, matches return to its tab's order, retries the same order and never persists the bearer download link.
 - Public create checks license acknowledgment/current server amount and rejects mismatched reuse. Public status adds `digitalEnabled`; the existing `enabled` field remains compatible.
-- Validation: 77/77 targeted Node tests pass (8 new tests), plus JS syntax checks. **Browser visual QA and real public PayPal redirect E2E remain pending**: Chromium is unavailable here and its download failed.
+- Validation: 104/104 targeted Node tests pass (10 new tests), including gallery keyboard, translation parity and disabled-purchase UX, plus JS syntax checks. **Browser visual QA and real public PayPal redirect E2E remain pending**: Chromium is unavailable here and its download failed.
 - Full implementation notes, limitations and next steps: `docs/digital-checkout-preparation-2026-10-13.md`.
-- Before paid activation: replace old homepage/gallery digital handoff; keep legacy cart/print paths closed; validate bilingual mobile UI and Sandbox redirect E2E; finalize pricing/terms/acceptance recording and canary scope; close webhook/decline/kill-switch checks; follow the approved migration plan and separate Live gate.
+- Gallery integration and root asset cache-busting are done. Before paid activation: verify the full gallery flow in a browser; keep legacy cart/print paths closed and review their backend policy; validate bilingual mobile UI and Sandbox redirect E2E; finalize pricing/terms/acceptance recording and canary scope; close webhook/decline/kill-switch checks; follow the approved migration plan and separate Live gate.
 - No migration, Cloudflare write, payment enablement, cloud-resource creation, real purchase or `prep/...` change was performed. No merge is authorized by this implementation request; work stays in a draft PR.
 
 ### RESUME POINT — 13.10.2026 (supersedes the 12.10 "STATUS AT A GLANCE / RESUME POINT" below)
