@@ -76,3 +76,28 @@ Merging, any production or `prep/...` change, a migration, PayPal Live, creating
 ## Author follow-up (supersedes the original code/QA snapshot above)
 
 The original environment inspection describes deployed head `908a5a3`; after the cookie/decline code update, re-check the final PR head, checks and deployed file hashes before any live test. Documentation commit `15be7aa` is preserved. Source/API tests pass 108/108; the new 17-scenario mocked browser run passed at `f489f623` (run `38405127740`). Both payment flags remain false. No secrets, webhook configuration or real PayPal call were changed by the code author.
+
+## 7. Setup checklist for the live window (verified state 13.10 evening, head `a9fe753`)
+
+**Verified (read-only):** PR #155 head `a9fe753d` is documentation-only on top of the code commit `f489f623`; 9 checks green on `f489f623` (incl. `digital-checkout-browser`); the Preview's latest deployment `b03a219d` (tag `f489f62`, build `96aebc11`) is that code; served `digital-checkout.mjs`, `gallery.js`, `i18n.js`, `style.css` and `/checkout/` are sha256-identical to `f489f623` (and `/` equals its `index.html`); bindings are Sandbox D1 `7b027b93-…`, Sandbox R2 and Images; `PAYMENTS_ENABLED=false` and `DIGITAL_PAYPAL_ENABLED=false`; **no secrets yet**; the existing main-Sandbox webhook and Worker, production and `prep/...` are untouched.
+
+**Recommended isolation: a separate Sandbox app.** A webhook id belongs to one PayPal app, and the Preview's Client ID/Secret must belong to that same app. If the Preview used the Default Application, its dedicated webhook would run alongside the existing one, so every event would also reach the main Sandbox Worker (1.10 code, shared D1) and attribution would be ambiguous. A new Sandbox app (own credentials, own webhook) emits events only to its own webhook, so the main-Sandbox webhook never sees them and the Preview is the only receiver.
+
+Owner steps, outside chat (never paste values):
+1. developer.paypal.com → **Sandbox** → Apps & Credentials → **Create App**: name `amit-photos-preview-checkout-test`, type Merchant, the same Sandbox business account as the Default Application.
+2. In that app → **Webhooks → Add Webhook**: URL `https://feature-digital-checkout-preparation-amit-photos-paypal-sandbox.erez-family.workers.dev/api/paypal/webhook`; events `CHECKOUT.ORDER.APPROVED`, `PAYMENT.CAPTURE.COMPLETED`, and optionally `PAYMENT.CAPTURE.DENIED`. Do not edit the Default Application's webhook.
+3. Copy that app's Client ID and Secret and the new Webhook ID to the clipboard only when needed.
+4. In PowerShell from an empty folder (hidden input; each command creates a new Preview deployment that inherits both flags `false`):
+   ```
+   function Put-Secret($k){ $s = Read-Host $k -AsSecureString; [Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($s)).Trim() | npx wrangler@4.149.0 preview secret put $k --name "feature/digital-checkout-preparation-2026-10-13" --worker-name amit-photos-paypal-sandbox }
+   Put-Secret PAYPAL_CLIENT_ID
+   Put-Secret PAYPAL_CLIENT_SECRET
+   Put-Secret PAYPAL_WEBHOOK_ID
+   Get-Content "$HOME\.sbx-admin-pw" | npx wrangler@4.149.0 preview secret put ADMIN_PASSWORD --name "feature/digital-checkout-preparation-2026-10-13" --worker-name amit-photos-paypal-sandbox
+   ```
+5. Sandbox buyer: Testing Tools → Sandbox Accounts → a **Personal** account that can pay in ILS with at least 3.00 ILS (credentials stay with the owner). For the decline case a second personal account or funding source that PayPal refuses; a real provider-side decline cannot be forced from the app, so it is a best-effort case.
+6. A phone for the mobile run; no pushes to PR #155 during the window; tell Claude "ready".
+
+Claude then checks only secret NAMES on the Preview, runs the admin `sandbox-status` (expects `ok:true`, `environment:sandbox`), repeats the blocked baseline, presents the final details and asks for the explicit approval to flip both flags on this Preview only.
+
+Note: because both `PAYMENTS_ENABLED` and `DIGITAL_PAYPAL_ENABLED` come from the Preview deployment's `env`, a later push to the branch redeploys from the config with both `false` and closes the checkout.

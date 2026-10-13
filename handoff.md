@@ -8,6 +8,14 @@
 
 ## Acquisition and caption quality review — 12.10.2026
 
+### Connected-session re-verification at head `a9fe753`; Sandbox setup checklist; flags still false (13.10.2026, evening)
+
+- **Head and code:** PR #155 (draft) head `a9fe753d` = docs-only commit on top of code commit `f489f623`. All 9 checks are green on `f489f623`; the checks on `a9fe753d` are `skipped` (`[skip ci]`).
+- **Preview matches the tested code:** latest Preview deployment `b03a219d` (tag `f489f62`, build `96aebc11`, success). Served `digital-checkout.mjs`, `gallery.js`, `i18n.js`, `style.css` and `/checkout/` are sha256-identical to `f489f623`, and `/` equals its `index.html` (`/index.html` differs only by Cloudflare-injected content and cache-busting query strings). The server-side change in `f489f623` is the explicit decline mapping (`INSTRUMENT_DECLINED` and identity-matched `DECLINED` → 422 `PAYMENT_DECLINED`, no entitlement write) plus the cookie-banner deferral.
+- **Sandbox only, closed:** D1 `7b027b93-…` (Sandbox), R2 `amit-photos-paypal-sandbox-images`, Images; PayPal API base hard-coded to Sandbox; `PAYMENTS_ENABLED=false`, `DIGITAL_PAYPAL_ENABLED=false` (`/api/payments-status` → `{"enabled":false,"digitalEnabled":false}`). **No secrets on this Preview yet**, so no PayPal call is possible. Production `payments-status` `{"enabled":false}`, the main Sandbox Worker and its webhook, and `prep/...` (`e69131f`) are untouched.
+- **Setup recommendation:** use a separate Sandbox app with its own credentials and a dedicated webhook pointing at the Preview, instead of a second webhook on the Default Application, so events never reach the main Sandbox Worker (1.10 code, shared D1) and attribution is unambiguous. Exact owner steps and commands are in section 7 of `docs/digital-checkout-sandbox-live-test-plan-2026-10-13.md`; no values are ever shared in chat.
+- **Status:** waiting for the owner to create the app/webhook, set the four Preview secrets and provide the buyer account(s). Claude will then verify secret names and `sandbox-status`, present the final details and ask for explicit approval before flipping both flags on this Preview only; afterwards both are restored to `false` and a 503 is verified. The historical missing `CHECKOUT.ORDER.APPROVED` check remains separate and open. Not merged; no production, `prep/...`, migration or PayPal Live change.
+
 ### Author follow-up — connected-review cookie/decline fixes (13.10.2026)
 
 Claude review/docs commit `15be7aa` is preserved. Before any live window, re-check the new exact head and deployed hashes.
