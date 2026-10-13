@@ -41,3 +41,12 @@ The owner authorized implementing the proposed digital purchase flow and documen
 - A lost tab/session cannot recover from another device; support/recovery UX and purchase notification/invoice handling are not added here.
 - A return URL is not payment proof. A successful capture can still require support if download transfer fails; the existing one-time-token transfer risk remains open.
 - No Live enablement, final pricing decision, production migration, `prep/...` update, Gelato work or real purchase is part of this change.
+
+## Automated browser QA follow-up
+
+- `tests/digital-checkout.browser.mjs` serves repository assets on localhost and intercepts every API/provider response. It tests HE/EN at 390/768/1280px, long titles, success, capture retry, cancellation, changed price, forged return and gallery pointer navigation. This is **mocked browser QA, not a real PayPal E2E or payment-security certification**.
+- A dedicated `digital-checkout-browser` CI job installs pinned Playwright 1.62.1/Chromium on the existing GitHub runner, runs the scenarios and retains screenshots for seven days. No credentials or external account are used. This job's initial result is pending until it runs.
+- Native Preview configuration now explicitly sets both payment vars to false, since Preview vars do not inherit top-level vars. The isolation regression test checks that setting too.
+- Long unbroken titles wrap inside the checkout card. The source test suite still passes 106/106.
+
+After this job passes, the remaining live checks still need explicit Sandbox-only activation approval: verify the chosen Preview uses Sandbox D1/R2/credentials, authorize both flags on that Preview only, create/approve/capture the disposable digital fixture, check one fulfillment and one token, test decline/cancel/retry/dedup and turn both flags off again. No production or `prep/...` change is authorized here.

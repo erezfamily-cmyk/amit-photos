@@ -25,7 +25,7 @@ def build_config(database_id, preview=False):
         config["previews"] = {
             # Cleanup stays admin-authenticated and dry-run by default; it only
             # exists in this Sandbox-only helper, never in the production config.
-            "vars": {"PAYMENTS_ENABLED": "false", "PAYPAL_SANDBOX_CLEANUP_ENABLED": "true"},
+            "vars": {"PAYMENTS_ENABLED": "false", "DIGITAL_PAYPAL_ENABLED": "false", "PAYPAL_SANDBOX_CLEANUP_ENABLED": "true"},
             "d1_databases": deepcopy(config["d1_databases"]),
             "r2_buckets": deepcopy(config["r2_buckets"]),
             "images": deepcopy(config["images"]),
@@ -42,3 +42,4 @@ if __name__ == "__main__":
     # Validate before writing: invalid inputs never produce a deployable config.
     config = build_config(args.database_id, preview=args.preview)
     args.output.write_text(json.dumps(config, indent=2) + "\n")
+
