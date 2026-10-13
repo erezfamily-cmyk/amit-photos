@@ -101,3 +101,7 @@ Owner steps, outside chat (never paste values):
 Claude then checks only secret NAMES on the Preview, runs the admin `sandbox-status` (expects `ok:true`, `environment:sandbox`), repeats the blocked baseline, presents the final details and asks for the explicit approval to flip both flags on this Preview only.
 
 Note: because both `PAYMENTS_ENABLED` and `DIGITAL_PAYPAL_ENABLED` come from the Preview deployment's `env`, a later push to the branch redeploys from the config with both `false` and closes the checkout.
+
+## 8. Status update (13.10.2026, late)
+
+Done on the Preview with both flags on (owner-approved windows 14:39–15:10Z and 17:29–17:36Z; both flags `false` afterwards): T0, T1 (desktop Hebrew), T2, T4 (replay, 5 parallel captures, mismatched return, lost response), T5, T6 (Resend answered duplicate), T7 (all three closed combinations: create, capture and quote closed), T8 (phone Hebrew and English: purchase and cancel; English kept after the PayPal return after fix `836ab625`). **Not run: T3 provider-side decline.** Later code fixes (`312537ce`: HEAD does not consume the token; INSERT collision returns the canonical order with its approval URL) are covered by unit tests and CI; a live HEAD check needs an approved window. The historical missing approval webhook of 12.10 stays a separate open check. See `docs/handoffs/2026-10-13.md` sections 7 and 8.
