@@ -15,7 +15,14 @@ CREATE TABLE IF NOT EXISTS photos (
   thumbnail TEXT NOT NULL DEFAULT '',
   created_at TEXT NOT NULL,
   published INTEGER NOT NULL DEFAULT 1,
-  price_overrides TEXT DEFAULT NULL
+  price_overrides TEXT DEFAULT NULL,
+  -- Columns the public gallery query (GET /api/photos) reads. Nullable with no
+  -- default, exactly as in production, so the Sandbox Worker does not throw
+  -- "no such column" (error 1101) on every home-page load.
+  sort_order INTEGER,
+  redbubble_url TEXT,
+  redbubble_products TEXT,
+  zazzle_products TEXT
 );
 
 CREATE TABLE IF NOT EXISTS settings (
