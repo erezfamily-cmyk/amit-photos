@@ -16,6 +16,22 @@
 
 ## Acquisition and caption quality review — 12.10.2026
 
+### RESUME POINT — EVENING 13.10.2026 (supersedes the earlier resume points below; flags are `false`)
+
+Full day summary: [`docs/handoffs/2026-10-13.md`](docs/handoffs/2026-10-13.md) (tests, evidence, order IDs, state, checklist). Owner's local copy: `HANDOFF_AMIT_PHOTOS_2026-10-13.md` (not in the repo).
+
+**State (verified 15:12–15:15Z):** Preview `feature/digital-checkout-preparation-2026-10-13` (deployment `70f9d725`, tag `836ab62`): `PAYMENTS_ENABLED=false`, `DIGITAL_PAYPAL_ENABLED=false`, `/api/payments-status` `{"enabled":false,"digitalEnabled":false}`, public create/capture 503. Production and the main Sandbox Worker: `{"enabled":false}`, create 503. `prep/...` unchanged (`e69131f`). PR #155 is a draft, **not merged**, code head `836ab625` (9 checks green) plus documentation commits. No Live, no production migration.
+
+**Done today in the live Sandbox window (details and evidence in the day summary):** Hebrew purchase and one-time download, cancel, replay, 5 parallel captures, lost-response, mismatched return, price/consent guards, webhook Resend (`duplicate`), phone Hebrew purchase and cancel; English phone **purchase and download succeeded (order `7HC277434B174151M`, token `37058ed9…`, confirmed in D1) but the page came back in HEBREW after PayPal: language persistence FAILED.**
+
+**Fix `836ab625`** (client saves the language with the pending attempt; `create-order` adds `&lang=en` to the PayPal return/cancel URLs; cache-bust hash updated; 3 unit + 3 mocked-browser tests): CI green, **not yet verified live**.
+
+**Not run, so NOT passing:** English cancel; the English return re-test after the fix; T7 flag combinations (only a dry-run patch with both `false` was done); T3 provider-side decline. **Open, separate:** the historical missing `CHECKOUT.ORDER.APPROVED` webhook (order `8S923706NG623915A`, 12.10; needs the PayPal event log).
+
+**Evening plan, in order:** (1) re-verify the closed state read-only; (2) re-check the English purchase in D1 if needed (already confirmed once); (3) obtain the owner's explicit approval, then patch both flags `true` on the Preview only (a code push resets them); (4) re-test English: purchase + one download with the page staying English, then English cancel; (5) T7; (6) decline if a refusing buyer exists, else record the gap; (7) restore both flags to `false`, verify 503s on the Preview, production and main Sandbox Worker, and document.
+
+**Not authorized:** merging, production or `prep/...` changes, production migration, PayPal Live, enabling flags without approval.
+
 ### Sandbox live window: results so far and the language-persistence fix (13.10.2026, 14:40–15:10Z)
 
 Owner-approved window with both flags `true` on this Preview only (patched 14:39:55Z). Buyer: Sandbox Personal account. Evidence from D1, Worker analytics and PayPal events (values/links never printed).
@@ -78,7 +94,7 @@ Claude review/docs commit `15be7aa` is preserved. Before any live window, re-che
 - **Plan:** `docs/digital-checkout-sandbox-live-test-plan-2026-10-13.md` (environment, exact flags and mechanism, owner inputs, test matrix T0–T8, sequence, stop rules). Flags are switched only on this Preview via a JSON merge patch of its latest deployment, only after the owner's explicit approval, and restored to `false` and verified (public create/capture 503) at the end; a push to the branch also resets them.
 - **Status:** waiting for the owner's approval and inputs (Preview secrets, webhook target, Sandbox buyer(s), phone). The historical missing `CHECKOUT.ORDER.APPROVED` check stays separate and open. Not merged; no production, `prep/...`, migration or PayPal Live change.
 
-### RESUME POINT — digital checkout code preparation (13.10.2026, supersedes code deferral below)
+### RESUME POINT — digital checkout code preparation (13.10.2026, supersedes code deferral below) [superseded by the evening 13.10 resume point above]
 
 The owner authorized starting digital-checkout implementation and saving code/documentation in GitHub. This authorizes a separate draft PR, **not paid activation**. The earlier demand no-go remains historical evidence; no new demand analysis was performed.
 
@@ -94,7 +110,7 @@ The owner authorized starting digital-checkout implementation and saving code/do
 - Gallery integration and root asset cache-busting are done. Before paid activation: verify the full gallery flow in a browser; keep legacy cart/print paths closed and review their backend policy; validate bilingual mobile UI and Sandbox redirect E2E; finalize pricing/terms/acceptance recording and canary scope; close webhook/decline/kill-switch checks; follow the approved migration plan and separate Live gate.
 - No migration, Cloudflare write, payment enablement, cloud-resource creation, real purchase or `prep/...` change was performed. No merge is authorized by this implementation request; work stays in a draft PR.
 
-### RESUME POINT — 13.10.2026 (supersedes the 12.10 "STATUS AT A GLANCE / RESUME POINT" below)
+### RESUME POINT — 13.10.2026 (supersedes the 12.10 "STATUS AT A GLANCE / RESUME POINT" below) [superseded by the evening 13.10 resume point above]
 
 **State:**
 - PRs #149, #150, #151, #152 and #153 are merged; #154 (this PR) adds only the migration 0002 **plan**, a local SQLite rehearsal test, a rollback SQL file and docs. No payment code (`worker.js`, `paypal-orders.js`) is changed by #154 and nothing in CI or deploy applies the migration (no workflow references `migrations/`; the rollback file lives outside `migrations/`).
