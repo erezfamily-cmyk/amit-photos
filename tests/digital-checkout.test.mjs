@@ -34,7 +34,7 @@ function env() {
   return { DB, sqlite, PAYMENTS_ENABLED: 'true', DIGITAL_PAYPAL_ENABLED: 'true', PAYPAL_CLIENT_ID: 'test', PAYPAL_CLIENT_SECRET: 'test' };
 }
 const quoteRequest = new Request('https://amitphotos.com/api/paypal/quote?photoId=photo-1&sku=large');
-const quote = { photoId: 'photo-1', amountMinor: 10000, currency: 'ILS', license: 'personal', enabled: true };
+const quote = { photoId: 'photo-1', amountMinor: 10000, currency: 'ILS', license: 'personal', enabled: true, environment: 'sandbox' };
 const orderId = 'PAYPALORDER12345';
 function createRequest(overrides = {}) {
   return new Request('https://amitphotos.com/api/paypal/create-order', {

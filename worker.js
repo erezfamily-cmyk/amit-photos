@@ -48,7 +48,7 @@ function paymentsDisabledResponse(request) {
   }, 503, request);
 }
 async function handlePaymentsStatus(request, env) {
-  return jsonRes({ enabled: paymentsEnabled(env), digitalEnabled: digitalPaymentsEnabled(env) }, 200, request);
+  return jsonRes({ enabled: paymentsEnabled(env), digitalEnabled: digitalPaymentsEnabled(env, request) }, 200, request);
 }
 export {
   paymentsEnabled,

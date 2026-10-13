@@ -13,6 +13,10 @@ compatibility_flags = ["nodejs_compat"]
 # checkout is a deliberate, separate dashboard decision for this Worker only.
 PAYMENTS_ENABLED = "false"
 DIGITAL_PAYPAL_ENABLED = "false"
+# Explicit environment. This Worker is Sandbox only; the code treats anything but
+# "sandbox"/"live" as blocked and refuses Sandbox tools when "live" is selected.
+PAYPAL_ENVIRONMENT = "sandbox"
+PAYPAL_CREDENTIALS_ENVIRONMENT = "sandbox"
 
 [assets]
 directory = "."

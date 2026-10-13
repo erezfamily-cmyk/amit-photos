@@ -25,7 +25,7 @@ def build_config(database_id, preview=False):
         config["previews"] = {
             # Cleanup stays admin-authenticated and dry-run by default; it only
             # exists in this Sandbox-only helper, never in the production config.
-            "vars": {"PAYMENTS_ENABLED": "false", "DIGITAL_PAYPAL_ENABLED": "false", "PAYPAL_SANDBOX_CLEANUP_ENABLED": "true"},
+            "vars": {"PAYMENTS_ENABLED": "false", "DIGITAL_PAYPAL_ENABLED": "false", "PAYPAL_SANDBOX_CLEANUP_ENABLED": "true", "PAYPAL_ENVIRONMENT": "sandbox", "PAYPAL_CREDENTIALS_ENVIRONMENT": "sandbox"},
             "d1_databases": deepcopy(config["d1_databases"]),
             "r2_buckets": deepcopy(config["r2_buckets"]),
             "images": deepcopy(config["images"]),

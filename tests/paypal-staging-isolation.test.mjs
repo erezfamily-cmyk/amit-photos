@@ -26,7 +26,10 @@ test('native Previews explicitly bind Sandbox storage and disable public payment
       PAYMENTS_ENABLED: 'false',
       DIGITAL_PAYPAL_ENABLED: 'false',
       PAYPAL_SANDBOX_CLEANUP_ENABLED: 'true',
+      PAYPAL_ENVIRONMENT: 'sandbox',
+      PAYPAL_CREDENTIALS_ENVIRONMENT: 'sandbox',
     });
+    assert.equal(config.vars.PAYPAL_ENVIRONMENT, 'sandbox');
     assert.deepEqual(config.previews.d1_databases, config.d1_databases);
     assert.deepEqual(config.previews.r2_buckets, config.r2_buckets);
     assert.deepEqual(config.previews.images, config.images);

@@ -1,5 +1,13 @@
-// Sandbox-only until the explicit production go-live gate is approved.
-const PAYPAL_SANDBOX_API = 'https://api-m.sandbox.paypal.com';
+// Environment is explicit: PAYPAL_ENVIRONMENT = 'sandbox' (default when unset) or 'live'.
+// Anything else blocks PayPal entirely. Live is never implied by the other settings.
+const PAYPAL_API_BASES = {
+  sandbox: 'https://api-m.sandbox.paypal.com',
+  live: 'https://api-m.paypal.com',
+};
+const PAYPAL_APPROVAL_HOSTS = {
+  sandbox: 'www.sandbox.paypal.com',
+  live: 'www.paypal.com',
+};
 const DIGITAL_SIZES = new Set(['small', 'medium', 'large']);
 const DIGITAL_CURRENCIES = new Set(['ILS', 'USD']);
 const DIGITAL_ILS_TO_USD = 3.7;
@@ -32,13 +40,57 @@ function paymentsDisabledResponse(request) {
   }, 503, request);
 }
 
-function paypalApiBase() {
-  // Phase 1 is intentionally sandbox-only. Live is a separate go-live step.
-  return PAYPAL_SANDBOX_API;
+// Resolves and validates the PayPal environment. Pure: no network, no secrets are read
+// beyond checking that they exist. Returns { ok, environment, apiBase, approvalHost }
+// or { ok: false, reason }. Pass the request to also bind Live to the production origin.
+export function resolvePayPalConfig(env, request) {
+  const raw = env.PAYPAL_ENVIRONMENT;
+  const environment = raw === undefined || raw === null || raw === '' ? 'sandbox' : raw;
+  if (environment !== 'sandbox' && environment !== 'live') {
+    return { ok: false, reason: 'PAYPAL_ENVIRONMENT_UNKNOWN' };
+  }
+  const apiBase = PAYPAL_API_BASES[environment];
+  // Credentials cannot be inspected, so the environment they belong to is declared.
+  const declared = env.PAYPAL_CREDENTIALS_ENVIRONMENT;
+  if (environment === 'live' && declared !== 'live') {
+    return { ok: false, reason: 'PAYPAL_CREDENTIALS_ENVIRONMENT_MISMATCH' };
+  }
+  if (environment === 'sandbox' && declared !== undefined && declared !== null && declared !== '' && declared !== 'sandbox') {
+    return { ok: false, reason: 'PAYPAL_CREDENTIALS_ENVIRONMENT_MISMATCH' };
+  }
+  if (env.PAYPAL_API_BASE !== undefined && env.PAYPAL_API_BASE !== null && env.PAYPAL_API_BASE !== '' &&
+      env.PAYPAL_API_BASE !== apiBase) {
+    return { ok: false, reason: 'PAYPAL_API_BASE_MISMATCH' };
+  }
+  if (environment === 'live') {
+    if (!env.PAYPAL_CLIENT_ID || !env.PAYPAL_CLIENT_SECRET) return { ok: false, reason: 'PAYPAL_CREDENTIALS_MISSING' };
+    if (!env.PAYPAL_WEBHOOK_ID) return { ok: false, reason: 'PAYPAL_WEBHOOK_ID_MISSING' };
+    if (request) {
+      let origin = '';
+      try { origin = new URL(request.url).origin; } catch {}
+      if (!ALLOWED_ORIGINS.includes(origin)) return { ok: false, reason: 'PAYPAL_LIVE_ORIGIN_NOT_ALLOWED' };
+    }
+  }
+  return { ok: true, environment, apiBase, approvalHost: PAYPAL_APPROVAL_HOSTS[environment] };
 }
 
-export function digitalPaymentsEnabled(env) {
-  return env.PAYMENTS_ENABLED === 'true' && env.DIGITAL_PAYPAL_ENABLED === 'true';
+function paypalApiBase(env) {
+  const config = resolvePayPalConfig(env);
+  if (!config.ok) throw new Error(config.reason);
+  return config.apiBase;
+}
+
+// Admin test tools and cleanup exist for Sandbox only, whatever the flags say.
+function sandboxToolsBlocked(request, env) {
+  const config = resolvePayPalConfig(env, request);
+  if (!config.ok) return jsonRes({ error: 'PAYPAL_CONFIGURATION_INVALID', reason: config.reason }, 503, request);
+  if (config.environment !== 'sandbox') return jsonRes({ error: 'SANDBOX_TOOLS_DISABLED_IN_LIVE' }, 403, request);
+  return null;
+}
+
+export function digitalPaymentsEnabled(env, request) {
+  return env.PAYMENTS_ENABLED === 'true' && env.DIGITAL_PAYPAL_ENABLED === 'true' &&
+    resolvePayPalConfig(env, request).ok;
 }
 
 // Read-only product preview. No PayPal call or migration-0002 table access.
@@ -53,7 +105,8 @@ export async function handleDigitalCheckoutQuote(request, env) {
   return jsonRes({
     photoId, sku, title: photo?.title || photoId,
     amountMinor: pricing.amountExpected, currency: 'ILS',
-    license: 'personal', enabled: digitalPaymentsEnabled(env), environment: 'sandbox',
+    license: 'personal', enabled: digitalPaymentsEnabled(env, request),
+    environment: resolvePayPalConfig(env, request).environment || null,
   }, 200, request);
 }
 
@@ -132,7 +185,7 @@ async function getPayPalAccessToken(env) {
     throw new Error('PAYPAL_CREDENTIALS_MISSING');
   }
   const auth = btoa(env.PAYPAL_CLIENT_ID + ':' + env.PAYPAL_CLIENT_SECRET);
-  const response = await fetch(paypalApiBase() + '/v1/oauth2/token', {
+  const response = await fetch(paypalApiBase(env) + '/v1/oauth2/token', {
     method: 'POST',
     headers: {
       'Authorization': 'Basic ' + auth,
@@ -149,6 +202,8 @@ async function getPayPalAccessToken(env) {
 
 export async function handlePayPalSandboxStatus(request, env) {
   if (request.method !== 'GET') return jsonRes({ error: 'method not allowed' }, 405, request);
+  const blocked = sandboxToolsBlocked(request, env);
+  if (blocked) return blocked;
   try {
     await getPayPalAccessToken(env);
     return jsonRes({
@@ -196,7 +251,7 @@ async function verifyPayPalWebhook(request, env, rawBody) {
   }
 
   const accessToken = await getPayPalAccessToken(env);
-  const response = await fetch(paypalApiBase() + '/v1/notifications/verify-webhook-signature', {
+  const response = await fetch(paypalApiBase(env) + '/v1/notifications/verify-webhook-signature', {
     method: 'POST',
     headers: {
       'Authorization': 'Bearer ' + accessToken,
@@ -306,7 +361,7 @@ async function processCompletedCaptureWebhook(request, env, event, accessToken) 
   }
 
   const orderResponse = await fetch(
-    paypalApiBase() + '/v2/checkout/orders/' + encodeURIComponent(paypalOrderId),
+    paypalApiBase(env) + '/v2/checkout/orders/' + encodeURIComponent(paypalOrderId),
     {
       method: 'GET',
       headers: {
@@ -378,6 +433,12 @@ async function processCompletedCaptureWebhook(request, env, event, accessToken) 
 
 export async function handlePayPalWebhook(request, env) {
   if (request.method !== 'POST') return jsonRes({ error: 'method not allowed' }, 405, request);
+
+  const config = resolvePayPalConfig(env, request);
+  if (!config.ok) {
+    return jsonRes({ error: config.reason === 'PAYPAL_WEBHOOK_ID_MISSING' ? config.reason : 'PAYPAL_CONFIGURATION_INVALID', reason: config.reason },
+      config.reason === 'PAYPAL_WEBHOOK_ID_MISSING' ? 400 : 503, request);
+  }
 
   const rawBody = await request.text();
   let verified;
@@ -482,6 +543,8 @@ function isoDaysAgo(days) {
 
 export async function handlePayPalSandboxCleanup(request, env) {
   if (request.method !== 'POST') return jsonRes({ error: 'method not allowed' }, 405, request);
+  const blocked = sandboxToolsBlocked(request, env);
+  if (blocked) return blocked;
   if (env.PAYPAL_SANDBOX_CLEANUP_ENABLED !== 'true') {
     return jsonRes({ error: 'PAYPAL_SANDBOX_CLEANUP_DISABLED' }, 403, request);
   }
@@ -560,7 +623,7 @@ async function canonicalOrderResponse(request, env, paypalOrderId, options) {
     try {
       const token = await getPayPalAccessToken(env);
       const response = await fetch(
-        paypalApiBase() + '/v2/checkout/orders/' + encodeURIComponent(paypalOrderId),
+        paypalApiBase(env) + '/v2/checkout/orders/' + encodeURIComponent(paypalOrderId),
         { headers: { 'Authorization': 'Bearer ' + token, 'Accept': 'application/json' } }
       );
       const order = await response.json().catch(() => ({}));
@@ -573,7 +636,13 @@ async function canonicalOrderResponse(request, env, paypalOrderId, options) {
 }
 
 export async function handlePayPalCreateOrder(request, env, options = {}) {
-  if (!options.allowWhenPaymentsDisabled && !digitalPaymentsEnabled(env)) return paymentsDisabledResponse(request);
+  if (options.allowWhenPaymentsDisabled) {
+    // Admin test hooks: Sandbox only, even with the flags off.
+    const blocked = sandboxToolsBlocked(request, env);
+    if (blocked) return blocked;
+  } else if (!digitalPaymentsEnabled(env, request)) {
+    return paymentsDisabledResponse(request);
+  }
   if (request.method !== 'POST') return jsonRes({ error: 'method not allowed' }, 405, request);
 
   if (!options.skipRateLimit) {
@@ -637,7 +706,7 @@ export async function handlePayPalCreateOrder(request, env, options = {}) {
   // The checkout page language must survive the PayPal round trip. Only the exact
   // value "en" is honoured; anything else keeps the default (Hebrew) URLs unchanged.
   const returnLang = options.publicCheckout && publicBody?.lang === 'en' ? '&lang=en' : '';
-  const paypalResponse = await fetch(paypalApiBase() + '/v2/checkout/orders', {
+  const paypalResponse = await fetch(paypalApiBase(env) + '/v2/checkout/orders', {
     method: 'POST',
     headers: {
       'Authorization': 'Bearer ' + accessToken,
@@ -764,7 +833,13 @@ async function finalizeDigitalPayPalOrder(request, env, order) {
 }
 
 export async function handlePayPalCaptureOrder(request, env, options = {}) {
-  if (!options.allowWhenPaymentsDisabled && !digitalPaymentsEnabled(env)) return paymentsDisabledResponse(request);
+  if (options.allowWhenPaymentsDisabled) {
+    // Admin test hooks: Sandbox only, even with the flags off.
+    const blocked = sandboxToolsBlocked(request, env);
+    if (blocked) return blocked;
+  } else if (!digitalPaymentsEnabled(env, request)) {
+    return paymentsDisabledResponse(request);
+  }
   if (request.method !== 'POST') return jsonRes({ error: 'method not allowed' }, 405, request);
 
   if (!options.skipRateLimit) {
@@ -801,7 +876,7 @@ export async function handlePayPalCaptureOrder(request, env, options = {}) {
     return jsonRes({ error: 'PayPal authentication failed' }, 502, request);
   }
 
-  const captureUrl = paypalApiBase() + '/v2/checkout/orders/' + encodeURIComponent(paypalOrderId) + '/capture';
+  const captureUrl = paypalApiBase(env) + '/v2/checkout/orders/' + encodeURIComponent(paypalOrderId) + '/capture';
   const paypalResponse = await fetch(captureUrl, {
     method: 'POST',
     headers: {
@@ -821,7 +896,7 @@ export async function handlePayPalCaptureOrder(request, env, options = {}) {
   const issue = capturedOrder?.details?.[0]?.issue;
   if (!paypalResponse.ok && issue === 'ORDER_ALREADY_CAPTURED') {
     const getResponse = await fetch(
-      paypalApiBase() + '/v2/checkout/orders/' + encodeURIComponent(paypalOrderId),
+      paypalApiBase(env) + '/v2/checkout/orders/' + encodeURIComponent(paypalOrderId),
       {
         method: 'GET',
         headers: {

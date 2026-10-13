@@ -9,6 +9,8 @@ export function resolveCheckoutLang({ param = null, pending = null, stored = nul
   return stored === 'en' ? 'en' : 'he';
 }
 
+const APPROVAL_HOSTS = { sandbox: 'www.sandbox.paypal.com', live: 'www.paypal.com' };
+
 export function createCheckoutClient({ fetcher = fetch, storage = sessionStorage, now = Date.now, uuid = () => crypto.randomUUID() } = {}) {
   let busy = false;
   let declinedOrder = null;
@@ -50,7 +52,7 @@ export function createCheckoutClient({ fetcher = fetch, storage = sessionStorage
           body: JSON.stringify({ type: 'digital', photoId: quote.photoId, sku: 'large', currency: 'ILS', licenseAccepted: true, expectedAmountMinor: quote.amountMinor, lang: language }),
         });
         const approval = new URL(data.approveUrl);
-        if (approval.protocol !== 'https:' || approval.hostname !== 'www.sandbox.paypal.com' || approval.username || approval.password ||
+        if (approval.protocol !== 'https:' || approval.hostname !== APPROVAL_HOSTS[quote.environment] || approval.username || approval.password ||
             !/^[A-Za-z0-9_-]{8,64}$/.test(data.paypalOrderId)) throw new Error('INVALID_APPROVAL');
         save({ ...attempt, paypalOrderId: data.paypalOrderId });
         return approval.href;
