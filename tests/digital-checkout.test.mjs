@@ -278,3 +278,103 @@ test('create-order puts lang=en on the return and cancel URLs only for English',
     for (const pair of urls.slice(1)) assert.deepEqual(pair, ['https://amitphotos.com/checkout/?approved=1', 'https://amitphotos.com/checkout/?cancelled=1']);
   } finally { globalThis.fetch = original; }
 });
+
+// ===== INSERT collision on create-order must return the canonical order WITH an approval URL =====
+
+// Simulates two concurrent requests with one Idempotency-Key: both pass the pre-checks (no row yet),
+// the other request commits its row, then this request's INSERT hits the unique key.
+function racingEnv(racingRow) {
+  const config = env();
+  const realPrepare = config.DB.prepare.bind(config.DB);
+  let raced = false;
+  config.DB.prepare = sql => {
+    const statement = realPrepare(sql);
+    if (!raced && /FROM paypal_orders WHERE client_idempotency_key/.test(sql)) {
+      // Before the race: neither the attempt check nor the retry lookup sees a row.
+      return { bind: () => ({ first: async () => null, run: async () => ({ meta: { changes: 0 } }) }) };
+    }
+    if (/^INSERT INTO paypal_orders/.test(sql)) {
+      return { bind: (...args) => ({
+        first: async () => null,
+        run: async () => {
+          if (!raced) {
+            raced = true;
+            config.sqlite.prepare(
+              'INSERT INTO paypal_orders (id, paypal_order_id, order_type, photo_id, sku, amount_expected, currency, status, created_at, client_idempotency_key) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+            ).run('race-local-id', racingRow.paypal_order_id, 'digital', racingRow.photo_id, racingRow.sku,
+              racingRow.amount_expected, racingRow.currency, 'CREATED', '2026-10-13T00:00:00Z', 'checkout-attempt-12345');
+          }
+          return statement.bind(...args).run();
+        },
+      }) };
+    }
+    return statement;
+  };
+  return config;
+}
+
+function paypalStub(approval) {
+  return async (url, options) => {
+    const target = String(url);
+    if (target.endsWith('/v1/oauth2/token')) return Response.json({ access_token: 'token' });
+    if (options?.method === 'POST') return Response.json({ id: orderId, links: [{ rel: 'payer-action', href: approval }] }, { status: 201 });
+    // GET of the canonical order, used to read its approval URL.
+    if (target.includes('/v2/checkout/orders/')) return Response.json({ id: target.split('/').pop(), links: [{ rel: 'payer-action', href: approval }] });
+    return Response.json({}, { status: 404 });
+  };
+}
+
+test('INSERT collision returns the canonical order with its approval URL after the attempt matches', async () => {
+  const original = globalThis.fetch;
+  const approval = 'https://www.sandbox.paypal.com/checkoutnow?token=' + orderId;
+  globalThis.fetch = paypalStub(approval);
+  try {
+    const config = racingEnv({ paypal_order_id: orderId, photo_id: 'photo-1', sku: 'large', amount_expected: 10000, currency: 'ILS' });
+    const response = await handlePayPalCreateOrder(createRequest(), config, { publicCheckout: true, includeApproveUrl: true, skipRateLimit: true });
+    assert.equal(response.status, 200);
+    const body = await response.json();
+    assert.equal(body.paypalOrderId, orderId);
+    assert.equal(body.reused, true);
+    // The browser client does new URL(data.approveUrl): it must be present and valid.
+    assert.equal(body.approveUrl, approval);
+    assert.equal(new URL(body.approveUrl).hostname, 'www.sandbox.paypal.com');
+    assert.equal(config.sqlite.prepare('SELECT COUNT(*) AS n FROM paypal_orders').get().n, 1);
+    assert.equal(config.sqlite.prepare("SELECT client_idempotency_key AS k FROM paypal_orders").get().k, 'checkout-attempt-12345');
+  } finally { globalThis.fetch = original; }
+});
+
+test('INSERT collision never returns another attempt\'s order or approval URL', async () => {
+  const original = globalThis.fetch;
+  globalThis.fetch = paypalStub('https://www.sandbox.paypal.com/checkoutnow?token=' + orderId);
+  try {
+    const cases = [
+      { photo_id: 'photo-1', sku: 'large', amount_expected: 1900, currency: 'ILS' },   // different price
+      { photo_id: 'photo-2', sku: 'large', amount_expected: 10000, currency: 'ILS' },  // different photo
+      { photo_id: 'photo-1', sku: 'small', amount_expected: 10000, currency: 'ILS' },  // different size
+      { photo_id: 'photo-1', sku: 'large', amount_expected: 10000, currency: 'USD' },  // different currency
+    ];
+    for (const racingRow of cases) {
+      const config = racingEnv({ paypal_order_id: 'OTHERORDER123456', ...racingRow });
+      const response = await handlePayPalCreateOrder(createRequest(), config, { publicCheckout: true, includeApproveUrl: true, skipRateLimit: true });
+      assert.equal(response.status, 409, JSON.stringify(racingRow));
+      const body = await response.json();
+      assert.equal(body.error, 'CHECKOUT_ATTEMPT_MISMATCH');
+      assert.equal('approveUrl' in body, false);
+      assert.equal('paypalOrderId' in body, false);
+    }
+  } finally { globalThis.fetch = original; }
+});
+
+test('collision path and normal retry path return the same response shape', async () => {
+  const original = globalThis.fetch;
+  const approval = 'https://www.sandbox.paypal.com/checkoutnow?token=' + orderId;
+  globalThis.fetch = paypalStub(approval);
+  try {
+    const options = { publicCheckout: true, includeApproveUrl: true, skipRateLimit: true };
+    const racing = await handlePayPalCreateOrder(createRequest(), racingEnv({ paypal_order_id: orderId, photo_id: 'photo-1', sku: 'large', amount_expected: 10000, currency: 'ILS' }), options);
+    const normalConfig = env();
+    await handlePayPalCreateOrder(createRequest(), normalConfig, options);
+    const retry = await handlePayPalCreateOrder(createRequest(), normalConfig, options);
+    assert.deepEqual(await racing.json(), await retry.json());
+  } finally { globalThis.fetch = original; }
+});

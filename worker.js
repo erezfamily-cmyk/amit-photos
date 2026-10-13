@@ -2032,6 +2032,16 @@ async function handleFillTitles(request, env) {
 async function handleDownload(request, env, token) {
   if (!token) return jsonRes({ error: 'token חסר' }, 400, request);
 
+  // Only GET delivers the file. HEAD (link previews, prefetchers, download
+  // managers) may validate the link but must never consume the one-time token.
+  const method = request.method;
+  if (method !== 'GET' && method !== 'HEAD') {
+    const refused = jsonRes({ error: 'method not allowed' }, 405, request);
+    refused.headers.set('Allow', 'GET, HEAD');
+    return refused;
+  }
+  const isHead = method === 'HEAD';
+
   const row = await env.DB.prepare(
     'SELECT * FROM download_tokens WHERE token = ?'
   ).bind(token).first();
@@ -2059,26 +2069,35 @@ async function handleDownload(request, env, token) {
   if (photo?.r2_key) {
     let object;
     try {
-      object = await env.PHOTOS.get(photo.r2_key);
+      // HEAD only needs metadata; prefer head() and never stream the body.
+      object = isHead && typeof env.PHOTOS.head === 'function'
+        ? await env.PHOTOS.head(photo.r2_key)
+        : await env.PHOTOS.get(photo.r2_key);
     } catch {
       return jsonRes({ error: 'שגיאה זמנית בקריאת הקובץ, נסו שוב' }, 503, request);
     }
     if (!object) return jsonRes({ error: 'קובץ לא נמצא ב-R2' }, 404, request);
-    if (!await claimToken()) {
+    // Only GET claims the token; HEAD never does.
+    if (!isHead && !await claimToken()) {
       try { await object.body?.cancel?.(); } catch {}
       return jsonRes({ error: 'קישור זה כבר שומש' }, 410, request);
     }
     const filename = (photo.title || 'photo').replace(/[^\w\u0590-\u05ff .-]/g, '_') + '.jpg';
-    return new Response(object.body, {
-      headers: {
-        'Content-Type': object.httpMetadata?.contentType || 'image/jpeg',
-        'Content-Disposition': `attachment; filename*=UTF-8''${encodeURIComponent(filename)}`,
-        'Cache-Control': 'no-store',
-      },
-    });
+    const fileHeaders = {
+      'Content-Type': object.httpMetadata?.contentType || 'image/jpeg',
+      'Content-Disposition': `attachment; filename*=UTF-8''${encodeURIComponent(filename)}`,
+      'Cache-Control': 'no-store',
+    };
+    if (isHead) {
+      // The link is valid and the file exists; the token stays unused.
+      try { await object.body?.cancel?.(); } catch {}
+      return new Response(null, { status: 200, headers: fileHeaders });
+    }
+    return new Response(object.body, { headers: fileHeaders });
   }
 
   // Google Drive fallback — photo not in R2 yet
+  if (isHead) return new Response(null, { status: 200, headers: { 'Cache-Control': 'no-store' } });
   if (!await claimToken()) return jsonRes({ error: 'קישור זה כבר שומש' }, 410, request);
   const SZ_MAP = { small: 'w1500', medium: 'w3000', large: null };
   const sz = SZ_MAP[row.size];

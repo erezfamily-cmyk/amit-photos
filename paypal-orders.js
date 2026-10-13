@@ -552,6 +552,26 @@ export async function handlePayPalSandboxCleanup(request, env) {
   }, 200, request);
 }
 
+// Response for an order that already exists for this Idempotency-Key: the canonical
+// local order id plus, when requested, the buyer approval URL read from PayPal.
+async function canonicalOrderResponse(request, env, paypalOrderId, options) {
+  const result = { paypalOrderId, reused: true };
+  if (options.includeApproveUrl) {
+    try {
+      const token = await getPayPalAccessToken(env);
+      const response = await fetch(
+        paypalApiBase() + '/v2/checkout/orders/' + encodeURIComponent(paypalOrderId),
+        { headers: { 'Authorization': 'Bearer ' + token, 'Accept': 'application/json' } }
+      );
+      const order = await response.json().catch(() => ({}));
+      if (response.ok) {
+        result.approveUrl = payerApprovalUrl(order);
+      }
+    } catch {}
+  }
+  return jsonRes(result, 200, request);
+}
+
 export async function handlePayPalCreateOrder(request, env, options = {}) {
   if (!options.allowWhenPaymentsDisabled && !digitalPaymentsEnabled(env)) return paymentsDisabledResponse(request);
   if (request.method !== 'POST') return jsonRes({ error: 'method not allowed' }, 405, request);
@@ -591,21 +611,7 @@ export async function handlePayPalCreateOrder(request, env, options = {}) {
     'SELECT paypal_order_id FROM paypal_orders WHERE client_idempotency_key = ? LIMIT 1'
   ).bind(idempotencyKey).first();
   if (existing?.paypal_order_id) {
-    const result = { paypalOrderId: existing.paypal_order_id, reused: true };
-    if (options.includeApproveUrl) {
-      try {
-        const token = await getPayPalAccessToken(env);
-        const response = await fetch(
-          paypalApiBase() + '/v2/checkout/orders/' + encodeURIComponent(existing.paypal_order_id),
-          { headers: { 'Authorization': 'Bearer ' + token, 'Accept': 'application/json' } }
-        );
-        const order = await response.json().catch(() => ({}));
-        if (response.ok) {
-          result.approveUrl = payerApprovalUrl(order);
-        }
-      } catch {}
-    }
-    return jsonRes(result, 200, request);
+    return canonicalOrderResponse(request, env, existing.paypal_order_id, options);
   }
 
   const body = await request.json().catch(() => ({}));
@@ -685,10 +691,18 @@ export async function handlePayPalCreateOrder(request, env, options = {}) {
     // same PayPal order first. Return that canonical local row instead of a
     // spurious 500; any other persistence failure remains fail-closed.
     const raced = await env.DB.prepare(
-      'SELECT paypal_order_id FROM paypal_orders WHERE client_idempotency_key = ? LIMIT 1'
+      'SELECT * FROM paypal_orders WHERE client_idempotency_key = ? LIMIT 1'
     ).bind(idempotencyKey).first().catch(() => null);
     if (raced?.paypal_order_id) {
-      return jsonRes({ paypalOrderId: raced.paypal_order_id, reused: true }, 200, request);
+      // The winning row must describe the same purchase attempt as this request;
+      // never hand back the approval link of a different photo, size or price.
+      if (raced.photo_id !== photoId || raced.sku !== sku ||
+          raced.currency !== pricing.currency || raced.amount_expected !== pricing.amountExpected) {
+        return jsonRes({ error: 'CHECKOUT_ATTEMPT_MISMATCH' }, 409, request);
+      }
+      // Same response shape as the normal retry path, including the approval URL
+      // the browser client needs to continue to PayPal.
+      return canonicalOrderResponse(request, env, raced.paypal_order_id, options);
     }
     return jsonRes({ error: 'Could not persist PayPal order' }, 500, request);
   }
