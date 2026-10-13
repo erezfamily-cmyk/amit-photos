@@ -16,6 +16,29 @@
 
 ## Acquisition and caption quality review — 12.10.2026
 
+### END OF DAY 13.10.2026 — RESUME POINT FOR 14.10.2026 (Sandbox window NOT started; flags `false`)
+
+**Verified blocked at end of day (all read at the time of writing):** the PR Preview (deployment `5ce1cc1c`, tag `3c426d4`) has `PAYMENTS_ENABLED=false` and `DIGITAL_PAYPAL_ENABLED=false` (read from the deployment) and `/api/payments-status` = `{"enabled":false,"digitalEnabled":false}`; create-order and capture-order answer **503** on the Preview, on the main Sandbox Worker (`amit-photos-paypal-sandbox`, `{"enabled":false}`) and on production `amitphotos.com` (`{"enabled":false}`). `prep/paypal-orders-v2-2026-10-01` is still `e69131f`; PR #155 is draft, open, not merged. No production, `prep`, Live or merge action.
+
+**Done today (state):**
+- Migration 0003 completed on the **Sandbox D1 only** (`amit-photos-paypal-sandbox-db`, `7b027b93-…`): identity, 0002 schema and counts verified first (orders 16, tokens 11, events 20, rate limits 3, photos 1, settings 1); one run, no error; after: new columns/indexes/`paypal_order_actions` present, counts unchanged, all orders `NONE/0/0`. **Data preserved.** **Restore point prepared:** a Time Travel bookmark taken before the run (kept locally in the working folder, not in git) plus the pre-run fingerprint and data hash. Production D1 untouched. The 0003 rehearsal on a throwaway D1 (deleted) is in `docs/paypal-d1-migration-0003-plan-2026-10-13.md` §6.
+- Code on PR #155 at `3c426d44` (162/162 PayPal CI tests, all checks green); later commits are docs/tools only (`[skip ci]`).
+
+**Not done / not confirmed:**
+- The **Sandbox test window has NOT started** (refunds and re-issue untested live).
+- Adding the five webhook event types (`PAYMENT.CAPTURE.REFUNDED`, `PAYMENT.CAPTURE.REVERSED`, `CUSTOMER.DISPUTE.CREATED`, `.UPDATED`, `.RESOLVED`) to the isolated app `amit-photos-preview-checkout-test` is **not yet confirmed as done** by the owner. Correction: the app's two ORIGINAL events (completed capture and the approval event) must be kept; an earlier note of mine mentioned only one.
+- The PowerShell helper (`staging/sandbox-window/window-tools.ps1`, local path `%TEMP%\ap149\staging\sandbox-window\`), the Sandbox buyer account and the Sandbox seller (Business) account are **not yet confirmed ready**.
+
+**Tomorrow, in order (nothing starts without the owner's go):**
+1. Re-verify the blocked state (both flags `false`, create/capture 503 on Preview, main Sandbox Worker and production; `prep` `e69131f`).
+2. Finish the webhook setup in the isolated app only, keeping both original events and adding the five; owner sends the event list as shown after saving; do not touch the Default Application or the main Worker's webhook.
+3. Test the helper (password prompt appears, `paste`/`head` work against a harmless link-less call), confirm buyer and seller accounts.
+4. Owner says explicitly that the window may start; only then enable both flags on the Preview feature/digital-checkout-preparation-2026-10-13 (max 45 minutes), then restore both to `false` and verify 503.
+
+**Planned tests (3 Sandbox purchases of 3.00 ILS each, simulated money only):** purchase 1: HEAD does not consume, one GET succeeds, second GET refused; re-issue twice with different keys (previous unused link revoked), third refused, same key replays the same link, no extra charge. Purchase 2: full refund while the link is unused → `REFUNDED`, link revoked, re-issue refused. Purchase 3: partial refund 1.00 → review only, link still active; second partial 2.00 → `REFUNDED`, link revoked. Also verify the real refund payload, its signature acceptance and the shape of the `up` link; record Event IDs without any download links.
+
+**Remaining gaps:** provider-side decline never run; the historical missing `CHECKOUT.ORDER.APPROVED` for order `8S923706NG623915A` (12.10) still needs the PayPal event log; **reversal and dispute not verified with real events** (reversal cannot be produced in Sandbox; a dispute only if Sandbox sends the events — otherwise they stay covered by tests with sample data and must not be reported as passed); real refund payloads/signatures unverified; `PAYPAL_CREDENTIALS_ENVIRONMENT` is a declaration only; production still lacks 0002/0003, a webhook ID and any release package; owner decisions (refund policy, legal terms, Live account) and PR #155 merge are open.
+
 ### SANDBOX WINDOW PREP 13.10.2026 (evening): migration 0003 applied to the SANDBOX D1 only (flags still `false`)
 
 Owner approved the window in `docs/paypal-sandbox-after-sale-test-window-plan-2026-10-13.md`. Done so far, **flags not yet enabled**:
