@@ -16,6 +16,16 @@
 
 ## Acquisition and caption quality review — 12.10.2026
 
+### SANDBOX/LIVE SEPARATION 13.10.2026 (late): explicit environment, Sandbox-only admin tools (flags still `false`)
+
+Commit `45ae5452c117a6a7214d9524ca2c05bdf6f42c3a` on PR #155; **9/9 GitHub checks green** (incl. `digital-checkout-browser`, `paypal-orders-v2`, both Cloudflare builds). Production, the main Sandbox Worker and the PR Preview all answer create 503 and `{"enabled":false}`; `prep/...` still `e69131f`; PR #155 draft, not merged. No Live secret was set; no production change.
+
+- `paypal-orders.js`: `resolvePayPalConfig(env, request)`. `PAYPAL_ENVIRONMENT` unset/empty = `sandbox`; `sandbox`/`live` exact; anything else blocks. API base and approval host derive from it. `PAYPAL_CREDENTIALS_ENVIRONMENT` must be `live` for Live and (if set) `sandbox` for Sandbox; `PAYPAL_API_BASE`, if set, must equal the environment base; Live also needs credentials, `PAYPAL_WEBHOOK_ID` and the `amitphotos.com` origin. Invalid config blocks quote (`enabled:false`), create, capture (503) and webhook (503, or 400 `PAYPAL_WEBHOOK_ID_MISSING`) even with both flags true. `/api/admin/paypal/*` and cleanup are Sandbox-only (403 `SANDBOX_TOOLS_DISABLED_IN_LIVE`, 503 on invalid config) before any PayPal/DB access.
+- `assets/js/digital-checkout.mjs`: approval host pinned to the quote's `environment` (cache-bust `?v=6fe13196`). Config: Sandbox build config and example TOML declare `PAYPAL_ENVIRONMENT`/`PAYPAL_CREDENTIALS_ENVIRONMENT` = `sandbox`. CI runs the new `tests/paypal-environment-separation.test.mjs` (13 tests, fake values only; a mutation removing the cleanup guard fails it).
+- Variable names are my proposal; owner to confirm. Real Live API traffic was never exercised.
+- Proposal doc (not implemented): `docs/digital-checkout-recovery-and-refunds-proposal-2026-10-13.md` — reissue of a download token for a paid order without a new charge, refund/reversal events and state machine, and the owner decisions needed.
+- **Next Sandbox window checklist:** live HEAD check against a real unused token (needs explicit flag approval; never print the link); provider-side decline; the missing 12.10 approval event; confirm the Preview shows `environment:"sandbox"` in the quote after the next flag window.
+
 ### LATE SESSION 13.10.2026 (~18:10Z): download/HEAD and create-order collision fixes, throwaway-D1 migration rehearsal, stale statuses updated (flags still `false`)
 
 Commit `312537ce19cf5353fa50491806ba1f9c94058653` (code + tests) on PR #155; **all 9 GitHub checks green on it** (incl. `digital-checkout-browser`, `paypal-orders-v2`, both Cloudflare builds). Preview redeployed (`89b37fb9`, tag `312537c`) with both payment flags `false`; production and the main Sandbox Worker `{"enabled":false}`; `prep/...` `e69131f`; PR #155 still draft, not merged.
