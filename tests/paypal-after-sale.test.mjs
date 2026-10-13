@@ -495,3 +495,87 @@ test('capture-order for a refunded order never mints a link', async () => {
     assert.equal(tokens(env).length, 0);
   } finally { stub.restore(); }
 });
+
+// ----- the "up" link from an event is untrusted -----------------------------------------------
+
+test('an event link naming another host, scheme, port, path or credentials is refused and never receives Authorization', async () => {
+  const hostsWithAuth = [];
+  const stub = paypal({ captureStatus: 'REFUNDED' });
+  const inner = globalThis.fetch;
+  globalThis.fetch = async (url, options = {}) => {
+    if (options.headers?.Authorization) hostsWithAuth.push(new URL(String(url)).host + new URL(String(url)).pathname);
+    return inner(url, options);
+  };
+  const ok = 'https://api-m.sandbox.paypal.com/v2/payments/captures/' + CAPTURE;
+  try {
+    for (const href of [
+      'https://evil.example/v2/payments/captures/' + CAPTURE,
+      'https://api-m.paypal.com/v2/payments/captures/' + CAPTURE,
+      'https://api-m.sandbox.paypal.com.evil.example/v2/payments/captures/' + CAPTURE,
+      'https://api-m.sandbox.paypal.com@evil.example/v2/payments/captures/' + CAPTURE,
+      'https://user:pw@api-m.sandbox.paypal.com/v2/payments/captures/' + CAPTURE,
+      'http://api-m.sandbox.paypal.com/v2/payments/captures/' + CAPTURE,
+      'https://api-m.sandbox.paypal.com:8443/v2/payments/captures/' + CAPTURE,
+      ok + '?x=1', ok + '#frag', ok + '/refunds', ok + '/../x', 'https://api-m.sandbox.paypal.com/v1/payments/captures/' + CAPTURE,
+      'https://api-m.sandbox.paypal.com/v2/payments/captures/short', 'not a url', '',
+    ]) {
+      const env = setup();
+      const result = await send(env, 'PAYMENT.CAPTURE.REFUNDED', refundResource('100.00', { links: [{ rel: 'up', href }] }));
+      assert.equal(result.response.status, 400, href);
+      assert.equal(state(env).s, 'NONE', href);
+      assert.equal(tokens(env)[0].used, 0, href);
+    }
+    // two "up" links are ambiguous; a missing link on a refund is invalid; only reversals may fall back to the resource id
+    const env = setup();
+    assert.equal((await send(env, 'PAYMENT.CAPTURE.REFUNDED', refundResource('100.00', { links: [{ rel: 'up', href: ok }, { rel: 'up', href: ok }] }))).response.status, 400);
+    assert.equal((await send(env, 'PAYMENT.CAPTURE.REFUNDED', refundResource('100.00', { links: [] }))).response.status, 400);
+    assert.equal((await send(env, 'PAYMENT.CAPTURE.REVERSED', { id: 'bad id', status: 'REVERSED' })).response.status, 400);
+    // Signature verification talks to the approved host by design; what must never happen is
+    // an authenticated call to any other host, or a capture lookup for a refused event.
+    assert.ok(hostsWithAuth.every(entry => entry.startsWith('api-m.sandbox.paypal.com/')), hostsWithAuth.join());
+    assert.deepEqual(hostsWithAuth.filter(entry => entry.includes('/v2/payments/captures/')), [], 'refused events trigger no capture lookup');
+
+    // the accepted shape still works and only talks to the approved API host
+    const good = await send(env, 'PAYMENT.CAPTURE.REFUNDED', refundResource('100.00'));
+    assert.equal(good.body.afterSale, 'REFUNDED');
+    assert.deepEqual(hostsWithAuth.filter(entry => entry.includes('/v2/payments/captures/')), ['api-m.sandbox.paypal.com/v2/payments/captures/' + CAPTURE]);
+  } finally { stub.restore(); }
+});
+
+test('in Live the link must name the Live API host, and a Sandbox link is refused', async () => {
+  const live = { PAYPAL_ENVIRONMENT: 'live', PAYPAL_CREDENTIALS_ENVIRONMENT: 'live' };
+  const stub = paypal({ captureStatus: 'REFUNDED' });
+  try {
+    const env = { ...setup(), ...live };
+    const sandboxLink = await send(env, 'PAYMENT.CAPTURE.REFUNDED', refundResource('100.00'));
+    assert.equal(sandboxLink.response.status, 400);
+    const liveLink = await send(env, 'PAYMENT.CAPTURE.REFUNDED', refundResource('100.00', {
+      links: [{ rel: 'up', href: 'https://api-m.paypal.com/v2/payments/captures/' + CAPTURE }],
+    }));
+    assert.equal(liveLink.body.afterSale, 'REFUNDED');
+  } finally { stub.restore(); }
+});
+
+test('a full refund or reversal can never be released through after-sale-review, and a late COMPLETED event cannot restore entitlement', async () => {
+  for (const state of ['REFUNDED', 'REVERSED', 'REVOKED_MANUAL']) {
+    const env = setup();
+    env.sqlite.prepare("UPDATE paypal_orders SET after_sale_state = ? WHERE id = ?").run(state, LOCAL);
+    const stub = paypal({ captureStatus: 'REFUNDED' });
+    try {
+      const release = await handlePayPalAfterSaleReview(new Request('https://amitphotos.com/x', {
+        method: 'POST', headers: { 'Idempotency-Key': 'release-final-' + state },
+        body: JSON.stringify({ paypalOrderId: ORDER, decision: 'release', reason: 'attempt' }),
+      }), env);
+      assert.equal(release.status, 409, state);
+      assert.equal(env.sqlite.prepare('SELECT after_sale_state AS s FROM paypal_orders WHERE id = ?').get(LOCAL).s, state);
+      assert.equal((await reissue(env, 'reissue-final-' + state)).status, 409, state);
+      const before = tokens(env).length;
+      const late = await send(env, 'PAYMENT.CAPTURE.COMPLETED', {
+        id: CAPTURE, status: 'COMPLETED', amount: { currency_code: 'ILS', value: '100.00' },
+        supplementary_data: { related_ids: { order_id: ORDER } },
+      });
+      assert.equal(late.body.ignored, true, state);
+      assert.equal(tokens(env).length, before, state);
+    } finally { stub.restore(); }
+  }
+});

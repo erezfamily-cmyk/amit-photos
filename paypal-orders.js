@@ -478,11 +478,25 @@ async function revokeUnusedTokens(env, order, captureId, reason, exceptToken = n
   return Number(result?.meta?.changes) || 0;
 }
 
-function captureIdFromResource(resource, fallbackToId) {
-  const up = Array.isArray(resource?.links) ? resource.links.find(link => link?.rel === 'up')?.href : null;
-  const match = typeof up === 'string' && up.match(/\/v2\/payments\/captures\/([A-Za-z0-9_-]+)(?:[/?#]|$)/);
-  if (match) return match[1];
-  return fallbackToId && typeof resource?.id === 'string' ? resource.id : null;
+// The capture id comes from the event's "up" link, but the link is only ever PARSED:
+// it is never fetched (PayPal is always called on the environment's own API base), so
+// no Authorization header can reach a host named by an event. It must still point at
+// this environment's API host and exactly /v2/payments/captures/<id>; anything else
+// (other host, http, port, credentials, query, fragment, extra path, two "up" links)
+// makes the event invalid.
+const PAYPAL_ID = /^[A-Za-z0-9_-]{8,64}$/;
+function captureIdFromResource(resource, fallbackToId, apiBase) {
+  const ups = (Array.isArray(resource?.links) ? resource.links : []).filter(link => link?.rel === 'up');
+  if (ups.length > 1) return null;
+  if (ups.length === 1) {
+    let url;
+    try { url = new URL(ups[0].href); } catch { return null; }
+    if (url.protocol !== 'https:' || url.hostname !== new URL(apiBase).hostname || url.port || url.username ||
+        url.password || url.search || url.hash) return null;
+    const match = url.pathname.match(/^\/v2\/payments\/captures\/([A-Za-z0-9_-]{8,64})$/);
+    return match ? match[1] : null;
+  }
+  return fallbackToId && typeof resource?.id === 'string' && PAYPAL_ID.test(resource.id) ? resource.id : null;
 }
 
 async function fetchAuthoritativeCapture(env, accessToken, captureId) {
@@ -540,7 +554,7 @@ async function processAfterSaleWebhook(request, env, event, accessToken) {
     if (!order) return { ok: true, ignored: true };
     signal = type === 'CUSTOMER.DISPUTE.RESOLVED' || resource.status === 'RESOLVED' ? 'DISPUTE_RESOLVED' : 'DISPUTE_OPEN';
   } else {
-    captureId = captureIdFromResource(resource, type === 'PAYMENT.CAPTURE.REVERSED');
+    captureId = captureIdFromResource(resource, type === 'PAYMENT.CAPTURE.REVERSED', paypalApiBase(env));
     const orderIdHint = resource.supplementary_data?.related_ids?.order_id;
     if (!captureId) return { ok: false, status: 400, error: 'PAYPAL_WEBHOOK_AFTER_SALE_INVALID' };
     order = await findOrderForAfterSale(env, captureId, orderIdHint);
