@@ -16,6 +16,15 @@
 
 ## Acquisition and caption quality review — 12.10.2026
 
+### SANDBOX WINDOW PREP 13.10.2026 (evening): migration 0003 applied to the SANDBOX D1 only (flags still `false`)
+
+Owner approved the window in `docs/paypal-sandbox-after-sale-test-window-plan-2026-10-13.md`. Done so far, **flags not yet enabled**:
+- Verified before: D1 name `amit-photos-paypal-sandbox-db` / id `7b027b93-…` (not production), 0002 shape, no 0003 objects; counts orders 16 / tokens 11 / events 20 / rate limits 3 / photos 1 / settings 1; fingerprint + data hash saved locally; a Time Travel bookmark taken before the run (kept locally, not in git).
+- Ran `migrations/0003_after_sale_and_reissue.sql` **once** with `wrangler@4.149.0 d1 execute --remote --yes --file` against that database only (11 queries, no error). After: the 5 order columns, 3 token columns, 2 indexes and `paypal_order_actions` exist; counts unchanged; all 16 orders `NONE/0/0`; the Sandbox `tx` index is non-unique (unlike production), re-issued links use their own `tx` anyway. Production D1 untouched.
+- Preview deployment `5ce1cc1c` (tag `3c426d4`): `PAYMENTS_ENABLED=false`, `DIGITAL_PAYPAL_ENABLED=false`, `PAYPAL_ENVIRONMENT=sandbox`, `PAYPAL_CREDENTIALS_ENVIRONMENT=sandbox`; quote price for the fixture is 300 agorot = 3.00 ILS; create 503.
+- Helper for owner-run admin/link checks: `staging/sandbox-window/window-tools.ps1` (hidden password and links, prints only statuses; Preview host only).
+- Waiting for the owner to add the five event types to the isolated app webhook (`amit-photos-preview-checkout-test`), then the flags window (max 45 min) starts.
+
 ### MIGRATION 0003 REHEARSED ON A THROWAWAY D1, EVENT-LINK HARDENING, SANDBOX WINDOW PLAN 13.10.2026 (late, flags still `false`)
 
 Code commit `3c426d445e3256fc1501facd3ce04c6cbd8bb82d` on PR #155; **9 GitHub checks** (the Sandbox build was still pending when last read; the rest green); the PayPal CI job ran **162/162** tests. Production, the main Sandbox Worker and the PR Preview answer create 503 / `{"enabled":false}`; `prep/...` still `e69131f`; PR #155 draft, not merged. The throwaway D1 `amit-migration-0003-rehearsal-20261013` (`59e89661-…`) was created with the owner's approval and **deleted**; `d1 list` shows only the production and Sandbox databases. **Migration 0003 was not applied to the Sandbox or production D1.**
