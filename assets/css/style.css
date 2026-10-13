@@ -1388,6 +1388,12 @@ body[data-payments-state="enabled"] .payments-disabled-only {
 
 .lightbox.open { display: flex; }
 
+/* Defer the cookie notice while a dialog owns focus. It reappears on close;
+   no dismissal or consent is recorded by opening a photo. */
+body:has(.lightbox.open, .buy-modal.open, .cart-modal.open, #wall-modal.open) #cookie-notice {
+  display: none;
+}
+
 .lightbox-inner {
   position: relative;
   flex: 1;

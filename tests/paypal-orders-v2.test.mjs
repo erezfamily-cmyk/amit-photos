@@ -373,6 +373,33 @@ test('create-order rate limits repeated public attempts by hashed IP', async () 
   }
 });
 
+test('declined funding and declined captures return a stable error without fulfillment writes', async () => {
+  const originalFetch = globalThis.fetch;
+  for (const providerResponse of [
+    { status: 422, body: { details: [{ issue: 'INSTRUMENT_DECLINED' }] } },
+    { status: 201, body: { id: 'PAYPALORDER123', status: 'APPROVED',
+      purchase_units: [{ custom_id: 'local-1', payments: { captures: [{ id: 'DECLINEDCAPTURE', status: 'DECLINED' }] } }] } },
+  ]) {
+    const db = makeDb({ order: { id: 'local-1', paypal_order_id: 'PAYPALORDER123',
+      order_type: 'digital', photo_id: 'photo-1', sku: 'large', amount_expected: 12900,
+      currency: 'ILS', status: 'CREATED' } });
+    globalThis.fetch = async url => String(url).endsWith('/v1/oauth2/token')
+      ? Response.json({ access_token: 'token' })
+      : Response.json(providerResponse.body, { status: providerResponse.status });
+    try {
+      const response = await handlePayPalCaptureOrder(post('/api/paypal/capture-order', { paypalOrderId: 'PAYPALORDER123' }),
+        { DB: db, PAYMENTS_ENABLED: 'true', DIGITAL_PAYPAL_ENABLED: 'true', PAYPAL_CLIENT_ID: 'test', PAYPAL_CLIENT_SECRET: 'test' });
+      assert.equal(response.status, 422);
+      assert.deepEqual(await response.json(), { error: 'PAYMENT_DECLINED', restartCheckout: true });
+      assert.equal(db.state.tokenInserts, 0);
+      assert.equal(db.state.orderInserts, 0);
+      assert.equal(db.state.order.status, 'CREATED');
+      assert.equal(db.state.order.paypal_capture_id, undefined);
+      assert.equal(db.state.order.fulfillment_token, undefined);
+    } finally { globalThis.fetch = originalFetch; }
+  }
+});
+
 test('capture-order rejects a completed PayPal capture when the amount does not exactly match', async () => {
   const db = makeDb({
     order: {

@@ -8,7 +8,7 @@ import { digitalPaymentsEnabled, handleDigitalCheckoutQuote, handlePayPalCreateO
 
 function storage() {
   const data = new Map();
-  return { getItem: key => data.get(key) || null, setItem: (key, value) => data.set(key, value) };
+  return { getItem: key => data.get(key) || null, setItem: (key, value) => data.set(key, value), removeItem: key => data.delete(key) };
 }
 function env() {
   const sqlite = new DatabaseSync(':memory:');
@@ -204,4 +204,23 @@ test('full-size product copy agrees with the personal license and retained copyr
   assert.match(html, /data-i18n="pricing.full.f4">זכויות היוצרים נשארות אצל הצלם/);
   assert.match(translations, /'pricing.full.f3':\s*'Personal, non-commercial license'/);
   assert.match(translations, /'pricing.full.f4':\s*'Copyright remains with the photographer'/);
+});
+
+test('only a definitive decline allows an explicit fresh checkout attempt', async () => {
+  for (const code of ['PAYMENT_DECLINED', 'TEST_NETWORK_FAILURE']) {
+    const saved = storage();
+    const client = createCheckoutClient({ storage: saved, fetcher: async url => {
+      if (url.endsWith('create-order')) return Response.json({ paypalOrderId: orderId, approveUrl: 'https://www.sandbox.paypal.com/checkoutnow' });
+      return Response.json({ error: code }, { status: code === 'PAYMENT_DECLINED' ? 422 : 502 });
+    } });
+    await client.start(quote, true);
+    await assert.rejects(client.capture(orderId), new RegExp(code));
+    if (code === 'PAYMENT_DECLINED') {
+      assert.equal(client.restartAfterDecline(), quote.photoId);
+      assert.equal(client.pending(), null);
+    } else {
+      assert.throws(() => client.restartAfterDecline(), /RESTART_NOT_ALLOWED/);
+      assert.equal(client.pending().paypalOrderId, orderId);
+    }
+  }
 });

@@ -818,12 +818,23 @@ export async function handlePayPalCaptureOrder(request, env, options = {}) {
       return jsonRes({ error: 'PayPal capture recovery failed' }, 502, request);
     }
   } else if (!paypalResponse.ok) {
+    // A definitive funding refusal must not look like a transient server error.
+    // Unknown capture failures keep the generic retry/recovery path.
+    if (Array.isArray(capturedOrder?.details) && capturedOrder.details.some(detail => detail?.issue === 'INSTRUMENT_DECLINED')) {
+      return jsonRes({ error: 'PAYMENT_DECLINED', restartCheckout: true }, 422, request);
+    }
     return jsonRes({ error: 'PayPal capture failed' }, 502, request);
   }
 
   const purchaseUnit = capturedOrder.purchase_units?.[0];
   const capture = purchaseUnit?.payments?.captures?.[0];
   const returnedCustomId = purchaseUnit?.custom_id || capture?.custom_id || null;
+
+  if (capturedOrder.id === paypalOrderId &&
+      (returnedCustomId === null || returnedCustomId === order.id) &&
+      capture?.status === 'DECLINED') {
+    return jsonRes({ error: 'PAYMENT_DECLINED', restartCheckout: true }, 422, request);
+  }
 
   if (
     capturedOrder.id !== paypalOrderId ||

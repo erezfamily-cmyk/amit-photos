@@ -31,8 +31,8 @@ const photo = { id: 'qa-photo', title: 'תמונת בדיקה — אור על ה
 let passed = 0;
 
 async function scenario(name, options, action) {
-  const context = await browser.newContext({ viewport: { width: options.width || 390, height: 844 }, serviceWorkers: 'block' });
-  const calls = { quotes: 0, creates: 0, captures: 0, approvals: 0 };
+  const context = await browser.newContext({ viewport: { width: options.width || 390, height: options.height || 844 }, serviceWorkers: 'block' });
+  const calls = { quotes: 0, creates: 0, captures: 0, approvals: 0, keys: [] };
   const errors = [];
   const page = await context.newPage();
   page.on('pageerror', error => errors.push(error.message));
@@ -51,6 +51,7 @@ async function scenario(name, options, action) {
         enabled: options.enabled === true, amountMinor: options.priceChange && calls.quotes > 1 ? 15000 : 12900, environment: 'sandbox' });
     } else if (url.pathname === '/api/paypal/create-order') {
       calls.creates++;
+      calls.keys.push(route.request().headers()['idempotency-key']);
       const body = route.request().postDataJSON();
       assert.equal(body.licenseAccepted, true);
       assert.equal(body.expectedAmountMinor, 12900);
@@ -58,6 +59,7 @@ async function scenario(name, options, action) {
     } else if (url.pathname === '/api/paypal/capture-order') {
       calls.captures++;
       assert.equal(route.request().postDataJSON().paypalOrderId, orderId);
+      if (options.decline) { await json(route, { error: 'PAYMENT_DECLINED', restartCheckout: true }, 422); return; }
       if (options.retry && calls.captures === 1) { await json(route, { error: 'TEST_NETWORK_FAILURE' }, 502); return; }
       await json(route, { title: photo.title, url: '/api/download/qa-bearer-token' });
     } else if (url.pathname === '/api/photos' || url.pathname === '/data/photos.json') await json(route, [photo]);
@@ -153,6 +155,42 @@ try {
     assert.equal(calls.captures, 0);
     assert.equal(await page.locator('#checkout-download').isVisible(), false);
   });
+  await scenario('decline-restart-390', { enabled: true, decline: true }, async ({ page, calls }) => {
+    await approve(page);
+    await page.locator('#checkout-restart').waitFor({ state: 'visible' });
+    assert.equal(await page.locator('#checkout-retry').isVisible(), false);
+    assert.equal(await page.locator('#checkout-download').isVisible(), false);
+    await page.locator('#checkout-restart').click();
+    await page.waitForURL(origin + '/checkout/?photoId=**');
+    await page.locator('#checkout-title').getByText(photo.title, { exact: true }).waitFor();
+    assert.equal(await page.locator('#checkout-consent').isChecked(), false);
+    assert.equal(await page.locator('#checkout-pay').isDisabled(), true);
+    assert.equal(calls.creates, 1);
+    assert.equal(calls.captures, 1);
+    await page.locator('#checkout-consent').check();
+    await page.locator('#checkout-pay').click();
+    await page.waitForURL('https://www.sandbox.paypal.com/**');
+    assert.equal(calls.creates, 2);
+    assert.notEqual(calls.keys[0], calls.keys[1]);
+  });
+  for (const size of [{ width: 1280, height: 800 }, { width: 360, height: 640 }]) {
+    await scenario('cookie-dialog-' + size.width + '-' + size.height, size, async ({ page, calls }) => {
+      await page.goto(origin);
+      await page.locator('#cookie-notice').waitFor({ state: 'visible' });
+      await page.locator('.filter-btn[data-cat="all"]').click();
+      await page.locator('.gallery-item').click();
+      await page.locator('#lightbox').waitFor({ state: 'visible' });
+      assert.equal(await page.locator('#cookie-notice').isVisible(), false);
+      assert.equal(await page.evaluate(() => localStorage.getItem('cookie_notice_dismissed')), null);
+      await page.locator('#lb-close').click();
+      await page.locator('#cookie-notice').waitFor({ state: 'visible' });
+      assert.equal(await page.evaluate(() => localStorage.getItem('cookie_notice_dismissed')), null);
+      await page.locator('.gallery-item').click();
+      await page.locator('#lb-buy').click();
+      await page.waitForURL(origin + '/checkout/**');
+      assert.equal(calls.creates + calls.captures, 0);
+    });
+  }
   for (const width of [390, 1280]) {
     await scenario('gallery-pointer-' + width, { width }, async ({ page, calls }) => {
       await page.goto(origin);

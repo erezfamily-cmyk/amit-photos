@@ -65,3 +65,12 @@ For the connected Claude session:
 6. Restore BOTH flags to false, verify public create/capture return 503 and status/quote report closed, then document results and exact tested head. If blocked by buyer credentials or PayPal Event Logs, report the concrete missing input without asking for secrets in chat.
 
 No production migration or Live setup is authorized. The first live test needs a connected operator; the current agent has no Cloudflare/PayPal account tools.
+
+## Connected-review fixes — after Claude's `15be7aa`
+
+- First-visit cookie notice temporarily hides while a photo/buy/cart/wall dialog is open. Closing it restores the notice, without recording consent or dismissal. Browser cases at 1280×800 and 360×640 verify visibility, storage and actual pointer navigation.
+- Known `INSTRUMENT_DECLINED` or identity-matched capture `DECLINED` returns HTTP 422 with stable `PAYMENT_DECLINED`. It makes no fulfillment/status/token write. Unknown/malformed failures retain the existing 502 retry/recovery path.
+- The page presents the funding refusal separately. Only a definitive decline enables an explicit return to product details; this clears the failed attempt, requires fresh consent and a fresh key on the next create, and does not automatically charge or retry capture. Ambiguous/network failures retain the original key/order.
+- The suite now has 108 passing source/API tests and 17 mocked browser scenarios; browser rerun pending on the new code. These are not a real PayPal negative test. No negative-test hook or provider mock header was added to application code.
+- Provider reference: https://developer.paypal.com/v5/checkout/handle-funding-failure/ . This redirect integration uses an explicit restart screen, not the SDK's `actions.restart()`.
+- The live-plan review is updated: prefer a dedicated Sandbox webhook for this Preview (and an isolated Sandbox app if necessary), leaving the existing main-Sandbox webhook untouched; creation/configuration needs owner authorization. Do not migrate the historical webhook investigation to a new target.
