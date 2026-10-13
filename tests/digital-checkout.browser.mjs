@@ -121,6 +121,36 @@ try {
     assert.equal(await page.evaluate(() => JSON.stringify(sessionStorage).includes('qa-bearer-token')), false);
     assert.equal(new URL(page.url()).search, '');
   });
+  // PayPal returns the buyer to /checkout/?approved=1 or ?cancelled=1 without ?lang when the
+  // return URL was created before the language was known; the tab's pending attempt must decide.
+  await scenario('english-survives-approval-return-390', { enabled: true }, async ({ page }) => {
+    await loaded(page, 'en');
+    await page.locator('#checkout-consent').check();
+    await page.locator('#checkout-pay').click();
+    await page.waitForURL('https://www.sandbox.paypal.com/**');
+    await page.goto(origin + '/checkout/?approved=1&token=' + orderId);
+    await page.locator('#checkout-download').waitFor({ state: 'visible' });
+    await page.locator('#checkout-status').getByText(/Payment verified/).waitFor();
+    assert.equal(await page.locator('html').getAttribute('lang'), 'en');
+    assert.equal(await page.locator('html').getAttribute('dir'), 'ltr');
+    assert.equal(new URL(page.url()).search, '?lang=en');
+  });
+  await scenario('english-survives-cancel-return-390', { enabled: true }, async ({ page }) => {
+    await loaded(page, 'en');
+    await page.locator('#checkout-consent').check();
+    await page.locator('#checkout-pay').click();
+    await page.waitForURL('https://www.sandbox.paypal.com/**');
+    await page.goto(origin + '/checkout/?cancelled=1');
+    await page.locator('#checkout-status').getByText(/You returned without completing checkout/).waitFor();
+    assert.equal(await page.locator('html').getAttribute('lang'), 'en');
+    assert.equal(await page.locator('html').getAttribute('dir'), 'ltr');
+  });
+  await scenario('english-return-url-param-works-without-session-390', { enabled: true }, async ({ page }) => {
+    // The server now adds &lang=en to the PayPal return/cancel URLs of English attempts.
+    await page.goto(origin + '/checkout/?cancelled=1&lang=en');
+    await page.locator('#checkout-status').getByText(/Choose an image in the gallery first/).waitFor();
+    assert.equal(await page.locator('html').getAttribute('lang'), 'en');
+  });
   await scenario('capture-retry-390', { enabled: true, retry: true }, async ({ page, calls }) => {
     await approve(page);
     await page.locator('#checkout-retry').waitFor({ state: 'visible' });

@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { DatabaseSync } from 'node:sqlite';
 import vm from 'node:vm';
 import { readFileSync } from 'node:fs';
-import { createCheckoutClient } from '../assets/js/digital-checkout.mjs';
+import { createCheckoutClient, resolveCheckoutLang } from '../assets/js/digital-checkout.mjs';
 import { digitalPaymentsEnabled, handleDigitalCheckoutQuote, handlePayPalCreateOrder, handlePayPalCaptureOrder } from '../paypal-orders.js';
 
 function storage() {
@@ -223,4 +223,58 @@ test('only a definitive decline allows an explicit fresh checkout attempt', asyn
       assert.equal(client.pending().paypalOrderId, orderId);
     }
   }
+});
+
+// ===== Language must survive the PayPal round trip (found in the Sandbox live test) =====
+
+test('checkout language: explicit param wins, then the pending attempt, then the site preference', () => {
+  assert.equal(resolveCheckoutLang({ param: 'en' }), 'en');
+  assert.equal(resolveCheckoutLang({ param: 'he', pending: { lang: 'en' }, stored: 'en' }), 'he');
+  // Return from PayPal carries no ?lang: the pending attempt decides.
+  assert.equal(resolveCheckoutLang({ param: null, pending: { lang: 'en' } }), 'en');
+  assert.equal(resolveCheckoutLang({ param: null, pending: { lang: 'he' }, stored: 'en' }), 'he');
+  assert.equal(resolveCheckoutLang({ param: null, pending: null, stored: 'en' }), 'en');
+  assert.equal(resolveCheckoutLang({ param: 'xx', pending: { lang: 'zz' }, stored: 'fr' }), 'he');
+  assert.equal(resolveCheckoutLang(), 'he');
+});
+
+test('client saves the language with the attempt and sends it to create-order', async () => {
+  const store = storage();
+  const bodies = [];
+  const client = createCheckoutClient({ storage: store, uuid: () => 'lang-checkout-key', fetcher: async (url, options) => {
+    bodies.push(JSON.parse(options.body));
+    return Response.json({ paypalOrderId: orderId, approveUrl: 'https://www.sandbox.paypal.com/checkoutnow?token=' + orderId });
+  } });
+  await client.start(quote, true, 'en');
+  assert.equal(bodies[0].lang, 'en');
+  assert.equal(client.pending().lang, 'en');
+  assert.equal(resolveCheckoutLang({ param: null, pending: client.pending(), stored: null }), 'en');
+  // Anything but "en" is stored and sent as Hebrew.
+  await client.start(quote, true, 'fr');
+  assert.equal(bodies[1].lang, 'he');
+  assert.equal(client.pending().lang, 'he');
+});
+
+test('create-order puts lang=en on the return and cancel URLs only for English', async () => {
+  const original = globalThis.fetch;
+  const urls = [];
+  const approval = 'https://www.sandbox.paypal.com/checkoutnow?token=' + orderId;
+  globalThis.fetch = async (url, options) => {
+    if (String(url).endsWith('/v1/oauth2/token')) return Response.json({ access_token: 'token' });
+    if (options?.method === 'POST') { const ctx = JSON.parse(options.body).payment_source.paypal.experience_context; urls.push([ctx.return_url, ctx.cancel_url]); }
+    return Response.json({ id: orderId, links: [{ rel: 'payer-action', href: approval }] }, { status: 201 });
+  };
+  try {
+    const options = { publicCheckout: true, includeApproveUrl: true, skipRateLimit: true };
+    const attempt = (overrides, key) => handlePayPalCreateOrder(new Request('https://amitphotos.com/api/paypal/create-order', {
+      method: 'POST', headers: { 'Content-Type': 'application/json', 'Idempotency-Key': key },
+      body: JSON.stringify({ type: 'digital', photoId: 'photo-1', sku: 'large', currency: 'ILS', licenseAccepted: true, expectedAmountMinor: 10000, ...overrides }),
+    }), env(), options);
+    assert.equal((await attempt({ lang: 'en' }, 'lang-attempt-en-0001')).status, 201);
+    assert.equal((await attempt({}, 'lang-attempt-he-0001')).status, 201);
+    assert.equal((await attempt({ lang: 'he' }, 'lang-attempt-he-0002')).status, 201);
+    assert.equal((await attempt({ lang: 'en&evil=1' }, 'lang-attempt-bad-0001')).status, 201);
+    assert.deepEqual(urls[0], ['https://amitphotos.com/checkout/?approved=1&lang=en', 'https://amitphotos.com/checkout/?cancelled=1&lang=en']);
+    for (const pair of urls.slice(1)) assert.deepEqual(pair, ['https://amitphotos.com/checkout/?approved=1', 'https://amitphotos.com/checkout/?cancelled=1']);
+  } finally { globalThis.fetch = original; }
 });

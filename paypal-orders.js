@@ -628,6 +628,9 @@ export async function handlePayPalCreateOrder(request, env, options = {}) {
 
   const localId = crypto.randomUUID();
   const origin = new URL(request.url).origin;
+  // The checkout page language must survive the PayPal round trip. Only the exact
+  // value "en" is honoured; anything else keeps the default (Hebrew) URLs unchanged.
+  const returnLang = options.publicCheckout && publicBody?.lang === 'en' ? '&lang=en' : '';
   const paypalResponse = await fetch(paypalApiBase() + '/v2/checkout/orders', {
     method: 'POST',
     headers: {
@@ -643,8 +646,8 @@ export async function handlePayPalCreateOrder(request, env, options = {}) {
           experience_context: {
             shipping_preference: 'NO_SHIPPING',
             user_action: 'PAY_NOW',
-            return_url: origin + (options.publicCheckout ? '/checkout/?approved=1' : '/api/paypal/approved'),
-            cancel_url: origin + (options.publicCheckout ? '/checkout/?cancelled=1' : '/api/paypal/cancelled'),
+            return_url: origin + (options.publicCheckout ? '/checkout/?approved=1' + returnLang : '/api/paypal/approved'),
+            cancel_url: origin + (options.publicCheckout ? '/checkout/?cancelled=1' + returnLang : '/api/paypal/cancelled'),
           },
         },
       },

@@ -16,6 +16,29 @@
 
 ## Acquisition and caption quality review — 12.10.2026
 
+### Sandbox live window: results so far and the language-persistence fix (13.10.2026, 14:40–15:10Z)
+
+Owner-approved window with both flags `true` on this Preview only (patched 14:39:55Z). Buyer: Sandbox Personal account. Evidence from D1, Worker analytics and PayPal events (values/links never printed).
+
+| Test | Result |
+|---|---|
+| T1 desktop HE: gallery → license → checkout → PayPal → capture → download | PASS: order `8XK26756HE840860D` `COMPLETED`, one token `ec4cadf6…` (`used=1`); download 6095-byte JPEG at 14:42:35 and the extra request 14:42:36 answered with the 43-byte "already used" body; `ORDER.APPROVED` + `CAPTURE.COMPLETED` processed (`attempts=1`), received only by the Preview version |
+| T2 cancel (desktop) | PASS: order `62319971203583134` stays `CREATED`, no capture/token/event; page says no capture was requested |
+| T4a replay + 5 parallel public captures of a completed order | PASS: all 200, same token, one token per capture |
+| T4b mismatched return (API-created order approved by the buyer, tab without matching attempt) | PASS: page shows the generic failure with no download link; no capture/token created |
+| T4c lost response after the server completed (public capture, client ignores the reply for 12 s) | PASS: order `57C56548529949838` `COMPLETED` 4 s later with one token `ae7af69c…`; 2 retries + 5 parallel all 200 with the same token; one capture, one `CAPTURE.COMPLETED` event |
+| T5 guards | PASS: wrong amount 409 `PRICE_CHANGED`; `licenseAccepted=false` 400; unknown photo 404; no orders created |
+| T6 Resend of `WH-55134073D0920064E-2VM32793R2017325C` | PASS: delivery verified (2 PayPal calls), response 28 bytes = `{"ok":true,"duplicate":true}`, no new rows (response body inferred from size) |
+| T8 phone HE: purchase and cancel | PASS: order `12087408198373233` `COMPLETED` + token `557ee91a…` (`used=1`); cancel order `6P9254596S937515W` stays `CREATED` |
+| T8 phone EN: purchase | **Payment and download OK (order `7HC277434B174151M`, token `37058ed9…`), but the page came back in HEBREW after PayPal: language persistence FAILED.** |
+| T3 provider-side decline, T7 flag combinations, EN cancel, EN success-return re-test | not run yet |
+
+**Root cause of the language bug:** the page took its language only from `?lang=` or `localStorage.lang`. The PayPal return/cancel URLs were fixed strings (`/checkout/?approved=1`, `/checkout/?cancelled=1`) without `lang`, and opening the page with `?lang=en` stored nothing, so after the round trip the page fell back to Hebrew.
+
+**Fix (this commit):** (1) the client saves the chosen language with the tab's pending attempt (`start(quote, accepted, lang)`), sends it to `create-order` and resolves it on load with `resolveCheckoutLang` (explicit `?lang` > pending attempt > site preference > Hebrew); after success the clean URL keeps `?lang=en`. (2) `create-order` appends `&lang=en` to the PayPal return and cancel URLs for English attempts only (exact value `en`; anything else keeps the unchanged Hebrew URLs). (3) `checkout/index.html` cache-bust `?v=` updated to the new module hash (`a8d112a3`, md5 of the LF file). Tests: 3 new unit tests (language resolution, saved/sent language, URL construction incl. an injection attempt `en&evil=1`) and 3 new mocked-browser scenarios (English survives approval return, cancel return, and a `?lang=en` return URL without session). Unit file 16/16 passes locally; the browser scenarios run in CI (`digital-checkout-browser`), not locally.
+
+**State:** this code push redeploys the Preview from the branch config, so both payment flags return to `false`; to continue the English re-test (and decline/T7) the flags must be patched on again, which needs the owner's go.
+
 ### Preview secrets verified and Sandbox login confirmed; flags still false; awaiting explicit approval (13.10.2026, ~14:20Z)
 
 - **Deployments:** owner uploaded the four Preview secrets (latest owner deployment `ede63a91-8f38-4117-85c7-7046db901af5`). Claude then made one dry-run JSON merge patch of the latest deployment that sets both payment flags to `"false"` (no change in value) to prove the flag/revert mechanism: it created deployment `3f9361cc…`, all secrets and bindings were inherited, flags stayed `false`.

@@ -1,6 +1,14 @@
 const STORAGE_KEY = 'amit-digital-checkout-v1';
 const MAX_AGE = 24 * 60 * 60 * 1000;
 
+// The page language must survive the PayPal round trip. An explicit ?lang wins,
+// then the language saved with this tab's pending attempt, then the site preference.
+export function resolveCheckoutLang({ param = null, pending = null, stored = null } = {}) {
+  if (param === 'en' || param === 'he') return param;
+  if (pending?.lang === 'en' || pending?.lang === 'he') return pending.lang;
+  return stored === 'en' ? 'en' : 'he';
+}
+
 export function createCheckoutClient({ fetcher = fetch, storage = sessionStorage, now = Date.now, uuid = () => crypto.randomUUID() } = {}) {
   let busy = false;
   let declinedOrder = null;
@@ -22,20 +30,24 @@ export function createCheckoutClient({ fetcher = fetch, storage = sessionStorage
     async quote(photoId) {
       return json('/api/paypal/quote?' + new URLSearchParams({ photoId, sku: 'large' }));
     },
-    async start(quote, accepted) {
+    async start(quote, accepted, lang = 'he') {
       if (busy) throw new Error('BUSY');
+      const language = lang === 'en' ? 'en' : 'he';
       if (!accepted || quote.enabled !== true || quote.currency !== 'ILS' || quote.license !== 'personal') throw new Error('CHECKOUT_DISABLED');
       busy = true;
       try {
         let attempt = read();
         if (!attempt || attempt.photoId !== quote.photoId || attempt.amountMinor !== quote.amountMinor) {
-          attempt = { photoId: quote.photoId, amountMinor: quote.amountMinor, key: uuid(), createdAt: now() };
+          attempt = { photoId: quote.photoId, amountMinor: quote.amountMinor, key: uuid(), createdAt: now(), lang: language };
           // Persist before the request: retries after a lost response use the same key.
+          save(attempt);
+        } else if (attempt.lang !== language) {
+          attempt = { ...attempt, lang: language };
           save(attempt);
         }
         const data = await json('/api/paypal/create-order', {
           method: 'POST', headers: { 'Content-Type': 'application/json', 'Idempotency-Key': attempt.key },
-          body: JSON.stringify({ type: 'digital', photoId: quote.photoId, sku: 'large', currency: 'ILS', licenseAccepted: true, expectedAmountMinor: quote.amountMinor }),
+          body: JSON.stringify({ type: 'digital', photoId: quote.photoId, sku: 'large', currency: 'ILS', licenseAccepted: true, expectedAmountMinor: quote.amountMinor, lang: language }),
         });
         const approval = new URL(data.approveUrl);
         if (approval.protocol !== 'https:' || approval.hostname !== 'www.sandbox.paypal.com' || approval.username || approval.password ||
@@ -77,13 +89,13 @@ export function createCheckoutClient({ fetcher = fetch, storage = sessionStorage
 
 async function mount() {
   const params = new URLSearchParams(location.search);
-  const isEn = params.get('lang') === 'en' || localStorage.getItem('lang') === 'en';
-  const lang = isEn ? 'en' : 'he';
+  const client = createCheckoutClient();
+  const lang = resolveCheckoutLang({ param: params.get('lang'), pending: client.pending(), stored: localStorage.getItem('lang') });
+  const isEn = lang === 'en';
   document.title = isEn ? 'Image license | Amit Photos' : 'רישיון לתמונה | Amit Photos';
   document.documentElement.lang = lang;
   document.documentElement.dir = isEn ? 'ltr' : 'rtl';
   document.querySelectorAll('[data-he][data-en]').forEach(el => { el.textContent = el.dataset[lang]; });
-  const client = createCheckoutClient();
   const status = document.getElementById('checkout-status');
   const button = document.getElementById('checkout-pay');
   const consent = document.getElementById('checkout-consent');
@@ -116,7 +128,7 @@ async function mount() {
       download.hidden = false;
       document.getElementById('checkout-title').textContent = result.title;
       // Remove return parameters; never place download tokens in the page URL or analytics.
-      history.replaceState(null, '', '/checkout/');
+      history.replaceState(null, '', isEn ? '/checkout/?lang=en' : '/checkout/');
     } catch (error) {
       const declined = error.message === 'PAYMENT_DECLINED';
       status.textContent = declined ? words.declined : words.error;
@@ -154,7 +166,7 @@ async function mount() {
           consent.checked = false;
           throw new Error('PRICE_CHANGED');
         }
-        location.assign(await client.start(quote, consent.checked));
+        location.assign(await client.start(quote, consent.checked, lang));
       } catch (error) {
         status.textContent = !quote.enabled ? words.disabled : error.message === 'PRICE_CHANGED' ? words.changed : words.error;
         consent.disabled = quote.enabled !== true;
