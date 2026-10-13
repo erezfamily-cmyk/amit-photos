@@ -8,6 +8,36 @@
 
 ## Acquisition and caption quality review — 12.10.2026
 
+### RESUME POINT — 13.10.2026 (supersedes the 12.10 "STATUS AT A GLANCE / RESUME POINT" below)
+
+**State:**
+- PRs #149, #150, #151, #152 and #153 are merged; #154 (this PR) adds only the migration 0002 **plan**, a local SQLite rehearsal test, a rollback SQL file and docs. No payment code (`worker.js`, `paypal-orders.js`) is changed by #154 and nothing in CI or deploy applies the migration (no workflow references `migrations/`; the rollback file lives outside `migrations/`).
+- All payment flags are `false` (production, main Sandbox Worker, both Previews). `prep/paypal-orders-v2-2026-10-01` is unchanged (`e69131f`). The main Sandbox Worker still runs the 1.10 code. The Sandbox D1 has the gallery-column fix (#151).
+- Production D1 `amit-photos-db`: **no write was ever made by this work; migration 0002 is NOT applied.** The plan is ready and waits for a business decision to proceed with sales; nothing needs to be done on it now.
+
+**Open, in order:**
+1. **Missing `CHECKOUT.ORDER.APPROVED` webhook check — OPEN.** Needs the owner's PayPal Sandbox Event Log (12.10, 23:10–23:30 Israel; Event IDs not in the stored list, `resource.id`, delivery status/attempts/URL/responses, and the webhook URL/id/subscribed events). Claude cannot open the authenticated PayPal session.
+2. **Business decision:** whether to go ahead with selling (demand gate, terms, pricing, legal, canary design). Until then do not touch production, flags, checkout UI or Live settings.
+3. **If go:** (a) remote verification on a throwaway D1 of atomicity of `wrangler d1 execute --file`, mid-file failure state, `DROP COLUMN` support and Time Travel restore (needs approval to create a cloud resource); (b) the migration per the plan, with approval and a protected backup if any; (c) digital-only flag, checkout UI, Live plumbing; (d) decline test, public-route test on a Sandbox-only Worker, fresh E2E on the final code (decide whether to bring `main` into `prep/...`); (e) kill-switch test.
+4. **Housekeeping (optional):** mirror production's `download_tokens` shape (nullable `tx`, UNIQUE partial index) in the Sandbox bootstrap; clean stale Previews; enable observability temporarily if exceptions reappear.
+
+**Not authorized:** production migration, creating cloud resources, enabling payments, changing `prep/...`, printing any `download_tokens` contents.
+
+### PR #153 merged; production D1 migration 0002 PLAN written (no production write) — 13.10.2026
+
+- **PR #153** (Live-gate status map) squash-merged as `e86cb94` after checking: only `handoff.md` changed, base = then-current `main`, blockers documented. Flags unchanged (`false`), `prep/...` unchanged (`e69131f`), no production write.
+- **Migration 0002 plan:** `docs/paypal-d1-migration-0002-plan-2026-10-13.md` (exact six changes, production state read, backup/recovery levels, execution command, post-migration checks, blockers vs decisions). **Nothing was run against production.**
+- **Production facts read (schema/metadata only, 13.10):** `amit-photos-db` has 0001-shape PayPal tables, 0 rows in `paypal_orders` and `paypal_webhook_events`, 8 legacy `download_tokens`, no `d1_migrations` table (migrations were applied by hand), ≈3.4 MB. Time Travel bookmark retrieval works on production and Sandbox (read-only; no restore performed). Drift noted: production `download_tokens.tx` is nullable with a UNIQUE partial index; Sandbox bootstrap has `tx NOT NULL` and a non-unique index (follow-up).
+- **Rehearsal: LOCAL SQLite ONLY (no cloud writes):** `tests/paypal-migration-0002-rehearsal.test.mjs` (in `node-tests.yml`) builds an in-memory SQLite (`node:sqlite`) from the production DDL pinned from `sqlite_master`, applies the real `migrations/0002_…sql` and checks exact objects added, existing rows kept (NULL / 0 defaults), unique-index behaviour, identity with the Sandbox bootstrap PayPal tables, that a second run fails and an explicit SQLite transaction rolls back cleanly, and the rollback file `staging/rollback-0002-paypal-security-hardening.sql` (outside `migrations/` so `migrations apply` cannot run it). 7/7 pass; a deliberately broken migration fails 2. **This does not prove anything about Cloudflare D1.** Still UNVERIFIED on D1 (needs a remote check on a throwaway D1, not authorized yet, never production `/export`, which makes the D1 unavailable while running): whether `wrangler d1 execute --remote --file` is atomic, the state a mid-file failure leaves, D1 support for `DROP COLUMN` in the rollback file, and Time Travel restore behaviour. The plan assumes NOT atomic until verified.
+- **Recovery order (untested on D1):** complete a partial run statement by statement → forward fix (additive, harmless to deployed code) → rollback SQL (only while no PayPal data exists after 0002) → Time Travel restore of the WHOLE production DB (last resort, explicit approval).
+- **Backups:** migration 0002 does not touch `download_tokens`; if a backup of it is ever taken at execution time it must be stored protected and never printed in logs, PRs, handoff or chat (tokens are bearer download links). No `download_tokens` contents appear in this PR or handoff (only the row count, 8).
+
+**Live blockers — separated**
+- *Technical:* (1) migration 0002 on production; (2) `DIGITAL_PAYPAL_ENABLED` digital-only flag (absent); (3) public digital checkout UI (absent); (4) PayPal Live plumbing: API base hard-coded to Sandbox, Live credentials, Live webhook and `PAYPAL_WEBHOOK_ID` in production (none today), review legacy production PayPal secrets; (5) close the missing-approval webhook check and run live dedup via Resend; (6) buyer-side decline, public-route test on a Sandbox-only Worker with the flag on, fresh E2E on the Worker that will run the final code (main Sandbox Worker still 1.10); (7) kill-switch test for the digital flag; (8) residual mid-stream token-loss risk, monitoring and support process.
+- *Business decisions (owner):* (1) demand gate (12.10 review is no-go; extend/re-run the experiment?); (2) whether to sell digital licences via PayPal at all vs other paths; (3) prices/currencies, licence terms, refund/chargeback policy, legal pages, VAT/invoicing, PayPal business verification and fees; (4) canary scope, duration, success/stop criteria, monitoring owner; (5) timing and sign-off of the production write; (6) Gelato/print stay out of scope.
+
+**Webhook check: still OPEN** (needs PayPal's log). Claude cannot open PayPal's authenticated Sandbox Event Log (no PayPal session; the browser profile available to Claude is not logged in and it must not enter owner credentials). Owner: Sandbox → Event Logs → Webhooks Events, 12.10 23:10–23:30 Israel, `CHECKOUT.ORDER.APPROVED`; send a screenshot or the Event IDs, `resource.id`, delivery status/attempts/URL/responses. Completion criteria are in the earlier entry (successful processing with `processed=1`, no double processing; `attempts` is not a pass/fail condition).
+
 ### Live-gate status map vs evidence + what is completed vs blocked (13.10.2026, read-only work)
 
 **PayPal Sandbox API access:** none available to Claude. No PayPal credentials in the environment; Cloudflare returns Worker secret NAMES only, never values; secret stores elsewhere were deliberately not searched. So the missing approval event cannot be looked up by API. Owner path (unchanged): https://developer.paypal.com/dashboard/webhooksEvents (Sandbox mode; else left menu **Event Logs → Webhooks Events**). Open `WH-49K20677JR0351154-8HJ81455X2175163M` → copy `resource.id`; list `CHECKOUT.ORDER.APPROVED` events 23:10–23:30 Israel → copy any Event ID not in the stored list with `resource.id`, delivery status, attempts, target URL, responses; then Apps & Credentials → Default Application → Webhooks → webhook URL, id, subscribed events. Do not paste secrets.
@@ -80,7 +110,7 @@ Stored `paypal_webhook_events` Event IDs (all `processed=1`): APPROVED — `WH-1
 
 **Recommendation on `prep/paypal-orders-v2-2026-10-01`:** update it (merge `main` into it) only after the owner decides to test the main Sandbox Worker end to end, because that Worker still runs the 1.10 code without the download-token fix and its only deploy path is that branch. Benefits: the Worker the webhook points at would run the tested code. Risks: its Production deploy runs automatically on push; its `wrangler.paypal-sandbox.toml` already has `PAYMENTS_ENABLED="false"`. If done, verify `/api/payments-status` `false`, secrets/bindings intact, `/api/photos` 200 and a quick E2E. Not required for this schema fix; not done.
 
-### STATUS AT A GLANCE (end of 12.10.2026) and RESUME POINT FOR 13.10.2026
+### STATUS AT A GLANCE (end of 12.10.2026) and RESUME POINT FOR 13.10.2026 [superseded by the 13.10 resume point above]
 
 **State now (all verified live on 12.10 night):**
 - **PR #149 is merged** (squash `3ff8922`). Includes the native Sandbox Preview config, the safe one-time download-token fix, the Sandbox template default `PAYMENTS_ENABLED="false"` with regression tests, and the E2E documentation.
