@@ -8,6 +8,13 @@ import { DatabaseSync } from 'node:sqlite';
 // in-memory SQLite database from the DDL pinned below, which was read from the
 // production D1 `amit-photos-db` (sqlite_master) on 2026-10-13, applies the real
 // migration file, and checks shape, data safety, re-run behaviour and rollback.
+//
+// LIMIT: this is a LOCAL SQLite rehearsal only. It proves nothing about Cloudflare
+// D1 itself: not that `wrangler d1 execute --file` is atomic, not what a mid-file
+// failure leaves behind on D1, not D1's support for DROP COLUMN, and not Time
+// Travel recovery. Those still need remote verification on a throwaway D1 (see
+// docs/paypal-d1-migration-0002-plan-2026-10-13.md, section 3). The explicit
+// BEGIN/ROLLBACK below demonstrates SQLite semantics, not D1 behaviour.
 
 const migration = await readFile(new URL('../migrations/0002_paypal_security_hardening.sql', import.meta.url), 'utf8');
 const rollback = await readFile(new URL('../staging/rollback-0002-paypal-security-hardening.sql', import.meta.url), 'utf8');

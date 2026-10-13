@@ -23,18 +23,25 @@ Properties: purely additive; no data is rewritten or deleted; `download_tokens`,
 
 Known drift, not part of 0002 and not required for it: production `download_tokens.tx` is nullable with a UNIQUE partial index (`idx_download_tokens_tx ... WHERE tx IS NOT NULL`) and `amount` is nullable, while the Sandbox bootstrap has `tx NOT NULL`, `amount NOT NULL DEFAULT 0` and a non-unique index. Production is the stricter/safer shape on the index; mirror it in the Sandbox bootstrap as a separate follow-up.
 
-## 3. Rehearsal and evidence already produced (no production writes)
+## 3. Rehearsal and evidence: what was done, and what is NOT yet verified
 
-- **Local rehearsal, in CI:** `tests/paypal-migration-0002-rehearsal.test.mjs` builds an in-memory SQLite from the production DDL pinned in the test (read from `sqlite_master`), applies the real migration file and checks: exact objects added; existing rows preserved with NULL/0 defaults; unique-index behaviour; resulting PayPal tables identical to the Sandbox bootstrap (the schema the E2E ran on); second run fails and a transaction rolls back cleanly; the rollback file restores the pre-0002 shape with data intact. 7/7 pass; a deliberately broken migration makes it fail.
-- **Sandbox D1** (`7b027b93-…`) already has the 0002 shape and ran the full Sandbox E2E on it (create, approve, capture, download, retries, webhooks, cleanup).
-- **Optional remote rehearsal (needs approval, creates a new throwaway D1, not production):** build a new D1 from the pinned pre-0002 DDL (use `sqlite_master`, **never** the production `/export` endpoint: an export makes the D1 unavailable to queries while it runs), apply with the exact command in section 5, run the section 7 checks, delete the throwaway database. This also confirms whether `wrangler d1 execute --file` is atomic on D1 (section 6 assumes it may not be).
+**Important limit: the only rehearsal performed so far ran in a LOCAL, in-memory SQLite (Node's `node:sqlite`). It was never run against any Cloudflare D1 database, and it does not prove how D1 behaves.** It validates the SQL and the data-safety logic under SQLite semantics only.
+
+- **Local SQLite rehearsal, in CI (done):** `tests/paypal-migration-0002-rehearsal.test.mjs` builds an in-memory SQLite from the production DDL pinned in the test (read from `sqlite_master`), applies the real migration file and checks: exact objects added; existing rows preserved with NULL/0 defaults; unique-index behaviour; resulting PayPal tables identical to the Sandbox bootstrap (the schema the E2E ran on); a second run fails and an explicit SQLite transaction rolls back cleanly; the rollback file restores the pre-0002 shape with data intact. 7/7 pass; a deliberately broken migration makes it fail. The "transaction rolls back cleanly" check describes SQLite, **not** `wrangler d1 execute --file`.
+- **Sandbox D1** (`7b027b93-…`) already has the 0002 shape and ran the full Sandbox E2E on it (create, approve, capture, download, retries, webhooks, cleanup). That shows the resulting schema works with the code; it is not a rehearsal of applying 0002 to a pre-0002 D1.
+- **NOT verified on D1 (needs remote verification before relying on it):**
+  1. whether `npx wrangler d1 execute --remote --file` applies a multi-statement file **atomically** (this plan therefore assumes it may NOT be, see section 6);
+  2. what state a mid-file failure leaves behind on D1;
+  3. that `ALTER TABLE ... DROP COLUMN` (used by the rollback file) is accepted by D1 for these columns;
+  4. Time Travel restore behaviour for this database (timing, effect on other data, whether the restore returns a bookmark that can undo it).
+- **Remote verification (not authorized yet; needs approval; creates a new throwaway D1, never production):** build a new D1 from the pinned pre-0002 DDL (use `sqlite_master`, **never** the production `/export` endpoint: an export makes the D1 unavailable to queries while it runs), apply with the exact command in section 5, deliberately test a failing statement to observe atomicity, run the rollback file and the section 7 checks, test a Time Travel restore on that throwaway database, then delete it.
 
 ## 4. Backup and recovery preparation (read-only steps before execution)
 
 1. Freeze: no production deploys during the window; confirm `PAYMENTS_ENABLED=false` and `GET /api/payments-status` → `{"enabled":false}`.
 2. **Time Travel bookmark:** record the current production bookmark and timestamp (`GET /accounts/<id>/d1/database/<db>/time_travel/bookmark`, or `npx wrangler d1 time-travel info amit-photos-db`; confirm syntax with `--help`). Retrieval was verified read-only on 13.10 for production and Sandbox.
 3. **Schema snapshot:** save `SELECT name, type, sql FROM sqlite_master ORDER BY name` for the whole database to the handoff.
-4. **Data copy of what could be affected:** the three PayPal tables are expected to be empty (confirm counts first); copy `download_tokens` with a plain `SELECT *` (8 rows). Do not use `/export` on production.
+4. **Protected backup, only if needed at execution time:** the three PayPal tables are expected to be empty (confirm counts first). Migration 0002 does not touch `download_tokens`, so a backup of it is optional. If one is taken, store it in a protected location (encrypted or access-controlled, per the owner's backup practice); **never print its contents in a terminal log, a PR, a handoff or a chat**, because tokens are bearer download links. Do not use `/export` on production.
 5. Record row counts: `paypal_orders`, `paypal_webhook_events`, `download_tokens`, `photos`.
 6. Pick a low-traffic window and keep the rollback SQL, this plan and the bookmark open.
 
@@ -50,9 +57,10 @@ Use `execute --file` (production has no `d1_migrations` table, so `migrations ap
 
 ## 6. Recovery, in order of preference
 
+0. **Assumption:** until the remote verification in section 3 has been done, treat the run as NOT atomic and any recovery step below as untested on D1.
 1. **Partial or unclear result:** read `PRAGMA table_info` for the three tables and `sqlite_master` for the two indexes, then run only the missing statements from section 2 (SQLite has no `ADD COLUMN IF NOT EXISTS`, so do not re-run a statement whose object exists).
 2. **Forward fix:** the change is additive and harmless to the deployed code, so leaving it applied is safe; fix problems forward.
-3. **Rollback SQL** (`staging/rollback-0002-paypal-security-hardening.sql`, outside `migrations/`, rehearsed in the test): drops the two indexes, `paypal_rate_limits` and the three columns. Only safe while no PayPal order/webhook data exists after 0002 (it deletes idempotency keys, the lease/attempt columns and the rate-limit table). Needs owner approval.
+3. **Rollback SQL** (`staging/rollback-0002-paypal-security-hardening.sql`, outside `migrations/`, rehearsed on local SQLite only, not yet on D1): drops the two indexes, `paypal_rate_limits` and the three columns. Only safe while no PayPal order/webhook data exists after 0002 (it deletes idempotency keys, the lease/attempt columns and the rate-limit table). Needs owner approval.
 4. **Time Travel restore** to the saved bookmark/timestamp (`POST .../time_travel/restore`): last resort. It restores the **whole** production database (photos, subscribers, sessions and everything else), losing every write after the bookmark. Needs explicit owner approval and a written decision; confirm during the rehearsal whether the restore returns a bookmark that can undo it.
 
 ## 7. Verification after the migration (read-only)
@@ -68,7 +76,7 @@ Use `execute --file` (production has no `d1_migrations` table, so `migrations ap
 
 ### Technical blockers (engineering/ops; can be done without a business decision, but only worth finishing once the go decision exists)
 
-1. **This migration** applied to production (sections 4–7).
+1. **This migration** applied to production (sections 4–7), preceded by the remote D1 verification of atomicity, mid-file failure state, `DROP COLUMN` support and Time Travel restore on a throwaway database (section 3), which is still outstanding.
 2. **Digital-only flag** `DIGITAL_PAYPAL_ENABLED` (0 occurrences today) so Orders v2 digital endpoints/UI no longer depend on the global `PAYMENTS_ENABLED`, which also opens legacy print/Gelato paths; legacy print handlers stay hard-disabled; tests.
 3. **Public digital checkout UI** (none exists): approve/cancel/return flows, errors, accessibility, i18n.
 4. **PayPal Live plumbing:** the API base is hard-coded to the Sandbox; needs an explicit environment switch, Live app credentials, a Live webhook and `PAYPAL_WEBHOOK_ID` in production (it has none today); review the legacy production secrets (`PAYPAL_CLIENT_ID/SECRET/PDT_TOKEN/RECEIVER_ID`, Live or Sandbox values unknown).
