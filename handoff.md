@@ -8,6 +8,33 @@
 
 ## Acquisition and caption quality review — 12.10.2026
 
+### Live-gate status map vs evidence + what is completed vs blocked (13.10.2026, read-only work)
+
+**PayPal Sandbox API access:** none available to Claude. No PayPal credentials in the environment; Cloudflare returns Worker secret NAMES only, never values; secret stores elsewhere were deliberately not searched. So the missing approval event cannot be looked up by API. Owner path (unchanged): https://developer.paypal.com/dashboard/webhooksEvents (Sandbox mode; else left menu **Event Logs → Webhooks Events**). Open `WH-49K20677JR0351154-8HJ81455X2175163M` → copy `resource.id`; list `CHECKOUT.ORDER.APPROVED` events 23:10–23:30 Israel → copy any Event ID not in the stored list with `resource.id`, delivery status, attempts, target URL, responses; then Apps & Credentials → Default Application → Webhooks → webhook URL, id, subscribed events. Do not paste secrets.
+
+**Code under test = `main`:** blob SHAs of `worker.js` (`0ed46d5775…`) and `paypal-orders.js` (`9a629eb834…`) are identical at the tested commit `4b60b14` and on `main` (`0f3dedb`), so the Preview E2E evidence applies to the merged code (not to the main Sandbox Worker, which still runs 1.10).
+
+**Production fails closed (verified live today, writes nothing):** `GET /api/paypal/webhook` → 405; `POST` webhook → 400 `PAYPAL_WEBHOOK_ID_MISSING` (production has no `PAYPAL_WEBHOOK_ID`); public `create-order` and `capture-order` → 503 `PAYMENTS_TEMPORARILY_DISABLED`; admin route unauthenticated → 401; `PAYMENTS_ENABLED=false`. Production Worker secrets include legacy `PAYPAL_CLIENT_ID`, `PAYPAL_CLIENT_SECRET`, `PAYPAL_PDT_TOKEN`, `PAYPAL_RECEIVER_ID` (whether Live or Sandbox values is unknown); the code's PayPal API base is hard-coded to Sandbox, so Live needs an explicit code change, Live credentials and a Live webhook.
+
+| Gate item (`docs/paypal-reactivation-gate-2026-10-01.md`) | Status |
+|---|---|
+| #76 → #110 revalidated on current code | DONE (Preview runs the same blobs as `main`) |
+| Orders v2 digital-only | DONE (non-`digital` create-order rejected; unit tests) |
+| Sandbox create → approve → capture → download on current code | DONE on the Preview (real 6095-byte JPEG, one-time); NOT run on the main Sandbox Worker |
+| Cancel path | DONE (order `7AT61812JF3543355`: no capture/token/approval) |
+| Sandbox webhook verification + dedup | PARTIAL: verification and processing live (approvals/captures processed; forged → 400/401); dedup live via PayPal Resend NOT run (unit tests cover it); one approval event missing/unidentified → OPEN |
+| **D1 migration verified against the intended production DB** | **NOT MET.** Read-only schema comparison (13.10): production `paypal_orders` has no `client_idempotency_key`, `paypal_webhook_events` has no `processing_started_at`/`attempts`, there is no `paypal_rate_limits` table, and indexes `idx_paypal_orders_client_idempotency`/`idx_paypal_rate_limits_window` are missing, i.e. migration `0002` is not applied (only the 0001 shape exists). Also `download_tokens.tx` and `.amount` are nullable in production vs NOT NULL in the Sandbox bootstrap. Not changed: needs a backed-up, approved migration right before activation. |
+| Server-side price authority | DONE (server resolves price; client amount ignored; live amount 100 agorot = 1 ILS from settings) |
+| Idempotency and duplicate-capture protection | DONE live (same-key reuse, 5 parallel creates, 5 parallel captures, lost-response retry, repeat capture) plus tests |
+| Rollback / kill-switch tested | PARTIAL: Sandbox flag flip to `false` verified (public closed, admin still works); production kill-switch for a digital flag untestable because the flag does not exist |
+| Digital-only flag (`DIGITAL_PAYPAL_ENABLED`) | NOT IMPLEMENTED (0 occurrences in code/config) |
+| Public checkout UI | NOT IMPLEMENTED (no page references `/api/paypal/create-order` or the PayPal SDK) |
+| Demand + measurement gates | NOT MET per the 12.10 review (not re-assessed here) |
+
+**Completed today without the log or payments:** the gate map above; production fail-closed live checks; production-vs-Sandbox D1 payment-schema comparison (found the migration gap); code-identity check; PayPal API access check; safe webhook endpoint checks on the main Sandbox Worker (earlier entry); schema fix merged (#151).
+
+**Still blocked and why:** missing-approval webhook (needs PayPal log, owner); buyer-side decline (needs a negative-testing Sandbox buyer/card); live public-checkout test (payments must stay blocked; also no UI); fresh E2E on the main Sandbox Worker (admin password unknown to Claude; `prep/...` unchanged by instruction); production D1 migration 0002 (a production write, not authorized, only needed before activation); digital-only flag and checkout UI (code work, only after the demand gate); Live credentials/webhook/API-base change.
+
 ### PR #151 MERGED; webhook check still OPEN — what PayPal's log must show (13.10.2026)
 
 - **Merge:** PR #151 squash-merged 2026-10-13 08:36:10Z as `66c7650450f1706c283b0e0485ce097479ac72db`. Before merging: head still `83d8891` (unchanged since review), base = current `main` (0 behind), checks green (`paypal-orders-v2` incl. the new schema test, `verify-live`, both Cloudflare builds), 4 files changed.
