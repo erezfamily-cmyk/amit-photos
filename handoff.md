@@ -16,6 +16,13 @@
 
 ## Acquisition and caption quality review — 12.10.2026
 
+### UPDATE 13.10.2026 17:37Z — English fix verified live, T7 passed, flags back to `false` (see `docs/handoffs/2026-10-13.md` section 7)
+
+- **English purchase (phone):** order `97A89187R7121682U` `COMPLETED`, one token `8c101af8…` (`used=1`), exactly one file delivery (6095 bytes, 17:32:01Z), webhook events processed; the return page **stayed in English** (owner observation). **English cancel:** order `38S41759WB225203S` stays `CREATED`, no capture/token; English message (owner observation). So fix `836ab625` is verified live.
+- **T7 passed:** `(true,false)`, `(false,true)` and `(false,false)` all return 503 on public create/capture and `quote.enabled=false`.
+- **Flags:** window 17:29:09Z–17:35:57Z on this Preview only; restored to `false` (deployment `ca39ff6d`) and verified: Preview, production and main Sandbox Worker return 503 on create; `prep/...` `e69131f`; PR #155 draft, not merged.
+- **Still open:** provider-side decline (not run), the historical missing `CHECKOUT.ORDER.APPROVED` webhook (12.10), business/Live decisions. The earlier evening resume plan below is now done except decline.
+
 ### RESUME POINT — EVENING 13.10.2026 (supersedes the earlier resume points below; flags are `false`)
 
 Full day summary: [`docs/handoffs/2026-10-13.md`](docs/handoffs/2026-10-13.md) (tests, evidence, order IDs, state, checklist). Owner's local copy: `HANDOFF_AMIT_PHOTOS_2026-10-13.md` (not in the repo).
