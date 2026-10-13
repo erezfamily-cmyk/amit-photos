@@ -139,4 +139,3 @@ test('staging bootstrap cannot silently reference production resources', async (
   assert.equal(bootstrap.includes(PROD_D1_ID), false);
   assert.equal(bootstrap.includes('amit-photos-images'), false);
 });
-

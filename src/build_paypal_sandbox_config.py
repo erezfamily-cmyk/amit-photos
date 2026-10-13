@@ -42,4 +42,3 @@ if __name__ == "__main__":
     # Validate before writing: invalid inputs never produce a deployable config.
     config = build_config(args.database_id, preview=args.preview)
     args.output.write_text(json.dumps(config, indent=2) + "\n")
-

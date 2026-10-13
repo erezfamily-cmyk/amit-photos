@@ -45,7 +45,7 @@ The owner authorized implementing the proposed digital purchase flow and documen
 ## Automated browser QA follow-up
 
 - `tests/digital-checkout.browser.mjs` serves repository assets on localhost and intercepts every API/provider response. It tests HE/EN at 390/768/1280px, long titles, success, capture retry, cancellation, changed price, forged return and gallery pointer navigation. This is **mocked browser QA, not a real PayPal E2E or payment-security certification**.
-- A dedicated `digital-checkout-browser` CI job installs pinned Playwright 1.62.1/Chromium on the existing GitHub runner, runs the scenarios and retains screenshots for seven days. No credentials or external account are used. This job's initial result is pending until it runs.
+- A dedicated `digital-checkout-browser` CI job installs pinned Playwright 1.62.1/Chromium on the existing GitHub runner, runs the scenarios and retains screenshots for seven days. No credentials or external account are used. First run: the 12 checkout scenarios passed, but gallery pointer navigation failed because `.img-protect-overlay` (z-index 1) intercepted the button. The gallery action overlay now sits above it (z-index 2), while wishlist controls retain z-index 3. Browser regression rerun is pending.
 - Native Preview configuration now explicitly sets both payment vars to false, since Preview vars do not inherit top-level vars. The isolation regression test checks that setting too.
 - Long unbroken titles wrap inside the checkout card. The source test suite still passes 106/106.
 
