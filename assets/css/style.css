@@ -1182,7 +1182,7 @@ body[data-payments-state="enabled"] .payments-disabled-only {
   position: absolute;
   inset: 0;
   /* Keep actionable controls above the image-protection surface (z-index: 1).
-     The wishlist control stays above both at z-index: 3. */
+     The wishlist control stays above both at z-index: 6. */
   z-index: 2;
   background: linear-gradient(
     to top,

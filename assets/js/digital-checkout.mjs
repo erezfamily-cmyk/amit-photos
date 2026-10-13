@@ -87,6 +87,7 @@ async function mount() {
   const photoId = params.get('photoId') || client.pending()?.photoId;
   async function capture() {
     controls.hidden = true;
+    document.getElementById('checkout-price').hidden = true;
     retry.hidden = true;
     status.textContent = words.verifying;
     try {
