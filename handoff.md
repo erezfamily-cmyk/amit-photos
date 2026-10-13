@@ -6,6 +6,14 @@
 
 ---
 
+## Password-manager location and owner secret setup — 13.10.2026
+
+- Owner is saving a dedicated Preview admin password in **Google Password Manager** (Chrome's "Add new password" dialog). Record website: `https://feature-digital-checkout-preparation-amit-photos-paypal-sandbox.erez-family.workers.dev`; username/search label: `ADMIN_PASSWORD`. This label identifies the secret in the manager; it is not an API login username.
+- Scope: Worker `amit-photos-paypal-sandbox`, Preview `feature/digital-checkout-preparation-2026-10-13` only. Retrieve the password locally from that manager entry if an admin check is needed; do not assume `$HOME/.sbx-admin-pw` exists on the owner's Windows computer. No password value is recorded here, in chat, or in repository files.
+- **Save/upload confirmation still pending:** the screenshot shows the add-password form before Save. Owner must save the manager entry and complete `preview secret put ADMIN_PASSWORD`; do not mark this done or authentication ready until confirmed.
+- Owner reported successful Preview secret puts for `PAYPAL_CLIENT_ID`, `PAYPAL_CLIENT_SECRET`, and `PAYPAL_WEBHOOK_ID` from the new Sandbox app. Latest reported deployment after webhook-ID put: `59a7c9cd-0b55-4708-bb0b-69582630df91`. These are owner CLI reports, not an independent server-side secret inventory or OAuth verification.
+- Re-check all four secret NAMES, Sandbox authentication, final deployed code/bindings and BOTH flags false with the connected Claude session after admin upload. No activation approval is given by saving these credentials; production, the main-Sandbox webhook, `prep/...` and Live settings remain outside this setup.
+
 ## Acquisition and caption quality review — 12.10.2026
 
 ### Connected-session re-verification at head `a9fe753`; Sandbox setup checklist; flags still false (13.10.2026, evening)
