@@ -62,7 +62,7 @@ All runs use `paypal-sandbox-test-photo`, language HE then EN, desktop and phone
 
 ## 5. Findings from the review (for the PR author)
 
-- **Desktop overlap:** at 1280x800 on a first visit the cookie banner (`#cookie-notice`, `z-index` 99997, fixed, 74px) covers about 60% of the lightbox "Personal license details" button (button y 716–768, banner from y 726); only its top strip was clickable until dismissal. Fix: defer the notice while a dialog is open and restore it on close without recording consent. New browser regression scenarios cover 1280x800 and 360x640. Their first run on this fix is pending.
+- **Desktop overlap:** at 1280x800 on a first visit the cookie banner (`#cookie-notice`, `z-index` 99997, fixed, 74px) covers about 60% of the lightbox "Personal license details" button (button y 716–768, banner from y 726); only its top strip was clickable until dismissal. Fix: defer the notice while a dialog is open and restore it on close without recording consent. New browser regression scenarios cover 1280x800 and 360x640. They passed in the 17-scenario mocked Chromium run `38405127740` at code head `f489f623`.
 - **Public wording after merge:** `servePhotoPage` now links the standalone photo page "buy" button to `/checkout/` ("personal license details"); once merged, production would expose a disabled checkout preview page (production `/checkout/` is 404 today). That is a product decision.
 - **`/api/payments-status`** gains `digitalEnabled`; the production health checks read `.enabled` through `jq`, so they stay compatible.
 - **Production config:** `wrangler.toml` changes only by adding `DIGITAL_PAYPAL_ENABLED = "false"`.
@@ -75,4 +75,4 @@ Merging, any production or `prep/...` change, a migration, PayPal Live, creating
 
 ## Author follow-up (supersedes the original code/QA snapshot above)
 
-The original environment inspection describes deployed head `908a5a3`; after the cookie/decline code update, re-check the final PR head, checks and deployed file hashes before any live test. Documentation commit `15be7aa` is preserved. Source/API tests pass 108/108; the new 17-scenario mocked browser run is pending. Both payment flags remain false. No secrets, webhook configuration or real PayPal call were changed by the code author.
+The original environment inspection describes deployed head `908a5a3`; after the cookie/decline code update, re-check the final PR head, checks and deployed file hashes before any live test. Documentation commit `15be7aa` is preserved. Source/API tests pass 108/108; the new 17-scenario mocked browser run passed at `f489f623` (run `38405127740`). Both payment flags remain false. No secrets, webhook configuration or real PayPal call were changed by the code author.

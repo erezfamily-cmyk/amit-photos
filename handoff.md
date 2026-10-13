@@ -1,12 +1,22 @@
 # Handoff — amit-photos
 
 > מסמך כניסה לכל מי (אדם או סוכן AI) שנכנס לפרויקט הזה בפעם הראשונה, או חוזר אחרי הפסקה.
-> עודכן: **12.10.2026**. זה מסמך חי — לעדכן אותו כשקורה משהו מהותי, לא לתת לו להתיישן.
+> עודכן: **13.10.2026**. זה מסמך חי — לעדכן אותו כשקורה משהו מהותי, לא לתת לו להתיישן.
 > לא מחליף את `CLAUDE.md` (כללי ארכיטקטורה מחייבים) — משלים אותו עם "מה המצב עכשיו ולמה".
 
 ---
 
 ## Acquisition and caption quality review — 12.10.2026
+
+### Author follow-up — connected-review cookie/decline fixes (13.10.2026)
+
+Claude review/docs commit `15be7aa` is preserved. Before any live window, re-check the new exact head and deployed hashes.
+
+- Cookie notice is deferred while a photo/purchase dialog owns focus; closing restores it without cookie dismissal/consent. This fixes the reported first-visit desktop overlap.
+- Known PayPal funding/capture decline now returns 422 `PAYMENT_DECLINED` without fulfillment writes. The page shows a dedicated explanation and an explicit product restart with fresh consent/key; unknown/network failures keep same-order recovery. No production mock header/test hook was added.
+- 108/108 source/API tests pass. All 17 mocked browser scenarios passed on code head `f489f623`, GitHub run `38405127740`, including decline/restart and first-visit cookie behavior at 1280x800 and 360x640. Actual provider-side decline/payment tests remain open. Live decline/payment/webhook checks remain open.
+- Live-plan corrections: use an approved dedicated Sandbox webhook for this Preview without redirecting the main-Sandbox webhook; optionally propose an isolated Sandbox app first. The clean success URL is not a browser-capture replay test; use the known order ID via API. Detailed plan remains `docs/digital-checkout-sandbox-live-test-plan-2026-10-13.md`.
+- No payment flag, secret, webhook target, production/prep setting or migration was changed. PR #155 remains draft and unmerged.
 
 ### Connected-session review of PR #155 and Sandbox live-test plan (13.10.2026) — NO flag changed
 
@@ -17,16 +27,6 @@
 - **Finding:** no dedicated decline handling or test (any non-OK capture other than `ORDER_ALREADY_CAPTURED` returns a generic 502).
 - **Plan:** `docs/digital-checkout-sandbox-live-test-plan-2026-10-13.md` (environment, exact flags and mechanism, owner inputs, test matrix T0–T8, sequence, stop rules). Flags are switched only on this Preview via a JSON merge patch of its latest deployment, only after the owner's explicit approval, and restored to `false` and verified (public create/capture 503) at the end; a push to the branch also resets them.
 - **Status:** waiting for the owner's approval and inputs (Preview secrets, webhook target, Sandbox buyer(s), phone). The historical missing `CHECKOUT.ORDER.APPROVED` check stays separate and open. Not merged; no production, `prep/...`, migration or PayPal Live change.
-
-### Author follow-up — connected-review cookie/decline fixes (13.10.2026)
-
-Claude review/docs commit `15be7aa` is preserved. Before any live window, re-check the new exact head and deployed hashes.
-
-- Cookie notice is deferred while a photo/purchase dialog owns focus; closing restores it without cookie dismissal/consent. This fixes the reported first-visit desktop overlap.
-- Known PayPal funding/capture decline now returns 422 `PAYMENT_DECLINED` without fulfillment writes. The page shows a dedicated explanation and an explicit product restart with fresh consent/key; unknown/network failures keep same-order recovery. No production mock header/test hook was added.
-- 108/108 source/API tests pass. Browser suite expands to 17 mocked scenarios with decline and first-visit cookie cases; new run pending. Live decline/payment/webhook checks remain open.
-- Live-plan corrections: use an approved dedicated Sandbox webhook for this Preview without redirecting the main-Sandbox webhook; optionally propose an isolated Sandbox app first. The clean success URL is not a browser-capture replay test; use the known order ID via API. Detailed plan remains `docs/digital-checkout-sandbox-live-test-plan-2026-10-13.md`.
-- No payment flag, secret, webhook target, production/prep setting or migration was changed. PR #155 remains draft and unmerged.
 
 ### RESUME POINT — digital checkout code preparation (13.10.2026, supersedes code deferral below)
 
@@ -2164,5 +2164,3 @@ Fix:
 - The total is the current published catalog after Drive HIDE/RESTORE cleanup; the earlier pre-cleanup snapshot contained 1,346 items. All 1,322 items currently in the scoring state have complete visual components.
 - `owner_review_required=569` is the score-based candidate count (score <=85 or a material problem) before Admin removes photos with an existing owner decision. Admin should continue showing only unresolved candidates, with problematic scores first. No image was automatically hidden or deleted by this scoring pipeline.
 - Payments remain disabled (`PAYMENTS_ENABLED=false`); PayPal Production and Gelato were not changed.
-
-
