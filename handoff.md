@@ -8,6 +8,33 @@
 
 ## Acquisition and caption quality review — 12.10.2026
 
+### PR #151 MERGED; webhook check still OPEN — what PayPal's log must show (13.10.2026)
+
+- **Merge:** PR #151 squash-merged 2026-10-13 08:36:10Z as `66c7650450f1706c283b0e0485ce097479ac72db`. Before merging: head still `83d8891` (unchanged since review), base = current `main` (0 behind), checks green (`paypal-orders-v2` incl. the new schema test, `verify-live`, both Cloudflare builds), 4 files changed.
+- **Verified after merge:** `staging/paypal-sandbox-bootstrap.sql` on `main` creates `sort_order`, `redbubble_url`, `redbubble_products`, `zazzle_products` (nullable, no default) and `tests/paypal-sandbox-bootstrap-schema.test.mjs` is on `main`; checks on the merge commit all success (production `deploy`/`build`/`Workers Builds: amit-photos`, `Workers Builds: amit-photos-paypal-sandbox`, `paypal-orders-v2`). `/api/payments-status` → `{"enabled":false}` and `/api/photos` → 200 on production, the main Sandbox Worker, the main Preview and the PR-branch Preview. `prep/...` was not touched; no public checkout enabled; no real purchases.
+- **Exceptions:** the three `scriptThrewException` at 06:22Z on 13.10 are my own `/api/photos` probes before the schema fix; none since.
+- **Safe webhook checks on the main Sandbox Worker (writes nothing):** `GET /api/paypal/webhook` → 405; POST without PayPal headers → 400 `PAYPAL_WEBHOOK_HEADERS_MISSING`; POST with forged headers → 401 `PAYPAL_WEBHOOK_SIGNATURE_INVALID` (it called PayPal's verify endpoint with its own credentials and webhook id and rejected the forgery); 0 forged rows in D1. So the endpoint is alive and verifying. D1 still has exactly 10 events; no new event since 20:22:06Z yesterday and no webhook-shaped request reached either Worker since.
+
+**Webhook test status: NOT COMPLETED.** Do not mark it done until the missing approval event is identified and its receipt is verified.
+
+Known: two orders were created at 20:10Z and both approved (`5CE517938N245005R`, `8S923706NG623915A`); D1 stores only one approval event in that window, `WH-49K20677JR0351154-8HJ81455X2175163M` (20:15:34Z), and does not record which order it belongs to. The capture events for both orders ARE stored (20:16:56Z and 20:22:06Z).
+
+**What only PayPal's log can tell (missing facts):**
+1. Which order `WH-49K20677JR0351154-8HJ81455X2175163M` is for (`resource.id`) — this identifies which order lacks an approval event.
+2. Whether PayPal generated a second `CHECKOUT.ORDER.APPROVED` event for 20:10–20:30 UTC (23:10–23:30 Israel): an Event ID not in the stored list (see the previous entry), and its `resource.id`.
+3. For that event: delivery status, number of attempts, target URL(s), each attempt's HTTP status/response, and whether further retries are scheduled.
+4. The configured webhook: URL (expected: the main Sandbox Worker), webhook id, and subscribed event types (must include `CHECKOUT.ORDER.APPROVED` and `PAYMENT.CAPTURE.COMPLETED`).
+
+**Owner actions (PayPal Sandbox → Event Logs → Webhooks Events; Apps & Credentials → Default Application → Webhooks):**
+- Open `WH-49K20677JR0351154-8HJ81455X2175163M` and read `resource.id`.
+- List `CHECKOUT.ORDER.APPROVED` events for 20:10–20:30 UTC and note every Event ID not in the stored list; open each and copy `resource.id`, status, attempts, target URL, responses.
+- Read the webhook's URL, id and subscribed events.
+- Only if such an event exists and was not delivered/failed: Resend that single event, then tell Claude. If no second approval event exists at all, report that.
+
+**Completion criteria (Claude verifies in D1):** the missing event is identified (Event ID + order), its delivery history is explained, and after delivery/Resend (a) a `paypal_webhook_events` row exists for it with `processed=1` (successful processing; `attempts` may legitimately be greater than 1 after PayPal retries or a Resend, so it is not a pass/fail condition), and (b) there is no double processing: for the related order exactly one fulfillment, one `download_tokens` row for its capture id, an unchanged capture id and `completed_at`, no extra `paypal_orders` row, and a repeated delivery/Resend of the same Event ID leaves all of that unchanged (the handler answers `duplicate:true`). If PayPal never generated the event, classify as PayPal-side/no event and keep the check open or reclassified explicitly; do not claim receipt.
+
+**Other remaining checks (blocked until you act or decide):** buyer-side decline (needs a negative-testing Sandbox buyer/card); live public-checkout test (excluded: payments stay blocked); a fresh E2E on the main Sandbox Worker (needs its admin password and, ideally, `main` merged into `prep/...`, which is NOT done); Live gates in `docs/paypal-reactivation-gate-2026-10-01.md`.
+
 ### Sandbox `/api/photos` 500 (error 1101) fixed — Sandbox D1 schema; webhook-lookup guidance corrected — 13.10.2026
 
 **Diagnosis (13.10, read-only first):** overnight analytics showed page-load bursts (5–14 requests/s) on the Preview and the main Sandbox Worker, each with one `scriptThrewException`. `GET /api/photos` returned `500 error code: 1101` on every Sandbox host (production returned 200). Cause: the Sandbox D1 `photos` table was created from the minimal `staging/paypal-sandbox-bootstrap.sql` (11 columns) and lacked `sort_order`, `redbubble_url`, `redbubble_products`, `zazzle_products` (production has 28 columns), so the public gallery query `SELECT * FROM photos WHERE published=1 ORDER BY CASE WHEN sort_order IS NULL …` failed with "no such column". Sandbox-only: not a production bug and unrelated to payments or webhooks. This also explains the earlier "unexplained" exceptions (19:52:13Z, 19:54:23Z, 20:19:06Z): they coincided with page loads.
