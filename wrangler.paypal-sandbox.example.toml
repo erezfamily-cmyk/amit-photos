@@ -12,6 +12,7 @@ compatibility_flags = ["nodejs_compat"]
 # this flag is "false". Do not set it to "true" here; enabling public Sandbox
 # checkout is a deliberate, separate dashboard decision for this Worker only.
 PAYMENTS_ENABLED = "false"
+DIGITAL_PAYPAL_ENABLED = "false"
 
 [assets]
 directory = "."
@@ -33,3 +34,4 @@ binding = "IMAGES"
 
 # Intentionally no [[routes]] and no [triggers].
 # Staging must remain workers.dev-only with no cron jobs.
+

@@ -37,6 +37,26 @@ function paypalApiBase() {
   return PAYPAL_SANDBOX_API;
 }
 
+export function digitalPaymentsEnabled(env) {
+  return env.PAYMENTS_ENABLED === 'true' && env.DIGITAL_PAYPAL_ENABLED === 'true';
+}
+
+// Read-only product preview. No PayPal call or migration-0002 table access.
+export async function handleDigitalCheckoutQuote(request, env) {
+  if (request.method !== 'GET') return jsonRes({ error: 'method not allowed' }, 405, request);
+  const params = new URL(request.url).searchParams;
+  const photoId = params.get('photoId');
+  const sku = params.get('sku') || 'large';
+  const pricing = await resolveDigitalPayPalPrice(env, photoId, sku, 'ILS');
+  if (pricing.error) return jsonRes({ error: pricing.error }, pricing.status, request);
+  const photo = await env.DB.prepare('SELECT title FROM photos WHERE id = ?').bind(photoId).first();
+  return jsonRes({
+    photoId, sku, title: photo?.title || photoId,
+    amountMinor: pricing.amountExpected, currency: 'ILS',
+    license: 'personal', enabled: digitalPaymentsEnabled(env), environment: 'sandbox',
+  }, 200, request);
+}
+
 function payerApprovalUrl(order) {
   if (!Array.isArray(order?.links)) return null;
   return order.links.find(link => link.rel === 'approve')?.href
@@ -533,7 +553,7 @@ export async function handlePayPalSandboxCleanup(request, env) {
 }
 
 export async function handlePayPalCreateOrder(request, env, options = {}) {
-  if (!options.allowWhenPaymentsDisabled && env.PAYMENTS_ENABLED !== 'true') return paymentsDisabledResponse(request);
+  if (!options.allowWhenPaymentsDisabled && !digitalPaymentsEnabled(env)) return paymentsDisabledResponse(request);
   if (request.method !== 'POST') return jsonRes({ error: 'method not allowed' }, 405, request);
 
   if (!options.skipRateLimit) {
@@ -544,6 +564,27 @@ export async function handlePayPalCreateOrder(request, env, options = {}) {
   const idempotencyKey = request.headers.get('Idempotency-Key');
   if (!validIdempotencyKey(idempotencyKey)) {
     return jsonRes({ error: 'Idempotency-Key לא תקין' }, 400, request);
+  }
+
+  // Public checkout confirms the server quote; the client never sets the price.
+  let publicBody;
+  if (options.publicCheckout) {
+    publicBody = await request.clone().json().catch(() => ({}));
+    if (publicBody.licenseAccepted !== true || publicBody.currency !== 'ILS') {
+      return jsonRes({ error: 'PERSONAL_LICENSE_ACCEPTANCE_REQUIRED' }, 400, request);
+    }
+    const quote = await resolveDigitalPayPalPrice(env, publicBody.photoId, publicBody.sku, 'ILS');
+    if (quote.error) return jsonRes({ error: quote.error }, quote.status, request);
+    if (publicBody.expectedAmountMinor !== quote.amountExpected) {
+      return jsonRes({ error: 'PRICE_CHANGED' }, 409, request);
+    }
+    const prior = await env.DB.prepare(
+      'SELECT * FROM paypal_orders WHERE client_idempotency_key = ? LIMIT 1'
+    ).bind(idempotencyKey).first();
+    if (prior && (prior.photo_id !== publicBody.photoId || prior.sku !== publicBody.sku ||
+        prior.currency !== 'ILS' || prior.amount_expected !== quote.amountExpected)) {
+      return jsonRes({ error: 'CHECKOUT_ATTEMPT_MISMATCH' }, 409, request);
+    }
   }
 
   const existing = await env.DB.prepare(
@@ -602,8 +643,8 @@ export async function handlePayPalCreateOrder(request, env, options = {}) {
           experience_context: {
             shipping_preference: 'NO_SHIPPING',
             user_action: 'PAY_NOW',
-            return_url: origin + '/api/paypal/approved',
-            cancel_url: origin + '/api/paypal/cancelled',
+            return_url: origin + (options.publicCheckout ? '/checkout/?approved=1' : '/api/paypal/approved'),
+            cancel_url: origin + (options.publicCheckout ? '/checkout/?cancelled=1' : '/api/paypal/cancelled'),
           },
         },
       },
@@ -706,7 +747,7 @@ async function finalizeDigitalPayPalOrder(request, env, order) {
 }
 
 export async function handlePayPalCaptureOrder(request, env, options = {}) {
-  if (!options.allowWhenPaymentsDisabled && env.PAYMENTS_ENABLED !== 'true') return paymentsDisabledResponse(request);
+  if (!options.allowWhenPaymentsDisabled && !digitalPaymentsEnabled(env)) return paymentsDisabledResponse(request);
   if (request.method !== 'POST') return jsonRes({ error: 'method not allowed' }, 405, request);
 
   if (!options.skipRateLimit) {
@@ -844,3 +885,4 @@ export function handlePayPalCheckoutReturn(request, approved) {
     }
   );
 }
+

@@ -205,6 +205,7 @@ test('create-order ignores client amount and sends the server-side D1 price to P
   const db = makeDb();
   const env = {
     PAYMENTS_ENABLED: 'true',
+    DIGITAL_PAYPAL_ENABLED: 'true',
     PAYPAL_CLIENT_ID: 'sandbox-client',
     PAYPAL_CLIENT_SECRET: 'sandbox-secret',
     DB: db,
@@ -249,6 +250,7 @@ test('create-order preserves the existing rounded USD conversion rule', async ()
   const db = makeDb();
   const env = {
     PAYMENTS_ENABLED: 'true',
+    DIGITAL_PAYPAL_ENABLED: 'true',
     PAYPAL_CLIENT_ID: 'sandbox-client',
     PAYPAL_CLIENT_SECRET: 'sandbox-secret',
     DB: db,
@@ -303,6 +305,7 @@ test('create-order reuses an existing order for the same Idempotency-Key without
   });
   const env = {
     PAYMENTS_ENABLED: 'true',
+    DIGITAL_PAYPAL_ENABLED: 'true',
     PAYPAL_CLIENT_ID: 'sandbox-client',
     PAYPAL_CLIENT_SECRET: 'sandbox-secret',
     DB: db,
@@ -335,6 +338,7 @@ test('create-order rate limits repeated public attempts by hashed IP', async () 
   const db = makeDb();
   const env = {
     PAYMENTS_ENABLED: 'true',
+    DIGITAL_PAYPAL_ENABLED: 'true',
     PAYPAL_CLIENT_ID: 'sandbox-client',
     PAYPAL_CLIENT_SECRET: 'sandbox-secret',
     DB: db,
@@ -387,6 +391,7 @@ test('capture-order rejects a completed PayPal capture when the amount does not 
   });
   const env = {
     PAYMENTS_ENABLED: 'true',
+    DIGITAL_PAYPAL_ENABLED: 'true',
     PAYPAL_CLIENT_ID: 'sandbox-client',
     PAYPAL_CLIENT_SECRET: 'sandbox-secret',
     DB: db,
@@ -446,6 +451,7 @@ test('successful capture creates one download token and a duplicate callback reu
   });
   const env = {
     PAYMENTS_ENABLED: 'true',
+    DIGITAL_PAYPAL_ENABLED: 'true',
     PAYPAL_CLIENT_ID: 'sandbox-client',
     PAYPAL_CLIENT_SECRET: 'sandbox-secret',
     DB: db,
@@ -519,6 +525,7 @@ test('resume from FULFILLING reuses the locked fulfillment token without calling
   });
   const env = {
     PAYMENTS_ENABLED: 'true',
+    DIGITAL_PAYPAL_ENABLED: 'true',
     PAYPAL_CLIENT_ID: 'sandbox-client',
     PAYPAL_CLIENT_SECRET: 'sandbox-secret',
     DB: db,
@@ -566,6 +573,7 @@ test('capture-order rejects a PayPal response that is not bound to the local ord
   });
   const env = {
     PAYMENTS_ENABLED: 'true',
+    DIGITAL_PAYPAL_ENABLED: 'true',
     PAYPAL_CLIENT_ID: 'sandbox-client',
     PAYPAL_CLIENT_SECRET: 'sandbox-secret',
     DB: db,
@@ -624,6 +632,7 @@ test('capture-order does not mark the order completed if the download entitlemen
   });
   const env = {
     PAYMENTS_ENABLED: 'true',
+    DIGITAL_PAYPAL_ENABLED: 'true',
     PAYPAL_CLIENT_ID: 'sandbox-client',
     PAYPAL_CLIENT_SECRET: 'sandbox-secret',
     DB: db,
@@ -682,6 +691,7 @@ test('capture-order recovers from ORDER_ALREADY_CAPTURED by reading the authorit
   });
   const env = {
     PAYMENTS_ENABLED: 'true',
+    DIGITAL_PAYPAL_ENABLED: 'true',
     PAYPAL_CLIENT_ID: 'sandbox-client',
     PAYPAL_CLIENT_SECRET: 'sandbox-secret',
     DB: db,
@@ -1300,6 +1310,7 @@ test('create-order sends a complete PayPal approval experience', async () => {
   const db = makeDb();
   const env = {
     PAYMENTS_ENABLED: 'true',
+    DIGITAL_PAYPAL_ENABLED: 'true',
     PAYPAL_CLIENT_ID: 'sandbox-client',
     PAYPAL_CLIENT_SECRET: 'sandbox-secret',
     DB: db,
@@ -1352,6 +1363,7 @@ test('create-order accepts payer-action links from PayPal', async () => {
   const db = makeDb();
   const env = {
     PAYMENTS_ENABLED: 'true',
+    DIGITAL_PAYPAL_ENABLED: 'true',
     PAYPAL_CLIENT_ID: 'sandbox-client',
     PAYPAL_CLIENT_SECRET: 'sandbox-secret',
     DB: db,
@@ -1429,6 +1441,7 @@ test('capture-order accepts a completed capture when PayPal omits optional custo
   });
   const env = {
     PAYMENTS_ENABLED: 'true',
+    DIGITAL_PAYPAL_ENABLED: 'true',
     PAYPAL_CLIENT_ID: 'sandbox-client',
     PAYPAL_CLIENT_SECRET: 'sandbox-secret',
     DB: db,
@@ -1473,6 +1486,7 @@ test('capture-order rejects malformed and unknown order IDs without calling PayP
   const db = makeDb();
   const env = {
     PAYMENTS_ENABLED: 'true',
+    DIGITAL_PAYPAL_ENABLED: 'true',
     PAYPAL_CLIENT_ID: 'sandbox-client',
     PAYPAL_CLIENT_SECRET: 'sandbox-secret',
     DB: db,
@@ -1523,6 +1537,7 @@ test('capture-order leaves an unapproved PayPal order untouched', async () => {
   });
   const env = {
     PAYMENTS_ENABLED: 'true',
+    DIGITAL_PAYPAL_ENABLED: 'true',
     PAYPAL_CLIENT_ID: 'sandbox-client',
     PAYPAL_CLIENT_SECRET: 'sandbox-secret',
     DB: db,
@@ -1646,3 +1661,4 @@ test('sandbox cleanup apply deletes only safe abandoned orders and processed web
   assert.match(deleteSql[1], /processed=1/);
   assert.equal(deleteSql.some(sql => /download_tokens/.test(sql)), false);
 });
+

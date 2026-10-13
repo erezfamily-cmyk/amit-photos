@@ -1,4 +1,4 @@
-import { handlePayPalCreateOrder, handlePayPalCaptureOrder, handlePayPalSandboxStatus, handlePayPalWebhook, handlePayPalCheckoutReturn, handlePayPalSandboxCleanup } from './paypal-orders.js';
+import { handlePayPalCreateOrder, handlePayPalCaptureOrder, handlePayPalSandboxStatus, handlePayPalWebhook, handlePayPalCheckoutReturn, handlePayPalSandboxCleanup, digitalPaymentsEnabled, handleDigitalCheckoutQuote } from './paypal-orders.js';
 // Cloudflare Worker — amit-photos
 // מטפל בנתיבי API ומגיש static assets
 
@@ -48,7 +48,7 @@ function paymentsDisabledResponse(request) {
   }, 503, request);
 }
 async function handlePaymentsStatus(request, env) {
-  return jsonRes({ enabled: paymentsEnabled(env) }, 200, request);
+  return jsonRes({ enabled: paymentsEnabled(env), digitalEnabled: digitalPaymentsEnabled(env) }, 200, request);
 }
 export {
   paymentsEnabled,
@@ -3198,7 +3198,7 @@ async function servePhotoPage(photoId, env) {
     <h1>${title}</h1>
     ${category ? `<p class="category"><a href="https://amitphotos.com/category/${encodeURIComponent(category)}" class="cat-link">← כל תמונות ${category}</a></p>` : ''}
     ${desc ? `<p class="desc">${desc}</p>` : ''}
-    <a class="buy" href="https://amitphotos.com/#photo-${photoId}">לרכישת התמונה</a>
+    <a class="buy" href="/checkout/?photoId=${encodeURIComponent(photoId)}">פרטי רישיון אישי לתמונה</a>
   </div>
   ${(() => {
     let rbProducts = [], zzProducts = [];
@@ -8011,7 +8011,8 @@ export default {
     if (path === '/api/paypal/webhook') return handlePayPalWebhook(request, env);
     if (path === '/api/paypal/approved') return handlePayPalCheckoutReturn(request, true);
     if (path === '/api/paypal/cancelled') return handlePayPalCheckoutReturn(request, false);
-    if (path === '/api/paypal/create-order') return handlePayPalCreateOrder(request, env);
+    if (path === '/api/paypal/quote') return handleDigitalCheckoutQuote(request, env);
+    if (path === '/api/paypal/create-order') return handlePayPalCreateOrder(request, env, { publicCheckout: true, includeApproveUrl: true });
     if (path === '/api/paypal/capture-order') return handlePayPalCaptureOrder(request, env);
     if (path === '/api/verify-payment') return jsonRes({ error: 'LEGACY_PAYMENT_ENDPOINT_REMOVED' }, 410, request);
     if (path === '/api/payments-status') return handlePaymentsStatus(request, env);
@@ -8477,3 +8478,4 @@ async function runPinterestCronSync(env) {
     }
   } catch { /* silent */ }
 }
+

@@ -7,6 +7,7 @@ compatibility_flags = ["nodejs_compat"]
 # Temporary payments lockdown while migrating PayPal to Orders API v2.
 # Flip to "true" once the new integration is verified end-to-end.
 PAYMENTS_ENABLED = "false"
+DIGITAL_PAYPAL_ENABLED = "false"
 
 [assets]
 directory = "."
@@ -32,3 +33,4 @@ zone_name = "amitphotos.com"
 
 [triggers]
 crons = ["0 */2 * * *", "0 9 1,15 * *"]
+

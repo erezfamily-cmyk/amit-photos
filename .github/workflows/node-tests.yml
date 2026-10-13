@@ -10,6 +10,9 @@ on:
       - 'wrangler.paypal-sandbox.example.toml'
       - 'staging/paypal-sandbox-bootstrap.sql'
       - 'tests/paypal-orders-v2.test.mjs'
+      - 'tests/digital-checkout.test.mjs'
+      - 'assets/js/digital-checkout.mjs'
+      - 'checkout/index.html'
       - 'tests/paypal-staging-isolation.test.mjs'
       - 'tests/download-token-consumption.test.mjs'
       - 'tests/payments-feature-flag.test.mjs'
@@ -29,6 +32,9 @@ on:
       - 'wrangler.paypal-sandbox.example.toml'
       - 'staging/paypal-sandbox-bootstrap.sql'
       - 'tests/paypal-orders-v2.test.mjs'
+      - 'tests/digital-checkout.test.mjs'
+      - 'assets/js/digital-checkout.mjs'
+      - 'checkout/index.html'
       - 'tests/paypal-staging-isolation.test.mjs'
       - 'tests/download-token-consumption.test.mjs'
       - 'tests/payments-feature-flag.test.mjs'
@@ -56,4 +62,5 @@ jobs:
         with:
           python-version: '3.12'
       - name: Run PayPal Orders v2 security and isolation suite
-        run: node --test tests/paypal-orders-v2.test.mjs tests/paypal-staging-isolation.test.mjs tests/download-token-consumption.test.mjs tests/payments-feature-flag.test.mjs tests/paypal-sandbox-bootstrap-schema.test.mjs tests/paypal-migration-0002-rehearsal.test.mjs
+        run: node --test tests/digital-checkout.test.mjs tests/paypal-orders-v2.test.mjs tests/paypal-staging-isolation.test.mjs tests/download-token-consumption.test.mjs tests/payments-feature-flag.test.mjs tests/paypal-sandbox-bootstrap-schema.test.mjs tests/paypal-migration-0002-rehearsal.test.mjs
+

@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="referrer" content="no-referrer">
+  <title>רישיון לתמונה | Amit Photos</title>
+  <link rel="icon" href="/favicon.ico">
+  <style>
+    *{box-sizing:border-box}body{margin:0;background:#111315;color:#f3f1eb;font:18px/1.7 system-ui,sans-serif}
+    main{max-width:680px;margin:5vh auto;padding:24px}header{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+    a{color:#e5c685;text-underline-offset:4px}h1{font-size:clamp(26px,6vw,38px);line-height:1.3}h2{font-size:22px}
+    .card{margin-top:28px;padding:clamp(20px,5vw,36px);border:1px solid #454139;border-radius:20px;background:#1b1e20}
+    .eyebrow{color:#e5c685;font-size:15px}.price{font-size:32px;font-weight:700;margin:8px 0}
+    label{display:flex;gap:12px;align-items:flex-start;margin:24px 0}input{width:22px;height:22px;flex-shrink:0;margin-top:5px}
+    button,.download{display:block;width:100%;padding:14px 20px;border:0;border-radius:10px;background:#e5c685;color:#151719;font:700 18px/1.5 system-ui;text-align:center}
+    button:disabled{background:#414548;color:#bec1c3;cursor:not-allowed}button:not(:disabled){cursor:pointer}
+    :focus-visible{outline:3px solid #f6dc9c;outline-offset:5px}[hidden]{display:none!important}.note{color:#c3c6c8;font-size:15px}
+    #checkout-status{min-height:2em}footer{margin-top:24px;font-size:16px}ul{padding-inline-start:24px}
+  </style>
+</head>
+<body>
+  <main>
+    <header><a href="/">Amit Photos</a><a href="/#gallery" data-he="חזרה לגלריה" data-en="Back to gallery">חזרה לגלריה</a></header>
+    <section class="card" aria-labelledby="checkout-title">
+      <p class="eyebrow" data-he="תמונה דיגיטלית · רישיון אישי" data-en="Digital image · Personal license">תמונה דיגיטלית · רישיון אישי</p>
+      <h1 id="checkout-title" data-he="רישיון לתמונה" data-en="Image license">רישיון לתמונה</h1>
+      <p data-he="קובץ בגודל המרבי הזמין לתמונה. הרכישה אינה כוללת הדפסה או משלוח." data-en="An image file at the largest available size. Prints and shipping are not included.">קובץ בגודל המרבי הזמין לתמונה. הרכישה אינה כוללת הדפסה או משלוח.</p>
+      <p id="checkout-price" class="price" aria-live="polite">—</p>
+      <h2 data-he="מה כולל הרישיון?" data-en="What does the license include?">מה כולל הרישיון?</h2>
+      <ul>
+        <li data-he="שימוש אישי ולא מסחרי, כגון רקע למכשיר או הדפסה לבית." data-en="Personal, non-commercial use, such as device wallpaper or a home print.">שימוש אישי ולא מסחרי, כגון רקע למכשיר או הדפסה לבית.</li>
+        <li data-he="אין להעביר, למכור מחדש או להפיץ את הקובץ. זכויות היוצרים נשארות אצל עמית ארז." data-en="No transfer, resale or redistribution of the file. Copyright remains with Amit Erez.">אין להעביר, למכור מחדש או להפיץ את הקובץ. זכויות היוצרים נשארות אצל עמית ארז.</li>
+      </ul>
+      <p><a href="/licensing/" data-he="פרטי הרישיון ושימוש מסחרי" data-en="License details and commercial use">פרטי הרישיון ושימוש מסחרי</a></p>
+      <div id="checkout-controls">
+        <label><input id="checkout-consent" type="checkbox" disabled><span data-he="קראתי את פרטי הרישיון ואני מאשר/ת שהשימוש אישי ולא מסחרי." data-en="I have read the license details and confirm personal, non-commercial use.">קראתי את פרטי הרישיון ואני מאשר/ת שהשימוש אישי ולא מסחרי.</span></label>
+        <button id="checkout-pay" type="button" disabled data-he="המשך לתשלום ב־PayPal" data-en="Continue to PayPal">המשך לתשלום ב־PayPal</button>
+      </div>
+      <p id="checkout-status" role="status" aria-live="polite" data-he="טוענים את פרטי התמונה…" data-en="Loading image details…">טוענים את פרטי התמונה…</p>
+      <button id="checkout-retry" type="button" hidden data-he="נסה שוב לאמת את אותה הזמנה" data-en="Retry verification of the same order">נסה שוב לאמת את אותה הזמנה</button>
+      <a id="checkout-download" class="download" hidden data-he="הורדת התמונה" data-en="Download image">הורדת התמונה</a>
+      <p class="note" data-he="קישור הורדה יופיע רק אחרי אימות התשלום בשרת." data-en="A download link appears only after the server verifies payment.">קישור הורדה יופיע רק אחרי אימות התשלום בשרת.</p>
+    </section>
+    <footer><a href="/#contact" data-he="שאלות? פנו אלינו" data-en="Questions? Contact us">שאלות? פנו אלינו</a> · <a href="/privacy/" data-he="פרטיות" data-en="Privacy">פרטיות</a></footer>
+  </main>
+  <script type="module" src="/assets/js/digital-checkout.mjs"></script>
+</body>
+</html>

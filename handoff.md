@@ -8,6 +8,19 @@
 
 ## Acquisition and caption quality review — 12.10.2026
 
+### RESUME POINT — digital checkout code preparation (13.10.2026, supersedes code deferral below)
+
+The owner authorized starting digital-checkout implementation and saving code/documentation in GitHub. This authorizes a separate draft PR, **not paid activation**. The earlier demand no-go remains historical evidence; no new demand analysis was performed.
+
+- New bilingual `/checkout/?photoId=...`: personal-use license, largest available file, ILS; read-only server quote and disabled payment by default. Standalone photo pages link to the preview.
+- New `DIGITAL_PAYPAL_ENABLED` flag: public Orders v2 create/capture require it AND `PAYMENTS_ENABLED`, both exact `true`. Both repository configs retain `false`. No dashboard flags changed. Admin Sandbox hooks remain unchanged.
+- Orders v2 redirect/return/capture/download flow is prepared; client persists an idempotent attempt before sending, matches return to its tab's order, retries the same order and never persists the bearer download link.
+- Public create checks license acknowledgment/current server amount and rejects mismatched reuse. Public status adds `digitalEnabled`; the existing `enabled` field remains compatible.
+- Validation: 77/77 targeted Node tests pass (8 new tests), plus JS syntax checks. **Browser visual QA and real public PayPal redirect E2E remain pending**: Chromium is unavailable here and its download failed.
+- Full implementation notes, limitations and next steps: `docs/digital-checkout-preparation-2026-10-13.md`.
+- Before paid activation: replace old homepage/gallery digital handoff; keep legacy cart/print paths closed; validate bilingual mobile UI and Sandbox redirect E2E; finalize pricing/terms/acceptance recording and canary scope; close webhook/decline/kill-switch checks; follow the approved migration plan and separate Live gate.
+- No migration, Cloudflare write, payment enablement, cloud-resource creation, real purchase or `prep/...` change was performed. No merge is authorized by this implementation request; work stays in a draft PR.
+
 ### RESUME POINT — 13.10.2026 (supersedes the 12.10 "STATUS AT A GLANCE / RESUME POINT" below)
 
 **State:**
@@ -2128,3 +2141,4 @@ Fix:
 - The total is the current published catalog after Drive HIDE/RESTORE cleanup; the earlier pre-cleanup snapshot contained 1,346 items. All 1,322 items currently in the scoring state have complete visual components.
 - `owner_review_required=569` is the score-based candidate count (score <=85 or a material problem) before Admin removes photos with an existing owner decision. Admin should continue showing only unresolved candidates, with problematic scores first. No image was automatically hidden or deleted by this scoring pipeline.
 - Payments remain disabled (`PAYMENTS_ENABLED=false`); PayPal Production and Gelato were not changed.
+
