@@ -188,3 +188,20 @@ test('legacy cart and print cannot charge when the global payment flag is true',
   assert.match(source, /async function open\(photo\) \{\s*if \(!PURCHASES_ENABLED \|\| !LEGACY_CHECKOUT_ENABLED\)/);
   assert.match(source, /async function pay\(\) \{\s*if \(!PURCHASES_ENABLED \|\| !LEGACY_CHECKOUT_ENABLED\)/);
 });
+
+test('homepage inline JavaScript parses, including the guide popup lead handler', () => {
+  const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
+  for (const match of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)) {
+    if (/\bsrc\s*=|application\/ld\+json|application\/json/i.test(match[1])) continue;
+    assert.doesNotThrow(() => new vm.Script(match[2]));
+  }
+});
+
+test('full-size product copy agrees with the personal license and retained copyright', () => {
+  const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
+  const translations = readFileSync(new URL('../assets/js/i18n.js', import.meta.url), 'utf8');
+  assert.match(html, /data-i18n="pricing.full.f3">רישיון אישי ולא מסחרי/);
+  assert.match(html, /data-i18n="pricing.full.f4">זכויות היוצרים נשארות אצל הצלם/);
+  assert.match(translations, /'pricing.full.f3':\s*'Personal, non-commercial license'/);
+  assert.match(translations, /'pricing.full.f4':\s*'Copyright remains with the photographer'/);
+});

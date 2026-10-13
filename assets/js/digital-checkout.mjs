@@ -64,6 +64,7 @@ async function mount() {
   const params = new URLSearchParams(location.search);
   const isEn = params.get('lang') === 'en' || localStorage.getItem('lang') === 'en';
   const lang = isEn ? 'en' : 'he';
+  document.title = isEn ? 'Image license | Amit Photos' : 'רישיון לתמונה | Amit Photos';
   document.documentElement.lang = lang;
   document.documentElement.dir = isEn ? 'ltr' : 'rtl';
   document.querySelectorAll('[data-he][data-en]').forEach(el => { el.textContent = el.dataset[lang]; });

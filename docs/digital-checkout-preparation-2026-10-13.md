@@ -17,15 +17,16 @@ The owner authorized implementing the proposed digital purchase flow and documen
 
 ## Validation performed
 
-- 104/104 Node tests passed across the new checkout client/API tests and the existing Orders v2, payment-flag, download-token, Sandbox-isolation, Sandbox-schema and local migration-rehearsal suites.
-- Ten new behavioral tests cover exact dual flags, disabled quote preview, server overrides, unpublished images, changed prices, license acceptance, canonical create retry, checkout return URLs, attempt mismatch, lost create/capture responses, concurrent clicks, untrusted approval URLs, forged/expired returns no bearer token persistence, gallery preview routing in both languages and legacy cart/print blocking.
+- 106/106 Node tests passed across the new checkout client/API tests and the existing Orders v2, payment-flag, download-token, Sandbox-isolation, Sandbox-schema and local migration-rehearsal suites.
+- Twelve new behavioral tests cover exact dual flags, disabled quote preview, server overrides, unpublished images, changed prices, license acceptance, canonical create retry, checkout return URLs, attempt mismatch, lost create/capture responses, concurrent clicks, untrusted approval URLs, forged/expired returns no bearer token persistence, gallery preview routing in both languages legacy cart/print blocking, homepage inline-script syntax and personal-license pricing copy.
 - Syntax checks passed for `worker.js`, `paypal-orders.js` and the new browser module.
-- Browser rendering and real PayPal redirect E2E are **not completed**. This runtime has Playwright but no Chromium executable; browser download failed. Mobile layout, keyboard interaction and actual HE/EN appearance still need browser QA.
+- Desktop browser QA PARTIAL: the cloud browser loaded the existing Sandbox Preview at commit `99c122a`; Hebrew and English quote/disabled states rendered correctly, and Enter on the lightbox personal-license control navigated to checkout. All seven checks on that commit were green, including both Cloudflare builds. Local Chromium is unavailable and its download failed; the cloud browser resolved basic desktop QA. Mobile 390px layout, pointer interaction/overlay behavior and real PayPal redirect E2E remain pending.
+- Browser review also exposed an existing malformed `if data.lead_created` in the guide popup and full-size pricing copy promising commercial/all rights. The popup condition is repaired and full-size copy now says personal non-commercial use with copyright retained (HE/EN), with regression tests.
 - Existing Sandbox admin hooks and callback-page tests pass. No calls were made to Cloudflare or PayPal, no cloud resources were created, and no migration was executed.
 
 ## Review / continuation
 
-1. Review this draft PR, then test the disabled page in its isolated Preview using the existing Sandbox fixture photo. Both flags must remain false for this review.
+1. Review this draft PR and continue browser QA on its existing isolated Preview using `paypal-sandbox-test-photo`. The observed Preview is `https://feature-digital-checkout-preparation-amit-photos-paypal-sandbox.erez-family.workers.dev/checkout/?photoId=paypal-sandbox-test-photo&lang=he`. Both flags must remain false for this review.
 2. Inspect Hebrew and English at 390px and desktop: long titles, tab order, disabled state, contact/license links, approval mismatch, cancellation and retry/success states.
 3. Gallery integration and root asset cache-busting are implemented. Verify the full gallery → personal license → checkout path in the browser. Do not activate legacy cart/print paths; browser blocking is not proof that their backend routes are safe. The digital flag gates Orders v2 only.
 4. Confirm current pricing and license wording, add final refund/support terms and decide whether/how to persist license acceptance/version. Current copy is product preparation, not approved launch terms.

@@ -187,8 +187,8 @@ const TRANSLATIONS = {
     'pricing.full.name':'קובץ מלא',
     'pricing.full.f1':  'רזולוציה מקסימלית',
     'pricing.full.f2':  'הדפסה גדולה (A1 ומעלה)',
-    'pricing.full.f3':  'שימוש מסחרי',
-    'pricing.full.f4':  'כל הזכויות כלולות',
+    'pricing.full.f3':  'רישיון אישי ולא מסחרי',
+    'pricing.full.f4':  'זכויות היוצרים נשארות אצל הצלם',
 
     // FAQ
     'faq.label':        'הדפסות בדואר',
@@ -579,8 +579,8 @@ const TRANSLATIONS = {
     'pricing.full.name':'Full File',
     'pricing.full.f1':  'Maximum resolution',
     'pricing.full.f2':  'Large printing (A1 and above)',
-    'pricing.full.f3':  'Commercial use',
-    'pricing.full.f4':  'All rights included',
+    'pricing.full.f3':  'Personal, non-commercial license',
+    'pricing.full.f4':  'Copyright remains with the photographer',
 
     // FAQ
     'faq.label':        'Mail Prints',
@@ -897,4 +897,3 @@ function setLang(lang) {
 
 // Apply on load
 document.addEventListener('DOMContentLoaded', applyTranslations);
-
