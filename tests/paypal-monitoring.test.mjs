@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { DatabaseSync } from 'node:sqlite';
-import { paymentHealthSnapshot, runPaymentHealthCheck, sendPaymentAlert, paymentAlertsEnabled } from '../paypal-monitoring.js';
+import { paymentHealthSnapshot, runPaymentHealthCheck, sendPaymentAlert, paymentAlertsEnabled, paymentAlertChannels } from '../paypal-monitoring.js';
 import { handlePayPalHealth, handlePayPalWebhook, handlePayPalTestAlert } from '../paypal-orders.js';
 
 // Monitoring and alerts on a REAL SQLite database shaped like production (pre-0002 + 0002 + 0003).
@@ -346,5 +346,47 @@ test('the test alert needs alerts enabled, a key and a reason, a valid configura
     net.state.email = 'ok';
     assert.equal((await testAlert(env, 'alert-test-0003')).status, 200, 'the failed claim was released, so the same key can be retried');
     assert.equal(alertRows(env).length, 1);
+  } finally { net.restore(); }
+});
+
+// ----- channel restriction and a dedicated recipient (production configuration) ---------------------------------------
+
+test('PAYMENT_ALERT_CHANNELS=email keeps Telegram silent even though its secret exists; the dedicated recipient wins over ADMIN_EMAIL', async () => {
+  const env = setup({ env: { PAYMENT_ALERT_CHANNELS: 'email', PAYMENT_ALERT_EMAIL: 'alerts@example.com', ADMIN_EMAIL: 'other-admin@example.com' } });
+  addOrder(env, { status: 'FULFILLING', created: ago(3 * HOUR) });
+  const net = fakes();
+  try {
+    assert.deepEqual(paymentAlertChannels(env), { telegram: false, email: true });
+    const run = await runPaymentHealthCheck(env);
+    assert.equal(run.sent, 1);
+    assert.equal(net.calls.telegram.length, 0, 'the unverified Telegram channel is not used');
+    assert.equal(net.calls.email.length, 1);
+    assert.equal(net.calls.email[0].to, 'alerts@example.com');
+    assert.deepEqual(alertRows(env).map(r => r.reason.split(':')[1]), ['email']);
+  } finally { net.restore(); }
+});
+
+test('channel list parsing: unset means all configured channels; unknown names or an empty channel set disable alerts instead of widening them', () => {
+  const base = { PAYMENT_ALERTS_ENABLED: 'true', CALLMEBOT_TELEGRAM_USER: 'u', RESEND_API_KEY: 'k' };
+  assert.deepEqual(paymentAlertChannels(base), { telegram: true, email: true });
+  assert.deepEqual(paymentAlertChannels({ ...base, PAYMENT_ALERT_CHANNELS: ' Email , ' }), { telegram: false, email: true });
+  assert.deepEqual(paymentAlertChannels({ ...base, PAYMENT_ALERT_CHANNELS: 'telegram,email' }), { telegram: true, email: true });
+  assert.deepEqual(paymentAlertChannels({ ...base, PAYMENT_ALERT_CHANNELS: 'sms' }), { telegram: false, email: false });
+  assert.equal(paymentAlertsEnabled({ ...base, PAYMENT_ALERT_CHANNELS: 'sms' }), false);
+  assert.equal(paymentAlertsEnabled({ ...base, PAYMENT_ALERT_CHANNELS: 'email', RESEND_API_KEY: undefined }), false, 'email-only without the mail key sends nothing');
+  assert.equal(paymentAlertsEnabled({ ...base, PAYMENT_ALERT_CHANNELS: 'email' }), true);
+});
+
+test('without PAYMENT_ALERT_EMAIL the old recipient chain still applies (ADMIN_EMAIL, then contact@)', async () => {
+  const net = fakes();
+  try {
+    const withAdmin = setup({ env: { ADMIN_EMAIL: 'admin@example.com' } });
+    addOrder(withAdmin, { status: 'FULFILLING', created: ago(3 * HOUR) });
+    await runPaymentHealthCheck(withAdmin);
+    assert.equal(net.calls.email.at(-1).to, 'admin@example.com');
+    const plain = setup({ env: { ADMIN_EMAIL: undefined } });
+    addOrder(plain, { status: 'FULFILLING', created: ago(3 * HOUR) });
+    await runPaymentHealthCheck(plain);
+    assert.equal(net.calls.email.at(-1).to, 'contact@amitphotos.com');
   } finally { net.restore(); }
 });

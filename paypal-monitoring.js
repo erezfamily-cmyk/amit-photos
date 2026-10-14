@@ -13,12 +13,22 @@ const WEBHOOK_FAILING_ATTEMPTS = 3;
 const LIST_LIMIT = 10;
 const ALERT_TIMEOUT_MS = 8000;
 
-export function paymentAlertsEnabled(env) {
-  return env.PAYMENT_ALERTS_ENABLED === 'true' && !!(env.CALLMEBOT_TELEGRAM_USER || env.RESEND_API_KEY);
+// PAYMENT_ALERT_CHANNELS (optional, e.g. "email") limits which channels may carry alerts, even if more
+// are configured for other purposes (the Telegram secret also serves purchase notices). Unset = every
+// configured channel. The alert recipient is PAYMENT_ALERT_EMAIL, then ADMIN_EMAIL, then contact@:
+// a dedicated variable, so setting it never redirects the site's other admin mail.
+function channelAllowed(env, name) {
+  const list = typeof env.PAYMENT_ALERT_CHANNELS === 'string' ? env.PAYMENT_ALERT_CHANNELS.split(',').map(item => item.trim().toLowerCase()).filter(Boolean) : [];
+  return list.length === 0 || list.includes(name);
 }
 
 export function paymentAlertChannels(env) {
-  return { telegram: !!env.CALLMEBOT_TELEGRAM_USER, email: !!env.RESEND_API_KEY };
+  return { telegram: !!env.CALLMEBOT_TELEGRAM_USER && channelAllowed(env, 'telegram'), email: !!env.RESEND_API_KEY && channelAllowed(env, 'email') };
+}
+
+export function paymentAlertsEnabled(env) {
+  const channels = paymentAlertChannels(env);
+  return env.PAYMENT_ALERTS_ENABLED === 'true' && (channels.telegram || channels.email);
 }
 
 async function safeAll(env, sql, args, problems, label) {
@@ -77,7 +87,7 @@ export async function paymentHealthSnapshot(env, now = Date.now()) {
 }
 
 async function postTelegram(env, text) {
-  if (!env.CALLMEBOT_TELEGRAM_USER) return false;
+  if (!paymentAlertChannels(env).telegram) return false;
   try {
     const url = 'https://api.callmebot.com/text.php?user=@' + encodeURIComponent(env.CALLMEBOT_TELEGRAM_USER) + '&text=' + encodeURIComponent(text);
     const response = await fetch(url, { signal: AbortSignal.timeout(ALERT_TIMEOUT_MS) });
@@ -86,12 +96,12 @@ async function postTelegram(env, text) {
 }
 
 async function postEmail(env, subject, text) {
-  if (!env.RESEND_API_KEY) return false;
+  if (!paymentAlertChannels(env).email) return false;
   try {
     const response = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: { 'Authorization': 'Bearer ' + env.RESEND_API_KEY, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ from: env.FROM_EMAIL || 'Amit Photos <contact@amitphotos.com>', to: env.ADMIN_EMAIL || 'contact@amitphotos.com', subject, text }),
+      body: JSON.stringify({ from: env.FROM_EMAIL || 'Amit Photos <contact@amitphotos.com>', to: env.PAYMENT_ALERT_EMAIL || env.ADMIN_EMAIL || 'contact@amitphotos.com', subject, text }),
       signal: AbortSignal.timeout(ALERT_TIMEOUT_MS),
     });
     return response.ok;
