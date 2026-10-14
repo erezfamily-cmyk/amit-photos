@@ -62,10 +62,10 @@ function recordFetch(approvalHost) {
 const publicOptions = { publicCheckout: true, includeApproveUrl: true, skipRateLimit: true };
 
 test('config: unset means Sandbox; explicit sandbox and live resolve to matching API base and approval host', () => {
-  assert.deepEqual(resolvePayPalConfig(env(SANDBOX)), { ok: true, environment: 'sandbox', apiBase: 'https://' + SANDBOX_HOST, approvalHost: 'www.sandbox.paypal.com' });
+  assert.deepEqual(resolvePayPalConfig(env(SANDBOX)), { ok: true, environment: 'sandbox', apiBase: 'https://' + SANDBOX_HOST, approvalHost: 'www.sandbox.paypal.com', eventLinkHosts: ['api-m.sandbox.paypal.com', 'api.sandbox.paypal.com'] });
   assert.equal(resolvePayPalConfig(env({ PAYPAL_ENVIRONMENT: 'sandbox', PAYPAL_CREDENTIALS_ENVIRONMENT: 'sandbox' })).environment, 'sandbox');
   assert.deepEqual(resolvePayPalConfig(env(LIVE), createRequest('https://www.amitphotos.com')),
-    { ok: true, environment: 'live', apiBase: 'https://' + LIVE_HOST, approvalHost: 'www.paypal.com' });
+    { ok: true, environment: 'live', apiBase: 'https://' + LIVE_HOST, approvalHost: 'www.paypal.com', eventLinkHosts: ['api-m.paypal.com', 'api.paypal.com'] });
 });
 
 test('config: unknown selector values are blocked, never treated as Sandbox or Live', () => {

@@ -4,6 +4,14 @@ const PAYPAL_API_BASES = {
   sandbox: 'https://api-m.sandbox.paypal.com',
   live: 'https://api-m.paypal.com',
 };
+// Hosts PayPal itself uses for resource links INSIDE webhook events. A real Sandbox refund
+// event (14.10.2026) links to api.sandbox.paypal.com while API calls go to api-m.*, so each
+// environment lists both exact names. No wildcards, and never a host of the other environment.
+// Event links are only parsed for an id; PayPal is always called on PAYPAL_API_BASES.
+const PAYPAL_EVENT_LINK_HOSTS = {
+  sandbox: ['api-m.sandbox.paypal.com', 'api.sandbox.paypal.com'],
+  live: ['api-m.paypal.com', 'api.paypal.com'],
+};
 const PAYPAL_APPROVAL_HOSTS = {
   sandbox: 'www.sandbox.paypal.com',
   live: 'www.paypal.com',
@@ -71,7 +79,7 @@ export function resolvePayPalConfig(env, request) {
       if (!ALLOWED_ORIGINS.includes(origin)) return { ok: false, reason: 'PAYPAL_LIVE_ORIGIN_NOT_ALLOWED' };
     }
   }
-  return { ok: true, environment, apiBase, approvalHost: PAYPAL_APPROVAL_HOSTS[environment] };
+  return { ok: true, environment, apiBase, approvalHost: PAYPAL_APPROVAL_HOSTS[environment], eventLinkHosts: PAYPAL_EVENT_LINK_HOSTS[environment] };
 }
 
 function paypalApiBase(env) {
@@ -481,17 +489,17 @@ async function revokeUnusedTokens(env, order, captureId, reason, exceptToken = n
 // The capture id comes from the event's "up" link, but the link is only ever PARSED:
 // it is never fetched (PayPal is always called on the environment's own API base), so
 // no Authorization header can reach a host named by an event. It must still point at
-// this environment's API host and exactly /v2/payments/captures/<id>; anything else
+// one of this environment's exact PayPal API host names and exactly /v2/payments/captures/<id>; anything else
 // (other host, http, port, credentials, query, fragment, extra path, two "up" links)
 // makes the event invalid.
 const PAYPAL_ID = /^[A-Za-z0-9_-]{8,64}$/;
-function captureIdFromResource(resource, fallbackToId, apiBase) {
+function captureIdFromResource(resource, fallbackToId, allowedHosts) {
   const ups = (Array.isArray(resource?.links) ? resource.links : []).filter(link => link?.rel === 'up');
   if (ups.length > 1) return null;
   if (ups.length === 1) {
     let url;
     try { url = new URL(ups[0].href); } catch { return null; }
-    if (url.protocol !== 'https:' || url.hostname !== new URL(apiBase).hostname || url.port || url.username ||
+    if (url.protocol !== 'https:' || !allowedHosts.includes(url.hostname) || url.port || url.username ||
         url.password || url.search || url.hash) return null;
     const match = url.pathname.match(/^\/v2\/payments\/captures\/([A-Za-z0-9_-]{8,64})$/);
     return match ? match[1] : null;
@@ -554,7 +562,7 @@ async function processAfterSaleWebhook(request, env, event, accessToken) {
     if (!order) return { ok: true, ignored: true };
     signal = type === 'CUSTOMER.DISPUTE.RESOLVED' || resource.status === 'RESOLVED' ? 'DISPUTE_RESOLVED' : 'DISPUTE_OPEN';
   } else {
-    captureId = captureIdFromResource(resource, type === 'PAYMENT.CAPTURE.REVERSED', paypalApiBase(env));
+    captureId = captureIdFromResource(resource, type === 'PAYMENT.CAPTURE.REVERSED', resolvePayPalConfig(env).eventLinkHosts);
     const orderIdHint = resource.supplementary_data?.related_ids?.order_id;
     if (!captureId) return { ok: false, status: 400, error: 'PAYPAL_WEBHOOK_AFTER_SALE_INVALID' };
     order = await findOrderForAfterSale(env, captureId, orderIdHint);

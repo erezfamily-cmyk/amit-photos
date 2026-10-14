@@ -53,15 +53,17 @@ function setup({ status = 'COMPLETED', capture = CAPTURE, tokenUsed = 0 } = {}) 
 }
 
 // PayPal stub. `capture` = what GET /payments/captures returns; `orderStatus` = GET order.
-function paypal({ captureStatus = 'COMPLETED', customId = LOCAL, orderStatus = 'COMPLETED', orderLookupOk = true, afterOrderGet } = {}) {
+function paypal({ captureStatus = 'COMPLETED', customId = LOCAL, orderStatus = 'COMPLETED', orderLookupOk = true, afterOrderGet, amount = '100.00', captureId = CAPTURE } = {}) {
   const original = globalThis.fetch;
   const calls = [];
+  const hosts = new Set();
   globalThis.fetch = async (url, options = {}) => {
     const path = new URL(String(url)).pathname;
+    hosts.add(new URL(String(url)).host);
     calls.push((options.method || 'GET') + ' ' + path);
     if (path === '/v1/oauth2/token') return Response.json({ access_token: 'token' });
     if (path === '/v1/notifications/verify-webhook-signature') return Response.json({ verification_status: 'SUCCESS' });
-    const capture = { id: CAPTURE, status: captureStatus, custom_id: customId, amount: { currency_code: 'ILS', value: '100.00' } };
+    const capture = { id: captureId, status: captureStatus, custom_id: customId, amount: { currency_code: 'ILS', value: amount } };
     if (path.startsWith('/v2/payments/captures/')) return Response.json(capture);
     if (path.startsWith('/v2/checkout/orders/')) {
       if (!orderLookupOk) return Response.json({}, { status: 500 });
@@ -71,7 +73,7 @@ function paypal({ captureStatus = 'COMPLETED', customId = LOCAL, orderStatus = '
     }
     return Response.json({}, { status: 404 });
   };
-  return { calls, restore() { globalThis.fetch = original; } };
+  return { calls, hosts, restore() { globalThis.fetch = original; } };
 }
 
 let eventCounter = 0;
@@ -578,4 +580,59 @@ test('a full refund or reversal can never be released through after-sale-review,
       assert.equal(tokens(env).length, before, state);
     } finally { stub.restore(); }
   }
+});
+
+// ----- regression: REAL Sandbox refund event of 14.10.2026 (filtered to the fields that matter) -----
+
+test('the real Sandbox refund payload (links on api.sandbox.paypal.com) is processed: REFUNDED, 300 recorded, unused link revoked', async () => {
+  const REAL_CAPTURE = '0MS84441LR651773E';
+  const env = setup({ capture: REAL_CAPTURE });
+  env.sqlite.exec('UPDATE paypal_orders SET amount_expected = 300');
+  const stub = paypal({ captureStatus: 'REFUNDED', amount: '3.00', captureId: REAL_CAPTURE });
+  try {
+    const result = await send(env, 'PAYMENT.CAPTURE.REFUNDED', {
+      id: '72459513T30123329', status: 'COMPLETED', amount: { currency_code: 'ILS', value: '3.00' },
+      seller_payable_breakdown: { total_refunded_amount: { currency_code: 'ILS', value: '3.00' } },
+      links: [
+        { rel: 'self', href: 'https://api.sandbox.paypal.com/v2/payments/refunds/72459513T30123329', method: 'GET' },
+        { rel: 'up', href: 'https://api.sandbox.paypal.com/v2/payments/captures/' + REAL_CAPTURE, method: 'GET' },
+      ],
+    });
+    assert.equal(result.response.status, 200, JSON.stringify(result.body));
+    assert.equal(result.body.afterSale, 'REFUNDED');
+    assert.deepEqual(state(env), { s: 'REFUNDED', d: 0, r: 300 });
+    assert.equal(tokens(env)[0].used, 2, 'the unused link is revoked');
+    assert.equal((await reissue(env, 'reissue-after-real-refund')).status, 409);
+    // The link host was only parsed: every PayPal call went to the trusted API base of the configuration.
+    assert.deepEqual([...stub.hosts], ['api-m.sandbox.paypal.com']);
+    assert.ok(stub.calls.includes('GET /v2/payments/captures/' + REAL_CAPTURE));
+  } finally { stub.restore(); }
+});
+
+test('event link hosts are exact per environment: both Sandbox aliases work in Sandbox, both Live aliases only in Live', async () => {
+  const link = host => [{ rel: 'up', href: 'https://' + host + '/v2/payments/captures/' + CAPTURE }];
+  const stub = paypal({ captureStatus: 'REFUNDED' });
+  try {
+    for (const host of ['api-m.sandbox.paypal.com', 'api.sandbox.paypal.com']) {
+      const env = setup();
+      assert.equal((await send(env, 'PAYMENT.CAPTURE.REFUNDED', refundResource('100.00', { links: link(host) }))).body.afterSale, 'REFUNDED', host);
+    }
+    for (const host of ['api-m.paypal.com', 'api.paypal.com', 'sandbox.paypal.com', 'www.sandbox.paypal.com', 'api.sandbox.paypal.com.evil.example',
+      'evil-api.sandbox.paypal.com', 'x.api.sandbox.paypal.com', 'paypal.com', 'localhost', '127.0.0.1']) {
+      const env = setup();
+      const result = await send(env, 'PAYMENT.CAPTURE.REFUNDED', refundResource('100.00', { links: link(host) }));
+      assert.equal(result.response.status, 400, 'Sandbox must refuse ' + host);
+      assert.equal(state(env).s, 'NONE', host);
+    }
+    for (const host of ['api-m.paypal.com', 'api.paypal.com']) {
+      const env = { ...setup(), PAYPAL_ENVIRONMENT: 'live', PAYPAL_CREDENTIALS_ENVIRONMENT: 'live' };
+      assert.equal((await send(env, 'PAYMENT.CAPTURE.REFUNDED', refundResource('100.00', { links: link(host) }))).body.afterSale, 'REFUNDED', 'Live accepts ' + host);
+    }
+    for (const host of ['api-m.sandbox.paypal.com', 'api.sandbox.paypal.com', 'www.paypal.com', 'api.paypal.com.evil.example']) {
+      const env = { ...setup(), PAYPAL_ENVIRONMENT: 'live', PAYPAL_CREDENTIALS_ENVIRONMENT: 'live' };
+      assert.equal((await send(env, 'PAYMENT.CAPTURE.REFUNDED', refundResource('100.00', { links: link(host) }))).response.status, 400, 'Live must refuse ' + host);
+    }
+    // whatever the event named, PayPal was only ever called on the configured API bases
+    assert.ok([...stub.hosts].every(host => ['api-m.sandbox.paypal.com', 'api-m.paypal.com'].includes(host)), [...stub.hosts].join());
+  } finally { stub.restore(); }
 });
