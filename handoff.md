@@ -16,6 +16,12 @@
 
 ## Acquisition and caption quality review — 12.10.2026
 
+### CLEANUP COMPLETE AND END-OF-DAY STATE 14.10.2026 (payments `false`; resume in the evening)
+
+Owner confirmed that the dedicated Resend key `amit-preview-link-mail-test` was deleted in Resend (the production key was not touched). Together with the Preview cleanup of 13:31Z (mail variables and `RESEND_API_KEY` removed from the PR Preview) **the real-mail test cleanup is complete: no test key, test recipient or mail variable remains anywhere.** Final blocked-state check at the time of writing: create and capture answer 503 on the PR Preview, the main Sandbox Worker and production (`{"enabled":false}`); both payment flags `false`; `prep/paypal-orders-v2-2026-10-01` still `e69131f`; PR #155 draft, open, not merged; no production, migration (beyond 0003 on the Sandbox D1 earlier), Live or merge action today beyond what is recorded above.
+
+Resume in the evening with the payments off. Open items, in the order they are likely to be taken: owner decisions (runtime D1 switch and freeze procedure; commercial terms; `/legal` and privacy incl. the mail provider); engineering (cosmetic replay response `test` flag, monitoring and alerts); verification still missing (decline, dispute and reversal with real events; other mail providers and enterprise scanners; the provider's idempotency/409 behaviour; bounce handling); everything that needs a separate approval (Live credentials/webhook/readiness in Live, production migrations 0002 then 0003, merging PR #155 which auto-deploys production, any canary).
+
 ### REAL MAIL TEST COMPLETED AND PREVIEW CLEANED 14.10.2026 (13:05–13:32Z; payment flags `false` throughout)
 
 Owner-approved test to ONE inbox (the approved test address) using the existing eligible Sandbox order `57C56548529949838`; no purchase, no payment flag, no production/Live action, no code change. Code under test: `98b8c09` (Preview).
