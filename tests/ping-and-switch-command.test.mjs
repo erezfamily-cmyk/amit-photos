@@ -89,12 +89,11 @@ test('ping: needs no password, no cookie and no query; extra input is ignored; t
   assert.deepEqual(seen, ['SELECT 1 AS ok']);
 });
 
-test('handlePing is exported and wrangler.toml still lists exactly the two original crons with both payment flags false', async () => {
+test('handlePing is exported and both payment flags stay false (the cron list is asserted per branch in scheduled-routing.test.mjs)', async () => {
   assert.equal(typeof handlePing, 'function');
   const toml = await read('../wrangler.toml');
   assert.match(toml, /PAYMENTS_ENABLED = "false"/);
   assert.match(toml, /DIGITAL_PAYPAL_ENABLED = "false"/);
-  assert.match(toml, /crons = \["0 \*\/2 \* \* \*", "0 9 1,15 \* \*"\]/);
 });
 
 // ----- helper tool: the switch command -----------------------------------------------------------------------------------------
