@@ -1,3 +1,5 @@
+import { paymentHealthSnapshot, sendPaymentAlert, afterSaleAlert, webhookFailingAlert, paymentAlertsEnabled, paymentAlertChannels } from './paypal-monitoring.js';
+
 // Environment is explicit: PAYPAL_ENVIRONMENT = 'sandbox' (default when unset) or 'live'.
 // Anything else blocks PayPal entirely. Live is never implied by the other settings.
 const PAYPAL_API_BASES = {
@@ -614,7 +616,7 @@ async function processAfterSaleWebhook(request, env, event, accessToken) {
   if (TERMINAL_AFTER_SALE.has(state)) {
     await revokeUnusedTokens(env, order, captureId, state);
   }
-  return { ok: true, afterSale: state };
+  return { ok: true, afterSale: state, paypalOrderId: order.paypal_order_id, orderRef: order.id };
 }
 
 function adminActionInput(request, body) {
@@ -986,8 +988,8 @@ export async function sendDownloadLinkEmail(env, request, orderRow, { kind = 'au
     let inserted = false;
     if (kind === 'manual') {
       requestId = 'manual-' + key;
-      const prior = await env.DB.prepare("SELECT status FROM paypal_order_actions WHERE order_ref = ? AND action = 'LINK_EMAIL' AND request_id = ?").bind(order.id, requestId).first();
-      if (prior) return { status: prior.status, replayed: true };
+      const prior = await env.DB.prepare("SELECT status, reason FROM paypal_order_actions WHERE order_ref = ? AND action = 'LINK_EMAIL' AND request_id = ?").bind(order.id, requestId).first();
+      if (prior) return { status: prior.status, replayed: true, test: prior.reason === 'test_recipient' };
       try {
         const result = await env.DB.prepare(
           `INSERT INTO paypal_order_actions (order_ref, paypal_order_id, action, request_id, status, actor, reason, created_at)
@@ -1113,6 +1115,8 @@ export async function handlePayPalLiveReadiness(request, env) {
   const mailOn = env.DOWNLOAD_EMAIL_ENABLED === 'true';
   checks.downloadEmail = { enabled: mailOn, keyPresent: !!env.RESEND_API_KEY, testRecipientSet: !!env.DOWNLOAD_EMAIL_OVERRIDE_TO };
   if (config.environment === 'live' && checks.downloadEmail.testRecipientSet) reasons.push('TEST_RECIPIENT_SET_IN_LIVE');
+  checks.paymentAlerts = { enabled: paymentAlertsEnabled(env), channels: paymentAlertChannels(env) };
+  if (config.environment === 'live' && !checks.paymentAlerts.enabled) reasons.push('PAYMENT_ALERTS_NOT_ENABLED');
   if (mailOn && !env.RESEND_API_KEY) reasons.push('EMAIL_ENABLED_WITHOUT_KEY');
   if (mailOn) {
     let base = null;
@@ -1155,6 +1159,30 @@ export async function handlePayPalLiveReadiness(request, env) {
     }
   }
   return jsonRes({ status: reasons.length ? 'NOT_READY' : 'READY', environment: config.environment, reasons, checks }, 200, request);
+}
+
+// Alerts must never change a payment or webhook outcome: background when the runtime allows it.
+function runBackground(options, job) {
+  const safe = Promise.resolve(job).catch(() => {});
+  if (typeof options?.waitUntil === 'function') { options.waitUntil(safe); return Promise.resolve(); }
+  return safe;
+}
+
+// A failing event is announced once it has failed WEBHOOK_FAILING_ATTEMPTS times (PayPal retries it).
+async function noteWebhookFailure(env, event, options) {
+  try {
+    const row = await env.DB.prepare('SELECT attempts FROM paypal_webhook_events WHERE event_id = ?').bind(event.id).first();
+    const alert = webhookFailingAlert(event.id, event.event_type, Number(row?.attempts) || 0);
+    if (alert) await runBackground(options, sendPaymentAlert(env, alert));
+  } catch { /* monitoring never affects the webhook response */ }
+}
+
+// Admin, read-only: stuck payments, failing webhooks, items waiting for a human, mail failures.
+export async function handlePayPalHealth(request, env) {
+  if (request.method !== 'GET') return jsonRes({ error: 'method not allowed' }, 405, request);
+  const blocked = adminConfigBlocked(request, env);
+  if (blocked) return blocked;
+  return jsonRes(await paymentHealthSnapshot(env), 200, request);
 }
 
 export async function handlePayPalWebhook(request, env, options = {}) {
@@ -1203,9 +1231,12 @@ export async function handlePayPalWebhook(request, env, options = {}) {
       const handled = await processAfterSaleWebhook(request, env, event, verified.accessToken);
       if (!handled.ok) {
         await releaseWebhookLease(env, event.id);
+        await noteWebhookFailure(env, event, options);
         return jsonRes({ error: handled.error }, handled.status || 500, request);
       }
       await markWebhookProcessed(env, event.id);
+      const alert = handled.afterSale ? afterSaleAlert(event.id, handled.afterSale, handled.paypalOrderId, handled.orderRef) : null;
+      if (alert) await runBackground(options, sendPaymentAlert(env, alert));
       return jsonRes({ ok: true, duplicate: false, ignored: !!handled.ignored, afterSale: handled.afterSale || null }, 200, request);
     }
     if (event.event_type !== 'PAYMENT.CAPTURE.COMPLETED') {
@@ -1222,6 +1253,7 @@ export async function handlePayPalWebhook(request, env, options = {}) {
     );
     if (!processed.ok) {
       await releaseWebhookLease(env, event.id);
+      await noteWebhookFailure(env, event, options);
       return jsonRes({ error: processed.error }, processed.status || 500, request);
     }
 
@@ -1236,6 +1268,7 @@ export async function handlePayPalWebhook(request, env, options = {}) {
     // Recoverable errors return the event to pending. A hard runtime crash that
     // prevents this line from running is covered by the stale-lease timeout.
     await releaseWebhookLease(env, event.id).catch(() => {});
+    await noteWebhookFailure(env, event, options);
     return jsonRes({ error: 'PAYPAL_WEBHOOK_PROCESSING_FAILED' }, 500, request);
   }
 }

@@ -13,7 +13,8 @@ const ALL_EVENTS = ['PAYMENT.CAPTURE.COMPLETED', 'PAYMENT.CAPTURE.REFUNDED', 'PA
   'CUSTOMER.DISPUTE.CREATED', 'CUSTOMER.DISPUTE.UPDATED', 'CUSTOMER.DISPUTE.RESOLVED', 'CHECKOUT.ORDER.APPROVED'];
 
 const SANDBOX_ENV = { PAYPAL_CLIENT_ID: 'fake-id', PAYPAL_CLIENT_SECRET: SECRET, PAYPAL_WEBHOOK_ID: WEBHOOK_ID, PAYMENTS_ENABLED: 'false', DIGITAL_PAYPAL_ENABLED: 'false' };
-const LIVE_ENV = { ...SANDBOX_ENV, PAYPAL_ENVIRONMENT: 'live', PAYPAL_CREDENTIALS_ENVIRONMENT: 'live' };
+const ALERTS = { PAYMENT_ALERTS_ENABLED: 'true', CALLMEBOT_TELEGRAM_USER: 'fake-telegram-user' };
+const LIVE_ENV = { ...SANDBOX_ENV, ...ALERTS, PAYPAL_ENVIRONMENT: 'live', PAYPAL_CREDENTIALS_ENVIRONMENT: 'live' };
 
 function fakePayPal({ oauth = 200, webhook = { url: 'https://amitphotos.com/api/paypal/webhook', event_types: ALL_EVENTS.map(name => ({ name })) }, webhookStatus = 200 } = {}) {
   const original = globalThis.fetch;
@@ -55,7 +56,7 @@ test('the response never contains a secret, an access token, the webhook id or a
   const net = fakePayPal();
   try {
     const result = await check({ ...LIVE_ENV, DOWNLOAD_EMAIL_OVERRIDE_TO: 'qa@example.com', RESEND_API_KEY: 'fake-mail-key' });
-    for (const needle of [SECRET, TOKEN, WEBHOOK_ID, 'fake-id', 'fake-mail-key', 'qa@example.com']) assert.ok(!result.text.includes(needle), needle);
+    for (const needle of [SECRET, TOKEN, WEBHOOK_ID, 'fake-id', 'fake-mail-key', 'qa@example.com', 'fake-telegram-user']) assert.ok(!result.text.includes(needle), needle);
   } finally { net.restore(); }
 });
 
@@ -162,5 +163,20 @@ test('only GET is accepted, and the payment flags are reported but not required 
     const open = await check({ ...LIVE_ENV, PAYMENTS_ENABLED: 'true', DIGITAL_PAYPAL_ENABLED: 'true' });
     assert.deepEqual(open.body.checks.paymentFlags, { payments: true, digital: true });
     assert.equal(open.body.status, 'READY');
+  } finally { net.restore(); }
+});
+
+test('Live is NOT_READY until payment alerts are enabled with a channel; Sandbox does not need them', async () => {
+  const net = fakePayPal();
+  try {
+    const { PAYMENT_ALERTS_ENABLED, CALLMEBOT_TELEGRAM_USER, ...liveWithoutAlerts } = LIVE_ENV;
+    let result = await check(liveWithoutAlerts);
+    assert.deepEqual(reasons(result), ['PAYMENT_ALERTS_NOT_ENABLED']);
+    result = await check({ ...liveWithoutAlerts, PAYMENT_ALERTS_ENABLED: 'true' });
+    assert.deepEqual(reasons(result), ['PAYMENT_ALERTS_NOT_ENABLED'], 'enabled flag without any channel is not enough');
+    result = await check({ ...liveWithoutAlerts, PAYMENT_ALERTS_ENABLED: 'true', RESEND_API_KEY: 'k' });
+    assert.equal(result.body.status, 'READY');
+    assert.deepEqual(result.body.checks.paymentAlerts, { enabled: true, channels: { telegram: false, email: true } });
+    assert.equal((await check(SANDBOX_ENV)).body.status, 'READY');
   } finally { net.restore(); }
 });

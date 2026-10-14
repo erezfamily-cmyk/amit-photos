@@ -1,4 +1,5 @@
-import { handlePayPalCreateOrder, handlePayPalCaptureOrder, handlePayPalSandboxStatus, handlePayPalWebhook, handlePayPalCheckoutReturn, handlePayPalSandboxCleanup, handlePayPalReissueDownload, handlePayPalAfterSaleReview, handlePayPalOrderSupportView, handlePayPalResendLinkEmail, handlePayPalLiveReadiness, retryDownloadLinkEmails, digitalPaymentsEnabled, handleDigitalCheckoutQuote } from './paypal-orders.js';
+import { handlePayPalCreateOrder, handlePayPalCaptureOrder, handlePayPalSandboxStatus, handlePayPalWebhook, handlePayPalCheckoutReturn, handlePayPalSandboxCleanup, handlePayPalReissueDownload, handlePayPalAfterSaleReview, handlePayPalOrderSupportView, handlePayPalResendLinkEmail, handlePayPalLiveReadiness, handlePayPalHealth, retryDownloadLinkEmails, digitalPaymentsEnabled, handleDigitalCheckoutQuote } from './paypal-orders.js';
+import { runPaymentHealthCheck } from './paypal-monitoring.js';
 // Cloudflare Worker — amit-photos
 // מטפל בנתיבי API ומגיש static assets
 
@@ -8043,6 +8044,10 @@ export default {
       if (!await checkAuth(request, env)) return unauth(request);
       return handlePayPalAfterSaleReview(request, env);
     }
+    if (path === '/api/admin/paypal/health') {
+      if (!await checkAuth(request, env)) return unauth(request);
+      return handlePayPalHealth(request, env);
+    }
     if (path === '/api/admin/paypal/live-readiness') {
       if (!await checkAuth(request, env)) return unauth(request);
       return handlePayPalLiveReadiness(request, env);
@@ -8346,6 +8351,7 @@ export default {
     ctx.waitUntil(runNewsletterCron(env));
     ctx.waitUntil(runWelcomeSequenceCron(env));
     ctx.waitUntil(retryDownloadLinkEmails(env).catch(() => {}));
+    ctx.waitUntil(runPaymentHealthCheck(env).catch(() => {}));
   },
 };
 

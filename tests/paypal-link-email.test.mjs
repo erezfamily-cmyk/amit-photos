@@ -336,7 +336,9 @@ test('support re-send mails the current link only; a re-issued order mails the N
     assert.equal(tokenIn(net.mails[0].html), 'aaaaaaaa-1111-4111-8111-aaaaaaaaaaaa');
     const replay = await resend(env, 'resend-key-0001');
     assert.equal(replay.status, 200);
-    assert.equal((await replay.json()).replayed, true);
+    const replayBody = await replay.json();
+    assert.equal(replayBody.replayed, true);
+    assert.equal(replayBody.test, true, 'a replay reports the recipient mode of the original send (test recipient), not a default');
     assert.equal(net.mails.length, 1);
 
     const reissued = await handlePayPalReissueDownload(new Request('https://amitphotos.com/x', {
