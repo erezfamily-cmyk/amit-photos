@@ -174,10 +174,36 @@ test('Live is NOT_READY until payment alerts are enabled with a channel; Sandbox
     let result = await check(liveWithoutAlerts);
     assert.deepEqual(reasons(result), ['PAYMENT_ALERTS_NOT_ENABLED']);
     result = await check({ ...liveWithoutAlerts, PAYMENT_ALERTS_ENABLED: 'true' });
-    assert.deepEqual(reasons(result), ['PAYMENT_ALERTS_NOT_ENABLED'], 'enabled flag without any channel is not enough');
+    assert.deepEqual(reasons(result), ['PAYMENT_ALERTS_NOT_ENABLED', 'ALERT_NO_USABLE_CHANNEL'], 'enabled flag without any channel is not enough, and says why');
     result = await check({ ...liveWithoutAlerts, PAYMENT_ALERTS_ENABLED: 'true', RESEND_API_KEY: 'k' });
     assert.equal(result.body.status, 'READY');
-    assert.deepEqual(result.body.checks.paymentAlerts, { enabled: true, channels: { telegram: false, email: true } });
+    assert.deepEqual(result.body.checks.paymentAlerts, { enabled: true, channels: { telegram: false, email: true }, problems: [] });
     assert.equal((await check(SANDBOX_ENV)).body.status, 'READY');
+  } finally { net.restore(); }
+});
+
+test('alerts switched on but with a missing or invalid e-mail channel: NOT_READY in Live with the exact cause, and flagged in every environment', async () => {
+  const net = fakePayPal();
+  try {
+    const { CALLMEBOT_TELEGRAM_USER, ...base } = LIVE_ENV;                       // no Telegram: e-mail is the only channel
+    const emailOnly = { ...base, PAYMENT_ALERTS_ENABLED: 'true', PAYMENT_ALERT_CHANNELS: 'email' };
+    let result = await check({ ...emailOnly });                                   // key missing
+    assert.equal(result.body.status, 'NOT_READY');
+    assert.deepEqual(reasons(result), ['PAYMENT_ALERTS_NOT_ENABLED', 'ALERT_EMAIL_KEY_MISSING', 'ALERT_NO_USABLE_CHANNEL']);
+    for (const recipient of ['not-an-email', 'a@b', 'two words@example.com', 'a@example.com,b@example.com', '<x>@example.com']) {
+      result = await check({ ...emailOnly, RESEND_API_KEY: 'k', PAYMENT_ALERT_EMAIL: recipient });
+      assert.equal(result.body.status, 'NOT_READY', recipient);
+      assert.deepEqual(reasons(result), ['PAYMENT_ALERTS_NOT_ENABLED', 'ALERT_EMAIL_RECIPIENT_INVALID', 'ALERT_NO_USABLE_CHANNEL'], recipient);
+      assert.ok(!result.text.includes(recipient.replace(/[<>]/g, '')), 'the response never echoes the address');
+    }
+    result = await check({ ...emailOnly, RESEND_API_KEY: 'k', PAYMENT_ALERT_CHANNELS: 'sms' });
+    assert.deepEqual(reasons(result), ['PAYMENT_ALERTS_NOT_ENABLED', 'ALERT_CHANNELS_UNKNOWN', 'ALERT_NO_USABLE_CHANNEL']);
+    result = await check({ ...emailOnly, RESEND_API_KEY: 'k', PAYMENT_ALERT_EMAIL: 'alerts@example.com' });
+    assert.equal(result.body.status, 'READY', 'the sound e-mail setup passes');
+    // Sandbox does not need alerts, but alerts that are switched on and broken are still reported there
+    const sandboxBroken = await check({ ...SANDBOX_ENV, PAYMENT_ALERTS_ENABLED: 'true', PAYMENT_ALERT_CHANNELS: 'email' });
+    assert.equal(sandboxBroken.body.status, 'NOT_READY');
+    assert.deepEqual(reasons(sandboxBroken), ['ALERT_EMAIL_KEY_MISSING', 'ALERT_NO_USABLE_CHANNEL']);
+    assert.equal((await check(SANDBOX_ENV)).body.status, 'READY', 'alerts not switched on: nothing to report');
   } finally { net.restore(); }
 });
