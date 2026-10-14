@@ -94,7 +94,7 @@ function Show-Json($res, [string[]]$fields) {
   return $o
 }
 
-Write-Host "Commands: readiness | switch | switch open|closed|frozen KEY [closesAtISO maxOrders photoId,photoId] | testalert KEY | mail ORDERID KEY | paste NAME | head NAME | get NAME | support ORDERID | reissue ORDERID KEY NAME | review ORDERID KEY release|revoke | quit"
+Write-Host "Commands: readiness | recover ORDERID KEY | switch | switch open|closed|frozen KEY [closesAtISO maxOrders photoId,photoId] | testalert KEY | mail ORDERID KEY | paste NAME | head NAME | get NAME | support ORDERID | reissue ORDERID KEY NAME | review ORDERID KEY release|revoke | quit"
 while ($true) {
   $line = Read-Host '>'
   if (-not $line) { continue }
@@ -146,6 +146,13 @@ while ($true) {
           $res = Send 'POST' ($Base + '/api/admin/paypal/switch') $body $true $p[2]
           Show-Json $res @('ok','error','replayed','requestedState','currentState','state','effectiveMode','config') | Out-Null
         }
+      }
+      'recover' {
+        # Admin recovery of a PAID order stuck in FULFILLING (Preview only). Body is exactly paypalOrderId + reason;
+        # a capture id cannot be sent. The answer carries no link and no capture id, so everything is printed.
+        if ($p.Count -lt 3) { throw 'usage: recover ORDERID KEY  (KEY: 8-64 letters, digits, - or _)' }
+        $res = Send 'POST' ($Base + '/api/admin/paypal/recover-fulfillment') @{ paypalOrderId = $p[1]; reason = 'sandbox recover rehearsal' } $true $p[2]
+        Show-Json $res @('ok','error','replayed','status','alreadyCompleted','retryWithSameKey','previous') | Out-Null
       }
       'testalert' {
         $res = Send 'POST' ($Base + '/api/admin/paypal/test-alert') @{ reason = 'sandbox alert channel test' } $true $p[1]

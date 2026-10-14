@@ -101,7 +101,7 @@ test('handlePing is exported and both payment flags stay false (the cron list is
 test('window-tools switch command: goes only through the existing admin route, never touches the database, stays Preview-only', async () => {
   const tool = await read('../staging/sandbox-window/window-tools.ps1');
   const start = tool.indexOf("'switch' {");
-  const end = tool.indexOf("'testalert' {");
+  const end = tool.indexOf("'recover' {");
   assert.ok(start > 0 && end > start);
   const branch = tool.slice(start, end);
   assert.deepEqual([...new Set(branch.match(/\/api\/[A-Za-z0-9\/_-]+/g))], ['/api/admin/paypal/switch']);
@@ -116,7 +116,7 @@ test('window-tools switch command: goes only through the existing admin route, n
 
 test('window-tools switch command: validates state, key and open arguments locally before any request', async () => {
   const tool = await read('../staging/sandbox-window/window-tools.ps1');
-  const branch = tool.slice(tool.indexOf("'switch' {"), tool.indexOf("'testalert' {"));
+  const branch = tool.slice(tool.indexOf("'switch' {"), tool.indexOf("'recover' {"));
   const order = ['State must be open, closed or frozen', 'idempotency KEY', 'open needs:', "Send 'POST'"].map(marker => branch.indexOf(marker));
   assert.ok(order.every(position => position > 0));
   assert.deepEqual([...order].sort((a, b) => a - b), order, 'all local checks come before the POST');

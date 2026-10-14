@@ -21,6 +21,8 @@ on:
       - 'tests/ping-and-switch-command.test.mjs'
       - 'tests/paypal-recover-fulfillment.test.mjs'
       - 'tests/paypal-dispute-gap.test.mjs'
+      - 'tests/sandbox-stuck-fixture.test.mjs'
+      - 'staging/sandbox-window/stuck-fixture.mjs'
       - 'staging/sandbox-window/window-tools.ps1'
       - 'tests/production-alert-config.test.mjs'
       - 'wrangler.toml'
@@ -71,6 +73,8 @@ on:
       - 'tests/ping-and-switch-command.test.mjs'
       - 'tests/paypal-recover-fulfillment.test.mjs'
       - 'tests/paypal-dispute-gap.test.mjs'
+      - 'tests/sandbox-stuck-fixture.test.mjs'
+      - 'staging/sandbox-window/stuck-fixture.mjs'
       - 'staging/sandbox-window/window-tools.ps1'
       - 'tests/production-alert-config.test.mjs'
       - 'wrangler.toml'
@@ -118,7 +122,7 @@ jobs:
         with:
           python-version: '3.12'
       - name: Run PayPal Orders v2 security and isolation suite
-        run: node --test tests/gallery-card-keyboard-a11y.test.mjs tests/i18n-translation-parity.test.mjs tests/purchase-disabled-ux.test.mjs tests/digital-checkout.test.mjs tests/paypal-orders-v2.test.mjs tests/paypal-staging-isolation.test.mjs tests/download-token-consumption.test.mjs tests/payments-feature-flag.test.mjs tests/paypal-sandbox-bootstrap-schema.test.mjs tests/paypal-migration-0002-rehearsal.test.mjs tests/paypal-environment-separation.test.mjs tests/paypal-after-sale.test.mjs tests/paypal-migration-0003-rehearsal.test.mjs tests/paypal-link-email.test.mjs tests/paypal-live-readiness.test.mjs tests/paypal-monitoring.test.mjs tests/paypal-checkout-switch.test.mjs tests/scheduled-routing.test.mjs tests/ping-and-switch-command.test.mjs tests/paypal-recover-fulfillment.test.mjs tests/paypal-dispute-gap.test.mjs tests/production-alert-config.test.mjs
+        run: node --test tests/gallery-card-keyboard-a11y.test.mjs tests/i18n-translation-parity.test.mjs tests/purchase-disabled-ux.test.mjs tests/digital-checkout.test.mjs tests/paypal-orders-v2.test.mjs tests/paypal-staging-isolation.test.mjs tests/download-token-consumption.test.mjs tests/payments-feature-flag.test.mjs tests/paypal-sandbox-bootstrap-schema.test.mjs tests/paypal-migration-0002-rehearsal.test.mjs tests/paypal-environment-separation.test.mjs tests/paypal-after-sale.test.mjs tests/paypal-migration-0003-rehearsal.test.mjs tests/paypal-link-email.test.mjs tests/paypal-live-readiness.test.mjs tests/paypal-monitoring.test.mjs tests/paypal-checkout-switch.test.mjs tests/scheduled-routing.test.mjs tests/ping-and-switch-command.test.mjs tests/paypal-recover-fulfillment.test.mjs tests/paypal-dispute-gap.test.mjs tests/sandbox-stuck-fixture.test.mjs tests/production-alert-config.test.mjs
 
   digital-checkout-browser:
     runs-on: ubuntu-latest
