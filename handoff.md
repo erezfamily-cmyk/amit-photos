@@ -16,6 +16,12 @@
 
 ## Acquisition and caption quality review — 12.10.2026
 
+### ALERT-TEST CLEANUP COMPLETE; PERMANENT-ALERT PREFERENCE RECORDED 14.10.2026 (payment flags `false`)
+
+The owner confirmed that the temporary Resend key `amit-preview-alerts-test` was **deleted in Resend** (owner's confirmation; production's key was not touched). With the Preview cleanup of 16:50:08Z (alert variable, admin address and mail key removed from the PR Preview), **the alert-test cleanup is complete: no test key, test recipient or alert variable remains anywhere.** State re-checked at the time of writing: create/capture answer 503 on the PR Preview, the main Sandbox Worker and production; both payment flags `false`; `prep/...` `e69131f`; PR #155 draft, open, not merged.
+
+**Owner preference (recorded, NOT an approval to enable):** permanent payment alerts by **e-mail to the owner's Gmail admin address**. Enabling them in production still needs a separate approval (it means setting `PAYMENT_ALERTS_ENABLED` and `ADMIN_EMAIL` in production, whose default recipient is otherwise `contact@amitphotos.com`). The e-mail channel was verified for receipt, SPF/DKIM/DMARC and de-duplication on the Preview; production's own mail key/domain path, the `contact@` routing and bounce handling are not.
+
 ### E-MAIL ALERT TEST VERIFIED BY RECEIPT AND PREVIEW CLEANED 14.10.2026 (payment flags `false`; Resend test key deletion NOT yet confirmed)
 
 Owner-approved single test, Preview only, admin address `erez.family@gmail.com` (`ADMIN_EMAIL` set by me; the production default stays `contact@amitphotos.com`). Owner added a temporary restricted Resend key (hidden-prompt script) and I enabled `PAYMENT_ALERTS_ENABLED` at 16:44:19Z (Preview deployment `9b39c556`; both payment flags stayed `false`; Telegram absent).
