@@ -6,6 +6,27 @@
 
 ---
 
+## STATUS BOARD (updated 14.10.2026, evening) — read this first; older entries below are history
+
+Payment flags: **both `false` everywhere** (production, main Sandbox Worker, PR Preview; `wrangler.toml` too). `prep/paypal-orders-v2-2026-10-01` is `e69131f`. PR #155 is a draft, not merged. No production action, production migration, PayPal Live action or canary has been done.
+
+**DONE and verified (latest results; each has an entry below with the evidence):**
+- Sandbox E2E purchase flow with real PayPal Sandbox events and signatures: HEAD without consuming the link, one GET, re-issue (quota 2, no extra charge), **full refund and partial refunds** (after fixing the real event-link host alias bug), webhook de-duplication.
+- **Readiness check run on the Sandbox Preview: `READY`** (owner-run; OAuth, webhook URL and events). Sandbox only; not evidence of Live.
+- **Download-link e-mail test with a real inbox:** received, SPF/DKIM/DMARC PASS, de-duplication, opening the page and Gmail's scan did not consume the link, one deliberate download, 409 after use; test key and settings removed and the key deleted (owner-confirmed).
+- **E-mail payment-alert test:** one test alert received, SPF/DKIM/DMARC PASS, replay sent nothing; Preview cleaned and the test key deleted (owner-confirmed).
+- **D1 checkout switch** (open / closed-graceful / frozen, fail closed, atomic order cap, photo list, `closesAt`, audit, emergency D1 procedure): implemented, 219 CI tests, and rehearsed on a **real throwaway D1** (30/30 on the final run; one real race bug found and fixed; the throwaway database was deleted). Orphan-PayPal-order scenario analysed and tested: **no charge is possible**.
+- Migration 0003 applied to the **Sandbox D1 only** (rehearsed earlier on a throwaway D1); monitoring/alerts, Live readiness check, event-link host hardening, Sandbox/Live separation: implemented and in CI.
+
+**STILL OPEN (not verified):** other mail providers and enterprise link scanners (e.g. Safe Links), bounce handling; **Telegram alert receipt (never confirmed)**; delivery to `contact@amitphotos.com` through Cloudflare Email Routing; readiness against real PayPal **Live** (no Live secrets/webhook exist); real **dispute / reversal / decline** events; the historical missing `CHECKOUT.ORDER.APPROVED` of 12.10; the provider's idempotency memory/409 behaviour with the real mail provider; a Live-safe admin tool for a payment stuck in `FULFILLING`; helper-script command for the switch.
+
+**NEEDS OWNER DECISIONS / SEPARATE APPROVALS:** adopt the incident runbook; production enablement of the alerts (preference recorded: e-mail to the owner's Gmail, not approved yet); the `event.cron` routing + 15-minute trigger and outside monitoring (production config); when the `wrangler.toml` flags may become `true`; commercial terms, `/legal`, privacy; Live account/webhook; production migrations 0002 then 0003; merging PR #155 (auto-deploys production); any canary.
+
+**SUPERSEDED / EXECUTED PLANS (history only):** `docs/paypal-sandbox-after-sale-test-window-plan-2026-10-13.md` (executed 14.10), `docs/download-link-email-live-test-plan-2026-10-14.md` (executed 14.10), the 0003 rehearsal plan in `docs/paypal-d1-migration-0003-plan-2026-10-13.md` §3 (executed 13.10), the "alert test not run" and "key deletion pending" entries (both now completed), and every older "NOT yet run" line in entries dated before 14.10. Still proposals only: `docs/external-monitoring-and-15-minute-cron-proposal-2026-10-14.md`, the freeze layers of `docs/release-freeze-and-emergency-switch-proposal-2026-10-14.md`, the runbook (draft).
+
+---
+
+
 ## Password-manager location and owner secret setup — 13.10.2026
 
 - Owner is saving a dedicated Preview admin password in **Google Password Manager** (Chrome's "Add new password" dialog). Record website: `https://feature-digital-checkout-preparation-amit-photos-paypal-sandbox.erez-family.workers.dev`; username/search label: `ADMIN_PASSWORD`. This label identifies the secret in the manager; it is not an API login username.
@@ -15,6 +36,14 @@
 - Re-check all four secret NAMES, Sandbox authentication, final deployed code/bindings and BOTH flags false with the connected Claude session after admin upload. No activation approval is given by saving these credentials; production, the main-Sandbox webhook, `prep/...` and Live settings remain outside this setup.
 
 ## Acquisition and caption quality review — 12.10.2026
+
+### D1 SWITCH VERIFIED ON A REAL THROWAWAY D1 + ORPHAN ORDER ANALYSIS 14.10.2026 (payment flags `false`; the throwaway database is DELETED)
+
+Owner-approved, isolated throwaway D1 `amit-switch-test-20261014` (`ee40e329-…`), created and deleted by me; **the existing Sandbox and production databases were not used** (`d1 list` before: Sandbox + production; after deletion: the same two). Real handlers over the D1 REST API, fake PayPal with fake ids; no real payment call, no mail, no alert. Harness: `staging/d1-rehearsal-switch/`; details in `docs/checkout-switch-and-emergency-procedure-2026-10-14.md` §6.
+- **Verified on D1:** `INSERT … ON CONFLICT DO UPDATE` (insert then update, `meta.changes` 1/1); fail-closed for absent / invalid / incomplete rows (unreadable DB simulated at the binding because a real D1 outage cannot be forced); admin transitions, replay and audit; the atomic `INSERT … SELECT … COUNT` cap: **8 parallel requests with cap 2 created exactly 2 orders**, a retry with the same key returned the same order without being counted, a new key was refused; `closesAt` passing in real time with no job; the 30-minute grace (29.5 min allowed, 31 min refused, an order created after the close refused); `frozen`; the photo list; the emergency statements (frozen upsert; deleting the row blocks charges).
+- **Real defect found in run 1 (29/30) and fixed (`7efd0553`, CI green):** with the cap already full, a parallel request carrying the SAME Idempotency-Key got 503 instead of the order its sibling had just created. The early cap look now returns the key owner's own order (deterministic unit test added; it fails without the fix). Final run: **30/30** (`201,200,200,200,200` for five parallel same-key requests). The second run's failure was a counting error in the harness (leftover audit rows of run 1), fixed there.
+- **Orphan PayPal order (cap race):** possible (4–6 orphans in 8 parallel requests): the PayPal order exists but has no local row and its approval link was never returned to any browser. **No charge is possible:** nobody can approve it; the order is `intent: CAPTURE` with no automatic completion, so money moves only when our server calls capture; our capture needs a local row (orphan -> 404, PayPal capture never called — verified on D1 and in a unit test); a completion/refund event for an orphan is acknowledged and ignored (no fulfilment, no token). The early cap look avoids most orphans; PayPal has no cancel API for an unapproved order and expires it itself (PayPal-documented, not verified here). Counting abandoned orders in the cap is accepted as a conservative limit by the owner.
+- **Not covered:** a real D1 outage, high load, and behaviour inside Cloudflare production at scale.
 
 ### D1 CHECKOUT SWITCH IMPLEMENTED (open / closed / frozen), tested locally and in CI; NOT yet verified on a real D1 (14.10.2026, evening; payment flags `false`)
 
