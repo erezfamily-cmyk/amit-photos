@@ -1,4 +1,4 @@
-import { handlePayPalCreateOrder, handlePayPalCaptureOrder, handlePayPalSandboxStatus, handlePayPalWebhook, handlePayPalCheckoutReturn, handlePayPalSandboxCleanup, handlePayPalReissueDownload, handlePayPalAfterSaleReview, handlePayPalOrderSupportView, digitalPaymentsEnabled, handleDigitalCheckoutQuote } from './paypal-orders.js';
+import { handlePayPalCreateOrder, handlePayPalCaptureOrder, handlePayPalSandboxStatus, handlePayPalWebhook, handlePayPalCheckoutReturn, handlePayPalSandboxCleanup, handlePayPalReissueDownload, handlePayPalAfterSaleReview, handlePayPalOrderSupportView, handlePayPalResendLinkEmail, retryDownloadLinkEmails, digitalPaymentsEnabled, handleDigitalCheckoutQuote } from './paypal-orders.js';
 // Cloudflare Worker — amit-photos
 // מטפל בנתיבי API ומגיש static assets
 
@@ -2029,6 +2029,13 @@ async function handleFillTitles(request, env) {
 }
 
 // ===== DOWNLOAD TOKEN =====
+// 410 for a link that can no longer be used. X-Link-State is a non-secret hint for the landing page.
+function downloadLinkGone(request, message, state, extra = {}) {
+  const response = jsonRes({ error: message, ...extra }, 410, request);
+  response.headers.set('X-Link-State', state);
+  return response;
+}
+
 async function handleDownload(request, env, token) {
   if (!token) return jsonRes({ error: 'token חסר' }, 400, request);
 
@@ -2047,9 +2054,9 @@ async function handleDownload(request, env, token) {
   ).bind(token).first();
 
   if (!row) return jsonRes({ error: 'קישור לא תקין' }, 404, request);
-  if (row.used === 2 || row.revoked_at) return jsonRes({ error: 'קישור זה בוטל', code: 'LINK_REVOKED' }, 410, request);
-  if (row.used) return jsonRes({ error: 'קישור זה כבר שומש' }, 410, request);
-  if (Math.floor(Date.now() / 1000) > row.expires_at) return jsonRes({ error: 'פג תוקף הקישור' }, 410, request);
+  if (row.used === 2 || row.revoked_at) return downloadLinkGone(request, 'קישור זה בוטל', 'revoked', { code: 'LINK_REVOKED' });
+  if (row.used) return downloadLinkGone(request, 'קישור זה כבר שומש', 'used');
+  if (Math.floor(Date.now() / 1000) > row.expires_at) return downloadLinkGone(request, 'פג תוקף הקישור', 'expired');
 
   // Look up the file first: a missing object or an R2 read failure must not
   // consume a paid, one-time token (the buyer can retry once it is fixed).
@@ -2081,7 +2088,7 @@ async function handleDownload(request, env, token) {
     // Only GET claims the token; HEAD never does.
     if (!isHead && !await claimToken()) {
       try { await object.body?.cancel?.(); } catch {}
-      return jsonRes({ error: 'קישור זה כבר שומש' }, 410, request);
+      return downloadLinkGone(request, 'קישור זה כבר שומש', 'used');
     }
     const filename = (photo.title || 'photo').replace(/[^\w\u0590-\u05ff .-]/g, '_') + '.jpg';
     const fileHeaders = {
@@ -2099,7 +2106,7 @@ async function handleDownload(request, env, token) {
 
   // Google Drive fallback — photo not in R2 yet
   if (isHead) return new Response(null, { status: 200, headers: { 'Cache-Control': 'no-store' } });
-  if (!await claimToken()) return jsonRes({ error: 'קישור זה כבר שומש' }, 410, request);
+  if (!await claimToken()) return downloadLinkGone(request, 'קישור זה כבר שומש', 'used');
   const SZ_MAP = { small: 'w1500', medium: 'w3000', large: null };
   const sz = SZ_MAP[row.size];
   const driveUrl = sz
@@ -8036,16 +8043,20 @@ export default {
       if (!await checkAuth(request, env)) return unauth(request);
       return handlePayPalAfterSaleReview(request, env);
     }
+    if (path === '/api/admin/paypal/resend-link-email') {
+      if (!await checkAuth(request, env)) return unauth(request);
+      return handlePayPalResendLinkEmail(request, env);
+    }
     if (path === '/api/admin/paypal/order') {
       if (!await checkAuth(request, env)) return unauth(request);
       return handlePayPalOrderSupportView(request, env);
     }
-    if (path === '/api/paypal/webhook') return handlePayPalWebhook(request, env);
+    if (path === '/api/paypal/webhook') return handlePayPalWebhook(request, env, { waitUntil: ctx.waitUntil.bind(ctx) });
     if (path === '/api/paypal/approved') return handlePayPalCheckoutReturn(request, true);
     if (path === '/api/paypal/cancelled') return handlePayPalCheckoutReturn(request, false);
     if (path === '/api/paypal/quote') return handleDigitalCheckoutQuote(request, env);
     if (path === '/api/paypal/create-order') return handlePayPalCreateOrder(request, env, { publicCheckout: true, includeApproveUrl: true });
-    if (path === '/api/paypal/capture-order') return handlePayPalCaptureOrder(request, env);
+    if (path === '/api/paypal/capture-order') return handlePayPalCaptureOrder(request, env, { waitUntil: ctx.waitUntil.bind(ctx) });
     if (path === '/api/verify-payment') return jsonRes({ error: 'LEGACY_PAYMENT_ENDPOINT_REMOVED' }, 410, request);
     if (path === '/api/payments-status') return handlePaymentsStatus(request, env);
     if (path === '/api/admin/purchases')   return handleAdminPurchases(request, env);
@@ -8330,6 +8341,7 @@ export default {
     ctx.waitUntil(runPinterestCronSync(env));
     ctx.waitUntil(runNewsletterCron(env));
     ctx.waitUntil(runWelcomeSequenceCron(env));
+    ctx.waitUntil(retryDownloadLinkEmails(env).catch(() => {}));
   },
 };
 

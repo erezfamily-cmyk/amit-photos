@@ -337,7 +337,7 @@ async function acquireWebhookLease(env, eventId, eventType) {
   };
 }
 
-async function processCompletedCaptureWebhook(request, env, event, accessToken) {
+async function processCompletedCaptureWebhook(request, env, event, accessToken, options = {}) {
   const resource = event.resource || {};
   const paypalOrderId = resource.supplementary_data?.related_ids?.order_id;
   const captureId = resource.id;
@@ -436,7 +436,7 @@ async function processCompletedCaptureWebhook(request, env, event, accessToken) 
     return { ok: false, status: 409, error: 'PAYPAL_WEBHOOK_FULFILLMENT_STATE_MISMATCH' };
   }
 
-  const fulfillmentResponse = await finalizeDigitalPayPalOrder(request, env, order);
+  const fulfillmentResponse = await finalizeDigitalPayPalOrder(request, env, order, { payerEmail: authoritative?.payer?.email_address || null, waitUntil: options.waitUntil });
   if (!fulfillmentResponse.ok) {
     return { ok: false, status: fulfillmentResponse.status, error: 'PAYPAL_WEBHOOK_FULFILLMENT_FAILED' };
   }
@@ -828,7 +828,248 @@ export async function handlePayPalOrderSupportView(request, env) {
   }, 200, request);
 }
 
-export async function handlePayPalWebhook(request, env) {
+// ---------------------------------------------------------------------------
+// Download-link e-mail. Sends the order's CURRENT active link to the payer address
+// that PayPal reported for the verified transaction. It never creates a token, an
+// order or a charge, never decides entitlement (a used, revoked or refunded order
+// gets nothing), and a failure here can never fail the payment. No schema change:
+// attempts, de-duplication and audit live in paypal_order_actions (action LINK_EMAIL).
+// The e-mail points at /checkout/download/#t=<token>: the token sits in the URL
+// fragment, which browsers never send to a server, so it cannot reach request logs
+// or analytics, and mail scanners that fetch the page cannot consume the one-time link.
+// ---------------------------------------------------------------------------
+const LINK_EMAIL_MAX_AUTO = 4;
+const LINK_EMAIL_MAX_MANUAL = 3;
+const LINK_EMAIL_IN_PROGRESS_MS = 5 * 60 * 1000;
+const LINK_EMAIL_SWEEP_WINDOW_MS = 24 * 60 * 60 * 1000;
+const LINK_EMAIL_SWEEP_LIMIT = 20;
+const LINK_EMAIL_TIMEOUT_MS = 8000;
+
+function cleanEmailAddress(value) {
+  if (typeof value !== 'string') return null;
+  const email = value.trim().toLowerCase();
+  if (email.length < 6 || email.length > 254) return null;
+  return /^[^\s@<>,;"'\\()[\]]+@[^\s@<>,;"'\\()[\]]+\.[^\s@<>,;"'\\()[\]]+$/.test(email) ? email : null;
+}
+
+function htmlEscape(value) {
+  return String(value ?? '').replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+}
+
+// Off unless explicitly enabled AND a mail key exists, so deploying never starts mailing by itself.
+export function downloadEmailEnabled(env) {
+  return env.DOWNLOAD_EMAIL_ENABLED === 'true' && !!env.RESEND_API_KEY;
+}
+
+// Where the mail may go. Sandbox payers have placeholder addresses, so in Sandbox mail
+// goes ONLY to an explicit test recipient. An invalid test recipient blocks everything.
+function linkEmailRecipient(env, config, payerEmail) {
+  const override = env.DOWNLOAD_EMAIL_OVERRIDE_TO;
+  if (override !== undefined && override !== null && override !== '') {
+    const test = cleanEmailAddress(override);
+    return test ? { to: test, test: true } : { reason: 'TEST_RECIPIENT_INVALID' };
+  }
+  if (config.environment !== 'live') return { reason: 'SANDBOX_NEEDS_TEST_RECIPIENT' };
+  const payer = cleanEmailAddress(payerEmail);
+  return payer ? { to: payer, test: false } : { reason: 'NO_PAYER_EMAIL' };
+}
+
+function linkEmailOrigin(request, env, config) {
+  let origin = null;
+  try { origin = request ? new URL(request.url).origin : (env.PUBLIC_BASE_URL ? new URL(env.PUBLIC_BASE_URL).origin : null); } catch {}
+  if (!origin || !origin.startsWith('https://')) return null;
+  if (config.environment === 'live' && !ALLOWED_ORIGINS.includes(origin)) return null;
+  return origin;
+}
+
+async function activeDownloadLink(env, order) {
+  return env.DB.prepare(
+    'SELECT token, expires_at FROM download_tokens WHERE used = 0 AND revoked_at IS NULL AND expires_at > ? AND (paypal_order_ref = ? OR tx = ?) ORDER BY created_at DESC, token LIMIT 1'
+  ).bind(Math.floor(Date.now() / 1000), order.id, order.paypal_capture_id || '').first();
+}
+
+function linkEmailEligible(order) {
+  return !!order && order.order_type === 'digital' && order.status === 'COMPLETED' && !!order.paypal_capture_id &&
+    afterSaleStateOf(order) === 'NONE' && Number(order.dispute_open) !== 1;
+}
+
+// The payer address of the VERIFIED transaction, read from PayPal (never from the browser).
+async function verifiedPayerEmail(env, order) {
+  const accessToken = await getPayPalAccessToken(env);
+  const response = await fetch(
+    paypalApiBase(env) + '/v2/checkout/orders/' + encodeURIComponent(order.paypal_order_id),
+    { method: 'GET', headers: { 'Authorization': 'Bearer ' + accessToken, 'Accept': 'application/json' } }
+  );
+  const data = await response.json().catch(() => ({}));
+  const capture = data.purchase_units?.[0]?.payments?.captures?.find(item => item?.id === order.paypal_capture_id);
+  if (!response.ok || data.id !== order.paypal_order_id || data.status !== 'COMPLETED' ||
+      data.purchase_units?.[0]?.custom_id !== order.id || capture?.status !== 'COMPLETED') return null;
+  return data.payer?.email_address || null;
+}
+
+function buildLinkEmail({ link, title, test }) {
+  const safeTitle = htmlEscape(title);
+  const tag = test ? '[TEST] ' : '';
+  const html = `<div style="font-family:sans-serif;max-width:560px;margin:0 auto;padding:1.5rem;color:#111">
+  <div dir="rtl" style="margin-bottom:1.5rem">
+    <h2 style="color:#c8a96e">AMIT PHOTOS</h2>
+    <p>תודה על הרכישה! הקובץ "${safeTitle}" מוכן להורדה.</p>
+    <p><a href="${link}" style="display:inline-block;background:#c8a96e;color:#111;padding:.7rem 1.6rem;text-decoration:none;font-weight:700">להורדת הקובץ</a></p>
+    <p style="color:#666;font-size:.9rem">הקישור חד-פעמי ותקף ל-24 שעות מרגע ההנפקה. אם ההורדה נכשלה, השיבו להודעה זו עם מספר ההזמנה ונשלח קישור חדש, ללא חיוב נוסף.</p>
+  </div>
+  <hr>
+  <div dir="ltr" style="margin-top:1.5rem">
+    <p>Thank you for your purchase! Your photo "${safeTitle}" is ready.</p>
+    <p><a href="${link}" style="display:inline-block;background:#c8a96e;color:#111;padding:.7rem 1.6rem;text-decoration:none;font-weight:700">Download your file</a></p>
+    <p style="color:#666;font-size:.9rem">The link works once and is valid for 24 hours from issue. If the download fails, reply to this email with your order number and we will send a new link at no extra charge.</p>
+  </div>
+</div>`;
+  const text = `${tag}הקובץ "${title}" מוכן להורדה / Your photo "${title}" is ready.\n${link}\nהקישור חד-פעמי / The link works once (24 hours).`;
+  return { subject: tag + 'הקובץ שלך מוכן להורדה | Your photo download is ready', html, text };
+}
+
+// Returns only a status code: the response body can echo the address and is never kept.
+async function postLinkEmail(env, { to, mail, idempotencyKey }) {
+  try {
+    const response = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + env.RESEND_API_KEY, 'Content-Type': 'application/json', 'Idempotency-Key': idempotencyKey },
+      body: JSON.stringify({ from: env.FROM_EMAIL || 'Amit Photos <contact@amitphotos.com>', to, subject: mail.subject, html: mail.html, text: mail.text }),
+      signal: AbortSignal.timeout(LINK_EMAIL_TIMEOUT_MS),
+    });
+    return response.ok ? { ok: true } : { ok: false, reason: 'provider_' + response.status };
+  } catch {
+    return { ok: false, reason: 'network' };
+  }
+}
+
+async function markLinkEmail(env, order, requestId, status, reason) {
+  await env.DB.prepare(
+    "UPDATE paypal_order_actions SET status = ?, reason = ?, completed_at = ? WHERE order_ref = ? AND action = 'LINK_EMAIL' AND request_id = ?"
+  ).bind(status, reason, new Date().toISOString(), order.id, requestId).run();
+}
+
+// kind: 'auto' (payment completion and the retry sweep) or 'manual' (admin, needs a key).
+// Never throws and never reports a payment problem; the caller can ignore the result.
+export async function sendDownloadLinkEmail(env, request, orderRow, { kind = 'auto', key = null, reason = '', payerEmail = null } = {}) {
+  try {
+    if (!downloadEmailEnabled(env)) return { status: 'SKIPPED', reason: 'NOT_ENABLED' };
+    const config = resolvePayPalConfig(env, request || undefined);
+    if (!config.ok) return { status: 'SKIPPED', reason: 'CONFIG_INVALID' };
+    const origin = linkEmailOrigin(request, env, config);
+    if (!origin) return { status: 'SKIPPED', reason: 'NO_SAFE_ORIGIN' };
+
+    const order = await env.DB.prepare('SELECT * FROM paypal_orders WHERE id = ?').bind(orderRow.id).first();
+    if (!linkEmailEligible(order)) return { status: 'SKIPPED', reason: 'ORDER_NOT_ELIGIBLE' };
+    const link = await activeDownloadLink(env, order);
+    if (!link) return { status: 'SKIPPED', reason: 'NO_ACTIVE_LINK' };
+
+    let recipient = linkEmailRecipient(env, config, payerEmail);
+    if (recipient.reason === 'NO_PAYER_EMAIL') {
+      recipient = linkEmailRecipient(env, config, await verifiedPayerEmail(env, order).catch(() => null));
+    }
+    if (!recipient.to) return { status: 'SKIPPED', reason: recipient.reason };
+
+    const nowIso = new Date().toISOString();
+    const fresh = new Date(Date.now() - LINK_EMAIL_IN_PROGRESS_MS).toISOString();
+    let requestId;
+    let inserted = false;
+    if (kind === 'manual') {
+      requestId = 'manual-' + key;
+      const prior = await env.DB.prepare("SELECT status FROM paypal_order_actions WHERE order_ref = ? AND action = 'LINK_EMAIL' AND request_id = ?").bind(order.id, requestId).first();
+      if (prior) return { status: prior.status, replayed: true };
+      try {
+        const result = await env.DB.prepare(
+          `INSERT INTO paypal_order_actions (order_ref, paypal_order_id, action, request_id, status, actor, reason, created_at)
+           SELECT ?, ?, 'LINK_EMAIL', ?, 'SENDING', 'admin', ?, ?
+           WHERE NOT EXISTS (SELECT 1 FROM paypal_order_actions WHERE order_ref = ? AND action = 'LINK_EMAIL' AND status = 'SENDING' AND created_at > ?)
+             AND (SELECT COUNT(*) FROM paypal_order_actions WHERE order_ref = ? AND action = 'LINK_EMAIL' AND request_id LIKE 'manual-%') < ?`
+        ).bind(order.id, order.paypal_order_id, requestId, String(reason).slice(0, 200), nowIso, order.id, fresh, order.id, LINK_EMAIL_MAX_MANUAL).run();
+        inserted = Number(result?.meta?.changes) > 0;
+      } catch { /* same key raced in parallel */ }
+    } else {
+      const count = await env.DB.prepare("SELECT COUNT(*) AS n FROM paypal_order_actions WHERE order_ref = ? AND action = 'LINK_EMAIL' AND request_id LIKE 'auto-%'").bind(order.id).first();
+      const attempt = (Number(count?.n) || 0) + 1;
+      if (attempt > LINK_EMAIL_MAX_AUTO) return { status: 'SKIPPED', reason: 'ATTEMPTS_EXHAUSTED' };
+      requestId = 'auto-' + attempt;
+      try {
+        const result = await env.DB.prepare(
+          `INSERT INTO paypal_order_actions (order_ref, paypal_order_id, action, request_id, status, actor, reason, created_at)
+           SELECT ?, ?, 'LINK_EMAIL', ?, 'SENDING', 'system', 'auto', ?
+           WHERE NOT EXISTS (SELECT 1 FROM paypal_order_actions WHERE order_ref = ? AND action = 'LINK_EMAIL' AND request_id LIKE 'auto-%' AND status = 'SENT')
+             AND NOT EXISTS (SELECT 1 FROM paypal_order_actions WHERE order_ref = ? AND action = 'LINK_EMAIL' AND status = 'SENDING' AND created_at > ?)`
+        ).bind(order.id, order.paypal_order_id, requestId, nowIso, order.id, order.id, fresh).run();
+        inserted = Number(result?.meta?.changes) > 0;
+      } catch { /* another sender took this attempt number */ }
+    }
+    if (!inserted) return { status: 'SKIPPED', reason: 'ALREADY_SENT_OR_IN_PROGRESS' };
+
+    // A refund can land between the first check and the claim: look again, then send.
+    const latest = await env.DB.prepare('SELECT * FROM paypal_orders WHERE id = ?').bind(order.id).first();
+    const stillActive = linkEmailEligible(latest) ? await activeDownloadLink(env, latest) : null;
+    if (!stillActive || stillActive.token !== link.token) {
+      await markLinkEmail(env, order, requestId, 'SKIPPED', 'link_changed_before_send');
+      return { status: 'SKIPPED', reason: 'LINK_CHANGED' };
+    }
+
+    const mail = buildLinkEmail({
+      link: origin + '/checkout/download/#t=' + link.token,
+      title: (await env.DB.prepare('SELECT title FROM photos WHERE id = ?').bind(order.photo_id).first())?.title || order.photo_id,
+      test: recipient.test,
+    });
+    const idempotencyKey = kind === 'manual' ? 'dl-manual-' + order.id + '-' + key : 'dl-auto-' + order.id;
+    const sent = await postLinkEmail(env, { to: recipient.to, mail, idempotencyKey });
+    await markLinkEmail(env, order, requestId, sent.ok ? 'SENT' : 'FAILED', sent.ok ? (recipient.test ? 'test_recipient' : 'payer') : sent.reason);
+    return sent.ok ? { status: 'SENT', test: recipient.test } : { status: 'FAILED', reason: sent.reason };
+  } catch {
+    return { status: 'FAILED', reason: 'exception' };
+  }
+}
+
+// Fire-and-forget after a completed payment; background when the runtime provides it.
+function sendLinkEmailInBackground(env, request, order, options) {
+  const job = sendDownloadLinkEmail(env, request, order, { kind: 'auto', payerEmail: options?.payerEmail || null }).catch(() => {});
+  if (typeof options?.waitUntil === 'function') { options.waitUntil(job); return Promise.resolve(); }
+  return job;
+}
+
+// Retry sweep (scheduled): paid orders from the last 24 h that still hold an unused link
+// and have no delivered mail yet. Recovers a failed or interrupted send. Bounded per run.
+export async function retryDownloadLinkEmails(env) {
+  if (!downloadEmailEnabled(env) || !resolvePayPalConfig(env).ok) return { checked: 0 };
+  const since = new Date(Date.now() - LINK_EMAIL_SWEEP_WINDOW_MS).toISOString();
+  const rows = await env.DB.prepare(
+    `SELECT o.* FROM paypal_orders o
+     WHERE o.order_type = 'digital' AND o.status = 'COMPLETED' AND o.completed_at > ? AND o.after_sale_state = 'NONE' AND o.dispute_open = 0
+       AND EXISTS (SELECT 1 FROM download_tokens t WHERE t.used = 0 AND t.revoked_at IS NULL AND t.expires_at > ? AND (t.paypal_order_ref = o.id OR t.tx = o.paypal_capture_id))
+       AND NOT EXISTS (SELECT 1 FROM paypal_order_actions a WHERE a.order_ref = o.id AND a.action = 'LINK_EMAIL' AND a.request_id LIKE 'auto-%' AND a.status = 'SENT')
+       AND (SELECT COUNT(*) FROM paypal_order_actions a WHERE a.order_ref = o.id AND a.action = 'LINK_EMAIL' AND a.request_id LIKE 'auto-%') < ?
+     ORDER BY o.completed_at LIMIT ?`
+  ).bind(since, Math.floor(Date.now() / 1000), LINK_EMAIL_MAX_AUTO, LINK_EMAIL_SWEEP_LIMIT).all();
+  let checked = 0;
+  for (const order of rows?.results || []) {
+    checked++;
+    await sendDownloadLinkEmail(env, null, order, { kind: 'auto' });
+  }
+  return { checked };
+}
+
+// Support: send the CURRENT active link again (no new token; use reissue first if none is active).
+export async function handlePayPalResendLinkEmail(request, env) {
+  if (request.method !== 'POST') return jsonRes({ error: 'method not allowed' }, 405, request);
+  const blocked = adminConfigBlocked(request, env);
+  if (blocked) return blocked;
+  const input = adminActionInput(request, await request.json().catch(() => ({})));
+  if (input.error) return jsonRes({ error: input.error }, 400, request);
+  if (!downloadEmailEnabled(env)) return jsonRes({ error: 'DOWNLOAD_EMAIL_NOT_ENABLED' }, 409, request);
+  const order = await env.DB.prepare('SELECT * FROM paypal_orders WHERE paypal_order_id = ?').bind(input.paypalOrderId).first();
+  if (!order) return jsonRes({ error: 'ORDER_NOT_FOUND' }, 404, request);
+  const result = await sendDownloadLinkEmail(env, request, order, { kind: 'manual', key: input.key, reason: input.reason });
+  const status = result.status === 'SENT' ? 200 : (result.status === 'SKIPPED' || result.status === 'FAILED') ? 409 : 200;
+  return jsonRes({ ok: result.status === 'SENT', status: result.status, reason: result.reason || null, replayed: !!result.replayed, test: !!result.test }, status, request);
+}
+
+export async function handlePayPalWebhook(request, env, options = {}) {
   if (request.method !== 'POST') return jsonRes({ error: 'method not allowed' }, 405, request);
 
   const config = resolvePayPalConfig(env, request);
@@ -888,7 +1129,8 @@ export async function handlePayPalWebhook(request, env) {
       request,
       env,
       event,
-      verified.accessToken
+      verified.accessToken,
+      options
     );
     if (!processed.ok) {
       await releaseWebhookLease(env, event.id);
@@ -1188,7 +1430,7 @@ export async function handlePayPalCreateOrder(request, env, options = {}) {
   return jsonRes(result, 201, request);
 }
 
-async function finalizeDigitalPayPalOrder(request, env, order) {
+async function finalizeDigitalPayPalOrder(request, env, order, extras = {}) {
   const captureId = order.paypal_capture_id;
   const fulfillmentToken = order.fulfillment_token;
   if (!captureId || !fulfillmentToken) {
@@ -1234,7 +1476,7 @@ async function finalizeDigitalPayPalOrder(request, env, order) {
     title: photo?.title || order.photo_id,
   };
 
-  await env.DB.prepare(
+  const completion = await env.DB.prepare(
     "UPDATE paypal_orders SET status='COMPLETED', fulfillment_json=?, completed_at=? WHERE paypal_order_id=? AND status='FULFILLING'"
   ).bind(JSON.stringify(fulfillment), new Date().toISOString(), order.paypal_order_id).run();
 
@@ -1244,6 +1486,10 @@ async function finalizeDigitalPayPalOrder(request, env, order) {
   if (completed?.status !== 'COMPLETED' || !completed.fulfillment_json) {
     return jsonRes({ error: 'Digital fulfillment completion failed' }, 500, request);
   }
+
+  // Only the request that completed the order sends the mail. A mail problem is invisible
+  // to the buyer's payment result and is retried by the sweep; the page still shows the link.
+  if (Number(completion?.meta?.changes) > 0) await sendLinkEmailInBackground(env, request, order, extras);
 
   return jsonRes(fulfillment, 200, request);
 }
@@ -1282,7 +1528,7 @@ export async function handlePayPalCaptureOrder(request, env, options = {}) {
   // A prior request may have captured successfully but been interrupted during
   // local fulfillment. Resume locally without charging again.
   if (order.status === 'FULFILLING' && order.paypal_capture_id && order.fulfillment_token && order.order_type === 'digital') {
-    return finalizeDigitalPayPalOrder(request, env, order);
+    return finalizeDigitalPayPalOrder(request, env, order, { waitUntil: options.waitUntil });
   }
 
   let accessToken;
@@ -1373,7 +1619,7 @@ export async function handlePayPalCaptureOrder(request, env, options = {}) {
       return jsonRes(JSON.parse(order.fulfillment_json), 200, request);
     }
     if (order?.status === 'FULFILLING' && order.paypal_capture_id && order.fulfillment_token && order.order_type === 'digital') {
-      return finalizeDigitalPayPalOrder(request, env, order);
+      return finalizeDigitalPayPalOrder(request, env, order, { waitUntil: options.waitUntil });
     }
     return jsonRes({ error: 'Order is already being processed' }, 409, request);
   }
@@ -1382,7 +1628,7 @@ export async function handlePayPalCaptureOrder(request, env, options = {}) {
   if (order.order_type !== 'digital') {
     return jsonRes({ error: 'Print fulfillment is not enabled in this phase' }, 409, request);
   }
-  return finalizeDigitalPayPalOrder(request, env, order);
+  return finalizeDigitalPayPalOrder(request, env, order, { payerEmail: capturedOrder?.payer?.email_address || null, waitUntil: options.waitUntil });
 }
 
 export function handlePayPalCheckoutReturn(request, approved) {
