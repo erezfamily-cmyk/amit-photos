@@ -3,14 +3,64 @@
 # It asks for the Preview admin password (hidden) and keeps download links only in memory,
 # under names you choose. It prints status codes and a fixed list of non-secret fields.
 # It refuses any host other than the Preview below. Download links are never printed.
+param([switch]$SelfTest)
 $ErrorActionPreference = 'Stop'
 $Base = 'https://feature-digital-checkout-preparation-amit-photos-paypal-sandbox.erez-family.workers.dev'
+
+# The admin password travels in an HTTP header, and HTTP headers can only carry plain ASCII.
+# A password typed with a Hebrew keyboard layout, or pasted with invisible direction marks, makes
+# .NET fail with "Request headers must contain only ASCII characters". This checks the password
+# BEFORE it is used and explains the problem without ever printing the password itself.
+function Normalize-AdminPassword([string]$raw) {
+  $invisible = '[​-‏‪-‮⁠⁦-⁩﻿ ]'
+  $removed = ([regex]::Matches($raw, $invisible)).Count
+  $clean = ([regex]::Replace($raw, $invisible, '')).Trim()
+  $nonAscii = ([regex]::Matches($clean, '[^ -~]')).Count
+  [pscustomobject]@{ Value = $clean; Removed = $removed; NonAscii = $nonAscii; Empty = ($clean.Length -eq 0) }
+}
+function Read-AdminPassword {
+  for ($try = 1; $try -le 3; $try++) {
+    $secure = Read-Host 'Preview admin password (hidden) - type it with the ENGLISH keyboard layout' -AsSecureString
+    $r = Normalize-AdminPassword ([System.Net.NetworkCredential]::new('', $secure).Password)
+    if ($r.Removed -gt 0) { Write-Host ("note: removed $($r.Removed) invisible character(s) (direction marks / spaces) that were pasted with the password") }
+    if ($r.Empty) { Write-Host 'error: empty password.'; continue }
+    if ($r.NonAscii -gt 0) {
+      Write-Host ("error: the password contains $($r.NonAscii) character(s) that are not plain ASCII (for example Hebrew letters typed with the wrong keyboard layout). " +
+        "Switch the keyboard to English and type it again. The password was not sent anywhere.")
+      continue
+    }
+    return $r.Value
+  }
+  throw 'Could not read a valid ASCII password after 3 tries. If the real password contains non-ASCII characters it cannot be sent in a header; use an ASCII-only password for this tool.'
+}
+
+if ($SelfTest) {
+  # Self-test with synthetic strings only (no real password involved); prints PASS/FAIL, never a value.
+  $cases = @(
+    @{ Name = 'plain ascii';          In = 'Abc-123_xyz';                              Value = 'Abc-123_xyz'; Removed = 0; NonAscii = 0 },
+    @{ Name = 'trailing space';       In = 'Abc-123 ';                                  Value = 'Abc-123';     Removed = 0; NonAscii = 0 },
+    @{ Name = 'RTL mark pasted';      In = ('Abc' + [char]0x200F + '123');              Value = 'Abc123';      Removed = 1; NonAscii = 0 },
+    @{ Name = 'BOM + zero width';     In = ([char]0xFEFF + 'Abc' + [char]0x200B + '1'); Value = 'Abc1';        Removed = 2; NonAscii = 0 },
+    @{ Name = 'hebrew letters';       In = ('Abc' + [char]0x05D0 + [char]0x05D1);       Value = $null;         Removed = 0; NonAscii = 2 },
+    @{ Name = 'non-breaking space';   In = ('Abc' + [char]0x00A0 + '1');                Value = 'Abc1';        Removed = 1; NonAscii = 0 },
+    @{ Name = 'accented letter';      In = ('Abc' + [char]0x00E9);                      Value = $null;         Removed = 0; NonAscii = 1 }
+  )
+  $failed = 0
+  foreach ($c in $cases) {
+    $r = Normalize-AdminPassword $c.In
+    $ok = ($r.Removed -eq $c.Removed) -and ($r.NonAscii -eq $c.NonAscii) -and (($null -eq $c.Value) -or ($r.Value -ceq $c.Value))
+    if (-not $ok) { $failed++ }
+    Write-Host ((@('FAIL', 'PASS')[[int]$ok]) + '  ' + $c.Name)
+  }
+  if ((Normalize-AdminPassword '   ').Empty) { Write-Host 'PASS  whitespace-only is empty' } else { $failed++; Write-Host 'FAIL  whitespace-only is empty' }
+  exit $failed
+}
+
 Add-Type -AssemblyName System.Net.Http
 $client = [System.Net.Http.HttpClient]::new()
 $client.Timeout = [TimeSpan]::FromSeconds(60)
 
-$secure = Read-Host 'Preview admin password (hidden)' -AsSecureString
-$password = [System.Net.NetworkCredential]::new('', $secure).Password
+$password = Read-AdminPassword
 $links = @{}
 
 function Resolve-Link([string]$raw) {
@@ -27,7 +77,10 @@ function Resolve-Link([string]$raw) {
 }
 function Send([string]$method, [string]$url, $body, [bool]$admin, [string]$key) {
   $req = [System.Net.Http.HttpRequestMessage]::new([System.Net.Http.HttpMethod]::new($method), $url)
-  if ($admin) { $req.Headers.Add('X-Admin-Password', $password) }
+  if ($admin) {
+    try { $req.Headers.Add('X-Admin-Password', $password) }
+    catch { throw 'The admin password cannot be sent as an HTTP header (it must be plain ASCII). Restart the tool and type it with the English keyboard layout.' }
+  }
   if ($key) { $req.Headers.Add('Idempotency-Key', $key) }
   if ($body) { $req.Content = [System.Net.Http.StringContent]::new(($body | ConvertTo-Json -Compress), [Text.Encoding]::UTF8, 'application/json') }
   $res = $client.SendAsync($req, [System.Net.Http.HttpCompletionOption]::ResponseHeadersRead).GetAwaiter().GetResult()
@@ -97,7 +150,11 @@ while ($true) {
       }
       default { Write-Host 'unknown command' }
     }
-  } catch { Write-Host ('error: ' + $_.Exception.Message) }
+  } catch {
+    $m = $_.Exception.Message
+    if ($m -like '*ASCII*') { $m = 'A value that must be plain ASCII was rejected (the admin password or a pasted value). Restart the tool and use the English keyboard layout.' }
+    Write-Host ('error: ' + $m)
+  }
   if ($p[0] -eq 'quit') { break }
 }
 $password = $null

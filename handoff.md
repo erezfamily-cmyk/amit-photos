@@ -16,6 +16,10 @@
 
 ## Acquisition and caption quality review — 12.10.2026
 
+### HELPER SCRIPT FIX 14.10.2026 (docs/tooling only; flags still `false`)
+
+`readiness` failed locally with "Request headers must contain only ASCII characters". Reproduced against a local listener: .NET raises exactly this at send time for ANY non-ASCII character in a header value, including a Hebrew letter (wrong keyboard layout while typing the hidden password) or an invisible direction mark/zero-width/non-breaking space that came with a paste; plain ASCII works. The earlier `support` test had succeeded, so the password typed this time most likely contained such a character (cannot be confirmed; the value was never seen). Fix in `staging/sandbox-window/window-tools.ps1`: the password is validated BEFORE use; invisible marks/spaces are removed (count reported), a real non-ASCII character gives a clear message without printing the password and re-prompts (3 tries); a send-time ASCII error is translated to a clear message; `-SelfTest` checks the rule with synthetic strings (8 PASS). No secret, flag or production change; an admin password with non-ASCII characters can never be sent in the `X-Admin-Password` header and must be ASCII for this tool.
+
 ### EMAIL/READINESS VERIFICATION ROUND 14.10.2026 (flags still `false`)
 
 Code commit `98b8c093c6f581fd996fee28f2539718eadc2e9f` on PR #155; **9/9 checks green**; the PayPal CI log shows `tests 191 / pass 191 / fail 0` (names of the new tests present: `interrupted AFTER the provider accepted`, `a new link after a re-issue is a new message`, the 20 h window test) and the browser job log shows `download landing browser QA: 15 scenarios passed`. Preview redeployed (`271efd99`, tag `98b8c09`) with both flags `false`; no mail variable or key on the Preview; create 503 on the Preview, the main Sandbox Worker and production; `prep/...` `e69131f`; PR #155 draft, not merged. Nothing was sent, no secret or DNS/production setting changed, no migration.
