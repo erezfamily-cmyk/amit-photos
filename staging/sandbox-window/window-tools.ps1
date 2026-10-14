@@ -94,7 +94,7 @@ function Show-Json($res, [string[]]$fields) {
   return $o
 }
 
-Write-Host "Commands: readiness | testalert KEY | mail ORDERID KEY | paste NAME | head NAME | get NAME | support ORDERID | reissue ORDERID KEY NAME | review ORDERID KEY release|revoke | quit"
+Write-Host "Commands: readiness | switch | switch open|closed|frozen KEY [closesAtISO maxOrders photoId,photoId] | testalert KEY | mail ORDERID KEY | paste NAME | head NAME | get NAME | support ORDERID | reissue ORDERID KEY NAME | review ORDERID KEY release|revoke | quit"
 while ($true) {
   $line = Read-Host '>'
   if (-not $line) { continue }
@@ -125,6 +125,27 @@ while ($true) {
         $text = $res.Content.ReadAsStringAsync().GetAwaiter().GetResult()
         Write-Host ('HTTP ' + [int]$res.StatusCode)
         Write-Host $text
+      }
+      'switch' {
+        # Only the existing admin route: it validates, enforces the readiness/flag rules and writes the audit row.
+        # No database is touched here. "switch" alone is a read.
+        if ($p.Count -eq 1) {
+          $res = Send 'GET' ($Base + '/api/admin/paypal/switch') $null $true $null
+          Show-Json $res @('error','valid','reason','state','effectiveMode','autoClosed','config','note') | Out-Null
+        } else {
+          $state = $p[1]
+          if ($state -notin @('open','closed','frozen')) { throw 'State must be open, closed or frozen.' }
+          if ($p.Count -lt 3) { throw 'An idempotency KEY (8-64 letters, digits, - or _) is required.' }
+          $body = @{ state = $state; reason = 'switch via window-tools' }
+          if ($state -eq 'open') {
+            if ($p.Count -lt 4) { throw 'open needs: switch open KEY closesAtISO(UTC, e.g. 2026-10-20T18:00:00Z) [maxOrders] [photoId,photoId]' }
+            $body.closesAt = $p[3]
+            if ($p.Count -ge 5) { $body.maxOrders = [int]$p[4] }
+            if ($p.Count -ge 6) { $body.photoIds = @($p[5] -split ',') }
+          }
+          $res = Send 'POST' ($Base + '/api/admin/paypal/switch') $body $true $p[2]
+          Show-Json $res @('ok','error','replayed','requestedState','currentState','state','effectiveMode','config') | Out-Null
+        }
       }
       'testalert' {
         $res = Send 'POST' ($Base + '/api/admin/paypal/test-alert') @{ reason = 'sandbox alert channel test' } $true $p[1]
