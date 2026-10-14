@@ -21,6 +21,8 @@ Payment flags: **both `false` everywhere** (production, main Sandbox Worker, PR 
 
 **PRODUCTION ALERT/CRON CONFIG: PREPARED FOR REVIEW ONLY — NOT APPLIED.** Draft PR **#156** (stacked on #155, base = the #155 branch): adds the `*/15 * * * *` trigger plus `PAYMENT_ALERTS_ENABLED`, `PAYMENT_ALERT_CHANNELS="email"`, `PAYMENT_ALERT_EMAIL` (dedicated recipient, the owner's Gmail) to `wrangler.toml`; flags stay `false`; no secret in the file. It is a separate PR because every merge to `main` deploys `wrangler.toml` through four paths (Workers Builds on each `main` commit, `deploy.yml`, `update-photos.yml`, `scan-dimensions.yml`), so putting it in #155 would have enabled it at #155's merge. Review: `docs/payment-alerts-cron-config-review-2026-10-14.md` (diff, deploy-path analysis, Resend-secret preservation, rollback).
 
+**ALERT MISCONFIGURATION VISIBILITY: DONE (health + Live readiness). UPTIME CHECK: PROPOSAL ONLY (docs/external-uptime-check-proposal-2026-10-14.md), nothing created.**
+
 **RECOMMENDED NEXT STEP:** the owner reviews PR #156 (and approves or changes it). Nothing is deployed until, in this order and each with its own approval: production migrations 0002 then 0003; merge of #155; merge of #156; then read-only post-deploy checks and one test alert. Still not decided: whether to also add the outside uptime check (a GitHub Actions workflow every 15 minutes, public URLs only).
 
 **STILL OPEN (not verified):** other mail providers and enterprise link scanners (e.g. Safe Links), bounce handling; **Telegram alert receipt (never confirmed)**; delivery to `contact@amitphotos.com` through Cloudflare Email Routing; readiness against real PayPal **Live** (no Live secrets/webhook exist); real **dispute / reversal / decline** events; the historical missing `CHECKOUT.ORDER.APPROVED` of 12.10; the provider's idempotency memory/409 behaviour with the real mail provider; a Live-safe admin tool for a payment stuck in `FULFILLING`; helper-script command for the switch; outside monitoring (proposal only); the 15-minute trigger and the production alert settings exist only as the unmerged draft PR #156.
@@ -41,6 +43,12 @@ Payment flags: **both `false` everywhere** (production, main Sandbox Worker, PR 
 - Re-check all four secret NAMES, Sandbox authentication, final deployed code/bindings and BOTH flags false with the connected Claude session after admin upload. No activation approval is given by saving these credentials; production, the main-Sandbox webhook, `prep/...` and Live settings remain outside this setup.
 
 ## Acquisition and caption quality review — 12.10.2026
+
+### ALERTS-ON-BUT-BROKEN NOW FAILS HEALTH AND BLOCKS LIVE READINESS; EXTERNAL UPTIME PROPOSAL (14.10.2026, night; payment flags `false`)
+
+- **Fix (PR #155 branch, commit `b6be18f6`):** alerts switched on (`PAYMENT_ALERTS_ENABLED=true`) but unusable (mail key missing, malformed or list recipient, unknown channel, Telegram wanted without a user) give `healthy:false` with `alerts.problems` reason codes in health, the same codes make Live readiness NOT_READY (codes reported in every environment), and the test-alert route names the cause. Nothing is ever sent to a malformed recipient. Tests: monitoring 18, readiness 10 (mutation-checked); no address or key is echoed.
+- **PR #156** stays a draft, unmerged, not applied; synced with the fix (merge commit `8fbe8dda`). Production untouched.
+- **Uptime proposal:** `docs/external-uptime-check-proposal-2026-10-14.md` (public GET checks, frequency, cost $0, e-mail channel, confirm-twice rule, 4 decisions). No service, workflow or code created.
 
 ### PRODUCTION CRON + E-MAIL ALERT CONFIG PREPARED AS A SEPARATE DRAFT PR #156 — NOT APPLIED (14.10.2026, evening; payment flags `false`)
 
