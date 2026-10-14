@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { DatabaseSync } from 'node:sqlite';
-import { paymentHealthSnapshot, runPaymentHealthCheck, sendPaymentAlert, paymentAlertsEnabled, paymentAlertChannels } from '../paypal-monitoring.js';
+import { paymentHealthSnapshot, runPaymentHealthCheck, sendPaymentAlert, paymentAlertsEnabled, paymentAlertChannels, paymentAlertProblems } from '../paypal-monitoring.js';
 import { handlePayPalHealth, handlePayPalWebhook, handlePayPalTestAlert } from '../paypal-orders.js';
 
 // Monitoring and alerts on a REAL SQLite database shaped like production (pre-0002 + 0002 + 0003).
@@ -289,7 +289,7 @@ test('the health route is read-only, needs a valid configuration, and returns no
     const body = JSON.parse(text);
     assert.equal(body.healthy, false);
     assert.deepEqual(body.counts, { stuckFulfilling: 1, unprocessedWebhooks: 1, reviewRequired: 0, openDisputes: 0, emailExhausted: 0, paidWithoutLink: 0 });
-    assert.deepEqual(body.alerts, { enabled: true, channels: { telegram: true, email: true } });
+    assert.deepEqual(body.alerts, { enabled: true, channels: { telegram: true, email: true }, switchedOn: true, problems: [] });
     for (const forbidden of ['@', 'http', 'fake-mail-key', 'fake-secret', 'fake-webhook-id', 'tok-']) assert.ok(!text.includes(forbidden), forbidden);
     assert.equal(JSON.stringify(env.sqlite.prepare('SELECT * FROM paypal_orders').all()), before, 'nothing was modified');
     assert.deepEqual([net.calls.telegram, net.calls.email, net.calls.other], [[], [], []], 'no alert and no PayPal call');
@@ -388,5 +388,61 @@ test('without PAYMENT_ALERT_EMAIL the old recipient chain still applies (ADMIN_E
     addOrder(plain, { status: 'FULFILLING', created: ago(3 * HOUR) });
     await runPaymentHealthCheck(plain);
     assert.equal(net.calls.email.at(-1).to, 'contact@amitphotos.com');
+  } finally { net.restore(); }
+});
+
+// ----- alerts switched on but broken: health shows the failure ---------------------------------------------------------------
+
+const noTelegram = { CALLMEBOT_TELEGRAM_USER: undefined };
+
+test('health reports alerts that are switched on but cannot work (missing mail key, malformed recipient, unknown channel) as a failure with the exact cause', async () => {
+  const cases = [
+    ['mail key missing', { ...noTelegram, PAYMENT_ALERT_CHANNELS: 'email', RESEND_API_KEY: undefined }, ['ALERT_EMAIL_KEY_MISSING', 'ALERT_NO_USABLE_CHANNEL']],
+    ['malformed recipient', { ...noTelegram, PAYMENT_ALERT_CHANNELS: 'email', PAYMENT_ALERT_EMAIL: 'not-an-email' }, ['ALERT_EMAIL_RECIPIENT_INVALID', 'ALERT_NO_USABLE_CHANNEL']],
+    ['recipient with a comma list', { ...noTelegram, PAYMENT_ALERT_EMAIL: 'a@example.com,b@example.com' }, ['ALERT_EMAIL_RECIPIENT_INVALID', 'ALERT_NO_USABLE_CHANNEL']],
+    ['unknown channel', { ...noTelegram, PAYMENT_ALERT_CHANNELS: 'sms' }, ['ALERT_CHANNELS_UNKNOWN', 'ALERT_NO_USABLE_CHANNEL']],
+    ['telegram wanted but no user', { RESEND_API_KEY: undefined, PAYMENT_ALERT_CHANNELS: 'telegram', CALLMEBOT_TELEGRAM_USER: undefined }, ['ALERT_TELEGRAM_USER_MISSING', 'ALERT_NO_USABLE_CHANNEL']],
+  ];
+  for (const [label, extra, expected] of cases) {
+    const env = setup({ env: extra });
+    const snapshot = await paymentHealthSnapshot(env);
+    assert.deepEqual(snapshot.alerts.problems, expected, label);
+    assert.equal(snapshot.alerts.switchedOn, true, label);
+    assert.equal(snapshot.alerts.enabled, false, label);
+    assert.equal(snapshot.healthy, false, label + ': a broken alert setup is an unhealthy system even with zero payment problems');
+    assert.deepEqual(Object.values(snapshot.counts), [0, 0, 0, 0, 0, 0], label);
+    const response = await handlePayPalHealth(new Request('https://amitphotos.com/api/admin/paypal/health'), env);
+    const text = await response.text();
+    assert.deepEqual(JSON.parse(text).alerts.problems, expected, label + ' (route)');
+    for (const secret of ['not-an-email', 'a@example.com', 'fake-mail-key']) assert.ok(!text.includes(secret), label + ' must not echo ' + secret);
+  }
+});
+
+test('a sound setup, or alerts not switched on, report no problem; a Telegram-only fallback still counts as a usable channel', async () => {
+  assert.deepEqual(paymentAlertProblems(setup()), []);
+  assert.deepEqual(paymentAlertProblems({ PAYMENT_ALERT_CHANNELS: 'sms', PAYMENT_ALERT_EMAIL: 'bad' }), [], 'switched off = nothing to report');
+  assert.deepEqual(paymentAlertProblems({ PAYMENT_ALERTS_ENABLED: 'true', RESEND_API_KEY: 'k', PAYMENT_ALERT_EMAIL: 'alerts@example.com', PAYMENT_ALERT_CHANNELS: 'email' }), []);
+  assert.deepEqual(paymentAlertProblems({ PAYMENT_ALERTS_ENABLED: 'true', RESEND_API_KEY: 'k' }), [], 'default recipient contact@ is valid');
+  const telegramFallback = { PAYMENT_ALERTS_ENABLED: 'true', CALLMEBOT_TELEGRAM_USER: 'u', RESEND_API_KEY: 'k', PAYMENT_ALERT_EMAIL: 'broken' };
+  assert.deepEqual(paymentAlertProblems(telegramFallback), ['ALERT_EMAIL_RECIPIENT_INVALID'], 'the bad recipient is reported even though Telegram still works');
+  assert.deepEqual(paymentAlertChannels(telegramFallback), { telegram: true, email: false });
+  assert.equal(paymentAlertsEnabled(telegramFallback), true);
+});
+
+test('with a malformed recipient nothing is ever sent to it, and the stuck-order alert is not lost when another channel exists', async () => {
+  const net = fakes();
+  try {
+    const onlyEmail = setup({ env: { ...noTelegram, PAYMENT_ALERT_CHANNELS: 'email', PAYMENT_ALERT_EMAIL: 'bad address' } });
+    addOrder(onlyEmail, { status: 'FULFILLING', created: ago(3 * HOUR) });
+    assert.deepEqual(await runPaymentHealthCheck(onlyEmail), { checked: false });
+    assert.deepEqual([net.calls.email, net.calls.telegram], [[], []]);
+    const both = setup({ env: { PAYMENT_ALERT_EMAIL: 'bad address' } });
+    addOrder(both, { status: 'FULFILLING', created: ago(3 * HOUR) });
+    assert.equal((await runPaymentHealthCheck(both)).sent, 1);
+    assert.equal(net.calls.email.length, 0, 'no mail to a malformed address');
+    assert.equal(net.calls.telegram.length, 1);
+    const response = await testAlert(setup({ env: { ...noTelegram, PAYMENT_ALERT_CHANNELS: 'email', RESEND_API_KEY: undefined } }), 'alert-test-0009');
+    assert.equal(response.status, 409);
+    assert.deepEqual((await response.json()).problems, ['ALERT_EMAIL_KEY_MISSING', 'ALERT_NO_USABLE_CHANNEL'], 'the test route names the cause');
   } finally { net.restore(); }
 });

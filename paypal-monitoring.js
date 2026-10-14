@@ -22,8 +22,38 @@ function channelAllowed(env, name) {
   return list.length === 0 || list.includes(name);
 }
 
+const ALERT_EMAIL_PATTERN = /^[^\s@<>,;"'\\()[\]]+@[^\s@<>,;"'\\()[\]]+\.[^\s@<>,;"'\\()[\]]+$/;
+function alertRecipient(env) {
+  return env.PAYMENT_ALERT_EMAIL || env.ADMIN_EMAIL || 'contact@amitphotos.com';
+}
+function alertRecipientValid(env) {
+  const value = alertRecipient(env);
+  return typeof value === 'string' && value.length <= 254 && ALERT_EMAIL_PATTERN.test(value.trim());
+}
+
+// A usable e-mail channel needs the mail key, permission (PAYMENT_ALERT_CHANNELS) AND a valid recipient:
+// alerts are never sent to a malformed address.
 export function paymentAlertChannels(env) {
-  return { telegram: !!env.CALLMEBOT_TELEGRAM_USER && channelAllowed(env, 'telegram'), email: !!env.RESEND_API_KEY && channelAllowed(env, 'email') };
+  return {
+    telegram: !!env.CALLMEBOT_TELEGRAM_USER && channelAllowed(env, 'telegram'),
+    email: !!env.RESEND_API_KEY && channelAllowed(env, 'email') && alertRecipientValid(env),
+  };
+}
+
+// Why alerts that were switched on (PAYMENT_ALERTS_ENABLED=true) cannot all work. Empty when alerts are
+// not switched on or the setup is sound. Reason codes only: never an address, a key or a user name.
+export function paymentAlertProblems(env) {
+  if (env.PAYMENT_ALERTS_ENABLED !== 'true') return [];
+  const problems = [];
+  const requested = typeof env.PAYMENT_ALERT_CHANNELS === 'string' ? env.PAYMENT_ALERT_CHANNELS.split(',').map(item => item.trim().toLowerCase()).filter(Boolean) : [];
+  if (requested.some(name => name !== 'telegram' && name !== 'email')) problems.push('ALERT_CHANNELS_UNKNOWN');
+  if (requested.includes('email') && !env.RESEND_API_KEY) problems.push('ALERT_EMAIL_KEY_MISSING');
+  if (requested.includes('telegram') && !env.CALLMEBOT_TELEGRAM_USER) problems.push('ALERT_TELEGRAM_USER_MISSING');
+  const wantsEmail = requested.length === 0 || requested.includes('email');
+  if (wantsEmail && (env.RESEND_API_KEY || requested.includes('email')) && !alertRecipientValid(env)) problems.push('ALERT_EMAIL_RECIPIENT_INVALID');
+  const channels = paymentAlertChannels(env);
+  if (!channels.telegram && !channels.email) problems.push('ALERT_NO_USABLE_CHANNEL');
+  return problems;
 }
 
 export function paymentAlertsEnabled(env) {
@@ -75,14 +105,16 @@ export async function paymentHealthSnapshot(env, now = Date.now()) {
 
   const lists = { stuckFulfilling, unprocessedWebhooks, reviewRequired, openDisputes, emailExhausted, paidWithoutLink };
   const counts = Object.fromEntries(Object.entries(lists).map(([key, rows]) => [key, rows.length]));
+  const alertProblems = paymentAlertProblems(env);
   return {
     generatedAt: new Date(now).toISOString(),
-    healthy: problems.length === 0 && Object.values(counts).every(n => n === 0),
+    healthy: problems.length === 0 && alertProblems.length === 0 && Object.values(counts).every(n => n === 0),
     schemaProblems: problems,
     counts,
     items: lists,
     thresholds: { stuckFulfillingMinutes: STUCK_FULFILLING_MS / 60000, webhookUnprocessedMinutes: WEBHOOK_UNPROCESSED_MS / 60000, listLimit: LIST_LIMIT },
-    alerts: { enabled: paymentAlertsEnabled(env), channels: paymentAlertChannels(env) },
+    // switched on but broken (missing key, malformed recipient, unknown channel...) is a failure, not "off"
+    alerts: { enabled: paymentAlertsEnabled(env), channels: paymentAlertChannels(env), switchedOn: env.PAYMENT_ALERTS_ENABLED === 'true', problems: alertProblems },
   };
 }
 
@@ -101,7 +133,7 @@ async function postEmail(env, subject, text) {
     const response = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: { 'Authorization': 'Bearer ' + env.RESEND_API_KEY, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ from: env.FROM_EMAIL || 'Amit Photos <contact@amitphotos.com>', to: env.PAYMENT_ALERT_EMAIL || env.ADMIN_EMAIL || 'contact@amitphotos.com', subject, text }),
+      body: JSON.stringify({ from: env.FROM_EMAIL || 'Amit Photos <contact@amitphotos.com>', to: alertRecipient(env).trim(), subject, text }),
       signal: AbortSignal.timeout(ALERT_TIMEOUT_MS),
     });
     return response.ok;

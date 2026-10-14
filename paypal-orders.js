@@ -1,5 +1,5 @@
 import { SWITCH_KEY, CLOSE_GRACE_MS, MAX_OPEN_HORIZON_MS, readCheckoutSwitch, checkNewOrderAllowed, checkCaptureAllowed, parseSwitch, effectiveSwitch, capSql } from './paypal-switch.js';
-import { paymentHealthSnapshot, sendPaymentAlert, afterSaleAlert, webhookFailingAlert, paymentAlertsEnabled, paymentAlertChannels } from './paypal-monitoring.js';
+import { paymentHealthSnapshot, sendPaymentAlert, afterSaleAlert, webhookFailingAlert, paymentAlertsEnabled, paymentAlertChannels, paymentAlertProblems } from './paypal-monitoring.js';
 
 // Environment is explicit: PAYPAL_ENVIRONMENT = 'sandbox' (default when unset) or 'live'.
 // Anything else blocks PayPal entirely. Live is never implied by the other settings.
@@ -1119,11 +1119,13 @@ export async function handlePayPalLiveReadiness(request, env) {
   const mailOn = env.DOWNLOAD_EMAIL_ENABLED === 'true';
   checks.downloadEmail = { enabled: mailOn, keyPresent: !!env.RESEND_API_KEY, testRecipientSet: !!env.DOWNLOAD_EMAIL_OVERRIDE_TO };
   if (config.environment === 'live' && checks.downloadEmail.testRecipientSet) reasons.push('TEST_RECIPIENT_SET_IN_LIVE');
-  checks.paymentAlerts = { enabled: paymentAlertsEnabled(env), channels: paymentAlertChannels(env) };
+  checks.paymentAlerts = { enabled: paymentAlertsEnabled(env), channels: paymentAlertChannels(env), problems: paymentAlertProblems(env) };
   const checkoutSwitch = await readCheckoutSwitch(env);
   checks.checkoutSwitch = checkoutSwitch.ok ? { state: checkoutSwitch.config.state, effectiveMode: checkoutSwitch.effective.mode } : { state: 'none', effectiveMode: 'blocked', reason: checkoutSwitch.reason };
   if (!checkoutSwitch.ok && checkoutSwitch.reason !== 'SWITCH_ABSENT') reasons.push('CHECKOUT_SWITCH_INVALID');
   if (config.environment === 'live' && !checks.paymentAlerts.enabled) reasons.push('PAYMENT_ALERTS_NOT_ENABLED');
+  // Alerts that are switched on but cannot work are reported in every environment, with the exact cause.
+  for (const problem of checks.paymentAlerts.problems) reasons.push(problem);
   if (mailOn && !env.RESEND_API_KEY) reasons.push('EMAIL_ENABLED_WITHOUT_KEY');
   if (mailOn) {
     let base = null;
@@ -1257,7 +1259,7 @@ export async function handlePayPalTestAlert(request, env) {
   const reason = typeof body?.reason === 'string' ? body.reason.replace(/[\u0000-\u001f\u007f]/g, ' ').trim().slice(0, 100) : '';
   if (!ACTION_ID.test(key)) return jsonRes({ error: 'IDEMPOTENCY_KEY_REQUIRED' }, 400, request);
   if (!reason) return jsonRes({ error: 'REASON_REQUIRED' }, 400, request);
-  if (!paymentAlertsEnabled(env)) return jsonRes({ error: 'PAYMENT_ALERTS_NOT_ENABLED' }, 409, request);
+  if (!paymentAlertsEnabled(env)) return jsonRes({ error: 'PAYMENT_ALERTS_NOT_ENABLED', problems: paymentAlertProblems(env) }, 409, request);
   const environment = resolvePayPalConfig(env, request).environment;
   const result = await sendPaymentAlert(env, {
     kind: 'TEST', key: 'test-' + key,
