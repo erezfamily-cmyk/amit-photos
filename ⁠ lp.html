@@ -12,38 +12,32 @@
       font-family: 'Assistant', sans-serif; 
       -webkit-tap-highlight-color: transparent;
     }
-    /* הסתרת פס גלילה בקרוסלת המובייל */
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
 </head>
-<body class="bg-zinc-950 text-zinc-100 antialiased pb-20 md:pb-0 selection:bg-amber-500 selection:text-black">
+<body class="bg-zinc-950 text-zinc-100 antialiased pb-24 md:pb-0 selection:bg-amber-500 selection:text-black">
 
-  <!-- TOP BAR קומפקטי למובייל -->
-  <header class="fixed top-0 inset-x-0 z-40 bg-zinc-950/70 backdrop-blur-md border-b border-white/10 px-5 py-3.5 flex items-center justify-between">
+  <!-- TOP BAR -->
+  <header class="fixed top-0 inset-x-0 z-40 bg-zinc-950/80 backdrop-blur-md border-b border-white/10 px-5 py-3.5 flex items-center justify-between">
     <a href="https://amitphotos.com" class="text-lg font-extrabold tracking-wider text-white">
       AMIT<span class="text-amber-400 font-light">PHOTOS</span>
     </a>
-    <a href="https://amitphotos.com" class="text-xs font-semibold px-3 py-1.5 rounded-full bg-white/10 text-zinc-200 border border-white/15 active:scale-95 transition">
+    <a href="https://amitphotos.com" class="text-xs font-semibold px-3 py-1.5 rounded-full bg-white/10 text-zinc-200 border border-white/15 transition">
       לאתר המלא &larr;
     </a>
   </header>
 
-  <!-- 1. MOBILE-FIRST HERO SECTION -->
-  <section class="relative min-h-[100dvh] w-full flex flex-col justify-end md:justify-center overflow-hidden pt-16 pb-10 px-5 md:px-12">
-    <!-- תמונת רקע: נוף ים המלח מהמצפה -->
+  <!-- 1. HERO SECTION -->
+  <section class="relative min-h-[100dvh] w-full flex flex-col justify-end md:justify-center overflow-hidden pt-20 pb-12 px-5 md:px-12">
     <img 
-      src="https://amitphotos.com/images/dead-sea-viewpoint.jpg" 
-      onerror="this.src='https://images.unsplash.com/photo-1544979590-37e9b47eb705?q=80&w=1600&auto=format&fit=crop'"
+      src="https://images.unsplash.com/photo-1544979590-37e9b47eb705?q=80&w=1600&auto=format&fit=crop" 
       alt="נוף ים המלח מהמצפה - עמית ארז" 
       fetchpriority="high"
       class="absolute inset-0 w-full h-full object-cover object-center"
     />
-    
-    <!-- שכבת החשכה מותאמת למובייל (כהה למטה לטקסט, פתוח למעלה לנוף) -->
-    <div class="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/75 to-zinc-950/20 md:bg-gradient-to-l md:from-zinc-950/90 md:via-zinc-950/60 md:to-transparent"></div>
+    <div class="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/80 to-zinc-950/30 md:bg-gradient-to-l md:from-zinc-950/90 md:via-zinc-950/60 md:to-transparent"></div>
 
-    <!-- תוכן ה-Hero -->
     <div class="relative z-10 max-w-6xl mx-auto w-full">
       <div class="max-w-xl space-y-4 md:space-y-6">
         <span class="inline-block py-1 px-3 rounded-full bg-amber-500/20 border border-amber-500/40 text-amber-300 text-xs md:text-sm font-semibold">
@@ -59,12 +53,11 @@
           הדפסי אמנות מנופי ישראל לבית ולמשרד, מדריכי צילום מעשיים ומיפוי הלוקיישנים היפים בארץ.
         </p>
         
-        <!-- כפתורים מותאמים ללחיצה באגודל (Full width במובייל) -->
         <div class="flex flex-col sm:flex-row gap-3 pt-2">
-          <a href="#prints" class="w-full sm:w-auto text-center px-7 py-4 bg-amber-500 active:bg-amber-600 hover:bg-amber-400 text-zinc-950 font-bold text-base rounded-xl transition shadow-lg shadow-amber-500/25 active:scale-[0.99]">
+          <a href="#prints" class="w-full sm:w-auto text-center px-7 py-4 bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold text-base rounded-xl transition shadow-lg shadow-amber-500/25">
             לגלריית ההדפסים
           </a>
-          <a href="#guide" class="w-full sm:w-auto text-center px-7 py-4 bg-white/10 active:bg-white/25 hover:bg-white/20 backdrop-blur-md text-white font-semibold text-base rounded-xl border border-white/20 transition active:scale-[0.99]">
+          <a href="#guide" class="w-full sm:w-auto text-center px-7 py-4 bg-white/10 hover:bg-white/20 backdrop-blur-md text-white font-semibold text-base rounded-xl border border-white/20 transition">
             🎁 מדריך חינמי: 50 טיפים לצילום
           </a>
         </div>
@@ -72,51 +65,47 @@
     </div>
   </section>
 
-  <!-- 2. SWIPEABLE PRINTS GALLERY (קרוסלת החלקה במובייל) -->
-  <section id="prints" class="py-14 md:py-20 max-w-6xl mx-auto">
+  <!-- 2. PRINTS GALLERY -->
+  <section id="prints" class="py-16 md:py-20 max-w-6xl mx-auto">
     <div class="px-5 md:px-12 flex items-end justify-between mb-6 md:mb-10">
       <div>
         <h2 class="text-2xl md:text-3xl font-bold text-white">הדפסי אמנות נבחרים</h2>
-        <p class="text-sm md:text-base text-zinc-400 mt-1">החלק הצידה לצפייה או לחץ למעבר לתמונה באתר</p>
+        <p class="text-sm md:text-base text-zinc-400 mt-1">החלק הצידה לצפייה או בחר תמונה להזמנה</p>
       </div>
       <a href="https://amitphotos.com" class="hidden sm:inline-flex text-amber-400 hover:text-amber-300 font-semibold text-sm">
         לכל הגלריה &larr;
       </a>
     </div>
 
-    <!-- מיכל נגלל אופקית במובייל ורשת בדסקטופ -->
     <div class="flex md:grid md:grid-cols-3 gap-4 md:gap-8 overflow-x-auto no-scrollbar snap-x snap-mandatory px-5 md:px-12 pb-4">
       
-      <!-- כרטיס 1 -->
-      <a href="https://amitphotos.com" class="snap-center shrink-0 w-[82vw] sm:w-[320px] md:w-auto group bg-zinc-900 rounded-2xl overflow-hidden border border-zinc-800 active:scale-[0.99] transition block">
+      <a href="https://amitphotos.com" class="snap-center shrink-0 w-[82vw] sm:w-[320px] md:w-auto group bg-zinc-900 rounded-2xl overflow-hidden border border-zinc-800 transition block">
         <div class="aspect-[4/3] overflow-hidden bg-zinc-800">
           <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=800&auto=format&fit=crop" alt="שדה חיטה בעמק יזרעאל" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" loading="lazy">
         </div>
         <div class="p-4 md:p-5 flex justify-between items-center">
           <div>
             <h3 class="text-lg font-bold text-white">שדה חיטה בעמק יזרעאל</h3>
-            <p class="text-xs text-zinc-400 mt-0.5">שעת הקציר בזריחה | גלריית ישראל</p>
+            <p class="text-xs text-zinc-400 mt-0.5">שעת הקציר בזריחה</p>
           </div>
           <span class="text-amber-400 text-sm font-bold bg-amber-500/10 px-3 py-1.5 rounded-lg">לצפייה</span>
         </div>
       </a>
 
-      <!-- כרטיס 2 -->
-      <a href="https://amitphotos.com" class="snap-center shrink-0 w-[82vw] sm:w-[320px] md:w-auto group bg-zinc-900 rounded-2xl overflow-hidden border border-zinc-800 active:scale-[0.99] transition block">
+      <a href="https://amitphotos.com" class="snap-center shrink-0 w-[82vw] sm:w-[320px] md:w-auto group bg-zinc-900 rounded-2xl overflow-hidden border border-zinc-800 transition block">
         <div class="aspect-[4/3] overflow-hidden bg-zinc-800">
           <img src="https://images.unsplash.com/photo-1499002238440-d264edd596ec?q=80&w=800&auto=format&fit=crop" alt="שקט בשדה לבנדר" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" loading="lazy">
         </div>
         <div class="p-4 md:p-5 flex justify-between items-center">
           <div>
             <h3 class="text-lg font-bold text-white">שקט בשדה לבנדר</h3>
-            <p class="text-xs text-zinc-400 mt-0.5">צילום אמנותי | גלריית ישראל</p>
+            <p class="text-xs text-zinc-400 mt-0.5">צילום אמנותי</p>
           </div>
           <span class="text-amber-400 text-sm font-bold bg-amber-500/10 px-3 py-1.5 rounded-lg">לצפייה</span>
         </div>
       </a>
 
-      <!-- כרטיס 3 -->
-      <a href="https://amitphotos.com" class="snap-center shrink-0 w-[82vw] sm:w-[320px] md:w-auto group bg-zinc-900 rounded-2xl overflow-hidden border border-zinc-800 active:scale-[0.99] transition block">
+      <a href="https://amitphotos.com" class="snap-center shrink-0 w-[82vw] sm:w-[320px] md:w-auto group bg-zinc-900 rounded-2xl overflow-hidden border border-zinc-800 transition block">
         <div class="aspect-[4/3] overflow-hidden bg-zinc-800">
           <img src="https://images.unsplash.com/photo-1542743408-218cc173cda0?q=80&w=800&auto=format&fit=crop" alt="מגדל דוד בלילה" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" loading="lazy">
         </div>
@@ -130,15 +119,9 @@
       </a>
 
     </div>
-
-    <div class="px-5 mt-4 sm:hidden">
-      <a href="https://amitphotos.com" class="block w-full text-center py-3 rounded-xl bg-zinc-900 border border-zinc-800 text-amber-400 font-semibold text-sm">
-        לכל הגלריה באתר Amitphotos.com &larr;
-      </a>
-    </div>
   </section>
 
-  <!-- 3. LEAD MAGNET (מותאם למקלדת מובייל) -->
+  <!-- 3. LEAD MAGNET -->
   <section id="guide" class="py-10 px-5 md:px-12">
     <div class="max-w-5xl mx-auto bg-gradient-to-b md:bg-gradient-to-r from-amber-500/15 via-zinc-900 to-zinc-900 border border-amber-500/30 rounded-2xl p-6 md:p-12 flex flex-col md:flex-row items-center justify-between gap-6">
       <div class="space-y-2 md:space-y-3 text-right w-full">
@@ -149,26 +132,24 @@
         </p>
       </div>
       
-      <form action="https://amitphotos.com" class="w-full md:w-auto flex flex-col sm:flex-row gap-3">
+      <form action="https://amitphotos.com" method="GET" class="w-full md:w-auto flex flex-col sm:flex-row gap-3">
         <input 
           type="email" 
-          inputmode="email"
-          autocomplete="email"
           placeholder="האימייל שלך לקבלת המדריך..." 
           required
           class="w-full sm:w-64 px-4 py-4 rounded-xl bg-zinc-950 border border-zinc-700 text-white text-base focus:outline-none focus:border-amber-400"
         />
-        <button type="submit" class="w-full sm:w-auto px-7 py-4 bg-amber-500 active:bg-amber-600 text-zinc-950 font-bold text-base rounded-xl transition whitespace-nowrap shadow-md">
+        <button type="submit" class="w-full sm:w-auto px-7 py-4 bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold text-base rounded-xl transition whitespace-nowrap shadow-md">
           שלח לי עכשיו
         </button>
       </form>
     </div>
   </section>
 
-  <!-- 4. QUICK LINKS (לוקיישנים וציוד) -->
+  <!-- 4. QUICK LINKS -->
   <section class="py-10 px-5 md:px-12 max-w-6xl mx-auto">
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <a href="https://amitphotos.com" class="p-6 rounded-2xl bg-zinc-900/80 border border-zinc-800 active:bg-zinc-800 transition flex items-center justify-between gap-4">
+      <a href="https://amitphotos.com" class="p-6 rounded-2xl bg-zinc-900/80 border border-zinc-800 transition flex items-center justify-between gap-4">
         <div>
           <h3 class="text-lg md:text-xl font-bold text-white">📍 מפת הלוקיישנים בישראל</h3>
           <p class="text-xs md:text-sm text-zinc-400 mt-1">נקודות צילום, עונות מומלצות ושעות אור</p>
@@ -176,7 +157,7 @@
         <span class="text-amber-400 text-xl font-bold">&larr;</span>
       </a>
 
-      <a href="https://amitphotos.com" class="p-6 rounded-2xl bg-zinc-900/80 border border-zinc-800 active:bg-zinc-800 transition flex items-center justify-between gap-4">
+      <a href="https://amitphotos.com" class="p-6 rounded-2xl bg-zinc-900/80 border border-zinc-800 transition flex items-center justify-between gap-4">
         <div>
           <h3 class="text-lg md:text-xl font-bold text-white">📷 מאחורי העדשה והציוד</h3>
           <p class="text-xs md:text-sm text-zinc-400 mt-1">ניתוח תמונות, נתוני EXIF והציוד שלי בשטח</p>
@@ -191,7 +172,7 @@
     © כל הזכויות שמורות לעמית ארז | Amitphotos.com
   </footer>
 
-  <!-- STICKY BOTTOM BAR (מופיע רק במובייל להמרה מהירה) -->
+  <!-- STICKY BOTTOM BAR -->
   <div class="fixed bottom-0 inset-x-0 z-50 md:hidden bg-zinc-950/90 backdrop-blur-lg border-t border-zinc-800 p-3 flex gap-2.5">
     <a href="#prints" class="flex-1 text-center py-3 rounded-xl bg-amber-500 text-zinc-950 font-bold text-sm shadow">
       לגלריית ההדפסים
