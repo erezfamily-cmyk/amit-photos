@@ -1,6 +1,6 @@
 # Preview rehearsal: checkout switch and recover-fulfillment (owner-run steps; prepared 14.10.2026)
 
-**Status (14.10 evening): the stuck order is CREATED (owner "go" for order `97A89187R7121682U` only); the owner-run commands have NOT been run yet.** Approved by the owner on 14.10.2026: one controlled `recover-fulfillment` rehearsal and a `switch` check on the **Preview only**. Not approved: production, Live, merge, deploy, a canary. Everything below happens on the Sandbox Worker `amit-photos-paypal-sandbox`, Preview `feature/digital-checkout-preparation-2026-10-13`, Sandbox D1 `amit-photos-paypal-sandbox-db` (`7b027b93-…`).
+**Status (14.10, 19:31 UTC): EXECUTED by the owner and restored/cleaned by me; results in HANDOFF ("PREVIEW REHEARSAL DONE"). The status-while-open observation was NOT recorded.**
 
 **Why the owner has to type the commands:** both routes are admin-authenticated and the Preview admin password is in the owner's password manager (the entry created on 13.10). It is never given to chat or to me. I did not use any other stored credential.
 
