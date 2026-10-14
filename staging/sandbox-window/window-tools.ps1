@@ -94,7 +94,7 @@ function Show-Json($res, [string[]]$fields) {
   return $o
 }
 
-Write-Host "Commands: readiness | mail ORDERID KEY | paste NAME | head NAME | get NAME | support ORDERID | reissue ORDERID KEY NAME | review ORDERID KEY release|revoke | quit"
+Write-Host "Commands: readiness | testalert KEY | mail ORDERID KEY | paste NAME | head NAME | get NAME | support ORDERID | reissue ORDERID KEY NAME | review ORDERID KEY release|revoke | quit"
 while ($true) {
   $line = Read-Host '>'
   if (-not $line) { continue }
@@ -125,6 +125,12 @@ while ($true) {
         $text = $res.Content.ReadAsStringAsync().GetAwaiter().GetResult()
         Write-Host ('HTTP ' + [int]$res.StatusCode)
         Write-Host $text
+      }
+      'testalert' {
+        $res = Send 'POST' ($Base + '/api/admin/paypal/test-alert') @{ reason = 'sandbox alert channel test' } $true $p[1]
+        $text = $res.Content.ReadAsStringAsync().GetAwaiter().GetResult()
+        $o = $text | ConvertFrom-Json
+        Write-Host ('HTTP ' + [int]$res.StatusCode + '  ok=' + $o.ok + '  status=' + $o.status + '  replayed=' + $o.replayed + '  channels=' + ($o.channels -join '+') + '  error=' + $o.error + $o.reason)
       }
       'mail' {
         $res = Send 'POST' ($Base + '/api/admin/paypal/resend-link-email') @{ paypalOrderId = $p[1]; reason = 'sandbox mail test' } $true $p[2]

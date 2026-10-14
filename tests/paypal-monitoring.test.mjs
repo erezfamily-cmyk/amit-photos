@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { DatabaseSync } from 'node:sqlite';
 import { paymentHealthSnapshot, runPaymentHealthCheck, sendPaymentAlert, paymentAlertsEnabled } from '../paypal-monitoring.js';
-import { handlePayPalHealth, handlePayPalWebhook } from '../paypal-orders.js';
+import { handlePayPalHealth, handlePayPalWebhook, handlePayPalTestAlert } from '../paypal-orders.js';
 
 // Monitoring and alerts on a REAL SQLite database shaped like production (pre-0002 + 0002 + 0003).
 // CallMeBot, the mail provider and PayPal are fakes; ids are fake; no network.
@@ -295,5 +295,56 @@ test('the health route is read-only, needs a valid configuration, and returns no
     assert.deepEqual([net.calls.telegram, net.calls.email, net.calls.other], [[], [], []], 'no alert and no PayPal call');
     assert.equal((await handlePayPalHealth(new Request('https://amitphotos.com/x', { method: 'POST' }), env)).status, 405);
     assert.equal((await handlePayPalHealth(new Request('https://amitphotos.com/x'), { ...env, PAYPAL_ENVIRONMENT: 'prod' })).status, 503);
+  } finally { net.restore(); }
+});
+
+// ----- admin test alert (proves the channels and the de-duplication without any real event) ------------------
+
+const testAlert = (env, key, body = { reason: 'channel check' }, method = 'POST') => handlePayPalTestAlert(new Request('https://amitphotos.com/api/admin/paypal/test-alert', {
+  method, headers: key ? { 'Idempotency-Key': key } : {}, ...(method === 'POST' ? { body: JSON.stringify(body) } : {}),
+}), env);
+
+test('the test alert sends one harmless message through the real channels, a replay sends nothing, and it touches no order', async () => {
+  const env = setup();
+  addOrder(env);
+  const net = fakes();
+  try {
+    const before = JSON.stringify(env.sqlite.prepare('SELECT * FROM paypal_orders').all());
+    const first = await testAlert(env, 'alert-test-0001');
+    assert.equal(first.status, 200);
+    assert.deepEqual(await first.json(), { ok: true, status: 'SENT', channels: ['telegram', 'email'] });
+    assert.equal(net.calls.telegram.length, 1);
+    assert.equal(net.calls.email.length, 1);
+    const text = JSON.stringify([net.calls.telegram.map(m => m.text), net.calls.email.map(m => [m.subject, m.text])]);
+    assert.match(text, /בדיקת התראה \(sandbox\)/);
+    for (const forbidden of ['PAYPALORD', 'CAPTURE', 'http', '@', 'tok-', 'fake-']) assert.ok(!text.includes(forbidden), 'test alert must not contain ' + forbidden);
+    const replay = await testAlert(env, 'alert-test-0001');
+    assert.deepEqual(await replay.json(), { ok: true, status: 'SKIPPED', replayed: true });
+    assert.equal(net.calls.telegram.length, 1, 'no second message for the same key');
+    assert.equal(net.calls.email.length, 1);
+    await testAlert(env, 'alert-test-0002');
+    assert.equal(net.calls.telegram.length, 2, 'a new key is a new test');
+    assert.equal(JSON.stringify(env.sqlite.prepare('SELECT * FROM paypal_orders').all()), before);
+    assert.deepEqual(net.calls.other, [], 'no PayPal call');
+  } finally { net.restore(); }
+});
+
+test('the test alert needs alerts enabled, a key and a reason, a valid configuration and POST; a dead channel reports 502 and can be retried', async () => {
+  const net = fakes();
+  try {
+    assert.equal((await testAlert(setup({ env: { PAYMENT_ALERTS_ENABLED: undefined } }), 'alert-test-0001')).status, 409);
+    const env = setup();
+    assert.equal((await testAlert(env, '')).status, 400);
+    assert.equal((await testAlert(env, 'short')).status, 400);
+    assert.equal((await testAlert(env, 'alert-test-0001', { reason: '   ' })).status, 400);
+    assert.equal((await testAlert(env, 'alert-test-0001', undefined, 'GET')).status, 405);
+    assert.equal((await testAlert({ ...env, PAYPAL_ENVIRONMENT: 'prod' }, 'alert-test-0001')).status, 503);
+    assert.deepEqual([net.calls.telegram, net.calls.email], [[], []]);
+    net.state.telegram = 'throw'; net.state.email = 'fail';
+    const dead = await testAlert(env, 'alert-test-0003');
+    assert.equal(dead.status, 502);
+    net.state.email = 'ok';
+    assert.equal((await testAlert(env, 'alert-test-0003')).status, 200, 'the failed claim was released, so the same key can be retried');
+    assert.equal(alertRows(env).length, 1);
   } finally { net.restore(); }
 });

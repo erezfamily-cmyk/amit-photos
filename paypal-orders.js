@@ -1177,6 +1177,28 @@ async function noteWebhookFailure(env, event, options) {
   } catch { /* monitoring never affects the webhook response */ }
 }
 
+// Admin: sends ONE harmless test alert through the real channels (no order, no customer data, no
+// payment action). The same Idempotency-Key never sends twice, which proves the de-duplication live.
+export async function handlePayPalTestAlert(request, env) {
+  if (request.method !== 'POST') return jsonRes({ error: 'method not allowed' }, 405, request);
+  const blocked = adminConfigBlocked(request, env);
+  if (blocked) return blocked;
+  const key = request.headers.get('Idempotency-Key') || '';
+  const body = await request.json().catch(() => ({}));
+  const reason = typeof body?.reason === 'string' ? body.reason.replace(/[\u0000-\u001f\u007f]/g, ' ').trim().slice(0, 100) : '';
+  if (!ACTION_ID.test(key)) return jsonRes({ error: 'IDEMPOTENCY_KEY_REQUIRED' }, 400, request);
+  if (!reason) return jsonRes({ error: 'REASON_REQUIRED' }, 400, request);
+  if (!paymentAlertsEnabled(env)) return jsonRes({ error: 'PAYMENT_ALERTS_NOT_ENABLED' }, 409, request);
+  const environment = resolvePayPalConfig(env, request).environment;
+  const result = await sendPaymentAlert(env, {
+    kind: 'TEST', key: 'test-' + key,
+    text: 'בדיקת התראה (' + environment + '): זו הודעת בדיקה, אין תקלה ואין צורך בפעולה. סיבה: ' + reason,
+  });
+  if (result.status === 'SENT') return jsonRes({ ok: true, status: 'SENT', channels: result.channels }, 200, request);
+  if (result.reason === 'ALREADY_ALERTED') return jsonRes({ ok: true, status: 'SKIPPED', replayed: true }, 200, request);
+  return jsonRes({ ok: false, status: result.status, reason: result.reason }, 502, request);
+}
+
 // Admin, read-only: stuck payments, failing webhooks, items waiting for a human, mail failures.
 export async function handlePayPalHealth(request, env) {
   if (request.method !== 'GET') return jsonRes({ error: 'method not allowed' }, 405, request);
