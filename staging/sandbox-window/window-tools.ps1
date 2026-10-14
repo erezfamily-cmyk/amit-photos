@@ -15,6 +15,11 @@ $links = @{}
 
 function Resolve-Link([string]$raw) {
   $raw = $raw.Trim()
+  # a link copied from the mail: https://<preview host>/checkout/download/#t=<token>
+  if ($raw -match '^https://([^/]+)/checkout/download/#t=([0-9a-fA-F-]{36})') {
+    if ($Matches[1] -ne ([Uri]$Base).Host) { throw 'Not the Preview host - refusing.' }
+    return $Base + '/api/download/' + $Matches[2]
+  }
   if ($raw.StartsWith('/api/download/')) { return $Base + $raw }
   $u = [Uri]$raw
   if ($u.Scheme -ne 'https' -or $u.Host -ne ([Uri]$Base).Host -or -not $u.AbsolutePath.StartsWith('/api/download/')) { throw 'Not a download link on the Preview host - refusing.' }
@@ -36,7 +41,7 @@ function Show-Json($res, [string[]]$fields) {
   return $o
 }
 
-Write-Host "Commands: readiness | paste NAME | head NAME | get NAME | support ORDERID | reissue ORDERID KEY NAME | review ORDERID KEY release|revoke | quit"
+Write-Host "Commands: readiness | mail ORDERID KEY | paste NAME | head NAME | get NAME | support ORDERID | reissue ORDERID KEY NAME | review ORDERID KEY release|revoke | quit"
 while ($true) {
   $line = Read-Host '>'
   if (-not $line) { continue }
@@ -67,6 +72,12 @@ while ($true) {
         $text = $res.Content.ReadAsStringAsync().GetAwaiter().GetResult()
         Write-Host ('HTTP ' + [int]$res.StatusCode)
         Write-Host $text
+      }
+      'mail' {
+        $res = Send 'POST' ($Base + '/api/admin/paypal/resend-link-email') @{ paypalOrderId = $p[1]; reason = 'sandbox mail test' } $true $p[2]
+        $text = $res.Content.ReadAsStringAsync().GetAwaiter().GetResult()
+        $o = $text | ConvertFrom-Json
+        Write-Host ('HTTP ' + [int]$res.StatusCode + '  ok=' + $o.ok + '  status=' + $o.status + '  reason=' + $o.reason + '  replayed=' + $o.replayed + '  test=' + $o.test)
       }
       'support' {
         $res = Send 'GET' ($Base + '/api/admin/paypal/order?paypalOrderId=' + $p[1]) $null $true $null
