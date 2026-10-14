@@ -1,6 +1,7 @@
 import { handlePayPalCreateOrder, handlePayPalCaptureOrder, handlePayPalSandboxStatus, handlePayPalWebhook, handlePayPalCheckoutReturn, handlePayPalSandboxCleanup, handlePayPalReissueDownload, handlePayPalAfterSaleReview, handlePayPalOrderSupportView, handlePayPalResendLinkEmail, handlePayPalLiveReadiness, handlePayPalHealth, handlePayPalTestAlert, handlePayPalCheckoutSwitch, retryDownloadLinkEmails, digitalPaymentsEnabled, handleDigitalCheckoutQuote } from './paypal-orders.js';
 import { runPaymentHealthCheck } from './paypal-monitoring.js';
 import { checkNewOrderAllowed } from './paypal-switch.js';
+import { scheduledJobs } from './scheduled-routing.js';
 // Cloudflare Worker — amit-photos
 // מטפל בנתיבי API ומגיש static assets
 
@@ -8359,11 +8360,19 @@ export default {
   },
 
   async scheduled(event, env, ctx) {
-    ctx.waitUntil(runPinterestCronSync(env));
-    ctx.waitUntil(runNewsletterCron(env));
-    ctx.waitUntil(runWelcomeSequenceCron(env));
-    ctx.waitUntil(retryDownloadLinkEmails(env).catch(() => {}));
-    ctx.waitUntil(runPaymentHealthCheck(env).catch(() => {}));
+    // Which jobs a trigger may start is decided in scheduled-routing.js (by event.cron): the two
+    // existing triggers run their usual set, a frequent payment trigger only the health check,
+    // and an unknown trigger only the (cheap, read-only) health check.
+    const plan = scheduledJobs(event?.cron);
+    if (plan.kind === 'unknown') console.error('[scheduled] unrecognised cron trigger "' + String(event?.cron).slice(0, 60) + '": only the payment health check ran');
+    const runners = {
+      pinterest: () => runPinterestCronSync(env),
+      newsletter: () => runNewsletterCron(env),
+      welcome: () => runWelcomeSequenceCron(env),
+      linkEmailRetry: () => retryDownloadLinkEmails(env).catch(() => {}),
+      paymentHealth: () => runPaymentHealthCheck(env).catch(() => {}),
+    };
+    for (const job of plan.jobs) ctx.waitUntil(runners[job]());
   },
 };
 
