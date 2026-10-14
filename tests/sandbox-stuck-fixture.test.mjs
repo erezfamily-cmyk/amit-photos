@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { DatabaseSync } from 'node:sqlite';
-import { assertSandboxTarget, eligibilityProblems, createStatements, restoreStatements, SANDBOX, PRODUCTION } from '../staging/sandbox-window/stuck-fixture.mjs';
+import { assertSandboxTarget, eligibilityProblems, createStatements, restoreStatements, finishStatements, clearSwitchStatements, SWITCH_KEY, SANDBOX, PRODUCTION } from '../staging/sandbox-window/stuck-fixture.mjs';
 
 // The Sandbox "stuck order" fixture and the helper commands for the Preview rehearsal. SQLite only: nothing here touches the cloud.
 
@@ -52,6 +52,43 @@ test('restore puts the order and its token back exactly as they were', () => {
   assert.deepEqual(run(s, restoreStatements({ order: before.order, token: before.tokens[0] })), [1, 1]);
   assert.deepEqual(load(s), before);
   assert.deepEqual(run(s, restoreStatements({ order: before.order, token: before.tokens[0] })), [0, 0], 'a second restore is a no-op');
+});
+
+test('finish: after a recovery rewrote the token and the fulfilment fields, the originals come back; the audit rows of the test stay', () => {
+  const s = db();
+  const before = load(s);
+  run(s, createStatements(before.order));
+  // what recover-fulfillment does: re-insert the stored token (fresh timestamps, unused), flip the order, write an audit row
+  s.prepare("INSERT INTO download_tokens (token, photo_ids, size, used, expires_at, created_at, tx, amount) VALUES ('tok-fixture-1','[\"p\"]','large',0,9999999999,1800000000,'CAPFIXTURE001',3)").run();
+  s.exec("UPDATE paypal_orders SET status = 'COMPLETED', fulfillment_json = '{\"url\":\"/api/download/tok-fixture-1\",\"x\":1}', completed_at = '2026-10-14T20:00:00Z'");
+  s.exec("INSERT INTO paypal_order_actions (order_ref, paypal_order_id, action, request_id, status, actor, created_at) VALUES ('o1','ORDERFIXTURE01','RECOVER_FULFILLMENT','k1','DONE','admin','2026-10-14T20:00:00Z')");
+  assert.deepEqual(run(s, finishStatements({ order: before.order, token: before.tokens[0] })), [1, 1]);
+  const after = load(s);
+  assert.deepEqual({ ...after, actions: undefined }, { ...before, actions: undefined }, 'order and token rows equal the originals');
+  assert.equal(after.actions.length, 1, 'the audit row of the rehearsal is kept');
+  assert.deepEqual(run(s, finishStatements({ order: before.order, token: before.tokens[0] })), [1, 1], 'idempotent');
+});
+
+test('finish does nothing to an order that is not COMPLETED', () => {
+  const s = db();
+  const before = load(s);
+  run(s, createStatements(before.order));
+  assert.equal(run(s, finishStatements({ order: before.order, token: before.tokens[0] }))[0], 0);
+  assert.equal(load(s).order.status, 'FULFILLING');
+});
+
+test('clear-switch deletes only the switch row and refuses while the switch is open', () => {
+  assert.throws(() => clearSwitchStatements(JSON.stringify({ state: 'open' })), /open/);
+  for (const value of [JSON.stringify({ state: 'frozen' }), JSON.stringify({ state: 'closed' }), 'not json', null]) {
+    const [statement] = clearSwitchStatements(value);
+    assert.equal(statement.sql, 'DELETE FROM settings WHERE key = ?');
+    assert.deepEqual(statement.params, [SWITCH_KEY]);
+  }
+  const s = new DatabaseSync(':memory:');
+  s.exec("CREATE TABLE settings (key TEXT PRIMARY KEY, value TEXT); INSERT INTO settings VALUES ('digital_checkout_switch','{\"state\":\"frozen\"}'), ('other_key','keep');");
+  const [statement] = clearSwitchStatements('{"state":"frozen"}');
+  assert.equal(Number(s.prepare(statement.sql).run(...statement.params).changes), 1);
+  assert.deepEqual(s.prepare('SELECT key FROM settings').all().map(r => r.key), ['other_key']);
 });
 
 test('orders that are not clean are refused: refunded, disputed, reviewed, re-issued, audited, not completed, not digital, extra tokens', () => {

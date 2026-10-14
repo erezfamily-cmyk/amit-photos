@@ -1,6 +1,6 @@
 # Production D1 backup before migrations 0002/0003: protected storage options (14.10.2026)
 
-**Status: options only. No export was made, no bucket, key or token was created, nothing was read from production for this document.** The owner has not approved exporting production data. Companion to `docs/production-migrations-0002-0003-execution-plan-2026-10-14.md` section 4.
+**Status: PLAN CHOSEN by the owner on 14.10.2026 (Time Travel bookmark + table-scoped export, age-encrypted, retention 14 days); this is the choice of a plan only — NO export has been made.** The text below keeps the options for the record. **Original status: options only. No export was made, no bucket, key or token was created, nothing was read from production for this document.** The owner has not approved exporting production data. Companion to `docs/production-migrations-0002-0003-execution-plan-2026-10-14.md` section 4.
 
 ## 1. What a backup has to protect against, and what is already covered
 The migrations are additive and touch only `paypal_orders`, `paypal_webhook_events`, `download_tokens` (new columns) and add new tables/indexes. The dress rehearsal (14.10) showed that a failed run leaves nothing behind and that the rollback files and a Time Travel restore both work. So the backup is insurance against an unforeseen problem, not part of the happy path.
@@ -46,3 +46,10 @@ Pass = counts and checksums equal. Until a restore test passes, the export count
 2. Storage: local encrypted file, private R2 bucket, or both; where the `age` private key lives (a new key pair for this project is cleaner than reusing another project's).
 3. Approve creating a short-lived scoped API token (and the R2 bucket if chosen) at execution time.
 4. Retention: 14 days (B) / 7 days (C), or other.
+
+## 7. Chosen plan (owner, 14.10.2026): plan selection only, nothing executed
+- **Layers:** A (Time Travel bookmark before each migration, with timestamp) + B (table-scoped export: `paypal_orders`, `paypal_webhook_events`, `download_tokens` with data, plus a whole-database **schema-only** export). No full export (C).
+- **Encryption:** `age`, public-key encryption; plaintext never leaves the operator's temporary folder and is overwritten right after encryption.
+- **Retention:** **14 days** from the verified migrations, then deletion with a recorded deletion check (section 4).
+- **Still to decide at execution time (not yet chosen):** storage location (local encrypted file, private R2 bucket with a 14-day lifecycle rule, or both) and who holds the `age` private key; approval to create a short-lived scoped token (and the bucket if R2). These need the owner's go at execution time together with the go for the migrations; no export, key, token or bucket is created before that.
+- **Proof of restorability** (section 5) stays part of the plan: decrypt, load into a temporary isolated D1, compare counts and checksums, `PRAGMA integrity_check`, delete.

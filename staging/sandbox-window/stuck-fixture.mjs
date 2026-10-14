@@ -5,6 +5,10 @@
 //   node stuck-fixture.mjs create  <paypalOrderId>   applies the two statements (needs --yes-sandbox)
 //   node stuck-fixture.mjs check   <paypalOrderId>   read-only: current status and token count
 //   node stuck-fixture.mjs restore <paypalOrderId>   puts the order back exactly as snapshotted (needs --yes-sandbox)
+//   node stuck-fixture.mjs finish  <paypalOrderId>   AFTER a successful recovery: puts the order's fulfilment fields and the token row
+//                                                    back to their ORIGINAL values (audit rows of the test are kept) (needs --yes-sandbox)
+//   node stuck-fixture.mjs clear-switch              removes the Sandbox checkout-switch row (the "absent = blocked" state); refuses while
+//                                                    the switch is open (needs --yes-sandbox)
 //
 // What it does to the chosen order, and nothing else: status COMPLETED -> FULFILLING (fulfillment_json and completed_at cleared)
 // and deletes its single download token. That is exactly the state a crash between the capture and the completion leaves
@@ -57,12 +61,32 @@ export function restoreStatements(snapshot) {
   ];
 }
 
+// After a successful recovery the order is COMPLETED again but its token row was recreated (fresh created_at/expires_at, used = 0) and its
+// fulfilment fields were rewritten. This puts those fields back to the snapshotted originals. Audit rows are not touched.
+export function finishStatements(snapshot) {
+  const t = snapshot.token; const o = snapshot.order;
+  return [
+    { sql: "UPDATE paypal_orders SET fulfillment_json = ?, completed_at = ? WHERE paypal_order_id = ? AND status = 'COMPLETED'", params: [o.fulfillment_json, o.completed_at, o.paypal_order_id] },
+    { sql: 'UPDATE download_tokens SET used = ?, expires_at = ?, created_at = ?, amount = ? WHERE token = ? AND tx = ? AND paypal_order_ref IS NULL', params: [t.used, t.expires_at, t.created_at, t.amount, t.token, t.tx] },
+  ];
+}
+
+// The checkout switch lives in one settings row. Removing it returns the Sandbox to the original "absent = blocked" state. Never while open.
+export const SWITCH_KEY = 'digital_checkout_switch';
+export function clearSwitchStatements(currentValue) {
+  let state = null;
+  try { state = currentValue ? JSON.parse(currentValue).state : null; } catch { state = 'unreadable'; }
+  if (state === 'open') throw new Error('refusing: the switch is open - close or freeze it first');
+  return [{ sql: 'DELETE FROM settings WHERE key = ?', params: [SWITCH_KEY] }];
+}
+
 // ---- cloud part (only when run directly) ------------------------------------------------------------------------------------
 async function main() {
   const [mode, orderId] = process.argv.slice(2);
   const confirmed = process.argv.includes('--yes-sandbox');
-  if (!['plan', 'create', 'check', 'restore'].includes(mode) || !/^[A-Za-z0-9_-]{8,64}$/.test(orderId || '')) {
-    console.log('usage: node stuck-fixture.mjs plan|create|check|restore <paypalOrderId> [--yes-sandbox]'); process.exit(2);
+  const orderMode = ['plan', 'create', 'check', 'restore', 'finish'].includes(mode);
+  if (!(orderMode && /^[A-Za-z0-9_-]{8,64}$/.test(orderId || '')) && mode !== 'clear-switch') {
+    console.log('usage: node stuck-fixture.mjs plan|create|check|restore|finish <paypalOrderId> [--yes-sandbox] | clear-switch [--yes-sandbox]'); process.exit(2);
   }
   const token = execFileSync('npx', ['-y', 'wrangler@4.149.0', 'auth', 'token'], { shell: true, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] })
     .split(/\r?\n/).map(l => l.trim()).filter(l => /^[A-Za-z0-9_.-]{20,}$/.test(l)).pop();
@@ -74,6 +98,15 @@ async function main() {
     if (!r.success || !r.result?.[0]?.success) throw new Error('D1: ' + (r.errors?.[0]?.message || 'query failed'));
     return r.result[0];
   };
+  if (mode === 'clear-switch') {
+    const row = (await q('SELECT value FROM settings WHERE key = ?', [SWITCH_KEY])).results[0];
+    console.log('database:', info.name, '(Sandbox) | switch row:', row ? 'present, state ' + (() => { try { return JSON.parse(row.value).state; } catch { return 'unreadable'; } })() : 'absent');
+    const statements = clearSwitchStatements(row?.value);
+    if (!row) { console.log('nothing to remove: the switch is already absent (blocked)'); return; }
+    if (!confirmed) { console.log('add --yes-sandbox to apply'); process.exit(2); }
+    for (const s of statements) console.log('changes:', (await q(s.sql, s.params)).meta?.changes);
+    return;
+  }
   const load = async () => {
     const order = (await q('SELECT * FROM paypal_orders WHERE paypal_order_id = ?', [orderId])).results[0];
     const tokens = order ? (await q('SELECT * FROM download_tokens WHERE tx = ? OR paypal_order_ref = ?', [order.paypal_capture_id || '-', order.id])).results : [];
@@ -95,10 +128,25 @@ async function main() {
     for (const s of statements) console.log('  ', s.sql, '| params:', s.params.map((p, i) => (typeof p === 'string' && p.length > 20 ? '<' + p.slice(0, 4) + '…>' : p)).join(', '));
     if (mode === 'plan') return;
     if (!confirmed) { console.log('add --yes-sandbox to apply'); process.exit(2); }
-    fs.writeFileSync(snapFile, JSON.stringify({ takenAt: new Date().toISOString(), order: state.order, token: state.tokens[0] }));
+    const snapText = JSON.stringify({ takenAt: new Date().toISOString(), order: state.order, token: state.tokens[0] });
+    fs.writeFileSync(snapFile, snapText);
+    console.log('snapshot sha256 (content never printed):', (await import('node:crypto')).createHash('sha256').update(snapText).digest('hex').slice(0, 16));
     for (const s of statements) console.log('changes:', (await q(s.sql, s.params)).meta?.changes);
     const after = await load();
     console.log('now:', after.order.status, '| tokens:', after.tokens.length, '| snapshot saved locally:', snapFile);
+    return;
+  }
+  if (mode === 'finish') {
+    if (!fs.existsSync(snapFile)) throw new Error('no snapshot file for this order');
+    if (!confirmed) { console.log('add --yes-sandbox to apply'); process.exit(2); }
+    if (state.order?.status !== 'COMPLETED') throw new Error('refusing: the order is ' + state.order?.status + ', finish only applies after a completed recovery');
+    const snapshot = JSON.parse(fs.readFileSync(snapFile, 'utf8'));
+    for (const s of finishStatements(snapshot)) console.log('changes:', (await q(s.sql, s.params)).meta?.changes);
+    const after = await load();
+    const t = after.tokens[0]; const o = snapshot.token;
+    const tokenRowEqual = !!t && t.token === o.token && t.used === o.used && t.expires_at === o.expires_at && t.created_at === o.created_at;
+    const orderEqual = after.order.fulfillment_json === snapshot.order.fulfillment_json && after.order.completed_at === snapshot.order.completed_at;
+    console.log('now:', after.order.status, '| tokens:', after.tokens.length, '| token row equals the original:', tokenRowEqual, '| order fields equal the original:', orderEqual);
     return;
   }
   // restore
