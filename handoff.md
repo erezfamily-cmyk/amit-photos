@@ -16,6 +16,17 @@
 
 ## Acquisition and caption quality review — 12.10.2026
 
+### E-MAIL ALERT TEST VERIFIED BY RECEIPT AND PREVIEW CLEANED 14.10.2026 (payment flags `false`; Resend test key deletion NOT yet confirmed)
+
+Owner-approved single test, Preview only, admin address `erez.family@gmail.com` (`ADMIN_EMAIL` set by me; the production default stays `contact@amitphotos.com`). Owner added a temporary restricted Resend key (hidden-prompt script) and I enabled `PAYMENT_ALERTS_ENABLED` at 16:44:19Z (Preview deployment `9b39c556`; both payment flags stayed `false`; Telegram absent).
+- **Alert sent:** `testalert alert-email-0001` -> `SENT`, channel `email`. D1: one new `ALERT` row (`test-alert-email-0001`, `SENT`, `TEST:email`, 16:46:44Z, completed in under a second); the only other `ALERT` row is the earlier Telegram test; no duplicate (order, action, request id); no address or link in any alert row; totals unchanged (20 orders, 29 webhook events, 16 tokens, 2 `LINK_EMAIL` rows), i.e. the test touched no order.
+- **De-duplication:** the same key again answered `SKIPPED replayed=True`; the owner received exactly one message.
+- **RECEIPT VERIFIED BY THE OWNER (not just "SENT"):** the test mail arrived in the inbox; SPF PASS, DKIM PASS, DMARC PASS. **The e-mail alert channel is therefore verified for receipt, authentication and de-duplication** on the Preview with a Resend test key. Not verified: delivery to the production default `contact@amitphotos.com` (Cloudflare Email Routing destination never tested), long-term inbox placement, bounce handling, and that production's own Resend key and settings work the same way.
+- **Telegram stays unverified** (the earlier test: server answered SENT, receipt never confirmed; see the previous entry).
+- **Cleanup done 16:50:08Z (Preview deployment `d7dcd44d`):** `PAYMENT_ALERTS_ENABLED`, `ADMIN_EMAIL` and `RESEND_API_KEY` removed from the PR Preview; Telegram variable, every mail variable and `PUBLIC_BASE_URL` absent; admin password, PayPal credentials, webhook id and bindings still present; both payment flags `false`. create/capture answer 503 on the Preview, the main Sandbox Worker and production; `prep/...` `e69131f`; PR #155 draft, not merged. Alerts are off everywhere.
+- **Still to do by the owner:** delete the temporary Resend key `amit-preview-alerts-test` in Resend. **Not recorded as done until the owner confirms it.**
+- **Open items from this thread:** the production alert recipient/channel choice (the owner prefers e-mail), the production default address and its routing, hardening of the Telegram success check, enabling alerts in production at release, the 15-minute `event.cron` routing, outside monitoring, the runbook adoption, and the Live-safe tool for a stuck order (all owner decisions listed in the runbook and proposals).
+
 ### TELEGRAM ALERT TEST: SERVER SAID SENT, RECEIPT NOT VERIFIED; PREVIEW CLEANED; EMAIL ALERT TEST PENDING 14.10.2026 (payment flags `false`)
 
 On the PR Preview only (Telegram secret added by the owner with the hidden-prompt script, `PAYMENT_ALERTS_ENABLED=true` applied by me at 16:26:56Z):
