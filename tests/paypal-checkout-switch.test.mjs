@@ -379,6 +379,54 @@ test('five parallel requests with ONE key make one order under a cap of one; a n
   } finally { net.restore(); }
 });
 
+test('a key owner whose order was created by a parallel request an instant earlier gets that order, not a refusal (cap already full)', async () => {
+  const env = setup({ switchValue: openSwitch({ maxOrders: 1 }) });
+  const net = fakePayPal(env);
+  // The sibling request wins the race between this request's key lookup and its cap look.
+  const realPrepare = env.DB.prepare.bind(env.DB);
+  let planted = false;
+  env.DB.prepare = sql => {
+    if (!planted && sql.startsWith("SELECT COUNT(*) AS n FROM paypal_orders WHERE order_type = 'digital' AND created_at >= ?")) {
+      planted = true;
+      env.sqlite.prepare("INSERT INTO paypal_orders (id, paypal_order_id, order_type, photo_id, sku, amount_expected, currency, status, created_at, client_idempotency_key) VALUES ('winner-1', 'PAYPALWINNER1', 'digital', 'photo-1', 'large', 10000, 'ILS', 'CREATED', ?, 'raced-key-00000001')").run(iso(Date.now()));
+    }
+    return realPrepare(sql);
+  };
+  try {
+    const response = await create(env, 'raced-key-00000001');
+    assert.equal(response.status, 200, 'the owner of the key gets its own order back');
+    assert.equal((await response.json()).paypalOrderId, 'PAYPALWINNER1');
+    assert.equal(orderCount(env), 1);
+    assert.equal(net.calls.creates, 0, 'no PayPal order was created for it');
+    const mismatch = await create(env, 'other-key-00000002');
+    assert.equal(mismatch.status, 503, 'a different key is still refused');
+  } finally { net.restore(); }
+});
+
+test('the orphan PayPal order (cap race) can never be charged: the app has no row for it, so capture is impossible, and its events are ignored', async () => {
+  const env = setup({ switchValue: openSwitch({ maxOrders: 1 }) });
+  const net = fakePayPal(env);
+  try {
+    const results = await Promise.all(Array.from({ length: 6 }, (_, i) => create(env, 'orphan-key-' + String(i).padStart(6, '0'))));
+    assert.equal(orderCount(env), 1);
+    const known = new Set(env.sqlite.prepare('SELECT paypal_order_id AS po FROM paypal_orders').all().map(r => r.po));
+    assert.ok(results.some(r => r.status === 503));
+    // PayPal orders that exist only at PayPal (their approval link was never returned to any browser)
+    const orphanId = 'PAYPALORDORPHAN1';
+    assert.ok(!known.has(orphanId));
+    const before = net.calls.captures;
+    assert.equal((await capture(env, orphanId)).status, 404);
+    assert.equal(net.calls.captures, before, 'PayPal capture is never called for an order without a local row');
+    const hook = await handlePayPalWebhook(new Request('https://amitphotos.com/api/paypal/webhook', {
+      method: 'POST', body: JSON.stringify({ id: 'WH-ORPHAN-00001', event_type: 'PAYMENT.CAPTURE.COMPLETED', create_time: '2026-10-14T10:00:00Z', resource: { id: 'CAPORPHAN0001', status: 'COMPLETED', amount: { currency_code: 'ILS', value: '100.00' }, supplementary_data: { related_ids: { order_id: orphanId } } } }),
+      headers: { 'PAYPAL-AUTH-ALGO': 'a', 'PAYPAL-CERT-URL': 'https://x/c', 'PAYPAL-TRANSMISSION-ID': 't1', 'PAYPAL-TRANSMISSION-SIG': 's', 'PAYPAL-TRANSMISSION-TIME': 't' },
+    }), env);
+    assert.equal(hook.status, 200);
+    assert.equal((await hook.json()).ignored, true);
+    assert.equal(env.sqlite.prepare('SELECT COUNT(*) AS n FROM download_tokens').get().n, 0, 'no fulfilment for an order the app never recorded');
+  } finally { net.restore(); }
+});
+
 test('the photo list is enforced on the server, for the quote and for the order', async () => {
   const env = setup({ switchValue: openSwitch({ photoIds: ['photo-1'] }) });
   const net = fakePayPal(env);

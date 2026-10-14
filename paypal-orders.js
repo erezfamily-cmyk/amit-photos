@@ -1563,7 +1563,14 @@ export async function handlePayPalCreateOrder(request, env, options = {}) {
   // atomic INSERT below, which parallel requests cannot get around.
   if (switchConfig?.maxOrders) {
     const used = await env.DB.prepare("SELECT COUNT(*) AS n FROM paypal_orders WHERE order_type = 'digital' AND created_at >= ?").bind(switchConfig.openedAt).first();
-    if ((Number(used?.n) || 0) >= switchConfig.maxOrders) return paymentsDisabledResponse(request);
+    if ((Number(used?.n) || 0) >= switchConfig.maxOrders) {
+      // A parallel request with the SAME key may have just created the order: that key owner is not a new order.
+      const owned = await env.DB.prepare('SELECT * FROM paypal_orders WHERE client_idempotency_key = ? LIMIT 1').bind(idempotencyKey).first();
+      if (owned?.paypal_order_id && owned.photo_id === photoId && owned.sku === sku && owned.currency === pricing.currency && owned.amount_expected === pricing.amountExpected) {
+        return canonicalOrderResponse(request, env, owned.paypal_order_id, options);
+      }
+      return paymentsDisabledResponse(request);
+    }
   }
 
   let accessToken;
