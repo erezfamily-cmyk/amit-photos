@@ -1,6 +1,6 @@
 # Preview rehearsal: checkout switch and recover-fulfillment (owner-run steps; prepared 14.10.2026)
 
-**Status: PREPARED, NOT RUN.** Approved by the owner on 14.10.2026: one controlled `recover-fulfillment` rehearsal and a `switch` check on the **Preview only**. Not approved: production, Live, merge, deploy, a canary. Everything below happens on the Sandbox Worker `amit-photos-paypal-sandbox`, Preview `feature/digital-checkout-preparation-2026-10-13`, Sandbox D1 `amit-photos-paypal-sandbox-db` (`7b027b93-…`).
+**Status (14.10 evening): the stuck order is CREATED (owner "go" for order `97A89187R7121682U` only); the owner-run commands have NOT been run yet.** Approved by the owner on 14.10.2026: one controlled `recover-fulfillment` rehearsal and a `switch` check on the **Preview only**. Not approved: production, Live, merge, deploy, a canary. Everything below happens on the Sandbox Worker `amit-photos-paypal-sandbox`, Preview `feature/digital-checkout-preparation-2026-10-13`, Sandbox D1 `amit-photos-paypal-sandbox-db` (`7b027b93-…`).
 
 **Why the owner has to type the commands:** both routes are admin-authenticated and the Preview admin password is in the owner's password manager (the entry created on 13.10). It is never given to chat or to me. I did not use any other stored credential.
 
@@ -56,3 +56,47 @@ What I verify afterwards (read-only on the Sandbox D1): exactly one token for th
 - `recover` returns `PAYMENT_NOT_VERIFIED` or `PAYPAL_LOOKUP_FAILED`: do not retry blindly; send me the code (it contains no data). This is the very result the rehearsal exists to find (the real PayPal payload differs from the fake).
 - Interrupted: the same key resumes; another key is held off for 10 minutes.
 - Abandon: `node staging/sandbox-window/stuck-fixture.mjs restore 97A89187R7121682U --yes-sandbox`.
+
+## 6. Final exact commands (owner-run) and what I do before/after
+**State right now (created by me after the "go", 14.10 ~19:10 UTC):** the Preview runs commit `52ec9f1` (contains the recovery route and the dispute guards tested in CI); order `97A89187R7121682U` was eligible (COMPLETED, no refund/dispute/after-sale state, no audit rows, exactly one token, no other test uses it: the only mentions are the 13.10 historical purchase notes; no webhook event arrived for its capture today) and is now `FULFILLING` with its capture id and fulfilment token still recorded and its single token row removed. Snapshot of the two affected rows: a local file (1054 bytes, sha256 prefix `2f1deeafcc76ee8b`), content never printed. Flags `false`, mail and alerts off, switch row absent.
+
+### In your own PowerShell (hidden password prompt; English keyboard layout)
+```
+cd <your checkout of the #155 branch>
+$closes = (Get-Date).ToUniversalTime().AddMinutes(30).ToString('yyyy-MM-ddTHH:mm:ssZ'); $closes     # copy this value
+pwsh -File staging/sandbox-window/window-tools.ps1
+```
+Then at the `>` prompt (the keys are arbitrary 8-64 character values; use these exactly or your own):
+```
+switch
+switch open pvw-sw-open-01 <the $closes value> 1 paypal-sandbox-test-photo
+switch
+switch open pvw-sw-open-01 <the same $closes value> 1 paypal-sandbox-test-photo
+switch closed pvw-sw-closed-02
+switch
+switch frozen pvw-sw-frozen-03
+switch
+support 97A89187R7121682U
+recover 97A89187R7121682U pvw-rec-0001
+support 97A89187R7121682U
+recover 97A89187R7121682U pvw-rec-0001
+recover 97A89187R7121682U pvw-rec-0002
+quit
+```
+Expected, in order:
+1. `switch` → `valid = false`, `effectiveMode = "blocked"` (no row).
+2. `switch open …` → `ok = true`, `effectiveMode = "open"`. (Optionally, between 2 and 4, open `<Preview>/api/payments-status` in a browser: it must still say `"digitalEnabled":false` — the flags override the switch.)
+3. `switch` → `state = "open"`; the same `switch open pvw-sw-open-01 …` again → `replayed = true`.
+4. `switch closed …` → `effectiveMode = "closed"`; `switch` shows it; `switch frozen …` → `frozen`.
+5. `support 97A89187R7121682U` → `status = FULFILLING`.
+6. `recover … pvw-rec-0001` → `HTTP 200`, `ok = true`, `replayed = false`, `status = "COMPLETED"`.
+7. `support …` → `COMPLETED` and an action `RECOVER_FULFILLMENT / DONE`.
+8. `recover … pvw-rec-0001` again → `replayed = true`; `recover … pvw-rec-0002` → `alreadyCompleted = true`.
+If step 6 prints an `error` (for example `PAYMENT_NOT_VERIFIED` or `PAYPAL_LOOKUP_FAILED`) do not retry; tell me the code. Tell me when you are done.
+
+### What I do afterwards (read-only checks, then restoration)
+1. Verify in the Sandbox D1: order `COMPLETED`, exactly one token for the capture, no new `LINK_EMAIL`/webhook rows, one `RECOVER_FULFILLMENT` audit row without link or token text, the three `SWITCH` audit rows.
+2. Restore the originals: `node staging/sandbox-window/stuck-fixture.mjs finish 97A89187R7121682U --yes-sandbox` (the order's fulfilment fields and the token row — `used`, `created_at`, `expires_at` — back to the snapshot; the audit rows of the rehearsal are kept as the record) and `… clear-switch --yes-sandbox` (removes the switch row: the original "absent = blocked" state; refuses while open).
+3. Re-read the Preview deployment through the Cloudflare API (both flags `false`, no mail or alert variables, no new secrets) and verify the blocking from outside: `/api/payments-status` `digitalEnabled:false`, public create-order and capture-order 503, `recover-fulfillment` without credentials 401, `GET …/switch` reports no valid switch.
+4. Delete the local snapshot file; record everything in HANDOFF.
+If you abandon the test before step 6: `… restore 97A89187R7121682U --yes-sandbox` (I run it).
