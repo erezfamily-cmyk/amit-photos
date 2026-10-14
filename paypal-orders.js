@@ -476,6 +476,15 @@ export function isTerminalAfterSale(order) {
   return TERMINAL_AFTER_SALE.has(afterSaleStateOf(order));
 }
 
+// Withdraws unused links of an order that is not completed yet (nothing was delivered). One statement: either the order is
+// already COMPLETED at that instant (then the human decides) or it is not (then the link is withdrawn).
+async function revokeUndeliveredTokens(env, order, captureId, reason) {
+  const result = await env.DB.prepare(
+    "UPDATE download_tokens SET used = 2, revoked_at = ?, revoke_reason = ? WHERE used = 0 AND (paypal_order_ref = ? OR tx = ?) AND EXISTS (SELECT 1 FROM paypal_orders WHERE id = ? AND status <> 'COMPLETED')"
+  ).bind(Math.floor(Date.now() / 1000), reason, order.id, captureId || order.paypal_capture_id || '', order.id).run();
+  return Number(result?.meta?.changes) || 0;
+}
+
 async function raiseAfterSaleState(env, orderRef, state, nowIso) {
   // Monotonic: a late or repeated event can raise the state, never lower it.
   const result = await env.DB.prepare(
@@ -619,6 +628,10 @@ async function processAfterSaleWebhook(request, env, event, accessToken) {
   await raiseAfterSaleState(env, order.id, state, nowIso);
   if (TERMINAL_AFTER_SALE.has(state)) {
     await revokeUnusedTokens(env, order, captureId, state);
+  } else if (state === 'REVIEW_REQUIRED') {
+    // Policy: a delivered link waits for the human decision; a link minted for an order that is NOT yet completed was never
+    // given to anyone, so it is withdrawn now (the state above is already recorded, so a completion can no longer flip).
+    await revokeUndeliveredTokens(env, order, captureId, 'REVIEW_BEFORE_DELIVERY');
   }
   return { ok: true, afterSale: state, paypalOrderId: order.paypal_order_id, orderRef: order.id };
 }
@@ -1228,6 +1241,11 @@ export async function handlePayPalRecoverFulfillment(request, env, options = {})
   };
   const refuse = async (code, status, extra = {}) => {
     await audit(order ? order.id : 'UNKNOWN', 'REFUSED', code);
+    // A resumed attempt (same key, still STARTED) that is now refused must not keep holding the 10-minute slot.
+    if (order) {
+      await env.DB.prepare("UPDATE paypal_order_actions SET status = 'REFUSED', reason = ?, completed_at = ? WHERE order_ref = ? AND action = 'RECOVER_FULFILLMENT' AND request_id = ? AND status = 'STARTED'")
+        .bind(recoveryAuditText(input.reason, code), nowIso(), order.id, input.key).run();
+    }
     return jsonRes({ error: code, ...extra }, status, request);
   };
   if (!order) return refuse('ORDER_NOT_FOUND', 404);
@@ -1326,6 +1344,8 @@ export async function handlePayPalRecoverFulfillment(request, env, options = {})
       payerEmail: authoritative?.payer?.email_address || null, waitUntil: options.waitUntil,
     });
     if (!completion.ok) {
+      const refusal = completion.status === 409 ? (await completion.json().catch(() => ({}))).error : null;
+      if (refusal === 'ORDER_UNDER_REVIEW') return await fail('AFTER_SALE_OPEN', 409);
       return await fail(completion.status === 409 ? 'ORDER_REFUNDED' : 'FULFILLMENT_FAILED', completion.status === 409 ? 409 : 502);
     }
     const done = await env.DB.prepare('SELECT status FROM paypal_orders WHERE id = ?').bind(order.id).first();
@@ -1832,22 +1852,32 @@ async function finalizeDigitalPayPalOrder(request, env, order, extras = {}) {
     return jsonRes({ error: 'PayPal fulfillment state is incomplete' }, 500, request);
   }
 
+  // Blocking policy (runbook rule 3): while an order has any after-sale state (full or partial refund, reversal,
+  // manual revoke, review) or an open dispute that THE DATABASE ALREADY KNOWS ABOUT, no link is minted and the order
+  // is not completed. The rule is enforced inside the writes themselves, not only by the reads before them, so an
+  // event recorded between a check and a write still wins. A dispute PayPal has not yet told us about cannot be
+  // seen here: see docs/stuck-fulfilling-recovery-design-2026-10-14.md section 6.
   const beforeMint = await env.DB.prepare('SELECT * FROM paypal_orders WHERE id = ?').bind(order.id).first();
-  if (isTerminalAfterSale(beforeMint)) return jsonRes({ error: 'ORDER_REFUNDED' }, 409, request);
+  const reviewColumns = !!beforeMint && 'after_sale_state' in beforeMint && 'dispute_open' in beforeMint;   // migration 0003 applied
+  const underReview = row => afterSaleStateOf(row) !== 'NONE' || Number(row?.dispute_open) === 1;
+  const blockedResponse = row => jsonRes({ error: isTerminalAfterSale(row) ? 'ORDER_REFUNDED' : 'ORDER_UNDER_REVIEW' }, 409, request);
+  const revokeReason = row => isTerminalAfterSale(row) ? afterSaleStateOf(row) : 'REVIEW_BEFORE_DELIVERY';
+  if (underReview(beforeMint)) return blockedResponse(beforeMint);
 
   const now = Math.floor(Date.now() / 1000);
   const expires = now + 86400;
+  if (reviewColumns) {
+    // A link that was withdrawn only because a review/dispute began before delivery comes back once the human released the order.
+    await env.DB.prepare(
+      "UPDATE download_tokens SET used = 0, revoked_at = NULL, revoke_reason = NULL WHERE token = ? AND tx = ? AND used = 2 AND revoke_reason = 'REVIEW_BEFORE_DELIVERY' AND EXISTS (SELECT 1 FROM paypal_orders WHERE id = ? AND after_sale_state = 'NONE' AND dispute_open = 0)"
+    ).bind(fulfillmentToken, captureId, order.id).run();
+  }
+  const mintValues = [fulfillmentToken, JSON.stringify([order.photo_id]), order.sku, captureId, expires, now, order.amount_expected / 100];
   await env.DB.prepare(
-    'INSERT OR IGNORE INTO download_tokens (token, photo_ids, size, tx, used, expires_at, created_at, amount) VALUES (?, ?, ?, ?, 0, ?, ?, ?)'
-  ).bind(
-    fulfillmentToken,
-    JSON.stringify([order.photo_id]),
-    order.sku,
-    captureId,
-    expires,
-    now,
-    order.amount_expected / 100
-  ).run();
+    reviewColumns
+      ? "INSERT OR IGNORE INTO download_tokens (token, photo_ids, size, tx, used, expires_at, created_at, amount) SELECT ?, ?, ?, ?, 0, ?, ?, ? WHERE EXISTS (SELECT 1 FROM paypal_orders WHERE id = ? AND after_sale_state = 'NONE' AND dispute_open = 0)"
+      : 'INSERT OR IGNORE INTO download_tokens (token, photo_ids, size, tx, used, expires_at, created_at, amount) VALUES (?, ?, ?, ?, 0, ?, ?, ?)'
+  ).bind(...(reviewColumns ? [...mintValues, order.id] : mintValues)).run();
 
   // Do not report success until the entitlement actually exists. This protects
   // against schema/constraint/DB failures after PayPal has already captured.
@@ -1855,14 +1885,16 @@ async function finalizeDigitalPayPalOrder(request, env, order, extras = {}) {
     'SELECT token FROM download_tokens WHERE token = ? AND tx = ? LIMIT 1'
   ).bind(fulfillmentToken, captureId).first();
   if (!persistedToken?.token) {
+    const blockedNow = reviewColumns ? await env.DB.prepare('SELECT * FROM paypal_orders WHERE id = ?').bind(order.id).first() : null;
+    if (blockedNow && underReview(blockedNow)) return blockedResponse(blockedNow);   // the guarded insert refused: a refund/dispute was recorded meanwhile
     return jsonRes({ error: 'Digital fulfillment persistence failed' }, 500, request);
   }
 
-  // A refund may have landed between the check above and the insert: undo the link.
+  // A refund or dispute may have been recorded between the check above and the insert: undo the link.
   const afterMint = await env.DB.prepare('SELECT * FROM paypal_orders WHERE id = ?').bind(order.id).first();
-  if (isTerminalAfterSale(afterMint)) {
-    await revokeUnusedTokens(env, order, captureId, afterSaleStateOf(afterMint));
-    return jsonRes({ error: 'ORDER_REFUNDED' }, 409, request);
+  if (underReview(afterMint)) {
+    await revokeUnusedTokens(env, order, captureId, revokeReason(afterMint));
+    return blockedResponse(afterMint);
   }
 
   const photo = await env.DB.prepare('SELECT title FROM photos WHERE id = ?').bind(order.photo_id).first();
@@ -1871,14 +1903,21 @@ async function finalizeDigitalPayPalOrder(request, env, order, extras = {}) {
     title: photo?.title || order.photo_id,
   };
 
+  // The completion itself carries the same condition: if a refund or dispute was recorded after the last read, nothing flips.
   const completion = await env.DB.prepare(
     "UPDATE paypal_orders SET status='COMPLETED', fulfillment_json=?, completed_at=? WHERE paypal_order_id=? AND status='FULFILLING'"
+      + (reviewColumns ? " AND after_sale_state = 'NONE' AND dispute_open = 0" : '')
   ).bind(JSON.stringify(fulfillment), new Date().toISOString(), order.paypal_order_id).run();
 
   const completed = await env.DB.prepare(
-    'SELECT status, fulfillment_json FROM paypal_orders WHERE paypal_order_id = ?'
+    'SELECT * FROM paypal_orders WHERE paypal_order_id = ?'
   ).bind(order.paypal_order_id).first();
   if (completed?.status !== 'COMPLETED' || !completed.fulfillment_json) {
+    if (reviewColumns && completed?.status === 'FULFILLING' && underReview(completed)) {
+      // The event arrived after the link was minted and before the order was completed: the link is withdrawn, nothing was delivered.
+      await revokeUnusedTokens(env, order, captureId, revokeReason(completed));
+      return blockedResponse(completed);
+    }
     return jsonRes({ error: 'Digital fulfillment completion failed' }, 500, request);
   }
 

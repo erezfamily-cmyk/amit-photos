@@ -49,3 +49,15 @@ Happy path completes and mails once; replay with the same key does nothing; seco
 4. May I mark the legacy section of `paypal-flow.md` as obsolete for Orders v2 and change the alert wording now (documentation/text only)?
 
 Not verified: PayPal's real retention window for resending events; behaviour with a real Live capture that stays `PENDING` (a real echeck-type capture would be neither `COMPLETED` nor failed: the action refuses it as `PAYMENT_NOT_VERIFIED`, which is the safe outcome, but it has never been seen live).
+
+## 6. Disputes and refunds: what is enforced, and what cannot be (added 14.10.2026, implemented in the #155 branch)
+
+**Two different situations must not be mixed up:**
+
+| | The database already knows (an event was received and recorded: `after_sale_state` is not `NONE`, or `dispute_open = 1`) | PayPal has not told us yet (the dispute exists at PayPal, but no event reached us) |
+|---|---|---|
+| Before delivery | **Enforced.** The shared completion function refuses (409 `ORDER_UNDER_REVIEW`, or `ORDER_REFUNDED` for a refund/reversal/revoke); the same condition sits inside the token INSERT and inside the completion UPDATE, so an event recorded between a check and a write still wins (a guarded INSERT writes nothing; a guarded UPDATE flips nothing). | **Cannot be known.** The recovery verifies the payment with PayPal, but the order/capture lookup does not report a dispute; delivery proceeds. |
+| Event arrives after the token was minted but before the order was completed | **Enforced.** The event handler withdraws every unused link of an order that is not yet `COMPLETED` (one statement; reason `REVIEW_BEFORE_DELIVERY`), and the completion's own check withdraws it if the event lands in the last instant. Nothing was delivered, so nothing is lost. After a person releases the order (`after-sale-review` `release`), the SAME stored link is restored and delivered once. A `revoke` decision is final; the link is never restored. | Same as above: only from the moment the event is recorded. |
+| After delivery (`COMPLETED`) | The event sets the review state and blocks re-issue, the mail sweep and recovery. By the written policy (runbook rule 3) a delivered link is **not** cancelled automatically: a person decides (`release` or `revoke`); only a full refund or a reversal revokes unused links by itself. | **The delivered link keeps working until the event is recorded (and, for a dispute, until a person revokes it).** The system cannot stop use of a link before it knows about the dispute; do not read this document as a promise that it can. |
+
+Layers are deliberately redundant (pre-check, guarded INSERT, post-mint re-read, guarded UPDATE, event-side withdrawal); mutation checks show each of the write-side and event-side guards is needed, while the two read-side checks are covered by the guarded writes. Before migration 0003 (no review columns) the completion keeps its previous behaviour. Tests: `tests/paypal-dispute-gap.test.mjs`.
