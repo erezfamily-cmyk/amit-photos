@@ -1,4 +1,4 @@
-import { handlePayPalCreateOrder, handlePayPalCaptureOrder, handlePayPalSandboxStatus, handlePayPalWebhook, handlePayPalCheckoutReturn, handlePayPalSandboxCleanup, handlePayPalReissueDownload, handlePayPalAfterSaleReview, handlePayPalOrderSupportView, handlePayPalResendLinkEmail, handlePayPalLiveReadiness, handlePayPalHealth, handlePayPalTestAlert, handlePayPalCheckoutSwitch, retryDownloadLinkEmails, digitalPaymentsEnabled, handleDigitalCheckoutQuote } from './paypal-orders.js';
+import { handlePayPalCreateOrder, handlePayPalCaptureOrder, handlePayPalSandboxStatus, handlePayPalWebhook, handlePayPalCheckoutReturn, handlePayPalSandboxCleanup, handlePayPalReissueDownload, handlePayPalAfterSaleReview, handlePayPalOrderSupportView, handlePayPalResendLinkEmail, handlePayPalLiveReadiness, handlePayPalHealth, handlePayPalTestAlert, handlePayPalCheckoutSwitch, handlePayPalRecoverFulfillment, retryDownloadLinkEmails, digitalPaymentsEnabled, handleDigitalCheckoutQuote } from './paypal-orders.js';
 import { runPaymentHealthCheck } from './paypal-monitoring.js';
 import { checkNewOrderAllowed } from './paypal-switch.js';
 import { scheduledJobs } from './scheduled-routing.js';
@@ -56,7 +56,27 @@ async function handlePaymentsStatus(request, env) {
   const digitalEnabled = flagsOpen && (await checkNewOrderAllowed(env)).allowed;
   return jsonRes({ enabled: paymentsEnabled(env), digitalEnabled }, 200, request);
 }
+// Public liveness + database probe for outside uptime checks. Read-only, no input, no authentication.
+// The body never carries data, a version, a binding name or a database error: only ok true/false.
+const PING_TIMEOUT_MS = 3000;
+async function handlePing(request, env) {
+  const headers = { 'Content-Type': 'application/json', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' };
+  const respond = (ok) => new Response(request.method === 'HEAD' ? null : JSON.stringify({ ok }), { status: ok ? 200 : 503, headers });
+  if (request.method !== 'GET' && request.method !== 'HEAD') return new Response(null, { status: 405, headers: { ...headers, Allow: 'GET, HEAD' } });
+  let timer;
+  try {
+    const probe = env.DB.prepare('SELECT 1 AS ok').first();
+    const timeout = new Promise((_, reject) => { timer = setTimeout(() => reject(new Error('timeout')), PING_TIMEOUT_MS); });
+    const row = await Promise.race([probe, timeout]);
+    return respond(row?.ok === 1);
+  } catch {
+    return respond(false);
+  } finally {
+    clearTimeout(timer);
+  }
+}
 export {
+  handlePing,
   paymentsEnabled,
   paymentsDisabledResponse,
   handlePaymentsStatus,
@@ -8049,6 +8069,10 @@ export default {
       if (!await checkAuth(request, env)) return unauth(request);
       return handlePayPalAfterSaleReview(request, env);
     }
+    if (path === '/api/admin/paypal/recover-fulfillment') {
+      if (!await checkAuth(request, env)) return unauth(request);
+      return handlePayPalRecoverFulfillment(request, env, { waitUntil: ctx.waitUntil.bind(ctx) });
+    }
     if (path === '/api/admin/paypal/switch') {
       if (!await checkAuth(request, env)) return unauth(request);
       return handlePayPalCheckoutSwitch(request, env);
@@ -8081,6 +8105,7 @@ export default {
     if (path === '/api/paypal/capture-order') return handlePayPalCaptureOrder(request, env, { waitUntil: ctx.waitUntil.bind(ctx) });
     if (path === '/api/verify-payment') return jsonRes({ error: 'LEGACY_PAYMENT_ENDPOINT_REMOVED' }, 410, request);
     if (path === '/api/payments-status') return handlePaymentsStatus(request, env);
+    if (path === '/api/ping') return handlePing(request, env);
     if (path === '/api/admin/purchases')   return handleAdminPurchases(request, env);
     if (path === '/api/admin/create-token' && request.method === 'POST') return handleAdminCreateToken(request, env);
     if (path === '/api/new-badge-settings') return handleNewBadgeSettings(request, env);

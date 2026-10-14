@@ -149,6 +149,9 @@ CREATE TABLE download_tokens (
 
 ## ניפוי שגיאות
 
+> **מיושן — הוראות הכנסת טוקן ידנית ל-D1 אינן תקפות להזמנות Orders v2 (14.10.2026).** הזרימה שמתוארת בסעיף הזה (`/api/verify-payment`, טבלת `download_tokens` עם `tx`) הוסרה; הנתיב מחזיר 410. הכנסת טוקן ידנית להזמנה חדשה משאירה אותה ב-`FULFILLING`, מאפשרת קישור שני מ-webhook מאוחר, ויוצרת טוקן שהחזר כספי לא יכול לבטל. **לא עושים עריכות ידניות ב-D1 להזמנות או לטוקנים.** הזמנה ששולמה ותקועה: תחילה שליחה מחדש של האירוע `PAYMENT.CAPTURE.COMPLETED` מלוח PayPal; אם אי אפשר — `POST /api/admin/paypal/recover-fulfillment` (אימות מול PayPal, בלי חיוב נוסף). ראו `docs/stuck-fulfilling-recovery-design-2026-10-14.md` ואת ה-runbook.
+
+
 **סימפטום:** הלקוח מדווח שלא הצליח להוריד.
 
 1. בדוק אם יש שגיאה ב-download.html (כלי פיתוח → Network → הבקשה ל-`/api/verify-payment`)
@@ -156,6 +159,8 @@ CREATE TABLE download_tokens (
 3. בדוק D1: `SELECT * FROM download_tokens WHERE tx = '<txn_id>'`
 4. אם יש טוקן ב-D1 עם `used=0` — שלח ללקוח ישירות: `https://amitphotos.com/api/download/<token>`
 5. אם `used=1` — הטוקן שומש. צור טוקן חדש ידנית ב-D1 עם תוקף מחודש
+
+> **מיושן:** אין להשתמש בהוראות שלהלן להזמנות Orders v2 (ראו ההערה בראש הסעיף; הכלי הנכון הוא `recover-fulfillment`).
 
 **יצירת טוקן ידנית ב-D1:**
 ```sql
