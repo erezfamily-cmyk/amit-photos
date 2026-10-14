@@ -16,6 +16,13 @@
 
 ## Acquisition and caption quality review — 12.10.2026
 
+### RELEASE PACKAGE DRAFT 14.10.2026 (docs only; Sandbox window still NOT started; flags `false`)
+
+Owner asked for a production-ready release package (purchases stay off). Written: `docs/digital-files-release-package-2026-10-14.md` — updated blocker list (passed with evidence / waiting for the Sandbox window / needs engineering fixes / gaps needing a decision / missing commercial decisions), the exact order for migrations 0002 then 0003, merge and deploy with flags false, Live setup and verification, a limited-opening (canary) plan with stop/success criteria, and rollback layers. Nothing in it was executed.
+- **Facts found (read-only):** production auto-deploys with `wrangler deploy` on every push/merge to **`main`** (other branches only upload versions), so merging PR #155 IS a production deploy — migrations must come first; PR #155 merges cleanly into `main`; two production deploys on 13–14.10 happened with no new `main` commit (some process deploys outside Git — identify and freeze before release); production has no `PAYPAL_WEBHOOK_ID`/`PAYPAL_ENVIRONMENT`; legacy PayPal secrets of unknown environment.
+- **Engineering gaps listed:** a read-only Live readiness probe (none exists; admin tools are Sandbox-only by design), emailing/keeping the download link, monitoring and alerts, `/legal`, deploys outside Git, dashboard-variable behaviour on deploy.
+- Production, the main Sandbox Worker and the Preview re-checked at write time: create/capture 503, `{"enabled":false}`; `prep/...` `e69131f`. Still waiting for the owner on: the five webhook events, buyer and seller accounts, the helper script check, and the explicit start of the 45-minute window.
+
 ### END OF DAY 13.10.2026 — RESUME POINT FOR 14.10.2026 (Sandbox window NOT started; flags `false`)
 
 **Verified blocked at end of day (all read at the time of writing):** the PR Preview (deployment `5ce1cc1c`, tag `3c426d4`) has `PAYMENTS_ENABLED=false` and `DIGITAL_PAYPAL_ENABLED=false` (read from the deployment) and `/api/payments-status` = `{"enabled":false,"digitalEnabled":false}`; create-order and capture-order answer **503** on the Preview, on the main Sandbox Worker (`amit-photos-paypal-sandbox`, `{"enabled":false}`) and on production `amitphotos.com` (`{"enabled":false}`). `prep/paypal-orders-v2-2026-10-01` is still `e69131f`; PR #155 is draft, open, not merged. No production, `prep`, Live or merge action.
