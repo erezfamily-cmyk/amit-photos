@@ -36,7 +36,7 @@ function Show-Json($res, [string[]]$fields) {
   return $o
 }
 
-Write-Host "Commands: paste NAME | head NAME | get NAME | support ORDERID | reissue ORDERID KEY NAME | review ORDERID KEY release|revoke | quit"
+Write-Host "Commands: readiness | paste NAME | head NAME | get NAME | support ORDERID | reissue ORDERID KEY NAME | review ORDERID KEY release|revoke | quit"
 while ($true) {
   $line = Read-Host '>'
   if (-not $line) { continue }
@@ -61,6 +61,12 @@ while ($true) {
         else { Write-Host ('  body: ' + $res.Content.ReadAsStringAsync().GetAwaiter().GetResult()) }
         Write-Host ('GET ' + $p[1] + ' -> HTTP ' + [int]$res.StatusCode + '  bytes=' + $bytes)
         $res.Dispose()
+      }
+      'readiness' {
+        $res = Send 'GET' ($Base + '/api/admin/paypal/live-readiness') $null $true $null
+        $text = $res.Content.ReadAsStringAsync().GetAwaiter().GetResult()
+        Write-Host ('HTTP ' + [int]$res.StatusCode)
+        Write-Host $text
       }
       'support' {
         $res = Send 'GET' ($Base + '/api/admin/paypal/order?paypalOrderId=' + $p[1]) $null $true $null

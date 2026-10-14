@@ -1,4 +1,4 @@
-import { handlePayPalCreateOrder, handlePayPalCaptureOrder, handlePayPalSandboxStatus, handlePayPalWebhook, handlePayPalCheckoutReturn, handlePayPalSandboxCleanup, handlePayPalReissueDownload, handlePayPalAfterSaleReview, handlePayPalOrderSupportView, handlePayPalResendLinkEmail, retryDownloadLinkEmails, digitalPaymentsEnabled, handleDigitalCheckoutQuote } from './paypal-orders.js';
+import { handlePayPalCreateOrder, handlePayPalCaptureOrder, handlePayPalSandboxStatus, handlePayPalWebhook, handlePayPalCheckoutReturn, handlePayPalSandboxCleanup, handlePayPalReissueDownload, handlePayPalAfterSaleReview, handlePayPalOrderSupportView, handlePayPalResendLinkEmail, handlePayPalLiveReadiness, retryDownloadLinkEmails, digitalPaymentsEnabled, handleDigitalCheckoutQuote } from './paypal-orders.js';
 // Cloudflare Worker — amit-photos
 // מטפל בנתיבי API ומגיש static assets
 
@@ -8042,6 +8042,10 @@ export default {
     if (path === '/api/admin/paypal/after-sale-review') {
       if (!await checkAuth(request, env)) return unauth(request);
       return handlePayPalAfterSaleReview(request, env);
+    }
+    if (path === '/api/admin/paypal/live-readiness') {
+      if (!await checkAuth(request, env)) return unauth(request);
+      return handlePayPalLiveReadiness(request, env);
     }
     if (path === '/api/admin/paypal/resend-link-email') {
       if (!await checkAuth(request, env)) return unauth(request);

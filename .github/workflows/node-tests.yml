@@ -14,6 +14,7 @@ on:
       - 'tests/paypal-environment-separation.test.mjs'
       - 'tests/paypal-after-sale.test.mjs'
       - 'tests/paypal-link-email.test.mjs'
+      - 'tests/paypal-live-readiness.test.mjs'
       - 'checkout/download/index.html'
       - 'tests/paypal-migration-0003-rehearsal.test.mjs'
       - 'migrations/0003_after_sale_and_reissue.sql'
@@ -50,6 +51,7 @@ on:
       - 'tests/paypal-environment-separation.test.mjs'
       - 'tests/paypal-after-sale.test.mjs'
       - 'tests/paypal-link-email.test.mjs'
+      - 'tests/paypal-live-readiness.test.mjs'
       - 'checkout/download/index.html'
       - 'tests/paypal-migration-0003-rehearsal.test.mjs'
       - 'migrations/0003_after_sale_and_reissue.sql'
@@ -90,7 +92,7 @@ jobs:
         with:
           python-version: '3.12'
       - name: Run PayPal Orders v2 security and isolation suite
-        run: node --test tests/gallery-card-keyboard-a11y.test.mjs tests/i18n-translation-parity.test.mjs tests/purchase-disabled-ux.test.mjs tests/digital-checkout.test.mjs tests/paypal-orders-v2.test.mjs tests/paypal-staging-isolation.test.mjs tests/download-token-consumption.test.mjs tests/payments-feature-flag.test.mjs tests/paypal-sandbox-bootstrap-schema.test.mjs tests/paypal-migration-0002-rehearsal.test.mjs tests/paypal-environment-separation.test.mjs tests/paypal-after-sale.test.mjs tests/paypal-migration-0003-rehearsal.test.mjs tests/paypal-link-email.test.mjs
+        run: node --test tests/gallery-card-keyboard-a11y.test.mjs tests/i18n-translation-parity.test.mjs tests/purchase-disabled-ux.test.mjs tests/digital-checkout.test.mjs tests/paypal-orders-v2.test.mjs tests/paypal-staging-isolation.test.mjs tests/download-token-consumption.test.mjs tests/payments-feature-flag.test.mjs tests/paypal-sandbox-bootstrap-schema.test.mjs tests/paypal-migration-0002-rehearsal.test.mjs tests/paypal-environment-separation.test.mjs tests/paypal-after-sale.test.mjs tests/paypal-migration-0003-rehearsal.test.mjs tests/paypal-link-email.test.mjs tests/paypal-live-readiness.test.mjs
 
   digital-checkout-browser:
     runs-on: ubuntu-latest

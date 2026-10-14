@@ -1069,6 +1069,82 @@ export async function handlePayPalResendLinkEmail(request, env) {
   return jsonRes({ ok: result.status === 'SENT', status: result.status, reason: result.reason || null, replayed: !!result.replayed, test: !!result.test }, status, request);
 }
 
+// ---------------------------------------------------------------------------
+// Read-only readiness check for the selected PayPal environment (admin only; also the
+// way to verify Live before any money moves). It only fetches an OAuth token and READS
+// the webhook definition: no order, capture, refund or change to PayPal settings.
+// It reports NOT_READY with reason codes and never returns a secret, a token or the
+// webhook id.
+// ---------------------------------------------------------------------------
+const REQUIRED_WEBHOOK_EVENTS = [
+  'PAYMENT.CAPTURE.COMPLETED', 'PAYMENT.CAPTURE.REFUNDED', 'PAYMENT.CAPTURE.REVERSED',
+  'CUSTOMER.DISPUTE.CREATED', 'CUSTOMER.DISPUTE.UPDATED', 'CUSTOMER.DISPUTE.RESOLVED',
+];
+const WEBHOOK_PATH = '/api/paypal/webhook';
+
+export async function handlePayPalLiveReadiness(request, env) {
+  if (request.method !== 'GET') return jsonRes({ error: 'method not allowed' }, 405, request);
+  const reasons = [];
+  const checks = {};
+  const config = resolvePayPalConfig(env, request);
+  if (!config.ok) {
+    return jsonRes({ status: 'NOT_READY', environment: null, reasons: [config.reason], checks: { configValid: false } }, 200, request);
+  }
+  checks.configValid = true;
+  checks.credentialsPresent = !!(env.PAYPAL_CLIENT_ID && env.PAYPAL_CLIENT_SECRET);
+  checks.webhookIdPresent = !!env.PAYPAL_WEBHOOK_ID;
+  checks.paymentFlags = { payments: env.PAYMENTS_ENABLED === 'true', digital: env.DIGITAL_PAYPAL_ENABLED === 'true' };
+  if (!checks.credentialsPresent) reasons.push('PAYPAL_CREDENTIALS_MISSING');
+  if (!checks.webhookIdPresent) reasons.push('PAYPAL_WEBHOOK_ID_MISSING');
+
+  // Mail settings that would be dangerous or broken in the selected environment.
+  const mailOn = env.DOWNLOAD_EMAIL_ENABLED === 'true';
+  checks.downloadEmail = { enabled: mailOn, keyPresent: !!env.RESEND_API_KEY, testRecipientSet: !!env.DOWNLOAD_EMAIL_OVERRIDE_TO };
+  if (config.environment === 'live' && checks.downloadEmail.testRecipientSet) reasons.push('TEST_RECIPIENT_SET_IN_LIVE');
+  if (mailOn && !env.RESEND_API_KEY) reasons.push('EMAIL_ENABLED_WITHOUT_KEY');
+  if (mailOn) {
+    let base = null;
+    try { base = new URL(env.PUBLIC_BASE_URL).origin; } catch {}
+    if (!base || !base.startsWith('https://') || (config.environment === 'live' && !ALLOWED_ORIGINS.includes(base))) reasons.push('PUBLIC_BASE_URL_INVALID');
+  }
+
+  if (checks.credentialsPresent) {
+    let accessToken = null;
+    try { accessToken = await getPayPalAccessToken(env); } catch {}
+    checks.oauth = !!accessToken;
+    if (!accessToken) {
+      reasons.push('PAYPAL_OAUTH_FAILED');
+    } else if (checks.webhookIdPresent) {
+      let webhook = null;
+      let status = 0;
+      try {
+        const response = await fetch(
+          paypalApiBase(env) + '/v1/notifications/webhooks/' + encodeURIComponent(env.PAYPAL_WEBHOOK_ID),
+          { method: 'GET', headers: { 'Authorization': 'Bearer ' + accessToken, 'Accept': 'application/json' } }
+        );
+        status = response.status;
+        webhook = response.ok ? await response.json().catch(() => null) : null;
+      } catch {}
+      checks.webhookFound = !!webhook;
+      if (!webhook) {
+        reasons.push(status === 404 ? 'WEBHOOK_NOT_FOUND' : 'WEBHOOK_LOOKUP_FAILED');
+      } else {
+        let url = null;
+        try { url = new URL(webhook.url); } catch {}
+        const expectedOrigin = (() => { try { return new URL(request.url).origin; } catch { return null; } })();
+        const urlOk = !!url && url.protocol === 'https:' && !url.port && !url.username && url.pathname === WEBHOOK_PATH && !url.search && url.origin === expectedOrigin;
+        checks.webhookUrl = url ? { host: url.host, path: url.pathname, matchesThisSite: urlOk } : { matchesThisSite: false };
+        if (!urlOk) reasons.push('WEBHOOK_URL_MISMATCH');
+        const names = new Set((Array.isArray(webhook.event_types) ? webhook.event_types : []).map(item => item?.name));
+        const missing = names.has('*') ? [] : REQUIRED_WEBHOOK_EVENTS.filter(name => !names.has(name));
+        checks.webhookEvents = { missing, approvedEventSubscribed: names.has('*') || names.has('CHECKOUT.ORDER.APPROVED') };
+        if (missing.length) reasons.push('WEBHOOK_EVENTS_MISSING');
+      }
+    }
+  }
+  return jsonRes({ status: reasons.length ? 'NOT_READY' : 'READY', environment: config.environment, reasons, checks }, 200, request);
+}
+
 export async function handlePayPalWebhook(request, env, options = {}) {
   if (request.method !== 'POST') return jsonRes({ error: 'method not allowed' }, 405, request);
 
