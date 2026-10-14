@@ -841,9 +841,19 @@ export async function handlePayPalOrderSupportView(request, env) {
 const LINK_EMAIL_MAX_AUTO = 4;
 const LINK_EMAIL_MAX_MANUAL = 3;
 const LINK_EMAIL_IN_PROGRESS_MS = 5 * 60 * 1000;
-const LINK_EMAIL_SWEEP_WINDOW_MS = 24 * 60 * 60 * 1000;
+// Retries only happen while the provider still remembers our idempotency key (it keeps keys
+// for 24 h), so an attempt interrupted AFTER the provider accepted the mail but BEFORE we
+// recorded it is re-sent with the same key and payload and answered without a second mail.
+const LINK_EMAIL_SWEEP_WINDOW_MS = 20 * 60 * 60 * 1000;
 const LINK_EMAIL_SWEEP_LIMIT = 20;
 const LINK_EMAIL_TIMEOUT_MS = 8000;
+
+// Stable, non-reversible fingerprint of a link: part of the provider idempotency key so a NEW
+// link (after a re-issue) is a new message, while a retry of the SAME link is a duplicate.
+async function linkFingerprint(token) {
+  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode('dl-link:' + token));
+  return [...new Uint8Array(digest)].slice(0, 8).map(byte => byte.toString(16).padStart(2, '0')).join('');
+}
 
 function cleanEmailAddress(value) {
   if (typeof value !== 'string') return null;
@@ -1017,7 +1027,9 @@ export async function sendDownloadLinkEmail(env, request, orderRow, { kind = 'au
       title: (await env.DB.prepare('SELECT title FROM photos WHERE id = ?').bind(order.photo_id).first())?.title || order.photo_id,
       test: recipient.test,
     });
-    const idempotencyKey = kind === 'manual' ? 'dl-manual-' + order.id + '-' + key : 'dl-auto-' + order.id;
+    const idempotencyKey = kind === 'manual'
+      ? 'dl-manual-' + order.id + '-' + key
+      : 'dl-auto-' + order.id + '-' + await linkFingerprint(link.token);
     const sent = await postLinkEmail(env, { to: recipient.to, mail, idempotencyKey });
     await markLinkEmail(env, order, requestId, sent.ok ? 'SENT' : 'FAILED', sent.ok ? (recipient.test ? 'test_recipient' : 'payer') : sent.reason);
     return sent.ok ? { status: 'SENT', test: recipient.test } : { status: 'FAILED', reason: sent.reason };

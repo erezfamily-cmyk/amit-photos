@@ -14,9 +14,9 @@
     main { width: 100%; max-width: 460px; background: var(--card); border: 1px solid var(--line); border-radius: 6px; padding: 28px 22px; text-align: center; }
     h1 { font-size: 1.35rem; margin: 0 0 10px; }
     p { color: var(--muted); line-height: 1.6; margin: 0 0 16px; }
-    a.btn { display: inline-block; min-height: 44px; padding: 12px 26px; background: var(--gold); color: #111; font-weight: 700; text-decoration: none; border-radius: 3px; }
-    a.btn[aria-disabled="true"] { opacity: .5; pointer-events: none; }
-    a.btn:focus-visible { outline: 3px solid var(--text); outline-offset: 3px; }
+    .btn { display: inline-block; min-height: 44px; padding: 12px 26px; background: var(--gold); color: #111; font: inherit; font-weight: 700; border: 0; border-radius: 3px; cursor: pointer; }
+    .btn:disabled { opacity: .5; cursor: default; }
+    .btn:focus-visible { outline: 3px solid var(--text); outline-offset: 3px; }
     .bad { color: var(--danger); }
     .lang { margin-bottom: 14px; font-size: .85rem; }
     .lang button { background: none; border: 0; color: var(--muted); cursor: pointer; padding: 6px; min-height: 32px; font: inherit; }
@@ -31,13 +31,15 @@
     </div>
     <h1 id="title"></h1>
     <p id="body" role="status" aria-live="polite"></p>
-    <a class="btn" id="go" href="#" aria-disabled="true"></a>
+    <button type="button" class="btn" id="go" disabled></button>
     <p id="note" style="margin-top:18px;font-size:.85rem"></p>
   </main>
   <script>
-    // The link token lives in the URL fragment (#t=...): it is never sent to any server, so it
-    // is not in request logs or analytics, and a mail scanner that fetches this page cannot
-    // use it. Downloading still needs a deliberate click on the button below.
+    // The link token lives in the URL fragment (#t=...): HTTP never sends a fragment, so it is
+    // not in request logs or analytics and a scanner that only fetches this page never sees it.
+    // A scanner that runs this JavaScript CAN read it, so loading, rendering, the HEAD check
+    // and any preview never touch the one-time link: the download URL is not in the page as a
+    // link and is requested only after a real user click (isTrusted).
     (function () {
       var T = {
         he: { title: 'הקובץ שלך מוכן', checking: 'בודקים את הקישור…', ready: 'לחצו על הכפתור כדי להוריד. הקישור חד-פעמי, ולכן עדיף להוריד כשמוכנים לשמור את הקובץ.', go: 'להורדת הקובץ',
@@ -62,11 +64,15 @@
         el.body.textContent = t[state] || t.ready;
         el.body.className = (state === 'used' || state === 'gone' || state === 'bad') ? 'bad' : '';
         var enabled = valid && (state === 'ready' || state === 'unknown');
-        el.go.setAttribute('aria-disabled', enabled ? 'false' : 'true');
-        el.go.setAttribute('href', enabled ? '/api/download/' + token : '#');
+        el.go.disabled = !enabled;
         Array.prototype.forEach.call(document.querySelectorAll('.lang button'), function (b) { b.setAttribute('aria-pressed', b.dataset.lang === lang ? 'true' : 'false'); });
       }
       Array.prototype.forEach.call(document.querySelectorAll('.lang button'), function (b) { b.addEventListener('click', function () { lang = b.dataset.lang; render(); }); });
+      el.go.addEventListener('click', function (event) {
+        if (!event.isTrusted || el.go.disabled || !valid) return;
+        el.go.disabled = true; // one deliberate click starts one download
+        location.assign('/api/download/' + token);
+      });
       if (!valid) { state = 'bad'; render(); return; }
       render();
       // HEAD never consumes the one-time link; it only tells us whether it is still usable.

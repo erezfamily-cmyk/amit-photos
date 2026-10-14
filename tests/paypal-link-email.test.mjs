@@ -62,6 +62,8 @@ const LIVE = { PAYPAL_ENVIRONMENT: 'live', PAYPAL_CREDENTIALS_ENVIRONMENT: 'live
 function fakes({ resend = 'ok', payer = PAYER, onResend } = {}) {
   const original = globalThis.fetch;
   const mails = [];
+  const delivered = [];                 // unique messages the provider actually accepted
+  const remembered = new Map();         // Idempotency-Key -> payload fingerprint (24 h in reality)
   const state = { resend };
   globalThis.fetch = async (url, options = {}) => {
     const u = new URL(String(url));
@@ -72,7 +74,14 @@ function fakes({ resend = 'ok', payer = PAYER, onResend } = {}) {
       if (onResend) await onResend(mail);
       if (state.resend === 'network') throw new Error('network down');
       if (state.resend === 'fail') return Response.json({ message: 'boom ' + body.to }, { status: 500 });
-      return Response.json({ id: 'mail-' + mails.length });
+      const fingerprint = JSON.stringify([body.to, body.subject, body.html]);
+      if (remembered.has(mail.key)) {
+        if (remembered.get(mail.key) !== fingerprint) return Response.json({ name: 'invalid_idempotent_request' }, { status: 409 });
+        return Response.json({ id: 'deduplicated' });            // same key + same payload: no second mail
+      }
+      remembered.set(mail.key, fingerprint);
+      delivered.push(mail);
+      return Response.json({ id: 'mail-' + delivered.length });
     }
     if (u.pathname === '/v1/oauth2/token') return Response.json({ access_token: 'token' });
     if (u.pathname === '/v1/notifications/verify-webhook-signature') return Response.json({ verification_status: 'SUCCESS' });
@@ -83,7 +92,7 @@ function fakes({ resend = 'ok', payer = PAYER, onResend } = {}) {
     if (u.pathname.startsWith('/v2/payments/captures/')) return Response.json(capture);
     return Response.json({}, { status: 404 });
   };
-  return { mails, state, restore() { globalThis.fetch = original; } };
+  return { mails, delivered, state, restore() { globalThis.fetch = original; } };
 }
 const capture = (env, extra = {}) => handlePayPalCaptureOrder(new Request('https://amitphotos.com/api/paypal/capture-order', { method: 'POST', body: JSON.stringify({ paypalOrderId: ORDER }) }), env, { skipRateLimit: true, ...extra });
 const rows = env => env.sqlite.prepare("SELECT request_id, status, actor, reason FROM paypal_order_actions WHERE action = 'LINK_EMAIL' ORDER BY id").all().map(r => ({ ...r }));
@@ -115,7 +124,8 @@ test('after capture the SAME link is mailed to the test recipient: no new token,
     assert.equal(tokenIn(net.mails[0].html), token, 'the mailed link is the link shown to the buyer');
     assert.ok(net.mails[0].html.includes('https://amitphotos.com/checkout/download/#t=' + token));
     assert.ok(!net.mails[0].html.includes('/api/download/'), 'the mail never links straight to the one-time endpoint');
-    assert.equal(net.mails[0].key, 'dl-auto-' + LOCAL);
+    assert.match(net.mails[0].key, /^dl-auto-local-order-1-[0-9a-f]{16}$/, 'stable key: order + fingerprint of the link');
+    assert.ok(!net.mails[0].key.includes(token), 'the bearer token is not part of the provider key');
     assert.equal(tokens(env).length, 1, 'no extra token');
     assert.deepEqual(rows(env), [{ request_id: 'auto-1', status: 'SENT', actor: 'system', reason: 'test_recipient' }]);
     assert.equal(orderRow(env).status, 'COMPLETED');
@@ -372,6 +382,10 @@ test('landing page: token only from the URL fragment, no third-party loads, HEAD
   assert.doesNotMatch(landing, /<script[^>]+src=/);
   assert.match(headersFile, /\/checkout\/download\/\*\s+Cache-Control: no-store\s+Referrer-Policy: no-referrer\s+X-Robots-Tag: noindex, nofollow/);
   assert.match(landing, /aria-live="polite"/);
+  assert.doesNotMatch(landing, /<a[^>]+href=["']\/api\/download/, 'no download link in the markup');
+  assert.doesNotMatch(landing, /setAttribute\('href'/, 'the script never writes a download href');
+  assert.match(landing, /event\.isTrusted/);
+  assert.match(landing, /<button type="button" class="btn" id="go" disabled>/);
 });
 
 test('a link that cannot be used answers 410 with a non-secret state hint, for HEAD and GET', async () => {
@@ -385,4 +399,68 @@ test('a link that cannot be used answers 410 with a non-secret state hint, for H
       assert.equal(response.headers.get('X-Link-State'), state, state + method);
     }
   }
+});
+
+// ----- provider key stability and interruption after the provider accepted the mail ------------------
+
+test('interrupted AFTER the provider accepted but BEFORE the database was updated: the retry reuses the key and produces no second mail', async () => {
+  const env = setup({ status: 'COMPLETED' });
+  const net = fakes();
+  const realPrepare = env.DB.prepare.bind(env.DB);
+  env.DB.prepare = sql => {
+    if (sql.startsWith('UPDATE paypal_order_actions SET status') && net.delivered.length > 0) throw new Error('worker died after the provider accepted');
+    return realPrepare(sql);
+  };
+  try {
+    const first = await sendDownloadLinkEmail(env, null, { id: LOCAL });
+    assert.equal(first.status, 'FAILED');
+    assert.equal(net.delivered.length, 1, 'the provider accepted the mail');
+    assert.deepEqual(rows(env).map(r => [r.request_id, r.status]), [['auto-1', 'SENDING']], 'the row never got updated');
+    // within the in-progress window nothing else sends; after it the attempt counts as abandoned
+    assert.equal((await sendDownloadLinkEmail(env, null, { id: LOCAL })).reason, 'ALREADY_SENT_OR_IN_PROGRESS');
+    env.DB.prepare = realPrepare;
+    env.sqlite.exec("UPDATE paypal_order_actions SET created_at = '2026-01-01T00:00:00.000Z'");
+    assert.deepEqual(await retryDownloadLinkEmails(env), { checked: 1 });
+    assert.equal(net.mails.length, 2, 'the retry was sent...');
+    assert.equal(net.mails[1].key, net.mails[0].key, '...with the very same provider key');
+    assert.equal(net.delivered.length, 1, '...and the provider answered it without a second mail');
+    assert.deepEqual(rows(env).map(r => [r.request_id, r.status]), [['auto-1', 'SENDING'], ['auto-2', 'SENT']]);
+    assert.deepEqual(await retryDownloadLinkEmails(env), { checked: 0 });
+  } finally { net.restore(); }
+});
+
+test('a new link after a re-issue is a new message (new key, no conflict); the same link is always the same key', async () => {
+  const env = setup({ status: 'COMPLETED' });
+  const net = fakes({ resend: 'fail' });
+  try {
+    await sendDownloadLinkEmail(env, null, { id: LOCAL });          // fails with the original link
+    const reissued = await handlePayPalReissueDownload(new Request('https://amitphotos.com/x', {
+      method: 'POST', headers: { 'Idempotency-Key': 'reissue-key-0001' }, body: JSON.stringify({ paypalOrderId: ORDER, reason: 'download failed' }),
+    }), env);
+    const newToken = (await reissued.json()).url.split('/').pop();
+    net.state.resend = 'ok';
+    assert.equal((await sendDownloadLinkEmail(env, null, { id: LOCAL })).status, 'SENT');
+    assert.equal(tokenIn(net.delivered[0].html), newToken);
+    assert.notEqual(net.mails[0].key, net.mails[1].key, 'a different link has a different key');
+    assert.ok(!net.mails.some(m => m.key.includes(newToken) || m.key.includes('aaaaaaaa-1111')), 'no token inside any key');
+    // repeated sends of the same link always produce the same key
+    const again = setup({ status: 'COMPLETED' });
+    const other = fakes();
+    try {
+      await sendDownloadLinkEmail(again, null, { id: LOCAL });
+      await handlePayPalResendLinkEmail(new Request('https://amitphotos.com/x', { method: 'POST', headers: { 'Idempotency-Key': 'resend-key-0001' }, body: JSON.stringify({ paypalOrderId: ORDER, reason: 'again' }) }), again);
+      assert.match(other.mails[1].key, /^dl-manual-local-order-1-resend-key-0001$/);
+    } finally { other.restore(); net.restore(); }
+  } finally { net.restore(); }
+});
+
+test('the retry sweep stays inside the provider 24 h idempotency memory (20 h window)', async () => {
+  const env = setup({ status: 'COMPLETED' });
+  const net = fakes();
+  try {
+    env.sqlite.exec("UPDATE paypal_orders SET completed_at = '" + new Date(Date.now() - 21 * 3600e3).toISOString() + "'");
+    assert.deepEqual(await retryDownloadLinkEmails(env), { checked: 0 }, 'too old for an automatic retry (support can re-send)');
+    env.sqlite.exec("UPDATE paypal_orders SET completed_at = '" + new Date(Date.now() - 19 * 3600e3).toISOString() + "'");
+    assert.deepEqual(await retryDownloadLinkEmails(env), { checked: 1 });
+  } finally { net.restore(); }
 });
