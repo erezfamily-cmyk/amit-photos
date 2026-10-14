@@ -108,3 +108,21 @@ Escalation: the operator stops at the first unexpected output, writes down the e
 
 ## 11. What this plan does not cover
 Deploying the code, the 15-minute cron, alerts, Live credentials, the canary, legal pages. Network loss during upload, very large databases and live concurrent traffic remain untested (the database is small and payments are off, which bounds the risk).
+
+## 12. Dress rehearsal results (14.10.2026, owner-approved; synthetic data only; production NOT read, NOT exported, NOT touched)
+Harness: `staging/d1-dress-rehearsal-2026-10-14/dress.mjs` (committed). Temporary D1 `amit-migration-dress-20261014`, wrangler 4.149.0, exact release command form (`d1 execute --remote --yes --file`, from a temporary config listing only that database). The schema was the pinned pre-0002 production DDL (13.10 `sqlite_master` reading, not re-read today), 8 legacy tokens + 3 synthetic orders; **P4 (comparing today's production schema) remains a pre-check for the real run.**
+
+| Stage | Result |
+|---|---|
+| 0002 checksum | equals the plan |
+| 0002 failure drill (runtime error after statement 4) | command failed (`no such table`); schema, counts and checksum identical to the baseline: nothing left behind |
+| 0002 clean run | succeeded, about 4.1-4.4 s wall; V2: all six objects as specified; every pre-existing row/column value unchanged (hash over the original columns) |
+| 0002 re-run | refused with `duplicate column name`, database unchanged |
+| 0003 checksum, failure drill, clean run | checksum equals the plan; failure drill left nothing behind; clean run about 4.2 s; V3: 8 columns with the specified defaults, 12-column `paypal_order_actions` with `UNIQUE(order_ref, action, request_id)`, both indexes, `idx_download_tokens_tx` still UNIQUE partial; the 8 existing tokens and the orders unchanged (new columns NULL / defaults) |
+| 0003 re-run | refused with `duplicate column name`, database unchanged |
+| Behaviour on the real D1 (16 checks) | recover-fulfillment completes a stuck order with only read-only PayPal calls (no capture); same-key replay; amount mismatch refused; a recorded dispute blocks both recovery and the completion webhook; D1 accepts the guarded `INSERT … SELECT … WHERE EXISTS` and the guarded completion `UPDATE` (0 rows under a dispute); a dispute event withdraws an undelivered token, a release restores the SAME link and the order completes once; a dispute after delivery leaves the link to a person; 6 parallel recoveries and recovery-vs-webhook races give one token; the revoke-undelivered statement skips a COMPLETED order; no mail |
+| Rollback files | 0003 rollback accepted (about 5.2 s, `DROP COLUMN` works), 0002 rollback accepted (about 4.2 s), rows kept, `idx_download_tokens_tx` kept |
+| Time Travel | restore to the pre-rollback bookmark about 3.5 s: schema and data identical to the snapshot, a marker written afterwards was discarded; undo with the returned previous bookmark about 3.4 s: the rolled-back state including the marker returned |
+| Cleanup | both temporary databases deleted; `d1 list` shows only `amit-photos-db` and `amit-photos-paypal-sandbox-db` |
+Totals of the accepted run: baseline 3/3, 0002 13/13, 0003 14/14, behaviour 16/16, rollback 5/5, restore 4/4, delete 2/2.
+Honest notes: (1) the first temporary database (`ef94ae20-…`) was deleted after a bug in the harness's own data comparison (not in the product); everything was repeated on a second one (`d3c9f6f5-…`, also deleted). (2) The first restore/undo attempt mis-parsed the previous bookmark in the harness; the rollback + restore + undo stages were repeated after the fix and passed. (3) Still unproven: network loss mid-upload, large data, live traffic, the retention period of Time Travel, and the real production schema (P4).
