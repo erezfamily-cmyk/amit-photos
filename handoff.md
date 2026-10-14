@@ -6,6 +6,54 @@
 
 ---
 
+## NEXT SESSION — remaining release gates and effort estimate (14.10.2026, 22:50 Israel)
+
+Documentation update requested by the owner. This section reconciles the latest completed rehearsals with the release order below; it does **not** authorize production actions, migrations, merge, Live setup or a canary. Existing pause remains in effect.
+
+### Verified baseline and first next step
+
+- Switch open/replay/closed/frozen and recover-fulfillment/replay/already-completed were rehearsed on the Sandbox Preview, restored and cleaned. Do not repeat those completed tests merely because older status-board/classification text still calls them untested; the later dated rehearsal entries are authoritative.
+- At the last verified stop: both flags false, switch absent (blocked), no Preview mail/alert variables, recorder stopped; public create/capture return 503. These are the recorded stop results, not a fresh environment check by this documentation update.
+- [ ] **First next session:** complete only the missing observation while the Preview switch is open and both flags stay false: record payments-status disabled and public create/capture 503, then freeze, clear the switch and verify blocked/absent. Follow the existing six-step procedure below with fresh keys/time. No order changes, PayPal calls or mail. This observation was NOT performed.
+
+### Ordered checklist before an attended Live canary
+
+- [ ] Final review of #155 and #157, current heads/diffs/CI and deployment paths; keep #157 separate (it changes production cron/alerts). Check rollback procedures.
+- [ ] Obtain separate approval for production migrations; execute the existing 0002 then 0003 plan: fresh production prechecks, Time Travel bookmark plus encrypted table-scoped backup (14-day plan; choose storage/key holder/access at execution), verification after each. Temporary-D1 dress rehearsal is already done; no production migration/export has been authorized by this update.
+- [ ] After separate approval, merge/deploy #155 with both flags false; perform the documented read-only post-deploy checks and verify the existing two crons remain unchanged.
+- [ ] After separate approval, review/merge #157 for the 15-minute payment monitor and email alerts; verify one deliberate production test alert and deployment secret preservation. Configure outside uptime monitoring before an unattended period (owner account required).
+- [ ] In parallel, owner completes and records: decision whether to sell; prices/currency/personal licence; refund/dispute policy; legal/privacy/terms and deletion path; invoicing/tax arrangements; PayPal business verification/fees. **Finish before creating Live app/webhook/secrets and before canary.** Any professional review or external approval is outside the effort estimate.
+- [ ] Verify contact@amitphotos.com routing and reply delivery to the owner; review production download-email configuration and support procedures.
+- [ ] Only after the recorded commercial/legal decisions and separate approval: prepare Live app/webhook/secrets, verify environment separation and required event subscriptions, and obtain Live readiness READY. Sandbox READY is not Live evidence.
+- [ ] Adopt the incident runbook and write the attended canary plan: known buyer, one photo, maxOrders=1, short closesAt, who monitors/how long, success/stop criteria, refund and freeze/flag rollback procedure.
+- [ ] Only with explicit canary approval: limited real purchase; verify payment, capture/webhook, link email/page and one download; inspect order/token/audit consistency; close/freeze and record results before any expansion.
+
+### Additional gates before broader public opening
+
+These were classified as deferrable for a constrained attended canary, **not as completed**. Follow docs/untested-checks-classification-2026-10-14.md for limits and closure evidence:
+- [ ] Real dispute/reversal payload coverage or documented Sandbox limitation and manual handling; provider-side decline behaviour.
+- [ ] Bounce/complaint handling or documented manual check; another mail provider/enterprise scanner coverage.
+- [ ] Close or formally drop unused Telegram receipt and historical missing CHECKOUT.ORDER.APPROVED follow-up.
+- [ ] Outside uptime monitoring active before any unattended period; reassess all deferred limits before expanding.
+
+### Planning estimate (not a completion promise)
+
+The conversational estimate was about **5–9 hours net**, conditional on no new defects or additional implementation. Rounded task ranges sum to approximately **5–10 hours**, suitable as a planning allowance to a constrained attended canary, not a guaranteed public-launch estimate.
+
+| Work | Net effort allowance |
+| --- | --- |
+| Missing Preview observation, cleanup and evidence | 15–30 min |
+| Migration/backup execution and Live technical readiness | 1–2 h |
+| Mail, support routing, alerts and monitoring setup | 30–60 min |
+| Final PR review, required checks, controlled code/config deployment | 1.5–2.5 h |
+| Attended canary and verification | 1–2 h |
+| Recording owner commercial/legal decisions and existing text review | 30–60 min |
+
+Practical scheduling: one focused day or 2–3 joint evenings, subject to owner access/approvals. External verification, legal/accounting advice, writing substantial new policy content, newly discovered defects and closing deferred public-opening items are **not included** and may add time. Start with fresh read-only state checks; this document is not permission to resume actions during the pause.
+
+---
+
+
 ## STATUS BOARD (updated 14.10.2026, night) — read this first; older entries below are history
 
 Payment flags: **both `false` everywhere** (production, main Sandbox Worker, PR Preview; `wrangler.toml` too). `prep/paypal-orders-v2-2026-10-01` is `e69131f`. PR #155 and PR #157 are drafts, not merged (#156 was auto-marked merged into the #155 branch only, never `main`, and replaced by #157). No production action, production migration, PayPal Live action or canary has been done.
