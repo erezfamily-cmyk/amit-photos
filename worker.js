@@ -1,4 +1,4 @@
-import { handlePayPalCreateOrder, handlePayPalCaptureOrder, handlePayPalSandboxStatus, handlePayPalWebhook, handlePayPalCheckoutReturn, handlePayPalSandboxCleanup, handlePayPalReissueDownload, handlePayPalAfterSaleReview, handlePayPalOrderSupportView, handlePayPalResendLinkEmail, handlePayPalLiveReadiness, handlePayPalHealth, handlePayPalTestAlert, handlePayPalCheckoutSwitch, retryDownloadLinkEmails, digitalPaymentsEnabled, handleDigitalCheckoutQuote } from './paypal-orders.js';
+import { handlePayPalCreateOrder, handlePayPalCaptureOrder, handlePayPalSandboxStatus, handlePayPalWebhook, handlePayPalCheckoutReturn, handlePayPalSandboxCleanup, handlePayPalReissueDownload, handlePayPalAfterSaleReview, handlePayPalOrderSupportView, handlePayPalResendLinkEmail, handlePayPalLiveReadiness, handlePayPalHealth, handlePayPalTestAlert, handlePayPalCheckoutSwitch, handlePayPalRecoverFulfillment, retryDownloadLinkEmails, digitalPaymentsEnabled, handleDigitalCheckoutQuote } from './paypal-orders.js';
 import { runPaymentHealthCheck } from './paypal-monitoring.js';
 import { checkNewOrderAllowed } from './paypal-switch.js';
 import { scheduledJobs } from './scheduled-routing.js';
@@ -8068,6 +8068,10 @@ export default {
     if (path === '/api/admin/paypal/after-sale-review') {
       if (!await checkAuth(request, env)) return unauth(request);
       return handlePayPalAfterSaleReview(request, env);
+    }
+    if (path === '/api/admin/paypal/recover-fulfillment') {
+      if (!await checkAuth(request, env)) return unauth(request);
+      return handlePayPalRecoverFulfillment(request, env, { waitUntil: ctx.waitUntil.bind(ctx) });
     }
     if (path === '/api/admin/paypal/switch') {
       if (!await checkAuth(request, env)) return unauth(request);

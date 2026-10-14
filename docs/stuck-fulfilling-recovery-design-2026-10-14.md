@@ -1,6 +1,6 @@
 # Design for review: recovering a paid order stuck in `FULFILLING` (14.10.2026)
 
-Status: **design only, for the owner's review. Nothing is implemented, nothing was run against PayPal, no event was sent, no mail test was made.** Payment flags stay `false`. Implementation starts only after the owner approves this document.
+Status: **approved by the owner on 14.10.2026 and implemented in the #155 branch only** (`handlePayPalRecoverFulfillment`, tests in `tests/paypal-recover-fulfillment.test.mjs`). Decisions 2-4 below were answered: build it (yes), no manual capture id (yes), mark the legacy advice obsolete and fix the alert text (done). Not deployed, not run against real PayPal; no event and no mail were sent. Payment flags stay `false`.
 
 ## 1. What exists today (verified in the code, not assumed)
 - An order enters `FULFILLING` at the moment a capture id is recorded (`UPDATE paypal_orders SET status='FULFILLING', paypal_capture_id=?, fulfillment_token=?`, guarded by `status NOT IN ('FULFILLING','COMPLETED')`). The fulfilment token is created once, with the capture id, and never regenerated.

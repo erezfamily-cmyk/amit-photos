@@ -1186,6 +1186,159 @@ async function noteWebhookFailure(env, event, options) {
   } catch { /* monitoring never affects the webhook response */ }
 }
 
+// ---------------------------------------------------------------------------
+// Admin: finish delivery of an order that is PAID but stuck in FULFILLING (design:
+// docs/stuck-fulfilling-recovery-design-2026-10-14.md). It is a thin, audited wrapper around the same
+// finalizeDigitalPayPalOrder the webhook and the buyer's retry use, so every path produces the one
+// stored token and the one guarded status flip. It never calls the capture endpoint, never creates an
+// order, never takes a capture id from the request, and works while the checkout is closed/frozen and
+// while the payment flags are false (an already paid order is always delivered).
+// ---------------------------------------------------------------------------
+const RECOVERY_IN_PROGRESS_WINDOW_MS = 10 * 60 * 1000;
+const RECOVERY_BODY_FIELDS = new Set(['paypalOrderId', 'reason']);
+
+function recoveryAuditText(reason, outcome) {
+  // The admin's free text is kept short and scrubbed: no link, no token-looking value ever reaches the audit table.
+  const clean = String(reason || '')
+    .replace(/https?:\/\/\S+/gi, '[link removed]')
+    .replace(/\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b/gi, '[id removed]')
+    .replace(/\S{40,}/g, '[long value removed]')
+    .slice(0, 150);
+  return (clean + (outcome ? ' | outcome=' + outcome : '')).slice(0, 400);
+}
+
+export async function handlePayPalRecoverFulfillment(request, env, options = {}) {
+  if (request.method !== 'POST') return jsonRes({ error: 'method not allowed' }, 405, request);
+  const blocked = adminConfigBlocked(request, env);
+  if (blocked) return blocked;
+  const body = await request.json().catch(() => ({}));
+  // The capture id and the link come only from our own record and from PayPal's own order lookup.
+  if (body && typeof body === 'object' && Object.keys(body).some(name => !RECOVERY_BODY_FIELDS.has(name))) {
+    return jsonRes({ error: 'UNEXPECTED_FIELDS', note: 'only paypalOrderId and reason are accepted; a capture id cannot be supplied' }, 400, request);
+  }
+  const input = adminActionInput(request, body);
+  if (input.error) return jsonRes({ error: input.error }, 400, request);
+
+  const nowIso = () => new Date().toISOString();
+  const order = await env.DB.prepare('SELECT * FROM paypal_orders WHERE paypal_order_id = ?').bind(input.paypalOrderId).first();
+  const audit = async (orderRef, status, outcome) => {
+    await env.DB.prepare(
+      "INSERT OR IGNORE INTO paypal_order_actions (order_ref, paypal_order_id, action, request_id, status, actor, reason, created_at, completed_at) VALUES (?, ?, 'RECOVER_FULFILLMENT', ?, ?, 'admin', ?, ?, ?)"
+    ).bind(orderRef, input.paypalOrderId, input.key, status, recoveryAuditText(input.reason, outcome), nowIso(), nowIso()).run();
+  };
+  const refuse = async (code, status, extra = {}) => {
+    await audit(order ? order.id : 'UNKNOWN', 'REFUSED', code);
+    return jsonRes({ error: code, ...extra }, status, request);
+  };
+  if (!order) return refuse('ORDER_NOT_FOUND', 404);
+
+  const existing = await env.DB.prepare(
+    "SELECT * FROM paypal_order_actions WHERE order_ref = ? AND action = 'RECOVER_FULFILLMENT' AND request_id = ?"
+  ).bind(order.id, input.key).first();
+  if (existing && existing.status === 'DONE') {
+    const current = await env.DB.prepare('SELECT status FROM paypal_orders WHERE id = ?').bind(order.id).first();
+    return jsonRes({ ok: true, replayed: true, status: current?.status || null }, 200, request);
+  }
+  if (existing && existing.status !== 'STARTED') {
+    return jsonRes({ error: 'KEY_ALREADY_USED_USE_A_NEW_KEY', previous: existing.status }, 409, request);
+  }
+
+  if (order.status === 'COMPLETED') {
+    await audit(order.id, 'DONE', 'ALREADY_COMPLETED');
+    return jsonRes({ ok: true, alreadyCompleted: true, status: 'COMPLETED' }, 200, request);
+  }
+  if (order.order_type !== 'digital') return refuse('ORDER_NOT_ELIGIBLE', 409, { reason: 'NOT_DIGITAL' });
+  if (order.status !== 'FULFILLING') return refuse('ORDER_NOT_ELIGIBLE', 409, { reason: 'NOT_FULFILLING' });
+  if (!order.paypal_capture_id || !order.fulfillment_token) return refuse('STATE_INCOMPLETE', 409);
+  if (isTerminalAfterSale(order)) return refuse('ORDER_REFUNDED', 409);
+  if (afterSaleStateOf(order) !== 'NONE' || Number(order.dispute_open) === 1) return refuse('AFTER_SALE_OPEN', 409);
+
+  // Take the slot in ONE statement: no other recovery of this order started in the last 10 minutes, and the
+  // order is still FULFILLING with no refund or dispute. A resumed STARTED row of the same key skips this.
+  let action = existing;
+  if (!action) {
+    const recent = new Date(Date.now() - RECOVERY_IN_PROGRESS_WINDOW_MS).toISOString();
+    try {
+      await env.DB.prepare(
+        `INSERT INTO paypal_order_actions (order_ref, paypal_order_id, action, request_id, status, actor, reason, created_at)
+         SELECT ?, ?, 'RECOVER_FULFILLMENT', ?, 'STARTED', 'admin', ?, ?
+         WHERE NOT EXISTS (SELECT 1 FROM paypal_order_actions WHERE order_ref = ? AND action = 'RECOVER_FULFILLMENT' AND status = 'STARTED' AND created_at > ?)
+           AND EXISTS (SELECT 1 FROM paypal_orders WHERE id = ? AND status = 'FULFILLING' AND after_sale_state = 'NONE' AND dispute_open = 0)`
+      ).bind(order.id, order.paypal_order_id, input.key, recoveryAuditText(input.reason), nowIso(), order.id, recent, order.id).run();
+    } catch {
+      // The same key raced in parallel (unique index): look it up below.
+    }
+    action = await env.DB.prepare(
+      "SELECT * FROM paypal_order_actions WHERE order_ref = ? AND action = 'RECOVER_FULFILLMENT' AND request_id = ?"
+    ).bind(order.id, input.key).first();
+    if (!action) return refuse('RECOVERY_IN_PROGRESS_OR_NOT_ELIGIBLE', 409);
+    if (action.status === 'DONE') return jsonRes({ ok: true, replayed: true }, 200, request);
+  }
+
+  const close = async (status, outcome) => {
+    await env.DB.prepare(
+      "UPDATE paypal_order_actions SET status = ?, reason = ?, completed_at = ? WHERE id = ? AND status = 'STARTED'"
+    ).bind(status, recoveryAuditText(input.reason, outcome), nowIso(), action.id).run();
+  };
+  const fail = async (code, status, extra = {}) => {
+    await close('FAILED', code);
+    return jsonRes({ error: code, ...extra }, status, request);
+  };
+
+  try {
+    // Payment verified by PayPal itself (read-only), against OUR recorded capture id.
+    let authoritative;
+    try {
+      const accessToken = await getPayPalAccessToken(env);
+      const orderResponse = await fetch(
+        paypalApiBase(env) + '/v2/checkout/orders/' + encodeURIComponent(order.paypal_order_id),
+        { method: 'GET', headers: { 'Authorization': 'Bearer ' + accessToken, 'Accept': 'application/json' } }
+      );
+      authoritative = await orderResponse.json().catch(() => ({}));
+      if (!orderResponse.ok) return await fail('PAYPAL_LOOKUP_FAILED', 502);
+    } catch {
+      return await fail('PAYPAL_LOOKUP_FAILED', 502);
+    }
+    const capture = authoritative.purchase_units?.[0]?.payments?.captures?.find(item => item?.id === order.paypal_capture_id);
+    if (
+      authoritative.id !== order.paypal_order_id || authoritative.status !== 'COMPLETED' ||
+      authoritative.purchase_units?.[0]?.custom_id !== order.id ||
+      !captureMatchesOrder(capture && { ...capture, custom_id: authoritative.purchase_units[0].custom_id }, order.paypal_capture_id, order) ||
+      capture.status !== 'COMPLETED'
+    ) {
+      return await fail('PAYMENT_NOT_VERIFIED', 409);
+    }
+
+    // The state NOW, after PayPal answered: a webhook, a buyer retry or a refund may have moved the order meanwhile.
+    const fresh = await env.DB.prepare('SELECT * FROM paypal_orders WHERE id = ?').bind(order.id).first();
+    if (fresh?.status === 'COMPLETED') {
+      await close('DONE', 'ALREADY_COMPLETED');
+      return jsonRes({ ok: true, alreadyCompleted: true, status: 'COMPLETED' }, 200, request);
+    }
+    if (isTerminalAfterSale(fresh)) return await fail('ORDER_REFUNDED', 409);
+    if (afterSaleStateOf(fresh) !== 'NONE' || Number(fresh?.dispute_open) === 1) return await fail('AFTER_SALE_OPEN', 409);
+    if (fresh?.status !== 'FULFILLING' || fresh.paypal_capture_id !== order.paypal_capture_id || !fresh.fulfillment_token) {
+      return await fail('ORDER_STATE_CHANGED', 409);
+    }
+
+    // The shared completion path. Its response carries the download link: it is deliberately NOT forwarded.
+    const completion = await finalizeDigitalPayPalOrder(request, env, fresh, {
+      payerEmail: authoritative?.payer?.email_address || null, waitUntil: options.waitUntil,
+    });
+    if (!completion.ok) {
+      return await fail(completion.status === 409 ? 'ORDER_REFUNDED' : 'FULFILLMENT_FAILED', completion.status === 409 ? 409 : 502);
+    }
+    const done = await env.DB.prepare('SELECT status FROM paypal_orders WHERE id = ?').bind(order.id).first();
+    if (done?.status !== 'COMPLETED') return await fail('FULFILLMENT_FAILED', 502);
+    await close('DONE', 'COMPLETED');
+    return jsonRes({ ok: true, replayed: false, status: 'COMPLETED' }, 200, request);
+  } catch {
+    // Interrupted mid-way (database or runtime error). The row stays STARTED, so the SAME key can resume;
+    // completion is idempotent (one stored token, guarded status flip).
+    return jsonRes({ error: 'RECOVERY_INTERRUPTED', retryWithSameKey: true }, 500, request);
+  }
+}
+
 // Admin: read or change the D1 checkout switch (see paypal-switch.js). Changing it needs the admin
 // login (enforced by the route), a unique Idempotency-Key and a reason, and is written to the audit
 // table. Closing and freezing never depend on PayPal configuration (they must work in an emergency);

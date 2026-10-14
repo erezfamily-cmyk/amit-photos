@@ -168,7 +168,7 @@ export async function sendPaymentAlert(env, { kind, key, orderRef = null, paypal
 
 // Texts name the condition and the PayPal id and point at the existing admin read routes.
 const KINDS = {
-  stuckFulfilling: id => ({ kind: 'STUCK_FULFILLING', key: 'stuck-' + id, paypalOrderId: id, text: `הזמנה ${id}: התשלום נקלט אך המסירה לא הושלמה מעל שעתיים. בדקו GET /api/admin/paypal/order?paypalOrderId=${id} והפעילו הנפקה מחדש לאחר אימות.` }),
+  stuckFulfilling: id => ({ kind: 'STUCK_FULFILLING', key: 'stuck-' + id, paypalOrderId: id, text: `הזמנה ${id}: התשלום נקלט אך המסירה לא הושלמה מעל שעתיים. בדקו GET /api/admin/paypal/order?paypalOrderId=${id}. תחילה שלחו מחדש את אירוע PAYMENT.CAPTURE.COMPLETED מלוח PayPal; אם אי אפשר, הפעילו POST /api/admin/paypal/recover-fulfillment (מאמת מול PayPal, בלי חיוב נוסף). הנפקה מחדש (reissue) אפשרית רק אחרי שההזמנה הושלמה. אין להכניס טוקן ידנית ל-D1.` }),
   unprocessedWebhooks: row => ({ kind: 'WEBHOOK_FAILING', key: 'wh-' + row.id, text: `אירוע webhook ${row.id} (${row.type}) לא עובד אחרי ${row.attempts} ניסיונות. יש לבדוק את ה-Worker ולבצע Resend מלוח PayPal אחרי התיקון.` }),
   reviewRequired: id => ({ kind: 'REVIEW_REQUIRED', key: 'review-' + id, paypalOrderId: id, text: `הזמנה ${id} ממתינה להחלטה ידנית (החזר חלקי או מחלוקת). פעולה: after-sale-review (release או revoke).` }),
   openDisputes: id => ({ kind: 'DISPUTE_OPEN', key: 'dispute-' + id, paypalOrderId: id, text: `מחלוקת פתוחה בהזמנה ${id}. יש תאריכי יעד לתגובה ב-PayPal: בדקו בהקדם.` }),
