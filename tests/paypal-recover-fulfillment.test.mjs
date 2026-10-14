@@ -455,6 +455,27 @@ test('interrupted while completing: the same key resumes safely (still one token
   } finally { net.restore(); }
 });
 
+test('an interrupted attempt that a webhook then completes is closed as DONE on the next call of the same key and holds no slot', async () => {
+  let breakOnce = true;
+  const env = setup({
+    wrap: (base) => ({
+      prepare(sql) {
+        if (breakOnce && sql.startsWith("UPDATE paypal_orders SET status='COMPLETED'")) { breakOnce = false; throw new Error('crash'); }
+        return base.prepare(sql);
+      },
+    }),
+  });
+  const net = fakes();
+  try {
+    assert.equal((await recover(env, KEY(1))).status, 500);
+    assert.deepEqual(actions(env).map(r => r.status), ['STARTED']);
+    env.sqlite.exec("UPDATE paypal_orders SET status = 'COMPLETED', fulfillment_json = '{}' WHERE id = '" + LOCAL + "'");   // the webhook finished it
+    const again = await recover(env, KEY(1));
+    assert.deepEqual(await again.json(), { ok: true, alreadyCompleted: true, status: 'COMPLETED' });
+    assert.deepEqual(actions(env).map(r => r.status), ['DONE']);
+  } finally { net.restore(); }
+});
+
 test('after the 10-minute window a stale interrupted attempt no longer blocks a new key', async () => {
   let breakOnce = true;
   const env = setup({
