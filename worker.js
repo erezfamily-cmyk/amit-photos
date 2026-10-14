@@ -1,5 +1,6 @@
-import { handlePayPalCreateOrder, handlePayPalCaptureOrder, handlePayPalSandboxStatus, handlePayPalWebhook, handlePayPalCheckoutReturn, handlePayPalSandboxCleanup, handlePayPalReissueDownload, handlePayPalAfterSaleReview, handlePayPalOrderSupportView, handlePayPalResendLinkEmail, handlePayPalLiveReadiness, handlePayPalHealth, handlePayPalTestAlert, retryDownloadLinkEmails, digitalPaymentsEnabled, handleDigitalCheckoutQuote } from './paypal-orders.js';
+import { handlePayPalCreateOrder, handlePayPalCaptureOrder, handlePayPalSandboxStatus, handlePayPalWebhook, handlePayPalCheckoutReturn, handlePayPalSandboxCleanup, handlePayPalReissueDownload, handlePayPalAfterSaleReview, handlePayPalOrderSupportView, handlePayPalResendLinkEmail, handlePayPalLiveReadiness, handlePayPalHealth, handlePayPalTestAlert, handlePayPalCheckoutSwitch, retryDownloadLinkEmails, digitalPaymentsEnabled, handleDigitalCheckoutQuote } from './paypal-orders.js';
 import { runPaymentHealthCheck } from './paypal-monitoring.js';
+import { checkNewOrderAllowed } from './paypal-switch.js';
 // Cloudflare Worker — amit-photos
 // מטפל בנתיבי API ומגיש static assets
 
@@ -49,7 +50,10 @@ function paymentsDisabledResponse(request) {
   }, 503, request);
 }
 async function handlePaymentsStatus(request, env) {
-  return jsonRes({ enabled: paymentsEnabled(env), digitalEnabled: digitalPaymentsEnabled(env, request) }, 200, request);
+  // The D1 switch is read only when the flags would otherwise allow digital checkout.
+  const flagsOpen = digitalPaymentsEnabled(env, request);
+  const digitalEnabled = flagsOpen && (await checkNewOrderAllowed(env)).allowed;
+  return jsonRes({ enabled: paymentsEnabled(env), digitalEnabled }, 200, request);
 }
 export {
   paymentsEnabled,
@@ -8043,6 +8047,10 @@ export default {
     if (path === '/api/admin/paypal/after-sale-review') {
       if (!await checkAuth(request, env)) return unauth(request);
       return handlePayPalAfterSaleReview(request, env);
+    }
+    if (path === '/api/admin/paypal/switch') {
+      if (!await checkAuth(request, env)) return unauth(request);
+      return handlePayPalCheckoutSwitch(request, env);
     }
     if (path === '/api/admin/paypal/test-alert') {
       if (!await checkAuth(request, env)) return unauth(request);

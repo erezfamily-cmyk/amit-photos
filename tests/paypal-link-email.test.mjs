@@ -16,12 +16,14 @@ const migration0002 = await read('../migrations/0002_paypal_security_hardening.s
 const migration0003 = await read('../migrations/0003_after_sale_and_reissue.sql');
 const landing = await read('../checkout/download/index.html');
 const headersFile = await read('../_headers');
+const OPEN_SWITCH = JSON.stringify({ state: 'open', openedAt: '2026-01-01T00:00:00.000Z', closesAt: '2099-01-01T00:00:00.000Z', maxOrders: null, photoIds: null });
 const PRE_0002 = `
 CREATE TABLE download_tokens ( token TEXT PRIMARY KEY, photo_ids TEXT NOT NULL, size TEXT NOT NULL, used INTEGER NOT NULL DEFAULT 0, expires_at INTEGER NOT NULL, created_at INTEGER NOT NULL , tx TEXT, amount REAL DEFAULT 0);
 CREATE UNIQUE INDEX idx_download_tokens_tx ON download_tokens(tx) WHERE tx IS NOT NULL;
 CREATE TABLE paypal_orders ( id TEXT PRIMARY KEY, paypal_order_id TEXT UNIQUE NOT NULL, order_type TEXT NOT NULL, photo_id TEXT NOT NULL, sku TEXT, amount_expected INTEGER NOT NULL, currency TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'CREATED', print_address_json TEXT, fulfillment_json TEXT, fulfillment_token TEXT UNIQUE, paypal_capture_id TEXT, created_at TEXT NOT NULL, completed_at TEXT );
 CREATE TABLE paypal_webhook_events ( event_id TEXT PRIMARY KEY, event_type TEXT NOT NULL, received_at TEXT NOT NULL, processed INTEGER NOT NULL DEFAULT 0 );
 CREATE TABLE photos (id TEXT PRIMARY KEY, title TEXT, r2_key TEXT);
+CREATE TABLE settings (key TEXT PRIMARY KEY, value TEXT);
 INSERT INTO photos VALUES ('photo-1', 'Photo <One> & "Co"', 'photo-1.jpg');
 `;
 const ORDER = 'PAYPALORDER12345';
@@ -34,6 +36,7 @@ const TEST_INBOX = 'qa-inbox@example.com';
 function setup({ status = 'CREATED', env: extra = {} } = {}) {
   const sqlite = new DatabaseSync(':memory:');
   sqlite.exec(PRE_0002); sqlite.exec(migration0002); sqlite.exec(migration0003);
+  sqlite.prepare("INSERT INTO settings (key, value) VALUES ('digital_checkout_switch', ?)").run(OPEN_SWITCH);
   const paid = status === 'COMPLETED';
   sqlite.prepare("INSERT INTO paypal_orders (id, paypal_order_id, order_type, photo_id, sku, amount_expected, currency, status, paypal_capture_id, fulfillment_token, fulfillment_json, completed_at, created_at) VALUES (?, ?, 'digital', 'photo-1', 'large', 10000, 'ILS', ?, ?, ?, ?, ?, '2026-10-01T00:00:00Z')")
     .run(LOCAL, ORDER, status, paid ? CAPTURE : null, paid ? 'aaaaaaaa-1111-4111-8111-aaaaaaaaaaaa' : null, paid ? '{"url":"/api/download/aaaaaaaa-1111-4111-8111-aaaaaaaaaaaa","title":"x"}' : null, paid ? new Date().toISOString() : null);

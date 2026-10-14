@@ -2,6 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import worker, { handlePayPalCreateOrder, handlePayPalCaptureOrder, handlePayPalSandboxStatus, handlePayPalWebhook, handlePayPalSandboxCleanup } from '../worker.js';
 
+const OPEN_SWITCH = JSON.stringify({ state: 'open', openedAt: '2026-01-01T00:00:00.000Z', closesAt: '2099-01-01T00:00:00.000Z', maxOrders: null, photoIds: null });
+
 function makeDb(options = {}) {
   const state = {
     prices: options.prices || { small: 19, medium: 59, large: 129 },
@@ -21,6 +23,9 @@ function makeDb(options = {}) {
         bind(...args) {
           return {
             async first() {
+              if (sql.includes('FROM settings WHERE key = ?') && args[0] === 'digital_checkout_switch') {
+                return { value: OPEN_SWITCH };
+              }
               if (sql.includes("FROM settings WHERE key='prices'")) {
                 return { value: JSON.stringify(state.prices) };
               }

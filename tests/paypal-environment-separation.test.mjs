@@ -12,11 +12,14 @@ const SANDBOX_HOST = 'api-m.sandbox.paypal.com';
 const LIVE_HOST = 'api-m.paypal.com';
 const orderId = 'PAYPALORDER12345';
 
+const OPEN_SWITCH = JSON.stringify({ state: 'open', openedAt: '2026-01-01T00:00:00.000Z', closesAt: '2099-01-01T00:00:00.000Z', maxOrders: null, photoIds: null });
+
 function env(extra = {}) {
   const sqlite = new DatabaseSync(':memory:');
   sqlite.exec(`
     CREATE TABLE settings (key TEXT PRIMARY KEY, value TEXT);
     INSERT INTO settings VALUES ('prices', '{"small":19,"medium":59,"large":129}');
+    INSERT INTO settings VALUES ('digital_checkout_switch', '${OPEN_SWITCH}');
     CREATE TABLE photos (id TEXT PRIMARY KEY, title TEXT, published INTEGER, price_overrides TEXT);
     INSERT INTO photos VALUES ('photo-1','Photo One',1,'{"large":100}');
     CREATE TABLE paypal_orders (id TEXT PRIMARY KEY, paypal_order_id TEXT UNIQUE, order_type TEXT,

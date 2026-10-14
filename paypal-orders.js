@@ -1,3 +1,4 @@
+import { SWITCH_KEY, CLOSE_GRACE_MS, MAX_OPEN_HORIZON_MS, readCheckoutSwitch, checkNewOrderAllowed, checkCaptureAllowed, parseSwitch, effectiveSwitch, capSql } from './paypal-switch.js';
 import { paymentHealthSnapshot, sendPaymentAlert, afterSaleAlert, webhookFailingAlert, paymentAlertsEnabled, paymentAlertChannels } from './paypal-monitoring.js';
 
 // Environment is explicit: PAYPAL_ENVIRONMENT = 'sandbox' (default when unset) or 'live'.
@@ -111,11 +112,14 @@ export async function handleDigitalCheckoutQuote(request, env) {
   const sku = params.get('sku') || 'large';
   const pricing = await resolveDigitalPayPalPrice(env, photoId, sku, 'ILS');
   if (pricing.error) return jsonRes({ error: pricing.error }, pricing.status, request);
+  // Flags and configuration first (no database read while payments are off), then the D1 switch.
+  const flagsOpen = digitalPaymentsEnabled(env, request);
+  const switchOpen = flagsOpen ? (await checkNewOrderAllowed(env, { photoId: photoId ?? '' })).allowed : false;
   const photo = await env.DB.prepare('SELECT title FROM photos WHERE id = ?').bind(photoId).first();
   return jsonRes({
     photoId, sku, title: photo?.title || photoId,
     amountMinor: pricing.amountExpected, currency: 'ILS',
-    license: 'personal', enabled: digitalPaymentsEnabled(env, request),
+    license: 'personal', enabled: flagsOpen && switchOpen,
     environment: resolvePayPalConfig(env, request).environment || null,
   }, 200, request);
 }
@@ -1116,6 +1120,9 @@ export async function handlePayPalLiveReadiness(request, env) {
   checks.downloadEmail = { enabled: mailOn, keyPresent: !!env.RESEND_API_KEY, testRecipientSet: !!env.DOWNLOAD_EMAIL_OVERRIDE_TO };
   if (config.environment === 'live' && checks.downloadEmail.testRecipientSet) reasons.push('TEST_RECIPIENT_SET_IN_LIVE');
   checks.paymentAlerts = { enabled: paymentAlertsEnabled(env), channels: paymentAlertChannels(env) };
+  const checkoutSwitch = await readCheckoutSwitch(env);
+  checks.checkoutSwitch = checkoutSwitch.ok ? { state: checkoutSwitch.config.state, effectiveMode: checkoutSwitch.effective.mode } : { state: 'none', effectiveMode: 'blocked', reason: checkoutSwitch.reason };
+  if (!checkoutSwitch.ok && checkoutSwitch.reason !== 'SWITCH_ABSENT') reasons.push('CHECKOUT_SWITCH_INVALID');
   if (config.environment === 'live' && !checks.paymentAlerts.enabled) reasons.push('PAYMENT_ALERTS_NOT_ENABLED');
   if (mailOn && !env.RESEND_API_KEY) reasons.push('EMAIL_ENABLED_WITHOUT_KEY');
   if (mailOn) {
@@ -1175,6 +1182,68 @@ async function noteWebhookFailure(env, event, options) {
     const alert = webhookFailingAlert(event.id, event.event_type, Number(row?.attempts) || 0);
     if (alert) await runBackground(options, sendPaymentAlert(env, alert));
   } catch { /* monitoring never affects the webhook response */ }
+}
+
+// Admin: read or change the D1 checkout switch (see paypal-switch.js). Changing it needs the admin
+// login (enforced by the route), a unique Idempotency-Key and a reason, and is written to the audit
+// table. Closing and freezing never depend on PayPal configuration (they must work in an emergency);
+// opening requires a valid PayPal configuration and a closing time. Only this handler and a manual
+// D1 statement ever write the switch: a deployment never creates, changes or resets it.
+export async function handlePayPalCheckoutSwitch(request, env) {
+  if (request.method === 'GET') {
+    const state = await readCheckoutSwitch(env);
+    return jsonRes(state.ok
+      ? { valid: true, state: state.config.state, effectiveMode: state.effective.mode, autoClosed: !!state.effective.autoClosed, config: state.config, graceMinutesAfterClose: CLOSE_GRACE_MS / 60000 }
+      : { valid: false, reason: state.reason, effectiveMode: 'blocked', note: 'No valid switch: new orders and charges are blocked.' }, 200, request);
+  }
+  if (request.method !== 'POST') return jsonRes({ error: 'method not allowed' }, 405, request);
+
+  const key = request.headers.get('Idempotency-Key') || '';
+  const body = await request.json().catch(() => ({}));
+  const reason = typeof body?.reason === 'string' ? body.reason.replace(/[\u0000-\u001f\u007f]/g, ' ').trim().slice(0, 150) : '';
+  const desired = body?.state;
+  if (!ACTION_ID.test(key)) return jsonRes({ error: 'IDEMPOTENCY_KEY_REQUIRED' }, 400, request);
+  if (!reason) return jsonRes({ error: 'REASON_REQUIRED' }, 400, request);
+  if (desired !== 'open' && desired !== 'closed' && desired !== 'frozen') return jsonRes({ error: 'STATE_INVALID' }, 400, request);
+
+  const prior = await env.DB.prepare("SELECT status FROM paypal_order_actions WHERE order_ref = 'SYSTEM' AND action = 'SWITCH' AND request_id = ?").bind(key).first();
+  if (prior) {
+    const now = await readCheckoutSwitch(env);
+    return jsonRes({ ok: true, replayed: true, requestedState: prior.status, currentState: now.ok ? now.config.state : null }, 200, request);
+  }
+
+  const nowMs = Date.now();
+  const nowIso = new Date(nowMs).toISOString();
+  const current = await readCheckoutSwitch(env, nowMs);
+  let next;
+  if (desired === 'open') {
+    const config = resolvePayPalConfig(env, request);
+    if (!config.ok) return jsonRes({ error: 'PAYPAL_CONFIGURATION_INVALID', reason: config.reason }, 503, request);
+    if (current.ok && current.config.state === 'frozen') return jsonRes({ error: 'FROZEN_MUST_BE_CLOSED_FIRST' }, 409, request);
+    const closesMs = typeof body.closesAt === 'string' ? Date.parse(body.closesAt) : NaN;
+    if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{1,3})?Z$/.test(String(body.closesAt)) || !Number.isFinite(closesMs) || closesMs <= nowMs || closesMs > nowMs + MAX_OPEN_HORIZON_MS) {
+      return jsonRes({ error: 'CLOSES_AT_INVALID', note: 'ISO UTC time in the future, at most 90 days ahead' }, 400, request);
+    }
+    next = { state: 'open', openedAt: nowIso, closesAt: new Date(closesMs).toISOString(), maxOrders: body.maxOrders ?? null, photoIds: body.photoIds ?? null, updatedAt: nowIso, updatedBy: 'admin' };
+    const check = parseSwitch(JSON.stringify(next));
+    if (!check.ok) return jsonRes({ error: check.reason }, 400, request);
+    next = { ...check.config, updatedAt: nowIso, updatedBy: 'admin' };
+  } else {
+    // Keep the ORIGINAL stop time when the checkout was already closed or frozen, so moving from
+    // frozen to closed never reopens the 30-minute window for orders from before the emergency.
+    const stoppedAt = current.ok && current.effective.mode !== 'open' ? current.effective.closedAt : nowIso;
+    next = { state: desired, closedAt: stoppedAt, updatedAt: nowIso, updatedBy: 'admin' };
+  }
+
+  await env.DB.prepare('INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value')
+    .bind(SWITCH_KEY, JSON.stringify(next)).run();
+  const summary = desired === 'open'
+    ? ' closesAt=' + next.closesAt + ' maxOrders=' + (next.maxOrders ?? 'none') + ' photos=' + (next.photoIds ? next.photoIds.length : 'any')
+    : '';
+  await env.DB.prepare(
+    "INSERT OR IGNORE INTO paypal_order_actions (order_ref, paypal_order_id, action, request_id, status, actor, reason, created_at, completed_at) VALUES ('SYSTEM', '-', 'SWITCH', ?, ?, 'admin', ?, ?, ?)"
+  ).bind(key, desired, (reason + ' | from=' + (current.ok ? current.config.state : current.reason) + ' to=' + desired + summary).slice(0, 400), nowIso, nowIso).run();
+  return jsonRes({ ok: true, state: next.state, effectiveMode: effectiveSwitch(next, nowMs).mode, config: next }, 200, request);
 }
 
 // Admin: sends ONE harmless test alert through the real channels (no order, no customer data, no
@@ -1448,8 +1517,13 @@ export async function handlePayPalCreateOrder(request, env, options = {}) {
 
   // Public checkout confirms the server quote; the client never sets the price.
   let publicBody;
+  let switchConfig = null;
   if (options.publicCheckout) {
     publicBody = await request.clone().json().catch(() => ({}));
+    // D1 switch: no valid/open switch, a closed or frozen checkout, or a photo outside the canary list = no new order.
+    const gate = await checkNewOrderAllowed(env, { photoId: typeof publicBody?.photoId === 'string' ? publicBody.photoId : '' });
+    if (!gate.allowed) return paymentsDisabledResponse(request);
+    switchConfig = gate.config;
     if (publicBody.licenseAccepted !== true || publicBody.currency !== 'ILS') {
       return jsonRes({ error: 'PERSONAL_LICENSE_ACCEPTANCE_REQUIRED' }, 400, request);
     }
@@ -1484,6 +1558,13 @@ export async function handlePayPalCreateOrder(request, env, options = {}) {
   const currency = typeof body.currency === 'string' ? body.currency.toUpperCase() : 'ILS';
   const pricing = await resolveDigitalPayPalPrice(env, photoId, sku, currency);
   if (pricing.error) return jsonRes({ error: pricing.error }, pricing.status, request);
+
+  // Canary cap, early look (saves a PayPal call when it is already full). The binding check is the
+  // atomic INSERT below, which parallel requests cannot get around.
+  if (switchConfig?.maxOrders) {
+    const used = await env.DB.prepare("SELECT COUNT(*) AS n FROM paypal_orders WHERE order_type = 'digital' AND created_at >= ?").bind(switchConfig.openedAt).first();
+    if ((Number(used?.n) || 0) >= switchConfig.maxOrders) return paymentsDisabledResponse(request);
+  }
 
   let accessToken;
   try {
@@ -1534,18 +1615,27 @@ export async function handlePayPalCreateOrder(request, env, options = {}) {
   }
 
   try {
-    await env.DB.prepare(
-      "INSERT INTO paypal_orders (id, paypal_order_id, order_type, photo_id, sku, amount_expected, currency, status, created_at, client_idempotency_key) VALUES (?, ?, 'digital', ?, ?, ?, ?, 'CREATED', ?, ?)"
-    ).bind(
-      localId,
-      paypalOrder.id,
-      photoId,
-      sku,
-      pricing.amountExpected,
-      pricing.currency,
-      new Date().toISOString(),
-      idempotencyKey
-    ).run();
+    const createdAt = new Date().toISOString();
+    const values = [localId, paypalOrder.id, photoId, sku, pricing.amountExpected, pricing.currency, createdAt, idempotencyKey];
+    let inserted;
+    if (switchConfig?.maxOrders) {
+      // The count is part of the statement, so concurrent requests cannot exceed the cap.
+      inserted = await env.DB.prepare(
+        "INSERT INTO paypal_orders (id, paypal_order_id, order_type, photo_id, sku, amount_expected, currency, status, created_at, client_idempotency_key) SELECT ?, ?, 'digital', ?, ?, ?, ?, 'CREATED', ?, ? WHERE " + capSql(switchConfig.maxOrders)
+      ).bind(...values, switchConfig.openedAt, switchConfig.maxOrders).run();
+    } else {
+      inserted = await env.DB.prepare(
+        "INSERT INTO paypal_orders (id, paypal_order_id, order_type, photo_id, sku, amount_expected, currency, status, created_at, client_idempotency_key) VALUES (?, ?, 'digital', ?, ?, ?, ?, 'CREATED', ?, ?)"
+      ).bind(...values).run();
+    }
+    if (!(Number(inserted?.meta?.changes) > 0)) {
+      // Cap reached by a parallel request. A retry that already owns a row is not a new order.
+      const owned = await env.DB.prepare('SELECT * FROM paypal_orders WHERE client_idempotency_key = ? LIMIT 1').bind(idempotencyKey).first();
+      if (owned?.paypal_order_id && owned.photo_id === photoId && owned.sku === sku && owned.currency === pricing.currency && owned.amount_expected === pricing.amountExpected) {
+        return canonicalOrderResponse(request, env, owned.paypal_order_id, options);
+      }
+      return paymentsDisabledResponse(request);
+    }
   } catch {
     // A concurrent request with the same Idempotency-Key may have persisted the
     // same PayPal order first. Return that canonical local row instead of a
@@ -1672,6 +1762,12 @@ export async function handlePayPalCaptureOrder(request, env, options = {}) {
   // local fulfillment. Resume locally without charging again.
   if (order.status === 'FULFILLING' && order.paypal_capture_id && order.fulfillment_token && order.order_type === 'digital') {
     return finalizeDigitalPayPalOrder(request, env, order, { waitUntil: options.waitUntil });
+  }
+
+  // The charge itself. Delivery of orders that are already paid (above) is never blocked by the switch.
+  if (!options.allowWhenPaymentsDisabled) {
+    const gate = await checkCaptureAllowed(env, order);
+    if (!gate.allowed) return paymentsDisabledResponse(request);
   }
 
   let accessToken;

@@ -6,6 +6,8 @@ import { readFileSync } from 'node:fs';
 import { createCheckoutClient, resolveCheckoutLang } from '../assets/js/digital-checkout.mjs';
 import { digitalPaymentsEnabled, handleDigitalCheckoutQuote, handlePayPalCreateOrder, handlePayPalCaptureOrder } from '../paypal-orders.js';
 
+const OPEN_SWITCH = JSON.stringify({ state: 'open', openedAt: '2026-01-01T00:00:00.000Z', closesAt: '2099-01-01T00:00:00.000Z', maxOrders: null, photoIds: null });
+
 function storage() {
   const data = new Map();
   return { getItem: key => data.get(key) || null, setItem: (key, value) => data.set(key, value), removeItem: key => data.delete(key) };
@@ -15,6 +17,7 @@ function env() {
   sqlite.exec(`
     CREATE TABLE settings (key TEXT PRIMARY KEY, value TEXT);
     INSERT INTO settings VALUES ('prices', '{"small":19,"medium":59,"large":129}');
+    INSERT INTO settings VALUES ('digital_checkout_switch', '${OPEN_SWITCH}');
     CREATE TABLE photos (id TEXT PRIMARY KEY, title TEXT, published INTEGER, price_overrides TEXT);
     INSERT INTO photos VALUES ('photo-1','Photo One',1,'{"large":100}');
     CREATE TABLE paypal_orders (id TEXT PRIMARY KEY, paypal_order_id TEXT UNIQUE, order_type TEXT,
