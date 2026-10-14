@@ -9,15 +9,6 @@ compatibility_flags = ["nodejs_compat"]
 PAYMENTS_ENABLED = "false"
 DIGITAL_PAYPAL_ENABLED = "false"
 
-# Payment alerts (read-only monitoring + e-mail notices). Prepared for review: takes effect only when
-# this change is merged and deployed. Alerts go by e-mail only (the Telegram secret also serves
-# purchase notices and its receipt is unverified) to a DEDICATED recipient, so the site's other admin
-# mail (ADMIN_EMAIL) is not redirected. Secrets (the mail and Telegram keys) are never defined here.
-# To switch the alerts off again: revert this change (see docs/payment-alerts-cron-config-review-2026-10-14.md).
-PAYMENT_ALERTS_ENABLED = "true"
-PAYMENT_ALERT_CHANNELS = "email"
-PAYMENT_ALERT_EMAIL = "erez.family@gmail.com"
-
 [assets]
 directory = "."
 binding = "ASSETS"
@@ -41,6 +32,5 @@ pattern = "www.amitphotos.com/*"
 zone_name = "amitphotos.com"
 
 [triggers]
-# The first two keep their usual jobs; "*/15 * * * *" runs ONLY the payment health check (see scheduled-routing.js).
-crons = ["0 */2 * * *", "0 9 1,15 * *", "*/15 * * * *"]
+crons = ["0 */2 * * *", "0 9 1,15 * *"]
 

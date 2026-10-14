@@ -44,6 +44,12 @@ Payment flags: **both `false` everywhere** (production, main Sandbox Worker, PR 
 
 ## Acquisition and caption quality review — 12.10.2026
 
+### INCIDENT: PRODUCTION ALERT/CRON CONFIG PUSHED TO THE #155 BRANCH BY MISTAKE, THEN REVERTED (14.10.2026, night; flags `false`, nothing merged or deployed)
+
+- **Mistake:** a docs commit made while the working copy was still on the #156 config branch was pushed to the #155 branch (`6212e92a`), so for a short time the #155 branch carried the `*/15 * * * *` cron and `PAYMENT_ALERTS_ENABLED="true"` etc. Merging #155 in that state would have applied them to production. Cause: a shell error aborted the command that was meant to switch branches, and the push ran anyway. Nothing was merged or deployed; production stayed on its two crons and `PAYMENTS_ENABLED=false`.
+- **Fix (owner-approved: new commit + normal push, no force push):** one revert commit on the #155 branch restores `wrangler.toml`, `.github/workflows/node-tests.yml` and `tests/scheduled-routing.test.mjs` to their state at `b6be18f6` and removes the #156-only files (`tests/production-alert-config.test.mjs`, `docs/payment-alerts-cron-config-review-2026-10-14.md`). The health/readiness code fixes are kept. Result: the diff of the #155 branch against `b6be18f6` is documentation only; `wrangler.toml` has exactly the two original crons, no alert variables, both payment flags `false`.
+- **Lesson / rule:** push with an explicit branch check (`git branch --show-current` must match) in the same command, never chain a push after a command that may have failed to switch branches.
+
 ### ALERTS-ON-BUT-BROKEN NOW FAILS HEALTH AND BLOCKS LIVE READINESS; EXTERNAL UPTIME PROPOSAL (14.10.2026, night; payment flags `false`)
 
 - **Fix (PR #155 branch, commit `b6be18f6`):** alerts switched on (`PAYMENT_ALERTS_ENABLED=true`) but unusable (mail key missing, malformed or list recipient, unknown channel, Telegram wanted without a user) give `healthy:false` with `alerts.problems` reason codes in health, the same codes make Live readiness NOT_READY (codes reported in every environment), and the test-alert route names the cause. Nothing is ever sent to a malformed recipient. Tests: monitoring 18, readiness 10 (mutation-checked); no address or key is echoed.

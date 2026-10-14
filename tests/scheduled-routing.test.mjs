@@ -136,9 +136,10 @@ test('an unknown trigger starts one job, reports itself once, and never reaches 
 
 // ----- nothing was added to the configuration -------------------------------------------------------------------
 
-test('wrangler.toml lists the two existing triggers plus the payment-monitor trigger, and the Sandbox config has none', async () => {
+test('wrangler.toml still lists exactly the two existing triggers: no 15-minute trigger was added anywhere', async () => {
   const toml = await read('../wrangler.toml');
-  assert.deepEqual(configuredCrons(toml), [...LEGACY_CRONS, PAYMENT_MONITOR_CRON]);
+  assert.deepEqual(configuredCrons(toml), LEGACY_CRONS);
+  assert.ok(!toml.includes(PAYMENT_MONITOR_CRON));
   const sandbox = await read('../wrangler.paypal-sandbox.example.toml');
   assert.ok(!/\[triggers\]\s*\n\s*crons/.test(sandbox) && !sandbox.includes(PAYMENT_MONITOR_CRON), 'the Sandbox Worker has no triggers');
   const builder = await read('../src/build_paypal_sandbox_config.py');
