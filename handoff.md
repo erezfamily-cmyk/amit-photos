@@ -16,6 +16,25 @@
 
 ## Acquisition and caption quality review — 12.10.2026
 
+### REAL MAIL TEST COMPLETED AND PREVIEW CLEANED 14.10.2026 (13:05–13:32Z; payment flags `false` throughout)
+
+Owner-approved test to ONE inbox (the approved test address) using the existing eligible Sandbox order `57C56548529949838`; no purchase, no payment flag, no production/Live action, no code change. Code under test: `98b8c09` (Preview).
+
+**Results (D1 read-only + owner reports; no address or link recorded):**
+- Mail 1 (`manual-mail-test-0001`) and mail 2 (`manual-mail-test-0002`): both HTTP 200 `SENT`, `test=True`, audit rows `LINK_EMAIL` actor `admin`, reason `test_recipient`, each completed in under a second; exactly two rows exist in the whole database.
+- **Authentication (Gmail "Show original"): SPF PASS, DKIM PASS (domain amitphotos.com), DMARC PASS.** Real delivery from `contact@amitphotos.com` through the verified Resend domain (eu-west-1) is therefore proven for Gmail; Outlook/other providers and spam-folder placement over time are not.
+- Opening the mailed page on desktop AND phone (and Gmail's own link scanning) showed the "ready" state and left the link `used=0` and unrevoked (verified in D1 at 13:21Z). Before that the fragment page's HEAD pre-check and rendering were also covered by the 15 browser scenarios in CI.
+- **De-duplication:** replay of an existing key (`mail-test-0002`) returned `replayed=True` with no new row and no third mail (note: the replay response shows `test=False` because the replay path returns only the stored status; the recipient was fixed at the original send. Cosmetic; to fix later).
+- One deliberate click on the download button produced exactly one download; the token is `used=1` (only one token exists for the order, no new token was ever created); a page refresh showed "link already used".
+- After use, `mail-test-0003` returned HTTP 409 `SKIPPED / NO_ACTIVE_LINK`: no claim row was created (the code stops before choosing a recipient, claiming or calling the provider), still exactly two `LINK_EMAIL` rows, no new order/event/token (20 orders, 29 events, 16 tokens). Worker analytics returned no rows for this window, so "no provider call" rests on the D1 state and the code path, not on a network count.
+- Cron isolation (before enabling): no cron on the Sandbox Worker or Previews, production has neither the mail variables nor the code, and the sweep-candidate query returned 0 rows.
+
+**Cleanup (done 13:31:41Z, Preview deployment `b58550dd`):** `DOWNLOAD_EMAIL_ENABLED`, `DOWNLOAD_EMAIL_OVERRIDE_TO`, `PUBLIC_BASE_URL` and `RESEND_API_KEY` removed from the PR Preview only; the other settings (admin password, PayPal credentials and webhook id, bindings) are still present; `PAYMENTS_ENABLED=false`, `DIGITAL_PAYPAL_ENABLED=false`, `PAYPAL_ENVIRONMENT=sandbox`. Verified afterwards: create and capture answer 503 on the Preview, the main Sandbox Worker and production (`{"enabled":false}`); the mail admin route is 401 without credentials; `prep/...` is still `e69131f`. **Pending on the owner:** delete the dedicated "Sending access" key in Resend (production's key was never touched).
+
+**What this proves / does not prove:** proves the end-to-end path (verified-order link -> provider -> inbox -> landing page -> one deliberate download), authenticated sending from the real domain, de-duplication by key, no consumption by page load/scanning, and refusal after use. Does not prove: delivery to non-Gmail providers or real enterprise link scanners, bounce handling, the provider's 24 h key memory and 409 behaviour, the failure path with the real provider (only unit tests), sending to a real payer in Live, or any behaviour at volume.
+
+**Remaining gaps for release (unchanged except as above):** Live credentials/webhook/readiness in Live; monitoring and alerts; `/legal`, terms and privacy (mention the mail provider); the runtime D1 switch and freeze procedure decisions; decline, dispute and reversal with real events; owner commercial decisions; production migrations 0002/0003, merge of PR #155 (auto-deploys production), canary approvals. The replay-response cosmetic issue above.
+
 ### REAL MAIL TEST IN PROGRESS 14.10.2026 (Preview only; payment flags `false`) — interim record
 
 Owner approved (explicitly, for this recipient only) the plan in `docs/download-link-email-live-test-plan-2026-10-14.md`. State at 13:10Z: Preview deployment `5d4f1c47` carries `RESEND_API_KEY` (secret), `DOWNLOAD_EMAIL_ENABLED=true`, `DOWNLOAD_EMAIL_OVERRIDE_TO` (the approved test inbox) and `PUBLIC_BASE_URL` (the Preview host); both payment flags `false`; create/capture 503 on the Preview, the main Sandbox Worker and production. **Cron isolation verified before enabling:** the Sandbox Worker has no cron schedules (`schedules: []`, its config states "no [triggers]"), Previews have no cron field, production (the only cron) has neither the mail variables nor the mail code, and the exact sweep-candidate query on the Sandbox D1 returned 0 rows (the only eligible order, `57C56548529949838`, completed 22.2 h ago, outside the 20 h sweep window).
