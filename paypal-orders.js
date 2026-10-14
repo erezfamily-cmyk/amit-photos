@@ -1263,6 +1263,9 @@ export async function handlePayPalRecoverFulfillment(request, env, options = {})
 
   if (order.status === 'COMPLETED') {
     await audit(order.id, 'DONE', 'ALREADY_COMPLETED');
+    // An interrupted attempt of this same key that someone else (a webhook) finished must not stay STARTED.
+    await env.DB.prepare("UPDATE paypal_order_actions SET status = 'DONE', reason = ?, completed_at = ? WHERE order_ref = ? AND action = 'RECOVER_FULFILLMENT' AND request_id = ? AND status = 'STARTED'")
+      .bind(recoveryAuditText(input.reason, 'ALREADY_COMPLETED'), nowIso(), order.id, input.key).run();
     return jsonRes({ ok: true, alreadyCompleted: true, status: 'COMPLETED' }, 200, request);
   }
   if (order.order_type !== 'digital') return refuse('ORDER_NOT_ELIGIBLE', 409, { reason: 'NOT_DIGITAL' });
