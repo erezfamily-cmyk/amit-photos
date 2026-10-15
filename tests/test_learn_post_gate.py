@@ -386,6 +386,87 @@ class RevisionRoundTests(unittest.TestCase):
             self.assertEqual(gate.run_revision(self.data(), verification), {"error": "request failed"})
 
 
+class WeeklyPickTests(unittest.TestCase):
+    candidates = [
+        {"photo_id": "PhotoA_123456", "title": "גשר", "thumbnail": "/photos/thumb/a.webp", "rule": "framing", "clarity": 0.92, "reason": "קשת ממסגרת"},
+        {"photo_id": "PhotoB_123456", "title": "מסילה", "thumbnail": "/photos/thumb/b.webp", "rule": "leading_lines", "clarity": 0.88, "reason": "קווים מובילים"},
+        {"photo_id": "PhotoC_123456", "title": "אגם", "thumbnail": "/photos/thumb/c.webp", "rule": "symmetry", "clarity": 0.81, "reason": "השתקפות"},
+    ]
+
+    def test_the_issue_shows_the_candidates_and_carries_them_for_the_pick(self):
+        title, body = gate.build_pick_issue(self.candidates)
+        self.assertIn("1, 2 או 3", body)
+        self.assertIn("### 2. מסילה", body)
+        self.assertIn("https://www.amitphotos.com/photos/thumb/a.webp", body)
+        self.assertIn("92%", body)
+        parsed = gate.parse_candidates(body)
+        self.assertEqual([c["photo_id"] for c in parsed], ["PhotoA_123456", "PhotoB_123456", "PhotoC_123456"])
+        self.assertEqual(gate.parse_candidates("no marker"), [])
+
+    def test_only_a_bare_number_in_range_is_a_choice(self):
+        for text, expected in (("1", 1), (" 2 ", 2), ("#3", 3), ("3.", 3), ("4", None), ("0", None), ("I like 2", None), ("2 please", None), ("", None), (None, None)):
+            self.assertEqual(gate.parse_choice(text, 3), expected, repr(text))
+        self.assertIsNone(gate.parse_choice("3", 2))
+
+    def write_event(self, folder, comment):
+        title, body = gate.build_pick_issue(self.candidates)
+        path = os.path.join(folder, "event.json")
+        with open(path, "w", encoding="utf-8") as handle:
+            json.dump({"issue": {"number": 7, "body": body}, "comment": {"body": comment}}, handle)
+        return path
+
+    def test_pick_writes_the_photo_and_rule_comments_and_closes_the_issue(self):
+        with tempfile.TemporaryDirectory() as folder:
+            out = os.path.join(folder, "out.txt")
+            with mock.patch.dict(os.environ, {"GITHUB_OUTPUT": out}), mock.patch.object(gate, "github_api") as api:
+                chosen = gate.pick(self.write_event(folder, "2"))
+            self.assertEqual(chosen["photo_id"], "PhotoB_123456")
+            self.assertEqual(open(out, encoding="utf-8").read(), "photo_id=PhotoB_123456\nrule=leading_lines\n")
+            calls = [(c.args[0], c.args[1]) for c in api.call_args_list]
+            self.assertEqual(calls, [("POST", "/issues/7/comments"), ("PATCH", "/issues/7")])
+            self.assertEqual(api.call_args_list[1].args[2], {"state": "closed"})
+
+    def test_an_ordinary_comment_does_nothing(self):
+        with tempfile.TemporaryDirectory() as folder:
+            out = os.path.join(folder, "out.txt")
+            with mock.patch.dict(os.environ, {"GITHUB_OUTPUT": out}), mock.patch.object(gate, "github_api") as api:
+                self.assertIsNone(gate.pick(self.write_event(folder, "nice photos!")))
+            api.assert_not_called()
+            self.assertFalse(os.path.exists(out))
+
+    def test_propose_with_no_clear_candidate_mails_that_and_opens_no_issue(self):
+        response = mock.Mock(ok=True, status_code=200)
+        response.json.return_value = {"candidates": []}
+        with mock.patch("requests.post", return_value=response), mock.patch.object(gate, "github_api") as api, mock.patch.object(gate, "send_email") as mail:
+            gate.propose()
+        api.assert_not_called()
+        self.assertIn("לא נמצאה", mail.call_args.args[0])
+
+    def test_propose_opens_the_issue_and_mails_its_link(self):
+        response = mock.Mock(ok=True, status_code=200)
+        response.json.return_value = {"candidates": self.candidates}
+        created = mock.Mock(ok=True, status_code=201)
+        created.json.return_value = {"html_url": "https://github.com/o/r/issues/9"}
+        def api(method, path, payload=None):
+            return created if path == "/issues" else mock.Mock(ok=True, status_code=201)
+        with mock.patch("requests.post", return_value=response) as post, mock.patch.object(gate, "github_api", side_effect=api) as github, \
+                mock.patch.object(gate, "send_email") as mail:
+            gate.propose()
+        self.assertTrue(post.call_args.args[0].endswith("/api/analyses/candidates"))
+        paths = [c.args[1] for c in github.call_args_list]
+        self.assertEqual(paths, ["/labels", "/issues"])
+        self.assertEqual(github.call_args_list[1].args[2]["labels"], ["learn-pick"])
+        subject, html = mail.call_args.args
+        self.assertIn("בחר תמונה", subject)
+        self.assertIn("https://github.com/o/r/issues/9", html)
+
+    def test_prepare_always_asks_for_a_dry_run_and_passes_the_pick_through(self):
+        self.assertEqual(gate.generate_request_body({}), {"dry_run": True})
+        self.assertEqual(gate.generate_request_body({"PHOTO_ID": "PhotoB_123456", "RULE": "leading_lines"}), {"dry_run": True, "photo_id": "PhotoB_123456", "rule": "leading_lines"})
+        self.assertEqual(gate.generate_request_body({"PHOTO_ID": "PhotoB_123456", "RULE": "spiral"}), {"dry_run": True, "photo_id": "PhotoB_123456"})
+        self.assertEqual(gate.generate_request_body({"PHOTO_ID": "../etc", "RULE": "framing"}), {"dry_run": True})
+
+
 class ServerErrorTextTests(unittest.TestCase):
     def test_the_server_error_code_is_shown_shortened_and_on_one_line(self):
         response = mock.Mock()
@@ -417,6 +498,13 @@ class WorkflowWiringTests(unittest.TestCase):
         self.assertNotIn("INSTAGRAM_PAGE_TOKEN", prepare)
         self.assertIn("dry run", text)
         self.assertIn("needs.prepare.outputs.publishable == 'true'", text)
+        self.assertIn("github.event.comment.user.login == github.repository_owner", text)
+        self.assertIn("contains(github.event.issue.labels.*.name, 'learn-pick')", text)
+        self.assertIn("src/learn_post_gate.py propose", text)
+        self.assertIn("src/learn_post_gate.py pick", text)
+        propose_job = text.split("  propose:")[1].split("  prepare:")[0]
+        self.assertNotIn("FACEBOOK_PAGE_TOKEN", propose_job)
+        self.assertNotIn("INSTAGRAM_PAGE_TOKEN", propose_job)
 
 
 if __name__ == "__main__":

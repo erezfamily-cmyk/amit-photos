@@ -38,3 +38,10 @@ A manual run with `mode = draft-only` prepares the draft and sends the e-mail bu
 - The gate runs the second check; if it found contradicted claims or an unfitting rule, it asks for ONE rewrite and checks the new text again. The owner is e-mailed only the final version. Still wrong after one round, or the rewrite failed: the draft stays blocked and the e-mail lists the problems. The e-mail notes when a draft was revised and what the first-round problems were.
 - Why: in the first real runs two of three drafts were blocked (windmill "perfect reflection"; kayak "lit subject" and "bright sky"), which would leave the owner with mostly blocked e-mails.
 - Cost: up to two more model calls per analysis (rewrite + second check), weekly.
+
+## Weekly pick of 3 photos (sixth PR)
+- Owner's decision (15.10.2026): photos that clearly demonstrate a rule are found first, and the owner picks one of three before anything is written.
+- `POST /api/analyses/candidates` (admin only, saves nothing): screens up to 8 unanalysed photos with the cheap model (Haiku), keeps only those that clearly demonstrate one of the six rules (clarity >= 0.7), best first, at most 3.
+- The weekly run now only proposes: it opens a GitHub issue (label `learn-pick`) with the 3 candidates (photo, rule, clarity, reason) and e-mails its link. The owner comments **1, 2 or 3**; only a bare number from the repository owner on an open pick issue counts. The issue is then closed and the analysis is written for that photo with the rule fixed in advance (`rule` in `/api/analyses/generate`): the model explains the rule, it does not choose it. Then the existing chain runs: dry run, EXIF, measurement, second check, one repair round, approval e-mail, approval in GitHub, save and publish.
+- No clear candidate in a week: an e-mail says so and nothing is written.
+- Manual runs: `propose` (now), `draft-only` / `full` (optionally with `photo_id` and `rule`).

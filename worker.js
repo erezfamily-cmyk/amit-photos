@@ -4332,6 +4332,8 @@ async function handleAnalysesGenerate(request, env) {
   const requestedPhotoId = body?.photo_id ?? null;
   // dry_run: produce the analysis and return it WITHOUT saving it (nothing becomes public until /api/analyses/save).
   const dryRun = body?.dry_run === true;
+  // rule: chosen in advance (the owner picked a photo that was screened for this rule); the model explains it, it does not choose.
+  const forcedRule = ANALYSIS_RULES.has(body?.rule) ? body.rule : null;
 
   let candidates;
   if (requestedPhotoId) {
@@ -4470,7 +4472,9 @@ ${EXIF_KEYS.map(k => `- ${EXIF_LABELS_HE[k]}: ${exif[k] || UNKNOWN_EXIF_VALUE}`)
 כותרת: ${chosen.title || ''}
 תיאור: ${chosen.description || ''}
 
-בחר את חוק הצילום שהתמונה מדגימה הכי ברור מתוך: rule_of_thirds, symmetry, leading_lines, golden_ratio, framing, negative_space
+${forcedRule
+  ? `החוק שהתמונה מדגימה כבר נקבע: ${forcedRule}. הסבר את התמונה לפי החוק הזה בלבד, ב-composition_rule כתוב בדיוק "${forcedRule}", ואם יש סטיות מהחוק — תאר אותן בכנות.`
+  : 'בחר את חוק הצילום שהתמונה מדגימה הכי ברור מתוך: rule_of_thirds, symmetry, leading_lines, golden_ratio, framing, negative_space'}
 
 נתח את התמונה לפי מה שמצולם בפועל. מיקום הנושא בפריים, סימטריה וקווי שליש — רק לפי מה שרואים בתמונה עצמה.
 ${exifInstruction}
@@ -4516,6 +4520,8 @@ ${exifInstruction}
 
   // The stored camera values are always the real EXIF (or "unknown"), whatever the model wrote.
   analysis.camera_analysis = enforceExifValues(analysis.camera_analysis, exif);
+
+  if (forcedRule) analysis.composition_rule = forcedRule;
 
   // 4. Save to D1 (skipped for a dry run: the owner approves first)
   const rule = analysis.composition_rule || 'rule_of_thirds';
@@ -4806,6 +4812,58 @@ async function handleAnalysesRevise(request, env) {
     annotations: check.annotations,
     tags: candidate.tags,
   }, 200, request);
+}
+
+// ----- weekly pick: screen a few unanalysed photos and propose the ones that CLEARLY demonstrate a rule (admin only) -----
+// Nothing is saved. The owner picks one of the proposals; the analysis is then written for that photo and that rule.
+async function handleAnalysesCandidates(request, env) {
+  if (!await checkAuth(request, env)) return unauth(request);
+  if (request.method !== 'POST') return jsonRes({ error: 'POST only' }, 405, request);
+  if (!env.ANTHROPIC_API_KEY) return jsonRes({ error: 'ANTHROPIC_API_KEY missing' }, 500, request);
+  const body = await request.json().catch(() => ({}));
+  const count = Math.min(Math.max(parseInt(body?.count, 10) || 3, 1), 5);
+  const pool = Math.min(Math.max(parseInt(body?.pool, 10) || 8, count), 12);
+  const minClarity = Number.isFinite(Number(body?.min_clarity)) ? Math.min(Math.max(Number(body.min_clarity), 0), 1) : 0.7;
+  const { results } = await env.DB.prepare(`
+    SELECT p.id, p.title, p.thumbnail, p.url, p.r2_key
+    FROM photos p
+    LEFT JOIN photo_analyses a ON a.photo_id = p.id
+    WHERE a.photo_id IS NULL AND p.published = 1 AND p.r2_key IS NOT NULL AND p.r2_key != '' AND p.width > 0 AND p.width <= 2000
+      AND p.r2_key NOT IN (SELECT p2.r2_key FROM photos p2 INNER JOIN photo_analyses a2 ON a2.photo_id = p2.id WHERE p2.r2_key IS NOT NULL AND p2.r2_key != '')
+    ORDER BY RANDOM()
+    LIMIT ?
+  `).bind(pool).all();
+  const prompt = 'אתה עורך צילום מחמיר. האם התמונה הזו מדגימה בצורה ברורה ומובהקת אחד מחוקי הקומפוזיציה האלה: rule_of_thirds, symmetry, leading_lines, golden_ratio, framing, negative_space? '
+    + 'אם אף חוק לא מודגם בבירור (למשל הנושא קרוב למרכז בלי סימטריה אמיתית), החזר rule null. clarity בין 0 ל-1: 0.9 ומעלה רק כשתלמיד מתחיל יזהה את החוק מיד. '
+    + 'reason: משפט אחד בעברית שמתאר מה בדיוק בתמונה מדגים את החוק (מיקום, קווים, מסגרת). '
+    + 'החזר JSON בלבד: {"rule":"..."|null,"clarity":0.0,"reason":"..."}';
+  const screened = [];
+  for (const photo of results || []) {
+    const image = await loadPhotoImageSource(env, request, photo);
+    if (!image) continue;
+    try {
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'x-api-key': env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
+        body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 300, messages: [{ role: 'user', content: [{ type: 'image', source: image }, { type: 'text', text: prompt }] }] }),
+      });
+      if (!res.ok) continue;
+      const raw = ((await res.json()).content?.[0]?.text || '').trim();
+      const parsed = JSON.parse(raw.match(/\{[\s\S]*\}/)?.[0] || raw);
+      const clarity = Number(parsed.clarity);
+      if (!ANALYSIS_RULES.has(parsed.rule) || !Number.isFinite(clarity) || clarity < minClarity) continue;
+      screened.push({
+        photo_id: photo.id,
+        title: photo.title || '',
+        thumbnail: photo.thumbnail || photo.url || '',
+        rule: parsed.rule,
+        clarity: Math.round(Math.min(clarity, 1) * 100) / 100,
+        reason: String(parsed.reason || '').replace(/\s+/g, ' ').trim().slice(0, 240),
+      });
+    } catch (_) { /* a photo the model could not judge is simply not proposed */ }
+  }
+  screened.sort((a, b) => b.clarity - a.clarity);
+  return jsonRes({ ok: true, screened: (results || []).length, candidates: screened.slice(0, count) }, 200, request);
 }
 
 // ===== LEARN INDEX =====
@@ -8397,6 +8455,7 @@ export default {
     if (path === '/api/analyses/save' && request.method === 'POST')              return handleAnalysesSave(request, env);
     if (path === '/api/analyses/verify' && request.method === 'POST')            return handleAnalysesVerify(request, env);
     if (path === '/api/analyses/revise' && request.method === 'POST')            return handleAnalysesRevise(request, env);
+    if (path === '/api/analyses/candidates' && request.method === 'POST')        return handleAnalysesCandidates(request, env);
     if (path.startsWith('/api/analyses/') && path.endsWith('/generate-en') && request.method === 'POST')
       return handleAnalysesGenerateEn(request, env, path.slice('/api/analyses/'.length).replace('/generate-en',''));
     if (path.startsWith('/api/analyses/') && request.method === 'GET')           return handleAnalysesGet(request, env, path.slice('/api/analyses/'.length));

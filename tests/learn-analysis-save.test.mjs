@@ -361,3 +361,76 @@ test('revise: an unsafe or malformed rewrite is refused (502), Claude failures a
     } finally { net.restore(); }
   }
 });
+
+// ----- weekly pick: candidates and a rule chosen in advance ----------------------------------------------------------------------
+
+function fakeScreen(replies) {
+  const original = globalThis.fetch;
+  const queue = [...replies];
+  const seen = [];
+  globalThis.fetch = async (url, options = {}) => {
+    if (String(url).startsWith('https://api.anthropic.com/')) {
+      const body = JSON.parse(options.body);
+      seen.push(body);
+      const reply = queue.shift();
+      if (typeof reply === 'number') return new Response('err', { status: reply });
+      return Response.json({ content: [{ text: typeof reply === 'string' ? reply : JSON.stringify(reply) }] });
+    }
+    return new Response('nf', { status: 404 });
+  };
+  return { seen, restore() { globalThis.fetch = original; } };
+}
+function addPhotos(sqlite, n) {
+  for (let i = 1; i <= n; i++) sqlite.prepare("INSERT INTO photos (id, title, thumbnail, url, r2_key) VALUES (?, ?, ?, ?, ?)").run('Cand' + i + '_photo_id', 'תמונה ' + i, '/photos/thumb/c' + i + '.webp', '/photos/c' + i + '.webp', 'c' + i + '.jpg');
+}
+
+test('candidates: admin only; screens unanalysed photos with the cheap model and returns only clear cases, best first', async () => {
+  const { sqlite, env } = setup();
+  sqlite.prepare("INSERT INTO photo_analyses (photo_id, composition_rule, title) VALUES (?, 'symmetry', 't')").run(PHOTO);   // already analysed: never proposed
+  addPhotos(sqlite, 5);
+  assert.equal((await call(env, '/api/analyses/candidates', {}, {})).status, 401);
+  const net = fakeScreen([
+    { rule: 'leading_lines', clarity: 0.95, reason: 'מסילה מובילה אל הנקודה' },
+    { rule: null, clarity: 0.2, reason: 'אין חוק ברור' },
+    { rule: 'symmetry', clarity: 0.65, reason: 'כמעט' },
+    { rule: 'framing', clarity: 0.82, reason: 'קשת ממסגרת' },
+    'not json',
+  ]);
+  try {
+    const res = await call(env, '/api/analyses/candidates', { count: 3, pool: 5 });
+    assert.equal(res.status, 200);
+    const body = await res.json();
+    assert.equal(body.screened, 5);
+    assert.deepEqual(body.candidates.map(c => [c.rule, c.clarity]), [['leading_lines', 0.95], ['framing', 0.82]], 'below 0.7, null rule and unparsable answers are dropped; sorted by clarity');
+    assert.ok(body.candidates.every(c => c.photo_id.startsWith('Cand') && c.title && c.thumbnail && c.reason));
+    assert.ok(net.seen.every(b => b.model.startsWith('claude-haiku')), 'screening uses the cheap model');
+    assert.equal(net.seen.length, 5);
+    assert.deepEqual(rows(sqlite).map(r => r.photo_id), [PHOTO], 'nothing is saved');
+  } finally { net.restore(); }
+});
+
+test('candidates: count and pool are bounded', async () => {
+  const { sqlite, env } = setup();
+  addPhotos(sqlite, 3);
+  const net = fakeScreen(Array.from({ length: 20 }, () => ({ rule: 'framing', clarity: 0.9, reason: 'r' })));
+  try {
+    const body = await (await call(env, '/api/analyses/candidates', { count: 99, pool: 99 })).json();
+    assert.ok(body.candidates.length <= 5);
+    assert.ok(net.seen.length <= 12);
+  } finally { net.restore(); }
+});
+
+test('generate with a rule chosen in advance: the prompt fixes the rule and the stored rule is that one, whatever the model wrote', async () => {
+  const { sqlite, env } = setup();
+  const restore = fakeClaude();     // the fake model answers composition_rule "symmetry"
+  prompts.length = 0;
+  try {
+    const body = await (await call(env, '/api/analyses/generate', { photo_id: PHOTO, dry_run: true, rule: 'framing' })).json();
+    assert.equal(body.composition_rule, 'framing');
+    assert.ok(prompts[0].includes('כבר נקבע: framing'));
+    assert.ok(!prompts[0].includes('בחר את חוק הצילום'));
+    const unknown = await (await call(env, '/api/analyses/generate', { photo_id: PHOTO, dry_run: true, rule: 'spiral' })).json();
+    assert.equal(unknown.composition_rule, 'symmetry', 'an unknown rule is ignored (the model chooses as before)');
+    assert.deepEqual(rows(sqlite), []);
+  } finally { restore(); }
+});
