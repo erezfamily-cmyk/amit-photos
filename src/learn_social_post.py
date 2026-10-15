@@ -97,6 +97,10 @@ def post_to_instagram(image_url, caption):
         print(f"❌ IG publish נכשל: {publish.text}")
 
 def main():
+    # Superseded by src/learn_post_gate.py (owner approval + checks before anything is posted).
+    if os.environ.get("ALLOW_UNGATED_LEARN_POST") != "1":
+        print("❌ this script posts without approval and is disabled; use src/learn_post_gate.py")
+        sys.exit(1)
     print("🔬 מייצר ניתוח צילום חדש...")
     data = generate_analysis()
 
