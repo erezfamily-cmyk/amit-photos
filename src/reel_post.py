@@ -20,7 +20,9 @@ import tempfile
 import time
 import urllib.request as ul
 from pathlib import Path
+from campaign_urls import build_campaign_url
 from social_caption_quality import compose_caption, generated_body, photo_fallback, require_caption
+from social_content_strategy import angle_instruction_en, angle_instruction_he, editorial_angle
 
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 sys.stderr.reconfigure(encoding="utf-8", errors="replace")
@@ -161,10 +163,17 @@ def generate_reel_caption(category, lang, titles=None):
     מייצר כיתוב ייחודי לרילס לפי הקטגוריה והתמונות שנבחרו, במקום שורת CTA קבועה.
     בלי ANTHROPIC_API_KEY או בכל כשל — נופל לשורת "בקר באתר שלי" הישנה.
     """
-    cta_line = "בקר באתר שלי" if lang == "he" else "Visit my website"
+    angle = editorial_angle("|".join(titles or [category]))
+    cta_line = "לסדרה המלאה באתר" if lang == "he" else "See the full series"
     fallback_body = photo_fallback({"category": category}, lang)
-    footer = f"{cta_line}: https://amitphotos.com/"
-    fallback = compose_caption(fallback_body, footer, get_hashtags(category), fallback_body)
+    link = build_campaign_url(
+        "/", source="instagram",
+        campaign="reels", content=f"{category}_{angle}",
+    )
+    footer = f"{cta_line}: {link}"
+    fallback = compose_caption(
+        fallback_body, footer, get_hashtags(category), fallback_body, max_hashtags=5,
+    )
     if not ANTHROPIC_API_KEY:
         return fallback
 
@@ -179,8 +188,9 @@ def generate_reel_caption(category, lang, titles=None):
             )
             prompt = (
                 f"קטגוריה: {category}\nתמונות ברילס: {titles_line}\n\n"
-                "כתוב כיתוב קצר (עד 2 משפטים) בגוף ראשון על הרגע/הנושא שברילס. "
-                "רצוי לסיים בשאלה קצרה לעוקבים. בלי hashtags, בלי קישור — אלה יתווספו בנפרד. "
+                f"{angle_instruction_he(angle)} "
+                "כתוב כיתוב קצר (עד 2 משפטים) בגוף ראשון. התחל בפרט שאפשר לראות, "
+                "ואל תמציא מקום, זמן או נסיבות שלא נמסרו. בלי hashtags ובלי קישור. "
                 "כתוב רק את הטקסט."
             )
         else:
@@ -190,8 +200,9 @@ def generate_reel_caption(category, lang, titles=None):
             )
             prompt = (
                 f"Category: {category}\nPhotos in this reel: {titles_line}\n\n"
-                "Write a short caption (max 2 sentences) in first person about the moment/subject in this reel. "
-                "Ideally end with a short question to followers. No hashtags, no link — those are added separately. "
+                f"{angle_instruction_en(angle)} "
+                "Write no more than two first-person sentences, starting with a visible detail. "
+                "Do not invent a location, timing, or circumstances. No hashtags or links. "
                 "Write only the text."
             )
         msg = client.messages.create(
@@ -201,7 +212,9 @@ def generate_reel_caption(category, lang, titles=None):
             messages=[{"role": "user", "content": prompt}],
         )
         body = generated_body(msg, fallback_body)
-        return compose_caption(body, footer, get_hashtags(category), fallback_body)
+        return compose_caption(
+            body, footer, get_hashtags(category), fallback_body, max_hashtags=5,
+        )
     except Exception as e:
         print(f"⚠️  יצירת כיתוב Claude נכשלה ({e}) — נופל לברירת מחדל")
         return fallback
