@@ -3,8 +3,8 @@
 zazzle_social_post.py — Weekly promotion of Zazzle print-on-demand products.
 
 Picks one photo (rotating through photos that have zazzle_products configured),
-posts one English feed post to Instagram/Facebook/Threads (one random product),
-and one Pinterest pin per product on that photo, to a dedicated "Zazzle Prints" board.
+posts one English feed post to Instagram/Facebook/Threads and one Pinterest pin
+for the same product, to a dedicated "Zazzle Prints" board.
 
 Usage:
   python src/zazzle_social_post.py            # real run
@@ -19,6 +19,15 @@ import time
 from pathlib import Path
 
 import requests
+from campaign_urls import add_campaign_params
+from social_caption_quality import require_caption
+from social_delivery_state import (
+    delivery_complete,
+    first_partial_item_id,
+    pending_platforms,
+    record_delivery,
+    reset_item_delivery,
+)
 
 ROOT        = Path(__file__).parent.parent
 SITE_URL    = "https://amitphotos.com"
@@ -28,6 +37,7 @@ PINTEREST_API = "https://api.pinterest.com/v5"
 
 POSTED_FILE  = ROOT / "data" / "zazzle_social_posted.json"
 PRODUCT_FIELD = "zazzle_products"  # swap to "redbubble_products" later for that marketplace
+REQUIRED_PLATFORMS = ("instagram", "facebook", "threads", "pinterest")
 
 DRY_RUN = "--dry-run" in sys.argv
 
@@ -138,12 +148,21 @@ def _image_url(photo):
     return f"{SITE_URL}{url}" if url.startswith("/") else url
 
 
+def _product_url(photo, product, source):
+    return add_campaign_params(
+        product.get("url", SITE_URL),
+        source=source,
+        campaign="zazzle_products",
+        content=photo["id"],
+    )
+
+
 def post_to_instagram(photo, caption, product):
     if not IG_USER_ID or not IG_TOKEN:
         print("⚠️  Missing INSTAGRAM_USER_ID / INSTAGRAM_PAGE_TOKEN — skipping Instagram")
         return None
 
-    full_caption = f"{caption}\n\n🛍️ {product.get('name', 'Print')}: {product.get('url', SITE_URL)}"
+    full_caption = require_caption(f"{caption}\n\n🛍️ {product.get('name', 'Print')}: {_product_url(photo, product, 'instagram')}")
     if DRY_RUN:
         print(f"[dry-run] would post to Instagram:\n{full_caption}\nimage: {_image_url(photo)}")
         return "dry-run-ig"
@@ -180,7 +199,7 @@ def post_to_facebook(photo, caption, product):
         print("⚠️  Missing FACEBOOK_PAGE_ID / FACEBOOK_PAGE_TOKEN — skipping Facebook")
         return None
 
-    full_caption = f"{caption}\n\n🛍️ {product.get('name', 'Print')}: {product.get('url', SITE_URL)}"
+    full_caption = require_caption(f"{caption}\n\n🛍️ {product.get('name', 'Print')}: {_product_url(photo, product, 'facebook')}")
     if DRY_RUN:
         print(f"[dry-run] would post to Facebook:\n{full_caption}\nimage: {_image_url(photo)}")
         return "dry-run-fb"
@@ -208,10 +227,10 @@ def post_to_threads(photo, caption, product):
         print("⚠️  Missing THREADS_USER_ID / THREADS_ACCESS_TOKEN — skipping Threads")
         return None
 
-    suffix = f"\n\n🛍️ {product.get('name', 'Print')}: {product.get('url', SITE_URL)}"
+    suffix = f"\n\n🛍️ {product.get('name', 'Print')}: {_product_url(photo, product, 'threads')}"
     room = THREADS_LIMIT - len(suffix)
     trimmed_caption = caption if len(caption) <= room else caption[:max(room - 1, 0)].rstrip() + "…"
-    full_caption = f"{trimmed_caption}{suffix}"
+    full_caption = require_caption(f"{trimmed_caption}{suffix}", max_chars=THREADS_LIMIT)
     if DRY_RUN:
         print(f"[dry-run] would post to Threads:\n{full_caption}\nimage: {_image_url(photo)}")
         return "dry-run-threads"
@@ -358,13 +377,13 @@ Output only the description text."""
 def publish_zazzle_pin(token, board_id, photo, product):
     title       = photo.get("title", "")
     image_url   = product.get("image") or _image_url(photo)
-    description = generate_pin_description(photo, product)
+    description = require_caption(generate_pin_description(photo, product), max_chars=500)
 
     body = {
         "board_id": board_id,
         "title": f"{title} — {product.get('name', 'Print')}",
         "description": description,
-        "link": product.get("url", SITE_URL),
+        "link": _product_url(photo, product, "pinterest"),
         "media_source": {"source_type": "image_url", "url": image_url},
     }
 
@@ -395,57 +414,89 @@ def main():
     posted_ids  = set(posted_data.get("posted_ids", []))
     print(f"📋 {len(photos)} Zazzle-enabled photos, {len(posted_ids)} already featured")
 
-    photo    = pick_photo(photos, posted_ids)
+    partial_id = first_partial_item_id(
+        posted_data,
+        [photo["id"] for photo in photos],
+        REQUIRED_PLATFORMS,
+    )
+    if partial_id:
+        photo = next(photo for photo in photos if str(photo["id"]) == partial_id)
+        print(f"↩️  Resuming partial delivery: {partial_id}")
+    else:
+        photo = pick_photo(photos, posted_ids)
+        if delivery_complete(posted_data, photo["id"], REQUIRED_PLATFORMS):
+            reset_item_delivery(posted_data, photo["id"])
+            posted_ids.discard(photo["id"])
+            posted_data["posted_ids"] = sorted(posted_ids)
+            save_posted(posted_data)
     products = get_products(photo)
     print(f"\n🖼️  Featured this week: {photo.get('title', photo['id'])} ({len(products)} products)")
 
-    # Feed platforms — one random product each
-    feed_product = pick_product(products)
+    # Keep the same product and caption when a partial delivery is resumed.
+    campaign = posted_data.setdefault("campaigns", {}).setdefault(str(photo["id"]), {})
+    saved_product_url = campaign.get("product_url")
+    feed_product = next((product for product in products if product.get("url") == saved_product_url), None)
+    if not feed_product:
+        feed_product = pick_product(products)
+        campaign["product_url"] = feed_product.get("url", "")
     print(f"🎯 Feed platforms will feature: {feed_product.get('name')}")
-    caption = generate_feed_caption(photo, feed_product)
+    caption = campaign.get("caption")
+    if not caption:
+        caption = generate_feed_caption(photo, feed_product)
+        campaign["caption"] = caption
+    if not DRY_RUN:
+        save_posted(posted_data)
     print(f"✍️  Caption: {caption[:100]}...")
 
-    results = {"instagram": None, "facebook": None, "threads": None, "pinterest_pins": []}
-
-    try:
-        results["instagram"] = post_to_instagram(photo, caption, feed_product)
-    except Exception as e:
-        print(f"❌ Instagram step crashed: {e}")
-
-    try:
-        results["facebook"] = post_to_facebook(photo, caption, feed_product)
-    except Exception as e:
-        print(f"❌ Facebook step crashed: {e}")
-
-    try:
-        results["threads"] = post_to_threads(photo, caption, feed_product)
-    except Exception as e:
-        print(f"❌ Threads step crashed: {e}")
-
-    # Pinterest — one pin per product
-    if not PINTEREST_TOKEN:
-        print("⚠️  Missing PINTEREST_ACCESS_TOKEN — skipping Pinterest")
-    else:
+    board_id = None
+    publishers = {
+        "instagram": lambda: post_to_instagram(photo, caption, feed_product),
+        "facebook": lambda: post_to_facebook(photo, caption, feed_product),
+        "threads": lambda: post_to_threads(photo, caption, feed_product),
+    }
+    results = {}
+    pending = REQUIRED_PLATFORMS if DRY_RUN else pending_platforms(posted_data, photo["id"], REQUIRED_PLATFORMS)
+    for platform in REQUIRED_PLATFORMS:
+        if platform not in pending:
+            print(f"⏭️  {platform} already published for {photo['id']}")
+            continue
         try:
-            board_id = get_or_create_zazzle_board(PINTEREST_TOKEN)
-            for product in products:
-                pin_id = publish_zazzle_pin(PINTEREST_TOKEN, board_id, photo, product)
-                results["pinterest_pins"].append(pin_id)
-                if not DRY_RUN:
-                    time.sleep(2)
+            if platform == "pinterest":
+                if not PINTEREST_TOKEN:
+                    print("⚠️  Missing PINTEREST_ACCESS_TOKEN — skipping Pinterest")
+                    result = None
+                else:
+                    board_id = board_id or get_or_create_zazzle_board(PINTEREST_TOKEN)
+                    result = publish_zazzle_pin(PINTEREST_TOKEN, board_id, photo, feed_product)
+            else:
+                result = publishers[platform]()
+            results[platform] = result
+            if result and not DRY_RUN:
+                record_delivery(posted_data, photo["id"], platform, result)
+                save_posted(posted_data)
         except Exception as e:
-            print(f"❌ Pinterest step crashed: {e}")
+            results[platform] = None
+            print(f"❌ {platform} step crashed: {e}")
 
-    if not DRY_RUN:
+    if DRY_RUN:
+        print("\n✅ Dry run completed; state was not changed")
+        return
+
+    if delivery_complete(posted_data, photo["id"], REQUIRED_PLATFORMS):
         posted_ids.add(photo["id"])
-        save_posted({"posted_ids": sorted(posted_ids)})
-        print(f"\n💾 Saved rotation state ({len(posted_ids)} photos featured so far)")
+        posted_data["posted_ids"] = sorted(posted_ids)
+        save_posted(posted_data)
+        print(f"\n💾 Saved complete delivery state ({len(posted_ids)} photos featured so far)")
+    else:
+        remaining = pending_platforms(posted_data, photo["id"], REQUIRED_PLATFORMS)
+        print(f"❌ Partial delivery; remaining: {', '.join(remaining)}")
+        sys.exit(1)
 
     print(f"\n{'=' * 40}")
-    print(f"✅ Instagram: {'ok' if results['instagram'] else 'skipped/failed'}")
-    print(f"✅ Facebook: {'ok' if results['facebook'] else 'skipped/failed'}")
-    print(f"✅ Threads: {'ok' if results['threads'] else 'skipped/failed'}")
-    print(f"✅ Pinterest pins: {sum(1 for p in results['pinterest_pins'] if p)}/{len(products)}")
+    print(f"✅ Instagram: {'ok' if results.get('instagram') else 'already published'}")
+    print(f"✅ Facebook: {'ok' if results.get('facebook') else 'already published'}")
+    print(f"✅ Threads: {'ok' if results.get('threads') else 'already published'}")
+    print(f"✅ Pinterest: {'ok' if results.get('pinterest') else 'already published'}")
 
 
 if __name__ == "__main__":

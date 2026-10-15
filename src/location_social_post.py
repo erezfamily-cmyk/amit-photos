@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Location Social Post Agent
-מפרסם דף מקום לצילום ל-Threads+Pinterest, round-robin, כל 7 ימים.
+מפרסם דף מקום לצילום ל-Threads+Pinterest, round-robin, פעם בשבוע.
 IG/FB הוסרו (2026-07-12) — engagement אפס, ראה project_instagram_performance_insights.
 """
 
@@ -12,6 +12,15 @@ import time
 import requests
 import anthropic
 from pathlib import Path
+from campaign_urls import build_campaign_url
+from social_caption_quality import require_caption
+from social_delivery_state import (
+    delivery_complete,
+    first_partial_item_id,
+    pending_platforms,
+    record_delivery,
+    reset_item_delivery,
+)
 
 ROOT          = Path(__file__).parent.parent
 POSTED_FILE   = ROOT / "data" / "location_social_posted.json"
@@ -26,6 +35,7 @@ ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "").strip()
 ADMIN_TOKEN       = os.environ.get("ADMIN_TOKEN", "")
 
 PINTEREST_BOARD = "Photography Locations — Israel"
+REQUIRED_PLATFORMS = ("pinterest", "threads")
 
 
 # ===== Tracking =====
@@ -84,7 +94,13 @@ def generate_caption(loc_detail, platform):
     best_time  = loc_detail.get("best_time", "")
     tip        = loc_detail.get("my_tip", "")
     slug       = loc_detail.get("id", "")
-    page_url   = f"{SITE_URL}/locations/spot/?slug={slug}"
+    page_url = build_campaign_url(
+        "/locations/spot/",
+        source=platform,
+        campaign="photography_locations",
+        content=slug,
+        params={"slug": slug},
+    )
     seasons    = _best_seasons_text(loc_detail.get("when_to_visit"))
 
     context = f"""Location: {title}
@@ -127,7 +143,7 @@ Output only the description."""
         system=system,
         messages=[{"role": "user", "content": prompt}],
     )
-    return msg.content[0].text.strip()
+    return require_caption(msg.content[0].text.strip(), max_chars=500)
 
 
 # ===== Image URL helpers =====
@@ -222,7 +238,13 @@ def post_to_pinterest(image_url, caption, loc_detail):
     title    = loc_detail.get("title", "")
     region   = loc_detail.get("region", "")
     slug     = loc_detail.get("id", "")
-    page_url = f"{SITE_URL}/locations/spot/?slug={slug}"
+    page_url = build_campaign_url(
+        "/locations/spot/",
+        source="pinterest",
+        campaign="photography_locations",
+        content=slug,
+        params={"slug": slug},
+    )
 
     try:
         board_id = _get_or_create_pinterest_board(PINTEREST_TOKEN, PINTEREST_BOARD)
@@ -304,8 +326,21 @@ def main():
     posted_data = load_posted()
     last_index  = posted_data.get("last_index", -1)
 
-    loc_summary, next_index = pick_location(locations, last_index)
+    partial_slug = first_partial_item_id(
+        posted_data,
+        [location["id"] for location in locations],
+        REQUIRED_PLATFORMS,
+    )
+    if partial_slug:
+        next_index = next(index for index, location in enumerate(locations) if location["id"] == partial_slug)
+        loc_summary = locations[next_index]
+        print(f"↩️  ממשיך פרסום חלקי: {partial_slug}")
+    else:
+        loc_summary, next_index = pick_location(locations, last_index)
     slug = loc_summary["id"]
+    if not partial_slug and delivery_complete(posted_data, slug, REQUIRED_PLATFORMS):
+        reset_item_delivery(posted_data, slug)
+        save_posted(posted_data)
     print(f"\n🗺️  מקום: {loc_summary.get('title', slug)} (אינדקס {next_index})")
 
     loc_detail = fetch_location_detail(slug)
@@ -318,20 +353,43 @@ def main():
 
     image_url = ensure_public_url(cover_url)
 
-    print("\n✍️  מייצר כיתובים...")
-    threads_caption   = generate_caption(loc_detail, "threads")
-    pinterest_caption = generate_caption(loc_detail, "pinterest")
+    campaign = posted_data.setdefault("campaigns", {}).setdefault(slug, {})
+    saved_captions = campaign.get("captions", {})
+    if all(saved_captions.get(platform) for platform in REQUIRED_PLATFORMS):
+        threads_caption = saved_captions["threads"]
+        pinterest_caption = saved_captions["pinterest"]
+        print("↩️  משתמש בכיתובים שנשמרו לפרסום החלקי")
+    else:
+        print("\n✍️  מייצר כיתובים...")
+        threads_caption = generate_caption(loc_detail, "threads")
+        pinterest_caption = generate_caption(loc_detail, "pinterest")
+        campaign["captions"] = {
+            "threads": threads_caption,
+            "pinterest": pinterest_caption,
+        }
+        save_posted(posted_data)
     print(f"Threads preview: {threads_caption[:120]}...")
 
-    results = {}
+    publishers = {
+        "pinterest": lambda: post_to_pinterest(image_url, pinterest_caption, loc_detail),
+        "threads": lambda: post_to_threads(image_url, threads_caption),
+    }
+    pending = pending_platforms(posted_data, slug, REQUIRED_PLATFORMS)
+    for platform in REQUIRED_PLATFORMS:
+        if platform not in pending:
+            print(f"⏭️  {platform} כבר פורסם עבור {slug}")
+            continue
+        print(f"\n📤 מפרסם ל-{platform}...")
+        result = publishers[platform]()
+        print(f"{'✅' if result else '❌'} {platform}: {result}")
+        if result:
+            record_delivery(posted_data, slug, platform, result)
+            save_posted(posted_data)
 
-    print("\n📤 מפרסם ל-Pinterest...")
-    results["pinterest"] = post_to_pinterest(image_url, pinterest_caption, loc_detail)
-    print(f"{'✅' if results['pinterest'] else '❌'} Pinterest: {results['pinterest']}")
-
-    print("\n📤 מפרסם ל-Threads...")
-    results["threads"] = post_to_threads(image_url, threads_caption)
-    print(f"{'✅' if results['threads'] else '❌'} Threads: {results['threads']}")
+    if not delivery_complete(posted_data, slug, REQUIRED_PLATFORMS):
+        remaining = pending_platforms(posted_data, slug, REQUIRED_PLATFORMS)
+        print(f"\n❌ הפרסום חלקי; נותרו: {', '.join(remaining)}")
+        sys.exit(1)
 
     posted_data["last_index"] = next_index
     slugs = posted_data.get("posted_slugs", [])
@@ -340,11 +398,7 @@ def main():
     posted_data["posted_slugs"] = slugs
     save_posted(posted_data)
     print(f"\n💾 עודכן {POSTED_FILE.name} — אינדקס הבא: {next_index}")
-
-    success_count = sum(1 for v in results.values() if v)
-    print(f"\n✅ הסתיים — {success_count}/2 רשתות פורסמו בהצלחה")
-    if success_count == 0:
-        sys.exit(1)
+    print("\n✅ הסתיים — 2/2 רשתות פורסמו בהצלחה")
 
 
 if __name__ == "__main__":

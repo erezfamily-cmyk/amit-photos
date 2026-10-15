@@ -1126,26 +1126,11 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
 
       <!-- SCHEDULE TABLE -->
       <h2 class="social-platform-title social-platform-title--schedule">📅 לוח שידורים</h2>
+      <p id="social-schedule-note" style="color:var(--text-muted);font-size:.8rem;margin:-.5rem 0 .75rem">טוען לוח שידורים...</p>
       <div class="table-wrap mobile-card-wrap" style="margin-bottom:2rem">
         <table class="data-table mobile-card-table social-schedule-table" id="social-schedule-table">
           <thead><tr><th>יום</th><th>שעה (IL)</th><th>פלטפורמה</th><th>תוכן</th></tr></thead>
-          <tbody>
-            <tr><td>כל יום</td><td>11:00</td><td>📸 IG Story</td><td>Slideshow תמונות</td></tr>
-            <tr><td>כל יום</td><td>17:00</td><td>📌 Pinterest</td><td>תמונת גלריה</td></tr>
-            <tr class="sched-row-hl"><td>ראשון</td><td>10:00</td><td>📸 IG + 📘 FB</td><td>תמונת השבוע</td></tr>
-            <tr class="sched-row-hl"><td>ראשון</td><td>12:00</td><td>▶️ YouTube</td><td>Slideshow שבועי</td></tr>
-            <tr class="sched-row-hl"><td>ראשון</td><td>20:00</td><td>📸 Instagram</td><td>תמונת גלריה</td></tr>
-            <tr><td>שני</td><td>12:00</td><td>📘 FB + 🧵 Threads + 📌</td><td>מדריך צילום</td></tr>
-            <tr><td>שני</td><td>18:00</td><td>🧵 Threads</td><td>תמונת גלריה</td></tr>
-            <tr><td>שני</td><td>18:00</td><td>📸 IG + 📘 FB</td><td>פרומו פאזל (שבועי)</td></tr>
-            <tr class="sched-row-hl"><td>שלישי</td><td>15:00</td><td>📸 IG + ▶️ YT Shorts</td><td>Reel (דו-שבועי)</td></tr>
-            <tr><td>רביעי</td><td>13:00</td><td>▶️ YouTube + 📸 + 📘 + 🧵</td><td>מדריך צילום + שיתוף</td></tr>
-            <tr><td>רביעי</td><td>18:00</td><td>🧵 Threads</td><td>תמונת גלריה</td></tr>
-            <tr><td>רביעי</td><td>18:00</td><td>📸 IG + 📘 FB</td><td>פרומו קוויז (דו-שבועי)</td></tr>
-            <tr><td>רביעי</td><td>20:00</td><td>📸 Instagram</td><td>תמונת גלריה</td></tr>
-            <tr class="sched-row-hl"><td>חמישי</td><td>18:00</td><td>🧵 Threads</td><td>תמונת גלריה</td></tr>
-            <tr><td>כל ~7 ימים</td><td>20:00</td><td>📸 + 📘 + 🧵 + 📌</td><td>מקום לצילום</td></tr>
-          </tbody>
+          <tbody><tr><td colspan="4">טוען לוח שידורים...</td></tr></tbody>
         </table>
       </div>
 
@@ -5546,6 +5531,40 @@ const SocialSection = (() => {
   const REPORT_URL  = 'https://raw.githubusercontent.com/erezfamily-cmyk/amit-photos/main/data/social_report.json';
   const HISTORY_URL = 'https://raw.githubusercontent.com/erezfamily-cmyk/amit-photos/main/data/social_history.json';
 
+  async function loadSchedule() {
+    const body = document.querySelector('#social-schedule-table tbody');
+    if (!body) return;
+    try {
+      const response = await fetch('/data/social_schedule.json?t=' + Date.now());
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const schedule = await response.json();
+      const fragment = document.createDocumentFragment();
+      for (const item of schedule.items || []) {
+        const row = document.createElement('tr');
+        if (item.status === 'מתוזמן') row.className = 'sched-row-hl';
+        for (const value of [item.day, item.time, item.platform, `${item.content} · ${item.status}`]) {
+          const cell = document.createElement('td');
+          cell.textContent = value || '—';
+          row.appendChild(cell);
+        }
+        fragment.appendChild(row);
+      }
+      body.replaceChildren(fragment);
+      const note = document.getElementById('social-schedule-note');
+      if (note) note.textContent = schedule.timezone_note || '';
+    } catch (error) {
+      const row = document.createElement('tr');
+      const cell = document.createElement('td');
+      cell.colSpan = 4;
+      cell.textContent = 'לוח השידורים לא נטען; יש לבדוק את data/social_schedule.json.';
+      row.replaceChildren(cell);
+      body.replaceChildren(row);
+      const note = document.getElementById('social-schedule-note');
+      if (note) note.textContent = '';
+      console.warn('Social schedule could not be loaded', error);
+    }
+  }
+
   function trend(current, previous, unit = '') {
     if (previous == null || current == null) return '';
     const diff = current - previous;
@@ -5562,15 +5581,17 @@ const SocialSection = (() => {
 
   function topPostsTable(posts, captionKey) {
     if (!posts?.length) return '<p style="color:var(--text-muted);padding:.5rem 0">אין פוסטים השבוע</p>';
+    const hasInsights = posts.some(p => p.reach != null || p.saved != null || p.shares != null);
     const rows = posts.map(p => `<tr>
       <td data-label="תאריך" style="white-space:nowrap;color:var(--text-muted)">${p.date || ''}</td>
       <td data-label="כיתוב" style="max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${(p[captionKey] || '').replace(/\n/g,' ')}</td>
       <td data-label="לייקים" style="text-align:center">❤️ ${p.likes ?? 0}</td>
       <td data-label="תגובות" style="text-align:center">💬 ${p.comments ?? 0}</td>
+      ${hasInsights ? `<td data-label="חשיפה" style="text-align:center">${p.reach ?? '—'}</td><td data-label="שמירות ושיתופים" style="text-align:center">${(p.saved == null && p.shares == null) ? '—' : (p.saved || 0) + (p.shares || 0)}</td>` : ''}
     </tr>`).join('');
     return `<div class="table-wrap mobile-card-wrap social-posts-table-wrap" style="margin-bottom:1.5rem">
       <table class="data-table mobile-card-table social-posts-table" style="font-size:.82rem">
-        <thead><tr><th>תאריך</th><th>כיתוב</th><th>לייקים</th><th>תגובות</th></tr></thead>
+        <thead><tr><th>תאריך</th><th>כיתוב</th><th>לייקים</th><th>תגובות</th>${hasInsights ? '<th>חשיפה</th><th>שמירות + שיתופים</th>' : ''}</tr></thead>
         <tbody>${rows}</tbody>
       </table>
     </div>`;
@@ -5603,67 +5624,52 @@ const SocialSection = (() => {
   }
 
   function renderHealth(d) {
-    const igRate  = (d.ig?.engagement_rate ?? 0) * 100;
-    const igPosts = d.ig?.posts_this_week ?? 0;
-    const fbPosts = d.fb?.posts_this_week ?? 0;
-    const igFollowers = d.ig?.followers ?? 0;
-    const igLikes = d.ig?.total_likes ?? 0;
-    const igComments = d.ig?.total_comments ?? 0;
-
-    const issues = [];
-
-    // Engagement rate
-    if (igRate < 0.5) {
-      issues.push({ cls: 'hi-red', icon: '🔴', text: `שיעור מעורבות ${igRate.toFixed(2)}% — נמוך מאוד (יעד: מעל 1%). כתבי כיתובים שמזמינים תגובה.` });
-    } else if (igRate < 1.5) {
-      issues.push({ cls: 'hi-yellow', icon: '🟡', text: `שיעור מעורבות ${igRate.toFixed(2)}% — בינוני. שאלי שאלה בכל פוסט כדי להגדיל תגובות.` });
-    } else {
-      issues.push({ cls: 'hi-green', icon: '🟢', text: `שיעור מעורבות ${igRate.toFixed(2)}% — טוב! המשיכי בסגנון הכיתוב הנוכחי.` });
+    const failedSources = d.data_quality?.failed_sources || {};
+    if (Object.keys(failedSources).length) {
+      const box = document.createElement('div');
+      box.className = 'social-health';
+      box.style.borderColor = '#8b5e20';
+      const title = document.createElement('div');
+      title.className = 'social-health-title';
+      title.textContent = 'הדוח חלקי — נתוני API חסרים';
+      const detail = document.createElement('p');
+      detail.className = 'social-health-issues';
+      detail.textContent = 'מקורות שלא נטענו: ' + Object.keys(failedSources).join(', ') + '. לא להסיק מכך שנתוני המעורבות הם אפס.';
+      box.append(title, detail);
+      $('social-health').replaceChildren(box);
+      return;
     }
-
-    // Posting frequency
-    if (igPosts > 10) {
-      issues.push({ cls: 'hi-red', icon: '🔴', text: `${igPosts} פוסטים השבוע — יותר מדי. אלגוריתם Instagram מעדיף 4–7 פוסטים איכותיים בשבוע.` });
-    } else if (igPosts < 3) {
-      issues.push({ cls: 'hi-yellow', icon: '🟡', text: `רק ${igPosts} פוסטים השבוע — פחות מדי לצמיחה. יעד: לפחות 4–5 פוסטים/שבוע.` });
-    } else {
-      issues.push({ cls: 'hi-green', icon: '🟢', text: `${igPosts} פוסטים השבוע — תדירות טובה.` });
+    const support = d.decision_support;
+    if (!support?.decisions?.length) {
+      $('social-health').innerHTML = `<div class="social-health"><div class="social-health-score">📊</div><div>
+        <div class="social-health-title">מנגנון ההחלטות יופיע לאחר הרצת הדוח השבועי הבא</div>
+        <p style="color:var(--text-muted);font-size:.84rem">הדוח הישן נשמר לתצוגה, ללא הוספת מסקנות כלליות שאינן מבוססות על הנתונים שלך.</p>
+      </div></div>`;
+      return;
     }
-
-    // Facebook
-    if (fbPosts === 0) {
-      issues.push({ cls: 'hi-red', icon: '🔴', text: `לא פורסם לפייסבוק השבוע — ${d.fb?.fans ?? 0} עוקבים מחכים לתוכן. שתף את אותן תמונות מ-Instagram.` });
-    } else if (fbPosts < 3) {
-      issues.push({ cls: 'hi-yellow', icon: '🟡', text: `${fbPosts} פוסטים לפייסבוק — מומלץ לפחות 3/שבוע.` });
-    }
-
-    // Likes per follower ratio (overall reach)
-    const reachPct = igFollowers > 0 ? (igLikes / igFollowers * 100).toFixed(1) : 0;
-    if (igFollowers > 0 && reachPct < 2) {
-      issues.push({ cls: 'hi-yellow', icon: '🟡', text: `רק ${reachPct}% מהעוקבים לייקו השבוע — נסה hashtags רלוונטיים ושעות פרסום אופטימליות (20:00–22:00).` });
-    }
-
-    const redCount    = issues.filter(i => i.cls === 'hi-red').length;
-    const yellowCount = issues.filter(i => i.cls === 'hi-yellow').length;
-    const emoji = redCount >= 2 ? '🚨' : redCount === 1 ? '⚠️' : yellowCount > 0 ? '📊' : '✅';
-    const title = redCount >= 2 ? 'יש מה לשפר — בדוק את הנקודות הבאות' :
-                  redCount === 1 ? 'ביצועים בינוניים — תשומת לב נדרשת' :
-                  yellowCount > 0 ? 'ביצועים סבירים — יש מקום לשיפור' : 'ביצועים טובים!';
-
-    const issuesHtml = issues.map(i =>
-      `<li class="social-health-issue"><span class="hi-icon">${i.icon}</span><span class="${i.cls}">${i.text}</span></li>`
-    ).join('');
+    const confidence = { low: 'נמוכה', medium: 'בינונית', high: 'גבוהה' };
+    const primary = support.decisions[0];
+    const active = d.optimization_policy?.active;
+    const activeHtml = active?.decision_id
+      ? `<p style="margin:.7rem 0 0;color:#7fd49b;font-size:.8rem">⚙️ תהליך אוטומטי פעיל: ${escHtml(active.title || active.decision_id)} · סבב ${active.runs || 1}</p>`
+      : '<p style="margin:.7rem 0 0;color:var(--text-muted);font-size:.8rem">אין כרגע ניסוי אוטומטי פעיל.</p>';
 
     $('social-health').innerHTML = `<div class="social-health">
-      <div class="social-health-score">${emoji}</div>
+      <div class="social-health-score">🎯</div>
       <div>
-        <div class="social-health-title">${title}</div>
-        <ul class="social-health-issues">${issuesHtml}</ul>
+        <div class="social-health-title">החלטות לשיפור · ביטחון ${confidence[support.sample?.confidence] || 'נמוכה'}</div>
+        <p style="color:var(--text-muted);font-size:.78rem;margin:.2rem 0 .8rem">${escHtml(support.sample?.note || '')}</p>
+        <strong>${escHtml(primary.title || '')}</strong>
+        <div style="color:var(--text-muted);margin-top:.3rem">${escHtml(primary.action || '')}</div>
+        <div style="font-size:.78rem;margin-top:.35rem">ראיה: ${escHtml(primary.evidence || '')}</div>
+        <div style="font-size:.78rem;color:var(--accent);margin-top:.35rem">מדידה: ${escHtml(primary.measure || '')}</div>
+        ${activeHtml}
       </div>
     </div>`;
   }
 
   async function load() {
+    loadSchedule();
     $('social-loading').hidden = false;
     $('social-content').hidden = true;
     $('social-error').hidden = true;
@@ -5686,26 +5692,34 @@ const SocialSection = (() => {
       const prev = d.prev || {};
 
       // Instagram stats — compute on-the-fly what Python didn't pre-compute
-      const igPosts = d.ig?.posts_this_week || 0;
-      const igLikes = d.ig?.total_likes || 0;
-      const igComments = d.ig?.total_comments || 0;
-      const igFollowers = d.ig?.followers || 0;
-      const igAvg = d.ig?.avg_likes_per_post ?? (igPosts > 0 ? +(igLikes / igPosts).toFixed(1) : 0);
-      const igRate = d.ig?.engagement_rate != null
-        ? fmtRate(d.ig.engagement_rate)
-        : (igPosts > 0 && igFollowers > 0 ? ((igLikes + igComments) / (igPosts * igFollowers) * 100).toFixed(2) + '%' : '—');
+      const failedSources = d.data_quality?.failed_sources || {};
+      const igMediaAvailable = !Object.hasOwn(failedSources, 'instagram_media');
+      const igAccountAvailable = !Object.hasOwn(failedSources, 'instagram_account');
+      const igPosts = igMediaAvailable ? (d.ig?.posts_this_week ?? 0) : null;
+      const igLikes = igMediaAvailable ? (d.ig?.total_likes ?? 0) : null;
+      const igComments = igMediaAvailable ? (d.ig?.total_comments ?? 0) : null;
+      const igFollowers = igAccountAvailable ? (d.ig?.followers ?? 0) : null;
+      const igAvg = !igMediaAvailable ? null : (d.ig?.avg_likes_per_post ?? (igPosts > 0 ? +(igLikes / igPosts).toFixed(1) : 0));
+      const reachRate = igMediaAvailable ? d.ig?.engagement_rate_by_reach : null;
+      const followerRate = !igMediaAvailable || !igAccountAvailable ? null : d.ig?.follower_engagement_rate ?? d.ig?.engagement_rate;
+      const igRate = reachRate != null ? fmtRate(reachRate) : (followerRate != null ? fmtRate(followerRate) : '—');
+      const rateLabel = reachRate != null ? 'מעורבות לפי חשיפה' : 'מעורבות לפי עוקבים (אומדן)';
 
       $('social-ig-stats').innerHTML =
-        statCard('עוקבים', igFollowers.toLocaleString(), trend(igFollowers, prev.ig_followers)) +
-        statCard('תמונות סה"כ', d.ig?.media_count?.toLocaleString()) +
+        statCard('עוקבים', igFollowers == null ? '—' : igFollowers.toLocaleString(), trend(igFollowers, prev.ig_followers)) +
         statCard('פוסטים השבוע', igPosts, trend(igPosts, prev.ig_posts_this_week)) +
+        statCard('חשיפות בכל הפוסטים', d.ig?.total_reach == null ? '—' : d.ig.total_reach.toLocaleString()) +
         statCard('לייקים', igLikes, trend(igLikes, prev.ig_total_likes)) +
-        statCard('שיעור מעורבות', igRate) +
+        statCard('שמירות', d.ig?.total_saved ?? '—') +
+        statCard('שיתופים', d.ig?.total_shares ?? '—') +
+        statCard(rateLabel, igRate) +
         statCard('ממוצע לייקים/פוסט', igAvg);
 
       // Top posts table (or best_post fallback)
       const igTop = d.ig?.top_posts;
-      if (igTop?.length) {
+      if (!igMediaAvailable) {
+        $('social-ig-top').innerHTML = '<p style="color:var(--text-muted)">נתוני הפוסטים לא זמינים בדוח הזה.</p>';
+      } else if (igTop?.length) {
         $('social-ig-top').innerHTML = topPostsTable(igTop, 'caption');
       } else if (d.ig?.best_post?.caption) {
         $('social-ig-top').innerHTML = topPostsTable([{
@@ -5720,30 +5734,36 @@ const SocialSection = (() => {
 
       // Facebook — multi-page support
       const allFbPages = d.fb_pages?.length ? d.fb_pages : (d.fb ? [{ ...d.fb, name: 'Facebook', label: 'Facebook' }] : []);
+      const fbDataUnavailable = Object.keys(failedSources).some(source => source.startsWith('facebook_') || source.startsWith('facebook:'));
       const fbPages = allFbPages.filter(p => (p.fans || 0) > 0 || (p.posts_this_week || 0) > 0 || (p.total_likes || 0) > 0);
 
       if (!fbPages.length) {
-        $('social-fb-pages').innerHTML = fbSetupGuide();
+        $('social-fb-pages').innerHTML = fbDataUnavailable
+          ? '<p style="color:var(--text-muted)">נתוני Facebook לא זמינים בדוח הזה.</p>'
+          : fbSetupGuide();
       } else {
         $('social-fb-pages').innerHTML = fbPages.map((page, idx) => {
-          const fp = page.posts_this_week || 0;
-          const fl = page.total_likes || 0;
-          const fc = page.total_comments || 0;
-          const ff = page.fans || 0;
-          const fa = page.avg_likes_per_post ?? (fp > 0 ? +(fl / fp).toFixed(1) : 0);
-          const fr = page.engagement_rate != null
+          const postsFailed = Object.hasOwn(failedSources, `facebook_posts:${page.page_id}`);
+          const pageFailed = Object.hasOwn(failedSources, `facebook_page:${page.page_id}`);
+          const fp = postsFailed ? null : (page.posts_this_week ?? 0);
+          const fl = postsFailed ? null : (page.total_likes ?? 0);
+          const fc = postsFailed ? null : (page.total_comments ?? 0);
+          const ff = pageFailed ? null : (page.fans ?? 0);
+          const fa = postsFailed ? null : (page.avg_likes_per_post ?? (fp > 0 ? +(fl / fp).toFixed(1) : 0));
+          const fr = postsFailed || pageFailed ? '—' : page.engagement_rate != null
             ? fmtRate(page.engagement_rate)
             : (fp > 0 && ff > 0 ? ((fl + fc) / (fp * ff) * 100).toFixed(2) + '%' : '—');
           const prevFans  = idx === 0 ? prev.fb_fans  : null;
           const prevPosts = idx === 0 ? prev.fb_posts_this_week : null;
           const prevLikes = idx === 0 ? prev.fb_total_likes : null;
           const pageTitle = page.name || page.label || 'Facebook';
+          const displayCount = value => value == null ? '—' : value.toLocaleString();
           const statsHtml = `<div class="dash-grid social-stats-row">
-            ${statCard('עוקבים', ff.toLocaleString(), trend(ff, prevFans))}
+            ${statCard('עוקבים', displayCount(ff), trend(ff, prevFans))}
             ${statCard('פוסטים השבוע', fp, trend(fp, prevPosts))}
             ${statCard('לייקים', fl, trend(fl, prevLikes))}
             ${statCard('תגובות', fc)}
-            ${statCard('שיעור מעורבות', fr)}
+            ${statCard('מעורבות לפי עוקבים (אומדן)', fr)}
             ${statCard('ממוצע לייקים/פוסט', fa)}
           </div>`;
           const top = page.top_posts;
@@ -5757,11 +5777,20 @@ const SocialSection = (() => {
         }).join('');
       }
 
-      // Recommendations
-      const recs = d.recommendations || [];
-      $('social-recommendations').innerHTML = recs.length
-        ? '<ol style="padding-right:1.25rem;line-height:2">' + recs.map(rec => `<li>${rec}</li>`).join('') + '</ol>'
-        : '<p style="color:var(--text-muted)">אין המלצות עדיין — יופיעו לאחר הרצת הדוח השבועי</p>';
+      // Keep the dashboard actions tied to deterministic evidence; AI text is informational only.
+      const decisions = d.decision_support?.decisions || [];
+      const outcomes = d.optimization_policy?.outcomes || [];
+      const remaining = decisions.slice(1);
+      const decisionHtml = remaining.map((decision, index) => `<li style="margin-bottom:.8rem">
+        <strong>${index + 2}. ${escHtml(decision.title || '')}</strong>
+        <div>${escHtml(decision.action || '')}</div>
+        <small style="color:var(--text-muted)">ראיה: ${escHtml(decision.evidence || '')}</small>
+        <div style="font-size:.78rem;color:var(--accent)">מדידה: ${escHtml(decision.measure || '')}</div>
+      </li>`).join('');
+      const outcomesHtml = outcomes.slice(-3).map(row => `<li>${escHtml(row.title || row.decision_id || '')}: ${row.status === 'successful' ? 'הצלחה' : 'לא עמד בתנאי ההצלחה'} (${escHtml(row.evidence || '')})</li>`).join('');
+      $('social-recommendations').innerHTML = decisionHtml || outcomesHtml
+        ? `<ol style="padding-right:1.25rem;line-height:1.7">${decisionHtml}${outcomesHtml ? `<li style="margin-top:1rem"><strong>ניסויים שהסתיימו</strong><ul>${outcomesHtml}</ul></li>` : ''}</ol>`
+        : '<p style="color:var(--text-muted)">אין החלטות נוספות על סמך הנתונים כרגע.</p>';
 
       $('social-loading').hidden = true;
       $('social-content').hidden = false;

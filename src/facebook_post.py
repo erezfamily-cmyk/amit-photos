@@ -15,6 +15,8 @@ from pathlib import Path
 from campaign_urls import build_campaign_url
 from social_photo_map import save_social_photo_mapping
 from social_caption_quality import (compose_caption, generated_body, photo_fallback, require_caption)
+from social_optimization import guidance_for_prompt
+from social_content_strategy import EDITORIAL_RULES_HE, angle_instruction_he, publication_angle
 
 # ===== הגדרות =====
 POSTED_FILE = Path(__file__).parent.parent / "data" / "facebook_posted.json"
@@ -25,9 +27,9 @@ PAGE_ID           = os.environ.get("FACEBOOK_PAGE_ID", "")
 ACCESS_TOKEN      = os.environ.get("FACEBOOK_PAGE_TOKEN", "")
 ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "").strip()
 
-# ===== Hashtag pools לפייסבוק (פחות מאינסטגרם — 3-5 בלבד) =====
+# ===== Hashtag pools לפייסבוק (הכיתוב הסופי מוגבל ל-3) =====
 HASHTAG_POOLS = {
-    "default":  ["#צילום #photography #ישראל", "#אמנות #art #photographer", "#digitalart #israel #fineartphotography"],
+    "default":  ["#צילום #photography #ישראל", "#אמנות #art #photographer", "#צילום_אמנותי #israel #fineartphotography"],
     "טבע":      ["#טבע #nature #naturephotography", "#wildlife #ישראל_יפה #macro", "#הטבע_הישראלי #outdoors #naturelover"],
     "פורטרט":   ["#פורטרט #portrait #portraitphotography", "#people #humanportrait #צילום_אנשים"],
     "עירוני":   ["#עיר #urban #streetphotography", "#architecture #cityscape #israel_urban"],
@@ -79,7 +81,7 @@ def pick_photo(photos, posted_ids):
 
 def get_hashtags(category):
     pool = HASHTAG_POOLS.get(category, HASHTAG_POOLS["default"])
-    return random.choice(pool)
+    return f"#amitphotos {random.choice(pool)}"
 
 
 def fetch_image_as_base64(url, max_bytes=3_750_000):
@@ -122,7 +124,7 @@ def generate_pdf_promo_caption(photo, client, image_content):
 
     system_prompt = """אתה עמית ארז, צלם ישראלי שמצלם מאהבה.
 אתה כותב בגוף ראשון, בעברית טבעית ואנושית. לא שיווקי, לא מתנשא.
-כאילו אתה מספר לחבר משהו שלמדת בדרך הקשה."""
+כאילו אתה מספר לחבר משהו שלמדת בדרך הקשה.""" + guidance_for_prompt("facebook", "post")
 
     prompt = f"""כתוב פוסט פייסבוק שמתחיל מהתמונה הזו ומגיע לרעיון של מדריך חינמי שכתבת.
 
@@ -144,7 +146,10 @@ def generate_pdf_promo_caption(photo, client, image_content):
     )
     fallback = photo_fallback(photo)
     link = build_campaign_url("/free-guide/", source="facebook", campaign="202610_freeguide_photo_tips", content=photo["id"])
-    return compose_caption(generated_body(msg, fallback), f"🎁 PDF חינם — 50 טיפים לצילום:\n{link}", hashtags, fallback)
+    return compose_caption(
+        generated_body(msg, fallback), f"🎁 PDF חינם — 50 טיפים לצילום:\n{link}",
+        hashtags, fallback, max_hashtags=3,
+    )
 
 
 def generate_caption(photo):
@@ -192,8 +197,9 @@ def generate_caption(photo):
     exif_line = " · ".join(exif_parts) if exif_parts else ""
 
     hashtags = get_hashtags(category)
+    angle = publication_angle(photo_id)
 
-    system_prompt = """אתה עמית ארז, צלם ישראלי שמצלם מאהבה אמיתית.
+    system_prompt = f"""אתה עמית ארז, צלם ישראלי שמצלם מאהבה אמיתית.
 אתה כותב בגוף ראשון (צילמתי, בחרתי, המתנתי), בעברית תקנית וברורה.
 
 הקול שלך:
@@ -207,24 +213,26 @@ def generate_caption(photo):
 - פתיחה עם שאלה — לא כל פוסט צריך להתחיל בשאלה
 - תבנית קבועה שחוזרת על עצמה
 - "שיתוף", "הנה", "חשוב לי לספר"
-- שפה עמומה — כל משפט צריך להגיד משהו ספציפי על הצילום הזה"""
+- שפה עמומה — כל משפט צריך להגיד משהו ספציפי על הצילום הזה
+
+{EDITORIAL_RULES_HE}
+{guidance_for_prompt('facebook', 'post')}"""
 
     user_content = image_content + [{"type": "text", "text": f"""כתוב פוסט פייסבוק בגוף ראשון על התמונה הזו.
 
 {meta_text}
 {f'הגדרות: {exif_line}' if exif_line else ''}
 
-התמקד בשניים-שלושה מהבאים, לפי מה שרלוונטי לתמונה:
-- המיקום: מה מיוחד בחלל הזה, גודל, עומק, אווירה
-- ההחלטה הצילומית: למה הזווית הזו, מה ניסית להשיג
-- האור: מאיפה הגיע, מה עשית איתו
-- ההגדרות: למה f/X עם ISO Y — מה זה נתן לך
-- הרגע: כמה המתנת, מה גרם ללחוץ דווקא אז
+{angle_instruction_he(angle)}
 
 כתוב עד 80 מילים במשפטים שלמים. בלי קישורים, hashtags או הבטחת רכישה; הם אינם חלק מהטקסט.
 
 עברית תקנית וברורה. רק הפוסט.
 """}]
+
+    if angle == "guide":
+        print("🎁 פוסט פרומו PDF (תמהיל קבוע של 1/4)")
+        return generate_pdf_promo_caption(photo, client, image_content)
 
     msg = client.messages.create(
         model="claude-opus-4-8",
@@ -236,12 +244,9 @@ def generate_caption(photo):
     fallback = photo_fallback(photo)
     post_text = generated_body(msg, fallback)
 
-    # 1 מתוך 4 פוסטים — פרומו אישי ל-PDF במקום footer רגיל
-    if random.random() < 0.25:
-        print("🎁 פוסט פרומו PDF (1/4)")
-        return generate_pdf_promo_caption(photo, client, image_content)
-
-    return compose_caption(post_text, f"התמונה בגלריה:\n{buy_link}", hashtags, fallback)
+    return compose_caption(
+        post_text, f"התמונה בגלריה:\n{buy_link}", hashtags, fallback, max_hashtags=3,
+    )
 
 
 def upload_to_public_host(source_url):
@@ -319,7 +324,9 @@ def main():
     print("📤 מפרסם לפייסבוק...")
     post_id = post_to_facebook(photo, caption)
     print(f"✅ פורסם בהצלחה! Facebook post ID: {post_id}")
-    save_social_photo_mapping("facebook", post_id, photo["id"])
+    save_social_photo_mapping(
+        "facebook", post_id, photo["id"], publication_angle(photo["id"]),
+    )
 
     posted_data["posted_ids"] = list(posted_ids | {photo["id"]})
     save_posted(posted_data)

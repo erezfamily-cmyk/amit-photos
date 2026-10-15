@@ -1386,7 +1386,7 @@ async function handleReels(request, env) {
 // ===== SOCIAL ACTIVITY — GitHub Actions runs for posting workflows =====
 const SOCIAL_POSTING_WORKFLOWS = new Set([
   'instagram-post.yml','instagram-story.yml','threads-post.yml',
-  'pinterest-post.yml','camera-edu-post.yml','location-social-post.yml',
+  'pinterest-post.yml','pinterest-daily.yml','camera-edu-post.yml','location-social-post.yml',
   'week-photo-social.yml','reels-post.yml','quiz-social-post.yml',
   'puzzle-social-post.yml','youtube-post.yml','youtube-tutorial.yml',
   'newsletter-social-post.yml','share-youtube.yml','zazzle-social-post.yml',
@@ -1397,6 +1397,7 @@ const SOCIAL_WORKFLOW_META = {
   'instagram-story.yml':       { name: 'IG Story',          icon: '📱' },
   'threads-post.yml':          { name: 'Threads גלריה',     icon: '🧵' },
   'pinterest-post.yml':        { name: 'Pinterest גלריה',   icon: '📌' },
+  'pinterest-daily.yml':       { name: 'Pinterest יומי',    icon: '📌' },
   'camera-edu-post.yml':       { name: 'מדריך צילום',       icon: '📚' },
   'location-social-post.yml':  { name: 'מקום לצילום',       icon: '📍' },
   'week-photo-social.yml':     { name: 'תמונת השבוע',       icon: '⭐' },
@@ -1441,16 +1442,21 @@ async function handleAdminSocialActivity(request, env) {
     .map(r => {
       const fn   = r.path?.split('/').pop();
       const meta = SOCIAL_WORKFLOW_META[fn] || { name: fn, icon: '⚙️' };
-      const dt   = new Date(r.created_at);
-      // convert to Israel time (UTC+3)
-      const il   = new Date(dt.getTime() + 3 * 60 * 60 * 1000);
+      const dt = new Date(r.created_at);
+      const parts = Object.fromEntries(
+        new Intl.DateTimeFormat('en-CA', {
+          timeZone: 'Asia/Jerusalem',
+          year: 'numeric', month: '2-digit', day: '2-digit',
+          hour: '2-digit', minute: '2-digit', hourCycle: 'h23',
+        }).formatToParts(dt).filter(part => part.type !== 'literal').map(part => [part.type, part.value])
+      );
       return {
         workflow: fn,
         name:     meta.name,
         icon:     meta.icon,
         status:   r.conclusion || r.status,
-        date:     il.toISOString().slice(0, 10),
-        time:     il.toISOString().slice(11, 16),
+        date:     `${parts.year}-${parts.month}-${parts.day}`,
+        time:     `${parts.hour}:${parts.minute}`,
         html_url: r.html_url,
       };
     })

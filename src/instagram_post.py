@@ -15,6 +15,8 @@ from pathlib import Path
 from social_photo_map import save_social_photo_mapping
 from campaign_urls import build_campaign_url
 from social_caption_quality import (compose_caption, generated_body, photo_fallback, require_caption)
+from social_optimization import guidance_for_prompt
+from social_content_strategy import EDITORIAL_RULES_HE, angle_instruction_he, publication_angle
 
 # ===== הגדרות =====
 POSTED_FILE = Path(__file__).parent.parent / "data" / "instagram_posted.json"
@@ -103,9 +105,7 @@ def get_hashtags(category):
     """בוחר pool רנדומלי של hashtags לפי קטגוריה."""
     pool = HASHTAG_POOLS.get(category, HASHTAG_POOLS["default"])
     base = random.choice(pool)
-    # הוסף תמיד כמה בסיסיים
-    always = "#amitphotos #ישראל #צילום #digitalart"
-    return f"{base} {always}"
+    return f"#amitphotos {base}"
 
 
 def fetch_image_as_base64(url, max_bytes=3_750_000):
@@ -169,7 +169,7 @@ def generate_pdf_promo_caption(photo, client, image_content, vision_description)
 
     system_prompt = """אתה עמית ארז, צלם ישראלי שמצלם מאהבה.
 אתה כותב בגוף ראשון, בעברית טבעית ואנושית. לא שיווקי, לא מתנשא.
-כאילו אתה מספר לחבר משהו שלמדת בדרך הקשה."""
+כאילו אתה מספר לחבר משהו שלמדת בדרך הקשה.""" + guidance_for_prompt("instagram", "post")
 
     prompt = f"""כתוב פוסט אינסטגרם שמתחיל מהתמונה הזו ומגיע לרעיון של מדריך חינמי שכתבת.
 
@@ -191,7 +191,10 @@ def generate_pdf_promo_caption(photo, client, image_content, vision_description)
     fallback = photo_fallback(photo)
     text = generated_body(msg, fallback)
     link = build_campaign_url("/free-guide/", source="instagram", campaign="202610_freeguide_photo_tips", content=photo["id"])
-    return compose_caption(text, f"🎁 PDF חינם — 50 טיפים לצילום:\n{link}", get_hashtags(category), fallback)
+    return compose_caption(
+        text, f"🎁 PDF חינם — 50 טיפים לצילום:\n{link}",
+        get_hashtags(category), fallback, max_hashtags=5,
+    )
 
 
 def generate_caption(photo):
@@ -241,12 +244,9 @@ def generate_caption(photo):
     if exif.get("camera"):   exif_parts.append(exif['camera'])
     exif_line = " · ".join(exif_parts) if exif_parts else ""
 
-    # question format performs 3.7x better — use for every other post
-    import hashlib
-    post_hash = int(hashlib.md5(str(photo.get('id','')).encode()).hexdigest(), 16)
-    use_question_format = (post_hash % 2 == 0)
+    angle = publication_angle(photo.get("id", ""))
 
-    system_prompt = """אתה עמית ארז, צלם ישראלי שמצלם מאהבה אמיתית.
+    system_prompt = f"""אתה עמית ארז, צלם ישראלי שמצלם מאהבה אמיתית.
 אתה כותב בגוף ראשון, בעברית תקנית וברורה, כאילו אתה מסביר לחבר את ההחלטות שעשית בשטח.
 
 הקול שלך:
@@ -259,41 +259,28 @@ def generate_caption(photo):
 תימנע מ:
 - תבנית קבועה שחוזרת על עצמה
 - ביטויים ריקים כמו "שיתוף", "הנה", "חשוב לי לספר"
-- שפה עמומה — כל משפט צריך להגיד משהו ספציפי על הצילום הזה"""
+- שפה עמומה — כל משפט צריך להגיד משהו ספציפי על הצילום הזה
 
-    if use_question_format:
-        caption_prompt = f"""כתוב כיתוב אינסטגרם בפורמט שאלה + רמז עבור התמונה הזו.
+{EDITORIAL_RULES_HE}
+{guidance_for_prompt('instagram', 'post')}"""
 
-מה שרואים בתמונה: {vision_description or '(לא זמין)'}
-{meta_text}
-
-הפורמט:
-1. שאלה מסתורית על המיקום/הנושא — "איפה בעולם צילמתי את זה?" / "מה אתם רואים כאן?" / "כמה זמן לקח לי להגיע לשם?"
-2. רמז קטן שמגרה — משפט אחד שמוסיף מידע אבל לא מגלה הכל
-3. הזמנה לנחש בתגובות — "נחשו 👇" / "תכתבו בתגובות"
-
-כתוב עד 80 מילים במשפטים שלמים. בלי קישורים, hashtags או הבטחת רכישה; הם אינם חלק מהטקסט.
-
-עברית תקנית וברורה. רק הכיתוב."""
-    else:
-        caption_prompt = f"""כתוב כיתוב אינסטגרם בגוף ראשון עבור התמונה הזו.
+    caption_prompt = f"""כתוב כיתוב אינסטגרם בגוף ראשון עבור התמונה הזו.
 
 מה שרואים בתמונה: {vision_description or '(לא זמין)'}
 {meta_text}
 {f'הגדרות: {exif_line}' if exif_line else ''}
 
-התמקד בשניים-שלושה מהבאים, לפי מה שרלוונטי לתמונה:
-- המיקום: מה מיוחד בחלל הזה, מה הגודל, העומק, האווירה שם
-- ההחלטה הצילומית: למה בחרת זווית זו, מה ניסית להשיג בקומפוזיציה
-- האור: מאיפה הגיע, מה עשית איתו, למה הוא עובד כאן
-- ההגדרות: למה f/X עם ISO Y — מה זה נתן לך בפועל
-- הרגע: כמה המתנת, מה גרם לך ללחוץ דווקא אז
+{angle_instruction_he(angle)}
 
 כתוב עד 80 מילים במשפטים שלמים. בלי קישורים, hashtags או הבטחת רכישה; הם אינם חלק מהטקסט.
 
 עברית תקנית וברורה. רק הכיתוב."""
 
     user_content = image_content + [{"type": "text", "text": caption_prompt}]
+
+    if angle == "guide":
+        print("🎁 פוסט פרומו PDF (תמהיל קבוע של 1/4)")
+        return generate_pdf_promo_caption(photo, client, image_content, vision_description)
 
     msg = client.messages.create(
         model="claude-opus-4-8",
@@ -305,14 +292,9 @@ def generate_caption(photo):
     fallback = photo_fallback(photo)
     caption_text = generated_body(msg, fallback)
 
-    # 1 מתוך 4 פוסטים — פרומו אישי ל-PDF במקום footer רגיל
-    if random.random() < 0.25:
-        print("🎁 פוסט פרומו PDF (1/4)")
-        return generate_pdf_promo_caption(photo, client, image_content, vision_description)
-
     link = build_campaign_url(f"/photo/{photo['id']}", source="instagram", campaign="photo_posts", content=photo["id"])
     footer = f"התמונה בגלריה:\n{link}\nהקישור לאתר בביו."
-    return compose_caption(caption_text, footer, hashtags, fallback)
+    return compose_caption(caption_text, footer, hashtags, fallback, max_hashtags=5)
 
 
 def _try_r2(img_bytes):
@@ -495,15 +477,15 @@ def main():
     caption = generate_caption(photo)
     print(f"\n--- כיתוב ---\n{caption}\n-------------\n")
 
-    # שמור את ה-ID לפני הפרסום — מונע כפילות אם ה-script נכשל אחרי upload
-    posted_data["posted_ids"] = list(posted_ids | {photo["id"]})
-    save_posted(posted_data)
-    print(f"💾 {photo['id']} סומן כ-posted (לפני פרסום)")
-
     print("📤 מפרסם לאינסטגרם...")
     post_id = post_to_instagram(photo, caption)
     print(f"✅ פורסם בהצלחה! Instagram post ID: {post_id}")
-    save_social_photo_mapping("instagram", post_id, photo["id"])
+    posted_data["posted_ids"] = list(posted_ids | {photo["id"]})
+    save_posted(posted_data)
+    print(f"💾 {photo['id']} סומן כ-posted לאחר אישור הפרסום")
+    save_social_photo_mapping(
+        "instagram", post_id, photo["id"], publication_angle(photo["id"]),
+    )
 
 
 if __name__ == "__main__":
