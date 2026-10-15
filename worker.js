@@ -4823,7 +4823,9 @@ async function handleAnalysesRevise(request, env) {
   const problems = (Array.isArray(body.problems) ? body.problems : [])
     .filter(p => p && typeof p.claim === 'string').slice(0, 15)
     .map(p => ({ claim: String(p.claim).slice(0, 200), reason: String(p.reason || '').slice(0, 240) }));
-  const ruleProblem = body.rule_fits === false;
+  // lock_rule: the owner chose the rule; the rewrite keeps it whatever the second check suggested.
+  const lockRule = body.lock_rule === true;
+  const ruleProblem = body.rule_fits === false && !lockRule;
   if (!problems.length && !ruleProblem) return jsonRes({ error: 'NOTHING_TO_REVISE' }, 400, request);
   const photo = await env.DB.prepare('SELECT id, title, r2_key, thumbnail, url FROM photos WHERE id = ?').bind(body.photo_id).first();
   if (!photo) return jsonRes({ error: 'PHOTO_NOT_FOUND' }, 404, request);
@@ -4834,6 +4836,7 @@ async function handleAnalysesRevise(request, env) {
   const text = body.composition_html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
   const prompt = 'אתה מורה לצילום. ניתוח שנכתב על התמונה הזו נבדק מולה, ונמצאו בו טעויות. כתוב אותו מחדש כך שכל טענה תהיה נכונה לפי מה שרואים בתמונה.\n\n'
     + 'חוק הקומפוזיציה שנבחר: ' + body.composition_rule + '\n'
+    + (lockRule ? 'החוק הזה נקבע על ידי הצלם — אסור לשנות אותו. ב-composition_rule כתוב בדיוק ' + body.composition_rule + '.\n' : '')
     + (ruleProblem ? 'החוק הזה אינו מתאים לתמונה' + (body.rule_reason ? ' (' + String(body.rule_reason).slice(0, 240) + ')' : '') + '. בחר חוק שבאמת מתאים' + (suggested ? ' — ההמלצה היא ' + suggested : '') + '.\n' : '')
     + 'הטקסט הקודם:\n' + text + '\n\n'
     + 'הטענות שנמצאו שגויות:\n' + problems.map(p => '- ' + p.claim + ' — ' + p.reason).join('\n') + '\n\n'
@@ -4858,7 +4861,7 @@ async function handleAnalysesRevise(request, env) {
   }
   const candidate = {
     photo_id: photo.id,
-    composition_rule: revised.composition_rule,
+    composition_rule: lockRule ? body.composition_rule : revised.composition_rule,
     composition_html: revised.composition_html,
     tags: Array.isArray(revised.tags) ? revised.tags.slice(0, 8) : [],
     annotations: Array.isArray(revised.annotations) ? revised.annotations.slice(0, 8) : [],

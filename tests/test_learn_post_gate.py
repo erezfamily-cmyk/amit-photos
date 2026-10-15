@@ -495,6 +495,68 @@ class WeeklyPickTests(unittest.TestCase):
         self.assertEqual(gate.generate_request_body({"PHOTO_ID": "../etc", "RULE": "framing"}), {"dry_run": True})
 
 
+class RuleLockAndApproveAnywayTests(unittest.TestCase):
+    def data(self):
+        return {"photo_id": "p1", "title": "דלת", "composition_rule": "rule_of_thirds", "composition_html": "<p><strong>שליש:</strong> הקיר תופס רבע.</p>",
+                "thumbnail": "/photos/thumb/p1.webp", "tags": [], "annotations": []}
+
+    rule_only = {"claims": [{"claim": "הדלת בשליש הימני", "verdict": "supported", "reason": "64%"}], "rule_fits": False, "rule_reason": "מרחב שלילי", "suggested_rule": "negative_space"}
+    contradicted = {"claims": [{"claim": "הקיר תופס רבע", "verdict": "contradicted", "reason": "כמחצית"}], "rule_fits": False, "rule_reason": "x", "suggested_rule": "negative_space"}
+
+    def test_with_the_owner_rule_a_rule_disagreement_is_a_note_and_triggers_no_rewrite(self):
+        problems, notes = gate.second_check_findings(self.rule_only, "rule_of_thirds", rule_locked=True)
+        self.assertEqual(problems, [])
+        self.assertTrue(any("disagrees with the rule you chose" in n for n in notes))
+        revise = mock.Mock()
+        data, verification, revision = gate.review_with_revision(self.data(), lambda d: self.rule_only, revise, rule_locked=True)
+        revise.assert_not_called()
+        self.assertIsNone(revision)
+        unlocked, _ = gate.second_check_findings(self.rule_only, "rule_of_thirds")
+        self.assertTrue(unlocked, "without the lock it is still a problem")
+
+    def test_the_rewrite_never_changes_the_owner_rule(self):
+        revised = {"composition_rule": "negative_space", "composition_html": "<p><strong>שליש:</strong> הקיר תופס כמחצית.</p>", "annotations": [], "tags": ["t"]}
+        checks = iter([self.contradicted, {"claims": [{"claim": "כמחצית", "verdict": "supported", "reason": "r"}], "rule_fits": False}])
+        data, verification, revision = gate.review_with_revision(self.data(), lambda d: next(checks), lambda d, v: revised, rule_locked=True)
+        self.assertEqual(data["composition_rule"], "rule_of_thirds")
+        self.assertEqual(data["composition_html"], revised["composition_html"])
+        draft = gate.make_draft(data, {}, None, gate.measure_subject(wall_with_block(0.51, 0.74)), verification, rule_locked=True)
+        self.assertTrue(draft["publishable"])
+        self.assertEqual(draft["rule"], "rule_of_thirds")
+
+    def test_run_revision_with_the_lock_tells_the_site_to_keep_the_rule(self):
+        response = mock.Mock(ok=True, status_code=200)
+        response.json.return_value = {"composition_html": "<p>x</p>"}
+        with mock.patch.dict(os.environ, {"ADMIN_TOKEN": "t"}), mock.patch("requests.post", return_value=response) as post:
+            gate.run_revision(self.data(), self.contradicted, lock_rule=True)
+        payload = post.call_args.kwargs["json"]
+        self.assertTrue(payload["lock_rule"])
+        self.assertTrue(payload["rule_fits"], "the rule verdict is not sent as a problem")
+
+    def test_a_draft_with_problems_still_goes_to_the_owner_and_can_be_published_after_approval(self):
+        draft = gate.make_draft(self.data(), {}, None, gate.measure_subject(wall_with_block(0.51, 0.74)), self.contradicted)
+        self.assertFalse(draft["publishable"])
+        self.assertTrue(draft["approvable"])
+        draft.update({"facebook": "f", "instagram": "i"})
+        subject, html = gate.build_approval_email(draft, "https://github.com/o/r/actions/runs/5")
+        self.assertIn("⚠", subject)
+        self.assertIn("Approve and deploy", html)
+        self.assertIn("color:#b00020", html)
+        with tempfile.TemporaryDirectory() as folder:
+            path = os.path.join(folder, "draft.json")
+            with open(path, "w", encoding="utf-8") as handle:
+                json.dump(draft, handle)
+            with mock.patch.object(gate, "save_analysis", return_value=True), mock.patch.object(gate, "post_to_facebook", return_value=True) as fb, \
+                    mock.patch.object(gate, "post_to_instagram", return_value=True):
+                gate.publish(path)
+            fb.assert_called_once()
+
+    def test_a_draft_without_content_is_never_approvable(self):
+        empty = {**self.data(), "composition_html": ""}
+        draft = gate.make_draft(empty, {}, None, None, None)
+        self.assertFalse(draft["approvable"])
+
+
 class ServerErrorTextTests(unittest.TestCase):
     def test_the_server_error_code_is_shown_shortened_and_on_one_line(self):
         response = mock.Mock()
@@ -530,7 +592,7 @@ class WorkflowWiringTests(unittest.TestCase):
         self.assertNotIn("FACEBOOK_PAGE_TOKEN", prepare)
         self.assertNotIn("INSTAGRAM_PAGE_TOKEN", prepare)
         self.assertIn("dry run", text)
-        self.assertIn("needs.prepare.outputs.publishable == 'true'", text)
+        self.assertIn("needs.prepare.outputs.approvable == 'true'", text)
         self.assertIn("github.event.comment.user.login == github.repository_owner", text)
         self.assertIn("contains(github.event.issue.labels.*.name, 'learn-pick')", text)
         self.assertIn("src/learn_post_gate.py propose", text)

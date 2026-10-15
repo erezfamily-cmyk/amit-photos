@@ -56,3 +56,8 @@ A manual run with `mode = draft-only` prepares the draft and sends the e-mail bu
 - The first full run for the green door (rule of thirds, 15.10) was blocked twice for the wrong reasons: the second check returned no claims (the model handed the claims array back as a JSON string inside the tool input), and the pixel measurement flagged the honest sentence "the door is closer to the centre than recommended" as a centring claim.
 - Tool answers are now normalised against the schema (array/object fields given as JSON strings are parsed, "true"/"false" and numeric strings converted). `VERIFY_EMPTY` now says what came back.
 - Pixel-measurement findings are notes for the owner, never blocks; the second check (which looks at the picture) decides. Camera contradictions with EXIF stay blocking (the stored values are forced to EXIF anyway).
+
+## Owner's rule is locked; drafts with problems can be approved (ninth PR)
+- Owner's decision (15.10.2026), after the green door run: the rewrite had replaced the owner's rule (rule of thirds) with "negative space" because the second check suggested it.
+- When the owner fixes the rule (pick comment or manual run with photo + rule), it is locked: the repair round keeps it (`lock_rule` in `/api/analyses/revise`, enforced on the site), and a second-check disagreement about the rule is a note in the e-mail, not a problem.
+- Drafts with problems are no longer stopped before the owner: they wait for approval like clean ones; the e-mail subject starts with "⚠" and the problems are shown in red. Not approving means nothing is published; approving publishes as is (the page can then be edited in the admin). Only a draft without content (no text or no image) cannot be approved.

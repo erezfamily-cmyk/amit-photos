@@ -296,8 +296,9 @@ def page_preview_html(analysis):
 
 def build_approval_email(draft, run_url):
     ready = draft["publishable"]
-    subject = ("אישור פרסום: " if ready else "נדרש תיקון, לא מפרסם: ") + draft["title"]
-    problems = "".join(f"<li>{esc(p)}</li>" for p in draft["problems"]) or "<li>לא נמצאו סתירות</li>"
+    approvable = draft.get("approvable", ready)
+    subject = ("אישור פרסום: " if ready else ("⚠ בעיות שנמצאו, לאישורך: " if approvable else "נדרש תיקון, לא מפרסם: ")) + draft["title"]
+    problems = "".join(f'<li style="color:#b00020"><b>{esc(p)}</b></li>' for p in draft["problems"]) or "<li>לא נמצאו סתירות</li>"
     notes = "".join(f"<li>{esc(n)}</li>" for n in draft["notes"])
     preview = page_preview_html(draft.get("analysis") or {})
     marks = {"supported": "✔", "contradicted": "✖", "uncertain": "?"}
@@ -308,7 +309,13 @@ def build_approval_email(draft, run_url):
         f'<p><b>לאישור:</b> פתח את <a href="{esc(run_url)}">ההרצה ב-GitHub</a> ולחץ Review deployments ← social-approval ← Approve and deploy. '
         "בלי אישור שלך שום דבר לא מתפרסם.</p>"
         if ready
-        else f'<p><b>הפוסט נעצר.</b> הבדיקות מצאו סתירות. הפרטים ב<a href="{esc(run_url)}">הרצה</a>. עמוד הניתוח כבר נשמר באתר ועשוי להכיל את אותן טעויות.</p>'
+        else (
+            f'<p style="color:#b00020"><b>הבדיקות מצאו בעיות (מסומנות באדום למטה).</b> אם אתה מסכים לפרסם בכל זאת, פתח את '
+            f'<a href="{esc(run_url)}">ההרצה ב-GitHub</a> ואשר (Review deployments ← social-approval ← Approve and deploy). '
+            "אם לא — פשוט אל תאשר, ושום דבר לא יעלה. אפשר גם לאשר ואז לתקן את העמוד באדמין.</p>"
+            if approvable
+            else f'<p><b>הפוסט נעצר.</b> אין מה לאשר (חסר ניתוח או תמונה). הפרטים ב<a href="{esc(run_url)}">הרצה</a>.</p>'
+        )
     )
     html = f"""<div dir="rtl" style="font-family:Arial,sans-serif;max-width:640px">
 <h2>{esc(draft['title'])}</h2>
@@ -352,8 +359,11 @@ def absolute(url):
     return f"https://www.amitphotos.com{url}" if url and url.startswith("/") else url
 
 
-def second_check_findings(verification, rule):
-    """Problems and notes from the separate sceptical pass (/api/analyses/verify). None = not run (unit tests)."""
+def second_check_findings(verification, rule, rule_locked=False):
+    """Problems and notes from the separate sceptical pass (/api/analyses/verify). None = not run (unit tests).
+
+    rule_locked: the owner chose the rule; a disagreement about the rule is then a note, never a problem.
+    """
     if verification is None:
         return [], []
     if not isinstance(verification, dict) or verification.get("error") or not verification.get("claims"):
@@ -367,11 +377,15 @@ def second_check_findings(verification, rule):
             notes.append(f"uncertain claim: {claim.get('claim', '')} — {claim.get('reason', '')}")
     if verification.get("rule_fits") is False:
         suggested = verification.get("suggested_rule")
-        problems.append(f"rule '{rule}' does not fit the picture: {verification.get('rule_reason', '')}" + (f" (suggested: {suggested})" if suggested else ""))
+        message = f"rule '{rule}' does not fit the picture: {verification.get('rule_reason', '')}" + (f" (suggested: {suggested})" if suggested else "")
+        if rule_locked:
+            notes.append("the second check disagrees with the rule you chose (kept): " + message)
+        else:
+            problems.append(message)
     return problems, notes
 
 
-def make_draft(data, camera_json, exif, measurement, verification=None):
+def make_draft(data, camera_json, exif, measurement, verification=None, rule_locked=False):
     photo_id = data.get("photo_id", "")
     rule = data.get("composition_rule", "")
     text = strip_html(data.get("composition_html", ""))
@@ -387,7 +401,7 @@ def make_draft(data, camera_json, exif, measurement, verification=None):
             (notes if item.startswith("no EXIF") else problems).append(item)
     elif not exif:
         notes.append("no EXIF: the caption carries no camera numbers")
-    check_problems, check_notes = second_check_findings(verification, rule)
+    check_problems, check_notes = second_check_findings(verification, rule, rule_locked)
     problems += check_problems
     notes += check_notes
     soft = [p for p in problems if "could not be measured" in p or "not confident" in p]
@@ -426,17 +440,19 @@ def make_draft(data, camera_json, exif, measurement, verification=None):
         "measurement": measurement,
         "second_check": (verification or {}).get("claims", []) if isinstance(verification, dict) else [],
         "publishable": not hard and bool(data.get("thumbnail") or data.get("url")),
+        # The owner may approve a draft with problems (his decision); only a draft without content cannot be approved.
+        "approvable": bool((data.get("thumbnail") or data.get("url")) and data.get("composition_html") and photo_id),
     }
 
 
-def review_with_revision(data, check, revise):
+def review_with_revision(data, check, revise, rule_locked=False):
     """Second check; if it found contradicted claims or an unfitting rule, ONE repair round and a fresh check.
 
     check(data) -> verification dict; revise(data, verification) -> revised fields or {"error": ...}.
     Returns (final_data, final_verification, revision_info_or_None). Never loops more than once.
     """
     verification = check(data)
-    problems, _ = second_check_findings(verification, data.get("composition_rule", ""))
+    problems, _ = second_check_findings(verification, data.get("composition_rule", ""), rule_locked)
     usable = isinstance(verification, dict) and not verification.get("error") and verification.get("claims")
     if not usable or not problems:
         return data, verification, None
@@ -444,12 +460,12 @@ def review_with_revision(data, check, revise):
     if not isinstance(revised, dict) or revised.get("error") or not revised.get("composition_html"):
         reason = revised.get("error") if isinstance(revised, dict) else "no answer"
         return data, verification, {"revised": False, "reason": reason, "first_problems": problems}
-    fields = ("composition_rule", "composition_html", "annotations", "tags")
+    fields = ("composition_html", "annotations", "tags") if rule_locked else ("composition_rule", "composition_html", "annotations", "tags")
     data = {**data, **{key: revised[key] for key in fields if key in revised}}
     return data, check(data), {"revised": True, "first_problems": problems}
 
 
-def run_revision(analysis, verification):
+def run_revision(analysis, verification, lock_rule=False):
     """Asks the site for one repair round. Returns the revised fields or {"error": ...}; never raises."""
     import requests
 
@@ -459,6 +475,9 @@ def run_revision(analysis, verification):
     payload["rule_fits"] = verification.get("rule_fits")
     payload["rule_reason"] = verification.get("rule_reason", "")
     payload["suggested_rule"] = verification.get("suggested_rule")
+    if lock_rule:
+        payload["lock_rule"] = True
+        payload["rule_fits"] = True
     try:
         response = requests.post(f"{SITE_URL}/api/analyses/revise", headers={"X-Admin-Password": token}, json=payload, timeout=120)
     except Exception:
@@ -545,8 +564,10 @@ def prepare(out_path="draft.json"):
         print("❌ the server did not honour dry_run: refusing to continue (the page may already be public)")
         sys.exit(1)
     camera = data.get("camera_analysis") or {}
-    data, verification, revision = review_with_revision(data, run_second_check, run_revision)
-    draft = make_draft(data, camera, exif, measurement, verification)
+    rule_locked = (os.environ.get("RULE") or "").strip() in RULE_LABELS and bool(os.environ.get("PHOTO_ID"))
+    revise = (lambda d, v: run_revision(d, v, lock_rule=True)) if rule_locked else run_revision
+    data, verification, revision = review_with_revision(data, run_second_check, revise, rule_locked)
+    draft = make_draft(data, camera, exif, measurement, verification, rule_locked)
     if revision:
         if revision.get("revised"):
             draft["notes"].append("the first draft was revised once after the second check; first-round problems: " + " | ".join(revision["first_problems"]))
@@ -564,6 +585,7 @@ def prepare(out_path="draft.json"):
     if github_output:
         with open(github_output, "a", encoding="utf-8") as handle:
             handle.write(f"publishable={'true' if draft['publishable'] else 'false'}\n")
+            handle.write(f"approvable={'true' if draft.get('approvable') else 'false'}\n")
 
 
 def post_to_facebook(image_url, message):
@@ -618,9 +640,11 @@ def save_analysis(analysis):
 def publish(draft_path="draft.json"):
     with open(draft_path, encoding="utf-8") as handle:
         draft = json.load(handle)
-    if not draft.get("publishable") or draft.get("problems"):
-        print("❌ the draft did not pass the checks: nothing is posted")
+    if not draft.get("approvable", draft.get("publishable")):
+        print("❌ the draft has no content to publish: nothing is posted")
         sys.exit(1)
+    if draft.get("problems"):
+        print(f"⚠️  publishing despite {len(draft['problems'])} problem(s) found by the checks: the owner approved it")
     if not draft.get("image_url"):
         print("❌ no image URL: nothing is posted")
         sys.exit(1)

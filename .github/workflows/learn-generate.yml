@@ -74,6 +74,7 @@ jobs:
       issues: write
     outputs:
       publishable: ${{ steps.draft.outputs.publishable }}
+      approvable: ${{ steps.draft.outputs.approvable }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -115,7 +116,8 @@ jobs:
 
   publish:
     needs: prepare
-    if: needs.prepare.outputs.publishable == 'true' && github.event.inputs.mode != 'draft-only'
+    # Clean drafts AND drafts with problems wait for the owner's approval; the e-mail marks the problems in red.
+    if: needs.prepare.outputs.approvable == 'true' && github.event.inputs.mode != 'draft-only'
     runs-on: ubuntu-latest
     environment: social-approval
     steps:
