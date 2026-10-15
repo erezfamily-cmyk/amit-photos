@@ -15,6 +15,7 @@ from pathlib import Path
 from social_photo_map import save_social_photo_mapping
 from campaign_urls import build_campaign_url
 from social_caption_quality import (compose_caption, generated_body, photo_fallback, require_caption)
+from social_optimization import guidance_for_prompt
 from social_content_strategy import EDITORIAL_RULES_HE, angle_instruction_he, publication_angle
 
 # ===== הגדרות =====
@@ -168,7 +169,7 @@ def generate_pdf_promo_caption(photo, client, image_content, vision_description)
 
     system_prompt = """אתה עמית ארז, צלם ישראלי שמצלם מאהבה.
 אתה כותב בגוף ראשון, בעברית טבעית ואנושית. לא שיווקי, לא מתנשא.
-כאילו אתה מספר לחבר משהו שלמדת בדרך הקשה."""
+כאילו אתה מספר לחבר משהו שלמדת בדרך הקשה.""" + guidance_for_prompt("instagram", "post")
 
     prompt = f"""כתוב פוסט אינסטגרם שמתחיל מהתמונה הזו ומגיע לרעיון של מדריך חינמי שכתבת.
 
@@ -260,7 +261,8 @@ def generate_caption(photo):
 - ביטויים ריקים כמו "שיתוף", "הנה", "חשוב לי לספר"
 - שפה עמומה — כל משפט צריך להגיד משהו ספציפי על הצילום הזה
 
-{EDITORIAL_RULES_HE}"""
+{EDITORIAL_RULES_HE}
+{guidance_for_prompt('instagram', 'post')}"""
 
     caption_prompt = f"""כתוב כיתוב אינסטגרם בגוף ראשון עבור התמונה הזו.
 

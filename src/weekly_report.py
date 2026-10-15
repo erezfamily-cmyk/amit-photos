@@ -19,6 +19,8 @@ from pathlib import Path
 from datetime import datetime, timedelta, timezone
 from social_photo_map import build_post_lookup, build_post_metadata_lookup
 from social_caption_quality import analyze_caption_set
+from social_decision_engine import build_decision_support, latest_ga_snapshot, load_json
+from social_optimization import build_optimization_policy, load_policy, save_policy
 
 ROOT = Path(__file__).parent.parent
 
@@ -36,6 +38,7 @@ REPORT_EMAIL = os.environ.get("REPORT_EMAIL", "erez.family@gmail.com")
 _fb_pages_raw = os.environ.get("FACEBOOK_PAGE_IDS", "")
 _fb_page_id_legacy = os.environ.get("FACEBOOK_PAGE_ID", "")
 DATA_FETCH_FAILURES = {}
+MEDIA_INSIGHT_WARNINGS = []
 
 
 def record_fetch_failure(source, error):
@@ -87,7 +90,7 @@ def build_editorial_performance(posts, platform, likes_key, comments_key):
         angle = row.get("content_angle")
         if not angle:
             continue
-        bucket = totals.setdefault(angle, {"posts": 0, "likes": 0, "comments": 0})
+        bucket = totals.setdefault(angle, {"posts": 0, "likes": 0, "comments": 0, "reach": 0, "saved": 0, "shares": 0, "posts_with_reach": 0, "full_interactions": 0, "posts_with_full_metrics": 0})
         likes = post.get(likes_key, 0) or 0
         comments = post.get(comments_key, 0) or 0
         if isinstance(likes, dict):
@@ -97,9 +100,19 @@ def build_editorial_performance(posts, platform, likes_key, comments_key):
         bucket["posts"] += 1
         bucket["likes"] += likes
         bucket["comments"] += comments
+        insights = post.get("insights", {})
+        if insights.get("reach") is not None:
+            bucket["reach"] += insights.get("reach", 0) or 0
+            bucket["posts_with_reach"] += 1
+        if insights.get("reach") is not None and "saved" in insights and "shares" in insights:
+            bucket["saved"] += insights.get("saved", 0) or 0
+            bucket["shares"] += insights.get("shares", 0) or 0
+            bucket["full_interactions"] += likes + comments + (insights.get("saved", 0) or 0) + (insights.get("shares", 0) or 0)
+            bucket["posts_with_full_metrics"] += 1
     for bucket in totals.values():
         interactions = bucket["likes"] + bucket["comments"]
         bucket["avg_interactions"] = round(interactions / bucket["posts"], 1)
+        bucket["engagement_rate_by_reach"] = round(bucket["full_interactions"] / bucket["reach"], 4) if bucket["reach"] and bucket["posts_with_full_metrics"] == bucket["posts"] else None
     return totals
 
 
@@ -126,34 +139,40 @@ def fetch_ig_insights():
 # מדדים ספציפיים ל-Reels (Graph API v21.0). מטא שינתה את "plays" ל-"views" — הפונקציה
 # נכשלת בשקט ומחזירה {} אם מדד לא תקין (כמו שאר קריאות ה-API בקובץ), לא קורסת את הדוח כולו.
 REEL_METRICS = "views,reach,saved,shares,total_interactions,ig_reels_avg_watch_time"
+POST_METRICS = "reach,saved,shares,total_interactions"
+REEL_FALLBACK_METRICS = "views,reach,saved,shares,total_interactions"
 
 
 def is_reel(post):
     return post.get("media_product_type") == "REELS" or post.get("media_type") == "VIDEO"
 
 
-def fetch_reel_insights(media_id):
-    """שולף מדדי Reels (צפיות, זמן צפייה ממוצע, שיתופים, שמירות) למדיה בודדת."""
-    try:
-        resp = requests.get(f"{GRAPH_API}/{media_id}/insights", params={
-            "metric": REEL_METRICS,
-            "access_token": IG_TOKEN,
-        }, timeout=15)
-        resp.raise_for_status()
-        out = {}
-        for item in resp.json().get("data", []):
-            values = item.get("values", [])
-            out[item.get("name")] = values[0].get("value", 0) if values else 0
-        return out
-    except requests.exceptions.HTTPError as e:
-        # מטא משנה שמות מדדים בין גרסאות API — הדפס את גוף התשובה כדי לדעת איזה metric נכשל בפועל
-        record_fetch_failure("instagram_reel_insights", e)
-        print(f"⚠️  Reel insights failed for media {media_id}")
-        return {}
-    except Exception as e:
-        record_fetch_failure("instagram_reel_insights", e)
-        print(f"⚠️  Reel insights failed for media {media_id}")
-        return {}
+def fetch_media_insights(post):
+    """Fetch reach-based metrics, retrying with a minimal metric set when Meta differs by media type."""
+    metric_sets = [REEL_METRICS, REEL_FALLBACK_METRICS, "views,reach", "reach"] if is_reel(post) else [POST_METRICS, "reach,saved,shares", "reach"]
+    for metrics in metric_sets:
+        try:
+            resp = requests.get(f"{GRAPH_API}/{post['id']}/insights", params={
+                "metric": metrics,
+                "access_token": IG_TOKEN,
+            }, timeout=15)
+            resp.raise_for_status()
+            out = {}
+            for item in resp.json().get("data", []):
+                values = item.get("values", [])
+                out[item.get("name")] = values[0].get("value", 0) if values else 0
+            return out
+        except Exception:
+            continue
+    MEDIA_INSIGHT_WARNINGS.append(str(post.get("id", "")))
+    print(f"⚠️  Media insights unavailable for {post.get('id', '')}")
+    return {}
+
+
+def enrich_ig_posts(ig_posts):
+    for post in ig_posts:
+        post["insights"] = fetch_media_insights(post)
+    return ig_posts
 
 
 def build_reel_summary(ig_posts):
@@ -161,16 +180,21 @@ def build_reel_summary(ig_posts):
     post_lookup = build_post_lookup()
     reels = [p for p in ig_posts if is_reel(p)]
     for p in reels:
-        p["reel_metrics"] = fetch_reel_insights(p["id"])
+        p["reel_metrics"] = p.get("insights", {})
 
     n = len(reels)
-    total_plays   = sum(p["reel_metrics"].get("views", 0) for p in reels)
-    total_reach   = sum(p["reel_metrics"].get("reach", 0) for p in reels)
-    total_shares  = sum(p["reel_metrics"].get("shares", 0) for p in reels)
-    total_saved   = sum(p["reel_metrics"].get("saved", 0) for p in reels)
+    view_posts = [p for p in reels if "views" in p["reel_metrics"]]
+    reach_posts = [p for p in reels if "reach" in p["reel_metrics"]]
+    share_posts = [p for p in reels if "shares" in p["reel_metrics"]]
+    saved_posts = [p for p in reels if "saved" in p["reel_metrics"]]
+    total_plays   = sum(p["reel_metrics"].get("views", 0) for p in view_posts) if view_posts else None
+    total_reach   = sum(p["reel_metrics"].get("reach", 0) for p in reach_posts) if reach_posts else None
+    total_shares  = sum(p["reel_metrics"].get("shares", 0) for p in share_posts) if share_posts else None
+    total_saved   = sum(p["reel_metrics"].get("saved", 0) for p in saved_posts) if saved_posts else None
     watch_times   = [p["reel_metrics"].get("ig_reels_avg_watch_time", 0) for p in reels if p["reel_metrics"].get("ig_reels_avg_watch_time")]
-    avg_watch     = round(sum(watch_times) / len(watch_times), 1) if watch_times else 0
-    best = max(reels, key=lambda p: p["reel_metrics"].get("views", 0), default=None)
+    avg_watch_ms  = round(sum(watch_times) / len(watch_times), 1) if watch_times else None
+    avg_watch_seconds = round(avg_watch_ms / 1000, 1) if avg_watch_ms is not None else None
+    best = max(reels, key=lambda p: p["reel_metrics"].get("views") or 0, default=None)
 
     return {
         "reels_this_week": n,
@@ -178,16 +202,24 @@ def build_reel_summary(ig_posts):
         "total_reach":     total_reach,
         "total_shares":    total_shares,
         "total_saved":     total_saved,
-        "avg_watch_time":  avg_watch,
+        "metric_coverage": {
+            "views": len(view_posts),
+            "reach": len(reach_posts),
+            "shares": len(share_posts),
+            "saved": len(saved_posts),
+        },
+        "avg_watch_time":  avg_watch_seconds,
+        "avg_watch_time_seconds": avg_watch_seconds,
+        "avg_watch_time_ms": avg_watch_ms,
         "top_reels": [
             {
                 "post_id": p.get("id", ""),
                 "photo_id": post_lookup.get(("instagram", str(p.get("id", ""))), ""),
                 "caption": (p.get("caption") or "")[:100].replace("\n", " "),
-                "plays":   p["reel_metrics"].get("views", 0),
-                "reach":   p["reel_metrics"].get("reach", 0),
-                "shares":  p["reel_metrics"].get("shares", 0),
-                "saved":   p["reel_metrics"].get("saved", 0),
+                "plays":   p["reel_metrics"].get("views"),
+                "reach":   p["reel_metrics"].get("reach"),
+                "shares":  p["reel_metrics"].get("shares"),
+                "saved":   p["reel_metrics"].get("saved"),
                 "date":    (p.get("timestamp") or "")[:10],
             }
             for p in sorted(reels, key=lambda p: p["reel_metrics"].get("views", 0), reverse=True)[:5]
@@ -196,7 +228,7 @@ def build_reel_summary(ig_posts):
             "post_id": best.get("id", "") if best else "",
             "photo_id": post_lookup.get(("instagram", str(best.get("id", ""))), "") if best else "",
             "caption": (best.get("caption") or "")[:120] if best else "",
-            "plays":   best["reel_metrics"].get("views", 0) if best else 0,
+            "plays":   best["reel_metrics"].get("views") if best else None,
             "date":    (best.get("timestamp") or "")[:10] if best else "",
         },
     }
@@ -335,7 +367,7 @@ def build_fb_page_block(label, page_id):
 
 # ===== Report builder =====
 
-def build_html_report(ig_posts, ig_account, fb_pages_data, reel_summary, content_quality=None):
+def build_html_report(ig_posts, ig_account, fb_pages_data, reel_summary, content_quality=None, decision_support=None):
     week_str = datetime.now().strftime("%d/%m/%Y")
 
     ig_media_available = "instagram_media" not in DATA_FETCH_FAILURES
@@ -344,6 +376,19 @@ def build_html_report(ig_posts, ig_account, fb_pages_data, reel_summary, content
     ig_total_comments = sum(p.get("comments_count", 0) for p in ig_posts) if ig_media_available else None
     ig_best = max(ig_posts, key=lambda p: p.get("like_count", 0), default=None) if ig_media_available else None
     ig_followers = ig_account.get("followers_count") if ig_account_available else None
+    ig_reached_posts = [p for p in ig_posts if p.get("insights", {}).get("reach") is not None]
+    ig_reach = sum(p["insights"].get("reach", 0) or 0 for p in ig_reached_posts) if ig_reached_posts else None
+    save_metric_posts = [p for p in ig_reached_posts if "saved" in p["insights"]]
+    share_metric_posts = [p for p in ig_reached_posts if "shares" in p["insights"]]
+    ig_saves = sum(p["insights"].get("saved", 0) or 0 for p in save_metric_posts) if save_metric_posts else None
+    ig_shares = sum(p["insights"].get("shares", 0) or 0 for p in share_metric_posts) if share_metric_posts else None
+    full_engagement_posts = [p for p in ig_reached_posts if "saved" in p["insights"] and "shares" in p["insights"]]
+    full_engagement_reach = sum(p["insights"].get("reach", 0) or 0 for p in full_engagement_posts)
+    ig_reach_rate = (
+        sum((p.get("like_count", 0) or 0) + (p.get("comments_count", 0) or 0)
+            + (p["insights"].get("saved", 0) or 0) + (p["insights"].get("shares", 0) or 0)
+            for p in full_engagement_posts) / full_engagement_reach
+    ) if full_engagement_reach and len(full_engagement_posts) == len(ig_posts) else None
 
     def display_metric(value):
         return "—" if value is None else value
@@ -394,9 +439,9 @@ def build_html_report(ig_posts, ig_account, fb_pages_data, reel_summary, content
             rows += f"""<tr>
                 <td style="padding:6px 12px;border-bottom:1px solid #333">{r['date']}</td>
                 <td style="padding:6px 12px;border-bottom:1px solid #333;color:#aaa">{r['caption']}…</td>
-                <td style="padding:6px 12px;border-bottom:1px solid #333;text-align:center">▶️ {r['plays']}</td>
-                <td style="padding:6px 12px;border-bottom:1px solid #333;text-align:center">🔁 {r['shares']}</td>
-                <td style="padding:6px 12px;border-bottom:1px solid #333;text-align:center">🔖 {r['saved']}</td>
+                <td style="padding:6px 12px;border-bottom:1px solid #333;text-align:center">▶️ {display_metric(r['plays'])}</td>
+                <td style="padding:6px 12px;border-bottom:1px solid #333;text-align:center">🔁 {display_metric(r['shares'])}</td>
+                <td style="padding:6px 12px;border-bottom:1px solid #333;text-align:center">🔖 {display_metric(r['saved'])}</td>
             </tr>"""
         return rows or "<tr><td colspan='5' style='padding:12px;color:#666;text-align:center'>אין Reels השבוע</td></tr>"
 
@@ -405,7 +450,7 @@ def build_html_report(ig_posts, ig_account, fb_pages_data, reel_summary, content
         reels_section = f"""
   <h2 style="color:#f77737;margin-top:32px">🎬 Reels</h2>
   <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:16px">
-    {''.join(f'<div style="background:#1a1a1a;padding:14px 20px;border-radius:8px;text-align:center;min-width:80px"><div style="font-size:24px;font-weight:bold;color:#c8a96e">{v}</div><div style="color:#888;font-size:12px">{lbl}</div></div>' for v,lbl in [(reel_summary['reels_this_week'],'Reels'),(reel_summary['total_plays'],'צפיות'),(reel_summary['avg_watch_time'],'שנ׳ צפייה ממוצע'),(reel_summary['total_shares'],'שיתופים'),(reel_summary['total_saved'],'שמירות')])}
+    {''.join(f'<div style="background:#1a1a1a;padding:14px 20px;border-radius:8px;text-align:center;min-width:80px"><div style="font-size:24px;font-weight:bold;color:#c8a96e">{display_metric(v)}</div><div style="color:#888;font-size:12px">{lbl}</div></div>' for v,lbl in [(reel_summary['reels_this_week'],'Reels'),(reel_summary['total_plays'],'צפיות'),(reel_summary['avg_watch_time'],'שנ׳ צפייה ממוצע'),(reel_summary['total_shares'],'שיתופים'),(reel_summary['total_saved'],'שמירות')])}
   </div>
   <table style="width:100%;border-collapse:collapse;background:#111;border-radius:8px;overflow:hidden">
     <thead><tr style="background:#1a1a1a;color:#c8a96e">
@@ -439,6 +484,20 @@ def build_html_report(ig_posts, ig_account, fb_pages_data, reel_summary, content
     וממוצע של {quality.get('avg_caption_chars', 0)} תווים לכיתוב קריא.
   </p>"""
 
+    decisions = (decision_support or {}).get("decisions", [])
+    decision_section = ""
+    if decisions:
+        primary = decisions[0]
+        confidence_labels = {"low": "נמוכה", "medium": "בינונית", "high": "גבוהה"}
+        decision_section = f"""
+  <div style="margin:28px 0;padding:18px;border:1px solid #c8a96e;border-radius:8px;background:#111">
+    <div style="color:#c8a96e;font-size:12px">החלטה לשבוע הבא · רמת ביטחון {confidence_labels.get(primary.get('confidence'), 'נמוכה')}</div>
+    <h2 style="margin:8px 0;color:#f0ede8">{primary.get('title', '')}</h2>
+    <p style="line-height:1.6"><strong>פעולה:</strong> {primary.get('action', '')}</p>
+    <p style="line-height:1.6;color:#aaa"><strong>הראיה:</strong> {primary.get('evidence', '')}</p>
+    <p style="line-height:1.6;color:#aaa"><strong>איך נדע:</strong> {primary.get('measure', '')}</p>
+  </div>"""
+
     return f"""<!DOCTYPE html>
 <html dir="rtl" lang="he">
 <head><meta charset="UTF-8"><title>דוח שבועי — עמית ארז</title></head>
@@ -446,10 +505,11 @@ def build_html_report(ig_posts, ig_account, fb_pages_data, reel_summary, content
   <h1 style="color:#c8a96e;border-bottom:1px solid #333;padding-bottom:12px">📊 דוח סושיאל מדיה שבועי</h1>
   <p style="color:#888">שבוע שהסתיים ב-{week_str}</p>
   {data_warning}
+  {decision_section}
 
   <h2 style="color:#e1306c;margin-top:32px">📸 Instagram</h2>
   <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:16px">
-    {''.join(f'<div style="background:#1a1a1a;padding:14px 20px;border-radius:8px;text-align:center;min-width:80px"><div style="font-size:24px;font-weight:bold;color:#c8a96e">{display_metric(v)}</div><div style="color:#888;font-size:12px">{lbl}</div></div>' for v,lbl in [(ig_followers,'עוקבים'),(len(ig_posts) if ig_media_available else None,'פוסטים'),(ig_total_likes,'לייקים'),(ig_total_comments,'תגובות')])}
+    {''.join(f'<div style="background:#1a1a1a;padding:14px 20px;border-radius:8px;text-align:center;min-width:80px"><div style="font-size:24px;font-weight:bold;color:#c8a96e">{display_metric(v)}</div><div style="color:#888;font-size:12px">{lbl}</div></div>' for v,lbl in [(ig_followers,'עוקבים'),(len(ig_posts) if ig_media_available else None,'פוסטים'),(ig_reach,'חשיפות בכל הפוסטים'),(ig_total_likes,'לייקים'),(ig_total_comments,'תגובות'),(ig_saves,'שמירות'),(ig_shares,'שיתופים'),(round(ig_reach_rate*100,2) if ig_reach_rate is not None else None,'מעורבות לפי חשיפה %')])}
   </div>
   {ig_best_text}
   <table style="width:100%;border-collapse:collapse;background:#111;border-radius:8px;overflow:hidden">
@@ -590,6 +650,11 @@ def _append_to_history(report):
         "ig_comments":    ig.get("total_comments"),
         "ig_avg_likes":   ig.get("avg_likes_per_post"),
         "ig_engagement":  ig.get("engagement_rate"),
+        "ig_follower_engagement": ig.get("follower_engagement_rate"),
+        "ig_reach":       ig.get("total_reach"),
+        "ig_reach_engagement": ig.get("engagement_rate_by_reach"),
+        "ig_saved":       ig.get("total_saved"),
+        "ig_shares":      ig.get("total_shares"),
         "fb_fans":        first_fb.get("fans"),
         "fb_posts":       first_fb.get("posts_this_week"),
         "fb_likes":       first_fb.get("total_likes"),
@@ -598,6 +663,8 @@ def _append_to_history(report):
         "reels_avg_watch_time": reels.get("avg_watch_time"),
         "reels_shares":   reels.get("total_shares"),
         "reels_saved":    reels.get("total_saved"),
+        "primary_decision_id": report.get("decision_support", {}).get("primary_decision_id"),
+        "optimization_experiment": report.get("optimization_policy", {}).get("active", {}).get("decision_id"),
     }
     history.append(row)
     # שמור עם הישן קודם (סדר כרונולוגי)
@@ -634,6 +701,19 @@ def save_social_report(ig_posts, ig_account, fb_pages_data, recommendations, ree
     ig_followers      = ig_account.get("followers_count", 0) if ig_account_available else None
     ig_n              = len(ig_posts) if ig_media_available else None
     ig_sorted = sorted(ig_posts, key=lambda p: p.get("like_count", 0), reverse=True)[:5] if ig_media_available else []
+    insight_posts = [p for p in ig_posts if p.get("insights", {}).get("reach") is not None]
+    ig_total_reach = sum(p["insights"].get("reach", 0) or 0 for p in insight_posts) if insight_posts else None
+    saved_posts = [p for p in insight_posts if "saved" in p.get("insights", {})]
+    shared_posts = [p for p in insight_posts if "shares" in p.get("insights", {})]
+    ig_total_saved = sum(p["insights"].get("saved", 0) or 0 for p in saved_posts) if saved_posts else None
+    ig_total_shares = sum(p["insights"].get("shares", 0) or 0 for p in shared_posts) if shared_posts else None
+    full_engagement_posts = [p for p in insight_posts if "saved" in p["insights"] and "shares" in p["insights"]]
+    full_engagement_reach = sum(p["insights"].get("reach", 0) or 0 for p in full_engagement_posts)
+    reach_interactions = sum(
+        (p.get("like_count", 0) or 0) + (p.get("comments_count", 0) or 0)
+        + (p["insights"].get("saved", 0) or 0) + (p["insights"].get("shares", 0) or 0)
+        for p in full_engagement_posts
+    ) if full_engagement_posts else None
 
     # fb backward-compat: aggregate or use first page
     first_fb = fb_pages_data[0] if fb_pages_data else {}
@@ -644,6 +724,14 @@ def save_social_report(ig_posts, ig_account, fb_pages_data, recommendations, ree
         "data_quality": {
             "status": "partial" if DATA_FETCH_FAILURES else "complete",
             "failed_sources": DATA_FETCH_FAILURES,
+            "media_insights": {
+                "posts_available": len(insight_posts),
+                "posts_requested": len(ig_posts),
+                "coverage": round(len(insight_posts) / len(ig_posts), 2) if ig_posts else None,
+                "saved_posts_available": len(saved_posts),
+                "shared_posts_available": len(shared_posts),
+                "unavailable_post_ids": MEDIA_INSIGHT_WARNINGS,
+            },
         },
         "ig": {
             "followers":          ig_followers,
@@ -652,6 +740,11 @@ def save_social_report(ig_posts, ig_account, fb_pages_data, recommendations, ree
             "total_likes":        ig_total_likes,
             "total_comments":     ig_total_comments,
             "avg_likes_per_post": round(ig_total_likes / ig_n, 1) if ig_media_available and ig_n else (0 if ig_media_available else None),
+            "total_reach":        ig_total_reach,
+            "total_saved":        ig_total_saved,
+            "total_shares":       ig_total_shares,
+            "engagement_rate_by_reach": round(reach_interactions / full_engagement_reach, 4) if full_engagement_reach and len(full_engagement_posts) == len(ig_posts) else None,
+            "follower_engagement_rate": round((ig_total_likes + ig_total_comments) / (ig_n * max(ig_followers, 1)), 4) if ig_media_available and ig_account_available and ig_n else (0 if ig_media_available and ig_account_available else None),
             "engagement_rate":    round((ig_total_likes + ig_total_comments) / (ig_n * max(ig_followers, 1)), 4) if ig_media_available and ig_account_available and ig_n else (0 if ig_media_available and ig_account_available else None),
             "editorial_performance": build_editorial_performance(
                 ig_posts, "instagram", "like_count", "comments_count",
@@ -663,6 +756,9 @@ def save_social_report(ig_posts, ig_account, fb_pages_data, recommendations, ree
                     "caption":  (p.get("caption") or "")[:100].replace("\n", " "),
                     "likes":    p.get("like_count", 0),
                     "comments": p.get("comments_count", 0),
+                    "reach":    p.get("insights", {}).get("reach"),
+                    "saved":    p.get("insights", {}).get("saved"),
+                    "shares":   p.get("insights", {}).get("shares"),
                     "date":     (p.get("timestamp") or "")[:10],
                 }
                 for p in ig_sorted
@@ -705,15 +801,24 @@ def save_social_report(ig_posts, ig_account, fb_pages_data, recommendations, ree
         "recommendations": recommendations,
     }
 
+    history = load_json(ROOT / "data" / "social_history.json", [])
+    ga_report = latest_ga_snapshot(load_json(ROOT / "data" / "ga_reports.json", []))
+    report["decision_support"] = build_decision_support(report, history, ga_report)
+    policy = build_optimization_policy(report, report["decision_support"], load_policy())
+    report["optimization_policy"] = policy
+    save_policy(policy)
+
     out.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
     print(f"💾 דוח נשמר ל-{out}")
 
     # צבור היסטוריה שבועית
     _append_to_history(report)
+    return report
 
 
 def main():
     DATA_FETCH_FAILURES.clear()
+    MEDIA_INSIGHT_WARNINGS.clear()
     if not RESEND_KEY:
         print("❌ חסר RESEND_API_KEY")
         sys.exit(1)
@@ -721,6 +826,9 @@ def main():
     print("📊 אוסף נתוני Instagram...")
     ig_posts   = fetch_ig_insights()
     ig_account = fetch_ig_account_insights()
+
+    print("📐 אוסף reach, שמירות ושיתופים לכל פוסט...")
+    enrich_ig_posts(ig_posts)
 
     print("🎬 אוסף נתוני Reels...")
     reel_summary = build_reel_summary(ig_posts)
@@ -741,12 +849,15 @@ def main():
         print(f"   {i}. {r}")
 
     print("💾 שומר דוח JSON...")
-    save_social_report(
+    report = save_social_report(
         ig_posts, ig_account, fb_pages_data, recommendations, reel_summary, content_quality,
     )
 
     print("✉️  בונה דוח...")
-    html = build_html_report(ig_posts, ig_account, fb_pages_data, reel_summary, content_quality)
+    html = build_html_report(
+        ig_posts, ig_account, fb_pages_data, reel_summary, content_quality,
+        report.get("decision_support"),
+    )
 
     week_str = datetime.now().strftime("%d/%m/%Y")
     subject  = f"📊 דוח שבועי סושיאל — {week_str}"

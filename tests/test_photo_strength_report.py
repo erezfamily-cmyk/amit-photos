@@ -86,9 +86,15 @@ class PhotoStrengthReportTests(unittest.TestCase):
         ga = (ROOT / "src" / "ga_weekly_report.py").read_text(encoding="utf-8")
 
         self.assertIn("from social_photo_map import save_social_photo_mapping", instagram)
-        self.assertIn('save_social_photo_mapping("instagram", post_id, photo["id"])', instagram)
         self.assertIn("from social_photo_map import save_social_photo_mapping", facebook)
-        self.assertIn('save_social_photo_mapping("facebook", post_id, photo["id"])', facebook)
+        self.assertRegex(
+            instagram,
+            r'save_social_photo_mapping\(\s*"instagram",\s*post_id,\s*photo\["id"\],\s*publication_angle\(photo\["id"\]\),?\s*\)',
+        )
+        self.assertRegex(
+            facebook,
+            r'save_social_photo_mapping\(\s*"facebook",\s*post_id,\s*photo\["id"\],\s*publication_angle\(photo\["id"\]\),?\s*\)',
+        )
 
         reel_fn = weekly.split("def build_reel_summary", 1)[1].split("def fetch_ig_account_insights", 1)[0]
         self.assertIn("post_lookup = build_post_lookup()", reel_fn)

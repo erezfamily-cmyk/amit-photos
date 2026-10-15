@@ -22,6 +22,7 @@ import urllib.request as ul
 from pathlib import Path
 from campaign_urls import build_campaign_url
 from social_caption_quality import compose_caption, generated_body, photo_fallback, require_caption
+from social_optimization import guidance_for_prompt
 from social_content_strategy import angle_instruction_en, angle_instruction_he, editorial_angle
 
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -185,6 +186,7 @@ def generate_reel_caption(category, lang, titles=None):
             system_prompt = (
                 "אתה עמית, צלם ישראלי, כותב בגוף ראשון כיתוב קצר לרילס באינסטגרם. "
                 "סגנון אישי ואותנטי, לא שיווקי. משפט אחד או שניים בלבד."
+                + guidance_for_prompt("instagram", "reel")
             )
             prompt = (
                 f"קטגוריה: {category}\nתמונות ברילס: {titles_line}\n\n"
