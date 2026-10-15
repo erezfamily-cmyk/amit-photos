@@ -246,6 +246,24 @@ class EmailAndPublishTests(unittest.TestCase):
         self.assertFalse(gate.save_analysis(None))
 
 
+class ServerErrorTextTests(unittest.TestCase):
+    def test_the_server_error_code_is_shown_shortened_and_on_one_line(self):
+        response = mock.Mock()
+        response.json.return_value = {"error": "Claude API error (analysis) 529:\n  overloaded " + "x" * 400}
+        text = gate.server_error_text(response)
+        self.assertTrue(text.startswith("Claude API error (analysis) 529: overloaded"))
+        self.assertNotIn("\n", text)
+        self.assertLessEqual(len(text), 200)
+
+    def test_a_non_json_or_odd_body_gives_an_empty_text(self):
+        response = mock.Mock()
+        response.json.side_effect = ValueError("not json")
+        self.assertEqual(gate.server_error_text(response), "")
+        response = mock.Mock()
+        response.json.return_value = ["not", "a", "dict"]
+        self.assertEqual(gate.server_error_text(response), "")
+
+
 class WorkflowWiringTests(unittest.TestCase):
     def test_the_workflow_posts_only_through_the_approval_gate(self):
         path = os.path.join(os.path.dirname(__file__), "..", ".github", "workflows", "learn-generate.yml")

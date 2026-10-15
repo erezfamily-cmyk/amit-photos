@@ -19,3 +19,9 @@ A manual run with `mode = draft-only` prepares the draft and sends the e-mail bu
 - Camera numbers can be verified only for photos that have EXIF in `data/photos.json` (6 of the 62 analysed photos at the time of writing). For the others the captions carry no camera numbers and the page's numbers stay unverified.
 - Instagram receives the same thumbnail URL as before (WebP, 800 px); a JPEG source and a full-size image are a separate change.
 - Required setup (repository settings, not code): the environment `social-approval` with the owner as required reviewer, and the secret `APPROVAL_EMAIL`.
+
+## Real EXIF in the analysis (third PR)
+- The generator now reads the photo's EXIF from `data/photos.json` (served as a static asset) and puts it in the prompt as fixed values; the model is told not to change or estimate them. After the model answers, the stored camera values are forced to the EXIF values ("לא ידוע" for a field the EXIF lacks, and for every field when there is no EXIF at all); the model's explanations are kept. Result: no analysis can show an invented aperture, shutter speed, ISO or focal length again, and the gate's EXIF check stops blocking every photo with EXIF.
+- The prompt also asks for composition claims to come only from what is visible in the picture.
+- The gate prints the server's error code/message (shortened, never a secret) when generation fails, so a failure like the HTTP 502 of 15.10 can be diagnosed.
+- Analyses that already exist keep their old (possibly invented) values until they are regenerated or corrected through `/api/analyses/save`.
