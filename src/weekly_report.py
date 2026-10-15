@@ -34,6 +34,14 @@ REPORT_EMAIL = os.environ.get("REPORT_EMAIL", "erez.family@gmail.com")
 # תמיכה בריבוי עמודים: "label:page_id,label2:page_id2" — או fallback לישן
 _fb_pages_raw = os.environ.get("FACEBOOK_PAGE_IDS", "")
 _fb_page_id_legacy = os.environ.get("FACEBOOK_PAGE_ID", "")
+DATA_FETCH_FAILURES = {}
+
+
+def record_fetch_failure(source, error):
+    """Record a safe source/status summary without logging request URLs or tokens."""
+    response = getattr(error, "response", None)
+    status = getattr(response, "status_code", None)
+    DATA_FETCH_FAILURES[source] = f"HTTP {status}" if status else type(error).__name__
 
 def get_fb_pages():
     """מחזיר רשימת (label, page_id) לאיסוף נתונים."""
@@ -66,7 +74,8 @@ def fetch_ig_insights():
         resp.raise_for_status()
         return resp.json().get("data", [])
     except Exception as e:
-        print(f"⚠️  Instagram insights נכשל: {e}")
+        record_fetch_failure("instagram_media", e)
+        print("⚠️  Instagram media request failed; report will mark this source unavailable")
         return []
 
 
@@ -94,11 +103,12 @@ def fetch_reel_insights(media_id):
         return out
     except requests.exceptions.HTTPError as e:
         # מטא משנה שמות מדדים בין גרסאות API — הדפס את גוף התשובה כדי לדעת איזה metric נכשל בפועל
-        detail = e.response.text if e.response is not None else str(e)
-        print(f"⚠️  Reel insights ({media_id}) נכשל: {detail}")
+        record_fetch_failure("instagram_reel_insights", e)
+        print(f"⚠️  Reel insights failed for media {media_id}")
         return {}
     except Exception as e:
-        print(f"⚠️  Reel insights ({media_id}) נכשל: {e}")
+        record_fetch_failure("instagram_reel_insights", e)
+        print(f"⚠️  Reel insights failed for media {media_id}")
         return {}
 
 
@@ -158,7 +168,8 @@ def fetch_ig_account_insights():
         resp.raise_for_status()
         return resp.json()
     except Exception as e:
-        print(f"⚠️  Instagram account insights נכשל: {e}")
+        record_fetch_failure("instagram_account", e)
+        print("⚠️  Instagram account request failed; report will mark this source unavailable")
         return {}
 
 
@@ -192,11 +203,8 @@ def fetch_fb_page_posts(page_id):
         resp.raise_for_status()
         return resp.json().get("data", [])
     except Exception as e:
-        try:
-            detail = e.response.json() if hasattr(e, "response") else {}
-        except Exception:
-            detail = {}
-        print(f"⚠️  Facebook posts ({page_id}) נכשל: {e} | פרטים: {detail}")
+        record_fetch_failure(f"facebook_posts:{page_id}", e)
+        print(f"⚠️  Facebook posts request failed for page {page_id}")
         return []
 
 
@@ -210,7 +218,8 @@ def fetch_fb_page_info(page_id):
         resp.raise_for_status()
         return resp.json()
     except Exception as e:
-        print(f"⚠️  Facebook page info ({page_id}) נכשל: {e}")
+        record_fetch_failure(f"facebook_page:{page_id}", e)
+        print(f"⚠️  Facebook page-info request failed for page {page_id}")
         return {}
 
 
@@ -220,15 +229,17 @@ def build_fb_page_block(label, page_id):
     print(f"  📘 שולף עמוד: {label} ({page_id})")
     posts    = fetch_fb_page_posts(page_id)
     info     = fetch_fb_page_info(page_id)
-    fans     = info.get("fan_count", 0)
+    posts_available = f"facebook_posts:{page_id}" not in DATA_FETCH_FAILURES
+    page_available = f"facebook_page:{page_id}" not in DATA_FETCH_FAILURES
+    fans     = info.get("fan_count", 0) if page_available else None
     name     = info.get("name") or label
     n        = len(posts)
     # כשה-API נכשל (token חסר הרשאות קריאה), נשתמש ב-git כ-fallback לספירת פוסטים
     if n == 0 and not posts:
         n = count_fb_posts_from_git()
 
-    total_likes    = sum(p.get("reactions", {}).get("summary", {}).get("total_count", 0) for p in posts)
-    total_comments = sum(p.get("comments",  {}).get("summary", {}).get("total_count", 0) for p in posts)
+    total_likes    = sum(p.get("reactions", {}).get("summary", {}).get("total_count", 0) for p in posts) if posts_available else None
+    total_comments = sum(p.get("comments",  {}).get("summary", {}).get("total_count", 0) for p in posts) if posts_available else None
     best = max(posts, key=lambda p: p.get("reactions", {}).get("summary", {}).get("total_count", 0), default=None)
     top5 = sorted(posts, key=lambda p: p.get("reactions", {}).get("summary", {}).get("total_count", 0), reverse=True)[:5]
 
@@ -237,11 +248,11 @@ def build_fb_page_block(label, page_id):
         "name":    name,
         "page_id": page_id,
         "fans":    fans,
-        "posts_this_week":    n,
+        "posts_this_week":    n if posts_available else None,
         "total_likes":        total_likes,
         "total_comments":     total_comments,
-        "avg_likes_per_post": round(total_likes / n, 1) if n else 0,
-        "engagement_rate":    round((total_likes + total_comments) / (n * max(fans, 1)), 4) if n else 0,
+        "avg_likes_per_post": round(total_likes / n, 1) if posts_available and n else (0 if posts_available else None),
+        "engagement_rate":    round((total_likes + total_comments) / (n * max(fans, 1)), 4) if posts_available and page_available and n else (0 if posts_available and page_available else None),
         "top_posts": [
             {
                 "post_id":  p.get("id", ""),
@@ -279,12 +290,19 @@ def build_fb_page_block(label, page_id):
 def build_html_report(ig_posts, ig_account, fb_pages_data, reel_summary):
     week_str = datetime.now().strftime("%d/%m/%Y")
 
-    ig_total_likes    = sum(p.get("like_count", 0) for p in ig_posts)
-    ig_total_comments = sum(p.get("comments_count", 0) for p in ig_posts)
-    ig_best = max(ig_posts, key=lambda p: p.get("like_count", 0), default=None)
-    ig_followers = ig_account.get("followers_count", "—")
+    ig_media_available = "instagram_media" not in DATA_FETCH_FAILURES
+    ig_account_available = "instagram_account" not in DATA_FETCH_FAILURES
+    ig_total_likes = sum(p.get("like_count", 0) for p in ig_posts) if ig_media_available else None
+    ig_total_comments = sum(p.get("comments_count", 0) for p in ig_posts) if ig_media_available else None
+    ig_best = max(ig_posts, key=lambda p: p.get("like_count", 0), default=None) if ig_media_available else None
+    ig_followers = ig_account.get("followers_count") if ig_account_available else None
+
+    def display_metric(value):
+        return "—" if value is None else value
 
     def post_rows_ig(posts):
+        if not ig_media_available:
+            return "<tr><td colspan='4' style='padding:12px;color:#f2c879;text-align:center'>נתוני Instagram לא זמינים</td></tr>"
         rows = ""
         for p in posts[:5]:
             date    = p.get("timestamp", "")[:10]
@@ -301,10 +319,13 @@ def build_html_report(ig_posts, ig_account, fb_pages_data, reel_summary):
 
     def fb_page_html(page):
         name  = page.get("name") or page.get("label", "Facebook")
-        fans  = page.get("fans", 0)
-        posts = page.get("posts_this_week", 0)
-        likes = page.get("total_likes", 0)
-        comms = page.get("total_comments", 0)
+        page_id = page.get("page_id", "")
+        page_available = f"facebook_page:{page_id}" not in DATA_FETCH_FAILURES
+        posts_available = f"facebook_posts:{page_id}" not in DATA_FETCH_FAILURES
+        fans  = page.get("fans", 0) if page_available else None
+        posts = page.get("posts_this_week", 0) if posts_available else None
+        likes = page.get("total_likes", 0) if posts_available else None
+        comms = page.get("total_comments", 0) if posts_available else None
         best  = page.get("best_post", {})
         best_text = ""
         if best.get("message"):
@@ -312,7 +333,7 @@ def build_html_report(ig_posts, ig_account, fb_pages_data, reel_summary):
         return f"""
   <h2 style="color:#1877f2;margin-top:32px">📘 {name}</h2>
   <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:16px">
-    {''.join(f'<div style="background:#1a1a1a;padding:14px 20px;border-radius:8px;text-align:center;min-width:80px"><div style="font-size:24px;font-weight:bold;color:#c8a96e">{v}</div><div style="color:#888;font-size:12px">{lbl}</div></div>' for v,lbl in [(fans,'עוקבים'),(posts,'פוסטים'),(likes,'לייקים'),(comms,'תגובות')])}
+    {''.join(f'<div style="background:#1a1a1a;padding:14px 20px;border-radius:8px;text-align:center;min-width:80px"><div style="font-size:24px;font-weight:bold;color:#c8a96e">{display_metric(v)}</div><div style="color:#888;font-size:12px">{lbl}</div></div>' for v,lbl in [(fans,'עוקבים'),(posts,'פוסטים'),(likes,'לייקים'),(comms,'תגובות')])}
   </div>
   {best_text}"""
 
@@ -349,16 +370,26 @@ def build_html_report(ig_posts, ig_account, fb_pages_data, reel_summary):
     <tbody>{reel_rows()}</tbody>
   </table>"""
 
+    data_warning = ""
+    if DATA_FETCH_FAILURES:
+        sources = ", ".join(DATA_FETCH_FAILURES)
+        data_warning = (
+            "<p style='padding:12px;border:1px solid #8b5e20;color:#f2c879;border-radius:8px'>"
+            f"הדוח חלקי. מקורות נתונים לא זמינים: {sources}. אין להסיק מכך שנתוני המעורבות הם אפס."
+            "</p>"
+        )
+
     return f"""<!DOCTYPE html>
 <html dir="rtl" lang="he">
 <head><meta charset="UTF-8"><title>דוח שבועי — עמית ארז</title></head>
 <body style="background:#0a0a0a;color:#f0ede8;font-family:Arial,sans-serif;padding:32px;max-width:640px;margin:0 auto">
   <h1 style="color:#c8a96e;border-bottom:1px solid #333;padding-bottom:12px">📊 דוח סושיאל מדיה שבועי</h1>
   <p style="color:#888">שבוע שהסתיים ב-{week_str}</p>
+  {data_warning}
 
   <h2 style="color:#e1306c;margin-top:32px">📸 Instagram</h2>
   <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:16px">
-    {''.join(f'<div style="background:#1a1a1a;padding:14px 20px;border-radius:8px;text-align:center;min-width:80px"><div style="font-size:24px;font-weight:bold;color:#c8a96e">{v}</div><div style="color:#888;font-size:12px">{lbl}</div></div>' for v,lbl in [(ig_followers,'עוקבים'),(len(ig_posts),'פוסטים'),(ig_total_likes,'לייקים'),(ig_total_comments,'תגובות')])}
+    {''.join(f'<div style="background:#1a1a1a;padding:14px 20px;border-radius:8px;text-align:center;min-width:80px"><div style="font-size:24px;font-weight:bold;color:#c8a96e">{display_metric(v)}</div><div style="color:#888;font-size:12px">{lbl}</div></div>' for v,lbl in [(ig_followers,'עוקבים'),(len(ig_posts) if ig_media_available else None,'פוסטים'),(ig_total_likes,'לייקים'),(ig_total_comments,'תגובות')])}
   </div>
   {ig_best_text}
   <table style="width:100%;border-collapse:collapse;background:#111;border-radius:8px;overflow:hidden">
@@ -396,6 +427,9 @@ def send_email(subject, html):
 
 def generate_ai_recommendations(ig_posts, ig_account, fb_pages_data, reel_summary):
     """יוצר המלצות AI מבוססות על ביצועי השבוע."""
+    if DATA_FETCH_FAILURES:
+        print("ℹ️  המלצות AI הושהו בגלל נתוני API חסרים")
+        return ["המלצות אוטומטיות הושהו השבוע: אחד ממקורות נתוני הרשתות לא היה זמין. יש לבדוק את סטטוס איסוף הנתונים לפני הסקת מסקנות."]
     if not ANTHROPIC_KEY:
         return ["אין ANTHROPIC_API_KEY — המלצות לא זמינות"]
 
@@ -459,6 +493,9 @@ No numbering, no markdown, no explanation before or after — just the 4 lines w
 
 def _append_to_history(report):
     """מוסיף שורת סיכום לקובץ ההיסטוריה השבועית."""
+    if report.get("data_quality", {}).get("status") != "complete":
+        print("ℹ️  היסטוריה לא עודכנה: הדוח מכיל מקורות נתונים חסרים")
+        return
     history_file = ROOT / "data" / "social_history.json"
     history = []
     if history_file.exists():
@@ -512,7 +549,7 @@ def save_social_report(ig_posts, ig_account, fb_pages_data, recommendations, ree
     if out.exists():
         try:
             old = json.loads(out.read_text(encoding="utf-8"))
-            prev = {
+            prev = {} if old.get("data_quality", {}).get("status") == "partial" else {
                 "ig_followers":      old.get("ig", {}).get("followers"),
                 "ig_posts_this_week": old.get("ig", {}).get("posts_this_week"),
                 "ig_total_likes":    old.get("ig", {}).get("total_likes"),
@@ -523,12 +560,14 @@ def save_social_report(ig_posts, ig_account, fb_pages_data, recommendations, ree
         except Exception:
             pass
 
-    ig_best = max(ig_posts, key=lambda p: p.get("like_count", 0), default=None)
-    ig_total_likes    = sum(p.get("like_count", 0) for p in ig_posts)
-    ig_total_comments = sum(p.get("comments_count", 0) for p in ig_posts)
-    ig_followers      = ig_account.get("followers_count", 0)
-    ig_n              = len(ig_posts)
-    ig_sorted = sorted(ig_posts, key=lambda p: p.get("like_count", 0), reverse=True)[:5]
+    ig_media_available = "instagram_media" not in DATA_FETCH_FAILURES
+    ig_account_available = "instagram_account" not in DATA_FETCH_FAILURES
+    ig_best = max(ig_posts, key=lambda p: p.get("like_count", 0), default=None) if ig_media_available else None
+    ig_total_likes    = sum(p.get("like_count", 0) for p in ig_posts) if ig_media_available else None
+    ig_total_comments = sum(p.get("comments_count", 0) for p in ig_posts) if ig_media_available else None
+    ig_followers      = ig_account.get("followers_count", 0) if ig_account_available else None
+    ig_n              = len(ig_posts) if ig_media_available else None
+    ig_sorted = sorted(ig_posts, key=lambda p: p.get("like_count", 0), reverse=True)[:5] if ig_media_available else []
 
     # fb backward-compat: aggregate or use first page
     first_fb = fb_pages_data[0] if fb_pages_data else {}
@@ -536,14 +575,18 @@ def save_social_report(ig_posts, ig_account, fb_pages_data, recommendations, ree
     report = {
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "week_ending":  datetime.now().strftime("%d/%m/%Y"),
+        "data_quality": {
+            "status": "partial" if DATA_FETCH_FAILURES else "complete",
+            "failed_sources": DATA_FETCH_FAILURES,
+        },
         "ig": {
             "followers":          ig_followers,
-            "media_count":        ig_account.get("media_count", 0),
+            "media_count":        ig_account.get("media_count", 0) if ig_account_available else None,
             "posts_this_week":    ig_n,
             "total_likes":        ig_total_likes,
             "total_comments":     ig_total_comments,
-            "avg_likes_per_post": round(ig_total_likes / ig_n, 1) if ig_n else 0,
-            "engagement_rate":    round((ig_total_likes + ig_total_comments) / (ig_n * max(ig_followers, 1)), 4) if ig_n else 0,
+            "avg_likes_per_post": round(ig_total_likes / ig_n, 1) if ig_media_available and ig_n else (0 if ig_media_available else None),
+            "engagement_rate":    round((ig_total_likes + ig_total_comments) / (ig_n * max(ig_followers, 1)), 4) if ig_media_available and ig_account_available and ig_n else (0 if ig_media_available and ig_account_available else None),
             "top_posts": [
                 {
                     "post_id":  p.get("id", ""),
@@ -563,14 +606,14 @@ def save_social_report(ig_posts, ig_account, fb_pages_data, recommendations, ree
                     "comments": p.get("comments_count", 0),
                     "date": (p.get("timestamp") or "")[:10],
                 }
-                for p in ig_posts
+                for p in ig_posts if ig_media_available
                 if post_lookup.get(("instagram", str(p.get("id", ""))), "")
             ],
             "best_post": {
                 "post_id": ig_best.get("id", "") if ig_best else "",
                 "photo_id": post_lookup.get(("instagram", str(ig_best.get("id", ""))), "") if ig_best else "",
                 "caption": (ig_best.get("caption") or "")[:120] if ig_best else "",
-                "likes":   ig_best.get("like_count", 0) if ig_best else 0,
+                "likes":   ig_best.get("like_count", 0) if ig_best else None,
                 "date":    (ig_best.get("timestamp") or "")[:10] if ig_best else "",
             },
         },
@@ -600,6 +643,7 @@ def save_social_report(ig_posts, ig_account, fb_pages_data, recommendations, ree
 
 
 def main():
+    DATA_FETCH_FAILURES.clear()
     if not RESEND_KEY:
         print("❌ חסר RESEND_API_KEY")
         sys.exit(1)

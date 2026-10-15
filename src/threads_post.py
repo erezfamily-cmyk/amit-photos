@@ -15,6 +15,7 @@ import requests
 import anthropic
 from pathlib import Path
 from campaign_urls import build_campaign_url
+from social_caption_quality import compose_caption, generated_body, photo_fallback, require_caption
 
 # ===== הגדרות =====
 POSTED_FILE = Path(__file__).parent.parent / "data" / "threads_posted.json"
@@ -155,7 +156,7 @@ def generate_caption(photo):
     system_prompt = """אתה עמית, צלם ישראלי, כותב בגוף ראשון על התמונות שלך ל-Threads.
 קצר ותכליתי — Threads הוא שיחה, לא נאום. משפט-שניים מקסימום.
 כשיש מונח טכני — מסביר אותו בביטוי פשוט בסוגריים.
-כתוב בעברית בלבד. ללא hashtags."""
+כתוב בעברית בלבד. ללא hashtags — הם יתווספו בנפרד."""
 
     user_content = image_content + [{"type": "text", "text": f"""כתוב פוסט Threads קצר בגוף ראשון עבור התמונה הזו.
 
@@ -167,9 +168,9 @@ def generate_caption(photo):
 1. משפט אחד קצר בגוף ראשון: מה צילמתי ומה הטכניקה שבחרתי
 2. אם יש הגדרות — שורה קצרה עם הנתונים הטכניים + הסבר מינימלי (אחרת — דלג)
 3. שורה ריקה
-4. 🛍️ {buy_link}
+4. קישור לתמונה בגלריה: {buy_link}
 
-סה"כ עד 180 תווים לפני הקישור. פלט רק את הפוסט.
+סה"כ עד 180 תווים לפני הקישור. בלי hashtags; הם יתווספו בנפרד. פלט רק את הטקסט.
 """}]
 
     msg = client.messages.create(
@@ -178,8 +179,9 @@ def generate_caption(photo):
         system=system_prompt,
         messages=[{"role": "user", "content": user_content}],
     )
-    post_text = msg.content[0].text.strip()
-    return f"{post_text}\n\n{hashtags}"
+    fallback = photo_fallback(photo)
+    body = generated_body(msg, fallback)
+    return compose_caption(body, f"לתמונה בגלריה:\n{buy_link}", hashtags, fallback, max_chars=500)
 
 
 def get_public_image_url(photo):
@@ -245,6 +247,7 @@ def _try_0x0(img_bytes):
 
 
 def post_to_threads(photo, text):
+    require_caption(text, max_chars=500)
     image_url = get_public_image_url(photo)
 
     # שלב 1: יצירת container

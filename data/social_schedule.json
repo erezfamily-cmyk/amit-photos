@@ -1,0 +1,114 @@
+{
+  "timezone": "Asia/Jerusalem",
+  "timezone_note": "זמני GitHub Actions מוגדרים ב-UTC. שעות ישראל משתנות בין שעון חורף לשעון קיץ.",
+  "items": [
+    {
+      "workflow": "instagram-story.yml",
+      "cron": ["0 8 * * *"],
+      "day": "כל יום",
+      "time": "10:00 חורף / 11:00 קיץ",
+      "platform": "Instagram Stories",
+      "content": "מצגת תמונות",
+      "status": "מתוזמן"
+    },
+    {
+      "workflow": "pinterest-daily.yml",
+      "cron": ["0 14 * * *"],
+      "day": "כל יום",
+      "time": "16:00 חורף / 17:00 קיץ",
+      "platform": "Pinterest",
+      "content": "עד 3 תמונות מהתור",
+      "status": "מתוזמן"
+    },
+    {
+      "workflow": "instagram-post.yml",
+      "cron": ["0 17 * * 0,3"],
+      "day": "ראשון ורביעי",
+      "time": "19:00 חורף / 20:00 קיץ",
+      "platform": "Instagram",
+      "content": "תמונה מהגלריה",
+      "status": "מתוזמן"
+    },
+    {
+      "workflow": "threads-post.yml",
+      "cron": ["0 15 * * 1,4"],
+      "day": "שני וחמישי",
+      "time": "17:00 חורף / 18:00 קיץ",
+      "platform": "Threads",
+      "content": "תמונה מהגלריה",
+      "status": "מתוזמן"
+    },
+    {
+      "workflow": "camera-edu-post.yml",
+      "cron": ["0 9 * * 1"],
+      "day": "שני",
+      "time": "11:00 חורף / 12:00 קיץ",
+      "platform": "Facebook · Threads · Pinterest",
+      "content": "מדריך צילום",
+      "status": "מתוזמן"
+    },
+    {
+      "workflow": "location-social-post.yml",
+      "cron": ["0 17 * * 1"],
+      "day": "שני",
+      "time": "19:00 חורף / 20:00 קיץ",
+      "platform": "Threads · Pinterest",
+      "content": "מקום לצילום",
+      "status": "מתוזמן"
+    },
+    {
+      "workflow": "youtube-post.yml",
+      "cron": ["0 9 * * 0"],
+      "day": "ראשון",
+      "time": "11:00 חורף / 12:00 קיץ",
+      "platform": "YouTube",
+      "content": "מצגת שבועית",
+      "status": "מתוזמן"
+    },
+    {
+      "workflow": "youtube-tutorial.yml",
+      "cron": ["0 10 * * 3"],
+      "day": "רביעי",
+      "time": "12:00 חורף / 13:00 קיץ",
+      "platform": "YouTube",
+      "content": "סרטון הדרכה",
+      "status": "מתוזמן"
+    },
+    {
+      "workflow": "facebook-post.yml",
+      "cron": [],
+      "day": "לפי דרישה",
+      "time": "הרצה ידנית בלבד",
+      "platform": "Facebook",
+      "content": "תמונה מהגלריה",
+      "status": "ידני"
+    },
+    {
+      "workflow": "week-photo-social.yml",
+      "cron": [],
+      "day": "—",
+      "time": "ללא תזמון",
+      "platform": "Instagram · Facebook",
+      "content": "תמונת השבוע",
+      "status": "מושהה"
+    },
+    {
+      "workflow": "puzzle-social-post.yml",
+      "cron": [],
+      "day": "—",
+      "time": "ללא תזמון",
+      "platform": "Instagram · Facebook",
+      "content": "פרומו פאזל",
+      "status": "מושהה"
+    },
+    {
+      "workflow": "quiz-social-post.yml",
+      "cron": [],
+      "day": "—",
+      "time": "ללא תזמון",
+      "platform": "Instagram · Facebook",
+      "content": "פרומו קוויז",
+      "status": "מושהה"
+    }
+  ]
+}
