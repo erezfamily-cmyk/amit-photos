@@ -1,13 +1,17 @@
 name: פרסום מקום לצילום לרשתות חברתיות
 
 on:
-  # כל יום שני ב-17:00 UTC. */7 ביום בחודש אינו מרווח רציף של שבעה ימים.
+  # כל שבת ב-17:00 UTC = 19:00 חורף / 20:00 קיץ בישראל
   schedule:
-    - cron: '0 17 * * 1'
+    - cron: '0 17 * * 6'
   workflow_dispatch:
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+concurrency:
+  group: social-location-post
+  cancel-in-progress: false
 
 jobs:
   location-social-post:
@@ -49,6 +53,7 @@ jobs:
           done
 
       - name: עדכון מעקב פרסומים
+        if: always()
         run: |
           git config user.name "Location Social Agent"
           git config user.email "agent@amitphotos.com"

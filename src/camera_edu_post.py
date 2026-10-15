@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Camera Education Promo Post
-מפרסם פוסט קידומי לכל 4 רשתות חברתיות שמוביל לדפי הלימוד של אמית.
+מפרסם פוסט קידומי לפייסבוק, Threads ו-Pinterest שמוביל לדפי הלימוד של עמית.
 משתמש בתמונה אמיתית מהגלריה + כיתוב שמסביר טכניקה ומזמין ללמוד.
 """
 
@@ -14,6 +14,15 @@ import time
 import requests
 import anthropic
 from pathlib import Path
+from campaign_urls import build_campaign_url
+from social_caption_quality import require_caption
+from social_delivery_state import (
+    delivery_complete,
+    first_partial_item_id,
+    pending_platforms,
+    record_delivery,
+    reset_item_delivery,
+)
 
 # ===== הגדרות =====
 POSTED_FILE = Path(__file__).parent.parent / "data" / "camera_edu_posted.json"
@@ -31,6 +40,7 @@ ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "").strip()
 ADMIN_TOKEN       = os.environ.get("ADMIN_TOKEN", "")
 
 PINTEREST_BOARD = "Photography Education & Techniques"
+REQUIRED_PLATFORMS = ("facebook", "threads", "pinterest")
 
 # ===== דפי הלימוד =====
 EDUCATION_PAGES = [
@@ -240,7 +250,16 @@ def save_posted(data):
     POSTED_FILE.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
 
 
-def pick_page(posted_keys):
+def pick_page(posted_keys, posted_data=None):
+    posted_data = posted_data or {}
+    partial_key = first_partial_item_id(
+        posted_data,
+        [page["key"] for page in EDUCATION_PAGES],
+        REQUIRED_PLATFORMS,
+    )
+    if partial_key:
+        print(f"↩️  ממשיך פרסום חלקי: {partial_key}")
+        return next(page for page in EDUCATION_PAGES if page["key"] == partial_key)
     unposted = [p for p in EDUCATION_PAGES if p["key"] not in posted_keys]
     if not unposted:
         print("🔄 כל הדפים קודמו — מתחיל rotation מחדש")
@@ -282,7 +301,7 @@ def fetch_image_as_base64(url, max_bytes=3_750_000):
 
 
 def generate_posts(photo, page):
-    """מייצר פוסטים לכל 4 הפלטפורמות."""
+    """מייצר פוסטים לשלוש הפלטפורמות הפעילות."""
     client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
 
     thumbnail_url = photo.get("thumbnail") or photo.get("url")
@@ -360,10 +379,20 @@ EXIF התמונה: {exif_line or '(לא זמין)'}
     fb_hashtags      = random.choice(EDU_HASHTAGS_FB)
     threads_hashtags = random.choice(EDU_HASHTAGS_THREADS)
 
+    path = page["url"].removeprefix(SITE_URL)
+    facebook_url = build_campaign_url(path, source="facebook", campaign="camera_education", content=page["key"])
+    threads_url = build_campaign_url(path, source="threads", campaign="camera_education", content=page["key"])
+    pinterest_url = build_campaign_url(path, source="pinterest", campaign="camera_education", content=page["key"])
+    facebook_body = fb_text.replace(page["url"], facebook_url) if page["url"] in fb_text else f"{fb_text}\n\n{facebook_url}"
+    threads_body = threads_text.replace(page["url"], threads_url) if page["url"] in threads_text else f"{threads_text}\n\n{threads_url}"
+    facebook_caption = f"{facebook_body}\n\n{fb_hashtags}"
+    threads_caption = f"{threads_body}\n\n{threads_hashtags}"
+    pinterest_fallback = f"I use this guide to explain {page['title']} in practical terms. Full guide at amitphotos.com"
+    pinterest_caption = (pinterest_text or pinterest_fallback).replace(page["url"], pinterest_url)
     return (
-        f"{fb_text}\n\n{fb_hashtags}",
-        f"{threads_text}\n\n{threads_hashtags}",
-        pinterest_text,
+        require_caption(facebook_caption),
+        require_caption(threads_caption, max_chars=500),
+        require_caption(pinterest_caption, max_chars=500),
     )
 
 
@@ -512,13 +541,19 @@ def post_to_pinterest(image_url, description, page):
         print(f"❌ Pinterest board error: {e}")
         return None
 
+    page_url = build_campaign_url(
+        page["url"].removeprefix(SITE_URL),
+        source="pinterest",
+        campaign="camera_education",
+        content=page["key"],
+    )
     pin = requests.post(f"{PINTEREST_API}/pins",
         headers={"Authorization": f"Bearer {PINTEREST_TOKEN}", "Content-Type": "application/json"},
         json={
             "board_id": board_id,
             "title": f"{page['title']} — Photography Guide",
             "description": description or f"Learn about {page['angle']} at amitphotos.com",
-            "link": page["url"],
+            "link": page_url,
             "media_source": {"source_type": "image_url", "url": image_url},
         }, timeout=20)
     if not pin.ok:
@@ -540,42 +575,71 @@ def main():
     posted_data = load_posted()
     posted_keys = set(posted_data.get("posted_keys", []))
 
-    page  = pick_page(posted_keys)
-    photo = pick_photo_for_page(photos, page)
+    page = pick_page(posted_keys, posted_data)
+    if delivery_complete(posted_data, page["key"], REQUIRED_PLATFORMS):
+        reset_item_delivery(posted_data, page["key"])
+        posted_keys.discard(page["key"])
+        posted_data["posted_keys"] = sorted(posted_keys)
+        save_posted(posted_data)
+
+    campaign = posted_data.setdefault("campaigns", {}).setdefault(page["key"], {})
+    saved_photo_id = campaign.get("photo_id")
+    photo = next((item for item in photos if str(item["id"]) == str(saved_photo_id)), None)
+    if not photo:
+        photo = pick_photo_for_page(photos, page)
 
     print(f"📚 דף לימוד: {page['title']} ({page['url']})")
     print(f"📸 תמונה: {photo.get('title', photo['id'])}")
 
-    print("✍️  מייצר פוסטים עם Claude Vision...")
-    fb_caption, threads_caption, pinterest_desc = generate_posts(photo, page)
+    saved_captions = campaign.get("captions", {})
+    if all(saved_captions.get(platform) for platform in REQUIRED_PLATFORMS):
+        fb_caption = saved_captions["facebook"]
+        threads_caption = saved_captions["threads"]
+        pinterest_desc = saved_captions["pinterest"]
+        print("↩️  משתמש בכיתובים שנשמרו לפרסום החלקי")
+    else:
+        print("✍️  מייצר פוסטים עם Claude Vision...")
+        fb_caption, threads_caption, pinterest_desc = generate_posts(photo, page)
+        campaign["captions"] = {
+            "facebook": fb_caption,
+            "threads": threads_caption,
+            "pinterest": pinterest_desc,
+        }
+        campaign["photo_id"] = photo["id"]
+        save_posted(posted_data)
     print(f"\nFacebook preview: {fb_caption[:120]}...\n")
 
     image_url = get_public_image_url(photo)
 
+    publishers = {
+        "facebook": lambda: post_to_facebook(image_url, fb_caption),
+        "threads": lambda: post_to_threads(image_url, threads_caption),
+        "pinterest": lambda: post_to_pinterest(image_url, pinterest_desc, page),
+    }
+    pending = pending_platforms(posted_data, page["key"], REQUIRED_PLATFORMS)
     results = {}
+    for platform in REQUIRED_PLATFORMS:
+        if platform not in pending:
+            print(f"⏭️  {platform} כבר פורסם עבור {page['key']}")
+            continue
+        print(f"📤 מפרסם ל-{platform}...")
+        result = publishers[platform]()
+        results[platform] = result
+        print(f"{'✅' if result else '❌'} {platform}: {result}")
+        if result:
+            record_delivery(posted_data, page["key"], platform, result)
+            save_posted(posted_data)
 
-    print("📤 מפרסם לפייסבוק...")
-    results["facebook"] = post_to_facebook(image_url, fb_caption)
-    print(f"{'✅' if results['facebook'] else '❌'} Facebook: {results['facebook']}")
-
-    print("📤 מפרסם ל-Threads...")
-    results["threads"] = post_to_threads(image_url, threads_caption)
-    print(f"{'✅' if results['threads'] else '❌'} Threads: {results['threads']}")
-
-    print("📤 מפרסם ל-Pinterest...")
-    results["pinterest"] = post_to_pinterest(image_url, pinterest_desc, page)
-    print(f"{'✅' if results['pinterest'] else '❌'} Pinterest: {results['pinterest']}")
-
-    if any(results.values()):
+    if delivery_complete(posted_data, page["key"], REQUIRED_PLATFORMS):
         posted_data["posted_keys"] = list(posted_keys | {page["key"]})
         save_posted(posted_data)
         print(f"💾 עודכן data/camera_edu_posted.json")
     else:
-        print("❌ כל הפרסומים נכשלו — לא מעדכן מעקב")
+        remaining = pending_platforms(posted_data, page["key"], REQUIRED_PLATFORMS)
+        print(f"❌ הפרסום חלקי; נותרו: {', '.join(remaining)}")
         sys.exit(1)
 
-    success = sum(1 for v in results.values() if v)
-    print(f"\n✅ הסתיים — {success}/3 רשתות פורסמו בהצלחה")
+    print("\n✅ הסתיים — 3/3 רשתות פורסמו בהצלחה")
 
 
 if __name__ == "__main__":

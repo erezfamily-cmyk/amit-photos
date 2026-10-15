@@ -1,13 +1,17 @@
 name: פרסום מוצרי Zazzle לרשתות
 
 on:
-  # כל יום רביעי ב-12:00 UTC = 15:00 ישראל
+  # כל יום שישי ב-10:00 UTC = 12:00 חורף / 13:00 קיץ בישראל
   schedule:
-    - cron: '0 12 * * 3'
+    - cron: '0 10 * * 5'
   workflow_dispatch:
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+concurrency:
+  group: social-zazzle-post
+  cancel-in-progress: false
 
 jobs:
   zazzle-social-post:
@@ -40,6 +44,7 @@ jobs:
         run: python src/zazzle_social_post.py
 
       - name: עדכון מעקב פרסומים
+        if: always()
         run: |
           git config user.name "Zazzle Social Agent"
           git config user.email "agent@amitphotos.com"

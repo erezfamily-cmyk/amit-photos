@@ -1,6 +1,24 @@
 {
   "timezone": "Asia/Jerusalem",
-  "timezone_note": "זמני GitHub Actions מוגדרים ב-UTC. שעות ישראל משתנות בין שעון חורף לשעון קיץ.",
+  "timezone_note": "זמני GitHub Actions מוגדרים ב-UTC. שעות ישראל משתנות בין שעון חורף לשעון קיץ. בדיקת CI אוכפת מרווחים ומכסה יומית לכל רשת.",
+  "policies": {
+    "daily_limits": {
+      "Instagram": 1,
+      "Facebook": 2,
+      "Threads": 2,
+      "Pinterest": 4,
+      "YouTube": 1,
+      "Instagram Stories": 1
+    },
+    "minimum_gap_hours": {
+      "Instagram": 4,
+      "Facebook": 4,
+      "Threads": 4,
+      "Pinterest": 3,
+      "YouTube": 2,
+      "Instagram Stories": 2
+    }
+  },
   "items": [
     {
       "workflow": "instagram-story.yml",
@@ -8,6 +26,8 @@
       "day": "כל יום",
       "time": "10:00 חורף / 11:00 קיץ",
       "platform": "Instagram Stories",
+      "channels": ["Instagram Stories"],
+      "posts_per_run": {"Instagram Stories": 1},
       "content": "מצגת תמונות",
       "status": "מתוזמן"
     },
@@ -17,6 +37,8 @@
       "day": "כל יום",
       "time": "16:00 חורף / 17:00 קיץ",
       "platform": "Pinterest",
+      "channels": ["Pinterest"],
+      "posts_per_run": {"Pinterest": 3},
       "content": "עד 3 תמונות מהתור",
       "status": "מתוזמן"
     },
@@ -26,6 +48,8 @@
       "day": "ראשון ורביעי",
       "time": "19:00 חורף / 20:00 קיץ",
       "platform": "Instagram",
+      "channels": ["Instagram"],
+      "posts_per_run": {"Instagram": 1},
       "content": "תמונה מהגלריה",
       "status": "מתוזמן"
     },
@@ -35,6 +59,8 @@
       "day": "שני וחמישי",
       "time": "17:00 חורף / 18:00 קיץ",
       "platform": "Threads",
+      "channels": ["Threads"],
+      "posts_per_run": {"Threads": 1},
       "content": "תמונה מהגלריה",
       "status": "מתוזמן"
     },
@@ -44,16 +70,42 @@
       "day": "שני",
       "time": "11:00 חורף / 12:00 קיץ",
       "platform": "Facebook · Threads · Pinterest",
+      "channels": ["Facebook", "Threads", "Pinterest"],
+      "posts_per_run": {"Facebook": 1, "Threads": 1, "Pinterest": 1},
       "content": "מדריך צילום",
       "status": "מתוזמן"
     },
     {
       "workflow": "location-social-post.yml",
-      "cron": ["0 17 * * 1"],
-      "day": "שני",
+      "cron": ["0 17 * * 6"],
+      "day": "שבת",
       "time": "19:00 חורף / 20:00 קיץ",
       "platform": "Threads · Pinterest",
+      "channels": ["Threads", "Pinterest"],
+      "posts_per_run": {"Threads": 1, "Pinterest": 1},
       "content": "מקום לצילום",
+      "status": "מתוזמן"
+    },
+    {
+      "workflow": "redbubble-social-post.yml",
+      "cron": ["0 10 * * 2"],
+      "day": "שלישי",
+      "time": "12:00 חורף / 13:00 קיץ",
+      "platform": "Instagram · Facebook · Threads · Pinterest",
+      "channels": ["Instagram", "Facebook", "Threads", "Pinterest"],
+      "posts_per_run": {"Instagram": 1, "Facebook": 1, "Threads": 1, "Pinterest": 1},
+      "content": "מוצר Redbubble",
+      "status": "מתוזמן"
+    },
+    {
+      "workflow": "zazzle-social-post.yml",
+      "cron": ["0 10 * * 5"],
+      "day": "שישי",
+      "time": "12:00 חורף / 13:00 קיץ",
+      "platform": "Instagram · Facebook · Threads · Pinterest",
+      "channels": ["Instagram", "Facebook", "Threads", "Pinterest"],
+      "posts_per_run": {"Instagram": 1, "Facebook": 1, "Threads": 1, "Pinterest": 1},
+      "content": "מוצר Zazzle",
       "status": "מתוזמן"
     },
     {
@@ -62,6 +114,8 @@
       "day": "ראשון",
       "time": "11:00 חורף / 12:00 קיץ",
       "platform": "YouTube",
+      "channels": ["YouTube"],
+      "posts_per_run": {"YouTube": 1},
       "content": "מצגת שבועית",
       "status": "מתוזמן"
     },
@@ -71,6 +125,8 @@
       "day": "רביעי",
       "time": "12:00 חורף / 13:00 קיץ",
       "platform": "YouTube",
+      "channels": ["YouTube"],
+      "posts_per_run": {"YouTube": 1},
       "content": "סרטון הדרכה",
       "status": "מתוזמן"
     },
