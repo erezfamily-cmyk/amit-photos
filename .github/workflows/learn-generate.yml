@@ -1,7 +1,8 @@
 name: ניתוח צילום חדש — ניתוח תמונות
 
-# Posts to Facebook/Instagram only AFTER the owner approves the run in GitHub (environment "social-approval")
-# and only if the checks pass (real EXIF, subject position measured from the pixels).
+# Nothing is saved on the site or posted until the owner approves the run in GitHub (environment "social-approval")
+# and only if the checks pass (real EXIF, subject position measured from the pixels). The analysis is generated as a
+# dry run; on approval the publish job saves it (the /learn page goes live) and then posts to Facebook/Instagram.
 # Manual run with mode "draft-only" prepares the draft and sends the approval e-mail but never posts.
 
 on:
@@ -77,6 +78,7 @@ jobs:
 
       - name: פרסום לרשתות אחרי אישור
         env:
+          ADMIN_TOKEN: ${{ secrets.ADMIN_PASSWORD }}
           INSTAGRAM_USER_ID: ${{ secrets.INSTAGRAM_USER_ID }}
           INSTAGRAM_PAGE_TOKEN: ${{ secrets.INSTAGRAM_PAGE_TOKEN }}
           FACEBOOK_PAGE_ID: ${{ secrets.FACEBOOK_PAGE_ID }}

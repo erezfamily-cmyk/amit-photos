@@ -3,11 +3,12 @@
 
 Two stages, run by .github/workflows/learn-generate.yml:
 
-  prepare  generate the analysis (existing endpoint), check it against facts we can measure
-           (real EXIF from data/photos.json, subject position measured from the pixels),
-           build the captions, write draft.json and e-mail the owner for approval.
-  publish  runs only after the owner approved the run in GitHub (environment "social-approval")
-           and only for a draft that passed the checks. Posts to Facebook and Instagram.
+  prepare  generate the analysis as a DRY RUN (nothing is saved on the site), check it against facts we can
+           measure (real EXIF from data/photos.json, subject position measured from the pixels), build the
+           captions, write draft.json and e-mail the owner for approval.
+  publish  runs only after the owner approved the run in GitHub (environment "social-approval") and only for a
+           draft that passed the checks. It saves the approved analysis (the /learn page goes live now) and then
+           posts to Facebook and Instagram.
 
 Nothing here prints a token, and draft.json contains only public post text and URLs.
 """
@@ -286,6 +287,7 @@ def build_approval_email(draft, run_url):
 {action}
 <h3>בדיקות</h3><ul>{problems}</ul>
 <h4>הערות</h4><ul>{notes}</ul>
+<p style="color:#555">הדף באתר ייווצר רק אחרי האישור, יחד עם הפוסטים.</p>
 <h3>פייסבוק</h3><pre style="white-space:pre-wrap;font-family:inherit">{esc(draft['facebook'])}</pre>
 <h3>אינסטגרם</h3><pre style="white-space:pre-wrap;font-family:inherit">{esc(draft['instagram'])}</pre>
 <p>עמוד הניתוח: <a href="{esc(draft['learn_url'])}">{esc(draft['learn_url'])}</a></p>
@@ -345,7 +347,16 @@ def make_draft(data, camera_json, exif, measurement):
         data.get("title", ""), clean_lead(data.get("composition_html", "")), format_exif_line(exif), learn_url, tags,
         RULE_LABELS.get(rule, rule),
     )
+    analysis = {
+        "photo_id": photo_id,
+        "composition_rule": rule,
+        "composition_html": data.get("composition_html", ""),
+        "tags": tags,
+        "annotations": data.get("annotations") or [],
+        "camera_analysis": data.get("camera_analysis") or camera_json or {},
+    }
     return {
+        "analysis": analysis,
         "photo_id": photo_id,
         "title": data.get("title", ""),
         "rule": rule,
@@ -370,7 +381,7 @@ def prepare(out_path="draft.json"):
     if not token:
         print("❌ ADMIN_TOKEN missing")
         sys.exit(1)
-    response = requests.post(f"{SITE_URL}/api/analyses/generate", headers={"X-Admin-Password": token}, timeout=120)
+    response = requests.post(f"{SITE_URL}/api/analyses/generate", headers={"X-Admin-Password": token}, json={"dry_run": True}, timeout=120)
     if not response.ok:
         print(f"❌ generate failed: HTTP {response.status_code}")
         sys.exit(1)
@@ -386,14 +397,12 @@ def prepare(out_path="draft.json"):
         measurement = measure_subject(image)
     except Exception:  # a failed measurement is reported, never silently ignored
         measurement = None
-    camera = {}
-    try:
-        page = requests.get(f"{SITE_URL}/learn/{data.get('photo_id', '')}", timeout=30)
-        camera = parse_page_camera(page.text) if page.ok else {}
-    except Exception:
-        camera = {}
+    if not data.get("dry_run"):
+        print("❌ the server did not honour dry_run: refusing to continue (the page may already be public)")
+        sys.exit(1)
+    camera = data.get("camera_analysis") or {}
     draft = make_draft(data, camera, exif, measurement)
-    draft["notes"].append("the analysis page is already saved on the site; camera settings shown on the page are the model's estimate unless they match the EXIF")
+    draft["notes"].append("nothing is saved on the site yet: the /learn page and the posts go live only after your approval")
     with open(out_path, "w", encoding="utf-8") as handle:
         json.dump(draft, handle, ensure_ascii=False, indent=1)
     run_url = os.environ.get("RUN_URL", "")
@@ -443,6 +452,18 @@ def post_to_instagram(image_url, caption):
     return publish.ok
 
 
+def save_analysis(analysis):
+    """Saves the approved analysis on the site (this is what makes the /learn page public)."""
+    import requests
+
+    token = os.environ.get("ADMIN_TOKEN", "")
+    if not token or not analysis:
+        return False
+    response = requests.post(f"{SITE_URL}/api/analyses/save", headers={"X-Admin-Password": token}, json=analysis, timeout=60)
+    print("save analysis:", "saved" if response.ok else f"failed (HTTP {response.status_code})")
+    return bool(response.ok)
+
+
 def publish(draft_path="draft.json"):
     with open(draft_path, encoding="utf-8") as handle:
         draft = json.load(handle)
@@ -453,6 +474,9 @@ def publish(draft_path="draft.json"):
         print("❌ no image URL: nothing is posted")
         sys.exit(1)
     print(f"publishing '{draft['title']}' after the owner's approval")
+    if not save_analysis(draft.get("analysis")):
+        print("❌ the approved analysis could not be saved: nothing is posted")
+        sys.exit(1)
     facebook = post_to_facebook(draft["image_url"], draft["facebook"])
     instagram = post_to_instagram(draft["image_url"], draft["instagram"])
     if not (facebook or instagram):

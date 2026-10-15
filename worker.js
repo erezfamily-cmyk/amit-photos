@@ -4330,6 +4330,8 @@ async function handleAnalysesGenerate(request, env) {
   // Support optional photo_id in POST body for card-level analysis
   const body = await request.json().catch(() => ({}));
   const requestedPhotoId = body?.photo_id ?? null;
+  // dry_run: produce the analysis and return it WITHOUT saving it (nothing becomes public until /api/analyses/save).
+  const dryRun = body?.dry_run === true;
 
   let candidates;
   if (requestedPhotoId) {
@@ -4503,8 +4505,23 @@ async function handleAnalysesGenerate(request, env) {
     return jsonRes({ error: 'Failed to parse Claude response: ' + String(e) }, 502, request);
   }
 
-  // 4. Save to D1
+  // 4. Save to D1 (skipped for a dry run: the owner approves first)
   const rule = analysis.composition_rule || 'rule_of_thirds';
+  if (dryRun) {
+    return jsonRes({
+      ok: true,
+      dry_run: true,
+      photo_id: chosen.id,
+      title: chosen.title,
+      thumbnail: chosen.thumbnail || chosen.url,
+      composition_rule: rule,
+      tags: analysis.tags || [],
+      composition_html: analysis.composition_html || '',
+      annotations: analysis.annotations || [],
+      camera_analysis: analysis.camera_analysis || {},
+      learn_url: `https://amitphotos.com/learn/${chosen.id}`,
+    }, 200, request);
+  }
   const now = new Date().toISOString();
   await env.DB.prepare(`
     INSERT OR REPLACE INTO photo_analyses
@@ -4532,6 +4549,57 @@ async function handleAnalysesGenerate(request, env) {
     composition_html: analysis.composition_html || '',
     learn_url: `https://amitphotos.com/learn/${chosen.id}`,
   }, 200, request);
+}
+
+// Saves an analysis that the owner approved after a dry run (admin only). Validates the shape and the text: nothing that
+// could carry script or markup beyond simple paragraphs is stored.
+const ANALYSIS_RULES = new Set(['rule_of_thirds', 'symmetry', 'leading_lines', 'golden_ratio', 'framing', 'negative_space']);
+const ANNOTATION_ANCHORS = new Set(['left', 'right', 'top', 'bottom']);
+function validateAnalysisPayload(body) {
+  const fail = reason => ({ ok: false, reason });
+  if (!body || typeof body !== 'object') return fail('BODY_INVALID');
+  if (typeof body.photo_id !== 'string' || !/^[A-Za-z0-9_-]{6,80}$/.test(body.photo_id)) return fail('PHOTO_ID_INVALID');
+  if (!ANALYSIS_RULES.has(body.composition_rule)) return fail('RULE_INVALID');
+  const html = body.composition_html;
+  if (typeof html !== 'string' || html.length < 20 || html.length > 6000) return fail('HTML_LENGTH');
+  if (/<\s*(script|iframe|object|embed|style|link|img|svg|form)|javascript:/i.test(html)) return fail('HTML_UNSAFE');
+  if (/<[a-z0-9]+\s[^>]*>/i.test(html)) return fail('HTML_ATTRIBUTES');
+  if ((html.match(/<\/?([a-z0-9]+)/gi) || []).some(tag => !/^<\/?(p|strong|em|br)$/i.test(tag))) return fail('HTML_TAGS');
+  if (!Array.isArray(body.tags) || body.tags.length > 8 || body.tags.some(t => typeof t !== 'string' || t.length > 40)) return fail('TAGS_INVALID');
+  const annotations = body.annotations ?? [];
+  if (!Array.isArray(annotations) || annotations.length > 8) return fail('ANNOTATIONS_INVALID');
+  for (const a of annotations) {
+    if (!a || typeof a.label !== 'string' || a.label.length > 80 || !ANNOTATION_ANCHORS.has(a.anchor) ||
+        !Number.isFinite(a.x_pct) || !Number.isFinite(a.y_pct) || a.x_pct < 0 || a.x_pct > 100 || a.y_pct < 0 || a.y_pct > 100) return fail('ANNOTATION_INVALID');
+  }
+  const camera = body.camera_analysis ?? {};
+  if (!camera || typeof camera !== 'object' || Array.isArray(camera)) return fail('CAMERA_INVALID');
+  for (const key of Object.keys(camera)) {
+    const c = camera[key];
+    if (!['aperture', 'shutter', 'iso', 'focal'].includes(key) || !c || typeof c.value !== 'string' || c.value.length > 20 ||
+        (c.explanation !== undefined && (typeof c.explanation !== 'string' || c.explanation.length > 500))) return fail('CAMERA_INVALID');
+  }
+  return { ok: true, annotations, camera };
+}
+
+async function handleAnalysesSave(request, env) {
+  if (!await checkAuth(request, env)) return unauth(request);
+  if (request.method !== 'POST') return jsonRes({ error: 'POST only' }, 405, request);
+  const body = await request.json().catch(() => null);
+  const check = validateAnalysisPayload(body);
+  if (!check.ok) return jsonRes({ error: 'ANALYSIS_INVALID', reason: check.reason }, 400, request);
+  const photo = await env.DB.prepare('SELECT id, title FROM photos WHERE id = ?').bind(body.photo_id).first();
+  if (!photo) return jsonRes({ error: 'PHOTO_NOT_FOUND' }, 404, request);
+  const now = new Date().toISOString();
+  await env.DB.prepare(`
+    INSERT OR REPLACE INTO photo_analyses
+      (photo_id, composition_rule, annotations_json, camera_json, composition_html, tags_json, title, published_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+  `).bind(
+    photo.id, body.composition_rule, JSON.stringify(check.annotations), JSON.stringify(check.camera),
+    body.composition_html, JSON.stringify(body.tags), photo.title || '', now
+  ).run();
+  return jsonRes({ ok: true, photo_id: photo.id, learn_url: `https://amitphotos.com/learn/${photo.id}` }, 200, request);
 }
 
 // ===== LEARN INDEX =====
@@ -8120,6 +8188,7 @@ export default {
     if (path === '/api/analyses/dedup' && request.method === 'POST')             return handleAnalysesDedup(request, env);
     if (path === '/api/analyses/publish-all' && request.method === 'POST')       return handleAnalysesPublishAll(request, env);
     if (path === '/api/analyses/generate' && request.method === 'POST')          return handleAnalysesGenerate(request, env);
+    if (path === '/api/analyses/save' && request.method === 'POST')              return handleAnalysesSave(request, env);
     if (path.startsWith('/api/analyses/') && path.endsWith('/generate-en') && request.method === 'POST')
       return handleAnalysesGenerateEn(request, env, path.slice('/api/analyses/'.length).replace('/generate-en',''));
     if (path.startsWith('/api/analyses/') && request.method === 'GET')           return handleAnalysesGet(request, env, path.slice('/api/analyses/'.length));
