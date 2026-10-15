@@ -495,14 +495,12 @@ def main():
     caption = generate_caption(photo)
     print(f"\n--- כיתוב ---\n{caption}\n-------------\n")
 
-    # שמור את ה-ID לפני הפרסום — מונע כפילות אם ה-script נכשל אחרי upload
-    posted_data["posted_ids"] = list(posted_ids | {photo["id"]})
-    save_posted(posted_data)
-    print(f"💾 {photo['id']} סומן כ-posted (לפני פרסום)")
-
     print("📤 מפרסם לאינסטגרם...")
     post_id = post_to_instagram(photo, caption)
     print(f"✅ פורסם בהצלחה! Instagram post ID: {post_id}")
+    posted_data["posted_ids"] = list(posted_ids | {photo["id"]})
+    save_posted(posted_data)
+    print(f"💾 {photo['id']} סומן כ-posted לאחר אישור הפרסום")
     save_social_photo_mapping("instagram", post_id, photo["id"])
 
 
