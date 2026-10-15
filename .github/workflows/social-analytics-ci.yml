@@ -4,6 +4,8 @@ on:
   pull_request:
     paths:
       - 'src/social_caption_quality.py'
+      - 'src/social_decision_engine.py'
+      - 'src/social_optimization.py'
       - 'src/campaign_urls.py'
       - 'src/instagram_post.py'
       - 'src/facebook_post.py'

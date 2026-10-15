@@ -16,6 +16,7 @@ import anthropic
 from pathlib import Path
 from campaign_urls import build_campaign_url
 from social_caption_quality import compose_caption, generated_body, photo_fallback, require_caption
+from social_optimization import guidance_for_prompt
 from social_content_strategy import EDITORIAL_RULES_HE, angle_instruction_he, editorial_angle
 
 # ===== הגדרות =====
@@ -160,7 +161,8 @@ def generate_caption(photo):
 כשיש מונח טכני — מסביר אותו בביטוי פשוט בסוגריים.
 כתוב בעברית בלבד. ללא hashtags — הם יתווספו בנפרד.
 
-{EDITORIAL_RULES_HE}"""
+{EDITORIAL_RULES_HE}
+{guidance_for_prompt('threads', 'post')}"""
 
     user_content = image_content + [{"type": "text", "text": f"""כתוב פוסט Threads קצר בגוף ראשון עבור התמונה הזו.
 
