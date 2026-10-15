@@ -496,6 +496,18 @@ def server_error_text(response):
     return re.sub(r"\s+", " ", text)[:200]
 
 
+def generate_request_body(environ):
+    """Always a dry run; a photo picked by the owner (and the rule it was screened for) is passed through."""
+    body = {"dry_run": True}
+    photo_id = (environ.get("PHOTO_ID") or "").strip()
+    if photo_id and re.fullmatch(r"[A-Za-z0-9_-]{6,80}", photo_id):
+        body["photo_id"] = photo_id
+        rule = (environ.get("RULE") or "").strip()
+        if rule in RULE_LABELS:
+            body["rule"] = rule
+    return body
+
+
 def prepare(out_path="draft.json"):
     import requests
     from io import BytesIO
@@ -506,7 +518,7 @@ def prepare(out_path="draft.json"):
     if not token:
         print("❌ ADMIN_TOKEN missing")
         sys.exit(1)
-    response = requests.post(f"{SITE_URL}/api/analyses/generate", headers={"X-Admin-Password": token}, json={"dry_run": True}, timeout=120)
+    response = requests.post(f"{SITE_URL}/api/analyses/generate", headers={"X-Admin-Password": token}, json=generate_request_body(os.environ), timeout=120)
     if not response.ok:
         print(f"❌ generate failed: HTTP {response.status_code} {server_error_text(response)}")
         sys.exit(1)
@@ -615,11 +627,143 @@ def publish(draft_path="draft.json"):
         sys.exit(1)
 
 
+
+# ------------------------------------------------------------------ weekly pick ------------------------------------------------
+# propose: screen photos (site endpoint), open a GitHub issue with up to 3 candidates and e-mail the owner.
+# pick:    the owner comments 1, 2 or 3 on that issue; the chosen photo and its rule go to prepare.
+
+PICK_LABEL = "learn-pick"
+CANDIDATES_MARK = "learn-candidates"
+
+
+def build_pick_issue(candidates):
+    lines = [
+        "בחירת תמונה לניתוח השבוע. **הגב על ה-Issue הזה במספר בלבד: 1, 2 או 3.**",
+        "אחרי הבחירה ייכתב ניתוח לתמונה שבחרת, הוא ייבדק, ותקבל מייל אישור לפני שמשהו עולה לאתר או לרשתות.",
+        "",
+    ]
+    for index, candidate in enumerate(candidates, 1):
+        rule = RULE_LABELS.get(candidate.get("rule", ""), candidate.get("rule", ""))
+        lines += [
+            f"### {index}. {candidate.get('title', '')}",
+            f"![{candidate.get('title', '')}]({absolute(candidate.get('thumbnail', ''))})",
+            f"**חוק:** {rule} · **ודאות:** {round(float(candidate.get('clarity', 0)) * 100)}%",
+            candidate.get("reason", ""),
+            "",
+        ]
+    payload = [{k: c.get(k) for k in ("photo_id", "title", "thumbnail", "rule", "clarity")} for c in candidates]
+    lines.append(f"<!-- {CANDIDATES_MARK}: {json.dumps(payload, ensure_ascii=False)} -->")
+    return "בחירת תמונה לניתוח השבוע", "\n".join(lines)
+
+
+def parse_candidates(issue_body):
+    match = re.search(r"<!-- " + CANDIDATES_MARK + r": (\[.*?\]) -->", issue_body or "", re.S)
+    if not match:
+        return []
+    try:
+        data = json.loads(match.group(1))
+    except ValueError:
+        return []
+    return [c for c in data if isinstance(c, dict) and c.get("photo_id") and c.get("rule") in RULE_LABELS]
+
+
+def parse_choice(comment, available):
+    """Only a bare number (optionally with #) counts, so an ordinary comment never triggers an analysis."""
+    match = re.fullmatch(r"\s*#?\s*([1-9])\s*\.?\s*", comment or "")
+    if not match:
+        return None
+    number = int(match.group(1))
+    return number if 1 <= number <= available else None
+
+
+def build_pick_email(candidates, issue_url):
+    if not candidates:
+        return "השבוע לא נמצאה תמונה מתאימה לניתוח", (
+            '<div dir="rtl" style="font-family:Arial,sans-serif"><p>הסינון לא מצא השבוע תמונה שמדגימה חוק קומפוזיציה בבירור, '
+            "ולכן לא נכתב ניתוח ולא יפורסם פוסט. אין צורך בפעולה.</p></div>"
+        )
+    items = "".join(
+        f'<div style="margin:12px 0"><b>{i}. {esc(c.get("title", ""))}</b><br>'
+        f'<img src="{esc(absolute(c.get("thumbnail", "")))}" alt="" style="max-width:100%;border-radius:8px"><br>'
+        f'{esc(RULE_LABELS.get(c.get("rule", ""), c.get("rule", "")))} · ודאות {round(float(c.get("clarity", 0)) * 100)}%<br>{esc(c.get("reason", ""))}</div>'
+        for i, c in enumerate(candidates, 1)
+    )
+    html = (
+        f'<div dir="rtl" style="font-family:Arial,sans-serif;max-width:640px"><h2>בחר תמונה לניתוח השבוע</h2>'
+        f'<p><b>איך בוחרים:</b> פתח את <a href="{esc(issue_url)}">ה-Issue ב-GitHub</a> והגב במספר בלבד (1, 2 או 3). '
+        "אחרי זה תקבל מייל אישור עם הניתוח והפוסטים, ושום דבר לא יעלה בלי אישורך.</p>"
+        f"{items}</div>"
+    )
+    return "בחר תמונה לניתוח השבוע", html
+
+
+def github_api(method, path, payload=None):
+    import requests
+
+    repo = os.environ.get("GITHUB_REPOSITORY", "")
+    token = os.environ.get("GITHUB_TOKEN", "")
+    response = requests.request(
+        method, f"https://api.github.com/repos/{repo}{path}",
+        headers={"Authorization": f"Bearer {token}", "Accept": "application/vnd.github+json"},
+        json=payload, timeout=30,
+    )
+    return response
+
+
+def propose():
+    import requests
+
+    token = os.environ.get("ADMIN_TOKEN", "")
+    response = requests.post(f"{SITE_URL}/api/analyses/candidates", headers={"X-Admin-Password": token}, json={"count": 3, "pool": 8}, timeout=300)
+    if not response.ok:
+        print(f"❌ screening failed: HTTP {response.status_code} {server_error_text(response)}")
+        sys.exit(1)
+    candidates = response.json().get("candidates") or []
+    if not candidates:
+        subject, html = build_pick_email([], "")
+        send_email(subject, html)
+        print("no clear candidate this week: nothing proposed")
+        return
+    github_api("POST", "/labels", {"name": PICK_LABEL, "color": "0e8a16", "description": "weekly learn photo pick"})
+    title, body = build_pick_issue(candidates)
+    created = github_api("POST", "/issues", {"title": title, "body": body, "labels": [PICK_LABEL]})
+    if not created.ok:
+        print(f"❌ could not open the pick issue: HTTP {created.status_code}")
+        sys.exit(1)
+    issue_url = created.json().get("html_url", "")
+    subject, html = build_pick_email(candidates, issue_url)
+    send_email(subject, html)
+    print(f"proposed {len(candidates)} candidates: {issue_url}")
+
+
+def pick(event_path=None):
+    """Reads the issue_comment event, writes photo_id/rule to GITHUB_OUTPUT, comments back and closes the issue."""
+    with open(event_path or os.environ.get("GITHUB_EVENT_PATH", ""), encoding="utf-8") as handle:
+        event = json.load(handle)
+    issue = event.get("issue") or {}
+    number = issue.get("number")
+    candidates = parse_candidates(issue.get("body", ""))
+    choice = parse_choice((event.get("comment") or {}).get("body", ""), len(candidates))
+    if not candidates or not choice:
+        print("the comment is not a valid choice: nothing to do")
+        return None
+    chosen = candidates[choice - 1]
+    github_output = os.environ.get("GITHUB_OUTPUT")
+    if github_output:
+        with open(github_output, "a", encoding="utf-8") as handle:
+            handle.write(f"photo_id={chosen['photo_id']}\nrule={chosen['rule']}\n")
+    github_api("POST", f"/issues/{number}/comments", {"body": f"נבחרה תמונה {choice}: {chosen.get('title', '')}. הניתוח נכתב ונבדק עכשיו, ומייל אישור יישלח בסיום."})
+    github_api("PATCH", f"/issues/{number}", {"state": "closed"})
+    print(f"picked {choice}: {chosen['photo_id']} ({chosen['rule']})")
+    return chosen
+
+
 def main(argv):
-    if len(argv) < 2 or argv[1] not in ("prepare", "publish"):
-        print("usage: learn_post_gate.py prepare|publish")
+    stages = {"prepare": prepare, "publish": publish, "propose": propose, "pick": pick}
+    if len(argv) < 2 or argv[1] not in stages:
+        print("usage: learn_post_gate.py propose|pick|prepare|publish")
         return 2
-    prepare() if argv[1] == "prepare" else publish()
+    stages[argv[1]]()
     return 0
 
 
