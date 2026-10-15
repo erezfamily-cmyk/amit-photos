@@ -132,6 +132,12 @@ class DraftTests(unittest.TestCase):
     def data(self, rule, html):
         return {"photo_id": "p1", "title": "חלון", "composition_rule": rule, "composition_html": html, "thumbnail": "/photos/thumb/p1.webp", "tags": ["a"]}
 
+    def test_measurement_findings_are_notes_not_blocks(self):
+        right = gate.measure_subject(wall_with_block(0.51, 0.74))
+        draft = gate.make_draft(self.data("symmetry", "<p><strong>סימטריה:</strong> הדלת קרובה למרכז הפריים יותר מהמומלץ.</p>"), {}, None, right)
+        self.assertTrue(draft["publishable"], "a measurement finding alone never blocks")
+        self.assertTrue(any(n.startswith("measurement note:") for n in draft["notes"]))
+
     def test_the_window_mistake_blocks_publication(self):
         right = gate.measure_subject(wall_with_block(0.51, 0.74))
         exif = {"aperture": 8, "shutter": 0.01, "iso": 200, "focal": 70}

@@ -4592,6 +4592,25 @@ const TOOL_SCREEN = { name: 'rule_screen', description: 'Whether the photo clear
   rule: { type: ['string', 'null'] }, clarity: { type: 'number' }, reason: { type: 'string' },
 }, required: ['rule', 'clarity', 'reason'] } };
 const RETRYABLE_STATUS = new Set([429, 500, 502, 503, 504, 529]);
+// Models sometimes hand back an array or object field as a JSON STRING inside the tool input ("claims": "[{...}]").
+// Parse such fields back according to the schema, recursively for nested objects.
+function normalizeToolInput(value, schema) {
+  if (!schema || value === null || value === undefined) return value;
+  const types = Array.isArray(schema.type) ? schema.type : [schema.type];
+  if (typeof value === 'string' && (types.includes('array') || types.includes('object'))) {
+    try { value = JSON.parse(value); } catch (_) { return value; }
+  }
+  if (Array.isArray(value) && schema.items) return value.map(item => normalizeToolInput(item, schema.items));
+  if (value && typeof value === 'object' && !Array.isArray(value) && schema.properties) {
+    const out = { ...value };
+    for (const [key, sub] of Object.entries(schema.properties)) if (key in out) out[key] = normalizeToolInput(out[key], sub);
+    return out;
+  }
+  if (typeof value === 'string' && types.includes('number') && value.trim() !== '' && Number.isFinite(Number(value))) return Number(value);
+  if (typeof value === 'string' && types.includes('boolean') && (value === 'true' || value === 'false')) return value === 'true';
+  return value;
+}
+
 async function anthropicFetch(url, init, tool) {
   let body = init.body;
   if (tool) {
@@ -4609,7 +4628,7 @@ async function anthropicFetch(url, init, tool) {
   if (!res.ok || !tool) return res;
   const data = await res.json().catch(() => null);
   const use = (data?.content || []).find(c => c && c.type === 'tool_use' && c.name === tool.name);
-  const text = use ? JSON.stringify(use.input) : ((data?.content || []).find(c => c && typeof c.text === 'string')?.text ?? '');
+  const text = use ? JSON.stringify(normalizeToolInput(use.input, tool.input_schema)) : ((data?.content || []).find(c => c && typeof c.text === 'string')?.text ?? '');
   return new Response(JSON.stringify({ ...(data || {}), content: [{ type: 'text', text }] }), { status: res.status, headers: { 'content-type': 'application/json' } });
 }
 
@@ -4777,7 +4796,7 @@ async function handleAnalysesVerify(request, env) {
     verdict: CLAIM_VERDICTS.has(c?.verdict) ? c.verdict : 'uncertain',
     reason: clip(c?.reason, 240),
   })).filter(c => c.claim);
-  if (!claims.length) return jsonRes({ error: 'VERIFY_EMPTY' }, 502, request);
+  if (!claims.length) return jsonRes({ error: 'VERIFY_EMPTY', detail: 'claims was ' + (Array.isArray(parsed.claims) ? 'an empty array' : typeof parsed.claims) }, 502, request);
   const ruleFits = parsed.rule_fits === true;
   return jsonRes({
     ok: true,

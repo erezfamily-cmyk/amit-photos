@@ -51,3 +51,8 @@ A manual run with `mode = draft-only` prepares the draft and sends the e-mail bu
 - A busy or failing Claude (429, 5xx, 529) is retried once after 1.5 s; client errors are not retried. The gate's log shows the Claude status when the site reports it.
 - The owner can correct the screened rule in the pick comment: `2 שליש` (also סימטריה, קווים, זהב, מסגור, מרחב). Motivated by the green door (15.10): screened as framing, the owner identified it as rule of thirds (the door sits on the right-third line, the chair balances it on the left).
 - The pick issue and e-mail say plainly: do not reply to the e-mail; the choice is read only from a GitHub comment.
+
+## Tool-answer normalisation; measurement becomes advisory (eighth PR)
+- The first full run for the green door (rule of thirds, 15.10) was blocked twice for the wrong reasons: the second check returned no claims (the model handed the claims array back as a JSON string inside the tool input), and the pixel measurement flagged the honest sentence "the door is closer to the centre than recommended" as a centring claim.
+- Tool answers are now normalised against the schema (array/object fields given as JSON strings are parsed, "true"/"false" and numeric strings converted). `VERIFY_EMPTY` now says what came back.
+- Pixel-measurement findings are notes for the owner, never blocks; the second check (which looks at the picture) decides. Camera contradictions with EXIF stay blocking (the stored values are forced to EXIF anyway).
