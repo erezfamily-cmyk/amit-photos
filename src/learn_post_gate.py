@@ -375,8 +375,11 @@ def make_draft(data, camera_json, exif, measurement, verification=None):
     photo_id = data.get("photo_id", "")
     rule = data.get("composition_rule", "")
     text = strip_html(data.get("composition_html", ""))
-    problems = verify_composition(rule, text, measurement)
-    notes = []
+    # The pixel measurement is a heuristic (it measured the reeds instead of the windmill, and flagged an honest
+    # "the door is closer to the centre than recommended" as a centring claim). Since the second check judges every
+    # claim against the picture, measurement findings are notes for the human, never blocks.
+    problems = []
+    notes = [f"measurement note: {item}" for item in verify_composition(rule, text, measurement)]
     if camera_json:
         camera_problems = verify_camera(camera_json, exif)
         # a missing EXIF is a note (the captions then carry no numbers); a contradiction is a problem

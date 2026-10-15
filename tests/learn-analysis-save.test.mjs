@@ -515,3 +515,29 @@ test('verify, revise and the screening all use their own forced tool', async () 
     assert.deepEqual(net.seen.map(b => b.tool_choice.name), ['claim_check', 'revised_analysis', 'rule_screen'].slice(0, net.seen.length));
   } finally { net.restore(); }
 });
+
+test('tool answers whose array fields come back as JSON strings are parsed back (claims, tags, annotations)', async () => {
+  let env = setup().env;
+  let net = fakeToolClaude([{ claims: JSON.stringify([{ claim: 'הדלת על קו השליש', verdict: 'supported', reason: 'כ-64%' }]), rule_fits: 'true', rule_reason: 'ok' }]);
+  try {
+    const res = await call(env, '/api/analyses/verify', verifyBody());
+    assert.equal(res.status, 200);
+    const body = await res.json();
+    assert.equal(body.claims.length, 1);
+    assert.equal(body.rule_fits, true, 'a "true" string becomes a boolean');
+  } finally { net.restore(); }
+  env = setup().env;
+  net = fakeToolClaude([{ ...toolAnalysis, tags: JSON.stringify(['שליש', 'דלת']), annotations: JSON.stringify(toolAnalysis.annotations) }]);
+  try {
+    const body = await (await call(env, '/api/analyses/generate', { photo_id: PHOTO, dry_run: true })).json();
+    assert.deepEqual(body.tags, ['שליש', 'דלת']);
+    assert.equal(body.annotations.length, 1);
+  } finally { net.restore(); }
+  env = setup().env;
+  net = fakeToolClaude([{ claims: [], rule_fits: true, rule_reason: 'x' }]);
+  try {
+    const res = await call(env, '/api/analyses/verify', verifyBody());
+    assert.equal(res.status, 502);
+    assert.deepEqual(await res.json(), { error: 'VERIFY_EMPTY', detail: 'claims was an empty array' });
+  } finally { net.restore(); }
+});
