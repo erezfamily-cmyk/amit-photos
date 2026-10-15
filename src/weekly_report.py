@@ -17,7 +17,8 @@ import requests
 import anthropic
 from pathlib import Path
 from datetime import datetime, timedelta, timezone
-from social_photo_map import build_post_lookup
+from social_photo_map import build_post_lookup, build_post_metadata_lookup
+from social_caption_quality import analyze_caption_set
 
 ROOT = Path(__file__).parent.parent
 
@@ -57,6 +58,49 @@ def get_fb_pages():
     if _fb_page_id_legacy:
         return [("Facebook", _fb_page_id_legacy)]
     return []
+
+
+def build_content_quality_summary(ig_posts, fb_pages_data):
+    """Measure caption hygiene so editorial changes can be tracked week to week."""
+    return {
+        "instagram": analyze_caption_set(p.get("caption") or "" for p in ig_posts),
+        "facebook_pages": {
+            page.get("name") or page.get("label") or "Facebook": page.get("content_quality", {})
+            for page in fb_pages_data
+        },
+        "instagram_editorial_performance": build_editorial_performance(
+            ig_posts, "instagram", "like_count", "comments_count",
+        ),
+        "facebook_editorial_performance": {
+            page.get("name") or page.get("label") or "Facebook": page.get("editorial_performance", {})
+            for page in fb_pages_data
+        },
+    }
+
+
+def build_editorial_performance(posts, platform, likes_key, comments_key):
+    """Aggregate results only for posts saved with an explicit editorial angle."""
+    metadata = build_post_metadata_lookup()
+    totals = {}
+    for post in posts:
+        row = metadata.get((platform, str(post.get("id", ""))), {})
+        angle = row.get("content_angle")
+        if not angle:
+            continue
+        bucket = totals.setdefault(angle, {"posts": 0, "likes": 0, "comments": 0})
+        likes = post.get(likes_key, 0) or 0
+        comments = post.get(comments_key, 0) or 0
+        if isinstance(likes, dict):
+            likes = likes.get("summary", {}).get("total_count", 0)
+        if isinstance(comments, dict):
+            comments = comments.get("summary", {}).get("total_count", 0)
+        bucket["posts"] += 1
+        bucket["likes"] += likes
+        bucket["comments"] += comments
+    for bucket in totals.values():
+        interactions = bucket["likes"] + bucket["comments"]
+        bucket["avg_interactions"] = round(interactions / bucket["posts"], 1)
+    return totals
 
 
 # ===== Instagram =====
@@ -282,12 +326,16 @@ def build_fb_page_block(label, page_id):
             "likes":   best.get("reactions", {}).get("summary", {}).get("total_count", 0) if best else 0,
             "date":    (best.get("created_time") or "")[:10] if best else "",
         },
+        "content_quality": analyze_caption_set(p.get("message") or "" for p in posts),
+        "editorial_performance": build_editorial_performance(
+            posts, "facebook", "reactions", "comments",
+        ),
     }
 
 
 # ===== Report builder =====
 
-def build_html_report(ig_posts, ig_account, fb_pages_data, reel_summary):
+def build_html_report(ig_posts, ig_account, fb_pages_data, reel_summary, content_quality=None):
     week_str = datetime.now().strftime("%d/%m/%Y")
 
     ig_media_available = "instagram_media" not in DATA_FETCH_FAILURES
@@ -379,6 +427,18 @@ def build_html_report(ig_posts, ig_account, fb_pages_data, reel_summary):
             "</p>"
         )
 
+    quality = (content_quality or {}).get("instagram", {})
+    quality_section = ""
+    if quality.get("posts_checked"):
+        quality_section = f"""
+  <h2 style="color:#c8a96e;margin-top:32px">✍️ איכות התוכן</h2>
+  <p style="color:#aaa;line-height:1.7">
+    נבדקו {quality.get('posts_checked', 0)} כיתובים באינסטגרם:
+    {quality.get('missing_or_hashtag_only', 0)} ריקים או מבוססי hashtags בלבד,
+    {quality.get('duplicate_hashtag_posts', 0)} עם hashtags כפולים,
+    וממוצע של {quality.get('avg_caption_chars', 0)} תווים לכיתוב קריא.
+  </p>"""
+
     return f"""<!DOCTYPE html>
 <html dir="rtl" lang="he">
 <head><meta charset="UTF-8"><title>דוח שבועי — עמית ארז</title></head>
@@ -404,6 +464,8 @@ def build_html_report(ig_posts, ig_account, fb_pages_data, reel_summary):
 
   {reels_section}
 
+  {quality_section}
+
   {fb_sections}
 
   <p style="color:#444;font-size:12px;margin-top:40px;text-align:center">דוח אוטומטי — amitphotos.com</p>
@@ -425,7 +487,7 @@ def send_email(subject, html):
     return resp.json()
 
 
-def generate_ai_recommendations(ig_posts, ig_account, fb_pages_data, reel_summary):
+def generate_ai_recommendations(ig_posts, ig_account, fb_pages_data, reel_summary, content_quality=None):
     """יוצר המלצות AI מבוססות על ביצועי השבוע."""
     if DATA_FETCH_FAILURES:
         print("ℹ️  המלצות AI הושהו בגלל נתוני API חסרים")
@@ -467,6 +529,7 @@ Instagram (@amitphotos.com):
 Instagram Reels this week: {reels_summary_text}
 
 Facebook pages:{fb_summary or ' none configured'}"""
+    quality_summary = json.dumps(content_quality or {}, ensure_ascii=False)
 
     try:
         client = anthropic.Anthropic(api_key=ANTHROPIC_KEY)
@@ -475,9 +538,12 @@ Facebook pages:{fb_summary or ' none configured'}"""
             max_tokens=800,
             messages=[{"role": "user", "content": f"""{summary}
 
+Caption quality diagnostics: {quality_summary}
+
 Based on this data, provide exactly 4 actionable recommendations in Hebrew for next week.
 Each recommendation should be specific, practical, and based on the actual numbers above.
 At least one recommendation must address Instagram Reels/video performance specifically (watch time, plays, shares/saves vs. static posts) when reel data is present above.
+When caption diagnostics show missing text or duplicate hashtags, address that directly. Do not infer content performance from volume alone.
 Return ONLY the 4 recommendations, each on its own line, separated by a line containing exactly "|||" and nothing else.
 No numbering, no markdown, no explanation before or after — just the 4 lines with the separator between them."""}],
         )
@@ -539,7 +605,7 @@ def _append_to_history(report):
     print(f"📈 היסטוריה: נוסף שבוע {week_key} ({len(history)} שבועות סה\"כ)")
 
 
-def save_social_report(ig_posts, ig_account, fb_pages_data, recommendations, reel_summary):
+def save_social_report(ig_posts, ig_account, fb_pages_data, recommendations, reel_summary, content_quality=None):
     """שומר דוח JSON לשימוש האדמין."""
     post_lookup = build_post_lookup()
     out = ROOT / "data" / "social_report.json"
@@ -587,6 +653,9 @@ def save_social_report(ig_posts, ig_account, fb_pages_data, recommendations, ree
             "total_comments":     ig_total_comments,
             "avg_likes_per_post": round(ig_total_likes / ig_n, 1) if ig_media_available and ig_n else (0 if ig_media_available else None),
             "engagement_rate":    round((ig_total_likes + ig_total_comments) / (ig_n * max(ig_followers, 1)), 4) if ig_media_available and ig_account_available and ig_n else (0 if ig_media_available and ig_account_available else None),
+            "editorial_performance": build_editorial_performance(
+                ig_posts, "instagram", "like_count", "comments_count",
+            ) if ig_media_available else {},
             "top_posts": [
                 {
                     "post_id":  p.get("id", ""),
@@ -631,6 +700,7 @@ def save_social_report(ig_posts, ig_account, fb_pages_data, recommendations, ree
         # all FB pages as array (new)
         "fb_pages": fb_pages_data,
         "reels":          reel_summary,
+        "content_quality": content_quality or {},
         "prev":           prev,
         "recommendations": recommendations,
     }
@@ -661,17 +731,22 @@ def main():
     if not pages:
         print("⚠️  לא הוגדרו עמודי פייסבוק (FACEBOOK_PAGE_IDS / FACEBOOK_PAGE_ID חסרים)")
     fb_pages_data = [build_fb_page_block(label, pid) for label, pid in pages]
+    content_quality = build_content_quality_summary(ig_posts, fb_pages_data)
 
     print("🤖 מייצר המלצות AI...")
-    recommendations = generate_ai_recommendations(ig_posts, ig_account, fb_pages_data, reel_summary)
+    recommendations = generate_ai_recommendations(
+        ig_posts, ig_account, fb_pages_data, reel_summary, content_quality,
+    )
     for i, r in enumerate(recommendations, 1):
         print(f"   {i}. {r}")
 
     print("💾 שומר דוח JSON...")
-    save_social_report(ig_posts, ig_account, fb_pages_data, recommendations, reel_summary)
+    save_social_report(
+        ig_posts, ig_account, fb_pages_data, recommendations, reel_summary, content_quality,
+    )
 
     print("✉️  בונה דוח...")
-    html = build_html_report(ig_posts, ig_account, fb_pages_data, reel_summary)
+    html = build_html_report(ig_posts, ig_account, fb_pages_data, reel_summary, content_quality)
 
     week_str = datetime.now().strftime("%d/%m/%Y")
     subject  = f"📊 דוח שבועי סושיאל — {week_str}"
