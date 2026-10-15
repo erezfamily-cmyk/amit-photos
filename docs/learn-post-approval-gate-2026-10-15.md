@@ -45,3 +45,9 @@ A manual run with `mode = draft-only` prepares the draft and sends the e-mail bu
 - The weekly run now only proposes: it opens a GitHub issue (label `learn-pick`) with the 3 candidates (photo, rule, clarity, reason) and e-mails its link. The owner comments **1, 2 or 3**; only a bare number from the repository owner on an open pick issue counts. The issue is then closed and the analysis is written for that photo with the rule fixed in advance (`rule` in `/api/analyses/generate`): the model explains the rule, it does not choose it. Then the existing chain runs: dry run, EXIF, measurement, second check, one repair round, approval e-mail, approval in GitHub, save and publish.
 - No clear candidate in a week: an e-mail says so and nothing is written.
 - Manual runs: `propose` (now), `draft-only` / `full` (optionally with `photo_id` and `rule`).
+
+## Structured output, retry, rule override (seventh PR)
+- The four learn calls to Claude (screening, analysis, second check, repair) now use a forced tool with a JSON schema, so the answer arrives as a validated object. The 15.10 failure "Expected ',' or '}' ... position 1434" (a quote inside Hebrew text breaking the hand-parsed JSON) can no longer happen. Other Claude calls in the site are untouched.
+- A busy or failing Claude (429, 5xx, 529) is retried once after 1.5 s; client errors are not retried. The gate's log shows the Claude status when the site reports it.
+- The owner can correct the screened rule in the pick comment: `2 שליש` (also סימטריה, קווים, זהב, מסגור, מרחב). Motivated by the green door (15.10): screened as framing, the owner identified it as rule of thirds (the door sits on the right-third line, the chair balances it on the left).
+- The pick issue and e-mail say plainly: do not reply to the e-mail; the choice is read only from a GitHub comment.
