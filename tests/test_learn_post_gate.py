@@ -246,6 +246,76 @@ class EmailAndPublishTests(unittest.TestCase):
         self.assertFalse(gate.save_analysis(None))
 
 
+class SecondCheckTests(unittest.TestCase):
+    def data(self):
+        return {"photo_id": "p1", "title": "טחנה", "composition_rule": "symmetry", "composition_html": "<p><strong>סימטריה:</strong> טקסט.</p>", "thumbnail": "/photos/thumb/p1.webp", "tags": []}
+
+    def centre(self):
+        return gate.measure_subject(wall_with_block(0.40, 0.60))
+
+    def test_a_contradicted_claim_or_an_unfitting_rule_blocks_and_is_explained(self):
+        verification = {"claims": [
+            {"claim": "כמעט במרכז", "verdict": "supported", "reason": "56%"},
+            {"claim": "משתקפת בשלמות", "verdict": "contradicted", "reason": "רוב החלק התחתון קני סוף"},
+            {"claim": "אור דרמטי", "verdict": "uncertain", "reason": "לא ברור"},
+        ], "rule_fits": False, "rule_reason": "השמיים שולטים", "suggested_rule": "negative_space"}
+        draft = gate.make_draft(self.data(), {}, None, self.centre(), verification)
+        self.assertFalse(draft["publishable"])
+        self.assertTrue(any("משתקפת בשלמות" in p for p in draft["problems"]))
+        self.assertTrue(any("does not fit" in p and "negative_space" in p for p in draft["problems"]))
+        self.assertTrue(any("אור דרמטי" in n for n in draft["notes"]))
+        self.assertEqual(len(draft["second_check"]), 3)
+
+    def test_all_supported_and_a_fitting_rule_passes(self):
+        verification = {"claims": [{"claim": "סימטרי", "verdict": "supported", "reason": "r"}], "rule_fits": True}
+        draft = gate.make_draft(self.data(), {}, None, self.centre(), verification)
+        self.assertTrue(draft["publishable"])
+
+    def test_a_second_check_that_could_not_run_fails_closed(self):
+        for verification in ({"error": "HTTP 502 CLAUDE_VERIFY_FAILED"}, {"claims": []}, "garbage"):
+            draft = gate.make_draft(self.data(), {}, None, self.centre(), verification)
+            self.assertFalse(draft["publishable"], verification)
+            self.assertTrue(any("could not run" in p for p in draft["problems"]))
+
+    def test_the_mail_lists_every_claim_with_its_verdict(self):
+        verification = {"claims": [{"claim": "משתקפת בשלמות", "verdict": "contradicted", "reason": "קני סוף"}], "rule_fits": True}
+        draft = gate.make_draft(self.data(), {}, None, self.centre(), verification)
+        draft.update({"facebook": "f", "instagram": "i"})
+        subject, html = gate.build_approval_email(draft, "https://github.com/o/r/actions/runs/3")
+        self.assertIn("✖ משתקפת בשלמות", html)
+        self.assertIn("בדיקה שנייה", html)
+
+    def test_run_second_check_never_raises_and_reports_errors(self):
+        with mock.patch.dict(os.environ, {"ADMIN_TOKEN": "t"}), mock.patch("requests.post", side_effect=OSError("down")):
+            self.assertEqual(gate.run_second_check({"photo_id": "p1"}), {"error": "request failed"})
+        bad = mock.Mock(ok=False, status_code=502)
+        bad.json.return_value = {"error": "VERIFY_PARSE_FAILED"}
+        with mock.patch.dict(os.environ, {"ADMIN_TOKEN": "t"}), mock.patch("requests.post", return_value=bad) as post:
+            self.assertEqual(gate.run_second_check({"photo_id": "p1", "composition_rule": "symmetry", "composition_html": "h", "extra": 1}), {"error": "HTTP 502 VERIFY_PARSE_FAILED"})
+        self.assertEqual(post.call_args.kwargs["json"], {"photo_id": "p1", "composition_rule": "symmetry", "composition_html": "h"})
+        self.assertTrue(post.call_args.args[0].endswith("/api/analyses/verify"))
+
+
+class PagePreviewTests(unittest.TestCase):
+    def test_the_mail_previews_the_page_and_says_the_link_is_404_until_approval(self):
+        draft = {"title": "טחנה", "image_url": "https://www.amitphotos.com/photos/thumb/p1.webp", "facebook": "f", "instagram": "i",
+                 "learn_url": "https://amitphotos.com/learn/p1", "problems": [], "notes": [], "publishable": True,
+                 "analysis": {"composition_rule": "rule_of_thirds", "composition_html": "<p><strong>חוק השליש:</strong> הטחנה בצד ימין.</p><p><strong>אור:</strong> שמיים <b>סוערים</b>.</p>",
+                              "camera_analysis": {"aperture": {"value": "f/22"}, "iso": {"value": "90"}}, "tags": ["נוף", "<script>"]}}
+        subject, html = gate.build_approval_email(draft, "https://github.com/o/r/actions/runs/4")
+        self.assertIn("תצוגה מקדימה של עמוד הניתוח", html)
+        self.assertIn("מחזירה 404, וזה צפוי", html)
+        self.assertIn("חוק השליש", html)
+        self.assertIn("הטחנה בצד ימין.", html)
+        self.assertIn("<b>צמצם:</b> f/22", html)
+        self.assertIn("&lt;script&gt;", html)
+        self.assertNotIn("<script>", html)
+        self.assertNotIn('<a href="https://amitphotos.com/learn/p1"', html, "no clickable link to a page that does not exist yet")
+
+    def test_without_an_analysis_the_preview_says_so(self):
+        self.assertIn("אין תצוגה מקדימה", gate.page_preview_html({}))
+
+
 class ServerErrorTextTests(unittest.TestCase):
     def test_the_server_error_code_is_shown_shortened_and_on_one_line(self):
         response = mock.Mock()

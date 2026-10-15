@@ -270,11 +270,40 @@ def esc(text):
     return (text or "").replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 
 
+CAMERA_LABELS = (("aperture", "צמצם"), ("shutter", "מהירות תריס"), ("iso", "ISO"), ("focal", "מרחק מוקד"))
+
+
+def page_preview_html(analysis):
+    """What the /learn page will show, as plain escaped text (the page itself does not exist before approval)."""
+    if not analysis:
+        return "<p>אין תצוגה מקדימה.</p>"
+    rule = RULE_LABELS.get(analysis.get("composition_rule", ""), analysis.get("composition_rule", ""))
+    paragraphs = [strip_html(p) for p in re.split(r"</p>", analysis.get("composition_html", "")) if strip_html(p)]
+    camera = analysis.get("camera_analysis") or {}
+    camera_rows = "".join(
+        f"<li><b>{label}:</b> {esc(str((camera.get(key) or {}).get('value', '')))}</li>" for key, label in CAMERA_LABELS if camera.get(key)
+    )
+    tags = " · ".join(esc(t) for t in analysis.get("tags") or [])
+    body = "".join(f"<p>{esc(p)}</p>" for p in paragraphs)
+    return (
+        f'<div style="border:1px solid #ddd;border-radius:8px;padding:12px">'
+        f"<p><b>חוק הקומפוזיציה:</b> {esc(rule)}</p>{body}"
+        + (f"<p><b>הגדרות מצלמה:</b></p><ul>{camera_rows}</ul>" if camera_rows else "")
+        + (f"<p><b>תגיות:</b> {tags}</p>" if tags else "")
+        + "</div>"
+    )
+
+
 def build_approval_email(draft, run_url):
     ready = draft["publishable"]
     subject = ("אישור פרסום: " if ready else "נדרש תיקון, לא מפרסם: ") + draft["title"]
     problems = "".join(f"<li>{esc(p)}</li>" for p in draft["problems"]) or "<li>לא נמצאו סתירות</li>"
     notes = "".join(f"<li>{esc(n)}</li>" for n in draft["notes"])
+    preview = page_preview_html(draft.get("analysis") or {})
+    marks = {"supported": "✔", "contradicted": "✖", "uncertain": "?"}
+    claims = "".join(
+        f"<li>{marks.get(c.get('verdict'), '?')} {esc(c.get('claim', ''))} — {esc(c.get('reason', ''))}</li>" for c in draft.get("second_check", [])
+    ) or "<li>לא רצה</li>"
     action = (
         f'<p><b>לאישור:</b> פתח את <a href="{esc(run_url)}">ההרצה ב-GitHub</a> ולחץ Review deployments ← social-approval ← Approve and deploy. '
         "בלי אישור שלך שום דבר לא מתפרסם.</p>"
@@ -287,10 +316,13 @@ def build_approval_email(draft, run_url):
 {action}
 <h3>בדיקות</h3><ul>{problems}</ul>
 <h4>הערות</h4><ul>{notes}</ul>
+<h4>בדיקה שנייה (כל טענה מול התמונה)</h4><ul>{claims}</ul>
 <p style="color:#555">הדף באתר ייווצר רק אחרי האישור, יחד עם הפוסטים.</p>
 <h3>פייסבוק</h3><pre style="white-space:pre-wrap;font-family:inherit">{esc(draft['facebook'])}</pre>
 <h3>אינסטגרם</h3><pre style="white-space:pre-wrap;font-family:inherit">{esc(draft['instagram'])}</pre>
-<p>עמוד הניתוח: <a href="{esc(draft['learn_url'])}">{esc(draft['learn_url'])}</a></p>
+<h3>תצוגה מקדימה של עמוד הניתוח</h3>
+<p style="color:#555">העמוד עדיין לא קיים באתר — הוא נוצר רק אחרי האישור. עד אז הכתובת {esc(draft['learn_url'])} מחזירה 404, וזה צפוי.</p>
+{preview}
 </div>"""
     return subject, html
 
@@ -320,7 +352,26 @@ def absolute(url):
     return f"https://www.amitphotos.com{url}" if url and url.startswith("/") else url
 
 
-def make_draft(data, camera_json, exif, measurement):
+def second_check_findings(verification, rule):
+    """Problems and notes from the separate sceptical pass (/api/analyses/verify). None = not run (unit tests)."""
+    if verification is None:
+        return [], []
+    if not isinstance(verification, dict) or verification.get("error") or not verification.get("claims"):
+        reason = verification.get("error") if isinstance(verification, dict) else "no answer"
+        return [f"second check could not run ({reason}): a human must review every claim"], []
+    problems, notes = [], []
+    for claim in verification["claims"]:
+        if claim.get("verdict") == "contradicted":
+            problems.append(f"claim contradicted by the picture: {claim.get('claim', '')} — {claim.get('reason', '')}")
+        elif claim.get("verdict") == "uncertain":
+            notes.append(f"uncertain claim: {claim.get('claim', '')} — {claim.get('reason', '')}")
+    if verification.get("rule_fits") is False:
+        suggested = verification.get("suggested_rule")
+        problems.append(f"rule '{rule}' does not fit the picture: {verification.get('rule_reason', '')}" + (f" (suggested: {suggested})" if suggested else ""))
+    return problems, notes
+
+
+def make_draft(data, camera_json, exif, measurement, verification=None):
     photo_id = data.get("photo_id", "")
     rule = data.get("composition_rule", "")
     text = strip_html(data.get("composition_html", ""))
@@ -333,6 +384,9 @@ def make_draft(data, camera_json, exif, measurement):
             (notes if item.startswith("no EXIF") else problems).append(item)
     elif not exif:
         notes.append("no EXIF: the caption carries no camera numbers")
+    check_problems, check_notes = second_check_findings(verification, rule)
+    problems += check_problems
+    notes += check_notes
     soft = [p for p in problems if "could not be measured" in p or "not confident" in p]
     hard = [p for p in problems if p not in soft]
     notes += soft
@@ -367,8 +421,27 @@ def make_draft(data, camera_json, exif, measurement):
         "problems": hard,
         "notes": notes,
         "measurement": measurement,
+        "second_check": (verification or {}).get("claims", []) if isinstance(verification, dict) else [],
         "publishable": not hard and bool(data.get("thumbnail") or data.get("url")),
     }
+
+
+def run_second_check(analysis):
+    """Asks the site for the separate sceptical pass. Returns its JSON or {"error": ...}; never raises."""
+    import requests
+
+    token = os.environ.get("ADMIN_TOKEN", "")
+    payload = {k: analysis.get(k) for k in ("photo_id", "composition_rule", "composition_html")}
+    try:
+        response = requests.post(f"{SITE_URL}/api/analyses/verify", headers={"X-Admin-Password": token}, json=payload, timeout=120)
+    except Exception:
+        return {"error": "request failed"}
+    if not response.ok:
+        return {"error": f"HTTP {response.status_code} {server_error_text(response)}".strip()}
+    try:
+        return response.json()
+    except ValueError:
+        return {"error": "invalid JSON"}
 
 
 def server_error_text(response):
@@ -411,7 +484,8 @@ def prepare(out_path="draft.json"):
         print("❌ the server did not honour dry_run: refusing to continue (the page may already be public)")
         sys.exit(1)
     camera = data.get("camera_analysis") or {}
-    draft = make_draft(data, camera, exif, measurement)
+    verification = run_second_check(data)
+    draft = make_draft(data, camera, exif, measurement, verification)
     draft["notes"].append("nothing is saved on the site yet: the /learn page and the posts go live only after your approval")
     with open(out_path, "w", encoding="utf-8") as handle:
         json.dump(draft, handle, ensure_ascii=False, indent=1)

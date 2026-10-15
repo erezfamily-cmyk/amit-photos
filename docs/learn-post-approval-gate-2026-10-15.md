@@ -25,3 +25,10 @@ A manual run with `mode = draft-only` prepares the draft and sends the e-mail bu
 - The prompt also asks for composition claims to come only from what is visible in the picture.
 - The gate prints the server's error code/message (shortened, never a secret) when generation fails, so a failure like the HTTP 502 of 15.10 can be diagnosed.
 - Analyses that already exist keep their old (possibly invented) values until they are regenerated or corrected through `/api/analyses/save`.
+
+## Second check and page preview (fourth PR)
+- `POST /api/analyses/verify` (admin only, saves nothing): a separate, sceptical pass sends the picture and the analysis text to the model and gets back every factual claim judged `supported` / `contradicted` / `uncertain`, plus whether the chosen rule fits. Without an image it refuses instead of judging blind.
+- The gate blocks the draft on any contradicted claim or an unfitting rule, lists uncertain claims as notes, and fails closed if the second check could not run.
+- The approval e-mail now lists every claim with its verdict and shows a preview of the /learn page (rule, text, camera values, tags). The page address is shown as text, with the note that it returns 404 until the approval (the page is created only then); it is no longer a clickable link.
+- Example that motivated it (15.10): the windmill draft passed the first checks but said the windmill "reflects perfectly in the canal" and the horizon is a symmetry axis, while most of the lower frame is reeds and grass.
+- Cost: one more model call per analysis (the workflow runs weekly).
