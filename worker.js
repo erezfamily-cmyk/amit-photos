@@ -4462,7 +4462,7 @@ ${EXIF_KEYS.map(k => `- ${EXIF_LABELS_HE[k]}: ${exif[k] || UNKNOWN_EXIF_VALUE}`)
     },
     body: JSON.stringify({
       model: 'claude-sonnet-4-6',
-      max_tokens: 1500,
+      max_tokens: 4096,
       messages: [{
         role: 'user',
         content: [
@@ -4516,6 +4516,10 @@ ${exifInstruction}
     analysis = JSON.parse(raw.replace(/```json\n?|\n?```/g, ''));
   } catch (e) {
     return jsonRes({ error: 'Failed to parse Claude response: ' + String(e) }, 502, request);
+  }
+
+  if (typeof analysis.composition_html !== 'string' || analysis.composition_html.trim().length < 20) {
+    return jsonRes({ error: 'ANALYSIS_INCOMPLETE', detail: 'composition_html missing or too short' }, 502, request);
   }
 
   // The stored camera values are always the real EXIF (or "unknown"), whatever the model wrote.
@@ -4627,6 +4631,10 @@ async function anthropicFetch(url, init, tool) {
   }
   if (!res.ok || !tool) return res;
   const data = await res.json().catch(() => null);
+  // An answer cut off by the token limit is incomplete: report it instead of using a half-filled object.
+  if (data?.stop_reason === 'max_tokens') {
+    return new Response(JSON.stringify({ error: 'max_tokens' }), { status: 502, headers: { 'content-type': 'application/json' } });
+  }
   const use = (data?.content || []).find(c => c && c.type === 'tool_use' && c.name === tool.name);
   const text = use ? JSON.stringify(normalizeToolInput(use.input, tool.input_schema)) : ((data?.content || []).find(c => c && typeof c.text === 'string')?.text ?? '');
   return new Response(JSON.stringify({ ...(data || {}), content: [{ type: 'text', text }] }), { status: res.status, headers: { 'content-type': 'application/json' } });
@@ -4779,7 +4787,7 @@ async function handleAnalysesVerify(request, env) {
   const res = await anthropicFetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: { 'x-api-key': env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
-    body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 1500, messages: [{ role: 'user', content: [{ type: 'image', source: image }, { type: 'text', text: prompt }] }] }),
+    body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 3000, messages: [{ role: 'user', content: [{ type: 'image', source: image }, { type: 'text', text: prompt }] }] }),
   }, TOOL_VERIFY);
   if (!res.ok) return jsonRes({ error: 'CLAUDE_VERIFY_FAILED', status: res.status }, 502, request);
   let parsed;
@@ -4848,7 +4856,7 @@ async function handleAnalysesRevise(request, env) {
   const res = await anthropicFetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: { 'x-api-key': env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
-    body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 1500, messages: [{ role: 'user', content: [{ type: 'image', source: image }, { type: 'text', text: prompt }] }] }),
+    body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 4096, messages: [{ role: 'user', content: [{ type: 'image', source: image }, { type: 'text', text: prompt }] }] }),
   }, TOOL_REVISE);
   if (!res.ok) return jsonRes({ error: 'CLAUDE_REVISE_FAILED', status: res.status }, 502, request);
   let revised;
@@ -4910,7 +4918,7 @@ async function handleAnalysesCandidates(request, env) {
       const res = await anthropicFetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
         headers: { 'x-api-key': env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
-        body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 300, messages: [{ role: 'user', content: [{ type: 'image', source: image }, { type: 'text', text: prompt }] }] }),
+        body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 600, messages: [{ role: 'user', content: [{ type: 'image', source: image }, { type: 'text', text: prompt }] }] }),
       }, TOOL_SCREEN);
       if (!res.ok) continue;
       const raw = ((await res.json()).content?.[0]?.text || '').trim();
