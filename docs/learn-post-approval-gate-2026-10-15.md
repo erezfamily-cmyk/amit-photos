@@ -61,3 +61,7 @@ A manual run with `mode = draft-only` prepares the draft and sends the e-mail bu
 - Owner's decision (15.10.2026), after the green door run: the rewrite had replaced the owner's rule (rule of thirds) with "negative space" because the second check suggested it.
 - When the owner fixes the rule (pick comment or manual run with photo + rule), it is locked: the repair round keeps it (`lock_rule` in `/api/analyses/revise`, enforced on the site), and a second-check disagreement about the rule is a note in the e-mail, not a problem.
 - Drafts with problems are no longer stopped before the owner: they wait for approval like clean ones; the e-mail subject starts with "⚠" and the problems are shown in red. Not approving means nothing is published; approving publishes as is (the page can then be edited in the admin). Only a draft without content (no text or no image) cannot be approved.
+
+## Token limit (tenth PR)
+- The green-door run after #171 produced an empty `composition_html` and empty tags: Hebrew text uses many tokens and the forced-tool answer was cut off at 1500 tokens, so the second check refused it (`HTML_LENGTH`) and the draft had nothing to approve.
+- Limits raised for the learn calls only: analysis and rewrite 4096, second check 3000, screening 600. An answer that stops at the token limit is now reported as an error instead of being used half-filled, and an analysis without text is refused (`ANALYSIS_INCOMPLETE`).

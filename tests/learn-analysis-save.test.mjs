@@ -554,3 +554,37 @@ test('revise with lock_rule keeps the owner rule even if the model answers anoth
     assert.ok(!prompt.includes('ההמלצה היא negative_space'), 'the suggestion to change the rule is not passed on');
   } finally { net.restore(); }
 });
+
+test('an answer cut off by the token limit is reported, and an analysis without text is never returned', async () => {
+  let env = setup().env;
+  const original = globalThis.fetch;
+  globalThis.fetch = async (url, options = {}) => String(url).startsWith('https://api.anthropic.com/')
+    ? Response.json({ stop_reason: 'max_tokens', content: [{ type: 'tool_use', name: JSON.parse(options.body).tool_choice.name, input: { composition_rule: 'framing' } }] })
+    : new Response('nf', { status: 404 });
+  try {
+    const res = await call(env, '/api/analyses/generate', { photo_id: PHOTO, dry_run: true });
+    assert.equal(res.status, 502);
+    assert.match((await res.json()).error, /Claude API error \(analysis\) 502/);
+  } finally { globalThis.fetch = original; }
+  env = setup().env;
+  const net = fakeToolClaude([{ ...toolAnalysis, composition_html: '' }]);
+  try {
+    const res = await call(env, '/api/analyses/generate', { photo_id: PHOTO, dry_run: true });
+    assert.equal(res.status, 502);
+    assert.equal((await res.json()).error, 'ANALYSIS_INCOMPLETE');
+  } finally { net.restore(); }
+});
+
+test('the learn calls ask for enough tokens for Hebrew text', async () => {
+  const { sqlite, env } = setup();
+  addPhotos(sqlite, 1);
+  const net = fakeToolClaude([toolAnalysis, { claims: [{ claim: 'x', verdict: 'supported', reason: 'r' }], rule_fits: true, rule_reason: 'r' }, goodRevision, { rule: null, clarity: 0, reason: 'r' }]);
+  try {
+    await call(env, '/api/analyses/generate', { photo_id: PHOTO, dry_run: true });
+    await call(env, '/api/analyses/verify', verifyBody());
+    await call(env, '/api/analyses/revise', reviseBody());
+    await call(env, '/api/analyses/candidates', { count: 1, pool: 1 });
+    const byTool = Object.fromEntries(net.seen.map(b => [b.tool_choice.name, b.max_tokens]));
+    assert.ok(byTool.photo_analysis >= 4000 && byTool.revised_analysis >= 4000 && byTool.claim_check >= 3000, JSON.stringify(byTool));
+  } finally { net.restore(); }
+});
