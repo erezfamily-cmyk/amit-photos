@@ -1,0 +1,27 @@
+name: Learn analysis save CI
+
+on:
+  pull_request:
+    paths:
+      - 'worker.js'
+      - 'tests/learn-analysis-save.test.mjs'
+      - '.github/workflows/learn-analysis-save-ci.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'tests/learn-analysis-save.test.mjs'
+      - '.github/workflows/learn-analysis-save-ci.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  learn-analysis-save:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Learn analysis dry run and save tests
+        run: node --test tests/learn-analysis-save.test.mjs

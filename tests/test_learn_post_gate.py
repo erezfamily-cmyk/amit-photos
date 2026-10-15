@@ -203,15 +203,47 @@ class EmailAndPublishTests(unittest.TestCase):
             fb.assert_not_called()
             ig.assert_not_called()
 
-    def test_publish_posts_an_approved_draft_to_both_networks(self):
+    def test_publish_saves_the_approved_analysis_first_and_then_posts_to_both_networks(self):
+        order = []
+        with tempfile.TemporaryDirectory() as folder:
+            path = os.path.join(folder, "draft.json")
+            draft = self.draft(True)
+            draft["analysis"] = {"photo_id": "p1", "composition_rule": "rule_of_thirds"}
+            with open(path, "w", encoding="utf-8") as handle:
+                json.dump(draft, handle)
+            with mock.patch.object(gate, "save_analysis", side_effect=lambda a: order.append("save") or True) as save, \
+                    mock.patch.object(gate, "post_to_facebook", side_effect=lambda *a: order.append("fb") or True) as fb, \
+                    mock.patch.object(gate, "post_to_instagram", side_effect=lambda *a: order.append("ig") or True) as ig:
+                gate.publish(path)
+            save.assert_called_once_with({"photo_id": "p1", "composition_rule": "rule_of_thirds"})
+            fb.assert_called_once_with("https://www.amitphotos.com/photos/thumb/p1.webp", "fb <b>text</b>")
+            ig.assert_called_once_with("https://www.amitphotos.com/photos/thumb/p1.webp", "ig text")
+        self.assertEqual(order, ["save", "fb", "ig"])
+
+    def test_if_the_analysis_cannot_be_saved_nothing_is_posted(self):
         with tempfile.TemporaryDirectory() as folder:
             path = os.path.join(folder, "draft.json")
             with open(path, "w", encoding="utf-8") as handle:
                 json.dump(self.draft(True), handle)
-            with mock.patch.object(gate, "post_to_facebook", return_value=True) as fb, mock.patch.object(gate, "post_to_instagram", return_value=True) as ig:
-                gate.publish(path)
-            fb.assert_called_once_with("https://www.amitphotos.com/photos/thumb/p1.webp", "fb <b>text</b>")
-            ig.assert_called_once_with("https://www.amitphotos.com/photos/thumb/p1.webp", "ig text")
+            with mock.patch.object(gate, "save_analysis", return_value=False), \
+                    mock.patch.object(gate, "post_to_facebook") as fb, mock.patch.object(gate, "post_to_instagram") as ig:
+                with self.assertRaises(SystemExit):
+                    gate.publish(path)
+            fb.assert_not_called()
+            ig.assert_not_called()
+
+    def test_save_analysis_posts_the_payload_with_the_admin_token_and_never_prints_it(self):
+        response = mock.Mock(ok=True, status_code=200)
+        with mock.patch.dict(os.environ, {"ADMIN_TOKEN": "admin_secret_value"}), mock.patch("requests.post", return_value=response) as post, \
+                mock.patch("builtins.print") as printed:
+            self.assertTrue(gate.save_analysis({"photo_id": "p1"}))
+        self.assertTrue(post.call_args.args[0].endswith("/api/analyses/save"))
+        self.assertEqual(post.call_args.kwargs["headers"], {"X-Admin-Password": "admin_secret_value"})
+        self.assertEqual(post.call_args.kwargs["json"], {"photo_id": "p1"})
+        self.assertNotIn("admin_secret_value", " ".join(str(c) for c in printed.call_args_list))
+        with mock.patch.dict(os.environ, {}, clear=True):
+            self.assertFalse(gate.save_analysis({"photo_id": "p1"}))
+        self.assertFalse(gate.save_analysis(None))
 
 
 class WorkflowWiringTests(unittest.TestCase):
@@ -225,6 +257,7 @@ class WorkflowWiringTests(unittest.TestCase):
         prepare = text.split("publish:")[0]
         self.assertNotIn("FACEBOOK_PAGE_TOKEN", prepare)
         self.assertNotIn("INSTAGRAM_PAGE_TOKEN", prepare)
+        self.assertIn("dry run", text)
         self.assertIn("needs.prepare.outputs.publishable == 'true'", text)
 
 
