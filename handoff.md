@@ -8,6 +8,8 @@
 
 ## PREVIEW READ-ONLY CHECK — Sandbox credential status still unresolved (15.10.2026, 16:32–16:34 Israel)
 
+> **RESOLVED (15.10.2026, later the same day):** the authenticated read-only readiness check was run with the local Preview admin password: `READY`, `credentialsPresent = true`, `webhookIdPresent = true`, `oauth = true`, webhook found and matching this site, no missing events. The Sandbox secrets ARE present on the Preview. The statement in the #155 PR description that the Preview has no PayPal secrets is STALE (written before the 13.10 secret uploads) and should be corrected when the description is next edited. See the entry "PREVIEW SANDBOX READINESS RE-CHECK".
+
 - Live read-only check of the named branch Preview at `feature-digital-checkout-preparation-amit-photos-paypal-sandbox.erez-family.workers.dev`:
   - `GET /api/payments-status` returned `{"enabled":false,"digitalEnabled":false}`.
   - Empty JSON `POST /api/paypal/create-order` and `POST /api/paypal/capture-order` each returned `503 PAYMENTS_TEMPORARILY_DISABLED`; no order was created.
@@ -107,6 +109,12 @@ Payment flags: **both `false` everywhere** (production, main Sandbox Worker, PR 
 - Re-check all four secret NAMES, Sandbox authentication, final deployed code/bindings and BOTH flags false with the connected Claude session after admin upload. No activation approval is given by saving these credentials; production, the main-Sandbox webhook, `prep/...` and Live settings remain outside this setup.
 
 ## Acquisition and caption quality review — 12.10.2026
+
+### PREVIEW SANDBOX READINESS RE-CHECK (15.10.2026; read-only; flags `false`; no order, no purchase, no mail, no production)
+
+- **What was run:** `GET /api/admin/paypal/live-readiness` on the Preview (tag `13931b4`), authenticated with the Preview admin password read from the local file `~/.sbx-admin-pw` on the owner's computer (the owner asked for "the local admin password"). The password was never printed or sent anywhere except the Preview's header. The route makes only read-only PayPal **Sandbox** calls (an OAuth token and the webhook lookup); it returns booleans and codes, never secret values. Note: the local file DOES work against this Preview (the earlier entry that doubted it is superseded).
+- **Result: HTTP 200, `status = READY`, `environment = sandbox`, `reasons = []`.** `configValid`, `credentialsPresent` (client id + secret) and `webhookIdPresent` all `true`; `oauth = true` (PayPal Sandbox accepted the stored credentials); `webhookFound = true`, its path is `/api/paypal/webhook` and `matchesThisSite = true`; `webhookEvents.missing = []` and the order-approved event is subscribed. `paymentFlags`: payments `false`, digital `false`. `downloadEmail`: disabled, no key, no test recipient. `paymentAlerts`: disabled, both channels off, no problems. `checkoutSwitch`: state none, effective mode `blocked`, reason `SWITCH_ABSENT`.
+- **Meaning:** the four Sandbox secrets named earlier (client id, client secret, webhook id, admin password) are present and valid for Sandbox, and the webhook is registered for this Preview. **This is Sandbox evidence only — not evidence for PayPal Live** (no Live app, webhook or secrets exist). Nothing was changed; the observation of `payments-status` while the switch is `open` is still NOT done.
 
 ### SYNC OF #155 WITH main (15.10.2026, remote, via GitHub; payment flags `false`; nothing merged or deployed; PR stays a draft)
 
