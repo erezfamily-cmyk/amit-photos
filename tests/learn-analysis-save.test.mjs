@@ -541,3 +541,16 @@ test('tool answers whose array fields come back as JSON strings are parsed back 
     assert.deepEqual(await res.json(), { error: 'VERIFY_EMPTY', detail: 'claims was an empty array' });
   } finally { net.restore(); }
 });
+
+test('revise with lock_rule keeps the owner rule even if the model answers another one, and says so in the prompt', async () => {
+  const { env } = setup();
+  const net = fakeVerify({ ...goodRevision, composition_rule: 'negative_space' });
+  try {
+    const res = await call(env, '/api/analyses/revise', reviseBody({ composition_rule: 'rule_of_thirds', lock_rule: true, rule_fits: false, suggested_rule: 'negative_space' }));
+    assert.equal(res.status, 200);
+    assert.equal((await res.json()).composition_rule, 'rule_of_thirds');
+    const prompt = net.seen[0].messages[0].content.find(c => c.type === 'text').text;
+    assert.ok(prompt.includes('אסור לשנות אותו'));
+    assert.ok(!prompt.includes('ההמלצה היא negative_space'), 'the suggestion to change the rule is not passed on');
+  } finally { net.restore(); }
+});
