@@ -1,8 +1,20 @@
 # Handoff — amit-photos
 
 > מסמך כניסה לכל מי (אדם או סוכן AI) שנכנס לפרויקט הזה בפעם הראשונה, או חוזר אחרי הפסקה.
-> עודכן: **13.10.2026**. זה מסמך חי — לעדכן אותו כשקורה משהו מהותי, לא לתת לו להתיישן.
+> עודכן: **15.10.2026**. זה מסמך חי — לעדכן אותו כשקורה משהו מהותי, לא לתת לו להתיישן.
 > לא מחליף את `CLAUDE.md` (כללי ארכיטקטורה מחייבים) — משלים אותו עם "מה המצב עכשיו ולמה".
+
+---
+
+## PREVIEW READ-ONLY CHECK — Sandbox credential status still unresolved (15.10.2026, 16:32–16:34 Israel)
+
+- Live read-only check of the named branch Preview at `feature-digital-checkout-preparation-amit-photos-paypal-sandbox.erez-family.workers.dev`:
+  - `GET /api/payments-status` returned `{"enabled":false,"digitalEnabled":false}`.
+  - Empty JSON `POST /api/paypal/create-order` and `POST /api/paypal/capture-order` each returned `503 PAYMENTS_TEMPORARILY_DISABLED`; no order was created.
+  - Unauthenticated `GET /api/admin/paypal/sandbox-status` returned `401`.
+- Therefore the Preview is currently payment-blocked. **Current presence/readiness of the PayPal Sandbox secrets was not verified**: the latest PR #155 description says they are absent, while the earlier owner-reported secret uploads and Sandbox tests below say they were set and exercised. The 401 explains why public read-only checks cannot resolve this discrepancy.
+- Next step: owner runs the authenticated, read-only Sandbox status/readiness check locally using the Preview admin password stored in Google Password Manager under `ADMIN_PASSWORD`; report only readiness and secret-presence booleans, never secret values. Do not set payment flags or make a new purchase as part of that check.
+- This check did not repeat the previously recorded Sandbox purchase/download test, did not change secrets or settings, and did not touch production, merge, or deploy anything.
 
 ---
 
