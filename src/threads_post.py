@@ -15,6 +15,9 @@ import requests
 import anthropic
 from pathlib import Path
 from campaign_urls import build_campaign_url
+from social_caption_quality import compose_caption, generated_body, photo_fallback, require_caption
+from social_optimization import guidance_for_prompt
+from social_content_strategy import EDITORIAL_RULES_HE, angle_instruction_he, editorial_angle
 
 # ===== הגדרות =====
 POSTED_FILE = Path(__file__).parent.parent / "data" / "threads_posted.json"
@@ -26,9 +29,9 @@ ACCESS_TOKEN      = os.environ.get("THREADS_ACCESS_TOKEN", "")
 ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "").strip()
 ADMIN_TOKEN       = os.environ.get("ADMIN_TOKEN", "")
 
-# ===== Hashtag pools (Threads — מינימלי, 3-5) =====
+# ===== Hashtag pools (Threads — הכיתוב הסופי מוגבל ל-2) =====
 HASHTAG_POOLS = {
-    "default":  ["#צילום #photography #ישראל", "#photographer #art #digitalart", "#photooftheday #israel #visualart"],
+    "default":  ["#צילום #photography #ישראל", "#photographer #art #צילום_אמנותי", "#photooftheday #israel #visualart"],
     "טבע":      ["#טבע #nature #naturephotography", "#wildlife #ישראל_יפה #naturelover", "#macro #outdoors #הטבע_הישראלי"],
     "פורטרט":   ["#פורטרט #portrait #portraitphotography", "#people #humanportrait #צילום_אנשים"],
     "עירוני":   ["#עיר #urban #streetphotography", "#architecture #cityscape #israel"],
@@ -77,7 +80,7 @@ def pick_photo(photos, posted_ids):
 
 def get_hashtags(category):
     pool = HASHTAG_POOLS.get(category, HASHTAG_POOLS["default"])
-    return random.choice(pool)
+    return f"#amitphotos {random.choice(pool)}"
 
 
 def fetch_image_as_base64(url, max_bytes=3_750_000):
@@ -151,11 +154,15 @@ def generate_caption(photo):
     exif_line = " · ".join(exif_parts) if exif_parts else ""
 
     hashtags = get_hashtags(category)
+    angle = editorial_angle(photo_id)
 
-    system_prompt = """אתה עמית, צלם ישראלי, כותב בגוף ראשון על התמונות שלך ל-Threads.
+    system_prompt = f"""אתה עמית, צלם ישראלי, כותב בגוף ראשון על התמונות שלך ל-Threads.
 קצר ותכליתי — Threads הוא שיחה, לא נאום. משפט-שניים מקסימום.
 כשיש מונח טכני — מסביר אותו בביטוי פשוט בסוגריים.
-כתוב בעברית בלבד. ללא hashtags."""
+כתוב בעברית בלבד. ללא hashtags — הם יתווספו בנפרד.
+
+{EDITORIAL_RULES_HE}
+{guidance_for_prompt('threads', 'post')}"""
 
     user_content = image_content + [{"type": "text", "text": f"""כתוב פוסט Threads קצר בגוף ראשון עבור התמונה הזו.
 
@@ -163,13 +170,9 @@ def generate_caption(photo):
 {meta_text}
 הגדרות: {exif_line or '(לא זמין)'}
 
-מבנה:
-1. משפט אחד קצר בגוף ראשון: מה צילמתי ומה הטכניקה שבחרתי
-2. אם יש הגדרות — שורה קצרה עם הנתונים הטכניים + הסבר מינימלי (אחרת — דלג)
-3. שורה ריקה
-4. 🛍️ {buy_link}
+{angle_instruction_he(angle)}
 
-סה"כ עד 180 תווים לפני הקישור. פלט רק את הפוסט.
+סה"כ עד 180 תווים. בלי hashtags ובלי קישור; הם יתווספו בנפרד. פלט רק את הטקסט.
 """}]
 
     msg = client.messages.create(
@@ -178,8 +181,12 @@ def generate_caption(photo):
         system=system_prompt,
         messages=[{"role": "user", "content": user_content}],
     )
-    post_text = msg.content[0].text.strip()
-    return f"{post_text}\n\n{hashtags}"
+    fallback = photo_fallback(photo)
+    body = generated_body(msg, fallback)
+    return compose_caption(
+        body, f"לתמונה בגלריה:\n{buy_link}", hashtags, fallback,
+        max_chars=500, max_hashtags=2,
+    )
 
 
 def get_public_image_url(photo):
@@ -245,6 +252,7 @@ def _try_0x0(img_bytes):
 
 
 def post_to_threads(photo, text):
+    require_caption(text, max_chars=500)
     image_url = get_public_image_url(photo)
 
     # שלב 1: יצירת container

@@ -1,0 +1,363 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#10110f">
+  <title>לגלות את עולם הצילום של עמית ארז | Amit Photos</title>
+  <meta name="description" content="גלריית צילום, מדריכים לצלמים, מקומות מומלצים, סרטונים ואתגרי צילום — כל עולם Amit Photos במקום אחד.">
+  <link rel="canonical" href="https://amitphotos.com/campaign/">
+  <link rel="alternate" hreflang="he" href="https://amitphotos.com/campaign/">
+  <link rel="alternate" hreflang="en" href="https://amitphotos.com/campaign/?lang=en">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://amitphotos.com/campaign/">
+  <meta property="og:title" content="לגלות את עולם הצילום של עמית ארז">
+  <meta property="og:description" content="השראה, ידע ורעיונות לצילום — בגלריה ובמרחבי האתר.">
+  <meta property="og:image" content="https://amitphotos.com/campaign/media/hero-campaign-poster.jpg">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta property="og:locale" content="he_IL">
+  <meta property="og:locale:alternate" content="en_US">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="לגלות את עולם הצילום של עמית ארז">
+  <meta name="twitter:description" content="גלריית צילום, מדריכים, מקומות לצילום ועוד — כל עולם Amit Photos במקום אחד.">
+  <meta name="twitter:image" content="https://amitphotos.com/campaign/media/hero-campaign-poster.jpg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://amitphotos.com">
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/css/style.css?v=a233aa03">
+  <script src="/assets/js/analytics.js?v=f571a0c4" defer></script>
+  <style>
+    :root {
+      color-scheme: dark;
+      --campaign-bg: #0a0a0a;
+      --campaign-panel: #111111;
+      --campaign-text: #f0ede8;
+      --campaign-muted: #888888;
+      --campaign-gold: #c8a96e;
+      --campaign-line: #222222;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-width: 320px;
+      background: var(--campaign-bg);
+      color: var(--campaign-text);
+      font-family: Heebo, sans-serif;
+      line-height: 1.65;
+    }
+    a { color: inherit; }
+    a:focus-visible, button:focus-visible { outline: 3px solid var(--campaign-gold); outline-offset: 4px; }
+    .skip-link {
+      position: absolute; top: -5rem; right: 1rem; z-index: 10;
+      padding: .6rem 1rem; background: var(--campaign-gold); color: #111;
+    }
+    .skip-link:focus { top: 1rem; }
+    .wrap { width: min(1160px, calc(100% - 2.5rem)); margin-inline: auto; }
+    .site-header {
+      display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+      position: sticky; top: 0; z-index: 100; min-height: 64px;
+      border-bottom: 1px solid var(--campaign-line);
+      background: rgba(10, 10, 10, .95);
+      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    }
+    .brand { color: var(--campaign-gold); font: 700 1rem Syne, sans-serif; letter-spacing: .02em; text-decoration: none; }
+    .header-actions { display: flex; align-items: center; gap: 1.1rem; }
+    .header-link, .lang-button {
+      border: 0; background: transparent; color: var(--campaign-muted);
+      font: inherit; font-size: .9rem; text-decoration: none; cursor: pointer;
+    }
+    .header-link:hover, .lang-button:hover, .lang-button[aria-pressed="true"] { color: var(--campaign-gold); }
+    .hero {
+      display: grid; grid-template-columns: minmax(0, 1fr) minmax(340px, .95fr);
+      align-items: center; gap: clamp(2rem, 7vw, 6rem); padding-block: clamp(3.5rem, 8vw, 7rem) 5rem;
+    }
+    .eyebrow { color: var(--campaign-gold); font-size: .78rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
+    h1, h2, h3 { font-family: Syne, Heebo, sans-serif; }
+    h1 { max-width: 650px; margin: .8rem 0 1.2rem; font-size: clamp(2.4rem, 5vw, 4.4rem); line-height: 1.08; letter-spacing: -.045em; }
+    h1 .accent { color: var(--campaign-gold); }
+    .hero-copy > p:not(.eyebrow) { max-width: 590px; color: var(--campaign-muted); font-size: clamp(1.02rem, 1.5vw, 1.2rem); }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: .8rem; margin-top: 1.8rem; }
+    .button {
+      display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
+      min-height: 48px; padding: .65rem 1.2rem; border: 1px solid var(--campaign-gold);
+      border-radius: 3px; background: var(--campaign-gold); color: #181711;
+      font-weight: 700; text-decoration: none; transition: transform .2s ease, background .2s ease;
+    }
+    .button:hover { transform: translateY(-2px); background: #e3cb98; }
+    .button.secondary { background: transparent; color: var(--campaign-text); border-color: var(--campaign-line); }
+    .button.secondary:hover { border-color: var(--campaign-gold); }
+    .hero-art { position: relative; min-height: 500px; }
+    .hero-photo {
+      position: absolute; top: 0; right: 3%; width: min(100%, 281px);
+      aspect-ratio: 9 / 16; overflow: hidden;
+      border-radius: 3px; background: #292a25;
+      z-index: 2; box-shadow: 0 24px 70px rgba(0,0,0,.48);
+    }
+    .hero-photo video { display: block; width: 100%; height: 100%; object-fit: cover; }
+    .video-toggle {
+      position: absolute; z-index: 2; top: .75rem; right: .75rem;
+      padding: .45rem .7rem; border: 1px solid rgba(240,237,232,.5);
+      background: rgba(10,10,10,.78); color: var(--campaign-text);
+      font: inherit; font-size: .75rem; cursor: pointer;
+    }
+    .video-toggle:hover { border-color: var(--campaign-gold); color: var(--campaign-gold); }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+    .art-note {
+      position: absolute; z-index: 2; left: 0; bottom: 0; width: min(190px, 38%);
+      padding: 1.1rem 1.2rem; border: 1px solid rgba(213,183,121,.42);
+      background: #171814; box-shadow: 0 18px 50px rgba(0,0,0,.35);
+    }
+    .art-note strong { display: block; color: var(--campaign-gold); font: 700 1.8rem Syne, sans-serif; }
+    .art-note span { color: var(--campaign-muted); font-size: .85rem; }
+    .hero-mark { position: absolute; top: 1rem; left: 0; color: var(--campaign-gold); font: 600 .78rem Syne, sans-serif; writing-mode: vertical-rl; }
+    .intro { padding: 1.1rem 0 3.5rem; text-align: center; }
+    .intro h2 { margin: .3rem 0 .6rem; font-size: clamp(1.8rem, 3.3vw, 2.8rem); }
+    .intro p { max-width: 670px; margin: auto; color: var(--campaign-muted); }
+    .gallery-preview { padding: 0 0 5rem; }
+    .gallery-preview-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+    .gallery-preview figure { margin: 0; overflow: hidden; border: 1px solid var(--campaign-line); background: var(--campaign-panel); }
+    .gallery-preview img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; background: #292a25; }
+    .gallery-preview figcaption { padding: .7rem .9rem; color: var(--campaign-muted); font-size: .9rem; }
+    .share-section { margin: 0 auto 5rem; padding: 2rem; border: 1px solid var(--campaign-line); background: var(--campaign-panel); }
+    .share-inner { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; }
+    .share-inner h2 { margin: 0; font-size: 1.35rem; }
+    .share-inner p { margin: .25rem 0 0; color: var(--campaign-muted); }
+    .share-actions { display: flex; flex-wrap: wrap; gap: .65rem; }
+    .share-actions .button { min-height: 42px; padding: .45rem .9rem; font-size: .9rem; }
+    .areas { display: grid; grid-template-columns: repeat(12, 1fr); gap: 1rem; padding-bottom: 5.5rem; }
+    .area-card {
+      position: relative; display: flex; min-height: 225px; flex-direction: column; justify-content: space-between;
+      grid-column: span 4; overflow: hidden; padding: 1.5rem;
+      border: 1px solid var(--campaign-line); background: var(--campaign-panel);
+      text-decoration: none; transition: border-color .2s ease, transform .2s ease;
+    }
+    .area-card:hover { transform: translateY(-4px); border-color: rgba(213,183,121,.7); }
+    .area-card.featured {
+      min-height: 320px; grid-column: span 8; color: white;
+      background:
+        radial-gradient(ellipse at 20% 15%, rgba(200,169,110,.3), transparent 42%),
+        linear-gradient(135deg, #25241f 0%, #111 74%);
+    }
+    .area-card.featured::before {
+      position: absolute; top: -4.6rem; left: 2rem; content: "A";
+      color: rgba(200,169,110,.12); font: 800 22rem/.9 Syne, sans-serif;
+      pointer-events: none;
+    }
+    .area-top, .area-bottom { position: relative; z-index: 1; }
+    .area-index { color: var(--campaign-gold); font: 600 .8rem Syne, sans-serif; letter-spacing: .12em; }
+    .area-icon { display: grid; width: 42px; height: 42px; place-items: center; border: 1px solid rgba(213,183,121,.45); color: var(--campaign-gold); }
+    .area-icon svg { width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-width: 1.5; }
+    .area-card h3 { margin: 1.3rem 0 .35rem; font-size: 1.35rem; }
+    .area-card p { max-width: 390px; margin: 0; color: var(--campaign-muted); font-size: .94rem; }
+    .area-card.featured p { color: rgba(255,255,255,.8); }
+    .area-cta { display: inline-block; margin-top: 1rem; color: var(--campaign-gold); font-size: .88rem; font-weight: 700; }
+    .site-footer { border-top: 1px solid var(--campaign-line); }
+    .footer-inner { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; padding-block: 1.5rem; }
+    .footer-inner p { margin: 0; color: var(--campaign-muted); font-size: .86rem; }
+    .footer-links { display: flex; flex-wrap: wrap; gap: 1rem; }
+    .footer-links a { color: var(--campaign-muted); font-size: .86rem; text-decoration: none; }
+    .footer-links a:hover { color: var(--campaign-gold); }
+    [hidden] { display: none !important; }
+    @media (max-width: 800px) {
+      .hero { grid-template-columns: 1fr; gap: 2.5rem; padding-top: 3.5rem; }
+      .hero-art { min-height: 480px; }
+      .hero-photo { width: min(100%, 270px); }
+      .area-card { grid-column: span 6; }
+      .area-card.featured { grid-column: span 12; }
+    }
+    @media (max-width: 560px) {
+      .wrap { width: min(100% - 1.5rem, 1160px); }
+      .site-header { min-height: 64px; }
+      .header-actions { gap: .75rem; }
+      .header-link { font-size: .82rem; }
+      .hero { padding-block: 2.7rem 3.5rem; }
+      .hero-art { min-height: 390px; }
+      .hero-photo { width: min(57vw, 210px); }
+      .gallery-preview-grid { grid-template-columns: 1fr; gap: .75rem; }
+      .share-section { padding: 1.25rem; margin-bottom: 3.5rem; }
+      .share-inner { align-items: flex-start; flex-direction: column; }
+      .area-card, .area-card.featured { grid-column: span 12; min-height: 220px; }
+      .area-card.featured { min-height: 280px; }
+      .footer-inner { align-items: flex-start; flex-direction: column; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main" data-he="דלג לתוכן" data-en="Skip to content">דלג לתוכן</a>
+  <header class="site-header wrap">
+    <a class="brand" href="/" aria-label="Amit Photos — דף הבית">AMIT PHOTOS</a>
+    <div class="header-actions">
+      <a class="header-link" href="/#gallery" data-he="הגלריה" data-en="Gallery" data-analytics-event="campaign_area_click" data-analytics-label="gallery">הגלריה</a>
+      <button class="lang-button" type="button" id="language-toggle" aria-pressed="false">EN</button>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero wrap" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <p class="eyebrow" data-he="צילום • השראה • ידע" data-en="Photography • Inspiration • Learning">צילום • השראה • ידע</p>
+        <h1 id="hero-title"><span data-he="יש עולם שלם" data-en="A whole world">יש עולם שלם</span><br><span class="accent" data-he="לקרוא ולראות" data-en="to read and see">לקרוא ולראות</span></h1>
+        <p data-he="מוזמנים לגלות את Amit Photos: לקרוא מדריכים וטיפים לצילום, לצפות בסרטונים, ולשוטט בגלריה של עמית ארז. בחרו מה מסקרן אתכם והתחילו לגלות." data-en="Explore Amit Photos: read photography guides and tips, watch videos and browse Amit Erez’s gallery. Pick what interests you and start exploring.">מוזמנים לגלות את Amit Photos: לקרוא מדריכים וטיפים לצילום, לצפות בסרטונים, ולשוטט בגלריה של עמית ארז. בחרו מה מסקרן אתכם והתחילו לגלות.</p>
+        <div class="hero-actions">
+          <a class="button" href="/camera/" data-he="לקרוא מדריכי צילום ←" data-en="Read photography guides →" data-analytics-event="campaign_hero_click" data-analytics-label="camera">לקרוא מדריכי צילום ←</a>
+          <a class="button secondary" href="/videos/" data-he="לצפות בסרטונים" data-en="Watch videos" data-analytics-event="campaign_hero_click" data-analytics-label="videos">לצפות בסרטונים</a>
+          <a class="header-link" href="/?utm_source=campaign&amp;utm_medium=landing_page&amp;utm_campaign=discover_amitphotos#gallery" data-he="או לגלות את הגלריה ←" data-en="Or explore the gallery →" data-analytics-event="campaign_hero_click" data-analytics-label="gallery">או לגלות את הגלריה ←</a>
+        </div>
+      </div>
+      <div class="hero-art" aria-label="צילום מתוך גלריית עמית ארז">
+        <span class="hero-mark" aria-hidden="true">AMIT EREZ · FINE ART PHOTOGRAPHY</span>
+        <figure class="hero-photo">
+          <video id="hero-video" src="/campaign/media/hero-campaign.mp4" poster="/campaign/media/hero-campaign-poster.jpg" muted loop playsinline preload="metadata" aria-describedby="hero-video-description"></video>
+          <button class="video-toggle" id="hero-video-toggle" type="button" data-he="השהיית הסרטון" data-en="Pause video" aria-pressed="false">השהיית הסרטון</button>
+          <figcaption class="sr-only" id="hero-video-description" data-he="סרטון קמפיין קצר עם הכיתוב: היום נצלם עם עומק שדה." data-en="A short campaign video with the caption: Today we’ll shoot with depth of field.">סרטון קמפיין קצר עם הכיתוב: היום נצלם עם עומק שדה.</figcaption>
+        </figure>
+        <div class="art-note"><strong>01—08</strong><span data-he="מקומות לגלות בעולם הצילום" data-en="ways to explore photography">מקומות לגלות בעולם הצילום</span></div>
+      </div>
+    </section>
+
+    <section class="gallery-preview wrap" aria-labelledby="gallery-preview-title">
+      <div class="intro">
+        <p class="eyebrow" data-he="מהגלריה של עמית" data-en="From Amit’s gallery">מהגלריה של עמית</p>
+        <h2 id="gallery-preview-title" data-he="כמה רגעים מתוך התמונות שלי" data-en="A few moments from my photographs">כמה רגעים מתוך התמונות שלי</h2>
+        <p data-he="עוד צילומים, טבע ומקומות מחכים לכם בגלריה המלאה." data-en="More photographs, nature and places are waiting in the full gallery.">עוד צילומים, טבע ומקומות מחכים לכם בגלריה המלאה.</p>
+      </div>
+      <div class="gallery-preview-grid">
+        <figure><img src="/photos/1d8LFk1t2KZRu2o8VmgJxszQCFPbEW-lg.webp" alt="שדה רחב מלא פרחים צהובים ושביל בין עצים" loading="eager" fetchpriority="high" onerror="this.closest('figure').hidden=true"><figcaption data-he="שדה פרחים בשפע" data-en="A field full of flowers">שדה פרחים בשפע</figcaption></figure>
+        <figure><img src="/photos/1NmCLTIcIAIf7CEsak3J21NxRLMI28QIP.webp" alt="ברווז בטבע" loading="lazy" onerror="this.src='/assets/images/amit-portrait.jpg';this.onerror=null"><figcaption data-he="ברווז בטבע" data-en="A duck in nature">ברווז בטבע</figcaption></figure>
+      </div>
+    </section>
+
+    <section class="share-section wrap" aria-label="שיתוף דף הקמפיין">
+      <div class="share-inner">
+        <div><h2 data-he="אהבתם? שתפו את עולם הצילום" data-en="Enjoyed it? Share the photography world">אהבתם? שתפו את עולם הצילום</h2><p data-he="שלחו את הקישור לחברים או שתפו ברשתות." data-en="Send the link to friends or share it on social media.">שלחו את הקישור לחברים או שתפו ברשתות.</p></div>
+        <div class="share-actions">
+          <a class="button" href="https://wa.me/?text=%D7%92%D7%9C%D7%95%20%D7%90%D7%AA%20%D7%A2%D7%95%D7%9C%D7%9D%20%D7%94%D7%A6%D7%99%D7%9C%D7%95%D7%9D%20%D7%A9%D7%9C%20%D7%A2%D7%9E%D7%99%D7%AA%20%D7%90%D7%A8%D7%96%20https%3A%2F%2Famitphotos.com%2Fcampaign%2F" target="_blank" rel="noopener noreferrer" data-he="שיתוף ב־WhatsApp" data-en="Share on WhatsApp">שיתוף ב־WhatsApp</a>
+          <a class="button secondary" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Famitphotos.com%2Fcampaign%2F" target="_blank" rel="noopener noreferrer" data-he="שיתוף בפייסבוק" data-en="Share on Facebook">שיתוף בפייסבוק</a>
+          <a class="button secondary" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Famitphotos.com%2Fcampaign%2F" target="_blank" rel="noopener noreferrer" data-he="שיתוף ב־LinkedIn" data-en="Share on LinkedIn">שיתוף ב־LinkedIn</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="wrap" id="areas" aria-labelledby="areas-title">
+      <div class="intro">
+        <p class="eyebrow" data-he="יש הרבה מה לגלות" data-en="A lot to explore">יש הרבה מה לגלות</p>
+        <h2 id="areas-title" data-he="מה מעניין אותך היום?" data-en="What are you curious about today?">מה מעניין אותך היום?</h2>
+        <p data-he="בחרו את הדרך שלכם להיכנס לעולם הצילום — מתמונה אחת ועד רעיון חדש לצילום הבא." data-en="Choose your way into photography — from one image to a new idea for your next shoot.">בחרו את הדרך שלכם להיכנס לעולם הצילום — מתמונה אחת ועד רעיון חדש לצילום הבא.</p>
+      </div>
+
+      <div class="areas">
+        <a class="area-card featured" href="/?utm_source=campaign&amp;utm_medium=landing_page&amp;utm_campaign=discover_amitphotos#gallery" data-analytics-event="campaign_area_click" data-analytics-label="gallery">
+          <span class="area-top"><span class="area-index">01 / GALLERY</span></span>
+          <span class="area-bottom">
+            <h3 data-he="הגלריה — תמונות מכל העולם" data-en="The gallery — images from around the world">הגלריה — תמונות מכל העולם</h3>
+            <p data-he="טבע, נופים, מאקרו ורגעים יומיומיים — אוסף צילומים מקורי של עמית ארז." data-en="Nature, landscapes, macro and everyday moments — an original collection by Amit Erez.">טבע, נופים, מאקרו ורגעים יומיומיים — אוסף צילומים מקורי של עמית ארז.</p>
+            <span class="area-cta" data-he="לצפייה בגלריה ←" data-en="View the gallery →">לצפייה בגלריה ←</span>
+          </span>
+        </a>
+
+        <a class="area-card" href="/camera/" data-analytics-event="campaign_area_click" data-analytics-label="camera">
+          <span class="area-top"><span class="area-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 7h4l2-3h6l2 3h4a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2Z"/><circle cx="12" cy="13" r="4"/></svg></span></span>
+          <span class="area-bottom"><span class="area-index">02 / LEARN</span><h3 data-he="ללמוד לצלם" data-en="Learn photography">ללמוד לצלם</h3><p data-he="מדריכים ברורים על חשיפה, קומפוזיציה, עדשות, אור ועוד." data-en="Clear guides to exposure, composition, lenses, light and more.">מדריכים ברורים על חשיפה, קומפוזיציה, עדשות, אור ועוד.</p><span class="area-cta" data-he="למדריכים ←" data-en="Explore the guides →">למדריכים ←</span></span>
+        </a>
+
+        <a class="area-card" href="/locations/" data-analytics-event="campaign_area_click" data-analytics-label="locations">
+          <span class="area-top"><span class="area-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg></span></span>
+          <span class="area-bottom"><span class="area-index">03 / PLACES</span><h3 data-he="למצוא מקומות לצילום" data-en="Find places to photograph">למצוא מקומות לצילום</h3><p data-he="מדריכי צילום מישראל ומהעולם, עם רעיונות וטיפים לתכנון הביקור." data-en="Photography guides from Israel and around the world, with ideas and tips for planning your visit.">מדריכי צילום מישראל ומהעולם, עם רעיונות וטיפים לתכנון הביקור.</p><span class="area-cta" data-he="לגלות מקומות ←" data-en="Explore places →">לגלות מקומות ←</span></span>
+        </a>
+
+        <a class="area-card" href="/learn/" data-analytics-event="campaign_area_click" data-analytics-label="photo_analysis">
+          <span class="area-top"><span class="area-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m16 16 5 5M8 11h6M11 8v6"/></svg></span></span>
+          <span class="area-bottom"><span class="area-index">04 / PHOTO NOTES</span><h3 data-he="להבין איך תמונה עובדת" data-en="See how a photo works">להבין איך תמונה עובדת</h3><p data-he="ניתוחים קצרים שמסתכלים מקרוב על האור, הקומפוזיציה והסיפור שבתמונה." data-en="Short analyses that look closely at light, composition and the story inside an image.">ניתוחים קצרים שמסתכלים מקרוב על האור, הקומפוזיציה והסיפור שבתמונה.</p><span class="area-cta" data-he="לניתוחי התמונות ←" data-en="Explore photo notes →">לניתוחי התמונות ←</span></span>
+        </a>
+
+        <a class="area-card" href="/videos/" data-analytics-event="campaign_area_click" data-analytics-label="videos">
+          <span class="area-top"><span class="area-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m10 9 5 3-5 3z"/></svg></span></span>
+          <span class="area-bottom"><span class="area-index">05 / WATCH</span><h3 data-he="לצפות וללמוד" data-en="Watch and learn">לצפות וללמוד</h3><p data-he="סרטונים ותוכן מצולם להשראה, היכרות ולמידה בקצב שלכם." data-en="Videos and visual stories for inspiration, discovery and learning at your own pace.">סרטונים ותוכן מצולם להשראה, היכרות ולמידה בקצב שלכם.</p><span class="area-cta" data-he="לסרטונים ←" data-en="Watch videos →">לסרטונים ←</span></span>
+        </a>
+
+        <a class="area-card" href="/games/" data-analytics-event="campaign_area_click" data-analytics-label="challenges">
+          <span class="area-top"><span class="area-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 4h10l4 5-9 12L3 9l4-5Z"/><path d="M3 9h18M7 4l5 17 5-17"/></svg></span></span>
+          <span class="area-bottom"><span class="area-index">06 / PLAY</span><h3 data-he="לשחק עם צילום" data-en="Play with photography">לשחק עם צילום</h3><p data-he="חידונים ואתגרים קטנים שבודקים את העין ומוסיפים קצת משחק ללמידה." data-en="Quizzes and small challenges that test your eye and add a little play to learning.">חידונים ואתגרים קטנים שבודקים את העין ומוסיפים קצת משחק ללמידה.</p><span class="area-cta" data-he="לאתגרים ←" data-en="Try a challenge →">לאתגרים ←</span></span>
+        </a>
+
+        <a class="area-card" href="/free-guide/" data-analytics-event="campaign_area_click" data-analytics-label="free_guide">
+          <span class="area-top"><span class="area-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v18H6.5A2.5 2.5 0 0 0 4 22V4.5Z"/><path d="M4 5v17M8 7h8M8 11h7"/></svg></span></span>
+          <span class="area-bottom"><span class="area-index">07 / FREE GUIDE</span><h3 data-he="להתחיל עם 50 טיפים" data-en="Start with 50 tips">להתחיל עם 50 טיפים</h3><p data-he="מדריך חינמי עם רעיונות פשוטים שיעזרו לכם לראות ולצלם קצת אחרת." data-en="A free guide with practical ideas to help you see and photograph a little differently.">מדריך חינמי עם רעיונות פשוטים שיעזרו לכם לראות ולצלם קצת אחרת.</p><span class="area-cta" data-he="לקבלת המדריך ←" data-en="Get the guide →">לקבלת המדריך ←</span></span>
+        </a>
+
+        <a class="area-card" href="/gear/" data-analytics-event="campaign_area_click" data-analytics-label="gear">
+          <span class="area-top"><span class="area-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 7h16l2 14H2L4 7Z"/><path d="M8 7a4 4 0 0 1 8 0M9 12h6"/></svg></span></span>
+          <span class="area-bottom"><span class="area-index">08 / GEAR</span><h3 data-he="להכיר את ציוד הצילום" data-en="Explore photography gear">להכיר את ציוד הצילום</h3><p data-he="הציוד והכלים שמשמשים את עמית בצילומים ובשטח." data-en="The gear and tools Amit uses for photography and in the field.">הציוד והכלים שמשמשים את עמית בצילומים ובשטח.</p><span class="area-cta" data-he="לעמוד הציוד ←" data-en="View the gear →">לעמוד הציוד ←</span></span>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner wrap">
+      <p data-he="Amit Photos · צילום, השראה ולמידה עם עמית ארז" data-en="Amit Photos · Photography, inspiration and learning with Amit Erez">Amit Photos · צילום, השראה ולמידה עם עמית ארז</p>
+      <nav class="footer-links" aria-label="קישורים">
+        <a href="/" data-he="לאתר הראשי" data-en="Main site">לאתר הראשי</a>
+        <a href="/privacy/" data-he="פרטיות" data-en="Privacy">פרטיות</a>
+        <a href="mailto:contact@amitphotos.com" data-he="יצירת קשר" data-en="Contact" data-analytics-event="contact_intent" data-analytics-method="email">יצירת קשר</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script>
+    (() => {
+      const button = document.getElementById('language-toggle');
+      const video = document.getElementById('hero-video');
+      const videoToggle = document.getElementById('hero-video-toggle');
+      const params = new URLSearchParams(window.location.search);
+      let language = params.get('lang') === 'en' ? 'en' : 'he';
+      function updateVideoToggle() {
+        const playing = !video.paused;
+        const text = playing
+          ? (language === 'he' ? 'השהיית הסרטון' : 'Pause video')
+          : (language === 'he' ? 'הפעלת הסרטון' : 'Play video');
+        videoToggle.textContent = text;
+        videoToggle.setAttribute('aria-label', text);
+        videoToggle.setAttribute('aria-pressed', String(playing));
+      }
+      function applyLanguage() {
+        document.documentElement.lang = language;
+        document.documentElement.dir = language === 'he' ? 'rtl' : 'ltr';
+        document.querySelectorAll('[data-he][data-en]').forEach(element => {
+          element.textContent = element.dataset[language];
+        });
+        button.textContent = language === 'he' ? 'EN' : 'עב';
+        button.setAttribute('aria-label', language === 'he' ? 'Switch to English' : 'החלפה לעברית');
+        button.setAttribute('aria-pressed', String(language === 'en'));
+        updateVideoToggle();
+        document.title = language === 'he'
+          ? 'לגלות את עולם הצילום של עמית ארז | Amit Photos'
+          : 'Discover Amit Erez Photography | Amit Photos';
+      }
+      button.addEventListener('click', () => {
+        language = language === 'he' ? 'en' : 'he';
+        applyLanguage();
+        const next = new URL(window.location.href);
+        if (language === 'en') next.searchParams.set('lang', 'en');
+        else next.searchParams.delete('lang');
+        window.history.replaceState({}, '', next);
+      });
+      video.addEventListener('play', updateVideoToggle);
+      video.addEventListener('pause', updateVideoToggle);
+      videoToggle.addEventListener('click', async () => {
+        if (video.paused) {
+          try { await video.play(); } catch { updateVideoToggle(); }
+        } else {
+          video.pause();
+        }
+      });
+      applyLanguage();
+    })();
+  </script>
+</body>
+</html>

@@ -4,10 +4,39 @@ on:
   pull_request:
     paths:
       - 'src/social_caption_quality.py'
+      - 'src/social_decision_engine.py'
+      - 'src/social_optimization.py'
+      - 'src/campaign_urls.py'
       - 'src/instagram_post.py'
       - 'src/facebook_post.py'
+      - 'src/threads_post.py'
+      - 'src/weekly_report.py'
+      - 'src/check_social_schedule.py'
+      - 'src/social_delivery_state.py'
+      - 'src/camera_edu_post.py'
+      - 'src/location_social_post.py'
+      - 'src/redbubble_social_post.py'
+      - 'src/zazzle_social_post.py'
       - 'src/reel_post.py'
       - 'src/ga_weekly_report.py'
+      - 'data/social_schedule.json'
+      - 'admin.html'
+      - 'worker.js'
+      - '.github/workflows/instagram-story.yml'
+      - '.github/workflows/instagram-post.yml'
+      - '.github/workflows/threads-post.yml'
+      - '.github/workflows/pinterest-daily.yml'
+      - '.github/workflows/camera-edu-post.yml'
+      - '.github/workflows/location-social-post.yml'
+      - '.github/workflows/redbubble-social-post.yml'
+      - '.github/workflows/zazzle-social-post.yml'
+      - '.github/workflows/youtube-post.yml'
+      - '.github/workflows/youtube-tutorial.yml'
+      - '.github/workflows/facebook-post.yml'
+      - '.github/workflows/weekly-report.yml'
+      - '.github/workflows/week-photo-social.yml'
+      - '.github/workflows/puzzle-social-post.yml'
+      - '.github/workflows/quiz-social-post.yml'
       - 'tests/test_social_caption_quality.py'
       - 'tests/test_ga_weekly_report.py'
       - '.github/workflows/social-analytics-ci.yml'
@@ -24,6 +53,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+      - name: Check social calendar against workflow crons
+        run: python src/check_social_schedule.py
       - run: pip install pytest requests anthropic
       - name: Caption and campaign regression tests (mocked APIs)
         run: python -m pytest -q tests/test_social_caption_quality.py tests/test_ga_weekly_report.py

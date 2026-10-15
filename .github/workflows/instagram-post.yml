@@ -9,6 +9,10 @@ on:
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
+concurrency:
+  group: social-instagram-photo-post
+  cancel-in-progress: false
+
 jobs:
   instagram-post:
     runs-on: ubuntu-latest
@@ -35,17 +39,7 @@ jobs:
           INSTAGRAM_PAGE_TOKEN: ${{ secrets.INSTAGRAM_PAGE_TOKEN }}
           ANTHROPIC_API_KEY: ${{ secrets.AMIT_PHOTO_AGENT }}
           ADMIN_TOKEN: ${{ secrets.ADMIN_PASSWORD }}
-        run: |
-          for attempt in 1 2 3; do
-            python src/instagram_post.py && break
-            if [ $attempt -lt 3 ]; then
-              echo "ניסיון $attempt נכשל — ממתין 60 שניות..."
-              sleep 60
-            else
-              echo "כל הניסיונות נכשלו"
-              exit 1
-            fi
-          done
+        run: python src/instagram_post.py
 
       - name: עדכון מעקב פרסומים
         run: |
