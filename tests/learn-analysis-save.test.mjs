@@ -300,3 +300,64 @@ test('verify: without an image to show the model it refuses (502) instead of jud
     assert.equal(net.seen.length, 0);
   } finally { net.restore(); }
 });
+
+// ----- one repair round (/api/analyses/revise) ---------------------------------------------------------------------------------
+
+const reviseBody = (extra = {}) => ({
+  photo_id: PHOTO, composition_rule: 'framing', composition_html: '<p><strong>מסגור:</strong> הקיאק מואר מול שמיים מבריקים.</p>',
+  problems: [{ claim: 'הקיאק מואר', reason: 'הוא צללית בצל' }, { claim: 'שמיים מבריקים', reason: 'אין שמיים, זו השתקפות' }],
+  rule_fits: true, ...extra,
+});
+const goodRevision = {
+  composition_rule: 'framing',
+  composition_html: '<p><strong>מסגור:</strong> קשת הגשר ממסגרת את הקיאק.</p><p><strong>אור:</strong> הקיאק צללית מול השתקפויות.</p><p><strong>מה ללמוד:</strong> צלמו מתוך הצל אל האור.</p>',
+  annotations: [{ x_pct: 60, y_pct: 40, label: 'הקיאק', anchor: 'left' }],
+  tags: ['מסגור', 'צללית'],
+};
+
+test('revise: admin only, needs something to revise, validates input, unknown photo 404', async () => {
+  const { env } = setup();
+  const net = fakeVerify(goodRevision);
+  try {
+    assert.equal((await call(env, '/api/analyses/revise', reviseBody(), {})).status, 401);
+    assert.equal((await call(env, '/api/analyses/revise', reviseBody({ problems: [], rule_fits: true }))).status, 400, 'nothing to revise');
+    assert.equal((await call(env, '/api/analyses/revise', reviseBody({ composition_rule: 'x' }))).status, 400);
+    assert.equal((await call(env, '/api/analyses/revise', reviseBody({ photo_id: 'NoSuchPhoto12345' }))).status, 404);
+    assert.equal(net.seen.length, 0);
+  } finally { net.restore(); }
+});
+
+test('revise: the model gets the picture, the old text and exactly the contradicted claims; the revision is returned and NOT saved', async () => {
+  const { sqlite, env } = setup();
+  const net = fakeVerify(goodRevision);
+  try {
+    const res = await call(env, '/api/analyses/revise', reviseBody({ rule_fits: false, rule_reason: 'השמיים שולטים', suggested_rule: 'negative_space' }));
+    assert.equal(res.status, 200);
+    const body = await res.json();
+    assert.equal(body.composition_html, goodRevision.composition_html);
+    assert.deepEqual(body.tags, ['מסגור', 'צללית']);
+    const sent = net.seen[0].messages[0].content;
+    assert.equal(sent[0].type, 'image');
+    const prompt = sent.find(c => c.type === 'text').text;
+    for (const piece of ['הקיאק מואר', 'אין שמיים, זו השתקפות', 'negative_space', 'אל תכתוב מספרי מצלמה']) assert.ok(prompt.includes(piece), piece);
+    assert.deepEqual(rows(sqlite), []);
+  } finally { net.restore(); }
+});
+
+test('revise: an unsafe or malformed rewrite is refused (502), Claude failures are 502 with a code', async () => {
+  for (const [reply, code] of [
+    [{ ...goodRevision, composition_html: '<p>x</p><script>alert(1)</script><p>more text here</p>' }, 'REVISE_INVALID'],
+    [{ ...goodRevision, composition_rule: 'spiral' }, 'REVISE_INVALID'],
+    ['no json', 'REVISE_PARSE_FAILED'],
+    [529, 'CLAUDE_REVISE_FAILED'],
+  ]) {
+    const { sqlite, env } = setup();
+    const net = fakeVerify(reply);
+    try {
+      const res = await call(env, '/api/analyses/revise', reviseBody());
+      assert.equal(res.status, 502, code);
+      assert.equal((await res.json()).error, code);
+      assert.deepEqual(rows(sqlite), []);
+    } finally { net.restore(); }
+  }
+});

@@ -32,3 +32,9 @@ A manual run with `mode = draft-only` prepares the draft and sends the e-mail bu
 - The approval e-mail now lists every claim with its verdict and shows a preview of the /learn page (rule, text, camera values, tags). The page address is shown as text, with the note that it returns 404 until the approval (the page is created only then); it is no longer a clickable link.
 - Example that motivated it (15.10): the windmill draft passed the first checks but said the windmill "reflects perfectly in the canal" and the horizon is a symmetry axis, while most of the lower frame is reeds and grass.
 - Cost: one more model call per analysis (the workflow runs weekly).
+
+## One automatic repair round (fifth PR)
+- `POST /api/analyses/revise` (admin only, saves nothing): sends the picture, the old text and exactly the claims the second check marked as contradicted (and the rule verdict) to the model, which rewrites the analysis (3 paragraphs, annotations, tags; never camera numbers). The rewrite is validated like a save (rule, plain markup only); an invalid rewrite is refused.
+- The gate runs the second check; if it found contradicted claims or an unfitting rule, it asks for ONE rewrite and checks the new text again. The owner is e-mailed only the final version. Still wrong after one round, or the rewrite failed: the draft stays blocked and the e-mail lists the problems. The e-mail notes when a draft was revised and what the first-round problems were.
+- Why: in the first real runs two of three drafts were blocked (windmill "perfect reflection"; kayak "lit subject" and "bright sky"), which would leave the owner with mostly blocked e-mails.
+- Cost: up to two more model calls per analysis (rewrite + second check), weekly.
