@@ -95,14 +95,6 @@
       border-radius: 3px; background: #292a25;
       z-index: 2; box-shadow: 0 24px 70px rgba(0,0,0,.48);
     }
-    .portfolio-photo {
-      position: absolute; overflow: hidden; margin: 0; border: 1px solid rgba(213,183,121,.45);
-      background: #292a25; box-shadow: 0 18px 50px rgba(0,0,0,.4);
-    }
-    .portfolio-photo img { display: block; width: 100%; height: 100%; object-fit: cover; }
-    .portfolio-photo-one { top: 12%; left: 2%; width: 48%; aspect-ratio: 4 / 3; transform: rotate(-5deg); }
-    .portfolio-photo-two { bottom: 12%; left: 8%; width: 48%; aspect-ratio: 4 / 3; transform: rotate(4deg); }
-    .portfolio-photo-three { top: 3%; left: 35%; width: 28%; aspect-ratio: 1 / 1; transform: rotate(3deg); }
     .hero-photo video { display: block; width: 100%; height: 100%; object-fit: cover; }
     .video-toggle {
       position: absolute; z-index: 2; top: .75rem; right: .75rem;
@@ -123,6 +115,11 @@
     .intro { padding: 1.1rem 0 3.5rem; text-align: center; }
     .intro h2 { margin: .3rem 0 .6rem; font-size: clamp(1.8rem, 3.3vw, 2.8rem); }
     .intro p { max-width: 670px; margin: auto; color: var(--campaign-muted); }
+    .gallery-preview { padding: 0 0 5rem; }
+    .gallery-preview-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+    .gallery-preview figure { margin: 0; overflow: hidden; border: 1px solid var(--campaign-line); background: var(--campaign-panel); }
+    .gallery-preview img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; background: #292a25; }
+    .gallery-preview figcaption { padding: .7rem .9rem; color: var(--campaign-muted); font-size: .9rem; }
     .share-section { margin: 0 auto 5rem; padding: 2rem; border: 1px solid var(--campaign-line); background: var(--campaign-panel); }
     .share-inner { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; }
     .share-inner h2 { margin: 0; font-size: 1.35rem; }
@@ -167,8 +164,6 @@
       .hero { grid-template-columns: 1fr; gap: 2.5rem; padding-top: 3.5rem; }
       .hero-art { min-height: 480px; }
       .hero-photo { width: min(100%, 270px); }
-      .portfolio-photo-one { width: 43%; }
-      .portfolio-photo-two { width: 43%; }
       .area-card { grid-column: span 6; }
       .area-card.featured { grid-column: span 12; }
     }
@@ -180,9 +175,7 @@
       .hero { padding-block: 2.7rem 3.5rem; }
       .hero-art { min-height: 390px; }
       .hero-photo { width: min(57vw, 210px); }
-      .portfolio-photo-one { top: 10%; left: 0; width: 45%; }
-      .portfolio-photo-two { bottom: 9%; left: 2%; width: 43%; }
-      .portfolio-photo-three { left: 34%; width: 24%; }
+      .gallery-preview-grid { grid-template-columns: 1fr; gap: .75rem; }
       .share-section { padding: 1.25rem; margin-bottom: 3.5rem; }
       .share-inner { align-items: flex-start; flex-direction: column; }
       .area-card, .area-card.featured { grid-column: span 12; min-height: 220px; }
@@ -208,24 +201,35 @@
     <section class="hero wrap" aria-labelledby="hero-title">
       <div class="hero-copy">
         <p class="eyebrow" data-he="צילום • השראה • ידע" data-en="Photography • Inspiration • Learning">צילום • השראה • ידע</p>
-        <h1 id="hero-title"><span data-he="להסתכל על העולם" data-en="See the world">להסתכל על העולם</span><br><span class="accent" data-he="דרך עדשה אחרת" data-en="through a different lens">דרך עדשה אחרת</span></h1>
-        <p data-he="ברוכים הבאים ל־Amit Photos — גלריית הצילום ומרחב ההשראה של עמית ארז. כאן אפשר לגלות תמונות, ללמוד צילום, למצוא מקומות חדשים ולצאת לרעיון הבא." data-en="Welcome to Amit Photos — the photography gallery and inspiration hub of Amit Erez. Discover images, learn photography, find new places and get inspired for your next idea.">ברוכים הבאים ל־Amit Photos — גלריית הצילום ומרחב ההשראה של עמית ארז. כאן אפשר לגלות תמונות, ללמוד צילום, למצוא מקומות חדשים ולצאת לרעיון הבא.</p>
+        <h1 id="hero-title"><span data-he="יש עולם שלם" data-en="A whole world">יש עולם שלם</span><br><span class="accent" data-he="לקרוא ולראות" data-en="to read and see">לקרוא ולראות</span></h1>
+        <p data-he="מוזמנים לגלות את Amit Photos: לקרוא מדריכים וטיפים לצילום, לצפות בסרטונים, ולשוטט בגלריה של עמית ארז. בחרו מה מסקרן אתכם והתחילו לגלות." data-en="Explore Amit Photos: read photography guides and tips, watch videos and browse Amit Erez’s gallery. Pick what interests you and start exploring.">מוזמנים לגלות את Amit Photos: לקרוא מדריכים וטיפים לצילום, לצפות בסרטונים, ולשוטט בגלריה של עמית ארז. בחרו מה מסקרן אתכם והתחילו לגלות.</p>
         <div class="hero-actions">
-          <a class="button" href="/?utm_source=campaign&amp;utm_medium=landing_page&amp;utm_campaign=discover_amitphotos#gallery" data-he="לגלות את הגלריה ←" data-en="Explore the gallery →" data-analytics-event="campaign_hero_click" data-analytics-label="gallery">לגלות את הגלריה ←</a>
-          <a class="button secondary" href="#areas" data-he="לגלות מה עוד באתר" data-en="Explore the site">לגלות מה עוד באתר</a>
+          <a class="button" href="/camera/" data-he="לקרוא מדריכי צילום ←" data-en="Read photography guides →" data-analytics-event="campaign_hero_click" data-analytics-label="camera">לקרוא מדריכי צילום ←</a>
+          <a class="button secondary" href="/videos/" data-he="לצפות בסרטונים" data-en="Watch videos" data-analytics-event="campaign_hero_click" data-analytics-label="videos">לצפות בסרטונים</a>
+          <a class="header-link" href="/?utm_source=campaign&amp;utm_medium=landing_page&amp;utm_campaign=discover_amitphotos#gallery" data-he="או לגלות את הגלריה ←" data-en="Or explore the gallery →" data-analytics-event="campaign_hero_click" data-analytics-label="gallery">או לגלות את הגלריה ←</a>
         </div>
       </div>
       <div class="hero-art" aria-label="צילום מתוך גלריית עמית ארז">
         <span class="hero-mark" aria-hidden="true">AMIT EREZ · FINE ART PHOTOGRAPHY</span>
-        <figure class="portfolio-photo portfolio-photo-one"><img src="/photos/11-TX9S2XFZXspF3BQqbP81COUhwauXNP.webp" alt="עצים בפריחת אביב ורודה מתוך הגלריה" loading="eager" fetchpriority="high" onerror="this.closest('figure').hidden=true"></figure>
-        <figure class="portfolio-photo portfolio-photo-two"><img src="/photos/10D5va4MnAh7QpagtevvTqzipMA3cS_8c.webp" alt="פרפר לבן על פרחים צהובים מתוך הגלריה" loading="lazy" onerror="this.closest('figure').hidden=true"></figure>
-        <figure class="portfolio-photo portfolio-photo-three"><img src="/photos/1NmCLTIcIAIf7CEsak3J21NxRLMI28QIP.webp" alt="ברווז בטבע מתוך הגלריה" loading="lazy" onerror="this.closest('figure').hidden=true"></figure>
         <figure class="hero-photo">
           <video id="hero-video" src="/campaign/media/hero-campaign.mp4" poster="/campaign/media/hero-campaign-poster.jpg" muted loop playsinline preload="metadata" aria-describedby="hero-video-description"></video>
           <button class="video-toggle" id="hero-video-toggle" type="button" data-he="השהיית הסרטון" data-en="Pause video" aria-pressed="false">השהיית הסרטון</button>
           <figcaption class="sr-only" id="hero-video-description" data-he="סרטון קמפיין קצר עם הכיתוב: היום נצלם עם עומק שדה." data-en="A short campaign video with the caption: Today we’ll shoot with depth of field.">סרטון קמפיין קצר עם הכיתוב: היום נצלם עם עומק שדה.</figcaption>
         </figure>
         <div class="art-note"><strong>01—08</strong><span data-he="מקומות לגלות בעולם הצילום" data-en="ways to explore photography">מקומות לגלות בעולם הצילום</span></div>
+      </div>
+    </section>
+
+    <section class="gallery-preview wrap" aria-labelledby="gallery-preview-title">
+      <div class="intro">
+        <p class="eyebrow" data-he="מהגלריה של עמית" data-en="From Amit’s gallery">מהגלריה של עמית</p>
+        <h2 id="gallery-preview-title" data-he="כמה רגעים מתוך התמונות שלי" data-en="A few moments from my photographs">כמה רגעים מתוך התמונות שלי</h2>
+        <p data-he="עוד צילומים, טבע ומקומות מחכים לכם בגלריה המלאה." data-en="More photographs, nature and places are waiting in the full gallery.">עוד צילומים, טבע ומקומות מחכים לכם בגלריה המלאה.</p>
+      </div>
+      <div class="gallery-preview-grid">
+        <figure><img src="/photos/11-TX9S2XFZXspF3BQqbP81COUhwauXNP.webp" alt="עצים בפריחת אביב ורודה" loading="eager" fetchpriority="high" onerror="this.src='/assets/images/amit-portrait.jpg';this.onerror=null"><figcaption data-he="פריחת אביב ורודה" data-en="Pink spring blossom">פריחת אביב ורודה</figcaption></figure>
+        <figure><img src="/photos/10D5va4MnAh7QpagtevvTqzipMA3cS_8c.webp" alt="פרפר לבן על פרחים צהובים" loading="lazy" onerror="this.src='/assets/images/amit-portrait.jpg';this.onerror=null"><figcaption data-he="פרפר בין פרחים" data-en="Butterfly among flowers">פרפר בין פרחים</figcaption></figure>
+        <figure><img src="/photos/1NmCLTIcIAIf7CEsak3J21NxRLMI28QIP.webp" alt="ברווז בטבע" loading="lazy" onerror="this.src='/assets/images/amit-portrait.jpg';this.onerror=null"><figcaption data-he="ברווז בטבע" data-en="A duck in nature">ברווז בטבע</figcaption></figure>
       </div>
     </section>
 
@@ -353,9 +357,6 @@
           video.pause();
         }
       });
-      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        video.play().catch(updateVideoToggle);
-      }
       applyLanguage();
     })();
   </script>
