@@ -426,6 +426,48 @@ def make_draft(data, camera_json, exif, measurement, verification=None):
     }
 
 
+def review_with_revision(data, check, revise):
+    """Second check; if it found contradicted claims or an unfitting rule, ONE repair round and a fresh check.
+
+    check(data) -> verification dict; revise(data, verification) -> revised fields or {"error": ...}.
+    Returns (final_data, final_verification, revision_info_or_None). Never loops more than once.
+    """
+    verification = check(data)
+    problems, _ = second_check_findings(verification, data.get("composition_rule", ""))
+    usable = isinstance(verification, dict) and not verification.get("error") and verification.get("claims")
+    if not usable or not problems:
+        return data, verification, None
+    revised = revise(data, verification)
+    if not isinstance(revised, dict) or revised.get("error") or not revised.get("composition_html"):
+        reason = revised.get("error") if isinstance(revised, dict) else "no answer"
+        return data, verification, {"revised": False, "reason": reason, "first_problems": problems}
+    fields = ("composition_rule", "composition_html", "annotations", "tags")
+    data = {**data, **{key: revised[key] for key in fields if key in revised}}
+    return data, check(data), {"revised": True, "first_problems": problems}
+
+
+def run_revision(analysis, verification):
+    """Asks the site for one repair round. Returns the revised fields or {"error": ...}; never raises."""
+    import requests
+
+    token = os.environ.get("ADMIN_TOKEN", "")
+    payload = {k: analysis.get(k) for k in ("photo_id", "composition_rule", "composition_html")}
+    payload["problems"] = [c for c in verification.get("claims", []) if c.get("verdict") == "contradicted"]
+    payload["rule_fits"] = verification.get("rule_fits")
+    payload["rule_reason"] = verification.get("rule_reason", "")
+    payload["suggested_rule"] = verification.get("suggested_rule")
+    try:
+        response = requests.post(f"{SITE_URL}/api/analyses/revise", headers={"X-Admin-Password": token}, json=payload, timeout=120)
+    except Exception:
+        return {"error": "request failed"}
+    if not response.ok:
+        return {"error": f"HTTP {response.status_code} {server_error_text(response)}".strip()}
+    try:
+        return response.json()
+    except ValueError:
+        return {"error": "invalid JSON"}
+
+
 def run_second_check(analysis):
     """Asks the site for the separate sceptical pass. Returns its JSON or {"error": ...}; never raises."""
     import requests
@@ -484,8 +526,14 @@ def prepare(out_path="draft.json"):
         print("❌ the server did not honour dry_run: refusing to continue (the page may already be public)")
         sys.exit(1)
     camera = data.get("camera_analysis") or {}
-    verification = run_second_check(data)
+    data, verification, revision = review_with_revision(data, run_second_check, run_revision)
     draft = make_draft(data, camera, exif, measurement, verification)
+    if revision:
+        if revision.get("revised"):
+            draft["notes"].append("the first draft was revised once after the second check; first-round problems: " + " | ".join(revision["first_problems"]))
+        else:
+            draft["notes"].append(f"the repair round could not run ({revision.get('reason')}); the first-round problems stand")
+        draft["revision"] = revision
     draft["notes"].append("nothing is saved on the site yet: the /learn page and the posts go live only after your approval")
     with open(out_path, "w", encoding="utf-8") as handle:
         json.dump(draft, handle, ensure_ascii=False, indent=1)

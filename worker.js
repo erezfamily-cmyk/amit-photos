@@ -4742,6 +4742,72 @@ async function handleAnalysesVerify(request, env) {
   }, 200, request);
 }
 
+// ----- one repair round: rewrite an analysis after the second check found claims the picture contradicts (admin only) -----
+// Nothing is saved; the caller checks the revised text again before the owner is asked. Camera values are not touched here.
+async function handleAnalysesRevise(request, env) {
+  if (!await checkAuth(request, env)) return unauth(request);
+  if (request.method !== 'POST') return jsonRes({ error: 'POST only' }, 405, request);
+  if (!env.ANTHROPIC_API_KEY) return jsonRes({ error: 'ANTHROPIC_API_KEY missing' }, 500, request);
+  const body = await request.json().catch(() => null);
+  if (!body || typeof body.photo_id !== 'string' || !/^[A-Za-z0-9_-]{6,80}$/.test(body.photo_id)) return jsonRes({ error: 'PHOTO_ID_INVALID' }, 400, request);
+  if (!ANALYSIS_RULES.has(body.composition_rule)) return jsonRes({ error: 'RULE_INVALID' }, 400, request);
+  if (typeof body.composition_html !== 'string' || body.composition_html.length < 20 || body.composition_html.length > 6000) return jsonRes({ error: 'HTML_LENGTH' }, 400, request);
+  const problems = (Array.isArray(body.problems) ? body.problems : [])
+    .filter(p => p && typeof p.claim === 'string').slice(0, 15)
+    .map(p => ({ claim: String(p.claim).slice(0, 200), reason: String(p.reason || '').slice(0, 240) }));
+  const ruleProblem = body.rule_fits === false;
+  if (!problems.length && !ruleProblem) return jsonRes({ error: 'NOTHING_TO_REVISE' }, 400, request);
+  const photo = await env.DB.prepare('SELECT id, title, r2_key, thumbnail, url FROM photos WHERE id = ?').bind(body.photo_id).first();
+  if (!photo) return jsonRes({ error: 'PHOTO_NOT_FOUND' }, 404, request);
+  const image = await loadPhotoImageSource(env, request, photo);
+  if (!image) return jsonRes({ error: 'IMAGE_NOT_AVAILABLE' }, 502, request);
+
+  const suggested = ANALYSIS_RULES.has(body.suggested_rule) ? body.suggested_rule : null;
+  const text = body.composition_html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+  const prompt = 'אתה מורה לצילום. ניתוח שנכתב על התמונה הזו נבדק מולה, ונמצאו בו טעויות. כתוב אותו מחדש כך שכל טענה תהיה נכונה לפי מה שרואים בתמונה.\n\n'
+    + 'חוק הקומפוזיציה שנבחר: ' + body.composition_rule + '\n'
+    + (ruleProblem ? 'החוק הזה אינו מתאים לתמונה' + (body.rule_reason ? ' (' + String(body.rule_reason).slice(0, 240) + ')' : '') + '. בחר חוק שבאמת מתאים' + (suggested ? ' — ההמלצה היא ' + suggested : '') + '.\n' : '')
+    + 'הטקסט הקודם:\n' + text + '\n\n'
+    + 'הטענות שנמצאו שגויות:\n' + problems.map(p => '- ' + p.claim + ' — ' + p.reason).join('\n') + '\n\n'
+    + 'כללים: אל תחזור על הטענות השגויות ואל תנסח אותן מחדש באופן אחר; אם אינך בטוח — אל תטען. אל תכתוב מספרי מצלמה. '
+    + 'מיקום, סימטריה, השתקפויות, שמיים ואור — רק לפי מה שגלוי בתמונה. '
+    + 'composition_html: בדיוק 3 פסקאות <p><strong>כותרת:</strong> טקסט</p>, בעברית, רק התגים p ו-strong. '
+    + 'annotations: 3-5 נקודות שמדגימות את החוק (x_pct, y_pct בין 0 ל-100, label קצר, anchor אחד מ-left|right|top|bottom). tags: 4-6 מילים בעברית.\n\n'
+    + 'החזר JSON בלבד, בלי markdown: {"composition_rule":"...","composition_html":"<p>...</p>","annotations":[...],"tags":[...]}';
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'x-api-key': env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
+    body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 1500, messages: [{ role: 'user', content: [{ type: 'image', source: image }, { type: 'text', text: prompt }] }] }),
+  });
+  if (!res.ok) return jsonRes({ error: 'CLAUDE_REVISE_FAILED', status: res.status }, 502, request);
+  let revised;
+  try {
+    const raw = ((await res.json()).content?.[0]?.text || '').trim();
+    const json = raw.replace(/```json\n?|\n?```/g, '');
+    revised = JSON.parse(json.match(/\{[\s\S]*\}/)?.[0] || json);
+  } catch (_) {
+    return jsonRes({ error: 'REVISE_PARSE_FAILED' }, 502, request);
+  }
+  const candidate = {
+    photo_id: photo.id,
+    composition_rule: revised.composition_rule,
+    composition_html: revised.composition_html,
+    tags: Array.isArray(revised.tags) ? revised.tags.slice(0, 8) : [],
+    annotations: Array.isArray(revised.annotations) ? revised.annotations.slice(0, 8) : [],
+    camera_analysis: {},
+  };
+  const check = validateAnalysisPayload(candidate);
+  if (!check.ok) return jsonRes({ error: 'REVISE_INVALID', reason: check.reason }, 502, request);
+  return jsonRes({
+    ok: true,
+    photo_id: photo.id,
+    composition_rule: candidate.composition_rule,
+    composition_html: candidate.composition_html,
+    annotations: check.annotations,
+    tags: candidate.tags,
+  }, 200, request);
+}
+
 // ===== LEARN INDEX =====
 const RULE_LABELS = {
   rule_of_thirds: 'חוק השליש',
@@ -8330,6 +8396,7 @@ export default {
     if (path === '/api/analyses/generate' && request.method === 'POST')          return handleAnalysesGenerate(request, env);
     if (path === '/api/analyses/save' && request.method === 'POST')              return handleAnalysesSave(request, env);
     if (path === '/api/analyses/verify' && request.method === 'POST')            return handleAnalysesVerify(request, env);
+    if (path === '/api/analyses/revise' && request.method === 'POST')            return handleAnalysesRevise(request, env);
     if (path.startsWith('/api/analyses/') && path.endsWith('/generate-en') && request.method === 'POST')
       return handleAnalysesGenerateEn(request, env, path.slice('/api/analyses/'.length).replace('/generate-en',''));
     if (path.startsWith('/api/analyses/') && request.method === 'GET')           return handleAnalysesGet(request, env, path.slice('/api/analyses/'.length));

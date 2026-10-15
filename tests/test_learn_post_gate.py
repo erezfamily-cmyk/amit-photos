@@ -316,6 +316,76 @@ class PagePreviewTests(unittest.TestCase):
         self.assertIn("אין תצוגה מקדימה", gate.page_preview_html({}))
 
 
+class RevisionRoundTests(unittest.TestCase):
+    def data(self):
+        return {"photo_id": "p1", "composition_rule": "framing", "composition_html": "<p><strong>a:</strong> הנושא מואר.</p>", "tags": ["x"], "annotations": []}
+
+    bad = {"claims": [{"claim": "הנושא מואר", "verdict": "contradicted", "reason": "צללית"}], "rule_fits": True}
+    good = {"claims": [{"claim": "הנושא צללית", "verdict": "supported", "reason": "r"}], "rule_fits": True}
+
+    def test_a_clean_first_check_means_no_repair_round(self):
+        revise = mock.Mock()
+        data, verification, revision = gate.review_with_revision(self.data(), lambda d: self.good, revise)
+        revise.assert_not_called()
+        self.assertIsNone(revision)
+        self.assertEqual(verification, self.good)
+
+    def test_contradicted_claims_get_one_repair_round_and_a_fresh_check(self):
+        checks = iter([self.bad, self.good])
+        seen = []
+        def check(d):
+            seen.append(d["composition_html"])
+            return next(checks)
+        revised = {"composition_rule": "framing", "composition_html": "<p><strong>a:</strong> הנושא צללית.</p>", "annotations": [], "tags": ["y"]}
+        data, verification, revision = gate.review_with_revision(self.data(), check, lambda d, v: revised)
+        self.assertEqual(seen, ["<p><strong>a:</strong> הנושא מואר.</p>", "<p><strong>a:</strong> הנושא צללית.</p>"])
+        self.assertEqual(data["composition_html"], revised["composition_html"])
+        self.assertEqual(data["tags"], ["y"])
+        self.assertEqual(verification, self.good)
+        self.assertTrue(revision["revised"])
+        draft = gate.make_draft({**data, "title": "t", "thumbnail": "/photos/thumb/p1.webp"}, {}, None, gate.measure_subject(wall_with_block(0.40, 0.60)), verification)
+        self.assertTrue(draft["publishable"])
+
+    def test_only_one_round_even_if_the_revision_is_still_wrong(self):
+        calls = {"check": 0, "revise": 0}
+        def check(d):
+            calls["check"] += 1
+            return self.bad
+        def revise(d, v):
+            calls["revise"] += 1
+            return {"composition_rule": "framing", "composition_html": "<p><strong>a:</strong> עדיין שגוי.</p>"}
+        data, verification, revision = gate.review_with_revision(self.data(), check, revise)
+        self.assertEqual(calls, {"check": 2, "revise": 1})
+        draft = gate.make_draft({**data, "title": "t", "thumbnail": "/x"}, {}, None, gate.measure_subject(wall_with_block(0.40, 0.60)), verification)
+        self.assertFalse(draft["publishable"])
+
+    def test_a_failed_repair_keeps_the_first_problems(self):
+        data, verification, revision = gate.review_with_revision(self.data(), lambda d: self.bad, lambda d, v: {"error": "HTTP 502 REVISE_INVALID"})
+        self.assertFalse(revision["revised"])
+        self.assertEqual(revision["reason"], "HTTP 502 REVISE_INVALID")
+        self.assertEqual(verification, self.bad)
+        self.assertEqual(data["composition_html"], self.data()["composition_html"])
+
+    def test_a_second_check_that_could_not_run_does_not_trigger_a_repair(self):
+        revise = mock.Mock()
+        data, verification, revision = gate.review_with_revision(self.data(), lambda d: {"error": "HTTP 502"}, revise)
+        revise.assert_not_called()
+        self.assertIsNone(revision)
+
+    def test_run_revision_sends_only_the_contradicted_claims_and_the_rule_verdict(self):
+        response = mock.Mock(ok=True, status_code=200)
+        response.json.return_value = {"composition_html": "<p>x</p>"}
+        verification = {"claims": [{"claim": "a", "verdict": "supported"}, {"claim": "b", "verdict": "contradicted", "reason": "r"}], "rule_fits": False, "rule_reason": "rr", "suggested_rule": "negative_space"}
+        with mock.patch.dict(os.environ, {"ADMIN_TOKEN": "t"}), mock.patch("requests.post", return_value=response) as post:
+            self.assertEqual(gate.run_revision(self.data(), verification), {"composition_html": "<p>x</p>"})
+        payload = post.call_args.kwargs["json"]
+        self.assertTrue(post.call_args.args[0].endswith("/api/analyses/revise"))
+        self.assertEqual(payload["problems"], [{"claim": "b", "verdict": "contradicted", "reason": "r"}])
+        self.assertEqual((payload["rule_fits"], payload["suggested_rule"]), (False, "negative_space"))
+        with mock.patch.dict(os.environ, {"ADMIN_TOKEN": "t"}), mock.patch("requests.post", side_effect=OSError("down")):
+            self.assertEqual(gate.run_revision(self.data(), verification), {"error": "request failed"})
+
+
 class ServerErrorTextTests(unittest.TestCase):
     def test_the_server_error_code_is_shown_shortened_and_on_one_line(self):
         response = mock.Mock()
