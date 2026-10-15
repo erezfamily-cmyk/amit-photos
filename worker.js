@@ -4442,6 +4442,14 @@ async function handleAnalysesGenerate(request, env) {
     return jsonRes({ error: 'לא נמצאה תמונה לניתוח', debug: dbg }, 404, request);
   }
 
+  // 3a. Real camera settings: EXIF from data/photos.json (static asset). The model must use these values, never estimate them.
+  const exif = await loadPhotoExif(env, request, chosen.id);
+  const exifInstruction = exif
+    ? `נתוני EXIF אמיתיים מהמצלמה — חובה להשתמש בערכים האלה בדיוק ב-value, אסור לשנות או להעריך אחרים:
+${EXIF_KEYS.map(k => `- ${EXIF_LABELS_HE[k]}: ${exif[k] || UNKNOWN_EXIF_VALUE}`).join('\n')}
+אם ערך מופיע כ-"${UNKNOWN_EXIF_VALUE}", כתוב בדיוק "${UNKNOWN_EXIF_VALUE}" ב-value. ההסבר (explanation) חייב להתאים לערך האמיתי ולא להזכיר מספר אחר.`
+    : `אין נתוני EXIF לתמונה הזו. בכל value של camera_analysis כתוב בדיוק "${UNKNOWN_EXIF_VALUE}" — אסור להמציא מספרים. בהסבר אפשר לתאר מה ניתן לראות (חדות, רעש, טשטוש תנועה) בלי לנקוב בערך.`;
+
   // 3. Ask Claude sonnet for composition rule selection + full analysis
   const analysisRes = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
@@ -4464,7 +4472,8 @@ async function handleAnalysesGenerate(request, env) {
 
 בחר את חוק הצילום שהתמונה מדגימה הכי ברור מתוך: rule_of_thirds, symmetry, leading_lines, golden_ratio, framing, negative_space
 
-נתח את התמונה והעריך את הגדרות המצלמה הסבירות ביותר לפי מה שניתן לראות בפועל — התחשב בכל ארבעת הפרמטרים: חשיפה, תנועה, רעש, מרחק צילום.
+נתח את התמונה לפי מה שמצולם בפועל. מיקום הנושא בפריים, סימטריה וקווי שליש — רק לפי מה שרואים בתמונה עצמה.
+${exifInstruction}
 
 החזר JSON בלבד (ללא markdown), בדיוק במבנה הזה:
 {
@@ -4505,6 +4514,9 @@ async function handleAnalysesGenerate(request, env) {
     return jsonRes({ error: 'Failed to parse Claude response: ' + String(e) }, 502, request);
   }
 
+  // The stored camera values are always the real EXIF (or "unknown"), whatever the model wrote.
+  analysis.camera_analysis = enforceExifValues(analysis.camera_analysis, exif);
+
   // 4. Save to D1 (skipped for a dry run: the owner approves first)
   const rule = analysis.composition_rule || 'rule_of_thirds';
   if (dryRun) {
@@ -4519,6 +4531,7 @@ async function handleAnalysesGenerate(request, env) {
       composition_html: analysis.composition_html || '',
       annotations: analysis.annotations || [],
       camera_analysis: analysis.camera_analysis || {},
+      exif_used: !!exif,
       learn_url: `https://amitphotos.com/learn/${chosen.id}`,
     }, 200, request);
   }
@@ -4549,6 +4562,42 @@ async function handleAnalysesGenerate(request, env) {
     composition_html: analysis.composition_html || '',
     learn_url: `https://amitphotos.com/learn/${chosen.id}`,
   }, 200, request);
+}
+
+// ----- real EXIF for the learn analyses (data/photos.json is a public static asset) -----
+const EXIF_KEYS = ['aperture', 'shutter', 'iso', 'focal'];
+const EXIF_LABELS_HE = { aperture: 'צמצם', shutter: 'מהירות תריס', iso: 'ISO', focal: 'מרחק מוקד' };
+const UNKNOWN_EXIF_VALUE = 'לא ידוע';
+function formatExif(raw) {
+  if (!raw || typeof raw !== 'object') return null;
+  const out = {};
+  const aperture = Number(raw.aperture), shutter = Number(raw.shutter), iso = Number(raw.iso), focal = Number(raw.focal);
+  if (aperture > 0) out.aperture = `f/${Math.round(aperture * 10) / 10}`;
+  if (shutter > 0) out.shutter = shutter < 1 ? `1/${Math.round(1 / shutter)}s` : `${Math.round(shutter * 10) / 10}s`;
+  if (iso > 0) out.iso = String(Math.round(iso));
+  if (focal > 0) out.focal = `${Math.round(focal)}mm`;
+  return Object.keys(out).length ? out : null;
+}
+async function loadPhotoExif(env, request, photoId) {
+  try {
+    if (!env.ASSETS) return null;
+    const res = await env.ASSETS.fetch(new Request(new URL('/data/photos.json', request.url).toString()));
+    if (!res.ok) return null;
+    const data = await res.json();
+    const list = Array.isArray(data) ? data : (data.photos || []);
+    return formatExif(list.find(p => p && p.id === photoId)?.exif);
+  } catch (_) {
+    return null;
+  }
+}
+function enforceExifValues(camera, exif) {
+  const source = camera && typeof camera === 'object' && !Array.isArray(camera) ? camera : {};
+  const out = {};
+  for (const key of EXIF_KEYS) {
+    const explanation = typeof source[key]?.explanation === 'string' ? source[key].explanation : '';
+    out[key] = { value: (exif && exif[key]) || UNKNOWN_EXIF_VALUE, explanation };
+  }
+  return out;
 }
 
 // Saves an analysis that the owner approved after a dry run (admin only). Validates the shape and the text: nothing that

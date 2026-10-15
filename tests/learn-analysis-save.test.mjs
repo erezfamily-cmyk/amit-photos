@@ -111,10 +111,12 @@ test('save: an unknown photo is a 404 and nothing is written', async () => {
 
 // ----- generate: dry run vs normal -------------------------------------------------------------------------------------------
 
+const prompts = [];
 function fakeClaude() {
   const original = globalThis.fetch;
-  globalThis.fetch = async (url) => {
+  globalThis.fetch = async (url, options = {}) => {
     if (String(url).startsWith('https://api.anthropic.com/')) {
+      try { prompts.push(JSON.parse(options.body).messages[0].content.find(c => c.type === 'text').text); } catch { prompts.push(''); }
       const analysis = {
         composition_rule: 'symmetry',
         annotations: [{ x_pct: 50, y_pct: 50, label: 'x', anchor: 'top' }],
@@ -140,7 +142,9 @@ test('generate with dry_run returns the whole analysis and saves NOTHING (the pa
     assert.equal(body.photo_id, PHOTO);
     assert.equal(body.composition_rule, 'symmetry');
     assert.deepEqual(body.tags, ['a', 'b']);
-    assert.ok(body.annotations.length === 1 && body.camera_analysis.iso.value === '100');
+    assert.equal(body.annotations.length, 1);
+    assert.equal(body.camera_analysis.iso.value, 'לא ידוע', 'no EXIF: the model value 100 is never kept');
+    assert.equal(body.exif_used, false);
     assert.deepEqual(rows(sqlite), []);
   } finally { restore(); }
 });
@@ -161,4 +165,52 @@ test('generate with dry_run is still admin only', async () => {
   const res = await call(env, '/api/analyses/generate', { photo_id: PHOTO, dry_run: true }, {});
   assert.equal(res.status, 401);
   assert.deepEqual(rows(sqlite), []);
+});
+
+// ----- real EXIF ---------------------------------------------------------------------------------------------------------------
+
+const withAssets = (env, photos, ok = true) => ({ ...env, ASSETS: { async fetch(req) { assert.match(String(req.url || req), /\/data\/photos\.json$/); return ok ? Response.json(photos) : new Response('no', { status: 500 }); } } });
+
+test('generate puts the real EXIF in the prompt and stores exactly those values, whatever the model wrote', async () => {
+  const { sqlite, env } = setup();
+  const restore = fakeClaude();
+  prompts.length = 0;
+  try {
+    const photos = [{ id: 'other', exif: { aperture: 2 } }, { id: PHOTO, exif: { camera: 'NIKON D300', aperture: 8, shutter: 0.01, iso: 200, focal: 70 } }];
+    const res = await call(withAssets(env, photos), '/api/analyses/generate', { photo_id: PHOTO, dry_run: true });
+    const body = await res.json();
+    assert.equal(res.status, 200);
+    assert.equal(body.exif_used, true);
+    assert.deepEqual(Object.fromEntries(Object.entries(body.camera_analysis).map(([k, v]) => [k, v.value])), { aperture: 'f/8', shutter: '1/100s', iso: '200', focal: '70mm' });
+    assert.equal(body.camera_analysis.iso.explanation, 'e', 'the model explanation is kept, the number is not');
+    assert.ok(prompts[0].includes('f/8') && prompts[0].includes('1/100s') && prompts[0].includes('70mm'), 'EXIF is in the prompt');
+    assert.ok(prompts[0].includes('אסור לשנות'), 'the prompt forbids other values');
+    assert.ok(!prompts[0].includes('העריך את הגדרות המצלמה'), 'the old "estimate the settings" instruction is gone');
+    assert.deepEqual(rows(sqlite), []);
+  } finally { restore(); }
+});
+
+test('generate (saving) stores the EXIF values too, and a partial EXIF marks the missing fields as unknown', async () => {
+  const { sqlite, env } = setup();
+  const restore = fakeClaude();
+  try {
+    const res = await call(withAssets(env, [{ id: PHOTO, exif: { aperture: 2.8, iso: 0 } }]), '/api/analyses/generate', { photo_id: PHOTO });
+    assert.equal(res.status, 200);
+    const stored = JSON.parse(sqlite.prepare('SELECT camera_json FROM photo_analyses').get().camera_json);
+    assert.deepEqual(Object.fromEntries(Object.entries(stored).map(([k, v]) => [k, v.value])), { aperture: 'f/2.8', shutter: 'לא ידוע', iso: 'לא ידוע', focal: 'לא ידוע' });
+  } finally { restore(); }
+});
+
+test('without EXIF (missing photo entry, unreadable asset, no binding) the prompt forbids numbers and every stored value is "unknown"', async () => {
+  for (const make of [env => withAssets(env, [{ id: 'other', exif: { aperture: 4 } }]), env => withAssets(env, [], false), env => env]) {
+    const { env } = setup();
+    const restore = fakeClaude();
+    prompts.length = 0;
+    try {
+      const body = await (await call(make(env), '/api/analyses/generate', { photo_id: PHOTO, dry_run: true })).json();
+      assert.equal(body.exif_used, false);
+      assert.ok(Object.values(body.camera_analysis).every(v => v.value === 'לא ידוע'));
+      assert.ok(prompts[0].includes('אין נתוני EXIF') && prompts[0].includes('אסור להמציא'));
+    } finally { restore(); }
+  }
 });

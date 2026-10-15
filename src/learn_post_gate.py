@@ -371,6 +371,16 @@ def make_draft(data, camera_json, exif, measurement):
     }
 
 
+def server_error_text(response):
+    """The server's own error code/message, shortened. The site never puts secrets in these messages."""
+    try:
+        body = response.json()
+    except Exception:
+        return ""
+    text = str(body.get("error", "")) if isinstance(body, dict) else ""
+    return re.sub(r"\s+", " ", text)[:200]
+
+
 def prepare(out_path="draft.json"):
     import requests
     from io import BytesIO
@@ -383,7 +393,7 @@ def prepare(out_path="draft.json"):
         sys.exit(1)
     response = requests.post(f"{SITE_URL}/api/analyses/generate", headers={"X-Admin-Password": token}, json={"dry_run": True}, timeout=120)
     if not response.ok:
-        print(f"❌ generate failed: HTTP {response.status_code}")
+        print(f"❌ generate failed: HTTP {response.status_code} {server_error_text(response)}")
         sys.exit(1)
     data = response.json()
     if data.get("error"):
