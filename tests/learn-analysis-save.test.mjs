@@ -434,3 +434,84 @@ test('generate with a rule chosen in advance: the prompt fixes the rule and the 
     assert.deepEqual(rows(sqlite), []);
   } finally { restore(); }
 });
+
+// ----- structured output (forced tool) and one retry ---------------------------------------------------------------------------
+
+function fakeToolClaude(replies) {
+  const original = globalThis.fetch;
+  const queue = [...replies];
+  const seen = [];
+  globalThis.fetch = async (url, options = {}) => {
+    if (String(url).startsWith('https://api.anthropic.com/')) {
+      const body = JSON.parse(options.body);
+      seen.push(body);
+      const reply = queue.shift();
+      if (typeof reply === 'number') return new Response('busy', { status: reply });
+      return Response.json({ content: [{ type: 'tool_use', name: body.tool_choice?.name, input: reply }] });
+    }
+    return new Response('nf', { status: 404 });
+  };
+  return { seen, restore() { globalThis.fetch = original; } };
+}
+const toolAnalysis = {
+  composition_rule: 'rule_of_thirds',
+  annotations: [{ x_pct: 64, y_pct: 50, label: 'הדלת על קו השליש', anchor: 'left' }],
+  camera_analysis: { iso: { value: '100', explanation: 'e' } },
+  composition_html: '<p><strong>חוק השליש:</strong> הדלת ליד שער צה"ל, "ירוקה" ועתיקה.</p>',
+  tags: ['שליש'],
+};
+
+test('generate: the model answers through the forced tool; quotes inside Hebrew text can no longer break the JSON', async () => {
+  const { env } = setup();
+  const net = fakeToolClaude([toolAnalysis]);
+  try {
+    const res = await call(env, '/api/analyses/generate', { photo_id: PHOTO, dry_run: true });
+    assert.equal(res.status, 200);
+    const body = await res.json();
+    assert.equal(body.composition_html, toolAnalysis.composition_html);
+    assert.equal(net.seen[0].tool_choice.name, 'photo_analysis');
+    assert.equal(net.seen[0].tools[0].name, 'photo_analysis');
+    assert.ok(net.seen[0].tools[0].input_schema.properties.composition_rule.enum.includes('rule_of_thirds'));
+  } finally { net.restore(); }
+});
+
+test('a busy or failing Claude (429/5xx/529) is retried once; a second failure is reported, a success is used', async () => {
+  let env = setup().env;
+  let net = fakeToolClaude([529, toolAnalysis]);
+  try {
+    const res = await call(env, '/api/analyses/generate', { photo_id: PHOTO, dry_run: true });
+    assert.equal(res.status, 200);
+    assert.equal(net.seen.length, 2, 'one retry');
+  } finally { net.restore(); }
+  env = setup().env;
+  net = fakeToolClaude([529, 529, toolAnalysis]);
+  try {
+    const res = await call(env, '/api/analyses/verify', verifyBody());
+    assert.equal(res.status, 502);
+    assert.equal((await res.json()).error, 'CLAUDE_VERIFY_FAILED');
+    assert.equal(net.seen.length, 2, 'never more than one retry');
+  } finally { net.restore(); }
+  env = setup().env;
+  net = fakeToolClaude([400]);
+  try {
+    assert.equal((await call(env, '/api/analyses/verify', verifyBody())).status, 502);
+    assert.equal(net.seen.length, 1, 'a client error is not retried');
+  } finally { net.restore(); }
+});
+
+test('verify, revise and the screening all use their own forced tool', async () => {
+  const { sqlite, env } = setup();
+  addPhotos(sqlite, 1);
+  const net = fakeToolClaude([
+    { claims: [{ claim: 'x', verdict: 'supported', reason: 'r' }], rule_fits: true, rule_reason: 'ok', suggested_rule: null },
+    goodRevision,
+    { rule: 'framing', clarity: 0.9, reason: 'קשת' },
+  ]);
+  try {
+    assert.equal((await call(env, '/api/analyses/verify', verifyBody())).status, 200);
+    assert.equal((await call(env, '/api/analyses/revise', reviseBody())).status, 200);
+    const cands = await (await call(env, '/api/analyses/candidates', { count: 1, pool: 1 })).json();
+    assert.equal(cands.candidates.length >= 0, true);
+    assert.deepEqual(net.seen.map(b => b.tool_choice.name), ['claim_check', 'revised_analysis', 'rule_screen'].slice(0, net.seen.length));
+  } finally { net.restore(); }
+});

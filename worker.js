@@ -4453,7 +4453,7 @@ ${EXIF_KEYS.map(k => `- ${EXIF_LABELS_HE[k]}: ${exif[k] || UNKNOWN_EXIF_VALUE}`)
     : `אין נתוני EXIF לתמונה הזו. בכל value של camera_analysis כתוב בדיוק "${UNKNOWN_EXIF_VALUE}" — אסור להמציא מספרים. בהסבר אפשר לתאר מה ניתן לראות (חדות, רעש, טשטוש תנועה) בלי לנקוב בערך.`;
 
   // 3. Ask Claude sonnet for composition rule selection + full analysis
-  const analysisRes = await fetch('https://api.anthropic.com/v1/messages', {
+  const analysisRes = await anthropicFetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: {
       'x-api-key': env.ANTHROPIC_API_KEY,
@@ -4503,7 +4503,7 @@ ${exifInstruction}
         ]
       }]
     })
-  });
+  }, TOOL_ANALYSIS);
   if (!analysisRes.ok) {
     const analysisErr = await analysisRes.text().catch(() => '');
     return jsonRes({ error: `Claude API error (analysis) ${analysisRes.status}: ${analysisErr.slice(0, 300)}` }, 502, request);
@@ -4568,6 +4568,49 @@ ${exifInstruction}
     composition_html: analysis.composition_html || '',
     learn_url: `https://amitphotos.com/learn/${chosen.id}`,
   }, 200, request);
+}
+
+// ----- Claude calls for the learn analyses: structured output (a forced tool with a JSON schema) + one retry -----
+// The model's answer arrives as a validated object instead of free text, so a quote inside Hebrew text can no longer
+// break the JSON. To keep the callers unchanged the answer is handed back as a text block holding that object.
+const RULE_ENUM = ['rule_of_thirds', 'symmetry', 'leading_lines', 'golden_ratio', 'framing', 'negative_space'];
+const ANNOTATIONS_SCHEMA = { type: 'array', items: { type: 'object', properties: { x_pct: { type: 'number' }, y_pct: { type: 'number' }, label: { type: 'string' }, anchor: { type: 'string', enum: ['left', 'right', 'top', 'bottom'] } }, required: ['x_pct', 'y_pct', 'label', 'anchor'] } };
+const CAMERA_FIELD = { type: 'object', properties: { value: { type: 'string' }, explanation: { type: 'string' } }, required: ['value', 'explanation'] };
+const TOOL_ANALYSIS = { name: 'photo_analysis', description: 'The composition analysis of the photo', input_schema: { type: 'object', properties: {
+  composition_rule: { type: 'string', enum: RULE_ENUM }, annotations: ANNOTATIONS_SCHEMA,
+  camera_analysis: { type: 'object', properties: { aperture: CAMERA_FIELD, shutter: CAMERA_FIELD, iso: CAMERA_FIELD, focal: CAMERA_FIELD } },
+  composition_html: { type: 'string' }, tags: { type: 'array', items: { type: 'string' } },
+}, required: ['composition_rule', 'annotations', 'camera_analysis', 'composition_html', 'tags'] } };
+const TOOL_VERIFY = { name: 'claim_check', description: 'Every visual claim judged against the photo', input_schema: { type: 'object', properties: {
+  claims: { type: 'array', items: { type: 'object', properties: { claim: { type: 'string' }, verdict: { type: 'string', enum: ['supported', 'contradicted', 'uncertain'] }, reason: { type: 'string' } }, required: ['claim', 'verdict', 'reason'] } },
+  rule_fits: { type: 'boolean' }, rule_reason: { type: 'string' }, suggested_rule: { type: ['string', 'null'] },
+}, required: ['claims', 'rule_fits', 'rule_reason'] } };
+const TOOL_REVISE = { name: 'revised_analysis', description: 'The rewritten analysis', input_schema: { type: 'object', properties: {
+  composition_rule: { type: 'string', enum: RULE_ENUM }, composition_html: { type: 'string' }, annotations: ANNOTATIONS_SCHEMA, tags: { type: 'array', items: { type: 'string' } },
+}, required: ['composition_rule', 'composition_html', 'annotations', 'tags'] } };
+const TOOL_SCREEN = { name: 'rule_screen', description: 'Whether the photo clearly demonstrates a composition rule', input_schema: { type: 'object', properties: {
+  rule: { type: ['string', 'null'] }, clarity: { type: 'number' }, reason: { type: 'string' },
+}, required: ['rule', 'clarity', 'reason'] } };
+const RETRYABLE_STATUS = new Set([429, 500, 502, 503, 504, 529]);
+async function anthropicFetch(url, init, tool) {
+  let body = init.body;
+  if (tool) {
+    const parsed = JSON.parse(init.body);
+    parsed.tools = [tool];
+    parsed.tool_choice = { type: 'tool', name: tool.name };
+    body = JSON.stringify(parsed);
+  }
+  let res;
+  for (let attempt = 0; attempt < 2; attempt++) {
+    res = await fetch(url, { ...init, body });
+    if (!RETRYABLE_STATUS.has(res.status) || attempt === 1) break;
+    await new Promise(resolve => setTimeout(resolve, 1500));
+  }
+  if (!res.ok || !tool) return res;
+  const data = await res.json().catch(() => null);
+  const use = (data?.content || []).find(c => c && c.type === 'tool_use' && c.name === tool.name);
+  const text = use ? JSON.stringify(use.input) : ((data?.content || []).find(c => c && typeof c.text === 'string')?.text ?? '');
+  return new Response(JSON.stringify({ ...(data || {}), content: [{ type: 'text', text }] }), { status: res.status, headers: { 'content-type': 'application/json' } });
 }
 
 // ----- real EXIF for the learn analyses (data/photos.json is a public static asset) -----
@@ -4714,11 +4757,11 @@ async function handleAnalysesVerify(request, env) {
     + 'החזר JSON בלבד, בלי markdown:\n'
     + '{"claims":[{"claim":"הטענה בקצרה","verdict":"supported|contradicted|uncertain","reason":"נימוק קצר לפי מה שרואים"}],'
     + '"rule_fits":true,"rule_reason":"נימוק קצר","suggested_rule":"rule_of_thirds|symmetry|leading_lines|golden_ratio|framing|negative_space"}';
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
+  const res = await anthropicFetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: { 'x-api-key': env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
     body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 1500, messages: [{ role: 'user', content: [{ type: 'image', source: image }, { type: 'text', text: prompt }] }] }),
-  });
+  }, TOOL_VERIFY);
   if (!res.ok) return jsonRes({ error: 'CLAUDE_VERIFY_FAILED', status: res.status }, 502, request);
   let parsed;
   try {
@@ -4780,11 +4823,11 @@ async function handleAnalysesRevise(request, env) {
     + 'composition_html: בדיוק 3 פסקאות <p><strong>כותרת:</strong> טקסט</p>, בעברית, רק התגים p ו-strong. '
     + 'annotations: 3-5 נקודות שמדגימות את החוק (x_pct, y_pct בין 0 ל-100, label קצר, anchor אחד מ-left|right|top|bottom). tags: 4-6 מילים בעברית.\n\n'
     + 'החזר JSON בלבד, בלי markdown: {"composition_rule":"...","composition_html":"<p>...</p>","annotations":[...],"tags":[...]}';
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
+  const res = await anthropicFetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: { 'x-api-key': env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
     body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 1500, messages: [{ role: 'user', content: [{ type: 'image', source: image }, { type: 'text', text: prompt }] }] }),
-  });
+  }, TOOL_REVISE);
   if (!res.ok) return jsonRes({ error: 'CLAUDE_REVISE_FAILED', status: res.status }, 502, request);
   let revised;
   try {
@@ -4842,11 +4885,11 @@ async function handleAnalysesCandidates(request, env) {
     const image = await loadPhotoImageSource(env, request, photo);
     if (!image) continue;
     try {
-      const res = await fetch('https://api.anthropic.com/v1/messages', {
+      const res = await anthropicFetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
         headers: { 'x-api-key': env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
         body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 300, messages: [{ role: 'user', content: [{ type: 'image', source: image }, { type: 'text', text: prompt }] }] }),
-      });
+      }, TOOL_SCREEN);
       if (!res.ok) continue;
       const raw = ((await res.json()).content?.[0]?.text || '').trim();
       const parsed = JSON.parse(raw.match(/\{[\s\S]*\}/)?.[0] || raw);

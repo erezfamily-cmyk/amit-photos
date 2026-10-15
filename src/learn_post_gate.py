@@ -492,7 +492,11 @@ def server_error_text(response):
         body = response.json()
     except Exception:
         return ""
-    text = str(body.get("error", "")) if isinstance(body, dict) else ""
+    if not isinstance(body, dict):
+        return ""
+    text = str(body.get("error", ""))
+    if body.get("status"):
+        text += f" (Claude HTTP {body['status']})"
     return re.sub(r"\s+", " ", text)[:200]
 
 
@@ -640,6 +644,8 @@ def build_pick_issue(candidates):
     lines = [
         "בחירת תמונה לניתוח השבוע. **הגב על ה-Issue הזה במספר בלבד: 1, 2 או 3.**",
         "אחרי הבחירה ייכתב ניתוח לתמונה שבחרת, הוא ייבדק, ותקבל מייל אישור לפני שמשהו עולה לאתר או לרשתות.",
+        "אם החוק שזוהה לא נכון, כתוב אחרי המספר את החוק הנכון, למשל: `2 שליש` (שליש, סימטריה, קווים, זהב, מסגור, מרחב).",
+        "**אל תשיב למייל** — הבחירה נקלטת רק כתגובה כאן ב-GitHub.",
         "",
     ]
     for index, candidate in enumerate(candidates, 1):
@@ -667,13 +673,39 @@ def parse_candidates(issue_body):
     return [c for c in data if isinstance(c, dict) and c.get("photo_id") and c.get("rule") in RULE_LABELS]
 
 
-def parse_choice(comment, available):
-    """Only a bare number (optionally with #) counts, so an ordinary comment never triggers an analysis."""
-    match = re.fullmatch(r"\s*#?\s*([1-9])\s*\.?\s*", comment or "")
+RULE_KEYWORDS = {
+    "שליש": "rule_of_thirds", "חוק השליש": "rule_of_thirds", "כלל השליש": "rule_of_thirds", "thirds": "rule_of_thirds", "rule_of_thirds": "rule_of_thirds",
+    "סימטריה": "symmetry", "symmetry": "symmetry",
+    "קווים": "leading_lines", "קווי הובלה": "leading_lines", "קווים מובילים": "leading_lines", "leading_lines": "leading_lines",
+    "זהב": "golden_ratio", "יחס הזהב": "golden_ratio", "golden_ratio": "golden_ratio",
+    "מסגור": "framing", "ממסגר": "framing", "מסגרת": "framing", "framing": "framing",
+    "מרחב": "negative_space", "מרחב שלילי": "negative_space", "negative_space": "negative_space",
+}
+
+
+def parse_pick(comment, available):
+    """A bare number, optionally followed by a rule that overrides the screened one ("2 שליש").
+
+    Returns (number, rule_or_None) or None. Anything else (e.g. "2 please") is not a pick, so ordinary comments never
+    start an analysis.
+    """
+    match = re.fullmatch(r"\s*#?\s*([1-9])\s*\.?\s*(?:[-–—:,]\s*)?(.*?)\s*", comment or "", re.S)
     if not match:
         return None
     number = int(match.group(1))
-    return number if 1 <= number <= available else None
+    if not 1 <= number <= available:
+        return None
+    word = re.sub(r"\s+", " ", match.group(2)).strip().lower()
+    if not word:
+        return number, None
+    rule = RULE_KEYWORDS.get(word)
+    return (number, rule) if rule else None
+
+
+def parse_choice(comment, available):
+    """Only a bare number (optionally with #) counts, so an ordinary comment never triggers an analysis."""
+    picked = parse_pick(comment, available)
+    return picked[0] if picked and picked[1] is None else None
 
 
 def build_pick_email(candidates, issue_url):
@@ -691,6 +723,8 @@ def build_pick_email(candidates, issue_url):
     html = (
         f'<div dir="rtl" style="font-family:Arial,sans-serif;max-width:640px"><h2>בחר תמונה לניתוח השבוע</h2>'
         f'<p><b>איך בוחרים:</b> פתח את <a href="{esc(issue_url)}">ה-Issue ב-GitHub</a> והגב במספר בלבד (1, 2 או 3). '
+        "אם החוק לא נכון, הוסף אותו אחרי המספר, למשל <b>2 שליש</b>. "
+        "<b>אל תשיב למייל הזה</b> — הבחירה נקלטת רק בתגובה ב-GitHub. "
         "אחרי זה תקבל מייל אישור עם הניתוח והפוסטים, ושום דבר לא יעלה בלי אישורך.</p>"
         f"{items}</div>"
     )
@@ -743,16 +777,19 @@ def pick(event_path=None):
     issue = event.get("issue") or {}
     number = issue.get("number")
     candidates = parse_candidates(issue.get("body", ""))
-    choice = parse_choice((event.get("comment") or {}).get("body", ""), len(candidates))
-    if not candidates or not choice:
+    picked = parse_pick((event.get("comment") or {}).get("body", ""), len(candidates))
+    if not candidates or not picked:
         print("the comment is not a valid choice: nothing to do")
         return None
-    chosen = candidates[choice - 1]
+    choice, override = picked
+    chosen = dict(candidates[choice - 1])
+    if override:
+        chosen["rule"] = override
     github_output = os.environ.get("GITHUB_OUTPUT")
     if github_output:
         with open(github_output, "a", encoding="utf-8") as handle:
             handle.write(f"photo_id={chosen['photo_id']}\nrule={chosen['rule']}\n")
-    github_api("POST", f"/issues/{number}/comments", {"body": f"נבחרה תמונה {choice}: {chosen.get('title', '')}. הניתוח נכתב ונבדק עכשיו, ומייל אישור יישלח בסיום."})
+    github_api("POST", f"/issues/{number}/comments", {"body": f"נבחרה תמונה {choice}: {chosen.get('title', '')} (חוק: {RULE_LABELS.get(chosen['rule'], chosen['rule'])}). הניתוח נכתב ונבדק עכשיו, ומייל אישור יישלח בסיום."})
     github_api("PATCH", f"/issues/{number}", {"state": "closed"})
     print(f"picked {choice}: {chosen['photo_id']} ({chosen['rule']})")
     return chosen

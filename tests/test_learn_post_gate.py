@@ -460,6 +460,28 @@ class WeeklyPickTests(unittest.TestCase):
         self.assertIn("בחר תמונה", subject)
         self.assertIn("https://github.com/o/r/issues/9", html)
 
+    def test_a_rule_after_the_number_overrides_the_screened_rule(self):
+        for text, expected in (("2 שליש", (2, "rule_of_thirds")), ("2 חוק השליש", (2, "rule_of_thirds")), ("#1 - סימטריה", (1, "symmetry")),
+                               ("3: מסגור", (3, "framing")), ("2", (2, None)), ("2 please", None), ("2 שליש בבקשה", None), ("4 שליש", None)):
+            self.assertEqual(gate.parse_pick(text, 3), expected, repr(text))
+        self.assertIsNone(gate.parse_choice("2 שליש", 3), "parse_choice stays a bare-number check")
+
+    def test_pick_with_a_rule_override_writes_that_rule(self):
+        with tempfile.TemporaryDirectory() as folder:
+            out = os.path.join(folder, "out.txt")
+            with mock.patch.dict(os.environ, {"GITHUB_OUTPUT": out}), mock.patch.object(gate, "github_api") as api:
+                chosen = gate.pick(self.write_event(folder, "2 שליש"))
+            self.assertEqual(chosen["rule"], "rule_of_thirds")
+            self.assertIn("rule=rule_of_thirds", open(out, encoding="utf-8").read())
+            self.assertIn("חוק השליש", api.call_args_list[0].args[2]["body"])
+
+    def test_the_issue_and_the_mail_explain_the_override_and_not_to_reply_by_mail(self):
+        title, body = gate.build_pick_issue(self.candidates)
+        self.assertIn("2 שליש", body)
+        self.assertIn("אל תשיב למייל", body)
+        subject, html = gate.build_pick_email(self.candidates, "https://github.com/o/r/issues/1")
+        self.assertIn("אל תשיב למייל הזה", html)
+
     def test_prepare_always_asks_for_a_dry_run_and_passes_the_pick_through(self):
         self.assertEqual(gate.generate_request_body({}), {"dry_run": True})
         self.assertEqual(gate.generate_request_body({"PHOTO_ID": "PhotoB_123456", "RULE": "leading_lines"}), {"dry_run": True, "photo_id": "PhotoB_123456", "rule": "leading_lines"})
@@ -475,6 +497,11 @@ class ServerErrorTextTests(unittest.TestCase):
         self.assertTrue(text.startswith("Claude API error (analysis) 529: overloaded"))
         self.assertNotIn("\n", text)
         self.assertLessEqual(len(text), 200)
+
+    def test_the_claude_status_is_appended_when_the_site_reports_it(self):
+        response = mock.Mock()
+        response.json.return_value = {"error": "CLAUDE_VERIFY_FAILED", "status": 529}
+        self.assertEqual(gate.server_error_text(response), "CLAUDE_VERIFY_FAILED (Claude HTTP 529)")
 
     def test_a_non_json_or_odd_body_gives_an_empty_text(self):
         response = mock.Mock()
