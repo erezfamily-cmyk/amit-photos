@@ -16,6 +16,7 @@ on:
       - 'privacy/**'
       - 'licensing/**'
       - 'business/**'
+      - 'campaign/**'
       - '.github/workflows/deploy.yml'
   workflow_dispatch:
 
