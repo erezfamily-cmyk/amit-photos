@@ -4651,6 +4651,97 @@ async function handleAnalysesSave(request, env) {
   return jsonRes({ ok: true, photo_id: photo.id, learn_url: `https://amitphotos.com/learn/${photo.id}` }, 200, request);
 }
 
+// ----- second check: a separate, sceptical pass that tests every visual claim against the picture (admin only) -----
+// Nothing is saved. Used by the approval gate before the owner is asked, and usable for a corrected analysis too.
+const CLAIM_VERDICTS = new Set(['supported', 'contradicted', 'uncertain']);
+async function loadPhotoImageSource(env, request, photo) {
+  const toB64 = (buf) => {
+    const bytes = new Uint8Array(buf);
+    let binary = '';
+    for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+    return btoa(binary);
+  };
+  const fromObject = async (obj, limit) => (obj && obj.size <= limit)
+    ? { type: 'base64', media_type: obj.httpMetadata?.contentType || 'image/jpeg', data: toB64(await obj.arrayBuffer()) } : null;
+  if (photo.r2_key && env.PHOTOS) {
+    const source = await fromObject(await env.PHOTOS.get(photo.r2_key), 4.5 * 1024 * 1024);
+    if (source) return source;
+  }
+  const imgUrl = photo.thumbnail || photo.url;
+  if (imgUrl && imgUrl.startsWith('/photos/') && env.PHOTOS) {
+    const source = await fromObject(await env.PHOTOS.get(imgUrl.slice('/photos/'.length)), 4.5 * 1024 * 1024);
+    if (source) return source;
+  }
+  if (imgUrl) {
+    try {
+      const resp = await fetch(imgUrl.startsWith('/') ? new URL(request.url).origin + imgUrl : imgUrl);
+      if (resp.ok) {
+        const buf = await resp.arrayBuffer();
+        if (buf.byteLength <= 4.5 * 1024 * 1024) return { type: 'base64', media_type: resp.headers.get('content-type') || 'image/jpeg', data: toB64(buf) };
+      }
+    } catch (_) { /* reported below */ }
+  }
+  return null;
+}
+
+async function handleAnalysesVerify(request, env) {
+  if (!await checkAuth(request, env)) return unauth(request);
+  if (request.method !== 'POST') return jsonRes({ error: 'POST only' }, 405, request);
+  if (!env.ANTHROPIC_API_KEY) return jsonRes({ error: 'ANTHROPIC_API_KEY missing' }, 500, request);
+  const body = await request.json().catch(() => null);
+  if (!body || typeof body.photo_id !== 'string' || !/^[A-Za-z0-9_-]{6,80}$/.test(body.photo_id)) return jsonRes({ error: 'PHOTO_ID_INVALID' }, 400, request);
+  if (!ANALYSIS_RULES.has(body.composition_rule)) return jsonRes({ error: 'RULE_INVALID' }, 400, request);
+  if (typeof body.composition_html !== 'string' || body.composition_html.length < 20 || body.composition_html.length > 6000) return jsonRes({ error: 'HTML_LENGTH' }, 400, request);
+  const photo = await env.DB.prepare('SELECT id, title, r2_key, thumbnail, url FROM photos WHERE id = ?').bind(body.photo_id).first();
+  if (!photo) return jsonRes({ error: 'PHOTO_NOT_FOUND' }, 404, request);
+  const image = await loadPhotoImageSource(env, request, photo);
+  if (!image) return jsonRes({ error: 'IMAGE_NOT_AVAILABLE' }, 502, request);
+
+  const text = body.composition_html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+  const prompt = 'אתה עורך צילום ספקן. תפקידך למצוא טעויות בניתוח שנכתב על התמונה הזו, לא לשבח אותו.\n\n'
+    + 'חוק הקומפוזיציה שנבחר: ' + body.composition_rule + '\n'
+    + 'טקסט הניתוח:\n' + text + '\n\n'
+    + 'פרק את הטקסט לטענות עובדתיות על מה שרואים בתמונה (מיקום הנושא בפריים, סימטריה, השתקפות, קווים, אור, צבע, עומק, חלוקת הפריים). '
+    + 'לכל טענה קבע לפי התמונה בלבד: supported (נכון בבירור), contradicted (שגוי או מוגזם באופן מהותי), uncertain (אי אפשר לקבוע). '
+    + 'היה מחמיר: "משתקף בשלמות" כשרוב החלק התחתון אינו השתקפות הוא contradicted; "במרכז" כשהנושא בצד הוא contradicted. '
+    + 'קבע גם אם החוק שנבחר באמת מתאים לתמונה.\n\n'
+    + 'החזר JSON בלבד, בלי markdown:\n'
+    + '{"claims":[{"claim":"הטענה בקצרה","verdict":"supported|contradicted|uncertain","reason":"נימוק קצר לפי מה שרואים"}],'
+    + '"rule_fits":true,"rule_reason":"נימוק קצר","suggested_rule":"rule_of_thirds|symmetry|leading_lines|golden_ratio|framing|negative_space"}';
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'x-api-key': env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
+    body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 1500, messages: [{ role: 'user', content: [{ type: 'image', source: image }, { type: 'text', text: prompt }] }] }),
+  });
+  if (!res.ok) return jsonRes({ error: 'CLAUDE_VERIFY_FAILED', status: res.status }, 502, request);
+  let parsed;
+  try {
+    const raw = ((await res.json()).content?.[0]?.text || '').trim();
+    const json = raw.replace(/```json\n?|\n?```/g, '');
+    parsed = JSON.parse(json.match(/\{[\s\S]*\}/)?.[0] || json);
+  } catch (_) {
+    return jsonRes({ error: 'VERIFY_PARSE_FAILED' }, 502, request);
+  }
+  const clip = (v, n) => String(v ?? '').replace(/\s+/g, ' ').trim().slice(0, n);
+  const claims = (Array.isArray(parsed.claims) ? parsed.claims : []).slice(0, 15).map(c => ({
+    claim: clip(c?.claim, 200),
+    verdict: CLAIM_VERDICTS.has(c?.verdict) ? c.verdict : 'uncertain',
+    reason: clip(c?.reason, 240),
+  })).filter(c => c.claim);
+  if (!claims.length) return jsonRes({ error: 'VERIFY_EMPTY' }, 502, request);
+  const ruleFits = parsed.rule_fits === true;
+  return jsonRes({
+    ok: true,
+    photo_id: photo.id,
+    claims,
+    contradicted: claims.filter(c => c.verdict === 'contradicted').length,
+    uncertain: claims.filter(c => c.verdict === 'uncertain').length,
+    rule_fits: ruleFits,
+    rule_reason: clip(parsed.rule_reason, 240),
+    suggested_rule: ANALYSIS_RULES.has(parsed.suggested_rule) ? parsed.suggested_rule : null,
+  }, 200, request);
+}
+
 // ===== LEARN INDEX =====
 const RULE_LABELS = {
   rule_of_thirds: 'חוק השליש',
@@ -8238,6 +8329,7 @@ export default {
     if (path === '/api/analyses/publish-all' && request.method === 'POST')       return handleAnalysesPublishAll(request, env);
     if (path === '/api/analyses/generate' && request.method === 'POST')          return handleAnalysesGenerate(request, env);
     if (path === '/api/analyses/save' && request.method === 'POST')              return handleAnalysesSave(request, env);
+    if (path === '/api/analyses/verify' && request.method === 'POST')            return handleAnalysesVerify(request, env);
     if (path.startsWith('/api/analyses/') && path.endsWith('/generate-en') && request.method === 'POST')
       return handleAnalysesGenerateEn(request, env, path.slice('/api/analyses/'.length).replace('/generate-en',''));
     if (path.startsWith('/api/analyses/') && request.method === 'GET')           return handleAnalysesGet(request, env, path.slice('/api/analyses/'.length));

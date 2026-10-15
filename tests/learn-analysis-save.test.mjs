@@ -214,3 +214,89 @@ test('without EXIF (missing photo entry, unreadable asset, no binding) the promp
     } finally { restore(); }
   }
 });
+
+// ----- second check (/api/analyses/verify) -------------------------------------------------------------------------------------
+
+const verifyBody = (extra = {}) => ({ photo_id: PHOTO, composition_rule: 'symmetry', composition_html: '<p><strong>סימטריה:</strong> הטחנה משתקפת בשלמות במים, ציר הסימטריה לאורך קו האופק.</p>', ...extra });
+function fakeVerify(reply) {
+  const original = globalThis.fetch;
+  const seen = [];
+  globalThis.fetch = async (url, options = {}) => {
+    const u = String(url);
+    if (u.startsWith('https://api.anthropic.com/')) {
+      seen.push(JSON.parse(options.body));
+      if (typeof reply === 'number') return new Response('err', { status: reply });
+      return Response.json({ content: [{ text: typeof reply === 'string' ? reply : JSON.stringify(reply) }] });
+    }
+    return new Response('not found', { status: 404 });
+  };
+  return { seen, restore() { globalThis.fetch = original; } };
+}
+
+test('verify: admin only, validates its input, and an unknown photo is a 404', async () => {
+  const { env } = setup();
+  const net = fakeVerify({ claims: [{ claim: 'x', verdict: 'supported', reason: 'r' }], rule_fits: true });
+  try {
+    assert.equal((await call(env, '/api/analyses/verify', verifyBody(), {})).status, 401);
+    for (const [label, body] of [['rule', verifyBody({ composition_rule: 'nope' })], ['short', verifyBody({ composition_html: '<p>x</p>' })], ['id', verifyBody({ photo_id: '../x' })]]) {
+      assert.equal((await call(env, '/api/analyses/verify', body)).status, 400, label);
+    }
+    assert.equal((await call(env, '/api/analyses/verify', verifyBody({ photo_id: 'NoSuchPhoto12345' }))).status, 404);
+    assert.equal(net.seen.length, 0, 'Claude is not called for refused requests');
+  } finally { net.restore(); }
+});
+
+test('verify: a sceptical pass judges every claim against the picture; nothing is saved', async () => {
+  const { sqlite, env } = setup();
+  const net = fakeVerify({
+    claims: [
+      { claim: 'הטחנה כמעט במרכז', verdict: 'supported', reason: 'בערך 56% מהרוחב' },
+      { claim: 'משתקפת בשלמות במים', verdict: 'contradicted', reason: 'רוב החלק התחתון קני סוף' },
+      { claim: 'אור דרמטי', verdict: 'maybe', reason: 'ערך לא חוקי' },
+    ],
+    rule_fits: false, rule_reason: 'השמיים תופסים את רוב הפריים', suggested_rule: 'negative_space',
+  });
+  try {
+    const res = await call(env, '/api/analyses/verify', verifyBody());
+    assert.equal(res.status, 200);
+    const body = await res.json();
+    assert.equal(body.contradicted, 1);
+    assert.equal(body.uncertain, 1, 'an invalid verdict becomes uncertain');
+    assert.equal(body.claims[2].verdict, 'uncertain');
+    assert.equal(body.rule_fits, false);
+    assert.equal(body.suggested_rule, 'negative_space');
+    const prompt = net.seen[0].messages[0].content.find(c => c.type === 'text').text;
+    assert.ok(prompt.includes('ספקן') && prompt.includes('משתקפת בשלמות במים'), 'the analysis text and the sceptical instruction are in the prompt');
+    assert.equal(net.seen[0].messages[0].content[0].type, 'image', 'the picture is sent');
+    assert.deepEqual(rows(sqlite), []);
+  } finally { net.restore(); }
+});
+
+test('verify: Claude failing, unparsable or empty answers are 502 with a clear code, an unknown suggested rule becomes null', async () => {
+  for (const [reply, code] of [[529, 'CLAUDE_VERIFY_FAILED'], ['not json at all', 'VERIFY_PARSE_FAILED'], [{ claims: [], rule_fits: true }, 'VERIFY_EMPTY']]) {
+    const { env } = setup();
+    const net = fakeVerify(reply);
+    try {
+      const res = await call(env, '/api/analyses/verify', verifyBody());
+      assert.equal(res.status, 502, code);
+      assert.equal((await res.json()).error, code);
+    } finally { net.restore(); }
+  }
+  const { env } = setup();
+  const net = fakeVerify({ claims: [{ claim: 'x', verdict: 'supported', reason: 'r' }], rule_fits: true, suggested_rule: 'spiral' });
+  try {
+    assert.equal((await (await call(env, '/api/analyses/verify', verifyBody())).json()).suggested_rule, null);
+  } finally { net.restore(); }
+});
+
+test('verify: without an image to show the model it refuses (502) instead of judging blind', async () => {
+  const { env } = setup();
+  env.PHOTOS = { async get() { return null; } };
+  const net = fakeVerify({ claims: [{ claim: 'x', verdict: 'supported', reason: 'r' }], rule_fits: true });
+  try {
+    const res = await call(env, '/api/analyses/verify', verifyBody());
+    assert.equal(res.status, 502);
+    assert.equal((await res.json()).error, 'IMAGE_NOT_AVAILABLE');
+    assert.equal(net.seen.length, 0);
+  } finally { net.restore(); }
+});
