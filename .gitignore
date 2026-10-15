@@ -8,6 +8,11 @@ __pycache__/
 .env
 assets/photos/
 .agents/
+!.agents/
+.agents/*
+!.agents/social-media-context-sms.md
+!.agents/skills/
+!.agents/skills/**
 skills-lock.json
 SETUP.md
 
