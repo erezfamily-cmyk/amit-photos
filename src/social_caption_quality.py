@@ -36,10 +36,46 @@ def generated_body(message, fallback):
     return text if has_caption_body(text) else fallback
 
 
-def compose_caption(body, footer, hashtags, fallback, max_chars=MAX_CAPTION_CHARS):
+def normalize_hashtags(hashtags, max_count=None):
+    """Deduplicate hashtags case-insensitively and keep a deliberate small set."""
+    result = []
+    seen = set()
+    for tag in str(hashtags or "").split():
+        if not tag.startswith("#"):
+            continue
+        key = tag.casefold()
+        if key in seen:
+            continue
+        seen.add(key)
+        result.append(tag)
+        if max_count is not None and len(result) >= max_count:
+            break
+    return " ".join(result)
+
+
+def analyze_caption_set(captions):
+    """Return editorial hygiene metrics for a set of published captions."""
+    values = [text if isinstance(text, str) else "" for text in captions]
+    readable = [text for text in values if has_caption_body(text)]
+    duplicate_hashtags = 0
+    for text in values:
+        tags = re.findall(r"#[^\s#]+", text)
+        if len({tag.casefold() for tag in tags}) < len(tags):
+            duplicate_hashtags += 1
+    return {
+        "posts_checked": len(values),
+        "readable_captions": len(readable),
+        "missing_or_hashtag_only": len(values) - len(readable),
+        "duplicate_hashtag_posts": duplicate_hashtags,
+        "question_posts": sum("?" in text or "؟" in text for text in readable),
+        "link_posts": sum(bool(re.search(r"https?://|amitphotos\.com", text)) for text in readable),
+        "avg_caption_chars": round(sum(len(text) for text in readable) / len(readable)) if readable else 0,
+    }
+
+
+def compose_caption(body, footer, hashtags, fallback, max_chars=MAX_CAPTION_CHARS, max_hashtags=None):
     """Preserve the complete CTA; trim only at a complete sentence boundary."""
-    # Deduplicate hashtags without changing their order.
-    tags = " ".join(dict.fromkeys(hashtags.split()))
+    tags = normalize_hashtags(hashtags, max_count=max_hashtags)
     suffix = f"\n\n{footer.strip()}\n\n{tags}".rstrip()
     budget = max_chars - len(suffix)
     if budget <= 0:
