@@ -1,8 +1,26 @@
 # Handoff — amit-photos
 
 > מסמך כניסה לכל מי (אדם או סוכן AI) שנכנס לפרויקט הזה בפעם הראשונה, או חוזר אחרי הפסקה.
-> עודכן: **15.10.2026**. זה מסמך חי — לעדכן אותו כשקורה משהו מהותי, לא לתת לו להתיישן.
+> עודכן: **16.10.2026**. זה מסמך חי — לעדכן אותו כשקורה משהו מהותי, לא לתת לו להתיישן.
 > לא מחליף את `CLAUDE.md` (כללי ארכיטקטורה מחייבים) — משלים אותו עם "מה המצב עכשיו ולמה".
+
+---
+
+## PREVIEW SWITCH-OPEN OBSERVATION — done by the owner (16.10.2026, about 09:32–09:35 Israel)
+
+Preview only, both flags `false`. No production change, no migration, no merge or deploy, no payment flag or secret change, no order, no PayPal purchase, no mail.
+
+- **Run by the owner** with `staging/sandbox-window/window-tools.ps1` (clean checkout of the #155 head `ab162921`): `switch` first showed `SWITCH_ABSENT`, effective mode `blocked` (pasted by the owner). Then `switch open obs-open-1016a` (cap 1, one photo, `closesAt` 06:37:45Z) and, after the recording, `switch frozen obs-frozen-1016a`, then `clear-switch`, then `readiness`.
+- **Owner's report (a summary, the raw command output was NOT pasted):** while the switch was open `create-order` and `capture-order` stayed blocked with HTTP `503`; final `readiness` = `READY`, switch `SWITCH_ABSENT`, payments `false`, digital `false`, webhook present and matching the Preview, no order, payment or mail.
+- **NOT confirmed:** the value of `GET /api/payments-status` WHILE the switch was open. The owner's summary does not state it and no raw output was shared, so it stays unconfirmed (the 503 on both public routes is the reported evidence).
+- **Independently checked by Claude, read-only, after the run:**
+  - Sandbox D1 `paypal_order_actions`: exactly two new `SWITCH` rows, `obs-open-1016a` at 06:32:32Z (`SWITCH_ABSENT` to `open`, `maxOrders=1`, one photo, `closesAt=06:37:45Z`) and `obs-frozen-1016a` at 06:34:06Z (`open` to `frozen`). The switch was open for about 94 seconds.
+  - `settings` holds only the `prices` key (switch row cleared).
+  - Since 06:00Z: 0 new `paypal_orders`, 0 new `download_tokens`, 0 `paypal_webhook_events`, 0 non-`SWITCH` rows in `paypal_order_actions`; `LINK_EMAIL` rows still 2 (no new mail).
+  - Public Preview now: `/api/payments-status` = `{"enabled":false,"digitalEnabled":false}`, public `create-order` and `capture-order` = 503.
+- **Not verified:** the public 503 responses at the moment the switch was open are known only from the owner's report; I did not observe them. PayPal's own request log was not consulted.
+
+**Sync of `main` into the #155 branch: NOT done yet.** `main` is 22 commits ahead. A trial merge in a scratch worktree (nothing committed or pushed) had no conflicts; the only shared file is `worker.js` (learn handlers and the `/api/analyses` routes, no payment logic). Local node tests on the merged tree: 311 of 314 pass. The 3 failures are local-environment artefacts or unconfirmed: one is proven CRLF line endings on this Windows checkout (the cache-bust hashes match `index.html` when computed on the LF content, as in CI); two (`paypal-staging-isolation`) call `python3`, which on this machine is probably the Microsoft Store stub (suspected, not confirmed) and hang here. They still need to be run on a clean Linux environment (CI) or with a real Python before the sync is called safe. #155 stays a draft.
 
 ---
 
@@ -28,7 +46,7 @@ Documentation update requested by the owner. This section reconciles the latest 
 
 - Switch open/replay/closed/frozen and recover-fulfillment/replay/already-completed were rehearsed on the Sandbox Preview, restored and cleaned. Do not repeat those completed tests merely because older status-board/classification text still calls them untested; the later dated rehearsal entries are authoritative.
 - At the last verified stop: both flags false, switch absent (blocked), no Preview mail/alert variables, recorder stopped; public create/capture return 503. These are the recorded stop results, not a fresh environment check by this documentation update.
-- [ ] **First next session:** complete only the missing observation while the Preview switch is open and both flags stay false: record payments-status disabled and public create/capture 503, then freeze, clear the switch and verify blocked/absent. Follow the existing six-step procedure below with fresh keys/time. No order changes, PayPal calls or mail. This observation was NOT performed.
+- [x] **Observation while the Preview switch is open: DONE 16.10.2026** (see the top entry). Reported 503 on create/capture while open, switch frozen and cleared, `READY`, both flags `false`; D1 audit rows verified by Claude. The `payments-status` value while open was not reported and stays unconfirmed. (Originally: record payments-status disabled and public create/capture 503, then freeze, clear the switch and verify blocked/absent.)
 
 ### Ordered checklist before an attended Live canary
 
