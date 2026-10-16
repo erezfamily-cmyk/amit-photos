@@ -1,16 +1,47 @@
 name: ניתוח צילום חדש — ניתוח תמונות
 
+# Weekly: the site screens a few photos and proposes up to 3 that clearly demonstrate a composition rule (a GitHub
+# issue + an e-mail). The owner comments 1, 2 or 3 on the issue; the analysis is then written for that photo and rule
+# as a dry run, checked (real EXIF, measured subject position, a second check of every claim, one repair round) and
+# e-mailed. Nothing is saved on the site or posted until the owner approves the run in GitHub (environment
+# "social-approval"); on approval the publish job saves it (the /learn page goes live) and posts to Facebook/Instagram.
+# Manual runs: mode "propose" = the weekly proposal now; "draft-only" = draft and e-mail, never posts; "full" = draft,
+# approval, publish (optionally for a given photo_id and rule).
+
 on:
   schedule:
-    - cron: '0 10 * * 4'  # שבועי — יום ה' 10:00 UTC (צומצם מ"כל יומיים" ב-19.7.2026, ראה feedback_instagram_performance)
+    - cron: '0 10 * * 4'  # שבועי — יום ה' 10:00 UTC
   workflow_dispatch:
+    inputs:
+      mode:
+        description: 'propose = weekly 3-photo proposal; draft-only = draft and e-mail only; full = draft, approval, publish'
+        type: choice
+        options:
+          - propose
+          - draft-only
+          - full
+        default: propose
+      photo_id:
+        description: 'optional: analyse this photo (draft-only / full)'
+        required: false
+        default: ''
+      rule:
+        description: 'optional: the composition rule chosen in advance for that photo'
+        required: false
+        default: ''
+  issue_comment:
+    types: [created]
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
-  generate-analysis:
+  propose:
+    if: github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && github.event.inputs.mode == 'propose')
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -23,11 +54,94 @@ jobs:
       - name: התקנת חבילות
         run: pip install requests pillow
 
-      - name: ייצור ניתוח ופרסום
+      - name: סינון תמונות והצעת 3 לבחירה
         env:
+          ADMIN_TOKEN: ${{ secrets.ADMIN_PASSWORD }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          APPROVAL_EMAIL: ${{ secrets.APPROVAL_EMAIL }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python src/learn_post_gate.py propose
+
+  prepare:
+    # Only the repository owner's bare-number comment on an open weekly pick issue starts an analysis.
+    if: >-
+      (github.event_name == 'issue_comment' && !github.event.issue.pull_request && github.event.issue.state == 'open' &&
+       contains(github.event.issue.labels.*.name, 'learn-pick') && github.event.comment.user.login == github.repository_owner) ||
+      (github.event_name == 'workflow_dispatch' && github.event.inputs.mode != 'propose')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+    outputs:
+      publishable: ${{ steps.draft.outputs.publishable }}
+      approvable: ${{ steps.draft.outputs.approvable }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Python setup
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: התקנת חבילות
+        run: pip install requests pillow
+
+      - name: קריאת הבחירה מה-Issue
+        id: pick
+        if: github.event_name == 'issue_comment'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python src/learn_post_gate.py pick
+
+      - name: ייצור ניתוח, בדיקות ושליחת בקשת אישור
+        id: draft
+        if: github.event_name == 'workflow_dispatch' || steps.pick.outputs.photo_id != ''
+        env:
+          ADMIN_TOKEN: ${{ secrets.ADMIN_PASSWORD }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          APPROVAL_EMAIL: ${{ secrets.APPROVAL_EMAIL }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          PHOTO_ID: ${{ steps.pick.outputs.photo_id || github.event.inputs.photo_id }}
+          RULE: ${{ steps.pick.outputs.rule || github.event.inputs.rule }}
+        run: python src/learn_post_gate.py prepare
+
+      - name: שמירת הטיוטה
+        if: steps.draft.outcome == 'success'
+        uses: actions/upload-artifact@v4
+        with:
+          name: learn-post-draft
+          path: draft.json
+          retention-days: 14
+
+  publish:
+    needs: prepare
+    # Clean drafts AND drafts with problems wait for the owner's approval; the e-mail marks the problems in red.
+    if: needs.prepare.outputs.approvable == 'true' && github.event.inputs.mode != 'draft-only'
+    runs-on: ubuntu-latest
+    environment: social-approval
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Python setup
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: התקנת חבילות
+        run: pip install requests pillow
+
+      - name: הורדת הטיוטה שאושרה
+        uses: actions/download-artifact@v4
+        with:
+          name: learn-post-draft
+
+      - name: פרסום לרשתות אחרי אישור
+        env:
+          ADMIN_TOKEN: ${{ secrets.ADMIN_PASSWORD }}
           INSTAGRAM_USER_ID: ${{ secrets.INSTAGRAM_USER_ID }}
           INSTAGRAM_PAGE_TOKEN: ${{ secrets.INSTAGRAM_PAGE_TOKEN }}
           FACEBOOK_PAGE_ID: ${{ secrets.FACEBOOK_PAGE_ID }}
           FACEBOOK_PAGE_TOKEN: ${{ secrets.FACEBOOK_PAGE_TOKEN }}
-          ADMIN_TOKEN: ${{ secrets.ADMIN_PASSWORD }}
-        run: python src/learn_social_post.py
+        run: python src/learn_post_gate.py publish

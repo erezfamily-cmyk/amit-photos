@@ -4383,6 +4383,10 @@ async function handleAnalysesGenerate(request, env) {
   // Support optional photo_id in POST body for card-level analysis
   const body = await request.json().catch(() => ({}));
   const requestedPhotoId = body?.photo_id ?? null;
+  // dry_run: produce the analysis and return it WITHOUT saving it (nothing becomes public until /api/analyses/save).
+  const dryRun = body?.dry_run === true;
+  // rule: chosen in advance (the owner picked a photo that was screened for this rule); the model explains it, it does not choose.
+  const forcedRule = ANALYSIS_RULES.has(body?.rule) ? body.rule : null;
 
   let candidates;
   if (requestedPhotoId) {
@@ -4493,8 +4497,16 @@ async function handleAnalysesGenerate(request, env) {
     return jsonRes({ error: 'לא נמצאה תמונה לניתוח', debug: dbg }, 404, request);
   }
 
+  // 3a. Real camera settings: EXIF from data/photos.json (static asset). The model must use these values, never estimate them.
+  const exif = await loadPhotoExif(env, request, chosen.id);
+  const exifInstruction = exif
+    ? `נתוני EXIF אמיתיים מהמצלמה — חובה להשתמש בערכים האלה בדיוק ב-value, אסור לשנות או להעריך אחרים:
+${EXIF_KEYS.map(k => `- ${EXIF_LABELS_HE[k]}: ${exif[k] || UNKNOWN_EXIF_VALUE}`).join('\n')}
+אם ערך מופיע כ-"${UNKNOWN_EXIF_VALUE}", כתוב בדיוק "${UNKNOWN_EXIF_VALUE}" ב-value. ההסבר (explanation) חייב להתאים לערך האמיתי ולא להזכיר מספר אחר.`
+    : `אין נתוני EXIF לתמונה הזו. בכל value של camera_analysis כתוב בדיוק "${UNKNOWN_EXIF_VALUE}" — אסור להמציא מספרים. בהסבר אפשר לתאר מה ניתן לראות (חדות, רעש, טשטוש תנועה) בלי לנקוב בערך.`;
+
   // 3. Ask Claude sonnet for composition rule selection + full analysis
-  const analysisRes = await fetch('https://api.anthropic.com/v1/messages', {
+  const analysisRes = await anthropicFetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: {
       'x-api-key': env.ANTHROPIC_API_KEY,
@@ -4503,7 +4515,7 @@ async function handleAnalysesGenerate(request, env) {
     },
     body: JSON.stringify({
       model: 'claude-sonnet-4-6',
-      max_tokens: 1500,
+      max_tokens: 4096,
       messages: [{
         role: 'user',
         content: [
@@ -4513,9 +4525,12 @@ async function handleAnalysesGenerate(request, env) {
 כותרת: ${chosen.title || ''}
 תיאור: ${chosen.description || ''}
 
-בחר את חוק הצילום שהתמונה מדגימה הכי ברור מתוך: rule_of_thirds, symmetry, leading_lines, golden_ratio, framing, negative_space
+${forcedRule
+  ? `החוק שהתמונה מדגימה כבר נקבע: ${forcedRule}. הסבר את התמונה לפי החוק הזה בלבד, ב-composition_rule כתוב בדיוק "${forcedRule}", ואם יש סטיות מהחוק — תאר אותן בכנות.`
+  : 'בחר את חוק הצילום שהתמונה מדגימה הכי ברור מתוך: rule_of_thirds, symmetry, leading_lines, golden_ratio, framing, negative_space'}
 
-נתח את התמונה והעריך את הגדרות המצלמה הסבירות ביותר לפי מה שניתן לראות בפועל — התחשב בכל ארבעת הפרמטרים: חשיפה, תנועה, רעש, מרחק צילום.
+נתח את התמונה לפי מה שמצולם בפועל. מיקום הנושא בפריים, סימטריה וקווי שליש — רק לפי מה שרואים בתמונה עצמה.
+${exifInstruction}
 
 החזר JSON בלבד (ללא markdown), בדיוק במבנה הזה:
 {
@@ -4541,7 +4556,7 @@ async function handleAnalysesGenerate(request, env) {
         ]
       }]
     })
-  });
+  }, TOOL_ANALYSIS);
   if (!analysisRes.ok) {
     const analysisErr = await analysisRes.text().catch(() => '');
     return jsonRes({ error: `Claude API error (analysis) ${analysisRes.status}: ${analysisErr.slice(0, 300)}` }, 502, request);
@@ -4556,8 +4571,33 @@ async function handleAnalysesGenerate(request, env) {
     return jsonRes({ error: 'Failed to parse Claude response: ' + String(e) }, 502, request);
   }
 
-  // 4. Save to D1
+  if (typeof analysis.composition_html !== 'string' || analysis.composition_html.trim().length < 20) {
+    return jsonRes({ error: 'ANALYSIS_INCOMPLETE', detail: 'composition_html missing or too short' }, 502, request);
+  }
+
+  // The stored camera values are always the real EXIF (or "unknown"), whatever the model wrote.
+  analysis.camera_analysis = enforceExifValues(analysis.camera_analysis, exif);
+
+  if (forcedRule) analysis.composition_rule = forcedRule;
+
+  // 4. Save to D1 (skipped for a dry run: the owner approves first)
   const rule = analysis.composition_rule || 'rule_of_thirds';
+  if (dryRun) {
+    return jsonRes({
+      ok: true,
+      dry_run: true,
+      photo_id: chosen.id,
+      title: chosen.title,
+      thumbnail: chosen.thumbnail || chosen.url,
+      composition_rule: rule,
+      tags: analysis.tags || [],
+      composition_html: analysis.composition_html || '',
+      annotations: analysis.annotations || [],
+      camera_analysis: analysis.camera_analysis || {},
+      exif_used: !!exif,
+      learn_url: `https://amitphotos.com/learn/${chosen.id}`,
+    }, 200, request);
+  }
   const now = new Date().toISOString();
   await env.DB.prepare(`
     INSERT OR REPLACE INTO photo_analyses
@@ -4585,6 +4625,371 @@ async function handleAnalysesGenerate(request, env) {
     composition_html: analysis.composition_html || '',
     learn_url: `https://amitphotos.com/learn/${chosen.id}`,
   }, 200, request);
+}
+
+// ----- Claude calls for the learn analyses: structured output (a forced tool with a JSON schema) + one retry -----
+// The model's answer arrives as a validated object instead of free text, so a quote inside Hebrew text can no longer
+// break the JSON. To keep the callers unchanged the answer is handed back as a text block holding that object.
+const RULE_ENUM = ['rule_of_thirds', 'symmetry', 'leading_lines', 'golden_ratio', 'framing', 'negative_space'];
+const ANNOTATIONS_SCHEMA = { type: 'array', items: { type: 'object', properties: { x_pct: { type: 'number' }, y_pct: { type: 'number' }, label: { type: 'string' }, anchor: { type: 'string', enum: ['left', 'right', 'top', 'bottom'] } }, required: ['x_pct', 'y_pct', 'label', 'anchor'] } };
+const CAMERA_FIELD = { type: 'object', properties: { value: { type: 'string' }, explanation: { type: 'string' } }, required: ['value', 'explanation'] };
+const TOOL_ANALYSIS = { name: 'photo_analysis', description: 'The composition analysis of the photo', input_schema: { type: 'object', properties: {
+  composition_rule: { type: 'string', enum: RULE_ENUM }, annotations: ANNOTATIONS_SCHEMA,
+  camera_analysis: { type: 'object', properties: { aperture: CAMERA_FIELD, shutter: CAMERA_FIELD, iso: CAMERA_FIELD, focal: CAMERA_FIELD } },
+  composition_html: { type: 'string' }, tags: { type: 'array', items: { type: 'string' } },
+}, required: ['composition_rule', 'annotations', 'camera_analysis', 'composition_html', 'tags'] } };
+const TOOL_VERIFY = { name: 'claim_check', description: 'Every visual claim judged against the photo', input_schema: { type: 'object', properties: {
+  claims: { type: 'array', items: { type: 'object', properties: { claim: { type: 'string' }, verdict: { type: 'string', enum: ['supported', 'contradicted', 'uncertain'] }, reason: { type: 'string' } }, required: ['claim', 'verdict', 'reason'] } },
+  rule_fits: { type: 'boolean' }, rule_reason: { type: 'string' }, suggested_rule: { type: ['string', 'null'] },
+}, required: ['claims', 'rule_fits', 'rule_reason'] } };
+const TOOL_REVISE = { name: 'revised_analysis', description: 'The rewritten analysis', input_schema: { type: 'object', properties: {
+  composition_rule: { type: 'string', enum: RULE_ENUM }, composition_html: { type: 'string' }, annotations: ANNOTATIONS_SCHEMA, tags: { type: 'array', items: { type: 'string' } },
+}, required: ['composition_rule', 'composition_html', 'annotations', 'tags'] } };
+const TOOL_SCREEN = { name: 'rule_screen', description: 'Whether the photo clearly demonstrates a composition rule', input_schema: { type: 'object', properties: {
+  rule: { type: ['string', 'null'] }, clarity: { type: 'number' }, reason: { type: 'string' },
+}, required: ['rule', 'clarity', 'reason'] } };
+const RETRYABLE_STATUS = new Set([429, 500, 502, 503, 504, 529]);
+// Models sometimes hand back an array or object field as a JSON STRING inside the tool input ("claims": "[{...}]").
+// Parse such fields back according to the schema, recursively for nested objects.
+function normalizeToolInput(value, schema) {
+  if (!schema || value === null || value === undefined) return value;
+  const types = Array.isArray(schema.type) ? schema.type : [schema.type];
+  if (typeof value === 'string' && (types.includes('array') || types.includes('object'))) {
+    try { value = JSON.parse(value); } catch (_) { return value; }
+  }
+  if (Array.isArray(value) && schema.items) return value.map(item => normalizeToolInput(item, schema.items));
+  if (value && typeof value === 'object' && !Array.isArray(value) && schema.properties) {
+    const out = { ...value };
+    for (const [key, sub] of Object.entries(schema.properties)) if (key in out) out[key] = normalizeToolInput(out[key], sub);
+    return out;
+  }
+  if (typeof value === 'string' && types.includes('number') && value.trim() !== '' && Number.isFinite(Number(value))) return Number(value);
+  if (typeof value === 'string' && types.includes('boolean') && (value === 'true' || value === 'false')) return value === 'true';
+  return value;
+}
+
+async function anthropicFetch(url, init, tool) {
+  let body = init.body;
+  if (tool) {
+    const parsed = JSON.parse(init.body);
+    parsed.tools = [tool];
+    parsed.tool_choice = { type: 'tool', name: tool.name };
+    body = JSON.stringify(parsed);
+  }
+  let res;
+  for (let attempt = 0; attempt < 2; attempt++) {
+    res = await fetch(url, { ...init, body });
+    if (!RETRYABLE_STATUS.has(res.status) || attempt === 1) break;
+    await new Promise(resolve => setTimeout(resolve, 1500));
+  }
+  if (!res.ok || !tool) return res;
+  const data = await res.json().catch(() => null);
+  // An answer cut off by the token limit is incomplete: report it instead of using a half-filled object.
+  if (data?.stop_reason === 'max_tokens') {
+    return new Response(JSON.stringify({ error: 'max_tokens' }), { status: 502, headers: { 'content-type': 'application/json' } });
+  }
+  const use = (data?.content || []).find(c => c && c.type === 'tool_use' && c.name === tool.name);
+  const text = use ? JSON.stringify(normalizeToolInput(use.input, tool.input_schema)) : ((data?.content || []).find(c => c && typeof c.text === 'string')?.text ?? '');
+  return new Response(JSON.stringify({ ...(data || {}), content: [{ type: 'text', text }] }), { status: res.status, headers: { 'content-type': 'application/json' } });
+}
+
+// ----- real EXIF for the learn analyses (data/photos.json is a public static asset) -----
+const EXIF_KEYS = ['aperture', 'shutter', 'iso', 'focal'];
+const EXIF_LABELS_HE = { aperture: 'צמצם', shutter: 'מהירות תריס', iso: 'ISO', focal: 'מרחק מוקד' };
+const UNKNOWN_EXIF_VALUE = 'לא ידוע';
+function formatExif(raw) {
+  if (!raw || typeof raw !== 'object') return null;
+  const out = {};
+  const aperture = Number(raw.aperture), shutter = Number(raw.shutter), iso = Number(raw.iso), focal = Number(raw.focal);
+  if (aperture > 0) out.aperture = `f/${Math.round(aperture * 10) / 10}`;
+  if (shutter > 0) out.shutter = shutter < 1 ? `1/${Math.round(1 / shutter)}s` : `${Math.round(shutter * 10) / 10}s`;
+  if (iso > 0) out.iso = String(Math.round(iso));
+  if (focal > 0) out.focal = `${Math.round(focal)}mm`;
+  return Object.keys(out).length ? out : null;
+}
+async function loadPhotoExif(env, request, photoId) {
+  try {
+    if (!env.ASSETS) return null;
+    const res = await env.ASSETS.fetch(new Request(new URL('/data/photos.json', request.url).toString()));
+    if (!res.ok) return null;
+    const data = await res.json();
+    const list = Array.isArray(data) ? data : (data.photos || []);
+    return formatExif(list.find(p => p && p.id === photoId)?.exif);
+  } catch (_) {
+    return null;
+  }
+}
+function enforceExifValues(camera, exif) {
+  const source = camera && typeof camera === 'object' && !Array.isArray(camera) ? camera : {};
+  const out = {};
+  for (const key of EXIF_KEYS) {
+    const explanation = typeof source[key]?.explanation === 'string' ? source[key].explanation : '';
+    out[key] = { value: (exif && exif[key]) || UNKNOWN_EXIF_VALUE, explanation };
+  }
+  return out;
+}
+
+// Saves an analysis that the owner approved after a dry run (admin only). Validates the shape and the text: nothing that
+// could carry script or markup beyond simple paragraphs is stored.
+const ANALYSIS_RULES = new Set(['rule_of_thirds', 'symmetry', 'leading_lines', 'golden_ratio', 'framing', 'negative_space']);
+const ANNOTATION_ANCHORS = new Set(['left', 'right', 'top', 'bottom']);
+function validateAnalysisPayload(body) {
+  const fail = reason => ({ ok: false, reason });
+  if (!body || typeof body !== 'object') return fail('BODY_INVALID');
+  if (typeof body.photo_id !== 'string' || !/^[A-Za-z0-9_-]{6,80}$/.test(body.photo_id)) return fail('PHOTO_ID_INVALID');
+  if (!ANALYSIS_RULES.has(body.composition_rule)) return fail('RULE_INVALID');
+  const html = body.composition_html;
+  if (typeof html !== 'string' || html.length < 20 || html.length > 6000) return fail('HTML_LENGTH');
+  if (/<\s*(script|iframe|object|embed|style|link|img|svg|form)|javascript:/i.test(html)) return fail('HTML_UNSAFE');
+  if (/<[a-z0-9]+\s[^>]*>/i.test(html)) return fail('HTML_ATTRIBUTES');
+  if ((html.match(/<\/?([a-z0-9]+)/gi) || []).some(tag => !/^<\/?(p|strong|em|br)$/i.test(tag))) return fail('HTML_TAGS');
+  if (!Array.isArray(body.tags) || body.tags.length > 8 || body.tags.some(t => typeof t !== 'string' || t.length > 40)) return fail('TAGS_INVALID');
+  const annotations = body.annotations ?? [];
+  if (!Array.isArray(annotations) || annotations.length > 8) return fail('ANNOTATIONS_INVALID');
+  for (const a of annotations) {
+    if (!a || typeof a.label !== 'string' || a.label.length > 80 || !ANNOTATION_ANCHORS.has(a.anchor) ||
+        !Number.isFinite(a.x_pct) || !Number.isFinite(a.y_pct) || a.x_pct < 0 || a.x_pct > 100 || a.y_pct < 0 || a.y_pct > 100) return fail('ANNOTATION_INVALID');
+  }
+  const camera = body.camera_analysis ?? {};
+  if (!camera || typeof camera !== 'object' || Array.isArray(camera)) return fail('CAMERA_INVALID');
+  for (const key of Object.keys(camera)) {
+    const c = camera[key];
+    if (!['aperture', 'shutter', 'iso', 'focal'].includes(key) || !c || typeof c.value !== 'string' || c.value.length > 20 ||
+        (c.explanation !== undefined && (typeof c.explanation !== 'string' || c.explanation.length > 500))) return fail('CAMERA_INVALID');
+  }
+  return { ok: true, annotations, camera };
+}
+
+async function handleAnalysesSave(request, env) {
+  if (!await checkAuth(request, env)) return unauth(request);
+  if (request.method !== 'POST') return jsonRes({ error: 'POST only' }, 405, request);
+  const body = await request.json().catch(() => null);
+  const check = validateAnalysisPayload(body);
+  if (!check.ok) return jsonRes({ error: 'ANALYSIS_INVALID', reason: check.reason }, 400, request);
+  const photo = await env.DB.prepare('SELECT id, title FROM photos WHERE id = ?').bind(body.photo_id).first();
+  if (!photo) return jsonRes({ error: 'PHOTO_NOT_FOUND' }, 404, request);
+  const now = new Date().toISOString();
+  await env.DB.prepare(`
+    INSERT OR REPLACE INTO photo_analyses
+      (photo_id, composition_rule, annotations_json, camera_json, composition_html, tags_json, title, published_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+  `).bind(
+    photo.id, body.composition_rule, JSON.stringify(check.annotations), JSON.stringify(check.camera),
+    body.composition_html, JSON.stringify(body.tags), photo.title || '', now
+  ).run();
+  return jsonRes({ ok: true, photo_id: photo.id, learn_url: `https://amitphotos.com/learn/${photo.id}` }, 200, request);
+}
+
+// ----- second check: a separate, sceptical pass that tests every visual claim against the picture (admin only) -----
+// Nothing is saved. Used by the approval gate before the owner is asked, and usable for a corrected analysis too.
+const CLAIM_VERDICTS = new Set(['supported', 'contradicted', 'uncertain']);
+async function loadPhotoImageSource(env, request, photo) {
+  const toB64 = (buf) => {
+    const bytes = new Uint8Array(buf);
+    let binary = '';
+    for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+    return btoa(binary);
+  };
+  const fromObject = async (obj, limit) => (obj && obj.size <= limit)
+    ? { type: 'base64', media_type: obj.httpMetadata?.contentType || 'image/jpeg', data: toB64(await obj.arrayBuffer()) } : null;
+  if (photo.r2_key && env.PHOTOS) {
+    const source = await fromObject(await env.PHOTOS.get(photo.r2_key), 4.5 * 1024 * 1024);
+    if (source) return source;
+  }
+  const imgUrl = photo.thumbnail || photo.url;
+  if (imgUrl && imgUrl.startsWith('/photos/') && env.PHOTOS) {
+    const source = await fromObject(await env.PHOTOS.get(imgUrl.slice('/photos/'.length)), 4.5 * 1024 * 1024);
+    if (source) return source;
+  }
+  if (imgUrl) {
+    try {
+      const resp = await fetch(imgUrl.startsWith('/') ? new URL(request.url).origin + imgUrl : imgUrl);
+      if (resp.ok) {
+        const buf = await resp.arrayBuffer();
+        if (buf.byteLength <= 4.5 * 1024 * 1024) return { type: 'base64', media_type: resp.headers.get('content-type') || 'image/jpeg', data: toB64(buf) };
+      }
+    } catch (_) { /* reported below */ }
+  }
+  return null;
+}
+
+async function handleAnalysesVerify(request, env) {
+  if (!await checkAuth(request, env)) return unauth(request);
+  if (request.method !== 'POST') return jsonRes({ error: 'POST only' }, 405, request);
+  if (!env.ANTHROPIC_API_KEY) return jsonRes({ error: 'ANTHROPIC_API_KEY missing' }, 500, request);
+  const body = await request.json().catch(() => null);
+  if (!body || typeof body.photo_id !== 'string' || !/^[A-Za-z0-9_-]{6,80}$/.test(body.photo_id)) return jsonRes({ error: 'PHOTO_ID_INVALID' }, 400, request);
+  if (!ANALYSIS_RULES.has(body.composition_rule)) return jsonRes({ error: 'RULE_INVALID' }, 400, request);
+  if (typeof body.composition_html !== 'string' || body.composition_html.length < 20 || body.composition_html.length > 6000) return jsonRes({ error: 'HTML_LENGTH' }, 400, request);
+  const photo = await env.DB.prepare('SELECT id, title, r2_key, thumbnail, url FROM photos WHERE id = ?').bind(body.photo_id).first();
+  if (!photo) return jsonRes({ error: 'PHOTO_NOT_FOUND' }, 404, request);
+  const image = await loadPhotoImageSource(env, request, photo);
+  if (!image) return jsonRes({ error: 'IMAGE_NOT_AVAILABLE' }, 502, request);
+
+  const text = body.composition_html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+  const prompt = 'אתה עורך צילום ספקן. תפקידך למצוא טעויות בניתוח שנכתב על התמונה הזו, לא לשבח אותו.\n\n'
+    + 'חוק הקומפוזיציה שנבחר: ' + body.composition_rule + '\n'
+    + 'טקסט הניתוח:\n' + text + '\n\n'
+    + 'פרק את הטקסט לטענות עובדתיות על מה שרואים בתמונה (מיקום הנושא בפריים, סימטריה, השתקפות, קווים, אור, צבע, עומק, חלוקת הפריים). '
+    + 'לכל טענה קבע לפי התמונה בלבד: supported (נכון בבירור), contradicted (שגוי או מוגזם באופן מהותי), uncertain (אי אפשר לקבוע). '
+    + 'היה מחמיר: "משתקף בשלמות" כשרוב החלק התחתון אינו השתקפות הוא contradicted; "במרכז" כשהנושא בצד הוא contradicted. '
+    + 'קבע גם אם החוק שנבחר באמת מתאים לתמונה.\n\n'
+    + 'החזר JSON בלבד, בלי markdown:\n'
+    + '{"claims":[{"claim":"הטענה בקצרה","verdict":"supported|contradicted|uncertain","reason":"נימוק קצר לפי מה שרואים"}],'
+    + '"rule_fits":true,"rule_reason":"נימוק קצר","suggested_rule":"rule_of_thirds|symmetry|leading_lines|golden_ratio|framing|negative_space"}';
+  const res = await anthropicFetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'x-api-key': env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
+    body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 3000, messages: [{ role: 'user', content: [{ type: 'image', source: image }, { type: 'text', text: prompt }] }] }),
+  }, TOOL_VERIFY);
+  if (!res.ok) return jsonRes({ error: 'CLAUDE_VERIFY_FAILED', status: res.status }, 502, request);
+  let parsed;
+  try {
+    const raw = ((await res.json()).content?.[0]?.text || '').trim();
+    const json = raw.replace(/```json\n?|\n?```/g, '');
+    parsed = JSON.parse(json.match(/\{[\s\S]*\}/)?.[0] || json);
+  } catch (_) {
+    return jsonRes({ error: 'VERIFY_PARSE_FAILED' }, 502, request);
+  }
+  const clip = (v, n) => String(v ?? '').replace(/\s+/g, ' ').trim().slice(0, n);
+  const claims = (Array.isArray(parsed.claims) ? parsed.claims : []).slice(0, 15).map(c => ({
+    claim: clip(c?.claim, 200),
+    verdict: CLAIM_VERDICTS.has(c?.verdict) ? c.verdict : 'uncertain',
+    reason: clip(c?.reason, 240),
+  })).filter(c => c.claim);
+  if (!claims.length) return jsonRes({ error: 'VERIFY_EMPTY', detail: 'claims was ' + (Array.isArray(parsed.claims) ? 'an empty array' : typeof parsed.claims) }, 502, request);
+  const ruleFits = parsed.rule_fits === true;
+  return jsonRes({
+    ok: true,
+    photo_id: photo.id,
+    claims,
+    contradicted: claims.filter(c => c.verdict === 'contradicted').length,
+    uncertain: claims.filter(c => c.verdict === 'uncertain').length,
+    rule_fits: ruleFits,
+    rule_reason: clip(parsed.rule_reason, 240),
+    suggested_rule: ANALYSIS_RULES.has(parsed.suggested_rule) ? parsed.suggested_rule : null,
+  }, 200, request);
+}
+
+// ----- one repair round: rewrite an analysis after the second check found claims the picture contradicts (admin only) -----
+// Nothing is saved; the caller checks the revised text again before the owner is asked. Camera values are not touched here.
+async function handleAnalysesRevise(request, env) {
+  if (!await checkAuth(request, env)) return unauth(request);
+  if (request.method !== 'POST') return jsonRes({ error: 'POST only' }, 405, request);
+  if (!env.ANTHROPIC_API_KEY) return jsonRes({ error: 'ANTHROPIC_API_KEY missing' }, 500, request);
+  const body = await request.json().catch(() => null);
+  if (!body || typeof body.photo_id !== 'string' || !/^[A-Za-z0-9_-]{6,80}$/.test(body.photo_id)) return jsonRes({ error: 'PHOTO_ID_INVALID' }, 400, request);
+  if (!ANALYSIS_RULES.has(body.composition_rule)) return jsonRes({ error: 'RULE_INVALID' }, 400, request);
+  if (typeof body.composition_html !== 'string' || body.composition_html.length < 20 || body.composition_html.length > 6000) return jsonRes({ error: 'HTML_LENGTH' }, 400, request);
+  const problems = (Array.isArray(body.problems) ? body.problems : [])
+    .filter(p => p && typeof p.claim === 'string').slice(0, 15)
+    .map(p => ({ claim: String(p.claim).slice(0, 200), reason: String(p.reason || '').slice(0, 240) }));
+  // lock_rule: the owner chose the rule; the rewrite keeps it whatever the second check suggested.
+  const lockRule = body.lock_rule === true;
+  const ruleProblem = body.rule_fits === false && !lockRule;
+  if (!problems.length && !ruleProblem) return jsonRes({ error: 'NOTHING_TO_REVISE' }, 400, request);
+  const photo = await env.DB.prepare('SELECT id, title, r2_key, thumbnail, url FROM photos WHERE id = ?').bind(body.photo_id).first();
+  if (!photo) return jsonRes({ error: 'PHOTO_NOT_FOUND' }, 404, request);
+  const image = await loadPhotoImageSource(env, request, photo);
+  if (!image) return jsonRes({ error: 'IMAGE_NOT_AVAILABLE' }, 502, request);
+
+  const suggested = ANALYSIS_RULES.has(body.suggested_rule) ? body.suggested_rule : null;
+  const text = body.composition_html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+  const prompt = 'אתה מורה לצילום. ניתוח שנכתב על התמונה הזו נבדק מולה, ונמצאו בו טעויות. כתוב אותו מחדש כך שכל טענה תהיה נכונה לפי מה שרואים בתמונה.\n\n'
+    + 'חוק הקומפוזיציה שנבחר: ' + body.composition_rule + '\n'
+    + (lockRule ? 'החוק הזה נקבע על ידי הצלם — אסור לשנות אותו. ב-composition_rule כתוב בדיוק ' + body.composition_rule + '.\n' : '')
+    + (ruleProblem ? 'החוק הזה אינו מתאים לתמונה' + (body.rule_reason ? ' (' + String(body.rule_reason).slice(0, 240) + ')' : '') + '. בחר חוק שבאמת מתאים' + (suggested ? ' — ההמלצה היא ' + suggested : '') + '.\n' : '')
+    + 'הטקסט הקודם:\n' + text + '\n\n'
+    + 'הטענות שנמצאו שגויות:\n' + problems.map(p => '- ' + p.claim + ' — ' + p.reason).join('\n') + '\n\n'
+    + 'כללים: אל תחזור על הטענות השגויות ואל תנסח אותן מחדש באופן אחר; אם אינך בטוח — אל תטען. אל תכתוב מספרי מצלמה. '
+    + 'מיקום, סימטריה, השתקפויות, שמיים ואור — רק לפי מה שגלוי בתמונה. '
+    + 'composition_html: בדיוק 3 פסקאות <p><strong>כותרת:</strong> טקסט</p>, בעברית, רק התגים p ו-strong. '
+    + 'annotations: 3-5 נקודות שמדגימות את החוק (x_pct, y_pct בין 0 ל-100, label קצר, anchor אחד מ-left|right|top|bottom). tags: 4-6 מילים בעברית.\n\n'
+    + 'החזר JSON בלבד, בלי markdown: {"composition_rule":"...","composition_html":"<p>...</p>","annotations":[...],"tags":[...]}';
+  const res = await anthropicFetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'x-api-key': env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
+    body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 4096, messages: [{ role: 'user', content: [{ type: 'image', source: image }, { type: 'text', text: prompt }] }] }),
+  }, TOOL_REVISE);
+  if (!res.ok) return jsonRes({ error: 'CLAUDE_REVISE_FAILED', status: res.status }, 502, request);
+  let revised;
+  try {
+    const raw = ((await res.json()).content?.[0]?.text || '').trim();
+    const json = raw.replace(/```json\n?|\n?```/g, '');
+    revised = JSON.parse(json.match(/\{[\s\S]*\}/)?.[0] || json);
+  } catch (_) {
+    return jsonRes({ error: 'REVISE_PARSE_FAILED' }, 502, request);
+  }
+  const candidate = {
+    photo_id: photo.id,
+    composition_rule: lockRule ? body.composition_rule : revised.composition_rule,
+    composition_html: revised.composition_html,
+    tags: Array.isArray(revised.tags) ? revised.tags.slice(0, 8) : [],
+    annotations: Array.isArray(revised.annotations) ? revised.annotations.slice(0, 8) : [],
+    camera_analysis: {},
+  };
+  const check = validateAnalysisPayload(candidate);
+  if (!check.ok) return jsonRes({ error: 'REVISE_INVALID', reason: check.reason }, 502, request);
+  return jsonRes({
+    ok: true,
+    photo_id: photo.id,
+    composition_rule: candidate.composition_rule,
+    composition_html: candidate.composition_html,
+    annotations: check.annotations,
+    tags: candidate.tags,
+  }, 200, request);
+}
+
+// ----- weekly pick: screen a few unanalysed photos and propose the ones that CLEARLY demonstrate a rule (admin only) -----
+// Nothing is saved. The owner picks one of the proposals; the analysis is then written for that photo and that rule.
+async function handleAnalysesCandidates(request, env) {
+  if (!await checkAuth(request, env)) return unauth(request);
+  if (request.method !== 'POST') return jsonRes({ error: 'POST only' }, 405, request);
+  if (!env.ANTHROPIC_API_KEY) return jsonRes({ error: 'ANTHROPIC_API_KEY missing' }, 500, request);
+  const body = await request.json().catch(() => ({}));
+  const count = Math.min(Math.max(parseInt(body?.count, 10) || 3, 1), 5);
+  const pool = Math.min(Math.max(parseInt(body?.pool, 10) || 8, count), 12);
+  const minClarity = Number.isFinite(Number(body?.min_clarity)) ? Math.min(Math.max(Number(body.min_clarity), 0), 1) : 0.7;
+  const { results } = await env.DB.prepare(`
+    SELECT p.id, p.title, p.thumbnail, p.url, p.r2_key
+    FROM photos p
+    LEFT JOIN photo_analyses a ON a.photo_id = p.id
+    WHERE a.photo_id IS NULL AND p.published = 1 AND p.r2_key IS NOT NULL AND p.r2_key != '' AND p.width > 0 AND p.width <= 2000
+      AND p.r2_key NOT IN (SELECT p2.r2_key FROM photos p2 INNER JOIN photo_analyses a2 ON a2.photo_id = p2.id WHERE p2.r2_key IS NOT NULL AND p2.r2_key != '')
+    ORDER BY RANDOM()
+    LIMIT ?
+  `).bind(pool).all();
+  const prompt = 'אתה עורך צילום מחמיר. האם התמונה הזו מדגימה בצורה ברורה ומובהקת אחד מחוקי הקומפוזיציה האלה: rule_of_thirds, symmetry, leading_lines, golden_ratio, framing, negative_space? '
+    + 'אם אף חוק לא מודגם בבירור (למשל הנושא קרוב למרכז בלי סימטריה אמיתית), החזר rule null. clarity בין 0 ל-1: 0.9 ומעלה רק כשתלמיד מתחיל יזהה את החוק מיד. '
+    + 'reason: משפט אחד בעברית שמתאר מה בדיוק בתמונה מדגים את החוק (מיקום, קווים, מסגרת). '
+    + 'החזר JSON בלבד: {"rule":"..."|null,"clarity":0.0,"reason":"..."}';
+  const screened = [];
+  for (const photo of results || []) {
+    const image = await loadPhotoImageSource(env, request, photo);
+    if (!image) continue;
+    try {
+      const res = await anthropicFetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'x-api-key': env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
+        body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 600, messages: [{ role: 'user', content: [{ type: 'image', source: image }, { type: 'text', text: prompt }] }] }),
+      }, TOOL_SCREEN);
+      if (!res.ok) continue;
+      const raw = ((await res.json()).content?.[0]?.text || '').trim();
+      const parsed = JSON.parse(raw.match(/\{[\s\S]*\}/)?.[0] || raw);
+      const clarity = Number(parsed.clarity);
+      if (!ANALYSIS_RULES.has(parsed.rule) || !Number.isFinite(clarity) || clarity < minClarity) continue;
+      screened.push({
+        photo_id: photo.id,
+        title: photo.title || '',
+        thumbnail: photo.thumbnail || photo.url || '',
+        rule: parsed.rule,
+        clarity: Math.round(Math.min(clarity, 1) * 100) / 100,
+        reason: String(parsed.reason || '').replace(/\s+/g, ' ').trim().slice(0, 240),
+      });
+    } catch (_) { /* a photo the model could not judge is simply not proposed */ }
+  }
+  screened.sort((a, b) => b.clarity - a.clarity);
+  return jsonRes({ ok: true, screened: (results || []).length, candidates: screened.slice(0, count) }, 200, request);
 }
 
 // ===== LEARN INDEX =====
@@ -8211,6 +8616,10 @@ export default {
     if (path === '/api/analyses/dedup' && request.method === 'POST')             return handleAnalysesDedup(request, env);
     if (path === '/api/analyses/publish-all' && request.method === 'POST')       return handleAnalysesPublishAll(request, env);
     if (path === '/api/analyses/generate' && request.method === 'POST')          return handleAnalysesGenerate(request, env);
+    if (path === '/api/analyses/save' && request.method === 'POST')              return handleAnalysesSave(request, env);
+    if (path === '/api/analyses/verify' && request.method === 'POST')            return handleAnalysesVerify(request, env);
+    if (path === '/api/analyses/revise' && request.method === 'POST')            return handleAnalysesRevise(request, env);
+    if (path === '/api/analyses/candidates' && request.method === 'POST')        return handleAnalysesCandidates(request, env);
     if (path.startsWith('/api/analyses/') && path.endsWith('/generate-en') && request.method === 'POST')
       return handleAnalysesGenerateEn(request, env, path.slice('/api/analyses/'.length).replace('/generate-en',''));
     if (path.startsWith('/api/analyses/') && request.method === 'GET')           return handleAnalysesGet(request, env, path.slice('/api/analyses/'.length));
