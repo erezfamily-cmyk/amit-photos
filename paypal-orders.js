@@ -22,6 +22,12 @@ const PAYPAL_APPROVAL_HOSTS = {
 const DIGITAL_SIZES = new Set(['small', 'medium', 'large']);
 const DIGITAL_CURRENCIES = new Set(['ILS', 'USD']);
 const DIGITAL_ILS_TO_USD = 3.7;
+// Launch model (owner-approved planning basis, 16.10.2026; wording still needs legal and accounting review).
+// The public checkout sells ONE product: the largest file under a personal, non-commercial license, in ILS.
+// All of this is enforced on the server; the browser only displays it and can never change it.
+export const DIGITAL_PUBLIC_SKU = 'large';
+export const DIGITAL_LINK_VALIDITY_DAYS = 7;
+const DIGITAL_LINK_TTL_SECONDS = DIGITAL_LINK_VALIDITY_DAYS * 24 * 60 * 60;
 const ALLOWED_ORIGINS = ['https://amitphotos.com', 'https://www.amitphotos.com'];
 
 function corsHeaders(request) {
@@ -109,7 +115,9 @@ export async function handleDigitalCheckoutQuote(request, env) {
   if (request.method !== 'GET') return jsonRes({ error: 'method not allowed' }, 405, request);
   const params = new URL(request.url).searchParams;
   const photoId = params.get('photoId');
-  const sku = params.get('sku') || 'large';
+  const sku = params.get('sku') || DIGITAL_PUBLIC_SKU;
+  // One product only: the public preview never quotes another size.
+  if (sku !== DIGITAL_PUBLIC_SKU) return jsonRes({ error: 'SKU_NOT_AVAILABLE' }, 400, request);
   const pricing = await resolveDigitalPayPalPrice(env, photoId, sku, 'ILS');
   if (pricing.error) return jsonRes({ error: pricing.error }, pricing.status, request);
   // Flags and configuration first (no database read while payments are off), then the D1 switch.
@@ -119,7 +127,7 @@ export async function handleDigitalCheckoutQuote(request, env) {
   return jsonRes({
     photoId, sku, title: photo?.title || photoId,
     amountMinor: pricing.amountExpected, currency: 'ILS',
-    license: 'personal', enabled: flagsOpen && switchOpen,
+    license: 'personal', linkValidityDays: DIGITAL_LINK_VALIDITY_DAYS, enabled: flagsOpen && switchOpen,
     environment: resolvePayPalConfig(env, request).environment || null,
   }, 200, request);
 }
@@ -191,7 +199,9 @@ async function getGlobalPrices(env) {
   if (row?.value) {
     try { return JSON.parse(row.value); } catch {}
   }
-  return { small: 19, medium: 59, large: 129 };
+  // Fallback only when no `prices` row exists in D1. The launch product is `large` at 89 ILS; the live value
+  // still comes from the D1 `prices` setting (an admin action, not part of this code change).
+  return { small: 19, medium: 59, large: 89 };
 }
 
 async function getPayPalAccessToken(env) {
@@ -455,7 +465,7 @@ async function processCompletedCaptureWebhook(request, env, event, accessToken, 
 // Nothing here creates an order or a capture, and nothing here refunds money.
 // ---------------------------------------------------------------------------
 const MAX_REISSUES = 2;
-const REISSUE_TTL_SECONDS = 86400;
+const REISSUE_TTL_SECONDS = DIGITAL_LINK_TTL_SECONDS;   // a re-issued link is valid as long as the first one
 const REISSUE_IN_PROGRESS_WINDOW_MS = 10 * 60 * 1000;
 const AFTER_SALE_RANK = { NONE: 0, REVIEW_REQUIRED: 1, REFUNDED: 2, REVOKED_MANUAL: 2, REVERSED: 3 };
 const TERMINAL_AFTER_SALE = new Set(['REFUNDED', 'REVERSED', 'REVOKED_MANUAL']);
@@ -936,7 +946,7 @@ async function verifiedPayerEmail(env, order) {
   return data.payer?.email_address || null;
 }
 
-function buildLinkEmail({ link, title, test }) {
+export function buildLinkEmail({ link, title, test }) {
   const safeTitle = htmlEscape(title);
   const tag = test ? '[TEST] ' : '';
   const html = `<div style="font-family:sans-serif;max-width:560px;margin:0 auto;padding:1.5rem;color:#111">
@@ -944,16 +954,16 @@ function buildLinkEmail({ link, title, test }) {
     <h2 style="color:#c8a96e">AMIT PHOTOS</h2>
     <p>תודה על הרכישה! הקובץ "${safeTitle}" מוכן להורדה.</p>
     <p><a href="${link}" style="display:inline-block;background:#c8a96e;color:#111;padding:.7rem 1.6rem;text-decoration:none;font-weight:700">להורדת הקובץ</a></p>
-    <p style="color:#666;font-size:.9rem">הקישור חד-פעמי ותקף ל-24 שעות מרגע ההנפקה. אם ההורדה נכשלה, השיבו להודעה זו עם מספר ההזמנה ונשלח קישור חדש, ללא חיוב נוסף.</p>
+    <p style="color:#666;font-size:.9rem">הקישור חד-פעמי ותקף ל-${DIGITAL_LINK_VALIDITY_DAYS} ימים מרגע ההנפקה. אם ההורדה נכשלה, השיבו להודעה זו עם מספר ההזמנה ונשלח קישור חדש, ללא חיוב נוסף.</p>
   </div>
   <hr>
   <div dir="ltr" style="margin-top:1.5rem">
     <p>Thank you for your purchase! Your photo "${safeTitle}" is ready.</p>
     <p><a href="${link}" style="display:inline-block;background:#c8a96e;color:#111;padding:.7rem 1.6rem;text-decoration:none;font-weight:700">Download your file</a></p>
-    <p style="color:#666;font-size:.9rem">The link works once and is valid for 24 hours from issue. If the download fails, reply to this email with your order number and we will send a new link at no extra charge.</p>
+    <p style="color:#666;font-size:.9rem">The link works once and is valid for ${DIGITAL_LINK_VALIDITY_DAYS} days from issue. If the download fails, reply to this email with your order number and we will send a new link at no extra charge.</p>
   </div>
 </div>`;
-  const text = `${tag}הקובץ "${title}" מוכן להורדה / Your photo "${title}" is ready.\n${link}\nהקישור חד-פעמי / The link works once (24 hours).`;
+  const text = `${tag}הקובץ "${title}" מוכן להורדה / Your photo "${title}" is ready.\n${link}\nהקישור חד-פעמי, ${DIGITAL_LINK_VALIDITY_DAYS} ימים / The link works once (${DIGITAL_LINK_VALIDITY_DAYS} days).`;
   return { subject: tag + 'הקובץ שלך מוכן להורדה | Your photo download is ready', html, text };
 }
 
@@ -1705,6 +1715,8 @@ export async function handlePayPalCreateOrder(request, env, options = {}) {
     if (publicBody.licenseAccepted !== true || publicBody.currency !== 'ILS') {
       return jsonRes({ error: 'PERSONAL_LICENSE_ACCEPTANCE_REQUIRED' }, 400, request);
     }
+    // One product only: the public checkout sells the largest size and nothing else.
+    if (publicBody.sku !== DIGITAL_PUBLIC_SKU) return jsonRes({ error: 'SKU_NOT_AVAILABLE' }, 400, request);
     const quote = await resolveDigitalPayPalPrice(env, publicBody.photoId, publicBody.sku, 'ILS');
     if (quote.error) return jsonRes({ error: quote.error }, quote.status, request);
     if (publicBody.expectedAmountMinor !== quote.amountExpected) {
@@ -1868,7 +1880,7 @@ async function finalizeDigitalPayPalOrder(request, env, order, extras = {}) {
   if (underReview(beforeMint)) return blockedResponse(beforeMint);
 
   const now = Math.floor(Date.now() / 1000);
-  const expires = now + 86400;
+  const expires = now + DIGITAL_LINK_TTL_SECONDS;
   if (reviewColumns) {
     // A link that was withdrawn only because a review/dispute began before delivery comes back once the human released the order.
     await env.DB.prepare(

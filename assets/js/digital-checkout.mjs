@@ -1,5 +1,8 @@
 const STORAGE_KEY = 'amit-digital-checkout-v1';
-const MAX_AGE = 24 * 60 * 60 * 1000;
+const MAX_AGE = 24 * 60 * 60 * 1000;   // how long a pending checkout ATTEMPT is remembered in this tab; unrelated to the download link
+// Display default only. The server decides the real validity: the quote returns `linkValidityDays`, and the
+// link's actual expiry is set on the server (tests keep this constant and the server constant equal).
+export const LINK_VALIDITY_DAYS = 7;
 
 // The page language must survive the PayPal round trip. An explicit ?lang wins,
 // then the language saved with this tab's pending attempt, then the site preference.
@@ -97,7 +100,11 @@ async function mount() {
   document.title = isEn ? 'Image license | Amit Photos' : 'רישיון לתמונה | Amit Photos';
   document.documentElement.lang = lang;
   document.documentElement.dir = isEn ? 'ltr' : 'rtl';
-  document.querySelectorAll('[data-he][data-en]').forEach(el => { el.textContent = el.dataset[lang]; });
+  const days = { value: LINK_VALIDITY_DAYS };
+  const render = el => { el.textContent = el.dataset[lang].replace('{days}', String(days.value)); };
+  document.querySelectorAll('[data-he][data-en]').forEach(render);
+  // The policy pages open in a new tab in the language of this page.
+  document.querySelectorAll('a[data-lang-link]').forEach(a => { if (isEn) a.setAttribute('href', a.getAttribute('href') + '?lang=en'); });
   const status = document.getElementById('checkout-status');
   const button = document.getElementById('checkout-pay');
   const consent = document.getElementById('checkout-consent');
@@ -109,7 +116,7 @@ async function mount() {
     error: isEn ? 'We could not complete this step. Retry this order or contact us. If you approved payment, do not create another order.' : 'לא הצלחנו להשלים את השלב. נסו שוב את אותה הזמנה או פנו אלינו. אם אישרתם תשלום, אל תיצרו הזמנה חדשה.',
     missing: isEn ? 'Choose an image in the gallery first.' : 'בחרו תחילה תמונה בגלריה.',
     verifying: isEn ? 'Verifying your payment…' : 'מאמתים את התשלום…',
-    success: isEn ? 'Payment verified. Your download is ready (one use, within 24 hours).' : 'התשלום אומת. ההורדה מוכנה (שימוש אחד בתוך 24 שעות).',
+    success: isEn ? `Payment verified. Your download is ready (one use, valid for ${LINK_VALIDITY_DAYS} days).` : `התשלום אומת. ההורדה מוכנה (שימוש אחד, תקף ל-${LINK_VALIDITY_DAYS} ימים).`,
     cancelled: isEn ? 'You returned without completing checkout. No capture was requested by this page.' : 'חזרתם ללא השלמת הרכישה. העמוד לא ביקש לחייב את ההזמנה.',
     changed: isEn ? 'The price changed. Review the new price and confirm the license again.' : 'המחיר השתנה. בדקו את המחיר החדש ואשרו שוב את הרישיון.',
     declined: isEn ? 'PayPal declined the payment method. Return to the image details, then choose a different payment method in PayPal.' : 'PayPal דחה את אמצעי התשלום. חזרו לפרטי התמונה, ולאחר מכן בחרו אמצעי תשלום אחר ב־PayPal.',
@@ -150,6 +157,11 @@ async function mount() {
   if (!photoId) { controls.hidden = true; status.textContent = words.missing; return; }
   try {
     quote = await client.quote(photoId);
+    // The validity shown before payment is the one the server reports.
+    if (Number.isInteger(quote.linkValidityDays) && quote.linkValidityDays > 0) {
+      days.value = quote.linkValidityDays;
+      document.querySelectorAll('[data-days]').forEach(render);
+    }
     document.getElementById('checkout-title').textContent = quote.title;
     document.getElementById('checkout-price').textContent = new Intl.NumberFormat(isEn ? 'en-IL' : 'he-IL', { style: 'currency', currency: 'ILS' }).format(quote.amountMinor / 100);
     status.textContent = params.get('cancelled') === '1' ? words.cancelled : quote.enabled ? '' : words.disabled;

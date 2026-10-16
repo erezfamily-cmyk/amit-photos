@@ -102,6 +102,19 @@ try {
       assert.equal(await page.locator('#checkout-pay').isDisabled(), true);
       assert.equal(await page.locator('#checkout-consent').isDisabled(), true);
       assert.equal(await page.locator('html').getAttribute('dir'), lang === 'he' ? 'rtl' : 'ltr');
+      // Launch model: the price, the 7-day one-time link, the license type, both policy links and the consent text.
+      const priceText = await page.locator('#checkout-price').innerText();
+      assert.match(priceText, /129/, 'the price shown is the one the server quoted (this QA server quotes 129.00)');
+      assert.match(priceText, /₪/);
+      assert.match(await page.locator('#checkout-validity').innerText(), lang === 'he' ? /ותקף ל-7 ימים/ : /valid for 7 days/);
+      assert.match(await page.locator('.eyebrow').innerText(), lang === 'he' ? /רישיון אישי/ : /Personal license/);
+      assert.match(await page.locator('label:has(#checkout-consent)').innerText(), lang === 'he' ? /תנאי הרישיון ואת מדיניות ההחזרים/ : /license terms and the refund policy/);
+      const terms = page.locator('#checkout-policy-links a[href^="/license-terms/"]');
+      const refunds = page.locator('#checkout-policy-links a[href^="/refund-policy/"]');
+      assert.equal(await terms.getAttribute('href'), lang === 'he' ? '/license-terms/' : '/license-terms/?lang=en');
+      assert.equal(await refunds.getAttribute('href'), lang === 'he' ? '/refund-policy/' : '/refund-policy/?lang=en');
+      assert.equal(await terms.getAttribute('target'), '_blank');
+      assert.equal(await refunds.getAttribute('rel'), 'noopener');
       const size = await page.evaluate(() => ({ scroll: document.documentElement.scrollWidth, width: innerWidth }));
       assert.ok(size.scroll <= size.width, JSON.stringify(size));
       assert.equal(calls.creates + calls.captures + calls.approvals, 0);
@@ -118,6 +131,7 @@ try {
     assert.equal(calls.creates, 1);
     assert.equal(calls.captures, 1);
     assert.equal(await page.locator('#checkout-download').getAttribute('href'), '/api/download/qa-bearer-token');
+    assert.match(await page.locator('#checkout-status').innerText(), /תקף ל-7 ימים/, 'the success message states the 7-day validity');
     assert.equal(await page.evaluate(() => JSON.stringify(sessionStorage).includes('qa-bearer-token')), false);
     assert.equal(new URL(page.url()).search, '');
   });
