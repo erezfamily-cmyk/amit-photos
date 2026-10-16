@@ -277,6 +277,24 @@ test('checkout policy links do not break across lines (nowrap, larger touch area
   assert.match(html, /#checkout-policy-links a\{display:inline-block;white-space:nowrap;padding:\.3em 0\}/);
 });
 
+test('no separator character can hang at the end of a line: link rows are wrapping flex rows with a gap, no "·" between links', () => {
+  const html = read('checkout/index.html');
+  assert.match(html, /#checkout-policy-links,footer\{display:flex;flex-wrap:wrap;gap:0 1\.25em\}/);
+  const rows = {
+    'policy links': html.match(/<p id="checkout-policy-links">([\s\S]*?)<\/p>/)[1],
+    footer: html.match(/<footer>([\s\S]*?)<\/footer>/)[1],
+  };
+  for (const [name, markup] of Object.entries(rows)) {
+    const outsideLinks = markup.replace(/<a\b[^>]*>[\s\S]*?<\/a>/g, '');
+    assert.equal(outsideLinks.trim(), '', name + ': nothing but whitespace may sit between the links (a stray "·" would hang at a line end)');
+    for (const [, he, en] of markup.matchAll(/data-he="([^"]*)" data-en="([^"]*)"/g).map(m => [m[0], m[1], m[2]])) {
+      for (const text of [he, en]) assert.doesNotMatch(text, /^[\s·|•\-–—\/]|[\s·|•\-–—\/]$/, name + ': a link text starts or ends with a separator');
+    }
+  }
+  assert.equal((rows['policy links'].match(/<a\b/g) || []).length, 3);
+  assert.equal((rows.footer.match(/<a\b/g) || []).length, 2);
+});
+
 test('the license terms state the approved launch model in both languages', () => {
   const html = read('license-terms/index.html');
   const he = section(html, 'he');

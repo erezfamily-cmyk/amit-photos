@@ -120,6 +120,31 @@ try {
       assert.equal(calls.creates + calls.captures + calls.approvals, 0);
     });
   }
+  // Regression: the policy-link row and the footer must never leave a separator hanging at the end of a line,
+  // even at the narrowest phone width, in both languages.
+  for (const lang of ['he', 'en']) {
+    await scenario('links-no-hanging-separator-320-' + lang, { width: 320 }, async ({ page }) => {
+      await loaded(page, lang);
+      const result = await page.evaluate(() => ({
+        hscroll: document.documentElement.scrollWidth > innerWidth,
+        rows: ['#checkout-policy-links', 'footer'].map(selector => {
+          const element = document.querySelector(selector);
+          return {
+            selector,
+            ownText: [...element.childNodes].filter(node => node.nodeType === 3).map(node => node.textContent.trim()).join(''),
+            visibleText: element.innerText,
+            linkLines: [...element.querySelectorAll('a')].map(a => a.getClientRects().length),
+          };
+        }),
+      }));
+      assert.equal(result.hscroll, false);
+      for (const row of result.rows) {
+        assert.equal(row.ownText, '', row.selector + ' has loose text between its links');
+        assert.doesNotMatch(row.visibleText, /[·|•]/, row.selector + ' shows a separator character');
+      }
+      assert.deepEqual(result.rows[0].linkLines, [1, 1, 1], 'each policy link stays on one line');
+    });
+  }
   await scenario('long-title-390', { title: 'Photograph'.repeat(24) }, async ({ page }) => {
     await page.goto(origin + '/checkout/?photoId=' + photo.id);
     await page.locator('#checkout-title').getByText('Photograph'.repeat(24), { exact: true }).waitFor();
