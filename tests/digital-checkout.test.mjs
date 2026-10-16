@@ -37,7 +37,7 @@ function env() {
   return { DB, sqlite, PAYMENTS_ENABLED: 'true', DIGITAL_PAYPAL_ENABLED: 'true', PAYPAL_CLIENT_ID: 'test', PAYPAL_CLIENT_SECRET: 'test' };
 }
 const quoteRequest = new Request('https://amitphotos.com/api/paypal/quote?photoId=photo-1&sku=large');
-const quote = { photoId: 'photo-1', amountMinor: 10000, currency: 'ILS', license: 'personal', enabled: true, environment: 'sandbox' };
+const quote = { photoId: 'photo-1', amountMinor: 10000, currency: 'ILS', license: 'personal', linkValidityDays: 7, enabled: true, environment: 'sandbox' };
 const orderId = 'PAYPALORDER12345';
 function createRequest(overrides = {}) {
   return new Request('https://amitphotos.com/api/paypal/create-order', {
@@ -100,7 +100,8 @@ test('public create uses server amount, checkout return URLs and one canonical o
     assert.equal((await second.json()).paypalOrderId, orderId);
     assert.equal(creates, 1);
     assert.equal(config.sqlite.prepare('SELECT COUNT(*) AS n FROM paypal_orders').get().n, 1);
-    const mismatch = await handlePayPalCreateOrder(createRequest({ sku: 'small', expectedAmountMinor: 1900 }), config, options);
+    // A stale client price is refused. (The launch model sells `large` only; other sizes are covered in launch-model.test.mjs.)
+    const mismatch = await handlePayPalCreateOrder(createRequest({ expectedAmountMinor: 1900 }), config, options);
     assert.equal(mismatch.status, 409);
   } finally { globalThis.fetch = original; }
 });

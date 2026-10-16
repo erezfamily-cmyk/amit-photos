@@ -18,6 +18,8 @@
     button:disabled{background:#414548;color:#bec1c3;cursor:not-allowed}button:not(:disabled){cursor:pointer}
     :focus-visible{outline:3px solid #f6dc9c;outline-offset:5px}[hidden]{display:none!important}.note{color:#c3c6c8;font-size:15px}
     #checkout-status{min-height:2em}footer{margin-top:24px;font-size:16px}ul{padding-inline-start:24px}
+    #checkout-policy-links,footer{display:flex;flex-wrap:wrap;gap:0 1.25em}
+    #checkout-policy-links a{display:inline-block;white-space:nowrap;padding:.3em 0}
   </style>
 </head>
 <body>
@@ -28,14 +30,19 @@
       <h1 dir="auto" id="checkout-title" data-he="רישיון לתמונה" data-en="Image license">רישיון לתמונה</h1>
       <p data-he="קובץ בגודל המרבי הזמין לתמונה. הרכישה אינה כוללת הדפסה או משלוח." data-en="An image file at the largest available size. Prints and shipping are not included.">קובץ בגודל המרבי הזמין לתמונה. הרכישה אינה כוללת הדפסה או משלוח.</p>
       <p id="checkout-price" class="price" aria-live="polite">—</p>
+      <p id="checkout-validity" data-days data-he="קישור ההורדה חד-פעמי ותקף ל-{days} ימים מרגע התשלום." data-en="The download link works once and is valid for {days} days from payment.">קישור ההורדה חד-פעמי ותקף ל-7 ימים מרגע התשלום.</p>
       <h2 data-he="מה כולל הרישיון?" data-en="What does the license include?">מה כולל הרישיון?</h2>
       <ul>
         <li data-he="שימוש אישי ולא מסחרי, כגון רקע למכשיר או הדפסה לבית." data-en="Personal, non-commercial use, such as device wallpaper or a home print.">שימוש אישי ולא מסחרי, כגון רקע למכשיר או הדפסה לבית.</li>
         <li data-he="אין להעביר, למכור מחדש או להפיץ את הקובץ. זכויות היוצרים נשארות אצל עמית ארז." data-en="No transfer, resale or redistribution of the file. Copyright remains with Amit Erez.">אין להעביר, למכור מחדש או להפיץ את הקובץ. זכויות היוצרים נשארות אצל עמית ארז.</li>
       </ul>
-      <p><a href="/licensing/" data-he="פרטי הרישיון ושימוש מסחרי" data-en="License details and commercial use">פרטי הרישיון ושימוש מסחרי</a></p>
+      <p id="checkout-policy-links">
+        <a href="/license-terms/" data-lang-link target="_blank" rel="noopener" data-he="תנאי הרישיון" data-en="License terms">תנאי הרישיון</a>
+        <a href="/refund-policy/" data-lang-link target="_blank" rel="noopener" data-he="מדיניות החזרים" data-en="Refund policy">מדיניות החזרים</a>
+        <a href="/licensing/" data-he="שימוש מסחרי" data-en="Commercial use">שימוש מסחרי</a>
+      </p>
       <div id="checkout-controls">
-        <label><input id="checkout-consent" type="checkbox" disabled><span data-he="קראתי את פרטי הרישיון ואני מאשר/ת שהשימוש אישי ולא מסחרי." data-en="I have read the license details and confirm personal, non-commercial use.">קראתי את פרטי הרישיון ואני מאשר/ת שהשימוש אישי ולא מסחרי.</span></label>
+        <label><input id="checkout-consent" type="checkbox" disabled><span data-he="קראתי את תנאי הרישיון ואת מדיניות ההחזרים, ואני מאשר/ת שהשימוש אישי ולא מסחרי." data-en="I have read the license terms and the refund policy, and I confirm the use is personal and non-commercial.">קראתי את תנאי הרישיון ואת מדיניות ההחזרים, ואני מאשר/ת שהשימוש אישי ולא מסחרי.</span></label>
         <button id="checkout-pay" type="button" disabled data-he="המשך לתשלום ב־PayPal" data-en="Continue to PayPal">המשך לתשלום ב־PayPal</button>
       </div>
       <p id="checkout-status" role="status" aria-live="polite" data-he="טוענים את פרטי התמונה…" data-en="Loading image details…">טוענים את פרטי התמונה…</p>
@@ -44,8 +51,8 @@
       <a id="checkout-download" class="download" hidden data-he="הורדת התמונה" data-en="Download image">הורדת התמונה</a>
       <p class="note" data-he="קישור הורדה יופיע רק אחרי אימות התשלום בשרת." data-en="A download link appears only after the server verifies payment.">קישור הורדה יופיע רק אחרי אימות התשלום בשרת.</p>
     </section>
-    <footer><a href="/#contact" data-he="שאלות? פנו אלינו" data-en="Questions? Contact us">שאלות? פנו אלינו</a> · <a href="/privacy/" data-he="פרטיות" data-en="Privacy">פרטיות</a></footer>
+    <footer><a href="/#contact" data-he="שאלות? פנו אלינו" data-en="Questions? Contact us">שאלות? פנו אלינו</a><a href="/privacy/" data-he="פרטיות" data-en="Privacy">פרטיות</a></footer>
   </main>
-  <script type="module" src="/assets/js/digital-checkout.mjs?v=6fe13196"></script>
+  <script type="module" src="/assets/js/digital-checkout.mjs?v=39d590e8"></script>
 </body>
 </html>

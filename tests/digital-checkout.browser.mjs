@@ -102,9 +102,47 @@ try {
       assert.equal(await page.locator('#checkout-pay').isDisabled(), true);
       assert.equal(await page.locator('#checkout-consent').isDisabled(), true);
       assert.equal(await page.locator('html').getAttribute('dir'), lang === 'he' ? 'rtl' : 'ltr');
+      // Launch model: the price, the 7-day one-time link, the license type, both policy links and the consent text.
+      const priceText = await page.locator('#checkout-price').innerText();
+      assert.match(priceText, /129/, 'the price shown is the one the server quoted (this QA server quotes 129.00)');
+      assert.match(priceText, /₪/);
+      assert.match(await page.locator('#checkout-validity').innerText(), lang === 'he' ? /ותקף ל-7 ימים/ : /valid for 7 days/);
+      assert.match(await page.locator('.eyebrow').innerText(), lang === 'he' ? /רישיון אישי/ : /Personal license/);
+      assert.match(await page.locator('label:has(#checkout-consent)').innerText(), lang === 'he' ? /תנאי הרישיון ואת מדיניות ההחזרים/ : /license terms and the refund policy/);
+      const terms = page.locator('#checkout-policy-links a[href^="/license-terms/"]');
+      const refunds = page.locator('#checkout-policy-links a[href^="/refund-policy/"]');
+      assert.equal(await terms.getAttribute('href'), lang === 'he' ? '/license-terms/' : '/license-terms/?lang=en');
+      assert.equal(await refunds.getAttribute('href'), lang === 'he' ? '/refund-policy/' : '/refund-policy/?lang=en');
+      assert.equal(await terms.getAttribute('target'), '_blank');
+      assert.equal(await refunds.getAttribute('rel'), 'noopener');
       const size = await page.evaluate(() => ({ scroll: document.documentElement.scrollWidth, width: innerWidth }));
       assert.ok(size.scroll <= size.width, JSON.stringify(size));
       assert.equal(calls.creates + calls.captures + calls.approvals, 0);
+    });
+  }
+  // Regression: the policy-link row and the footer must never leave a separator hanging at the end of a line,
+  // even at the narrowest phone width, in both languages.
+  for (const lang of ['he', 'en']) {
+    await scenario('links-no-hanging-separator-320-' + lang, { width: 320 }, async ({ page }) => {
+      await loaded(page, lang);
+      const result = await page.evaluate(() => ({
+        hscroll: document.documentElement.scrollWidth > innerWidth,
+        rows: ['#checkout-policy-links', 'footer'].map(selector => {
+          const element = document.querySelector(selector);
+          return {
+            selector,
+            ownText: [...element.childNodes].filter(node => node.nodeType === 3).map(node => node.textContent.trim()).join(''),
+            visibleText: element.innerText,
+            linkLines: [...element.querySelectorAll('a')].map(a => a.getClientRects().length),
+          };
+        }),
+      }));
+      assert.equal(result.hscroll, false);
+      for (const row of result.rows) {
+        assert.equal(row.ownText, '', row.selector + ' has loose text between its links');
+        assert.doesNotMatch(row.visibleText, /[·|•]/, row.selector + ' shows a separator character');
+      }
+      assert.deepEqual(result.rows[0].linkLines, [1, 1, 1], 'each policy link stays on one line');
     });
   }
   await scenario('long-title-390', { title: 'Photograph'.repeat(24) }, async ({ page }) => {
@@ -118,6 +156,7 @@ try {
     assert.equal(calls.creates, 1);
     assert.equal(calls.captures, 1);
     assert.equal(await page.locator('#checkout-download').getAttribute('href'), '/api/download/qa-bearer-token');
+    assert.match(await page.locator('#checkout-status').innerText(), /תקף ל-7 ימים/, 'the success message states the 7-day validity');
     assert.equal(await page.evaluate(() => JSON.stringify(sessionStorage).includes('qa-bearer-token')), false);
     assert.equal(new URL(page.url()).search, '');
   });

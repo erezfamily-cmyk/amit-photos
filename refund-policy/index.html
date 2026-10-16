@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="referrer" content="no-referrer">
+  <title>מדיניות החזרים | Refund policy | Amit Photos</title>
+  <link rel="icon" href="/favicon.ico">
+  <style>
+    *{box-sizing:border-box}body{margin:0;background:#111315;color:#f3f1eb;font:18px/1.7 system-ui,sans-serif}
+    main{max-width:720px;margin:4vh auto;padding:24px}header{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+    a{color:#e5c685;text-underline-offset:4px}h1{font-size:clamp(26px,6vw,36px);line-height:1.3}
+    .draft{margin:24px 0;padding:14px 18px;border:1px solid #8a6d2b;border-radius:12px;background:#2a2314;color:#f3e3b5;font-size:16px}
+    ol{padding-inline-start:26px}li{margin:10px 0}[hidden]{display:none!important}
+    :focus-visible{outline:3px solid #f6dc9c;outline-offset:5px}footer{margin-top:32px;font-size:16px}
+  </style>
+</head>
+<body>
+  <main>
+    <header><a href="/">Amit Photos</a></header>
+
+    <section id="he" lang="he" dir="rtl">
+      <h1>מדיניות החזרים, תמונה דיגיטלית</h1>
+      <p class="draft" role="note"><strong>טיוטה.</strong> הנוסח טרם נבדק על ידי יועץ משפטי ורואה חשבון, ועשוי להשתנות לפני תחילת המכירה. אין בו כדי לפגוע בזכויות שהדין מקנה לך ושאין להתנות עליהן.</p>
+      <ol>
+        <li><strong>לפני הורדה.</strong> ניתן לבקש החזר כספי מלא לפני שהורדת את הקובץ.</li>
+        <li><strong>אחרי הורדה.</strong> לאחר שהקובץ הורד לא יינתן החזר, למעט שני מקרים: (א) תקלה טכנית שמנעה שימוש בקובץ, ו-(ב) חיוב כפול.</li>
+        <li><strong>איך מבקשים.</strong> כותבים ל-<a href="mailto:contact@amitphotos.com">contact@amitphotos.com</a> עם מספר ההזמנה ועם כתובת האימייל שבה נעשתה הרכישה. אנחנו מאמתים את התשלום מול PayPal.</li>
+        <li><strong>תקלה בהורדה.</strong> אם ההורדה נכשלה, יונפק קישור חדש ללא חיוב נוסף, עד שתי הנפקות חוזרות להזמנה (ראו <a href="/license-terms/" data-lang-link>תנאי הרישיון</a>). אם גם אז לא ניתן להשתמש בקובץ, יינתן החזר.</li>
+        <li><strong>ביצוע ההחזר.</strong> ההחזר מבוצע לחשבון PayPal ששימש לתשלום, והוא יופיע לפי כללי PayPal והבנק.</li>
+        <li><strong>קישורים שלא נוצלו.</strong> עם ההחזר, קישורי הורדה שטרם נוצלו מתבטלים אוטומטית.</li>
+        <li><strong>מחלוקת.</strong> אם נפתחה מחלוקת (dispute) ב-PayPal, ההזמנה נבדקת ידנית, ולא יונפק קישור נוסף עד סיום הבדיקה.</li>
+      </ol>
+      <footer><a href="/#contact">שאלות? פנו אלינו</a></footer>
+    </section>
+
+    <section id="en" lang="en" dir="ltr">
+      <h1>Refund Policy, Digital Image</h1>
+      <p class="draft" role="note"><strong>Draft.</strong> This wording has not yet been reviewed by a lawyer and an accountant, and may change before sales begin. It does not affect rights that the law gives you and that cannot be waived.</p>
+      <ol>
+        <li><strong>Before download.</strong> You can request a full refund before you download the file.</li>
+        <li><strong>After download.</strong> Once the file has been downloaded we do not give a refund, except in two cases: (a) a technical fault that prevented use of the file, and (b) a duplicate charge.</li>
+        <li><strong>How to request.</strong> Write to <a href="mailto:contact@amitphotos.com">contact@amitphotos.com</a> with your order number and the e-mail address used for the purchase. We verify the payment with PayPal.</li>
+        <li><strong>Download problems.</strong> If the download failed, a new link is issued at no extra charge, up to two re-issues per order (see the <a href="/license-terms/" data-lang-link>license terms</a>). If the file still cannot be used, a refund is given.</li>
+        <li><strong>How a refund is made.</strong> The refund goes to the PayPal account used for the payment and appears according to PayPal and bank rules.</li>
+        <li><strong>Unused links.</strong> With the refund, download links that have not been used are cancelled automatically.</li>
+        <li><strong>Disputes.</strong> If a dispute is opened with PayPal, the order is reviewed manually and no further link is issued until the review ends.</li>
+      </ol>
+      <footer><a href="/#contact">Questions? Contact us</a></footer>
+    </section>
+  </main>
+  <script>
+    (function () {
+      var lang = 'he';
+      try {
+        var p = new URLSearchParams(location.search).get('lang');
+        lang = p === 'en' || p === 'he' ? p : (localStorage.getItem('lang') === 'en' ? 'en' : 'he');
+      } catch (e) {}
+      document.documentElement.lang = lang;
+      document.documentElement.dir = lang === 'en' ? 'ltr' : 'rtl';
+      document.getElementById('he').hidden = lang === 'en';
+      document.getElementById('en').hidden = lang !== 'en';
+      document.title = lang === 'en' ? 'Refund policy | Amit Photos' : 'מדיניות החזרים | Amit Photos';
+      // Cross links keep the language of this page.
+      document.querySelectorAll('a[data-lang-link]').forEach(function (a) { a.setAttribute('href', a.getAttribute('href') + '?lang=' + lang); });
+    })();
+  </script>
+</body>
+</html>

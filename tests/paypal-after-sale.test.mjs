@@ -271,7 +271,7 @@ test('re-issue gives a new one-time link for the same order, revokes the old unu
     assert.equal(response.status, 200);
     assert.match(body.url, /^\/api\/download\/[0-9a-f-]{36}$/);
     assert.equal(body.reissuesRemaining, 1);
-    assert.ok(Math.abs(new Date(body.expiresAt).getTime() - (Date.now() + 86400000)) < 5000, 'valid for 24 hours');
+    assert.ok(Math.abs(new Date(body.expiresAt).getTime() - (Date.now() + 7 * 86400000)) < 5000, 'a re-issued link is valid for 7 days, like the first one');
     const rows = tokens(env);
     assert.equal(rows.length, 2);
     const fresh = rows.find(row => row.token === body.url.split('/').pop());

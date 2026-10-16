@@ -98,6 +98,7 @@ function makeDb(options = {}) {
               }
               if (sql.includes('INSERT OR IGNORE INTO download_tokens')) {
                 state.tokenInserts += 1;
+                state.tokenInsertArgs = args;   // [token, photos, size, tx, expires_at, created_at, amount, ...]
                 if (!options.failTokenPersist) state.token = { token: args[0], tx: args[3] };
                 return { success: true, meta: { changes: options.failTokenPersist ? 0 : 1 } };
               }
@@ -522,6 +523,10 @@ test('successful capture creates one download token and a duplicate callback reu
     assert.match(firstBody.url, /^\/api\/download\//);
     assert.equal(db.state.tokenInserts, 1);
     assert.equal(db.state.order.status, 'COMPLETED');
+    // Launch model: the first download link is valid for 7 days (the server sets it, not the browser).
+    const [, , , , expiresAt, createdAt] = db.state.tokenInsertArgs;
+    assert.equal(expiresAt - createdAt, 7 * 24 * 60 * 60, 'the minted link is valid for exactly 7 days');
+    assert.ok(Math.abs(createdAt - Math.floor(Date.now() / 1000)) <= 5);
 
     const callsAfterFirst = fetchCalls;
     const second = await handlePayPalCaptureOrder(
