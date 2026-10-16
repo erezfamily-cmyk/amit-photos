@@ -15,5 +15,19 @@
     "8842a9d9-a2ea-428c-9358-bc4b405df5b8",
     "ba7677aa-989c-419e-8086-9eeef32a9650",
     "e5949a96-1c67-4394-b929-c6eca351e2a5"
-  ]
+  ],
+  "campaigns": {
+    "9eff0b9c-aa7f-4879-bb47-8cacb8c3508e": {
+      "product_url": "https://www.zazzle.com/purple_lilac_flowers_macro_canvas_print-256669905797454926",
+      "caption": "I waited for the soft morning light to catch these delicate purple lilac blossoms, letting the green behind them melt into a gentle blur. I chose this frame because the dense cluster feels alive with color, yet so calm and quiet. It's now available as a Canvas Print, ready to bring a little of that spring stillness into your home."
+    }
+  },
+  "deliveries": {
+    "9eff0b9c-aa7f-4879-bb47-8cacb8c3508e": {
+      "facebook": {
+        "post_id": "1422628493356655",
+        "published_at": "2026-10-16T14:39:14.358878+00:00"
+      }
+    }
+  }
 }
