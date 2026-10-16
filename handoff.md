@@ -6,6 +6,22 @@
 
 ---
 
+## LAUNCH MODEL — CODE AND UI PR #174 (DRAFT, not merged, not enabled) (16.10.2026)
+
+Owner asked for a separate technical draft PR for the approved launch model. **PR #174**, branch `feature/launch-model-code-ui-2026-10-16`, based on #155 (`b4f97ea1`, synced with main), so it is a stacked PR with base = the #155 branch. Both payment flags stay `false`; no production, Live, D1, migration, secret or flag change; #155 unchanged; nothing merged or deployed.
+
+**What changed:** (server, `paypal-orders.js`) public quote and public create-order sell `large` only (`400 SKU_NOT_AVAILABLE` otherwise); the first download link and every re-issue are valid **7 days** (was 24 hours); the quote returns `linkValidityDays`; the e-mail says 7 days; the no-`prices`-row fallback for `large` is 89. (UI) the checkout shows price, license type and link validity, links to the new draft pages `/license-terms/` and `/refund-policy/`, and a mandatory consent checkbox, in Hebrew and English. Re-issues stay at most two (`MAX_REISSUES = 2`, verified in code).
+
+**Verified:** CI on the PR passed, all four checks: `paypal-orders-v2` (302 of 302 node tests, including the new `tests/launch-model.test.mjs`, 16 tests, and `paypal-staging-isolation`), `digital-checkout-browser` (the new Hebrew and English browser assertions ran and passed), and both Cloudflare Workers Builds. Locally on Windows 292 of 293 passed; the one local failure is the known CRLF artefact. Three deliberate regressions were caught by the tests (public sku guard removed, first link back to 24 hours, re-issue back to 24 hours) and then restored.
+
+**Not verified:** the branch Preview URL was not found, so its pages were not opened; no real PayPal call; no real e-mail sent.
+
+**Behaviour changes that need explicit approval before any merge:** public sizes other than `large` are rejected; the link validity 24 hours to 7 days (also for admin re-issue); the quote has one new field; the fallback price for `large` is 89. They are inert while the flags are `false`.
+
+**Open questions (also in the PR description):** the real `settings.prices.large` in production D1 is unread, and setting it to 89 is a separate admin action; the homepage price tiers (19/59/129), `gallery.js` and `sale/index.html` defaults were not changed; the legacy flow (`worker.js`, 24 hours) and the admin manual link (30 days) were not changed; the two policy pages are drafts marked as such and must be reviewed by a lawyer and an accountant before their draft notice is removed; whether support can see "downloaded / not downloaded" is still unverified. Merge order: #155 first, then retarget #174 to `main`, each only with separate approval.
+
+---
+
 ## PREVIEW SWITCH-OPEN OBSERVATION — done by the owner (16.10.2026, about 09:32–09:35 Israel)
 
 Preview only, both flags `false`. No production change, no migration, no merge or deploy, no payment flag or secret change, no order, no PayPal purchase, no mail.
