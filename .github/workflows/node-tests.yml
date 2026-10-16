@@ -10,6 +10,37 @@ on:
       - 'wrangler.paypal-sandbox.example.toml'
       - 'staging/paypal-sandbox-bootstrap.sql'
       - 'tests/paypal-orders-v2.test.mjs'
+      - 'tests/digital-checkout.test.mjs'
+      - 'tests/paypal-environment-separation.test.mjs'
+      - 'tests/paypal-after-sale.test.mjs'
+      - 'tests/paypal-link-email.test.mjs'
+      - 'tests/paypal-live-readiness.test.mjs'
+      - 'tests/paypal-monitoring.test.mjs'
+      - 'tests/paypal-checkout-switch.test.mjs'
+      - 'tests/scheduled-routing.test.mjs'
+      - 'tests/ping-and-switch-command.test.mjs'
+      - 'tests/paypal-recover-fulfillment.test.mjs'
+      - 'tests/paypal-dispute-gap.test.mjs'
+      - 'tests/sandbox-stuck-fixture.test.mjs'
+      - 'staging/sandbox-window/stuck-fixture.mjs'
+      - 'staging/sandbox-window/window-tools.ps1'
+      - 'scheduled-routing.js'
+      - 'paypal-switch.js'
+      - 'paypal-monitoring.js'
+      - 'checkout/download/index.html'
+      - 'tests/paypal-migration-0003-rehearsal.test.mjs'
+      - 'migrations/0003_after_sale_and_reissue.sql'
+      - 'staging/rollback-0003-after-sale-and-reissue.sql'
+      - 'tests/digital-checkout.browser.mjs'
+      - 'tests/download-landing.browser.mjs'
+      - 'assets/js/digital-checkout.mjs'
+      - 'assets/js/gallery.js'
+      - 'assets/js/i18n.js'
+      - 'index.html'
+      - 'tests/gallery-card-keyboard-a11y.test.mjs'
+      - 'tests/i18n-translation-parity.test.mjs'
+      - 'tests/purchase-disabled-ux.test.mjs'
+      - 'checkout/index.html'
       - 'tests/paypal-staging-isolation.test.mjs'
       - 'tests/download-token-consumption.test.mjs'
       - 'tests/payments-feature-flag.test.mjs'
@@ -29,6 +60,37 @@ on:
       - 'wrangler.paypal-sandbox.example.toml'
       - 'staging/paypal-sandbox-bootstrap.sql'
       - 'tests/paypal-orders-v2.test.mjs'
+      - 'tests/digital-checkout.test.mjs'
+      - 'tests/paypal-environment-separation.test.mjs'
+      - 'tests/paypal-after-sale.test.mjs'
+      - 'tests/paypal-link-email.test.mjs'
+      - 'tests/paypal-live-readiness.test.mjs'
+      - 'tests/paypal-monitoring.test.mjs'
+      - 'tests/paypal-checkout-switch.test.mjs'
+      - 'tests/scheduled-routing.test.mjs'
+      - 'tests/ping-and-switch-command.test.mjs'
+      - 'tests/paypal-recover-fulfillment.test.mjs'
+      - 'tests/paypal-dispute-gap.test.mjs'
+      - 'tests/sandbox-stuck-fixture.test.mjs'
+      - 'staging/sandbox-window/stuck-fixture.mjs'
+      - 'staging/sandbox-window/window-tools.ps1'
+      - 'scheduled-routing.js'
+      - 'paypal-switch.js'
+      - 'paypal-monitoring.js'
+      - 'checkout/download/index.html'
+      - 'tests/paypal-migration-0003-rehearsal.test.mjs'
+      - 'migrations/0003_after_sale_and_reissue.sql'
+      - 'staging/rollback-0003-after-sale-and-reissue.sql'
+      - 'tests/digital-checkout.browser.mjs'
+      - 'tests/download-landing.browser.mjs'
+      - 'assets/js/digital-checkout.mjs'
+      - 'assets/js/gallery.js'
+      - 'assets/js/i18n.js'
+      - 'index.html'
+      - 'tests/gallery-card-keyboard-a11y.test.mjs'
+      - 'tests/i18n-translation-parity.test.mjs'
+      - 'tests/purchase-disabled-ux.test.mjs'
+      - 'checkout/index.html'
       - 'tests/paypal-staging-isolation.test.mjs'
       - 'tests/download-token-consumption.test.mjs'
       - 'tests/payments-feature-flag.test.mjs'
@@ -56,4 +118,30 @@ jobs:
         with:
           python-version: '3.12'
       - name: Run PayPal Orders v2 security and isolation suite
-        run: node --test tests/paypal-orders-v2.test.mjs tests/paypal-staging-isolation.test.mjs tests/download-token-consumption.test.mjs tests/payments-feature-flag.test.mjs tests/paypal-sandbox-bootstrap-schema.test.mjs tests/paypal-migration-0002-rehearsal.test.mjs
+        run: node --test tests/gallery-card-keyboard-a11y.test.mjs tests/i18n-translation-parity.test.mjs tests/purchase-disabled-ux.test.mjs tests/digital-checkout.test.mjs tests/paypal-orders-v2.test.mjs tests/paypal-staging-isolation.test.mjs tests/download-token-consumption.test.mjs tests/payments-feature-flag.test.mjs tests/paypal-sandbox-bootstrap-schema.test.mjs tests/paypal-migration-0002-rehearsal.test.mjs tests/paypal-environment-separation.test.mjs tests/paypal-after-sale.test.mjs tests/paypal-migration-0003-rehearsal.test.mjs tests/paypal-link-email.test.mjs tests/paypal-live-readiness.test.mjs tests/paypal-monitoring.test.mjs tests/paypal-checkout-switch.test.mjs tests/scheduled-routing.test.mjs tests/ping-and-switch-command.test.mjs tests/paypal-recover-fulfillment.test.mjs tests/paypal-dispute-gap.test.mjs tests/sandbox-stuck-fixture.test.mjs
+
+  digital-checkout-browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      CHECKOUT_QA_OUTPUT: /tmp/amit-checkout-browser
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Install isolated browser test dependency
+        run: npm install --prefix "$RUNNER_TEMP/checkout-browser-qa" --no-save --package-lock=false playwright@1.62.1
+      - name: Install Chromium
+        run: node "$RUNNER_TEMP/checkout-browser-qa/node_modules/playwright/cli.js" install --with-deps chromium
+      - name: Run mocked checkout and download-landing browser QA
+        run: |
+          CHECKOUT_QA_PLAYWRIGHT_MODULE="$RUNNER_TEMP/checkout-browser-qa/node_modules/playwright/index.mjs" node tests/digital-checkout.browser.mjs
+          CHECKOUT_QA_PLAYWRIGHT_MODULE="$RUNNER_TEMP/checkout-browser-qa/node_modules/playwright/index.mjs" node tests/download-landing.browser.mjs
+      - name: Keep browser QA screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: digital-checkout-browser-qa
+          path: /tmp/amit-checkout-browser
+          retention-days: 7

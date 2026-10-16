@@ -98,7 +98,9 @@ function applyPaymentsAvailability(enabled) {
     document.body.dataset.paymentsState = PURCHASES_ENABLED ? 'enabled' : 'disabled';
   }
 }
-function canBuy(photo) { return PURCHASES_ENABLED; }
+// Cart and print use retired payment flows; the digital rollout never enables them.
+const LEGACY_CHECKOUT_ENABLED = false;
+function canBuy(photo) { return PURCHASES_ENABLED && LEGACY_CHECKOUT_ENABLED; }
 let allPhotos = [];
 let filteredPhotos = [];
 let featuredIds = [];
@@ -487,7 +489,7 @@ function renderGallery(append = false) {
         </div>
         <div class="gallery-item-actions">
           ${canBuy(photo) ? `<button class="gallery-cart-btn" data-idx="${idx}" aria-label="${t('gallery.btn.cart')}">${t('gallery.btn.cart')}</button>` : ''}
-          ${canBuy(photo) ? `<button class="gallery-buy-btn" data-idx="${idx}" aria-label="${t('gallery.btn.buy')}">${t('gallery.btn.buy')}</button>` : ''}
+          <button class="gallery-buy-btn" data-idx="${idx}" aria-label="${t('gallery.btn.license')}">${t('gallery.btn.license')}</button>
         </div>
       </div>`;
     galRevealObs?.observe(item);
@@ -1248,8 +1250,8 @@ function openLightbox(idx) {
   // Buy / Print button visibility per photo
   const lbBuy   = document.getElementById('lb-buy');
   const lbPrint = document.getElementById('lb-print');
-  if (lbBuy)   lbBuy.style.display   = canBuy(photo) ? '' : 'none';
-  if (lbPrint) lbPrint.style.display = PURCHASES_ENABLED ? '' : 'none';
+  if (lbBuy)   lbBuy.style.display   = '';
+  if (lbPrint) lbPrint.style.display = canBuy(photo) ? '' : 'none';
   const priceHint = document.getElementById('lb-price-hint');
   if (priceHint && canBuy(photo)) {
     const minPrice = getEffectivePrice(photo.id, 'small');
@@ -1676,7 +1678,7 @@ function renderCartSummary() {
 }
 
 function cartCheckout() {
-  if (!PURCHASES_ENABLED) { alert(t('payments.disabled')); return; }
+  if (!PURCHASES_ENABLED || !LEGACY_CHECKOUT_ENABLED) { alert(t('payments.disabled')); return; }
   if (cart.length === 0) return;
   const price = getCartPrices()[cartSize] || 39;
   const total = cart.length * price;
@@ -1799,74 +1801,13 @@ function initBuyModal() {
   });
 }
 
+// Product preview is available while payment is disabled. The checkout server
+// alone decides whether PayPal can be used; there is no client amount handoff.
 function openBuyModal(photo) {
-  if (!photo) return;
-  if (!PURCHASES_ENABLED) { alert(t('payments.disabled')); return; }
-  trackEvent('purchase_intent', photo);
-  const modal = document.getElementById('buy-modal');
-  modal._photo = photo;
-
-  // Photo preview + title
-  const previewImg = document.getElementById('buy-modal-img');
-  if (previewImg) {
-    previewImg.alt = photo.title;
-    previewImg.src = photo.thumbnail || photo.url;
-    previewImg.onerror = () => { if (photo.url && previewImg.src !== photo.url) previewImg.src = photo.url; };
-  }
-  document.getElementById('buy-modal-title').textContent = photo.title;
-
-  // Size availability based on source resolution (only restrict if dimensions are known)
-  const maxDim = Math.max(photo.width || 0, photo.height || 0);
-  const knownDims = maxDim > 0;
-  document.getElementById('buy-step-1').querySelectorAll('.buy-size-row').forEach(btn => {
-    const size = btn.dataset.size;
-    let available = true;
-    if (knownDims && size === 'medium' && maxDim < 3000) available = false;
-    if (knownDims && size === 'large'  && maxDim < 5000) available = false;
-
-    btn.disabled = !available;
-    btn.classList.toggle('buy-size-unavailable', !available);
-
-    const price = getEffectivePrice(photo.id, size);
-    const priceEl = btn.querySelector('.buy-size-price');
-    btn.dataset.price = price;
-
-    // sale badge + strikethrough original price
-    btn.querySelector('.buy-size-sale-badge')?.remove();
-    if (price < globalPrices[size]) {
-      if (priceEl) priceEl.innerHTML = `<s class="buy-size-original-price">${formatPrice(globalPrices[size])}</s> <span class="buy-size-sale-price">${formatPrice(price)}</span>`;
-      const badge = document.createElement('span');
-      badge.className = 'buy-size-sale-badge';
-      const isPuzzle = puzzleDiscountPhotoId && String(photo.id) === String(puzzleDiscountPhotoId);
-      badge.textContent = photo.is_week_photo
-        ? '⭐ תמונת השבוע'
-        : isPuzzle
-          ? '🧩 הנחת פאזל'
-          : quizDiscountActive
-            ? '🌍 הנחת קוויז'
-            : '🏷 מבצע';
-      btn.appendChild(badge);
-    } else {
-      if (priceEl) priceEl.textContent = formatPrice(price);
-    }
-
-    const pxEl = btn.querySelector('.buy-size-px');
-    if (size === 'large' && pxEl) {
-      if (maxDim >= 5000) pxEl.textContent = `${photo.width}×${photo.height}px`;
-      else if (knownDims) pxEl.textContent = t('buy.size.requires', { min: 5000, actual: maxDim });
-    }
-    if (size === 'medium' && pxEl && knownDims && maxDim < 3000) {
-      pxEl.textContent = t('buy.size.requires', { min: 3000, actual: maxDim });
-    }
-  });
-
-  // Always start at step 1 (no animation on open)
-  document.getElementById('buy-step-1').classList.remove('buy-step-hidden');
-  document.getElementById('buy-step-2').classList.add('buy-step-hidden');
-
-  modal.classList.add('open');
-  document.body.style.overflow = 'hidden';
-  openModalA11y(modal, '#buy-modal-close');
+  if (!photo?.id) return;
+  trackEvent('licensing_personal_interest', photo);
+  const query = new URLSearchParams({ photoId: photo.id, lang: getLang() === 'en' ? 'en' : 'he' });
+  window.location.assign('/checkout/?' + query.toString());
 }
 
 function transitionBuyStep(fromId, toId, direction) {
@@ -1935,29 +1876,9 @@ function closeBuyModal() {
   closeModalA11y(modal);
 }
 
+// Compatibility for old modal listeners: single-image purchases always use Orders v2.
 function redirectToPayPal(photo, size) {
-  const s = SIZES[size];
-  const itemNumber = `${photo.id}_${size}`;
-  const email = document.getElementById('buy-email')?.value?.trim() || '';
-
-  localStorage.setItem('pending_item_number', itemNumber);
-  if (email) localStorage.setItem('pending_buyer_email', email);
-
-  const { amount, currency } = payPalAmount(getEffectivePrice(photo.id, size));
-  const params = new URLSearchParams({
-    cmd: '_xclick',
-    business: PAYPAL_EMAIL,
-    item_name: `${photo.title} — ${s.label}`,
-    item_number: itemNumber,
-    amount: amount,
-    currency_code: currency,
-    no_shipping: '1',
-    return: `${SITE_URL}/download.html`,
-    cancel_return: `${SITE_URL}/`,
-    rm: '2',
-  });
-
-  window.location.href = `https://www.paypal.com/cgi-bin/webscr?${params.toString()}`;
+  openBuyModal(photo);
 }
 
 // ===== FAQ ACCORDION =====
@@ -1994,7 +1915,7 @@ const PrintShop = (() => {
   }
 
   async function open(photo) {
-    if (!PURCHASES_ENABLED) { alert(t('payments.disabled')); return; }
+    if (!PURCHASES_ENABLED || !LEGACY_CHECKOUT_ENABLED) { alert(t('payments.disabled')); return; }
     trackEvent('print_intent', photo);
     currentPhoto = photo;
     selectedType = null; selectedSku = null; selectedPrice = null;
@@ -2349,7 +2270,7 @@ const PrintShop = (() => {
   }
 
   async function pay() {
-    if (!PURCHASES_ENABLED) { alert(t('payments.disabled')); return; }
+    if (!PURCHASES_ENABLED || !LEGACY_CHECKOUT_ENABLED) { alert(t('payments.disabled')); return; }
     const name = document.getElementById('print-name').value.trim();
     const phone = document.getElementById('print-phone').value.trim();
     const email = document.getElementById('print-email').value.trim();

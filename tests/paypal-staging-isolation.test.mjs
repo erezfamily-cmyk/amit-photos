@@ -21,10 +21,15 @@ test('native Previews explicitly bind Sandbox storage and disable public payment
     assert.equal(config.name, 'amit-photos-paypal-sandbox');
     // Top-level (non-Preview) vars must also keep public checkout closed.
     assert.equal(config.vars.PAYMENTS_ENABLED, 'false');
+    assert.equal(config.vars.DIGITAL_PAYPAL_ENABLED, 'false');
     assert.deepEqual(config.previews.vars, {
       PAYMENTS_ENABLED: 'false',
+      DIGITAL_PAYPAL_ENABLED: 'false',
       PAYPAL_SANDBOX_CLEANUP_ENABLED: 'true',
+      PAYPAL_ENVIRONMENT: 'sandbox',
+      PAYPAL_CREDENTIALS_ENVIRONMENT: 'sandbox',
     });
+    assert.equal(config.vars.PAYPAL_ENVIRONMENT, 'sandbox');
     assert.deepEqual(config.previews.d1_databases, config.d1_databases);
     assert.deepEqual(config.previews.r2_buckets, config.r2_buckets);
     assert.deepEqual(config.previews.images, config.images);
@@ -51,6 +56,7 @@ test('temporary Sandbox config resolves code and assets to the repository', asyn
     assert.equal(config.name, 'amit-photos-paypal-sandbox');
     // The manual-workflow config deploys top-level vars; it must not open checkout.
     assert.equal(config.vars.PAYMENTS_ENABLED, 'false');
+    assert.equal(config.vars.DIGITAL_PAYPAL_ENABLED, 'false');
     assert.equal(config.d1_databases[0].database_id, '11111111-1111-4111-8111-111111111111');
     assert.equal(config.d1_databases[0].database_name, 'amit-photos-paypal-sandbox-db');
     assert.equal(config.r2_buckets[0].bucket_name, 'amit-photos-paypal-sandbox-images');
