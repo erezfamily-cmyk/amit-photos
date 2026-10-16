@@ -18,7 +18,7 @@
 </head>
 <body>
   <main>
-    <header><a href="/">Amit Photos</a><a href="/checkout/" id="back-link">חזרה לרכישה / Back to checkout</a></header>
+    <header><a href="/">Amit Photos</a></header>
 
     <section id="he" lang="he" dir="rtl">
       <h1>מדיניות החזרים, תמונה דיגיטלית</h1>
@@ -32,6 +32,7 @@
         <li><strong>קישורים שלא נוצלו.</strong> עם ההחזר, קישורי הורדה שטרם נוצלו מתבטלים אוטומטית.</li>
         <li><strong>מחלוקת.</strong> אם נפתחה מחלוקת (dispute) ב-PayPal, ההזמנה נבדקת ידנית, ולא יונפק קישור נוסף עד סיום הבדיקה.</li>
       </ol>
+      <footer><a href="/#contact">שאלות? פנו אלינו</a></footer>
     </section>
 
     <section id="en" lang="en" dir="ltr">
@@ -46,9 +47,8 @@
         <li><strong>Unused links.</strong> With the refund, download links that have not been used are cancelled automatically.</li>
         <li><strong>Disputes.</strong> If a dispute is opened with PayPal, the order is reviewed manually and no further link is issued until the review ends.</li>
       </ol>
+      <footer><a href="/#contact">Questions? Contact us</a></footer>
     </section>
-
-    <footer><a href="/#contact">שאלות? פנו אלינו / Questions? Contact us</a></footer>
   </main>
   <script>
     (function () {
@@ -62,7 +62,8 @@
       document.getElementById('he').hidden = lang === 'en';
       document.getElementById('en').hidden = lang !== 'en';
       document.title = lang === 'en' ? 'Refund policy | Amit Photos' : 'מדיניות החזרים | Amit Photos';
-      if (lang === 'en') document.querySelectorAll('a[data-lang-link]').forEach(function (a) { a.setAttribute('href', a.getAttribute('href') + '?lang=en'); });
+      // Cross links keep the language of this page.
+      document.querySelectorAll('a[data-lang-link]').forEach(function (a) { a.setAttribute('href', a.getAttribute('href') + '?lang=' + lang); });
     })();
   </script>
 </body>

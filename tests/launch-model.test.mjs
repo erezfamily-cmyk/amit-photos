@@ -227,6 +227,56 @@ for (const [path, name] of [['license-terms/index.html', 'license terms'], ['ref
   });
 }
 
+for (const path of ['license-terms/index.html', 'refund-policy/index.html']) {
+  test(path + ': each language shows only its own text, header and footer included', () => {
+    const html = read(path);
+    const header = html.match(/<header>([\s\S]*?)<\/header>/)[1];
+    assert.doesNotMatch(header, /[֐-׿]/, 'the shared header carries no Hebrew');
+    assert.match(header, /Amit Photos/);
+    const en = section(html, 'en');
+    assert.doesNotMatch(en, /[֐-׿]/, 'the English section (footer included) has no Hebrew');
+    const he = section(html, 'he');
+    const heText = he.replace(/<[^>]*>/g, '').replace(/contact@amitphotos\.com|PayPal|dispute/g, '');
+    assert.doesNotMatch(heText, /[A-Za-z]{4,}/, 'the visible Hebrew text has no English words except names and addresses');
+    assert.match(he, /<footer><a href="\/#contact">שאלות\? פנו אלינו<\/a><\/footer>/);
+    assert.match(en, /<footer><a href="\/#contact">Questions\? Contact us<\/a><\/footer>/);
+    assert.equal((html.match(/<footer>/g) || []).length, 2, 'one footer per language, none shared');
+  });
+
+  test(path + ': no link back to the checkout without a photo (the page opens in a new tab)', () => {
+    const html = read(path);
+    assert.doesNotMatch(html, /href="\/checkout\/?"/);
+    assert.doesNotMatch(html, /Back to checkout|חזרה לרכישה/);
+  });
+}
+
+test('cross links keep the page language, and the privacy page can really open in it', () => {
+  for (const path of ['license-terms/index.html', 'refund-policy/index.html']) {
+    const html = read(path);
+    assert.match(html, /'\?lang=' \+ lang/, path + ' appends the active language to its cross links');
+  }
+  const terms = read('license-terms/index.html');
+  for (const id of ['he', 'en']) assert.match(section(terms, id), /<a href="\/privacy\/" data-lang-link>/);
+  assert.match(read('privacy/index.html'), /new URLSearchParams\(location\.search\)\.get\('lang'\)/, 'the privacy page reads ?lang');
+});
+
+test('the license terms do not promise e-mail delivery of the link; it is shown on the payment page', () => {
+  const html = read('license-terms/index.html');
+  const delivery = section(html, 'he').match(/<li><strong>מסירה\.<\/strong>([\s\S]*?)<\/li>/)[1];
+  const deliveryEn = section(html, 'en').match(/<li><strong>Delivery\.<\/strong>([\s\S]*?)<\/li>/)[1];
+  assert.doesNotMatch(delivery, /מייל|דוא"ל|אימייל/);
+  assert.doesNotMatch(deliveryEn, /e-?mail/i);
+  assert.match(delivery, /בעמוד התשלום/);
+  assert.match(deliveryEn, /on the payment page/);
+  assert.match(delivery, /חד-פעמי ותקף ל-7 ימים/);
+  assert.match(deliveryEn, /valid for 7 days/);
+});
+
+test('checkout policy links do not break across lines (nowrap, larger touch area)', () => {
+  const html = read('checkout/index.html');
+  assert.match(html, /#checkout-policy-links a\{display:inline-block;white-space:nowrap;padding:\.3em 0\}/);
+});
+
 test('the license terms state the approved launch model in both languages', () => {
   const html = read('license-terms/index.html');
   const he = section(html, 'he');
