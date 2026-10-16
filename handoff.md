@@ -384,6 +384,37 @@ Status: [PR #147](https://github.com/erezfamily-cmyk/amit-photos/pull/147) was s
 
 ---
 
+## LAUNCH MODEL — owner-approved product decisions (16.10.2026) — DOCS ONLY, NOTHING IMPLEMENTED
+
+> Placement note: this section sits here (not at the very top) on purpose, so this docs-only PR does not conflict with the newer top-of-file entries on the #155 branch. After #155 is merged it can be moved to the top.
+
+**Approved by the owner on 16.10.2026 (planning basis; legal and accountant review still required):**
+
+| Item | Decision |
+|---|---|
+| Product | Personal, **non-commercial** digital license only |
+| Size | **`large` only** (the largest available file); small and medium are not sold at launch |
+| Price | **89 ₪** per image |
+| Currency | **ILS** |
+| Payment | **PayPal only** |
+| Commercial license | By manual inquiry only (not automated) |
+| Download link | **One-time, valid 7 days** |
+| Re-issues | **Up to two per order** |
+| Refund | Possible before download; none after download except a technical fault or a double charge (draft; may not be enforceable against consumers, needs legal review) |
+| Launch | Restricted **canary** with a clear kill switch |
+
+**NOT implemented, on purpose.** This PR changes documents only. The price in the code and in D1 is unchanged (the code default and the home page still show 129 ₪ for the full file; the production `settings.prices` value was not read); the download validity is still **24 hours** in the code; both payment flags are `false`; no D1 change or migration; no production, Live, merge or deploy. Code locations to change later (line numbers as of #155 head `b4f97ea1`): price in worker.js:3789, assets/js/gallery.js:55, sale/index.html:167, index.html:527/884/974; validity in paypal-orders.js:1871 (and the re-issue constant at :458), email text at :947/953/956, the success message in assets/js/digital-checkout.mjs:112, and tests/paypal-after-sale.test.mjs:274.
+
+**New documents (all DRAFTS, every wording requires a lawyer and an accountant before any publication):**
+- `docs/business-and-legal-decisions-2026-10-16.md`: decisions, code-vs-decision gaps, assumptions for the owner, items for the lawyer and accountant.
+- `docs/personal-license-terms-draft-2026-10-16.md` (Hebrew and English).
+- `docs/refund-policy-draft-2026-10-16.md` (Hebrew and English).
+- `docs/canary-and-rollback-checklist-2026-10-16.md`: preconditions, canary steps, success and stop criteria, rollback.
+
+**Still open (owner):** confirm the assumptions in section 3 of the decisions document; legal and accounting review; 89 ₪ is about 31% below the currently shown 129 ₪; whether support can see "downloaded / not downloaded" (not verified); how the gallery buttons reach `/checkout/` (not verified); production price value (not read). Existing payment gates are unchanged: migrations 0002 and 0003, the #155 and #157 merges, Live and the canary each need separate explicit approval.
+
+---
+
 ## Pinterest queue and publishing — 4.10.2026
 
 - PR #139 מוזג ל-`main` כ-`87b7dbbd6f5358eb354056502a61b57cdd356322` ומכין תור פרסום מבוקר. בגיליון Google `pinterest_queue` (לשונית `pinterest_queue.csv`) וב-`data/pinterest_queue.csv` יש 447 רשומות תואמות לפי מזהה: לכל הרשומות תיאור, קישור ייעודי `?photo=<id>` ותגיות. תוקנו 59 תיאורים/תגיות, 6 כותרות ו-447 קישורים. בעת מיזוג PR #139 סומנו 11 תמונות שכבר נרשמו ב-`data/pinterest_posted.json` כ-`posted=TRUE`. אחרי הפיילוט: 12 `TRUE`, 435 `FALSE` והיסטוריית 247 מזהים; אחרי חידוש הפרסום המספרים העדכניים רשומים להלן. אין למחוק את ההיסטוריה.
