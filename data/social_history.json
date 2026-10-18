@@ -297,5 +297,30 @@
     "reels_avg_watch_time": 3971.2,
     "reels_shares": 0,
     "reels_saved": 0
+  },
+  {
+    "week_ending": "18/10/2026",
+    "generated_at": "2026-10-18T10:13:34.868295+00:00",
+    "ig_followers": 661,
+    "ig_posts": 8,
+    "ig_likes": 15,
+    "ig_comments": 0,
+    "ig_avg_likes": 1.9,
+    "ig_engagement": 0.0028,
+    "ig_follower_engagement": 0.0028,
+    "ig_reach": 353,
+    "ig_reach_engagement": 0.0425,
+    "ig_saved": 0,
+    "ig_shares": 0,
+    "fb_fans": 278,
+    "fb_posts": 12,
+    "fb_likes": 0,
+    "reels_count": 3,
+    "reels_plays": 246,
+    "reels_avg_watch_time": 4.3,
+    "reels_shares": 0,
+    "reels_saved": 0,
+    "primary_decision_id": "fix-caption-hygiene",
+    "optimization_experiment": "fix-caption-hygiene"
   }
 ]

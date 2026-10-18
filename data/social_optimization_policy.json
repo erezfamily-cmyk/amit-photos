@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "generated_at": "2026-10-18T10:13:34.868295+00:00",
+  "mode": "one_experiment_at_a_time",
+  "active": {
+    "decision_id": "fix-caption-hygiene",
+    "title": "לתקן כיתובים חסרים לפני הפרסום הבא",
+    "status": "collecting",
+    "runs": 1,
+    "started_at": "2026-10-18T10:13:34.868295+00:00",
+    "instruction_he": "ודא שהטקסט כולל פתיח ספציפי לתמונה, הקשר קצר והזמנה אחת לפעולה; אסור להחזיר טקסט ריק או hashtags בלבד.",
+    "applies_to": [
+      "instagram:post",
+      "facebook:post",
+      "threads:post"
+    ],
+    "success_measure": "הצלחה בשבוע הבא: 0 כיתובים ריקים או מבוססי hashtags בלבד."
+  },
+  "outcomes": []
+}

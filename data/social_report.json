@@ -1,135 +1,168 @@
 {
-  "generated_at": "2026-10-11T11:57:33.839003+00:00",
-  "week_ending": "11/10/2026",
+  "generated_at": "2026-10-18T10:13:34.868295+00:00",
+  "week_ending": "18/10/2026",
+  "data_quality": {
+    "status": "complete",
+    "failed_sources": {},
+    "media_insights": {
+      "posts_available": 8,
+      "posts_requested": 8,
+      "coverage": 1.0,
+      "saved_posts_available": 8,
+      "shared_posts_available": 8,
+      "unavailable_post_ids": []
+    }
+  },
   "ig": {
-    "followers": 660,
-    "media_count": 1405,
+    "followers": 661,
+    "media_count": 1413,
     "posts_this_week": 8,
-    "total_likes": 6,
-    "total_comments": 2,
-    "avg_likes_per_post": 0.8,
-    "engagement_rate": 0.0015,
+    "total_likes": 15,
+    "total_comments": 0,
+    "avg_likes_per_post": 1.9,
+    "total_reach": 353,
+    "total_saved": 0,
+    "total_shares": 0,
+    "engagement_rate_by_reach": 0.0425,
+    "follower_engagement_rate": 0.0028,
+    "engagement_rate": 0.0028,
+    "editorial_performance": {},
     "top_posts": [
       {
-        "post_id": "18118793824936831",
+        "post_id": "18128756887880936",
         "photo_id": "",
-        "caption": "#amitphotos #amitphotos",
+        "caption": "תמונות מהערב בצפון (צולם מהאייפון)",
+        "likes": 4,
+        "comments": 0,
+        "reach": 26,
+        "saved": 0,
+        "shares": 0,
+        "date": "2026-10-16"
+      },
+      {
+        "post_id": "17939839323368644",
+        "photo_id": "",
+        "caption": "האור מושלם. ההרים מרהיבים. ואז מגיע קו 72 🚌😂  סוכן 38 מצא את הלוקיישן המושלם. רק חבל שהוא בתחנת אוטו",
         "likes": 2,
-        "comments": 1,
-        "date": "2026-10-07"
+        "comments": 0,
+        "reach": 126,
+        "saved": 0,
+        "shares": 0,
+        "date": "2026-10-16"
       },
       {
-        "post_id": "17960223666253138",
+        "post_id": "18140909560565715",
         "photo_id": "",
-        "caption": "",
-        "likes": 1,
+        "caption": "📸 דלת ירוקה עם צלב  הצלם השתמש בחוק השלישים על ידי מיקום שני האלמנטים הראשיים — הכיסא הבודד והדלת הי",
+        "likes": 2,
         "comments": 0,
-        "date": "2026-10-09"
+        "reach": 28,
+        "saved": 0,
+        "shares": 0,
+        "date": "2026-10-15"
       },
       {
-        "post_id": "18034716926845116",
-        "photo_id": "ed99d9b5-bbae-499e-8876-59f8879958fa",
-        "caption": "שכבתי כמעט על הסלעים כדי לצלם את זה. הפיתוי בנוף כזה הוא לכוון את המצלמה ישר אל הפסגה, אבל אז מפספסי",
-        "likes": 1,
+        "post_id": "18071894030508221",
+        "photo_id": "21c96cc1-2404-4983-8f4b-ce4593b9dd84",
+        "caption": "כמה שניות החזקתי את התריס פתוח כדי שהמים ייראו כמו ערפל?  הסלעים האלה חדים וקשים, אבל הגלים סביבם זו",
+        "likes": 2,
         "comments": 0,
-        "date": "2026-10-07"
+        "reach": 35,
+        "saved": 0,
+        "shares": 0,
+        "date": "2026-10-14"
       },
       {
-        "post_id": "18128817883699367",
+        "post_id": "18074629550572618",
         "photo_id": "",
-        "caption": "התקרבתי עד שהצבעים מילאו לי את כל המסגרת, ופתאום ראיתי עולם שלם בתוך עלה כותרת אחד. מתי בפעם האחרונה",
-        "likes": 1,
-        "comments": 1,
-        "date": "2026-10-06"
-      },
-      {
-        "post_id": "18353908510219999",
-        "photo_id": "1BDXrQzpt4I1c_Bj5lAIRR8xw8xGQXAVU",
-        "caption": "מה אתם חושבים שאתם רואים כאן? 🤔  רמז: לא צבעתי כלום, לא זייפתי כלום — כל הגוונים האלה הם השתקפות של ",
-        "likes": 1,
+        "caption": "I photographed this geometric tunnel at the exact moment every converging line pulled my eye toward ",
+        "likes": 2,
         "comments": 0,
-        "date": "2026-10-04"
+        "reach": 27,
+        "saved": 0,
+        "shares": 0,
+        "date": "2026-10-14"
       }
     ],
     "photo_performance": [
       {
-        "post_id": "18034716926845116",
-        "photo_id": "ed99d9b5-bbae-499e-8876-59f8879958fa",
-        "likes": 1,
+        "post_id": "18071894030508221",
+        "photo_id": "21c96cc1-2404-4983-8f4b-ce4593b9dd84",
+        "likes": 2,
         "comments": 0,
-        "date": "2026-10-07"
+        "date": "2026-10-14"
       },
       {
-        "post_id": "18353908510219999",
-        "photo_id": "1BDXrQzpt4I1c_Bj5lAIRR8xw8xGQXAVU",
-        "likes": 1,
+        "post_id": "18038175266844780",
+        "photo_id": "1VCl8Dl8bupSfuDmmc5hVCadHsPoGNpWI",
+        "likes": 2,
         "comments": 0,
-        "date": "2026-10-04"
+        "date": "2026-10-11"
       }
     ],
     "best_post": {
-      "post_id": "18118793824936831",
+      "post_id": "18128756887880936",
       "photo_id": "",
-      "caption": "#amitphotos #amitphotos",
-      "likes": 2,
-      "date": "2026-10-07"
+      "caption": "תמונות מהערב בצפון (צולם מהאייפון)",
+      "likes": 4,
+      "date": "2026-10-16"
     }
   },
   "fb": {
     "fans": 278,
-    "posts_this_week": 8,
-    "total_likes": 2,
-    "total_comments": 1,
-    "avg_likes_per_post": 0.2,
-    "engagement_rate": 0.0013,
+    "posts_this_week": 12,
+    "total_likes": 0,
+    "total_comments": 0,
+    "avg_likes_per_post": 0.0,
+    "engagement_rate": 0.0,
     "top_posts": [
       {
-        "post_id": "339707206917_1412999074319597",
+        "post_id": "339707206917_1423492969936874",
         "photo_id": "",
-        "message": "",
-        "likes": 2,
-        "comments": 1,
-        "date": "2026-10-06"
-      },
-      {
-        "post_id": "339707206917_1415302360755935",
-        "photo_id": "",
-        "message": "📸 מדוזות זוהרות בחושך  מרחב שלילי: התמונה מנצלת את חשכת הרקע השחור כמרחב שלילי עוצמתי.  👉 ניתוח מלא:",
+        "message": "https://www.facebook.com/share/1EbYUQ98zx/?mibextid=wwXIfr",
         "likes": 0,
         "comments": 0,
-        "date": "2026-10-08"
+        "date": "2026-10-17"
       },
       {
-        "post_id": "339707206917_1414812967471541",
+        "post_id": "339707206917_1422750703344434",
         "photo_id": "",
         "message": "",
         "likes": 0,
         "comments": 0,
-        "date": "2026-10-08"
+        "date": "2026-10-16"
       },
       {
-        "post_id": "339707206917_1414465454172959",
+        "post_id": "339707206917_1422628520023319",
         "photo_id": "",
-        "message": "#amitphotos",
+        "message": "I waited for the soft morning light to catch these delicate purple lilac blossoms, letting the green",
         "likes": 0,
         "comments": 0,
-        "date": "2026-10-07"
+        "date": "2026-10-16"
       },
       {
-        "post_id": "339707206917_1414456717507166",
+        "post_id": "339707206917_1422586070027564",
         "photo_id": "",
-        "message": "I photographed this abstract mud wall just as the light grazed its surface, revealing the delicate s",
+        "message": "האור מושלם. ההרים מרהיבים. ואז מגיע קו 72 🚌😂  סוכן 38 מצא את הלוקיישן המושלם. רק חבל שהוא בתחנת אוטו",
         "likes": 0,
         "comments": 0,
-        "date": "2026-10-07"
+        "date": "2026-10-16"
+      },
+      {
+        "post_id": "339707206917_1422584303361074",
+        "photo_id": "",
+        "message": "האור מושלם. ההרים מרהיבים. ואז מגיע קו 72 🚌😂  סוכן 38 מצא את הלוקיישן המושלם. רק חבל שהוא בתחנת אוטו",
+        "likes": 0,
+        "comments": 0,
+        "date": "2026-10-16"
       }
     ],
     "best_post": {
-      "post_id": "339707206917_1412999074319597",
+      "post_id": "339707206917_1423492969936874",
       "photo_id": "",
-      "message": "",
-      "likes": 2,
-      "date": "2026-10-06"
+      "message": "https://www.facebook.com/share/1EbYUQ98zx/?mibextid=wwXIfr",
+      "likes": 0,
+      "date": "2026-10-17"
     }
   },
   "fb_pages": [
@@ -138,142 +171,244 @@
       "name": "amit erez photos",
       "page_id": "339707206917",
       "fans": 278,
-      "posts_this_week": 8,
-      "total_likes": 2,
-      "total_comments": 1,
-      "avg_likes_per_post": 0.2,
-      "engagement_rate": 0.0013,
+      "posts_this_week": 12,
+      "total_likes": 0,
+      "total_comments": 0,
+      "avg_likes_per_post": 0.0,
+      "engagement_rate": 0.0,
       "top_posts": [
         {
-          "post_id": "339707206917_1412999074319597",
+          "post_id": "339707206917_1423492969936874",
           "photo_id": "",
-          "message": "",
-          "likes": 2,
-          "comments": 1,
-          "date": "2026-10-06"
-        },
-        {
-          "post_id": "339707206917_1415302360755935",
-          "photo_id": "",
-          "message": "📸 מדוזות זוהרות בחושך  מרחב שלילי: התמונה מנצלת את חשכת הרקע השחור כמרחב שלילי עוצמתי.  👉 ניתוח מלא:",
+          "message": "https://www.facebook.com/share/1EbYUQ98zx/?mibextid=wwXIfr",
           "likes": 0,
           "comments": 0,
-          "date": "2026-10-08"
+          "date": "2026-10-17"
         },
         {
-          "post_id": "339707206917_1414812967471541",
+          "post_id": "339707206917_1422750703344434",
           "photo_id": "",
           "message": "",
           "likes": 0,
           "comments": 0,
-          "date": "2026-10-08"
+          "date": "2026-10-16"
         },
         {
-          "post_id": "339707206917_1414465454172959",
+          "post_id": "339707206917_1422628520023319",
           "photo_id": "",
-          "message": "#amitphotos",
+          "message": "I waited for the soft morning light to catch these delicate purple lilac blossoms, letting the green",
           "likes": 0,
           "comments": 0,
-          "date": "2026-10-07"
+          "date": "2026-10-16"
         },
         {
-          "post_id": "339707206917_1414456717507166",
+          "post_id": "339707206917_1422586070027564",
           "photo_id": "",
-          "message": "I photographed this abstract mud wall just as the light grazed its surface, revealing the delicate s",
+          "message": "האור מושלם. ההרים מרהיבים. ואז מגיע קו 72 🚌😂  סוכן 38 מצא את הלוקיישן המושלם. רק חבל שהוא בתחנת אוטו",
           "likes": 0,
           "comments": 0,
-          "date": "2026-10-07"
+          "date": "2026-10-16"
+        },
+        {
+          "post_id": "339707206917_1422584303361074",
+          "photo_id": "",
+          "message": "האור מושלם. ההרים מרהיבים. ואז מגיע קו 72 🚌😂  סוכן 38 מצא את הלוקיישן המושלם. רק חבל שהוא בתחנת אוטו",
+          "likes": 0,
+          "comments": 0,
+          "date": "2026-10-16"
         }
       ],
       "photo_performance": [],
       "best_post": {
-        "post_id": "339707206917_1412999074319597",
+        "post_id": "339707206917_1423492969936874",
         "photo_id": "",
-        "message": "",
-        "likes": 2,
-        "date": "2026-10-06"
-      }
+        "message": "https://www.facebook.com/share/1EbYUQ98zx/?mibextid=wwXIfr",
+        "likes": 0,
+        "date": "2026-10-17"
+      },
+      "content_quality": {
+        "posts_checked": 12,
+        "readable_captions": 10,
+        "missing_or_hashtag_only": 2,
+        "duplicate_hashtag_posts": 0,
+        "question_posts": 6,
+        "link_posts": 9,
+        "avg_caption_chars": 433
+      },
+      "editorial_performance": {}
     }
   ],
   "reels": {
-    "reels_this_week": 5,
-    "total_plays": 258,
-    "total_reach": 191,
+    "reels_this_week": 3,
+    "total_plays": 246,
+    "total_reach": 199,
     "total_shares": 0,
     "total_saved": 0,
-    "avg_watch_time": 3971.2,
+    "metric_coverage": {
+      "views": 3,
+      "reach": 3,
+      "shares": 3,
+      "saved": 3
+    },
+    "avg_watch_time": 4.3,
+    "avg_watch_time_seconds": 4.3,
+    "avg_watch_time_ms": 4302.7,
     "top_reels": [
       {
-        "post_id": "18118793824936831",
+        "post_id": "17939839323368644",
         "photo_id": "",
-        "caption": "#amitphotos #amitphotos",
-        "plays": 65,
-        "reach": 68,
+        "caption": "האור מושלם. ההרים מרהיבים. ואז מגיע קו 72 🚌😂  סוכן 38 מצא את הלוקיישן המושלם. רק חבל שהוא בתחנת אוטו",
+        "plays": 158,
+        "reach": 126,
         "shares": 0,
         "saved": 0,
-        "date": "2026-10-07"
+        "date": "2026-10-16"
       },
       {
-        "post_id": "18149679538544892",
-        "photo_id": "",
-        "caption": "אני מבין בצילום… ועל הנעל לא דיברנו. 😄 צילומים אמיתיים של עמית ארז, בגלריה באתר: https://amitphotos.",
-        "plays": 56,
-        "reach": 34,
-        "shares": 0,
-        "saved": 0,
-        "date": "2026-10-10"
-      },
-      {
-        "post_id": "17960223666253138",
+        "post_id": "18114370025114463",
         "photo_id": "",
         "caption": "",
-        "plays": 47,
-        "reach": 33,
+        "plays": 57,
+        "reach": 52,
         "shares": 0,
         "saved": 0,
-        "date": "2026-10-09"
+        "date": "2026-10-17"
       },
       {
-        "post_id": "17888828913619572",
+        "post_id": "17983411001897652",
         "photo_id": "",
-        "caption": "",
-        "plays": 46,
-        "reach": 29,
+        "caption": "רציתי חשיפה ארוכה. הים הבין ״מקלחת ארוכה״ 🌊😂  המצלמה על החצובה, הפריים מושלם… רק הגל לא קרא את התסרי",
+        "plays": 31,
+        "reach": 21,
         "shares": 0,
         "saved": 0,
-        "date": "2026-10-05"
-      },
-      {
-        "post_id": "18128817883699367",
-        "photo_id": "",
-        "caption": "התקרבתי עד שהצבעים מילאו לי את כל המסגרת, ופתאום ראיתי עולם שלם בתוך עלה כותרת אחד. מתי בפעם האחרונה",
-        "plays": 44,
-        "reach": 27,
-        "shares": 0,
-        "saved": 0,
-        "date": "2026-10-06"
+        "date": "2026-10-13"
       }
     ],
     "best_reel": {
-      "post_id": "18118793824936831",
+      "post_id": "17939839323368644",
       "photo_id": "",
-      "caption": "#amitphotos #amitphotos",
-      "plays": 65,
-      "date": "2026-10-07"
+      "caption": "האור מושלם. ההרים מרהיבים. ואז מגיע קו 72 🚌😂\n\nסוכן 38 מצא את הלוקיישן המושלם.\nרק חבל שהוא בתחנת אוטובוס.\n\nלפני שאתם מעמי",
+      "plays": 158,
+      "date": "2026-10-16"
+    }
+  },
+  "content_quality": {
+    "instagram": {
+      "posts_checked": 8,
+      "readable_captions": 7,
+      "missing_or_hashtag_only": 1,
+      "duplicate_hashtag_posts": 0,
+      "question_posts": 3,
+      "link_posts": 5,
+      "avg_caption_chars": 414
+    },
+    "facebook_pages": {
+      "amit erez photos": {
+        "posts_checked": 12,
+        "readable_captions": 10,
+        "missing_or_hashtag_only": 2,
+        "duplicate_hashtag_posts": 0,
+        "question_posts": 6,
+        "link_posts": 9,
+        "avg_caption_chars": 433
+      }
+    },
+    "instagram_editorial_performance": {},
+    "facebook_editorial_performance": {
+      "amit erez photos": {}
     }
   },
   "prev": {
     "ig_followers": 660,
-    "ig_posts_this_week": 5,
-    "ig_total_likes": 7,
+    "ig_posts_this_week": 8,
+    "ig_total_likes": 6,
     "fb_fans": 278,
-    "fb_posts_this_week": 7,
-    "fb_total_likes": 1
+    "fb_posts_this_week": 8,
+    "fb_total_likes": 2
   },
   "recommendations": [
-    "להגביר את התדירות של פוסטים המעורבים באינטראקציה - הוסף שאלות, קריאה לפעולה ו-CTA ברורים בתיאורים כדי להגביל את הירידה מ-0.8 לייקים לפוסט",
-    "להתמקד בתוכן ווידאו/Reels מעל תוכן סטטי - למרות 5 Reels השבוע עם 258 הצגות, יש חוסר משמעותי בשיתופים וחסכונות (0 שניהם), אז נסה Reels עם סיפור חזק יותר ותמונות עורר או אחורי הקלעים",
-    "העתק את ההצלחה של ה-Reel הטוב ביותר (65 הצגות) וחקור מה הפעיל אותו - בדוק את הנושא, ההשתתפות, האורך, וההאשטגים, ואחזור לתבנית דומה בשבוע הבא",
-    "העבר דוקוס משיווק מ-Facebook (278 עוקבים בלבד עם 2 לייקים בלבד) ל-Instagram שבו יש לך 660 עוקבים, וגדל את קהל ה-Instagram בעדיפות ראשונה עם אסטרטגיית תוכן משופרת"
-  ]
+    "הגבירו את התקשורת בקפশנים: ממוצע 414 תווים בפייסבוק מול 1.9 לייקים בממוצע באינסטגרם - נסו להוסיף קפשנים ארוכים יותר עם סיפור או שאלה לקהל באינסטגרם כמו ברמה של פייסבוק כדי להגביר אנגייג'מנט.",
+    "השתמשו ברילס כערוץ ראשי: הרילס שלכם מקבלים 246 צפיות מ-3 וידאו לעומת 15 לייקים מ-8 פוסטים סטטיים - פרסמו 5-6 רילס בשבוע הבא במקום פוסטים סטטיים כדי לנצל את הטווח שגוגל/אינסטגרם מעדיפים.",
+    "הוסיפו Call-to-Action ברילס: ברילס שלכם יש 0 שיירים ו-0 שמירות למרות 246 צפיות - בקעו מהצופים לשמור, לשתף או להגיב בקול בסוף כל רילס כדי להמיר צפיות לתנועה.",
+    "תקנו את הקפשנים החסרים בפייסבוק: 2 מתוך 12 הפוסטים בפייסבוק בעלי קפשנים חסרים או רק האשתגים - הוסיפו קפשנים בעלי משמעות לכל פוסט כדי לשפר הבנה ואנגייג'מנט."
+  ],
+  "decision_support": {
+    "method": "own_baseline_v1",
+    "sample": {
+      "current_posts": 8,
+      "tracked_posts": 52,
+      "history_weeks": 8,
+      "confidence": "high",
+      "metrics_coverage": 1.0,
+      "note": "הביטחון מבוסס על המדגם המצטבר בחשבון."
+    },
+    "baseline": {
+      "weeks": 8,
+      "posts": 44,
+      "confidence": "high",
+      "median_posts_per_week": 5.0,
+      "median_likes_per_post": 1.4,
+      "median_follower_engagement_rate": 0.0022
+    },
+    "primary_decision_id": "fix-caption-hygiene",
+    "decisions": [
+      {
+        "id": "fix-caption-hygiene",
+        "tier": "quick_win",
+        "title": "לתקן כיתובים חסרים לפני הפרסום הבא",
+        "action": "להוסיף לכל פוסט פתיח קצר, הקשר לתמונה והזמנה אחת לפעולה.",
+        "evidence": "1 מתוך 8 כיתובים שנבדקו היו ריקים או hashtags בלבד.",
+        "measure": "הצלחה בשבוע הבא: 0 כיתובים ריקים או מבוססי hashtags בלבד.",
+        "confidence": "high"
+      },
+      {
+        "id": "improve-social-attribution",
+        "tier": "quick_win",
+        "title": "למדוד אילו פוסטים מביאים ביקורים לאתר",
+        "action": "להשתמש בכל שיתוף בקישור עמוק לדף הרלוונטי עם UTM שכולל פלטפורמה, סוג תוכן ומזהה פוסט.",
+        "evidence": "77.2% מתוך 79 ביקורים נרשמו כתנועה ישירה, ולכן קשה לשייך תוצאות לפוסט מסוים.",
+        "measure": "הצלחה בתוך שבועיים: לפחות ביקור אחד מקמפיין UTM לכל פוסט עם קישור, וירידה בחלקה של תנועה ישירה.",
+        "confidence": "medium"
+      },
+      {
+        "id": "reel-save-share-test",
+        "tier": "experiment",
+        "title": "לבדוק קריאה ממוקדת לשמירה או לשיתוף ב-Reels",
+        "action": "בשלושת ה-Reels הבאים להוסיף בסוף קריאה אחת שמתאימה לתוכן: לשמור למסלול עתידי או לשתף עם חובב צילום.",
+        "evidence": "פורסמו 3 Reels השבוע ולא נמדדו בהם שמירות או שיתופים.",
+        "measure": "הצלחה: לפחות 3 שמירות ושיתופים יחד בשלושת ה-Reels. כישלון: 0; במקרה כזה מחליפים את הפתיח או הנושא.",
+        "confidence": "low"
+      },
+      {
+        "id": "collect-editorial-angle-sample",
+        "tier": "strategic",
+        "title": "לבנות מדגם להשוואת סוגי התוכן",
+        "action": "לסמן מראש כל פוסט כ'סיפור', 'טכניקה', 'שיחה' או 'מדריך', ולהגיע לפחות ל-3 פוסטים בכל סוג לפני בחירת מנצח.",
+        "evidence": "יש כרגע 0 פוסטים מסומנים, ואין עדיין סוג תוכן עם 3 פוסטים להשוואה.",
+        "measure": "הצלחה: לפחות 3 פוסטים בשני סוגי תוכן, ואז משווים מעורבות לפי חשיפה וביקורי UTM.",
+        "confidence": "low"
+      }
+    ]
+  },
+  "optimization_policy": {
+    "version": 1,
+    "generated_at": "2026-10-18T10:13:34.868295+00:00",
+    "mode": "one_experiment_at_a_time",
+    "active": {
+      "decision_id": "fix-caption-hygiene",
+      "title": "לתקן כיתובים חסרים לפני הפרסום הבא",
+      "status": "collecting",
+      "runs": 1,
+      "started_at": "2026-10-18T10:13:34.868295+00:00",
+      "instruction_he": "ודא שהטקסט כולל פתיח ספציפי לתמונה, הקשר קצר והזמנה אחת לפעולה; אסור להחזיר טקסט ריק או hashtags בלבד.",
+      "applies_to": [
+        "instagram:post",
+        "facebook:post",
+        "threads:post"
+      ],
+      "success_measure": "הצלחה בשבוע הבא: 0 כיתובים ריקים או מבוססי hashtags בלבד."
+    },
+    "outcomes": []
+  }
 }
