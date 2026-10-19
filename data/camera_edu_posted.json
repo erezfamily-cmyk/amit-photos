@@ -17,5 +17,27 @@
     "light",
     "sports",
     "composition"
-  ]
+  ],
+  "campaigns": {
+    "types": {
+      "captions": {
+        "facebook": "את התמונה הזאת של הנשר צילמתי ברגע שבו הוא נעל אותי במבט — ואתם יודעים מה הכי מעניין? התוצאה הזאת, עם הרקע השחור והנשר שכאילו \"קופץ\" קדימה, קשורה ישירות לסוג המצלמה שבה השתמשתי.\n\nהרבה אנשים חושבים שמצלמה Full Frame (חיישן גדול בגודל פילם 35 מ\"מ) נותנת בדיוק אותה תמונה כמו מצלמת APS-C (חיישן קטן יותר) — אבל זה פשוט לא נכון. ה-Crop Factor (מקדם החיתוך — כמה החיישן \"מקרב\" את התמונה) משנה גם את זווית הראייה וגם את עומק השדה (כמה מהתמונה יוצא חד מול מטושטש). אותה עדשה בדיוק תיתן לכם תוצאה אחרת לגמרי על גוף מצלמה אחר.\n\nבדף הזה ריכזתי את ההשוואה האמיתית בין Full Frame, APS-C והסמארטפון שבכיס שלכם — בלי שיווק, רק מה שבאמת חשוב כשבאים לבחור מצלמה ראשונה. אחרי שתקראו תדעו בדיוק איזו מערכת מתאימה למה שאתם רוצים לצלם.\n\nאתם מצלמים היום בטלפון או שכבר עברתם למצלמה ייעודית? ספרו לי בתגובות מה בחרתם ולמה 👇\n\n👉 ללמוד עוד: https://amitphotos.com/camera/types/?utm_source=facebook&utm_medium=organic_social&utm_campaign=camera_education&utm_content=types\n\n#צילום #photography #ישראל #למודצילום",
+        "threads": "גיליתי שאותה עדשה של 50 מ\"מ נותנת תמונה שונה לגמרי על מצלמת APS-C לעומת Full Frame — זה לא רק \"קירוב\", זה משנה את כל עומק השדה.\n\nhttps://amitphotos.com/camera/types/?utm_source=threads&utm_medium=organic_social&utm_campaign=camera_education&utm_content=types\n\n#photographytips #צילום_ישראלי",
+        "pinterest": "In this guide I break down the real difference between Full Frame, APS-C, and smartphone cameras — not the marketing, just what actually matters. I explain how the crop factor changes your angle of view and background blur, so you can choose the right camera for the photos you want to take. Perfect if you're buying your first serious camera. Full guide at amitphotos.com"
+      },
+      "photo_id": "41e19dcc-7e43-4bbe-af16-266216c2bbfe"
+    }
+  },
+  "deliveries": {
+    "types": {
+      "facebook": {
+        "post_id": "1425511203068384",
+        "published_at": "2026-10-19T16:15:30.487079+00:00"
+      },
+      "pinterest": {
+        "post_id": "512636370109569902",
+        "published_at": "2026-10-19T16:15:35.940282+00:00"
+      }
+    }
+  }
 }
