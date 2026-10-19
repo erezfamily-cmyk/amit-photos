@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-10-12T16:25:02.678900+00:00",
-  "source_period": "2026-10-05 → 2026-10-12",
+  "generated_at": "2026-10-19T14:16:41.514350+00:00",
+  "source_period": "2026-10-12 → 2026-10-19",
   "window_days": 30,
   "method": {
     "website_views_weight": 0.45,
@@ -17,21 +17,21 @@
       "category": "",
       "score": 45.0,
       "confidence": "high",
-      "views_30d": 25,
+      "views_30d": 23,
       "purchase_intents_30d": 0,
       "verified_print_purchases_30d": 0,
       "social_signal_7d": 0,
       "mapped_social_posts_7d": 0,
       "eligible_for_featured_review": true,
       "reasons": [
-        "25 views / 30d"
+        "23 views / 30d"
       ]
     },
     {
       "photo_id": "4cf149dc-4e7c-4698-897b-97dfc2475366",
       "title": "",
       "category": "",
-      "score": 35.1,
+      "score": 35.4,
       "confidence": "low",
       "views_30d": 2,
       "purchase_intents_30d": 2,
@@ -63,27 +63,10 @@
       ]
     },
     {
-      "photo_id": "1Hf6F1nz_5dwRh-sY3TM3StAnU0nqOGK9",
-      "title": "הרים בעננים גיאורגיים",
-      "category": "גאורגיה",
-      "score": 15.6,
-      "confidence": "low",
-      "views_30d": 4,
-      "purchase_intents_30d": 0,
-      "verified_print_purchases_30d": 0,
-      "social_signal_7d": 0,
-      "mapped_social_posts_7d": 0,
-      "eligible_for_featured_review": false,
-      "reasons": [
-        "4 views / 30d",
-        "sample still small"
-      ]
-    },
-    {
       "photo_id": "1wjLT-hutHz9TWXvXiS_Q9ynAzLIx3xCY",
       "title": "כפר בהרי גיאורגיה",
       "category": "גאורגיה",
-      "score": 15.6,
+      "score": 16.0,
       "confidence": "low",
       "views_30d": 4,
       "purchase_intents_30d": 0,
@@ -97,24 +80,41 @@
       ]
     },
     {
-      "photo_id": "1BDXrQzpt4I1c_Bj5lAIRR8xw8xGQXAVU",
-      "title": "השתקפויות על המים",
-      "category": "צילום מופשט",
+      "photo_id": "1Hf6F1nz_5dwRh-sY3TM3StAnU0nqOGK9",
+      "title": "הרים בעננים גיאורגיים",
+      "category": "גאורגיה",
+      "score": 16.0,
+      "confidence": "low",
+      "views_30d": 4,
+      "purchase_intents_30d": 0,
+      "verified_print_purchases_30d": 0,
+      "social_signal_7d": 0,
+      "mapped_social_posts_7d": 0,
+      "eligible_for_featured_review": false,
+      "reasons": [
+        "4 views / 30d",
+        "sample still small"
+      ]
+    },
+    {
+      "photo_id": "1VCl8Dl8bupSfuDmmc5hVCadHsPoGNpWI",
+      "title": "פנים המסגד הגדול אבו דאבי",
+      "category": "אבו דאבי",
       "score": 14.0,
       "confidence": "low",
       "views_30d": 0,
       "purchase_intents_30d": 0,
       "verified_print_purchases_30d": 0,
-      "social_signal_7d": 1.0,
+      "social_signal_7d": 2.0,
       "mapped_social_posts_7d": 1,
       "eligible_for_featured_review": false,
       "reasons": [
-        "social signal 1.0",
+        "social signal 2.0",
         "sample still small"
       ]
     },
     {
-      "photo_id": "ed99d9b5-bbae-499e-8876-59f8879958fa",
+      "photo_id": "21c96cc1-2404-4983-8f4b-ce4593b9dd84",
       "title": "",
       "category": "",
       "score": 14.0,
@@ -122,11 +122,28 @@
       "views_30d": 0,
       "purchase_intents_30d": 0,
       "verified_print_purchases_30d": 0,
-      "social_signal_7d": 1.0,
+      "social_signal_7d": 2.0,
       "mapped_social_posts_7d": 1,
       "eligible_for_featured_review": false,
       "reasons": [
-        "social signal 1.0",
+        "social signal 2.0",
+        "sample still small"
+      ]
+    },
+    {
+      "photo_id": "1toFUd2s_cxvcYm1HaoGaCLZaGzkRqU9D",
+      "title": "פרות בגאורגיה",
+      "category": "גאורגיה",
+      "score": 13.7,
+      "confidence": "low",
+      "views_30d": 3,
+      "purchase_intents_30d": 0,
+      "verified_print_purchases_30d": 0,
+      "social_signal_7d": 0,
+      "mapped_social_posts_7d": 0,
+      "eligible_for_featured_review": false,
+      "reasons": [
+        "3 views / 30d",
         "sample still small"
       ]
     },
@@ -134,7 +151,7 @@
       "photo_id": "0985a050-eeff-440e-8e51-1a26ab463258",
       "title": "",
       "category": "",
-      "score": 13.4,
+      "score": 13.7,
       "confidence": "low",
       "views_30d": 3,
       "purchase_intents_30d": 0,
@@ -151,7 +168,7 @@
       "photo_id": "1i-XAY9X2H0MlGDep-TKkzT6990IduzuE",
       "title": "שדה ירוק בגאורגיה",
       "category": "גאורגיה",
-      "score": 13.4,
+      "score": 13.7,
       "confidence": "low",
       "views_30d": 3,
       "purchase_intents_30d": 0,
@@ -161,91 +178,6 @@
       "eligible_for_featured_review": false,
       "reasons": [
         "3 views / 30d",
-        "sample still small"
-      ]
-    },
-    {
-      "photo_id": "1toFUd2s_cxvcYm1HaoGaCLZaGzkRqU9D",
-      "title": "פרות בגאורגיה",
-      "category": "גאורגיה",
-      "score": 13.4,
-      "confidence": "low",
-      "views_30d": 3,
-      "purchase_intents_30d": 0,
-      "verified_print_purchases_30d": 0,
-      "social_signal_7d": 0,
-      "mapped_social_posts_7d": 0,
-      "eligible_for_featured_review": false,
-      "reasons": [
-        "3 views / 30d",
-        "sample still small"
-      ]
-    },
-    {
-      "photo_id": "1QjVUEg6tqbQuipiSfVmFOhhGn8pqLRRz",
-      "title": "הר מושלج בגאורגיה",
-      "category": "גאורגיה",
-      "score": 10.6,
-      "confidence": "low",
-      "views_30d": 2,
-      "purchase_intents_30d": 0,
-      "verified_print_purchases_30d": 0,
-      "social_signal_7d": 0,
-      "mapped_social_posts_7d": 0,
-      "eligible_for_featured_review": false,
-      "reasons": [
-        "2 views / 30d",
-        "sample still small"
-      ]
-    },
-    {
-      "photo_id": "6831fae6-c904-4e91-b0a9-3eba4b7f3b73",
-      "title": "",
-      "category": "",
-      "score": 10.6,
-      "confidence": "low",
-      "views_30d": 2,
-      "purchase_intents_30d": 0,
-      "verified_print_purchases_30d": 0,
-      "social_signal_7d": 0,
-      "mapped_social_posts_7d": 0,
-      "eligible_for_featured_review": false,
-      "reasons": [
-        "2 views / 30d",
-        "sample still small"
-      ]
-    },
-    {
-      "photo_id": "45e4c3b6-8382-4c47-be61-e238cbd0e5d8",
-      "title": "",
-      "category": "",
-      "score": 10.6,
-      "confidence": "low",
-      "views_30d": 2,
-      "purchase_intents_30d": 0,
-      "verified_print_purchases_30d": 0,
-      "social_signal_7d": 0,
-      "mapped_social_posts_7d": 0,
-      "eligible_for_featured_review": false,
-      "reasons": [
-        "2 views / 30d",
-        "sample still small"
-      ]
-    },
-    {
-      "photo_id": "1Uueu7LeUnN8QsigBP5LtFCHM9Hmxmmfz",
-      "title": "מגדלי שומGuards בגאורגיה",
-      "category": "גאורגיה",
-      "score": 10.6,
-      "confidence": "low",
-      "views_30d": 2,
-      "purchase_intents_30d": 0,
-      "verified_print_purchases_30d": 0,
-      "social_signal_7d": 0,
-      "mapped_social_posts_7d": 0,
-      "eligible_for_featured_review": false,
-      "reasons": [
-        "2 views / 30d",
         "sample still small"
       ]
     },
@@ -253,24 +185,7 @@
       "photo_id": "1ltSPcKOpWe5b7CSMgeJr53Zf-W6Xr86i",
       "title": "עצים עתיקים בגאורגיה",
       "category": "גאורגיה",
-      "score": 10.6,
-      "confidence": "low",
-      "views_30d": 2,
-      "purchase_intents_30d": 0,
-      "verified_print_purchases_30d": 0,
-      "social_signal_7d": 0,
-      "mapped_social_posts_7d": 0,
-      "eligible_for_featured_review": false,
-      "reasons": [
-        "2 views / 30d",
-        "sample still small"
-      ]
-    },
-    {
-      "photo_id": "1IY3Qa2NQIvhchDjAGUdlY7NPfegOirPo",
-      "title": "הרים בערפל בגאורגיה",
-      "category": "גאורגיה",
-      "score": 10.6,
+      "score": 10.9,
       "confidence": "low",
       "views_30d": 2,
       "purchase_intents_30d": 0,
@@ -287,7 +202,24 @@
       "photo_id": "15ajueRBNI5HP68qir7ri5hFT8e0Ll-9N",
       "title": "פרחים סגולים על גדר",
       "category": "גאורגיה",
-      "score": 10.6,
+      "score": 10.9,
+      "confidence": "low",
+      "views_30d": 2,
+      "purchase_intents_30d": 0,
+      "verified_print_purchases_30d": 0,
+      "social_signal_7d": 0,
+      "mapped_social_posts_7d": 0,
+      "eligible_for_featured_review": false,
+      "reasons": [
+        "2 views / 30d",
+        "sample still small"
+      ]
+    },
+    {
+      "photo_id": "6831fae6-c904-4e91-b0a9-3eba4b7f3b73",
+      "title": "",
+      "category": "",
+      "score": 10.9,
       "confidence": "low",
       "views_30d": 2,
       "purchase_intents_30d": 0,
@@ -304,7 +236,7 @@
       "photo_id": "7f8946b4-6871-430c-b1d9-729be53b3ee6",
       "title": "",
       "category": "",
-      "score": 10.6,
+      "score": 10.9,
       "confidence": "low",
       "views_30d": 2,
       "purchase_intents_30d": 0,
@@ -318,10 +250,78 @@
       ]
     },
     {
-      "photo_id": "4f0999db-21f3-4cab-beab-1fe05b968374",
+      "photo_id": "45e4c3b6-8382-4c47-be61-e238cbd0e5d8",
       "title": "",
       "category": "",
-      "score": 6.7,
+      "score": 10.9,
+      "confidence": "low",
+      "views_30d": 2,
+      "purchase_intents_30d": 0,
+      "verified_print_purchases_30d": 0,
+      "social_signal_7d": 0,
+      "mapped_social_posts_7d": 0,
+      "eligible_for_featured_review": false,
+      "reasons": [
+        "2 views / 30d",
+        "sample still small"
+      ]
+    },
+    {
+      "photo_id": "1QjVUEg6tqbQuipiSfVmFOhhGn8pqLRRz",
+      "title": "הר מושלج בגאורגיה",
+      "category": "גאורגיה",
+      "score": 10.9,
+      "confidence": "low",
+      "views_30d": 2,
+      "purchase_intents_30d": 0,
+      "verified_print_purchases_30d": 0,
+      "social_signal_7d": 0,
+      "mapped_social_posts_7d": 0,
+      "eligible_for_featured_review": false,
+      "reasons": [
+        "2 views / 30d",
+        "sample still small"
+      ]
+    },
+    {
+      "photo_id": "1IY3Qa2NQIvhchDjAGUdlY7NPfegOirPo",
+      "title": "הרים בערפל בגאורגיה",
+      "category": "גאורגיה",
+      "score": 10.9,
+      "confidence": "low",
+      "views_30d": 2,
+      "purchase_intents_30d": 0,
+      "verified_print_purchases_30d": 0,
+      "social_signal_7d": 0,
+      "mapped_social_posts_7d": 0,
+      "eligible_for_featured_review": false,
+      "reasons": [
+        "2 views / 30d",
+        "sample still small"
+      ]
+    },
+    {
+      "photo_id": "1Uueu7LeUnN8QsigBP5LtFCHM9Hmxmmfz",
+      "title": "מגדלי שומGuards בגאורגיה",
+      "category": "גאורגיה",
+      "score": 10.9,
+      "confidence": "low",
+      "views_30d": 2,
+      "purchase_intents_30d": 0,
+      "verified_print_purchases_30d": 0,
+      "social_signal_7d": 0,
+      "mapped_social_posts_7d": 0,
+      "eligible_for_featured_review": false,
+      "reasons": [
+        "2 views / 30d",
+        "sample still small"
+      ]
+    },
+    {
+      "photo_id": "ba7677aa-989c-419e-8086-9eeef32a9650",
+      "title": "",
+      "category": "",
+      "score": 6.9,
       "confidence": "low",
       "views_30d": 1,
       "purchase_intents_30d": 0,
@@ -338,7 +338,7 @@
       "photo_id": "405035f8-5fe1-46fd-acde-92f8ad0c622a",
       "title": "",
       "category": "",
-      "score": 6.7,
+      "score": 6.9,
       "confidence": "low",
       "views_30d": 1,
       "purchase_intents_30d": 0,
@@ -352,27 +352,10 @@
       ]
     },
     {
-      "photo_id": "1zaWISr14KVt1cIEJXKMBbwAnkUMeiOBI",
-      "title": "עדר סוסים בשדה ירוק",
-      "category": "גאורגיה",
-      "score": 6.7,
-      "confidence": "low",
-      "views_30d": 1,
-      "purchase_intents_30d": 0,
-      "verified_print_purchases_30d": 0,
-      "social_signal_7d": 0,
-      "mapped_social_posts_7d": 0,
-      "eligible_for_featured_review": false,
-      "reasons": [
-        "1 views / 30d",
-        "sample still small"
-      ]
-    },
-    {
-      "photo_id": "ba7677aa-989c-419e-8086-9eeef32a9650",
+      "photo_id": "f7e18780-1f2d-4d85-bbcb-d584c4216812",
       "title": "",
       "category": "",
-      "score": 6.7,
+      "score": 6.9,
       "confidence": "low",
       "views_30d": 1,
       "purchase_intents_30d": 0,
@@ -389,7 +372,24 @@
       "photo_id": "faa67256-b357-41bd-a0fa-0b00e3ab72fa",
       "title": "",
       "category": "",
-      "score": 6.7,
+      "score": 6.9,
+      "confidence": "low",
+      "views_30d": 1,
+      "purchase_intents_30d": 0,
+      "verified_print_purchases_30d": 0,
+      "social_signal_7d": 0,
+      "mapped_social_posts_7d": 0,
+      "eligible_for_featured_review": false,
+      "reasons": [
+        "1 views / 30d",
+        "sample still small"
+      ]
+    },
+    {
+      "photo_id": "4f0999db-21f3-4cab-beab-1fe05b968374",
+      "title": "",
+      "category": "",
+      "score": 6.9,
       "confidence": "low",
       "views_30d": 1,
       "purchase_intents_30d": 0,
@@ -410,14 +410,14 @@
       "category": "",
       "score": 45.0,
       "confidence": "high",
-      "views_30d": 25,
+      "views_30d": 23,
       "purchase_intents_30d": 0,
       "verified_print_purchases_30d": 0,
       "social_signal_7d": 0,
       "mapped_social_posts_7d": 0,
       "eligible_for_featured_review": true,
       "reasons": [
-        "25 views / 30d"
+        "23 views / 30d"
       ]
     }
   ]
