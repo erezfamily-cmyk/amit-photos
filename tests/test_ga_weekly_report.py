@@ -266,3 +266,66 @@ def test_campaign_query_failure_falls_back_to_all_available_sources():
         data = gwr.fetch_ga4_data("token")
     assert data["experiment_campaigns"] is None
     assert gwr.build_acquisition_experiment_scorecard(data)["campaign_metrics_source"] == "source_rows_fallback"
+
+
+def test_qualified_event_attribution_by_source_is_queried_and_preserved():
+    calls = []
+
+    def fake_report(_token, body):
+        calls.append(body)
+        if body.get("dimensions") == [
+            {"name": "eventName"}, {"name": "sessionSource"}, {"name": "sessionMedium"}
+        ]:
+            return {"rows": [{
+                "dimensionValues": [{"value": "photo_contact_click"},
+                                    {"value": "instagram"}, {"value": "social"}],
+                "metricValues": [{"value": "2"}]
+            }]}
+        return {"rows": []}
+
+    with patch.object(gwr, "run_report", side_effect=fake_report):
+        result = gwr.fetch_ga4_data("token")
+
+    assert result["qualified_source_status"] == "available"
+    assert result["qualified_by_source"] == [
+        {"event": "photo_contact_click", "source": "instagram",
+         "medium": "social", "count": "2"}
+    ]
+    matching = [call for call in calls if call.get("dimensions") == [
+        {"name": "eventName"}, {"name": "sessionSource"}, {"name": "sessionMedium"}
+    ]]
+    assert len(matching) == 1
+    assert set(matching[0]["dimensionFilter"]["filter"]["inListFilter"]["values"]) == set(gwr.QUALIFIED_EVENTS)
+
+
+def test_qualified_event_query_failure_is_not_reported_as_zero():
+    def fake_report(_token, body):
+        if body.get("dimensions") == [
+            {"name": "eventName"}, {"name": "sessionSource"}, {"name": "sessionMedium"}
+        ]:
+            return None
+        return {"rows": []}
+
+    with patch.object(gwr, "run_report", side_effect=fake_report):
+        result = gwr.fetch_ga4_data("token")
+    assert result["qualified_source_status"] == "unavailable"
+    assert "לא זמין" in gwr.build_qualified_channel_html(result)
+
+
+def test_qualified_channel_html_escapes_values_and_report_persists(tmp_path):
+    data = fake_data()
+    data["qualified_by_source"] = [{
+        "event": "guide_request_success",
+        "source": "<img src=x onerror=alert(1)>",
+        "medium": "social", "count": "3",
+    }]
+    data["qualified_source_status"] = "available"
+    html = gwr.build_qualified_channel_html(data)
+    assert "&lt;img" in html
+    assert "<img" not in html
+    assert "לא במספר לידים ייחודיים" in html
+    target = tmp_path / "ga_reports.json"
+    gwr.save_report(data, "analysis", reports_file=target)
+    saved = json.loads(target.read_text(encoding="utf-8"))[-1]
+    assert saved["qualified_by_source"] == data["qualified_by_source"]
+    assert saved["qualified_source_status"] == "available"
