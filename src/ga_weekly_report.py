@@ -5,6 +5,7 @@ GA4 Weekly Analysis
 """
 
 import os, sys, json
+from social_business_audit import QUALIFIED_EVENTS
 from datetime import date, timedelta
 import requests
 import anthropic
@@ -163,6 +164,18 @@ def fetch_ga4_data(token):
         }},
         "limit": len(ACQUISITION_EXPERIMENT_CAMPAIGNS),
     })
+    # Query qualified non-checkout events by traffic source. These are event
+    # counts, not distinct people or guaranteed conversions from a given post.
+    qualified_by_source_raw = run_report(token, {
+        "dateRanges": dr,
+        "dimensions": [{"name": "eventName"}, {"name": "sessionSource"}, {"name": "sessionMedium"}],
+        "metrics": [{"name": "eventCount"}],
+        "dimensionFilter": {"filter": {
+            "fieldName": "eventName",
+            "inListFilter": {"values": list(QUALIFIED_EVENTS)},
+        }},
+        "limit": 1000,
+    })
     landing_pages_raw = run_report(token, {
         "dateRanges": dr,
         "dimensions": [{"name": "landingPagePlusQueryString"}],
@@ -286,6 +299,18 @@ def fetch_ga4_data(token):
             "count": metrics[0]["value"] if metrics else "0",
         })
 
+    qualified_by_source = []
+    for row in (qualified_by_source_raw or {}).get("rows", []):
+        dims = row.get("dimensionValues", [])
+        metrics = row.get("metricValues", [])
+        if len(dims) >= 3 and metrics:
+            qualified_by_source.append({
+                "event": dims[0]["value"],
+                "source": dims[1]["value"],
+                "medium": dims[2]["value"],
+                "count": metrics[0]["value"],
+            })
+
     return {
         "period": f"{start} → {end}",
         "summary": {
@@ -309,6 +334,8 @@ def fetch_ga4_data(token):
         "funnel_events": events_by_name,
         "ux_by_page": ux_by_page,
         "experiment_events": experiment_events,
+        "qualified_by_source": qualified_by_source,
+        "qualified_source_status": "available" if qualified_by_source_raw is not None else "unavailable",
     }
 
 
@@ -488,6 +515,17 @@ def build_data_summary(data):
     lines += ["", "--- ארצות ---"]
     for r in data["countries"]:
         lines.append(f"  {r['ארץ']}: {r['sessions']} סשנים")
+    lines += ["", "--- פניות והתעניינות לפי מקור GA4 (אירועים, לא משתמשים ייחודיים) ---"]
+    qrows = data.get("qualified_by_source", [])
+    if data.get("qualified_source_status") == "unavailable":
+        lines.append("  לא זמין: שאילתת GA4 לפי מקור נכשלה")
+    elif qrows:
+        for row in qrows[:20]:
+            lines.append(f"  {row['source']} / {row['medium']}: {row['event']}={row['count']}")
+    else:
+        lines.append("  לא נצפו אירועי התעניינות/פנייה בטווח המדידה")
+    lines.append("  המקור מיוחס על ידי GA4 לסשן; אינו מוכיח שיוך לפוסט יחיד.")
+
     lines += ["", "--- משפך מכירה דיגיטלית (buy modal) ---"]
     fe = data["funnel_events"]
     lines.append(f"  צפיות בתמונה (photo_view):        {fe.get('photo_view', '0')}")
@@ -972,6 +1010,8 @@ def save_report(data, analysis, reports_file=None):
         "business_review": data.get("business_review"),
         "acquisition_experiment": data.get("acquisition_experiment"),
         "experiment_events": data.get("experiment_events", []),
+        "qualified_by_source": data.get("qualified_by_source", []),
+        "qualified_source_status": data.get("qualified_source_status", "unavailable"),
         "revenue":   data.get("revenue"),
         "photo_analytics": data.get("photo_analytics"),
         "analysis":  analysis,
