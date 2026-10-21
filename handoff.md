@@ -1,5 +1,19 @@
 # Handoff — amit-photos
 
+## RESUME POINT — 2026-10-21: Social/business monitoring hardening (draft PR)
+
+**Branch:** `feature/social-business-audit-2026-10-21`. Details: `docs/social-business-audit-2026-10-21.md`.
+
+- Read-only weekly FB duplicate candidates (full same-day normalized captions, distinct Meta post IDs); manual review only, no deletion.
+- GA4 adds qualified non-checkout lead/contact/licensing events by session source + medium, with explicit unavailable-on-API-error state. Numbers are event counts, not unique people or verified conversions.
+- Weekly social JSON/email now includes business-signal diagnostics; qualified zeroes are evaluated separately from checkout events while payments are disabled. Social decision engine prioritizes checking lead paths when there is meaningful traffic and no measured qualified actions.
+- **Critical code finding:** Daily `instagram-story.py` also invokes Facebook Reels publishing in addition to Facebook Story; not necessarily the same as FB feed posts. Investigate provenance of observed 12 FB posts and 16.10 duplicate candidates before changing targets.
+- CI expanded with new tests. Local standalone audit tests: 4/4 passed; full CI and real GA4 query pending. No workflow cron/target changes, payment configuration changes, D1 writes, merge, or deployment.
+- **Next:** review draft PR; check its CI; then validate real GA4 channel event query and Meta IDs after approval. Decide separately whether Facebook Reel/Story crossposting is desired. Continue to keep `PAYMENTS_ENABLED=false`, PayPal Live off, Gelato out of scope.
+
+---
+
+
 > מסמך כניסה לכל מי (אדם או סוכן AI) שנכנס לפרויקט הזה בפעם הראשונה, או חוזר אחרי הפסקה.
 > עודכן: **12.10.2026**. זה מסמך חי — לעדכן אותו כשקורה משהו מהותי, לא לתת לו להתיישן.
 > לא מחליף את `CLAUDE.md` (כללי ארכיטקטורה מחייבים) — משלים אותו עם "מה המצב עכשיו ולמה".
