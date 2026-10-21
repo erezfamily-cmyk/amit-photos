@@ -20,6 +20,7 @@ from datetime import datetime, timedelta, timezone
 from social_photo_map import build_post_lookup, build_post_metadata_lookup
 from social_caption_quality import analyze_caption_set
 from social_decision_engine import build_decision_support, latest_ga_snapshot, load_json
+from social_business_audit import facebook_duplicates, build_social_business_audit
 from social_optimization import build_optimization_policy, load_policy, save_policy
 
 ROOT = Path(__file__).parent.parent
@@ -325,6 +326,7 @@ def build_fb_page_block(label, page_id):
         "page_id": page_id,
         "fans":    fans,
         "posts_this_week":    n if posts_available else None,
+        "suspected_duplicates": facebook_duplicates(posts) if posts_available else [],
         "total_likes":        total_likes,
         "total_comments":     total_comments,
         "avg_likes_per_post": round(total_likes / n, 1) if posts_available and n else (0 if posts_available else None),
@@ -367,7 +369,7 @@ def build_fb_page_block(label, page_id):
 
 # ===== Report builder =====
 
-def build_html_report(ig_posts, ig_account, fb_pages_data, reel_summary, content_quality=None, decision_support=None):
+def build_html_report(ig_posts, ig_account, fb_pages_data, reel_summary, content_quality=None, decision_support=None, business_audit=None):
     week_str = datetime.now().strftime("%d/%m/%Y")
 
     ig_media_available = "instagram_media" not in DATA_FETCH_FAILURES
@@ -498,6 +500,32 @@ def build_html_report(ig_posts, ig_account, fb_pages_data, reel_summary, content
     <p style="line-height:1.6;color:#aaa"><strong>איך נדע:</strong> {primary.get('measure', '')}</p>
   </div>"""
 
+    ga_audit = (business_audit or {}).get("ga", {})
+    duplicate_count = len((business_audit or {}).get("facebook_duplicate_candidates", []))
+    audit_section = ""
+    if business_audit:
+        checkout_label = {
+            "disabled": "התשלומים כבויים בכוונה; אפס אירועי checkout אינו תקלה בפני עצמו",
+            "enabled": "התשלומים פעילים; יש לאמת את המשפך",
+            "unknown": "סטטוס התשלומים לא אומת; אין להסיק מסקנות מאפס אירועי checkout",
+        }.get(ga_audit.get("checkout_state"), "מצב תשלומים לא ידוע")
+        duplicate_label = (
+            f"{duplicate_count} זוגות/קבוצות של פרסומי Facebook עם כיתוב זהה באותו יום — לבדיקה ידנית"
+            if duplicate_count else "לא זוהתה כפילות מדויקת במדגם הפוסטים שה-API החזיר"
+        )
+        audit_section = f"""
+  <div style="margin:18px 0;padding:16px;border:1px solid #555;border-radius:8px;background:#171717">
+    <h2 style="margin:0 0 8px;color:#c8a96e">בקרת פרסום ומדדים עסקיים (קריאה בלבד)</h2>
+    <p>{duplicate_label}</p>
+    <p>לידים/פניות/עניין ברישוי ב-3 דוחות GA אחרונים:
+       {ga_audit.get('qualified_action_events', 'לא זמין')} אירועים,
+       מתוך {ga_audit.get('sessions', 'לא זמין')} סשנים.
+       אין בכך אישור לשיוך המרות לפוסט מסוים.</p>
+    <p>{checkout_label}</p>
+    <p style="color:#bbb">עד לאימות מקור הפרסומים ונתוני ההמרות,
+       אין המלצה להגדיל נפח או לשנות את יעדי ההפצה אוטומטית.</p>
+  </div>"""
+
     return f"""<!DOCTYPE html>
 <html dir="rtl" lang="he">
 <head><meta charset="UTF-8"><title>דוח שבועי — עמית ארז</title></head>
@@ -506,6 +534,7 @@ def build_html_report(ig_posts, ig_account, fb_pages_data, reel_summary, content
   <p style="color:#888">שבוע שהסתיים ב-{week_str}</p>
   {data_warning}
   {decision_section}
+  {audit_section}
 
   <h2 style="color:#e1306c;margin-top:32px">📸 Instagram</h2>
   <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:16px">
@@ -802,7 +831,9 @@ def save_social_report(ig_posts, ig_account, fb_pages_data, recommendations, ree
     }
 
     history = load_json(ROOT / "data" / "social_history.json", [])
-    ga_report = latest_ga_snapshot(load_json(ROOT / "data" / "ga_reports.json", []))
+    ga_reports = load_json(ROOT / "data" / "ga_reports.json", [])
+    ga_report = latest_ga_snapshot(ga_reports)
+    report["business_audit"] = build_social_business_audit(report, ga_reports)
     report["decision_support"] = build_decision_support(report, history, ga_report)
     policy = build_optimization_policy(report, report["decision_support"], load_policy())
     report["optimization_policy"] = policy
@@ -857,6 +888,7 @@ def main():
     html = build_html_report(
         ig_posts, ig_account, fb_pages_data, reel_summary, content_quality,
         report.get("decision_support"),
+        report.get("business_audit"),
     )
 
     week_str = datetime.now().strftime("%d/%m/%Y")

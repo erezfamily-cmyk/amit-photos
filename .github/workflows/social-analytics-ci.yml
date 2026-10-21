@@ -6,6 +6,7 @@ on:
       - 'src/social_caption_quality.py'
       - 'src/social_decision_engine.py'
       - 'src/social_optimization.py'
+      - 'src/social_business_audit.py'
       - 'src/campaign_urls.py'
       - 'src/instagram_post.py'
       - 'src/facebook_post.py'
@@ -39,6 +40,7 @@ on:
       - '.github/workflows/quiz-social-post.yml'
       - 'tests/test_social_caption_quality.py'
       - 'tests/test_ga_weekly_report.py'
+      - 'tests/test_social_business_audit.py'
       - '.github/workflows/social-analytics-ci.yml'
 
 permissions:
@@ -57,4 +59,4 @@ jobs:
         run: python src/check_social_schedule.py
       - run: pip install pytest requests anthropic
       - name: Caption and campaign regression tests (mocked APIs)
-        run: python -m pytest -q tests/test_social_caption_quality.py tests/test_ga_weekly_report.py
+        run: python -m pytest -q tests/test_social_caption_quality.py tests/test_ga_weekly_report.py tests/test_social_business_audit.py
