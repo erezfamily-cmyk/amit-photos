@@ -59,3 +59,26 @@ def test_no_traffic_unavailable_history_and_read_only_audit():
     assert audit["facebook_posts_observed"] == 12
     assert len(audit["facebook_duplicate_candidates"]) == 1
     assert audit["facebook_post_source_attribution"] == "unavailable"
+
+
+def test_social_decisions_prioritize_qualified_business_signals_not_likes():
+    from social_decision_engine import build_decision_support
+
+    ga = {"summary": {"sessions": "65"}, "funnel_events": {"photo_view": "12"},
+          "revenue": {"payments_enabled": False}}
+    report = {"ig": {"posts_this_week": 8, "avg_likes_per_post": 2},
+              "data_quality": {"status": "complete"}, "reels": {},
+              "content_quality": {"instagram": {"posts_checked": 8, "missing_or_hashtag_only": 0}}}
+    decisions = build_decision_support(report, [], ga)
+    assert decisions["primary_decision_id"] == "check-qualified-business-events"
+    assert "אין להפעיל תשלומים" in decisions["decisions"][0]["action"]
+
+
+def test_existing_qualified_lead_does_not_trigger_missing_lead_check():
+    from social_decision_engine import build_decision_support
+
+    ga = {"summary": {"sessions": "65"}, "funnel_events": {"photo_contact_click": "2"}}
+    report = {"ig": {"posts_this_week": 8, "avg_likes_per_post": 2},
+              "data_quality": {"status": "complete"}, "reels": {}, "content_quality": {}}
+    decisions = build_decision_support(report, [], ga)
+    assert all(row["id"] != "check-qualified-business-events" for row in decisions["decisions"])
