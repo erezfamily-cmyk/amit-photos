@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 from statistics import median
+from social_business_audit import QUALIFIED_EVENTS
 
 
 def _number(value, default=0):
@@ -84,6 +85,23 @@ def build_decision_support(report, history, ga_report=None):
             "לטפל במקורות ה-API שנכשלו לפני שינוי בתדירות או בסוג התוכן.",
             "הדוח חלקי ולכן ערך אפס יכול להיות נתון חסר.",
             "הצלחה: הדוח הבא מסומן complete וכל מקורות הנתונים נטענים.", "high",
+        ))
+
+    # Qualified actions matter more than post frequency. A zero is a reason to
+    # validate the user journey and GA4 event coverage, never proof of a bug.
+    ga_business = ga_report or {}
+    ga_sessions = _number(ga_business.get("summary", {}).get("sessions"))
+    ga_funnel = ga_business.get("funnel_events", {}) or {}
+    qualified_actions = sum(_number(ga_funnel.get(name)) for name in QUALIFIED_EVENTS)
+    if ga_sessions >= 30 and qualified_actions == 0:
+        decisions.append(_decision(
+            "check-qualified-business-events", "quick_win",
+            "לבדוק אם מבקרים מבצעים פעולות עסקיות באתר",
+            "לאמת ב-GA4 ובגלישה מבוקרת אירועי פנייה, רישוי והורדת מדריך; אין להפעיל תשלומים.",
+            f"נמדדו {ga_sessions} סשנים אך לא נרשמו אירועי התעניינות או פנייה בדוח האחרון. "
+            "ייתכן שאין פעולות כאלה, או שהמדידה חסרה.",
+            "הצלחה: אירועי המדידה אומתו בדיבאג, ובהמשך נמדד ערך העסקי לפי מקור תנועה.",
+            "medium",
         ))
 
     missing = _number(quality.get("missing_or_hashtag_only"))
