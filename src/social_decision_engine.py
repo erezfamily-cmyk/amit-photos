@@ -12,6 +12,16 @@ def _number(value, default=0):
     return value if isinstance(value, (int, float)) and not isinstance(value, bool) else default
 
 
+def _ga_count(value):
+    """GA4 stores session and event counts as numeric strings."""
+    if isinstance(value, bool):
+        return 0
+    try:
+        return max(0, int(float(value)))
+    except (TypeError, ValueError, OverflowError):
+        return 0
+
+
 def _confidence(post_count):
     if post_count >= 30:
         return "high"
@@ -90,9 +100,9 @@ def build_decision_support(report, history, ga_report=None):
     # Qualified actions matter more than post frequency. A zero is a reason to
     # validate the user journey and GA4 event coverage, never proof of a bug.
     ga_business = ga_report or {}
-    ga_sessions = _number(ga_business.get("summary", {}).get("sessions"))
+    ga_sessions = _ga_count(ga_business.get("summary", {}).get("sessions"))
     ga_funnel = ga_business.get("funnel_events", {}) or {}
-    qualified_actions = sum(_number(ga_funnel.get(name)) for name in QUALIFIED_EVENTS)
+    qualified_actions = sum(_ga_count(ga_funnel.get(name)) for name in QUALIFIED_EVENTS)
     if ga_sessions >= 30 and qualified_actions == 0:
         decisions.append(_decision(
             "check-qualified-business-events", "quick_win",
