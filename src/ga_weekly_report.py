@@ -797,6 +797,34 @@ def build_acquisition_experiment_html(scorecard):
   </div>"""
 
 
+def build_qualified_channel_html(data):
+    """Aggregate GA4 session-source events without pretending they are unique leads."""
+    from html import escape
+    rows = data.get("qualified_by_source", []) or []
+    status = data.get("qualified_source_status", "unavailable")
+    if status == "unavailable":
+        detail = "לא זמין השבוע — שאילתת אירועים לפי מקור נכשלה"
+    elif not rows:
+        detail = "לא נצפו אירועי פנייה או התעניינות בתקופה"
+    else:
+        cells = "".join(
+            "<tr><td style='padding:6px'>" +
+            escape(str(row.get("source", "(not set)"))) + " / " +
+            escape(str(row.get("medium", "(not set)"))) +
+            "</td><td>" + escape(str(row.get("event", ""))) +
+            "</td><td>" + str(_safe_int(row.get("count"))) + "</td></tr>"
+            for row in sorted(rows, key=lambda row: _safe_int(row.get("count")), reverse=True)[:15]
+        )
+        detail = "<table style='width:100%;border-collapse:collapse'>" + cells + "</table>"
+    return (
+        "<div style='padding:0 24px 20px'>"
+        "<h2 style='color:#2c3e50'>פעולות עסקיות לפי מקור תנועה</h2>"
+        + detail +
+        "<p style='color:#777;font-size:.85em'>מדובר בספירת אירועים לפי מקור הסשן ב-GA4, "
+        "לא במספר לידים ייחודיים ולא בהוכחת המרה מפוסט בודד.</p></div>"
+    )
+
+
 def build_revenue_html(rev, card):
     """סעיף אימות הכנסות אמיתי מ-D1 בגוף המייל — לא זמין בעדינות (לא שובר את שאר המייל) אם
     revenue-summary נכשל."""
@@ -874,6 +902,7 @@ def build_html_email(data, analysis):
   </div>
   {build_business_review_html(data.get('business_review'))}
   {build_acquisition_experiment_html(data.get('acquisition_experiment'))}
+  {build_qualified_channel_html(data)}
   <div style="padding:0 24px 20px">
     <h2 style="color:#2c3e50;margin:0 0 10px;font-size:1em">ניתוח והמלצות — Claude</h2>
     <div style="background:#f8f9fa;border-right:4px solid #3498db;padding:14px 16px;border-radius:0 8px 8px 0;line-height:1.7;color:#333;font-size:.92em">
