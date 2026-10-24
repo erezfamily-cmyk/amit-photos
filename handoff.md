@@ -398,6 +398,52 @@ Status: [PR #147](https://github.com/erezfamily-cmyk/amit-photos/pull/147) was s
 
 ---
 
+## LAUNCH MODEL — owner-approved product decisions (16.10.2026) — DOCS ONLY, NOTHING IMPLEMENTED
+
+> Placement note: this section sits here (not at the very top) on purpose, so this docs-only PR does not conflict with the newer top-of-file entries on the #155 branch. After #155 is merged it can be moved to the top.
+
+**Approved by the owner on 16.10.2026 (planning basis; legal and accountant review still required):**
+
+| Item | Decision |
+|---|---|
+| Product | Personal, **non-commercial** digital license only |
+| Size | **`large` only** (the largest available file); small and medium are not sold at launch |
+| Price | **89 ₪** per image |
+| Currency | **ILS** |
+| Payment | **PayPal only** |
+| Commercial license | By manual inquiry only (not automated) |
+| Download link | **One-time, valid 7 days** |
+| Re-issues | **Up to two per order** |
+| Refund | Possible before download; none after download except a technical fault or a double charge (draft; may not be enforceable against consumers, needs legal review) |
+| Launch | Restricted **canary** with a clear kill switch |
+
+**NOT implemented, on purpose.** This PR changes documents only. The price in the code and in D1 is unchanged (the code default and the home page still show 129 ₪ for the full file; the production `settings.prices` value was not read); the download validity is still **24 hours** in the code; both payment flags are `false`; no D1 change or migration; no production, Live, merge or deploy. Code locations to change later (line numbers as of #155 head `b4f97ea1`): price in worker.js:3789, assets/js/gallery.js:55, sale/index.html:167, index.html:527/884/974; validity in paypal-orders.js:1871 (and the re-issue constant at :458), email text at :947/953/956, the success message in assets/js/digital-checkout.mjs:112, and tests/paypal-after-sale.test.mjs:274.
+
+**New documents (all DRAFTS, every wording requires a lawyer and an accountant before any publication):**
+- `docs/business-and-legal-decisions-2026-10-16.md`: decisions, code-vs-decision gaps, assumptions for the owner, items for the lawyer and accountant.
+- `docs/personal-license-terms-draft-2026-10-16.md` (Hebrew and English).
+- `docs/refund-policy-draft-2026-10-16.md` (Hebrew and English).
+- `docs/canary-and-rollback-checklist-2026-10-16.md`: preconditions, canary steps, success and stop criteria, rollback.
+
+**Still open (owner):** confirm the assumptions in section 3 of the decisions document; legal and accounting review; 89 ₪ is about 31% below the currently shown 129 ₪; whether support can see "downloaded / not downloaded" (not verified); how the gallery buttons reach `/checkout/` (not verified); production price value (not read). Existing payment gates are unchanged: migrations 0002 and 0003, the #155 and #157 merges, Live and the canary each need separate explicit approval.
+
+---
+
+## NEXT STEPS: invoicing (Morning / Green Invoice), PayPal data and the consent evidence — PLAN ONLY (17.10.2026)
+
+Full plan: `docs/accounting-invoicing-and-paypal-download-plan-2026-10-17.md`. Nothing implemented; no migration run; both payment flags `false`.
+
+- **Safe to continue?** Yes for development in draft PRs and the Sandbox. **No** for a real (Live) sale, and **no** for adopting the external legal and accounting summary as is: part of it was verified, part had no source, and its schema has problems.
+- **External material:** the owner's pasted summary and a shared Gemini conversation (same content). The only sources it cites are our own two PDFs; no external legal source. Each claim was checked separately (section 2 of the plan).
+- **Verified:** exempt-dealer ceiling 122,833 ILS and VAT 18% for 2026; allocation-number schedule (10,000 ILS from 1.1.2026, 5,000 ILS from 1.6.2026, tied to a business buyer's input-VAT deduction); Amendment 13 narrowed database registration (in force 14.8.2025); PayPal's capture returns `seller_receivable_breakdown` (gross, fee, net) and the payer name and e-mail. **Not verified or probably wrong:** the statute section number for the digital-information exception; "refund within 7 business days by law" (sources say 14 days); the homepage "cancel transaction" link duty; that storing buyer name and e-mail is mandatory; the exclusive-jurisdiction clause (presumed unfair under the Standard Contracts Law, section 4(9)); the buyer country code in a digital purchase (PayPal's example shows it in the shipping address).
+- **Schema:** do NOT create the proposed new `orders` table. It duplicates `paypal_orders`, `download_tokens` and `paypal_order_actions`. Use an additive migration `0004` (file only, not applied): `terms_version`, `accepted_at`, `checkout_locale`, `paypal_fee_minor`, `net_minor` on `paypal_orders`, `claimed_at` on `download_tokens`; the code writes them only if the columns exist (like migration 0003). The server decides the terms version and the time, and rejects a stale version. No column defaults for price or acceptance. No buyer name or e-mail stored until decided.
+- **Order of work (each a separate draft PR):** A) consent evidence and fee/net capture, no personal data; B) wording and seller details (after the owner's facts and the legal review); C) invoicing through Morning (after the tax status and the Morning account); D) monthly CSV export for the accountant (admin only).
+- **Morning:** verified that it has an API (key and secret under account settings, developer tools), a separate sandbox account, and an "Add Document" endpoint. Not verified: registration steps, pricing, which plan includes the API, whether its PayPal add-on issues a document for a payment made through our own PayPal order (probably not), document type codes. Options: (1) a manual receipt for the single canary sale (recommended first); (2) our Worker calls the API after a successful capture, never blocking delivery, idempotent, secrets only as Cloudflare secrets; (3) Make or Zapier.
+- **Owner decisions needed:** store buyer personal data or not (recommended: not yet); EU withdrawal waiver (separate checkbox, or limit sales to Israel); seller details to show (name, business or ID number, physical address); VAT status (exempt or licensed); jurisdiction wording; the refund windows as a business policy.
+- **Also:** `main` moved only by automated data commits (data files and `sitemap.xml`), no code change; #155 will need a trivial re-sync with `main` before its merge.
+
+---
+
 ## Pinterest queue and publishing — 4.10.2026
 
 - PR #139 מוזג ל-`main` כ-`87b7dbbd6f5358eb354056502a61b57cdd356322` ומכין תור פרסום מבוקר. בגיליון Google `pinterest_queue` (לשונית `pinterest_queue.csv`) וב-`data/pinterest_queue.csv` יש 447 רשומות תואמות לפי מזהה: לכל הרשומות תיאור, קישור ייעודי `?photo=<id>` ותגיות. תוקנו 59 תיאורים/תגיות, 6 כותרות ו-447 קישורים. בעת מיזוג PR #139 סומנו 11 תמונות שכבר נרשמו ב-`data/pinterest_posted.json` כ-`posted=TRUE`. אחרי הפיילוט: 12 `TRUE`, 435 `FALSE` והיסטוריית 247 מזהים; אחרי חידוש הפרסום המספרים העדכניים רשומים להלן. אין למחוק את ההיסטוריה.
