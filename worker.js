@@ -1,4 +1,7 @@
-import { handlePayPalCreateOrder, handlePayPalCaptureOrder, handlePayPalSandboxStatus, handlePayPalWebhook, handlePayPalCheckoutReturn, handlePayPalSandboxCleanup } from './paypal-orders.js';
+import { handlePayPalCreateOrder, handlePayPalCaptureOrder, handlePayPalSandboxStatus, handlePayPalWebhook, handlePayPalCheckoutReturn, handlePayPalSandboxCleanup, handlePayPalReissueDownload, handlePayPalAfterSaleReview, handlePayPalOrderSupportView, handlePayPalResendLinkEmail, handlePayPalLiveReadiness, handlePayPalHealth, handlePayPalTestAlert, handlePayPalCheckoutSwitch, handlePayPalRecoverFulfillment, retryDownloadLinkEmails, digitalPaymentsEnabled, handleDigitalCheckoutQuote } from './paypal-orders.js';
+import { runPaymentHealthCheck } from './paypal-monitoring.js';
+import { checkNewOrderAllowed } from './paypal-switch.js';
+import { scheduledJobs } from './scheduled-routing.js';
 // Cloudflare Worker — amit-photos
 // מטפל בנתיבי API ומגיש static assets
 
@@ -48,9 +51,32 @@ function paymentsDisabledResponse(request) {
   }, 503, request);
 }
 async function handlePaymentsStatus(request, env) {
-  return jsonRes({ enabled: paymentsEnabled(env) }, 200, request);
+  // The D1 switch is read only when the flags would otherwise allow digital checkout.
+  const flagsOpen = digitalPaymentsEnabled(env, request);
+  const digitalEnabled = flagsOpen && (await checkNewOrderAllowed(env)).allowed;
+  return jsonRes({ enabled: paymentsEnabled(env), digitalEnabled }, 200, request);
+}
+// Public liveness + database probe for outside uptime checks. Read-only, no input, no authentication.
+// The body never carries data, a version, a binding name or a database error: only ok true/false.
+const PING_TIMEOUT_MS = 3000;
+async function handlePing(request, env) {
+  const headers = { 'Content-Type': 'application/json', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' };
+  const respond = (ok) => new Response(request.method === 'HEAD' ? null : JSON.stringify({ ok }), { status: ok ? 200 : 503, headers });
+  if (request.method !== 'GET' && request.method !== 'HEAD') return new Response(null, { status: 405, headers: { ...headers, Allow: 'GET, HEAD' } });
+  let timer;
+  try {
+    const probe = env.DB.prepare('SELECT 1 AS ok').first();
+    const timeout = new Promise((_, reject) => { timer = setTimeout(() => reject(new Error('timeout')), PING_TIMEOUT_MS); });
+    const row = await Promise.race([probe, timeout]);
+    return respond(row?.ok === 1);
+  } catch {
+    return respond(false);
+  } finally {
+    clearTimeout(timer);
+  }
 }
 export {
+  handlePing,
   paymentsEnabled,
   paymentsDisabledResponse,
   handlePaymentsStatus,
@@ -2035,16 +2061,34 @@ async function handleFillTitles(request, env) {
 }
 
 // ===== DOWNLOAD TOKEN =====
+// 410 for a link that can no longer be used. X-Link-State is a non-secret hint for the landing page.
+function downloadLinkGone(request, message, state, extra = {}) {
+  const response = jsonRes({ error: message, ...extra }, 410, request);
+  response.headers.set('X-Link-State', state);
+  return response;
+}
+
 async function handleDownload(request, env, token) {
   if (!token) return jsonRes({ error: 'token חסר' }, 400, request);
+
+  // Only GET delivers the file. HEAD (link previews, prefetchers, download
+  // managers) may validate the link but must never consume the one-time token.
+  const method = request.method;
+  if (method !== 'GET' && method !== 'HEAD') {
+    const refused = jsonRes({ error: 'method not allowed' }, 405, request);
+    refused.headers.set('Allow', 'GET, HEAD');
+    return refused;
+  }
+  const isHead = method === 'HEAD';
 
   const row = await env.DB.prepare(
     'SELECT * FROM download_tokens WHERE token = ?'
   ).bind(token).first();
 
   if (!row) return jsonRes({ error: 'קישור לא תקין' }, 404, request);
-  if (row.used) return jsonRes({ error: 'קישור זה כבר שומש' }, 410, request);
-  if (Math.floor(Date.now() / 1000) > row.expires_at) return jsonRes({ error: 'פג תוקף הקישור' }, 410, request);
+  if (row.used === 2 || row.revoked_at) return downloadLinkGone(request, 'קישור זה בוטל', 'revoked', { code: 'LINK_REVOKED' });
+  if (row.used) return downloadLinkGone(request, 'קישור זה כבר שומש', 'used');
+  if (Math.floor(Date.now() / 1000) > row.expires_at) return downloadLinkGone(request, 'פג תוקף הקישור', 'expired');
 
   // Look up the file first: a missing object or an R2 read failure must not
   // consume a paid, one-time token (the buyer can retry once it is fixed).
@@ -2065,27 +2109,36 @@ async function handleDownload(request, env, token) {
   if (photo?.r2_key) {
     let object;
     try {
-      object = await env.PHOTOS.get(photo.r2_key);
+      // HEAD only needs metadata; prefer head() and never stream the body.
+      object = isHead && typeof env.PHOTOS.head === 'function'
+        ? await env.PHOTOS.head(photo.r2_key)
+        : await env.PHOTOS.get(photo.r2_key);
     } catch {
       return jsonRes({ error: 'שגיאה זמנית בקריאת הקובץ, נסו שוב' }, 503, request);
     }
     if (!object) return jsonRes({ error: 'קובץ לא נמצא ב-R2' }, 404, request);
-    if (!await claimToken()) {
+    // Only GET claims the token; HEAD never does.
+    if (!isHead && !await claimToken()) {
       try { await object.body?.cancel?.(); } catch {}
-      return jsonRes({ error: 'קישור זה כבר שומש' }, 410, request);
+      return downloadLinkGone(request, 'קישור זה כבר שומש', 'used');
     }
     const filename = (photo.title || 'photo').replace(/[^\w\u0590-\u05ff .-]/g, '_') + '.jpg';
-    return new Response(object.body, {
-      headers: {
-        'Content-Type': object.httpMetadata?.contentType || 'image/jpeg',
-        'Content-Disposition': `attachment; filename*=UTF-8''${encodeURIComponent(filename)}`,
-        'Cache-Control': 'no-store',
-      },
-    });
+    const fileHeaders = {
+      'Content-Type': object.httpMetadata?.contentType || 'image/jpeg',
+      'Content-Disposition': `attachment; filename*=UTF-8''${encodeURIComponent(filename)}`,
+      'Cache-Control': 'no-store',
+    };
+    if (isHead) {
+      // The link is valid and the file exists; the token stays unused.
+      try { await object.body?.cancel?.(); } catch {}
+      return new Response(null, { status: 200, headers: fileHeaders });
+    }
+    return new Response(object.body, { headers: fileHeaders });
   }
 
   // Google Drive fallback — photo not in R2 yet
-  if (!await claimToken()) return jsonRes({ error: 'קישור זה כבר שומש' }, 410, request);
+  if (isHead) return new Response(null, { status: 200, headers: { 'Cache-Control': 'no-store' } });
+  if (!await claimToken()) return downloadLinkGone(request, 'קישור זה כבר שומש', 'used');
   const SZ_MAP = { small: 'w1500', medium: 'w3000', large: null };
   const sz = SZ_MAP[row.size];
   const driveUrl = sz
@@ -3204,7 +3257,7 @@ async function servePhotoPage(photoId, env) {
     <h1>${title}</h1>
     ${category ? `<p class="category"><a href="https://amitphotos.com/category/${encodeURIComponent(category)}" class="cat-link">← כל תמונות ${category}</a></p>` : ''}
     ${desc ? `<p class="desc">${desc}</p>` : ''}
-    <a class="buy" href="https://amitphotos.com/#photo-${photoId}">לרכישת התמונה</a>
+    <a class="buy" href="/checkout/?photoId=${encodeURIComponent(photoId)}">פרטי רישיון אישי לתמונה</a>
   </div>
   ${(() => {
     let rbProducts = [], zzProducts = [];
@@ -8419,13 +8472,51 @@ export default {
       if (!await checkAuth(request, env)) return unauth(request);
       return handlePayPalSandboxCleanup(request, env);
     }
-    if (path === '/api/paypal/webhook') return handlePayPalWebhook(request, env);
+    if (path === '/api/admin/paypal/reissue') {
+      if (!await checkAuth(request, env)) return unauth(request);
+      return handlePayPalReissueDownload(request, env);
+    }
+    if (path === '/api/admin/paypal/after-sale-review') {
+      if (!await checkAuth(request, env)) return unauth(request);
+      return handlePayPalAfterSaleReview(request, env);
+    }
+    if (path === '/api/admin/paypal/recover-fulfillment') {
+      if (!await checkAuth(request, env)) return unauth(request);
+      return handlePayPalRecoverFulfillment(request, env, { waitUntil: ctx.waitUntil.bind(ctx) });
+    }
+    if (path === '/api/admin/paypal/switch') {
+      if (!await checkAuth(request, env)) return unauth(request);
+      return handlePayPalCheckoutSwitch(request, env);
+    }
+    if (path === '/api/admin/paypal/test-alert') {
+      if (!await checkAuth(request, env)) return unauth(request);
+      return handlePayPalTestAlert(request, env);
+    }
+    if (path === '/api/admin/paypal/health') {
+      if (!await checkAuth(request, env)) return unauth(request);
+      return handlePayPalHealth(request, env);
+    }
+    if (path === '/api/admin/paypal/live-readiness') {
+      if (!await checkAuth(request, env)) return unauth(request);
+      return handlePayPalLiveReadiness(request, env);
+    }
+    if (path === '/api/admin/paypal/resend-link-email') {
+      if (!await checkAuth(request, env)) return unauth(request);
+      return handlePayPalResendLinkEmail(request, env);
+    }
+    if (path === '/api/admin/paypal/order') {
+      if (!await checkAuth(request, env)) return unauth(request);
+      return handlePayPalOrderSupportView(request, env);
+    }
+    if (path === '/api/paypal/webhook') return handlePayPalWebhook(request, env, { waitUntil: ctx.waitUntil.bind(ctx) });
     if (path === '/api/paypal/approved') return handlePayPalCheckoutReturn(request, true);
     if (path === '/api/paypal/cancelled') return handlePayPalCheckoutReturn(request, false);
-    if (path === '/api/paypal/create-order') return handlePayPalCreateOrder(request, env);
-    if (path === '/api/paypal/capture-order') return handlePayPalCaptureOrder(request, env);
+    if (path === '/api/paypal/quote') return handleDigitalCheckoutQuote(request, env);
+    if (path === '/api/paypal/create-order') return handlePayPalCreateOrder(request, env, { publicCheckout: true, includeApproveUrl: true });
+    if (path === '/api/paypal/capture-order') return handlePayPalCaptureOrder(request, env, { waitUntil: ctx.waitUntil.bind(ctx) });
     if (path === '/api/verify-payment') return jsonRes({ error: 'LEGACY_PAYMENT_ENDPOINT_REMOVED' }, 410, request);
     if (path === '/api/payments-status') return handlePaymentsStatus(request, env);
+    if (path === '/api/ping') return handlePing(request, env);
     if (path === '/api/admin/purchases')   return handleAdminPurchases(request, env);
     if (path === '/api/admin/create-token' && request.method === 'POST') return handleAdminCreateToken(request, env);
     if (path === '/api/new-badge-settings') return handleNewBadgeSettings(request, env);
@@ -8709,9 +8800,19 @@ export default {
   },
 
   async scheduled(event, env, ctx) {
-    ctx.waitUntil(runPinterestCronSync(env));
-    ctx.waitUntil(runNewsletterCron(env));
-    ctx.waitUntil(runWelcomeSequenceCron(env));
+    // Which jobs a trigger may start is decided in scheduled-routing.js (by event.cron): the two
+    // existing triggers run their usual set, a frequent payment trigger only the health check,
+    // and an unknown trigger only the (cheap, read-only) health check.
+    const plan = scheduledJobs(event?.cron);
+    if (plan.kind === 'unknown') console.error('[scheduled] unrecognised cron trigger "' + String(event?.cron).slice(0, 60) + '": only the payment health check ran');
+    const runners = {
+      pinterest: () => runPinterestCronSync(env),
+      newsletter: () => runNewsletterCron(env),
+      welcome: () => runWelcomeSequenceCron(env),
+      linkEmailRetry: () => retryDownloadLinkEmails(env).catch(() => {}),
+      paymentHealth: () => runPaymentHealthCheck(env).catch(() => {}),
+    };
+    for (const job of plan.jobs) ctx.waitUntil(runners[job]());
   },
 };
 
@@ -8892,3 +8993,4 @@ async function runPinterestCronSync(env) {
     }
   } catch { /* silent */ }
 }
+

@@ -104,11 +104,11 @@
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Heebo:wght@300;400;500;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'" />
   <noscript><link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Heebo:wght@300;400;500;700&display=swap" rel="stylesheet" /></noscript>
 
-  <link rel="stylesheet" href="assets/css/style.css?v=a233aa03" />
+  <link rel="stylesheet" href="assets/css/style.css?v=f54a161d" />
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#0a0a0a" />
-  <script src="assets/js/analytics.js?v=f571a0c4"></script>
-  <script src="assets/js/i18n.js?v=e32fc9ef"></script>
+  <script src="assets/js/analytics.js?v=5b30dc6e"></script>
+  <script src="assets/js/i18n.js?v=db68ddd4"></script>
 </head>
 <body data-payments-state="disabled">
 
@@ -530,8 +530,8 @@
         <ul class="pricing-features">
           <li data-i18n="pricing.full.f1">רזולוציה מקסימלית</li>
           <li data-i18n="pricing.full.f2">הדפסה גדולה (A1 ומעלה)</li>
-          <li data-i18n="pricing.full.f3">שימוש מסחרי</li>
-          <li data-i18n="pricing.full.f4">כל הזכויות כלולות</li>
+          <li data-i18n="pricing.full.f3">רישיון אישי ולא מסחרי</li>
+          <li data-i18n="pricing.full.f4">זכויות היוצרים נשארות אצל הצלם</li>
         </ul>
         <a href="#gallery" class="pricing-cta pricing-cta-outline payments-enabled-only" data-i18n="pricing.cta">עיין בגלריה</a>
         <a href="tel:0503333227" class="pricing-cta pricing-cta-outline payments-disabled-only" data-i18n="pricing.contact">יצירת קשר לרכישה</a>
@@ -800,7 +800,7 @@
       <button id="lb-slideshow" class="lb-action-btn" data-i18n="lb.slideshow.start">▶ מצגת</button>
       <button id="lb-wall" class="lb-action-btn" data-i18n="lb.wall">🖼 על הקיר</button>
       <button id="lb-print" class="lb-action-btn lb-print-btn" data-i18n="lb.print">🖨️ הדפסה ←</button>
-      <button id="lb-buy" class="lb-action-btn lb-buy-btn"><span data-i18n="lb.buy">רכישה ←</span><span id="lb-price-hint" class="lb-price-hint"></span></button>
+      <button id="lb-buy" class="lb-action-btn lb-buy-btn"><span data-i18n="lb.license">פרטי רישיון אישי ←</span><span id="lb-price-hint" class="lb-price-hint"></span></button>
       <a id="lb-contact" class="lb-action-btn lb-contact-btn payments-disabled-only" target="_blank" rel="noopener" data-i18n="lb.contact" data-analytics-event="photo_contact_click" data-analytics-method="whatsapp">רכישה ישירות בוואטסאפ</a>
       <a id="lb-share-wa" class="lb-action-btn lb-whatsapp" target="_blank" rel="noopener" data-i18n="lb.whatsapp">וואטסאפ</a>
       <a id="lb-share-fb" class="lb-action-btn" target="_blank" rel="noopener" data-i18n="lb.facebook">פייסבוק</a>
@@ -1147,7 +1147,7 @@
     </div>
   </div>
 
-  <script src="assets/js/gallery.js?v=6a7cc7f1"></script>
+  <script src="assets/js/gallery.js?v=de56cffd"></script>
   <script>
     // טוען נתוני Instagram מהדוח השבועי ומעדכן את כרטיס הפלטפורמות
     fetch('https://raw.githubusercontent.com/erezfamily-cmyk/amit-photos/main/data/social_report.json')
@@ -1233,7 +1233,7 @@
       if (r.ok) {
         if (typeof trackUxEvent === 'function') {
           trackUxEvent('guide_request_success', { source: 'popup' });
-          if data.lead_created trackUxEvent('generate_lead', { source: 'popup' });
+          if (data.lead_created) trackUxEvent('generate_lead', { source: 'popup' });
         }
         msg.style.color = '#4caf7d';
         msg.textContent = '&#x2713; נשלח! בדוק תיבת הדואר (גם spam).';
