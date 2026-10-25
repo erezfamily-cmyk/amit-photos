@@ -188,6 +188,10 @@ function initExperiencePaths() {
     });
   });
   section.hidden = available === 0;
+  // The homepage invitation should open the experience only when it is available.
+  // If the public API fails, the original #gallery link remains the fallback.
+  const heroCta = document.querySelector('.hero-cta[href="#gallery"]');
+  if (available > 0 && heroCta) heroCta.setAttribute('href', '#experience');
 }
 
 let currentIndex = 0;
