@@ -1,5 +1,18 @@
 # Handoff — amit-photos
 
+## RESUME POINT — 2026-10-25: Owner-directed details-path revision (new draft PR)
+
+- P0 PR #178 and P1 PR #179 **already merged** to `main`; latest P1 commit `c1b8c9c6a0086ce7a4cc1ba66d97a0fdb0479624`.
+- Current branch `feature/experience-details-refresh-2026-10-25` (not merged): revise only `experience.details` photo IDs and bilingual subtitle, preserving fail-closed D1 published filtering and all other paths.
+- Details collection in order: `1c_MjQDRqBDKXXUs8J2IRYpUtq68hF0d5` אבקת הפרח הזהובה; `1T_sZuDJIECAtqscPBtZ1qoi7KECxxmLu` פרחים ורודים בתקריב; `1qAYmV4wg-5I8isvUTrP1kZnT1leAHkvA` ורד ורוד עדין (macro version); `1WZUI8vzx_VBpg6yfXb_mAth6guweU2JH` עדינות של טבע. Remove leaf, snail and blue flower from this route only; no photo deletion.
+- Subtitle HE: `עדינות של הטבע`; EN: `The delicate beauty of nature`. Reviewer sheet updated: `docs/experience-photo-selection-review-2026-10-25.md`.
+- Four additional **suggested future experience paths**, not yet live / not DB categories: כשהאור מספר סיפור, מפגשים בטבע, ערים עם נשמה, עולם של צבעים. Recommend delayed / progressive disclosure after baseline metrics, to avoid crowding homepage; details in roadmap.
+- Next: verify exact content/cache-bust, run GitHub CI and mobile/EN preview, ask separate merge approval.
+- No change to PayPal, `PAYMENTS_ENABLED=false`, D1, prices, licenses, Gelato, Drive files or social publishing.
+
+---
+
+
 ## RESUME POINT — 2026-10-25: Experience-led P1 discovery paths (draft)
 
 - Phase P0 is in `main` via PR #178 after owner approval.
