@@ -223,9 +223,9 @@ def fetch_ga4_data(token):
         "nav_locations_click", "nav_purchase_info_click", "nav_newsletter_click",
         "nav_contact_click", "nav_more_click", "nav_games_click", "nav_videos_click",
         "nav_learn_click", "nav_gear_click",
-        "experience_path_click", "experience_photo_view", "wall_preview_open",
+        "experience_path_click", "experience_photo_view", "wall_preview_open", "experience_contact_click",
         *[f"experience_{key}_{step}" for key in EXPERIENCE_PATH_LABELS
-          for step in ("click", "photo_view", "wall_open")],
+          for step in ("click", "photo_view", "wall_open", "contact_click")],
     ]
     events_raw = run_report(token, {
         "dateRanges": dr,
@@ -486,12 +486,14 @@ def build_experience_scorecard(data):
             "clicks": _safe_int(events.get(f"experience_{key}_click", 0)),
             "photo_views": _safe_int(events.get(f"experience_{key}_photo_view", 0)),
             "wall_opens": _safe_int(events.get(f"experience_{key}_wall_open", 0)),
+            "contact_clicks": _safe_int(events.get(f"experience_{key}_contact_click", 0)),
         })
     return {
         "paths": paths,
         "all_path_clicks": _safe_int(events.get("experience_path_click", 0)),
         "all_experience_photo_views": _safe_int(events.get("experience_photo_view", 0)),
         "all_wall_previews": _safe_int(events.get("wall_preview_open", 0)),
+        "all_experience_contact_clicks": _safe_int(events.get("experience_contact_click", 0)),
         "measurement_note": "Counts are events, not unique visitors, leads, or guaranteed conversions.",
     }
 
@@ -503,14 +505,15 @@ def build_experience_html(data):
         f'<tr><td style="padding:6px 8px">{path["label"]}</td>'
         f'<td style="padding:6px 8px;text-align:center">{path["clicks"]}</td>'
         f'<td style="padding:6px 8px;text-align:center">{path["photo_views"]}</td>'
-        f'<td style="padding:6px 8px;text-align:center">{path["wall_opens"]}</td></tr>'
+        f'<td style="padding:6px 8px;text-align:center">{path["wall_opens"]}</td>'
+        f'<td style="padding:6px 8px;text-align:center">{path["contact_clicks"]}</td></tr>'
         for path in scorecard["paths"]
     )
     return (
         '<div style="padding:0 24px 20px">'
         '<h2 style="color:#2c3e50;font-size:1em">מסלולי השראה — מעורבות</h2>'
         '<table style="width:100%;border-collapse:collapse;font-size:.86em">'
-        '<tr><th>מסלול</th><th>בחירות</th><th>צפיות בתמונות</th><th>תצוגות קיר</th></tr>'
+        '<tr><th>מסלול</th><th>בחירות</th><th>צפיות בתמונות</th><th>תצוגות קיר</th><th>פניות יזומות</th></tr>'
         + rows + '</table>'
         '<p style="font-size:.78em;color:#777">ספירות אירועים בלבד; לא מבקרים ייחודיים או שיעורי המרה. '
         'בהיעדר נתונים אין להסיק היעדר עניין.</p></div>'
@@ -622,12 +625,14 @@ def build_data_summary(data):
     lines.append(
         f"  בחירות מסלול: {scorecard['all_path_clicks']} | "
         f"צפיות בתמונות מתוך מסלול: {scorecard['all_experience_photo_views']} | "
-        f"תצוגות על הקיר בכלל האתר: {scorecard['all_wall_previews']}"
+        f"תצוגות על הקיר בכלל האתר: {scorecard['all_wall_previews']} | "
+        f"קליקים לפנייה ממסלול: {scorecard['all_experience_contact_clicks']}"
     )
     for item in scorecard["paths"]:
         lines.append(
             f"  {item['label']}: בחירות={item['clicks']} | "
-            f"צפיות={item['photo_views']} | תצוגות קיר={item['wall_opens']}"
+            f"צפיות={item['photo_views']} | תצוגות קיר={item['wall_opens']} | "
+            f"קליקים לפנייה={item['contact_clicks']}"
         )
     lines.append("  אירועים נספרים, לא אנשים או המרות מאומתות; מדדים אפסיים אינם הוכחת חוסר ביקוש.")
 
