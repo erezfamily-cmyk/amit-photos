@@ -1,3 +1,20 @@
+## Experience-led brand/UX — 25.10.2026
+
+Full roadmap and criteria: https://github.com/erezfamily-cmyk/amit-photos/issues/177  
+Implementation branch: `feature/experience-led-p0-2026-10-25` (review-only; NOT merged/deployed).
+
+- [x] Define experience-led strategy and the new HE/EN home-page voice.
+- [x] Prepare a reversible P0 Hero/About change, responsive subtitle and targeted regression test.
+- [ ] Run full targeted Node tests, check cache-bust fingerprints, and validate HE/EN keyboard and mobile rendering.
+- [ ] Audit off-state PayPal/download and commercial-license claims separately before any further rollout.
+- [ ] Curate four experiential discovery paths without modifying existing taxonomy or Drive source files.
+- [ ] Pilot eight to twelve genuine behind-the-photo stories without invented setting or memories.
+- [ ] Connect free guide and Agent 38 stories while avoiding a higher automatic social posting frequency.
+- [ ] Compare anonymous engagement, wall-preview, favorites, newsletter and qualified leads over 14–28 days.
+- [ ] Obtain separate approval before merging or deploying; keep checkout (#155/#173/#174) separate, and keep real payments disabled.
+
+---
+
 ## Health-check runner — 4.10.2026
 
 - [x] Use the existing daily GitHub Actions health-check and harden failure reporting; no duplicate AI schedule.

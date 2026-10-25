@@ -59,16 +59,16 @@ const TRANSLATIONS = {
     'nav.menu':         'תפריט',
 
     // Hero
-    'hero.title.main':  'תמונות שמדברות',
-    'hero.title.em':    'אליך',
-    'hero.subtitle':    'תמונות אמנותיות דיגיטליות לרכישה — הורדה מיידית לאחר תשלום',
+    'hero.title.main':  'יש רגעים',
+    'hero.title.em':    'שלא רוצים שייגמרו.',
+    'hero.subtitle':    'אור שמופיע לרגע, מקום שנשאר בזיכרון, פרט קטן שכמעט פספסנו. בואו לגלות את העולם דרך העיניים שלי.',
     'payments.disabled.title': 'הרכישה המקוונת נמצאת בשדרוג אבטחה',
-    'payments.disabled.hero':  'הגלריה פתוחה לעיון. לרכישה ניתן ליצור קשר ישירות עם עמית.',
+    'payments.disabled.hero':  'הגלריה פתוחה להשראה. התאהבתם בצילום? אפשר לפנות אליי ישירות לבירור רכישה.',
     'payments.disabled.text':  'בינתיים ניתן לבחור תמונה בגלריה ולתאם רכישה ישירות עם עמית. התשלום יתבצע ידנית באמצעות Bit או PayBox.',
     'payments.disabled.call':  'התקשרו לעמית — 050-3333227',
     'hero.scroll':      'גלול',
-    'hero.cta':         'עיין בגלריה',
-    'hero.cta-pdf':     '50 טיפים חינם',
+    'hero.cta':         'גלו את הרגע שלכם',
+    'hero.cta-pdf':     'ללמוד לראות אחרת',
     'hero.cta-sale':    'מבצע השבוע',
 
     // Gallery section
@@ -102,8 +102,8 @@ const TRANSLATIONS = {
     // About
     'about.label':           'אמנות הצילום',
     'about.title1':          'עמית ארז',
-    'about.title2':          'שפה ויזואלית',
-    'about.intro':           'הפלטפורמה המקצועית amitphotos.com הוקמה מתוך חזון המשלב מצוינות טכנית חסרת פשרות עם תשוקה עמוקה לתיעוד הטבע והנוף. כמי שרואה בצילום מדיום המגשר בין הטכנולוגיה לאומנות, אני פועל מתוך שאיפה לזקק את המציאות לכדי פריים המדבר בשפה ויזואלית מובחנת ומנומקת.',
+    'about.title2':          'הסיפור שמאחורי הפריים',
+    'about.intro':           'אני מחפש דרך המצלמה את הרגעים שקל לחלוף על פניהם: אור שמשתנה, קו של נוף או פרט קטן בטבע. התמונות באתר הן הזמנה לעצור, להתבונן ולגלות משהו חדש בכל פריים.',
     'about.section1.title':  'צילום כחוויה וכשפה אישית',
     'about.section1.text':   'עבורי, הצילום אינו מתמצה בתיעוד אובייקטיבי, אלא מהווה כלי לביטוי אישי ודרך להתבוננות מעמיקה בעולם. כל יצירה המוצגת כאן היא תולדה של דיאלוג מתמשך עם האור, המרחב והזמן. אני מאמין כי פיתוח "שפה אישית" הוא המפתח למעבר מצילום טכני ליצירה בעלת משמעות.',
     'about.section2.title':  'מרכז לידע והשראה',
@@ -449,16 +449,16 @@ const TRANSLATIONS = {
     'nav.menu':         'Menu',
 
     // Hero
-    'hero.title.main':  'Photos That Speak',
-    'hero.title.em':    'To You',
-    'hero.subtitle':    'Fine art digital photos for purchase — instant download after payment',
+    'hero.title.main':  'Some moments',
+    'hero.title.em':    'deserve to stay.',
+    'hero.subtitle':    'A fleeting light, a place you remember, a detail you almost missed. Explore the world through my lens.',
     'payments.disabled.title': 'Online purchasing is undergoing a security upgrade',
-    'payments.disabled.hero':  'The gallery is open for browsing. To purchase, please contact Amit directly.',
+    'payments.disabled.hero':  'Explore the gallery and find your moment. Love a photograph? Contact me directly to ask about purchasing it.',
     'payments.disabled.text':  'For now, choose a photo in the gallery and arrange the purchase directly with Amit. Payment is handled manually via Bit or PayBox.',
     'payments.disabled.call':  'Call Amit — 050-3333227',
     'hero.scroll':      'Scroll',
-    'hero.cta':         'Browse Gallery',
-    'hero.cta-pdf':     '50 Free Tips',
+    'hero.cta':         'Find your moment',
+    'hero.cta-pdf':     'Learn to see differently',
     'hero.cta-sale':    'Weekly Sale',
 
     // Gallery section
@@ -492,8 +492,8 @@ const TRANSLATIONS = {
     // About
     'about.label':           'The Art of Photography',
     'about.title1':          'Amit Erez',
-    'about.title2':          'Visual Language',
-    'about.intro':           'amitphotos.com was founded with a vision that combines uncompromising technical excellence with a deep passion for documenting nature and landscape. Seeing photography as a medium that bridges technology and art, I strive to distill reality into frames that speak a distinctive and reasoned visual language.',
+    'about.title2':          'The story behind the frame',
+    'about.intro':           'Through my camera, I look for moments that are easy to pass by: changing light, the shape of a landscape, or a small detail in nature. The photographs here are an invitation to pause, look closer, and discover something new in every frame.',
     'about.section1.title':  'Photography as Experience and Personal Language',
     'about.section1.text':   'For me, photography is not merely objective documentation — it is a tool for personal expression and a means of deep observation of the world. Every work presented here is the result of an ongoing dialogue with light, space, and time. I believe that developing a personal visual language is the key to transitioning from technical photography to meaningful creation.',
     'about.section2.title':  'A Hub for Knowledge & Inspiration',
