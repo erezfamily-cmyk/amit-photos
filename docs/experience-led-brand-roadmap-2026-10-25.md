@@ -1,7 +1,7 @@
 # Amit Photos — Experience-led marketing & UX roadmap
 Date: 2026-10-25  
 Main task: https://github.com/erezfamily-cmyk/amit-photos/issues/177  
-P0: PR #178 merged. P1: PR #179 merged into `main` (commit `c1b8c9c6`); see [updated photo review sheet](experience-photo-selection-review-2026-10-25.md). P1.1: detail-path refresh on branch `feature/experience-details-refresh-2026-10-25` pending separate merge approval.
+P0: PR #178 merged. P1: PR #179 merged into `main` (commit `c1b8c9c6`); see [updated photo review sheet](experience-photo-selection-review-2026-10-25.md). P1.1: detail-path refresh PR #180 merged to `main` (commit `cec12a7`). P2 analytics/story draft branch: `feature/experience-analytics-story-pilot-2026-10-25` (not merged).
 
 ## Objective
 Sell the **experience around an image** before discussing file format, pixel dimensions, or pricing. A natural visitor journey is **Discover → Connect → Imagine → Inquire/Choose**.
@@ -85,6 +85,14 @@ The site remains both an original-art photography portfolio and a learning desti
 - [ ] Introduce 8–12 authentic “behind the frame” stories, only with photographer-approved memories/location/date details. No invented anecdotes or metadata.
 - [ ] Bring wall-preview and wishlist opportunities closer to the story and provide manual purchase enquiry. Keep images primary and avoid heavy text overlays, layout shifts, or extra loading.
 - [ ] Consider a lightweight room-preview framing; do not implement a checkout or Gelato integration as part of this stage.
+
+## P2 delivery checkpoint — analytics and editorial stories (draft, 25.10.2026)
+
+- Add GA4 event counts per experience route for path selection, photo lightbox, wall preview and WhatsApp **contact-click intent**. These are actions, not verified enquiries or unique people.
+- Weekly GA script must query explicit per-route event names and display `experience_scorecard` in saved JSON, text and email, with "0 events" clearly distinguished from "0 demand".
+- Publish no made-up stories: [eight draft bilingual editorial captions](experience-photo-story-pilot-2026-10-25.md) are factual observations only; first-person memories require photographer input.
+- QA and release gates: [measurement plan](experience-measurement-plan-2026-10-25.md), GitHub node/pytest tests, Preview HE/EN mobile/desktop, check GA4 DebugView and no PII, production payment flag remains `false`.
+- Do not add four more paths to the live homepage before the first 14–28-day behavioral signal review. No merge/deploy without new approval.
 
 ## P1 — content, social and B2B
 - [ ] Position the existing 50-tips guide as “learn to see differently”, with deep links to real tutorials, locations, image analysis and gallery pages.
