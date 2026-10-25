@@ -831,6 +831,47 @@ async function handleCustomers(request, env) {
   return jsonRes({ error: 'method not allowed' }, 405);
 }
 
+// Preview-only read proxy: a separate Sandbox D1 may contain no published photos.
+// Read ONLY the already-public production gallery, never admin=1, D1 secrets, or writes.
+// Production hosts do not expose this endpoint; failed upstream responses fail closed.
+const EXPERIENCE_PREVIEW_HOST_SUFFIX = '-amit-photos-paypal-sandbox.erez-family.workers.dev';
+async function handleExperiencePreviewPublicPhotos(request) {
+  const host = new URL(request.url).hostname.toLowerCase();
+  if (!host.endsWith(EXPERIENCE_PREVIEW_HOST_SUFFIX)) {
+    return new Response('Not found', { status: 404 });
+  }
+  if (request.method !== 'GET') return jsonRes({ error: 'method not allowed' }, 405, request);
+  try {
+    const response = await fetch('https://amitphotos.com/api/photos', {
+      method: 'GET',
+      headers: { Accept: 'application/json' },
+      redirect: 'error',
+    });
+    if (!response.ok) return jsonRes({ error: 'public gallery unavailable' }, 503, request);
+    const published = await response.json();
+    if (!Array.isArray(published) || !published.length || published.length > 5000) {
+      return jsonRes({ error: 'public gallery unavailable' }, 503, request);
+    }
+    // Preserve the canonical public API's published-only filtering. Explicitly
+    // exclude a row if the source unexpectedly labels it unpublished.
+    const absolutePhotoAsset = path => typeof path === 'string' && path.startsWith('/')
+      ? 'https://amitphotos.com' + path : path;
+    const rows = published.filter(photo => photo && typeof photo.id === 'string'
+      && photo.published !== 0 && photo.published !== false).map(photo => ({
+        ...photo,
+        thumbnail: absolutePhotoAsset(photo.thumbnail),
+        url: absolutePhotoAsset(photo.url),
+    }));
+    if (!rows.length) return jsonRes({ error: 'public gallery unavailable' }, 503, request);
+    return new Response(JSON.stringify(rows), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=60' },
+    });
+  } catch (_) {
+    return jsonRes({ error: 'public gallery unavailable' }, 503, request);
+  }
+}
+
 // ===== PHOTOS =====
 // The public gallery is read far more often than it changes. Cache the canonical
 // response at Cloudflare's edge so normal page views do not scan the full D1 table.
@@ -8369,6 +8410,7 @@ export default {
     if (path === '/api/reset-password')    return handleResetPassword(request, env);
     if (path === '/api/subscribers')       return handleSubscribers(request, env);
     if (path === '/api/customers')         return handleCustomers(request, env);
+    if (path === '/api/experience-preview-photos') return handleExperiencePreviewPublicPhotos(request);
     if (path === '/api/photos')            return handlePhotos(request, env);
     if (path === '/api/quiz-photos')       return handleQuizPhotos(request, env);
     if (path === '/api/sale-photos')       return handleSalePhotos(request, env);
