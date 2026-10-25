@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="referrer" content="no-referrer">
+  <title>הורדת הקובץ | Download</title>
+  <style>
+    :root { --bg: #0a0a0a; --card: #141414; --line: #2a2a2a; --text: #f0ede8; --muted: #a8a39a; --gold: #c8a96e; --danger: #ff7b8a; }
+    @media (prefers-color-scheme: light) { :root { --bg: #f6f3ee; --card: #fff; --line: #ddd5c8; --text: #1b1a17; --muted: #5c574d; --gold: #8a6a22; --danger: #b00020; } }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 16px; background: var(--bg); color: var(--text); font-family: system-ui, -apple-system, "Segoe UI", Arial, sans-serif; }
+    main { width: 100%; max-width: 460px; background: var(--card); border: 1px solid var(--line); border-radius: 6px; padding: 28px 22px; text-align: center; }
+    h1 { font-size: 1.35rem; margin: 0 0 10px; }
+    p { color: var(--muted); line-height: 1.6; margin: 0 0 16px; }
+    .btn { display: inline-block; min-height: 44px; padding: 12px 26px; background: var(--gold); color: #111; font: inherit; font-weight: 700; border: 0; border-radius: 3px; cursor: pointer; }
+    .btn:disabled { opacity: .5; cursor: default; }
+    .btn:focus-visible { outline: 3px solid var(--text); outline-offset: 3px; }
+    .bad { color: var(--danger); }
+    .lang { margin-bottom: 14px; font-size: .85rem; }
+    .lang button { background: none; border: 0; color: var(--muted); cursor: pointer; padding: 6px; min-height: 32px; font: inherit; }
+    .lang button[aria-pressed="true"] { color: var(--gold); font-weight: 700; }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="lang" role="group" aria-label="Language / שפה">
+      <button type="button" data-lang="he" aria-pressed="true">עברית</button> |
+      <button type="button" data-lang="en" aria-pressed="false">English</button>
+    </div>
+    <h1 id="title"></h1>
+    <p id="body" role="status" aria-live="polite"></p>
+    <button type="button" class="btn" id="go" disabled></button>
+    <p id="note" style="margin-top:18px;font-size:.85rem"></p>
+  </main>
+  <script>
+    // The link token lives in the URL fragment (#t=...): HTTP never sends a fragment, so it is
+    // not in request logs or analytics and a scanner that only fetches this page never sees it.
+    // A scanner that runs this JavaScript CAN read it, so loading, rendering, the HEAD check
+    // and any preview never touch the one-time link: the download URL is not in the page as a
+    // link and is requested only after a real user click (isTrusted).
+    (function () {
+      var T = {
+        he: { title: 'הקובץ שלך מוכן', checking: 'בודקים את הקישור…', ready: 'לחצו על הכפתור כדי להוריד. הקישור חד-פעמי, ולכן עדיף להוריד כשמוכנים לשמור את הקובץ.', go: 'להורדת הקובץ',
+          used: 'הקישור כבר נוצל. אם ההורדה לא הושלמה, השיבו להודעת המייל עם מספר ההזמנה ונשלח קישור חדש ללא חיוב נוסף.',
+          gone: 'הקישור פג תוקף או בוטל. השיבו להודעת המייל עם מספר ההזמנה ונבדוק.', bad: 'קישור לא תקין. פתחו אותו שוב מהמייל.', unknown: 'לא הצלחנו לבדוק את הקישור כרגע. אפשר לנסות להוריד בכל זאת.',
+          note: 'שמרו את הקובץ אחרי ההורדה. הקישור אינו להעברה או להפצה.' },
+        en: { title: 'Your file is ready', checking: 'Checking your link…', ready: 'Press the button to download. The link works once, so download when you are ready to save the file.', go: 'Download the file',
+          used: 'This link has already been used. If the download did not finish, reply to the email with your order number and we will send a new link at no extra charge.',
+          gone: 'This link has expired or was cancelled. Reply to the email with your order number and we will look into it.', bad: 'Invalid link. Please open it again from the email.', unknown: 'We could not check the link right now. You can still try the download.',
+          note: 'Keep the file after downloading. The link is not transferable.' }
+      };
+      var hash = new URLSearchParams(location.hash.replace(/^#/, ''));
+      var token = hash.get('t') || '';
+      var lang = hash.get('lang') === 'en' ? 'en' : (navigator.language || '').toLowerCase().indexOf('en') === 0 && !hash.get('lang') ? 'en' : 'he';
+      var valid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(token);
+      var el = { title: document.getElementById('title'), body: document.getElementById('body'), go: document.getElementById('go'), note: document.getElementById('note') };
+      var state = 'checking';
+      function render() {
+        var t = T[lang];
+        document.documentElement.lang = lang; document.documentElement.dir = lang === 'he' ? 'rtl' : 'ltr';
+        el.title.textContent = t.title; el.go.textContent = t.go; el.note.textContent = t.note;
+        el.body.textContent = t[state] || t.ready;
+        el.body.className = (state === 'used' || state === 'gone' || state === 'bad') ? 'bad' : '';
+        var enabled = valid && (state === 'ready' || state === 'unknown');
+        el.go.disabled = !enabled;
+        Array.prototype.forEach.call(document.querySelectorAll('.lang button'), function (b) { b.setAttribute('aria-pressed', b.dataset.lang === lang ? 'true' : 'false'); });
+      }
+      Array.prototype.forEach.call(document.querySelectorAll('.lang button'), function (b) { b.addEventListener('click', function () { lang = b.dataset.lang; render(); }); });
+      el.go.addEventListener('click', function (event) {
+        if (!event.isTrusted || el.go.disabled || !valid) return;
+        el.go.disabled = true; // one deliberate click starts one download
+        location.assign('/api/download/' + token);
+      });
+      if (!valid) { state = 'bad'; render(); return; }
+      render();
+      // HEAD never consumes the one-time link; it only tells us whether it is still usable.
+      fetch('/api/download/' + token, { method: 'HEAD', cache: 'no-store', referrerPolicy: 'no-referrer' })
+        .then(function (r) { state = r.status === 200 ? 'ready' : r.status === 410 ? (r.headers.get('X-Link-State') === 'used' ? 'used' : 'gone') : r.status === 404 ? 'bad' : 'unknown'; render(); })
+        .catch(function () { state = 'unknown'; render(); });
+    })();
+  </script>
+</body>
+</html>

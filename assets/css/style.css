@@ -1181,6 +1181,9 @@ body[data-payments-state="enabled"] .payments-disabled-only {
 .gallery-item-overlay {
   position: absolute;
   inset: 0;
+  /* Keep actionable controls above the image-protection surface (z-index: 1).
+     The wishlist control stays above both at z-index: 6. */
+  z-index: 2;
   background: linear-gradient(
     to top,
     rgba(0, 0, 0, 0.75) 0%,
@@ -1384,6 +1387,12 @@ body[data-payments-state="enabled"] .payments-disabled-only {
 }
 
 .lightbox.open { display: flex; }
+
+/* Defer the cookie notice while a dialog owns focus. It reappears on close;
+   no dismissal or consent is recorded by opening a photo. */
+body:has(.lightbox.open, .buy-modal.open, .cart-modal.open, #wall-modal.open) #cookie-notice {
+  display: none;
+}
 
 .lightbox-inner {
   position: relative;

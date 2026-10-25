@@ -158,3 +158,110 @@ test('Drive fallback (no r2_key) still claims the token atomically before redire
   const second = await handleDownload(request(), env, TOKEN);
   assert.equal(second.status, 410);
 });
+
+// ===== HEAD must never consume the one-time token (link previews, prefetchers) =====
+
+const headRequest = () => new Request('https://example.test/api/download/' + TOKEN, { method: 'HEAD' });
+const methodRequest = method => new Request('https://example.test/api/download/' + TOKEN, { method });
+
+test('HEAD does not consume the token: HEAD, then one GET succeeds, then another GET is blocked', async () => {
+  const env = makeEnv({ objects: { 'photo.jpg': fileObject() } });
+
+  const head = await handleDownload(headRequest(), env, TOKEN);
+  assert.equal(head.status, 200);
+  assert.equal(head.headers.get('Content-Type'), 'image/jpeg');
+  assert.equal(head.headers.get('Cache-Control'), 'no-store');
+  assert.equal(await head.text(), '');
+  assert.equal(env.state.used, 0);
+  assert.equal(env.state.claimAttempts, 0);
+
+  // A second HEAD (browser preload, scanner) still leaves it intact.
+  assert.equal((await handleDownload(headRequest(), env, TOKEN)).status, 200);
+  assert.equal(env.state.used, 0);
+
+  const first = await handleDownload(request(), env, TOKEN);
+  assert.equal(first.status, 200);
+  assert.equal(await first.text(), 'jpeg-bytes');
+  assert.equal(env.state.used, 1);
+
+  assert.equal((await handleDownload(request(), env, TOKEN)).status, 410);
+  assert.equal(env.state.claimWins, 1);
+  // Once spent, HEAD reports it too.
+  assert.equal((await handleDownload(headRequest(), env, TOKEN)).status, 410);
+});
+
+test('HEAD uses R2 head() when available and never reads or streams the body', async () => {
+  const env = makeEnv({ objects: { 'photo.jpg': fileObject() } });
+  let heads = 0;
+  let cancelled = 0;
+  env.PHOTOS.head = async () => { heads += 1; return { body: { cancel: async () => { cancelled += 1; } }, httpMetadata: { contentType: 'image/jpeg' } }; };
+
+  const head = await handleDownload(headRequest(), env, TOKEN);
+  assert.equal(head.status, 200);
+  assert.equal(heads, 1);
+  assert.equal(env.state.r2Gets, 0);
+  assert.equal(env.state.used, 0);
+  assert.equal(cancelled, 1);
+
+  assert.equal((await handleDownload(request(), env, TOKEN)).status, 200);
+  assert.equal(env.state.used, 1);
+});
+
+test('HEAD on a missing file or an R2 error reports it and leaves the token intact', async () => {
+  const missing = makeEnv({ objects: {} });
+  assert.equal((await handleDownload(headRequest(), missing, TOKEN)).status, 404);
+  assert.equal(missing.state.used, 0);
+  const broken = makeEnv({ getImpl: async () => { throw new Error('R2 unavailable'); } });
+  assert.equal((await handleDownload(headRequest(), broken, TOKEN)).status, 503);
+  assert.equal(broken.state.used, 0);
+  assert.equal(broken.state.claimAttempts, 0);
+});
+
+test('HEAD on the Drive fallback does not redirect or claim; GET then redirects once', async () => {
+  const env = makeEnv({ r2Key: null });
+  const head = await handleDownload(headRequest(), env, TOKEN);
+  assert.equal(head.status, 200);
+  assert.equal(head.headers.get('Location'), null);
+  assert.equal(env.state.used, 0);
+  assert.equal((await handleDownload(request(), env, TOKEN)).status, 302);
+  assert.equal(env.state.used, 1);
+  assert.equal((await handleDownload(request(), env, TOKEN)).status, 410);
+});
+
+test('only GET and HEAD are accepted; other methods answer 405 and never consume the token', async () => {
+  const env = makeEnv({ objects: { 'photo.jpg': fileObject() } });
+  for (const method of ['POST', 'PUT', 'DELETE', 'PATCH']) {
+    const response = await handleDownload(methodRequest(method), env, TOKEN);
+    assert.equal(response.status, 405);
+    assert.equal(response.headers.get('Allow'), 'GET, HEAD');
+  }
+  assert.equal(env.state.used, 0);
+  assert.equal(env.state.claimAttempts, 0);
+  assert.equal(env.state.r2Gets, 0);
+});
+
+test('mixed parallel HEAD and GET requests: only one GET delivers the file, HEAD never claims', async () => {
+  let release;
+  const gate = new Promise(resolve => { release = resolve; });
+  const env = makeEnv({ getImpl: async () => { await gate; return fileObject(); } });
+  env.PHOTOS.head = async () => { await gate; return fileObject(); };
+
+  const pending = [
+    handleDownload(headRequest(), env, TOKEN),
+    handleDownload(request(), env, TOKEN),
+    handleDownload(headRequest(), env, TOKEN),
+    handleDownload(request(), env, TOKEN),
+  ];
+  await new Promise(resolve => setImmediate(resolve));
+  release();
+  const responses = await Promise.all(pending);
+
+  // Both HEADs validate the link (200) and never claim it.
+  assert.equal(responses[0].status, 200);
+  assert.equal(responses[2].status, 200);
+  const getStatuses = [responses[1].status, responses[3].status].sort();
+  assert.deepEqual(getStatuses, [200, 410]);
+  assert.equal(env.state.claimAttempts, 2);
+  assert.equal(env.state.claimWins, 1);
+  assert.equal(env.state.used, 1);
+});
