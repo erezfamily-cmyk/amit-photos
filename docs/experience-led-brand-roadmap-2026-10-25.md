@@ -88,6 +88,7 @@ The site remains both an original-art photography portfolio and a learning desti
 
 ## P2 delivery checkpoint — analytics and editorial stories (draft, 25.10.2026)
 
+- **Photo-led homepage improvement in PR #181:** four real-image cards changed from split photo/text tiles into immersive portrait-crop image surfaces with gradient-backed captions, low visual noise, subtle hover respecting reduced-motion and responsive two-column mobile layout. Hero invitation leads into experience discovery only after the verified public gallery loads; otherwise remains pointed to normal gallery. No additional route or new image files.
 - Add GA4 event counts per experience route for path selection, photo lightbox, wall preview and WhatsApp **contact-click intent**. These are actions, not verified enquiries or unique people.
 - Weekly GA script must query explicit per-route event names and display `experience_scorecard` in saved JSON, text and email, with "0 events" clearly distinguished from "0 demand".
 - Publish no made-up stories: [eight bilingual editorial captions](experience-photo-story-pilot-2026-10-25.md) are factual observations only; in **draft PR #181** they display underneath the selected photo in the lightbox, replacing its technical description and pairing with the existing wall mockup. First-person memories still require photographer input. No story content is live in `main` yet.
