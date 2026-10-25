@@ -2,8 +2,10 @@
 
 - [x] PR #180 merged: exact four-photo "הקסם שבפרטים" set and HE/EN subtitle.
 - [x] Draft P2 tracking added for experience path → photo → wall → WhatsApp contact intent; existing checkout remains disabled.
-- [x] Draft weekly GA4 scorecard by route, text/email/JSON, without storing PII; separate 8-photo bilingual **editorial** story pilot drafted (not published).
-- [ ] Run GitHub CI and manual mobile/RTL/English QA on P2 preview.
+- [x] Draft weekly GA4 scorecard by route, text/email/JSON, without storing PII; eight bilingual editorial captions **now integrated into PR #181 lightbox Preview**, not yet merged or published in production.
+- [x] Implement subtle experience-first lightbox text for 8 selected public photos, with a safe link to existing wall preview; technical descriptions remain for all other photos.
+- [x] Add dedicated regression tests and bilingual lightbox copy, including cache-bust for CSS/JS.
+- [ ] Run GitHub CI and manual mobile/RTL/English QA on P2 preview, including wall CTA and no caption on other images.
 - [ ] Validate GA4 event receipt and weekly report after deployment; do not claim unique visitor conversions from event counts.
 - [ ] Confirm real photographer memories or explicit approval of observational captions before publishing stories.
 - [ ] Request separate approval to merge/deploy P2; no new experience categories yet.
