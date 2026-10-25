@@ -338,6 +338,8 @@ def test_experience_scorecard_counts_events_by_path_not_unique_people():
         "experience_details_click": "3",
         "experience_details_photo_view": "7",
         "experience_details_wall_open": "2",
+        "experience_details_contact_click": "1",
+        "experience_contact_click": "1",
         "experience_quiet_click": "2",
         "experience_quiet_photo_view": "3",
         "experience_photo_view": "10",
@@ -351,6 +353,8 @@ def test_experience_scorecard_counts_events_by_path_not_unique_people():
     assert details["clicks"] == 3
     assert details["photo_views"] == 7
     assert details["wall_opens"] == 2
+    assert details["contact_clicks"] == 1
+    assert result["all_experience_contact_clicks"] == 1
     assert "not unique visitors" in result["measurement_note"]
     assert "מסלולי השראה" in gwr.build_data_summary(data)
     html = gwr.build_experience_html(data)
@@ -361,7 +365,7 @@ def test_experience_scorecard_counts_events_by_path_not_unique_people():
 def test_experience_scorecard_gracefully_handles_prelaunch_zero_events():
     result = gwr.build_experience_scorecard(fake_data())
     assert len(result["paths"]) == 4
-    assert all(p["clicks"] == 0 and p["photo_views"] == 0 and p["wall_opens"] == 0 for p in result["paths"])
+    assert all(p["clicks"] == 0 and p["photo_views"] == 0 and p["wall_opens"] == 0 and p["contact_clicks"] == 0 for p in result["paths"])
 
 
 def test_ga4_weekly_query_includes_experience_events_by_name():
@@ -376,9 +380,11 @@ def test_ga4_weekly_query_includes_experience_events_by_name():
         assert f"experience_{path}_click" in filtered
         assert f"experience_{path}_photo_view" in filtered
         assert f"experience_{path}_wall_open" in filtered
+        assert f"experience_{path}_contact_click" in filtered
     assert "experience_path_click" in filtered
     assert "experience_photo_view" in filtered
     assert "wall_preview_open" in filtered
+    assert "experience_contact_click" in filtered
 
 
 def test_experience_scorecard_is_saved_in_weekly_json(tmp_path):
