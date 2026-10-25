@@ -5,6 +5,8 @@
 - [x] Draft weekly GA4 scorecard by route, text/email/JSON, without storing PII; eight bilingual editorial captions **now integrated into PR #181 lightbox Preview**, not yet merged or published in production.
 - [x] Implement subtle experience-first lightbox text for 8 selected public photos, with a safe link to existing wall preview; technical descriptions remain for all other photos.
 - [x] Add dedicated regression tests and bilingual lightbox copy, including cache-bust for CSS/JS.
+- [x] Refine four emotional home cards to foreground original photos with bottom gradient text, minimal motion, mobile two-column layout; route hero CTA to experiences only when public photos confirmed.
+- [ ] Visually verify cards on HE/EN phones and desktop (image crop, contrast, overlay, scroll), and verify hero fallback when `/api/photos` fails.
 - [ ] Run GitHub CI and manual mobile/RTL/English QA on P2 preview, including wall CTA and no caption on other images.
 - [ ] Validate GA4 event receipt and weekly report after deployment; do not claim unique visitor conversions from event counts.
 - [ ] Confirm real photographer memories or explicit approval of observational captions before publishing stories.
