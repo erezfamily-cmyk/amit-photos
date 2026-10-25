@@ -1278,7 +1278,7 @@
       if (r.ok) {
         if (typeof trackUxEvent === 'function') {
           trackUxEvent('guide_request_success', { source: 'popup' });
-          if data.lead_created trackUxEvent('generate_lead', { source: 'popup' });
+          if (data.lead_created) trackUxEvent('generate_lead', { source: 'popup' });
         }
         msg.style.color = '#4caf7d';
         msg.textContent = '&#x2713; נשלח! בדוק תיבת הדואר (גם spam).';
