@@ -58,6 +58,9 @@ const TRANSLATIONS = {
     'nav.contact':      'צור קשר',
     'nav.menu':         'תפריט',
 
+    'experience.story.aria': "תיאור חווייתי של התמונה",
+    'experience.story.eyebrow': "להרגיש את הרגע",
+    'experience.story.wall': "דמיינו אותה על הקיר ↗",
     // Experience-led photography discovery
     'experience.label': 'לאן הצילום לוקח אתכם?',
     'experience.heading': 'בחרו רגע להרגיש',
@@ -462,6 +465,9 @@ const TRANSLATIONS = {
     'nav.contact':      'Contact',
     'nav.menu':         'Menu',
 
+    'experience.story.aria': "Experiencing the photograph",
+    'experience.story.eyebrow': "Feel the moment",
+    'experience.story.wall': "Imagine it on your wall ↗",
     // Experience-led photography discovery
     'experience.label': 'Where will the photograph take you?',
     'experience.heading': 'Find a feeling to explore',
