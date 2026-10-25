@@ -114,6 +114,19 @@ const EXPERIENCE_PATHS = Object.freeze({
 });
 let activeExperiencePath = null;
 
+// The Sandbox Preview has a separate R2 bucket. Static public-catalog fallback
+// paths such as /photos/thumb/id.webp otherwise resolve against that empty bucket.
+// Use the existing public production assets only for known photo-image paths.
+// No change to production URLs, publication checks, IDs or image visibility.
+function normalizePhotoAssetUrlsForPreview(photo) {
+  if (!location.hostname.endsWith('-amit-photos-paypal-sandbox.erez-family.workers.dev')) return photo;
+  const publicPhotoUrl = value => typeof value === 'string'
+    && /^\/photos\/(?:thumb\/)?[\w-]+\.(?:webp|jpe?g|png)$/i.test(value)
+    ? 'https://amitphotos.com' + value
+    : value;
+  return { ...photo, thumbnail: publicPhotoUrl(photo.thumbnail), url: publicPhotoUrl(photo.url) };
+}
+
 function clearExperienceSelection() {
   activeExperiencePath = null;
   document.querySelectorAll('.experience-card').forEach(card => {
@@ -421,6 +434,11 @@ async function loadPhotos() {
   } catch {
     allPhotos = getDemoPhotos();
   }
+
+  // Featured cards and lightbox also read from allPhotos. Normalize both the
+  // verified public API and the existing JSON fallback before any image renders.
+  // This never upgrades fallback catalog rows to published experience cards.
+  allPhotos = allPhotos.map(normalizePhotoAssetUrlsForPreview);
 
   // קבץ מדינות תחת "מקומות בעולם" אם אין parent_category מוגדר
   allPhotos = allPhotos.map(p =>
