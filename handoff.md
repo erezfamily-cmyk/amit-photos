@@ -1,5 +1,19 @@
 # Handoff — amit-photos
 
+## RESUME POINT — 2026-10-25: Experience-led P0 (draft PR preparation)
+
+- The new experience-led marketing roadmap is at https://github.com/erezfamily-cmyk/amit-photos/issues/177 and `docs/experience-led-brand-roadmap-2026-10-25.md`.
+- Implementation branch `feature/experience-led-p0-2026-10-25`, based on `main`; NOT merged or deployed.
+- Changes: HE/EN homepage Hero + warmer About opening, responsive Hero subtitle, and targeted Node regression. The existing gallery, guide popup and photo assets are retained.
+- CSS and i18n asset cache-bust hashes were changed in `index.html` to match new content. Check them in CI.
+- Planned work: four reversible emotional discovery paths, 8–12 verified authentic photo stories, connecting the free guide and Agent 38 without raising posting frequency, and anonymous GA4 measurement over 14–28 days.
+- Purchase/offline warning: keep `PAYMENTS_ENABLED=false`, PayPal Live disabled, Gelato out of scope; do not change D1, price, licensing/checkout, Drive files or social automation. Pending checkout PRs #155/#157/#173/#174 are separate.
+- Outstanding QA: targeted Node tests, Safari mobile and desktop Hebrew/English layouts, keyboard/accessibility, checkout-off appearance and purchase/legal-copy audit; review all CI results.
+- Next: open/review draft PR, then seek **separate** approval before merge or deploy. Do not mark this as live.
+
+---
+
+
 ## RESUME POINT — 2026-10-21: Social/business monitoring hardening (draft PR)
 
 **Branch:** `feature/social-business-audit-2026-10-21`. Details: `docs/social-business-audit-2026-10-21.md`.
