@@ -109,7 +109,7 @@ let featuredIds = [];
 const EXPERIENCE_PATHS = Object.freeze({
   quiet: ['19Q-SGNEyuCzAc8cbmMMeXeSzVpaFJazV', '1DKV8fePHvPbFLArxDDCRuGsX9eT48ZKd', '1M0MNq47h_rck94IU0GlqlX9yIA5_6MMe', '1IY3Qa2NQIvhchDjAGUdlY7NPfegOirPo'],
   wonder: ['1TCAfgJ9pl3T0G8RRtIAa5_0FOoxXrjso', '1toLLUZrvlD_zP5qosJLEabgyh1WOEWZc', '1F5h4R4wzlMQ_DRq6LrnVXk-O7S9NvADw', '1G_dn5hHrv_1cZ-VVGfECEYzi9J6pDGhI'],
-  details: ['1c_MjQDRqBDKXXUs8J2IRYpUtq68hF0d5', '1CXbZJsASVcR5m4PxT3If4J8W_t5cyuSU', '10rE-_ZJqqxcpfrcIDulapy2WIk_ZbPLQ', '1Yjmr3Jzv9ovFqBPAm2-2VEXvM9SwUYpU'],
+  details: ['1c_MjQDRqBDKXXUs8J2IRYpUtq68hF0d5', '1T_sZuDJIECAtqscPBtZ1qoi7KECxxmLu', '1qAYmV4wg-5I8isvUTrP1kZnT1leAHkvA', '1WZUI8vzx_VBpg6yfXb_mAth6guweU2JH'],
   places: ['1rVBJnzQ8onOOR-qQHUzuK6zr_dMd_vHN', '1z_OKuttSBnZOehYvPVa774CillJuylnh', '1xwICPgKQr7IAa7BFcEZRX5D1XtXzwKI6', '1ySQLVxa-NZVG-WGwcTi6eMp_aHR80vo8']
 });
 let activeExperiencePath = null;
