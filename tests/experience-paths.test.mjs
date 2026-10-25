@@ -125,7 +125,10 @@ test('Cloudflare Sandbox Preview reads the published public photo source without
   assert.match(worker, /if \(path === '\/api\/experience-preview-photos'\) return handleExperiencePreviewPublicPhotos\(request\)/);
   assert.match(worker, /if \(!host\.endsWith\(EXPERIENCE_PREVIEW_HOST_SUFFIX\)\)/);
   assert.match(worker, /request\.method !== 'GET'/);
-  assert.match(worker, /fetch\('https:\/\/amitphotos\.com\/api\/photos'/);
+  assert.match(worker, /'https:\/\/www\.amitphotos\.com\/api\/photos'/);
+  assert.match(worker, /'https:\/\/amitphotos\.com\/api\/photos'/);
+  assert.match(worker, /for \(const url of publicGalleryUrls\)/);
+  assert.match(worker, /redirect: 'error'/);
   assert.match(worker, /photo\.published !== 0 && photo\.published !== false/);
   assert.match(worker, /new Response\('Not found', \{ status: 404 \}\)/);
   assert.match(worker, /'public gallery unavailable'/);
@@ -161,12 +164,49 @@ test('preview proxy returns only published rows with absolute image URLs; produc
   });
   assert.equal(preview.status, 200);
   assert.equal(calls.length, 1);
-  assert.equal(calls[0][0], 'https://amitphotos.com/api/photos');
+  assert.equal(calls[0][0], 'https://www.amitphotos.com/api/photos');
   const rows = await preview.json();
   assert.equal(rows.length, 1);
   assert.equal(rows[0].id, 'public-1');
   assert.equal(rows[0].thumbnail, 'https://amitphotos.com/photos/thumb/one.webp');
   assert.equal(rows[0].url, 'https://amitphotos.com/photos/one.webp');
+});
+
+test('preview proxy falls back only to apex public gallery if www fails', async () => {
+  const worker = readFileSync(new URL('../worker.js', import.meta.url), 'utf8');
+  const source = worker.slice(worker.indexOf('const EXPERIENCE_PREVIEW_HOST_SUFFIX'),
+    worker.indexOf('// ===== PHOTOS ====='));
+  const calls = [];
+  const ctx = {
+    URL,
+    Response,
+    fetch: async (url, options) => {
+      calls.push([url, options]);
+      if (url === 'https://www.amitphotos.com/api/photos') {
+        return new Response(null, { status: 302, headers: { location: 'https://amitphotos.com/api/photos' } });
+      }
+      assert.equal(url, 'https://amitphotos.com/api/photos');
+      return new Response(JSON.stringify([
+        { id: 'public-photo', published: 1, thumbnail: '/photos/thumb/public.webp' },
+        { id: 'unpublished-photo', published: false, url: '/photos/private.webp' },
+      ]), { status: 200 });
+    },
+    jsonRes: (value, status) => new Response(JSON.stringify(value), { status }),
+  };
+  vm.runInNewContext(source + '\nthis.previewHandler = handleExperiencePreviewPublicPhotos;', ctx);
+  const preview = await ctx.previewHandler({
+    url: 'https://feature-amit-photos-paypal-sandbox.erez-family.workers.dev/api/experience-preview-photos',
+    method: 'GET',
+  });
+  assert.equal(preview.status, 200);
+  assert.deepEqual(calls.map(v => v[0]), [
+    'https://www.amitphotos.com/api/photos',
+    'https://amitphotos.com/api/photos',
+  ]);
+  assert.ok(calls.every(v => v[1].redirect === 'error' && v[1].method === 'GET'));
+  const rows = await preview.json();
+  assert.deepEqual(rows.map(row => row.id), ['public-photo']);
+  assert.equal(rows[0].thumbnail, 'https://amitphotos.com/photos/thumb/public.webp');
 });
 
 test('preview proxy fails closed when public source is unavailable', async () => {
