@@ -45,7 +45,7 @@ The site remains both an original-art photography portfolio and a learning desti
 
 - Branch: `feature/experience-discovery-paths-2026-10-25`. Phase P0 has already been merged as PR #178.
 - Four HE/EN cards between Hero and category filters, with 16 source-catalog candidates from existing photographs (4 per feeling).
-- Images are rendered **only after matching IDs against currently public `allPhotos`** (D1 primary where populated); paths with fewer than two available pictures are hidden. No unpublished photo URLs are exposed directly in HTML.
+- **Security clarification:** cards are rendered only if `/api/photos` returned a non-empty published-image list from the Worker/D1. If the endpoint errors, returns empty, or demo/JSON fallback is used, all four experience cards are hidden, even though the old gallery may still display its fallback. Candidates are then matched by ID only against D1-derived `allPhotos`; fewer than two matches hides a path. No image source is hardcoded in HTML.
 - Editorial grouping relies on catalog titles and description. **A visual quality check and owner approval of the specific 16 candidates are still required before merging.** Source resolution is not a visual quality guarantee.
 - Selection reuses gallery thumbnails, lightbox, masonry, existing filters and search; standard filters clear an active emotional path. Language switching and #experience-path hash links are supported.
 - Anonymous click measurement is limited to `experience_path_click` with allowlisted label and result count; no PII.
