@@ -1,5 +1,13 @@
 ## Experience-led brand/UX — 25.10.2026
 
+- [x] PR #180 merged: exact four-photo "הקסם שבפרטים" set and HE/EN subtitle.
+- [x] Draft P2 tracking added for experience path → photo → wall → WhatsApp contact intent; existing checkout remains disabled.
+- [x] Draft weekly GA4 scorecard by route, text/email/JSON, without storing PII; separate 8-photo bilingual **editorial** story pilot drafted (not published).
+- [ ] Run GitHub CI and manual mobile/RTL/English QA on P2 preview.
+- [ ] Validate GA4 event receipt and weekly report after deployment; do not claim unique visitor conversions from event counts.
+- [ ] Confirm real photographer memories or explicit approval of observational captions before publishing stories.
+- [ ] Request separate approval to merge/deploy P2; no new experience categories yet.
+
 - [x] P0 homepage experience messaging merged as PR #178.
 - [x] P1 four emotion-led discovery cards with existing photo IDs prepared in a review branch.
 - [x] Fail-closed gallery protection for P1: disable discovery if the D1-published endpoint cannot be verified; related Node tests added.
@@ -8,11 +16,11 @@
 - [ ] Collect 8–12 authentic photographer memories; do not invent details.
 - [x] P1 merged via PR #179 (2026-10-25).
 - [x] P1.1 details-path photo refresh prepared: "אבקת הפרח הזהובה", "פרחים ורודים בתקריב", "ורד ורוד עדין", "עדינות של טבע"; HE/EN label updated.
-- [ ] Run targeted CI and visual review of updated details selection; seek separate PR merge approval.
+- [x] PR #180 targeted CI passed and owner approved merge; browser visual QA remains distinct.
 - [ ] Evaluate four optional additional *experience paths* after 14–28 days of traffic and qualified leads; do not add four more taxonomy categories now.
 
 Full roadmap and criteria: https://github.com/erezfamily-cmyk/amit-photos/issues/177  
-Current draft branch: `feature/experience-details-refresh-2026-10-25` (PR #180, not merged). P0 (#178) and P1 (#179) already merged to main.
+Current draft branch: `feature/experience-analytics-story-pilot-2026-10-25` (P2 analytics/story, not merged). P0 (#178), P1 (#179) and detail refresh (#180) are merged to main.
 
 - [x] Define experience-led strategy and the new HE/EN home-page voice.
 - [x] Prepare a reversible P0 Hero/About change, responsive subtitle and targeted regression test.
