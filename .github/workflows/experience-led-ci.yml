@@ -8,6 +8,7 @@ on:
       - 'assets/js/i18n.js'
       - 'tests/experience-hero.test.mjs'
       - 'tests/experience-paths.test.mjs'
+      - 'tests/inline-homepage-scripts.test.mjs'
       - 'tests/experience-editorial-captions.test.mjs'
       - 'assets/js/gallery.js'
       - 'worker.js'
@@ -38,6 +39,7 @@ jobs:
         run: >
           node --test
           tests/experience-hero.test.mjs
+          tests/inline-homepage-scripts.test.mjs
           tests/experience-paths.test.mjs
           tests/experience-editorial-captions.test.mjs
           tests/i18n-translation-parity.test.mjs
