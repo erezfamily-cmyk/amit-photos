@@ -122,7 +122,7 @@ test('Cloudflare Sandbox Preview reads the published public photo source without
   const worker = readFileSync(new URL('../worker.js', import.meta.url), 'utf8');
   assert.match(gallery, /const isSandboxPreview = location\.hostname\.endsWith\('-amit-photos-paypal-sandbox\.erez-family\.workers\.dev'\)/);
   assert.match(gallery, /const publicGalleryEndpoint = isSandboxPreview \? '\/api\/experience-preview-photos' : '\/api\/photos'/);
-  assert.match(worker, /if \(path === '\/api\/experience-preview-photos'\) return handleExperiencePreviewPublicPhotos\(request\)/);
+  assert.match(worker, /if \(path === '\/api\/experience-preview-photos'\) return handleExperiencePreviewPublicPhotos\(request, env\)/);
   assert.match(worker, /if \(!host\.endsWith\(EXPERIENCE_PREVIEW_HOST_SUFFIX\)\)/);
   assert.match(worker, /request\.method !== 'GET'/);
   assert.match(worker, /'https:\/\/www\.amitphotos\.com\/api\/photos'/);
@@ -134,6 +134,58 @@ test('Cloudflare Sandbox Preview reads the published public photo source without
   assert.match(worker, /'public gallery unavailable'/);
   assert.doesNotMatch(worker.slice(worker.indexOf('async function handleExperiencePreviewPublicPhotos('),
     worker.indexOf('// ===== PHOTOS =====')), /admin=1|\/api\/admin|env\.DB|\.put\(|DELETE FROM|UPDATE photos/);
+});
+
+test('Sandbox service binding reads only published public photos without cross-worker fetch', async () => {
+  const worker = readFileSync(new URL('../worker.js', import.meta.url), 'utf8');
+  const source = worker.slice(worker.indexOf('const EXPERIENCE_PREVIEW_HOST_SUFFIX'),
+    worker.indexOf('// ===== PHOTOS ====='));
+  const calls = [];
+  const ctx = {
+    URL,
+    Request,
+    Response,
+    fetch: async () => { throw new Error('network fetch must not occur with a binding'); },
+    jsonRes: (value, status) => new Response(JSON.stringify(value), { status }),
+  };
+  vm.runInNewContext(source + '\nthis.previewHandler = handleExperiencePreviewPublicPhotos;', ctx);
+  const req = { url: 'https://feature-amit-photos-paypal-sandbox.erez-family.workers.dev/api/experience-preview-photos', method: 'GET' };
+  const env = { PUBLIC_GALLERY_SERVICE: { fetch: async request => {
+    calls.push(request);
+    return new Response(JSON.stringify([
+      { id: 'published-one', published: 1, thumbnail: '/photos/thumb/one.webp' },
+      { id: 'hidden-zero', published: 0, thumbnail: '/photos/thumb/zero.webp' },
+      { id: 'hidden-false', published: false, thumbnail: '/photos/thumb/false.webp' },
+    ]), { status: 200 });
+  } } };
+  const response = await ctx.previewHandler(req, env);
+  assert.equal(response.status, 200);
+  assert.equal(calls.length, 1);
+  assert.equal(calls[0].url, 'https://amitphotos.com/api/photos');
+  assert.equal(calls[0].method, 'GET');
+  const data = await response.json();
+  assert.deepEqual(data.map(p => p.id), ['published-one']);
+  assert.equal(data[0].thumbnail, 'https://amitphotos.com/photos/thumb/one.webp');
+  const prod = await ctx.previewHandler({url: 'https://amitphotos.com/api/experience-preview-photos',method:'GET'},env);
+  assert.equal(prod.status,404);
+  assert.equal(calls.length,1);
+});
+
+test('Sandbox service binding fails closed when its public photo endpoint is unavailable', async () => {
+  const worker = readFileSync(new URL('../worker.js', import.meta.url), 'utf8');
+  const source = worker.slice(worker.indexOf('const EXPERIENCE_PREVIEW_HOST_SUFFIX'),
+    worker.indexOf('// ===== PHOTOS ====='));
+  const ctx = {
+    URL, Request, Response,
+    fetch: async () => { throw new Error('must not fall back to unverified source'); },
+    jsonRes: (value, status) => new Response(JSON.stringify(value), { status }),
+  };
+  vm.runInNewContext(source + '\nthis.previewHandler = handleExperiencePreviewPublicPhotos;', ctx);
+  const response = await ctx.previewHandler({
+    url: 'https://feature-amit-photos-paypal-sandbox.erez-family.workers.dev/api/experience-preview-photos',method: 'GET',
+  }, { PUBLIC_GALLERY_SERVICE: { fetch: async () => new Response('unavailable', {status:503}) } });
+  assert.equal(response.status,503);
+  assert.equal((await response.json()).error,'public gallery unavailable');
 });
 
 test('preview proxy returns only published rows with absolute image URLs; production fails closed', async () => {
