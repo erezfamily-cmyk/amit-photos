@@ -1,5 +1,17 @@
 # Handoff — amit-photos
 
+## RESUME POINT — 2026-10-25: Experience-led P1 discovery paths (draft)
+
+- Phase P0 is in `main` via PR #178 after owner approval.
+- Phase P1 branch: `feature/experience-discovery-paths-2026-10-25`; work is **not yet merged or deployed**.
+- Four bilingual visual discovery routes reuse currently public gallery photographs through D1-first `allPhotos` matching. Each route has four catalog candidate IDs; fewer than two public matches hides that route automatically.
+- No personally invented backstories. Candidate assignments use catalog title/description and still need human visual approval.
+- Code includes cards, existing gallery filtering, responsive CSS, i18n, safe analytics and CI test.
+- Continue: check full CI, verify browser/mobile Preview and choose photos; request **new approval before merge**.
+- Original Drive files, categories, PayPal, payment flags, D1, prices, Gelato and publishing cadence remain unchanged. Roadmap: https://github.com/erezfamily-cmyk/amit-photos/issues/177
+
+---
+
 ## RESUME POINT — 2026-10-25: Experience-led P0 (draft PR #178, tested)
 
 - The new experience-led marketing roadmap is at https://github.com/erezfamily-cmyk/amit-photos/issues/177 and `docs/experience-led-brand-roadmap-2026-10-25.md`.
