@@ -10,6 +10,7 @@ on:
       - 'tests/experience-paths.test.mjs'
       - 'tests/experience-editorial-captions.test.mjs'
       - 'assets/js/gallery.js'
+      - 'worker.js'
       - 'tests/i18n-translation-parity.test.mjs'
       - 'tests/purchase-disabled-ux.test.mjs'
       - 'tests/homepage-hierarchy-redesign.test.mjs'
@@ -31,6 +32,7 @@ jobs:
       - name: Parse gallery and bilingual scripts
         run: |
           node --check assets/js/gallery.js
+          node --check worker.js
           node --check assets/js/i18n.js
       - name: Verify experience Hero, translations, payment guards and analytics
         run: >
