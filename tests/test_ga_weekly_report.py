@@ -329,3 +329,64 @@ def test_qualified_channel_html_escapes_values_and_report_persists(tmp_path):
     saved = json.loads(target.read_text(encoding="utf-8"))[-1]
     assert saved["qualified_by_source"] == data["qualified_by_source"]
     assert saved["qualified_source_status"] == "available"
+
+
+def test_experience_scorecard_counts_events_by_path_not_unique_people():
+    data = fake_data()
+    data["funnel_events"] = {
+        "experience_path_click": "5",
+        "experience_details_click": "3",
+        "experience_details_photo_view": "7",
+        "experience_details_wall_open": "2",
+        "experience_quiet_click": "2",
+        "experience_quiet_photo_view": "3",
+        "experience_photo_view": "10",
+        "wall_preview_open": "4",
+    }
+    result = gwr.build_experience_scorecard(data)
+    details = {p["key"]: p for p in result["paths"]}["details"]
+    assert result["all_path_clicks"] == 5
+    assert result["all_experience_photo_views"] == 10
+    assert result["all_wall_previews"] == 4
+    assert details["clicks"] == 3
+    assert details["photo_views"] == 7
+    assert details["wall_opens"] == 2
+    assert "not unique visitors" in result["measurement_note"]
+    assert "מסלולי השראה" in gwr.build_data_summary(data)
+    html = gwr.build_experience_html(data)
+    assert "הקסם שבפרטים" in html
+    assert "לא מבקרים ייחודיים" in html
+
+
+def test_experience_scorecard_gracefully_handles_prelaunch_zero_events():
+    result = gwr.build_experience_scorecard(fake_data())
+    assert len(result["paths"]) == 4
+    assert all(p["clicks"] == 0 and p["photo_views"] == 0 and p["wall_opens"] == 0 for p in result["paths"])
+
+
+def test_ga4_weekly_query_includes_experience_events_by_name():
+    queries = []
+    with patch.object(gwr, "run_report", side_effect=lambda _t, body: queries.append(body) or {"rows": []}):
+        gwr.fetch_ga4_data("token")
+    filtered = [
+        v for q in queries
+        for v in q.get("dimensionFilter", {}).get("filter", {}).get("inListFilter", {}).get("values", [])
+    ]
+    for path in ("quiet", "wonder", "details", "places"):
+        assert f"experience_{path}_click" in filtered
+        assert f"experience_{path}_photo_view" in filtered
+        assert f"experience_{path}_wall_open" in filtered
+    assert "experience_path_click" in filtered
+    assert "experience_photo_view" in filtered
+    assert "wall_preview_open" in filtered
+
+
+def test_experience_scorecard_is_saved_in_weekly_json(tmp_path):
+    data = fake_data()
+    data["funnel_events"] = {"experience_details_click": "2", "experience_details_photo_view": "4"}
+    path = tmp_path / "ga.json"
+    gwr.save_report(data, "analysis", reports_file=path)
+    saved = json.loads(path.read_text(encoding="utf-8"))[-1]
+    assert saved["experience_scorecard"]["paths"][2]["key"] == "details"
+    assert saved["experience_scorecard"]["paths"][2]["clicks"] == 2
+    assert saved["experience_scorecard"]["paths"][2]["photo_views"] == 4
