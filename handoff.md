@@ -1,9 +1,22 @@
 # Handoff — amit-photos
 
+## RESUME POINT — 2026-10-25: Experience analytics & authentic-story pilot (draft)
+
+- Latest production `main`: `cec12a799a8162e96e14e6109f823fa1061adf99`. Phase P0/P1/P1.1 PRs #178/#179/#180 **merged**, GitHub/Cloudflare deployment checks successful; hands-on mobile browser QA still requires confirmation.
+- Current work on `feature/experience-analytics-story-pilot-2026-10-25`, pending its own new PR and separate merge approval. Analytics: track per-path click, photo lightbox view, wall-preview open and contact/WhatsApp **click intent** (not a verified lead), using only existing GA4 anonymous allowlisted parameters.
+- `src/ga_weekly_report.py` now queries the path-specific event names and builds a `experience_scorecard` in weekly JSON, text and email. GA4 custom dimensions not required for these event-name-only totals; these count **events, not unique visitors**.
+- Last stored GA baseline before experience launch: 19.10.2026 report (12–19 October): 118 sessions and 0% lead rate reported. Post-launch GA4 readings have not yet been retrieved/verified, so no impact claims.
+- New docs: `docs/experience-measurement-plan-2026-10-25.md`, `docs/experience-photo-story-pilot-2026-10-25.md` (8 bilingual, catalog-grounded editorial captions, **not real photographer memories and not published**).
+- Planned next: CI (node+pytest), preview HE/EN/mobile QA, evaluate actual event reporting and photos, request approval before merging. 14–28-day measurement window starts only after analytics PR deployment.
+- Do not change `PAYMENTS_ENABLED=false`, PayPal Live, D1, licensing, Gelato, Drive or social posting frequency. Four additional emotion paths remain roadmap-only.
+
+---
+
+
 ## RESUME POINT — 2026-10-25: Owner-directed details-path revision (new draft PR)
 
 - P0 PR #178 and P1 PR #179 **already merged** to `main`; latest P1 commit `c1b8c9c6a0086ce7a4cc1ba66d97a0fdb0479624`.
-- Current branch `feature/experience-details-refresh-2026-10-25` (not merged): revise only `experience.details` photo IDs and bilingual subtitle, preserving fail-closed D1 published filtering and all other paths.
+- **Historical:** `feature/experience-details-refresh-2026-10-25` was merged via PR #180. This section records the former draft rationale; current phase is the analytics/story pilot above.
 - Details collection in order: `1c_MjQDRqBDKXXUs8J2IRYpUtq68hF0d5` אבקת הפרח הזהובה; `1T_sZuDJIECAtqscPBtZ1qoi7KECxxmLu` פרחים ורודים בתקריב; `1qAYmV4wg-5I8isvUTrP1kZnT1leAHkvA` ורד ורוד עדין (macro version); `1WZUI8vzx_VBpg6yfXb_mAth6guweU2JH` עדינות של טבע. Remove leaf, snail and blue flower from this route only; no photo deletion.
 - Subtitle HE: `עדינות של הטבע`; EN: `The delicate beauty of nature`. Reviewer sheet updated: `docs/experience-photo-selection-review-2026-10-25.md`.
 - Four additional **suggested future experience paths**, not yet live / not DB categories: כשהאור מספר סיפור, מפגשים בטבע, ערים עם נשמה, עולם של צבעים. Recommend delayed / progressive disclosure after baseline metrics, to avoid crowding homepage; details in roadmap.
