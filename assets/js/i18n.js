@@ -58,6 +58,20 @@ const TRANSLATIONS = {
     'nav.contact':      'צור קשר',
     'nav.menu':         'תפריט',
 
+    // Experience-led photography discovery
+    'experience.label': 'לאן הצילום לוקח אתכם?',
+    'experience.heading': 'בחרו רגע להרגיש',
+    'experience.intro': 'ארבע דרכים לגלות רגעים דרך העדשה. כל בחירה פותחת אוסף קטן מתוך הגלריה.',
+    'experience.group.aria': 'מסלולי השראה',
+    'experience.quiet.title': 'רגעים של שקט',
+    'experience.quiet.desc': 'אגמים, ערפל ואור של בוקר',
+    'experience.wonder.title': 'רגעים של התרגשות',
+    'experience.wonder.desc': 'תנועה, אש ואור מפתיע',
+    'experience.details.title': 'הקסם שבפרטים',
+    'experience.details.desc': 'עולמות קטנים מקרוב',
+    'experience.places.title': 'מקומות להתגעגע אליהם',
+    'experience.places.desc': 'נופים ופינות שנשארים בזיכרון',
+
     // Hero
     'hero.title.main':  'יש רגעים',
     'hero.title.em':    'שלא רוצים שייגמרו.',
@@ -447,6 +461,20 @@ const TRANSLATIONS = {
     'nav.more':         'More',
     'nav.contact':      'Contact',
     'nav.menu':         'Menu',
+
+    // Experience-led photography discovery
+    'experience.label': 'Where will the photograph take you?',
+    'experience.heading': 'Find a feeling to explore',
+    'experience.intro': 'Four ways to discover the world through my lens. Each path opens a small collection from the gallery.',
+    'experience.group.aria': 'Photography discovery paths',
+    'experience.quiet.title': 'Moments of calm',
+    'experience.quiet.desc': 'Lakes, morning mist and soft light',
+    'experience.wonder.title': 'Moments of wonder',
+    'experience.wonder.desc': 'Movement, fire and unexpected light',
+    'experience.details.title': 'The magic in details',
+    'experience.details.desc': 'Small worlds, seen up close',
+    'experience.places.title': 'Places to remember',
+    'experience.places.desc': 'Scenes and places that stay with you',
 
     // Hero
     'hero.title.main':  'Some moments',
