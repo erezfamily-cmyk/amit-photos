@@ -75,6 +75,49 @@ test('experience paths fail closed if the public D1 gallery cannot be verified',
   assert.match(gallery, /function initExperiencePaths\(\) \{[\s\S]*?if \(!experiencePublicGalleryVerified\) \{\s*section\.hidden = true;/);
 });
 
+test('sandbox featured/gallery image URLs resolve against public assets, not isolated R2', () => {
+  const start = gallery.indexOf('function normalizePhotoAssetUrlsForPreview(');
+  const end = gallery.indexOf('function clearExperienceSelection(', start);
+  assert.ok(start >= 0 && end > start, 'preview-only normalization helper exists');
+  const helper = gallery.slice(start, end);
+  const photo = {
+    id: 'existing-public-photo',
+    thumbnail: '/photos/thumb/1c_MjQDRqBDKXXUs8J2IRYpUtq68hF0d5.webp',
+    url: '/photos/1c_MjQDRqBDKXXUs8J2IRYpUtq68hF0d5.webp',
+  };
+  const preview = vm.runInNewContext(helper + '\nnormalizePhotoAssetUrlsForPreview(photo);', {
+    photo, location: { hostname: 'feature-experience-analytics-story-p-amit-photos-paypal-sandbox.erez-family.workers.dev' },
+  });
+  assert.equal(preview.thumbnail, 'https://amitphotos.com' + photo.thumbnail);
+  assert.equal(preview.url, 'https://amitphotos.com' + photo.url);
+  assert.equal(preview.id, photo.id);
+  assert.match(gallery, /allPhotos = allPhotos\.map\(normalizePhotoAssetUrlsForPreview\)/);
+  assert.ok(gallery.indexOf('allPhotos = allPhotos.map(normalizePhotoAssetUrlsForPreview);')
+    < gallery.indexOf('injectImageObjectSchemas(allPhotos)'), 'normalize before gallery/featured rendering');
+});
+
+test('image URL repair does not change production or promote unpublished fallback rows', () => {
+  const start = gallery.indexOf('function normalizePhotoAssetUrlsForPreview(');
+  const end = gallery.indexOf('function clearExperienceSelection(', start);
+  const helper = gallery.slice(start, end);
+  const run = (hostname, photo) => vm.runInNewContext(helper + '\nnormalizePhotoAssetUrlsForPreview(photo);', {
+    photo, location: { hostname },
+  });
+  const photo = { id: 'same-photo', thumbnail: '/photos/thumb/known.webp', url: '/photos/known.webp', published: 0 };
+  const live = run('amitphotos.com', photo);
+  assert.equal(live.thumbnail, photo.thumbnail);
+  assert.equal(live.url, photo.url);
+  const preview = run('feature-amit-photos-paypal-sandbox.erez-family.workers.dev', photo);
+  assert.equal(preview.published, 0);
+  assert.equal(preview.thumbnail, 'https://amitphotos.com/photos/thumb/known.webp');
+  const noRewrite = run('feature-amit-photos-paypal-sandbox.erez-family.workers.dev',
+    { thumbnail: 'https://amitphotos.com/photos/thumb/known.webp', url: '/api/admin/photos' });
+  assert.equal(noRewrite.thumbnail, 'https://amitphotos.com/photos/thumb/known.webp');
+  assert.equal(noRewrite.url, '/api/admin/photos');
+  assert.match(gallery, /let experiencePublicGalleryVerified = false;/);
+  assert.match(gallery, /if \(!experiencePublicGalleryVerified\) \{\s*section.hidden = true;/);
+});
+
 test('Cloudflare Sandbox Preview reads the published public photo source without loosening production', () => {
   const worker = readFileSync(new URL('../worker.js', import.meta.url), 'utf8');
   assert.match(gallery, /const isSandboxPreview = location\.hostname\.endsWith\('-amit-photos-paypal-sandbox\.erez-family\.workers\.dev'\)/);
