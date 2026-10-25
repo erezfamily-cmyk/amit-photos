@@ -27,6 +27,21 @@ test('four paths exist with 4 unique known photo candidates per path', () => {
   }
 });
 
+test('details collection highlights subtle floral macro photography', () => {
+  assert.deepEqual(paths.details, [
+    '1c_MjQDRqBDKXXUs8J2IRYpUtq68hF0d5',
+    '1T_sZuDJIECAtqscPBtZ1qoi7KECxxmLu',
+    '1qAYmV4wg-5I8isvUTrP1kZnT1leAHkvA',
+    '1WZUI8vzx_VBpg6yfXb_mAth6guweU2JH',
+  ]);
+  assert.equal(byId.get(paths.details[1]).title, 'פרחים ורודים בתקריב');
+  assert.equal(byId.get(paths.details[2]).title, 'ורד ורוד עדין');
+  assert.equal(byId.get(paths.details[3]).title, 'עדינות של טבע');
+  assert.match(i18n, /'experience\.details\.desc': 'עדינות של הטבע'/);
+  assert.match(i18n, /'experience\.details\.desc': 'The delicate beauty of nature'/);
+  assert.match(html, /data-i18n="experience\.details\.desc">עדינות של הטבע/);
+});
+
 test('photo choices resolve only from the current public gallery and hide unavailable paths', () => {
   assert.match(gallery, /const published = new Map\(allPhotos\.map\(photo => \[String\(photo\.id\), photo\]\)\)/);
   assert.match(gallery, /ids\.map\(id => published\.get\(id\)\)\.filter\(Boolean\)/);

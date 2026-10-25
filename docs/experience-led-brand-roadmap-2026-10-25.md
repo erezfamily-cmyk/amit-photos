@@ -1,7 +1,7 @@
 # Amit Photos — Experience-led marketing & UX roadmap
 Date: 2026-10-25  
 Main task: https://github.com/erezfamily-cmyk/amit-photos/issues/177  
-P0: PR #178 merged into `main` (commit `0f300bc3`). P1: [draft PR #179](https://github.com/erezfamily-cmyk/amit-photos/pull/179) — not merged; see [photo review sheet](experience-photo-selection-review-2026-10-25.md).
+P0: PR #178 merged. P1: PR #179 merged into `main` (commit `c1b8c9c6`); see [updated photo review sheet](experience-photo-selection-review-2026-10-25.md). P1.1: detail-path refresh on branch `feature/experience-details-refresh-2026-10-25` pending separate merge approval.
 
 ## Objective
 Sell the **experience around an image** before discussing file format, pixel dimensions, or pricing. A natural visitor journey is **Discover → Connect → Imagine → Inquire/Choose**.
@@ -18,7 +18,7 @@ The site remains both an original-art photography portfolio and a learning desti
 - Relevant checkout PRs #155, #157, #173 and #174 remain **separate**. `PAYMENTS_ENABLED=false`, PayPal Live disabled, no Gelato.
 - Prior social review warned that raising posting volume could hurt engagement; do not change social schedules in this project.
 
-## P0 — initial experience-first copy (on review branch)
+## P0 — initial experience-first copy (merged as PR #178)
 - [x] Update homepage Hero in Hebrew and English using existing i18n keys. Opening: **יש רגעים / שלא רוצים שייגמרו.** / **Some moments / deserve to stay.**
 - [x] Offer *גלו את הרגע שלכם* as the gallery action and *ללמוד לראות אחרת* for the existing free-guide popup. Keep their destinations and tracked actions unchanged.
 - [x] Make the About introduction personal and approachable, retaining professional proof and awards elsewhere.
@@ -41,7 +41,7 @@ The site remains both an original-art photography portfolio and a learning desti
 - Payment-off: Explore the gallery and find your moment. Love a photograph? Contact me directly to ask about purchasing it.
 - CTA: Find your moment / Learn to see differently
 
-## P1 implementation checkpoint — 25.10.2026 (draft, not merged)
+## P1 implementation checkpoint — 25.10.2026 (merged as PR #179; photo refinements pending in PR #180)
 
 - Branch: `feature/experience-discovery-paths-2026-10-25`. Phase P0 has already been merged as PR #178.
 - Four HE/EN cards between Hero and category filters, with 16 source-catalog candidates from existing photographs (4 per feeling).
@@ -52,6 +52,32 @@ The site remains both an original-art photography portfolio and a learning desti
 - Still blocked by authentic photographer input: 8–12 personal behind-the-frame anecdotes. Do not generate imaginary shooting memories.
 - Pending: GitHub CI, mobile Safari/desktop visual QA, two-language text, published-image availability, and **separate approval to merge/deploy**.
 - No PayPal, D1, source photo, pricing, Gelato or publishing schedule changes.
+
+## P1.1 — refinements after owner review (25.10.2026)
+
+- The owner reviewed the live experience categories and requested a softer “הקסם שבפרטים” set.
+- Replace only the `details` allowlist IDs, preserving its existing 4-photo count and all other three routes:
+  1. `1c_MjQDRqBDKXXUs8J2IRYpUtq68hF0d5` — אבקת הפרח הזהובה (retained; old visual review flag remains)
+  2. `1T_sZuDJIECAtqscPBtZ1qoi7KECxxmLu` — פרחים ורודים בתקריב (new)
+  3. `1qAYmV4wg-5I8isvUTrP1kZnT1leAHkvA` — ורד ורוד עדין (new; distinct from identically titled abstract photo)
+  4. `1WZUI8vzx_VBpg6yfXb_mAth6guweU2JH` — עדינות של טבע (new)
+- Remove from this route only: עלה תאורה; שבלול זעיר על קצה עלה; כדור פרחוני כחול. **No photo deletion, hide, D1 change or category reassignment.**
+- HE route description: **עדינות של הטבע**; EN: **The delicate beauty of nature**. Keep the existing section title.
+- Selected from exact catalog title matches and existing photo IDs at source resolutions >=1000 px. The actual publication state continues to be validated through the existing public API/D1 fail-closed route; no new in-code overrides.
+- Tests must assert the exact IDs, labels, i18n parity and payment-off state. Visual QA on iPhone/desktop remains a separate requirement.
+
+## P2 idea — four optional experiences, not four new database categories
+
+**Recommendation:** start with four visible emotional paths. If click-through, scroll depth and qualified enquiries indicate demand after a 14–28-day baseline, add a compact **“גלו עוד רגעים / Explore more moments”** affordance that reveals four more paths rather than placing eight equally weighted cards above the gallery. No schema/Drive taxonomy changes.
+
+| Path (HE) | English | Example photographic territory | Distinguishing emotion |
+|---|---|---|---|
+| כשהאור מספר סיפור | When light tells a story | golden hour, long exposures, backlight, shadows | intrigue / wonder at light |
+| מפגשים בטבע | Encounters in the wild | birds, foxes, wildlife portraits | connection / curiosity |
+| ערים עם נשמה | Cities with character | architecture, street scenes, local details | discovery / nostalgia |
+| עולם של צבעים | A world of color | flower fields, colorful facades, abstract palettes | joy / energy |
+
+**Constraints before P2 build:** review 3–5 publishable photo IDs per path; minimize overlap with “רגעים של התרגשות”/“הקסם שבפרטים”, verify public `/api/photos` and curation decisions, supply localized titles/captions, tag analytics with anonymous allowlisted path IDs only, check mobile 2-column layout, do not expand automatically based solely on provisional technical scores. All further work needs a separate PR/approval.
 
 ## P1 — discovery by emotion rather than inventory
 - [ ] Add four **reversible navigation paths** over existing published images: רגעים של שקט; רגעים של התרגשות; הקסם שבפרטים; מקומות להתגעגע אליהם.

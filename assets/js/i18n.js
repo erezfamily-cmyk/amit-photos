@@ -68,7 +68,7 @@ const TRANSLATIONS = {
     'experience.wonder.title': 'רגעים של התרגשות',
     'experience.wonder.desc': 'תנועה, אש ואור מפתיע',
     'experience.details.title': 'הקסם שבפרטים',
-    'experience.details.desc': 'עולמות קטנים מקרוב',
+    'experience.details.desc': 'עדינות של הטבע',
     'experience.places.title': 'מקומות להתגעגע אליהם',
     'experience.places.desc': 'נופים ופינות שנשארים בזיכרון',
 
@@ -472,7 +472,7 @@ const TRANSLATIONS = {
     'experience.wonder.title': 'Moments of wonder',
     'experience.wonder.desc': 'Movement, fire and unexpected light',
     'experience.details.title': 'The magic in details',
-    'experience.details.desc': 'Small worlds, seen up close',
+    'experience.details.desc': 'The delicate beauty of nature',
     'experience.places.title': 'Places to remember',
     'experience.places.desc': 'Scenes and places that stay with you',
 
