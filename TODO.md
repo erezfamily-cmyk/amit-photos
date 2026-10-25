@@ -12,7 +12,7 @@
 - [ ] Evaluate four optional additional *experience paths* after 14–28 days of traffic and qualified leads; do not add four more taxonomy categories now.
 
 Full roadmap and criteria: https://github.com/erezfamily-cmyk/amit-photos/issues/177  
-Implementation branch: `feature/experience-led-p0-2026-10-25` (review-only; NOT merged/deployed).
+Current draft branch: `feature/experience-details-refresh-2026-10-25` (PR #180, not merged). P0 (#178) and P1 (#179) already merged to main.
 
 - [x] Define experience-led strategy and the new HE/EN home-page voice.
 - [x] Prepare a reversible P0 Hero/About change, responsive subtitle and targeted regression test.
