@@ -188,6 +188,11 @@ function initExperiencePaths() {
     });
   });
   section.hidden = available === 0;
+  // Deep links to a previously-hidden section are not reliably scrolled by browsers
+  // before the asynchronous public gallery has finished loading.
+  if (available > 0 && window.location.hash === '#experience') {
+    requestAnimationFrame(() => section.scrollIntoView({ behavior: 'auto', block: 'start' }));
+  }
   // The homepage invitation should open the experience only when it is available.
   // If the public API fails, the original #gallery link remains the fallback.
   const heroCta = document.querySelector('.hero-cta[href="#gallery"]');
