@@ -70,9 +70,29 @@ test('photo choices resolve only from the current public gallery and hide unavai
 test('experience paths fail closed if the public D1 gallery cannot be verified', () => {
   assert.match(gallery, /let experiencePublicGalleryVerified = false;/);
   assert.match(gallery, /async function loadPhotos\(\) \{[\s\S]*?experiencePublicGalleryVerified = false;/);
-  assert.match(gallery, /if \(Array\.isArray\(apiPhotos\) && apiPhotos\.length > 0\) \{\s*\/\/ The Worker public endpoint serves only published=1 images\.\s*experiencePublicGalleryVerified = true;/);
+  assert.match(gallery, /if \(Array\.isArray\(apiPhotos\) && apiPhotos\.length > 0\) \{\s*\/\/ The original D1 route or Preview's public-production proxy returns only published images\.\s*experiencePublicGalleryVerified = true;/);
   assert.match(gallery, /function showExperiencePath\([^)]*\) \{\s*if \(!experiencePublicGalleryVerified\) return;/);
   assert.match(gallery, /function initExperiencePaths\(\) \{[\s\S]*?if \(!experiencePublicGalleryVerified\) \{\s*section\.hidden = true;/);
+});
+
+test('Cloudflare Sandbox Preview reads the published public photo source without loosening production', () => {
+  const worker = readFileSync(new URL('../worker.js', import.meta.url), 'utf8');
+  assert.match(gallery, /const isSandboxPreview = location\.hostname\.endsWith\('-amit-photos-paypal-sandbox\.erez-family\.workers\.dev'\)/);
+  assert.match(gallery, /const publicGalleryEndpoint = isSandboxPreview \? '\/api\/experience-preview-photos' : '\/api\/photos'/);
+  assert.match(worker, /if \(path === '\/api\/experience-preview-photos'\) return handleExperiencePreviewPublicPhotos\(request\)/);
+  assert.match(worker, /if \(!host\.endsWith\(EXPERIENCE_PREVIEW_HOST_SUFFIX\)\)/);
+  assert.match(worker, /request\.method !== 'GET'/);
+  assert.match(worker, /fetch\('https:\/\/amitphotos\.com\/api\/photos'/);
+  assert.match(worker, /photo\.published !== 0 && photo\.published !== false/);
+  assert.match(worker, /new Response\('Not found', \{ status: 404 \}\)/);
+  assert.match(worker, /'public gallery unavailable'/);
+  assert.doesNotMatch(worker.slice(worker.indexOf('async function handleExperiencePreviewPublicPhotos('),
+    worker.indexOf('// ===== PHOTOS =====')), /admin=1|\/api\/admin|env\.DB|\.put\(|DELETE FROM|UPDATE photos/);
+});
+
+test('direct links show the discovery once public content is loaded', () => {
+  assert.match(gallery, /if \(available > 0 && window\.location\.hash === '#experience'\)/);
+  assert.match(gallery, /requestAnimationFrame\(\(\) => section\.scrollIntoView\(\{ behavior: 'auto', block: 'start' \}\)\)/);
 });
 
 test('cards are localized and can be activated with keyboard buttons', () => {
