@@ -1,20 +1,29 @@
 {
   "version": 1,
-  "generated_at": "2026-10-18T10:13:34.868295+00:00",
+  "generated_at": "2026-10-25T10:32:19.047323+00:00",
   "mode": "one_experiment_at_a_time",
   "active": {
-    "decision_id": "fix-caption-hygiene",
-    "title": "לתקן כיתובים חסרים לפני הפרסום הבא",
+    "decision_id": "collect-editorial-angle-sample",
+    "title": "לבנות מדגם להשוואת סוגי התוכן",
     "status": "collecting",
     "runs": 1,
-    "started_at": "2026-10-18T10:13:34.868295+00:00",
-    "instruction_he": "ודא שהטקסט כולל פתיח ספציפי לתמונה, הקשר קצר והזמנה אחת לפעולה; אסור להחזיר טקסט ריק או hashtags בלבד.",
+    "started_at": "2026-10-25T10:32:19.047323+00:00",
+    "instruction_he": "שמור בקפדנות על זווית התוכן שנבחרה לפוסט כדי שאפשר יהיה להשוות בין סוגי התוכן לאחר הצטברות המדגם.",
     "applies_to": [
       "instagram:post",
       "facebook:post",
       "threads:post"
     ],
-    "success_measure": "הצלחה בשבוע הבא: 0 כיתובים ריקים או מבוססי hashtags בלבד."
+    "success_measure": "הצלחה: לפחות 3 פוסטים בשני סוגי תוכן, ואז משווים מעורבות לפי חשיפה וביקורי UTM."
   },
-  "outcomes": []
+  "outcomes": [
+    {
+      "decision_id": "fix-caption-hygiene",
+      "title": "לתקן כיתובים חסרים לפני הפרסום הבא",
+      "status": "successful",
+      "runs": 2,
+      "evidence": "נבדקו 6 כיתובים; חסרים או hashtags בלבד: 0",
+      "completed_at": "2026-10-25T10:32:19.047323+00:00"
+    }
+  ]
 }

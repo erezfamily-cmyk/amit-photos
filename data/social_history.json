@@ -322,5 +322,30 @@
     "reels_saved": 0,
     "primary_decision_id": "fix-caption-hygiene",
     "optimization_experiment": "fix-caption-hygiene"
+  },
+  {
+    "week_ending": "25/10/2026",
+    "generated_at": "2026-10-25T10:32:19.047323+00:00",
+    "ig_followers": 664,
+    "ig_posts": 6,
+    "ig_likes": 3,
+    "ig_comments": 0,
+    "ig_avg_likes": 0.5,
+    "ig_engagement": 0.0008,
+    "ig_follower_engagement": 0.0008,
+    "ig_reach": 236,
+    "ig_reach_engagement": 0.0127,
+    "ig_saved": 0,
+    "ig_shares": 0,
+    "fb_fans": 278,
+    "fb_posts": 6,
+    "fb_likes": 2,
+    "reels_count": 2,
+    "reels_plays": 160,
+    "reels_avg_watch_time": 5.0,
+    "reels_shares": 0,
+    "reels_saved": 0,
+    "primary_decision_id": "test-lower-volume",
+    "optimization_experiment": "collect-editorial-angle-sample"
   }
 ]

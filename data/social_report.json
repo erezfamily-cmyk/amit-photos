@@ -1,168 +1,195 @@
 {
-  "generated_at": "2026-10-18T10:13:34.868295+00:00",
-  "week_ending": "18/10/2026",
+  "generated_at": "2026-10-25T10:32:19.047323+00:00",
+  "week_ending": "25/10/2026",
   "data_quality": {
     "status": "complete",
     "failed_sources": {},
     "media_insights": {
-      "posts_available": 8,
-      "posts_requested": 8,
+      "posts_available": 6,
+      "posts_requested": 6,
       "coverage": 1.0,
-      "saved_posts_available": 8,
-      "shared_posts_available": 8,
+      "saved_posts_available": 6,
+      "shared_posts_available": 6,
       "unavailable_post_ids": []
     }
   },
   "ig": {
-    "followers": 661,
-    "media_count": 1413,
-    "posts_this_week": 8,
-    "total_likes": 15,
+    "followers": 664,
+    "media_count": 1419,
+    "posts_this_week": 6,
+    "total_likes": 3,
     "total_comments": 0,
-    "avg_likes_per_post": 1.9,
-    "total_reach": 353,
+    "avg_likes_per_post": 0.5,
+    "total_reach": 236,
     "total_saved": 0,
     "total_shares": 0,
-    "engagement_rate_by_reach": 0.0425,
-    "follower_engagement_rate": 0.0028,
-    "engagement_rate": 0.0028,
-    "editorial_performance": {},
+    "engagement_rate_by_reach": 0.0127,
+    "follower_engagement_rate": 0.0008,
+    "engagement_rate": 0.0008,
+    "editorial_performance": {
+      "technique": {
+        "posts": 1,
+        "likes": 2,
+        "comments": 0,
+        "reach": 36,
+        "saved": 0,
+        "shares": 0,
+        "posts_with_reach": 1,
+        "full_interactions": 2,
+        "posts_with_full_metrics": 1,
+        "avg_interactions": 2.0,
+        "engagement_rate_by_reach": 0.0556
+      },
+      "story": {
+        "posts": 1,
+        "likes": 0,
+        "comments": 0,
+        "reach": 23,
+        "saved": 0,
+        "shares": 0,
+        "posts_with_reach": 1,
+        "full_interactions": 0,
+        "posts_with_full_metrics": 1,
+        "avg_interactions": 0.0,
+        "engagement_rate_by_reach": 0.0
+      }
+    },
     "top_posts": [
       {
-        "post_id": "18128756887880936",
-        "photo_id": "",
-        "caption": "תמונות מהערב בצפון (צולם מהאייפון)",
-        "likes": 4,
-        "comments": 0,
-        "reach": 26,
-        "saved": 0,
-        "shares": 0,
-        "date": "2026-10-16"
-      },
-      {
-        "post_id": "17939839323368644",
-        "photo_id": "",
-        "caption": "האור מושלם. ההרים מרהיבים. ואז מגיע קו 72 🚌😂  סוכן 38 מצא את הלוקיישן המושלם. רק חבל שהוא בתחנת אוטו",
+        "post_id": "18116649320107349",
+        "photo_id": "446d34db-49ad-4d0c-97f2-60b0dbdb4d35",
+        "caption": "האגרסיביות של הוורוד כאן כמעט בולעת הכל — ולכן הפוקוס נשאר רק על אשכול העלים הירוקים במרכז, על טיפות",
         "likes": 2,
         "comments": 0,
-        "reach": 126,
+        "reach": 36,
         "saved": 0,
         "shares": 0,
-        "date": "2026-10-16"
+        "date": "2026-10-21"
       },
       {
-        "post_id": "18140909560565715",
+        "post_id": "18027744746697541",
         "photo_id": "",
-        "caption": "📸 דלת ירוקה עם צלב  הצלם השתמש בחוק השלישים על ידי מיקום שני האלמנטים הראשיים — הכיסא הבודד והדלת הי",
-        "likes": 2,
+        "caption": "ניסיתי להזיז את העץ בשביל קומפוזיציה טובה יותר. הוא פחות זרם 🌳😂  סוכן 38 למד בדרך הקשה: לפעמים מספיק",
+        "likes": 1,
         "comments": 0,
-        "reach": 28,
+        "reach": 87,
         "saved": 0,
         "shares": 0,
-        "date": "2026-10-15"
+        "date": "2026-10-19"
       },
       {
-        "post_id": "18071894030508221",
-        "photo_id": "21c96cc1-2404-4983-8f4b-ce4593b9dd84",
-        "caption": "כמה שניות החזקתי את התריס פתוח כדי שהמים ייראו כמו ערפל?  הסלעים האלה חדים וקשים, אבל הגלים סביבם זו",
-        "likes": 2,
-        "comments": 0,
-        "reach": 35,
-        "saved": 0,
-        "shares": 0,
-        "date": "2026-10-14"
-      },
-      {
-        "post_id": "18074629550572618",
+        "post_id": "17997032406030008",
         "photo_id": "",
-        "caption": "I photographed this geometric tunnel at the exact moment every converging line pulled my eye toward ",
-        "likes": 2,
+        "caption": "I waited for the soft morning light to catch these delicate purple lilac blossoms, letting the green",
+        "likes": 0,
         "comments": 0,
-        "reach": 27,
+        "reach": 23,
         "saved": 0,
         "shares": 0,
-        "date": "2026-10-14"
+        "date": "2026-10-23"
+      },
+      {
+        "post_id": "18116509727111739",
+        "photo_id": "",
+        "caption": "📸 כיפת האור  התמונה מדגימה סימטריה רדיאלית מרשימה — הכיפה בנויה סביב נקודת מרכז אחת שהיא חלון האור ה",
+        "likes": 0,
+        "comments": 0,
+        "reach": 31,
+        "saved": 0,
+        "shares": 0,
+        "date": "2026-10-22"
+      },
+      {
+        "post_id": "17891307225455290",
+        "photo_id": "",
+        "caption": "הוא שם על אוטומט. הציפור לקחה את כל הקרדיט 🐦😂  סוכן 38 חשב שהמצלמה תעשה הכול לבד. אחרי שהציפור גנבה ",
+        "likes": 0,
+        "comments": 0,
+        "reach": 36,
+        "saved": 0,
+        "shares": 0,
+        "date": "2026-10-21"
       }
     ],
     "photo_performance": [
       {
-        "post_id": "18071894030508221",
-        "photo_id": "21c96cc1-2404-4983-8f4b-ce4593b9dd84",
+        "post_id": "18116649320107349",
+        "photo_id": "446d34db-49ad-4d0c-97f2-60b0dbdb4d35",
         "likes": 2,
         "comments": 0,
-        "date": "2026-10-14"
+        "date": "2026-10-21"
       },
       {
-        "post_id": "18038175266844780",
-        "photo_id": "1VCl8Dl8bupSfuDmmc5hVCadHsPoGNpWI",
-        "likes": 2,
+        "post_id": "18114097082122895",
+        "photo_id": "9b073a89-7269-4afe-8014-fc7a1bc245a4",
+        "likes": 0,
         "comments": 0,
-        "date": "2026-10-11"
+        "date": "2026-10-18"
       }
     ],
     "best_post": {
-      "post_id": "18128756887880936",
-      "photo_id": "",
-      "caption": "תמונות מהערב בצפון (צולם מהאייפון)",
-      "likes": 4,
-      "date": "2026-10-16"
+      "post_id": "18116649320107349",
+      "photo_id": "446d34db-49ad-4d0c-97f2-60b0dbdb4d35",
+      "caption": "האגרסיביות של הוורוד כאן כמעט בולעת הכל — ולכן הפוקוס נשאר רק על אשכול העלים הירוקים במרכז, על טיפות הטל הזעירות על קצות",
+      "likes": 2,
+      "date": "2026-10-21"
     }
   },
   "fb": {
     "fans": 278,
-    "posts_this_week": 12,
-    "total_likes": 0,
+    "posts_this_week": 6,
+    "total_likes": 2,
     "total_comments": 0,
-    "avg_likes_per_post": 0.0,
-    "engagement_rate": 0.0,
+    "avg_likes_per_post": 0.3,
+    "engagement_rate": 0.0012,
     "top_posts": [
       {
-        "post_id": "339707206917_1423492969936874",
+        "post_id": "339707206917_1426913502928154",
         "photo_id": "",
-        "message": "https://www.facebook.com/share/1EbYUQ98zx/?mibextid=wwXIfr",
-        "likes": 0,
+        "message": "הוא שם על אוטומט. הציפור לקחה את כל הקרדיט 🐦😂  סוכן 38 חשב שהמצלמה תעשה הכול לבד. אחרי שהציפור גנבה ",
+        "likes": 1,
         "comments": 0,
-        "date": "2026-10-17"
+        "date": "2026-10-21"
       },
       {
-        "post_id": "339707206917_1422750703344434",
+        "post_id": "339707206917_1426178909668280",
         "photo_id": "",
-        "message": "",
-        "likes": 0,
+        "message": "With Simple is Beautiful Photography – I just made it onto their weekly engagement list by being one",
+        "likes": 1,
         "comments": 0,
-        "date": "2026-10-16"
+        "date": "2026-10-20"
       },
       {
-        "post_id": "339707206917_1422628520023319",
+        "post_id": "339707206917_1429676862651818",
         "photo_id": "",
-        "message": "I waited for the soft morning light to catch these delicate purple lilac blossoms, letting the green",
+        "message": "https://www.facebook.com/share/p/1F7SmS7ro5/?mibextid=wwXIfr",
         "likes": 0,
         "comments": 0,
-        "date": "2026-10-16"
+        "date": "2026-10-24"
       },
       {
-        "post_id": "339707206917_1422586070027564",
+        "post_id": "339707206917_1428350929451078",
         "photo_id": "",
-        "message": "האור מושלם. ההרים מרהיבים. ואז מגיע קו 72 🚌😂  סוכן 38 מצא את הלוקיישן המושלם. רק חבל שהוא בתחנת אוטו",
+        "message": "📸 כיפת האור  התמונה מדגימה סימטריה רדיאלית מרשימה — הכיפה בנויה סביב נקודת מרכז אחת שהיא חלון האור ה",
         "likes": 0,
         "comments": 0,
-        "date": "2026-10-16"
+        "date": "2026-10-22"
       },
       {
-        "post_id": "339707206917_1422584303361074",
+        "post_id": "339707206917_1425524223067082",
         "photo_id": "",
-        "message": "האור מושלם. ההרים מרהיבים. ואז מגיע קו 72 🚌😂  סוכן 38 מצא את הלוקיישן המושלם. רק חבל שהוא בתחנת אוטו",
+        "message": "ניסיתי להזיז את העץ בשביל קומפוזיציה טובה יותר. הוא פחות זרם 🌳😂  סוכן 38 למד בדרך הקשה: לפעמים מספיק",
         "likes": 0,
         "comments": 0,
-        "date": "2026-10-16"
+        "date": "2026-10-19"
       }
     ],
     "best_post": {
-      "post_id": "339707206917_1423492969936874",
+      "post_id": "339707206917_1426913502928154",
       "photo_id": "",
-      "message": "https://www.facebook.com/share/1EbYUQ98zx/?mibextid=wwXIfr",
-      "likes": 0,
-      "date": "2026-10-17"
+      "message": "הוא שם על אוטומט.\nהציפור לקחה את כל הקרדיט 🐦😂\n\nסוכן 38 חשב שהמצלמה תעשה הכול לבד. אחרי שהציפור גנבה לו את הפריים, הוא הח",
+      "likes": 1,
+      "date": "2026-10-21"
     }
   },
   "fb_pages": [
@@ -171,173 +198,222 @@
       "name": "amit erez photos",
       "page_id": "339707206917",
       "fans": 278,
-      "posts_this_week": 12,
-      "total_likes": 0,
+      "posts_this_week": 6,
+      "suspected_duplicates": [],
+      "total_likes": 2,
       "total_comments": 0,
-      "avg_likes_per_post": 0.0,
-      "engagement_rate": 0.0,
+      "avg_likes_per_post": 0.3,
+      "engagement_rate": 0.0012,
       "top_posts": [
         {
-          "post_id": "339707206917_1423492969936874",
+          "post_id": "339707206917_1426913502928154",
           "photo_id": "",
-          "message": "https://www.facebook.com/share/1EbYUQ98zx/?mibextid=wwXIfr",
-          "likes": 0,
+          "message": "הוא שם על אוטומט. הציפור לקחה את כל הקרדיט 🐦😂  סוכן 38 חשב שהמצלמה תעשה הכול לבד. אחרי שהציפור גנבה ",
+          "likes": 1,
           "comments": 0,
-          "date": "2026-10-17"
+          "date": "2026-10-21"
         },
         {
-          "post_id": "339707206917_1422750703344434",
+          "post_id": "339707206917_1426178909668280",
           "photo_id": "",
-          "message": "",
-          "likes": 0,
+          "message": "With Simple is Beautiful Photography – I just made it onto their weekly engagement list by being one",
+          "likes": 1,
           "comments": 0,
-          "date": "2026-10-16"
+          "date": "2026-10-20"
         },
         {
-          "post_id": "339707206917_1422628520023319",
+          "post_id": "339707206917_1429676862651818",
           "photo_id": "",
-          "message": "I waited for the soft morning light to catch these delicate purple lilac blossoms, letting the green",
+          "message": "https://www.facebook.com/share/p/1F7SmS7ro5/?mibextid=wwXIfr",
           "likes": 0,
           "comments": 0,
-          "date": "2026-10-16"
+          "date": "2026-10-24"
         },
         {
-          "post_id": "339707206917_1422586070027564",
+          "post_id": "339707206917_1428350929451078",
           "photo_id": "",
-          "message": "האור מושלם. ההרים מרהיבים. ואז מגיע קו 72 🚌😂  סוכן 38 מצא את הלוקיישן המושלם. רק חבל שהוא בתחנת אוטו",
+          "message": "📸 כיפת האור  התמונה מדגימה סימטריה רדיאלית מרשימה — הכיפה בנויה סביב נקודת מרכז אחת שהיא חלון האור ה",
           "likes": 0,
           "comments": 0,
-          "date": "2026-10-16"
+          "date": "2026-10-22"
         },
         {
-          "post_id": "339707206917_1422584303361074",
+          "post_id": "339707206917_1425524223067082",
           "photo_id": "",
-          "message": "האור מושלם. ההרים מרהיבים. ואז מגיע קו 72 🚌😂  סוכן 38 מצא את הלוקיישן המושלם. רק חבל שהוא בתחנת אוטו",
+          "message": "ניסיתי להזיז את העץ בשביל קומפוזיציה טובה יותר. הוא פחות זרם 🌳😂  סוכן 38 למד בדרך הקשה: לפעמים מספיק",
           "likes": 0,
           "comments": 0,
-          "date": "2026-10-16"
+          "date": "2026-10-19"
         }
       ],
       "photo_performance": [],
       "best_post": {
-        "post_id": "339707206917_1423492969936874",
+        "post_id": "339707206917_1426913502928154",
         "photo_id": "",
-        "message": "https://www.facebook.com/share/1EbYUQ98zx/?mibextid=wwXIfr",
-        "likes": 0,
-        "date": "2026-10-17"
+        "message": "הוא שם על אוטומט.\nהציפור לקחה את כל הקרדיט 🐦😂\n\nסוכן 38 חשב שהמצלמה תעשה הכול לבד. אחרי שהציפור גנבה לו את הפריים, הוא הח",
+        "likes": 1,
+        "date": "2026-10-21"
       },
       "content_quality": {
-        "posts_checked": 12,
-        "readable_captions": 10,
-        "missing_or_hashtag_only": 2,
+        "posts_checked": 6,
+        "readable_captions": 5,
+        "missing_or_hashtag_only": 1,
         "duplicate_hashtag_posts": 0,
-        "question_posts": 6,
-        "link_posts": 9,
-        "avg_caption_chars": 433
+        "question_posts": 3,
+        "link_posts": 4,
+        "avg_caption_chars": 440
       },
       "editorial_performance": {}
     }
   ],
   "reels": {
-    "reels_this_week": 3,
-    "total_plays": 246,
-    "total_reach": 199,
+    "reels_this_week": 2,
+    "total_plays": 160,
+    "total_reach": 123,
     "total_shares": 0,
     "total_saved": 0,
     "metric_coverage": {
-      "views": 3,
-      "reach": 3,
-      "shares": 3,
-      "saved": 3
+      "views": 2,
+      "reach": 2,
+      "shares": 2,
+      "saved": 2
     },
-    "avg_watch_time": 4.3,
-    "avg_watch_time_seconds": 4.3,
-    "avg_watch_time_ms": 4302.7,
+    "avg_watch_time": 5.0,
+    "avg_watch_time_seconds": 5.0,
+    "avg_watch_time_ms": 5009.0,
     "top_reels": [
       {
-        "post_id": "17939839323368644",
+        "post_id": "18027744746697541",
         "photo_id": "",
-        "caption": "האור מושלם. ההרים מרהיבים. ואז מגיע קו 72 🚌😂  סוכן 38 מצא את הלוקיישן המושלם. רק חבל שהוא בתחנת אוטו",
-        "plays": 158,
-        "reach": 126,
+        "caption": "ניסיתי להזיז את העץ בשביל קומפוזיציה טובה יותר. הוא פחות זרם 🌳😂  סוכן 38 למד בדרך הקשה: לפעמים מספיק",
+        "plays": 103,
+        "reach": 87,
         "shares": 0,
         "saved": 0,
-        "date": "2026-10-16"
+        "date": "2026-10-19"
       },
       {
-        "post_id": "18114370025114463",
+        "post_id": "17891307225455290",
         "photo_id": "",
-        "caption": "",
+        "caption": "הוא שם על אוטומט. הציפור לקחה את כל הקרדיט 🐦😂  סוכן 38 חשב שהמצלמה תעשה הכול לבד. אחרי שהציפור גנבה ",
         "plays": 57,
-        "reach": 52,
+        "reach": 36,
         "shares": 0,
         "saved": 0,
-        "date": "2026-10-17"
-      },
-      {
-        "post_id": "17983411001897652",
-        "photo_id": "",
-        "caption": "רציתי חשיפה ארוכה. הים הבין ״מקלחת ארוכה״ 🌊😂  המצלמה על החצובה, הפריים מושלם… רק הגל לא קרא את התסרי",
-        "plays": 31,
-        "reach": 21,
-        "shares": 0,
-        "saved": 0,
-        "date": "2026-10-13"
+        "date": "2026-10-21"
       }
     ],
     "best_reel": {
-      "post_id": "17939839323368644",
+      "post_id": "18027744746697541",
       "photo_id": "",
-      "caption": "האור מושלם. ההרים מרהיבים. ואז מגיע קו 72 🚌😂\n\nסוכן 38 מצא את הלוקיישן המושלם.\nרק חבל שהוא בתחנת אוטובוס.\n\nלפני שאתם מעמי",
-      "plays": 158,
-      "date": "2026-10-16"
+      "caption": "ניסיתי להזיז את העץ בשביל קומפוזיציה טובה יותר.\nהוא פחות זרם 🌳😂\n\nסוכן 38 למד בדרך הקשה: לפעמים מספיק לזוז חצי מטר — במקו",
+      "plays": 103,
+      "date": "2026-10-19"
     }
   },
   "content_quality": {
     "instagram": {
-      "posts_checked": 8,
-      "readable_captions": 7,
-      "missing_or_hashtag_only": 1,
+      "posts_checked": 6,
+      "readable_captions": 6,
+      "missing_or_hashtag_only": 0,
       "duplicate_hashtag_posts": 0,
-      "question_posts": 3,
-      "link_posts": 5,
-      "avg_caption_chars": 414
+      "question_posts": 5,
+      "link_posts": 6,
+      "avg_caption_chars": 504
     },
     "facebook_pages": {
       "amit erez photos": {
-        "posts_checked": 12,
-        "readable_captions": 10,
-        "missing_or_hashtag_only": 2,
+        "posts_checked": 6,
+        "readable_captions": 5,
+        "missing_or_hashtag_only": 1,
         "duplicate_hashtag_posts": 0,
-        "question_posts": 6,
-        "link_posts": 9,
-        "avg_caption_chars": 433
+        "question_posts": 3,
+        "link_posts": 4,
+        "avg_caption_chars": 440
       }
     },
-    "instagram_editorial_performance": {},
+    "instagram_editorial_performance": {
+      "technique": {
+        "posts": 1,
+        "likes": 2,
+        "comments": 0,
+        "reach": 36,
+        "saved": 0,
+        "shares": 0,
+        "posts_with_reach": 1,
+        "full_interactions": 2,
+        "posts_with_full_metrics": 1,
+        "avg_interactions": 2.0,
+        "engagement_rate_by_reach": 0.0556
+      },
+      "story": {
+        "posts": 1,
+        "likes": 0,
+        "comments": 0,
+        "reach": 23,
+        "saved": 0,
+        "shares": 0,
+        "posts_with_reach": 1,
+        "full_interactions": 0,
+        "posts_with_full_metrics": 1,
+        "avg_interactions": 0.0,
+        "engagement_rate_by_reach": 0.0
+      }
+    },
     "facebook_editorial_performance": {
       "amit erez photos": {}
     }
   },
   "prev": {
-    "ig_followers": 660,
+    "ig_followers": 661,
     "ig_posts_this_week": 8,
-    "ig_total_likes": 6,
+    "ig_total_likes": 15,
     "fb_fans": 278,
-    "fb_posts_this_week": 8,
-    "fb_total_likes": 2
+    "fb_posts_this_week": 12,
+    "fb_total_likes": 0
   },
   "recommendations": [
-    "הגבירו את התקשורת בקפশנים: ממוצע 414 תווים בפייסבוק מול 1.9 לייקים בממוצע באינסטגרם - נסו להוסיף קפשנים ארוכים יותר עם סיפור או שאלה לקהל באינסטגרם כמו ברמה של פייסבוק כדי להגביר אנגייג'מנט.",
-    "השתמשו ברילס כערוץ ראשי: הרילס שלכם מקבלים 246 צפיות מ-3 וידאו לעומת 15 לייקים מ-8 פוסטים סטטיים - פרסמו 5-6 רילס בשבוע הבא במקום פוסטים סטטיים כדי לנצל את הטווח שגוגל/אינסטגרם מעדיפים.",
-    "הוסיפו Call-to-Action ברילס: ברילס שלכם יש 0 שיירים ו-0 שמירות למרות 246 צפיות - בקעו מהצופים לשמור, לשתף או להגיב בקול בסוף כל רילס כדי להמיר צפיות לתנועה.",
-    "תקנו את הקפשנים החסרים בפייסבוק: 2 מתוך 12 הפוסטים בפייסבוק בעלי קפשנים חסרים או רק האשתגים - הוסיפו קפשנים בעלי משמעות לכל פוסט כדי לשפר הבנה ואנגייג'מנט."
+    "השקע במרחק יותר גדול לעץ בוידאו: הריל הטוב ביותר קיבל 103 צפיות אך רק 5 שניות ממוצע — נסה ליצור ריילים עם כותרת דינמית בשניות הראשונות כדי להגביל את ה-drop-off.",
+    "הוסף שאלה אקטיבית בסוף כל פוסט בעברית: 5 מתוך 6 הפוסטים כוללים שאלות אך יש 0 תגובות — שנה את הניסוח לשאלה ישירה יותר (\"איזה צבע אהוב עליכם כאן?\") במקום תגובות משכנעות.",
+    "העתק את סגנון הכתוביות של הפוסט הטוב ביותר (504 תווים עם סיפור) ליותר תמונות: הפוסט עם 2 לייקים השתמש בסיפור מעמיק על הקומפוזיציה — החל את אותו סגנון בכל 6 הפוסטים הבאים כדי להגביל את ה-0.5 ממוצע לייקים.",
+    "פרסם לפחות 2-3 ריילים בשבוע במקום שניים: הריילים קיבלו 103-57 צפיות למרות שיש רק 160 כלל — זה הוא קנל העוסק שלך, לא הפוסטים הסטטיים עם 0 תגובות."
   ],
+  "business_audit": {
+    "version": 1,
+    "read_only": true,
+    "facebook_posts_observed": 6,
+    "facebook_post_source_attribution": "unavailable",
+    "source_note": "Observed API feed totals cannot be reliably assigned to a workflow, manual upload or approval from existing data. Story/Reel deliveries are separate.",
+    "facebook_duplicate_candidates": [],
+    "ga": {
+      "status": "measuring",
+      "weeks": 3,
+      "sessions": 262,
+      "checkout_state": "disabled",
+      "checkout_events": 0,
+      "checkout_disappeared_after_prior_activity": true,
+      "checkout_zero_interpretation": "expected_while_disabled",
+      "qualified_action_events": 9,
+      "photo_views": 53,
+      "qualified_event_counts": {
+        "guide_request_success": 2,
+        "generate_lead": 0,
+        "contact_form_success": 0,
+        "photo_contact_click": 1,
+        "licensing_personal_interest": 5,
+        "licensing_commercial_contact": 0,
+        "b2b_contact_start": 1
+      },
+      "next_action": "Compare campaign-tagged visits with qualified actions before adjusting publishing volume.",
+      "data_limitations": "No per-post conversions or verified platform attribution can be inferred from GA aggregate reports; absent events can mean no interactions or missing measurement."
+    },
+    "publishing_recommendation": "Keep volume/targets unchanged until provenance and business signals are verified."
+  },
   "decision_support": {
     "method": "own_baseline_v1",
     "sample": {
-      "current_posts": 8,
-      "tracked_posts": 52,
+      "current_posts": 6,
+      "tracked_posts": 53,
       "history_weeks": 8,
       "confidence": "high",
       "metrics_coverage": 1.0,
@@ -345,47 +421,29 @@
     },
     "baseline": {
       "weeks": 8,
-      "posts": 44,
+      "posts": 47,
       "confidence": "high",
-      "median_posts_per_week": 5.0,
+      "median_posts_per_week": 5.5,
       "median_likes_per_post": 1.4,
       "median_follower_engagement_rate": 0.0022
     },
-    "primary_decision_id": "fix-caption-hygiene",
+    "primary_decision_id": "test-lower-volume",
     "decisions": [
       {
-        "id": "fix-caption-hygiene",
-        "tier": "quick_win",
-        "title": "לתקן כיתובים חסרים לפני הפרסום הבא",
-        "action": "להוסיף לכל פוסט פתיח קצר, הקשר לתמונה והזמנה אחת לפעולה.",
-        "evidence": "1 מתוך 8 כיתובים שנבדקו היו ריקים או hashtags בלבד.",
-        "measure": "הצלחה בשבוע הבא: 0 כיתובים ריקים או מבוססי hashtags בלבד.",
-        "confidence": "high"
-      },
-      {
-        "id": "improve-social-attribution",
-        "tier": "quick_win",
-        "title": "למדוד אילו פוסטים מביאים ביקורים לאתר",
-        "action": "להשתמש בכל שיתוף בקישור עמוק לדף הרלוונטי עם UTM שכולל פלטפורמה, סוג תוכן ומזהה פוסט.",
-        "evidence": "77.2% מתוך 79 ביקורים נרשמו כתנועה ישירה, ולכן קשה לשייך תוצאות לפוסט מסוים.",
-        "measure": "הצלחה בתוך שבועיים: לפחות ביקור אחד מקמפיין UTM לכל פוסט עם קישור, וירידה בחלקה של תנועה ישירה.",
-        "confidence": "medium"
-      },
-      {
-        "id": "reel-save-share-test",
+        "id": "test-lower-volume",
         "tier": "experiment",
-        "title": "לבדוק קריאה ממוקדת לשמירה או לשיתוף ב-Reels",
-        "action": "בשלושת ה-Reels הבאים להוסיף בסוף קריאה אחת שמתאימה לתוכן: לשמור למסלול עתידי או לשתף עם חובב צילום.",
-        "evidence": "פורסמו 3 Reels השבוע ולא נמדדו בהם שמירות או שיתופים.",
-        "measure": "הצלחה: לפחות 3 שמירות ושיתופים יחד בשלושת ה-Reels. כישלון: 0; במקרה כזה מחליפים את הפתיח או הנושא.",
-        "confidence": "low"
+        "title": "לבדוק אם פחות פרסומים משפרים ביצוע לפוסט",
+        "action": "במשך שבועיים לפרסם 6 פוסטים בשבוע ולשמור על איכות הכיתוב והנושא.",
+        "evidence": "השבוע הממוצע היה 0.5 לייקים לפוסט, 64% מתחת לחציון האישי 1.4, עם 6 פוסטים.",
+        "measure": "הצלחה: ממוצע של לפחות 1.4 לייקים לפוסט בלי ירידה בביקורי UTM. כישלון: פחות מ-0.5.",
+        "confidence": "high"
       },
       {
         "id": "collect-editorial-angle-sample",
         "tier": "strategic",
         "title": "לבנות מדגם להשוואת סוגי התוכן",
         "action": "לסמן מראש כל פוסט כ'סיפור', 'טכניקה', 'שיחה' או 'מדריך', ולהגיע לפחות ל-3 פוסטים בכל סוג לפני בחירת מנצח.",
-        "evidence": "יש כרגע 0 פוסטים מסומנים, ואין עדיין סוג תוכן עם 3 פוסטים להשוואה.",
+        "evidence": "יש כרגע 2 פוסטים מסומנים, ואין עדיין סוג תוכן עם 3 פוסטים להשוואה.",
         "measure": "הצלחה: לפחות 3 פוסטים בשני סוגי תוכן, ואז משווים מעורבות לפי חשיפה וביקורי UTM.",
         "confidence": "low"
       }
@@ -393,22 +451,31 @@
   },
   "optimization_policy": {
     "version": 1,
-    "generated_at": "2026-10-18T10:13:34.868295+00:00",
+    "generated_at": "2026-10-25T10:32:19.047323+00:00",
     "mode": "one_experiment_at_a_time",
     "active": {
-      "decision_id": "fix-caption-hygiene",
-      "title": "לתקן כיתובים חסרים לפני הפרסום הבא",
+      "decision_id": "collect-editorial-angle-sample",
+      "title": "לבנות מדגם להשוואת סוגי התוכן",
       "status": "collecting",
       "runs": 1,
-      "started_at": "2026-10-18T10:13:34.868295+00:00",
-      "instruction_he": "ודא שהטקסט כולל פתיח ספציפי לתמונה, הקשר קצר והזמנה אחת לפעולה; אסור להחזיר טקסט ריק או hashtags בלבד.",
+      "started_at": "2026-10-25T10:32:19.047323+00:00",
+      "instruction_he": "שמור בקפדנות על זווית התוכן שנבחרה לפוסט כדי שאפשר יהיה להשוות בין סוגי התוכן לאחר הצטברות המדגם.",
       "applies_to": [
         "instagram:post",
         "facebook:post",
         "threads:post"
       ],
-      "success_measure": "הצלחה בשבוע הבא: 0 כיתובים ריקים או מבוססי hashtags בלבד."
+      "success_measure": "הצלחה: לפחות 3 פוסטים בשני סוגי תוכן, ואז משווים מעורבות לפי חשיפה וביקורי UTM."
     },
-    "outcomes": []
+    "outcomes": [
+      {
+        "decision_id": "fix-caption-hygiene",
+        "title": "לתקן כיתובים חסרים לפני הפרסום הבא",
+        "status": "successful",
+        "runs": 2,
+        "evidence": "נבדקו 6 כיתובים; חסרים או hashtags בלבד: 0",
+        "completed_at": "2026-10-25T10:32:19.047323+00:00"
+      }
+    ]
   }
 }
