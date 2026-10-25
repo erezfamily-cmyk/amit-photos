@@ -111,7 +111,9 @@ test('experience journey signals are emitted through anonymous GA4 helper', () =
   assert.match(gallery, /window\.trackUxEvent\?\.\('experience_photo_view', \{ label: activeExperiencePath, photo_id: String\(photo\.id\) \}\)/);
   assert.ok(gallery.includes('window.trackUxEvent?.(`experience_${activeExperiencePath}_photo_view`, { photo_id: String(photo.id) });'));
   assert.match(gallery, /window\.trackUxEvent\?\.\('wall_preview_open', \{/);
+  assert.match(gallery, /window\.trackUxEvent\?\.\('experience_contact_click', \{/);
   assert.ok(gallery.includes('window.trackUxEvent?.(`experience_${activeExperiencePath}_wall_open`, { photo_id: String(photo.id) });'));
+  assert.ok(gallery.includes('window.trackUxEvent?.(`experience_${activeExperiencePath}_contact_click`, { photo_id: String(photo.id) });'));
   assert.match(gallery, /const isExperiencePhoto = origin === 'lightbox'/);
   assert.match(gallery, /if \(weekPhoto\) openWallMockup\(weekPhoto, 'weekly_photo'\)/);
 });
