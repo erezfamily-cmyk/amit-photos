@@ -1,0 +1,42 @@
+name: Experience Preview Browser QA
+
+on:
+  pull_request:
+    paths:
+      - 'tests/experience-live-smoke.mjs'
+      - '.github/workflows/experience-live-smoke.yml'
+      - 'index.html'
+      - 'assets/js/gallery.js'
+      - 'assets/js/i18n.js'
+      - 'assets/css/style.css'
+      - 'worker.js'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  experience-live-browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Install pinned Playwright Chromium
+        run: |
+          npm install --no-save playwright@1.64.1
+          npx playwright install --with-deps chromium
+      - name: Exercise Sandbox experience on mobile Chromium (no checkout)
+        env:
+          EXPERIENCE_PREVIEW_URL: https://feature-experience-analytics-story-p-amit-photos-paypal-sandbox.erez-family.workers.dev/
+        run: node tests/experience-live-smoke.mjs
+      - name: Save read-only QA evidence and screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: experience-preview-mobile-qa
+          path: artifacts/experience-smoke/
+          if-no-files-found: ignore
+          retention-days: 7
