@@ -19,6 +19,10 @@ jobs:
   experience-live-browser:
     runs-on: ubuntu-latest
     timeout-minutes: 18
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, webkit]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -27,16 +31,17 @@ jobs:
       - name: Install pinned Playwright Chromium
         run: |
           npm install --no-save playwright@1.64.1
-          npx playwright install --with-deps chromium
-      - name: Exercise Sandbox experience on mobile Chromium (no checkout)
+          npx playwright install --with-deps ${{ matrix.browser }}
+      - name: Exercise Sandbox experience on mobile ${{ matrix.browser }} (no checkout)
         env:
           EXPERIENCE_PREVIEW_URL: https://feature-experience-analytics-story-p-amit-photos-paypal-sandbox.erez-family.workers.dev/
+          EXPERIENCE_BROWSER: ${{ matrix.browser }}
         run: node tests/experience-live-smoke.mjs
       - name: Save read-only QA evidence and screenshots
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: experience-preview-mobile-qa
+          name: experience-preview-mobile-qa-${{ matrix.browser }}
           path: artifacts/experience-smoke/
           if-no-files-found: ignore
           retention-days: 7
