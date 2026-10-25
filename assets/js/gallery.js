@@ -1032,6 +1032,9 @@ function initLightbox() {
       label: isExperiencePhoto ? activeExperiencePath : '',
       photo_id: String(photo.id),
     });
+    if (isExperiencePhoto) {
+      window.trackUxEvent?.(`experience_${activeExperiencePath}_wall_open`, { photo_id: String(photo.id) });
+    }
   }
   function closeWallMockup() {
     wallModal.classList.remove('open');
@@ -1366,6 +1369,7 @@ function openLightbox(idx) {
   trackEvent('photo_view', photo);
   if (activeExperiencePath && filteredPhotos.some(p => String(p.id) === String(photo.id))) {
     window.trackUxEvent?.('experience_photo_view', { label: activeExperiencePath, photo_id: String(photo.id) });
+    window.trackUxEvent?.(`experience_${activeExperiencePath}_photo_view`, { photo_id: String(photo.id) });
   }
 }
 
