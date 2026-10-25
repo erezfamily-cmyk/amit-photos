@@ -4,7 +4,7 @@
 
 - Phase P0 is in `main` via PR #178 after owner approval.
 - Phase P1 branch: `feature/experience-discovery-paths-2026-10-25`; work is **not yet merged or deployed**.
-- Four bilingual visual discovery routes reuse currently public gallery photographs through D1-first `allPhotos` matching. Each route has four catalog candidate IDs; fewer than two public matches hides that route automatically.
+- Four bilingual discovery routes are now **fail-closed**: they render only after `/api/photos` returns a non-empty published D1 list. JSON/demo fallback never enables experience cards; candidates are matched only against D1-derived public `allPhotos`. Fewer than two public matches hides a route. Human review sheet: `docs/experience-photo-selection-review-2026-10-25.md`.
 - No personally invented backstories. Candidate assignments use catalog title/description and still need human visual approval.
 - Code includes cards, existing gallery filtering, responsive CSS, i18n, safe analytics and CI test.
 - Continue: check full CI, verify browser/mobile Preview and choose photos; request **new approval before merge**.
