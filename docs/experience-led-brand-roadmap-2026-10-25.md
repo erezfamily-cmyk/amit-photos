@@ -53,6 +53,32 @@ The site remains both an original-art photography portfolio and a learning desti
 - Pending: GitHub CI, mobile Safari/desktop visual QA, two-language text, published-image availability, and **separate approval to merge/deploy**.
 - No PayPal, D1, source photo, pricing, Gelato or publishing schedule changes.
 
+## P1.1 — refinements after owner review (25.10.2026)
+
+- The owner reviewed the live experience categories and requested a softer “הקסם שבפרטים” set.
+- Replace only the `details` allowlist IDs, preserving its existing 4-photo count and all other three routes:
+  1. `1c_MjQDRqBDKXXUs8J2IRYpUtq68hF0d5` — אבקת הפרח הזהובה (retained; old visual review flag remains)
+  2. `1T_sZuDJIECAtqscPBtZ1qoi7KECxxmLu` — פרחים ורודים בתקריב (new)
+  3. `1qAYmV4wg-5I8isvUTrP1kZnT1leAHkvA` — ורד ורוד עדין (new; distinct from identically titled abstract photo)
+  4. `1WZUI8vzx_VBpg6yfXb_mAth6guweU2JH` — עדינות של טבע (new)
+- Remove from this route only: עלה תאורה; שבלול זעיר על קצה עלה; כדור פרחוני כחול. **No photo deletion, hide, D1 change or category reassignment.**
+- HE route description: **עדינות של הטבע**; EN: **The delicate beauty of nature**. Keep the existing section title.
+- Selected from exact catalog title matches and existing photo IDs at source resolutions >=1000 px. The actual publication state continues to be validated through the existing public API/D1 fail-closed route; no new in-code overrides.
+- Tests must assert the exact IDs, labels, i18n parity and payment-off state. Visual QA on iPhone/desktop remains a separate requirement.
+
+## P2 idea — four optional experiences, not four new database categories
+
+**Recommendation:** start with four visible emotional paths. If click-through, scroll depth and qualified enquiries indicate demand after a 14–28-day baseline, add a compact **“גלו עוד רגעים / Explore more moments”** affordance that reveals four more paths rather than placing eight equally weighted cards above the gallery. No schema/Drive taxonomy changes.
+
+| Path (HE) | English | Example photographic territory | Distinguishing emotion |
+|---|---|---|---|
+| כשהאור מספר סיפור | When light tells a story | golden hour, long exposures, backlight, shadows | intrigue / wonder at light |
+| מפגשים בטבע | Encounters in the wild | birds, foxes, wildlife portraits | connection / curiosity |
+| ערים עם נשמה | Cities with character | architecture, street scenes, local details | discovery / nostalgia |
+| עולם של צבעים | A world of color | flower fields, colorful facades, abstract palettes | joy / energy |
+
+**Constraints before P2 build:** review 3–5 publishable photo IDs per path; minimize overlap with “רגעים של התרגשות”/“הקסם שבפרטים”, verify public `/api/photos` and curation decisions, supply localized titles/captions, tag analytics with anonymous allowlisted path IDs only, check mobile 2-column layout, do not expand automatically based solely on provisional technical scores. All further work needs a separate PR/approval.
+
 ## P1 — discovery by emotion rather than inventory
 - [ ] Add four **reversible navigation paths** over existing published images: רגעים של שקט; רגעים של התרגשות; הקסם שבפרטים; מקומות להתגעגע אליהם.
 - [ ] Select 3–5 strong, already-approved real images per path, manually. Do not use AI image scores as emotional labels or expose hidden/unapproved photos.
