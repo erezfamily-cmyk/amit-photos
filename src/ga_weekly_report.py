@@ -36,6 +36,15 @@ ACQUISITION_EXPERIMENT_CAMPAIGNS = {
     },
 }
 
+# Stable event names, one set per path, so GA4 Data API reports do not require
+# manually registering event-scoped custom dimensions for the label parameter.
+EXPERIENCE_PATH_LABELS = {
+    "quiet": "רגעים של שקט",
+    "wonder": "רגעים של התרגשות",
+    "details": "הקסם שבפרטים",
+    "places": "מקומות להתגעגע אליהם",
+}
+
 HEBREW_CHANNELS = {
     "Organic Search": "חיפוש אורגני",
     "Direct":         "כניסה ישירה",
@@ -214,6 +223,9 @@ def fetch_ga4_data(token):
         "nav_locations_click", "nav_purchase_info_click", "nav_newsletter_click",
         "nav_contact_click", "nav_more_click", "nav_games_click", "nav_videos_click",
         "nav_learn_click", "nav_gear_click",
+        "experience_path_click", "experience_photo_view", "wall_preview_open",
+        *[f"experience_{key}_{step}" for key in EXPERIENCE_PATH_LABELS
+          for step in ("click", "photo_view", "wall_open")],
     ]
     events_raw = run_report(token, {
         "dateRanges": dr,
@@ -458,6 +470,53 @@ def build_acquisition_experiment_scorecard(data):
     }
 
 
+def build_experience_scorecard(data):
+    """Aggregate event COUNTS by path; not unique visitors or proven conversion rates.
+
+    When the latest GA4 report has no experience events, counts are zero.
+    Per-path events are tracked client-side only and may be absent with consent
+    restrictions, blockers, unavailable GA4, or pre-deployment date windows.
+    """
+    events = data.get("funnel_events") or {}
+    paths = []
+    for key, label in EXPERIENCE_PATH_LABELS.items():
+        paths.append({
+            "key": key,
+            "label": label,
+            "clicks": _safe_int(events.get(f"experience_{key}_click", 0)),
+            "photo_views": _safe_int(events.get(f"experience_{key}_photo_view", 0)),
+            "wall_opens": _safe_int(events.get(f"experience_{key}_wall_open", 0)),
+        })
+    return {
+        "paths": paths,
+        "all_path_clicks": _safe_int(events.get("experience_path_click", 0)),
+        "all_experience_photo_views": _safe_int(events.get("experience_photo_view", 0)),
+        "all_wall_previews": _safe_int(events.get("wall_preview_open", 0)),
+        "measurement_note": "Counts are events, not unique visitors, leads, or guaranteed conversions.",
+    }
+
+
+def build_experience_html(data):
+    """Bilingual-site discovery counts in the existing Hebrew weekly email."""
+    scorecard = data.get("experience_scorecard") or build_experience_scorecard(data)
+    rows = "".join(
+        f'<tr><td style="padding:6px 8px">{path["label"]}</td>'
+        f'<td style="padding:6px 8px;text-align:center">{path["clicks"]}</td>'
+        f'<td style="padding:6px 8px;text-align:center">{path["photo_views"]}</td>'
+        f'<td style="padding:6px 8px;text-align:center">{path["wall_opens"]}</td></tr>'
+        for path in scorecard["paths"]
+    )
+    return (
+        '<div style="padding:0 24px 20px">'
+        '<h2 style="color:#2c3e50;font-size:1em">מסלולי השראה — מעורבות</h2>'
+        '<table style="width:100%;border-collapse:collapse;font-size:.86em">'
+        '<tr><th>מסלול</th><th>בחירות</th><th>צפיות בתמונות</th><th>תצוגות קיר</th></tr>'
+        + rows + '</table>'
+        '<p style="font-size:.78em;color:#777">ספירות אירועים בלבד; לא מבקרים ייחודיים או שיעורי המרה. '
+        'בהיעדר נתונים אין להסיק היעדר עניין.</p></div>'
+    )
+
+
 def build_data_summary(data):
     s, p = data["summary"], data["prev_week"]
     def delta(c, pv):
@@ -557,6 +616,20 @@ def build_data_summary(data):
         ("language_change", "החלפת שפה"),
     ]:
         lines.append(f"  {label}: {fe.get(event, '0')}")
+
+    scorecard = data.get("experience_scorecard") or build_experience_scorecard(data)
+    lines += ["", "--- מסלולי השראה — אירועים (לא משתמשים ייחודיים) ---"]
+    lines.append(
+        f"  בחירות מסלול: {scorecard['all_path_clicks']} | "
+        f"צפיות בתמונות מתוך מסלול: {scorecard['all_experience_photo_views']} | "
+        f"תצוגות על הקיר בכלל האתר: {scorecard['all_wall_previews']}"
+    )
+    for item in scorecard["paths"]:
+        lines.append(
+            f"  {item['label']}: בחירות={item['clicks']} | "
+            f"צפיות={item['photo_views']} | תצוגות קיר={item['wall_opens']}"
+        )
+    lines.append("  אירועים נספרים, לא אנשים או המרות מאומתות; מדדים אפסיים אינם הוכחת חוסר ביקוש.")
 
     lines += ["", "--- התנהגות לפי עמוד ---"]
     ux_by_page = data.get("ux_by_page", [])
@@ -903,6 +976,7 @@ def build_html_email(data, analysis):
   {build_business_review_html(data.get('business_review'))}
   {build_acquisition_experiment_html(data.get('acquisition_experiment'))}
   {build_qualified_channel_html(data)}
+  {build_experience_html(data)}
   <div style="padding:0 24px 20px">
     <h2 style="color:#2c3e50;margin:0 0 10px;font-size:1em">ניתוח והמלצות — Claude</h2>
     <div style="background:#f8f9fa;border-right:4px solid #3498db;padding:14px 16px;border-radius:0 8px 8px 0;line-height:1.7;color:#333;font-size:.92em">
@@ -1034,6 +1108,7 @@ def save_report(data, analysis, reports_file=None):
         "devices":   data.get("devices", []),
         "countries": data.get("countries", [])[:5],
         "funnel_events": data["funnel_events"],
+        "experience_scorecard": data.get("experience_scorecard") or build_experience_scorecard(data),
         "ux_by_page": data.get("ux_by_page", [])[:50],
         "subscriber_summary": data.get("subscriber_summary"),
         "business_review": data.get("business_review"),
