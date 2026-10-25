@@ -1,7 +1,7 @@
 # Amit Photos — Experience-led marketing & UX roadmap
 Date: 2026-10-25  
 Main task: https://github.com/erezfamily-cmyk/amit-photos/issues/177  
-Implementation: `feature/experience-led-p0-2026-10-25` — draft review only, not deployed.
+P0: PR #178 merged into `main` (commit `0f300bc3`). P1: [draft PR #179](https://github.com/erezfamily-cmyk/amit-photos/pull/179) — not merged; see [photo review sheet](experience-photo-selection-review-2026-10-25.md).
 
 ## Objective
 Sell the **experience around an image** before discussing file format, pixel dimensions, or pricing. A natural visitor journey is **Discover → Connect → Imagine → Inquire/Choose**.
@@ -40,6 +40,18 @@ The site remains both an original-art photography portfolio and a learning desti
 - Description: A fleeting light, a place you remember, a detail you almost missed. Explore the world through my lens.
 - Payment-off: Explore the gallery and find your moment. Love a photograph? Contact me directly to ask about purchasing it.
 - CTA: Find your moment / Learn to see differently
+
+## P1 implementation checkpoint — 25.10.2026 (draft, not merged)
+
+- Branch: `feature/experience-discovery-paths-2026-10-25`. Phase P0 has already been merged as PR #178.
+- Four HE/EN cards between Hero and category filters, with 16 source-catalog candidates from existing photographs (4 per feeling).
+- **Security clarification:** cards are rendered only if `/api/photos` returned a non-empty published-image list from the Worker/D1. If the endpoint errors, returns empty, or demo/JSON fallback is used, all four experience cards are hidden, even though the old gallery may still display its fallback. Candidates are then matched by ID only against D1-derived `allPhotos`; fewer than two matches hides a path. No image source is hardcoded in HTML.
+- Editorial grouping relies on catalog titles and description. **A visual quality check and owner approval of the specific 16 candidates are still required before merging.** Source resolution is not a visual quality guarantee.
+- Selection reuses gallery thumbnails, lightbox, masonry, existing filters and search; standard filters clear an active emotional path. Language switching and #experience-path hash links are supported.
+- Anonymous click measurement is limited to `experience_path_click` with allowlisted label and result count; no PII.
+- Still blocked by authentic photographer input: 8–12 personal behind-the-frame anecdotes. Do not generate imaginary shooting memories.
+- Pending: GitHub CI, mobile Safari/desktop visual QA, two-language text, published-image availability, and **separate approval to merge/deploy**.
+- No PayPal, D1, source photo, pricing, Gelato or publishing schedule changes.
 
 ## P1 — discovery by emotion rather than inventory
 - [ ] Add four **reversible navigation paths** over existing published images: רגעים של שקט; רגעים של התרגשות; הקסם שבפרטים; מקומות להתגעגע אליהם.

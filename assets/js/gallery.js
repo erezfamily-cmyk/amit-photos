@@ -100,8 +100,92 @@ function applyPaymentsAvailability(enabled) {
 }
 function canBuy(photo) { return PURCHASES_ENABLED; }
 let allPhotos = [];
+// Experience cards must never use the unverified JSON/demo fallback after a D1/API failure.
+let experiencePublicGalleryVerified = false;
 let filteredPhotos = [];
 let featuredIds = [];
+// Experience discovery pilot: a curated allowlist, never a separate photo source.
+// Only render IDs found in the already-public allPhotos (D1 primary) collection.
+const EXPERIENCE_PATHS = Object.freeze({
+  quiet: ['19Q-SGNEyuCzAc8cbmMMeXeSzVpaFJazV', '1DKV8fePHvPbFLArxDDCRuGsX9eT48ZKd', '1M0MNq47h_rck94IU0GlqlX9yIA5_6MMe', '1IY3Qa2NQIvhchDjAGUdlY7NPfegOirPo'],
+  wonder: ['1TCAfgJ9pl3T0G8RRtIAa5_0FOoxXrjso', '1toLLUZrvlD_zP5qosJLEabgyh1WOEWZc', '1F5h4R4wzlMQ_DRq6LrnVXk-O7S9NvADw', '1G_dn5hHrv_1cZ-VVGfECEYzi9J6pDGhI'],
+  details: ['1c_MjQDRqBDKXXUs8J2IRYpUtq68hF0d5', '1CXbZJsASVcR5m4PxT3If4J8W_t5cyuSU', '10rE-_ZJqqxcpfrcIDulapy2WIk_ZbPLQ', '1Yjmr3Jzv9ovFqBPAm2-2VEXvM9SwUYpU'],
+  places: ['1rVBJnzQ8onOOR-qQHUzuK6zr_dMd_vHN', '1z_OKuttSBnZOehYvPVa774CillJuylnh', '1xwICPgKQr7IAa7BFcEZRX5D1XtXzwKI6', '1ySQLVxa-NZVG-WGwcTi6eMp_aHR80vo8']
+});
+let activeExperiencePath = null;
+
+function clearExperienceSelection() {
+  activeExperiencePath = null;
+  document.querySelectorAll('.experience-card').forEach(card => {
+    card.classList.remove('is-active');
+    card.setAttribute('aria-pressed', 'false');
+  });
+}
+
+function showExperiencePath(pathId, { track = true, scroll = true } = {}) {
+  if (!experiencePublicGalleryVerified) return;
+  const ids = EXPERIENCE_PATHS[pathId];
+  if (!ids) return;
+  const published = new Map(allPhotos.map(photo => [String(photo.id), photo]));
+  const matches = ids.map(id => published.get(id)).filter(Boolean);
+  if (matches.length < 2) return;
+  activeExperiencePath = pathId;
+  document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+  document.querySelectorAll('.experience-card').forEach(card => {
+    const selected = card.dataset.experience === pathId;
+    card.classList.toggle('is-active', selected);
+    card.setAttribute('aria-pressed', String(selected));
+  });
+  const search = document.getElementById('gallery-search');
+  if (search) search.value = '';
+  filteredPhotos = matches;
+  displayedCount = matches.length;
+  isHomePreview = false;
+  const label = document.getElementById('gallery-context-label');
+  if (label) label.textContent = t('experience.' + pathId + '.title');
+  setHomeView(false);
+  renderGallery();
+  if (track) window.trackUxEvent?.('experience_path_click', { label: pathId, result_count: matches.length });
+  if (scroll) document.getElementById('gallery-grid-wrap')?.scrollIntoView({
+    behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+    block: 'start'
+  });
+}
+
+function initExperiencePaths() {
+  const section = document.getElementById('experience');
+  if (!section) return;
+  if (!experiencePublicGalleryVerified) {
+    section.hidden = true;
+    return;
+  }
+  const published = new Map(allPhotos.map(photo => [String(photo.id), photo]));
+  let available = 0;
+  section.querySelectorAll('.experience-card').forEach(card => {
+    const ids = EXPERIENCE_PATHS[card.dataset.experience] || [];
+    const matches = ids.map(id => published.get(id)).filter(Boolean);
+    card.hidden = matches.length < 2;
+    if (card.hidden) return;
+    available++;
+    card.disabled = false;
+    const photo = matches[0];
+    if (photo.thumbnail || photo.url) {
+      const img = document.createElement('img');
+      img.src = getGalleryThumbUrl(photo.thumbnail || photo.url);
+      img.alt = ''; // Decorative; the card's title is already accessible.
+      img.loading = 'lazy';
+      img.width = 480;
+      img.height = 320;
+      card.querySelector('.experience-card-media')?.appendChild(img);
+    }
+    card.addEventListener('click', () => {
+      history.replaceState(null, '', '#experience-' + card.dataset.experience);
+      showExperiencePath(card.dataset.experience);
+    });
+  });
+  section.hidden = available === 0;
+}
+
 let currentIndex = 0;
 let displayedCount = 0;
 const PAGE_SIZE = 12;
@@ -136,6 +220,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   initSearch();
   await initFeatured();
   initFilters(); // rebuild after featuredIds are known
+  initExperiencePaths();
   // בדף הבית: הפעל פילטר "מובחרות" כברירת מחדל
   if (document.getElementById('featured-grid') && featuredIds.length > 0) {
     applyFilters();
@@ -277,6 +362,7 @@ async function loadPhotos() {
   const grid = document.getElementById('gallery-grid');
   if (!grid) return;
 
+  experiencePublicGalleryVerified = false;
   showSkeletons(grid);
 
   try {
@@ -292,7 +378,9 @@ async function loadPhotos() {
     const jsonPhotos = jsonRes.ok ? await jsonRes.json().catch(() => []) : [];
     if (apiRes?.ok) {
       const apiPhotos = await apiRes.json().catch(() => []);
-      if (apiPhotos.length) {
+      if (Array.isArray(apiPhotos) && apiPhotos.length > 0) {
+        // The Worker public endpoint serves only published=1 images.
+        experiencePublicGalleryVerified = true;
         // API is primary — merge thumbnail/url from JSON for photos that have them
         const jsonMap = new Map(jsonPhotos.map(p => [p.id, p]));
         allPhotos = apiPhotos.map(p => {
@@ -668,6 +756,7 @@ function getActiveCategory() {
 }
 
 function applyFilters() {
+  clearExperienceSelection();
   const query = (document.getElementById('gallery-search')?.value || '').trim().toLowerCase();
   const { cat, parent } = getActiveCategory();
 
@@ -1371,6 +1460,10 @@ function handleInitialHash() {
     return;
   }
   const hash = window.location.hash;
+  if (hash.startsWith('#experience-')) {
+    showExperiencePath(hash.slice('#experience-'.length), { track: false });
+    return;
+  }
   if (hash.startsWith('#filter-')) {
     let cat = hash.replace('#filter-', '');
     try { cat = decodeURIComponent(cat); } catch (_) { /* already decoded */ }
@@ -2438,7 +2531,8 @@ const PrintShop = (() => {
 // Re-render gallery and filters when language changes
 window.onLangChange = function() {
   initFilters();
-  renderGallery();
+  if (activeExperiencePath) showExperiencePath(activeExperiencePath, { track: false, scroll: false });
+  else renderGallery();
   updateWeekPhotoStrip();
   PrintShop.onLangChange();
 };

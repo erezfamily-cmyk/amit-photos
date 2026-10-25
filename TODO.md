@@ -1,5 +1,13 @@
 ## Experience-led brand/UX — 25.10.2026
 
+- [x] P0 homepage experience messaging merged as PR #178.
+- [x] P1 four emotion-led discovery cards with existing photo IDs prepared in a review branch.
+- [x] Fail-closed gallery protection for P1: disable discovery if the D1-published endpoint cannot be verified; related Node tests added.
+- [x] Visual review sheet with all 16 original thumbnails prepared (`docs/experience-photo-selection-review-2026-10-25.md`).
+- [ ] CI / Preview QA, visual approval of 16 photo candidates (catalog metadata alone is insufficient), accessibility/mobile HE/EN.
+- [ ] Collect 8–12 authentic photographer memories; do not invent details.
+- [ ] Obtain a separate approval to merge/deploy P1.
+
 Full roadmap and criteria: https://github.com/erezfamily-cmyk/amit-photos/issues/177  
 Implementation branch: `feature/experience-led-p0-2026-10-25` (review-only; NOT merged/deployed).
 
