@@ -6,7 +6,10 @@
 - [x] Visual review sheet with all 16 original thumbnails prepared (`docs/experience-photo-selection-review-2026-10-25.md`).
 - [ ] CI / Preview QA, visual approval of 16 photo candidates (catalog metadata alone is insufficient), accessibility/mobile HE/EN.
 - [ ] Collect 8–12 authentic photographer memories; do not invent details.
-- [ ] Obtain a separate approval to merge/deploy P1.
+- [x] P1 merged via PR #179 (2026-10-25).
+- [x] P1.1 details-path photo refresh prepared: "אבקת הפרח הזהובה", "פרחים ורודים בתקריב", "ורד ורוד עדין", "עדינות של טבע"; HE/EN label updated.
+- [ ] Run targeted CI and visual review of updated details selection; seek separate PR merge approval.
+- [ ] Evaluate four optional additional *experience paths* after 14–28 days of traffic and qualified leads; do not add four more taxonomy categories now.
 
 Full roadmap and criteria: https://github.com/erezfamily-cmyk/amit-photos/issues/177  
 Implementation branch: `feature/experience-led-p0-2026-10-25` (review-only; NOT merged/deployed).
