@@ -31,6 +31,8 @@ test('photo choices resolve only from the current public gallery and hide unavai
   assert.match(gallery, /const published = new Map\(allPhotos\.map\(photo => \[String\(photo\.id\), photo\]\)\)/);
   assert.match(gallery, /ids\.map\(id => published\.get\(id\)\)\.filter\(Boolean\)/);
   assert.match(gallery, /card\.hidden = matches\.length < 2/);
+  assert.match(html, /<section class="experience-section" id="experience"[^>]*hidden>/);
+  assert.match(gallery, /section\.hidden = available === 0;/);
   assert.match(gallery, /img\.src = getGalleryThumbUrl\(photo\.thumbnail \|\| photo\.url\)/);
   assert.doesNotMatch(html, /\/photos\/thumb\//);
 });
