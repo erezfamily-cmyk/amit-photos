@@ -37,9 +37,9 @@ test('details collection highlights subtle floral macro photography', () => {
   assert.equal(byId.get(paths.details[1]).title, 'פרחים ורודים בתקריב');
   assert.equal(byId.get(paths.details[2]).title, 'ורד ורוד עדין');
   assert.equal(byId.get(paths.details[3]).title, 'עדינות של טבע');
-  assert.match(i18n, /'experience\\.details\\.desc': 'עדינות של הטבע'/);
-  assert.match(i18n, /'experience\\.details\\.desc': 'The delicate beauty of nature'/);
-  assert.match(html, /data-i18n="experience\\.details\\.desc">עדינות של הטבע/);
+  assert.match(i18n, /'experience\.details\.desc': 'עדינות של הטבע'/);
+  assert.match(i18n, /'experience\.details\.desc': 'The delicate beauty of nature'/);
+  assert.match(html, /data-i18n="experience\.details\.desc">עדינות של הטבע/);
 });
 
 test('photo choices resolve only from the current public gallery and hide unavailable paths', () => {
