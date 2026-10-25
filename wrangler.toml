@@ -32,3 +32,14 @@ zone_name = "amitphotos.com"
 
 [triggers]
 crons = ["0 */2 * * *", "0 9 1,15 * *"]
+
+# Preview deployments do not inherit production Worker bindings.
+# This applies ONLY to Cloudflare Worker Previews; no production Service Binding.
+# Read-only public GET is further restricted to Sandbox Preview host in worker.js.
+[[previews.services]]
+binding = "PUBLIC_GALLERY_SERVICE"
+service = "amit-photos"
+
+# Explicitly keep all real payments disabled in Preview as well.
+[previews.vars]
+PAYMENTS_ENABLED = "false"
