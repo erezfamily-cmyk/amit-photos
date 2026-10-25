@@ -374,9 +374,14 @@ async function loadPhotos() {
   showSkeletons(grid);
 
   try {
+    // In the isolated Cloudflare Sandbox Preview, the D1 gallery can be empty.
+    // Ask the local Worker to proxy the already-published public gallery only.
+    // The production website continues to use its own D1-backed /api/photos.
+    const isSandboxPreview = location.hostname.endsWith('-amit-photos-paypal-sandbox.erez-family.workers.dev');
+    const publicGalleryEndpoint = isSandboxPreview ? '/api/experience-preview-photos' : '/api/photos';
     const [jsonRes, apiRes, paymentsRes] = await Promise.all([
       fetch('data/photos.json'),
-      fetch('/api/photos').catch(() => null),
+      fetch(publicGalleryEndpoint).catch(() => null),
       fetch('/api/payments-status').catch(() => null)
     ]);
     if (paymentsRes?.ok) {
@@ -387,7 +392,7 @@ async function loadPhotos() {
     if (apiRes?.ok) {
       const apiPhotos = await apiRes.json().catch(() => []);
       if (Array.isArray(apiPhotos) && apiPhotos.length > 0) {
-        // The Worker public endpoint serves only published=1 images.
+        // The original D1 route or Preview's public-production proxy returns only published images.
         experiencePublicGalleryVerified = true;
         // API is primary — merge thumbnail/url from JSON for photos that have them
         const jsonMap = new Map(jsonPhotos.map(p => [p.id, p]));
