@@ -1050,6 +1050,10 @@ function initLightbox() {
     closeModalA11y(wallModal);
   }
 
+  // The editorial CTA opens the exact same wall-preview control, not checkout.
+  document.getElementById('lb-experience-wall')?.addEventListener('click', () => {
+    document.getElementById('lb-wall')?.click();
+  });
   document.getElementById('lb-wall').addEventListener('click', () => {
     const photo = window._currentLightboxPhoto;
     if (photo) openWallMockup(photo);
@@ -1150,6 +1154,36 @@ function getLightboxUrl(url) {
   return url;
 }
 
+// Short, catalog-grounded editorial captions for a limited visual pilot.
+// No personal shooting memories, invented locations, prices or extra photo API calls.
+const EXPERIENCE_EDITORIAL_CAPTIONS = Object.freeze({
+  '1c_MjQDRqBDKXXUs8J2IRYpUtq68hF0d5': { he: "מקרוב, האבקנים הצהובים הופכים את מרכז הפרח לעולם בפני עצמו. עומק השדה הרדוד מזמין להתעכב על פרט אחד קטן.", en: "Up close, the yellow stamens become a world of their own. Shallow depth of field invites a closer look at one small detail." },
+  '1T_sZuDJIECAtqscPBtZ1qoi7KECxxmLu': { he: "שכבות של ורוד, שמנת וזהב נפגשות בפריים צפוף ועדין. לפעמים היופי נמצא דווקא במה שמגלים כשמתקרבים.", en: "Layers of pink, cream and gold meet in a delicate close-up. Sometimes beauty reveals itself when we come closer." },
+  '1qAYmV4wg-5I8isvUTrP1kZnT1leAHkvA': { he: "ורד ורוד בפריחה מלאה ממלא את הפריים ברכות של עלי הכותרת. הזמנה להתבונן בצבע ובמרקם בלי למהר.", en: "A pink rose in full bloom fills the frame with the softness of its petals. An invitation to linger over color and texture." },
+  '1WZUI8vzx_VBpg6yfXb_mAth6guweU2JH': { he: "זרעים עדינים ותאורה רכה יוצרים כמעט רישום של הטבע. לפעמים הפרטים הקטנים הם הסיפור כולו.", en: "Delicate seeds in soft light look almost like a drawing made by nature. Sometimes the smallest details tell the whole story." },
+  '19Q-SGNEyuCzAc8cbmMMeXeSzVpaFJazV': { he: "האגם משקף את היער ואת גוני הסתיו, והנוף כולו נדמה שקט. רגע שאפשר לשוב אליו במבט.", en: "The lake reflects the forest and its autumn colors in a quiet scene. A moment to return to, even with just a glance." },
+  '1DKV8fePHvPbFLArxDDCRuGsX9eT48ZKd': { he: "ערפל בוקר עוטף את השדה, וקרני שמש חודרות מבעד לעננים. האור מגלה רק חלק מהנוף ומשאיר מקום לדמיון.", en: "Morning mist wraps around a field as sunlight filters through the clouds. The light reveals only part of the scene, leaving room for imagination." },
+  '1TCAfgJ9pl3T0G8RRtIAa5_0FOoxXrjso': { he: "מעגל של אור זהוב נרשם בחשכת הלילה מתנועת צמר פלדה. כאן התנועה עצמה הופכת לציור.", en: "A golden circle of light is drawn into the night by spinning steel wool. Here, movement becomes the artwork." },
+  '1rVBJnzQ8onOOR-qQHUzuK6zr_dMd_vHN': { he: "חווה כפרית, בעלי חיים ושדות ירוקים בגאורגיה נפרשים לאורך העמק. נוף שאפשר לתת למבט לשוטט בו.", en: "A rural farm, animals and green fields stretch across a valley in Georgia. A landscape where the eye can wander." }
+});
+
+function renderExperienceEditorialCaption(photo) {
+  const box = document.getElementById('lb-experience-story');
+  const textEl = document.getElementById('lb-experience-story-text');
+  if (!box || !textEl) return false;
+  const caption = photo && EXPERIENCE_EDITORIAL_CAPTIONS[String(photo.id)];
+  const available = experiencePublicGalleryVerified && photo
+    && allPhotos.some(p => String(p.id) === String(photo.id));
+  if (!available || !caption) {
+    textEl.textContent = '';
+    box.hidden = true;
+    return false;
+  }
+  textEl.textContent = caption[getLang() === 'en' ? 'en' : 'he'];
+  box.hidden = false;
+  return true;
+}
+
 function openLightbox(idx) {
   currentIndex = idx;
   const photo = filteredPhotos[idx];
@@ -1179,7 +1213,9 @@ function openLightbox(idx) {
   const descEl = document.getElementById('lb-desc');
   const descText = (getLang() === 'en' && photo.description_en) ? photo.description_en : photo.description;
   descEl.textContent = descText || '';
-  descEl.style.display = descText ? 'block' : 'none';
+  const hasEditorialCaption = renderExperienceEditorialCaption(photo);
+  // Show one clear story, not two repetitive paragraphs in a small mobile lightbox.
+  descEl.style.display = !hasEditorialCaption && descText ? 'block' : 'none';
 
   // Progress bar
   const progress = document.getElementById('lb-progress');
@@ -2561,6 +2597,19 @@ window.onLangChange = function() {
   if (activeExperiencePath) showExperiencePath(activeExperiencePath, { track: false, scroll: false });
   else renderGallery();
   updateWeekPhotoStrip();
+  // The existing lightbox can remain open while the visitor switches HE/EN.
+  if (document.getElementById('lightbox')?.classList.contains('open') && window._currentLightboxPhoto) {
+    const photo = window._currentLightboxPhoto;
+    const hasEditorialCaption = renderExperienceEditorialCaption(photo);
+    const descEl = document.getElementById('lb-desc');
+    const originalDesc = (getLang() === 'en' && photo.description_en) ? photo.description_en : photo.description;
+    if (descEl) {
+      descEl.textContent = originalDesc || '';
+      descEl.style.display = !hasEditorialCaption && originalDesc ? 'block' : 'none';
+    }
+    const titleEl = document.getElementById('lb-title');
+    if (titleEl) titleEl.textContent = (getLang() === 'en' && photo.title_en) ? photo.title_en : photo.title;
+  }
   PrintShop.onLangChange();
 };
 
