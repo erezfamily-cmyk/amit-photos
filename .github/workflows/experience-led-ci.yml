@@ -57,6 +57,7 @@ jobs:
           const hosts = [
             ['public-www', 'https://www.amitphotos.com/api/photos'],
             ['public-apex', 'https://amitphotos.com/api/photos'],
+            ['public-worker-direct', 'https://amit-photos.erez-family.workers.dev/api/photos'],
             ['sandbox-preview', 'https://feature-experience-analytics-story-p-amit-photos-paypal-sandbox.erez-family.workers.dev/api/experience-preview-photos'],
           ];
           let summary = '### Public-photo experience diagnostic (read-only)\n\n';
