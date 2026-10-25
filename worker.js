@@ -842,16 +842,30 @@ async function handleExperiencePreviewPublicPhotos(request) {
   }
   if (request.method !== 'GET') return jsonRes({ error: 'method not allowed' }, 405, request);
   try {
-    const response = await fetch('https://amitphotos.com/api/photos', {
-      method: 'GET',
-      headers: { Accept: 'application/json' },
-      redirect: 'error',
-    });
-    if (!response.ok) return jsonRes({ error: 'public gallery unavailable' }, 503, request);
-    const published = await response.json();
-    if (!Array.isArray(published) || !published.length || published.length > 5000) {
-      return jsonRes({ error: 'public gallery unavailable' }, 503, request);
+    // The Worker is explicitly routed on www.amitphotos.com; the apex can
+    // redirect there. Since redirects are disallowed, try both exact trusted
+    // public endpoints, never a redirect target or an admin endpoint.
+    const publicGalleryUrls = [
+      'https://www.amitphotos.com/api/photos',
+      'https://amitphotos.com/api/photos',
+    ];
+    let published = null;
+    for (const url of publicGalleryUrls) {
+      try {
+        const response = await fetch(url, {
+          method: 'GET',
+          headers: { Accept: 'application/json' },
+          redirect: 'error',
+        });
+        if (!response.ok) continue;
+        const rows = await response.json();
+        if (Array.isArray(rows) && rows.length > 0 && rows.length <= 5000) {
+          published = rows;
+          break;
+        }
+      } catch (_) { /* Try the other canonical public hostname. */ }
     }
+    if (!published) return jsonRes({ error: 'public gallery unavailable' }, 503, request);
     // Preserve the canonical public API's published-only filtering. Explicitly
     // exclude a row if the source unexpectedly labels it unpublished.
     const absolutePhotoAsset = path => typeof path === 'string' && path.startsWith('/')
