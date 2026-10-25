@@ -1009,6 +1009,14 @@ function initLightbox() {
   if (buyBtn) {
     buyBtn.addEventListener('click', () => openBuyModal(filteredPhotos[currentIndex]));
   }
+  // A WhatsApp click is contact *intent*, not a verified lead or sale.
+  // The existing generic photo_contact_click event remains intact.
+  document.getElementById('lb-contact')?.addEventListener('click', () => {
+    const photo = window._currentLightboxPhoto;
+    if (!photo || !activeExperiencePath || !filteredPhotos.some(p => String(p.id) === String(photo.id))) return;
+    window.trackUxEvent?.('experience_contact_click', { label: activeExperiencePath, photo_id: String(photo.id) });
+    window.trackUxEvent?.(`experience_${activeExperiencePath}_contact_click`, { photo_id: String(photo.id) });
+  });
 
   PrintShop.init();
 
