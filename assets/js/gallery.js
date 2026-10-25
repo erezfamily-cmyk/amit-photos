@@ -100,6 +100,8 @@ function applyPaymentsAvailability(enabled) {
 }
 function canBuy(photo) { return PURCHASES_ENABLED; }
 let allPhotos = [];
+// Experience cards must never use the unverified JSON/demo fallback after a D1/API failure.
+let experiencePublicGalleryVerified = false;
 let filteredPhotos = [];
 let featuredIds = [];
 // Experience discovery pilot: a curated allowlist, never a separate photo source.
@@ -121,6 +123,7 @@ function clearExperienceSelection() {
 }
 
 function showExperiencePath(pathId, { track = true, scroll = true } = {}) {
+  if (!experiencePublicGalleryVerified) return;
   const ids = EXPERIENCE_PATHS[pathId];
   if (!ids) return;
   const published = new Map(allPhotos.map(photo => [String(photo.id), photo]));
@@ -152,6 +155,10 @@ function showExperiencePath(pathId, { track = true, scroll = true } = {}) {
 function initExperiencePaths() {
   const section = document.getElementById('experience');
   if (!section) return;
+  if (!experiencePublicGalleryVerified) {
+    section.hidden = true;
+    return;
+  }
   const published = new Map(allPhotos.map(photo => [String(photo.id), photo]));
   let available = 0;
   section.querySelectorAll('.experience-card').forEach(card => {
@@ -355,6 +362,7 @@ async function loadPhotos() {
   const grid = document.getElementById('gallery-grid');
   if (!grid) return;
 
+  experiencePublicGalleryVerified = false;
   showSkeletons(grid);
 
   try {
@@ -370,7 +378,9 @@ async function loadPhotos() {
     const jsonPhotos = jsonRes.ok ? await jsonRes.json().catch(() => []) : [];
     if (apiRes?.ok) {
       const apiPhotos = await apiRes.json().catch(() => []);
-      if (apiPhotos.length) {
+      if (Array.isArray(apiPhotos) && apiPhotos.length > 0) {
+        // The Worker public endpoint serves only published=1 images.
+        experiencePublicGalleryVerified = true;
         // API is primary — merge thumbnail/url from JSON for photos that have them
         const jsonMap = new Map(jsonPhotos.map(p => [p.id, p]));
         allPhotos = apiPhotos.map(p => {
