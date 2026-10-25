@@ -90,6 +90,61 @@ test('Cloudflare Sandbox Preview reads the published public photo source without
     worker.indexOf('// ===== PHOTOS =====')), /admin=1|\/api\/admin|env\.DB|\.put\(|DELETE FROM|UPDATE photos/);
 });
 
+test('preview proxy returns only published rows with absolute image URLs; production fails closed', async () => {
+  const worker = readFileSync(new URL('../worker.js', import.meta.url), 'utf8');
+  const source = worker.slice(worker.indexOf('const EXPERIENCE_PREVIEW_HOST_SUFFIX'),
+    worker.indexOf('// ===== PHOTOS ====='));
+  const calls = [];
+  const ctx = {
+    URL,
+    Response,
+    fetch: async (...args) => {
+      calls.push(args);
+      return new Response(JSON.stringify([
+        { id: 'public-1', published: 1, thumbnail: '/photos/thumb/one.webp', url: '/photos/one.webp' },
+        { id: 'hidden-2', published: 0, thumbnail: '/photos/thumb/two.webp' },
+        { id: 'hidden-3', published: false, thumbnail: '/photos/thumb/three.webp' },
+      ]), { status: 200 });
+    },
+    jsonRes: (value, status) => new Response(JSON.stringify(value), { status }),
+  };
+  vm.runInNewContext(source + '\nthis.previewHandler = handleExperiencePreviewPublicPhotos;', ctx);
+  const prod = await ctx.previewHandler({ url: 'https://amitphotos.com/api/experience-preview-photos', method: 'GET' });
+  assert.equal(prod.status, 404);
+  assert.equal(calls.length, 0);
+  const preview = await ctx.previewHandler({
+    url: 'https://feature-experience-analytics-story-p-amit-photos-paypal-sandbox.erez-family.workers.dev/api/experience-preview-photos',
+    method: 'GET',
+  });
+  assert.equal(preview.status, 200);
+  assert.equal(calls.length, 1);
+  assert.equal(calls[0][0], 'https://amitphotos.com/api/photos');
+  const rows = await preview.json();
+  assert.equal(rows.length, 1);
+  assert.equal(rows[0].id, 'public-1');
+  assert.equal(rows[0].thumbnail, 'https://amitphotos.com/photos/thumb/one.webp');
+  assert.equal(rows[0].url, 'https://amitphotos.com/photos/one.webp');
+});
+
+test('preview proxy fails closed when public source is unavailable', async () => {
+  const worker = readFileSync(new URL('../worker.js', import.meta.url), 'utf8');
+  const source = worker.slice(worker.indexOf('const EXPERIENCE_PREVIEW_HOST_SUFFIX'),
+    worker.indexOf('// ===== PHOTOS ====='));
+  const ctx = {
+    URL,
+    Response,
+    fetch: async () => { throw new Error('upstream unavailable'); },
+    jsonRes: (value, status) => new Response(JSON.stringify(value), { status }),
+  };
+  vm.runInNewContext(source + '\nthis.previewHandler = handleExperiencePreviewPublicPhotos;', ctx);
+  const response = await ctx.previewHandler({
+    url: 'https://e07c1d63-amit-photos-paypal-sandbox.erez-family.workers.dev/api/experience-preview-photos',
+    method: 'GET',
+  });
+  assert.equal(response.status, 503);
+  assert.equal((await response.json()).error, 'public gallery unavailable');
+});
+
 test('direct links show the discovery once public content is loaded', () => {
   assert.match(gallery, /if \(available > 0 && window\.location\.hash === '#experience'\)/);
   assert.match(gallery, /requestAnimationFrame\(\(\) => section\.scrollIntoView\(\{ behavior: 'auto', block: 'start' \}\)\)/);
