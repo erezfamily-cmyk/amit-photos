@@ -41,6 +41,18 @@ The site remains both an original-art photography portfolio and a learning desti
 - Payment-off: Explore the gallery and find your moment. Love a photograph? Contact me directly to ask about purchasing it.
 - CTA: Find your moment / Learn to see differently
 
+## P1 implementation checkpoint — 25.10.2026 (draft, not merged)
+
+- Branch: `feature/experience-discovery-paths-2026-10-25`. Phase P0 has already been merged as PR #178.
+- Four HE/EN cards between Hero and category filters, with 16 source-catalog candidates from existing photographs (4 per feeling).
+- Images are rendered **only after matching IDs against currently public `allPhotos`** (D1 primary where populated); paths with fewer than two available pictures are hidden. No unpublished photo URLs are exposed directly in HTML.
+- Editorial grouping relies on catalog titles and description. **A visual quality check and owner approval of the specific 16 candidates are still required before merging.** Source resolution is not a visual quality guarantee.
+- Selection reuses gallery thumbnails, lightbox, masonry, existing filters and search; standard filters clear an active emotional path. Language switching and #experience-path hash links are supported.
+- Anonymous click measurement is limited to `experience_path_click` with allowlisted label and result count; no PII.
+- Still blocked by authentic photographer input: 8–12 personal behind-the-frame anecdotes. Do not generate imaginary shooting memories.
+- Pending: GitHub CI, mobile Safari/desktop visual QA, two-language text, published-image availability, and **separate approval to merge/deploy**.
+- No PayPal, D1, source photo, pricing, Gelato or publishing schedule changes.
+
 ## P1 — discovery by emotion rather than inventory
 - [ ] Add four **reversible navigation paths** over existing published images: רגעים של שקט; רגעים של התרגשות; הקסם שבפרטים; מקומות להתגעגע אליהם.
 - [ ] Select 3–5 strong, already-approved real images per path, manually. Do not use AI image scores as emotional labels or expose hidden/unapproved photos.
