@@ -18,7 +18,7 @@ The site remains both an original-art photography portfolio and a learning desti
 - Relevant checkout PRs #155, #157, #173 and #174 remain **separate**. `PAYMENTS_ENABLED=false`, PayPal Live disabled, no Gelato.
 - Prior social review warned that raising posting volume could hurt engagement; do not change social schedules in this project.
 
-## P0 — initial experience-first copy (on review branch)
+## P0 — initial experience-first copy (merged as PR #178)
 - [x] Update homepage Hero in Hebrew and English using existing i18n keys. Opening: **יש רגעים / שלא רוצים שייגמרו.** / **Some moments / deserve to stay.**
 - [x] Offer *גלו את הרגע שלכם* as the gallery action and *ללמוד לראות אחרת* for the existing free-guide popup. Keep their destinations and tracked actions unchanged.
 - [x] Make the About introduction personal and approachable, retaining professional proof and awards elsewhere.
@@ -41,7 +41,7 @@ The site remains both an original-art photography portfolio and a learning desti
 - Payment-off: Explore the gallery and find your moment. Love a photograph? Contact me directly to ask about purchasing it.
 - CTA: Find your moment / Learn to see differently
 
-## P1 implementation checkpoint — 25.10.2026 (draft, not merged)
+## P1 implementation checkpoint — 25.10.2026 (merged as PR #179; photo refinements pending in PR #180)
 
 - Branch: `feature/experience-discovery-paths-2026-10-25`. Phase P0 has already been merged as PR #178.
 - Four HE/EN cards between Hero and category filters, with 16 source-catalog candidates from existing photographs (4 per feeling).
