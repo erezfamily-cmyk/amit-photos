@@ -1,0 +1,35 @@
+name: Experience-led homepage CI
+
+on:
+  pull_request:
+    paths:
+      - 'index.html'
+      - 'assets/css/style.css'
+      - 'assets/js/i18n.js'
+      - 'tests/experience-hero.test.mjs'
+      - 'tests/i18n-translation-parity.test.mjs'
+      - 'tests/purchase-disabled-ux.test.mjs'
+      - 'tests/homepage-hierarchy-redesign.test.mjs'
+      - 'tests/ux-analytics-instrumentation.test.mjs'
+      - '.github/workflows/experience-led-ci.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  experience-p0:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Verify experience Hero, translations, payment guards and analytics
+        run: >
+          node --test
+          tests/experience-hero.test.mjs
+          tests/i18n-translation-parity.test.mjs
+          tests/purchase-disabled-ux.test.mjs
+          tests/homepage-hierarchy-redesign.test.mjs
+          tests/ux-analytics-instrumentation.test.mjs
