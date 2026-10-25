@@ -42,6 +42,21 @@ test('details collection highlights subtle floral macro photography', () => {
   assert.match(html, /data-i18n="experience\.details\.desc">עדינות של הטבע/);
 });
 
+test('photo-led homepage cards keep the image dominant and text legible', () => {
+  assert.match(css, /\.experience-card-media\s*\{[^}]*position:\s*absolute/s);
+  assert.match(css, /\.experience-card::after\s*\{[^}]*linear-gradient/s);
+  assert.match(css, /\.experience-card-copy\s*\{[^}]*z-index:\s*1/s);
+  assert.match(css, /\.experience-card\s*\{[^}]*aspect-ratio:\s*3\s*\/\s*4/s);
+  assert.match(css, /@media \(prefers-reduced-motion: reduce\)/);
+});
+
+test('hero opens the emotional discovery only when a public route exists', () => {
+  assert.match(html, /href="#gallery" class="hero-cta"/);
+  assert.match(gallery, /const heroCta = document\.querySelector\('\.hero-cta\[href="#gallery"\]'\)/);
+  assert.match(gallery, /if \(available > 0 && heroCta\) heroCta\.setAttribute\('href', '#experience'\)/);
+  assert.match(gallery, /if \(!experiencePublicGalleryVerified\) \{\s*section\.hidden = true;\s*return;/);
+});
+
 test('photo choices resolve only from the current public gallery and hide unavailable paths', () => {
   assert.match(gallery, /const published = new Map\(allPhotos\.map\(photo => \[String\(photo\.id\), photo\]\)\)/);
   assert.match(gallery, /ids\.map\(id => published\.get\(id\)\)\.filter\(Boolean\)/);
