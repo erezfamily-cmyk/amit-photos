@@ -35,6 +35,14 @@ test('photo choices resolve only from the current public gallery and hide unavai
   assert.doesNotMatch(html, /\/photos\/thumb\//);
 });
 
+test('experience paths fail closed if the public D1 gallery cannot be verified', () => {
+  assert.match(gallery, /let experiencePublicGalleryVerified = false;/);
+  assert.match(gallery, /async function loadPhotos\(\) \{[\s\S]*?experiencePublicGalleryVerified = false;/);
+  assert.match(gallery, /if \(Array\.isArray\(apiPhotos\) && apiPhotos\.length > 0\) \{\s*\/\/ The Worker public endpoint serves only published=1 images\.\s*experiencePublicGalleryVerified = true;/);
+  assert.match(gallery, /function showExperiencePath\([^)]*\) \{\s*if \(!experiencePublicGalleryVerified\) return;/);
+  assert.match(gallery, /function initExperiencePaths\(\) \{[\s\S]*?if \(!experiencePublicGalleryVerified\) \{\s*section\.hidden = true;/);
+});
+
 test('cards are localized and can be activated with keyboard buttons', () => {
   for (const id of ['quiet', 'wonder', 'details', 'places']) {
     assert.match(html, new RegExp('data-experience="' + id + '"'));
