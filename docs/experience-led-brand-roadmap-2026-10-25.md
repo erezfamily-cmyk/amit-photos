@@ -1,7 +1,7 @@
 # Amit Photos — Experience-led marketing & UX roadmap
 Date: 2026-10-25  
 Main task: https://github.com/erezfamily-cmyk/amit-photos/issues/177  
-Implementation: `feature/experience-led-p0-2026-10-25` — draft review only, not deployed.
+P0: PR #178 merged into `main` (commit `0f300bc3`). P1: [draft PR #179](https://github.com/erezfamily-cmyk/amit-photos/pull/179) — not merged; see [photo review sheet](experience-photo-selection-review-2026-10-25.md).
 
 ## Objective
 Sell the **experience around an image** before discussing file format, pixel dimensions, or pricing. A natural visitor journey is **Discover → Connect → Imagine → Inquire/Choose**.
