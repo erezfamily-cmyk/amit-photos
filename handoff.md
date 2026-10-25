@@ -1,5 +1,16 @@
 # Handoff — amit-photos
 
+## RESUME POINT — 2026-10-25: Preview image visibility fix in PR #181
+
+- User could not see photo-first discovery in linked Cloudflare Sandbox Preview despite PR preview deploy success.
+- Root-cause **hypothesis supported by code/config** (live HTTP responses not independently inspected): Cloudflare Preview uses separately bound Sandbox D1/R2, whereas gallery.js requires a nonempty /api/photos response for experience cards; the #experience hash is initially hidden until asynchronous image loading.
+- Implemented narrow **staging-host-only** GET endpoint /api/experience-preview-photos in worker.js, locked to host suffix -amit-photos-paypal-sandbox.erez-family.workers.dev, which reads **only existing publicly published** https://amitphotos.com/api/photos and rewrites relative image URLs to absolute public asset URLs. It never reads D1 or writes data; production host yields 404. If public source inaccessible, endpoint returns 503; no JSON/demo fallback can activate experience cards.
+- Browser gallery.js uses this endpoint only on Sandbox Preview host suffix, keeps the existing D1 /api/photos for production and payment flag untouched. On #experience initial deep link, scroll after public photos have loaded. Cache-bust index and add Worker regression tests including mocked public-published/hidden samples and unavailable upstream.
+- Next: verify GitHub CI and latest Cloudflare Preview head SHA, manually inspect 4 cards and 8 photo story captions HE/EN on phone. Do not call UI verified from CI alone. No merge without owner approval; no photo data copied, no production D1/PayPal changes.
+
+---
+
+
 ## RESUME POINT — 2026-10-25: Experience analytics & authentic-story pilot (draft)
 
 - Latest production `main`: `cec12a799a8162e96e14e6109f823fa1061adf99`. Phase P0/P1/P1.1 PRs #178/#179/#180 **merged**, GitHub/Cloudflare deployment checks successful; hands-on mobile browser QA still requires confirmation.
