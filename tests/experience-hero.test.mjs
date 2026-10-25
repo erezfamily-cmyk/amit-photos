@@ -14,16 +14,23 @@ test('the experience-led hero links to the gallery and existing guide', () => {
   assert.match(dict, /'hero\.cta':\s*'Find your moment'/);
 });
 
-test('the no-checkout Hero remains truthful in Hebrew and English', () => {
+test('the main emotional story remains visible while online payments are disabled', () => {
   assert.match(html, /<body[^>]*data-payments-state="disabled"/);
-  const off = html.match(/<p class="hero-subtitle payments-disabled-only"[^>]*>([^<]+)<\/p>/);
-  assert.ok(off, 'disabled-mode subtitle is present');
+  assert.match(html, /<p class="hero-subtitle" data-i18n="hero\.subtitle">אור שמופיע לרגע/);
+  assert.doesNotMatch(html, /class="hero-subtitle payments-enabled-only"/);
+  assert.match(dict, /'hero\.subtitle':\s*'A fleeting light/);
+});
+
+test('disabled-payment notice is honest in Hebrew and English', () => {
+  const off = html.match(/<p class="hero-payment-note payments-disabled-only"[^>]*>([^<]+)<\/p>/);
+  assert.ok(off, 'disabled-mode notice is present');
   assert.match(off[1], /לפנות אליי ישירות/);
   assert.doesNotMatch(off[1], /PayPal|הורדה מיידית|תשלום מאובטח/);
   assert.match(dict, /'payments\.disabled\.hero':\s*'Explore the gallery and find your moment/);
 });
 
-test('the experiential subtitle wraps on narrow mobile devices', () => {
+test('hero text and disabled notice wrap on narrow mobile screens', () => {
   assert.match(css, /\.hero-subtitle\s*\{[^}]*white-space:\s*normal;/s);
   assert.match(css, /\.hero-subtitle\s*\{[^}]*text-wrap:\s*balance;/s);
+  assert.match(css, /\.hero-payment-note\s*\{[^}]*text-wrap:\s*balance;/s);
 });
