@@ -323,7 +323,8 @@ body[data-payments-state="enabled"] .payments-disabled-only {
   margin: 0 auto 2rem;
   line-height: 1.7;
   letter-spacing: 0.02em;
-  white-space: nowrap;
+  white-space: normal;
+  text-wrap: balance;
 }
 
 .hero-actions {
