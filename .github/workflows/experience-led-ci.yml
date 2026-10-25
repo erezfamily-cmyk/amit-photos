@@ -8,6 +8,7 @@ on:
       - 'assets/js/i18n.js'
       - 'tests/experience-hero.test.mjs'
       - 'tests/experience-paths.test.mjs'
+      - 'tests/experience-editorial-captions.test.mjs'
       - 'assets/js/gallery.js'
       - 'tests/i18n-translation-parity.test.mjs'
       - 'tests/purchase-disabled-ux.test.mjs'
@@ -36,6 +37,7 @@ jobs:
           node --test
           tests/experience-hero.test.mjs
           tests/experience-paths.test.mjs
+          tests/experience-editorial-captions.test.mjs
           tests/i18n-translation-parity.test.mjs
           tests/purchase-disabled-ux.test.mjs
           tests/homepage-hierarchy-redesign.test.mjs
