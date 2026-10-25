@@ -145,7 +145,11 @@ function showExperiencePath(pathId, { track = true, scroll = true } = {}) {
   if (label) label.textContent = t('experience.' + pathId + '.title');
   setHomeView(false);
   renderGallery();
-  if (track) window.trackUxEvent?.('experience_path_click', { label: pathId, result_count: matches.length });
+  if (track) {
+    window.trackUxEvent?.('experience_path_click', { label: pathId, result_count: matches.length });
+    // Per-path GA4 event names are reportable without creating custom dimensions.
+    window.trackUxEvent?.(`experience_${pathId}_click`, { label: pathId });
+  }
   if (scroll) document.getElementById('gallery-grid-wrap')?.scrollIntoView({
     behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
     block: 'start'
@@ -1013,13 +1017,21 @@ function initLightbox() {
   const wallImg     = document.getElementById('wall-img');
   const wallLabel   = document.getElementById('wall-label');
 
-  function openWallMockup(photo) {
+  function openWallMockup(photo, origin = 'lightbox') {
     wallImg.src = getLightboxUrl(photo.url);
     wallImg.alt = photo.title;
     wallLabel.textContent = photo.title || '';
     wallModal.classList.add('open');
     document.body.style.overflow = 'hidden';
     openModalA11y(wallModal, '#wall-modal-close');
+    const isExperiencePhoto = origin === 'lightbox'
+      && activeExperiencePath
+      && filteredPhotos.some(p => String(p.id) === String(photo.id));
+    window.trackUxEvent?.('wall_preview_open', {
+      source: isExperiencePhoto ? 'experience' : origin,
+      label: isExperiencePhoto ? activeExperiencePath : '',
+      photo_id: String(photo.id),
+    });
   }
   function closeWallMockup() {
     wallModal.classList.remove('open');
@@ -1037,7 +1049,7 @@ function initLightbox() {
 
   document.getElementById('wps-preview-btn').addEventListener('click', () => {
     const weekPhoto = allPhotos.find(p => p.is_week_photo);
-    if (weekPhoto) openWallMockup(weekPhoto);
+    if (weekPhoto) openWallMockup(weekPhoto, 'weekly_photo');
   });
 
   document.getElementById('wall-color-picker').addEventListener('input', e => {
@@ -1352,6 +1364,9 @@ function openLightbox(idx) {
   document.body.style.overflow = 'hidden';
   openModalA11y(lightboxEl, '#lb-close');
   trackEvent('photo_view', photo);
+  if (activeExperiencePath && filteredPhotos.some(p => String(p.id) === String(photo.id))) {
+    window.trackUxEvent?.('experience_photo_view', { label: activeExperiencePath, photo_id: String(photo.id) });
+  }
 }
 
 function closeLightbox() {
