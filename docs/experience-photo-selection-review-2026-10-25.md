@@ -1,6 +1,6 @@
 # Amit Photos — ביקורת חזותית לפני מיזוג מסלולי ההשראה
 
-תאריך: 25.10.2026 | [PR #179](https://github.com/erezfamily-cmyk/amit-photos/pull/179) | [תוכנית מלאה #177](https://github.com/erezfamily-cmyk/amit-photos/issues/177)
+תאריך: 25.10.2026 | [PR #179 — ארבעת המסלולים שמוזגו](https://github.com/erezfamily-cmyk/amit-photos/pull/179) | [PR #180 — עדכון הקסם שבפרטים](https://github.com/erezfamily-cmyk/amit-photos/pull/180) | [תוכנית מלאה #177](https://github.com/erezfamily-cmyk/amit-photos/issues/177)
 
 **סטטוס: שלושה מועמדים הוחלפו לבקשת בעל האתר; יש לבצע QA חזותי ומצב פרסום ציבורי.** 16 הצילומים קיימים ב־`data/photos.json` ברזולוציית מקור מעל 1000px. השיוך למסלול נקבע לפי שם ותיאור קיים, ואינו מהווה אימות של איכות/דירוג עין. התצוגה בפועל תלויה בפרסום התמונה ב־D1. הטקסט בעמוד זה אינו סיפור צילום אישי.
 
