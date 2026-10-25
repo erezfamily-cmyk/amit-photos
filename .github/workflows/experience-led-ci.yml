@@ -27,6 +27,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
+      - name: Parse gallery and bilingual scripts
+        run: |
+          node --check assets/js/gallery.js
+          node --check assets/js/i18n.js
       - name: Verify experience Hero, translations, payment guards and analytics
         run: >
           node --test
