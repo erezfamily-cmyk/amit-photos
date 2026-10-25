@@ -2,7 +2,7 @@
 // Intentionally never clicks checkout/WhatsApp or sends GA4 events.
 import assert from 'node:assert/strict';
 import { mkdirSync, writeFileSync } from 'node:fs';
-import { chromium } from 'playwright';
+import { chromium, webkit } from 'playwright';
 
 const preview = process.env.EXPERIENCE_PREVIEW_URL ||
   'https://feature-experience-analytics-story-p-amit-photos-paypal-sandbox.erez-family.workers.dev/';
@@ -10,10 +10,13 @@ const base = new URL(preview);
 assert.ok(base.protocol === 'https:' &&
   base.hostname.endsWith('-amit-photos-paypal-sandbox.erez-family.workers.dev'),
   'Live smoke test must only target the isolated Sandbox Preview');
+const engine = process.env.EXPERIENCE_BROWSER || 'chromium';
+assert.ok(['chromium', 'webkit'].includes(engine), 'Browser engine must be Chromium or Safari WebKit');
+const artifactDir = 'artifacts/experience-smoke/' + engine;
 const routes = ['quiet', 'wonder', 'details', 'places'];
 const results = [];
-const browser = await chromium.launch({ headless: true });
-mkdirSync('artifacts/experience-smoke', { recursive: true });
+const browser = await (engine === 'webkit' ? webkit : chromium).launch({ headless: true });
+mkdirSync(artifactDir, { recursive: true });
 
 const context = await browser.newContext({
   viewport: { width: 390, height: 844 },
@@ -29,6 +32,12 @@ await context.addInitScript(() => {
 });
 const page = await context.newPage();
 page.setDefaultTimeout(20000);
+const errors = [];
+page.on('pageerror', error => errors.push(error.message));
+page.on('requestfailed', request => {
+  if (request.url().includes('/api/experience-preview-photos'))
+    errors.push('API request failed: ' + (request.failure()?.errorText || 'unknown'));
+});
 // A smoke test should not produce tracking events or phantom leads.
 await page.route(/google-analytics\.com|googletagmanager\.com|facebook\.net\/tr|\/api\/track(?:\?|$)/, route => route.abort());
 
@@ -46,7 +55,16 @@ try {
   await page.locator('#experience').waitFor({ state: 'visible', timeout: 30000 });
   const cards = page.locator('#experience .experience-card:not([hidden]):not([disabled])');
   assert.equal(await cards.count(), 4, 'Exactly four visible experience routes');
-  await page.locator('#experience').screenshot({ path: 'artifacts/experience-smoke/mobile-routes.png' });
+  const layout = await page.locator('.experience-card[data-experience="details"]').evaluate(el => ({
+    cardPosition: getComputedStyle(el).position,
+    mediaPosition: getComputedStyle(el.querySelector('.experience-card-media')).position,
+    width: Math.round(el.getBoundingClientRect().width),
+    height: Math.round(el.getBoundingClientRect().height),
+  }));
+  assert.equal(layout.cardPosition, 'relative', 'P2 photo-first design must be deployed (not old P1)');
+  assert.equal(layout.mediaPosition, 'absolute', 'P2 image must fill the experience card');
+  results.push({ step: 'design-revision', engine, layout });
+  await page.locator('#experience').screenshot({ path: artifactDir + '/mobile-routes.png' });
   for (const route of routes) {
     const card = page.locator('.experience-card[data-experience="' + route + '"]');
     assert.ok(await card.isVisible() && await card.isEnabled(), route + ' is visible/enabled');
@@ -71,7 +89,7 @@ try {
   const hebrew = (await page.locator('#lb-experience-story-text').innerText()).trim();
   assert.ok(hebrew.length >= 50, 'Hebrew editorial story must be present');
   assert.equal(await page.locator('#lb-desc').isVisible(), false, 'No duplicate catalog paragraph');
-  await page.locator('#lightbox').screenshot({ path: 'artifacts/experience-smoke/mobile-lightbox-he.png' });
+  await page.locator('#lightbox').screenshot({ path: artifactDir + '/mobile-lightbox-he.png' });
   results.push({ step: 'editorial-he', characters: hebrew.length });
 
   // Language change while lightbox is still open is supported by the site.
@@ -87,18 +105,18 @@ try {
   const wallPhoto = page.locator('#wall-img');
   await page.waitForFunction(el => el.complete && el.naturalWidth > 0,
     await wallPhoto.elementHandle(), { timeout: 20000 });
-  await page.screenshot({ path: 'artifacts/experience-smoke/mobile-wall.png' });
+  await page.screenshot({ path: artifactDir + '/mobile-wall.png' });
   results.push({ step: 'wall-preview', visible: true });
 
-  console.log('EXPERIENCE_SMOKE_SUCCESS ' + JSON.stringify(results));
+  console.log('EXPERIENCE_SMOKE_SUCCESS ' + JSON.stringify({ engine, results, pageErrors: errors }));
 } catch (error) {
-  console.error('EXPERIENCE_SMOKE_FAILED ' + error.message);
+  console.error('EXPERIENCE_SMOKE_FAILED ' + JSON.stringify({ engine, message: error.message, pageErrors: errors }));
   try {
-    await page.screenshot({ path: 'artifacts/experience-smoke/mobile-failure.png', fullPage: true, timeout: 7000 });
+    await page.screenshot({ path: artifactDir + '/mobile-failure.png', fullPage: true, timeout: 7000 });
   } catch { /* best effort screenshot */ }
-  writeFileSync('artifacts/experience-smoke/result.json', JSON.stringify({ error: error.message, results }, null, 2));
+  writeFileSync(artifactDir + '/result.json', JSON.stringify({ error: error.message, results }, null, 2));
   process.exitCode = 1;
 } finally {
-  if (!process.exitCode) writeFileSync('artifacts/experience-smoke/result.json', JSON.stringify({ results }, null, 2));
+  if (!process.exitCode) writeFileSync(artifactDir + '/result.json', JSON.stringify({ results }, null, 2));
   await browser.close();
 }
