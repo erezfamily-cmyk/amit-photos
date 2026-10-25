@@ -835,7 +835,7 @@ async function handleCustomers(request, env) {
 // Read ONLY the already-public production gallery, never admin=1, D1 secrets, or writes.
 // Production hosts do not expose this endpoint; failed upstream responses fail closed.
 const EXPERIENCE_PREVIEW_HOST_SUFFIX = '-amit-photos-paypal-sandbox.erez-family.workers.dev';
-async function handleExperiencePreviewPublicPhotos(request) {
+async function handleExperiencePreviewPublicPhotos(request, env) {
   const host = new URL(request.url).hostname.toLowerCase();
   if (!host.endsWith(EXPERIENCE_PREVIEW_HOST_SUFFIX)) {
     return new Response('Not found', { status: 404 });
@@ -850,7 +850,23 @@ async function handleExperiencePreviewPublicPhotos(request) {
       'https://amitphotos.com/api/photos',
     ];
     let published = null;
-    for (const url of publicGalleryUrls) {
+    // Cloudflare Worker-to-Worker fetches on routed domains can be blocked.
+    // Prefer the optional Sandbox-only service binding. Never bind production
+    // to itself or use a privileged/admin endpoint; this is public GET only.
+    if (env?.PUBLIC_GALLERY_SERVICE?.fetch) {
+      const response = await env.PUBLIC_GALLERY_SERVICE.fetch(
+        new Request('https://amitphotos.com/api/photos', {
+          method: 'GET',
+          headers: { Accept: 'application/json' },
+        }),
+      );
+      if (!response.ok) return jsonRes({ error: 'public gallery unavailable' }, 503, request);
+      const rows = await response.json();
+      if (!Array.isArray(rows) || !rows.length || rows.length > 5000) {
+        return jsonRes({ error: 'public gallery unavailable' }, 503, request);
+      }
+      published = rows;
+    } else for (const url of publicGalleryUrls) {
       try {
         const response = await fetch(url, {
           method: 'GET',
@@ -8424,7 +8440,7 @@ export default {
     if (path === '/api/reset-password')    return handleResetPassword(request, env);
     if (path === '/api/subscribers')       return handleSubscribers(request, env);
     if (path === '/api/customers')         return handleCustomers(request, env);
-    if (path === '/api/experience-preview-photos') return handleExperiencePreviewPublicPhotos(request);
+    if (path === '/api/experience-preview-photos') return handleExperiencePreviewPublicPhotos(request, env);
     if (path === '/api/photos')            return handlePhotos(request, env);
     if (path === '/api/quiz-photos')       return handleQuizPhotos(request, env);
     if (path === '/api/sale-photos')       return handleSalePhotos(request, env);
