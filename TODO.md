@@ -1,3 +1,11 @@
+## Preview image visibility — 25.10.2026
+
+- [x] Investigated missing experience cards: preview has isolated Sandbox D1 and experience requires verified public photos; initial anchor may target hidden section.
+- [x] Add staging-host-only public published image proxy, production D1 route unchanged and fail-closed on upstream errors.
+- [x] Scroll direct #experience hash once API confirms public photo cards; regression tests verify host isolation and excluded unpublished samples.
+- [ ] Confirm latest Preview build head SHA and manually inspect public images, lightbox and wall CTA on HE/EN mobile.
+- [ ] Obtain separate user approval for PR #181 merge. Do not enable purchases.
+
 ## Experience-led brand/UX — 25.10.2026
 
 - [x] PR #180 merged: exact four-photo "הקסם שבפרטים" set and HE/EN subtitle.
