@@ -17,7 +17,7 @@ test('the emotional-value section is hidden unless the explicit preview query is
 test('the preview uses the existing gallery and does not activate payment or analytics flows', () => {
   const section = html.slice(html.indexOf('id="home-value"'), html.indexOf('</section>', html.indexOf('id="home-value"')));
   assert.match(section, /href="#gallery"/);
-  assert.match(section, /amitphotos\.com\/photos\/thumb\//);
+  assert.ok(section.includes('https://amitphotos.com/photos/f4c456db-3cfd-4d3e-978f-56cfbb82b46b.jpg'));
   assert.doesNotMatch(section, /data-analytics-event|paypal|payment|checkout/i);
   assert.match(html, /data-payments-state="disabled"/);
 });
