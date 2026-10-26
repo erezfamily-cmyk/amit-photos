@@ -128,7 +128,7 @@
       <li><a href="#gallery" id="nav-sale" data-i18n="nav.sale" data-analytics-event="nav_click" data-analytics-label="sale" onclick="event.preventDefault();document.getElementById('filter-bar')?.scrollIntoView({behavior:'smooth'});setTimeout(()=>{const btn=document.querySelector('.filter-btn-sale');if(btn)btn.click();},400)">מבצע</a></li>
       <li><a href="/camera/" data-i18n="nav.camera" data-analytics-event="nav_click" data-analytics-label="camera">למד לצלם</a></li>
       <li><a href="/locations/" data-i18n="nav.locations" data-analytics-event="nav_click" data-analytics-label="locations">מקומות לצילום</a></li>
-      <li><a href="#how-to-buy" data-i18n="nav.how-to-buy" data-analytics-event="nav_click" data-analytics-label="purchase_info">רכישה ורישוי</a></li>
+      <li><a href="#how-to-buy" data-i18n="nav.how-to-buy" data-analytics-event="nav_click" data-analytics-label="purchase_info">רכישה לשימוש אישי</a></li>
       <li><a href="#contact" data-i18n="nav.contact" data-analytics-event="nav_click" data-analytics-label="contact">צור קשר</a></li>
       <li class="nav-more">
         <details>
@@ -164,7 +164,7 @@
         <em data-i18n="hero.title.em">שלא רוצים שייגמרו.</em>
       </h1>
       <p class="hero-subtitle" data-i18n="hero.subtitle">אור שמופיע לרגע, מקום שנשאר בזיכרון, פרט קטן שכמעט פספסנו. בואו לגלות את העולם דרך העיניים שלי.</p>
-      <p class="hero-payment-note payments-disabled-only" data-i18n="payments.disabled.hero">מצאתם צילום שמתאים לכם? פתחו אותו ושלחו בירור רכישה או רישוי ב־WhatsApp.</p>
+      <p class="hero-payment-note payments-disabled-only" data-i18n="payments.disabled.hero">מצאתם צילום שמתאים לכם? פתחו אותו ושלחו בירור רכישה לשימוש אישי ב־WhatsApp.</p>
       <div class="hero-actions">
         <a href="#gallery" class="hero-cta" data-i18n="hero.cta" data-analytics-event="hero_gallery_click">גלו את הרגע שלכם</a>
         <a href="/sale/" class="hero-cta-ghost payments-enabled-only" data-i18n="hero.cta-sale" data-analytics-event="hero_sale_click">מבצע השבוע</a>
@@ -434,10 +434,10 @@
     </div>
     <div class="purchase-disabled-notice payments-disabled-only" role="status">
       <h3 data-i18n="payments.disabled.title">הרכישה המקוונת ב־PayPal עדיין לא נפתחה</h3>
-      <p data-i18n="payments.disabled.text">בחרו צילום בגלריה, ציינו אם השימוש אישי או עסקי ושלחו בקשה ב־WhatsApp. אחזור אליכם עם המחיר ותנאי הרישיון; לאחר אישור הפרטים נתאם תשלום ידני ב־Bit או PayBox.</p>
-      <a href="https://wa.me/972503333227?text=%D7%94%D7%99%D7%99%20%D7%A2%D7%9E%D7%99%D7%AA%2C%20%D7%90%D7%A9%D7%9E%D7%97%20%D7%9C%D7%91%D7%A8%D7%A8%20%D7%A8%D7%9B%D7%99%D7%A9%D7%94%20%D7%90%D7%95%20%D7%A8%D7%99%D7%A9%D7%95%D7%99%20%D7%A9%D7%9C%20%D7%A6%D7%99%D7%9C%D7%95%D7%9D.%20%D7%94%D7%A9%D7%99%D7%9E%D7%95%D7%A9%20%D7%94%D7%9E%D7%AA%D7%95%D7%9B%D7%A0%D7%9F%3A%20%D7%90%D7%99%D7%A9%D7%99%20%2F%20%D7%A2%D7%A1%D7%A7%D7%99." class="purchase-disabled-contact" target="_blank" rel="noopener" data-i18n="payments.disabled.call" data-analytics-event="purchase_inquiry_click" data-analytics-method="whatsapp">שליחת בקשה ב־WhatsApp</a>
+      <p data-i18n="payments.disabled.text">בחרו צילום בגלריה ושלחו בקשה לרכישה לשימוש אישי ב־WhatsApp. אחזור אליכם עם המחיר ותנאי השימוש; לאחר אישור הפרטים נתאם תשלום ידני ב־Bit או PayBox. שימוש עסקי, מסחרי או פרסומי אינו זמין כרגע.</p>
+      <a href="https://wa.me/972503333227?text=%D7%94%D7%99%D7%99%20%D7%A2%D7%9E%D7%99%D7%AA%2C%20%D7%90%D7%A9%D7%9E%D7%97%20%D7%9C%D7%91%D7%A8%D7%A8%20%D7%A8%D7%9B%D7%99%D7%A9%D7%94%20%D7%9C%D7%A9%D7%99%D7%9E%D7%95%D7%A9%20%D7%90%D7%99%D7%A9%D7%99.%20%D7%94%D7%A6%D7%99%D7%9C%D7%95%D7%9D%3A%20____" class="purchase-disabled-contact" target="_blank" rel="noopener" data-i18n="payments.disabled.call" data-analytics-event="purchase_inquiry_click" data-analytics-method="whatsapp">שליחת בקשה ב־WhatsApp</a>
     </div>
-    <div class="process-grid payments-disabled-only" aria-label="תהליך בירור רכישה ורישוי" data-i18n-aria="htb.temp.aria">
+    <div class="process-grid payments-disabled-only" aria-label="תהליך בירור רכישה לשימוש אישי" data-i18n-aria="htb.temp.aria">
       <div class="process-step reveal">
         <div class="process-num">01</div>
         <h3 class="process-step-title" data-i18n="htb.temp.s1.title">בחרו צילום</h3>
@@ -446,7 +446,7 @@
       <div class="process-step reveal reveal-delay-1">
         <div class="process-num">02</div>
         <h3 class="process-step-title" data-i18n="htb.temp.s2.title">ציינו את השימוש</h3>
-        <p class="process-step-desc" data-i18n="htb.temp.s2.desc">כתבו אם הצילום מיועד לשימוש אישי או לעסק, אתר, קמפיין או עבודה ללקוח.</p>
+        <p class="process-step-desc" data-i18n="htb.temp.s2.desc">הצילומים זמינים כרגע לשימוש אישי בלבד.</p>
       </div>
       <div class="process-step reveal reveal-delay-2">
         <div class="process-num">03</div>
@@ -553,7 +553,7 @@
     <div class="section-header reveal">
       <p class="section-label" data-i18n="pricing.label">רישיונות ומחירים</p>
       <h2 class="section-title" data-i18n="pricing.title">קבצים לשימוש אישי</h2>
-      <p class="section-subtitle" data-i18n="pricing.subtitle">המחירים המוצגים הם לרישיון אישי בלבד. שימוש עסקי או פרסומי מחייב הצעת רישוי נפרדת.</p>
+      <p class="section-subtitle" data-i18n="pricing.subtitle">המחירים והקבצים זמינים לשימוש אישי בלבד. שימוש עסקי, מסחרי או פרסומי אינו זמין בשלב זה.</p>
     </div>
     <div class="pricing-grid">
       <div class="pricing-card reveal">
@@ -601,10 +601,8 @@
       </div>
     </div>
     <div class="purchase-disabled-notice" role="note">
-      <h3 data-i18n="pricing.commercial.title">צריכים את הצילום לעסק?</h3>
-      <p data-i18n="pricing.commercial.text">שימוש באתר עסקי, קמפיין, משרד, מוצר או עבודה ללקוח דורש רישיון מסחרי מותאם להיקף השימוש.</p>
-      <a href="/licensing/" class="purchase-disabled-contact" data-i18n="pricing.commercial.cta" data-analytics-event="licensing_details_click">לפרטי רישוי מסחרי</a>
-    </div>
+       <p data-i18n="pricing.availability">כרגע ניתן לברר רכישה לשימוש אישי בלבד. שימוש עסקי, מסחרי או פרסומי אינו זמין בשלב זה.</p>
+     </div>
   </section>
 
   <!-- ===== PRINT FAQ ===== -->
@@ -673,7 +671,7 @@
     <div class="contact-wrapper">
       <div class="contact-info reveal">
         <h3 data-i18n="contact.h3">נשמח לשמוע ממך</h3>
-        <p data-i18n="contact.p">שאלה על תמונה? רוצה רישיון מסחרי? גודל מותאם אישית? השאר פרטים ואחזור אליך בהקדם.</p>
+        <p data-i18n="contact.p">שאלה על תמונה, רכישה לשימוש אישי או גודל מותאם אישית? השאר פרטים ואחזור אליך בהקדם.</p>
 
         <div class="contact-detail">
           <div class="contact-detail-icon">
@@ -717,7 +715,7 @@
             <select name="topic" id="topic">
               <option value="" data-i18n="contact.f.topic.select">בחר נושא...</option>
               <option data-i18n="contact.f.t1">רכישת תמונה</option>
-              <option data-i18n="contact.f.t2">רישיון מסחרי</option>
+              
               <option data-i18n="contact.f.t3">גודל מותאם אישית</option>
               <option data-i18n="contact.f.t4">שאלה כללית</option>
               <option data-i18n="contact.f.t5">אחר</option>
@@ -874,7 +872,7 @@
       <button id="lb-wall" class="lb-action-btn" data-i18n="lb.wall">🖼 על הקיר</button>
       <button id="lb-print" class="lb-action-btn lb-print-btn" data-i18n="lb.print">🖨️ הדפסה ←</button>
       <button id="lb-buy" class="lb-action-btn lb-buy-btn"><span data-i18n="lb.buy">רכישה ←</span><span id="lb-price-hint" class="lb-price-hint"></span></button>
-      <a id="lb-contact" class="lb-action-btn lb-contact-btn payments-disabled-only" target="_blank" rel="noopener" data-i18n="lb.contact" data-analytics-event="photo_contact_click" data-analytics-method="whatsapp">בירור רכישה או רישוי ב־WhatsApp</a>
+      <a id="lb-contact" class="lb-action-btn lb-contact-btn payments-disabled-only" target="_blank" rel="noopener" data-i18n="lb.contact" data-analytics-event="photo_contact_click" data-analytics-method="whatsapp">בירור רכישה לשימוש אישי ב־WhatsApp</a>
       <a id="lb-share-wa" class="lb-action-btn lb-whatsapp" target="_blank" rel="noopener" data-i18n="lb.whatsapp">וואטסאפ</a>
       <a id="lb-share-fb" class="lb-action-btn" target="_blank" rel="noopener" data-i18n="lb.facebook">פייסבוק</a>
       <a id="lb-share-pin" class="lb-action-btn lb-pinterest" target="_blank" rel="noopener" data-i18n="lb.pinterest">Pinterest</a>
