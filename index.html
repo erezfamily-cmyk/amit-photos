@@ -101,11 +101,11 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="preconnect" href="https://lh3.googleusercontent.com" crossorigin />
   <link rel="preload" as="image" href="https://amitphotos.com/photos/f4c456db-3cfd-4d3e-978f-56cfbb82b46b.jpg" fetchpriority="high" />
-  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Heebo:wght@300;400;500;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'" />
-  <noscript><link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Heebo:wght@300;400;500;700&display=swap" rel="stylesheet" /></noscript>
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500&family=Syne:wght@700;800&family=Heebo:wght@300;400;500;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500&family=Syne:wght@700;800&family=Heebo:wght@300;400;500;700&display=swap" rel="stylesheet" /></noscript>
 
   <link rel="stylesheet" href="assets/css/style.css?v=e965d255" />
-  <link rel="stylesheet" href="assets/css/home-experience-preview.css?v=1" />
+  <link rel="stylesheet" href="assets/css/home-experience-preview.css?v=4" />
   <script src="assets/js/home-experience-preview.js?v=1"></script>
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#0a0a0a" />
@@ -124,7 +124,7 @@
   <!-- ===== NAV ===== -->
   <nav id="main-nav">
     <a href="#hero" class="nav-logo"><span data-i18n="nav.logo.name">עמית ארז</span><span class="nav-logo-tagline" data-i18n="nav.logo.tagline"> | עולם של צבעים מבעד לעדשה</span></a>
-    <ul class="nav-links">
+    <ul class="nav-links" id="main-nav-links">
       <li><a href="#gallery" data-i18n="nav.gallery" data-analytics-event="nav_click" data-analytics-label="gallery">גלריה</a></li>
       <li><a href="#gallery" id="nav-sale" data-i18n="nav.sale" data-analytics-event="nav_click" data-analytics-label="sale" onclick="event.preventDefault();document.getElementById('filter-bar')?.scrollIntoView({behavior:'smooth'});setTimeout(()=>{const btn=document.querySelector('.filter-btn-sale');if(btn)btn.click();},400)">מבצע</a></li>
       <li><a href="/camera/" data-i18n="nav.camera" data-analytics-event="nav_click" data-analytics-label="camera">למד לצלם</a></li>
@@ -148,7 +148,7 @@
       <span class="lang-sep">|</span>
       <button type="button" class="lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
     </div>
-    <button class="nav-hamburger" data-i18n-aria="nav.menu" aria-label="תפריט">
+    <button type="button" class="nav-hamburger" data-i18n-aria="nav.menu" aria-label="תפריט" aria-controls="main-nav-links" aria-expanded="false">
       <span></span><span></span><span></span>
     </button>
   </nav>
@@ -1249,7 +1249,7 @@
     </div>
   </div>
 
-  <script src="assets/js/gallery.js?v=9d51e4fe"></script>
+  <script src="assets/js/gallery.js?v=c3a39890"></script>
   <script>
     // טוען נתוני Instagram מהדוח השבועי ומעדכן את כרטיס הפלטפורמות
     fetch('https://raw.githubusercontent.com/erezfamily-cmyk/amit-photos/main/data/social_report.json')

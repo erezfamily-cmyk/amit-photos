@@ -57,17 +57,20 @@ html.home-experience-preview .hero-content {
   animation: none;
 }
 html.home-experience-preview .hero-eyebrow {
-  color: var(--accent);
+  color: #566156;
   text-shadow: none;
   letter-spacing: .22em;
 }
 html.home-experience-preview .hero-title {
   color: var(--text);
   text-shadow: none;
+  font-family: 'Frank Ruhl Libre', Georgia, serif;
+  font-weight: 400;
+  letter-spacing: -.035em;
   line-height: 1.08;
-  font-size: clamp(2.5rem, 5.4vw, 5rem);
+  font-size: clamp(2.2rem, 4.8vw, 3.94rem);
 }
-html.home-experience-preview .hero-title em { color: var(--accent); }
+html.home-experience-preview .hero-title em { color: #47533b; }
 html.home-experience-preview .hero-subtitle {
   color: var(--text-muted);
   margin-inline: 0;
@@ -84,6 +87,11 @@ html.home-experience-preview .hero-cta {
   letter-spacing: .01em;
   text-transform: none;
 }
+html.home-experience-preview .hero .hero-cta {
+  background: #47533b;
+  color: #f4f0e8;
+}
+html.home-experience-preview .hero .hero-cta:hover { background: #3d4932; }
 html.home-experience-preview .hero-cta-ghost {
   border-color: var(--border);
   color: var(--text);
@@ -125,10 +133,13 @@ html.home-experience-preview .home-value-room-note {
   text-align: center;
   font-size: .78rem;
 }
-html.home-experience-preview .home-value-copy .section-label { color: var(--accent); }
+html.home-experience-preview .home-value-copy .section-label { color: #566156; }
 html.home-experience-preview .home-value-copy .section-title {
   margin: .25rem 0 1rem;
-  font-size: clamp(1.8rem, 3vw, 2.8rem);
+  font-family: 'Frank Ruhl Libre', Georgia, serif;
+  font-weight: 400;
+  letter-spacing: -.035em;
+  font-size: clamp(1.56rem, 3vw, 2.5rem);
   line-height: 1.12;
 }
 html.home-experience-preview .home-value-intro {
@@ -162,7 +173,7 @@ html.home-experience-preview .home-value-product-note {
   max-width: 40rem;
   margin: 1rem 0;
   padding-inline-start: .9rem;
-  border-inline-start: 2px solid var(--accent);
+  border-inline-start: 2px solid #47533b;
   color: #5c554b;
   font-size: .82rem;
   line-height: 1.7;
@@ -180,6 +191,30 @@ html.home-experience-preview .home-filter-wrap,
 html.home-experience-preview .featured-section,
 html.home-experience-preview .about-section,
 html.home-experience-preview .section { color: var(--text); }
+html.home-experience-preview #filter-bar {
+  min-height: 9rem;
+}
+html.home-experience-preview #filter-bar .filter-btn {
+  color: #394137;
+  background: rgba(255, 255, 255, .62);
+  border-color: #a9a398;
+  opacity: 1;
+  font-size: .75rem;
+  letter-spacing: .02em;
+}
+html.home-experience-preview #filter-bar .filter-btn:hover,
+html.home-experience-preview #filter-bar .filter-btn.active {
+  opacity: 1;
+}
+html.home-experience-preview #filter-bar .filter-btn.active {
+  color: #f4f0e8;
+  background: #47533b;
+  border-color: #47533b;
+}
+html.home-experience-preview .filter-taxonomy-label,
+html.home-experience-preview .gallery-context-label {
+  color: #566156;
+}
 @media (max-width: 900px) {
   html.home-experience-preview .hero {
     min-height: 0;
@@ -216,6 +251,50 @@ html.home-experience-preview .section { color: var(--text); }
   }
   html.home-experience-preview .home-value-room { padding: 1rem; }
   html.home-experience-preview .home-value-contexts { grid-template-columns: 1fr; }
+}
+@media (max-width: 768px) {
+  html.home-experience-preview #filter-bar { min-height: 15rem; }
+}
+@media (max-width: 1100px) {
+  html.home-experience-preview #main-nav {
+    gap: .75rem;
+    padding-inline: 1rem;
+  }
+  html.home-experience-preview .nav-logo {
+    flex: 0 1 auto;
+    max-width: min(240px, 42vw);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  html.home-experience-preview .nav-logo-tagline { display: none; }
+  html.home-experience-preview .lang-toggle {
+    flex: 0 0 auto;
+    margin-inline-start: auto;
+  }
+  html.home-experience-preview .nav-links {
+    position: fixed;
+    top: 64px;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    display: none;
+    flex-direction: column;
+    align-items: stretch;
+    gap: .35rem;
+    padding: 1rem 1.25rem;
+    background: var(--bg-nav);
+    border-bottom: 1px solid var(--border);
+    box-shadow: 0 12px 28px rgba(59, 47, 33, .12);
+  }
+  html.home-experience-preview .nav-links.open { display: flex; }
+  html.home-experience-preview .nav-links a {
+    display: block;
+    padding: .55rem .35rem;
+    white-space: normal;
+  }
+  html.home-experience-preview .nav-hamburger { display: flex; }
+  html.home-experience-preview .nav-hamburger span { background: var(--text); }
 }
 @media (prefers-reduced-motion: reduce) {
   html.home-experience-preview *, html.home-experience-preview *::before, html.home-experience-preview *::after {

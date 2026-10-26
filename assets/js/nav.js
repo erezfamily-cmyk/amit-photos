@@ -219,7 +219,7 @@ nav#main-nav .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px)
 <a href="${isHome ? '#hero' : '/'}" class="nav-logo" data-analytics-event="nav_click" data-analytics-label="home">
   <span data-nav="logo.name" data-i18n="nav.logo.name">עמית ארז</span><span class="nav-logo-tagline" data-nav="logo.tagline" data-i18n="nav.logo.tagline"> | עולם של צבעים מבעד לעדשה</span>
 </a>
-<ul class="nav-links">
+<ul class="nav-links" id="main-nav-links">
   <li><a href="${a('#gallery')}" data-i18n="nav.gallery" data-analytics-event="nav_click" data-analytics-label="gallery">גלריה</a></li>
   <li><a href="${a('#gallery')}" id="nav-sale" data-i18n="nav.sale" data-analytics-event="nav_click" data-analytics-label="sale">מבצע</a></li>
   <li><a href="/camera/" data-i18n="nav.camera" data-analytics-event="nav_click" data-analytics-label="camera">למד לצלם</a></li>
@@ -250,7 +250,7 @@ nav#main-nav .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px)
   <span class="lang-sep">|</span>
   <button type="button" class="lang-btn" data-lang="en" aria-label="EN — English">EN</button>
 </div>
-<button class="nav-hamburger" aria-label="תפריט">
+<button type="button" class="nav-hamburger" aria-label="תפריט" aria-controls="main-nav-links" aria-expanded="false">
   <span></span><span></span><span></span>
 </button>
 `;
@@ -260,8 +260,10 @@ nav#main-nav .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px)
   const hamburger = nav.querySelector('.nav-hamburger');
   const links = nav.querySelector('.nav-links');
   hamburger.addEventListener('click', function () {
-    this.classList.toggle('open');
-    links.classList.toggle('open');
+    const isOpen = !links.classList.contains('open');
+    this.classList.toggle('open', isOpen);
+    links.classList.toggle('open', isOpen);
+    this.setAttribute('aria-expanded', String(isOpen));
   });
 
   // close mobile menu on link click
@@ -269,6 +271,16 @@ nav#main-nav .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px)
     if (e.target.tagName === 'A') {
       hamburger.classList.remove('open');
       links.classList.remove('open');
+      hamburger.setAttribute('aria-expanded', 'false');
+    }
+  });
+
+  nav.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape' && links.classList.contains('open')) {
+      hamburger.classList.remove('open');
+      links.classList.remove('open');
+      hamburger.setAttribute('aria-expanded', 'false');
+      hamburger.focus();
     }
   });
 
