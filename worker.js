@@ -835,12 +835,18 @@ async function handleCustomers(request, env) {
 // Read ONLY the already-public production gallery, never admin=1, D1 secrets, or writes.
 // Production hosts do not expose this endpoint; failed upstream responses fail closed.
 const EXPERIENCE_PREVIEW_HOST_SUFFIX = '-amit-photos-paypal-sandbox.erez-family.workers.dev';
+function previewGalleryUnavailable(request, source) {
+  const response = jsonRes({ error: 'public gallery unavailable' }, 503, request);
+  response.headers.set('X-Preview-Gallery-Source', source);
+  return response;
+}
 async function handleExperiencePreviewPublicPhotos(request, env) {
   const host = new URL(request.url).hostname.toLowerCase();
   if (!host.endsWith(EXPERIENCE_PREVIEW_HOST_SUFFIX)) {
     return new Response('Not found', { status: 404 });
   }
   if (request.method !== 'GET') return jsonRes({ error: 'method not allowed' }, 405, request);
+  let source = 'external-unavailable';
   try {
     // The Worker is explicitly routed on www.amitphotos.com; the apex can
     // redirect there. Since redirects are disallowed, try both exact trusted
@@ -860,13 +866,18 @@ async function handleExperiencePreviewPublicPhotos(request, env) {
           headers: { Accept: 'application/json' },
         }),
       );
-      if (!response.ok) return jsonRes({ error: 'public gallery unavailable' }, 503, request);
+      if (!response.ok) {
+        return previewGalleryUnavailable(request, 'service-status-' + response.status);
+      }
       const rows = await response.json();
       if (!Array.isArray(rows) || !rows.length || rows.length > 5000) {
-        return jsonRes({ error: 'public gallery unavailable' }, 503, request);
+        return previewGalleryUnavailable(request, 'service-invalid-json');
       }
       published = rows;
-    } else for (const url of publicGalleryUrls) {
+      source = 'service-binding';
+    } else {
+      source = 'service-binding-missing';
+      for (const url of publicGalleryUrls) {
       try {
         const response = await fetch(url, {
           method: 'GET',
@@ -880,8 +891,9 @@ async function handleExperiencePreviewPublicPhotos(request, env) {
           break;
         }
       } catch (_) { /* Try the other canonical public hostname. */ }
+      }
     }
-    if (!published) return jsonRes({ error: 'public gallery unavailable' }, 503, request);
+    if (!published) return previewGalleryUnavailable(request, source);
     // Preserve the canonical public API's published-only filtering. Explicitly
     // exclude a row if the source unexpectedly labels it unpublished.
     const absolutePhotoAsset = path => typeof path === 'string' && path.startsWith('/')
@@ -892,13 +904,13 @@ async function handleExperiencePreviewPublicPhotos(request, env) {
         thumbnail: absolutePhotoAsset(photo.thumbnail),
         url: absolutePhotoAsset(photo.url),
     }));
-    if (!rows.length) return jsonRes({ error: 'public gallery unavailable' }, 503, request);
+    if (!rows.length) return previewGalleryUnavailable(request, source + '-empty');
     return new Response(JSON.stringify(rows), {
       status: 200,
       headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=60' },
     });
   } catch (_) {
-    return jsonRes({ error: 'public gallery unavailable' }, 503, request);
+    return previewGalleryUnavailable(request, source + '-exception');
   }
 }
 
