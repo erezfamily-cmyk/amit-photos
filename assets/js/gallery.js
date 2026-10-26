@@ -1097,8 +1097,8 @@ function initLightbox() {
 
   function openWallMockup(photo, origin = 'lightbox') {
     wallImg.src = getLightboxUrl(photo.url);
-    wallImg.alt = photo.title;
-    wallLabel.textContent = photo.title || '';
+    wallImg.alt = localizedPhotoAlt(photo);
+    wallLabel.textContent = localizedPhotoTitle(photo);
     wallModal.classList.add('open');
     document.body.style.overflow = 'hidden';
     openModalA11y(wallModal, '#wall-modal-close');
@@ -1376,7 +1376,7 @@ function openLightbox(idx) {
         const src = p.thumbnail || p.url;
         const thumbSrc = src?.startsWith('/photos/') ? src + '?w=150' : src;
         return `<div class="lb-related-thumb" data-id="${p.id}" data-idx="${relIdx}">
-          <img src="${thumbSrc}" alt="${p.title}" width="${p.width || 800}" height="${p.height || 600}" loading="lazy" />
+          <img src="${thumbSrc}" alt="${localizedPhotoAlt(p)}" width="${p.width || 800}" height="${p.height || 600}" loading="lazy" />
         </div>`;
       }).join('');
       relatedTrack.querySelectorAll('.lb-related-thumb').forEach(t => {
@@ -1422,12 +1422,12 @@ function openLightbox(idx) {
   const shareUrl = window.location.origin + '/photo/' + photo.id;
   const hashUrl  = window.location.href.split('#')[0] + '#photo-' + photo.id;
   const waBtn = document.getElementById('lb-share-wa');
-  if (waBtn) waBtn.href = `https://api.whatsapp.com/send?text=${encodeURIComponent(photo.title + ' — ' + shareUrl)}`;
+  if (waBtn) waBtn.href = `https://api.whatsapp.com/send?text=${encodeURIComponent(localizedPhotoTitle(photo) + ' — ' + shareUrl)}`;
 
   const contactBtn = document.getElementById('lb-contact');
   if (contactBtn) {
     const contactMessage = getLang() === 'en'
-      ? `Hi Amit, I'd like details about the photograph "${photo.title_en || photo.title}".\nPhoto ID: ${photo.id}\nLink: ${shareUrl}\nIntended use: personal use.`
+      ? `Hi Amit, I'd like details about the photograph "${localizedPhotoTitle(photo)}".\nPhoto ID: ${photo.id}\nLink: ${shareUrl}\nIntended use: personal use.`
       : `היי עמית, אשמח לקבל פרטים על הצילום "${photo.title}".\nמזהה צילום: ${photo.id}\nקישור: ${shareUrl}\nהשימוש המתוכנן: אישי בלבד.`;
     contactBtn.href = `https://wa.me/972503333227?text=${encodeURIComponent(contactMessage)}`;
     contactBtn.dataset.analyticsPhotoId = String(photo.id || '');
@@ -1439,7 +1439,7 @@ function openLightbox(idx) {
   const pinBtn = document.getElementById('lb-share-pin');
   if (pinBtn) {
     const imgUrl = window.location.origin + '/photos/' + photo.id + '.jpg';
-    pinBtn.href = `https://pinterest.com/pin/create/button/?url=${encodeURIComponent(shareUrl)}&media=${encodeURIComponent(photo.url || imgUrl)}&description=${encodeURIComponent(photo.title + (photo.description ? ' — ' + photo.description : '') + ' | עמית ארז צילום')}`;
+    pinBtn.href = `https://pinterest.com/pin/create/button/?url=${encodeURIComponent(shareUrl)}&media=${encodeURIComponent(photo.url || imgUrl)}&description=${encodeURIComponent(localizedPhotoTitle(photo) + (localizedPhotoDescription(photo) ? ' — ' + localizedPhotoDescription(photo) : '') + (getLang() === 'en' ? ' | Amit Erez Photography' : ' | עמית ארז צילום'))}`;
   }
 
   const copyBtn = document.getElementById('lb-copy-link');
@@ -1455,8 +1455,8 @@ function openLightbox(idx) {
 
   // Update meta tags for sharing
   const photoThumb = photo.thumbnail || photo.url;
-  document.querySelector('meta[property="og:title"]')?.setAttribute('content', `${photo.title} — עמית ארז`);
-  document.querySelector('meta[property="og:description"]')?.setAttribute('content', photo.description || 'תמונה אמנותית מגלריית עמית ארז — לרכישה ולהדפסה');
+  document.querySelector('meta[property="og:title"]')?.setAttribute('content', `${localizedPhotoTitle(photo)} — ${getLang() === 'en' ? 'Amit Erez' : 'עמית ארז'}`);
+  document.querySelector('meta[property="og:description"]')?.setAttribute('content', localizedPhotoDescription(photo) || (getLang() === 'en' ? 'Fine art photograph from Amit Erez Photography' : 'תמונה אמנותית מגלריית עמית ארז'));
   document.querySelector('meta[property="og:image"]')?.setAttribute('content', photoThumb);
   document.querySelector('meta[property="og:url"]')?.setAttribute('content', shareUrl);
 
