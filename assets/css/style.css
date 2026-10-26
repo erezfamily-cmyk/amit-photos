@@ -1486,6 +1486,14 @@ body[data-payments-state="enabled"] .payments-disabled-only {
 
 /* ===== LIGHTBOX ===== */
 .lightbox {
+  /* Keep the modal on its own dark palette even when the page theme is light. */
+  color-scheme: dark;
+  --text: #f5f1ea;
+  --text-muted: #c7c2ba;
+  --accent: #e4bd7a;
+  --accent-hover: #f1d59c;
+  --border: #6e665b;
+  color: var(--text);
   position: fixed;
   inset: 0;
   z-index: 1000;
@@ -1523,7 +1531,7 @@ body[data-payments-state="enabled"] .payments-disabled-only {
   position: absolute;
   bottom: 14px;
   left: 18px;
-  color: rgba(255,255,255,0.5);
+  color: rgba(255,255,255,0.78);
   font-size: 0.72rem;
   font-family: var(--font);
   letter-spacing: 0.08em;
@@ -1539,8 +1547,8 @@ body[data-payments-state="enabled"] .payments-disabled-only {
   right: 1.5rem;
   width: 44px;
   height: 44px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.42);
   border-radius: 50%;
   color: var(--text);
   font-size: 1.1rem;
@@ -1558,8 +1566,8 @@ body[data-payments-state="enabled"] .payments-disabled-only {
   position: fixed;
   top: 50%;
   transform: translateY(-50%);
-  background: rgba(255, 255, 255, 0.07);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.42);
   color: var(--text);
   font-size: 1.4rem;
   width: 52px;
@@ -1751,7 +1759,7 @@ body[data-payments-state="enabled"] .payments-disabled-only {
   text-align: center;
 }
 .lb-related-label {
-  font-size: 0.65rem;
+  font-size: 0.72rem;
   color: var(--text-muted);
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -1819,7 +1827,7 @@ body[data-payments-state="enabled"] .payments-disabled-only {
   pointer-events: none;
 }
 .lb-rb-item span {
-  font-size: 0.68rem;
+  font-size: 0.78rem;
   color: var(--text-muted);
   max-width: 110px;
   overflow: hidden;
@@ -1871,7 +1879,7 @@ body[data-payments-state="enabled"] .payments-disabled-only {
   pointer-events: none;
 }
 .lb-zz-item span {
-  font-size: 0.68rem;
+  font-size: 0.78rem;
   color: var(--text-muted);
   max-width: 110px;
   overflow: hidden;
@@ -1894,7 +1902,7 @@ body[data-payments-state="enabled"] .payments-disabled-only {
   border-radius: 8px;
   border: 1px dashed rgba(255,255,255,.25);
   color: var(--accent);
-  font-size: 0.75rem;
+  font-size: 0.82rem;
   font-weight: 600;
   white-space: normal;
   padding: 0 .5rem;

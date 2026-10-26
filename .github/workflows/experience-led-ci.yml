@@ -9,6 +9,7 @@ on:
       - 'assets/js/i18n.js'
       - 'assets/js/home-experience-preview.js'
       - 'tests/home-emotional-preview.test.mjs'
+      - 'tests/gallery-language-fallback.test.mjs'
       - 'tests/experience-hero.test.mjs'
       - 'tests/experience-paths.test.mjs'
       - 'tests/inline-homepage-scripts.test.mjs'
@@ -51,6 +52,7 @@ jobs:
           tests/homepage-hierarchy-redesign.test.mjs
           tests/ux-analytics-instrumentation.test.mjs
           tests/home-emotional-preview.test.mjs
+          tests/gallery-language-fallback.test.mjs
       - name: Diagnose live public experience API (read-only)
         continue-on-error: true
         run: |
