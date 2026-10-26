@@ -1230,10 +1230,10 @@ function openLightbox(idx) {
   };
   window._currentLightboxPhoto = photo;
   img.src = getLightboxUrl(photo.thumbnail || photo.url);
-  img.alt = photo.alt || photo.title;
+  img.alt = getLang() === 'en' ? (photo.alt_en || photo.title_en || photo.alt || photo.title) : (photo.alt || photo.title);
   document.getElementById('lb-title').textContent = (getLang() === 'en' && photo.title_en) ? photo.title_en : photo.title;
   const catEl = document.getElementById('lb-cat');
-  catEl.textContent = photo.category;
+  catEl.textContent = getCategoryLabel(photo.category);
   catEl.className = 'lb-cat-link';
   catEl.onclick = () => {
     closeLightbox();
@@ -2641,6 +2641,10 @@ window.onLangChange = function() {
     }
     const titleEl = document.getElementById('lb-title');
     if (titleEl) titleEl.textContent = (getLang() === 'en' && photo.title_en) ? photo.title_en : photo.title;
+    const catEl = document.getElementById('lb-cat');
+    if (catEl) catEl.textContent = getCategoryLabel(photo.category);
+    const img = document.getElementById('lb-img');
+    if (img) img.alt = getLang() === 'en' ? (photo.alt_en || photo.title_en || photo.alt || photo.title) : (photo.alt || photo.title);
   }
   PrintShop.onLangChange();
 };
