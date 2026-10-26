@@ -1389,8 +1389,8 @@ function openLightbox(idx) {
   const contactBtn = document.getElementById('lb-contact');
   if (contactBtn) {
     const contactMessage = getLang() === 'en'
-      ? `Hi Amit, I'm interested in purchasing the photo "${photo.title_en || photo.title}": ${shareUrl}`
-      : `היי עמית, אני מתעניין/ת ברכישת התמונה "${photo.title}": ${shareUrl}`;
+      ? `Hi Amit, I'd like details about the photograph "${photo.title_en || photo.title}".\nPhoto ID: ${photo.id}\nLink: ${shareUrl}\nIntended use: personal / business (please delete one).`
+      : `היי עמית, אשמח לקבל פרטים על הצילום "${photo.title}".\nמזהה צילום: ${photo.id}\nקישור: ${shareUrl}\nהשימוש המתוכנן: אישי / עסקי (נא למחוק את המיותר).`;
     contactBtn.href = `https://wa.me/972503333227?text=${encodeURIComponent(contactMessage)}`;
     contactBtn.dataset.analyticsPhotoId = String(photo.id || '');
   }

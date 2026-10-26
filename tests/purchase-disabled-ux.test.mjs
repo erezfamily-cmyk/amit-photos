@@ -45,10 +45,31 @@ test('homepage cache-busts every asset that implements the purchase-state UI', (
 
 test('disabled-purchase notice offers a real contact route in Hebrew and English', () => {
   assert.match(html, /class="[^"]*payments-disabled-only[^"]*"/);
-  assert.match(html, /href="tel:0503333227"/);
+  assert.match(html, /href="https:\/\/wa\.me\/972503333227\?text=/);
+  assert.match(html, /data-analytics-event="purchase_inquiry_click"/);
   assert.match(i18n, /'payments\.disabled\.title'/);
-  assert.match(i18n, /הרכישה המקוונת נמצאת בשדרוג אבטחה/);
-  assert.match(i18n, /Online purchasing is undergoing a security upgrade/);
+  assert.match(i18n, /הרכישה המקוונת ב־PayPal עדיין לא נפתחה/);
+  assert.match(i18n, /Online PayPal purchasing is not open yet/);
+});
+
+test('disabled-purchase journey explains photo, use, inquiry and quote steps', () => {
+  assert.match(html, /class="process-grid payments-disabled-only"/);
+  for (const key of ['htb.temp.s1.title', 'htb.temp.s2.title', 'htb.temp.s3.title', 'htb.temp.s4.title']) {
+    assert.match(html, new RegExp(`data-i18n="${key.replaceAll('.', '\\.')}"`));
+  }
+  assert.match(gallery, /מזהה צילום: \$\{photo\.id\}/);
+  assert.match(gallery, /השימוש המתוכנן: אישי \/ עסקי/);
+  assert.match(gallery, /Photo ID: \$\{photo\.id\}/);
+  assert.match(gallery, /Intended use: personal \/ business/);
+});
+
+test('homepage separates personal file prices from tailored commercial licensing', () => {
+  assert.match(html, /data-i18n="pricing\.subtitle"/);
+  assert.match(html, /href="\/licensing\/"[^>]*data-i18n="pricing\.commercial\.cta"/);
+  assert.doesNotMatch(i18n, /'pricing\.full\.f3':\s+'(?:שימוש מסחרי|Commercial use)'/);
+  assert.doesNotMatch(i18n, /'pricing\.full\.f4':\s+'(?:כל הזכויות כלולות|All rights included)'/);
+  assert.match(i18n, /'pricing\.full\.f3':\s+'שימוש אישי בלבד'/);
+  assert.match(i18n, /'pricing\.full\.f4':\s+'זכויות היוצרים נשארות בידי עמית'/);
 });
 
 test('PayPal checkout instructions and print-order FAQ are shown only when payments are enabled', () => {
@@ -75,7 +96,7 @@ test('published newsletter issues do not advertise PayPal or sale checkout while
   const end = worker.indexOf('async function handleAdminNlList', start);
   const source = worker.slice(start, end);
   assert.match(source, /const purchasesEnabled\s*=\s*paymentsEnabled\(env\)/);
-  assert.match(source, /purchasesEnabled\s*\?\s*`[\s\S]*PayPal[\s\S]*`\s*:\s*`[\s\S]*שדרוג אבטחה/);
+  assert.match(source, /purchasesEnabled\s*\?\s*`[\s\S]*PayPal[\s\S]*`\s*:\s*`[\s\S]*בירור רכישה או רישוי/);
   assert.match(source, /const saleBannerSection\s*=\s*purchasesEnabled\s*&&/);
 });
 
@@ -115,8 +136,9 @@ function newsletterEnv(paymentsFlag) {
 test('rendered newsletter issue is fail-closed when the payments flag is false', async () => {
   const response = await handleNlIssue(newsletterEnv('false'), 'test-issue', false);
   const rendered = await response.text();
-  assert.match(rendered, /הרכישה המקוונת נמצאת בשדרוג אבטחה/);
-  assert.match(rendered, /href="tel:\+972503333227"/);
+  assert.match(rendered, /הרכישה המקוונת ב־PayPal עדיין לא נפתחה/);
+  assert.match(rendered, /href="https:\/\/wa\.me\/972503333227\?text=/);
+  assert.match(rendered, /%3A%20photo-1%0A/);
   assert.doesNotMatch(rendered, /Buy with PayPal|רכוש קובץ ב-PayPal/);
   assert.doesNotMatch(rendered, /מבצע שלא אמור להופיע|₪50/);
 });
@@ -126,5 +148,5 @@ test('rendered newsletter issue restores checkout messaging only for exact true'
   const rendered = await response.text();
   assert.match(rendered, /Buy with PayPal|רכוש קובץ ב-PayPal/);
   assert.match(rendered, /מבצע שלא אמור להופיע|₪50/);
-  assert.doesNotMatch(rendered, /הרכישה המקוונת נמצאת בשדרוג אבטחה/);
+  assert.doesNotMatch(rendered, /הרכישה המקוונת ב־PayPal עדיין לא נפתחה/);
 });

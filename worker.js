@@ -7063,6 +7063,9 @@ export async function handleNlIssue(env, slug, isPreview) {
   const dateStr = issue.published_at ? issue.published_at.slice(0, 10) : new Date().toISOString().slice(0, 10);
   const pageUrl = `https://amitphotos.com/newsletter/${slug}/`;
   const waHref = escXml(`https://wa.me/?text=${encodeURIComponent(issue.title_he + ' — ' + pageUrl)}`);
+  const purchaseInquiryHref = escXml(`https://wa.me/972503333227?text=${encodeURIComponent(
+    `היי עמית, אשמח לקבל פרטים על הצילום "${c.hero?.title_he || ''}".\nמזהה צילום: ${c.hero?.photo_id || ''}\nקישור: ${pageUrl}\nהשימוש המתוכנן: אישי / עסקי (נא למחוק את המיותר).`
+  )}`);
 
   const heroPriceHtml = purchasesEnabled && c.sale?.sale_price ? `
       <div class="nl-hero-price">
@@ -7071,7 +7074,7 @@ export async function handleNlIssue(env, slug, isPreview) {
       </div>` : '';
   const heroOrderHtml = purchasesEnabled
     ? `<a class="nl-btn-secondary nl-hero-order" href="/?photo=${escXml(c.hero?.photo_id || '')}" data-he="רכוש קובץ ב-PayPal ←" data-en="Buy with PayPal →">רכוש קובץ ב-PayPal ←</a>`
-    : `<a class="nl-btn-secondary nl-hero-order" href="tel:+972503333227" data-he="יצירת קשר לרכישה ←" data-en="Contact to Purchase →">יצירת קשר לרכישה ←</a>`;
+    : `<a class="nl-btn-secondary nl-hero-order" href="${purchaseInquiryHref}" target="_blank" rel="noopener" data-he="בירור רכישה או רישוי ←" data-en="Purchase or Licensing Inquiry →">בירור רכישה או רישוי ←</a>`;
   const heroSection = c.hero ? `
     <section class="nl-section nl-hero-section">
       <a href="/?photo=${escXml(c.hero.photo_id)}" style="display:block;text-decoration:none">
@@ -7281,7 +7284,7 @@ export async function handleNlIssue(env, slug, isPreview) {
   };
   const paymentAvailabilityNote = purchasesEnabled
     ? `<p class="nl-contact-note" data-he="ניתן לשלם: ביט · פייבוקס · PayPal" data-en="Payment: Bit · Paybox · PayPal">ניתן לשלם: ביט · פייבוקס · PayPal</p>`
-    : `<p class="nl-contact-note" data-he="הרכישה המקוונת נמצאת בשדרוג אבטחה — לתיאום רכישה פנו אליי ישירות" data-en="Online purchasing is undergoing a security upgrade — contact me directly to arrange a purchase">הרכישה המקוונת נמצאת בשדרוג אבטחה — לתיאום רכישה פנו אליי ישירות</p>`;
+    : `<p class="nl-contact-note" data-he="הרכישה המקוונת ב־PayPal עדיין לא נפתחה — אפשר לשלוח בירור לרכישה או לרישיון ב־WhatsApp" data-en="Online PayPal purchasing is not open yet — send a purchase or licensing inquiry on WhatsApp">הרכישה המקוונת ב־PayPal עדיין לא נפתחה — אפשר לשלוח בירור לרכישה או לרישיון ב־WhatsApp</p>`;
   const contactOutreachSection = `
     <section class="nl-section nl-contact-section">
       <div class="nl-contact-card">
