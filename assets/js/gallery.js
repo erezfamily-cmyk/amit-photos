@@ -623,12 +623,12 @@ function renderGallery(append = false) {
     item.dataset.idx = idx;
     item.tabIndex = 0;
     item.setAttribute('role', 'button');
-    item.setAttribute('aria-label', `${photo.title || ''} — ${t('gallery.item.aria')}`);
+    item.setAttribute('aria-label', `${localizedPhotoTitle(photo)} — ${t('gallery.item.aria')}`);
     const wished = wishlist.has(photo.id);
     item.innerHTML = `
       <img
         src="${getGalleryThumbUrl(photo.thumbnail || photo.url)}"
-        alt="${photo.alt || photo.title}"
+        alt="${localizedPhotoAlt(photo)}"
         width="${photo.width || 800}"
         height="${photo.height || 600}"
         ${idx < 3 ? 'loading="eager" fetchpriority="high"' : 'loading="lazy"'}
@@ -640,7 +640,7 @@ function renderGallery(append = false) {
       ${isNew(photo) ? `<div class="gallery-new-badge">${t('gallery.badge.new')}</div>` : ''}
       ${isOnSale(photo) ? `<div class="gallery-sale-badge">${t('gallery.badge.sale')}</div>` : ''}
       ${isWeekPhoto(photo) ? `<div class="gallery-week-badge">${t('gallery.badge.week')}</div>` : ''}
-      <button class="gallery-wish-btn${wished ? ' wished' : ''}" data-id="${photo.id}" aria-label="שמור למועדפים">${wished ? '♥' : '♡'}</button>
+      <button class="gallery-wish-btn${wished ? ' wished' : ''}" data-id="${photo.id}" aria-label="${t('gallery.wishlist.save')}">${wished ? '♥' : '♡'}</button>
       <div class="gallery-item-overlay">
         <div class="gallery-item-info">
       <h3>${localizedPhotoTitle(photo)}</h3>
