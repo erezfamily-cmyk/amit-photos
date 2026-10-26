@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - 'tests/experience-live-smoke.mjs'
+      - 'tests/photo-language-browser.mjs'
       - '.github/workflows/experience-live-smoke.yml'
       - 'index.html'
       - 'assets/js/gallery.js'
@@ -37,6 +38,10 @@ jobs:
           EXPERIENCE_PREVIEW_URL: https://feature-experience-analytics-story-p-amit-photos-paypal-sandbox.erez-family.workers.dev/
           EXPERIENCE_BROWSER: ${{ matrix.browser }}
         run: node tests/experience-live-smoke.mjs
+      - name: Exercise current PR checkout's bilingual lightbox and wall preview
+        env:
+          EXPERIENCE_BROWSER: ${{ matrix.browser }}
+        run: node tests/photo-language-browser.mjs
       - name: Save read-only QA evidence and screenshots
         if: always()
         uses: actions/upload-artifact@v4
