@@ -109,7 +109,7 @@ gtag('config','G-XM6T3E8QWN',{send_page_view:true});
          data-en="Up to 1500px on the long edge. Suitable for screens, personal wallpaper and personal posts.">
          עד 1500px בצלע הארוכה. מתאים למסכים, רקע אישי ופוסטים אישיים.
       </p>
-      <div class="price" data-price-size="small">₪19</div>
+      <div class="price" data-he="המחיר יימסר בפנייה" data-en="Price provided upon inquiry">המחיר יימסר בפנייה</div>
     </article>
     <article class="card">
       <h3 data-he="קובץ הדפסה" data-en="Print-ready file">קובץ הדפסה</h3>
@@ -117,7 +117,7 @@ gtag('config','G-XM6T3E8QWN',{send_page_view:true});
          data-en="Up to 3000px on the long edge. Suitable for high-quality personal use and a one-off home print.">
          עד 3000px בצלע הארוכה. מתאים לשימוש אישי באיכות גבוהה ולהדפסה ביתית חד-פעמית.
       </p>
-      <div class="price" data-price-size="medium">₪59</div>
+      <div class="price" data-he="המחיר יימסר בפנייה" data-en="Price provided upon inquiry">המחיר יימסר בפנייה</div>
     </article>
     <article class="card">
       <h3 data-he="קובץ מלא" data-en="Full-size file">קובץ מלא</h3>
@@ -125,7 +125,7 @@ gtag('config','G-XM6T3E8QWN',{send_page_view:true});
          data-en="The largest available file for the image. Suitable for maximum-resolution personal use.">
          הקובץ הגדול הזמין לפי התמונה. מתאים לשימוש אישי ברזולוציה המרבית.
       </p>
-      <div class="price" data-price-size="large">₪129</div>
+      <div class="price" data-he="המחיר יימסר בפנייה" data-en="Price provided upon inquiry">המחיר יימסר בפנייה</div>
     </article>
   </div>
 
@@ -154,9 +154,9 @@ gtag('config','G-XM6T3E8QWN',{send_page_view:true});
   </div>
 
   <p class="small"
-    data-he="המחירים נטענים מאותה הגדרת מחירים שמשמשת את ההורדות באתר. לתמונה מסוימת עשויה להיות התאמת מחיר; המחיר הקובע ותנאי הרישיון יאושרו בכתב לפני התשלום. אין להעביר, למכור מחדש, להפיץ את הקובץ או להעניק לו רישיון משנה. שימוש עסקי, מסחרי או פרסומי אינו זמין כרגע."
-    data-en="Prices are loaded from the same settings used for the site's digital downloads. A specific image may have a price adjustment; the final price and license terms will be confirmed in writing before payment. The file may not be transferred, resold, redistributed or sublicensed. Business, commercial and advertising use is currently unavailable.">
-    המחירים נטענים מאותה הגדרת מחירים שמשמשת את ההורדות באתר. לתמונה מסוימת עשויה להיות התאמת מחיר; המחיר הקובע ותנאי הרישיון יאושרו בכתב לפני התשלום. אין להעביר, למכור מחדש, להפיץ את הקובץ או להעניק לו רישיון משנה. שימוש עסקי, מסחרי או פרסומי אינו זמין כרגע.
+    data-he="הרכישה המקוונת עדיין אינה זמינה. שלחו פנייה לגבי צילום לשימוש אישי ונחזור אליכם עם פרטי הרישיון והמחיר. בשלב זה איננו מציעים רישיונות לשימוש עסקי, מסחרי או פרסומי."
+    data-en="Online purchasing is not available yet. Send an inquiry about a photo for personal use, and we’ll reply with the license details and price. Business, commercial and advertising licenses are not available at this time.">
+    הרכישה המקוונת עדיין אינה זמינה. שלחו פנייה לגבי צילום לשימוש אישי ונחזור אליכם עם פרטי הרישיון והמחיר. בשלב זה איננו מציעים רישיונות לשימוש עסקי, מסחרי או פרסומי.
   </p>
 </main>
 <footer style="text-align:center;padding:1.5rem 1.25rem;border-top:1px solid #222;color:#666;font-size:.8rem">
@@ -169,46 +169,7 @@ gtag('config','G-XM6T3E8QWN',{send_page_view:true});
 
 <script>
 (function () {
-  const ILS_TO_USD = 3.7;
   let currentLang = 'he';
-  let currentPrices = { small: 19, medium: 59, large: 129 };
-
-  function formatPrice(ils) {
-    const value = Number(ils);
-    if (!Number.isFinite(value)) return '';
-    return currentLang === 'en'
-      ? '$' + Math.round(value / ILS_TO_USD)
-      : '₪' + value;
-  }
-
-  function renderPrices() {
-    document.querySelectorAll('[data-price-size]').forEach(function (el) {
-      const size = el.dataset.priceSize;
-      if (currentPrices[size] != null) el.textContent = formatPrice(currentPrices[size]);
-    });
-  }
-
-  async function loadCurrentPrices() {
-    try {
-      const response = await fetch('/api/admin/prices', {
-        headers: { 'Accept': 'application/json' }
-      });
-      if (!response.ok) return;
-      const data = await response.json();
-      if (['small', 'medium', 'large'].every(function (size) {
-        return Number.isFinite(Number(data[size]));
-      })) {
-        currentPrices = {
-          small: Number(data.small),
-          medium: Number(data.medium),
-          large: Number(data.large)
-        };
-        renderPrices();
-      }
-    } catch (e) {
-      // Fail safe: keep display defaults. A future checkout remains server-authoritative.
-    }
-  }
 
   const T = {
     he: {
@@ -238,7 +199,6 @@ gtag('config','G-XM6T3E8QWN',{send_page_view:true});
 
     document.getElementById('lang-he')?.classList.toggle('active', lang === 'he');
     document.getElementById('lang-en')?.classList.toggle('active', lang === 'en');
-    renderPrices();
   };
 
   let initial = 'he';
@@ -253,7 +213,6 @@ gtag('config','G-XM6T3E8QWN',{send_page_view:true});
   }
 
   setLicensingLang(initial);
-  loadCurrentPrices();
 })();
 </script>
 </body>
