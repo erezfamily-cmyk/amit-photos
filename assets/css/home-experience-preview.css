@@ -31,6 +31,12 @@ html.home-experience-preview[lang="en"] .section-title {
   letter-spacing: -.035em;
   line-height: 1.15;
 }
+html.home-experience-preview[lang="he"] .section-title {
+  font-family: 'Frank Ruhl Libre', Georgia, serif;
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 1.2;
+}
 html.home-experience-preview #beta-banner {
   background: #ebe4d8;
   color: #494238;
