@@ -8,7 +8,7 @@ import { resolve, sep, extname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { chromium, webkit } from 'playwright';
 
-const root = fileURLToPath(new URL('../', import.meta.url));
+const root = resolve(fileURLToPath(new URL('../', import.meta.url))); // normalize trailing slash before containment checks
 const engine = process.env.EXPERIENCE_BROWSER || 'chromium';
 assert.ok(['chromium', 'webkit'].includes(engine));
 const photos = [
@@ -85,7 +85,17 @@ try {
   const errors = [];
   page.on('pageerror', e => errors.push(e.message));
   await page.goto(origin + '/', { waitUntil: 'domcontentloaded', timeout: 45000 });
-  await page.locator('.filter-btn[data-cat="all"]').waitFor();
+  try {
+    await page.locator('.filter-btn[data-cat="all"]').waitFor();
+  } catch (error) {
+    console.error('LOCAL_FIXTURE_DIAGNOSTICS ' + JSON.stringify({
+      status: await page.locator('body').count(),
+      htmlLength: (await page.content()).length,
+      filterHtml: await page.locator('#filter-bar').innerHTML().catch(() => null),
+      errors,
+    }));
+    throw error;
+  }
   assert.equal(await page.locator('html').getAttribute('lang'), 'en');
   assert.equal(await page.locator('body').getAttribute('data-payments-state'), 'disabled');
   await page.locator('.filter-btn[data-cat="all"]').click();
