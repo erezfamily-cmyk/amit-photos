@@ -1,9 +1,34 @@
 # Handoff — amit-photos
 
+## RESUME POINT — 2026-10-25: Preview image visibility fix in PR #181
+
+- User could not see photo-first discovery in linked Cloudflare Sandbox Preview despite PR preview deploy success.
+- Root-cause **hypothesis supported by code/config** (live HTTP responses not independently inspected): Cloudflare Preview uses separately bound Sandbox D1/R2, whereas gallery.js requires a nonempty /api/photos response for experience cards; the #experience hash is initially hidden until asynchronous image loading.
+- Implemented narrow **staging-host-only** GET endpoint /api/experience-preview-photos in worker.js, locked to host suffix -amit-photos-paypal-sandbox.erez-family.workers.dev, which reads **only existing publicly published** https://amitphotos.com/api/photos and rewrites relative image URLs to absolute public asset URLs. It never reads D1 or writes data; production host yields 404. If public source inaccessible, endpoint returns 503; no JSON/demo fallback can activate experience cards.
+- Browser gallery.js uses this endpoint only on Sandbox Preview host suffix, keeps the existing D1 /api/photos for production and payment flag untouched. On #experience initial deep link, scroll after public photos have loaded. Cache-bust index and add Worker regression tests including mocked public-published/hidden samples and unavailable upstream.
+- Next: verify GitHub CI and latest Cloudflare Preview head SHA, manually inspect 4 cards and 8 photo story captions HE/EN on phone. Do not call UI verified from CI alone. No merge without owner approval; no photo data copied, no production D1/PayPal changes.
+
+---
+
+
+## RESUME POINT — 2026-10-25: Experience analytics & authentic-story pilot (draft)
+
+- Latest production `main`: `cec12a799a8162e96e14e6109f823fa1061adf99`. Phase P0/P1/P1.1 PRs #178/#179/#180 **merged**, GitHub/Cloudflare deployment checks successful; hands-on mobile browser QA still requires confirmation.
+- Current work on `feature/experience-analytics-story-pilot-2026-10-25`, pending its own new PR and separate merge approval. Analytics: track per-path click, photo lightbox view, wall-preview open and contact/WhatsApp **click intent** (not a verified lead), using only existing GA4 anonymous allowlisted parameters.
+- `src/ga_weekly_report.py` now queries the path-specific event names and builds a `experience_scorecard` in weekly JSON, text and email. GA4 custom dimensions not required for these event-name-only totals; these count **events, not unique visitors**.
+- Last stored GA baseline before experience launch: 19.10.2026 report (12–19 October): 118 sessions and 0% lead rate reported. Post-launch GA4 readings have not yet been retrieved/verified, so no impact claims.
+- New docs: `docs/experience-measurement-plan-2026-10-25.md`, `docs/experience-photo-story-pilot-2026-10-25.md` (8 bilingual, catalog-grounded editorial captions, **not real photographer memories**). They now render in the existing `index.html` lightbox on draft PR #181 only; no production publication. Caption replaces technical description on selected public photos, with an inline existing wall-preview CTA. Other photo captions unchanged.
+- **Visual homepage refinement in the same draft PR:** four original photo-led tall (3:4) emotional cards with bottom gradient, high contrast overlay text and subtle reduced-motion-safe hover; two columns on mobile. Existing approved public D1 image matching is unchanged. The hero CTA stays `#gallery` if no D1-confirmed paths and points to `#experience` only when at least one valid card was rendered.
+- Planned next: CI (`tests/experience-paths.test.mjs`, `tests/experience-editorial-captions.test.mjs` + other node+pytest), preview HE/EN/mobile QA, test tall photo cards, hero CTA fallback, wall CTA and language switch, evaluate actual event reporting and photos; request approval before merging. `main` may receive concurrent Pinterest queue updates; recheck base before any future merge. 14–28-day measurement window starts only after analytics PR deployment.
+- Do not change `PAYMENTS_ENABLED=false`, PayPal Live, D1, licensing, Gelato, Drive or social posting frequency. Four additional emotion paths remain roadmap-only.
+
+---
+
+
 ## RESUME POINT — 2026-10-25: Owner-directed details-path revision (new draft PR)
 
 - P0 PR #178 and P1 PR #179 **already merged** to `main`; latest P1 commit `c1b8c9c6a0086ce7a4cc1ba66d97a0fdb0479624`.
-- Current branch `feature/experience-details-refresh-2026-10-25` (not merged): revise only `experience.details` photo IDs and bilingual subtitle, preserving fail-closed D1 published filtering and all other paths.
+- **Historical:** `feature/experience-details-refresh-2026-10-25` was merged via PR #180. This section records the former draft rationale; current phase is the analytics/story pilot above.
 - Details collection in order: `1c_MjQDRqBDKXXUs8J2IRYpUtq68hF0d5` אבקת הפרח הזהובה; `1T_sZuDJIECAtqscPBtZ1qoi7KECxxmLu` פרחים ורודים בתקריב; `1qAYmV4wg-5I8isvUTrP1kZnT1leAHkvA` ורד ורוד עדין (macro version); `1WZUI8vzx_VBpg6yfXb_mAth6guweU2JH` עדינות של טבע. Remove leaf, snail and blue flower from this route only; no photo deletion.
 - Subtitle HE: `עדינות של הטבע`; EN: `The delicate beauty of nature`. Reviewer sheet updated: `docs/experience-photo-selection-review-2026-10-25.md`.
 - Four additional **suggested future experience paths**, not yet live / not DB categories: כשהאור מספר סיפור, מפגשים בטבע, ערים עם נשמה, עולם של צבעים. Recommend delayed / progressive disclosure after baseline metrics, to avoid crowding homepage; details in roadmap.

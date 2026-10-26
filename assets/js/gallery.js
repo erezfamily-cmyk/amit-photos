@@ -114,6 +114,19 @@ const EXPERIENCE_PATHS = Object.freeze({
 });
 let activeExperiencePath = null;
 
+// The Sandbox Preview has a separate R2 bucket. Static public-catalog fallback
+// paths such as /photos/thumb/id.webp otherwise resolve against that empty bucket.
+// Use the existing public production assets only for known photo-image paths.
+// No change to production URLs, publication checks, IDs or image visibility.
+function normalizePhotoAssetUrlsForPreview(photo) {
+  if (!location.hostname.endsWith('-amit-photos-paypal-sandbox.erez-family.workers.dev')) return photo;
+  const publicPhotoUrl = value => typeof value === 'string'
+    && /^\/photos\/(?:thumb\/)?[\w-]+\.(?:webp|jpe?g|png)$/i.test(value)
+    ? 'https://amitphotos.com' + value
+    : value;
+  return { ...photo, thumbnail: publicPhotoUrl(photo.thumbnail), url: publicPhotoUrl(photo.url) };
+}
+
 function clearExperienceSelection() {
   activeExperiencePath = null;
   document.querySelectorAll('.experience-card').forEach(card => {
@@ -145,7 +158,11 @@ function showExperiencePath(pathId, { track = true, scroll = true } = {}) {
   if (label) label.textContent = t('experience.' + pathId + '.title');
   setHomeView(false);
   renderGallery();
-  if (track) window.trackUxEvent?.('experience_path_click', { label: pathId, result_count: matches.length });
+  if (track) {
+    window.trackUxEvent?.('experience_path_click', { label: pathId, result_count: matches.length });
+    // Per-path GA4 event names are reportable without creating custom dimensions.
+    window.trackUxEvent?.(`experience_${pathId}_click`, { label: pathId });
+  }
   if (scroll) document.getElementById('gallery-grid-wrap')?.scrollIntoView({
     behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
     block: 'start'
@@ -184,6 +201,15 @@ function initExperiencePaths() {
     });
   });
   section.hidden = available === 0;
+  // Deep links to a previously-hidden section are not reliably scrolled by browsers
+  // before the asynchronous public gallery has finished loading.
+  if (available > 0 && window.location.hash === '#experience') {
+    requestAnimationFrame(() => section.scrollIntoView({ behavior: 'auto', block: 'start' }));
+  }
+  // The homepage invitation should open the experience only when it is available.
+  // If the public API fails, the original #gallery link remains the fallback.
+  const heroCta = document.querySelector('.hero-cta[href="#gallery"]');
+  if (available > 0 && heroCta) heroCta.setAttribute('href', '#experience');
 }
 
 let currentIndex = 0;
@@ -366,9 +392,14 @@ async function loadPhotos() {
   showSkeletons(grid);
 
   try {
+    // In the isolated Cloudflare Sandbox Preview, the D1 gallery can be empty.
+    // Ask the local Worker to proxy the already-published public gallery only.
+    // The production website continues to use its own D1-backed /api/photos.
+    const isSandboxPreview = location.hostname.endsWith('-amit-photos-paypal-sandbox.erez-family.workers.dev');
+    const publicGalleryEndpoint = isSandboxPreview ? '/api/experience-preview-photos' : '/api/photos';
     const [jsonRes, apiRes, paymentsRes] = await Promise.all([
       fetch('data/photos.json'),
-      fetch('/api/photos').catch(() => null),
+      fetch(publicGalleryEndpoint).catch(() => null),
       fetch('/api/payments-status').catch(() => null)
     ]);
     if (paymentsRes?.ok) {
@@ -379,7 +410,7 @@ async function loadPhotos() {
     if (apiRes?.ok) {
       const apiPhotos = await apiRes.json().catch(() => []);
       if (Array.isArray(apiPhotos) && apiPhotos.length > 0) {
-        // The Worker public endpoint serves only published=1 images.
+        // The original D1 route or Preview's public-production proxy returns only published images.
         experiencePublicGalleryVerified = true;
         // API is primary — merge thumbnail/url from JSON for photos that have them
         const jsonMap = new Map(jsonPhotos.map(p => [p.id, p]));
@@ -403,6 +434,11 @@ async function loadPhotos() {
   } catch {
     allPhotos = getDemoPhotos();
   }
+
+  // Featured cards and lightbox also read from allPhotos. Normalize both the
+  // verified public API and the existing JSON fallback before any image renders.
+  // This never upgrades fallback catalog rows to published experience cards.
+  allPhotos = allPhotos.map(normalizePhotoAssetUrlsForPreview);
 
   // קבץ מדינות תחת "מקומות בעולם" אם אין parent_category מוגדר
   allPhotos = allPhotos.map(p =>
@@ -1005,6 +1041,14 @@ function initLightbox() {
   if (buyBtn) {
     buyBtn.addEventListener('click', () => openBuyModal(filteredPhotos[currentIndex]));
   }
+  // A WhatsApp click is contact *intent*, not a verified lead or sale.
+  // The existing generic photo_contact_click event remains intact.
+  document.getElementById('lb-contact')?.addEventListener('click', () => {
+    const photo = window._currentLightboxPhoto;
+    if (!photo || !activeExperiencePath || !filteredPhotos.some(p => String(p.id) === String(photo.id))) return;
+    window.trackUxEvent?.('experience_contact_click', { label: activeExperiencePath, photo_id: String(photo.id) });
+    window.trackUxEvent?.(`experience_${activeExperiencePath}_contact_click`, { photo_id: String(photo.id) });
+  });
 
   PrintShop.init();
 
@@ -1013,13 +1057,24 @@ function initLightbox() {
   const wallImg     = document.getElementById('wall-img');
   const wallLabel   = document.getElementById('wall-label');
 
-  function openWallMockup(photo) {
+  function openWallMockup(photo, origin = 'lightbox') {
     wallImg.src = getLightboxUrl(photo.url);
     wallImg.alt = photo.title;
     wallLabel.textContent = photo.title || '';
     wallModal.classList.add('open');
     document.body.style.overflow = 'hidden';
     openModalA11y(wallModal, '#wall-modal-close');
+    const isExperiencePhoto = origin === 'lightbox'
+      && activeExperiencePath
+      && filteredPhotos.some(p => String(p.id) === String(photo.id));
+    window.trackUxEvent?.('wall_preview_open', {
+      source: isExperiencePhoto ? 'experience' : origin,
+      label: isExperiencePhoto ? activeExperiencePath : '',
+      photo_id: String(photo.id),
+    });
+    if (isExperiencePhoto) {
+      window.trackUxEvent?.(`experience_${activeExperiencePath}_wall_open`, { photo_id: String(photo.id) });
+    }
   }
   function closeWallMockup() {
     wallModal.classList.remove('open');
@@ -1027,6 +1082,10 @@ function initLightbox() {
     closeModalA11y(wallModal);
   }
 
+  // The editorial CTA opens the exact same wall-preview control, not checkout.
+  document.getElementById('lb-experience-wall')?.addEventListener('click', () => {
+    document.getElementById('lb-wall')?.click();
+  });
   document.getElementById('lb-wall').addEventListener('click', () => {
     const photo = window._currentLightboxPhoto;
     if (photo) openWallMockup(photo);
@@ -1037,7 +1096,7 @@ function initLightbox() {
 
   document.getElementById('wps-preview-btn').addEventListener('click', () => {
     const weekPhoto = allPhotos.find(p => p.is_week_photo);
-    if (weekPhoto) openWallMockup(weekPhoto);
+    if (weekPhoto) openWallMockup(weekPhoto, 'weekly_photo');
   });
 
   document.getElementById('wall-color-picker').addEventListener('input', e => {
@@ -1127,6 +1186,36 @@ function getLightboxUrl(url) {
   return url;
 }
 
+// Short, catalog-grounded editorial captions for a limited visual pilot.
+// No personal shooting memories, invented locations, prices or extra photo API calls.
+const EXPERIENCE_EDITORIAL_CAPTIONS = Object.freeze({
+  '1c_MjQDRqBDKXXUs8J2IRYpUtq68hF0d5': { he: "מקרוב, האבקנים הצהובים הופכים את מרכז הפרח לעולם בפני עצמו. עומק השדה הרדוד מזמין להתעכב על פרט אחד קטן.", en: "Up close, the yellow stamens become a world of their own. Shallow depth of field invites a closer look at one small detail." },
+  '1T_sZuDJIECAtqscPBtZ1qoi7KECxxmLu': { he: "שכבות של ורוד, שמנת וזהב נפגשות בפריים צפוף ועדין. לפעמים היופי נמצא דווקא במה שמגלים כשמתקרבים.", en: "Layers of pink, cream and gold meet in a delicate close-up. Sometimes beauty reveals itself when we come closer." },
+  '1qAYmV4wg-5I8isvUTrP1kZnT1leAHkvA': { he: "ורד ורוד בפריחה מלאה ממלא את הפריים ברכות של עלי הכותרת. הזמנה להתבונן בצבע ובמרקם בלי למהר.", en: "A pink rose in full bloom fills the frame with the softness of its petals. An invitation to linger over color and texture." },
+  '1WZUI8vzx_VBpg6yfXb_mAth6guweU2JH': { he: "זרעים עדינים ותאורה רכה יוצרים כמעט רישום של הטבע. לפעמים הפרטים הקטנים הם הסיפור כולו.", en: "Delicate seeds in soft light look almost like a drawing made by nature. Sometimes the smallest details tell the whole story." },
+  '19Q-SGNEyuCzAc8cbmMMeXeSzVpaFJazV': { he: "האגם משקף את היער ואת גוני הסתיו, והנוף כולו נדמה שקט. רגע שאפשר לשוב אליו במבט.", en: "The lake reflects the forest and its autumn colors in a quiet scene. A moment to return to, even with just a glance." },
+  '1DKV8fePHvPbFLArxDDCRuGsX9eT48ZKd': { he: "ערפל בוקר עוטף את השדה, וקרני שמש חודרות מבעד לעננים. האור מגלה רק חלק מהנוף ומשאיר מקום לדמיון.", en: "Morning mist wraps around a field as sunlight filters through the clouds. The light reveals only part of the scene, leaving room for imagination." },
+  '1TCAfgJ9pl3T0G8RRtIAa5_0FOoxXrjso': { he: "מעגל של אור זהוב נרשם בחשכת הלילה מתנועת צמר פלדה. כאן התנועה עצמה הופכת לציור.", en: "A golden circle of light is drawn into the night by spinning steel wool. Here, movement becomes the artwork." },
+  '1rVBJnzQ8onOOR-qQHUzuK6zr_dMd_vHN': { he: "חווה כפרית, בעלי חיים ושדות ירוקים בגאורגיה נפרשים לאורך העמק. נוף שאפשר לתת למבט לשוטט בו.", en: "A rural farm, animals and green fields stretch across a valley in Georgia. A landscape where the eye can wander." }
+});
+
+function renderExperienceEditorialCaption(photo) {
+  const box = document.getElementById('lb-experience-story');
+  const textEl = document.getElementById('lb-experience-story-text');
+  if (!box || !textEl) return false;
+  const caption = photo && EXPERIENCE_EDITORIAL_CAPTIONS[String(photo.id)];
+  const available = experiencePublicGalleryVerified && photo
+    && allPhotos.some(p => String(p.id) === String(photo.id));
+  if (!available || !caption) {
+    textEl.textContent = '';
+    box.hidden = true;
+    return false;
+  }
+  textEl.textContent = caption[getLang() === 'en' ? 'en' : 'he'];
+  box.hidden = false;
+  return true;
+}
+
 function openLightbox(idx) {
   currentIndex = idx;
   const photo = filteredPhotos[idx];
@@ -1156,7 +1245,9 @@ function openLightbox(idx) {
   const descEl = document.getElementById('lb-desc');
   const descText = (getLang() === 'en' && photo.description_en) ? photo.description_en : photo.description;
   descEl.textContent = descText || '';
-  descEl.style.display = descText ? 'block' : 'none';
+  const hasEditorialCaption = renderExperienceEditorialCaption(photo);
+  // Show one clear story, not two repetitive paragraphs in a small mobile lightbox.
+  descEl.style.display = !hasEditorialCaption && descText ? 'block' : 'none';
 
   // Progress bar
   const progress = document.getElementById('lb-progress');
@@ -1298,8 +1389,8 @@ function openLightbox(idx) {
   const contactBtn = document.getElementById('lb-contact');
   if (contactBtn) {
     const contactMessage = getLang() === 'en'
-      ? `Hi Amit, I'm interested in purchasing the photo "${photo.title_en || photo.title}": ${shareUrl}`
-      : `היי עמית, אני מתעניין/ת ברכישת התמונה "${photo.title}": ${shareUrl}`;
+      ? `Hi Amit, I'd like details about the photograph "${photo.title_en || photo.title}".\nPhoto ID: ${photo.id}\nLink: ${shareUrl}\nIntended use: personal use.`
+      : `היי עמית, אשמח לקבל פרטים על הצילום "${photo.title}".\nמזהה צילום: ${photo.id}\nקישור: ${shareUrl}\nהשימוש המתוכנן: אישי בלבד.`;
     contactBtn.href = `https://wa.me/972503333227?text=${encodeURIComponent(contactMessage)}`;
     contactBtn.dataset.analyticsPhotoId = String(photo.id || '');
   }
@@ -1352,6 +1443,10 @@ function openLightbox(idx) {
   document.body.style.overflow = 'hidden';
   openModalA11y(lightboxEl, '#lb-close');
   trackEvent('photo_view', photo);
+  if (activeExperiencePath && filteredPhotos.some(p => String(p.id) === String(photo.id))) {
+    window.trackUxEvent?.('experience_photo_view', { label: activeExperiencePath, photo_id: String(photo.id) });
+    window.trackUxEvent?.(`experience_${activeExperiencePath}_photo_view`, { photo_id: String(photo.id) });
+  }
 }
 
 function closeLightbox() {
@@ -1574,8 +1669,8 @@ function applyBusinessContactContext(form) {
   if (!context) return null;
 
   const topic = form.querySelector('#topic');
-  const commercialOption = topic?.querySelector('option[data-i18n="contact.f.t2"]');
-  if (topic && commercialOption) topic.value = commercialOption.value;
+  const inquiryOption = topic?.querySelector('option[data-i18n="contact.f.t4"]');
+  if (topic && inquiryOption) topic.value = inquiryOption.value;
 
   const subject = form.querySelector('[name="subject"]');
   if (subject) subject.value = 'Amit Photos B2B inquiry — ' + context.package;
@@ -2534,6 +2629,19 @@ window.onLangChange = function() {
   if (activeExperiencePath) showExperiencePath(activeExperiencePath, { track: false, scroll: false });
   else renderGallery();
   updateWeekPhotoStrip();
+  // The existing lightbox can remain open while the visitor switches HE/EN.
+  if (document.getElementById('lightbox')?.classList.contains('open') && window._currentLightboxPhoto) {
+    const photo = window._currentLightboxPhoto;
+    const hasEditorialCaption = renderExperienceEditorialCaption(photo);
+    const descEl = document.getElementById('lb-desc');
+    const originalDesc = (getLang() === 'en' && photo.description_en) ? photo.description_en : photo.description;
+    if (descEl) {
+      descEl.textContent = originalDesc || '';
+      descEl.style.display = !hasEditorialCaption && originalDesc ? 'block' : 'none';
+    }
+    const titleEl = document.getElementById('lb-title');
+    if (titleEl) titleEl.textContent = (getLang() === 'en' && photo.title_en) ? photo.title_en : photo.title;
+  }
   PrintShop.onLangChange();
 };
 

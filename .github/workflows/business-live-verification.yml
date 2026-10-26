@@ -33,7 +33,8 @@ jobs:
 
           LIC=$(curl -fsS --max-time 20 https://amitphotos.com/licensing/)
           grep -q 'licensing_personal_interest' <<<"$LIC"
-          grep -q '/api/admin/prices' <<<"$LIC"
+          grep -q 'המחיר יימסר בפנייה' <<<"$LIC"
+          ! grep -q '/api/admin/prices' <<<"$LIC"
           grep -q 'G-XM6T3E8QWN' <<<"$LIC"
           echo "licensing=ok"
 

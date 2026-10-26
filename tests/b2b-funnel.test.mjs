@@ -25,9 +25,9 @@ test('business packages are allowlisted and stored without PII', () => {
   assert.doesNotMatch(business, /email|phone|name:/i);
 });
 
-test('contact form reads short-lived B2B context and selects commercial topic robustly', () => {
+test('contact form reads short-lived B2B context and selects general inquiry topic robustly', () => {
   assert.match(gallery, /30 \* 60 \* 1000/);
-  assert.match(gallery, /option\[data-i18n="contact\.f\.t2"\]/);
+  assert.match(gallery, /option\[data-i18n="contact\.f\.t4"\]/);
   assert.doesNotMatch(gallery, /selectedIndex\s*=\s*2/);
 });
 

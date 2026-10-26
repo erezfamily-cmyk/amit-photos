@@ -8,7 +8,10 @@ on:
       - 'assets/js/i18n.js'
       - 'tests/experience-hero.test.mjs'
       - 'tests/experience-paths.test.mjs'
+      - 'tests/inline-homepage-scripts.test.mjs'
+      - 'tests/experience-editorial-captions.test.mjs'
       - 'assets/js/gallery.js'
+      - 'worker.js'
       - 'tests/i18n-translation-parity.test.mjs'
       - 'tests/purchase-disabled-ux.test.mjs'
       - 'tests/homepage-hierarchy-redesign.test.mjs'
@@ -30,13 +33,64 @@ jobs:
       - name: Parse gallery and bilingual scripts
         run: |
           node --check assets/js/gallery.js
+          node --check worker.js
           node --check assets/js/i18n.js
       - name: Verify experience Hero, translations, payment guards and analytics
         run: >
           node --test
           tests/experience-hero.test.mjs
+          tests/inline-homepage-scripts.test.mjs
           tests/experience-paths.test.mjs
+          tests/experience-editorial-captions.test.mjs
           tests/i18n-translation-parity.test.mjs
           tests/purchase-disabled-ux.test.mjs
           tests/homepage-hierarchy-redesign.test.mjs
           tests/ux-analytics-instrumentation.test.mjs
+      - name: Diagnose live public experience API (read-only)
+        continue-on-error: true
+        run: |
+          node --input-type=module <<'NODE'
+          import { readFileSync, appendFileSync } from 'node:fs';
+          import vm from 'node:vm';
+          const js = readFileSync('assets/js/gallery.js', 'utf8');
+          const match = js.match(/const EXPERIENCE_PATHS = Object\.freeze\((\{[\s\S]*?\})\);/);
+          if (!match) throw new Error('Experience IDs not found');
+          const paths = vm.runInNewContext('(' + match[1] + ')');
+          const hosts = [
+            ['public-www', 'https://www.amitphotos.com/api/photos'],
+            ['public-apex', 'https://amitphotos.com/api/photos'],
+            ['public-worker-direct', 'https://amit-photos.erez-family.workers.dev/api/photos'],
+            ['sandbox-preview', 'https://feature-experience-analytics-story-p-amit-photos-paypal-sandbox.erez-family.workers.dev/api/experience-preview-photos'],
+          ];
+          let summary = '### Public-photo experience diagnostic (read-only)\n\n';
+          for (const [label, url] of hosts) {
+            try {
+              const response = await fetch(url, { method: 'GET', redirect: 'manual',
+                headers: { Accept: 'application/json' }, signal: AbortSignal.timeout(12000) });
+              let detail = 'http=' + response.status;
+              if (response.ok) {
+                const rows = await response.json();
+                if (Array.isArray(rows)) {
+                  const ids = new Set(rows.filter(p => p && typeof p.id === 'string'
+                    && p.published !== 0 && p.published !== false).map(p => p.id));
+                  const counts = Object.entries(paths).map(([name, photoIds]) =>
+                    name + '=' + photoIds.filter(id => ids.has(id)).length + '/4').join(', ');
+                  detail += '; public_rows=' + rows.length + '; selected=' + counts;
+                  if (label === 'sandbox-preview' &&
+                      !Object.values(paths).some(photoIds => photoIds.filter(id => ids.has(id)).length >= 2)) {
+                    console.log('::warning::No experience paths have 2+ verified public photos');
+                  }
+                } else detail += '; JSON not an array';
+              } else {
+                detail += '; content-type=' + (response.headers.get('content-type') || 'missing');
+              }
+              console.log(label + ': ' + detail);
+              summary += '- ' + label + ': ' + detail + '\n';
+            } catch (error) {
+              const detail = 'unreachable (' + error.name + ')';
+              console.log('::warning::' + label + ': ' + detail);
+              summary += '- ' + label + ': ' + detail + '\n';
+            }
+          }
+          if (process.env.GITHUB_STEP_SUMMARY) appendFileSync(process.env.GITHUB_STEP_SUMMARY, summary);
+          NODE

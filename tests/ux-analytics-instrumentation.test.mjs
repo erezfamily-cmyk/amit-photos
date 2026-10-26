@@ -103,3 +103,52 @@ test('navigation choices and internal content links are distinguishable in repor
   assert.match(analytics, /trackUxEvent\(`nav_\$\{navLabel\}_click`/);
   assert.match(analytics, /trackUxEvent\('content_link_click'/);
 });
+
+
+test('experience journey signals are emitted through anonymous GA4 helper', () => {
+  assert.match(gallery, /window\.trackUxEvent\?\.\('experience_path_click', \{ label: pathId, result_count: matches\.length \}\)/);
+  assert.ok(gallery.includes('window.trackUxEvent?.(`experience_${pathId}_click`, { label: pathId });'));
+  assert.match(gallery, /window\.trackUxEvent\?\.\('experience_photo_view', \{ label: activeExperiencePath, photo_id: String\(photo\.id\) \}\)/);
+  assert.ok(gallery.includes('window.trackUxEvent?.(`experience_${activeExperiencePath}_photo_view`, { photo_id: String(photo.id) });'));
+  assert.match(gallery, /window\.trackUxEvent\?\.\('wall_preview_open', \{/);
+  assert.match(gallery, /window\.trackUxEvent\?\.\('experience_contact_click', \{/);
+  assert.ok(gallery.includes('window.trackUxEvent?.(`experience_${activeExperiencePath}_wall_open`, { photo_id: String(photo.id) });'));
+  assert.ok(gallery.includes('window.trackUxEvent?.(`experience_${activeExperiencePath}_contact_click`, { photo_id: String(photo.id) });'));
+  assert.match(gallery, /const isExperiencePhoto = origin === 'lightbox'/);
+  assert.match(gallery, /if \(weekPhoto\) openWallMockup\(weekPhoto, 'weekly_photo'\)/);
+});
+
+test('experience event data includes no personal information', () => {
+  const events = [];
+  const listeners = new Map();
+  const context = {
+    window: {
+      gtag: (...args) => events.push(args),
+      addEventListener: (type, listener) => listeners.set(type, listener),
+    },
+    document: {
+      readyState: 'loading',
+      documentElement: { scrollHeight: 2000 },
+      addEventListener: (type, listener) => listeners.set(type, listener),
+    },
+    location: { pathname: '/' },
+    Set,
+  };
+  context.window.document = context.document;
+  context.window.location = context.location;
+  runInNewContext(analytics, context);
+  context.window.trackUxEvent('experience_details_click', {
+    label: 'details',
+    photo_id: 'safe-public-id',
+    email: 'secret@example.org',
+    name: 'secret person',
+    notes: 'private text',
+  });
+  assert.equal(events.length, 1);
+  assert.equal(events[0][1], 'experience_details_click');
+  assert.equal(events[0][2].label, 'details');
+  assert.equal(events[0][2].photo_id, 'safe-public-id');
+  assert.equal('email' in events[0][2], false);
+  assert.equal('name' in events[0][2], false);
+  assert.equal('notes' in events[0][2], false);
+});

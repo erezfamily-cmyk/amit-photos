@@ -831,6 +831,89 @@ async function handleCustomers(request, env) {
   return jsonRes({ error: 'method not allowed' }, 405);
 }
 
+// Preview-only read proxy: a separate Sandbox D1 may contain no published photos.
+// Read ONLY the already-public production gallery, never admin=1, D1 secrets, or writes.
+// Production hosts do not expose this endpoint; failed upstream responses fail closed.
+const EXPERIENCE_PREVIEW_HOST_SUFFIX = '-amit-photos-paypal-sandbox.erez-family.workers.dev';
+function previewGalleryUnavailable(request, source) {
+  const response = jsonRes({ error: 'public gallery unavailable' }, 503, request);
+  response.headers.set('X-Preview-Gallery-Source', source);
+  return response;
+}
+async function handleExperiencePreviewPublicPhotos(request, env) {
+  const host = new URL(request.url).hostname.toLowerCase();
+  if (!host.endsWith(EXPERIENCE_PREVIEW_HOST_SUFFIX)) {
+    return new Response('Not found', { status: 404 });
+  }
+  if (request.method !== 'GET') return jsonRes({ error: 'method not allowed' }, 405, request);
+  let source = 'external-unavailable';
+  try {
+    // The Worker is explicitly routed on www.amitphotos.com; the apex can
+    // redirect there. Since redirects are disallowed, try both exact trusted
+    // public endpoints, never a redirect target or an admin endpoint.
+    const publicGalleryUrls = [
+      'https://www.amitphotos.com/api/photos',
+      'https://amitphotos.com/api/photos',
+    ];
+    let published = null;
+    // Cloudflare Worker-to-Worker fetches on routed domains can be blocked.
+    // Prefer the optional Sandbox-only service binding. Never bind production
+    // to itself or use a privileged/admin endpoint; this is public GET only.
+    if (env?.PUBLIC_GALLERY_SERVICE?.fetch) {
+      const response = await env.PUBLIC_GALLERY_SERVICE.fetch(
+        new Request('https://amitphotos.com/api/photos', {
+          method: 'GET',
+          headers: { Accept: 'application/json' },
+        }),
+      );
+      if (!response.ok) {
+        return previewGalleryUnavailable(request, 'service-status-' + response.status);
+      }
+      const rows = await response.json();
+      if (!Array.isArray(rows) || !rows.length || rows.length > 5000) {
+        return previewGalleryUnavailable(request, 'service-invalid-json');
+      }
+      published = rows;
+      source = 'service-binding';
+    } else {
+      source = 'service-binding-missing';
+      for (const url of publicGalleryUrls) {
+      try {
+        const response = await fetch(url, {
+          method: 'GET',
+          headers: { Accept: 'application/json' },
+          redirect: 'error',
+        });
+        if (!response.ok) continue;
+        const rows = await response.json();
+        if (Array.isArray(rows) && rows.length > 0 && rows.length <= 5000) {
+          published = rows;
+          break;
+        }
+      } catch (_) { /* Try the other canonical public hostname. */ }
+      }
+    }
+    if (!published) return previewGalleryUnavailable(request, source);
+    // Preserve the canonical public API's published-only filtering. Explicitly
+    // exclude a row if the source unexpectedly labels it unpublished.
+    const absolutePhotoAsset = path => typeof path === 'string' && path.startsWith('/')
+      ? 'https://amitphotos.com' + path : path;
+    const rows = published.filter(photo => photo && typeof photo.id === 'string'
+      && photo.published !== 0 && photo.published !== false).map(photo => ({
+        ...photo,
+        thumbnail: absolutePhotoAsset(photo.thumbnail),
+        url: absolutePhotoAsset(photo.url),
+    }));
+    if (!rows.length) return previewGalleryUnavailable(request, source + '-empty');
+    return new Response(JSON.stringify(rows), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=60' },
+    });
+  } catch (_) {
+    return previewGalleryUnavailable(request, source + '-exception');
+  }
+}
+
 // ===== PHOTOS =====
 // The public gallery is read far more often than it changes. Cache the canonical
 // response at Cloudflare's edge so normal page views do not scan the full D1 table.
@@ -6992,6 +7075,9 @@ export async function handleNlIssue(env, slug, isPreview) {
   const dateStr = issue.published_at ? issue.published_at.slice(0, 10) : new Date().toISOString().slice(0, 10);
   const pageUrl = `https://amitphotos.com/newsletter/${slug}/`;
   const waHref = escXml(`https://wa.me/?text=${encodeURIComponent(issue.title_he + ' — ' + pageUrl)}`);
+  const purchaseInquiryHref = escXml(`https://wa.me/972503333227?text=${encodeURIComponent(
+    `היי עמית, אשמח לקבל פרטים על הצילום "${c.hero?.title_he || ''}".\nמזהה צילום: ${c.hero?.photo_id || ''}\nקישור: ${pageUrl}\nהשימוש המתוכנן: אישי בלבד.`
+  )}`);
 
   const heroPriceHtml = purchasesEnabled && c.sale?.sale_price ? `
       <div class="nl-hero-price">
@@ -7000,7 +7086,7 @@ export async function handleNlIssue(env, slug, isPreview) {
       </div>` : '';
   const heroOrderHtml = purchasesEnabled
     ? `<a class="nl-btn-secondary nl-hero-order" href="/?photo=${escXml(c.hero?.photo_id || '')}" data-he="רכוש קובץ ב-PayPal ←" data-en="Buy with PayPal →">רכוש קובץ ב-PayPal ←</a>`
-    : `<a class="nl-btn-secondary nl-hero-order" href="tel:+972503333227" data-he="יצירת קשר לרכישה ←" data-en="Contact to Purchase →">יצירת קשר לרכישה ←</a>`;
+    : `<a class="nl-btn-secondary nl-hero-order" href="${purchaseInquiryHref}" target="_blank" rel="noopener" data-he="בירור רכישה לשימוש אישי ←" data-en="Personal-use Purchase Inquiry →">בירור רכישה לשימוש אישי ←</a>`;
   const heroSection = c.hero ? `
     <section class="nl-section nl-hero-section">
       <a href="/?photo=${escXml(c.hero.photo_id)}" style="display:block;text-decoration:none">
@@ -7210,7 +7296,7 @@ export async function handleNlIssue(env, slug, isPreview) {
   };
   const paymentAvailabilityNote = purchasesEnabled
     ? `<p class="nl-contact-note" data-he="ניתן לשלם: ביט · פייבוקס · PayPal" data-en="Payment: Bit · Paybox · PayPal">ניתן לשלם: ביט · פייבוקס · PayPal</p>`
-    : `<p class="nl-contact-note" data-he="הרכישה המקוונת נמצאת בשדרוג אבטחה — לתיאום רכישה פנו אליי ישירות" data-en="Online purchasing is undergoing a security upgrade — contact me directly to arrange a purchase">הרכישה המקוונת נמצאת בשדרוג אבטחה — לתיאום רכישה פנו אליי ישירות</p>`;
+    : `<p class="nl-contact-note" data-he="הרכישה המקוונת ב־PayPal עדיין לא נפתחה — אפשר לשלוח בירור לרכישה לשימוש אישי ב־WhatsApp. שימוש עסקי, מסחרי או פרסומי אינו זמין כרגע." data-en="Online PayPal purchasing is not open yet — send an inquiry for personal-use purchase on WhatsApp. Business, commercial and advertising use is currently unavailable.">הרכישה המקוונת ב־PayPal עדיין לא נפתחה — אפשר לשלוח בירור לרכישה לשימוש אישי ב־WhatsApp. שימוש עסקי, מסחרי או פרסומי אינו זמין כרגע.</p>`;
   const contactOutreachSection = `
     <section class="nl-section nl-contact-section">
       <div class="nl-contact-card">
@@ -8369,6 +8455,7 @@ export default {
     if (path === '/api/reset-password')    return handleResetPassword(request, env);
     if (path === '/api/subscribers')       return handleSubscribers(request, env);
     if (path === '/api/customers')         return handleCustomers(request, env);
+    if (path === '/api/experience-preview-photos') return handleExperiencePreviewPublicPhotos(request, env);
     if (path === '/api/photos')            return handlePhotos(request, env);
     if (path === '/api/quiz-photos')       return handleQuizPhotos(request, env);
     if (path === '/api/sale-photos')       return handleSalePhotos(request, env);

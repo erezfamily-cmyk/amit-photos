@@ -104,11 +104,11 @@
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Heebo:wght@300;400;500;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'" />
   <noscript><link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Heebo:wght@300;400;500;700&display=swap" rel="stylesheet" /></noscript>
 
-  <link rel="stylesheet" href="assets/css/style.css?v=0d63494f" />
+  <link rel="stylesheet" href="assets/css/style.css?v=ff6917ab" />
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#0a0a0a" />
   <script src="assets/js/analytics.js?v=5b30dc6e"></script>
-  <script src="assets/js/i18n.js?v=37cf0525"></script>
+  <script src="assets/js/i18n.js?v=616036a4"></script>
 </head>
 <body data-payments-state="disabled">
 
@@ -128,7 +128,7 @@
       <li><a href="#gallery" id="nav-sale" data-i18n="nav.sale" data-analytics-event="nav_click" data-analytics-label="sale" onclick="event.preventDefault();document.getElementById('filter-bar')?.scrollIntoView({behavior:'smooth'});setTimeout(()=>{const btn=document.querySelector('.filter-btn-sale');if(btn)btn.click();},400)">מבצע</a></li>
       <li><a href="/camera/" data-i18n="nav.camera" data-analytics-event="nav_click" data-analytics-label="camera">למד לצלם</a></li>
       <li><a href="/locations/" data-i18n="nav.locations" data-analytics-event="nav_click" data-analytics-label="locations">מקומות לצילום</a></li>
-      <li><a href="#how-to-buy" data-i18n="nav.how-to-buy" data-analytics-event="nav_click" data-analytics-label="purchase_info">רכישה</a></li>
+      <li><a href="#how-to-buy" data-i18n="nav.how-to-buy" data-analytics-event="nav_click" data-analytics-label="purchase_info">רכישה לשימוש אישי</a></li>
       <li><a href="#contact" data-i18n="nav.contact" data-analytics-event="nav_click" data-analytics-label="contact">צור קשר</a></li>
       <li class="nav-more">
         <details>
@@ -164,7 +164,7 @@
         <em data-i18n="hero.title.em">שלא רוצים שייגמרו.</em>
       </h1>
       <p class="hero-subtitle" data-i18n="hero.subtitle">אור שמופיע לרגע, מקום שנשאר בזיכרון, פרט קטן שכמעט פספסנו. בואו לגלות את העולם דרך העיניים שלי.</p>
-      <p class="hero-payment-note payments-disabled-only" data-i18n="payments.disabled.hero">הגלריה פתוחה להשראה. התאהבתם בצילום? אפשר לפנות אליי ישירות לבירור רכישה.</p>
+      <p class="hero-payment-note payments-disabled-only" data-i18n="payments.disabled.hero">מצאתם צילום שמתאים לכם? פתחו אותו ושלחו בירור רכישה לשימוש אישי ב־WhatsApp.</p>
       <div class="hero-actions">
         <a href="#gallery" class="hero-cta" data-i18n="hero.cta" data-analytics-event="hero_gallery_click">גלו את הרגע שלכם</a>
         <a href="/sale/" class="hero-cta-ghost payments-enabled-only" data-i18n="hero.cta-sale" data-analytics-event="hero_sale_click">מבצע השבוע</a>
@@ -430,12 +430,34 @@
   <section class="section process-section" id="how-to-buy" data-section="how-to-buy">
     <div class="section-header reveal">
       <p class="section-label" data-i18n="htb.label">פשוט ומהיר</p>
-      <h2 class="section-title" data-i18n="htb.title">כיצד לרכוש?</h2>
+      <h2 class="section-title" data-i18n="htb.title">איך רוכשים כרגע?</h2>
     </div>
     <div class="purchase-disabled-notice payments-disabled-only" role="status">
-      <h3 data-i18n="payments.disabled.title">הרכישה המקוונת נמצאת בשדרוג אבטחה</h3>
-      <p data-i18n="payments.disabled.text">בינתיים ניתן לבחור תמונה בגלריה ולתאם רכישה ישירות עם עמית. התשלום יתבצע ידנית באמצעות Bit או PayBox.</p>
-      <a href="tel:0503333227" class="purchase-disabled-contact" data-i18n="payments.disabled.call">התקשרו לעמית — 050-3333227</a>
+      <h3 data-i18n="payments.disabled.title">הרכישה המקוונת ב־PayPal עדיין לא נפתחה</h3>
+      <p data-i18n="payments.disabled.text">בחרו צילום בגלריה ושלחו בקשה לרכישה לשימוש אישי ב־WhatsApp. אחזור אליכם עם המחיר ותנאי השימוש; לאחר אישור הפרטים נתאם תשלום ידני ב־Bit או PayBox. שימוש עסקי, מסחרי או פרסומי אינו זמין כרגע.</p>
+      <a href="https://wa.me/972503333227?text=%D7%94%D7%99%D7%99%20%D7%A2%D7%9E%D7%99%D7%AA%2C%20%D7%90%D7%A9%D7%9E%D7%97%20%D7%9C%D7%91%D7%A8%D7%A8%20%D7%A8%D7%9B%D7%99%D7%A9%D7%94%20%D7%9C%D7%A9%D7%99%D7%9E%D7%95%D7%A9%20%D7%90%D7%99%D7%A9%D7%99.%20%D7%94%D7%A6%D7%99%D7%9C%D7%95%D7%9D%3A%20____" class="purchase-disabled-contact" target="_blank" rel="noopener" data-i18n="payments.disabled.call" data-analytics-event="purchase_inquiry_click" data-analytics-method="whatsapp">שליחת בקשה ב־WhatsApp</a>
+    </div>
+    <div class="process-grid payments-disabled-only" aria-label="תהליך בירור רכישה לשימוש אישי" data-i18n-aria="htb.temp.aria">
+      <div class="process-step reveal">
+        <div class="process-num">01</div>
+        <h3 class="process-step-title" data-i18n="htb.temp.s1.title">בחרו צילום</h3>
+        <p class="process-step-desc" data-i18n="htb.temp.s1.desc">פתחו את הצילום הרצוי בגלריה כדי שהשם, המזהה והקישור יצורפו לבקשה.</p>
+      </div>
+      <div class="process-step reveal reveal-delay-1">
+        <div class="process-num">02</div>
+        <h3 class="process-step-title" data-i18n="htb.temp.s2.title">ציינו את השימוש</h3>
+        <p class="process-step-desc" data-i18n="htb.temp.s2.desc">הצילומים זמינים כרגע לשימוש אישי בלבד.</p>
+      </div>
+      <div class="process-step reveal reveal-delay-2">
+        <div class="process-num">03</div>
+        <h3 class="process-step-title" data-i18n="htb.temp.s3.title">שלחו בקשה</h3>
+        <p class="process-step-desc" data-i18n="htb.temp.s3.desc">לחצו על כפתור הבירור ב־WhatsApp מתוך חלון הצילום.</p>
+      </div>
+      <div class="process-step reveal reveal-delay-3">
+        <div class="process-num">04</div>
+        <h3 class="process-step-title" data-i18n="htb.temp.s4.title">קבלו הצעה</h3>
+        <p class="process-step-desc" data-i18n="htb.temp.s4.desc">תקבלו מחיר ותנאי רישיון מתאימים; לאחר האישור נתאם תשלום ומסירת הקובץ.</p>
+      </div>
     </div>
     <div class="process-grid payments-enabled-only">
       <div class="process-step reveal">
@@ -529,8 +551,9 @@
   <!-- ===== PRICING ===== -->
   <section class="section" id="pricing" data-section="pricing">
     <div class="section-header reveal">
-      <p class="section-label" data-i18n="pricing.label">גדלים ומחירים</p>
-      <h2 class="section-title" data-i18n="pricing.title">בחר את הגודל שלך</h2>
+      <p class="section-label" data-i18n="pricing.label">רישיונות ומחירים</p>
+      <h2 class="section-title" data-i18n="pricing.title">קבצים לשימוש אישי</h2>
+      <p class="section-subtitle" data-i18n="pricing.subtitle">המחירים והקבצים זמינים לשימוש אישי בלבד. שימוש עסקי, מסחרי או פרסומי אינו זמין בשלב זה.</p>
     </div>
     <div class="pricing-grid">
       <div class="pricing-card reveal">
@@ -540,12 +563,12 @@
         <p class="pricing-period" data-i18n="pricing.per-photo">לתמונה</p>
         <ul class="pricing-features">
           <li data-i18n="pricing.net.f1">רזולוציה 1500px</li>
-          <li data-i18n="pricing.net.f2">מושלם לרשתות חברתיות</li>
-          <li data-i18n="pricing.net.f3">WhatsApp ופרופיל</li>
+          <li data-i18n="pricing.net.f2">פרופיל ופוסטים אישיים</li>
+          <li data-i18n="pricing.net.f3">מסכים ו־WhatsApp אישי</li>
           <li data-i18n="pricing.net.f4">שימוש אישי</li>
         </ul>
         <a href="#gallery" class="pricing-cta pricing-cta-outline payments-enabled-only" data-i18n="pricing.cta">עיין בגלריה</a>
-        <a href="tel:0503333227" class="pricing-cta pricing-cta-outline payments-disabled-only" data-i18n="pricing.contact">יצירת קשר לרכישה</a>
+        <a href="#gallery" class="pricing-cta pricing-cta-outline payments-disabled-only" data-i18n="pricing.contact">בחרו צילום לבירור</a>
       </div>
       <div class="pricing-card featured reveal reveal-delay-1">
         <div class="pricing-badge" data-i18n="pricing.popular">פופולרי</div>
@@ -557,10 +580,10 @@
           <li data-i18n="pricing.print.f1">רזולוציה 3000px</li>
           <li data-i18n="pricing.print.f2">הדפסה איכותית עד A4</li>
           <li data-i18n="pricing.print.f3">קישוט הבית</li>
-          <li data-i18n="pricing.print.f4">שימוש אישי מלא</li>
+          <li data-i18n="pricing.print.f4">רישיון לשימוש אישי</li>
         </ul>
         <a href="#gallery" class="pricing-cta pricing-cta-filled payments-enabled-only" data-i18n="pricing.cta">עיין בגלריה</a>
-        <a href="tel:0503333227" class="pricing-cta pricing-cta-filled payments-disabled-only" data-i18n="pricing.contact">יצירת קשר לרכישה</a>
+        <a href="#gallery" class="pricing-cta pricing-cta-filled payments-disabled-only" data-i18n="pricing.contact">בחרו צילום לבירור</a>
       </div>
       <div class="pricing-card reveal reveal-delay-2">
         <p class="pricing-name" data-i18n="pricing.full.name">קובץ מלא</p>
@@ -570,13 +593,16 @@
         <ul class="pricing-features">
           <li data-i18n="pricing.full.f1">רזולוציה מקסימלית</li>
           <li data-i18n="pricing.full.f2">הדפסה גדולה (A1 ומעלה)</li>
-          <li data-i18n="pricing.full.f3">שימוש מסחרי</li>
-          <li data-i18n="pricing.full.f4">כל הזכויות כלולות</li>
+          <li data-i18n="pricing.full.f3">שימוש אישי בלבד</li>
+          <li data-i18n="pricing.full.f4">זכויות היוצרים נשארות בידי עמית</li>
         </ul>
         <a href="#gallery" class="pricing-cta pricing-cta-outline payments-enabled-only" data-i18n="pricing.cta">עיין בגלריה</a>
-        <a href="tel:0503333227" class="pricing-cta pricing-cta-outline payments-disabled-only" data-i18n="pricing.contact">יצירת קשר לרכישה</a>
+        <a href="#gallery" class="pricing-cta pricing-cta-outline payments-disabled-only" data-i18n="pricing.contact">בחרו צילום לבירור</a>
       </div>
     </div>
+    <div class="purchase-disabled-notice" role="note">
+       <p data-i18n="pricing.availability">כרגע ניתן לברר רכישה לשימוש אישי בלבד. שימוש עסקי, מסחרי או פרסומי אינו זמין בשלב זה.</p>
+     </div>
   </section>
 
   <!-- ===== PRINT FAQ ===== -->
@@ -645,7 +671,7 @@
     <div class="contact-wrapper">
       <div class="contact-info reveal">
         <h3 data-i18n="contact.h3">נשמח לשמוע ממך</h3>
-        <p data-i18n="contact.p">שאלה על תמונה? רוצה רישיון מסחרי? גודל מותאם אישית? השאר פרטים ואחזור אליך בהקדם.</p>
+        <p data-i18n="contact.p">שאלה על תמונה, רכישה לשימוש אישי או גודל מותאם אישית? השאר פרטים ואחזור אליך בהקדם.</p>
 
         <div class="contact-detail">
           <div class="contact-detail-icon">
@@ -689,7 +715,7 @@
             <select name="topic" id="topic">
               <option value="" data-i18n="contact.f.topic.select">בחר נושא...</option>
               <option data-i18n="contact.f.t1">רכישת תמונה</option>
-              <option data-i18n="contact.f.t2">רישיון מסחרי</option>
+              
               <option data-i18n="contact.f.t3">גודל מותאם אישית</option>
               <option data-i18n="contact.f.t4">שאלה כללית</option>
               <option data-i18n="contact.f.t5">אחר</option>
@@ -834,6 +860,11 @@
       <strong id="lb-title"></strong>
       <span id="lb-cat"></span>
       <p id="lb-desc"></p>
+      <div id="lb-experience-story" class="lb-experience-story" hidden aria-label="חוויה בתמונה" data-i18n-aria="experience.story.aria">
+        <span class="lb-experience-eyebrow" data-i18n="experience.story.eyebrow">להרגיש את הרגע</span>
+        <p id="lb-experience-story-text"></p>
+        <button type="button" id="lb-experience-wall" class="lb-experience-wall" data-i18n="experience.story.wall">דמיינו אותה על הקיר ↗</button>
+      </div>
       <div class="lb-exif hidden" id="lb-exif"></div>
     </div>
     <div class="lb-actions">
@@ -841,7 +872,7 @@
       <button id="lb-wall" class="lb-action-btn" data-i18n="lb.wall">🖼 על הקיר</button>
       <button id="lb-print" class="lb-action-btn lb-print-btn" data-i18n="lb.print">🖨️ הדפסה ←</button>
       <button id="lb-buy" class="lb-action-btn lb-buy-btn"><span data-i18n="lb.buy">רכישה ←</span><span id="lb-price-hint" class="lb-price-hint"></span></button>
-      <a id="lb-contact" class="lb-action-btn lb-contact-btn payments-disabled-only" target="_blank" rel="noopener" data-i18n="lb.contact" data-analytics-event="photo_contact_click" data-analytics-method="whatsapp">רכישה ישירות בוואטסאפ</a>
+      <a id="lb-contact" class="lb-action-btn lb-contact-btn payments-disabled-only" target="_blank" rel="noopener" data-i18n="lb.contact" data-analytics-event="photo_contact_click" data-analytics-method="whatsapp">בירור רכישה לשימוש אישי ב־WhatsApp</a>
       <a id="lb-share-wa" class="lb-action-btn lb-whatsapp" target="_blank" rel="noopener" data-i18n="lb.whatsapp">וואטסאפ</a>
       <a id="lb-share-fb" class="lb-action-btn" target="_blank" rel="noopener" data-i18n="lb.facebook">פייסבוק</a>
       <a id="lb-share-pin" class="lb-action-btn lb-pinterest" target="_blank" rel="noopener" data-i18n="lb.pinterest">Pinterest</a>
@@ -1187,7 +1218,7 @@
     </div>
   </div>
 
-  <script src="assets/js/gallery.js?v=b21678e3"></script>
+  <script src="assets/js/gallery.js?v=cbb6be4b"></script>
   <script>
     // טוען נתוני Instagram מהדוח השבועי ומעדכן את כרטיס הפלטפורמות
     fetch('https://raw.githubusercontent.com/erezfamily-cmyk/amit-photos/main/data/social_report.json')
@@ -1273,7 +1304,7 @@
       if (r.ok) {
         if (typeof trackUxEvent === 'function') {
           trackUxEvent('guide_request_success', { source: 'popup' });
-          if data.lead_created trackUxEvent('generate_lead', { source: 'popup' });
+          if (data.lead_created) trackUxEvent('generate_lead', { source: 'popup' });
         }
         msg.style.color = '#4caf7d';
         msg.textContent = '&#x2713; נשלח! בדוק תיבת הדואר (גם spam).';

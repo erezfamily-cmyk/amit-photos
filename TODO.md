@@ -1,4 +1,24 @@
+## Preview image visibility — 25.10.2026
+
+- [x] Investigated missing experience cards: preview has isolated Sandbox D1 and experience requires verified public photos; initial anchor may target hidden section.
+- [x] Add staging-host-only public published image proxy, production D1 route unchanged and fail-closed on upstream errors.
+- [x] Scroll direct #experience hash once API confirms public photo cards; regression tests verify host isolation and excluded unpublished samples.
+- [ ] Confirm latest Preview build head SHA and manually inspect public images, lightbox and wall CTA on HE/EN mobile.
+- [ ] Obtain separate user approval for PR #181 merge. Do not enable purchases.
+
 ## Experience-led brand/UX — 25.10.2026
+
+- [x] PR #180 merged: exact four-photo "הקסם שבפרטים" set and HE/EN subtitle.
+- [x] Draft P2 tracking added for experience path → photo → wall → WhatsApp contact intent; existing checkout remains disabled.
+- [x] Draft weekly GA4 scorecard by route, text/email/JSON, without storing PII; eight bilingual editorial captions **now integrated into PR #181 lightbox Preview**, not yet merged or published in production.
+- [x] Implement subtle experience-first lightbox text for 8 selected public photos, with a safe link to existing wall preview; technical descriptions remain for all other photos.
+- [x] Add dedicated regression tests and bilingual lightbox copy, including cache-bust for CSS/JS.
+- [x] Refine four emotional home cards to foreground original photos with bottom gradient text, minimal motion, mobile two-column layout; route hero CTA to experiences only when public photos confirmed.
+- [ ] Visually verify cards on HE/EN phones and desktop (image crop, contrast, overlay, scroll), and verify hero fallback when `/api/photos` fails.
+- [ ] Run GitHub CI and manual mobile/RTL/English QA on P2 preview, including wall CTA and no caption on other images.
+- [ ] Validate GA4 event receipt and weekly report after deployment; do not claim unique visitor conversions from event counts.
+- [ ] Confirm real photographer memories or explicit approval of observational captions before publishing stories.
+- [ ] Request separate approval to merge/deploy P2; no new experience categories yet.
 
 - [x] P0 homepage experience messaging merged as PR #178.
 - [x] P1 four emotion-led discovery cards with existing photo IDs prepared in a review branch.
@@ -8,11 +28,11 @@
 - [ ] Collect 8–12 authentic photographer memories; do not invent details.
 - [x] P1 merged via PR #179 (2026-10-25).
 - [x] P1.1 details-path photo refresh prepared: "אבקת הפרח הזהובה", "פרחים ורודים בתקריב", "ורד ורוד עדין", "עדינות של טבע"; HE/EN label updated.
-- [ ] Run targeted CI and visual review of updated details selection; seek separate PR merge approval.
+- [x] PR #180 targeted CI passed and owner approved merge; browser visual QA remains distinct.
 - [ ] Evaluate four optional additional *experience paths* after 14–28 days of traffic and qualified leads; do not add four more taxonomy categories now.
 
 Full roadmap and criteria: https://github.com/erezfamily-cmyk/amit-photos/issues/177  
-Current draft branch: `feature/experience-details-refresh-2026-10-25` (PR #180, not merged). P0 (#178) and P1 (#179) already merged to main.
+Current draft branch: `feature/experience-analytics-story-pilot-2026-10-25` (P2 analytics/story, not merged). P0 (#178), P1 (#179) and detail refresh (#180) are merged to main.
 
 - [x] Define experience-led strategy and the new HE/EN home-page voice.
 - [x] Prepare a reversible P0 Hero/About change, responsive subtitle and targeted regression test.
