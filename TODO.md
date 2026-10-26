@@ -1,3 +1,28 @@
+## ACTIVE NEXT-DAY CHECKLIST — 2026-10-27 (supersedes historical #181/#187 drafts)
+
+**Current source of truth:** [handoff.md](https://github.com/erezfamily-cmyk/amit-photos/blob/main/handoff.md) (top entry dated 2026-10-26). Older TODO bullets below are historical and include obsolete "draft/not merged" instructions; do not use them as the current status.
+
+### Completed on 2026-10-26
+- [x] PR #181/#184/#185/#187 rollout completed before #188 (see their merged PRs; do not redo old TODO merge requests).
+- [x] PR [#188](https://github.com/erezfamily-cmyk/amit-photos/pull/188) — English title/alt/description fallbacks and gallery category labels, English heading typography, dark lightbox contrast, localized wall preview/share/contact, HE/EN language-switch accessibility regression — **merged to main** as `4fbd17add9078d72e00fa2ed90ef0052d40fc731`.
+- [x] All five checks on PR final head passed, including Chromium & WebKit browser QA [run #40402169044](https://github.com/erezfamily-cmyk/amit-photos/actions/runs/40402169044).
+- [x] Deploy Worker [run #506](https://github.com/erezfamily-cmyk/amit-photos/actions/runs/40403251114) successfully deployed PR #188. Public assets reflect new translations/DM Sans CSS.
+- [x] Live `/api/payments-status` reported `{"enabled":false}` after deploy; `PAYMENTS_ENABLED=false` remains in `wrangler.toml`.
+
+### 2026-10-27 — verification and follow-up
+- [ ] **User mobile acceptance:** live HE/EN normal gallery, experience paths, photo modal title/description/category/button labels, wall mockup and switching language with open modal. Verify actual photography and readability on iPhone; try desktop Chrome/Edge if possible.
+- [ ] If issue: record screenshot, URL, photo ID/title, language, browser/device; reproduce with cache refresh and fix on a NEW branch/PR, no direct deployment without approval.
+- [ ] If acceptable: record owner acceptance and reconcile stale [issue #177](https://github.com/erezfamily-cmyk/amit-photos/issues/177) checklists against merged PRs.
+- [ ] Verify experience-path GA4 events appear in analytics/reports after deployment (path, photo, wall, WhatsApp click-intent only; not a purchase or confirmed lead). Plan 14–28-day measurement before changing marketing.
+- [ ] Check that personal-use inquiry is clear and no unsupported commercial license or hardcoded pricing has returned; no real purchase testing.
+
+### Local VS Code continuation
+`C:\Users\erezf\amit-photos` (if using the same clone): check `git status --short` first and protect uncommitted work; for a clean tree use `git fetch origin`, `git switch main`, `git pull --ff-only origin main`. Read `handoff.md` before any new change. Run `node --test tests/gallery-language-fallback.test.mjs tests/purchase-disabled-ux.test.mjs` if needed; browser regression requires Playwright. Start new code work from fresh main on a new branch, not PR #188.
+
+**Do not enable** PayPal Production or `PAYMENTS_ENABLED`, Gelato, real purchases or commercial licensing. Do not change D1/Drive or social jobs as part of this UX acceptance.
+
+---
+
 ## Preview image visibility — 25.10.2026
 
 - [x] Investigated missing experience cards: preview has isolated Sandbox D1 and experience requires verified public photos; initial anchor may target hidden section.
