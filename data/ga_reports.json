@@ -1,60 +1,5 @@
 [
   {
-    "date": "10.08.2026",
-    "period": "2026-08-03 → 2026-08-10",
-    "summary": {
-      "sessions": "57",
-      "activeUsers": "50",
-      "pageViews": "62",
-      "bounceRate": "91.2%",
-      "avgSessionSec": "18",
-      "delta_sessions": "↓17%",
-      "delta_users": "↓17%",
-      "delta_views": "↓29%"
-    },
-    "top_pages": [
-      {
-        "עמוד": "/",
-        "צפיות": "56",
-        "sessions": "51"
-      },
-      {
-        "עמוד": "/photo/48b61eff-c89d-4b83-846c-18eb0cc731a9",
-        "צפיות": "3",
-        "sessions": "3"
-      },
-      {
-        "עמוד": "/newsletter/2026-08-full/",
-        "צפיות": "2",
-        "sessions": "2"
-      },
-      {
-        "עמוד": "/free-guide/",
-        "צפיות": "1",
-        "sessions": "1"
-      }
-    ],
-    "sources": [
-      {
-        "מקור": "כניסה ישירה",
-        "sessions": "52"
-      },
-      {
-        "מקור": "סושיאל אורגני",
-        "sessions": "4"
-      },
-      {
-        "מקור": "לא מוגדר",
-        "sessions": "3"
-      }
-    ],
-    "funnel_events": {
-      "photo_view": "15",
-      "purchase_intent": "1"
-    },
-    "analysis": "**מה קרה השבוע**\n\nשבוע חלש עם ירידה של 17% בסשנים ו-29% בצפיות, כמעט כל התנועה נכנסת ישירות (52 מתוך 57) ונוטשת מיד — bounce של 91% וזמן ממוצע של 18 שניות אומרים שהאנשים מגיעים לדף הבית ולא מוצאים סיבה להישאר. הממצא הכי מדאיג: מתוך 15 צפיות בתמונות רק מודל קנייה אחד נפתח, ואף שלב במשפך ההדפסה (Gelato) לא נגע — כלומר יש כשל מוחלט בהמרה לפני הרכישה.\n\n**המלצות לשבוע הבא**\n\n1. **תקן/בדוק את מודל ההדפסה מיידית.** print_intent=0 מוחלט זה לא מקרה — סביר שהכפתור לא בולט, לא עובד, או שאין CTA להדפסה בכלל בעמוד התמונה. עבור על עמוד תמונה בעצמך מהמובייל, ודא שכפתור \"הזמן הדפסה\" קיים, נראה מעל הקיפול ולוחץ. זה החסם היחיד שמונע ממך את המכירה הראשונה אי פעם.\n\n2. **חזק את המעבר מדף הבית לתמונות.** 56 צפיות בדף הבית מול 3 בעמוד תמונה — אנשים נכנסים ולא מקליקים פנימה. שים 3-4 תמונות בולטות עם קריאה ברורה (\"צפה בגלריה\" / \"ראה בגודל מלא\") גבוה בדף, כדי לדחוף מעבר לעמוד תמונה שבו מתחיל המשפך.\n\n3. **בדוק את מודל הקנייה במובייל.** 15 צפיות → מודל אחד → 0 בחירת גודל. או שהמודל לא נפתח כמו שצריך, או שבחירת הגודל מבלבלת/שבורה. 61% מהתנועה במובייל — בדוק את כל הזרימה מטלפון עד שלב ה-add_size.\n\n4. **נצל את התנועה הישירה שכבר יש לך.** 52 כניסות ישירות עם 47 משתמשים חדשים זה מוזר — כנראה מגיע מהניוזלטר או מלינק שאתה משתף בלי UTM. הוסף פרמטרי UTM לכל לינק שאתה מפרסם, כדי לדעת מאיפה באמת מגיעים ולהכפיל את מה שעובד.\n\n5. **צור מסלול לרכישה מהתמונה הפופולרית.** התמונה עם 3 הצפיות היא הכי נצפית — ודא שדווקא בעמוד שלה כל כפתורי הקנייה וההדפסה מושלמים, והפוך אותה לנקודת בדיקה שלך.\n\n**אזהרה**\n\nאל תתפתה לפרש את הנתונים כ\"בעיית תנועה\". הבעיה האמיתית היא שהמשפכים ריקים — גם ה-57 סשנים שכן הגיעו כמעט לא נגעו בשום כפתור המרה, ומשפך ההדפסה אפס מוחלט. יש כאן חשד ממשי לתקלה טכנית בכפתורי ה-print/purchase או ב-tracking שלהם. לפני שאתה משקיע במשיכת תנועה נוספת — תוודא שהמכונה בכלל עובדת, אחרת אתה שופך תנועה לחור."
-  },
-  {
     "date": "17.08.2026",
     "period": "2026-08-10 → 2026-08-17",
     "summary": {
@@ -3178,5 +3123,682 @@
       "purchases": []
     },
     "analysis": "## מה קרה השבוע\n\nשבוע חזק מבחינת תנועה — צמיחה של 64% בסשנים (118) ו-75% בצפיות, מונעת בעיקר מסושיאל (פייסבוק) וכניסה ישירה, עם פיצול בריא בין ישראל (72) לארה\"ב (39). התשלומים כבויים בכוונה, ולכן האותות האמיתיים שחשוב להסתכל עליהם הם 5 עניין ברישוי אישי, פנייה אחת מתוך תמונה ובקשת מדריך אחת — יש כאן ביקוש רך שמתחיל להצטבר.\n\n## המלצות לשבוע הבא\n\n**1. לנצל את 5 ה-licensing_personal_interest שכולם ב-homepage.**\nחמישה אנשים הביעו עניין ברישוי אישי — זה האות החזק ביותר השבוע, וכולו מרוכז בדף הבית. דאג שיש שם דרך ברורה להשאיר פרטים/לפנות (טופס רישוי קצר, לא כפתור קנייה). זה המקום שבו ביקוש רך יכול להפוך לליד אמיתי.\n\n**2. להעמיק את /campaign/ — שם הקשב הכי גבוה.**\nבעמוד הקמפיין הגלילה מרשימה: 14 הגיעו ל-25%, ו-10 עד 90% — אנשים קוראים עד הסוף. הוסף שם קריאה לפעולה רכה בתחתית (פנייה, הצטרפות לרשימה, בקשת מדריך) כדי לתפוס אותם ברגע שסיימו לקרוא.\n\n**3. לטפל ב-Acquisition Experiment 01 שתקוע ב-not_started.**\nשלושת המסלולים (Free Guide, Personal Licensing, B2B) עם 0 סשנים — הניסוי פשוט לא רץ. השבוע: להפעיל לפחות מסלול אחד (מומלץ Personal Licensing, כי כבר יש שם ביקוש אורגני של 5), ולכוון אליו טראפיק מהסושיאל.\n\n**4. לחזק נוכחות בארה\"ב סביב הדפסות קיר.**\n39 סשנים מארה\"ב זה נתח משמעותי — קהל טבעי להדפסות fine art ולמעצבי פנים. שקול פוסט/עמוד נחיתה באנגלית שמדבר על wall art ורישוי, ולהפנות אליו את התנועה האמריקאית.\n\n**5. לנקות ולתייג את תנועת הפייסבוק.**\nרוב התנועה מגיעה עם fbclid ונרשמת כ-referral מפוזר (facebook.com, m.facebook.com, l.facebook.com, lm.facebook.com) — זה מפצל את הדיווח. הוסף UTM-ים עקביים לפוסטים כדי לראות איזה תוכן באמת מביא את האנשים האיכותיים.\n\n## אזהרה אחת\n\nBounce rate של 62.7% ו-engagement rate של 37.3% בלבד — למרות הזמן הממוצע הגבוה (9:19). הפער הזה אומר שחלק גדול מהמבקרים נוחתים בדף הבית, לא מתקדמים לשום עמוד נוסף ויוצאים, בעוד מיעוט מעורב מאוד \"מושך\" את הממוצע למעלה. הפוקוס השבוע צריך להיות בדף הבית: לתת צעד הבא ברור (רישוי אישי, מדריך, קמפיין) כדי להמיר יותר מהנוחתים למעורבים — לא כפתור קנייה (הוא מוסתר בכוונה), אלא נתיב רך להמשך.\n\nלא מדובר בבעיית משפך או מעקב: purchase_intent ו-print_intent הם 0 מבנית כי התשלומים כבויים וכפתורי הקנייה מוסתרים — זו מדיניות, לא תקלה."
+  },
+  {
+    "date": "26.10.2026",
+    "period": "2026-10-19 → 2026-10-26",
+    "summary": {
+      "sessions": "87",
+      "activeUsers": "64",
+      "pageViews": "126",
+      "bounceRate": "62.1%",
+      "avgSessionSec": "1131",
+      "newUsers": "61",
+      "engagementRate": "37.9%",
+      "engagedSessions": "33",
+      "delta_sessions": "↓26%",
+      "delta_users": "↓36%",
+      "delta_views": "↓8%"
+    },
+    "top_pages": [
+      {
+        "עמוד": "/",
+        "צפיות": "72",
+        "sessions": "53"
+      },
+      {
+        "עמוד": "/campaign/",
+        "צפיות": "12",
+        "sessions": "9"
+      },
+      {
+        "עמוד": "/camera/composition/",
+        "צפיות": "7",
+        "sessions": "7"
+      },
+      {
+        "עמוד": "/free-guide/",
+        "צפיות": "7",
+        "sessions": "7"
+      },
+      {
+        "עמוד": "/camera/",
+        "צפיות": "5",
+        "sessions": "4"
+      }
+    ],
+    "landing_pages": [
+      {
+        "עמוד נחיתה": "/",
+        "sessions": "48",
+        "activeUsers": "32"
+      },
+      {
+        "עמוד נחיתה": "/campaign/",
+        "sessions": "4",
+        "activeUsers": "1"
+      },
+      {
+        "עמוד נחיתה": "(not set)",
+        "sessions": "3",
+        "activeUsers": "2"
+      },
+      {
+        "עמוד נחיתה": "/?fbclid=IwZXh0bgNhZW0CMTEAcGRvZgRzcnRjBmFwcF9pZAwyNTYyODEwNDA1NTgAAR5KOWqoaoLUHXyr0CFRTfz2wlLVdqJBkNstlaLOfGtBAD89HB--Bm-fz4SAeA_aem_bTnHDZ2E8egffhX52NzB4A",
+        "sessions": "1",
+        "activeUsers": "1"
+      },
+      {
+        "עמוד נחיתה": "/camera/",
+        "sessions": "1",
+        "activeUsers": "1"
+      }
+    ],
+    "sources": [
+      {
+        "מקור": "כניסה ישירה",
+        "sessions": "52"
+      },
+      {
+        "מקור": "סושיאל אורגני",
+        "sessions": "20"
+      },
+      {
+        "מקור": "AI Assistant",
+        "sessions": "9"
+      },
+      {
+        "מקור": "חיפוש אורגני",
+        "sessions": "5"
+      },
+      {
+        "מקור": "Organic Video",
+        "sessions": "1"
+      }
+    ],
+    "campaigns": [
+      {
+        "source": "(direct)",
+        "medium": "(none)",
+        "campaign": "(direct)",
+        "sessions": "52",
+        "activeUsers": "33"
+      },
+      {
+        "source": "chatgpt.com",
+        "medium": "ai-assistant",
+        "campaign": "(ai-assistant)",
+        "sessions": "9",
+        "activeUsers": "6"
+      },
+      {
+        "source": "m.facebook.com",
+        "medium": "referral",
+        "campaign": "(referral)",
+        "sessions": "9",
+        "activeUsers": "9"
+      },
+      {
+        "source": "facebook.com",
+        "medium": "referral",
+        "campaign": "(referral)",
+        "sessions": "5",
+        "activeUsers": "5"
+      },
+      {
+        "source": "google",
+        "medium": "organic",
+        "campaign": "(organic)",
+        "sessions": "3",
+        "activeUsers": "2"
+      },
+      {
+        "source": "instagram",
+        "medium": "organic_social",
+        "campaign": "photo_posts",
+        "sessions": "3",
+        "activeUsers": "3"
+      },
+      {
+        "source": "bing",
+        "medium": "organic",
+        "campaign": "(organic)",
+        "sessions": "2",
+        "activeUsers": "2"
+      },
+      {
+        "source": "lm.facebook.com",
+        "medium": "referral",
+        "campaign": "(referral)",
+        "sessions": "2",
+        "activeUsers": "2"
+      },
+      {
+        "source": "linkedin.com",
+        "medium": "referral",
+        "campaign": "(referral)",
+        "sessions": "1",
+        "activeUsers": "1"
+      },
+      {
+        "source": "youtube.com",
+        "medium": "referral",
+        "campaign": "(referral)",
+        "sessions": "1",
+        "activeUsers": "1"
+      }
+    ],
+    "experiment_campaigns": [],
+    "devices": [
+      {
+        "מכשיר": "desktop",
+        "sessions": "52"
+      },
+      {
+        "מכשיר": "mobile",
+        "sessions": "36"
+      }
+    ],
+    "countries": [
+      {
+        "ארץ": "Israel",
+        "sessions": "45"
+      },
+      {
+        "ארץ": "United States",
+        "sessions": "32"
+      },
+      {
+        "ארץ": "Sweden",
+        "sessions": "6"
+      },
+      {
+        "ארץ": "(not set)",
+        "sessions": "2"
+      },
+      {
+        "ארץ": "Bangladesh",
+        "sessions": "1"
+      }
+    ],
+    "funnel_events": {
+      "scroll_25": "32",
+      "scroll_50": "18",
+      "photo_view": "16",
+      "scroll_75": "14",
+      "scroll_90": "12",
+      "content_link_click": "9",
+      "nav_click": "6",
+      "hero_gallery_click": "5",
+      "hero_guide_click": "3",
+      "language_change": "3",
+      "gallery_filter": "2",
+      "nav_camera_click": "2",
+      "nav_gallery_click": "2",
+      "contact_intent": "1",
+      "nav_learn_click": "1",
+      "nav_more_click": "1"
+    },
+    "ux_by_page": [
+      {
+        "event": "scroll_25",
+        "עמוד": "/",
+        "count": "18"
+      },
+      {
+        "event": "photo_view",
+        "עמוד": "/",
+        "count": "11"
+      },
+      {
+        "event": "nav_click",
+        "עמוד": "/",
+        "count": "6"
+      },
+      {
+        "event": "scroll_50",
+        "עמוד": "/",
+        "count": "6"
+      },
+      {
+        "event": "hero_gallery_click",
+        "עמוד": "/",
+        "count": "5"
+      },
+      {
+        "event": "scroll_25",
+        "עמוד": "/campaign/",
+        "count": "4"
+      },
+      {
+        "event": "scroll_50",
+        "עמוד": "/campaign/",
+        "count": "4"
+      },
+      {
+        "event": "scroll_75",
+        "עמוד": "/campaign/",
+        "count": "4"
+      },
+      {
+        "event": "scroll_90",
+        "עמוד": "/campaign/",
+        "count": "4"
+      },
+      {
+        "event": "content_link_click",
+        "עמוד": "/",
+        "count": "3"
+      },
+      {
+        "event": "content_link_click",
+        "עמוד": "/camera/",
+        "count": "3"
+      },
+      {
+        "event": "hero_guide_click",
+        "עמוד": "/",
+        "count": "3"
+      },
+      {
+        "event": "language_change",
+        "עמוד": "/",
+        "count": "3"
+      },
+      {
+        "event": "photo_view",
+        "עמוד": "/photo/446d34db-49ad-4d0c-97f2-60b0dbdb4d35",
+        "count": "3"
+      },
+      {
+        "event": "scroll_75",
+        "עמוד": "/",
+        "count": "3"
+      },
+      {
+        "event": "scroll_90",
+        "עמוד": "/",
+        "count": "3"
+      },
+      {
+        "event": "content_link_click",
+        "עמוד": "/camera/lenses/",
+        "count": "2"
+      },
+      {
+        "event": "gallery_filter",
+        "עמוד": "/",
+        "count": "2"
+      },
+      {
+        "event": "nav_camera_click",
+        "עמוד": "/",
+        "count": "2"
+      },
+      {
+        "event": "nav_gallery_click",
+        "עמוד": "/",
+        "count": "2"
+      },
+      {
+        "event": "photo_view",
+        "עמוד": "/photo/d6cf6057-485f-465b-8839-a12504f0da2e",
+        "count": "2"
+      },
+      {
+        "event": "scroll_25",
+        "עמוד": "/camera/lenses/",
+        "count": "2"
+      },
+      {
+        "event": "scroll_25",
+        "עמוד": "/free-guide/",
+        "count": "2"
+      },
+      {
+        "event": "scroll_50",
+        "עמוד": "/camera/lenses/",
+        "count": "2"
+      },
+      {
+        "event": "scroll_50",
+        "עמוד": "/free-guide/",
+        "count": "2"
+      },
+      {
+        "event": "scroll_75",
+        "עמוד": "/camera/lenses/",
+        "count": "2"
+      },
+      {
+        "event": "scroll_75",
+        "עמוד": "/free-guide/",
+        "count": "2"
+      },
+      {
+        "event": "scroll_90",
+        "עמוד": "/camera/lenses/",
+        "count": "2"
+      },
+      {
+        "event": "contact_intent",
+        "עמוד": "/",
+        "count": "1"
+      },
+      {
+        "event": "content_link_click",
+        "עמוד": "/camera/exposure/",
+        "count": "1"
+      },
+      {
+        "event": "nav_learn_click",
+        "עמוד": "/",
+        "count": "1"
+      },
+      {
+        "event": "nav_more_click",
+        "עמוד": "/",
+        "count": "1"
+      },
+      {
+        "event": "scroll_25",
+        "עמוד": "/camera/",
+        "count": "1"
+      },
+      {
+        "event": "scroll_25",
+        "עמוד": "/camera/composition/",
+        "count": "1"
+      },
+      {
+        "event": "scroll_25",
+        "עמוד": "/camera/exposure/",
+        "count": "1"
+      },
+      {
+        "event": "scroll_25",
+        "עמוד": "/camera/portrait/",
+        "count": "1"
+      },
+      {
+        "event": "scroll_25",
+        "עמוד": "/learn/",
+        "count": "1"
+      },
+      {
+        "event": "scroll_25",
+        "עמוד": "/learn/1QJLpgSQb3KyodrBYvMzz5HYIClrPzl6S",
+        "count": "1"
+      },
+      {
+        "event": "scroll_50",
+        "עמוד": "/camera/composition/",
+        "count": "1"
+      },
+      {
+        "event": "scroll_50",
+        "עמוד": "/camera/exposure/",
+        "count": "1"
+      },
+      {
+        "event": "scroll_50",
+        "עמוד": "/camera/portrait/",
+        "count": "1"
+      },
+      {
+        "event": "scroll_50",
+        "עמוד": "/learn/1QJLpgSQb3KyodrBYvMzz5HYIClrPzl6S",
+        "count": "1"
+      },
+      {
+        "event": "scroll_75",
+        "עמוד": "/camera/exposure/",
+        "count": "1"
+      },
+      {
+        "event": "scroll_75",
+        "עמוד": "/camera/portrait/",
+        "count": "1"
+      },
+      {
+        "event": "scroll_75",
+        "עמוד": "/learn/1QJLpgSQb3KyodrBYvMzz5HYIClrPzl6S",
+        "count": "1"
+      },
+      {
+        "event": "scroll_90",
+        "עמוד": "/camera/exposure/",
+        "count": "1"
+      },
+      {
+        "event": "scroll_90",
+        "עמוד": "/camera/portrait/",
+        "count": "1"
+      },
+      {
+        "event": "scroll_90",
+        "עמוד": "/free-guide/",
+        "count": "1"
+      }
+    ],
+    "subscriber_summary": {
+      "period_days": 7,
+      "period_new_by_source": [],
+      "period_marketing_opt_ins_by_source": [],
+      "current_marketing_by_source": [],
+      "totals": {
+        "total_subscribers": 11,
+        "marketing_subscribers": 0,
+        "non_marketing_subscribers": 2,
+        "unknown_marketing_consent": 9
+      }
+    },
+    "business_review": {
+      "sample": {
+        "sessions": 87,
+        "new_subscribers": 0,
+        "directional_only": true,
+        "note": "Directional only — fewer than 20 new subscribers in the measured period."
+      },
+      "kpis": {
+        "direct_share_pct": 59.8,
+        "lead_rate_pct": 0.0,
+        "guide_request_rate_pct": 0.0,
+        "new_subscriber_marketing_opt_in_pct": null,
+        "period_marketing_opt_ins": 0,
+        "digital_intent_pct": 0.0,
+        "digital_selection_pct": null,
+        "print_intent_pct": 0.0
+      },
+      "next_action": "Keep measurement stable for another week and focus on increasing qualified traffic rather than adding a new commerce feature.",
+      "reason": "Current conversion counts are still too small for a reliable channel decision."
+    },
+    "acquisition_experiment": {
+      "experiment": "Acquisition Experiment 01",
+      "window_status": "not_started",
+      "campaign_metrics_source": "campaign_totals",
+      "paths": [
+        {
+          "campaign": "202610_freeguide_photo_tips",
+          "label": "Free Guide",
+          "sessions": 0,
+          "active_users": 0,
+          "primary_event": "guide_request_success",
+          "primary_count": 0,
+          "primary_rate_pct": null,
+          "secondary_event": "generate_lead",
+          "secondary_count": 0,
+          "status": "not_started"
+        },
+        {
+          "campaign": "202610_licensing_personal",
+          "label": "Personal Licensing",
+          "sessions": 0,
+          "active_users": 0,
+          "primary_event": "licensing_personal_interest",
+          "primary_count": 0,
+          "primary_rate_pct": null,
+          "secondary_event": "purchase_intent",
+          "secondary_count": 0,
+          "status": "not_started"
+        },
+        {
+          "campaign": "202610_b2b_outreach",
+          "label": "B2B Wall Art",
+          "sessions": 0,
+          "active_users": 0,
+          "primary_event": "b2b_contact_start",
+          "primary_count": 0,
+          "primary_rate_pct": null,
+          "secondary_event": "contact_form_success",
+          "secondary_count": 0,
+          "status": "not_started"
+        }
+      ]
+    },
+    "experiment_events": [],
+    "qualified_by_source": [],
+    "qualified_source_status": "available",
+    "revenue": {
+      "period_days": 7,
+      "payments_enabled": false,
+      "digital": {
+        "count": 0,
+        "revenue_ils": 0
+      },
+      "print": {
+        "by_status": [],
+        "total_count": 0,
+        "total_revenue_ils": 0
+      }
+    },
+    "photo_analytics": {
+      "window_days": 30,
+      "views": [
+        {
+          "photo_id": "88674fc6-1801-4ce4-8f1d-483e496c9a4a",
+          "photo_title": "דבורה מוכסת אבקה על חמניה",
+          "category": "מאקרו-צילומי תקריב",
+          "count": 26
+        },
+        {
+          "photo_id": "1toFUd2s_cxvcYm1HaoGaCLZaGzkRqU9D",
+          "photo_title": "פרות בגאורגיה",
+          "category": "גאורגיה",
+          "count": 3
+        },
+        {
+          "photo_id": "1i-XAY9X2H0MlGDep-TKkzT6990IduzuE",
+          "photo_title": "שדה ירוק בגאורגיה",
+          "category": "גאורגיה",
+          "count": 3
+        },
+        {
+          "photo_id": "1TCAfgJ9pl3T0G8RRtIAa5_0FOoxXrjso",
+          "photo_title": "ריקוד של אש בלילה",
+          "category": "צילומי לילה",
+          "count": 3
+        },
+        {
+          "photo_id": "1Hf6F1nz_5dwRh-sY3TM3StAnU0nqOGK9",
+          "photo_title": "הרים בעננים גיאורגיים",
+          "category": "גאורגיה",
+          "count": 3
+        },
+        {
+          "photo_id": "0985a050-eeff-440e-8e51-1a26ab463258",
+          "photo_title": "ציפור בשקיעה",
+          "category": "בעלי חיים",
+          "count": 3
+        },
+        {
+          "photo_id": "7f8946b4-6871-430c-b1d9-729be53b3ee6",
+          "photo_title": "פרפר שועל על קוץ",
+          "category": "מאקרו-צילומי תקריב",
+          "count": 2
+        },
+        {
+          "photo_id": "6831fae6-c904-4e91-b0a9-3eba4b7f3b73",
+          "photo_title": "ורד ורוד עדין",
+          "category": "מאקרו-צילומי תקריב",
+          "count": 2
+        },
+        {
+          "photo_id": "45e4c3b6-8382-4c47-be61-e238cbd0e5d8",
+          "photo_title": "סוסים לבנים בטבע",
+          "category": "בעלי חיים",
+          "count": 2
+        },
+        {
+          "photo_id": "1ltSPcKOpWe5b7CSMgeJr53Zf-W6Xr86i",
+          "photo_title": "עצים עתיקים בגאורגיה",
+          "category": "גאורגיה",
+          "count": 2
+        },
+        {
+          "photo_id": "1QjVUEg6tqbQuipiSfVmFOhhGn8pqLRRz",
+          "photo_title": "הר מושלג בגאורגיה",
+          "category": "גאורגיה",
+          "count": 2
+        },
+        {
+          "photo_id": "1IY3Qa2NQIvhchDjAGUdlY7NPfegOirPo",
+          "photo_title": "הרים בערפל בגאורגיה",
+          "category": "גאורגיה",
+          "count": 2
+        },
+        {
+          "photo_id": "15ajueRBNI5HP68qir7ri5hFT8e0Ll-9N",
+          "photo_title": "פרחים סגולים על גדר",
+          "category": "גאורגיה",
+          "count": 2
+        },
+        {
+          "photo_id": "faa67256-b357-41bd-a0fa-0b00e3ab72fa",
+          "photo_title": "שועל בשדה פרחים",
+          "category": "בעלי חיים",
+          "count": 1
+        },
+        {
+          "photo_id": "f7e18780-1f2d-4d85-bbcb-d584c4216812",
+          "photo_title": "טווס בתהילה",
+          "category": "בעלי חיים",
+          "count": 1
+        },
+        {
+          "photo_id": "ba7677aa-989c-419e-8086-9eeef32a9650",
+          "photo_title": "כלנית סגולה",
+          "category": "מאקרו-צילומי תקריב",
+          "count": 1
+        },
+        {
+          "photo_id": "6c56b6f3-707a-4011-9556-0561352f682a",
+          "photo_title": "עיני הטווס המלכותי",
+          "category": "צילום מופשט",
+          "count": 1
+        },
+        {
+          "photo_id": "4f0999db-21f3-4cab-beab-1fe05b968374",
+          "photo_title": "טלפון שחור עתיק",
+          "category": "שחור-לבן",
+          "count": 1
+        },
+        {
+          "photo_id": "1zp8xbRsZfeSoReHWOdfRdB7A1klXttab",
+          "photo_title": "תפר היסטוריה",
+          "category": "שחור-לבן",
+          "count": 1
+        },
+        {
+          "photo_id": "1zaWISr14KVt1cIEJXKMBbwAnkUMeiOBI",
+          "photo_title": "עדר סוסים בשדה ירוק",
+          "category": "גאורגיה",
+          "count": 1
+        }
+      ],
+      "intents": [],
+      "purchases": []
+    },
+    "analysis": "## מה קרה השבוע\n\nהתנועה ירדה חזק (סשנים ↓26%, משתמשים ↓36%), אבל מי שהגיע נשאר הרבה — כמעט 19 דקות בסשן בממוצע וגלילה עמוקה יחסית (12 הגיעו ל-90%). התשלומים כבויים במכוון, אז אין מה לקרוא לתוך רכישות=0; אות הביקוש האמיתי כרגע (פניות, רישוי, בקשות מדריך) גם הוא אפס — וזה מה שצריך להעיר אותו.\n\n## המלצות לשבוע הבא\n\n**1. תעשה דחיפה אקטיבית לתנועה — הירידה אמיתית.**\nעם 20 סשנים מסושיאל השבוע, אתה תלוי כמעט רק בכניסות ישירות (52). פרסם 2-3 תמונות חזקות השבוע באינסטגרם/פייסבוק עם לינק ישיר לעמוד /photo הספציפי (לא לבית), כדי להחזיר נפח. ה-fbclid בנתונים מראה שהקמפיין בפייסבוק עובד — תזין אותו.\n\n**2. תנצל את ה-/campaign/ — זה העמוד עם ההתנהגות הכי טובה.**\nבכל שלבי הגלילה שם הגיעו ל-90% (4 מתוך 4). העמוד עובד, אבל נכנסו אליו רק 4 סשנים. תפנה אליו תנועה ישירה מהסושיאל ומה-bio, ותוודא שיש בו קריאה ברורה ל-guide_request או לפנייה אישית (שהם אותות הביקוש הפעילים כרגע).\n\n**3. תחזק את ה-free-guide כמנוע לידים.**\n7 צפיות ב-/free-guide/ אבל guide_request_success=0. כשהתשלומים כבויים, המדריך הוא ה-conversion העיקרי שלך השבוע. בדוק שהטופס עצמו עובד טכנית (submit מצליח, event נורה), כי אפס בקשות מול 7 צפיות חשוד — או שהטופס מסורבל או שבור.\n\n**4. תנתב את תנועת ה-AI Assistant.**\n9 סשנים מ-ChatGPT — זה מקור משמעותי (יותר מגוגל אורגני!). ודא שהתוכן ב-/camera/ וב-/learn/ מצוטט נקי ועם לינקים פנימיים לגלריה ולמדריך, כי משם מגיעים גולשים סקרנים שאפשר להמיר ללידים.\n\n**5. תפרסם תוכן camera/learn — זה מה שמביא את התנועה האיכותית.**\ncomposition ו-lenses קיבלו content_link_click. פרסם פוסט אחד חדש או שדרג קיים השבוע כדי להזין את מנוע האורגני וה-AI.\n\n## אזהרה אחת\n\n**guide_request_success=0 מול 7 צפיות ב-/free-guide/ זו בעיה אמיתית לבדוק.** זה הערוץ היחיד שיכול לייצר תוצאה בזמן שהתשלומים כבויים, ואם הטופס שבור טכנית אתה מאבד את כל הביקוש החי. בדוק אותו ידנית מקצה לקצה (כולל שה-event נרשם ב-D1, לא רק ב-GA) לפני כל דחיפת תנועה — אין טעם להביא תנועה לדלי מחורר.\n\n(הערה: רכישות והדפסות=0 הן תוצאה של PAYMENTS_ENABLED=false — מדיניות מכוונת, לא כשל. אל תתייחס לזה כבעיה.)"
   }
 ]
