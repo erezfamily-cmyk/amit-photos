@@ -104,11 +104,11 @@
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Heebo:wght@300;400;500;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'" />
   <noscript><link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Heebo:wght@300;400;500;700&display=swap" rel="stylesheet" /></noscript>
 
-  <link rel="stylesheet" href="assets/css/style.css?v=ff6917ab" />
+  <link rel="stylesheet" href="assets/css/style.css?v=e965d255" />
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#0a0a0a" />
   <script src="assets/js/analytics.js?v=5b30dc6e"></script>
-  <script src="assets/js/i18n.js?v=616036a4"></script>
+  <script src="assets/js/i18n.js?v=49d9b739"></script>
 </head>
 <body data-payments-state="disabled">
 
@@ -116,8 +116,7 @@
 
   <!-- ===== BETA BANNER ===== -->
   <div id="beta-banner" data-i18n="beta.banner.html" data-i18n-html>
-    האתר נמצא בשלבי הרצה. לרכישת תמונות ניתן לפנות טלפונית ולשלם דרך
-    <strong>ביט</strong> או <strong>PayBox</strong> — <a href="tel:050-3333227" class="beta-banner-tel">050-3333227</a>
+    לרכישת צילום לשימוש אישי, פנו לבירור המחיר ותנאי השימוש — <a href="tel:050-3333227" class="beta-banner-tel">050-3333227</a>. שימוש מסחרי אינו זמין כרגע.
   </div>
 
   <!-- ===== NAV ===== -->
@@ -434,7 +433,7 @@
     </div>
     <div class="purchase-disabled-notice payments-disabled-only" role="status">
       <h3 data-i18n="payments.disabled.title">הרכישה המקוונת ב־PayPal עדיין לא נפתחה</h3>
-      <p data-i18n="payments.disabled.text">בחרו צילום בגלריה ושלחו בקשה לרכישה לשימוש אישי ב־WhatsApp. אחזור אליכם עם המחיר ותנאי השימוש; לאחר אישור הפרטים נתאם תשלום ידני ב־Bit או PayBox. שימוש עסקי, מסחרי או פרסומי אינו זמין כרגע.</p>
+      <p data-i18n="payments.disabled.text">בחרו צילום בגלריה ושלחו בקשה לרכישה לשימוש אישי ב־WhatsApp. אחזור אליכם עם המחיר ותנאי השימוש; לאחר אישור הפרטים נתאם את התשלום. שימוש עסקי, מסחרי או פרסומי אינו זמין כרגע.</p>
       <a href="https://wa.me/972503333227?text=%D7%94%D7%99%D7%99%20%D7%A2%D7%9E%D7%99%D7%AA%2C%20%D7%90%D7%A9%D7%9E%D7%97%20%D7%9C%D7%91%D7%A8%D7%A8%20%D7%A8%D7%9B%D7%99%D7%A9%D7%94%20%D7%9C%D7%A9%D7%99%D7%9E%D7%95%D7%A9%20%D7%90%D7%99%D7%A9%D7%99.%20%D7%94%D7%A6%D7%99%D7%9C%D7%95%D7%9D%3A%20____" class="purchase-disabled-contact" target="_blank" rel="noopener" data-i18n="payments.disabled.call" data-analytics-event="purchase_inquiry_click" data-analytics-method="whatsapp">שליחת בקשה ב־WhatsApp</a>
     </div>
     <div class="process-grid payments-disabled-only" aria-label="תהליך בירור רכישה לשימוש אישי" data-i18n-aria="htb.temp.aria">
@@ -538,28 +537,27 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
           </div>
           <div class="affiliate-card-text">
-            <p class="affiliate-card-title" data-he="הפוך תמונה לאמנות על הקיר" data-en="Turn Photos into Wall Art">הפוך תמונה לאמנות על הקיר</p>
-            <p class="affiliate-card-desc" data-he="פוסטרים, קנבס ומסגרות איכותיות — משלוח חינם מעל $59" data-en="Premium posters, canvas & frames — free shipping over $59">פוסטרים, קנבס ומסגרות איכותיות — משלוח חינם מעל $59</p>
+            <p class="affiliate-card-title" data-i18n="affiliate.title">הפוך תמונה לאמנות על הקיר</p>
+            <p class="affiliate-card-desc" data-i18n="affiliate.desc">פוסטרים, קנבס ומסגרות איכותיות</p>
           </div>
-          <span class="affiliate-card-btn" data-he="גלה ב-Poster Master ←" data-en="Explore Poster Master →">גלה ב-Poster Master ←</span>
+          <span class="affiliate-card-btn" data-i18n="affiliate.cta">גלה ב-Poster Master ←</span>
         </div>
       </a>
-      <p class="gear-disclose" data-he="קישור שותף — עמלה קטנה, ללא עלות נוספת לך" data-en="Affiliate link — small commission, no extra cost to you">קישור שותף — עמלה קטנה, ללא עלות נוספת לך</p>
+      <p class="gear-disclose" data-i18n="affiliate.disclosure">קישור שותף — עמלה קטנה, ללא עלות נוספת לך</p>
     </div>
   </section>
 
   <!-- ===== PRICING ===== -->
   <section class="section" id="pricing" data-section="pricing">
     <div class="section-header reveal">
-      <p class="section-label" data-i18n="pricing.label">רישיונות ומחירים</p>
+      <p class="section-label" data-i18n="pricing.label">שימוש אישי ומחירים</p>
       <h2 class="section-title" data-i18n="pricing.title">קבצים לשימוש אישי</h2>
-      <p class="section-subtitle" data-i18n="pricing.subtitle">המחירים והקבצים זמינים לשימוש אישי בלבד. שימוש עסקי, מסחרי או פרסומי אינו זמין בשלב זה.</p>
+      <p class="section-subtitle" data-i18n="pricing.subtitle">קובצי תמונה לשימוש אישי בלבד. המחיר ותנאי השימוש יימסרו בפנייה. שימוש עסקי, מסחרי או פרסומי אינו זמין בשלב זה.</p>
     </div>
     <div class="pricing-grid">
       <div class="pricing-card reveal">
         <p class="pricing-name" data-i18n="pricing.net.name">קובץ רשת</p>
-        <div class="pricing-price"><span class="pricing-currency">₪</span>19</div>
-        <div class="pricing-usd">~$5</div>
+        <div class="pricing-price pricing-inquiry" data-i18n="pricing.inquiry">המחיר יימסר בפנייה</div>
         <p class="pricing-period" data-i18n="pricing.per-photo">לתמונה</p>
         <ul class="pricing-features">
           <li data-i18n="pricing.net.f1">רזולוציה 1500px</li>
@@ -573,8 +571,7 @@
       <div class="pricing-card featured reveal reveal-delay-1">
         <div class="pricing-badge" data-i18n="pricing.popular">פופולרי</div>
         <p class="pricing-name" data-i18n="pricing.print.name">קובץ הדפסה</p>
-        <div class="pricing-price"><span class="pricing-currency">₪</span>59</div>
-        <div class="pricing-usd">~$16</div>
+        <div class="pricing-price pricing-inquiry" data-i18n="pricing.inquiry">המחיר יימסר בפנייה</div>
         <p class="pricing-period" data-i18n="pricing.per-photo">לתמונה</p>
         <ul class="pricing-features">
           <li data-i18n="pricing.print.f1">רזולוציה 3000px</li>
@@ -587,8 +584,7 @@
       </div>
       <div class="pricing-card reveal reveal-delay-2">
         <p class="pricing-name" data-i18n="pricing.full.name">קובץ מלא</p>
-        <div class="pricing-price"><span class="pricing-currency">₪</span>129</div>
-        <div class="pricing-usd">~$35</div>
+        <div class="pricing-price pricing-inquiry" data-i18n="pricing.inquiry">המחיר יימסר בפנייה</div>
         <p class="pricing-period" data-i18n="pricing.per-photo">לתמונה</p>
         <ul class="pricing-features">
           <li data-i18n="pricing.full.f1">רזולוציה מקסימלית</li>

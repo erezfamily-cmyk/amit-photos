@@ -14,15 +14,19 @@ test('business page has one canonical and bilingual social metadata', () => {
   assert.match(business, /data-en=/);
 });
 
-test('business page sends one contact-start event through funnel logic', () => {
-  assert.match(business, /window\.trackUxEvent\('b2b_contact_start'/);
-  assert.doesNotMatch(business, /data-analytics-event="b2b_contact_start"/);
+test('business page pauses commercial offers and routes visitors to personal-use information', () => {
+  assert.match(business, /id="business-unavailable"/);
+  assert.match(business, /Commercial use is currently unavailable/);
+  assert.match(business, /שימוש מסחרי אינו זמין כרגע/);
+  assert.match(business, /href="\/#gallery"/);
+  assert.match(business, /href="\/licensing\/"/);
+  assert.doesNotMatch(business, /data-package=|b2b_contact_start|b2b_package_select|b2b_intent|business_quote|tailored quote|Request a business quote/);
 });
 
-test('business packages are allowlisted and stored without PII', () => {
-  assert.match(business, /new Set\(\['digital_display','wall_art','custom_collection'\]\)/);
-  assert.match(business, /sessionStorage\.setItem\('amit_b2b_context'/);
-  assert.doesNotMatch(business, /email|phone|name:/i);
+test('paused business page cannot create a business lead context and honors language links', () => {
+  assert.doesNotMatch(business, /sessionStorage\.setItem|amit_b2b_context/);
+  assert.match(business, /URLSearchParams\(location.search\)\.get\('lang'\)/);
+  assert.match(business, /url.searchParams.set\('lang',lang\)/);
 });
 
 test('contact form reads short-lived B2B context and selects general inquiry topic robustly', () => {

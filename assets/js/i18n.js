@@ -81,7 +81,7 @@ const TRANSLATIONS = {
     'hero.subtitle':    'אור שמופיע לרגע, מקום שנשאר בזיכרון, פרט קטן שכמעט פספסנו. בואו לגלות את העולם דרך העיניים שלי.',
     'payments.disabled.title': 'הרכישה המקוונת ב־PayPal עדיין לא נפתחה',
     'payments.disabled.hero':  'מצאתם צילום שמתאים לכם? פתחו אותו ושלחו בירור לרכישה לשימוש אישי ב־WhatsApp.',
-    'payments.disabled.text':  'בחרו צילום בגלריה ושלחו בקשה לרכישה לשימוש אישי ב־WhatsApp. אחזור אליכם עם המחיר ותנאי השימוש; לאחר אישור הפרטים נתאם תשלום ידני ב־Bit או PayBox. שימוש עסקי, מסחרי או פרסומי אינו זמין כרגע.',
+    'payments.disabled.text':  'בחרו צילום בגלריה ושלחו בקשה לרכישה לשימוש אישי ב־WhatsApp. אחזור אליכם עם המחיר ותנאי השימוש; לאחר אישור הפרטים נתאם את התשלום. שימוש עסקי, מסחרי או פרסומי אינו זמין כרגע.',
     'payments.disabled.call':  'שליחת בקשה ב־WhatsApp',
     'hero.scroll':      'גלול',
     'hero.cta':         'גלו את הרגע שלכם',
@@ -193,11 +193,16 @@ const TRANSLATIONS = {
     'explore.locations.cta':      'לגלות מקומות ←',
 
     // Pricing
+    'affiliate.title': "הפוך תמונה לאמנות על הקיר",
+    'affiliate.desc': "פוסטרים, קנבס ומסגרות איכותיות",
+    'affiliate.cta': "גלה ב-Poster Master ←",
+    'affiliate.disclosure': "קישור שותף — עמלה קטנה, ללא עלות נוספת לך",
     'pricing.label':    'שימוש אישי ומחירים',
     'pricing.title':    'קבצים לשימוש אישי',
-    'pricing.subtitle': 'המחירים והקבצים זמינים לשימוש אישי בלבד. שימוש עסקי, מסחרי או פרסומי אינו זמין בשלב זה.',
+    'pricing.subtitle': 'קובצי תמונה לשימוש אישי בלבד. המחיר ותנאי השימוש יימסרו בפנייה. שימוש עסקי, מסחרי או פרסומי אינו זמין בשלב זה.',
     'pricing.popular':  'פופולרי',
     'pricing.per-photo':'לתמונה',
+    'pricing.inquiry': 'המחיר יימסר בפנייה',
     'pricing.cta':      'עיין בגלריה',
     'pricing.contact':  'בחרו צילום לבירור',
     'pricing.net.name': 'קובץ רשת',
@@ -310,7 +315,7 @@ const TRANSLATIONS = {
     'buy.alt.brand':    'ביט / Paybox',
 
     // Beta banner
-    'beta.banner.html': 'האתר נמצא בשלבי הרצה. לרכישת תמונות ניתן לפנות טלפונית ולשלם דרך <strong>ביט</strong> או <strong>PayBox</strong> — <a href="tel:050-3333227" class="beta-banner-tel">050-3333227</a>',
+    'beta.banner.html': "לרכישת צילום לשימוש אישי, פנו לבירור המחיר ותנאי השימוש — <a href=\"tel:050-3333227\" class=\"beta-banner-tel\">050-3333227</a>. שימוש מסחרי אינו זמין כרגע.",
 
     // GuruShots section
     'gurushots.label':            'הכרה בינלאומית',
@@ -499,7 +504,7 @@ const TRANSLATIONS = {
     'hero.subtitle':    'A fleeting light, a place you remember, a detail you almost missed. Explore the world through my lens.',
     'payments.disabled.title': 'Online PayPal purchasing is not open yet',
     'payments.disabled.hero':  'Found a photograph you love? Open it and send a personal-use purchase inquiry on WhatsApp.',
-    'payments.disabled.text':  'Choose a photograph in the gallery and send a WhatsApp inquiry to purchase it for personal use. I will reply with the price and terms; after approval, we will arrange manual payment via Bit or PayBox. Business, commercial and advertising use is currently unavailable.',
+    'payments.disabled.text':  'Choose a photograph in the gallery and send a WhatsApp inquiry to purchase it for personal use. I will reply with the price and terms; after approval, we will arrange payment. Business, commercial and advertising use is currently unavailable.',
     'payments.disabled.call':  'Send a WhatsApp inquiry',
     'hero.scroll':      'Scroll',
     'hero.cta':         'Find your moment',
@@ -611,11 +616,16 @@ const TRANSLATIONS = {
     'explore.locations.cta':      'Explore Locations →',
 
     // Pricing
+    'affiliate.title': "Turn Photos into Wall Art",
+    'affiliate.desc': "Premium posters, canvas & frames",
+    'affiliate.cta': "Explore Poster Master →",
+    'affiliate.disclosure': "Affiliate link — small commission, no extra cost to you",
     'pricing.label':    'Personal Use & Prices',
     'pricing.title':    'Files for Personal Use',
-    'pricing.subtitle': 'The listed files and prices are for personal use only. Business, commercial and advertising use is currently unavailable.',
+    'pricing.subtitle': 'Photo files are for personal use only. Contact me for the price and terms. Business, commercial and advertising use is currently unavailable.',
     'pricing.popular':  'Popular',
     'pricing.per-photo':'per photo',
+    'pricing.inquiry': 'Contact for pricing',
     'pricing.cta':      'Browse Gallery',
     'pricing.contact':  'Choose a Photo to Inquire',
     'pricing.net.name': 'Web File',
@@ -728,7 +738,7 @@ const TRANSLATIONS = {
     'buy.alt.brand':    'Bit / Paybox',
 
     // Beta banner
-    'beta.banner.html': 'The site is currently in a trial phase. To purchase photos, please call and pay via <strong>Bit</strong> or <strong>PayBox</strong> — <a href="tel:050-3333227" class="beta-banner-tel">050-3333227</a>',
+    'beta.banner.html': "For a personal-use photo purchase, contact me for the price and terms — <a href=\"tel:050-3333227\" class=\"beta-banner-tel\">050-3333227</a>. Commercial use is currently unavailable.",
 
     // GuruShots section
     'gurushots.label':            'International Recognition',
