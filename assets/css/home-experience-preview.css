@@ -1,4 +1,4 @@
-/* Opt-in homepage concept. No effect unless ?experience=warm is present. */
+/* Warm editorial homepage visual language. */
 html.home-experience-preview {
   color-scheme: light;
 }
@@ -13,6 +13,23 @@ html.home-experience-preview body {
   --border: #ded8ce;
   background: var(--bg);
   color: var(--text);
+}
+/* English uses a quieter, editorial sans; Hebrew keeps the established Hebrew display face. */
+html[lang="en"].home-experience-preview body {
+  --font: 'DM Sans', Arial, sans-serif;
+  --font-display: 'DM Sans', Arial, sans-serif;
+}
+html[lang="en"].home-experience-preview .hero-title {
+  font-family: 'DM Sans', Arial, sans-serif;
+  font-weight: 600;
+  letter-spacing: -.045em;
+  line-height: 1.12;
+}
+html[lang="en"].home-experience-preview .section-title {
+  font-family: 'DM Sans', Arial, sans-serif;
+  font-weight: 600;
+  letter-spacing: -.035em;
+  line-height: 1.15;
 }
 html.home-experience-preview #beta-banner {
   background: #ebe4d8;
