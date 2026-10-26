@@ -1,5 +1,34 @@
 # Handoff — amit-photos
 
+## CURRENT RESUME POINT — 2026-10-26 (for Tuesday 2026-10-27): PR #188 merged and LIVE
+
+**Read this first.** Entries below are historical snapshots (some still say #181/#187 are draft); this section supersedes their outdated PR/deploy statuses. The owner's next task is *live-site visual acceptance*, not another PR #188 merge.
+
+### Confirmed status (GitHub + production)
+- Repo: `erezfamily-cmyk/amit-photos`; source of truth: GitHub `main`. Public site: https://amitphotos.com/.
+- PR [#188](https://github.com/erezfamily-cmyk/amit-photos/pull/188) — **squash merged 2026-10-26**, merge commit `4fbd17add9078d72e00fa2ed90ef0052d40fc731`. Its parent design rollout PR #187 had already merged/published; #185 English lightbox copy was already merged. Do NOT reopen/remerge these.
+- [Deploy Worker run #506](https://github.com/erezfamily-cmyk/amit-photos/actions/runs/40403251114) for merge `4fbd17a` **completed successfully** (Cloudflare production Worker and cache-purge workflow). Public `/assets/js/gallery.js?v=db50ca09` and `/assets/css/home-experience-preview.css?v=51dbb8f0` were reachable; the served design CSS includes the English DM Sans typography.
+- On final PR head `d3acb254561781ad9af5c53af1c832c5d0b6cc21`, **five GitHub checks passed**: Lead Funnel CI, B2B Funnel CI, Gallery Taxonomy CI, Experience-led homepage CI, Experience Preview Browser QA. [Browser QA run](https://github.com/erezfamily-cmyk/amit-photos/actions/runs/40402169044): **Chromium AND WebKit success**, both with Sandbox smoke and isolated-current-branch bilingual lightbox regression. The Chromium installer was reduced to headless-only Playwright shell after earlier infrastructure stalls; both browsers ended green.
+- Completed visual/code changes: English DM Sans headings (Hebrew Frank Ruhl Libre; body Heebo as appropriate), dark lightbox contrast against warm/light homepage, localized photo titles/descriptions/alt/accessible names, missing category translations (Georgia, Night Photography), localized wall mockup label and share/contact copy, HE↔EN switch while photo popup is open, deterministic fallback when English translations are missing, cache-bust versions. New regression tests: `tests/gallery-language-fallback.test.mjs`, `tests/photo-language-browser.mjs`.
+- **Payments still LOCKED**: production `wrangler.toml` has `PAYMENTS_ENABLED = "false"`; the live `https://amitphotos.com/api/payments-status` responded `{"enabled":false}` after deployment. No PayPal Live/real checkout, no Gelato, no unapproved commercial licensing. Public-facing journey remains contact/inquiry for personal use.
+- The automated browser test ran **current PR code with isolated photo fixtures**, plus a separate Sandbox preview smoke. It does not replace a human's final visual acceptance on the production domain. **User stated they will check**; no user acceptance recorded yet.
+
+### Next actions for 2026-10-27 — prioritized
+1. **Owner live QA, phone first:** open https://amitphotos.com/?lang=en (prefer private/Incognito or clean refresh) and click 2–3 photos from normal gallery and an experience route. Check photo title/category/description/alt where practical; all visible UI in English, no stray Hebrew, contrast readable, proper English font, image actually loads, close/prev/next work and there is no horizontal overflow. Switch to HE while lightbox open, then EN again; check wall mockup photo label and its close/back behavior. Repeat a representative Hebrew gallery photo. Check both iPhone Safari and desktop Chrome/Edge if available; compare mobile widths and desktop.
+2. **No real purchase tests:** inspect only the visible personal-use WhatsApp inquiry route (can check the drafted message without sending), ensure commercial-use claims remain paused, and verify public `/api/payments-status` still reports `enabled:false`. Do not toggle payment flags.
+3. **If owner finds a defect:** capture exact URL, selected language, photo ID or title, browser/device and screenshot; distinguish stale client cache vs reproducible bug. Implement a **new narrow fix branch + PR** based on fresh `main`; targeted tests, browser visual QA, approval before merge/deploy. Do not make unapproved changes to `main` outside explicit documentation updates.
+4. **If live QA passes:** mark #188 acceptance complete in the next handoff; close/refresh stale checklists in [issue #177](https://github.com/erezfamily-cmyk/amit-photos/issues/177) and `TODO.md` only after verifying their historical details; review GA4 event receipt (experience path clicks, photo opens, wall previews, WhatsApp *click intent*). Compare 14–28-day metrics before business/marketing conclusions; event counts are NOT verified leads or sales.
+5. **Separate backlog, not a blocker for #188:** actual licensing/PayPal Orders v2 reactivation remains on hold behind sandbox security/E2E, digital-only kill switch and explicit owner approval; portfolio curation/old Free Guide/GA4 tasks must be re-evaluated against latest GitHub rather than assuming their historical statuses still apply.
+
+### How to resume safely in VS Code (Windows / PowerShell)
+- Open local `C:\Users\erezf\amit-photos` if that is still the current clone. First review `git status --short` to preserve any uncommitted work; do not discard/stash blindly or overwrite someone else's branch.
+- In a *clean* working tree: `git fetch origin`, `git switch main`, `git pull --ff-only origin main`. If dirty, reconcile local work before switching or pulling.
+- Read `handoff.md` (this section) and `TODO.md` **before editing**; inspect production and the merged [PR #188](https://github.com/erezfamily-cmyk/amit-photos/pull/188). Any new code should start on a new branch from the up-to-date main.
+- Optional targeted local diagnostics (not required for tomorrow's owner phone check): `node --check assets/js/gallery.js`, `node --test tests/gallery-language-fallback.test.mjs`, `node --test tests/purchase-disabled-ux.test.mjs`. Browser QA test `tests/photo-language-browser.mjs` depends on Playwright and its browser installation; final CI is already green.
+- Guardrails: do not change production D1/Google Drive/photo curation decisions, PayPal Live, Gelato, social publishing cadence or deployment configuration without a separate justified task and owner approval. No direct payment enablement.
+
+---
+
 ## RESUME POINT — 2026-10-25: Preview image visibility fix in PR #181
 
 - User could not see photo-first discovery in linked Cloudflare Sandbox Preview despite PR preview deploy success.
