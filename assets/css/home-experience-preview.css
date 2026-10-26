@@ -264,6 +264,44 @@ html.home-experience-preview .newsletter-section {
 }
 html.home-experience-preview .newsletter-text h2 { color: #302d28; }
 html.home-experience-preview .newsletter-text p { color: #59544c; }
+html.home-experience-preview .gs-section {
+  background: linear-gradient(160deg, #f5f1e9 0%, #eee8dc 100%);
+}
+html.home-experience-preview .gs-header .section-label { color: #566156; }
+html.home-experience-preview .gs-header .section-title {
+  color: #302d28;
+  font-family: 'Frank Ruhl Libre', Georgia, serif;
+  font-size: clamp(2rem, 3.5vw, 2.8rem);
+  font-weight: 400;
+  letter-spacing: -.025em;
+  line-height: 1.15;
+}
+html.home-experience-preview .gs-sub {
+  color: #59544c;
+  font-family: Heebo, Arial, sans-serif;
+  font-size: 1rem;
+  line-height: 1.8;
+}
+html.home-experience-preview .gs-sub strong { color: #47533b; }
+html.home-experience-preview .gs-badge-pts { color: #59544c; font-size: .9rem; }
+html.home-experience-preview .gs-stat {
+  background: #fffdf9;
+  border-color: #ded8ce;
+}
+html.home-experience-preview .gs-stat-num { color: #47533b; }
+html.home-experience-preview .gs-stat-label {
+  color: #302d28;
+  font-family: Heebo, Arial, sans-serif;
+  font-size: .92rem;
+}
+html.home-experience-preview .gs-stat-sub {
+  color: #59544c;
+  font-family: Heebo, Arial, sans-serif;
+  font-size: .86rem;
+  line-height: 1.6;
+}
+html.home-experience-preview .gs-link { color: #59452f; font-size: .95rem; }
+html.home-experience-preview .gs-link:hover { border-color: #59452f; }
 html.home-experience-preview .contact-consent-row input:focus-visible,
 html.home-experience-preview .newsletter-consent-row input:focus-visible {
   outline: 3px solid #47533b;
