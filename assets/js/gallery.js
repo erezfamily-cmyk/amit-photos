@@ -81,6 +81,26 @@ function isWeekPhoto(photo) {
   return !!photo.is_week_photo;
 }
 
+// Never show Hebrew photo copy in the English interface when a translation is missing.
+function hasHebrewText(value) { return /[\u0590-\u05FF]/.test(String(value || '')); }
+function localizedPhotoTitle(photo) {
+  if (getLang() !== 'en') return photo?.title || '';
+  const title = photo?.title_en || photo?.title;
+  if (title && !hasHebrewText(title)) return title;
+  const category = getCategoryLabel(photo?.category || '');
+  return category && !hasHebrewText(category) ? `${category} photograph` : 'Fine art photograph';
+}
+function localizedPhotoDescription(photo) {
+  if (getLang() !== 'en') return photo?.description || '';
+  const description = photo?.description_en || photo?.description || '';
+  return hasHebrewText(description) ? '' : description;
+}
+function localizedPhotoAlt(photo) {
+  if (getLang() !== 'en') return photo?.alt || photo?.title || '';
+  const alt = photo?.alt_en || photo?.title_en || photo?.alt || '';
+  return alt && !hasHebrewText(alt) ? alt : localizedPhotoTitle(photo);
+}
+
 function isNew(photo) {
   const dateField = photo.added_at || photo.created_at;
   if (dateField) return (Date.now() - new Date(dateField)) / 86400000 <= NEW_DAYS;
@@ -431,7 +451,13 @@ async function loadPhotos() {
           // D1 WebP wins; JSON URL/thumbnail only as fallback when D1 has no WebP
           const thumb = (p.thumbnail?.endsWith('.webp')) ? p.thumbnail : (j?.thumbnail || p.thumbnail);
           const url   = (p.url?.endsWith('.webp'))       ? p.url       : (j?.url       || p.url);
-          return j ? { ...j, ...p, thumbnail: thumb, url } : p;
+          if (!j) return p;
+          const merged = { ...j, ...p, thumbnail: thumb, url };
+          // D1 may contain empty translation columns; keep the curated JSON translation then.
+          for (const field of ['title_en', 'description_en', 'alt_en']) {
+            if (!String(p[field] || '').trim() && String(j[field] || '').trim()) merged[field] = j[field];
+          }
+          return merged;
         });
       } else {
         allPhotos = jsonPhotos;
@@ -617,7 +643,7 @@ function renderGallery(append = false) {
       <button class="gallery-wish-btn${wished ? ' wished' : ''}" data-id="${photo.id}" aria-label="שמור למועדפים">${wished ? '♥' : '♡'}</button>
       <div class="gallery-item-overlay">
         <div class="gallery-item-info">
-          <h3>${getLang() === 'en' && photo.title_en ? photo.title_en : photo.title}</h3>
+      <h3>${localizedPhotoTitle(photo)}</h3>
           <span>${getCategoryLabel(photo.category)}</span>
           ${canBuy(photo) ? `<span class="gallery-item-price">${t('gallery.price.from')}${formatPrice(getEffectivePrice(photo.id, 'small'))}</span>` : ''}
         </div>
@@ -734,16 +760,16 @@ async function initFeatured() {
 
   grid.innerHTML = picks.map((photo, i) => `
     <div class="featured-item" data-id="${photo.id}">
-      <img src="${photo.thumbnail || photo.url}" alt="${getLang() === 'en' && photo.title_en ? photo.title_en : photo.title}" width="${photo.width || 800}" height="${photo.height || 600}" loading="lazy" />
+      <img src="${photo.thumbnail || photo.url}" alt="${localizedPhotoAlt(photo)}" width="${photo.width || 800}" height="${photo.height || 600}" loading="lazy" />
       <div class="featured-item-overlay">
-        <span class="featured-item-title">${getLang() === 'en' && photo.title_en ? photo.title_en : photo.title}</span>
+        <span class="featured-item-title">${localizedPhotoTitle(photo)}</span>
       </div>
     </div>
   `).join('');
 
   grid.querySelectorAll('.featured-item').forEach(item => {
     const photo = allPhotos.find(p => String(p.id) === String(item.dataset.id));
-    const title = getLang() === 'en' && photo?.title_en ? photo.title_en : photo?.title || '';
+    const title = localizedPhotoTitle(photo);
     item.tabIndex = 0;
     item.setAttribute('role', 'button');
     item.setAttribute('aria-label', `${title} — ${t('gallery.item.aria')}`);
@@ -1242,8 +1268,8 @@ function openLightbox(idx) {
   };
   window._currentLightboxPhoto = photo;
   img.src = getLightboxUrl(photo.thumbnail || photo.url);
-  img.alt = getLang() === 'en' ? (photo.alt_en || photo.title_en || photo.alt || photo.title) : (photo.alt || photo.title);
-  document.getElementById('lb-title').textContent = (getLang() === 'en' && photo.title_en) ? photo.title_en : photo.title;
+  img.alt = localizedPhotoAlt(photo);
+  document.getElementById('lb-title').textContent = localizedPhotoTitle(photo);
   const catEl = document.getElementById('lb-cat');
   catEl.textContent = getCategoryLabel(photo.category);
   catEl.className = 'lb-cat-link';
@@ -1255,7 +1281,7 @@ function openLightbox(idx) {
   };
   document.getElementById('lb-counter').textContent = `${idx + 1} / ${filteredPhotos.length}`;
   const descEl = document.getElementById('lb-desc');
-  const descText = (getLang() === 'en' && photo.description_en) ? photo.description_en : photo.description;
+  const descText = localizedPhotoDescription(photo);
   descEl.textContent = descText || '';
   const hasEditorialCaption = renderExperienceEditorialCaption(photo);
   // Show one clear story, not two repetitive paragraphs in a small mobile lightbox.
@@ -2646,17 +2672,17 @@ window.onLangChange = function() {
     const photo = window._currentLightboxPhoto;
     const hasEditorialCaption = renderExperienceEditorialCaption(photo);
     const descEl = document.getElementById('lb-desc');
-    const originalDesc = (getLang() === 'en' && photo.description_en) ? photo.description_en : photo.description;
+    const originalDesc = localizedPhotoDescription(photo);
     if (descEl) {
       descEl.textContent = originalDesc || '';
       descEl.style.display = !hasEditorialCaption && originalDesc ? 'block' : 'none';
     }
     const titleEl = document.getElementById('lb-title');
-    if (titleEl) titleEl.textContent = (getLang() === 'en' && photo.title_en) ? photo.title_en : photo.title;
+    if (titleEl) titleEl.textContent = localizedPhotoTitle(photo);
     const catEl = document.getElementById('lb-cat');
     if (catEl) catEl.textContent = getCategoryLabel(photo.category);
     const img = document.getElementById('lb-img');
-    if (img) img.alt = getLang() === 'en' ? (photo.alt_en || photo.title_en || photo.alt || photo.title) : (photo.alt || photo.title);
+    if (img) img.alt = localizedPhotoAlt(photo);
   }
   PrintShop.onLangChange();
 };
