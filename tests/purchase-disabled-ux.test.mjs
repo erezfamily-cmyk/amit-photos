@@ -58,20 +58,18 @@ test('disabled-purchase journey explains photo, use, inquiry and quote steps', (
     assert.match(html, new RegExp(`data-i18n="${key.replaceAll('.', '\\.')}"`));
   }
   assert.match(gallery, /מזהה צילום: \$\{photo\.id\}/);
-  assert.match(gallery, /השימוש המתוכנן: אישי \/ עסקי/);
+  assert.match(gallery, /השימוש המתוכנן: אישי בלבד/);
   assert.match(gallery, /Photo ID: \$\{photo\.id\}/);
-  assert.match(gallery, /Intended use: personal \/ business/);
+  assert.match(gallery, /Intended use: personal use/);
 });
 
-test('homepage separates personal file prices from tailored commercial licensing', () => {
+test('homepage limits listed files to personal use while commercial use is unavailable', () => {
   assert.match(html, /data-i18n="pricing\.subtitle"/);
-  assert.match(html, /href="\/licensing\/"[^>]*data-i18n="pricing\.commercial\.cta"/);
-  assert.doesNotMatch(i18n, /'pricing\.full\.f3':\s+'(?:שימוש מסחרי|Commercial use)'/);
-  assert.doesNotMatch(i18n, /'pricing\.full\.f4':\s+'(?:כל הזכויות כלולות|All rights included)'/);
+  assert.match(i18n, /Business, commercial and advertising use is currently unavailable/);
+  assert.doesNotMatch(html, /pricing\.commercial|licensing_details_click/);
   assert.match(i18n, /'pricing\.full\.f3':\s+'שימוש אישי בלבד'/);
   assert.match(i18n, /'pricing\.full\.f4':\s+'זכויות היוצרים נשארות בידי עמית'/);
 });
-
 test('PayPal checkout instructions and print-order FAQ are shown only when payments are enabled', () => {
   assert.match(html, /class="process-grid payments-enabled-only"/);
   assert.match(html, /id="print-faq"[^>]*class="[^"]*payments-enabled-only/);
@@ -96,7 +94,7 @@ test('published newsletter issues do not advertise PayPal or sale checkout while
   const end = worker.indexOf('async function handleAdminNlList', start);
   const source = worker.slice(start, end);
   assert.match(source, /const purchasesEnabled\s*=\s*paymentsEnabled\(env\)/);
-  assert.match(source, /purchasesEnabled\s*\?\s*`[\s\S]*PayPal[\s\S]*`\s*:\s*`[\s\S]*בירור רכישה או רישוי/);
+  assert.match(source, /purchasesEnabled\s*\?\s*`[\s\S]*PayPal[\s\S]*`\s*:\s*`[\s\S]*בירור רכישה לשימוש אישי/);
   assert.match(source, /const saleBannerSection\s*=\s*purchasesEnabled\s*&&/);
 });
 
