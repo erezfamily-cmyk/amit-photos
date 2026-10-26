@@ -1389,8 +1389,8 @@ function openLightbox(idx) {
   const contactBtn = document.getElementById('lb-contact');
   if (contactBtn) {
     const contactMessage = getLang() === 'en'
-      ? `Hi Amit, I'd like details about the photograph "${photo.title_en || photo.title}".\nPhoto ID: ${photo.id}\nLink: ${shareUrl}\nIntended use: personal / business (please delete one).`
-      : `היי עמית, אשמח לקבל פרטים על הצילום "${photo.title}".\nמזהה צילום: ${photo.id}\nקישור: ${shareUrl}\nהשימוש המתוכנן: אישי / עסקי (נא למחוק את המיותר).`;
+      ? `Hi Amit, I'd like details about the photograph "${photo.title_en || photo.title}".\nPhoto ID: ${photo.id}\nLink: ${shareUrl}\nIntended use: personal use.`
+      : `היי עמית, אשמח לקבל פרטים על הצילום "${photo.title}".\nמזהה צילום: ${photo.id}\nקישור: ${shareUrl}\nהשימוש המתוכנן: אישי בלבד.`;
     contactBtn.href = `https://wa.me/972503333227?text=${encodeURIComponent(contactMessage)}`;
     contactBtn.dataset.analyticsPhotoId = String(photo.id || '');
   }
@@ -1669,8 +1669,8 @@ function applyBusinessContactContext(form) {
   if (!context) return null;
 
   const topic = form.querySelector('#topic');
-  const commercialOption = topic?.querySelector('option[data-i18n="contact.f.t2"]');
-  if (topic && commercialOption) topic.value = commercialOption.value;
+  const inquiryOption = topic?.querySelector('option[data-i18n="contact.f.t4"]');
+  if (topic && inquiryOption) topic.value = inquiryOption.value;
 
   const subject = form.querySelector('[name="subject"]');
   if (subject) subject.value = 'Amit Photos B2B inquiry — ' + context.package;
