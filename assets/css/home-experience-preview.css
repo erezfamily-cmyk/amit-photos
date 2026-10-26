@@ -112,27 +112,36 @@ html.home-experience-preview .home-value-section {
   background: #eee8dc;
   border-radius: 24px;
 }
+html.home-experience-preview .home-value-room-wrap { min-width: 0; }
 html.home-experience-preview .home-value-room {
+  position: relative;
+  overflow: hidden;
   min-width: 0;
-  padding: clamp(1.25rem, 4vw, 3rem);
-  background: linear-gradient(145deg, #e3d7c4, #f8f4eb 58%, #e9e1d5);
+  aspect-ratio: 1.426 / 1;
+  background: url('../images/home-value-living-room.png') center / cover no-repeat;
   border-radius: 18px;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.75);
+  box-shadow: 0 14px 34px rgba(50, 39, 27, .16);
 }
 html.home-experience-preview .home-value-art {
-  width: 100%;
+  position: absolute;
+  z-index: 1;
+  top: 10%;
+  left: 50%;
+  width: 43%;
+  transform: translateX(-50%);
   overflow: hidden;
   aspect-ratio: 4 / 3;
   background: #ddd3c4;
-  border: 12px solid #fffdf8;
-  box-shadow: 0 13px 32px rgba(50, 39, 27, .18);
+  border: 8px solid #f7f2e8;
+  box-shadow: 0 8px 20px rgba(36, 28, 19, .34), 0 0 0 2px rgba(104, 76, 49, .42), 0 2px 4px rgba(35, 26, 17, .36);
 }
 html.home-experience-preview .home-value-art img { object-fit: cover; }
 html.home-experience-preview .home-value-room-note {
-  margin: .9rem 0 0;
+  margin: .75rem 0 0;
   color: #675e52;
   text-align: center;
   font-size: .78rem;
+  line-height: 1.5;
 }
 html.home-experience-preview .home-value-copy .section-label { color: #566156; }
 html.home-experience-preview .home-value-copy .section-title {
@@ -576,7 +585,9 @@ html.home-experience-preview .gallery-context-label {
     padding: 1rem;
     border-radius: 18px;
   }
-  html.home-experience-preview .home-value-room { padding: 1rem; }
+  html.home-experience-preview .home-value-room { aspect-ratio: 1.32 / 1; }
+  html.home-experience-preview .home-value-art { width: 45%; border-width: 6px; }
+  html.home-experience-preview .home-value-room-note { font-size: .72rem; }
   html.home-experience-preview .home-value-contexts { grid-template-columns: 1fr; }
 }
 @media (max-width: 768px) {

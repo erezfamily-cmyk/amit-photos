@@ -21,6 +21,9 @@ test('the preview uses the existing gallery and does not activate payment or ana
   assert.doesNotMatch(section, /data-analytics-event|paypal|payment|checkout/i);
   assert.match(html, /data-payments-state="disabled"/);
   assert.ok(previewCss.includes('https://amitphotos.com/photos/1m6IFLTq0pfpdgENTItciXddOOGIOUzt2.webp'));
+  assert.ok(previewCss.includes("../images/home-value-living-room.png"));
+  assert.match(section, /class="home-value-room-wrap"/);
+  assert.match(previewCss, /html\.home-experience-preview \.home-value-room-note\s*\{\s*margin:/);
 });
 
 test('Hebrew and English copy explains the personal digital product and the illustration', () => {
