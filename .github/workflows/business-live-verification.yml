@@ -39,8 +39,8 @@ jobs:
           echo "licensing=ok"
 
           BIZ=$(curl -fsS --max-time 20 https://amitphotos.com/business/)
-          grep -q 'b2b_contact_start' <<<"$BIZ"
-          grep -q 'amit_b2b_context' <<<"$BIZ"
+          grep -q 'business-unavailable' <<<"$BIZ"
+          grep -q 'Commercial use is currently unavailable' <<<"$BIZ"
           grep -q '/assets/js/analytics.js' <<<"$BIZ"
           echo "business=ok"
 

@@ -105,15 +105,16 @@ jobs:
 
           LIC=$(curl -fsSL --retry 2 --retry-delay 2 --connect-timeout 10 --max-time 20 https://amitphotos.com/licensing/)
           grep -q 'licensing_personal_interest' <<<"$LIC"
-          grep -q '/api/admin/prices' <<<"$LIC"
+          grep -q 'המחיר יימסר בפנייה' <<<"$LIC"
+          ! grep -q '/api/admin/prices' <<<"$LIC"
           grep -q 'G-XM6T3E8QWN' <<<"$LIC"
-          echo "✅ /licensing/: page + pricing source + analytics marker"
+          echo "✅ /licensing/: personal use + inquiry pricing + analytics marker"
 
           BIZ=$(curl -fsSL --retry 2 --retry-delay 2 --connect-timeout 10 --max-time 20 https://amitphotos.com/business/)
-          grep -q 'b2b_contact_start' <<<"$BIZ"
-          grep -q 'amit_b2b_context' <<<"$BIZ"
+          grep -q 'business-unavailable' <<<"$BIZ"
+          grep -q 'Commercial use is currently unavailable' <<<"$BIZ"
           grep -q '/assets/js/analytics.js' <<<"$BIZ"
-          echo "✅ /business/: funnel + context + analytics marker"
+          echo "✅ /business/: commercial-use pause + bilingual notice + analytics marker"
 
           ADMIN=$(curl -fsSL --retry 2 --retry-delay 2 --connect-timeout 10 --max-time 20 https://amitphotos.com/admin.html)
           grep -q 'campaign-destination' <<<"$ADMIN"

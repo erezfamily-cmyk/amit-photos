@@ -70,6 +70,21 @@ test('homepage limits listed files to personal use while commercial use is unava
   assert.match(i18n, /'pricing\.full\.f3':\s+'שימוש אישי בלבד'/);
   assert.match(i18n, /'pricing\.full\.f4':\s+'זכויות היוצרים נשארות בידי עמית'/);
 });
+
+test('public pricing cards quote on inquiry without hardcoded shekel or dollar amounts', () => {
+  const pricing = html.slice(html.indexOf('id="pricing"'), html.indexOf('id="print-faq"'));
+  assert.equal((pricing.match(/data-i18n="pricing.inquiry"/g) || []).length, 3);
+  assert.doesNotMatch(pricing, /₪|\$\d|pricing-usd/);
+  assert.match(i18n, /'pricing.inquiry': 'Contact for pricing'/);
+  assert.match(i18n, /'pricing.inquiry': 'המחיר יימסר בפנייה'/);
+});
+
+test('banner gives personal-use guidance without trial or payment-method promises', () => {
+  const banner = html.match(/<div id="beta-banner"[^>]*>([\s\S]*?)<\/div>/)[1];
+  assert.match(banner, /לשימוש אישי/);
+  assert.doesNotMatch(banner, /בשלבי הרצה|ביט|PayBox/);
+  assert.doesNotMatch(i18n.match(/'beta.banner.html':[^\n]+/g).join('\n'), /trial phase|בשלבי הרצה|Bit|PayBox/);
+});
 test('PayPal checkout instructions and print-order FAQ are shown only when payments are enabled', () => {
   assert.match(html, /class="process-grid payments-enabled-only"/);
   assert.match(html, /id="print-faq"[^>]*class="[^"]*payments-enabled-only/);
