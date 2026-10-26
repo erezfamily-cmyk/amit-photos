@@ -11,13 +11,12 @@ test('licensing page includes GA bootstrap before analytics helper', () => {
   assert.ok(analytics > gtag, 'analytics.js should load after gtag bootstrap');
 });
 
-test('licensing page tracks personal and commercial business events', () => {
+test('licensing page offers personal use only and pauses commercial licensing', () => {
   assert.match(html, /data-analytics-event="licensing_personal_interest"/);
-  assert.match(html, /data-analytics-event="licensing_commercial_contact"/);
-  assert.match(html, /data-analytics-method="whatsapp"/);
-  assert.match(html, /href="https:\/\/wa\.me\/972503333227\?text=/);
+  assert.match(html, /שימוש אישי בלבד/);
+  assert.match(html, /Business, commercial and advertising use is currently unavailable/);
+  assert.doesNotMatch(html, /licensing_commercial_contact|commercial license quote|בקשת הצעה לרישיון מסחרי/);
 });
-
 test('licensing page loads prices from the existing server endpoint', () => {
   assert.match(html, /fetch\('\/api\/admin\/prices'/);
   assert.match(html, /data-price-size="small"/);
@@ -27,7 +26,7 @@ test('licensing page loads prices from the existing server endpoint', () => {
 
 test('licensing page keeps production checkout disabled in its public copy', () => {
   assert.match(html, /הרכישה המקוונת ב־PayPal עדיין לא נפתחה/);
-  assert.match(html, /המחיר ותנאי הרישיון יאושרו לפני התשלום/);
+  assert.match(html, /שימוש עסקי, מסחרי או פרסומי אינו זמין כרגע/);
   assert.doesNotMatch(html, /paypal\.Buttons|create-order|capture-order/);
 });
 
