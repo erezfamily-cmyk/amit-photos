@@ -20,6 +20,7 @@ test('licensing page offers personal use only and pauses commercial licensing', 
 test('licensing page gives prices on inquiry without loading unapproved price settings', () => {
   assert.match(html, /המחיר יימסר בפנייה/);
   assert.match(html, /Price provided upon inquiry/);
+  assert.doesNotMatch(html, /₪\s?(?:19|59|129)/);
   assert.doesNotMatch(html, /\/api\/admin\/prices|data-price-size=|₪(?:19|59|129)/);
 });
 
