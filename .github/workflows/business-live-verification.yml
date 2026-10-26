@@ -21,6 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
+      - uses: actions/checkout@v4
       - name: Verify acquisition pages and payment guardrail
         run: |
           set -euo pipefail
@@ -38,7 +39,14 @@ jobs:
           grep -q 'G-XM6T3E8QWN' <<<"$LIC"
           echo "licensing=ok"
 
-          BIZ=$(curl -fsS --max-time 20 https://amitphotos.com/business/)
+          # A PR's proposed business copy is not deployed to production yet.
+          if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
+            BIZ=$(cat business/index.html)
+            echo "business_source=checked-out-pr"
+          else
+            BIZ=$(curl -fsS --max-time 20 https://amitphotos.com/business/)
+            echo "business_source=production"
+          fi
           grep -q 'business-unavailable' <<<"$BIZ"
           grep -q 'Commercial use is currently unavailable' <<<"$BIZ"
           grep -q '/assets/js/analytics.js' <<<"$BIZ"
