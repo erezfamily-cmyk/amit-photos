@@ -7,9 +7,9 @@ const translations = readFileSync(new URL('../assets/js/i18n.js', import.meta.ur
 const previewScript = readFileSync(new URL('../assets/js/home-experience-preview.js', import.meta.url), 'utf8');
 const previewCss = readFileSync(new URL('../assets/css/home-experience-preview.css', import.meta.url), 'utf8');
 
-test('the emotional-value section is hidden unless the explicit preview query is selected', () => {
+test('the warm experience is enabled on the normal homepage without a query parameter', () => {
   assert.match(html, /<section class="home-value-section" id="home-value" hidden/);
-  assert.match(previewScript, /get\('experience'\) !== 'warm'/);
+  assert.doesNotMatch(previewScript, /URLSearchParams|experience.*warm/);
   assert.match(previewScript, /classList\.add\('home-experience-preview'\)/);
   assert.match(previewScript, /previewSection\.hidden = false/);
 });

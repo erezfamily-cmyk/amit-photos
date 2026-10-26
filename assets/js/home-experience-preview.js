@@ -1,6 +1,5 @@
-// Optional visual review mode. This is deliberately off in the normal homepage.
+// The warm emotional homepage experience is now the default live homepage.
 (function () {
-  if (new URLSearchParams(window.location.search).get('experience') !== 'warm') return;
   document.documentElement.classList.add('home-experience-preview');
   document.addEventListener('DOMContentLoaded', function () {
     const previewSection = document.getElementById('home-value');
