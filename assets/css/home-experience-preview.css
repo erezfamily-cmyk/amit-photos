@@ -15,17 +15,17 @@ html.home-experience-preview body {
   color: var(--text);
 }
 /* English uses a quieter, editorial sans; Hebrew keeps the established Hebrew display face. */
-html[lang="en"].home-experience-preview body {
+html.home-experience-preview[lang="en"] body {
   --font: 'DM Sans', Arial, sans-serif;
   --font-display: 'DM Sans', Arial, sans-serif;
 }
-html[lang="en"].home-experience-preview .hero-title {
+html.home-experience-preview[lang="en"] .hero-title {
   font-family: 'DM Sans', Arial, sans-serif;
   font-weight: 600;
   letter-spacing: -.045em;
   line-height: 1.12;
 }
-html[lang="en"].home-experience-preview .section-title {
+html.home-experience-preview[lang="en"] .section-title {
   font-family: 'DM Sans', Arial, sans-serif;
   font-weight: 600;
   letter-spacing: -.035em;
