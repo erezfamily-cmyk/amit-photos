@@ -5,7 +5,10 @@ on:
     paths:
       - 'index.html'
       - 'assets/css/style.css'
+      - 'assets/css/home-experience-preview.css'
       - 'assets/js/i18n.js'
+      - 'assets/js/home-experience-preview.js'
+      - 'tests/home-emotional-preview.test.mjs'
       - 'tests/experience-hero.test.mjs'
       - 'tests/experience-paths.test.mjs'
       - 'tests/inline-homepage-scripts.test.mjs'
@@ -35,6 +38,7 @@ jobs:
           node --check assets/js/gallery.js
           node --check worker.js
           node --check assets/js/i18n.js
+          node --check assets/js/home-experience-preview.js
       - name: Verify experience Hero, translations, payment guards and analytics
         run: >
           node --test
@@ -46,6 +50,7 @@ jobs:
           tests/purchase-disabled-ux.test.mjs
           tests/homepage-hierarchy-redesign.test.mjs
           tests/ux-analytics-instrumentation.test.mjs
+          tests/home-emotional-preview.test.mjs
       - name: Diagnose live public experience API (read-only)
         continue-on-error: true
         run: |
