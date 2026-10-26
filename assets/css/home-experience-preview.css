@@ -245,6 +245,30 @@ html.home-experience-preview .about-contact-link:hover { color: #394533; }
 html.home-experience-preview .about-stats { border-color: #c9c1b5; }
 html.home-experience-preview .about-stats .stat-number { color: #47533b; }
 html.home-experience-preview .about-stats .stat-label { color: #59544c; }
+html.home-experience-preview .contact-consent-row,
+html.home-experience-preview .newsletter-consent-row {
+  color: #514b43;
+  font-size: .92rem;
+  line-height: 1.65;
+}
+html.home-experience-preview .contact-consent-row a,
+html.home-experience-preview .newsletter-consent-row a {
+  color: #493a29;
+  font-weight: 600;
+  text-underline-offset: 3px;
+}
+html.home-experience-preview .newsletter-section {
+  background: #eee8dc;
+  border-top: 1px solid #d5cbbb;
+  border-bottom: 1px solid #d5cbbb;
+}
+html.home-experience-preview .newsletter-text h2 { color: #302d28; }
+html.home-experience-preview .newsletter-text p { color: #59544c; }
+html.home-experience-preview .contact-consent-row input:focus-visible,
+html.home-experience-preview .newsletter-consent-row input:focus-visible {
+  outline: 3px solid #47533b;
+  outline-offset: 3px;
+}
 html.home-experience-preview #filter-bar {
   min-height: 9rem;
 }
