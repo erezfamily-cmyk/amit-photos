@@ -29,6 +29,12 @@ def build_config(database_id, preview=False):
             "d1_databases": deepcopy(config["d1_databases"]),
             "r2_buckets": deepcopy(config["r2_buckets"]),
             "images": deepcopy(config["images"]),
+            # The experience-photo endpoint reads only the production Worker's
+            # already-public photo API. Its hostname guard keeps this path
+            # available only from the Sandbox Preview.
+            "services": [
+                {"binding": "PUBLIC_GALLERY_SERVICE", "service": "amit-photos"},
+            ],
         }
     return config
 
