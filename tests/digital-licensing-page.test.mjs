@@ -17,11 +17,10 @@ test('licensing page offers personal use only and pauses commercial licensing', 
   assert.match(html, /Business, commercial and advertising use is currently unavailable/);
   assert.doesNotMatch(html, /licensing_commercial_contact|commercial license quote|בקשת הצעה לרישיון מסחרי/);
 });
-test('licensing page loads prices from the existing server endpoint', () => {
-  assert.match(html, /fetch\('\/api\/admin\/prices'/);
-  assert.match(html, /data-price-size="small"/);
-  assert.match(html, /data-price-size="medium"/);
-  assert.match(html, /data-price-size="large"/);
+test('licensing page gives prices on inquiry without loading unapproved price settings', () => {
+  assert.match(html, /המחיר יימסר בפנייה/);
+  assert.match(html, /Price provided upon inquiry/);
+  assert.doesNotMatch(html, /\/api\/admin\/prices|data-price-size=|₪(?:19|59|129)/);
 });
 
 test('licensing page keeps production checkout disabled in its public copy', () => {
@@ -39,8 +38,9 @@ test('licensing page is bilingual and has canonical social metadata', () => {
 });
 
 
-test('licensing page inline script remains syntactically intact', () => {
-  assert.match(html, /return currentLang === 'en'[\s\S]*\? '\$' \+ Math\.round\(value \/ ILS_TO_USD\)[\s\S]*: '₪' \+ value;/);
+test('licensing page language switch remains intact without price loading code', () => {
+  assert.match(html, /window\.setLicensingLang/);
+  assert.doesNotMatch(html, /function formatPrice|loadCurrentPrices|renderPrices|ILS_TO_USD/);
   assert.equal((html.match(/const T = \{/g) || []).length, 1);
   assert.equal((html.match(/<\/body>/g) || []).length, 1);
   assert.equal((html.match(/<\/html>/g) || []).length, 1);
