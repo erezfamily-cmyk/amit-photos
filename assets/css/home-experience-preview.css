@@ -1,0 +1,643 @@
+/* Opt-in homepage concept. No effect unless ?experience=warm is present. */
+html.home-experience-preview {
+  color-scheme: light;
+}
+html.home-experience-preview body {
+  --bg: #f5f1e9;
+  --bg-card: #fffdf9;
+  --bg-nav: rgba(248, 245, 238, 0.96);
+  --accent: #977656;
+  --accent-hover: #775a3d;
+  --text: #302d28;
+  --text-muted: #716c64;
+  --border: #ded8ce;
+  background: var(--bg);
+  color: var(--text);
+}
+html.home-experience-preview #beta-banner {
+  background: #ebe4d8;
+  color: #494238;
+  border-bottom-color: #d7caba;
+}
+html.home-experience-preview #main-nav {
+  background: var(--bg-nav);
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 3px 18px rgba(59, 47, 33, .05);
+}
+html.home-experience-preview .nav-logo,
+html.home-experience-preview .nav-links a,
+html.home-experience-preview .nav-more summary,
+html.home-experience-preview .lang-btn { color: var(--text); }
+html.home-experience-preview .hero {
+  height: auto;
+  min-height: min(690px, calc(100vh - 6rem));
+  padding: clamp(3rem, 7vw, 6rem) clamp(1.25rem, 6vw, 6rem);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.08fr);
+  align-items: center;
+  gap: clamp(2rem, 5vw, 5rem);
+  background: var(--bg);
+}
+html.home-experience-preview .hero-bg {
+  position: relative;
+  inset: auto;
+  width: 100%;
+  height: clamp(310px, 43vw, 520px);
+  border-radius: 18px;
+  background-image: url('https://amitphotos.com/photos/1m6IFLTq0pfpdgENTItciXddOOGIOUzt2.webp');
+  background-position: 67% center;
+  box-shadow: 0 24px 65px rgba(55, 43, 28, .16);
+  overflow: hidden;
+}
+html.home-experience-preview .hero-bg::after { display: none; }
+html.home-experience-preview .hero-content {
+  position: relative;
+  inset: auto;
+  text-align: start;
+  padding: 1rem 0;
+  animation: none;
+}
+html.home-experience-preview .hero-eyebrow {
+  color: #566156;
+  text-shadow: none;
+  letter-spacing: .22em;
+}
+html.home-experience-preview .hero-title {
+  color: var(--text);
+  text-shadow: none;
+  font-family: 'Frank Ruhl Libre', Georgia, serif;
+  font-weight: 400;
+  letter-spacing: -.035em;
+  line-height: 1.08;
+  font-size: clamp(2.2rem, 4.8vw, 3.94rem);
+}
+html.home-experience-preview .hero-title em { color: #47533b; }
+html.home-experience-preview .hero-subtitle {
+  color: var(--text-muted);
+  margin-inline: 0;
+  max-width: 34rem;
+}
+html.home-experience-preview .hero-payment-note {
+  color: #51483d;
+  margin-inline: 0;
+}
+html.home-experience-preview .hero-actions { justify-content: flex-start; }
+html.home-experience-preview .hero-scroll { display: none !important; }
+html.home-experience-preview .hero-cta {
+  border-radius: 999px;
+  letter-spacing: .01em;
+  text-transform: none;
+}
+html.home-experience-preview .hero .hero-cta {
+  background: #47533b;
+  color: #f4f0e8;
+}
+html.home-experience-preview .hero .hero-cta:hover { background: #3d4932; }
+html.home-experience-preview .hero-cta-ghost {
+  border-color: var(--border);
+  color: var(--text);
+  border-radius: 999px;
+  letter-spacing: .01em;
+  text-transform: none;
+}
+html.home-experience-preview .home-value-section:not([hidden]) { display: grid; }
+html.home-experience-preview .home-value-section {
+  max-width: 1340px;
+  margin: 0 auto;
+  padding: clamp(2rem, 5vw, 4.5rem);
+  grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr);
+  align-items: center;
+  gap: clamp(2rem, 5vw, 5rem);
+  color: var(--text);
+  background: #eee8dc;
+  border-radius: 24px;
+}
+html.home-experience-preview .home-value-room-wrap { min-width: 0; }
+html.home-experience-preview .home-value-room {
+  position: relative;
+  overflow: hidden;
+  min-width: 0;
+  aspect-ratio: 1.426 / 1;
+  background: url('../images/home-value-living-room.png') center / cover no-repeat;
+  border-radius: 18px;
+  box-shadow: 0 14px 34px rgba(50, 39, 27, .16);
+}
+html.home-experience-preview .home-value-art {
+  position: absolute;
+  z-index: 1;
+  top: 10%;
+  left: 50%;
+  width: 43%;
+  transform: translateX(-50%);
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+  background: #ddd3c4;
+  border: 8px solid #f7f2e8;
+  box-shadow: 0 8px 20px rgba(36, 28, 19, .34), 0 0 0 2px rgba(104, 76, 49, .42), 0 2px 4px rgba(35, 26, 17, .36);
+}
+html.home-experience-preview .home-value-art img { object-fit: cover; }
+html.home-experience-preview .home-value-room-note {
+  margin: .75rem 0 0;
+  color: #675e52;
+  text-align: center;
+  font-size: .78rem;
+  line-height: 1.5;
+}
+html.home-experience-preview .home-value-copy .section-label { color: #566156; }
+html.home-experience-preview .home-value-copy .section-title {
+  margin: .25rem 0 1rem;
+  font-family: 'Frank Ruhl Libre', Georgia, serif;
+  font-weight: 400;
+  letter-spacing: -.035em;
+  font-size: clamp(1.56rem, 3vw, 2.5rem);
+  line-height: 1.12;
+}
+html.home-experience-preview .home-value-intro {
+  max-width: 38rem;
+  color: #625d55;
+  line-height: 1.8;
+}
+html.home-experience-preview .home-value-contexts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: .75rem;
+  margin: 1.5rem 0;
+}
+html.home-experience-preview .home-value-context {
+  padding: 1rem;
+  background: rgba(255,255,255,.58);
+  border: 1px solid rgba(130, 107, 78, .16);
+  border-radius: 12px;
+}
+html.home-experience-preview .home-value-context h3 {
+  color: #463c30;
+  font-size: .98rem;
+  margin-bottom: .4rem;
+}
+html.home-experience-preview .home-value-context p {
+  color: #6b6257;
+  font-size: .82rem;
+  line-height: 1.65;
+}
+html.home-experience-preview .home-value-product-note {
+  max-width: 40rem;
+  margin: 1rem 0;
+  padding-inline-start: .9rem;
+  border-inline-start: 2px solid #47533b;
+  color: #5c554b;
+  font-size: .82rem;
+  line-height: 1.7;
+}
+html.home-experience-preview .home-value-cta {
+  display: inline-flex;
+  align-items: center;
+  padding: .8rem 1.35rem;
+  border-radius: 999px;
+  background: #4c5145;
+  color: #fffdf8;
+  font-weight: 600;
+}
+html.home-experience-preview .home-filter-wrap,
+html.home-experience-preview .featured-section,
+html.home-experience-preview .about-section,
+html.home-experience-preview .section { color: var(--text); }
+html.home-experience-preview .about-section {
+  background: linear-gradient(180deg, #f5f1e9 0%, #eee8dc 48%, #f5f1e9 100%);
+}
+html.home-experience-preview .about-grid {
+  grid-template-columns: minmax(0, .76fr) minmax(0, 1.24fr);
+  gap: clamp(2rem, 4vw, 4rem);
+  align-items: start;
+}
+html.home-experience-preview .about-image {
+  width: min(100%, 330px);
+  aspect-ratio: 4 / 5;
+  justify-self: center;
+}
+html.home-experience-preview .about-text .section-label {
+  color: #566156;
+  font-size: .78rem;
+  letter-spacing: .16em;
+  margin-bottom: .75rem;
+}
+html.home-experience-preview .about-text .section-title {
+  color: #302d28;
+  font-family: 'Frank Ruhl Libre', Georgia, serif;
+  font-size: clamp(2.15rem, 4vw, 3.2rem);
+  font-weight: 400;
+  letter-spacing: -.025em;
+  line-height: 1.16;
+  margin-bottom: 1.35rem;
+}
+html.home-experience-preview .about-text p,
+html.home-experience-preview .about-list li {
+  color: #59544c;
+  font-family: Heebo, Arial, sans-serif;
+  font-size: 1.04rem;
+  line-height: 1.85;
+}
+html.home-experience-preview .about-text p { margin-bottom: 1.1rem; }
+html.home-experience-preview .about-subtitle {
+  color: #36342e;
+  font-family: Heebo, Arial, sans-serif;
+  font-size: 1.08rem;
+  font-weight: 700;
+  margin-top: 1.5rem;
+}
+html.home-experience-preview .about-list li {
+  border-color: #68745b;
+  padding-block: .15rem;
+}
+html.home-experience-preview .about-list-link,
+html.home-experience-preview .about-contact-link { color: #59452f; }
+html.home-experience-preview .about-list-link:hover,
+html.home-experience-preview .about-contact-link:hover { color: #394533; }
+html.home-experience-preview .about-stats { border-color: #c9c1b5; }
+html.home-experience-preview .about-stats .stat-number { color: #47533b; }
+html.home-experience-preview .about-stats .stat-label { color: #59544c; }
+html.home-experience-preview .contact-consent-row,
+html.home-experience-preview .newsletter-consent-row {
+  color: #514b43;
+  font-size: .92rem;
+  line-height: 1.65;
+}
+html.home-experience-preview .contact-consent-row a,
+html.home-experience-preview .newsletter-consent-row a {
+  color: #493a29;
+  font-weight: 600;
+  text-underline-offset: 3px;
+}
+html.home-experience-preview .newsletter-section {
+  background: #eee8dc;
+  border-top: 1px solid #d5cbbb;
+  border-bottom: 1px solid #d5cbbb;
+}
+html.home-experience-preview .newsletter-text h2 { color: #302d28; }
+html.home-experience-preview .newsletter-text p { color: #59544c; }
+html.home-experience-preview .gs-section {
+  background: linear-gradient(160deg, #f5f1e9 0%, #eee8dc 100%);
+}
+html.home-experience-preview .gs-header .section-label { color: #566156; }
+html.home-experience-preview .gs-header .section-title {
+  color: #302d28;
+  font-family: 'Frank Ruhl Libre', Georgia, serif;
+  font-size: clamp(2rem, 3.5vw, 2.8rem);
+  font-weight: 400;
+  letter-spacing: -.025em;
+  line-height: 1.15;
+}
+html.home-experience-preview .gs-sub {
+  color: #59544c;
+  font-family: Heebo, Arial, sans-serif;
+  font-size: 1rem;
+  line-height: 1.8;
+}
+html.home-experience-preview .gs-sub strong { color: #47533b; }
+html.home-experience-preview .gs-badge-pts { color: #59544c; font-size: .9rem; }
+html.home-experience-preview .gs-stat {
+  background: #fffdf9;
+  border-color: #ded8ce;
+}
+html.home-experience-preview .gs-stat-num { color: #47533b; }
+html.home-experience-preview .gs-stat-label {
+  color: #302d28;
+  font-family: Heebo, Arial, sans-serif;
+  font-size: .92rem;
+}
+html.home-experience-preview .gs-stat-sub {
+  color: #59544c;
+  font-family: Heebo, Arial, sans-serif;
+  font-size: .86rem;
+  line-height: 1.6;
+}
+html.home-experience-preview .gs-link { color: #59452f; font-size: .95rem; }
+html.home-experience-preview .gs-link:hover { border-color: #59452f; }
+html.home-experience-preview #pricing .section-title {
+  color: #302d28;
+  font-family: 'Frank Ruhl Libre', Georgia, serif;
+  font-size: clamp(2rem, 3.5vw, 2.8rem);
+  font-weight: 400;
+  letter-spacing: -.025em;
+  line-height: 1.15;
+}
+html.home-experience-preview #pricing .section-subtitle {
+  color: #59544c;
+  font-family: Heebo, Arial, sans-serif;
+  font-size: 1rem;
+  line-height: 1.8;
+}
+html.home-experience-preview .pricing-card,
+html.home-experience-preview .pricing-card.featured {
+  background: #fffdf9;
+  border-color: #d8d0c3;
+}
+html.home-experience-preview .pricing-card.featured {
+  border-color: #68745b;
+  box-shadow: 0 12px 34px rgba(59, 47, 33, .1);
+}
+html.home-experience-preview .pricing-name { color: #59452f; font-size: .82rem; }
+html.home-experience-preview .pricing-price { color: #302d28; }
+html.home-experience-preview .pricing-inquiry {
+  font-family: Heebo, Arial, sans-serif;
+  font-size: 1.18rem;
+  font-weight: 700;
+  line-height: 1.55;
+}
+html.home-experience-preview .pricing-period,
+html.home-experience-preview .pricing-features li {
+  color: #59544c;
+  font-family: Heebo, Arial, sans-serif;
+  font-size: .96rem;
+  line-height: 1.65;
+}
+html.home-experience-preview .pricing-features { border-color: #ded8ce; }
+html.home-experience-preview .pricing-features li::before { color: #47533b; }
+html.home-experience-preview .pricing-badge {
+  background: #47533b;
+  color: #f4f0e8;
+  font-family: Heebo, Arial, sans-serif;
+  font-size: .76rem;
+  letter-spacing: .04em;
+}
+html.home-experience-preview .pricing-cta {
+  font-family: Heebo, Arial, sans-serif;
+  font-size: .96rem;
+  letter-spacing: 0;
+  text-transform: none;
+}
+html.home-experience-preview .pricing-cta-outline {
+  border-color: #8c8578;
+  color: #403b34;
+}
+html.home-experience-preview .pricing-cta-outline:hover {
+  border-color: #47533b;
+  color: #302d28;
+}
+html.home-experience-preview .pricing-cta-filled {
+  background: #47533b;
+  border-color: #47533b;
+  color: #f4f0e8;
+}
+html.home-experience-preview .pricing-cta-filled:hover {
+  background: #394533;
+  border-color: #394533;
+}
+html.home-experience-preview .purchase-disabled-notice {
+  background: #e9e2d6;
+  border-color: #c7bca9;
+}
+html.home-experience-preview .purchase-disabled-notice p {
+  color: #4f4942;
+  font-family: Heebo, Arial, sans-serif;
+  font-size: 1rem;
+  line-height: 1.8;
+}
+html.home-experience-preview .purchase-disabled-notice h3 { color: #59452f; }
+html.home-experience-preview .purchase-disabled-contact {
+  background: #47533b;
+  border-color: #47533b;
+  color: #f4f0e8;
+  font-family: Heebo, Arial, sans-serif;
+}
+html.home-experience-preview .purchase-disabled-contact:hover {
+  background: #394533;
+  color: #fffdf9;
+}
+html.home-experience-preview .gear-section { background: #eee8dc; }
+html.home-experience-preview .gear-section .section-label { color: #566156; }
+html.home-experience-preview .gear-section .section-title {
+  color: #302d28;
+  font-family: 'Frank Ruhl Libre', Georgia, serif;
+  font-size: clamp(2rem, 3.5vw, 2.8rem);
+  font-weight: 400;
+  letter-spacing: -.025em;
+  line-height: 1.15;
+}
+html.home-experience-preview .gear-card {
+  background: #fffdf9;
+  border-color: #d8d0c3;
+  box-shadow: 0 8px 24px rgba(59, 47, 33, .06);
+}
+html.home-experience-preview .gear-card:hover { border-color: #68745b; }
+html.home-experience-preview .gear-icon { color: #68745b; }
+html.home-experience-preview .gear-title {
+  color: #302d28;
+  font-family: Heebo, Arial, sans-serif;
+  font-size: 1.12rem;
+}
+html.home-experience-preview .gear-list li {
+  color: #59544c;
+  font-family: Heebo, Arial, sans-serif;
+  font-size: .98rem;
+  line-height: 1.7;
+}
+html.home-experience-preview .gear-list li::before { color: #68745b; }
+html.home-experience-preview .gear-cta-btn {
+  background: #47533b;
+  border-color: #47533b;
+  color: #f4f0e8;
+  font-family: Heebo, Arial, sans-serif;
+  font-size: .96rem;
+}
+html.home-experience-preview .gear-cta-btn:hover {
+  background: #394533;
+  border-color: #394533;
+  color: #fffdf9;
+}
+html.home-experience-preview .process-section { background: #f5f1e9; }
+html.home-experience-preview .process-section .section-label { color: #566156; }
+html.home-experience-preview .process-section .section-title {
+  color: #302d28;
+  font-family: 'Frank Ruhl Libre', Georgia, serif;
+  font-size: clamp(2rem, 3.5vw, 2.8rem);
+  font-weight: 400;
+  letter-spacing: -.025em;
+  line-height: 1.15;
+}
+html.home-experience-preview .process-step {
+  background: #fffdf9;
+  border-color: #d8d0c3;
+}
+html.home-experience-preview .process-step:hover { border-color: #68745b; }
+html.home-experience-preview .process-num {
+  color: #68745b;
+  font-family: Heebo, Arial, sans-serif;
+  font-size: 2rem;
+  font-weight: 600;
+  opacity: 1;
+}
+html.home-experience-preview .process-step-title {
+  color: #302d28;
+  font-family: Heebo, Arial, sans-serif;
+  font-size: 1.08rem;
+}
+html.home-experience-preview .process-step-desc {
+  color: #59544c;
+  font-family: Heebo, Arial, sans-serif;
+  font-size: .98rem;
+  line-height: 1.75;
+}
+html.home-experience-preview .platforms-inner .section-label,
+html.home-experience-preview .explore-section .section-label { color: #566156; }
+html.home-experience-preview .platforms-inner .section-title,
+html.home-experience-preview .explore-section .section-title {
+  color: #302d28;
+  font-family: 'Frank Ruhl Libre', Georgia, serif;
+  font-size: clamp(2rem, 3.5vw, 2.8rem);
+  font-weight: 400;
+  letter-spacing: -.025em;
+  line-height: 1.15;
+}
+html.home-experience-preview .platform-card,
+html.home-experience-preview .explore-card {
+  background: #fffdf9;
+  border-color: #d8d0c3;
+  box-shadow: 0 8px 24px rgba(59, 47, 33, .05);
+}
+html.home-experience-preview .platform-card:hover,
+html.home-experience-preview .explore-card:hover { border-color: #68745b; }
+html.home-experience-preview .platform-logo,
+html.home-experience-preview .explore-card-title {
+  color: #59452f;
+  font-family: Heebo, Arial, sans-serif;
+}
+html.home-experience-preview .platform-stat,
+html.home-experience-preview .explore-card-desc {
+  color: #59544c;
+  font-family: Heebo, Arial, sans-serif;
+  font-size: .95rem;
+  line-height: 1.7;
+}
+html.home-experience-preview .platform-stat span { color: #302d28; }
+html.home-experience-preview .platform-cta,
+html.home-experience-preview .explore-card-cta { color: #47533b; }
+@media (min-width: 481px) and (max-width: 1024px) {
+  html.home-experience-preview .gear-card:last-child {
+    grid-column: 1 / -1;
+    width: calc(50% - 1rem);
+    justify-self: center;
+  }
+}
+html.home-experience-preview .contact-consent-row input:focus-visible,
+html.home-experience-preview .newsletter-consent-row input:focus-visible {
+  outline: 3px solid #47533b;
+  outline-offset: 3px;
+}
+html.home-experience-preview #filter-bar {
+  min-height: 9rem;
+}
+html.home-experience-preview #filter-bar .filter-btn {
+  color: #394137;
+  background: rgba(255, 255, 255, .62);
+  border-color: #a9a398;
+  opacity: 1;
+  font-size: .75rem;
+  letter-spacing: .02em;
+}
+html.home-experience-preview #filter-bar .filter-btn:hover,
+html.home-experience-preview #filter-bar .filter-btn.active {
+  opacity: 1;
+}
+html.home-experience-preview #filter-bar .filter-btn.active {
+  color: #f4f0e8;
+  background: #47533b;
+  border-color: #47533b;
+}
+html.home-experience-preview .filter-taxonomy-label,
+html.home-experience-preview .gallery-context-label {
+  color: #566156;
+}
+@media (max-width: 900px) {
+  html.home-experience-preview .hero {
+    min-height: 0;
+    gap: 2rem;
+    padding-block: 3rem;
+  }
+  html.home-experience-preview .home-value-contexts { grid-template-columns: 1fr; }
+}
+@media (max-width: 768px) {
+  html.home-experience-preview .about-grid { gap: 2rem; }
+  html.home-experience-preview .about-image { width: min(100%, 285px); }
+}
+@media (max-width: 680px) {
+  html.home-experience-preview .hero {
+    grid-template-columns: 1fr;
+    gap: 1.4rem;
+    padding: 1.5rem 1rem 2.5rem;
+  }
+  html.home-experience-preview .hero-bg {
+    grid-row: 1;
+    height: clamp(250px, 72vw, 370px);
+    border-radius: 14px;
+  }
+  html.home-experience-preview .hero-content { grid-row: 2; padding: .3rem 0; }
+  html.home-experience-preview .hero-title { font-size: clamp(2.15rem, 11vw, 3.4rem); }
+  html.home-experience-preview .hero-actions { gap: .65rem; }
+  html.home-experience-preview .hero-cta,
+  html.home-experience-preview .hero-cta-ghost {
+    padding: .72rem 1.1rem;
+    font-size: .8rem;
+  }
+  html.home-experience-preview .home-value-section {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    margin: 1rem;
+    padding: 1rem;
+    border-radius: 18px;
+  }
+  html.home-experience-preview .home-value-room { aspect-ratio: 1.32 / 1; }
+  html.home-experience-preview .home-value-art { width: 45%; border-width: 6px; }
+  html.home-experience-preview .home-value-room-note { font-size: .72rem; }
+  html.home-experience-preview .home-value-contexts { grid-template-columns: 1fr; }
+}
+@media (max-width: 768px) {
+  html.home-experience-preview #filter-bar { min-height: 15rem; }
+}
+@media (max-width: 1100px) {
+  html.home-experience-preview #main-nav {
+    gap: .75rem;
+    padding-inline: 1rem;
+  }
+  html.home-experience-preview .nav-logo {
+    flex: 0 1 auto;
+    max-width: min(240px, 42vw);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  html.home-experience-preview .nav-logo-tagline { display: none; }
+  html.home-experience-preview .lang-toggle {
+    flex: 0 0 auto;
+    margin-inline-start: auto;
+  }
+  html.home-experience-preview .nav-links {
+    position: fixed;
+    top: 64px;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    display: none;
+    flex-direction: column;
+    align-items: stretch;
+    gap: .35rem;
+    padding: 1rem 1.25rem;
+    background: var(--bg-nav);
+    border-bottom: 1px solid var(--border);
+    box-shadow: 0 12px 28px rgba(59, 47, 33, .12);
+  }
+  html.home-experience-preview .nav-links.open { display: flex; }
+  html.home-experience-preview .nav-links a {
+    display: block;
+    padding: .55rem .35rem;
+    white-space: normal;
+  }
+  html.home-experience-preview .nav-hamburger { display: flex; }
+  html.home-experience-preview .nav-hamburger span { background: var(--text); }
+}
+@media (prefers-reduced-motion: reduce) {
+  html.home-experience-preview *, html.home-experience-preview *::before, html.home-experience-preview *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .01ms !important;
+    transition-duration: .01ms !important;
+  }
+}

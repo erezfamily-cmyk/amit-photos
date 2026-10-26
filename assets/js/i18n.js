@@ -61,6 +61,20 @@ const TRANSLATIONS = {
     'experience.story.aria': "תיאור חווייתי של התמונה",
     'experience.story.eyebrow': "להרגיש את הרגע",
     'experience.story.wall': "דמיינו אותה על הקיר ↗",
+
+    'home.value.label': 'כשהצילום פוגש את הבית',
+    'home.value.title': 'תמונה יכולה לשנות את התחושה בחלל.',
+    'home.value.intro': 'אור, צבע ופרט קטן יכולים להפוך פינה יומיומית לרגע שעוצרים בו. בוחרים את התמונה שמדברת אליכם.',
+    'home.value.image.alt': 'שני כיסאות לבנים על חוף שקט מול הים וההרים',
+    'home.value.image.note': 'צילום של רגע שקט, תלוי בבית',
+    'home.value.home.title': 'בבית',
+    'home.value.home.copy': 'צילום שמזכיר מקום אהוב או רגע של שקט, ומשתלב בסיפור האישי של הבית.',
+    'home.value.space.title': 'בפינה האישית',
+    'home.value.space.copy': 'נוף, צבע או פרט טבע שמכניסים השראה לחלל שבו אוהבים לשהות.',
+    'home.value.gift.title': 'כמתנה',
+    'home.value.gift.copy': 'בחירת צילום עם משמעות למישהו שיקר לכם; פרטי השימוש במקרה של מתנה יתבררו בפנייה.',
+    'home.value.product.note': 'המוצר המוצע כעת הוא קובץ דיגיטלי לשימוש אישי. הדפסה, מסגרת ומשלוח אינם כלולים.',
+    'home.value.cta': 'לגלות את הצילום שלי',
     // Experience-led photography discovery
     'experience.label': 'לאן הצילום לוקח אתכם?',
     'experience.heading': 'בחרו רגע להרגיש',
@@ -486,6 +500,20 @@ const TRANSLATIONS = {
     'experience.story.aria': "Experiencing the photograph",
     'experience.story.eyebrow': "Feel the moment",
     'experience.story.wall': "Imagine it on your wall ↗",
+
+    'home.value.label': 'When a photograph meets a room',
+    'home.value.title': 'A photograph can change the feeling of a space.',
+    'home.value.intro': 'Light, color and a small detail can turn an everyday corner into a moment to pause. Choose the photograph that speaks to you.',
+    'home.value.image.alt': 'Two white loungers on a quiet beach facing the sea and mountains',
+    'home.value.image.note': 'A quiet moment by the sea, framed for your home',
+    'home.value.home.title': 'At home',
+    'home.value.home.copy': 'A photograph that recalls a favorite place or a quiet moment, becoming part of your home’s personal story.',
+    'home.value.space.title': 'In your personal space',
+    'home.value.space.copy': 'A landscape, a touch of color or a detail from nature to bring inspiration to a space you enjoy.',
+    'home.value.gift.title': 'As a gift',
+    'home.value.gift.copy': 'Choose a photograph that means something to someone you care about; use terms for a gift can be discussed by inquiry.',
+    'home.value.product.note': 'The current offer is a digital file for personal use. Printing, framing and shipping are not included.',
+    'home.value.cta': 'Explore the photographs',
     // Experience-led photography discovery
     'experience.label': 'Where will the photograph take you?',
     'experience.heading': 'Find a feeling to explore',
@@ -929,6 +957,9 @@ function applyTranslations() {
   });
   document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
     el.placeholder = t(el.dataset.i18nPlaceholder);
+  });
+  document.querySelectorAll('[data-i18n-alt]').forEach(el => {
+    el.alt = t(el.dataset.i18nAlt);
   });
   document.querySelectorAll('[data-i18n-aria]').forEach(el => {
     el.setAttribute('aria-label', t(el.dataset.i18nAria));
