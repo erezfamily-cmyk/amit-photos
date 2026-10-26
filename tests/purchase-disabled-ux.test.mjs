@@ -15,7 +15,9 @@ const worker = readFileSync(new URL('../worker.js', import.meta.url), 'utf8');
 // (this exact test previously hardcoded a stale hash after an unrelated edit to i18n.js/
 // gallery.js/style.css and had to be fixed, which is precisely what this avoids going forward).
 function assetVersion(buf) {
-  return createHash('md5').update(buf).digest('hex').slice(0, 8);
+  // GitHub Actions deploys the normalized Git blobs (LF), while Windows checkouts
+  // may use CRLF. Hash the same normalized bytes on both platforms.
+  return createHash('md5').update(buf.toString('utf8').replace(/\r\n/g, '\n')).digest('hex').slice(0, 8);
 }
 const cssBuf = readFileSync(new URL('../assets/css/style.css', import.meta.url));
 const galleryBuf = readFileSync(new URL('../assets/js/gallery.js', import.meta.url));
