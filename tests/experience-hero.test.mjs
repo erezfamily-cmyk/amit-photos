@@ -24,9 +24,9 @@ test('the main emotional story remains visible while online payments are disable
 test('disabled-payment notice is honest in Hebrew and English', () => {
   const off = html.match(/<p class="hero-payment-note payments-disabled-only"[^>]*>([^<]+)<\/p>/);
   assert.ok(off, 'disabled-mode notice is present');
-  assert.match(off[1], /בירור רכישה או רישוי ב־WhatsApp/);
+  assert.match(off[1], /בירור רכישה לשימוש אישי ב־WhatsApp/);
   assert.doesNotMatch(off[1], /PayPal|הורדה מיידית|תשלום מאובטח/);
-  assert.match(dict, /'payments\.disabled\.hero':\s*'Found a photograph that fits\?/);
+  assert.match(dict, /'payments\.disabled\.hero':\s*'Found a photograph you love\?/);
 });
 
 test('hero text and disabled notice wrap on narrow mobile screens', () => {
