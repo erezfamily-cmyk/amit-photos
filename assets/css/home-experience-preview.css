@@ -191,6 +191,60 @@ html.home-experience-preview .home-filter-wrap,
 html.home-experience-preview .featured-section,
 html.home-experience-preview .about-section,
 html.home-experience-preview .section { color: var(--text); }
+html.home-experience-preview .about-section {
+  background: linear-gradient(180deg, #f5f1e9 0%, #eee8dc 48%, #f5f1e9 100%);
+}
+html.home-experience-preview .about-grid {
+  grid-template-columns: minmax(0, .76fr) minmax(0, 1.24fr);
+  gap: clamp(2rem, 4vw, 4rem);
+  align-items: start;
+}
+html.home-experience-preview .about-image {
+  width: min(100%, 330px);
+  aspect-ratio: 4 / 5;
+  justify-self: center;
+}
+html.home-experience-preview .about-text .section-label {
+  color: #566156;
+  font-size: .78rem;
+  letter-spacing: .16em;
+  margin-bottom: .75rem;
+}
+html.home-experience-preview .about-text .section-title {
+  color: #302d28;
+  font-family: 'Frank Ruhl Libre', Georgia, serif;
+  font-size: clamp(2.15rem, 4vw, 3.2rem);
+  font-weight: 400;
+  letter-spacing: -.025em;
+  line-height: 1.16;
+  margin-bottom: 1.35rem;
+}
+html.home-experience-preview .about-text p,
+html.home-experience-preview .about-list li {
+  color: #59544c;
+  font-family: Heebo, Arial, sans-serif;
+  font-size: 1.04rem;
+  line-height: 1.85;
+}
+html.home-experience-preview .about-text p { margin-bottom: 1.1rem; }
+html.home-experience-preview .about-subtitle {
+  color: #36342e;
+  font-family: Heebo, Arial, sans-serif;
+  font-size: 1.08rem;
+  font-weight: 700;
+  margin-top: 1.5rem;
+}
+html.home-experience-preview .about-list li {
+  border-color: #68745b;
+  padding-block: .15rem;
+}
+html.home-experience-preview .about-list-link,
+html.home-experience-preview .about-contact-link { color: #59452f; }
+html.home-experience-preview .about-list-link:hover,
+html.home-experience-preview .about-contact-link:hover { color: #394533; }
+html.home-experience-preview .about-stats { border-color: #c9c1b5; }
+html.home-experience-preview .about-stats .stat-number { color: #47533b; }
+html.home-experience-preview .about-stats .stat-label { color: #59544c; }
 html.home-experience-preview #filter-bar {
   min-height: 9rem;
 }
@@ -222,6 +276,10 @@ html.home-experience-preview .gallery-context-label {
     padding-block: 3rem;
   }
   html.home-experience-preview .home-value-contexts { grid-template-columns: 1fr; }
+}
+@media (max-width: 768px) {
+  html.home-experience-preview .about-grid { gap: 2rem; }
+  html.home-experience-preview .about-image { width: min(100%, 285px); }
 }
 @media (max-width: 680px) {
   html.home-experience-preview .hero {
