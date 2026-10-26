@@ -66,7 +66,7 @@ test('regression: every data-i18n* key actually used in HTML exists in the dicti
   // fell through to t()'s final fallback and displayed the literal key name "skip.link" as
   // visible text — found live in production.
   const consumers = ['404.html', 'download.html', 'index.html', 'print-complete.html'];
-  const attrPattern = /data-i18n(?:-html|-aria|-placeholder|-title)?="([^"]+)"/g;
+  const attrPattern = /data-i18n(?:-html|-aria|-alt|-placeholder|-title)?="([^"]+)"/g;
   const missing = [];
   for (const file of consumers) {
     const pageSrc = readFileSync(fileURLToPath(new URL(`../${file}`, import.meta.url)), 'utf8');

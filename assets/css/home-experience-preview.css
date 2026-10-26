@@ -44,7 +44,8 @@ html.home-experience-preview .hero-bg {
   width: 100%;
   height: clamp(310px, 43vw, 520px);
   border-radius: 18px;
-  background-position: center;
+  background-image: url('https://amitphotos.com/photos/1m6IFLTq0pfpdgENTItciXddOOGIOUzt2.webp');
+  background-position: 67% center;
   box-shadow: 0 24px 65px rgba(55, 43, 28, .16);
   overflow: hidden;
 }

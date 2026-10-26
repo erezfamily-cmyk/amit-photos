@@ -65,8 +65,8 @@ const TRANSLATIONS = {
     'home.value.label': 'כשהצילום פוגש את הבית',
     'home.value.title': 'תמונה יכולה לשנות את התחושה בחלל.',
     'home.value.intro': 'אור, צבע ופרט קטן יכולים להפוך פינה יומיומית לרגע שעוצרים בו. בוחרים את התמונה שמדברת אליכם.',
-    'home.value.image.alt': 'צילום מתוך הגלריה',
-    'home.value.image.note': 'המחשה של צילום בתוך חלל אישי',
+    'home.value.image.alt': 'שני כיסאות לבנים על חוף שקט מול הים וההרים',
+    'home.value.image.note': 'רגע של שקט מול הים — דוגמה לאווירה שצילום יכול להכניס לחלל אישי',
     'home.value.home.title': 'בבית',
     'home.value.home.copy': 'צילום שמזכיר מקום אהוב או רגע של שקט, ומשתלב בסיפור האישי של הבית.',
     'home.value.space.title': 'בפינה האישית',
@@ -504,8 +504,8 @@ const TRANSLATIONS = {
     'home.value.label': 'When a photograph meets a room',
     'home.value.title': 'A photograph can change the feeling of a space.',
     'home.value.intro': 'Light, color and a small detail can turn an everyday corner into a moment to pause. Choose the photograph that speaks to you.',
-    'home.value.image.alt': 'A photograph from the gallery',
-    'home.value.image.note': 'Illustration of a photograph in a personal space',
+    'home.value.image.alt': 'Two white loungers on a quiet beach facing the sea and mountains',
+    'home.value.image.note': 'A quiet moment by the sea — an example of the feeling a photograph can bring to a personal space',
     'home.value.home.title': 'At home',
     'home.value.home.copy': 'A photograph that recalls a favorite place or a quiet moment, becoming part of your home’s personal story.',
     'home.value.space.title': 'In your personal space',
@@ -957,6 +957,9 @@ function applyTranslations() {
   });
   document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
     el.placeholder = t(el.dataset.i18nPlaceholder);
+  });
+  document.querySelectorAll('[data-i18n-alt]').forEach(el => {
+    el.alt = t(el.dataset.i18nAlt);
   });
   document.querySelectorAll('[data-i18n-aria]').forEach(el => {
     el.setAttribute('aria-label', t(el.dataset.i18nAria));
