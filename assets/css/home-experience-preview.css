@@ -302,6 +302,212 @@ html.home-experience-preview .gs-stat-sub {
 }
 html.home-experience-preview .gs-link { color: #59452f; font-size: .95rem; }
 html.home-experience-preview .gs-link:hover { border-color: #59452f; }
+html.home-experience-preview #pricing .section-title {
+  color: #302d28;
+  font-family: 'Frank Ruhl Libre', Georgia, serif;
+  font-size: clamp(2rem, 3.5vw, 2.8rem);
+  font-weight: 400;
+  letter-spacing: -.025em;
+  line-height: 1.15;
+}
+html.home-experience-preview #pricing .section-subtitle {
+  color: #59544c;
+  font-family: Heebo, Arial, sans-serif;
+  font-size: 1rem;
+  line-height: 1.8;
+}
+html.home-experience-preview .pricing-card,
+html.home-experience-preview .pricing-card.featured {
+  background: #fffdf9;
+  border-color: #d8d0c3;
+}
+html.home-experience-preview .pricing-card.featured {
+  border-color: #68745b;
+  box-shadow: 0 12px 34px rgba(59, 47, 33, .1);
+}
+html.home-experience-preview .pricing-name { color: #59452f; font-size: .82rem; }
+html.home-experience-preview .pricing-price { color: #302d28; }
+html.home-experience-preview .pricing-inquiry {
+  font-family: Heebo, Arial, sans-serif;
+  font-size: 1.18rem;
+  font-weight: 700;
+  line-height: 1.55;
+}
+html.home-experience-preview .pricing-period,
+html.home-experience-preview .pricing-features li {
+  color: #59544c;
+  font-family: Heebo, Arial, sans-serif;
+  font-size: .96rem;
+  line-height: 1.65;
+}
+html.home-experience-preview .pricing-features { border-color: #ded8ce; }
+html.home-experience-preview .pricing-features li::before { color: #47533b; }
+html.home-experience-preview .pricing-badge {
+  background: #47533b;
+  color: #f4f0e8;
+  font-family: Heebo, Arial, sans-serif;
+  font-size: .76rem;
+  letter-spacing: .04em;
+}
+html.home-experience-preview .pricing-cta {
+  font-family: Heebo, Arial, sans-serif;
+  font-size: .96rem;
+  letter-spacing: 0;
+  text-transform: none;
+}
+html.home-experience-preview .pricing-cta-outline {
+  border-color: #8c8578;
+  color: #403b34;
+}
+html.home-experience-preview .pricing-cta-outline:hover {
+  border-color: #47533b;
+  color: #302d28;
+}
+html.home-experience-preview .pricing-cta-filled {
+  background: #47533b;
+  border-color: #47533b;
+  color: #f4f0e8;
+}
+html.home-experience-preview .pricing-cta-filled:hover {
+  background: #394533;
+  border-color: #394533;
+}
+html.home-experience-preview .purchase-disabled-notice {
+  background: #e9e2d6;
+  border-color: #c7bca9;
+}
+html.home-experience-preview .purchase-disabled-notice p {
+  color: #4f4942;
+  font-family: Heebo, Arial, sans-serif;
+  font-size: 1rem;
+  line-height: 1.8;
+}
+html.home-experience-preview .purchase-disabled-notice h3 { color: #59452f; }
+html.home-experience-preview .purchase-disabled-contact {
+  background: #47533b;
+  border-color: #47533b;
+  color: #f4f0e8;
+  font-family: Heebo, Arial, sans-serif;
+}
+html.home-experience-preview .purchase-disabled-contact:hover {
+  background: #394533;
+  color: #fffdf9;
+}
+html.home-experience-preview .gear-section { background: #eee8dc; }
+html.home-experience-preview .gear-section .section-label { color: #566156; }
+html.home-experience-preview .gear-section .section-title {
+  color: #302d28;
+  font-family: 'Frank Ruhl Libre', Georgia, serif;
+  font-size: clamp(2rem, 3.5vw, 2.8rem);
+  font-weight: 400;
+  letter-spacing: -.025em;
+  line-height: 1.15;
+}
+html.home-experience-preview .gear-card {
+  background: #fffdf9;
+  border-color: #d8d0c3;
+  box-shadow: 0 8px 24px rgba(59, 47, 33, .06);
+}
+html.home-experience-preview .gear-card:hover { border-color: #68745b; }
+html.home-experience-preview .gear-icon { color: #68745b; }
+html.home-experience-preview .gear-title {
+  color: #302d28;
+  font-family: Heebo, Arial, sans-serif;
+  font-size: 1.12rem;
+}
+html.home-experience-preview .gear-list li {
+  color: #59544c;
+  font-family: Heebo, Arial, sans-serif;
+  font-size: .98rem;
+  line-height: 1.7;
+}
+html.home-experience-preview .gear-list li::before { color: #68745b; }
+html.home-experience-preview .gear-cta-btn {
+  background: #47533b;
+  border-color: #47533b;
+  color: #f4f0e8;
+  font-family: Heebo, Arial, sans-serif;
+  font-size: .96rem;
+}
+html.home-experience-preview .gear-cta-btn:hover {
+  background: #394533;
+  border-color: #394533;
+  color: #fffdf9;
+}
+html.home-experience-preview .process-section { background: #f5f1e9; }
+html.home-experience-preview .process-section .section-label { color: #566156; }
+html.home-experience-preview .process-section .section-title {
+  color: #302d28;
+  font-family: 'Frank Ruhl Libre', Georgia, serif;
+  font-size: clamp(2rem, 3.5vw, 2.8rem);
+  font-weight: 400;
+  letter-spacing: -.025em;
+  line-height: 1.15;
+}
+html.home-experience-preview .process-step {
+  background: #fffdf9;
+  border-color: #d8d0c3;
+}
+html.home-experience-preview .process-step:hover { border-color: #68745b; }
+html.home-experience-preview .process-num {
+  color: #68745b;
+  font-family: Heebo, Arial, sans-serif;
+  font-size: 2rem;
+  font-weight: 600;
+  opacity: 1;
+}
+html.home-experience-preview .process-step-title {
+  color: #302d28;
+  font-family: Heebo, Arial, sans-serif;
+  font-size: 1.08rem;
+}
+html.home-experience-preview .process-step-desc {
+  color: #59544c;
+  font-family: Heebo, Arial, sans-serif;
+  font-size: .98rem;
+  line-height: 1.75;
+}
+html.home-experience-preview .platforms-inner .section-label,
+html.home-experience-preview .explore-section .section-label { color: #566156; }
+html.home-experience-preview .platforms-inner .section-title,
+html.home-experience-preview .explore-section .section-title {
+  color: #302d28;
+  font-family: 'Frank Ruhl Libre', Georgia, serif;
+  font-size: clamp(2rem, 3.5vw, 2.8rem);
+  font-weight: 400;
+  letter-spacing: -.025em;
+  line-height: 1.15;
+}
+html.home-experience-preview .platform-card,
+html.home-experience-preview .explore-card {
+  background: #fffdf9;
+  border-color: #d8d0c3;
+  box-shadow: 0 8px 24px rgba(59, 47, 33, .05);
+}
+html.home-experience-preview .platform-card:hover,
+html.home-experience-preview .explore-card:hover { border-color: #68745b; }
+html.home-experience-preview .platform-logo,
+html.home-experience-preview .explore-card-title {
+  color: #59452f;
+  font-family: Heebo, Arial, sans-serif;
+}
+html.home-experience-preview .platform-stat,
+html.home-experience-preview .explore-card-desc {
+  color: #59544c;
+  font-family: Heebo, Arial, sans-serif;
+  font-size: .95rem;
+  line-height: 1.7;
+}
+html.home-experience-preview .platform-stat span { color: #302d28; }
+html.home-experience-preview .platform-cta,
+html.home-experience-preview .explore-card-cta { color: #47533b; }
+@media (min-width: 481px) and (max-width: 1024px) {
+  html.home-experience-preview .gear-card:last-child {
+    grid-column: 1 / -1;
+    width: calc(50% - 1rem);
+    justify-self: center;
+  }
+}
 html.home-experience-preview .contact-consent-row input:focus-visible,
 html.home-experience-preview .newsletter-consent-row input:focus-visible {
   outline: 3px solid #47533b;
