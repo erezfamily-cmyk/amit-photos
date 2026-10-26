@@ -47,7 +47,9 @@ try {
   await page.goto(new URL('/#experience', base).toString(),
     { waitUntil: 'domcontentloaded', timeout: 45000 });
   const apiResponse = await publicApi;
-  assert.equal(apiResponse.status(), 200, 'Sandbox published-photo API must return 200');
+  const gallerySource = apiResponse.headers()['x-preview-gallery-source'] || 'not-reported';
+  assert.equal(apiResponse.status(), 200,
+    'Sandbox published-photo API must return 200; source=' + gallerySource);
   const photos = await apiResponse.json();
   assert.ok(Array.isArray(photos) && photos.length >= 16, 'Sandbox must return a populated public photo array');
   results.push({ step: 'public-api', status: 200, count: photos.length });
