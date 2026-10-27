@@ -16,5 +16,23 @@
     "e8d084b0-3add-4cde-910b-7953fb79fbb3",
     "f6f018ab-16c1-48e1-88d4-d81d103facd7",
     "f7e18780-1f2d-4d85-bbcb-d584c4216812"
-  ]
+  ],
+  "campaigns": {
+    "1xXiWFageaUy0iYqgk-OKPuNPSOVPIjPk": {
+      "product_url": "https://www.redbubble.com/i/mouse-pad/Light-Painting-Circle-Over-Dark-Mountain-Landscape-by-erezphoto/182128037/2mh5",
+      "caption": "I waited for the deepest dark to settle over the mountains before tracing this glowing circle of color into the night sky. There's something magical about painting with light in total silence, capturing a moment that exists for just a few seconds. I'm happy to share that this shot is now available as a Light Painting Circle Over Dark Mountain Landscape Mouse Pad."
+    }
+  },
+  "deliveries": {
+    "1xXiWFageaUy0iYqgk-OKPuNPSOVPIjPk": {
+      "instagram": {
+        "post_id": "18135003139755577",
+        "published_at": "2026-10-27T15:49:17.940438+00:00"
+      },
+      "facebook": {
+        "post_id": "1433002785652559",
+        "published_at": "2026-10-27T15:49:24.012198+00:00"
+      }
+    }
+  }
 }
