@@ -17,8 +17,9 @@ Verified OK: no horizontal scroll (390 / 1425<1440 desktop scrollbar); `.whatsap
 - **#4: not a bug** — the empty circle is the wall colour picker (`#wall-color-picker`), its swatch equals the default wall colour. Left as is.
 - **#5: FIXED** in PR [#195](https://github.com/erezfamily-cmyk/amit-photos/pull/195) (merged `265d63b`, verified live): a11y button hidden while lightbox/wall preview is open.
 - **#6: not a bug** — `/api/photos` returns 2,310 unique published photos (the ~1,225 figure in CLAUDE.md is stale).
-- **#7: fix in a new PR** (`?lang=he|en` now overrides stored language; hreflang alternates point to `/?lang=en`, so crawlers previously saw Hebrew).
-- #3 still open (needs a real phone).
+- **#7: FIXED** in PR [#196](https://github.com/erezfamily-cmyk/amit-photos/pull/196) (merged `888f7b0`, verified live): `?lang=he|en` overrides stored language; hreflang alternates point to `/?lang=en`, so crawlers previously saw Hebrew.
+- **#3: confirmed by owner iPhone screenshot, FIXED** in PR [#197](https://github.com/erezfamily-cmyk/amit-photos/pull/197) (merged `5ad3110`): mobile lightbox stage hugs the photo, arrows directly below, WhatsApp inquiry button 44px single line, `body.modal-open` hides the a11y button (also nested wall preview). Verified live in Chromium mobile (photo 56-251px, arrows 259px, contact 44px, no JS errors). **Still to confirm on the real iPhone/WebKit after deploy** (use a private tab to avoid stale cache).
+- **Experience route ("Feel the moment", 1/4 and 2/4) checked live in Chromium mobile (portrait + landscape):** layout, arrows, a11y-button hiding, wall modal and no JS errors all OK. Found a faint ghost of page text / dark rectangle behind the lightbox (backdrop was rgba 0.97) — fixed in PR [#199](https://github.com/erezfamily-cmyk/amit-photos/pull/199) (merged `16fccee`; opaque #000, test + cache-bust `style.css?v=f60f10ce`). Verified live in Chromium mobile (computed bg rgb(0,0,0), ghost text gone, payments still `{"enabled":false}`); real iPhone/WebKit still not checked.
 
 1. **Lightbox arrow glyphs reversed in EN (LTR):** `#lb-prev` sits left but shows `›`, `#lb-next` right shows `‹`. Correct in HE (RTL). Glyphs are hardcoded for RTL.
 2. **Hebrew leaks on EN page:** `<title>` stays Hebrew (`עמית ארז | עולם של צבעים…`); footer logo `עמית / צילום` is not translated.
