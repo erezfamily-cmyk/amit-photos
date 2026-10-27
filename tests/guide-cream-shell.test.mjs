@@ -6,7 +6,7 @@ import { createHash } from 'node:crypto';
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const css = read('assets/css/guide-cream.css');
 const hash = createHash('md5').update(css.replace(/\r\n/g, '\n')).digest('hex').slice(0, 8);
-const migrated = ['exposure', 'night', 'black-and-white', 'color-channels', 'color-theory', 'composition'].map((g) => `camera/${g}/index.html`);
+const migrated = ['exposure', 'night', 'black-and-white', 'color-channels', 'color-theory', 'composition', 'dynamic-range', 'filters'].map((g) => `camera/${g}/index.html`);
 
 test('migrated guides link the shared cream stylesheet with its current cache-bust hash', () => {
   for (const page of migrated) {
@@ -38,5 +38,12 @@ test('cream palette text tokens meet 4.5:1 on cream and on the surface colours',
   for (const bg of ['#f5f1e9', '#fffdf9', '#f0ebe0']) {
     assert.ok(ratio('#645f57', bg) >= 4.5, `muted on ${bg}`);
     assert.ok(ratio('#7a5c3f', bg) >= 4.5, `accent on ${bg}`);
+  }
+});
+
+test('migrated guides use inline SVG icons, not emoji, anywhere in the markup', () => {
+  for (const page of migrated) {
+    const found = read(page).match(/\p{Extended_Pictographic}/gu) || [];
+    assert.deepEqual(found, [], `${page} still contains emoji: ${found.join('')}`);
   }
 });

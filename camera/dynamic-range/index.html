@@ -13,7 +13,7 @@
 <title>טווח דינמי — אורות, צללים וגבולות החיישן | בית ספר לצילום | Amit Photos</title>
 <meta name="description" content="למה השמיים נשרפים ופני האדם נעלמים? טווח דינמי — הדמו האינטראקטיבי שיסביר הכל.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&family=Frank+Ruhl+Libre:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
@@ -198,6 +198,8 @@ input[type=range]::-webkit-slider-thumb {
 .kofi-bar{text-align:center;padding:1.25rem 1.25rem 1.75rem;max-width:760px;margin:0 auto}
 .kofi-bar a{display:inline-flex;align-items:center;gap:.5rem;background:var(--surface);border:1px solid rgba(200,169,110,.4);color:var(--accent);font-size:.82rem;font-weight:700;padding:.55rem 1.4rem;border-radius:8px;text-decoration:none;transition:background .2s,color .2s}
 .kofi-bar a:hover{background:var(--accent);color:#000}</style>
+<link rel="stylesheet" href="/assets/css/guide-cream.css?v=85d11a81">
+
 <script src="/assets/js/nav.js?v=dd63b478" defer></script>
 <script src="/assets/js/share.js" defer></script>
 
@@ -266,7 +268,7 @@ input[type=range]::-webkit-slider-thumb {
 </div>
 
 <div class="hero">
-  <div class="hero-badge" data-he="🌗 טווח דינמי" data-en="🌗 Dynamic Range">🌗 טווח דינמי</div>
+  <div class="hero-badge"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 4v16" /><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/></svg><span data-he="טווח דינמי" data-en="Dynamic Range">טווח דינמי</span></div>
   <h1 data-he="מהצל לאור" data-en="From Shadow to Light">מהצל לאור</h1>
   <p data-he='למה השמיים "נשרפים" לבן ופני האדם נעלמים לחושך? כי לכל מצלמה יש גבול — ולגבול הזה יש שם' data-en='Why do skies "blow out" to white and faces disappear into darkness? Every camera has a limit — and that limit has a name'>למה השמיים "נשרפים" לבן ופני האדם נעלמים לחושך? כי לכל מצלמה יש גבול — ולגבול הזה יש שם</p>
 </div>
@@ -292,17 +294,17 @@ input[type=range]::-webkit-slider-thumb {
   <!-- ===== LAB 1: COMPARE SLIDER ===== -->
   <div class="section">
     <div class="section-label" data-he="אינטראקטיבי" data-en="Interactive">אינטראקטיבי</div>
-    <h2 data-he="גרור: חשיפה לשמיים ↔ חשיפה לאדמה" data-en="Drag: Exposed for Sky ↔ Exposed for Ground">גרור: חשיפה לשמיים ↔ חשיפה לאדמה</h2>
+    <h2 data-he="גרור: חשיפה לשמיים ⟷ חשיפה לאדמה" data-en="Drag: Exposed for Sky ⟷ Exposed for Ground">גרור: חשיפה לשמיים ⟷ חשיפה לאדמה</h2>
 
     <div class="lab">
-      <div class="lab-title" data-he="📷 אותה תמונה, שתי הגדרות — גרור את הקו" data-en="📷 Same photo, two exposures — drag the line">📷 אותה תמונה, שתי הגדרות — גרור את הקו</div>
+      <div class="lab-title"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l1.5-2h7L17 8h3v11H4z"/><circle cx="12" cy="13.5" r="3.2"/></svg><span data-he="אותה תמונה, שתי הגדרות — גרור את הקו" data-en="Same photo, two exposures — drag the line">אותה תמונה, שתי הגדרות — גרור את הקו</span></div>
 
       <!-- Photo picker -->
       <div class="photo-picker">
-        <button type="button" class="photo-btn active" onclick="setPhoto(0)" data-he="🌄 שדה בזריחה" data-en="🌄 Field at Sunrise">🌄 שדה בזריחה</button>
-        <button type="button" class="photo-btn" onclick="setPhoto(1)" data-he="☀️ אור בוקר" data-en="☀️ Morning Light">☀️ אור בוקר</button>
-        <button type="button" class="photo-btn" onclick="setPhoto(2)" data-he="🌊 שקיעה ים המלח" data-en="🌊 Dead Sea Sunset">🌊 שקיעה ים המלח</button>
-        <button type="button" class="photo-btn" onclick="setPhoto(3)" data-he="🏔️ נוף ים המלח" data-en="🏔️ Dead Sea Landscape">🏔️ נוף ים המלח</button>
+        <button type="button" class="photo-btn active" onclick="setPhoto(0)"><svg class="gi" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 18h18M7 18a5 5 0 0 1 10 0M12 6v3M4.5 11l2 1.5M19.5 11l-2 1.5"/></svg><span data-he="שדה בזריחה" data-en="Field at Sunrise">שדה בזריחה</span></button>
+        <button type="button" class="photo-btn" onclick="setPhoto(1)"><svg class="gi" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/></svg><span data-he="אור בוקר" data-en="Morning Light">אור בוקר</span></button>
+        <button type="button" class="photo-btn" onclick="setPhoto(2)"><svg class="gi" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9c2-2 4-2 6 0s4 2 6 0 4-2 6 0M3 15c2-2 4-2 6 0s4 2 6 0 4-2 6 0"/></svg><span data-he="שקיעה ים המלח" data-en="Dead Sea Sunset">שקיעה ים המלח</span></button>
+        <button type="button" class="photo-btn" onclick="setPhoto(3)"><svg class="gi" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 19l6.5-11 4 6.5 2.5-3.5L21 19z"/></svg><span data-he="נוף ים המלח" data-en="Dead Sea Landscape">נוף ים המלח</span></button>
       </div>
 
       <!-- Compare slider -->
@@ -316,8 +318,8 @@ input[type=range]::-webkit-slider-thumb {
             <line x1="12" y1="4" x2="16" y2="9"/><line x1="12" y1="14" x2="16" y2="9"/>
           </svg>
         </div>
-        <div class="compare-label label-a" data-he="🔥 חשיפה לאדמה — שמיים שרופים" data-en="🔥 Exposed for ground — blown sky">🔥 חשיפה לאדמה — שמיים שרופים</div>
-        <div class="compare-label label-b" data-he="🌑 חשיפה לשמיים — אדמה שחורה" data-en="🌑 Exposed for sky — black ground">🌑 חשיפה לשמיים — אדמה שחורה</div>
+        <div class="compare-label label-a"><svg class="gi" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3c1 3.5 5 5.5 5 10a5 5 0 0 1-10 0c0-2 1-3.2 2-4.2.2 1.2.8 2 1.6 2.4C10.2 8.2 11 5.6 12 3z"/></svg><span data-he="חשיפה לאדמה — שמיים שרופים" data-en="Exposed for ground — blown sky">חשיפה לאדמה — שמיים שרופים</span></div>
+        <div class="compare-label label-b"><svg class="gi" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5z"/></svg><span data-he="חשיפה לשמיים — אדמה שחורה" data-en="Exposed for sky — black ground">חשיפה לשמיים — אדמה שחורה</span></div>
       </div>
 
       <div class="compare-hint" data-he="← גרור את הקו ימינה/שמאלה לגילוי" data-en="Drag the line left/right to reveal →">← גרור את הקו ימינה/שמאלה לגילוי</div>
@@ -332,22 +334,22 @@ input[type=range]::-webkit-slider-thumb {
     <h2 data-he="כמה סטופ יש למצלמה שלך?" data-en="How many stops does your camera have?">כמה סטופ יש למצלמה שלך?</h2>
 
     <div class="lab">
-      <div class="lab-title" data-he="🎚️ שנה את הטווח הדינמי — ראה מה נשמר" data-en="🎚️ Change the dynamic range — see what's preserved">🎚️ שנה את הטווח הדינמי — ראה מה נשמר</div>
+      <div class="lab-title"><svg class="gi" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h16M4 16h16"/><circle cx="9" cy="8" r="2.2"/><circle cx="15" cy="16" r="2.2"/></svg><span data-he="שנה את הטווח הדינמי — ראה מה נשמר" data-en="Change the dynamic range — see what's preserved">שנה את הטווח הדינמי — ראה מה נשמר</span></div>
 
       <div class="dr-preview">
         <img class="dr-img" id="drImg" src="" alt="סימולטור טווח דינמי">
         <div class="dr-badges">
-          <div class="dr-badge badge-hi" id="badgeHi">🔥 שרוף</div>
-          <div class="dr-badge badge-lo" id="badgeLo">🌑 שחור</div>
+          <div class="dr-badge badge-hi" id="badgeHi"><svg class="gi" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3c1 3.5 5 5.5 5 10a5 5 0 0 1-10 0c0-2 1-3.2 2-4.2.2 1.2.8 2 1.6 2.4C10.2 8.2 11 5.6 12 3z"/></svg><span>שרוף</span></div>
+          <div class="dr-badge badge-lo" id="badgeLo"><svg class="gi" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5z"/></svg><span>שחור</span></div>
         </div>
         <div class="dr-badge badge-ok" id="badgeOk">✓ מאוזן</div>
       </div>
 
       <div class="preset-btns">
-        <button type="button" class="preset-btn" onclick="setDrPreset(8)" data-he="📱 סמארטפון ישן — 8 סטופ" data-en="📱 Old Smartphone — 8 stops">📱 סמארטפון ישן — 8 סטופ</button>
-        <button type="button" class="preset-btn" onclick="setDrPreset(11)" data-he="📱 iPhone מודרני — 11" data-en="📱 Modern iPhone — 11">📱 iPhone מודרני — 11</button>
-        <button type="button" class="preset-btn active" onclick="setDrPreset(13)" data-he="📷 Mirrorless — 13" data-en="📷 Mirrorless — 13">📷 Mirrorless — 13</button>
-        <button type="button" class="preset-btn" onclick="setDrPreset(15)" data-he="🎥 Pro — 15 סטופ" data-en="🎥 Pro — 15 stops">🎥 Pro — 15 סטופ</button>
+        <button type="button" class="preset-btn" onclick="setDrPreset(8)"><svg class="gi" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="2.5" width="10" height="19" rx="2"/><path d="M11 18.5h2"/></svg><span data-he="סמארטפון ישן — 8 סטופ" data-en="Old Smartphone — 8 stops">סמארטפון ישן — 8 סטופ</span></button>
+        <button type="button" class="preset-btn" onclick="setDrPreset(11)"><svg class="gi" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="2.5" width="10" height="19" rx="2"/><path d="M11 18.5h2"/></svg><span data-he="iPhone מודרני — 11" data-en="Modern iPhone — 11">iPhone מודרני — 11</span></button>
+        <button type="button" class="preset-btn active" onclick="setDrPreset(13)"><svg class="gi" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l1.5-2h7L17 8h3v11H4z"/><circle cx="12" cy="13.5" r="3.2"/></svg><span data-he="Mirrorless — 13" data-en="Mirrorless — 13">Mirrorless — 13</span></button>
+        <button type="button" class="preset-btn" onclick="setDrPreset(15)"><svg class="gi" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="M16 10.5l5-3v9l-5-3"/></svg><span data-he="Pro — 15 סטופ" data-en="Pro — 15 stops">Pro — 15 סטופ</span></button>
       </div>
 
       <div class="slider-row">
@@ -362,7 +364,7 @@ input[type=range]::-webkit-slider-thumb {
         <div class="scale-labels">
           <span data-he="5 — סמארטפון ישן" data-en="5 — Old smartphone">5 — סמארטפון ישן</span><span data-he="16 — חיישן מדעי" data-en="16 — Scientific sensor">16 — חיישן מדעי</span>
         </div>
-        <div class="slider-hint" data-he="⬆ יותר סטופים = יותר פרטים בו-זמנית בצל ובאור" data-en="⬆ More stops = more detail in shadows and highlights simultaneously">⬆ יותר סטופים = יותר פרטים בו-זמנית בצל ובאור</div>
+        <div class="slider-hint"><svg class="gi" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20V5M6 11l6-6 6 6"/></svg><span data-he="יותר סטופים = יותר פרטים בו-זמנית בצל ובאור" data-en="More stops = more detail in shadows and highlights simultaneously">יותר סטופים = יותר פרטים בו-זמנית בצל ובאור</span></div>
       </div>
     </div>
   </div>
@@ -405,22 +407,22 @@ input[type=range]::-webkit-slider-thumb {
     <h2 data-he="מה עושים עם זה בשטח?" data-en="What do you do with this in the field?">מה עושים עם זה בשטח?</h2>
     <div class="tips-grid">
       <div class="tip-card">
-        <div class="tip-icon">🌅</div>
+        <div class="tip-icon"><svg class="gi" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 18h18M7 18a5 5 0 0 1 10 0M12 6v3M4.5 11l2 1.5M19.5 11l-2 1.5"/></svg><span></span></div>
         <div class="tip-title" data-he="צלם בשעת הזהב" data-en="Shoot During Golden Hour">צלם בשעת הזהב</div>
         <div class="tip-body" data-he="בבוקר ובשקיעה, ההפרש בין האור לצל קטן הרבה יותר — הסצנה כולה נכנסת לטווח של המצלמה." data-en="In the morning and at sunset, the contrast between light and shadow is much smaller — the whole scene fits within the camera's range.">בבוקר ובשקיעה, ההפרש בין האור לצל קטן הרבה יותר — הסצנה כולה נכנסת לטווח של המצלמה.</div>
       </div>
       <div class="tip-card">
-        <div class="tip-icon">📄</div>
+        <div class="tip-icon"><svg class="gi" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4M9 12h6M9 16h6"/></svg><span></span></div>
         <div class="tip-title" data-he="צלם RAW, לא JPEG" data-en="Shoot RAW, Not JPEG">צלם RAW, לא JPEG</div>
         <div class="tip-body" data-he="RAW שומר את כל המידע שהחיישן תפס. ב-Lightroom ניתן להציל 3–4 סטופ של פרטים שב-JPEG כבר נעלמו." data-en="RAW preserves all the data the sensor captured. In Lightroom you can recover 3–4 stops of detail that would already be gone in a JPEG.">RAW שומר את כל המידע שהחיישן תפס. ב-Lightroom ניתן להציל 3–4 סטופ של פרטים שב-JPEG כבר נעלמו.</div>
       </div>
       <div class="tip-card">
-        <div class="tip-icon">📊</div>
+        <div class="tip-icon"><svg class="gi" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg><span></span></div>
         <div class="tip-title" data-he="תסתכל על ההיסטוגרמה" data-en="Check the Histogram">תסתכל על ההיסטוגרמה</div>
         <div class="tip-body" data-he="שריפה בקצה הימני = highlights אבודים. ערמה בשמאל = צל ללא פרטים. ההיסטוגרמה לא משקרת — המסך כן." data-en="Clipping on the right edge = lost highlights. A pile on the left = shadows with no detail. The histogram doesn't lie — your screen does.">שריפה בקצה הימני = highlights אבודים. ערמה בשמאל = צל ללא פרטים. ההיסטוגרמה לא משקרת — המסך כן.</div>
       </div>
       <div class="tip-card">
-        <div class="tip-icon">🔢</div>
+        <div class="tip-icon"><svg class="gi" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4L7 20M17 4l-2 16M4 9h16M3 15h16"/></svg><span></span></div>
         <div class="tip-title" data-he="Bracketing — 3 חשיפות" data-en="Bracketing — 3 Exposures">Bracketing — 3 חשיפות</div>
         <div class="tip-body" data-he="צלם EV−2, EV 0, EV+2 ומזג בפוסט. בנופים סטטיים זה מדמה 18+ סטופ — יותר ממה שהעין רואה." data-en="Shoot EV−2, EV 0, EV+2 and blend in post. For static landscapes this simulates 18+ stops — more than the eye can see.">צלם EV−2, EV 0, EV+2 ומזג בפוסט. בנופים סטטיים זה מדמה 18+ סטופ — יותר ממה שהעין רואה.</div>
       </div>
