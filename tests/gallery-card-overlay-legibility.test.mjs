@@ -15,6 +15,12 @@ test('card title and location are explicitly light, not inherited page text colo
 });
 
 test('card watermark is English on the English page and laid out LTR in both languages', () => {
-  assert.match(css, /html\[lang="en"\] \.gallery-item::after \{ content: '© Amit Erez'; \}/);
+  assert.match(css, /html\[lang="en"\] \.gallery-item::after \{ content: '© Amit Erez';/);
   assert.match(rule('.gallery-item::after'), /direction:\s*ltr\s*;/);
+});
+
+test('card watermark sits in the corner opposite the title in English, title/category gap is tight', () => {
+  assert.match(css, /html\[lang="en"\] \.gallery-item::after \{[^}]*left:\s*auto;[^}]*right:\s*10px;/);
+  assert.match(rule('.gallery-item-info h3'), /line-height:\s*1\.25\s*;/);
+  assert.match(rule('.gallery-item-info span:first-of-type'), /display:\s*block\s*;/);
 });
