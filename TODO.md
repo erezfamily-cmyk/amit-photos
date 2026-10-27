@@ -5,6 +5,7 @@
 - [x] a11y button overlap — #195 merged `265d63b`, verified live. (Wall-modal empty circle = colour picker, not a bug.)
 - [x] Counter `/2310` is correct (2,310 published photos). `?lang=` override — fix PR open.
 - [x] Mobile lightbox stage layout — fixed in #197 (`5ad3110`), verified live in Chromium; owner to re-check on iPhone (private tab).
+- [ ] Opaque lightbox backdrop — PR #199 open, awaiting approval to merge; then verify live + owner iPhone check.
 - [x] `?lang=` override — #196 merged `888f7b0`, verified live.
 - [ ] Owner to confirm on real phone.
 
