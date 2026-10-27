@@ -13,7 +13,7 @@
 <title>סוגי מצלמות וחיישנים — בית ספר לצילום | Amit Photos</title>
 <meta name="description" content="Full Frame vs APS-C vs סמארטפון — Crop Factor אינטראקטיבי, מחשבון מרחק מוקד, ו-DSLR vs Mirrorless.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&family=Frank+Ruhl+Libre:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
@@ -180,8 +180,8 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
 .cam-pros { color: var(--green); margin-bottom: .5rem; }
 .cam-cons { color: var(--muted); }
 .cam-pros li, .cam-cons li { list-style: none; padding-right: 0; margin-bottom: .2rem; }
-.cam-pros li::before { content: '✅ '; }
-.cam-cons li::before { content: '❌ '; }
+.cam-pros li::before { content: '✓ '; }
+.cam-cons li::before { content: '✗ '; }
 
 /* Decision helper */
 .decision-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .85rem; margin: 1.25rem 0; }
@@ -218,6 +218,7 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
 .kofi-bar{text-align:center;padding:1.25rem 1.25rem 1.75rem;max-width:760px;margin:0 auto}
 .kofi-bar a{display:inline-flex;align-items:center;gap:.5rem;background:var(--surface);border:1px solid rgba(200,169,110,.4);color:var(--accent);font-size:.82rem;font-weight:700;padding:.55rem 1.4rem;border-radius:8px;text-decoration:none;transition:background .2s,color .2s}
 .kofi-bar a:hover{background:var(--accent);color:#000}</style>
+<link rel="stylesheet" href="/assets/css/guide-cream.css?v=9da5a29e">
 <script src="/assets/js/nav.js?v=e842596e" defer></script>
 <script src="/assets/js/share.js" defer></script>
 
@@ -284,8 +285,8 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
 <div class="breadcrumb"><a href="/camera/" data-he="למד לצלם" data-en="Photography School">למד לצלם</a> ← <span data-he="סוגי מצלמות" data-en="Camera Types">סוגי מצלמות</span></div>
 
 <div class="hero">
-  <div class="hero-badge" data-he="📷 בית ספר לצילום" data-en="📷 Photography School">📷 בית ספר לצילום</div>
-  <h1 data-he="📷 מצלמות וחיישנים" data-en="📷 Cameras & Sensors">📷 מצלמות וחיישנים</h1>
+  <div class="hero-badge"><svg class="gi" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l1.5-2h7L17 8h3v11H4z"/><circle cx="12" cy="13.5" r="3.2"/></svg><span data-he="בית ספר לצילום" data-en="Photography School">בית ספר לצילום</span></div>
+  <h1 data-he="מצלמות וחיישנים" data-en="Cameras & Sensors">מצלמות וחיישנים</h1>
   <p data-he="Full Frame, APS-C, Mirrorless, DSLR, סמארטפון — מה ההבדל באמת, ואיך גודל החיישן משנה כל תמונה. עם דמו אינטראקטיבי." data-en="Full Frame, APS-C, Mirrorless, DSLR, Smartphone — what's the real difference, and how sensor size changes every shot. With an interactive demo.">Full Frame, APS-C, Mirrorless, DSLR, סמארטפון — מה ההבדל באמת, ואיך גודל החיישן משנה כל תמונה. עם דמו אינטראקטיבי.</p>
 </div>
 
@@ -294,7 +295,7 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
   <div class="section">
     <div class="section-label" data-he="אינפוגרפיקה" data-en="Infographic">אינפוגרפיקה</div>
     <h2>Full Frame vs Crop Sensor</h2>
-    <div class="infographic-wrap">
+    <div class="infographic-wrap guide-dark">
       <img src="/assets/infographics/sensor-infographic.jpg" alt="Full Frame vs Crop Sensor — אינפוגרפיקה" loading="lazy">
       <div class="infographic-caption" data-he="גלול למטה לדמו האינטראקטיבי שמראה בדיוק מה כל חיישן &quot;רואה&quot;" data-en="Scroll down for the interactive demo showing exactly what each sensor &quot;sees&quot;">גלול למטה לדמו האינטראקטיבי שמראה בדיוק מה כל חיישן "רואה"</div>
     </div>
@@ -308,8 +309,8 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
     <h2 data-he="מה החיישן שלך רואה?" data-en="What Does Your Sensor See?">מה החיישן שלך רואה?</h2>
     <p data-he="לחץ על סוג החיישן — המסגרת מראה בדיוק איזה חלק מהפריים כל חיישן &quot;כורך&quot;. שים לב כמה מידע נחתך בסמארטפון לעומת Full Frame." data-en="Click a sensor type — the frame shows exactly which part of the scene each sensor &quot;crops&quot;. Notice how much is cut off in a smartphone vs Full Frame.">לחץ על סוג החיישן — המסגרת מראה בדיוק איזה חלק מהפריים כל חיישן "כורך". שים לב כמה מידע נחתך בסמארטפון לעומת Full Frame.</p>
 
-    <div class="crop-lab">
-      <div class="crop-lab-title" data-he="🔍 מה החיישן שלך רואה?" data-en="🔍 What Does Your Sensor See?">🔍 מה החיישן שלך רואה?</div>
+    <div class="crop-lab guide-dark">
+      <div class="crop-lab-title"><svg class="gi" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M16 16l5 5"/></svg><span data-he="מה החיישן שלך רואה?" data-en="What Does Your Sensor See?">מה החיישן שלך רואה?</span></div>
 
       <div class="crop-demo-wrap">
         <img id="crop-img"
@@ -360,15 +361,15 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
           <div class="cip-label" data-he="שקול ל-50mm על FF" data-en="Equivalent on FF (50mm lens)">שקול ל-50mm על FF</div>
         </div>
         <div>
-          <div class="cip-val" id="info-bokeh">🔵🔵🔵</div>
+          <div class="cip-val" id="info-bokeh"><svg class="gi" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/></svg><span></span></div>
           <div class="cip-label" data-he="פוטנציאל בוקה" data-en="Bokeh Potential">פוטנציאל בוקה</div>
         </div>
       </div>
     </div>
 
     <!-- Focal Length Calculator -->
-    <div class="focal-calc">
-      <h3 data-he="🧮 מחשבון מרחק מוקד" data-en="🧮 Focal Length Calculator">🧮 מחשבון מרחק מוקד</h3>
+    <div class="focal-calc guide-dark">
+      <h3 data-he="מחשבון מרחק מוקד" data-en="Focal Length Calculator">מחשבון מרחק מוקד</h3>
       <div class="focal-input-row">
         <label for="focal-input" data-he="עדשה שלך:" data-en="Your lens:">עדשה שלך:</label>
         <input type="number" id="focal-input" value="50" min="1" max="2000">
@@ -408,7 +409,7 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
 
     <div class="cam-grid">
       <div class="cam-card">
-        <div class="cam-icon">📸</div>
+        <div class="cam-icon"><svg class="gi" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l1.5-2h7L17 8h3v11H4z"/><circle cx="12" cy="13.5" r="3.2"/></svg><span></span></div>
         <div class="cam-name">DSLR</div>
         <ul class="cam-pros">
           <li data-he="סוללה ארוכת טווח" data-en="Long battery life">סוללה ארוכת טווח</li>
@@ -423,7 +424,7 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
         </ul>
       </div>
       <div class="cam-card">
-        <div class="cam-icon">🎥</div>
+        <div class="cam-icon"><svg class="gi" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="M16 10.5l5-3v9l-5-3"/></svg><span></span></div>
         <div class="cam-name">Mirrorless</div>
         <ul class="cam-pros">
           <li data-he="קומפקטי יחסית" data-en="Relatively compact">קומפקטי יחסית</li>
@@ -438,7 +439,7 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
         </ul>
       </div>
       <div class="cam-card">
-        <div class="cam-icon">📱</div>
+        <div class="cam-icon"><svg class="gi" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="2.5" width="10" height="19" rx="2"/><path d="M11 18.5h2"/></svg><span></span></div>
         <div class="cam-name" data-he="סמארטפון" data-en="Smartphone">סמארטפון</div>
         <ul class="cam-pros">
           <li data-he="תמיד בכיס" data-en="Always in your pocket">תמיד בכיס</li>
@@ -455,7 +456,7 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
     </div>
 
     <div class="tip-box">
-      <div class="tip-label" data-he="💡 האמת שאף אחד לא אומר" data-en="💡 The Truth Nobody Tells You">💡 האמת שאף אחד לא אומר</div>
+      <div class="tip-label"><svg class="gi" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/></svg><span data-he="האמת שאף אחד לא אומר" data-en="The Truth Nobody Tells You">האמת שאף אחד לא אומר</span></div>
       <p data-he="הצלם הכי טוב הוא זה שיש לו מצלמה. iPhone מודרני עם עין טובה יכריע DSLR ישן בידי מישהו שלא מבין קומפוזיציה. בחרו מצלמה שתרצו לקחת איתכם — לא את היפה ביותר על הנייר." data-en="The best camera is the one you have. A modern iPhone with a good eye beats an old DSLR in hands that don't understand composition. Choose the camera you'll actually carry — not the best one on paper.">הצלם הכי טוב הוא זה <strong>שיש לו מצלמה</strong>. iPhone מודרני עם עין טובה יכריע DSLR ישן בידי מישהו שלא מבין קומפוזיציה. בחרו מצלמה שתרצו לקחת איתכם — לא את היפה ביותר על הנייר.</p>
     </div>
   </div>
@@ -468,19 +469,19 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
 
     <div class="decision-grid">
       <div class="decision-card">
-        <div class="decision-who" data-he="🏔️ צלם נוף ו-Landscape" data-en="🏔️ Landscape Photographer">🏔️ צלם נוף ו-Landscape</div>
+        <div class="decision-who"><svg class="gi" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 19l6.5-11 4 6.5 2.5-3.5L21 19z"/></svg><span data-he="צלם נוף ו-Landscape" data-en="Landscape Photographer">צלם נוף ו-Landscape</span></div>
         <div class="decision-pick" data-he="Full Frame Mirrorless — Sony A7, Nikon Z, Canon R. חיישן גדול = ביצועי ISO מעולים בשקיעות ולילה." data-en="Full Frame Mirrorless — Sony A7, Nikon Z, Canon R. Large sensor = excellent ISO performance at sunsets and night.">Full Frame Mirrorless — Sony A7, Nikon Z, Canon R. חיישן גדול = ביצועי ISO מעולים בשקיעות ולילה.</div>
       </div>
       <div class="decision-card">
-        <div class="decision-who" data-he="🦅 צלם ספורט ו-Wildlife" data-en="🦅 Sports & Wildlife Photographer">🦅 צלם ספורט ו-Wildlife</div>
+        <div class="decision-who" data-he="צלם ספורט ו-Wildlife" data-en="Sports & Wildlife Photographer">צלם ספורט ו-Wildlife</div>
         <div class="decision-pick" data-he="APS-C עם Telephoto — Crop Factor נותן לך reach חינמי. Nikon Z50, Canon R7." data-en="APS-C with Telephoto — Crop Factor gives you free reach. Nikon Z50, Canon R7.">APS-C עם Telephoto — Crop Factor נותן לך reach חינמי. Nikon Z50, Canon R7.</div>
       </div>
       <div class="decision-card">
-        <div class="decision-who" data-he="👤 צלם פורטרטים" data-en="👤 Portrait Photographer">👤 צלם פורטרטים</div>
+        <div class="decision-who"><svg class="gi" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.500 3.500-7 8-7s8 2.500 8 7"/></svg><span data-he="צלם פורטרטים" data-en="Portrait Photographer">צלם פורטרטים</span></div>
         <div class="decision-pick" data-he="Full Frame עם 50mm/85mm פריים — בוקה טבעי ואור עשיר בחיישן גדול. Sony A7C, Nikon Z6." data-en="Full Frame with 50mm/85mm prime — natural bokeh and rich light on a large sensor. Sony A7C, Nikon Z6.">Full Frame עם 50mm/85mm פריים — בוקה טבעי ואור עשיר בחיישן גדול. Sony A7C, Nikon Z6.</div>
       </div>
       <div class="decision-card">
-        <div class="decision-who" data-he="🎬 יוצר תוכן וידאו" data-en="🎬 Video Content Creator">🎬 יוצר תוכן וידאו</div>
+        <div class="decision-who"><svg class="gi" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="M16 10.5l5-3v9l-5-3"/></svg><span data-he="יוצר תוכן וידאו" data-en="Video Content Creator">יוצר תוכן וידאו</span></div>
         <div class="decision-pick" data-he="Mirrorless עם 4K — Sony ZV-E10, Fujifilm X-S20. קל, גמיש, וידאו מעולה." data-en="Mirrorless with 4K — Sony ZV-E10, Fujifilm X-S20. Light, flexible, excellent video.">Mirrorless עם 4K — Sony ZV-E10, Fujifilm X-S20. קל, גמיש, וידאו מעולה.</div>
       </div>
     </div>
@@ -493,7 +494,7 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
     <h2 data-he="צלם עם &quot;Crop מנטלי&quot;" data-en="Shoot with a &quot;Mental Crop&quot;">צלם עם "Crop מנטלי"</h2>
 
     <div class="exercise-box">
-      <div class="exercise-label" data-he="📷 המשימה" data-en="📷 The Assignment">📷 המשימה</div>
+      <div class="exercise-label"><svg class="gi" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l1.5-2h7L17 8h3v11H4z"/><circle cx="12" cy="13.5" r="3.2"/></svg><span data-he="המשימה" data-en="The Assignment">המשימה</span></div>
       <p data-he="צאו לצלם עם הציוד שיש לכם. לפני שלוחצים על ההדק — שלב 1: תסתכלו על הסצנה ודמיינו שאתם מחזיקים Full Frame עם עדשת 35mm. מה הפריים הרחב שתראו? שלב 2: עכשיו דמיינו APS-C עם אותה עדשה. חשבו: מה נחתך? מה נשאר? שלב 3: צלמו פעמיים — פריים מלא ופריים צר יותר (zoom). השוו. מטרה: להתחיל לחשוב ב-&quot;שפת הפריים&quot; של הציוד שלכם — לא מה שיש, אלא מה שרואים." data-en="Go out and shoot with the gear you have. Before pressing the shutter — Step 1: Look at the scene and imagine holding a Full Frame with a 35mm lens. What wide frame would you see? Step 2: Now imagine APS-C with the same lens. What gets cropped? What remains? Step 3: Shoot twice — a full frame and a tighter frame (zoom). Compare. Goal: start thinking in the &quot;frame language&quot; of your gear — not what you have, but what you see.">
         צאו לצלם עם הציוד שיש לכם. לפני שלוחצים על ההדק —<br><br>
         <strong data-he="שלב 1:" data-en="Step 1:">שלב 1:</strong> תסתכלו על הסצנה ודמיינו שאתם מחזיקים Full Frame עם עדשת 35mm. מה הפריים הרחב שתראו?<br>
@@ -564,10 +565,10 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
 
 <script>
 const SENSORS = {
-  ff:    { crop: 1.0,   zoom: 1.0, bokeh: '🔵🔵🔵🔵', equiv: '50', cls: 'active-ff' },
-  apsc:  { crop: 1.5,   zoom: 1.5, bokeh: '🔵🔵🔵',   equiv: '33', cls: 'active-apsc' },
-  mft:   { crop: 2.0,   zoom: 2.0, bokeh: '🔵🔵',     equiv: '25', cls: 'active-mft' },
-  phone: { crop: 6.0,   zoom: 6.0, bokeh: '🔵',       equiv: '8',  cls: 'active-phone' },
+  ff:    { crop: 1.0,   zoom: 1.0, bokeh: '●●●●', equiv: '50', cls: 'active-ff' },
+  apsc:  { crop: 1.5,   zoom: 1.5, bokeh: '●●●',   equiv: '33', cls: 'active-apsc' },
+  mft:   { crop: 2.0,   zoom: 2.0, bokeh: '●●',     equiv: '25', cls: 'active-mft' },
+  phone: { crop: 6.0,   zoom: 6.0, bokeh: '●',       equiv: '8',  cls: 'active-phone' },
 };
 
 const BOXES = { ff: 'box-ff', apsc: 'box-apsc', mft: 'box-mft', phone: 'box-phone' };

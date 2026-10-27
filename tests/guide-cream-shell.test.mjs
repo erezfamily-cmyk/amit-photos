@@ -6,10 +6,10 @@ import { createHash } from 'node:crypto';
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const css = read('assets/css/guide-cream.css');
 const hash = createHash('md5').update(css.replace(/\r\n/g, '\n')).digest('hex').slice(0, 8);
-const migrated = ['exposure', 'night', 'black-and-white', 'color-channels', 'color-theory', 'composition', 'dynamic-range', 'filters', 'depth-of-field', 'histogram', 'white-balance', 'controls', 'focus', 'lenses', 'light'].map((g) => `camera/${g}/index.html`);
+const migrated = ['exposure', 'night', 'black-and-white', 'color-channels', 'color-theory', 'composition', 'dynamic-range', 'filters', 'depth-of-field', 'histogram', 'white-balance', 'controls', 'focus', 'lenses', 'light', 'editing', 'landscape', 'macro', 'mobile', 'portrait', 'software', 'sports', 'types', 'visual-language'].map((g) => `camera/${g}/index.html`).concat('camera/index.html');
 
 // guides without an interactive simulator: the whole page stays in the cream theme
-const contentOnly = ['camera/light/index.html'];
+const contentOnly = ['camera/light/index.html', 'camera/software/index.html', 'camera/visual-language/index.html', 'camera/index.html'];
 
 test('migrated guides link the shared cream stylesheet with its current cache-bust hash', () => {
   for (const page of migrated) {
@@ -25,7 +25,7 @@ test('the shared stylesheet beats the variables nav.js injects and keeps simulat
 test('migrated guides use inline SVG badges instead of emoji and load the heading font', () => {
   for (const page of migrated) {
     const html = read(page);
-    assert.match(html, /<div class="(hero-badge|badge)"><svg /);
+    assert.match(html, /<div class="(hero-badge|ls-hero-badge|badge)"><svg /);
     if (html.includes('class="lab-title')) assert.match(html, /<div class="lab-title"><svg /);
     else if (!contentOnly.includes(page)) assert.ok(html.includes('guide-dark'), `${page} keeps its simulator dark via guide-dark`);
     assert.ok(html.includes('family=Frank+Ruhl+Libre'), `${page} loads Frank Ruhl Libre`);
