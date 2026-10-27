@@ -243,7 +243,7 @@
       <p class="splash-tagline">צלם אמנותי | גלריה דיגיטלית לרכישה</p>
       <hr class="splash-divider">
       <div class="splash-emoji">🧩</div>
-      <div class="splash-title">פאזל הזזה</div>
+      <div class="splash-title" role="heading" aria-level="1">פאזל הזזה</div>
       <p class="splash-desc">פתור את הפאזל וזכה ב-<strong style="color:var(--accent)">20% הנחה</strong> על רכישת התמונה</p>
       <button type="button" class="splash-start" onclick="hideSplash()">התחל לשחק ←</button>
       <p class="splash-note">3×3 קל · 4×4 מאתגר</p>
@@ -443,6 +443,7 @@
           const sc = (value - 1) % SIZE;
           tile.classList.add('loading');
           const img = document.createElement('img');
+          img.alt = '';
           img.src = photo.thumbnail;
           img.draggable = false;
           img.style.cssText = `position:absolute;width:${SIZE*100}%;height:${SIZE*100}%;top:${-sr*100}%;left:${-sc*100}%;pointer-events:none;user-select:none;`;

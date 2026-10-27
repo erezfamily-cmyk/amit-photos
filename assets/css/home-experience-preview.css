@@ -673,3 +673,36 @@ html.home-experience-preview .gallery-context-label {
     transition-duration: .01ms !important;
   }
 }
+
+/* Readability pass: Hebrew is not letter-spaced (it breaks the joined rhythm of the script),
+   small labels reach 12px, and the bronze accent used as text meets 4.5:1 on the cream background. */
+html.home-experience-preview[lang="he"] .section-label,
+html.home-experience-preview[lang="he"] .filter-taxonomy-label,
+html.home-experience-preview[lang="he"] .gallery-context-label,
+html.home-experience-preview[lang="he"] .featured-cta-btn,
+html.home-experience-preview[lang="he"] .stat-label,
+html.home-experience-preview[lang="he"] .gs-badge-pts,
+html.home-experience-preview[lang="he"] .pricing-name,
+html.home-experience-preview[lang="he"] .form-submit,
+html.home-experience-preview[lang="he"] .lb-experience-eyebrow,
+html.home-experience-preview[lang="he"] .lb-action-btn,
+html.home-experience-preview[lang="he"] .lb-related-label,
+html.home-experience-preview[lang="he"] .lb-back-btn,
+html.home-experience-preview[lang="he"] .buy-modal-label,
+html.home-experience-preview[lang="he"] .week-popup-label,
+html.home-experience-preview[lang="he"] .form-group label,
+html.home-experience-preview[lang="he"] .footer-copy {
+  letter-spacing: normal;
+}
+html.home-experience-preview .section-label { font-size: 0.78rem; color: #7a5c3f; }
+html.home-experience-preview .nav-logo span { color: #7a5c3f; }
+html.home-experience-preview .filter-count,
+html.home-experience-preview .filter-taxonomy-label,
+html.home-experience-preview .gallery-context-label,
+html.home-experience-preview .experience-card-description,
+html.home-experience-preview .form-group label,
+html.home-experience-preview .home-value-room-note,
+html.home-experience-preview .wall-disclaimer,
+html.home-experience-preview .lang-btn {
+  font-size: 0.75rem;
+}
