@@ -1282,7 +1282,8 @@ body[data-payments-state="enabled"] .payments-disabled-only {
   position: absolute;
   bottom: 8px;
   left: 10px;
-  color: rgba(255,255,255,0.55);
+  direction: ltr;
+  color: rgba(255,255,255,0.7);
   font-size: 0.72rem;
   font-family: var(--font);
   letter-spacing: 0.08em;
@@ -1291,6 +1292,8 @@ body[data-payments-state="enabled"] .payments-disabled-only {
   z-index: 2;
   user-select: none;
 }
+
+html[lang="en"] .gallery-item::after { content: '© Amit Erez'; }
 
 .gallery-item-overlay {
   position: absolute;
@@ -1347,7 +1350,10 @@ body[data-payments-state="enabled"] .payments-disabled-only {
   }
 }
 
+/* The overlay always sits on a dark gradient over the photo, so it must not inherit the page text colour (dark on the light theme). */
 .gallery-item-info h3 {
+  color: #fff;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
   font-size: 0.9rem;
   font-weight: 600;
   margin-bottom: 0.2rem;
@@ -1356,7 +1362,8 @@ body[data-payments-state="enabled"] .payments-disabled-only {
 
 .gallery-item-info span {
   font-size: 0.7rem;
-  color: var(--accent);
+  color: #e4bd7a;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
   letter-spacing: 0.15em;
   text-transform: uppercase;
 }
