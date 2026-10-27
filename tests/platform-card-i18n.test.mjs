@@ -16,10 +16,9 @@ const keys = {
   likes: ['לייקים', 'likes'],
   rank: ['דרגה', 'rank'],
   followers: ['עוקבים', 'followers'],
-  weekly: ['שבועיות', 'weekly'],
-  short: ['קצרים', 'short'],
-  tips: ['טיפים', 'Tips on'],
-  photography: ['צילום', 'photography'],
+  stories: ['Stories שבועיות', 'Weekly Stories'],
+  reels: ['Reels קצרים', 'Short Reels'],
+  tips: ['טיפים צילום', 'Photography tips'],
   profile: ['לפרופיל ↗', 'View profile ↗'],
   follow: ['עקוב ↗', 'Follow ↗'],
 };
