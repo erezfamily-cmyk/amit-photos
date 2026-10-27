@@ -57,3 +57,30 @@ html:root { --green: #2a7049; --blue: #2f5fa8; --purple: #6a4aa8; --warm: #8f551
 .lab, .guide-dark { --green: #5dbf8a; --blue: #6090d8; --purple: #a078d8; --warm: #e8a040; --red: #e06060; }
 .compare-label-bad { color: var(--red); }
 .compare-label-good { color: var(--green); }
+
+/* Phone layout for photo simulators (.demo-wrap guides): the photo stays pinned while the controls that change it
+   sit directly beneath, so photo and every control fit on one screen. Result panels move below the controls. */
+@media (max-width: 640px) {
+  .demo-wrap { display: flex; flex-direction: column; gap: .75rem; }
+  .demo-wrap > * { order: 5; }
+  .demo-wrap > .photo-picker { order: 0; gap: .4rem; margin-bottom: 0; }
+  .demo-wrap > .interactive { display: contents; }
+  .interactive > .photo-panel { order: 1; position: sticky; top: 0; z-index: 30; margin-bottom: 0; box-shadow: 0 10px 18px -10px rgba(40, 30, 10, .55); }
+  .demo-wrap > .sliders-wrap, .demo-wrap > .exposure-wrap, .demo-wrap > .temp-wrap { order: 2; }
+  .interactive > .dof-panel, .interactive > .hist-panel, .interactive > .presets-panel { order: 3; }
+  .photo-panel .photo-container { aspect-ratio: 16 / 9; }
+  .photo-panel .photo-info { display: none; }
+  .photo-btn { min-width: 0; flex: 1 1 20%; }
+  .photo-btn img { height: 46px; }
+  .photo-btn span { font-size: .62rem; padding: .2rem .3rem; }
+  .sliders-wrap { gap: .5rem; }
+  .slider-card { padding: .6rem .85rem; }
+  .slider-card .slider-header { margin-bottom: .4rem; }
+  .slider-card .slider-cur { font-size: 1.05rem; }
+  .slider-card .tick-labels { margin-top: .2rem; }
+  .slider-card .focal-btns, .slider-card .sensor-btns { margin-top: .25rem; }
+  .slider-card .focal-btns { flex-wrap: nowrap; gap: .25rem; }
+  .slider-card .focal-btn { min-width: 0; padding: .35rem 0; font-size: .7rem; }
+  .slider-card .sensor-btn { padding: .35rem; }
+  #sensor-btns + .tick-labels { display: none; }
+}
