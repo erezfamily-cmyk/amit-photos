@@ -336,6 +336,19 @@ const TRANSLATIONS = {
     // Beta banner
     'beta.banner.html': "לרכישת צילום לשימוש אישי, פנו לבירור המחיר ותנאי השימוש — <a href=\"tel:050-3333227\" class=\"beta-banner-tel\">050-3333227</a>. שימוש מסחרי אינו זמין כרגע.",
 
+    // Social platform cards
+    'platforms.label':       'נוכחות ברשת',
+    'platforms.photos':      'תמונות',
+    'platforms.views':       'צפיות',
+    'platforms.likes':       'לייקים',
+    'platforms.rank':        'דרגה',
+    'platforms.followers':   'עוקבים',
+    'platforms.stories':     'Stories שבועיות',
+    'platforms.reels':       'Reels קצרים',
+    'platforms.tips':        'טיפים צילום',
+    'platforms.profile':     'לפרופיל ↗',
+    'platforms.follow':      'עקוב ↗',
+
     // GuruShots section
     'gurushots.label':            'הכרה בינלאומית',
     'gurushots.title':            'הישגים ב-GuruShots',
@@ -775,6 +788,19 @@ const TRANSLATIONS = {
 
     // Beta banner
     'beta.banner.html': "For a personal-use photo purchase, contact me for the price and terms — <a href=\"tel:050-3333227\" class=\"beta-banner-tel\">050-3333227</a>. Commercial use is currently unavailable.",
+
+    // Social platform cards
+    'platforms.label':       'Online Presence',
+    'platforms.photos':      'photos',
+    'platforms.views':       'views',
+    'platforms.likes':       'likes',
+    'platforms.rank':        'rank',
+    'platforms.followers':   'followers',
+    'platforms.stories':     'Weekly Stories',
+    'platforms.reels':       'Short Reels',
+    'platforms.tips':        'Photography tips',
+    'platforms.profile':     'View profile ↗',
+    'platforms.follow':      'Follow ↗',
 
     // GuruShots section
     'gurushots.label':            'International Recognition',
