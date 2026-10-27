@@ -1,0 +1,30 @@
+name: Node Unit Tests
+
+# Runs the whole tests/*.test.mjs suite so a stale or broken test cannot sit unnoticed
+# (12 tests failed on main until 27 Oct 2026 because only topic-specific suites ran in CI).
+on:
+  pull_request:
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+  push:
+    branches: [main]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  node-unit-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Run all node unit tests
+        run: node --test tests/*.test.mjs
