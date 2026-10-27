@@ -6,7 +6,7 @@ import { createHash } from 'node:crypto';
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const css = read('assets/css/guide-cream.css');
 const hash = createHash('md5').update(css.replace(/\r\n/g, '\n')).digest('hex').slice(0, 8);
-const migrated = ['camera/exposure/index.html', 'camera/night/index.html'];
+const migrated = ['exposure', 'night', 'black-and-white', 'color-channels', 'color-theory', 'composition'].map((g) => `camera/${g}/index.html`);
 
 test('migrated guides link the shared cream stylesheet with its current cache-bust hash', () => {
   for (const page of migrated) {
