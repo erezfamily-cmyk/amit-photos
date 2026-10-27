@@ -106,6 +106,11 @@ nav#main-nav {
   font-family: var(--font-nav, 'Heebo', sans-serif);
 }
 nav#main-nav.scrolled { border-bottom-color: rgba(200,169,110,0.3); }
+@media (max-width: 768px) {
+  nav#main-nav { transition: border-color 0.3s, transform 0.25s ease; }
+  nav#main-nav.nav-hidden { transform: translateY(-100%); }
+}
+@media (prefers-reduced-motion: reduce) { nav#main-nav { transition: border-color 0.3s; } }
 nav#main-nav .nav-logo {
   font-family: var(--font-display-nav, 'Syne', sans-serif);
   font-size: 1.25rem; font-weight: 800; letter-spacing: -0.02em;
@@ -299,8 +304,18 @@ nav#main-nav .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px)
   }
 
   // ── Scroll border ──────────────────────────────────────────────────────────────
+  // On phones the fixed bar slides away while reading downwards and returns on the first scroll up,
+  // so it stops eating a 64px strip of a small screen (it stays put while the menu is open).
+  var lastY = window.scrollY;
+  var phone = window.matchMedia('(max-width: 768px)');
   window.addEventListener('scroll', function () {
-    nav.classList.toggle('scrolled', window.scrollY > 10);
+    var y = window.scrollY;
+    nav.classList.toggle('scrolled', y > 10);
+    var menuOpen = nav.querySelector('.nav-links.open');
+    if (!phone.matches || menuOpen || y < 120) nav.classList.remove('nav-hidden');
+    else if (y > lastY + 6) nav.classList.add('nav-hidden');
+    else if (y < lastY - 6) nav.classList.remove('nav-hidden');
+    lastY = y;
   }, { passive: true });
 
   // ── Active link ────────────────────────────────────────────────────────────────
