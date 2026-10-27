@@ -8,7 +8,7 @@ const admin = readFileSync(fileURLToPath(new URL('../admin.html', import.meta.ur
 const dialogs = [...admin.matchAll(/<dialog\b[^>]*>/g)].map(match => match[0]);
 
 test('every admin dialog has an accessible name wired with aria-labelledby', () => {
-  assert.equal(dialogs.length, 8, 'update this test when a dialog is added or removed');
+  assert.equal(dialogs.length, 9, 'update this test when a dialog is added or removed');
   for (const tag of dialogs) {
     const id = tag.match(/id="([^"]+)"/)?.[1];
     const labelId = tag.match(/aria-labelledby="([^"]+)"/)?.[1];
@@ -19,7 +19,7 @@ test('every admin dialog has an accessible name wired with aria-labelledby', () 
 
 test('icon-only dialog close buttons have an explicit Hebrew name', () => {
   const closeButtons = [...admin.matchAll(/<button\b[^>]*class="[^"]*(?:dialog-close|lb-close)[^"]*"[^>]*>/g)].map(match => match[0]);
-  assert.equal(closeButtons.length, 8);
+  assert.equal(closeButtons.length, 9);
   for (const tag of closeButtons) assert.match(tag, /aria-label="סגור"/);
 });
 
