@@ -1562,6 +1562,8 @@ body[data-payments-state="enabled"] .payments-disabled-only {
 
 .lightbox-close:hover { background: rgba(255, 255, 255, 0.15); }
 
+.lightbox-navigation { display: contents; } /* Preserve desktop fixed arrows. */
+
 .lightbox-nav {
   position: fixed;
   top: 50%;
@@ -1710,6 +1712,43 @@ body[data-payments-state="enabled"] .payments-disabled-only {
    so nav/close buttons need explicit z-index to stay on top */
 .lightbox-close,
 .lightbox-nav { z-index: 10; }
+
+
+/* Mobile photo viewer: navigate below the photograph, never over it. */
+@media (max-width: 600px) {
+  .lightbox-inner {
+    flex: 0 0 auto;
+    height: min(56svh, 480px);
+    padding: calc(env(safe-area-inset-top, 0px) + 3.5rem) 1rem 0;
+  }
+  .lightbox-inner img {
+    max-height: calc(min(56svh, 480px) - 4rem);
+    max-width: 100%;
+    object-fit: contain;
+  }
+  .lightbox-navigation {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: .5rem max(1rem, env(safe-area-inset-right, 0px)) .35rem max(1rem, env(safe-area-inset-left, 0px));
+  }
+  .lightbox-navigation .lightbox-nav {
+    position: static;
+    inset: auto;
+    transform: none;
+    width: 44px;
+    height: 44px;
+    flex: 0 0 44px;
+    font-size: 1.3rem;
+    touch-action: manipulation;
+  }
+  .lightbox-navigation .lightbox-nav:hover,
+  .lightbox-navigation .lightbox-nav:focus-visible { transform: none; }
+  .lightbox-caption { padding-top: .3rem; }
+  .lightbox-close { top: calc(env(safe-area-inset-top, 0px) + .75rem); right: 1rem; }
+}
 
 /* ===== LIGHTBOX PROGRESS BAR ===== */
 .lb-progress-bar {
