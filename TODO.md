@@ -8,6 +8,7 @@
 - [x] Opaque lightbox backdrop — #199 merged (`16fccee`), verified live in Chromium; owner iPhone check still pending.
 - [x] Gallery card title contrast + English watermark — #200 merged (`c1a55e9`), verified live via computed styles; owner iPhone check DONE 2026-10-27 (looks fine)
 - [x] Card title/category spacing + English watermark side — #202 merged (`f15bfeb`), verified live in Chromium; owner iPhone check DONE 2026-10-27 (looks fine)
+- [x] Site-wide design audit (27 Oct) — small fixes #207 (`95c05f1`): no Hebrew letter-spacing, labels >=12px, bronze text 5.4:1 on cream, h1 roles on /sale /quiz /puzzle, puzzle tile alt. Verified live; owner iPhone check: looks fine. **Open (needs owner decision):** unify design language (home cream/green vs subpages dark/gold + Syne) — option A all light, option B shared nav/footer/heading font with dark simulators (recommended); replace emoji icons with SVG on /camera/. Wait for the GA4 window (to end Nov) before big visual changes.
 - [x] `?lang=` override — #196 merged `888f7b0`, verified live.
 - [ ] Owner to confirm on real phone.
 
