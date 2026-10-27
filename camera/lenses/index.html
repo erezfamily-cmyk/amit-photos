@@ -13,7 +13,7 @@
 <title>עדשות — בית ספר לצילום | Amit Photos</title>
 <meta name="description" content="למד על עדשות מצלמה — מרחק מוקד, בוקה, Wide vs Telephoto — עם אינטראקציה ויזואלית.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&family=Frank+Ruhl+Libre:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
@@ -149,6 +149,8 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
 .kofi-bar{text-align:center;padding:1.25rem 1.25rem 1.75rem;max-width:760px;margin:0 auto}
 .kofi-bar a{display:inline-flex;align-items:center;gap:.5rem;background:var(--surface);border:1px solid rgba(200,169,110,.4);color:var(--accent);font-size:.82rem;font-weight:700;padding:.55rem 1.4rem;border-radius:8px;text-decoration:none;transition:background .2s,color .2s}
 .kofi-bar a:hover{background:var(--accent);color:#000}</style>
+<link rel="stylesheet" href="/assets/css/guide-cream.css?v=5ce41489">
+
 <script src="/assets/js/nav.js?v=e842596e" defer></script>
 <script src="/assets/js/share.js" defer></script>
 
@@ -213,7 +215,7 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
 <body>
 
 <div class="hero">
-  <div class="hero-badge" data-he="📷 בית ספר לצילום" data-en="📷 Photography School">📷 בית ספר לצילום</div>
+  <div class="hero-badge"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l1.5-2h7L17 8h3v11H4z"/><circle cx="12" cy="13.5" r="3.2"/></svg><span data-he="בית ספר לצילום" data-en="Photography School">בית ספר לצילום</span></div>
   <h1 data-he="עדשות" data-en="Lenses">עדשות</h1>
   <p data-he="גרור, חקור, הבן — איך מרחק מוקד, צמצם ועדשה משנים את התמונה" data-en="Drag, explore, understand — how focal length, aperture and lens choice transform the image">גרור, חקור, הבן — איך מרחק מוקד, צמצם ועדשה משנים את התמונה</p>
 </div>
@@ -229,7 +231,7 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
   <div class="section-label" data-he="חלק 1" data-en="Part 1">חלק 1</div>
   <h2 data-he="מרחק מוקד — כמה רואים?" data-en="Focal Length — How Much Do You See?">מרחק מוקד — כמה רואים?</h2>
   <p data-he="מרחק מוקד (מ&quot;מ) קובע כמה שדה ראייה נכנס לפריים. ערך נמוך = עדשה רחבה = נוף שלם. ערך גבוה = טלפוטו = תקריב." data-en="Focal length (mm) determines how much of the scene fits in the frame. Lower value = wide angle = full landscape. Higher value = telephoto = close-up.">מרחק מוקד (מ"מ) קובע כמה שדה ראייה נכנס לפריים. ערך נמוך = עדשה רחבה = נוף שלם. ערך גבוה = טלפוטו = תקריב.</p>
-  <div class="demo-card">
+  <div class="demo-card guide-dark">
     <div class="slider-row">
       <label>18mm</label>
       <input type="range" id="focalSlider" min="18" max="200" value="35"
@@ -254,7 +256,7 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
   <div class="section-label" data-he="חלק 2" data-en="Part 2">חלק 2</div>
   <h2 data-he="בוקה — הטשטוש הקסום" data-en="Bokeh — The Magic Blur">בוקה — הטשטוש הקסום</h2>
   <p data-he="צמצם פתוח (f/1.8) = עומק שדה רדוד = רקע מטושטש, הנושא בולט. צמצם סגור (f/16) = הכל חד." data-en="Wide aperture (f/1.8) = shallow depth of field = blurred background, subject stands out. Closed aperture (f/16) = everything sharp.">צמצם פתוח (f/1.8) = עומק שדה רדוד = רקע מטושטש, הנושא בולט. צמצם סגור (f/16) = הכל חד.</p>
-  <div class="demo-card">
+  <div class="demo-card guide-dark">
     <div class="bokeh-split">
       <div class="bokeh-img">
         <img src="https://drive.google.com/thumbnail?id=10D5va4MnAh7QpagtevvTqzipMA3cS_8c&sz=w400"
@@ -284,13 +286,13 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
   <h2 data-he="Wide vs Telephoto — אותו עולם, שתי עדשות" data-en="Wide vs Telephoto — Same World, Two Lenses">Wide vs Telephoto — אותו עולם, שתי עדשות</h2>
   <p data-he="עדשה רחבה תכניס יותר לפריים אבל &quot;תדחוף&quot; את הרקע. עדשה ארוכה תדחוס מרחקים ותייצר רקע מטושטש יותר." data-en="A wide lens fits more in the frame but &quot;pushes&quot; the background away. A long lens compresses distances and creates more background blur.">עדשה רחבה תכניס יותר לפריים אבל "תדחוף" את הרקע. עדשה ארוכה תדחוס מרחקים ותייצר רקע מטושטש יותר.</p>
   <div class="compare-grid">
-    <div class="compare-card">
+    <div class="compare-card guide-dark">
       <img src="https://drive.google.com/thumbnail?id=1ShiRcz-EvlJu6CG55sxIKZiCoLHgTSnx&sz=w500"
            alt="הכותל המערבי — Wide">
       <div class="cc-label">~18mm — Wide</div>
       <div class="cc-desc" data-he="שדה ראייה רחב, הכל בפריים, פרספקטיבה מוגזמת" data-en="Wide field of view, everything in frame, exaggerated perspective">שדה ראייה רחב, הכל בפריים, פרספקטיבה מוגזמת</div>
     </div>
-    <div class="compare-card">
+    <div class="compare-card guide-dark">
       <img src="https://drive.google.com/thumbnail?id=17RW9kh-Ry3KiqOj_yM3oCK8FPOC88_JN&sz=w500"
            alt="ינשוף שלג — Telephoto">
       <div class="cc-label">300mm+ — Telephoto</div>
@@ -303,7 +305,7 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
   <div class="section-label" data-he="חלק 4" data-en="Part 4">חלק 4</div>
   <h2 data-he="מה קורה לאור בתוך העדשה?" data-en="What Happens to Light Inside the Lens?">מה קורה לאור בתוך העדשה?</h2>
   <p data-he="האור נכנס מהשמאל, מתכופף דרך אלמנטי הזכוכית, ומתמקד לנקודה אחת על הסנסור — זה המיקוד." data-en="Light enters from the left, bends through glass elements, and focuses to a single point on the sensor — that's focus.">האור נכנס מהשמאל, מתכופף דרך אלמנטי הזכוכית, ומתמקד לנקודה אחת על הסנסור — זה המיקוד.</p>
-  <div class="anatomy-wrap">
+  <div class="anatomy-wrap guide-dark">
     <svg viewBox="0 0 520 190" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="דיאגרמת מעבר אור בעדשה">
       <!-- Lens barrel -->
       <rect x="190" y="35" width="140" height="120" rx="8"

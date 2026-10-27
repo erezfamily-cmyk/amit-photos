@@ -13,7 +13,7 @@
 <title>להבין את האור — בית ספר לצילום | Amit Photos</title>
 <meta name="description" content="מדריך מעשי לשליטה באור — אור רך מול קשה, טמפרטורת צבע, שעות הקסם וזוויות תאורה.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&family=Frank+Ruhl+Libre:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
@@ -58,7 +58,7 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
 .compare-icon { margin-bottom: .75rem; }
 .compare-title { font-family: 'Syne', sans-serif; font-size: .9rem; margin-bottom: .4rem; }
 .compare-desc { font-size: .8rem; color: var(--muted); line-height: 1.5; }
-.tag-hard { color: #e07060; }
+.tag-hard { color: var(--red); }
 .tag-soft { color: var(--green); }
 
 /* Temperature bar */
@@ -135,6 +135,8 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
 .kofi-bar a{display:inline-flex;align-items:center;gap:.5rem;background:var(--surface);border:1px solid rgba(200,169,110,.4);color:var(--accent);font-size:.82rem;font-weight:700;padding:.55rem 1.4rem;border-radius:8px;text-decoration:none;transition:background .2s,color .2s}
 .kofi-bar a:hover{background:var(--accent);color:#000}.gear-card-ico svg { width: 3rem; height: 3rem; stroke: var(--accent); opacity: .7; }
 </style>
+<link rel="stylesheet" href="/assets/css/guide-cream.css?v=5ce41489">
+
 <script src="/assets/js/nav.js?v=e842596e" defer></script>
 <script src="/assets/js/share.js" defer></script>
 
@@ -201,8 +203,8 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
 <div class="breadcrumb"><a href="/camera/" data-he="למד לצלם" data-en="Photography School">למד לצלם</a> ← <span data-he="אור וצבע" data-en="Light &amp; Color">אור וצבע</span></div>
 
 <div class="hero">
-  <div class="hero-badge" data-he="📷 בית ספר לצילום" data-en="📷 Photography School">📷 בית ספר לצילום</div>
-  <h1 data-he="🌅 להבין את האור" data-en="🌅 Understanding Light">🌅 להבין את האור</h1>
+  <div class="hero-badge"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/></svg><span data-he="בית ספר לצילום" data-en="Photography School">בית ספר לצילום</span></div>
+  <h1 data-he="להבין את האור" data-en="Understanding Light">להבין את האור</h1>
   <p data-he='האור הוא "החומר" של הצלם. הוא יכול להפוך סצנה משעממת לדרמטית, מרגשת או נקייה — ובמדריך הזה תלמד לשלוט בו.' data-en="Light is the photographer's raw material. It can turn a dull scene into something dramatic, emotional, or clean — and in this guide you'll learn to control it.">האור הוא "החומר" של הצלם. הוא יכול להפוך סצנה משעממת לדרמטית, מרגשת או נקייה — ובמדריך הזה תלמד לשלוט בו.</p>
 </div>
 
@@ -256,7 +258,7 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
     </div>
 
     <div class="tip-box">
-      <div class="tip-label" data-he="💡 טיפ מהשטח" data-en="💡 Field Tip">💡 טיפ מהשטח</div>
+      <div class="tip-label"><svg class="gi" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/></svg><span data-he="טיפ מהשטח" data-en="Field Tip">טיפ מהשטח</span></div>
       <p data-he="ביום שמש חזק, חפשו אזור מוצל — מתחת לעץ, ליד בניין, או מתחת לגג. האור שם יהיה הרבה יותר רך ומחמיא." data-en="On a bright sunny day, look for a shaded area — under a tree, beside a building, or under an overhang. The light there will be much softer and more flattering.">ביום שמש חזק, חפשו אזור מוצל — מתחת לעץ, ליד בניין, או מתחת לגג. האור שם יהיה הרבה יותר רך ומחמיא.</p>
     </div>
   </div>
@@ -275,27 +277,27 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
       <div class="temp-labels"><span data-he="חם (כתום)" data-en="Warm (orange)">חם (כתום)</span><span data-he="נייטרלי" data-en="Neutral">נייטרלי</span><span data-he="קר (כחול)" data-en="Cool (blue)">קר (כחול)</span></div>
       <div class="temp-points" style="margin-top:1.25rem">
         <div class="temp-point">
-          <span class="tp-icon">🌫️</span>
+          <span class="tp-icon"><svg class="gi" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 18a4.5 4.5 0 0 1-.5-9A6 6 0 0 1 18 10.5 3.8 3.8 0 0 1 17.500 18z"/></svg><span></span></span>
           <div class="tp-label" data-he="צל עמוק" data-en="Deep shade">צל עמוק</div>
           <div class="tp-k">~10000K</div>
         </div>
         <div class="temp-point">
-          <span class="tp-icon">⛅</span>
+          <span class="tp-icon"><svg class="gi" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 18a4.5 4.5 0 0 1-.5-9A6 6 0 0 1 18 10.5 3.8 3.8 0 0 1 17.500 18z"/></svg><span></span></span>
           <div class="tp-label" data-he="יום מעונן" data-en="Cloudy day">יום מעונן</div>
           <div class="tp-k">~7000K</div>
         </div>
         <div class="temp-point">
-          <span class="tp-icon">☀️</span>
+          <span class="tp-icon"><svg class="gi" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/></svg><span></span></span>
           <div class="tp-label" data-he="אור יום" data-en="Daylight">אור יום</div>
           <div class="tp-k">~5500K</div>
         </div>
         <div class="temp-point">
-          <span class="tp-icon">💡</span>
+          <span class="tp-icon"><svg class="gi" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/></svg><span></span></span>
           <div class="tp-label" data-he="לא-ספיר" data-en="Fluorescent">לא-ספיר</div>
           <div class="tp-k">~3000K</div>
         </div>
         <div class="temp-point">
-          <span class="tp-icon">🕯️</span>
+          <span class="tp-icon"><svg class="gi" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3c1 3.5 5 5.5 5 10a5 5 0 0 1-10 0c0-2 1-3.2 2-4.2.2 1.2.8 2 1.6 2.4C10.2 8.2 11 5.6 12 3z"/></svg><span></span></span>
           <div class="tp-label" data-he="נר / שקיעה" data-en="Candle / Sunset">נר / שקיעה</div>
           <div class="tp-k">~2000K</div>
         </div>
@@ -320,24 +322,24 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
       <ul class="timeline">
         <li class="tl-item">
           <div class="tl-dot tl-gold"></div>
-          <div class="tl-title" style="color:#e8a040" data-he="🌅 שעת הזהב (Golden Hour)" data-en="🌅 Golden Hour">🌅 שעת הזהב (Golden Hour)</div>
+          <div class="tl-title" style="color:var(--warm)"><svg class="gi" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 18h18M7 18a5 5 0 0 1 10 0M12 6v3M4.5 11l2 1.5M19.5 11l-2 1.5"/></svg><span data-he="שעת הזהב (Golden Hour)" data-en="Golden Hour">שעת הזהב (Golden Hour)</span></div>
           <div class="tl-desc" data-he="השעה שאחרי הזריחה והשעה שלפני השקיעה. השמש נמוכה, האור רך וצבוע בכתום-זהב. הצללים ארוכים ומעניינים. זה הזמן שבו הכל נראה טוב." data-en="The hour after sunrise and the hour before sunset. The sun is low, the light is soft and painted in golden orange. Shadows are long and interesting. This is when everything looks good.">השעה שאחרי הזריחה והשעה שלפני השקיעה. השמש נמוכה, האור רך וצבוע בכתום-זהב. הצללים ארוכים ומעניינים. זה הזמן שבו <strong style="color:var(--text)">הכל נראה טוב</strong>.</div>
         </li>
         <li class="tl-item">
           <div class="tl-dot tl-blue"></div>
-          <div class="tl-title" style="color:#6090d8" data-he="🌆 השעה הכחולה (Blue Hour)" data-en="🌆 Blue Hour">🌆 השעה הכחולה (Blue Hour)</div>
+          <div class="tl-title" style="color:var(--blue)"><svg class="gi" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 18h18M7 18a5 5 0 0 1 10 0M12 6v3M4.5 11l2 1.5M19.5 11l-2 1.5"/></svg><span data-he="השעה הכחולה (Blue Hour)" data-en="Blue Hour">השעה הכחולה (Blue Hour)</span></div>
           <div class="tl-desc" data-he="הדקות הקצרות מיד אחרי שהשמש נעלמת. השמיים הופכים לכחול עמוק ומסתורי. מושלם לצילומי נוף עירוני עם תאורת רחוב." data-en="The brief minutes right after the sun disappears. The sky turns deep, mysterious blue. Perfect for urban landscape shots with street lighting.">הדקות הקצרות מיד אחרי שהשמש נעלמת. השמיים הופכים לכחול עמוק ומסתורי. מושלם לצילומי נוף עירוני עם תאורת רחוב.</div>
         </li>
         <li class="tl-item">
           <div class="tl-dot tl-mid"></div>
-          <div class="tl-title" style="color:var(--muted)" data-he="☀️ אמצע היום" data-en="☀️ Midday">☀️ אמצע היום</div>
+          <div class="tl-title" style="color:var(--muted)"><svg class="gi" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/></svg><span data-he="אמצע היום" data-en="Midday">אמצע היום</span></div>
           <div class="tl-desc" data-he="האור הקשה ביותר. צלמים מנוסים בדרך כלל נמנעים מלצלם פורטרטים ונוף בשעות אלו, אלא אם הם מחפשים אפקט ספציפי." data-en="The harshest light. Experienced photographers usually avoid shooting portraits and landscapes during these hours, unless they're going for a specific effect.">האור הקשה ביותר. צלמים מנוסים בדרך כלל נמנעים מלצלם פורטרטים ונוף בשעות אלו, אלא אם הם מחפשים אפקט ספציפי.</div>
         </li>
       </ul>
     </div>
 
     <div class="tip-box">
-      <div class="tip-label" data-he="💡 טיפ מהשטח" data-en="💡 Field Tip">💡 טיפ מהשטח</div>
+      <div class="tip-label"><svg class="gi" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/></svg><span data-he="טיפ מהשטח" data-en="Field Tip">טיפ מהשטח</span></div>
       <p data-he="השתמשו באפליקציות כמו PhotoPills או Sun Surveyor כדי לתכנן מראש בדיוק מתי ואיפה תהיה שעת הזהב במיקום הצילום שלכם." data-en="Use apps like PhotoPills or Sun Surveyor to plan exactly when and where golden hour will fall at your shooting location.">השתמשו באפליקציות כמו <strong>PhotoPills</strong> או <strong>Sun Surveyor</strong> כדי לתכנן מראש בדיוק מתי ואיפה תהיה שעת הזהב במיקום הצילום שלכם.</p>
     </div>
   </div>
@@ -367,7 +369,7 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
               <line x1="40" y1="6" x2="38" y2="9" stroke="#e8a040" stroke-width="1.5" stroke-linecap="round"/>
             </svg>
           </div>
-          <div class="dir-title" style="color:#e8a040" data-he="אור אחורי" data-en="Backlight">אור אחורי</div>
+          <div class="dir-title" style="color:var(--warm)" data-he="אור אחורי" data-en="Backlight">אור אחורי</div>
           <div class="dir-desc" data-he='האור מאחורי הנושא. יוצר "הילה" סביב קווי המתאר ומפריד מהרקע. דרמטי מאוד.' data-en='Light comes from behind the subject. Creates a "halo" around the outline and separates it from the background. Very dramatic.'>האור מאחורי הנושא. יוצר "הילה" סביב קווי המתאר ומפריד מהרקע. דרמטי מאוד.</div>
         </div>
         <div class="dir-card">
@@ -405,12 +407,12 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
     </div>
 
     <div class="tip-box">
-      <div class="tip-label" data-he="💡 טיפ של מקצוענים" data-en="💡 Pro Tip">💡 טיפ של מקצוענים</div>
+      <div class="tip-label"><svg class="gi" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/></svg><span data-he="טיפ של מקצוענים" data-en="Pro Tip">טיפ של מקצוענים</span></div>
       <p data-he="אל תפחדו לצלם לכיוון האור (אור אחורי). אם רוצים את הנושא חד — מקדו עליו. אם רוצים צללית שחורה — מקדו על האור שברקע." data-en="Don't be afraid to shoot toward the light (backlight). If you want the subject sharp — focus on it. If you want a black silhouette — focus on the background light.">אל תפחדו לצלם לכיוון האור (אור אחורי). אם רוצים את הנושא חד — מקדו עליו. אם רוצים צללית שחורה — מקדו על האור שברקע.</p>
     </div>
 
     <div class="tip-box" style="background:rgba(96,144,216,.08);border-color:rgba(96,144,216,.25)">
-      <div class="tip-label" style="color:#6090d8" data-he="🔍 טיפ נוסף" data-en="🔍 Extra Tip">🔍 טיפ נוסף</div>
+      <div class="tip-label" style="color:var(--blue)"><svg class="gi" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M16 16l5 5"/></svg><span data-he="טיפ נוסף" data-en="Extra Tip">טיפ נוסף</span></div>
       <p data-he="חפשו תמיד את הצל — לא רק את האור. הצל הוא מה שנותן לתמונה עומק ותחושת תלת-ממד. ביום שמש חזק, פינת הצל שבקרבת מקום היא הנכס הגדול ביותר שלכם." data-en="Always look for the shadow — not just the light. The shadow is what gives an image depth and a sense of three dimensions. On a bright sunny day, the nearest patch of shade is your greatest asset.">חפשו תמיד את ה<strong>צל</strong> — לא רק את האור. הצל הוא מה שנותן לתמונה עומק ותחושת תלת-ממד. ביום שמש חזק, פינת הצל שבקרבת מקום היא הנכס הגדול ביותר שלכם.</p>
     </div>
   </div>
@@ -424,7 +426,7 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
     <p data-he="הצבו חפץ פשוט (כוס קפה, תפוח, בקבוק) ליד חלון עם אור טבעי. צלמו אותו שלוש פעמים:" data-en="Place a simple object (coffee cup, apple, bottle) near a window with natural light. Photograph it three times:">הצבו חפץ פשוט (כוס קפה, תפוח, בקבוק) ליד חלון עם אור טבעי. צלמו אותו שלוש פעמים:</p>
 
     <div class="exercise-box">
-      <div class="exercise-label" data-he="📷 המשימה" data-en="📷 The Assignment">📷 המשימה</div>
+      <div class="exercise-label"><svg class="gi" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l1.5-2h7L17 8h3v11H4z"/><circle cx="12" cy="13.5" r="3.2"/></svg><span data-he="המשימה" data-en="The Assignment">המשימה</span></div>
       <p data-he="1. אור חזיתי — אתם מצד האור, הנושא מולכם. 2. אור צידי — הנושא בפינה 90° לאור, שימו לב לצללים על הצד. 3. אור אחורי — הנושא בין הצלם לחלון. שחקו עם החשיפה וראו מה קורה. שימו לב: כמה שונה האווירה בכל אחת?" data-en="1. Front light — you are on the light side, the subject faces you. 2. Side light — the subject is at 90° to the light, notice the shadows on the side. 3. Backlight — the subject is between you and the window. Play with exposure and see what happens. Notice: how different is the mood in each?">
         <strong>1. אור חזיתי</strong> — אתם מצד האור, הנושא מולכם.<br><br>
         <strong>2. אור צידי</strong> — הנושא בפינה 90° לאור, שימו לב לצללים על הצד.<br><br>
