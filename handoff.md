@@ -1,5 +1,34 @@
 # Handoff — amit-photos
 
+## CURRENT RESUME POINT — 2026-10-27: PR #190/#191/#192 merged + live QA (automated, Chromium only)
+
+Supersedes the 2026-10-26 section for status. Source of truth: GitHub `main` (HEAD `b79eab7`).
+
+### Merged today
+- [#190](https://github.com/erezfamily-cmyk/amit-photos/pull/190) `5492d07` — mobile lightbox arrows moved below the photo, living-room frame placement, WhatsApp/back-to-top hidden on mobile, `minimum-scale=1.0`, horizontal-overflow fixes.
+- [#191](https://github.com/erezfamily-cmyk/amit-photos/pull/191) `cb245c9` + [#192](https://github.com/erezfamily-cmyk/amit-photos/pull/192) `b79eab7` — English translations for 500px / GuruShots / Instagram / TikTok cards (+ regression test `tests/platform-card-i18n.test.mjs`). #189 was closed unmerged (superseded).
+- CI/Deploy on `b79eab7`: Deploy Worker, Gallery Taxonomy CI, pages build → success (an older `cb245c9` pages run was auto-cancelled by the newer one). `/api/payments-status` → `{"enabled":false}`; `wrangler.toml` `PAYMENTS_ENABLED="false"` unchanged.
+
+### Live QA (Chrome DevTools MCP / Chromium; 390x844 mobile + 1440x900 desktop; WebKit NOT run locally — only in CI; no real iPhone)
+Verified OK: no horizontal scroll (390 / 1425<1440 desktop scrollbar); `.whatsapp-float` and `.back-to-top` are `display:none` on mobile; viewport meta has `minimum-scale=1.0`; living-room frame sits centred above the sofa; lightbox opens/closes/next works (HE+EN); wall preview opens/closes; no JS errors (one harmless preload warning); social cards not re-checked beyond absence of Hebrew in visible EN text.
+
+### Defects found (NOT fixed — need a new branch/PR from fresh main)
+1. **Lightbox arrow glyphs reversed in EN (LTR):** `#lb-prev` sits left but shows `›`, `#lb-next` right shows `‹`. Correct in HE (RTL). Glyphs are hardcoded for RTL.
+2. **Hebrew leaks on EN page:** `<title>` stays Hebrew (`עמית ארז | עולם של צבעים…`); footer logo `עמית / צילום` is not translated.
+3. **Mobile lightbox layout oddity (EN, landscape photo):** photo 294x195 floats in a 473px-tall stage with a dark rectangle offset behind it; arrows/© sit far below the photo. Needs a visual look on a real phone before deciding.
+4. **Wall-preview modal (mobile):** an empty unlabeled circle appears next to the Close button (top-left).
+5. **Accessibility widget button (fixed, bottom-left) overlaps content/buttons** (e.g. the Facebook share button, CTA text) on mobile; cookie notice also overlaps it.
+6. Lightbox counter shows `502 / 2310` while the gallery has ~1,225 photos — possible duplicated list; unverified.
+7. `?lang=en` does not override a stored language preference (after switching to HE, `?lang=en` loaded HE).
+
+### Not verified
+Real iPhone Safari/WebKit rendering, pinch-zoom behaviour on a real device, social cards 500px/GuruShots/Instagram/TikTok visually in EN, GA4 events, desktop EN lightbox arrows.
+
+### Recommended next
+Small fix PR for #1, #2 (+ i18n test), then #4/#5 after a visual look; ask owner to confirm #3 on his phone. Business: measure 14–28 days of GA4 experience events before further marketing changes. Payments/PayPal/Gelato stay locked.
+
+---
+
 ## CURRENT RESUME POINT — 2026-10-26 (for Tuesday 2026-10-27): PR #188 merged and LIVE
 
 **Read this first.** Entries below are historical snapshots (some still say #181/#187 are draft); this section supersedes their outdated PR/deploy statuses. The owner's next task is *live-site visual acceptance*, not another PR #188 merge.
