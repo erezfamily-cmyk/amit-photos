@@ -98,6 +98,30 @@ try {
   }
   assert.equal(await page.locator('html').getAttribute('lang'), 'en');
   assert.equal(await page.locator('body').getAttribute('data-payments-state'), 'disabled');
+  // Room mockup stays on the wall, clear of the sofa back, on narrow phones.
+  await page.locator('#home-value:not([hidden])').waitFor();
+  const roomLayout = await page.evaluate(() => {
+    const room = document.querySelector('.home-value-room').getBoundingClientRect();
+    const art = document.querySelector('.home-value-art').getBoundingClientRect();
+    return {
+      roomWidth: room.width, roomHeight: room.height,
+      centerDelta: Math.abs((art.left + art.width / 2) - (room.left + room.width / 2)),
+      frameBottomRatio: (art.bottom - room.top) / room.height,
+      artWidthRatio: art.width / room.width,
+      whatsappDisplay: getComputedStyle(document.querySelector('.whatsapp-float')).display,
+      backToTopDisplay: getComputedStyle(document.querySelector('.back-to-top')).display,
+    };
+  });
+  assert.ok(roomLayout.roomHeight > 0 && roomLayout.roomWidth > 0);
+  assert.ok(roomLayout.centerDelta < 3, 'Frame must be centered above the sofa');
+  assert.ok(roomLayout.frameBottomRatio < 0.54, 'Frame should not touch the sofa top');
+  assert.ok(roomLayout.artWidthRatio < 0.42, 'Frame too wide for a phone');
+  assert.equal(roomLayout.whatsappDisplay, 'none');
+  assert.equal(roomLayout.backToTopDisplay, 'none');
+  assert.doesNotMatch(await page.locator('meta[name="viewport"]').getAttribute('content'), /user-scalable\s*=\s*no|maximum-scale\s*=\s*1(?:[,.\s]|$)/,
+    'Keep pinch zoom available for accessibility');
+  results.push('Mobile living-room art alignment + unobstructed photo + accessible viewport');
+
   await page.locator('.filter-btn[data-cat="all"]').click();
   await page.locator('#gallery-grid .gallery-item').first().waitFor();
   assert.equal(await page.locator('#gallery-grid .gallery-item').count(), 4);
@@ -107,6 +131,23 @@ try {
   assert.equal(await card.locator('img').getAttribute('alt'), 'Old attic window.');
   await card.click();
   await page.locator('#lightbox.open').waitFor();
+  const navLayout = await page.evaluate(() => {
+    const photoRegion = document.querySelector('.lightbox-inner').getBoundingClientRect();
+    const nav = document.querySelector('.lightbox-navigation').getBoundingClientRect();
+    const previous = document.querySelector('#lb-prev').getBoundingClientRect();
+    const next = document.querySelector('#lb-next').getBoundingClientRect();
+    return { regionBottom: photoRegion.bottom, navTop: nav.top,
+      previousTop: previous.top, nextTop: next.top,
+      buttonHeight: Math.min(previous.height, next.height),
+      previousPosition: getComputedStyle(document.querySelector('#lb-prev')).position };
+  });
+  assert.ok(navLayout.navTop >= navLayout.regionBottom - 2, 'Navigation should follow the image region');
+  assert.ok(navLayout.previousTop >= navLayout.regionBottom - 2 && navLayout.nextTop >= navLayout.regionBottom - 2,
+    'Arrow buttons must not overlay the photograph');
+  assert.ok(navLayout.buttonHeight >= 44, 'Arrow tap targets must be at least 44px');
+  assert.equal(navLayout.previousPosition, 'static');
+  results.push('Mobile previous/next controls appear below photograph');
+
   assert.equal((await page.locator('#lb-title').innerText()).trim(), 'Old Attic Window in Slovakia');
   assert.equal((await page.locator('#lb-desc').innerText()).trim(), 'An old wooden window.');
   assert.equal((await page.locator('#lb-cat').innerText()).trim(), 'Slovakia');
