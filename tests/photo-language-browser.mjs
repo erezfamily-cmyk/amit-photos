@@ -98,6 +98,15 @@ try {
   }
   assert.equal(await page.locator('html').getAttribute('lang'), 'en');
   assert.equal(await page.locator('body').getAttribute('data-payments-state'), 'disabled');
+  // English-only page must not leak Hebrew in platform cards (500px/GuruShots/Instagram/TikTok).
+  assert.equal((await page.locator('.platforms-section .section-label').innerText()).trim(), 'Online Presence');
+  assert.equal((await page.locator('.platform-card').nth(0).locator('.platform-stat').first().innerText()).trim(), '202 photos');
+  assert.match(await page.locator('.platform-card').nth(1).locator('.platform-stat').first().innerText(), /GURU rank/);
+  assert.match(await page.locator('.platform-card').nth(2).locator('.platform-stat').first().innerText(), /followers/);
+  assert.equal((await page.locator('.platform-card').nth(3).locator('.platform-stat').nth(1).innerText()).trim(), 'Tips on photography');
+  assert.equal((await page.locator('.platform-card').nth(0).locator('.platform-cta').innerText()).trim(), 'View profile ↗');
+  assert.equal((await page.locator('.platform-card').nth(2).locator('.platform-cta').innerText()).trim(), 'Follow ↗');
+  results.push('English social platform labels and card statistics');
   await page.locator('.filter-btn[data-cat="all"]').click();
   await page.locator('#gallery-grid .gallery-item').first().waitFor();
   assert.equal(await page.locator('#gallery-grid .gallery-item').count(), 4);
@@ -140,6 +149,9 @@ try {
   results.push('No Hebrew leak when English translation is absent');
 
   await page.evaluate(() => window.setLang('he'));
+  assert.equal((await page.locator('.platforms-section .section-label').innerText()).trim(), 'נוכחות ברשת');
+  assert.match(await page.locator('.platform-card').nth(0).locator('.platform-stat').first().innerText(), /תמונות/);
+  assert.equal((await page.locator('.platform-card').nth(0).locator('.platform-cta').innerText()).trim(), 'לפרופיל ↗');
   assert.equal((await page.locator('#lb-title').innerText()).trim(), 'שביל בגאורגיה');
   assert.equal((await page.locator('#lb-cat').innerText()).trim(), 'גאורגיה');
   assert.equal((await page.locator('#lb-desc').innerText()).trim(), 'תיאור ללא תרגום');
