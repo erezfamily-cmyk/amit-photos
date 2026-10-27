@@ -148,9 +148,10 @@ html.home-experience-preview .home-value-room {
 html.home-experience-preview .home-value-art {
   position: absolute;
   z-index: 1;
-  top: 10%;
+  /* Leave visible wall between the frame and the sofa back. */
+  top: 11%;
   left: 50%;
-  width: 43%;
+  width: 36%;
   transform: translateX(-50%);
   overflow: hidden;
   aspect-ratio: 4 / 3;
@@ -609,9 +610,17 @@ html.home-experience-preview .gallery-context-label {
     border-radius: 18px;
   }
   html.home-experience-preview .home-value-room { aspect-ratio: 1.32 / 1; }
-  html.home-experience-preview .home-value-art { width: 45%; border-width: 6px; }
+  html.home-experience-preview .home-value-art { top: 10%; width: 34%; border-width: 5px; }
   html.home-experience-preview .home-value-room-note { font-size: .72rem; }
   html.home-experience-preview .home-value-contexts { grid-template-columns: 1fr; }
+}
+/* Keep immersive photographs and the room mockup free of floating CTA overlays.
+   WhatsApp and gallery-contact links remain available in the document flow. */
+@media (max-width: 600px) {
+  html.home-experience-preview,
+  html.home-experience-preview body { overflow-x: clip; }
+  html.home-experience-preview .whatsapp-float,
+  html.home-experience-preview .back-to-top { display: none !important; }
 }
 @media (max-width: 768px) {
   html.home-experience-preview #filter-bar { min-height: 15rem; }
