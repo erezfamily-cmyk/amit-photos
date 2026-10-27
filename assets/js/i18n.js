@@ -799,7 +799,7 @@ const TRANSLATIONS = {
     'platforms.followers':   'followers',
     'platforms.weekly':      'weekly',
     'platforms.short':       'short',
-    'platforms.tips':        'Photography tips',
+    'platforms.tips':        'Tips on',
     'platforms.photography': 'photography',
     'platforms.profile':     'View profile ↗',
     'platforms.follow':      'Follow ↗',
