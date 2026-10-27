@@ -1,0 +1,42 @@
+/* Photography-school guides: the cream-and-green shell of the home page.
+   Interactive simulators keep a dark card (.lab or .guide-dark) so photographs and scenes stay high contrast.
+   Loaded after each guide's inline <style>; `html:root` and `html …` selectors out-rank the styles nav.js injects later. */
+html:root {
+  --bg: #f5f1e9; --surface: #fffdf9; --surface2: #f0ebe0; --border: #ded8ce;
+  --accent: #7a5c3f; --text: #302d28; --muted: #645f57;
+  --bg-nav: rgba(248, 245, 238, 0.96); --text-muted-nav: #716c64;
+}
+body { background: var(--bg); color: var(--text); }
+.hero h1, .section h2, .lab-title { font-family: 'Frank Ruhl Libre', Georgia, serif; font-weight: 500; }
+.hero h1 { font-size: 2.3rem; color: #302d28; }
+.hero-badge { background: #fffdf9; border-color: #ded8ce; color: #566156; }
+.hero-badge svg, .lab-title svg { vertical-align: -3px; margin-inline-end: 6px; }
+.breadcrumb a { color: #7a5c3f; }
+.effect-desc, .gear-disclose { color: var(--muted); }
+html .share-bar-label { color: var(--muted); }
+html nav#main-nav.scrolled { border-bottom-color: #ded8ce; }
+html nav#main-nav .lang-sep { color: #b9b2a5; }
+html nav#main-nav .nav-yt-btn, html nav#main-nav .nav-tt-btn { color: #716c64; }
+html footer#main-footer { border-top-color: #ded8ce; color: #716c64; }
+html footer#main-footer a { color: #716c64; }
+html footer#main-footer a:hover { color: #7a5c3f; }
+html #nav-breadcrumb a { color: #716c64; }
+html #nav-nl-strip { background: #fffdf9; border-color: #ded8ce; }
+html #nav-nl-strip h2 { color: #302d28; }
+html #nav-nl-strip .nl-sub, html #nav-nl-strip .nl-consent-row, html #nav-nl-strip .nl-more { color: #716c64; }
+html #nav-nl-strip .nl-eyebrow, html #nav-nl-strip .nl-consent-row a { color: #7a5c3f; }
+html #nav-nl-strip input[type=email] { background: #fff; border-color: #ded8ce; color: #302d28; }
+html #nav-nl-strip button { background: #475038; color: #fff; }
+html #nav-read-also-title { color: #716c64; }
+html .nav-read-also-card { background: #fffdf9; border-color: #ded8ce; color: #302d28; }
+html .nav-read-also-card:hover { border-color: #7a5c3f; }
+html .nav-rac-arrow { color: #7a5c3f; }
+
+/* Dark simulator card inside the cream page */
+.lab, .guide-dark {
+  --surface: #141413; --surface2: #1d1c1a; --border: #2e2d2a;
+  --accent: #e4bd7a; --text: #f5f1ea; --muted: #c7c2ba;
+  background: #141413; color: var(--text); border-color: #141413;
+  box-shadow: 0 18px 30px -16px rgba(40, 30, 10, 0.5);
+}
+.sim-preview { --text: #f5f1ea; --accent: #e4bd7a; --muted: #c7c2ba; }
