@@ -164,6 +164,16 @@ try {
   const dest = 'artifacts/experience-smoke/branch-' + engine;
   mkdirSync(dest, { recursive: true });
   await page.locator('#lightbox').screenshot({ path: dest + '/lightbox-english.png', timeout: 12000 });
+  // Evidence from the actual browser engine: all four English platform cards.
+  await page.locator('.platforms-section').scrollIntoViewIfNeeded();
+  const platformText = await page.locator('.platforms-section').innerText();
+  assert.doesNotMatch(platformText, /[\u0590-\u05ff]/,
+    'English social presence section must not contain Hebrew');
+  await page.locator('.platforms-section').screenshot({
+    path: dest + '/english-platform-cards.png', timeout: 12000,
+  });
+  results.push('English social platform screenshot free from Hebrew labels');
+
   assert.deepEqual(errors, [], 'No JavaScript page errors');
   console.log('BRANCH_LIGHTBOX_SUCCESS ' + JSON.stringify({ engine, results, pageErrors: errors }));
 } finally {
