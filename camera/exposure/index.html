@@ -13,7 +13,7 @@
 <title>חשיפה — ISO, צמצם ותריס | בית ספר לצילום | Amit Photos</title>
 <meta name="description" content="המשולש של הצלם — ISO, צמצם ותריס. שלושה סליידרים שמשנים את החשיפה בזמן אמת.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&family=Frank+Ruhl+Libre:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
@@ -146,7 +146,38 @@ input[type=range].aperture-slider::-webkit-slider-thumb { -webkit-appearance: no
 
 .kofi-bar{text-align:center;padding:1.25rem 1.25rem 1.75rem;max-width:760px;margin:0 auto}
 .kofi-bar a{display:inline-flex;align-items:center;gap:.5rem;background:var(--surface);border:1px solid rgba(200,169,110,.4);color:var(--accent);font-size:.82rem;font-weight:700;padding:.55rem 1.4rem;border-radius:8px;text-decoration:none;transition:background .2s,color .2s}
-.kofi-bar a:hover{background:var(--accent);color:#000}</style>
+.kofi-bar a:hover{background:var(--accent);color:#000}
+/* ===== PREVIEW ONLY — design trial for /camera/exposure/ (not for merge) ===== */
+:root {
+  --bg: #f5f1e9; --surface: #fffdf9; --surface2: #f0ebe0; --border: #ded8ce;
+  --accent: #7a5c3f; --text: #302d28; --muted: #716c64;
+  --bg-nav: rgba(248,245,238,.96); --text-muted-nav: #716c64;
+}
+body { background: var(--bg); color: var(--text); }
+.hero h1, .section h2, .lab-title { font-family: 'Frank Ruhl Libre', Georgia, serif; font-weight: 500; }
+.hero h1 { font-size: 2.3rem; }
+.hero-badge { background: #fffdf9; border-color: #ded8ce; color: #566156; }
+.breadcrumb a { color: #7a5c3f; }
+.lab { border-color: #ded8ce; }
+html nav#main-nav.scrolled { border-bottom-color: #ded8ce; }
+html nav#main-nav .lang-sep { color: #b9b2a5; }
+html nav#main-nav .nav-yt-btn, html nav#main-nav .nav-tt-btn { color: #716c64; }
+html footer#main-footer { border-top-color: #ded8ce; color: #716c64; }
+html footer#main-footer a { color: #716c64; }
+html footer#main-footer a:hover { color: #7a5c3f; }
+html #nav-breadcrumb a { color: #716c64; }
+html #nav-nl-strip { background: #fffdf9; border-color: #ded8ce; }
+html #nav-nl-strip h2 { color: #302d28; }
+html #nav-nl-strip .nl-sub, html #nav-nl-strip .nl-consent-row, html #nav-nl-strip .nl-more { color: #716c64; }
+html #nav-nl-strip .nl-eyebrow, html #nav-nl-strip .nl-consent-row a { color: #7a5c3f; }
+html #nav-nl-strip input[type=email] { background: #fff; border-color: #ded8ce; color: #302d28; }
+html #nav-nl-strip button { background: #475038; color: #fff; }
+html #nav-read-also-title { color: #716c64; }
+html .nav-read-also-card { background: #fffdf9; border-color: #ded8ce; color: #302d28; }
+html .nav-read-also-card:hover { border-color: #7a5c3f; }
+html .nav-rac-arrow { color: #7a5c3f; }
+/* ===== END PREVIEW ===== */
+</style>
 <script src="/assets/js/nav.js?v=dd63b478" defer></script>
 <script src="/assets/js/share.js" defer></script>
 
