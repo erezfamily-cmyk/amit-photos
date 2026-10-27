@@ -58,6 +58,16 @@ html:root { --green: #2a7049; --blue: #2f5fa8; --purple: #6a4aa8; --warm: #8f551
 .compare-label-bad { color: var(--red); }
 .compare-label-good { color: var(--green); }
 
+/* location-style guide heroes (photo background): badge stays light on the darkened image */
+.ls-hero-badge { background: rgba(255, 253, 249, .14); border-color: rgba(255, 253, 249, .45); color: #fffdf9; }
+.ls-hero-badge svg { vertical-align: -3px; margin-inline-end: 6px; }
+.ls-hero { background: #141413; }
+
+/* buttons that fill with the (now darker) accent need light text */
+.gear-card-btn:hover, .kofi-bar a:hover, .ls-section-badge, .po-btn, .purchase-cta, .filter-btn.active, .card-cta, .gumroad-banner-btn { color: #fffdf9; }
+html #box-apsc .sensor-tag, html #box-mft .sensor-tag { color: #141413; }
+@media (max-width: 640px) { .slider-row { flex-wrap: wrap; } .slider-row label { white-space: normal; } }
+
 /* sticky in-page table of contents and primary call-to-action buttons */
 .toc { background: rgba(245, 241, 233, .94); border-bottom-color: #ded8ce; }
 .cta-btn { color: #fffdf9; }

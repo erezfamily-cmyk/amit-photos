@@ -13,7 +13,7 @@
 <title>צילום ספורט ותנועה — בית ספר לצילום | Amit Photos</title>
 <meta name="description" content="למד לצלם ספורט ותנועה — מהירות תריס, panning, הגדרות ועדשות — עם תמונות אמיתיות של עמית.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&family=Frank+Ruhl+Libre:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
@@ -151,6 +151,7 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
 .kofi-bar{text-align:center;padding:1.25rem 1.25rem 1.75rem;max-width:760px;margin:0 auto}
 .kofi-bar a{display:inline-flex;align-items:center;gap:.5rem;background:var(--surface);border:1px solid rgba(200,169,110,.4);color:var(--accent);font-size:.82rem;font-weight:700;padding:.55rem 1.4rem;border-radius:8px;text-decoration:none;transition:background .2s,color .2s}
 .kofi-bar a:hover{background:var(--accent);color:#000}</style>
+<link rel="stylesheet" href="/assets/css/guide-cream.css?v=9da5a29e">
 <script src="/assets/js/nav.js?v=e842596e" defer></script>
 <script src="/assets/js/share.js" defer></script>
 
@@ -215,7 +216,7 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
 <body>
 
 <div class="hero">
-  <div class="hero-badge" data-he="📷 בית ספר לצילום" data-en="📷 Photography School">📷 בית ספר לצילום</div>
+  <div class="hero-badge"><svg class="gi" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l1.5-2h7L17 8h3v11H4z"/><circle cx="12" cy="13.5" r="3.2"/></svg><span data-he="בית ספר לצילום" data-en="Photography School">בית ספר לצילום</span></div>
   <h1 data-he="צילום ספורט ותנועה" data-en="Sports & Motion Photography">צילום ספורט ותנועה</h1>
   <p data-he="איך לקפוא תנועה בשיאה, ליצור blur של מהירות, ולתפוס את הרגע המושלם" data-en="How to freeze motion at its peak, create motion blur for speed, and capture the perfect moment">איך לקפוא תנועה בשיאה, ליצור blur של מהירות, ולתפוס את הרגע המושלם</p>
 </div>
@@ -231,7 +232,7 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
   <div class="section-label" data-he="חלק 1" data-en="Part 1">חלק 1</div>
   <h2 data-he="מהירות תריס — קפיאה מול תנועה" data-en="Shutter Speed — Freeze vs Motion Blur">מהירות תריס — קפיאה מול תנועה</h2>
   <p data-he="תריס מהיר (1/1000 ומעלה) קופא את התנועה בחדות מוחלטת. תריס איטי יוצר blur — תחושה של מהירות ואנרגיה. גרור כדי לראות את ההבדל." data-en="A fast shutter (1/1000+) freezes motion with absolute sharpness. A slow shutter creates blur — a feeling of speed and energy. Drag to see the difference.">תריס מהיר (1/1000 ומעלה) קופא את התנועה בחדות מוחלטת. תריס איטי יוצר blur — תחושה של מהירות ואנרגיה. גרור כדי לראות את ההבדל.</p>
-  <div class="demo-card">
+  <div class="demo-card guide-dark">
     <div class="slider-row">
       <label>1/30</label>
       <input type="range" id="shutterSlider" min="1" max="6" step="1" value="1"
@@ -256,7 +257,7 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
   <div class="section-label" data-he="חלק 2" data-en="Part 2">חלק 2</div>
   <h2 data-he="פנינג — לעקוב אחרי התנועה" data-en="Panning — Follow the Motion">פנינג — לעקוב אחרי התנועה</h2>
   <p data-he="טכניקת פנינג: עוקבים אחרי הנושא עם המצלמה בזמן הצילום. הנושא יוצא חד, הרקע מיטשטש — תחושת מהירות דרמטית." data-en="Panning technique: follow the subject with your camera during the shot. Subject stays sharp, background blurs — dramatic sense of speed.">טכניקת פנינג: עוקבים אחרי הנושא עם המצלמה בזמן הצילום. הנושא יוצא חד, הרקע מיטשטש — תחושת מהירות דרמטית.</p>
-  <div class="demo-card">
+  <div class="demo-card guide-dark">
     <div class="slider-row">
       <label data-he="ללא פנינג" data-en="No panning">ללא פנינג</label>
       <input type="range" id="panningSlider" min="0" max="4" step="1" value="0"
@@ -265,14 +266,14 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
       <div class="slider-value" id="panningVal" data-he="כבוי" data-en="Off">כבוי</div>
     </div>
     <div class="compare-grid">
-      <div class="compare-card">
+      <div class="compare-card guide-dark">
         <img id="panningSharp"
              src="/assets/img/sports/cyclist-panning.png"
              alt="רוכב — נושא חד">
         <div class="cc-label" data-he="נושא — חד" data-en="Subject — Sharp">נושא — חד</div>
         <div class="cc-desc" id="panningSharpDesc" data-he="הנושא שרואים נשאר חד כי המצלמה עוקבת אחריו" data-en="The subject stays sharp because the camera follows it">הנושא שרואים נשאר חד כי המצלמה עוקבת אחריו</div>
       </div>
-      <div class="compare-card">
+      <div class="compare-card guide-dark">
         <img id="panningBg"
              src="/assets/img/sports/cyclist-panning.png"
              alt="רקע — blur תנועה">
@@ -288,10 +289,10 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
   <div class="section-label" data-he="חלק 3" data-en="Part 3">חלק 3</div>
   <h2 data-he="הגדרות, עדשות וטכניקות" data-en="Settings, Lenses & Techniques">הגדרות, עדשות וטכניקות</h2>
   <p data-he="המדריך המלא — מ-ISO ומהירות תריס דרך בחירת עדשה נכונה ועד לטיפים מקצועיים לצילום ספורט." data-en="The full guide — from ISO and shutter speed, through choosing the right lens, to professional sports photography tips.">המדריך המלא — מ-ISO ומהירות תריס דרך בחירת עדשה נכונה ועד לטיפים מקצועיים לצילום ספורט.</p>
-  <div class="infographic-wrap" onclick="openLightbox()">
+  <div class="infographic-wrap guide-dark" onclick="openLightbox()">
     <img src="/assets/infographics/sports-infographic.png"
          alt="מדריך צילום ספורט ותנועה">
-    <div class="infographic-hint" data-he="לחץ להגדלה 🔍" data-en="Click to enlarge 🔍">לחץ להגדלה 🔍</div>
+    <div class="infographic-hint" data-he="לחץ להגדלה " data-en="Click to enlarge ">לחץ להגדלה </div>
   </div>
 </section>
 
@@ -302,9 +303,9 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
 
   <div class="gallery-filters">
     <button type="button" class="filter-btn active" onclick="filterGallery('all', this)" data-he="הכל" data-en="All">הכל</button>
-    <button type="button" class="filter-btn" onclick="filterGallery('טיסה', this)" data-he="🦅 טיסה" data-en="🦅 Flight">🦅 טיסה</button>
-    <button type="button" class="filter-btn" onclick="filterGallery('תנועה', this)" data-he="💨 תנועה" data-en="💨 Motion">💨 תנועה</button>
-    <button type="button" class="filter-btn" onclick="filterGallery('חיות', this)" data-he="🐎 חיות" data-en="🐎 Animals">🐎 חיות</button>
+    <button type="button" class="filter-btn" onclick="filterGallery('טיסה', this)" data-he="טיסה" data-en="Flight">טיסה</button>
+    <button type="button" class="filter-btn" onclick="filterGallery('תנועה', this)" data-he="תנועה" data-en="Motion">תנועה</button>
+    <button type="button" class="filter-btn" onclick="filterGallery('חיות', this)" data-he="חיות" data-en="Animals">חיות</button>
   </div>
 
   <div class="gallery-grid">

@@ -13,7 +13,7 @@
 <title>צילום מאקרו — בית ספר לצילום | Amit Photos</title>
 <meta name="description" content="למד צילום מאקרו — יחס הגדלה, עומק שדה דק, ציוד וטכניקות — עם תמונות אמיתיות של עמית.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&family=Frank+Ruhl+Libre:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
@@ -137,6 +137,7 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
 .kofi-bar{text-align:center;padding:1.25rem 1.25rem 1.75rem;max-width:760px;margin:0 auto}
 .kofi-bar a{display:inline-flex;align-items:center;gap:.5rem;background:var(--surface);border:1px solid rgba(200,169,110,.4);color:var(--accent);font-size:.82rem;font-weight:700;padding:.55rem 1.4rem;border-radius:8px;text-decoration:none;transition:background .2s,color .2s}
 .kofi-bar a:hover{background:var(--accent);color:#000}</style>
+<link rel="stylesheet" href="/assets/css/guide-cream.css?v=9da5a29e">
 <script src="/assets/js/nav.js?v=e842596e" defer></script>
 <script src="/assets/js/share.js" defer></script>
 
@@ -201,7 +202,7 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
 <body>
 
 <div class="hero">
-  <div class="hero-badge" data-he="📷 בית ספר לצילום" data-en="📷 Photography School">📷 בית ספר לצילום</div>
+  <div class="hero-badge"><svg class="gi" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l1.5-2h7L17 8h3v11H4z"/><circle cx="12" cy="13.5" r="3.2"/></svg><span data-he="בית ספר לצילום" data-en="Photography School">בית ספר לצילום</span></div>
   <h1 data-he="צילום מאקרו — עולם הקרוב" data-en="Macro Photography — The Close-Up World">צילום מאקרו — עולם הקרוב</h1>
   <p data-he="גלה את היקום הנסתר — איך לצלם חרקים, פרחים וטיפות טל מקרוב עם תמונות אמיתיות של עמית" data-en="Discover the hidden universe — how to photograph insects, flowers and dew drops up close with real photos by Amit">גלה את היקום הנסתר — איך לצלם חרקים, פרחים וטיפות טל מקרוב עם תמונות אמיתיות של עמית</p>
 </div>
@@ -217,7 +218,7 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
   <div class="section-label" data-he="חלק 1" data-en="Part 1">חלק 1</div>
   <h2 data-he="יחס הגדלה — כמה קרוב?" data-en="Magnification Ratio — How Close?">יחס הגדלה — כמה קרוב?</h2>
   <p data-he="במאקרו אמיתי (1:1) חרק קטן ממלא את כל הסנסור. ב-1:4 אנחנו רואים הרבה מהסביבה. גרור את הסליידר כדי לחוות את ההבדל." data-en="In true macro (1:1) a small insect fills the entire sensor. At 1:4 we see a lot of the surroundings. Drag the slider to experience the difference.">במאקרו אמיתי (1:1) חרק קטן ממלא את כל הסנסור. ב-1:4 אנחנו רואים הרבה מהסביבה. גרור את הסליידר כדי לחוות את ההבדל.</p>
-  <div class="demo-card">
+  <div class="demo-card guide-dark">
     <div class="slider-row">
       <label>1:4</label>
       <input type="range" id="magSlider" min="1" max="4" step="1" value="1"
@@ -242,8 +243,8 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
   <div class="section-label" data-he="חלק 2" data-en="Part 2">חלק 2</div>
   <h2 data-he="עומק שדה דק — הקסם והאתגר" data-en="Shallow Depth of Field — The Magic and the Challenge">עומק שדה דק — הקסם והאתגר</h2>
   <p data-he="במאקרו, אפילו ב-f/8 עומק השדה יכול להיות מילימטר אחד בלבד. זה מה שמייצר את הרקע המטושטש הקסום — אבל גם מקשה על המיקוד." data-en="In macro, even at f/8 the depth of field can be just one millimeter. This creates the magical blurred background — but also makes focusing very difficult.">במאקרו, אפילו ב-f/8 עומק השדה יכול להיות מילימטר אחד בלבד. זה מה שמייצר את הרקע המטושטש הקסום — אבל גם מקשה על המיקוד.</p>
-  <div class="demo-card">
-    <div class="bokeh-split">
+  <div class="demo-card guide-dark">
+    <div class="bokeh-split guide-dark">
       <div class="bokeh-img">
         <img src="https://lh3.googleusercontent.com/d/1sFRvwHnpOODK4KEkEaJCsHNZGl35oBrA=w600"
              alt="פרפר ציר מצוי על פרח ורוד — נושא">
@@ -271,10 +272,10 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
   <div class="section-label" data-he="חלק 3" data-en="Part 3">חלק 3</div>
   <h2 data-he="ציוד, טכניקות ו-Focus Stacking" data-en="Gear, Techniques & Focus Stacking">ציוד, טכניקות ו-Focus Stacking</h2>
   <p data-he="כל מה שצריך לדעת כדי להתחיל לצלם מאקרו — ציוד, הגדרות, וטכניקת הצטרפות מוקד לתמונות חדות יותר." data-en="Everything you need to know to start shooting macro — gear, settings, and focus stacking technique for sharper images.">כל מה שצריך לדעת כדי להתחיל לצלם מאקרו — ציוד, הגדרות, וטכניקת הצטרפות מוקד לתמונות חדות יותר.</p>
-  <div class="infographic-wrap" onclick="openLightbox()">
+  <div class="infographic-wrap guide-dark" onclick="openLightbox()">
     <img src="/assets/infographics/macro-infographic.png"
          alt="מדריך צילום מאקרו — ציוד, טכניקות ו-Focus Stacking">
-    <div class="infographic-hint" data-he="לחץ להגדלה 🔍" data-en="Click to enlarge 🔍">לחץ להגדלה 🔍</div>
+    <div class="infographic-hint" data-he="לחץ להגדלה " data-en="Click to enlarge ">לחץ להגדלה </div>
   </div>
 </section>
 
@@ -285,10 +286,10 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
 
   <div class="gallery-filters">
     <button class="filter-btn active" onclick="filterGallery('all', this)" data-he="הכל" data-en="All">הכל</button>
-    <button class="filter-btn" onclick="filterGallery('פרפרים', this)" data-he="🦋 פרפרים" data-en="🦋 Butterflies">🦋 פרפרים</button>
-    <button class="filter-btn" onclick="filterGallery('חרקים', this)" data-he="🐝 חרקים" data-en="🐝 Insects">🐝 חרקים</button>
-    <button class="filter-btn" onclick="filterGallery('עכבישים', this)" data-he="🕷️ עכבישים" data-en="🕷️ Spiders">🕷️ עכבישים</button>
-    <button class="filter-btn" onclick="filterGallery('טל', this)" data-he="💧 טל ואחר" data-en="💧 Dew & Other">💧 טל ואחר</button>
+    <button class="filter-btn" onclick="filterGallery('פרפרים', this)" data-he="פרפרים" data-en="Butterflies">פרפרים</button>
+    <button class="filter-btn" onclick="filterGallery('חרקים', this)" data-he="חרקים" data-en="Insects">חרקים</button>
+    <button class="filter-btn" onclick="filterGallery('עכבישים', this)" data-he="עכבישים" data-en="Spiders">עכבישים</button>
+    <button class="filter-btn" onclick="filterGallery('טל', this)" data-he="טל ואחר" data-en="Dew & Other">טל ואחר</button>
   </div>
 
   <div class="gallery-grid">
