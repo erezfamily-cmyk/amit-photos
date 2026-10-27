@@ -343,19 +343,19 @@ nav#main-nav .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px)
   // דף הבית כבר מכיל באנר + פופאפ + סקציית ניוזלטר; עמוד שמכיל טופס משלו מדולג
   const NL_T = {
     he: {
-      eyebrow: 'מתנה חינמית 🎁',
+      eyebrow: 'מתנה חינמית',
       title: '50 טיפים לצילום — PDF חינם',
       sub: 'המדריך המעשי לצלם המתחיל, ישירות למייל + ניוזלטר חודשי. ביטול בכל עת.',
       placeholder: 'כתובת המייל שלך',
       btn: 'שלחו לי ←',
-      ok: 'תודה! המדריך בדרך למייל שלך 📬',
+      ok: 'תודה! המדריך בדרך למייל שלך',
       err: 'משהו השתבש — נסו שוב',
       more: 'לדף ההורדה המלא ←',
       consentPrivacy: 'קראתי ואני מאשר/ת את <a href="/privacy/" target="_blank" rel="noopener">מדיניות הפרטיות</a>',
       consentMarketing: 'מעוניין/ת לקבל עדכונים ותוכן שיווקי במייל'
     },
     en: {
-      eyebrow: 'Free Gift 🎁',
+      eyebrow: 'Free Gift',
       title: '50 Photography Tips — Free PDF',
       sub: 'The practical beginner\'s guide, straight to your inbox + monthly newsletter. Unsubscribe anytime.',
       placeholder: 'Your email address',
