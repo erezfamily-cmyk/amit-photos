@@ -103,9 +103,11 @@ try {
   assert.equal((await page.locator('.platform-card').nth(0).locator('.platform-stat').first().innerText()).trim(), '202 photos');
   assert.match(await page.locator('.platform-card').nth(1).locator('.platform-stat').first().innerText(), /GURU rank/);
   assert.match(await page.locator('.platform-card').nth(2).locator('.platform-stat').first().innerText(), /followers/);
-  assert.equal((await page.locator('.platform-card').nth(3).locator('.platform-stat').nth(1).innerText()).trim(), 'Tips on photography');
+  assert.equal((await page.locator('.platform-card').nth(3).locator('.platform-stat').nth(1).innerText()).trim(), 'Photography tips');
   assert.equal((await page.locator('.platform-card').nth(0).locator('.platform-cta').innerText()).trim(), 'View profile ↗');
   assert.equal((await page.locator('.platform-card').nth(2).locator('.platform-cta').innerText()).trim(), 'Follow ↗');
+  assert.equal((await page.locator('.platform-card').nth(2).locator('.platform-stat').nth(2).innerText()).trim(), 'Weekly Stories');
+  assert.equal((await page.locator('.platform-card').nth(3).locator('.platform-stat').first().innerText()).trim(), 'Short Reels');
   results.push('English social platform labels and card statistics');
   await page.locator('.filter-btn[data-cat="all"]').click();
   await page.locator('#gallery-grid .gallery-item').first().waitFor();
