@@ -13,7 +13,7 @@
 <title>חשיפה — ISO, צמצם ותריס | בית ספר לצילום | Amit Photos</title>
 <meta name="description" content="המשולש של הצלם — ISO, צמצם ותריס. שלושה סליידרים שמשנים את החשיפה בזמן אמת.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&family=Frank+Ruhl+Libre:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
@@ -146,7 +146,46 @@ input[type=range].aperture-slider::-webkit-slider-thumb { -webkit-appearance: no
 
 .kofi-bar{text-align:center;padding:1.25rem 1.25rem 1.75rem;max-width:760px;margin:0 auto}
 .kofi-bar a{display:inline-flex;align-items:center;gap:.5rem;background:var(--surface);border:1px solid rgba(200,169,110,.4);color:var(--accent);font-size:.82rem;font-weight:700;padding:.55rem 1.4rem;border-radius:8px;text-decoration:none;transition:background .2s,color .2s}
-.kofi-bar a:hover{background:var(--accent);color:#000}</style>
+.kofi-bar a:hover{background:var(--accent);color:#000}
+/* ===== PREVIEW ONLY — design trial for /camera/exposure/ (not for merge) ===== */
+html:root {
+  --bg: #f5f1e9; --surface: #fffdf9; --surface2: #f0ebe0; --border: #ded8ce;
+  --accent: #7a5c3f; --text: #302d28; --muted: #716c64;
+  --bg-nav: rgba(248,245,238,.96); --text-muted-nav: #716c64;
+}
+body { background: var(--bg); color: var(--text); }
+.hero h1, .section h2, .lab-title { font-family: 'Frank Ruhl Libre', Georgia, serif; font-weight: 500; }
+.hero h1 { font-size: 2.3rem; color: #302d28; }
+.hero-badge { background: #fffdf9; border-color: #ded8ce; color: #566156; }
+.breadcrumb a { color: #7a5c3f; }
+.lab { border-color: #ded8ce; }
+.sim-preview { --text: #f5f1ea; --accent: #e4bd7a; --muted: #c7c2ba; }
+html nav#main-nav.scrolled { border-bottom-color: #ded8ce; }
+html nav#main-nav .lang-sep { color: #b9b2a5; }
+html nav#main-nav .nav-yt-btn, html nav#main-nav .nav-tt-btn { color: #716c64; }
+html footer#main-footer { border-top-color: #ded8ce; color: #716c64; }
+html footer#main-footer a { color: #716c64; }
+html footer#main-footer a:hover { color: #7a5c3f; }
+html #nav-breadcrumb a { color: #716c64; }
+html #nav-nl-strip { background: #fffdf9; border-color: #ded8ce; }
+html #nav-nl-strip h2 { color: #302d28; }
+html #nav-nl-strip .nl-sub, html #nav-nl-strip .nl-consent-row, html #nav-nl-strip .nl-more { color: #716c64; }
+html #nav-nl-strip .nl-eyebrow, html #nav-nl-strip .nl-consent-row a { color: #7a5c3f; }
+html #nav-nl-strip input[type=email] { background: #fff; border-color: #ded8ce; color: #302d28; }
+html #nav-nl-strip button { background: #475038; color: #fff; }
+html #nav-read-also-title { color: #716c64; }
+html .nav-read-also-card { background: #fffdf9; border-color: #ded8ce; color: #302d28; }
+html .nav-read-also-card:hover { border-color: #7a5c3f; }
+html .nav-rac-arrow { color: #7a5c3f; }
+/* Option B: the simulator stays a dark card inside the cream page */
+.lab {
+  --surface: #141413; --surface2: #1d1c1a; --border: #2e2d2a;
+  --accent: #e4bd7a; --text: #f5f1ea; --muted: #c7c2ba;
+  background: #141413; color: var(--text); border-color: #141413;
+  box-shadow: 0 18px 30px -16px rgba(40,30,10,.5);
+}
+/* ===== END PREVIEW ===== */
+</style>
 <script src="/assets/js/nav.js?v=dd63b478" defer></script>
 <script src="/assets/js/share.js" defer></script>
 
@@ -216,7 +255,7 @@ input[type=range].aperture-slider::-webkit-slider-thumb { -webkit-appearance: no
 </div>
 
 <div class="hero">
-  <div class="hero-badge" data-he="☀️ חשיפה" data-en="☀️ Exposure">☀️ חשיפה</div>
+  <div class="hero-badge"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" style="vertical-align:-2px;margin-inline-end:6px"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/></svg><span data-he="חשיפה" data-en="Exposure">חשיפה</span></div>
   <h1 data-he="המשולש של הצלם" data-en="The Exposure Triangle">המשולש של הצלם</h1>
   <p data-he="ISO, צמצם ותריס — שלושה פרמטרים שקובעים כמה אור יגיע לחיישן, ולכל אחד יש מחיר" data-en="ISO, aperture and shutter speed — three parameters that determine how much light reaches the sensor, and each has a trade-off">ISO, צמצם ותריס — שלושה פרמטרים שקובעים כמה אור יגיע לחיישן, ולכל אחד יש מחיר</p>
 </div>
@@ -226,7 +265,7 @@ input[type=range].aperture-slider::-webkit-slider-thumb { -webkit-appearance: no
   <!-- SIMULATOR -->
   <div class="section">
     <div class="lab">
-      <div class="lab-title" data-he="🎚️ סימולטור חשיפה — גרור ותראה" data-en="🎚️ Exposure Simulator — Drag & See">🎚️ סימולטור חשיפה — גרור ותראה</div>
+      <div class="lab-title"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" style="vertical-align:-3px;margin-inline-end:8px"><path d="M4 8h16M4 16h16"/><circle cx="9" cy="8" r="2.2"/><circle cx="15" cy="16" r="2.2"/></svg><span data-he="סימולטור חשיפה — גרור ותראה" data-en="Exposure Simulator — Drag &amp; See">סימולטור חשיפה — גרור ותראה</span></div>
 
       <div class="sim-preview">
         <canvas class="sim-canvas" id="simCanvas" width="640" height="360"></canvas>
