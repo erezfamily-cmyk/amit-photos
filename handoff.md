@@ -12,7 +12,12 @@ Supersedes the 2026-10-26 section for status. Source of truth: GitHub `main` (HE
 ### Live QA (Chrome DevTools MCP / Chromium; 390x844 mobile + 1440x900 desktop; WebKit NOT run locally — only in CI; no real iPhone)
 Verified OK: no horizontal scroll (390 / 1425<1440 desktop scrollbar); `.whatsapp-float` and `.back-to-top` are `display:none` on mobile; viewport meta has `minimum-scale=1.0`; living-room frame sits centred above the sofa; lightbox opens/closes/next works (HE+EN); wall preview opens/closes; no JS errors (one harmless preload warning); social cards not re-checked beyond absence of Hebrew in visible EN text.
 
-### Defects found (NOT fixed — need a new branch/PR from fresh main)
+### Defects found (status updated later on 2026-10-27)
+- **#1 and #2: FIXED** in PR [#194](https://github.com/erezfamily-cmyk/amit-photos/pull/194) (merged `7df4272`, verified live in Chromium mobile, HE<->EN switching).
+- **#4: not a bug** — the empty circle is the wall colour picker (`#wall-color-picker`), its swatch equals the default wall colour. Left as is.
+- **#5: fix in PR [#195](https://github.com/erezfamily-cmyk/amit-photos/pull/195)** (open, awaiting CI + approval): a11y button hidden while lightbox/wall preview is open.
+- #3, #6, #7 still open.
+
 1. **Lightbox arrow glyphs reversed in EN (LTR):** `#lb-prev` sits left but shows `›`, `#lb-next` right shows `‹`. Correct in HE (RTL). Glyphs are hardcoded for RTL.
 2. **Hebrew leaks on EN page:** `<title>` stays Hebrew (`עמית ארז | עולם של צבעים…`); footer logo `עמית / צילום` is not translated.
 3. **Mobile lightbox layout oddity (EN, landscape photo):** photo 294x195 floats in a 473px-tall stage with a dark rectangle offset behind it; arrows/© sit far below the photo. Needs a visual look on a real phone before deciding.

@@ -1,8 +1,9 @@
 ## UPDATE 2026-10-27 (see handoff.md top section)
 - [x] #190, #191/#192 merged (#189 closed); deploy + CI green on `b79eab7`; payments still `enabled:false`.
 - [x] Automated live QA (Chromium, mobile+desktop) done; WebKit/real iPhone still unverified.
-- [ ] Fix PR: EN lightbox arrow glyphs reversed; Hebrew `<title>` + footer logo on EN page.
-- [ ] Investigate: mobile lightbox stage layout, empty circle in wall modal, a11y button overlapping content, counter `/2310`, `?lang=` vs stored language.
+- [x] EN lightbox arrows + Hebrew `<title>`/footer logo — fixed in #194 (merged `7df4272`, verified live).
+- [ ] a11y button overlap — PR #195 open. (Wall-modal empty circle = colour picker, not a bug.)
+- [ ] Investigate: mobile lightbox stage layout, counter `/2310`, `?lang=` vs stored language.
 - [ ] Owner to confirm on real phone.
 
 ## ACTIVE NEXT-DAY CHECKLIST — 2026-10-27 (supersedes historical #181/#187 drafts)
