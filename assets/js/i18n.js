@@ -961,7 +961,16 @@ const TRANSLATIONS = {
 
 // ===== Runtime =====
 
-let _lang = localStorage.getItem('lang') || 'he';
+// An explicit ?lang=he|en in the URL wins over the stored preference (hreflang alternates point to /?lang=en).
+let _lang = (function () {
+  let fromUrl = null;
+  try { fromUrl = new URLSearchParams(location.search).get('lang'); } catch (e) {}
+  if (fromUrl === 'he' || fromUrl === 'en') {
+    try { localStorage.setItem('lang', fromUrl); } catch (e) {}
+    return fromUrl;
+  }
+  return localStorage.getItem('lang') || 'he';
+})();
 
 function t(key, params) {
   let str = (TRANSLATIONS[_lang] && TRANSLATIONS[_lang][key]) ||
