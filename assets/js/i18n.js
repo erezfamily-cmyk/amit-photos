@@ -330,6 +330,11 @@ const TRANSLATIONS = {
     'gallery.item.aria':'פתח תצוגה מוגדלת',
     'lightbox.prev':    'התמונה הקודמת',
     'lightbox.next':    'התמונה הבאה',
+    'lightbox.prev.glyph': '›',
+    'lightbox.next.glyph': '‹',
+    'footer.logo.name': 'עמית',
+    'footer.logo.tag': ' / צילום',
+    'meta.title.home': 'עמית ארז | עולם של צבעים מבעד לעדשה',
     'wall.color.picker':'שנה צבע קיר',
     'buy.alt.brand':    'ביט / Paybox',
 
@@ -783,6 +788,11 @@ const TRANSLATIONS = {
     'gallery.item.aria':'Open enlarged view',
     'lightbox.prev':    'Previous photo',
     'lightbox.next':    'Next photo',
+    'lightbox.prev.glyph': '‹',
+    'lightbox.next.glyph': '›',
+    'footer.logo.name': 'Amit',
+    'footer.logo.tag': ' / Photography',
+    'meta.title.home': 'Amit Erez | A World of Colors Through the Lens',
     'wall.color.picker':'Change wall color',
     'buy.alt.brand':    'Bit / Paybox',
 
