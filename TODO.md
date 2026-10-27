@@ -1,3 +1,11 @@
+## UPDATE 2026-10-27 (see handoff.md top section)
+- [x] #190, #191/#192 merged (#189 closed); deploy + CI green on `b79eab7`; payments still `enabled:false`.
+- [x] Automated live QA (Chromium, mobile+desktop) done; WebKit/real iPhone still unverified.
+- [x] EN lightbox arrows + Hebrew `<title>`/footer logo — fixed in #194 (merged `7df4272`, verified live).
+- [ ] a11y button overlap — PR #195 open. (Wall-modal empty circle = colour picker, not a bug.)
+- [ ] Investigate: mobile lightbox stage layout, counter `/2310`, `?lang=` vs stored language.
+- [ ] Owner to confirm on real phone.
+
 ## ACTIVE NEXT-DAY CHECKLIST — 2026-10-27 (supersedes historical #181/#187 drafts)
 
 **Current source of truth:** [handoff.md](https://github.com/erezfamily-cmyk/amit-photos/blob/main/handoff.md) (top entry dated 2026-10-26). Older TODO bullets below are historical and include obsolete "draft/not merged" instructions; do not use them as the current status.
