@@ -11,8 +11,15 @@ function getModalFocusableElements(container) {
     .filter(el => el.getClientRects().length > 0 && getComputedStyle(el).visibility !== 'hidden');
 }
 
+// Keeps body.modal-open in sync so floating widgets (a11y button) can hide behind any open viewer,
+// without relying on :has() support. Called after the caller toggled the modal's 'open' class.
+function syncModalOpenClass() {
+  document.body.classList.toggle('modal-open', !!document.querySelector('.lightbox.open, .wall-modal.open'));
+}
+
 function openModalA11y(modalEl, focusSelector) {
   modalEl._a11yPrevFocus = document.activeElement;
+  syncModalOpenClass();
   const focusTarget = (focusSelector && modalEl.querySelector(focusSelector)) || getModalFocusableElements(modalEl)[0];
   requestAnimationFrame(() => { if (focusTarget) focusTarget.focus(); });
 
@@ -29,6 +36,7 @@ function openModalA11y(modalEl, focusSelector) {
 }
 
 function closeModalA11y(modalEl) {
+  syncModalOpenClass();
   if (modalEl._a11yKeydownHandler) {
     modalEl.removeEventListener('keydown', modalEl._a11yKeydownHandler);
     modalEl._a11yKeydownHandler = null;

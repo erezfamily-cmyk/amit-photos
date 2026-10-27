@@ -45,7 +45,11 @@ function runModalA11y() {
     console,
   };
   vm.createContext(context);
-  fakeDocument = { activeElement: null, body: { contains: (el) => el !== null } };
+  fakeDocument = {
+    activeElement: null,
+    body: { contains: (el) => el !== null, classList: { toggle() {} } },
+    querySelector: () => null,
+  };
   context.document = fakeDocument;
   vm.runInContext(modalA11ySrc, context);
   return context;

@@ -1718,8 +1718,8 @@ body[data-payments-state="enabled"] .payments-disabled-only {
 @media (max-width: 600px) {
   .lightbox-inner {
     flex: 0 0 auto;
-    height: min(56svh, 480px);
-    padding: calc(env(safe-area-inset-top, 0px) + 3.5rem) 1rem 0;
+    height: auto; /* hug the photo: a fixed-height stage left big black gaps above/below landscape photos */
+    padding: calc(env(safe-area-inset-top, 0px) + 3.5rem) 1rem 2.25rem;
   }
   .lightbox-inner img {
     max-height: calc(min(56svh, 480px) - 4rem);
@@ -2049,9 +2049,12 @@ body[data-payments-state="enabled"] .payments-disabled-only {
     order: -3;
     width: 100%;
     justify-content: center;
-    min-height: 48px;
-    padding: 0.75rem 1rem;
-    font-size: 0.95rem;
+    min-height: 44px;
+    padding: 0.55rem 0.9rem;
+    font-size: 0.85rem;
+    letter-spacing: 0.01em;
+    line-height: 1.3;
+    text-align: center;
   }
 }
 
@@ -4119,4 +4122,5 @@ footer {
 
 /* Floating accessibility button must not cover lightbox / wall-preview controls (share buttons, close) */
 body:has(#lightbox.open) #a11y-widget-btn,
-body:has(#wall-modal.open) #a11y-widget-btn { display: none; }
+body:has(#wall-modal.open) #a11y-widget-btn,
+body.modal-open #a11y-widget-btn { display: none; }
