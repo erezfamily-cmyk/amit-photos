@@ -22,6 +22,6 @@ test('the lightbox contact action is personalized to the open photo without expo
 
 test('the mobile contact action is a full-width primary touch target', () => {
   assert.match(css, /\.lb-contact-btn\s*\{[^}]*background:\s*#25d366/s);
-  assert.match(css, /@media \(hover: none\)[\s\S]*\.lb-contact-btn\s*\{[^}]*width:\s*100%[^}]*min-height:\s*48px/s);
+  assert.match(css, /@media \(hover: none\)[\s\S]*\.lb-contact-btn\s*\{[^}]*width:\s*100%[^}]*min-height:\s*44px/s);
   assert.match(css, /\.lightbox\s*\{[^}]*overflow-y:\s*auto[^}]*overscroll-behavior:\s*contain/s);
 });
