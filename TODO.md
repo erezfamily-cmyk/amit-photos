@@ -4,7 +4,8 @@
 - [x] EN lightbox arrows + Hebrew `<title>`/footer logo — fixed in #194 (merged `7df4272`, verified live).
 - [x] a11y button overlap — #195 merged `265d63b`, verified live. (Wall-modal empty circle = colour picker, not a bug.)
 - [x] Counter `/2310` is correct (2,310 published photos). `?lang=` override — fix PR open.
-- [ ] Mobile lightbox stage layout — needs a real phone.
+- [x] Mobile lightbox stage layout — fixed in #197 (`5ad3110`), verified live in Chromium; owner to re-check on iPhone (private tab).
+- [x] `?lang=` override — #196 merged `888f7b0`, verified live.
 - [ ] Owner to confirm on real phone.
 
 ## ACTIVE NEXT-DAY CHECKLIST — 2026-10-27 (supersedes historical #181/#187 drafts)
