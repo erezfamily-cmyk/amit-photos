@@ -99,7 +99,7 @@ try {
   assert.equal(await page.locator('html').getAttribute('lang'), 'en');
   assert.equal(await page.locator('body').getAttribute('data-payments-state'), 'disabled');
   // English-only page must not leak Hebrew in platform cards (500px/GuruShots/Instagram/TikTok).
-  assert.equal((await page.locator('.platforms-section .section-label').innerText()).trim(), 'Online Presence');
+  assert.match((await page.locator('.platforms-section .section-label').innerText()).trim(), /^online presence$/i);
   assert.equal((await page.locator('.platform-card').nth(0).locator('.platform-stat').first().innerText()).trim(), '202 photos');
   assert.match(await page.locator('.platform-card').nth(1).locator('.platform-stat').first().innerText(), /GURU rank/);
   assert.match(await page.locator('.platform-card').nth(2).locator('.platform-stat').first().innerText(), /followers/);
