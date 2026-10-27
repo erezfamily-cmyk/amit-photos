@@ -6,6 +6,7 @@
 - [x] Counter `/2310` is correct (2,310 published photos). `?lang=` override — fix PR open.
 - [x] Mobile lightbox stage layout — fixed in #197 (`5ad3110`), verified live in Chromium; owner to re-check on iPhone (private tab).
 - [x] Opaque lightbox backdrop — #199 merged (`16fccee`), verified live in Chromium; owner iPhone check still pending.
+- [x] Gallery card title contrast + English watermark — #200 merged (`c1a55e9`), verified live via computed styles; owner iPhone check pending.
 - [x] `?lang=` override — #196 merged `888f7b0`, verified live.
 - [ ] Owner to confirm on real phone.
 
