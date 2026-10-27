@@ -147,7 +147,7 @@ input[type=range].aperture-slider::-webkit-slider-thumb { -webkit-appearance: no
 .kofi-bar{text-align:center;padding:1.25rem 1.25rem 1.75rem;max-width:760px;margin:0 auto}
 .kofi-bar a{display:inline-flex;align-items:center;gap:.5rem;background:var(--surface);border:1px solid rgba(200,169,110,.4);color:var(--accent);font-size:.82rem;font-weight:700;padding:.55rem 1.4rem;border-radius:8px;text-decoration:none;transition:background .2s,color .2s}
 .kofi-bar a:hover{background:var(--accent);color:#000}</style>
-<link rel="stylesheet" href="/assets/css/guide-cream.css?v=92a39176">
+<link rel="stylesheet" href="/assets/css/guide-cream.css?v=85d11a81">
 
 <script src="/assets/js/nav.js?v=dd63b478" defer></script>
 <script src="/assets/js/share.js" defer></script>
@@ -254,7 +254,7 @@ input[type=range].aperture-slider::-webkit-slider-thumb { -webkit-appearance: no
           <div class="scale-labels">
             <span>100</span><span>200</span><span>400</span><span>800</span><span>1600</span><span>3200</span><span>6400</span>
           </div>
-          <div class="slider-hint" data-he="⬆ ISO גבוה = יותר אור, אבל גם יותר רעש (גרעיניות)" data-en="⬆ High ISO = more light, but also more noise (grain)">⬆ ISO גבוה = יותר אור, אבל גם יותר רעש (גרעיניות)</div>
+          <div class="slider-hint"><svg class="gi" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20V5M6 11l6-6 6 6"/></svg><span data-he="ISO גבוה = יותר אור, אבל גם יותר רעש (גרעיניות)" data-en="High ISO = more light, but also more noise (grain)">ISO גבוה = יותר אור, אבל גם יותר רעש (גרעיניות)</span></div>
         </div>
 
         <!-- Shutter Speed -->
@@ -270,7 +270,7 @@ input[type=range].aperture-slider::-webkit-slider-thumb { -webkit-appearance: no
           <div class="scale-labels">
             <span>1/1000</span><span>1/500</span><span>1/250</span><span>1/125</span><span>1/60</span><span>1/30</span><span>1/15</span><span>1/8</span>
           </div>
-          <div class="slider-hint" data-he="⬇ תריס איטי = יותר אור, אבל טשטוש תנועה אם לא יציב" data-en="⬇ Slow shutter = more light, but motion blur if not steady">⬇ תריס איטי = יותר אור, אבל טשטוש תנועה אם לא יציב</div>
+          <div class="slider-hint"><svg class="gi" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v15M6 13l6 6 6-6"/></svg><span data-he="תריס איטי = יותר אור, אבל טשטוש תנועה אם לא יציב" data-en="Slow shutter = more light, but motion blur if not steady">תריס איטי = יותר אור, אבל טשטוש תנועה אם לא יציב</span></div>
         </div>
 
         <!-- Aperture -->
@@ -286,7 +286,7 @@ input[type=range].aperture-slider::-webkit-slider-thumb { -webkit-appearance: no
           <div class="scale-labels">
             <span>f/1.4</span><span>f/2</span><span>f/2.8</span><span>f/5.6</span><span>f/8</span><span>f/11</span><span>f/16</span>
           </div>
-          <div class="slider-hint" data-he="⬅ f קטן = פתח גדול = יותר אור + רקע מטושטש (בוקה)" data-en="⬅ Small f = large opening = more light + blurred background (bokeh)">⬅ f קטן = פתח גדול = יותר אור + רקע מטושטש (בוקה)</div>
+          <div class="slider-hint"><svg class="gi" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12H5M11 6l-6 6 6 6"/></svg><span data-he="f קטן = פתח גדול = יותר אור + רקע מטושטש (בוקה)" data-en="Small f = large opening = more light + blurred background (bokeh)">f קטן = פתח גדול = יותר אור + רקע מטושטש (בוקה)</span></div>
         </div>
       </div>
     </div>
@@ -312,11 +312,11 @@ input[type=range].aperture-slider::-webkit-slider-thumb { -webkit-appearance: no
               data-he="צמצם" data-en="Aperture">צמצם</text>
         <!-- Side labels (tradeoffs) -->
         <text x="255" y="150" text-anchor="middle" fill="#888" font-size="11" transform="rotate(50 255 150)"
-              data-he="רעש ↔ אור" data-en="Noise ↔ Light">רעש ↔ אור</text>
+              data-he="רעש ⟷ אור" data-en="Noise ⟷ Light">רעש ⟷ אור</text>
         <text x="85" y="150" text-anchor="middle" fill="#888" font-size="11" transform="rotate(-50 85 150)"
-              data-he="בוקה ↔ שדה" data-en="Bokeh ↔ Depth">בוקה ↔ שדה</text>
+              data-he="בוקה ⟷ שדה" data-en="Bokeh ⟷ Depth">בוקה ⟷ שדה</text>
         <text x="170" y="268" text-anchor="middle" fill="#888" font-size="11"
-              data-he="טשטוש ↔ קפאון" data-en="Blur ↔ Freeze">טשטוש ↔ קפאון</text>
+              data-he="טשטוש ⟷ קפאון" data-en="Blur ⟷ Freeze">טשטוש ⟷ קפאון</text>
         <!-- Center label -->
         <text x="170" y="165" text-anchor="middle" fill="#c8a96e" font-family="Syne,sans-serif" font-size="15" font-weight="bold"
               data-he="חשיפה" data-en="Exposure">חשיפה</text>
@@ -344,7 +344,7 @@ input[type=range].aperture-slider::-webkit-slider-thumb { -webkit-appearance: no
           <div class="effect-name">ISO</div>
         </div>
         <div class="effect-desc" data-he="מגביר את רגישות החיישן לאור. מאפשר לצלם בחשכה בלי לשנות את שאר הפרמטרים." data-en="Amplifies the sensor's sensitivity to light. Lets you shoot in the dark without changing other parameters.">מגביר את רגישות החיישן לאור. מאפשר לצלם בחשכה בלי לשנות את שאר הפרמטרים.</div>
-        <div class="effect-tradeoff" data-he="⚠ ISO גבוה = רעש (גרעיניות דיגיטלית) בעיקר בצללים" data-en="⚠ High ISO = noise (digital grain) especially in shadows">⚠ ISO גבוה = רעש (גרעיניות דיגיטלית) בעיקר בצללים</div>
+        <div class="effect-tradeoff"><svg class="gi" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18.2v.1"/></svg><span data-he="ISO גבוה = רעש (גרעיניות דיגיטלית) בעיקר בצללים" data-en="High ISO = noise (digital grain) especially in shadows">ISO גבוה = רעש (גרעיניות דיגיטלית) בעיקר בצללים</span></div>
       </div>
 
       <div class="effect-card">
@@ -353,7 +353,7 @@ input[type=range].aperture-slider::-webkit-slider-thumb { -webkit-appearance: no
           <div class="effect-name" data-he="תריס" data-en="Shutter">תריס</div>
         </div>
         <div class="effect-desc" data-he="קובע כמה זמן החיישן חשוף לאור. תריס מהיר מקפיא תנועה; איטי יוצר טשטוש." data-en="Determines how long the sensor is exposed to light. Fast shutter freezes motion; slow creates blur.">קובע כמה זמן החיישן חשוף לאור. תריס מהיר מקפיא תנועה; איטי יוצר טשטוש.</div>
-        <div class="effect-tradeoff" data-he="⚠ תריס איטי מחייב חצובה. מתחת ל-1/60 — קשה להחזיק יציב" data-en="⚠ Slow shutter requires a tripod. Below 1/60 — hard to hold steady">⚠ תריס איטי מחייב חצובה. מתחת ל-1/60 — קשה להחזיק יציב</div>
+        <div class="effect-tradeoff"><svg class="gi" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18.2v.1"/></svg><span data-he="תריס איטי מחייב חצובה. מתחת ל-1/60 — קשה להחזיק יציב" data-en="Slow shutter requires a tripod. Below 1/60 — hard to hold steady">תריס איטי מחייב חצובה. מתחת ל-1/60 — קשה להחזיק יציב</span></div>
       </div>
 
       <div class="effect-card">
@@ -362,7 +362,7 @@ input[type=range].aperture-slider::-webkit-slider-thumb { -webkit-appearance: no
           <div class="effect-name" data-he="צמצם" data-en="Aperture">צמצם</div>
         </div>
         <div class="effect-desc" data-he="גודל פתח העדשה. f קטן = פתח גדול = יותר אור + עומק שדה רדוד (בוקה)." data-en="The lens opening size. Small f = large opening = more light + shallow depth of field (bokeh).">גודל פתח העדשה. f קטן = פתח גדול = יותר אור + עומק שדה רדוד (בוקה).</div>
-        <div class="effect-tradeoff" data-he="⚠ f גדול (f/16) = פחות בוקה אבל נדרש יותר אור. f קטן (f/1.4) = בוקה חזק" data-en="⚠ Large f (f/16) = less bokeh but needs more light. Small f (f/1.4) = strong bokeh">⚠ f גדול (f/16) = פחות בוקה אבל נדרש יותר אור. f קטן (f/1.4) = בוקה חזק</div>
+        <div class="effect-tradeoff"><svg class="gi" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18.2v.1"/></svg><span data-he="f גדול (f/16) = פחות בוקה אבל נדרש יותר אור. f קטן (f/1.4) = בוקה חזק" data-en="Large f (f/16) = less bokeh but needs more light. Small f (f/1.4) = strong bokeh">f גדול (f/16) = פחות בוקה אבל נדרש יותר אור. f קטן (f/1.4) = בוקה חזק</span></div>
       </div>
     </div>
   </div>
