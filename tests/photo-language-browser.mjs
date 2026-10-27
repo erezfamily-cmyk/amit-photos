@@ -120,6 +120,8 @@ try {
   assert.equal(roomLayout.backToTopDisplay, 'none');
   assert.doesNotMatch(await page.locator('meta[name="viewport"]').getAttribute('content'), /user-scalable\s*=\s*no|maximum-scale\s*=\s*1(?:[,.\s]|$)/,
     'Keep pinch zoom available for accessibility');
+  assert.match(await page.locator('meta[name="viewport"]').getAttribute('content'), /minimum-scale\s*=\s*1(?:[,.\s]|$)/,
+    'Keep native minimum mobile scale, but allow zooming in');
   results.push('Mobile living-room art alignment + unobstructed photo + accessible viewport');
 
   await page.locator('.filter-btn[data-cat="all"]').click();
