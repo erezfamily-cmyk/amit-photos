@@ -19,6 +19,9 @@ test('worker-generated Pinterest destinations use one UTM helper', () => {
 test('automated social scripts use campaign URLs instead of unattributed photo links', () => {
   assert.match(facebook, /source="facebook", campaign="photo_posts"/);
   assert.match(threads, /source="threads", campaign="photo_posts"/);
-  assert.match(pinterest, /source="pinterest", campaign="gallery_pins"/);
-  assert.match(pinterest, /"link": build_campaign_url/);
+  // Pinterest posts curated queue rows (#139/#140): the per-photo link comes from the queue and UTM params are appended in publish().
+  assert.match(pinterest, /"utm_source": "pinterest"/);
+  assert.match(pinterest, /"utm_medium": "organic_social"/);
+  assert.match(pinterest, /"utm_campaign": "gallery_pins"/);
+  assert.match(pinterest, /"link": link,/);
 });
