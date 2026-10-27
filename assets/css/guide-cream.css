@@ -11,6 +11,10 @@ body { background: var(--bg); color: var(--text); }
 .hero h1 { font-size: 2.3rem; color: #302d28; }
 .hero-badge { background: #fffdf9; border-color: #ded8ce; color: #566156; }
 .hero-badge svg, .lab-title svg { vertical-align: -3px; margin-inline-end: 6px; }
+/* guides whose hero uses .page-hero / .badge instead of .hero / .hero-badge */
+.page-hero h1 { font-family: 'Frank Ruhl Libre', Georgia, serif; font-weight: 500; font-size: 2.3rem; color: #302d28; }
+.page-hero .badge { background: #fffdf9; border-color: #ded8ce; color: #566156; }
+.page-hero .badge svg { vertical-align: -3px; margin-inline-end: 6px; }
 /* inline icons that replace emoji inside labels, buttons, badges and tip cards */
 .gi { flex-shrink: 0; vertical-align: -.2em; margin-inline-end: .4em; }
 .tip-icon .gi, .tip-card-icon .gi, .tip-card-emoji .gi, .filter-desc-icon .gi, .f-emoji .gi { margin: 0; vertical-align: middle; }
