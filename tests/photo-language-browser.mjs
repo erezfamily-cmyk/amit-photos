@@ -98,6 +98,17 @@ try {
   }
   assert.equal(await page.locator('html').getAttribute('lang'), 'en');
   assert.equal(await page.locator('body').getAttribute('data-payments-state'), 'disabled');
+  // English-only page must not leak Hebrew in platform cards (500px/GuruShots/Instagram/TikTok).
+  assert.match((await page.locator('.platforms-section .section-label').innerText()).trim(), /^online presence$/i);
+  assert.equal((await page.locator('.platform-card').nth(0).locator('.platform-stat').first().innerText()).trim(), '202 photos');
+  assert.match(await page.locator('.platform-card').nth(1).locator('.platform-stat').first().innerText(), /GURU rank/);
+  assert.match(await page.locator('.platform-card').nth(2).locator('.platform-stat').first().innerText(), /followers/);
+  assert.equal((await page.locator('.platform-card').nth(3).locator('.platform-stat').nth(1).innerText()).trim(), 'Photography tips');
+  assert.equal((await page.locator('.platform-card').nth(0).locator('.platform-cta').innerText()).trim(), 'View profile ↗');
+  assert.equal((await page.locator('.platform-card').nth(2).locator('.platform-cta').innerText()).trim(), 'Follow ↗');
+  assert.equal((await page.locator('.platform-card').nth(2).locator('.platform-stat').nth(2).innerText()).trim(), 'Weekly Stories');
+  assert.equal((await page.locator('.platform-card').nth(3).locator('.platform-stat').first().innerText()).trim(), 'Short Reels');
+  results.push('English social platform labels and card statistics');
   // Room mockup stays on the wall, clear of the sofa back, on narrow phones.
   await page.locator('#home-value:not([hidden])').waitFor();
   const roomLayout = await page.evaluate(() => {
@@ -183,6 +194,10 @@ try {
   results.push('No Hebrew leak when English translation is absent');
 
   await page.evaluate(() => window.setLang('he'));
+  assert.equal((await page.locator('.platforms-section .section-label').innerText()).trim(), 'נוכחות ברשת');
+  assert.match(await page.locator('.platform-card').nth(0).locator('.platform-stat').first().innerText(), /תמונות/);
+  assert.equal((await page.locator('.platform-card').nth(0).locator('.platform-cta').innerText()).trim(), 'לפרופיל ↗');
+
   assert.equal((await page.locator('#lb-title').innerText()).trim(), 'שביל בגאורגיה');
   assert.equal((await page.locator('#lb-cat').innerText()).trim(), 'גאורגיה');
   assert.equal((await page.locator('#lb-desc').innerText()).trim(), 'תיאור ללא תרגום');
@@ -193,6 +208,15 @@ try {
   const dest = 'artifacts/experience-smoke/branch-' + engine;
   mkdirSync(dest, { recursive: true });
   await page.locator('#lightbox').screenshot({ path: dest + '/lightbox-english.png', timeout: 12000 });
+  // Evidence from the actual browser engine: all four English platform cards.
+  await page.locator('.platforms-section').scrollIntoViewIfNeeded();
+  const platformText = await page.locator('.platforms-section').innerText();
+  assert.doesNotMatch(platformText, /[\u0590-\u05ff]/,
+    'English social presence section must not contain Hebrew');
+  await page.locator('.platforms-section').screenshot({
+    path: dest + '/english-platform-cards.png', timeout: 12000,
+  });
+  results.push('English social platform screenshot free from Hebrew labels');
   assert.deepEqual(errors, [], 'No JavaScript page errors');
   console.log('BRANCH_LIGHTBOX_SUCCESS ' + JSON.stringify({ engine, results, pageErrors: errors }));
 } finally {
