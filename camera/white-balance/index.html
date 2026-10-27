@@ -13,7 +13,7 @@
 <title>וייט בלאנס — טמפרטורת צבע ומה זה קלוין | בית ספר לצילום | Amit Photos</title>
 <meta name="description" content="למד על וייט בלאנס וטמפרטורת צבע — סליידר אינטראקטיבי שמשנה תמונות אמיתיות מקר לחם.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&family=Frank+Ruhl+Libre:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
@@ -146,6 +146,7 @@ input[type=range]#wb-slider:active::-webkit-slider-thumb { cursor: grabbing; }
 .kofi-bar{text-align:center;padding:1.25rem 1.25rem 1.75rem;max-width:760px;margin:0 auto}
 .kofi-bar a{display:inline-flex;align-items:center;gap:.5rem;background:var(--surface);border:1px solid rgba(200,169,110,.4);color:var(--accent);font-size:.82rem;font-weight:700;padding:.55rem 1.4rem;border-radius:8px;text-decoration:none;transition:background .2s,color .2s}
 .kofi-bar a:hover{background:var(--accent);color:#000}</style>
+<link rel="stylesheet" href="/assets/css/guide-cream.css?v=233e6265">
 <script src="/assets/js/nav.js?v=6783a6fc" defer></script>
 <script src="/assets/js/share.js" defer></script>
 
@@ -210,11 +211,10 @@ input[type=range]#wb-slider:active::-webkit-slider-thumb { cursor: grabbing; }
 <body>
 
 <div class="page-hero">
-  <div class="badge" data-he="📷 בית ספר לצילום" data-en="📷 Photography School">📷 בית ספר לצילום</div>  </div>
+  <div class="badge"><svg class="gi" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l1.5-2h7L17 8h3v11H4z"/><circle cx="12" cy="13.5" r="3.2"/></svg><span data-he="בית ספר לצילום" data-en="Photography School">בית ספר לצילום</span></div>
   <div class="yt-embed-wrap">
     <iframe id="vid-embed" title="סרטון הדרכה — איזון לבן" loading="lazy" allowfullscreen></iframe>
   </div>
-</div>
   <h1 data-he="וייט בלאנס — טמפרטורת צבע" data-en="White Balance — Color Temperature">וייט בלאנס — טמפרטורת צבע</h1>
   <p data-he="למה תמונה יוצאת כחולה בחוץ בצל, וכתומה בפנים ליד מנורה? גרור וראה בעצמך" data-en="Why does a photo look blue in the shade, and orange indoors near a lamp? Drag and see for yourself">למה תמונה יוצאת כחולה בחוץ בצל, וכתומה בפנים ליד מנורה? גרור וראה בעצמך</p>
 </div>
@@ -227,7 +227,7 @@ input[type=range]#wb-slider:active::-webkit-slider-thumb { cursor: grabbing; }
   <div class="interactive">
 
     <!-- Photo -->
-    <div class="photo-panel">
+    <div class="photo-panel guide-dark">
       <div class="photo-container">
         <img id="main-photo" src="" alt="" class="main-photo-img">
       </div>
@@ -238,7 +238,7 @@ input[type=range]#wb-slider:active::-webkit-slider-thumb { cursor: grabbing; }
     </div>
 
     <!-- Presets -->
-    <div class="presets-panel">
+    <div class="presets-panel guide-dark">
       <div class="presets-title" data-he="הגדרות מוכנות (Presets)" data-en="Ready Presets">הגדרות מוכנות (Presets)</div>
       <div class="preset-list" id="preset-list"></div>
     </div>
@@ -246,7 +246,7 @@ input[type=range]#wb-slider:active::-webkit-slider-thumb { cursor: grabbing; }
   </div>
 
   <!-- Temperature slider -->
-  <div class="temp-wrap">
+  <div class="temp-wrap guide-dark">
     <div class="temp-header">
       <span class="temp-label" data-he="טמפרטורת צבע" data-en="Color Temperature">טמפרטורת צבע</span>
       <div class="temp-value-wrap">
@@ -438,12 +438,12 @@ function setK(k) {
 }
 
 const BADGE_NAMES = [
-  { k: 3000, he: '🕯️ נרות — חם מאוד',  en: '🕯️ Candle — Very Warm',  color: '#ff8833', bg: 'rgba(255,136,51,.15)' },
-  { k: 3800, he: '💡 הלוגן — חם',       en: '💡 Halogen — Warm',       color: '#ffaa44', bg: 'rgba(255,170,68,.15)' },
-  { k: 4800, he: '🏭 פלואורסנט',        en: '🏭 Fluorescent',          color: '#c8c8aa', bg: 'rgba(200,200,170,.1)' },
-  { k: 6000, he: '☀️ אור יום — ניטרלי', en: '☀️ Daylight — Neutral',   color: '#c8a96e', bg: 'rgba(200,169,110,.12)' },
-  { k: 7500, he: '☁️ עננים — קריר',    en: '☁️ Cloudy — Cool',         color: '#aabbff', bg: 'rgba(170,187,255,.12)' },
-  { k: Infinity, he: '🌑 צל — קר מאוד', en: '🌑 Shade — Very Cool',    color: '#88aaff', bg: 'rgba(136,170,255,.15)' }
+  { k: 3000, he: 'נרות — חם מאוד',  en: 'Candle — Very Warm',  color: '#ff8833', bg: 'rgba(255,136,51,.15)' },
+  { k: 3800, he: 'הלוגן — חם',       en: 'Halogen — Warm',       color: '#ffaa44', bg: 'rgba(255,170,68,.15)' },
+  { k: 4800, he: 'פלואורסנט',        en: 'Fluorescent',          color: '#c8c8aa', bg: 'rgba(200,200,170,.1)' },
+  { k: 6000, he: 'אור יום — ניטרלי', en: 'Daylight — Neutral',   color: '#c8a96e', bg: 'rgba(200,169,110,.12)' },
+  { k: 7500, he: 'עננים — קריר',    en: 'Cloudy — Cool',         color: '#aabbff', bg: 'rgba(170,187,255,.12)' },
+  { k: Infinity, he: 'צל — קר מאוד', en: 'Shade — Very Cool',    color: '#88aaff', bg: 'rgba(136,170,255,.15)' }
 ];
 
 function updateBadge(k) {

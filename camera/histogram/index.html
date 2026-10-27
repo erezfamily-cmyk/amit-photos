@@ -13,7 +13,7 @@
 <title>היסטוגרם — לקרוא את האור | בית ספר לצילום | Amit Photos</title>
 <meta name="description" content="למד לקרוא היסטוגרם — הכלי החשוב ביותר לחשיפה נכונה. דמו אינטראקטיבי עם תמונות אמיתיות.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&family=Frank+Ruhl+Libre:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
@@ -154,6 +154,7 @@ input[type=range]#exp-slider:active::-webkit-slider-thumb { cursor: grabbing; }
 .kofi-bar{text-align:center;padding:1.25rem 1.25rem 1.75rem;max-width:760px;margin:0 auto}
 .kofi-bar a{display:inline-flex;align-items:center;gap:.5rem;background:var(--surface);border:1px solid rgba(200,169,110,.4);color:var(--accent);font-size:.82rem;font-weight:700;padding:.55rem 1.4rem;border-radius:8px;text-decoration:none;transition:background .2s,color .2s}
 .kofi-bar a:hover{background:var(--accent);color:#000}</style>
+<link rel="stylesheet" href="/assets/css/guide-cream.css?v=233e6265">
 <script src="/assets/js/nav.js?v=6783a6fc" defer></script>
 <script src="/assets/js/share.js" defer></script>
 
@@ -218,11 +219,10 @@ input[type=range]#exp-slider:active::-webkit-slider-thumb { cursor: grabbing; }
 <body>
 
 <div class="page-hero">
-  <div class="badge" data-he="📷 בית ספר לצילום" data-en="📷 Photography School">📷 בית ספר לצילום</div>  </div>
+  <div class="badge"><svg class="gi" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l1.5-2h7L17 8h3v11H4z"/><circle cx="12" cy="13.5" r="3.2"/></svg><span data-he="בית ספר לצילום" data-en="Photography School">בית ספר לצילום</span></div>
   <div class="yt-embed-wrap">
     <iframe id="vid-embed" title="סרטון הדרכה — היסטוגרמה" loading="lazy" allowfullscreen></iframe>
   </div>
-</div>
   <h1 data-he="היסטוגרם — לקרוא את האור" data-en="Histogram — Reading the Light">היסטוגרם — לקרוא את האור</h1>
   <p data-he='שנה חשיפה וראה בזמן אמת איך ההיסטוגרם זז — ומתי הפרטים "נשרפים" או נעלמים' data-en='Change exposure and see in real time how the histogram shifts — and when details get "burned" or disappear'>שנה חשיפה וראה בזמן אמת איך ההיסטוגרם זז — ומתי הפרטים "נשרפים" או נעלמים</p>
 </div>
@@ -236,7 +236,7 @@ input[type=range]#exp-slider:active::-webkit-slider-thumb { cursor: grabbing; }
   <div class="interactive">
 
     <!-- Photo -->
-    <div class="photo-panel">
+    <div class="photo-panel guide-dark">
       <div class="photo-container">
         <img id="main-photo" src="" alt="">
         <div class="clip-overlay">
@@ -251,7 +251,7 @@ input[type=range]#exp-slider:active::-webkit-slider-thumb { cursor: grabbing; }
     </div>
 
     <!-- Histogram -->
-    <div class="hist-panel">
+    <div class="hist-panel guide-dark">
       <div class="hist-header">
         <span class="hist-title" data-he="היסטוגרם" data-en="Histogram">היסטוגרם</span>
         <div class="hist-channels">
@@ -270,15 +270,15 @@ input[type=range]#exp-slider:active::-webkit-slider-thumb { cursor: grabbing; }
         <span data-he="לבן (255)" data-en="White (255)">לבן (255)</span>
       </div>
       <div class="clip-info">
-        <div class="clip-badge clip-shadow-badge" id="clip-shadow-badge">⬛ צללים בסדר</div>
-        <div class="clip-badge clip-highlight-badge" id="clip-hl-badge">⬜ הבהרות בסדר</div>
+        <div class="clip-badge clip-shadow-badge" id="clip-shadow-badge">צללים בסדר</div>
+        <div class="clip-badge clip-highlight-badge" id="clip-hl-badge">הבהרות בסדר</div>
       </div>
     </div>
 
   </div>
 
   <!-- Exposure slider -->
-  <div class="exposure-wrap">
+  <div class="exposure-wrap guide-dark">
     <div class="exp-header">
       <span class="exp-label" data-he="שינוי חשיפה" data-en="Exposure">שינוי חשיפה</span>
       <span><span class="exp-value" id="exp-val">0</span> <span class="exp-unit" data-he="סטופים (EV)" data-en="stops (EV)">סטופים (EV)</span></span>
@@ -295,22 +295,22 @@ input[type=range]#exp-slider:active::-webkit-slider-thumb { cursor: grabbing; }
   <!-- Info cards -->
   <div class="info-grid">
     <div class="info-card">
-      <div class="ic-icon">⬛</div>
+      <div class="ic-icon"><svg class="gi" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="1.5"/></svg><span></span></div>
       <h2 data-he="קצה שמאל — צללים" data-en="Left edge — Shadows">קצה שמאל — צללים</h2>
       <p data-he='ערכים 0–30. כשהגרף "נשפך" משמאל — הפרטים בצל נעלמים לחלוטין (underexposed).' data-en='Values 0–30. When the graph "spills" on the left — shadow details disappear completely (underexposed).'>ערכים 0–30. כשהגרף "נשפך" משמאל — הפרטים בצל נעלמים לחלוטין (underexposed).</p>
     </div>
     <div class="info-card">
-      <div class="ic-icon">🎯</div>
+      <div class="ic-icon"><svg class="gi" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1" fill="currentColor"/></svg><span></span></div>
       <h2 data-he="אמצע — אפורים בינוניים" data-en="Middle — Midtones">אמצע — אפורים בינוניים</h2>
       <p data-he='ערכים 100–150. רוב הפרטים החשובים נמצאים כאן. היסטוגרם "הגון" נמצא סביב האמצע.' data-en='Values 100–150. Most important details live here. A "decent" histogram sits around the middle.'>ערכים 100–150. רוב הפרטים החשובים נמצאים כאן. היסטוגרם "הגון" נמצא סביב האמצע.</p>
     </div>
     <div class="info-card">
-      <div class="ic-icon">⬜</div>
+      <div class="ic-icon" style="color:var(--accent)"><svg class="gi" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="1.5"/></svg></div>
       <h2 data-he="קצה ימין — הבהרות" data-en="Right edge — Highlights">קצה ימין — הבהרות</h2>
       <p data-he='ערכים 225–255. כשהגרף "נשפך" מימין — פרטי אור נשרפים ללבן טהור (overexposed).' data-en='Values 225–255. When the graph "spills" on the right — highlight details burn to pure white (overexposed).'>ערכים 225–255. כשהגרף "נשפך" מימין — פרטי אור נשרפים ללבן טהור (overexposed).</p>
     </div>
     <div class="info-card">
-      <div class="ic-icon">📐</div>
+      <div class="ic-icon"><svg class="gi" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17L17 3l4 4L7 21z"/><path d="M7 13l2 2M10 10l2 2M13 7l2 2"/></svg><span></span></div>
       <h2 data-he='אין היסטוגרם "נכון"' data-en='No "correct" histogram'>אין היסטוגרם "נכון"</h2>
       <p data-he="תמונה כהה במכוון תהיה שמאלית. High-key תהיה ימינית. המטרה: לא לאבד פרטים שרצית לשמר." data-en="An intentionally dark image will be left-heavy. High-key will be right-heavy. The goal: don't lose details you wanted to keep.">תמונה כהה במכוון תהיה שמאלית. High-key תהיה ימינית. המטרה: לא לאבד פרטים שרצית לשמר.</p>
     </div>
@@ -581,31 +581,31 @@ function drawHistogram() {
 
   const isEn = getLang() === 'en';
   if (shadowClip) {
-    shadowBadge.textContent = isEn ? '⬛ Shadows clipped!' : '⬛ צללים נחסמים!';
+    shadowBadge.textContent = isEn ? 'Shadows clipped!' : 'צללים נחסמים!';
     shadowBadge.classList.add('warn');
     shadowOverlay.style.opacity = '1';
   } else {
-    shadowBadge.textContent = isEn ? '⬛ Shadows OK' : '⬛ צללים בסדר';
+    shadowBadge.textContent = isEn ? 'Shadows OK' : 'צללים בסדר';
     shadowBadge.classList.remove('warn');
     shadowOverlay.style.opacity = '0';
   }
 
   if (hlClip) {
-    hlBadge.textContent = isEn ? '⬜ Highlights blown!' : '⬜ הבהרות נשרפות!';
+    hlBadge.textContent = isEn ? 'Highlights blown!' : 'הבהרות נשרפות!';
     hlBadge.classList.add('warn');
     hlOverlay.style.opacity = '1';
   } else {
-    hlBadge.textContent = isEn ? '⬜ Highlights OK' : '⬜ הבהרות בסדר';
+    hlBadge.textContent = isEn ? 'Highlights OK' : 'הבהרות בסדר';
     hlBadge.classList.remove('warn');
     hlOverlay.style.opacity = '0';
   }
 }
 
 const TIPS = [
-  { test: ev => ev < -2.2, he: '⚠️ חשיפת חסר קיצונית — פרטים בצל נעלמים לחלוטין',    en: '⚠️ Extreme underexposure — shadow details completely lost',   cls: 'reading-tip bad'  },
-  { test: ev => ev < -1,   he: '↙ חשיפת חסר — ההיסטוגרם זז שמאלה, צללים מתעמקים',  en: '↙ Underexposed — histogram shifts left, shadows deepen',       cls: 'reading-tip warn' },
-  { test: ev => ev > 2.2,  he: '⚠️ חשיפת יתר קיצונית — פרטי האור "נשרפים" ללבן',   en: '⚠️ Extreme overexposure — highlight details burn to white',    cls: 'reading-tip bad'  },
-  { test: ev => ev > 1,    he: '↗ חשיפת יתר — ההיסטוגרם זז ימינה, הבהרות מאירות',  en: '↗ Overexposed — histogram shifts right, highlights brighten',  cls: 'reading-tip warn' },
+  { test: ev => ev < -2.2, he: 'חשיפת חסר קיצונית — פרטים בצל נעלמים לחלוטין',    en: 'Extreme underexposure — shadow details completely lost',   cls: 'reading-tip bad'  },
+  { test: ev => ev < -1,   he: 'חשיפת חסר — ההיסטוגרם זז שמאלה, צללים מתעמקים',  en: 'Underexposed — histogram shifts left, shadows deepen',       cls: 'reading-tip warn' },
+  { test: ev => ev > 2.2,  he: 'חשיפת יתר קיצונית — פרטי האור "נשרפים" ללבן',   en: 'Extreme overexposure — highlight details burn to white',    cls: 'reading-tip bad'  },
+  { test: ev => ev > 1,    he: 'חשיפת יתר — ההיסטוגרם זז ימינה, הבהרות מאירות',  en: 'Overexposed — histogram shifts right, highlights brighten',  cls: 'reading-tip warn' },
   { test: () => true,      he: '✓ חשיפה טובה — פרטים נשמרים בשני הקצוות',            en: '✓ Good exposure — details preserved at both ends',             cls: 'reading-tip good' }
 ];
 
