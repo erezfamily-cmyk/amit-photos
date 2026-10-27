@@ -13,7 +13,7 @@
 <title>פוקוס — מצבים, נקודות ו-Stacking | בית ספר לצילום | Amit Photos</title>
 <meta name="description" content="למד על מצבי AF, נקודות פוקוס ו-Focus Stacking — דמואים אינטראקטיביים עם תמונות אמיתיות.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&family=Frank+Ruhl+Libre:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
@@ -192,6 +192,7 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
 .kofi-bar{text-align:center;padding:1.25rem 1.25rem 1.75rem;max-width:760px;margin:0 auto}
 .kofi-bar a{display:inline-flex;align-items:center;gap:.5rem;background:var(--surface);border:1px solid rgba(200,169,110,.4);color:var(--accent);font-size:.82rem;font-weight:700;padding:.55rem 1.4rem;border-radius:8px;text-decoration:none;transition:background .2s,color .2s}
 .kofi-bar a:hover{background:var(--accent);color:#000}</style>
+<link rel="stylesheet" href="/assets/css/guide-cream.css?v=5ce41489">
 <script src="/assets/js/nav.js?v=e842596e" defer></script>
 <script src="/assets/js/share.js" defer></script>
 
@@ -257,15 +258,14 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
 
 <!-- SECTION 1: Hero -->
 <div class="page-hero">
-  <div class="badge" data-he="📷 בית ספר לצילום" data-en="📷 Photography School">📷 בית ספר לצילום</div>  </div>
-</div>
+  <div class="badge"><svg class="gi" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l1.5-2h7L17 8h3v11H4z"/><circle cx="12" cy="13.5" r="3.2"/></svg><span data-he="בית ספר לצילום" data-en="Photography School">בית ספר לצילום</span></div>
   <h1 data-he="פוקוס — מצבים, נקודות ו-Stacking" data-en="Focus — Modes, Points &amp; Stacking">פוקוס — מצבים, נקודות ו-Stacking</h1>
   <p data-he="איך המצלמה מחליטה מה חד? בחר מצב, נסה על תמונות אמיתיות" data-en="How does the camera decide what's sharp? Pick a mode, try it on real photos">איך המצלמה מחליטה מה חד? בחר מצב, נסה על תמונות אמיתיות</p>
 </div>
 
 <!-- SECTION 2: AF Modes Demo -->
 <div class="demo-wrap" id="af-demo">
-  <h2 class="section-title" data-he="🎯 מצבי AF — איזה מצב פוקוס לבחור?" data-en="🎯 AF Modes — Which Focus Mode to Choose?">🎯 מצבי AF — איזה מצב פוקוס לבחור?</h2>
+  <h2 class="section-title" data-he="מצבי AF — איזה מצב פוקוס לבחור?" data-en="AF Modes — Which Focus Mode to Choose?">מצבי AF — איזה מצב פוקוס לבחור?</h2>
 
   <!-- Photo picker -->
   <div class="photo-picker" id="af-picker"></div>
@@ -283,7 +283,7 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
   <!-- Main layout -->
   <div class="af-layout">
     <!-- Photo panel -->
-    <div class="photo-panel">
+    <div class="photo-panel guide-dark">
       <div class="photo-container" id="af-photo-container">
         <img id="af-photo" src="" alt="">
         <div class="focus-square mode-one-shot" id="focus-square"></div>
@@ -294,11 +294,11 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
     </div>
 
     <!-- Info panel -->
-    <div class="info-panel" id="af-info-panel">
+    <div class="info-panel guide-dark" id="af-info-panel">
 
       <!-- One-Shot -->
       <div class="mode-info active" data-mode="one-shot">
-        <div class="mode-info-title" data-he="🔒 One-Shot AF — פוקוס נעול" data-en="🔒 One-Shot AF — Lock &amp; Shoot">🔒 One-Shot AF — פוקוס נעול</div>
+        <div class="mode-info-title"><svg class="gi" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span data-he="One-Shot AF — פוקוס נעול" data-en="One-Shot AF — Lock &amp; Shoot">One-Shot AF — פוקוס נעול</span></div>
         <div class="mode-info-when">
           <span class="lang-he">לחיצה חצי על ההדק נועלת את הפוקוס. המצלמה לא תמשיך לחפש עד שתשחרר. מתאים לכל נושא שעומד בשקט.</span>
           <span class="lang-en" style="display:none">Half-press the shutter to lock focus. The camera stops searching until you release. Perfect for any subject that stays still.</span>
@@ -311,7 +311,7 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
 
       <!-- AI Servo -->
       <div class="mode-info" data-mode="servo">
-        <div class="mode-info-title" data-he="🔄 AI Servo (AF-C) — מעקב רציף" data-en="🔄 AI Servo (AF-C) — Continuous Tracking">🔄 AI Servo (AF-C) — מעקב רציף</div>
+        <div class="mode-info-title"><svg class="gi" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8 8 0 0 0-14-4M4 4v4h4M4 13a8 8 0 0 0 14 4M20 20v-4h-4"/></svg><span data-he="AI Servo (AF-C) — מעקב רציף" data-en="AI Servo (AF-C) — Continuous Tracking">AI Servo (AF-C) — מעקב רציף</span></div>
         <div class="mode-info-when">
           <span class="lang-he">המצלמה מחשבת כל הזמן מחדש איפה הנושא. כל עוד לוחצים חצי על ההדק — הפוקוס עוקב. הנקודה הכתומה זזה עם הציפור.</span>
           <span class="lang-en" style="display:none">The camera continuously recalculates where the subject is. Hold half-press and the focus follows. The orange square tracks the moving bird.</span>
@@ -324,7 +324,7 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
 
       <!-- MF -->
       <div class="mode-info" data-mode="mf">
-        <div class="mode-info-title" data-he="🖐 Manual Focus (MF) — שליטה ידנית" data-en="🖐 Manual Focus (MF) — Full Control">🖐 Manual Focus (MF) — שליטה ידנית</div>
+        <div class="mode-info-title"><svg class="gi" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 12V5.500a1.500 1.500 0 0 1 3 0V11M11 10V4a1.500 1.500 0 0 1 3 0v7M14 10V5.500a1.500 1.500 0 0 1 3 0V13M8 12l-1.500-2a1.500 1.500 0 0 0-2.400 1.800L7 17a6 6 0 0 0 5 3h1a5 5 0 0 0 5-5v-3"/></svg><span data-he="Manual Focus (MF) — שליטה ידנית" data-en="Manual Focus (MF) — Full Control">Manual Focus (MF) — שליטה ידנית</span></div>
         <div class="mode-info-when">
           <span class="lang-he">סובב את טבעת הפוקוס בעדשה. לא מסתמך על האלגוריתם של המצלמה. הזהב: מאקרו, חושך, צילום דרך גדר/זכוכית.</span>
           <span class="lang-en" style="display:none">Rotate the focus ring on the lens. You bypass the camera's algorithm entirely. Essential for: macro, darkness, shooting through fences or glass.</span>
@@ -341,7 +341,7 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
 
 <!-- SECTION 3: Focus Areas -->
 <div class="demo-wrap" id="focus-areas">
-  <h2 class="section-title" data-he="📐 אזורי פוקוס — איפה המצלמה מחפשת?" data-en="📐 Focus Areas — Where Does the Camera Search?">📐 אזורי פוקוס — איפה המצלמה מחפשת?</h2>
+  <h2 class="section-title" data-he="אזורי פוקוס — איפה המצלמה מחפשת?" data-en="Focus Areas — Where Does the Camera Search?">אזורי פוקוס — איפה המצלמה מחפשת?</h2>
 
   <div class="area-tabs">
     <button type="button" class="area-tab active" data-area="single"
@@ -356,7 +356,7 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
 
   <div class="area-layout">
     <!-- SVG Viewfinder -->
-    <div class="viewfinder-wrap">
+    <div class="viewfinder-wrap guide-dark">
       <svg id="vf-svg" viewBox="0 0 200 150" style="width:100%;display:block">
         <!-- Outer frame -->
         <rect x="2" y="2" width="196" height="146" rx="4"
@@ -385,22 +385,22 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
       <div class="area-desc active" data-area="single">
         <h3 data-he="נקודה בודדת" data-en="Single Point">נקודה בודדת</h3>
         <p data-he="אתה בוחר בדיוק איזו נקודה מהרשת תהיה פעילה. הכי שליטה — הכי מדויק. מתאים לנושאים שאינם בדיוק במרכז הפריים." data-en="You choose exactly which grid point is active. Maximum control, maximum precision. Perfect for off-center subjects.">אתה בוחר בדיוק איזו נקודה מהרשת תהיה פעילה. הכי שליטה — הכי מדויק.</p>
-        <div class="tip" data-he="💡 טיפ: ניתן להזיז את הנקודה עם הג'ויסטיק/מגע על המסך — אל תסמוך תמיד על מרכז." data-en="💡 Tip: Move the point with the joystick or touchscreen — don't always rely on center AF.">💡 טיפ: ניתן להזיז את הנקודה עם הג'ויסטיק/מגע על המסך.</div>
+        <div class="tip"><svg class="gi" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/></svg><span data-he="טיפ: ניתן להזיז את הנקודה עם הג'ויסטיק/מגע על המסך — אל תסמוך תמיד על מרכז." data-en="Tip: Move the point with the joystick or touchscreen — don't always rely on center AF.">טיפ: ניתן להזיז את הנקודה עם הג'ויסטיק/מגע על המסך.</span></div>
       </div>
       <div class="area-desc" data-area="zone">
         <h3 data-he="אזור (Zone)" data-en="Zone">אזור (Zone)</h3>
         <p data-he="מספר נקודות סמוכות פעילות יחד. המצלמה בוחרת את הנושא הקרוב ביותר באזור. פחות מדויק מנקודה, אבל הרבה יותר מהיר לנושאים נעים." data-en="A cluster of adjacent points active together. Camera picks the nearest subject in the zone. Less precise than single point, but much faster for moving subjects.">מספר נקודות סמוכות פעילות יחד. המצלמה בוחרת את הנושא הקרוב ביותר באזור.</p>
-        <div class="tip" data-he="💡 טיפ: טוב לספורט ועופות כשהנושא זז בתוך אזור מוגדר." data-en="💡 Tip: Great for sports and birds moving within a defined zone.">💡 טיפ: טוב לספורט ועופות כשהנושא זז בתוך אזור מוגדר.</div>
+        <div class="tip"><svg class="gi" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/></svg><span data-he="טיפ: טוב לספורט ועופות כשהנושא זז בתוך אזור מוגדר." data-en="Tip: Great for sports and birds moving within a defined zone.">טיפ: טוב לספורט ועופות כשהנושא זז בתוך אזור מוגדר.</span></div>
       </div>
       <div class="area-desc" data-area="wide">
         <h3 data-he="אוטומטי רחב (Wide/Auto)" data-en="Wide / Auto AF">אוטומטי רחב (Wide/Auto)</h3>
         <p data-he="כל הנקודות פעילות. המצלמה מחליטה לבד מה לפקס. בדרך כלל בוחרת את הנושא הקרוב ביותר. נוח לצילום מהיר — אבל ייתכן שיפקס על הרקע בטעות." data-en="All points active. Camera decides what to focus on — usually the closest subject. Convenient for quick shooting, but may accidentally focus on background.">כל הנקודות פעילות. המצלמה מחליטה לבד — בדרך כלל הנושא הקרוב.</p>
-        <div class="tip" data-he="💡 טיפ: הימנע מכאן לפורטרטים — המצלמה עשויה לפקס על האף במקום העיניים." data-en="💡 Tip: Avoid for portraits — camera may focus on the nose instead of the eyes.">💡 טיפ: הימנע מכאן לפורטרטים — המצלמה עשויה לפקס על האף.</div>
+        <div class="tip"><svg class="gi" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/></svg><span data-he="טיפ: הימנע מכאן לפורטרטים — המצלמה עשויה לפקס על האף במקום העיניים." data-en="Tip: Avoid for portraits — camera may focus on the nose instead of the eyes.">טיפ: הימנע מכאן לפורטרטים — המצלמה עשויה לפקס על האף.</span></div>
       </div>
       <div class="area-desc" data-area="eye">
         <h3 data-he="זיהוי פנים + עיניים (Eye AF)" data-en="Face + Eye Detection (Eye AF)">זיהוי פנים + עיניים (Eye AF)</h3>
         <p data-he="מצלמות מודרניות מזהות פנים ועיניים ונועלות אוטומטית על העין הקרובה ביותר. שינוי המשחק לפורטרטים — כמעט אף פעם לא מפספס." data-en="Modern cameras detect faces and eyes, automatically locking on the nearest eye. A game-changer for portraits — almost never misses.">מצלמות מודרניות מזהות פנים ועיניים ונועלות אוטומטית על העין הקרובה.</p>
-        <div class="tip" data-he="💡 טיפ: עובד עם AF-C — המצלמה עוקבת אחרי העין גם כשהנושא זז." data-en="💡 Tip: Works with AI Servo — camera tracks the eye even as the subject moves.">💡 טיפ: עובד עם AI Servo — עוקב אחרי העין גם כשהנושא זז.</div>
+        <div class="tip"><svg class="gi" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/></svg><span data-he="טיפ: עובד עם AF-C — המצלמה עוקבת אחרי העין גם כשהנושא זז." data-en="Tip: Works with AI Servo — camera tracks the eye even as the subject moves.">טיפ: עובד עם AI Servo — עוקב אחרי העין גם כשהנושא זז.</span></div>
       </div>
     </div>
   </div>
@@ -410,10 +410,10 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
 <div class="demo-wrap" id="focus-stacking">
   <h2 class="section-title">
     <span class="advanced-badge" data-he="מתקדם" data-en="Advanced">מתקדם</span>
-    <span data-he="🔍 Focus Stacking — הרכבת שכבות פוקוס" data-en="🔍 Focus Stacking — Combining Focus Layers">🔍 Focus Stacking — הרכבת שכבות פוקוס</span>
+    <span><svg class="gi" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M16 16l5 5"/></svg><span data-he="Focus Stacking — הרכבת שכבות פוקוס" data-en="Focus Stacking — Combining Focus Layers">Focus Stacking — הרכבת שכבות פוקוס</span></span>
   </h2>
 
-  <div class="stacking-wrap">
+  <div class="stacking-wrap guide-dark">
     <div class="stacking-canvas-wrap">
       <canvas id="stacking-canvas" width="800" height="450"></canvas>
       <div class="stacking-label" id="stacking-label"
@@ -422,13 +422,13 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
     <div class="stacking-controls">
       <div class="stacking-steps">
         <button type="button" class="stack-step active" data-step="0"
-          data-he="📷 שכבה 1" data-en="📷 Layer 1">📷 שכבה 1</button>
+         ><svg class="gi" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l1.5-2h7L17 8h3v11H4z"/><circle cx="12" cy="13.5" r="3.2"/></svg><span data-he="שכבה 1" data-en="Layer 1">שכבה 1</span></button>
         <button type="button" class="stack-step" data-step="1"
-          data-he="📷 שכבה 2" data-en="📷 Layer 2">📷 שכבה 2</button>
+         ><svg class="gi" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l1.5-2h7L17 8h3v11H4z"/><circle cx="12" cy="13.5" r="3.2"/></svg><span data-he="שכבה 2" data-en="Layer 2">שכבה 2</span></button>
         <button type="button" class="stack-step" data-step="2"
-          data-he="📷 שכבה 3" data-en="📷 Layer 3">📷 שכבה 3</button>
+         ><svg class="gi" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l1.5-2h7L17 8h3v11H4z"/><circle cx="12" cy="13.5" r="3.2"/></svg><span data-he="שכבה 3" data-en="Layer 3">שכבה 3</span></button>
         <button type="button" class="stack-step" data-step="3"
-          data-he="✨ תוצאה" data-en="✨ Result">✨ תוצאה</button>
+         ><svg class="gi" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3c.6 4.500 2.500 6.400 7 7-4.500.6-6.400 2.500-7 7-.6-4.500-2.500-6.400-7-7 4.500-.6 6.400-2.500 7-7z"/></svg><span data-he="תוצאה" data-en="Result">תוצאה</span></button>
       </div>
       <p class="stacking-desc" id="stacking-desc"
         data-he="כל צילום שומר חלק אחר של הנושא בפוקוס. ב-Photoshop/Lightroom מאחדים את כל השכבות לתמונה שהכל בה חד — גם כשעומק השדה הוא מילימטרים בודדים."
@@ -439,7 +439,7 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
 
 <!-- SECTION 5: Info Cards -->
 <div class="demo-wrap" id="info-cards">
-  <h2 class="section-title" data-he="💡 טיפים מתקדמים" data-en="💡 Pro Tips">💡 טיפים מתקדמים</h2>
+  <h2 class="section-title" data-he="טיפים מתקדמים" data-en="Pro Tips">טיפים מתקדמים</h2>
   <div class="info-grid">
 
     <div class="info-card">
@@ -658,8 +658,8 @@ renderVF('single');
   const W = 800, H = 450;
 
   const STEP_LABELS = {
-    he: ['שכבה 1 — חלק קדמי חד', 'שכבה 2 — אמצע חד', 'שכבה 3 — חלק אחורי חד', '✨ תוצאה — הכל חד!'],
-    en: ['Layer 1 — Front in Focus', 'Layer 2 — Middle in Focus', 'Layer 3 — Background in Focus', '✨ Result — Everything Sharp!']
+    he: ['שכבה 1 — חלק קדמי חד', 'שכבה 2 — אמצע חד', 'שכבה 3 — חלק אחורי חד', 'תוצאה — הכל חד!'],
+    en: ['Layer 1 — Front in Focus', 'Layer 2 — Middle in Focus', 'Layer 3 — Background in Focus', 'Result — Everything Sharp!']
   };
 
   function drawScene(step) {

@@ -58,6 +58,11 @@ html:root { --green: #2a7049; --blue: #2f5fa8; --purple: #6a4aa8; --warm: #8f551
 .compare-label-bad { color: var(--red); }
 .compare-label-good { color: var(--green); }
 
+/* sticky in-page table of contents and primary call-to-action buttons */
+.toc { background: rgba(245, 241, 233, .94); border-bottom-color: #ded8ce; }
+.cta-btn { color: #fffdf9; }
+.cta-btn:hover { background: #654a30; }
+
 /* Phone layout for photo simulators: inside .sim-stage the photo stays pinned while the controls that change it
    sit directly beneath and the result panel follows. The pin ends where .sim-stage ends, so the photo scrolls away
    with the simulator instead of covering the explanatory text below. */
