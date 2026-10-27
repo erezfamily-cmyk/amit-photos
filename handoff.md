@@ -15,8 +15,10 @@ Verified OK: no horizontal scroll (390 / 1425<1440 desktop scrollbar); `.whatsap
 ### Defects found (status updated later on 2026-10-27)
 - **#1 and #2: FIXED** in PR [#194](https://github.com/erezfamily-cmyk/amit-photos/pull/194) (merged `7df4272`, verified live in Chromium mobile, HE<->EN switching).
 - **#4: not a bug** — the empty circle is the wall colour picker (`#wall-color-picker`), its swatch equals the default wall colour. Left as is.
-- **#5: fix in PR [#195](https://github.com/erezfamily-cmyk/amit-photos/pull/195)** (open, awaiting CI + approval): a11y button hidden while lightbox/wall preview is open.
-- #3, #6, #7 still open.
+- **#5: FIXED** in PR [#195](https://github.com/erezfamily-cmyk/amit-photos/pull/195) (merged `265d63b`, verified live): a11y button hidden while lightbox/wall preview is open.
+- **#6: not a bug** — `/api/photos` returns 2,310 unique published photos (the ~1,225 figure in CLAUDE.md is stale).
+- **#7: fix in a new PR** (`?lang=he|en` now overrides stored language; hreflang alternates point to `/?lang=en`, so crawlers previously saw Hebrew).
+- #3 still open (needs a real phone).
 
 1. **Lightbox arrow glyphs reversed in EN (LTR):** `#lb-prev` sits left but shows `›`, `#lb-next` right shows `‹`. Correct in HE (RTL). Glyphs are hardcoded for RTL.
 2. **Hebrew leaks on EN page:** `<title>` stays Hebrew (`עמית ארז | עולם של צבעים…`); footer logo `עמית / צילום` is not translated.
