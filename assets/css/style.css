@@ -1497,7 +1497,7 @@ body[data-payments-state="enabled"] .payments-disabled-only {
   position: fixed;
   inset: 0;
   z-index: 1000;
-  background: rgba(0, 0, 0, 0.97);
+  background: #000;
   display: none;
   flex-direction: column;
   overflow-y: auto;
