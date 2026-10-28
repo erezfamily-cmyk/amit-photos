@@ -30,3 +30,16 @@ test('cream pages carry no emoji in their markup', () => {
     assert.deepEqual(found, [], `${page} still contains emoji: ${found.join('')}`);
   }
 });
+
+test('worker-rendered /learn/ and /learn/{id} link the cream shell, use cream tokens and keep the diagram card dark', () => {
+  const worker = read('worker.js');
+  const start = worker.indexOf('async function handleLearnIndex');
+  const end = worker.indexOf('// ===== LOCATIONS API =====');
+  const learn = worker.slice(start, end);
+  assert.equal(learn.split(`/assets/css/guide-cream.css?v=${hash}`).length - 1, 2, 'both learn templates link guide-cream.css');
+  assert.equal(learn.split('--bg:#f5f1e9').length - 1, 2, 'both learn templates set the cream tokens');
+  assert.ok(!learn.includes("font-family:'Syne'"), 'no Syne headings left in the learn templates');
+  assert.ok(learn.includes('class="bokeh-box guide-dark"'), 'the physics diagram stays a dark card');
+  const visible = learn.split('\n').filter((l) => !/^\s*<meta /.test(l)).join('\n');
+  assert.deepEqual(visible.match(/\p{Extended_Pictographic}/gu) || [], [], 'no emoji in the learn templates (og: meta tags excepted)');
+});

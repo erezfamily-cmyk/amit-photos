@@ -5090,7 +5090,7 @@ async function handleLearnIndex(env, request) {
   }).join('\n');
 
   const empty = analyses.length === 0
-    ? '<p style="text-align:center;color:#888;padding:4rem" data-he="הניתוח הראשון יפורסם בקרוב — חזרו מחר!" data-en="First analysis coming soon — check back tomorrow!">הניתוח הראשון יפורסם בקרוב — חזרו מחר!</p>'
+    ? '<p style="text-align:center;color:var(--muted);padding:4rem" data-he="הניתוח הראשון יפורסם בקרוב — חזרו מחר!" data-en="First analysis coming soon — check back tomorrow!">הניתוח הראשון יפורסם בקרוב — חזרו מחר!</p>'
     : '';
 
   const canonicalUrl = currentPage === 1 ? 'https://amitphotos.com/learn/' : `https://amitphotos.com/learn/?page=${currentPage}`;
@@ -5122,47 +5122,48 @@ ${prevLink}
 ${nextLink}
 ${GA_SNIPPET}
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&family=Frank+Ruhl+Libre:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#0a0a0a;--surface:#111;--border:#222;--accent:#c8a96e;--text:#f0ede8;--muted:#888}
+:root{--bg:#f5f1e9;--surface:#fffdf9;--surface2:#f0ebe0;--border:#ded8ce;--accent:#7a5c3f;--text:#302d28;--muted:#645f57}
 body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direction:rtl;min-height:100vh;padding:0 0 4rem}
 .page-hero{text-align:center;padding:2.5rem 1.25rem 1.5rem}
-.page-hero h1{font-family:'Syne',sans-serif;font-size:1.8rem;color:var(--accent);margin-bottom:.5rem}
+.page-hero h1{font-family:'Frank Ruhl Libre',Georgia,serif;font-weight:500;font-size:1.8rem;color:var(--accent);margin-bottom:.5rem}
 .page-hero p{color:var(--muted);font-size:.9rem;max-width:380px;margin:0 auto}
 .grid{display:grid;grid-template-columns:1fr;gap:1rem;padding:1.25rem;max-width:900px;margin:0 auto}
 @media(min-width:520px){.grid{grid-template-columns:1fr 1fr}}
 @media(min-width:800px){.grid{grid-template-columns:1fr 1fr 1fr}}
 .learn-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;text-decoration:none;color:inherit;transition:border-color .2s,transform .15s;display:flex;flex-direction:column}
 .learn-card:hover{border-color:var(--accent);transform:translateY(-3px)}
-.learn-card img{width:100%;aspect-ratio:4/3;object-fit:cover;background:#1a1a1a}
+.learn-card img{width:100%;aspect-ratio:4/3;object-fit:cover;background:var(--surface2)}
 .learn-card-body{padding:.75rem}
-.learn-card-rule{font-size:.7rem;color:var(--accent);background:rgba(200,169,110,.1);border:1px solid rgba(200,169,110,.25);border-radius:4px;display:inline-block;padding:2px 7px;margin-bottom:.4rem}
-.learn-card-title{font-family:'Syne',sans-serif;font-size:.95rem;color:var(--text);margin-bottom:.4rem}
+.learn-card-rule{font-size:.7rem;color:var(--accent);background:rgba(122,92,63,.1);border:1px solid rgba(122,92,63,.25);border-radius:4px;display:inline-block;padding:2px 7px;margin-bottom:.4rem}
+.learn-card-title{font-family:'Frank Ruhl Libre',Georgia,serif;font-weight:500;font-size:.95rem;color:var(--text);margin-bottom:.4rem}
 .learn-card-tags{display:flex;flex-wrap:wrap;gap:3px;margin-bottom:.3rem}
-.tag{font-size:.65rem;color:var(--muted);background:#1a1a1a;border:1px solid var(--border);border-radius:4px;padding:1px 5px}
-.learn-card-date{font-size:.65rem;color:#888}
+.tag{font-size:.65rem;color:var(--muted);background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:1px 5px}
+.learn-card-date{font-size:.65rem;color:var(--muted)}
 .back-link{text-align:center;padding:1rem}
 .back-link a{color:var(--accent);font-size:.85rem;text-decoration:none}
 .learn-affiliate{max-width:900px;margin:1rem auto;padding:0 1.25rem}
-.learn-affiliate-inner{background:linear-gradient(135deg,rgba(200,169,110,.08),rgba(200,169,110,.03));border:1px solid rgba(200,169,110,.3);border-radius:14px;padding:1.1rem 1.4rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.learn-affiliate-inner{background:linear-gradient(135deg,rgba(122,92,63,.08),rgba(122,92,63,.03));border:1px solid rgba(122,92,63,.3);border-radius:14px;padding:1.1rem 1.4rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
 .learn-affiliate-text{}
-.learn-affiliate-title{font-family:'Syne',sans-serif;font-size:.9rem;color:var(--accent);margin-bottom:.25rem}
+.learn-affiliate-title{font-family:'Frank Ruhl Libre',Georgia,serif;font-weight:500;font-size:.9rem;color:var(--accent);margin-bottom:.25rem}
 .learn-affiliate-desc{font-size:.78rem;color:var(--muted)}
-.learn-affiliate-btn{flex-shrink:0;background:var(--accent);color:#000;font-weight:700;font-size:.8rem;padding:.5rem 1.1rem;border-radius:8px;text-decoration:none;white-space:nowrap;transition:background .15s}
-.learn-affiliate-btn:hover{background:#e0c080}
+.learn-affiliate-btn{flex-shrink:0;background:var(--accent);color:#fffdf9;font-weight:700;font-size:.8rem;padding:.5rem 1.1rem;border-radius:8px;text-decoration:none;white-space:nowrap;transition:background .15s}
+.learn-affiliate-btn:hover{background:#654a30}
 .pagination{display:flex;align-items:center;justify-content:center;gap:1rem;padding:1.5rem 1.25rem}
 .pag-btn{background:var(--surface);border:1px solid var(--border);color:var(--accent);font-size:.85rem;padding:.5rem 1.1rem;border-radius:8px;text-decoration:none;transition:border-color .2s}
 .pag-btn:hover{border-color:var(--accent)}
-.pag-disabled{background:transparent;border:1px solid #1a1a1a;color:#888;cursor:default}
+.pag-disabled{background:transparent;border:1px solid var(--border);color:var(--muted);cursor:default}
 .pag-info{font-size:.8rem;color:var(--muted)}
 </style>
+<link rel="stylesheet" href="/assets/css/guide-cream.css?v=9da5a29e">
 <script src="/assets/js/nav.js" defer></script>
 <script src="/assets/js/share.js" defer></script>
 </head>
 <body>
 <div class="page-hero">
-  <h1 data-he="📸 ניתוח תמונות" data-en="📸 Photo Analysis">📸 ניתוח תמונות</h1>
+  <h1 data-he="ניתוח תמונות" data-en="Photo Analysis">ניתוח תמונות</h1>
   <p data-he="ניתוח צילומי מעמיק — חוקי קומפוזיציה, הגדרות מצלמה, ומה הצלם חשב" data-en="Deep photographic analysis — composition rules, camera settings, and the photographer's vision">ניתוח צילומי מעמיק — חוקי קומפוזיציה, הגדרות מצלמה, ומה הצלם חשב</p>
 </div>
 <div class="grid">${cards}${empty}</div>
@@ -5206,7 +5207,7 @@ function buildPhysicsDiagram(camera) {
   else { const m2 = shutterStr.match(/^(\d*\.?\d+)/); if (m2) shutterSec = parseFloat(m2[1]); }
 
   if (!isNaN(apertureVal) && apertureVal <= 4) return {
-    title: '📊 עומק שדה ובוקה', titleEn: '📊 Depth of Field & Bokeh',
+    title: 'עומק שדה ובוקה', titleEn: 'Depth of Field & Bokeh',
     svg: `<svg viewBox="0 0 500 180" style="width:100%;max-width:500px;display:block;margin:0 auto">
       <rect x="20" y="65" width="55" height="50" rx="5" fill="#1a1a1a" stroke="${gold}" stroke-width="1.5"/>
       <text x="47" y="94" text-anchor="middle" fill="${gold}" font-size="10" font-family="Heebo" data-he="מצלמה" data-en="Camera">מצלמה</text>
@@ -5230,7 +5231,7 @@ function buildPhysicsDiagram(camera) {
   };
 
   if (!isNaN(focalVal) && focalVal <= 28) return {
-    title: '📊 זווית רחבה ופרספקטיבה', titleEn: '📊 Wide Angle & Perspective',
+    title: 'זווית רחבה ופרספקטיבה', titleEn: 'Wide Angle & Perspective',
     svg: `<svg viewBox="0 0 500 180" style="width:100%;max-width:500px;display:block;margin:0 auto">
       <rect x="10" y="70" width="48" height="40" rx="5" fill="#1a1a1a" stroke="${gold}" stroke-width="1.5"/>
       <text x="34" y="93" text-anchor="middle" fill="${gold}" font-size="9" font-family="Heebo" data-he="מצלמה" data-en="Camera">מצלמה</text>
@@ -5250,7 +5251,7 @@ function buildPhysicsDiagram(camera) {
   };
 
   if (!isNaN(focalVal) && focalVal >= 85) return {
-    title: '📊 דחיסת טלה', titleEn: '📊 Telephoto Compression',
+    title: 'דחיסת טלה', titleEn: 'Telephoto Compression',
     svg: `<svg viewBox="0 0 500 180" style="width:100%;max-width:500px;display:block;margin:0 auto">
       <rect x="10" y="70" width="55" height="40" rx="5" fill="#1a1a1a" stroke="${gold}" stroke-width="1.5"/>
       <text x="37" y="93" text-anchor="middle" fill="${gold}" font-size="9" font-family="Heebo" data-he="מצלמה" data-en="Camera">מצלמה</text>
@@ -5268,7 +5269,7 @@ function buildPhysicsDiagram(camera) {
   };
 
   if (shutterSec !== null && shutterSec >= 1/30) return {
-    title: '📊 חשיפה ארוכה ותנועה', titleEn: '📊 Long Exposure & Motion',
+    title: 'חשיפה ארוכה ותנועה', titleEn: 'Long Exposure & Motion',
     svg: `<svg viewBox="0 0 500 180" style="width:100%;max-width:500px;display:block;margin:0 auto">
       <rect x="20" y="70" width="50" height="40" rx="5" fill="#1a1a1a" stroke="${gold}" stroke-width="1.5"/>
       <text x="45" y="93" text-anchor="middle" fill="${gold}" font-size="9" font-family="Heebo" data-he="מצלמה" data-en="Camera">מצלמה</text>
@@ -5286,7 +5287,7 @@ function buildPhysicsDiagram(camera) {
   };
 
   if (shutterSec !== null && shutterSec <= 1/500) return {
-    title: '📊 הקפאת תנועה', titleEn: '📊 Freezing Motion',
+    title: 'הקפאת תנועה', titleEn: 'Freezing Motion',
     svg: `<svg viewBox="0 0 500 180" style="width:100%;max-width:500px;display:block;margin:0 auto">
       <rect x="20" y="70" width="50" height="40" rx="5" fill="#1a1a1a" stroke="${gold}" stroke-width="1.5"/>
       <text x="45" y="93" text-anchor="middle" fill="${gold}" font-size="9" font-family="Heebo" data-he="מצלמה" data-en="Camera">מצלמה</text>
@@ -5302,7 +5303,7 @@ function buildPhysicsDiagram(camera) {
   };
 
   return {
-    title: '📊 ISO ורעש דיגיטלי', titleEn: '📊 ISO & Digital Noise',
+    title: 'ISO ורעש דיגיטלי', titleEn: 'ISO & Digital Noise',
     svg: `<svg viewBox="0 0 500 180" style="width:100%;max-width:500px;display:block;margin:0 auto">
       <text x="120" y="25" text-anchor="middle" fill="${green}" font-size="11" font-family="Heebo" data-he="ISO נמוך (נקי)" data-en="Low ISO (Clean)">ISO נמוך (נקי)</text>
       ${Array.from({length:36},(_,i)=>`<rect x="${40+(i%6)*16}" y="${35+Math.floor(i/6)*16}" width="13" height="13" rx="1" fill="rgba(74,222,128,.7)" stroke="rgba(74,222,128,.3)" stroke-width=".5"/>`).join('')}
@@ -5427,7 +5428,7 @@ async function handleLearnAnalysis(env, photoId) {
   ).bind(photoId).first().catch(() => null);
 
   if (!row || !photo) {
-    return htmlRes(`<!DOCTYPE html><html lang="he" dir="rtl"><head><meta charset="utf-8"><title>לא נמצא</title><style>body{background:#0a0a0a;color:#f0ede8;font-family:'Heebo',sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;gap:1rem}</style></head><body><h1 style="color:#c8a96e;font-size:2rem">404</h1><p>הניתוח לא נמצא</p><a href="/learn/" style="color:#c8a96e">← חזרה לניתוח תמונות</a></body></html>`, 404);
+    return htmlRes(`<!DOCTYPE html><html lang="he" dir="rtl"><head><meta charset="utf-8"><title>לא נמצא</title><style>body{background:#f5f1e9;color:#302d28;font-family:'Heebo',sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;gap:1rem}</style></head><body><h1 style="color:var(--accent);font-size:2rem">404</h1><p>הניתוח לא נמצא</p><a href="/learn/" style="color:var(--accent)">← חזרה לניתוח תמונות</a></body></html>`, 404);
   }
 
   // Prev/next and more analyses — run in parallel
@@ -5452,29 +5453,29 @@ async function handleLearnAnalysis(env, photoId) {
     let link, titleHe, titleEn, descHe, descEn, btnHe, btnEn;
     if (!isNaN(aperture) && aperture <= 2) {
       link = 'https://adorama.prf.hn/click/camref:1101l5Km5i/destination:https://www.adorama.com/catalog.tpl?SearchInfo=50mm+85mm+f1.8+prime+lens';
-      titleHe = '🎯 עדשת פריים מהירה — הסוד מאחורי הבוקה';
-      titleEn = '🎯 Fast Prime Lens — The Secret Behind the Bokeh';
+      titleHe = 'עדשת פריים מהירה — הסוד מאחורי הבוקה';
+      titleEn = 'Fast Prime Lens — The Secret Behind the Bokeh';
       descHe = `הצילום הזה בוצע עם פתח f/${aperture} — עדשת פריים מהירה היא ההשקעה שמשפרת יותר מכל.`;
       descEn = `This shot was taken at f/${aperture} — a fast prime lens is the single investment that improves your photos most.`;
       btnHe = 'ראה עדשות באדוראמה ←'; btnEn = 'View Lenses at Adorama →';
     } else if (shutterSec !== null && shutterSec >= 1) {
       link = 'https://adorama.prf.hn/click/camref:1101l5Km5i/destination:https://www.adorama.com/catalog.tpl?SearchInfo=travel+tripod+lightweight';
-      titleHe = '📐 חצובה — חובה לחשיפות ארוכות';
-      titleEn = '📐 Tripod — Essential for Long Exposures';
+      titleHe = 'חצובה — חובה לחשיפות ארוכות';
+      titleEn = 'Tripod — Essential for Long Exposures';
       descHe = `חשיפה של ${cam.shutter?.value || ''} דורשת יציבות מושלמת. חצובה קלה ואיכותית משנה הכל.`;
       descEn = `An exposure of ${cam.shutter?.value || ''} demands perfect stability. A lightweight quality tripod changes everything.`;
       btnHe = 'ראה חצובות באדוראמה ←'; btnEn = 'View Tripods at Adorama →';
     } else if (!isNaN(focal) && focal >= 100) {
       link = 'https://adorama.prf.hn/click/camref:1101l5Km5i/destination:https://www.adorama.com/catalog.tpl?SearchInfo=70-200mm+telephoto+zoom+lens';
-      titleHe = '🔭 עדשת טלה — דחיסת מרחקים ופרספקטיבה דרמטית';
-      titleEn = '🔭 Telephoto Lens — Distance Compression and Dramatic Perspective';
+      titleHe = 'עדשת טלה — דחיסת מרחקים ופרספקטיבה דרמטית';
+      titleEn = 'Telephoto Lens — Distance Compression and Dramatic Perspective';
       descHe = `עם ${Math.round(focal)}mm השגת דחיסת מרחקים מרשימה. עדשת זום 70-200 מאפשרת לך לשחק עם הפרספקטיבה.`;
       descEn = `With ${Math.round(focal)}mm you achieved impressive compression. A 70-200 zoom lets you play with perspective.`;
       btnHe = 'ראה עדשות טלה ←'; btnEn = 'View Telephoto Lenses →';
     } else {
       link = 'https://skylum.evyy.net/c/3782640/1738804/5925';
-      titleHe = '✨ Luminar Neo — ערוך כמו הצלמים שאתה לומד מהם';
-      titleEn = '✨ Luminar Neo — Edit Like the Photographers You Learn From';
+      titleHe = 'Luminar Neo — ערוך כמו הצלמים שאתה לומד מהם';
+      titleEn = 'Luminar Neo — Edit Like the Photographers You Learn From';
       descHe = 'עריכת AI חכמה — שיפור אוטומטי, שליטה על ניגוד ואור, כלי שחור-לבן מקצועיים.';
       descEn = 'Smart AI editing — auto-enhance, contrast and light control, professional B&W tools.';
       btnHe = 'נסה חינם ←'; btnEn = 'Try Free →';
@@ -5547,21 +5548,21 @@ async function handleLearnAnalysis(env, photoId) {
 })}</script>
 ${GA_SNIPPET}
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&family=Frank+Ruhl+Libre:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#0a0a0a;--surface:#111;--border:#222;--accent:#c8a96e;--text:#f0ede8;--muted:#888}
+:root{--bg:#f5f1e9;--surface:#fffdf9;--surface2:#f0ebe0;--border:#ded8ce;--accent:#7a5c3f;--text:#302d28;--muted:#645f57}
 body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direction:rtl;min-height:100vh;padding:0 0 4rem}
 .page-header{padding:1.5rem 1.25rem .5rem;max-width:900px;margin:0 auto;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:.5rem}
-.page-title{font-family:'Syne',sans-serif;font-size:1.4rem;color:var(--text)}
-.rule-badge{font-size:.72rem;color:var(--accent);background:rgba(200,169,110,.1);border:1px solid rgba(200,169,110,.25);border-radius:4px;padding:3px 9px;margin-top:.3rem;display:inline-block}
-.buy-btn{background:var(--accent);color:#000;font-weight:700;font-size:.82rem;border-radius:8px;padding:.5rem 1rem;text-decoration:none;white-space:nowrap;flex-shrink:0}
+.page-title{font-family:'Frank Ruhl Libre',Georgia,serif;font-weight:500;font-size:1.4rem;color:var(--text)}
+.rule-badge{font-size:.72rem;color:var(--accent);background:rgba(122,92,63,.1);border:1px solid rgba(122,92,63,.25);border-radius:4px;padding:3px 9px;margin-top:.3rem;display:inline-block}
+.buy-btn{background:var(--accent);color:#fffdf9;font-weight:700;font-size:.82rem;border-radius:8px;padding:.5rem 1rem;text-decoration:none;white-space:nowrap;flex-shrink:0}
 .photo-wrap{position:relative;max-width:900px;margin:0 auto 1.5rem;padding:0 .75rem}
 .photo-wrap img{width:100%;border-radius:10px;display:block}
 .rule-overlay{position:absolute;top:.75rem;left:.75rem;right:.75rem;bottom:0;width:calc(100% - 1.5rem);height:100%;pointer-events:none}
 .ann{position:absolute;transform:translate(-50%,-50%);pointer-events:none;opacity:0;transition:opacity .4s}
-.ann-dot{width:10px;height:10px;border-radius:50%;background:var(--accent);border:2px solid #000;position:relative;z-index:2}
-.ann-label{position:absolute;background:rgba(0,0,0,.85);border:1px solid var(--accent);border-radius:7px;padding:.3rem .55rem;font-size:.68rem;color:var(--text);line-height:1.45;white-space:nowrap;z-index:3}
+.ann-dot{width:10px;height:10px;border-radius:50%;background:#e4bd7a;border:2px solid #000;position:relative;z-index:2}
+.ann-label{position:absolute;background:rgba(0,0,0,.85);border:1px solid #e4bd7a;border-radius:7px;padding:.3rem .55rem;font-size:.68rem;color:#f5f1ea;line-height:1.45;white-space:nowrap;z-index:3}
 .ann-right{left:16px;top:-10px}
 .ann-left{right:16px;top:-10px}
 .ann-bottom{top:16px;left:50%;transform:translateX(-50%)}
@@ -5570,17 +5571,17 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direc
 @media(min-width:600px){.cam-cards{grid-template-columns:repeat(4,1fr)}}
 .cam-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:.85rem}
 .cam-label{font-size:.7rem;color:var(--muted);margin-bottom:.25rem}
-.cam-value{font-family:'Syne',sans-serif;font-size:1.05rem;color:var(--accent)}
+.cam-value{font-family:'Frank Ruhl Libre',Georgia,serif;font-weight:500;font-size:1.05rem;color:var(--accent)}
 .cam-desc{font-size:.7rem;color:var(--muted);margin-top:.3rem;line-height:1.4}
 .section{max-width:900px;margin:0 auto 1.5rem;padding:0 .75rem}
-.section h2{font-family:'Syne',sans-serif;color:var(--accent);font-size:1.05rem;margin-bottom:.75rem}
+.section h2{font-family:'Frank Ruhl Libre',Georgia,serif;font-weight:500;color:var(--accent);font-size:1.05rem;margin-bottom:.75rem}
 .bokeh-box{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem}
 .comp-box{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.1rem;font-size:.85rem;color:var(--muted);line-height:1.75}
 .comp-box p{margin-bottom:.7rem}
 .comp-box p:last-child{margin-bottom:0}
 .comp-box strong{color:var(--text)}
 .tags-row{display:flex;flex-wrap:wrap;gap:.3rem;margin-top:.75rem}
-.tag{font-size:.72rem;color:var(--accent);background:rgba(200,169,110,.1);border:1px solid rgba(200,169,110,.25);border-radius:5px;padding:2px 8px}
+.tag{font-size:.72rem;color:var(--accent);background:rgba(122,92,63,.1);border:1px solid rgba(122,92,63,.25);border-radius:5px;padding:2px 8px}
 .nav-row{text-align:center;padding:1rem}
 .nav-row a{color:var(--accent);font-size:.85rem;text-decoration:none;margin:0 .75rem}
 .analysis-nav{display:flex;justify-content:space-between;align-items:center;max-width:900px;margin:0 auto 2rem;padding:0 .75rem;gap:.5rem}
@@ -5591,7 +5592,7 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direc
 .analysis-nav .nav-next{text-align:right}
 .analysis-nav .nav-older{text-align:left}
 .more-section{max-width:900px;margin:0 auto 2rem;padding:0 .75rem}
-.more-section h2{font-family:'Syne',sans-serif;color:var(--accent);font-size:1.05rem;margin-bottom:.75rem}
+.more-section h2{font-family:'Frank Ruhl Libre',Georgia,serif;font-weight:500;color:var(--accent);font-size:1.05rem;margin-bottom:.75rem}
 .more-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.75rem}
 @media(min-width:600px){.more-grid{grid-template-columns:repeat(4,1fr)}}
 .more-card{display:block;text-decoration:none;background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden;transition:border-color .2s}
@@ -5601,19 +5602,20 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direc
 .more-card-rule{font-size:.65rem;color:var(--accent);margin-bottom:.2rem}
 .more-card-title{font-size:.78rem;color:var(--text);overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 .analysis-affiliate{max-width:900px;margin:1.5rem auto;padding:0 .75rem}
-.analysis-affiliate-inner{background:linear-gradient(135deg,rgba(200,169,110,.08),rgba(200,169,110,.03));border:1px solid rgba(200,169,110,.3);border-radius:14px;padding:1.1rem 1.4rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
-.analysis-affiliate-title{font-family:'Syne',sans-serif;font-size:.9rem;color:var(--accent);margin-bottom:.25rem}
+.analysis-affiliate-inner{background:linear-gradient(135deg,rgba(122,92,63,.08),rgba(122,92,63,.03));border:1px solid rgba(122,92,63,.3);border-radius:14px;padding:1.1rem 1.4rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.analysis-affiliate-title{font-family:'Frank Ruhl Libre',Georgia,serif;font-weight:500;font-size:.9rem;color:var(--accent);margin-bottom:.25rem}
 .analysis-affiliate-desc{font-size:.78rem;color:var(--muted)}
-.analysis-affiliate-disclose{font-size:.63rem;color:#888;margin-top:.2rem}
-.analysis-affiliate-btn{flex-shrink:0;background:var(--accent);color:#000;font-weight:700;font-size:.8rem;padding:.5rem 1.1rem;border-radius:8px;text-decoration:none;white-space:nowrap;transition:background .15s}
-.analysis-affiliate-btn:hover{background:#e0c080}
+.analysis-affiliate-disclose{font-size:.63rem;color:var(--muted);margin-top:.2rem}
+.analysis-affiliate-btn{flex-shrink:0;background:var(--accent);color:#fffdf9;font-weight:700;font-size:.8rem;padding:.5rem 1.1rem;border-radius:8px;text-decoration:none;white-space:nowrap;transition:background .15s}
+.analysis-affiliate-btn:hover{background:#654a30}
 .shop-cta{max-width:900px;margin:1.5rem auto;padding:0 .75rem}
 .shop-cta-inner{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.1rem 1.4rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
-.shop-cta-title{font-family:'Syne',sans-serif;font-size:.95rem;color:var(--text);margin-bottom:.25rem}
+.shop-cta-title{font-family:'Frank Ruhl Libre',Georgia,serif;font-weight:500;font-size:.95rem;color:var(--text);margin-bottom:.25rem}
 .shop-cta-desc{font-size:.78rem;color:var(--muted)}
 .shop-cta-btn{flex-shrink:0;background:transparent;color:var(--accent);font-weight:700;font-size:.82rem;padding:.5rem 1.1rem;border:1px solid var(--accent);border-radius:8px;text-decoration:none;white-space:nowrap;transition:background .15s}
-.shop-cta-btn:hover{background:rgba(200,169,110,.1)}
+.shop-cta-btn:hover{background:rgba(122,92,63,.1)}
 </style>
+<link rel="stylesheet" href="/assets/css/guide-cream.css?v=9da5a29e">
 <script src="/assets/js/nav.js" defer></script>
 <script src="/assets/js/share.js" defer></script>
 </head>
@@ -5636,15 +5638,15 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direc
   ${buildAnnotationLabels(annotations)}
 </div>
 ${annotations.length > 0 ? `<div style="text-align:center;margin-top:.5rem;margin-bottom:.5rem;min-height:2rem">
-  <button id="ann-hide-btn" onclick="annHideAll()" style="display:none;background:rgba(200,169,110,.1);border:1px solid rgba(200,169,110,.3);color:#c8a96e;border-radius:20px;padding:.35rem 1.2rem;font-family:'Heebo',sans-serif;font-size:.82rem;cursor:pointer" data-he="הסתר ביאורים" data-en="Hide Annotations">הסתר ביאורים</button>
+  <button id="ann-hide-btn" onclick="annHideAll()" style="display:none;background:rgba(122,92,63,.1);border:1px solid rgba(122,92,63,.3);color:var(--accent);border-radius:20px;padding:.35rem 1.2rem;font-family:'Heebo',sans-serif;font-size:.82rem;cursor:pointer" data-he="הסתר ביאורים" data-en="Hide Annotations">הסתר ביאורים</button>
 </div>` : ''}
 
 <div class="cam-cards">${cameraCards}</div>
 
-${(() => { const d = buildPhysicsDiagram(camera); return `<div class="section"><h2 data-he="${escXml(d.title)}" data-en="${escXml(d.titleEn||d.title)}">${escXml(d.title)}</h2><div class="bokeh-box">${d.svg}</div></div>`; })()}
+${(() => { const d = buildPhysicsDiagram(camera); return `<div class="section"><h2 data-he="${escXml(d.title)}" data-en="${escXml(d.titleEn||d.title)}">${escXml(d.title)}</h2><div class="bokeh-box guide-dark">${d.svg}</div></div>`; })()}
 
 <div class="section">
-  <h2 data-he="🎨 ניתוח קומפוזיציה" data-en="🎨 Composition Analysis">🎨 ניתוח קומפוזיציה</h2>
+  <h2 data-he="ניתוח קומפוזיציה" data-en="Composition Analysis">ניתוח קומפוזיציה</h2>
   <div class="comp-box">
     <div class="lang-he">${String(row.composition_html || '').replace(/<(?!\/?(?:p|strong|em|br|span|div)\b)[^>]*>/gi, '')}</div>
     <div class="lang-en" style="display:none">${String(row.composition_html_en || row.composition_html || '').replace(/<(?!\/?(?:p|strong|em|br|span|div)\b)[^>]*>/gi, '')}</div>
@@ -5660,7 +5662,7 @@ ${(prevRow || nextRow) ? `
 
 ${moreAnalyses.length > 0 ? `
 <div class="more-section">
-  <h2 data-he="📸 ניתוחים נוספים" data-en="📸 More Analyses">📸 ניתוחים נוספים</h2>
+  <h2 data-he="ניתוחים נוספים" data-en="More Analyses">ניתוחים נוספים</h2>
   <div class="more-grid">
     ${moreAnalyses.map(a => {
       const thumb = (a.thumbnail || a.url || '') + '?w=300';
@@ -5737,6 +5739,8 @@ window.addEventListener('storage',e=>{if(e.key==='lang')applyLang()});
 
   return htmlRes(html);
 }
+
+export { handleLearnIndex, handleLearnAnalysis };
 
 // ===== LOCATIONS API =====
 
