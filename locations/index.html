@@ -13,65 +13,68 @@
 <title>מקומות לצילום — Amit Photos</title>
 <meta name="description" content="מקומות מומלצים לצילום בישראל — טיפים, ציוד, שעות מומלצות וגלריה מכל מקום.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&family=Frank+Ruhl+Libre:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#0a0a0a;--surface:#111;--border:#222;--accent:#c8a96e;--text:#f0ede8;--muted:#888;}
+:root{--bg:#f5f1e9;--surface:#fffdf9;--surface2:#f0ebe0;--border:#ded8ce;--accent:#7a5c3f;--text:#302d28;--muted:#645f57;}
 body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direction:rtl;min-height:100vh;padding:0 0 4rem}
 .page-hero{text-align:center;padding:2.5rem 1.25rem 1.5rem}
-.badge{display:inline-block;font-size:.72rem;background:rgba(200,169,110,.12);border:1px solid rgba(200,169,110,.3);color:var(--accent);border-radius:20px;padding:.3rem .8rem;margin-bottom:.75rem}
-.page-hero h1{font-family:'Syne',sans-serif;font-size:2rem;color:var(--accent);margin-bottom:.5rem}
+.badge{display:inline-block;font-size:.72rem;background:rgba(122,92,63,.12);border:1px solid rgba(122,92,63,.3);color:var(--accent);border-radius:20px;padding:.3rem .8rem;margin-bottom:.75rem}
+.page-hero h1{font-family:'Frank Ruhl Libre',Georgia,serif;font-weight:500;font-size:2rem;color:var(--accent);margin-bottom:.5rem}
 .page-hero p{color:var(--muted);font-size:.9rem;max-width:420px;margin:0 auto 1.25rem}
-.btn-suggest{background:var(--accent);color:#0a0a0a;border:none;padding:.65rem 1.5rem;border-radius:4px;font-weight:700;font-size:.9rem;cursor:pointer;transition:background .2s}
-.btn-suggest:hover{background:#e0c080}
+.btn-suggest{background:var(--accent);color:#fffdf9;border:none;padding:.65rem 1.5rem;border-radius:4px;font-weight:700;font-size:.9rem;cursor:pointer;transition:background .2s}
+.btn-suggest:hover{background:#654a30}
 .filters{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;padding:.75rem 1.25rem 1.25rem}
 .filter-btn{background:transparent;border:1px solid var(--border);color:var(--muted);padding:.4rem .9rem;border-radius:20px;font-size:.8rem;cursor:pointer;transition:all .2s;font-family:'Heebo',sans-serif}
-.filter-btn.active,.filter-btn:hover{border-color:var(--accent);color:var(--accent)}
+.filter-btn:hover{border-color:var(--accent);color:var(--accent)}
+.filter-btn.active{background:var(--accent);border-color:var(--accent);color:#fffdf9}
 .grid{display:grid;grid-template-columns:1fr;gap:1.25rem;padding:0 1.25rem;max-width:1100px;margin:0 auto}
 @media(min-width:520px){.grid{grid-template-columns:1fr 1fr}}
 @media(min-width:900px){.grid{grid-template-columns:repeat(3,1fr)}}
 .card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;text-decoration:none;color:inherit;transition:border-color .2s,transform .15s;display:block}
 .card:hover{border-color:var(--accent);transform:translateY(-2px)}
-.card-img{width:100%;aspect-ratio:3/2;object-fit:cover;background:#1a1a1a;display:block}
+.card-img{width:100%;aspect-ratio:3/2;object-fit:cover;background:var(--surface2);display:block}
 .card-body{padding:1rem}
-.card-title{font-family:'Syne',sans-serif;font-size:1rem;margin-bottom:.3rem}
+.card-title{font-family:'Frank Ruhl Libre',Georgia,serif;font-weight:500;font-size:1rem;margin-bottom:.3rem}
 .card-meta{font-size:.8rem;color:var(--muted)}
 .empty{text-align:center;color:var(--muted);padding:3rem 1.25rem;font-size:.9rem}
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:2000;display:none;align-items:center;justify-content:center;padding:1.25rem}
+.modal-overlay{position:fixed;inset:0;background:rgba(40,32,20,.55);z-index:2000;display:none;align-items:center;justify-content:center;padding:1.25rem}
 .modal-overlay.open{display:flex}
-.modal{background:#111;border:1px solid #333;border-radius:12px;padding:2rem;width:100%;max-width:460px}
-.modal h2{font-family:'Syne',sans-serif;color:var(--accent);margin-bottom:1.25rem}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:2rem;width:100%;max-width:460px}
+.modal h2{font-family:'Frank Ruhl Libre',Georgia,serif;font-weight:500;color:var(--accent);margin-bottom:1.25rem}
 .modal label{display:block;font-size:.85rem;color:var(--muted);margin-bottom:.3rem}
-.modal input,.modal textarea,.modal select{width:100%;background:#0a0a0a;border:1px solid var(--border);color:var(--text);padding:.65rem .9rem;border-radius:4px;font-size:.9rem;font-family:'Heebo',sans-serif;direction:rtl;margin-bottom:1rem;outline:none}
+.modal input,.modal textarea,.modal select{width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:.65rem .9rem;border-radius:4px;font-size:.9rem;font-family:'Heebo',sans-serif;direction:rtl;margin-bottom:1rem;outline:none}
 .modal input:focus,.modal textarea:focus{border-color:var(--accent)}
 .modal textarea{min-height:100px;resize:vertical}
 .modal-actions{display:flex;gap:.75rem;justify-content:flex-end;margin-top:.5rem}
 .btn-cancel{background:transparent;border:1px solid var(--border);color:var(--muted);padding:.6rem 1.25rem;border-radius:4px;font-size:.85rem;cursor:pointer}
-.btn-submit{background:var(--accent);color:#0a0a0a;border:none;padding:.6rem 1.5rem;border-radius:4px;font-weight:700;font-size:.85rem;cursor:pointer}
+.btn-submit{background:var(--accent);color:#fffdf9;border:none;padding:.6rem 1.5rem;border-radius:4px;font-weight:700;font-size:.85rem;cursor:pointer}
 .sort-bar{display:flex;align-items:center;gap:.5rem;margin-bottom:1.5rem;justify-content:flex-end;padding:0 1.25rem;max-width:1100px;margin-left:auto;margin-right:auto}
-.sort-bar span{font-size:.8rem;color:#999}
-.sort-bar select{background:#111;border:1px solid #333;color:#aaa;padding:.3rem .6rem;border-radius:4px;font-family:'Heebo',sans-serif;font-size:.8rem;cursor:pointer}
-.leaflet-popup-content-wrapper{background:#111 !important;color:#f0ede8 !important;border:1px solid #333 !important;border-radius:8px !important}
-.leaflet-popup-tip{background:#111 !important}
+.sort-bar span{font-size:.8rem;color:var(--muted)}
+.sort-bar select{color-scheme:light;background:var(--surface);border:1px solid var(--border);color:var(--muted);padding:.3rem .6rem;border-radius:4px;font-family:'Heebo',sans-serif;font-size:.8rem;cursor:pointer}
+.leaflet-popup-content-wrapper{background:var(--surface) !important;color:var(--text) !important;border:1px solid var(--border) !important;border-radius:8px !important}
+.leaflet-popup-tip{background:var(--surface) !important}
 .leaflet-popup-content{margin:8px 12px !important}
-.loc-popup-title{font-weight:700;font-size:.9rem;color:#c8a96e}
-.loc-popup-region{font-size:.75rem;color:#888;margin-top:2px}
-.loc-popup-link{display:inline-block;margin-top:6px;font-size:.78rem;color:#c8a96e;text-decoration:none}
+.loc-popup-title{font-weight:700;font-size:.9rem;color:var(--accent)}
+.loc-popup-region{font-size:.75rem;color:var(--muted);margin-top:2px}
+.loc-popup-link{display:inline-block;margin-top:6px;font-size:.78rem;color:var(--accent);text-decoration:none}
 .map-section{max-width:1100px;margin:0 auto 1.5rem;padding:0 1.25rem}
-.btn-toggle-map{background:transparent;border:1px solid #444;color:#aaa;padding:.45rem 1rem;border-radius:20px;font-size:.8rem;font-family:'Heebo',sans-serif;cursor:pointer;transition:all .2s;margin-bottom:.75rem}
+.btn-toggle-map{background:transparent;border:1px solid var(--border);color:var(--muted);padding:.45rem 1rem;border-radius:20px;font-size:.8rem;font-family:'Heebo',sans-serif;cursor:pointer;transition:all .2s;margin-bottom:.75rem}
 .btn-toggle-map:hover{border-color:var(--accent);color:var(--accent)}
-.map-container{display:none;border-radius:10px;overflow:hidden;border:1px solid #333;height:380px}
+.badge .gi,.btn-toggle-map .gi{vertical-align:-3px;margin-inline-end:6px}
+.map-container{display:none;border-radius:10px;overflow:hidden;border:1px solid var(--border);height:380px}
 .locations-map{height:100%;width:100%}
 </style>
 </head>
 <body>
+<link rel="stylesheet" href="/assets/css/guide-cream.css?v=9da5a29e">
 <script src="/assets/js/nav.js?v=e842596e" defer></script>
 
 <main>
 <div class="page-hero">
-  <div class="badge">📍 מקומות לצילום</div>
+  <div class="badge"><svg class="gi" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-6.2 7-11.2A7 7 0 0 0 5 9.8C5 14.800 12 21 12 21z"/><circle cx="12" cy="10" r="2.5"/></svg><span>מקומות לצילום</span></div>
   <h1>מקומות שווים בישראל</h1>
   <p>מדריך צילום לוקיישנים — טיפים, ציוד, שעות מומלצות וגלריה מכל מקום.</p>
   <button class="btn-suggest" id="btn-open-suggest">הצע מקום חדש</button>
@@ -98,7 +101,7 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direc
 </div>
 
 <div class="map-section">
-  <button type="button" id="btn-toggle-map" class="btn-toggle-map">🗺 הצג מפה</button>
+  <button type="button" id="btn-toggle-map" class="btn-toggle-map"><svg class="gi" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4 3 6.500v13.500l6-2.500 6 2.500 6-2.500V4l-6 2.500z"/><path d="M9 4v13.500M15 6.500V20"/></svg><span>הצג מפה</span></button>
   <div id="map-container" class="map-container">
     <div id="locations-map" class="locations-map"></div>
   </div>
@@ -146,7 +149,7 @@ const REGION_MAP_EN = {
 
 const LABELS = {
   he: {
-    badge: '📍 מקומות לצילום',
+    badge: 'מקומות לצילום',
     title: 'מקומות לצילום',
     subtitle: 'מקומות מומלצים לצילום בישראל — טיפים, ציוד, שעות מומלצות וגלריה מכל מקום.',
     suggest: 'הצע מקום +',
@@ -157,8 +160,8 @@ const LABELS = {
     sortAlpha: 'א-ב',
     sortRegion: 'לפי אזור',
     sortPhotos: 'מספר תמונות',
-    mapShow: '🗺 הצג מפה',
-    mapHide: '🗺 הסתר מפה',
+    mapShow: 'הצג מפה',
+    mapHide: 'הסתר מפה',
     filterAll: 'הכל',
     regionNames: { 'צפון':'צפון','מרכז':'מרכז','ירושלים':'ירושלים','דרום':'דרום','נגב':'נגב','הרי אילת':'הרי אילת' },
     modalTitle: 'הצע מקום לצילום',
@@ -179,7 +182,7 @@ const LABELS = {
     viewSpot: 'צפה במקום →',
   },
   en: {
-    badge: '📍 Photography Locations',
+    badge: 'Photography Locations',
     title: 'Photography Locations',
     subtitle: 'Recommended photography spots — tips, gear, best times, and a gallery from each location.',
     suggest: 'Suggest a Spot +',
@@ -190,8 +193,8 @@ const LABELS = {
     sortAlpha: 'A–Z',
     sortRegion: 'By Region',
     sortPhotos: 'Photo Count',
-    mapShow: '🗺 Show Map',
-    mapHide: '🗺 Hide Map',
+    mapShow: 'Show Map',
+    mapHide: 'Hide Map',
     filterAll: 'All',
     regionNames: { 'צפון':'North','מרכז':'Center','ירושלים':'Jerusalem','דרום':'South','נגב':'Negev','הרי אילת':'Eilat Mountains' },
     modalTitle: 'Suggest a Photography Spot',
@@ -223,7 +226,7 @@ function applyLang() {
   document.title = isEn ? 'Photography Locations — Amit Photos' : 'מקומות לצילום — Amit Photos';
 
   const badge = document.querySelector('.badge');
-  if (badge) badge.textContent = L.badge;
+  if (badge) badge.querySelector('span').textContent = L.badge;
   const h1 = document.querySelector('.page-hero h1');
   if (h1) h1.textContent = L.title;
   const sub = document.querySelector('.page-hero p');
@@ -247,8 +250,8 @@ function applyLang() {
   const mapContainer = document.getElementById('map-container');
   const mapBtn = document.getElementById('btn-toggle-map');
   if (mapBtn) {
-    const isOpen = mapContainer && mapContainer.style.display !== 'none';
-    mapBtn.textContent = isOpen ? L.mapHide : L.mapShow;
+    const isOpen = !!mapContainer && mapContainer.style.display === 'block';
+    mapBtn.querySelector('span').textContent = isOpen ? L.mapHide : L.mapShow;
   }
 
   // Filter buttons
@@ -325,14 +328,14 @@ function renderGrid() {
     : allLocations;
   const sorted = getSorted(filtered);
 
+  const lang = getLang();
+  const isEn = lang === 'en';
+  const L = LABELS[lang] || LABELS.he;
+
   if (!sorted.length) {
     grid.innerHTML = `<p class="empty">${L.empty}</p>`;
     return;
   }
-
-  const lang = getLang();
-  const isEn = lang === 'en';
-  const L = LABELS[lang] || LABELS.he;
 
   // תמונות המקומות מגיעות לרוב בלי thumbnail אמיתי (cover_thumb===cover_url, קובץ מקורי מלא) —
   // מבקשים גרסה מוקטנת דרך Cloudflare Image Resizing (נופל בחזרה לגודל מקורי אם לא מופעל בחשבון)
@@ -348,7 +351,7 @@ function renderGrid() {
     const displayTitle = (isEn && l.title_en) ? l.title_en : l.title;
     const displayRegion = isEn ? (REGION_MAP_EN[l.region] || l.region || '') : (l.region || '');
     const photoCount = l.photo_count > 0
-      ? `<span style="font-size:.68rem;background:#1a1a1a;border:1px solid #333;border-radius:10px;padding:1px 7px;color:#888">${L.photos(l.photo_count)}</span>`
+      ? `<span style="font-size:.68rem;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:1px 7px;color:var(--muted)">${L.photos(l.photo_count)}</span>`
       : '';
     return `
     <a class="card" href="/locations/${escHtml(l.id)}/">
@@ -359,7 +362,7 @@ function renderGrid() {
           <span>${escHtml(displayRegion)}</span>
           ${photoCount}
         </div>
-        ${(l.best_time || l.best_time_en) ? `<div style="font-size:.72rem;color:#888;margin-top:.3rem;display:flex;align-items:center;gap:.25rem"><span style="color:#c8a96e">◷</span><span>${escHtml((isEn && l.best_time_en) ? l.best_time_en : l.best_time)}</span></div>` : ''}
+        ${(l.best_time || l.best_time_en) ? `<div style="font-size:.72rem;color:var(--muted);margin-top:.3rem;display:flex;align-items:center;gap:.25rem"><span style="color:var(--accent)">◷</span><span>${escHtml((isEn && l.best_time_en) ? l.best_time_en : l.best_time)}</span></div>` : ''}
       </div>
     </a>`;
   }).join('');
@@ -429,7 +432,7 @@ function initMap(locations) {
 
     const marker = L.circleMarker([lat, lng], {
       radius: 8,
-      fillColor: '#c8a96e',
+      fillColor: '#7a5c3f',
       color: '#fff',
       weight: 2,
       opacity: 1,
@@ -455,9 +458,9 @@ function initMap(locations) {
 document.getElementById('btn-toggle-map').addEventListener('click', function() {
   const container = document.getElementById('map-container');
   const L = LABELS[getLang()] || LABELS.he;
-  const isOpen = container.style.display !== 'none';
+  const isOpen = container.style.display === 'block';
   container.style.display = isOpen ? 'none' : 'block';
-  this.textContent = isOpen ? L.mapShow : L.mapHide;
+  this.querySelector('span').textContent = isOpen ? L.mapShow : L.mapHide;
   if (!isOpen) {
     initMap(allLocations);
     setTimeout(() => mapInstance && mapInstance.invalidateSize(), 150);
