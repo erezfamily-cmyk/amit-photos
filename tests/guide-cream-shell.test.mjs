@@ -47,7 +47,7 @@ test('cream palette text tokens meet 4.5:1 on cream and on the surface colours',
 
 test('migrated guides use inline SVG icons, not emoji, anywhere in the markup', () => {
   for (const page of migrated) {
-    const found = read(page).match(/\p{Extended_Pictographic}/gu) || [];
+    const found = read(page).match(/\p{Extended_Pictographic}|\u20E3/gu) || [];
     assert.deepEqual(found, [], `${page} still contains emoji: ${found.join('')}`);
   }
 });
