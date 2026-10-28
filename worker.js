@@ -3663,7 +3663,7 @@ async function handleSitemap(request, env) {
   let learnUrls = [];
   try {
     const { results: analyses } = await env.DB.prepare(
-      'SELECT photo_id, published_at FROM photo_analyses ORDER BY published_at DESC'
+      'SELECT a.photo_id, a.published_at FROM photo_analyses a JOIN photos p ON p.id = a.photo_id AND p.published = 1 ORDER BY a.published_at DESC'
     ).all();
     learnUrls = analyses.map(a => `  <url>
     <loc>${base}/learn/${escXml(a.photo_id)}</loc>
@@ -5049,7 +5049,7 @@ async function handleLearnIndex(env, request) {
   const offset = (page - 1) * PAGE_SIZE;
 
   const { results: [{ total }] } = await env.DB.prepare(
-    `SELECT COUNT(*) as total FROM photo_analyses a`
+    `SELECT COUNT(*) as total FROM photo_analyses a JOIN photos p ON p.id = a.photo_id AND p.published = 1`
   ).all().catch(() => ({ results: [{ total: 0 }] }));
 
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
@@ -5059,7 +5059,7 @@ async function handleLearnIndex(env, request) {
     `SELECT a.photo_id, a.title, a.title_en, a.composition_rule, a.tags_json, a.tags_json_en, a.published_at,
             p.thumbnail
      FROM photo_analyses a
-     LEFT JOIN photos p ON p.id = a.photo_id
+     JOIN photos p ON p.id = a.photo_id AND p.published = 1
      ORDER BY a.published_at DESC
      LIMIT ? OFFSET ?`
   ).bind(PAGE_SIZE, (currentPage - 1) * PAGE_SIZE).all().catch(() => ({ results: [] }));
@@ -5424,7 +5424,7 @@ async function handleLearnAnalysis(env, photoId) {
   ).bind(photoId).first().catch(() => null);
 
   const photo = await env.DB.prepare(
-    'SELECT id, title, thumbnail, url, category FROM photos WHERE id = ?'
+    'SELECT id, title, thumbnail, url, category FROM photos WHERE id = ? AND published = 1'
   ).bind(photoId).first().catch(() => null);
 
   if (!row || !photo) {
@@ -5433,9 +5433,9 @@ async function handleLearnAnalysis(env, photoId) {
 
   // Prev/next and more analyses — run in parallel
   const [prevRow, nextRow, moreRows] = await Promise.all([
-    env.DB.prepare(`SELECT a.photo_id, a.title, a.title_en FROM photo_analyses a WHERE a.published_at > ? AND a.published_at IS NOT NULL ORDER BY a.published_at ASC LIMIT 1`).bind(row.published_at || '').first().catch(() => null),
-    env.DB.prepare(`SELECT a.photo_id, a.title, a.title_en FROM photo_analyses a WHERE a.published_at < ? AND a.published_at IS NOT NULL ORDER BY a.published_at DESC LIMIT 1`).bind(row.published_at || '').first().catch(() => null),
-    env.DB.prepare(`SELECT a.photo_id, a.title, a.title_en, a.composition_rule, p.thumbnail, p.url FROM photo_analyses a LEFT JOIN photos p ON p.id = a.photo_id WHERE a.photo_id != ? AND a.published_at IS NOT NULL ORDER BY RANDOM() LIMIT 4`).bind(photoId).all().catch(() => ({ results: [] })),
+    env.DB.prepare(`SELECT a.photo_id, a.title, a.title_en FROM photo_analyses a JOIN photos p ON p.id = a.photo_id AND p.published = 1 WHERE a.published_at > ? AND a.published_at IS NOT NULL ORDER BY a.published_at ASC LIMIT 1`).bind(row.published_at || '').first().catch(() => null),
+    env.DB.prepare(`SELECT a.photo_id, a.title, a.title_en FROM photo_analyses a JOIN photos p ON p.id = a.photo_id AND p.published = 1 WHERE a.published_at < ? AND a.published_at IS NOT NULL ORDER BY a.published_at DESC LIMIT 1`).bind(row.published_at || '').first().catch(() => null),
+    env.DB.prepare(`SELECT a.photo_id, a.title, a.title_en, a.composition_rule, p.thumbnail, p.url FROM photo_analyses a JOIN photos p ON p.id = a.photo_id AND p.published = 1 WHERE a.photo_id != ? AND a.published_at IS NOT NULL ORDER BY RANDOM() LIMIT 4`).bind(photoId).all().catch(() => ({ results: [] })),
   ]);
   const moreAnalyses = moreRows?.results || [];
 

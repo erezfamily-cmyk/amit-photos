@@ -1,4 +1,4 @@
-const CACHE = 'amit-photos-v5';
+const CACHE = 'amit-photos-v6';
 const STATIC = [
   '/',
   '/index.html',
@@ -33,8 +33,9 @@ self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET' || !url.origin.includes(self.location.origin)) return;
 
   // Network-first for photos.json, /api/photos (נתוני D1 חיים) ו-HTML navigations
-  // (תמיד עדכני, נופל לקאש רק אם הרשת נכשלת)
-  if (url.pathname.includes('photos.json') || url.pathname.startsWith('/api/photos') || e.request.mode === 'navigate') {
+  // (תמיד עדכני, נופל לקאש רק אם הרשת נכשלת). גם JS/CSS תחת /assets/ שהכתובת שלהם בלי ?v= (כמו nav.js בעמודי SSR) — ב-cache-first הם נשארו ישנים לנצח; גרסאות עם ?v=hash נשארות cache-first
+  const isCode = url.pathname.startsWith('/assets/') && /\.(js|css)$/.test(url.pathname) && !url.searchParams.has('v');
+  if (url.pathname.includes('photos.json') || url.pathname.startsWith('/api/photos') || e.request.mode === 'navigate' || isCode) {
     e.respondWith(
       fetch(e.request).then(res => {
         const clone = res.clone();
