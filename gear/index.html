@@ -13,19 +13,19 @@
 <title>הציוד שלי — עמית פוטוס | Amit Photos Gear</title>
 <meta name="description" content="הציוד האמיתי שאני משתמש בו — Nikon D700, Z7, עדשות Nikon ו-Sigma, חצובת Slik קרבון ועוד.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&family=Frank+Ruhl+Libre:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
-  --bg: #0a0a0a; --surface: #111; --surface2: #181818; --border: #222;
-  --accent: #c8a96e; --text: #f0ede8; --muted: #888;
+  --bg: #f5f1e9; --surface: #fffdf9; --surface2: #f0ebe0; --border: #ded8ce;
+  --accent: #7a5c3f; --text: #302d28; --muted: #645f57;
 }
 body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--text);
   direction: rtl; min-height: 100vh; padding-bottom: 4rem; }
 
 .site-header { display: flex; align-items: center; justify-content: space-between;
   padding: .9rem 1.5rem; border-bottom: 1px solid var(--border); }
-.site-title { font-family: 'Syne', sans-serif; font-size: 1.05rem;
+.site-title { font-family: 'Frank Ruhl Libre', Georgia, serif; font-weight: 500; font-size: 1.05rem;
   color: var(--accent); text-decoration: none; }
 .header-back { font-size: .8rem; color: var(--muted); text-decoration: none; }
 .header-back:hover { color: var(--accent); }
@@ -36,11 +36,11 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
 .lang-btn:hover { color: var(--accent); border-color: var(--accent); }
 
 .hero { max-width: 760px; margin: 0 auto; padding: 2.5rem 1.25rem 1rem; }
-.hero h1 { font-family: 'Syne', sans-serif; font-size: 1.9rem; margin-bottom: .6rem; }
+.hero h1 { font-family: 'Frank Ruhl Libre', Georgia, serif; font-weight: 500; font-size: 1.9rem; margin-bottom: .6rem; }
 .hero p { color: var(--muted); font-size: .93rem; line-height: 1.65; max-width: 560px; }
 
 .section { max-width: 760px; margin: 0 auto; padding: 1.5rem 1.25rem .5rem; }
-.section-title { font-family: 'Syne', sans-serif; font-size: .75rem; text-transform: uppercase;
+.section-title { font-family: 'Frank Ruhl Libre', Georgia, serif; font-weight: 500; font-size: .75rem; text-transform: uppercase;
   letter-spacing: .08em; color: var(--muted); margin-bottom: 1rem;
   padding-bottom: .5rem; border-bottom: 1px solid var(--border);
   display: flex; align-items: center; gap: .5rem; }
@@ -51,7 +51,7 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
 .gear-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
   overflow: hidden; display: flex; flex-direction: column; text-decoration: none;
   transition: border-color .2s, transform .15s; }
-.gear-card:hover { border-color: rgba(200,169,110,.5); transform: translateY(-2px); }
+.gear-card:hover { border-color: rgba(122,92,63,.5); transform: translateY(-2px); }
 .gear-card-ico { aspect-ratio: 3/2; background: var(--surface2); display: flex;
   align-items: center; justify-content: center; position: relative;
   color: var(--accent); }
@@ -59,23 +59,23 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
 .gear-card-body { padding: .9rem; flex: 1; display: flex; flex-direction: column; }
 .gear-card-brand { font-size: .68rem; text-transform: uppercase; letter-spacing: .06em;
   color: var(--accent); margin-bottom: .2rem; }
-.gear-card-name { font-family: 'Syne', sans-serif; font-size: .9rem; color: var(--text);
+.gear-card-name { font-family: 'Frank Ruhl Libre', Georgia, serif; font-weight: 500; font-size: .9rem; color: var(--text);
   margin-bottom: .35rem; }
 .gear-card-desc { font-size: .76rem; color: var(--muted); line-height: 1.55; flex: 1; margin-bottom: .8rem; }
-.gear-card-coupon { font-size: .72rem; color: var(--accent); font-weight: 700; border: 1px dashed rgba(200,169,110,.4);
+.gear-card-coupon { font-size: .72rem; color: var(--accent); font-weight: 700; border: 1px dashed rgba(122,92,63,.4);
   border-radius: 4px; padding: .3rem .5rem; margin-bottom: .6rem; text-align: center; letter-spacing: .02em; }
-.gear-card-btn { display: block; text-align: center; border: 1px solid rgba(200,169,110,.45);
+.gear-card-btn { display: block; text-align: center; border: 1px solid rgba(122,92,63,.45);
   color: var(--accent); font-size: .75rem; font-weight: 700; padding: .4rem .75rem;
   border-radius: 6px; transition: background .15s, color .15s; }
-.gear-card:hover .gear-card-btn { background: var(--accent); color: #000; }
+.gear-card:hover .gear-card-btn { background: var(--accent); color: #fffdf9; }
 
 .gear-card.own-badge .gear-card-ico::after {
   content: '✓ שלי';
   position: absolute;
   top: .5rem;
   left: .5rem;
-  background: rgba(200,169,110,.15);
-  border: 1px solid rgba(200,169,110,.4);
+  background: rgba(122,92,63,.15);
+  border: 1px solid rgba(122,92,63,.4);
   color: var(--accent);
   font-size: .65rem;
   font-weight: 700;
@@ -85,29 +85,30 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
 }
 
 .disclose { max-width: 760px; margin: 0 auto; padding: .5rem 1.25rem 2rem;
-  font-size: .7rem; color: #888; text-align: center; }
-.disclose a { color: #666; }
+  font-size: .7rem; color: var(--muted); text-align: center; }
+.disclose a { color: var(--muted); }
 
 .kofi-bar { text-align: center; padding: 1.5rem 1.25rem 2rem;
   border-top: 1px solid var(--border); max-width: 760px; margin: 1rem auto 0; }
 .kofi-bar a { display: inline-flex; align-items: center; gap: .5rem;
-  background: var(--surface); border: 1px solid rgba(200,169,110,.4);
+  background: var(--surface); border: 1px solid rgba(122,92,63,.4);
   color: var(--accent); font-size: .82rem; font-weight: 700;
   padding: .55rem 1.4rem; border-radius: 8px; text-decoration: none;
   transition: background .2s, color .2s; }
-.kofi-bar a:hover { background: var(--accent); color: #000; }
+.kofi-bar a:hover { background: var(--accent); color: #fffdf9; }
 
 @media(max-width: 480px) { .gear-grid { grid-template-columns: 1fr 1fr; } }
 
 .gumroad-banner { max-width: 760px; margin: 0 auto; padding: 0 1.25rem 1.5rem; }
-.gumroad-banner-inner { background: linear-gradient(135deg, rgba(200,169,110,.1), rgba(200,169,110,.04)); border: 1px solid rgba(200,169,110,.4); border-radius: 14px; padding: 1.25rem 1.5rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
-.gumroad-banner-title { font-family: 'Syne', sans-serif; font-size: .95rem; color: var(--accent); margin-bottom: .3rem; }
+.gumroad-banner-inner { background: linear-gradient(135deg, rgba(122,92,63,.1), rgba(122,92,63,.04)); border: 1px solid rgba(122,92,63,.4); border-radius: 14px; padding: 1.25rem 1.5rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+.gumroad-banner-title { font-family: 'Frank Ruhl Libre', Georgia, serif; font-weight: 500; font-size: .95rem; color: var(--accent); margin-bottom: .3rem; }
 .gumroad-banner-desc { font-size: .83rem; color: var(--muted); }
-.gumroad-banner-btn { flex-shrink: 0; background: var(--accent); color: #000; font-weight: 700; font-size: .85rem; padding: .6rem 1.3rem; border-radius: 8px; text-decoration: none; transition: background .15s; white-space: nowrap; }
-.gumroad-banner-btn:hover { background: #e0c080; }
+.gumroad-banner-btn { flex-shrink: 0; background: var(--accent); color: #fffdf9; font-weight: 700; font-size: .85rem; padding: .6rem 1.3rem; border-radius: 8px; text-decoration: none; transition: background .15s; white-space: nowrap; }
+.gumroad-banner-btn:hover { background: #654a30; }
 </style>
 </head>
 <body>
+<link rel="stylesheet" href="/assets/css/guide-cream.css?v=9da5a29e">
 <script src="/assets/js/nav.js?v=e842596e" defer></script>
 
 <header class="site-header">
