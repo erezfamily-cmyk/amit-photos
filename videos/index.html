@@ -10,21 +10,21 @@
 <title data-he="הסרטונים שלי — Amit Photos" data-en="My Videos — Amit Photos">הסרטונים שלי — Amit Photos</title>
 <meta name="description" content="מדריכי צילום, גלריות אלבום וריילס מאת עמית ארז.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&family=Frank+Ruhl+Libre:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
-  --bg: #0a0a0a; --surface: #111; --border: #222;
-  --accent: #c8a96e; --text: #f0ede8; --muted: #888;
+  --bg: #f5f1e9; --surface: #fffdf9; --border: #ded8ce;
+  --accent: #7a5c3f; --text: #302d28; --muted: #645f57;
 }
 body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--text);
   direction: rtl; min-height: 100vh; padding: 0 0 4rem; }
 
 .page-hero { text-align: center; padding: 2.5rem 1.25rem 1.5rem; }
 .page-hero .badge { display: inline-block; font-size: .72rem;
-  background: rgba(200,169,110,.12); border: 1px solid rgba(200,169,110,.3);
+  background: rgba(122,92,63,.12); border: 1px solid rgba(122,92,63,.3);
   color: var(--accent); border-radius: 20px; padding: .3rem .8rem; margin-bottom: .75rem; }
-.page-hero h1 { font-family: 'Syne', sans-serif; font-size: 1.8rem;
+.page-hero h1 { font-family: 'Frank Ruhl Libre', Georgia, serif; font-weight: 500; font-size: 1.8rem;
   color: var(--accent); margin-bottom: .5rem; }
 .page-hero p { color: var(--muted); font-size: .9rem; max-width: 420px; margin: 0 auto; }
 
@@ -33,19 +33,19 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
 .tab-btn { background: var(--surface); border: 1px solid var(--border);
   color: var(--muted); font-family: 'Heebo', sans-serif; font-size: .85rem;
   padding: .5rem 1.2rem; border-radius: 20px; cursor: pointer; transition: all .2s; }
-.tab-btn.active { background: rgba(200,169,110,.15); border-color: var(--accent);
-  color: var(--accent); font-weight: 600; }
-.tab-btn:hover:not(.active) { border-color: #444; color: var(--text); }
+.tab-btn.active { background: var(--accent); border-color: var(--accent);
+  color: #fffdf9; font-weight: 600; }
+.tab-btn:hover:not(.active) { border-color: var(--accent); color: var(--text); }
 
 .section { max-width: 900px; margin: 0 auto; padding: 1.5rem 1.25rem; }
-.section-title { font-family: 'Syne', sans-serif; font-size: 1.2rem;
+.section-title { font-family: 'Frank Ruhl Libre', Georgia, serif; font-weight: 500; font-size: 1.2rem;
   color: var(--accent); margin-bottom: 1.25rem;
   border-bottom: 1px solid var(--border); padding-bottom: .5rem; }
 
 /* Tutorial cards — single column */
 .tutorial-card { background: var(--surface); border: 1px solid var(--border);
   border-radius: 14px; padding: 1.5rem; margin-bottom: 1.5rem; }
-.tutorial-card .card-title { font-family: 'Syne', sans-serif; font-size: 1.1rem;
+.tutorial-card .card-title { font-family: 'Frank Ruhl Libre', Georgia, serif; font-weight: 500; font-size: 1.1rem;
   color: var(--accent); margin-bottom: .5rem; }
 .tutorial-card .card-summary { color: var(--muted); font-size: .88rem;
   line-height: 1.6; margin-bottom: 1rem; }
@@ -54,9 +54,9 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
 .tutorial-card .yt-embed iframe { position: absolute; top: 0; right: 0;
   width: 100%; height: 100%; border: 0; }
 .card-link { display: inline-block; margin-top: .5rem; background: var(--accent);
-  color: #000; font-weight: 700; font-size: .83rem; padding: .5rem 1.1rem;
+  color: #fffdf9; font-weight: 700; font-size: .83rem; padding: .5rem 1.1rem;
   border-radius: 8px; text-decoration: none; transition: background .15s; }
-.card-link:hover { background: #e0c080; }
+.card-link:hover { background: #654a30; }
 
 /* Gallery + Reel grids — 2 columns */
 .two-col { display: grid; grid-template-columns: 1fr; gap: 1.25rem; }
@@ -72,18 +72,18 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
 .ig-card { background: var(--surface); border: 1px solid var(--border);
   border-radius: 14px; padding: 1rem; display: flex; flex-direction: column; gap: .75rem; }
 .ig-card .card-label { font-size: .88rem; color: var(--text); }
-.ig-link { display: inline-block; background: rgba(200,169,110,.15);
+.ig-link { display: inline-block; background: rgba(122,92,63,.15);
   border: 1px solid var(--accent); color: var(--accent); font-size: .83rem;
   font-weight: 700; padding: .5rem 1rem; border-radius: 8px;
   text-decoration: none; transition: background .15s; }
-.ig-link:hover { background: rgba(200,169,110,.3); }
+.ig-link:hover { background: rgba(122,92,63,.3); }
 
 /* Adorama gear mini-card inside tutorial */
 .gear-mini { display: flex; align-items: center; gap: .75rem; margin-top: .75rem;
-  padding: .75rem 1rem; background: rgba(200,169,110,.06);
-  border: 1px solid rgba(200,169,110,.2); border-radius: 10px;
+  padding: .75rem 1rem; background: rgba(122,92,63,.06);
+  border: 1px solid rgba(122,92,63,.2); border-radius: 10px;
   text-decoration: none; color: inherit; transition: background .15s; }
-.gear-mini:hover { background: rgba(200,169,110,.12); }
+.gear-mini:hover { background: rgba(122,92,63,.12); }
 .gear-mini .gear-ico { font-size: 1.4rem; flex-shrink: 0; }
 .gear-mini .gear-body { flex: 1; }
 .gear-mini .gear-name { font-size: .83rem; font-weight: 600; color: var(--text); }
@@ -93,10 +93,10 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
 
 /* Peltier affiliate banner */
 .peltier-banner { display: flex; align-items: center; gap: 1rem;
-  background: rgba(200,169,110,.08); border: 1px solid rgba(200,169,110,.25);
+  background: rgba(122,92,63,.08); border: 1px solid rgba(122,92,63,.25);
   border-radius: 14px; padding: 1.1rem 1.4rem; margin-bottom: 1.5rem;
   text-decoration: none; color: inherit; transition: background .15s; }
-.peltier-banner:hover { background: rgba(200,169,110,.15); }
+.peltier-banner:hover { background: rgba(122,92,63,.15); }
 .peltier-banner .pb-icon { font-size: 2rem; flex-shrink: 0; }
 .peltier-banner .pb-body { flex: 1; }
 .peltier-banner .pb-title { font-size: .93rem; font-weight: 700; color: var(--accent); }
@@ -111,7 +111,7 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
   background: var(--surface); border: 1px solid var(--border);
   border-radius: 14px; padding: 1rem 1.5rem;
   text-decoration: none; color: inherit; transition: background .15s; }
-.kofi-card:hover { background: #1a1a1a; }
+.kofi-card:hover { background: var(--surface2); }
 .kofi-card .kofi-ico { font-size: 1.6rem; }
 .kofi-card .kofi-text { text-align: start; }
 .kofi-card .kofi-title { font-size: .9rem; font-weight: 700; color: var(--text); }
@@ -121,6 +121,7 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
   padding: 2rem; }
 .hidden { display: none; }
 </style>
+<link rel="stylesheet" href="/assets/css/guide-cream.css?v=9da5a29e">
 <script src="/assets/js/nav.js?v=e842596e" defer></script>
 </head>
 <body>
@@ -154,7 +155,7 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
 
 <div class="kofi-section">
   <a class="kofi-card" href="https://ko-fi.com/amitphotos" target="_blank" rel="noopener">
-    <div class="kofi-ico">☕</div>
+    <div class="kofi-ico"><svg class="gi" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color:var(--accent)"><path d="M4 8h13v6a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5z"/><path d="M17 10h2a2 2 0 0 1 0 4h-2M8 3v2M12 3v2"/></svg></div>
     <div class="kofi-text">
       <div class="kofi-title" data-he="אהבת את התוכן? קנה לי קפה" data-en="Enjoyed the content? Buy me a coffee">אהבת את התוכן? קנה לי קפה</div>
       <div class="kofi-sub" data-he="תמיכה קטנה שעוזרת לי להמשיך ליצור" data-en="A small support that helps me keep creating">תמיכה קטנה שעוזרת לי להמשיך ליצור</div>
@@ -195,7 +196,7 @@ var TUTORIAL_GEAR = {
 
 function peltierBanner() {
   return '<a class="peltier-banner" href="https://www.awin1.com/cread.php?awinmid=96417&awinaffid=2911221&ued=https%3A%2F%2Fwww.peltierphotocourses.com%2F" target="_blank" rel="noopener sponsored">' +
-    '<div class="pb-icon">🎓</div>' +
+    '<div class="pb-icon"><svg class="gi" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color:var(--accent)"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c0 1.500 3 3 6 3s6-1.500 6-3v-5"/><path d="M22 9v6"/></svg></div>' +
     '<div class="pb-body">' +
       '<div class="pb-title">' + t('Peltier Photo Courses', 'Peltier Photo Courses') + '</div>' +
       '<div class="pb-desc">' + t('קורסי וידאו מקצועיים לצילום — מהיסודות ועד מתקדם, בקצב שלך', 'Professional photography video courses — beginner to advanced, at your own pace') + '</div>' +
@@ -217,6 +218,7 @@ function buildTutorials(videos) {
   }
   var html = videos.map(function(v, i) {
     var title   = v['title_'   + LANG] || v.title_he || '';
+    title = title.replace(/^[\p{Extended_Pictographic}️\s]+/u, '');
     var summary = v['summary_' + LANG] || '';
     var link    = v.slug
       ? '<a href="/camera/' + v.slug + '/" class="card-link">' +
@@ -226,7 +228,7 @@ function buildTutorials(videos) {
     if (v.slug && TUTORIAL_GEAR[v.slug]) {
       var g = TUTORIAL_GEAR[v.slug];
       gear = '<a class="gear-mini" href="' + g.url + '" target="_blank" rel="noopener sponsored">' +
-        '<div class="gear-ico">📷</div>' +
+        '<div class="gear-ico"><svg class="gi" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color:var(--accent)"><path d="M4 8h3l1.5-2h7L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.500"/></svg></div>' +
         '<div class="gear-body">' +
           '<div class="gear-name">' + (LANG === 'en' ? g.name_en : g.name_he) + '</div>' +
           '<div class="gear-sub">' + (LANG === 'en' ? g.sub_en : g.sub_he) + '</div>' +
@@ -254,6 +256,7 @@ function buildGalleries(videos) {
   }
   grid.innerHTML = videos.map(function(v) {
     var title = v['title_' + LANG] || v.title_he || '';
+    title = title.replace(/^[\p{Extended_Pictographic}️\s]+/u, '');
     return '<div class="media-card">' + ytEmbed(v.id) +
       '<div class="card-label">' + title + '</div></div>';
   }).join('');
@@ -267,6 +270,7 @@ function buildReels(videos) {
   }
   grid.innerHTML = videos.map(function(v) {
     var title = v['title_' + LANG] || v.title_he || '';
+    title = title.replace(/^[\p{Extended_Pictographic}️\s]+/u, '');
     if (v.platform === 'youtube') {
       return '<div class="media-card">' + ytEmbed(v.id) +
         '<div class="card-label">' + title + '</div></div>';
