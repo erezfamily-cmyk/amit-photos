@@ -14,38 +14,38 @@
 <meta property="og:site_name" content="עמית ארז | צילום">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Syne:wght@700&family=Frank+Ruhl+Libre:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#0a0a0a;--surface:#111;--border:#222;--accent:#c8a96e;--text:#f0ede8;--muted:#888;}
+:root{--bg:#f5f1e9;--surface:#fffdf9;--surface2:#f0ebe0;--border:#ded8ce;--accent:#7a5c3f;--text:#302d28;--muted:#645f57;}
 body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direction:rtl;min-height:100vh;padding:0 0 4rem}
 .spot-hero{padding:2.5rem 1.25rem 1.5rem;max-width:800px;margin:0 auto}
 .back-link{font-size:.85rem;color:var(--muted);text-decoration:none;display:inline-flex;align-items:center;gap:.4rem;margin-bottom:1.5rem;transition:color .2s}
 .back-link:hover{color:var(--accent)}
-.badge{display:inline-block;font-size:.72rem;background:rgba(200,169,110,.12);border:1px solid rgba(200,169,110,.3);color:var(--accent);border-radius:20px;padding:.3rem .8rem;margin-bottom:.75rem}
-h1{font-family:'Syne',sans-serif;font-size:2rem;color:var(--accent);margin-bottom:.5rem}
+.badge{display:inline-block;font-size:.72rem;background:rgba(122,92,63,.12);border:1px solid rgba(122,92,63,.3);color:var(--accent);border-radius:20px;padding:.3rem .8rem;margin-bottom:.75rem}
+h1{font-family:'Frank Ruhl Libre',Georgia,serif;font-weight:500;font-size:2rem;color:var(--accent);margin-bottom:.5rem}
 .region-time{color:var(--muted);font-size:.9rem;margin-bottom:1.5rem}
 .map-wrap{margin:0 auto 2rem;max-width:800px;padding:0 1.25rem}
 .map-wrap iframe{width:100%;height:300px;border:0;border-radius:8px}
 .section{max-width:800px;margin:0 auto 2rem;padding:0 1.25rem}
-.section h2{font-family:'Syne',sans-serif;font-size:1.1rem;color:var(--accent);margin-bottom:.75rem}
-.tip-box{background:#141414;border:1px solid rgba(200,169,110,.2);border-radius:8px;padding:1.25rem;font-size:.9rem;line-height:1.7;color:var(--text)}
+.section h2{font-family:'Frank Ruhl Libre',Georgia,serif;font-weight:500;font-size:1.1rem;color:var(--accent);margin-bottom:.75rem}
+.tip-box{background:var(--surface2);border:1px solid rgba(122,92,63,.2);border-radius:8px;padding:1.25rem;font-size:.9rem;line-height:1.7;color:var(--text)}
 .specs-list{list-style:none;display:flex;flex-direction:column;gap:.5rem}
 .specs-list li{font-size:.9rem;color:var(--muted)}
 .specs-list li strong{color:var(--text)}
 .guides-row{display:flex;flex-wrap:wrap;gap:.5rem}
-.guide-chip{background:#141414;border:1px solid var(--border);border-radius:20px;padding:.35rem .9rem;font-size:.8rem;color:var(--muted);text-decoration:none;transition:all .2s}
+.guide-chip{background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:.35rem .9rem;font-size:.8rem;color:var(--muted);text-decoration:none;transition:all .2s}
 .guide-chip:hover{border-color:var(--accent);color:var(--accent)}
 .gallery-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
 @media(min-width:600px){.gallery-grid{grid-template-columns:repeat(3,1fr)}}
-.gallery-item{border-radius:6px;overflow:hidden;background:#111;display:flex;flex-direction:column}
+.gallery-item{border-radius:6px;overflow:hidden;background:var(--surface);display:flex;flex-direction:column}
 .gallery-item .photo-wrap{aspect-ratio:3/2;overflow:hidden}
 .gallery-item .photo-wrap img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .3s}
 .gallery-item:hover .photo-wrap img{transform:scale(1.04)}
 .photo-btns{display:flex;gap:.4rem;padding:.5rem;justify-content:center}
-.btn-gallery{flex:1;text-align:center;background:#1a1a1a;border:1px solid var(--border);color:var(--muted);border-radius:4px;padding:.35rem .5rem;font-size:.75rem;font-family:'Heebo',sans-serif;text-decoration:none;transition:all .2s}
+.btn-gallery{flex:1;text-align:center;background:var(--surface2);border:1px solid var(--border);color:var(--muted);border-radius:4px;padding:.35rem .5rem;font-size:.75rem;font-family:'Heebo',sans-serif;text-decoration:none;transition:all .2s}
 .btn-gallery:hover{border-color:var(--accent);color:var(--accent)}
-.btn-sale{flex:1;text-align:center;background:var(--accent);color:#0a0a0a;border:none;border-radius:4px;padding:.35rem .5rem;font-size:.75rem;font-weight:700;font-family:'Heebo',sans-serif;text-decoration:none;transition:opacity .2s}
+.btn-sale{flex:1;text-align:center;background:var(--accent);color:#fffdf9;border:none;border-radius:4px;padding:.35rem .5rem;font-size:.75rem;font-weight:700;font-family:'Heebo',sans-serif;text-decoration:none;transition:opacity .2s}
 .btn-sale:hover{opacity:.85}
 .lb{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:3000;display:none;align-items:center;justify-content:center}
 .lb.open{display:flex}
@@ -53,28 +53,28 @@ h1{font-family:'Syne',sans-serif;font-size:2rem;color:var(--accent);margin-botto
 .lb-close{position:absolute;top:1rem;left:1rem;background:none;border:none;color:#fff;font-size:1.5rem;cursor:pointer;padding:.5rem}
 .suggest-link{text-align:center;padding:1.5rem;color:var(--muted);font-size:.85rem}
 .suggest-link button{background:none;border:none;color:var(--accent);cursor:pointer;font-size:.85rem;text-decoration:underline;font-family:'Heebo',sans-serif}
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:2000;display:none;align-items:center;justify-content:center;padding:1.25rem}
+.modal-overlay{position:fixed;inset:0;background:rgba(40,32,20,.55);z-index:2000;display:none;align-items:center;justify-content:center;padding:1.25rem}
 .modal-overlay.open{display:flex}
-.modal{background:#111;border:1px solid #333;border-radius:12px;padding:2rem;width:100%;max-width:460px}
-.modal h2{font-family:'Syne',sans-serif;color:var(--accent);margin-bottom:1.25rem}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:2rem;width:100%;max-width:460px}
+.modal h2{font-family:'Frank Ruhl Libre',Georgia,serif;font-weight:500;color:var(--accent);margin-bottom:1.25rem}
 .modal label{display:block;font-size:.85rem;color:var(--muted);margin-bottom:.3rem}
-.modal input,.modal textarea{width:100%;background:#0a0a0a;border:1px solid var(--border);color:var(--text);padding:.65rem .9rem;border-radius:4px;font-size:.9rem;font-family:'Heebo',sans-serif;direction:rtl;margin-bottom:1rem;outline:none}
+.modal input,.modal textarea{width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:.65rem .9rem;border-radius:4px;font-size:.9rem;font-family:'Heebo',sans-serif;direction:rtl;margin-bottom:1rem;outline:none}
 .modal input:focus,.modal textarea:focus{border-color:var(--accent)}
 .modal textarea{min-height:100px;resize:vertical}
 .modal-actions{display:flex;gap:.75rem;justify-content:flex-end}
 .btn-cancel{background:transparent;border:1px solid var(--border);color:var(--muted);padding:.6rem 1.25rem;border-radius:4px;font-size:.85rem;cursor:pointer}
-.btn-submit{background:var(--accent);color:#0a0a0a;border:none;padding:.6rem 1.5rem;border-radius:4px;font-weight:700;font-size:.85rem;cursor:pointer}
+.btn-submit{background:var(--accent);color:#fffdf9;border:none;padding:.6rem 1.5rem;border-radius:4px;font-weight:700;font-size:.85rem;cursor:pointer}
 .share-row { display:flex; gap:.6rem; flex-wrap:wrap; margin:1rem 0 1.5rem; }
 .share-btn { display:flex; align-items:center; gap:.4rem; padding:.45rem .9rem; border-radius:20px; border:none; cursor:pointer; font-size:.8rem; font-family:'Heebo',sans-serif; font-weight:600; transition:opacity .2s; }
 .share-btn:hover { opacity:.85; }
 .share-wa { background:#0e7a3a; color:#fff; }
 .share-fb { background:#1461cc; color:#fff; }
-.share-copy { background:#222; color:#ccc; border:1px solid #444; }
+.share-copy { background:var(--surface2); color:var(--text); border:1px solid var(--border); }
 #waze-wrap { display:none; margin:.75rem 1.25rem; }
-#waze-link { display:inline-flex; align-items:center; gap:.5rem; background:#1a1a1a; border:1px solid #333; border-radius:6px; padding:.55rem 1rem; color:#c8a96e; text-decoration:none; font-size:.85rem; font-weight:600; }
-#next-loc-nav { display:none; margin:2.5rem 1.25rem; padding:1.25rem 1.5rem; background:#111; border:1px solid #222; border-radius:8px; text-align:center; }
-#next-loc-label { font-size:.78rem; color:#999; margin-bottom:.4rem; }
-#next-loc-link { color:#c8a96e; text-decoration:none; font-size:1rem; font-weight:700; }
+#waze-link { display:inline-flex; align-items:center; gap:.5rem; background:var(--surface2); border:1px solid var(--border); border-radius:6px; padding:.55rem 1rem; color:var(--accent); text-decoration:none; font-size:.85rem; font-weight:600; }
+#next-loc-nav { display:none; margin:2.5rem 1.25rem; padding:1.25rem 1.5rem; background:var(--surface); border:1px solid var(--border); border-radius:8px; text-align:center; }
+#next-loc-label { font-size:.78rem; color:var(--muted); margin-bottom:.4rem; }
+#next-loc-link { color:var(--accent); text-decoration:none; font-size:1rem; font-weight:700; }
 @media print {
   nav#main-nav, footer#main-footer, .share-row, #correction-modal, #correction-trigger { display:none !important; }
   body { background:#fff !important; color:#000 !important; }
@@ -82,30 +82,36 @@ h1{font-family:'Syne',sans-serif;font-size:2rem;color:var(--accent);margin-botto
 /* when_to_visit */
 .seasons-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem;margin:.75rem 0}
 .season-card{border-radius:6px;padding:.6rem .5rem;text-align:center;font-family:'Heebo',sans-serif}
-.season-card.good{background:rgba(200,169,110,.18);border:1px solid rgba(200,169,110,.4)}
+.season-card.good{background:rgba(122,92,63,.18);border:1px solid rgba(122,92,63,.4)}
 .season-card.ok{background:rgba(100,180,100,.1);border:1px solid rgba(100,180,100,.25)}
-.season-card.bad{background:rgba(80,80,80,.12);border:1px solid #2a2a2a}
+.season-card.bad{background:rgba(80,80,80,.12);border:1px solid var(--border)}
 .season-card .s-emoji{font-size:1.1rem}
-.season-card .s-name{font-size:.7rem;color:#888;margin:.2rem 0}
-.season-card .s-note{font-size:.68rem;color:#aaa;line-height:1.4}
-.season-card.good .s-note{color:#c8a96e}
+.season-card .s-name{font-size:.7rem;color:var(--text);margin:.2rem 0}
+.season-card .s-note{font-size:.68rem;color:#4a463f;line-height:1.4}
+.season-card.good .s-note{color:#5c4329}
 /* recommended_gear */
 .gear-chips{display:flex;flex-wrap:wrap;gap:.4rem;margin:.6rem 0}
-.gear-chip{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:12px;padding:.3rem .75rem;font-size:.78rem;color:#aaa;font-family:'Heebo',sans-serif}
-.gear-chip.primary{border-color:rgba(200,169,110,.5);color:#c8a96e;font-weight:600}
+.gear-chip{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:.3rem .75rem;font-size:.78rem;color:var(--muted);font-family:'Heebo',sans-serif}
+.gear-chip.primary{border-color:rgba(122,92,63,.5);color:var(--accent);font-weight:600}
 /* nearby */
 .nearby-list{display:flex;flex-direction:column;gap:.5rem;margin:.6rem 0}
-.nearby-item{display:flex;align-items:center;justify-content:space-between;background:#141414;border:1px solid #222;border-radius:6px;padding:.5rem .85rem;text-decoration:none;color:var(--text);transition:border-color .2s}
+.nearby-item{display:flex;align-items:center;justify-content:space-between;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:.5rem .85rem;text-decoration:none;color:var(--text);transition:border-color .2s}
 .nearby-item:hover{border-color:var(--accent)}
 .nearby-name{font-size:.88rem}
 .nearby-dist{font-size:.75rem;color:var(--muted)}
 @media(max-width:480px){.seasons-grid{grid-template-columns:repeat(2,1fr)}}
+.badge .gi,.share-btn .gi,#waze-link .gi,.kofi-bar .gi{vertical-align:-3px}
+.sun-ico{display:inline-flex;vertical-align:middle;margin-inline-end:.35rem;color:var(--accent)}
+#weather-icon{color:var(--accent);line-height:1}
+#weather-wind{display:flex;align-items:center;gap:.3rem}
+.season-card .s-emoji{color:var(--accent);line-height:1;display:flex;justify-content:center}
 .kofi-bar{text-align:center;padding:1.5rem 1.25rem 2rem;border-top:1px solid var(--border);margin-top:1rem}
-.kofi-bar a{display:inline-flex;align-items:center;gap:.5rem;background:var(--surface);border:1px solid rgba(200,169,110,.4);color:var(--accent);font-size:.82rem;font-weight:700;padding:.55rem 1.4rem;border-radius:8px;text-decoration:none;transition:background .2s,color .2s}
-.kofi-bar a:hover{background:var(--accent);color:#000}
+.kofi-bar a{display:inline-flex;align-items:center;gap:.5rem;background:var(--surface);border:1px solid rgba(122,92,63,.4);color:var(--accent);font-size:.82rem;font-weight:700;padding:.55rem 1.4rem;border-radius:8px;text-decoration:none;transition:background .2s,color .2s}
+.kofi-bar a:hover{background:var(--accent);color:#fffdf9}
 </style>
 </head>
 <body>
+<link rel="stylesheet" href="/assets/css/guide-cream.css?v=9da5a29e">
 <script src="/assets/js/nav.js?v=e842596e" defer></script>
 
 <main>
@@ -116,13 +122,13 @@ h1{font-family:'Syne',sans-serif;font-size:2rem;color:var(--accent);margin-botto
     <button type="button" onclick="shareWhatsApp()" class="share-btn share-wa">WhatsApp</button>
     <button type="button" onclick="shareFacebook()" class="share-btn share-fb">Facebook</button>
     <button type="button" onclick="copyLink()" class="share-btn share-copy" id="btn-copy-link">העתק קישור</button>
-    <button type="button" onclick="window.print()" class="share-btn share-copy" id="btn-pdf">🖨 שמור PDF</button>
+    <button type="button" onclick="window.print()" class="share-btn share-copy" id="btn-pdf"><svg class="gi" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 9V3h10v6"/><rect x="4" y="9" width="16" height="8" rx="2"/><path d="M7 14h10v7H7z"/></svg><span>שמור PDF</span></button>
   </div>
 </div>
 
 <div id="map-section"></div>
 <div id="waze-wrap">
-  <a id="waze-link" href="#" target="_blank" rel="noopener">🧭 <span id="waze-label">נווט ב-Waze</span></a>
+  <a id="waze-link" href="#" target="_blank" rel="noopener"><svg class="gi" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m15.500 8.500-2 5-5 2 2-5z"/></svg><span id="waze-label">נווט ב-Waze</span></a>
 </div>
 <div id="details-section"></div>
 <div id="gallery-section"></div>
@@ -337,7 +343,7 @@ async function loadSpot() {
     setJsonLd(loc);
     loadNextLocation(slug, loc.region);
   } catch {
-    document.getElementById('hero-content').innerHTML = '<p style="color:#888">שגיאה בטעינה.</p>';
+    document.getElementById('hero-content').innerHTML = '<p style="color:var(--muted)">שגיאה בטעינה.</p>';
   }
 }
 
@@ -345,21 +351,35 @@ window.addEventListener('storage', (e) => {
   if (e.key === 'lang') { loadSpot(); applySpotModalLang(); }
 });
 
+const ICONS = { summer: "<svg class=\"gi\" width=\"22\" height=\"22\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"4\"/><path d=\"M12 2v2.500M12 19.500V22M2 12h2.500M19.500 12H22M4.900 4.900l1.800 1.800M17.300 17.300l1.800 1.800M4.900 19.100l1.800-1.800M17.300 6.700l1.800-1.800\"/></svg>",
+  fall: "<svg class=\"gi\" width=\"22\" height=\"22\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M20 4C9 4 4 9 4 15c0 3 2 5 5 5 6 0 11-5 11-16z\"/><path d=\"M4 20c3-6 7-9 12-11\"/></svg>",
+  winter: "<svg class=\"gi\" width=\"22\" height=\"22\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M12 2v20M3.500 7l17 10M20.500 7l-17 10M9 4l3 2 3-2M9 20l3-2 3 2\"/></svg>",
+  spring: "<svg class=\"gi\" width=\"22\" height=\"22\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"2.500\"/><path d=\"M12 9.500C12 6 10 3.500 12 2c2 1.500 0 4 0 7.500zM14.500 12c3.500 0 6-2 7.500 0-1.500 2-4 0-7.500 0zM12 14.500c0 3.500 2 6 0 7.500-2-1.500 0-4 0-7.500zM9.500 12C6 12 3.500 14 2 12c1.500-2 4 0 7.500 0z\"/></svg>" };
+const WX_ICONS = { clear: "<svg class=\"gi\" width=\"32\" height=\"32\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"4\"/><path d=\"M12 2v2.500M12 19.500V22M2 12h2.500M19.500 12H22M4.900 4.900l1.800 1.800M17.300 17.300l1.800 1.800M4.900 19.100l1.800-1.800M17.300 6.700l1.800-1.800\"/></svg>",
+  partly: "<svg class=\"gi\" width=\"32\" height=\"32\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"8\" cy=\"8\" r=\"3\"/><path d=\"M8 2v1M2 8h1M3.800 3.800l.7.7\"/><path d=\"M8 20h9a4 4 0 0 0 .5-8A6 6 0 0 0 6 13.500 3.300 3.300 0 0 0 8 20z\"/></svg>",
+  cloud: "<svg class=\"gi\" width=\"32\" height=\"32\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M7 19h10a4.500 4.500 0 0 0 .6-9A6 6 0 0 0 6 11.500 3.800 3.800 0 0 0 7 19z\"/></svg>",
+  fog: "<svg class=\"gi\" width=\"32\" height=\"32\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M7 13h10a4 4 0 0 0 .4-8A6 6 0 0 0 6 7a3.500 3.500 0 0 0 1 6zM4 17h16M6 21h12\"/></svg>",
+  drizzle: "<svg class=\"gi\" width=\"32\" height=\"32\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M7 14h10a4 4 0 0 0 .4-8A6 6 0 0 0 6 8a3.500 3.500 0 0 0 1 6z\"/><path d=\"M9 18v2M13 17v2M17 18v2\"/></svg>",
+  rain: "<svg class=\"gi\" width=\"32\" height=\"32\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M7 14h10a4 4 0 0 0 .4-8A6 6 0 0 0 6 8a3.500 3.500 0 0 0 1 6z\"/><path d=\"m8 17-1 4M12 17l-1 4M16 17l-1 4\"/></svg>",
+  snow: "<svg class=\"gi\" width=\"32\" height=\"32\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M12 3v18M4.200 7.500l15.600 9M19.800 7.500l-15.600 9\"/></svg>",
+  storm: "<svg class=\"gi\" width=\"32\" height=\"32\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M7 14h10a4 4 0 0 0 .4-8A6 6 0 0 0 6 8a3.500 3.500 0 0 0 1 6z\"/><path d=\"m12 14-2 4h3l-2 4\"/></svg>",
+  thermo: "<svg class=\"gi\" width=\"32\" height=\"32\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M10 14V5a2 2 0 0 1 4 0v9a4 4 0 1 1-4 0z\"/></svg>" };
+
 function renderSeasons(wt, lang) {
   if (!wt) return '';
   const isEn = lang === 'en';
   const SEASONS = [
-    { key: 'summer', label: isEn ? 'Summer' : 'קיץ',  emoji: '☀️' },
-    { key: 'fall',   label: isEn ? 'Autumn' : 'סתיו', emoji: '🍂' },
-    { key: 'winter', label: isEn ? 'Winter' : 'חורף', emoji: '❄️' },
-    { key: 'spring', label: isEn ? 'Spring' : 'אביב', emoji: '🌸' }
+    { key: 'summer', label: isEn ? 'Summer' : 'קיץ',  icon: ICONS.summer },
+    { key: 'fall',   label: isEn ? 'Autumn' : 'סתיו', icon: ICONS.fall },
+    { key: 'winter', label: isEn ? 'Winter' : 'חורף', icon: ICONS.winter },
+    { key: 'spring', label: isEn ? 'Spring' : 'אביב', icon: ICONS.spring }
   ];
   const heading = isEn ? 'When to Visit' : 'מתי לבוא';
   const cards = SEASONS.map(s => {
     const d = wt[s.key] || {};
     const cls = d.rating === 'good' ? 'good' : d.rating === 'bad' ? 'bad' : 'ok';
     return `<div class="season-card ${cls}">
-      <div class="s-emoji">${s.emoji}</div>
+      <div class="s-emoji">${s.icon}</div>
       <div class="s-name">${s.label}</div>
       <div class="s-note">${escHtml(d.note || '')}</div>
     </div>`;
@@ -410,10 +430,10 @@ function renderSpot(loc, lang) {
   const guideLabels = isEn ? GUIDE_LABELS_EN : GUIDE_LABELS;
 
   document.getElementById('hero-content').innerHTML = `
-    <div class="badge">📍 ${escHtml(region || (isEn ? 'Photography Spot' : 'מקום צילום'))}</div>
+    <div class="badge"><svg class="gi" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-6.2 7-11.2A7 7 0 0 0 5 9.8C5 14.800 12 21 12 21z"/><circle cx="12" cy="10" r="2.5"/></svg><span>${escHtml(region || (isEn ? 'Photography Spot' : 'מקום צילום'))}</span></div>
     <h1>${escHtml(title)}</h1>
     <div class="region-time">${escHtml(region)}${best_time ? ' · ' + escHtml(best_time) : ''}</div>
-    ${isEn && !loc.title_en ? '<div style="font-size:.75rem;color:#888;margin-top:.5rem;padding:.3rem .75rem;background:#1a1a1a;border-radius:4px;display:inline-block">🔜 English translation coming soon</div>' : ''}
+    ${isEn && !loc.title_en ? '<div style="font-size:.75rem;color:var(--muted);margin-top:.5rem;padding:.3rem .75rem;background:var(--surface2);border-radius:4px;display:inline-block">English translation coming soon</div>' : ''}
   `;
   document.getElementById('share-row').style.display = 'flex';
 
@@ -462,20 +482,20 @@ function renderSpot(loc, lang) {
         ${loc.coordinates ? `<li><strong>${navLabel}</strong> <a href="https://www.google.com/maps/search/?api=1&query=${loc.coordinates}" target="_blank" style="color:var(--accent)">${mapsLabel}</a></li>` : ''}
       </ul>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin:1rem 0">
-        <div id="sun-widget" style="display:none;background:#111;border:1px solid #222;border-radius:8px;padding:1rem 1.25rem">
-          <div style="font-size:.75rem;color:#999;margin-bottom:.6rem">${sunLabel}</div>
+        <div id="sun-widget" style="display:none;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1rem 1.25rem">
+          <div style="font-size:.75rem;color:var(--muted);margin-bottom:.6rem">${sunLabel}</div>
           <div style="display:flex;gap:1.5rem;flex-wrap:wrap">
-            <div><span style="font-size:1.1rem">🌅</span><span style="font-size:.85rem;color:#c8a96e;font-weight:700" id="sun-rise">--:--</span><div style="font-size:.7rem;color:#999">${riseLabel}</div></div>
-            <div><span style="font-size:1.1rem">🌇</span><span style="font-size:.85rem;color:#c8a96e;font-weight:700" id="sun-set">--:--</span><div style="font-size:.7rem;color:#999">${setLabel2}</div></div>
-            <div><span style="font-size:1.1rem">✨</span><span style="font-size:.85rem;color:#c8a96e;font-weight:700" id="golden-hour">--:--</span><div style="font-size:.7rem;color:#999">${goldLabel}</div></div>
+            <div><span class="sun-ico"><svg class="gi" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v4M5.600 8.600l2.800 2.800M18.400 8.600l-2.800 2.800M3 18h18M7 18a5 5 0 0 1 10 0"/></svg></span><span style="font-size:.85rem;color:var(--accent);font-weight:700" id="sun-rise">--:--</span><div style="font-size:.7rem;color:var(--muted)">${riseLabel}</div></div>
+            <div><span class="sun-ico"><svg class="gi" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 7v-4M5.600 12.400l2.800-2.800M18.400 12.400l-2.800-2.800M3 18h18M7 18a5 5 0 0 1 10 0"/></svg></span><span style="font-size:.85rem;color:var(--accent);font-weight:700" id="sun-set">--:--</span><div style="font-size:.7rem;color:var(--muted)">${setLabel2}</div></div>
+            <div><span class="sun-ico"><svg class="gi" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.800 5.200L19 10l-5.200 1.800L12 17l-1.800-5.200L5 10l5.200-1.800z"/><path d="M19 17v4M17 19h4"/></svg></span><span style="font-size:.85rem;color:var(--accent);font-weight:700" id="golden-hour">--:--</span><div style="font-size:.7rem;color:var(--muted)">${goldLabel}</div></div>
           </div>
         </div>
-        <div id="weather-widget" style="display:none;background:#111;border:1px solid #222;border-radius:8px;padding:1rem 1.25rem">
-          <div style="font-size:.75rem;color:#999;margin-bottom:.6rem">${wxLabel}</div>
+        <div id="weather-widget" style="display:none;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1rem 1.25rem">
+          <div style="font-size:.75rem;color:var(--muted);margin-bottom:.6rem">${wxLabel}</div>
           <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap">
             <div style="font-size:2rem" id="weather-icon">—</div>
-            <div><div style="font-size:1.4rem;font-weight:700;color:#f0ede8" id="weather-temp">--°</div><div style="font-size:.75rem;color:#888" id="weather-desc">--</div></div>
-            <div style="font-size:.8rem;color:#999" id="weather-wind"></div>
+            <div><div style="font-size:1.4rem;font-weight:700;color:var(--text)" id="weather-temp">--°</div><div style="font-size:.75rem;color:var(--muted)" id="weather-desc">--</div></div>
+            <div style="font-size:.8rem;color:var(--muted)" id="weather-wind"></div>
           </div>
         </div>
       </div>
@@ -530,7 +550,7 @@ const SPOT_LABELS = {
     alertFill: 'נא למלא הודעה.',
     copied: '✓ הועתק!',
     copyLink: 'העתק קישור',
-    pdfLabel: '🖨 שמור PDF',
+    pdfLabel: 'שמור PDF',
     wazeLabel: 'נווט ב-Waze',
     nextLocLabel: 'מקום נוסף באזור זה',
   },
@@ -546,7 +566,7 @@ const SPOT_LABELS = {
     alertFill: 'Please fill in your message.',
     copied: '✓ Copied!',
     copyLink: 'Copy Link',
-    pdfLabel: '🖨 Save PDF',
+    pdfLabel: 'Save PDF',
     wazeLabel: 'Navigate with Waze',
     nextLocLabel: 'Another spot in this region',
   }
@@ -569,7 +589,7 @@ function applySpotModalLang() {
   const copyBtn = document.getElementById('btn-copy-link');
   if (copyBtn && copyBtn.textContent !== L.copied) copyBtn.textContent = L.copyLink;
   const pdfBtn = document.getElementById('btn-pdf');
-  if (pdfBtn) pdfBtn.textContent = L.pdfLabel;
+  if (pdfBtn) pdfBtn.querySelector('span').textContent = L.pdfLabel;
   const wazeLabel = document.getElementById('waze-label');
   if (wazeLabel) wazeLabel.textContent = L.wazeLabel;
   const nextLabel = document.getElementById('next-loc-label');
@@ -598,25 +618,25 @@ document.getElementById('btn-send-corr').addEventListener('click', async () => {
 });
 
 const WMO_HE = {
-  0:'☀️ בהיר', 1:'🌤 בהיר ברובו', 2:'⛅ מעונן חלקית', 3:'☁️ מעונן',
-  45:'🌫 ערפל', 48:'🌫 ערפל קרח',
-  51:'🌦 טפטוף קל', 53:'🌦 טפטוף', 55:'🌧 טפטוף כבד',
-  61:'🌧 גשם קל', 63:'🌧 גשם', 65:'🌧 גשם כבד',
-  71:'🌨 שלג קל', 73:'❄️ שלג', 75:'❄️ שלג כבד',
-  80:'🌦 מקלחות קלות', 81:'🌧 מקלחות', 82:'⛈ מקלחות כבדות',
-  95:'⛈ סופת רעמים', 99:'⛈ סופה עם ברד'
+  0:'clear בהיר', 1:'partly בהיר ברובו', 2:'partly מעונן חלקית', 3:'cloud מעונן',
+  45:'fog ערפל', 48:'fog ערפל קרח',
+  51:'drizzle טפטוף קל', 53:'drizzle טפטוף', 55:'rain טפטוף כבד',
+  61:'rain גשם קל', 63:'rain גשם', 65:'rain גשם כבד',
+  71:'snow שלג קל', 73:'snow שלג', 75:'snow שלג כבד',
+  80:'drizzle מקלחות קלות', 81:'rain מקלחות', 82:'storm מקלחות כבדות',
+  95:'storm סופת רעמים', 99:'storm סופה עם ברד'
 };
 const WMO_EN = {
-  0:'☀️ Clear', 1:'🌤 Mostly Clear', 2:'⛅ Partly Cloudy', 3:'☁️ Overcast',
-  45:'🌫 Foggy', 48:'🌫 Icy Fog',
-  51:'🌦 Light Drizzle', 53:'🌦 Drizzle', 55:'🌧 Heavy Drizzle',
-  61:'🌧 Light Rain', 63:'🌧 Rain', 65:'🌧 Heavy Rain',
-  71:'🌨 Light Snow', 73:'❄️ Snow', 75:'❄️ Heavy Snow',
-  80:'🌦 Light Showers', 81:'🌧 Showers', 82:'⛈ Heavy Showers',
-  95:'⛈ Thunderstorm', 99:'⛈ Storm with Hail'
+  0:'clear Clear', 1:'partly Mostly Clear', 2:'partly Partly Cloudy', 3:'cloud Overcast',
+  45:'fog Foggy', 48:'fog Icy Fog',
+  51:'drizzle Light Drizzle', 53:'drizzle Drizzle', 55:'rain Heavy Drizzle',
+  61:'rain Light Rain', 63:'rain Rain', 65:'rain Heavy Rain',
+  71:'snow Light Snow', 73:'snow Snow', 75:'snow Heavy Snow',
+  80:'drizzle Light Showers', 81:'rain Showers', 82:'storm Heavy Showers',
+  95:'storm Thunderstorm', 99:'storm Storm with Hail'
 };
 function getWMO(code) {
-  return getLang() === 'en' ? (WMO_EN[code] || '🌡 --') : (WMO_HE[code] || '🌡 --');
+  return getLang() === 'en' ? (WMO_EN[code] || 'thermo --') : (WMO_HE[code] || 'thermo --');
 }
 
 async function loadSunTimes(lat, lng) {
@@ -649,12 +669,12 @@ async function loadWeather(lat, lng) {
     if (!c) return;
 
     const wmoEntry = getWMO(c.weathercode);
-    const [icon, ...descParts] = wmoEntry.split(' ');
-    document.getElementById('weather-icon').textContent = icon;
+    const [kind, ...descParts] = wmoEntry.split(' ');
+    document.getElementById('weather-icon').innerHTML = WX_ICONS[kind] || WX_ICONS.thermo;
     document.getElementById('weather-temp').textContent = Math.round(c.temperature_2m) + '°C';
     document.getElementById('weather-desc').textContent = descParts.join(' ');
     const windUnit = getLang() === 'en' ? 'km/h' : 'קמ"ש';
-    document.getElementById('weather-wind').textContent = `💨 ${Math.round(c.windspeed_10m)} ${windUnit}`;
+    document.getElementById('weather-wind').innerHTML = `<svg class="gi" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h11a3 3 0 1 0-3-3M3 12h16a3 3 0 1 1-3 3M3 16h7"/></svg><span>${Math.round(c.windspeed_10m)} ${windUnit}</span>`;
     document.getElementById('weather-widget').style.display = 'block';
   } catch(e) {}
 }
@@ -665,37 +685,37 @@ applySpotModalLang();
 
 <div class="kofi-bar">
   <a href="https://ko-fi.com/amitphotos" target="_blank" rel="noopener">
-    &#9749; <span data-he="אהבת את המדריך? קנה לי קפה" data-en="Found this guide useful? Buy me a coffee">אהבת את המדריך? קנה לי קפה</span>
+    <svg class="gi" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h13v6a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5z"/><path d="M17 10h2a2 2 0 0 1 0 4h-2M8 3v2M12 3v2"/></svg> <span data-he="אהבת את המדריך? קנה לי קפה" data-en="Found this guide useful? Buy me a coffee">אהבת את המדריך? קנה לי קפה</span>
   </a>
 </div>
 
   <!-- ===== PDF LEAD MAGNET POPUP ===== -->
-  <div id="pdf-popup" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:9999;align-items:center;justify-content:center;padding:1rem">
-    <div style="background:#1a1a1a;border:1px solid #c8a96e;border-radius:8px;padding:2rem;max-width:400px;width:100%;direction:rtl;position:relative">
-      <button onclick="closePdfPopup()" style="position:absolute;top:.75rem;left:.75rem;background:none;border:none;color:#999;font-size:1.2rem;cursor:pointer;line-height:1">&#x2715;</button>
-      <div style="font-size:.7rem;letter-spacing:.12em;color:#c8a96e;margin-bottom:.4rem">מתנה חינמית</div>
-      <h3 style="font-size:1.2rem;color:#f0ede8;margin-bottom:.3rem">50 טיפים לצילום</h3>
-      <p style="font-size:.85rem;color:#aaa;margin-bottom:1.2rem">PDF חינם — ישיר למייל שלך</p>
+  <div id="pdf-popup" style="display:none;position:fixed;inset:0;background:rgba(40,32,20,.55);z-index:9999;align-items:center;justify-content:center;padding:1rem">
+    <div style="background:var(--surface2);border:1px solid var(--accent);border-radius:8px;padding:2rem;max-width:400px;width:100%;direction:rtl;position:relative">
+      <button onclick="closePdfPopup()" style="position:absolute;top:.75rem;left:.75rem;background:none;border:none;color:var(--muted);font-size:1.2rem;cursor:pointer;line-height:1">&#x2715;</button>
+      <div style="font-size:.7rem;letter-spacing:.12em;color:var(--accent);margin-bottom:.4rem">מתנה חינמית</div>
+      <h3 style="font-size:1.2rem;color:var(--text);margin-bottom:.3rem">50 טיפים לצילום</h3>
+      <p style="font-size:.85rem;color:var(--muted);margin-bottom:1.2rem">PDF חינם — ישיר למייל שלך</p>
       <form id="popup-form">
         <input type="email" id="popup-email" placeholder="כתובת המייל שלך" aria-label="כתובת המייל שלך" required
-          style="width:100%;padding:.65rem 1rem;background:#111;border:1px solid #444;border-radius:4px;color:#f0ede8;font-size:.95rem;margin-bottom:.6rem;direction:rtl">
-        <label style="display:flex;align-items:flex-start;gap:.4rem;font-size:.7rem;color:#999;margin-bottom:.4rem;cursor:pointer">
+          style="width:100%;padding:.65rem 1rem;background:var(--surface);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:.95rem;margin-bottom:.6rem;direction:rtl">
+        <label style="display:flex;align-items:flex-start;gap:.4rem;font-size:.7rem;color:var(--muted);margin-bottom:.4rem;cursor:pointer">
           <input type="checkbox" id="popup-consent-privacy" required style="margin-top:.15rem;flex-shrink:0;cursor:pointer">
-          <span>קראתי ואני מאשר/ת את <a href="/privacy/" target="_blank" rel="noopener" style="color:#c8a96e">מדיניות הפרטיות</a></span>
+          <span>קראתי ואני מאשר/ת את <a href="/privacy/" target="_blank" rel="noopener" style="color:var(--accent)">מדיניות הפרטיות</a></span>
         </label>
-        <label style="display:flex;align-items:flex-start;gap:.4rem;font-size:.7rem;color:#999;margin-bottom:.6rem;cursor:pointer">
+        <label style="display:flex;align-items:flex-start;gap:.4rem;font-size:.7rem;color:var(--muted);margin-bottom:.6rem;cursor:pointer">
           <input type="checkbox" id="popup-consent-marketing" style="margin-top:.15rem;flex-shrink:0;cursor:pointer">
           <span>מעוניין/ת לקבל עדכונים ותוכן שיווקי במייל</span>
         </label>
         <button type="submit" id="popup-btn"
-          style="width:100%;padding:.7rem;background:#c8a96e;color:#111;border:none;border-radius:4px;font-weight:700;cursor:pointer;font-size:.95rem">
+          style="width:100%;padding:.7rem;background:var(--accent);color:#fffdf9;border:none;border-radius:4px;font-weight:700;cursor:pointer;font-size:.95rem">
           שלח לי &#x2190;
         </button>
-        <p style="font-size:.65rem;color:#888;margin-top:.5rem">הרשמה + ניוזלטר חודשי. בטל בכל עת.</p>
+        <p style="font-size:.65rem;color:var(--muted);margin-top:.5rem">הרשמה + ניוזלטר חודשי. בטל בכל עת.</p>
         <p id="popup-msg" style="margin-top:.5rem;font-size:.85rem;min-height:1.1em"></p>
       </form>
       <p style="text-align:center;margin-top:.8rem">
-        <a href="/free-guide/" style="font-size:.75rem;color:#888;text-decoration:none">לדף ההורדה המלא &#x2190;</a>
+        <a href="/free-guide/" style="font-size:.75rem;color:var(--muted);text-decoration:none">לדף ההורדה המלא &#x2190;</a>
       </p>
     </div>
   </div>
@@ -737,20 +757,20 @@ applySpotModalLang();
         })
       });
       if (r.ok) {
-        msg.style.color = '#4caf7d';
-        msg.textContent = '&#x2713; נשלח! בדוק תיבת הדואר (גם spam).';
+        msg.style.color = '#2a7049';
+        msg.textContent = '✓ נשלח! בדוק תיבת הדואר (גם spam).';
         document.getElementById('popup-email').value = '';
-        btn.textContent = 'נשלח &#x2713;';
+        btn.textContent = 'נשלח ✓';
         localStorage.setItem('pdfPopupSeen', '1');
       } else {
-        msg.style.color = '#e05555';
+        msg.style.color = '#a8322a';
         msg.textContent = 'שגיאה. נסה שוב.';
-        btn.disabled = false; btn.textContent = 'שלח לי &#x2190;';
+        btn.disabled = false; btn.textContent = 'שלח לי ←';
       }
     } catch {
-      msg.style.color = '#e05555';
+      msg.style.color = '#a8322a';
       msg.textContent = 'שגיאת רשת.';
-      btn.disabled = false; btn.textContent = 'שלח לי &#x2190;';
+      btn.disabled = false; btn.textContent = 'שלח לי ←';
     }
   });
   </script>
