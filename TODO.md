@@ -1,3 +1,11 @@
+## UPDATE 2026-10-27 evening - design unification (see handoff.md top section)
+- [x] Cream-shell redesign merged and live for all 24 /camera/ guides + index (PRs #211-#220, CSS `guide-cream.css?v=9da5a29e`); emoji replaced by SVG; mobile nav auto-hide; pinned photo + controls on one screen for depth-of-field/histogram/white-balance.
+- [ ] Owner: iPhone check of a few guides (private tab) + English toggle; report with screenshot + URL.
+- [ ] Claude: fix findings on a new PR; EN pass on 3-4 pages; optional pinned photo for /camera/focus/.
+- [ ] Decide: wire real YouTube tutorials (data/videos.json) into guides, or leave removed.
+- [ ] Close draft PR #210 and superseded docs PR #208; consider making `node-unit-tests` a required check (owner approval).
+- [ ] Remember: GA4 window to end of November is confounded by these visual changes.
+
 ## UPDATE 2026-10-27 (see handoff.md top section)
 - [x] #190, #191/#192 merged (#189 closed); deploy + CI green on `b79eab7`; payments still `enabled:false`.
 - [x] Automated live QA (Chromium, mobile+desktop) done; WebKit/real iPhone still unverified.

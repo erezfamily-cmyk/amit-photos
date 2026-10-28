@@ -1,5 +1,32 @@
 # Handoff — amit-photos
 
+## CURRENT RESUME POINT — 2026-10-27 (evening): site-wide design unification (cream shell) — ALL 24 /camera/ guides + index MERGED and LIVE
+
+Supersedes the status of the earlier 2026-10-27 sections below. Source of truth: GitHub `main` (HEAD at write time: `744bb89` + later docs). Payments still locked: `PAYMENTS_ENABLED=false`, live `/api/payments-status` = `{"enabled":false}` (checked after the last deploy).
+
+### What was decided and built
+- After a site-wide design audit (small fixes [#207](https://github.com/erezfamily-cmyk/amit-photos/pull/207) `95c05f1`, readability pass) the owner chose **"Option B"**: one visual language across the site = home look (cream `#f5f1e9` + bronze `#7a5c3f`, Frank Ruhl Libre headings) while interactive simulators stay **dark cards**.
+- Mechanism: one shared stylesheet `assets/css/guide-cream.css` (cache-bust `?v=<first 8 hex of md5 of LF-normalised file>`; every guide HTML links it; `tests/guide-cream-shell.test.mjs` enforces the hash, SVG icons, no emoji, and a dark simulator class or an explicit `contentOnly` exception). Dark cards = class `.lab` or `.guide-dark`; light semantic colours inside them, darker ones on cream via `--green/--blue/--warm/--red/--purple`.
+- PRs (all squash-merged, CI green: Workers Builds x2 + `node-unit-tests`): [#211](https://github.com/erezfamily-cmyk/amit-photos/pull/211) pilot exposure+night; [#212](https://github.com/erezfamily-cmyk/amit-photos/pull/212) batch 2; [#213](https://github.com/erezfamily-cmyk/amit-photos/pull/213) dynamic-range+filters and emoji -> SVG; [#214](https://github.com/erezfamily-cmyk/amit-photos/pull/214) shared emoji (course card, coffee button, newsletter strip in nav.js); [#215](https://github.com/erezfamily-cmyk/amit-photos/pull/215) depth-of-field/histogram/white-balance; [#216](https://github.com/erezfamily-cmyk/amit-photos/pull/216) removed empty video iframes (leftover of the reverted dubbing feature) + mobile nav auto-hide on scroll down (`nav.js`); [#217](https://github.com/erezfamily-cmyk/amit-photos/pull/217) + [#218](https://github.com/erezfamily-cmyk/amit-photos/pull/218) pinned photo + all controls on one phone screen inside `.sim-stage` (pin ends where the simulator ends); [#219](https://github.com/erezfamily-cmyk/amit-photos/pull/219) controls/focus/lenses/light; [#220](https://github.com/erezfamily-cmyk/amit-photos/pull/220) editing, landscape, macro, mobile, portrait, software, sports, types, visual-language + `/camera/` index. Live CSS hash after #220: `9da5a29e`.
+- Contrast scans (WCAG, browser script) were run per page; fixed dark-text-on-bronze buttons, `.toc`, `.cta-btn`, `.sensor-tag`, hardcoded accent colours. Old bugs fixed on the way: malformed hero markup in depth-of-field/histogram/white-balance/focus, horizontal overflow on /camera/sports/ (`.slider-row`, 405px vs 390px, also on prod before).
+
+### Verified for real vs not
+- Verified: unit tests 526/526 in CI; live CSS hash + key markers via curl after each deploy; Chromium mobile 390px (Chrome DevTools MCP) screenshots and computed-style/contrast scans on most pages; owner checked the first batches on his iPhone ("looks excellent") and the sticky photo on iPhone ("now excellent").
+- NOT verified: English version of the new pages; real iPhone for batches #219 and #220; remote photos (Drive/R2) do not load on the local server, so photo-dependent layouts (depth-of-field picker with real images, landscape/mobile/portrait heroes) were only checked structurally; `/camera/` index scanned before the last button fix; nav auto-hide feel on a real phone.
+- Known leftovers: `editing` (one extra `</div>` at the end) and `types` (one unclosed `<div>`) are old and harmless; `focus` has no pinned photo (different simulator structure); the donate/ko-fi and shared cards are consistent but not individually re-screenshotted on every page.
+
+### Open items / next steps (in order)
+1. **Owner:** open a few guides on the iPhone in a private tab (e.g. /camera/depth-of-field/, /camera/landscape/, /camera/types/, /camera/) and report anything odd (screenshot + URL); also check the English toggle.
+2. **Claude:** fix whatever comes back from (1) on a NEW branch/PR; then add a short English-version pass on 3-4 representative pages.
+3. Optional: pinned-photo pattern for /camera/focus/, a decision whether to wire the real YouTube tutorials (data/videos.json has the IDs; embeds add third-party requests/cookies) into the guides that lost the empty iframe.
+4. Docs/cleanup: [#208](https://github.com/erezfamily-cmyk/amit-photos/pull/208) (docs for #207) is superseded by this entry; draft [#210](https://github.com/erezfamily-cmyk/amit-photos/pull/210) (preview, do not merge) can be closed. Set `node-unit-tests` as a required check (needs owner approval). GA4 measurement window (14-28 days from the experience launch, to end of November) is confounded by these visual changes - the owner chose to proceed anyway; note it when reading the numbers.
+5. Tooling used (temp, not committed): scripts that swap emoji for inline SVG (`data-he`/`data-en` text lives in a `<span>` so `setLang()` never wipes the icon) and apply the shell; the rules they follow are encoded in `tests/guide-cream-shell.test.mjs` and `assets/css/guide-cream.css`.
+
+### Owner constraints still in force
+No PayPal production / real purchases / Gelato; no inactive commercial-licensing option shown; do not change photo data (D1/Drive) without approval; merge only after explicit owner approval and green checks; never force push.
+
+---
+
 ## CURRENT RESUME POINT — 2026-10-27: PR #190/#191/#192 merged + live QA (automated, Chromium only)
 
 Supersedes the 2026-10-26 section for status. Source of truth: GitHub `main` (HEAD `b79eab7`).
