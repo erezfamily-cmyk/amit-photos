@@ -51,6 +51,8 @@ html.home-experience-preview .nav-logo,
 html.home-experience-preview .nav-links a,
 html.home-experience-preview .nav-more summary,
 html.home-experience-preview .lang-btn { color: var(--text); }
+/* same side gutter as .hero and .container, so the logo and language switch line up with the page content */
+html.home-experience-preview nav { padding-inline: clamp(1.25rem, 6vw, 6rem); }
 html.home-experience-preview .hero {
   height: auto;
   min-height: min(690px, calc(100vh - 6rem));
