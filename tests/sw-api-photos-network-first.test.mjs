@@ -86,14 +86,36 @@ test('data/photos.json still uses network-first (regression guard)', async () =>
   assert.ok(fetchCalls.includes('https://amitphotos.com/data/photos.json'));
 });
 
-test('static JS assets remain cache-first (regression guard — must not become network-first too)', async () => {
+test('versioned static assets (?v=hash) remain cache-first (regression guard — must not become network-first too)', async () => {
   const { listeners, cacheStore, fetchCalls } = buildSandbox();
-  cacheStore.set('https://amitphotos.com/assets/js/gallery.js', { url: 'https://amitphotos.com/assets/js/gallery.js', _tag: 'CACHED-JS' });
+  const u = 'https://amitphotos.com/assets/js/gallery.js?v=fa67e0bd';
+  cacheStore.set(u, { url: u, _tag: 'CACHED-JS' });
 
-  const result = await fireFetch(listeners, { url: 'https://amitphotos.com/assets/js/gallery.js' });
+  const result = await fireFetch(listeners, { url: u });
 
-  assert.equal(result._tag, 'CACHED-JS', 'a cache hit for a static asset must be returned without touching the network');
+  assert.equal(result._tag, 'CACHED-JS', 'a cache hit for a versioned asset must be returned without touching the network');
   assert.equal(fetchCalls.length, 0);
+});
+
+test('unversioned /assets/ JS and CSS are network-first, so pages that reference them without ?v= are not stuck on a stale copy', async () => {
+  const { listeners, cacheStore, fetchCalls } = buildSandbox();
+  const u = 'https://amitphotos.com/assets/js/nav.js';
+  cacheStore.set(u, { url: u, _tag: 'STALE-NAV' });
+
+  const result = await fireFetch(listeners, { url: u });
+
+  assert.ok(fetchCalls.includes(u), 'must hit the network');
+  assert.equal(result._tag, 'network-response', 'must resolve with the fresh response, not the stale copy');
+});
+
+test('unversioned /assets/ code falls back to the cached copy when the network fails', async () => {
+  const { listeners, cacheStore } = buildSandbox({ networkOk: false });
+  const u = 'https://amitphotos.com/assets/js/share.js';
+  cacheStore.set(u, { url: u, _tag: 'OFFLINE-COPY' });
+
+  const result = await fireFetch(listeners, { url: u });
+
+  assert.equal(result._tag, 'OFFLINE-COPY');
 });
 
 test('HTML navigations remain network-first (regression guard)', async () => {
@@ -103,5 +125,5 @@ test('HTML navigations remain network-first (regression guard)', async () => {
 });
 
 test('cache version was bumped so existing visitors get a clean cache on next activation', () => {
-  assert.match(swSrc, /const CACHE = 'amit-photos-v5'/);
+  assert.match(swSrc, /const CACHE = 'amit-photos-v6'/);
 });
