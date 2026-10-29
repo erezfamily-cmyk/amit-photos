@@ -65,6 +65,8 @@ html.home-experience-preview .hero {
   background: var(--bg);
 }
 html.home-experience-preview .hero-bg {
+  /* gallery.js parallax sets an inline translateY on scroll; on this framed image it slid the photo down over the next section */
+  transform: none !important;
   position: relative;
   inset: auto;
   width: 100%;
