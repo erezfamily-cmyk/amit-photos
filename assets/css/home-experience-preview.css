@@ -51,12 +51,13 @@ html.home-experience-preview .nav-logo,
 html.home-experience-preview .nav-links a,
 html.home-experience-preview .nav-more summary,
 html.home-experience-preview .lang-btn { color: var(--text); }
-/* same side gutter as .hero and .container, so the logo and language switch line up with the page content */
-html.home-experience-preview nav { padding-inline: clamp(1.25rem, 6vw, 6rem); }
+/* nav and hero share one side gutter that also follows the 1440px centered sections on wide screens, so the logo and language switch line up with the page content */
+html.home-experience-preview { --home-gutter: max(clamp(1.25rem, 6vw, 6rem), calc((100% - 1440px) / 2 + 40px)); }
+html.home-experience-preview nav { padding-inline: var(--home-gutter); }
 html.home-experience-preview .hero {
   height: auto;
   min-height: min(690px, calc(100vh - 6rem));
-  padding: clamp(3rem, 7vw, 6rem) clamp(1.25rem, 6vw, 6rem);
+  padding: clamp(3rem, 7vw, 6rem) var(--home-gutter);
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1.08fr);
   align-items: center;
