@@ -3122,6 +3122,30 @@ async function trackPageView(env, request, page) {
   } catch { /* non-critical */ }
 }
 
+const CRAWLER_UA = /bot|crawler|spider|slurp|bytespider|facebookexternalhit/i;
+
+// /photo/{id} מריץ 2 שאילתות D1 (אחת מהן ORDER BY RANDOM() שסורקת את כל הקטגוריה) + 2 כתיבות analytics.
+// סורק (30.10.2026: ElevenlabsCrawler, ~120 בקשות/שעה) שרף ~80% ממכסת 5M קריאות/יום של D1.
+// מטמון קצה של שעה לדף + בוטים לא נספרים באנליטיקס.
+async function servePhotoPageCached(request, env, ctx, path) {
+  const isGet = request.method === 'GET';
+  const cacheKey = new Request(new URL(path, 'https://amitphotos.com').toString(), { method: 'GET' });
+  if (isGet) {
+    const hit = await caches.default.match(cacheKey);
+    if (hit) return hit;
+  }
+  if (!CRAWLER_UA.test(request.headers.get('User-Agent') || '')) {
+    ctx.waitUntil(trackPageView(env, request, 'photo'));
+  }
+  const res = await servePhotoPage(path.slice('/photo/'.length), env);
+  if (isGet && res.status === 200) {
+    const toCache = new Response(res.clone().body, res);
+    toCache.headers.set('Cache-Control', 'public, max-age=3600');
+    ctx.waitUntil(caches.default.put(cacheKey, toCache));
+  }
+  return res;
+}
+
 async function handleAnalytics(request, env) {
   if (!await checkAuth(request, env)) return unauth(request);
   await env.DB.prepare(
@@ -3779,6 +3803,9 @@ function handleRobots(request) {
   const txt = `User-agent: *
 Disallow: /api/
 Disallow: /admin.html
+
+User-agent: ElevenlabsCrawler
+Disallow: /
 
 Sitemap: ${base}/sitemap.xml`;
 
@@ -8683,7 +8710,7 @@ export default {
     if (path === '/api/proxy-image')          return handleImageProxy(request, env);
     if (path === '/api/analytics')         return handleAnalytics(request, env);
     if (path.startsWith('/photos/'))       return servePhoto(path.slice('/photos/'.length), env, request);
-    if (path.startsWith('/photo/'))        { trackPageView(env, request, 'photo'); return servePhotoPage(path.slice('/photo/'.length), env); }
+    if (path.startsWith('/photo/'))        return servePhotoPageCached(request, env, ctx, path);
     if (path.startsWith('/category/'))     { trackPageView(env, request, 'category'); return handleCategoryPage(decodeURIComponent(path.slice('/category/'.length)), env); }
     // Newsletter public routes
     if (path === '/newsletter' || path === '/newsletter/') return handleNlList(env);
