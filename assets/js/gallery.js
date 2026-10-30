@@ -1187,14 +1187,63 @@ function initLightbox() {
   });
 
   // Touch swipe support
-  let touchX = null;
-  lb.addEventListener('touchstart', e => { touchX = e.touches[0].clientX; }, { passive: true });
-  lb.addEventListener('touchend', e => {
-    if (touchX === null) return;
-    const diff = touchX - e.changedTouches[0].clientX;
-    if (Math.abs(diff) > 50) { stopSlideshow(); navigateLightbox(diff > 0 ? 1 : -1); }
-    touchX = null;
-  });
+  // The photo follows the finger 1:1; on release the flick velocity is projected forward (same
+  // exponential-decay formula as scroll deceleration) so a short fast flick still turns the page.
+  let swipe = null;
+  let swipeBusy = false;
+  const reduceMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const project = (v /* px/ms */) => v * 1000 / 1000 * 0.998 / (1 - 0.998);
+  const slideImg = (x, ms, ease) => {
+    img.style.transition = x === null ? '' : ms ? `transform ${ms}ms ${ease}, opacity ${ms}ms ease` : 'none';
+    img.style.transform = x === null ? '' : `translateX(${x}px)`;
+  };
+  lb.addEventListener('touchstart', e => {
+    if (swipeBusy || isZoomed || e.touches.length !== 1 || e.target.closest('button, a, input, select, textarea')) { swipe = null; return; }
+    const t = e.touches[0];
+    swipe = { x: t.clientX, y: t.clientY, dx: 0, active: false, samples: [[t.clientX, e.timeStamp]] };
+  }, { passive: true });
+  lb.addEventListener('touchmove', e => {
+    if (!swipe) return;
+    const t = e.touches[0];
+    const dx = t.clientX - swipe.x, dy = t.clientY - swipe.y;
+    if (!swipe.active) {
+      if (Math.abs(dy) > 10 && Math.abs(dy) > Math.abs(dx)) { swipe = null; return; } // vertical: let the info panel scroll
+      if (Math.abs(dx) < 10) return; // small hysteresis before committing to a horizontal swipe
+      swipe.active = true;
+      swipe.x += dx > 0 ? 10 : -10; // start tracking from the commit point so the photo doesn't jump
+    }
+    swipe.dx = t.clientX - swipe.x;
+    swipe.samples.push([t.clientX, e.timeStamp]);
+    if (swipe.samples.length > 6) swipe.samples.shift();
+    slideImg(swipe.dx, 0);
+  }, { passive: true });
+  const endSwipe = e => {
+    if (!swipe) return;
+    const s = swipe; swipe = null;
+    if (!s.active) return;
+    const first = s.samples[0], last = s.samples[s.samples.length - 1];
+    const v = last[1] > first[1] ? (last[0] - first[0]) / (last[1] - first[1]) : 0;
+    const landing = s.dx + project(v);
+    const commit = e.type === 'touchend' && (Math.abs(s.dx) > 50 || Math.abs(landing) > 120) && Math.sign(landing || s.dx) === Math.sign(s.dx || landing);
+    const dur = reduceMotion() ? 0 : 1;
+    if (!commit) { slideImg(0, dur * 300, 'cubic-bezier(.2,.8,.2,1)'); setTimeout(() => slideImg(null, 0), dur * 300 + 20); return; }
+    const dir = (landing || s.dx) < 0 ? 1 : -1; // finger moved left = next photo (unchanged behaviour)
+    const off = Math.sign(landing || s.dx) * window.innerWidth * 0.6;
+    swipeBusy = true;
+    stopSlideshow();
+    slideImg(off, dur * 160, 'ease-in');
+    img.style.opacity = '0';
+    setTimeout(() => {
+      currentIndex = (currentIndex + dir + filteredPhotos.length) % filteredPhotos.length;
+      openLightbox(currentIndex);
+      slideImg(-off * 0.25, 0); // enter from the opposite side, then settle
+      void img.offsetWidth;
+      slideImg(0, dur * 300, 'cubic-bezier(.2,.8,.2,1)');
+      setTimeout(() => { slideImg(null, 0); img.style.transition = ''; swipeBusy = false; }, dur * 300 + 20);
+    }, dur * 160);
+  };
+  lb.addEventListener('touchend', endSwipe);
+  lb.addEventListener('touchcancel', endSwipe);
 }
 
 function startSlideshow() {
