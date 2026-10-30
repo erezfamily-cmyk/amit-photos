@@ -5157,7 +5157,7 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direc
 .pag-disabled{background:transparent;border:1px solid var(--border);color:var(--muted);cursor:default}
 .pag-info{font-size:.8rem;color:var(--muted)}
 </style>
-<link rel="stylesheet" href="/assets/css/guide-cream.css?v=9da5a29e">
+<link rel="stylesheet" href="/assets/css/guide-cream.css?v=645d1432">
 <script src="/assets/js/nav.js" defer></script>
 <script src="/assets/js/share.js" defer></script>
 </head>
@@ -5615,7 +5615,7 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);direc
 .shop-cta-btn{flex-shrink:0;background:transparent;color:var(--accent);font-weight:700;font-size:.82rem;padding:.5rem 1.1rem;border:1px solid var(--accent);border-radius:8px;text-decoration:none;white-space:nowrap;transition:background .15s}
 .shop-cta-btn:hover{background:rgba(122,92,63,.1)}
 </style>
-<link rel="stylesheet" href="/assets/css/guide-cream.css?v=9da5a29e">
+<link rel="stylesheet" href="/assets/css/guide-cream.css?v=645d1432">
 <script src="/assets/js/nav.js" defer></script>
 <script src="/assets/js/share.js" defer></script>
 </head>
