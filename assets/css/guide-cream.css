@@ -99,3 +99,16 @@ html #box-apsc .sensor-tag, html #box-mft .sensor-tag { color: #141413; }
   .slider-card .sensor-btn { padding: .35rem; }
   #sensor-btns + .tick-labels { display: none; }
 }
+
+/* ===== REDUCED MOTION / TRANSPARENCY (guides, locations, and the other cream pages) ===== */
+@media (prefers-reduced-motion: reduce) {
+  html:root *, html:root *::before, html:root *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}
+@media (prefers-reduced-transparency: reduce) {
+  *, *::before, *::after { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+}
