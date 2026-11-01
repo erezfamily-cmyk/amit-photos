@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generated_at": "2026-10-25T10:32:19.047323+00:00",
+  "generated_at": "2026-11-01T12:31:07.137102+00:00",
   "mode": "one_experiment_at_a_time",
   "active": {
     "decision_id": "collect-editorial-angle-sample",
@@ -14,7 +14,8 @@
       "facebook:post",
       "threads:post"
     ],
-    "success_measure": "הצלחה: לפחות 3 פוסטים בשני סוגי תוכן, ואז משווים מעורבות לפי חשיפה וביקורי UTM."
+    "success_measure": "הצלחה: לפחות 3 פוסטים בשני סוגי תוכן, ואז משווים מעורבות לפי חשיפה וביקורי UTM.",
+    "last_evidence": "נדרשים לפחות 6 פוסטים עם זווית מתויגת; נמדדו 2"
   },
   "outcomes": [
     {
