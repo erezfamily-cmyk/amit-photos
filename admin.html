@@ -7028,7 +7028,8 @@ document.addEventListener('DOMContentLoaded', () => {
       ['/camera/light/','אור'],['/camera/dynamic-range/','דינמיק ריינג'],
       ['/camera/controls/','בקרות']
     ];
-    const relGuides = loc.related_guides || [];
+    const relGuides = Array.isArray(loc.related_guides) ? loc.related_guides : [];
+    const extraLinks = Array.isArray(loc.extra_links) ? loc.extra_links : [];
     ed.innerHTML = `
       <button id="btn-back-locations" style="background:transparent;border:none;color:#888;cursor:pointer;margin-bottom:1.5rem;font-size:.85rem">← חזרה לרשימה</button>
       <div style="display:flex;gap:.75rem;flex-wrap:wrap;margin-bottom:1.5rem">
@@ -7107,7 +7108,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <button type="button" onclick="addExtraLink()" style="font-size:.75rem;color:var(--accent);background:none;border:1px solid var(--accent);border-radius:4px;cursor:pointer;padding:.2rem .6rem">+ הוסף קישור</button>
         </div>
         <div id="loc-extra-links" style="display:flex;flex-direction:column;gap:.5rem">
-          ${(loc.extra_links||[]).map((lnk,i) => `
+          ${extraLinks.map((lnk,i) => `
             <div style="display:flex;gap:.5rem;align-items:center" data-link-idx="${i}">
               <input placeholder="תווית (למשל: אתר הפארק)" value="${escHtml(lnk.label||'')}" style="flex:1;background:#0a0a0a;border:1px solid #222;color:#f0ede8;padding:.4rem .6rem;border-radius:4px;font-family:'Heebo',sans-serif;font-size:.82rem" class="extra-link-label">
               <input placeholder="https://..." value="${escHtml(lnk.url||'')}" style="flex:2;background:#0a0a0a;border:1px solid #222;color:#f0ede8;padding:.4rem .6rem;border-radius:4px;font-family:'Heebo',sans-serif;font-size:.82rem;direction:ltr" class="extra-link-url">

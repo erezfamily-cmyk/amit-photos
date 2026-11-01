@@ -5981,7 +5981,8 @@ async function handleAdminLocationsCreate(request, env) {
 
   const loc = await env.DB.prepare('SELECT * FROM locations WHERE id = ?').bind(id).first();
   const safeJson = (s, fb) => { try { return s ? JSON.parse(s) : fb; } catch { return fb; } };
-  return jsonRes({ ...loc, related_guides: safeJson(loc.related_guides, []) }, 201, request);
+  // extra_links חייב להיות מערך — renderEditor באדמין קורא לו .map (מחרוזת "[]" קורסת והעורך נשאר ריק)
+  return jsonRes({ ...loc, related_guides: safeJson(loc.related_guides, []), extra_links: safeJson(loc.extra_links, []) }, 201, request);
 }
 
 async function handleAdminLocationsUpdate(request, env, slug) {
