@@ -1,5 +1,5 @@
 {
-  "current_category_index": 23,
+  "current_category_index": 24,
   "used_ids_by_category": {
     "אבו דאבי": [
       "6c9e818c-bdd3-402f-b6f5-ee2e668507c9",
@@ -900,14 +900,14 @@
       "8f7c626c-b1c1-4f12-b796-7f807f41d8cb"
     ],
     "צילומי לילה": [
+      "1V3y3FF5PCEuQvCOXCaF2fT5eWMDiZEWH",
+      "1Dtx-JpBUgntpzvI7KOs9UGBnovCaG5xr",
       "1G_dn5hHrv_1cZ-VVGfECEYzi9J6pDGhI",
+      "1DYbjGEVEnIwQnrBJtdZhLKmPjUqgw7an",
+      "1qs9QySZm5Bk-qKDOly953CjGlTevOwic",
       "1FuLmEDMlnwTVFImQYv4sA40hRsxhs5Vl",
       "1xXiWFageaUy0iYqgk-OKPuNPSOVPIjPk",
-      "1toLLUZrvlD_zP5qosJLEabgyh1WOEWZc",
-      "1TCAfgJ9pl3T0G8RRtIAa5_0FOoxXrjso",
-      "10DjcZPt6eAjs4C5gke5cCSe9T-ob76OO",
-      "1V3y3FF5PCEuQvCOXCaF2fT5eWMDiZEWH",
-      "1YsIg7p5rLNOahDSVqUZnxkAmbXvvgXsi"
+      "10DjcZPt6eAjs4C5gke5cCSe9T-ob76OO"
     ],
     "גאורגיה": [
       "1It7jfQcxdeO24JC7wf2kPVcgRJ2J4fVJ",
@@ -920,5 +920,5 @@
       "1sILZR3DOsqmaWvEeW9NGBzyiieiXBDV2"
     ]
   },
-  "gear_tool_index": 1
+  "gear_tool_index": 0
 }
