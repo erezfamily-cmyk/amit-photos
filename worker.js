@@ -5979,6 +5979,11 @@ async function handleAdminLocationsCreate(request, env) {
     ).run();
   }
 
+  // האנגלית נוצרת כאן ולא רק בכפתור "Generate English" — אחרת מקום חדש מוצג בעברית בגרסה האנגלית של האתר
+  if (enriched) {
+    try { await handleAdminLocationsGenerateEn(request, env, id); } catch (e) { console.error('auto generate-en failed', id, e); }
+  }
+
   const loc = await env.DB.prepare('SELECT * FROM locations WHERE id = ?').bind(id).first();
   const safeJson = (s, fb) => { try { return s ? JSON.parse(s) : fb; } catch { return fb; } };
   // extra_links חייב להיות מערך — renderEditor באדמין קורא לו .map (מחרוזת "[]" קורסת והעורך נשאר ריק)
@@ -6192,7 +6197,17 @@ Rules:
     slug
   ).run();
 
-  return jsonRes({ message: 200, title_en: parsed.title_en || '' }, 200, request);
+  // העורך באדמין ממלא את כל שדות ה-EN מהתשובה — בלי זה רק הכותרת מופיעה ושמירה מוחקת את השאר
+  return jsonRes({
+    message: 200,
+    title_en: parsed.title_en || '',
+    description_en: parsed.description_en || '',
+    best_time_en: parsed.best_time_en || '',
+    equipment_en: parsed.equipment_en || '',
+    my_tip_en: parsed.my_tip_en || '',
+    when_to_visit_en: when_to_visit_en || '',
+    recommended_gear_en: recommended_gear_en || ''
+  }, 200, request);
 }
 
 // ===== LOCATION PHOTOS MANAGEMENT =====
