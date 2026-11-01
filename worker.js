@@ -6197,7 +6197,17 @@ Rules:
     slug
   ).run();
 
-  return jsonRes({ message: 200, title_en: parsed.title_en || '' }, 200, request);
+  // העורך באדמין ממלא את כל שדות ה-EN מהתשובה — בלי זה רק הכותרת מופיעה ושמירה מוחקת את השאר
+  return jsonRes({
+    message: 200,
+    title_en: parsed.title_en || '',
+    description_en: parsed.description_en || '',
+    best_time_en: parsed.best_time_en || '',
+    equipment_en: parsed.equipment_en || '',
+    my_tip_en: parsed.my_tip_en || '',
+    when_to_visit_en: when_to_visit_en || '',
+    recommended_gear_en: recommended_gear_en || ''
+  }, 200, request);
 }
 
 // ===== LOCATION PHOTOS MANAGEMENT =====

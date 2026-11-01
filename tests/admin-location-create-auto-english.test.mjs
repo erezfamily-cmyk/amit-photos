@@ -43,3 +43,21 @@ test('create location also writes the English fields', async () => {
   assert.ok(en, 'expected an UPDATE of the English fields');
   assert.equal(en.args[0], 'Test Place');
 });
+
+test('generate-en response carries every English field for the editor', async () => {
+  const payload = { title_en: 'T', description_en: 'D', best_time_en: 'B', equipment_en: 'E', my_tip_en: 'M',
+    when_to_visit_en: { summer: { rating: 'ok', note: 'n' } }, recommended_gear_en: [{ name: 'Tripod', primary: true }] };
+  const env = { ADMIN_PASSWORD: 'pw', ANTHROPIC_API_KEY: 'k',
+    DB: { prepare: () => ({ bind: () => ({ first: async () => ({ id: 'x', title: 'א', region: '' }), run: async () => ({}) }) }) } };
+  const realFetch = globalThis.fetch;
+  globalThis.fetch = async () => new Response(JSON.stringify({ content: [{ text: JSON.stringify(payload) }] }), { status: 200 });
+  try {
+    const res = await worker.fetch(new Request('https://amitphotos.com/api/admin/locations/x/generate-en', {
+      method: 'POST', headers: { 'X-Admin-Password': 'pw' } }), env, { waitUntil() {} });
+    assert.equal(res.status, 200);
+    const d = await res.json();
+    for (const k of ['title_en', 'description_en', 'best_time_en', 'equipment_en', 'my_tip_en']) assert.ok(d[k], k);
+    assert.ok(JSON.parse(d.when_to_visit_en).summer);
+    assert.equal(JSON.parse(d.recommended_gear_en)[0].name, 'Tripod');
+  } finally { globalThis.fetch = realFetch; }
+});
