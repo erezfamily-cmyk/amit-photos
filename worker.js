@@ -5979,6 +5979,11 @@ async function handleAdminLocationsCreate(request, env) {
     ).run();
   }
 
+  // האנגלית נוצרת כאן ולא רק בכפתור "Generate English" — אחרת מקום חדש מוצג בעברית בגרסה האנגלית של האתר
+  if (enriched) {
+    try { await handleAdminLocationsGenerateEn(request, env, id); } catch (e) { console.error('auto generate-en failed', id, e); }
+  }
+
   const loc = await env.DB.prepare('SELECT * FROM locations WHERE id = ?').bind(id).first();
   const safeJson = (s, fb) => { try { return s ? JSON.parse(s) : fb; } catch { return fb; } };
   // extra_links חייב להיות מערך — renderEditor באדמין קורא לו .map (מחרוזת "[]" קורסת והעורך נשאר ריק)
