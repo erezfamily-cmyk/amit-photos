@@ -3256,8 +3256,11 @@ window.addEventListener('resize', () => {
   }
 });
 
+// דגל נפרד מ-navBootstrapBound: bootstrapAdminNav כבר סימן את כל הטאבים, ובגללו המאזין הזה (שטוען נתונים
+// לכל טאב) מעולם לא נקשר — הטאבים נפתחו אבל נשארו ריקים (מקומות, ניתוח תמונות, רכישות, הדפסות, סושיאל, Pinterest, סרטונים, סטטיסטיקות).
 document.querySelectorAll('.nav-item').forEach(item => {
-  if (item.dataset.navBootstrapBound === '1') return;
+  if (item.dataset.navLoadersBound === '1') return;
+  item.dataset.navLoadersBound = '1';
   item.setAttribute('role', 'button');
   item.setAttribute('tabindex', '0');
   if (item.classList.contains('active')) item.setAttribute('aria-current', 'page');
