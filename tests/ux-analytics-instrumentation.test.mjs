@@ -74,7 +74,8 @@ test('analytics helper allowlists parameters and never forwards personal form fi
   assert.equal(calls.length, 1);
   assert.equal(calls[0][0], 'event');
   assert.equal(calls[0][1], 'generate_lead');
-  assert.equal(calls[0][2].source, 'homepage_section');
+  assert.equal(calls[0][2].event_source, 'homepage_section');
+  assert.equal('source' in calls[0][2], false, 'a `source` event param overrides GA4 session source');
   assert.equal(calls[0][2].page_path, '/');
   assert.equal('email' in calls[0][2], false);
   assert.equal('name' in calls[0][2], false);

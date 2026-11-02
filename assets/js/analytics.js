@@ -34,7 +34,10 @@
     Object.entries(params).forEach(([key, value]) => {
       if (!ALLOWED_PARAMS.has(key)) return;
       if (!['string', 'number', 'boolean'].includes(typeof value)) return;
-      safeParams[key] = typeof value === 'string' ? value.slice(0, 100) : value;
+      // GA4 treats an event param named `source` as the session's traffic source, which turned
+      // 'lightbox'/'experience'/'popup' into fake acquisition sources. Send it under another name.
+      const outKey = key === 'source' ? 'event_source' : key;
+      safeParams[outKey] = typeof value === 'string' ? value.slice(0, 100) : value;
     });
     window.gtag('event', name, safeParams);
   }

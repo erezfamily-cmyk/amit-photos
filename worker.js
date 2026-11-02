@@ -470,9 +470,9 @@ document.getElementById('fg-form').addEventListener('submit', async function(e) 
           window.trackUxEvent('generate_lead', { source: 'lead_magnet' });
         }
       } else if (typeof gtag === 'function') {
-        gtag('event', 'guide_request_success', { source: 'lead_magnet' });
+        gtag('event', 'guide_request_success', { event_source: 'lead_magnet' });
         if (data.lead_created) {
-          gtag('event', 'generate_lead', { source: 'lead_magnet' });
+          gtag('event', 'generate_lead', { event_source: 'lead_magnet' });
         }
       }
       if (data.email_sent === true) {
