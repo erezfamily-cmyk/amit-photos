@@ -1,0 +1,40 @@
+# Amit Photos
+
+> Hebrew-first photography portfolio of Amit Erez, an Israeli photographer: a categorized photo gallery, a free interactive photography school (/camera/, 24 guides, Hebrew and English), a guide to photo locations in Israel, and licensing information. Pages are available in Hebrew (default) and English.
+
+## Photography school (interactive guides)
+- [צילום שחור לבן — מה הופך תמונה לעוצמתית](https://amitphotos.com/camera/black-and-white/)
+- [ערוצי צבע — מה המצלמה באמת רואה](https://amitphotos.com/camera/color-channels/)
+- [תיאוריית צבע — הרמוניה ויזואלית בצילום](https://amitphotos.com/camera/color-theory/)
+- [קומפוזיציה — חוק השליש, מסגור וקווים מובילים](https://amitphotos.com/camera/composition/)
+- [כפתורי מצלמה — Auto עד Manual](https://amitphotos.com/camera/controls/)
+- [עומק שדה — DOF ובוקה](https://amitphotos.com/camera/depth-of-field/)
+- [טווח דינמי — אורות, צללים וגבולות החיישן](https://amitphotos.com/camera/dynamic-range/)
+- [עריכת תמונות | Amit Photos](https://amitphotos.com/camera/editing/)
+- [חשיפה — ISO, צמצם ותריס](https://amitphotos.com/camera/exposure/)
+- [פילטרים למצלמה — UV, ND, CPL, GND](https://amitphotos.com/camera/filters/)
+- [פוקוס — מצבים, נקודות ו-Stacking](https://amitphotos.com/camera/focus/)
+- [היסטוגרם — לקרוא את האור](https://amitphotos.com/camera/histogram/)
+- [צילום לנדסקייפ — מדריך מלא](https://amitphotos.com/camera/landscape/)
+- [עדשות | Amit Photos](https://amitphotos.com/camera/lenses/)
+- [להבין את האור | Amit Photos](https://amitphotos.com/camera/light/)
+- [צילום מאקרו | Amit Photos](https://amitphotos.com/camera/macro/)
+- [צילום מטלפון — מדריך מלא](https://amitphotos.com/camera/mobile/)
+- [צילום לילה — מסלולי אור, ירח וחשיפה ארוכה](https://amitphotos.com/camera/night/)
+- [צילום פורטרט — מדריך מלא](https://amitphotos.com/camera/portrait/)
+- [תוכנות עריכה | Amit Photos](https://amitphotos.com/camera/software/)
+- [צילום ספורט ותנועה | Amit Photos](https://amitphotos.com/camera/sports/)
+- [סוגי מצלמות וחיישנים | Amit Photos](https://amitphotos.com/camera/types/)
+- [שפה צילומית אישית | Amit Photos](https://amitphotos.com/camera/visual-language/)
+- [וייט בלאנס — טמפרטורת צבע ומה זה קלוין](https://amitphotos.com/camera/white-balance/)
+
+## Main sections
+- [Photography school index](https://amitphotos.com/camera/)
+- [Photo locations in Israel](https://amitphotos.com/locations/)
+- [Licensing](https://amitphotos.com/licensing/)
+- [Free guide: 50 photography tips (PDF)](https://amitphotos.com/free-guide/)
+- [Gallery](https://amitphotos.com/)
+
+## Notes
+- Sitemap: https://amitphotos.com/sitemap.xml
+- Photographs are copyrighted by Amit Erez. See /licensing/ before reusing any image.
