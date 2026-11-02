@@ -1,64 +1,5 @@
 [
   {
-    "date": "17.08.2026",
-    "period": "2026-08-10 → 2026-08-17",
-    "summary": {
-      "sessions": "45",
-      "activeUsers": "42",
-      "pageViews": "47",
-      "bounceRate": "88.9%",
-      "avgSessionSec": "3",
-      "delta_sessions": "↓21%",
-      "delta_users": "↓16%",
-      "delta_views": "↓25%"
-    },
-    "top_pages": [
-      {
-        "עמוד": "/",
-        "צפיות": "38",
-        "sessions": "38"
-      },
-      {
-        "עמוד": "/photo/d8a85efe-7c59-4222-bc85-25f99f5e5850",
-        "צפיות": "3",
-        "sessions": "2"
-      },
-      {
-        "עמוד": "/photo/e52adbf9-28b6-454a-9f7f-7dab3fb3289e",
-        "צפיות": "2",
-        "sessions": "2"
-      },
-      {
-        "עמוד": "/free-guide/",
-        "צפיות": "1",
-        "sessions": "1"
-      },
-      {
-        "עמוד": "/learn/",
-        "צפיות": "1",
-        "sessions": "1"
-      }
-    ],
-    "sources": [
-      {
-        "מקור": "כניסה ישירה",
-        "sessions": "37"
-      },
-      {
-        "מקור": "חיפוש אורגני",
-        "sessions": "4"
-      },
-      {
-        "מקור": "סושיאל אורגני",
-        "sessions": "4"
-      }
-    ],
-    "funnel_events": {
-      "photo_view": "2"
-    },
-    "analysis": "## מה קרה השבוע\n\nשבוע חלש עם ירידה רוחבית בכל המדדים (סשנים ↓21%, צפיות עמוד ↓25%), כאשר 37 מתוך 45 הסשנים הם כניסה ישירה — כלומר כמעט אין תנועה חדשה מגיעה מחיפוש או סושיאל. הנתון הכי מדאיג: זמן ממוצע בסשן של 3 שניות ו-Bounce של 88.9%, מה שאומר שרוב האנשים נוחתים בדף הבית ועוזבים מיד בלי להגיע בכלל לתמונות.\n\n## המלצות לשבוע הבא\n\n**1. תקן את דף הבית — הוא לא מוליך לגלריה.**\nמתוך 47 צפיות, 38 היו בדף הבית ורק ~9 בעמודי תמונה. אנשים נכנסים ולא ממשיכים. שים 3-4 תמונות בולטות עם קריאה לפעולה ברורה (\"צפה בגלריה\") מעל הקיפול, במיוחד במובייל (33 מתוך 45 מהסשנים).\n\n**2. בדוק דחוף אם אירועי המשפך בכלל נורים.**\nphoto_view=2 בזמן שהיו 9 צפיות בעמודי /photo/ — זה חשד שהמעקב לא מדווח כמו שצריך. אם האירועים שבורים, כל הניתוח של המשפך חסר משמעות. תעשה בדיקה ידנית: פתח תמונה, פתח מודל קנייה, ותראה אם האירועים מגיעים ל-GA.\n\n**3. נצל את הקהל האמריקאי והאירופי.**\n18 סשנים מארה\"ב, 8 מהולנד — קהל fine art איכותי עם כוח קנייה. ודא שהמחירים, המשלוח וההדפסות (Gelato) מוצגים נכון עבורם, ושהדף הראשי שהם נוחתים בו מדבר אליהם ולא רק לישראלים.\n\n**4. הפעל מקור תנועה אחד באופן עקבי.**\nכמעט הכל כניסה ישירה — אתה תלוי באנשים שכבר מכירים אותך. בחר ערוץ אחד (אינסטגרם/Pinterest שמתאים ל-fine art) ופרסם 3-4 תמונות עם לינק ישיר לעמוד התמונה, לא לדף הבית.\n\n## אזהרה חשובה\n\n**שני המשפכים ריקים לגמרי — וזה כנראה בעיית מעקב, לא בעיית מוצר.** print_intent=0 ו-purchase_intent=0 לצד photo_view=2 (בזמן שיש 9 צפיות אמיתיות בעמודי תמונה) מרמזים שהאירועים לא נורים או לא נרשמים כראוי. **לפני שתסיק שאף אחד לא מתעניין בהדפסות — ודא שהמערכת בכלל מודדת.** בלי לתקן את זה, אתה מנווט בעיוורון."
-  },
-  {
     "date": "24.08.2026",
     "period": "2026-08-17 → 2026-08-24",
     "summary": {
@@ -3800,5 +3741,778 @@
       "purchases": []
     },
     "analysis": "## מה קרה השבוע\n\nהתנועה ירדה חזק (סשנים ↓26%, משתמשים ↓36%), אבל מי שהגיע נשאר הרבה — כמעט 19 דקות בסשן בממוצע וגלילה עמוקה יחסית (12 הגיעו ל-90%). התשלומים כבויים במכוון, אז אין מה לקרוא לתוך רכישות=0; אות הביקוש האמיתי כרגע (פניות, רישוי, בקשות מדריך) גם הוא אפס — וזה מה שצריך להעיר אותו.\n\n## המלצות לשבוע הבא\n\n**1. תעשה דחיפה אקטיבית לתנועה — הירידה אמיתית.**\nעם 20 סשנים מסושיאל השבוע, אתה תלוי כמעט רק בכניסות ישירות (52). פרסם 2-3 תמונות חזקות השבוע באינסטגרם/פייסבוק עם לינק ישיר לעמוד /photo הספציפי (לא לבית), כדי להחזיר נפח. ה-fbclid בנתונים מראה שהקמפיין בפייסבוק עובד — תזין אותו.\n\n**2. תנצל את ה-/campaign/ — זה העמוד עם ההתנהגות הכי טובה.**\nבכל שלבי הגלילה שם הגיעו ל-90% (4 מתוך 4). העמוד עובד, אבל נכנסו אליו רק 4 סשנים. תפנה אליו תנועה ישירה מהסושיאל ומה-bio, ותוודא שיש בו קריאה ברורה ל-guide_request או לפנייה אישית (שהם אותות הביקוש הפעילים כרגע).\n\n**3. תחזק את ה-free-guide כמנוע לידים.**\n7 צפיות ב-/free-guide/ אבל guide_request_success=0. כשהתשלומים כבויים, המדריך הוא ה-conversion העיקרי שלך השבוע. בדוק שהטופס עצמו עובד טכנית (submit מצליח, event נורה), כי אפס בקשות מול 7 צפיות חשוד — או שהטופס מסורבל או שבור.\n\n**4. תנתב את תנועת ה-AI Assistant.**\n9 סשנים מ-ChatGPT — זה מקור משמעותי (יותר מגוגל אורגני!). ודא שהתוכן ב-/camera/ וב-/learn/ מצוטט נקי ועם לינקים פנימיים לגלריה ולמדריך, כי משם מגיעים גולשים סקרנים שאפשר להמיר ללידים.\n\n**5. תפרסם תוכן camera/learn — זה מה שמביא את התנועה האיכותית.**\ncomposition ו-lenses קיבלו content_link_click. פרסם פוסט אחד חדש או שדרג קיים השבוע כדי להזין את מנוע האורגני וה-AI.\n\n## אזהרה אחת\n\n**guide_request_success=0 מול 7 צפיות ב-/free-guide/ זו בעיה אמיתית לבדוק.** זה הערוץ היחיד שיכול לייצר תוצאה בזמן שהתשלומים כבויים, ואם הטופס שבור טכנית אתה מאבד את כל הביקוש החי. בדוק אותו ידנית מקצה לקצה (כולל שה-event נרשם ב-D1, לא רק ב-GA) לפני כל דחיפת תנועה — אין טעם להביא תנועה לדלי מחורר.\n\n(הערה: רכישות והדפסות=0 הן תוצאה של PAYMENTS_ENABLED=false — מדיניות מכוונת, לא כשל. אל תתייחס לזה כבעיה.)"
+  },
+  {
+    "date": "02.11.2026",
+    "period": "2026-10-26 → 2026-11-02",
+    "summary": {
+      "sessions": "149",
+      "activeUsers": "102",
+      "pageViews": "408",
+      "bounceRate": "64.4%",
+      "avgSessionSec": "940",
+      "newUsers": "99",
+      "engagementRate": "35.6%",
+      "engagedSessions": "53",
+      "delta_sessions": "↑82%",
+      "delta_users": "↑70%",
+      "delta_views": "↑237%"
+    },
+    "top_pages": [
+      {
+        "עמוד": "/",
+        "צפיות": "196",
+        "sessions": "122"
+      },
+      {
+        "עמוד": "/camera/",
+        "צפיות": "22",
+        "sessions": "8"
+      },
+      {
+        "עמוד": "/camera/exposure/",
+        "צפיות": "15",
+        "sessions": "6"
+      },
+      {
+        "עמוד": "/licensing/",
+        "צפיות": "12",
+        "sessions": "4"
+      },
+      {
+        "עמוד": "/locations/",
+        "צפיות": "11",
+        "sessions": "5"
+      }
+    ],
+    "landing_pages": [
+      {
+        "עמוד נחיתה": "/",
+        "sessions": "106",
+        "activeUsers": "80"
+      },
+      {
+        "עמוד נחיתה": "/?experience=warm",
+        "sessions": "3",
+        "activeUsers": "3"
+      },
+      {
+        "עמוד נחיתה": "/?lang=en",
+        "sessions": "3",
+        "activeUsers": "1"
+      },
+      {
+        "עמוד נחיתה": "(not set)",
+        "sessions": "2",
+        "activeUsers": "1"
+      },
+      {
+        "עמוד נחיתה": "/camera/",
+        "sessions": "2",
+        "activeUsers": "2"
+      }
+    ],
+    "sources": [
+      {
+        "מקור": "AI Assistant",
+        "sessions": "63"
+      },
+      {
+        "מקור": "כניסה ישירה",
+        "sessions": "35"
+      },
+      {
+        "מקור": "לא מוגדר",
+        "sessions": "32"
+      },
+      {
+        "מקור": "סושיאל אורגני",
+        "sessions": "18"
+      },
+      {
+        "מקור": "חיפוש אורגני",
+        "sessions": "2"
+      }
+    ],
+    "campaigns": [
+      {
+        "source": "chatgpt.com",
+        "medium": "ai-assistant",
+        "campaign": "(ai-assistant)",
+        "sessions": "63",
+        "activeUsers": "63"
+      },
+      {
+        "source": "(direct)",
+        "medium": "(none)",
+        "campaign": "(direct)",
+        "sessions": "35",
+        "activeUsers": "20"
+      },
+      {
+        "source": "lightbox",
+        "medium": "(not set)",
+        "campaign": "(not set)",
+        "sessions": "20",
+        "activeUsers": "2"
+      },
+      {
+        "source": "m.facebook.com",
+        "medium": "referral",
+        "campaign": "(referral)",
+        "sessions": "10",
+        "activeUsers": "10"
+      },
+      {
+        "source": "experience",
+        "medium": "(not set)",
+        "campaign": "(not set)",
+        "sessions": "8",
+        "activeUsers": "1"
+      },
+      {
+        "source": "(not set)",
+        "medium": "(not set)",
+        "campaign": "(not set)",
+        "sessions": "4",
+        "activeUsers": "2"
+      },
+      {
+        "source": "instagram",
+        "medium": "organic_social",
+        "campaign": "photo_posts",
+        "sessions": "3",
+        "activeUsers": "3"
+      },
+      {
+        "source": "facebook.com",
+        "medium": "referral",
+        "campaign": "(referral)",
+        "sessions": "2",
+        "activeUsers": "2"
+      },
+      {
+        "source": "lm.facebook.com",
+        "medium": "referral",
+        "campaign": "(referral)",
+        "sessions": "2",
+        "activeUsers": "2"
+      },
+      {
+        "source": "bing",
+        "medium": "organic",
+        "campaign": "(organic)",
+        "sessions": "1",
+        "activeUsers": "1"
+      },
+      {
+        "source": "experience",
+        "medium": "(none)",
+        "campaign": "(direct)",
+        "sessions": "1",
+        "activeUsers": "1"
+      },
+      {
+        "source": "google",
+        "medium": "organic",
+        "campaign": "(organic)",
+        "sessions": "1",
+        "activeUsers": "1"
+      },
+      {
+        "source": "l.facebook.com",
+        "medium": "referral",
+        "campaign": "(referral)",
+        "sessions": "1",
+        "activeUsers": "0"
+      }
+    ],
+    "experiment_campaigns": [],
+    "devices": [
+      {
+        "מכשיר": "mobile",
+        "sessions": "103"
+      },
+      {
+        "מכשיר": "desktop",
+        "sessions": "46"
+      }
+    ],
+    "countries": [
+      {
+        "ארץ": "Israel",
+        "sessions": "123"
+      },
+      {
+        "ארץ": "United States",
+        "sessions": "16"
+      },
+      {
+        "ארץ": "Sweden",
+        "sessions": "3"
+      },
+      {
+        "ארץ": "(not set)",
+        "sessions": "2"
+      },
+      {
+        "ארץ": "Ireland",
+        "sessions": "2"
+      }
+    ],
+    "funnel_events": {
+      "photo_view": "106",
+      "scroll_25": "98",
+      "scroll_50": "58",
+      "experience_photo_view": "50",
+      "language_change": "41",
+      "scroll_75": "39",
+      "content_link_click": "36",
+      "nav_click": "28",
+      "experience_wonder_photo_view": "27",
+      "scroll_90": "24",
+      "experience_path_click": "21",
+      "experience_quiet_photo_view": "19",
+      "nav_camera_click": "17",
+      "experience_wonder_click": "10",
+      "experience_quiet_click": "8",
+      "wall_preview_open": "7",
+      "gallery_filter": "5",
+      "experience_places_photo_view": "4",
+      "hero_gallery_click": "3",
+      "nav_gallery_click": "3",
+      "nav_locations_click": "3",
+      "experience_contact_click": "2",
+      "experience_places_click": "2",
+      "experience_quiet_wall_open": "2",
+      "nav_more_click": "2",
+      "photo_contact_click": "2",
+      "experience_details_click": "1",
+      "experience_places_contact_click": "1",
+      "experience_quiet_contact_click": "1",
+      "hero_guide_click": "1",
+      "nav_games_click": "1",
+      "nav_learn_click": "1",
+      "nav_sale_click": "1"
+    },
+    "experience_scorecard": {
+      "paths": [
+        {
+          "key": "quiet",
+          "label": "רגעים של שקט",
+          "clicks": 8,
+          "photo_views": 19,
+          "wall_opens": 2,
+          "contact_clicks": 1
+        },
+        {
+          "key": "wonder",
+          "label": "רגעים של התרגשות",
+          "clicks": 10,
+          "photo_views": 27,
+          "wall_opens": 0,
+          "contact_clicks": 0
+        },
+        {
+          "key": "details",
+          "label": "הקסם שבפרטים",
+          "clicks": 1,
+          "photo_views": 0,
+          "wall_opens": 0,
+          "contact_clicks": 0
+        },
+        {
+          "key": "places",
+          "label": "מקומות להתגעגע אליהם",
+          "clicks": 2,
+          "photo_views": 4,
+          "wall_opens": 0,
+          "contact_clicks": 1
+        }
+      ],
+      "all_path_clicks": 21,
+      "all_experience_photo_views": 50,
+      "all_wall_previews": 7,
+      "all_experience_contact_clicks": 2,
+      "measurement_note": "Counts are events, not unique visitors, leads, or guaranteed conversions."
+    },
+    "ux_by_page": [
+      {
+        "event": "photo_view",
+        "עמוד": "/",
+        "count": "101"
+      },
+      {
+        "event": "experience_photo_view",
+        "עמוד": "/",
+        "count": "50"
+      },
+      {
+        "event": "language_change",
+        "עמוד": "/",
+        "count": "41"
+      },
+      {
+        "event": "scroll_25",
+        "עמוד": "/",
+        "count": "39"
+      },
+      {
+        "event": "experience_wonder_photo_view",
+        "עמוד": "/",
+        "count": "27"
+      },
+      {
+        "event": "experience_path_click",
+        "עמוד": "/",
+        "count": "21"
+      },
+      {
+        "event": "experience_quiet_photo_view",
+        "עמוד": "/",
+        "count": "19"
+      },
+      {
+        "event": "content_link_click",
+        "עמוד": "/camera/",
+        "count": "16"
+      },
+      {
+        "event": "nav_click",
+        "עמוד": "/",
+        "count": "16"
+      },
+      {
+        "event": "scroll_50",
+        "עמוד": "/",
+        "count": "16"
+      },
+      {
+        "event": "scroll_25",
+        "עמוד": "/camera/",
+        "count": "11"
+      },
+      {
+        "event": "experience_wonder_click",
+        "עמוד": "/",
+        "count": "10"
+      },
+      {
+        "event": "scroll_75",
+        "עמוד": "/",
+        "count": "10"
+      },
+      {
+        "event": "experience_quiet_click",
+        "עמוד": "/",
+        "count": "8"
+      },
+      {
+        "event": "nav_camera_click",
+        "עמוד": "/",
+        "count": "7"
+      },
+      {
+        "event": "wall_preview_open",
+        "עמוד": "/",
+        "count": "7"
+      },
+      {
+        "event": "scroll_25",
+        "עמוד": "/camera/depth-of-field/",
+        "count": "6"
+      },
+      {
+        "event": "scroll_50",
+        "עמוד": "/camera/",
+        "count": "6"
+      },
+      {
+        "event": "gallery_filter",
+        "עמוד": "/",
+        "count": "5"
+      },
+      {
+        "event": "experience_places_photo_view",
+        "עמוד": "/",
+        "count": "4"
+      },
+      {
+        "event": "scroll_25",
+        "עמוד": "/camera/exposure/",
+        "count": "4"
+      },
+      {
+        "event": "scroll_25",
+        "עמוד": "/locations/",
+        "count": "4"
+      },
+      {
+        "event": "scroll_50",
+        "עמוד": "/camera/depth-of-field/",
+        "count": "4"
+      },
+      {
+        "event": "content_link_click",
+        "עמוד": "/locations/",
+        "count": "3"
+      },
+      {
+        "event": "hero_gallery_click",
+        "עמוד": "/",
+        "count": "3"
+      },
+      {
+        "event": "nav_locations_click",
+        "עמוד": "/",
+        "count": "3"
+      },
+      {
+        "event": "photo_view",
+        "עמוד": "/photo/1UHAnI17wVt8l6w6tNGjcxBPKoMGFchos",
+        "count": "3"
+      },
+      {
+        "event": "scroll_25",
+        "עמוד": "/camera/filters/",
+        "count": "3"
+      },
+      {
+        "event": "scroll_25",
+        "עמוד": "/licensing/",
+        "count": "3"
+      },
+      {
+        "event": "scroll_25",
+        "עמוד": "/locations/park-tmna/",
+        "count": "3"
+      },
+      {
+        "event": "scroll_50",
+        "עמוד": "/camera/exposure/",
+        "count": "3"
+      },
+      {
+        "event": "scroll_50",
+        "עמוד": "/licensing/",
+        "count": "3"
+      },
+      {
+        "event": "scroll_75",
+        "עמוד": "/camera/exposure/",
+        "count": "3"
+      },
+      {
+        "event": "scroll_90",
+        "עמוד": "/",
+        "count": "3"
+      },
+      {
+        "event": "content_link_click",
+        "עמוד": "/",
+        "count": "2"
+      },
+      {
+        "event": "content_link_click",
+        "עמוד": "/camera/lenses/",
+        "count": "2"
+      },
+      {
+        "event": "experience_contact_click",
+        "עמוד": "/",
+        "count": "2"
+      },
+      {
+        "event": "experience_places_click",
+        "עמוד": "/",
+        "count": "2"
+      },
+      {
+        "event": "experience_quiet_wall_open",
+        "עמוד": "/",
+        "count": "2"
+      },
+      {
+        "event": "nav_click",
+        "עמוד": "/camera/depth-of-field/",
+        "count": "2"
+      },
+      {
+        "event": "nav_gallery_click",
+        "עמוד": "/",
+        "count": "2"
+      },
+      {
+        "event": "nav_more_click",
+        "עמוד": "/",
+        "count": "2"
+      },
+      {
+        "event": "photo_contact_click",
+        "עמוד": "/",
+        "count": "2"
+      },
+      {
+        "event": "scroll_25",
+        "עמוד": "/camera/dynamic-range/",
+        "count": "2"
+      },
+      {
+        "event": "scroll_25",
+        "עמוד": "/camera/histogram/",
+        "count": "2"
+      },
+      {
+        "event": "scroll_25",
+        "עמוד": "/camera/lenses/",
+        "count": "2"
+      },
+      {
+        "event": "scroll_25",
+        "עמוד": "/camera/light/",
+        "count": "2"
+      },
+      {
+        "event": "scroll_25",
+        "עמוד": "/camera/portrait/",
+        "count": "2"
+      },
+      {
+        "event": "scroll_25",
+        "עמוד": "/camera/visual-language/",
+        "count": "2"
+      },
+      {
+        "event": "scroll_25",
+        "עמוד": "/learn/1Te7-mtm1JgMQyOQMdJp_I07pXaic2R4l",
+        "count": "2"
+      }
+    ],
+    "subscriber_summary": {
+      "period_days": 7,
+      "period_new_by_source": [],
+      "period_marketing_opt_ins_by_source": [],
+      "current_marketing_by_source": [],
+      "totals": {
+        "total_subscribers": 11,
+        "marketing_subscribers": 0,
+        "non_marketing_subscribers": 2,
+        "unknown_marketing_consent": 9
+      }
+    },
+    "business_review": {
+      "sample": {
+        "sessions": 149,
+        "new_subscribers": 0,
+        "directional_only": true,
+        "note": "Directional only — fewer than 20 new subscribers in the measured period."
+      },
+      "kpis": {
+        "direct_share_pct": 23.5,
+        "lead_rate_pct": 0.0,
+        "guide_request_rate_pct": 0.0,
+        "new_subscriber_marketing_opt_in_pct": null,
+        "period_marketing_opt_ins": 0,
+        "digital_intent_pct": 0.0,
+        "digital_selection_pct": null,
+        "print_intent_pct": 0.0
+      },
+      "next_action": "Keep measurement stable for another week and focus on increasing qualified traffic rather than adding a new commerce feature.",
+      "reason": "Current conversion counts are still too small for a reliable channel decision."
+    },
+    "acquisition_experiment": {
+      "experiment": "Acquisition Experiment 01",
+      "window_status": "not_started",
+      "campaign_metrics_source": "campaign_totals",
+      "paths": [
+        {
+          "campaign": "202610_freeguide_photo_tips",
+          "label": "Free Guide",
+          "sessions": 0,
+          "active_users": 0,
+          "primary_event": "guide_request_success",
+          "primary_count": 0,
+          "primary_rate_pct": null,
+          "secondary_event": "generate_lead",
+          "secondary_count": 0,
+          "status": "not_started"
+        },
+        {
+          "campaign": "202610_licensing_personal",
+          "label": "Personal Licensing",
+          "sessions": 0,
+          "active_users": 0,
+          "primary_event": "licensing_personal_interest",
+          "primary_count": 0,
+          "primary_rate_pct": null,
+          "secondary_event": "purchase_intent",
+          "secondary_count": 0,
+          "status": "not_started"
+        },
+        {
+          "campaign": "202610_b2b_outreach",
+          "label": "B2B Wall Art",
+          "sessions": 0,
+          "active_users": 0,
+          "primary_event": "b2b_contact_start",
+          "primary_count": 0,
+          "primary_rate_pct": null,
+          "secondary_event": "contact_form_success",
+          "secondary_count": 0,
+          "status": "not_started"
+        }
+      ]
+    },
+    "experiment_events": [],
+    "qualified_by_source": [
+      {
+        "event": "photo_contact_click",
+        "source": "lightbox",
+        "medium": "(not set)",
+        "count": "2"
+      }
+    ],
+    "qualified_source_status": "available",
+    "revenue": {
+      "period_days": 7,
+      "payments_enabled": false,
+      "digital": {
+        "count": 0,
+        "revenue_ils": 0
+      },
+      "print": {
+        "by_status": [],
+        "total_count": 0,
+        "total_revenue_ils": 0
+      }
+    },
+    "photo_analytics": {
+      "window_days": 30,
+      "views": [
+        {
+          "photo_id": "88674fc6-1801-4ce4-8f1d-483e496c9a4a",
+          "photo_title": "דבורה מוכסת אבקה על חמניה",
+          "category": "מאקרו-צילומי תקריב",
+          "count": 33
+        },
+        {
+          "photo_id": "4cf149dc-4e7c-4698-897b-97dfc2475366",
+          "photo_title": "תבנית גיאומטרית בעיצוב ברזל",
+          "category": "ישראל",
+          "count": 14
+        },
+        {
+          "photo_id": "1TCAfgJ9pl3T0G8RRtIAa5_0FOoxXrjso",
+          "photo_title": "ריקוד של אש בלילה",
+          "category": "צילומי לילה",
+          "count": 14
+        },
+        {
+          "photo_id": "1G_dn5hHrv_1cZ-VVGfECEYzi9J6pDGhI",
+          "photo_title": "ריקוד אור בערבה",
+          "category": "צילומי לילה",
+          "count": 9
+        },
+        {
+          "photo_id": "1toLLUZrvlD_zP5qosJLEabgyh1WOEWZc",
+          "photo_title": "מטריית אש",
+          "category": "צילומי לילה",
+          "count": 8
+        },
+        {
+          "photo_id": "1DKV8fePHvPbFLArxDDCRuGsX9eT48ZKd",
+          "photo_title": "שדה בערפל בוקר",
+          "category": "סלובקיה",
+          "count": 7
+        },
+        {
+          "photo_id": "ba7677aa-989c-419e-8086-9eeef32a9650",
+          "photo_title": "כלנית סגולה",
+          "category": "מאקרו-צילומי תקריב",
+          "count": 6
+        },
+        {
+          "photo_id": "19Q-SGNEyuCzAc8cbmMMeXeSzVpaFJazV",
+          "photo_title": "אגם שקט בסלובקיה",
+          "category": "סלובקיה",
+          "count": 6
+        },
+        {
+          "photo_id": "a26e89d8-895e-4c56-ab32-22d5cf523fb6",
+          "photo_title": "שדה חיטה בעמק",
+          "category": "ישראל",
+          "count": 3
+        },
+        {
+          "photo_id": "1M0MNq47h_rck94IU0GlqlX9yIA5_6MMe",
+          "photo_title": "שדה בזריחה",
+          "category": "ישראל",
+          "count": 3
+        },
+        {
+          "photo_id": "0985a050-eeff-440e-8e51-1a26ab463258",
+          "photo_title": "ציפור בשקיעה",
+          "category": "בעלי חיים",
+          "count": 3
+        },
+        {
+          "photo_id": "f7e18780-1f2d-4d85-bbcb-d584c4216812",
+          "photo_title": "טווס בתהילה",
+          "category": "בעלי חיים",
+          "count": 2
+        },
+        {
+          "photo_id": "45e4c3b6-8382-4c47-be61-e238cbd0e5d8",
+          "photo_title": "סוסים לבנים בטבע",
+          "category": "בעלי חיים",
+          "count": 2
+        },
+        {
+          "photo_id": "25f2f560-9b24-4243-a92a-706c32de7646",
+          "photo_title": "ציפור כחולה וזהובה",
+          "category": "בעלי חיים",
+          "count": 2
+        },
+        {
+          "photo_id": "1z_OKuttSBnZOehYvPVa774CillJuylnh",
+          "photo_title": "מגדל עתיק בעמק ירוק",
+          "category": "גאורגיה",
+          "count": 2
+        },
+        {
+          "photo_id": "1rVBJnzQ8onOOR-qQHUzuK6zr_dMd_vHN",
+          "photo_title": "כפר בעמק הירוק",
+          "category": "גאורגיה",
+          "count": 2
+        },
+        {
+          "photo_id": "1BTqOchZJzstemNadwnVTFo6FSyIDEAwD",
+          "photo_title": "עץ בודד בסוואנה טנזנית",
+          "category": "טנזניה",
+          "count": 2
+        },
+        {
+          "photo_id": "faa67256-b357-41bd-a0fa-0b00e3ab72fa",
+          "photo_title": "שועל בשדה פרחים",
+          "category": "בעלי חיים",
+          "count": 1
+        },
+        {
+          "photo_id": "f6f018ab-16c1-48e1-88d4-d81d103facd7",
+          "photo_title": "צבעים וטקסטורות מרובדות",
+          "category": "צילום מופשט",
+          "count": 1
+        },
+        {
+          "photo_id": "f303bf99-f38c-447e-b262-e844dcb609aa",
+          "photo_title": "פרפר כחול על צמח",
+          "category": "מאקרו-צילומי תקריב",
+          "count": 1
+        }
+      ],
+      "intents": [],
+      "purchases": []
+    },
+    "analysis": "## מה קרה השבוע\n\nשבוע חזק של גדילה: סשנים זינקו 82% וצפיות העמוד 237%, כשרובן המוחלט מגיעות מ-ChatGPT (63 סשנים) — כלומר האתר מתחיל להופיע כמקור מצוטט במנועי AI, וזה ערוץ אסטרטגי מצוין. זמן ממוצע של 15:40 דקות עם 41 החלפות שפה ו-50 צפיות תמונה ממסלולי ההשראה מעיד על קהל סקרן ומעורב, גם אם מצומצם.\n\n## המלצות לשבוע הבא\n\n**1. לנצל את ערוץ ה-AI Assistant — זה הסיפור הגדול.**\n63 סשנים מ-ChatGPT זה לא מקרי. בדוק אילו שאלות/נושאים מפנים לאתר (כנראה מדריכי הצילום), והרחב דווקא את עמודי `/camera/` שכבר מושכים — הם המנוע שמביא אותך לתוך תשובות AI. הוסף תוכן עובדתי וברור שמנועי AI אוהבים לצטט.\n\n**2. לחזק את אותות הביקוש האמיתיים שכבר קיימים.**\nהתשלומים כבויים במכוון, אז המדד שחשוב עכשיו הוא `photo_contact_click` (2 פניות השבוע מתוך lightbox) ו-11 subscribers ב-D1. הצב קריאה עדינה לפנייה/התעניינות ליד תמונות שמושכות הכי הרבה צפיות — זה הרגש שאתה רוצה ללכוד כל עוד הקנייה סגורה.\n\n**3. להזרים את קהל ה-AI לתוך רשימת התפוצה.**\n9 מתוך 11 subscribers הם \"unknown legacy\" ו-0 marketing opt-in — כלומר אין לך כמעט אף אחד שאתה יכול לשווק אליו חוקית. הצב הצעה ברורה להרשמה (מדריך חינמי / עדכון על הדפסות חדשות) עם opt-in אמיתי, כדי שכשהתשלומים ייפתחו יהיה למי לפנות.\n\n**4. להפעיל את Acquisition Experiment 01.**\nכל שלושת המסלולים במצב `not_started` עם 0 סשנים. יש לך עכשיו תנועה אמיתית (149 סשנים) — זה הזמן להפנות אליהם קמפיין, ולו קטן, כדי לקבל נתונים ראשונים על Free Guide / Personal Licensing / B2B.\n\n**5. לחזק את מסלול \"רגעים של התרגשות\".**\n10 בחירות מסלול ו-27 צפיות תמונה — הכי פופולרי — אבל 0 קליקים לפנייה ו-0 תצוגות קיר. יש כאן עניין רגשי שלא מומר לשום פעולה. הוסף במסלול הזה אפשרות \"ראה על הקיר\" או פנייה עדינה.\n\n## אזהרה אחת\n\n**Bounce rate 64% וגלילה שנושרת בחדות** — 98 גללו ל-25% אבל רק 24 הגיעו ל-90%. בעיקר במובייל (103 מתוך 149 סשנים). הרבה מבקרים מ-AI נוחתים בעמוד הבית, מסתכלים ועוזבים. ודא שעמוד הבית במובייל נפתח מהר ומציג מיד את העבודות החזקות ביותר — כרגע אתה מאבד חלק ניכר מהתנועה החדשה והיקרה הזו לפני שהיא מתחברת רגשית.\n\n*(הערה: רכישות=0 כאן תקין ומכוון — התשלומים כבויים, אין פה שום כשל במשפך או בשיווק.)*"
   }
 ]
