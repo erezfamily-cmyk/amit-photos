@@ -127,7 +127,7 @@ try {
     };
   });
   assert.ok(roomLayout.roomHeight > 0 && roomLayout.roomWidth > 0);
-  assert.ok(roomLayout.centerDelta < 3, 'Frame must be centered above the sofa');
+  assert.ok(roomLayout.centerDelta < 3, 'Frame must be centered above the sofa ' + JSON.stringify(roomLayout));
   assert.ok(roomLayout.frameBottomRatio < 0.54, 'Frame should not touch the sofa top');
   assert.ok(roomLayout.artWidthRatio < 0.42, 'Frame too wide for a phone');
   assert.equal(roomLayout.whatsappDisplay, 'none');
