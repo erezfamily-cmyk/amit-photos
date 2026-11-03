@@ -37,8 +37,8 @@ test('Hebrew and English copy explains the personal digital product and the illu
   }
   assert.match(translations, /'home\.value\.product\.note': 'המוצר המוצע כעת הוא קובץ דיגיטלי לשימוש אישי/);
   assert.match(translations, /'home\.value\.product\.note': 'The current offer is a digital file for personal use/);
-  assert.match(translations, /'home\.value\.image\.alt': 'שני כיסאות לבנים על חוף שקט/);
-  assert.match(translations, /'home\.value\.image\.alt': 'Two white loungers on a quiet beach/);
+  assert.match(translations, /'home\.value\.image\.alt': 'עץ ירוק בודד על מדרון גבעה עשבוני/);
+  assert.match(translations, /'home\.value\.image\.alt': 'A solitary green tree on a golden-green grassy hillside/);
   assert.match(translations, /'home\.value\.image\.note': 'A quiet moment by the sea/);
   assert.match(translations, /querySelectorAll\('\[data-i18n-alt\]'\)/);
 });
