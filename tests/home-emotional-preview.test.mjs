@@ -17,7 +17,7 @@ test('the warm experience is enabled on the normal homepage without a query para
 test('the preview uses the existing gallery and does not activate payment or analytics flows', () => {
   const section = html.slice(html.indexOf('id="home-value"'), html.indexOf('</section>', html.indexOf('id="home-value"')));
   assert.match(section, /href="#gallery"/);
-  assert.ok(section.includes('https://amitphotos.com/photos/14vthzIuM_Gi0Bl5IsQbogDajHKad6B1r.webp'));
+  assert.ok(section.includes('https://amitphotos.com/photos/1DbMo5Ntvvm2Az_fi5u-idXMPJXgvJ5Lp.webp'));
   assert.doesNotMatch(section, /data-analytics-event|paypal|payment|checkout/i);
   assert.match(html, /data-payments-state="disabled"/);
   assert.ok(previewCss.includes('https://amitphotos.com/photos/1m6IFLTq0pfpdgENTItciXddOOGIOUzt2.webp'));
@@ -37,8 +37,8 @@ test('Hebrew and English copy explains the personal digital product and the illu
   }
   assert.match(translations, /'home\.value\.product\.note': 'המוצר המוצע כעת הוא קובץ דיגיטלי לשימוש אישי/);
   assert.match(translations, /'home\.value\.product\.note': 'The current offer is a digital file for personal use/);
-  assert.match(translations, /'home\.value\.image\.alt': 'שני כיסאות לבנים על חוף שקט/);
-  assert.match(translations, /'home\.value\.image\.alt': 'Two white loungers on a quiet beach/);
+  assert.match(translations, /'home\.value\.image\.alt': 'עץ ירוק בודד על מדרון גבעה עשבוני/);
+  assert.match(translations, /'home\.value\.image\.alt': 'A solitary green tree on a golden-green grassy hillside/);
   assert.match(translations, /'home\.value\.image\.note': 'A quiet moment by the sea/);
   assert.match(translations, /querySelectorAll\('\[data-i18n-alt\]'\)/);
 });
