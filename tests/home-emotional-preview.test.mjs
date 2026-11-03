@@ -29,7 +29,7 @@ test('the preview uses the existing gallery and does not activate payment or ana
 test('Hebrew and English copy explains the personal digital product and the illustration', () => {
   for (const key of [
     'home.value.label', 'home.value.title', 'home.value.intro', 'home.value.image.alt',
-    'home.value.image.note', 'home.value.home.title', 'home.value.home.copy',
+    'home.value.image.note', 'home.value.note.office', 'home.value.note.lounge', 'home.value.image.office.alt', 'home.value.image.lounge.alt', 'home.value.home.title', 'home.value.home.copy',
     'home.value.space.title', 'home.value.space.copy', 'home.value.gift.title',
     'home.value.gift.copy', 'home.value.product.note', 'home.value.cta'
   ]) {
@@ -39,7 +39,7 @@ test('Hebrew and English copy explains the personal digital product and the illu
   assert.match(translations, /'home\.value\.product\.note': 'The current offer is a digital file for personal use/);
   assert.match(translations, /'home\.value\.image\.alt': 'עץ ירוק בודד על מדרון גבעה עשבוני/);
   assert.match(translations, /'home\.value\.image\.alt': 'A solitary green tree on a golden-green grassy hillside/);
-  assert.match(translations, /'home\.value\.image\.note': 'A quiet moment by the sea/);
+  assert.match(translations, /'home\.value\.image\.note': 'In the living room: a photograph/);
   assert.match(translations, /querySelectorAll\('\[data-i18n-alt\]'\)/);
 });
 
