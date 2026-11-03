@@ -111,9 +111,12 @@ try {
   results.push('English social platform labels and card statistics');
   // Room mockup stays on the wall, clear of the sofa back, on narrow phones.
   await page.locator('#home-value:not([hidden])').waitFor();
+  // The room rotates every 5s: pin the living room and let its cross-fade settle before measuring.
+  await page.locator('[data-room-go="0"]').click();
+  await page.waitForTimeout(2200);
   const roomLayout = await page.evaluate(() => {
     const room = document.querySelector('.home-value-room').getBoundingClientRect();
-    const art = document.querySelector('.home-value-art').getBoundingClientRect();
+    const art = document.querySelector('.home-room.is-active .home-value-art').getBoundingClientRect();
     return {
       roomWidth: room.width, roomHeight: room.height,
       centerDelta: Math.abs((art.left + art.width / 2) - (room.left + room.width / 2)),
@@ -124,7 +127,7 @@ try {
     };
   });
   assert.ok(roomLayout.roomHeight > 0 && roomLayout.roomWidth > 0);
-  assert.ok(roomLayout.centerDelta < 3, 'Frame must be centered above the sofa');
+  assert.ok(roomLayout.centerDelta < 3, 'Frame must be centered above the sofa ' + JSON.stringify(roomLayout));
   assert.ok(roomLayout.frameBottomRatio < 0.54, 'Frame should not touch the sofa top');
   assert.ok(roomLayout.artWidthRatio < 0.42, 'Frame too wide for a phone');
   assert.equal(roomLayout.whatsappDisplay, 'none');
