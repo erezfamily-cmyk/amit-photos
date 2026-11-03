@@ -161,6 +161,8 @@ html.home-experience-preview .home-room {
   transition: opacity 1s ease, transform 1.4s cubic-bezier(.22, .61, .36, 1), visibility 0s linear 1s;
   --art-top: 11%;
   --art-w: 36%;
+  --art-left: 50%;
+  --art-ratio: 4 / 3;
   --art-frame: #f7f2e8;
   --art-ring: rgba(104, 76, 49, .42);
 }
@@ -194,6 +196,11 @@ html.home-experience-preview .home-value-room-note.is-swapping { opacity: 0; tra
 }
 html.home-experience-preview .home-room[data-room="living"] {
   background: url('../images/home-value-living-room.png') center / cover no-repeat;
+  /* Long, wide frame centred over the sofa (the sofa sits ~51.5% across the picture, not at the exact middle). */
+  --art-top: 12%;
+  --art-w: 56%;
+  --art-left: 51.5%;
+  --art-ratio: 2.2 / 1;
 }
 html.home-experience-preview .home-room-bg {
   position: absolute;
@@ -245,11 +252,11 @@ html.home-experience-preview .home-value-art {
   z-index: 1;
   /* Leave visible wall between the frame and the furniture. */
   top: var(--art-top);
-  left: 50%;
+  left: var(--art-left);
   width: var(--art-w);
   transform: translateX(-50%);
   overflow: hidden;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: var(--art-ratio);
   background: #ddd3c4;
   border: 8px solid var(--art-frame);
   box-shadow: 0 8px 20px rgba(36, 28, 19, .34), 0 0 0 2px var(--art-ring), 0 2px 4px rgba(35, 26, 17, .36);
@@ -706,7 +713,7 @@ html.home-experience-preview .gallery-context-label {
   }
   html.home-experience-preview .home-value-room { aspect-ratio: 1.32 / 1; }
   html.home-experience-preview .home-value-art { top: var(--art-top); width: var(--art-w); border-width: 5px; }
-  html.home-experience-preview .home-room[data-room="living"] { --art-top: 10%; --art-w: 34%; }
+  html.home-experience-preview .home-room[data-room="living"] { --art-top: 13%; --art-w: 58%; }
   html.home-experience-preview .home-value-room-note { font-size: .72rem; }
   html.home-experience-preview .home-value-contexts { grid-template-columns: 1fr; }
 }
