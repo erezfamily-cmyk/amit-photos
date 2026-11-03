@@ -17,7 +17,7 @@ test('the warm experience is enabled on the normal homepage without a query para
 test('the preview uses the existing gallery and does not activate payment or analytics flows', () => {
   const section = html.slice(html.indexOf('id="home-value"'), html.indexOf('</section>', html.indexOf('id="home-value"')));
   assert.match(section, /href="#gallery"/);
-  assert.ok(section.includes('https://amitphotos.com/photos/14vthzIuM_Gi0Bl5IsQbogDajHKad6B1r.webp'));
+  assert.ok(section.includes('https://amitphotos.com/photos/1DbMo5Ntvvm2Az_fi5u-idXMPJXgvJ5Lp.webp'));
   assert.doesNotMatch(section, /data-analytics-event|paypal|payment|checkout/i);
   assert.match(html, /data-payments-state="disabled"/);
   assert.ok(previewCss.includes('https://amitphotos.com/photos/1m6IFLTq0pfpdgENTItciXddOOGIOUzt2.webp'));
