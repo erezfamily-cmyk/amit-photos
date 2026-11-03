@@ -182,7 +182,7 @@ html.home-experience-preview .home-room.is-active .home-value-art {
   translate: 0 0;
   transition: opacity .8s ease .55s, translate .8s cubic-bezier(.22, .61, .36, 1) .55s;
 }
-html.home-experience-preview .home-value-room-note { transition: opacity .35s ease, translate .35s ease; }
+html.home-experience-preview .home-value-room-note { transition: opacity .35s ease, translate .35s ease; text-wrap: balance; }
 html.home-experience-preview .home-value-room-note.is-swapping { opacity: 0; translate: 0 6px; }
 @media (prefers-reduced-motion: reduce) {
   html.home-experience-preview .home-room,
