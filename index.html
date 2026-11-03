@@ -105,12 +105,12 @@
   <noscript><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Frank+Ruhl+Libre:wght@400;500&family=Syne:wght@700;800&family=Heebo:wght@300;400;500;700&display=swap" rel="stylesheet" /></noscript>
 
   <link rel="stylesheet" href="assets/css/style.css?v=0b1db79a" />
-  <link rel="stylesheet" href="assets/css/home-experience-preview.css?v=b1edb3c5" />
+  <link rel="stylesheet" href="assets/css/home-experience-preview.css?v=7040edb8" />
   <script src="assets/js/home-experience-preview.js?v=2"></script>
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#0a0a0a" />
   <script src="assets/js/analytics.js?v=e69201d3"></script>
-  <script src="assets/js/i18n.js?v=98a7dfbc"></script>
+  <script src="assets/js/i18n.js?v=eac1ab87"></script>
 </head>
 <body data-payments-state="disabled">
 
@@ -183,13 +183,34 @@
   <!-- ===== EMOTIONAL VALUE ===== -->
   <section class="home-value-section" id="home-value" hidden aria-labelledby="home-value-heading">
     <div class="home-value-room-wrap">
-      <div class="home-value-room">
-        <div class="home-value-art">
-          <img src="https://amitphotos.com/photos/1DbMo5Ntvvm2Az_fi5u-idXMPJXgvJ5Lp.webp"
-               alt="עץ ירוק בודד על מדרון גבעה עשבוני בגוונים זהובים וירוקים" data-i18n-alt="home.value.image.alt" loading="lazy" />
+      <div class="home-value-room" id="home-room-rotator">
+        <div class="home-room is-active" data-room="living">
+          <div class="home-value-art">
+            <img src="https://amitphotos.com/photos/1DbMo5Ntvvm2Az_fi5u-idXMPJXgvJ5Lp.webp"
+                 alt="עץ ירוק בודד על מדרון גבעה עשבוני בגוונים זהובים וירוקים" data-i18n-alt="home.value.image.alt" loading="lazy" />
+          </div>
+        </div>
+        <div class="home-room" data-room="office" aria-hidden="true">
+          <img class="home-room-bg" src="assets/images/home-value-office.webp" alt="" width="1800" height="1344" loading="lazy" />
+          <div class="home-value-art">
+            <img src="https://amitphotos.com/photos/169n6UlmL7JA_aX_1lcxIEe_QaUZWZjeo.webp"
+                 alt="שביל אדמה מתפתל בין שדות חיטה ירוקים" data-i18n-alt="home.value.image.office.alt" loading="lazy" />
+          </div>
+        </div>
+        <div class="home-room" data-room="lounge" aria-hidden="true">
+          <img class="home-room-bg" src="assets/images/home-value-lounge.webp" alt="" width="1800" height="1344" loading="lazy" />
+          <div class="home-value-art">
+            <img src="https://amitphotos.com/photos/1V2x1O-7f6CMhpmNghfzq3ce5r9yI-HKB.webp"
+                 alt="הרים ועצי אורן בצללית מול שמיים זהובים בדמדומים" data-i18n-alt="home.value.image.lounge.alt" loading="lazy" />
+          </div>
         </div>
       </div>
-      <p class="home-value-room-note" data-i18n="home.value.image.note">צילום של רגע שקט, תלוי בבית</p>
+      <div class="home-room-dots" role="group" aria-label="חללים לדוגמה" data-i18n-aria="home.value.rooms.label">
+        <button type="button" class="is-active" data-room-go="0" aria-label="סלון" data-i18n-aria="home.value.room.living" aria-pressed="true"></button>
+        <button type="button" data-room-go="1" aria-label="משרד" data-i18n-aria="home.value.room.office" aria-pressed="false"></button>
+        <button type="button" data-room-go="2" aria-label="לובי" data-i18n-aria="home.value.room.lounge" aria-pressed="false"></button>
+      </div>
+      <p class="home-value-room-note" id="home-room-note" data-i18n="home.value.note.living">בסלון: צילום שמביא שקט לפינה שבה מתיישבים בסוף היום</p>
     </div>
     <div class="home-value-copy">
       <p class="section-label" data-i18n="home.value.label">כשהצילום פוגש את הבית</p>
@@ -1358,6 +1379,55 @@
       btn.disabled = false; btn.textContent = 'שלח לי &#x2190;';
     }
   });
+  </script>
+  <script>
+  // Rotates the three example rooms on the homepage (living room, office, lounge).
+  (function () {
+    var box = document.getElementById('home-room-rotator');
+    if (!box) return;
+    var rooms = box.querySelectorAll('.home-room');
+    var dots = document.querySelectorAll('[data-room-go]');
+    var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var note = document.getElementById('home-room-note');
+    var noteKeys = ['home.value.note.living', 'home.value.note.office', 'home.value.note.lounge'];
+    var current = 0, timer = null, paused = false;
+    function show(i) {
+      current = (i + rooms.length) % rooms.length;
+      rooms.forEach(function (r, k) {
+        r.classList.toggle('is-active', k === current);
+        r.setAttribute('aria-hidden', k === current ? 'false' : 'true');
+      });
+      if (note && typeof t === 'function') {
+        note.classList.add('is-swapping');
+        setTimeout(function () {
+          note.dataset.i18n = noteKeys[current];
+          note.textContent = t(noteKeys[current]);
+          note.classList.remove('is-swapping');
+        }, 350);
+      }
+      dots.forEach(function (d, k) {
+        d.classList.toggle('is-active', k === current);
+        d.setAttribute('aria-pressed', k === current ? 'true' : 'false');
+      });
+    }
+    function stop() { if (timer) { clearInterval(timer); timer = null; } }
+    function start() {
+      if (reduce || timer || paused || document.hidden) return;
+      timer = setInterval(function () { show(current + 1); }, 5000);
+    }
+    dots.forEach(function (d) {
+      d.addEventListener('click', function () { show(+d.getAttribute('data-room-go')); stop(); start(); });
+    });
+    var wrap = box.parentElement;
+    wrap.addEventListener('mouseenter', function () { paused = true; stop(); });
+    wrap.addEventListener('mouseleave', function () { paused = false; start(); });
+    wrap.addEventListener('focusin', function () { paused = true; stop(); });
+    wrap.addEventListener('focusout', function () { paused = false; start(); });
+    document.addEventListener('visibilitychange', function () { document.hidden ? stop() : start(); });
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (es) { es[0].isIntersecting ? start() : stop(); }, { threshold: .3 }).observe(box);
+    } else { start(); }
+  })();
   </script>
 </body>
 </html>

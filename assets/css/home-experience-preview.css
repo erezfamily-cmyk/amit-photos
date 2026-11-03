@@ -146,23 +146,112 @@ html.home-experience-preview .home-value-room {
   overflow: hidden;
   min-width: 0;
   aspect-ratio: 1.426 / 1;
-  background: url('../images/home-value-living-room.png') center / cover no-repeat;
+  background: #d9cfbf;
   border-radius: 18px;
   box-shadow: 0 14px 34px rgba(50, 39, 27, .16);
 }
+/* Three example rooms that cross-fade; each room sets where and how large its picture hangs. */
+html.home-experience-preview .home-room {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  visibility: hidden;
+  /* Cross-dissolve with a slow push-in: the room leaving grows slightly, the one arriving settles. */
+  transform: scale(1.06);
+  transition: opacity 1s ease, transform 1.4s cubic-bezier(.22, .61, .36, 1), visibility 0s linear 1s;
+  --art-top: 11%;
+  --art-w: 36%;
+  --art-frame: #f7f2e8;
+  --art-ring: rgba(104, 76, 49, .42);
+}
+html.home-experience-preview .home-room.is-active {
+  opacity: 1;
+  visibility: visible;
+  z-index: 1;
+  transform: scale(1);
+  transition: opacity 1s ease, transform 1.4s cubic-bezier(.22, .61, .36, 1), visibility 0s;
+}
+/* The picture arrives a beat after the room, as if hung on the wall. */
+html.home-experience-preview .home-room .home-value-art {
+  opacity: 0;
+  translate: 0 14px;
+  transition: opacity .6s ease, translate .6s ease;
+}
+html.home-experience-preview .home-room.is-active .home-value-art {
+  opacity: 1;
+  translate: 0 0;
+  transition: opacity .8s ease .55s, translate .8s cubic-bezier(.22, .61, .36, 1) .55s;
+}
+html.home-experience-preview .home-value-room-note { transition: opacity .35s ease, translate .35s ease; }
+html.home-experience-preview .home-value-room-note.is-swapping { opacity: 0; translate: 0 6px; }
+@media (prefers-reduced-motion: reduce) {
+  html.home-experience-preview .home-room,
+  html.home-experience-preview .home-room.is-active,
+  html.home-experience-preview .home-room .home-value-art,
+  html.home-experience-preview .home-room.is-active .home-value-art,
+  html.home-experience-preview .home-value-room-note { transition: none; transform: none; translate: none; }
+}
+html.home-experience-preview .home-room[data-room="living"] {
+  background: url('../images/home-value-living-room.png') center / cover no-repeat;
+}
+html.home-experience-preview .home-room-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+/* Large open wall: the photograph hangs big, above the low furniture. */
+html.home-experience-preview .home-room[data-room="office"] {
+  --art-top: 9%;
+  --art-w: 46%;
+  --art-frame: #f4f1ea;
+  --art-ring: rgba(40, 34, 28, .5);
+}
+html.home-experience-preview .home-room[data-room="lounge"] {
+  --art-top: 9%;
+  --art-w: 46%;
+  --art-frame: #ece4d4;
+  --art-ring: rgba(176, 138, 79, .6);
+}
+html.home-experience-preview .home-room-dots {
+  display: flex;
+  justify-content: center;
+  gap: .25rem;
+  margin-top: .5rem;
+}
+html.home-experience-preview .home-room-dots button {
+  position: relative;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+html.home-experience-preview .home-room-dots button::before {
+  content: "";
+  position: absolute;
+  inset: 8px;
+  border-radius: 50%;
+  background: #b7ab98;
+  transition: background .3s, transform .3s;
+}
+html.home-experience-preview .home-room-dots button.is-active::before { background: #7a5c3f; transform: scale(1.25); }
+html.home-experience-preview .home-room-dots button:focus-visible { outline: 2px solid #7a5c3f; outline-offset: 1px; border-radius: 4px; }
 html.home-experience-preview .home-value-art {
   position: absolute;
   z-index: 1;
-  /* Leave visible wall between the frame and the sofa back. */
-  top: 11%;
+  /* Leave visible wall between the frame and the furniture. */
+  top: var(--art-top);
   left: 50%;
-  width: 36%;
+  width: var(--art-w);
   transform: translateX(-50%);
   overflow: hidden;
   aspect-ratio: 4 / 3;
   background: #ddd3c4;
-  border: 8px solid #f7f2e8;
-  box-shadow: 0 8px 20px rgba(36, 28, 19, .34), 0 0 0 2px rgba(104, 76, 49, .42), 0 2px 4px rgba(35, 26, 17, .36);
+  border: 8px solid var(--art-frame);
+  box-shadow: 0 8px 20px rgba(36, 28, 19, .34), 0 0 0 2px var(--art-ring), 0 2px 4px rgba(35, 26, 17, .36);
 }
 html.home-experience-preview .home-value-art img { object-fit: cover; }
 html.home-experience-preview .home-value-room-note {
@@ -615,7 +704,8 @@ html.home-experience-preview .gallery-context-label {
     border-radius: 18px;
   }
   html.home-experience-preview .home-value-room { aspect-ratio: 1.32 / 1; }
-  html.home-experience-preview .home-value-art { top: 10%; width: 34%; border-width: 5px; }
+  html.home-experience-preview .home-value-art { top: var(--art-top); width: var(--art-w); border-width: 5px; }
+  html.home-experience-preview .home-room[data-room="living"] { --art-top: 10%; --art-w: 34%; }
   html.home-experience-preview .home-value-room-note { font-size: .72rem; }
   html.home-experience-preview .home-value-contexts { grid-template-columns: 1fr; }
 }
