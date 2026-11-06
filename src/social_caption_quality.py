@@ -25,6 +25,21 @@ def photo_fallback(photo, lang="he"):
     return f"From my photography gallery: {title}." if title else "A photograph from my gallery."
 
 
+def fit_to_limit(text, fallback, max_chars):
+    """Return text unchanged when it fits; otherwise cut at the last full sentence
+    that fits, or use fallback. Never returns a mid-sentence cut."""
+    if has_caption_body(text) and len(text) <= max_chars:
+        return text
+    if isinstance(text, str):
+        window = text[:max_chars]
+        end = max(window.rfind(mark) for mark in (".", "!", "?"))
+        if end > 0:
+            cut = window[:end + 1].strip()
+            if has_caption_body(cut):
+                return cut
+    return fallback
+
+
 def generated_body(message, fallback):
     # max_tokens can leave a plausible-looking sentence cut in the middle.
     if getattr(message, "stop_reason", None) != "end_turn":

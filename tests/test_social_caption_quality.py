@@ -85,3 +85,13 @@ def test_reel_validation_blocks_hashtag_only_caption_before_network():
         caption = reel_post.generate_reel_caption("טבע", "he")
     assert "טבע" in caption
     assert quality.has_caption_body(caption)
+
+
+def test_fit_to_limit_cuts_at_sentence_or_falls_back():
+    from social_caption_quality import fit_to_limit
+    short = "A short readable description of my photo."
+    assert fit_to_limit(short, "fb", 500) == short
+    long_text = ("I photographed this lilac in soft morning light. " * 20).strip()
+    cut = fit_to_limit(long_text, "fb", 500)
+    assert len(cut) <= 500 and cut.endswith(".")
+    assert fit_to_limit("x" * 600, "fb", 500) == "fb"

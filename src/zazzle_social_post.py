@@ -20,7 +20,7 @@ from pathlib import Path
 
 import requests
 from campaign_urls import add_campaign_params
-from social_caption_quality import require_caption
+from social_caption_quality import fit_to_limit, require_caption
 from social_delivery_state import (
     delivery_complete,
     first_partial_item_id,
@@ -368,7 +368,8 @@ Output only the description text."""
     try:
         msg = client.messages.create(model="claude-opus-4-8", max_tokens=300,
                                       messages=[{"role": "user", "content": prompt}])
-        return msg.content[0].text.strip()
+        fallback = f"\"{title}\" now available as a {product_name}. Available for purchase at {product.get('url', SITE_URL)}"
+        return fit_to_limit(msg.content[0].text.strip(), fallback, 500)
     except Exception as e:
         print(f"⚠️  Claude pin description failed ({e}) — using fallback")
         return f"\"{title}\" now available as a {product_name}. Available for purchase at {product.get('url', SITE_URL)}"
