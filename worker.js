@@ -1873,7 +1873,13 @@ async function handleZazzleProductsList(request, env) {
 async function handleRedbubbleProductScrape(request, env) {
   if (!await checkAuth(request, env)) return jsonRes({ error: 'Unauthorized' }, 401, request);
   const url = new URL(request.url).searchParams.get('url');
-  if (!url || !url.startsWith('https://www.redbubble.com/')) return jsonRes({ error: 'קישור Redbubble לא תקין' }, 400, request);
+  // בדיקת host באמצעות פירוק URL אמיתי — לא string.startsWith, שניתן לעקוף עם
+  // דומיין כמו https://www.redbubble.com.evil.com/ שמתחיל באותם תווים
+  let targetUrl;
+  try { targetUrl = url ? new URL(url) : null; } catch { targetUrl = null; }
+  if (!targetUrl || targetUrl.protocol !== 'https:' || targetUrl.hostname !== 'www.redbubble.com') {
+    return jsonRes({ error: 'קישור Redbubble לא תקין' }, 400, request);
+  }
 
   try {
     const res = await fetch(url, {
