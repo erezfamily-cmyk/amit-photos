@@ -169,6 +169,7 @@ def main():
     print("💾 מעדכן GitHub Secret: INSTAGRAM_PAGE_TOKEN...")
     update_github_secret("INSTAGRAM_PAGE_TOKEN", new_user_token, key_id, public_key)
 
+    failures = []
     if THREADS_ACCESS_TOKEN:
         print("🔄 מחדש Threads token...")
         new_threads_token = refresh_threads_token(THREADS_ACCESS_TOKEN)
@@ -176,6 +177,7 @@ def main():
             update_github_secret("THREADS_ACCESS_TOKEN", new_threads_token, key_id, public_key)
         else:
             print("⚠️  THREADS_ACCESS_TOKEN לא עודכן — אם פג תוקף, נדרש חיבור ידני חד-פעמי")
+            failures.append("THREADS_ACCESS_TOKEN")
     else:
         print("ℹ️  THREADS_ACCESS_TOKEN לא מוגדר — מדלג על Threads")
 
@@ -188,6 +190,12 @@ def main():
             print("⚠️  לא עודכן FACEBOOK_PAGE_TOKEN — עמוד לא נמצא")
     else:
         print("ℹ️  FACEBOOK_PAGE_ID לא מוגדר — מדלג על Facebook token")
+
+    if failures:
+        # Fail the run so GitHub sends a failure alert; a silent warning let an
+        # expired Threads token go unnoticed from 26.8 to 6.11.2026.
+        print(f"❌ חידוש נכשל עבור: {', '.join(failures)} — נדרש חיבור ידני")
+        sys.exit(1)
 
     print("🎉 חידוש טוקן הושלם בהצלחה!")
 
