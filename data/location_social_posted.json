@@ -1,5 +1,5 @@
 {
-  "last_index": 31,
+  "last_index": 33,
   "posted_slugs": [
     "gnym-bhay-chyph",
     "chvp-rashvn-ltzyvn",
@@ -29,7 +29,8 @@
     "shdh-bvkr",
     "shknaym-mtzpvr-ykr",
     "shmvrt-dn",
-    "shmvrt-htba-hchvlh"
+    "shmvrt-htba-hchvlh",
+    "sirmione-lago-di-garda"
   ],
   "campaigns": {
     "sirmione-lago-di-garda": {
@@ -44,6 +45,10 @@
       "pinterest": {
         "post_id": "512636370109556280",
         "published_at": "2026-10-17T19:09:43.711887+00:00"
+      },
+      "threads": {
+        "post_id": "18681869047032542",
+        "published_at": "2026-11-07T20:44:48.797005+00:00"
       }
     }
   }
