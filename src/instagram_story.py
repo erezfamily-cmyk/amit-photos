@@ -447,7 +447,10 @@ def publish_ig(video_url):
         sys.exit(1)
     print(f"📦 IG container: {creation_id}")
 
-    for attempt in range(18):
+    # Instagram sometimes needs several minutes to process a video; publishing
+    # before FINISHED returns 400 (failed 8.11.2026 after only 90s of polling).
+    finished = False
+    for attempt in range(60):
         time.sleep(5)
         status = requests.get(
             f"{GRAPH_API}/{creation_id}",
@@ -456,10 +459,15 @@ def publish_ig(video_url):
         ).json().get("status_code", "")
         print(f"  ⏳ [{attempt+1}] {status}")
         if status == "FINISHED":
+            finished = True
             break
         if status == "ERROR":
             print("❌ שגיאת עיבוד Instagram")
             sys.exit(1)
+
+    if not finished:
+        print("❌ Instagram לא סיים לעבד את הוידאו תוך 5 דקות")
+        sys.exit(1)
 
     pub = requests.post(f"{GRAPH_API}/{IG_USER_ID}/media_publish", data={
         "creation_id":  creation_id,
