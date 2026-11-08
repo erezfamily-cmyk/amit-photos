@@ -1,155 +1,149 @@
 {
-  "generated_at": "2026-11-01T12:31:07.137102+00:00",
-  "week_ending": "01/11/2026",
+  "generated_at": "2026-11-08T12:36:56.044950+00:00",
+  "week_ending": "08/11/2026",
   "data_quality": {
     "status": "complete",
     "failed_sources": {},
     "media_insights": {
-      "posts_available": 4,
-      "posts_requested": 4,
+      "posts_available": 3,
+      "posts_requested": 3,
       "coverage": 1.0,
-      "saved_posts_available": 4,
-      "shared_posts_available": 4,
+      "saved_posts_available": 3,
+      "shared_posts_available": 3,
       "unavailable_post_ids": []
     }
   },
   "ig": {
-    "followers": 663,
-    "media_count": 1423,
-    "posts_this_week": 4,
-    "total_likes": 7,
+    "followers": 665,
+    "media_count": 1426,
+    "posts_this_week": 3,
+    "total_likes": 5,
     "total_comments": 0,
-    "avg_likes_per_post": 1.8,
-    "total_reach": 183,
+    "avg_likes_per_post": 1.7,
+    "total_reach": 127,
     "total_saved": 0,
     "total_shares": 0,
-    "engagement_rate_by_reach": 0.0383,
-    "follower_engagement_rate": 0.0026,
-    "engagement_rate": 0.0026,
+    "engagement_rate_by_reach": 0.0394,
+    "follower_engagement_rate": 0.0025,
+    "engagement_rate": 0.0025,
     "editorial_performance": {
-      "guide": {
-        "posts": 2,
-        "likes": 6,
+      "story": {
+        "posts": 1,
+        "likes": 2,
         "comments": 0,
-        "reach": 96,
+        "reach": 41,
         "saved": 0,
         "shares": 0,
-        "posts_with_reach": 2,
-        "full_interactions": 6,
-        "posts_with_full_metrics": 2,
-        "avg_interactions": 3.0,
-        "engagement_rate_by_reach": 0.0625
+        "posts_with_reach": 1,
+        "full_interactions": 2,
+        "posts_with_full_metrics": 1,
+        "avg_interactions": 2.0,
+        "engagement_rate_by_reach": 0.0488
+      },
+      "technique": {
+        "posts": 1,
+        "likes": 2,
+        "comments": 0,
+        "reach": 44,
+        "saved": 0,
+        "shares": 0,
+        "posts_with_reach": 1,
+        "full_interactions": 2,
+        "posts_with_full_metrics": 1,
+        "avg_interactions": 2.0,
+        "engagement_rate_by_reach": 0.0455
       }
     },
     "top_posts": [
       {
-        "post_id": "17883877209534648",
-        "photo_id": "1Sq3RncvzHkqHMdDfX151-XqfxFL7KJEH",
-        "caption": "הקוצים הדקיקים של פרח הניגלה הזה הם מה שמשך אותי אליו. אבל האמת? שנים צילמתי מאקרו כמו הזה בצמצם הכי",
-        "likes": 3,
+        "post_id": "17924698335225329",
+        "photo_id": "8c85dd51-8de0-44c8-afcd-8e2d0ffa07c3",
+        "caption": "הקו האלכסוני הזה הוא מה שעצר אותי — החיטה הבשלה מצד אחד, האדמה החרושה מצד שני, ובדיוק באמצע פס דק של",
+        "likes": 2,
         "comments": 0,
-        "reach": 37,
+        "reach": 41,
         "saved": 0,
         "shares": 0,
-        "date": "2026-10-28"
+        "date": "2026-11-04"
       },
       {
-        "post_id": "17898975219393352",
-        "photo_id": "1bwCjLweaRzBfN-yMzW9GUPwdBJL-QNRr",
-        "caption": "תראו את רצועת העננים הזו. היא בדיוק על קו האופק, מחלקת את הפריים לשניים — ים כהה למטה, שמיים בהירים ",
-        "likes": 3,
+        "post_id": "18109825625214028",
+        "photo_id": "1UHAnI17wVt8l6w6tNGjcxBPKoMGFchos",
+        "caption": "כשראיתי את העלה המרכזי, מדדתי את האור על החלק המואר שלו ולא על הסצנה כולה. ברגע שחשפתי לפי הזוהר היר",
+        "likes": 2,
         "comments": 0,
-        "reach": 59,
+        "reach": 44,
         "saved": 0,
         "shares": 0,
-        "date": "2026-10-25"
+        "date": "2026-11-01"
       },
       {
-        "post_id": "18135003139755577",
+        "post_id": "17908819368340828",
         "photo_id": "",
-        "caption": "I waited for the deepest dark to settle over the mountains before tracing this glowing circle of col",
+        "caption": "📸 טחנות רוח הולנדיות  הכוח הויזואלי של התמונה נשען על ההשתקפות של טחנת הרוח הראשית במים השקטים שמתחת",
         "likes": 1,
         "comments": 0,
         "reach": 42,
         "saved": 0,
         "shares": 0,
-        "date": "2026-10-27"
-      },
-      {
-        "post_id": "18154478695536129",
-        "photo_id": "",
-        "caption": "📸 קיאק תחת הגשר  החוק מסתמך על קווים גיאומטריים שמובילים את עין הצופה לעומק הפריים.  קווי הובלה · ני",
-        "likes": 0,
-        "comments": 0,
-        "reach": 45,
-        "saved": 0,
-        "shares": 0,
-        "date": "2026-10-29"
+        "date": "2026-11-05"
       }
     ],
     "photo_performance": [
       {
-        "post_id": "17883877209534648",
-        "photo_id": "1Sq3RncvzHkqHMdDfX151-XqfxFL7KJEH",
-        "likes": 3,
+        "post_id": "17924698335225329",
+        "photo_id": "8c85dd51-8de0-44c8-afcd-8e2d0ffa07c3",
+        "likes": 2,
         "comments": 0,
-        "date": "2026-10-28"
+        "date": "2026-11-04"
       },
       {
-        "post_id": "17898975219393352",
-        "photo_id": "1bwCjLweaRzBfN-yMzW9GUPwdBJL-QNRr",
-        "likes": 3,
+        "post_id": "18109825625214028",
+        "photo_id": "1UHAnI17wVt8l6w6tNGjcxBPKoMGFchos",
+        "likes": 2,
         "comments": 0,
-        "date": "2026-10-25"
+        "date": "2026-11-01"
       }
     ],
     "best_post": {
-      "post_id": "17883877209534648",
-      "photo_id": "1Sq3RncvzHkqHMdDfX151-XqfxFL7KJEH",
-      "caption": "הקוצים הדקיקים של פרח הניגלה הזה הם מה שמשך אותי אליו. אבל האמת? שנים צילמתי מאקרו כמו הזה בצמצם הכי פתוח שיש, ותהיתי למ",
-      "likes": 3,
-      "date": "2026-10-28"
+      "post_id": "17924698335225329",
+      "photo_id": "8c85dd51-8de0-44c8-afcd-8e2d0ffa07c3",
+      "caption": "הקו האלכסוני הזה הוא מה שעצר אותי — החיטה הבשלה מצד אחד, האדמה החרושה מצד שני, ובדיוק באמצע פס דק של גבעולים שקרסו. הבנת",
+      "likes": 2,
+      "date": "2026-11-04"
     }
   },
   "fb": {
     "fans": 280,
-    "posts_this_week": 3,
-    "total_likes": 2,
-    "total_comments": 1,
-    "avg_likes_per_post": 0.7,
-    "engagement_rate": 0.0036,
+    "posts_this_week": 2,
+    "total_likes": 0,
+    "total_comments": 0,
+    "avg_likes_per_post": 0.0,
+    "engagement_rate": 0.0,
     "top_posts": [
       {
-        "post_id": "339707206917_1431320369154134",
+        "post_id": "339707206917_1442123438073827",
         "photo_id": "",
-        "message": "תראו את רצועת העננים הזו. היא בדיוק על קו האופק, מחלקת את הפריים לשניים — ים כהה למטה, שמיים בהירים ",
-        "likes": 2,
-        "comments": 1,
-        "date": "2026-10-25"
-      },
-      {
-        "post_id": "339707206917_1435025542116950",
-        "photo_id": "",
-        "message": "📸 קיאק תחת הגשר  החוק מסתמך על קווים גיאומטריים שמובילים את עין הצופה לעומק הפריים.  👉 הניתוח המלא: ",
+        "message": "📸 טחנות רוח הולנדיות  הכוח הויזואלי של התמונה נשען על ההשתקפות של טחנת הרוח הראשית במים השקטים שמתחת",
         "likes": 0,
         "comments": 0,
-        "date": "2026-10-29"
+        "date": "2026-11-05"
       },
       {
-        "post_id": "339707206917_1433002825652555",
+        "post_id": "339707206917_1441980618088109",
         "photo_id": "",
-        "message": "I waited for the deepest dark to settle over the mountains before tracing this glowing circle of col",
+        "message": "",
         "likes": 0,
         "comments": 0,
-        "date": "2026-10-27"
+        "date": "2026-11-05"
       }
     ],
     "best_post": {
-      "post_id": "339707206917_1431320369154134",
+      "post_id": "339707206917_1442123438073827",
       "photo_id": "",
-      "message": "תראו את רצועת העננים הזו. היא בדיוק על קו האופק, מחלקת את הפריים לשניים — ים כהה למטה, שמיים בהירים למעלה.\n\nהדבר שלקח לי",
-      "likes": 2,
-      "date": "2026-10-25"
+      "message": "📸 טחנות רוח הולנדיות\n\nהכוח הויזואלי של התמונה נשען על ההשתקפות של טחנת הרוח הראשית במים השקטים שמתחתיה. הטחנה מופיעה פעמ",
+      "likes": 0,
+      "date": "2026-11-05"
     }
   },
   "fb_pages": [
@@ -158,54 +152,46 @@
       "name": "amit erez photos",
       "page_id": "339707206917",
       "fans": 280,
-      "posts_this_week": 3,
+      "posts_this_week": 2,
       "suspected_duplicates": [],
-      "total_likes": 2,
-      "total_comments": 1,
-      "avg_likes_per_post": 0.7,
-      "engagement_rate": 0.0036,
+      "total_likes": 0,
+      "total_comments": 0,
+      "avg_likes_per_post": 0.0,
+      "engagement_rate": 0.0,
       "top_posts": [
         {
-          "post_id": "339707206917_1431320369154134",
+          "post_id": "339707206917_1442123438073827",
           "photo_id": "",
-          "message": "תראו את רצועת העננים הזו. היא בדיוק על קו האופק, מחלקת את הפריים לשניים — ים כהה למטה, שמיים בהירים ",
-          "likes": 2,
-          "comments": 1,
-          "date": "2026-10-25"
-        },
-        {
-          "post_id": "339707206917_1435025542116950",
-          "photo_id": "",
-          "message": "📸 קיאק תחת הגשר  החוק מסתמך על קווים גיאומטריים שמובילים את עין הצופה לעומק הפריים.  👉 הניתוח המלא: ",
+          "message": "📸 טחנות רוח הולנדיות  הכוח הויזואלי של התמונה נשען על ההשתקפות של טחנת הרוח הראשית במים השקטים שמתחת",
           "likes": 0,
           "comments": 0,
-          "date": "2026-10-29"
+          "date": "2026-11-05"
         },
         {
-          "post_id": "339707206917_1433002825652555",
+          "post_id": "339707206917_1441980618088109",
           "photo_id": "",
-          "message": "I waited for the deepest dark to settle over the mountains before tracing this glowing circle of col",
+          "message": "",
           "likes": 0,
           "comments": 0,
-          "date": "2026-10-27"
+          "date": "2026-11-05"
         }
       ],
       "photo_performance": [],
       "best_post": {
-        "post_id": "339707206917_1431320369154134",
+        "post_id": "339707206917_1442123438073827",
         "photo_id": "",
-        "message": "תראו את רצועת העננים הזו. היא בדיוק על קו האופק, מחלקת את הפריים לשניים — ים כהה למטה, שמיים בהירים למעלה.\n\nהדבר שלקח לי",
-        "likes": 2,
-        "date": "2026-10-25"
+        "message": "📸 טחנות רוח הולנדיות\n\nהכוח הויזואלי של התמונה נשען על ההשתקפות של טחנת הרוח הראשית במים השקטים שמתחתיה. הטחנה מופיעה פעמ",
+        "likes": 0,
+        "date": "2026-11-05"
       },
       "content_quality": {
-        "posts_checked": 3,
-        "readable_captions": 3,
-        "missing_or_hashtag_only": 0,
+        "posts_checked": 2,
+        "readable_captions": 1,
+        "missing_or_hashtag_only": 1,
         "duplicate_hashtag_posts": 0,
-        "question_posts": 2,
-        "link_posts": 3,
-        "avg_caption_chars": 517
+        "question_posts": 0,
+        "link_posts": 1,
+        "avg_caption_chars": 357
       },
       "editorial_performance": {}
     }
@@ -236,38 +222,51 @@
   },
   "content_quality": {
     "instagram": {
-      "posts_checked": 4,
-      "readable_captions": 4,
+      "posts_checked": 3,
+      "readable_captions": 3,
       "missing_or_hashtag_only": 0,
       "duplicate_hashtag_posts": 0,
-      "question_posts": 3,
-      "link_posts": 4,
-      "avg_caption_chars": 545
+      "question_posts": 2,
+      "link_posts": 3,
+      "avg_caption_chars": 543
     },
     "facebook_pages": {
       "amit erez photos": {
-        "posts_checked": 3,
-        "readable_captions": 3,
-        "missing_or_hashtag_only": 0,
+        "posts_checked": 2,
+        "readable_captions": 1,
+        "missing_or_hashtag_only": 1,
         "duplicate_hashtag_posts": 0,
-        "question_posts": 2,
-        "link_posts": 3,
-        "avg_caption_chars": 517
+        "question_posts": 0,
+        "link_posts": 1,
+        "avg_caption_chars": 357
       }
     },
     "instagram_editorial_performance": {
-      "guide": {
-        "posts": 2,
-        "likes": 6,
+      "story": {
+        "posts": 1,
+        "likes": 2,
         "comments": 0,
-        "reach": 96,
+        "reach": 41,
         "saved": 0,
         "shares": 0,
-        "posts_with_reach": 2,
-        "full_interactions": 6,
-        "posts_with_full_metrics": 2,
-        "avg_interactions": 3.0,
-        "engagement_rate_by_reach": 0.0625
+        "posts_with_reach": 1,
+        "full_interactions": 2,
+        "posts_with_full_metrics": 1,
+        "avg_interactions": 2.0,
+        "engagement_rate_by_reach": 0.0488
+      },
+      "technique": {
+        "posts": 1,
+        "likes": 2,
+        "comments": 0,
+        "reach": 44,
+        "saved": 0,
+        "shares": 0,
+        "posts_with_reach": 1,
+        "full_interactions": 2,
+        "posts_with_full_metrics": 1,
+        "avg_interactions": 2.0,
+        "engagement_rate_by_reach": 0.0455
       }
     },
     "facebook_editorial_performance": {
@@ -275,44 +274,44 @@
     }
   },
   "prev": {
-    "ig_followers": 664,
-    "ig_posts_this_week": 6,
-    "ig_total_likes": 3,
-    "fb_fans": 278,
-    "fb_posts_this_week": 6,
+    "ig_followers": 663,
+    "ig_posts_this_week": 4,
+    "ig_total_likes": 7,
+    "fb_fans": 280,
+    "fb_posts_this_week": 3,
     "fb_total_likes": 2
   },
   "recommendations": [
-    "אתה מפרסם 4 פוסטים בשבוע עם ממוצע של 1.8 לייקים בלבד - צמצם את התדירות ל-2 פוסטים באיכות גבוהה יותר ותן עדיפות לתוכן שמעורר שאלות, שכן 3 מתוך 4 הפוסטים שלך כללו שאלות אך קיבלו 0 תגובות.",
-    "התוכן ההחוזי (Guides) שלך על אינסטגרם משג יותר טוב עם engagement rate של 6.25% בהשוואה ל-0.27% בפוסטים הרגילים (7 לייקים מ-663 עוקבים) - פוקס על יצירת 2-3 Guides עריכתיים בחודש הקרוב במקום פוסטים בודדים.",
-    "לא פרסמת אף Reel השבוע למרות שהם מייצרים reach גבוה יותר מפוסטים סטטיים - התחל בפרסום של Reel אחד בשבוע המציג טכניקות מקרו או מאחורי הקלעים, מכיוון שהכיתובים שלך ארוכים (545 תווים בממוצע) וטובים לסיפור אך לא משגשגים בפוסטים סטטיים.",
-    "בפייסבוק יש לך 280 עוקבים (קטן פי 2 מאינסטגרם) אך אתה מפרסם שם באותה תדירות - העביר את מיקוד המאמצים לאינסטגרם וצמצם לפוסט אחד בשבוע בפייסבוק, או השתמש בפוסטים בפייסבוק כדי לנהל קהילייה קיימת במקום בנייה אורגנית."
+    "פרסמו סרטון Reel אחד לפחות השבוע — הנתונים מראים שלפוסטים טכניים (reach 44, engagement rate 4.55%) יש ביצועים טובים יותר מהפוסטים הסטטיים (ממוצע 1.7 לייקים), וסרטונים יכולים להגביר את ההשפעה בקהילייה של 665 עוקבים.",
+    "הוסיפו שאלה ישירה לגמרי בכל פוסט באינסטגרם — רק 2 מתוך 3 פוסטים כללו שאלה, ודבר זה יעזור לעורר תגובות (כרגע 0 תגובות בשבוע) ולהגביר את האנגיימנט על פוסטים שיש להם כבר טקסט איכותי (ממוצע 543 תווים).",
+    "עדכנו את דף Facebook \"amit erez photos\" — אחד מ-2 הפוסטים חסר טקסט קריא (ממוצע רק 357 תווים לעומת 543 באינסטגרם), וזה מנחה למה אין שום לייקים; העברת אותו תוכן איכותי מאינסטגרם לפייסבוק תחזק את שתי הפלטפורמות.",
+    "פרסמו לפחות 5 פוסטים באינסטגרם בשבוע הבא במקום 3 — עם 665 עוקבים ורק 1.7 לייק לפוסט בממוצע, הגדלת תדירות הפרסום תיתן יותר הזדמנויות לתוכן לעלות ולהגיע לקהל רחב יותר."
   ],
   "business_audit": {
     "version": 1,
     "read_only": true,
-    "facebook_posts_observed": 3,
+    "facebook_posts_observed": 2,
     "facebook_post_source_attribution": "unavailable",
     "source_note": "Observed API feed totals cannot be reliably assigned to a workflow, manual upload or approval from existing data. Story/Reel deliveries are separate.",
     "facebook_duplicate_candidates": [],
     "ga": {
       "status": "measuring",
       "weeks": 3,
-      "sessions": 284,
+      "sessions": 354,
       "checkout_state": "disabled",
       "checkout_events": 0,
       "checkout_disappeared_after_prior_activity": true,
       "checkout_zero_interpretation": "expected_while_disabled",
-      "qualified_action_events": 8,
-      "photo_views": 57,
+      "qualified_action_events": 9,
+      "photo_views": 141,
       "qualified_event_counts": {
         "guide_request_success": 1,
         "generate_lead": 0,
         "contact_form_success": 0,
-        "photo_contact_click": 1,
+        "photo_contact_click": 3,
         "licensing_personal_interest": 5,
         "licensing_commercial_contact": 0,
-        "b2b_contact_start": 1
+        "b2b_contact_start": 0
       },
       "next_action": "Compare campaign-tagged visits with qualified actions before adjusting publishing volume.",
       "data_limitations": "No per-post conversions or verified platform attribution can be inferred from GA aggregate reports; absent events can mean no interactions or missing measurement."
@@ -322,8 +321,8 @@
   "decision_support": {
     "method": "own_baseline_v1",
     "sample": {
-      "current_posts": 4,
-      "tracked_posts": 52,
+      "current_posts": 3,
+      "tracked_posts": 51,
       "history_weeks": 8,
       "confidence": "high",
       "metrics_coverage": 1.0,
@@ -337,17 +336,8 @@
       "median_likes_per_post": 1.2,
       "median_follower_engagement_rate": 0.0018
     },
-    "primary_decision_id": "check-qualified-business-events",
+    "primary_decision_id": "collect-editorial-angle-sample",
     "decisions": [
-      {
-        "id": "check-qualified-business-events",
-        "tier": "quick_win",
-        "title": "לבדוק אם מבקרים מבצעים פעולות עסקיות באתר",
-        "action": "לאמת ב-GA4 ובגלישה מבוקרת אירועי פנייה, רישוי והורדת מדריך; אין להפעיל תשלומים.",
-        "evidence": "נמדדו 87 סשנים אך לא נרשמו אירועי התעניינות או פנייה בדוח האחרון. ייתכן שאין פעולות כאלה, או שהמדידה חסרה.",
-        "measure": "הצלחה: אירועי המדידה אומתו בדיבאג, ובהמשך נמדד ערך העסקי לפי מקור תנועה.",
-        "confidence": "medium"
-      },
       {
         "id": "collect-editorial-angle-sample",
         "tier": "strategic",
@@ -361,7 +351,7 @@
   },
   "optimization_policy": {
     "version": 1,
-    "generated_at": "2026-11-01T12:31:07.137102+00:00",
+    "generated_at": "2026-11-08T12:36:56.044950+00:00",
     "mode": "one_experiment_at_a_time",
     "active": {
       "decision_id": "collect-editorial-angle-sample",
