@@ -1,22 +1,22 @@
 {
   "posted_keys": [
-    "lenses",
-    "white-balance",
-    "visual-language",
-    "filters",
-    "software",
-    "types",
-    "macro",
-    "exposure",
-    "controls",
-    "depth-of-field",
-    "dynamic-range",
-    "histogram",
-    "editing",
-    "night",
     "light",
+    "depth-of-field",
+    "exposure",
+    "software",
+    "macro",
+    "editing",
+    "types",
+    "controls",
+    "dynamic-range",
+    "white-balance",
+    "composition",
     "sports",
-    "composition"
+    "filters",
+    "visual-language",
+    "histogram",
+    "night",
+    "lenses"
   ],
   "campaigns": {
     "types": {
@@ -37,6 +37,10 @@
       "pinterest": {
         "post_id": "512636370109569902",
         "published_at": "2026-10-19T16:15:35.940282+00:00"
+      },
+      "threads": {
+        "post_id": "18137242063709444",
+        "published_at": "2026-11-09T19:33:18.273219+00:00"
       }
     }
   }
