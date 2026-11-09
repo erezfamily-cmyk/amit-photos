@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-11-02T16:45:47.559133+00:00",
-  "source_period": "2026-10-26 → 2026-11-02",
+  "generated_at": "2026-11-09T17:04:47.495755+00:00",
+  "source_period": "2026-11-02 → 2026-11-09",
   "window_days": 30,
   "method": {
     "website_views_weight": 0.45,
@@ -28,25 +28,25 @@
       ]
     },
     {
-      "photo_id": "1TCAfgJ9pl3T0G8RRtIAa5_0FOoxXrjso",
-      "title": "ריקוד של אש בלילה",
-      "category": "צילומי לילה",
-      "score": 30.4,
+      "photo_id": "4cf149dc-4e7c-4698-897b-97dfc2475366",
+      "title": "",
+      "category": "",
+      "score": 31.1,
       "confidence": "medium",
-      "views_30d": 14,
+      "views_30d": 15,
       "purchase_intents_30d": 0,
       "verified_print_purchases_30d": 0,
       "social_signal_7d": 0,
       "mapped_social_posts_7d": 0,
       "eligible_for_featured_review": true,
       "reasons": [
-        "14 views / 30d"
+        "15 views / 30d"
       ]
     },
     {
-      "photo_id": "4cf149dc-4e7c-4698-897b-97dfc2475366",
-      "title": "",
-      "category": "",
+      "photo_id": "1TCAfgJ9pl3T0G8RRtIAa5_0FOoxXrjso",
+      "title": "ריקוד של אש בלילה",
+      "category": "צילומי לילה",
       "score": 30.4,
       "confidence": "medium",
       "views_30d": 14,
@@ -128,50 +128,50 @@
       "photo_id": "ba7677aa-989c-419e-8086-9eeef32a9650",
       "title": "",
       "category": "",
-      "score": 17.4,
+      "score": 16.0,
       "confidence": "low",
-      "views_30d": 6,
+      "views_30d": 5,
       "purchase_intents_30d": 0,
       "verified_print_purchases_30d": 0,
       "social_signal_7d": 0,
       "mapped_social_posts_7d": 0,
       "eligible_for_featured_review": false,
       "reasons": [
-        "6 views / 30d",
+        "5 views / 30d",
         "sample still small"
       ]
     },
     {
-      "photo_id": "1bwCjLweaRzBfN-yMzW9GUPwdBJL-QNRr",
-      "title": "אופק כחול אינסופי",
-      "category": "יוון",
+      "photo_id": "8c85dd51-8de0-44c8-afcd-8e2d0ffa07c3",
+      "title": "",
+      "category": "",
       "score": 14.0,
       "confidence": "low",
       "views_30d": 0,
       "purchase_intents_30d": 0,
       "verified_print_purchases_30d": 0,
-      "social_signal_7d": 3.0,
+      "social_signal_7d": 2.0,
       "mapped_social_posts_7d": 1,
       "eligible_for_featured_review": false,
       "reasons": [
-        "social signal 3.0",
+        "social signal 2.0",
         "sample still small"
       ]
     },
     {
-      "photo_id": "1Sq3RncvzHkqHMdDfX151-XqfxFL7KJEH",
-      "title": "ניצן פרח עדין צילום טבע מאקרו",
+      "photo_id": "1UHAnI17wVt8l6w6tNGjcxBPKoMGFchos",
+      "title": "עלים ירוקים בתאורת שמש",
       "category": "פרחים וצמחים",
       "score": 14.0,
       "confidence": "low",
       "views_30d": 0,
       "purchase_intents_30d": 0,
       "verified_print_purchases_30d": 0,
-      "social_signal_7d": 3.0,
+      "social_signal_7d": 2.0,
       "mapped_social_posts_7d": 1,
       "eligible_for_featured_review": false,
       "reasons": [
-        "social signal 3.0",
+        "social signal 2.0",
         "sample still small"
       ]
     },
@@ -179,23 +179,6 @@
       "photo_id": "1M0MNq47h_rck94IU0GlqlX9yIA5_6MMe",
       "title": "שדה בזריחה",
       "category": "ישראל",
-      "score": 12.4,
-      "confidence": "low",
-      "views_30d": 3,
-      "purchase_intents_30d": 0,
-      "verified_print_purchases_30d": 0,
-      "social_signal_7d": 0,
-      "mapped_social_posts_7d": 0,
-      "eligible_for_featured_review": false,
-      "reasons": [
-        "3 views / 30d",
-        "sample still small"
-      ]
-    },
-    {
-      "photo_id": "0985a050-eeff-440e-8e51-1a26ab463258",
-      "title": "",
-      "category": "",
       "score": 12.4,
       "confidence": "low",
       "views_30d": 3,
@@ -227,9 +210,43 @@
       ]
     },
     {
-      "photo_id": "1z_OKuttSBnZOehYvPVa774CillJuylnh",
-      "title": "מגדל עתיק בעמק ירוק",
-      "category": "גאורגיה",
+      "photo_id": "25f2f560-9b24-4243-a92a-706c32de7646",
+      "title": "",
+      "category": "",
+      "score": 9.8,
+      "confidence": "low",
+      "views_30d": 2,
+      "purchase_intents_30d": 0,
+      "verified_print_purchases_30d": 0,
+      "social_signal_7d": 0,
+      "mapped_social_posts_7d": 0,
+      "eligible_for_featured_review": false,
+      "reasons": [
+        "2 views / 30d",
+        "sample still small"
+      ]
+    },
+    {
+      "photo_id": "1BTqOchZJzstemNadwnVTFo6FSyIDEAwD",
+      "title": "עץ בודד בסוואנה טנזנית",
+      "category": "טנזניה",
+      "score": 9.8,
+      "confidence": "low",
+      "views_30d": 2,
+      "purchase_intents_30d": 0,
+      "verified_print_purchases_30d": 0,
+      "social_signal_7d": 0,
+      "mapped_social_posts_7d": 0,
+      "eligible_for_featured_review": false,
+      "reasons": [
+        "2 views / 30d",
+        "sample still small"
+      ]
+    },
+    {
+      "photo_id": "00ea4ea2-3be2-47a6-8573-9bafa5d2c5e0",
+      "title": "",
+      "category": "",
       "score": 9.8,
       "confidence": "low",
       "views_30d": 2,
@@ -261,9 +278,9 @@
       ]
     },
     {
-      "photo_id": "f7e18780-1f2d-4d85-bbcb-d584c4216812",
-      "title": "",
-      "category": "",
+      "photo_id": "1z_OKuttSBnZOehYvPVa774CillJuylnh",
+      "title": "מגדל עתיק בעמק ירוק",
+      "category": "גאורגיה",
       "score": 9.8,
       "confidence": "low",
       "views_30d": 2,
@@ -295,7 +312,7 @@
       ]
     },
     {
-      "photo_id": "25f2f560-9b24-4243-a92a-706c32de7646",
+      "photo_id": "f7e18780-1f2d-4d85-bbcb-d584c4216812",
       "title": "",
       "category": "",
       "score": 9.8,
@@ -312,9 +329,9 @@
       ]
     },
     {
-      "photo_id": "1BTqOchZJzstemNadwnVTFo6FSyIDEAwD",
-      "title": "עץ בודד בסוואנה טנזנית",
-      "category": "טנזניה",
+      "photo_id": "0985a050-eeff-440e-8e51-1a26ab463258",
+      "title": "",
+      "category": "",
       "score": 9.8,
       "confidence": "low",
       "views_30d": 2,
@@ -361,23 +378,6 @@
         "1 views / 30d",
         "sample still small"
       ]
-    },
-    {
-      "photo_id": "f303bf99-f38c-447e-b262-e844dcb609aa",
-      "title": "",
-      "category": "",
-      "score": 6.2,
-      "confidence": "low",
-      "views_30d": 1,
-      "purchase_intents_30d": 0,
-      "verified_print_purchases_30d": 0,
-      "social_signal_7d": 0,
-      "mapped_social_posts_7d": 0,
-      "eligible_for_featured_review": false,
-      "reasons": [
-        "1 views / 30d",
-        "sample still small"
-      ]
     }
   ],
   "featured_review_shortlist": [
@@ -398,25 +398,25 @@
       ]
     },
     {
-      "photo_id": "1TCAfgJ9pl3T0G8RRtIAa5_0FOoxXrjso",
-      "title": "ריקוד של אש בלילה",
-      "category": "צילומי לילה",
-      "score": 30.4,
+      "photo_id": "4cf149dc-4e7c-4698-897b-97dfc2475366",
+      "title": "",
+      "category": "",
+      "score": 31.1,
       "confidence": "medium",
-      "views_30d": 14,
+      "views_30d": 15,
       "purchase_intents_30d": 0,
       "verified_print_purchases_30d": 0,
       "social_signal_7d": 0,
       "mapped_social_posts_7d": 0,
       "eligible_for_featured_review": true,
       "reasons": [
-        "14 views / 30d"
+        "15 views / 30d"
       ]
     },
     {
-      "photo_id": "4cf149dc-4e7c-4698-897b-97dfc2475366",
-      "title": "",
-      "category": "",
+      "photo_id": "1TCAfgJ9pl3T0G8RRtIAa5_0FOoxXrjso",
+      "title": "ריקוד של אש בלילה",
+      "category": "צילומי לילה",
       "score": 30.4,
       "confidence": "medium",
       "views_30d": 14,
