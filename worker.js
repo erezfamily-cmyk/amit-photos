@@ -3177,6 +3177,36 @@ async function handleAnalytics(request, env) {
   }, 200, request);
 }
 
+// תמונות קשורות: שאילתה אחת לקטגוריה (מטמון קצה שעה) ובחירה אקראית ב-JS.
+// לפני כן כל עמוד /photo/{id} הריץ ORDER BY RANDOM() על כל הקטגוריה ושרף 4.3M
+// מתוך 5M קריאות D1 ביום (9.11.2026, 1,700 קריאות ב-~2,550 שורות כל אחת).
+async function getRelatedPhotos(env, category, photoId) {
+  const cacheKey = new Request(`https://amitphotos.com/__related/${encodeURIComponent(category)}`, { method: 'GET' });
+  const edge = typeof caches !== 'undefined' ? caches.default : null;
+  let pool = null;
+  if (edge) {
+    const hit = await edge.match(cacheKey);
+    if (hit) pool = await hit.json();
+  }
+  if (!pool) {
+    const { results } = await env.DB.prepare(
+      'SELECT id, title, thumbnail FROM photos WHERE published=1 AND category=?'
+    ).bind(category).all();
+    pool = results || [];
+    if (edge) {
+      await edge.put(cacheKey, new Response(JSON.stringify(pool), {
+        headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=3600' },
+      }));
+    }
+  }
+  const others = pool.filter(p => p.id !== photoId);
+  for (let i = others.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [others[i], others[j]] = [others[j], others[i]];
+  }
+  return others.slice(0, 6);
+}
+
 // ===== SERVE PHOTO FROM R2 =====
 async function servePhotoPage(photoId, env) {
   // נסה לשלוף תמונה מ-D1
@@ -3201,10 +3231,7 @@ async function servePhotoPage(photoId, env) {
   let relatedPhotos = [];
   if (photo?.category) {
     try {
-      const { results } = await env.DB.prepare(
-        'SELECT id, title, thumbnail FROM photos WHERE published=1 AND category=? AND id!=? ORDER BY RANDOM() LIMIT 6'
-      ).bind(photo.category, photoId).all();
-      relatedPhotos = results;
+      relatedPhotos = await getRelatedPhotos(env, photo.category, photoId);
     } catch (_) {}
   }
 
