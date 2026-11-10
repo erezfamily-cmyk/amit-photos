@@ -6,6 +6,7 @@
     "1qs9QySZm5Bk-qKDOly953CjGlTevOwic",
     "1r4loPT-Yt7_ETsCVOoGS5XFROs4t3MoZ",
     "1urMy-bvaR9o7AO8hZo7I0iHllUhyTh8X",
+    "1xXiWFageaUy0iYqgk-OKPuNPSOVPIjPk",
     "2d71ab1b-3b9a-45c5-96e3-dc2118e07a18",
     "38bcd8f2-cb57-42dd-b640-f8e87770c846",
     "4d446564-b0c6-426b-92dd-905596f630cc",
@@ -32,6 +33,14 @@
       "facebook": {
         "post_id": "1433002785652559",
         "published_at": "2026-10-27T15:49:24.012198+00:00"
+      },
+      "threads": {
+        "post_id": "17876331408649904",
+        "published_at": "2026-11-10T17:38:15.636827+00:00"
+      },
+      "pinterest": {
+        "post_id": "512636370109738829",
+        "published_at": "2026-11-10T17:38:23.603132+00:00"
       }
     }
   }
