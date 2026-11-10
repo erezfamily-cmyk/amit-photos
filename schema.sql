@@ -152,3 +152,6 @@ CREATE TABLE IF NOT EXISTS paypal_rate_limits (
 
 CREATE INDEX IF NOT EXISTS idx_paypal_rate_limits_window
   ON paypal_rate_limits(window_start);
+
+-- Category lookups on published photos (see migrations/0003_photos_category_index.sql)
+CREATE INDEX IF NOT EXISTS idx_photos_published_category ON photos(published, category);
