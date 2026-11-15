@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-11-08T12:36:56.044950+00:00",
-  "week_ending": "08/11/2026",
+  "generated_at": "2026-11-15T13:17:55.598329+00:00",
+  "week_ending": "15/11/2026",
   "data_quality": {
     "status": "complete",
     "failed_sources": {},
@@ -15,135 +15,143 @@
   },
   "ig": {
     "followers": 665,
-    "media_count": 1426,
+    "media_count": 1429,
     "posts_this_week": 3,
-    "total_likes": 5,
+    "total_likes": 6,
     "total_comments": 0,
-    "avg_likes_per_post": 1.7,
-    "total_reach": 127,
+    "avg_likes_per_post": 2.0,
+    "total_reach": 120,
     "total_saved": 0,
     "total_shares": 0,
-    "engagement_rate_by_reach": 0.0394,
-    "follower_engagement_rate": 0.0025,
-    "engagement_rate": 0.0025,
+    "engagement_rate_by_reach": 0.05,
+    "follower_engagement_rate": 0.003,
+    "engagement_rate": 0.003,
     "editorial_performance": {
+      "guide": {
+        "posts": 1,
+        "likes": 3,
+        "comments": 0,
+        "reach": 53,
+        "saved": 0,
+        "shares": 0,
+        "posts_with_reach": 1,
+        "full_interactions": 3,
+        "posts_with_full_metrics": 1,
+        "avg_interactions": 3.0,
+        "engagement_rate_by_reach": 0.0566
+      },
       "story": {
         "posts": 1,
-        "likes": 2,
+        "likes": 1,
         "comments": 0,
-        "reach": 41,
+        "reach": 35,
         "saved": 0,
         "shares": 0,
         "posts_with_reach": 1,
-        "full_interactions": 2,
+        "full_interactions": 1,
         "posts_with_full_metrics": 1,
-        "avg_interactions": 2.0,
-        "engagement_rate_by_reach": 0.0488
-      },
-      "technique": {
-        "posts": 1,
-        "likes": 2,
-        "comments": 0,
-        "reach": 44,
-        "saved": 0,
-        "shares": 0,
-        "posts_with_reach": 1,
-        "full_interactions": 2,
-        "posts_with_full_metrics": 1,
-        "avg_interactions": 2.0,
-        "engagement_rate_by_reach": 0.0455
+        "avg_interactions": 1.0,
+        "engagement_rate_by_reach": 0.0286
       }
     },
     "top_posts": [
       {
-        "post_id": "17924698335225329",
-        "photo_id": "8c85dd51-8de0-44c8-afcd-8e2d0ffa07c3",
-        "caption": "הקו האלכסוני הזה הוא מה שעצר אותי — החיטה הבשלה מצד אחד, האדמה החרושה מצד שני, ובדיוק באמצע פס דק של",
-        "likes": 2,
+        "post_id": "17929095477424775",
+        "photo_id": "1bZhip7_LBDGQWL6KwGfzPP9vMMaK_I0_",
+        "caption": "בחולה, שעה לפני הזריחה, כל המסה הזאת של עגורים התרוממה בבת אחת. צילמתי כמו מטורף ואחר כך גיליתי שכל ",
+        "likes": 3,
         "comments": 0,
-        "reach": 41,
+        "reach": 53,
         "saved": 0,
         "shares": 0,
-        "date": "2026-11-04"
+        "date": "2026-11-11"
       },
       {
-        "post_id": "18109825625214028",
-        "photo_id": "1UHAnI17wVt8l6w6tNGjcxBPKoMGFchos",
-        "caption": "כשראיתי את העלה המרכזי, מדדתי את האור על החלק המואר שלו ולא על הסצנה כולה. ברגע שחשפתי לפי הזוהר היר",
-        "likes": 2,
-        "comments": 0,
-        "reach": 44,
-        "saved": 0,
-        "shares": 0,
-        "date": "2026-11-01"
-      },
-      {
-        "post_id": "17908819368340828",
+        "post_id": "18107161943334008",
         "photo_id": "",
-        "caption": "📸 טחנות רוח הולנדיות  הכוח הויזואלי של התמונה נשען על ההשתקפות של טחנת הרוח הראשית במים השקטים שמתחת",
+        "caption": "I waited for the perfect stillness before the water began to shift, capturing colors and light bendi",
+        "likes": 2,
+        "comments": 0,
+        "reach": 32,
+        "saved": 0,
+        "shares": 0,
+        "date": "2026-11-13"
+      },
+      {
+        "post_id": "18147544282599763",
+        "photo_id": "1pGM9mPLg74SmiXFaEHkwTR-0VQJQMDte",
+        "caption": "הסל האחורי של הדבורה היה מלא אבקה כתומה — נקודה קטנה וצפופה שמשכה לי את העין יותר מהכנפיים השקופות. ",
         "likes": 1,
         "comments": 0,
-        "reach": 42,
+        "reach": 35,
         "saved": 0,
         "shares": 0,
-        "date": "2026-11-05"
+        "date": "2026-11-08"
       }
     ],
     "photo_performance": [
       {
-        "post_id": "17924698335225329",
-        "photo_id": "8c85dd51-8de0-44c8-afcd-8e2d0ffa07c3",
-        "likes": 2,
+        "post_id": "17929095477424775",
+        "photo_id": "1bZhip7_LBDGQWL6KwGfzPP9vMMaK_I0_",
+        "likes": 3,
         "comments": 0,
-        "date": "2026-11-04"
+        "date": "2026-11-11"
       },
       {
-        "post_id": "18109825625214028",
-        "photo_id": "1UHAnI17wVt8l6w6tNGjcxBPKoMGFchos",
-        "likes": 2,
+        "post_id": "18147544282599763",
+        "photo_id": "1pGM9mPLg74SmiXFaEHkwTR-0VQJQMDte",
+        "likes": 1,
         "comments": 0,
-        "date": "2026-11-01"
+        "date": "2026-11-08"
       }
     ],
     "best_post": {
-      "post_id": "17924698335225329",
-      "photo_id": "8c85dd51-8de0-44c8-afcd-8e2d0ffa07c3",
-      "caption": "הקו האלכסוני הזה הוא מה שעצר אותי — החיטה הבשלה מצד אחד, האדמה החרושה מצד שני, ובדיוק באמצע פס דק של גבעולים שקרסו. הבנת",
-      "likes": 2,
-      "date": "2026-11-04"
+      "post_id": "17929095477424775",
+      "photo_id": "1bZhip7_LBDGQWL6KwGfzPP9vMMaK_I0_",
+      "caption": "בחולה, שעה לפני הזריחה, כל המסה הזאת של עגורים התרוממה בבת אחת. צילמתי כמו מטורף ואחר כך גיליתי שכל הפריימים מרוחים.\n\nמה",
+      "likes": 3,
+      "date": "2026-11-11"
     }
   },
   "fb": {
-    "fans": 280,
-    "posts_this_week": 2,
+    "fans": 281,
+    "posts_this_week": 3,
     "total_likes": 0,
     "total_comments": 0,
     "avg_likes_per_post": 0.0,
     "engagement_rate": 0.0,
     "top_posts": [
       {
-        "post_id": "339707206917_1442123438073827",
-        "photo_id": "",
-        "message": "📸 טחנות רוח הולנדיות  הכוח הויזואלי של התמונה נשען על ההשתקפות של טחנת הרוח הראשית במים השקטים שמתחת",
-        "likes": 0,
-        "comments": 0,
-        "date": "2026-11-05"
-      },
-      {
-        "post_id": "339707206917_1441980618088109",
+        "post_id": "339707206917_1450655997220571",
         "photo_id": "",
         "message": "",
         "likes": 0,
         "comments": 0,
-        "date": "2026-11-05"
+        "date": "2026-11-13"
+      },
+      {
+        "post_id": "339707206917_1450445487241622",
+        "photo_id": "",
+        "message": "I waited for the perfect stillness before the water began to shift, capturing colors and light bendi",
+        "likes": 0,
+        "comments": 0,
+        "date": "2026-11-13"
+      },
+      {
+        "post_id": "339707206917_1445242051095299",
+        "photo_id": "",
+        "message": "",
+        "likes": 0,
+        "comments": 0,
+        "date": "2026-11-08"
       }
     ],
     "best_post": {
-      "post_id": "339707206917_1442123438073827",
+      "post_id": "339707206917_1450655997220571",
       "photo_id": "",
-      "message": "📸 טחנות רוח הולנדיות\n\nהכוח הויזואלי של התמונה נשען על ההשתקפות של טחנת הרוח הראשית במים השקטים שמתחתיה. הטחנה מופיעה פעמ",
+      "message": "",
       "likes": 0,
-      "date": "2026-11-05"
+      "date": "2026-11-13"
     }
   },
   "fb_pages": [
@@ -151,8 +159,8 @@
       "label": "amit erez photos",
       "name": "amit erez photos",
       "page_id": "339707206917",
-      "fans": 280,
-      "posts_this_week": 2,
+      "fans": 281,
+      "posts_this_week": 3,
       "suspected_duplicates": [],
       "total_likes": 0,
       "total_comments": 0,
@@ -160,38 +168,46 @@
       "engagement_rate": 0.0,
       "top_posts": [
         {
-          "post_id": "339707206917_1442123438073827",
-          "photo_id": "",
-          "message": "📸 טחנות רוח הולנדיות  הכוח הויזואלי של התמונה נשען על ההשתקפות של טחנת הרוח הראשית במים השקטים שמתחת",
-          "likes": 0,
-          "comments": 0,
-          "date": "2026-11-05"
-        },
-        {
-          "post_id": "339707206917_1441980618088109",
+          "post_id": "339707206917_1450655997220571",
           "photo_id": "",
           "message": "",
           "likes": 0,
           "comments": 0,
-          "date": "2026-11-05"
+          "date": "2026-11-13"
+        },
+        {
+          "post_id": "339707206917_1450445487241622",
+          "photo_id": "",
+          "message": "I waited for the perfect stillness before the water began to shift, capturing colors and light bendi",
+          "likes": 0,
+          "comments": 0,
+          "date": "2026-11-13"
+        },
+        {
+          "post_id": "339707206917_1445242051095299",
+          "photo_id": "",
+          "message": "",
+          "likes": 0,
+          "comments": 0,
+          "date": "2026-11-08"
         }
       ],
       "photo_performance": [],
       "best_post": {
-        "post_id": "339707206917_1442123438073827",
+        "post_id": "339707206917_1450655997220571",
         "photo_id": "",
-        "message": "📸 טחנות רוח הולנדיות\n\nהכוח הויזואלי של התמונה נשען על ההשתקפות של טחנת הרוח הראשית במים השקטים שמתחתיה. הטחנה מופיעה פעמ",
+        "message": "",
         "likes": 0,
-        "date": "2026-11-05"
+        "date": "2026-11-13"
       },
       "content_quality": {
-        "posts_checked": 2,
+        "posts_checked": 3,
         "readable_captions": 1,
-        "missing_or_hashtag_only": 1,
+        "missing_or_hashtag_only": 2,
         "duplicate_hashtag_posts": 0,
-        "question_posts": 0,
+        "question_posts": 1,
         "link_posts": 1,
-        "avg_caption_chars": 357
+        "avg_caption_chars": 537
       },
       "editorial_performance": {}
     }
@@ -226,47 +242,47 @@
       "readable_captions": 3,
       "missing_or_hashtag_only": 0,
       "duplicate_hashtag_posts": 0,
-      "question_posts": 2,
+      "question_posts": 3,
       "link_posts": 3,
-      "avg_caption_chars": 543
+      "avg_caption_chars": 598
     },
     "facebook_pages": {
       "amit erez photos": {
-        "posts_checked": 2,
+        "posts_checked": 3,
         "readable_captions": 1,
-        "missing_or_hashtag_only": 1,
+        "missing_or_hashtag_only": 2,
         "duplicate_hashtag_posts": 0,
-        "question_posts": 0,
+        "question_posts": 1,
         "link_posts": 1,
-        "avg_caption_chars": 357
+        "avg_caption_chars": 537
       }
     },
     "instagram_editorial_performance": {
+      "guide": {
+        "posts": 1,
+        "likes": 3,
+        "comments": 0,
+        "reach": 53,
+        "saved": 0,
+        "shares": 0,
+        "posts_with_reach": 1,
+        "full_interactions": 3,
+        "posts_with_full_metrics": 1,
+        "avg_interactions": 3.0,
+        "engagement_rate_by_reach": 0.0566
+      },
       "story": {
         "posts": 1,
-        "likes": 2,
+        "likes": 1,
         "comments": 0,
-        "reach": 41,
+        "reach": 35,
         "saved": 0,
         "shares": 0,
         "posts_with_reach": 1,
-        "full_interactions": 2,
+        "full_interactions": 1,
         "posts_with_full_metrics": 1,
-        "avg_interactions": 2.0,
-        "engagement_rate_by_reach": 0.0488
-      },
-      "technique": {
-        "posts": 1,
-        "likes": 2,
-        "comments": 0,
-        "reach": 44,
-        "saved": 0,
-        "shares": 0,
-        "posts_with_reach": 1,
-        "full_interactions": 2,
-        "posts_with_full_metrics": 1,
-        "avg_interactions": 2.0,
-        "engagement_rate_by_reach": 0.0455
+        "avg_interactions": 1.0,
+        "engagement_rate_by_reach": 0.0286
       }
     },
     "facebook_editorial_performance": {
@@ -274,42 +290,42 @@
     }
   },
   "prev": {
-    "ig_followers": 663,
-    "ig_posts_this_week": 4,
-    "ig_total_likes": 7,
+    "ig_followers": 665,
+    "ig_posts_this_week": 3,
+    "ig_total_likes": 5,
     "fb_fans": 280,
-    "fb_posts_this_week": 3,
-    "fb_total_likes": 2
+    "fb_posts_this_week": 2,
+    "fb_total_likes": 0
   },
   "recommendations": [
-    "פרסמו סרטון Reel אחד לפחות השבוע — הנתונים מראים שלפוסטים טכניים (reach 44, engagement rate 4.55%) יש ביצועים טובים יותר מהפוסטים הסטטיים (ממוצע 1.7 לייקים), וסרטונים יכולים להגביר את ההשפעה בקהילייה של 665 עוקבים.",
-    "הוסיפו שאלה ישירה לגמרי בכל פוסט באינסטגרם — רק 2 מתוך 3 פוסטים כללו שאלה, ודבר זה יעזור לעורר תגובות (כרגע 0 תגובות בשבוע) ולהגביר את האנגיימנט על פוסטים שיש להם כבר טקסט איכותי (ממוצע 543 תווים).",
-    "עדכנו את דף Facebook \"amit erez photos\" — אחד מ-2 הפוסטים חסר טקסט קריא (ממוצע רק 357 תווים לעומת 543 באינסטגרם), וזה מנחה למה אין שום לייקים; העברת אותו תוכן איכותי מאינסטגרם לפייסבוק תחזק את שתי הפלטפורמות.",
-    "פרסמו לפחות 5 פוסטים באינסטגרם בשבוע הבא במקום 3 — עם 665 עוקבים ורק 1.7 לייק לפוסט בממוצע, הגדלת תדירות הפרסום תיתן יותר הזדמנויות לתוכן לעלות ולהגיע לקהל רחב יותר."
+    "השבוע לא פרסמת כל Reels - זה הכלי החזק ביותר בInsta עכשיו. פרסם לפחות Reel אחד בשבוע הבא מצילומי הציפורים שלך כדי להגדיל reach ומעורבות.",
+    "בFacebook, 2 מתוך 3 הפוסטים שלך היו רק hashtags ללא טקסט תיאור - כתוב caption בן 100-150 תווים שמספר סיפור בכל פוסט כדי להגביר אינטראקציה.",
+    "קבל יותר תגובות על ידי הוספת שאלה ישירה בסוף הcaption - כבר עשית זאת ב-3 מהפוסטים שלך השבוע אבל קיבלת 0 תגובות, אז שנה את השאלה להיות יותר ספציפית על החוויה של הצילום.",
+    "הGuide שלך קיבל engagement rate של 5.66% שהוא טוב, אבל עם 665 עוקבים בלבד אתה צריך להגביר את התדירות - פרסם Guide חדש כל 2 שבועות עם סיפורים מאחורי הקלעים מהשטח."
   ],
   "business_audit": {
     "version": 1,
     "read_only": true,
-    "facebook_posts_observed": 2,
+    "facebook_posts_observed": 3,
     "facebook_post_source_attribution": "unavailable",
     "source_note": "Observed API feed totals cannot be reliably assigned to a workflow, manual upload or approval from existing data. Story/Reel deliveries are separate.",
     "facebook_duplicate_candidates": [],
     "ga": {
       "status": "measuring",
       "weeks": 3,
-      "sessions": 354,
+      "sessions": 327,
       "checkout_state": "disabled",
       "checkout_events": 0,
       "checkout_disappeared_after_prior_activity": true,
       "checkout_zero_interpretation": "expected_while_disabled",
-      "qualified_action_events": 9,
-      "photo_views": 141,
+      "qualified_action_events": 2,
+      "photo_views": 136,
       "qualified_event_counts": {
-        "guide_request_success": 1,
+        "guide_request_success": 0,
         "generate_lead": 0,
         "contact_form_success": 0,
-        "photo_contact_click": 3,
-        "licensing_personal_interest": 5,
+        "photo_contact_click": 2,
+        "licensing_personal_interest": 0,
         "licensing_commercial_contact": 0,
         "b2b_contact_start": 0
       },
@@ -322,7 +338,7 @@
     "method": "own_baseline_v1",
     "sample": {
       "current_posts": 3,
-      "tracked_posts": 51,
+      "tracked_posts": 49,
       "history_weeks": 8,
       "confidence": "high",
       "metrics_coverage": 1.0,
@@ -330,14 +346,23 @@
     },
     "baseline": {
       "weeks": 8,
-      "posts": 48,
+      "posts": 46,
       "confidence": "high",
       "median_posts_per_week": 6.0,
-      "median_likes_per_post": 1.2,
-      "median_follower_engagement_rate": 0.0018
+      "median_likes_per_post": 1.4,
+      "median_follower_engagement_rate": 0.0022
     },
-    "primary_decision_id": "collect-editorial-angle-sample",
+    "primary_decision_id": "check-qualified-business-events",
     "decisions": [
+      {
+        "id": "check-qualified-business-events",
+        "tier": "quick_win",
+        "title": "לבדוק אם מבקרים מבצעים פעולות עסקיות באתר",
+        "action": "לאמת ב-GA4 ובגלישה מבוקרת אירועי פנייה, רישוי והורדת מדריך; אין להפעיל תשלומים.",
+        "evidence": "נמדדו 91 סשנים אך לא נרשמו אירועי התעניינות או פנייה בדוח האחרון. ייתכן שאין פעולות כאלה, או שהמדידה חסרה.",
+        "measure": "הצלחה: אירועי המדידה אומתו בדיבאג, ובהמשך נמדד ערך העסקי לפי מקור תנועה.",
+        "confidence": "medium"
+      },
       {
         "id": "collect-editorial-angle-sample",
         "tier": "strategic",
@@ -351,7 +376,7 @@
   },
   "optimization_policy": {
     "version": 1,
-    "generated_at": "2026-11-08T12:36:56.044950+00:00",
+    "generated_at": "2026-11-15T13:17:55.598329+00:00",
     "mode": "one_experiment_at_a_time",
     "active": {
       "decision_id": "collect-editorial-angle-sample",

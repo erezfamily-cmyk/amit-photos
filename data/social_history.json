@@ -397,5 +397,30 @@
     "reels_saved": null,
     "primary_decision_id": "collect-editorial-angle-sample",
     "optimization_experiment": "collect-editorial-angle-sample"
+  },
+  {
+    "week_ending": "15/11/2026",
+    "generated_at": "2026-11-15T13:17:55.598329+00:00",
+    "ig_followers": 665,
+    "ig_posts": 3,
+    "ig_likes": 6,
+    "ig_comments": 0,
+    "ig_avg_likes": 2.0,
+    "ig_engagement": 0.003,
+    "ig_follower_engagement": 0.003,
+    "ig_reach": 120,
+    "ig_reach_engagement": 0.05,
+    "ig_saved": 0,
+    "ig_shares": 0,
+    "fb_fans": 281,
+    "fb_posts": 3,
+    "fb_likes": 0,
+    "reels_count": 0,
+    "reels_plays": null,
+    "reels_avg_watch_time": null,
+    "reels_shares": null,
+    "reels_saved": null,
+    "primary_decision_id": "check-qualified-business-events",
+    "optimization_experiment": "collect-editorial-angle-sample"
   }
 ]
