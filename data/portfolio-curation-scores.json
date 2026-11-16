@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-15T14:42:26.803673+00:00",
+  "generated_at": "2026-11-16T16:57:51.234255+00:00",
   "version": "portfolio-v1",
   "scope": "all_galleries",
   "policy": {
@@ -8192,7 +8192,7 @@
       "title": "DSC_4981",
       "category": "ישראל",
       "filename": "DSC_4981.jpg",
-      "thumbnail": "/photos/thumb/1-YTdelBgyCaKynpa0axlZjbCAnVoSHP1.webp",
+      "thumbnail": "https://drive.google.com/thumbnail?id=1-YTdelBgyCaKynpa0axlZjbCAnVoSHP1&sz=w600",
       "width": 8256,
       "height": 5504,
       "score": 84,
@@ -8618,7 +8618,7 @@
       "title": "DSC_5042",
       "category": "ישראל",
       "filename": "DSC_5042.jpg",
-      "thumbnail": "/photos/thumb/1acm0sZg37N8z7BFZZUaM7tsezOVgSlWK.webp",
+      "thumbnail": "https://drive.google.com/thumbnail?id=1acm0sZg37N8z7BFZZUaM7tsezOVgSlWK&sz=w600",
       "width": 6965,
       "height": 4636,
       "score": 87,
