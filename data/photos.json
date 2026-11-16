@@ -2213,7 +2213,7 @@
     "width": 1504,
     "height": 1000,
     "exif": null,
-    "added_at": "2026-11-14"
+    "added_at": "2026-11-16"
   },
   {
     "id": "1LuoH9OWwTFPRnDvZihmDE5hyBz3Kt815",
@@ -5030,8 +5030,8 @@
     "title": "DSC_4981",
     "category": "ישראל",
     "parent_category": null,
-    "url": "/photos/1-YTdelBgyCaKynpa0axlZjbCAnVoSHP1.webp",
-    "thumbnail": "/photos/thumb/1-YTdelBgyCaKynpa0axlZjbCAnVoSHP1.webp",
+    "url": "https://drive.google.com/uc?export=view&id=1-YTdelBgyCaKynpa0axlZjbCAnVoSHP1",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1-YTdelBgyCaKynpa0axlZjbCAnVoSHP1&sz=w600",
     "description": "",
     "filename": "DSC_4981.jpg",
     "width": 8256,
@@ -5044,7 +5044,7 @@
       "iso": 64,
       "shutter": 0.00025
     },
-    "added_at": "2026-11-14"
+    "added_at": "2026-11-16"
   },
   {
     "id": "1MQ7BrJCgaDZ2aQpdk9qxy2pnBaadvNq-",
@@ -5303,8 +5303,8 @@
     "title": "DSC_5042",
     "category": "ישראל",
     "parent_category": null,
-    "url": "/photos/1acm0sZg37N8z7BFZZUaM7tsezOVgSlWK.webp",
-    "thumbnail": "/photos/thumb/1acm0sZg37N8z7BFZZUaM7tsezOVgSlWK.webp",
+    "url": "https://drive.google.com/uc?export=view&id=1acm0sZg37N8z7BFZZUaM7tsezOVgSlWK",
+    "thumbnail": "https://drive.google.com/thumbnail?id=1acm0sZg37N8z7BFZZUaM7tsezOVgSlWK&sz=w600",
     "description": "",
     "filename": "DSC_5042.jpg",
     "width": 6965,
@@ -5317,7 +5317,7 @@
       "iso": 64,
       "shutter": 0.00025
     },
-    "added_at": "2026-11-14"
+    "added_at": "2026-11-16"
   },
   {
     "id": "1_b4PAOqE5ljEEqgIQOqCIga5Q1Zv_9Ux",
