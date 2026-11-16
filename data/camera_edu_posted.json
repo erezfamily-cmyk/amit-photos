@@ -1,22 +1,22 @@
 {
   "posted_keys": [
-    "light",
-    "depth-of-field",
-    "exposure",
-    "software",
-    "macro",
-    "editing",
-    "types",
-    "controls",
     "dynamic-range",
-    "white-balance",
-    "composition",
-    "sports",
     "filters",
-    "visual-language",
-    "histogram",
+    "macro",
+    "depth-of-field",
     "night",
-    "lenses"
+    "sports",
+    "composition",
+    "editing",
+    "controls",
+    "software",
+    "light",
+    "lenses",
+    "visual-language",
+    "types",
+    "exposure",
+    "histogram",
+    "white-balance"
   ],
   "campaigns": {
     "types": {
@@ -26,6 +26,14 @@
         "pinterest": "In this guide I break down the real difference between Full Frame, APS-C, and smartphone cameras — not the marketing, just what actually matters. I explain how the crop factor changes your angle of view and background blur, so you can choose the right camera for the photos you want to take. Perfect if you're buying your first serious camera. Full guide at amitphotos.com"
       },
       "photo_id": "41e19dcc-7e43-4bbe-af16-266216c2bbfe"
+    },
+    "visual-language": {
+      "captions": {
+        "facebook": "את התמונה הזאת צילמתי בסלובקיה — שני בתים, צהוב וירוק, זה לצד זה. אבל שימו לב מה עשיתי: בחרתי לצלם דרך הצללים של העצים, לא את החזית הנקייה והברורה. למה? כי בדיוק שם מתחילה השפה הצילומית שלי — ברגע שאני מפסיק לצלם \"מה שיפה\" ומתחיל לשאול \"למה דווקא ככה?\".\n\nזה בדיוק מה שאני מלמד בדף החדש — איך לפתח קול אישי ייחודי בצילום. אחרי שלומדים את הטכניקה (איך לצלם נכון), מגיע השלב המעניין באמת: לגלות מה אתם רוצים להגיד דרך התמונות שלכם. בדף תמצאו איך לזהות את מה שמושך אתכם שוב ושוב, ואיך להפוך את זה לסגנון שמזהים כשלכם.\n\nאז ספרו לי — יש לכם נושא או צבע או אווירה שאתם מוצאים את עצמכם מצלמים שוב ושוב בלי לשים לב?\n\n👉 ללמוד עוד: https://amitphotos.com/camera/visual-language/?utm_source=facebook&utm_medium=organic_social&utm_campaign=camera_education&utm_content=visual-language\n\n#צילום #photography #ישראל #למודצילום",
+        "threads": "גיליתי שהקול הצילומי שלי לא נולד ממצלמה טובה יותר — אלא מהשאלה \"למה דווקא את זה?\".\n\nhttps://amitphotos.com/camera/visual-language/?utm_source=threads&utm_medium=organic_social&utm_campaign=camera_education&utm_content=visual-language\n\n#צילום #photography #cameratips",
+        "pinterest": "In this guide I teach you how to move beyond just taking technically correct photos, and start developing your own visual voice. I'll show you how to notice what draws you in again and again, and turn it into a style that's truly yours. Perfect for beginners ready to find their eye. Full guide at amitphotos.com"
+      },
+      "photo_id": "0ecc9894-a731-41a7-a0d7-f42d72fda818"
     }
   },
   "deliveries": {
@@ -41,6 +49,20 @@
       "threads": {
         "post_id": "18137242063709444",
         "published_at": "2026-11-09T19:33:18.273219+00:00"
+      }
+    },
+    "visual-language": {
+      "facebook": {
+        "post_id": "1453644350255069",
+        "published_at": "2026-11-16T19:20:34.465351+00:00"
+      },
+      "threads": {
+        "post_id": "18350782666287053",
+        "published_at": "2026-11-16T19:20:52.846087+00:00"
+      },
+      "pinterest": {
+        "post_id": "512636370109784472",
+        "published_at": "2026-11-16T19:20:59.238349+00:00"
       }
     }
   }
