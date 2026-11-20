@@ -13,7 +13,7 @@ import requests
 import anthropic
 from pathlib import Path
 from campaign_urls import build_campaign_url
-from social_caption_quality import require_caption
+from social_caption_quality import fit_to_limit, require_caption
 from social_delivery_state import (
     delivery_complete,
     first_partial_item_id,
@@ -143,7 +143,12 @@ Output only the description."""
         system=system,
         messages=[{"role": "user", "content": prompt}],
     )
-    return require_caption(msg.content[0].text.strip(), max_chars=500)
+    text = msg.content[0].text.strip()
+    if platform == "pinterest":
+        # Pinterest rejects descriptions over 500 chars; the model sometimes overshoots.
+        fallback = f"{title}: a photography location worth the trip. Full guide at amitphotos.com"
+        text = fit_to_limit(text, fallback, 500)
+    return require_caption(text, max_chars=500)
 
 
 # ===== Image URL helpers =====
