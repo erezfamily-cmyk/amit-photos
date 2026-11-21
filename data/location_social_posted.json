@@ -1,5 +1,5 @@
 {
-  "last_index": 33,
+  "last_index": 34,
   "posted_slugs": [
     "gnym-bhay-chyph",
     "chvp-rashvn-ltzyvn",
@@ -32,6 +32,24 @@
     "shmvrt-htba-hchvlh",
     "sirmione-lago-di-garda"
   ],
-  "campaigns": {},
-  "deliveries": {}
+  "campaigns": {
+    "sirmione-lago-di-garda": {
+      "captions": {
+        "threads": "עליתי למגדל הטירה הסקליג'רית בסירמיונה לפני שהתיירים הגיעו, וקיבלתי מבט פנורמי של 360 מעלות על כל חצי-האי — הגגות האדומים והאגם הכחול נפרשים לכל כיוון. בשקיעה ירדתי לקצה הדרומי, שם כמעט אין צלמים, והטירה נשקפת מוארקת במים.\n\nhttps://amitphotos.com/locations/spot/?slug=sirmione-lago-di-garda&utm_source=threads&utm_medium=organic_social&utm_campaign=photography_locations&utm_content=sirmione-lago-di-garda\n\n#צילום #ישראל",
+        "pinterest": "Sirmione might be the most photogenic spot I've shot in all of Italy — the Scaligera Castle rises straight out of Lake Garda with its tower, walls, and moat, and climbing to the top rewards you with a breathtaking 360-degree panorama over the red rooftops and blue water. I always head up the tower early in the morning before the crowds arrive, then return at sunset to catch the castle silhouetted and mirrored on the water from the southern shore."
+      }
+    }
+  },
+  "deliveries": {
+    "sirmione-lago-di-garda": {
+      "pinterest": {
+        "post_id": "512636370109824722",
+        "published_at": "2026-11-21T22:06:11.537219+00:00"
+      },
+      "threads": {
+        "post_id": "18457338634120554",
+        "published_at": "2026-11-21T22:06:28.785996+00:00"
+      }
+    }
+  }
 }
