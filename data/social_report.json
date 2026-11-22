@@ -1,120 +1,131 @@
 {
-  "generated_at": "2026-11-15T13:17:55.598329+00:00",
-  "week_ending": "15/11/2026",
+  "generated_at": "2026-11-22T13:54:53.622186+00:00",
+  "week_ending": "22/11/2026",
   "data_quality": {
     "status": "complete",
     "failed_sources": {},
     "media_insights": {
-      "posts_available": 3,
-      "posts_requested": 3,
+      "posts_available": 4,
+      "posts_requested": 4,
       "coverage": 1.0,
-      "saved_posts_available": 3,
-      "shared_posts_available": 3,
+      "saved_posts_available": 4,
+      "shared_posts_available": 4,
       "unavailable_post_ids": []
     }
   },
   "ig": {
-    "followers": 665,
-    "media_count": 1429,
-    "posts_this_week": 3,
-    "total_likes": 6,
+    "followers": 949,
+    "media_count": 1433,
+    "posts_this_week": 4,
+    "total_likes": 5,
     "total_comments": 0,
-    "avg_likes_per_post": 2.0,
-    "total_reach": 120,
+    "avg_likes_per_post": 1.2,
+    "total_reach": 173,
     "total_saved": 0,
     "total_shares": 0,
-    "engagement_rate_by_reach": 0.05,
-    "follower_engagement_rate": 0.003,
-    "engagement_rate": 0.003,
+    "engagement_rate_by_reach": 0.0289,
+    "follower_engagement_rate": 0.0013,
+    "engagement_rate": 0.0013,
     "editorial_performance": {
-      "guide": {
-        "posts": 1,
-        "likes": 3,
-        "comments": 0,
-        "reach": 53,
-        "saved": 0,
-        "shares": 0,
-        "posts_with_reach": 1,
-        "full_interactions": 3,
-        "posts_with_full_metrics": 1,
-        "avg_interactions": 3.0,
-        "engagement_rate_by_reach": 0.0566
-      },
-      "story": {
+      "technique": {
         "posts": 1,
         "likes": 1,
         "comments": 0,
-        "reach": 35,
+        "reach": 44,
         "saved": 0,
         "shares": 0,
         "posts_with_reach": 1,
         "full_interactions": 1,
         "posts_with_full_metrics": 1,
         "avg_interactions": 1.0,
-        "engagement_rate_by_reach": 0.0286
+        "engagement_rate_by_reach": 0.0227
+      },
+      "conversation": {
+        "posts": 1,
+        "likes": 2,
+        "comments": 0,
+        "reach": 51,
+        "saved": 0,
+        "shares": 0,
+        "posts_with_reach": 1,
+        "full_interactions": 2,
+        "posts_with_full_metrics": 1,
+        "avg_interactions": 2.0,
+        "engagement_rate_by_reach": 0.0392
       }
     },
     "top_posts": [
       {
-        "post_id": "17929095477424775",
-        "photo_id": "1bZhip7_LBDGQWL6KwGfzPP9vMMaK_I0_",
-        "caption": "בחולה, שעה לפני הזריחה, כל המסה הזאת של עגורים התרוממה בבת אחת. צילמתי כמו מטורף ואחר כך גיליתי שכל ",
-        "likes": 3,
-        "comments": 0,
-        "reach": 53,
-        "saved": 0,
-        "shares": 0,
-        "date": "2026-11-11"
-      },
-      {
-        "post_id": "18107161943334008",
+        "post_id": "17985630347906119",
         "photo_id": "",
-        "caption": "I waited for the perfect stillness before the water began to shift, capturing colors and light bendi",
+        "caption": "I waited for that perfect golden hour when the sunset light wraps around the Tower of David and the ",
         "likes": 2,
         "comments": 0,
-        "reach": 32,
+        "reach": 44,
         "saved": 0,
         "shares": 0,
-        "date": "2026-11-13"
+        "date": "2026-11-17"
       },
       {
-        "post_id": "18147544282599763",
-        "photo_id": "1pGM9mPLg74SmiXFaEHkwTR-0VQJQMDte",
-        "caption": "הסל האחורי של הדבורה היה מלא אבקה כתומה — נקודה קטנה וצפופה שמשכה לי את העין יותר מהכנפיים השקופות. ",
-        "likes": 1,
+        "post_id": "18355034650269846",
+        "photo_id": "1BgYcFKYr1Gw72UPuk1rntr3qBWsIjMtA",
+        "caption": "הבקתה הבודדה בפינה השמאלית תפסה אותי בגלל הגודל שלה ביחס לקיר הסלע מאחוריה — פתאום היא נראית כמו צעצ",
+        "likes": 2,
         "comments": 0,
-        "reach": 35,
+        "reach": 51,
         "saved": 0,
         "shares": 0,
-        "date": "2026-11-08"
+        "date": "2026-11-15"
+      },
+      {
+        "post_id": "18172526806478511",
+        "photo_id": "919e0768-af54-4ef5-a8a0-575ad9b09960",
+        "caption": "השורה של הסלעים בחזית היא מה שהחזיק לי את הפריים. בלעדיהם המים החלקים היו נשארים שטח ריק בלי כיוון. ",
+        "likes": 1,
+        "comments": 0,
+        "reach": 44,
+        "saved": 0,
+        "shares": 0,
+        "date": "2026-11-18"
+      },
+      {
+        "post_id": "17900067003682812",
+        "photo_id": "",
+        "caption": "I photographed this mud wall just as the light grazed its surface, revealing textures and gentle pat",
+        "likes": 0,
+        "comments": 0,
+        "reach": 34,
+        "saved": 0,
+        "shares": 0,
+        "date": "2026-11-20"
       }
     ],
     "photo_performance": [
       {
-        "post_id": "17929095477424775",
-        "photo_id": "1bZhip7_LBDGQWL6KwGfzPP9vMMaK_I0_",
-        "likes": 3,
-        "comments": 0,
-        "date": "2026-11-11"
-      },
-      {
-        "post_id": "18147544282599763",
-        "photo_id": "1pGM9mPLg74SmiXFaEHkwTR-0VQJQMDte",
+        "post_id": "18172526806478511",
+        "photo_id": "919e0768-af54-4ef5-a8a0-575ad9b09960",
         "likes": 1,
         "comments": 0,
-        "date": "2026-11-08"
+        "date": "2026-11-18"
+      },
+      {
+        "post_id": "18355034650269846",
+        "photo_id": "1BgYcFKYr1Gw72UPuk1rntr3qBWsIjMtA",
+        "likes": 2,
+        "comments": 0,
+        "date": "2026-11-15"
       }
     ],
     "best_post": {
-      "post_id": "17929095477424775",
-      "photo_id": "1bZhip7_LBDGQWL6KwGfzPP9vMMaK_I0_",
-      "caption": "בחולה, שעה לפני הזריחה, כל המסה הזאת של עגורים התרוממה בבת אחת. צילמתי כמו מטורף ואחר כך גיליתי שכל הפריימים מרוחים.\n\nמה",
-      "likes": 3,
-      "date": "2026-11-11"
+      "post_id": "17985630347906119",
+      "photo_id": "",
+      "caption": "I waited for that perfect golden hour when the sunset light wraps around the Tower of David and the ancient walls of Jer",
+      "likes": 2,
+      "date": "2026-11-17"
     }
   },
   "fb": {
-    "fans": 281,
+    "fans": 282,
     "posts_this_week": 3,
     "total_likes": 0,
     "total_comments": 0,
@@ -122,36 +133,36 @@
     "engagement_rate": 0.0,
     "top_posts": [
       {
-        "post_id": "339707206917_1450655997220571",
+        "post_id": "339707206917_1457542513198586",
         "photo_id": "",
-        "message": "",
+        "message": "I photographed this mud wall just as the light grazed its surface, revealing textures and gentle pat",
         "likes": 0,
         "comments": 0,
-        "date": "2026-11-13"
+        "date": "2026-11-20"
       },
       {
-        "post_id": "339707206917_1450445487241622",
+        "post_id": "339707206917_1454603350159169",
         "photo_id": "",
-        "message": "I waited for the perfect stillness before the water began to shift, capturing colors and light bendi",
+        "message": "I waited for that perfect golden hour when the sunset light wraps around the Tower of David and the ",
         "likes": 0,
         "comments": 0,
-        "date": "2026-11-13"
+        "date": "2026-11-17"
       },
       {
-        "post_id": "339707206917_1445242051095299",
+        "post_id": "339707206917_1453644376921733",
         "photo_id": "",
-        "message": "",
+        "message": "את התמונה הזאת צילמתי בסלובקיה — שני בתים, צהוב וירוק, זה לצד זה. אבל שימו לב מה עשיתי: בחרתי לצלם ד",
         "likes": 0,
         "comments": 0,
-        "date": "2026-11-08"
+        "date": "2026-11-16"
       }
     ],
     "best_post": {
-      "post_id": "339707206917_1450655997220571",
+      "post_id": "339707206917_1457542513198586",
       "photo_id": "",
-      "message": "",
+      "message": "I photographed this mud wall just as the light grazed its surface, revealing textures and gentle patterns that usually g",
       "likes": 0,
-      "date": "2026-11-13"
+      "date": "2026-11-20"
     }
   },
   "fb_pages": [
@@ -159,7 +170,7 @@
       "label": "amit erez photos",
       "name": "amit erez photos",
       "page_id": "339707206917",
-      "fans": 281,
+      "fans": 282,
       "posts_this_week": 3,
       "suspected_duplicates": [],
       "total_likes": 0,
@@ -168,46 +179,46 @@
       "engagement_rate": 0.0,
       "top_posts": [
         {
-          "post_id": "339707206917_1450655997220571",
+          "post_id": "339707206917_1457542513198586",
           "photo_id": "",
-          "message": "",
+          "message": "I photographed this mud wall just as the light grazed its surface, revealing textures and gentle pat",
           "likes": 0,
           "comments": 0,
-          "date": "2026-11-13"
+          "date": "2026-11-20"
         },
         {
-          "post_id": "339707206917_1450445487241622",
+          "post_id": "339707206917_1454603350159169",
           "photo_id": "",
-          "message": "I waited for the perfect stillness before the water began to shift, capturing colors and light bendi",
+          "message": "I waited for that perfect golden hour when the sunset light wraps around the Tower of David and the ",
           "likes": 0,
           "comments": 0,
-          "date": "2026-11-13"
+          "date": "2026-11-17"
         },
         {
-          "post_id": "339707206917_1445242051095299",
+          "post_id": "339707206917_1453644376921733",
           "photo_id": "",
-          "message": "",
+          "message": "את התמונה הזאת צילמתי בסלובקיה — שני בתים, צהוב וירוק, זה לצד זה. אבל שימו לב מה עשיתי: בחרתי לצלם ד",
           "likes": 0,
           "comments": 0,
-          "date": "2026-11-08"
+          "date": "2026-11-16"
         }
       ],
       "photo_performance": [],
       "best_post": {
-        "post_id": "339707206917_1450655997220571",
+        "post_id": "339707206917_1457542513198586",
         "photo_id": "",
-        "message": "",
+        "message": "I photographed this mud wall just as the light grazed its surface, revealing textures and gentle patterns that usually g",
         "likes": 0,
-        "date": "2026-11-13"
+        "date": "2026-11-20"
       },
       "content_quality": {
         "posts_checked": 3,
-        "readable_captions": 1,
-        "missing_or_hashtag_only": 2,
+        "readable_captions": 3,
+        "missing_or_hashtag_only": 0,
         "duplicate_hashtag_posts": 0,
-        "question_posts": 1,
-        "link_posts": 1,
-        "avg_caption_chars": 537
+        "question_posts": 3,
+        "link_posts": 3,
+        "avg_caption_chars": 722
       },
       "editorial_performance": {}
     }
@@ -238,51 +249,51 @@
   },
   "content_quality": {
     "instagram": {
-      "posts_checked": 3,
-      "readable_captions": 3,
+      "posts_checked": 4,
+      "readable_captions": 4,
       "missing_or_hashtag_only": 0,
       "duplicate_hashtag_posts": 0,
-      "question_posts": 3,
-      "link_posts": 3,
-      "avg_caption_chars": 598
+      "question_posts": 4,
+      "link_posts": 4,
+      "avg_caption_chars": 665
     },
     "facebook_pages": {
       "amit erez photos": {
         "posts_checked": 3,
-        "readable_captions": 1,
-        "missing_or_hashtag_only": 2,
+        "readable_captions": 3,
+        "missing_or_hashtag_only": 0,
         "duplicate_hashtag_posts": 0,
-        "question_posts": 1,
-        "link_posts": 1,
-        "avg_caption_chars": 537
+        "question_posts": 3,
+        "link_posts": 3,
+        "avg_caption_chars": 722
       }
     },
     "instagram_editorial_performance": {
-      "guide": {
-        "posts": 1,
-        "likes": 3,
-        "comments": 0,
-        "reach": 53,
-        "saved": 0,
-        "shares": 0,
-        "posts_with_reach": 1,
-        "full_interactions": 3,
-        "posts_with_full_metrics": 1,
-        "avg_interactions": 3.0,
-        "engagement_rate_by_reach": 0.0566
-      },
-      "story": {
+      "technique": {
         "posts": 1,
         "likes": 1,
         "comments": 0,
-        "reach": 35,
+        "reach": 44,
         "saved": 0,
         "shares": 0,
         "posts_with_reach": 1,
         "full_interactions": 1,
         "posts_with_full_metrics": 1,
         "avg_interactions": 1.0,
-        "engagement_rate_by_reach": 0.0286
+        "engagement_rate_by_reach": 0.0227
+      },
+      "conversation": {
+        "posts": 1,
+        "likes": 2,
+        "comments": 0,
+        "reach": 51,
+        "saved": 0,
+        "shares": 0,
+        "posts_with_reach": 1,
+        "full_interactions": 2,
+        "posts_with_full_metrics": 1,
+        "avg_interactions": 2.0,
+        "engagement_rate_by_reach": 0.0392
       }
     },
     "facebook_editorial_performance": {
@@ -292,16 +303,16 @@
   "prev": {
     "ig_followers": 665,
     "ig_posts_this_week": 3,
-    "ig_total_likes": 5,
-    "fb_fans": 280,
-    "fb_posts_this_week": 2,
+    "ig_total_likes": 6,
+    "fb_fans": 281,
+    "fb_posts_this_week": 3,
     "fb_total_likes": 0
   },
   "recommendations": [
-    "השבוע לא פרסמת כל Reels - זה הכלי החזק ביותר בInsta עכשיו. פרסם לפחות Reel אחד בשבוע הבא מצילומי הציפורים שלך כדי להגדיל reach ומעורבות.",
-    "בFacebook, 2 מתוך 3 הפוסטים שלך היו רק hashtags ללא טקסט תיאור - כתוב caption בן 100-150 תווים שמספר סיפור בכל פוסט כדי להגביר אינטראקציה.",
-    "קבל יותר תגובות על ידי הוספת שאלה ישירה בסוף הcaption - כבר עשית זאת ב-3 מהפוסטים שלך השבוע אבל קיבלת 0 תגובות, אז שנה את השאלה להיות יותר ספציפית על החוויה של הצילום.",
-    "הGuide שלך קיבל engagement rate של 5.66% שהוא טוב, אבל עם 665 עוקבים בלבד אתה צריך להגביר את התדירות - פרסם Guide חדש כל 2 שבועות עם סיפורים מאחורי הקלעים מהשטח."
+    "אתה צריך להשקיע בתוכן וידאו (Reels) על Instagram - השבוע לא פרסמת אף Reel אחד, בעוד שהפוסטים הסטטיים שלך מקבלים רק 1.2 לייקים בממוצע. התחל בפרסום Reel אחד לפחות בשבוע של תמונות שלך במהלך השעות הזהובות כדי להגדיל את ההגעה והשיתופים.",
+    "כל 4 הפוסטים שלך כוללים שאלות לקהל אך אתה מקבל 0 תגובות - שנה את הגישה והשאל שאלות ספציפיות ויותר מעורבות על הפוטוגרפיה, כמו \"איזה טריק מצילום זה עדיף?\" בעוד שמשמרת לשיתוף הקישור במישהו שרוצה ללמוד את הכישוריות שלך.",
+    "על Facebook, אתה משתמש בכתוביות ארוכות מאוד (722 תווים בממוצע) אך מקבל 0 לייקים על 3 פוסטים - קצר את הטקסט לכשליש מהאורך וספר סיפור קטן עם תמונה אחת בלבד כדי להגביר את ההשתתפות על הפלטפורמה הזו.",
+    "יש לך 949 עוקבים על Instagram אך רק 1.2 לייקים בממוצע לפוסט - זה מצביע על בעיית התאמה או גודל קהל - שקול לפרסם בשעות שעוקבים ישראליים פעילים (בין 7-9 בערב שעון ישראל) ולהוסיף קול אל גיאוגרפיה כדי לאטוב את ההשיגה המקומית."
   ],
   "business_audit": {
     "version": 1,
@@ -313,13 +324,13 @@
     "ga": {
       "status": "measuring",
       "weeks": 3,
-      "sessions": 327,
+      "sessions": 285,
       "checkout_state": "disabled",
       "checkout_events": 0,
       "checkout_disappeared_after_prior_activity": true,
       "checkout_zero_interpretation": "expected_while_disabled",
       "qualified_action_events": 2,
-      "photo_views": 136,
+      "photo_views": 138,
       "qualified_event_counts": {
         "guide_request_success": 0,
         "generate_lead": 0,
@@ -337,8 +348,8 @@
   "decision_support": {
     "method": "own_baseline_v1",
     "sample": {
-      "current_posts": 3,
-      "tracked_posts": 49,
+      "current_posts": 4,
+      "tracked_posts": 47,
       "history_weeks": 8,
       "confidence": "high",
       "metrics_coverage": 1.0,
@@ -346,11 +357,11 @@
     },
     "baseline": {
       "weeks": 8,
-      "posts": 46,
+      "posts": 43,
       "confidence": "high",
-      "median_posts_per_week": 6.0,
-      "median_likes_per_post": 1.4,
-      "median_follower_engagement_rate": 0.0022
+      "median_posts_per_week": 5.5,
+      "median_likes_per_post": 1.5,
+      "median_follower_engagement_rate": 0.0023
     },
     "primary_decision_id": "check-qualified-business-events",
     "decisions": [
@@ -359,7 +370,7 @@
         "tier": "quick_win",
         "title": "לבדוק אם מבקרים מבצעים פעולות עסקיות באתר",
         "action": "לאמת ב-GA4 ובגלישה מבוקרת אירועי פנייה, רישוי והורדת מדריך; אין להפעיל תשלומים.",
-        "evidence": "נמדדו 91 סשנים אך לא נרשמו אירועי התעניינות או פנייה בדוח האחרון. ייתכן שאין פעולות כאלה, או שהמדידה חסרה.",
+        "evidence": "נמדדו 45 סשנים אך לא נרשמו אירועי התעניינות או פנייה בדוח האחרון. ייתכן שאין פעולות כאלה, או שהמדידה חסרה.",
         "measure": "הצלחה: אירועי המדידה אומתו בדיבאג, ובהמשך נמדד ערך העסקי לפי מקור תנועה.",
         "confidence": "medium"
       },
@@ -376,7 +387,7 @@
   },
   "optimization_policy": {
     "version": 1,
-    "generated_at": "2026-11-15T13:17:55.598329+00:00",
+    "generated_at": "2026-11-22T13:54:53.622186+00:00",
     "mode": "one_experiment_at_a_time",
     "active": {
       "decision_id": "collect-editorial-angle-sample",
