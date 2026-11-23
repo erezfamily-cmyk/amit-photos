@@ -1,22 +1,22 @@
 {
   "posted_keys": [
     "dynamic-range",
-    "filters",
-    "macro",
     "depth-of-field",
     "night",
-    "sports",
-    "composition",
-    "editing",
-    "controls",
-    "software",
-    "light",
-    "lenses",
-    "visual-language",
     "types",
+    "lenses",
+    "controls",
+    "visual-language",
+    "composition",
     "exposure",
+    "macro",
+    "white-balance",
+    "filters",
+    "light",
     "histogram",
-    "white-balance"
+    "software",
+    "sports",
+    "editing"
   ],
   "campaigns": {
     "types": {
@@ -34,6 +34,14 @@
         "pinterest": "In this guide I teach you how to move beyond just taking technically correct photos, and start developing your own visual voice. I'll show you how to notice what draws you in again and again, and turn it into a style that's truly yours. Perfect for beginners ready to find their eye. Full guide at amitphotos.com"
       },
       "photo_id": "0ecc9894-a731-41a7-a0d7-f42d72fda818"
+    },
+    "editing": {
+      "captions": {
+        "facebook": "את היעל הזו צילמתי בערמון סלע במדבר, אור בוקר רך שליטף את הפרווה שלה. אבל האמת? התמונה שראיתם לא יצאה ישר מהמצלמה — היא עברה עריכה. ופה אני רוצה לשבור מיתוס: RAW (קובץ הגלם של המצלמה) הוא לא ״איכות גבוהה יותר״. הוא פשוט ניגטיב דיגיטלי — ההבדל הוא בשליטה שהוא נותן לכם, לא במספר הפיקסלים.\n\nכשאני עורך את הצבעים החמים של המדבר, או מאזן את האור על הסלע מול הרקע הירקרק, אני לא ״מזייף״ — אני מבטא את מה שהרגשתי כשעמדתי שם. בדף הלימוד שלי אני מפרק את העריכה לחמישה אלמנטים פשוטים, ומשווה בין שתי התוכנות המובילות — Lightroom ו-Capture One — כדי שתבינו איזו מתאימה לכם.\n\nאתם מצלמים ב-RAW או ב-JPEG? ולמה בחרתם ככה? מסקרן אותי לשמוע 🙂\n\n👉 ללמוד עוד: https://amitphotos.com/camera/editing/?utm_source=facebook&utm_medium=organic_social&utm_campaign=camera_education&utm_content=editing\n\n#צלם #צילום_ישראלי #photography_tips #cameratips",
+        "threads": "גיליתי שרוב המתחילים חושבים ש-RAW זה ״איכות טובה יותר״. זה לא — זה ניגטיב דיגיטלי. כל הקסם הוא בשליטה שהוא נותן בעריכה.\n\nhttps://amitphotos.com/camera/editing/?utm_source=threads&utm_medium=organic_social&utm_campaign=camera_education&utm_content=editing\n\n#photographytips #צילום_ישראלי",
+        "pinterest": "In this guide I explain why RAW isn't about \"higher quality\" — it's a digital negative that gives you full control when editing. I break editing down into five simple elements and compare Lightroom and Capture One, so beginners can pick the right tool and start expressing their vision instead of just fixing photos. Full guide at amitphotos.com"
+      },
+      "photo_id": "cc0dd6cc-e57b-4df2-931f-f6a3919f5ab8"
     }
   },
   "deliveries": {
@@ -63,6 +71,20 @@
       "pinterest": {
         "post_id": "512636370109784472",
         "published_at": "2026-11-16T19:20:59.238349+00:00"
+      }
+    },
+    "editing": {
+      "facebook": {
+        "post_id": "1460761126210058",
+        "published_at": "2026-11-23T20:55:27.771586+00:00"
+      },
+      "threads": {
+        "post_id": "18113158172264663",
+        "published_at": "2026-11-23T20:55:45.393982+00:00"
+      },
+      "pinterest": {
+        "post_id": "512636370109839809",
+        "published_at": "2026-11-23T20:55:54.713918+00:00"
       }
     }
   }
