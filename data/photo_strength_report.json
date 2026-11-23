@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-11-16T16:42:13.927862+00:00",
-  "source_period": "2026-11-09 → 2026-11-16",
+  "generated_at": "2026-11-23T18:56:05.897509+00:00",
+  "source_period": "2026-11-16 → 2026-11-23",
   "window_days": 30,
   "method": {
     "website_views_weight": 0.45,
@@ -17,21 +17,21 @@
       "category": "",
       "score": 45.0,
       "confidence": "high",
-      "views_30d": 32,
+      "views_30d": 30,
       "purchase_intents_30d": 0,
       "verified_print_purchases_30d": 0,
       "social_signal_7d": 0,
       "mapped_social_posts_7d": 0,
       "eligible_for_featured_review": true,
       "reasons": [
-        "32 views / 30d"
+        "30 views / 30d"
       ]
     },
     {
       "photo_id": "4cf149dc-4e7c-4698-897b-97dfc2475366",
       "title": "",
       "category": "",
-      "score": 31.4,
+      "score": 32.0,
       "confidence": "medium",
       "views_30d": 15,
       "purchase_intents_30d": 0,
@@ -47,23 +47,23 @@
       "photo_id": "1TCAfgJ9pl3T0G8RRtIAa5_0FOoxXrjso",
       "title": "ריקוד של אש בלילה",
       "category": "צילומי לילה",
-      "score": 30.7,
+      "score": 32.0,
       "confidence": "medium",
-      "views_30d": 14,
+      "views_30d": 15,
       "purchase_intents_30d": 0,
       "verified_print_purchases_30d": 0,
       "social_signal_7d": 0,
       "mapped_social_posts_7d": 0,
       "eligible_for_featured_review": true,
       "reasons": [
-        "14 views / 30d"
+        "15 views / 30d"
       ]
     },
     {
       "photo_id": "1G_dn5hHrv_1cZ-VVGfECEYzi9J6pDGhI",
       "title": "ריקוד אור בערבה",
       "category": "צילומי לילה",
-      "score": 26.1,
+      "score": 26.6,
       "confidence": "medium",
       "views_30d": 9,
       "purchase_intents_30d": 0,
@@ -79,7 +79,7 @@
       "photo_id": "1toLLUZrvlD_zP5qosJLEabgyh1WOEWZc",
       "title": "מטריית אש",
       "category": "צילומי לילה",
-      "score": 24.9,
+      "score": 25.3,
       "confidence": "medium",
       "views_30d": 8,
       "purchase_intents_30d": 0,
@@ -95,7 +95,7 @@
       "photo_id": "1DKV8fePHvPbFLArxDDCRuGsX9eT48ZKd",
       "title": "שדה בערפל בוקר",
       "category": "סלובקיה",
-      "score": 23.6,
+      "score": 24.0,
       "confidence": "medium",
       "views_30d": 7,
       "purchase_intents_30d": 0,
@@ -111,7 +111,7 @@
       "photo_id": "19Q-SGNEyuCzAc8cbmMMeXeSzVpaFJazV",
       "title": "אגם שקט בסלובקיה",
       "category": "סלובקיה",
-      "score": 17.5,
+      "score": 17.8,
       "confidence": "low",
       "views_30d": 6,
       "purchase_intents_30d": 0,
@@ -128,7 +128,7 @@
       "photo_id": "ba7677aa-989c-419e-8086-9eeef32a9650",
       "title": "",
       "category": "",
-      "score": 16.1,
+      "score": 16.4,
       "confidence": "low",
       "views_30d": 5,
       "purchase_intents_30d": 0,
@@ -142,27 +142,27 @@
       ]
     },
     {
-      "photo_id": "1bZhip7_LBDGQWL6KwGfzPP9vMMaK_I0_",
-      "title": "הנדידה של העגורנים",
-      "category": "ישראל",
+      "photo_id": "1BgYcFKYr1Gw72UPuk1rntr3qBWsIjMtA",
+      "title": "הרים תלולים באלפים",
+      "category": "איטליה",
       "score": 14.0,
       "confidence": "low",
       "views_30d": 0,
       "purchase_intents_30d": 0,
       "verified_print_purchases_30d": 0,
-      "social_signal_7d": 3.0,
+      "social_signal_7d": 2.0,
       "mapped_social_posts_7d": 1,
       "eligible_for_featured_review": false,
       "reasons": [
-        "social signal 3.0",
+        "social signal 2.0",
         "sample still small"
       ]
     },
     {
-      "photo_id": "56108123-0116-4fa6-920f-567d80caff86",
-      "title": "",
-      "category": "",
-      "score": 12.5,
+      "photo_id": "1M0MNq47h_rck94IU0GlqlX9yIA5_6MMe",
+      "title": "שדה בזריחה",
+      "category": "ישראל",
+      "score": 12.7,
       "confidence": "low",
       "views_30d": 3,
       "purchase_intents_30d": 0,
@@ -179,7 +179,7 @@
       "photo_id": "a26e89d8-895e-4c56-ab32-22d5cf523fb6",
       "title": "",
       "category": "",
-      "score": 12.5,
+      "score": 12.7,
       "confidence": "low",
       "views_30d": 3,
       "purchase_intents_30d": 0,
@@ -193,70 +193,19 @@
       ]
     },
     {
-      "photo_id": "1M0MNq47h_rck94IU0GlqlX9yIA5_6MMe",
-      "title": "שדה בזריחה",
-      "category": "ישראל",
-      "score": 12.5,
-      "confidence": "low",
-      "views_30d": 3,
-      "purchase_intents_30d": 0,
-      "verified_print_purchases_30d": 0,
-      "social_signal_7d": 0,
-      "mapped_social_posts_7d": 0,
-      "eligible_for_featured_review": false,
-      "reasons": [
-        "3 views / 30d",
-        "sample still small"
-      ]
-    },
-    {
-      "photo_id": "1BTqOchZJzstemNadwnVTFo6FSyIDEAwD",
-      "title": "עץ בודד בסוואנה טנזנית",
-      "category": "טנזניה",
-      "score": 9.9,
-      "confidence": "low",
-      "views_30d": 2,
-      "purchase_intents_30d": 0,
-      "verified_print_purchases_30d": 0,
-      "social_signal_7d": 0,
-      "mapped_social_posts_7d": 0,
-      "eligible_for_featured_review": false,
-      "reasons": [
-        "2 views / 30d",
-        "sample still small"
-      ]
-    },
-    {
-      "photo_id": "1rVBJnzQ8onOOR-qQHUzuK6zr_dMd_vHN",
-      "title": "כפר בעמק הירוק",
-      "category": "גאורגיה",
-      "score": 9.9,
-      "confidence": "low",
-      "views_30d": 2,
-      "purchase_intents_30d": 0,
-      "verified_print_purchases_30d": 0,
-      "social_signal_7d": 0,
-      "mapped_social_posts_7d": 0,
-      "eligible_for_featured_review": false,
-      "reasons": [
-        "2 views / 30d",
-        "sample still small"
-      ]
-    },
-    {
-      "photo_id": "25f2f560-9b24-4243-a92a-706c32de7646",
+      "photo_id": "56108123-0116-4fa6-920f-567d80caff86",
       "title": "",
       "category": "",
-      "score": 9.9,
+      "score": 12.7,
       "confidence": "low",
-      "views_30d": 2,
+      "views_30d": 3,
       "purchase_intents_30d": 0,
       "verified_print_purchases_30d": 0,
       "social_signal_7d": 0,
       "mapped_social_posts_7d": 0,
       "eligible_for_featured_review": false,
       "reasons": [
-        "2 views / 30d",
+        "3 views / 30d",
         "sample still small"
       ]
     },
@@ -264,41 +213,7 @@
       "photo_id": "1f6e5d86-3017-4cb9-9c48-155444d52828",
       "title": "",
       "category": "",
-      "score": 9.9,
-      "confidence": "low",
-      "views_30d": 2,
-      "purchase_intents_30d": 0,
-      "verified_print_purchases_30d": 0,
-      "social_signal_7d": 0,
-      "mapped_social_posts_7d": 0,
-      "eligible_for_featured_review": false,
-      "reasons": [
-        "2 views / 30d",
-        "sample still small"
-      ]
-    },
-    {
-      "photo_id": "0985a050-eeff-440e-8e51-1a26ab463258",
-      "title": "",
-      "category": "",
-      "score": 9.9,
-      "confidence": "low",
-      "views_30d": 2,
-      "purchase_intents_30d": 0,
-      "verified_print_purchases_30d": 0,
-      "social_signal_7d": 0,
-      "mapped_social_posts_7d": 0,
-      "eligible_for_featured_review": false,
-      "reasons": [
-        "2 views / 30d",
-        "sample still small"
-      ]
-    },
-    {
-      "photo_id": "00ea4ea2-3be2-47a6-8573-9bafa5d2c5e0",
-      "title": "",
-      "category": "",
-      "score": 9.9,
+      "score": 10.1,
       "confidence": "low",
       "views_30d": 2,
       "purchase_intents_30d": 0,
@@ -315,7 +230,7 @@
       "photo_id": "1z_OKuttSBnZOehYvPVa774CillJuylnh",
       "title": "מגדל עתיק בעמק ירוק",
       "category": "גאורגיה",
-      "score": 9.9,
+      "score": 10.1,
       "confidence": "low",
       "views_30d": 2,
       "purchase_intents_30d": 0,
@@ -329,10 +244,95 @@
       ]
     },
     {
-      "photo_id": "1pGM9mPLg74SmiXFaEHkwTR-0VQJQMDte",
-      "title": "דבורה מתקרבת לחמניה",
-      "category": "מאקרו-צילומי תקריב",
-      "score": 7.0,
+      "photo_id": "1BTqOchZJzstemNadwnVTFo6FSyIDEAwD",
+      "title": "עץ בודד בסוואנה טנזנית",
+      "category": "טנזניה",
+      "score": 10.1,
+      "confidence": "low",
+      "views_30d": 2,
+      "purchase_intents_30d": 0,
+      "verified_print_purchases_30d": 0,
+      "social_signal_7d": 0,
+      "mapped_social_posts_7d": 0,
+      "eligible_for_featured_review": false,
+      "reasons": [
+        "2 views / 30d",
+        "sample still small"
+      ]
+    },
+    {
+      "photo_id": "1rVBJnzQ8onOOR-qQHUzuK6zr_dMd_vHN",
+      "title": "כפר בעמק הירוק",
+      "category": "גאורגיה",
+      "score": 10.1,
+      "confidence": "low",
+      "views_30d": 2,
+      "purchase_intents_30d": 0,
+      "verified_print_purchases_30d": 0,
+      "social_signal_7d": 0,
+      "mapped_social_posts_7d": 0,
+      "eligible_for_featured_review": false,
+      "reasons": [
+        "2 views / 30d",
+        "sample still small"
+      ]
+    },
+    {
+      "photo_id": "0985a050-eeff-440e-8e51-1a26ab463258",
+      "title": "",
+      "category": "",
+      "score": 10.1,
+      "confidence": "low",
+      "views_30d": 2,
+      "purchase_intents_30d": 0,
+      "verified_print_purchases_30d": 0,
+      "social_signal_7d": 0,
+      "mapped_social_posts_7d": 0,
+      "eligible_for_featured_review": false,
+      "reasons": [
+        "2 views / 30d",
+        "sample still small"
+      ]
+    },
+    {
+      "photo_id": "00ea4ea2-3be2-47a6-8573-9bafa5d2c5e0",
+      "title": "",
+      "category": "",
+      "score": 10.1,
+      "confidence": "low",
+      "views_30d": 2,
+      "purchase_intents_30d": 0,
+      "verified_print_purchases_30d": 0,
+      "social_signal_7d": 0,
+      "mapped_social_posts_7d": 0,
+      "eligible_for_featured_review": false,
+      "reasons": [
+        "2 views / 30d",
+        "sample still small"
+      ]
+    },
+    {
+      "photo_id": "25f2f560-9b24-4243-a92a-706c32de7646",
+      "title": "",
+      "category": "",
+      "score": 10.1,
+      "confidence": "low",
+      "views_30d": 2,
+      "purchase_intents_30d": 0,
+      "verified_print_purchases_30d": 0,
+      "social_signal_7d": 0,
+      "mapped_social_posts_7d": 0,
+      "eligible_for_featured_review": false,
+      "reasons": [
+        "2 views / 30d",
+        "sample still small"
+      ]
+    },
+    {
+      "photo_id": "919e0768-af54-4ef5-a8a0-575ad9b09960",
+      "title": "",
+      "category": "",
+      "score": 8.8,
       "confidence": "low",
       "views_30d": 0,
       "purchase_intents_30d": 0,
@@ -349,7 +349,7 @@
       "photo_id": "f7e18780-1f2d-4d85-bbcb-d584c4216812",
       "title": "",
       "category": "",
-      "score": 6.2,
+      "score": 6.4,
       "confidence": "low",
       "views_30d": 1,
       "purchase_intents_30d": 0,
@@ -366,7 +366,7 @@
       "photo_id": "f6f018ab-16c1-48e1-88d4-d81d103facd7",
       "title": "",
       "category": "",
-      "score": 6.2,
+      "score": 6.4,
       "confidence": "low",
       "views_30d": 1,
       "purchase_intents_30d": 0,
@@ -387,21 +387,21 @@
       "category": "",
       "score": 45.0,
       "confidence": "high",
-      "views_30d": 32,
+      "views_30d": 30,
       "purchase_intents_30d": 0,
       "verified_print_purchases_30d": 0,
       "social_signal_7d": 0,
       "mapped_social_posts_7d": 0,
       "eligible_for_featured_review": true,
       "reasons": [
-        "32 views / 30d"
+        "30 views / 30d"
       ]
     },
     {
       "photo_id": "4cf149dc-4e7c-4698-897b-97dfc2475366",
       "title": "",
       "category": "",
-      "score": 31.4,
+      "score": 32.0,
       "confidence": "medium",
       "views_30d": 15,
       "purchase_intents_30d": 0,
@@ -417,23 +417,23 @@
       "photo_id": "1TCAfgJ9pl3T0G8RRtIAa5_0FOoxXrjso",
       "title": "ריקוד של אש בלילה",
       "category": "צילומי לילה",
-      "score": 30.7,
+      "score": 32.0,
       "confidence": "medium",
-      "views_30d": 14,
+      "views_30d": 15,
       "purchase_intents_30d": 0,
       "verified_print_purchases_30d": 0,
       "social_signal_7d": 0,
       "mapped_social_posts_7d": 0,
       "eligible_for_featured_review": true,
       "reasons": [
-        "14 views / 30d"
+        "15 views / 30d"
       ]
     },
     {
       "photo_id": "1G_dn5hHrv_1cZ-VVGfECEYzi9J6pDGhI",
       "title": "ריקוד אור בערבה",
       "category": "צילומי לילה",
-      "score": 26.1,
+      "score": 26.6,
       "confidence": "medium",
       "views_30d": 9,
       "purchase_intents_30d": 0,
@@ -449,7 +449,7 @@
       "photo_id": "1toLLUZrvlD_zP5qosJLEabgyh1WOEWZc",
       "title": "מטריית אש",
       "category": "צילומי לילה",
-      "score": 24.9,
+      "score": 25.3,
       "confidence": "medium",
       "views_30d": 8,
       "purchase_intents_30d": 0,
@@ -465,7 +465,7 @@
       "photo_id": "1DKV8fePHvPbFLArxDDCRuGsX9eT48ZKd",
       "title": "שדה בערפל בוקר",
       "category": "סלובקיה",
-      "score": 23.6,
+      "score": 24.0,
       "confidence": "medium",
       "views_30d": 7,
       "purchase_intents_30d": 0,
